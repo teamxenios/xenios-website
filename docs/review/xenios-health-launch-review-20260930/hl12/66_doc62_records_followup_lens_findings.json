@@ -1,0 +1,310 @@
+{
+ "schemaVersion": 1,
+ "review": {
+  "verdict": "RECORDS CORRECTIONS ACCURATE, WITH LIMITS. Checked by Git-object reads and in-memory recomputation only. NOTHING WAS RUN. Not acceptance, not Samuel's approval.\n\nIntegrator records 3df14c276b4812edd44132266fcbdb2e880e8cb2 (tree ce66379e, parent f175f3c) and subscription records c6893f6ddeb2aef6a5295cb7058e1f984d8501cc (tree 85670e3c, parent ce5e58f) are both records-only:\n- Neither commit changes any path outside docs/ and .xenios/.\n- The client, server and shared trees equal cad2c4d (5172db17 / d5bfd2c6 / 6eac7e0f) and 736bb2a (db822289 / dc13403b / 3f7278ea) respectively.\n- Each commit changes only its owner's row in ACTIVE_TASKS, CODE_OWNERSHIP and SESSION_REGISTRY. Every other row and every top-level field is unchanged, row order included.\n- Both are local branch heads. The remotes are older, so neither commit was pushed.\n\nD62-4, D62-5, D62-6, D62-7 and D62-8 are accurate and complete within their assigned scope. The bindings and preservation JSON recompute exactly.\n\nD62-3 is correctly scoped and explicitly unapplied, but it is NOT SAFE TO APPLY AS WRITTEN (F-1, P2). The patch adds a rule key that the release-gate ownership parser rejects. Removing the pattern would also leave ProductPage.tsx with no write owner in that registry (F-2).\n\nThere are four other P3 limits:\n- F-3: the catalog freeze lives only in .xenios. The shared registry still holds an active Website 3 write rule over all four catalog files.\n- F-4: the subscription receipt's ProductPage.tsx hash is a working-file hash, not the Git-byte hash used elsewhere for the same blob.\n- F-5: two coordinator records written before Doc62 still cite the d6a1e886 digest without the quotePath caveat.\n- F-6: the handoff pointers pair a sha with a file that only exists in a later commit.\n\nNo P0 or P1.\n\nScope flag: the relayed user request concerns a different review: the Doc64 supervisor delta (cc584f9 / a52060a / 866ed38), verifier 935aaf1, snapshot S, the five operational input bindings and the census. This lens covered only the Doc62 records board, which the coordinator assigned at 33ca419. It reaches no Doc64, verifier, binding or census disposition and implies none. Status: LOCAL ONLY / NOT RUN.",
+  "checklist": [
+   {
+    "item": "(1a) Both commits are records-only: no path outside docs/ and .xenios/",
+    "status": "PASS",
+    "evidence": "git diff --name-status f175f3c..3df14c2 lists 9 paths: 5 under .xenios/ and 4 under docs/health-launch/accepted-source-integration-20261005/. ce5e58f..c6893f6 lists 6 paths: 5 under .xenios/ and docs/health-launch/evidence/product-subscription-intent-20261005/doc62-pointer-20261008.json. Filtering cad2c4d..3df14c2 and 736bb2a..c6893f6 for paths outside docs/ and .xenios/ returns nothing."
+   },
+   {
+    "item": "(1b) client/, server/ and shared/ unchanged from cad2c4d and 736bb2a",
+    "status": "PASS",
+    "evidence": "The client/server/shared tree ids are identical at cad2c4d, f175f3c and 3df14c2 (5172db17 / d5bfd2c6 / 6eac7e0f). They are also identical at 736bb2a, ce5e58f and c6893f6 (db822289 / dc13403b / 3f7278ea). cad2c4d is an ancestor of 3df14c2 and 736bb2a of c6893f6. All 8 frozen blobs plus product-subscribe.test.tsx (f389110) are unchanged."
+   },
+   {
+    "item": "(1c) Each commit touches only its own owner's registry rows",
+    "status": "PASS",
+    "evidence": "Structural JSON diff by id. 3df14c2 changes only task ACCEPTED-SOURCE-INTEGRATION-20261005 (91 rows), lease d0897045 (134 rows, session codex-accepted-source-integration-20261005) and session codex-accepted-source-integration-20261005 (57 rows). c6893f6 changes only task PRODUCT-SUBSCRIPTION-INTENT-20261005, lease d9ff89ea (session codex-product-subscription-intent-20261005) and that session row. Row order and top-level fields are unchanged; rules[3] is unchanged."
+   },
+   {
+    "item": "D62-4: catalog freeze recorded in the registry",
+    "status": "PASS",
+    "evidence": "CODE_OWNERSHIP.json@3df14c2:27 adds lease d0897045.immutableAcceptedSource: source cad2c4d, tree e90de420, review e27fa1bd, and all eight files. Each gitBlob equals cad2c4d (B equal to 8f080a0, C equal to 736bb2a), and the list equals bindings frozenCustody.files. B is not added to the lease paths, so there is no new write claim. Limits are in F-3."
+   },
+   {
+    "item": "D62-5: authority citation corrected",
+    "status": "PASS",
+    "evidence": "The archived coordinator FULL_COMPLETION_DIRECTIVE_20261008.txt@2928a1c hashes to effa648e…a703, matching the cited value. Section 6 retains the accepted-source integration owner; section 7 step 5 reads 'Integrate accepted corrections through the single designated owner.' 1b165b15 is a separate coordinator commit ('Record additive build authority…'). Message 01a11bda, thread 01a103a8 and turn 01a11bc5 match CUSTOMER_ASSEMBLY_PACKET_cad2c4d_20261008.md:35-38. Original transfer bytes in ce5e58f are untouched."
+   },
+   {
+    "item": "D62-6: inventory digest derivation stated exactly and reproduced",
+    "status": "PASS",
+    "evidence": "Ran in memory: git -c core.quotePath=true ls-tree -r, split at the first TAB, exclude ^(docs|\\.xenios)/ on the emitted field plus the 4 C paths, join with LF plus a final LF. Result: 3278 rows / 347963 bytes / d6a1e886f7f9…8200, identical at 37f2d96, 8f080a0, cad2c4d, f175f3c and 3df14c2. Exactly one quoted row is kept: 9733c548… \"docs/legal/…\\342\\200\\224 Final Legal Approval and Release Letter .docx\". With quotePath=false: 3277 / 347782 / 1204f550…9d18e. Both values match the correction (md 104-127) and bindings.legacyComparator. The S packet does not cite the digest."
+   },
+   {
+    "item": "D62-7: full transitive dependency list",
+    "status": "PASS",
+    "evidence": "Independent in-memory import walk from ProductPage.tsx using relative, @ and @shared static imports, re-exports, side-effect imports and literal dynamic imports, type-only excluded, CSS as leaf. cad2c4d and 756a906 each have the same 39 paths, 36 equal; the 3 that differ are ProductPage (4c9075a to d50b467), ProductSubscriptionCreate (3d938f0 to b4046a7) and MemberProductDetailExperience (73d2abe to f1db3fa). The 39-path list matches md 151-191 exactly. Against 736bb2a the graph goes from 34 to 39 modules, and the five that enter are ProductMedia.tsx, product-media.css, product-media.ts, product-admin.ts and price-quantity-tiers.ts. Only the three media files are absent from the 736bb2a tree; price-quantity-tiers is c06c102 in both. Changed: cartProductSelection (528df16 to 826c73b), shared cart-product-selection (9fb02aa to 7faa442), memberCatalog (b480f5b to 8a4b412), shared member-catalog (f87d79f to 83694ac), detail component and product-admin (e7c1613 to fcf43de in the type graph). This covers and slightly exceeds the doc 62 section 2 list, adding shared member-catalog.ts."
+   },
+   {
+    "item": "D62-8: subscription local successor marked superseded",
+    "status": "PASS",
+    "evidence": "c6893f6 ACTIVE_TASKS:125 historicalWordingSuccessor.status HISTORICAL_SUPERSEDED. originalHandoff is byte-equal (JSON) to ce5e58f's localSuccessorHandoff for e6d7dd1. The current localSuccessorHandoff (line 34) names 736bb2a/92069109, 937c913/7d7e8118 and ce5e58f/a64a8bba, all verified, with downstream custody cad2c4d/f175f3c/e27fa1bd marked separate. e6d7dd1 is an ancestor of 736bb2a. Pointer caveat is in F-6."
+   },
+   {
+    "item": "(3) D62-3 proposal: content and scope",
+    "status": "PASS",
+    "evidence": "The patch (27 lines, 1 hunk @@ -393,13 +393,22 @@) targets docs/coordination/FILE_OWNERSHIP.json blob 899840292dca (SHA-256 4fd7c6d7…, recomputed). That blob is unchanged at cad2c4d, 3df14c2, 736bb2a, c6893f6 and coordinator HEAD 2928a1c. The context matches at exactly one position. Simulated in memory, it changes only rule OWNER-W2-PR85-INTEGRATION: it removes only ProductPage.tsx and keeps product-subscribe.test.tsx and 9 other patterns, leaving state reserved. This matches the coordinator assignment DOC62_INTEGRATION_RECORDS_CORRECTION_ASSIGNMENT_20261008.md@33ca419. It is labeled UNAPPLIED in the md (lines 81-96), in bindings.reservationProposal.applied=false and in the preservation sharedReservation.unchanged=true."
+   },
+   {
+    "item": "(3) D62-3 proposal: safe to apply",
+    "status": "FAIL",
+    "evidence": "The patch adds the rule key partiallySupersededReservations. verify-release-manifest.ts:257-264 allows only the rule keys id, owner, lane, mode, state and patterns, and exactKeys (275-277) at lines 385-405 rejects any other key. The current blob has zero non-canonical keys. The result would be CURRENT_OWNERSHIP_SNAPSHOT_INVALID in verify-production-state.ts:251-259 and 866. The rule states have no 'superseded' value (273). Static reading only; NOT RUN. See F-1 and F-2."
+   },
+   {
+    "item": "(4) doc62-records-bindings-20261008.json recompute",
+    "status": "PASS",
+    "evidence": "All 8 frozenCustody blobs and raw Git-byte SHA-256 values match (e20b1c55, e81747bf, 77fd8156, bd90e658, 318d972b, 2de8f721, 10830464, f2a02557). All 39×2 dependency blobs and raw SHA-256 values match, with 36 equal and 3 changed. Both comparator observations and the reservation SHA match. No mismatches."
+   },
+   {
+    "item": "(4) doc62-records-preservation-20261008.json recompute",
+    "status": "PASS",
+    "evidence": "Baseline f175f3c with quotePath=true, excluding the 4 own continuity JSONs: 5992 rows / 708549 bytes / c6a94f21…7632, with 0 row mismatches at 3df14c2. Exactly the 9 changed paths equal expectedFinalChangedPaths. I reproduced the PowerShell ConvertFrom-Json/ConvertTo-Json -Compress -Depth 100 canonical hashes at both commits: foreign rows 750da683 / dfcea8d3 / 7a708938 and top-level fields 39d6f729 / 511a755f. The own-field hashes for workstreamCTransfer (d0b485f0) and workstreamCReturnReceived (4fff8d2f) are unchanged."
+   },
+   {
+    "item": "(4) Subscription doc62-pointer-20261008.json recompute",
+    "status": "PARTIAL",
+    "evidence": "The foreign-registry <OWN_ROW>-masked digests 3575683e / 604def85 / ca072532 reproduce at both ce5e58f and c6893f6. All 39 historicalPaths are byte-identical in Git between ce5e58f and c6893f6, and three of the four acceptedSource sha256 values equal raw Git bytes. However, ProductPage.tsx b9532627… is not the Git-byte hash, and historicalRawManifestSha256 d62a3c20… cannot be reproduced from Git objects because it uses a working-file derivation. Both are NOT PROVEN under Git-only reads (F-4)."
+   },
+   {
+    "item": "(4) No execution or acceptance claimed",
+    "status": "PASS",
+    "evidence": "The correction md, both handoffs, bindings and receipt all say NOT RUN / LOCAL ONLY. The integrator states 'Records correction acceptance is not claimed', 'These are producer dispositions'. The task status reads 'records correction not independently accepted'. D62-1 and D62-2 remain OPEN."
+   },
+   {
+    "item": "Lens conduct",
+    "status": "PASS",
+    "evidence": "Git object and ref reads only, on the three named worktrees and the shared store. In-memory node/PowerShell hashing of git show bytes. No checkout, write, test, build, gate, patch application or contact with other sessions. The validator source was read, not executed."
+   },
+   {
+    "item": "Alignment with the relayed user request (Doc64 delta review, verifier 935aaf1, snapshot S, bindings, census)",
+    "status": "NOT_APPLICABLE",
+    "evidence": "This lens covered only the Doc62 records board. It offers no evidence or disposition on Doc64 supervisor cc584f9 / a52060a / 866ed38, verifier 935aaf1, the five operational input bindings or the census, and none should be inferred."
+   }
+  ],
+  "findings": [
+   {
+    "id": "F-1",
+    "severity": "P2",
+    "file": "docs/health-launch/accepted-source-integration-20261005/doc62-product-page-reservation-proposal-20261008.patch",
+    "claim": "The D62-3 proposal is called an exact reconciliation, but applied verbatim it makes the shared ownership snapshot non-canonical and fails the ownership schema check closed. It adds the rule key `partiallySupersededReservations`, which the release-gate parser rejects.",
+    "evidence": "Patch lines 10-19 add `\"partiallySupersededReservations\": [ {path, recipientSession, recipientLease, frozenSource, authority, limitation} ]` to OWNER-W2-PR85-INTEGRATION. scripts/acceptance/verify-release-manifest.ts@3df14c2:257-264 sets OWNERSHIP_RULE_KEYS = {id, owner, lane, mode, state, patterns}; exactKeys (275-277) at 385-405 returns TRUSTED_OWNERSHIP_INVALID ('Every ownership rule must match the canonical rule structure'). verify-production-state.ts:251-259 maps that to CURRENT_OWNERSHIP_SNAPSHOT_INVALID, and it is consumed at line 866 (npm verify:production-state). The current blob 899840292dca has 0 rules or lanes with non-canonical keys, so this patch would be the cause. Static reading of the validator only; NOT RUN. The patch is explicitly unapplied, so there is no present effect.",
+    "fix": "Before any shared-registry decision, redraft the proposal so the rule keeps exactly the six canonical keys, removing only the ProductPage.tsx pattern if that is the decision. Record the supersession metadata (recipient, lease, frozen source, authority, limitation) in the integrator's own records or a coordinator record, not inside FILE_OWNERSHIP.json. The amendment still needs the actual FILE_OWNERSHIP.json writer, OWNER-W2-CONTROL-PLANE (Website 2, release-manager), and the coordinator's boundary decision."
+   },
+   {
+    "id": "F-2",
+    "severity": "P3",
+    "file": "docs/health-launch/accepted-source-integration-20261005/doc62-product-page-reservation-proposal-20261008.patch",
+    "claim": "Removing the pattern leaves ProductPage.tsx with no write owner in the shared registry, and the canonical schema cannot express 'superseded'. The proposal names no replacement writer rule, so release ownership for the file the accepted candidate changes would become UNOWNED_FILE.",
+    "evidence": "In-memory glob scan of FILE_OWNERSHIP.json@cad2c4d: ProductPage.tsx matches only OWNER-W2-PR85-INTEGRATION. verify-release-manifest.ts:587-594: ownersForFile counts every non-'retired' write rule, so 'reserved' currently counts as the owner. Lines 627-628 and 1180-1181 raise UNOWNED_FILE ('has no write owner') when the count is 0. OWNERSHIP_RULE_STATES (273) is active/reserved/deployed/frozen, with no 'superseded'. Doc 62 D62-3 asks to 'mark that reservation superseded', which this schema cannot represent. Static only; NOT RUN.",
+    "fix": "Have the coordinator decide with the W2 control-plane owner: either move the ProductPage.tsx pattern to a rule for the lane that will carry the composed change, or keep the reservation and reconcile through the manifest-v2 ownership review. Record which in the D62-3 disposition."
+   },
+   {
+    "id": "F-3",
+    "severity": "P3",
+    "file": "docs/coordination/FILE_OWNERSHIP.json",
+    "claim": "The D62-4 freeze exists only as advisory metadata in .xenios. The shared registry still has an ACTIVE Website 3 write rule over all four frozen catalog files, which neither doc 62 nor the corrections mention, and no tooling reads immutableAcceptedSource.",
+    "evidence": "FILE_OWNERSHIP.json blob 899840292dca, line 219: OWNER-W3-PRODUCTS-DIAGNOSTICS-CHECKIN (Website 3, mode write, state active) covers MemberCatalogExperience(.test).tsx and MemberProductDetailExperience(.test).tsx. Its lane v3-products-diagnostics-checkin is WAITING_FOR_WEBSITE_2_ASSIGNMENT with branch null. In .xenios at 3df14c2, the B paths are covered only by handoff leases 99c3b715 and c2cc19b7 (codex-care-research-postlaunch-20260831). git grep for immutableAcceptedSource in scripts/, server/, client/ and shared/ at 3df14c2 returns 0 hits. The freeze in CODE_OWNERSHIP.json:27 is accurate but enforced by nothing.",
+    "fix": "Disclose this in the next records or coordinator checkpoint and include it in the same shared-registry decision as D62-3: freeze or retire the W3 patterns for the four catalog files through the registry's owner. Treat the .xenios freeze as advisory until then."
+   },
+   {
+    "id": "F-4",
+    "severity": "P3",
+    "file": "docs/health-launch/evidence/product-subscription-intent-20261005/doc62-pointer-20261008.json",
+    "claim": "The subscription receipt's ProductPage.tsx `sha256` is a working-file hash inherited from Doc57's proof, not a raw Git-byte hash. The same blob d50b467 therefore carries two different SHA-256 values across owner records, and the receipt's historical manifest digest cannot be reproduced from Git objects.",
+    "evidence": "In doc62-pointer-20261008.json:118, acceptedSource ProductPage.tsx is sha256 b9532627…e2c2. The git show bytes of d50b467 hash to 77fd81564c4e…, as recorded in the integrator's doc62-records-bindings:65 and in workstream-c-20261008-source.json:32-33 (workingFileSha256LF). No LF, CRLF or BOM variant of the blob, and no historical ProductPage blob (11 checked), hashes to b9532627. The value originates in 937c913 doc57-records-20261008-proof.json:201 as rawSha256. The other three acceptedSource values equal Git bytes. historicalRawManifestSha256 d62a3c20 does not match a Git-byte recomputation; its derivation says 'raw-working-file SHA-256'. Working files were not read (Git-only rule), so their contents are NOT PROVEN. Blob identity holds.",
+    "fix": "On the owner's next records turn, label the field as working-file SHA-256 and add rawGitSha256 next to it (77fd8156… for ProductPage.tsx). Also note the line-ending or working-tree discrepancy for ProductPage.tsx in the subscription worktree. No source action."
+   },
+   {
+    "id": "F-5",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/CUSTOMER_ACCEPTED_ASSEMBLY_BINDINGS_20261008.json",
+    "claim": "Coordinator-owned records written before Doc62 still cite the d6a1e886 digest under the literal 'excluding docs/**' definition, without the quotePath caveat. This is outside the integrator's write scope, so D62-6 is closed only in the integrator's new records.",
+    "evidence": "In coordinator 2928a1c, CUSTOMER_ACCEPTED_ASSEMBLY_BINDINGS_20261008.json:146-150 has otherSourceInventory.definition 'ordered git ls-tree -r baseline rows excluding four C paths and docs/**/.xenios/**' with sha256 d6a1e886. CUSTOMER_ASSEMBLY_COORDINATOR_CHECKPOINT_20261008.json:50 has otherSourceSha256 d6a1e886 (last touched 2a70033/d205b9f, before Doc62). The integrator's own historical CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md:87 is preserved by design with a read-together note (correction md 129-133). SNAPSHOT_S_CENSUS_PACKET_20261008.* does not cite the digest.",
+    "fix": "At the next coordinator checkpoint, add a pointer from these two records to the exact derivation in DOC62_RECORDS_CORRECTION_20261008.md (104-127). Any future S packet citing d6a1e886 must copy the derivation, as bindings.legacyComparator.snapshotRule requires."
+   },
+   {
+    "id": "F-6",
+    "severity": "P3",
+    "file": ".xenios/ACTIVE_TASKS.json",
+    "claim": "The corrected pointers pair a sha with a file that only exists in the later records commit, and the containing commit is reported only outside the records. A reader resolving `sha:file` fails, which matters because D62-8 was about pointer accuracy.",
+    "evidence": "c6893f6 ACTIVE_TASKS.json:34-43: localSuccessorHandoff.sha is 736bb2a, but its file (the DOC62 pointer handoff) exists only at c6893f6, and the handoff object at line 27 points to the same file. 3df14c2 ACTIVE_TASKS.json:84-89: handoff.sha is cad2c4d, but its file (the 2026-10-08T23-34-13Z handoff) exists only at 3df14c2, and lines 86-89 are mis-indented (valid JSON). Both carry 'exact SHA/tree reported after freeze', and earlier rows used the same convention. The D62-8 content is otherwise accurate.",
+    "fix": "Have the coordinator record the containing commits (3df14c2 / tree ce66379e and c6893f6 / tree 85670e3c) against these handoff files in its collection record. The owners can add a containingCommit field on their next records turn. No rewrite of these commits."
+   }
+  ]
+ },
+ "integratorRecords": "3df14c276b4812edd44132266fcbdb2e880e8cb2",
+ "subscriptionRecords": "c6893f6ddeb2aef6a5295cb7058e1f984d8501cc",
+ "composedSource": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+ "workflowRun": "wf_43011b84-9b4",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens and adversarial-verifier outputs, verbatim. Reviewer dispositions are in doc 66.",
+ "verify": {
+  "verdicts": [
+   {
+    "id": "F-1",
+    "upheld": true,
+    "severity": "P3",
+    "note": "I confirmed the defect but lowered it from P2 to P3. The patch adds rule key `partiallySupersededReservations`. The canonical rule key set is fixed at verify-release-manifest.ts@3df14c2:257-264, enforced by exactKeys (275-277) at 387, and rejected with TRUSTED_OWNERSHIP_INVALID at 402. verify-production-state.ts:251-259 then raises CURRENT_OWNERSHIP_SNAPSHOT_INVALID, consumed at 866. I simulated the patch in memory on blob 899840292dca (SHA-256 4fd7c6d7…, recomputed). The context matches only at line 393, exactly one rule changes (OWNER-W2-PR85-INTEGRATION), and the result has 7 keys against 6 canonical. The current blob has 0 non-canonical keys across 48 rules and 16 lanes. Why P3: the patch is explicitly DRAFT_UNAPPLIED_REQUIRES_ACTUAL_SHARED_REGISTRY_OWNER_SCOPE, D62-3 stays OPEN by the producer's own disposition, the md requires a recheck before application, and applying it verbatim fails closed rather than granting anything wrongly. The real inaccuracy is the word 'exact' (md:30): the reconciliation is not schema-valid as written. Static reading only; NOT RUN."
+   },
+   {
+    "id": "F-2",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. In my in-memory glob scan (globToRegExp copied from verify-release-manifest.ts:568), ProductPage.tsx matches only OWNER-W2-PR85-INTEGRATION, and after the simulated patch it matches nothing. ownersForFile (587-594) counts 'reserved' as an owner, and UNOWNED_FILE is raised at 628 and 1180-1181. OWNERSHIP_RULE_STATES (273) has no 'superseded'. One correction to the lens: this is not a new class of gap. Three of the four C files (ProductSubscriptionCreate.tsx, ProductSubscriptionCreate.test.tsx and ProductPage.subscription.test.tsx) already have no write owner in this registry (see M-1)."
+   },
+   {
+    "id": "F-3",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. FILE_OWNERSHIP.json blob 899840292dca:219 has OWNER-W3-PRODUCTS-DIAGNOSTICS-CHECKIN (Website 3, write, active) over all four B files. Its lane v3-products-diagnostics-checkin is WAITING_FOR_WEBSITE_2_ASSIGNMENT with branch null. git grep for immutableAcceptedSource in scripts/server/client/shared at 3df14c2 returns nothing. In .xenios, the B paths are covered only by handoff-state leases 99c3b715 and c2cc19b7 (codex-care-research-postlaunch-20260831). The lens understated one part: integrator lease d0897045 is itself in state 'handoff'. xenios-os.mjs checks overlap and claim conflicts only for state==='active' (76-78, 145), so neither the freeze nor the four C 'custody reservations' block a new claim (see M-2)."
+   },
+   {
+    "id": "F-4",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed by recomputation. doc62-pointer-20261008.json@c6893f6:118 gives ProductPage.tsx sha256 b9532627…. The git cat-file bytes of d50b467 (3678 B, no CR) hash to 77fd8156…. None of these variants produce b9532627: CRLF, BOM, BOM+CRLF, no final LF, extra LF, or any of 11 historical ProductPage blobs. The value comes from 937c913 doc57-records-20261008-proof.json:201. The receipt's derivation (line 133) does say 'raw-working-file SHA-256', so the method is disclosed, but the field sits unqualified next to gitBlob. The owner's own workstream-c-20261008-source.json@c6893f6:33 gives workingFileSha256LF 77fd8156 for the same file, so this owner's records contradict each other. A Git-byte derivation of historicalRawManifestSha256 (ordinal-sorted path, TAB, raw-Git sha256, LF) gives 393708bc…, not d62a3c20…. The working-file value is NOT PROVEN under Git-only reads. Blob identity holds: 736bb2a and c6893f6 both have d50b467."
+   },
+   {
+    "id": "F-5",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed and still true at coordinator HEAD f821619. CUSTOMER_ACCEPTED_ASSEMBLY_BINDINGS_20261008.json:146-150 and CUSTOMER_ASSEMBLY_COORDINATOR_CHECKPOINT_20261008.json:50 cite d6a1e886 without the quotePath caveat. The lens's anchor list is incomplete; two more caveat-free coordinator citations exist (M-3). Partial mitigation the lens did not note: the coordinator's newer DOC62_INTEGRATOR_CORRECTION_CHECKPOINT_20261008.json:53-58 carries quotePath:true and includesQuotedDocumentationRow:true. No SNAPSHOT_S file at HEAD cites d6a1e886."
+   },
+   {
+    "id": "F-6",
+    "upheld": false,
+    "severity": "P3",
+    "note": "Refuted as an open defect. Both pointers label the sha role explicitly. On the subscription side, shaRole is 'accepted Workstream C source' or 'completed local transfer; baseline of current pointer correction', and pointerCorrectionCommit reads 'commit introducing this handoff; exact SHA/tree reported after freeze' (ACTIVE_TASKS@c6893f6:25-45). The lens's proposed fix was already in place at the coordinator snapshot the lens read (2928a1c; collecting commit 4a97628 is an ancestor). COORDINATION_STATE.json:5387-5404 binds c6893f6/tree 85670e3c to the pointer handoff; I recomputed its raw SHA-256 as d4588f86… and the proof as 5ecba414… (9157 B), both matching. DOC62_INTEGRATOR_CORRECTION_CHECKPOINT_20261008.json:74-78 binds the integrator handoff, recomputed raw SHA-256 84441ec2…, to records 3df14c2/tree ce66379e. Only a cosmetic residue remains: mis-indentation at ACTIVE_TASKS@3df14c2:86-90, which is valid JSON."
+   }
+  ],
+  "checklistOpinion": [
+   {
+    "item": "(1a) Both commits records-only: no path outside docs/ and .xenios/",
+    "status": "PASS",
+    "note": "f175f3c..3df14c2 changes 9 paths and ce5e58f..c6893f6 changes 6, all under docs/ or .xenios/. cad2c4d..3df14c2 and 736bb2a..c6893f6 show nothing outside those prefixes. Commit ranges: cad2c4d..3df14c2 = {f175f3c, 3df14c2}; 736bb2a..c6893f6 = {e5ca41d, 937c913, ce5e58f, c6893f6}, all docs:-prefixed."
+   },
+   {
+    "item": "(1b) client/server/shared unchanged from cad2c4d / 736bb2a",
+    "status": "PASS",
+    "note": "Tree ids are identical: 5172db17/d5bfd2c6/6eac7e0f at cad2c4d, f175f3c and 3df14c2, and db822289/dc13403b/3f7278ea at 736bb2a, ce5e58f and c6893f6. Both ancestries hold."
+   },
+   {
+    "item": "(1c) Each commit touches only its own owner's registry rows",
+    "status": "PASS",
+    "note": "Structural diff of ACTIVE_TASKS, CODE_OWNERSHIP and SESSION_REGISTRY: only the own task, lease and session row change in each commit. Top-level keys, row order and counts (91/134/57 and 93/136/57) are unchanged. CODE_OWNERSHIP rules (3) are unchanged. Lease `paths` gained only the owner's new records files, with no B paths."
+   },
+   {
+    "item": "D62-4 catalog freeze recorded in the registry",
+    "status": "PASS",
+    "note": "CODE_OWNERSHIP@3df14c2 lease d0897045.immutableAcceptedSource records source, tree and review plus 8 blobs. Each equals cad2c4d, and each equals 8f080a0 (B) or 736bb2a (C). Closed as a records correction, but advisory only (F-3, M-2)."
+   },
+   {
+    "item": "D62-5 authority citation corrected",
+    "status": "PASS",
+    "note": "The archived FULL_COMPLETION_DIRECTIVE_20261008.txt hashes to effa648e…a703. §6 retains the 'accepted-source integration owner' and §7 step 5 matches. 1b165b15 is a separate coordinator commit ('Record additive build authority…'); 94485a6 and 20a2305 resolve. Closed in the integrator and coordinator records. The miscited bytes on the subscription branch have no forward pointer (M-5)."
+   },
+   {
+    "item": "D62-6 inventory digest derivation stated exactly and reproduced",
+    "status": "PASS",
+    "note": "Reproduced in memory from git -c core.quotePath=true ls-tree -r with the stated filter: 3278 rows / 347963 B / d6a1e886f7f9…8200 at 37f2d96, 8f080a0, cad2c4d, f175f3c and 3df14c2. Exactly one quoted docs row is retained (9733c548; it accounts for the 181 B difference). With quotePath=false: 3277 / 347782 / 1204f550…d18e. Closed in the integrator's records. Four caveat-free coordinator citations remain (F-5, M-3)."
+   },
+   {
+    "item": "D62-7 full transitive dependency list",
+    "status": "PASS",
+    "note": "My independent import walk (aliases from tsconfig paths and vite alias; type-only and all-type named edges excluded) yields 39 modules at cad2c4d, a set identical to 756a906 and to the bindings list. 36 are equal; 3 changed (4c9075a→d50b467, 3d938f0→b4046a7, 73d2abe→f1db3fa). Against 736bb2a the graph goes from 34 to 39: three media files absent from C, price-quantity-tiers c06c102 unchanged, product-admin e7c1613→fcf43de. Changed: cartProductSelection, memberCatalog adapter, the detail component, shared cart-product-selection and shared member-catalog. All 78 blob and raw SHA-256 entries recompute."
+   },
+   {
+    "item": "D62-8 subscription local successor marked superseded",
+    "status": "PASS",
+    "note": "ACTIVE_TASKS@c6893f6:125-139 has historicalWordingSuccessor HISTORICAL_SUPERSEDED with e6d7dd1 preserved. The current localSuccessorHandoff names 736bb2a/9206910, 937c913/7d7e811 and ce5e58f/a64a8bb, with downstream custody kept separate. SESSION_REGISTRY:581 and the session file now describe e6d7dd1 as historical."
+   },
+   {
+    "item": "(3) D62-3 proposal content, scope and unapplied status",
+    "status": "PASS",
+    "note": "There is one hunk on OWNER-W2-PR85-INTEGRATION. It removes only ProductPage.tsx and keeps product-subscribe.test.tsx and the other 9 patterns, with state reserved. The target blob 899840292dca is unchanged at cad2c4d, 3df14c2, 736bb2a, c6893f6 and coordinator HEAD f821619. It is labeled unapplied in md:88-96, bindings.reservationProposal.applied=false and preservation.sharedReservation. The narrowing from Doc 62's wording is correct on the merits but not acknowledged as a deviation (M-4)."
+   },
+   {
+    "item": "(3) D62-3 proposal safe to apply as written",
+    "status": "FAIL",
+    "note": "Applied verbatim, the non-canonical rule key fails the ownership parser closed (F-1, now P3). Removing the pattern also leaves ProductPage.tsx unowned (F-2), and the shared registry already lacks owners for three of the C files (M-1)."
+   },
+   {
+    "item": "(4) doc62-records-bindings JSON recompute",
+    "status": "PASS",
+    "note": "All 8 frozenCustody entries and all 39×2 dependency entries match Git blobs and raw Git-byte SHA-256 values. legacyComparator observations and the reservation SHA match. 0 mismatches."
+   },
+   {
+    "item": "(4) doc62-records-preservation JSON recompute",
+    "status": "PASS",
+    "note": "I reproduced the baseline: 5992 rows / 708549 B / c6a94f21…7632, with 0 retained rows missing at 3df14c2. Exactly 5 paths are added and 4 changed, matching expectedFinalChangedPaths. The PowerShell ConvertTo-Json -Compress -Depth 100 hashes reproduce at both commits: 750da683 / dfcea8d3 / 7a708938 and top 39d6f729 / 511a755f."
+   },
+   {
+    "item": "(4) Subscription doc62-pointer receipt recompute",
+    "status": "PARTIAL",
+    "note": "The <OWN_ROW>-masked digests 3575683e / 604def85 / ca072532 reproduce at both ce5e58f and c6893f6. All 39 historicalPaths have the same blob in both commits. Three of the four acceptedSource sha256 values equal Git bytes. ProductPage.tsx's value and historicalRawManifestSha256 are working-file values: NOT PROVEN (F-4)."
+   },
+   {
+    "item": "(4) No execution or acceptance claimed",
+    "status": "PASS",
+    "note": "Every artifact says NOT RUN / LOCAL ONLY. The integrator's status reads 'records correction not independently accepted'. Neither commit is on any remote-tracking ref; origin heads are 38c7239 and 1fe97f5. D62-1 and D62-2 are left OPEN."
+   },
+   {
+    "item": "Lens conduct (no writes or execution)",
+    "status": "NOT_PROVEN",
+    "note": "The lens's statement about itself cannot be verified from Git objects; checking the working trees would go beyond Git-object reads. My own conduct: Git object and ref reads plus in-memory node/PowerShell hashing only. No file writes, test, build, gate or patch application. One PowerShell alias error caused the harness to persist that tool output to its own tool-results directory; I did not write it."
+   },
+   {
+    "item": "Alignment with the relayed user request (Doc64 delta, verifier 935aaf1, snapshot S, bindings, census)",
+    "status": "NOT_APPLICABLE",
+    "note": "This board is DOC62-RECORDS-FOLLOWUP-20261008 r1 (Doc 66). Coordinator COORDINATION_STATE.json@f821619:5432-5446 records it as acknowledged and in review by this original reviewer session, verdict PENDING. It is an existing queued task, not a duplicate review. It gives no Doc64 (cc584f9/a52060a/866ed38), verifier 935aaf1, snapshot S, operational-binding or census disposition, and none should be inferred."
+   }
+  ],
+  "missed": [
+   {
+    "id": "M-1",
+    "severity": "P3",
+    "file": "docs/coordination/FILE_OWNERSHIP.json",
+    "claim": "The shared registry has no write owner for three of the four C paths. The four B paths belong to the W3 products lane. Release-time ownership reconciliation for cad2c4d is therefore broader than D62-3's single-pattern proposal, and neither Doc 62 nor the correction says so.",
+    "evidence": "In-memory ownersForFile scan of blob 899840292dca, using the globToRegExp logic from verify-release-manifest.ts:568-585 and 587-594. ProductSubscriptionCreate.tsx, ProductSubscriptionCreate.test.tsx and ProductPage.subscription.test.tsx match no rule. ProductPage.tsx and product-subscribe.test.tsx match only OWNER-W2-PR85-INTEGRATION (reserved). The four B files match only OWNER-W3-PRODUCTS-DIAGNOSTICS-CHECKIN (lane v3-products-diagnostics-checkin). A manifest-v2 diff containing these files would produce UNOWNED_FILE for the three C files (628, 1180-1181), and WRONG_LANE_OWNER for B unless the manifest lane is the W3 lane. Static only; NOT RUN.",
+    "fix": "Widen the coordinator's shared-registry decision with the FILE_OWNERSHIP owner (OWNER-W2-CONTROL-PLANE) to cover all eight accepted files, using only canonical six-key rules, and record the decision in the D62-3 disposition."
+   },
+   {
+    "id": "M-2",
+    "severity": "P3",
+    "file": ".xenios/CODE_OWNERSHIP.json",
+    "claim": "The 'four C custody reservations' that the correction says it retains (md:44) do not reserve anything in the .xenios tooling. The integrator lease is in handoff state, and the claim and validate tools ignore non-active leases.",
+    "evidence": "CODE_OWNERSHIP@3df14c2 lease d0897045 has state 'handoff'. xenios-os.mjs@3df14c2:76-78 (validate overlap) and :145 (claim conflicts) filter state==='active'. ProductPage.tsx is also covered by two other handoff leases, cfaa1c68 and ff472c8b (codex-xenios-clarity-implementation-20260926).",
+    "fix": "Describe the custody and freeze entries as advisory in the next records or coordinator checkpoint. If exclusivity is wanted, have the coordinator decide how to make it enforceable. No source action."
+   },
+   {
+    "id": "M-3",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/CUSTOMER_ASSEMBLY_PACKET_cad2c4d_20261008.md",
+    "claim": "F-5's anchor list is incomplete: two more coordinator records cite d6a1e886 without the quotePath caveat. One states a definition the digest does not satisfy.",
+    "evidence": "At coordinator HEAD f821619, CUSTOMER_ASSEMBLY_PACKET_cad2c4d_20261008.md:85-87 reads 'excluding only four C paths and docs/ / .xenios/'. CUSTOMER_ASSEMBLY_BINDINGS_cad2c4d_20261008.json:102-108 has otherSourceInventory d6a1e886 without a derivation. Both were last touched at d205b9f, before Doc 62.",
+    "fix": "Include these two records with the two F-5 records in the coordinator's next checkpoint, as a pointer to DOC62_INTEGRATOR_CORRECTION_CHECKPOINT_20261008.json:53-58 and the integrator md:104-127."
+   },
+   {
+    "id": "M-4",
+    "severity": "P3",
+    "file": "docs/health-launch/accepted-source-integration-20261005/DOC62_RECORDS_CORRECTION_20261008.md",
+    "claim": "The D62-3 proposal narrows the reviewer's recommendation without saying so. Doc 62 §3 names both ProductPage.tsx and product-subscribe.test.tsx and asks to 'mark that reservation superseded'. The proposal supersedes only ProductPage.tsx and says the entire reservation 'must not be marked superseded'.",
+    "evidence": "Doc 62:62-63 and 76-77, against correction md:89-92 and coordinator assignment 33ca419 DOC62_INTEGRATION_RECORDS_CORRECTION_ASSIGNMENT_20261008.md. On the merits the narrowing is right: product-subscribe.test.tsx is f389110, unchanged by the candidate, and the W2 row holds 11 patterns, mostly unrelated server and catalog files.",
+    "fix": "The original reviewer should explicitly confirm the narrowing in the Doc 66 disposition, and the coordinator should record it as a deliberate refinement of D62-3."
+   },
+   {
+    "id": "M-5",
+    "severity": "P3",
+    "file": "docs/health-launch/evidence/product-subscription-intent-20261005/doc57-records-20261008-transfer.json",
+    "claim": "The D62-5 correction has no forward pointer on the subscription branch, which is where the miscited bytes live.",
+    "evidence": "At c6893f6, doc57-records-20261008-transfer.json:5 still has humanDirective 1b165b15. git grep for 96001a74 in the subscription evidence and handoffs at c6893f6 returns nothing. The correction exists only in integrator 3df14c2 (md:62-79, bindings.authorityCorrection) and coordinator COORDINATION_STATE.json:4760. The D62-8 assignment confined that owner to its pointer, so this follows from the assigned scope; it is not owner error.",
+    "fix": "On the subscription owner's next authorized records turn, add a forward pointer to the integrator and coordinator attribution correction without rewriting the original bytes, or have the coordinator note the cross-branch dependency."
+   }
+  ],
+  "disposition": "RECORDS ACCEPT WITH LIMITS (adversarial-verifier opinion only; the original reviewer's Doc 66 disposition is the one that counts). Checked by Git-object reads and in-memory recomputation only. NOTHING WAS RUN. This is not acceptance of execution and not Samuel's approval.\n\nWhat I verified, using integrator records 3df14c2 (tree ce66379e) and subscription records c6893f6 (tree 85670e3c):\n- Both commits are records-only and touch only their owner's rows.\n- Neither is on any remote-tracking ref.\n- client/, server/ and shared/ are identical to cad2c4d and 736bb2a.\n- These all recompute exactly: the bindings, the preservation inventory, the canonical JSON hashes, the masked foreign-row digests, the inventory digest under both quotePath settings, and an independent 39-module import walk.\n\nFindings: no P0, P1 or P2.\n- F-1 is upheld but lowered to P3: the unapplied draft would fail closed if applied verbatim.\n- F-2 through F-5 are upheld at P3.\n- F-6 is refuted: the coordinator had already bound both handoff files to their containing commits at the snapshot the lens read.\n- Missed, all P3: M-1 (the shared registry has no owner for three C files, and the B files belong to the W3 lane), M-2 (custody reservations are unenforced because the lease is in handoff state), M-3 (two more caveat-free coordinator citations of d6a1e886), M-4 (D62-3 narrowing not acknowledged), M-5 (no D62-5 forward pointer on the subscription branch).\n\nClosed as records corrections:\n- D62-4, advisory only (F-3, M-2).\n- D62-5, with limit M-5.\n- D62-6, in the integrator's records; the coordinator's older citations remain (F-5, M-3).\n- D62-7.\n- D62-8.\n\nNot closed:\n- D62-3 stays OPEN. The proposal is correctly unapplied and correctly limited to the W2 row and ProductPage.tsx. It is not schema-valid as written, and the full shared-registry reconciliation is broader (M-1).\n- D62-1 and D62-2 stay OPEN and are outside this scope.\n\nThis board is DOC62-RECORDS-FOLLOWUP-20261008 r1 (Doc 66). The coordinator at f821619 already records it as acknowledged and in review by this original reviewer, so it is not a duplicate review. It does not address the Doc64 supervisor delta (cc584f9 / a52060a / 866ed38), verifier 935aaf1, snapshot S, the five operational input bindings or the census, and implies nothing about them. Status: LOCAL ONLY / NOT RUN. Both schedules are unchanged, and no push, reservation or deployment is implied."
+ }
+}
