@@ -1,0 +1,327 @@
+{
+ "schemaVersion": 1,
+ "review": {
+  "verdict": "The specialist input map holds up with limits (disposition B lens). There are no P0 or P1 findings, 2 P2 and 5 P3. I recomputed every identity, raw SHA256, size, count and lineage claim from Git object bytes at S=25858ad94a649a9f7442562e6e0423636d2a3124 (tree c5565bcd), and all of them are correct.\n\n- **Hashes:** all 14 blob IDs, sizes and raw hashes match, and every one is byte-identical at old S f98c416. The specialist map .md (92e61b6c), map .json (c31966bb) and RESULT (0b9f2732) are byte-identical at coordinator 2bac0c8, coordinator HEAD 52e57c3 and in the scratchpad. The packet .md (145d0d22) and .json (c8bb1979) at d007162 match their scratchpad copies.\n- **Counts:** the catalog has 424 canonical rows from 426 workbook rows. Bindings have 415 bound and 9 unbound, which together cover exactly the 424 catalog variant IDs with no overlap. The 415 are exactly the predecessor's 417 pairs minus the 2 archived_not_transferred pairs.\n- **Aug21 reconciliation:** the raw hash d63eade1 equals the reconciliation pin in the catalog, in the bindings and in retainedAuthority. The file has zero CR bytes, so the raw and CRLF-to-LF hash domains coincide. The workbook pin, provenance map, MC01 hold and both merges are identical across all three files.\n- **Nine unbound rows:** each matches its catalog row exactly. The reason codes split 1 shipping_service, 2 quote_only and 6 binding_pending (GRP-0421 to GRP-0426).\n- **Research legal hashes:** the specialist's values are corroborated independently by RELEASE_HASH_MANIFEST.json and by the sourceSha256 pins in legal-import.ts.\n- **Distinctions kept:** the specialist and the packet keep identity, historical approval, currentness and Health Quick Order applicability separate. They do not treat Research approval as Health approval or candidate rows as approved offers. They choose no legal terms, quantities, regions, audiences or commercial policy; the one stock-witness recommendation is labelled as a recommendation.\n- **Remaining limits:**\n  - The legal candidate set leaves out XR-LEGAL-14, which shares the product_checkout stage with XR-LEGAL-13 (P2).\n  - The packet does not say that current Quick Order projection code admits at most 23 of the 424 catalog rows by family (P2).\n  - The decision-register additions add no question and so duplicate none, but they carry no recommendation or consequence of their own.\n\nAll execution is NOT RUN. Deployed-path and live currentness are NOT PROVEN. Nothing here is Samuel's approval.",
+  "checklist": [
+   {
+    "item": "Specialist and packet artifact identity at the coordinator",
+    "status": "PASS",
+    "evidence": "Recomputed sha256 over git show bytes. SPECIALIST_INPUT_APPLICABILITY_MAP_20261009.md is 92e61b6cd80b30d1... (24144 bytes) and the .json is c31966bbab604958... (35272 bytes), at both 2bac0c8 and 52e57c3. RESULT .json is 0b9f2732... (3625 bytes). Packet .md is 145d0d22... and packet .json is c8bb1979... at d0071628. All five scratchpad copies are byte-identical."
+   },
+   {
+    "item": "14 real artifacts: blob ID, raw sha256 and size at S, and identical at old S",
+    "status": "PASS",
+    "evidence": "All 14 rows of realArtifactMetadata match exactly, including catalog 4a1bb489/09bfb1d1/351419, bindings a3615ec0/f2df5364/128269 and reconciliation 35371f6b/d63eade1/5815. Each path resolves to the same blob at f98c416, and f98c416 is an ancestor of S. git diff f98c416..S over server/, shared/, client/ and config/ is empty."
+   },
+   {
+    "item": "Catalog: 424 canonical rows from 426 workbook rows",
+    "status": "PASS",
+    "evidence": "Fields at S: workbookSourceRowCount=426, sourceRowCount=424, canonicalProductCount=424, variantCount=424. products[] has 424 entries with 424 unique offering IDs and 424 unique variant IDs. schemaVersion=1 and generatedAt=2026-10-01T07:49:06.496Z."
+   },
+   {
+    "item": "Bindings: 415 bound and 9 unbound, plus the 417-to-415 lineage",
+    "status": "PASS",
+    "evidence": "boundCount=415 and unboundCount=9. Bound and unbound together cover all 424 catalog variant IDs with zero overlap and zero orphans; offeringId agrees in every row, and there are no duplicate variantId or SKU values. The predecessor 3416f8de is an ancestor of S, and its raw blob hashes equal predecessorBindingsCanonicalSha256 (587595e6) and predecessorDatasetCanonicalSha256 (b8634a5d). All 415 current pairs are unchanged from the 417 predecessor pairs, and the 2 dropped pairs are exactly supersededBindings[].binding. productionReadBack.at is 2026-08-15 and productionReadBackRefreshed=false."
+   },
+   {
+    "item": "Aug21 reconciliation lineage matches the exact catalog and bindings bytes",
+    "status": "PASS",
+    "evidence": "The raw sha256 of config/research/master-catalog-reconciliation-20260821.json equals catalog.reconciliation.sha256, bindings.reconciliation.sha256 and bindings.retainedAuthority.candidateReconciliationSha256. The file has 0 CR bytes and no BOM, so the utf8_crlf_to_lf hash policy gives the raw hash. The workbook sha 6478ad0d appears in all three files. Catalog and bindings provenance maps are deep-equal; the only non-identity entries are GRP-0426<-GRP-0402 and GRP-0425<-GRP-0407, which equal merges[].keeps/supersedes. commerceHeldRows is [GRP-0422] in both, and its catalogIdentity matches the catalog row. The bindings do not pin the current catalog hash directly; the pairing rests on the shared reconciliation and workbook pins, the same commit 9c3358b, and exact ID coverage."
+   },
+   {
+    "item": "Nine unbound mappings and their classification (1 shipping, 2 quote-only, 6 new)",
+    "status": "PASS",
+    "evidence": "For all 9 rows, offeringId, offeringVariantId, sourceGroupId, reasonCode and reason match the bindings unbound[]. Label, family and displayState match a single-variant catalog row, and none of the 9 is bound. Reason codes are shipping_service x1 (GRP-0364), quote_only x2 (GRP-0244, GRP-0365) and binding_pending x6 (GRP-0421 to GRP-0426), consistent with retainedAuthority newIdentities=6 and retainedIdentities=418. The predecessor bindings for 0402 and 0407 are archived_not_transferred, and their old variant and SKU are reused by no current binding. One nuance is logged as P3-1: GRP-0365 is in a non-merchandise family."
+   },
+   {
+    "item": "Research legal scopes, versions and raw hashes",
+    "status": "PARTIAL",
+    "evidence": "Hashes, versions and stages are correct. The manifest gives XR-LEGAL-06 as stage activation, required, v1.0, effective 2026-07-22, and XR-LEGAL-13 as stage product_checkout, required. The document headers show v1.0, effective July 22, 2026 and an approved-for-publication status. RELEASE_HASH_MANIFEST.json and legal-import.ts sourceSha256 independently pin the same raw hashes, and .gitattributes is '* -text', so raw blob bytes equal working-tree bytes. APPROVAL_RECORD_INDEX.md records the July 22 letters; the letters themselves were not opened. The candidate set is incomplete: it omits XR-LEGAL-14, which is also required at product_checkout (see P2-1)."
+   },
+   {
+    "item": "Published canonical pair and declared fingerprint",
+    "status": "PASS",
+    "evidence": "In server/research/policies-data.ts@S, lines 16-19 give early_access_terms/v1, lines 96-97 give RESEARCH_USE_POLICY_CONTENT_SHA256=98918e35..., and lines 99-145 hash JSON.stringify of {title, updated, sections}. That is a different domain from the raw module hash ab925494. The runtime fingerprint is NOT RUN. legal.ts:12-31 admits only that published pair, and only when it is also in approvedHealthPairs."
+   },
+   {
+    "item": "Configuration required fields against the accepted decision-input contract",
+    "status": "PASS",
+    "evidence": "The specialist's field table matches Doc51 items 18-21 (7b1e606) and the validator text in supabase/candidates/20261006_research_health_quick_order_currentness.sql@S lines 145-339. That validator requires: healthAgreements 1..30 with printable ASCII 1..64, sorted, unique kind; refs 1..32 that are subsets of the envelope; offerRules with Identifier200 fields that refuse the 'unbound:' prefix; workflowModes 1..2; audiences 1..5 with no admin; regions 1..51 of 50 states plus DC; quantity integers 1..100000 with min<=max; unpriced=request_pricing if and only if the workflow includes request_pricing; and configurationVersion equal to the configuration sha256."
+   },
+   {
+    "item": "Configuration candidate characterizations",
+    "status": "PASS",
+    "evidence": "product-activation-overlay has 5 entries, all founderActivationApproval=null. catalog-priority-projection has 9 entries, and its $comment says it is monotonically restrictive. catalog-reconciliation-policy has mode=dry_run_only, all mutation flags false, and canonicalArtifacts hashes that differ from S. live-identity-closure has observedAt 2026-09-22, is evidence-only, and records 420 repo canonical variants, which is the predecessor catalog, not S."
+   },
+   {
+    "item": "The four distinctions kept per input (identity, historical approval, currentness, applicability)",
+    "status": "PASS",
+    "evidence": "The specialist's fiveInputs carry status, statusMeaning, selection, currentness and missing separately. The packet MD says statuses concern Quick Order operational approval and do not revoke earlier canonical approvals."
+   },
+   {
+    "item": "No policy value chosen on Samuel's behalf",
+    "status": "PASS",
+    "evidence": "Every value is assigned to Samuel or legal authority: Health pairs, offers, workflows, quantity bands, audiences, regions and effectivity. The figures USD, US, 1/100/1 and member are described as existing contract or code facts, not adoption. The 27-pair limit is described as a constraint, not a chosen count. The packet's stock-witness proposal is labelled 'Recommend' and leaves the owner to choose."
+   },
+   {
+    "item": "Candidate catalog rows not treated as approved offers",
+    "status": "PASS",
+    "evidence": "Statuses are EXISTS_NOT_APPROVED / EXISTS_BUT_NOT_APPROVED_FOR_QO_USE. Register class4 deferral says '424 rows not 424 approved offers'. The specialist says 'Displaying a Research row does not approve it for Health'."
+   },
+   {
+    "item": "Research approval not treated as Health approval",
+    "status": "PASS",
+    "evidence": "The map has healthAdopted=false and healthApproved=false, and states 'No identity mapping between XR-LEGAL-06/13 v1.0 and this pair is asserted'. The packet says 'Research approval does not establish Health QO adoption'."
+   },
+   {
+    "item": "Register additions at 2bac0c8 duplicate no existing question",
+    "status": "PASS",
+    "evidence": "The diff adds 18 lines in 2 sections. The input section explicitly reuses the existing class4 decision, and the native section reuses class2 with 'REQUESTNOTGRANTED' and 'no duplicate acceptance review'. Neither adds a new question row."
+   },
+   {
+    "item": "Register additions present each decision with a concrete recommendation and consequence",
+    "status": "PARTIAL",
+    "evidence": "Neither added section has a recommendation or deferral column of its own; the input section defers to the existing class4 row. That row does carry a recommendation and deferral, but it was not updated with the new constraints (at most 27 pairs, at most 23 family-eligible rows, the nine-row classification). The added text is whitespace-collapsed. The native section's 3-path class2 request differs from packet decision C's 6-path set (P3-3)."
+   },
+   {
+    "item": "Input shapes compatible with the accepted decision-input schema",
+    "status": "PASS",
+    "evidence": "All 415 bound triples are lowercase UUIDs or mov_ IDs that satisfy Identifier200; 0 violations, 0 'unbound:' prefixes, 415 unique product/variant pairs. Every candidate legal identifier fits Text64, including the category names in legal-import.ts. The nine unbound rows have null product and variant IDs, so they cannot form an OfferRule, which is correct. CF-9's 64/100/128 mismatch is recorded in Doc51 line 127 but not repeated by the specialist (P3-4)."
+   },
+   {
+    "item": "Health Quick Order catalog applicability quantified for the owner decision",
+    "status": "PARTIAL",
+    "evidence": "Static derivation, NOT RUN. Using catalog.ts:93-98, production-catalog.ts:176-178 and pathway-authority.ts:57-74, the family gates exclude 242 clinical_formulations_503a rows (provider), 157 research_* rows (researchUseOnly) and 2 shipping_and_fulfillment rows (non-merchandise). That leaves at most 23 rows (20 supplements and 3 topicals, all bound, all request_access). Neither the specialist nor the packet states this bound (P2-2)."
+   },
+   {
+    "item": "Deployed and selected path, and live currentness",
+    "status": "NOT_PROVEN",
+    "evidence": "The environment-selected dataset and bindings paths and any live readback were not inspected; that access is outside this lens. The newest recorded readback is 2026-08-15 (productionReadBackRefreshed=false), and the 2026-09-22 closure is historical."
+   },
+   {
+    "item": "Execution evidence (fingerprint, SQL validator, tests)",
+    "status": "NOT_PROVEN",
+    "evidence": "Everything is NOT RUN. The SQL and TypeScript were read as text from Git objects only."
+   }
+  ],
+  "inputs": [
+   {
+    "input": "catalog",
+    "identity": "server/research/master-offerings/data/member-safe-master-offerings.generated.json@S. Blob 4a1bb489, raw sha256 09bfb1d1cb064218345f4b006d2cc4c72d6cf63017ac8d3e8cd8a3469f1e7829, 351419 bytes. Same blob at old S f98c416; last changed in 9c3358b (2026-10-01). schemaVersion 1, generatedAt 2026-10-01T07:49:06.496Z, 424 canonical rows from 426 workbook rows.",
+    "historicalApproval": "Rests on the Aug21 founder reconciliation (decidedBy founder, 2026-08-21) and the workbook pin 6478ad0d. Member-safe invariants are all false. This is approval of Research catalog provenance only; it carries no price, offer or Health authority.",
+    "currentness": "Generated 2026-10-01 and unchanged between f98c416 and S. The reader's mtime cache and the Quick Order double scan detect drift but are not atomic. The deployed selected path and live currentness are NOT PROVEN.",
+    "healthQoApplicability": "Not approved for Health Quick Order. Current projection code (catalog.ts:93-98) refuses provider, research-only, non-merchandise and classification-pending rows, which caps family-eligible rows at 23 of 424 (20 supplements, 3 topicals). Health visibility and destination callbacks are still required.",
+    "remainingIssueClass": "Samuel's policy decision: which positive Health offers. Missing artifact: a selected-source/currentness receipt. Missing access: the deployed path and live readback were not inspected. Concrete technical incompatibility: rows in the 503A and research families cannot be Quick Order offers under current projection code without a source change."
+   },
+   {
+    "input": "bindings",
+    "identity": "server/research/master-offerings/data/master-offering-bindings.generated.json@S. Blob a3615ec0, raw sha256 f2df53646aba339784c09c91f0f1ff21c4817c7e8c84f70a0a5e568563137832, 128269 bytes. Same at old S. 415 bound and 9 unbound, plus 2 superseded bindings archived_not_transferred. retainedAuthority: reviewed_predecessor_subset from 3416f8de; the 417-to-415 derivation is verified.",
+    "historicalApproval": "A reviewed predecessor subset of Product Control identities, with production readback 2026-08-15 after the general initialization. invariants.bindingAuthorizesPurchase=false and bindingCarriesPrice=false. This is identity provenance only.",
+    "currentness": "productionReadBackRefreshed=false, so the newest readback is 2026-08-15. The 2026-09-22 closure matched 417 live identities against the predecessor and is historical. No current readback exists.",
+    "healthQoApplicability": "Not approved. Nine rows have no identity and are refused by the validator's 'unbound:' check (currentness.sql:251-255). All nine are also refused by the current Quick Order projection: 7 are research-only and 2 are in the non-merchandise shipping_and_fulfillment family. The 415 bound triples fit Identifier200 and are structurally usable only once Samuel selects them.",
+    "remainingIssueClass": "Concrete technical incompatibility: the 9 unbound rows have no identity and the validator refuses them. Missing artifact or access: a refreshed readback and currentness receipt. Samuel's policy decision: which bound triples to include."
+   },
+   {
+    "input": "reconciliation",
+    "identity": "config/research/master-catalog-reconciliation-20260821.json@S. Blob 35371f6b, raw sha256 d63eade14720c36547fe07b17f954000cc704094a376f246352757af33597976, 5815 bytes, 0 CR bytes, so the raw and CRLF-to-LF domains are equal. schemaVersion 1. Workbook 6478ad0d, 426 rows to 424, 2 merges, MC01 hold on GRP-0422.",
+    "historicalApproval": "Founder decision of 2026-08-21, which also records historical price decisions. reconciliation-authority.ts:7-50 pins the filename, workbook and counts. It is not the approved-reconciliation-adapter envelope (approval, approvedBy, approvedAt, sourceDigest, decision), and no approval wrapper should be invented around it.",
+    "currentness": "The lineage matches the exact S catalog and bindings bytes (verified). Its historical price decisions do not prove a currently selected price or version.",
+    "healthQoApplicability": "Compatible lineage for Health Quick Order. Applicability as a Quick Order input is not approved, and it confers no offer, quantity, destination or legal approval.",
+    "remainingIssueClass": "No technical incompatibility found in the lineage. The only remaining item is technical binding of this exact file as artifacts.reconciliation, plus Samuel's general class4 applicability decision. Nothing new is needed from Samuel for the reconciliation itself."
+   },
+   {
+    "input": "health_legal",
+    "identity": "No Health legal artifact exists (path and hash are null). Research sources at S: APPROVAL_RECORD_INDEX.md 3e116fcb (422 bytes), 06_research_use_acceptable_use.md 91fe4676 (3245), 13_product_purchase_terms.md 3888a8a1 (3272), website_integration_manifest.json 2ff67f9c (6543), FINAL_BUSINESS_TERMS_SCHEDULE.md 3d5a3ff7 (1764). Also policies-data.ts ab925494, which declares semantic fingerprint 98918e35 for early_access_terms/v1. document-register.json c8ce1a6d holds 159 entries, all draft, not_reviewed and not effective.",
+    "historicalApproval": "The Research package v1.0, effective 2026-07-22, records counsel release letters (letters not opened). The XR-LEGAL-06 and -13 headers state approval for publication and e-signature. The published pair early_access_terms/v1 is the canonical Research-use agreement. There is no Health approval of any kind.",
+    "currentness": "The package is unchanged since import and the hashes agree with RELEASE_HASH_MANIFEST.json. The runtime fingerprint check is NOT RUN.",
+    "healthQoApplicability": "Not adopted for Health. legal.ts:12-31 serves only early_access_terms/v1 and only when it is in approvedHealthPairs, which production.ts:22-23 states stays empty until approved. Any other kind needs adapter source (class3). With 3 form acknowledgments added, at most 27 Health pairs fit the combined 30 limit (core.mjs:110-116). The package designation contract (package-manifest.ts:238-293) requires every required document of a designated stage, so a product_checkout designation needs both XR-LEGAL-13 and XR-LEGAL-14.",
+    "remainingIssueClass": "Samuel or legal authority decides applicability and the complete required set. Missing artifact: the single artifacts.healthLegal file and its content schema are undefined. Concrete technical incompatibility: the current adapter supports only the published Research pair."
+   },
+   {
+    "input": "configuration",
+    "identity": "No configuration artifact exists (path and hash are null). Hash-bound related candidates: product-activation-overlay-20260826.json 9cb3f2cb (5 entries, founderActivationApproval all null); catalog-priority-projection-20260826.json 37b9946b (9 entries, monotonically restrictive); catalog-reconciliation-policy.json a7fe256e (dry_run_only, older hash pins); catalog-live-identity-closure-20260922.json 2f9834d3 (historical, evidence-only).",
+    "historicalApproval": "No approved Quick Order configuration exists. The candidates are restrictive or historical Research records. The 1/100/1 quantity band is the Research Early Access default (production-catalog.ts:191-201, early-access-quantity.ts:47), not a Health decision.",
+    "currentness": "No current operational configuration. configurationVersion must equal the sha256 of the real artifact once it exists.",
+    "healthQoApplicability": "None of the candidates supplies Quick Order offer rules. The fields required are exactly Doc51 items 18-21. The decision-text validator does not define the raw configuration artifact's content schema.",
+    "remainingIssueClass": "Missing artifact. Samuel's policy decisions: offers, workflows, both quantity bands, audience subset, regions, effectivity, and stock, revocation and refusal policy. Engineering construction remains: serializing the artifact and defining its content schema."
+   }
+  ],
+  "findings": [
+   {
+    "id": "P2-1",
+    "severity": "P2",
+    "file": "docs/coordination/launch-coordination-20261005/SPECIALIST_INPUT_APPLICABILITY_MAP_20261009.json (coordinator 2bac0c8, legalFacts.package.candidateDocuments); QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md (d007162, input table, Health legal row)",
+    "claim": "The Health legal candidate set shows only XR-LEGAL-06 (activation) and XR-LEGAL-13 (product_checkout). It leaves out XR-LEGAL-14, which is also required at product_checkout, and the other 12 required activation documents. It also does not point to the existing designation contract, which refuses a designation that drops a required document of its stage. Presented this way, Samuel or legal authority could be steered toward affirming a set the existing package rules would refuse.",
+    "evidence": "docs/legal/xenios-research/v1.0.0/supporting/website_integration_manifest.json@S lists XR-LEGAL-14 'Shipping, Claims and Replacement Policy' as stage product_checkout, required:true, beside XR-LEGAL-13. legal-import.ts@S:322-333 pins XR-LEGAL-14 at sourceSha256 4e5add66, which matches RELEASE_HASH_MANIFEST.json. server/research/early-access/legal/package-manifest.ts@S:229-278 (resolveDesignatedPackage) refuses with required_document_omitted when a required entry of a designated stage is missing, and takes the decision shape documentIds, stages, designatedBy, designatedAt and approvalReference. The packet's gap text asks Samuel or legal to 'affirm applicability' of the listed candidates. Classification: Samuel/legal policy decision, presented incompletely. No term was chosen on his behalf.",
+    "fix": "In the class4 Health legal row, list every manifest document per stage with its hash, at minimum both product_checkout documents (XR-LEGAL-13 and XR-LEGAL-14). State that any stage-based designation must name all required documents of that stage under package-manifest.ts. Offer the existing designation shape as the reusable decision format, and keep Health applicability as Samuel's and legal's choice."
+   },
+   {
+    "id": "P2-2",
+    "severity": "P2",
+    "file": "server/research/health/quick-order/catalog.ts@25858ad (lines 93-98); register class4 row in RECOVERY_DECISIONS_20261007.md; packet decision A",
+    "claim": "Samuel is asked for 'positive bound offers' without being told that current Quick Order projection code admits at most 23 of the 424 catalog rows by family. If he intends Health Quick Order offers from the 503A or research families, that is a source change (a concrete technical incompatibility), not just a value to supply.",
+    "evidence": "This is a static derivation over the S data and code; NOT RUN. catalog.ts:93-98 sets requestable = not provider, not unavailable, not classificationPending and not researchUseOnly. production-catalog.ts:176-178 marks the research_peptides_materials, research_capsules and research_supplies families as researchUseOnly (157 rows). pathway-authority.ts:57-74 puts clinical_formulations_503a in the provider families (242 rows) and shipping_and_fulfillment in the non-merchandise families (2 rows). The remaining 23 rows (20 supplements, 3 topicals_regenerative) are all bound and all request_access. Health visibility, destination callbacks and pricing gates further restrict these and are NOT PROVEN. The specialist states the rule (map MD line 32) but not its scale.",
+    "fix": "Add a sentence to the class4 offer decision stating the family-eligible upper bound (23 rows by family) and the excluded counts. Say that choosing outside this set requires a separately scoped source or policy change under the existing class3 decision. Do not pre-select any of the 23."
+   },
+   {
+    "id": "P3-1",
+    "severity": "P3",
+    "file": "SPECIALIST_INPUT_APPLICABILITY_MAP_20261009.md (coordinator 2bac0c8, lines 45 and 50)",
+    "claim": "The treatment of GRP-0365 implies that a quote workflow could apply once it has a binding and a policy. It leaves out that GRP-0365 is in the non-merchandise shipping_and_fulfillment family, which the current pathway authority withholds and the Quick Order projection refuses whatever its binding. All nine unbound rows are therefore refused by current code: seven as research-only and two as non-merchandise.",
+    "evidence": "In the S catalog, the GRP-0365 product family is shipping_and_fulfillment. production-catalog.ts@S:167-173 marks non_merchandise_family as held. catalog.ts@S:94 treats NON_MERCHANDISE_FAMILIES as unavailable.",
+    "fix": "Change the 'Required treatment' for GRP-0365 to say it is non-merchandise under current pathway authority. A quote workflow for it would need a pathway-authority source change as well as a binding and an explicit policy."
+   },
+   {
+    "id": "P3-2",
+    "severity": "P3",
+    "file": "QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json (d007162, inputs[3].status) versus SPECIALIST_INPUT_APPLICABILITY_MAP_20261009.json (fiveInputs[3].status)",
+    "claim": "The health_legal status is inconsistent: the packet says EXISTS_BUT_NOT_APPROVED_FOR_HEALTH_QO, while the specialist says MISSING_NEEDS_OWNER. Neither notes that artifacts.healthLegal is a single path and hash whose content schema is undefined, in the same way as configuration. Several Research source files cannot themselves be that one artifact.",
+    "evidence": "The validator (currentness.sql@S:181-197) and Doc51 item 18 require exactly one ArtifactRef {path, sha256} for healthLegal, and Doc51 item 16 refuses repeated paths. The specialist flags the undefined serialization only for configuration (map JSON fiveInputs[4].next).",
+    "fix": "Harmonize the status to: Research sources exist; the Health legal artifact is missing and needs an owner. Record that the content schema for the healthLegal artifact must be defined in the class3 source scope before construction, and that no placeholder should be made."
+   },
+   {
+    "id": "P3-3",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/RECOVERY_DECISIONS_20261007.md (coordinator 2bac0c8, added lines 3-19)",
+    "claim": "The two added sections add no question and so duplicate none, but neither presents its decision with a recommendation and a deferral consequence. The class4 row they rely on was not updated with the new constraints. The native section's class2 request (3 paths, 1 new native family) differs from packet decision C (2 existing paths plus 4 proposed: native .cc, build .ps1, fixtures.mjs, profiles.json) without saying which supersedes which. The added text is whitespace-collapsed (for example 'Nineunknowns are1shippingservice'), which hurts readability for Samuel.",
+    "evidence": "Diff 2bac0c8~1..2bac0c8 adds 18 lines. Register line 7 lists 3 paths. Packet MD lines 152-159 list 6 paths. Class4 row (register line 34) is unchanged.",
+    "fix": "Append one sentence each to the existing class4 and class2 rows: for class4, the at-most-27-pair limit, the at-most-23 family-eligible rows and the nine-row classification; for class2, the exact path set and which list supersedes the other. Restore normal spacing. Add no new question."
+   },
+   {
+    "id": "P3-4",
+    "severity": "P3",
+    "file": "SPECIALIST_INPUT_APPLICABILITY_MAP_20261009.json (configurationFields: healthAgreements[].kind/version)",
+    "claim": "The specialist states 'ASCII1..64 in decision schema' but does not carry forward the recorded CF-9 caveat. The publisher grammar allows 128 characters (policies-data.ts AGREEMENT_IDENTIFIER) and the request reader allows 100 (core.mjs:101), so a longer real legal identifier would need a reviewed schema change. Every current candidate fits.",
+    "evidence": "policies-data.ts@S:147 has /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/. core.mjs@S:101 has text(kind, 100). currentness.sql@S:215 has ^[ -~]{1,64}$. Doc53 CF-9 is recorded in DOC51_CARRY_FORWARD at line 127. Candidate identifiers XR-LEGAL-06, 1.0, early_access_terms, v1 and the legal-import category names are each 64 characters or fewer.",
+    "fix": "Add a CF-9 reference to the Health pair field row: an identifier of 65-128 characters requires a reviewed schema-version change and must never be truncated."
+   },
+   {
+    "id": "P3-5",
+    "severity": "P3",
+    "file": "server/research/master-offerings/data/master-offering-bindings.generated.json@25858ad",
+    "claim": "The catalog and the bindings are paired only indirectly, through the same reconciliation and workbook pins, the same commit (9c3358b) and exact 424-ID coverage. The bindings carry no pin of the current catalog bytes. The specialist's 'matches exact catalog/bindings' is true through the reconciliation pins, but a future regeneration of only one file would not be detected by a cross-hash.",
+    "evidence": "The top-level keys of the bindings file have no current-dataset hash. retainedAuthority pins only the predecessor dataset (b8634a5d). Coverage was verified: 424 IDs, zero orphans, zero overlap.",
+    "fix": "When the five-artifact decision is constructed, bind the catalog and bindings raw hashes together in the same decision and treat the coverage check as a construction precondition. Record this as an engineering construction note, not an owner question."
+   }
+  ]
+ },
+ "task": "SNAPSHOT-S-CENSUS-PACKET-REVIEW-20261009 r1",
+ "disposition": "B",
+ "proposedS": "25858ad94a649a9f7442562e6e0423636d2a3124",
+ "artifacts": {
+  "packet": "d0071628fa26e89034eb29e1b7db77929d0acb6a",
+  "specialistMap": "2bac0c8726512720e855b1dbe49e28756791c41e"
+ },
+ "workflowRun": "wf_5202bf1f-62c",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens and adversarial-verifier outputs, verbatim. Reviewer dispositions are in doc 70.",
+ "verify": {
+  "verdicts": [
+   {
+    "id": "P2-1",
+    "upheld": true,
+    "severity": "P2",
+    "note": "Confirmed from Git objects at S. website_integration_manifest.json lists XR-LEGAL-14 'Shipping, Claims and Replacement Policy' as v1.0, stage product_checkout, required:true, next to XR-LEGAL-13. legal-import.ts pins it at sourceSha256 4e5add66..., which matches RELEASE_HASH_MANIFEST.json and my recompute of the raw blob (2924 bytes). The activation stage holds 13 required documents (01-08, 17, 09-12), so 12 besides XR-LEGAL-06. XR-LEGAL-15 is required at payment_evidence_upload. package-manifest.ts resolveDesignatedPackage (from line 238) refuses required_document_omitted. Mitigation: the packet's gap text already asks for the 'full exact required pairs'. Correction to the fix: that designation contract governs Research Early Access. Whether its stage-completeness rule applies to Health is itself a Samuel/legal applicability question, so present it as context, not as a binding rule. Keep P2: the candidate list shows a partial stage set as 'the' candidates."
+   },
+   {
+    "id": "P2-2",
+    "upheld": true,
+    "severity": "P2",
+    "note": "I re-derived the bound and it holds. Catalog families: clinical_formulations_503a 242, research_peptides_materials 139, research_capsules 16, research_supplies 2, shipping_and_fulfillment 2, supplements 20, topicals_regenerative 3. production-catalog.ts sets researchUseOnly for the three research_* families (157 rows). pathway-authority.ts puts 503A in PROVIDER_PATHWAY_FAMILIES and shipping in NON_MERCHANDISE_FAMILIES. All 23 remaining supplement and topical rows are bound and in request_access/request_access. action-policy.ts maps a priced bound row with no refusal to direct_order_request and an unpriced row to request_pricing; neither is request_activation, so all 23 can be requestable in catalog.ts. The specialist states the refusal rule (map MD line 32, line 50) but never its scale. Static derivation; NOT RUN."
+   },
+   {
+    "id": "P3-1",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. GRP-0365 (mov_512ed6b875c04eee4753) is family shipping_and_fulfillment with displayState care_pathway. directPurchaseRefusal returns non_merchandise_family, production-catalog marks it held, and action-policy maps held rows to availability_review. QO catalog.ts treats NON_MERCHANDISE_FAMILIES as unavailable. A quote workflow would therefore need a pathway-authority source change, not only a binding and a policy."
+   },
+   {
+    "id": "P3-2",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Partly refuted. The packet JSON inputs[3] already carries requiredOperationalArtifactStatus=MISSING_AND_NEEDS_OWNER next to status=EXISTS_BUT_NOT_APPROVED_FOR_HEALTH_QO, so the packet and the specialist differ only in labeling, not in substance. The other point stands: artifacts.healthLegal is exactly one ArtifactRef {path, sha256} (Doc51 items 16 and 18; currentness.sql artifact loop), its content schema is undefined, and the specialist flags that gap only for configuration."
+   },
+   {
+    "id": "P3-3",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed: 18 added lines, whitespace-collapsed, and no new question. The class4 row (register line 34) is unchanged; it still carries the earlier recommendation and deferral but not the 23-row, 27-pair or nine-row constraints. Correction to one sub-claim: the native section does say the completed proposal 'narrows native-source permission', so supersession is stated. What is missing is a path-level reconciliation against packet decision C's six paths (build .ps1, fixtures.mjs and profiles.json are not listed). The native material is outside this input lens."
+   },
+   {
+    "id": "P3-4",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. policies-data.ts AGREEMENT_IDENTIFIER allows up to 128 characters, core.mjs reads text(kind, 100), and currentness.sql uses ^[ -~]{1,64}$. CF-9 sits at Doc51 line 127 in coordinator HEAD, appended by 81a32af after the 7b1e606 freeze. Every current candidate identifier fits within 64."
+   },
+   {
+    "id": "P3-5",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. The top-level keys of the bindings file have no current-catalog hash; retainedAuthority pins only the predecessor dataset (b8634a5d, which equals the raw blob hash at 3416f8de). The pairing rests on the shared reconciliation and workbook pins, the same commit 9c3358b, and exact 424-ID coverage, which I verified: 0 overlap, 0 orphans, 0 offeringId mismatches."
+   }
+  ],
+  "inputOpinion": [
+   {
+    "input": "catalog",
+    "agree": true,
+    "note": "Identity confirmed: blob 4a1bb489, raw sha256 09bfb1d1..., 351419 bytes, 0 CR, identical at f98c416, last changed in 9c3358b. The file has 424 products with 424 unique offering IDs and 424 unique variant IDs, 1 variant each; workbookSourceRowCount is 426. The 23-row family bound and its classification as a technical incompatibility are correct. Health Quick Order applicability is not approved, and deployed selection and live currentness are NOT PROVEN."
+   },
+   {
+    "input": "bindings",
+    "agree": true,
+    "note": "Confirmed: 415 bound and 9 unbound, with exact 424 coverage and 415 unique SKUs, variant IDs and product/variant pairs. 217 distinct productIds. All triples are mov_ hex or lowercase UUID and fit Identifier200, with no 'unbound:' prefix. The 415 equal the 417 predecessor pairs minus the 2 supersededBindings. Their old SKU and variantId are reused by no current binding. Their old productId is still shared by sibling variants, which reflects product grouping, not a transfer. productionReadBack.at is 2026-08-15 and productionReadBackRefreshed=false."
+   },
+   {
+    "input": "reconciliation",
+    "agree": false,
+    "note": "The lineage claims are correct: the raw hash d63eade1 equals all three pins, there are 0 CR bytes so the LF-normalized hash is identical, and the provenance maps are deep-equal with exactly two non-identity merges. But the lens and specialist attach the 2026-08-21 founder approval directly to the S bytes. Those bytes came from an engineering commit, 9c3358b on 2026-10-01, which added a catalogIdentity block to the GRP-0422 hold. The founder-era bytes are blob 50a4b0e, raw 8ee32f7e..., and equal retainedAuthority.predecessorReconciliationCanonicalSha256. The decision content (merges, holds, priceDecision, expected) is unchanged. The four distinctions require identity and historical approval to be recorded separately (see M-1). I agree that nothing new is needed from Samuel for reconciliation."
+   },
+   {
+    "input": "health_legal",
+    "agree": true,
+    "note": "Hashes, versions and stages for XR-LEGAL-06 and XR-LEGAL-13 are confirmed against RELEASE_HASH_MANIFEST and the legal-import.ts pins. The document headers state v1.0, effective July 22, 2026, approved for publication; the approval index was checked only for the date, and no letter was opened. The draft register has 159 entries, all draft, not_reviewed and not_effective_pending_counsel. One additional nuance: legal.ts takes the required set from the assisted-order service config (config.requiredAgreements) and uses approvedHealthPairs only as a gate. The only adapter-supported pair, early_access_terms/v1, is the Research Use Policy. Health applicability is wholly Samuel's and legal authority's decision. P2-1 and the corrected P3-2 apply."
+   },
+   {
+    "input": "configuration",
+    "agree": true,
+    "note": "Confirmed. The overlay has 5 entries, all founderActivationApproval=null, plus an activationQueue of 13. The priority projection has 9 entries and is 'monotonically restrictive'. The reconciliation policy is dry_run_only with all four mutation flags false, its canonicalArtifacts hashes are cb938e44 and e49a8d74 (not the S hashes), and it also holds historical commercial-pricing proposals that nobody adopted. The live closure is observedAt 2026-09-22, evidence_only, with repoCanonicalVariants 420 and liveVariants 439. The required fields match Doc51 items 18-21 and the currentness.sql validator. Add the constraints in M-2 and M-3."
+   }
+  ],
+  "missed": [
+   {
+    "id": "M-1",
+    "severity": "P2",
+    "file": "config/research/master-catalog-reconciliation-20260821.json@25858ad (blob 35371f6b); SPECIALIST_INPUT_APPLICABILITY_MAP_20261009.md/.json (coordinator 2bac0c8, reconciliation row); QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md (d007162, line 32); RECOVERY_DECISIONS_20261007.md (2bac0c8 addition)",
+    "claim": "The specialist, the packet and the register addition attribute the 2026-08-21 founder approval directly to the S bytes. The specialist calls it 'founder decision 2026-08-21' and 'Recorded founder-approved Research reconciliation'; the packet says 'Aug21 founder reconciliation... remains valid'. In fact those bytes come from a 2026-10-01 engineering amendment. This mixes up artifact identity and historical approval, the distinction this review must keep separate.",
+    "evidence": "The file history at S has three commits: ba8d389 and e1a0d05 (both 2026-08-21), then 9c3358b (2026-10-01, the HL11 materialization). The diff from 3416f8de to 9c3358b adds 4 lines: a catalogIdentity {offeringId, offeringVariantId} on the GRP-0422 commerce hold. The founder-era blob is 50a4b0e, raw sha256 8ee32f7e15af318c..., which equals bindings.retainedAuthority.predecessorReconciliationCanonicalSha256. The S blob is 35371f6b, raw d63eade1. Merges, holds, priceDecision and expected counts are unchanged. Whether 9c3358b received its own review is NOT PROVEN by this lens.",
+    "fix": "In the class4 reconciliation row, record identity and approval separately. Identity: d63eade1, from 9c3358b. Historical founder approval: the 2026-08-21 content at 8ee32f7e (e1a0d05). State that the only delta is an engineering identity annotation, and cite its review record or mark it NOT PROVEN. Change no hash and ask Samuel no new question."
+   },
+   {
+    "id": "M-2",
+    "severity": "P3",
+    "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql@25858ad (publication validator around lines 68-73 and 127; decision validator lines 224-231 and 303-310); SPECIALIST map configurationFields (sourceApprovalRefs and applicabilityRefs rows)",
+    "claim": "The specialist describes approval and applicability references only as 'nonempty sorted unique 1..32 and nested subset of envelope'. It leaves out two constraints. First, each reference must match ^[A-Za-z0-9][A-Za-z0-9._-]{0,159}$, which rules out '/', ':' and spaces. Second, the envelope's sourceRefs and applicabilityRefs are each capped at 32 distinct entries for the whole publication, across every health agreement and every offer rule. That limits how Samuel's and legal's approvals can be referenced: repository paths and colon-delimited IDs cannot be used directly, and there can be no more than 32 distinct approval references in total.",
+    "evidence": "The publication validator requires 1..32 entries and the token grammar for the sourceRefs and applicabilityRefs arrays. Each nested reference must exist in those envelope arrays (the '? s' checks). Doc51 item 18 says 'Every source/applicability array, including envelope arrays: 1–32'.",
+    "fix": "Add the reference grammar and the global 32-entry envelope cap to the field table as a construction constraint. No value is chosen."
+   },
+   {
+    "id": "M-3",
+    "severity": "P3",
+    "file": "server/research/assisted-order/production-catalog.ts@25858ad (lines 191-201); shared/research/early-access-quantity.ts (line 47); SPECIALIST map quantity row",
+    "claim": "Doc51 item 18 requires a quantity to satisfy both the Health offer band and the canonical catalog band. Current source fixes the catalog band at 1/100/1 for every row, so any Health maximum above 100 has no effect without a source change. The specialist states the both-bands rule but not this consequence for Samuel's quantity decision.",
+    "evidence": "authorityFor sets minimumQuantity 1, maximumQuantity EARLY_ACCESS_POLICY_MAX_QUANTITY (100) and quantityIncrement 1. Doc51 item 18 says a future quantity must independently meet BOTH the offer and catalog min/max/increment.",
+    "fix": "Add one sentence to the class4 quantity row: under current source the effective Health maximum is at most 100; a larger value requires a separately scoped change. Choose no band."
+   },
+   {
+    "id": "M-4",
+    "severity": "P3",
+    "file": "docs/research-legal/00-register/document-register.json@25858ad (blob ff8538b1)",
+    "claim": "The only family-eligible Quick Order rows are supplements and topicals. The draft register already contains a supplement-specific member document, XR-COM-015 'Supplement Acknowledgment', which is draft, not_reviewed and not effective. Legal authority is not told it exists. It cannot be used and must not be presented as a candidate, but it is relevant context for the Health legal decision.",
+    "evidence": "The register's status is DRAFT and its version 0.1.0-draft. Its 159 documents all have status draft, counsel_status not_reviewed and effective_date not_effective_pending_counsel. XR-COM-015 has audience member.",
+    "fix": "Optionally note in the Health legal row, as information only, that a draft supplement acknowledgment exists and needs counsel review before it can be considered. Do not list it as a candidate or adopt it."
+   }
+  ],
+  "disposition": "Disposition B: the input map is factually correct, with limits. There are no P0 or P1 findings. A records-only amendment is recommended before Samuel is asked; no re-analysis is required.\n\n**What I recomputed from Git object bytes and confirmed**\n- Every identity, raw SHA256, size and blob in the specialist map at S 25858ad (tree c5565bcd) matches, and every one is byte-identical at f98c416. The map, the result file and the packet match their coordinator commits and the scratchpad copies.\n- Catalog: 424 canonical rows from 426 workbook rows.\n- Bindings: 415 bound and 9 unbound, with exact coverage and no overlap. The 415 equal the predecessor's 417 pairs minus the 2 archived_not_transferred pairs.\n- Reconciliation: the hash d63eade1 matches all three pins. There are 0 CR bytes, so the raw and LF-normalized hashes are the same.\n- The nine unbound rows split 1 shipping_service (GRP-0364), 2 quote_only (GRP-0244, GRP-0365) and 6 binding_pending (GRP-0421 to GRP-0426).\n- Research legal hashes and versions match. The validator limits match the Doc51 schema.\n- Nothing chooses legal terms, quantities, regions, audiences or commercial policy on Samuel's behalf. No candidate row is presented as an approved offer, and Research approval is not treated as Health approval. The stock-witness proposal is labelled as a recommendation.\n\n**Limits**\n- P2: the legal candidates leave out XR-LEGAL-14, which is the other required product_checkout document.\n- P2: current Quick Order projection code admits at most 23 of the 424 rows (20 supplements, 3 topicals); the other 401 need a source change. The packet does not say so.\n- P2, missed by the lens: the founder approval of 2026-08-21 attaches to reconciliation bytes 8ee32f7e. The S bytes d63eade1 come from the 2026-10-01 engineering amendment in 9c3358b.\n- P3: GRP-0365 is non-merchandise; the health_legal status labels differ; the healthLegal content schema is undefined; the register additions are whitespace-collapsed and do not update the class4 row; the CF-9 caveat is not carried forward; catalog and bindings are not cross-hashed; the reference grammar and global 32-entry cap are missing; the catalog caps quantity at 100; a draft supplement acknowledgment exists and is not mentioned.\n\n**Not proven:** all execution is NOT RUN, and deployed selection and live currentness are NOT PROVEN.\n\n**Decisions that are genuinely Samuel's (with legal authority where noted)**\n1. Health legal applicability, and the complete required Health kind/version set with its approval and applicability references. This includes whether any Research document, or the Research stage-completeness rule, applies to Health at all.\n2. The positive Health offers, meaning which bound triples to include, knowing current code admits at most 23 rows. Also whether to scope a class3 source change to admit other families.\n3. The workflow modes for each offer, and the unpriced rule that follows from them.\n4. The Health quantity band; current code caps the maximum at 100.\n5. The subset of existing price audiences.\n6. The destination regions, from the 50 states plus DC, with destination approval references.\n7. The effectivity interval.\n8. Stock witness versus sufficient-quantity policy, revocation ordering, and the writer lock_timeout and refusal budget.\n9. The class3 source grant, which would also define the healthLegal and configuration content schemas and any adapter for agreement kinds that are not yet published.\n\n**Not Samuel's:** reconciliation binding, catalog and bindings currentness receipts, hashing and configurationVersion derivation, and the nine unbound rows, which stay unbound unless the canonical owner reviews them."
+ }
+}
