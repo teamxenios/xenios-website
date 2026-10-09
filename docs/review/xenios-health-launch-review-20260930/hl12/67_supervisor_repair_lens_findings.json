@@ -1,0 +1,1554 @@
+{
+ "schemaVersion": 1,
+ "review": "67_QUICK_ORDER_SUPERVISOR_REPAIR_cc584f9_2026-10-09.md",
+ "subject": "cc584f971d1342acf05a9dd43f97916e38f8072c",
+ "tree": "a52060a6922888e952cf0e5a3de5ea4c12e636e9",
+ "records": "866ed38f0f6007d7a87dfc90628c99b3f42afe4a",
+ "predecessor": "f98c41617f7216353b316510cca6c615f3c79a87",
+ "workflowRun": "wf_2ec6f07b-366",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens, adversarial-verifier and completeness-critic outputs, verbatim. Reviewer dispositions are in doc 67.",
+ "lenses": [
+  {
+   "lens": "zero-launch-pause-timing",
+   "review": {
+    "verdict": "LENS T1 on cc584f9 (tree a52060a6). I recomputed the supervisor hash (a827a2c4…5a12) and the manifest hash (dcea1a24…bdbf8); both match doc64-supervisor-source-cc584f9.json@866ed38. Against a828501 the subject changes exactly two files, and 866ed38 is records-only. No group wall, command ceiling, childWallMs, process cap or maximumWaitMs changed.\n\nSOURCE CORRECTNESS: REVISION REQUIRED.\n- Closed in source (authored, NOT RUN): F-02 (G0 post-launch interruption is declared terminal, and cumulative waits are bounded to 3,000 ms), F-03, F-05, F-06, F-07 and F-09.\n- F-01 is NOT CLOSED. No zero-launch pause is written now. But the replacement non-consuming refusal ties the restart to the first invocation's clock, and every group budget sums exactly to its wall. So the restart check passes only if the restart starts within (ceilings of the skipped in-process commands + handshake time already spent) of the first start. That is never possible for G1-G7, at most about 5.4 s for G0's first child, and never possible before the parser. G0, and with it the window, is still lost with nothing launched, while the record says restartEligible:true.\n- New P1 (regression of the CC-03 closure claimed preserved): any plain pre-attempt refusal on a first fresh start, for example G1 run before G0.review-acceptance.json exists, writes restartEligible:false. Every later fresh start of that group is then refused permanently.\n\nEXECUTION ELIGIBILITY: none.\n- Every mode is refused at loadAuthority by holds and by the new all-row G0 three-process assertion (real-child-tree 4, vitest-baseline 8). The stage-count decision stays Samuel's; no cap was raised and no process omitted.\n- G0 handshakes have 428-429 ms each, and no responder that can meet that is named.\n- The 12 authored fixtures have not run.\n\nVerifier binding stays: 7a62e64 accepted, 935aaf1 pending. Everything is NOT RUN; the window has expired.",
+    "closure": [
+     {
+      "item": "Identity and two-file delta (cc584f9 / a52060a / records 866ed38)",
+      "status": "CLOSED",
+      "evidence": "cc584f9 has tree a52060a6 and parent a828501. Against a828501 it changes exactly qualification-supervisor.mjs (blob 397c451, sha256 a827a2c4…5a12, 2145 lines) and qualification-manifest-20261008.json (blob 3a4f2d2, sha256 dcea1a24…bdbf8). Both were recomputed over git-show bytes and equal doc64-supervisor-source-cc584f9.json@866ed38. 866ed38 (parent cc584f9) touches no source file. A field diff f98c416→cc584f9 shows no change to any group wallMs, command wallMs, childWallMs, maxOwnedProcesses or handshake.maximumWaitMs (M:809). Each group only gains timeBudget.handshakeWaitBudgetMs and continuationPolicy."
+     },
+     {
+      "item": "F-01(a): no pause with zero child launches; a non-consuming refusal binds the in-process receipts",
+      "status": "CLOSED",
+      "evidence": "A pause needs group≠G0, anyChildLaunchAttempted and run.groupConsumed (S:1900-1903@cc584f9). readPause needs groupConsumed===true, anyChildLaunchAttempted===true and group≠G0 (S:1549). A first-child miss instead writes <G>-<inv>.nonconsuming.json (S:1957-1960) with restartEligible set (S:1904-1906), receipt summaries carrying attemptId, attemptRecord and receiptSha256 (S:1929-1933), and the original startedAt, deadline and handshakeWaitSpentMs (S:1921-1925). A marker written before a refused launch is archived (S:1863-1878), and so is the pre-launch folder (S:1879-1887). groupConsumed stays false."
+     },
+     {
+      "item": "F-01(b): a material-change restart can proceed within G0's unchanged 60,000 ms wall",
+      "status": "NOT_CLOSED",
+      "evidence": "The restart restores I1's attemptId, startedAt and deadline (S:1722-1725@cc584f9), then must pass requireGroupTime (S:1769, S:1119-1135): Σceil[k..] + max(0, setup−s2) + max(0, adm−H) + final ≤ D−a2. Every budget sums exactly to its wall (G0: 51,000+3,000+3,000+3,000 = 60,000, M:2723-2731). The check therefore reduces to t2−t0 ≤ C_done+H.\n- G0 after the parser: the restart must start within 5,000 + ≤428 ms of I1's start.\n- G0 before the parser: t2 ≤ t0, which is impossible. This covers an admission refusal at S:1783, or setup above 3,000 ms at S:1769.\nFailing restarts write another restartEligible record. The parser is not re-run, but G0 cannot finish inside its wall."
+     },
+     {
+      "item": "Sim G0: exit-zero admission refused immediately, timed out, or missed after 25 s elapsed",
+      "status": "NOT_CLOSED",
+      "evidence": "I1 does setup (S:1769 passes only at s1 ≤ 3,000), the attempt (S:1771), a full before-inventory (S:1785) and the parser receipt (S:1809-1821). The exit-zero wait is min(30,000, floor(3,000/7)) = 428 ms (S:1149-1150). An immediate RAM refusal (S:1097 via S:1174) or a 428 ms timeout (S:1200) is NONCONSUMING with pause allowed; no marker is written and R1 is restartEligible:true. I2 must reach S:1769 within ~5,000-5,428 ms of t0, but I1 alone already spent setup, a full inventory, the parser and a pinned pass. If the miss comes 25 s in, R1 is relabelled ..._WINDOW_DEADLINE_REFUSAL (S:1907-1909) yet stays restartEligible:true, and no restart can pass. A 25 s handshake itself can no longer occur."
+     },
+     {
+      "item": "Sim G0: admission stale or refused at the pre-launch rechecks",
+      "status": "PARTIAL",
+      "evidence": "recheckChildAdmission re-codes any assertAdmission failure as NONCONSUMING with pauseAllowed true (S:1140-1143). It runs at S:1322, before the marker, and at S:1326, after consumeGroup (S:1324). After the marker, anyChildLaunchAttempted is false, so the marker is archived and groupConsumed is reset (S:1863-1878), and the folder is archived (S:1879-1887). The result is a clean zero-launch refusal. For G0, staleness over 30 s cannot arise inside a 428 ms handshake, so this path is nearly vacuous. Where it does arise, the restart is bound by the same t2−t0 ≤ C_done+H rule and cannot be reached."
+     },
+     {
+      "item": "Sim G1/G4/G7: first child (red-handler / app-composition / build) admission miss",
+      "status": "NOT_CLOSED",
+      "evidence": "None of these groups has an in-process prefix (C_done = 0). The waits are G1 min(30,000, 60,000/4) = 15,000, G4 30,000 and G7 25,000 (S:1149-1150). R1 is written restartEligible:true and immediately relabelled WINDOW_DEADLINE, because the fit needs wall−H (S:1899, S:1907-1909). A restart needs t2−t0 ≤ H. But I2 must read an admission record naming R1's digest, and R1 exists only after I1 spent setup + inventory + H. So these groups can never be restarted. At f98c416 a zero-launch pause had 90-225 s of slack. Losing G1 blocks G2-G7 and the window."
+     },
+     {
+      "item": "Restart never repeats or re-runs completed work",
+      "status": "CLOSED",
+      "evidence": "readCompletedPrefix (S:1493-1527) binds each skipped receipt to its canonical path, raw sha, attemptId, invocationId, childLaunchAttempted===!noChild, and a raw attempt record with identical clocks. assertFreshGroupStart requires every prefix row to have childLaunchAttempted:false (S:1678) and nextCommandIndex===receipts.length (S:1713-1714). It refuses unbound in-process receipts (S:1715-1717) and any child folder that is not a .no-launch-<inv> archive (S:1718-1721). The loop starts at the restored index (S:1786) and refuses completed commands (S:1788). mkdir is non-recursive (S:1291), and the marker blocks any fresh start (S:1653). No path re-runs runParserSelfTests or a launched child."
+     },
+     {
+      "item": "F-02: G0 later-handshake timeout (resumable within the wall, or declared terminal)",
+      "status": "CLOSED",
+      "evidence": "G0 is declared terminal: postLaunch TERMINAL_ADMISSION_INTERRUPTION (M:2733-2734), enforced at S:186-188. There is no G0 pause (S:1900) and no G0 resume (S:1549); M:782, M:814, M:2241 and closure F-02 state this. Waits are bounded to 3,000 ms in total, which is ≤ admissionAndPauseMs (S:183-185, S:1146-1151, S:1206). Worst-case wait, then cumulative H, per index:\n- 1 exit-zero: 428, H 428\n- 2 exit-one: 428, H 856\n- 3 deadline-kill: 428, H 1,284\n- 4 stdout-cap: 429, H 1,713\n- 5 stderr-cap: 429, H 2,142\n- 6 refusal-path: in-process, no wait\n- 7 real-child-tree: 429, H 2,571\n- 8 vitest-baseline: 429, H 3,000\nA miss at indexes 2-8 writes a terminal G0.group.json (S:1960). Index 1 falls under F-01. Neither the wall nor any cap was raised."
+     },
+     {
+      "item": "F-03: pre-launch freshness rechecks are non-consuming and pausable",
+      "status": "CLOSED",
+      "evidence": "S:1322 and S:1326 call recheckChildAdmission (S:1140-1143), which codes NONCONSUMING_ADMISSION_REFUSAL with pauseAllowed true. The time rechecks keep pauseAllowed false (S:1112-1118). Nothing has launched yet: commandLaunchAttempted is set only at S:1328. For a later G1-G7 child, a recheck refusal pauses when the full remaining budget fits (S:1900-1903). For a later G0 child it is terminal by the declared policy. For a first child it becomes a non-consuming refusal, whose restart cannot be reached (see F-01)."
+     },
+     {
+      "item": "F-05: a refused resume before its attempt record is not terminal",
+      "status": "CLOSED",
+      "evidence": "preAttemptResumePreserved (S:1852) writes <G>-<inv>.resume-refused.json (S:1958). It restores the pause's receipts (S:1854-1857) and skips the after-inventory (S:1889). The used marker is written only after the attempt record (S:1780), so the pause stays resumable. The material-change check now sits after Object.assign (S:1625-1628) and is covered by this path. Only requireGroupTime and assertInvocationBudget refusals (terminalProgress, S:1131, S:1641, S:1647) end the group, which means genuine time or attempt exhaustion."
+     },
+     {
+      "item": "F-06: digest-keyed exclusivity, canonical names, attemptId in receipts, G7 artifact binding",
+      "status": "CLOSED",
+      "evidence": "The used marker is <G>-pause-<sha>.resume-used.json (S:1483-1486, S:1581-1582), and any attempt whose parentPause.sha256 names the pause is refused (S:1583-1586). Pause, parent, attempt and receipt paths must match canonical names with realpath equality (S:1476-1482, S:1544, S:1564, S:1607-1608, S:1500-1511). Child and in-process receipts carry attemptId, invocationId, attemptRecord and childLaunchAttempted (S:1356-1357, S:1797-1798, S:1811-1812). G7-build-artifacts.json carries attemptId, and its raw sha is restored from the pause (S:1528-1539, S:1838-1841, S:1938)."
+     },
+     {
+      "item": "F-07: the resume fit check reserves inventories and handshake",
+      "status": "CLOSED",
+      "evidence": "Before the attempt record, requireGroupTime reserves the unfinished ceilings, the remaining setup, admissionAndPauseMs minus H and finalization, plus at least 1 ms of handshake capacity per remaining child (S:1119-1139, S:1769-1771). A pause is published only if the same total fits with a full fresh setupMs (S:1899-1903). Inventories are assumed to fit inside setupMs, and that fit is PROPOSED_NOT_MEASURED (M:2729). This is authored arithmetic, not a measured reserve."
+     },
+     {
+      "item": "F-09: a fresh start refuses when attempt, receipt or archive evidence survives",
+      "status": "CLOSED",
+      "evidence": "A fresh start raises a sticky UNRESOLVED_PRIOR_EVIDENCE refusal in four cases:\n- attempt records, in-process receipts, folders or .unconsumed-marker/.no-launch files exist without a refusal record (S:1662-1665);\n- a .pending twin lacks its base (S:1658-1661);\n- an attempt is not bound to any refusal record (S:1700-1707);\n- a folder is not a .no-launch archive (S:1718-1721).\nOnly PREPARE creates the receipts folder (S:979-980). loadRun requires it and never recreates it (S:1274-1278). The packet discloses the limit that deleting all retained history cannot be detected."
+     },
+     {
+      "item": "CC-03 preserved: a harmless pre-attempt refusal stays clean (claimed in manifest doc64Correction)",
+      "status": "NOT_CLOSED",
+      "evidence": "M:775 says a dependency refusal before the attempt record uses no attempt. But a first fresh start that fails a plain check writes <G>-<inv>.nonconsuming.json with restartEligible false, because the failureCode is not NONCONSUMING_* (S:1904-1906). Example: G1's assertDependencies hits ENOENT on G0.review-acceptance.json (S:1416). After that, every fresh start fails S:1673-1679 before restartProgressValidated, and writes another restartEligible:false record. No material change can clear it. At f98c416, such a record (receipts []) still allowed a fresh start on a new wall (S:1534-1541, S:1575-1583@f98c416)."
+     },
+     {
+      "item": "G0 stage-count decision (4-process real tree, 8-process Vitest baseline vs 3-process cap)",
+      "status": "HOLD_HONEST",
+      "evidence": "maxOwnedProcesses is unchanged (real-child-tree 4, vitest-baseline 8), and G0_THREE_PROCESS_CONTRACT stays in G0's correctionHolds. The new S:1225-1227 refuses G0 unless every row equals exactly 3. loadAuthority runs assertStageEligibility for every window group (S:267-272), so every mode is refused before any record is written. approvedOverride is null (M:2242-2245). No cap was raised and no process omitted. This decision remains Samuel's."
+     },
+     {
+      "item": "Execution eligibility (distinct from source correctness)",
+      "status": "NOT_PROVEN",
+      "evidence": "runnableModes is [] and executionReservation is null (doc64-supervisor-source-cc584f9.json@866ed38). Even with the holds lifted, G0 would need all of the following:\n- setup ≤ 3,000 ms, since S:1769 passes only at equality;\n- seven separately authorized handshake responses of ≤428-429 ms each;\n- 2 full and 16 pinned inventories inside unmeasured slack (M:2247-2254).\nThe 12 new authority fixtures (S:2028-2064) are authored and NOT RUN. Twelve authored controls do not establish twelve working controls."
+     },
+     {
+      "item": "Qualification bindings stay on accepted verifier bytes",
+      "status": "CLOSED",
+      "evidence": "The manifest's database category keeps the accepted currentness verifier 7a62e64 with receipt 61f478ed… (M:19734-19743). 935aaf1 appears only as pendingCurrentnessVerifier, PENDING_EXACT_ORIGINAL_DELTA_ACCEPTANCE (M:19770-19778, M:19785-19786). The two receipt match counts (64/66 and 66/66) are recorded separately and not substituted. No qualification binding silently moved to 935aaf1 bytes."
+     }
+    ],
+    "findings": [
+     {
+      "id": "T1-01",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "F-01 is not closed. The zero-launch material-change restart cannot be reached arithmetically. So a first-child admission miss, an initial-admission refusal, or a first G0 invocation whose setup exceeds 3,000 ms still loses the group (G0, and so the window) with nothing launched. G1-G7 also lost the 90-225 s of slack they had at f98c416.",
+      "evidence": "The restart restores I1's attemptId, startedAt and deadline (S:1722-1725@cc584f9) and must pass requireGroupTime (S:1769, S:1119-1135). Each budget sums exactly to its wall (M:2723-2731), so the check becomes t2−t0 ≤ C_done+H.\n- G0 after the parser: within 5,000 + ≤428 ms of t0, and I1 alone already spends setup, a full inventory, the parser and a pinned pass.\n- G0 before the parser (S:1783, or S:1769 with setup above 3,000 ms): t2 ≤ t0.\n- G1/G4/G7: t2−t0 ≤ H, but I1 alone spends setup + inventory + H.\nThe records still say restartEligible:true (S:1904-1912). The closure F-01 limit and its manual trace omit this arithmetic.",
+      "fix": "Do not bind the group clock before the first child launch. Either bind startedAt and deadline at consumeGroup, or give a material-change zero-launch restart a fresh unchanged wall, min(t2+wall, aggregate). Keep the skipped prefix, the aggregate, the window and the nine-invocation cap absolute. Set restartEligible only when the restart check can actually pass. Show the per-group arithmetic in the manifest and closure, then re-hash. Change no wall or cap."
+     },
+     {
+      "id": "T1-02",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "New regression of CC-03: one harmless pre-attempt refusal on a group's first fresh start permanently blocks that group in the window. Nothing is launched and no attempt is charged. For G1 this blocks G2-G7.",
+      "evidence": "S:1673-1679@cc584f9 requires restartEligible===true on every <G>-*.nonconsuming.json. restartEligible is true only for NONCONSUMING_* codes (S:1904-1906). A first fresh start returns early (S:1666), so any plain refusal writes restartEligible:false (S:1960). Examples:\n- G1 run before G0.review-acceptance.json exists (S:1416, ENOENT);\n- the reviewer's commit is not yet on the branch (S:141);\n- G6 run before G5 (S:1405);\n- a mistaken --resume of a nonconsuming record (S:1544).\nEach later fresh start fails S:1673-1679 and writes another false record. This contradicts M:775 and the CC-03 'preserved' claim. f98c416 allowed these restarts (S:1534-1541, S:1575-1583).",
+      "fix": "Treat every clean refusal with no launch, no marker and proven cleanup as eligible for a material-change restart, as f98c416 did for zero receipts. Keep the material-change digest binding and the latest-record rule. Reserve a permanent refusal for genuine in-process fixture failure or evidence uncertainty, and disclose it in the manifest and closure. Re-hash."
+     },
+     {
+      "id": "T1-03",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "Execution eligibility: G0's bounded handshake gives each of seven children 428-429 ms. Each response must be a separately authorized fresh observation of RAM, disk and the heavy-job census. No responder or measured latency is named. A miss on the first child strands G0 (T1-01), and a later miss ends G0 and the window. The bounded wait is authored, not shown to work.",
+      "evidence": "handshakeWaitBudgetMs is 3,000 across 7 children (M:2730, M:816). The per-handshake allocation is floor(remaining/children) (S:1146-1151). Each response must have observedAt ≥ request and must pass the RAM, disk, heavy-job, input and permission checks (S:1087-1102; M:806). The design is 'no resource sampling', with a coordinator response via filesystem notification (M:810). The packet says responder fit is unmeasured. A later miss writes a terminal G0.group.json (S:1900, S:1960), and assertInvocationBudget then refuses the remaining groups (S:1639-1642).",
+      "fix": "Before any execution proposal, name and separately review the responder mechanism and its measured latency against 428 ms. Otherwise record that G0 cannot be executed under this allowance. Do not raise G0's wall, admissionAndPauseMs or any cap to make it fit."
+     },
+     {
+      "id": "T1-04",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Refusal records misstate restartability and cause. They advertise restarts that cannot pass, label exhausted-budget refusals as window-deadline refusals, and publish 'unstarted' records for groups that are already consumed.",
+      "evidence": "- When the failure code is relabelled to ..._WINDOW_DEADLINE_REFUSAL or ..._HANDSHAKE_BUDGET_REFUSAL, restartEligible stays true (S:1904-1912), and continuation still reads ..._MATERIAL_CHANGE_RESTART_ONLY (S:1951).\n- Fresh-start refusals from assertInvocationBudget, caused by the attempt cap or another group's terminal result (S:1639-1648), are also relabelled as a window-deadline refusal. Only the failure text keeps the real cause.\n- Refusals inside readPause before Object.assign (S:1544-1614), such as replaying a used pause, write <G>-<inv>.nonconsuming.json. That record says groupConsumed:false, UNSTARTED_REFUSED and OWNED_CHILD_ABSENCE_ESTABLISHED (S:1935-1947) for a group that is already consumed.",
+      "fix": "Compute restartEligible with the same fit test the restart uses, and keep the original refusal cause rather than relabelling it. Write pre-assign resume refusals as resume refusals of a consumed group, never as unstarted no-launch records."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "T1-01",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Re-derived from the source. Every group budget sums exactly to its wall (checked for all 8 groups). The restart restores I1's clocks (S:1722@cc584f9), then requireGroupTime (S:1119-1133, S:1769) passes only if t2-t0 <= C_done+H when I2's setup <= S.\n- G1-G7: impossible. I2 can only read an admission naming R1's digest (S:415, S:1730) after R1 exists, and I1's setup plus inventories exceeds I2's lag from S:243 to S:415.\n- G0 after the parser: the margin is 5,000 minus (s1 + two full byte inventories + pinned passes + parser + R1 write + the coordinator's change). That is negative given the packet's ~7.9 GB of hashing.\n- G0 before the parser (S:1769, S:1783): t2 <= t0.\nf98c416 gave zero-receipt refusals a fresh wall (S:1546@f98c416), so this is a regression. Any fix must also be checked against G0_ONE_MINUTE_ALL_WORK."
+     },
+     {
+      "id": "T1-02",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Re-derived. A first fresh start returns [] at S:1666 without setting restartProgressValidated. Any plain refusal then writes restartEligible:false (S:1904-1906, S:1960), for example S:1405, S:1416 ENOENT, or S:141 via S:1417. Every later start fails S:1673-1679 before S:1728.\nAttribution correction: CC-03's own scope is preserved, namely current-invocation marker archival (S:1863) and lock release on cleanupProven (S:1965). The defect instead contradicts M:775 ('A zero-child refusal does not consume the unstarted group') and M:756, and it regresses f98c416 S:1534-1541.\nOther ways to reach it:\n- a mistaken --resume of R1 (S:1544);\n- replaying a used pause (S:1582);\n- a transient EBUSY read inside assertFreshGroupStart before S:1728;\n- post-attempt, pre-launch plain refusals (S:1291 EEXIST, S:1320)."
+     },
+     {
+      "id": "T1-03",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. This is an execution-eligibility gap, not a source-correctness defect. 428 ms is the first slice, and it is the worst-case slice when every earlier wait times out (428, 428, 428, 429, 429, 429, 429). Fast responses enlarge later slices (S:1146-1150). Timer overshoot is charged to H (S:1206), so H can exceed 3,000 by jitter; this is harmless for G0 because its post-launch policy is terminal. No responder and no measured latency are named (M:810, M:816). A per-child RAM, disk and heavy-job census inside 428 ms is unproven."
+     },
+     {
+      "id": "T1-04",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed.\n- The relabel at S:1907-1912 keeps restartEligible true, and continuation stays MATERIAL_CHANGE_RESTART_ONLY (S:1951).\n- On a fresh start, an assertInvocationBudget refusal (S:1640, S:1646) is always relabelled WINDOW_DEADLINE, because the future-invocation pauseFit (about W-H) exceeds D-now.\n- readPause refusals before S:1615 write UNSTARTED_REFUSED and OWNED_CHILD_ABSENCE_ESTABLISHED into <G>-<inv>.nonconsuming.json for a consumed group.\nA valid pause stays resumable afterwards, because readPause ignores those records. The impact is therefore limited to record truthfulness."
+     }
+    ],
+    "closureOpinion": [
+     {
+      "item": "Identity and two-file delta (cc584f9 / a52060a / records 866ed38)",
+      "status": "CLOSED",
+      "note": "Recomputed sha256 over git-show bytes:\n- supervisor a827a2c4…5a12, blob 397c451, 2145 lines;\n- manifest dcea1a24…bdbf8, blob 3a4f2d2.\nBoth equal doc64-supervisor-source-cc584f9.json@866ed38. a828501→cc584f9 changes exactly those two files. 866ed38 adds records, README and .xenios files only. Against f98c416, no group wall, RAM floor, command wallMs, childWallMs, maxOwnedProcesses, argv, environment, maximumWaitMs, attempt cap or aggregate changed; only handshakeWaitBudgetMs and continuationPolicy were added."
+     },
+     {
+      "item": "F-01(a): no pause with zero child launches; a non-consuming refusal binds the in-process receipts",
+      "status": "CLOSED",
+      "note": "Agreed. The pause predicate requires a non-G0 group, anyChildLaunchAttempted and groupConsumed (S:1900). readPause rejects G0 and unconsumed pauses (S:1549). A zero-launch outcome is written to <G>-<inv>.nonconsuming.json with the prefix, attemptId, attemptRecord, receiptSha256 and the original clocks (S:1916-1933, S:1960). The marker and pre-launch folder are archived (S:1863-1887)."
+     },
+     {
+      "item": "F-01(b): a material-change restart can proceed within G0's unchanged 60,000 ms wall",
+      "status": "NOT_CLOSED",
+      "note": "Re-derived: the restart passes only if t2-t0 <= C_done+H, with s2 <= S. See T1-01."
+     },
+     {
+      "item": "Sim G0: exit-zero admission refused immediately, timed out, or missed after 25 s elapsed",
+      "status": "NOT_CLOSED",
+      "note": "Agreed.\n- The exit-zero slice is floor(3000/7) = 428.\n- An immediate refusal or a 428 ms timeout writes R1 with restartEligible:true, relabelled WINDOW_DEADLINE because D-now < W-H.\n- I2 must start within 5,000+H of t0. I1 already spends s1, a full before-inventory, two pinned passes, the parser and a full after-inventory (S:1889) before R1 exists.\n- A miss 25 s in is unreachable as a handshake and lands in the same relabelled record."
+     },
+     {
+      "item": "Sim G0: admission stale or refused at the pre-launch rechecks",
+      "status": "PARTIAL",
+      "note": "Agreed. S:1322 and S:1326 code the refusal NONCONSUMING with pauseAllowed true (S:1140-1143). The marker written at S:1324 is archived when no launch occurred. Staleness over 30 s cannot arise inside a ~428 ms handshake plus the pre-spawn IO, so the path is near-vacuous for G0. Where it does fire, the restart is unreachable (T1-01)."
+     },
+     {
+      "item": "Sim G1/G4/G7: first child (red-handler / app-composition / build) admission miss",
+      "status": "NOT_CLOSED",
+      "note": "Agreed. The slices are G1 15,000, G4 30,000 and G7 25,000. The restart needs t2-t0 <= H while R1 lands after t0+s1+inventory+H. This holds even for the single-child groups G2, G3, G5 and G6."
+     },
+     {
+      "item": "Restart never repeats or re-runs completed work",
+      "status": "CLOSED",
+      "note": "Agreed, and I re-ran the forgery cases.\n- A forged later record with receipts [] cannot replay the parser: unbound in-process receipts are refused at S:1715-1717.\n- A forged record listing a child receipt fails S:1678.\n- The archived .no-launch folder lets the never-launched command use mkdir again (S:1291).\n- A launched command's folder still blocks a repeat with EEXIST."
+     },
+     {
+      "item": "F-02: G0 later-handshake timeout (resumable within the wall, or declared terminal)",
+      "status": "CLOSED",
+      "note": "Agreed, with one nuance. The per-index table (428/428/428/429/429/-/429/429, cumulative to 3,000) is confirmed. Index 1 is a zero-launch case; a miss at indexes 2-8 writes a terminal G0.group.json. The nuance: the cumulative wait is bounded to 3,000 plus timer jitter, because the finally block charges actual elapsed time (S:1206). That is immaterial under the terminal G0 policy."
+     },
+     {
+      "item": "F-03: pre-launch freshness rechecks are non-consuming and pausable",
+      "status": "CLOSED",
+      "note": "Agreed. requireCommandTime stays pauseAllowed false (S:1116), which is genuine time exhaustion."
+     },
+     {
+      "item": "F-05: a refused resume before its attempt record is not terminal",
+      "status": "CLOSED",
+      "note": "Agreed.\n- Refusals after S:1615 write .resume-refused.json.\n- Refusals before S:1615, including transient reads inside readCompletedPrefix (S:1588), write a misleading nonconsuming record (T1-04) but do not end the pause.\n- requireGroupTime and invocation-budget refusals (terminalProgress) end the group. See M-01 for the case where that budget is already exhausted when the pause is written."
+     },
+     {
+      "item": "F-06: digest-keyed exclusivity, canonical names, attemptId in receipts, G7 artifact binding",
+      "status": "CLOSED",
+      "note": "Agreed. The digest-keyed used marker (S:1483-1486, S:1581-1586) and canonical names with realpath checks also defeat the retained .pending twin of a pause. G7 artifacts are bound and restored (S:1528-1539, S:1838-1841). Overwriting an immutable pause is privileged forgery and is disclosed out of scope; the EEXIST folder guard still prevents a repeated command."
+     },
+     {
+      "item": "F-07: the resume fit check reserves inventories and handshake",
+      "status": "PARTIAL",
+      "note": "Handshake capacity (S:1136-1139) and the unspent setup and finalization are reserved, and inventories are assumed to fit inside setup and finalization. Three things are not reserved: the pinned passes (16 in G0, M:2250) once setup is spent, the gap before a coordinator resumes (M-03), and the nine-invocation budget for the resume (M-01). All of this is authored arithmetic, NOT RUN."
+     },
+     {
+      "item": "F-09: a fresh start refuses when attempt, receipt or archive evidence survives",
+      "status": "CLOSED",
+      "note": "Agreed (S:1653-1665, S:1700-1721, S:979-980, S:1274-1278). Total deletion of history is disclosed as undetectable. For the cheap forged-record case, see M-04."
+     },
+     {
+      "item": "CC-03 preserved: a harmless pre-attempt refusal stays clean (claimed in manifest doc64Correction)",
+      "status": "PARTIAL",
+      "note": "CC-03's actual scope is preserved: invocation-owned marker and folder archival (S:1863, S:1879) and run-lock release on known cleanup (S:1965). The lens's NOT_CLOSED is mis-attributed. The restart-poisoning defect is real (T1-02), but it contradicts M:775 and M:756, not CC-03."
+     },
+     {
+      "item": "G0 stage-count decision (4-process real tree, 8-process Vitest baseline vs 3-process cap)",
+      "status": "HOLD_HONEST",
+      "note": "Agreed. S:1225-1227 requires exactly 3 on every row, and the real-child-tree 4 and vitest-baseline 8 rows are unchanged. The hold is G0_THREE_PROCESS_CONTRACT. loadAuthority refuses every mode (S:267-272). approvedOverride is null (M:2245). Nothing was raised or omitted; the decision remains Samuel's."
+     },
+     {
+      "item": "Execution eligibility (distinct from source correctness)",
+      "status": "NOT_PROVEN",
+      "note": "Agreed. runnableModes is [] and executionReservation is null. G0 would need s1 <= 3,000 ms, seven handshakes of about 428 ms each, and two full plus 16 pinned inventories inside unmeasured slack. The 12 authored controls (S:2030-2064: 3 positive, 9 negative) are NOT RUN. Authored controls are not working controls."
+     },
+     {
+      "item": "Qualification bindings stay on accepted verifier bytes",
+      "status": "CLOSED",
+      "note": "Agreed. M:19734-19743 binds the accepted 7a62e64 with receipt 61f478ed…. 935aaf1 appears only as pendingCurrentnessVerifier, PENDING_EXACT_ORIGINAL_DELTA_ACCEPTANCE (M:19770-19777). The 64/66 and 66/66 match counts stay separate (M:19751)."
+     }
+    ],
+    "missed": [
+     {
+      "id": "M-01",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The pause predicate and restartEligible ignore the nine-invocation budget. A pause that the resume check cannot pass can therefore still be published.",
+      "evidence": "The pause predicate checks time and handshake capacity only (S:1900-1903@cc584f9). The resume calls assertInvocationBudget (S:1770), which refuses with terminalProgress when spent plus unfinished groups exceeds 9 (S:1645-1647). terminalProgress disables preAttemptResumePreserved (S:1852), and groupConsumed has been restored (S:1615), so the resume writes a terminal G.group.json (S:1960).\nExample: G0 (1), G1 (2), G1 resume (3), G2-G6 (4-8), G7 (9). A G7 pause after build is still published as PAUSED…COORDINATOR_CAN_RELEASE and can never resume. This contradicts doc 64 F-01 ('never write a pause that the resume check cannot pass'). M:782 discloses only the global one-extra arithmetic.",
+      "fix": "Add the invocation-budget test (current spent + 1 resume + unfinished groups <= cap) to the pause and restartEligible predicates. Otherwise write a truthful cap-exhausted terminal record. Change no cap."
+     },
+     {
+      "id": "M-02",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "When the remaining handshake budget at the final child is 30,000 ms or less, that child gets the entire remainder. A timeout then leaves zero capacity, so the partial group ends terminal instead of pausing.",
+      "evidence": "The slice is min(30,000, floor((budget-H)/r)), where r includes the current child (S:1146-1150). With r = 1 and budget-H <= 30,000, a timeout charges the full remainder (S:1206). remainingHandshakeCapacity then needs budget-H >= 1 and fails (S:1136-1139), so the pause predicate fails (S:1903) and the consumed group writes a terminal G.group.json (S:1960).\nThis is reachable in G1 once earlier waits used 30,000 of 60,000, and similarly in G4 and G7. It is undisclosed in M:814, M:816 and closure F-02.",
+      "fix": "Reserve retry capacity (for example, slice over r+1) so that a final-child timeout can pause. Otherwise disclose that it is terminal under this condition. Change no wall or cap."
+     },
+     {
+      "id": "M-03",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "No declared allowance covers the gap between a pause and its resume. A pause can be resumed only within the unmeasured under-run of completed commands, and the pause record gives no latest resume start.",
+      "evidence": "handshakeWaitBudgetMs equals admissionAndPauseMs in all 8 groups (3,000; 60,000; 90,000; 150,000), so the admission reserve (S:1123@cc584f9) is pure handshake capacity. The resume check (S:1769) passes only if the pause predicate (S:1903) still holds at the resume's start. That means t_r-p <= sum over completed commands of (ceiling - actual), minus s1, the inventories and the pinned passes.\nNothing funds the coordinator's material change, so a pause published with about 0 ms margin is unusable. Pinned passes (16 in G0, M:2250) are likewise funded only by command under-run once setup is spent.",
+      "fix": "Disclose per group that pause resumability depends on command under-run, and record latestResumeStartAt in the pause. Alternatively, split a declared pause allowance out of the handshake budget inside the unchanged overhead. Change no wall or cap."
+     },
+     {
+      "id": "M-04",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "A single forged zero-receipt refusal record is accepted with arbitrary clocks. It can extend a group's wall (G0's 60 s) up to the aggregate deadline without touching the pinned manifest or supervisor bytes.",
+      "evidence": "assertFreshGroupStart accepts a canonically named <G>-<id>.nonconsuming.json with restartEligible true and receipts [] (S:1667-1680@cc584f9). Nothing binds it to a real invocation:\n- originalAttemptRecord is optional (S:1689);\n- the attempt loop constrains only attempts that exist (S:1700-1707);\n- the clocks need only satisfy deadline = min(startedAt+wall, aggregate) (S:1708-1711).\nNo check ties startedAt to >= approvedAt, <= finishedAt or <= now. A future startedAt restores deadline = aggregateDeadline (S:1722). The packet disclaims privileged-forgery resistance, hence P3, but this case needs one unanchored evidence file.",
+      "fix": "Require approvedAt <= startedAt <= finishedAt <= now. Require each restartEligible record to bind a raw attempt or a raw first-invocation record. Otherwise disclose this cheap case explicitly."
+     },
+     {
+      "id": "M-05",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/doc64-supervisor-closure-20261008.json",
+      "claim": "Outside this lens: every supervisor sourceAnchor in the carried ccFindings cites f98c416 line numbers, not cc584f9, and none is labelled historical.",
+      "evidence": "All 15 of 15 ccFindings sourceAnchors fail at cc584f9. Examples:\n- CC-01: readPause 1421 (now S:1540), consumeGroup 1395 (S:1447), runGroup 1544 (S:1737), assertFreshGroupStart 1528 (S:1652);\n- CC-02: assertStaticTimeBudget 163 (S:165), requireCommandTime 1105 (S:1112);\n- CC-03: releaseRunLock 1195 (S:1239).\nThe top-level anchors map is current, for example requireGroupTime 1127 and runGroup 1737.",
+      "fix": "Re-anchor these rows to cc584f9, or label the fields as f98c416 historical anchors. Then re-hash the records wrapper."
+     }
+    ],
+    "verdictOpinion": "I checked every lens finding and closure against the Git objects; the lens holds, with one attribution correction and five missed items. Everything here is NOT RUN, and nothing approves execution, a window, a cap change or any policy.\n\n**Identity:** recomputed. Supervisor a827a2c4…5a12 and manifest dcea1a24…bdbf8 match the source receipt. Exactly two source files changed. No wall, command ceiling, childWallMs, process cap, maximumWaitMs, attempt cap or aggregate moved.\n\n**Source correctness: REVISION REQUIRED (two P1s).**\n- **T1-01 (P1):** the zero-launch restart is pinned to I1's clocks, and every budget sums exactly to its wall. So the restart passes only if t2-t0 <= C_done+H.\n  - G1-G7 can never restart, even if I2 is launched early.\n  - G0 after the parser has a margin of 5,000 ms minus I1's setup, two full inventories, the parser and the coordinator's change. That is negative in practice.\n  - G0 before the parser can never restart.\n  - This regresses f98c416, which gave zero-receipt refusals a fresh wall. The records still say restartEligible:true.\n- **T1-02 (P1):** any plain pre-attempt refusal on a group's first start permanently blocks that group with nothing launched. Examples are G1 before G0 acceptance, the reviewer commit not yet on the branch, a mistaken --resume, or a transient read error.\n  - Correction: this is not a CC-03 regression. CC-03 covers marker archival and lock release, and both are preserved. The defect contradicts M:775 and M:756 instead.\n- **Correctly closed in authored source:** F-01(a) (no zero-launch pause), F-02 (G0 post-launch interruption declared terminal), F-03, F-05, F-06 and F-09.\n- **F-07 is only partial.** Neither pause publication nor the resume fit check reserves the invocation budget for the resume (M-01), the gap before a coordinator resumes (M-03), or the pinned passes.\n\n**G0 timing by index** (worst-case slice, then cumulative H):\n- 0 parser: in-process, no wait. A refusal before or at this point (S:1769 with setup over 3,000 ms, or S:1783) is restartEligible but unreachable.\n- 1 exit-zero: 428, H 428. A miss is zero-launch and the restart is unreachable.\n- 2-5: 428, 428, 429, 429, reaching H 2,142. A miss is terminal.\n- 6 refusal-path: in-process, no wait.\n- 7 real-child-tree: 429, H 2,571. A miss is terminal.\n- 8 vitest-baseline: 429, H 3,000 plus timer jitter. A miss is terminal.\n\n**Forged or replayed records:**\n- A replayed used pause, a pending twin or a non-canonical path is refused. A replay before S:1615 writes a misleading UNSTARTED nonconsuming record (T1-04), and a pause that is still valid stays resumable.\n- A forged later refusal cannot replay the parser or skip a command.\n- A forged zero-receipt refusal can carry arbitrary clocks and extend G0's wall to the aggregate (M-04, trusted-local P3).\n\n**Execution eligibility: none.**\n- Holds plus the all-row G0 three-process assertion refuse every mode.\n- G0 needs setup of 3,000 ms or less and seven handshakes of about 428 ms each from a responder nobody has named (T1-03, P2).\n- The 12 authored controls are NOT RUN; authored controls are not working controls.\n- The stage-count decision (four-process real tree and eight-process Vitest baseline against the three-process cap) stays Samuel's. No cap was raised and no process omitted.\n\n**Bindings:** they stay on the accepted 7a62e64. 935aaf1 remains pending under doc 65."
+   }
+  },
+  {
+   "lens": "opening-policy-holds-prose",
+   "review": {
+    "verdict": "Lens T2 on cc584f9 (tree a52060a6, records 866ed38), delta against doc 64 / f98c416. Everything is NOT RUN.\n\nSOURCE CORRECTNESS (my scope): F-04 is closed in source.\n- The opening policy observation is now its own raw-bound --policy-observation record (S:323-338). Only two bounds apply: observedAt <= approvedAt, and approvedAt - observedAt <= 300 s (S:234). It also needs its own committed one-shot authority (S:352-376).\n- The verification and R2 carry no observation bytes. Their only time bounds are decision <= verifiedAt <= reviewedAt <= approvedAt (S:314, S:395), so the reviewer comparison can come any time before the window.\n- CR-07 is not reopened. CC-05 is intact, and F-19 (Process scope must be Undefined) is now enforced (S:227-228).\n\nOther P3 items:\n- Closed: F-08 (by disclosure), F-10, F-11, F-15, F-16, F-17, F-18, F-20, F-21 and F-22.\n- F-12 is corrected as a proposed criterion.\n- F-13 and F-14 are honestly held.\n\nG0 stage-count hold: intact.\n- The G0 rows are still 4 and 8 (M:2594, M:2631).\n- A new exact-three assertion (S:1225-1227) and the HELD prerequisite both refuse G0.\n- No cap was raised and no process was omitted. The decision remains Samuel's.\n\nCurrentness pin: honest. The manifest pins accepted 7a62e64 (doc 63). Pending 935aaf1 is listed separately, and no binding moved to it. Recomputed match counts: 64/66 for the 7a receipt and 66/66 for the 935 receipt at cc584f9.\n\nEXECUTION ELIGIBILITY: none.\n- No mode can run: every group is held, and the supervisor itself is pending review.\n- The twelve new controls were hand-simulated only. They run only inside the held G0. Authored controls: 12; working controls: 0.\n- No actual owner decision, verification, R1 or R2, policy observation, observation authority, reservation or admission exists.\n- The window expired at 2026-10-06T21:43:37Z.\n\nIn-lens residuals (all P3): stale and overstated policy prose, misleading labels on refusals caused by the terminal-group rule, gaps in the new test cases (fixtures), and a dependency record bound by digest but outside the subject tree.\n\nCROSS-LENS, for T1 and the critic:\n- P1: the zero-launch restart that replaced the F-01 pause cannot fit, by arithmetic. The restart is held to the refused invocation's deadline, and every group's ceilings plus overhead equal its wall exactly. A G0 restart must therefore start within about 5.4 s of the original start; a G1-G7 restart never fits. F-01's consequence (G0 and the window lost with nothing launched) persists.\n- P3: an ordinary pre-attempt refusal now leaves its group unrestartable for the rest of the run. This regressed from f98c416.",
+    "closure": [
+     {
+      "item": "F-04 policy observation is separate one-shot bytes bound at opening, outside the verification and R2 chain, bounding only approvedAt minus observedAt",
+      "status": "CLOSED",
+      "evidence": "S:323-326@cc584f9 refuse executionPolicy in the verification or window, and policyObservation/policyObservationSha256 in the window. S:327-338 read --policy-observation as its own raw record, pinned to manifest, window, run, PowerShell, helper and environment. S:234 bounds only observedAt<=approved and approved-observed<=maximumAgeMs (<=300000, S:219-221). S:352-376 need a committed HUMAN_USER EFFECTIVE_POLICY_OBSERVATION authority (maximumObservations 1; notBefore<=observedAt<=notAfter<=approved). S:425 and stableAuthority (S:1468-1474) fix the same bytes for the whole run. Approval scope binds only the contract (S:159). Source correctness only: no actual observation or authority exists."
+     },
+     {
+      "item": "F-04 the reviewer comparison can precede the window with no 300-second squeeze",
+      "status": "CLOSED",
+      "evidence": "The remaining chain is decisionAt<=verifiedAt<=approved (S:313-315@cc584f9) and verifiedAt<=reviewedAt<=approved (S:395). There is no lower bound against approvedAt or the observation. The f98c416 terms observed<=verifiedAt and verifiedAt-observed<=maxAge, and the observation reference and sha embedded in the verification, are deleted. Only the coordinator's observations fall shortly before opening: policy within 300 s (S:234, S:374) and host within 30 s (S:351). recordTiming (M:32514) and freshness (M:32748) state this. Hand-simulated: an R2 committed days before approvedAt passes S:395."
+     },
+     {
+      "item": "F-04 did not reopen CR-07",
+      "status": "CLOSED",
+      "evidence": "CR-07 (doc 55:79-82) put the window commit, verification, policy observation and reviewer comparison inside the window. At cc584f9 all of them, including the observation and its authority's notAfter (S:234, S:374), precede approvedAt, and approved<=now is required at invocation (S:252-254). Only the G0 acceptance R4 lies inside the window, and its g0AcceptanceMs was already budgeted."
+     },
+     {
+      "item": "CC-05 not weakened (precedence, five required scopes) and F-19 Process scope Undefined",
+      "status": "CLOSED",
+      "evidence": "S:222-233@cc584f9 keep, unchanged from f98c416:\n- the five rows in exact MachinePolicy, UserPolicy, Process, CurrentUser, LocalMachine order;\n- the allowed row values;\n- the first non-Undefined row as effective, allowed only if RemoteSigned or Unrestricted;\n- refusal when all rows are Undefined;\n- the declared effectivePolicy must equal the computed row.\nNew S:227-228 require effectivePolicies[2] (Process) to be Undefined, matching the helper environment, which refuses the policy variables (S:109-116). The contract adds processScopeRequired and processReason (M:32724-32760). The record is now pinned directly to the manifest, helper and environment hash (S:331-337), not a weakening."
+     },
+     {
+      "item": "F-08 terminal group: refuses only its dependency closure, or is disclosed",
+      "status": "CLOSED",
+      "evidence": "In effect the rule is unchanged: any selected group whose <G>.group.json lacks dependencyAccepted and cleanupProven refuses every remaining group (S:1631-1643@cc584f9). It is now coded non-consuming with terminalProgress. It is disclosed as bounds.accountingProposal.terminalGroupRule (M:784), which approvalScope binds through bounds (S:158). Doc 64 allowed either disclosure or limiting it to the dependency closure. The label residual is T2-4."
+     },
+     {
+      "item": "F-10 approval-bound prose readable; list any remaining space-stripped strings",
+      "status": "CLOSED",
+      "evidence": "Structural diff f98c416 to cc584f9: 48 group-command prose leaves were rewritten, including all eleven S2-F6 paths and all eight S3-F4 paths (36 provenance, 4 unresolved, 4 expectedCauses provenance, failurePolicy, anchorPrecision, cause provenance, outputGrammar). The supervisor reads none of these keys. A concatenation heuristic flags 62 tokens at f98c416 (onlyexact, notcalibrated, groupHELD and others) and none at cc584f9 beyond identifiers. Remaining in approval-bound bytes: none found. Record-only residue such as 'Pending935', 'original935' and 'verifier935' (closure F-22@866ed38) is not approval-bound. Stale, as opposed to stripped, prose is T2-3."
+     },
+     {
+      "item": "F-11 G1 note",
+      "status": "CLOSED",
+      "evidence": "doc52Residuals.G1 (M:33017@cc584f9) now names the actual Node 20 TAP/cause and Vitest RED calibrations, pre-run fit, bootstrap and handle proofs. It says the 512 MiB memory-denial proof applies only to G0. The holds list adds NODE20_TAP_CAUSE_CALIBRATION_PREREQUISITE (M:33003ff)."
+     },
+     {
+      "item": "F-12 fit-hold lift criteria not circular",
+      "status": "CLOSED",
+      "evidence": "In doc64-prerequisite-resolution@866ed38 (sha 1e895521… recomputed), R:126-128 and R:165-167 state a proposed pre-run lift: original acceptance of the static allocation and enforcement plus frozen synthetic overhead and runner receipts, then a frozen final manifest. noCircularity forbids using G0, G6 or mandatory RED receipts, and any mid-window rehash. The manifest lift routes agree (M:32778ff). This is a proposal pending original disposition; no vehicle exists."
+     },
+     {
+      "item": "F-13 prerequisite-only authority scope",
+      "status": "HOLD_HONEST",
+      "evidence": "R:20@866ed38 specifies a standalone scope: one actionId, no group list, a one-shot identity, owner, coordinator and reviewer comparisons, and its own wall, process, memory and output limits. It is marked NOT_IMPLEMENTED with actualAuthority NONE. The TAP --prerequisite argv prefix is removed (g0.calibrationLiftRoutes.TAP, M:2192ff@cc584f9). Digest 1e895521… is bound in each liftRoute.recordSha256 and in prerequisiteVehicles (M:33152), inside approvalScope.prerequisites (S:159)."
+     },
+     {
+      "item": "F-14 memory fixture family",
+      "status": "HOLD_HONEST",
+      "evidence": "The MEMORY_CAP_REFUSAL_DETECTION route (R:199@866ed38; M:32778ff@cc584f9) names the executable-family decision: a native addon or executable needs its own grant, or a reviewed Node-compatible alternative. Chunk size, attempt count and timeout are marked UNFROZEN. No fixture is authored."
+     },
+     {
+      "item": "F-15 single-window plan",
+      "status": "CLOSED",
+      "evidence": "orderedGates (M:33158ff@cc584f9) and R:277-283@866ed38 now end in one approved PREPARE+G0+dependent-group window, with R4 inside the same runId and manifest. Lift evidence is completed before any window. No separately authorised G1-G7 sequence remains."
+     },
+     {
+      "item": "F-16 G0 non-command time itemised",
+      "status": "CLOSED",
+      "evidence": "M:2247-2265@cc584f9 itemise 2 full and 16 pinned sourceState passes and 7 handshakes sharing 3000 ms. A runGroup trace confirms this: full before (S:1785), pinned before each of the 9 commands (S:1790), pinned after each of the 7 children (S:1843), full after (S:1890). The 7.9 GB figure comes from the doc 64 lens archive. Counts only, with no per-item ms; G0_ONE_MINUTE_ALL_WORK stays HELD (M:32802)."
+     },
+     {
+      "item": "F-17 stage-count decision is Samuel's only; no rewrite invited",
+      "status": "CLOSED",
+      "evidence": "M:32780ff@cc584f9 and R:37,44@866ed38 record the decision as SAMUEL_EXACT_STAGE_COUNT_OR_ADDITIONAL_SOURCE_SCOPE_UNRESOLVED, with 'No same-file three-process rewrite is claimed achievable' and sourceChangeNow none. The only alternative offered is a scope grant that is itself Samuel's decision."
+     },
+     {
+      "item": "F-18 total of authorized acts",
+      "status": "CLOSED",
+      "evidence": "R:266-267@866ed38 tally 18 one-shot profiles:\n- 11 core profiles before PREPARE and G0 (1+4+2+1+1+1+1);\n- 7 fit profiles for G1-G7.\nEach needs an owner decision, a coordinator comparison, a reviewer window comparison and a receipt disposition (18 of each), plus vehicle source acceptance. PREPARE, G0 and qualification are additional. Arithmetic recomputed. Labelled an unapproved minimum."
+     },
+     {
+      "item": "F-20 three-process cap asserted on G0 rows; label renamed",
+      "status": "CLOSED",
+      "evidence": "S:1225-1227@cc584f9 refuse G0 unless every row has maxOwnedProcesses exactly 3. real-child-tree is still 4 (M:2594) and vitest-baseline still 8 (M:2631), so G0 refuses even with its holds lifted. No decision-bound count field exists, and source never reads explicitCommandCap.approvedOverride (null). The label is renamed proposedTotalOwnedProcesses (S:2121)."
+     },
+     {
+      "item": "F-21 fixtures for decision tokens and policy observation; extra action tokens refused",
+      "status": "CLOSED",
+      "evidence": "S:2028-2064@cc584f9 add:\n- 2 decision positives;\n- 4 decision negatives: run-id suffix, range, duplicate group, unrequired action;\n- 1 policy positive;\n- 5 policy negatives: subset, all Undefined, Restricted precedence, defined Process, stale by 1 ms.\nHand-simulated against S:206-238 and refuse() (S:36): each positive passes and each negative refuses with exactly its expected message. S:215-216 refuse an unrequired action= token. They run only inside the held G0 parser-self-test, NOT RUN: 12 authored controls, 0 working. Gaps in T2-5."
+     },
+     {
+      "item": "F-22 receipt naming",
+      "status": "CLOSED",
+      "evidence": "Packet P:54-55@866ed38 names the accepted 7a receipt 61f478ed (64/66 in this checkout, 66/66 at its own source) and the pending 935 receipt 24430f71 (66/66). Recomputed from git show bytes with LF sha256: exact match, with mismatches only in rollback.md and currentness_local.mjs."
+     },
+     {
+      "item": "G0 stage-count hold: source still refuses G0; no cap raised, no process omitted",
+      "status": "HOLD_HONEST",
+      "evidence": "G0_THREE_PROCESS_CONTRACT is HELD (M:32780), alongside the one-minute, bootstrap, handle and memory holds. assertStageEligibility applies them all (S:1209-1223) before the new exact-three row check (S:1225-1227). The G0 wall (60000), the rows (4 and 8 for the two fixtures, 3 for the rest) and the 512 MiB contract are byte-identical to f98c416. The only G0 additions are handshakeWaitBudgetMs and continuationPolicy. Resolution is Samuel's decision only."
+     },
+     {
+      "item": "Manifest database currentness pin",
+      "status": "CLOSED",
+      "evidence": "Accepted (M:19726-19786@cc584f9): 7a62e64, tree 1d950242 verified, records 276226f, review 829931b6 ('doc 63: SOURCE ACCEPT WITH LIMITS'), receipt 61f478ed, status DOC63_SOURCE_ACCEPT_WITH_LIMITS_NOT_EXECUTED_DB_CATEGORY_HELD.\nPending, listed separately with no reliance: 935aaf1, tree 3a7b5d11, records a828501, receipt 24430f71, PENDING_EXACT_ORIGINAL_DELTA_ACCEPTANCE_NOT_EXECUTED.\nRecomputed: the 7a receipt matches 66/66 at 7a62e64 and 64/66 at cc584f9; the 935 receipt matches 66/66. M:19751 says exactly this. Honest; nothing is bound to 935aaf1."
+     },
+     {
+      "item": "Execution eligibility (every mode)",
+      "status": "HOLD_HONEST",
+      "evidence": "No mode can run:\n- 8 HELD prerequisites, the CR03 acceptance gate, and G1 command correctionHolds;\n- supervisor a827a2c4 is itself DOC64_CORRECTION_PENDING_EXACT_ORIGINAL_REVIEW (M:26-28);\n- no owner decision, coordinator verification, R1 or R2, policy observation, observation authority, reservation or admission exists;\n- --prerequisite is still an unknown option;\n- the window expired at 2026-10-06T21:43:37Z.\nSource correctness above is authored and hand-simulated only. Nothing NOT RUN is evidence of working controls."
+     }
+    ],
+    "findings": [
+     {
+      "id": "T2-1",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Cross-lens (F-01, for T1 and the critic): the zero-launch restart that replaces the F-01 pause cannot fit its fixed original deadline. A first-child admission miss still loses G0, and so the window, with nothing launched.",
+      "evidence": "In every group, command ceilings plus overhead equal the wall exactly (G0 51000+9000, G1 480000+120000, G7 1200000+300000). A zero-launch refusal fixes deadline = original start + wall (S:1904-1908, S:1960@cc584f9), and the restart restores it (S:1711, S:1722). requireGroupTime (S:1119-1133) then requires the restart's start minus the original start to be at most the completed prefix ceilings plus the spent wait. For G0 that is at most 5000+428 ms, after setup, a full inventory and a committed material-change admission. For G1-G7 it is at most the spent wait, which is less than the refused run's own elapsed time. Hand-simulated.",
+      "fix": "On a material-change restart after a clean zero-launch refusal, give a fresh unchanged group wall, while keeping the aggregate, window and nine-invocation cap. Or never fix the group deadline before the first child launch. Otherwise disclose that a zero-launch refusal ends the group (for G0, the window) and return F-01 as unresolved. Do not raise any wall."
+     },
+     {
+      "id": "T2-2",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Cross-lens regression: a first fresh start refused by an uncoded pre-attempt check now strands its group for the rest of the run. At f98c416 such a refusal allowed a material-change restart.",
+      "evidence": "assertDependencies (S:1768, S:1401ff@cc584f9) and the hold and source-gate checks throw uncoded errors inside runGroup's try block. A null failureCode makes restartEligible false (S:1904-1906), yet <G>-<inv>.nonconsuming.json is still written (S:1960). Every later fresh start requires restartEligible === true (S:1676-1679), so it refuses again and writes another such record. Example: G1 invoked before the R4 pointer is committed, or a transient Git failure in committedRecord. M:775 says these refusals use no attempt but does not disclose the stranding.",
+      "fix": "Treat a clean, receipt-free refusal before any attempt record as restartable, or do not publish a blocking record for it. Otherwise disclose the rule in bounds.accountingProposal. Re-hash."
+     },
+     {
+      "id": "T2-3",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "Two approval-bound manifest strings contradict or overstate the F-04 source.",
+      "evidence": "M:184@cc584f9 (toolchain.windowsHelper.executionPolicy.record) still says scope values 'must match coordinator verification' and freshness 'is bounded at verification and window opening'. But S:323-326 forbid executionPolicy in the verification, and S:234 bounds freshness only at opening. M:684 (preparation.entrypoint) says the 'owner/coordinator/reviewer comparison binds their actual one-shot authority'. Neither the verification scope (S:146-165) nor R2 (S:390-402) references that authority; only the supervisor checks it against the window (S:352-376). The record's status 'VERIFIED_EFFECTIVE_POLICY…' (S:331) is self-asserted by the observation bytes.",
+      "fix": "Rewrite M:184 to the opening-only rule. Rewrite M:684 to say the comparison binds the contract, and that the authority is checked against the exact window at opening. Re-hash."
+     },
+     {
+      "id": "T2-4",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "A refusal caused by the disclosed terminal-group stop, or by the nine-invocation budget, is recorded as a restart-eligible window-deadline refusal, and it fixes the unstarted group's clock.",
+      "evidence": "assertInvocationBudget throws nonconsumingAdmission with terminalProgress (S:1640-1647@cc584f9). For a fresh start, restartEligible is then true (S:1904-1906). With full setup, pauseFit equals the wall, so any elapsed time rewrites failureCode to NONCONSUMING_UNSTARTED_WINDOW_DEADLINE_REFUSAL (S:1907-1908). The record also carries continuation NONCONSUMING_UNSTARTED_MATERIAL_CHANGE_RESTART_ONLY, while M:784 says no later group may proceed. Only the failure text keeps the real cause.",
+      "fix": "For terminal-stop and budget refusals, keep the original code, set restartEligible to false, and use a distinct status such as RUN_STOPPED_BY_TERMINAL_GROUP. Re-hash."
+     },
+     {
+      "id": "T2-5",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The twelve authored controls leave some checks untested by any case, and none of the twelve has run.",
+      "evidence": "No fixture puts the five rows out of order, so deleting the scope-order term at S:224@cc584f9 leaves all six policy fixtures with the same result (the subset is still caught by length). No fixture declares an effectivePolicy different from the computed row (S:231), or an observedAt after approvedAt (S:234). No decision fixture omits a required label or repeats a required token. All twelve run only inside the held G0 parser-self-test (S:1806-1816).",
+      "fix": "Add four cases, each refusing with its own message: five rows out of order, a mismatched declared effectivePolicy, an observation after opening, and a duplicate runId= token. Re-hash."
+     },
+     {
+      "id": "T2-6",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "The approval-bound manifest binds, by digest, a dependency record that is not in the subject tree, and names the prose-corrections record with no digest.",
+      "evidence": "liftRoute.recordSha256 in all nine prerequisites, the TAP and Vitest calibration routes, and prerequisiteVehicles.recordSha256 (M:32778ff, M:2192ff, M:33152@cc584f9) all give 1e895521… for doc64-prerequisite-resolution-20261008.json. That file is absent from tree a52060a6 ('not in cc584f9'). It appears only at 866ed38, where it recomputes to 1e895521…. doc64Correction.proseCorrectionsRecord gives a path with no digest. The record does not embed the manifest digest, so there is no cycle, and source never reads it.",
+      "fix": "State that these records resolve from the following records commit, or bind that commit, and add the prose-corrections digest. There is no runtime effect."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "T2-1",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Upheld at P1. Re-derived: a restart restores the refused invocation's deadline (S:1708-1711, S:1722@cc584f9). requireGroupTime (S:1127-1135) charges a fresh setupMs plus the unspent admission allowance, so with setup within setupMs a restart needs T1−T0 ≤ completed-prefix ceilings + handshakeWaitSpentMs. Walls equal ceilings plus overhead in all eight groups (recomputed).\n- G0 index 1 (parser done; first-child wait floor(3000/7)=428, S:1149-1150): restart within 5,428 ms.\n- G0 index 0 and every G1-G7 case: T1−T0 ≤ the spent wait, which is less than the refused run's own elapsed time, so strictly impossible.\nPrecision: index 1 is practically, not arithmetically, impossible (the refused run's two full passes, including about 347 MB of dependencies, M:220 and M:2256, must finish first). The material-change record is the local raw --admission file (S:415-416), not a commit. The record still says restartEligible true and RESTART_ONLY (S:1904-1912, S:1951)."
+     },
+     {
+      "id": "T2-2",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld; raised to P2 because it is the doc 64 F-03 class: a refusal with nothing launched becomes terminal. On a fresh start, an uncoded throw inside try strands the group. Examples: G0.review-acceptance.json absent (boundRecord ENOENT, S:1416), a Git failure in committedRecord (S:1417), or the R4 timing check (S:1429-1433@cc584f9). Sequence: failureCode is null, so restartEligible is false (S:1904-1906); <G>-<inv>.nonconsuming.json is written (S:1960); every later fresh start then fails S:1676. preAttemptRestartPreserved stays false because restartProgressValidated is set only when prior records exist (S:1666, S:1728). At f98c416 a zero-receipt refusal allowed a fresh-clock restart (S0:1534-1541, S0:1546). A stranded G1 loses G2-G7, which all require G1, and so the run."
+     },
+     {
+      "id": "T2-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3.\n- M:184@cc584f9 is unchanged from f98c416. It still says scope values must match the coordinator verification and that freshness is bounded at verification, contradicting S:324-326 and S:234.\n- M:684 says the owner/coordinator/reviewer comparison binds the one-shot authority. But approvalScope binds only openingPolicyContract (S:159), R2 compares only verification.scope (S:394), and only the supervisor reads the authority (S:353-377).\n- The status at S:331 is self-asserted.\nThe lens missed M:196 and M:32754 (see M-2)."
+     },
+     {
+      "id": "T2-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. Simulated a fresh G3 start after G2.group.json has dependencyAccepted false:\n- assertDependencies passes, since G3 requires only G0 and G1.\n- requireGroupTime passes, then assertInvocationBudget throws a coded refusal with terminalProgress (S:1639-1642@cc584f9).\n- restartEligible is true (S:1904-1906). pauseFit equals the full wall, so the code becomes NONCONSUMING_UNSTARTED_WINDOW_DEADLINE_REFUSAL (S:1907-1908).\n- The record says continuation RESTART_ONLY (S:1951) and disposition ORIGINAL_DEADLINE_PRESERVED (S:1945); only the failure text names the stop.\nDependents of the failed group hit the uncoded assertDependencies refusal first (T2-2 class). Labelling defect only."
+     },
+     {
+      "id": "T2-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. All 12 controls were hand-simulated against S:206-238. refuses() (S:2024-2027) compares exact messages: the 3 positives pass and the 9 negatives refuse with their own messages.\nGaps:\n- deleting the order term at S:225 changes no outcome, because the subset case is caught by length (S:224);\n- no case covers a declared effectivePolicy different from the computed row (S:231);\n- none covers observedAt later than approvedAt (S:234);\n- none covers a duplicate or missing required label (S:210).\nThe fixtures are at S:2028-2064. They run only inside the held G0 parser-self-test (S:1809-1821)."
+     },
+     {
+      "id": "T2-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3.\n- git cat-file: doc64-prerequisite-resolution-20261008.json is absent from cc584f9.\n- At 866ed38 its sha256 is 1e8955212912…, bound at M:2228, M:2238, all nine liftRoutes (M:32798-32999) and M:33154.\n- proseCorrectionsRecord (M:33255) is a path only; its bytes at 866ed38 hash to 512e3b61….\nSource never reads either record. A reviewer pinning cc584f9 alone cannot resolve the digest."
+     }
+    ],
+    "closureOpinion": [
+     {
+      "item": "F-04: policy observation is separate one-shot bytes at opening, outside the verification/R2 chain, bounding only approvedAt−observedAt",
+      "status": "CLOSED",
+      "note": "Confirmed at cc584f9: S:324-338 (separate --policy-observation record, pinned to manifest/window/run/PowerShell/helper/environment), S:218-235 (only observed ≤ approved and approved−observed ≤ maxAge ≤ 300000), S:353-377 (committed HUMAN_USER authority), S:159 (approval scope binds only the contract), S:425 and S:1468-1474 (fixed for the run). This is source correctness only.\nResiduals:\n- 'one-shot' is a declared field (S:370), not enforced, and no committed record fixes the digest before PREPARE (M-3);\n- stale prose at M:184 and M:684 (T2-3) and at M:196 and M:32754 (M-2).\nThe coordinator branch holds no actual observation or authority record (git grep)."
+     },
+     {
+      "item": "F-04: reviewer comparison can precede the window with no 300-second squeeze",
+      "status": "CLOSED",
+      "note": "Re-derived chain: decision.at ≤ verifiedAt ≤ approved (S:313-315); verifiedAt ≤ reviewedAt ≤ approved (S:395). The observation is bounded only against approved (S:234) and its authority window (S:372-374). Hand-simulated: an R2 committed days earlier passes. Only coordinator acts stay near opening: policy observation within 300 s (S:234) and host observation within 30 s (S:351). The authority binds windowSha256 (S:370), so it follows the final window bytes, but it has no lower bound against approvedAt."
+     },
+     {
+      "item": "F-04 did not reopen CR-07",
+      "status": "CLOSED",
+      "note": "Doc 55:79-82 verified. Every committed chain record and both observations precede approvedAt, and approved ≤ now is required at invocation (S:252). Only R4 lies inside the window, budgeted by g0AcceptanceMs (S:192-196, S:1429-1433)."
+     },
+     {
+      "item": "CC-05 not weakened; F-19 Process scope Undefined",
+      "status": "CLOSED",
+      "note": "S:222-235 keep order, values, first-defined effective row, all-Undefined refusal and declared=computed. S:227-228 add Process==Undefined, consistent with the helper environment (allowlist S:75-87; S:109-116).\nRemoved by design: the f98c416 cross-check between the committed verification rows and the raw observation rows (S0:316-333). S:338 now passes the same object twice, so the second eq at S:231 is redundant. The CC-05 rule itself is not weakened."
+     },
+     {
+      "item": "F-08 terminal-group rule disclosed",
+      "status": "CLOSED",
+      "note": "Disclosed at M:784 inside bounds, which is approval-bound (S:158). The refusal is now coded non-consuming with terminalProgress (S:1639-1642). The labelling residual is T2-4."
+     },
+     {
+      "item": "F-10 approval-bound prose readable",
+      "status": "CLOSED",
+      "note": "Structural diff of the groups leaves, f98c416 to cc584f9: 48 string leaves changed, matching the lens tally; no non-string leaf changed. grep confirms the supervisor reads none of these keys. My token scan of approval-scope prose (groups, preparation, bounds, g0Memory, prerequisites, policy contract) finds no glued words: every lowercase token of 9 or more letters is a real word. At f98c416 it found notcalibrated×36, groupHELD and others. The scan is a heuristic."
+     },
+     {
+      "item": "F-11 G1 note",
+      "status": "CLOSED",
+      "note": "M:33017 names Node 20 TAP/cause and Vitest RED calibration, pre-run fit, bootstrap and handle gates. It says the 512 MiB memory proof applies only to G0. NODE20_TAP_CAUSE_CALIBRATION_PREREQUISITE is listed at M:33015."
+     },
+     {
+      "item": "F-12 fit lift criterion non-circular",
+      "status": "CLOSED",
+      "note": "R:126-127 and R:165-166@866ed38 propose a pre-run lift: original acceptance of the static allocation and enforcement plus frozen synthetic overhead and runner receipts, then a frozen manifest. noCircularity forbids G0, G6 or mandatory-RED inputs and any mid-window rehash. It is non-circular as a proposal and awaits original disposition. No vehicle exists."
+     },
+     {
+      "item": "F-13 prerequisite-only authority scope",
+      "status": "HOLD_HONEST",
+      "note": "R:18-24@866ed38: one actionId, no group list, one-shot identity, its own limits, NOT_IMPLEMENTED, actualAuthority NONE. The TAP --prerequisite argv is gone; grep finds no live argv. --prerequisite is still an unknown option (S:444-445)."
+     },
+     {
+      "item": "F-14 memory fixture family",
+      "status": "HOLD_HONEST",
+      "note": "R:198-199@866ed38 name the executable-family decision (a native grant or a reviewed Node-compatible alternative). Chunk size, attempt count and timeout are marked UNFROZEN. No fixture is authored."
+     },
+     {
+      "item": "F-15 single-window plan",
+      "status": "CLOSED",
+      "note": "Single-window plan verified at M:33158-33183 and R:277-283@866ed38: one PREPARE+G0+dependent window with R4 in the same run. No separately authorized G1-G7 sequence remains."
+     },
+     {
+      "item": "F-16 G0 non-command time itemised",
+      "status": "CLOSED",
+      "note": "Counts verified by trace: full passes at S:1785 and S:1890; pinned passes at S:1790 (×9) and S:1843 (×7). That gives 18 passes and 7 handshakes, matching M:2247-2265.\nResidual: for G0, handshakeWaitBudgetMs equals admissionAndPauseMs (3000). All 18 passes must therefore fit in setup, finalization or command slack, with no per-bucket ms. The hold remains (M:32802)."
+     },
+     {
+      "item": "F-17 stage-count decision Samuel's only",
+      "status": "CLOSED",
+      "note": "R:37 and R:44-45@866ed38 and M:32785-32790: SAMUEL_EXACT_STAGE_COUNT_OR_ADDITIONAL_SOURCE_SCOPE_UNRESOLVED. No achievable same-file rewrite is claimed, and sourceChangeNow is none."
+     },
+     {
+      "item": "F-18 total of authorized acts",
+      "status": "CLOSED",
+      "note": "Recomputed: 1+4+2+1+1+1+1 = 11, plus 7 = 18 (R:230-275; M:33191-33236). Labelled as an unapproved minimum. Qualification-window acts are excluded and noted as additional."
+     },
+     {
+      "item": "F-20 three-process cap asserted on G0 rows; label renamed",
+      "status": "CLOSED",
+      "note": "S:1225-1227 require each G0 row to have exactly 3. Rows at M:2594 (4) and M:2631 (8) refuse even with the holds lifted. approvedOverride (M:2245) is unread, so a non-null value would still refuse. The label is renamed proposedTotalOwnedProcesses (S:2121)."
+     },
+     {
+      "item": "F-21 fixtures for decision tokens and policy observation; extra action tokens refused",
+      "status": "CLOSED",
+      "note": "Hand-simulated: 3 positives pass and 9 negatives refuse with their exact messages. S:215-216 refuse an unrequired action= token. 12 authored controls, 0 working: they run only inside the held G0 parser-self-test. Gaps are in T2-5."
+     },
+     {
+      "item": "F-22 receipt naming",
+      "status": "CLOSED",
+      "note": "Recomputed over git show with LF sha256.\n- 7a receipt: its blob lives in 276226f, not in 7a62e64; sha256 61f478ed…; 66/66 at 276226f and 64/66 at cc584f9 (rollback.md and currentness_local.mjs).\n- 935 receipt: 24430f71…; 66/66 at a828501 and at cc584f9.\nThese match P:54-55@866ed38 and M:19751."
+     },
+     {
+      "item": "G0 stage-count hold: source still refuses G0; no cap raised, no process omitted",
+      "status": "HOLD_HONEST",
+      "note": "8 HELD prerequisites; the five G0 correctionHolds refuse at S:1209-1224 before the exact-three check (S:1225-1227). G0 commands, wallMs and g0.memoryContract are JSON-identical to f98c416; only timeBudget.handshakeWaitBudgetMs and continuationPolicy were added. maxJobChildren = maxOwnedProcesses−2 is unchanged (S:1313)."
+     },
+     {
+      "item": "Manifest database currentness pin",
+      "status": "CLOSED",
+      "note": "M:19734-19744 pin 7a62e64 (tree 1d950242, verified), records 276226f, review 829931b6 (commit subject 'doc 63 … SOURCE ACCEPT WITH LIMITS') and receipt 61f478ed. 935aaf1 (tree 3a7b5d11, verified) appears only as pendingCurrentnessVerifier (M:19770-19778), with no reliance. grep finds no other binding to 935 bytes. The category is not authorized (M:19720)."
+     },
+     {
+      "item": "F-01 (cross-lens): zero-launch refusal is restartable",
+      "status": "NOT_CLOSED",
+      "note": "No zero-launch pause is written any more (S:1900). But the replacement restart cannot fit:\n- G0 at index 0 and every G1-G7 case: impossible;\n- G0 at index 1: the restart must start within about 5.4 s of the original start.\nSee T2-1 and M-1. The doc 64 consequence, losing G0 and the window with nothing launched, persists and has regressed relative to f98c416."
+     },
+     {
+      "item": "F-02 (cross-lens): G0 handshake bound and terminal post-launch",
+      "status": "CLOSED",
+      "note": "Closed by declaration: G0 never pauses (S:1900; postLaunch TERMINAL at S:186-188; M:2241), and the wait is cumulative and bounded (S:183-185, S:1146-1151). By G0 index:\n- 0 and 6: in-process;\n- 1: zero-launch, restart within about 5.4 s;\n- 2-5, 7 and 8: terminal on any miss.\nResidual M-4: each handshake needs a responder within about 428 ms."
+     },
+     {
+      "item": "Execution eligibility (every mode)",
+      "status": "HOLD_HONEST",
+      "note": "No mode can run:\n- 8 HELD prerequisites, the CR03 acceptance gate and command holds on G1, G3, G4 and G5;\n- the G0 exact-three assertion;\n- --prerequisite is unknown;\n- supervisor a827a2c4 is pending review (M:27-28);\n- the coordinator branch has no ACTUAL_HUMAN… or VERIFIED_EFFECTIVE_POLICY record (git grep);\n- the window expired 2026-10-06T21:43:37Z.\nAuthored controls: 12; working controls: 0."
+     }
+    ],
+    "missed": [
+     {
+      "id": "M-1",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The restart defect is wider than T2-1 and is a regression from f98c416. A G0 refusal before any in-process receipt can never be restarted, so G0 and the window are lost with nothing launched. Examples: an initial --admission that is stale or below the floor (S:1783-1784), or first-invocation setup over 3,000 ms (S:1769). At f98c416 both restarted on a fresh clock.",
+      "evidence": "First G0 invocation: requireGroupTime (S:1127-1135@cc584f9) needs deadline−at ≥ 51000+max(0,3000−s)+3000+3000, so setup s must be ≤ 3000 ms; otherwise it refuses, coded, with terminalProgress. The initial admission refusal is coded at S:1784. Both publish restartEligible true at index 0 (S:1904-1906) with the original startedAt and deadline. A restart restores that deadline (S:1722) and needs T1−T0 ≤ 0, which is impossible.\nAt f98c416:\n- run.deadline was the new authorityStartedAt+wall (S0:1546);\n- a zero-receipt refusal allowed restart (S0:1534-1541);\n- setup could take up to 6000 ms (S0:1570-1573).\nG1-G7 zero-launch cases went from resumable within 90-225 s (doc 64 F-01) to never.",
+      "fix": "Fix together with T2-1. A zero-prefix zero-launch refusal, or any refusal before an attempt record, must not pin the group clock. A qualified restart should get a fresh, unchanged group wall, bounded by the aggregate, the window and the nine-invocation cap. Otherwise disclose these refusals as window-terminal and keep F-01 open. Re-hash."
+     },
+     {
+      "id": "M-2",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "More stale F-04 prose beyond T2-3: two manifest strings and one packet line describe bindings the source does not make.",
+      "evidence": "- M:196@cc584f9 (separateAuthority) says the EFFECTIVE_POLICY_OBSERVATION authority binds the raw observation hash. But the authority precedes the observation (S:372-374), and S:358-376 never check an observation digest.\n- M:32754 says the observation's actual bytes are retained in the preparation, attempt, group and command receipts. Only effectivePolicyObservationSha256 is kept (S:425); the file is never copied into the run root.\n- Packet P:26@866ed38 says the permission binds action/group/cap/window scope. The authority scope checks only action, manifest, window, runId, maximumObservations and time bounds (S:369-374).",
+      "fix": "Rewrite M:196 and M:32754 to match the source: the authority binds action, manifest, window, run and time bounds, and the run retains only the observation digest. Correct the packet line. Re-hash."
+     },
+     {
+      "id": "M-3",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The 'one-shot' policy observation is declared but not enforced. An operator can make several observations under one authority and present any of them, and no committed record fixes the digest before PREPARE. At f98c416 the verification that R2 compared embedded that digest.",
+      "evidence": "S:370@cc584f9 only checks scope.maximumObservations === 1. The observation is a local raw file (S:327) that nothing consumes or marks as used. At f98c416, verification.executionPolicy had to carry observationReference and observationSha256 matching the raw observation (S0:316-333), and R2 bound those verification bytes. Now any observation inside [notBefore, notAfter] passes (S:373-374). It is pinned only from PREPARE onward (stableAuthority S:1468-1474, S:1261-1265). The host observation behaves the same way. This is inherent to the F-04 separation, but it is undisclosed in policyObservationContract.limitation (M:32749).",
+      "fix": "Disclose in policyObservationContract.limitation that one-shot use is unenforced and that the observation bytes are fixed only from PREPARE. Optionally require a coordinator-committed observation digest before approvedAt. Re-hash."
+     },
+     {
+      "id": "M-4",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "G0 handshake slicing implicitly requires an automated responder within about 428 ms at each of seven child admissions. A miss after the first launch ends G0, and with it the window. Only the 3,000 ms total is disclosed.",
+      "evidence": "allocatedWait = min(30000, floor((3000−spent)/childrenRemaining)) (S:1146-1150@cc584f9). At full timeout over child indexes 1,2,3,4,5,7,8 the waits are 428, 428, 428, 429, 429, 429 and 429, totalling 3000 ms. The spent time includes request publication and fsync (S:1145, S:1206). Indexes 0 and 6 run in-process. After a launch, any miss is terminal: a pause requires group ≠ G0 (S:1900), and the consumed group publishes G0.group.json (S:1960). Each response must carry an observationAuthorityReference (S:1095-1096). M:816 states only '3,000 ms total for seven child handshakes'.",
+      "fix": "State the per-handshake responder bound of about 428 ms and its terminal consequence in g0.fullOverheadDisclosure and the G0_ONE_MINUTE_ALL_WORK hold. Change no wall or cap."
+     }
+    ],
+    "verdictOpinion": "Adversarial check of lens T2 on cc584f9 (tree a52060a6, records 866ed38), as a delta against doc 64 / f98c416. Everything is NOT RUN.\n\nSOURCE CORRECTNESS:\n- F-04 is closed. The policy observation is now separate raw bytes, bounded only by approvedAt. The verification and R2 carry no observation bytes. CR-07 is not reopened. CC-05 is intact, and Process=Undefined (F-19) is now enforced.\n- Verified closed: F-08, F-10 (my own scan), F-11, F-12, F-15, F-16, F-17, F-18, F-20, F-21 and F-22. F-13 and F-14 are honest holds.\n- The G0 stage-count hold is intact: the rows stay 4 and 8, and the new exact-three assertion refuses G0. No cap was raised and no process omitted.\n- The database currentness pin is honest: accepted 7a62e64, with pending 935aaf1 listed separately. Recomputed receipt matches: 64/66 and 66/66.\n\nLens findings: all six upheld.\n- T2-1 stays P1, with precision fixes.\n- T2-2 is raised to P2, the same class as doc 64 F-03.\n\nMissed findings:\n- M-1 (P1): a zero-prefix refusal is unrecoverable in every group. At f98c416 it allowed a fresh-clock restart.\n- M-2, M-3 and M-4 (P3): more stale policy prose; a 'one-shot' observation that is unenforced and no longer bound by a committed record; and an undisclosed ~428 ms G0 responder requirement.\n\nF-01 is NOT closed (cross-lens finding).\n\nEXECUTION ELIGIBILITY: none. Authored controls: 12; working controls: 0.\n\nProcess note: I copied git show bytes to this session's scratchpad to get line numbers, and verified their blob hashes. Nothing was written in either worktree, and no subject code was executed."
+   }
+  },
+  {
+   "lens": "records-eligibility",
+   "review": {
+    "verdict": "LENS T3 (closure map, records, execution eligibility) on source cc584f971d1342acf05a9dd43f97916e38f8072c / tree a52060a6 / records 866ed38, delta against Doc64 (f98c416).\n\nSOURCE CORRECTNESS, records and closure-map view: the records pass. I recomputed the hashes:\n- Supervisor: raw = LF a827a2c4..., 168,351 B.\n- Manifest: raw = LF dcea1a24..., 1,490,787 B.\n- Both match the source record, the bindings and the packet.\n- All 13 wrapper entries recompute.\n\nScope and preservation:\n- a828501..cc584f9 is exactly the two files. cc584f9..866ed38 is records-only.\n- The verifier bytes and every other path are unchanged since 935aaf1.\n- Pins recompute: 30 target pins at f581b6b and 14 HTTP snapshot pins.\n- 101 historical blobs and the embedded helper are unchanged.\n- Receipts recompute: 7a is 64/66 here and 66/66 at its own source; 935 is 66/66.\n- Accepted currentness is 7a62e64. 935aaf1 stays a separate pending item, so no binding moved silently.\n\nClosure map: it covers 22 F, 10 CC and 31 CR items. Every F disposition matches the source, and I found no material overclaim. There are precision gaps:\n- 8 P3 items: stale CC anchors, practical G0 restart, the 108+1 prose count, an unread approvedOverride, a mislabelled early resume refusal, a record outside the source tree, ambiguous README wording, and the responder gap (T3-03).\n- F-16 is PARTIAL because the responder is not named.\n\nEXECUTION ELIGIBILITY, kept separate: none.\n- All modes are refused: PREPARE, G0–G7, --resume, unknown --prerequisite, and the database category, which has no route.\n- The twelve F-21 fixtures exist in source and hand-simulate to the outcomes they declare. They are NOT proven working, because only G0's parser-self-test runs them, and G0 is refused by holds and by the three-process row assertion.\n- firstExecutableProposal=null is supported.\n\nWhat remains:\n- The Doc67 verdict: acknowledged, still pending.\n- The Doc65 verdict on 935aaf1.\n- Samuel's stage-count or scope decision. Even after it, another supervisor source change is needed.\n- Standalone authority, plus native observer, handle and memory source and proofs.\n- Pre-run fit and calibration evidence.\n- A named admission responder fast enough for G0's 3,000 ms total handshake budget.\n- A fresh window and authority records.\n\nEverything is LOCAL ONLY / NOT RUN. The window expired 2026-10-06T21:43:37Z.",
+    "closure": [
+     {
+      "item": "F-01 zero-launch pause replaced by non-consuming refusal",
+      "status": "CLOSED",
+      "evidence": "Pause now requires a group other than G0, a launched child and a consumed group (S:1900@cc584f9). A zero-launch failure writes a restartEligible .nonconsuming record that binds the prefix, the attempt and the original clocks (S:1904-1912, S:1957-1960). A pre-launch marker is archived and groupConsumed reset (S:1866-1875). A restart needs exact clean refusal lineage plus a material change bound to the raw refusal (S:1652-1735). This matches closure F-01 AUTHORED_SOURCE_CORRECTION_NOT_RUN. Practical residual is T3-02: in G0, a restart after a first-child miss is practically unreachable, so the window is still lost, although truthfully recorded as non-consuming. NOT RUN."
+     },
+     {
+      "item": "F-02 G0 post-launch interruption terminal; finite cumulative handshake slicing",
+      "status": "CLOSED",
+      "evidence": "readPause refuses G0 (S:1549@cc584f9). Paused excludes G0 (S:1900). The static check requires 0 < handshakeWaitBudgetMs <= admissionAndPauseMs, and G0 postLaunch is TERMINAL_ADMISSION_INTERRUPTION (S:183-188). Each wait is min(30000, floor(remaining/children)) and is charged in a finally block (S:1144-1150, S:1207). Manifest G0 values: handshakeWaitBudgetMs 3000 (M:2730), continuationPolicy (M:2733). This uses Doc64's permitted truthful-terminal option. Walls, caps and ceilings are unchanged per preservation.groups. Consequence: any G0 admission miss after a launch ends G0 and the window."
+     },
+     {
+      "item": "F-03 pre-launch freshness rechecks non-consuming",
+      "status": "CLOSED",
+      "evidence": "Both rechecks now call recheckChildAdmission (S:1322, S:1326@cc584f9), which sets code NONCONSUMING_ADMISSION_REFUSAL and pauseAllowed=true (S:1140-1143). A miss after consumeGroup (S:1324) archives only this invocation's marker (.no-launch.json / .unconsumed-marker.json) and resets groupConsumed (S:1866-1875). The pre-launch folder is renamed .no-launch-<inv> (S:1877-1884). Later partial groups follow the pause-fit or terminal rule (S:1899-1912). Closure limit 'not executed' is accurate."
+     },
+     {
+      "item": "F-04 opening policy bytes separated from approval/comparison chain",
+      "status": "CLOSED",
+      "evidence": "--policy-observation is a required separate option (S:445-449@cc584f9). The window and verification may not embed executionPolicy or policyObservation (S:324-326). Bytes are pinned to helper, PowerShell, environment, window, manifest and runId (S:327-337). There is a committed one-shot authority with maximumObservations===1 and notAfter<=approvedAt (S:354-377). Freshness is now only approvedAt minus observedAt <= 300000 ms (S:218-236); verifiedAt is removed, so the reviewer comparison is untied from the 300 s clock. The observation itself must still fall within 5 minutes before opening. NOT RUN; no policy was sampled."
+     },
+     {
+      "item": "F-05 refused resume no longer ends a valid pause",
+      "status": "CLOSED",
+      "evidence": "A validated pre-attempt refusal writes a separate .resume-refused.json or .restart-refused.json with the prior pause or prefix preserved, unless time or budget is exhausted (terminalProgress) (S:1852-1857, S:1941-1943, S:1958-1959@cc584f9). Residual T3-06: readPause failures before S:1615 fall through to an UNSTARTED_REFUSED .nonconsuming label. The pause stays resumable, so there is no safety loss."
+     },
+     {
+      "item": "F-06 digest-keyed continuation identity",
+      "status": "CLOSED",
+      "evidence": "The used marker is keyed on the pause sha (S:1581@cc584f9). A digest already named as a parentPause in any attempt record is refused (S:1583-1586). Canonical basename and realpath checks: canonicalEvidencePath S:1476-1482, applied at S:1544 and S:1564. Receipts embed attemptId, invocationId and attemptRecord, and readCompletedPrefix re-verifies them (S:1493-1527). G7 artifact record is raw-hash-bound and restored (S:1528-1539). NOT RUN."
+     },
+     {
+      "item": "F-07 fit check reserves full overhead and handshake capacity",
+      "status": "CLOSED",
+      "evidence": "requireGroupTime (S:1127-1135@cc584f9) reserves unfinished ceilings plus remaining setup, admission and finalization, and at least 1 ms of handshake capacity per remaining child. It is called at S:1769, before the attempt record. Pause publication uses the future-invocation reserve (S:1899-1903). Timing is authored arithmetic only; side effect noted in T3-02 (G0 now has zero slack)."
+     },
+     {
+      "item": "F-08 terminal-group stop rule",
+      "status": "CLOSED",
+      "evidence": "Disclosed at M:784@cc584f9 (bounds.accountingProposal.terminalGroupRule). The source rule is preserved and now coded as a non-consuming refusal with terminalProgress (S:1631-1648). The closure status EXISTING_STOP_RULE_DISCLOSED matches."
+     },
+     {
+      "item": "F-09 fresh start checks all prior evidence",
+      "status": "CLOSED",
+      "evidence": "assertFreshGroupStart (S:1652-1735@cc584f9) refuses on orphan .pending files. It refuses attempt records, receipt folders, .no-launch and .unconsumed-marker files unless a clean bound refusal covers them (S:1658-1665, plus the loop over attempt records and directories). Only PREPARE creates receipts/ (S:979-980), and loadRun refuses a missing or substituted directory (S:1274-1278). The limit on deletion by a trusted operator is disclosed (packet L34)."
+     },
+     {
+      "item": "F-10 approval prose re-spaced",
+      "status": "CLOSED",
+      "evidence": "108 of 109 corrections recompute old(a828501) to new(cc584f9). One, prerequisiteVehicles.authorizationLoad.qualificationExcluded, is a new field added in this delta (T3-04). A heuristic scan for glued tokens of 22+ characters finds 13 at a828501 and 0 at cc584f9. No corrected key is read at runtime: the supervisor reads only toolchain.dependencyTree.{sha256,fileCount,totalBytes} and git.{executable,sha256,cwd}. Argv, environment and expectedFailures literals are unchanged; the structural diff shows no groups CHG outside prose paths."
+     },
+     {
+      "item": "F-11 G1 residual note",
+      "status": "CLOSED",
+      "evidence": "doc52Residuals.G1@cc584f9 now names Node 20 TAP and cause, pinned Vitest RED, pre-run fit, bootstrap and handle proofs, continuation acceptance, and states that the 512 MiB denial applies only to G0. The holds list grew from 9 to 10 with NODE20_TAP_CAUSE_CALIBRATION_PREREQUISITE."
+     },
+     {
+      "item": "F-12 fit-hold lift criterion",
+      "status": "HOLD_HONEST",
+      "evidence": "The prerequisite-resolution routes for DOC55-G1-G6-WALL-FIT and G7 state a proposed pre-run criterion and noCircularity (no G0/G6/RED receipt as input, no mid-window rehash). It is explicitly a proposal needing original disposition, and the hold stays HELD (doc64-prerequisite-resolution@866ed38)."
+     },
+     {
+      "item": "F-13 standalone prerequisite authority; record digest bound",
+      "status": "HOLD_HONEST",
+      "evidence": "recordSha256 1e895521 is bound at M:2228, M:2238, M:32798-32999 and M:33154@cc584f9, and enters approvalScope.prerequisites (S:159). authoritySeparation.implementation is NOT_IMPLEMENTED_OUTSIDE_THIS_BOUNDED_REPAIR and actualAuthority is NONE. The bound record exists only in records 866ed38 (T3-07)."
+     },
+     {
+      "item": "F-14 native memory fixture vs Node-only route",
+      "status": "HOLD_HONEST",
+      "evidence": "The closure and resolution name the native VirtualAlloc fixture as outside the Node-only path, with incremental parameters unfrozen. The packet invents no family or values (L40@866ed38). MEMORY_CAP_REFUSAL_DETECTION stays HELD for G0."
+     },
+     {
+      "item": "F-15 single-window qualification order",
+      "status": "CLOSED",
+      "evidence": "prerequisiteVehicles.orderedGates step 5@cc584f9 has one approved PREPARE/G0/dependent window, where only committed R4 inside the same runId unlocks dependents. The separately authorized G1-G7 sequence is removed (orderedGates went from 7 to 5)."
+     },
+     {
+      "item": "F-16 G0 non-command overhead itemized",
+      "status": "PARTIAL",
+      "evidence": "M:2247-2260@cc584f9 (g0.fullOverheadDisclosure) lists 2 full and 16 pinned passes, 7 handshakes sharing 3000 ms, and states AUTHORED_COST_INVENTORY_NOT_MEASURED with no fit claim. Missing: the handshake responder and its latency are not named, which the Doc64 lens verifier asked for (T3-03)."
+     },
+     {
+      "item": "F-17 three-process conflict routed to Samuel",
+      "status": "HOLD_HONEST",
+      "evidence": "The resolution route G0_THREE_PROCESS_CONTRACT records realChildTree 4, vitestBaseline 8, cap 3, measuredPeak null, and 'No same-file three-process rewrite is claimed achievable'. orderedGates step 1 leads with the stage-count or scope decision. Rows are unchanged at 4 and 8 (preservation.groups G0); no cap was raised and no process omitted."
+     },
+     {
+      "item": "F-18 approval load totalled",
+      "status": "CLOSED",
+      "evidence": "Recomputed from M:33191-33236@cc584f9: core profiles 1+4+2+1+1+1+1=11, plus 7 synthetic G1-G7 profiles, gives 18. That means 18 owner decisions, 18 coordinator comparisons, 18 window comparisons and 18 receipt dispositions, at least 72 acts. PREPARE, G0 and qualification are excluded, and it is labelled a lower bound, not a plan."
+     },
+     {
+      "item": "F-19 Process scope must be Undefined",
+      "status": "CLOSED",
+      "evidence": "S:227-228@cc584f9: effectivePolicies[2].policy must be 'Undefined'. A negative fixture covers it (S:2060-2062). This is source-present only; no policy was observed."
+     },
+     {
+      "item": "F-20 G0 three-process cap on every row",
+      "status": "CLOSED",
+      "evidence": "S:1215-1217@cc584f9 asserts maxOwnedProcesses === 3 on every G0 row. real-child-tree (4) and vitest-baseline (8) are unchanged, so G0 always refuses. The label was renamed to proposedTotalOwnedProcesses (S:2110). The assertion is unconditional, and manifest approvedOverride is never read (T3-05)."
+     },
+     {
+      "item": "F-21 twelve authored authority controls",
+      "status": "CLOSED",
+      "evidence": "Present in source, S:2028-2064@cc584f9, plus the action-token refusal at S:212-213. Decision tokens: 2 positives, plus suffix/range/duplicate/extra-PREPARE refusals. Policy: 1 positive, plus subset/all-Undefined/MachinePolicy-Restricted precedence/Process-defined/stale(300001 ms) refusals. Hand-simulation against S:206-236 gives each its declared message (check=Error('REFUSED: '+msg), eq=JSON.stringify). Closed as source only; working is NOT PROVEN (see eligibility)."
+     },
+     {
+      "item": "F-22 receipt names and counts",
+      "status": "CLOSED",
+      "evidence": "Recomputed. The 7a receipt (61f478ed) is 64/66 at cc584f9; the mismatches are rollback.md (474483e8) and currentness_local.mjs (e7703ece). It is 66/66 at 7a62e64. The 935 receipt (24430f71) is 66/66 at cc584f9 and at 935aaf1. Both are recorded in the source JSON, the bindings and packet L54-55."
+     },
+     {
+      "item": "Records: source/manifest hashes and identities",
+      "status": "CLOSED",
+      "evidence": "git show recompute: supervisor blob 397c4510, raw = LF a827a2c4..., 168,351 B, CR count 0. Manifest blob 3a4f2d21, raw = LF dcea1a24..., 1,490,787 B. Predecessor blobs fffb2a42 and caffa6e2 (8dec3860 and 00eb8955) match f98c416 and a828501. manifest.supervisor.sha256 equals a827a2c4. These match doc64-supervisor-source-cc584f9.json, the bindings and packet L48-49@866ed38."
+     },
+     {
+      "item": "Records: diff scope",
+      "status": "CLOSED",
+      "evidence": "git diff --name-status a828501 cc584f9 shows exactly 2 M (supervisor and manifest). cc584f9..866ed38 shows 5 .xenios continuity files, README, the packet and 7 doc64 evidence JSON; no source path changes. 935aaf1..866ed38 outside .xenios shows only the a828501 records, Doc64 records and the two files. So verifier, decision-input and every other path are byte-unchanged since 935aaf1."
+     },
+     {
+      "item": "Records: wrapper, bindings, review and authority pins",
+      "status": "CLOSED",
+      "evidence": "All 13 entries in doc64-supervisor-records@866ed38 match on bytes, raw and LF; the wrapper excludes itself (14th file). The bindings' review hashes recompute: Doc64 md 77372d54 and lens json 2f95b7fa at 6245511 and on disk. Directive 2cb114d3 at 475b95f. The coordinator copies DOC64_BUILDER_* at f821619 are byte-identical to the builder records."
+     },
+     {
+      "item": "Bindings: verifier 935aaf1 frozen; currentness basis",
+      "status": "CLOSED",
+      "evidence": "Verifier blobs: rollback.md a0260719 and currentness_local.mjs f7cf66c3 are identical at 935aaf1, a828501, cc584f9 and 866ed38. preservation.frozenCurrentness lists 6 files, all verified. In the manifest, database.currentness is 7a62e64/276226f (Doc63 accepted) and pendingCurrentnessVerifier is 935aaf1 (M:19770). The supervisor has no currentness or database route (grep). Bytes are not moved to accepted status; Doc65 is pending."
+     },
+     {
+      "item": "Bindings: 30 target pins and 14 HTTP snapshots",
+      "status": "CLOSED",
+      "evidence": "targetPins are JSON-identical between a828501 and cc584f9. All 30 recompute (blob and LF sha) at f581b6bd and at cc584f9. All 14 httpRegression snapshot files recompute at their sourceCommits. httpRegression changed only in prose fields (rule, reportInstrumentation)."
+     },
+     {
+      "item": "Historical evidence and native helper unchanged",
+      "status": "CLOSED",
+      "evidence": "All 101 preservation.historicalEvidence blobs are equal at a828501, cc584f9 and 866ed38; 102 evidence entries at a828501 minus the manifest. The WINDOWS_HELPER template bytes are identical at f98c416, a828501 and cc584f9 (sha b2aaaa76)."
+     },
+     {
+      "item": "Continuity rows",
+      "status": "CLOSED",
+      "evidence": "Between cc584f9 and 866ed38, only owner rows changed: ACTIVE_TASKS HEALTH-QUICK-ORDER-20261005, SESSION_REGISTRY codex-health-quick-order-20261005, CODE_OWNERSHIP 17093695. Changed keys equal records.continuityPreservation, and top-level keys and row counts (92, 58, 135) are preserved."
+     },
+     {
+      "item": "No execution claimed",
+      "status": "CLOSED",
+      "evidence": "Every record has execution NOT_RUN, runnableModes [], firstExecutableProposal null, executionReservation null and window EXPIRED. Manifest: executionAuthorization null, window EXPIRED_NO_NEW_WINDOW. A pattern scan finds no pass, run or observation claims. Packet L62 says verification was metadata only."
+     },
+     {
+      "item": "CC/CR carried map",
+      "status": "PARTIAL",
+      "evidence": "The counts are right: 10 CC and 31 CR. But all 15 CC sourceAnchors in doc64-supervisor-closure@866ed38 point to f98c416 line numbers, not cc584f9. Examples: readPause 1421 (now 1540), runGroup 1544 (now 1737), assertDecisionTokens 198 (now 206). The 14 top-level anchors are correct for cc584f9 (T3-01)."
+     },
+     {
+      "item": "Independent acceptance and review queue state",
+      "status": "NOT_PROVEN",
+      "evidence": "Coordinator COORDINATION_STATE.json:700-717@f821619: DOC64-SUPERVISOR-REPAIR-DELTA-20261009 r1 (doc 67) for cc584f9/866ed38 against f98c416. Queued (frozen at 49c389b), acknowledged (ab1d43f), reviewed: verdict PENDING. Verifier 935aaf1 is separately pending as Doc65. No acceptance is inferable from this lens."
+     },
+     {
+      "item": "Eligibility: twelve authored controls",
+      "status": "NOT_PROVEN",
+      "evidence": "All 12 are present in source and hand-simulated only. Their only runner is runParserSelfTests, called from G0's in-process parser-self-test (S:1810@cc584f9). G0 is refused at loadAuthority by 5 prerequisite holds, 5 group correctionHolds and the F-20 row assertion. None can execute in the current manifest, and authored fixtures are not live consent or policy proof."
+     },
+     {
+      "item": "Eligibility: runnable modes",
+      "status": "HOLD_HONEST",
+      "evidence": "Every mode is refused:\n- PREPARE: each window group is held (S:267-272), and every window must include G0 (S:257-259).\n- G0: THREE_PROCESS, ONE_MINUTE, BOOTSTRAP, HANDLE and MEMORY holds, plus row cap 3 (S:1209-1218).\n- G1-G6: BOOTSTRAP, HANDLE and WALL-FIT holds; VITEST-RED for G1/G3/G4/G5; command holds and calibration.\n- G7: BOOTSTRAP, HANDLE and G7_SHARED_WALL holds.\n- --resume: needs a group, so the same holds apply.\n- --prerequisite: unknown option (S:444-445).\n- DB category: no route."
+     },
+     {
+      "item": "Eligibility: G0 stage-count decision",
+      "status": "HOLD_HONEST",
+      "evidence": "Cap 3 against real-child-tree 4 and Vitest baseline 8 is unresolved. No cap was raised and no row omitted (preservation.groups G0 declaredOwnedProcesses). Even after Samuel decides, S:1215-1217 must change in source and be reviewed again, because explicitCommandCap.approvedOverride (M:2242-2246) is never read."
+     },
+     {
+      "item": "Eligibility: native proofs and standalone vehicles",
+      "status": "HOLD_HONEST",
+      "evidence": "These are missing:\n- surviving observer and Job handle\n- STARTUPINFOEX allowlist\n- native memory fixture\n- standalone authority format\n- G0 all-work and G1-G7 synthetic fit profiles\nAll are listed as NOT_IMPLEMENTED with runnableNow false (doc64-prerequisite-resolution@866ed38). That is 18 one-shot profiles, at least 72 acts, before PREPARE/G0."
+     },
+     {
+      "item": "Eligibility: firstExecutableProposal null",
+      "status": "CLOSED",
+      "evidence": "null is supported:\n- source acceptance is pending (Doc67, and Doc65 for 935)\n- all modes are held\n- the stage-count decision is unresolved\n- there are no vehicles or proofs\n- there are no actual decision, verification, window-review, pre-window or policy-observation authority records\n- the window expired 2026-10-06T21:43:37Z and there is no reservation."
+     },
+     {
+      "item": "Eligibility: command-admission responder",
+      "status": "NOT_PROVEN",
+      "evidence": "Each handshake requests 'ONE_SEPARATELY_AUTHORIZED_OBSERVATION' from 'one authorized coordinator response' (S:1163, M:810@cc584f9). G0 shares 3000 ms across 7 child handshakes (M:815-816), so the first allocation is floor(3000/7) = 428 ms. No responder implementation, authority or latency appears in the dependency tally (T3-03)."
+     },
+     {
+      "item": "Customer-request save track (snapshot S, 5 bindings, census, Section 5C)",
+      "status": "NOT_APPLICABLE",
+      "evidence": "Outside this two-file source. Packet L66@866ed38 and the ACTIVE_TASKS blockedOn field name these as separate dependencies; the records make no completion claim for them. Status belongs to the coordinator checkpoint, not this lens."
+     }
+    ],
+    "findings": [
+     {
+      "id": "T3-03",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/evidence/doc64-prerequisite-resolution-20261008.json",
+      "claim": "Execution-eligibility gap, not a source defect. The F-02 fix gives G0's 7 child handshakes a shared 3000 ms budget, each needing a separately authorized coordinator observation. No responder, authority or latency is named, and it is not in the 18-profile tally.",
+      "evidence": "S:1144-1150, S:1163@cc584f9: wait = min(30000, floor(remaining/children)); the action is ONE_SEPARATELY_AUTHORIZED_OBSERVATION. M:810 mechanism is 'one authorized coordinator response'. M:815-816: g0WaitBudgetMs 3000, 'not 30,000 ms per child', so the first allocation is 428 ms. The authorizationLoad profiles (M:33191-33236) have no responder profile. Resolution routes mention responder only as a cost condition. The Doc64 lens verifier said 'Name the handshake responder and its latency'. The coordinator session cannot answer in under 0.5 s, and a G0 miss after a launch is terminal.",
+      "fix": "Records-only, before any execution decision: name the responder (automated or human), its authority scope and its latency target as an explicit prerequisite in the dependency record and the F-16 limit, and add it to the tally. Do not raise any wall or wait budget."
+     },
+     {
+      "id": "T3-02",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Practical F-01 residual: G0's authored budget has zero slack (51000+3000+3000+3000=60000). Setup must finish within 3000 ms, and a qualified restart after a first-child miss is effectively unreachable, so G0 and the window are still lost. The loss is now truthfully recorded as non-consuming. Disclosure is only conditional.",
+      "evidence": "S:1119-1135@cc584f9: requireGroupTime needs deadline minus now >= ceilings + max(0, setupMs - elapsed) + (admission - spent) + finalization. deadline = authorityStartedAt + wallMs (S:1739). For G0, elapsed > 3000 ms refuses. A restart after a miss at exit-zero must still find about 46000+3000+2572+3000 ms of the original 60 s left (S:1899-1910). That means about 5.4 s after start, including a human material-change record. Packet L22 says only 'if ... still fit'.",
+      "fix": "No source change needed. State plainly in the F-01 limit and packet that, under the unchanged 60 s wall, a G0 first-child admission miss or a setup over 3 s ends G0 for that window. Name setup fit as part of the G0_ONE_MINUTE_ALL_WORK pre-run evidence."
+     },
+     {
+      "id": "T3-01",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/doc64-supervisor-closure-20261008.json",
+      "claim": "All 15 sourceAnchors in the CC map point to predecessor f98c416 line numbers, but the record names cc584f9 as its source. They are not labelled as predecessor anchors.",
+      "evidence": "Checked each anchor's line against both sources: every anchor matches its symbol at f98c416 and none at cc584f9. Examples: readPause 1421 (cc584f9: 1540), runGroup 1544 (1737), assertFreshGroupStart 1528 (1652), assertDecisionTokens 198 (206), assertPolicyObservation 208 (218), assertInvocationBudget 1511 (1631). The 14 top-level anchors and the preservation anchors are correct for cc584f9.",
+      "fix": "Records-only: relabel the CC sourceAnchors as f98c416 anchors or update them to cc584f9 lines. No source change."
+     },
+     {
+      "id": "T3-04",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/doc64-prose-corrections-20261008.json",
+      "claim": "The record reports 109 applied corrections of base text, but one path did not exist at base a828501: the field was added in this delta. Its limitations also say 'no manifest mutation' while kind says APPLIED.",
+      "evidence": "Old-to-new comparison: 108 of 109 entries match a828501 to cc584f9. The path prerequisiteVehicles.authorizationLoad.qualificationExcluded is absent at a828501 (structural diff shows authorizationLoad ADD). Its 'old' text ('maximumAttempts9 applies there') appears nowhere in the a828501 tree. The limitations list includes '...no manifest mutation' next to kind EXPLANATORY_PROSE_CORRECTIONS_APPLIED. The packet L30 and closure F-10 '109' count inherits this.",
+      "fix": "Records-only: mark that entry as an in-delta self-correction, so the count is 108 base corrections plus 1, and reword the limitation to say the read helper did not mutate the manifest."
+     },
+     {
+      "id": "T3-05",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The F-20 assertion is unconditional, and the manifest's explicitCommandCap.approvedOverride slot is never read. So Samuel's stage-count decision alone cannot make G0 eligible; another supervisor source change and review are required.",
+      "evidence": "S:1215-1217@cc584f9 requires maxOwnedProcesses === 3 on every G0 row. M:2242-2246 has explicitCommandCap {maximumTotalOwnedProcesses:3, approvedOverride:null}. grep finds no explicitCommandCap, approvedOverride or maximumTotalOwnedProcesses reference in the supervisor. Doc64 F-20 suggested '<= 3 absent an explicit decision-bound count field'.",
+      "fix": "No change required for safety. Disclose in the F-20 and F-17 limits that a decision-bound count needs a further bounded source edit, or remove the unread approvedOverride slot."
+     },
+     {
+      "id": "T3-06",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "PLAUSIBLE (hand-simulated). A resume refused inside readPause before its state is restored is recorded as an unstarted, non-consuming refusal with OWNED_CHILD_ABSENCE disposition, even though the group has launched children. The pause stays resumable, so this is a label-only inaccuracy.",
+      "evidence": "Failures at S:1544 (canonical path), S:1580 (deadline) or S:1582 (used) throw before Object.assign at S:1615. At that point run.parentPause is null and groupConsumed is false (S:1743-1745). So preAttemptResumePreserved is false (S:1852). check() errors carry no code (S:36-37), so restartEligible is false. The result is written to <G>-<inv>.nonconsuming.json (S:1957-1960) with executionState UNSTARTED_REFUSED (S:1936) and reservationDisposition OWNED_CHILD_ABSENCE_ESTABLISHED (S:1941-1947). A fresh start is still blocked by .paused.json.",
+      "fix": "Optional bounded polish: when run.resumePreview is set, label pre-validation failures as resume-refused, not unstarted. Otherwise record this as a limit of F-05."
+     },
+     {
+      "id": "T3-07",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "The source manifest binds, by digest and into the approval scope, a dependency record that is not in source tree a52060a6. It exists only in records commit 866ed38.",
+      "evidence": "prerequisiteVehicles.recordSha256 and executionPrerequisites[*].liftRoute.recordSha256 = 1e895521... at M:2228, M:2238, M:32798-32999 and M:33154@cc584f9. These enter approvalScope.prerequisites (S:159). git ls-tree cc584f9 finds no doc64-prerequisite-resolution file. At 866ed38 it exists, 22,297 B, sha 1e895521 recomputed equal. The supervisor never reads it at runtime.",
+      "fix": "Disclosure only: state that the source-review target is cc584f9 plus record bytes 1e895521 from 866ed38. Any approval chain must fetch that exact record."
+     },
+     {
+      "id": "T3-08",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/README.md",
+      "claim": "The README summary sentence can be read as saying the successor authors none of its corrections.",
+      "evidence": "README L5@866ed38: 'This successor authors no zero-launch pause, immutable-prefix qualified restart under original clocks, finite handshake budgets, truthful terminal G0 interruption, feasible partial continuation and separate opening policy bytes...'. Read as written, 'no' applies to every item in the list. The packet L17-26 and closure state the intended meaning.",
+      "fix": "Records-only rewording, for example: 'authors: no zero-launch pause; immutable-prefix qualified restart...; ...'."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "T3-01",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Recomputed all 15 CC sourceAnchors in doc64-supervisor-closure@866ed38: each matches its symbol at f98c416 and none matches at cc584f9. Examples: readPause 1421→1540, consumeGroup 1395→1447, runGroup 1544→1737, assertDecisionTokens 198→206, assertDependencies 1350→1401. All 14 top-level anchors match cc584f9. carriedFrom says 'Doc59 exact historical map' but the lines are not labelled as f98c416. Records-only relabel."
+     },
+     {
+      "id": "T3-02",
+      "upheld": true,
+      "severity": "P1",
+      "note": "The fact holds, but severity is corrected from P3 to P1 and 'no source change needed' is refuted.\n\nThe restart restores the original deadline (S:1722), then S:1769/S:1119-1135 require deadline−now ≥ remaining ceilings + max(0,setup−s) + (admission−spent) + finalization. Walls are exact-fit, so the restart passes only if T1−T0 ≤ completed in-process walls + handshakeWaitSpentMs. G0 after the parser needs ≤5000+428 ms, including a human material change.\n\nThis is the Doc64 F-01 P1 consequence persisting, and it is broader than the lens framed it. Merged into V-M1."
+     },
+     {
+      "id": "T3-03",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed:\n- S:1144-1150 and S:1163@cc584f9; M:810, M:815-816.\n- First slice is floor(3000/7)=428 ms; if each slice is fully used: 428/428/428/429/429/429/429.\n- authorizationLoad (18 profiles) has no responder profile. Routes mention 'admission/responder' only as a fit cost.\n- Coordinator state records no inbound/wake capability (COORDINATION_STATE.json:720@f821619).\n\nThis is an execution-eligibility gap, not a source defect. Combined with V-M1, a G0 first-handshake miss loses the window; any later miss is terminal."
+     },
+     {
+      "id": "T3-04",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Recomputed: 108/109 'old' values equal a828501, and 109/109 'new' values equal cc584f9. prerequisiteVehicles.authorizationLoad.qualificationExcluded is absent at a828501 (structural diff: ADD prerequisiteVehicles.authorizationLoad). The limitations list includes '...no manifest mutation' beside kind EXPLANATORY_PROSE_CORRECTIONS_APPLIED_SOURCE_ONLY_NOT_RUN."
+     },
+     {
+      "id": "T3-05",
+      "upheld": true,
+      "severity": "P3",
+      "note": "The claim holds, but the anchors are wrong.\n- The all-row assertion (exactly 3, >=3 && <=3) is at S:1225-1227@cc584f9. S:1215-1217 is the commandHolds builder.\n- The proposedTotalOwnedProcesses label is at S:2121, not S:2110.\n- grep finds no read of explicitCommandCap, approvedOverride or maximumTotalOwnedProcesses.\nA stage-count decision alone therefore cannot lift G0; another bounded source edit and review is required."
+     },
+     {
+      "id": "T3-06",
+      "upheld": true,
+      "severity": "P3",
+      "note": "CONFIRMED by hand-simulation for a group holding a valid pause.\n- Failures at S:1544, S:1580 or S:1582 precede Object.assign at S:1615, so parentPause is null (S:1746).\n- failureCode is null, so restartEligible is false.\n- The result is written to <G>-<inv>.nonconsuming.json labelled UNSTARTED_REFUSED / OWNED_CHILD_ABSENCE.\n- The .paused.json remains, so this is label-only.\nThe lens missed the same path where no pause exists: any G0 --resume, refused at S:1549. There the restartEligible:false record permanently blocks fresh starts (S:1673-1679). See V-M2."
+     },
+     {
+      "id": "T3-07",
+      "upheld": true,
+      "severity": "P3",
+      "note": "ls-tree cc584f9 lists no doc64-* evidence file. 1e8955212912… occurs 12 times in the cc584f9 manifest (M:2228, 2238, 32798-32999, 33154) and enters approvalScope.prerequisites (S:159). The record exists only at 866ed38: 22,297 B, sha recomputed equal. The supervisor never reads it at runtime."
+     },
+     {
+      "id": "T3-08",
+      "upheld": true,
+      "severity": "P3",
+      "note": "README line 5@866ed38: 'This successor authors no zero-launch pause, immutable-prefix qualified restart under original clocks, finite handshake budgets…'. Read as written, 'no' governs the whole list. Packet L17-26 states the intended meaning."
+     }
+    ],
+    "closureOpinion": [
+     {
+      "item": "F-01 zero-launch pause replaced by non-consuming refusal",
+      "status": "PARTIAL",
+      "note": "The authored part is present:\n- A pause requires a non-G0 group with a launched child and a consumed group (S:1900).\n- A zero-launch refusal binds the prefix and the original clocks (S:1904-1912, 1957-1960).\n- A restart checks lineage plus a raw-bound material change (S:1652-1735).\n\nThe defect itself is not closed. The restart restores the original deadline (S:1722), then S:1769 needs T1−T0 ≤ completed in-process walls + spent handshake ms, because walls are exact-fit (M:2405/2724-2730; M:2741/5879-5885). That makes a restart:\n- impossible for every G1–G7 zero-launch refusal\n- impossible for G0 before the parser\n- possible within about 5.4 s for G0 after the parser\n\nG0, and with it the window, is still lost with nothing launched, now coded truthfully. See V-M1."
+     },
+     {
+      "item": "F-02 G0 post-launch terminal; finite cumulative handshake",
+      "status": "CLOSED",
+      "note": "Changes in source:\n- readPause refuses G0 (S:1549@cc584f9) and the pause condition excludes G0 (S:1900).\n- Static check: 0 < handshakeWaitBudgetMs ≤ admissionAndPauseMs, and G0 postLaunch is TERMINAL (S:183-188).\n- Each wait is min(30000, floor(remaining/children)), charged in a finally block (S:1144-1150, S:1206; the lens cited 1207). G0 budget is 3000 ms (M:2730).\n\nThis takes Doc64's option of declaring G0 pauses terminal. Walls and caps are unchanged. Any post-launch admission miss now ends G0 and the window; the 428 ms slices are eligibility issue T3-03."
+     },
+     {
+      "item": "F-03 pre-launch freshness rechecks non-consuming",
+      "status": "CLOSED",
+      "note": "Coding is fixed:\n- Both rechecks call recheckChildAdmission, which sets the non-consuming code and pauseAllowed=true (S:1140-1143, S:1322, S:1326).\n- The marker is archived and groupConsumed reset (S:1863-1878).\n- The pre-launch folder is renamed .no-launch-<inv> (S:1879-1887).\n\nWith prior child progress, a non-G0 group pauses if the time fits (S:1900-1903). On a first child the refusal is zero-launch, so V-M1 makes it stranding."
+     },
+     {
+      "item": "F-04 opening policy bytes separated",
+      "status": "CLOSED",
+      "note": "Changes in source:\n- --policy-observation is required (S:444-453).\n- The window and verification may not carry executionPolicy or policyObservation (S:324-326).\n- Pins: helper, PowerShell, environment, window, manifest and runId (S:331-337).\n- One-shot committed authority: decision.at ≤ notBefore ≤ observedAt ≤ notAfter ≤ approved, and maximumObservations 1 (S:353-377).\n- Freshness is now only approved−observed ≤ 300000 (S:233-235); the verifiedAt bound at f98c416 S:222-223 is removed.\n\nThe reviewer comparison (S:390-396) is no longer squeezed. NOT RUN."
+     },
+     {
+      "item": "F-05 refused resume preserves pause",
+      "status": "CLOSED",
+      "note": "A refusal after readPause restores state (S:1615) goes to .resume-refused.json with the pause kept (S:1852-1857, 1942, 1958), unless terminalProgress is set. A requireGroupTime or budget refusal stays terminal, as Doc64 allowed. Pre-restore failures carry the T3-06 mislabel."
+     },
+     {
+      "item": "F-06 digest-keyed continuation identity",
+      "status": "CLOSED",
+      "note": "Recomputed in source:\n- The used marker is keyed on the pause sha (S:1483-1486, 1581).\n- A pause digest already named as a parentPause is refused (S:1583-1586).\n- canonicalEvidencePath (S:1476-1482) rejects .pending twins and aliases.\n- Receipts bind attemptId, invocationId and the attempt record (S:1356-1357), re-verified at S:1493-1527.\n- The G7 artifact record is raw-bound (S:1528-1539).\n- groupConsumed is no longer hard-coded (S:1775)."
+     },
+     {
+      "item": "F-07 fit check reserves overhead/handshake",
+      "status": "CLOSED",
+      "note": "requireGroupTime (S:1127-1135) reserves ceilings plus remaining setup, admission and finalization, plus at least 1 ms per remaining handshake. It runs at S:1769, before the attempt record. Pause publication uses the future-invocation reserve (S:1899-1903).\n\nThis is correct for F-07. Combined with original-clock restarts it is the mechanism behind V-M1."
+     },
+     {
+      "item": "F-08 terminal-group stop rule",
+      "status": "CLOSED",
+      "note": "Disclosed at M:784 terminalGroupRule. Coded at S:1639-1641 as a non-consuming refusal with terminalProgress. The record still sets restartEligible:true for it (V-M3)."
+     },
+     {
+      "item": "F-09 fresh start checks prior evidence",
+      "status": "CLOSED",
+      "note": "Checks in source:\n- Orphan .pending files are refused (S:1658-1661).\n- Attempt records, folders and archives need clean refusal lineage (S:1662-1721).\n- Only PREPARE creates receipts/ (S:979-980), and loadRun refuses a substituted root (S:1274-1278).\n- Deleting a published record is detected through its retained .pending twin.\n\nSide effect: the new hard restartEligible===true check (S:1676) permanently disqualifies any uncoded pre-launch refusal. That is a regression from f98c416 (S:1534-1541); see V-M2."
+     },
+     {
+      "item": "F-10 approval prose re-spaced",
+      "status": "CLOSED",
+      "note": "108/109 'old' values equal a828501 and 109/109 'new' values equal cc584f9; the odd one is T3-04. 'notcalibrated' occurrences: 36 → 0. A scan for glued lowercase runs of 24+ characters: 21 → 0.\n\nCorrection to the lens: 50 corrected paths (48 under groups, 2 under preparation) sit inside approvalScope (S:151-158) and are approval-bound through eq() at S:320. No corrected key drives behaviour: assertFailureCause reads only calibrationRequired, messageIncludes, sourcePath, sourceLine and excludes (S:485-496)."
+     },
+     {
+      "item": "F-11 G1 residual",
+      "status": "CLOSED",
+      "note": "doc52Residuals.G1@cc584f9 names Node 20 TAP and cause, Vitest RED, pre-run fit, bootstrap, handle and continuation. It says the 512 MiB denial is G0-only. holds gained NODE20_TAP_CAUSE_CALIBRATION_PREREQUISITE. That is a residual label, not an executionPrerequisites id; enforcement is through the G1 correctionHolds."
+     },
+     {
+      "item": "F-12 fit-hold lift criterion",
+      "status": "HOLD_HONEST",
+      "note": "The resolution routes for DOC55-G1-G6-WALL-FIT and G7 require standalone synthetic fit evidence before the final manifest. They allow no same-window G0, G6 or RED receipt as input and no mid-window rehash. The status is a proposal and the holds stay HELD."
+     },
+     {
+      "item": "F-13 standalone authority; record digest",
+      "status": "HOLD_HONEST",
+      "note": "The digest 1e895521 is bound in the manifest and enters approval scope (S:159). authoritySeparation.implementation is NOT_IMPLEMENTED. The record lives only at 866ed38 (T3-07)."
+     },
+     {
+      "item": "F-14 native memory fixture",
+      "status": "HOLD_HONEST",
+      "note": "The MEMORY_CAP route names VirtualAlloc as outside the Node-only path, with parameters unfrozen. The hold stays HELD for G0, and no fixture was authored."
+     },
+     {
+      "item": "F-15 single-window order",
+      "status": "CLOSED",
+      "note": "orderedGates went from 7 to 5 (structural diff DEL 5, 6). Step 5 is one PREPARE/G0/dependent window, with only committed R4 unlocking dependents. assertDependencies binds G0 acceptance to the same window and runId (S:1412-1433)."
+     },
+     {
+      "item": "F-16 G0 overhead itemized",
+      "status": "CLOSED",
+      "note": "M:2247-2262 lists 18 passes, recounted against source as before + 9 pre-command (S:1790) + 7 post-child (S:1843) + after. It also lists 7 handshakes sharing 3000 ms, with status NOT_MEASURED. This meets Doc64's stated fix ('itemize the cost').\n\nThe archived verifier's 'name the responder… in the vehicle' targets a vehicle that does not exist yet; it is carried as eligibility gap T3-03. The lens's PARTIAL is stricter than Doc64's text."
+     },
+     {
+      "item": "F-17 three-process conflict routed to Samuel",
+      "status": "HOLD_HONEST",
+      "note": "The route records real child tree 4, Vitest 8 and cap 3, and claims no same-file rewrite. Rows are unchanged (preservation.groups G0). No cap was raised and no process omitted. orderedGates step 1 leads with the decision."
+     },
+     {
+      "item": "F-18 approval load totalled",
+      "status": "CLOSED",
+      "note": "Recomputed: 1+4+2+1+1+1+1 = 11, plus 7 = 18 profiles. At 18 per act type, that is at least 72 acts. qualificationExcluded marks PREPARE, G0 and qualification as additional."
+     },
+     {
+      "item": "F-19 Process=Undefined",
+      "status": "CLOSED",
+      "note": "S:227-228 requires effectivePolicies[2] to be Undefined. Negative fixture: S:2060-2062. Source-only."
+     },
+     {
+      "item": "F-20 G0 cap on every row",
+      "status": "CLOSED",
+      "note": "The assertion is at S:1225-1227 (lens cited 1215-1217). Rows real-child-tree=4 and vitest-baseline=8 are unchanged, so G0 refuses; in practice the holds at S:1221 fire first. The label is at S:2121 (lens cited 2110). approvedOverride is never read (T3-05)."
+     },
+     {
+      "item": "F-21 twelve authored controls",
+      "status": "CLOSED",
+      "note": "Recounted 12 at S:2034-2064:\n- Decision tokens: 2 positives; runId suffix, group range, duplicate group and extra action=PREPARE refusals.\n- Policy: 1 positive; subset, all-Undefined, MachinePolicy Restricted, Process RemoteSigned and stale (300001 ms) refusals.\n\nHand-simulated against S:206-235, each reaches its declared message. The action rule is at S:215-216 (lens cited 212-213). These are present in source only and NOT proven working."
+     },
+     {
+      "item": "F-22 receipt names and counts",
+      "status": "CLOSED",
+      "note": "Recomputed:\n- The 7a receipt (61f478ed) is 64/66 at cc584f9; the mismatches are rollback.md and currentness_local.mjs. It is 66/66 at 7a62e64.\n- The 935 receipt (24430f71) is 66/66 at cc584f9 and at 935aaf1.\nThese match the source JSON, the bindings and packet L54-55."
+     },
+     {
+      "item": "Records: source/manifest hashes",
+      "status": "CLOSED",
+      "note": "Supervisor blob 397c4510: raw = LF a827a2c4…, 168,351 B, CR 0. Manifest 3a4f2d21: dcea1a24…, 1,490,787 B. Predecessors fffb2a42 (8dec3860) and caffa6e2 (00eb8955) are equal at f98c416 and a828501. These match the source, bindings, preservation and packet L48-49."
+     },
+     {
+      "item": "Records: diff scope",
+      "status": "CLOSED",
+      "note": "a828501..cc584f9 is exactly 2 M. cc584f9..866ed38 is 5 .xenios files, README, the packet and 7 doc64 JSON. 935aaf1..866ed38 outside .xenios is only a828501 records, Doc64 records and the two files."
+     },
+     {
+      "item": "Records: wrapper, bindings, review pins",
+      "status": "CLOSED",
+      "note": "Recomputed:\n- 13/13 wrapper entries match on bytes, raw and LF; the wrapper excludes itself.\n- Doc64 md 77372d54 and lens 2f95b7fa match at 6245511 and on disk.\n- The directive is 2cb114d3 at 475b95f.\n- The 8 DOC64_BUILDER_* copies at f821619 are byte-identical to the builder records."
+     },
+     {
+      "item": "Bindings: verifier frozen, currentness",
+      "status": "CLOSED",
+      "note": "Verifier bytes:\n- rollback.md a0260719 and currentness_local.mjs f7cf66c3 are unchanged from 935aaf1 to 866ed38.\n- frozenCurrentness: 6/6 files match at four commits.\n\nThe lens did not note that this delta re-binds manifest database.currentness from 2d2d958 to 7a62e64 (Doc63 829931b, SOURCE ACCEPT WITH LIMITS) and moves the pending entry from 7a to 935aaf1. The change is explicit (packet L53), goes to accepted bytes and labels 935 as pending. The supervisor has no database route, so nothing moved silently."
+     },
+     {
+      "item": "Bindings: 30 target pins, 14 snapshots",
+      "status": "CLOSED",
+      "note": "targetPins are JSON-identical between a828501 and cc584f9. 30/30 match on blob and LF sha at f581b6bd, and 30/30 on blob at cc584f9. httpRegression.snapshots are identical, and 14/14 files match on blob and sha at their sourceCommits."
+     },
+     {
+      "item": "Historical evidence and native helper",
+      "status": "CLOSED",
+      "note": "101/101 blobs are equal at a828501, cc584f9 and 866ed38; 102 entries minus the manifest leaves none uncovered. The WINDOWS_HELPER template is identical at f98c416, a828501 and cc584f9 (18,658 chars). I recompute its sha256 as 4e069ed9…; the lens's b2aaaa76 is not reproducible, and no record states either value. The equality claim stands."
+     },
+     {
+      "item": "Continuity rows",
+      "status": "CLOSED",
+      "note": "Exactly one owner row changed in each file (92/58/135 rows preserved), and top-level keys are unchanged. The changed keys equal records.continuityPreservation."
+     },
+     {
+      "item": "No execution claimed",
+      "status": "CLOSED",
+      "note": "All records say NOT_RUN, runnableModes [], firstExecutableProposal null, reservation null and window EXPIRED. Pattern scans found no pass, run or measurement claims."
+     },
+     {
+      "item": "CC/CR carried map",
+      "status": "PARTIAL",
+      "note": "Counts are right: 22 F, 10 CC, 31 CR. The 15 CC sourceAnchors are f98c416 lines (T3-01)."
+     },
+     {
+      "item": "Independent acceptance / review queue",
+      "status": "NOT_PROVEN",
+      "note": "COORDINATION_STATE.json:700-717@f821619 shows DOC64-SUPERVISOR-REPAIR-DELTA-20261009 r1, doc 67, status ACKNOWLEDGED_IN_REVIEW, acknowledgment ab1d43f, verdict PENDING. It was frozen at 49c389b. 935aaf1 is separately pending as Doc65."
+     },
+     {
+      "item": "Simulation: zero-launch refusal then restart",
+      "status": "NOT_CLOSED",
+      "note": "G1 example:\n- Invocation 1: first-child miss, spent=15000 ms. S:1907-1908 recodes the result as NONCONSUMING_UNSTARTED_WINDOW_DEADLINE_REFUSAL, yet restartEligible stays true.\n- Invocation 2 restores the deadline at S:1722. S:1769 then needs 600000−(T1−T0) ≥ 585000, i.e. T1−T0 ≤ 15000, but T1−T0 > e1+15000. It is refused, writes another non-consuming record, and the group is stranded.\n\nG0 cases:\n- Initial-admission refusal (S:1783): needs T1 ≤ T0.\n- After the parser: needs T1−T0 ≤ 5428 ms.\n\nThe same simulation at f98c416 S:1534-1546 gave zero-receipt records a fresh wall. See V-M1."
+     },
+     {
+      "item": "Simulation: forged or replayed refusal or pause",
+      "status": "CLOSED",
+      "note": "Within the trusted-local model:\n- A forged refusal cannot add a child receipt (S:1678, S:1506) or drop the in-process prefix (S:1715-1717).\n- Mixed attempts or clocks are refused (S:1683-1685).\n- Deleting the latest record is caught by its .pending twin (S:1658-1661).\n- A replayed pause is refused by the digest marker and parentPause scan (S:1581-1586). After record loss, mkdir EEXIST (S:1291) and .group.json (S:1587) still block a repeat.\n- G0 --resume always refuses (S:1549).\n- A full self-consistent forgery could skip only G0's parser prefix, which packet L34 discloses."
+     },
+     {
+      "item": "Simulation: G0 timing indices",
+      "status": "HOLD_HONEST",
+      "note": "Rows: idx0 parser 5000 (in-process), idx1-5 5000 each, idx6 refusal 1000 (in-process), idx7 5000 (process count 4), idx8 15000 (process count 8); total 51000 + 9000 = 60000.\n- S:1769 passes only if setup ≤ 3000 ms; there is no slack.\n- Handshake slices are 428/428/428/429/429/429/429 ms.\n- idx1 miss or recheck: zero-launch (V-M1).\n- idx2+ miss: terminal (S:1900, S:1960).\n- refusal-path needs its exact cause (S:1796).\nThe G0_ONE_MINUTE hold stays honest."
+     },
+     {
+      "item": "Eligibility: twelve authored controls",
+      "status": "NOT_PROVEN",
+      "note": "The only runner is runParserSelfTests via G0's parser-self-test (S:1810, S:1973), which is not exported. G0 is refused before the lock (S:267-272, S:1221). Hand simulation is not working proof, and the fixtures are not consent or policy observations."
+     },
+     {
+      "item": "Eligibility: runnable modes",
+      "status": "HOLD_HONEST",
+      "note": "Every mode is refused:\n- PREPARE: every window must contain G0 (S:255-259), and each window group is held (S:268-272).\n- G0: 5 prerequisite holds, 5 correctionHolds and the S:1225 cap.\n- G1-G7: holds plus command holds and calibration.\n- --resume: follows its group.\n- --prerequisite: unknown option (S:444-445).\n- Database: no route.\nEven with holds lifted, eligibleModes in the source disposition is required (S:403-414)."
+     },
+     {
+      "item": "Eligibility: G0 stage-count decision",
+      "status": "HOLD_HONEST",
+      "note": "Cap 3 against 4 and 8 is unresolved, and the rows are unchanged. A decision alone is insufficient because S:1225-1227 is unconditional and approvedOverride is unread; another source edit and review is needed."
+     },
+     {
+      "item": "Eligibility: native proofs, vehicles, fit",
+      "status": "HOLD_HONEST",
+      "note": "All 9 routes show runnableNow false and supportedCurrentArgv null. Missing: observer and Job handle, STARTUPINFOEX, the native memory family, standalone authority, G0 all-work fit and the G1-G7 fit profiles. That is 18 profiles and at least 72 acts before PREPARE/G0."
+     },
+     {
+      "item": "Eligibility: admission responder",
+      "status": "NOT_PROVEN",
+      "note": "Slices of 428 ms each need 'one authorized coordinator response' (M:810) and a separately authorized observation (S:1163). No responder implementation, authority or latency exists. The coordinator records no wake capability. See T3-03."
+     },
+     {
+      "item": "Eligibility: firstExecutableProposal null",
+      "status": "CLOSED",
+      "note": "Supported:\n- Doc67 and Doc65 are pending.\n- All modes are held.\n- The stage count is unresolved.\n- There are no vehicles, proofs or responder.\n- V-M1 and V-M2 are open.\n- There are no authority records.\n- The window expired 2026-10-06T21:43:37Z and there is no reservation."
+     },
+     {
+      "item": "Customer-request save track",
+      "status": "NOT_APPLICABLE",
+      "note": "Outside the two-file source. Packet L66 names S, the bindings, the census and §5C as separate dependencies, with no completion claim."
+     }
+    ],
+    "missed": [
+     {
+      "id": "V-M1",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The F-01 'qualified zero-launch restart' cannot be reached under the manifest's exact-fit walls, so a pre-launch refusal still strands the group, and for G0 the window.\n- Strictly impossible: every G1–G7 zero-launch refusal and every G0 refusal before the parser receipt.\n- G0 after the parser: needs a restart within about 5.4 s.\nThis regresses f98c416, where zero-receipt refusals got a fresh wall and a G1 first-child miss stayed resumable for about 90 s.",
+      "evidence": "The restart restores the original deadline (S:1722@cc584f9). S:1769 then needs deadline−now ≥ remaining ceilings + max(0, setup−s) + (admission−spent) + finalization (S:1119-1135).\n\nEvery wall is exact-fit (G0 51000+9000=60000 at M:2405 and M:2724-2730; G1 480000+120000 at M:2741 and M:5879-5885). So the restart passes only if T1−T0 ≤ completed in-process walls + spent. G1–G7 have no in-process rows, and T1−T0 > e1+spent, so it never passes.\n\nS:1907-1908 itself recodes the result as WINDOW_DEADLINE, yet restartEligible stays true and continuation reads RESTART_ONLY (S:1904, S:1951). At f98c416, S:1534-1546 gave a fresh wall.",
+      "fix": "Bounded two-file successor, with walls and caps unchanged. Either:\n(a) for zero-launch refusals, give the material-change restart a fresh group clock bounded by the aggregate/window deadline and the nine-invocation cap, rerunning or skipping only the in-process prefix; or\n(b) declare every zero-launch refusal terminal for the group/window in the manifest (M:785, M:2241), closure and packet L22, and write restartEligible:false.\nThe choice between (a) and (b) belongs to the owner and reviewer. Re-hash and re-review."
+     },
+     {
+      "id": "V-M2",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Uncoded pre-launch refusals now write restartEligible:false .nonconsuming.json records. The next fresh start treats them as a hard, permanent refusal. So a dependent invocation that arrives too early or races the R4 pointer, a mistaken --resume, or a transient pre-launch check permanently loses that group for the window, and with G0 or G1 every dependent group. f98c416 accepted any clean zero-receipt record for a material-change restart.",
+      "evidence": "check() errors carry no code (S:35-36), so failureCode is null and restartEligible is false (S:1904-1906). With groupConsumed false the result goes to <G>-<inv>.nonconsuming.json (S:1960). The next fresh start then fails hard: check(restartEligible===true) at S:1673-1679, and equal attemptIds at S:1683-1685.\n\nReachable sources:\n- assertDependencies (S:1768) when G0.group.json is absent, or when the committed R4 pointer is not yet visible (S:1413-1428)\n- a G0 --resume with a future deadline (S:279-282, S:1549)\n- the before inventory (S:1785)\n- executeOwned pre-launch checks (S:1288, S:1301-1304, S:1317, S:1320)\n\nf98c416 S:1534-1541 accepted these.",
+      "fix": "Hard-refuse only records that show cleanup uncertainty or consumption. For clean zero-receipt, zero-launch records, allow a material-change-bound fresh start as f98c416 did, or code these refusals non-consuming. Label a refused --resume of an unpaused group as resume-refused. Two files only; re-hash."
+     },
+     {
+      "id": "V-M3",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "restartEligible ignores terminalProgress and the deadline/handshake codes it has just written. A record can therefore say NONCONSUMING_UNSTARTED_MATERIAL_CHANGE_RESTART_ONLY when the source has already found that the time, the handshake budget or the window plan is exhausted.",
+      "evidence": "restartEligible at S:1904-1906 has no terminalProgress term. S:1907-1912 changes only failureCode, to WINDOW_DEADLINE or HANDSHAKE_BUDGET. The continuation status (S:1951) and reservationDisposition (S:1945) key on restartEligible.\n\nThe terminal plan refusal from assertInvocationBudget (S:1639-1641, terminalProgress true, code NONCONSUMING) also yields restartEligible:true. This is the analogue of Doc64's 'never write a pause that the resume check cannot pass'.",
+      "fix": "Set restartEligible false and the continuation to TERMINAL when terminalProgress is set or the deadline or handshake recode fires. Alternatively, fold this into the V-M1 option (b) disclosure. Re-hash."
+     }
+    ],
+    "verdictOpinion": "Adversarial verification of LENS T3 on cc584f971d1342acf05a9dd43f97916e38f8072c / tree a52060a6 / records 866ed38, a delta against Doc64 (f98c416). I used Git object reads and hand simulation only; nothing was run.\n\n**Records: upheld.** I recomputed:\n- supervisor a827a2c4… (168,351 B) and manifest dcea1a24… (1,490,787 B); raw equals LF for both\n- all 13 wrapper entries, the Doc64 md and lens hashes, and the directive 2cb114d3\n- 30/30 target pins and 14/14 HTTP snapshot files\n- 101/101 historical blobs and 6/6 frozen 935 verifier files\n- receipts: 7a is 64/66 here and 66/66 at its own source; 935 is 66/66\n\nThe diff scopes are exact, and the coordinator copies at f821619 are byte-identical. Pending 935aaf1 is not bound as accepted. The 2d2d958→7a62e64 database re-binding is explicit, goes to Doc63-accepted bytes and is not read at runtime.\n\n**Source correctness.** F-02, F-03 (coding), F-04 and F-05 to F-22 are closed or honest holds as authored. The lens has anchor drift: F-20 is at S:1225-1227 and its label at S:2121; the helper hash is not reproducible, though equality holds. I uphold T3-01 and T3-03 to T3-08.\n\nF-01 is only PARTIAL. The misleading pause is gone, but the restart that replaces it cannot be reached under the source's own exact-fit walls:\n- It never passes for G1–G7 zero-launch refusals or for G0 before the parser.\n- It needs a restart within about 5.4 s for G0 after the parser.\n\nSo \"a zero-launch miss strands G0 and the window\" persists and broadens. f98c416 gave zero-receipt refusals a fresh wall, and its G1 first-child miss stayed resumable for about 90 s. This is V-M1 (P1); T3-02 is upheld but raised to P1. V-M2 (P2) adds that uncoded pre-launch refusals now permanently disqualify the group. V-M3 (P3) is the restartEligible label.\n\nMy opinion is SOURCE REVISION REQUIRED: one bounded two-file successor, or an explicit owner decision to declare zero-launch refusals terminal. The disposition belongs to the original reviewer (Doc67, acknowledged, verdict PENDING).\n\n**Execution eligibility, kept separate: none.**\n- Every mode is refused before the lock.\n- The twelve controls hand-simulate to their declared outcomes but are present in source only. Their sole runner is G0's parser-self-test, and G0 is held.\n- Still missing: Samuel's stage-count decision (and a further source edit, since approvedOverride is unread), standalone authority and native proofs, fit evidence, an automated responder fast enough for 428 ms slices, and a fresh window and authority.\n- firstExecutableProposal=null is supported.\n\nThe window expired 2026-10-06T21:43:37Z. Nothing here approves execution, a window, a cap or a policy."
+   }
+  }
+ ],
+ "critic": {
+  "coverage": [
+   {
+    "item": "Identity, two-file delta, records-only 866ed38",
+    "coverage": "COVERED",
+    "closure": "VERIFIED",
+    "evidence": "cc584f9 has tree a52060a6 and parent a8285015. a828501..cc584f9 changes exactly the supervisor and the manifest (M, M). cc584f9..866ed38 changes 5 .xenios files, the README and the packet, and adds 7 doc64 evidence JSON files; it touches no source path. I recomputed sha256 over git-show bytes: supervisor a827a2c4...5a12 and manifest dcea1a24...bdbf8. Both equal doc64-supervisor-source-cc584f9.json:13,22@866ed38, which also records runnableModes [] and executionReservation null (:95-96). All three lenses agree."
+   },
+   {
+    "item": "F-01 zero-launch pause replaced by non-consuming refusal plus qualified restart",
+    "coverage": "COVERED",
+    "closure": "NOT CLOSED (P1, U-01 and U-02). F-01(a) is closed: no zero-launch pause is written. F-01(b) is open: the restart that replaces the pause cannot be reached.",
+    "evidence": "A pause requires G!=G0, a launched child and a consumed group (S:1900@cc584f9). A zero-launch refusal writes <G>-<inv>.nonconsuming.json (S:1960).\n- A restart restores I1's deadline (S:1722) but charges setup from I2's own start (S:1122).\n- All 8 walls are exact-fit (I parsed M@cc584f9; G0 is 51000+3000+3000+3000=60000).\n- So requireGroupTime (S:1127-1135, S:1769) passes only if t2-t0 <= C_done+H.\n- G0 before the parser (S:1769 with setup over 3000, S:1783): impossible. Every G1-G7 first-child miss: unreachable. G0 after the parser: within 5,428 ms.\nThe approval-bound policy literal (S:186) encodes this. T3's 'CLOSED' is overruled by its own verifier."
+   },
+   {
+    "item": "F-02 G0 later-handshake timeout",
+    "coverage": "COVERED",
+    "closure": "CLOSED IN AUTHORED SOURCE (G0 post-launch interruption declared terminal). NOT RUN.",
+    "evidence": "readPause refuses G0 (S:1549), the pause condition excludes G0 (S:1900), and the TERMINAL_ADMISSION_INTERRUPTION postLaunch policy is enforced statically (S:186-188). Cumulative wait <= handshakeWaitBudgetMs <= admissionAndPauseMs (S:183-185). Each slice is min(30000, floor(remaining/children)) (S:1149-1150). I recomputed the worst-case sequence: 428, 428, 428, 429, 429, 429, 429, totalling 3,000. Actual elapsed time is charged in the finally block (S:1206), so jitter can push the total past 3,000; that is immaterial under the terminal policy. No wall or cap changed. A miss at index 1 is U-01; any later miss ends G0 and the window. Doc64 allowed this option."
+   },
+   {
+    "item": "F-03 pre-launch freshness rechecks",
+    "coverage": "COVERED",
+    "closure": "CLOSED (coding). A first-child case inherits U-01.",
+    "evidence": "S:1322 and S:1326 call recheckChildAdmission, which codes NONCONSUMING_ADMISSION_REFUSAL with pauseAllowed true (S:1140-1143). requireCommandTime keeps pauseAllowed false for genuine time exhaustion (S:1112-1118). When nothing launched, the marker and the pre-launch folder are archived (S:1863-1887). For a later non-G0 child the refusal pauses if the fit holds (S:1900-1903). For a first child it becomes a zero-launch refusal whose restart cannot be reached (U-01). All lenses agree."
+   },
+   {
+    "item": "F-04 opening policy bytes outside the approval and comparison chain",
+    "coverage": "COVERED",
+    "closure": "CLOSED IN SOURCE. Prose residuals U-09 and U-10.",
+    "evidence": "- S:324-326 refuse executionPolicy and policyObservation in the verification and the window.\n- S:327-338 read a separate raw --policy-observation pinned to helper, PowerShell, environment, window, manifest and runId.\n- S:234 bounds only observedAt <= approved and approved-observed <= 300000.\n- S:313-315 and S:395 set no lower bound against approvedAt, so the reviewer comparison can precede the window by any interval.\n- The authority is checked at S:353-377. CC-05 is retained (S:222-233) and CR-07 is not reopened.\nStale approval-bound prose remains at M:184, M:196, M:684 and M:32754. maximumObservations===1 is declared (S:370) but not enforced."
+   },
+   {
+    "item": "F-05 refused resume ends a valid pause",
+    "coverage": "COVERED",
+    "closure": "CLOSED. Label residual U-04.",
+    "evidence": "Once readPause restores state (S:1615), a pre-attempt refusal writes .resume-refused.json and keeps the pause (S:1852-1857, S:1958). The used marker is written only after the attempt record (S:1780). Only terminalProgress refusals (time or invocation budget) end the group. readPause failures before S:1615 (S:1544, S:1580, S:1582) write an UNSTARTED nonconsuming record, but the .paused.json still blocks a fresh start and stays resumable."
+   },
+   {
+    "item": "F-06 digest-keyed continuation identity",
+    "coverage": "COVERED",
+    "closure": "CLOSED. NOT RUN.",
+    "evidence": "- The used marker is keyed on the pause digest (S:1581-1582), and attempt records are scanned for that parentPause digest (S:1583-1586).\n- Canonical names are checked with realpath (S:1476-1482, S:1544).\n- Receipts carry attemptId, invocationId and attemptRecord, and are re-verified (S:1493-1527).\n- The G7 artifact record is raw-bound and restored (S:1528-1539).\nAll three lenses and verifiers agree."
+   },
+   {
+    "item": "F-07 resume fit check reserves inventories and handshake",
+    "coverage": "COVERED",
+    "closure": "CLOSED AS AUTHORED, WITH P3 LIMITS (U-05, U-07)",
+    "evidence": "requireGroupTime reserves the unfinished ceilings, remaining setup, admission minus spent, finalization, and at least 1 ms of handshake per remaining child (S:1119-1139). It runs before the attempt record (S:1769). Pause publication uses the future-invocation reserve (S:1899-1903). Full inventories are assumed to fit inside setup and finalization (proposed, not measured).\nNot reserved: pinned passes once setup is spent, the gap between pause and resume (U-07), and the resume's invocation charge (U-05).\nThe lenses split (T3 CLOSED, T1 verifier PARTIAL). I resolve it as met: Doc64 asked for inventories and handshake, and both are reserved as authored arithmetic."
+   },
+   {
+    "item": "F-08 terminal-group stop rule",
+    "coverage": "COVERED",
+    "closure": "CLOSED BY DISCLOSURE. Label residual U-04.",
+    "evidence": "terminalGroupRule is disclosed at M:784 and is approval-bound through bounds (S:158). The refusal is now coded non-consuming with terminalProgress (S:1639-1642). Residual: that refusal is still written with restartEligible true and relabelled WINDOW_DEADLINE (S:1904-1909)."
+   },
+   {
+    "item": "F-09 fresh start honours all prior evidence",
+    "coverage": "COVERED",
+    "closure": "CLOSED. Its new hard check is what makes U-02 permanent.",
+    "evidence": "A fresh start refuses:\n- an orphan .pending file (S:1658-1661);\n- progress without a refusal record (S:1662-1665);\n- an unbound attempt record (S:1700-1707);\n- an unbound in-process receipt (S:1715-1717);\n- a folder that is not a .no-launch archive (S:1718-1721).\nreceipts/ is created only by PREPARE (S:979-980) and never recreated (S:1274-1278). Total deletion is disclosed. Side effect: the hard restartEligible===true check (S:1676) turns any uncoded first refusal into permanent stranding."
+   },
+   {
+    "item": "F-10 approval-bound prose re-spaced",
+    "coverage": "COVERED",
+    "closure": "CLOSED. Count residual U-14.",
+    "evidence": "T2 and T3, each with a verifier, checked independently:\n- 48 group prose leaves and 2 preparation leaves were rewritten;\n- glued-token scans find none in approval-bound bytes at cc584f9;\n- 108 of 109 recorded old values equal a828501, and 109 of 109 new values equal cc584f9;\n- no corrected key is read at runtime (assertFailureCause reads other keys, S:485-496)."
+   },
+   {
+    "item": "F-11 G1 note",
+    "coverage": "COVERED",
+    "closure": "CLOSED",
+    "evidence": "doc52Residuals.G1 (M:33017@cc584f9) names Node 20 TAP and cause, Vitest RED, pre-run fit, bootstrap and handle. It states the 512 MiB denial applies only to G0. NODE20_TAP_CAUSE_CALIBRATION_PREREQUISITE is listed. Both lenses agree."
+   },
+   {
+    "item": "F-12 fit-hold lift criteria",
+    "coverage": "COVERED",
+    "closure": "CORRECTED AS A PROPOSAL; THE HOLD STAYS HELD",
+    "evidence": "doc64-prerequisite-resolution@866ed38 R:126-128 and R:165-167 propose a pre-run lift with noCircularity: no G0, G6 or RED receipt as input, and no mid-window rehash. It awaits original disposition, and no vehicle exists. T2 said CLOSED and T3 said HOLD_HONEST; both describe the same state."
+   },
+   {
+    "item": "F-13 standalone prerequisite authority",
+    "coverage": "COVERED",
+    "closure": "HOLD HONEST",
+    "evidence": "A standalone scope is specified (one actionId, no group list, its own limits), but it is NOT_IMPLEMENTED with actualAuthority NONE (R:18-24@866ed38). The TAP --prerequisite argv was removed, and --prerequisite is still an unknown option (S:444-445). Digest 1e895521 is bound in the manifest, but its record exists only in 866ed38 (U-12)."
+   },
+   {
+    "item": "F-14 native memory fixture family",
+    "coverage": "COVERED",
+    "closure": "HOLD HONEST",
+    "evidence": "The MEMORY_CAP route names the native VirtualAlloc family as outside the Node-only path. Its parameters are UNFROZEN and no fixture is authored. MEMORY_CAP_REFUSAL_DETECTION stays HELD for G0 (R:198-199@866ed38)."
+   },
+   {
+    "item": "F-15 single-window order",
+    "coverage": "COVERED",
+    "closure": "CLOSED",
+    "evidence": "orderedGates is reduced to one PREPARE+G0+dependent window, with R4 inside the same runId (M:33158-33183; R:277-283@866ed38). No separately authorized G1-G7 sequence remains. assertDependencies binds G0 acceptance to the same window and run (S:1412-1433)."
+   },
+   {
+    "item": "F-16 G0 non-command cost itemised",
+    "coverage": "COVERED",
+    "closure": "CLOSED (itemised, NOT MEASURED). The responder gap is carried as U-03 (eligibility).",
+    "evidence": "M:2247-2262 itemises 2 full passes, 16 pinned passes and 7 handshakes sharing 3,000 ms. I recounted against S:1785, S:1790 (x9), S:1843 (x7) and S:1890. Status is NOT_MEASURED, and G0_ONE_MINUTE_ALL_WORK stays HELD. I resolve T3's PARTIAL to CLOSED: Doc64 asked for itemisation, which is done. The unnamed responder is an eligibility gap, not a source defect."
+   },
+   {
+    "item": "F-17 three-process conflict routed to Samuel",
+    "coverage": "COVERED",
+    "closure": "HOLD HONEST (Samuel's decision only)",
+    "evidence": "The route records the real child tree at 4, Vitest at 8 and the cap at 3. It claims no achievable same-file rewrite, and sourceChangeNow is none (R:37, R:44-45@866ed38; M:32785-32790). orderedGates step 1 is Samuel's stage-count or scope decision."
+   },
+   {
+    "item": "F-18 approval load totalled",
+    "coverage": "COVERED",
+    "closure": "CLOSED",
+    "evidence": "Recomputed: 1+4+2+1+1+1+1 = 11 core profiles, plus 7 G1-G7 fit profiles, gives 18. Each needs an owner decision, a coordinator comparison, a reviewer comparison and a receipt disposition, so at least 72 acts. It is labelled an unapproved lower bound, and PREPARE, G0 and qualification are excluded (M:33191-33236). T2 and T3 agree."
+   },
+   {
+    "item": "F-19 Process scope must be Undefined",
+    "coverage": "COVERED",
+    "closure": "CLOSED IN SOURCE",
+    "evidence": "S:227-228 require effectivePolicies[2] (Process) to be Undefined, consistent with the helper's environment allowlist. The negative fixture is at S:2060-2062. Source only; no policy was observed."
+   },
+   {
+    "item": "F-20 three-process cap asserted on G0 rows",
+    "coverage": "COVERED",
+    "closure": "CLOSED. Disclosure residual U-15.",
+    "evidence": "S:1225-1227 refuse G0 unless every row's maxOwnedProcesses is exactly 3. The rows are unchanged at 4 (real-child-tree) and 8 (vitest-baseline), so G0 always refuses. The label is renamed proposedTotalOwnedProcesses (S:2121). explicitCommandCap.approvedOverride (M:2242-2246) is never read. T3's anchors (S:1215-1217 and S:2110) are wrong; the correct lines are S:1225-1227 and S:2121."
+   },
+   {
+    "item": "F-21 decision-token and policy fixtures",
+    "coverage": "COVERED",
+    "closure": "CLOSED IN SOURCE: 12 authored controls, 0 working. Gaps in U-11.",
+    "evidence": "I counted 12 at S:2030-2064:\n- decision tokens: 2 positive and 4 negative (runId suffix, range, duplicate group, unrequired action=PREPARE);\n- policy: 1 positive and 5 negative (subset, all-Undefined, MachinePolicy Restricted, Process RemoteSigned, stale by 300001 ms).\nHand-simulated against S:206-238 with the exact-message refuses() (S:2024-2027), each reaches its declared outcome. Their only runner is G0's in-process parser-self-test, and G0 is refused."
+   },
+   {
+    "item": "F-22 receipt naming and counts",
+    "coverage": "COVERED",
+    "closure": "CLOSED",
+    "evidence": "Packet P:54-55@866ed38 and M:19751 name both receipts:\n- accepted 7a receipt 61f478ed: 64/66 at cc584f9 (mismatches rollback.md and currentness_local.mjs), 66/66 at its own source;\n- pending 935 receipt 24430f71: 66/66.\ndoc64-supervisor-source:61,82@866ed38 carry the same digests. T2 and T3 recomputed these."
+   },
+   {
+    "item": "New defects introduced by cc584f9",
+    "coverage": "COVERED",
+    "closure": "Two P1 regressions (U-01, U-02) and new P3 items (U-04 to U-08)",
+    "evidence": "U-01 and U-02 regress f98c416. There, a zero-receipt refusal of any code allowed a fresh start on a fresh deadline (S:1534-1546@f98c416). cc584f9 instead pins the original deadline (S:1722) and hard-requires restartEligible===true (S:1676).\nNew P3 items:\n- restart and cause labels (S:1904-1912, S:1945, S:1951);\n- the pause ignores the nine-invocation budget (S:1900-1903 against S:1645-1647);\n- the final child's slice takes the whole remainder (S:1149-1150);\n- zero-receipt clocks are unanchored (S:1708-1711).\nCC-03 itself is preserved (S:1863, S:1965). T1's CC-03 attribution is corrected: the defect contradicts M:775 and M:756."
+   },
+   {
+    "item": "Records and invariance",
+    "coverage": "COVERED",
+    "closure": "PASS, with P3 record residuals (U-12, U-13, U-14, U-16)",
+    "evidence": "T3 and its verifier recomputed:\n- 13/13 wrapper entries; Doc64 md 77372d54 and lens 2f95b7fa;\n- 30/30 target pins at f581b6bd and 14/14 HTTP snapshots;\n- 101/101 historical blobs and 6/6 frozen 935 verifier files.\nSince f98c416, no wall, ceiling, childWallMs, maxOwnedProcesses, maximumWaitMs, attempt cap or aggregate changed. One continuity row changed per file. The helper sha256 differs between T3's lens and its verifier (b2aaaa76 vs 4e069ed9). No record states it, and byte equality across commits holds, so it is immaterial."
+   },
+   {
+    "item": "Source correctness kept separate from execution eligibility",
+    "coverage": "COVERED",
+    "closure": "KEPT SEPARATE",
+    "evidence": "All three lenses and verifiers report source correctness and eligibility separately. The responder gap (U-03) is classified as eligibility only. None treats the hand-simulated fixtures as working controls: all report 12 authored, 0 working, NOT RUN. The window expired 2026-10-06T21:43:37Z."
+   },
+   {
+    "item": "G0 stage-count hold",
+    "coverage": "COVERED",
+    "closure": "HOLD HONEST",
+    "evidence": "G0_THREE_PROCESS_CONTRACT is HELD (M:32780). Rows stay at real-child-tree 4 (M:2594) and vitest-baseline 8 (M:2631). The exact-3 assertion (S:1225-1227) and the holds (S:1209-1224) run for every window group in loadAuthority (S:267-272). approvedOverride is null and unread. No cap was raised and no process omitted. Any fix for U-01 must leave this untouched."
+   },
+   {
+    "item": "Currentness pin (7a62e64 accepted, 935aaf1 pending)",
+    "coverage": "COVERED",
+    "closure": "CLOSED: no binding moved to 935aaf1",
+    "evidence": "M:19736-19743@cc584f9 bind the accepted 7a62e64 (receipt 61f478ed, status DOC63_SOURCE_ACCEPT_WITH_LIMITS_NOT_EXECUTED_DB_CATEGORY_HELD). 935aaf1 appears only as pendingCurrentnessVerifier, PENDING_EXACT_ORIGINAL_DELTA_ACCEPTANCE_NOT_EXECUTED (M:19770-19786), and M:19750 says never mix receipt generations. The supervisor references neither (grep count 0). The re-binding from 2d2d958 to 7a62e64 is explicit and points to Doc63-accepted bytes. Verifier blobs are unchanged from 935aaf1 to 866ed38."
+   },
+   {
+    "item": "Review queue state (queued / acknowledged / reviewed)",
+    "coverage": "COVERED",
+    "closure": "QUEUED and ACKNOWLEDGED; REVIEWED: PENDING",
+    "evidence": "COORDINATION_STATE.json:700-717@f821619 (coordinator) records DOC64-SUPERVISOR-REPAIR-DELTA-20261009 r1 as doc 67:\n- target cc584f9 / a52060a6 / 866ed38 against f98c416;\n- queued by freeze commit 49c389b;\n- acknowledged at ab1d43f, status ACKNOWLEDGED_IN_REVIEW, verdict PENDING.\nLine :720 records no inbound or wake capability. 935aaf1 is separately pending as Doc65. This lens output is review input, not the committed verdict."
+   },
+   {
+    "item": "Customer-request save track (snapshot S, five operational bindings, census, Section 5C)",
+    "coverage": "PARTIAL",
+    "closure": "SEPARATE TRACK; NOT EVIDENCED BY THIS SOURCE",
+    "evidence": "This track is outside the two-file subject. Packet L66@866ed38 and ACTIVE_TASKS blockedOn name snapshot S, the operational input bindings, the populated census and §5C as separate dependencies, and claim none complete. This review neither advances nor assesses them; their status belongs to the coordinator checkpoint."
+   }
+  ],
+  "ownChecks": [
+   {
+    "question": "Notation and method",
+    "answer": "S: is docs/health-launch/quick-order-20261005/qualification-supervisor.mjs. M: is its evidence/qualification-manifest-20261008.json. R: is doc64-prerequisite-resolution. P: is the Doc64 packet. Lines are @cc584f9 unless stated.\nI used only git cat-file, show, diff, log and grep with --no-optional-locks against both worktrees, plus sha256sum and a stdin-only node JSON parse of manifest bytes. I wrote nothing, executed no subject code, ran no PowerShell and contacted no session. I read Doc64 in full."
+   },
+   {
+    "question": "Do the subject hashes and diff scope recompute?",
+    "answer": "Yes.\n- sha256 over git-show bytes: supervisor a827a2c42b32...5a12, manifest dcea1a240199...bdbf8, both equal to doc64-supervisor-source-cc584f9.json@866ed38.\n- a828501..cc584f9 changes exactly 2 files.\n- cc584f9..866ed38 is records-only.\n- cc584f9's parent is a8285015 and its tree is a52060a6."
+   },
+   {
+    "question": "Are all group budgets exact-fit (ceilings plus setup, admission and finalization equal the wall)?",
+    "answer": "Yes, for all 8 groups, parsed from M@cc584f9:\n- G0: 51000+3000+3000+3000 = 60000\n- G1, G2, G5, G6: 480000+30000+60000+30000 = 600000\n- G3, G4: 720000+45000+90000+45000 = 900000\n- G7: 1200000+75000+150000+75000 = 1500000\nhandshakeWaitBudgetMs equals admissionAndPauseMs in every group. maximumWaitMs is 30000."
+   },
+   {
+    "question": "Is the zero-launch restart arithmetically reachable?",
+    "answer": "No, except G0 after the parser within about 5.4 s.\n- The restart restores I1's deadline = t0+W (S:1722).\n- setupRemaining uses I2's own authorityStartedAt (S:1122), and admissionRemaining = A-H (S:1123).\n- With exact-fit W, requireGroupTime (S:1127-1135) reduces to t2-t0 <= C_done+H (for s2 <= S; worse otherwise).\n- I2 reads an admission whose materialChange names R1's digest (S:415, S:1730). I1 holds the run lock until S:1965 (S:1233, S:1282).\nSo for G1-G7 the restart needs I1's setup plus its inventories to be shorter than I2's S:243-to-S:415 control reads: unreachable in practice. For G0 index 0, t2 <= t0 is required: strictly impossible. S:186 makes the original deadline the declared policy."
+   },
+   {
+    "question": "Does an uncoded pre-attempt refusal permanently strand a group?",
+    "answer": "Yes.\n- check() throws uncoded errors (S:36-37), and fs errors carry ENOENT and similar codes.\n- On a first fresh start, assertFreshGroupStart returns [] (S:1666), so restartProgressValidated is never set.\n- S:1405 or S:1416 then refuses (G1 before G0.group.json or the R4 pointer). restartEligible is false (S:1904-1906), and <G>-<inv>.nonconsuming.json is written (S:1960).\n- Every later fresh start fails S:1673-1679 and writes another false record. Files are writeNew-only, so nothing clears it within the run.\nf98c416 accepted any clean zero-receipt record with a fresh deadline (S:1534-1546@f98c416)."
+   },
+   {
+    "question": "Severity for U-02, given T1 P1 and the T2/T3 verifiers at P2",
+    "answer": "Consolidated at P1. Doc64's F-01 correction requires that a refusal before any launch be recorded as non-consuming 'so a material-change restart can follow'. U-02 breaks that requirement for every uncoded zero-launch refusal, with the same consequence Doc64 rated P1 (group and window lost with nothing launched). It is reachable in the normal single-window path: G1 invoked before the R4 pointer or the reviewer commit is visible. It also contradicts approval-bound M:775. Doc64 F-03 (P2) was a narrower timing case. The disposition is the same either way."
+   },
+   {
+    "question": "Are the G0 handshake slices and terminal behaviour as reported?",
+    "answer": "Yes.\n- With every wait fully used, floor((3000-spent)/children) gives 428, 428, 428, 429, 429, 429, 429, totalling 3000.\n- Actual elapsed time is charged in finally (S:1206), so overshoot is possible.\n- G0 never pauses (S:1900) and never resumes (S:1549). A consumed G0 writes G0.group.json (S:1960).\n- A miss at index 1 is zero-launch and falls under U-01."
+   },
+   {
+    "question": "Is F-04 closed, and is the prose accurate?",
+    "answer": "Closed in source: S:324-326 exclude observation bytes from the verification and window, S:234 bounds only against approvedAt, and S:313-315 and S:395 have no lower bound.\nThe prose is not accurate:\n- M:184 still says scopes must match the coordinator verification and that freshness is bounded at verification.\n- M:196 claims the authority binds the raw observation hash, but S:358-376 check no observation digest.\n- M:32754 claims the bytes are retained, but only the digest is kept (S:425).\n- maximumObservations===1 is only a field check (S:370)."
+   },
+   {
+    "question": "Are the twelve controls present, correct, and do they work?",
+    "answer": "Present and correct by hand simulation: 2+4 decision fixtures and 1+5 policy fixtures (S:2030-2064). refuses() compares exact messages (S:2024-2027), and each declared message matches the first failing check at S:206-238.\nThey are not working: their only runner is G0's parser-self-test, and G0 is refused at loadAuthority (S:267-272) and by S:1225-1227. Authored 12, working 0."
+   },
+   {
+    "question": "Did any qualification binding move to unaccepted 935aaf1 bytes?",
+    "answer": "No. M:19736-19743 bind 7a62e64 with receipt 61f478ed under DOC63 accept-with-limits. 935aaf1 appears only under pendingCurrentnessVerifier (M:19770-19786). The supervisor has zero references to currentness, 7a62e64 or 935aaf1."
+   },
+   {
+    "question": "Lens disagreements resolved",
+    "answer": "- F-01: T3 said CLOSED; T1, T2 and T3's verifier said NOT CLOSED or PARTIAL. Resolved NOT CLOSED, P1.\n- F-07: T3 CLOSED vs T1's verifier PARTIAL. Resolved: closed as authored, with P3 limits.\n- F-16: T3 PARTIAL vs its verifier CLOSED. Resolved CLOSED; the responder gap is carried as eligibility item U-03.\n- CC-03: T1 said NOT_CLOSED. Corrected: CC-03's scope (marker archival S:1863, lock release S:1965) is preserved, and the defect contradicts M:775 and M:756.\n- F-20 anchors: corrected to S:1225-1227 and S:2121.\n- Helper hash: the two values differ, no record states either, and equality holds, so it is immaterial."
+   },
+   {
+    "question": "Doc67 review queue state",
+    "answer": "COORDINATION_STATE.json:700-717@f821619 records DOC64-SUPERVISOR-REPAIR-DELTA-20261009 r1 (doc 67) for cc584f9 / a52060a6 / 866ed38 against f98c416. It was queued at freeze 49c389b, acknowledged at ab1d43f, and its verdict is PENDING. 935aaf1 is separately pending as Doc65. No duplicate review is implied by this lens."
+   }
+  ],
+  "upheld": [
+   {
+    "id": "U-01",
+    "severity": "P1",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "F-01 is not closed. The zero-launch 'qualified restart' is bound to the refused invocation's original deadline (S:1722@cc584f9; declared in the policy S:186). Every group is exact-fit, so requireGroupTime (S:1769, S:1119-1135) passes only if t2-t0 <= completed in-process ceilings + spent handshake.\n- G0 refused before the parser receipt (setup over 3000 at S:1769, admission refusal at S:1783): strictly impossible.\n- Every G1-G7 first-child miss: unreachable, because I2 reads an admission naming R1 (S:415, S:1730) and the lock is held until S:1965.\n- G0 after the parser: within 5.4 s.\nRecords still say restartEligible:true. G0 and the window are still lost with nothing launched, and f98c416's fresh-wall restart (S:1546@f98c416) is lost. Sources: T1-01, T2-1, M-1, V-M1, T3-02.",
+    "fix": "Make one bounded successor on the same two files.\n- Do not bind the group clock before the first child launch: a material-change restart after a clean zero-launch refusal gets a fresh, unchanged group wall, min(t2+wall, aggregate, window).\n- Keep the skipped in-process prefix, the nine-invocation cap and the aggregate absolute, and update the continuationPolicy.zeroLaunch literal.\n- Set restartEligible only when the restart can pass. Re-check against G0_ONE_MINUTE_ALL_WORK and re-hash. Raise no wall or cap.\nDeclaring zero-launch refusals terminal does not satisfy Doc64 F-01 and would need Samuel's explicit decision."
+   },
+   {
+    "id": "U-02",
+    "severity": "P1",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "Regression: an uncoded refusal on a group's first fresh start permanently strands that group, with nothing launched (and, before S:1772, no attempt charged).\n- check() is uncoded (S:36-37), so restartEligible is false (S:1904-1906) and a .nonconsuming.json is written (S:1960).\n- Every later fresh start fails the hard restartEligible===true check (S:1676) and writes another such record.\nReachable in the normal path:\n- G1 invoked before G0.group.json, the R4 pointer or the reviewer commit is visible (S:1405, S:1416-1418);\n- a mistaken G0 --resume (S:1549);\n- transient read errors and post-attempt pre-launch checks.\nThis contradicts M:775 and M:756; f98c416 allowed these restarts (S:1534-1546@f98c416). It is P1 because it fails Doc64's F-01 requirement. CC-03 is preserved. Sources: T1-02, T2-2, V-M2.",
+    "fix": "In the same successor, let every clean refusal with no launch, no consumption and proven cleanup be restarted under the material-change binding, whatever its code, as f98c416 did. Reserve the hard refusal for cleanup uncertainty, consumption or fixture failure. Write a refused --resume of an unpaused group as a resume refusal, not a blocking record. Disclose this in bounds.accountingProposal and re-hash."
+   },
+   {
+    "id": "U-03",
+    "severity": "P2",
+    "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+    "claim": "Execution-eligibility gap, not a source defect. G0's 3000 ms budget gives each of seven child handshakes a worst-case slice of 428-429 ms (S:1146-1150; M:816). Each slice needs a separately authorized fresh RAM, disk and heavy-job observation from 'one authorized coordinator response' (S:1163; M:810). No responder, authority or measured latency is named, and none is in the 18-profile tally (M:33191-33236). The coordinator records no wake capability (COORDINATION_STATE.json:720@f821619). A first-child miss strands G0 (U-01); a later miss ends G0 and the window (S:1900, S:1960). Sources: T1-03, T3-03, M-4.",
+    "fix": "Before any execution proposal, name the responder, its authority scope and its measured latency against 428 ms as an explicit prerequisite. Add it to the tally and to G0_ONE_MINUTE_ALL_WORK, or record that G0 cannot execute under this allowance. Do not raise the G0 wall, admissionAndPauseMs, maximumWaitMs or any cap."
+   },
+   {
+    "id": "U-04",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "Refusal records misstate restartability and cause.\n- restartEligible ignores terminalProgress and the deadline and handshake recodes (S:1904-1912). Continuation stays MATERIAL_CHANGE_RESTART_ONLY (S:1951) and the disposition ORIGINAL_DEADLINE_PRESERVED (S:1945) even when time, budget or the plan is exhausted.\n- Invocation-budget and terminal-group refusals (S:1639-1647) are relabelled WINDOW_DEADLINE.\n- readPause failures before S:1615 write UNSTARTED_REFUSED / OWNED_CHILD_ABSENCE for a consumed group.\nSources: T1-04, T2-4, V-M3, T3-06.",
+    "fix": "Compute restartEligible with the restart's own fit test, and set it false under terminalProgress. Keep the original cause code. Label pre-restore resume failures as resume refusals of a consumed group. Re-hash."
+   },
+   {
+    "id": "U-05",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "The pause predicate (S:1900-1903) ignores the nine-invocation budget, which the resume enforces with terminalProgress (S:1770, S:1645-1647). After one pause and resume, a later pause (for example G7 after build) is published as resumable but can never resume. M:782 discloses only the global arithmetic. Source: M-01.",
+    "fix": "Add spent + 1 + unfinished <= cap to the pause and restartEligible predicates, or write a truthful cap-exhausted terminal record. Change no cap."
+   },
+   {
+    "id": "U-06",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "When one child remains and the remaining budget is at most 30000, that child's slice is the whole remainder (S:1149-1150). A timeout then leaves zero capacity (S:1136-1139), so the consumed group writes a terminal result (S:1960) instead of pausing. This is reachable in G1, G4 and G7, and undisclosed at M:814, M:816 and closure F-02. Source: M-02.",
+    "fix": "Reserve retry capacity (for example, slice over r+1) or disclose the terminal outcome. Change no wall or cap."
+   },
+   {
+    "id": "U-07",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+    "claim": "No declared allowance covers the gap between a pause and its resume, or the pinned inventory passes once setup is spent. handshakeWaitBudgetMs equals admissionAndPauseMs in all groups, so a resume (S:1769) passes only within the completed commands' under-run left after the pause test (S:1903). The pause records no latest resume start. Source: M-03 (an F-07 limit).",
+    "fix": "Disclose per group that resumability depends on command under-run, and record latestResumeStartAt in the pause, or split a declared pause allowance inside the unchanged overhead. Change no wall or cap."
+   },
+   {
+    "id": "U-08",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "A single forged, canonically named zero-receipt refusal with restartEligible true is accepted with unanchored clocks (S:1667-1711). approvedAt <= startedAt <= finishedAt <= now is not required, and originalAttemptRecord is optional (S:1689). A future startedAt therefore restores deadline = aggregate (S:1722), extending G0's 60 s wall without touching pinned bytes. Trusted-local forgery is disclaimed, hence P3. Source: M-04.",
+    "fix": "Require approvedAt <= startedAt <= finishedAt <= now and a bound raw attempt or first-invocation record for every restartEligible record, or disclose this cheap case. Re-hash."
+   },
+   {
+    "id": "U-09",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+    "claim": "Approval-bound prose contradicts the F-04 source:\n- M:184 says scopes must match the verification and freshness is bounded at verification (S:324-326 and S:234 say otherwise).\n- M:196 says the authority binds the raw observation hash; S:358-376 check none.\n- M:684 says the comparison binds the one-shot authority; only the contract is bound (S:159, S:394).\n- M:32754 says the bytes are retained; only the digest is (S:425).\n- Packet P:26 overstates the authority scope.\nSources: T2-3, M-2.",
+    "fix": "Rewrite these to the opening-only rule and the actual authority scope (action, manifest, window, run and time bounds; digest retained). Re-hash."
+   },
+   {
+    "id": "U-10",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "The 'one-shot' policy observation is declared (maximumObservations===1, S:370) but not enforced. No observation is consumed or marked used, and no committed record fixes its digest before PREPARE; at f98c416, the R2-compared verification embedded it. This is undisclosed in M:32749. Source: M-3.",
+    "fix": "Disclose that one-shot use is unenforced and the bytes are fixed only from PREPARE, or require a coordinator-committed observation digest before approvedAt. Re-hash."
+   },
+   {
+    "id": "U-11",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "The twelve controls leave four checks untested:\n- row order (the subset case is caught by length at S:224);\n- a declared effectivePolicy that differs from the computed row (S:231);\n- observedAt after approvedAt (S:234);\n- a missing or duplicated required label (S:210).\nAll twelve run only inside the held G0. Source: T2-5.",
+    "fix": "Add those four negative cases with exact messages. Re-hash."
+   },
+   {
+    "id": "U-12",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+    "claim": "The approval-bound manifest binds digest 1e895521... (M:2228, M:2238, M:32798-32999, M:33154; it enters approvalScope via S:159) to a record absent from tree a52060a6, present only in 866ed38. proseCorrectionsRecord (M:33255) has no digest. There is no runtime effect. Sources: T2-6, T3-07.",
+    "fix": "State that the review target is cc584f9 plus record bytes 1e895521 from 866ed38, and add the prose-corrections digest."
+   },
+   {
+    "id": "U-13",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/evidence/doc64-supervisor-closure-20261008.json",
+    "claim": "All 15 CC sourceAnchors are f98c416 line numbers and are not labelled historical (for example readPause 1421, now 1540; runGroup 1544, now 1737). The 14 top-level anchors are current. Sources: M-05, T3-01.",
+    "fix": "Re-anchor to cc584f9 or label as f98c416 anchors, and re-hash the records wrapper."
+   },
+   {
+    "id": "U-14",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/evidence/doc64-prose-corrections-20261008.json",
+    "claim": "The record claims 109 base corrections, but prerequisiteVehicles.authorizationLoad.qualificationExcluded did not exist at a828501 (108/109 old values match). Its limitation says 'no manifest mutation' beside kind ...APPLIED. Packet L30 and closure F-10 inherit the count. Source: T3-04.",
+    "fix": "Mark that entry as an in-delta self-correction (108+1) and reword the limitation."
+   },
+   {
+    "id": "U-15",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+    "claim": "The F-20 assertion (S:1225-1227) is unconditional, and explicitCommandCap.approvedOverride (M:2242-2246) is never read. Samuel's stage-count decision alone therefore cannot make G0 eligible; a further reviewed source edit is required. This is undisclosed in the F-17 and F-20 limits. Source: T3-05.",
+    "fix": "Disclose that a decision-bound count needs a further reviewed source edit, or remove the unread slot. Raise no cap and omit no process."
+   },
+   {
+    "id": "U-16",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/README.md",
+    "claim": "README L5@866ed38 reads as if the successor authors none of its corrections ('authors no zero-launch pause, immutable-prefix qualified restart ...'). Source: T3-08.",
+    "fix": "Reword so that 'no' attaches only to the zero-launch pause."
+   }
+  ],
+  "sourceDisposition": "SOURCE REVISION REQUIRED. This is my opinion only: the committed verdict belongs to the original reviewer as Doc67, which is acknowledged at ab1d43f with verdict PENDING. Records pass, and there is no P0.\n\nClosed in authored source (NOT RUN):\n- F-01(a): no zero-launch pause is written.\n- F-02: G0 post-launch interruption is declared terminal; worst-case slices 428-429 ms, 3,000 ms total.\n- F-03, F-04, F-05, F-06, F-08 (by disclosure), F-09, F-10, F-11, F-15, F-16, F-18, F-19, F-20, F-21 (12 authored, 0 working) and F-22.\n- F-07 is closed with P3 limits.\n- F-12, F-13, F-14 and F-17 remain honest holds or proposals.\n\nBlocking:\n- U-01: F-01 is not closed. The restart is pinned to I1's deadline under exact-fit walls, so it can never pass for G1-G7 or for G0 before the parser, and must start within about 5.4 s for G0 after the parser.\n- U-02: a P1 regression of the same F-01 requirement. Any uncoded first refusal strands its group permanently.\n\nCorrection, only if Doc67 adopts it: one bounded successor on the same two files that fixes U-01 and U-02 together, folding in U-04 to U-16 where touched. It must not change any wall, ceiling, cap, process row, maximumWaitMs, attempt cap or aggregate.\n\nThe G0 stage-count decision stays separate and stays Samuel's. Bindings stay on the accepted 7a62e64; 935aaf1 remains pending as Doc65 and must not be inferred from this correction. Another supervisor commit should follow only after the original reviewer identifies this correction.",
+  "executionEligibility": "NONE. There are no eligible modes, and nothing here grants execution, a window, a reservation, a cap change or any policy. LOCAL ONLY / NOT RUN. The window expired 2026-10-06T21:43:37Z.\n\nEvery mode is refused before the lock:\n- PREPARE and G0-G7, through window-group holds (S:267-272);\n- G0, also through the exact-3 row assertion (S:1225-1227);\n- --resume, through the same group holds;\n- --prerequisite, which is an unknown option;\n- the database category, which has no route.\n\nAuthored controls: 12. Working controls: 0. Even with every hold lifted, G0 would need:\n- setup within 3,000 ms (S:1769 passes only at equality);\n- seven handshakes of about 428 ms each from a responder nobody has named (U-03);\n- 2 full and 16 pinned inventories inside unmeasured slack.\n\nThe two blockers stay separate:\n\n1. **Running qualification** still needs:\n   - Doc67 acceptance of a corrected supervisor;\n   - Doc65 disposition of 935aaf1;\n   - Samuel's G0 stage-count or scope decision, plus a further reviewed source edit, because approvedOverride is unread;\n   - standalone native-proof source (observer and Job handle, STARTUPINFOEX allowlist, memory-fixture family) and the standalone prerequisite-authority vehicle;\n   - pre-run fit and calibration evidence: 18 profiles, at least 72 acts;\n   - a responder proven against the 428 ms slices;\n   - a fresh window with actual decision, verification, R1/R2, policy observation and authority, reservation and admission;\n   - fresh execution authority.\n\n2. **Saving customer requests** still needs the five operational input bindings, an accepted populated census, the applicable §5C implementation authority and a completed durable transaction. These are outside this source and not evidenced here."
+ }
+}

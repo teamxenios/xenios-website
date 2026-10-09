@@ -86,6 +86,6 @@ Samuel's message reached this session; the board's three ready items are acknowl
 | --- | --- | --- |
 | `DOC63-VERIFIER-FORMAT-DELTA-20261008` r1 | source `935aaf1a679aa67d013133521dd7110f66db74a3` (tree `3a7b5d11…`), records `a828501` | COMPLETE: doc 65, SOURCE ACCEPT WITH LIMITS; V63-1, V63-2 and V63-4 closed in source; definition unchanged; execution eligibility none |
 | `DOC62-RECORDS-FOLLOWUP-20261008` r1 | integrator records `3df14c2`, subscription records `c6893f6`, composed source `cad2c4d` unchanged | COMPLETE: doc 66, RECORDS ACCEPT WITH LIMITS; D62-4 to D62-8 closed; D62-3 narrowing confirmed but the proposal must be redrafted before applying |
-| `DOC64-SUPERVISOR-REPAIR-DELTA-20261009` r1 | source `cc584f971d1342acf05a9dd43f97916e38f8072c` (tree `a52060a6…`), records `866ed38` | ACKNOWLEDGED and IN REVIEW against doc 64; disposition will be doc 67, separating source correctness from execution eligibility |
+| `DOC64-SUPERVISOR-REPAIR-DELTA-20261009` r1 | source `cc584f971d1342acf05a9dd43f97916e38f8072c` (tree `a52060a6…`), records `866ed38` | COMPLETE: doc 67, SOURCE REVISION REQUIRED on U-01 (zero-launch restart cannot fit the original deadline) and U-02 (an ordinary early refusal strands a group); EXECUTION ELIGIBILITY NONE |
 
 The three touch disjoint material and are reviewed in parallel. Nothing was executed.
