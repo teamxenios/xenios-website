@@ -1,0 +1,290 @@
+{
+ "schemaVersion": 1,
+ "review": {
+  "verdict": "LENS on 935aaf1 (verifier format delta against Doc 63). Read-only and NOT RUN. Recommendation: SOURCE CORRECT WITH LIMITS. I found no P0, P1 or P2. This is lens input for the original reviewer's disposition. It is not acceptance and not Samuel's approval.\n\n**Identity.** Subject 935aaf1a679aa67d013133521dd7110f66db74a3 has tree 3a7b5d11f2c5b8d8e472185f1fe1136313c3eae6 and parent 6c3a883b. Records a8285015 has tree d8184fe6 and parent 935aaf1.\n\n**SQL.** The .sql blob is 15d63f91 at 2d2d958, 7a62e64 and 935aaf1. Pre and postchecks are also unchanged. I recomputed sha256 over the LF install section followed by the fingerprint section: 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74.\n\n**Source correctness, by hand-simulation over git-show bytes.** All seven new direct valid_publication pairs refuse only through their named target. Each control is valid. Removing the target term would let the negative be accepted, so the 'f' assertion would fail:\n- schemaVersion v2 → sql:95\n- uppercase revisionId → sql:96\n- 'g'x40 sourceCommit → sql:97\n- 'g'x64 bundleSha256 → sql:98\n- 'g'x64 catalog artifact sha256 → sql:118\n- effectiveFrom 2026-10-06T24:00:00.000Z → sql:103\n- effectiveUntil of the same value → the to_char arm of sql:107\n\nThe round-trip cases are guarded by ordinary SELECTs that must succeed: normalisation to 2026-10-07T00:00:00.000Z, an equal-instant check and, for the end case, an end-after-start check. A cast failure therefore fails the verifier; it is never credited as a refusal.\n\n**Doc 63 findings.**\n- V63-1, V63-2 and V63-4 are closed in source.\n- V63-6 is closed in the new closure. One typography residual remains in the bindings JSON.\n- V63-3 and V63-5 are carried as disclosed limits, as the assignment directed.\n\n**Preservation.** Removing the DOC63 case block (mjs:670-721) and the doc63Discrimination output (mjs:1100-1106), then reverting BINDINGS, reproduces the 7a62e64 verifier byte-for-byte (81,561 bytes). So the retained cases, HELD list, argv, exit codes 2/1/130/143 and receipt confinement are all unchanged.\n\n**Records.**\n- The receipt has 66 entries; all 66 match 935aaf1. Its raw sha256 is 24430f71…6a66, it is not listed in itself, and it is exactly the required union set.\n- The bindings, closure, source, preservation and records JSON all recompute.\n- 6c3a883..935aaf1 touches exactly the three declared paths, and 935aaf1..a828501 touches records only.\n- The supervisor (8dec3860) and manifest (00eb8955) are unchanged from f98c416 through a828501.\n- No execution is claimed anywhere.\n\n**Execution eligibility: NOT PROVEN / NOT ELIGIBLE.**\n- Seven authored pairs are not seven working pairs.\n- PostgreSQL 17.11 handling of 24:00 has not been observed.\n- The window has expired; there is no execution authority and no reservation.\n- The Docker and image facts are missing.\n- This delta still needs the original reviewer's exact disposition.\n\nThe later cc584f9 manifest keeps 7a62e64 as the accepted pin and lists 935aaf1 only as pending, so nothing was silently re-pinned.",
+  "checklist": [
+   {
+    "item": "Identity of subject and records",
+    "status": "PASS",
+    "evidence": "cat-file 935aaf1: tree 3a7b5d11f2c5b8d8e472185f1fe1136313c3eae6, parent 6c3a883b706211a60502b3adeec0d57726495c70. a828501: tree d8184fe6d997e6d65ec521aae4f3261993feb708, parent 935aaf1. The doc63 review commit 829931b6 exists in health-review (doc 63 plus the hl12 lens archive)."
+   },
+   {
+    "item": "(1) SQL byte-identical to 7a62e64 and 2d2d958; definition recomputes",
+    "status": "PASS",
+    "evidence": "ls-tree shows .sql blob 15d63f91a6e46007d6fa151eb405149b79fa4b5f at 2d2d958, 7a62e64 and 935aaf1. Precheck ff6cc891 and postcheck 02453231 are also identical. The SQL has no CR, and each tag occurs exactly twice. sha256(LF install section followed by fingerprint section) = 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74."
+   },
+   {
+    "item": "(2a) schema-version-literal pair → SQL 95",
+    "status": "PASS",
+    "evidence": "mjs:673-674, 684-690@935aaf1. The negative is a copy of publication with schemaVersion 'quick-order-authority-v2'; the control is publication. At sql:90-94 all nine keys are present and there is no extra key. At sql:95, 'v2' is distinct from 'v1', so the function returns false. With the sql:95 term deleted, sql:96-101 pass on valid values, sql:102-103 round-trip the canonical start, effectiveUntil is null so sql:104 is skipped, sql:109-123 pass with six kinds and distinct paths, and sql:127-136 pass on sorted refs. The result is true, so the 'f' assertion at :688 fails."
+   },
+   {
+    "item": "(2b) revision-id-format pair → SQL 96",
+    "status": "PASS",
+    "evidence": "The negative revisionId is '00000000-0000-4000-8000-00000000000A'. jsonb_typeof is 'string'. Under collate C the regex ^[0-9a-f]{8}-…-[0-9a-f]{12}$ fails on 'A' (0x41 is outside a-f), and sql:95 passes first. With the sql:96 regex term deleted, every later guard passes, so the result is true and :688 fails."
+   },
+   {
+    "item": "(2c) source-commit-format pair → SQL 97",
+    "status": "PASS",
+    "evidence": "'g'x40 fails ^[0-9a-f]{40}$ at sql:97, and sql:95-96 pass. With that term deleted, the publication is otherwise valid and the result is true."
+   },
+   {
+    "item": "(2d) bundle-digest-format pair → SQL 98",
+    "status": "PASS",
+    "evidence": "'g'x64 fails ^[0-9a-f]{64}$ at sql:98, and sql:95-97 pass. With that term deleted, the result is true."
+   },
+   {
+    "item": "(2e) artifact-digest-format pair → SQL 118",
+    "status": "PASS",
+    "evidence": "The catalog artifact is index 0, path synthetic/catalog.json. It passes sql:112-116 and does not match sql:117, then fails the sql:118 hex regex with 'g'x64. With the sql:118 regex deleted, the loop completes, kinds are complete, the six paths are distinct and refs are valid, so the result is true. No other SQL term reads the artifact sha in valid_publication. The closure's control value '3'x64 is correct, from envelope String(0+3).repeat(64)."
+   },
+   {
+    "item": "(2f) start-utc-round-trip pair → SQL 103",
+    "status": "PASS",
+    "evidence": "mjs:691-719. '2026-10-06T24:00:00.000Z' matches the sql:100 grammar, which the JS mirror asserts at :697. The prerequisite SELECTs (:704-708, using the same format string as sql:103) must return 2026-10-07T00:00:00.000Z and an equal instant. sql:102 then casts cleanly, and sql:103's to_char gives '2026-10-07T00:00:00.000Z' <> input, so it returns false. effectiveUntil is null (asserted at :713), so the end branch is skipped. With sql:103 deleted, the result is true and :717 fails. The control (start 10-07, until null) is valid."
+   },
+   {
+    "item": "(2g) end-utc-round-trip pair → SQL 107 to_char arm",
+    "status": "PASS",
+    "evidence": "The negative's effectiveUntil is the 24:00 value with effectiveFrom 2026-10-06. sql:101 type is string, sql:104 enters the branch, the sql:105 grammar passes and the sql:106 cast succeeds (prerequisite). At sql:107, finish<=instant is false (10-07 > 10-06, asserted separately at :710), and the to_char arm differs, so it returns false. With only the to_char arm deleted, the result is true and :717 fails. The control has until 2026-10-07T00:00:00.000Z (the same as finiteControl at mjs:601) and is valid."
+   },
+   {
+    "item": "Prerequisites prevent a conversion failure being credited as a refusal",
+    "status": "PASS",
+    "evidence": "Ordinary SELECTs at mjs:704-711 run before the negative. Inside the function, the catch-all at sql:138 would hide a cast error; outside it, the same session settings would raise through sql() and fail verification. psql does not interpolate :MI or :SS inside single-quoted literals. The block only SELECTs immutable functions and casts, with no writes, so the later empty and canonical snapshots (:728-734) are unaffected."
+   },
+   {
+    "item": "V63-3 end-of-string dot segment",
+    "status": "NOT_APPLICABLE",
+    "evidence": "No case was added. The assignment (33ca419, sha 143e86a6) directs no new scope for V63-3. The closure records it as INFORMATIONAL_LIMIT_CARRIED_NO_NEW_SCOPE, and the bindings scope and verifier output say 'No optional path … expansion'. The (/|$) to '/' mutation stays undetected, as Doc 63 found."
+   },
+   {
+    "item": "V63-5 replay assertion",
+    "status": "NOT_APPLICABLE",
+    "evidence": "Carried as REPLAY_PROOF_LIMIT_CARRIED_NO_NEW_SCOPE (closure), consistent with the assignment. The replay prose at rollback.md:95-104 is unchanged."
+   },
+   {
+    "item": "(3) Retained cases not weakened or removed",
+    "status": "PASS",
+    "evidence": "diff 7a62e64..935aaf1 on the mjs gives +60/-1; the only removed line is BINDINGS at :14. Removing lines 670-721 (DOC63_BLOCK_BEGIN through the END comment) and the doc63Discrimination output (reduced-file lines 1048-1054, i.e. 1100-1106@935aaf1), then reverting the binding name, reproduces the 7a62e64 verifier exactly (1087 lines, 81,561 bytes, LF sha cbc1f509). The doc53 and doc58 output objects at 1090-1099 are untouched."
+   },
+   {
+    "item": "HELD list, argv, exit codes, receipt confinement unchanged",
+    "status": "PASS",
+    "evidence": "These follow from the byte reconstruction. HELD is at mjs:76-78. argv is at :348-355 (four flags, length 7). Receipt confinement is at :360-395 (realpath in the evidence root, 256 KiB, raw sha pin, git-show recheck), and the bindings asserts are at :396-429. Exit codes: 2 at :1109, 130/143/1 at :1114 and 1 at :1141, each shifted by +59 from :1050/:1055/:1082@7a62e64."
+   },
+   {
+    "item": "(4) rollback.md V63-4 and other prose changes",
+    "status": "PASS",
+    "evidence": "Both bindings references (lines 46 and 130) now name doc63-verifier-bindings-20261008.json, which matches BINDINGS at mjs:14. The new paragraph at lines 58-68 accurately names the receipt path, its post-source timing and records-supplied digest, that Doc63 829931b6 accepts 7a62e64/276226f WITH LIMITS, that the old receipt is historical (it matches only 64 of 66 at 935aaf1), and that this successor is pending. The SQL fence is unchanged: inner 3508 bytes, sha e6ebd340; with delimiters 3519 bytes, sha 05df8f0b. That is the same at 7a62e64 and 935aaf1. No stale doc53 or doc58 bindings filename remains."
+   },
+   {
+    "item": "(5a) Receipt for 935aaf1",
+    "status": "PASS",
+    "evidence": "sql-currentness-source-receipt-doc63-20261008.json@a828501: 11,956 bytes, raw sha256 24430f71fc4c644eb126c1e9fff350c4c22c3668fa9c46d6f8ccb3b36b806a66, no CR. Keys are {files, schemaVersion, sourceCommit}, the schema is v1 and sourceCommit is 935aaf1. It has 66 entries, 66 ok and 0 bad (LF sha of git show 935aaf1:path), sorted, with no duplicates and valid grammar. It does not list itself. Its path set equals the union of the bindings inventory (55), the bindings file, OWN_SOURCE (5) and BASELINE_SQL (20), which is 66. Against the 7a receipt: added doc63 bindings, removed doc58 bindings, changed mjs and rollback, 63 unchanged. It also matches 66/66 at a828501, cc584f9 and 866ed38."
+   },
+   {
+    "item": "(5b) Bindings doc63-verifier-bindings-20261008.json",
+    "status": "PASS",
+    "evidence": "Raw/LF sha is 1348d310…111f and the blob is 091ea15c. Every verifier-consumed field matches doc58-verifier-bindings: review 9a9023e2, base 18bfbcda, 55 inventory rows (55/55 recompute at base), canonicalTriggers, predecessorCurrentness f581/cab02e54 (file blobs and definition recompute) and currentnessDefinition 3ca2bab8. currentnessFiles: the five current hashes match 935aaf1, and the before-blob and before-sha values match 7a62e64. predecessorBindings (doc58 file at 7a62e64) recomputes to fc588427. The 19 canonical triggers are unchanged."
+   },
+   {
+    "item": "(5c) Closure, source, preservation and records JSON",
+    "status": "PASS",
+    "evidence": "Closure: the case map lines (95/96/97/98/118/103/107), negatives and controls are correct; the anchors are firstLine 670 and 1100; the corrected presence labels (90-92 versus 93-94; bundleSha256, sourceRefs and applicabilityRefs isolated; schemaVersion and artifacts compound) are hand-verified. Source JSON: blob, bytes, sha and before-values match. Preservation: 96 of 96 evidence objects are unchanged, and the SQL, fence, supervisor and manifest claims recompute. Records wrapper: 11 of 11 files match a828501 bytes and sha, and it excludes itself."
+   },
+   {
+    "item": "(5d) Commit scope",
+    "status": "PASS",
+    "evidence": "diff --name-status 6c3a883 935aaf1 shows exactly A doc63-verifier-bindings, M rollback.md and M the verifier mjs. 935aaf1..a828501 shows 12 paths, all under .xenios/ or docs/health-launch/quick-order-20261005/ as records, and none is pinned in the receipt."
+   },
+   {
+    "item": "(5e) Supervisor and manifest unchanged from f98c416",
+    "status": "PASS",
+    "evidence": "Raw sha256 at f98c416, 935aaf1 and a828501: qualification-supervisor.mjs 8dec3860…148e and qualification-manifest-20261008.json 00eb8955…72ca. The f98c416 tree is e64f3989."
+   },
+   {
+    "item": "(5f) No execution claimed",
+    "status": "PASS",
+    "evidence": "The closure, source, records, packet, README and handoff all state NOT_RUN, window EXPIRED, reservation null and push not attempted. The packet says the 24:00 conversion has not been observed. The status of 935aaf1 is PENDING_EXACT_ORIGINAL_DELTA_REVIEW everywhere. Downstream, the cc584f9/866ed38 manifest keeps 7a62e64 as the accepted currentness pin and lists 935aaf1 under pendingCurrentnessVerifier, so nothing was silently re-pinned."
+   },
+   {
+    "item": "Execution eligibility (runtime behaviour on PostgreSQL 17.11)",
+    "status": "NOT_PROVEN",
+    "evidence": "Nothing was executed. The PostgreSQL behaviours relied on are assumptions: 24:00:00 accepted and normalised, the collate C regex, and NULL propagation. The qualification window has expired; there is no DB-category authority, and the Docker and image facts are missing. Separately, the builder repo has core.autocrlf=true and no .gitattributes. A fresh checkout could CRLF the receipt, and the raw-byte pin would then refuse it. That fails closed, as documented at rollback.md:32-34. The current working-tree copy is LF, with raw sha 24430f71."
+   }
+  ],
+  "findings": [
+   {
+    "id": "L935-F1",
+    "severity": "P3",
+    "file": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+    "claim": "The five V63-1 cases discriminate each format line, but not its sub-terms: the type terms, the anchors and the length quantifiers. Some of those sub-terms are the only refuser for reachable inputs.",
+    "evidence": "mjs:672-683@935aaf1 covers non-hex and uppercase strings only. Two kinds of reachable input are untested. (1) Type terms: a JSON number of 40 digits for sourceCommit passes the sql:97 regex through ->>, so only jsonb_typeof<>'string' refuses it. The same holds for 64-digit numbers at bundleSha256 (sql:98) and artifact sha256 (sql:118), a numeric path at sql:116, and a numeric ref element at sql:132. (2) Anchors and length: 'g'x40 and 'g'x64 are still refused if ^ or $ is removed or {40} is widened, so those mutations stay green. The verifier has no non-string envelope cases. The closure discloses 'String format coverage only; no broad type/null matrix'. This is the same sub-line class as V63-3, outside Doc 63's line-level ask.",
+    "fix": "Optional, verifier-only, before a qualification run relies on these sub-terms. Add direct cases with the existing control: sourceCommit as a 40-digit JSON number, a 64-digit numeric bundleSha256 and artifact sha256, and '1'x41 for the $ anchor and upper bound. Otherwise, record them in the closure as non-discriminated sub-term residuals."
+   },
+   {
+    "id": "L935-F2",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/evidence/doc63-verifier-bindings-20261008.json",
+    "claim": "V63-6 readability residual: the new bindings still join words to numbers, despite the assignment's 'use readable spacing'.",
+    "evidence": "In doc63-verifier-bindings-20261008.json@935aaf1: line 625 \"presence\":\"SQL90–92\", line 626 \"closedKeys\":\"SQL93–94\", line 622 'all66 required current paths', and line 587 'Accepted7a database pin'. The closure itself is spaced correctly ('SQL 90–92').",
+    "fix": "Records-only: fix the spacing in the next records or bindings successor. No source behaviour is affected."
+   },
+   {
+    "id": "L935-F3",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/evidence/doc63-verifier-source-935aaf1.json",
+    "claim": "The queue checkpoint records supervisor A as PENDING under active Doc 64, observed at 23:40:05Z. Doc 64 (SOURCE REVISION REQUIRED) had already been committed in the review repo at 23:38:30Z.",
+    "evidence": "queueCheckpoint.A.disposition is 'PENDING', with observedAt 2026-10-08T23:40:05.091Z and basis 'current coordinator board'. Packet line 44@a828501 says 'under active Doc64 review according to the current coordinator board'. Review commit 6245511 (doc 64) was committed at 2026-10-08T18:38:30-05:00. The attribution to the board is accurate and no verdict is inferred. The record is conservative, and the later Doc 64 repair at cc584f9 supersedes it.",
+    "fix": "None required. The next records checkpoint should cite doc 64 at 6245511 as the controlling disposition for f98c416."
+   }
+  ]
+ },
+ "subject": "935aaf1a679aa67d013133521dd7110f66db74a3",
+ "tree": "3a7b5d11f2c5b8d8e472185f1fe1136313c3eae6",
+ "records": "a8285015c2f63748f6e76f1ab4c8a01b5dde8fa1",
+ "acceptedBase": "7a62e64de1d0120e64aee9a9b04816e5e4c9a1a4",
+ "workflowRun": "wf_72aba18e-24f",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens and adversarial-verifier outputs, verbatim. Reviewer dispositions are in doc 65.",
+ "verify": {
+  "verdicts": [
+   {
+    "id": "L935-F1",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Re-derived. The five new cases use 'g' (non-hex) and uppercase strings only (mjs:672-683@935aaf1). (a) Type terms: a 40-digit JSON number for sourceCommit renders through ->> as 40 digits and passes the sql:97 regex. jsonb_typeof<>'string' is therefore the sole refuser. The same holds at sql:98 (64-digit bundleSha256), sql:118 (artifact sha256), sql:116 (numeric path) and sql:132 (numeric ref element). The type terms at sql:96 (revisionId) and sql:99/101 (dates) are redundant behind their regexes. (b) Anchors and length: 'g'x40 and 'g'x64 are refused with or without ^, $ or an exact {n}, so those mutations stay green. A grep of the verifier finds no non-string or wrong-length envelope case for sourceCommit, bundleSha256 or artifact sha256. The closure discloses 'String format coverage only; no broad type/null matrix'. The gap is sub-line, not line-level, so it does not reopen V63-1. P3 is correct, and it was not raised in the Doc 63 lens archive."
+   },
+   {
+    "id": "L935-F2",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed in doc63-verifier-bindings-20261008.json@935aaf1: 'Accepted7a' (L587), 'all66' (L622) and 'SQL90–92'/'SQL93–94' in inheritedLabelCorrection. The closure and the verifier output use 'SQL 90–92'. Correction to the lens's fix: this file is not a records-only artifact. It is one of the three source paths of 935aaf1 and is pinned in the 66-path receipt (24430f71) and by BINDINGS at mjs:14. Editing it in place would change source bytes and invalidate the receipt. The right handling is to carry it as a cosmetic residual and correct it only in a future bindings or source successor that is already needed for another reason. It must not trigger its own source commit."
+   },
+   {
+    "id": "L935-F3",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. doc63-verifier-source-935aaf1.json@a828501 queueCheckpoint.A has disposition 'PENDING', observedAt 2026-10-08T23:40:05.091Z, basis 'current coordinator board'. Review commit 6245511 (Doc 64, SOURCE REVISION REQUIRED) was committed at 2026-10-08T23:38:30Z. The record attributes the state to the board and infers no verdict, so this is informational only. The cc584f9 Doc64 repair supersedes it. No source impact."
+   }
+  ],
+  "checklistOpinion": [
+   {
+    "item": "Identity: subject 935aaf1 and records a828501",
+    "status": "PASS",
+    "note": "cat-file: 935aaf1 has tree 3a7b5d11f2c5b8d8e472185f1fe1136313c3eae6 and parent 6c3a883b706211a60502b3adeec0d57726495c70. a828501 has tree d8184fe6d997e6d65ec521aae4f3261993feb708 and parent 935aaf1. Lineage is 7a62e64 > 276226f > f98c416 > 6c3a883 > 935aaf1 > a828501 > cc584f9 > 866ed38. Doc 63 is review commit 829931b6 in health-review (SOURCE ACCEPT WITH LIMITS)."
+   },
+   {
+    "item": "(1) .sql byte-identical to 7a62e64 and 2d2d958; definition hash recomputes",
+    "status": "PASS",
+    "note": "The .sql is blob 15d63f91 at 2d2d958, 7a62e64, 935aaf1 and a828501. Precheck ff6cc891 and postcheck 02453231 are also unchanged. The file is 45,229 bytes with no CR, and each tag occurs twice. sha256(install section + fingerprint section) = 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74. This is the same split method as section() at mjs:195-199."
+   },
+   {
+    "item": "(2a) schema-version-literal pair targets SQL 95",
+    "status": "PASS",
+    "note": "I re-simulated against the fixture at mjs:539-550. The negative fails only at the sql:95 'is distinct from' test. sql:90-94 pass because all nine keys are present and there are no extras. With the sql:95 term removed, sql:96-101 pass, 102/103 round-trip '2026-10-06T00:00:00.000Z', 104 is skipped (effectiveUntil is JSON null), 109-123 pass (six kinds, six distinct synthetic/<kind>.json paths, lowercase hex shas including sha256(text) for normalized_decision_inputs), and 127-136 pass (refs are valid and strictly sorted bytewise). The function would return 't' and the :688 'f' assertion would fail. The control is the unmutated publication; I grepped for and found no mutation of publication before line 670."
+   },
+   {
+    "item": "(2b) revision-id-format pair targets SQL 96",
+    "status": "PASS",
+    "note": "'00000000-0000-4000-8000-00000000000A' keeps the 8-4-4-4-12 shape and has type string. Under collate C, 'A' is outside [0-9a-f], so the regex refuses. Without that regex term the result is true. The type term is redundant for this field."
+   },
+   {
+    "item": "(2c) source-commit-format pair targets SQL 97",
+    "status": "PASS",
+    "note": "'g'x40 fails ^[0-9a-f]{40}$, and nothing else reads sourceCommit in valid_publication. Removing the term gives true."
+   },
+   {
+    "item": "(2d) bundle-digest-format pair targets SQL 98",
+    "status": "PASS",
+    "note": "'g'x64 fails the sql:98 regex, and that is the only reader. Removing the term gives true."
+   },
+   {
+    "item": "(2e) artifact-digest-format pair targets SQL 118",
+    "status": "PASS",
+    "note": "Catalog is ordinality 1, path synthetic/catalog.json. It passes 112-117 and fails the 118 regex. No other valid_publication term reads artifact sha256. Removing the term gives true. The closure's control value '3'x64 matches String(0+3).repeat(64)."
+   },
+   {
+    "item": "(2f) start-utc-round-trip pair targets SQL 103",
+    "status": "PASS",
+    "note": "'2026-10-06T24:00:00.000Z' passes the sql:100 grammar, which the JS mirror asserts at :697. The prerequisite SELECTs at :704-708 must normalise to '2026-10-07T00:00:00.000Z' and compare equal. They use the same format string as sql:103. psql reads them from stdin, and :MI/:SS inside quotes are not interpolated. With the prerequisites met, sql:103 is the sole refuser: effectiveUntil is null (asserted at :713) and the remaining guards pass. The control (start 10-07, until null) is valid. Authored only; PG 17.11 acceptance of 24:00 is not observed, but the design fails closed."
+   },
+   {
+    "item": "(2g) end-utc-round-trip pair targets the SQL 107 to_char arm",
+    "status": "PASS",
+    "note": "From 2026-10-06T00:00Z, until 24:00. The sql:105 grammar passes, the sql:106 cast is guarded by the prerequisite, and finish<=instant is excluded by the ordinary SELECT at :710. Only the to_char arm refuses. The control until '2026-10-07T00:00:00.000Z' equals finiteControl (mjs:601), which is already asserted valid."
+   },
+   {
+    "item": "V63-3 end-of-string dot segment",
+    "status": "NOT_APPLICABLE",
+    "note": "No case was added, as the assignment directs at 33ca419 (sha 143e86a6, line 12: 'V63-3 is informational… do not add unrelated source scope'). 'synthetic/..' would still reach only the $ arm of sql:117, so the limit remains open and carried. It is not closed."
+   },
+   {
+    "item": "(3) Retained cases, HELD list, argv, exit codes and receipt confinement unchanged",
+    "status": "PASS",
+    "note": "diff 7a62e64..935aaf1 on the mjs shows +60/-1, and the only removed line is BINDINGS. I independently removed lines 670-721 and 1100-1106 at 935aaf1 and reverted the binding name. The result equals the 7a62e64 blob exactly (1087 lines, 81,561 bytes, sha cbc1f509). HELD (:76-78), argv (:348-355), receipt confinement (:360-395), exit 2 (:1109), 130/143/1 (:1114) and 1 (:1141) are retained byte-for-byte. Scope is sound: the new consts sit at try-block level (indent 2, inside try{ at :347 through :1110), as do the doc58 consts used at :1095, so the references at :1100-1103 resolve."
+   },
+   {
+    "item": "(4) rollback.md V63-4 and the new paragraph",
+    "status": "PASS",
+    "note": "Both bindings references (lines 46 and 130) name doc63-verifier-bindings-20261008.json, matching BINDINGS at mjs:14, and no doc53 or doc58 bindings name remains. The new lines 58-69 are accurate: post-source receipt timing; Doc63 829931b6 accepts 7a62e64/276226f WITH LIMITS; the old receipt is historical (64 of 66 at 935aaf1); the successor is pending; no execution authority. The verifier-extracted rollback block is 3438 bytes, sha c4b67fa0, identical at 2d2d958, 7a62e64 and 935aaf1. The md fence is 3508 bytes inner (e6ebd340) and 3519 with delimiters (05df8f0b), both unchanged."
+   },
+   {
+    "item": "(5a) Receipt for 935aaf1",
+    "status": "PASS",
+    "note": "sql-currentness-source-receipt-doc63-20261008.json@a828501 is 11,956 bytes with raw sha 24430f71fc4c644eb126c1e9fff350c4c22c3668fa9c46d6f8ccb3b36b806a66 and no CR. Keys are {files, schemaVersion, sourceCommit}, the schema is v1 and sourceCommit is 935aaf1. It has 66 entries: 66 ok, 0 bad against LF sha256 of git show 935aaf1:path. Entries are sorted (both string and Buffer order) with no duplicates, the grammar is valid and the receipt does not list itself. The path set equals the 66-path union of 55 inventory paths, the bindings file, OWN_SOURCE (5) and BASELINE_SQL (20). Against the 7a receipt: doc63 bindings added, doc58 bindings removed, mjs and rollback changed. It still matches 66/66 at cc584f9 and 866ed38."
+   },
+   {
+    "item": "(5b) Bindings JSON",
+    "status": "PASS",
+    "note": "Raw/LF sha 1348d310…111f, blob 091ea15c, 33,321 bytes. The verifier-consumed fields (review, base, inventory, canonicalTriggers, predecessorCurrentness, currentnessDefinition) are JSON-identical to doc58-verifier-bindings@7a62e64. The inventory recomputes 55/55 at base 18bfbcda, the 19 triggers equal TRIGGERS, the f581 files and definition cab02e54 recompute, and predecessorBindings fc588427 recomputes. currentnessFiles carry current hashes at 935aaf1 and before-values at 7a62e64. The typography residual is covered in L935-F2."
+   },
+   {
+    "item": "(5c) Closure, source, preservation and records JSON",
+    "status": "PASS",
+    "note": "Closure: the case map lines 95/96/97/98/118/103/107 and the controls are correct. The presence labels (90-92 versus 93-94) and isolated versus compound missing keys were re-simulated via NULL propagation: bundleSha256, sourceRefs, applicabilityRefs, revisionId, sourceCommit, effectiveFrom and effectiveUntil are isolated; schemaVersion (sql:95 is distinct from) and artifacts (sql:121) are compound. Source JSON: blobs, bytes, sha and before-values recompute against 935aaf1 and 6c3a883. Preservation: 96 evidence files at 6c3a883, reconstruction verified. Records wrapper: 11/11 files match a828501 bytes, sha and LF sha, and it excludes itself. One timestamp-precision residual is listed under missed findings (M1)."
+   },
+   {
+    "item": "(5d) Commit scope",
+    "status": "PASS",
+    "note": "diff --name-status 6c3a883 935aaf1 shows exactly A doc63-verifier-bindings, M rollback.md and M the verifier mjs. 935aaf1..a828501 touches 12 paths, all under .xenios/ or docs/health-launch/quick-order-20261005/. That equals the wrapper's 11 files plus the wrapper itself, and none is receipt-pinned. Later commits cc584f9 and 866ed38 change nothing under supabase/."
+   },
+   {
+    "item": "(5e) Supervisor and manifest unchanged from f98c416",
+    "status": "PASS",
+    "note": "qualification-supervisor.mjs is 8dec3860 and qualification-manifest-20261008.json is 00eb8955 at f98c416, 6c3a883, 935aaf1 and a828501. They change only later, in the Doc64 repair at cc584f9 (a827a2c4/dcea1a24), which is outside this subject. The 866ed38 manifest keeps 7a62e64 as the accepted currentness pin and lists 935aaf1 under pendingCurrentnessVerifier ('Qualification of those new bytes is refused until exact original delta acceptance'), so nothing was silently re-pinned."
+   },
+   {
+    "item": "(5f) No execution claimed",
+    "status": "PASS",
+    "note": "The packet (lines 3, 24 and 54), README, handoff, closure and source JSON all state NOT RUN, window EXPIRED, reservation null and no push. The packet says 24:00 conversion has not been observed."
+   },
+   {
+    "item": "Execution eligibility of 935aaf1",
+    "status": "NOT_PROVEN",
+    "note": "Nothing was run. Source correctness does not establish execution eligibility: seven authored pairs are not seven working pairs. The verifier pins PG 17.11 at :456, but 24:00 normalisation, collate-C regex and NULL propagation are unobserved. The window has expired, there is no database-category authority or reservation, and Docker and image facts are absent. The builder has core.autocrlf=true and no .gitattributes; the receipt is currently i/lf w/lf, and a CRLF checkout would fail closed at the raw-sha pin. Running accepted 7a62e64 from the current builder snapshot would also fail closed (64 of 66), so any 7a run needs an exact 7a checkout. 935aaf1 needs its own original disposition first."
+   }
+  ],
+  "missed": [
+   {
+    "id": "M1",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/evidence/doc63-verifier-closure-20261008.json",
+    "claim": "The closure's 'at' timestamp predates the source commit and the receipt that the closure names, so it does not record when the content was finalised.",
+    "evidence": "closure@a828501 has \"at\": \"2026-10-08T23:32:50.668Z\" but contains source 935aaf1, tree 3a7b5d11 and the post-source receipt sha 24430f71. The 935aaf1 committer time is 1791502576 = 2026-10-08T23:36:16Z, and the rollback prose and closure say the receipt was created after that commit. The other records are consistent: the source and preservation JSON are 23:38:02Z and the records wrapper is 23:40:56Z. A commit SHA cannot be known 3m26s before the commit exists, so 'at' is a draft-time stamp. It has no hash or source impact.",
+    "fix": "Records-only, in the next records checkpoint. Either restamp 'at' to the finalisation time or rename it to make clear it records draft creation. Do not create a new source commit for this."
+   },
+   {
+    "id": "M2",
+    "severity": "P3",
+    "file": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+    "claim": "The verifier's success output still carries the retained Doc58 limits sentence saying timestamp round-trip keeps compound-gate limits. The new Doc63 output object supersedes that only implicitly, and its explicit retainedLabelCorrection covers the presence labels only.",
+    "evidence": "mjs:1099@935aaf1 (retained, byte-identical) says 'Timestamp conversion/round-trip and non-mirrored missing keys … retain explicit compound-gate limits.' mjs:1102 lists the new directRoundTripCases isolating SQL 103/107. mjs:1105 retainedLabelCorrection supersedes only the presence labels and the three non-mirrored missing keys. A reader of a future success JSON would see a round-trip 'compound' limit and round-trip isolation side by side. The 'checked' summary at :1073-1087 also has no Doc63 entry. Both follow from the board's byte-identical retained-block constraint.",
+    "fix": "Optional, and only in a successor that is needed anyway: have doc63Discrimination (or the closure) explicitly state that the Doc58 round-trip compound limit is superseded by the Doc63 pairs, subject to execution. Otherwise record it as a disclosure residual. It does not block source acceptance."
+   }
+  ],
+  "disposition": "My disposition opinion for 935aaf1 (tree 3a7b5d11, records a828501) is SOURCE ACCEPT WITH LIMITS. This is an adversarial-verifier opinion for the original reviewer's Doc63 delta disposition. It is not acceptance and not Samuel's approval. Everything remains LOCAL ONLY and NOT RUN.\n\nI found no P0, P1 or P2. All three lens findings are upheld at P3. For L935-F2 I corrected the fix: the bindings JSON is a receipt-pinned source path, so it is not records-only. I added two P3s: M1, a stale closure timestamp, and M2, a superseded Doc58 limits sentence that remains in the verifier output.\n\n**Source correctness: PASS.** I re-derived every check from Git objects and redid each hand simulation:\n- The SQL is byte-identical to 2d2d958 and 7a62e64, and the definition hash recomputes to 3ca2bab8.\n- Each of the seven new direct pairs refuses only through its named target, and each control is valid:\n  - SQL 95, 96, 97, 98 and 118;\n  - SQL 103;\n  - the to_char arm of SQL 107.\n- The round-trip negatives are credited only after ordinary normalisation and equality SELECTs succeed. A failed cast fails verification; it is never counted as a refusal.\n- Preservation is exact: removing the two Doc63 blocks and restoring the binding constant reproduces the 7a62e64 verifier byte-for-byte.\n- The 66-entry receipt (24430f71) recomputes 66/66 and is exactly the required set.\n- The commit scope is exactly the three declared paths, and a828501 touches records only.\n- The supervisor and manifest are unchanged from f98c416 through a828501.\n- Nothing was silently re-pinned: the 866ed38 manifest keeps 7a62e64 as the accepted pin and lists 935aaf1 as pending.\n\n**Status of V63-1 to V63-6:**\n\n| Item | Status | Note |\n|---|---|---|\n| V63-1 | Closed in source, line level | The type, anchor and length sub-terms stay a P3 residual (L935-F1). |\n| V63-2 | Closed in source, authored | It depends on PG 17.11 normalising 24:00, which has not been observed; it fails closed if not. |\n| V63-3 | Open | Carried informational limit. No terminal dot-segment case was added, as the assignment directed. |\n| V63-4 | Closed | |\n| V63-5 | Open | Carried replay-proof limit, as directed. |\n| V63-6 | Closed in the new closure | A cosmetic spacing residual remains in the receipt-pinned bindings JSON; it does not justify a new source commit. |\n\n**Execution eligibility: NOT ELIGIBLE / NOT PROVEN.** Seven authored pairs are not seven working pairs. Execution also lacks:\n- observed PostgreSQL behaviour;\n- the original reviewer's exact disposition of this delta;\n- database-category execution authority and a reservation (the window has expired);\n- Docker and image facts.\n\n935aaf1 must stay a separate, frozen, pending item. Its acceptance must not be inferred from the cc584f9 supervisor correction, and qualification bindings must not move off 7a62e64 until the original reviewer rules on this delta."
+ }
+}
