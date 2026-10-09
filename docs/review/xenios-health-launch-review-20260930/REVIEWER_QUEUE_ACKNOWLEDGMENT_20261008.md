@@ -97,3 +97,29 @@ The three touch disjoint material and are reviewed in parallel. Nothing was exec
 | `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` r1 | source `25858ad94a649a9f7442562e6e0423636d2a3124` (tree `c5565bcd…`), records `feaff6f` | COMPLETE: doc 68, SOURCE ACCEPT WITH LIMITS (doc 67 U-01 and U-02 closed); EXECUTION ELIGIBILITY NONE |
 
 Nothing was executed.
+
+## Queue state update (2026-10-09, submission packet)
+
+Samuel's direct message reached this session. The registered task `SNAPSHOT-S-CENSUS-PACKET-REVIEW-20261009` r1 is
+ACKNOWLEDGED and IN REVIEW, at its registered targets plus the two specialist supplements, all recomputed:
+
+| Artifact | Commit | Raw SHA-256 |
+| --- | --- | --- |
+| `QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md` | `d007162` | `145d0d22…` |
+| `QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json` | `d007162` | `c8bb1979…` |
+| `QUICK_ORDER_READER_CENSUS_V1.partial-25858ad.json` | `d007162` | `5fcbe47b…` |
+| `QUICK_ORDER_READER_CENSUS_BINDING_25858ad_V1.json` | `e6494ba` | `b6056e18…` |
+| `SPECIALIST_NATIVE_PREREQUISITE_PROPOSAL_20261009.md` / `.json` | `2bac0c8` | `c10fdf85…` / `c87f29df…` |
+| `SPECIALIST_INPUT_APPLICABILITY_MAP_20261009.md` / `.json` | `2bac0c8` | `92e61b6c…` / `c31966bb…` |
+
+Proposed snapshot S: `25858ad94a649a9f7442562e6e0423636d2a3124` (tree `c5565bcd…`). The coordinator checkpoint `0ba8cfa`
+is records-only. The four requested dispositions will be published separately as each completes:
+
+| Disposition | Doc |
+| --- | --- |
+| A. Snapshot S and partial census | 69 |
+| B. Input applicability | 70 |
+| C. Transaction design and source scope | 71 |
+| D. Native qualification proposal | 72 |
+
+Nothing was executed.
