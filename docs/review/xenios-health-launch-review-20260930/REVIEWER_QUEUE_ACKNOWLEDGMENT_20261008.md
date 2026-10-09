@@ -158,3 +158,21 @@ The builder's handoff is `45a30bd`; the coordinator checkpoint `6630c51` is reco
 
 The next review for this session is the builder's r2 of the three doc 71 delta records, once it is registered. Nothing
 was executed.
+
+## Queue state update (2026-10-09, transaction records r2)
+
+The registered task `DOC71-TRANSACTION-DESIGN-DELTA-REVIEW-20261009` **revision 2** is ACKNOWLEDGED and IN REVIEW. It is
+registered at coordinator `a1beaf9` to this session. The target is recomputed from Git objects:
+
+| Field | Value |
+| --- | --- |
+| Records | `39203461eaed6ee6284a0d7a597feb9c74c9a39a` (tree `dad34b252ac497787be8cea77bdae9dde282a129`), parent `45a30bd` |
+| Handoff | `301d9b08cb965f6d05ee2f4acf8463e6cdddf0ce` (records-only `.xenios/` changes) |
+| `DOC71_TRANSACTION_DESIGN_DELTA_20261009.md` | blob `cc4ad17`, 105,059 bytes, raw `4e8a23b6…` |
+| `evidence/doc71-transaction-design-delta-20261009.json` | blob `0b5b1f9`, 175,679 bytes, raw `a065a04e…` |
+| `evidence/doc71-transaction-design-bindings-20261009.json` | blob `8d7eaf2`, 59,455 bytes, raw `ae929902…` |
+| Controlling review | doc 73 (`56e9ad4`) against r1 `32643e3` |
+
+r2 changes only those three records. No `supabase/`, `server/` or `shared/` byte differs from `25858ad`.
+
+The verdict will be published as doc 75. Doc 73 is the review of r1, not a verdict on r2. Nothing was executed.
