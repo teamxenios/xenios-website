@@ -1,0 +1,1470 @@
+{
+ "schemaVersion": 1,
+ "review": "71_SUBMISSION_PACKET_C_TRANSACTION_DESIGN_AND_SCOPE_2026-10-09.md",
+ "task": "SNAPSHOT-S-CENSUS-PACKET-REVIEW-20261009 r1",
+ "disposition": "C",
+ "proposedS": "25858ad94a649a9f7442562e6e0423636d2a3124",
+ "packet": "d0071628fa26e89034eb29e1b7db77929d0acb6a",
+ "workflowRun": "wf_f4625f86-0bb",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens, adversarial-verifier and completeness-critic outputs, verbatim. Reviewer dispositions are in doc 71.",
+ "lenses": [
+  {
+   "lens": "call-lock-design",
+   "review": {
+    "verdict": "LENS C1, prospective call/lock design: REVISION REQUIRED as a design. Nothing was run, and this verdict gives no source permission. The protocol core is COMPATIBLE AS DESIGN with doc 49's 5C held design (f1821b6:50,56), the 462cf79 correction, doc 51 and the 7b1e606 carry-forwards, Samuel's scope 1d4f2c3:96-120,170-197, the currentness contract at S 25858ad and the accepted 3e82154 intake. That core is: an actor/key lock, then replay inside the transaction; preflight row locks, then the head FOR SHARE last; an AFTER-statement guard that advances the epoch only when a projection changes; a single-owner SECURITY DEFINER commit; five atomic writes and no legacy submit; persisted:true only after commit; recovery that runs before any mutable gate; readback guarded by read_all; referral kept as declarations. Three P2 gaps must close before any commit or guard body is drafted. (1) The commit's current-authority read and activation interface is unnamed. At S, read_current_authority always returns unavailable, and same-epoch owner DML can set the head state (HI-3, item 15). (2) The guard's definer/owner model is missing from the same-OID set. (3) The packet says an exact ordered lock/call/privilege specification is in its JSON, but the JSON has none. There are also eight P3 precision items. Samuel decides the operating budgets, the writer lock_timeout, the refusal budget, the first-lock-wins revocation order and the stock predicate; everything else is engineering.",
+    "checklist": [
+     {
+      "item": "Area: server-authoritative selection and policy validation",
+      "status": "PASS",
+      "evidence": "COMPATIBLE AS DESIGN. Packet md:140@d007162 requires the commit to revalidate approved identifiers, price audiences, workflow, currency, both quantity bands, Health, destinations and standing inside the transaction. Scope 1d4f2c3:104-107: a QO digest or a second app scan is not the currentness guard. The accepted handler's preflight is advisory: handler.mjs:159-161@25858ad says the port must repeat decisive checks atomically. Doc51 items 18-20 (7b1e606:45-97): Samuel's values fill keys; the browser chooses nothing. Limit: F10 ('version' ambiguity). Operational values are reserved (class 4). NOT RUN."
+     },
+     {
+      "item": "Area: actor/key idempotency",
+      "status": "PASS",
+      "evidence": "COMPATIBLE AS DESIGN. 1d4f2c3:96-103: hash = quick-order-v1 NUL actorId NUL key; lock actor/key, then exact replay before any mutable rule. Packet JSON:1258@d007162 says the same. Companion UNIQUE(actor_scope,key_hash) is at intake.sql:121@25858ad. Canonical requests.idempotency_key_hash is globally unique (migrations/20260815150000:98); the actor-bound, domain-separated hash avoids collisions across actors and with the legacy email\\0key hash. A 23505 after the lock means conflict, no receipt, no retry (06 design:39-40). Placing the lock first in the total order is not restated (F3)."
+     },
+     {
+      "item": "Area: atomic request, lines and evidence persistence",
+      "status": "PASS",
+      "evidence": "COMPATIBLE AS DESIGN, with P3 F7. Packet md:83,142 and JSON:1247,1251-1257: one reserved commit(jsonb) writes requests, lines, events, the existing outbox and the companion together; the legacy submit-then-append path is forbidden (production.ts:93-98@25858ad; 1d4f2c3:113-117). The 19-trigger fence (currentness.sql:22-42,571-577) is unaffected: the commit adds no triggers on requests/events/outbox, and the guards sit on the 12 IN relations. The outbox guard returns early for unbound rows (20261001040351:133). The other 18 trigger functions were not enumerated (F7). NOT RUN."
+     },
+     {
+      "item": "Area: receipt only after persistence",
+      "status": "PASS",
+      "evidence": "COMPATIBLE AS DESIGN. handler.mjs:161-165@25858ad requires persisted===true, a boolean replayed, and a receipt whose attribution and estimate match. Packet JSON:1281: persisted:true only after the committed RPC succeeds. 1d4f2c3:118: verify the complete canonical readback before producing the safe receipt. Through PostgREST, a function result reaches the server only after commit. NOT RUN."
+     },
+     {
+      "item": "Area: lost-response recovery",
+      "status": "PASS",
+      "evidence": "COMPATIBLE AS DESIGN. handler.mjs:140-147 runs actor-scoped replay before the config, legal and catalog gates. Replay (intake.sql:287-307) is service_role only and checks integrity via admin_detail (:300). It never calls commit, so no second obligation is written. The client keeps the same key and payload while the outcome is unknown (QuickOrderPage.tsx:165-167,270-271). The actor is stable across sessions (production.ts:53,56). Limits: the attempt lives only in page memory, so recovery after a refresh is not guaranteed (:270); definite refusals currently surface as 'unknown' (F5). NOT RUN."
+     },
+     {
+      "item": "Area: authorised operator readback",
+      "status": "PASS",
+      "evidence": "COMPATIBLE AS DESIGN at S. service.ts:816@25858ad checks read_all before the repository call. quick-order-admin-readback.test.ts:367-376 asserts a manage-only admin gets 403 and the RPC is never called. admin_detail and replay EXECUTE is granted only to service_role (intake.sql:309-314). The 20-to-23-key envelope is strict and refuses corruption (intake.sql:197-259; quick-order-repository.ts:128-165). Accepted limit: when companion, marker and obligation are all absent the request reads as legacy (intake.sql:193-196; repo:139-142)."
+     },
+     {
+      "item": "Area: no false paid/fulfilled state, outbox obligation, referral kept as declaration",
+      "status": "PASS",
+      "evidence": "COMPATIBLE AS DESIGN. Packet JSON:1280,1283: provider and finance references stay null; never paid, fulfilled, reserved or trusted attribution. Exactly one obligation per request: event type assisted_order.submitted, a fixed key and template, a 3-key payload, initial status pending (06:135-141). Dispatch waits for renderer deployment. Replay writes none. 7b1e606:19 (item 5): the referral family is OUT, states are direct_no_referrer or captured_unmatched, commission is not_authorized (ports.ts:28,34)."
+     },
+     {
+      "item": "Area: lock order (preflight row locks, then head last)",
+      "status": "NOT_PROVEN",
+      "evidence": "The rule is COMPATIBLE; the exact order is INSUFFICIENT EVIDENCE. The rule comes from f1821b6:50,56, 1d4f2c3:170-185 and 06:15-26. Packet md:140 and JSON:1279@d007162 restate only the rule. The census rows for all five positive-lock relations are UNPOPULATED (JSON:337-352,389-394,410-415). Md:144 claims an exact specification exists in the JSON; JSON:1260-1306 contains only generic lists and keeps 'Prospective calls/locks/privileges' as an open dispatch gate. See F3; witness-lot hazard in F4."
+     },
+     {
+      "item": "Area: scoped writer epoch and AFTER-statement guards",
+      "status": "FAIL",
+      "evidence": "REVISION REQUIRED, limited to the guard's privilege model; the scope rule is COMPATIBLE. JSON:1250@d007162 (exactly 12 IN relations; AFTER statement; an unchanged projection takes no head) matches 7b1e606:15,17. But head and revisions are revoked from every role (currentness.sql:374-375@25858ad), and the ACL drift check refuses any grantee other than the owner (:482-494). A guard running as invoker therefore cannot lock or advance the head for writers running under other roles (hosted owners NOT PROVEN). The guard is also missing from the same-OID list (JSON:1284; 7b1e606:31). See F2."
+     },
+     {
+      "item": "Area: single-owner SECURITY DEFINER commit",
+      "status": "PARTIAL",
+      "evidence": "COMPATIBLE AS DESIGN with P3 completeness gaps. JSON:1284 carries super-or-bypass, effective UPDATE and EXECUTE, empty search_path, qualified names and no grant/RLS repair. currentness_integrity requires current_user to be the head owner (currentness.sql:419-421), so the commit must be a definer under that OID; the intake gate is at intake.sql:341-345. Gaps: sessions and nonces owners are not named explicitly (7b1e606:31); the call inventory is incomplete (F7); the timeout mechanism conflicts with the pinned proconfig (F6). Hosted ownership NOT PROVEN."
+     },
+     {
+      "item": "Area: decision inputs and the currentness contract at S",
+      "status": "FAIL",
+      "evidence": "REVISION REQUIRED. publish_revision always re-holds the head and adds 1 to the epoch (currentness.sql:507,524-527@25858ad). read_current_authority returns a constant 'unavailable' (:550-555). The monotonic trigger allows an equal epoch (:388-390). Doc50:82 HI-3: same-epoch owner DML can set the state and is mitigated only by the constant reader. 1d4f2c3:146,189-193,275: a private reader and a separate activation slice. JSON:1260-1269 has the commit call currentness_integrity() but name no authority reader. See F1."
+     },
+     {
+      "item": "Hand-sim 1: two concurrent submissions with the same idempotency key",
+      "status": "PASS",
+      "evidence": "Both requests find nothing on getExisting (handler.mjs:142; intake.sql:297-299) and both reach commit. The actor/key lock comes first (1d4f2c3:100; 06:15-17). T1 writes the five rows and commits. T2 then re-reads in a fresh READ COMMITTED statement: same payload gives a stored-receipt replay (200, :165); a different payload gives a conflict with no writes (06:39-40). One outbox row. If T2's lock wait exceeds lock_timeout: 55P03 → 503 → client retries the same key → replay. While unknown, the client ignores 409 catalog_changed (QuickOrderPage:141), so it never shows a false 'not accepted'. Requires the lock before every source lock (F3). NOT RUN."
+     },
+     {
+      "item": "Hand-sim 2: submission racing publish_revision (head re-held, epoch advanced)",
+      "status": "PARTIAL",
+      "evidence": "The intake records E0 before preflight (1d4f2c3:172-178). (a) Publish commits first: the intake's head share then reads E0+1 and 'held' (currentness.sql:524-526), so it refuses and rolls back with no retry. (b) Intake holds the share first: publish waits at :507, the request commits under R0, then the head is re-held. This is first lock wins (1d4f2c3:186-188), which is reserved to Samuel. (c) Publish holds FOR UPDATE uncommitted: the intake times out, or re-reads the new head version and refuses. No partial or duplicate writes in any branch. At S nothing ever makes the head active, so every intake refuses; the success-path read is unspecified (F1)."
+     },
+     {
+      "item": "Hand-sim 3: lost response, then recovery",
+      "status": "PASS",
+      "evidence": "The commit committed but the response was lost. The extension errors and the handler returns 503 asking the customer to retry with the same request (handler.mjs:108-111,199-201), or the response to the browser is lost. The client keeps the attempt and key (QuickOrderPage:165-167,270-271) and refreshes CSRF via /config, which tolerates a config outage (handler:167-181). On retry, replay runs before any gate (:140-147), admin_detail checks integrity, and the same reference returns with 200. No commit call, so no second obligation. If the original is still in flight, the retry waits on the actor/key lock and then replays. Replay ignores currentness, so recovery survives a re-held head. NOT RUN."
+     },
+     {
+      "item": "Hand-sim 4: a reader under the census (price row, IN)",
+      "status": "PARTIAL",
+      "evidence": "Price write W on a selected variant (prices are IN with a complete-row projection; 462cf79:55-57; 7b1e606:15). If W commits before the intake's head share, the guard has advanced the epoch and the intake refuses. If the intake holds the head share first, W's guard waits; the intake's fresh read sees the old committed price, so it is ordered before W. If W holds the head mid-transaction, the intake waits; on a cycle, lock_timeout refuses (item 23). Expiry of effectivity involves no write, so a database-time recheck after waits is needed (06:37-38). This is safe only if the actual readers match the projections; 17 rows are UNPOPULATED (JSON:311-316). See F9. NOT PROVEN."
+     },
+     {
+      "item": "Hand-sim 5: operator readback by an unauthorised actor",
+      "status": "PASS",
+      "evidence": "A viewer with manage only, or a member with read_own, is stopped by service.ts:816 (read_all) before getAdmin; test :367-376 expects 403 with no RPC. Unauthenticated callers get 401 before resolve (:360-364). Direct anon or authenticated calls through PostgREST fail: EXECUTE on admin_detail and replay is revoked and granted only to service_role (intake.sql:309-314). An authorised read_all caller gets the strict envelope; a missing or corrupt companion, marker, lines or obligation refuses (intake.sql:197-259). The SQL trusts the service_role caller (no operator identity in SQL), which is the accepted boundary. NOT RUN."
+     },
+     {
+      "item": "Doc51 item 4: no head for unchanged decisions",
+      "status": "PARTIAL",
+      "evidence": "Carried: packet md:138@d007162 says quantity/version/timestamp-only statements give no reason to take the head; inventory scope is conditional only (JSON:1286). Precision gap F10: md:140 says the commit revalidates 'version' without saying which. catalogVersion (catalog.ts:123-124) digests the inventory sourceVersion, which includes lot version and updatedAt (member-catalog-service.ts:283-292). 7b1e606:17 proposes comparing the locked predicate instead."
+     },
+     {
+      "item": "Doc51 item 6: inventory predicate",
+      "status": "PASS",
+      "evidence": "Correctly routed to Samuel: md:70 recommends one allocatable witness per variant, with no reservation or fulfilment promise, and leaves stock choice open; 7b1e606:21 agrees. Engineering hazard F4: witness waits versus a multi-SKU FEFO reserve."
+     },
+     {
+      "item": "Doc51 item 10: anchor corrections",
+      "status": "NOT_APPLICABLE",
+      "evidence": "These are inventory, referral and legacy-decoder anchors (7b1e606:29). The packet's call/lock design cites none of them, and the referral family is OUT under item 5."
+     },
+     {
+      "item": "Doc51 item 11: common owner OID",
+      "status": "PARTIAL",
+      "evidence": "JSON:1284 lists 'fences/head/revisions/intake/commit'. 7b1e606:31 also names the sessions and nonces owners. The guard function is in neither list (F2). Hosted facts NOT PROVEN."
+     },
+     {
+      "item": "Doc51 item 12: call and operation inventory",
+      "status": "PARTIAL",
+      "evidence": "JSON:1260-1269 lists 8 calls generically ('applicable transitives', 'all implicit CHECK/provider/trigger calls'). Missing: an authority reader (F1), provider_settlement_integrity(), the runtime 19-trigger fence (currentness.sql:566-577,610-612), and per-trigger post-head behaviour (F7)."
+     },
+     {
+      "item": "Doc51 item 13: mandatory definer controls",
+      "status": "PARTIAL",
+      "evidence": "Carried in JSON:1284 (empty search_path, qualified names, approved ACL). Conflict F6: 7b1e606:35 pins proconfig to exactly search_path='', while f1821b6:88 needs a lock timeout applied before the RPC; the packet names no mechanism. 'No dynamic SQL' is not restated."
+     },
+     {
+      "item": "Doc51 item 14: intake-family amendment",
+      "status": "PASS",
+      "evidence": "Packet md:138@d007162 and JSON:1287: intake SQL 355-358 and pre/postcheck 131 refuse until an explicitly scoped, fingerprint-bound amendment; never bypassed. 1d4f2c3:164 places the commit in the intake candidate file."
+     },
+     {
+      "item": "Doc51 item 23: operating decisions",
+      "status": "PARTIAL",
+      "evidence": "The packet folds these into class-4 'revocation/writer-refusal policy' (md:70; JSON:291,782). It does not separately register: intake hold, lock, statement and rollback numbers; the writer-side lock_timeout for guarded and positive-lock writers and for publish/revoke; the refusal budget; acceptance of first lock wins (doc49:130-133,163-166; doc51:132-134). See F8."
+     },
+     {
+      "item": "Split between Samuel's operating decisions and engineering",
+      "status": "PASS",
+      "evidence": "Samuel (doc49:163-166; doc51:150-152; doc53:193-195; 7b1e606:21,23,109): intake budget (2s/250ms/1500ms/500ms is an unapproved proposal, f1821b6:88); writer-side lock_timeout, including positive-lock writers and publish/revoke; refusal and latency budget and the sources of refusals; first-lock-wins revocation order for session, member, acceptance and publication; stock predicate; offers, bands, audiences, currency, destinations and Health pairs; activation and notification dispatch. Engineering: the ordered lock table, the authority-read contract, the guard definer, the isolation check, the refusal taxonomy, the database time source, the timeout mechanism, the call inventory and the census conformance rule."
+     },
+     {
+      "item": "Execution evidence for every case",
+      "status": "NOT_PROVEN",
+      "evidence": "Packet JSON:1300 says evidenceStatus ALL_NOT_RUN. This lens only read Git objects and simulated by hand. No SQL, tests, verifier, probe or installation ran. Concurrency, timeout, deadlock-victim, rollback and liveness behaviour are all unmeasured."
+     }
+    ],
+    "paths": [
+     {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "kind": "existing sqlCore; reserved host of research_health_quick_order_commit(jsonb) per 1d4f2c3:164",
+      "existsAtS": true,
+      "currentOwner": "builder session codex-health-quick-order-20261005; lease 17093695 recorded idle (packet JSON:816-825@d007162)",
+      "alreadyAuthorized": "Companion, replay and admin_detail drafting under dc3329b/1d4f2c3 (done). The commit body is HELD (doc51 §4; item 14). Not authorised.",
+      "note": "Gate :341-345 and refusal :355-358 at 25858ad must be amended (item 14). The commit needs the authority-read contract (F1), the ordered lock table (F3), the refusal taxonomy (F5) and a single database time source (F11)."
+     },
+     {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "kind": "existing sqlCore",
+      "existsAtS": true,
+      "currentOwner": "same builder; idle lease",
+      "alreadyAuthorized": "No (amendment held under item 14)",
+      "note": ":131 refuses an existing commit or guard. The amendment must combine the intake gate, sessions :683 and the full same-OID set, including the guard (F2)."
+     },
+     {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "kind": "existing sqlCore; host of the guard set per 1d4f2c3:212",
+      "existsAtS": true,
+      "currentOwner": "same builder; idle lease",
+      "alreadyAuthorized": "Only the head-integrity and decision-input slice (dc3329b; doc49 §5; 7b1e606:113-123), already completed at S. The guard set, the reader replacement and activation are HELD.",
+      "note": "publish/revoke always re-hold the head (:524-527,543-545); the reader is constant (:550-555); epoch equality is allowed (:388-390). Basis for F1 and F2."
+     },
+     {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "kind": "existing sqlCore verifier",
+      "existsAtS": true,
+      "currentOwner": "same builder; idle lease",
+      "alreadyAuthorized": "No (held with the commit)",
+      "note": "Must eventually carry two-sided race, lock-timeout, deadlock-victim and refusal-taxonomy cases. NOT RUN."
+     },
+     {
+      "path": "server/research/health/quick-order/production.ts",
+      "kind": "existing healthConfiguration adapter",
+      "existsAtS": true,
+      "currentOwner": "same builder; idle lease",
+      "alreadyAuthorized": "No (held)",
+      "note": "commit throws (:93-98) and assistedOrderExtension is null (:25). This is where to map definite refusals to InputError 409 (core.mjs:8) without editing handler.mjs (F5)."
+     },
+     {
+      "path": "server/research/health/quick-order/ports.ts",
+      "kind": "existing healthConfiguration interface",
+      "existsAtS": true,
+      "currentOwner": "same builder; idle lease",
+      "alreadyAuthorized": "No (held)",
+      "note": "QuickOrderAssistedOrderExtension.getExisting/commit (:59-62). CommitArguments.receivedAt (:41) must not become canonical time (F11)."
+     },
+     {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "kind": "existing canonicalAdapter",
+      "existsAtS": true,
+      "currentOwner": "same builder; idle lease",
+      "alreadyAuthorized": "No (held)",
+      "note": "Strict admin envelope decoder (:128-165); legacy null-enrichment fallback (:139-142). Likely implementation site for the extension."
+     },
+     {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "kind": "existing canonicalAdapter",
+      "existsAtS": true,
+      "currentOwner": "same builder; outside listed lease per md:79 for its test file",
+      "alreadyAuthorized": "No (held)",
+      "note": "fail() at :229-301 maps only 23505 and 40001 plus P0001 details for other flows; QO commit refusals need explicit codes (F5)."
+     },
+     {
+      "path": "server/research/assisted-order/express.ts",
+      "kind": "existing privateContext seam",
+      "existsAtS": true,
+      "currentOwner": "not covered by the listed idle lease (packet md:79); owner reconciliation pending",
+      "alreadyAuthorized": "No (owner scope required; doc49 §3, doc51 §4)",
+      "note": "Must supply the raw stored session hash, owner and role for the exact session FOR SHARE taken last before the head (f1821b6:76-84)."
+     },
+     {
+      "path": "server/index.ts",
+      "kind": "protectedComposition",
+      "existsAtS": true,
+      "currentOwner": "protected; separate GATE01 authority",
+      "alreadyAuthorized": "No (protected-change review)",
+      "note": "Wiring only; no call/lock dependency in this lens."
+     },
+     {
+      "path": "supabase/candidates/20261007_research_inventory_quick_order_lock_order.sql",
+      "kind": "conditionalInventory new candidate",
+      "existsAtS": false,
+      "currentOwner": "none; outside the listed lease",
+      "alreadyAuthorized": "No; conditional on a proven incompatibility",
+      "note": "If the intake takes witnesses with SKIP LOCKED or NOWAIT (F4), the FEFO-vs-UUID cycle disappears for the intake and this family may be unnecessary."
+     },
+     {
+      "path": "server/research/health/quick-order/handler.mjs",
+      "kind": "accepted application (3e82154/doc48); not among the 33 paths",
+      "existsAtS": true,
+      "currentOwner": "accepted; frozen",
+      "alreadyAuthorized": "No edit required by this lens",
+      "note": "Recovery runs before gates (:140-147); 503 copy for unknown outcomes (:108-111); Node-clock receivedAt (:156)."
+     }
+    ],
+    "findings": [
+     {
+      "id": "C1-F1",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "The commit's current-authority read and its dependency on activation are unspecified. At S the designated reader always returns 'unavailable', and the head state alone can be set by same-epoch owner DML.",
+      "evidence": "currentness.sql:524-527@25858ad: publish always sets held and adds 1 to the epoch. :550-555: read_current_authority is constant 'unavailable', independent of row state. :388-390: equal epochs are allowed. Doc50:82 HI-3: same-epoch DML can rewrite state, 'mitigated by the constant reader'; future protocol must strictly increase the epoch (7b1e606:39, item 15). 1d4f2c3:146 makes the private reader the authority; :189-193,275 make activation a separate slice. JSON:1260-1269@d007162 lists currentness_integrity() but no authority reader, and md:140 gives no epoch comparison source. The body would either never pass 'held' or trust a head.state that DML can forge. Where readerCensusSha256 is compared at runtime is also unnamed (7b1e606:27).",
+      "fix": "Specify the commit's authority read: head FOR SHARE taken last, then one call to read_current_authority() (or a single named successor) in a fresh statement. Refuse unless it returns a closed {state:'active', revisionId, writerEpoch} equal to the E0/R0 recorded before preflight. The separate activation slice (Samuel, class 5) must replace the reader with one that requires a strict epoch increase. Compare readerCensusSha256 at activation, outside any measured reader. Until then the commit stays fail-closed."
+     },
+     {
+      "id": "C1-F2",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "The source-write guard's effective role is unspecified and missing from the same-OID precondition. As an invoker function it cannot lock or advance the head for any writer not running as the head owner.",
+      "evidence": "JSON:1250@d007162: the guard takes the head when a projection changes. JSON:1284's same-OID list ('fences/head/revisions/intake/commit') and 7b1e606:31 (item 11) both omit the guard. currentness.sql:374-375@25858ad revokes head and revisions from public, anon, authenticated and service_role. :482-494 refuses any grantee other than the owner, and FOR UPDATE/UPDATE on the head needs UPDATE privilege. Writers run as their RPC owner or caller (hosted owners NOT PROVEN). 06 design:42-47 says writers are never refused merely because intake is held. The currentness triggers are ENABLE ALWAYS (:405-410); the guard's enable mode is unstated.",
+      "fix": "Specify guard_source_write as SECURITY DEFINER, owned by the common OID, proconfig search_path='', no EXECUTE grants, its own fingerprint and ACL check, an explicit enable mode (ALWAYS like :405-410, or a justified ORIGIN), and absent/held-head behaviour per 06:42. Add the guard to the item-11 precheck, postcheck and runtime set."
+     },
+     {
+      "id": "C1-F3",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+      "claim": "Decision B makes an exact ordered lock/call/privilege design a precondition, but the packet does not contain it. Md:144 says it is 'specified in JSON'; the JSON holds only generic requirement lists.",
+      "evidence": "md:71,144@d007162 versus JSON:1260-1269 (8 generic calls, 'applicable transitives') and :1276-1288 (rules only). :1301-1306 still lists 'Prospective calls/locks/privileges' as an open gate. Census JSON:337-352,389-394,410-415 marks all five positive-lock relations UNPOPULATED. The controlling order exists only as prose (f1821b6:56; 1d4f2c3:170-185; 06:15-26). No sort key, lock mode, post-wait predicate or writer counterpart is given for members, customers, legal bindings with aliases, acceptances, the founder checkout or lot witnesses.",
+      "fix": "Add one ordered table to the JSON. Columns: step, object (advisory key or relation+selector), mode, sort key, NOT FOUND/ambiguity refusal, post-wait recheck using database time, writer counterpart and its order, justified 'none' rows (item 8). Order: READ COMMITTED check; actor/key lock on the 1d4f2c3:96-97 hash; replay; record E0/R0; members, customers, bindings, acceptances, checkout; lot witnesses by UUID; session; head FOR SHARE; fresh reads; inserts. Correct md:144."
+     },
+     {
+      "id": "C1-F4",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+      "claim": "A witness-lot intake that waits on lot locks can deadlock with an unreplaced multi-SKU FEFO reserve, and the deadlock detector may abort the customer reservation instead of the intake.",
+      "evidence": "Hand simulation: the intake share-locks witness W_a and then requests W_b (UUID order). research_reserve_inventory holds W_b FOR UPDATE after mutating SKU B and then requests W_a (f1821b6:33; doc49:67,110 on the FEFO-vs-UUID inversion). This cycle needs no head. The backend that detects the deadlock aborts, which may be the reserve unless the intake's lock_timeout fires first. Items 4 and 6 (7b1e606:17,21) leave the predicate to Samuel and inventory replacement conditional (md:70,138).",
+      "fix": "Existence predicate: take witnesses FOR SHARE SKIP LOCKED (pick another qualified lot) or NOWAIT (refuse), in UUID order, then recheck allocatability using database time. Quantity predicate: NOWAIT. The intake then never waits on lots, and the conditional inventory family is needed only for a remaining proven incompatibility."
+     },
+     {
+      "id": "C1-F5",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "No refusal taxonomy separates definite from unknown commit outcomes. Definite in-transaction refusals would read as 'could not confirm receipt' and leave the client stuck in unknown mode.",
+      "evidence": "supabase-repository.ts:229-301@25858ad maps only 23505 (conflict), 40001 ('Retry the request'), P0001 details for other flows, and otherwise a generic Error. handler.mjs:199-201,108-111 turns any non-InputError into 503 'could not confirm receipt'. QuickOrderPage.tsx:141 unlocks only on 422 invalid_input or 409 catalog_changed/terms_changed; anything else stays unknown (:165-167). While held, a retry gets 503 feature_disabled (handler:121-122), so the customer stays 'unconfirmed' although nothing was saved. JSON:1279 names no codes. InputError is exported (core.mjs:8).",
+      "fix": "Define a SQL errcode/detail for each refusal class and map it in the in-scope adapter. held/epoch/stale → 409 catalog_changed; Health/standing/session → 409 terms_changed or 401; payload conflict → 409 idempotency_conflict; 55P03/57014/40P01/40001/transport errors → 503 unknown."
+     },
+     {
+      "id": "C1-F6",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC51_CARRY_FORWARD_AND_DECISION_INPUT_SCOPE_20261008.md",
+      "claim": "The intake timeout mechanism is unspecified and conflicts with item 13's exactly pinned proconfig.",
+      "evidence": "7b1e606:35 (item 13): 'exactly pinned empty search_path proconfig' for the commit family. :109 (item 23): the numbers are unapproved. f1821b6:88: timeouts must apply before the top-level RPC, and an in-function SET is 'not proof'. A service_role or transport-level setting would bound every service_role RPC, not only QO. Packet JSON:1276-1288 is silent.",
+      "fix": "Name the mechanism and its blast radius. Either amend item 13 explicitly to allow lock_timeout in the commit's pinned proconfig (with a transport or role setting bounding the statement), or use a dedicated role or PostgREST setting. Require the intake lock_timeout to be below deadlock_timeout. The values stay Samuel's."
+     },
+     {
+      "id": "C1-F7",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "The call and privilege inventory omits known runtime calls and the full item-11 owner set.",
+      "evidence": "JSON:1260-1269@d007162 omits an authority reader (F1) and research_assisted_order_provider_settlement_integrity(). It also has no runtime 19-trigger fence check; installers check it only at install (currentness.sql:566-577,610-612@25858ad; intake.sql:360,378). Trigger functions reached by the five inserts appear only as 'all implicit…'; one spot check: the outbox guard returns early for unbound rows (20261001040351:133). JSON:1284's owner list lacks the sessions and nonces owners (7b1e606:31) and the guard (F2).",
+      "fix": "Enumerate signature, owner, EXECUTE rights and post-head lock behaviour for every trigger function the inserts reach, plus the provider-integrity and trigger-fence runtime checks. Restate item 11's OID set verbatim, adding the guard."
+     },
+     {
+      "id": "C1-F8",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+      "claim": "The operating decisions are folded into class 4 instead of being registered as the separate Samuel decisions that doc 49 and doc 51 reserve.",
+      "evidence": "md:70 and JSON:291,782@d007162 say only 'revocation/writer-refusal policy'. Doc49:130-133,163-166 reserves first lock wins, the numeric budget and writers queuing behind intake shares. Doc51:132-134,150-152 (item 23) reserves the writer lock_timeout. 7b1e606:23,109 reserves the refusal budget and the writer-vs-writer measurement. Not covered: intake budget numbers, and writers on positive-lock relations and on publish/revoke (currentness.sql:507,538), which can wait behind continuous intake shares.",
+      "fix": "Register separate items in the existing question set: intake budget; writer lock_timeout (guarded, positive-lock, publish/revoke); refusal budget and sources; first lock wins for each revocation path. Restore item 7's writer-vs-writer-with-head-held measurement."
+     },
+     {
+      "id": "C1-F9",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+      "claim": "The proposal to complete the census after the source exists has no conformance rule binding implemented readers to the design projections.",
+      "evidence": "md:75 and JSON:1270-1275@d007162 put bodies before the actual census. f1821b6:126: a decision reader that consumes an unlisted relation or column blocks drafting. 462cf79:21-77 and 7b1e606:15 freeze projections and IN/OUT modes. JSON:746: the media dependency returns if the legacy cart reader is used.",
+      "fix": "State that any implemented reader, column, selector or lock outside the 462cf79/7b1e606 projections invalidates the successor S and returns to design review; the census is never widened to fit the body."
+     },
+     {
+      "id": "C1-F10",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+      "claim": "Revalidating 'version' is ambiguous and could bring back the inventory churn that item 4 removed.",
+      "evidence": "md:140@d007162 says 'revalidate … version'. catalog.ts:123-124@25858ad: catalogVersion digests the canonical sourceVersion and is 'NOT a transactional version guard'. member-catalog-service.ts:283-292: the inventory sourceVersion includes lot version and updatedAt. 7b1e606:17 (item 4) proposes comparing the locked predicate, not aggregate source-version equality.",
+      "fix": "State that the commit compares priceVersion, price identity and effectivity, the locked witness predicate and both quantity bands. It never recomputes a catalogVersion that contains lot version or updated_at."
+     },
+     {
+      "id": "C1-F11",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+      "claim": "The canonical time source is only implied; the application's receivedAt must be overridden.",
+      "evidence": "handler.mjs:156-157@25858ad takes receivedAt and the attribution receivedAt from the Node clock and passes them to commit. admin_detail requires created_at, occurred_at and received_at to be equal to the millisecond (intake.sql:218-223) and reads confirmedAt from the attribution receivedAt (:261-272); the decoder binds both to it (quick-order-repository.ts:151). f1821b6:90 forbids browser receivedAt as canonical. md:140 says only 'database time'.",
+      "fix": "State that the commit takes one millisecond-truncated database clock value after the last wait and writes it to created_at, occurred_at, received_at and the attribution receivedAt, ignoring CommitArguments.receivedAt."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "C1-F1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. Re-derived: read_current_authority always returns 'unavailable' (currentness.sql:550-555@25858ad); equal epochs are allowed (:388-390); the reader was kept constant (doc50:82 HI-3). The prospectiveCalls list omits any authority reader (packet JSON:1260-1269@d007162). Md:140 asks only for an epoch comparison, while the controlling text requires re-reading the 'active publication' (HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md:23-24@25858ad; 1d4f2c3:146,177). Added evidence: the companion CHECK needs a per-line authorityRevisionId (intake.sql:87,93-94@25858ad), which only an active-revision read can supply. If the commit read head.state directly, same-epoch owner DML would become an activation path that skips the held activation slice. The contract must be fixed before drafting."
+     },
+     {
+      "id": "C1-F2",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2, the same class as doc49 5C-2. Writers must take the head exclusively and advance the epoch (1d4f2c3:179-180). The head is revoked from every role (currentness.sql:374-375@25858ad), and the ACL check refuses any non-owner grantee (:482-494). An invoker guard therefore fails for non-owner writers, such as Product Control table writes (1d4f2c3:221). Item 11 omits the guard (7b1e606:31); item 15 only reserves its name (:39). Correction to the lens's fix: do NOT import 'absent head: guard is a no-op' (06:42). That line predates the seeded head (doc50:5-6; currentness.sql:413,426-428). A no-op on an absent or RLS-hidden head would silently stop invalidation, so the guard must raise. See M2."
+     },
+     {
+      "id": "C1-F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Downgraded from P2 to P3. The ordered table really is absent (JSON:1260-1288@d007162), but the packet discloses this. Decision B is conditioned 'after prospective reader/call/lock/privilege design' (md:71,75), and JSON:1303 keeps 'Prospective calls/locks/privileges' as an open dispatch gate. Md:144 says the topics are 'specified in JSON'; it does not claim an 'exact ordered' table, so the lens overstates the packet's claim. The real defect is overstatement: md:144 and transaction.status 'IMPLEMENTATION_READY_PROPOSAL_NOT_DISPATCHED' (JSON:810). The order itself exists in controlling prose (RECOVERY_5C_RESOLUTION_20261007.md:56@f1821b6; 06:15-26). The lens's proposed table is a correct engineering fix."
+     },
+     {
+      "id": "C1-F4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. The cycle holds: reserve locks every candidate lot FOR UPDATE per SKU and mutates before the next SKU (doc49:67,88), while the intake locks witnesses in UUID order. With two or more variants, a cycle forms without the head. Doc51 item 4 already names this hazard (7b1e606:17), and the packet registers it as conditional inventory (md:138; JSON:1286). The lens adds deadlock-victim selection (the backend whose deadlock_timeout fires first aborts itself) and the SKIP LOCKED/NOWAIT option. Those refusals still count against Samuel's budget. NOT RUN."
+     },
+     {
+      "id": "C1-F5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. fail() maps 23505 and 40001 to AssistedOrderConflictError, not InputError (supabase-repository.ts:236-299@25858ad), and every other error to a generic Error. The handler sends anything that is not an InputError to 503 'could not confirm receipt' (handler.mjs:199-201,108-111). The client unlocks only on 422 invalid_input or 409 catalog/terms, and only when not unknown (QuickOrderPage.tsx:141). A definite refusal therefore leaves the customer stuck in 'unconfirmed'. The outcome is safe but untruthful, so P3 is correct."
+     },
+     {
+      "id": "C1-F6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld with a nuance. Item 13 pins proconfig to search_path='' (7b1e606:35), and f1821b6:88 already rules out an in-function SET as proof and requires a transport or database setting. So there is no literal conflict unless proconfig were chosen. The real gap is that the mechanism and its blast radius are unnamed (a role-level setting affects every service_role RPC). The lens's added rule, intake lock_timeout below deadlock_timeout, is sound engineering."
+     },
+     {
+      "id": "C1-F7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with anchor corrections. The missing authority reader and the incomplete owner set (JSON:1284 omits the sessions and nonces owners in 7b1e606:31, and the guard) are verified. However, provider_settlement_integrity() is an install-time call (intake.sql:360; currentness.sql:566,610@25858ad), not a known runtime call of the commit; listing it is optional. intake.sql:378 is a row in the trigger list, not a separate check. The generic 'all implicit…' entry (JSON:1268) still needs enumeration under item 12."
+     },
+     {
+      "id": "C1-F8",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Md:70 and JSON:291,782 fold the operating decisions into 'revocation/writer-refusal policy'. Doc49:130-133,163-166, doc51 item 23 (doc51:132-134; 7b1e606:109) and 7b1e606:23 reserve these as separate decisions: intake budget, writer lock_timeout, refusal budget and first-lock-wins. The lens is right that publish/revoke (currentness.sql:507,538) can wait behind intake shares, but it understates how long; see M1."
+     },
+     {
+      "id": "C1-F9",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The controlling rule 'an unlisted reader column blocks drafting' (f1821b6:126; DOC49_5C_CORRECTION_20261008.md:11@462cf79) assumes the census comes before the bodies. The packet reverses that order (md:75; JSON:1270-1275), so the rule cannot operate as written. A restated rule, under which nonconforming implemented readers invalidate the successor and the census is never widened to fit, is needed."
+     },
+     {
+      "id": "C1-F10",
+      "upheld": false,
+      "severity": "P3",
+      "note": "Refuted on its anchor. At S the Quick Order catalogVersion does not digest the inventory sourceVersion. catalog.ts:124 digests item.catalogVersion plus public facts. That value is the assisted-order wiring constant MASTER_OFFERING_COMMITTED_BINDINGS_PATH (server/index.ts:976; production-deps.ts:125; production-catalog.ts:204,316@25858ad), not member-catalog-service.ts:283-292. Item 4's rule, to compare the locked predicate and not source-version equality (7b1e606:17), is carried by md:81 and md:138. The real 'version' gap is in the companion's per-line sourceVersion; see M4."
+     },
+     {
+      "id": "C1-F11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with corrected basis. f1821b6:90 forbids treating a browser receivedAt as the canonical referral-attribution time. The handler's receivedAt comes from the Node server clock (handler.mjs:156), not the browser. The stronger basis: canonical defaults are now() (transaction start, microsecond precision; 20260815150000:116,209,253@25858ad), while admin_detail requires created_at, occurred_at and received_at to be equal and millisecond-truncated (intake.sql:218-223). The commit must therefore set one explicit millisecond value; database time taken after the waits is the defensible choice."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Area: server-authoritative selection and policy validation",
+      "status": "PASS",
+      "note": "COMPATIBLE AS DESIGN. Md:140@d007162; 1d4f2c3:104-107; handler.mjs:159-161@25858ad says preflight is advisory. Limit: the per-line sourceVersion and authorityRevisionId the companion requires are unspecified (M4). Values are Samuel's. NOT RUN."
+     },
+     {
+      "item": "Area: actor/key idempotency",
+      "status": "PASS",
+      "note": "COMPATIBLE. Actor-bound hash (1d4f2c3:96-103); lock, then lookup (JSON:1258); companion UNIQUE (intake.sql:121); canonical hash globally unique (20260815150000:98); 23505 after the lock means conflict (06:39-40)."
+     },
+     {
+      "item": "Area: atomic request, lines and evidence persistence",
+      "status": "PASS",
+      "note": "COMPATIBLE. Five writes in one RPC (JSON:1251-1257; md:83,142); no legacy submit (production.ts:93-98). The 19-trigger fence is unaffected; the outbox guard returns early for unbound rows (20261001040351:133). Trigger enumeration remains open (F7)."
+     },
+     {
+      "item": "Area: receipt only after persistence",
+      "status": "PASS",
+      "note": "COMPATIBLE. handler.mjs:161-165 requires persisted===true and a matching receipt; 1d4f2c3:118 requires readback before the receipt. Commit-before-response through PostgREST is NOT PROVEN by execution."
+     },
+     {
+      "item": "Area: lost-response recovery",
+      "status": "PASS",
+      "note": "COMPATIBLE. Replay runs before the gates (handler.mjs:140-147). Replay is read-only and checks integrity (intake.sql:287-307). Limit: in-page only (QuickOrderPage.tsx:270); definite refusals read as unknown (F5)."
+     },
+     {
+      "item": "Area: authorised operator readback",
+      "status": "PASS",
+      "note": "COMPATIBLE. read_all is checked before the repository call (service.ts:816); the test expects 403 with no RPC (quick-order-admin-readback.test.ts:367-376); EXECUTE is granted only to service_role (intake.sql:309-314); the envelope is strict and refuses corruption (intake.sql:197-259)."
+     },
+     {
+      "item": "Area: no false paid/fulfilled, outbox obligation, referral as declaration",
+      "status": "PASS",
+      "note": "COMPATIBLE. JSON:1280,1283; exactly one obligation (06:135-141); referral OUT (7b1e606:19); states fixed (ports.ts:28,34)."
+     },
+     {
+      "item": "Area: lock order (preflight row locks, then head last)",
+      "status": "NOT_PROVEN",
+      "note": "The rule is compatible (f1821b6:50,56; 06:15-26). The exact ordered table is absent but disclosed as an open gate (JSON:1303); see F3 at P3. Share-lock starvation of FOR UPDATE on the head is unaddressed (M1)."
+     },
+     {
+      "item": "Area: scoped writer epoch and AFTER-statement guards",
+      "status": "FAIL",
+      "note": "REVISION REQUIRED. The guard's definer and owner model is missing (F2). Its scope source and cost are unspecified (M3). Absent-head no-op semantics (06:42) are stale and fail-open (M2). FOR SHARE starvation affects guard and revoke (M1)."
+     },
+     {
+      "item": "Area: single-owner SECURITY DEFINER commit",
+      "status": "PARTIAL",
+      "note": "JSON:1284 carries the core. Owner list omits sessions and nonces (7b1e606:31), the guard and the IN-relation owners needed for TRIGGER (M2). No dynamic SQL is not restated. Hosted ownership NOT PROVEN."
+     },
+     {
+      "item": "Area: decision inputs and the currentness contract at S",
+      "status": "FAIL",
+      "note": "The validator and publish(jsonb,text) are compatible. The commit's authority read and activation dependency are unnamed (F1). The companion's authorityRevisionId needs that read (intake.sql:87,93-94)."
+     },
+     {
+      "item": "Hand-sim 1: same idempotency key, concurrent",
+      "status": "PASS",
+      "note": "Re-run: both miss getExisting. T2 waits on the actor/key lock, re-reads in a fresh statement and replays or conflicts. 55P03 gives a 503 retry, then replay. Extra: if prices changed between T1 and T2, handler.mjs:164 returns a transient 503; the next retry replays via getExisting. One obligation. NOT RUN."
+     },
+     {
+      "item": "Hand-sim 2: submission vs publish_revision",
+      "status": "PARTIAL",
+      "note": "Branches (a) to (c) verified against currentness.sql:502-527. Added: under continuously overlapping intakes, publish or revoke FOR UPDATE can be bypassed by later FOR SHARE requests (M1). At S every intake refuses because the reader is constant."
+     },
+     {
+      "item": "Hand-sim 3: lost response then recovery",
+      "status": "PASS",
+      "note": "Verified: replay before gates, the same reference and no second outbox row. If the original is still in flight, the retry waits on the lock and then replays. A gate refusal while unknown is ignored by the client (:141)."
+     },
+     {
+      "item": "Hand-sim 4: reader under the census",
+      "status": "PARTIAL",
+      "note": "Price race verified. Own simulation: writer W updates lot L1 (guard takes the head), then needs witness L2, which the intake share-locked. That is a cycle; the intake's lock_timeout refuses, but only if the writer invariant (06:27-32) is broken. Projection conformance NOT PROVEN."
+     },
+     {
+      "item": "Hand-sim 5: unauthorised operator readback",
+      "status": "PASS",
+      "note": "403 before any RPC for manage-only; 401 before resolve; PostgREST EXECUTE limited to service_role. Trust in the service_role caller is the accepted boundary."
+     },
+     {
+      "item": "Doc51 item 4",
+      "status": "PASS",
+      "note": "Carried by md:138 and md:81. F10 refuted: catalogVersion at S is the static bindings path (server/index.ts:976)."
+     },
+     {
+      "item": "Doc51 item 6",
+      "status": "PASS",
+      "note": "Routed to Samuel (md:70; 7b1e606:21). Engineering hazard F4."
+     },
+     {
+      "item": "Doc51 item 10",
+      "status": "NOT_APPLICABLE",
+      "note": "Anchors are outside this call/lock design; referral is OUT."
+     },
+     {
+      "item": "Doc51 item 11",
+      "status": "PARTIAL",
+      "note": "JSON:1284 lacks sessions and nonces, the guard and the IN-relation owners (M2)."
+     },
+     {
+      "item": "Doc51 item 12",
+      "status": "PARTIAL",
+      "note": "No authority reader; generic transitives (JSON:1266-1268)."
+     },
+     {
+      "item": "Doc51 item 13",
+      "status": "PARTIAL",
+      "note": "No dynamic SQL is not restated; the timeout mechanism is unnamed (F6)."
+     },
+     {
+      "item": "Doc51 item 14",
+      "status": "PASS",
+      "note": "md:138; JSON:1287; intake.sql:355-358 and precheck:131 verified, and both refuse the guard too."
+     },
+     {
+      "item": "Doc51 item 23",
+      "status": "PARTIAL",
+      "note": "Folded into class 4 (F8). The wait bound understated (M1)."
+     },
+     {
+      "item": "Samuel vs engineering split",
+      "status": "PASS",
+      "note": "Samuel: budgets, writer and revoke lock_timeout, refusal budget, first-lock-wins, stock predicate, offers and legal. Engineering: lock table, authority read, guard definer and scope, fair head gate, refusal taxonomy, time source."
+     },
+     {
+      "item": "Execution evidence",
+      "status": "NOT_PROVEN",
+      "note": "JSON:1300 ALL_NOT_RUN. Everything here is Git reads and hand simulation only."
+     }
+    ],
+    "missed": [
+     {
+      "id": "C1-M1",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "Head FOR UPDATE (publish, revoke, every guarded writer) can be starved without limit by overlapping intake FOR SHARE locks on the single head row. The accepted framing 'writers queue for one intake hold' understates this, and first-lock-wins revocation assumes a bounded wait.",
+      "evidence": "Intakes take the head FOR SHARE (06:23@25858ad; f1821b6:56). Publish and revoke take it FOR UPDATE (currentness.sql:507,538@25858ad), as must writers (1d4f2c3:179-180). Doc49:130-133 and 7b1e606:109 state the wait as one 'full hold'. PostgreSQL heap_lock_tuple grants a FOR SHARE request without sleeping when only share lockers hold the tuple, and README.tuplock queues share lockers via LockTuple only on an active conflict. A waiting FOR UPDATE can therefore be bypassed by each new intake. 1d4f2c3:187-188 ('after revocation commits, new intake refuses') assumes revocation acquires. Derived from PostgreSQL semantics; NOT RUN.",
+      "fix": "Put a fair heavyweight gate before the head. Intakes take pg_advisory_xact_lock_shared(K) immediately before head FOR SHARE (after all source rows); publish, revoke and the guard take pg_advisory_xact_lock(K) before FOR UPDATE. Use the same order everywhere. The lock manager queues new shared requests behind a waiting exclusive one. Alternatively, record the unbounded wait and an operating procedure (app disable before revoke; writer and revoke lock_timeout) in Samuel's decision. Measure under mixed load."
+     },
+     {
+      "id": "C1-M2",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md",
+      "claim": "Guard installation and runtime semantics are incomplete. TRIGGER privilege on the 12 IN relations is not in the owner/privilege precondition. The 'absent head: guard is a no-op' rule is stale and would fail open. Writer isolation is unhandled.",
+      "evidence": "06:42@25858ad says an absent head makes the guard a no-op. That predates the seeded, removal-guarded head (currentness.sql:399-413,426-428; doc50:5-6). The head has RLS enabled (:373), so an under-privileged or hidden view would silently skip invalidation. CREATE TRIGGER needs TRIGGER on each IN relation, and grants are forbidden (JSON:1284@d007162), yet item 11 (7b1e606:31) lists no IN-relation owners. Writers in REPEATABLE READ or SERIALIZABLE get 40001 on the guard's head UPDATE once the epoch moves after their snapshot.",
+      "fix": "The guard raises 55000 when the head row is not visible; it is never a no-op. Add the IN-relation owners, or the exact TRIGGER privilege, to precheck, postcheck and runtime integrity under the common OID. State the writer isolation handling and count 40001 as a refusal source in the budget."
+     },
+     {
+      "id": "C1-M3",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "The guard's scope source is unspecified: which revision defines P/V/L/D, how it is read, and its cost per statement on hot inventory relations.",
+      "evidence": "JSON:1250@d007162: 'unchanged projection/scope takes no head'. The scope is publication-bound and invalidated conservatively while held (f1821b6:98). It exists only in decision_inputs_text, up to 8,388,608 bytes and 50,000 rules (currentness.sql:162,243@25858ad). Lots and documents are derived sets (462cf79:23-25). Inventory lots are IN (7b1e606:15), so every reserve, release or movement statement would evaluate scope. The packet names no source revision (active vs last_published), lock or cost bound.",
+      "fix": "Specify an immutable, indexed scope materialization per revision, sealed in the currentness fingerprint. The guard reads head.active_revision_id without a lock; it invalidates conservatively while held; activation strictly increases the epoch (item 15). Bound and measure guard cost on inventory statements."
+     },
+     {
+      "id": "C1-M4",
+      "severity": "P3",
+      "file": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "claim": "The commit must fill per-line classification sourceVersion and authorityRevisionId, which the companion CHECK requires, but the packet does not say what they bind. This is the real 'version' ambiguity behind F10.",
+      "evidence": "intake.sql:86-99@25858ad requires each classification to carry decision 'health_requestable', a sourceVersion of 1-160 characters and an authorityRevisionId UUID matching the request and payload. Packet md:140-142 and JSON:1276-1288@d007162 name neither field's source. Item 4 (7b1e606:17) asks for comparison against the locked predicate, not source-version equality.",
+      "fix": "State that authorityRevisionId equals the active revision returned by the F1 authority read under the head share. sourceVersion is the identity of the locked decision predicate (price id and version, effectivity, witness-lot predicate), never catalogVersion or the lot version/updated_at."
+     }
+    ],
+    "verdictOpinion": "The lens's overall verdict holds: REVISION REQUIRED as a design, nothing was run, and no source permission follows. The protocol core is COMPATIBLE AS DESIGN with doc 49/51, 1d4f2c3, the currentness contract at 25858ad and the 3e82154 intake. That core is: actor/key lock then replay; preflight row locks then head last; AFTER-statement guards; a single-owner definer commit; five atomic writes; persisted:true only after commit; replay before gates; read_all readback; declarations only.\n\nI re-derived every anchor. F1 and F2 stand at P2. I add M1 at P2: overlapping intake FOR SHARE locks can starve the head's FOR UPDATE for publish, revoke and guarded writers without limit. That undercuts the bounded wait that first-lock-wins revocation assumes. The fix is a fair advisory gate before the head.\n\nF3 drops to P3: the missing ordered lock table is disclosed as an open gate (JSON:1303), so the defect is the overstatement in md:144 and in the 'IMPLEMENTATION_READY' status. F10 is refuted: catalogVersion at S is the static bindings path (server/index.ts:976). F4-F9 and F11 stand at P3, with corrections to the anchors behind F6, F7 and F11. I add three P3s: the guard must raise on an absent head and needs TRIGGER privilege plus isolation handling (M2); the guard's scope source and cost are unspecified (M3); the classification's sourceVersion and authorityRevisionId are unbound (M4).\n\nSamuel decides the intake budget, the writer and revoke lock_timeout, the refusal budget, first-lock-wins and the stock predicate. Everything else is engineering."
+   }
+  },
+  {
+   "lens": "path-inventory-authority",
+   "review": {
+    "verdict": "LENS C2 (paths). Local, read-only, NOT RUN. This is not a source permission. The packet lists exactly 28 primary paths (sqlCore 10, healthConfiguration 6, canonicalAdapter 8, privateContext 2, protectedComposition 2) and 5 conditional inventory paths. Every preimage matches git ls-tree at S 25858ad: 25 primary paths exist with the stated blobs and sizes; 3 primary paths and all 5 conditional paths are absent. Only server/index.ts is protected under the manifest at S, and it is already off its seam baseline. supabase/** and server/research/** are allowed zones, and tests are reported. Samuel's dc3329b approval of 1d4f2c3, plus S4, names 21 of the 28 primary paths for described changes; supabase-repository.ts and service.ts are covered only for patch hunks that are already applied. The commit body, the intake-family amendment, the guard set and read_current_authority stay held (doc49, doc51, 7b1e606:5). Seven primary paths are not authorised: the health-agreement-config pair, service.test.ts, supabase-repository.test.ts, express.ts and its new test, and server/index.ts. None of the 5 conditional paths is authorised. The conditional paths are labelled conditional and sit outside the lease, but the packet triggers them by a class of conflict, not a demonstrated finding, and Decision B still scopes '33 exact preimages'. Ownership is not reconciled: the QO lease exists only in builder records feaff6f, and FILE_OWNERSHIP at coordinator HEAD 52e57c3 marks a Phase Zero writer 'active' on four canonical paths. The smallest complete DISABLED slice is 16 paths: the 10 SQL family files plus quick-order-repository.ts/.test.ts, production.ts/.test.ts, ports.ts and quick-order-admin-readback.test.ts. Add the 2 private-context paths only if Early Access actors must be supported. The additional grant must name the commit body and its own gate, the intake compatibility amendment, the 12-relation guard set, the read_current_authority and activation source (never invoked), the source-order amendment, the stock-policy choice and a registered exclusive lease. It must exclude payment, protected, dispatcher, inventory and activation changes.",
+    "checklist": [
+     {
+      "item": "Exact 28 primary + 5 conditional list extracted from packet md/json",
+      "status": "PASS",
+      "evidence": "QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md:87-136@d007162 and .json:842-1240@d007162 (sqlCore 10, healthConfiguration 6, canonicalAdapter 8, privateContext 2, protectedComposition 2 = 28; conditionalInventory 5). Scratch copies hash-equal d007162 (md 145d0d22..., json c8bb1979...). Review request SUBMISSION_PACKET_REVIEW_REQUEST_20261009.md:52-113 matches."
+     },
+     {
+      "item": "Existence at S via git ls-tree (builder 389a, S=25858ad)",
+      "status": "PASS",
+      "evidence": "ls-tree at 25858ad: 25 primary exist, all mode 100644, with blobs and sizes equal to packet JSON (e.g. intake.sql 867dc0a3/39536, server/index.ts d27a3da9/75201, supabase-repository.test.ts b1021804/1614). Absent: health-agreement-config.ts, health-agreement-config.test.ts, express-quick-order-context.test.ts and all 5 20261007_research_inventory_quick_order_lock_order.* paths. Matches json exists flags."
+     },
+     {
+      "item": "Kind classification against CORE_SITE_PROTECTION_MANIFEST.json at S",
+      "status": "PASS",
+      "evidence": "Manifest blob 241fc344@25858ad. protectedPaths globs include server/index.ts (:200). allowedWriteZones prefixes include server/research/ (:263) and supabase/ (:270). reportedZones .test.ts (:350). Only server/index.ts of the 33 is protected; it is a permittedSeamFile whose forbidden list covers session and route-authority changes without a new protected-change review (:447-451). S raw sha256 cc1d8d4d... differs from seamBaselineHashes 1d6594d6... (:1255), so it is already off baseline at S (doc49:137-139)."
+     },
+     {
+      "item": "Builder lease coverage of the 33 paths",
+      "status": "PASS",
+      "evidence": ".xenios/CODE_OWNERSHIP.json@feaff6f lease 17093695 HEALTH-QUICK-ORDER-20261005 (state idle, heartbeat 2026-10-09T03:55:05.354Z, 43 paths incl. glob server/research/health/quick-order/** and exact server/index.ts) covers 24 of 28 primary paths. Not covered: service.test.ts, supabase-repository.test.ts, express.ts, express-quick-order-context.test.ts and all 5 conditional paths. Matches packet json:825 and md:79."
+     },
+     {
+      "item": "Current owner and lease at coordinator HEAD (.xenios/CODE_OWNERSHIP.json, docs/coordination/FILE_OWNERSHIP.json)",
+      "status": "FAIL",
+      "evidence": "coordinator HEAD 52e57c3: CODE_OWNERSHIP has no 17093695 and no QO lease. Only 'handoff' leases overlap: globs 5760f18a (:81) and 9e874362 (:2824) on server/research/assisted-order/**; HL12-ADP03 2495d504 (:3383) exact on supabase-repository.ts, service.ts, service.test.ts, supabase-repository.test.ts and server/index.ts; 24cef6f8 (:2908) on express.ts; M71 glob on supabase/verification/**. FILE_OWNERSHIP rule OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819 is state 'active', mode write (:883), covering express.ts (:954), service.test.ts (:967), service.ts (:968) and supabase-repository.ts (:970). The single exclusive writer is not reconciled in the authoritative registry."
+     },
+     {
+      "item": "Mapping to Samuel's existing scope (1d4f2c3 approved by dc3329b; S1-S5 at 60d593a)",
+      "status": "PASS",
+      "evidence": "dc3329b COORDINATION_STATE supplementalScope.approval: 'Approve this bounded source-only scope', scopeSha 4e422cf9 (equal to the scratch copy) and patch b7427650. 21 of 28 primary paths are named: intake family (S4 SOURCE_AUTHORIZATION_DRAFT:58-67@60d593a; PERSISTENCE_PROPOSAL:13-24@5ee44d5; 1d4f2c3:76-80,162-166); currentness (1d4f2c3:153-157); ports/legal/production and adjacent tests (1d4f2c3:267-275); quick-order-repository (1d4f2c3:162-163); patch hunks in supabase-repository.ts and service.ts (1d4f2c3:293-299, applied 9118a82); readback and notification tests (1d4f2c3:321-329); root-composition test (1d4f2c3:360). 7 are not named. Bodies remain held: 7b1e606:5; doc51:139-149."
+     },
+     {
+      "item": "Conditional paths genuinely conditional (named trigger or finding), not silently included",
+      "status": "PARTIAL",
+      "evidence": "Labelled conditional: md:138, review request md:107,115 and boundaries[2] ('No complete33path approval or automatic conditional inclusion'). Absent at S and outside the lease. The trigger is a class ('specific proven lot-share/FEFO-vs-UUID/writer conflict') with no demonstrated finding at S; doc51 item 4 / 7b1e606:17 withdrew the head-inversion rationale. Decision B's scope string still reads '33 exact preimages:28 primary/5 conditional inventory' (json:791; md:71), so an approval of B as worded could be read to include them."
+     },
+     {
+      "item": "Prospective call/lock/privilege design concrete enough to condition a path grant",
+      "status": "PARTIAL",
+      "evidence": "md:144 says signatures, transitive calls, role OID, privileges, ACL and all 12 IN guards are 'specified in JSON', but JSON holds only 8 prospectiveCalls strings (json:1260-1269) plus requirement prose (json:1276-1288). It omits read_current_authority, which is a constant 'unavailable' at currentness.sql:550-555@25858ad with header :6-7 'No source-write guards, commit RPC or activation'. It also omits any held-to-active head transition and does not say which file or gate holds the commit body (doc51 item 14 / 7b1e606:37 require its own gate)."
+     },
+     {
+      "item": "Smallest complete DISABLED slice identified (save once, recover reference, authorised readback)",
+      "status": "PARTIAL",
+      "evidence": "16 paths: 10 sqlCore files plus quick-order-repository.ts/.test.ts, production.ts/.test.ts, ports.ts and quick-order-admin-readback.test.ts. Readback is already in source at S (supabase-repository.ts:419-430 getAdmin RPC; service.ts:812-816 read_all). Recovery uses production.ts:88-92 delegation plus the drafted replay RPC. Save needs production.ts:93-98, which currently throws, plus the held commit SQL. Whether Early Access actors need the express.ts seam is NOT PROVEN: session_active(text,uuid,text) needs an owner uuid (research-private-early-access-sessions.sql:539-543), and AssistedOrderViewer lacks one (assisted-order/ports.ts:23-34)."
+     },
+     {
+      "item": "Flag protected wiring, payment, notification sending, activation, SQL installation",
+      "status": "PASS",
+      "evidence": "Protected: server/index.ts (manifest :200,:447-451,:1255). Payment-bearing: supabase-repository.ts (financial state/capture; history 2f0a975), service.ts, service.test.ts (HL12-ADP03 lease) and supabase-repository.test.ts (wholly a provider-settlement test, :4-24). Notification-adjacent: the commit enqueues an outbox row; quick-order-notifications.test.ts drives the dispatcher with synthetic transports. Activation-adjacent: the production.ts throw barrier, read_current_authority and head activation. SQL install artifacts: the 10 sqlCore files, the 5 conditional files and the *_local.mjs verifiers. Nothing installs by authoring; all NOT RUN."
+     },
+     {
+      "item": "Any behaviour of the proposed slice",
+      "status": "NOT_PROVEN",
+      "evidence": "No body exists. The packet's evidenceStatus is ALL_NOT_RUN (json:1299). No tests, SQL, verifiers or installs were run by this lens. Atomicity, replay, readback correspondence, lock-cycle freedom and ownership facts are all unproven."
+     }
+    ],
+    "paths": [
+     {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "kind": "candidate SQL source (schema-install candidate, unregistered); target of commit body and intake-family compatibility amendment",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (CODE_OWNERSHIP.json@feaff6f); no lease in coordinator HEAD 52e57c3 registry",
+      "alreadyAuthorized": "PARTIAL: readers/replay/admin_detail drafted under S4 (60d593a) and 1d4f2c3:76-80, accepted doc45/48; commit body named at 1d4f2c3:162-166 but HELD (doc49:160-163; doc51:139-149; 7b1e606:5,37)",
+      "note": "In minimal slice. Refuses an existing commit/guard at :355-358@25858ad, so the amendment is new owner scope (doc51 item 14). Writes reach requests-table HL12 payment triggers. Installs SQL only if executed; NOT RUN."
+     },
+     {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "kind": "candidate install precheck SQL",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "PARTIAL: same as intake family; held-surface refusal amendment at :130-133 not yet authorised (7b1e606:37)",
+      "note": "In minimal slice; amendment must be scoped only to the new commit and guard names."
+     },
+     {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "kind": "candidate install postcheck SQL",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "PARTIAL: as precheck (:130-133 refusal)",
+      "note": "In minimal slice."
+     },
+     {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "kind": "record (rollback procedure for candidate)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "PARTIAL: path named via S4/A2; content for the commit body held",
+      "note": "In minimal slice."
+     },
+     {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "kind": "verification tooling source (disposable-DB verifier; executes SQL when run)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); coordinator HEAD only M71 'handoff' glob supabase/verification/**",
+      "alreadyAuthorized": "PARTIAL: path named via S4/A2; commit cases depend on held body",
+      "note": "In minimal slice; author only, NOT RUN."
+     },
+     {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "kind": "candidate SQL source; target of guard function, AFTER-statement triggers and read_current_authority implementation",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "PARTIAL: path named 1d4f2c3:153-157 and guard named :143-145; head-integrity and decision-input slices done; guard set HELD (doc49:150-151,163; doc51:139-140; 1d4f2c3:229)",
+      "note": "In minimal slice. Header :6-7@25858ad says 'No source-write guards, commit RPC or activation'; read_current_authority is constant unavailable (:550-555). Activation-adjacent."
+     },
+     {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "kind": "candidate install precheck SQL",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "PARTIAL: as currentness family",
+      "note": "In minimal slice."
+     },
+     {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "kind": "candidate install postcheck SQL",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "PARTIAL: as currentness family",
+      "note": "In minimal slice."
+     },
+     {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "kind": "record (rollback procedure)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "PARTIAL: as currentness family",
+      "note": "In minimal slice."
+     },
+     {
+      "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "kind": "verification tooling source (disposable-DB verifier)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease 17093695 idle (feaff6f); coordinator HEAD M71 'handoff' glob",
+      "alreadyAuthorized": "PARTIAL: as currentness family; accepted 935aaf1/Doc65 must be preserved",
+      "note": "In minimal slice; NOT RUN."
+     },
+     {
+      "path": "server/research/health/quick-order/health-agreement-config.ts",
+      "kind": "new source module (Health legal/configuration input reader)",
+      "existsAtS": false,
+      "currentOwner": "Covered only by builder glob server/research/health/quick-order/** (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "NO: not named in 1d4f2c3; doc49:161 requires owner scope for the Health six-path proposal",
+      "note": "Excluded from minimal slice: it reads Samuel-reserved decision-A inputs. A generic fail-closed version needs an express grant (json:1273)."
+     },
+     {
+      "path": "server/research/health/quick-order/health-agreement-config.test.ts",
+      "kind": "test (new)",
+      "existsAtS": false,
+      "currentOwner": "Builder glob only (feaff6f)",
+      "alreadyAuthorized": "NO: not named in 1d4f2c3",
+      "note": "Excluded with its module."
+     },
+     {
+      "path": "server/research/health/quick-order/production.ts",
+      "kind": "existing unprotected edit (unmounted production port factory)",
+      "existsAtS": true,
+      "currentOwner": "Builder glob (feaff6f); none at coordinator HEAD",
+      "alreadyAuthorized": "YES for described change: 1d4f2c3:272-275 (bind canonical standing and the new repository in unmounted DI tests; keep productionReady false); untouched since f1e467f",
+      "note": "In minimal slice: replace the throw at :93-98 with delegation to the injected extension. Keep :41 productionReady:false, :70 enabled:false and the handler gate (handler.mjs:120). Activation-adjacent because it removes one barrier."
+     },
+     {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "kind": "test (existing)",
+      "existsAtS": true,
+      "currentOwner": "Builder glob (feaff6f)",
+      "alreadyAuthorized": "YES: adjacent tests in scope (1d4f2c3:274)",
+      "note": "In minimal slice; must assert that the barriers remain."
+     },
+     {
+      "path": "server/research/health/quick-order/ports.ts",
+      "kind": "existing unprotected edit (QO port contract types)",
+      "existsAtS": true,
+      "currentOwner": "Builder glob (feaff6f)",
+      "alreadyAuthorized": "YES for described change: 1d4f2c3:267-269 (standing, currentness, full canonical line and trusted-attribution inputs)",
+      "note": "In slice only if CommitArguments (:36-42) must change; adds no grant cost."
+     },
+     {
+      "path": "server/research/health/quick-order/legal.ts",
+      "kind": "existing unprotected edit (agreement adapter)",
+      "existsAtS": true,
+      "currentOwner": "Builder glob (feaff6f)",
+      "alreadyAuthorized": "YES for described change: 1d4f2c3:270-271 (refuse the Research-use pair for Health)",
+      "note": "Not required for the disabled save path; optional safety hardening. Actual Health pairs are Samuel's."
+     },
+     {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "kind": "existing unprotected edit (A2 module; at S only the admin-envelope decoder :8-10,128)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease exact (feaff6f); coordinator HEAD 'handoff' globs 5760f18a, 9e874362 and others",
+      "alreadyAuthorized": "PARTIAL: module named S4 (PERSISTENCE_PROPOSAL:18-20@5ee44d5) and 1d4f2c3:162-163; the commit RPC it would call is held",
+      "note": "In minimal slice: implement QuickOrderAssistedOrderExtension (ports.ts:59-62) with getExisting via replay and commit via the commit RPC, plus strict receipts; persisted:true only after RPC success."
+     },
+     {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "kind": "test (existing)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease exact (feaff6f); coordinator 'handoff' globs",
+      "alreadyAuthorized": "YES: adjacent A2 test (PERSISTENCE_PROPOSAL:18-20)",
+      "note": "In minimal slice."
+     },
+     {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "kind": "existing unprotected edit to canonical shared runtime carrying payment/financial authority",
+      "existsAtS": true,
+      "currentOwner": "Builder lease exact (feaff6f); coordinator HL12-ADP03 2495d504 and ADP01 6bd4b292 'handoff' exact; FILE_OWNERSHIP OWNER-PHASE-ZERO 'active' (:970)",
+      "alreadyAuthorized": "ONLY the exact patch b7427650 getAdmin hunk (1d4f2c3:296), already applied at 9118a82; any new edit NO",
+      "note": "PAYMENT flag. Excluded: readback wrapper already exists at :419-430@25858ad."
+     },
+     {
+      "path": "server/research/assisted-order/service.ts",
+      "kind": "existing unprotected edit to canonical service (quote/payment status authority)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease exact (feaff6f); coordinator HL12-ADP03 'handoff' exact, clarity leases; FILE_OWNERSHIP OWNER-PHASE-ZERO 'active' (:968)",
+      "alreadyAuthorized": "ONLY the exact updateStatus hunk (1d4f2c3:297), applied at 9118a82; any new edit NO",
+      "note": "PAYMENT flag. Excluded: adminDetail read_all already at :812-816."
+     },
+     {
+      "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "kind": "test (existing)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease exact (feaff6f); coordinator 'handoff' globs",
+      "alreadyAuthorized": "YES: named 1d4f2c3:323-326",
+      "note": "In minimal slice: add commit-to-read_all correspondence and corruption refusal (synthetic RPC)."
+     },
+     {
+      "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "kind": "test (existing; drives the existing dispatcher with synthetic transports)",
+      "existsAtS": true,
+      "currentOwner": "Builder lease exact (feaff6f); coordinator 'handoff' globs",
+      "alreadyAuthorized": "YES: named 1d4f2c3:327-329",
+      "note": "NOTIFICATION-adjacent. Excluded unless the outbox payload changes."
+     },
+     {
+      "path": "server/research/assisted-order/service.test.ts",
+      "kind": "test (existing; payment and recovery heavy)",
+      "existsAtS": true,
+      "currentOwner": "Outside builder lease; coordinator HL12-ADP03 2495d504 'handoff' exact; FILE_OWNERSHIP OWNER-PHASE-ZERO 'active' (:967)",
+      "alreadyAuthorized": "NO: not named in 1d4f2c3",
+      "note": "PAYMENT flag. Excluded."
+     },
+     {
+      "path": "server/research/assisted-order/supabase-repository.test.ts",
+      "kind": "test (existing; whole file is a provider-settlement/payment boundary test :4-24@25858ad)",
+      "existsAtS": true,
+      "currentOwner": "Outside builder lease; coordinator HL12-ADP03 'handoff' exact",
+      "alreadyAuthorized": "NO: not named in 1d4f2c3",
+      "note": "PAYMENT flag. Excluded."
+     },
+     {
+      "path": "server/research/assisted-order/express.ts",
+      "kind": "existing unprotected edit (Research zone) to the canonical auth/private-session seam",
+      "existsAtS": true,
+      "currentOwner": "Outside builder lease; coordinator 24cef6f8 HL12 verified-admin-actor 'handoff' exact plus globs; FILE_OWNERSHIP OWNER-PHASE-ZERO 'active' (:954)",
+      "alreadyAuthorized": "NO: session seam held (doc49:162,222-223; doc51:146-147; 7b1e606:5)",
+      "note": "Optional, only for Early Access actor parity. The need is NOT PROVEN (viewer :142-147 has a session hash but no owner uuid)."
+     },
+     {
+      "path": "server/research/assisted-order/express-quick-order-context.test.ts",
+      "kind": "test (new)",
+      "existsAtS": false,
+      "currentOwner": "Outside builder lease; coordinator 'handoff' globs only",
+      "alreadyAuthorized": "NO",
+      "note": "Optional, paired with express.ts."
+     },
+     {
+      "path": "server/index.ts",
+      "kind": "PROTECTED wiring (manifest protectedPaths :200; seam :447-451; baseline :1255)",
+      "existsAtS": true,
+      "currentOwner": "Listed exact in builder lease (feaff6f) but protected; coordinator HL12/clarity/checkout 'handoff' and others released/transferred; FILE_OWNERSHIP OWNER-W2-PR86 'deployed' (:413-419)",
+      "alreadyAuthorized": "NO: S-2 (SOURCE_AUTHORIZATION_DRAFT:23-37@60d593a) consumed by ac36e60; 1d4f2c3:362-365 keeps boot unchanged",
+      "note": "PROTECTED and ACTIVATION flag. S sha cc1d8d4d does not equal seam baseline 1d6594d6; GATE-01 review needed. Excluded: the factory stays unmounted and only containment is mounted (:277-278)."
+     },
+     {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "kind": "test bound to protected composition (boots actual server/index.ts)",
+      "existsAtS": true,
+      "currentOwner": "Builder glob (feaff6f)",
+      "alreadyAuthorized": "YES as named test (1d4f2c3:360); any amendment needs owner scope (doc49:162-163)",
+      "note": "Excluded; changes only if server/index.ts changes."
+     },
+     {
+      "path": "supabase/candidates/20261007_research_inventory_quick_order_lock_order.sql",
+      "kind": "new conditional candidate SQL replacing existing inventory writer functions (stock/reservation semantics)",
+      "existsAtS": false,
+      "currentOwner": "None (outside builder lease; no coordinator lease)",
+      "alreadyAuthorized": "NO: 1d4f2c3:223 'grants no inventory mutation', :234-237 no writer-body edits; rationale withdrawn (7b1e606:17)",
+      "note": "Conditional only on a demonstrated, statement-exact conflict tied to the decision-A stock policy. Excluded."
+     },
+     {
+      "path": "supabase/candidates/20261007_research_inventory_quick_order_lock_order.precheck.sql",
+      "kind": "new conditional install precheck SQL",
+      "existsAtS": false,
+      "currentOwner": "None",
+      "alreadyAuthorized": "NO",
+      "note": "Excluded; conditional."
+     },
+     {
+      "path": "supabase/candidates/20261007_research_inventory_quick_order_lock_order.postcheck.sql",
+      "kind": "new conditional install postcheck SQL",
+      "existsAtS": false,
+      "currentOwner": "None",
+      "alreadyAuthorized": "NO",
+      "note": "Excluded; conditional."
+     },
+     {
+      "path": "supabase/candidates/20261007_research_inventory_quick_order_lock_order.rollback.md",
+      "kind": "new conditional record",
+      "existsAtS": false,
+      "currentOwner": "None",
+      "alreadyAuthorized": "NO",
+      "note": "Excluded; conditional."
+     },
+     {
+      "path": "supabase/verification/research_inventory_quick_order_lock_order_local.mjs",
+      "kind": "new conditional verification tooling",
+      "existsAtS": false,
+      "currentOwner": "Only coordinator M71 'handoff' glob supabase/verification/**",
+      "alreadyAuthorized": "NO",
+      "note": "Excluded; conditional."
+     }
+    ],
+    "findings": [
+     {
+      "id": "C2-F1",
+      "severity": "P2",
+      "file": ".xenios/CODE_OWNERSHIP.json; docs/coordination/FILE_OWNERSHIP.json",
+      "claim": "Exclusive ownership is not reconciled in the authoritative coordinator registry. The QO lease exists only on the builder branch, and a stale 'active' writer rule still covers four canonical paths in the packet.",
+      "evidence": "coordinator HEAD 52e57c3 CODE_OWNERSHIP has no 17093695 and no QO lease; HL12-ADP03 2495d504 'handoff' (:3383) holds supabase-repository.ts, service.ts, service.test.ts, supabase-repository.test.ts and server/index.ts. FILE_OWNERSHIP OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819 is 'active' write (:883) on express.ts (:954), service.test.ts (:967), service.ts (:968) and supabase-repository.ts (:970). The rule is 'one active owner per path prefix'. The lease is recorded only in .xenios/CODE_OWNERSHIP.json@feaff6f (:3592+, state idle).",
+      "fix": "Before any dispatch, record an exact-path exclusive lease for the granted slice in the coordinator registry. Disposition the Phase Zero 'active' rule and get the HL12 handoff owners' acknowledgment for any of their paths that are included."
+     },
+     {
+      "id": "C2-F2",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "Decision B's scope string counts all 33 preimages, conditional inventory included, so approving B as worded could silently include the conditional family and the protected, session and payment paths.",
+      "evidence": "json:791@d007162 'scope': '33 exact preimages:28 primary/5 conditional inventory'; md:71 'JSON preimages:28 primary paths plus5 conditional inventory paths'. The protective sentence lives only in the review request (boundaries[2] 'No complete33path approval or automatic conditional inclusion') and md:138 prose. The JSON per-path editPermission is identical for conditional and primary entries (json:1187-1230).",
+      "fix": "The grant should list exact paths and nothing by count. Exclude the 5 inventory paths until a named, statement-exact finding exists. Name server/index.ts, express.ts and the payment-bearing files as separate items or exclude them."
+     },
+     {
+      "id": "C2-F3",
+      "severity": "P2",
+      "file": "server/research/assisted-order/supabase-repository.test.ts",
+      "claim": "canonicalAdapter includes payment-bearing files and tests with no stated Quick Order need. The authorised readback they would serve already exists at S.",
+      "evidence": "supabase-repository.test.ts:4-24@25858ad is a single provider-settlement/fulfillment-hold test (blob b1021804). service.test.ts and supabase-repository.test.ts sit under HL12-ADP03 'handoff' exact leases. supabase-repository.ts carries financial state (:261-325) and legacy submit (:328-332), last touched by payment commit 2f0a975 before 9118a82. The readback wrapper getAdmin (:419-430) and service.adminDetail read_all (:812-816) are already present. 1d4f2c3:293-299 authorised only two exact hunks, already applied.",
+      "fix": "Exclude supabase-repository.ts, service.ts, service.test.ts and supabase-repository.test.ts from the slice. If any is needed later, name exact hunks, make test changes append-only, forbid any edit to financial/payment functions and assertions, and get the HL12 owners' acknowledgment."
+     },
+     {
+      "id": "C2-F4",
+      "severity": "P2",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The packet does not name two required parts of the database-side activation gate or the commit body's file. A save cannot succeed, even in a disposable verifier, without replacing a constant-unavailable reader and having an active head.",
+      "evidence": "currentness.sql:6-7@25858ad 'No source-write guards, commit RPC or activation'; :550-555 read_current_authority returns constant {state:'unavailable'} 'independent of row state'; publish/revoke return 'held' (:524-546). The packet md:144 says calls, locks and privileges are 'specified in JSON', but json:1260-1269 has 8 strings without read_current_authority or any held-to-active transition. doc51 item 14 / 7b1e606:37 require the commit's own candidate gate, yet no file is named for the commit body.",
+      "fix": "The grant should name the read_current_authority implementation and any owner-only activation function as source only, never invoked. The install head stays seeded HELD and no publish or activate is executed. It should also name the exact file and gate for commit(jsonb)."
+     },
+     {
+      "id": "C2-F5",
+      "severity": "P3",
+      "file": "server/research/health/quick-order/production.ts",
+      "claim": "The slice removes two fail-closed barriers, so the grant must pin the ones that remain.",
+      "evidence": "production.ts:93-98@25858ad throws 'canonical transaction is not qualified'. Remaining barriers: :41 productionReady:false; :70 enabled:false; handler.mjs:120 requires options.enabled===true && productionReady===true; the factory has no non-test caller (git grep at S); server/index.ts:277-278 mounts containment only. The DB constant reader (see C2-F4) is also removed.",
+      "fix": "Conditions: keep the productionReady literal false and enabled false, leave the factory unmounted, leave server/index.ts and containment unchanged, and inject the extension only in tests. Add tests asserting each barrier."
+     },
+     {
+      "id": "C2-F6",
+      "severity": "P3",
+      "file": "server/index.ts",
+      "claim": "The protected root is already off its manifest seam baseline at S, and its only edit authority (S-2) has been consumed. It is not needed for a disabled slice.",
+      "evidence": "S raw sha256 cc1d8d4d... does not equal manifest seamBaselineHashes 1d6594d6... (CORE_SITE_PROTECTION_MANIFEST.json:1255@25858ad). The seam forbids session and route-authority changes without a new protected-change review (:447-451). S-2 permitted editing from the MOUNT_BASELINES hash only for patch c65d7e49 (SOURCE_AUTHORIZATION_DRAFT:23-37@60d593a), used by ac36e60. 1d4f2c3:362-365 keeps boot unchanged. doc49:137-139.",
+      "fix": "Exclude server/index.ts and root-composition.test.ts from the source grant. Treat any future wiring as a separate GATE-01 protected-change item."
+     },
+     {
+      "id": "C2-F7",
+      "severity": "P3",
+      "file": "server/research/assisted-order/express.ts",
+      "claim": "It is unproven whether the private-context seam is needed, and the seam may require an unlisted path.",
+      "evidence": "research_private_early_access_session_active(p_session_hash text, p_owner_id uuid, p_access_role text) at research-private-early-access-sessions.sql:539-543@25858ad. AssistedOrderViewer (server/research/assisted-order/ports.ts:23-34) carries earlyAccessSessionHash and earlyAccessCustomerRef but no owner uuid. That ports.ts is not among the 33 paths.",
+      "fix": "Specify the private-context shape. Either list server/research/assisted-order/ports.ts or forbid a viewer type change. Alternatively, scope the first slice so Early Access actors refuse fail-closed and add express.ts and its test as a separate seam item."
+     },
+     {
+      "id": "C2-F8",
+      "severity": "P3",
+      "file": "supabase/candidates/20261007_research_inventory_quick_order_lock_order.sql",
+      "claim": "The conditional inventory trigger is a class of conflict, not a finding. Whether it fires depends on Samuel's stock policy and on how many variants an intake carries.",
+      "evidence": "Hand-simulation, not run. Intake takes one FOR SHARE witness lot per variant in UUID order. A multi-SKU reserve locks lots FOR UPDATE per SKU in FEFO order (doc49:67, :109-111). A two-variant intake and a reserve on the same two SKUs in opposite order can form a cycle that PostgreSQL aborts; a single-variant intake cannot. 7b1e606:21 leaves witness versus sufficient-set to Samuel.",
+      "fix": "Tie inclusion to the decision-A stock choice plus a demonstrated, statement-exact conflict. Evaluate witness acquisition that avoids writer replacement (lock_timeout, or skip-locked witness choice) before granting writer edits."
+     },
+     {
+      "id": "C2-F9",
+      "severity": "P3",
+      "file": "server/research/health/quick-order/health-agreement-config.ts",
+      "claim": "The new Health configuration pair is outside dc3329b and depends on Samuel's reserved legal inputs. The packet omits catalog.ts, which 1d4f2c3 named.",
+      "evidence": "Not named in 1d4f2c3. doc49:161 requires owner scope for the Health six-path proposal. 1d4f2c3:270 names catalog.ts for positive Health classification. Carry-forward 2 (7b1e606:13) needs visibility and destination from published offer rules; catalog.ts is not among the 33 paths.",
+      "fix": "Defer the health-agreement-config pair to decision A, or grant an explicitly generic fail-closed reader. Record catalog.ts as a later path for the operational S."
+     },
+     {
+      "id": "C2-F10",
+      "severity": "P3",
+      "file": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "claim": "The commit writes a notification obligation that the existing dispatcher would send once installed, but the grant does not yet pin enqueue-only behaviour.",
+      "evidence": "json:1251-1257 writes include 'existing notification outbox'. 1d4f2c3:308-319: template, status pending, null financial foreign keys, closed payload; recipient, routing and copy need the communications owner's approval before activation. The test drives the dispatcher with synthetic transports (1d4f2c3:327-329).",
+      "fix": "Grant condition: one pending reference-only row only; no dispatcher, transport, recipient or template-routing change; no send or provider call; replay creates no second obligation."
+     },
+     {
+      "id": "C2-F11",
+      "severity": "P3",
+      "file": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "claim": "The intake filenames differ from the names in the approval text, so the grant should restate exact current paths.",
+      "evidence": "S4 PERSISTENCE_PROPOSAL:13-17@5ee44d5 names 20261005_research_assisted_order_quick_order_intake.*, and 1d4f2c3:53-54 says 'The existing proposed A2 filenames remain unchanged'. Files at S are 20261005_research_health_quick_order_intake.*, accepted by doc45:43 and present in lease feaff6f.",
+      "fix": "In the new grant, cite the exact current paths and blobs, not the S4 filenames."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "C2-F1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Facts re-derived. Coordinator 52e57c3 CODE_OWNERSHIP has no 17093695. The overlapping leases are all 'handoff': 5760f18a:81, ccbb6bd4:99, 9e874362:2824, 24cef6f8:2908, 6bd4b292:3340, 2495d504:3383. FILE_OWNERSHIP OWNER-PHASE-ZERO is 'active' (:883) on express.ts :954, service.test.ts :967, service.ts :968 and supabase-repository.ts :970. Downgraded from P2: the coordinator registry has never carried the QO lease (0 hits at 1d4f2c3, dc3329b, 7b1e606, d007162 and HEAD), yet dc3329b work proceeded. Packet md:79 already gates dispatch on reconciliation, and none of the four Phase Zero paths is in the recommended slice. Correction: 'one active owner per path prefix' is in the CODE_OWNERSHIP rules; the FILE_OWNERSHIP invariant reads 'One active writer per repository file' (:994)."
+     },
+     {
+      "id": "C2-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "json:791 and md:71 verified. editPermission is identical across conditional and primary entries (json:1187-1240). Downgraded: the same Decision B row (md:71, json:790) says 'inventory only on demonstrated incompatibility' and 'Session/protected wiring remains separately named'. md:138, review request md:107,115 and boundaries json:215 exclude automatic inclusion. Protected edits stay bound by the manifest seam rules (:446-451). What remains is count-based drafting; the payment-path part is F3."
+     },
+     {
+      "id": "C2-F3",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Verified: supabase-repository.test.ts:4-24@25858ad is a single provider-settlement/fulfillment-hold test. getAdmin (supabase-repository.ts:419-431) and adminDetail read_all (service.ts:812-822) already exist. 2495d504 is exact on all four payment-bearing paths. Neither the packet nor the review request gives any rationale for them: scopeClassification json:135-149 is only a label. Decision B's 'disabled Health/canonical adapter source' would sweep them in. P2 kept."
+     },
+     {
+      "id": "C2-F4",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Verified at S: currentness.sql:6-7 header; publish_revision and revoke_revision force state 'held' (:524, :543); read_current_authority is constant (:550-555). No function in the file sets 'active', and the packet JSON never names read_current_authority or any activation step. Intake refusal is at :355-358, with pre/post at :130-133. Correction: md:144 is partly true, because the census coverage at json:320-445 does enumerate the 12 IN and 5 positive-lock relations. The real omissions are transitive calls, privileges/ACL, read_current_authority, activation and the commit's file. Strengthened: doc51:148-149 lists 'The commit candidate' separately from the intake amendment, and :98 gives the commit 'its own candidate gate'. A new candidate family may therefore be missing from the 33."
+     },
+     {
+      "id": "C2-F5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Verified: production.ts:41 productionReady:false, :70 enabled:false, :93-98 throw. handler.mjs:120 requires both flags true. The only callers of the factory are production.test.ts:4,26. server/index.ts:277-278 mounts containment only."
+     },
+     {
+      "id": "C2-F6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Verified: S raw sha256 cc1d8d4d differs from seamBaselineHashes 1d6594d6 (:1255). The seam forbids changes beyond its listed scope without a new review (:450). S-2 (SOURCE_AUTHORIZATION_DRAFT:21-38@60d593a) was consumed by ac36e60, the last commit touching server/index.ts at S. 1d4f2c3:362-365 keeps boot unchanged."
+     },
+     {
+      "id": "C2-F7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "The unlisted-path point stands: AssistedOrderViewer (assisted-order ports.ts:23-34) has no owner id, that file is outside the 33, and FILE_OWNERSHIP Phase Zero holds it as active. The 'need is unproven' premise is too weak. doc46:94,123 (B-3) already established that the viewer hash is sha256 of the stored session_hash and that owner_id is unspecified. json:1262 keeps session_active in the call list. See missed C2-V-M7."
+     },
+     {
+      "id": "C2-F8",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-simulated (NOT RUN). A two-variant intake holds witness a1 FOR SHARE and waits on b1, while a reserve over SKUs B then A holds the b-lots FOR UPDATE and waits on a1: a cycle, and PostgreSQL aborts one side. That is a liveness cost, not a safety failure. A single-variant intake cannot cycle, because quantity-only writers take no head (7b1e606:17). Release and expiry lock in lot_uuid order, so a globally UUID-sorted witness acquisition does not cycle with them; per-variant sequential acquisition could."
+     },
+     {
+      "id": "C2-F9",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Anchor drift: catalog.ts is at 1d4f2c3:269 (:270 is legal.ts). The health-agreement-config pair is not in 1d4f2c3, and doc49:161 requires owner scope for it. Mitigation: 7b1e606:97 (item 20) carries healthAgreements[] inside the governed decision inputs, so the commit can read its Health-pair source from the revision and the TS pair module can be deferred."
+     },
+     {
+      "id": "C2-F10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld: json:1255 and 1d4f2c3:308-319. Extension: intake.sql:224-227@25858ad shows admin_detail binding the outbox event_type 'assisted_order.submitted' and the recipient to the companion's notification_recipient. The enqueue-only condition must therefore also fix where the recipient comes from (see C2-V-M6)."
+     },
+     {
+      "id": "C2-F11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Verified the old names at PERSISTENCE_PROPOSAL:13-17@5ee44d5 and the new names at S. Context: the reviewer directed the rename (doc42:70, S-F9 'Rename the files') and doc45:43 accepted it. This is citation hygiene, not unauthorised drift."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Exact 28 primary + 5 conditional list extracted from packet md/json",
+      "status": "PASS",
+      "note": "Reproduced from md:87-136 and json:841-1241@d007162. At coordinator HEAD the blobs b2708aa9 (json) and 5b0adb0d (md) are unchanged. The scratch copies hash c8bb1979 and 145d0d22, matching the review request."
+     },
+     {
+      "item": "Existence at S via git ls-tree",
+      "status": "PASS",
+      "note": "ls-tree at 25858ad (tree c5565bcd): 25 paths present, all mode 100644, with blobs, sizes and raw-sha256 prefixes equal to the json. 8 paths absent: the health-agreement-config pair, express-quick-order-context.test.ts and all 5 conditional paths."
+     },
+     {
+      "item": "Kind classification against CORE_SITE_PROTECTION_MANIFEST at S",
+      "status": "PASS",
+      "note": "Manifest blob 241fc344. protectedPaths.globs includes server/index.ts (:200). server/research/ (:263) and supabase/ (:270) are allowed zones, and .test.ts files are reported (:350). Seam entry :446-451; baseline :1255 (1d6594d6) does not match S (cc1d8d4d)."
+     },
+     {
+      "item": "Builder lease coverage",
+      "status": "PASS",
+      "note": "Lease 17093695 at feaff6f:3592: idle, heartbeat 03:55:05Z, 43 entries. It covers 24 of 28 primary paths. Outside it: service.test.ts, supabase-repository.test.ts, express.ts, express-quick-order-context.test.ts and all 5 conditional paths (json:825 agrees)."
+     },
+     {
+      "item": "Current owner and lease at coordinator HEAD",
+      "status": "PARTIAL",
+      "note": "Lens said FAIL. The facts are right, but the registry has never mirrored the QO lease. Overlapping CODE_OWNERSHIP leases are 'handoff', not active. The only active conflict is the FILE_OWNERSHIP Phase Zero rule (:883), on four paths outside the recommended slice. The packet md:79 already requires reconciliation before dispatch. The rule quote is misattributed (see C2-F1)."
+     },
+     {
+      "item": "Mapping to Samuel's existing scope",
+      "status": "PASS",
+      "note": "Verified: 21 primary paths named, 7 not. However, the dc3329b question covers the 'currentness/atomic-save SQL drafts', and 1d4f2c3:143-146 and :212-227 name the guard set and read_current_authority. Their held status comes from the reviewer and coordinator (doc42:9-11, doc49:160-163, 7b1e606:5), not from a missing grant (C2-V-M4)."
+     },
+     {
+      "item": "Conditional paths genuinely conditional",
+      "status": "PARTIAL",
+      "note": "Agree. They are labelled, absent at S and outside the lease. The trigger is a class of conflict, not a demonstrated finding. Decision B's scope string still counts 33 paths (now P3, see C2-F2)."
+     },
+     {
+      "item": "Prospective call/lock/privilege design concrete enough",
+      "status": "PARTIAL",
+      "note": "Agree, with one correction: the census coverage at json:320-445 does name the 12 IN and 5 positive-lock relations. Still missing: transitive calls, privileges/ACL, read_current_authority, the activation transition and the commit's file/gate."
+     },
+     {
+      "item": "Smallest complete DISABLED slice",
+      "status": "PARTIAL",
+      "note": "The 16-path core is reasonable but incomplete. It should add: quick-order-notifications.test.ts (C2-V-M6); the evidence bindings/receipt records (C2-V-M2); the QO port context as a mandatory item (C2-V-M7); a possible separate commit candidate family (doc51:98,148-149); and the 8396609 decision for readback (C2-V-M3)."
+     },
+     {
+      "item": "Flag protected wiring, payment, notification, activation, SQL install",
+      "status": "PASS",
+      "note": "Flags verified. Additional payment-bearing dependency: provider-journal-http.test.ts (C2-V-M3)."
+     },
+     {
+      "item": "Verifier hand-simulations",
+      "status": "NOT_PROVEN",
+      "note": "Hand simulation only. (1) Inventory cycle: confirmed for intakes of two or more variants (C2-F8). (2) Lost response, then a retry while the first transaction is in flight: blocks on the actor/key lock, the repeat lookup replays, and no second outbox row is written (json:1258). (3) Readback: admin_detail requires the outbox recipient to equal the companion's (intake.sql:224-227). (4) The provider-journal stub throws, giving 500 instead of 409. Nothing was run."
+     },
+     {
+      "item": "Any behaviour of the proposed slice",
+      "status": "NOT_PROVEN",
+      "note": "No body exists. The packet's evidenceStatus is ALL_NOT_RUN (json:1300; the lens cited :1299). Nothing was executed."
+     }
+    ],
+    "missed": [
+     {
+      "id": "C2-V-M1",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/PERSISTENCE_PROPOSAL.md",
+      "claim": "The 33-path inventory leaves out new modules that are already authorised and absent at S, without retiring or reusing them: quick-order-service.ts and quick-order-authority.ts with their tests, quick-order-currentness.ts and quick-order-publication.ts with their tests, and the shared quick-order-currentness.ts.",
+      "evidence": "PERSISTENCE_PROPOSAL.md:18-20@5ee44d5 names quick-order-repository, -service and -authority.ts with adjacent tests; S4 adopts them (SOURCE_AUTHORIZATION_DRAFT:58-63@60d593a). 1d4f2c3:158-162 names quick-order-currentness.ts/.test.ts, quick-order-publication.ts/.test.ts and shared/research/assisted-order/quick-order-currentness.ts, and says service and authority 'consume this contract'. ls-tree at 25858ad: none of them exists. Packet md:87-136 and json:841-1241 list none. The lens covered only catalog.ts (F9) and assisted-order ports.ts (F7).",
+      "fix": "The exact grant should mark each path as retired, deferred or reused. Hosting the extension in an already-authorised module costs no new grant. An 'exact paths only' grant that leaves them unmentioned leaves their authority ambiguous."
+     },
+     {
+      "id": "C2-V-M2",
+      "severity": "P3",
+      "file": "supabase/verification/research_health_quick_order_local.mjs",
+      "claim": "Any edit to the SQL family needs successor evidence bindings and receipts, whose paths the verifiers hard-code. Neither the packet nor the 16-path slice names them.",
+      "evidence": "research_health_quick_order_local.mjs:17@25858ad sets BINDINGS to docs/health-launch/quick-order-20261005/evidence/review-599-repair-bindings-20261007.json, and the receipt must sit in that evidence directory (:131-139). research_health_quick_order_currentness_local.mjs:14 sets BINDINGS to doc63-verifier-bindings-20261008.json, with its directory check at :361-366. 7b1e606:37 requires 'new bindings/review' for the intake amendment, and :123 allows 'Own source bindings, new immutable external receipt' as supporting records. doc49:207 named the re-pinned bindings and a new receipt as exact paths for an earlier slice.",
+      "fix": "Name the new immutable bindings and receipt record paths under the evidence directory, and the verifier BINDINGS-constant edits, as supporting records of the slice. Preserve the old receipts."
+     },
+     {
+      "id": "C2-V-M3",
+      "severity": "P3",
+      "file": "server/research/assisted-order/provider-journal-http.test.ts",
+      "claim": "The readback 'already in source' carries a known payment-boundary test regression. It is pending Samuel's one-path test amendment 8396609, and neither the packet nor the lens mentions it.",
+      "evidence": "provider-journal-http.test.ts@25858ad (blob 49684049, raw sha256 8a8842d3, which is the 8396609 before-hash per doc44:95) stubs only research_assisted_order_admin_get and throws on anything else (:213-225). getAdmin now calls research_health_quick_order_admin_detail (supabase-repository.ts:419-425). Hand simulation: the four provider-hold cases hit the throw and return 500, not the 409 asserted at :233 (doc44 RB-F5 P2; doc49:177 Q-2). The packet and review request never mention 8396609. The path is outside the 33 and the lease, and is payment-bearing. NOT RUN.",
+      "fix": "Make the slice's readback acceptance depend on Samuel's existing 8396609 decision: either apply it exactly from 8a8842d3, or accept the four named reds. Do not silently widen Decision B to cover it."
+     },
+     {
+      "id": "C2-V-M4",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/COORDINATION_STATE.json",
+      "claim": "The lens treats the commit body, the 12-relation guard set and read_current_authority as needing a new grant from Samuel. dc3329b already covers them as source; the reviewer and coordinator are holding them. The new grant should separate releasing that hold from genuinely new scope.",
+      "evidence": "dc3329b exactQuestion: 'covers the proposed currentness/atomic-save SQL drafts and modules … SQL drafting remains conditional on the original reviewer's compatibility review'. 1d4f2c3:143-146 names guard_source_write and read_current_authority, and :212-227 lists 23 guard relations; the 12 IN relations at 7b1e606:15 are a strict subset. 1d4f2c3:163-165 includes the commit. The holds are at doc42:9-11, doc49:160-163 and 7b1e606:5. doc51:145-149 lists the intake amendment and commit candidate as owner scope, but not the guard set.",
+      "fix": "Write the grant in two parts. (a) Confirm the dc3329b-covered items once the carry-forwards are recorded. (b) Grant new owner scope for item 14, the commit gate or file, the activation transition source, the source-order amendment, and the seam and protected items. Avoid re-issuing or narrowing dc3329b."
+     },
+     {
+      "id": "C2-V-M5",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The guard body depends on writer-side lock policy that Samuel has reserved, and the lens's list of grant inputs leaves it out.",
+      "evidence": "json:1250: the guard runs AFTER each statement on the 12 IN relations and takes the head inside every guarded writer's transaction. doc51:132-134 (item 23) adds a writer-side lock_timeout policy item reserved for Samuel. doc51:150-152 reserves the revocation ordering, refusal budget and writer lock policy. 7b1e606:109: 'Writer lock_timeout, refusal budget and revocation order remain Samuel decisions … No numeric policy is chosen'. The lens verdict names only the stock-policy choice as an owner input.",
+      "fix": "Add the writer lock_timeout, refusal budget and revocation order as named owner inputs. Alternatively, require the guard source to read them from an unset parameter that fails closed and has no numeric default."
+     },
+     {
+      "id": "C2-V-M6",
+      "severity": "P3",
+      "file": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "claim": "The slice leaves out the notifications test even though a recipient test is still owed there, and the TS contract has no field to carry the server-only recipient.",
+      "evidence": "doc46:96: S-F7 'CLOSED AT DESIGN; test due'. doc46:127 (B-7): add the missing, blank and malformed recipient cases. intake.sql:120-129@25858ad makes companion notification_recipient NOT NULL with a CHECK, and :224-227 requires the outbox event_type 'assisted_order.submitted' and a recipient equal to the companion's. CommitArguments (ports.ts:36-42) and the wiring in production.ts:15-26 have no recipient. 7b1e606:103 allows only a server-configured recipient. The test path is already authorised (1d4f2c3:327-329), so adding it costs no grant.",
+      "fix": "Add quick-order-notifications.test.ts to the slice for the B-7 cases. Carry the server-only recipient through the extension constructor or a named QO-port hunk. Leave the production-deps.ts binding to the later composition step."
+     },
+     {
+      "id": "C2-V-M7",
+      "severity": "P3",
+      "file": "server/research/assisted-order/express.ts",
+      "claim": "Session-bound actors are known to need the private context, so the QO port context change is mandatory and the seam gates any real save. The lens treats it as optional.",
+      "evidence": "doc46:94,123 (B-3): the viewer hash is sha256 of the stored session_hash, owner_id is unspecified, and the commit needs both as server-only arguments. express.ts:142-145,163-165@25858ad hashes sessionId. Assisted-order ports.ts:23-34 has no owner id. json:1262 calls session_active(text,uuid,text), and 7b1e606:15 positively locks the session row. Members' standing is borrowed from a bound session (express.ts:66-70,119-136), and 1d4f2c3:91-95 refuses unbound viewers. doc49:220-221 lists the session seam as a blocker for the commit body. NOT PROVEN: whether member commits must re-lock the session.",
+      "fix": "Make the QO port or extension context (raw session hash and owner id) a mandatory slice item. State that save-once is proven only with a synthetic context until the express.ts seam lands as the next named item, together with any change to assisted-order ports.ts."
+     }
+    ],
+    "verdictOpinion": "LENS C2 is largely correct and reproducible from Git objects. This verdict is read-only and NOT RUN, and it is not a source permission. Verified at S 25858ad:\n- All 33 path facts: 25 paths present with matching blobs, sizes and raw hashes; 8 absent.\n- server/index.ts is the only protected path, and it is off its seam baseline.\n- Lease 17093695 (feaff6f) covers 24 of the 28 primary paths and is idle.\n- Coordinator HEAD 52e57c3 has no QO lease.\n- dc3329b and S4 name 21 of the 28 primary paths. None of the 5 conditional paths is authorised.\n\nAll 11 findings are upheld. Severity corrections: F1 and F2 drop to P3; F3 and F4 stay P2.\n\nCorrections to the lens:\n- The census coverage at json:320-445 does enumerate the IN and positive-lock relations.\n- The 'one active owner per path prefix' quote comes from CODE_OWNERSHIP, not FILE_OWNERSHIP.\n- Anchors: json:1300 (not 1299), and catalog.ts at 1d4f2c3:269.\n- F7's premise is too weak; doc46 B-3 already establishes the double hash and the missing owner_id.\n\nMissed, all P3 (M1-M7):\n- Already-authorised modules left out of the inventory.\n- Verifier-bound evidence and receipt records.\n- The provider-journal payment-test regression pending 8396609.\n- dc3329b already covers the atomic-save drafts, the guard contract and read_current_authority, so the grant should release a hold rather than re-issue scope.\n- Samuel's reserved writer lock policy.\n- The notifications test owed under B-7, and the carrier for the server-only recipient.\n- The mandatory session context.\n\nRevised slice: the 10 SQL files; quick-order-repository.ts and its test; production.ts and its test; QO ports.ts (now mandatory); quick-order-admin-readback.test.ts; quick-order-notifications.test.ts; the successor evidence bindings and receipts; and a separate commit candidate family if doc51 item 14 means one.\n\nThe lens's grant wording contradicts itself: it says to name 'activation source' but also to exclude 'activation changes'. It should read: the activation and read_current_authority source is authored only and never invoked; productionReady and enabled stay false, nothing is mounted, and server/index.ts, payment, dispatcher and inventory are untouched."
+   }
+  }
+ ],
+ "critic": {
+  "coverage": [
+   {
+    "item": "Area: server-authoritative selection and policy revalidation",
+    "status": "COVERED",
+    "evidence": "COMPATIBLE AS DESIGN. The packet requires the commit to revalidate identifiers, audiences, workflow, currency, both bands, Health, destinations and standing (md:140@d007162). A QO digest is not the guard (1d4f2c3:104-107). App preflight is advisory (handler.mjs:159-161@25858ad). Limit: the per-line sourceVersion and authorityRevisionId the companion CHECK needs are unbound (intake.sql:86-99@25858ad; finding C-15). C1-F10 is refuted: QO catalogVersion digests the static bindings path (catalog.ts:124; server/index.ts:976@25858ad). NOT RUN."
+   },
+   {
+    "item": "Area: actor/key idempotency",
+    "status": "COVERED",
+    "evidence": "COMPATIBLE. Hash is quick-order-v1 NUL actor NUL key, lock then replay before mutable rules (1d4f2c3:96-103); repeated at json:1258@d007162. Companion UNIQUE(actor_scope,key_hash) is at intake.sql:121@25858ad. Hand-sim: concurrent same key gives one request, T2 replays or conflicts. 55P03 yields 503, then a same-key retry replays. The lock's first position in the total order is unstated (C-6). NOT RUN."
+   },
+   {
+    "item": "Area: atomic five-write persistence and no legacy submit",
+    "status": "COVERED",
+    "evidence": "COMPATIBLE. One commit(jsonb) writes requests, lines, events, the existing outbox and the companion (json:1247-1257; md:83,142@d007162). The legacy submit-then-append path is forbidden (1d4f2c3:113-117; production.ts:93-98@25858ad). The trigger functions the inserts reach are enumerated only as 'all implicit' (json:1268; C-10). NOT RUN."
+   },
+   {
+    "item": "Area: receipt only after persistence; lost-response recovery",
+    "status": "COVERED",
+    "evidence": "COMPATIBLE. persisted:true comes only after the committed RPC (json:1281). handler.mjs:161-165 requires persisted===true and a matching receipt. Replay runs before gates (handler.mjs:140-147), is read-only and integrity-checked (intake.sql:287-307), so no second obligation. Accepted limit: recovery lives in page memory and the UI discloses it (QuickOrderPage.tsx:270). Definite refusals currently surface as 'unknown' (QuickOrderPage.tsx:141,165-167; C-8). NOT RUN."
+   },
+   {
+    "item": "Area: authorised operator readback; financial and referral boundary",
+    "status": "COVERED",
+    "evidence": "COMPATIBLE. read_all is checked before the RPC (service.ts:812-816@25858ad). EXECUTE is service_role only (intake.sql:309-314). The strict envelope refuses corruption (intake.sql:197-259) and binds the outbox event_type and recipient (:224-227). Referral is OUT (7b1e606:19); provider and finance refs stay null (json:1280,1283). Readback acceptance still depends on the pending 8396609 test decision (C-25). NOT RUN."
+   },
+   {
+    "item": "Area: lock order (preflight row locks, then head last)",
+    "status": "PARTIAL",
+    "evidence": "The rule is COMPATIBLE (f1821b6:50,56; 1d4f2c3:170-185). The exact ordered table is absent, though disclosed as an open gate (json:1303@d007162); md:144 and the transaction status 'IMPLEMENTATION_READY' (json:813) overstate this (C-6). All five positive-lock census rows are unpopulated. New P2: overlapping intake FOR SHARE locks can starve publish/revoke/guard FOR UPDATE on the single head row (C-3). The witness-lot cycle with a multi-SKU reserve is in C-7."
+   },
+   {
+    "item": "Area: scoped writer epoch and AFTER-statement guards",
+    "status": "MISSING",
+    "evidence": "REVISION REQUIRED. json:1250 matches 7b1e606:15,17 on scope, but the guard's role model is absent. The head is revoked from every role (currentness.sql:374-375@25858ad) and the ACL check refuses any non-owner grantee (:482-494), so an invoker guard fails for non-owner writers (C-2). 06:42's absent-head no-op is stale and fails open (C-2). Scope source and cost are unspecified (C-14). The statement-level comparison needs transition tables, which PostgreSQL rejects on multi-event, column-list and TRUNCATE triggers (C-27)."
+   },
+   {
+    "item": "Area: single-owner SECURITY DEFINER commit and the decision-input/currentness contract",
+    "status": "MISSING",
+    "evidence": "The definer core is carried in json:1284, but no authority reader or activation is named. read_current_authority is constant 'unavailable' (currentness.sql:550-555@25858ad); publish/revoke force 'held' with epoch+1 (:524-527,543-545); equal epochs are allowed (:388-390). The prospectiveCalls list (json:1260-1269) omits a reader, so a save cannot succeed even in a disposable verifier (C-1). Owner set: sessions/nonces, the guard and the IN-relation TRIGGER owners are missing (7b1e606:31; C-10). Timeout mechanism unnamed (C-9). Commit host file/gate unnamed (C-5)."
+   },
+   {
+    "item": "Path table: sqlCore (10)",
+    "status": "COVERED",
+    "evidence": "Kinds: intake candidate .sql/.precheck/.postcheck, .rollback.md record, research_health_quick_order_local.mjs verifier; currentness equivalents and currentness_local.mjs. All exist at S, with blobs equal to json:842-961@d007162. Owner: builder lease 17093695, idle (CODE_OWNERSHIP@feaff6f); coordinator HEAD dc9394d has no QO lease. Authorised: intake family via S4 (60d593a) and 1d4f2c3:76-80; currentness via dc3329b/1d4f2c3:151-157. Decision-input slice released and completed at S (7b1e606:113-123). Commit body, guard set, reader replacement and intake amendment are HELD (doc51:139-149; 7b1e606:5,37). In slice."
+   },
+   {
+    "item": "Path table: healthConfiguration (6)",
+    "status": "COVERED",
+    "evidence": "health-agreement-config.ts and .test.ts are NEW, absent at S, covered only by the builder glob, and NOT authorised (absent from 1d4f2c3; doc49:161 requires owner scope). Deferred to decision A, since the commit can read healthAgreements[] from the revision (7b1e606:97). production.ts, production.test.ts, ports.ts and legal.ts exist under the builder glob and are authorised for the described changes (1d4f2c3:267-275). production, production.test and ports are in the slice; legal.ts is optional hardening."
+   },
+   {
+    "item": "Path table: canonicalAdapter (8)",
+    "status": "COVERED",
+    "evidence": "quick-order-repository.ts and .test.ts exist (builder exact); authorised by PERSISTENCE_PROPOSAL:18-20@5ee44d5 and 1d4f2c3:162-163; in slice. quick-order-admin-readback.test.ts and quick-order-notifications.test.ts exist; authorised at 1d4f2c3:321-329; in slice. supabase-repository.ts and service.ts are payment-bearing; only the applied 9118a82 hunks were authorised (1d4f2c3:296-297); held by HL12-ADP03 2495d504 and FILE_OWNERSHIP Phase Zero (active :883); excluded. service.test.ts and supabase-repository.test.ts are outside the lease, NOT authorised, payment; excluded."
+   },
+   {
+    "item": "Path table: privateContext (2) and protectedComposition (2)",
+    "status": "COVERED",
+    "evidence": "express.ts exists, is outside the builder lease, sits under 24cef6f8 handoff and Phase Zero active (:954), and is NOT authorised (doc51:146-147). express-quick-order-context.test.ts is NEW and NOT authorised. Together they form the next named seam item, required before any non-synthetic save (C-20). server/index.ts is PROTECTED (manifest :200, seam :447-451) and already off baseline (:1255@25858ad); S-2 was consumed by ac36e60; NOT authorised; GATE-01. root-composition.test.ts is authorised only as a named test (1d4f2c3:360). Both excluded."
+   },
+   {
+    "item": "Conditional inventory paths kept conditional (5)",
+    "status": "PARTIAL",
+    "evidence": "All five 20261007_research_inventory_quick_order_lock_order.* paths and the verifier are NEW, absent at S, unowned, and NOT authorised (1d4f2c3:223,234-237). They are labelled conditional (md:138) and fall outside the lease. But their editPermission is identical to the primary paths (json:1195-1239), Decision B's scope still counts '33 exact preimages' (json:791; md:71), and the trigger is a class of conflict, not a demonstrated finding (C-7, C-17). Keep them out of any grant until a stock choice and a statement-exact conflict exist."
+   },
+   {
+    "item": "Paths outside the 33 that a complete grant must disposition",
+    "status": "MISSING",
+    "evidence": "Not in the packet: (1) already-authorised but absent modules: quick-order-service.ts, quick-order-authority.ts, quick-order-currentness.ts, quick-order-publication.ts with tests, and shared quick-order-currentness.ts (1d4f2c3:158-163; all absent at S); (2) the successor evidence bindings and receipts the verifiers hard-code (research_health_quick_order_local.mjs:17@25858ad); (3) a separate commit candidate family, if doc51:98,148-149 means one; (4) catalog.ts (1d4f2c3:269); (5) assisted-order/ports.ts, if the viewer changes; (6) provider-journal-http.test.ts (8396609)."
+   },
+   {
+    "item": "Exclusive ownership reconciled",
+    "status": "PARTIAL",
+    "evidence": "Lease 17093695 exists only in the builder records (feaff6f), idle, covering 24 of 28 primary paths. Coordinator HEAD dc9394d has 0 hits for 17093695. FILE_OWNERSHIP OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819 is still 'active' write (:883-887@dc9394d) on express.ts, service.ts, service.test.ts and supabase-repository.ts, none of which is in the recommended slice. The packet gates dispatch on reconciliation (md:79). Downgraded to P3 (C-16)."
+   },
+   {
+    "item": "Smallest disabled slice for save -> recover -> readback",
+    "status": "PARTIAL",
+    "evidence": "The packet does not define it. Consolidated: 17 paths, plus supporting evidence records and the activation/reader source inside currentness.sql (see smallestSlice). Save is impossible without the C-1 reader and activation source. A real session-bound save needs the express.ts seam (doc46:94,123 B-3), so the slice proves save only through a synthetic private context. Every proof is NOT RUN."
+   },
+   {
+    "item": "Operating decisions registered as Samuel's",
+    "status": "PARTIAL",
+    "evidence": "Folded into class-4 'revocation/writer-refusal policy' (md:70; json:782). These are not separately registered: the intake budget (2s/250ms/1500ms/500ms, unapproved; 7b1e606:109), the writer lock_timeout for guarded, positive-lock and publish/revoke writers (doc51:132-134), the refusal budget (7b1e606:23), and first-lock-wins for each revocation path (1d4f2c3:186-188). C-3 shows the revoke wait is unbounded, not 'one hold'."
+   },
+   {
+    "item": "Execution evidence",
+    "status": "MISSING",
+    "evidence": "evidenceStatus ALL_NOT_RUN (json:1300@d007162). This critic and both lenses used Git object reads and hand-simulation only. Concurrency, timeouts, deadlock victims, starvation, rollback and readback correspondence are all unmeasured. A favourable design review is not source permission."
+   }
+  ],
+  "upheld": [
+   {
+    "id": "C-1",
+    "severity": "P2",
+    "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+    "claim": "The commit's current-authority read and the activation it depends on are unspecified. At S read_current_authority is constant 'unavailable' (currentness.sql:550-555@25858ad); publish and revoke always force held with epoch+1 (:524-527,543-545); equal epochs are allowed (:388-390). The commit therefore either never succeeds or would trust a head.state that same-epoch owner DML can forge (doc50 HI-3). prospectiveCalls (json:1260-1269@d007162) names no reader. The companion's per-line authorityRevisionId (intake.sql:86-95) needs an active-revision read. (C1-F1 + C2-F4)",
+    "fix": "Specify: after the head FOR SHARE (last lock), make one fresh-statement call to a named private reader returning closed {state:'active',revisionId,writerEpoch}. Refuse unless it equals the E0/R0 recorded before preflight; authorityRevisionId equals that revisionId. Author an owner-only activation function that strictly increases the epoch (item 15), as source only. The seeded head stays HELD and the function is never invoked against a managed DB. Compare readerCensusSha256 at activation."
+   },
+   {
+    "id": "C-2",
+    "severity": "P2",
+    "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+    "claim": "The guard's effective role is unspecified and absent from the same-OID set (json:1284; 7b1e606:31). The head is revoked from all roles (currentness.sql:374-375@25858ad) and non-owner grantees are refused (:482-494), so an invoker guard cannot lock or advance the head for non-owner writers. 06:42 'absent head: no-op' predates the seeded head (:413) and fails open under RLS (:373). TRIGGER privilege on the 12 IN relations and writer isolation are unhandled. (C1-F2 + C1-M2)",
+    "fix": "Make guard_source_write SECURITY DEFINER, owned by the common OID, with proconfig search_path='', no EXECUTE grants, its own fingerprint and ACL check, and ENABLE ALWAYS. It raises 55000 when the head row is not visible and is never a no-op. Add the IN-relation owners (or exact TRIGGER rights) to precheck, postcheck and runtime integrity. Count writer 40001 under REPEATABLE READ/SERIALIZABLE as a refusal source."
+   },
+   {
+    "id": "C-3",
+    "severity": "P2",
+    "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+    "claim": "Overlapping intake FOR SHARE locks on the single head row can starve FOR UPDATE without limit for publish and revoke (currentness.sql:507,538@25858ad), for guarded writers (1d4f2c3:179-180) and for activation. PostgreSQL grants a FOR SHARE tuple lock without sleeping when only share lockers hold the tuple, so a waiting FOR UPDATE is bypassed. This breaks the bounded 'one full hold' premise (doc51:132-134; 7b1e606:109) behind first-lock-wins revocation (1d4f2c3:186-188). Derived from PostgreSQL semantics; NOT RUN. (C1-M1)",
+    "fix": "Put a fair heavyweight gate before the head. The intake takes pg_advisory_xact_lock_shared(K) immediately before head FOR SHARE, after all source locks. Publish, revoke, activation and the guard take pg_advisory_xact_lock(K) before FOR UPDATE, in one global order. Alternatively, record the unbounded wait and an app-disable-before-revoke procedure in Samuel's decision. Measure under mixed load."
+   },
+   {
+    "id": "C-4",
+    "severity": "P2",
+    "file": "server/research/assisted-order/supabase-repository.test.ts",
+    "claim": "canonicalAdapter sweeps in payment-bearing files with no stated QO need. supabase-repository.test.ts:4-24@25858ad is a single provider-settlement test. service.test.ts and supabase-repository.test.ts sit under HL12-ADP03 2495d504. supabase-repository.ts and service.ts carry financial authority, and only the two applied 9118a82 hunks were ever authorised (1d4f2c3:296-297). The readback they would serve already exists (supabase-repository.ts:419-431; service.ts:812-816). (C2-F3)",
+    "fix": "Exclude supabase-repository.ts, service.ts, service.test.ts and supabase-repository.test.ts from the grant. Any later need must name exact hunks, use append-only tests, leave financial functions and assertions unedited, and carry the HL12 owners' acknowledgment."
+   },
+   {
+    "id": "C-5",
+    "severity": "P2",
+    "file": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+    "claim": "The commit body's host file and its own gate are unnamed, so an exact-path grant cannot be written. 1d4f2c3:163-165 places the commit in the intake candidate file. doc51:98 requires 'its own candidate gate', and doc51:148-149 lists 'The commit candidate' as owner scope separate from the intake amendment. The packet names no commit family and speaks only of intake compatibility (md:138; json:1287). intake.sql:355-358@25858ad refuses both the commit and guard_source_write.",
+    "fix": "The grant must choose one: (a) commit inside intake.sql, with an amended, fingerprint-bound gate combining intake:341-345, sessions:683 and the expanded same-OID set; or (b) a named new candidate family (sql, precheck, postcheck, rollback.md, verifier) with that gate. Either way, the intake amendment covers both the commit and guard names and preserves the old receipts."
+   },
+   {
+    "id": "C-6",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+    "claim": "No exact ordered lock/call/privilege table exists. md:144 says these are 'specified in JSON', but json:1260-1288 holds only generic lists, and 'IMPLEMENTATION_READY' (json:813) overstates readiness. The gap is disclosed as an open gate (json:1303), which is why this is P3. (C1-F3, downgraded)",
+    "fix": "Add one ordered table: step, object, mode, sort key, NOT FOUND/ambiguity refusal, post-wait database-time recheck, writer counterpart and justified none rows. Order: READ COMMITTED check, actor/key lock, replay, E0/R0, members, customers, bindings/aliases, acceptances, checkout, witness lots, session, fair gate, head FOR SHARE, fresh reads, inserts. Correct md:144 and the status."
+   },
+   {
+    "id": "C-7",
+    "severity": "P3",
+    "file": "supabase/candidates/20261007_research_inventory_quick_order_lock_order.sql",
+    "claim": "Hand simulation: an intake with two or more variants share-locks witness lots in UUID order, while a multi-SKU FEFO reserve locks per SKU FOR UPDATE (doc49:67,109-111). This can deadlock without the head, and the victim may be the reservation. A single-variant intake cannot cycle. The conditional inventory trigger is a class of conflict, not a finding. NOT RUN. (C1-F4 + C2-F8)",
+    "fix": "Take witnesses globally UUID-sorted with FOR SHARE SKIP LOCKED (choose another qualified lot) or NOWAIT (refuse), then recheck allocatability using database time. Include inventory paths only after Samuel's stock choice and a demonstrated, statement-exact conflict."
+   },
+   {
+    "id": "C-8",
+    "severity": "P3",
+    "file": "server/research/health/quick-order/production.ts",
+    "claim": "There is no refusal taxonomy. fail() maps only 23505/40001 and P0001 details (supabase-repository.ts:229-301@25858ad); every non-InputError becomes 503 'could not confirm' (handler.mjs:108-111,199-201); the client unlocks only on 422 or 409 catalog/terms (QuickOrderPage.tsx:141). A definite refusal therefore leaves the customer stuck in 'unconfirmed'. (C1-F5)",
+    "fix": "Define SQL errcodes and details per refusal class. Map them in the QO adapter, not handler.mjs: held, epoch or stale gives 409 catalog_changed; Health, standing or session gives 409 terms_changed or 401; payload conflict gives 409; 55P03, 57014, 40P01, 40001 and transport errors give 503."
+   },
+   {
+    "id": "C-9",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/DOC51_CARRY_FORWARD_AND_DECISION_INPUT_SCOPE_20261008.md",
+    "claim": "The intake timeout mechanism and its blast radius are unnamed. Item 13 pins proconfig to search_path='' (7b1e606:35), and f1821b6:88 rules out an in-function SET as proof. A role-level setting would bound every service_role RPC. (C1-F6)",
+    "fix": "Name the mechanism: either an explicit item-13 amendment allowing lock_timeout in proconfig, or a dedicated role or PostgREST setting. Require the intake lock_timeout to be below deadlock_timeout. Leave the values to Samuel."
+   },
+   {
+    "id": "C-10",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+    "claim": "The call and owner inventory is incomplete. There is no authority reader, trigger functions reached by the inserts are listed only as 'all implicit' (json:1268), and the item-11 owner set lacks the sessions/nonces owners, the guard and the IN-relation owners (json:1284 vs 7b1e606:31). provider_settlement_integrity is install-time only (intake.sql:360), so listing it is optional. (C1-F7)",
+    "fix": "Enumerate the signature, owner, EXECUTE rights and post-head lock behaviour of every function and trigger reached. Restate item 11's OID set verbatim, adding the guard and the IN-relation owners."
+   },
+   {
+    "id": "C-11",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+    "claim": "Reserved operating decisions are folded into class 4 (md:70; json:782) instead of being registered separately: the intake budget, the writer lock_timeout (guarded, positive-lock, publish/revoke), the refusal budget and its sources, and first-lock-wins for each revocation path (doc49:130-133,163-166; doc51:132-134,150-152; 7b1e606:23,109). (C1-F8 + C2-V-M5)",
+    "fix": "Register each as a separate item in the existing question set, restore item 7's writer-vs-writer measurement, and make guard and commit source read the values from unset settings that fail closed, with no numeric default."
+   },
+   {
+    "id": "C-12",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+    "claim": "Reversing the census-before-body order (md:75; json:1270-1275) disables the controlling rule that an unlisted reader blocks drafting (f1821b6:126) and puts no conformance rule in its place. (C1-F9)",
+    "fix": "Any implemented reader, column, selector or lock outside the 462cf79/7b1e606 projections invalidates the successor S and returns to design review; the census is never widened to fit the body."
+   },
+   {
+    "id": "C-13",
+    "severity": "P3",
+    "file": "server/research/health/quick-order/ports.ts",
+    "claim": "The canonical time source is only implied. receivedAt comes from the Node clock (handler.mjs:156@25858ad); canonical defaults are now() at microsecond precision (20260815150000:116,209,253); admin_detail requires equal, millisecond-truncated times (intake.sql:218-223). (C1-F11, basis corrected)",
+    "fix": "The commit takes one millisecond-truncated database time after the last wait and writes it to created_at, occurred_at, received_at and the attribution receivedAt, ignoring CommitArguments.receivedAt."
+   },
+   {
+    "id": "C-14",
+    "severity": "P3",
+    "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+    "claim": "The guard's scope source, lock and cost are unspecified. The scope lives only in decision_inputs_text, up to 8 MiB and 50,000 rules (currentness.sql:162,243@25858ad), and inventory lots are IN (7b1e606:15), so every reserve or movement statement would evaluate scope. (C1-M3)",
+    "fix": "Specify an immutable, indexed per-revision scope materialisation sealed in the fingerprint. The guard reads active_revision_id without a lock and invalidates conservatively while held. Bound and measure the cost on inventory statements."
+   },
+   {
+    "id": "C-15",
+    "severity": "P3",
+    "file": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+    "claim": "The packet does not say what the companion CHECK's per-line sourceVersion and authorityRevisionId bind (intake.sql:86-99@25858ad; md:140-142). This is the real 'version' ambiguity; C1-F10 is refuted on its anchor. (C1-M4)",
+    "fix": "authorityRevisionId equals the active revision from the C-1 read under the head share. sourceVersion is the identity of the locked decision predicate (price id/version, effectivity, witness predicate), never catalogVersion, lot version or updated_at."
+   },
+   {
+    "id": "C-16",
+    "severity": "P3",
+    "file": ".xenios/CODE_OWNERSHIP.json",
+    "claim": "Ownership is unreconciled. The coordinator HEAD dc9394d has no 17093695 or QO lease, and FILE_OWNERSHIP OWNER-PHASE-ZERO is 'active' (:883) on four canonical paths outside the recommended slice. The packet already gates dispatch on this (md:79). (C2-F1, downgraded)",
+    "fix": "Before dispatch, record an exact-path exclusive lease for the granted slice in the coordinator registry, disposition the Phase Zero rule for any included path, and get the HL12 owners' acknowledgment where their paths are touched."
+   },
+   {
+    "id": "C-17",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+    "claim": "Decision B's scope is count-based ('33 exact preimages', json:791; md:71), and editPermission is identical for conditional and primary paths (json:1195-1239). Approving B as worded could be read to include inventory, protected, session and payment paths. (C2-F2, downgraded)",
+    "fix": "The grant lists exact paths only, never counts, and names each exclusion explicitly."
+   },
+   {
+    "id": "C-18",
+    "severity": "P3",
+    "file": "server/research/health/quick-order/production.ts",
+    "claim": "The slice removes two fail-closed barriers: the commit throw (production.ts:93-98@25858ad) and the constant reader. The barriers that remain are not pinned: productionReady:false (:41), enabled:false (:70), the handler gate (handler.mjs:120), and an unmounted factory with only containment mounted (server/index.ts:277-278). (C2-F5)",
+    "fix": "Make it a grant condition that these stay literal, the extension is injected only in tests, and tests assert each barrier."
+   },
+   {
+    "id": "C-19",
+    "severity": "P3",
+    "file": "server/index.ts",
+    "claim": "Protected root at S: sha cc1d8d4d differs from the seam baseline 1d6594d6 (manifest :1255@25858ad), and S-2 was consumed by ac36e60. It is not needed for a disabled slice. (C2-F6)",
+    "fix": "Exclude server/index.ts and root-composition.test.ts. Treat any wiring as a separate GATE-01 protected-change item."
+   },
+   {
+    "id": "C-20",
+    "severity": "P3",
+    "file": "server/research/assisted-order/express.ts",
+    "claim": "A real save needs the private context. The viewer hash is sha256(sessionId), where sessionId is already the stored session_hash (express.ts:142-145,163-165@25858ad), and owner_id is absent (doc46:94,123 B-3). Members also submit only through a bound session (express.ts:117-137). The lens called the seam optional; the verifier was right that the QO port context is mandatory. (C2-F7 + C2-V-M7)",
+    "fix": "Add the raw session hash and owner id to the QO port and extension context (QO ports.ts) as server-only fields. Prove save-once only with a synthetic context. Name express.ts and its test as the next seam item, and either list assisted-order/ports.ts or forbid changing the viewer type."
+   },
+   {
+    "id": "C-21",
+    "severity": "P3",
+    "file": "server/research/health/quick-order/health-agreement-config.ts",
+    "claim": "The health-agreement-config pair is outside dc3329b and depends on Samuel's legal inputs (doc49:161). catalog.ts (1d4f2c3:269) and the already-authorised but absent quick-order-service/authority/currentness/publication modules and shared currentness (1d4f2c3:158-163) are not dispositioned. (C2-F9 + C2-V-M1)",
+    "fix": "Defer the pair to decision A; the commit reads healthAgreements[] from the revision (7b1e606:97). Mark each authorised-absent module retired, deferred or reused, and record catalog.ts for the operational S."
+   },
+   {
+    "id": "C-22",
+    "severity": "P3",
+    "file": "server/research/assisted-order/quick-order-notifications.test.ts",
+    "claim": "The commit writes an outbox obligation that the dispatcher would send once installed, yet enqueue-only behaviour is not pinned. The recipient must equal the companion's (intake.sql:224-227), but CommitArguments and production.ts have no recipient carrier, and the B-7 recipient test is still owed (doc46:96,127). (C2-F10 + C2-V-M6)",
+    "fix": "Include the notifications test in the slice. Carry the server-only recipient through the extension constructor. Grant condition: one pending, reference-only row; no dispatcher, transport, routing or template change; no send; replay writes none."
+   },
+   {
+    "id": "C-23",
+    "severity": "P3",
+    "file": "supabase/verification/research_health_quick_order_local.mjs",
+    "claim": "Any SQL-family edit needs successor evidence bindings and receipts at paths the verifiers hard-code (research_health_quick_order_local.mjs:17,131-139; currentness_local.mjs:14,361-366@25858ad). Neither the packet nor the lens slice names them. The S4 filenames also differ from the current ones (PERSISTENCE_PROPOSAL:13-17@5ee44d5). (C2-V-M2 + C2-F11)",
+    "fix": "Name the new immutable bindings and receipt paths under docs/health-launch/quick-order-20261005/evidence/ as supporting records, preserve the old receipts, and cite current paths and blobs."
+   },
+   {
+    "id": "C-24",
+    "severity": "P3",
+    "file": "server/research/assisted-order/provider-journal-http.test.ts",
+    "claim": "The stub handles only research_assisted_order_admin_get (:213-225@25858ad), but getAdmin calls the QO admin_detail RPC (supabase-repository.ts:420), so the four provider-hold cases return 500 where 409 is asserted (doc49:177 Q-2). This is the pending 8396609 decision, which the packet never mentions. (C2-V-M3)",
+    "fix": "Make readback acceptance depend on Samuel's 8396609 decision (apply it exactly, or accept the four named reds). Do not widen Decision B to cover it."
+   },
+   {
+    "id": "C-25",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/COORDINATION_STATE.json",
+    "claim": "dc3329b already covers the currentness/atomic-save SQL drafts, including guard_source_write and read_current_authority (1d4f2c3:7-11,143-146,162-166). Their hold comes from review (doc51:139-140; 7b1e606:5), not from a missing grant. A new grant that re-issues or narrows dc3329b would blur authority. (C2-V-M4)",
+    "fix": "Two-part grant: (1) confirm the dc3329b-covered drafting once the original reviewer accepts the successor design delta; (2) new owner scope only for item 14, the commit host and gate, the activation source, the source-order amendment, generic fail-closed authoring and the lease."
+   },
+   {
+    "id": "C-26",
+    "severity": "P3",
+    "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+    "claim": "New (critic). 'Unchanged projection takes no head' at statement level (json:1250; 1d4f2c3:179-181) needs OLD/NEW transition tables. PostgreSQL rejects transition tables on multi-event triggers, on column-list triggers and on TRUNCATE, and INSERT ON CONFLICT DO UPDATE fires both INSERT and UPDATE statement triggers. No mechanism or trigger count is specified, and whether existing fences on the 12 IN relations tolerate added triggers is NOT PROVEN.",
+    "fix": "Per relation: three single-event AFTER STATEMENT triggers with REFERENCING tables comparing the projection by key, plus an AFTER TRUNCATE trigger that always advances. Pin the count in the fingerprint, precheck for conflicting fences, and bound transition-table cost (C-14)."
+   }
+  ],
+  "designVerdict": "REVISION REQUIRED, consolidated for disposition C. This is local and read-only; NOTHING was run, and a favourable design review is not source permission.\n\nThe protocol core is COMPATIBLE AS DESIGN with doc 49's 5C, the 462cf79 correction, doc 51 and its 24 carry-forwards (7b1e606, 81a32af), Samuel's 1d4f2c3 scope, currentness at S 25858ad and the accepted 3e82154. That core:\n- actor/key lock, then replay before mutable gates;\n- preflight row locks, then the head last;\n- AFTER-statement guards with a scoped epoch;\n- a single-owner definer commit;\n- five atomic writes, with no legacy submit;\n- persisted:true only after commit;\n- read_all readback;\n- declarations only, never paid/fulfilled/reserved.\n\nFive P2s block drafting the bodies or writing an exact grant:\n- C-1: the authority read and activation source are unnamed, and the reader at S is constant 'unavailable', so no save can succeed.\n- C-2: the guard's definer/owner model is missing, and its absent-head rule fails open.\n- C-3: FOR SHARE locks on the single head row can starve publish/revoke/guard FOR UPDATE, so first-lock-wins revocation has no bounded wait.\n- C-4: payment-bearing paths are included with no need.\n- C-5: the commit's host file and gate are unnamed.\n\nHow the lens disagreements were resolved:\n- C1-F3 drops to P3 (disclosed gap, overstated wording).\n- C1-F10 is refuted; QO catalogVersion is the static bindings path.\n- C2-F1 and C2-F2 drop to P3.\n- C2-F7 resolves to: the QO port private context is mandatory for any non-synthetic save; the express.ts seam is the next named item.\n- The lens grant's contradiction (authorise the activation source, exclude activation) resolves as: authored only, never invoked.\n\nAdded by this critic: C-26 (transition-table trigger mechanics).",
+  "smallestSlice": "Smallest DISABLED slice for save once -> recover reference -> authorised readback. Base S 25858ad, same builder, NOT RUN.\n\nSQL (10 existing):\n- supabase/candidates/20261005_research_health_quick_order_intake.sql, .precheck.sql, .postcheck.sql, .rollback.md\n- supabase/verification/research_health_quick_order_local.mjs\n- supabase/candidates/20261006_research_health_quick_order_currentness.sql, .precheck.sql, .postcheck.sql, .rollback.md\n- supabase/verification/research_health_quick_order_currentness_local.mjs\n\nThis covers the commit body (unless the grant picks a separate commit family per C-5), the item-14 amendment for both commit and guard, the guard set, the strict-epoch reader and an owner-only activation function. The activation source is authored only; the seeded head stays HELD.\n\nTypeScript (7 existing):\n- server/research/assisted-order/quick-order-repository.ts and quick-order-repository.test.ts (the extension: getExisting via replay, commit via the commit RPC, receipt checks, refusal mapping)\n- server/research/health/quick-order/production.ts and production.test.ts (throw becomes delegation; productionReady and enabled stay false; unmounted)\n- server/research/health/quick-order/ports.ts (server-only private context and recipient)\n- server/research/assisted-order/quick-order-admin-readback.test.ts\n- server/research/assisted-order/quick-order-notifications.test.ts (B-7)\n\nSupporting records: new immutable bindings and receipt under docs/health-launch/quick-order-20261005/evidence/. Old receipts preserved.\n\nProof boundary: save is shown only through a synthetic private context at the extension and SQL layers. A real session-bound save needs the express.ts seam next.\n\nExcluded:\n- health-agreement-config pair (decision A)\n- legal.ts (optional)\n- supabase-repository.ts, service.ts and both of their tests (payment)\n- express.ts and express-quick-order-context.test.ts\n- server/index.ts and root-composition.test.ts\n- the 5 inventory paths\n- provider-journal-http.test.ts (8396609)",
+  "alreadyAuthorized": "Already authorised (git records, not this review):\n\n1. S4 at 60d593a (PERSISTENCE_PROPOSAL:13-24@5ee44d5): the intake-family companion, replay, admin_detail, ACL, pre/post/rollback records and verifier. Drafted and accepted (doc45, doc48).\n2. Samuel's dc3329b, answering 'Approve this bounded source-only scope' to 1d4f2c3. It covers:\n   - the currentness modules and SQL drafts, including the named guard_source_write and read_current_authority (1d4f2c3:143-161);\n   - the dependent atomic commit draft in the intake candidate (:7-11,162-166);\n   - five shared runtime edits, applied at 9118a82 (:293-299);\n   - the readback and notification tests (:321-329) and composition tests (:349-360);\n   - the QO ports, catalog, legal and production changes with adjacent tests (:267-275).\n   SQL drafting stays conditional on the original reviewer's compatibility review.\n3. Doc51 §4 and 7b1e606:113-123 released only the decision-input column, validator and publish signature, which are complete at S (docs 53, 58, 63, 65).\n\nHELD by review and coordination (doc51:139-149; 7b1e606:5,37): the guard set, commit body, writer replacements, session seam, intake-family amendment, commit candidate and protected wiring.\n\nOf the 28 primary paths, 21 are named in existing scope. Not authorised: the health-agreement-config pair, service.test.ts, supabase-repository.test.ts, express.ts and its new test, server/index.ts (protected, S-2 consumed), and all 5 conditional inventory paths. No execution, installation, registration, push, activation, notification send, payment or deploy is authorised.",
+  "grantProposal": "PROPOSED TEXT FOR SAMUEL'S DECISION (not an approval, not reviewer-granted):\n\n\"Class-3 Quick Order source grant r1. The same builder codex-health-quick-order-20261005 (worktree 389a) may author source on base 25858ad only after both:\n(i) the original reviewer accepts a successor design delta that closes C-1 to C-5 and C-26;\n(ii) an exact-path exclusive lease is recorded in the coordinator .xenios/CODE_OWNERSHIP.json.\n\nPart 1 confirms drafting already covered by dc3329b/1d4f2c3: guard_source_write and its 12 IN-relation statement triggers, read_current_authority, and the commit body.\n\nPart 2 is new owner scope:\n(a) Source-order amendment: bodies may precede the complete census. Any implemented reader outside the 462cf79/7b1e606 projections returns the work to design review.\n(b) Intake-family compatibility amendment (intake.sql:355-358, pre/post :131), limited to the commit and guard names, fingerprint-bound, with new bindings and receipt.\n(c) Commit host: [intake.sql | named new family], with its own gate (intake:341-345, sessions:683, the expanded same-OID set).\n(d) An owner-only activation function and a strict-epoch reader, authored as source only, never invoked against any managed database; the head stays HELD.\n(e) Generic fail-closed authoring without operational values.\n\nExact paths: the 17 paths in the slice, plus the named evidence records.\n\nConditions:\n- productionReady and enabled stay false; the factory stays unmounted.\n- Unchanged: server/index.ts, express.ts, the payment files (supabase-repository.ts, service.ts, their tests, provider-journal-http.test.ts), the dispatcher, transport and routing, inventory writers, migrations and the manifest.\n- The outbox is enqueue-only.\n- No numeric operating policy; unset values refuse.\n- No SQL, tests, install, registration, push or deploy.\"",
+  "samuelDecisions": "Samuel's decisions:\n\n1. Whether to approve the class-3 grant, Part 1 and Part 2 (a) to (e), including the source-order amendment and generic fail-closed authoring.\n2. The stock predicate: one allocatable witness per variant, or sufficient requested quantity. It sets the commit's lock footprint and whether any inventory path is ever needed.\n3. Operating budgets:\n   - intake lock, statement and hold numbers (the 2s/250ms/1500ms/500ms proposal is unapproved);\n   - writer lock_timeout for guarded, positive-lock and publish/revoke/activation writers;\n   - the refusal and latency budget and its sources;\n   - first-lock-wins for each revocation path (session, member, acceptance, publication);\n   - whether revocation is preceded by an app disable (C-3).\n4. Decision A values, with legal authority: offers, both quantity bands, the audience subset, currency, destinations, effectivity, and the Health legal pairs and their cardinality. Also confirm that referral and commission stay OUT.\n5. Ownership: authorise the exclusive lease and disposition the Phase Zero active rule. Get the HL12 owners' acknowledgment only if any of their paths are added.\n6. The 8396609 test decision: apply it exactly, or accept the four named reds.\n7. When the express.ts session seam (the next named item) and any assisted-order/ports.ts change are scoped.\n8. Later and separate: activation, installation and GATE-01 protected review, notification recipient and copy (with the communications owner), dispatch, and payment.\n\nEngineering, not Samuel's: the lock table, authority-read contract, guard definer and trigger mechanics, fair head gate, refusal taxonomy, time source, timeout mechanism, call and owner inventory, and the census conformance rule."
+ }
+}
