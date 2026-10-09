@@ -89,3 +89,11 @@ Samuel's message reached this session; the board's three ready items are acknowl
 | `DOC64-SUPERVISOR-REPAIR-DELTA-20261009` r1 | source `cc584f971d1342acf05a9dd43f97916e38f8072c` (tree `a52060a6…`), records `866ed38` | COMPLETE: doc 67, SOURCE REVISION REQUIRED on U-01 (zero-launch restart cannot fit the original deadline) and U-02 (an ordinary early refusal strands a group); EXECUTION ELIGIBILITY NONE |
 
 The three touch disjoint material and are reviewed in parallel. Nothing was executed.
+
+## Queue state update (2026-10-09, doc 67 successor)
+
+| Board task | Exact target | State |
+| --- | --- | --- |
+| `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` r1 | source `25858ad94a649a9f7442562e6e0423636d2a3124` (tree `c5565bcd…`), records `feaff6f` | ACKNOWLEDGED and IN REVIEW against doc 67 at Samuel's direct request; disposition will be doc 68, with execution eligibility reported separately |
+
+Nothing was executed.
