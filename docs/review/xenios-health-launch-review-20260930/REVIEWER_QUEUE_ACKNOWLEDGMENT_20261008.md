@@ -176,3 +176,12 @@ registered at coordinator `a1beaf9` to this session. The target is recomputed fr
 r2 changes only those three records. No `supabase/`, `server/` or `shared/` byte differs from `25858ad`.
 
 The verdict will be published as doc 75. Doc 73 is the review of r1, not a verdict on r2. Nothing was executed.
+
+## Queue state update (2026-10-09, transaction records r2 complete)
+
+| Board task | Exact target | State |
+| --- | --- | --- |
+| `DOC71-TRANSACTION-DESIGN-DELTA-REVIEW-20261009` revision 2 | records `39203461eaed6ee6284a0d7a597feb9c74c9a39a` (`4e8a23b6…`, `a065a04e…`, `ae929902…`) | COMPLETE: doc 75, DESIGN COMPATIBLE WITH CONDITIONS. No P0, P1 or P2. R2-1 to R2-4 go into a records-only errata before the decision-5 and decision-3 texts are final; R2-5 to R2-20 travel as named conditions. Rulings: try-lock adopted (CC-18); a definite retryable refusal maps to 503 with the key kept (CC-10). No source permission. The grant text remains a DRAFT |
+
+The next review for this session is a byte check of the builder's R2-1 to R2-4 errata, once it is registered. Nothing
+was executed.
