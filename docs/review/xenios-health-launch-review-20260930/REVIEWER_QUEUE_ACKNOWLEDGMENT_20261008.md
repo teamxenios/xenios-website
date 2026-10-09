@@ -94,6 +94,6 @@ The three touch disjoint material and are reviewed in parallel. Nothing was exec
 
 | Board task | Exact target | State |
 | --- | --- | --- |
-| `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` r1 | source `25858ad94a649a9f7442562e6e0423636d2a3124` (tree `c5565bcd…`), records `feaff6f` | ACKNOWLEDGED and IN REVIEW against doc 67 at Samuel's direct request; disposition will be doc 68, with execution eligibility reported separately |
+| `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` r1 | source `25858ad94a649a9f7442562e6e0423636d2a3124` (tree `c5565bcd…`), records `feaff6f` | COMPLETE: doc 68, SOURCE ACCEPT WITH LIMITS (doc 67 U-01 and U-02 closed); EXECUTION ELIGIBILITY NONE |
 
 Nothing was executed.
