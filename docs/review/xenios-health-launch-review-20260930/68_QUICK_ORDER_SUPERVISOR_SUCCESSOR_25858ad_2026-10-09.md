@@ -72,7 +72,9 @@ Every verifier upheld every lens finding. Lens output archived as `hl12/68_super
 **Acknowledge before any execution proposal:**
 - **D68-3. What G0's one minute now means.** Before launch, an invocation is bounded by one group wall from its own
   start, within the aggregate. So G0's setup and parser self-test now run outside its 60-second started wall, and one
-  G0 invocation can take up to about two minutes in total. This is the shape doc 67 prescribed, and the manifest
+  G0 invocation has no demonstrated total ceiling below the run aggregate: most work before launch is bounded by one
+  group wall, but the dependency reads and first handshake are bounded only by the aggregate (D68-6). Only once D68-6 is
+  fixed would the total be about two minutes (corrected 2026-10-09; the earlier text said "up to about two minutes"). This is the shape doc 67 prescribed, and the manifest
   discloses it. But several manifest fields still call the sub-allowances "ceilings" the code does not enforce, and
   the one-minute lift route still says all G0 work fits in 60 seconds. Either correct that prose and acknowledge the
   new reading, or tighten the before-launch bound with a clean, restartable refusal.
@@ -120,3 +122,9 @@ Remaining prerequisites, in order:
   Your answers gate the builder's next amendment on the same two files. That amendment would implement the stage-count
   change, fix D68-1, D68-2, D68-4 and D68-5, and correct the D68-3 and D68-10 prose. It would change no limit and run
   nothing. Saving customer requests remains a separate track, gated on the five operational inputs and the census.
+
+## 6. Correction (2026-10-09)
+
+D68-3 originally said one G0 invocation "can take up to about two minutes in total". That overstated the bound:
+D68-6 shows some reads before launch are bounded only by the run aggregate, so no total ceiling below the aggregate is
+demonstrated. D68-3 now says so. The source disposition and execution eligibility are unchanged.
