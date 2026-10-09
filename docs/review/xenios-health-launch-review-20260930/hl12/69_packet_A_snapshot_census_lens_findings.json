@@ -1,0 +1,628 @@
+{
+ "schemaVersion": 1,
+ "review": "69_SUBMISSION_PACKET_A_SNAPSHOT_AND_PARTIAL_CENSUS_2026-10-09.md",
+ "task": "SNAPSHOT-S-CENSUS-PACKET-REVIEW-20261009 r1",
+ "disposition": "A",
+ "proposedS": "25858ad94a649a9f7442562e6e0423636d2a3124",
+ "artifacts": {
+  "packet": "d0071628fa26e89034eb29e1b7db77929d0acb6a",
+  "binding": "e6494bad57001aea38b84a5d3c99c90f3818c819"
+ },
+ "workflowRun": "wf_322b9784-9d1",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens and adversarial-verifier outputs, verbatim. Reviewer dispositions are in doc 69.",
+ "lenses": [
+  {
+   "lens": "census-content-spec",
+   "review": {
+    "verdict": "LENS A1: NO P0, P1 OR P2. The partial census is byte-canonical, matches its contract and is factually correct at S. The census binding is external to the census and acyclic. Seven P3 precision items remain. The census has 8 rows, and all 8 are exclusion rows (readers=[]). There are no actual Reader entries, so no blob or line binding exists to be wrong. The 17 unpopulated relations are absent from the file; none appears as a placeholder row. CF-11 stays open: the census at the fixed path does not exist, and the complete expected digest, the original disposition and P are all null. I only read Git objects and recomputed hashes in node over git-show bytes. I executed nothing and changed nothing. Everything is NOT RUN, and nothing here is Samuel's approval.",
+    "checklist": [
+     {
+      "item": "Artifact identities",
+      "status": "PASS",
+      "evidence": "census blob a3d7ea51 mode 100644 at d007162: 12902 bytes, sha256 5fcbe47b... recomputed. binding blob f0353d65 at e6494ba: sha256 b6056e18... recomputed. Packet .json (b2708aa9, c8bb1979..., 70857 B) and .md (5b0adb0d, 145d0d22..., 25220 B) at d007162 recomputed equal to binding:18-30@e6494ba. artifactTree 9eeab240 = d007162^{tree}. proposedSourceTree c5565bcd = 25858ad^{tree}. The scratchpad copies are byte-equal."
+     },
+     {
+      "item": "Schema version and root/row key order (DOC53:9-30@9600645)",
+      "status": "PASS",
+      "evidence": "Root keys are exactly schemaVersion, canonicalReaderProfile, relationProjectionVersion, sourceCommit, relations, with the three fixed literals. Each of the 8 rows has the 10 keys in displayed order. mutationTreatment is insert/update/delete/truncate and each Rule is {text, readerIds}. Checked in node over git show d007162:...partial-25858ad.json."
+     },
+     {
+      "item": "Canonical bytes (DOC53:58-60; scope item 9, 7b1e606:27)",
+      "status": "PASS",
+      "evidence": "First byte 0x7B (no BOM); last byte 0x7D (no trailing LF). Every byte is printable ASCII 0x20-0x7E, and there are 0 backslashes, so no escapes. No integers occur. Re-serialising the parse in contract key order (escaping only quote and backslash) gives bytes equal to the raw file, so there is no duplicate key or whitespace. RuleText is 1-8192 bytes with no leading or trailing space. QualifiedRelation and SHA40 match their patterns."
+     },
+     {
+      "item": "Relation set ordering and uniqueness",
+      "status": "PASS",
+      "evidence": "The 8 relations are strictly increasing by unsigned UTF-8 bytes: affiliate_customer_bindings < attribution_touches < early_access_referral_grants < partner_links < partners ('_' 0x5F < 's') < private_early_access_nonces < product_media < referral_binding_transfer_events. No duplicates."
+     },
+     {
+      "item": "New partial differs from historical partial only in sourceCommit",
+      "status": "PASS",
+      "evidence": "Historical QUICK_ORDER_READER_CENSUS_V1.partial.json at d007162: 12902 B, sha256 4f6c39ac..., sourceCommit f98c416. Replacing sourceCommit in both files makes them byte-equal, which matches binding:41@e6494ba and packet.json:760-765@d007162."
+     },
+     {
+      "item": "Reader regular-file mode, blobSha256 and line spans (doc 61 M-1/M-2; DOC58 C-8)",
+      "status": "NOT_APPLICABLE",
+      "evidence": "All 8 rows have readers=[] and every Rule.readerIds is empty. binding:39 measuredReaderPaths=[] and additionalEligibleRows=0. No Reader path, blob or line anchor exists to verify. M-1/M-2 apply to the future populated census."
+     },
+     {
+      "item": "Exclusion row shape (DOC53:67-68@9600645)",
+      "status": "PASS",
+      "evidence": "Each of the 8 rows has epochMode OUT, empty readProjection, epochProjection and selectors, a non-empty exclusionReason, and justified no-current-reader rules (mutation x4, positiveLock, absence) with readerIds=[]."
+     },
+     {
+      "item": "Exclusion reasons factually true at S",
+      "status": "PASS",
+      "evidence": "git grep at 25858ad finds no reference to any of the 8 relations in the QO server/shared/client files or the intake/currentness SQL. server/index.ts:6,278 mounts only createQuickOrderContainment, which returns 503. core.mjs:164-165 sets referral to captured_unmatched/direct_no_referrer with commission not_authorized. No QO nonce use. Cart migration 20260727200000:242,261-265 joins product_media and locks it FOR UPDATE. shared/research/cart-product-selection.ts:62-64 says selection authority ignores media. I sampled transitive injected deps; I did not exhaustively prove them."
+     },
+     {
+      "item": "Packet exclusion/declaration evidence recomputed at S",
+      "status": "PASS",
+      "evidence": "There are 18 evidence rows plus the mediaCaveat rows (packet.json:453-765@d007162). At 25858ad every path is mode 100644 and its blob OID equals f98c416. Recomputed raw sha256, bytes and LF counts all match: index.ts 1530, containment.ts 21, production.ts 100, catalog.ts 213, core.mjs 166, handler.mjs 217, quick-order-repository 165, supabase-repository 561, identity migration 575, private-sessions.sql 750. The cited lines read as claimed (create table lines; media join and lock). See F1 for the pinning."
+     },
+     {
+      "item": "17 unpopulated relations honestly absent",
+      "status": "PASS",
+      "evidence": "The census holds only 8 rows. Packet coverage (packet.json:320+) marks the other 17 UNPOPULATED. 12 IN: domain_launch_controls, early_access_legal_bindings, early_access_session_bindings, early_access_shipping_regions, inventory_lots, lot_quality_documents, lot_quality_tests, product_content, product_prices, product_variants, products, required_inputs. 5 OUT with positive lock: early_access_agreement_acceptances, early_access_cart_checkouts, early_access_customers, members, private_early_access_sessions (all research_). This matches scope item 3 (7b1e606:15), and each has a create table at S."
+     },
+     {
+      "item": "No placeholder presented as an actual reader or binding",
+      "status": "PASS",
+      "evidence": "No row or Reader is fabricated. packet.json:633 states that dormant adapters are not current Readers. binding:4 status is PARTIAL_METADATA_BINDING_NOT_COMPLETE_OPERATIONAL_RECEIPT. binding:42-51 sets approvedCompleteExpectedDigest, completeCensusCommit, originalCompleteCensusDisposition and publicationDeliveryP to null, with publicationUsable=false and the note 'This partial digest is not that value'. completeCensusArtifactExists=false: the fixed path is absent at d007162 and e6494ba."
+     },
+     {
+      "item": "Binding names census path, C, raw sha and S (DOC58 C-9/C-10, 8655288:21-27)",
+      "status": "PASS",
+      "evidence": "binding:6-16@e6494ba gives S 25858ad, C d0071628, census path, gitBlob a3d7ea51, rawSha256 5fcbe47b and bytes 12902. census.sourceCommit == binding.proposedSourceCommit == S. The binding does not name its own commit e6494ba. See F2 for the key name."
+     },
+     {
+      "item": "Expected digest outside measured material; not in any blob at S",
+      "status": "PASS",
+      "evidence": "git grep -F at 25858ad finds 0 files for 5fcbe47b, 4f6c39ac, b6056e18ca9b, d0071628fa and e6494bad57. S has no launch-coordination-20261005 paths. readerCensusSha256 appears at S only in format checks: currentness.sql:175-176 (^[0-9a-f]{64}$) and the verifier's synthetic 'a'.repeat(64) at line 110. Nothing is hard-coded as the expected value."
+     },
+     {
+      "item": "Acyclic construction (DOC53:73-78; scope item 21, 7b1e606:99)",
+      "status": "PASS",
+      "evidence": "In the builder repo, d007162 is not an ancestor of 25858ad, nor e6494ba, nor is 25858ad an ancestor of d007162. e6494ba's only parent is d007162, so the binding follows C. The census embeds S only. The order is S, then census and C, then binding. Nothing feeds back into S."
+     },
+     {
+      "item": "Binding review-state currency",
+      "status": "PARTIAL",
+      "evidence": "binding:57-62 records sourceReview acknowledgment 169b1a3 and sourceAcceptance PENDING. That was true at 09:01:46. Doc 68 at 9f57058 (09:18) accepted S with limits, and 36debe0 corrected it. The review request md:16 discloses the frozen pending labels as creation-time, so this is informational."
+     },
+     {
+      "item": "CF-11 complete census acceptance",
+      "status": "NOT_PROVEN",
+      "evidence": "8 of 25 rows only. QUICK_ORDER_READER_CENSUS_V1.json is not created. No original disposition, decision or P exists. Doc 61:74-78 still requires S, the complete census at the fixed path with M-1, its receipt, and a disposition."
+     }
+    ],
+    "findings": [
+     {
+      "id": "A1-F1",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "The census exclusion evidence is pinned at the superseded source f98c416, not at S 25858ad. The stated unchanged-scope covers only server/shared/client/config, not the supabase/ evidence paths.",
+      "evidence": "packet.json:453-716@d007162 has 18 evidence rows, all sourceCommit f98c41617f72. The census root (census:1@d007162) says S=25858ad. packet.json:765 claims only that server/shared/client/config are unchanged. The f98..S diff touches supabase/candidates/...currentness.rollback.md and supabase/verification. I recomputed at 25858ad: all 12 distinct evidence paths are mode 100644, blob-identical to f98, and their sha256, bytes and LF counts match. So nothing is factually wrong, but the record makes the reader do this cross-head check.",
+      "fix": "Restate each evidence row with sourceCommit 25858ad, or add an explicit per-path list showing the f98 and S blob OIDs are equal, covering the supabase/ paths, before the exclusion rows are carried into the complete census."
+     },
+     {
+      "id": "A1-F2",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_BINDING_25858ad_V1.json",
+      "claim": "The binding identifies S under the key proposedSourceCommit, not sourceCommit as Doc58 C-9 words it.",
+      "evidence": "binding:6@e6494ba has \"proposedSourceCommit\": \"25858ad...\", and binding:58 has sourceReview.source. DOC58 amendment:23@8655288 says the receipt must 'explicitly identify that same S as sourceCommit'. The values are equal, so only the key differs.",
+      "fix": "In the complete-census receipt, use a sourceCommit field, or state the key mapping explicitly in the receipt contract."
+     },
+     {
+      "id": "A1-F3",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_BINDING_25858ad_V1.json",
+      "claim": "excludedFromMeasuredMaterial lists the 'census artifact itself', but the recorded rawSha256 measures exactly that artifact.",
+      "evidence": "binding:52-56@e6494ba lists the binding record, the 'census artifact itself' and the normalized decision. binding:15 and 33 give the census sha256 5fcbe47b as the measured digest. The intended meaning matches C-10 (8655288:27): none of these may be a pinned Reader. Read literally, the wording contradicts the derivation at binding:41.",
+      "fix": "Rename the list to something like notPinnedAsReader / excludedFromReaderSet, matching C-10's wording."
+     },
+     {
+      "id": "A1-F4",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_BINDING_25858ad_V1.json",
+      "claim": "historicalBindingPreserved calls the f98 binding 'unchanged' without pinning a version, and that file was edited in place twice after it was created.",
+      "evidence": "binding:64@e6494ba. QUICK_ORDER_READER_CENSUS_BINDING_V1.json has blob 1ccf5e8 at a853479 (created), cca0e50 at db4c230, and 1f7e121 at 51cf986 and e6494ba. Only the sourceReviewUpdates overlay changed; the core path, commit, hash and S fields are unchanged. This runs against Doc58 C-7 (8655288:11), which says future amendments use separate files.",
+      "fix": "Pin the historical binding as blob 1f7e121 (and name its edit history), and put future review overlays in separate files."
+     },
+     {
+      "id": "A1-F5",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_BINDING_25858ad_V1.json",
+      "claim": "authorityCopyRawSha256 gives a bare hash with no path or commit.",
+      "evidence": "binding:83@e6494ba has c152cb14.... I traced it to QUICK_ORDER_SUBMISSION_PRIORITY_DIRECTIVE_20261009.txt at d007162 (13577 B, sha256 recomputed equal), through QUICK_ORDER_SUBMISSION_PRIORITY_PROVENANCE_20261009.json. The binding itself does not say what it identifies.",
+      "fix": "Add the path and commit (d007162) next to the hash, or drop it from the census binding."
+     },
+     {
+      "id": "A1-F6",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_V1.partial-25858ad.json",
+      "claim": "The partial file has a fully contract-valid census shape, so its digest would pass the format-only decision check. Its partial status is carried only outside the file.",
+      "evidence": "census:1@d007162 has 8 relations, within the 1..512 bound. C-9 (8655288:21) forbids adding path or status fields to the JSON. currentness.sql:175-176@25858ad checks only ^[0-9a-f]{64}$. Partiality lives only in the non-fixed filename and binding:4,49 (status, publicationUsable=false). Both 5fcbe47b and the historical 4f6c39ac are valid-shaped values.",
+      "fix": "Have the future decision construction and its external receipt refuse any readerCensusSha256 not bound to the fixed path QUICK_ORDER_READER_CENSUS_V1.json with an original disposition. List 5fcbe47b... and 4f6c39ac... explicitly as non-admissible values."
+     },
+     {
+      "id": "A1-F7",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_BINDING_25858ad_V1.json",
+      "claim": "The binding's source-review state is stale: PENDING and acknowledgment-only, although S has since been accepted with limits.",
+      "evidence": "binding:57-62@e6494ba (recorded 09:01:05) has status ACKNOWLEDGED_IN_REVIEW_DOC68, acknowledgment 169b1a3 and sourceAcceptance PENDING. Doc 68 at 9f57058 (09:18) gives SOURCE ACCEPT WITH LIMITS, and 36debe0 corrects D68-3. The review request md:16 discloses the pending labels as creation-time.",
+      "fix": "No edit to the frozen record. The complete-census receipt should cite doc 68 at 9f57058 and the 36debe0 correction as the source acceptance."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "A1-F1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. All 18 rows (packet.json:453-724@d007162) give sourceCommit f98c416. I recomputed every one at both f98c416 and 25858ad: mode 100644, same blob OID, same sha256, bytes and LF count. The f98..S diff has 32 paths and none is under server/, shared/, client/ or config/. The lens has two slips. There are 14 distinct evidence paths plus 2 mediaCaveat paths, not 12. And the mediaCaveat (packet.json:725-747) carries only path, raw sha256 and anchors, with no sourceCommit, mode, blob or bytes. Both 2 paths match at f98 and S. Nothing is factually wrong; this is a pinning precision item."
+     },
+     {
+      "id": "A1-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed: binding:6@e6494ba has proposedSourceCommit, and 8655288:23 words the field as sourceCommit. The binding labels itself PARTIAL_METADATA_BINDING_NOT_COMPLETE_OPERATIONAL_RECEIPT (binding:4), so it is not yet the C-9 receipt. The requirement applies to the complete-census receipt."
+     },
+     {
+      "id": "A1-F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Wording only. binding:52-56 lists the 'census artifact itself' as excluded from measured material, while binding:15,33,41 measure exactly that artifact. The intended meaning matches C-10 (8655288:27): the artifact is never a pinned Reader."
+     },
+     {
+      "id": "A1-F4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. The historical binding's blob was 1ccf5e8 at a853479, cca0e50 at db4c230, and 1f7e121 at 51cf986 and e6494ba. The a853479..51cf986 diff touches only sourceReviewUpdates. 'Unchanged' is true for commit e6494ba itself, which did not touch the file. No health-review doc pins any version of the historical binding, so the lineage risk is low. C-7 (8655288:11) is an analogy, not a direct rule for this file."
+     },
+     {
+      "id": "A1-F5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed: c152cb14... is the sha256 of QUICK_ORDER_SUBMISSION_PRIORITY_DIRECTIVE_20261009.txt at d007162 (13577 B, 377 lines), the same value as the PROVENANCE json's rawSha256. binding:83 names neither path nor commit."
+     },
+     {
+      "id": "A1-F6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed: currentness.sql:175-176@25858ad checks only the 64-hex shape. This mostly restates the limit doc 61 already accepted (the validator is format-only, and runtime comparison is held work). The useful part is the explicit non-admissible list for 5fcbe47b and 4f6c39ac."
+     },
+     {
+      "id": "A1-F7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Informational. binding:57-63 was true when recorded (09:01). Doc 68 was committed at 9f57058 (09:18) and corrected at 36debe0 (09:27). The review request md:16@19ed1a4 already discloses this. The frozen record needs no edit; the complete receipt should cite 9f57058 and 36debe0."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Artifact identities",
+      "status": "PASS",
+      "note": "Recomputed: census a3d7ea51 is 12902 B, 5fcbe47b; binding f0353d65 is 4301 B, b6056e18; packet json is c8bb1979 and md 145d0d22. d007162^{tree}=9eeab240 and 25858ad^{tree}=c5565bcd. The scratchpad copies are byte-equal. DOC58 hashes to c29e14e3, matching doc 61."
+     },
+     {
+      "item": "Schema version, key order and canonical bytes",
+      "status": "PASS",
+      "note": "Independent node re-serialisation in contract key order (escaping only quote and backslash) is byte-equal to the raw file. No BOM, no trailing LF, all printable ASCII, 0 backslashes. Literals, SHA40, QualifiedRelation and RuleText bounds hold. The relations are strictly increasing by unsigned bytes."
+     },
+     {
+      "item": "Historical partial differs only in sourceCommit",
+      "status": "PASS",
+      "note": "QUICK_ORDER_READER_CENSUS_V1.partial.json@d007162 has sourceCommit f98c416 and sha 4f6c39ac. After the sourceCommit substitution it is byte-equal to the new partial."
+     },
+     {
+      "item": "Reader mode, blobSha256 and line spans (M-1/M-2, C-8)",
+      "status": "NOT_APPLICABLE",
+      "note": "readers=[] in all 8 rows and every Rule.readerIds is empty. binding:39 measuredReaderPaths=[]."
+     },
+     {
+      "item": "Exclusion row shape (DOC53:67-68)",
+      "status": "PASS",
+      "note": "Every row has OUT, empty projections and selectors, a non-empty exclusionReason, and justified no-reader mutation, lock and absence rules with readerIds=[]."
+     },
+     {
+      "item": "Exclusion reasons factually true at S",
+      "status": "PASS",
+      "note": "There is no QO file or QO SQL reference to the 8 relations. The mount is containment-only (index.ts:6,278; containment.ts:19 returns 503). core.mjs:164-165 is declarations-only. session_active (sessions.sql:539-569) does not touch nonces. The QO pricing path (index.ts:684-686 -> listForPricing) reads products, variants and prices only. Media is read only on the presentation and selection-facts path, which is ignored (product-control-reader.ts:132-135; cart-product-selection.ts:62-63). See X2 and X3 for the limits."
+     },
+     {
+      "item": "Packet exclusion and declaration evidence at S",
+      "status": "PASS",
+      "note": "All 14 distinct paths plus the 2 mediaCaveat paths are mode 100644 and blob-identical between f98 and S. The cited lines are create-table lines, the containment mount, the attribution snapshot and the media join and lock. See F1 for pinning."
+     },
+     {
+      "item": "17 unpopulated relations honestly absent",
+      "status": "PASS",
+      "note": "The census has only 8 rows. packet.json coverage marks the 17 others UNPOPULATED: 12 IN and 5 OUT with positive lock. This matches item 3 (7b1e606:15), and each has a create table at S."
+     },
+     {
+      "item": "No placeholder presented as reader or binding",
+      "status": "PASS",
+      "note": "packet.json:633 sets the boundary. binding:4,42-51 record publicationUsable=false and null complete digest, commit, disposition and P. The fixed path is absent at d007162 and e6494ba."
+     },
+     {
+      "item": "Binding names path, C, raw sha and S; digest is external and acyclic",
+      "status": "PASS",
+      "note": "binding:6-16. 0 S files contain 5fcbe47b, 4f6c39ac, b6056e18, d0071628 or e6494bad, and there are 0 launch-coordination paths at S. Neither commit is an ancestor of the other in either repo, and e6494ba's parent is d007162. Lens nuance: readerCensusSha256 also appears at currentness.sql:168,171,335 and verifier:819, as key lists, rebuild and negatives, never as an expected value."
+     },
+     {
+      "item": "Doc 61 M-1/M-2 carried forward",
+      "status": "PARTIAL",
+      "note": "M-1 is restated in the packet.json:634 refusal. The M-2 worked line-count vectors appear nowhere in the packet or binding (X4)."
+     },
+     {
+      "item": "Binding review-state currency",
+      "status": "PARTIAL",
+      "note": "Informational. The state was true at creation and the review request md:16 discloses it (F7)."
+     },
+     {
+      "item": "Proposed order of work",
+      "status": "PARTIAL",
+      "note": "The direction is right: the complete census must follow the implemented, frozen source (C-10; DOC53:75-76). However, step 4 does not freeze the five inputs at the same S (X1). Step 1 lacks prospective census rows. Decision and P placement after census disposition is not stated."
+     },
+     {
+      "item": "CF-11 complete census",
+      "status": "NOT_PROVEN",
+      "note": "8 of 25 rows only. The fixed-path artifact, receipt, original disposition and P are all absent."
+     }
+    ],
+    "missed": [
+     {
+      "id": "X1",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/SUBMISSION_PACKET_REVIEW_REQUEST_20261009.md",
+      "claim": "The proposed order freezes only the implemented source at the new S (step 4). It then populates the census 'against actual implemented source and real inputs' (step 5). The accepted contract instead requires the five referenced inputs to be frozen at that same S before the census is built, with census.sourceCommit == decision.sourceCommit. As written, the step-5 census cannot be the operational one.",
+      "evidence": "request md:43-44@19ed1a4 (scratchpad copy byte-equal; unchanged at a046256); packet md:75@d007162. DOC53:75-76@9600645: 'Freeze reviewed application/readers and five referenced inputs at S', then populate. 8655288:23 requires census=decision=publication=S. 7b1e606:99 requires the five inputs at S. packet.json:751@d007162: actualQOConfigurationArtifactFound=false, and the class-4 values are unchosen. So a step-4 S without inputs forces a second S, census and disposition.",
+      "fix": "Amend step 4: freeze the implemented source and all five input artifacts (after Samuel's class-4 decisions) at one new S. Alternatively, state that any later input-bearing S needs a fresh census and disposition. Also state that census disposition and its external receipt precede the normalized decision and P (DOC53:77-78)."
+     },
+     {
+      "id": "X2",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_V1.partial-25858ad.json",
+      "claim": "The product_media OUT/no-reader row is true at S. It rests on an item-3 refinement that reverses the Doc51 design ('media readers named'), and doc 53 accepted that refinement only in aggregate. The mediaCaveat also omits two install-state and transitive facts.",
+      "evidence": "Doc51 health-review 51_...462cf79:34 says 'shipping, media and launch-control readers named'. 7b1e606:15 moves product_media OUT as a 'reviewable profile refinement'. Doc 53 (53_...e90d464:51,56) explicitly judges only the referral OUT. At 25858ad, cart SQL 20260727200000:242,261-265 locks media, while the unapplied candidate 20261003_research_media_commerce_decoupling.sql:1-14 would remove it. The selection-facts path reads the media table (product-admin-production.ts:505,598 via presentationMedia; index.ts:764,800) but is presentation-only (product-control-reader.ts:132-135). The mediaCaveat (packet.json:725-747) mentions neither.",
+      "fix": "In the complete census, have the original reviewer disposition product_media OUT explicitly. In the step-1 design, state whether the commit reuses persistent-cart selection SQL, and under which install state of 20261003. Record the presentation-only reads as non-decision."
+     },
+     {
+      "id": "X3",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_V1.partial-25858ad.json",
+      "claim": "The nonce exclusion says 'current Quick Order consumes no nonce subsystem'. That is true at S, but it will become inaccurate prose once the required future owner gate exists. The gate checks the nonce table's owner OID, which is catalog metadata, not a row read.",
+      "evidence": "At 25858ad there is no nonce reference in QO files or QO SQL, and session_active (research-private-early-access-sessions.sql:539-569) has none. Items 11 and 14 (7b1e606:31,37) require the future commit gate to include 'sessions:683' and the same owner OID for sessions and nonces. sessions.sql:642-651 compares the nonce table's pg_class.relowner. OUT with readers=[] stays valid for rows.",
+      "fix": "Re-derive at the new S. Reword the reason to 'no row reader', and record the owner-OID dependency in the item 11/12 owner and privilege inventory rather than the row census."
+     },
+     {
+      "id": "X4",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "Doc 61 M-2 (the worked LF line-count vectors) is not carried forward. Only M-1 is restated, although the packet already reports LFLineCount values.",
+      "evidence": "Doc 61 (61_...8655288:55-67,72-73) says M-1 and M-2 may be folded into the populated-census submission. packet.json:634@d007162 restates M-1 (100644/100755). A grep of the packet md and json and the binding finds no M-2 vector table. packet.json:461,480,... report LFLineCount, which I recomputed as correct, without the vector check.",
+      "fix": "Add the six-row M-2 table (empty=0, a=1, a LF=1, LF=1, a CR LF b=2, a LF LF=2) with its expected counts to the complete-census submission."
+     }
+    ],
+    "disposition": "My opinion on disposition A is FACTUALLY CORRECT AS PARTIAL. I agree with lens A1 that there is no P0, P1 or P2 in the partial census or its binding. I recomputed every identity in node over git-show bytes. The census is byte-canonical, and its 8 exclusion rows are true at 25858ad. The 17 unpopulated rows are honestly absent, with no placeholder Reader. The digest is external and acyclic, and no digest appears in S. All seven lens P3 findings stand, F6 and F7 being mostly restatements of known limits. I add three P3s: X2 (product_media rests on aggregate acceptance of item 3), X3 (nonce prose against the future owner gate) and X4 (M-2 not carried). The census is not complete: CF-11 stays open, and 5fcbe47b and 4f6c39ac must never be admitted as readerCensusSha256.\n\nOn the order of work, I endorse the direction. The 17 rows need readers that do not exist at 25858ad, and C-10 and DOC53 steps 1-2 require S to be frozen before the census. However, the order needs revision before it is adopted, because of X1 (P2): the new S must contain the implemented source and the five input artifacts together. Step 1 should also carry prospective census rows and re-justify all 8 exclusions. Census disposition and its receipt must come before the decision and P. All 8 rows must be re-verified at the new S. Everything here is NOT RUN, and nothing is Samuel's approval."
+   }
+  },
+  {
+   "lens": "snapshot-composition-order",
+   "review": {
+    "verdict": "LENS A2: S IS COMPOSED CORRECTLY, BUT 25858ad CANNOT BE THE CENSUS S. No P0 or P1. Two P2, six P3. Everything NOT RUN.\n\nComposition. S is 25858ad, tree c5565bcd. History from 3e82154 to S is linear. Every non-records path at S matches the blob of the latest accepted commit that changed it (3e82154/doc48, e90d464/doc53, 2d2d958/doc58, 935aaf1/doc65, 25858ad/doc68). No unreviewed source bytes are present. cad2c4d is excluded: it is not an ancestor of S, and its paths do not overlap with S's. It is not needed for the Quick Order journey or the census.\n\nInputs. I recomputed 12 candidate files: the three canonical files, the five legal files and the four configuration files. Each matches the packet's raw sha256, blob, mode and size. None of them is called bound or approved.\n\n25858ad as S. Under doc 51 item 21, S must contain the implemented readers and the five inputs. 25858ad has neither, so it is not a viable census S. Use it as the implementation base and preimage anchor, and treat its partial census as a dry run. The real S is the implemented successor that also contains the inputs.\n\nOrder. It is acceptable once amended. It creates no circularity and waives no census.",
+    "checklist": [
+     {
+      "item": "S identity is 25858ad, tree c5565bcd",
+      "status": "PASS",
+      "evidence": "In the builder repo, cat-file says commit and rev-parse 25858ad^{tree} gives c5565bcdb0bf84b744de1cc0abb76c3867c8f165. This equals packet MD:15-16@d007162, JSON snapshot:29@d007162 and doc68:38@36debe0. First-parent history from 3e82154 to S is linear, with no merges (rev-list --merges is empty)."
+     },
+     {
+      "item": "Accepted components are ancestors of S, and their path blobs at S equal the accepted bytes",
+      "status": "PASS",
+      "evidence": "3e82154, f581b6b, 2d2d958, 7a62e64, 935aaf1 and f98c416 are all ancestors of S, and their trees match the packet JSON:30-66. Per path:\n- Intake family (5 files) and the root/static/vite composition tests equal 3e82154.\n- Currentness .sql equals 2d2d958 (15d63f91).\n- Precheck and postcheck equal e90d464 (ff6cc891, 02453231).\n- rollback.md and the verifier equal 935aaf1 (a0260719, f7cf66c3).\n- Supervisor and manifest equal 25858ad.\nf581b6b's bytes are fully superseded by later accepted deltas. Outside .xenios and docs, the only diff from 3e82154 to S is the currentness family."
+     },
+     {
+      "item": "Any included source still under review or not accepted",
+      "status": "PASS",
+      "evidence": "Every non-records commit from 756a906 to S was reviewed. 7d027e4 was REVISION in doc45; its repair 3e82154 was accepted in doc48:3@7dde166. The supervisor revisions (90f4ebd through cc584f9) were superseded by 25858ad, accepted with limits in doc68:3@36debe0. Limits that remain:\n- Protected successor-hash, manifest recut and GATE-01 for server/index.ts and the S-2 seams are still pending (doc41:111-112@ca1c114). The seams are unchanged since ac36e60.\n- The packet's frozen 'verdict pending' labels (JSON:64@d007162, binding:61@e6494ba) are stale. The request overlay at :16@19ed1a4 corrects them."
+     },
+     {
+      "item": "Packet's included-component list is complete",
+      "status": "PARTIAL",
+      "evidence": "MD:22@d007162 and JSON:30-66 omit e90d464/doc53 (accepted at 58c6f58), although the currentness precheck and postcheck bytes at S are e90d464's. They also omit the accepted chain before 3e82154 (docs 35-47: 3b0048d, f1e467f, fd023e8, ac36e60, 10208fe, 9118a82, 5fd2e4c, e279cc6, 00e12fb). Ancestry covers all of them, so no bytes are unaccounted for, but the list is a lineage, not a complete composition manifest."
+     },
+     {
+      "item": "cad2c4d excluded as stated",
+      "status": "PASS",
+      "evidence": "merge-base --is-ancestor cad2c4d S is false. The merge base is 756a906. cad2c4d's 8 client paths (ProductPage, MemberCatalogExperience, MemberProductDetailExperience, ProductSubscriptionCreate, and their tests) have the same blobs at S as at 756a906 (for example ProductPage 4c9075ad), not cad2c4d's (d50b4671). S's non-records diff from 756a906 touches none of the 8. This matches JSON excluded:68-76@d007162."
+     },
+     {
+      "item": "Should S include cad2c4d for the Quick Order journey",
+      "status": "NOT_APPLICABLE",
+      "evidence": "No, not for the journey or the census.\n- At S, QuickOrderPage.tsx, contracts.ts and OperatorDeclarations.tsx import only PublicShell, the shared assisted-order form and local modules.\n- git grep finds no reference to cad2c4d's components in client quick-order, App.tsx or server health quick-order.\n- Census relations are database and server readers.\nFor any served customer candidate, though, the two must be composed, and doc62:94-96@e27fa1b anticipated an S built on cad2c4d. Where composition happens relative to S is open; see finding A2-P2-2."
+     },
+     {
+      "item": "Candidate inputs exist at S with the stated raw sha256 (recomputed)",
+      "status": "PASS",
+      "evidence": "All 12 files recomputed from git cat-file bytes match the packet (MD:42-52@d007162, JSON inputs). All are mode 100644 blobs, with no BOM, and identical to f98c416:\n- 3 canonical: catalog 09bfb1d1 (351419 bytes, 11482 lines), bindings f2df5364 (128269, 4333), reconciliation d63eade1 (5815, 143).\n- 5 legal: 3e116fcb, 91fe4676, 3888a8a1, 2ff67f9c, 3d5a3ff7.\n- 4 configuration: 9cb3f2cb, 37b9946b, a7fe256e, 2f9834d3."
+     },
+     {
+      "item": "Packet does not call any input bound or approved",
+      "status": "PASS",
+      "evidence": "Statuses are EXISTS BUT NOT APPROVED, or MISSING AND NEEDS OWNER (MD:30-34@d007162). MD:36 says no row is EXISTS AND BOUND merely because its Git bytes are known. In the JSON, every actualQuickOrderInputBinding is null, usableForQuickOrderPublication is false, and configurationVersion is null. 'bindingLevel: Immutable candidate bytes bound' (JSON:116,145,173) is a byte-identity claim and is qualified as operationally incomplete."
+     },
+     {
+      "item": "Partial census at 25858ad changes only sourceCommit; historical bytes preserved",
+      "status": "PASS",
+      "evidence": "The partial at d007162 is blob a3d7ea51, sha256 5fcbe47b, 12902 bytes. Substituting S for f98c416 in the historical partial (blob 29dfff12, which appears once) reproduces 5fcbe47b exactly. The historical partial and SNAPSHOT_S packet md/json have the same blobs at 894da89, e6494ba and 19ed1a4. The binding at e6494ba recomputes to b6056e18. The 8 rows are all OUT with readers=0."
+     },
+     {
+      "item": "25858ad as the census S (17 reader/lock rows depend on unwritten transaction code)",
+      "status": "FAIL",
+      "evidence": "Not viable as the census S.\n- Item 21 (7b1e606:99) makes S the 'reviewed application/reader and five-input snapshot', with the inputs at S. Contract 9600645:75 says S must be an actual assembled snapshot. Doc 61 C-9 (61:38-40@7ea60dc) requires census, decision and publication to share the same S.\n- At 25858ad the health_legal and configuration artifacts do not exist, and the 12 IN plus 5 positive-lock rows have no composed readers (packet MD:24,60).\n- The packet itself says a later successor is needed (JSON:85).\nUseful only as the implementation base and preimage anchor, and as a format dry run."
+     },
+     {
+      "item": "Proposed order consistent with doc 51 item 21",
+      "status": "PARTIAL",
+      "evidence": "Request steps 4-5 (MD:43-44@19ed1a4, JSON:93-94) freeze the 'implemented successor' without requiring the five approved input artifacts at that same commit. Item 21 (7b1e606:99) requires them there. Packet JSON:1273@d007162 does say 'plus real approved inputs as S'. The health_legal and configuration artifacts have no named path, writer or review in the 33-path scope. See A2-P2-1."
+     },
+     {
+      "item": "Proposed order consistent with doc 61 CF-11 conditions",
+      "status": "PASS",
+      "evidence": "Doc 61 (61:74-78@7ea60dc) needs a frozen S, a populated census at the fixed path (with M-1), an external receipt, then the reviewer's disposition. The order puts the completed census at the frozen implemented successor before qualification and install (request MD:43-46, JSON:98 'do not waive...'). The external digest stays outside the measured material (packet MD:62). Placement of P and the receipt, and an explicit source-acceptance gate, are missing; see A2-P3-4."
+     },
+     {
+      "item": "Does any step create a circularity",
+      "status": "PASS",
+      "evidence": "None is intrinsic. The design comes before the grant, the grant before implementation, and implementation before S and the census. The census depends on S, but S does not depend on the census, provided the expected digest comes only from the decision or receipt (doc61:45-47; contract 9600645:76-78). One residual risk: doc61:80-81 defers runtime comparison to held work, and item 9 (7b1e606:27) says the commit 'compares the reviewed digest'. A digest literal in a census-pinned body would recreate the C-10 fixpoint. See A2-P3-3."
+     },
+     {
+      "item": "Does any step waive the implemented-source census",
+      "status": "PASS",
+      "evidence": "No. The request JSON:98@19ed1a4 keeps the complete implemented-source census before application/database qualification and release. The packet's decision D (MD:73@d007162) defers install until the census is accepted. 'Generic fail-closed source before values' (JSON:1274) relaxes the order of source authoring only, not the census."
+     },
+     {
+      "item": "Accuracy of the 'circular census-before-body' premise",
+      "status": "PARTIAL",
+      "evidence": "The premise is accurate, but the gate it cites is coordinator wording, not a reviewer gate. It appears at SNAPSHOT_S_CENSUS_PACKET:40@894da89 ('Complete census/call/privilege/lock design') and contract:82@9600645. Doc 51 §3 (51:38@9a9023e) requires the 24 design carry-forwards before any body: item 3 (IN/OUT labels), item 9 (digest definition), item 12 (call inventory). Scope item 12 (7b1e606:33) already says the final call graph is 'not falsely claimed complete for an unauthored commit'. So the amendment is a clarification consistent with docs 51 and 61, not a reviewer-gate relaxation."
+     },
+     {
+      "item": "Execution status",
+      "status": "NOT_APPLICABLE",
+      "evidence": "Read-only Git object reads plus SHA-256 recomputation over git cat-file bytes piped into node. Nothing was executed, imported, tested or written. Every application, SQL, verifier and qualification claim is NOT RUN. Nothing here is Samuel's approval."
+     }
+    ],
+    "findings": [
+     {
+      "id": "A2-P2-1",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/SUBMISSION_PACKET_REVIEW_REQUEST_20261009.md",
+      "claim": "The 7-step order freezes the implemented successor as S (step 4) without requiring the five approved input artifacts at that commit. Item 21 requires them. The health_legal and configuration artifacts have no named path, writer or review.",
+      "evidence": "Request MD:43-44@19ed1a4 (and JSON:93-94) says 'Freeze implemented successor...' and 'against actual implemented source and real inputs'. Item 21 (7b1e606:99) says S is the 'application/reader and five-input snapshot, with five referenced input artifacts at S'. Doc 61 C-9 (61:38-40@7ea60dc) requires census, decision and publication to share the same S. Packet JSON:1273@d007162 says 'plus real approved inputs as S', so the two documents disagree. None of the 33 paths is an input artifact (configurationVersion and requiredDigest are null in JSON). A census frozen at an input-less successor would be a second dry run, forcing another S, census and disposition.",
+      "fix": "Amend step 4: freeze the implemented successor S containing the five approved input artifacts at named paths, written by a named owner under a separate input-artifact grant and review, with class-4 decision A as a hard predecessor. Alternatively, label a census at an input-less successor as a correspondence census only, not CF-11 closure."
+     },
+     {
+      "id": "A2-P2-2",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+      "claim": "The order does not fix how the census/decision S relates to the tree that is later qualified and installed. Excluding cad2c4d, plus pending supervisor amendments, guarantees later commits that differ from S.",
+      "evidence": "MD:22@d007162 excludes cad2c4d with 'no whole-branch composition'. Doc62:94-96@e27fa1b anticipates 'a snapshot built on it'. Doc68:118-124@36debe0 queues a supervisor amendment to the two files. The request's steps 6-7 (MD:45-46@19ed1a4) qualify and install without saying the tree must equal S. Contract 9600645:64 refuses a mixed-head census, and item 21 calls S the 'reviewed application' snapshot. If composition happens after the census, the served tree is not the one the decision embeds, which defeats the census's purpose in effect.",
+      "fix": "Decide before freezing S. Either compose cad2c4d and the D68 supervisor amendment first, so S is the qualification and release candidate. Or adopt an explicit rule: the qualified and installed tree must be blob-equal to S on every census reader path and the five input paths, checked at qualification and install and recorded in the external receipt."
+     },
+     {
+      "id": "A2-P3-1",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.json",
+      "claim": "The included-component list is a partial lineage. It omits e90d464/doc53, whose bytes S carries, and the accepted chain before 3e82154. It still labels 25858ad 'verdict pending'.",
+      "evidence": "JSON:30-66@d007162 lists 3e82154, f581b6b, 2d2d958, 7a62e64, 935aaf1 and 25858ad. At S, the currentness precheck and postcheck blobs (ff6cc891, 02453231) were last changed by e90d464 (accepted at 58c6f58). The QO commits accepted in docs 35-47 are unlisted. JSON:64 and binding:61@e6494ba say pending or PENDING, while doc68:3@36debe0 accepts with limits. Request overlay:16@19ed1a4 corrects the label without changing bytes.",
+      "fix": "In the next records turn, list the full accepted lineage with the last-change commit for each non-records path at S, and carry the doc 68 status by overlay only (no byte edits)."
+     },
+     {
+      "id": "A2-P3-2",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md",
+      "claim": "The 'current records literally require the completed census before bodies' premise comes from coordinator wording. Reviewer docs require only the design-level carry-forwards before bodies.",
+      "evidence": "MD:75@d007162. The gate's sources are SNAPSHOT_S_CENSUS_PACKET:40@894da89 and contract:82@9600645. Doc 51 (51:38@9a9023e) makes carry-forwards 1-24 'required before any body is drafted': IN/OUT labels (item 3), digest definition (item 9), call inventory (item 12). Scope item 12 (7b1e606:33) already says the final call graph is 'not falsely claimed complete for an unauthored commit'.",
+      "fix": "Present the class-3 amendment as a clarification of coordinator wording consistent with docs 51 and 61, citing those lines. Make step 1 explicitly carry all 24 carry-forwards and a prospective 25-row census design (projections, selectors, mutation, lock and absence rules for each relation) as the source-grant basis."
+     },
+     {
+      "id": "A2-P3-3",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/SUBMISSION_PACKET_REVIEW_REQUEST_20261009.md",
+      "claim": "Step 1 does not require the prospective design to name the runtime census-digest comparison source. Held bodies could compile the expected digest into a census-pinned reader and recreate the C-10 fixpoint.",
+      "evidence": "Doc61:80-81@7ea60dc says runtime comparison 'belongs to held work'. Item 9 (7b1e606:27) says the 'Future server/commit compares the reviewed digest'. C-10 (61:45-47) forbids the value living in a reader file the census pins. The census pins exactly the files step 3 writes (supabase commit body, production.ts). Request MD:40 lists 'call/lock/privilege design' only.",
+      "fix": "Add to step 1: the expected readerCensusSha256 is read only from the published decision, authority revision or external receipt, and no census reader path may contain a digest literal. The source review checks this."
+     },
+     {
+      "id": "A2-P3-4",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/SUBMISSION_PACKET_REVIEW_REQUEST_20261009.md",
+      "claim": "The order lacks an explicit source-acceptance gate for the implemented successor, a re-census rule, a place for P and the external receipt, and the supervisor manifest re-pin.",
+      "evidence": "Request MD:43-46@19ed1a4 goes straight from 'Freeze' and 'Populate/review completed census' to qualification. Contract 9600645:69 says the original source review establishes reader correspondence. Contract 9600645:76-78 and item 21 order the steps as S, then C, then disposition, then decision at P, then external receipt. The supervisor manifest currently pins 935aaf1 (doc68:41@36debe0). History shows multiple REVISION cycles (docs 52-67), so each source repair means a new S and a new census.",
+      "fix": "Insert the original source acceptance of the successor S, bundled with the census disposition. State that any source change means a new S and re-population. Place P and the external receipt after disposition and before activation, and make a reviewed supervisor manifest re-pin to S a qualification prerequisite."
+     },
+     {
+      "id": "A2-P3-5",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_V1.partial-25858ad.json",
+      "claim": "The partial census at 25858ad does not depend on S. Its 8 exclusion rows pin no bytes, so it is a format dry run only, and those rows must be re-derived against the implemented call graph at the real S.",
+      "evidence": "At d007162 the file has 8 relations, all OUT with readers=0 (affiliate bindings, attribution touches, referral grants, partner links, partners, private nonces, product media, transfer events). They are justified by doc 51 items 3 and 5, not by S bytes. Only sourceCommit differs from the f98 partial, which I recomputed: substitution yields 5fcbe47b. Packet MD:24 says the successor 'adds no actual request reader'. The not-yet-written privateContext seam (express.ts) and the commit body could touch nonces or cart media.",
+      "fix": "Treat 25858ad as the implementation base and preimage anchor, and the partial as a rehearsal. Do not re-pin it at each intermediate commit. Re-derive all 25 rows, including the 8 exclusions, against the implemented call and privilege inventory at the real S."
+     },
+     {
+      "id": "A2-P3-6",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_READER_CENSUS_BINDING_25858ad_V1.json",
+      "claim": "The binding says the historical binding V1 is 'unchanged', but V1 was edited in place twice after it was issued, against doc 58 C-7's separate-file practice.",
+      "evidence": "V1 was added at a853479, then modified at db4c230 and 51cf986. The edits rewrite sourceReviewUpdates A, B and C (git diff a853479 51cf986). The binding (25858ad V1) records 'historicalBindingPreserved: ...unchanged'. Doc58:76-77@202ed1a: a pinned record was edited in place; put future addenda in separate files. The measured partial and the packet bytes themselves are byte-identical (blobs 29dfff12, aa2fb470, f941327337).",
+      "fix": "Restate as 'unchanged since 51cf986 after two in-place status edits (a853479→db4c230→51cf986)', and keep using overlays as the 19ed1a4 request now does."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "A2-P2-1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. Request steps 4-5 (MD:43-44@19ed1a4, JSON:93-94@19ed1a4) freeze the 'implemented successor' without requiring the five inputs at S. Item 21 (7b1e606:99) requires them at S; doc 53 accepted it as 'Strengthened' (53:50). Contract 9600645:75 and doc61 C-9 (61:38-40@7ea60dc) require census, decision and publication to share one S. Packet JSON:1273@d007162 does say 'plus real approved inputs as S', so the request summary and the packet disagree. health_legal and configuration have no path, writer or review: JSON requiredDigest and configurationVersion are null, and none of the 33 scope paths is an input artifact. The 7-step order sequences no class-4 step at all. Adopted as written, it gives a census that cannot close CF-11. P2 is right."
+     },
+     {
+      "id": "A2-P2-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "The gap is real, but I downgrade it to P3. No step adopts a mixed tree, and packet decision D (MD:73@d007162) already defers the served-candidate plan until after the accepted census and qualification. The manifest pins application source by commit (source.commit=f581b6b at S) and qualifies a detached checkout of that commit, so qualifying exactly S already works by pinning S in a post-S manifest. cad2c4d's 8 client paths are disjoint from S's diff and from every prospective reader path, so composing it later changes no reader blob. A blob-equality rule on reader and input paths at qualification and install is a precision item for gate D, not a reason to revise the order now."
+     },
+     {
+      "id": "A2-P3-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Partly upheld. The e90d464 omission is mostly cosmetic: doc58:99@202ed1a says '2d2d958 and its receipt replace e90d464 as the accepted currentness source', and the precheck/postcheck blobs ff6cc891/02453231 are identical at e90d464, 2d2d958, 935aaf1 and S. The pre-3e82154 chain (docs 36-47; 7d027e4 REVISION in doc45, repaired by 3e82154) is ancestral and reviewed. The stale labels are real: JSON:17 and :64 say PENDING, and binding:61@e6494ba says sourceAcceptance PENDING, while doc68 is SOURCE ACCEPT WITH LIMITS (9f57058, corrected at 36debe0). Overlay 19ed1a4:16 corrects this without changing bytes."
+     },
+     {
+      "id": "A2-P3-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. No reviewer doc requires a completed census before bodies. Doc 51 (51:38@9a9023e) requires only the 24 carry-forwards 'before any body is drafted'. Scope item 12 (7b1e606:33) says the final call graph is 'not falsely claimed complete for an unauthored commit'. The 'circular census-before-body' gate traces to coordinator wording: SNAPSHOT_S packet:40@894da89 ('Complete census/call/privilege/lock design'), contract 9600645:82 (ambiguous) and COORDINATION_STATE:6420@d007162. Packet MD:75 overstates it as 'literally require'."
+     },
+     {
+      "id": "A2-P3-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. C-10 (61:45-47@7ea60dc) already forbids a digest literal in census-pinned readers. However, item 9 (7b1e606:27) assigns the comparison to 'future server/commit', and doc61:80-81 defers it to held work. The only non-circular comparison source for a runtime that cannot see the census file is still unspecified. Step 1 should name that comparator, and the source review should check it."
+     },
+     {
+      "id": "A2-P3-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "The gaps are upheld, but the fix needs correcting. The request (MD:40-46@19ed1a4) has no explicit original source-acceptance gate, no re-census-on-change rule and no manifest re-pin. The manifest pins application f581b6b and database 935aaf1, and a later manifest commit must pin S. But the fix wrongly places 'the external receipt after disposition'. Doc 61 CF-11 (61:74-78) needs the census binding record after C and before the original disposition, as the current 25858ad binding does. The operational receipt that binds P comes after the decision (9600645:78). These are two records and need two placements. See missed A2V-M2."
+     },
+     {
+      "id": "A2-P3-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. The 8 OUT rows (readers=[], selectors=[]) pin no bytes. Their exclusion texts are time-relative ('Current Quick Order...', 'current Quick Order consumes no nonce subsystem'), and product_media carries an explicit 'restore before census completion' caveat. Partial@d007162 with f98 substituted back recomputes to 4f6c39ac, and with S to 5fcbe47b (a single occurrence). I checked one candidate: session_active(text,uuid,text) reads only research_private_early_access_sessions (research-private-early-access-sessions.sql:539-568@25858ad), so the nonce exclusion holds against that call. It must still be re-derived at the real S."
+     },
+     {
+      "id": "A2-P3-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Factual. V1 was added at a853479 (sha256 848e3988…, cited by commit in the db4c230 handoff:11), then modified at db4c230 and 51cf986 (sourceReviewUpdates A/B/C rewritten). This came after doc58 C-7 (202ed1a, 2026-10-08 15:17) asked for separate-file addenda. V1 blob 1f7e121 has been unchanged since 51cf986 through e6494ba and 19ed1a4, so binding:64 is true for this turn but omits the lineage. This is records hygiene, adjacent to the lens's scope."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "S identity 25858ad / tree c5565bcd",
+      "status": "PASS",
+      "note": "Builder repo: rev-parse 25858ad^{tree} gives c5565bcdb0bf84b744de1cc0abb76c3867c8f165. This equals packet MD:15-16@d007162, JSON:23-24 and doc68:38@36debe0. History 3e82154..S has 25 commits, linear, 0 merges."
+     },
+     {
+      "item": "Accepted components are ancestors and their path blobs equal the accepted bytes",
+      "status": "PASS",
+      "note": "Ancestors of S: 3e82154, f581b6b, e90d464, 2d2d958, 7a62e64, f98c416, 935aaf1. The diff from 3e82154 to S outside .xenios and docs is exactly the 5 currentness files. Their blobs at S: sql 15d63f91 (equals 2d2d958); pre ff6cc891 and post 02453231 (equal to e90d464, 2d2d958 and 935aaf1); rollback a0260719 and verifier f7cf66c3 (equal to 935aaf1). Receipt doc63 recomputes to 24430f71. Supervisor and manifest last changed at 25858ad."
+     },
+     {
+      "item": "Included source under review or not accepted",
+      "status": "PASS",
+      "note": "Docs 36-48, 50, 53, 58, 63, 65 and 68 cover every source commit; 7d027e4 (doc45 REVISION) was repaired by 3e82154 (doc48:3@7dde166). Doc68 is SOURCE ACCEPT WITH LIMITS (9f57058/36debe0). The packet's 'pending' labels are stale but corrected by overlay 19ed1a4:16. Protected server/index.ts successor-hash and GATE-01 remain pending (doc41:111-112@ca1c114); index.ts and express.ts are unchanged since ac36e60."
+     },
+     {
+      "item": "Included-component list completeness",
+      "status": "PARTIAL",
+      "note": "It is a lineage, not a manifest. The e90d464 omission is covered by doc58:99 (2d2d958 replaces e90d464). Ancestry accounts for every byte. P3 only."
+     },
+     {
+      "item": "cad2c4d excluded as stated",
+      "status": "PASS",
+      "note": "cad2c4d is not an ancestor of S; the merge base is 756a906. Its 8 client paths have the base blobs at S (for example ProductPage 4c9075ad, not cad2c4d's d50b4671), and its docs paths are absent at S. S's diff from 756a906 touches none of them."
+     },
+     {
+      "item": "Should S include cad2c4d",
+      "status": "NOT_APPLICABLE",
+      "note": "Not needed for the QO journey or the census. QuickOrderPage imports only PublicShell, ./contracts and its CSS. git grep at S finds no ProductPage/MemberCatalog/MemberProductDetail/ProductSubscriptionCreate reference in App.tsx or the QO dirs. Served-candidate composition belongs to gate D under a blob-equality rule (A2-P2-2, now P3)."
+     },
+     {
+      "item": "Candidate inputs at S: recomputed sha256",
+      "status": "PASS",
+      "note": "I recomputed 14 files from cat-file bytes: 3 canonical, 5 legal, 4 configuration, plus policies-data.ts (ab925494) and document-register.json (c8ce1a6d). All match the packet's sha256, blob, mode 100644 and size; the canonical LF counts are 11482, 4333 and 143. All have no BOM and no CR, and all equal the f98c416 blobs."
+     },
+     {
+      "item": "No input called bound or approved",
+      "status": "PASS",
+      "note": "MD:30-36@d007162. In JSON, actualQuickOrderInputBinding is null, usableForQuickOrderPublication is false, and health_legal and configuration have requiredDigest and configurationVersion null."
+     },
+     {
+      "item": "Partial census and binding",
+      "status": "PASS",
+      "note": "Partial a3d7ea51 is 12902 bytes, sha256 5fcbe47b; substituting into the historical 29dfff12 reproduces it. It has 8 OUT rows with empty readers. Binding f0353d65 recomputes to b6056e18, measuredReaderPaths is [], and the binding is outside the measured material. The historical partial and SNAPSHOT_S md/json blobs are identical at 894da89, e6494ba, 19ed1a4 and 52e57c3."
+     },
+     {
+      "item": "Packet labels 25858ad accurately as non-operational",
+      "status": "PASS",
+      "note": "MD:13 and MD:24 ('A later implemented/input-complete composition needs a new exact S') and JSON:85 match. The packet makes no CF-11 claim."
+     },
+     {
+      "item": "25858ad viable as the CF-11 census S",
+      "status": "FAIL",
+      "note": "Item 21 (7b1e606:99), contract 9600645:75 and C-9 (61:38-40) require readers plus five inputs at one S. At 25858ad the health_legal and configuration artifacts are missing and 17 rows lack readers. Use 25858ad as the implementation base, preimage anchor and format dry run only."
+     },
+     {
+      "item": "Order consistent with item 21",
+      "status": "PARTIAL",
+      "note": "Steps 4-5 omit inputs at S, and no class-4 step is sequenced (A2-P2-1). Packet JSON:1273 has the correct wording."
+     },
+     {
+      "item": "Order consistent with doc 61 CF-11",
+      "status": "PARTIAL",
+      "note": "The lens said PASS; I correct it. C-9 equality fails without inputs at S, and step 5 omits CF-11 step 3 (the census binding record before disposition) and the M-1 and M-2 conformance (61:51-67, 74-78)."
+     },
+     {
+      "item": "Circularity",
+      "status": "PASS",
+      "note": "Design, grant, implementation, S and then census is acyclic. A manifest pinning S necessarily lives after S, which is not a cycle. The runtime comparator source is still unnamed (A2-P3-3)."
+     },
+     {
+      "item": "Implemented-source census waived",
+      "status": "PASS",
+      "note": "Request JSON:98@19ed1a4 and packet MD:73 and :75 retain it before qualification and install."
+     },
+     {
+      "item": "Stock predicate sequenced before implementation",
+      "status": "PARTIAL",
+      "note": "Item 6 (7b1e606:21) blocks the commit body's lock footprint on Samuel's stock predicate. Packet MD:71 includes the 'applicable stock choice'; request steps 1-3 (MD:40-42) do not (A2V-M1)."
+     },
+     {
+      "item": "Execution",
+      "status": "NOT_APPLICABLE",
+      "note": "Git object reads and node sha256 over cat-file and show bytes only. Nothing was executed or written. All runtime, SQL and qualification claims are NOT RUN. Nothing here is Samuel's approval."
+     }
+    ],
+    "missed": [
+     {
+      "id": "A2V-M1",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/SUBMISSION_PACKET_REVIEW_REQUEST_20261009.md",
+      "claim": "The 7-step order omits Samuel's stock-predicate choice (any allocatable witness versus sufficient quantity) as a predecessor of step 3. That choice fixes the commit body's inventory_lots lock footprint and the IN census row.",
+      "evidence": "Item 6 (7b1e606:21): stock predicate 'remains Samuel's quantity policy... This blocks the held commit body's lock footprint'. Packet MD:71@d007162 conditions class 3 on the 'applicable stock choice', and MD:70 says the 'owner still chooses stock'. Request MD:40-42@19ed1a4 and JSON:90-92 list design, the source decision and implementation with no stock choice. JSON:1274 allows generic fail-closed source without values, but a lock set cannot be generic across both predicates.",
+      "fix": "Insert the stock-predicate decision, or an explicit grant to implement both footprints with the census describing both, before step 3."
+     },
+     {
+      "id": "A2V-M2",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/SUBMISSION_PACKET_REVIEW_REQUEST_20261009.md",
+      "claim": "Step 5 omits CF-11's census binding record and the M-1 and M-2 conformance. The lens's fix (A2-P3-4) puts 'the external receipt' after disposition, which conflates two records and inverts doc 61's CF-11 order for the census binding.",
+      "evidence": "Doc61:74-78@7ea60dc: frozen S, then a populated census at the fixed path meeting M-1, then 'its external binding receipt', then 'my disposition'. M-1 is regular-file mode 100644/100755 (61:51-54); M-2 is the line-count table (61:55-67). Contract 9600645:78: the later operational receipt binds C, S, disposition and P. The current practice matches doc 61: the binding at e6494ba was written after C=d007162, before any disposition. Request MD:44 says only 'Populate/review completed census'.",
+      "fix": "Step 5: populate at the fixed path with M-1 and M-2, then commit C and a separate census binding record, then the original census and source disposition. After the decision at P: the operational receipt. Do not merge the two records."
+     }
+    ],
+    "disposition": "Disposition A: the snapshot proposal and partial census are FACTUALLY CORRECT AS PARTIAL. No packet byte revision is required.\n- S is 25858ad, tree c5565bcd. Its composition, the cad2c4d exclusion and the 14 candidate hashes all reproduce.\n- The partial census (5fcbe47b) and its binding (b6056e18) reproduce.\n- Carry the Doc68 acceptance by overlay only (already at 19ed1a4:16). The lineage note is P3.\n\n25858ad is not a viable CF-11 census S, and the packet does not claim it is. Use it as the implementation base and preimage anchor, and treat its partial census as a format dry run. The real S is the implemented, source-accepted successor that also holds the five approved inputs, and all 25 rows, including the 8 exclusions, must be re-derived there.\n\nOrder of work: acceptable only with amendment.\n- P2-1, required: step 4 must freeze S with the five approved input artifacts at named paths, with the class-4 owner and review sequenced before the freeze.\n- P3 items: the stock predicate before step 3; an explicit source acceptance; the census binding record before disposition and the operational receipt after P; M-1 and M-2; the runtime comparator source; re-census on any change; a manifest re-pin; blob-equality at qualification and install.\n\nThe order has no circularity and no census waiver. No P0 or P1. Everything is NOT RUN, and nothing here is Samuel's approval."
+   }
+  }
+ ]
+}
