@@ -91,3 +91,25 @@ against the supervisor at `25858ad`. Lens output archived as `hl12/74_doc72_nati
   cap, provider binding, authority and sample count is null. The observation inputs have no producer. No toolchain
   inventory exists or is authorised.
 - **Order:** the two-file supervisor amendment (your two G0 decisions) comes first, and the native lane rebases onto it.
+
+## 4. Disclosure correction (2026-10-09, published with doc 73)
+
+The method paragraph above undercounts this review's rule deviations. The archive recorded each one verbatim. The full
+list is below.
+
+**Copies in this reviewer's scratch folder.**
+- Both lenses, not one, wrote a `git show` copy of `qualification-manifest-20261008.json` at `25858ad` there.
+- The copies are `n1_manifest_25858ad.json` and `n2_manifest_25858ad.json`, each raw `15f4ad97…`, 1,501,610 bytes.
+
+**JSON parses.**
+- Lens N1 ran one python parse of the hl12 JSON, which failed on encoding.
+- Lens N2 ran two `python -I` one-liners over JSON data.
+- One verifier ran one `python -I` that printed the archive's top-level keys.
+
+**A third copy outside the scratch folder.**
+- One verifier's shell redirect wrote a third identical copy at `C:\Users\sboad\AppData\Local\nul_unused`.
+- I confirmed it is byte-identical to the Git blob.
+- It is in no repository or worktree. I have not deleted it; it is left for Samuel to remove.
+
+No repository was written, and no repository code was executed, imported or compiled. The findings and the
+disposition are unchanged.

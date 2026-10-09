@@ -148,3 +148,13 @@ at their registered targets, all recomputed:
 | `DOC72-CONDITIONAL-NATIVE-PROPOSAL-DELTA-REVIEW-20261009` r1 | coordinator `2ec266ff1203fbb5e9603cf16e01c7bfd3cb3f53`: `DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md` and `.json` | `bc766b92…`, `30b34b8e…` | 74 |
 
 The builder's handoff is `45a30bd`; the coordinator checkpoint `6630c51` is records-only. Nothing was executed.
+
+## Queue state update (2026-10-09, design and native deltas complete)
+
+| Board task | Exact target | State |
+| --- | --- | --- |
+| `DOC71-TRANSACTION-DESIGN-DELTA-REVIEW-20261009` r1 | builder `32643e3974f37a18ecb8768d97ec2fc0253248d3` (`72ec44ad…`, `9946b938…`, `0bc0d65d…`) | COMPLETE: doc 73, DESIGN REVISION REQUIRED through a records-only r2 on CC-1 to CC-4. The core is DESIGN COMPATIBLE. No P0 or P1. No source permission. The grant text remains a DRAFT |
+| `DOC72-CONDITIONAL-NATIVE-PROPOSAL-DELTA-REVIEW-20261009` r1 | coordinator `2ec266ff1203fbb5e9603cf16e01c7bfd3cb3f53` (`bc766b92…`, `30b34b8e…`) | COMPLETE: doc 74 (`0554f6d`). The conditional source decision is sufficient once N-1 to N-7 are added. Execution is insufficient; eligibility none. Its disclosure is corrected in doc 74 section 4 |
+
+The next review for this session is the builder's r2 of the three doc 71 delta records, once it is registered. Nothing
+was executed.
