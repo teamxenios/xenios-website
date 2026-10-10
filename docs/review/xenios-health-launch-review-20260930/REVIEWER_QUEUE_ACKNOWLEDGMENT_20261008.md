@@ -223,3 +223,20 @@ acceptance. The packet itself is records `280193059a6b28fee5645833cb56b7d944ad1c
 - for decision 2: an existence check only, with no quantity aggregation and no inventory write.
 
 Nothing was executed.
+
+## Queue state update (2026-10-10, CI pilot proposal review)
+
+`QUICK-ORDER-CI-PILOT-PROPOSAL-REVIEW-20261009` **revision 1** is ACKNOWLEDGED and IN REVIEW. It was registered at
+coordinator `9d2dd41` (02:10Z) to this session and found by this session's own board check; no message delivered it.
+The target is recomputed from Git:
+
+| Field | Value |
+| --- | --- |
+| Records | `91deaaa8ef9fb1963dce2ac4eb597ea486ad09a7` (tree `d0ad9d03…`), handoff `0d73b3dd…` |
+| `CI_PILOT_PROPOSAL_20261009.md` / `.json` | `052ab26`, raw `28ef0850…` / `16bd132`, raw `3d434604…` |
+| `CI_PILOT_SOURCE_PREREQUISITES_20261009.md` / `.json` | `16c88d3`, raw `9bc60ec1…` / `4a32b82`, raw `59d8a942…` |
+| `CI_ROUTE_EXISTING_RUN_EVIDENCE_20261009.json` | `2753866`, raw `85729096…` |
+| Candidate | `2d291d028ebf3664ead7d2df0b7212fed7a45348` (tree `be16220c…`). No application byte differs from `25858ad`. `checks.yml` there is blob `7a2c2c5`, which differs from `main` |
+
+The verdict will be published as doc 77. The nonproduction operating profile (`9c4a9b5`) is not yet submitted to this
+session; it waits for the steward's finding. Nothing was executed.
