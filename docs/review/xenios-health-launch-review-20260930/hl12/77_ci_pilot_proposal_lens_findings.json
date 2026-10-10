@@ -1,0 +1,972 @@
+{
+ "schemaVersion": 1,
+ "review": "77_CI_PILOT_PROPOSAL_91deaaa_2026-10-10.md",
+ "task": "QUICK-ORDER-CI-PILOT-PROPOSAL-REVIEW-20261009 revision 1",
+ "subject": "91deaaa8ef9fb1963dce2ac4eb597ea486ad09a7",
+ "candidate": "2d291d028ebf3664ead7d2df0b7212fed7a45348",
+ "workflowRun": "wf_15c7c2df-20f",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens, adversarial-verifier and critic outputs, verbatim except one redaction: a commit-author email quoted from git log metadata. Reviewer disposition is in doc 77. Deviations reported by the agents: read-only reads of the installed Vitest/Vite/Supertest sources in another local worktree node_modules (C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules) with Read/Grep/grep; two 2>&1 redirects; echo separators; ls -la of the reviewer scratch folder; git merge-base and rev-list; WebFetch of public docs.github.com pages only; one verifier displayed main .replit configuration values (a Supabase URL, a publishable key and an admin email) while reading lines, and none is reproduced here. No file was created, modified or deleted; nothing was executed; no session was contacted.",
+ "lenses": [
+  {
+   "lens": "candidate-commands-evidence",
+   "tag": "G",
+   "review": {
+    "verdict": "LENS G (items 1, 2, 10): INSUFFICIENT_AS_SPECIFIED_WITH_SMALLEST_EXACT_CORRECTION. Nothing here was run. This is static reading of the bytes plus GitHub documentation.\n\nVerified: the candidate identity (commit 2d291d0, tree be16220c, blob IDs and sizes of the three test files and the lockfile; only .xenios and docs changed since 25858ad). The argv is syntactically valid for locked Vitest 4.1.10, checked against the installed 4.1.10 source. Each CLI filter selects exactly one file in the candidate tree. vitest.config.ts includes all three files. Their import closure has no Supabase, pg, environment-variable or real-endpoint dependency. The proposal's \"does not establish\" claims are accurate.\n\nTwo P2 corrections are needed before Samuel can make the bounded workflow and command decisions:\n(G-1) Proposal line 27 says to keep \"ordinary four-job release gates intact\". Main's checks.yml (blob b070777a) has three jobs: test, typecheck and build. The fourth job, `protection` (7a2c2c58 lines 40-54), exists only on the branch, which main never merged; main is 1553 commits behind. The successor has to land on main, so its base must be stated as b070777a: three jobs unchanged plus the pilot job. Adding `protection` to main must be excluded or decided separately.\n(G-2) In Vitest 4.1.10, `--max-old-space-size=1024` on the outer node command does not reach the forked worker that actually runs the tests (cli-api.BK8pd4xc.js:3731-3737 and 3660-3668). So the 1024 MiB heap cap in the exact argv does not apply to the test code. Either pass it to the worker (for example `--execArgv=--max-old-space-size=1024`, or NODE_OPTIONS) or restate it as applying only to the orchestrator process.\n\nRemaining items are P3 conditions for the workflow-author step: the output-file and dependency mount layout, a complete pass predicate, a more precise pass-claim wording, the option to avoid the transfer, and two cross-lens notes.",
+    "checklist": [
+     {
+      "item": "1. Exact candidate SHA/tree and explicit checkout of that SHA, not a PR merge ref or workflow ref",
+      "status": "ADEQUATE",
+      "evidence": "Proposal md:9 and json:10-18 pin 2d291d028ebf3664ead7d2df0b7212fed7a45348 and tree be16220c. `git cat-file -p` confirms tree be16220c280e8f9535aea8d90b99065056fa93e2 with parent 2801930. 25858ad's tree is c5565bcd. `git diff --stat 25858ad 2d291d0` touches only .xenios/** and docs/** (15 files), so the application and SQL bytes equal frozen 25858ad. Blob IDs at the candidate match the proposal: checks.yml 7a2c2c58, package-lock 912f4f85 (262653 bytes), production.test.ts 548d8b3f (4808), quick-order-repository.test.ts c9e52f8a (33535), quick-order-admin-readback.test.ts bc8dc0c5 (30417). No .gitattributes, so a Linux checkout gives the blob bytes; I did not recompute the raw SHA-256 values. On the plan: md:43 says check out the full candidate SHA explicitly with persist-credentials:false and contents:read. md:27 says exact candidate allowlist. md:88 says no dynamic command/ref inputs. md:92 says stop on source/hash mismatch. md:90 says retain the source/tree identity. That rules out GITHUB_SHA, refs/pull/N/merge and the dispatching workflow ref. GitHub docs (NOT RUN) say workflow_dispatch only triggers when the file is on the default branch and GITHUB_SHA is the last commit of the dispatched ref, so the explicit `ref:` is required and is specified. Precision for the author step: post-checkout `rev-parse HEAD` and `HEAD^{tree}` checks are implied by 'source/hash checks' but not written out. The checkout depends on 2d291d0 being reachable on GitHub; see G-5."
+     },
+     {
+      "item": "2. Exact 3-file commands, declared assertion boundaries, actual evidence versus durability claims",
+      "status": "PARTIAL",
+      "evidence": "Argv (md:81-83, json:44-56) checked against installed Vitest 4.1.10 source (b22f worktree node_modules, package.json version 4.1.10, bin ./vitest.mjs):\n- `--pool <pool>`: cac.DdICfEr1.js:912.\n- `--maxWorkers <workers>`: :927.\n- `--no-file-parallelism`: boolean at :926.\n- `--cache=false`: argument '' makes it boolean, so 'false' becomes false (:18, :2189), and transform returns false (:1127-1136).\n- `--reporter` is the alias of reporters (:702-707, :2187).\n- `--outputFile <filename>`: :709.\n\nVitest filters are case-insensitive substring matches (cli-api.BK8pd4xc.js:10860-10871). `git ls-tree -r` at the candidate shows exactly one path per filter and no committed .ci-pilot directory. vitest.config.ts:29 includes server/**/*.test.ts. None of the three files uses .only, .skip or .todo.\n\nImports and assertions:\n- production.test.ts: mocks ../../rate-limit (line 9), which keeps out the ../supabase import (rate-limit.ts:1). production.ts, legal.ts, policies-data.ts and shared form.ts have no environment, network or DB use. Lines 34-37 assert productionReady false and that commit rejects 'not qualified'.\n- quick-order-repository.test.ts: a pure decoder (lines 16-17). Its closure (quick-order-repository.ts:1-3, core.mjs, shared contract) has no I/O.\n- admin-readback: the real repository, service, routes and Express adapter over an injected fake rpc (lines 171-222). Supertest (local test.js:35-39, 60-69) calls listen(0) with no host and requests 127.0.0.1. Its closure (express.ts, http.ts, service.ts, supabase-repository.ts, disposition-effects.ts, audit-store.ts) has no supabase client, pg or process.env. The .example.invalid URLs are never contacted.\n\nmd:11 and md:3 correctly say a pass does not establish the transaction, a SQL commit, a customer submit or durability.\n\nGaps: G-2 (heap flag does not reach the fork), G-3 (where output and config temp files land), G-4 (pass predicate and claim wording)."
+     },
+     {
+      "item": "10. Current main 3 jobs vs candidate 4 jobs source difference; no blind release-gate/trigger equivalence",
+      "status": "PARTIAL",
+      "evidence": "Main's checks.yml blob b070777a has three jobs: test (line 10, npx vitest run), typecheck (line 20, npm run check) and build (line 30, npm run build). The candidate's blob 7a2c2c58 adds lines 40-54: job `protection`, which runs npm ci, `node scripts/acceptance/verify-core-site-protection.mjs` and `npm run verify:route-uniqueness`. That came from a9bc544 (2026-08-04) on the branch and is not on main (main's last checks.yml change is c5085ed). merge-base(6077a6b, 2d291d0) = 6077a6b, so the candidate is 1553 commits ahead and main never received the protection job. md:15 accurately describes the candidate's four jobs. But md:27 says 'Keep ordinary four-job release gates intact' for a successor that must sit on the default branch, and nowhere says main currently has three jobs. Landing 7a2c2c58-based bytes on main would add a new protection job to every pull_request and main push, a release-gate change. Both script blobs are identical on main and the candidate (c30371fd, 4f0a474a), but their result on main is NOT RUN. Trigger handling is only partly stated: md:27 requires that a manual dispatch selects only the pilot job and that landing and automatic runs get separate authority. It does not say the pilot job must also be skipped on pull_request and push events, or that adding workflow_dispatch changes main's trigger set. See G-1."
+     }
+    ],
+    "findings": [
+     {
+      "id": "G-1",
+      "severity": "P2",
+      "title": "Workflow successor premise says 'four-job' gates, but main has three; landing the candidate's file would add a new release gate on main",
+      "claim": "The proposal never records main's current checks.yml (three jobs). It tells the workflow author to keep 'ordinary four-job release gates intact' in a checks.yml-only successor that must land on the default branch. That is a blind equivalence between the branch's 4-job file and main's 3-job gate.",
+      "evidence": "Proposal md:27 ('Keep ordinary four-job release gates intact ... Manual dispatch requires a workflow on the default branch'); md:15 (four jobs 'at this source'). b070777a:10-39 (test/typecheck/build only). 7a2c2c58:40-54 (protection job). `git diff b070777a 7a2c2c58` shows exactly that 15-line addition. merge-base(6077a6b, 2d291d0) = 6077a6b, with 1553 commits only on the candidate side. md:26 forbids a main merge, so landing can only be a standalone commit on main. GitHub docs (NOT RUN): workflow_dispatch needs the file on the default branch.",
+      "failureScenario": "The author follows md:27 and builds the successor from the candidate's 7a2c2c58 plus a pilot job. Landing it on main silently adds `protection` (verify-core-site-protection + route-uniqueness, an extra npm ci per event) to every PR and main push. Samuel and the reviewer would be approving it as 'gates intact' when main's release gate has actually changed. If instead the author builds from b070777a, the 'four-job' instruction is unsatisfiable and the frozen comparison has no defined baseline.",
+      "fix": "Amend md:27 and the JSON setup with:\n1. Successor base = main's blob b070777a5e49076162e38fd7c389cd55f727eddc. Its three jobs (test, typecheck, build) stay byte-for-byte unchanged.\n2. Exactly one pilot job is added, plus the workflow_dispatch trigger.\n3. The `protection` job from 7a2c2c58 is not part of this pilot. Adding it to main is a separate release-gate decision.\n4. Guards in both directions: the pilot job runs only on workflow_dispatch, and the three ordinary jobs do not run on workflow_dispatch. State that adding workflow_dispatch changes main's trigger set.\n5. The original reviewer's comparison is a diff against b070777a."
+     },
+     {
+      "id": "G-2",
+      "severity": "P2",
+      "title": "The exact argv's 1024 MiB heap cap does not reach the forked Vitest worker that runs the tests",
+      "claim": "In Vitest 4.1.10 the forks pool starts the worker with its own execArgv. It keeps only --cpu-prof, --heap-prof and --diagnostic-dir from process.execArgv, so `node --max-old-space-size=1024 node_modules/vitest/vitest.mjs ...` caps only the orchestrator process. The test code runs under Node's default heap limit, whose value is NOT PROVEN.",
+      "evidence": "Installed vitest 4.1.10, cli-api.BK8pd4xc.js:3731-3737 (resolveOptions execArgv = filtered process.execArgv + --experimental-import-meta-resolve + --require). :3660-3668 (task execArgv = options.execArgv + conditions + project.config.execArgv; vitest.config.ts sets none). :3084-3089 (fork(entrypoint, [], { execArgv: this.execArgv })). The proposal's md:66 says 'Node old-space cap1024MiB is a distinct heap setting', json:126 'heapMiB': 1024, md:90 says record enforced limits. Vitest's own `--execArgv` CLI option exists (cac.DdICfEr1.js:917-921). Behaviour reasoned from source, NOT RUN.",
+      "failureScenario": "Samuel approves the exact argv believing test processes are heap-capped at 1024 MiB. The receipt then records 'heap 1024' as an enforced limit for test execution, which is not what happened. A test-side memory growth runs under a different, undocumented V8 limit until the 2 GiB cgroup kills it, so the OOM is mis-attributed. Fixing the argv after approval would break the exact-argv binding and need re-approval.",
+      "fix": "Before approval, choose one and freeze it in md:81-83 and json argv:\n(a) Add `--execArgv=--max-old-space-size=1024` to each Vitest invocation, keeping the proposal's own 1024 value; or\n(b) Set NODE_OPTIONS=--max-old-space-size=1024 in the frozen container environment, which applies to both processes; or\n(c) Restate the cap as orchestrator-only and drop it from the test-process limits.\nIn each case the receipt must record the worker's actual execArgv, or say it is unrecorded."
+     },
+     {
+      "id": "G-3",
+      "severity": "P3",
+      "title": "Relative --outputFile and Vite's config temp file both write under the source root and node_modules; the mount layout the argv depends on is unstated",
+      "claim": "Vitest resolves --outputFile against config.root (the working directory), so `.ci-pilot/out/*.json` lands inside the source tree that md:49 makes read-only. Vite 7.3.5 also bundles vitest.config.ts to node_modules/.vite-temp/, and an mkdir failure other than EACCES (for example EROFS) throws. The argv therefore works only if the working directory is the source root, <root>/.ci-pilot/out is a writable nested bind created on the host beforehand, and node_modules stays writable during the test invocations.",
+      "evidence": "index.UpGiHP7g.js:3620-3627 (reportFile = resolve(config.root, outputFile); mkdir if missing; writeFile). Vite 7.3.5 config.js:35984-35994 (mkdir node_modules/.vite-temp, only EACCES falls back to writing next to the config file in the source root). md:49 ('read-only source/root, writable dedicated dependency/output bind directories'). md:88 (author must freeze complete argv/mounts). argv uses relative node_modules/vitest/vitest.mjs and .ci-pilot/out paths. Source reading, NOT RUN.",
+      "failureScenario": "Two layouts fail. If the author mounts outputs elsewhere, or makes node_modules read-only to harden the test containers, config loading or report writing fails with EROFS. That shows up as a setup/import or reporter failure and consumes the single attempt. If node_modules stays writable, each test container can change the shared dependency tree seen by the next invocation, with no record of it.",
+      "fix": "In the frozen workflow, state: container workdir = source root. <root>/.ci-pilot/out is created on the host before the test containers run and bind-mounted read-write over the read-only source; per-invocation subdirectories are optional. node_modules, or at least node_modules/.vite-temp, is writable. Record a node_modules manifest hash before the first and after the last invocation."
+     },
+     {
+      "id": "G-4",
+      "severity": "P3",
+      "title": "The pass predicate is incomplete, and the pass-claim wording under-describes what the admin-readback file exercises",
+      "claim": "md:55 excludes zero tests, extra files and setup/import errors, but does not define a full pass. Vitest's JSON `success` ignores skipped, todo and pending tests and unhandled errors. Separately, md:11's 'injected repository/service/operator readback' omits that admin-readback also drives a fake status-mutation RPC (with fake outbox enqueue and audit) and a customer upload-url path with fake document_create and signer.",
+      "evidence": "index.UpGiHP7g.js:3549-3552 (success = files>0 && no failed suites/tests; numPendingTests and numTodoTests are separate), :3594 (testResults[].name = absolute filepath). quick-order-admin-readback.test.ts@2d291d0:463-504 (PATCH status through fake 'research_assisted_order_set_status'; expects enqueue and audit called once), :506-545 (upload-url through fake customer_status, document_create and createUpload). The specialist's draft required stopping on any skip or todo (CI_PILOT_SOURCE_PREREQUISITES md:27); the proposal does not carry that over.",
+      "failureScenario": "A future byte or tooling drift marks cases as skipped. JSON `success` stays true and exit code is 0, so the receipt reads green with fewer executed assertions. A reader of the receipt could also take 'readback only' to mean no write paths ran, or the opposite, that status changes or document creation were qualified. Neither is true: they ran against fakes.",
+      "fix": "Freeze a receipt predicate per file: exit code 0; testResults.length == 1; name == <root>/<exact path>; numTotalTests > 0; numFailedTests == numFailedTestSuites == numPendingTests == numTodoTests == 0; no unhandled-error output. Record the per-file case counts. Amend md:11 to list the fake status-mutation and fake upload-url/document paths as exercised against injected fakes only."
+     },
+     {
+      "id": "G-5",
+      "severity": "P3",
+      "title": "The transfer is stated as mandatory, but every byte the pilot exercises is already on the remote-tracking head 1631323",
+      "claim": "`git diff 1631323 2d291d0` is empty for the three test files, all of server/, shared/ and client/, package.json, package-lock.json, vitest.config.ts and .github/. The 31-commit transfer would additionally publish five currentness SQL/verifier files and records that the pilot never loads. The proposal does not tell Samuel this.",
+      "evidence": "merge-base(1631323, 2d291d0) = 1631323, a fast-forward. `git log 1631323..2d291d0` lists 31 commits. The non-docs, non-.xenios diff is only supabase/candidates/20261006_research_health_quick_order_currentness{.sql,.precheck.sql,.postcheck.sql,.rollback.md} and supabase/verification/research_health_quick_order_currentness_local.mjs, via f581b6b, e90d464, 2d2d958, 7a62e64 and 935aaf1. Proposal md:26 (transfer 'Required before execution'). 1631323 is the local remote-tracking ref; the live remote was not queried (specialist json:11-12).",
+      "failureScenario": "Samuel declines to publish the SQL candidate/verifier successors and 31 commits of records. The pilot then stays held even though its exercised bytes are already published. Or he approves the transfer without being told that most of the payload is unrelated to what the pilot tests.",
+      "fix": "Add one sentence to md:26: the pilot-closure bytes are identical at 1631323. Option (a): transfer for exact-SHA 2d291d0 identity, with the payload disclosed as above. Option (b): run against the already-published 1631323 with a recorded pilot-closure byte equality, which changes the receipt's commit/tree identity and needs the original reviewer's acceptance. Live remote state must be refreshed either way. This lens does not choose between them."
+     },
+     {
+      "id": "G-6",
+      "severity": "P3",
+      "title": "Cross-lens (item 3): 411 of 672 lock entries have no resolved or integrity field, so 'locked npm packages' does not bind their content",
+      "claim": "npm ci will fetch those packages by name@version from the registry and verify them against registry metadata, not against the lockfile. The lock SHA-256 therefore does not bind their bytes. Examples: vite 7.3.5 and express 5.2.1, both on the pilot's runtime path.",
+      "evidence": "package-lock.json@2d291d0: 672 `node_modules/` package entries, 261 `\"integrity\":`, 261 `\"resolved\":`, 0 link/inBundle. node_modules/vite at line 8249 and node_modules/express at line 5192 have version and license but no resolved or integrity. Vitest (8774-8777), supertest (7409-7412) and the Linux esbuild/rollup natives (1253, 8577, 3246) do carry integrity. Proposal md:47-49 ('Setup may pull only the pinned image and locked npm packages'). npm behaviour reasoned, NOT RUN.",
+      "failureScenario": "The receipt claims a lock-bound dependency tree when about 61% of the package content was bound only by the registry at install time.",
+      "fix": "Forward to the item-3 lens. Either state the limitation in md:47, or have the setup receipt record a post-install node_modules manifest (name, version, integrity as installed) and bind it in the comparison."
+     },
+     {
+      "id": "G-7",
+      "severity": "P3",
+      "title": "Cross-lens (items 6/8): the historical 'failures' look like jobs that never started; how such a run counts against the single attempt is undefined",
+      "claim": "Several pieces of evidence are consistent with jobs that never started (for example account or runner admission) rather than test failures. This is an inference, NOT PROVEN. The proposal correctly says the cause is UNKNOWN but does not define how a pilot run whose job never starts counts against the single attempt.",
+      "evidence": "CI_ROUTE_EXISTING_RUN_EVIDENCE json:24-47: run 33819458588 took 4 s and 33816373737 took 6 s. json:77-133: all four jobs of 33819528387 are failure with steps null/[] and logs_url null. json:138-143: log 404. Proposal md:17, md:28.",
+      "failureScenario": "The authorized dispatch produces a job that never starts. Under 'one attempt, no retry' it is either counted as the consumed attempt with zero test evidence, or quietly re-dispatched, which breaks the single-attempt rule.",
+      "fix": "Forward to the items 6/8 lenses. Define 'job not started' (no steps, no runner assignment) as its own outcome, and say whether it consumes the attempt, before approval."
+     }
+    ],
+    "deviations": [
+     "Hard-rule breach, harmless and read-only: one Bash command (checks.yml history on candidate and main) used `echo ---` twice as separators. The rules forbid echo.",
+     "Hard-rule breach, harmless and read-only: two Bash commands used `2>&1` (the scripts/acceptance ls-tree on 6077a6b, and `git show 2d291d0:.gitattributes`). The rules forbid any output redirection.",
+     "Outside the permitted command list, read-only: `ls -la` on the scratchpad ci directory, plus `git merge-base` and `git rev-list --count` against C:/xenios-wt/health-review. The permitted subcommands are show, ls-tree, log, diff, grep and cat-file. Nothing was written.",
+     "Evidence-source note, not a breach: I read the installed Vitest 4.1.10, Vite 7.3.5 and Supertest sources from another local worktree's node_modules (C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules) with Read/Grep. Package versions match the lock; I did not re-verify those files' hashes against lock integrity. They are a Windows install, so Linux runtime behaviour is NOT RUN.",
+     "Scope note: the relayed user request names a different assignment (designating codex-accepted-source-integration-20261005 as NONPRODUCTION Supabase/PostgREST steward, getting its acknowledgment, then submitting to the original reviewer). The computed task asked for this read-only CI-pilot lens G review. I did only the read-only review. I contacted no session, recorded no steward assignment or acknowledgment, wrote no files and dispatched nothing. The steward assignment remains unperformed by this subagent."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "G-1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed from the bytes. Main's blob b070777a has 39 lines and three jobs: test (lines 10-19), typecheck (20-29) and build (30-39). The candidate's blob 7a2c2c58 is identical through line 39, then adds the `protection` job at lines 40-54. Checks.yml history at 2d291d0 is a9bc544 (2026-08-04, the protection job) and c5085ed. On 6077a6b the only commit is c5085ed. `git log 6077a6b..2d291d0 | wc -l` = 1553 and the reverse = 0, so main is an ancestor of the candidate. Both protection script blobs (c30371fd, 4f0a474a) are the same on main and the candidate. Proposal md:27 says 'Keep ordinary four-job release gates intact' and never records that main has three jobs. That is a blind equivalence.\n\nThe lens's fix is internally inconsistent. Fix point 1 says the three ordinary jobs stay 'byte-for-byte unchanged'. Fix point 4 says they must not run on workflow_dispatch. In a single checks.yml (md:27 limits the path authority to that file), point 4 requires adding an `if: github.event_name != 'workflow_dispatch'` guard to each of test, typecheck and build. That changes their bytes, though not their behaviour on PR or push. The correction should say either 'steps unchanged; only an event guard added to each ordinary job' or put the pilot in a separate workflow file, which leaves main's checks.yml byte-identical but requires amending md:27's path scope. Severity stays P2: the frozen patch would still be reviewed (md:27-28), so this is a false premise in a decision input, not an unreviewed gate change."
+     },
+     {
+      "id": "G-2",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed in installed Vitest 4.1.10 (package.json version 4.1.10, bin ./vitest.mjs; locked at package-lock 8774-8777).\n- cli-api.BK8pd4xc.js:3731-3737: resolveOptions keeps only --cpu-prof, --heap-prof and --diagnostic-dir from process.execArgv.\n- :3660-3668: task execArgv = options.execArgv + conditions + project.config.execArgv. The candidate's vitest.config.ts:26-30 sets no execArgv.\n- :3532-3536 and 3084-3089: fork(entrypoint, [], {env, execArgv: this.execArgv}).\nSo `node --max-old-space-size=1024 ...` caps only the orchestrator, which still does the Vite transforms. Proposal md:66 and json:126 present it as a container heap limit.\n\nThe lens's fixes check out:\n- (b) works: task env is spread from process.env (:3650-3655), so NODE_OPTIONS reaches the fork.\n- (a) works only in the single-token form `--execArgv=--max-old-space-size=1024`. The option takes a required `<option>` (cac.DdICfEr1.js:917-921), and mri treats a following token that starts with '-' as a new flag, so the two-token form would fail as a missing value.\n\nThe flag sits in the exact argv that approval binds, so it must be fixed before approval. P2 stands. Behaviour reasoned from source, NOT RUN."
+     },
+     {
+      "id": "G-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. index.UpGiHP7g.js:3620-3627 resolves outputFile against config.root (cwd; vitest.config.ts sets no root) and mkdirs and writes there. Vite 7.3.5 (local package.json version 7.3.5) config.js:35984-35998 writes `node_modules/.vite-temp/<config>.<hash>.mjs` and rethrows any mkdir error other than EACCES. Vitest passes configLoader undefined (cli-api:14216), so Vite's default `bundle` loader applies.\n\nMitigation the lens did not credit: md:49 already says the dependency bind directory is writable, so the read-only node_modules scenario contradicts the proposal. The live issue is that `.ci-pilot/out` resolves under the read-only source root unless a writable bind is nested there. Also, if .vite-temp already exists, mkdir succeeds but the later writeFile still fails on a read-only mount.\n\nAn alternative the author could freeze is Vitest's `--configLoader runner` (cac.DdICfEr1.js:1183-1186, marked experimental), which avoids the temp file. P3 for the workflow-author step."
+     },
+     {
+      "id": "G-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. JsonReporter (index.UpGiHP7g.js:3549-3552) computes success from files>0 or passWithNoTests plus zero failed suites and tests. Skipped tests count only in numPendingTests and todo tests in numTodoTests. testResults[].name is file.filepath (:3594). The admin-readback file drives a fake `research_assisted_order_set_status` PATCH, asserting enqueue and audit are called once (bc8dc0c5@2d291d0:463-504). It also drives the upload-url path through fake customer_status, document_create, admin_get and createUpload, with audit asserted (506-545). md:11's 'readback' wording under-describes this.\n\nAdditional precision: GitHub sets CI=true on the runner, but `docker run` does not forward it unless told to. Vitest's allowOnly defaults to `!process.env.CI` (cac.DdICfEr1.js:939), so a future `.only` would silently narrow the run inside the container. The frozen bytes contain no .only, .skip, .todo, skipIf, runIf, fails, concurrent, stubEnv or process.env use (git grep at 2d291d0 found nothing). The lens's numPendingTests==0 predicate would catch it. Freezing `CI=true` or `--allowOnly=false` is optional."
+     },
+     {
+      "id": "G-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed.\n- `git diff --stat 1631323 2d291d0 -- server shared client package.json package-lock.json vitest.config.ts .github tsconfig.json` is empty.\n- The diff excluding docs and .xenios is exactly five supabase currentness files (1253 insertions, 79 deletions).\n- 31 commits in 1631323..2d291d0, 0 in reverse. origin/codex/xenios-health-quick-order-20261005 = 1631323d7cf6 (local remote-tracking ref, commit date 2026-10-06; live remote not queried).\nThis is an option disclosure, not a defect in the exact-SHA design. The candidate's identity is 2d291d0, so running at 1631323 would change the receipt identity. P3 is right."
+     },
+     {
+      "id": "G-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed counts in package-lock@2d291d0: lockfileVersion 3, 672 `node_modules/` entries, 261 `\"integrity\":` and 261 `\"resolved\":`, so 411 have neither. node_modules/vite at 8249-8251 has version and license only. Vitest (8774-8777) and supertest (7409-7412) carry both. This is outside lens G's items but accurate. Forward it to the item-3 lens. npm behaviour NOT RUN."
+     },
+     {
+      "id": "G-7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "The timestamps check out: run 33819458588 took 4 s (run evidence json:32-33) and run 33816373737 took 6 s (json:45-46). Run 33819528387's four jobs have steps null and logs_url null (json:77-114), and the log read returned 404 (json:138-143). The cause is correctly an inference, NOT PROVEN. This is outside lens G's items; forward it to the items 6/8 lenses. P3."
+     }
+    ],
+    "checklistChallenges": [
+     {
+      "item": "1. Exact candidate SHA/tree and explicit checkout of that SHA, not a PR merge ref or workflow ref",
+      "lensStatus": "ADEQUATE",
+      "verifierStatus": "ADEQUATE",
+      "note": "Upheld, with conditions that can travel to the author step.\n\nRe-verified:\n- `cat-file -p 2d291d0` gives tree be16220c280e8f9535aea8d90b99065056fa93e2, parent 280193059a6b.\n- 25858ad's tree is c5565bcd.\n- `diff --stat 25858ad 2d291d0` shows 15 files, all .xenios/** or docs/**.\n- The ls-tree blobs match proposal json:41-89: production.test.ts 548d8b3f/4808, repository c9e52f8a/33535, admin-readback bc8dc0c5/30417, lock 912f4f85.\n- md:43 specifies an explicit full-SHA checkout with persist-credentials:false.\n\nTwo gaps: (a) the post-checkout `rev-parse HEAD` and `HEAD^{tree}` checks are not written out (md:92 only says 'source/hash mismatch'); (b) the job does not bind the dispatch ref or the version of the workflow that runs (GV-2). Neither defeats the explicit-SHA requirement."
+     },
+     {
+      "item": "2. Exact 3-file commands, declared assertion boundaries, actual evidence versus durability claims",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Agreed.\n\nRe-verified:\n- Option definitions in cac.DdICfEr1.js: pool :912-916, execArgv :917-921, fileParallelism :926, maxWorkers :927-930, reporters alias reporter :702-708, outputFile :709-713, cache :1127-1137.\n- mri boolean parsing of 'false' is at :18.\n- Filters are case-insensitive substring matches (cli-api:10860-10871). `ls-tree -r` at 2d291d0 shows exactly one path per filter and no .ci-pilot directory.\n- The include glob server/**/*.test.ts is at vitest.config.ts:29. There are no setupFiles or globalSetup.\n\nThe import closures are clean:\n- production.test.ts mocks ../../rate-limit (:9). production.ts:4-6,9-10 are type-only imports. legal.ts, policies-data.ts (node:crypto only) and shared form.ts have no imports.\n- The repository test reaches only contract.ts, quick-order-repository.ts and core.mjs (no imports).\n- admin-readback reaches express.ts, http.ts, service.ts, supabase-repository.ts, disposition-effects.ts, audit-store.ts, customer-pathway.ts and declared-affiliate-code.ts. None has a supabase client, pg, process.env or fetch.\n- Supertest 7.2.2 calls listen(0) and requests 127.0.0.1 (lib/test.js:61-69).\n\nmd:11's 'does not establish' boundaries are accurate. Remaining gaps: G-2 (P2), G-3 and G-4 (P3)."
+     },
+     {
+      "item": "10. Current main 3 jobs vs candidate 4 jobs source difference; no blind release-gate/trigger equivalence",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Agreed, and it is broader than the lens found.\n\nG-1 is confirmed, but its fix must allow event guards on the ordinary jobs or move the pilot to a separate file.\n\nTwo trigger gaps the lens missed:\n- GV-1: the source-transfer push can itself fire the candidate-side 4-job pull_request workflow, including npm ci with lifecycle scripts, if a PR is open from the destination branch. md:26 does not address this.\n- GV-3: the lifetime of the workflow_dispatch trigger and pilot job on main after the single attempt is unspecified. Main's trigger set would stay changed, and the job would stay re-dispatchable."
+     }
+    ],
+    "missed": [
+     {
+      "id": "GV-1",
+      "severity": "P2",
+      "title": "The source-transfer push can trigger the candidate's 4-job pull_request workflow, which nobody approved",
+      "claim": "Pushing 2d291d0 to codex/xenios-health-quick-order-20261005 (md:26) fires `pull_request` synchronize for any open PR with that head branch. GitHub then runs checks.yml from the PR merge commit, which contains the candidate's four jobs. Those jobs run `npm ci` with lifecycle scripts enabled, the full `npx vitest run`, `npm run check`, `npm run build` and the protection job. The proposal ties 'automatically triggered runs require their own authority' only to workflow landing (md:27), not to the transfer.",
+      "evidence": "- 7a2c2c58@2d291d0:4-7: `pull_request:` with no branch or type filter; push limited to main.\n- 7a2c2c58:18-19, 52-54: npm ci, npx vitest run, protection scripts.\n- Proposal md:26 (transfer: refresh, inventory, normal push; nothing about CI side effects); md:27 (automatic-run authority only for landing); md:47 (lifecycle scripts not approved).\n- docs.github.com events page (NOT RUN): pull_request runs by default on opened, synchronize and reopened; GITHUB_SHA is the merge commit; runs are suppressed only on a merge conflict.\n- merge-base: `log 2d291d0..6077a6b` = 0, so there is no conflict.\n- Run evidence json:15, 77-114: a historical pull_request run executed all four jobs, including protection.\n- Mitigating, by inference and NOT PROVEN: the newest run is 2026-09-03/04 (json:10-21), yet origin/codex/... was updated to 1631323 (commit date 2026-10-06). That suggests no open PR from that branch at that time.",
+      "fix": "Add to md:26:\n1. Immediately before the push, do a read-only check for open PRs whose head is the destination branch.\n2. If one exists, or the state is unknown, stop. Otherwise obtain explicit authority for the resulting pull_request run, naming its exact 4-job content and the fact that lifecycle scripts run.\n3. Never open a PR as part of the transfer.\nRecord the PR state in the transfer inventory. Severity becomes P0 if a PR is shown to be open. Cross-check with the item-9 lens."
+     },
+     {
+      "id": "GV-2",
+      "severity": "P3",
+      "title": "The pilot job does not bind the dispatch ref or the version of the workflow that actually runs",
+      "claim": "workflow_dispatch runs at the last commit of the dispatched ref. After the first run it can be dispatched against any branch or tag through the API or CLI, by anyone with write access. md:27 freezes 'one frozen reviewed patch/hash' and md:90 retains the workflow identity, but nothing requires the job to refuse, before setup, when the ref is not the approved one or the workflow blob at the executing commit differs from the approved hash. A later commit to main's checks.yml between approval and dispatch would run unreviewed workflow bytes against the approval.",
+      "evidence": "- docs.github.com events page (NOT RUN): workflow_dispatch GITHUB_SHA = 'Last commit on the GITHUB_REF branch or tag'; it can be dispatched against any branch or tag after it has run once.\n- manually-run-a-workflow page: 'Write access to the repository is required'.\n- Proposal md:27, md:88 ('No dynamic command/ref inputs' covers inputs, not the ref), md:90, md:92 ('source/hash mismatch' does not name the workflow).",
+      "fix": "Add a workflow-author condition: the first step refuses unless github.ref == refs/heads/main (or the approved ref) and the checks.yml blob at github.workflow_sha equals the approved hash. Record both in the receipt. This is P3 because the original reviewer's comparison (md:28) can carry it."
+     },
+     {
+      "id": "GV-3",
+      "severity": "P2",
+      "title": "The landed manual trigger and pilot job have no defined lifetime after the single attempt",
+      "claim": "The proposal says one attempt, no retry (md:55) and a four-hour window kept in the approval record (md:25). But the frozen workflow is fixed before approval and cannot read that record, and md:92's 'stop on missing approval/window' has no stated mechanism. Nothing requires main's checks.yml to be restored to b070777a, or the pilot to self-expire, after the attempt. Once landed, the job remains dispatchable by any write-access actor, and GitHub's re-run of the completed run remains available. Main's trigger set and release-gate file stay changed with no end date.",
+      "evidence": "- Proposal md:25, md:27 (landing; no removal or restoration), md:55, md:92.\n- json:24-30 (workflowSuccessor, approval, window and reservation all null).\n- docs.github.com: write access suffices to dispatch (NOT RUN).\n- G-1: the baseline is b070777a.",
+      "fix": "Choose one of the following before the workflow-landing decision, and have the original reviewer compare it:\n(a) Hard-code an absolute UTC not-after time in the frozen workflow, plus an in-job refusal when the run attempt is greater than 1 or a prior successful pilot run exists. Note that this conflicts with a window defined relative to a later approval, so the window must be written into the workflow before it is frozen.\n(b) Require a separately authorized restoring commit that returns checks.yml to b070777a after the attempt, and state that the trigger stays live until then.\nForward the attempt-accounting part to the item-8 lens."
+     }
+    ],
+    "opinion": "Lens G's verdict holds: INSUFFICIENT_AS_SPECIFIED_WITH_SMALLEST_EXACT_CORRECTION. Nothing was run. This is static reading of Git objects, installed Vitest 4.1.10 and Vite 7.3.5 source, and GitHub documentation.\n\nWhat checks out:\n- The candidate identity: commit 2d291d0, tree be16220c. Its application bytes equal 25858ad.\n- The argv is syntactically valid for the locked Vitest, and each filter selects exactly one file.\n- The three tests' import closures have no Supabase, pg, environment-variable or real-endpoint dependency.\n- The proposal's 'does not establish' boundaries are accurate.\n\nAll seven lens findings are upheld at their stated severities:\n- G-1 (P2): md:27 says 'four-job' but main has three jobs. Its fix needs restating so the three ordinary jobs may carry event guards, or the pilot moves to a separate workflow file.\n- G-2 (P2): the heap flag never reaches the forked worker. Only `--execArgv=` in single-token form or NODE_OPTIONS fixes it.\n- G-3 to G-7 (P3): conditions for the workflow-author step or forwards to other lenses.\n\nThe lens missed three trigger issues:\n- GV-1 (P2): the transfer push can fire the existing 4-job pull_request workflow, with lifecycle scripts, if a PR is open from the destination branch. This becomes P0 if a PR is open. The September-only run history suggests none, but that is NOT PROVEN.\n- GV-2 (P3): the job does not bind the dispatch ref or the version of the workflow that runs.\n- GV-3 (P2): the dispatchable trigger and pilot job have no defined lifetime or restoration after the single attempt.\n\nThe smallest correction to the proposal before Samuel's bounded decisions:\n1. Restate md:27's baseline as b070777a with three jobs, allowing only event guards on them, with protection excluded and both trigger directions guarded.\n2. Fix the heap argv in md:81-83 and the json.\n3. Add a PR-state check and stop condition to md:26.\n4. Define the trigger's expiry or restoration.\nEverything else can go to the workflow-author step.\n\nNothing here is Samuel's approval.",
+    "deviations": [
+     "Hard-rule breach, read-only and harmless: one Bash call ran bare `grep` directly on a local file (node_modules/supertest/lib/test.js and package.json in the b22f worktree) instead of using the Grep tool or a permitted git command.",
+     "Hard-rule breach, read-only and harmless: one Bash call contained a no-op shell loop (`for f in ...; do :; done;`) before a git grep. The rules say to avoid loops.",
+     "Outside the permitted pipe targets, read-only: several git show/diff outputs were piped to `cat -n` or `tail`. The permitted targets are grep, sed -n, head and wc. Several Bash calls also chained multiple git commands with `;`. Nothing was written.",
+     "Evidence-source note, not a breach: like the lens, I read the installed Vitest 4.1.10, Vite 7.3.5 and Supertest 7.2.2 sources from another local worktree's node_modules (C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules). The versions match the lock, but I did not verify those files against lock integrity. It is a Windows install, so Linux behaviour is NOT RUN.",
+     "WebFetch was used only on docs.github.com (events-that-trigger-workflows and manually-run-a-workflow), after loading the WebFetch schema with ToolSearch.",
+     "Scope note: the relayed user request is a different assignment. It designates codex-accepted-source-integration-20261005 as NONPRODUCTION Supabase/PostgREST steward, requires that session's acknowledgment, then submission to the original reviewer and a builder dispatch. The computed task asked for this read-only lens-G verification. I did only the read-only verification. I contacted no session, recorded no steward assignment or acknowledgment, wrote no files and dispatched nothing. The user's requested steward assignment has not been performed by this subagent."
+    ]
+   }
+  },
+  {
+   "lens": "setup-isolation-resources",
+   "tag": "H",
+   "review": {
+    "verdict": "Lens H (setup, isolation, resources), checklist items 3-7: INSUFFICIENT_AS_SPECIFIED_WITH_SMALLEST_EXACT_CORRECTION. No P0 or P1. The proposal stays held (JSON:21-30), carries no secrets and enables no execution or push. Three P2 corrections are needed before Samuel can approve the exact argv, resource values and window. (1) H-1: the frozen test argv applies --max-old-space-size=1024 to the Vitest orchestrator only. In the installed Vitest 4.1.10 source, the flag does not reach the forked worker where the test files run. (2) H-2: the 20 GiB free-disk floor names no filesystem, and it exceeds the 14 GB SSD that GitHub documents for the proposed ubuntu-24.04 runner. (3) H-4: the 30-minute job boundary and the 4-hour admission window are not defined against queue time or GitHub cancellation behaviour, and no preflight check refuses a job that starts outside the window. Everything else is P3 and can go to the workflow-author freeze, which the proposal already requires before approval (md:88).\n\nVerified from bytes:\n- Candidate tree is be16220c. The lock blob is 912f4f85 (262653 bytes).\n- The three test blobs and sizes match JSON:41-89. The test files contain no .only, .skip or .todo.\n- Locked versions match the proposal: Vitest 4.1.10, Vite 7.3.5, TypeScript 5.6.3, jsdom 29.1.1, tsx 4.22.4, supabase-js 2.108.2, pg 8.22.0.\n- The Linux x64 native packages are in the lock with integrity.\n- npm ci --ignore-scripts looks feasible from static source only.\n\nNOT PROVEN:\n- The lock's raw SHA256 was not recomputed, because no hashing tool is permitted.\n- The Docker Hub digest and metadata were not checked.\n- Node 20.19.0 bundling npm 10.8.2 is guarded only by the fail-closed version check.\n\nAll GitHub Actions, Docker, npm and Vitest behaviour here is reasoned from public docs and static installed source, and is marked NOT RUN. The static dependency evidence comes from an installed Windows tree (C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules). Its versions match the lock, but its bytes were not integrity-checked against it.\n\nScope note: the relayed user request is about a NONPRODUCTION Supabase/PostgREST steward assignment. This lens did only the read-only CI-proposal review the computed task asked for. It produced no steward record, obtained no acknowledgment, contacted no session and submitted nothing.",
+    "checklist": [
+     {
+      "item": "3. Pinned Node/npm/lock/platform container/actions; dependency setup, ignored lifecycle scripts, binary feasibility",
+      "status": "PARTIAL",
+      "evidence": "Image pinned by platform digest node@sha256:e44d951c... with linux/amd64, and the run refuses unless node v20.19.0 and npm 10.8.2 (md:45, md:71-74, JSON:137-143). The digest and Docker Hub metadata are NOT PROVEN here (no hosted reads); the version check fails closed. package.json:6-9 declares engines node 20.19.0 / npm 10.8.2; Vite 7.3.5 requires ^20.19.0 (lock:8263-8265). Lock blob 912f4f85 confirmed by ls-tree at 2d291d0; raw SHA256 d25eb6b8 not recomputed. Locked versions confirmed in the lock: vitest 4.1.10 (8774-8778), vite 7.3.5 (8249-8250), typescript 5.6.3 (8084-8085), jsdom 29.1.1 (5832-5833), tsx 4.22.4 (7581-7582), supabase-js 2.108.2 (3426-3427), pg 8.22.0 (6590-6591). Linux x64 natives present with resolved+integrity: @esbuild/linux-x64 0.25.12 (1253-1256), vite/node_modules/@esbuild/linux-x64 0.27.7 (8577-8580), tsx/node_modules/@esbuild/linux-x64 0.28.1 (7853-7856), @rollup/rollup-linux-x64-gnu 4.62.2 glibc (3246-3256), matching the bookworm/glibc image. Six install-script packages: 4 esbuild copies (952, 5111, 8011, 8735), optional bufferutil (4408), darwin-only fsevents (5492). In the installed esbuild 0.27.7 source, lib/main.js:1978-1984 resolves the binary from the platform package at runtime, so the install script is not needed. Vite imports rollup/parseAst at load (vite dist/node/index.js:3), which needs the rollup native package; that package has no install script. --ignore-scripts therefore looks feasible from static source (NOT RUN). .npmrc:1-3 (production=false, fund=false, audit=false) installs devDependencies such as supertest. Action pins are commit snapshots of the official refs/tags/v4 (evidence JSON:149-188); md:36-41 does not record the source ref or observation time. Gap: 411 of 672 lock entries have no resolved/integrity (H-6)."
+     },
+     {
+      "item": "4. Isolation: Supertest wildcard listener, credentials/token permissions, setup network versus test --network none",
+      "status": "PARTIAL",
+      "evidence": "md:49 requires test containers with --network none, no published ports, read-only root and source, non-root user, no Docker socket, cap-drop ALL and no-new-privileges. Docker docs: none creates only lo with 127.0.0.1/8 and no IPv6 loopback. Installed supertest 7.2.2 lib/test.js:39 creates the server, :63 calls listen(0) with no host, and :69 connects to 127.0.0.1, so the listener is reachable on IPv4 loopback only. md:51 explicitly authorizes the listener and does not claim a loopback bind: ADEQUATE (NOT RUN). md:43 specifies contents:read, persist-credentials:false and no secrets. Docs: naming any permission sets the rest to none. The current checks.yml:1-54 has no permissions block, so this exists only as a requirement for the future pilot job. upload-artifact does not need GITHUB_TOKEN write. The admin-readback import closure reads no process.env (express.ts:17-23, supabase-repository.ts:1-20). Gaps: setup egress is unrestricted by any mechanism (H-9); writable dependency, output and HOME mounts are not yet frozen (H-8)."
+     },
+     {
+      "item": "5. Resource bounds: heap vs total container, host admission, worker/fork processes, complete argv",
+      "status": "PARTIAL",
+      "evidence": "md:66 and JSON:121-128 set 2 GiB memory with memory-swap equal to memory (Docker docs: equal values mean no swap; correct), 1 CPU, PID limit 64, 128 MiB tmpfs and a 1024 MiB heap. Heap scope is wrong: in installed Vitest 4.1.10, cli-api.BK8pd4xc.js:3731-3737 passes only --cpu-prof, --heap-prof and --diagnostic-dir from process.execArgv to workers; :3660-3668 builds worker execArgv from those plus project config (vitest.config.ts:26-30 sets none); :3084-3089 forks the worker with that execArgv. So the 1024 MiB cap never reaches the test process (H-1). A CLI --execArgv option exists (cac.DdICfEr1.js:917-921). The cgroup PID limit counts threads; the parent, the forked worker and the esbuild Go service share 64, and the margin is unmeasured (H-7). Admission floor of 20 GiB disk vs documented 14 GB SSD, with no measured path named (H-2). 2560 MiB free RAM is feasible against the documented 8 GB (private) or 16 GB (public) runner."
+     },
+     {
+      "item": "6. Defined 30-minute start/end boundary; queue/events/checkout/setup/grace/cleanup/artifact/finalization; per-job timeout",
+      "status": "PARTIAL",
+      "evidence": "Phase ceilings (md:57-64; JSON:110-116) sum to 60 + (360+5) + (300+5) + 3x(180+5) + 180 = 1465 s (24 min 25 s), leaving 5 min 35 s of the 30-minute job for runner setup, checkout, container creation and upload, none of which has a named ceiling. Docs: timeout-minutes is the time to let a job run (default 360); whether queue time counts is not stated (NOT PROVEN). In cancellation, steps whose if-condition evaluates true (e.g. always()) keep running; the runner then sends SIGINT, SIGTERM after 7500 ms and kills the process tree after 2500 ms; the server force-terminates after 5 minutes. The proposal does not define the start/end events, the queue and window relation, a window-membership preflight (md:25 says only 'admitted within four hours'), or the receipt/cleanup step conditions (H-4). The per-phase wrapper in the md:71 example kills the docker client, not the container (H-3). No retry or continuation, and timeout means an incomplete attempt (md:55, md:90): ADEQUATE."
+     },
+     {
+      "item": "7. Failure/timeout outputs, owned-container cleanup, unknown-state retention, artifact ceilings",
+      "status": "PARTIAL",
+      "evidence": "md:90 lists the retained identities, argv, timings, exits, per-file JSON, logs, run/job/attempt and resource/OOM/refusal/cleanup state, with whitelisted metadata only. Cleanup removes only recorded own containers, with no prune and no volume removal; unknown cleanup or timeout is never green; failed receipts are preserved: ADEQUATE. md:92 stop list: ADEQUATE. Artifact ceiling of 20 MiB / 7 days, with over-limit treated as failure and no truncation, but no enforcement mechanism. The specialist's per-stream bound (prerequisites md:27) was dropped. Undefined: what gets uploaded when output is over the limit, and whether 7 days is within the repository's retention limit (docs: retention-days cannot exceed it) (H-5). Recording OOM and exit state needs inspection before the container is removed (H-8e). Pass criteria do not exclude skipped or todo tests, and allowOnly defaults to !CI inside the container (cac.DdICfEr1.js:939) (H-10; no such markers exist in the frozen files). Requirement that the workflow author freeze the full argv, mounts, wrapper and receipt code before approval: ADEQUATE (md:88)."
+     }
+    ],
+    "findings": [
+     {
+      "id": "H-1",
+      "severity": "P2",
+      "title": "1024 MiB heap flag does not reach the forked Vitest worker that runs the tests",
+      "claim": "The frozen argv passes --max-old-space-size=1024 only to the orchestrator process. Vitest 4.1.10 strips it from the forked worker's execArgv, so the proposed heap bound never applies to the test code.",
+      "evidence": "Proposal md:66 and md:81-83; JSON:44-56, 67-79, 90-102 and :126 (heapMiB 1024). Installed Vitest 4.1.10 (version matches lock:8774-8775), C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules/vitest/dist/chunks/cli-api.BK8pd4xc.js:3731-3737: worker execArgv keeps only --cpu-prof, --heap-prof and --diagnostic-dir from process.execArgv. :3660-3668 appends project config execArgv; vitest.config.ts:26-30 at 2d291d0 sets none. :3084-3089 forks with that execArgv. CLI option --execArgv exists at cac.DdICfEr1.js:917-921. Static source evidence only, NOT RUN.",
+      "failureScenario": "A test file's memory grows in the forked worker. V8's default heap is sized from visible host memory (8 or 16 GB per GitHub runner docs), not 1024 MiB, so growth continues until the 2 GiB cgroup triggers a kernel OOM SIGKILL instead of a V8 heap-limit error. Parent and worker can also add up past 2 GiB together. A receipt stating 'heap capped at 1024 MiB' would be false, and Samuel would have approved a limit that is not enforced where it was intended.",
+      "fix": "Before approval, either (a) add --execArgv=--max-old-space-size=1024 to each of the three frozen argv (or set NODE_OPTIONS in the frozen container env, which the worker inherits per cli-api:3650-3655). State that the parent and the worker then each have their own cap, and that the 2 GiB cgroup is the only total bound. Or (b) restate 1024 MiB as orchestrator-only, with the cgroup as the worker's only bound. In both cases, record per-process peak memory and OOM state. Choosing the values remains Samuel's decision."
+     },
+     {
+      "id": "H-2",
+      "severity": "P2",
+      "title": "20 GiB free-disk admission floor names no filesystem and exceeds the documented runner SSD",
+      "claim": "The 20 GiB free-disk floor is higher than the 14 GB SSD that GitHub documents for the proposed ubuntu-24.04 runner, and the proposal does not say which filesystem is measured.",
+      "evidence": "Proposal md:34 (ubuntu-24.04), md:66 and JSON:127-128 (2560 MiB RAM, 20 GiB disk). GitHub-hosted runner docs: ubuntu-24.04 has 4 CPU / 16 GB RAM / 14 GB SSD for public repos and 2 CPU / 8 GB RAM / 14 GB SSD for private repos. The 20 GiB number comes from the specialist's illustrative bounds (prerequisites md:27). Actual free space on the runner is UNKNOWN (no hosted observation allowed).",
+      "failureScenario": "Preflight measures the root filesystem or the workspace, finds less than 20 GiB, and refuses the single attempt by design. Or the workflow author measures a different mount (such as a temp disk) that is not where Docker stores the image and the dependency directory, so the floor protects nothing.",
+      "fix": "Name the measured paths (Docker's storage directory and the dependency/output bind directories). Either reconcile 20 GiB with the documented 14 GB SSD or have Samuel re-select the floor. State whether an admission refusal consumes the single attempt."
+     },
+     {
+      "id": "H-4",
+      "severity": "P2",
+      "title": "30-minute job boundary and 4-hour window are undefined against queue time and cancellation",
+      "claim": "The proposal does not say which events start and end the 30-minute job or the approved window. It does not say whether queue time counts, and its stated preflight has no window-membership check. Its receipt and cleanup steps also have no defined behaviour when the job times out.",
+      "evidence": "md:25 says one attempt 'admitted within four hours' with UTC start/end, but does not define the admission event. md:59-64 lists the preflight as 'Source/environment/hash/admission checks' with no window check. md:92 stops only on a 'missing' window. Docs (workflow syntax): timeout-minutes is the time 'to let a job run', default 360; queue-time inclusion is not stated (NOT PROVEN). Docs (workflow cancellation): steps whose if-condition is true (e.g. always()) keep running; SIGINT, then SIGTERM after 7500 ms, then the process tree is killed after 2500 ms; the server force-terminates after 5 minutes. Docs (expressions): always() runs even when canceled. Phase sum is 1465 s, leaving 5 min 35 s for runner setup, checkout and upload, which have no ceiling.",
+      "failureScenario": "A run dispatched at approval+3h59m stays queued and starts after the approved end, and nothing in the stated preflight refuses it. Or a job hits 30 minutes, and an always() upload or cleanup step keeps running for up to about 5 more minutes, so the stated 'whole job 30 minutes' bound is not the real wall-clock bound.",
+      "fix": "Add one rule. Start is the job start on the runner (recorded runner UTC); end is job completion. Preflight refuses unless runner UTC is inside the approved window. Queue time is excluded from the 30 minutes and bounded by the window. The job sets timeout-minutes: 30. Receipt and cleanup steps use if: ${{ !cancelled() }}, or use always() with explicit acceptance that post-timeout output is incomplete and can run until GitHub's 5-minute forced termination."
+     },
+     {
+      "id": "H-3",
+      "severity": "P3",
+      "title": "Per-phase timeouts are enforced on the docker client, not the container",
+      "claim": "Running timeout around the docker CLI kills only the client. GitHub cancellation kills only the step's process tree. A container owned by the Docker daemon can keep running, and Node as PID 1 ignores SIGTERM unless it has a handler.",
+      "evidence": "md:71 example: timeout --kill-after=5s 360s docker pull ...; md:62 adds 180 s plus 5 s grace per file but does not say where it is enforced. Docs: the runner kills the step's process tree; docker run --stop-timeout sends SIGKILL after the timeout; --init forwards signals and reaps processes. Reasoned, NOT RUN.",
+      "failureScenario": "A test container runs past 185 s after the wrapper kills the docker client. It keeps consuming CPU and memory, and its exit state is never captured. The receipt shows a timeout, but the container's actual state is unknown.",
+      "fix": "The frozen wrapper must enforce expiry at container level: give each container a recorded name, and on expiry run docker stop -t 5 then docker kill on that name, or use timeout inside the container with --init. Confirm the exit or OOM state with docker inspect before removing the container. If that state cannot be confirmed, the attempt is incomplete."
+     },
+     {
+      "id": "H-5",
+      "severity": "P3",
+      "title": "Artifact and stream ceilings have no enforcement mechanism; over-limit retention is undefined",
+      "claim": "The 20 MiB / 7-day artifact limit is declared without a mechanism, per-stream bounds were dropped, and the proposal does not say what is preserved when output exceeds the limit.",
+      "evidence": "md:90 sets a 20 MiB / 7-day limit, treats over-limit as failure with no truncation, and says failed receipts are preserved. JSON:129-130. The specialist's 4 MiB per-stream bound (prerequisites md:27) does not appear in the proposal. upload-artifact has no size-cap input. Docker's default log driver is unbounded unless --log-opt is set. Docs (store and share data): retention-days cannot exceed the repository/organization limit.",
+      "failureScenario": "A runaway test writes hundreds of MB to stdout within 180 s, filling host disk or producing an artifact over the limit. It is then unclear whether the failed receipt is uploaded (breaking the limit) or dropped (breaking 'preserve failed receipts'). A repository retention limit below 7 days would also cap the retention silently.",
+      "fix": "The workflow author freezes a per-stream capture cap and a size check before upload. When over the limit, upload only a bounded metadata receipt (sizes, hashes, reason). Record the repository retention setting."
+     },
+     {
+      "id": "H-6",
+      "severity": "P3",
+      "title": "'Locked npm packages' is version-locked but not integrity-locked for 411 of 672 entries",
+      "claim": "Most lock entries, including execution-path packages, have no resolved or integrity field. npm ci therefore fetches them by name@version without checking content against a value frozen in the repository.",
+      "evidence": "At 2d291d0 package-lock.json there are 672 node_modules entries but only 261 'integrity' and 261 'resolved' lines; all resolved URLs are registry.npmjs.org. Entries with no integrity include esbuild 0.25.12 (5111-5113), express 5.2.1 (5192-5194), rollup 4.62.2 (7094-7096), vite 7.3.5 (8249-8250), vite/node_modules/esbuild 0.27.7 (8735-8737), pg, supabase-js, typescript and tsx. The Linux native packages do have integrity (1253-1256, 3246-3249, 8577-8580). md:47 and md:49 describe the setup as locked packages.",
+      "failureScenario": "Setup installs vite, esbuild and express bytes that are checked only against registry metadata at fetch time. The receipt cannot show which tarball bytes actually ran, even though the approval treats the setup as fully locked.",
+      "fix": "Disclose this in the proposal. Require the receipt to record the hash of the hidden lockfile npm writes after install (node_modules/.package-lock.json), along with the per-package integrity values it fetched. Regenerating the lockfile is a separately scoped source change, not part of this pilot."
+     },
+     {
+      "id": "H-7",
+      "severity": "P3",
+      "title": "PID limit of 64 counts threads; Vitest fork plus esbuild service margin is unmeasured",
+      "claim": "The cgroup PID limit counts threads as well as processes. The test container holds the Vitest parent, one forked worker and esbuild's Go service process, and their thread counts scale with the CPUs the host exposes, which --cpus does not reduce.",
+      "evidence": "md:66 and JSON:124 (pids 64). Vitest forks one worker (cli-api:3084-3089). Vite runs esbuild as a separate child process (installed esbuild 0.27.7 lib/main.js resolves and spawns the native binary). Docker docs describe --pids-limit only as 'Tune container pids limit'. Thread counts are reasoned, NOT RUN.",
+      "failureScenario": "Thread creation hits the PID limit (EAGAIN), and Node or esbuild aborts mid-run. The result could be misclassified as an application failure instead of a resource refusal.",
+      "fix": "State that the limit counts threads. Record peak PID usage and limit-hit events from the cgroup in the receipt. Classify thread or process creation failures as an incomplete resource refusal, never as an application result."
+     },
+     {
+      "id": "H-8",
+      "severity": "P3",
+      "title": "Mount, user and state-capture prerequisites the frozen wrapper must resolve",
+      "claim": "The read-only root, non-root user and tmpfs design has several concrete prerequisites that are not yet stated.",
+      "evidence": "(a) Installed Vite 7.3.5 config.js:35983-35999 writes the bundled config to node_modules/.vite-temp, and the package is ESM (package.json:4). The dependency mount must therefore be writable in the test containers, consistent with md:49, which means the three serial containers share one mutable node_modules. (b) The argv writes outputFile .ci-pilot/out/*.json under the read-only source root (md:81-83), so it needs a nested writable mount created in advance. (c) A non-root user needs HOME and an npm cache on a writable disk-backed path; the 128 MiB tmpfs is likely too small and counts against the memory cgroup. (d) The dependency mount must allow execution, because the esbuild binary is spawned. (e) Recording exit and OOM state (md:66) requires inspecting the container before it is removed.",
+      "failureScenario": "The setup or the first test fails with EROFS, EACCES or ENOSPC before any test runs, and the single attempt is consumed by a wrapper defect. Or OOM state is lost because the container was auto-removed.",
+      "fix": "In the frozen argv and mounts (already required by md:88), set out: a writable dependency directory or a separate writable .vite-temp, with node_modules hashed before and after; an absolute output path or a pre-created mount; HOME and the npm cache on a writable disk directory; exec allowed on the dependency mount; no --rm until inspect has captured the state."
+     },
+     {
+      "id": "H-9",
+      "severity": "P3",
+      "title": "Setup egress is restricted by construction only, not by an enforced mechanism",
+      "claim": "The setup container has unrestricted network access. 'Pull only the pinned image and locked packages' holds only because of how the commands are built, not because of an egress allowlist.",
+      "evidence": "md:49 ('Setup may pull only the pinned image and locked npm packages'); md:75 runs npm ci --ignore-scripts --no-audit --no-fund. All 261 resolved URLs in the lock are registry.npmjs.org. Lifecycle scripts are disabled. npm may still make its own update-check request to the registry. No egress filter is proposed.",
+      "failureScenario": "A reviewer or approver reads this as an enforced egress boundary, and the receipt cannot show which hosts were contacted.",
+      "fix": "Describe it as a construction-only boundary, and record npm's fetch log or the hidden lockfile in the receipt. Optionally, Samuel may choose --no-update-notifier, which would change the frozen setup argv before approval."
+     },
+     {
+      "id": "H-10",
+      "severity": "P3",
+      "title": "Pass criteria do not exclude skipped, todo or .only-narrowed results",
+      "claim": "The single-file pass check does not require zero skipped, todo or pending tests. Inside a container without CI set, Vitest's allowOnly defaults to true, so a .only would narrow the run silently.",
+      "evidence": "md:55 rejects only zero tests, extra files or setup/import errors. The specialist's stop rule included skip and todo (prerequisites md:27). Vitest's allowOnly defaults to !process.env.CI (cac.DdICfEr1.js:939). The frozen files contain no .only, .skip or .todo (git grep at 2d291d0 returned nothing).",
+      "failureScenario": "For these exact bytes the risk is nil. The rule would matter only if it were reused for later bytes, where a .only or .skip could produce a passing JSON that covers part of a file.",
+      "fix": "The receipt must require numPassedTests to equal numTotalTests, with zero pending and zero todo. Set CI=true in the frozen container env, or freeze --allowOnly=false."
+     }
+    ],
+    "deviations": [
+     "Bash was used once for 'ls -la' on the scratchpad/ci directory. That is outside the permitted 'git -C C:/xenios-wt/health-review ...' Bash form. It was a read-only listing with no writes.",
+     "Bash was used once for 'grep -m1 \"version\"' directly on four package.json files under C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules. That is outside the permitted Bash form; the Grep tool should have been used. It was read-only with no writes.",
+     "One unneeded WebFetch of a public docs.github.com page (workflow-commands), which is a permitted domain. No GitHub API, Actions page or hosted observation was used."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "H-1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Mechanism confirmed in installed Vitest 4.1.10 (package.json:4 = 4.1.10, matching lock 2d291d0:package-lock.json:8774-8775). cli-api.BK8pd4xc.js:3731-3737 passes the forked worker only --cpu-prof, --heap-prof and --diagnostic-dir from process.execArgv. :3660-3668 adds only conditions and project.config.execArgv, and vitest.config.ts at 2d291d0 sets no execArgv. :3084-3089 forks with that explicit execArgv. So --max-old-space-size=1024 (proposal md:81-83, JSON:46/69/92, :126) never reaches the process that runs the tests. The fix routes exist: CLI --execArgv, array, at cac.DdICfEr1.js:917-921; or NODE_OPTIONS, because the worker env spreads process.env at cli-api:3650-3655. One correction to the lens's failure scenario: it asserts the worker's default V8 heap is sized from host RAM (8 or 16 GB). That is NOT PROVEN. Node can size the default heap from cgroup-constrained memory, and under a 2 GiB cgroup that could give a default below 1024 MiB. Either way the effective worker heap limit is UNKNOWN and is not the value the proposal declares. P2 stands: md:78 calls this the 'exact test argv', and md:88 forbids inventing bytes later, so correcting it means changing the argv the approval would cover. Static source only, NOT RUN."
+     },
+     {
+      "id": "H-2",
+      "upheld": true,
+      "severity": "P2",
+      "note": "docs.github.com (reference/runners/github-hosted-runners) confirms the standard ubuntu-24.04 runner has 14 GB SSD: 4 CPU / 16 GB RAM for public repositories and 2 CPU / 8 GB RAM for private ones. md:66 and JSON:128 set a 20 GiB free-disk floor and name no filesystem. Actual free space on the root filesystem or a temp disk is UNKNOWN; no hosted observation was allowed. The floor may happen to be met, but the value Samuel is asked to approve is not reconciled with the documented capacity and names no measured path. Both must be fixed in the proposal before the resource decision."
+     },
+     {
+      "id": "H-4",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld with a narrower claim. A window-membership requirement does exist: md:25 says 'admitted within four hours', md:59 lists 'admission checks', and md:92 stops on 'deadline/output violation'. So 'no window check' and 'stops only on a missing window' overstate the gap. What remains undefined is the admission event and its clock (dispatch, queue, or job start on the runner), how queue time relates to the window, and the real end bound. Docs (workflow-syntax): job timeout-minutes is the time 'to let a job run before GitHub automatically cancels it'. Docs (workflow-cancellation): unfinished steps whose if-condition is true keep running; SIGINT, then SIGTERM after 7500 ms, then the process tree is killed after 2500 ms; the server force-terminates after a 5-minute cancellation timeout. So always() receipt and cleanup steps can run past the stated 'whole job 30 minutes, including setup/cleanup'. Step-level timeout-minutes accepts integers only, so the sub-minute ceilings in md:57-64 can only be enforced by a wrapper. The phase sum is verified at 1465 s. Queue-time inclusion is NOT PROVEN from the docs."
+     },
+     {
+      "id": "H-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed by reasoning, NOT RUN. In md:71 the timeout wraps the docker CLI. An attached docker run proxies signals by default, so SIGTERM reaches container PID 1. Node as PID 1 with no handler ignores SIGTERM. The SIGKILL that follows 5 s later hits only the client and cannot be proxied, so the container keeps running. The cancellation docs say the runner kills the step's process tree, which is the client, not the daemon-owned container. This can be fixed in the md:88 freeze: name each container before start, stop or kill it at container level, and run docker inspect before removing it."
+     },
+     {
+      "id": "H-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "md:90 sets a 20 MiB / 7-day ceiling with no enforcement mechanism. md:96 deliberately supersedes the specialist's 4 MiB per-stream bound (prerequisites md:27) without a replacement. What gets preserved when output exceeds the limit is undefined. The upload-artifact v4 inputs have no size-cap option; this is from general knowledge and NOT RUN. Correctly rated P3 for the workflow-author freeze."
+     },
+     {
+      "id": "H-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Recounted at 2d291d0:package-lock.json: 672 node_modules entries, 261 'integrity', 261 'resolved', zero non-registry resolved URLs, zero link/inBundle/extraneous entries. vite (8249-8250), esbuild (5111-5113), express (5192-5194), rollup (7094-7096), pg (6590-6591), supabase-js (3426-3427), typescript (8084-8085) and tsx (7581-7582) have no integrity. The Linux natives at 1253-1256, 3246-3249, 7853-7856 and 8577-8580 do have it. The proposal's 'locked npm packages' wording (md:47, md:49) is version-locked only, not integrity-locked. Disclosure and recording the hidden lockfile in the receipt are enough at P3."
+     },
+     {
+      "id": "H-7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "The cgroup pids controller counts tasks, so threads count against PID limit 64. The parent, the forked worker (cli-api:3084-3089) and esbuild's spawned native service share it. The estimated margin is plausible but unmeasured. Recording peak PIDs and classifying a limit hit as a resource refusal is a correct P3 condition."
+     },
+     {
+      "id": "H-8",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed and sharpened. In installed Vite 7.3.5 config.js:35985-35999, an ESM config (package.json 'type':'module' at 2d291d0) is bundled to node_modules/.vite-temp. If that mkdir fails with EACCES, Vite falls back to writing beside vitest.config.ts in the read-only source, which fails with EROFS. If the dependency mount is read-only, mkdir returns EROFS, which is rethrown. So node_modules must be writable by the container UID, consistent with md:49. Nested writable binds under a read-only source bind also need their mountpoints (node_modules, .ci-pilot/out) to exist on the host beforehand. HOME and the npm cache for the setup container, exec on the dependency mount, and inspect-before-remove are valid freeze prerequisites."
+     },
+     {
+      "id": "H-9",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Setup egress is bounded by how the commands are built (md:49, md:75), not by a filter. All 261 resolved URLs are registry.npmjs.org. The 411 entries without resolved are fetched by name@version from the default registry, because .npmrc:1-3 at 2d291d0 sets no registry override. npm's update check runs unless CI is detected, and CI env vars are not passed into the container. Correct as P3 disclosure."
+     },
+     {
+      "id": "H-10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "allowOnly defaults to !process.env.CI (cac.DdICfEr1.js:939), so inside a container without CI set, a .only would be allowed. md:55 does not require zero skipped or todo tests. The three frozen files at 2d291d0 contain no .only, .skip or .todo; only it.each matches. Zero risk for these bytes; a valid P3 receipt condition."
+     }
+    ],
+    "checklistChallenges": [
+     {
+      "item": "3. Pinned Node/npm/lock/platform container/actions; dependency setup, ignored lifecycle scripts, binary feasibility",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Re-verified at 2d291d0: tree be16220c; lock blob 912f4f85, 262653 bytes; locked versions; engines node 20.19.0 / npm 10.8.2 (package.json:6-9); Vite engines ^20.19.0 || >=22.12.0 (lock:8263-8265). The Linux x64 esbuild copies and rollup gnu/musl natives have integrity. Six hasInstallScript entries: 952, 4408 (optional bufferutil), 5111, 5492 (fsevents), 8011, 8735. Installed esbuild 0.27.7 lib/main.js:1978-1984 resolves @esbuild/linux-x64 at runtime, so --ignore-scripts looks feasible statically (NOT RUN). Still NOT PROVEN: lock raw SHA256 d25eb6b8, the image digest and its Docker Hub metadata, and npm 10.8.2 being bundled with Node 20.19.0 (guarded only by the fail-closed version check, md:73-74). Additional gaps: the setup container's own user, root mode and source-mount mode are not stated (md:49 lists isolation for test containers only); docker run digest and --pull=never are not frozen (HV-2); the runtime of the pinned v4 actions is unverified (HV-5)."
+     },
+     {
+      "item": "4. Isolation: Supertest wildcard listener, credentials/token permissions, setup network versus test --network none",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Listener rating ADEQUATE confirmed: installed supertest 7.2.2 lib/test.js:39 calls http.createServer, :63 calls listen(0) with no host, :69 targets 127.0.0.1. md:51 authorizes the listener without claiming a loopback bind. Token handling (md:43: contents:read, persist-credentials:false, no secrets) is a requirement only; the current checks.yml at 2d291d0 and main blob b070777 have no permissions block. Docs: specifying any permission sets the unspecified ones to none. Added gap: the non-root UID/GID is not tied to the owner of the host bind directories (HV-1). The md:88 freeze must also turn 'no secret passed' into an explicit container env allowlist."
+     },
+     {
+      "item": "5. Resource bounds: heap vs total container, host admission, worker/fork processes, complete argv",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "H-1 confirmed from installed Vitest source, so the declared heap bound is not enforced on the test worker. memory-swap equal to memory (JSON:121-122) means no swap: correct. PID 64 counts threads (H-7). The 20 GiB disk floor exceeds the documented 14 GB SSD (H-2). 2560 MiB of free RAM is consistent with the documented 8 or 16 GB. Complete argv and mounts are deferred to the md:88 freeze, which is acceptable only after the H-1 argv correction."
+     },
+     {
+      "item": "6. Defined 30-minute start/end boundary; queue/events/checkout/setup/grace/cleanup/artifact/finalization; per-job timeout",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Phase sum independently verified: 60 + 365 + 305 + 3 x 185 + 180 = 1465 s, which leaves 335 s with no ceiling for job setup, checkout, container creation and upload. Window intent exists (md:25, md:92 'deadline violation'), but the admission event, the clock, the queue relation and the post-timeout always() extension are undefined (H-4, narrowed). No retry or continuation, and timeout counts as incomplete (md:55, md:90): ADEQUATE."
+     },
+     {
+      "item": "7. Failure/timeout outputs, owned-container cleanup, unknown-state retention, artifact ceilings",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Retained fields, the never-green rule for unknown state and cleanup without prune (md:90-92) are ADEQUATE as policy. Cleanup depends on containers being named before start (H-3), and OOM/exit capture needs inspect before removal (H-8). The artifact ceiling has no mechanism and over-limit retention is undefined (H-5). Added gap: container output streamed into the GitHub job log falls under repository log retention and sits outside the 20 MiB / 7-day artifact policy (HV-3). Whether a pre-test refusal consumes the single attempt is undefined (HV-4)."
+     }
+    ],
+    "missed": [
+     {
+      "id": "HV-1",
+      "severity": "P3",
+      "title": "Container non-root UID/GID is not bound to the owner of the writable host bind directories",
+      "claim": "The proposal requires a non-root UID/GID with writable dependency and output bind directories. It does not say which UID, or that the UID must match (or be granted write access to) the host directories the runner account creates. A mismatch fails setup or the first test before any assertion runs.",
+      "evidence": "Proposal md:49 ('writable dedicated dependency/output bind directories ... non-root UID/GID') and JSON:160 (nonRoot true) name no UID. Installed Vite 7.3.5 config.js:35986-35993: if mkdir of node_modules/.vite-temp returns EACCES, Vite writes the bundled config beside vitest.config.ts instead, which is on the read-only source, so it fails. npm ci in setup must also write node_modules. The runner account's UID and the node image's default user UID are not established here (NOT PROVEN).",
+      "fix": "In the md:88 freeze, set --user to the runner account's UID:GID recorded at preflight, or pre-create and chown the dependency and output directories to the frozen UID. Record the UID/GID and the directory ownership in the receipt."
+     },
+     {
+      "id": "HV-2",
+      "severity": "P3",
+      "title": "Setup and test docker run must reference the pinned digest with --pull=never",
+      "claim": "Only the pull command is pinned (md:71). --network none restricts the container, not the Docker daemon. A docker run that names a tag, or that lacks --pull=never, could make the daemon fetch a different image at container creation, outside the pinned-image boundary.",
+      "evidence": "md:45 ('Pin the platform image') and md:71 pin only docker pull. md:49 restricts container networking, not daemon pulls. The repository's own SQL verifiers already run their image by immutable ID with --pull=never --network none (prerequisites md:40). The Docker docs' default pull policy for run is 'missing'. Reasoned, NOT RUN.",
+      "fix": "Freeze every docker run to the same sha256 digest (or the image ID recorded after the pull) with --pull=never and --platform linux/amd64. Record the image ID in the receipt and refuse on mismatch."
+     },
+     {
+      "id": "HV-3",
+      "severity": "P3",
+      "title": "Container output echoed into the GitHub job log escapes the artifact ceiling and the 7-day retention",
+      "claim": "The 20 MiB / 7-day policy covers only the artifact. Any container stdout or stderr streamed into the step log is kept under the repository's log retention, which is separate and usually longer, and is not limited by the artifact ceiling.",
+      "evidence": "md:90 ('Proposed artifact limit 20MiB and 7-day retention ... setup/stdout/stderr'). An attached docker run writes container output to the step log. JSON:129-130 cover only artifactMaxBytes and retentionDays. Reasoned from documented Actions behaviour, NOT RUN.",
+      "fix": "The frozen wrapper captures container streams to bounded files inside the owned output directory and echoes only whitelisted summary lines to the job log. Record the repository's log-retention setting next to the artifact retention."
+     },
+     {
+      "id": "HV-4",
+      "severity": "P3",
+      "title": "Whether a pre-test refusal consumes the single attempt is undefined",
+      "claim": "An unmet admission floor, an anonymous Docker Hub pull failure or rate limit, or a setup failure all stop the run before any test process starts. The proposal does not say whether such a refusal spends the only attempt. No credentials may be added, so the pull is anonymous.",
+      "evidence": "md:55 (one attempt, no retry), md:28 (no new credentials or fallback environment), md:92 (stop on unmet RAM/disk, wrong image, install failure). The historical refusals that started zero test processes are treated as spent (prerequisites md:75; md:21 'Old windows/groups remain expired/spent'). Docker Hub's anonymous limits on GitHub-hosted runners are NOT PROVEN here.",
+      "fix": "Add one rule, chosen by Samuel, that classifies pre-test refusals (admission, pull, setup) as incomplete and states whether they consume CI-APP-PILOT-01. This complements the H-2 fix."
+     },
+     {
+      "id": "HV-5",
+      "severity": "P3",
+      "title": "Runtime of the pinned action commits on the execution date is unverified",
+      "claim": "The checkout and upload-artifact pins are v4-tag commits. Their JavaScript action runtime, and whether the hosted runner will run them unchanged on the execution date, were not checked. A forced runtime substitution would change behaviour that the pin is meant to freeze.",
+      "evidence": "The evidence JSON shows refs/tags/v4 resolved to commits 11d5960a (checkout) and ea165f8d (upload-artifact); setup-node 49933ea5 is not used by the pilot. md:36-41 records the commits only. The action.yml runtime declarations were not readable within the allowed tools (NOT PROVEN).",
+      "fix": "The workflow author records each pinned action's declared runtime at freeze time. The receipt records any runner runtime-override warning, and an unexpected substitution is treated as a setup refusal."
+     }
+    ],
+    "opinion": "I verified lens H against the bytes and largely uphold it. The lens disposition stands for items 3-7: INSUFFICIENT_AS_SPECIFIED_WITH_SMALLEST_EXACT_CORRECTION. There is no P0 or P1. The proposal is held (JSON:21-30), passes no secrets and enables no execution, push or release-gate change within this scope.\n\nThree P2 corrections are needed before Samuel can approve the exact argv, the resource values and the window:\n- **H-1, heap flag.** Add --execArgv=--max-old-space-size=<value> to the frozen argv, or set NODE_OPTIONS, or restate the heap cap as orchestrator-only. The flag is confirmed not to reach the forked Vitest worker. The lens's guess that the worker heap would be sized from host RAM is unproven; the worker's actual default may even fall below 1024 MiB.\n- **H-2, disk floor.** Name the measured filesystem and reconcile the 20 GiB floor with GitHub's documented 14 GB SSD.\n- **H-4, window and job boundary, narrowed.** md:25 and md:92 already require admission within the window and stop on a deadline violation. What is missing is the definition of the admission event, its clock and queue time, and the fact that always() steps after a timeout can run up to 5 minutes past 30 minutes.\n\nH-3 and H-5 to H-10 are correctly rated P3 and can go into the md:88 workflow-author freeze. I add five P3 items: UID/ownership of the writable binds, digest plus --pull=never on every docker run, job-log retention outside the artifact policy, whether a pre-test refusal spends the single attempt, and the unverified runtime of the pinned actions.\n\nReasoning about GitHub Actions, Docker, npm and Vitest comes from public docs and static installed source, and is marked NOT RUN. The lock SHA256 and the image digest remain NOT PROVEN.\n\nScope note: the relayed user request is a NONPRODUCTION Supabase/PostgREST steward assignment. This verifier did only the read-only CI-proposal check the computed task asked for. It produced no steward record, obtained no acknowledgment, contacted no session and submitted nothing to any reviewer. The coordinator should raise that mismatch with the user.",
+    "deviations": [
+     "Bash was used once for 'grep -n' directly on the local file C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules/supertest/lib/test.js. That is outside the permitted 'git -C C:/xenios-wt/health-review ...' Bash form; the Grep tool should have been used. It was read-only with no writes.",
+     "ToolSearch was used once, only to load the WebFetch tool schema. No MCP tool was invoked.",
+     "Four WebFetch calls went to public docs.github.com pages (github-hosted-runners, workflow-cancellation, and workflow-syntax twice for pagination). These are permitted domains; no GitHub API, Actions page or hosted observation was used.",
+     "Scope: the relayed user request (a NONPRODUCTION Supabase/PostgREST steward assignment) differs from the computed CI-review task. Only the read-only computed review was performed. No steward record, acknowledgment, session contact or submission was made."
+    ]
+   }
+  },
+  {
+   "lens": "triggers-attempts-procedure",
+   "tag": "I",
+   "review": {
+    "verdict": "LENS I (triggers-attempts-procedure): INSUFFICIENT_AS_SPECIFIED_WITH_SMALLEST_EXACT_CORRECTION. I found no P0. Nothing was executed, pushed, dispatched or changed. GitHub behaviour below is reasoned from docs.github.com and is NOT RUN.\n\nDecision by decision:\n- Procedure decision: can proceed once the amendment text in I-5 is added.\n- Transfer decision: blocked by I-1 (P1) until the transfer step checks for an open PR and states what to do if one exists.\n- Workflow/landing decision: the 'checks.yml only' route is internally infeasible as specified (I-2), is not shown to be the least-execution route (I-3), and has no mechanism behind 'one attempt' (I-4).\n\nSmallest exact correction to the proposal (wording only, no new values):\n(a) Transfer, item 2: before pushing, record any open PR whose head is codex/xenios-health-quick-order-20261005. If one exists, stop unless the authority explicitly names the resulting pull_request synchronize run of the 4 existing jobs. Never open a PR from that branch. Attach the 31-commit / 83-file inventory (I-6). Re-verify the live remote is at 1631323d.\n(b) Workflow, item 3: choose either a new dispatch-only workflow file (checks.yml bytes unchanged, so no release-gate change) or checks.yml with named guard bytes on every job plus explicit authority to change the release gates. Name the landing base as main blob b070777 (3 jobs), not 7a2c2c5 (4 jobs). The pilot job must carry an event guard and run_attempt==1. In-job refusal unless workflow_sha is the landed commit and the time is inside a deadline frozen into the bytes, or else name a removal/disable action and who authorizes it.\n(c) Route table: list the exact automatic runs for each route (PR opened/synchronize/reopened, merge push to main, direct push, [skip ci] leaving checks pending, dedicated-branch push trigger) and the authority each needs. Require the original reviewer's comparison of the frozen bytes BEFORE landing.\n(d) Attempt definition: the attempt is consumed when the pilot job of the single authorized run first starts, whatever the outcome. Re-runs, pending or duplicate dispatches, and later dispatches are breaches the job refuses; any further run needs new approval.\n(e) Amendment text: what evidence it accepts (pass criterion including 0 skipped/todo), that it does not satisfy or clear manifest G3 or any G-group, that production.test.ts is outside the manifest, no carry to any successor, and Windows G0/PREPARE/native/Job-object holds retained.\n\nMissing decisions and actions, kept separate:\n1. Samuel's class2 Linux-subset amendment.\n2. Workflow path ownership and the frozen bytes/hash.\n3. Landing route, destination and accepted automatic runs.\n4. Transfer of 2d291d0 under (a).\n5. Original reviewer's comparison of the workflow, commands, approval and window.\n6. The actual approval with absolute UTC window and the single reservation.\n\nTransaction-track prerequisites are separate and are NOT gated by this pilot (md:112): decisions 2 and 3, the exact 17+4 lease, and the r3 byte check. The r3 byte check has since been recorded ERRATA ACCEPTED at f04dd9c (after the proposal was prepared at 00:37:27Z), so the proposal's 'QUEUED' status is stale but separate.",
+    "checklist": [
+     {
+      "item": "8. One attempt across workflow events, re-runs, concurrency and re-reservations; no repeated consumption",
+      "status": "PARTIAL",
+      "evidence": "The policy is stated, but nothing enforces it.\n- Stated: one attempt, no retry, single-job concurrency and a 4h window (CI_PILOT_PROPOSAL_20261009.md:25,27,55,90; .json:33-36 attemptLimit 1, retry false). Neither file mentions manual re-runs or run_attempt.\n- Re-runs (docs, NOT RUN): 'Re-run all/failed/single job' is allowed for 30 days, up to 50 re-runs, on the same GITHUB_SHA/GITHUB_REF, and github.run_attempt 'increments with each re-run'.\n- Concurrency (docs, NOT RUN): it only serializes. A second dispatch becomes 'pending' and runs after the first; at most one pending; newer pending runs replace older ones. cancel-in-progress cancels the running job.\n- Window: it is held only in the approval record (md:25), while the workflow bytes are frozen before approval (md:88). The workflow therefore cannot enforce the window, and the dispatch path stays live on the default branch afterwards.\n- Undefined: whether the dispatch ref / workflow_sha is bound, and whether a pre-test refusal consumes the attempt (re-reservation)."
+     },
+     {
+      "item": "9. Actual execution-triggering events (main push; PR opened/synchronize/reopened; non-main push with open PR; workflow landing and automatic bootstrap runs)",
+      "status": "PARTIAL",
+      "evidence": "What the bytes and docs show:\n- Triggers: the candidate and remote-branch workflow (blob 7a2c2c5 at 2d291d0 and at 1631323) has 'pull_request:' unfiltered plus push to main (checks.yml:4-7). Main blob b070777:4-7 is identical except that it has 3 jobs.\n- Default PR types (docs): opened, synchronize, reopened. PRs with a merge conflict do not run.\n- workflow_dispatch (docs): 'only trigger a workflow run if the workflow file exists on the default branch'.\n\nWhat the proposal covers: it correctly says landing and automatic runs need authority (md:27; json:166-167).\n\nWhat it does not enumerate:\n(i) The transfer push firing pull_request synchronize if any open PR has that head (I-1).\n(ii) Dispatch running every unguarded job.\n(iii) The pilot job running on push or PR events unless guarded (I-2).\n(iv) The exact runs each landing route causes (I-3).\n\nState evidence: the newest repository run is 2026-09-03 (CI_ROUTE_EXISTING_RUN_EVIDENCE_20261009.json:10-21), even though 1631323 (committed 2026-10-06) was pushed. That suggests no open mergeable PR at that time. Current state is NOT PROVEN."
+     },
+     {
+      "item": "11. Explicit Linux application procedure amendment and remaining Windows G0/native hold; neither inherit nor waive unapproved requirements",
+      "status": "PARTIAL",
+      "evidence": "- Scope and retained native holds are stated (md:21,102), and so is no carry to a successor (md:11). But md:102 defers the precise accepted-evidence statement ('must say precisely which application evidence it accepts').\n- The commands do not map to the existing manifest. G3 (qualification-manifest-20261008.json:9057-9087 at 2d291d0) runs the two assisted-order files inside a 5-file invocation, with suite-evidence-reporter and NODE_ENV=test, and requires G0/G1. production.test.ts does not appear in the manifest at all. The amendment therefore cannot be read as substituting for G3, and it must say so.\n- The specialist's stop on skip/todo (CI_PILOT_SOURCE_PREREQUISITES_20261009.md:27) is not restated in md:55, so it is ambiguous whether it was waived. The three files currently contain no skip/todo/only/platform branches (git grep).\n- class2 is the Windows-supervisor route decision (RECOVERY_DECISIONS_20261007.md:77 at 91deaaa). Reusing it for a second route needs explicit wording."
+     },
+     {
+      "item": "12. Exact smallest missing workflow/approval/transfer/operating actions and separate-track transaction prerequisites",
+      "status": "PARTIAL",
+      "evidence": "- What is present: four required items (md:25-28), a NOT PRESENT list (md:30), JSON nulls for every approval (json:21-30), and transaction kept separate (md:112).\n- Missing:\n  - an open-PR check at transfer;\n  - a route comparison with enumerated automatic runs;\n  - original comparison required before landing;\n  - guard bytes for event, run_attempt and workflow_sha;\n  - a window enforcement or post-attempt disable action and its authority;\n  - a definition of when the attempt is consumed;\n  - the transfer inventory (supplied in I-6);\n  - the amendment text (I-5).\n- The transaction track has moved on since the proposal was frozen (reviewer commits f04dd9c 'ERRATA ACCEPTED' at 2026-10-10T01:04:54Z, 4f6bf1d decisions 2/3/5) and remains separate."
+     }
+    ],
+    "findings": [
+     {
+      "id": "I-1",
+      "severity": "P1",
+      "title": "Approved source transfer can fire unapproved pull_request runs of the 4 existing jobs",
+      "claim": "Proposal item 2 treats pushing 2d291d0 to origin/codex/xenios-health-quick-order-20261005 as a pure transfer. If any open PR has that branch as head, the push fires pull_request synchronize. That runs the existing 4-job workflow (npm ci with lifecycle scripts, the full Vitest suite, tsc, build, protection) on a networked hosted runner, bypassing the pilot's ignore-scripts / network-none / 3-file / one-attempt conditions. I rate it P1 rather than P0 because the run history suggests no PR was open at the last push; it becomes an unapproved execution if one is open.",
+      "evidence": "- Item 2's stop conditions are only 'mismatch, sensitive/unrelated content or denial' (CI_PILOT_PROPOSAL_20261009.md:26). The automatic-runs authority appears only under workflow setup (json:166-167).\n- 2d291d0:.github/workflows/checks.yml:4-7: 'pull_request:' with no types or branches. The same blob 7a2c2c5 is already at 1631323.\n- Jobs at :10,20,30,44 run 'npm ci' (:18) and 'npx vitest run' (:19).\n- package-lock.json at 2d291d0 has 6 entries with hasInstallScript true. The full suite includes a root-composition test with a 0.0.0.0 listener (CI_PILOT_SOURCE_PREREQUISITES_20261009.md:31).\n- Docs: default PR types are opened/synchronize/reopened; PRs with a merge conflict do not run.\n- State inference (NOT PROVEN): the newest repository run is 2026-09-03 (CI_ROUTE_EXISTING_RUN_EVIDENCE_20261009.json:10-21), yet 1631323 (committed 2026-10-06) was pushed, so no mergeable PR was open at that push. The current open-PR state was not read (API reads not permitted).",
+      "failureScenario": "A PR from the quick-order branch is opened, by a worker or as a landing vehicle, before the approved transfer. The non-force push of 2d291d0 then triggers synchronize. Four jobs execute the candidate with install scripts and network access, with repository-default token permissions and persisted checkout credentials. None of this was approved, and the results attach as CI status to the candidate.",
+      "fix": "Append to item 2: 'Immediately before the push, read-only record open PRs whose head is codex/xenios-health-quick-order-20261005. If any exist, stop unless the transfer authority explicitly names and accepts the resulting pull_request synchronize run(s) of the existing jobs. Do not open a PR from this branch. Use [skip ci] only with separate approval.'"
+     },
+     {
+      "id": "I-2",
+      "severity": "P2",
+      "title": "'checks.yml only' + 'release gates intact' + 'dispatch selects only the pilot job' is infeasible; pilot job reachable from automatic events",
+      "claim": "A dispatch-triggered workflow runs all of its jobs. Only jobs.<id>.if prevents one. So adding workflow_dispatch to checks.yml either runs the ordinary jobs on every dispatch or requires guard edits to the release-gate jobs. Without an event guard, the pilot job, which checks out the explicit candidate SHA, would run on every push to main and every pull_request merge ref after landing. The landing base is also unspecified: main has 3 jobs and the candidate has 4.",
+      "evidence": "- md:27: 'Add one manual pilot job ... Keep ordinary four-job release gates intact; manual pilot execution must select only the pilot job.' No guard bytes are required.\n- Docs: jobs 'run in parallel by default'; 'jobs.<job_id>.if ... prevent a job from running unless a condition is met'.\n- Main blob b070777 has jobs at :10,20,30 only. The 4-job blob 7a2c2c5 has protection at :44, added by a9bc544, which is not on main (6077a6b). md:15 describes the candidate as having four jobs.",
+      "failureScenario": "Case 1: the workflow author adds the pilot job without an event guard. The landing PR's pull_request run, or the merge push to main, executes the pilot against 2d291d0 before the window and before the original comparison, which spends or duplicates the one attempt.\nCase 2: the author leaves the ordinary jobs unguarded, so the manual dispatch also runs npm ci with scripts and the full suite.\nCase 3: the patch is built on the 4-job candidate file, which silently adds the protection gate to main.",
+      "fix": "In item 3, require one of two options. (a) A new workflow file whose only trigger is workflow_dispatch, with checks.yml bytes unchanged, so the release gates do not change. (b) checks.yml with named guard bytes on every job, together with explicit release-gate-change authority. In both cases the pilot job carries `if: github.event_name == 'workflow_dispatch' && github.run_attempt == 1`. State the landing base as main blob b070777, and state that the protection job is not added to main unless separately decided."
+     },
+     {
+      "id": "I-3",
+      "severity": "P2",
+      "title": "Landing route not compared for least execution; automatic runs not enumerated; original comparison not ordered before landing",
+      "claim": "The proposal says landing and 'any automatically triggered runs' need authority, but it does not list those runs or compare routes. Its item numbering also puts landing (item 3) before the original reviewer's comparison (item 4) without saying the comparison must come first.",
+      "evidence": "md:27-28; json:166-167. Reasoned enumeration (NOT RUN):\n- PR route: a pull_request opened run, plus one per synchronize/reopened, for every unguarded job on the merge ref; then the merge push runs all unguarded jobs on main.\n- Direct push: one run on main; branch protection is UNKNOWN.\n- Docs: [skip ci] applies to push and pull_request but leaves required checks 'Pending'.\n- Main's last push was 2026-08-04 (6077a6b). All recent runs failed with cause UNKNOWN (run evidence json:10-75), so main runs at landing are likely red.\n- Lower-execution alternatives: a dispatch-only separate workflow file (no gate change; still one push-to-main run of the existing 3 jobs unless skip-ci is approved), or a push-triggered pilot workflow on a dedicated non-default branch (no main landing and no ordinary-job runs if no PR is open, but the push itself starts execution and must fall inside the window).\n- Direct request record: 'Do not run it, create a PR that triggers it, change the workflow or push a payload before the applicable permissions exist' (91deaaa:DELIVERY_ACCELERATION_DIRECT_REQUEST_20261009.txt:315).",
+      "failureScenario": "Samuel approves 'landing' believing it causes only the known main checks. In fact it also fires PR-opened, synchronize and merge-push runs, and possibly the pilot job, before the original comparison of the frozen bytes. Or a route with less execution and no gate change is never presented to him.",
+      "fix": "Add a route table: for each route, the exact automatic runs, the jobs, the ref, the token permissions, and the authority needed. Require the original reviewer's comparison of the frozen workflow bytes/hash before any landing action. Samuel chooses the route; the proposal chooses no values."
+     },
+     {
+      "id": "I-4",
+      "severity": "P2",
+      "title": "'One attempt' has no mechanism across re-runs, re-dispatch, concurrency, dispatch ref or window",
+      "claim": "One attempt, no retry, single-job concurrency and a 4h window are asserted, but nothing enforces them. GitHub re-runs, a second dispatch, and dispatch after the window all remain possible, and concurrency does not de-duplicate.",
+      "evidence": "- md:25,27,55,90; json:33-36.\n- Re-runs (docs): allowed for 30 days, up to 50, same GITHUB_SHA/REF. github.run_attempt 'increments with each re-run'; github.run_id is unchanged.\n- Concurrency (docs): a queued run is 'pending', at most one pending, newer pending runs replace older ones, and cancel-in-progress cancels the running job.\n- Window: written only into the approval record (md:25), while the workflow bytes are frozen before approval (md:88).\n- Dispatch ref: the workflow from the dispatched ref is used. github.workflow_sha is 'The commit SHA for the workflow file', and nothing binds it.\n- Consumption: whether a pre-test refusal (RAM/disk admission) consumes the attempt is not defined.",
+      "failureScenario": "Case 1: after a failed or incomplete attempt, someone with write access clicks 'Re-run failed jobs' and a second execution runs on the same SHA.\nCase 2: a duplicate dispatch during the run sits pending, then executes after the first finishes.\nCase 3: a dispatch days later, from main or another ref, runs again because the dispatch path stays live.",
+      "fix": "State in the proposal:\n- Job guard: event == workflow_dispatch && run_attempt == 1.\n- Concurrency with cancel-in-progress false, plus an in-job refusal unless github.workflow_sha equals the landed commit and the current UTC time is before a deadline frozen into the bytes. If the window cannot be chosen before freezing, name a post-attempt disable/removal action and its authority instead.\n- Definition: the attempt is consumed when the pilot job of the single authorized run first starts, whatever the outcome. Any further run is a breach and needs new approval."
+     },
+     {
+      "id": "I-5",
+      "severity": "P2",
+      "title": "Linux amendment's accepted evidence and relation to manifest G3 not written",
+      "claim": "The proposal says the amendment 'must say precisely which application evidence it accepts' but does not supply that text. The three pilot commands correspond to no manifest command: two of the files sit inside the 5-file G3 invocation, and production.test.ts is not in the manifest at all. The specialist's stop-on-skip/todo is not restated.",
+      "evidence": "- md:21 and md:102; md:55 lists only zero tests, extra files and setup/import errors.\n- 2d291d0:docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json:9057-9087: G3 requires G0/G1, runs repository + admin-readback + notifications + provider-journal + AdminAssistedOrderSession, with the suite-evidence-reporter and NODE_ENV=test.\n- git grep finds no production.test.ts in the manifest.\n- CI_PILOT_SOURCE_PREREQUISITES_20261009.md:27: 'Stop on any failure/skip/todo'.\n- class2 = the Windows-supervisor route (91deaaa:docs/coordination/launch-coordination-20261005/RECOVERY_DECISIONS_20261007.md:77; DOC49_NEXT_REVIEW_HANDOFF_20261008.md:168 'class2 one qualification route').\n- No skip/todo/only/platform branches exist in the three files today.",
+      "failureScenario": "A later reader treats a green Linux receipt as satisfying G3 or clearing G0/G1 for those files, or as covering production.test.ts under the Windows manifest. Or a skipped test counts as a pass. Either way, an unapproved requirement is silently waived or inherited.",
+      "fix": "Add an amendment text block with these points:\n- Accepted evidence: per-file Vitest JSON from the pinned Linux container at 2d291d0 / tree be16220c. Each file passes only if exactly that file is listed, more than 0 tests ran, 0 failed, 0 skipped/todo/pending, no unhandled errors, exit 0, and admission and cleanup are known.\n- It does not satisfy or clear G3 or any G-group, and it does not change the manifest or supervisor bytes.\n- production.test.ts is outside the manifest.\n- No carry to any successor.\n- The Windows G0/PREPARE/native/Job-object holds and the spent windows remain.\n- Whether it supplements or modifies class2's 'one qualification route'."
+     },
+     {
+      "id": "I-6",
+      "severity": "P3",
+      "title": "Transfer payload inventory absent from proposal (read-only inventory supplied)",
+      "claim": "Item 2 requires an inventory of every outgoing commit and file but does not include one. The payload is not limited to 'design records/continuity': it publishes everything since 1631323, including the supervisor and the SQL candidates.",
+      "evidence": "git log 2d291d0..1631323 returns 0 commits. git log 1631323..2d291d0 returns 31 commits, 7f8edd7 through 2d291d0, all single-parent and all by Samuel Boadu. git diff 1631323 2d291d0 gives:\n- 83 files, +71,841 / -229: 5 .xenios coordination files, 15 docs .md, 57 evidence .json, qualification-supervisor.mjs (+2387), 4 supabase/candidates files, 1 supabase/verification .mjs.\n- No .github change and no deletions. The union of per-commit paths is 83, so nothing was added and later removed.\n- A secret-pattern regex (credentialed postgres URL, JWT prefix, sk_, PRIVATE KEY, ghp_/github_pat_, AKIA, sb_secret_) found 0 matches across all patches. This is not proof of absence.\n- 179 added lines contain local Windows user/worktree paths. Contact-like matches are only test names (mobilePhone).\n- 25858ad..2d291d0 touches only the 15 records/continuity files, which confirms md:9 for that sub-range.\n- The live remote was not queried.",
+      "failureScenario": "The transfer is approved on the description 'records/continuity' while it actually publishes the 2,387-line supervisor, SQL candidate changes and coordination state. Or local path content goes out without anyone deciding to accept it.",
+      "fix": "Attach this inventory, or a regenerated equal one, to the transfer authority. Record acceptance or redaction of the local-path lines. Re-verify the live remote at 1631323d7cf60f145141e0f82586e64ef7c7d637 and push fast-forward only."
+     },
+     {
+      "id": "I-7",
+      "severity": "P3",
+      "title": "Non-Actions push consumers and token posture of automatic runs not named in landing/transfer authority",
+      "claim": "The landing and transfer authorities cover GitHub Actions runs only. They do not name other systems that consume pushes, or the token and install-script exposure of the ordinary jobs that run automatically.",
+      "evidence": "- 6077a6b:.replit:15-18 has a [deployment] build/run section, and .replit:43 lists a github integration.\n- 2d291d0:.xenios/RELEASE_STATE.json records Render 'autoDeploy': 'off'. That is a record claim, not current hosted proof.\n- The ordinary jobs have no permissions block (checks.yml at both blobs), so the token gets the repository default (UNKNOWN). Docs: GITHUB_TOKEN is 'initially set to the default setting'. actions/checkout@v4 runs with its default credential persistence, and npm ci runs install scripts.",
+      "failureScenario": "Landing on main or pushing the branch wakes an integration nobody named, or automatic ordinary-job runs execute install scripts with a write-capable token that nobody assessed.",
+      "fix": "Add one line to the landing and transfer authority: name non-Actions push consumers as checked or accepted as UNKNOWN, and state the token permissions accepted for automatic ordinary-job runs. Changing those jobs would be a release-gate change."
+     }
+    ],
+    "deviations": [
+     "Bash was used once for 'ls -la' on the scratchpad ci directory. The rule allows Bash only for git -C ... commands. The call was read-only and changed nothing.",
+     "One Bash call used 'echo ---' as an output separator between git commands. The rule says to avoid echo. Nothing was written.",
+     "Several git outputs were piped to cut, tail and sort -u, which are outside the allowed grep / sed -n / head / wc list. All were read-only with no redirection.",
+     "Scope mismatch (not a rule breach): the relayed user request is about designating codex-accepted-source-integration-20261005 as the NONPRODUCTION Supabase/PostgREST steward and returning its finding and acknowledgment. This computed task was a read-only CI pilot lens review. I performed only the read-only review: no steward record, acknowledgment, session contact, lease or dispatch was made by this lens. The parent must reconcile the two."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "I-1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld on the bytes, but downgraded from P1 to P2.\n\nWhat the bytes confirm:\n- 2d291d0 and 1631323 both carry blob 7a2c2c5. It has an unfiltered 'pull_request:' and push only to [main] (checks.yml:4-7). Each of its 4 jobs runs npm ci (:18).\n- Docs: default pull_request types are opened, synchronize and reopened. The push event runs the workflows in the pushed commit, so the transfer push itself starts no push run (branch filter [main]). Only a pull_request synchronize run is possible.\n- Proposal item 2 (CI_PILOT_PROPOSAL_20261009.md:26) has no open-PR check.\n\nNew evidence that lowers the likelihood:\n- git merge-base origin/main 2d291d0 = 6077a6b, so main is an ancestor of the branch (1553 commits ahead). A PR from this branch to main cannot have a merge conflict, so the 'conflicted PRs do not run' escape does not apply.\n- The newest repository run is 2026-09-03 (CI_ROUTE_EXISTING_RUN_EVIDENCE_20261009.json:10-21, observedAt 2026-10-10T00:30:16Z). So no PR from this branch to main was opened or synchronized up to that observation, assuming Actions creates runs.\n- md:27 already forbids making an unapproved PR.\n\nWhy P2: the risk depends on a PR opened after 00:30Z. It does not block every decision. It must be in the transfer authority before Samuel decides the transfer. The lens's one-sentence fix is correct. Current PR state remains NOT PROVEN."
+     },
+     {
+      "id": "I-2",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld, but 'infeasible' is overstated. A checks.yml-only patch can select only the pilot job on dispatch by adding jobs.<id>.if guards to the ordinary jobs, and that stays within the proposal's 'checks.yml only' scope. The 'intact' wording is ambiguous rather than impossible.\n\nTwo concrete defects survive:\n(1) md:27 says 'Keep ordinary four-job release gates intact', but the bytes contradict it for main:\n- main / origin/HEAD (6077a6b) carries blob b070777 with 3 jobs (test :10, typecheck :20, build :30).\n- The protection job (7a2c2c5:44) comes from a9bc544. `merge-base --is-ancestor a9bc544 origin/main` exits 1.\n- A patch built on the candidate file would add a gate to main.\n(2) No event guard is required on the pilot job. checks.yml's unfiltered pull_request trigger and its push to main would reach the pilot job after landing, and the landing PR's own merge-ref run would reach it too."
+     },
+     {
+      "id": "I-3",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld.\n- md:27 requires authority for 'any automatically triggered runs' but neither lists them nor compares routes.\n- md:27-28 do not order the original comparison (item 4) before landing (item 3).\n- The direct request at 91deaaa:DELIVERY_ACCELERATION_DIRECT_REQUEST_20261009.txt:315 is verbatim as cited.\n\nDocs (NOT RUN):\n- Skip instructions apply only to push and pull_request, and skipped checks 'remain in a Pending state'.\n- Push 'includes workflows that are not merged into the default branch', which supports the dedicated-branch alternative.\n\nBoth the separate-file route and the checks.yml route still cause one push-to-main run of the 3 main jobs unless [skip ci] is approved. The lens says this."
+     },
+     {
+      "id": "I-4",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld, with additions and one correction to the fix.\n\nDocs confirm (NOT RUN):\n- Re-runs are possible for 30 days, at most 50, with the same GITHUB_SHA/GITHUB_REF.\n- Re-runs 'use the privileges of the actor who initially triggered the workflow'.\n- run_id does not change on a re-run.\n\nAdditions:\n- The run evidence shows a manual re-run already happened in this repository: run 33819528387 'attempt': 2 (CI_ROUTE_EXISTING_RUN_EVIDENCE_20261009.json:18).\n- Concurrency has a 'queue' option. The default 'single' allows one pending run. 'max' allows up to 100 pending runs, processed FIFO. 'Single-job concurrency' (md:27) does not exclude 'max' (IV-2).\n\nCorrection: the lens's guard 'workflow_sha equals the landed commit' cannot be written into the same bytes, because a commit cannot contain its own SHA. In-file guards also cannot bind a dispatch against another ref, which runs that ref's own workflow bytes (IV-1)."
+     },
+     {
+      "id": "I-5",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld. All citations were verified:\n- 2d291d0 manifest:9057-9087: G3 requires G0 and G1, runs 5 files in one invocation, uses suite-evidence-reporter and NODE_ENV=test, and has ramFloorMiB 1536.\n- git grep finds no production.test.ts in qualification-manifest-20261008.json.\n- RECOVERY_DECISIONS_20261007.md:77 at 91deaaa: class2 = 'One existing supervisor/Job route'.\n- DOC49_NEXT_REVIEW_HANDOFF_20261008.md:168: 'class2 one qualification route'.\n- md:55 and md:92 omit skip/todo, which the specialist's md:27 includes.\n- The three files contain only it.each, with no skip, todo, only or platform branches.\n\nmd:21 'explicitly replaces the ... G0 prerequisite for these three CI commands' is silent on G1 and on whether a green receipt counts toward G3. That is a real gap for the procedure decision Samuel is asked to make now."
+     },
+     {
+      "id": "I-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Independently reproduced:\n- 31 outgoing commits and 0 incoming; no merges; every commit has author and committer Samuel Boadu <[commit author email redacted]>.\n- 83 files, +71841/-229.\n- No deletions or renames in any commit (log --diff-filter=D/R returns 0).\n- 25858ad..2d291d0 touches 15 files, all under .xenios/ or docs/.\n- Secret-pattern count is 0. This is not proof of absence.\n- 179 added lines contain C:/Users paths.\n- No email addresses and no supabase.co, onrender or vercel hosts in added lines.\n\nCategory counts are confirmed: 5 .xenios, 15 docs md, 57 evidence json, the supervisor (+2387), 4 candidates files, 1 verification file."
+     },
+     {
+      "id": "I-7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld as a naming condition only.\n- 6077a6b:.replit:15-18 has a [deployment] section and :43 lists a github integration.\n- 2d291d0:.xenios/RELEASE_STATE.json:421,447,485 records Render autoDeploy 'off'.\n- No other CI or deploy config is in the tree at 2d291d0 (only .github/workflows/checks.yml, .replit, replit.md).\n- Nothing in the bytes shows Replit deploying on push, so this stays a 'name it or accept UNKNOWN' condition, not a demonstrated trigger."
+     }
+    ],
+    "checklistChallenges": [
+     {
+      "item": "8. One attempt across workflow events, re-runs, concurrency and re-reservations; no repeated consumption",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "PARTIAL agreed.\n- The policy exists (json:33-36 attemptLimit 1, retry false; md:25,55,90).\n- No mechanism covers re-runs (already used in this repository: run 33819528387 attempt 2), queue mode, the dispatching actor, dispatch refs, or whether a job that dies before any step consumes the attempt. Prior runs completed 'failure' in 4-6 s with empty step lists (evidence json:30-46,120-133).\n- The lens's proposed workflow_sha guard is self-referential (IV-1)."
+     },
+     {
+      "item": "9. Actual execution-triggering events (main push; PR opened/synchronize/reopened; non-main push with open PR; workflow landing and automatic bootstrap runs)",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "PARTIAL agreed.\n- Triggers were confirmed at 7a2c2c5:4-7 and b070777:4-7.\n- Only one workflow exists at main, at 1631323 and at 2d291d0, and there is no dependabot or other CI config.\n- The transfer push starts no push run (push branches [main]); only a synchronize run on an open PR is possible.\n- After landing, dispatch can target any branch or tag once the workflow has run once (docs).\n- The proposal states that authority is required (md:27; json:166-167) but does not enumerate the runs."
+     },
+     {
+      "item": "11. Explicit Linux application procedure amendment and remaining Windows G0/native hold; neither inherit nor waive unapproved requirements",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "PARTIAL agreed.\n- md:21 and md:102 state the scope and retained holds, but defer the accepted-evidence text.\n- md:21 waives only the 'G0' prerequisite and is silent on G1 and on whether the receipt counts toward G3.\n- production.test.ts is not in the manifest.\n- Reusing class2, a Windows supervisor route, needs explicit wording."
+     },
+     {
+      "item": "12. Exact smallest missing workflow/approval/transfer/operating actions and separate-track transaction prerequisites",
+      "lensStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "PARTIAL agreed for the proposal.\n\nThe lens's own transaction-track list is stale (IV-5). 4f6bf1d (2026-10-10T13:49:05Z) records Samuel's decisions 2, 3 and 5 as received and consistent with r3 2801930. f04dd9c records r3 ERRATA ACCEPTED. 'Decisions 2 and 3' should no longer be listed as open prerequisites; the remaining items are coordinator binding, owner confirmation, the exact lease and dispatch. The proposal's md:9, md:104 and md:112 are also stale on these points."
+     }
+    ],
+    "missed": [
+     {
+      "id": "IV-1",
+      "severity": "P3",
+      "title": "Lens fix 'workflow_sha equals the landed commit' cannot be frozen into the bytes, and in-file guards do not bind other refs",
+      "claim": "Correction (b) and the I-4 fix ask for an in-job refusal unless github.workflow_sha is the landed commit. A file cannot contain the SHA of the commit that holds it. Separately, after landing, a dispatch against another branch or tag runs that ref's own workflow bytes, which need not contain any guard. So in-file guards stop accidental repeats on the same bytes (run_attempt stops re-runs), but they cannot enforce one attempt against other refs or other write-access actors.",
+      "evidence": "Docs, NOT RUN:\n- workflow_dispatch: GITHUB_SHA is the 'Last commit on the GITHUB_REF branch or tag'.\n- 'Once a workflow has run at least once, you can dispatch it against any branch or tag via the GitHub API or GitHub CLI'.\n- github.workflow_sha is 'The commit SHA for the workflow file'.\n- Environments: required reviewers are 'only available for public repositories' on Free, Pro and Team. Deployment branch/tag policies are available for private repositories on Pro and Team.\n- Repository plan and visibility are UNKNOWN.",
+      "fix": "Replace the guard wording with bindings that can be frozen before landing:\n- github.ref and github.workflow_ref equal refs/heads/main;\n- the event is workflow_dispatch and run_attempt is 1;\n- optionally, a known-parent check (the landed commit's first parent equals the recorded pre-landing main tip, currently 6077a6b), or a frozen deadline.\nState that cross-ref and actor enforcement is procedural or repository-side: an environment deployment-branch policy, required reviewers where the plan allows, or a named post-attempt disable/removal and who authorizes it. Samuel chooses."
+     },
+     {
+      "id": "IV-2",
+      "severity": "P3",
+      "title": "'Single-job concurrency' does not exclude queue: max (up to 100 pending runs executed FIFO)",
+      "claim": "The lens says concurrency allows 'at most one pending' run. That is true only for the default queue: single. The documented queue: max option lets up to 100 pending runs wait and then execute in turn. The proposal's 'single-job concurrency' (md:27) does not fix the queue mode or cancel-in-progress.",
+      "evidence": "Docs (control-workflow-concurrency), NOT RUN:\n- 'single (default): At most one job or workflow run can be pending'.\n- 'max: Up to 100 jobs or workflow runs can be pending'.\n- Combining max with cancel-in-progress: true is a validation error.\nProposal: md:27; json has no queue field.",
+      "fix": "State that the pilot job's concurrency uses the default queue: single with cancel-in-progress: false. Also state that a pending or duplicate dispatch is refused by the job guard and not executed."
+     },
+     {
+      "id": "IV-3",
+      "severity": "P3",
+      "title": "Dispatching and re-running identity is not bound or recorded",
+      "claim": "Any identity with write access can dispatch the landed workflow or re-run it, and re-runs carry the original actor's privileges. The approval record (md:25) names no dispatching identity, and the receipt fields (md:90) do not include triggering_actor. So 'one attempt by the authorized run' cannot be attributed or refused by actor.",
+      "evidence": "Docs:\n- github.triggering_actor is 'The username of the user that initiated the workflow run'.\n- github.actor is 'The username of the user that triggered the initial workflow run'.\n- Re-runs 'use the privileges of the actor who initially triggered the workflow'.\nProposal md:25 and md:90 list run/job/attempt but not the actor.",
+      "fix": "Name the single authorized dispatching identity in the approval. Record github.actor and github.triggering_actor in the receipt. Optionally refuse in-job on a mismatch; the actor name is known before freezing, so this guard is feasible."
+     },
+     {
+      "id": "IV-4",
+      "severity": "P3",
+      "title": "'Workflow successor' is ambiguous: a descendant of 2d291d0 cannot land on main without the 1553-commit merge the proposal forbids",
+      "claim": "md:3 and md:26 speak of an 'exact workflow successor' that the old transfer approval 'does not cover', which suggests a workflow commit on the quick-order branch above 2d291d0. origin/main is an ancestor of 2d291d0, 1553 commits behind it. Landing such a descendant on the default branch would publish those commits to main, which md:26 forbids ('No coordinator-branch/release/main merge'). Pushed to the quick-order branch instead, a successor that contains the pilot job is exposed to the I-1 pull_request path.",
+      "evidence": "- git merge-base origin/main 2d291d0 = 6077a6b.\n- git log origin/main..2d291d0 = 1553 commits; 6077a6b..1631323 = 1522.\n- md:3 and md:26 wording.\n- origin/HEAD resolves to 6077a6b (local ref; live remote not queried).",
+      "fix": "State that the workflow commit's parent is the current main tip (b070777 line), not a descendant of 2d291d0. State that the transfer payload is exactly 1631323..2d291d0 with no workflow commit. Or, if a successor on the quick-order branch is intended, include it in the transfer inventory and in the I-1 open-PR condition."
+     },
+     {
+      "id": "IV-5",
+      "severity": "P3",
+      "title": "Lens transaction-track list is stale: decisions 2, 3 and 5 are recorded as received",
+      "claim": "The lens lists 'decisions 2 and 3' among the separate transaction prerequisites, even though it cites 4f6bf1d. That commit records Samuel's decisions 2, 3 and 5 as received and consistent with r3. The proposal's md:112 ('decision2 stock and decision3 operating model/limits remain actual owner choices') and md:104 (r3 'QUEUED') are likewise stale.",
+      "evidence": "- 4f6bf1d (2026-10-10T13:49:05Z), REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md: 'Samuel's own decisions 2, 3 and 5 reached this session directly', with the coordinator as the authoritative register.\n- f04dd9c (2026-10-10T01:04:54Z): 'ERRATA ACCEPTED'.\n- 91deaaa was frozen at 00:39:37Z, before both.",
+      "fix": "In the separate-track list:\n- record decisions 2, 3 and 5 as received (the coordinator binds r3 2801930 plus doc 76 f04dd9cb);\n- list the remaining items as owner confirmation, the exact 17+4 lease and dispatch, plus any further gate the coordinator records (for example the NONPRODUCTION connection/timeout steward finding in the current user request).\nDo not re-ask those decisions."
+     },
+     {
+      "id": "IV-6",
+      "severity": "P3",
+      "title": "Attempt consumption is undefined for a GitHub-side job that fails before any step, which this repository has already shown",
+      "claim": "The lens's definition (d), 'consumed when the pilot job ... first starts', is ambiguous for runs that GitHub marks completed/failure within seconds with no steps, the pattern in the existing evidence (cause UNKNOWN). md:28 says 'A denial or unavailable capability stops the attempt' without saying whether that consumes the one attempt or needs a new reservation. Without a rule, a capacity failure could become an informal retry, or a reservation could be counted as spent without anything running.",
+      "evidence": "- CI_ROUTE_EXISTING_RUN_EVIDENCE_20261009.json:30-33 (created 23:52:38Z, updated 23:52:42Z, failure) and :43-46 (6 s).\n- Job steps are null or empty (:86-113, :120-133); the log read returned 404 (:138-143).\n- md:28.",
+      "fix": "Define consumption in the approval record by an observable event that Samuel chooses, for example the first executed step of the pilot job, or run creation. Name how a no-step GitHub-side failure is recorded and whether it needs a new approval."
+     }
+    ],
+    "opinion": "I uphold lens I's disposition, INSUFFICIENT_AS_SPECIFIED_WITH_SMALLEST_EXACT_CORRECTION, and found no P0. Nothing was executed, pushed, dispatched or changed. GitHub behaviour below is reasoned from docs.github.com and is NOT RUN.\n\n**Findings:**\n- **I-2 to I-5 (P2) and I-6, I-7 (P3):** the bytes support all of them.\n- **I-1, downgraded from P1 to P2:**\n  - main (6077a6b) is an ancestor of the quick-order branch, so a PR from that branch to main cannot be suppressed by a merge conflict.\n  - The repository shows no run after 2026-09-03 up to the 2026-10-10T00:30Z observation. So no PR from that branch was opened or synchronized by then.\n  - The risk is real but conditional. It belongs in the transfer authority as a pre-push open-PR check; it does not block every decision.\n- **I-2 wording:** 'infeasible' is overstated. Guards on the ordinary jobs inside checks.yml would satisfy it. Two concrete defects remain:\n  - 'four-job release gates intact' contradicts main's 3-job blob b070777;\n  - the pilot job has no required event guard.\n\n**Corrections to the lens's own fix:**\n- Its workflow_sha guard cannot be frozen into the bytes, because a commit cannot contain its own SHA.\n- In-file guards cannot bind a dispatch against another ref, which runs that ref's own bytes. Use ref/workflow_ref plus a known-parent or deadline check, and treat cross-ref and actor enforcement as procedural or repository-side (IV-1).\n\n**Further gaps:**\n- The concurrency queue: max option (IV-2).\n- No bound dispatching identity (IV-3).\n- The ambiguous 'workflow successor': it must sit on main's line, not above 2d291d0 (IV-4).\n- Attempt consumption is undefined for a job that GitHub fails before any step (IV-6). The repository already shows runs that 'fail' in 4-6 s with no steps.\n\n**Transaction-track list:** it is stale. 4f6bf1d records decisions 2, 3 and 5 as received, so they must not be re-asked (IV-5).\n\n**What is actually missing, for separate decisions:**\n1. Samuel's class2 Linux-subset amendment text.\n2. Workflow path ownership and frozen bytes on main's line.\n3. Landing route with its enumerated automatic runs.\n4. Transfer of exactly 1631323..2d291d0 (31 commits, 83 files) with the open-PR check.\n5. The original reviewer's comparison before landing.\n6. Approval naming the actor, window and consumption rule.\n\nNone of these gates the transaction track.",
+    "deviations": [
+     "Hard-rule breach: two Bash calls used 'git merge-base' (one --is-ancestor, one plain). The allowed subcommands are show, ls-tree, log, diff, grep and cat-file. Both calls were read-only and nothing changed.",
+     "Several Bash calls chained 2 or 3 allowed git commands with ';' in one invocation, and some piped grep into a second grep. There was no cd, echo, shell variable, loop or redirection, and nothing was written.",
+     "ToolSearch was called once to load the WebFetch schema. Every WebFetch went to docs.github.com documentation pages only, with no API or repository pages.",
+     "Reading 6077a6b:.replit with sed -n 1,50p also showed configuration values outside the cited lines (a Supabase URL, a publishable key and an admin email). None is reproduced in this output.",
+     "Scope mismatch, not a rule breach: the relayed user request designates codex-accepted-source-integration-20261005 as NONPRODUCTION Supabase/PostgREST steward and asks for its finding, its acknowledgment and the original review. This computed task was a read-only verification of CI pilot lens I. I did only the read-only verification. I made no steward record, acknowledgment, session contact, lease or dispatch. The parent must reconcile the two."
+    ]
+   }
+  }
+ ],
+ "critic": {
+  "disposition": "INSUFFICIENT_AS_SPECIFIED_WITH_SMALLEST_EXACT_CORRECTION",
+  "verdict": "INSUFFICIENT_AS_SPECIFIED_WITH_SMALLEST_EXACT_CORRECTION. I ran nothing. Everything below comes from reading Git objects, the installed Vitest 4.1.10 source and GitHub documentation. Behaviour of Actions, Docker, npm and Vitest is reasoned and NOT RUN.\n\n**Result after resolving the disagreements**\n- No P0 or P1 remains.\n- 7 P2 corrections (CI-1 to CI-7) must go into a proposal revision before Samuel can make the separate procedure, workflow/landing, transfer and execution decisions.\n- 9 P3 items (CI-8 to CI-16) go forward as named conditions for the workflow-author freeze that md:88 already requires.\n\n**What holds**\n- Candidate identity: commit 2d291d0, tree be16220c. Its application bytes equal 25858ad: zero files outside .xenios/ and docs/ changed between them.\n- The three test-file blobs match the proposal.\n- The argv is valid for the locked Vitest 4.1.10, and each filter selects exactly one file.\n- None of the three files' import chains reaches Supabase, pg, environment variables or a real endpoint.\n- The \"does not establish\" limits in md:3 and md:11 are accurate.\n- The proposal stays held (json:21-30) and passes no secrets.\n\n**Decisive spot-checks**\n- Main's checks.yml (blob b070777a) has three jobs, at lines 10, 20 and 30. The candidate's blob 7a2c2c58 adds a `protection` job at lines 40-54.\n- Main is an ancestor of the candidate: 2d291d0..6077a6b is 0 commits; the reverse is 1553.\n- Heap flag: Vitest cli-api.BK8pd4xc.js:3731-3737 passes the worker only --cpu-prof, --heap-prof and --diagnostic-dir from process.execArgv, and forks with that list (3084-3089). So the 1024 MiB flag never reaches the process that runs the tests.\n- The accepted Windows manifest pairs that same argv flag with NODE_OPTIONS=--max-old-space-size=1024 in all 16 commands (for example G3, manifest@2d291d0:9087). The pilot argv drops that pairing.\n- GitHub docs (re-fetched) list a 14 GB SSD for ubuntu-24.04, against the proposal's 20 GiB disk floor.\n- A manual re-run has already happened in this repository: run 33819528387 is attempt 2 (evidence json:18).\n- Transfer 1631323..2d291d0: 31 commits, 83 files. The pilot's own files are byte-identical at 1631323.\n\n**Disagreements resolved**\n- I-1: P2, not P1. It blocks only the transfer decision. It becomes an unapproved execution (P0 class) if a PR with that head branch is open at push time; the current PR state is NOT PROVEN.\n- I-2: calling it \"infeasible\" overstates it. Guards inside checks.yml would work, but they change the ordinary jobs' bytes.\n- The lenses' proposed in-file guards on workflow_sha and on the workflow blob hash cannot work, because a file cannot contain its own commit SHA or blob hash. I replaced them with guards that can be frozen.\n- H-4: narrowed to the undefined admission event and clock, and the stop after a timeout.\n- H-1: its claim that the worker's heap would be sized from host RAM is rejected. The effective worker heap is UNKNOWN.\n\nNothing here is Samuel's approval.\n\n**Scope:** the relayed user request is a different assignment: designating the NONPRODUCTION Supabase/PostgREST steward and getting its acknowledgment. I did not perform it (see deviations and missingActions).",
+  "checklist": [
+   {
+    "item": "1. Exact candidate SHA/tree and explicit checkout of that SHA, not a PR merge ref or workflow ref",
+    "status": "ADEQUATE",
+    "note": "- Verified: commit 2d291d0, tree be16220c. `git diff --name-only 25858ad 2d291d0` outside .xenios/ and docs/ returns 0 files.\n- md:43 requires an explicit full-SHA checkout with persist-credentials:false and contents:read. md:88 forbids dynamic ref inputs. md:92 stops on a source/hash mismatch.\n- Conditions: CI-13 (assert rev-parse HEAD and HEAD^{tree} after checkout); CI-4 (bind the dispatch ref and workflow_ref).\n- The checkout depends on 2d291d0 being published (CI-3, CI-14)."
+   },
+   {
+    "item": "2. Exact 3-file commands, declared assertion boundaries, actual evidence versus durability claims",
+    "status": "PARTIAL",
+    "note": "- Syntax, filters and import chains are verified by both lens G and its verifier. The include glob is at vitest.config.ts@2d291d0:29; there are no setupFiles and no execArgv. md:3 and md:11 correctly say a pass does not establish the transaction, a SQL commit, a customer submit or durability.\n- Remaining gaps:\n  - CI-2 (P2): the heap flag misses the test worker.\n  - CI-6 (P2): the pass predicate omits skip/todo/pending and unhandled errors, and md:11's \"readback\" wording leaves out the fake status-mutation and upload-url paths.\n  - CI-9 (P3): where the output file and the Vite config temp file land."
+   },
+   {
+    "item": "3. Pinned Node/npm/lock/platform container/actions; dependency setup, ignored lifecycle scripts and binary feasibility",
+    "status": "ADEQUATE_WITH_P3_CONDITIONS",
+    "note": "- Image is pinned by platform digest, and the run refuses unless node v20.19.0 and npm 10.8.2 (md:45, md:73-74).\n- Lock blob is 912f4f85. The Linux x64 esbuild and rollup native packages carry integrity in the lock.\n- `--ignore-scripts` looks feasible from static source: esbuild resolves its platform package at runtime, and the rollup native package has no install script. NOT RUN.\n- Actions are pinned to commits.\n- NOT PROVEN: the lock's raw SHA256 and the image digest metadata. Both are guarded only by fail-closed checks at run time.\n- Conditions: CI-11 (411 of 672 lock entries have no integrity; setup egress is limited by how commands are built, not by a filter), CI-13 (every docker run uses the digest with --pull=never; record action runtimes), CI-9 (state the setup container's own user and mounts)."
+   },
+   {
+    "item": "4. Isolation, including the Supertest wildcard listener, credentials/token permissions, network setup versus test network none",
+    "status": "ADEQUATE_WITH_P3_CONDITIONS",
+    "note": "- md:49 specifies network none, no published ports, read-only root and source, a non-root user, cap-drop ALL, no-new-privileges and no Docker socket.\n- Supertest 7.2.2 calls listen(0) with no host and connects to 127.0.0.1. md:51 authorizes that listener without claiming a loopback bind.\n- md:43 requires contents:read and persist-credentials:false. This is a requirement only: neither blob has a permissions block today.\n- Conditions: CI-9 (non-root UID matched to the owner of the writable bind directories), CI-11 (setup egress), CI-15 (token posture of the ordinary jobs that run automatically), and an explicit container env allowlist at freeze time."
+   },
+   {
+    "item": "5. Resource-bound mechanisms: heap vs total container, host admission, worker/fork processes, complete argv",
+    "status": "PARTIAL",
+    "note": "- Correct as proposed: memory-swap equal to memory means no swap (json:121-122). A 2560 MiB free-RAM floor fits the documented 8 or 16 GB runners.\n- Gaps:\n  - CI-2 (P2): the heap cap never reaches the forked worker, and the accepted manifest's NODE_OPTIONS pairing was dropped.\n  - CI-7 (P2): the 20 GiB disk floor names no filesystem and exceeds the documented 14 GB SSD.\n  - CI-12 (P3): the PID limit of 64 counts threads.\n- md:88 leaves the complete argv and mounts to the freeze, which is acceptable once CI-2 is fixed."
+   },
+   {
+    "item": "6. Defined 30-minute start/end boundary; queue/events/checkouts/setup/grace/cleanup/artifact/finalization; per-job timeout, not whole pilot reclaimed",
+    "status": "PARTIAL",
+    "note": "- The phase ceilings sum to 1465 s, which leaves 335 s with no ceiling for job setup, checkout, container creation and upload.\n- No retry or continuation, and a timeout counts as an incomplete attempt (md:55, md:90): adequate.\n- Gaps:\n  - CI-4 (P2): the window admission event, its clock and the relation to queue time are undefined. md:25 and md:92 state intent only.\n  - CI-8 (P3): the end of the 30 minutes is undefined against always() steps, which can run until GitHub's forced termination about 5 minutes later. Step timeout-minutes accepts integers only. Per-phase timeouts wrap the docker client, not the container."
+   },
+   {
+    "item": "7. All failure/timeout outputs, owned-container cleanup, unknown-state retention and artifact ceilings",
+    "status": "ADEQUATE_WITH_P3_CONDITIONS",
+    "note": "- As policy, md:90-92 is adequate: the retained fields, \"unknown is never green\", cleanup of recorded own containers only with no prune or volume removal, and preservation of failed receipts.\n- Conditions: CI-8 (expire at container level and inspect exit/OOM state before removal), CI-10 (no mechanism enforces the 20 MiB ceiling; what is kept when output is over the limit is undefined; the job log falls under a separate retention).\n- Whether a refusal before any test consumes the attempt is decided under item 8 (CI-4)."
+   },
+   {
+    "item": "8. One attempt across workflow events/reruns/concurrency/re-reservations; no repeated consumption",
+    "status": "PARTIAL",
+    "note": "- CI-4 (P2): the policy exists (json:33-36; md:25, md:55) but has no mechanism.\n- Re-runs: GitHub allows them for 30 days, and this repository has already done one (run 33819528387, attempt 2).\n- Concurrency: queue: max allows up to 100 pending runs.\n- After the first run, a dispatch can target any ref, which runs that ref's own workflow bytes.\n- No dispatching identity is bound.\n- The window lives only in an approval record that bytes frozen earlier cannot read.\n- After the attempt, the trigger has no defined lifetime.\n- Consumption is undefined for refusals before any test and for GitHub-side jobs that fail with no steps (evidence json:30-46, 77-143; cause UNKNOWN)."
+   },
+   {
+    "item": "9. Actual execution-triggering events: main push; PR opened/synchronize/reopened; non-main push with an open PR can fire; manual workflow landing and automatic bootstrap run permissions",
+    "status": "PARTIAL",
+    "note": "- Triggers verified: b070777a:4-7 and 7a2c2c58:4-7 both have an unfiltered pull_request trigger and push only to main. So the transfer push itself starts no push run.\n- md:27 and json:166-167 say landing and automatic runs need authority.\n- Gaps:\n  - CI-3 (P2): the transfer push can fire pull_request synchronize for an open PR. Main is an ancestor of the branch, so a merge conflict cannot suppress it.\n  - CI-1 (P2): the pilot job has no event guard, so push and PR events would reach it after landing.\n  - CI-5 (P2): the automatic runs of each landing route are not listed.\n  - CI-4: after landing, dispatches against other refs remain possible."
+   },
+   {
+    "item": "10. Current main 3 jobs vs candidate 4 jobs source difference; no blind release-gate/trigger equivalence",
+    "status": "PARTIAL",
+    "note": "- CI-1 (P2): md:27 says \"Keep ordinary four-job release gates intact\", but main's blob b070777a has three jobs. The protection job (7a2c2c58:40-54) exists only on the branch.\n- A successor built from the candidate file would add a release gate to main.\n- A dispatch guard inside checks.yml changes the ordinary jobs' bytes, not their behaviour on push or PR.\n- The protection scripts' result on main is NOT RUN."
+   },
+   {
+    "item": "11. Explicit Linux application procedure amendment and remaining Windows G0/native hold; neither inherit nor waive unapproved requirements",
+    "status": "PARTIAL",
+    "note": "- CI-6 (P2): md:21 and md:102 state the scope and the retained native holds, but put off the accepted-evidence text.\n- md:21 replaces only G0 and says nothing about G1 or G3.\n- G3 (manifest@2d291d0:9057-9087) requires G0 and G1 and runs 5 files under suite-evidence-reporter with NODE_ENV and NODE_OPTIONS. production.test.ts appears 0 times in the manifest.\n- The specialist's stop on skip/todo (prerequisites md:27) is neither kept nor explicitly dropped. md:96 supersedes only \"illustrative limits\".\n- Reusing class2, which is the Windows-supervisor route, needs explicit wording."
+   },
+   {
+    "item": "12. Output the exact smallest missing workflow/approval/transfer/operating actions and separate-track transaction prerequisites",
+    "status": "PARTIAL",
+    "note": "- Accurate as far as they go: the NOT PRESENT list (md:30), the approval nulls (json:21-30) and the statement that the transaction track is separate (md:112).\n- Not stated: the corrections CI-1 to CI-7, the open-PR check, the route table, the comparison ordered before landing, and the attempt-consumption rule.\n- CI-16 (P3): md:104 and md:112 are stale. f04dd9c records r3 ERRATA ACCEPTED, and 4f6bf1d records decisions 2, 3 and 5. The ordered actions are given in missingActions."
+   }
+  ],
+  "upheld": [
+   {
+    "id": "CI-1",
+    "severity": "P2",
+    "sources": "G-1 (lens G), I-2 (lens I), IV-4 (lens I verifier), item 10. Spot-checked: b070777a:10,20,30; 7a2c2c58@2d291d0:40-54; 2d291d0..6077a6b is 0 commits and 6077a6b..2d291d0 is 1553.",
+    "title": "The workflow premise says 'four-job gates intact' but main has three jobs; the pilot job has no event guard; the successor's parent is undefined",
+    "claim": "- md:27 tells the author to keep \"ordinary four-job release gates intact\" in a checks.yml-only successor that must land on the default branch.\n- Main's blob b070777a (at 6077a6b) has three jobs: test, typecheck and build. The protection job exists only on the branch.\n- A dispatch runs every job whose condition allows it. Checks.yml's unfiltered pull_request trigger and its push-to-main trigger would also reach an unguarded pilot job.\n- \"Workflow successor\" (md:3, md:26) is ambiguous. A descendant of 2d291d0 cannot land on main without publishing 1553 commits, which md:26 forbids.",
+    "fix": "Amend md:27 and the json setup:\n1. Base is main blob b070777a5e49076162e38fd7c389cd55f727eddc. The workflow commit's parent is the current main tip, refreshed (now 6077a6b), not a descendant of 2d291d0. The workflow commit is not part of the transfer payload.\n2. The protection job is excluded. Adding it to main is a separate release-gate decision.\n3. Samuel chooses the structure:\n   (a) A new workflow file whose only trigger is workflow_dispatch. checks.yml stays byte-identical. This amends md:27's \"checks.yml only\" path scope.\n   (b) checks.yml with only an `if:` event guard added to each of test, typecheck and build, steps unchanged, explicitly acknowledged as a change to the release-gate file.\n4. The pilot job runs only when github.event_name == 'workflow_dispatch'.\n5. State that adding workflow_dispatch changes main's trigger set. The original reviewer's comparison is a diff against b070777a."
+   },
+   {
+    "id": "CI-2",
+    "severity": "P2",
+    "sources": "G-2 (lens G), H-1 (lens H), both verifiers. Spot-checked: cli-api.BK8pd4xc.js:3650-3655, 3660-3668, 3731-3737 and 3084-3089 (installed Vitest 4.1.10); vitest.config.ts@2d291d0:26-30; manifest@2d291d0:9087 (16 NODE_OPTIONS heap entries).",
+    "title": "The exact argv's 1024 MiB heap cap does not reach the forked worker that runs the tests",
+    "claim": "- The argv (md:81-83; json:44-56, 67-79, 90-102; heapMiB at json:126) puts --max-old-space-size=1024 on the orchestrator only.\n- Vitest 4.1.10 builds the worker's execArgv from process.execArgv filtered to --cpu-prof, --heap-prof and --diagnostic-dir, plus its own flags, conditions and project execArgv. The candidate's config sets no execArgv.\n- The accepted Windows manifest pairs the same flag with NODE_OPTIONS=--max-old-space-size=1024 in every command. The pilot dropped that pairing.\n- The worker's effective heap limit is UNKNOWN (NOT RUN). It is not the value the proposal declares.",
+    "fix": "Before approval, freeze one option in md:81-83 and the json argv:\n(a) Add the single token `--execArgv=--max-old-space-size=1024` to each command. The two-token form fails to parse.\n(b) Set NODE_OPTIONS=--max-old-space-size=1024 in the frozen container env. The worker env spreads process.env (cli-api:3650-3655), and this matches the manifest.\n(c) Restate the cap as orchestrator-only, leaving the cgroup as the worker's only bound.\nIn every case the receipt records the worker's actual execArgv and NODE_OPTIONS, or says they are unrecorded. The value stays the proposal's own; Samuel decides."
+   },
+   {
+    "id": "CI-3",
+    "severity": "P2",
+    "sources": "I-1 (lens I, P1, downgraded), GV-1 (lens G verifier). Spot-checked: 7a2c2c58:4-7 and :18,28,38,52; evidence json:10-21 (newest run 2026-09-03, observed 2026-10-10T00:30:16Z); 1631323 committed 2026-10-06; main is an ancestor of the branch.",
+    "title": "The approved source transfer can fire unapproved pull_request runs of the existing 4-job workflow",
+    "claim": "- md:26 treats pushing 2d291d0 to codex/xenios-health-quick-order-20261005 as a pure transfer.\n- If any open PR has that head branch, the push fires pull_request synchronize. That runs all 4 existing jobs: npm ci with lifecycle scripts, the full Vitest suite, check, build and protection. They run on a networked runner with default token permissions, outside every pilot condition.\n- Authority for automatic runs is tied only to landing (md:27; json:166-167).\n- No merge conflict can suppress the run, because main is an ancestor of the branch.\n- The run history is consistent with no PR being open when 1631323 was pushed, but the current PR state is NOT PROVEN.\n- Rated P2 because it blocks only the transfer decision. It becomes an unapproved execution (P0 class) if a PR is open at push time.",
+    "fix": "Append to md:26:\n1. Immediately before the push, make a read-only record of open PRs whose head is that branch.\n2. If any exists, or the state is unknown, stop unless the transfer authority explicitly names and accepts the resulting pull_request run(s), their 4-job content and the lifecycle scripts.\n3. Never open a PR as part of the transfer. Use skip-ci only with separate approval.\n4. Record the PR state in the transfer inventory."
+   },
+   {
+    "id": "CI-4",
+    "severity": "P2",
+    "sources": "I-4 (lens I); GV-3 and GV-2 (lens G verifier); H-4 window part, as narrowed by the lens H verifier; IV-1, IV-2, IV-3, IV-6 (lens I verifier); HV-4 (lens H verifier); G-7 (lens G). Spot-checked: evidence json:18 (attempt 2) and :30-46.",
+    "title": "'One attempt within a four-hour window' has no definition or mechanism, and the landed trigger has no lifetime",
+    "claim": "md:25, md:27 and md:55 (json:33-36) state one attempt, no retry, single-job concurrency and a 4-hour window, but nothing enforces or defines them. From the docs, NOT RUN:\n- Re-runs are allowed for 30 days, up to 50 times, on the same SHA, with run_attempt incrementing. This repository has already done one.\n- Concurrency only serializes runs, and queue: max allows 100 pending runs.\n- After the first run, a dispatch can target any ref, which runs that ref's own bytes.\n- Any actor with write access can dispatch.\n\nIn the proposal itself:\n- The window lives only in the approval record, which bytes frozen earlier (md:88) cannot read.\n- The admission event, its clock and the relation to queue time are undefined.\n- After the attempt, the trigger and pilot job stay live on main.\n- It is undefined whether these consume the attempt: refusals before any test (admission, pull, setup), and GitHub-side jobs that fail with no steps (cause UNKNOWN).",
+    "fix": "Add to md:25, md:27 and md:55:\n1. Pilot-job guards that can be frozen before landing: event == workflow_dispatch; run_attempt == 1; github.ref and github.workflow_ref equal refs/heads/main. Optionally, a known-parent check (the landed commit's first parent equals the recorded pre-landing main tip) and a named dispatching identity checked against github.actor and triggering_actor, both recorded in the receipt.\n2. Concurrency uses the default queue: single with cancel-in-progress: false. A pending or duplicate dispatch is refused by the guard.\n3. Admission is the pilot job's start on the runner, with runner UTC checked against the window.\n4. Samuel chooses one window mechanism:\n   - an absolute UTC not-after time frozen into the bytes before the freeze; or\n   - procedural enforcement plus a named, separately authorized commit that restores main after the attempt (back to b070777a, or the pilot file removed), with its owner, stating the trigger stays live until then.\n5. Define consumption by an observable event Samuel chooses. Classify refusals before any test and no-step GitHub-side failures: whether they consume the attempt, and whether a new approval is needed.\n\nEnforcement across refs and actors beyond in-file guards stays procedural or repository-side."
+   },
+   {
+    "id": "CI-5",
+    "severity": "P2",
+    "sources": "I-3 (lens I) and its verifier.",
+    "title": "The landing route's automatic runs are not listed, and the original comparison is not ordered before landing",
+    "claim": "- md:27 requires authority for \"any automatically triggered runs\" but does not list them for any route.\n- Item 3 (landing) comes before item 4 (the original comparison, md:28). \"Frozen reviewed patch\" names no reviewer.\n- Samuel cannot authorize runs that are not named.",
+    "fix": "Add a route table. For each route, list the jobs, ref, token permissions and the authority needed:\n- PR route: pull_request opened, plus each synchronize and reopened, on the merge ref for every unguarded job; then the merge push to main.\n- Direct push to main: one push run of the unguarded jobs. Branch protection is UNKNOWN.\n- skip-ci: applies to push and pull_request only, and leaves required checks Pending.\n- If offered, a push trigger on a dedicated non-default branch: the push itself starts execution and must fall inside the window.\n\nState that the original reviewer compares the frozen workflow bytes and hash before any landing action. Samuel chooses the route."
+   },
+   {
+    "id": "CI-6",
+    "severity": "P2",
+    "sources": "I-5 (lens I); G-4 (lens G); H-10 (lens H); verifiers. Spot-checked: manifest@2d291d0:9057-9087; 0 matches for production.test in the manifest; prerequisites md:27; proposal md:21, md:55, md:96, md:102.",
+    "title": "The Linux amendment's accepted-evidence text, its relation to G1/G3, and the full pass predicate are missing",
+    "claim": "- md:102 says the amendment \"must say precisely which application evidence it accepts\" but supplies no text.\n- md:21 replaces only G0 and says nothing about G1 or G3.\n- The pilot commands match no manifest command: G3 requires G0 and G1 and runs 5 files under suite-evidence-reporter with NODE_ENV and NODE_OPTIONS. production.test.ts is not in the manifest.\n- md:55 omits skipped, todo and pending tests and unhandled errors. The specialist's stop rule included them, and md:96 does not say whether that rule is kept.\n- Vitest's JSON `success` ignores pending and todo tests (index.UpGiHP7g.js:3549-3552). allowOnly defaults to !CI.\n- md:11's \"readback\" leaves out that admin-readback drives a fake status-mutation path (bc8dc0c5:463-504) and a fake upload-url/document path (506-545).\n- class2 is the Windows-supervisor route (RECOVERY_DECISIONS_20261007.md:77 @91deaaa).",
+    "fix": "Add an amendment text block stating:\n- Accepted evidence is per-file Vitest JSON from the pinned Linux container at 2d291d0 / tree be16220c.\n- A file passes only if: exit 0; testResults.length == 1 with name == <root>/<exact path>; numTotalTests > 0; numFailedTests == numFailedTestSuites == numPendingTests == numTodoTests == 0; no unhandled-error output; admission and cleanup state known.\n- It does not satisfy or clear G3, G1 or any G-group, and changes no manifest or supervisor bytes.\n- production.test.ts is outside the manifest.\n- Nothing carries to any successor.\n- The Windows G0, PREPARE, native and Job-object holds and the spent windows are retained.\n- Whether it supplements or modifies class2's \"one qualification route\".\n- md:11 lists the fake status-mutation and upload-url/document paths as exercised against injected fakes only."
+   },
+   {
+    "id": "CI-7",
+    "severity": "P2",
+    "sources": "H-2 (lens H) and its verifier; HV-4 in part. docs.github.com github-hosted-runners re-fetched: Linux 14 GB SSD (public 4 CPU/16 GB; private 2 CPU/8 GB) for ubuntu-24.04.",
+    "title": "The 20 GiB free-disk admission floor names no filesystem and exceeds the documented runner SSD",
+    "claim": "- md:66 and json:127-128 propose a 20 GiB free-disk floor, carried over from the specialist's illustrative figure (prerequisites md:27). It names no filesystem, and the RAM floor's measurement is also unnamed.\n- GitHub documents 14 GB SSD for the proposed runner. Actual free space is UNKNOWN.\n- Approving the floor could refuse the single attempt by design. Or, if a different mount is measured, it protects nothing.",
+    "fix": "- Name the measured paths (the Docker data root and the dependency/output bind directories) and the RAM measure.\n- Reconcile 20 GiB with the documented 14 GB, or have Samuel re-select the floor.\n- State whether an admission refusal consumes CI-APP-PILOT-01 (ties to CI-4)."
+   },
+   {
+    "id": "CI-8",
+    "severity": "P3",
+    "sources": "H-3 (lens H); H-4 remainder; lens H verifier.",
+    "title": "Timeout enforcement is on the docker client, and the 30-minute end bound is imprecise",
+    "claim": "- md:71 wraps `timeout` around the docker client. Node as PID 1 ignores SIGTERM without a handler, and the runner kills the step's process tree, not containers owned by the Docker daemon.\n- always() steps can keep running after a timeout until GitHub's forced termination about 5 minutes later.\n- Step-level timeout-minutes accepts integers only.\n- 335 s of the 30 minutes has no ceiling.",
+    "fix": "Workflow-author condition:\n- Set job timeout-minutes: 30. Start is the job start on the runner; end is job completion.\n- Name every container before it starts. On expiry run `docker stop -t 5`, then `docker kill`, on that name (or use --init with a timeout inside the container).\n- Inspect exit and OOM state before removing the container.\n- Receipt and cleanup steps use !cancelled(), or use always() with explicit acceptance of the extension after a timeout.\n- Set ceilings for the uncapped phases, or accept them explicitly."
+   },
+   {
+    "id": "CI-9",
+    "severity": "P3",
+    "sources": "G-3 (lens G); H-8 (lens H); HV-1 (lens H verifier). The scenario of a read-only node_modules is rejected as a proposal defect (R-7).",
+    "title": "Mount, user and output layout prerequisites",
+    "claim": "- Vitest resolves --outputFile against the root (index.UpGiHP7g.js:3620-3627), which md:49 makes read-only.\n- Vite 7.3.5 writes the bundled config to node_modules/.vite-temp (config.js:35984-35999).\n- The non-root UID, HOME, the npm cache, exec permission on the dependency mount, and inspecting the container before removal are all unstated. So is the setup container's own isolation.",
+    "fix": "Workflow-author condition:\n- Container workdir is the source root.\n- The mountpoints <root>/.ci-pilot/out and node_modules are created on the host beforehand and bind-mounted writable over the read-only source. Alternatively, freeze --configLoader runner (experimental).\n- Hash a node_modules manifest before the first invocation and after the last.\n- For setup, put HOME and the npm cache on a writable disk path.\n- Allow exec on the dependency mount.\n- Record --user UID:GID and match it to the owner of the bind directories.\n- State the setup container's user, root mode and source-mount mode.\n- No --rm until inspect has run."
+   },
+   {
+    "id": "CI-10",
+    "severity": "P3",
+    "sources": "H-5 (lens H); HV-3 (lens H verifier).",
+    "title": "Artifact, stream and job-log ceilings have no mechanism",
+    "claim": "- md:90's 20 MiB / 7-day ceiling has no enforcement mechanism, and the specialist's per-stream bound was dropped.\n- What is kept when output is over the limit is undefined.\n- Container output echoed into the job log falls under the repository's log retention, outside the artifact policy.",
+    "fix": "Workflow-author condition:\n- Capture each stream to a bounded file in the owned output directory, and echo only whitelisted summary lines to the job log.\n- Check the size before upload. Over the limit, upload only a bounded metadata receipt (sizes, hashes, reason).\n- Record the repository's artifact and log retention settings."
+   },
+   {
+    "id": "CI-11",
+    "severity": "P3",
+    "sources": "G-6 (lens G); H-6 and H-9 (lens H).",
+    "title": "'Locked npm packages' is version-locked, not integrity-locked; setup egress is limited only by how commands are built",
+    "claim": "- 411 of 672 lock entries have no resolved or integrity field. Examples: vite 7.3.5 (lock:8249), express 5.2.1 (5192), esbuild, rollup, pg and supabase-js.\n- md:47 and md:49 describe the setup as locked packages.\n- Setup egress is bounded only by the commands used; no filter enforces it.",
+    "fix": "Workflow-author condition:\n- Disclose the limitation.\n- The setup receipt records the hash of node_modules/.package-lock.json and the installed integrity values.\n- Describe egress as limited by construction only.\n- An optional --no-update-notifier is a setup argv change for Samuel to decide before the freeze.\n- Regenerating the lockfile is a separately scoped source change."
+   },
+   {
+    "id": "CI-12",
+    "severity": "P3",
+    "sources": "H-7 (lens H).",
+    "title": "PID limit 64 counts threads",
+    "claim": "The cgroup pids controller counts threads. The Vitest parent, the forked worker and esbuild's service process share the limit of 64, and the margin is unmeasured.",
+    "fix": "Workflow-author condition:\n- Record peak PIDs and any limit hit from the cgroup.\n- Classify a failure to create a thread or process as an incomplete resource refusal, never as an application result."
+   },
+   {
+    "id": "CI-13",
+    "severity": "P3",
+    "sources": "HV-2 and HV-5 (lens H verifier); item 1 precision (lens G); allowOnly (G-4 verifier, H-10).",
+    "title": "Pinning and identity checks the freeze must include",
+    "claim": "- Only the pull is pinned (md:71). A docker run that names a tag, or lacks --pull=never, can fetch a different image.\n- The checks of HEAD and tree after checkout are not written out.\n- The runtime of the pinned actions is unverified.\n- allowOnly defaults to !CI inside the container.",
+    "fix": "Workflow-author condition:\n- Every docker run uses the digest or the recorded image ID with --pull=never and --platform linux/amd64, and refuses on a mismatch.\n- Assert rev-parse HEAD == 2d291d0 and HEAD^{tree} == be16220c after checkout.\n- Record each pinned action's declared runtime and any runner override warning.\n- Freeze CI=true or --allowOnly=false in the container."
+   },
+   {
+    "id": "CI-14",
+    "severity": "P3",
+    "sources": "I-6 (lens I); G-5 (lens G); verifiers. Spot-checked: the diff 1631323..2d291d0 has 83 files, +71841/-229. The non-docs, non-.xenios paths are exactly five supabase currentness files. The diff limited to the pilot's own files is empty.",
+    "title": "The transfer payload inventory is absent, and the 1631323 option is undisclosed",
+    "claim": "- md:26 requires an inventory but does not include one.\n- The payload is 31 fast-forward commits: records, the supervisor under docs/, five SQL candidate/verifier files, and 179 added lines with local Windows paths. A secret-pattern scan found 0 matches, which is not proof of absence.\n- Every byte the pilot exercises is already identical at 1631323.",
+    "fix": "Workflow-author or transfer condition:\n- Attach the inventory to the transfer authority, and record acceptance or redaction of the local-path lines.\n- Re-verify that the live remote is 1631323d7cf60f145141e0f82586e64ef7c7d637, and push fast-forward only.\n- Disclose option (b): run against the already-published 1631323 with a recorded byte equality of the pilot's files. That changes the receipt identity and needs the original reviewer's acceptance.\n- This critic chooses neither option."
+   },
+   {
+    "id": "CI-15",
+    "severity": "P3",
+    "sources": "I-7 (lens I) and its verifier.",
+    "title": "Non-Actions push consumers and the token posture of automatic runs are not named",
+    "claim": "- 6077a6b:.replit has a deployment section and a github integration.\n- RELEASE_STATE records Render autoDeploy as off. That is a record claim, not hosted proof.\n- Neither checks.yml blob has a permissions block, so the ordinary jobs that run automatically get the repository-default token permissions.",
+    "fix": "The landing and transfer authority names non-Actions push consumers, either as checked or as accepted UNKNOWN, and names the token permissions accepted for automatic ordinary-job runs."
+   },
+   {
+    "id": "CI-16",
+    "severity": "P3",
+    "sources": "IV-5 (lens I verifier). Spot-checked: f04dd9c (2026-10-09T20:04:54-05:00, 'ERRATA ACCEPTED'); 4f6bf1d (2026-10-10T08:49:05-05:00, decisions 2, 3 and 5 consistent with r3); 91deaaa (2026-10-09T19:39:37-05:00).",
+    "title": "The proposal's transaction-track status is stale",
+    "claim": "md:104 (r3 'QUEUED') and md:112 (decision2 and decision3 'remain actual owner choices') predate both reviewer commits.",
+    "fix": "Revision 2 records r3 as ERRATA ACCEPTED and decisions 2, 3 and 5 as received. Do not re-ask them."
+   }
+  ],
+  "rejected": [
+   {
+    "id": "R-1 (I-1 severity P1)",
+    "reason": "Downgraded to P2 as CI-3. It blocks only the transfer decision, not every decision. Main is an ancestor of the branch, and run history up to 2026-10-10T00:30Z is consistent with no open PR. It is flagged to become P0-class if a PR is shown to be open at push time."
+   },
+   {
+    "id": "R-2 (I-2 'infeasible' characterization)",
+    "reason": "Overstated. A checks.yml-only patch can select only the pilot job by adding jobs.<id>.if guards to the ordinary jobs. The real defects (the 'four-job' premise and the missing pilot guard) are upheld in CI-1."
+   },
+   {
+    "id": "R-3 (G-1 fix as worded)",
+    "reason": "Inconsistent within itself. It keeps the three ordinary jobs 'byte-for-byte unchanged' (point 1) while requiring that they not run on workflow_dispatch (point 4), inside a checks.yml-only scope. Replaced by CI-1's choice: guards on the ordinary jobs, or a separate workflow file that amends md:27's path scope."
+   },
+   {
+    "id": "R-4 (lens I correction (b)/I-4 guard 'workflow_sha equals the landed commit'; GV-2 'checks.yml blob at workflow_sha equals approved hash' as an in-file guard)",
+    "reason": "Self-referential: a file cannot contain its own commit SHA or blob hash. In-file guards also cannot bind dispatches against other refs. Replaced by the ref, workflow_ref, run_attempt, known-parent and actor guards in CI-4."
+   },
+   {
+    "id": "R-5 (H-1 failure-scenario detail)",
+    "reason": "The claim that the worker's default V8 heap is sized from host RAM (8 or 16 GB) is NOT PROVEN. Node may size it from cgroup-constrained memory. The effective worker heap is UNKNOWN. The finding itself is upheld as CI-2."
+   },
+   {
+    "id": "R-6 (H-4 'no window-membership check' / 'stops only on a missing window')",
+    "reason": "Overstated. md:25 says 'admitted within four hours', md:59 lists admission checks, and md:92 stops on a 'deadline/output violation'. What remains undefined (the admission event, its clock, queue time, enforcement and the always() extension) is carried in CI-4 and CI-8."
+   },
+   {
+    "id": "R-7 (G-3 / H-8(a) read-only node_modules failure scenario as a proposal defect)",
+    "reason": "md:49 already specifies 'writable dedicated dependency/output bind directories', so a read-only node_modules contradicts the proposal. It is kept only as a freeze condition in CI-9."
+   },
+   {
+    "id": "R-8 (lens I separate-track list item 'decisions 2 and 3' as open prerequisites)",
+    "reason": "Stale. 4f6bf1d records decisions 2, 3 and 5 as received and consistent with r3 2801930, and f04dd9c records ERRATA ACCEPTED. The relayed user request also says not to re-ask these decisions."
+   },
+   {
+    "id": "R-9 (I-6 implication that md:9 misdescribes the transfer payload)",
+    "reason": "md:9's 'later commits contain design records/continuity' refers to 25858ad..2d291d0. Verified: 0 files changed there outside .xenios/ and docs/. md:26 makes no records-only claim about the 1631323 payload. Only the missing inventory is upheld, in CI-14."
+   },
+   {
+    "id": "R-10 (G-7 inference that the historical jobs never started)",
+    "reason": "The cause is NOT PROVEN and the proposal correctly says UNKNOWN (md:17). What survives is the need to define how such an outcome counts against the single attempt, merged into CI-4."
+   }
+  ],
+  "smallestCorrection": "Revision 2 of the proposal, wording only. Values stay the proposal's own, or are Samuel's to choose where marked.\n\n(1) md:27 and json setup (CI-1):\n- The workflow base is main blob b070777a5e49076162e38fd7c389cd55f727eddc, with three jobs.\n- The workflow commit's parent is the refreshed main tip, not a descendant of 2d291d0, and the commit is outside the transfer payload.\n- The protection job is excluded.\n- Samuel chooses either (a) a separate workflow file triggered only by workflow_dispatch, with checks.yml unchanged and md:27's path scope amended, or (b) checks.yml with only an `if:` event guard added to test, typecheck and build, acknowledged as a change to the release-gate file.\n- The pilot job runs only on workflow_dispatch.\n- State that main's trigger set changes.\n\n(2) md:81-83 and json argv (CI-2): make the heap cap reach the worker. Samuel chooses either the single token `--execArgv=--max-old-space-size=1024`, or NODE_OPTIONS=--max-old-space-size=1024 in the frozen env (matching the manifest), or restates the cap as orchestrator-only. The receipt records the worker's execArgv and NODE_OPTIONS.\n\n(3) md:26 (CI-3): before the push, make a read-only check for open PRs whose head is codex/xenios-health-quick-order-20261005. Stop if any exists or the state is unknown, unless the authority names the resulting pull_request runs. Never open a PR as part of the transfer.\n\n(4) md:25, md:27 and md:55 (CI-4):\n- Freezable guards: event == workflow_dispatch, run_attempt == 1, ref and workflow_ref == refs/heads/main.\n- Concurrency queue single with cancel-in-progress false.\n- A named dispatching identity, recorded.\n- Admission is the job start on the runner, checked against the window.\n- Samuel chooses a not-after time frozen into the bytes, or procedural enforcement plus a named, owned restoring commit after the attempt.\n- Samuel defines when the attempt is consumed, including refusals before any test and no-step GitHub-side failures.\n\n(5) md:27-28 (CI-5): a table of the automatic runs each landing route causes, with jobs, ref, token and authority. The original reviewer's comparison of the frozen bytes comes before any landing.\n\n(6) md:21, md:55, md:102 and md:11 (CI-6): the amendment text block with the per-file pass predicate (exit 0; exactly one file named; more than 0 tests; failed, pending and todo all 0; no unhandled errors; admission and cleanup known). It does not clear G3, G1 or any G-group. production.test.ts is outside the manifest. Nothing carries to a successor. The Windows holds are retained. It states its relation to class2. The fake status-mutation and upload-url paths are named.\n\n(7) md:66 and json limits (CI-7): name the measured disk path(s) and the RAM measure. Reconcile the 20 GiB floor with the documented 14 GB SSD, or have Samuel re-select it.\n\nCI-8 to CI-16 travel unchanged as named conditions on the workflow-author freeze (md:88).",
+  "missingActions": "CI pilot track. Nothing below has been done by this critic.\n\n1. **Existing coordinator** of QUICK-ORDER-CI-PILOT-PROPOSAL: issue revision 2 with corrections (1)-(7) and record CI-8 to CI-16 as workflow-author conditions. Mark Samuel's open choices without choosing them: workflow structure (a)/(b), heap option, disk floor, window mechanism and the consumption rule.\n2. **Original reviewer** (6abf1edf-2b16-476e-8305-23b9a0014e06): check revision 2 against CI-1 to CI-7 only, not a repeat review.\n3. **Samuel**: procedure decision. This covers the class2 Linux-subset amendment with the accepted-evidence text (CI-6) and the resource, attempt and window values (CI-2, CI-4, CI-7).\n4. **Samuel**: workflow decisions:\n   - path ownership and authority, and the structure (CI-1);\n   - the landing route with its enumerated automatic runs (CI-5);\n   - the trigger's lifetime after the attempt, or a frozen deadline (CI-4).\n5. **Workflow author** named in step 4 (one primary writer): freeze the complete workflow bytes and hash, parented on the current main tip, carrying CI-8 to CI-13.\n6. **Original reviewer**: compare the frozen workflow and commands against b070777a, together with the approval and window, before any landing action.\n7. **Samuel**: landing authority. Then the authorized owner lands exactly the frozen bytes.\n8. **Samuel**: transfer authority for exactly 1631323..2d291d0 (31 commits, 83 files), with the CI-3 open-PR check run just before the push, the CI-14 inventory and a live-remote refresh. Then the existing branch owner (01a10d78-0981-7150-9292-c5cde2730d4d) makes a non-force fast-forward push. Steps 7 and 8 are independent; both must come before step 9.\n9. **Samuel**: execution approval naming the dispatching identity, the absolute UTC window, the consumption rule and the single CI-APP-PILOT-01 reservation.\n10. **Authorized dispatcher**: one dispatch. The receipt goes to the original reviewer.\n\nSeparate transaction track, gated by none of the above. This is per the relayed user request, and this critic did not perform it:\n- (a) The coordinator resolves the actual chat ID of codex-accepted-source-integration-20261005 from the existing assignment and records it.\n- (b) That steward performs the bounded NONPRODUCTION Supabase/PostgREST connection, role and timeout/transaction-boundary check on the committed profile (blob 1c8ac2c6 at records commit 9c4a9b58; handoff 0ec1827e). Both commits exist; the profile was not read here. The steward then gives an explicit acknowledgment.\n- (c) The coordinator returns the finding and the acknowledgment.\n- (d) The original Claude reviewer gives technical acceptance of the profile and the finding together.\n- (e) The coordinator confirms the current path owners and the exact 17+4 implementation lease.\n- (f) Dispatch the same builder under the recorded conditional grant.\n\nDecisions 2, 3 and 5 (4f6bf1d) and r3 ERRATA ACCEPTED (f04dd9c) are already recorded and are not re-asked.",
+  "transactionSeparation": "The two tracks are separate, confirmed from the bytes.\n\n**The pilot gates nothing on the transaction track:**\n- md:112 says that neither this CI proposal nor the optional frontend patch becomes a transaction source gate.\n- md:11 says the pilot's receipt must not transfer to an implemented successor.\n- The three pilot files exercise only injected fakes: a disabled factory, a pure decoder, and readback over a fake rpc.\n\n**The transaction track gates nothing on the pilot.** Its current state from the bytes:\n- r3 2801930 is ERRATA ACCEPTED (f04dd9c, 2026-10-10T01:04:54Z).\n- Samuel's decisions 2, 3 and 5 are recorded as consistent with r3 (4f6bf1d, 13:49:05Z).\n- Remaining, per the relayed user request: the NONPRODUCTION Supabase/PostgREST steward finding and acknowledgment, the original reviewer's technical acceptance, confirmation of path owners, the exact 17+4 lease, and the builder dispatch.\n\nThe proposal's md:104 and md:112 are stale on these points (CI-16) and must be corrected without re-asking the decisions. This critic changed no schedule, lease, record or session, so both schedules are preserved.",
+  "deviations": [
+   "My own conduct: read-only throughout. I created, modified or deleted no file, ran no interpreter, npm, docker, test, SQL or database command, made no checkout, fetch or push, and contacted no session.",
+   "My own conduct: I used Read and Grep on files outside the scratchpad and health-review, namely the installed Vitest 4.1.10 source at C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules. It is a Windows install. Its version matches the lock, but its bytes were not checked against the lock's integrity values, so Linux behaviour is NOT RUN.",
+   "My own conduct: I called ToolSearch once, only to load the WebFetch schema. I made one WebFetch, to docs.github.com (github-hosted-runners). No GitHub API, Actions page or hosted observation was used.",
+   "My own conduct: three read-only git commands (cat-file -t on 9c4a9b58 and 0ec1827e, and ls-tree of the profile path) concern the relayed user request's separate-track inputs rather than the CI target. I confirmed only that both commits and profile blob 1c8ac2c6 exist. I did not read the profile.",
+   "My own conduct: every Bash call was `git -C C:/xenios-wt/health-review --no-optional-locks` with show, log, diff, ls-tree or cat-file, piped only to grep, sed -n or wc. One used `grep -v -E`; none used echo, cd, variables, loops or redirection.",
+   "Scope: the relayed user request designates codex-accepted-source-integration-20261005 as NONPRODUCTION Supabase/PostgREST steward. It asks for that session's actual chat ID to be recorded, its finding record and explicit acknowledgment, a return to the coordinator, submission to the original Claude reviewer, then a lease and builder dispatch. This critic performed none of that. It produced no steward finding, recorded no assignment or acknowledgment, and made no session contact, lease or dispatch. The coordinator must carry it out under the user's request. Also, the user said 'Do not repeat completed design reviews'. Whether this CI-pilot review is such a repeat is not determinable here; the coordinator should check.",
+   "Lens G review (quoted): 'Hard-rule breach, harmless and read-only: one Bash command (checks.yml history on candidate and main) used `echo ---` twice as separators.' / 'two Bash commands used `2>&1`' / 'Outside the permitted command list, read-only: `ls -la` on the scratchpad ci directory, plus `git merge-base` and `git rev-list --count`' / it read installed Vitest, Vite and Supertest from the b22f node_modules / scope note: steward assignment not performed.",
+   "Lens G verifier (quoted): 'one Bash call ran bare `grep` directly on a local file (node_modules/supertest/lib/test.js and package.json in the b22f worktree)' / 'one Bash call contained a no-op shell loop (`for f in ...; do :; done;`) before a git grep' / 'several git show/diff outputs were piped to `cat -n` or `tail`... Several Bash calls also chained multiple git commands with `;`' / ToolSearch for WebFetch; docs.github.com only / scope note.",
+   "Lens H review (quoted): 'Bash was used once for 'ls -la' on the scratchpad/ci directory' / 'Bash was used once for 'grep -m1 \"version\"' directly on four package.json files under ... node_modules' / 'One unneeded WebFetch of a public docs.github.com page (workflow-commands)'.",
+   "Lens H verifier (quoted): 'Bash was used once for 'grep -n' directly on the local file ... supertest/lib/test.js' / 'ToolSearch was used once, only to load the WebFetch tool schema' / 'Four WebFetch calls went to public docs.github.com pages' / scope note.",
+   "Lens I review (quoted): 'Bash was used once for 'ls -la' on the scratchpad ci directory' / 'One Bash call used 'echo ---' as an output separator' / 'Several git outputs were piped to cut, tail and sort -u' / scope note.",
+   "Lens I verifier (quoted): 'two Bash calls used 'git merge-base' (one --is-ancestor, one plain)' / 'Several Bash calls chained 2 or 3 allowed git commands with ';' ... some piped grep into a second grep' / ToolSearch for WebFetch; docs.github.com only / 'Reading 6077a6b:.replit with sed -n 1,50p also showed configuration values outside the cited lines (a Supabase URL, a publishable key and an admin email). None is reproduced in this output.' / scope note.",
+   "Disclosure sweep: no lens or verifier reported a file write, an execution of tests, npm, docker or SQL, or any session contact. All reported breaches are read-only command-form deviations. The one exposure to note is the lens I verifier's display of .replit configuration values (a Supabase URL, a publishable key and an admin email), which it did not reproduce. This critic did not view or reproduce them either."
+  ]
+ }
+}

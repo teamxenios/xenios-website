@@ -240,3 +240,15 @@ The target is recomputed from Git:
 
 The verdict will be published as doc 77. The nonproduction operating profile (`9c4a9b5`) is not yet submitted to this
 session; it waits for the steward's finding. Nothing was executed.
+
+## Queue state update (2026-10-10, CI pilot proposal complete)
+
+| Board task | State |
+| --- | --- |
+| `QUICK-ORDER-CI-PILOT-PROPOSAL-REVIEW-20261009` revision 1 (`91deaaa`) | COMPLETE: doc 77, INSUFFICIENT AS SPECIFIED, with the smallest exact correction: a wording-only revision 2 for CI-1 to CI-7. No P0 or P1. CI-8 to CI-16 travel as workflow-author conditions. Grants nothing |
+
+The next items for this session:
+- the CI revision 2 check (CI-1 to CI-7 only);
+- the nonproduction operating profile together with the steward's finding, once submitted.
+
+Nothing was executed.
