@@ -2,6 +2,21 @@
   "schemaVersion": 1,
   "leases": [
     {
+      "id": "ad40b9f0-b430-48c7-9f10-f1d5432fd1fe",
+      "task": "QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "handoff",
+      "claimedAt": "2026-10-10T14:05:42Z",
+      "heartbeatAt": "2026-10-10T14:12:15Z",
+      "handoff": ".xenios/handoffs/2026-10-10-QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010-codex-accepted-source-integration-20261005.md",
+      "paths": [
+        "docs/health-launch/accepted-source-integration-20261005/QUICK_ORDER_NONPRODUCTION_ENFORCEMENT_CHECK_20261010.md",
+        ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+        ".xenios/handoffs/2026-10-10-QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010-codex-accepted-source-integration-20261005.md"
+      ],
+      "scopeNote": "New direct bounded NONPRODUCTION engineering-steward assignment acknowledged; one records-only finding plus own continuity, no connection/role/source ownership or transaction-body lease. Prior source-custody lease d0897045 remains unchanged. No push or execution authority."
+    },
+    {
       "id": "d0897045-efd3-425b-a8b4-02385e855153",
       "task": "ACCEPTED-SOURCE-INTEGRATION-20261005",
       "session": "codex-accepted-source-integration-20261005",

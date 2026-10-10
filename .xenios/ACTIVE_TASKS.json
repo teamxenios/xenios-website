@@ -3,6 +3,28 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010",
+      "revision": 1,
+      "title": "Bounded nonproduction Supabase/PostgREST steward check; records only",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-accepted-source-integration-20261005",
+      "baseSha": "3df14c276b4812edd44132266fcbdb2e880e8cb2",
+      "claimedAt": "2026-10-10T14:05:42Z",
+      "completedAt": "2026-10-10T14:12:15Z",
+      "disposition": "STATIC_CHECK_COMPLETE; NUMERIC_PROFILE_CONSISTENT; ENFORCEMENT_PREREQUISITES_OPEN; DEPLOYED_UNKNOWN; NOT_RUN; ORIGINAL_TECHNICAL_ACCEPTANCE_PENDING; LOCAL_ONLY",
+      "findingSha256": "6323b876f6db625a2d50c765db0d71cff4eefff5c14429c3fea374968aa6c8ca",
+      "handoffPath": ".xenios/handoffs/2026-10-10-QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010-codex-accepted-source-integration-20261005.md",
+      "paths": [
+        "docs/health-launch/accepted-source-integration-20261005/QUICK_ORDER_NONPRODUCTION_ENFORCEMENT_CHECK_20261010.md",
+        ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+        ".xenios/handoffs/2026-10-10-QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010-codex-accepted-source-integration-20261005.md"
+      ],
+      "scopeNote": "New bounded stewardship designated by actual user message 01a1261f-9e0b-78d3-919c-23d4778425eb in QO builder chat 01a10d78-0981-7150-9292-c5cde2730d4d; directly read and explicitly acknowledged to existing coordinator. Same session, no historical ownership inference. Source/documentation inspection, one finding and own continuity only. No source changes, tests, DB access, SQL, hosted observations/configuration, push or deployment. Existing source custody and both schedules unchanged.",
+      "profileRecords": "9c4a9b5809162eab9b0669cb6a2f1f2516c06c67",
+      "profileSha256": "82544bf503b5dc2ce9ee8bdda19ec4a5e981f76e51bff1f2dbe8f7c98266d4e2"
+    },
+    {
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",
       "title": "Doc62 records-only correction r1; accepted customer source frozen",
       "priority": "P1",
