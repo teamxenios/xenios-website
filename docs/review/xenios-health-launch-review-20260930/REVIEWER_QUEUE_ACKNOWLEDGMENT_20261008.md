@@ -193,3 +193,33 @@ was executed.
 | Builder records errata r3 `280193059a6b28fee5645833cb56b7d944ad1c46` (`0c5c17e0…`, `811f04fe…`, `bb3d4513…`), handoff `2d291d0` | COMPLETE: doc 76, ERRATA ACCEPTED. R2-1 to R2-4 corrected, no blocking defect, 14 precision items travel (the Markdown governs). Taken from the builder's frozen handoff under doc 75 section 5; board registration not yet observed at coordinator `5baa14f` |
 
 The final decision-5 text may now be presented. No source permission. Nothing was executed.
+
+## Queue state update (2026-10-10, Samuel's decisions 2, 3 and 5 received)
+
+Samuel's own decisions 2, 3 and 5 reached this session directly. The coordinator records them authoritatively, binds
+them, confirms owners, sets the lease and dispatches the builder. This session did none of those, and its note is not
+the register.
+
+**Reviewer consistency check: none of the three decisions changes the reviewed design. No further design review is
+needed.**
+
+| Decision as received | Reviewed basis in r3 (`280193059a6b28fee5645833cb56b7d944ad1c46`) |
+| --- | --- |
+| 2. One allocatable stock witness per variant: an existence check, with no reservation and no sufficient-quantity or inventory-writer change | The reviewed lock footprint. Witnesses taken FOR SHARE NOWAIT (row 10, MD:554). The "existence check only" option at MD:190-195. No inventory path is in the 17 |
+| 3. The reviewed behaviour accepted for the disabled source, including the CC-1 hold, the READ COMMITTED reach, writer-limit refusals, the cascade and republication rules and the other disclosed decision-3 effects. No numerical values; the owner-managed settings contract with no compiled defaults; absent values refuse | The decision-3 row (MD:203) and the CC-19 carrier (MD:418-433). Absent limits refuse with no numeric default (MD:401, :671). "Budgets needed by the lock design" (MD:227) is read as the limit kinds, enforcement points and relationships, not values |
+| 5. The corrected Part 2 exactly as checked, preserving Part 1 | Part 1 and Part 2 at MD:121-145. The 17 paths at MD:101-105. The 4 evidence records at MD:146-149. Exclusions in section 11 |
+
+**Identity to bind.** Samuel's text cites `f04dd9cb01f986066d16e5d755930cc5779c234a`, which is doc 76, the
+acceptance. The packet itself is records `280193059a6b28fee5645833cb56b7d944ad1c46`: Markdown blob `fe50e01`, raw
+`0c5c17e0…`. The binding should name both.
+
+**Next review for this session:** the builder's first coherent source checkpoint. The acceptance criteria are:
+- r3 section 13, doc 73's six carries;
+- r3 section 14, doc 75's sixteen criteria;
+- doc 76 section 2, the fourteen precision items;
+- the literal barriers;
+- no compiled numerical values;
+- edits to the 17 paths and 4 evidence records only, with every exclusion untouched;
+- for decision 2: an existence check only, with no quantity aggregation and no inventory write.
+
+Nothing was executed.
