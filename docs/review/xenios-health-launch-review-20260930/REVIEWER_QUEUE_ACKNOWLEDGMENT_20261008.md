@@ -307,3 +307,18 @@ Nothing was executed.
 | `QUICK-ORDER-CI-PILOT-PROPOSAL-REVIEW-20261009` revision 2 (`e01f8ea`) | COMPLETE: doc 79, SUFFICIENT FOR SEPARATE BOUNDED DECISIONS WITH NAMED CONDITIONS. D-1 (class-2 relation, resolving the one blocking point) and D-2 (trigger change) go verbatim into the decision texts; W-1 to W-4 travel to the workflow author. The older-baseline target `1631323` is accepted as static suitability. Grants nothing |
 
 Doc 78 is still in review. Nothing was executed.
+
+## Queue state update (2026-10-10, doc 78 implementation gate complete)
+
+| Board task | Exact targets | State |
+| --- | --- | --- |
+| `QUICK-ORDER-NONPRODUCTION-PROFILE-TECHNICAL-REVIEW-20261010` revision 1 | profile `9c4a9b5809162eab9b0669cb6a2f1f2516c06c67` (`a80eb2a6…`, `82544bf5…`); steward `29297c31fa0357ba186620e7e51425d5ce19badd` (`6323b876…`) | COMPLETE: doc 78. **IMPLEMENTATION GATE: SATISFIED.** `PROFILE_TECHNICALLY_ACCEPTED_FOR_CHECKED_DISABLED_AUTHORING_WITH_EXPLICIT_CARRIES`. None of QOE-01 to QOE-08 blocks disabled dispatch. The per-function timeout option is declined (function settings stay `search_path=""`). C-1 to C-12 carry to source acceptance. Execution and operation stay unproven and unauthorized |
+
+**Before dispatch (coordinator):**
+- record this acceptance and the actors;
+- confirm current owners;
+- record the exclusive 17+4 lease;
+- resolve HL12;
+- record the R2-13 shared-seal reading.
+
+Then dispatch the same builder under decision 5. Nothing was executed.
