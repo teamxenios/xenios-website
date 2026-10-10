@@ -6,10 +6,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "accepted-source-integration",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-10T17:33:42Z",
-      "note": "Same-session bounded CI published-baseline comparison r1 active under coordinator1df99a1 and direct human provenance. Exact new records lease a150b9b5; static Git/file/JSON/hash inspection only, no application execution, source/profile/prior-finding changes, push or hosted actions. Customer source cad2c4d and completed stewardship29297c3 frozen. Both schedules unchanged."
+      "heartbeatAt": "2026-10-10T17:38:28Z",
+      "note": "Same-session CI published-baseline comparison r1 complete locally at 1d55a240e1ae4fe7dd1231b50ad70d44853e6adb. Seventy-one inspected inputs byte-identical; six later qualification/SQL files explicitly excluded. Recommend published1631323 for limited pilot only, subject to original reviewer acceptance and explicit selection. NOT_RUN; no source/profile/prior-finding/workflow/hosted changes or push. Customer cad2c4d and stewardship29297c3 frozen. Both schedules unchanged."
     },
     {
       "id": "claude-opus5-main",

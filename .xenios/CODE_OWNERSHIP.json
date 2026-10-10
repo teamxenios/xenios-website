@@ -5,9 +5,10 @@
       "id": "a150b9b5-7985-488c-9d52-e0667422e564",
       "task": "QUICK-ORDER-CI-PUBLISHED-BASELINE-COMPARISON-20261010",
       "session": "codex-accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-10T17:33:42Z",
-      "heartbeatAt": "2026-10-10T17:33:42Z",
+      "heartbeatAt": "2026-10-10T17:38:28Z",
+      "handoff": ".xenios/handoffs/2026-10-10-QUICK-ORDER-CI-PUBLISHED-BASELINE-COMPARISON-20261010-codex-accepted-source-integration-20261005.md",
       "paths": [
         "docs/health-launch/accepted-source-integration-20261005/CI_PILOT_PUBLISHED_BASELINE_COMPARISON_20261010.md",
         ".xenios/sessions/codex-accepted-source-integration-20261005.json",
