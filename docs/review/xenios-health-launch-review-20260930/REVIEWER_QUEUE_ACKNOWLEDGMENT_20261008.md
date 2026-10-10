@@ -299,3 +299,11 @@ registered at coordinator `ddad665`. The target is recomputed from Git:
 - **Publication.** The verdict will be published as doc 79.
 
 Nothing was executed.
+
+## Queue state update (2026-10-10, CI revision 2 complete)
+
+| Board task | State |
+| --- | --- |
+| `QUICK-ORDER-CI-PILOT-PROPOSAL-REVIEW-20261009` revision 2 (`e01f8ea`) | COMPLETE: doc 79, SUFFICIENT FOR SEPARATE BOUNDED DECISIONS WITH NAMED CONDITIONS. D-1 (class-2 relation, resolving the one blocking point) and D-2 (trigger change) go verbatim into the decision texts; W-1 to W-4 travel to the workflow author. The older-baseline target `1631323` is accepted as static suitability. Grants nothing |
+
+Doc 78 is still in review. Nothing was executed.
