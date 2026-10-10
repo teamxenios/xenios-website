@@ -6,10 +6,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "accepted-source-integration",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-10T14:12:15Z",
-      "note": "New bounded NONPRODUCTION stewardship acknowledged; QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010 r1 complete locally against profile9c4a9b5/digest82544bf5. Numeric proposal consistent; QOE-01 through QOE-08 preserve precise enforcement/configuration/measurement prerequisites. One finding plus own continuity, NOT_RUN, source cad2c4d frozen. Coordinator receives exact local packet for original reviewer; no push, DB/hosted action or source change. Both schedules unchanged."
+      "heartbeatAt": "2026-10-10T17:33:42Z",
+      "note": "Same-session bounded CI published-baseline comparison r1 active under coordinator1df99a1 and direct human provenance. Exact new records lease a150b9b5; static Git/file/JSON/hash inspection only, no application execution, source/profile/prior-finding changes, push or hosted actions. Customer source cad2c4d and completed stewardship29297c3 frozen. Both schedules unchanged."
     },
     {
       "id": "claude-opus5-main",

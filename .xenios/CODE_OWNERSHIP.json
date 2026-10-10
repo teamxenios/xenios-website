@@ -2,6 +2,20 @@
   "schemaVersion": 1,
   "leases": [
     {
+      "id": "a150b9b5-7985-488c-9d52-e0667422e564",
+      "task": "QUICK-ORDER-CI-PUBLISHED-BASELINE-COMPARISON-20261010",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "active",
+      "claimedAt": "2026-10-10T17:33:42Z",
+      "heartbeatAt": "2026-10-10T17:33:42Z",
+      "paths": [
+        "docs/health-launch/accepted-source-integration-20261005/CI_PILOT_PUBLISHED_BASELINE_COMPARISON_20261010.md",
+        ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+        ".xenios/handoffs/2026-10-10-QUICK-ORDER-CI-PUBLISHED-BASELINE-COMPARISON-20261010-codex-accepted-source-integration-20261005.md"
+      ],
+      "scopeNote": "Exact new comparison record and own continuity only. Current active foreign lease bf834f90 covers five .xenios state/decision files, none claimed here. Existing ad40b9f0 finding and d0897045 source custody unchanged; no takeover."
+    },
+    {
       "id": "ad40b9f0-b430-48c7-9f10-f1d5432fd1fe",
       "task": "QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010",
       "session": "codex-accepted-source-integration-20261005",

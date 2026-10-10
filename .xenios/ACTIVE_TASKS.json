@@ -3,6 +3,22 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "QUICK-ORDER-CI-PUBLISHED-BASELINE-COMPARISON-20261010",
+      "revision": 1,
+      "title": "Static published-baseline comparison for three-file CI pilot; records only",
+      "priority": "P2",
+      "state": "active",
+      "owner": "codex-accepted-source-integration-20261005",
+      "baseSha": "29297c31fa0357ba186620e7e51425d5ce19badd",
+      "claimedAt": "2026-10-10T17:33:42Z",
+      "paths": [
+        "docs/health-launch/accepted-source-integration-20261005/CI_PILOT_PUBLISHED_BASELINE_COMPARISON_20261010.md",
+        ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+        ".xenios/handoffs/2026-10-10-QUICK-ORDER-CI-PUBLISHED-BASELINE-COMPARISON-20261010-codex-accepted-source-integration-20261005.md"
+      ],
+      "scopeNote": "Direct user provenance 01a126cf-7594-77d0-b7fa-9a48b9e9fed5; coordinator assignment1df99a1 revision1. Static exact-Git and metadata only. No source, profile, prior finding, workflow, execution, installation, SQL, hosted, push or reviewer-message authority. Both schedules unchanged."
+    },
+    {
       "id": "QUICK-ORDER-NONPRODUCTION-ENFORCEMENT-CHECK-20261010",
       "revision": 1,
       "title": "Bounded nonproduction Supabase/PostgREST steward check; records only",
