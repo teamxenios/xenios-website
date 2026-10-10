@@ -1,0 +1,612 @@
+{
+ "schemaVersion": 1,
+ "review": "76_DOC75_ERRATA_R3_2801930_BYTE_CHECK_2026-10-09.md",
+ "task": "Doc 75 records errata byte check (DOC71-TRANSACTION-DESIGN-RECORDS-DELTA-20261009 revision 3)",
+ "subject": "280193059a6b28fee5645833cb56b7d944ad1c46",
+ "controllingReview": "7609c42d387b3f7edd8fe3986e8907fce0bb4403",
+ "workflowRun": "wf_39d3368a-925",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Checker and adversarial-verifier outputs, verbatim. Reviewer disposition is in doc 76. Agents used read-only git forms beyond the two named templates, read the r3 handoff 2d291d0 to test one lease claim, and one Grep ran over the whole reviewer scratch folder (read only). Oversized command outputs were captured automatically by the harness in the session tool-results folder; no agent created, modified or deleted a file. Raw SHA-256 values were recomputed by the reviewer, not the agents.",
+ "results": [
+  {
+   "checker": "names-part2-boundary",
+   "tag": "E",
+   "check": {
+    "summary": "Checker E (names-part2-boundary) on r3 280193059 against doc 75. Nothing is BLOCKING.\n\nR2-1 is CORRECTED:\n- The MD amendments and the JSON namedAmendments now use the S0 names publish_revision(jsonb,text) and revoke_revision(uuid,text). The prefixed names appear nowhere in r3.\n- The fingerprint entries are explicitly retained.\n- One table-lock order is stated identically for publish and activation in MD and JSON: an explicit list of the 12 IN tables, the same as guard.scopeTableOrder. I verified that the list really is in ascending ASCII byte order.\n\nR2-2 is CORRECTED:\n- The fingerprinted monotonic_epoch() head BEFORE UPDATE gate check is flagged as NEW Part 2 scope in four places: the MD Part 2 list, JSON part2, the currentness slice row additionalScope and the namedAmendments entry.\n- Both stale 'Part2 private' tags are relabelled as Part 1 refinements. This matches scope 1d4f2c3 and the critic's doc 71 basis.\n\nR2-20 is CORRECTED. R2-18 is PARTIAL: two labels are fixed, but the lease sentence adds a new 'reclaimed for r3' claim that the r3 tree does not show.\n\nChange boundary:\n- The r3 commit changes only the three records.\n- Everything outside R2-1..R2-4, R2-18/R2-20 and the two rulings is records bookkeeping: doc 75 basis and assignment metadata, the Doc73 relabel, the 16 carried criteria reproduced in MD section 14 and JSON, the CC-1 row wording, and the decision-5 sequencing sentence.\n- None of it changes the design. The 17 paths, the exclusions, Part 1, the 47-trigger/48-row fingerprint and the CC-1..CC-4 closures are intact.\n- Nothing records Samuel's approval, a grant, an execution or a push. DRAFT, LOCAL ONLY and NOT RUN still hold.\n\nFive NONBLOCKING precision defects:\n- E-1: the lease reclaim claim.\n- E-2: stale r2 line anchors in the carried R2-5 and R2-15.\n- E-3: drift between MD and JSON in the doc73 map and row 12. JSON row 12 also lost the 'never upgrade' rule.\n- E-4: the MD decision-3 row lost its 'UNRESOLVED:' label.\n- E-5: R2-18 and R2-20 are still listed as carried / NOT RUN although r3 performed them.\n\nPostgreSQL try-lock and NOWAIT behaviour is reasoned from documentation, NOT RUN.",
+    "items": [
+     {
+      "item": "R2-1(a) S0 publish/revoke names in the MD named amendments",
+      "status": "CORRECTED",
+      "evidence": "r3 MD:666 `public.research_health_quick_order_publish_revision(jsonb,text)` and MD:667 `public.research_health_quick_order_revoke_revision(uuid,text)`, replacing r2 MD:658-659's currentness_-prefixed names. S0: currentness.sql:498 (p_publication jsonb, p_decision_inputs_text text) and :531 (p_revision_id uuid, p_reason text) @25858ad. Grep for 'currentness_(publish|revoke)_revision' in all three r3 files finds 0 matches; in r2 it finds 4. The MD Part 2 list now reads 'amendments under the correct S0 signatures' (MD:132-133)."
+     },
+     {
+      "item": "R2-1(b) S0 names in JSON namedAmendments",
+      "status": "CORRECTED",
+      "evidence": "r3 JSON:2066 and :2070 carry the bare S0 names (r2 JSON:2023 and :2027 were prefixed). The slice row intendedChange (JSON:1669) is unchanged and already bare. sourceGrantDraft.part2 (JSON:2008) reads 'correct S0 publish/revoke amendments'."
+     },
+     {
+      "item": "R2-1(c) exact-name fingerprint entries kept",
+      "status": "CORRECTED",
+      "evidence": "r3 MD:1102: 'Retain the existing exact-name fingerprint entries for ...publish_revision(jsonb,text) and ...revoke_revision(uuid,text); do not introduce prefixed substitutes.' MD:735 and JSON:2138 functionPredicate ('Retain ... existing exact names') are unchanged from r2. S0 pins the bare pronames at currentness.sql:53-54, :471, :561-562 and :584. In JSON the retention appears only as the summary 'preserve fingerprint names' (doc75Errata.correctionMap JSON:3249; bindings :1220). Acceptable."
+     },
+     {
+      "item": "R2-1(d) one stated table-lock order for publish and activation",
+      "status": "CORRECTED",
+      "evidence": "The same rule ('all 12 IN tables in ascending schema-qualified ASCII byte order (the exact guard.scopeTableOrder list), each SHARE NOWAIT, then the approved bounded exclusive transaction gate, then the head FOR UPDATE') appears at:\n- MD:329, :666, :668, :710 and :1102, the last with the explicit 12-name list;\n- JSON:280 scopeRaceProposal, :1537 activation.transition, :2067, :2075 and :2095-2111 gateProtocol.publicationActivationOrder, with the same 12 relations and the reason 'every table acquisition is NOWAIT'.\nThe list equals guard.scopeTableOrder at JSON:281-294. I checked it is genuinely ascending by byte: session < shipping because 'e' (0x65) < 'h' (0x68), and product_* < products because '_' (0x5F) < 's' (0x73).\nNo residual 'sorted order' or 'section 9 order' remains (r2 MD:322 and :658 had both). Revoke still takes no table locks (MD:667, :674). The order rule is a design statement, NOT RUN."
+     },
+     {
+      "item": "R2-2(a) monotonic_epoch head exclusive-gate amendment flagged as NEW Part 2 scope in MD",
+      "status": "CORRECTED",
+      "evidence": "r3 MD:133-135: 'the existing fingerprinted public.research_health_quick_order_currentness_monotonic_epoch() head BEFORE UPDATE exclusive-gate-check amendment as **NEW Part2 scope**'. S0: function at currentness.sql:385-395, trigger research_health_quick_order_head_epoch_monotonic BEFORE UPDATE FOR EACH ROW at :402-404, and fingerprint entry at :456 @25858ad. The description is accurate. Section 14 R2-2 row: MD:1098."
+     },
+     {
+      "item": "R2-2(b) JSON part2 / sourceGrantDraft",
+      "status": "CORRECTED",
+      "evidence": "r3 JSON:2008 part2 includes 'existing fingerprinted public.research_health_quick_order_currentness_monotonic_epoch() head BEFORE UPDATE exclusive-gate-check amendment as NEW scope'. Status stays DRAFT_ONLY_NOT_SAMUEL_APPROVAL (JSON:2006), and part1 is unchanged (JSON:2007)."
+     },
+     {
+      "item": "R2-2(c) currentness slice row additionalScope",
+      "status": "CORRECTED",
+      "evidence": "r3 JSON:1671 additionalScope adds 'Part2 NEW existing fingerprinted ...monotonic_epoch() head BEFORE UPDATE exclusive-gate-check amendment' (r2 JSON:1644 lacked it). namedAmendments monotonic_epoch also gains additionalScope 'Part2 NEW_SCOPE_UNAPPROVED ... not covered by a silently inferred Part1 basis' (JSON:2080)."
+     },
+     {
+      "item": "R2-2(d) two stale 'Part2 private context' tags relabelled",
+      "status": "CORRECTED",
+      "evidence": "quick-order-repository.ts: JSON:1786 now reads 'Part1 existing adapter/private context drafting refinement; no reissue or new Part2 private-context grant' (r2 JSON:1756: 'Part2 disabled private context contract').\nports.ts: JSON:1878 now reads 'Part1 existing ports/private proof contract refinement; no reissue or new Part2 private-proof grant' (r2 JSON:1844: 'Part2 private proof contract').\nThis is one of the two options doc 75 allowed. It is consistent with the critic's note that doc 71 places private context under dc3329b drafting, and with scope 1d4f2c3, which assigns ports.ts and quick-order-repository.ts wiring to the existing builder (QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:162-163, :268-274). No 'Part2 private' tag remains in r3."
+     },
+     {
+      "item": "R2-18 (optional) 'Approved' recipient label, existingLease to historical, 'refreshed at 301d9b08'",
+      "status": "PARTIAL",
+      "evidence": "- (a) Fixed: the CC-23 row reads 'Server-only constructor recipient carrier named; value/approval absent' in MD:882 and JSON doc73CorrectionMap CC-23.\n- (b) Fixed: existingLease is removed from all 17 futureDisabledSlice rows, which now carry historicalLease plus historicalLeaseNote 'At handoff301d9b08 this lease covers only three records and own continuity' (JSON:1563 ... :1931, 17 notes). The note matches .xenios/CODE_OWNERSHIP.json:3592-3601@280193059.\n- (c) MD:111-113 now says 'narrowed/refreshed at handoff 301d9b08' but adds 'and is reclaimed on the same scope for r3'. Inside the r3 tree, lease 17093695 is still state 'idle' with heartbeat 2026-10-09T22:25:16Z and a note describing r2 (CODE_OWNERSHIP.json:3602-3605@280193059). This repeats the in-tree overstatement R2-18 targeted. See E-1."
+     },
+     {
+      "item": "R2-20 (optional) stale r1 workingRaw removed or labelled",
+      "status": "CORRECTED",
+      "evidence": "The r2-to-r3 bindings diff removes the three workingRaw blocks from r1RecordArtifacts. R3_BINDINGS.json:1114-1142 now holds only repository, commit, tree, path, gitBlob, sha256 and bytes. Other workingRaw fields (e.g. R3_BINDINGS.json:20-1054) belong to unrelated observation entries outside R2-20."
+     },
+     {
+      "item": "Change boundary: every r2-to-r3 changed region classified",
+      "status": "PARTIAL",
+      "evidence": "The r3 commit's own diff (`git show --stat`) touches only the three records. The .xenios changes between 39203461 and 280193059 come from handoff 301d9b08.\n\nMD regions:\n- :1-3 title and status line [bookkeeping]\n- :15 doc 75 basis [bookkeeping]\n- :26 Doc73 relabelled 'historical r1 review' [bookkeeping]\n- :36-38 assignment [bookkeeping]\n- :42 [bookkeeping]\n- :111-113 [R2-18]\n- :133-138 [R2-1/R2-2/R2-3]\n- :203 [R2-4 + CC-18 budget]\n- :329 [R2-1]\n- :376-378 and :384-386 [CC-18 ruling]\n- :402 [R2-4]\n- :556 [rulings]\n- :659 and :661 [R2-4]\n- :666-668 [R2-1]\n- :687-704 [R2-3]\n- :710 [R2-1/R2-3]\n- :717 [R2-4]\n- :860 CC-1 row reworded [bookkeeping/R2-4]\n- :877 [CC-18]\n- :882 [R2-18]\n- :899 [doc 75 sequencing]\n- :1079 and :1083 [rulings]\n- :1091-1143 new section 14: errata map, R2-1/R2-4 text, rulings, and the 16 carried criteria [recording]\n\nJSON regions:\n- header, review.status, review.doc75 [bookkeeping]\n- guard.scopeRaceProposal [R2-1]\n- 35 expectedRefusal and 47 isolationRule fields [R2-4]\n- guard.checks and guardChecks [R2-4]\n- activation.transition [R2-1 + R2-5 pointer]\n- 17 slice rows [R2-18, R2-2, R2-4, R3 eligibility label]\n- sourceGrantDraft.part2 [R2-1/2/3] and finalDecision5Prerequisite [bookkeeping]\n- decision3 [R2-4]\n- namedAmendments [R2-1/R2-2]\n- gateProtocol.intakeSharedChoice and publicationActivationOrder [CC-18/R2-1]\n- sourceSuccessorConditions CC-10/CC-18 [rulings]\n- scopeMaterialisation [R2-3]\n- doc73CorrectionMap CC-23 [R2-18]\n- ordered row 12 [CC-18]\n- new r2, doc75SourceSuccessorConditions and doc75Errata blocks [recording]\n\nBindings regions: header, doc 75 and lens reviewArtifacts, assignment observation, r3 recordArtifacts hashes, R2-20 removal, validation counters, r2FrozenRecords/r2RecordArtifacts/doc75CorrectionMap/r3CarrierContract.\n\nOutside the six permitted items, the changes are records bookkeeping and the recording of doc 75's carries; none changes design. I verified the doc 75 and r2 blob ids and sizes in bindings: c0b2d48/21304, 9504cdd/321891, cc4ad17/105059, 0b5b1f9/175679, 8d7eaf2/59455. I also verified the r3 record sizes 128858 and 224734. The raw SHA-256 values are NOT PROVEN by me because hashing was not permitted.\n\nThe boundary is PARTIAL only because the bookkeeping additions introduce the precision defects E-2, E-3 and E-5."
+     },
+     {
+      "item": "Doc 75 CLOSED items and status markers intact",
+      "status": "CORRECTED",
+      "evidence": "- CC-1: MD:341-346 keeps 'UNRESOLVED choice under existing decision 3 ... If the owner declines it, return this design for revision'; JSON decision3.status stays UNRESOLVED_EXISTING_OWNER_DECISION_NO_NEW_QUESTION (JSON:2047); CC-29 invariant at MD:725. The MD decision-3 row label was dropped (E-4).\n- CC-2: MD:667 and :671-674.\n- CC-3: MD:651-652, strengthened.\n- CC-4: materialisation and resolver at MD:706-717; publication failure at MD:727-728.\n- 47 triggers / 48 rows: MD:737 and :817-819; JSON expectedTriggerCount 47; bindings validation eventRows 48, guardTriggers 47, triggeredIudRows 35 (= 47 - 12 TRUNCATE).\n- Part 1: text unchanged at MD:123-129 and JSON:2007.\n- Status markers: DRAFT at MD:143, :890 and JSON:2006; LOCAL ONLY / NOT RUN at MD:3 and JSON:2033-2035 ('NOT_RUN', null reservation, 'LOCAL_ONLY_NOT_AUTHORIZED').\n- Doc 75's 'no approval' still holds."
+     },
+     {
+      "item": "17 paths and exclusions unchanged",
+      "status": "CORRECTED",
+      "evidence": "There is no MD hunk in the 17-path table (MD:99-105) or in the section 11 exclusion list (MD:929-955). In JSON, futureDisabledSlice path values are unchanged; only historicalLease, currentWriteEligibility (R2 to R3), three additionalScope fields and the currentness verifier acceptanceEvidence change. There is no hunk in the paymentExclusions or exclusions region (the hunks jump from -1890 to -1967), and none in bindings future17PathPreimages. Validation still reads futureSourcePaths 17 and futureEvidencePaths 4."
+     },
+     {
+      "item": "Recording of doc 75's two rulings (CC-18 try-lock; CC-10/R2-8 mapping to 503 temporarily_unavailable with the key kept)",
+      "status": "PARTIAL",
+      "evidence": "Recorded accurately in:\n- MD:376-378, :384-386, :556, :877, :1079, :1083 and :1114-1118;\n- JSON:2093 gateProtocol.intakeSharedChoice;\n- JSON:2232-2254 sourceSuccessorConditions CC-10/CC-18;\n- JSON:3018 ordered row 12;\n- JSON:3276 doc75Errata.reviewRulings;\n- JSON R2-8 originalRuling.\nThe wording matches doc 75 section 4 (pg_catalog.pg_try_advisory_xact_lock_shared(integer,integer); false gives DEFINITE_REFUSAL_RETRYABLE with the key kept and no body retry; exclusive waits stay bounded; required controls; existing 503 temporarily_unavailable; no page or handler change). Mirror drift is described in E-3."
+     },
+     {
+      "item": "No record of Samuel's approval, a grant, execution or push",
+      "status": "CORRECTED",
+      "evidence": "I found none. Grep of r3 MD for Samuel/APPROVED/granted/pushed/executed finds only negations (MD:66, :97, :143, :363, :692 'must be expressly granted', :890). JSON keeps sourceBodyGrant false, reviewCreatesGrant false, DRAFT_ONLY_NOT_SAMUEL_APPROVAL, execution NOT_RUN and push LOCAL_ONLY_NOT_AUTHORIZED. The bindings assignment entry is labelled READ_ONLY_WORKING_ASSIGNMENT_OBSERVATION_NOT_APPROVAL."
+     }
+    ],
+    "defects": [
+     {
+      "id": "E-1",
+      "severity": "NONBLOCKING",
+      "title": "Lease sentence re-introduces an in-tree-unsupported present-tense claim ('reclaimed ... for r3')",
+      "claim": "R2-18 asked for 'refreshed at handoff 301d9b08' because r2's 'now refreshed' was false inside its own tree. r3 MD:111-113 adds 'and is reclaimed on the same scope for r3', which the r3 tree does not show.",
+      "evidence": "- r3 MD:111-113.\n- .xenios/CODE_OWNERSHIP.json:3592-3605@280193059: lease 17093695 has state 'idle', heartbeatAt 2026-10-09T22:25:16.370Z, and a note describing the r2 freeze at 39203461.\n- Only the later handoff 2d291d0 updates the heartbeat (2026-10-10T00:19:09Z), and the state is still 'idle' there.\n- The scope part of the sentence is accurate: the paths are three records plus continuity.",
+      "fix": "Say 'narrowed/refreshed at handoff 301d9b08 for these three records and owned continuity only'. Either drop the r3 reclaim clause, or anchor it to the commit that records it (e.g. 'heartbeat recorded at the r3 handoff')."
+     },
+     {
+      "id": "E-2",
+      "severity": "NONBLOCKING",
+      "title": "Carried R2-5 and R2-15 criteria cite r2 line numbers that point to the wrong r3 lines",
+      "claim": "Section 14 and its JSON copy reproduce doc 75's critic anchors 'MD:705-706' and 'MD:696' without saying they refer to r2. Read against r3, they land on unrelated text.",
+      "evidence": "- The anchors appear at r3 MD:1126 (R2-5), MD:1136 (R2-15), JSON:3097-3098 (R2-5 title and condition) and JSON:3189 (R2-15).\n- r2 MD:705-706 ('Activation requires active revision, last-published revision and scope revision to agree') is now r3 MD:726-727.\n- r2 MD:696 ('New descendants') is now r3 MD:717.\n- In r3, MD:705 is blank, MD:706 is '**Single output authority:**', and MD:696 is the bindings read set.",
+      "fix": "Write 'r2 MD:705-706 (r3 MD:726-727)' and 'r2 MD:696 (r3 MD:717)', or anchor the criteria by section and paragraph name."
+     },
+     {
+      "id": "E-3",
+      "severity": "NONBLOCKING",
+      "title": "MD and JSON diverge in how the rulings and the doc73 map are recorded; JSON row 12 lost the no-upgrade rule",
+      "claim": "r3 updated several MD rows but left their JSON mirrors stale or worded differently. Section 14's precedence clause (MD:1093) mitigates this, but the structured mirror is not exact.",
+      "evidence": "- CC-18: MD:877 says 'Original Doc75 adopts the shared try-lock', but JSON doc73CorrectionMap CC-18 (JSON:2822-2825) still says 'Intake try-shared-lock alternative left to original reviewer; no silently selected new gate policy.'\n- CC-1: MD:860 was reworded, but JSON doc73CorrectionMap CC-1 (JSON:2652-2655) still reads 'Decision 3 now explicitly carries...'.\n- Section 13 statuses: MD:1079 CARRIED_NOT_SOURCE_CLOSED vs JSON:2234 CARRIED_NOT_CLOSED; MD:1083 ORIGINAL_RULING_SOURCE_AND_CONTROLS_CARRIED vs JSON:2254 ORIGINAL_DOC75_RULING_SOURCE_IMPLEMENTATION_AND_CONTROLS_CARRIED.\n- Row 12: MD:556 keeps '503 temporarily_unavailable ... Never upgrade or reuse a reentrant holder', while JSON:3018 has only the CC-18 ruling text. JSON lost r2's 'Never upgrade or retry admission under an old head share' (r2 JSON:2871), and the word 'upgrade' no longer appears anywhere in r3 JSON. The MD still states the rule at MD:381 and MD:556.",
+      "fix": "Mirror MD:860 and MD:877 into JSON doc73CorrectionMap CC-1/CC-18. Align the CC-10/CC-18 status labels. Restore 'no shared-to-exclusive upgrade' and the 503 mapping in JSON ordered row 12, or add the no-upgrade rule to gateProtocol."
+     },
+     {
+      "id": "E-4",
+      "severity": "NONBLOCKING",
+      "title": "MD decision-3 row lost the explicit 'UNRESOLVED:' label that doc 75 cited for the CC-1 closure",
+      "claim": "Doc 75 cited R2_DELTA.md:196, which began 'UNRESOLVED: ...', for CC-1's registration. The r3 row (MD:203) was rewritten to mirror the JSON items and no longer carries the label. The CC-1 closure still stands on other evidence.",
+      "evidence": "- r2 MD:196 began 'UNRESOLVED: material write holds intake...'.\n- r3 MD:203 begins 'Every material guarded write advances epoch...' and ends 'No values or availability policy selected; this is an amendment for the existing coordinator register, not an owner answer.'\n- The closure remains supported by MD:341-346 ('UNRESOLVED choice under existing decision 3 ... If the owner declines it, return this design for revision') and by JSON decision3.status UNRESOLVED_EXISTING_OWNER_DECISION_NO_NEW_QUESTION (JSON:2047).",
+      "fix": "Prefix the MD decision-3 row with 'UNRESOLVED:' for parity with JSON decision3.status."
+     },
+     {
+      "id": "E-5",
+      "severity": "NONBLOCKING",
+      "title": "R2-18 and R2-20 were performed in r3 but are still listed as carried source criteria, NOT RUN",
+      "claim": "R2-18 and R2-20 are records-label items with no source component. r3 performed them, yet still lists them as source acceptance criteria to carry, and doc75Errata.correctionMap gives them no recordStatus.",
+      "evidence": "- MD:1139 and :1141 mark them 'CARRIED / NOT RUN'.\n- JSON:3217 and :3236 give status CARRIED_SOURCE_ACCEPTANCE_CRITERION_NOT_SOURCE_CLOSED, with optionalRecordsErrata notes at :3220 and :3239.\n- doc75Errata.correctionMap lists only R2-1..R2-4; R2-18/R2-20 appear only in optionalRecordsOnly (JSON:3280-3282).\n- MD:1122 says 'Optional R2-18/R2-20 records cleanup does not claim implementation or execution closure'.",
+      "fix": "Record R2-18 and R2-20 as CORRECTED_PENDING_ORIGINAL_BYTE_CHECK in the doc75Errata map and in the section 14 table. Keep a source carry only for any residue, such as E-1."
+     }
+    ],
+    "deviations": [
+     "Beyond the two enumerated git templates, I used other read-only git forms: `git diff --stat` (records path and whole tree, 39203461..280193059), `git show --stat` on 280193059, `git log --all --oneline --ancestry-path 280193059..`, `git show 280193059:.xenios/CODE_OWNERSHIP.json` and `git show 2d291d0:.xenios/CODE_OWNERSHIP.json` piped to grep/head, and `git ls-tree -l` at 7609c42, 39203461 and 280193059. None of these writes anything.",
+     "I read commit 2d291d0, the r3 handoff, which is outside the named target. I used it only to test the lease claim behind E-1.",
+     "Two oversized git diff outputs (the MD and delta-JSON diffs) were saved automatically by the tool harness under C:/Users/sboad/.claude/projects/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/tool-results/ as bp2lrw1qt.txt and bljumr11g.txt. No command of mine redirected output there. I then read those files with the Read tool. I created, modified and deleted no other file.",
+     "I did not use any interpreter, SQL, database, MCP tool, WebFetch, hashing utility, checkout, commit, fetch or push, and I did not contact other sessions. Raw SHA-256 values are therefore NOT PROVEN by me; only Git blob ids and sizes were verified."
+    ]
+   },
+   "verify": {
+    "itemChallenges": [
+     {
+      "item": "R2-1(a) S0 publish/revoke names in the MD named amendments",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Could not refute.\n- r3 MD:666-667 name public.research_health_quick_order_publish_revision(jsonb,text) and ..._revoke_revision(uuid,text).\n- S0 matches: currentness.sql:498 (p_publication jsonb, p_decision_inputs_text text) and :531 (p_revision_id uuid, p_reason text) @25858ad. The S0 header :5-6 confirms these are exact names, not currentness_ prefixed ones.\n- Grep of all three r3 files for 'currentness_(publish|revoke)_revision' finds 0 matches.\n- The other bare uses (MD:684, JSON:1669, :2530, bindings :1245) are consistent."
+     },
+     {
+      "item": "R2-1(b) S0 names in JSON namedAmendments",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed in the r2-to-r3 diff: JSON:2066 and :2070 now carry the bare S0 names. sourceGrantDraft.part2 (JSON:2008) says 'correct S0 publish/revoke amendments'. No prefixed residue remains."
+     },
+     {
+      "item": "R2-1(c) exact-name fingerprint entries kept",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- MD:1102 explicitly retains both exact-name fingerprint entries and forbids prefixed substitutes.\n- MD:735 and JSON fingerprint.functionPredicate ('Retain currentness_ prefix/existing exact names') are unchanged. This matches S0's split at currentness.sql:5-6 and :53-55: exact names for publish/revoke/read, a prefix rule for currentness_*.\n- JSON restates the retention only in summary form (doc75Errata.correctionMap). That is sufficient."
+     },
+     {
+      "item": "R2-1(d) one stated table-lock order for publish and activation",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "One identical rule appears at MD:329, :666, :668, :710, :1102 and at JSON scopeRaceProposal, activation.transition, namedAmendments and gateProtocol.publicationActivationOrder. That last object also gives the NOWAIT reason, satisfying both alternatives in doc 75's fix.\n\nThe 12-name list equals guard.scopeTableOrder (JSON:281-294), which is unchanged from r2. I re-checked it is ascending by byte: d < e < i < l < p < r; legal < session < shipping; documents < tests; product_c < product_p < product_v < products ('_' 0x5F < 's' 0x73); required_inputs last.\n\nNo 'sorted order' or 'section 9 order' remains in any r3 file (grep finds 0). The design statement is NOT RUN."
+     },
+     {
+      "item": "R2-2(a) monotonic_epoch head exclusive-gate amendment flagged as NEW Part 2 scope in MD",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "MD:133-135 flags it as NEW Part2 scope. The S0 object is accurately described: function at currentness.sql:385-395; trigger research_health_quick_order_head_epoch_monotonic is BEFORE UPDATE FOR EACH ROW at :402-404; fingerprint entry at :455-456 @25858ad. Section 10 (MD:893-894) points back to the section 2 list, so no second Part 2 list omits it."
+     },
+     {
+      "item": "R2-2(b) JSON part2 / sourceGrantDraft",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "JSON:2008 adds the amendment as NEW scope. part1 at JSON:2007 is byte-unchanged and status stays DRAFT_ONLY_NOT_SAMUEL_APPROVAL."
+     },
+     {
+      "item": "R2-2(c) currentness slice row additionalScope",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "JSON:1671 adds 'Part2 NEW existing fingerprinted ...monotonic_epoch() head BEFORE UPDATE exclusive-gate-check amendment' (the diff shows it absent from r2). namedAmendments also gains the NEW_SCOPE_UNAPPROVED flag (JSON:2080)."
+     },
+     {
+      "item": "R2-2(d) two stale 'Part2 private context' tags relabelled",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "The diff shows quick-order-repository.ts and ports.ts additionalScope rewritten as Part1 refinements with no new Part2 grant. That is exactly the first option in the doc 75 critic's FIX.\n\nScope 1d4f2c3 places ports.ts and quick-order-repository.ts wiring with the existing builder (QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:162-163, :268-274). No 'Part2 private' text remains in r3.\n\nThe Part 1 text (MD:123-129, JSON:2007) still enumerates only guard, reader and commit. That is unchanged pre-existing wording that doc 75 accepted, not a defect introduced here."
+     },
+     {
+      "item": "R2-18 (optional) 'Approved' recipient label, existingLease to historical, 'refreshed at 301d9b08'",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Upheld as PARTIAL.\n- Fixed in r3: CC-23 is reworded in MD:882 and the JSON doc73 map. 'existingLease' occurs 0 times in r3. historicalLease and historicalLeaseNote occur on all 17 rows (17 notes).\n- Not supported in-tree: MD:111-113 adds 'and is reclaimed on the same scope for r3'. At 280193059 (= the 301d9b08 .xenios), CODE_OWNERSHIP.json:3602-3605 shows lease 17093695 'idle', heartbeat 2026-10-09T22:25:16Z, with a note describing r2. Even the later handoff 2d291d0 keeps it 'idle'; only the heartbeat and note move to r3.\n- The JSON historicalLeaseNote makes no r3 claim, so MD and JSON also disagree here."
+     },
+     {
+      "item": "R2-20 (optional) stale r1 workingRaw removed or labelled",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "The bindings diff removes all three workingRaw blocks from r1RecordArtifacts, including the equalToGit:true one, and leaves the gitBlob/sha256/bytes binding fields intact."
+     },
+     {
+      "item": "Change boundary: every r2-to-r3 changed region classified",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Agreed. `git show --stat 280193059` lists only the three records; the parent is 301d9b08 and the tree is eb1d5c25.\n\nI walked every MD hunk and every JSON hunk header (about 110). Each one maps to R2-1..R2-4, R2-18/R2-20, the two rulings, or records bookkeeping:\n- title and status;\n- doc 75 basis;\n- Doc73 relabel;\n- assignment;\n- the CC-1 row (responds to critic R2-4(e));\n- the decision-5 sequencing sentence;\n- section 14 and the JSON r2, doc75SourceSuccessorConditions and doc75Errata blocks;\n- bindings counters.\n\nNo design change falls outside the permitted set. The event matrix hunks touch only 35 expectedRefusal and 47 isolationRule values (both counts re-grepped). PARTIAL only because the bookkeeping introduces the E-1..E-4 precision drift and the EV-1 stale labels."
+     },
+     {
+      "item": "Doc 75 CLOSED items and status markers intact",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- CC-1: MD:341-346 still says UNRESOLVED and 'If the owner declines it, return this design for revision'. JSON decision3.status is UNRESOLVED_EXISTING_OWNER_DECISION_NO_NEW_QUESTION. MD:725 keeps CC-29.\n- CC-2: revoke takes no table locks (MD:667, :674).\n- CC-3: MD:651-652.\n- CC-4: MD:706-731.\n- 47/48: MD:737, JSON expectedTriggerCount 47, bindings triggeredIudRows 35.\n- DRAFT at MD:143 and :890; JSON:2006 and :2033-2035 (NOT_RUN, null reservation, LOCAL_ONLY_NOT_AUTHORIZED).\n\nThe only weakening is the dropped 'UNRESOLVED:' label on the MD:203 row (E-4); the closure stands on the other anchors."
+     },
+     {
+      "item": "17 paths and exclusions unchanged",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- There is no MD hunk in MD:99-105 or in section 11.\n- The JSON hunk list jumps from -1890 to -1967 with no hunk in paymentExclusions or exclusions. In the 17 rows, path values are unchanged; only the lease fields, currentWriteEligibility, two tags, the currentness additionalScope and the verifier acceptanceEvidence change.\n- sourceGrantDraft.scope is unchanged ('futureDisabledSlice17 plus futureEvidencePaths4; exclusions verbatim')."
+     },
+     {
+      "item": "Recording of doc 75's two rulings (CC-18 try-lock; CC-10/R2-8 503 with key kept)",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "The ruling text is accurate wherever it is recorded:\n- pg_catalog.pg_try_advisory_xact_lock_shared(integer,integer);\n- false gives DEFINITE_REFUSAL_RETRYABLE, key kept, no body retry;\n- exclusive waits stay bounded;\n- the five required controls match doc 75 §4;\n- the 503 temporarily_unavailable mapping;\n- no page or handler change;\n- the reserve-503 wording is superseded.\n\nBut JSON doc73CorrectionMap CC-18 (JSON:2822-2825) still says the try-lock is 'left to original reviewer; no silently selected new gate policy'. That directly contradicts the recorded ruling, and only MD has the precedence clause (MD:1093); JSON has none. Hence PARTIAL, NONBLOCKING."
+     },
+     {
+      "item": "No record of Samuel's approval, a grant, execution or push",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Nothing new records approval, grant, execution or push.\n- 'approved bounded exclusive ... gate' was already r2 wording, and it means an approved bound whose values are absent.\n- The 'approved not-a-second-catalog-or-legal-registry boundary' refers to Samuel's already-approved scope 1d4f2c3.\n- The bindings assignment entry is labelled READ_ONLY_WORKING_ASSIGNMENT_OBSERVATION_NOT_APPROVAL."
+     }
+    ],
+    "defectVerdicts": [
+     {
+      "id": "E-1",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed with git show 280193059:.xenios/CODE_OWNERSHIP.json. Lease 17093695 is 'idle', with heartbeat 2026-10-09T22:25:16.370Z and a note about the r2 freeze at 39203461. At 2d291d0 it is still 'idle'; only the heartbeat and note change.\n\nNo commit shows a reclaim, so 'is reclaimed on the same scope for r3' (MD:112-113) has no support in the tree. It also exceeds the JSON historicalLeaseNote, which speaks only of 301d9b08.\n\nThe scope half of the sentence is accurate. The required 'refreshed at handoff 301d9b08' wording is present, so this is NONBLOCKING."
+     },
+     {
+      "id": "E-2",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed. MD:1126 and :1136, and JSON:3097, :3098 and :3189, reproduce the doc 75 critic anchors 'MD:705-706' and 'MD:696' with no r2 qualifier.\n\nIn r3, MD:705 is blank and MD:706 is '**Single output authority:**'. The cited sentence is now MD:726-727, and MD:696 is the bindings field read set (New descendants is MD:717). A reader applying R2-15 to r3 would land on the wrong paragraph. This is wording only."
+     },
+     {
+      "id": "E-3",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed on all counts.\n- JSON doc73CorrectionMap CC-1 (JSON:2655) and CC-18 (JSON:2825) are unchanged from r2, while MD:860 and :877 were rewritten. The CC-18 JSON text contradicts the recorded ruling.\n- MD :1079 and :1083 status labels differ from JSON CC-10 (CARRIED_NOT_CLOSED) and CC-18.\n- r2 JSON:2871 was the only 'Never upgrade' rule in JSON. r3 JSON:3018 replaced it, and grep of r3 JSON for 'upgrade' finds 0. MD keeps the rule at :381 and :556.\n\nMitigated by MD:1093 precedence and by gateProtocol, sourceSuccessorConditions and doc75Errata carrying the ruling. Still, this is a contradiction between MD and JSON."
+     },
+     {
+      "id": "E-4",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed. The r2 MD:196 row began 'UNRESOLVED:'. The r3 MD:203 row is the concatenation of the JSON decision3.choicesNotSelected items plus 'not an owner answer', with no UNRESOLVED label.\n\nThe status survives in JSON decision3.status (JSON:2047), in the JSON key name 'choicesNotSelected', in MD:341-346, and in the row's own 'needs explicit owner acceptance' and 'not an owner answer'. The CC-1 closure is therefore not broken; this is a parity and precision point."
+     },
+     {
+      "id": "E-5",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Upheld, but it is cosmetic. Listing R2-18 and R2-20 among the 16 carried criteria follows doc 75 literally: §0 says 'Sixteen (R2-5 to R2-20) travel as named conditions', and §7 makes them acceptance criteria.\n\nr3 does disclose that it performed the cleanup: MD:15, MD:1122, and JSON optionalRecordsErrata at :3220 and :3239. The residue is only that neither the MD section-14 table nor doc75Errata.correctionMap gives R2-18 or R2-20 a records status. 'CARRIED / NOT RUN' reads oddly for R2-20, which has no source component."
+     }
+    ],
+    "missed": [
+     {
+      "id": "EV-1",
+      "severity": "NONBLOCKING",
+      "title": "Stale 'pending original decision/acceptance' labels left outside the r2 map caveat",
+      "claim": "r3 rewrote the CC-18 correction text to say the original reviewer has ruled. It kept the disposition label CARRIED_ORIGINAL_REVIEW_DECISION in MD:877 and JSON:2824, which reads as a decision still pending. MD:849 also still says 'records proposal pending original acceptance', while JSON scopeMaterialisation.status now records DOC75_DESIGN_COMPATIBLE_WITH_CONDITIONS. MD:42's caveat covers only 'historical pending labels in the r2 map'; MD:849 is outside that map.",
+      "evidence": "- r3 MD:877: '| CC-18 (P3) | CARRIED_ORIGINAL_REVIEW_DECISION | Original Doc75 adopts the shared try-lock; ...'.\n- JSON:2822-2825: disposition CARRIED_ORIGINAL_REVIEW_DECISION.\n- r3 MD:847-849: 'This is a records proposal pending original acceptance and Part2 scope'.\n- JSON scopeMaterialisation.status: 'DOC75_DESIGN_COMPATIBLE_WITH_CONDITIONS_R3_CARRIER_ERRATA_PENDING_BYTE_CHECK_PART2_UNAPPROVED'.\n- MD:42 limits its caveat to 'the r2 map'.",
+      "fix": "Relabel CC-18 (MD:877 and JSON:2824) as, for example, ORIGINAL_RULING_MADE_SOURCE_AND_CONTROLS_CARRIED, matching MD:1083. Reword MD:849 to 'design accepted with conditions by Doc75; Part2 scope unapproved'. Alternatively, widen MD:42's caveat to cover all inherited pending labels."
+     }
+    ],
+    "opinion": "Checker E's verdicts survive this adversarial pass, and nothing is BLOCKING.\n\nI could not refute any CORRECTED item:\n- **R2-1.** The bare S0 names publish_revision(jsonb,text) and revoke_revision(uuid,text) appear in MD and JSON, and no prefixed residue remains. The fingerprint retention is explicit. One table-lock order is stated identically in MD and JSON, with the NOWAIT reason in JSON. I independently confirmed the 12-name list is guard.scopeTableOrder (unchanged from r2) and is in ascending byte order.\n- **R2-2.** The monotonic_epoch head BEFORE UPDATE gate check is flagged as NEW Part 2 scope in the MD Part 2 list, JSON part2, the currentness slice row and namedAmendments, and is accurate against S0 currentness.sql:385-404 and :455-456. Both stale tags are relabelled as Part 1 refinements, the first option doc 75 allowed.\n- **R2-20.** Corrected.\n\nR2-18 is correctly PARTIAL. The two required labels are fixed, but MD:112-113 adds an r3 'reclaimed' claim. Neither the r3 tree nor the later handoff 2d291d0 shows it: the lease stays 'idle'. The JSON note makes no such claim.\n\n**Change boundary.** The r3 commit changes only the three records. Every hunk maps to R2-1..R2-4, R2-18/R2-20, the two rulings, or records bookkeeping. The 17 paths, exclusions, Part 1, the 47/48 fingerprint, the CC-1..CC-4 closures and the DRAFT / LOCAL ONLY / NOT RUN status are intact. Nothing records approval, a grant, an execution or a push.\n\n**Defects.** All five checker defects are upheld as NONBLOCKING; E-5 is cosmetic because carrying R2-18 and R2-20 follows doc 75 literally. I add EV-1: stale pending-decision labels at MD:877, JSON:2824 and MD:849.\n\nThe most substantive residue is the MD/JSON drift in E-3: the stale JSON CC-18 map text, and the loss from JSON of the 'never upgrade' rule. JSON has no precedence clause to cover it. All of this wording can travel with the byte check.\n\nPostgreSQL try-lock and NOWAIT behaviour is reasoned from documentation only, NOT RUN.",
+    "deviations": [
+     "Beyond the two git command templates in the task, I used other read-only git forms:\n- `git diff --stat` and per-file `git diff` for the three record paths, 39203461..280193059;\n- `git show --stat --format=%H%n%P%n%T 280193059`;\n- `git log --oneline --all --ancestry-path 280193059..`;\n- `git ls-tree -l` at 7609c42 and at 280193059;\n- `git show 280193059:.xenios/CODE_OWNERSHIP.json` and `git show 2d291d0:.xenios/CODE_OWNERSHIP.json`, piped to grep/head;\n- `git show 25858ad:<currentness.sql>` piped to grep and sed -n.\nNone of these writes anything.",
+     "I read commit 2d291d0, the r3 handoff, which is outside the named target. I used it only to test the lease claim behind E-1.",
+     "Two oversized git diff outputs, for the MD and the delta JSON, were saved automatically by the tool harness, not by any redirection of mine. They are bupgnug31.txt and brn58hglf.txt under C:/Users/sboad/.claude/projects/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/tool-results/, and I read them with the Read tool. I created, modified and deleted no other file.",
+     "I used no interpreter, SQL, database, MCP tool, WebFetch, hashing utility, checkout, commit, fetch or push, and I did not contact other sessions. Raw SHA-256 values are therefore NOT PROVEN by me; I verified only Git blob ids and sizes (doc 75 c0b2d48/21304 and 9504cdd/321891; r3 records fe50e01/128858, a99ad1b/224734 and 0301e86/70359)."
+    ]
+   }
+  },
+  {
+   "checker": "carrier-decision3-rulings",
+   "tag": "F",
+   "check": {
+    "summary": "Checker F (carrier, decision 3 and the two rulings) against doc 75 and r3 280193059 (r3's parent is 301d9b08; only the three records changed, confirmed by git diff --stat). Every scoped correction is present, accurate against S0 and the 1d4f2c3 scope, and consistent between the Markdown and the JSON. I found no BLOCKING defect, and five NONBLOCKING ones that can travel. Missing evidence is reported as NOT PROVEN. PostgreSQL behaviour is reasoned from documentation only, NOT RUN.\n\nR2-3 (scope-input carrier): CORRECTED. r3 takes the narrow option.\n- What is stored: raw bytea only for bindings and configuration. Reference-only kinds are catalog, reconciliation and health_legal (MD:687-692; JSON:2527, :2531-2539).\n- Read sets: closed field paths for bindings, configuration and the normalized decision (MD:694-698). The paths match S0: the decision artifact keys at currentness.sql:151@25858ad, and the S0 bindings artifact master-offering-bindings.generated.json (schemaVersion 1, bindings[] with offeringVariantId/productId/variantId, 128,269 bytes, 415 bound rows).\n- Hash checks: the full raw SHA-256 must equal both the publication artifacts[] entry and the decision $.artifacts entry (MD:700).\n- Size bound: 4,194,304 + 262,144 = 4,456,448 bytes, plus count and depth limits. The offer key limit of 200 equals S0's ^[!-~]{1,200}$ (currentness.sql:253). The US-only country claim is true at :279 (MD:702).\n- Parse contracts: built and reviewed with the class-4 artifacts before S (MD:696, :702, :704).\n- Nothing still needs catalog contents in SQL:\n  - Domains and countries come only from configuration quickOrderScope plus the decision's countryCode (MD:697, :710; JSON:2636).\n  - JSON:2530 states the ProductControl check runs against SQL products/variants.\n  - Publish step 7 (MD:253-256) needs no catalog contents.\n- Boundary: the departure from the S0 comments at currentness.sql:4 and :126 is disclosed as an unapproved Part 2 exception (MD:692). The 1d4f2c3:133-134 boundary is kept by narrowing. The :244-251 file-authority boundary is kept because all five external authorities remain (MD:690, :692). Part 2 carries the narrowed carrier (MD:135-138; JSON:2008).\n\nR2-4 (decision-3 register): CORRECTED.\n- (a) to (d) are present in MD:203 and in JSON decision3 (:2055-2058).\n- MD:401-402 now agrees with :431-433.\n- The writer-profile refusal is on exactly 35 eventMatrix rows. The other 13 are the 12 TRUNCATE rows plus the excluded session INSERT. It is also in guardChecks.material/prePublication (:2126-2127) and guard.checks (:1488-1489), with negative controls at :2129-2135 and :1764.\n- The cascade and closure item is now definite. 'can require' is gone.\n- No values are chosen and no owner answer is recorded (:2062; MD:187-190).\n\nRulings:\n- CC-18 try-lock: recorded faithfully at MD:376-392, :556, :1083, :1114; JSON:2093, :2253, :3018, :3277. The decision-3 cost is at :2059. The required controls are all listed.\n- CC-10/R2-8: 503 temporarily_unavailable with the key kept, and no page or handler change, at MD:1079, :1116, :1118, :1129; JSON:2233 and doc75Errata.\n- Contradictions: none remain except leftovers that MD:1093 and MD:1118 formally supersede. JSON:2825 still says the try-lock is 'left to original reviewer'. MD:616 says 'shared counterpart'.\n\nApproval, scope and closed items:\n- No Samuel approval, grant, execution or push is recorded (JSON:2006, :2035).\n- No doc 75 CLOSED item is weakened in my scope: the 47/48 fingerprint, the Part 1/Part 2 boundary, DRAFT/NOT RUN, and CC-1's UNRESOLVED registration (MD:341-346; JSON:2047).\n\nOut of scope, for another checker: JSON specificRemainingPrerequisites R2_REVIEW (R3_DELTA.json:1975-1978) still cites Doc73 and asks for 'Same original exactr2 disposition', which is stale after Doc75. r3 did not change it.",
+    "items": [
+     {
+      "item": "R2-3: narrow choice; SQL keeps raw bytes only for bindings and configuration; catalog, reconciliation and Health legal contents stay outside SQL",
+      "status": "CORRECTED",
+      "evidence": "R3_DELTA.md:687-688 says 'raw bytea ONLY for bindings and configuration'. MD:692 says 'Catalog, reconciliation and Health legal contents are neither stored nor parsed in SQL'. JSON:2527 and storedRawKinds/referenceOnlyKinds at :2531-2539 match, as does R3_BINDINGS.json:1239-1254. r2 stored all five ('raw bytea contents', r2 diff JSON:2457 and R2_DELTA.md:679-683)."
+     },
+     {
+      "item": "R2-3: closed field paths read from each retained artifact",
+      "status": "CORRECTED",
+      "evidence": "MD:694-698 and JSON fieldReadSets at :2540-2588 define the paths:\n- bindings: $.schemaVersion, $.bindings[*].offeringVariantId/productId/variantId. These match the S0 artifact server/research/master-offerings/data/master-offering-bindings.generated.json@25858ad (schemaVersion 1 at line 2; bindings[] at 1323 with those keys; unbound at 4230 and supersededBindings at 4295, which the rule excludes).\n- configuration: quickOrderScope.* (DRAFT, since the artifact is absent).\n- decision: $.artifacts.{catalog,bindings,reconciliation,healthLegal,configuration}.path/sha256, $.canonicalReaderProfile, $.offerRules[*].*. These match currentness.sql:151, :167-173 and :250-279@25858ad.\nThe comparator for the two decision productId/variantId paths is left implicit (F-5)."
+     },
+     {
+      "item": "R2-3: raw SHA-256 checked against the publication entries",
+      "status": "CORRECTED",
+      "evidence": "MD:700 and JSON hashChecks (:2589) hash each full raw sequence with no LF normalization. The result must equal both the publication artifacts[] (kind,path,sha256) entry and the decision $.artifacts entry. All five reference pairs still match through the existing S0 validator (currentness.sql:186-196@25858ad region). Catalog, reconciliation and health_legal hashes are checked externally and bound by the construction receipt."
+     },
+     {
+      "item": "R2-3: a content size bound",
+      "status": "CORRECTED",
+      "evidence": "MD:702 and JSON sizeBounds (:2590-2606):\n- bindings 4,194,304 bytes; configuration 262,144 bytes; total 4,456,448 (the arithmetic is correct).\n- 4,096 rows/offers, 64 domains, one country, depth 32; byte ceilings are checked before parsing.\n- offer key 200 bytes, equal to S0 ^[!-~]{1,200}$ (currentness.sql:253@25858ad).\n- 'S0 validator permits US only' is true (currentness.sql:279@25858ad).\nThe 4,096-offer ceiling is below S0's 50,000 offerRules (:243). This is disclosed: 'above-bound real inputs require explicit scope amendment'. The S0 bindings artifact (128,269 bytes, 415 rows) fits."
+     },
+     {
+      "item": "R2-3: parse contracts built and reviewed with the class-4 artifacts before the S freeze",
+      "status": "CORRECTED",
+      "evidence": "MD:696 says the parser is 'built/reviewed with class-4 artifacts before S'. MD:702 says the bounds are 'built/reviewed with actual class-4 artifacts before S'. MD:704 says parser contracts are 'built and reviewed with all five class-4 artifacts BEFORE S'. JSON:2543, :2605 and :2607 match. This also agrees with the sequence step at MD:230-235."
+     },
+     {
+      "item": "R2-3 internal consistency: nothing in r3 still needs catalog contents in SQL (ProductControl check, domain/country derivation, publish-step inputs, JSON scopeMaterialisation)",
+      "status": "CORRECTED",
+      "evidence": "- ProductControl: JSON:2530 and R3_BINDINGS.json:1245 say the ProductControl disagreement 'is checked against SQL products/variants, not by importing a catalog'. The bindings rule at MD:696 requires the canonical SQL variant to belong to the mapped product.\n- Domains and countries: they now come only from configuration quickOrderScope plus the decision countryCode (MD:697, :710; JSON:2636). r2 took domains 'from actual approved binding/configuration fields'.\n- Construction states 'only the two named artifact contents enter SQL'.\n- Publish step 7 (MD:253-256) checks blob equality externally.\n- MD:684-685 still says the publish arguments 'do not contain the five artifact contents', which is accurate.\nMD does not carry JSON's 'why' sentence (F-5)."
+     },
+     {
+      "item": "R2-3: departure from 1d4f2c3:133-134/:244-251 and currentness.sql:4/:126@25858ad avoided or disclosed",
+      "status": "CORRECTED",
+      "evidence": "Verified at S0: currentness.sql:4 reads 'normalized decision-input metadata only', and :126 reads 'SQL does not read or approve those artifacts'.\n- Disclosed: MD:692 and JSON boundary (:2608) call parsing the two inputs 'a NEW, unapproved Part2 exception to S0 normalized-metadata-only/SQL-does-not-read-artifacts comments', to be granted expressly and updated only in the authorized successor.\n- Avoided: 1d4f2c3:133-134 ('not a second catalog or legal registry') holds because catalog and legal contents are excluded. 1d4f2c3:244-251 ('File authority is a separate finite set') holds through 'SQL neither approves those inputs nor replaces their external authorities' and 'all five external authorities remain required' (MD:690, :692).\n- Part 2 lists the 'explicit limited parsing departure' (MD:135-138; JSON:2008)."
+     },
+     {
+      "item": "R2-3: Markdown, delta JSON and bindings JSON agree",
+      "status": "CORRECTED",
+      "evidence": "The identity, lifecycle, trust, fieldReadSets, hashChecks, sizeBounds, parseAndResolve and boundary text is byte-identical across MD:687-704, R3_DELTA.json:2524-2609 and R3_BINDINGS.json:1239-1323. newSchemaScope (JSON:2648) and the currentness slice additionalScope (JSON:1671) name the narrowed carrier. The section 14 R2-3 row (MD:1099) matches doc75Errata."
+     },
+     {
+      "item": "R2-4(a): non-READ COMMITTED refusal reaches every guarded statement, including OUT, equal-projection, quantity-only and zero-row",
+      "status": "CORRECTED",
+      "evidence": "MD:203 (decision-3 row), MD:402, MD:1104, JSON decision3 :2056, guardChecks.bypass :2125, guard.checks.bypass :1487, and the eventMatrix isolationRule on all 47 trigger rows. The 48th row is the excluded session INSERT, which carries no isolationRule (JSON:1175-1195)."
+     },
+     {
+      "item": "R2-4(b): absent, invalid or exceeded writer profile refuses material platform writes AND revoke, including before publication; MD:393-394 'new saves and activation' fixed; refusal added to every I/U/D eventMatrix expectedRefusal and to guardChecks.material",
+      "status": "CORRECTED",
+      "evidence": "- Decision 3: JSON decision3 :2057 and MD:203 say 'refuses every material platform write before gate/head, including before first publication; publish, activation and revoke also refuse'.\n- The r2 line at R2_DELTA.md:393-394 is replaced at R3_DELTA.md:401-402 and now agrees with MD:431-433.\n- eventMatrix: 35 occurrences of the writer-profile expectedRefusal (grep count), i.e. 47 triggers minus 12 TRUNCATE. TRUNCATE keeps '55000 always'.\n- guardChecks.material/prePublication at JSON:2126-2127, guard.checks at :1488-1489, MD:659 and :661.\n- Negative and positive controls: writerProfileControls at :2129-2135 and :1491-1497, the verifier acceptanceEvidence at :1764, and MD:1106-1112.\nThe MD per-relation matrix column was not updated (F-3)."
+     },
+     {
+      "item": "R2-4(c): cascade refusal, and any closure change needs a new revision, decision text, publication and receipts; definite, not 'can require'",
+      "status": "CORRECTED",
+      "evidence": "JSON decision3 :2055 replaces r2's 'can require new publication ... proposed, not accepted' (r2 JSON:2016) with: 'requires a new revision ID, new decision text, a new six-artifact publication and new receipts before saving resumes; reactivation alone cannot repair immutable closure'. The same text appears at MD:203, MD:717 (newDescendants), JSON:2643 and MD:1104. Grep finds no 'can require' in r3."
+     },
+     {
+      "item": "R2-4(d): revocation assumes no foreign holder of the gate key",
+      "status": "CORRECTED",
+      "evidence": "JSON decision3 :2058 and MD:203 say 'Revocation availability assumes no foreign or non-protocol session-level holder of gate (1380471107,1) ... belong to the existing decision-3 refusal budget'. MD:1104 matches. This is consistent with MD:372-374."
+     },
+     {
+      "item": "R2-4: no values chosen and no owner answer recorded",
+      "status": "CORRECTED",
+      "evidence": "JSON decision3 status 'UNRESOLVED_EXISTING_OWNER_DECISION_NO_NEW_QUESTION' (:2047), registrationState 'R3_RECORDS_AMENDMENTS_FOR_EXISTING_COORDINATOR_REGISTER_NO_OWNER_ANSWER' (:2062). MD:187-190 and the end of the MD:203 row say 'not an owner answer'. 'No operating values selected' appears at :2059. The JSON CC-1 map row still says 'Decision 3 now explicitly carries' (F-1)."
+     },
+     {
+      "item": "Doc 75 CC-18 ruling recorded: pg_try_advisory_xact_lock_shared(integer,integer) in the commit; false gives DEFINITE_REFUSAL_RETRYABLE, key kept, no body retry; exclusive paths keep bounded waits; required controls",
+      "status": "CORRECTED",
+      "evidence": "MD:376-378 and :384-392 (anti-bypass, 'NOT RUN'), MD:556 row 12, MD:877, :1083, :1114. JSON gateProtocol.intakeSharedChoice :2093, orderedTransaction row 12 :3018, sourceSuccessorConditions CC-18 :2253, doc75Errata.reviewRulings.CC18 :3277. The decision-3 cost is at :2059 and MD:203. All five controls are listed (queued writer plus fresh intake, exclusive holder, shared-only grant, abort window, reentrant non-admission). Exclusive bounded waits are kept at MD:666-668 and :671."
+     },
+     {
+      "item": "Doc 75 CC-10/R2-8 ruling recorded: definite retryable refusal maps to 503 temporarily_unavailable with the key kept; no page or handler change",
+      "status": "CORRECTED",
+      "evidence": "MD:1079 (CC-10 row), MD:1116, MD:1129 (R2-8), MD:556 row 12. JSON:2233, the R2-8 condition/originalRuling at :3125/:3129, and reviewRulings.CC10 :3278. MD:1118 says 'They change no SQL, page or handler bytes' and supersedes 'reserve-503-for-uncertainty wording'. Grep finds no surviving 'reserve uncertain', 'uncertain503' or 'Do not relabel' text."
+     },
+     {
+      "item": "Rulings not contradicted anywhere (leftover blocking-shared-gate or reserve-503 text)",
+      "status": "PARTIAL",
+      "evidence": "Two leftovers remain. MD:1093 and MD:1118 formally supersede both.\n- R3_DELTA.json:2825 (doc73CorrectionMap CC-18, unchanged from r2) still reads 'Intake try-shared-lock alternative left to original reviewer; no silently selected new gate policy', while MD:877 was updated (F-1).\n- MD:615-616 still lists gate builtins as 'pg_advisory_xact_lock(integer,integer) and shared counterpart', i.e. the blocking shared overload (F-2).\nNo reserve-503 text remains."
+     },
+     {
+      "item": "Nothing records Samuel's approval, a grant, execution or push",
+      "status": "CORRECTED",
+      "evidence": "sourceGrantDraft.status is 'DRAFT_ONLY_NOT_SAMUEL_APPROVAL' (JSON:2006). JSON also has push 'LOCAL_ONLY_NOT_AUTHORIZED' (:2035), execution 'NOT_RUN' (:2033) and executionReservation null. MD:3, :97, :143 and :1143 say the grant remains DRAFT and nothing ran. Grep for Samuel/approved by/granted/pushed/executed finds only negations."
+     },
+     {
+      "item": "No weakening of doc 75 CLOSED items in this scope (CC-1 decision-3 registration, 47/48 fingerprint, Part 1/Part 2 boundary, DRAFT/NOT RUN)",
+      "status": "CORRECTED",
+      "evidence": "- CC-1: the UNRESOLVED registration and 'return for revision if declined' remain at MD:341-346, with JSON decision3.status UNRESOLVED (:2047). The MD:203 row dropped r2's leading 'UNRESOLVED:' label (F-4).\n- The fingerprint section is unchanged: MD:737-761 and JSON fingerprint at :2140-2141 (47 triggers, 48 rows).\n- Part 1 is unchanged (MD:123-129). Part 2 only adds the doc 75-required items (MD:130-143).\n- Carrier, scope and activation tables stay outside the 47 (MD:761)."
+     }
+    ],
+    "defects": [
+     {
+      "id": "F-1",
+      "severity": "NONBLOCKING",
+      "title": "JSON doc73CorrectionMap CC-18 and CC-1 rows were not mirrored from the corrected MD rows",
+      "claim": "r3 rewrote the MD CC-1 and CC-18 rows but left the JSON rows at their r2 text. CC-18 in JSON therefore still contradicts the try-lock ruling. CC-1 in JSON still implies the coordinator's decision-3 register already carries the hold, which is the doc 75 critic's R2-4(e) point.",
+      "evidence": "- CC-18: R3_DELTA.json:2825 reads 'Intake try-shared-lock alternative left to original reviewer; no silently selected new gate policy.' R3_DELTA.md:877 reads 'Original Doc75 adopts the shared try-lock'.\n- CC-1: R3_DELTA.json:2655 reads 'Decision 3 now explicitly carries held-until-separate-reactivation...'. R3_DELTA.md:860 reads 'This builder record supplies decision-3 amendments for coordinator reconciliation...'.\n- The r2-to-r3 JSON diff changed CC-23 (:2875) but not :2655 or :2825.\n- Critic record 75_doc73_r2_records_lens_findings.json:1765, R2-4 (e).\n- MD:1093 and :1118 formally supersede inherited wording, so no decision text becomes inaccurate.",
+      "fix": "Copy the MD:860 and MD:877 correction text into R3_DELTA.json:2655 and :2825, or label both JSON rows as historical r2 text superseded by doc75Errata."
+     },
+     {
+      "id": "F-2",
+      "severity": "NONBLOCKING",
+      "title": "Leftover gate-builtin wording and an incomplete refusal-taxonomy row",
+      "claim": "The MD builtin inventory still names the gate overloads as 'pg_advisory_xact_lock(integer,integer) and shared counterpart'. That reads as the blocking pg_advisory_xact_lock_shared(integer,integer), not the ruled pg_try_advisory_xact_lock_shared(integer,integer). Separately, the canonical refusal-taxonomy row for DEFINITE_REFUSAL_RETRYABLE still lists only lock timeout/deadlock/serialization, not the false try-lock result.",
+      "evidence": "- R3_DELTA.md:615-616 is unchanged from r2.\n- R3_DELTA.md:483 is the taxonomy row.\n- The false try-lock result is recorded elsewhere: MD:377, :556, :1079; JSON:2093, :2233.\n- MD:1118 supersedes 'inherited blocking shared-gate' wording.",
+      "fix": "At MD:616, name pg_catalog.pg_try_advisory_xact_lock_shared(integer,integer) for intake. At MD:483, add 'false shared try-lock' to the DEFINITE_REFUSAL_RETRYABLE row."
+     },
+     {
+      "id": "F-3",
+      "severity": "NONBLOCKING",
+      "title": "MD per-relation event matrix refusal column omits the writer-profile refusal",
+      "claim": "The JSON eventMatrix carries the writer-profile refusal on all 35 I/U/D rows. The MD per-relation matrix's 'Owner / refusal' column still lists only integrity, privilege and missing or uncertain scope/head. Coverage there rests on the general sentence 'Each I/U/D row has the O privilege/error checks above', which reaches MD:659.",
+      "evidence": "- R3_DELTA.md:834-845 is the matrix column.\n- R3_DELTA.md:830 is the general sentence.\n- R3_DELTA.md:1104 says 'The JSON adds the material-profile refusal to all 35 triggered I/U/D event rows'.\n- R3_DELTA.json has 35 occurrences of 'Writer approved_limits absent/invalid/exceeded refuses on material path'.",
+      "fix": "Append 'writer approved_limits absent/invalid/exceeded refuses on the material path before gate/head' to the MD matrix refusal column, or state it explicitly in MD:827-830."
+     },
+     {
+      "id": "F-4",
+      "severity": "NONBLOCKING",
+      "title": "MD decision-3 row lost its explicit UNRESOLVED marker and repeats itself",
+      "claim": "r2's decision-3 row began 'UNRESOLVED:', and doc 75 cited that row for CC-1's registration. r3's row now reads declaratively and ends with a duplicated 'No operating values selected. No values or availability policy selected'. CC-1 is not weakened, because UNRESOLVED survives at MD:341-346 and in JSON decision3.status.",
+      "evidence": "- R2_DELTA.md:196 begins 'UNRESOLVED: material write holds intake until separate reactivation'.\n- R3_DELTA.md:203 begins 'Every material guarded write advances epoch...'.\n- R3_DELTA.md:341-342 says 'an UNRESOLVED choice under existing decision 3'.\n- R3_DELTA.json:2047 has status UNRESOLVED_EXISTING_OWNER_DECISION_NO_NEW_QUESTION.\n- Doc 75:77-78 cites R2_DELTA.md:196 for the CC-1 registration.",
+      "fix": "Prefix the MD:203 cell with 'UNRESOLVED (choices not selected):' and drop the duplicated closing sentence."
+     },
+     {
+      "id": "F-5",
+      "severity": "NONBLOCKING",
+      "title": "Carrier comparator precision: decision productId/variantId versus bindings, and the MD lacks the ProductControl 'why'",
+      "claim": "The closed decision read set includes $.offerRules[*].productId/variantId, but no rule says they must byte-equal the bindings productId/variantId mapped from the same offeringVariantId. Only 'Bind exact selected identities' is stated. S0 allows any printable 1-200 character string there, while r3 requires lowercase UUIDs in bindings. The MD keeps 'canonical ProductControl disagreement' without the JSON's statement that the check runs against SQL products/variants, not a catalog.",
+      "evidence": "- R3_DELTA.md:698 and JSON:2582-2583, :2586 (the decision read set and its rule).\n- currentness.sql:253@25858ad (^[!-~]{1,200}$ for offeringVariantId/productId/variantId).\n- MD:702 and JSON:2602 (bindings IDs are lowercase UUIDs).\n- The output has both uuid and *_identifier text columns (MD:707).\n- R3_DELTA.json:2530 (the 'why') against MD:704.",
+      "fix": "State that, for each selected offeringVariantId, the decision offerRules productId/variantId byte-equal the bindings productId/variantId and the canonical SQL rows, and that a mismatch refuses publication. Copy the JSON:2530 'why' sentence into MD:704. This can travel with R2-16."
+     }
+    ],
+    "deviations": [
+     "Bash use beyond the two named git read forms: I ran read-only 'git diff --stat', 'git diff -U0', and 'git grep -l' (to locate the S0 bindings artifact). All were read-only git commands against C:/xenios-wt/health-review with --no-optional-locks.",
+     "Pipes beyond grep/sed -n/head: one 'git show ... | wc -c' (byte count of the S0 bindings artifact). One 'git diff ... | grep -v -E' is grep, as allowed.",
+     "The harness automatically saved three oversized command outputs to C:/Users/sboad/.claude/projects/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/tool-results/: bw6xtf02g.txt, bklfc0gkk.txt and b9bt8xiay.txt. I did not create them deliberately and did not modify or delete them. I only read them with Read and Grep.",
+     "No interpreter, SQL, database, MCP tool, WebFetch, checkout, commit, fetch, push or contact with other sessions was used. My only files work was reading."
+    ]
+   },
+   "verify": {
+    "itemChallenges": [
+     {
+      "item": "R2-3: narrow choice; SQL keeps raw bytes only for bindings and configuration; catalog, reconciliation and Health legal contents stay outside SQL",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "I could not refute it.\n- R3_DELTA.md:688 and :692 match JSON:2527 and :2531-2539, and R3_BINDINGS.json r3CarrierContract.\n- The r2 text 'five ordered kind/path/raw-SHA256 pairs, raw bytea contents' is gone (diff of r2 JSON:2457).\n- A grep for 'raw bytea', 'artifact contents' and 'parse fixed closed' finds only the narrowed wording, plus MD:684-685, which is still accurate."
+     },
+     {
+      "item": "R2-3: closed field paths read from each retained artifact",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Verified against S0:\n- The bindings artifact at 25858ad has schemaVersion 1 at line 2 and bindings[] at line 1323, with offeringVariantId/productId/variantId as lowercase UUIDs.\n- The decision validator uses artifact keys catalog/bindings/reconciliation/healthLegal/configuration with path/sha256, and offerRules with productId/variantId/destination.countryCode.\n- The configuration read set is disclosed as a DRAFT contract because the artifact is absent (MD:697).\n\nThe only gap is a comparator: decision productId/variantId against bindings. That is F-5, NONBLOCKING."
+     },
+     {
+      "item": "R2-3: raw SHA-256 checked against the publication entries",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- MD:700 and JSON:2589 hash the full raw bytes and require equality with the publication artifacts[] entry and the decision $.artifacts entry.\n- The S0 validator already enforces decision/publication equality for all five references.\n- The checker's line citation for that loop ('186-196 region') is approximate, but the claim itself is right."
+     },
+     {
+      "item": "R2-3: a content size bound",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- 4,194,304 + 262,144 = 4,456,448 (MD:702; JSON sizeBounds).\n- The decision text keeps the S0 limit of 8,388,608 bytes.\n- The offer key limit of 200 bytes matches S0's ^[!-~]{1,200}$.\n- countryCode is 'US' only at S0.\n- The 4,096-offer ceiling, below S0's 50,000, is disclosed as needing a scope amendment if exceeded."
+     },
+     {
+      "item": "R2-3: parse contracts built and reviewed with the class-4 artifacts before the S freeze",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- Present at MD:696, :702 and :704, and JSON:2543, :2605 and :2607.\n- Minor ambiguity: MD:704 says 'per-artifact parser contracts ... with all five class-4 artifacts'. This could be misread as SQL parsing of all five, but MD:692 is explicit that catalog, reconciliation and legal contents are never parsed in SQL. I am not raising a defect."
+     },
+     {
+      "item": "R2-3 internal consistency: nothing in r3 still needs catalog contents in SQL (ProductControl check, domain/country derivation, publish-step inputs, JSON scopeMaterialisation)",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- Domains and countries now come only from configuration quickOrderScope plus the decision countryCode (MD:710 = JSON:2636). r2's 'binding/configuration fields' domain source is removed; the S0 bindings carry no domain field.\n- The section 9 matrix scopes, publish step 7 (MD:253-256) and the resolver/commit rule need only sealed rows, SQL or configuration.\n- External catalog membership is checked outside SQL (MD:690)."
+     },
+     {
+      "item": "R2-3: departure from 1d4f2c3:133-134/:244-251 and currentness.sql:4/:126@25858ad avoided or disclosed",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Line anchors confirmed:\n- currentness.sql:4@25858ad 'normalized decision-input metadata only'.\n- currentness.sql:126@25858ad 'SQL does not read or approve those artifacts'.\n- 1d4f2c3:133-134 'not a second catalog or legal registry'.\n- 1d4f2c3:244-251 'File authority is a separate finite set'.\n\nThe S0-comment departure is disclosed as a new, unapproved Part 2 exception (MD:692; JSON:2608), and Part 2 carries it (MD:136-138; JSON:2008). The scope boundaries are kept by narrowing and by keeping all five external authorities."
+     },
+     {
+      "item": "R2-3: Markdown, delta JSON and bindings JSON agree",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- Spot-checked identity, trust, read-set rules, hashChecks, sizeBounds rule, parseAndResolve and boundary: identical across MD:687-704, R3_DELTA.json:2524-2609 and R3_BINDINGS.json r3CarrierContract.\n- The only asymmetry is that JSON:2530's 'why' sentence (ProductControl checked against SQL, not a catalog) has no MD counterpart (F-5)."
+     },
+     {
+      "item": "R2-4(a): non-READ COMMITTED refusal reaches every guarded statement, including OUT, equal-projection, quantity-only and zero-row",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- Present at MD:203, :402 and :1104, and JSON decision3:2056, guardChecks.bypass:2125 and guard.checks.bypass:1487.\n- Grep counts 47 isolationRule occurrences with the new text: the 47 trigger rows, with the session INSERT row (JSON:1175-1195) carrying none."
+     },
+     {
+      "item": "R2-4(b): absent, invalid or exceeded writer profile refuses material platform writes AND revoke, including before publication; MD 'new saves and activation' fixed; refusal added to every I/U/D eventMatrix expectedRefusal and to guardChecks.material",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- Grep counts 35 writer-profile expectedRefusals. The other 13 rows are 12 '55000 always' TRUNCATE rows plus the session INSERT row ('Missing positive binding refuses later intake'), so 35 + 12 + 1 = 48.\n- MD:401-402 (r2 :393-394) now agrees with MD:431-433.\n- guardChecks.material/prePublication (:2126-2127), writerProfileControls (:2129-2135) and the verifier acceptanceEvidence (:1764) are present.\n- The MD matrix column was not updated (F-3, NONBLOCKING)."
+     },
+     {
+      "item": "R2-4(c): cascade refusal and closure change require a new revision, decision text, publication and receipts; definite, not 'can require'",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- Grep finds no 'can require' and no 'proposed, not accepted' in r3.\n- The definite text is at JSON:2055, :2643 and MD:203, :717, :1104.\n- The trailing qualifier 'that changes closure' does not weaken doc 75's lot/COA case: a new or deleted in-scope lot or COA document changes the sealed L/D closure by definition."
+     },
+     {
+      "item": "R2-4(d): revocation assumes no foreign holder of the gate key",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Present at JSON:2058 and MD:203 and :1104. It is consistent with MD:372-374 and with the carried R2-14 diagnostics."
+     },
+     {
+      "item": "R2-4: no values chosen and no owner answer recorded",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- JSON:2047 status is UNRESOLVED_EXISTING_OWNER_DECISION_NO_NEW_QUESTION.\n- JSON:2062 registrationState includes NO_OWNER_ANSWER.\n- MD:188-190 explicitly says the coordinator register was not edited.\n- The only overstated register text is JSON:2655, 'Decision 3 now explicitly carries' (F-1)."
+     },
+     {
+      "item": "Doc 75 CC-18 ruling recorded: pg_try_advisory_xact_lock_shared(integer,integer) in the commit; false gives DEFINITE_REFUSAL_RETRYABLE, key kept, no body retry; exclusive paths keep bounded waits; required controls",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- Recorded at MD:376-378, :384-386, :1083, :1114 and JSON:2093, :2253, :3277.\n- The decision-3 cost is at JSON:2059 and MD:203.\n- All five controls are listed, and the exclusive bounded waits are kept (MD:666-668, :671).\n- Collateral: the rewrite of JSON row 12 lost the 'never upgrade' invariant (FV-1)."
+     },
+     {
+      "item": "Doc 75 CC-10/R2-8 ruling recorded: definite retryable refusal maps to 503 temporarily_unavailable with the key kept; no page or handler change",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- Recorded at MD:556, :1079, :1116, :1118, :1129 and JSON:2233, :3125, :3129, :3278.\n- Grep for '503', 'relabel', 'reserve uncertain' and 'genuinely unresolved' finds no surviving reserve-503 text.\n- Minor label drift only: the CC-10 status is CARRIED_NOT_SOURCE_CLOSED in MD:1079 but CARRIED_NOT_CLOSED in JSON:2234 (folded into FV-1)."
+     },
+     {
+      "item": "Rulings not contradicted anywhere (leftover blocking-shared-gate or reserve-503 text)",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "PARTIAL is confirmed, not refuted.\n- JSON:2825 still says 'left to original reviewer'.\n- MD:616 still names 'shared counterpart' of pg_advisory_xact_lock.\n- MD:483 omits the false try-lock.\n\nMD:1093 and :1118 formally supersede these leftovers, so no decision text becomes inaccurate, but the literal leftovers remain. Separately, JSON row 12 no longer mirrors MD:556 (FV-1)."
+     },
+     {
+      "item": "Nothing records Samuel's approval, a grant, execution or push",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- JSON:2006 DRAFT_ONLY_NOT_SAMUEL_APPROVAL, :2033 NOT_RUN, :2034 executionReservation null, :2035 LOCAL_ONLY_NOT_AUTHORIZED.\n- An MD grep for Samuel/granted/owner answer finds only negations and pg_locks 'granted' predicates.\n- r2's 'never ... proof of Samuel's approval' sentence was replaced by the equivalent 'Owner preparation and byte equality are not consent' (MD:690)."
+     },
+     {
+      "item": "No weakening of doc 75 CLOSED items in this scope (CC-1 decision-3 registration, 47/48 fingerprint, Part 1/Part 2 boundary, DRAFT/NOT RUN)",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "- The diff has no hunks in the MD fingerprint section (733-761) or the JSON fingerprint (:2137-2174).\n- Part 1 (MD:123-129) is unchanged.\n- CC-2, CC-3 and CC-4 content is kept; CC-3 is strengthened.\n- CC-1's UNRESOLVED registration and the decline consequence remain at MD:341-346 and JSON:2047. The MD:203 row lost only its 'UNRESOLVED:' prefix (F-4)."
+     }
+    ],
+    "defectVerdicts": [
+     {
+      "id": "F-1",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed by the r2-to-r3 JSON diff:\n- JSON:2655 (CC-1, 'Decision 3 now explicitly carries') and JSON:2825 (CC-18, 'left to original reviewer') are unchanged.\n- MD:860 and MD:877 were rewritten.\n\nr2 had MD and JSON consistent here, so the errata introduced the MD/JSON split. MD:1093 supersedes the inherited wording, so this stays NONBLOCKING."
+     },
+     {
+      "id": "F-2",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "MD:615-616 and MD:483 are unchanged from r2.\n- Under 'exact typed overloads', 'shared counterpart' of pg_advisory_xact_lock(integer,integer) names the blocking pg_advisory_xact_lock_shared, not the ruled try-lock.\n- The taxonomy row lists only lock timeout, deadlock and serialization.\n\nMD:1118 supersedes both, and neither feeds the Part 2 text."
+     },
+     {
+      "id": "F-3",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "The MD:834-845 'Owner / refusal' column lists only integrity, privilege and missing or uncertain scope/head. Coverage there rests on MD:830 ('O privilege/error checks above') plus MD:659. MD:1104 itself says the addition was made in the JSON. Doc 75's fix targets the JSON expectedRefusal and guardChecks, which are done."
+     },
+     {
+      "id": "F-4",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed:\n- The r2 row began 'UNRESOLVED: material write holds intake until separate reactivation' (diff hunk -196).\n- The r3 MD:203 row reads declaratively and ends with 'No operating values selected. No values or availability policy selected'.\n\nUNRESOLVED survives at MD:341-346 and JSON:2047, so CC-1 is not weakened."
+     },
+     {
+      "id": "F-5",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "- MD:698 and JSON:2582-2586 read $.offerRules[*].productId/variantId and state only 'Bind exact selected identities'. No byte-equality rule is stated against the bindings productId/variantId, which r3 requires to be lowercase UUIDs while S0 allows any ^[!-~]{1,200}$.\n- S0 also permits one offeringVariantId on two (productId, variantId) pairs, so 'corresponding' at MD:697 is ambiguous. The 'duplicate/ambiguous selected identities' rejection at MD:704 partly covers this.\n- The JSON:2530 'why' has no MD counterpart. MD:692 implies the same.\n\nThis is a precision gap, not a missing correction. It can travel with R2-16."
+     }
+    ],
+    "missed": [
+     {
+      "id": "FV-1",
+      "severity": "NONBLOCKING",
+      "title": "JSON orderedTransaction row 12 no longer mirrors MD row 12 and lost the 'never upgrade' invariant",
+      "claim": "r3 replaced the JSON row 12 lockRoleRefusal with the CC-18 ruling text.\n- That dropped r2's 'immediately before head' placement and its 'Never upgrade or retry admission under an old head share'.\n- After the change, R3_DELTA.json contains no shared-to-exclusive 'upgrade' prohibition anywhere.\n- MD:556 keeps 'immediately before head' and 'Never upgrade or reuse a reentrant holder as new admission', and adds the 503 mapping. The ordered table, which CC-9 says is mirrored in JSON, therefore now differs between MD and JSON.\n- The two ruling rows also carry different status labels in MD and JSON.",
+      "evidence": "- R3_DELTA.json:3018 against R3_DELTA.md:556.\n- r2 JSON:2871 was 'Transaction shared lock immediately before head. Never upgrade or retry admission under an old head share.' A grep for 'upgrade' in r2 finds it only at R2_DELTA.json:2871 and R2_DELTA.md:373/:548. A grep in R3_DELTA.json finds no match.\n- Status labels: MD:1079 'CARRIED_NOT_SOURCE_CLOSED' against JSON:2234 'CARRIED_NOT_CLOSED'; MD:1083 'ORIGINAL_RULING_SOURCE_AND_CONTROLS_CARRIED' against JSON:2254 'ORIGINAL_DOC75_RULING_SOURCE_IMPLEMENTATION_AND_CONTROLS_CARRIED'.\n- Mitigation: MD:381 and MD:556 keep the rule, and JSON gateProtocol.order (:2089) keeps source locks, then gate, then head.",
+      "fix": "Set R3_DELTA.json:3018 to the MD:556 cell text, keeping 'immediately before head' and 'never upgrade; a reentrant holder never counts as admission'. Align the CC-10 and CC-18 status labels between MD section 13 and JSON sourceSuccessorConditions."
+     },
+     {
+      "id": "FV-2",
+      "severity": "NONBLOCKING",
+      "title": "The JSON remaining-prerequisite entry for the decision-5 path is stale and contradicts r3's own new decision-5 prerequisite",
+      "claim": "r3 rewrote MD:899 to 'Before final decision-5 text: the original reviewer's byte check of these four errata (Doc75 design disposition is complete)' and added JSON sourceGrantDraft.finalDecision5Prerequisite. It left JSON specificRemainingPrerequisites R2_REVIEW citing Doc73 and requiring 'Same original exactr2 disposition'. This contradicts MD:42, MD:899 and JSON:2025. The checker noted it as out of scope; it is an MD/JSON contradiction that bears on the decision-5 gating text.",
+      "evidence": "- R3_DELTA.json:1975-1978: artifact 56e9ad47 (Doc73); need 'Same original exactr2 disposition; proposed records not independently closed'.\n- R3_DELTA.json:2025 (finalDecision5Prerequisite).\n- R3_DELTA.md:42 and :899.\n- Doc 75:257-259 and :282 make the byte check the only remaining records gate.",
+      "fix": "Change R2_REVIEW to cite doc 75 7609c42d with the need 'original byte check of R2-1 to R2-4; no new design review', matching JSON:2025 and MD:899."
+     },
+     {
+      "id": "FV-3",
+      "severity": "NONBLOCKING",
+      "title": "Newly added carried criteria keep r2 line anchors that now point at the R2-3 carrier text",
+      "claim": "Section 14 and JSON doc75SourceSuccessorConditions copy the critic's text verbatim, including r2 line anchors. r3 inserted 21 lines above them.\n- R2-15's 'identical in the MD matrix, MD:696 and the JSON rows' now points at the new R2-3 bindings read-set bullet (r3 MD:696). The intended target is the New-descendants rule (r2 :696, now r3 :717).\n- R2-5's 'MD:705-706' now points at the 'Single output authority' area. The intended target is r3 :726-727.\n\nA later builder following R2-15 literally could edit the narrowed carrier rule.",
+      "evidence": "- R3_DELTA.md:1126 and :1136.\n- R3_DELTA.json:3097-3098 (R2-5) and :3189 (R2-15).\n- MD diff hunks '@@ -696 +717 @@' and r3 MD:726-727 ('Activation requires active revision, last-published revision and scope revision to agree').",
+      "fix": "Qualify the anchors as 'r2 R2_DELTA.md:696' and 'r2 :705-706', or update them to r3 MD:717 and :726-727, in both MD section 14 and the JSON conditions."
+     }
+    ],
+    "opinion": "I agree with checker F: no BLOCKING defect, and the decision-5 and decision-3 texts in scope are accurate.\n\n**R2-3 (carrier).** r3 takes the narrow option.\n- SQL stores raw bytes only for bindings and configuration.\n- The closed read sets match the S0 bindings artifact and the S0 decision validator.\n- Each full raw SHA-256 must equal both the publication entry and the decision $.artifacts entry.\n- The size bounds are arithmetically right and consistent with S0 (200-byte offer key, US-only country, 8,388,608-byte decision text).\n- Parse contracts are built and reviewed before S.\n- Nothing left in r3 needs catalog contents in SQL. Domains and countries now come only from configuration plus the decision countryCode.\n- The departure from the S0 comments (currentness.sql:4 and :126) is disclosed as an unapproved Part 2 exception, and the 1d4f2c3 boundaries are kept by narrowing.\n\n**R2-4 (decision 3).** Items (a) to (d) are in both MD:203 and JSON decision3.\n- MD:401-402 now agrees with MD:431-433.\n- The writer-profile refusal is on all 35 triggered I/U/D rows (35 + 12 TRUNCATE + 1 session INSERT = 48), in guardChecks, and has controls.\n- The cascade and closure item is definite.\n- No values are chosen and no owner answer is recorded.\n\n**Doc 75 rulings.** Both are recorded faithfully: the CC-18 try-lock, and the CC-10/R2-8 mapping to 503 temporarily_unavailable with the key kept and no page or handler change. MD:1093 and :1118 formally supersede the leftovers.\n\n**Defects.** I uphold all five checker defects as NONBLOCKING. I add three NONBLOCKING items introduced by the errata:\n- **FV-1:** JSON row 12 lost 'immediately before head' and 'never upgrade', and no longer mirrors MD:556.\n- **FV-2:** the JSON R2_REVIEW prerequisite is stale against MD:899 and the new finalDecision5Prerequisite.\n- **FV-3:** stale r2 line anchors in the newly added R2-5 and R2-15 criteria now point at the R2-3 carrier text.\n\nNone of these makes the decision-5 or decision-3 text inaccurate, and none records an approval, grant, execution or push. PostgreSQL try-lock and wait-queue behaviour is reasoned from documentation and lock-manager source only, NOT RUN.\n\n**Files checked:**\n- C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/r3/R3_DELTA.md\n- C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/r3/R3_DELTA.json\n- C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/r3/R3_BINDINGS.json\n- C:/xenios-wt/health-review/docs/review/xenios-health-launch-review-20260930/75_DOC71_TRANSACTION_RECORDS_R2_39203461_2026-10-09.md\n- C:/xenios-wt/health-review/docs/review/xenios-health-launch-review-20260930/hl12/75_doc73_r2_records_lens_findings.json",
+    "deviations": [
+     "I ran read-only git commands beyond the exact named forms, all with --no-optional-locks against C:/xenios-wt/health-review:\n- 'git diff --stat' for 39203461..280193059 and for 301d9b08..280193059, without a path filter;\n- 'git diff -U0' on each of the three record files;\n- 'git grep -n' at 25858ad on currentness.sql.",
+     "The harness automatically saved three oversized outputs under C:/Users/sboad/.claude/projects/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/tool-results/: b0jvt6o1j.txt, bp6bnrpb9.txt and toolu_019bgSuxGJtgMogFZYkacSgR.txt. I did not create them deliberately. I only read them and did not modify or delete them.",
+     "One read-only Grep ran over the whole scratchpad directory instead of only the r2 and r3 copies. It returned lines from unrelated scratch files, which I did not use.",
+     "I used no interpreter, SQL, database, MCP tool, WebFetch, checkout, commit, fetch or push, and had no contact with other sessions. I created, modified or deleted no file."
+    ]
+   }
+  }
+ ]
+}

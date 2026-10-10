@@ -185,3 +185,11 @@ The verdict will be published as doc 75. Doc 73 is the review of r1, not a verdi
 
 The next review for this session is a byte check of the builder's R2-1 to R2-4 errata, once it is registered. Nothing
 was executed.
+
+## Queue state update (2026-10-09, doc 75 errata byte check)
+
+| Target | State |
+| --- | --- |
+| Builder records errata r3 `280193059a6b28fee5645833cb56b7d944ad1c46` (`0c5c17e0…`, `811f04fe…`, `bb3d4513…`), handoff `2d291d0` | COMPLETE: doc 76, ERRATA ACCEPTED. R2-1 to R2-4 corrected, no blocking defect, 14 precision items travel (the Markdown governs). Taken from the builder's frozen handoff under doc 75 section 5; board registration not yet observed at coordinator `5baa14f` |
+
+The final decision-5 text may now be presented. No source permission. Nothing was executed.
