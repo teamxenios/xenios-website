@@ -252,3 +252,26 @@ The next items for this session:
 - the nonproduction operating profile together with the steward's finding, once submitted.
 
 Nothing was executed.
+
+## Queue state update (2026-10-10, nonproduction profile and steward finding)
+
+**Delivery confirmed.** Samuel delivered the coordinator's direct submission message (Prompt 1, prepared as
+`PROFILE_EXISTING_TASK_DIRECT_SUBMISSION_MESSAGE_20261010.txt` at `1df99a1`) in this session's chat. It reached this
+session.
+
+The existing task `QUICK-ORDER-NONPRODUCTION-PROFILE-TECHNICAL-REVIEW-20261010` **revision 1** is ACKNOWLEDGED and IN
+REVIEW. It was registered at coordinator `56ffecf` (14:18Z), and this is not a duplicate. The targets are recomputed
+from Git:
+
+| Target | Commit | Blob | Raw SHA-256 |
+| --- | --- | --- | --- |
+| `NONPRODUCTION_OPERATING_PROFILE_20261010.md` | `9c4a9b5809162eab9b0669cb6a2f1f2516c06c67` (tree `d265a25b…`), handoff `0ec1827e…` | `1c8ac2c` | `a80eb2a6…` |
+| `evidence/nonproduction-operating-profile-20261010.json` | same | `58e642e` | `82544bf5…` |
+| `QUICK_ORDER_NONPRODUCTION_ENFORCEMENT_CHECK_20261010.md` (steward `01a0e098…`) | `29297c31fa0357ba186620e7e51425d5ce19badd` (tree `6d5d9032…`) | `8a91e94` | `6323b876…` |
+
+**Controlling authority:**
+- Samuel's decisions 2, 3 and 5 as recorded at `bfe7f27` (`DECISIONS_2_3_5_DIRECT_AUTHORITY_20261010.txt`). Decision
+  3 requires the complete profile and its technical acceptance before dispatch.
+- The stage clarification (`PROFILE_GATE_STAGE_CLARIFICATION_DIRECT_AUTHORITY_20261010.txt`).
+
+The verdict will be published as doc 78. Nothing was executed.
