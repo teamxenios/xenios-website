@@ -275,3 +275,27 @@ from Git:
 - The stage clarification (`PROFILE_GATE_STAGE_CLARIFICATION_DIRECT_AUTHORITY_20261010.txt`).
 
 The verdict will be published as doc 78. Nothing was executed.
+
+## Queue state update (2026-10-10, continuation: doc 78 resumed, CI revision 2)
+
+Samuel relayed the coordinator's prepared continuation notice (`REVIEWER_EXISTING_TASKS_CONTINUATION_MESSAGE_20261010.txt`
+at `b65624e`).
+
+**Doc 78** (`QUICK-ORDER-NONPRODUCTION-PROFILE-TECHNICAL-REVIEW-20261010` revision 1). This is already acknowledged at
+`0917a21` and is not re-acknowledged. Its review run was interrupted when the previous session ended, and it was
+resumed from its last completed step. Targets and verdict pending are unchanged.
+
+**CI revision 2.** `QUICK-ORDER-CI-PILOT-PROPOSAL-REVIEW-20261009` **revision 2** is ACKNOWLEDGED and IN REVIEW. It is
+registered at coordinator `ddad665`. The target is recomputed from Git:
+
+| Target at `e01f8ea8e481103b1960d150f3af8bef6930e216` (tree `f7fceb8b…`) | Raw SHA-256 |
+| --- | --- |
+| `CI_PILOT_PROPOSAL_20261009.md` | `685bb587…` |
+| `CI_PILOT_PROPOSAL_20261009.json` | `01a90baa…` |
+| `CI_PUBLISHED_BASELINE_COMPARISON_AC9BBE3_20261010.md` (steward comparison `ac9bbe3`) | `f3065d81…` |
+
+- **Revision 1.** Its target `91deaaa` and the doc 77 verdict are preserved.
+- **Scope.** The check covers CI-1 to CI-7, the carry-forward of CI-8 to CI-16 and the older-baseline comparison only.
+- **Publication.** The verdict will be published as doc 79.
+
+Nothing was executed.
