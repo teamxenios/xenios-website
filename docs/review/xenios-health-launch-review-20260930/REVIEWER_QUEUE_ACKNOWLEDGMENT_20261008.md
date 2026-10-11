@@ -391,3 +391,18 @@ Nothing was executed.
 | `DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010` revision 2 | source `aa857e4f94df95f09a1402fb1cbf08042a3bc19f`, records `735254e4cc6230479c9bfa821e1c6991389d5266` | COMPLETE: doc 81. **CORRECTIONS REQUIRED IN THE VERIFIER ONLY** (R2C-1, R2C-2). **The four SQL files are accepted now as the currentness definition** (`d44974d1…`, `91ab412b…`, `78534251…`, `8de55983…`; definition `8b631a83…` as recorded). The intake reseal may be authored against it immediately. The currentness receipt and the intake seal stay non-final until the revision 3 byte check |
 
 The next item for this session is the revision 3 byte check (verifier only). Nothing was executed.
+
+## Queue state update (2026-10-11, currentness verifier revision 3)
+
+Samuel delivered the direct revision 3 request in this session's chat. `DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010`
+**revision 3** (verifier-only byte check, registered at coordinator `7a14880`) is ACKNOWLEDGED and IN REVIEW. The
+target is recomputed from Git:
+
+| Field | Value |
+| --- | --- |
+| Source | `264e6af20477fabe65aa8d229ed2334fb59d9cc4` (tree `75911334…`), on `codex/accepted-source-integration-20261005`. The commit changes only `research_health_quick_order_currentness_local.mjs` (raw `6c47b308…`) |
+| Records | `b00aed5be48d9b3ff92a62f041ceb8ec344bcb2f` (tree `3b007c05…`), via `fcdc31b` |
+| The four doc 81 accepted SQL files | **byte-identical** at `264e6af` and at the provisional intake `5e984ca` (`d44974d1…`, `91ab412b…`, `78534251…`, `8de55983…`) |
+
+The provisional intake (`121d098` / `5e984ca`) descends from this revision 3, is separate ongoing work under doc 81,
+and is not reviewed here. The verdict will be published as doc 82. Nothing was executed.
