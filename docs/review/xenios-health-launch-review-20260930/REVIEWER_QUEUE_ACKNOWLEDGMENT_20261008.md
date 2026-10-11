@@ -322,3 +322,33 @@ Doc 78 is still in review. Nothing was executed.
 - record the R2-13 shared-seal reading.
 
 Then dispatch the same builder under decision 5. Nothing was executed.
+
+## Queue state update (2026-10-11, currentness source acceptance)
+
+Samuel relayed the coordinator's status in this session's chat; that is the delivery. The registered task
+`DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010` **revision 1** (board slot 03, parent
+`DOC71-DISABLED-TRANSACTION-SOURCE-20261009` r1) is ACKNOWLEDGED and IN REVIEW. It was registered at coordinator
+`4e180a6`.
+
+**This exact target, recomputed from Git:**
+
+| Field | Value |
+| --- | --- |
+| Source | `9c1c92bcb7a514da9b575a291d0abac67c8ba366` |
+| Tree | `d0c676b673df6f9f9d587b543df9c745e31e5d39` |
+| Records | `1fa74efd957ee78f8e75f24e25be766062b5de1c` (tree `837818fc…`) |
+| `…currentness.sql` | blob `ba1e701`, raw `a1716144…` (2,055 lines) |
+| `…currentness.precheck.sql` | blob `23e2b6a`, raw `97789d21…` |
+| `…currentness.postcheck.sql` | blob `b083a55`, raw `96e0695e…` |
+| `…currentness.rollback.md` | blob `e15088f`, raw `ec87e6c7…` |
+| `research_health_quick_order_currentness_local.mjs` | blob `2589402`, raw `357bd060…` (2,200 lines) |
+| Evidence (bindings, intake receipt, currentness receipt, correction map) | `ac7d45ec…`, `590e57ad…`, `9b5da663…`, `f6bd470e…` |
+
+**Scope:**
+- **What changes.** Only the 17 slice paths differ from `25858ad`.
+- **What is reviewed.** The whole implemented currentness family and its verifier, against the last accepted baseline
+  `25858ad` and every carried requirement (docs 73, 75, 76 and 78 C-1 to C-12). This is not only the 28 new control
+  groups.
+- **Context only.** The intake, adapter and readback files are read for compatibility, not for final acceptance.
+
+The verdict will be published as doc 80. Nothing was executed.
