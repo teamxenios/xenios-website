@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+  "revision": 2,
+  "at": "2026-10-11T23:43:03.266Z",
+  "owner": {
+    "session": "codex-health-quick-order-20261005",
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005"
+  },
+  "actualAcknowledgment": "Same builder accepts exclusive four-evidence custody after exact clean b0f17044 and stopped integrator lease verification. No application source custody or edits.",
+  "assignment": {
+    "commit": "c5b6f6029f07c7debb39460317d3281d93e64915",
+    "path": "docs/coordination/launch-coordination-20261005/DOC83_COMPOSITION_EVIDENCE_ONLY_ASSIGNMENT_20261011.json",
+    "gitBlob": "35e0356e016ee6fd389712b448cfcd87c2a772d3",
+    "rawSha256": "498d39462bbacf25003fd14976c74d14ba63c1714c6602f170c9a37937f015c0",
+    "bytes": 48459
+  },
+  "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+  "sourceTree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+  "base": "b0f170446722684c7c5a135ace8c20429552ddd3",
+  "baseTree": "585fe865c899319b6dc68fa57cbf3f75c89550e4",
+  "lease": {
+    "id": "e1c90dfe-27a8-4e4d-9270-d1543b68f7d0",
+    "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+    "revision": 2,
+    "session": "codex-health-quick-order-20261005",
+    "state": "active",
+    "paths": [
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+    ],
+    "claimedAt": "2026-10-11T23:43:03.266Z",
+    "heartbeatAt": "2026-10-11T23:43:03.266Z",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "sourceBase": "69d9e32a5df899985b2877e06e1a778060a021f9",
+    "recordsBase": "b0f170446722684c7c5a135ace8c20429552ddd3",
+    "assignmentCommit": "c5b6f6029f07c7debb39460317d3281d93e64915",
+    "stage": "FOUR_EVIDENCE_ONLY_NO_APPLICATION_SOURCE_WRITES",
+    "ack": ".xenios/handoffs/2026-10-11-doc83-composition-evidence-owner-ack.json",
+    "authority": "Existing direct-human 17+4 evidence scope; coordinator Doc83 revision2 after serial integrator handoff"
+  },
+  "priorSourceLeasesRemainHandoff": [
+    "ddc54431-bcfb-46c5-beae-a48a7bc44f02",
+    "f57c582d-0527-4792-9389-849cf4e60105"
+  ],
+  "nonoverlappingActiveLeases": [
+    {
+      "id": "bf834f90-14a8-4e7a-abb9-f12913cd262c",
+      "task": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/DECISIONS.md",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T06:26:41.299Z",
+      "heartbeatAt": "2026-10-01T18:24:01.294Z"
+    }
+  ],
+  "incomingSourceBindings": [
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "gitBlob": "415a9a09652d1719fc6176a6e48cad6854ec449e",
+      "rawSha256": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112",
+      "sha256lf": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112",
+      "bytes": 101994,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "gitBlob": "5d5e1aa1f1cf9aef5d94bc6b3cb2585bcab69b95",
+      "rawSha256": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9",
+      "sha256lf": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9",
+      "bytes": 19895,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "gitBlob": "146e9ef92c4e5a153961b9f2de0027c7c286dc61",
+      "rawSha256": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3",
+      "sha256lf": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3",
+      "bytes": 19901,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "gitBlob": "13585a4df545a9041fc4e2898d98ebf29cdc8246",
+      "rawSha256": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571",
+      "sha256lf": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571",
+      "bytes": 22130,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "gitBlob": "6720110dbe253f9b7dfe106c3e08ad0fab87c3f4",
+      "rawSha256": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+      "sha256lf": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+      "bytes": 127690,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "gitBlob": "f001222499689c482eab183d642efd50f2d24634",
+      "rawSha256": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482",
+      "sha256lf": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482",
+      "bytes": 33891,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "gitBlob": "d2547502d681877d6adade0ab4f72236d8cab000",
+      "rawSha256": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138",
+      "sha256lf": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138",
+      "bytes": 64297,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "gitBlob": "df020ea3b729a6f6c96f46f546bd29b245759ff6",
+      "rawSha256": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f",
+      "sha256lf": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f",
+      "bytes": 5549,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "gitBlob": "f47443ef97a74c6d592f804f81f45e40bd258ebc",
+      "rawSha256": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5",
+      "sha256lf": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5",
+      "bytes": 36728,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "gitBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+      "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+      "sha256lf": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+      "bytes": 18079,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "server/research/assisted-order/production-deps.ts",
+      "gitBlob": "226cac2930a2006ac9d79e12c2c99499fcb693ed",
+      "rawSha256": "adb32a0b6f847afcdd2f6e998193aa328e819c844099b6446c06556c9abc7875",
+      "sha256lf": "adb32a0b6f847afcdd2f6e998193aa328e819c844099b6446c06556c9abc7875",
+      "bytes": 12108,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "gitBlob": "349d3ea94c8b285460783a23043fe61b9b21ee6e",
+      "rawSha256": "823a99bae4a9af94dd6f0242fed9fb6875796b4843e324c8f3a17216b1bc98e8",
+      "sha256lf": "823a99bae4a9af94dd6f0242fed9fb6875796b4843e324c8f3a17216b1bc98e8",
+      "bytes": 51238,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "gitBlob": "951e363078830b74057fc9132cc0a9102cff3359",
+      "rawSha256": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+      "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+      "bytes": 32255,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    }
+  ],
+  "acceptedCurrentnessBindings": [
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+      "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+      "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+      "bytes": 226183,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+      "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+      "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+      "bytes": 17174,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+      "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+      "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+      "bytes": 16996,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+      "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+      "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+      "bytes": 27232,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+      "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+      "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+      "bytes": 219791,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    }
+  ],
+  "incomingEvidenceBindings": [
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+      "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+      "sha256lf": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+      "bytes": 54259,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "eeb5b06e17681caa6a07518b10a1e06379ac6e1e",
+      "rawSha256": "bdedff7cc964e4c1e59934c8b6e420884eef1a2c078eb9221fe048f7f995253d",
+      "sha256lf": "bdedff7cc964e4c1e59934c8b6e420884eef1a2c078eb9221fe048f7f995253d",
+      "bytes": 136696,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "2f09dc370e689d60a22e6031955ef87d0dce1367",
+      "rawSha256": "263261e68d7fce2b7f87bf555bb235cc6b9e9b6703e61aa085fb888e6e01423f",
+      "sha256lf": "263261e68d7fce2b7f87bf555bb235cc6b9e9b6703e61aa085fb888e6e01423f",
+      "bytes": 122098,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "db161965e43f2a6df958f33119a8dc1829158a0a",
+      "rawSha256": "0fdcf30d51a37495e842c42ed24c0555711c2855cc0d2938b88b5285ce656e9c",
+      "sha256lf": "0fdcf30d51a37495e842c42ed24c0555711c2855cc0d2938b88b5285ce656e9c",
+      "bytes": 711641,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    }
+  ],
+  "integratorHandoff": {
+    "commit": "b0f170446722684c7c5a135ace8c20429552ddd3",
+    "path": ".xenios/handoffs/2026-10-11-doc83-integrator-correction-handoff.json",
+    "rawSha256": "724fbf73279a90b6bf8ca2e0dcce9bee4b26f408048b5eb5dc7c1c237d922670",
+    "bytes": 18953
+  },
+  "proposedSequence": "Reconcile one shared binding at a prior records-only candidate checkpoint, then currentness receipt, then dependent nonfinal intake receipt and map, with complete outward inventories in stopped-writer handoff; no same-commit self-references.",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED"
+}
