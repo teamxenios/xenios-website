@@ -19,6 +19,9 @@ export interface QuickOrderReceiptEnvelope extends PublicReceipt {
 export function submissionHash(input: NormalizedSubmission): string;
 export function publishedAgreements(config: unknown): boolean;
 export function safeReceipt(value: unknown, replayed?: boolean): QuickOrderReceiptEnvelope;
+/** Recovery precedes new-write gates. The derived submission hash binds the
+ * adapter attempt; root-entry timing and private session context are never read
+ * from request bodies, headers or the public QuickOrderSession. */
 export function createQuickOrderHandler(ports: QuickOrderPorts, options: QuickOrderHandlerOptions):
   (req: QuickOrderHttpRequest, res: ServerResponse, next?: () => void) => Promise<void>;
 export function createQuickOrderErrorHandler(options?: { prefix?: string }):

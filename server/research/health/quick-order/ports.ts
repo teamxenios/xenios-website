@@ -6,8 +6,9 @@ import type { QuickOrderCatalogItem } from "./catalog";
 export interface QuickOrderSession { actorId: string; csrfToken: string }
 
 /** Server-only evidence. These fields never belong in a browser session, public
- * config, receipt or log. The disabled candidate receives synthetic instances
- * from tests only; the existing Express/viewer seam is unchanged. */
+ * config, receipt or log. Only the canonical resolver may bind the raw stored
+ * hash to its verified viewer and server-derived owner/actor/role. Timing lives
+ * in private adapter state, never as a fifth context field. */
 export interface QuickOrderPrivateContext {
   readonly rawStoredSessionHash: string;
   readonly configuredOwnerId: string;
@@ -15,7 +16,7 @@ export interface QuickOrderPrivateContext {
   readonly requiredRole: string;
 }
 
-/** Opaque identity issued at session entry by the candidate extension. */
+/** Opaque identity issued only after recovery misses, retaining Node entry time. */
 export interface QuickOrderAttempt {
   readonly enteredAtMonotonicMs: number;
 }
@@ -62,7 +63,9 @@ export interface QuickOrderPorts {
   listCatalog(session: QuickOrderSession, query: { page: number; pageSize: number; search: string }): Promise<{ items: readonly CatalogItem[]; total: number; page: number; pageSize: number }>;
   resolveItem(session: QuickOrderSession, productId: string, variantId: string, customerState: string): Promise<CatalogItem | null>;
   takeRateLimit(session: QuickOrderSession, req: IncomingMessage): Promise<boolean>;
-  getExisting(session: QuickOrderSession, key: string): Promise<{ payloadHash: string; publicReceipt: PublicReceipt } | null>;
+  /** The handler supplies its derived hash to bind a single new-write attempt
+   * only after a strict-null recovery miss. Omitting it is recovery-only. */
+  getExisting(session: QuickOrderSession, key: string, payloadHash?: string): Promise<{ payloadHash: string; publicReceipt: PublicReceipt } | null>;
   commit(session: QuickOrderSession, args: CommitArguments): Promise<PublicReceipt & { persisted: true; replayed?: boolean }>;
   onOperationalError?(event: { code: "quick_order_unavailable" }): void;
 }

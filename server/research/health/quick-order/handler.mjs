@@ -139,8 +139,10 @@ export function createQuickOrderHandler(ports, options = {}) {
         const payloadHash = submissionHash(input);
         // Recovery is read-only, actor-scoped and precedes every new-write gate.
         // Current legal/catalog outages must not hide an already stored receipt.
-        const existing = await ports.getExisting(session, input.idempotencyKey);
-        if (existing !== null && existing !== undefined) {
+        // Concrete adapter uses this derived hash only after a strict-null miss
+        // to bind one attempt to the private original Node-entry timestamp.
+        const existing = await ports.getExisting(session, input.idempotencyKey, payloadHash);
+        if (existing !== null) {
           if (!existing || typeof existing.payloadHash !== 'string' || !/^[a-f0-9]{64}$/u.test(existing.payloadHash)) throw new Error('Recovery record unavailable');
           if (existing.payloadHash !== payloadHash) throw new InputError('request', 'This request key was used with different details. Recover the original request before starting another.', 409, 'idempotency_conflict');
           return send(res, 200, safeReceipt(existing.publicReceipt, true));

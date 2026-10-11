@@ -16,6 +16,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 // All probes/dependency fixtures use loopback. The unchanged root listener binds
 // 0.0.0.0, so this is NOT a loopback-bound root or an outbound network sandbox.
 // These receipts are separate from the mandatory historical HTTP red/green pair.
+// The new timestamp/context positive controls in production.test.ts use injected
+// adapters. The next integrator stage must supply the actual root-entry WeakMap
+// and canonical captured-cookie context; this suite claims neither exists yet.
 const ROOT = fileURLToPath(new URL("../../../../", import.meta.url));
 const TEMP_PARENT = path.resolve(os.tmpdir());
 const TEMP_PREFIX = "xenios-quick-order-root-";
@@ -335,6 +338,20 @@ describe("Quick Order through the actual production composition root", () => {
     expect(proxy.status).toBe(200);
     expect(JSON.parse(proxy.body)).toEqual({ synthetic: "loopback-kairos" });
     expect(dependencyReceipts).toContainEqual({ method: "GET", target: "/kairos/__qo_composition_probe", allowed: true });
+  });
+
+  it("keeps canonical operator readback behind the existing unconfigured admin guard", async () => {
+    // Actual root, negative access control only. No authenticated operator,
+    // canonical saved request, new reader cutover or positive readback proof.
+    for (const target of ["/api/admin/research/assisted-orders",
+      "/api/admin/research/assisted-orders/00000000-0000-4000-8000-000000000003"]) {
+      const reply = await rawProbe(target);
+      expect(reply.status).toBe(503);
+      expect(JSON.parse(reply.body)).toEqual({ success: false, message: "Admin access not configured" });
+      expect(reply.body).not.toContain("rawStoredSessionHash");
+      expect(reply.body).not.toContain("XRR-");
+    }
+    expect(dependencyReceipts.filter(row => !row.allowed)).toEqual([]);
   });
 
   it("serves the disabled intake as private HTML through the real static root", async () => {
