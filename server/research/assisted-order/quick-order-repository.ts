@@ -172,16 +172,30 @@ export const QUICK_ORDER_COMMIT_RPC = "research_health_quick_order_commit" as co
 export const QUICK_ORDER_REPLAY_RPC = "research_health_quick_order_replay" as const;
 export type QuickOrderCommitOutcome = "DEFINITE_REFUSAL" | "DEFINITE_REFUSAL_RETRYABLE" | "OUTCOME_UNCERTAIN" | "IDEMPOTENCY_CONFLICT";
 
+/** Closed definite reasons implement Doc83 section 2 using the unchanged
+ * InputError contracts. They are not client-selected policy or raw SQL text. */
+type QuickOrderDefiniteRefusalReason = "catalog_changed" | "terms_changed" | "invalid_input" | "temporarily_unavailable";
+const DEFINITE_RESPONSES: Readonly<Record<QuickOrderDefiniteRefusalReason, Readonly<{ status: number; message: string }>>> = {
+  catalog_changed: { status: 409, message: "The catalog or price changed. Review the current selections and try again." },
+  terms_changed: { status: 409, message: "The required agreements changed. Review and accept the current agreements." },
+  invalid_input: { status: 422, message: "This request cannot be submitted with the current details. Review the form before trying again." },
+  temporarily_unavailable: { status: 503, message: "Quick Order is unavailable. Keep this form open and retry using the same request; do not send payment." },
+};
+
 /** Deliberately sanitized: no payload, recipient, session hash, SQL detail or
- * connection identity is attached to an error. The unchanged handler retains
- * the submitted key on 503, and may recover it through the read-only RPC. */
+ * connection identity is attached to an error. Definite validation/drift
+ * refusals use the existing contracts that release the page's held attempt;
+ * held, retryable and uncertain outcomes retain its original key. */
 export class QuickOrderTransactionError extends InputError {
   readonly outcome: QuickOrderCommitOutcome;
-  constructor(outcome: QuickOrderCommitOutcome) {
+  constructor(outcome: QuickOrderCommitOutcome, reason: QuickOrderDefiniteRefusalReason = "temporarily_unavailable") {
     const conflict = outcome === "IDEMPOTENCY_CONFLICT";
+    const refusal = outcome === "DEFINITE_REFUSAL" ? DEFINITE_RESPONSES[reason] : null;
     super("request", conflict ? "This request key was used with different details. Recover the original request before starting another."
+      : refusal ? refusal.message
       : "We could not confirm receipt. Keep this form open and retry using the same request; do not send payment.",
-    conflict ? 409 : 503, conflict ? "idempotency_conflict" : "temporarily_unavailable");
+    conflict ? 409 : refusal ? refusal.status : 503,
+    conflict ? "idempotency_conflict" : refusal ? reason : "temporarily_unavailable");
     this.name = "QuickOrderTransactionError";
     this.outcome = outcome;
   }
@@ -192,7 +206,8 @@ export interface QuickOrderCandidateRpcResult {
   readonly error: { readonly code?: string; readonly details?: string } | null;
   /** Trusted transport metadata, never an RPC JSON field. Absent means unknown.
    * A future qualified single-RPC/autocommit transport must supply this proof;
-   * the existing Supabase adapter is intentionally not changed or wired. */
+   * the disabled canonical composition currently permits replay only and
+   * supplies no commit transport or committed-outcome proof. */
   readonly transactionOutcome?: "committed" | "aborted";
 }
 export interface QuickOrderCandidateDependencies {
@@ -204,8 +219,9 @@ export interface QuickOrderCandidateDependencies {
   readonly privateContextFor?: (viewer: AssistedOrderViewer) => QuickOrderPrivateContext | null;
   readonly runtime?: {
     now(): number;
-    /** Implementations must reject unsupported delays, never clamp to a
-     * different timeout. This capability is also absent in real composition. */
+    /** An operational scheduler must reject unsupported delays, never clamp
+     * to a different timeout. Disabled composition supplies a refusal-only
+     * runtime; its clock and zero sentinel do not provide an operational timer. */
     readonly maximumDelayMs: number;
     schedule(milliseconds: number, expire: () => void): () => void;
   } | null;
@@ -303,15 +319,25 @@ function databaseRefusal(response: QuickOrderCandidateRpcResult): QuickOrderTran
   try {
     const marker = closed(detail, ["quickOrderCode"]);
     if (error.code === "23505" && marker.quickOrderCode === "IDEMPOTENCY_CONFLICT") return new QuickOrderTransactionError("IDEMPOTENCY_CONFLICT");
-    if (error.code === "55000" && marker.quickOrderCode === "DEFINITE_REFUSAL") return new QuickOrderTransactionError("DEFINITE_REFUSAL");
+    if (error.code === "55000") {
+      switch (marker.quickOrderCode) {
+        case "DEFINITE_REFUSAL_CATALOG_CHANGED": return new QuickOrderTransactionError("DEFINITE_REFUSAL", "catalog_changed");
+        case "DEFINITE_REFUSAL_TERMS_CHANGED": return new QuickOrderTransactionError("DEFINITE_REFUSAL", "terms_changed");
+        case "DEFINITE_REFUSAL_INVALID_INPUT": return new QuickOrderTransactionError("DEFINITE_REFUSAL", "invalid_input");
+        case "DEFINITE_REFUSAL_UNAVAILABLE": return new QuickOrderTransactionError("DEFINITE_REFUSAL", "temporarily_unavailable");
+      }
+    }
+    // The former undifferentiated DEFINITE_REFUSAL SQL marker is not a current
+    // contract. Unknown markers cannot authorize a definite customer outcome.
   } catch { /* Malformed/unrecognized database detail supplies no evidence. */ }
   return new QuickOrderTransactionError("OUTCOME_UNCERTAIN");
 }
 
 /** Disabled, injectable implementation over the EXISTING canonical RPC family.
  * No client, credentials, connection pool, settings or timer defaults are
- * created. Real production wiring supplies none of the private admission
- * dependencies. Recovery deliberately remains independent of those gates. */
+ * created. Canonical composition supplies its private-context resolver and a
+ * refusal-only runtime, but no limits, digest, recipient, operational timer or
+ * commit transport. Recovery deliberately remains independent of those gates. */
 export function createQuickOrderTransactionExtension(dependencies: QuickOrderCandidateDependencies): QuickOrderDisabledTransactionExtension {
   // Snapshot immutable constructor values; never consult browser input or a
   // later mutation of the caller's dependencies for recipient/config authority.

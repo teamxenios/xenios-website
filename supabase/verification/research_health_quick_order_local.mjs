@@ -19,6 +19,7 @@ const OWN = [CANDIDATE+'.sql', CANDIDATE+'.precheck.sql', CANDIDATE+'.postcheck.
 const BOOTSTRAP = 'supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql';
 const OUTBOX = 'supabase/research-notification-outbox.sql';
 const CURRENTNESS = 'supabase/candidates/20261006_research_health_quick_order_currentness';
+const CUSTOMER_STATUS = 'supabase/candidates/20260921_research_assisted_order_member_history.sql';
 // Whole canonical files only. No extracted CREATE fragments, mock authority
 // functions, replacement persistence tables or disabled canonical triggers.
 const TRANSACTION_PREDECESSORS = [
@@ -84,7 +85,7 @@ const TRIGGERS = [
   ['research_notification_outbox','hl12_disposition_effects_truncate','O'],
 ].map(row => row.join('|')).sort();
 const held = [
-  'canonical transaction/receipt/replay, baseline price and five-write lock-fault controls AUTHORED / NOT RUN',
+  'source-authored transaction controls require the separately accepted receipt/descriptor and fresh execution authority; runtime observations, if any, are reported per case',
   'authenticated actor/key derivation and standing/legal/Health admission',
   'guarded catalog/legal/destination authority currentness and classification truth',
   'concurrent writers, lock boundaries, epoch scope and liveness',
@@ -93,7 +94,7 @@ const held = [
   'notification dispatcher transport/retry/delivery and operational intake',
   'owner-resistant immutability is not claimed; SQL owner is the disclosed trust boundary',
   'admin-attested row-8 checkout binding absent from four-field private context: branch refuses',
-  'Doc81 four-file SQL acceptance permits provisional authoring; r3 byte check and final currentness/intake receipt acceptance pending',
+  'Doc82 currentness source accepted; any new records-only dependency receipt requires original byte confirmation; intake acceptance remains pending',
   'adapter mapping controls require separately accepted installed Node/tsx dependency inventory and explicit future dispatch; no current CLI dispatch added',
   'implemented-S source-column descriptor remains absent; fixtures do not supply or replace its accepted seal',
   'canonical Early Access-to-member price correction and its controls await independent acceptance and execution',
@@ -111,7 +112,7 @@ let interrupted=null;
 const interrupt=signal=>{interrupted=signal;process.exitCode=2;for(const child of activeChildren)child.kill();};
 const onInt=()=>interrupt('SIGINT'),onTerm=()=>interrupt('SIGTERM');
 process.on('SIGINT',onInt);process.on('SIGTERM',onTerm);
-function run(command,args,{input='',timeout=30_000,allowAfterInterrupt=false}={}) {
+function run(command,args,{input='',timeout=30_000,allowAfterInterrupt=false,captureDiagnostics=false}={}) {
   if(interrupted&&!allowAfterInterrupt) return Promise.reject(new Error('Interrupted before child launch'));
   return new Promise((resolve,reject) => {
     const child=spawn(command,args,{cwd:ROOT,env:childEnv,windowsHide:true,stdio:['pipe','pipe','pipe']});
@@ -129,7 +130,7 @@ function run(command,args,{input='',timeout=30_000,allowAfterInterrupt=false}={}
       const out=Buffer.concat(stdout).toString('utf8'),err=Buffer.concat(stderr).toString('utf8');
       if(code!==0||stopped||(interrupted&&!allowAfterInterrupt)) reject(Object.assign(new Error('Bounded child refused or failed'),
         {code,signal,timedOut,interrupted,stdout:out,stderr:err,outputLimitExceeded:bytes>outputLimit}));
-      else resolve(out); // Preserve exact Git stdout, including every final newline.
+      else resolve(captureDiagnostics?{stdout:out,stderr:err}:out); // Preserve exact Git stdout by default; notices are explicit control evidence.
     });
     child.stdin.end(input);
   });
@@ -176,8 +177,21 @@ assert.match(receipt.sourceAcceptance?.reviewCommit??'',/^[a-f0-9]{40}$/);
 assert.match(receipt.sourceTree??'',/^[a-f0-9]{40}$/);
 assert.match(receipt.definitionSha256??'',/^[a-f0-9]{64}$/);
 assert.match(receipt.currentnessDefinition??'',/^[a-f0-9]{64}$/);
-assert.ok(receipt.currentnessDependency&&typeof receipt.currentnessDependency==='object',
-  'An accepted currentness receipt must precede the intake seal');
+const dependency=receipt.currentnessDependency;
+assert.ok(dependency&&typeof dependency==='object'&&!Array.isArray(dependency));
+assert.equal(dependency.status,'SOURCE_ACCEPT_WITH_LIMITS');
+assert.match(dependency.reviewCommit??'',/^[a-f0-9]{40}$/);
+assert.match(dependency.sourceCommit??'',/^[a-f0-9]{40}$/);
+assert.match(dependency.sourceTree??'',/^[a-f0-9]{40}$/);
+assert.equal(dependency.definitionSha256,receipt.currentnessDefinition);
+assert.equal(dependency.sealStatus,'FINAL_CURRENTNESS_DEPENDENCY_ONLY');
+assert.equal(dependency.receipt?.path,'docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json');
+assert.match(dependency.receipt?.recordsCommit??'',/^[a-f0-9]{40}$/);
+assert.match(dependency.receipt?.gitBlob??'',/^[a-f0-9]{40}$/);
+assert.match(dependency.receipt?.rawSha256??'',/^[a-f0-9]{64}$/);
+assert.ok(Number.isSafeInteger(dependency.receipt?.bytes)&&dependency.receipt.bytes>0);
+assert.equal(receipt.disclosures.sharedBindings,BINDINGS);
+
 assert.equal(receipt.schemaVersion,'quick-order-intake-source-receipt-v1');
 assert.equal(receipt.sourceCommit,args[6]); assert.ok(Array.isArray(receipt.files));
 const pinned=new Map();
@@ -198,7 +212,7 @@ async function load(file) {
   assert.equal(sha(git),pinned.get(file),'Receipt does not bind Git source: '+file);
   sources.set(file,disk); return disk;
 }
-for(const file of [...OWN,BINDINGS,BOOTSTRAP,OUTBOX,...MIGRATIONS,...TRANSACTION_PREDECESSORS,
+for(const file of [...OWN,BINDINGS,BOOTSTRAP,OUTBOX,CUSTOMER_STATUS,...MIGRATIONS,...TRANSACTION_PREDECESSORS,
   CURRENTNESS+'.sql',CURRENTNESS+'.precheck.sql',CURRENTNESS+'.postcheck.sql'])await load(file);
 const bindingPacket=JSON.parse(await load(BINDINGS));
 assert.equal(bindingPacket.schemaVersion,'doc71-disabled-source-bindings-v1');
@@ -216,8 +230,10 @@ const candidate=await load(CANDIDATE+'.sql');
 const definitionHash=sha(uniqueBlock(candidate,'$qo_ddl$')+uniqueBlock(candidate,'$qo_fingerprint$'));
 assert.equal(definitionHash,receipt.definitionSha256,'Receipt definition differs from authored bytes');
 // Sequenced source review is a prerequisite even before disposable startup.
-assert.doesNotMatch(candidate,/expected_currentness_definition\s+text\s*:=\s*null/i,
-  'R2-13 accepted currentness receipt is pending; qualification is not ready');
+const embeddedDefinition=[...candidate.matchAll(/expected_currentness_definition\s+(?:pg_catalog\.)?text\s*:=\s*'([a-f0-9]{64})'/g)];
+assert.equal(embeddedDefinition.length,1,'Exactly one explicit currentness definition binding');
+assert.equal(embeddedDefinition[0][1],receipt.currentnessDefinition);
+
 const currentnessCandidate=await load(CURRENTNESS+'.sql');
 assert.doesNotMatch(currentnessCandidate,/expected_columns\s*:=\s*null\s*;/i,
   'Implemented-S column descriptor is absent; synthetic bootstrap never supplies its seal');
@@ -332,10 +348,10 @@ const txJson=async body=>{const values=await txRows(body);assert.ok(values.lengt
 // Unlike the historical DDL runner, do not replace startup timers in the RPC
 // connection. Every call starts a fresh psql/backend with the synthetic catalog
 // login+database settings already installed. This is not PostgREST proof.
-function startupSql(body) {
+function startupSql(body,{captureDiagnostics=false}={}) {
   assert.match(containerId??'',/^[a-f0-9]{64}$/);
   return docker(['exec','-i',containerId,'psql','-X','-q','-A','-t','-v','ON_ERROR_STOP=1',
-    '-U','postgres','-d','postgres'],{input:'\\set VERBOSITY verbose\n'+body+'\n',timeout:30_000});
+    '-U','postgres','-d','postgres'],{input:'\\set VERBOSITY verbose\n'+body+'\n',timeout:30_000,captureDiagnostics});
 }
 function sqlFailure(error,state,message,detail) {
   assert.ok(error,'Expected a PostgreSQL refusal, not a missing invocation');
@@ -358,7 +374,7 @@ const stable=value=>Array.isArray(value)?value.map(stable):value&&typeof value==
 function rehash(p){p.submission.payloadHash=sha(JSON.stringify(stable(p.submission.input)));return p;}
 async function effectCounts(){return json(`select json_build_array(${effects.map(table=>`(select count(*) from public.${table})`).join(',')})::text;`);}
 function countDelta(before,after,expected){assert.deepEqual(after.map((n,i)=>n-before[i]),expected);}
-async function syntheticRoute(routeClass) {
+async function syntheticRoute(routeClass,{longWaits=false}={}) {
   assert.ok(routeClass==='intake'||routeClass==='writer');
   const identities=await json(`select json_build_object('database',json_build_object('name',current_database(),'oid',
     (select oid::text from pg_database where datname=current_database())),
@@ -374,6 +390,15 @@ async function syntheticRoute(routeClass) {
       cleanupMs:200,attemptDeadlineMs:10350,acquisitionMs:50,responseMs:100,gateWaitMs:5500,postGateReserveMs:1000},
     enforcement:{preBeginAttestationSha256:sha('SYNTHETIC: no gateway attestation'),
       writerOrderAttestationSha256:sha('SYNTHETIC: no deployed writer attestation'),singleRpcAutocommit:true}};
+  // DOC83 overlap-only fixture budgets. These are not proposed deployed values.
+  if(longWaits){
+    Object.assign(carrier.intake,{lockTimeoutMs:20000,deadlockTimeoutMs:21000,idleTimeoutMs:22000,statementTimeoutMs:24000,
+      transactionTimeoutMs:26000,cleanupMs:1000,acquisitionMs:500,responseMs:500,attemptDeadlineMs:28000});
+    Object.assign(carrier.writer,{lockTimeoutMs:27000,gateWaitMs:27000,postGateReserveMs:1000,deadlockTimeoutMs:1000,
+      idleTimeoutMs:28000,statementTimeoutMs:30000,transactionTimeoutMs:35000,cleanupMs:1000,acquisitionMs:500,responseMs:500,attemptDeadlineMs:37000});
+  }
+  assert.deepEqual(Object.keys(carrier),bindingPacket.digestContract.fields,'Synthetic carrier uses the sealed field order');
+
   const raw=JSON.stringify(carrier),digest=sha(raw),limits=carrier[routeClass];
   await psql(`alter role postgres in database postgres set research_health_quick_order.approved_limits=${quote(raw)};
     ${[['lock_timeout','lockTimeoutMs'],['statement_timeout','statementTimeoutMs'],['transaction_timeout','transactionTimeoutMs'],
@@ -403,10 +428,15 @@ async function canonicalTransactionBootstrap() {
 
 async function seedTransactionGraph(n,{memberStatus='active',customerStatus='APPROVED',legalMode='verified_link',
   sessionRevoked=false,qualityReady=true,quantityAvailable=2,priceMode='member',priceAmount=125,priceApproved=true,
-  priceAudiences=['member'],retailDecoy=false}={}) {
+  priceAudiences=['member'],retailDecoy=false,sessionIssuedOffsetMs=-60_000,bindingBoundOffsetMs=-60_000,
+  legalVerifiedOffsetMs=-60_000,agreementMode='valid',documentReviewedOffsetMs=-60_000,documentReportOffsetDays=-1,domainPublic=true}={}) {
   const k=50000+n*100,id=offset=>uuid(k+offset),customerId='synthetic_doc71_customer_'+n;
   const now=await json("select json_build_object('at',to_char(date_trunc('milliseconds',clock_timestamp()) at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"'))::text;");
   const at=now.at,earlier=new Date(Date.parse(at)-60_000).toISOString();
+  const fixtureTime=offset=>new Date(Date.parse(at)+offset).toISOString();
+  const issued=fixtureTime(sessionIssuedOffsetMs),bound=fixtureTime(bindingBoundOffsetMs),verified=fixtureTime(legalVerifiedOffsetMs),reviewed=fixtureTime(documentReviewedOffsetMs);
+  assert.ok(['valid','missing','wrong-version'].includes(agreementMode));
+  assert.ok(Number.isInteger(documentReportOffsetDays));
   const g={n,productId:id(1),variantId:id(2),priceId:id(3),lotId:id(4),documentId:id(5),memberId:id(6),
     authUserId:id(7),applicationId:id(8),ownerId:id(9),legalId:id(10),revisionId:id(11),customerId,
     customerRef:'eac_'+sha('early-access-customer-v1:'+customerId).slice(0,32),sessionHash:sha('synthetic_doc71_session_'+n),
@@ -425,15 +455,15 @@ async function seedTransactionGraph(n,{memberStatus='active',customerStatus='APP
       values(${quote(customerId)},'synthetic-${n}@example.invalid',${quote(customerStatus)},${j({id:customerId,
         normalizedEmail:`synthetic-${n}@example.invalid`,status:customerStatus,audience:'PRIVATE_EARLY_ACCESS'})});
     insert into public.research_early_access_session_bindings(session_id,customer_id,bound_at)
-      values('${g.sessionHash}',${quote(customerId)},${quote(earlier)});
+      values('${g.sessionHash}',${quote(customerId)},${quote(bound)});
     insert into public.research_early_access_legal_bindings(id,customer_ref,member_id,established_by,verified_at,attested_by)
-      values('${g.legalId}','${g.customerRef}','${g.memberId}',${quote(legalMode)},${quote(earlier)},${quote(legalMode==='verified_link'?null:'synthetic-steward')});
+      values('${g.legalId}','${g.customerRef}','${g.memberId}',${quote(legalMode)},${quote(verified)},${quote(legalMode==='verified_link'?null:'synthetic-steward')});
     insert into public.research_private_early_access_sessions(session_hash,owner_id,access_role,issued_at,expires_at,revoked_at)
-      values('${g.sessionHash}','${g.ownerId}','private_early_access_member',${quote(earlier)},
-        ${quote(earlier)}::timestamptz+interval '240 minutes',${sessionRevoked?quote(at):'null'});
+      values('${g.sessionHash}','${g.ownerId}','private_early_access_member',${quote(issued)},
+        ${quote(issued)}::timestamptz+interval '240 minutes',${sessionRevoked?quote(at):'null'});
     insert into public.research_early_access_agreement_acceptances(customer_ref,agreement_kind,agreement_version,accepted_at,recorded_at)
-      values('${g.customerRef}','Synthetic Health A','synthetic-v1',${quote(earlier)},${quote(earlier)}),
-        ('${g.customerRef}','Synthetic Health B','synthetic-v1',${quote(earlier)},${quote(earlier)});
+      values('${g.customerRef}','Synthetic Health A','synthetic-v1',${quote(earlier)},${quote(earlier)})
+        ${agreementMode==='missing'?'':`,('${g.customerRef}','Synthetic Health B',${quote(agreementMode==='wrong-version'?'synthetic-v2':'synthetic-v1')},${quote(earlier)},${quote(earlier)})`};
     insert into public.research_products(id,sku,slug,display_name,canonical_name,lane,admin_status,active_state)
       values('${g.productId}','${g.sku}','synthetic-doc71-${n}','Synthetic fixture only','Synthetic fixture only','supplement','approved',true);
     insert into public.research_product_variants(id,product_id,sku,label,member_eligible,created_by,updated_by)
@@ -452,7 +482,7 @@ async function seedTransactionGraph(n,{memberStatus='active',customerStatus='APP
       original_filename,content_type,size_bytes,sha256,report_issuer,report_number,report_date,reviewed_at,reviewed_by,published_at,published_by)
       values('${g.documentId}','${g.lotId}',true,'available','document_on_file','lots/synthetic/${n}.pdf',
         'synthetic.pdf','application/pdf',5,${quote(sha('SYNTHETIC-NO-UPLOADED-DOCUMENT:'+n))},'Synthetic laboratory','SYNTHETIC-${n}',
-        current_date-1,${quote(earlier)},'synthetic-fixture',${quote(earlier)},'synthetic-fixture');
+        current_date+${documentReportOffsetDays},${quote(reviewed)},'synthetic-fixture',${quote(earlier)},'synthetic-fixture');
     ${tests.map((test,i)=>`insert into public.research_lot_quality_tests(id,quality_document_id,test_key,state,method,result,reviewed_by,reviewed_at)
       values('${g.testIds[i]}','${g.documentId}',${quote(test)},${quote(!qualityReady&&test==='identity'?'failed':'passed')},
         'synthetic-method','synthetic-result','synthetic-fixture',${quote(earlier)});`).join('\n')}
@@ -464,9 +494,10 @@ async function seedTransactionGraph(n,{memberStatus='active',customerStatus='APP
         'super_admin','Synthetic fixture',${quote(earlier)},${quote(earlier)},'synthetic-fixture','Synthetic only','No production effect','/admin/synthetic','synthetic-fixture');
     insert into public.research_domain_launch_controls(domain,launch_status,software_complete,manifest_version,manifest_hash,expected_input_count,
       manifest_approved_by,manifest_approved_at,release_approved_by,release_approved_at,updated_by,updated_reason)
-      values('${g.domain}','public_enabled',true,1,public.research_required_input_manifest_hash('${g.domain}'),1,
+      values('${g.domain}',${quote(domainPublic?'public_enabled':'paused')},true,1,public.research_required_input_manifest_hash('${g.domain}'),1,
         'synthetic-fixture',${quote(earlier)},'synthetic-fixture',${quote(earlier)},'synthetic-fixture','Synthetic only');
     commit;`);
+  doc83FixtureExpectations.set(g.sessionHash,{memberId:g.memberId});
   return g;
 }
 
@@ -525,8 +556,8 @@ function transactionPayload(g,key,{earlyAccess=false,unpriced=g.priceMode!=='mem
       attribution:{schemaVersion:'attribution-v1',source:'direct',sourceDetail:'',declaredAffiliateCode:null,affiliation:{kind:'none',detail:''},
         confirmedByCustomer:true,receivedAt:g.at,reviewState:'direct_no_referrer',commissionState:'not_authorized'}}});
 }
-async function assertCommitted(p,{replayed=false,expectedPriceAudience='member'}={}) {
-  const result=await txJson(commitSql(p));
+async function assertCommitted(p,{replayed=false,expectedPriceAudience='member',result:existingResult}={}) {
+  const result=existingResult??await txJson(commitSql(p));
   assert.deepEqual(Object.keys(result).sort(),['attributionState','estimate','persisted','publicReference','replayed','requestId']);
   assert.equal(result.persisted,true);assert.equal(result.replayed,replayed);
   assert.equal(result.attributionState,'direct_no_referrer');assert.deepEqual(result.estimate,{...p.submission.computedEstimate,
@@ -596,6 +627,8 @@ async function assertCommitted(p,{replayed=false,expectedPriceAudience='member'}
   const expectedSourceVersion='qosv1:'+sha(JSON.stringify(expectedTuple));
   assert.equal(tuple.line.authoritative_fingerprint,expectedSourceVersion,'Actual canonical facts bind the exact ordered typed tuple');
   assert.equal(retained.classifications[0].sourceVersion,expectedSourceVersion);
+  await doc83AssertReadback(p,result,readback,tuple.at);
+
   return result;
 }
 
@@ -609,7 +642,7 @@ async function withSyntheticLock(lockBody,action,end='rollback') {
     {cwd:ROOT,env:childEnv,windowsHide:true,stdio:['pipe','pipe','pipe']});
   activeChildren.add(child);let output='',stderr='',bytes=0,done=false,readySeen=false,resolveReady,rejectReady;
   const ready=new Promise((resolve,reject)=>{resolveReady=resolve;rejectReady=reject;});
-  const timer=setTimeout(()=>{child.kill();rejectReady(new Error('Synthetic lock holder deadline'));},15_000);
+  const timer=setTimeout(()=>{child.kill();rejectReady(new Error('Synthetic lock holder deadline'));},35_000);
   const finished=new Promise((resolve,reject)=>{
     child.on('error',error=>{rejectReady(error);reject(error);});
     child.on('close',(code,signal)=>{done=true;clearTimeout(timer);activeChildren.delete(child);
@@ -624,7 +657,7 @@ async function withSyntheticLock(lockBody,action,end='rollback') {
     const match=output.match(/QO_FIXTURE_READY:([0-9]+)/);if(match){readySeen=true;resolveReady(Number(match[1]));}});
   child.stderr.on('data',chunk=>{bytes+=chunk.length;stderr+=chunk.toString('utf8');if(bytes>outputLimit)child.kill();});
   child.stdin.write(`\\set VERBOSITY verbose\nset application_name=${quote(tag)};
-    set statement_timeout='10s';set transaction_timeout='12s';set idle_in_transaction_session_timeout='10s';
+    set statement_timeout='25s';set transaction_timeout='28s';set idle_in_transaction_session_timeout='25s';
     begin;${lockBody}\nselect 'QO_FIXTURE_READY:'||pg_backend_pid();\n`);
   try{const pid=await ready;const result=await action({pid,tag});assert.equal(done,false,'Lock holder vanished during control');return result;}
   finally{if(!done)child.stdin.end(end+';\n\\q\n');await finished;}
@@ -702,12 +735,12 @@ async function doc81RunAdapterMappingControls(runtimeBinding) {
     attribution:{schemaVersion:'attribution-v1',source:'person',sourceDetail:'Synthetic referrer',declaredAffiliateCode:null,affiliation:{kind:'none',detail:''},confirmedByCustomer:true,receivedAt,reviewState:'captured_unmatched',commissionState:'not_authorized'},
     snapshots:[{productId:'synthetic-product',variantId:'synthetic-variant',quantity:2,workflowMode:'direct_order_request',unitPriceCents:1250,catalogVersion:'synthetic-catalog-v1',priceVersion:'synthetic-price-v1'}],computedEstimate:estimate};
   const publicReceipt={requestId:'c0000000-0000-4000-8000-000000000003',publicReference:'XRR-20261011-ABCDEF0123',attributionState:'captured_unmatched',estimate};
-  const marked={code:'55000',message:'Quick Order scope unavailable',details:'{"quickOrderCode":"DEFINITE_REFUSAL"}'};
+  const marked={code:'55000',message:'Quick Order scope unavailable before resolver',details:'{"quickOrderCode":"DEFINITE_REFUSAL_CATALOG_CHANGED"}'};
   const rows=[
     ['positive',{data:{...publicReceipt,persisted:true,replayed:false},error:null,transactionOutcome:'committed'},null],
     ['marked-aborted',{data:null,error:marked,transactionOutcome:'aborted'},'DEFINITE_REFUSAL'],
     ['integrity-unmarked',{data:null,error:{code:'55000',message:'Quick Order currentness schema drift'},transactionOutcome:'aborted'},'OUTCOME_UNCERTAIN'],
-    ['seal-unmarked',{data:null,error:{code:'55000',message:'Quick Order scope header seal mismatch'},transactionOutcome:'aborted'},'OUTCOME_UNCERTAIN'],
+    ['seal-unmarked',{data:null,error:{code:'55000',message:'Quick Order sealed scope rows changed'},transactionOutcome:'aborted'},'OUTCOME_UNCERTAIN'],
     ['marked-unconfirmed',{data:null,error:marked},'OUTCOME_UNCERTAIN'],
   ];
   const results=[];
@@ -720,7 +753,8 @@ async function doc81RunAdapterMappingControls(runtimeBinding) {
     });
     const attempt=extension.beginAttempt(viewer,actor,0);assert.ok(attempt,'Valid synthetic admission reaches the actual adapter');
     let value,failure;try{value=await extension.commitAttempt(viewer,actor,copy(submission),attempt);}catch(error){failure=error;}
-    if(outcome){assert.equal(failure?.outcome,outcome,id);assert.equal(value,undefined,'No success receipt manufactured');}
+    if(outcome){assert.equal(failure?.outcome,outcome,id);assert.equal(value,undefined,'No success receipt manufactured');
+      if(id==='marked-aborted'){assert.equal(failure.status,409);assert.equal(failure.code,'catalog_changed');}}
     else {assert.equal(failure,undefined);assert.deepEqual(value,{...publicReceipt,persisted:true,replayed:false});}
     assert.equal(calls.length,1);assert.equal(calls[0].name,module.QUICK_ORDER_COMMIT_RPC);
     assert.equal(calls[0].args.p_payload.submission.input.idempotencyKey,input.idempotencyKey);
@@ -734,7 +768,9 @@ async function runSyntheticTransactionControls() {
   const providerBefore=(await psql(fingerprint)).trim();
   let index=1;const fresh=async options=>activateSynthetic(await seedTransactionGraph(index++,options));
   const g=await fresh({}),p=transactionPayload(g,'synthetic-doc71-positive');
+  const noOtherBefore=await doc83OtherEffects();
   const baseline=await effectCounts(),first=await assertCommitted(p);
+  assert.deepEqual(await doc83OtherEffects(),noOtherBefore,'TC6: no notification attempt, token, document, reservation or commission-hold effect');
   countDelta(baseline,await effectCounts(),[1,1,1,1,1]);
   const firstCounts=await effectCounts();const replayed=await assertCommitted(p,{replayed:true});
   assert.deepEqual({...replayed,replayed:false},first);assert.deepEqual(await effectCounts(),firstCounts);
@@ -745,6 +781,7 @@ async function runSyntheticTransactionControls() {
   const stock=await json(`select json_build_object('available',quantity_available,'reserved',quantity_reserved) from public.research_inventory_lots where id='${g.lotId}';`);
   assert.deepEqual(stock,{available:2,reserved:0}); // Requested nine; request-only any_allocatable witnesses do not reserve.
   txPass('TX01','actual commit: five canonical effects, receipt/readback, same instant, safe replay, conflict, no reservation');
+  await doc83ShadowControls(g,p,first);
 
   for(const table of effects) {
     const key='synthetic-fault-'+table.slice(-28),faultPayload=transactionPayload(g,key),before=await effectCounts();
@@ -758,16 +795,8 @@ async function runSyntheticTransactionControls() {
     await assertCommitted(faultPayload);countDelta(before,await effectCounts(),[1,1,1,1,1]);
     txPass('TX02-'+table,'observed RowExclusiveLock wait, normal SQL abort, no retained partial effects, same-key success after release');
   }
-  const same=transactionPayload(g,'synthetic-same-key-concurrent'),beforeSame=await effectCounts();
-  const sameResults=await Promise.all([txJson(commitSql(same)),txJson(commitSql(same))]);
-  assert.equal(sameResults[0].requestId,sameResults[1].requestId);
-  assert.deepEqual(sameResults.map(r=>r.replayed).sort(),[false,true]);countDelta(beforeSame,await effectCounts(),[1,1,1,1,1]);
-  const race=transactionPayload(g,'synthetic-conflict-concurrent'),raceChanged=copy(race);
-  raceChanged.submission.input.contact.fullLegalName='Other synthetic buyer';rehash(raceChanged);
-  const beforeRace=await effectCounts(),raceResults=await Promise.allSettled([txJson(commitSql(race)),txJson(commitSql(raceChanged))]);
-  assert.equal(raceResults.filter(r=>r.status==='fulfilled').length,1);
-  sqlFailure(raceResults.find(r=>r.status==='rejected')?.reason,'23505','Quick Order key conflicts',{quickOrderCode:'IDEMPOTENCY_CONFLICT'});
-  countDelta(beforeRace,await effectCounts(),[1,1,1,1,1]);txPass('TX03','same-key serialization and changed-input concurrent conflict');
+  await doc83ActorRace(g,false);
+  await doc83ActorRace(g,true);
 
   for(const [id,options,message] of [
     ['TX04-member-standing',{memberStatus:'paused'},'Quick Order eligibility changed'],
@@ -783,7 +812,7 @@ async function runSyntheticTransactionControls() {
     const beforeControl=await effectCounts();await assertCommitted(controlPayload);
     countDelta(beforeControl,await effectCounts(),[1,1,1,1,1]);
     const negative=await fresh(options),payload=transactionPayload(negative,'synthetic-'+id),before=await effectCounts();
-    await txRefused(commitSql(payload),'55000',message,{quickOrderCode:'DEFINITE_REFUSAL'});
+    await txRefused(commitSql(payload),'55000',message,doc83Detail(message));
     assert.deepEqual(await effectCounts(),before);assert.equal((await startupSql(replayCall(payload))).trim(),'');
     txPass(id,'matched canonical positive commits; activated negative with one changed eligibility value reaches exact refusal and zero effects');
   }
@@ -804,7 +833,7 @@ async function runSyntheticTransactionControls() {
       payload.submission.computedEstimate.knownSubtotalCents*=2;
     }
     rehash(payload);const before=await effectCounts();
-    await txRefused(commitSql(payload),'55000','Quick Order scope unavailable',{quickOrderCode:'DEFINITE_REFUSAL'});
+    await txRefused(commitSql(payload),'55000','Quick Order scope unavailable before resolver',doc83Detail('Quick Order scope unavailable before resolver'));
     assert.deepEqual(await effectCounts(),before,'Pre-resolver refusal leaves all five saved-effect relations unchanged');
     assert.equal((await startupSql(replayCall(payload))).trim(),'','No saved key or success receipt');
     txPass('IC2-'+mode+'-offer-match','Valid admitted twin commits; exact marked refusal has zero persisted effects');
@@ -823,7 +852,11 @@ async function runSyntheticTransactionControls() {
   priceG.route=await syntheticRoute('intake');
   const wrongVersion=transactionPayload(priceG,'synthetic-wrong-price-version');
   wrongVersion.submission.input.lines[0].expectedPriceVersion='1';wrongVersion.submission.snapshots[0].priceVersion='1';rehash(wrongVersion);
-  await txRefused(commitSql(wrongVersion),'55000','Quick Order price changed',{quickOrderCode:'DEFINITE_REFUSAL'});
+  const wrongVersionBefore=await effectCounts();
+  await txRefused(commitSql(wrongVersion),'55000','Quick Order price changed',doc83Detail('Quick Order price changed'));
+  assert.deepEqual(await effectCounts(),wrongVersionBefore);assert.equal((await startupSql(replayCall(wrongVersion))).trim(),'');
+  await assertCommitted(transactionPayload(priceG,wrongVersion.submission.input.idempotencyKey));
+  countDelta(wrongVersionBefore,await effectCounts(),[1,1,1,1,1]);
   txPass('TX05','member price.id contract; no tier columns; unpriced member/EA; baseline rejects EA audience and duplicate active row');
 
   // Canonical early-access-retail-pricing.ts grants an admitted EA session the
@@ -834,6 +867,7 @@ async function runSyntheticTransactionControls() {
   const pricedEaBefore=await effectCounts();
   const pricedEaResult=await assertCommitted(pricedEa,{expectedPriceAudience:'member'});
   countDelta(pricedEaBefore,await effectCounts(),[1,1,1,1,1]);
+  await doc83EaOwnership(pricedEa,pricedEaResult);
   assert.equal(pricedEaResult.estimate.knownSubtotalCents,9*125);
   const sameGrantMember=transactionPayload(pricedEaG,'synthetic-member-grant-preserved',{unpriced:false});
   const sameGrantBefore=await effectCounts();
@@ -849,7 +883,7 @@ async function runSyntheticTransactionControls() {
   const excludedG=await fresh({priceAudiences:['retail']});
   const excluded=transactionPayload(excludedG,'synthetic-ea-allowlist-excluded',{earlyAccess:true,unpriced:false});
   const excludedBefore=await effectCounts();
-  await txRefused(commitSql(excluded),'55000','Quick Order price changed',{quickOrderCode:'DEFINITE_REFUSAL'});
+  await txRefused(commitSql(excluded),'55000','Quick Order price changed',doc83Detail('Quick Order price changed'));
   assert.deepEqual(await effectCounts(),excludedBefore);
   assert.equal((await startupSql(replayCall(excluded))).trim(),'','Excluded price must not consume the actor/key');
   const excludedRetry=transactionPayload(excludedG,excluded.submission.input.idempotencyKey,{earlyAccess:true,unpriced:true});
@@ -862,7 +896,7 @@ async function runSyntheticTransactionControls() {
   const retailOnlyG=await fresh({priceMode:'retail',priceAudiences:['member','retail']});
   const retailOnly=transactionPayload(retailOnlyG,'synthetic-ea-retail-not-granted',{earlyAccess:true,unpriced:false});
   const retailOnlyBefore=await effectCounts();
-  await txRefused(commitSql(retailOnly),'55000','Quick Order price changed',{quickOrderCode:'DEFINITE_REFUSAL'});
+  await txRefused(commitSql(retailOnly),'55000','Quick Order price changed',doc83Detail('Quick Order price changed'));
   assert.deepEqual(await effectCounts(),retailOnlyBefore);
   assert.equal((await startupSql(replayCall(retailOnly))).trim(),'','A non-member price must not consume the actor/key');
   await assertCommitted(transactionPayload(retailOnlyG,retailOnly.submission.input.idempotencyKey,{earlyAccess:true,unpriced:true}));
@@ -875,7 +909,7 @@ async function runSyntheticTransactionControls() {
   wrongIdentity.actorScope='early_access:eac_'+sha('synthetic-other-customer').slice(0,32);
   wrongIdentity.context.actorScope=wrongIdentity.actorScope;
   const wrongIdentityBefore=await effectCounts();
-  await txRefused(commitSql(wrongIdentity),'55000','Quick Order eligibility changed',{quickOrderCode:'DEFINITE_REFUSAL'});
+  await txRefused(commitSql(wrongIdentity),'55000','Quick Order eligibility changed',doc83Detail('Quick Order eligibility changed'));
   assert.deepEqual(await effectCounts(),wrongIdentityBefore);assert.equal((await startupSql(replayCall(wrongIdentity))).trim(),'');
   txPass('TX05-EA-private-identity','Valid priced EA control commits; syntactically valid but mismatched EA identity refuses before price selection with zero effects');
 
@@ -887,15 +921,19 @@ async function runSyntheticTransactionControls() {
   await withSyntheticLock(`select id from public.research_inventory_lots where id='${lockG.lotId}' for update;`,async()=>{
     await txRefused(commitSql(busyLot),'55P03','could not obtain lock on row in relation');
   });await assertCommitted(busyLot);
-  const reentrant=transactionPayload(lockG,'synthetic-reentrant');
+  const reentrant=transactionPayload(lockG,'synthetic-reentrant'),reentrantBefore=await effectCounts(),reentrantOther=await doc83OtherEffects();
   await txRefused(`begin;select pg_advisory_xact_lock_shared(1380471107,1);set role service_role;${commitCall(reentrant)}commit;`,
-    '55000','Quick Order reentrant admission refused',{quickOrderCode:'DEFINITE_REFUSAL'});
-  txPass('TX06','exclusive-gate retry, NOWAIT witness refusal/retry, same-session reentrant refusal');
+    '55000','Quick Order reentrant admission refused',doc83Detail('Quick Order reentrant admission refused'));
+  assert.deepEqual(await effectCounts(),reentrantBefore);assert.deepEqual(await doc83OtherEffects(),reentrantOther);
+  assert.equal((await startupSql(replayCall(reentrant))).trim(),'');await assertCommitted(reentrant);
+  countDelta(reentrantBefore,await effectCounts(),[1,1,1,1,1]);
+  await doc83GateControls(lockG);
+  txPass('TX06','exclusive/queued-writer refusal, shared-only grant, NOWAIT witness refusal/retry, reentrant no effects and retry');
   const actorP=transactionPayload(lockG,'synthetic-actor-lock'),actorKey=sha('xenios:health:quick-order:key:v1|'+actorP.actorScope+'|'+actorP.submission.input.idempotencyKey);
   const actorBefore=await effectCounts();
   await withSyntheticLock(`select pg_advisory_xact_lock(hashtextextended(${quote('xenios:health:quick-order:actor-key:v1|'+actorP.actorScope+'|'+actorKey)},0));`,async({pid})=>{
     const invalid=copy(actorP);invalid.expectedConfigurationDigest='0'.repeat(64);
-    await txRefused(commitSql(invalid),'55000','Quick Order approved limits binding unavailable',{quickOrderCode:'DEFINITE_REFUSAL'});
+    await txRefused(commitSql(invalid),'55000','Quick Order approved limits binding unavailable',doc83Detail('Quick Order approved limits binding unavailable'));
     const attempt=startupSql(commitSql(actorP)).then(value=>({value}),error=>({error}));
     await awaitBlockedBy(pid);sqlFailure((await attempt).error,'55P03','canceling statement due to lock timeout');
   });assert.deepEqual(await effectCounts(),actorBefore);await assertCommitted(actorP);
@@ -907,21 +945,27 @@ async function runSyntheticTransactionControls() {
     const attempt=startupSql(commitSql(row11P)).then(value=>({value}),error=>({error}));
     await awaitBlockedBy(pid);return {attempt};
   },'commit');
-  sqlFailure((await pending.attempt).error,'55000','Quick Order eligibility changed',{quickOrderCode:'DEFINITE_REFUSAL'});
+  sqlFailure((await pending.attempt).error,'55000','Quick Order eligibility changed',doc83Detail('Quick Order eligibility changed'));
   assert.deepEqual(await effectCounts(),row11Before);txPass('TX06-row11','observed session-row wait followed by same-instant revoked-session refusal');
   // Restore a separate live synthetic authority for the profile/revoke pair.
-  const finalG=await fresh({}),finalP=transactionPayload(finalG,'synthetic-before-final-revoke');await assertCommitted(finalP);
+  await doc83NegativeMatrix(fresh);
+  const finalG=await fresh({}),finalP=transactionPayload(finalG,'synthetic-before-final-revoke');const finalSaved=await assertCommitted(finalP);
+  const recoveryBefore=await effectCounts();
+  for(const [id,sql] of [['zero-timer',`set lock_timeout='0';${commitSql(finalP)}`],['no-set-role',commitCall(finalP)]]){
+    const recovered=await txJson(sql);assert.deepEqual(recovered,{...finalSaved,replayed:true});
+    assert.deepEqual(await effectCounts(),recoveryBefore);txPass('TC7-recovery-'+id,'Existing receipt precedes timer/route admission; identical receipt, no new effects');
+  }
   const profileP=transactionPayload(finalG,'synthetic-profile-missing'),beforeProfile=await effectCounts();
   profileP.expectedConfigurationDigest='0'.repeat(64);
-  await txRefused(commitSql(profileP),'55000','Quick Order approved limits binding unavailable',{quickOrderCode:'DEFINITE_REFUSAL'});
+  await txRefused(commitSql(profileP),'55000','Quick Order approved limits binding unavailable',doc83Detail('Quick Order approved limits binding unavailable'));
   await txRefused(`set lock_timeout='0';\n${commitSql(transactionPayload(finalG,'synthetic-timer-disabled'))}`,
-    '55000','Quick Order effective timer unavailable or unsupported',{quickOrderCode:'DEFINITE_REFUSAL'});
+    '55000','Quick Order effective timer unavailable or unsupported',doc83Detail('Quick Order effective timer unavailable or unsupported'));
   assert.deepEqual(await effectCounts(),beforeProfile);
   await syntheticRoute('writer');
   await txJson(`select public.research_health_quick_order_revoke_revision('${finalG.revisionId}','synthetic-review-revocation')::text;`);
   finalG.route=await syntheticRoute('intake');
   const afterRevoke=transactionPayload(finalG,'synthetic-after-revocation');
-  await txRefused(commitSql(afterRevoke),'55000','Quick Order authority unavailable',{quickOrderCode:'DEFINITE_REFUSAL'});
+  await txRefused(commitSql(afterRevoke),'55000','Quick Order authority unavailable',doc83Detail('Quick Order authority unavailable'));
   const recover=copy(finalP);recover.expectedConfigurationDigest='0'.repeat(64);
   const recovered=await assertCommitted(recover,{replayed:true});assert.equal(recovered.publicReference,(await txJson(replayCall(finalP))).publicReceipt.publicReference);
   txPass('TX07','invalid profile/timer refuses new request; actual revoke refuses new key while committed receipt remains recoverable');
@@ -930,8 +974,315 @@ async function runSyntheticTransactionControls() {
   // does NOT exercise a failure after all five writes or uncertain COMMIT.
   return {cases:copy(txCaseResults),execution:'OBSERVED_ONLY_IF_THIS_FUNCTION_COMPLETES',
     remaining:['post-fifth-effect/commit-acknowledgment fault','hosted timeout/disconnect contract','admin-attested trusted checkout positive',
-      'canonical Early Access-to-member price correction independent acceptance/execution','full writer/revocation timing matrix']};
+      'canonical Early Access-to-member price correction independent acceptance/execution','full writer/revocation timing matrix',
+      'price-ambiguous branch unreachable under canonical one-active-price unique index',
+      'stored access-role mismatch unreachable under exact session CHECK; input-role refusal and canonical CHECK control are separate',
+      'C10 intake alternate-server/version/max_prepared_transactions controls require separately authorized alternate server',
+      'explicit transaction-budget branches are defence in depth: transaction_timeout normally terminates first',
+      'adapter mapping function UNDISPATCHED; no hosted transaction outcome or transport proof' ]};
 }
+// DOC83 future synthetic controls. None bypass receipt, descriptor or source seals.
+const doc83FixtureExpectations=new Map();
+const DOC83_OTHER_RELATIONS=['research_notification_attempts','research_assisted_order_access_tokens','research_assisted_order_documents',
+  'research_lot_reservations','research_lot_reservation_allocations','research_inventory_reservation_events',
+  'research_early_access_reservations','research_early_access_commission_events'];
+function doc83Detail(message){
+  let category;
+  if(message==='Quick Order agreement pair changed')category='TERMS_CHANGED';
+  else if(/Quick Order (?:scope|witness|quality witness|stock witness|offer|price|estimate|snapshot)/.test(message))category='CATALOG_CHANGED';
+  else if(/Quick Order (?:input unavailable|identity unavailable|private context|eligibility|trusted checkout|session binding|locked session binding|customer unavailable|locked customer|legal binding|locked legal binding|member unavailable|private session|quantity invalid)/.test(message))category='INVALID_INPUT';
+  else category='UNAVAILABLE';
+  return {quickOrderCode:'DEFINITE_REFUSAL_'+category};
+}
+async function doc83OtherEffects(){
+  const snapshots={};
+  for(const table of DOC83_OTHER_RELATIONS){
+    // Full synthetic rows detect modifications as well as new side effects.
+    snapshots[table]=await json(`select coalesce(jsonb_agg(to_jsonb(t) order by to_jsonb(t)::text),'[]'::jsonb)::text from public.${table} t;`);
+  }
+  return snapshots;
+}
+async function doc83NoSave(p,before,other){
+  assert.deepEqual(await effectCounts(),before);assert.deepEqual(await doc83OtherEffects(),other);
+  assert.equal((await startupSql(replayCall(p))).trim(),'','Refusal cannot leave a saved key or public receipt');
+}
+async function doc83EaOwnership(p,result){
+  const raw=p.context.rawStoredSessionHash,viewerHash=sha(raw);
+  const statusSql=hash=>service(`select public.research_assisted_order_customer_status(${quote(result.publicReference)},null,${quote(hash)},null)::text;`);
+  const owned=await txJson(statusSql(viewerHash));
+  assert.equal(owned.requestId,result.requestId);assert.equal(owned.publicReference,result.publicReference);
+  assert.equal((await startupSql(statusSql(raw))).trim(),'');assert.equal((await startupSql(statusSql(sha('synthetic-wrong-session')))).trim(),'');
+  const identity=await json(`select json_build_object('stored',(select early_access_session_hash from public.research_assisted_order_requests where id=${quote(result.requestId)}::uuid),
+    'rawPresent',exists(select 1 from public.research_assisted_order_requests r join public.research_private_early_access_sessions s on r.early_access_session_hash=s.session_hash))::text;`);
+  assert.equal(identity.stored,viewerHash);assert.equal(identity.rawPresent,false);
+  txPass('TC1-EA-owned-status-double-hash','Actual customer_status with null member/token accepts viewer hash; raw/wrong hashes refuse; no request stores a raw private-session lookup key');
+}
+async function doc83AssertReadback(p,result,envelope,decisionAt){
+  const keys=(value,expected)=>assert.deepEqual(Object.keys(value).sort(),[...expected].sort());
+  keys(envelope,['schemaVersion','requestId','detail','submittedEvent','enrichment']);
+  assert.equal(envelope.schemaVersion,'quick-order-admin-envelope-v1');assert.equal(envelope.requestId,result.requestId);
+  const d=envelope.detail,i=p.submission.input,a=p.submission.attribution;
+  keys(d,['requestId','publicReference','status','source','actorMemberId','fullLegalName','email','mobilePhone','organizationName','shippingAddress','billingAddress','lines','estimatedTotalCents','currency','generalNotes','agreements','affiliateAttributionRef','declaredAffiliateCode','declaredAffiliateCodeState','timeline','documents','createdAt','updatedAt']);
+  assert.equal(d.publicReference,result.publicReference);assert.equal(d.fullLegalName,i.contact.fullLegalName);
+  assert.equal(d.actorMemberId,doc83FixtureExpectations.get(p.context.rawStoredSessionHash)?.memberId,'Actual canonical member UUID from the independent fixture seed');
+  assert.equal(d.email,i.contact.email.toLowerCase());assert.equal(d.mobilePhone,i.contact.mobilePhone);
+  assert.equal(d.organizationName,i.contact.organizationName||null);assert.deepEqual(d.shippingAddress,i.contact.shippingAddress);assert.deepEqual(d.billingAddress,i.contact.billingAddress);
+  const pairs=i.agreements.map(x=>({kind:x.kind,version:x.version})).sort((x,y)=>x.kind<y.kind?-1:x.kind>y.kind?1:x.version<y.version?-1:x.version>y.version?1:0);
+  assert.deepEqual(d.agreements,pairs);assert.equal(d.estimatedTotalCents,p.submission.computedEstimate.knownSubtotalCents||null);assert.equal(d.currency,'USD');
+  assert.equal(d.source,'early_access_manual_order_bridge');assert.equal(d.generalNotes,null);assert.equal(d.affiliateAttributionRef,null);
+  assert.equal(d.declaredAffiliateCode,a.declaredAffiliateCode||null);assert.equal(d.declaredAffiliateCodeState,a.declaredAffiliateCode?'captured_unmatched':'not_provided');
+  assert.equal(d.createdAt,decisionAt);assert.equal(new Date(d.updatedAt).toISOString(),decisionAt);assert.deepEqual(d.documents,[]);
+  assert.deepEqual(d.timeline.map(event=>({...event,occurredAt:new Date(event.occurredAt).toISOString()})),
+    [{status:'submitted',occurredAt:decisionAt,customerMessage:'Your request has been received.'}]);
+  assert.equal(d.lines.length,i.lines.length);
+  for(const inputLine of i.lines){
+    const line=d.lines.find(x=>x.productId===inputLine.productId&&x.variantId===inputLine.variantId);
+    const snapshot=p.submission.snapshots.find(x=>x.productId===inputLine.productId&&x.variantId===inputLine.variantId);
+    assert.ok(line&&snapshot);keys(line,['lineId','productId','variantId','productName','specification','format','packBasis','quantity','minimumQuantity','maximumQuantity','quantityIncrement','workflowMode','customerActionLabel','unitPriceCents','lineEstimateCents','currency','catalogVersion','priceVersion','accessNotice','researchUseOnly']);
+    assert.equal(line.quantity,inputLine.quantity);assert.equal(line.workflowMode,snapshot.workflowMode);assert.equal(line.unitPriceCents,snapshot.unitPriceCents);
+    assert.equal(line.priceVersion,snapshot.priceVersion);assert.equal(line.catalogVersion,snapshot.catalogVersion);assert.equal(line.currency,'USD');assert.equal(line.researchUseOnly,false);
+    assert.equal(line.lineEstimateCents,snapshot.unitPriceCents===null?null:snapshot.unitPriceCents*inputLine.quantity);
+    assert.equal(line.minimumQuantity,1);assert.equal(line.maximumQuantity,10);assert.equal(line.quantityIncrement,1);
+    assert.equal(line.productName,'Synthetic fixture only');assert.equal(line.specification,null);assert.equal(line.format,null);assert.equal(line.packBasis,null);
+    assert.equal(line.customerActionLabel,snapshot.workflowMode==='request_pricing'?'Request pricing':'Submit request');assert.equal(line.accessNotice,null);
+    assert.match(line.lineId,/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/);
+  }
+  assert.deepEqual(envelope.submittedEvent,{schemaVersion:'quick-order-v1',requestId:result.requestId,eventType:'submitted',occurredAt:decisionAt,payloadHash:p.submission.payloadHash});
+  const e=envelope.enrichment;keys(e,['schemaVersion','companion','receipt','obligation','observation']);assert.equal(e.schemaVersion,'quick-order-v1');
+  assert.deepEqual(e.companion,{requestId:result.requestId,payloadHash:p.submission.payloadHash,intake:{schemaVersion:'quick-order-v1',source:a.source,sourceDetail:a.sourceDetail,
+    declaredCode:a.declaredAffiliateCode||null,affiliationKind:a.affiliation.kind,affiliationDetail:a.affiliation.detail,confirmedByCustomer:a.confirmedByCustomer,
+    confirmedAt:decisionAt,requestAcknowledged:i.requestAcknowledged,reviewState:a.reviewState,commissionState:a.commissionState,estimate:p.submission.computedEstimate}});
+  assert.deepEqual(e.receipt,{schemaVersion:'quick-order-v1',requestId:result.requestId,publicReference:result.publicReference,payloadHash:p.submission.payloadHash,attributionState:a.reviewState,estimate:p.submission.computedEstimate});
+  const eventKey='assisted-order:'+result.requestId+':quick-order-submitted:admin';
+  const outboxPayload={schemaVersion:'quick-order-v1',requestId:result.requestId,publicReference:result.publicReference};
+  assert.deepEqual(e.obligation,{eventKey,templateKey:'research.assisted_order.quick_order.submitted.admin.v1',payload:outboxPayload});
+  keys(e.observation,['state','eventKey','observedAt','notification']);assert.equal(e.observation.state,'observed');assert.equal(e.observation.eventKey,eventKey);
+  assert.deepEqual(e.observation.notification,{status:'pending',attemptCount:0,nextAttemptAt:decisionAt,completedAt:null});
+  const direct=await json(`select json_build_object('recipient',o.recipient,'channel',o.channel,'eventType',o.event_type,'payload',o.payload,
+    'companionRecipient',c.notification_recipient,'actorId',v.actor_id,'actorType',v.actor_type)
+    from public.research_notification_outbox o join public.research_health_quick_order_intakes c on c.request_id=${quote(result.requestId)}::uuid
+    join public.research_assisted_order_events v on v.request_id=c.request_id and v.status='submitted'
+    where o.event_key=${quote(eventKey)};`);
+  assert.equal(direct.recipient,p.notificationRecipient);assert.equal(direct.companionRecipient,p.notificationRecipient);assert.equal(direct.channel,'email');
+  assert.equal(direct.eventType,'assisted_order.submitted');assert.deepEqual(direct.payload,outboxPayload);
+  assert.equal(direct.actorId,p.actorScope);assert.equal(direct.actorType,p.actorScope.startsWith('member:')?'member':'early_access_session');
+}
+async function doc83ShadowControls(g,savedPayload,savedResult){
+  const marker='DOC83_SHADOW_DOMAIN_CALLED';
+  const setup=`set client_min_messages=notice;create temporary table doc83_temp_environment(x pg_catalog.int4);
+    create function pg_temp.doc83_mark() returns pg_catalog.bool language plpgsql as $marker$ begin raise notice '${marker}';return true;end $marker$;
+    select pg_temp.doc83_mark();
+    create domain pg_temp.jsonb as pg_catalog.jsonb check(pg_temp.doc83_mark());
+    create domain pg_temp.text as pg_catalog.text check(pg_temp.doc83_mark());
+    create domain pg_temp.uuid as pg_catalog.uuid check(pg_temp.doc83_mark());
+    create domain pg_temp.timestamptz as pg_catalog.timestamptz check(pg_temp.doc83_mark());`;
+  for(const kind of ['admin','replay','commit']){
+    const p=transactionPayload(g,'synthetic-shadow-'+kind),before=await effectCounts();
+    let statement;
+    if(kind==='admin')statement=`select public.research_health_quick_order_admin_detail(${quote(savedResult.requestId)}::pg_catalog.uuid)::pg_catalog.text;`;
+    else if(kind==='replay')statement=`select public.research_health_quick_order_replay(${quote(savedPayload.actorScope)}::pg_catalog.text,${quote(sha('xenios:health:quick-order:key:v1|'+savedPayload.actorScope+'|'+savedPayload.submission.input.idempotencyKey))}::pg_catalog.text)::pg_catalog.text;`;
+    else statement=`select public.research_health_quick_order_commit(${quote(JSON.stringify(p))}::pg_catalog.jsonb)::pg_catalog.text;`;
+    // Fresh backend avoids a previously compiled PL/pgSQL type-resolution cache.
+    const observed=await startupSql(setup+'set role service_role;'+statement,{captureDiagnostics:true});
+    assert.equal((observed.stderr.match(new RegExp(marker,'g'))??[]).length,1,'Only the explicit positive marker call may emit a notice');
+    const output=rows(observed.stdout).at(-1);assert.ok(output);
+    if(kind==='admin'){assert.equal(output.requestId,savedResult.requestId);assert.deepEqual(await effectCounts(),before);}
+    else if(kind==='replay'){assert.equal(output.publicReceipt.requestId,savedResult.requestId);assert.deepEqual(await effectCounts(),before);}
+    else {await assertCommitted(p,{result:output});countDelta(before,await effectCounts(),[1,1,1,1,1]);}
+    const twin=await startupSql('set role service_role;'+statement,{captureDiagnostics:true});
+    assert.ok(!twin.stderr.includes(marker));
+    const twinOutput=rows(twin.stdout).at(-1);
+    if(kind==='admin'){
+      assert.match(output.enrichment.observation.observedAt,/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+      assert.match(twinOutput.enrichment.observation.observedAt,/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+      const retained=copy(output),twinRetained=copy(twinOutput);
+      // This observation timestamp is intentionally fresh; every retained field must match.
+      delete retained.enrichment.observation.observedAt;delete twinRetained.enrichment.observation.observedAt;
+      assert.deepEqual(twinRetained,retained);
+    }else assert.deepEqual(twinOutput,kind==='commit'?{...output,replayed:true}:output);
+    txPass('TC3-shadow-'+kind,'Fresh same-backend domain shadows, observable positive NOTICE and no domain invocation; exact no-domain twin');
+  }
+}
+async function doc83Wait(sql,accept,description){
+  const deadline=Date.now()+8000;
+  for(let n=0;n<60&&Date.now()<deadline;n++){
+    const value=await json(sql);if(accept(value))return value;
+    await new Promise(resolve=>setTimeout(resolve,20));
+  }
+  assert.fail('Required concurrency witness absent: '+description);
+}
+async function doc83ActorRace(g,conflict){
+  g.route=await syntheticRoute('intake',{longWaits:true});
+  const p=transactionPayload(g,'synthetic-doc83-race-'+(conflict?'conflict':'same')),q=copy(p);
+  if(conflict){q.submission.input.contact.fullLegalName='Synthetic changed concurrent payload';rehash(q);}
+  const key=sha('xenios:health:quick-order:key:v1|'+p.actorScope+'|'+p.submission.input.idempotencyKey);
+  const actorPreimage='xenios:health:quick-order:actor-key:v1|'+p.actorScope+'|'+key;
+  const aTag='doc83-A-'+randomUUID(),bTag='doc83-B-'+randomUUID(),before=await effectCounts(),other=await doc83OtherEffects();
+  let a,b;
+  try {await withSyntheticLock(`select session_hash from public.research_private_early_access_sessions where session_hash=${quote(g.sessionHash)} for update;`,async({pid:holder})=>{
+    a=startupSql(`set application_name=${quote(aTag)};${commitSql(p)}`).then(value=>({value}),error=>({error}));
+    const witness=await doc83Wait(`select coalesce((select json_build_object('pid',a.pid,'blocked',${holder}=any(pg_blocking_pids(a.pid)),
+      'actorHeld',exists(select 1 from pg_locks l where l.pid=a.pid and l.locktype='advisory' and l.objsubid=1 and l.mode='ExclusiveLock' and l.granted
+        and ((l.classid::bigint<<32)|l.objid::bigint)=hashtextextended(${quote(actorPreimage)},0)))
+      from pg_stat_activity a where a.application_name=${quote(aTag)}),'{}'::json)::text;`,v=>v.blocked&&v.actorHeld,'A holds actor key and waits on row 11');
+    b=startupSql(`set application_name=${quote(bTag)};${commitSql(q)}`).then(value=>({value}),error=>({error}));
+    await doc83Wait(`select coalesce((select json_build_object('blocked',${witness.pid}=any(pg_blocking_pids(a.pid)),
+      'actorWaiting',exists(select 1 from pg_locks l where l.pid=a.pid and l.locktype='advisory' and l.objsubid=1 and l.mode='ExclusiveLock' and not l.granted
+        and ((l.classid::bigint<<32)|l.objid::bigint)=hashtextextended(${quote(actorPreimage)},0)))
+      from pg_stat_activity a where a.application_name=${quote(bTag)}),'{}'::json)::text;`,v=>v.blocked&&v.actorWaiting,'B waits on A exact actor key');
+  });}finally{await Promise.all([a,b].filter(Boolean));}
+  const ar=await a,br=await b;assert.equal(ar.error,undefined);const aValue=rows(ar.value).at(-1);assert.equal(aValue.replayed,false);
+  await assertCommitted(p,{result:aValue});
+  if(conflict)sqlFailure(br.error,'23505','Quick Order key conflicts',{quickOrderCode:'IDEMPOTENCY_CONFLICT'});
+  else {assert.equal(br.error,undefined);assert.deepEqual(rows(br.value).at(-1),{...aValue,replayed:true});}
+  countDelta(before,await effectCounts(),[1,1,1,1,1]);assert.deepEqual(await doc83OtherEffects(),other);
+  const recovered=await txJson(replayCall(p));assert.equal(recovered.payloadHash,p.submission.payloadHash);assert.equal(recovered.publicReceipt.requestId,aValue.requestId);
+  txPass('TC5-actor-'+(conflict?'conflict':'replay'),'Observed A row-11 wait while holding exact actor key, B actor-key wait on A; deterministic winner and post-lock outcome');
+  g.route=await syntheticRoute('intake');
+}
+async function doc83QueuedWriter(){
+  const tag='doc83-queued-'+randomUUID();
+  const child=spawn('docker',['--host',endpoint,'exec','-i',containerId,'psql','-X','-q','-A','-t','-v','ON_ERROR_STOP=1','-U','postgres','-d','postgres'],
+    {cwd:ROOT,env:childEnv,windowsHide:true,stdio:['pipe','pipe','pipe']});
+  activeChildren.add(child);let text='',errors='',bytes=0,resolvePid,rejectPid,closed=false,pidSeen=false;
+  const pidPromise=new Promise((resolve,reject)=>{resolvePid=resolve;rejectPid=reject;});
+  const deadline=setTimeout(()=>{child.kill();rejectPid(new Error('Queued writer fixture deadline'));},35_000);
+  const done=new Promise((resolve,reject)=>{
+    child.on('error',error=>{rejectPid(error);reject(error);});
+    child.on('close',(code,signal)=>{closed=true;clearTimeout(deadline);activeChildren.delete(child);
+      if(!pidSeen)rejectPid(new Error('Queued writer exited before its PID receipt'));
+      if(code!==0||signal||interrupted){const error=new Error('Queued writer fixture failed');rejectPid(error);reject(error);}else resolve();});
+  });done.catch(()=>{});child.stdin.on('error',()=>{});
+  child.stdout.on('data',chunk=>{bytes+=chunk.length;text+=chunk.toString('utf8');if(bytes>outputLimit){child.kill();rejectPid(new Error('Queued writer output bound'));}
+    const match=text.match(/DOC83_QUEUED_PID:([0-9]+)/);if(match){pidSeen=true;resolvePid(Number(match[1]));}});
+  child.stderr.on('data',chunk=>{bytes+=chunk.length;errors+=chunk.toString('utf8');if(bytes>outputLimit)child.kill();});
+  // PID is available before the blocked statement, not after lock acquisition.
+  child.stdin.write(`\\set VERBOSITY verbose\nset application_name=${quote(tag)};set statement_timeout='25s';set transaction_timeout='28s';set idle_in_transaction_session_timeout='25s';
+    begin;select 'DOC83_QUEUED_PID:'||pg_backend_pid();select pg_advisory_xact_lock(1380471107,1);\n`);
+  const pid=await pidPromise;
+  return {pid,tag,finish:async()=>{if(!closed)child.stdin.end('rollback;\n\\q\n');await done;assert.equal(errors.includes('ERROR:'),false);}};
+}
+async function doc83GateControls(g){
+  g.route=await syntheticRoute('intake',{longWaits:true});
+  const shared=transactionPayload(g,'synthetic-shared-only'),beforeShared=await effectCounts();
+  await withSyntheticLock('select pg_advisory_xact_lock_shared(1380471107,1);',async()=>{await assertCommitted(shared);});
+  countDelta(beforeShared,await effectCounts(),[1,1,1,1,1]);
+  const p=transactionPayload(g,'synthetic-queued-writer'),before=await effectCounts(),other=await doc83OtherEffects();let writer;
+  try {
+    await withSyntheticLock('select pg_advisory_xact_lock_shared(1380471107,1);',async({pid:holder})=>{
+      writer=await doc83QueuedWriter();
+      await doc83Wait(`select json_build_object('holder',exists(select 1 from pg_locks where pid=${holder} and locktype='advisory' and classid=1380471107 and objid=1 and objsubid=2 and mode='ShareLock' and granted),
+        'queued',exists(select 1 from pg_locks where pid=${writer.pid} and locktype='advisory' and classid=1380471107 and objid=1 and objsubid=2 and mode='ExclusiveLock' and not granted),
+        'blocks',${holder}=any(pg_blocking_pids(${writer.pid})))::text;`,v=>v.holder&&v.queued&&v.blocks,'shared grant with queued exclusive writer');
+      await txRefused(commitSql(p),'55P03','Quick Order temporarily unavailable',{quickOrderCode:'DEFINITE_REFUSAL_RETRYABLE'});
+      await doc83NoSave(p,before,other);
+    });
+  } finally {if(writer)await writer.finish();}
+  await assertCommitted(p);countDelta(before,await effectCounts(),[1,1,1,1,1]);
+  txPass('TC5-shared-only-and-queued-writer','Shared-only holder admits; witnessed queued exclusive writer refuses a fresh shared try-lock; same key succeeds after release');
+  g.route=await syntheticRoute('intake');
+}
+async function doc83CurrentnessDrift(){
+  // Normal SQL refusal closes the transaction and restores the exact function.
+  // COST affects pg_get_functiondef (the fingerprint) but not the exact inventory.
+  // Use the definition-bound DDL runner, never the RPC runner lacking that variable.
+  for(const [id,mutation,message] of [
+    ['inventory',"set search_path='public'",'Quick Order exact function inventory mismatch'],
+    ['fingerprint','cost 101','Quick Order accepted currentness fingerprint differs'],
+  ])for(const [gate,text] of [['precheck',precheck],['reapply',candidate],['postcheck',postcheck]]){
+    let error;try{await psql(`begin;alter function public.research_health_quick_order_currentness_read_strict_authority(pg_catalog.timestamptz) ${mutation};\n${text}`);}catch(value){error=value;}
+    sqlFailure(error,'55000',message);
+    txPass('TC16-currentness-'+id+'-'+gate,'Exact currentness drift refuses at the intended dependency gate; no reseal or retained mutation');
+  }
+}
+async function doc83NegativeMatrix(fresh){
+  const cases=[
+    {id:'owner',mutate:p=>{p.context.configuredOwnerId=uuid(999001);},message:'Quick Order eligibility changed'},
+    {id:'member-actor',mutate:p=>{p.actorScope='member:'+uuid(999002);p.context.actorScope=p.actorScope;},message:'Quick Order eligibility changed'},
+    {id:'email',mutate:p=>{p.submission.input.contact.email='different-synthetic@example.invalid';},message:'Quick Order eligibility changed'},
+    {id:'expired',seed:{sessionIssuedOffsetMs:-300*60_000},message:'Quick Order eligibility changed'},
+    {id:'issued-future',seed:{sessionIssuedOffsetMs:60_000},message:'Quick Order eligibility changed'},
+    {id:'legal-future',seed:{legalVerifiedOffsetMs:60_000},message:'Quick Order eligibility changed'},
+    {id:'binding-future',seed:{bindingBoundOffsetMs:60_000},message:'Quick Order eligibility changed'},
+    {id:'recorded-agreement-missing',seed:{agreementMode:'missing'},message:'Quick Order agreement pair changed'},
+    {id:'recorded-agreement-version',seed:{agreementMode:'wrong-version'},message:'Quick Order agreement pair changed'},
+    {id:'input-agreement',mutate:p=>{p.submission.input.agreements.pop();},message:'Quick Order agreement pair changed'},
+    {id:'required-role',mutate:p=>{p.context.requiredRole='synthetic_other_role';},message:'Quick Order private context unavailable'},
+    {id:'context-actor',mutate:p=>{p.context.actorScope='member:'+uuid(999003);},message:'Quick Order private context unavailable'},
+    {id:'acknowledgment',mutate:p=>{p.submission.input.requestAcknowledged=false;},message:'Quick Order private context unavailable'},
+    {id:'snapshot-count',mutate:p=>{p.submission.snapshots=[];},message:'Quick Order private context unavailable'},
+    {id:'recipient',mutate:p=>{p.notificationRecipient='invalid-synthetic-recipient';},message:'Quick Order notification recipient unavailable'},
+    {id:'key-format',mutate:p=>{p.submission.input.idempotencyKey='short';},message:'Quick Order identity unavailable'},
+    {id:'unknown-session',mutate:p=>{p.context.rawStoredSessionHash=sha('synthetic-nonexistent-session');},message:'Quick Order session binding unavailable'},
+    {id:'region',mutate:p=>{p.submission.input.contact.shippingAddress.region='NY';},message:'Quick Order offer unavailable'},
+    {id:'quantity-rule',mutate:p=>{p.submission.input.lines[0].quantity=11;p.submission.snapshots[0].quantity=11;p.submission.computedEstimate.knownSubtotalCents=11*125;},message:'Quick Order offer unavailable'},
+    {id:'quantity-grammar',mutate:p=>{p.submission.input.lines[0].quantity=1.5;p.submission.snapshots[0].quantity=1.5;},message:'Quick Order quantity invalid'},
+    {id:'readiness',seed:{domainPublic:false},message:'Quick Order readiness unavailable'},
+    {id:'estimate',mutate:p=>{p.submission.computedEstimate.knownSubtotalCents++;},message:'Quick Order estimate unavailable'},
+    {id:'quality-selection',seed:{documentReviewedOffsetMs:60_000},message:'Quick Order quality witness unavailable',allocatable:true},
+    {id:'stock-final',seed:{documentReportOffsetDays:1},message:'Quick Order stock witness changed',allocatable:true},
+  ];
+  for(const c of cases){
+    const positive=await fresh({}),positivePayload=transactionPayload(positive,'synthetic-doc83-'+c.id+'-positive');
+    await assertCommitted(positivePayload);
+    const negative=await fresh(c.seed??{}),p=transactionPayload(negative,'synthetic-doc83-'+c.id+'-negative');c.mutate?.(p);rehash(p);
+    if(c.allocatable)assert.equal((await startupSql(`select public.research_lot_is_allocatable('${negative.lotId}',clock_timestamp());`)).trim(),'t','Canonical witness must pass before the narrower intended refusal');
+    const before=await effectCounts(),other=await doc83OtherEffects();
+    await txRefused(commitSql(p),'55000',c.message,doc83Detail(c.message));await doc83NoSave(p,before,other);
+    txPass('TC7-'+c.id,'Canonical positive twin; one semantic mutation; exact intended closed refusal, unchanged effects and no saved key');
+  }
+  // Stored access_role cannot differ without violating this canonical CHECK.
+  const roleG=await fresh({});
+  await txRefused(`update public.research_private_early_access_sessions set access_role='synthetic_other_role' where session_hash=${quote(roleG.sessionHash)};`,
+    '23514','research_private_early_access_sessions_role_exact');
+  txPass('TC7-stored-role-canonical-check','Canonical role mutation refuses; final intake comparison remains defence-in-depth, never forged around the CHECK');
+  await doc83SettingMatrix(fresh);
+}
+async function doc83SettingMatrix(fresh){
+  const cases=[
+    {id:'timer-above-field',pre:()=>"set lock_timeout='700ms';",message:'Quick Order effective timer exceeds approved field'},
+    {id:'timer-startup-mismatch',pre:()=>"set statement_timeout='2500ms';",message:'Quick Order effective startup timer mismatch'},
+    {id:'timer-binding-missing',catalog:"alter role postgres in database postgres reset statement_timeout;",pre:()=>"set statement_timeout='3s';",message:'Quick Order startup timer binding missing'},
+    {id:'effective-relationship',pre:()=>"set deadlock_timeout='500ms';",message:'Quick Order effective profile relationship mismatch'},
+    {id:'timezone',pre:()=>"set timezone='America/New_York';",message:'Quick Order effective profile relationship mismatch'},
+    {id:'datestyle',pre:()=>"set datestyle='ISO, DMY';",message:'Quick Order effective profile relationship mismatch'},
+    {id:'no-set-role',withoutRole:true,message:'Quick Order approved limits identity mismatch'},
+    {id:'isolation',pre:()=>"begin isolation level repeatable read;",message:'Quick Order transaction contract unavailable'},
+    {id:'profile-zero',profile:x=>{x.intake.cleanupMs=0;},message:'Quick Order approved limit is not representable positive milliseconds'},
+    {id:'profile-fraction',profile:x=>{x.intake.cleanupMs=0.5;},message:'Quick Order approved limit is not representable positive milliseconds'},
+    {id:'profile-overflow',profile:x=>{x.intake.cleanupMs=1e20;},message:'Quick Order approved limit is not representable positive milliseconds'},
+    {id:'profile-fields',profile:x=>{delete x.intake.responseMs;},message:'Quick Order approved limits fields invalid'},
+    {id:'profile-relationship',profile:x=>{x.intake.attemptDeadlineMs++;},message:'Quick Order approved limit relationships invalid'},
+    {id:'gate-relationship',profile:x=>{x.writer.postGateReserveMs=3000;},message:'Quick Order approved gate relationships invalid'},
+    {id:'profile-identity',profile:x=>{x.database.oid='999999999';},message:'Quick Order approved limits identity mismatch'},
+  ];
+  for(const c of cases){
+    const g=await fresh({}),positive=transactionPayload(g,'synthetic-doc83-setting-'+c.id+'-positive');await assertCommitted(positive);
+    const p=transactionPayload(g,'synthetic-doc83-setting-'+c.id+'-negative'),before=await effectCounts(),other=await doc83OtherEffects();
+    try {
+      if(c.profile){const carrier=copy(g.route.carrier);c.profile(carrier);const raw=JSON.stringify(carrier);p.expectedConfigurationDigest=sha(raw);
+        await psql(`alter role postgres in database postgres set research_health_quick_order.approved_limits=${quote(raw)};`);}
+      if(c.catalog)await psql(c.catalog);
+      const call=(c.pre?.()??'')+(c.withoutRole?commitCall(p):commitSql(p));
+      await txRefused(call,'55000',c.message,doc83Detail(c.message));await doc83NoSave(p,before,other);
+    } finally {g.route=await syntheticRoute('intake');}
+    txPass('TC7-setting-'+c.id,'Valid positive twin; exactly targeted profile/session/catalog mutation reaches the intended admission refusal');
+  }
+  const g=await fresh({}),p=transactionPayload(g,'synthetic-doc83-decoy'),before=await effectCounts(),other=await doc83OtherEffects();
+  await assertCommitted(transactionPayload(g,'synthetic-doc83-decoy-positive'));
+  const afterPositive=await effectCounts();
+  try {
+    await psql(`alter role postgres in database postgres set researchXhealth_quick_order.approved_limits=${quote(g.route.raw)};
+      alter role postgres in database postgres reset research_health_quick_order.approved_limits;`);
+    await txRefused(commitSql(p),'55000','Quick Order approved limits binding unavailable',doc83Detail('Quick Order approved limits binding unavailable'));
+    await doc83NoSave(p,afterPositive,other);
+  } finally {
+    await psql('alter role postgres in database postgres reset researchXhealth_quick_order.approved_limits;');g.route=await syntheticRoute('intake');
+  }
+  await assertCommitted(p);countDelta(before,await effectCounts(),[2,2,2,2,2]);
+  txPass('TC16-starts-with-decoy','Only decoy remains with exact anchor-matching raw bytes; refusal discriminates starts_with from wildcard LIKE; restored same-key retry succeeds');
+}
+
 async function cleanup() {
   if(!launchAttempted)return;
   let inspected;
@@ -975,6 +1326,8 @@ try {
   await psql(await load(BOOTSTRAP));
   await psql('create schema extensions;create extension pgcrypto with schema extensions;');
   await psql(await load(MIGRATIONS[0]));await psql(await load(MIGRATIONS[1]));
+  // Whole canonical candidate, once, before provider sealing; never legacy-status fallback.
+  await psql(await load(CUSTOMER_STATUS));
   await psql(await load(MIGRATIONS[2]));
   for(const file of MIGRATIONS.slice(3,10))await psql(await load(file));
   await psql(await load(OUTBOX));
@@ -993,8 +1346,8 @@ try {
     alter default privileges in schema public grant execute on functions to anon,authenticated,service_role;`);
   const before=(await psql(fingerprint)).trim();
   await boundary(before);await psql(precheck);await psql(candidate);await psql(postcheck);await boundary(before);
-  await psql(candidate);await psql(postcheck);await boundary(before);
-  pass('exact absent install and identical reapply preserve provider integrity/fingerprint and independently checked 19 trigger states');
+  await psql(precheck);await psql(candidate);await psql(postcheck);await boundary(before);
+  pass('TC2 absent precheck/install/postcheck and present precheck/reapply/postcheck; exact absent install and identical reapply preserve provider integrity/fingerprint and independently checked 19 trigger states');
   await psql(rollback);await psql(precheck);await boundary(before);
   await psql(rollback);await boundary(before);await psql(candidate);await psql(postcheck);
   pass('empty exact rollback and absent rollback preserve canonical state; installation can be reapplied');
@@ -1006,14 +1359,15 @@ try {
   await refused(service('delete from public.research_health_quick_order_intakes;'),'42501');
   await refused(service('truncate public.research_health_quick_order_intakes;'),'42501');
   await refused(service("select public.research_health_quick_order_intake_closed('{}',array[]::text[]);"),'42501');
-  await refused(service("select public.research_health_quick_order_commit('{}'::jsonb);"),'55000');
+  await txRefused(service("select public.research_health_quick_order_commit('{}'::pg_catalog.jsonb);"),'55000','Quick Order input unavailable',doc83Detail('Quick Order input unavailable'));
   for(const role of ['anon','authenticated']) await refused("set role "+role+";select public.research_health_quick_order_commit('{}'::jsonb);",'42501');
   pass('client roles cannot call readers/commit; missing-context commit refuses');
   await refused('begin;alter table public.research_health_quick_order_intakes add column drift text;'+candidate,'55000');
   await refused('begin;grant select on public.research_health_quick_order_intakes to authenticated;'+candidate,'55000');
   await refused('begin;alter function public.research_health_quick_order_admin_detail(uuid) security invoker;'+candidate,'55000');
+  await doc83CurrentnessDrift();
   await psql(postcheck);await boundary(before);
-  pass('changed schema/ACL/function definition refuses reapply without repair');
+  pass('changed schema/ACL/function/currentness definition refuses reapply without repair');
   await psql('begin;'+fixture(10,{companion:false,marker:false,outbox:false})+'commit;');
   const canonical=await json('select public.research_assisted_order_admin_get('+quote(uuid(10))+')::text;');
   assert.equal(Object.keys(canonical).length,20);

@@ -773,42 +773,165 @@ describe("disabled canonical transaction adapter (synthetic, not executed)", () 
     expect(transactionFixture({ approvedLimitsJson: raw, expectedConfigurationDigest: createHash("sha256").update(raw).digest("hex") }).attempt).toBeNull();
     expect(transactionFixture({ privateContextFor: () => ({ ...syntheticContext, actorScope: "early_access:eac_" + "f".repeat(32) }) }).attempt).toBeNull();
   });
-  it("counts preflight time from session origin and refuses expiry before transmission with the same key", async () => {
+  it("counts preflight time from the Node HTTP-entry stamp and permits original-key recovery after expiry before transmission", async () => {
     const f = transactionFixture(), args = candidateArguments(); f.setClock(8000);
-    await expect(f.extension.commitAttempt(candidateViewer, candidateActor, args, f.attempt!)).rejects.toMatchObject({ outcome: "DEFINITE_REFUSAL_RETRYABLE", status: 503, code: "temporarily_unavailable" });
-    expect(args.input.idempotencyKey).toBe("Synthetic_Key_0001");
+    await expect(f.extension.commitAttempt(candidateViewer, candidateActor, args, f.attempt!)).rejects.toMatchObject({
+      outcome: "DEFINITE_REFUSAL_RETRYABLE", status: 503, code: "temporarily_unavailable",
+    });
     expect(f.rpc).not.toHaveBeenCalled(); expect(f.schedule).not.toHaveBeenCalled();
+    f.rpc.mockResolvedValueOnce({ data: null, error: null });
+    await expect(f.extension.getExisting(candidateViewer, candidateActor, "Synthetic_Key_0001")).resolves.toBeNull();
+    expect(f.rpc.mock.calls).toEqual([[QUICK_ORDER_REPLAY_RPC, {
+      p_actor_scope: candidateActor,
+      p_key_hash: createHash("sha256").update("xenios:health:quick-order:key:v1|" + candidateActor + "|Synthetic_Key_0001").digest("hex"),
+    }]]);
   });
-  it("retains uncertainty and the key when the deadline expires after transmission, ignoring a late success", async () => {
+
+  it("retains uncertainty after transmitted expiry and addresses later recovery with the transmitted original key", async () => {
     let respond!: (value: QuickOrderCandidateRpcResult) => void;
-    const rpc = vi.fn((_name: string, _args: Readonly<Record<string, unknown>>, _options?: { readonly signal: AbortSignal }) => new Promise<QuickOrderCandidateRpcResult>(resolve => { respond = resolve; }));
+    const rpc = vi.fn((name: string, _args: Readonly<Record<string, unknown>>, _options?: { readonly signal: AbortSignal }) =>
+      name === QUICK_ORDER_REPLAY_RPC
+        ? Promise.resolve<QuickOrderCandidateRpcResult>({ data: null, error: null })
+        : new Promise<QuickOrderCandidateRpcResult>(resolve => { respond = resolve; }));
     const f = transactionFixture({ rpc }), args = candidateArguments();
     const result = f.extension.commitAttempt(candidateViewer, candidateActor, args, f.attempt!);
-    const assertion = expect(result).rejects.toMatchObject({ outcome: "OUTCOME_UNCERTAIN", status: 503 });
+    const assertion = expect(result).rejects.toMatchObject({ outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" });
     f.setClock(8000); f.expire();
     await assertion;
+    expect(rpc.mock.calls[0][0]).toBe(QUICK_ORDER_COMMIT_RPC);
+    expect(rpc.mock.calls[0][1]).toMatchObject({ p_payload: { submission: { input: { idempotencyKey: "Synthetic_Key_0001" } } } });
     expect(rpc.mock.calls[0][2]?.signal.aborted).toBe(true);
     respond({ data: { ...candidateReceipt(), persisted: true, replayed: false }, error: null, transactionOutcome: "committed" });
-    expect(args.input.idempotencyKey).toBe("Synthetic_Key_0001"); expect(rpc).toHaveBeenCalledOnce();
+    expect(rpc).toHaveBeenCalledOnce();
+    await expect(f.extension.getExisting(candidateViewer, candidateActor, "Synthetic_Key_0001")).resolves.toBeNull();
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(rpc.mock.calls[1]).toEqual([QUICK_ORDER_REPLAY_RPC, {
+      p_actor_scope: candidateActor,
+      p_key_hash: createHash("sha256").update("xenios:health:quick-order:key:v1|" + candidateActor + "|Synthetic_Key_0001").digest("hex"),
+    }]);
   });
+
   it.each([
-    ["55P03", "aborted", undefined, "DEFINITE_REFUSAL_RETRYABLE"],
-    ["40P01", "aborted", undefined, "DEFINITE_REFUSAL_RETRYABLE"],
-    ["40001", "aborted", undefined, "DEFINITE_REFUSAL_RETRYABLE"],
-    ["55P03", undefined, undefined, "OUTCOME_UNCERTAIN"],
-    ["25P03", "aborted", undefined, "OUTCOME_UNCERTAIN"],
-    ["25P04", "aborted", undefined, "OUTCOME_UNCERTAIN"],
-    [undefined, "aborted", undefined, "OUTCOME_UNCERTAIN"],
-    ["23505", "aborted", undefined, "OUTCOME_UNCERTAIN"],
-    ["57014", "aborted", undefined, "OUTCOME_UNCERTAIN"],
-    ["23505", "aborted", '{"quickOrderCode":"IDEMPOTENCY_CONFLICT"}', "IDEMPOTENCY_CONFLICT"],
-    ["55000", "aborted", '{"quickOrderCode":"DEFINITE_REFUSAL"}', "DEFINITE_REFUSAL"],
-  ] as const)("classifies only explicit transport/SQL evidence (%s/%s)", async (code, transactionOutcome, details, outcome) => {
-    const rpc = vi.fn(async (): Promise<QuickOrderCandidateRpcResult> => ({ data: null, error: { code, details }, transactionOutcome }));
+    { label: "native lock refusal", sqlCode: "55P03", transactionOutcome: "aborted", details: undefined, outcome: "DEFINITE_REFUSAL_RETRYABLE", status: 503, code: "temporarily_unavailable" },
+    { label: "exact try-lock and budget retryable wire marker", sqlCode: "55P03", transactionOutcome: "aborted", details: '{"quickOrderCode":"DEFINITE_REFUSAL_RETRYABLE"}', outcome: "DEFINITE_REFUSAL_RETRYABLE", status: 503, code: "temporarily_unavailable" },
+    { label: "deadlock", sqlCode: "40P01", transactionOutcome: "aborted", details: undefined, outcome: "DEFINITE_REFUSAL_RETRYABLE", status: 503, code: "temporarily_unavailable" },
+    { label: "serialization", sqlCode: "40001", transactionOutcome: "aborted", details: undefined, outcome: "DEFINITE_REFUSAL_RETRYABLE", status: 503, code: "temporarily_unavailable" },
+    { label: "catalog class", sqlCode: "55000", transactionOutcome: "aborted", details: '{"quickOrderCode":"DEFINITE_REFUSAL_CATALOG_CHANGED"}', outcome: "DEFINITE_REFUSAL", status: 409, code: "catalog_changed" },
+    { label: "terms class", sqlCode: "55000", transactionOutcome: "aborted", details: '{"quickOrderCode":"DEFINITE_REFUSAL_TERMS_CHANGED"}', outcome: "DEFINITE_REFUSAL", status: 409, code: "terms_changed" },
+    { label: "input/eligibility/verified-link class", sqlCode: "55000", transactionOutcome: "aborted", details: '{"quickOrderCode":"DEFINITE_REFUSAL_INVALID_INPUT"}', outcome: "DEFINITE_REFUSAL", status: 422, code: "invalid_input" },
+    { label: "held/authority/currentness class", sqlCode: "55000", transactionOutcome: "aborted", details: '{"quickOrderCode":"DEFINITE_REFUSAL_UNAVAILABLE"}', outcome: "DEFINITE_REFUSAL", status: 503, code: "temporarily_unavailable" },
+    { label: "key conflict", sqlCode: "23505", transactionOutcome: "aborted", details: '{"quickOrderCode":"IDEMPOTENCY_CONFLICT"}', outcome: "IDEMPOTENCY_CONFLICT", status: 409, code: "idempotency_conflict" },
+    { label: "unconfirmed lock", sqlCode: "55P03", transactionOutcome: undefined, details: '{"quickOrderCode":"DEFINITE_REFUSAL_RETRYABLE"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unconfirmed deadlock", sqlCode: "40P01", transactionOutcome: undefined, details: undefined, outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unconfirmed serialization", sqlCode: "40001", transactionOutcome: undefined, details: undefined, outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unconfirmed unavailable", sqlCode: "55000", transactionOutcome: undefined, details: '{"quickOrderCode":"DEFINITE_REFUSAL_UNAVAILABLE"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unconfirmed catalog", sqlCode: "55000", transactionOutcome: undefined, details: '{"quickOrderCode":"DEFINITE_REFUSAL_CATALOG_CHANGED"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unconfirmed terms", sqlCode: "55000", transactionOutcome: undefined, details: '{"quickOrderCode":"DEFINITE_REFUSAL_TERMS_CHANGED"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unconfirmed input", sqlCode: "55000", transactionOutcome: undefined, details: '{"quickOrderCode":"DEFINITE_REFUSAL_INVALID_INPUT"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unconfirmed conflict", sqlCode: "23505", transactionOutcome: undefined, details: '{"quickOrderCode":"IDEMPOTENCY_CONFLICT"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "error with committed metadata", sqlCode: "55000", transactionOutcome: "committed", details: '{"quickOrderCode":"DEFINITE_REFUSAL_INVALID_INPUT"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "idle termination", sqlCode: "25P03", transactionOutcome: "aborted", details: undefined, outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "transaction termination", sqlCode: "25P04", transactionOutcome: "aborted", details: undefined, outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "codeless", sqlCode: undefined, transactionOutcome: "aborted", details: undefined, outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unmarked uniqueness", sqlCode: "23505", transactionOutcome: "aborted", details: undefined, outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unqualified statement cancellation", sqlCode: "57014", transactionOutcome: "aborted", details: undefined, outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "legacy undifferentiated marker", sqlCode: "55000", transactionOutcome: "aborted", details: '{"quickOrderCode":"DEFINITE_REFUSAL"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "unknown marker", sqlCode: "55000", transactionOutcome: "aborted", details: '{"quickOrderCode":"FUTURE_REFUSAL"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "open marker shape", sqlCode: "55000", transactionOutcome: "aborted", details: '{"quickOrderCode":"DEFINITE_REFUSAL_INVALID_INPUT","extra":"private"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+    { label: "marker on wrong SQLSTATE", sqlCode: "23505", transactionOutcome: "aborted", details: '{"quickOrderCode":"DEFINITE_REFUSAL_INVALID_INPUT"}', outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" },
+  ] as const)("classifies only explicit transport/SQL evidence: $label", async ({ sqlCode, transactionOutcome, details, outcome, status, code }) => {
+    const rpc = vi.fn(async (name: string, _parameters: Readonly<Record<string, unknown>>): Promise<QuickOrderCandidateRpcResult> =>
+      name === QUICK_ORDER_REPLAY_RPC ? { data: null, error: null }
+        : { data: null, error: { code: sqlCode, details }, transactionOutcome });
     const f = transactionFixture({ rpc }), args = candidateArguments();
-    await expect(f.extension.commitAttempt(candidateViewer, candidateActor, args, f.attempt!)).rejects.toMatchObject({ outcome, status: outcome === "IDEMPOTENCY_CONFLICT" ? 409 : 503 });
-    expect(rpc).toHaveBeenCalledOnce(); expect(args.input.idempotencyKey).toBe("Synthetic_Key_0001");
+    const result = f.extension.commitAttempt(candidateViewer, candidateActor, args, f.attempt!);
+    await expect(result).rejects.toMatchObject({ outcome, status, code, field: "request" });
+    if (outcome === "DEFINITE_REFUSAL") {
+      await expect(result).rejects.not.toHaveProperty("message", expect.stringContaining("could not confirm"));
+    }
+    expect(rpc).toHaveBeenCalledOnce();
+    expect(rpc.mock.calls[0][0]).toBe(QUICK_ORDER_COMMIT_RPC);
+    expect(rpc.mock.calls[0][1]).toMatchObject({ p_payload: { submission: { input: { idempotencyKey: "Synthetic_Key_0001" } } } });
+    await expect(f.extension.getExisting(candidateViewer, candidateActor, "Synthetic_Key_0001")).resolves.toBeNull();
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(rpc.mock.calls[1]).toEqual([QUICK_ORDER_REPLAY_RPC, {
+      p_actor_scope: candidateActor,
+      p_key_hash: createHash("sha256").update("xenios:health:quick-order:key:v1|" + candidateActor + "|Synthetic_Key_0001").digest("hex"),
+    }]);
   });
+
+  it.each(["before-send", "synchronous-expiry"] as const)("refuses %s expiry before transmission, paired with an unexpired control", async mode => {
+    for (const expires of [false, true]) {
+      let clock = 0;
+      const cancel = vi.fn();
+      const schedule = vi.fn((_delay: number, callback: () => void) => {
+        if (expires && mode === "before-send") clock = 8000;
+        if (expires && mode === "synchronous-expiry") callback();
+        return cancel;
+      });
+      const f = transactionFixture({ runtime: { now: () => clock, maximumDelayMs: 24000, schedule } });
+      expect(f.attempt).not.toBeNull();
+      const result = f.extension.commitAttempt(candidateViewer, candidateActor, candidateArguments(), f.attempt!);
+      if (expires) {
+        await expect(result).rejects.toMatchObject({ outcome: "DEFINITE_REFUSAL_RETRYABLE", status: 503, code: "temporarily_unavailable" });
+        expect(f.rpc).not.toHaveBeenCalled();
+      } else {
+        await expect(result).resolves.toMatchObject({ persisted: true, replayed: false });
+        expect(f.rpc).toHaveBeenCalledOnce();
+      }
+      expect(schedule).toHaveBeenCalledWith(8000, expect.any(Function));
+      expect(cancel).toHaveBeenCalledOnce();
+    }
+  });
+
+  it("treats a synchronous transport throw after invocation as uncertain and never retries it", async () => {
+    const rpc = vi.fn((_name: string, _parameters: Readonly<Record<string, unknown>>): Promise<QuickOrderCandidateRpcResult> => {
+      throw new Error("Synthetic private synchronous transport diagnostic");
+    });
+    const f = transactionFixture({ rpc });
+    const result = f.extension.commitAttempt(candidateViewer, candidateActor, candidateArguments(), f.attempt!);
+    await expect(result).rejects.toMatchObject({ outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" });
+    await expect(result).rejects.not.toHaveProperty("message", expect.stringContaining("private synchronous"));
+    expect(rpc).toHaveBeenCalledOnce();
+    expect(rpc.mock.calls[0][0]).toBe(QUICK_ORDER_COMMIT_RPC);
+    expect(rpc.mock.calls[0][1]).toMatchObject({ p_payload: { submission: { input: { idempotencyKey: "Synthetic_Key_0001" } } } });
+    expect(f.cancel).toHaveBeenCalledOnce();
+  });
+
+  it.each([
+    { label: "persisted false", patch: { persisted: false } },
+    { label: "replayed string", patch: { replayed: "false" } },
+  ])("refuses committed metadata with $label instead of exposing a success", async ({ patch }) => {
+    const rpc = vi.fn(async (_name: string, _parameters: Readonly<Record<string, unknown>>): Promise<QuickOrderCandidateRpcResult> => ({
+      data: { ...candidateReceipt(), persisted: true, replayed: false, ...patch }, error: null, transactionOutcome: "committed",
+    }));
+    const f = transactionFixture({ rpc });
+    await expect(f.extension.commitAttempt(candidateViewer, candidateActor, candidateArguments(), f.attempt!))
+      .rejects.toMatchObject({ outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" });
+    expect(rpc).toHaveBeenCalledOnce();
+    expect(f.cancel).toHaveBeenCalledOnce();
+  });
+
+  it.each([0, -1, Number.NaN])("refuses a maximum delay of %s before consulting private context or scheduling", maximumDelayMs => {
+    const privateContextFor = vi.fn(() => syntheticContext), schedule = vi.fn(() => vi.fn());
+    const f = transactionFixture({ privateContextFor, runtime: { now: () => 0, maximumDelayMs, schedule } });
+    expect(f.attempt).toBeNull();
+    expect(privateContextFor).not.toHaveBeenCalled();
+    expect(schedule).not.toHaveBeenCalled();
+    expect(f.rpc).not.toHaveBeenCalled();
+  });
+
+  it("refuses a throwing scheduler before transmission without leaking its diagnostic", async () => {
+    const schedule = vi.fn((): (() => void) => { throw new Error("Synthetic private scheduler diagnostic"); });
+    const f = transactionFixture({ runtime: { now: () => 0, maximumDelayMs: 24000, schedule } });
+    expect(f.attempt).not.toBeNull();
+    const result = f.extension.commitAttempt(candidateViewer, candidateActor, candidateArguments(), f.attempt!);
+    await expect(result).rejects.toMatchObject({ outcome: "DEFINITE_REFUSAL", status: 503, code: "temporarily_unavailable" });
+    await expect(result).rejects.not.toHaveProperty("message", expect.stringContaining("private scheduler"));
+    expect(schedule).toHaveBeenCalledOnce();
+    expect(f.rpc).not.toHaveBeenCalled();
+  });
+
   it("treats transport rejection, unconfirmed success and malformed receipt as uncertain without retry", async () => {
     for (const rpc of [
       vi.fn(async (): Promise<QuickOrderCandidateRpcResult> => { throw new Error("synthetic transport loss"); }),
@@ -816,7 +939,7 @@ describe("disabled canonical transaction adapter (synthetic, not executed)", () 
       vi.fn(async (): Promise<QuickOrderCandidateRpcResult> => ({ data: { ...candidateReceipt(), persisted: true, replayed: false, privateContext: syntheticContext }, error: null, transactionOutcome: "committed" })),
     ]) {
       const f = transactionFixture({ rpc });
-      await expect(f.extension.commitAttempt(candidateViewer, candidateActor, candidateArguments(), f.attempt!)).rejects.toMatchObject({ outcome: "OUTCOME_UNCERTAIN" });
+      await expect(f.extension.commitAttempt(candidateViewer, candidateActor, candidateArguments(), f.attempt!)).rejects.toMatchObject({ outcome: "OUTCOME_UNCERTAIN", status: 503, code: "temporarily_unavailable" });
       expect(rpc).toHaveBeenCalledOnce();
     }
   });
@@ -855,10 +978,10 @@ describe("disabled canonical transaction adapter (synthetic, not executed)", () 
       .resolves.toEqual({ payloadHash: args.payloadHash, publicReceipt: candidateReceipt() });
     expect(rpc.mock.calls.map(([name]) => name)).toEqual([QUICK_ORDER_COMMIT_RPC, QUICK_ORDER_REPLAY_RPC]);
     expect(stored.size).toBe(1);
-    expect(args.input.idempotencyKey).toBe(originalKey);
+    expect(rpc.mock.calls[1]).toEqual([QUICK_ORDER_REPLAY_RPC, { p_actor_scope: candidateActor, p_key_hash: keyHash }]);
   });
 
-  it("retains the session-origin deadline and refuses a late success even before the observer callback fires", async () => {
+  it("retains the Node HTTP-entry deadline and refuses a late success even before the observer callback fires", async () => {
     let respond!: (value: QuickOrderCandidateRpcResult) => void;
     const rpc = vi.fn(() => new Promise<QuickOrderCandidateRpcResult>(resolve => { respond = resolve; }));
     const f = transactionFixture({ rpc });

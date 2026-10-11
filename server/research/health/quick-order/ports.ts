@@ -79,8 +79,10 @@ export interface QuickOrderAssistedOrderExtension {
   commit(viewer: AssistedOrderViewer, actorId: string, args: CommitArguments): Promise<PublicReceipt & { persisted: true; replayed?: boolean }>;
 }
 
-/** Candidate-only extension of the existing domain. No runtime constructor is
- * wired here. Existing exported port methods retain their signatures. */
+/** Disabled extension of the existing domain. Canonical composition supplies
+ * its private-context resolver and a refusal-only runtime, but no limits,
+ * digest, recipient, operational timer or commit transport. This interface
+ * changes no existing exported port method signature and grants no activation. */
 export interface QuickOrderDisabledTransactionExtension extends QuickOrderAssistedOrderExtension {
   monotonicNow(): number;
   beginAttempt(viewer: AssistedOrderViewer, actorId: string, enteredAtMonotonicMs: number): QuickOrderAttempt | null;

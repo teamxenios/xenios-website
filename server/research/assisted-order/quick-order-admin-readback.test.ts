@@ -1,4 +1,5 @@
 import express, { type RequestHandler } from "express";
+import { createHash } from "node:crypto";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -359,9 +360,10 @@ describe("Quick Order canonical admin readback composition", () => {
     expectOnlyRead(h);
   });
 
-  it("keeps same-key recovery compatible with authorized admin readback without requiring new-submission admission", async () => {
-    // This is a synthetic committed response, not execution of the commit RPC
-    // or evidence that an obligation exists in an installed database.
+  it("decodes the closed recovery projection without admission settings alongside an authorized admin projection", async () => {
+    // Both projections use a synthetic response. Their agreement is fixture
+    // compatibility only, not proof that SQL persisted matching fields. The
+    // intake verifier owns exact persisted-value and recipient assertions.
     const value = envelope();
     const retained = rowAt(value, "enrichment.receipt");
     const publicReceipt = {
@@ -375,7 +377,7 @@ describe("Quick Order canonical admin readback composition", () => {
       normalizedEmail: "synthetic-customer@example.invalid", actorLabel: "synthetic-customer@example.invalid",
       capabilities: new Set(["assisted_orders:submit"]),
     };
-    const rpc = vi.fn(async (name: string) => {
+    const rpc = vi.fn(async (name: string, _parameters: Readonly<Record<string, unknown>>) => {
       if (name !== QUICK_ORDER_REPLAY_RPC) throw new Error("Recovery attempted a write RPC");
       return { data: { payloadHash: retained.payloadHash, publicReceipt }, error: null };
     });
@@ -389,7 +391,10 @@ describe("Quick Order canonical admin readback composition", () => {
     ]);
     expect(recovered!.publicReceipt).not.toHaveProperty("intake");
     expect(recovered!.publicReceipt).not.toHaveProperty("notificationRecipient");
-    expect(rpc.mock.calls.map(([name]) => name)).toEqual([QUICK_ORDER_REPLAY_RPC]);
+    expect(rpc.mock.calls).toEqual([[QUICK_ORDER_REPLAY_RPC, {
+      p_actor_scope: "member:d0000000-0000-4000-8000-000000000002",
+      p_key_hash: createHash("sha256").update("xenios:health:quick-order:key:v1|member:d0000000-0000-4000-8000-000000000002|synthetic-key-12345678").digest("hex"),
+    }]]);
 
     const h = reader(value);
     const response = await read(h);
@@ -404,12 +409,10 @@ describe("Quick Order canonical admin readback composition", () => {
     });
     expectOnlyRead(h);
 
-    const unauthorized = reader(value, { ...ADMIN_VIEWER, capabilities: new Set(["assisted_orders:manage"]) });
-    expect((await read(unauthorized)).status).toBe(403);
-    expect(unauthorized.rpc).not.toHaveBeenCalled();
+    // The separate read_all negative below owns authorization coverage.
   });
 
-  it("repeated admin reads preserve the immutable receipt while replacing only the notification observation", async () => {
+  it("projects an updated notification observation on independent authorized reads", async () => {
     const initial = envelope();
     const later = structuredClone(initial);
     rowAt(later, "enrichment.observation").observedAt = UPDATED_AT;
@@ -431,7 +434,6 @@ describe("Quick Order canonical admin readback composition", () => {
       state: "observed", observedAt: UPDATED_AT,
       notification: { status: "sent", attemptCount: 1, nextAttemptAt: CREATED_AT, completedAt: UPDATED_AT },
     });
-    expect(rowAt(later, "enrichment.receipt")).toEqual(rowAt(initial, "enrichment.receipt"));
     expect(JSON.stringify([initial, later])).toBe(before);
     expect(h.rpc.mock.calls).toEqual([
       [QUICK_ORDER_ADMIN_DETAIL_RPC, { p_request_id: REQUEST_ID }],
@@ -440,6 +442,33 @@ describe("Quick Order canonical admin readback composition", () => {
     expect(h.enqueue).not.toHaveBeenCalled();
     expect(h.audit).not.toHaveBeenCalled();
     expect(h.createUpload).not.toHaveBeenCalled();
+  });
+
+  it.each(["reference", "estimate"] as const)("refuses a later read with an independently corrupted receipt %s", async field => {
+    const initial = envelope(), later = structuredClone(initial);
+    rowAt(later, "enrichment.observation").observedAt = UPDATED_AT;
+    if (field === "reference") rowAt(later, "enrichment.receipt").publicReference = "XRR-20261006-ABCDEF5678";
+    else rowAt(later, "enrichment.receipt.estimate").knownSubtotalCents = 2501;
+    let reads = 0;
+    const h = compose(async name => {
+      if (name !== QUICK_ORDER_ADMIN_DETAIL_RPC) throw new Error("Unexpected write during readback");
+      return { data: reads++ === 0 ? initial : later, error: null };
+    });
+    expect((await read(h)).status).toBe(200);
+    const second = await read(h);
+    expect(second.status).toBe(500);
+    expect(second.body).toEqual(UNAVAILABLE);
+    expect(second.text).not.toContain(REFERENCE);
+    expect(second.headers["cache-control"]).toBe("no-store");
+    expect(h.rpc.mock.calls).toEqual([
+      [QUICK_ORDER_ADMIN_DETAIL_RPC, { p_request_id: REQUEST_ID }],
+      [QUICK_ORDER_ADMIN_DETAIL_RPC, { p_request_id: REQUEST_ID }],
+    ]);
+    expect(h.enqueue).not.toHaveBeenCalled();
+    expect(h.audit).not.toHaveBeenCalled();
+    expect(h.createUpload).not.toHaveBeenCalled();
+    // This detects an internally inconsistent current envelope. The decoder
+    // is stateless and does not authenticate history across separate reads.
   });
 
   it("rejects at the synthetic fixture admission before resolving a viewer or calling the RPC", async () => {
