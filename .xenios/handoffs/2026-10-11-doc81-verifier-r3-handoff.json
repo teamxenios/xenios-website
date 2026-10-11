@@ -216,13 +216,13 @@
     },
     {
       "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
-      "rawSha256": "8f82aca2912af3f6e39568d77ea7b99249260970615731840f2d9d9704e4e28e",
-      "bytes": 93722
+      "rawSha256": "de471eb5263d4b9234373819262282c8590790e1179d1d2cfb312b7edb03341a",
+      "bytes": 93744
     },
     {
       "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
-      "rawSha256": "45ce960d22ba29161735a6f028f3ad7607f3c571d7e1c9e88ab26f8fe3e6e176",
-      "bytes": 70664
+      "rawSha256": "6163aa85af9127781c1d7652f753991af9fc3ec052c54f57229ede94eb541363",
+      "bytes": 70686
     }
   ],
   "lease": "af843213-fa11-42b9-8874-f6451ae38034",
@@ -231,5 +231,6 @@
   "next": "Separate dependent intake source successor in same narrowed lease; no currentness SQL edits",
   "recordsIdentity": "This handoff is committed in the following records commit; obtain that containing commit via Git, no self-referential hash.",
   "coordinatorRequestBinding": "Coordinator owns REQUEST. Rebind it to exact source, verifier raw hash/blob and these records; no foreign board file edited.",
-  "at": "2026-10-11T19:07:08.007Z"
+  "at": "2026-10-11T19:07:08.007Z",
+  "recordsCorrection": "Historical design references placed inside existing disclosures so strict receipt top-level schema is preserved; source unchanged."
 }

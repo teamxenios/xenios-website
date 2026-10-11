@@ -1378,17 +1378,17 @@
         "control": "DOC80-history-and-seal",
         "execution": "NOT_RUN"
       }
+    ],
+    "externalHistoricalSourceReferences": [
+      {
+        "path": "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
+        "sha256lf": "0c5c17e0a370d440738a2cfc469b1d23feedf4b5e9edb40f43764750aa98c12f",
+        "sourceCommit": "735254e4cc6230479c9bfa821e1c6991389d5266",
+        "gitBlob": "fe50e011e0135e206e1dca8b7205341bcb5757e2",
+        "rawSha256": "0c5c17e0a370d440738a2cfc469b1d23feedf4b5e9edb40f43764750aa98c12f",
+        "status": "HISTORICAL_DESIGN_REFERENCE_NOT_PRESENT_IN_B22F_SOURCE_TREE",
+        "effect": "Not loaded by verifier; immutable shared binding retains exact historical authority. No file copied or successor-tree presence claimed."
+      }
     ]
-  },
-  "externalHistoricalSourceReferences": [
-    {
-      "path": "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
-      "sha256lf": "0c5c17e0a370d440738a2cfc469b1d23feedf4b5e9edb40f43764750aa98c12f",
-      "sourceCommit": "735254e4cc6230479c9bfa821e1c6991389d5266",
-      "gitBlob": "fe50e011e0135e206e1dca8b7205341bcb5757e2",
-      "rawSha256": "0c5c17e0a370d440738a2cfc469b1d23feedf4b5e9edb40f43764750aa98c12f",
-      "status": "HISTORICAL_DESIGN_REFERENCE_NOT_PRESENT_IN_B22F_SOURCE_TREE",
-      "effect": "Not loaded by verifier; immutable shared binding retains exact historical authority. No file copied or successor-tree presence claimed."
-    }
-  ]
+  }
 }
