@@ -4107,7 +4107,7 @@
       "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
       "revision": 2,
       "session": "codex-health-quick-order-20261005",
-      "state": "active",
+      "state": "handoff",
       "paths": [
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
         "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
@@ -4115,7 +4115,7 @@
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
       ],
       "claimedAt": "2026-10-11T23:43:03.266Z",
-      "heartbeatAt": "2026-10-11T23:43:03.266Z",
+      "heartbeatAt": "2026-10-11T23:51:09.370Z",
       "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
       "branch": "codex/accepted-source-integration-20261005",
       "sourceBase": "69d9e32a5df899985b2877e06e1a778060a021f9",
@@ -4123,7 +4123,16 @@
       "assignmentCommit": "c5b6f6029f07c7debb39460317d3281d93e64915",
       "stage": "FOUR_EVIDENCE_ONLY_NO_APPLICATION_SOURCE_WRITES",
       "ack": ".xenios/handoffs/2026-10-11-doc83-composition-evidence-owner-ack.json",
-      "authority": "Existing direct-human 17+4 evidence scope; coordinator Doc83 revision2 after serial integrator handoff"
+      "authority": "Existing direct-human 17+4 evidence scope; coordinator Doc83 revision2 after serial integrator handoff",
+      "handedOffAt": "2026-10-11T23:51:09.370Z",
+      "writerStopped": true,
+      "noAutomaticReclaim": true,
+      "sourceCommit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+      "sourceTree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+      "candidateCommit": "a044293d6782493c4b1ed5296ada6435a3dbac0b",
+      "recordsCommit": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+      "recordsTree": "c146ebff5763aa4b2e0789ff0d687bd538154e15",
+      "handoff": ".xenios/handoffs/2026-10-11-doc83-composition-evidence-handoff.json"
     }
   ],
   "rules": [
