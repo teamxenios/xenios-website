@@ -2,6 +2,25 @@
   "schemaVersion": 1,
   "leases": [
     {
+      "id": "f57c582d-0527-4792-9389-849cf4e60105",
+      "task": "QUICK-ORDER-DOC83-INTEGRATOR-CORRECTION-20261011",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "active",
+      "claimedAt": "2026-10-11T23:33:00Z",
+      "heartbeatAt": "2026-10-11T23:33:00Z",
+      "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "branch": "codex/accepted-source-integration-20261005",
+      "base": "7b08bd73137296ef0bd0ea5a9311045a486d26fd",
+      "assignmentCommit": "f4ae7e39bf9d8f62c76adb5600400fba57965c62",
+      "paths": [
+        "server/research/assisted-order/production-deps.ts",
+        "client/src/App.tsx",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx"
+      ],
+      "scopeNote": "Actual claim after same integrator four-path ACK, unchanged path bytes and stopped-builder ddc54431 HANDOFF at7b08bd73. One serial source/Git/own-continuity writer. No builder evidence/currentness/supervisor/protected manifest changes. bf834f90 continuity lease and all historical rows preserved. No tests/import/parser/compiler/probes/SQL/hosted/push/schedules."
+    },
+    {
       "id": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
       "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
       "session": "codex-accepted-source-integration-20261005",

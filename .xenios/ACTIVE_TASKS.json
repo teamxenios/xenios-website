@@ -3,6 +3,42 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "QUICK-ORDER-DOC83-INTEGRATOR-CORRECTION-20261011",
+      "revision": 1,
+      "owner": "codex-accepted-source-integration-20261005",
+      "state": "in_progress",
+      "phase": "SERIAL_INTEGRATOR_SOURCE_ONLY",
+      "claimedAt": "2026-10-11T23:33:00Z",
+      "heartbeatAt": "2026-10-11T23:33:00Z",
+      "leaseId": "f57c582d-0527-4792-9389-849cf4e60105",
+      "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "branch": "codex/accepted-source-integration-20261005",
+      "base": "7b08bd73137296ef0bd0ea5a9311045a486d26fd",
+      "baseTree": "63fe1b56ef659a3cf93084f8f9acdaddde830fe9",
+      "incomingSource": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+      "incomingSourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+      "assignmentCommit": "f4ae7e39bf9d8f62c76adb5600400fba57965c62",
+      "paths": [
+        "server/research/assisted-order/production-deps.ts",
+        "client/src/App.tsx",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx"
+      ],
+      "receivingAck": "msg_0f2569fb2809ea47016acc18b261d487d181a836670f8bfcf5",
+      "authority": {
+        "ninePathRawSha256": "4fbe1d96858789ece46b35a9dea504f28c97060623ad6146e4f85ec54a895a72",
+        "tc10DelegationRawSha256": "ee7ebb05e0e5e3ebb845f32488fff7ce390c92dfb3899986499b3f91023d8108",
+        "tc10ActualDisposition": "02cb90935511e3c48c97539b7da7022494f9f211",
+        "originalReview": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      "execution": "NOT_RUN",
+      "publication": "LOCAL_ONLY",
+      "requestedModel": "gpt-6-astra",
+      "requestedEffort": "ultra",
+      "actualModel": "NOT_EXPOSED",
+      "actualEffort": "NOT_EXPOSED"
+    },
+    {
       "id": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
       "revision": 1,
       "title": "Existing disabled integration: exact registry phase and prepared fixed copy boundary",

@@ -1,10 +1,10 @@
 {
   "id": "codex-accepted-source-integration-20261005",
   "tool": "OpenAI Codex desktop",
-  "lane": "accepted-source-integration",
+  "lane": "doc83-integrator-correction",
   "branch": "codex/accepted-source-integration-20261005",
-  "state": "handoff_ready",
+  "state": "active",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-11T17:20:58.0120582Z",
-  "note": "Six-path disabled source8e01ef8660ab2148078e969b2190808fc37a27ad treec79391328a4fc1671c2feaa284b7404b897b487c complete. Sourcewriter stopped; lease8703 handoff. Only own records/Git checkpoint remains. Canonical private context/root clock/browser session authored; actual intake and handler remain disabled. Controls AUTHORED_NOT_RUN; no execution, push, hosted or schedule change. Sourceacceptance pending/intakeunsealed; no independent reviewer restarted. Requested gpt-6-astra/ultra, actualNOT_EXPOSED."
+  "heartbeatAt": "2026-10-11T23:33:00Z",
+  "note": "Doc83 TC8/9/10 exact four-path source correction in same b22f after stopped builder source5c59cf44/records7b08bd73. Exclusive lease f57c582d-0527-4792-9389-849cf4e60105 active. Source authoring and local hooks-disabled Git only; AUTHORED_NOT_RUN. No changes to builder nine files/four evidence, currentness, supervisor, bf834f90-owned continuity, disabled barriers or protected manifests. Products and Order History separate frozen checkpoints not copied. Original reviewer preserved; actual model/effort NOT_EXPOSED."
 }
