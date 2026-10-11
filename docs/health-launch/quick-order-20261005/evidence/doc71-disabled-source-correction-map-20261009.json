@@ -1,130 +1,130 @@
 {
   "schemaVersion": "doc71-disabled-source-correction-map-v1",
   "taskId": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
-  "revision": 2,
-  "sourceCommit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
-  "sourceTree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
-  "sourceStatus": "DOC80_CONSOLIDATED_CORRECTION_PENDING_ORIGINAL_DELTA_REVIEW",
+  "revision": 3,
+  "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+  "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+  "sourceStatus": "DOC81_VERIFIER_R3_PENDING_ORIGINAL_BYTE_CHECK",
   "execution": "NOT_RUN",
   "publication": "LOCAL_ONLY",
   "sourceFiles": [
     {
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
       "rawSha256": "cde91d113aea9cef4c8104da9d51ac78c702f553b05e7476659d2565492eee3b",
+      "sha256lf": "cde91d113aea9cef4c8104da9d51ac78c702f553b05e7476659d2565492eee3b",
       "bytes": 90171,
-      "lines": 1033,
       "gitBlob": "f518b2220bda12985f4279adc9eaddb136d60689"
     },
     {
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
       "rawSha256": "9cf375e4ecfea2bf1818c6f4008a2842d3e1752e3549dabf4a5c72388828b106",
+      "sha256lf": "9cf375e4ecfea2bf1818c6f4008a2842d3e1752e3549dabf4a5c72388828b106",
       "bytes": 15884,
-      "lines": 178,
       "gitBlob": "d95e246733dbbb9d7df027422c51069efdb46b79"
     },
     {
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
       "rawSha256": "12c16a6741f12ddd60f789de073e6b784d38ec5658c609ff819e60dcae455cde",
+      "sha256lf": "12c16a6741f12ddd60f789de073e6b784d38ec5658c609ff819e60dcae455cde",
       "bytes": 15890,
-      "lines": 178,
       "gitBlob": "d25dae0d6979af6dcb37c07c939f03fba7bf72c5"
     },
     {
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
       "rawSha256": "a4c517f491b6e4e80db6b05cbdce3bfa98d3e8b25f365c954498e3b632f6b8b7",
+      "sha256lf": "a4c517f491b6e4e80db6b05cbdce3bfa98d3e8b25f365c954498e3b632f6b8b7",
       "bytes": 20967,
-      "lines": 247,
       "gitBlob": "f3726bf805f252e8c41dc61ea1ae6dbec073b89d"
     },
     {
       "path": "supabase/verification/research_health_quick_order_local.mjs",
       "rawSha256": "bbc040e6bf7b2656ca5b5a4e0c82d408313346163f4915a4e780784d8af8c1fc",
+      "sha256lf": "bbc040e6bf7b2656ca5b5a4e0c82d408313346163f4915a4e780784d8af8c1fc",
       "bytes": 83410,
-      "lines": 994,
       "gitBlob": "b77b75321e34e3ea48e64ae4b9260b2eec63dbb6"
     },
     {
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
       "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+      "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
       "bytes": 226183,
-      "lines": 2260,
       "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a"
     },
     {
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
       "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+      "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
       "bytes": 17174,
-      "lines": 181,
       "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803"
     },
     {
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
       "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+      "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
       "bytes": 16996,
-      "lines": 178,
       "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675"
     },
     {
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
       "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+      "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
       "bytes": 27232,
-      "lines": 375,
       "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928"
     },
     {
       "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
-      "rawSha256": "2665acf43a800935db407f872dbc0fe0dcdfbedc74c7f869796511c02b8a4b7e",
-      "bytes": 210310,
-      "lines": 2761,
-      "gitBlob": "120449d62dbc44131d3563868b522476a021a2b1"
+      "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+      "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+      "bytes": 219791,
+      "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82"
     },
     {
       "path": "server/research/assisted-order/quick-order-repository.ts",
       "rawSha256": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
+      "sha256lf": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
       "bytes": 31788,
-      "lines": 414,
       "gitBlob": "307d903f2b83a3252a1dde38f199c88e51cae2af"
     },
     {
       "path": "server/research/assisted-order/quick-order-repository.test.ts",
       "rawSha256": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170",
+      "sha256lf": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170",
       "bytes": 52802,
-      "lines": 910,
       "gitBlob": "7070fd8a2b3a973908fbe127cdbe68bbd0e9ed4b"
     },
     {
       "path": "server/research/health/quick-order/production.ts",
-      "rawSha256": "66ec299f2dcced2857a0b0dbef4871c625b14f9f397dd0c2e26f0deef2ee91ce",
-      "bytes": 6852,
-      "lines": 114,
-      "gitBlob": "aca2a9a5727a17fdc447c67242fadc5812a80cfd"
+      "rawSha256": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
+      "sha256lf": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
+      "bytes": 9743,
+      "gitBlob": "e7c8d9f57aab964f47bf6d305297dc392b621e40"
     },
     {
       "path": "server/research/health/quick-order/production.test.ts",
-      "rawSha256": "1e766ea84e2a9accd4a46988b4d410f782875bc9218bf00b35fd49ff21d9306f",
-      "bytes": 7185,
-      "lines": 112,
-      "gitBlob": "a1527a72a5fbe55167146fb3d66000b141c05380"
+      "rawSha256": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
+      "sha256lf": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
+      "bytes": 30667,
+      "gitBlob": "8b2a7b51d6db7cc34ce35e6ec52c5c2c4023fa16"
     },
     {
       "path": "server/research/health/quick-order/ports.ts",
-      "rawSha256": "39d0d2da8fd6636c76f951c7a56f87de3a058d5e0c0eed09ed98cdf5ebbe161a",
-      "bytes": 5126,
-      "lines": 85,
-      "gitBlob": "06472a5437f39f0821a3ae9952d1c0a607e25251"
+      "rawSha256": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
+      "sha256lf": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
+      "bytes": 5390,
+      "gitBlob": "3266ff8475f726037e6b03ddfa434e262432e252"
     },
     {
       "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
       "rawSha256": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb",
+      "sha256lf": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb",
       "bytes": 35156,
-      "lines": 650,
       "gitBlob": "bffd940fc24d9cc8b1cd179378ec16f7977e0efc"
     },
     {
       "path": "server/research/assisted-order/quick-order-notifications.test.ts",
       "rawSha256": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0",
+      "sha256lf": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0",
       "bytes": 24468,
-      "lines": 448,
       "gitBlob": "32cd919a0235cd0c0a55963418c301b5dd86f64b"
     }
   ],
@@ -398,7 +398,10 @@
         "disposition": "CONTROLS_AUTHORED_PENDING_INDEPENDENT_REVIEW",
         "controls": [
           "DOC80-published-admission"
-        ]
+        ],
+        "title": "Published-state admission and prepublication refusal controls",
+        "governingPointer": "280193059a6b28fee5645833cb56b7d944ad1c46:docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-delta-20261009.json#doc75SourceSuccessorConditions/R2-4 (r3 R3_DELTA); Doc80 CS-8 addendum",
+        "priorDisposition": "CARRIED_SOURCE_ACCEPTANCE_CRITERION_NOT_IMPLEMENTED"
       },
       {
         "id": "R2-5",
@@ -626,7 +629,7 @@
         "id": "CC-15-TYPES",
         "condition": "All SQL type/cast qualifications and exact typed price/stock projection mappings required in future source; no subject compilation/check executed.",
         "source": "56e9ad47b6990d546b218346d6d891fac583573b; governing2801930 #sourceSuccessorConditions/CC-15-TYPES",
-        "disposition": "CORRECTION_AUTHORED_PENDING_EXACT_SOURCE_REVIEW",
+        "disposition": "SPLIT_SEPARATE_DISPOSITIONS",
         "priorDisposition": "CARRIED_SOURCE_ACCEPTANCE_CRITERION_NOT_IMPLEMENTED",
         "historicalDoc80Disposition": "NOT_IMPLEMENTED_AT_9C1",
         "doc80Findings": [
@@ -634,7 +637,19 @@
           "CS-3"
         ],
         "remaining": "Actual implemented-S/census schema descriptor and typed price/stock mapping remain unbound; qualification not implied.",
-        "stage": "S2"
+        "stage": "S2",
+        "dispositions": [
+          {
+            "part": "QUALIFICATION_AUTHORED",
+            "stage": "S2",
+            "status": "PENDING_ORIGINAL_R3_REVIEW"
+          },
+          {
+            "part": "TYPED_MAPPING_HELD",
+            "stage": "S3",
+            "status": "ACTUAL_IMPLEMENTED_S_CENSUS_UNBOUND"
+          }
+        ]
       }
     ]
   },
@@ -837,8 +852,8 @@
   "remaining": [
     {
       "id": "SEQUENTIAL_SOURCE_SEAL",
-      "requirement": "Original acceptance of exact currentness source, then accepted receipt, then explicit intake dependency-seal successor. No unreviewed bytes are adopted.",
-      "stage": "S3"
+      "requirement": "Four SQL-family files accepted by Doc81 for dependent authoring. Verifier r3 byte check still pending; both receipts PENDING and intake seal NON_FINAL.",
+      "stage": "S2"
     },
     {
       "id": "CANONICAL_SCHEMA_DESCRIPTOR",
@@ -848,36 +863,162 @@
     {
       "id": "CHECKOUT_PRIVATE_BINDING",
       "requirement": "Admin-attested checkout branch remains refused without a trusted exact checkout binding; no browser fallback or fifth private-context field invented.",
-      "stage": "S2"
+      "stage": "S3"
     },
     {
       "id": "FULL_DATABASE_VERIFIER",
       "requirement": "Canonical quality-command and parent/closure control source added; exact held and unreachable cases remain recorded without bypassing canonical contracts. No qualification execution or success.",
       "suitePrerequisites": {
         "currentness": [
-          "Future accepted source/receipt and exact candidate with legitimately resolved schema descriptor; accepted implemented-S/census, immutable input/profile/connection proofs, separately approved execution authority, reviewed driver and explicit future dispatch. None supplied or bypassed here.",
-          "No pinned reviewed quality command deletes documents/tests. Canonical BEFORE guards reject direct child DELETE and real lot cascade; immutable quality_events NO ACTION FK additionally retains command-created documents. Therefore positive QO AFTER DELETE and successful real child cascade coverage are unfilled, not replaced by the three canonical refusals.",
-          "Visible NULL-product/NULL-variant legacy lot parent fixture is unfilled: supabase/research-inventory-reservation-commands.sql:300-303 refuses either NULL identity with inventory lot identity is incomplete, and its BEFORE INSERT/UPDATE(product_id,variant_id,sku) trigger at327-329 applies to supported current writes. An actual preexisting legacy row would need a separately accepted provenance/bootstrap binding, not a weakened guard. Actual visible OUT parents are covered; a JSON NULL operand is not actual visible-NULL-parent evidence.",
-          "Sealed-document/missing-parent control models an OLD resolver operand; it does not establish a successful actual cascade.",
-          "Proposed synthetic upload metadata is format/lifecycle input only; no object was uploaded, inspected or confirmed in hosted storage. Synthetic confirm_upload is a canonical command-state control, not storage proof.",
-          "Expiry/disconnect timing and other prior qualification measurements remain pending. Existing future driver, suite and proof holds are unchanged.",
-          "Material session/legal U/D and price DELETE still reach canonical BEFORE refusal, not Quick Order AFTER guards. The new real quality-command UPDATE controls supersede only the prior missing-quality-UPDATE carry; quality DELETE remains unfilled.",
-          "TRUNCATE CASCADE controls prove guard-family refusal per requested command target; FK cascades still prevent attribution to each individual trigger firing. The exact 47-trigger inventory is separate source-authored coverage.",
-          "Historical CLI remains held and does not dispatch the future suite; exact accepted external proof bytes and a reviewed dispatch increment remain required.",
-          "Disposable postgres login/request/function-owner identities coincide in the authored driver. Future OID assertions are not Supabase/PostgREST topology evidence or observed deployment/enforcement.",
-          "Per-case database lifecycle bounds are authored; total suite command ceilings/runtime/schedule feasibility, transaction-origin budget expiry and disconnect/rollback behavior remain unmeasured.",
-          "Prior C1-12 and 6+16+14 holds remain; source correctness and qualification readiness are not asserted. No SQL, installation, verifier execution, push or deployment occurred."
+          {
+            "id": "currentness-prerequisite-1",
+            "stage": "S3",
+            "requirement": "Future accepted source/receipt and exact candidate with legitimately resolved schema descriptor; accepted implemented-S/census, immutable input/profile/connection proofs, separately approved execution authority, reviewed driver and explicit future dispatch. None supplied or bypassed here.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-2",
+            "stage": "S3",
+            "requirement": "No pinned reviewed quality command deletes documents/tests. Canonical BEFORE guards reject direct child DELETE and real lot cascade; immutable quality_events NO ACTION FK additionally retains command-created documents. Therefore positive QO AFTER DELETE and successful real child cascade coverage are unfilled, not replaced by the three canonical refusals.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-3",
+            "stage": "S3",
+            "requirement": "Visible NULL-product/NULL-variant legacy lot parent fixture is unfilled: supabase/research-inventory-reservation-commands.sql:300-303 refuses either NULL identity with inventory lot identity is incomplete, and its BEFORE INSERT/UPDATE(product_id,variant_id,sku) trigger at327-329 applies to supported current writes. An actual preexisting legacy row would need a separately accepted provenance/bootstrap binding, not a weakened guard. Actual visible OUT parents are covered; a JSON NULL operand is not actual visible-NULL-parent evidence.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-4",
+            "stage": "S3",
+            "requirement": "Sealed-document/missing-parent control models an OLD resolver operand; it does not establish a successful actual cascade.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-5",
+            "stage": "S3",
+            "requirement": "Proposed synthetic upload metadata is format/lifecycle input only; no object was uploaded, inspected or confirmed in hosted storage. Synthetic confirm_upload is a canonical command-state control, not storage proof.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-6",
+            "stage": "S3",
+            "requirement": "Expiry/disconnect timing and other prior qualification measurements remain pending. Existing future driver, suite and proof holds are unchanged.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-7",
+            "stage": "S3",
+            "requirement": "Material session/legal U/D and price DELETE still reach canonical BEFORE refusal, not Quick Order AFTER guards. The new real quality-command UPDATE controls supersede only the prior missing-quality-UPDATE carry; quality DELETE remains unfilled.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-8",
+            "stage": "S3",
+            "requirement": "TRUNCATE CASCADE controls prove guard-family refusal per requested command target; FK cascades still prevent attribution to each individual trigger firing. The exact 47-trigger inventory is separate source-authored coverage.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-9",
+            "stage": "S3",
+            "requirement": "Historical CLI remains held and does not dispatch the future suite; exact accepted external proof bytes and a reviewed dispatch increment remain required.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-10",
+            "stage": "S3",
+            "requirement": "Disposable postgres login/request/function-owner identities coincide in the authored driver. Future OID assertions are not Supabase/PostgREST topology evidence or observed deployment/enforcement.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-11",
+            "stage": "S3",
+            "requirement": "Per-case database lifecycle bounds are authored; total suite command ceilings/runtime/schedule feasibility, transaction-origin budget expiry and disconnect/rollback behavior remain unmeasured.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "currentness-prerequisite-12",
+            "stage": "S3",
+            "requirement": "Prior C1-12 and 6+17+14 holds remain; source correctness and qualification readiness are not asserted. No SQL, installation, verifier execution, push or deployment occurred.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          }
         ],
         "intake": [
-          "All controls AUTHORED / NOT RUN. No syntax/parser/module/SQL/Docker execution performed.",
-          "Actual implemented-S descriptor, accepted census and intake dependency seal are absent. No fixture rewrites frozen SQL or fills source authority.",
-          "Trusted admin-attested checkout-number binding remains absent from four-field context: positive branch cannot be authored honestly against current signature; specific refusal is covered.",
-          "Canonical Early Access member-audience correction and its discriminating controls are authored; independent source acceptance and separately authorized execution remain pending.",
-          "Write-boundary fault cases cover failure before each of five INSERTs and rollback of zero through four prior effects. Failure after the fifth effect, uncertain COMMIT acknowledgment and database restart durability are not covered.",
-          "Hosted Supabase/PostgREST login/request/owner configuration, actual timer/pre-BEGIN/disconnect enforcement and production behavior remain unobserved.",
-          "Full simultaneous writer/revocation timing/fairness matrix, all row-class permutations and transport/adapter end-to-end qualification remain incomplete.",
-          "Canonical bootstrap order and synthetic platform seams are authored from whole pinned files; no successful bootstrap is claimed.",
-          "No external reviewer acceptance or execution eligibility is inferred; both schedules and existing holds unchanged."
+          {
+            "id": "intake-prerequisite-1",
+            "stage": "S3",
+            "requirement": "All controls AUTHORED / NOT RUN. No syntax/parser/module/SQL/Docker execution performed.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "intake-prerequisite-2",
+            "stage": "S3",
+            "requirement": "Actual implemented-S descriptor, accepted census and intake dependency seal are absent. No fixture rewrites frozen SQL or fills source authority.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "intake-prerequisite-3",
+            "stage": "S3",
+            "requirement": "Trusted admin-attested checkout-number binding remains absent from four-field context: positive branch cannot be authored honestly against current signature; specific refusal is covered.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "intake-prerequisite-4",
+            "stage": "S3",
+            "requirement": "Canonical Early Access member-audience correction and its discriminating controls are authored; independent source acceptance and separately authorized execution remain pending.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "intake-prerequisite-5",
+            "stage": "S3",
+            "requirement": "Write-boundary fault cases cover failure before each of five INSERTs and rollback of zero through four prior effects. Failure after the fifth effect, uncertain COMMIT acknowledgment and database restart durability are not covered.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "intake-prerequisite-6",
+            "stage": "S3",
+            "requirement": "Hosted Supabase/PostgREST login/request/owner configuration, actual timer/pre-BEGIN/disconnect enforcement and production behavior remain unobserved.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "intake-prerequisite-7",
+            "stage": "S3",
+            "requirement": "Full simultaneous writer/revocation timing/fairness matrix, all row-class permutations and transport/adapter end-to-end qualification remain incomplete.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "intake-prerequisite-8",
+            "stage": "S3",
+            "requirement": "Canonical bootstrap order and synthetic platform seams are authored from whole pinned files; no successful bootstrap is claimed.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "id": "intake-prerequisite-9",
+            "stage": "S3",
+            "requirement": "No external reviewer acceptance or execution eligibility is inferred; both schedules and existing holds unchanged.",
+            "status": "NOT_PROVEN",
+            "execution": "NOT_RUN"
+          }
         ]
       },
       "stage": "S3"
@@ -965,10 +1106,100 @@
       "title": "Anchor cannot be supplied inside the install transaction"
     },
     {
-      "id": "DOC80_INTAKE_RESEAL_CARRY",
+      "id": "IC-1",
       "stage": "S2",
-      "status": "HELD_UNTIL_EXACT_CURRENTNESS_ACCEPTANCE",
-      "requirement": "After original currentness acceptance: refuse empty/short offerings before resolver; bind integrity/seal part3/function inventory; disclose digest as consistency binding; correct pre-BEGIN/header-verification comments; bind corrected CC-17 guard. Intake dependency seal remains null. No intake source changed here."
+      "status": "MOOT",
+      "requirement": "Moot: accepted currentness strict reader verifies the sealed scope header; no second resolver.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "IC-2",
+      "stage": "S2",
+      "status": "AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK",
+      "requirement": "Refuse NULL/short offering set before resolver with 55000 and exact DEFINITE_REFUSAL marker; author actual adapter classification and valid SQL twins.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "IC-3",
+      "stage": "S2",
+      "status": "AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK",
+      "requirement": "Check full currentness seal format/part2/part3, complete thirteen-function inventory and integrity.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "IC-4",
+      "stage": "S2",
+      "status": "AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK",
+      "requirement": "Describe expectedConfigurationDigest as caller/catalog consistency, not authority against holders of EXECUTE.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "IC-5",
+      "stage": "S2",
+      "status": "AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK",
+      "requirement": "Remove implication that catalog/effective checks prove timers armed before BEGIN.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "IC-6",
+      "stage": "S2",
+      "status": "AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK",
+      "requirement": "Optional: document accepted 1-100 input-line cap without policy change.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "IC-7",
+      "stage": "S2",
+      "status": "AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK",
+      "requirement": "Bind corrected legal guard through accepted currentness definition and integrity, with no second resolver.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "IC-12",
+      "stage": "S2",
+      "status": "AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK",
+      "requirement": "Rebind historical EA3 currentness digest to accepted 8b631a83 definition in a separate explicit intake successor.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "INTAKE-STARTS-WITH",
+      "stage": "S2",
+      "status": "AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK",
+      "requirement": "Replace intake approved_limits LIKE scan with pg_catalog.starts_with.",
+      "governing": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3 final Markdown sections3/5",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-16",
+      "stage": "S3",
+      "title": "int2vector '<>' resolution is NOT RUN",
+      "status": "HELD_NOT_RUN_LATER_STAGE"
+    },
+    {
+      "id": "R2C-17",
+      "stage": "S3",
+      "title": "CS-28 holder idle-timer race now covers more windows",
+      "status": "HELD_NOT_RUN_LATER_STAGE"
+    },
+    {
+      "id": "R2C-18",
+      "stage": "S3",
+      "title": "A future run gives no per-control doc80 evidence, and logical WAL gates unrelated suites",
+      "status": "HELD_NOT_RUN_LATER_STAGE"
+    },
+    {
+      "id": "EXPLICIT_TABLE_ACL_LOOP",
+      "stage": "S3",
+      "status": "NOT_INDEPENDENTLY_DISCRIMINATED",
+      "reason": "Direct grants refuse at fingerprint; inherited owner grant reaches earlier function ACL loop."
     }
   ],
   "generationRepair": {
@@ -8240,7 +8471,6 @@
     ],
     "definitionSha256": "0a475814bc7e0819d6fed86952d7250d85fc1836db6ad42e730df353073b41b1",
     "previousDefinitionSha256": "90551d4383010573336f46d21b2cfc22b3f5d2e774bd17d35adf61cacc5b1eec",
-    "currentnessDefinitionUnchanged": "6c6b27b410f5a32e1fd19288c82e7d79434a1e74e7fffe1997c00111e40f113b",
     "companionFingerprints": "UNCHANGED_QUERIES_CAPTURE_PG_GET_FUNCTIONDEF",
     "coverage": {
       "path": "supabase/verification/research_health_quick_order_local.mjs",
@@ -8280,7 +8510,9 @@
     "policyChanged": false,
     "sourceAcceptance": "PENDING",
     "execution": "NOT_RUN",
-    "publication": "LOCAL_ONLY"
+    "publication": "LOCAL_ONLY",
+    "historicalEA3CurrentnessDefinition": "6c6b27b410f5a32e1fd19288c82e7d79434a1e74e7fffe1997c00111e40f113b",
+    "bindingStatus": "HISTORICAL_EA3_SUPERSEDED_BY_DOC81_8B631A83_SEPARATE_IC12_RESEAL"
   },
   "qualityClosureFixtureIncrement": {
     "kind": "CANONICAL_QUALITY_COMMAND_AND_PARENT_CLOSURE_FIXTURE_SOURCE",
@@ -9053,7 +9285,7 @@
         },
         {
           "stage": "S4",
-          "requirement": "Prior C1-12 and 6+16+14 holds remain; source correctness and qualification readiness are not asserted. No SQL, installation, verifier execution, push or deployment occurred.",
+          "requirement": "Prior C1-12 and 6+17+14 holds remain; source correctness and qualification readiness are not asserted. No SQL, installation, verifier execution, push or deployment occurred.",
           "status": "HELD_NOT_PROVEN",
           "execution": "NOT_RUN"
         }
@@ -9476,9 +9708,9 @@
           "DOC80-function-role-rollback"
         ],
         "controlNote": {
-          "id": "CS-14",
-          "disposition": "AUTHORED_CONTROLS",
-          "summary": "13 function inventory, roles/ACL/proconfig and exact rollback absence."
+          "status": "AUTHORED_R3_PENDING_REVIEW",
+          "correction": "All13 function proconfig/owner/ACL and all6 table ACL negatives; inherited owner membership witnesses unchanged fingerprint and reaches explicit function ACL loop; rollback restores membership. Later table ACL loop remains undiscriminated.",
+          "remaining": "Explicit table ACL loop not isolated"
         },
         "disposition": "AUTHORED_CONTROLS",
         "execution": "NOT_RUN"
@@ -9830,8 +10062,8 @@
         ],
         "stage": "S2",
         "callable": "doc80RunIntegrityControls",
-        "discriminator": "Temp jsonb/uuid/text domains call marker function; guarded zero-row and material UPDATE leave zero markers. Empty temp pg_class/pg_trigger preserve integrity and strict held reader outcome.",
-        "expectedRefusal": null,
+        "discriminator": "NOTICE capture on success/error plus positive marker witness; shadow-domain zero-row/material refusals expect exact55000, no marker and unchanged six relations; no-domain twin zero/+1-held. Dynamic reach is function-entry and descriptor only; session-local fail-closed behavior disclosed.",
+        "expectedRefusal": "55000 Quick Order protected source columns drift",
         "classification": "AUTHORED_PAIRED_SHADOW_CONTROLS",
         "execution": "NOT_RUN",
         "executionStage": "S3"
@@ -9980,7 +10212,17 @@
         "expectedRefusal": null,
         "classification": "AUTHORED_2_INVOCATION_PAIR",
         "execution": "NOT_RUN",
-        "executionStage": "S3"
+        "executionStage": "S3",
+        "supersededCaseIds": [
+          "alias-free-legal-insert-bypass"
+        ],
+        "oldToNewCaseIds": {
+          "alias-free-legal-insert-bypass": [
+            "unrelated-alias-free-legal-insert-no-profile-bypass",
+            "DOC80-cross-alias-pair"
+          ]
+        },
+        "historicalCounts": "Historical inventory counts are not current runnable cases or observed passes."
       },
       {
         "id": "DOC80-revoke-source-lock",
@@ -9993,7 +10235,26 @@
         "expectedRefusal": "22023 Invalid Quick Order revocation; 55000 activation stale or revoked",
         "classification": "AUTHORED_REASON_CORRECTION_AND_SEPARATE_NEGATIVE",
         "execution": "NOT_RUN",
-        "executionStage": "S3"
+        "executionStage": "S3",
+        "supersededCaseIds": [
+          "revoke-with-source-lock",
+          "immutable-revocation-evidence",
+          "revoked-reactivation-refusal"
+        ],
+        "oldToNewCaseIds": {
+          "revoke-with-source-lock": [
+            "revoke-with-source-lock",
+            "invalid-spaced-revoke-reason"
+          ],
+          "immutable-revocation-evidence": [
+            "revocation-row-recorded"
+          ],
+          "revoked-reactivation-refusal": [
+            "revoked-reactivation-refusal"
+          ]
+        },
+        "precision": "Old same-name controls were broken by a spaced reason; current rows use synthetic-revocation and an independent invalid-reason refusal.",
+        "historicalCounts": "Historical inventory counts are not current runnable cases or observed passes."
       },
       {
         "id": "DOC80-history-and-seal",
@@ -10059,7 +10320,7 @@
         ],
         "stage": "S2",
         "callable": "doc80RunStatementAndDriftControls; doc71GuardInventory",
-        "discriminator": "Fourteen mutation groups: foreign/disabled/missing/wrong-alias guards, overload, column-list inventory drift, trigger args, proconfig, function owner/ACL, table ACL, live-column descriptor, history trigger disabled, seal WHEN. No fingerprint reseal; actual first inventory/descriptor/fingerprint refusal named. All 47 guard attributes include empty tgattr/tgargs, no WHEN, unconstrained/immediate.",
+        "discriminator": "All13 function proconfig/owner/ACL and all6 table ACL negatives; inherited owner membership witnesses unchanged fingerprint and reaches explicit function ACL loop; rollback restores membership. Later table ACL loop remains undiscriminated. 56 drift invocations plus membership-loop case authored; zero executed.",
         "expectedRefusal": "Named 55000 exact function/guard inventory, schema drift or descriptor drift",
         "classification": "AUTHORED_DRIFT_GROUPS_NOT_ALL_PREDICATE_ISOLATED",
         "execution": "NOT_RUN",
@@ -10182,11 +10443,6 @@
         "id": "CS33-CS36",
         "stage": "S4",
         "reason": "Profile validity/revocation, maintenance NOWAIT locks, single identity anchor and separate installation anchor workflow remain named operating prerequisites."
-      },
-      {
-        "id": "INTAKE-COMMENT-RESEAL",
-        "stage": "S2",
-        "reason": "CS17 intake comments and actual dependent intake reseal follow accepted exact currentness; intake files untouched."
       }
     ],
     "laterStageConditions": [
@@ -10334,7 +10590,7 @@
       "all nine-path integration and intake source bytes",
       "schedules unchanged"
     ],
-    "sourceAcceptance": "PENDING_ORIGINAL_REVIEWER_DELTA",
+    "sourceAcceptance": "FOUR_SQL_FILES_ACCEPTED_WITH_LIMITS_DOC81_VERIFIER_R3_PENDING",
     "execution": "NOT_RUN",
     "publication": "LOCAL_ONLY",
     "actualModel": "NOT_EXPOSED",
@@ -10345,6 +10601,218 @@
       "https://www.postgresql.org/docs/17/view-pg-locks.html",
       "https://www.postgresql.org/docs/17/sql-createsubscription.html",
       "https://www.postgresql.org/docs/17/catalog-pg-subscription-rel.html"
+    ],
+    "status": "HISTORICAL_DOC80_TARGET_AMENDED_BY_DOC81_CORRECTION"
+  },
+  "doc81Correction": {
+    "revision": 3,
+    "phase": "VERIFIER_ONLY_SOURCE",
+    "review": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3",
+    "coordinatorAssignment": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
+    "coordinatorCommit": "e6abab18e2b675bd2a5b8015153bd6befe85d5e9",
+    "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+    "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+    "sourceFiles": [
+      {
+        "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+        "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+        "bytes": 219791,
+        "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82"
+      }
+    ],
+    "acceptedSql": {
+      "status": "SOURCE_ACCEPT_WITH_LIMITS_FOR_DEPENDENT_AUTHORING",
+      "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+      "tree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+      "review": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3",
+      "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+      "files": [
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+          "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+          "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+          "bytes": 226183
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+          "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+          "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+          "bytes": 17174
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+          "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+          "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+          "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+          "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+          "bytes": 16996
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+          "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+          "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+          "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+          "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+          "bytes": 27232
+        }
+      ],
+      "byteCheck": "Standalone builtin hashing confirms all four Git blobs and definition unchanged; this is not independent acceptance."
+    },
+    "immutableSharedBindings": {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "source": "6bf25795453e0da6feaa57414fe80d1fd7c5fa19",
+      "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+      "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+      "bytes": 54259
+    },
+    "findings": [
+      {
+        "id": "R2C-1",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "NOTICE capture on success/error plus positive marker witness; shadow-domain zero-row/material refusals expect exact55000, no marker and unchanged six relations; no-domain twin zero/+1-held. Dynamic reach is function-entry and descriptor only; session-local fail-closed behavior disclosed.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-2",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "All13 function proconfig/owner/ACL and all6 table ACL negatives; inherited owner membership witnesses unchanged fingerprint and reaches explicit function ACL loop; rollback restores membership. Later table ACL loop remains undiscriminated.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-4",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "Restore captured trigger descriptor comments, wrong NEW alias twin; align altered binding/decision variant identities and rebind their artifact/text digests. UPDATE-OF fixture also changes event type; no isolated tgattr claim.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-5",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "Unanchored EXCEPTION WHEN lexical count outside comments, exactly2 and one in each designated validator body.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-6",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "Supplemental four-family lexical catalog/type assertions; dollar body source retained. Not a SQL parser or dynamic coverage of post-descriptor paths.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-7",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "Intake-specific installation/runtime refusals restored; currentness prerequisites explicitly transitive.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-8",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "Historical EA3 6c6b27b4 binding explicitly superseded by accepted8b631a83; IC12 separate carry.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-9",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "IC-numbered carries and intake starts_with task recorded; final Doc81 authoring permission supersedes earlier draft hold.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-10",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "Explicit old-to-new IDs and historical count labels.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-12",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "Suite prerequisites as staged objects; source acceptance and fresh execution separated; shared requirement stages aligned to Doc80.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-13",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "R2-4 sibling fields and 6+17+14 count corrected.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-14",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "CC15TYPES qualification-authoring half separate from held typed mapping.",
+        "execution": "NOT_RUN"
+      },
+      {
+        "id": "R2C-15",
+        "stage": "S2",
+        "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+        "correction": "Unknown/already-revoked55000 versus historical22023 disclosed; DOC80-history-and-seal.",
+        "execution": "NOT_RUN"
+      }
+    ],
+    "deferred": [
+      {
+        "id": "R2C-3",
+        "stage": "S2_PRECISION_CARRY",
+        "reason": "Do not change accepted rollback.md or any of the four SQL-family bytes; doing so lapses final Doc81 section3 ruling. Record this precision hold, not an unapproved SQL edit."
+      },
+      {
+        "id": "R2C-16",
+        "stage": "S3",
+        "title": "int2vector '<>' resolution is NOT RUN",
+        "status": "HELD_NOT_RUN_LATER_STAGE"
+      },
+      {
+        "id": "R2C-17",
+        "stage": "S3",
+        "title": "CS-28 holder idle-timer race now covers more windows",
+        "status": "HELD_NOT_RUN_LATER_STAGE"
+      },
+      {
+        "id": "R2C-18",
+        "stage": "S3",
+        "title": "A future run gives no per-control doc80 evidence, and logical WAL gates unrelated suites",
+        "status": "HELD_NOT_RUN_LATER_STAGE"
+      },
+      {
+        "id": "R2C-11",
+        "stage": "COORDINATOR_RECORDS",
+        "status": "COORDINATOR_OWNED_NOT_EDITED"
+      },
+      {
+        "id": "EXPLICIT_TABLE_ACL_LOOP",
+        "stage": "S3",
+        "status": "NOT_INDEPENDENTLY_DISCRIMINATED",
+        "reason": "Direct grants refuse at fingerprint; inherited owner grant reaches earlier function ACL loop."
+      }
+    ],
+    "sourceAcceptance": {
+      "status": "PENDING",
+      "reviewCommit": null
+    },
+    "intakeSeal": "NON_FINAL",
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "checkMethod": "Source reading and builtin byte/hash/Git/JSON metadata only. No imports, parser, syntax/compiler/test, SQL or verifier execution.",
+    "referenceDocs": [
+      "https://www.postgresql.org/docs/17/plpgsql-errors-and-messages.html",
+      "https://www.postgresql.org/docs/17/role-membership.html"
     ]
   }
 }

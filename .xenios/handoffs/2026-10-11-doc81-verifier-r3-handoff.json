@@ -1,0 +1,235 @@
+{
+  "revision": 3,
+  "phase": "VERIFIER_ONLY_SOURCE",
+  "review": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3",
+  "coordinatorAssignment": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
+  "coordinatorCommit": "e6abab18e2b675bd2a5b8015153bd6befe85d5e9",
+  "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+  "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+  "sourceFiles": [
+    {
+      "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+      "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+      "bytes": 219791,
+      "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82"
+    }
+  ],
+  "acceptedSql": {
+    "status": "SOURCE_ACCEPT_WITH_LIMITS_FOR_DEPENDENT_AUTHORING",
+    "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+    "tree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+    "review": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3",
+    "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+    "files": [
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+        "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+        "bytes": 226183
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+        "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+        "bytes": 17174
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+        "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+        "bytes": 16996
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+        "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+        "bytes": 27232
+      }
+    ],
+    "byteCheck": "Standalone builtin hashing confirms all four Git blobs and definition unchanged; this is not independent acceptance."
+  },
+  "immutableSharedBindings": {
+    "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+    "absolutePath": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+    "source": "6bf25795453e0da6feaa57414fe80d1fd7c5fa19",
+    "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+    "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+    "bytes": 54259
+  },
+  "findings": [
+    {
+      "id": "R2C-1",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "NOTICE capture on success/error plus positive marker witness; shadow-domain zero-row/material refusals expect exact55000, no marker and unchanged six relations; no-domain twin zero/+1-held. Dynamic reach is function-entry and descriptor only; session-local fail-closed behavior disclosed.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-2",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "All13 function proconfig/owner/ACL and all6 table ACL negatives; inherited owner membership witnesses unchanged fingerprint and reaches explicit function ACL loop; rollback restores membership. Later table ACL loop remains undiscriminated.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-4",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "Restore captured trigger descriptor comments, wrong NEW alias twin; align altered binding/decision variant identities and rebind their artifact/text digests. UPDATE-OF fixture also changes event type; no isolated tgattr claim.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-5",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "Unanchored EXCEPTION WHEN lexical count outside comments, exactly2 and one in each designated validator body.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-6",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "Supplemental four-family lexical catalog/type assertions; dollar body source retained. Not a SQL parser or dynamic coverage of post-descriptor paths.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-7",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "Intake-specific installation/runtime refusals restored; currentness prerequisites explicitly transitive.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-8",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "Historical EA3 6c6b27b4 binding explicitly superseded by accepted8b631a83; IC12 separate carry.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-9",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "IC-numbered carries and intake starts_with task recorded; final Doc81 authoring permission supersedes earlier draft hold.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-10",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "Explicit old-to-new IDs and historical count labels.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-12",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "Suite prerequisites as staged objects; source acceptance and fresh execution separated; shared requirement stages aligned to Doc80.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-13",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "R2-4 sibling fields and 6+17+14 count corrected.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-14",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "CC15TYPES qualification-authoring half separate from held typed mapping.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "R2C-15",
+      "stage": "S2",
+      "status": "AUTHORED_PENDING_ORIGINAL_R3_REVIEW",
+      "correction": "Unknown/already-revoked55000 versus historical22023 disclosed; DOC80-history-and-seal.",
+      "execution": "NOT_RUN"
+    }
+  ],
+  "deferred": [
+    {
+      "id": "R2C-3",
+      "stage": "S2_PRECISION_CARRY",
+      "reason": "Do not change accepted rollback.md or any of the four SQL-family bytes; doing so lapses final Doc81 section3 ruling. Record this precision hold, not an unapproved SQL edit."
+    },
+    {
+      "id": "R2C-16",
+      "stage": "S3",
+      "title": "int2vector '<>' resolution is NOT RUN",
+      "status": "HELD_NOT_RUN_LATER_STAGE"
+    },
+    {
+      "id": "R2C-17",
+      "stage": "S3",
+      "title": "CS-28 holder idle-timer race now covers more windows",
+      "status": "HELD_NOT_RUN_LATER_STAGE"
+    },
+    {
+      "id": "R2C-18",
+      "stage": "S3",
+      "title": "A future run gives no per-control doc80 evidence, and logical WAL gates unrelated suites",
+      "status": "HELD_NOT_RUN_LATER_STAGE"
+    },
+    {
+      "id": "R2C-11",
+      "stage": "COORDINATOR_RECORDS",
+      "status": "COORDINATOR_OWNED_NOT_EDITED"
+    },
+    {
+      "id": "EXPLICIT_TABLE_ACL_LOOP",
+      "stage": "S3",
+      "status": "NOT_INDEPENDENTLY_DISCRIMINATED",
+      "reason": "Direct grants refuse at fingerprint; inherited owner grant reaches earlier function ACL loop."
+    }
+  ],
+  "sourceAcceptance": {
+    "status": "PENDING",
+    "reviewCommit": null
+  },
+  "intakeSeal": "NON_FINAL",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED",
+  "checkMethod": "Source reading and builtin byte/hash/Git/JSON metadata only. No imports, parser, syntax/compiler/test, SQL or verifier execution.",
+  "referenceDocs": [
+    "https://www.postgresql.org/docs/17/plpgsql-errors-and-messages.html",
+    "https://www.postgresql.org/docs/17/role-membership.html"
+  ],
+  "recordFiles": [
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "rawSha256": "bcae263624baf259badccfa16f4eafecc2b7c8d0ef3d75847d5ee27ab071c051",
+      "bytes": 600661
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "rawSha256": "8f82aca2912af3f6e39568d77ea7b99249260970615731840f2d9d9704e4e28e",
+      "bytes": 93722
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "rawSha256": "45ce960d22ba29161735a6f028f3ad7607f3c571d7e1c9e88ab26f8fe3e6e176",
+      "bytes": 70664
+    }
+  ],
+  "lease": "af843213-fa11-42b9-8874-f6451ae38034",
+  "leaseState": "active",
+  "sourceWriter": "codex-health-quick-order-20261005",
+  "next": "Separate dependent intake source successor in same narrowed lease; no currentness SQL edits",
+  "recordsIdentity": "This handoff is committed in the following records commit; obtain that containing commit via Git, no self-referential hash.",
+  "coordinatorRequestBinding": "Coordinator owns REQUEST. Rebind it to exact source, verifier raw hash/blob and these records; no foreign board file edited.",
+  "at": "2026-10-11T19:07:08.007Z"
+}

@@ -3819,7 +3819,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-10T22:26:00.727Z",
-      "heartbeatAt": "2026-10-11T18:58:55.658Z",
+      "heartbeatAt": "2026-10-11T19:07:08.007Z",
       "authorityCommit": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
       "note": "DOC71 quality-command and parent-closure fixture successor 9c1c92bcb7a514da9b575a291d0abac67c8ba366 / tree d0c676b673df6f9f9d587b543df9c745e31e5d39. Same af843213 exact21 lease; only currentness verifier source changed. SQL families and canonical price mapping unchanged; LOCAL ONLY / NOT RUN / PENDING source acceptance.\n2026-10-11 actual owner handoff of frozen aa857/735 custody for the approved fixed-copy phase only. Full21 paths, session, original claim and source grant retained. Builder source writers stopped. No expiry/crash inference; no automatic reclaim.",
       "copyPhaseHandoff": {
@@ -3911,7 +3911,15 @@
           "state": "COMPLETE_WRITING_CUSTODY_HANDED_OFF",
           "sourcePathsHeld": true
         }
-      ]
+      ],
+      "currentDoc81Checkpoint": {
+        "source": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+        "tree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+        "handoff": ".xenios/handoffs/2026-10-11-doc81-verifier-r3-handoff.json",
+        "stage": "VERIFIER_R3_COMMITTED_INTAKE_SOURCE_NEXT",
+        "execution": "NOT_RUN",
+        "publication": "LOCAL_ONLY"
+      }
     },
     {
       "id": "45b81df8-c988-4d87-a1c0-37cbccb3f97d",
