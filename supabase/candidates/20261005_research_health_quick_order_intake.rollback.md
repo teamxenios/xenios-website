@@ -1,3 +1,5 @@
+Doc81 dependency binding is provisional source authoring against the unchanged accepted currentness definition. Both receipts remain PENDING and the intake seal NON_FINAL until the original revision-3 byte check; no execution or installation authority is implied.
+
 # Quick Order intake reader candidate rollback — SOURCE ONLY / NOT RUN
 
 Contract: pushed `b75325a`. This is an unregistered candidate and a source-only

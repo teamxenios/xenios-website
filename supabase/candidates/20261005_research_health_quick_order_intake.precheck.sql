@@ -1,3 +1,5 @@
+-- Doc81 dependency binding is provisional source authoring; both receipts remain
+-- PENDING and intake NON_FINAL until original revision-3 byte check. No execution.
 -- SOURCE ONLY / NOT RUN. psql variable qo_intake_definition_sha256 is the
 -- SHA-256 of the approved candidate's literal qo_ddl + qo_fingerprint blocks,
 -- LF normalized. Supply it from an externally SHA-pinned source receipt; never

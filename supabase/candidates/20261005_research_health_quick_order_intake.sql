@@ -358,8 +358,9 @@ begin
   key_hash:=pg_catalog.encode(extensions.digest(pg_catalog.convert_to(
     'xenios:health:quick-order:key:v1|'||actor||'|'||(input->>'idempotencyKey'),'UTF8'),'sha256'),'hex');
   -- Read-only recovery precedes mutable admission. An already committed receipt
-  -- needs no waiting actor lock. New submissions validate the prearmed finite
-  -- timers below before that first lock, then repeat recovery under the lock.
+  -- needs no waiting actor lock. New submissions check catalog/effective finite
+  -- timer consistency before that first lock, then repeat recovery under it.
+  -- These checks do not establish that the connection armed timers before BEGIN.
   recovered:=public.research_health_quick_order_replay(actor,key_hash);
   if recovered is not null then
     if recovered->>'payloadHash' is distinct from payload_hash then
@@ -396,14 +397,16 @@ begin
     where setrole=login_oid and setdatabase=database_oid;
   select pg_catalog.substring(s,pg_catalog.length('research_health_quick_order.approved_limits=')+1)
     into limits_raw from pg_catalog.unnest(catalog_settings) s
-    where s like 'research_health_quick_order.approved_limits=%';
+    where pg_catalog.starts_with(s,'research_health_quick_order.approved_limits=');
   anchor := (p_payload->>'expectedConfigurationDigest');
   if anchor is null or anchor !~ '^[0-9a-f]{64}$' or limits_raw is null
     or pg_catalog.encode(extensions.digest(pg_catalog.convert_to(limits_raw,'UTF8'),'sha256'),'hex')<>anchor
     or limits_raw is not json object with unique keys then
     raise exception 'Quick Order approved limits binding unavailable' using errcode='55000',detail='{"quickOrderCode":"DEFINITE_REFUSAL"}'; end if;
-  -- The external digest binds the complete canonical ASCII artifact; jsonb::pg_catalog.text
-  -- is deliberately not used as that artifact's serialization or hash preimage.
+  -- This caller-supplied digest checks consistency with catalog approved_limits
+  -- bytes; it is not authorization against a caller already holding EXECUTE.
+  -- jsonb::pg_catalog.text is not the serialization or hash preimage. The adapter
+  -- separately checks canonical encoding; neither fact proves pre-BEGIN arming.
   limits:=limits_raw::pg_catalog.jsonb;
   if limits-array['schemaVersion','profileId','profileVersion','database','loginRole','requestRole','ownerRole',
       'routeClass','routeId','timeZone','dateStyle','intake','writer','enforcement']<>'{}'::pg_catalog.jsonb
@@ -533,8 +536,10 @@ begin
     or pg_catalog.jsonb_array_length(args->'snapshots')<>pg_catalog.jsonb_array_length(input->'lines') then
     raise exception 'Quick Order private context unavailable' using errcode='55000',detail='{"quickOrderCode":"DEFINITE_REFUSAL"}';
   end if;
-  -- All waits, including actor/key serialization, are inside the admitted
-  -- pre-BEGIN timer contract. The second read closes the initial recovery race.
+  -- The intended external contract includes every wait, including actor/key
+  -- serialization. Only catalog/effective consistency was checked here; actual
+  -- pre-BEGIN enforcement needs independent connection evidence. The second read
+  -- closes the initial recovery race.
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(
     'xenios:health:quick-order:actor-key:v1|'||actor||'|'||key_hash,0));
   recovered:=public.research_health_quick_order_replay(actor,key_hash);
@@ -545,6 +550,7 @@ begin
     return recovered->'publicReceipt'||pg_catalog.jsonb_build_object('persisted',true,'replayed',true);
   end if;
   preflight_at:=pg_catalog.date_trunc('milliseconds',pg_catalog.clock_timestamp());
+  -- Accepted strict reader verifies the sealed scope header via resolve_scope('verify').
   preflight:=public.research_health_quick_order_currentness_read_strict_authority(preflight_at);
   if preflight->>'state' is distinct from 'active' then
     raise exception 'Quick Order authority unavailable' using errcode='55000',detail='{"quickOrderCode":"DEFINITE_REFUSAL"}';
@@ -577,6 +583,13 @@ begin
   select pg_catalog.jsonb_agg(r->'offeringVariantId' order by r->>'offeringVariantId' collate "C") into offerings
     from pg_catalog.jsonb_array_elements(decision->'offerRules') r
     where exists(select 1 from pg_catalog.jsonb_array_elements(input->'lines') l where l->>'productId'=r->>'productId' and l->>'variantId'=r->>'variantId');
+  -- IC-2: NULL/short sets must receive the intake's definite-refusal marker
+  -- before the resolver can raise an unmarked integrity/shape refusal. The
+  -- accepted 1-100 input-line cap remains unchanged above.
+  if offerings is null or pg_catalog.jsonb_array_length(offerings) is distinct from pg_catalog.jsonb_array_length(input->'lines') then
+    raise exception 'Quick Order scope unavailable' using errcode='55000',detail='{"quickOrderCode":"DEFINITE_REFUSAL"}';
+  end if;
+  -- The separate offer lookup also recomputes the sealed-row digest.
   scope:=public.research_health_quick_order_currentness_resolve_scope(revision.revision_id,'offer',pg_catalog.jsonb_build_object('offeringVariantIds',offerings));
   if pg_catalog.jsonb_array_length(scope->'offers') is distinct from pg_catalog.jsonb_array_length(input->'lines') then
     raise exception 'Quick Order scope unavailable' using errcode='55000',detail='{"quickOrderCode":"DEFINITE_REFUSAL"}';
@@ -631,6 +644,7 @@ begin
   perform singleton from public.research_health_quick_order_authority_head where singleton for share;
   if not found then raise exception 'Quick Order head unavailable' using errcode='55000',detail='{"quickOrderCode":"DEFINITE_REFUSAL"}'; end if;
   decision_at:=pg_catalog.date_trunc('milliseconds',pg_catalog.clock_timestamp());
+  -- Repeat strict header/seal verification under the final authority gate.
   current_authority:=public.research_health_quick_order_currentness_read_strict_authority(decision_at);
   if current_authority is distinct from preflight
     or not exists(select 1 from public.research_health_quick_order_authority_revisions r
@@ -834,10 +848,11 @@ select encode(extensions.digest(convert_to(jsonb_build_object(
    from pg_catalog.pg_proc p where p.pronamespace='public'::regnamespace and (left(p.proname,length('research_health_quick_order_intake_'))='research_health_quick_order_intake_' or p.proname in ('research_health_quick_order_replay','research_health_quick_order_admin_detail','research_health_quick_order_commit')))
  )::text,'UTF8'),'sha256'),'hex')
 $qo_fingerprint$;
-  -- R2-13 sequenced seal: no accepted currentness successor receipt exists yet.
-  -- A later exact source successor may embed ONLY that independently accepted
-  -- definition digest. Null is an intentional installation refusal, not proof.
-  expected_currentness_definition text:=null;
+  -- Doc81 accepts the four aa857e4 SQL-family files for dependent authoring.
+  -- This provisional definition binding is NON_FINAL until the original r3 byte
+  -- check. Both source receipts remain PENDING; no installation is authorized.
+  expected_currentness_definition text:='8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe';
+  currentness_seal pg_catalog.text;
   definition_hash text; actual_hash text; seal text; provider_before text;
   relation_count integer; function_count integer; role_name text; fn record;
 begin
@@ -860,16 +875,28 @@ begin
   if expected_currentness_definition is null then
     raise exception 'Quick Order exact accepted currentness receipt is pending' using errcode='55000';
   end if;
+  -- Complete accepted function identity/owner/search_path/security inventory.
+  if (select pg_catalog.count(*) from pg_catalog.pg_proc p where p.pronamespace='public'::pg_catalog.regnamespace
+      and (p.proname in ('research_health_quick_order_publish_revision','research_health_quick_order_revoke_revision','research_health_quick_order_read_current_authority','research_health_quick_order_guard_source_write')
+        or p.proname like 'research\_health\_quick\_order\_currentness\_%' escape '\'))<>13
+    or exists(select 1 from (values ('public.research_health_quick_order_currentness_valid_publication(pg_catalog.jsonb)'),('public.research_health_quick_order_currentness_valid_decision_inputs(pg_catalog.text,pg_catalog.jsonb)'),('public.research_health_quick_order_currentness_refuse_mutation()'),('public.research_health_quick_order_currentness_monotonic_epoch()'),('public.research_health_quick_order_currentness_integrity()'),('public.research_health_quick_order_currentness_schema_fingerprint()'),('public.research_health_quick_order_currentness_read_strict_authority(timestamp with time zone)'),('public.research_health_quick_order_currentness_resolve_scope(pg_catalog.uuid,pg_catalog.text,pg_catalog.jsonb)'),('public.research_health_quick_order_currentness_activate_revision(pg_catalog.uuid,bigint,pg_catalog.text,pg_catalog.text)'),('public.research_health_quick_order_guard_source_write()'),('public.research_health_quick_order_publish_revision(pg_catalog.jsonb,pg_catalog.text)'),('public.research_health_quick_order_revoke_revision(pg_catalog.uuid,pg_catalog.text)'),('public.research_health_quick_order_read_current_authority()')) expected(signature)
+      left join pg_catalog.pg_proc p on p.oid=pg_catalog.to_regprocedure(expected.signature)
+      where p.oid is null or p.proowner<>(select oid from pg_catalog.pg_roles where rolname=current_user)
+        or p.proconfig is distinct from array['search_path=""']::pg_catalog.text[]
+        or p.prosecdef is distinct from (p.proname='research_health_quick_order_guard_source_write')) then
+    raise exception 'Quick Order exact function inventory mismatch' using errcode='55000'; end if;
+  currentness_seal:=pg_catalog.obj_description(pg_catalog.to_regclass('public.research_health_quick_order_authority_head'),'pg_class');
   if expected_currentness_definition !~ '^[a-f0-9]{64}$'
-    or pg_catalog.split_part(pg_catalog.obj_description(
-      pg_catalog.to_regclass('public.research_health_quick_order_authority_head'),'pg_class'),':',2)
-       is distinct from expected_currentness_definition then
+    or currentness_seal is null or currentness_seal !~ '^RHQOC_HELD_V1:[0-9a-f]{64}:[0-9a-f]{64}$'
+    or pg_catalog.split_part(currentness_seal,':',2) is distinct from expected_currentness_definition then
     raise exception 'Quick Order accepted currentness definition differs' using errcode='55000';
   end if;
-  if pg_catalog.to_regprocedure('public.research_health_quick_order_currentness_read_strict_authority(timestamptz)') is null
-    or pg_catalog.to_regprocedure('public.research_health_quick_order_currentness_resolve_scope(uuid,text,jsonb)') is null then
-    raise exception 'Quick Order accepted currentness predecessor missing' using errcode='55000';
+  if pg_catalog.split_part(currentness_seal,':',3) is distinct from public.research_health_quick_order_currentness_schema_fingerprint() then
+    raise exception 'Quick Order accepted currentness fingerprint differs' using errcode='55000';
   end if;
+  -- Includes the accepted corrected legal guard, source descriptors and ACLs.
+  -- Actual implemented-S/census descriptor remains absent and fails closed.
+  perform public.research_health_quick_order_currentness_integrity();
 
   perform public.research_assisted_order_provider_settlement_integrity();
   if exists (

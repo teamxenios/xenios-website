@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { readFile, realpath } from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const CANDIDATE = 'supabase/candidates/20261005_research_health_quick_order_intake';
@@ -93,7 +93,8 @@ const held = [
   'notification dispatcher transport/retry/delivery and operational intake',
   'owner-resistant immutability is not claimed; SQL owner is the disclosed trust boundary',
   'admin-attested row-8 checkout binding absent from four-field private context: branch refuses',
-  'exact accepted-currentness receipt and sequenced intake dependency seal pending',
+  'Doc81 four-file SQL acceptance permits provisional authoring; r3 byte check and final currentness/intake receipt acceptance pending',
+  'adapter mapping controls require separately accepted installed Node/tsx dependency inventory and explicit future dispatch; no current CLI dispatch added',
   'implemented-S source-column descriptor remains absent; fixtures do not supply or replace its accepted seal',
   'canonical Early Access-to-member price correction and its controls await independent acceptance and execution',
   'external transport timeout/disconnect proof and complete writer/revocation timing qualification remain unobserved',
@@ -647,6 +648,88 @@ async function awaitBlockedBy(pid) {
   assert.fail('The expected holder did not block the real commit; no concurrency coverage claimed');
 }
 
+// IC-2 source-authored adapter controls. NOT DISPATCHED by the historical CLI.
+// Future dispatch must be separately reviewed and authorized with the exact
+// installed Node/tsx closure; it is not supplied by fixture hashes or this code.
+const DOC81_ADAPTER_SOURCE_PATHS=[
+  'server/research/assisted-order/quick-order-repository.ts',
+  'shared/research/assisted-order/contract.ts',
+  'server/research/health/quick-order/handler.mjs',
+  'server/research/health/quick-order/core.mjs',
+  'server/research/health/quick-order/paths.mjs',
+  'package.json','package-lock.json',
+];
+async function doc81RunAdapterMappingControls(runtimeBinding) {
+  assert.equal(runtimeBinding?.status,'SOURCE_ACCEPT_WITH_LIMITS');
+  assert.match(runtimeBinding?.reviewCommit??'',/^[a-f0-9]{40}$/);
+  assert.match(runtimeBinding?.executionAuthoritySha256??'',/^[a-f0-9]{64}$/);
+  assert.equal(runtimeBinding?.sourceCommit,receipt.sourceCommit);
+  assert.deepEqual(process.execArgv,['--import','tsx'],'Only the separately reviewed existing tsx loader is eligible');
+  assert.equal(process.version,'v20.19.0');
+  assert.equal(sha(await readFile(process.execPath)),runtimeBinding.nodeSha256);
+  assert.ok(Array.isArray(runtimeBinding.installedFiles)&&runtimeBinding.installedFiles.length>0&&runtimeBinding.installedFiles.length<=512);
+  const runtimePaths=new Set();
+  for(const pin of runtimeBinding.installedFiles){
+    assert.match(pin.sha256,/^[a-f0-9]{64}$/);assert.ok(pin.path.startsWith('node_modules/'));
+    assert.ok(!runtimePaths.has(pin.path));runtimePaths.add(pin.path);
+    const resolved=await realpath(safeRelative(pin.path));assert.ok(contained(resolved,realRoot));
+    assert.equal(sha(await readFile(resolved)),pin.sha256,'Reviewed installed dependency byte binding');
+  }
+  assert.ok(runtimePaths.has('node_modules/tsx/package.json')&&runtimePaths.has('node_modules/tsx/dist/loader.mjs'));
+  // The original reviewer must confirm that installedFiles is the complete
+  // transitive runtime closure; this loop alone does not establish completeness.
+  for(const file of DOC81_ADAPTER_SOURCE_PATHS)await load(file);
+  const module=await import(pathToFileURL(safeRelative(DOC81_ADAPTER_SOURCE_PATHS[0])).href);
+  const {submissionHash}=await import(pathToFileURL(safeRelative('server/research/health/quick-order/handler.mjs')).href);
+  const {ESTIMATE_EXCLUSIONS}=await import(pathToFileURL(safeRelative('server/research/health/quick-order/core.mjs')).href);
+  const viewer={actorType:'member',memberId:'synthetic-member',authUserId:'c0000000-0000-4000-8000-000000000001',
+    earlyAccessSessionHash:null,normalizedEmail:'synthetic@example.invalid',capabilities:new Set(['assisted_orders:submit'])};
+  const actor='member:'+viewer.authUserId,context={rawStoredSessionHash:'e'.repeat(64),configuredOwnerId:'c0000000-0000-4000-8000-000000000002',actorScope:actor,requiredRole:'synthetic-role'};
+  const profile={schemaVersion:'quick-order-approved-limits-v1',profileId:'synthetic-nonproduction',profileVersion:'synthetic-v1',
+    database:{name:'synthetic_db',oid:'10'},loginRole:{name:'synthetic_login',oid:'11'},requestRole:{name:'service_role',oid:'12'},ownerRole:{name:'synthetic_owner',oid:'13'},
+    routeClass:'intake',routeId:'synthetic-route',timeZone:'UTC',dateStyle:'ISO, YMD',
+    intake:{lockTimeoutMs:250,statementTimeoutMs:4000,transactionTimeoutMs:5000,idleTimeoutMs:1000,deadlockTimeoutMs:1000,cleanupMs:1000,attemptDeadlineMs:8000,acquisitionMs:1000,responseMs:1000},
+    writer:{lockTimeoutMs:7000,statementTimeoutMs:15000,transactionTimeoutMs:20000,idleTimeoutMs:1000,deadlockTimeoutMs:1000,cleanupMs:1000,attemptDeadlineMs:24000,acquisitionMs:1000,responseMs:2000,gateWaitMs:7000,postGateReserveMs:1000},
+    enforcement:{preBeginAttestationSha256:'a'.repeat(64),writerOrderAttestationSha256:'b'.repeat(64),singleRpcAutocommit:true}};
+  const raw=JSON.stringify(profile),address={line1:'1 Synthetic Way',line2:'',city:'Test City',region:'IL',postalCode:'60000',countryCode:'US'};
+  const input={schemaVersion:'quick-order-v1',idempotencyKey:'Synthetic_IC2_Key_0001',
+    contact:{fullLegalName:'Synthetic Customer',email:'synthetic@example.invalid',mobilePhone:'+12025550100',organizationName:'',ageConfirmed:true,shippingAddress:address,billingSameAsShipping:true,billingAddress:{...address}},
+    referral:{kind:'person',detail:'Synthetic referrer',declaredCode:'',confirmed:true},affiliation:{kind:'none',detail:''},
+    lines:[{productId:'synthetic-product',variantId:'synthetic-variant',quantity:2,expectedCatalogVersion:'synthetic-catalog-v1',expectedPriceVersion:'synthetic-price-v1'}],
+    agreements:[{kind:'synthetic-terms',version:'synthetic-v1'}],requestAcknowledged:true};
+  const receivedAt='2026-10-11T00:00:00.000Z',estimate={knownSubtotalCents:2500,estimateComplete:true,currency:'USD',excludes:ESTIMATE_EXCLUSIONS};
+  const submission={input,payloadHash:submissionHash(input),receivedAt,
+    attribution:{schemaVersion:'attribution-v1',source:'person',sourceDetail:'Synthetic referrer',declaredAffiliateCode:null,affiliation:{kind:'none',detail:''},confirmedByCustomer:true,receivedAt,reviewState:'captured_unmatched',commissionState:'not_authorized'},
+    snapshots:[{productId:'synthetic-product',variantId:'synthetic-variant',quantity:2,workflowMode:'direct_order_request',unitPriceCents:1250,catalogVersion:'synthetic-catalog-v1',priceVersion:'synthetic-price-v1'}],computedEstimate:estimate};
+  const publicReceipt={requestId:'c0000000-0000-4000-8000-000000000003',publicReference:'XRR-20261011-ABCDEF0123',attributionState:'captured_unmatched',estimate};
+  const marked={code:'55000',message:'Quick Order scope unavailable',details:'{"quickOrderCode":"DEFINITE_REFUSAL"}'};
+  const rows=[
+    ['positive',{data:{...publicReceipt,persisted:true,replayed:false},error:null,transactionOutcome:'committed'},null],
+    ['marked-aborted',{data:null,error:marked,transactionOutcome:'aborted'},'DEFINITE_REFUSAL'],
+    ['integrity-unmarked',{data:null,error:{code:'55000',message:'Quick Order currentness schema drift'},transactionOutcome:'aborted'},'OUTCOME_UNCERTAIN'],
+    ['seal-unmarked',{data:null,error:{code:'55000',message:'Quick Order scope header seal mismatch'},transactionOutcome:'aborted'},'OUTCOME_UNCERTAIN'],
+    ['marked-unconfirmed',{data:null,error:marked},'OUTCOME_UNCERTAIN'],
+  ];
+  const results=[];
+  for(const [id,response,outcome] of rows){
+    const calls=[];let cancellations=0;
+    const extension=module.createQuickOrderTransactionExtension({
+      rpc:async(name,args)=>{calls.push({name,args});return response;},approvedLimitsJson:raw,expectedConfigurationDigest:sha(raw),
+      notificationRecipient:'synthetic-operator@example.invalid',privateContextFor:()=>context,
+      runtime:{now:()=>0,maximumDelayMs:24000,schedule:()=>()=>{cancellations++;}},
+    });
+    const attempt=extension.beginAttempt(viewer,actor,0);assert.ok(attempt,'Valid synthetic admission reaches the actual adapter');
+    let value,failure;try{value=await extension.commitAttempt(viewer,actor,copy(submission),attempt);}catch(error){failure=error;}
+    if(outcome){assert.equal(failure?.outcome,outcome,id);assert.equal(value,undefined,'No success receipt manufactured');}
+    else {assert.equal(failure,undefined);assert.deepEqual(value,{...publicReceipt,persisted:true,replayed:false});}
+    assert.equal(calls.length,1);assert.equal(calls[0].name,module.QUICK_ORDER_COMMIT_RPC);
+    assert.equal(calls[0].args.p_payload.submission.input.idempotencyKey,input.idempotencyKey);
+    assert.equal(calls[0].args.p_payload.submission.payloadHash,submission.payloadHash);assert.equal(cancellations,1);
+    results.push({id:'IC2-adapter-'+id,result:'OBSERVED_SYNTHETIC_ADAPTER_ONLY',databaseWireReachability:'NOT_PROVEN'});
+  }
+  return results;
+}
+
 async function runSyntheticTransactionControls() {
   const providerBefore=(await psql(fingerprint)).trim();
   let index=1;const fresh=async options=>activateSynthetic(await seedTransactionGraph(index++,options));
@@ -703,6 +786,28 @@ async function runSyntheticTransactionControls() {
     await txRefused(commitSql(payload),'55000',message,{quickOrderCode:'DEFINITE_REFUSAL'});
     assert.deepEqual(await effectCounts(),before);assert.equal((await startupSql(replayCall(payload))).trim(),'');
     txPass(id,'matched canonical positive commits; activated negative with one changed eligibility value reaches exact refusal and zero effects');
+  }
+  // IC-2: pre-resolver NULL/partial matches must produce the intake marker.
+  // Each negative has otherwise valid admission and a committing positive twin.
+  for(const mode of ['zero','partial']) {
+    const positive=await fresh({}),positivePayload=transactionPayload(positive,'synthetic-ic2-'+mode+'-positive');
+    const positiveBefore=await effectCounts();await assertCommitted(positivePayload);
+    countDelta(positiveBefore,await effectCounts(),[1,1,1,1,1]);
+    const negative=await fresh({}),payload=transactionPayload(negative,'synthetic-ic2-'+mode+'-negative');
+    const missingVariant='dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+    if(mode==='zero') {
+      payload.submission.input.lines[0].variantId=missingVariant;
+      payload.submission.snapshots[0].variantId=missingVariant;
+    } else {
+      payload.submission.input.lines.push({...copy(payload.submission.input.lines[0]),variantId:missingVariant});
+      payload.submission.snapshots.push({...copy(payload.submission.snapshots[0]),variantId:missingVariant});
+      payload.submission.computedEstimate.knownSubtotalCents*=2;
+    }
+    rehash(payload);const before=await effectCounts();
+    await txRefused(commitSql(payload),'55000','Quick Order scope unavailable',{quickOrderCode:'DEFINITE_REFUSAL'});
+    assert.deepEqual(await effectCounts(),before,'Pre-resolver refusal leaves all five saved-effect relations unchanged');
+    assert.equal((await startupSql(replayCall(payload))).trim(),'','No saved key or success receipt');
+    txPass('IC2-'+mode+'-offer-match','Valid admitted twin commits; exact marked refusal has zero persisted effects');
   }
   const unpriced=await fresh({priceMode:'none'}),unpricedPayload=transactionPayload(unpriced,'synthetic-unpriced');
   const unpricedBefore=await effectCounts();await assertCommitted(unpricedPayload);countDelta(unpricedBefore,await effectCounts(),[1,1,1,1,1]);
