@@ -414,3 +414,18 @@ and is not reviewed here. The verdict will be published as doc 82. Nothing was e
 | `DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010` revision 3 | source `264e6af20477fabe65aa8d229ed2334fb59d9cc4`, records `b00aed5be48d9b3ff92a62f041ceb8ec344bcb2f` | COMPLETE: doc 82. **R2C-1 and R2C-2 CORRECTED. The doc 81 SQL and definition `8b631a83…` are intact. The currentness family is ACCEPTED WITH NAMED LIMITS.** The currentness receipt and the intake's currentness dependency seal may be finalized. The intake source and the integration changes are not accepted; they go to the transaction composition review |
 
 The next review for this session is the transaction composition review, once it is registered. Nothing was executed.
+
+## Queue state update (2026-10-11, four completed source packages)
+
+Samuel delivered the direct request in this session's chat (coordinator checkpoint `892d90f`). All four registered tasks
+are ACKNOWLEDGED and IN REVIEW. They run in parallel, with the transaction composition first in priority. Targets are
+recomputed from Git:
+
+| Doc | Board task | Source | Records | Scope |
+| --- | --- | --- | --- | --- |
+| 83 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` revision 2 (transaction composition) | `121d0987ed138f7377dd00ecc6ff1c6c26cf2deb` (tree `f57044e8…`) | `dcf896356892ef670b72a9aaaf124f176f7d9b83` (records only on top of the source) | 21 paths: the intake family and its verifier, the adapter, production, ports and handler, the nine integration paths and the regression tests. The accepted doc 82 currentness family is context only |
+| 84 | `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` revision 2 (qualification amendment) | `3e5e2ed9faf30aa46f5a81047fa71d55e28bdb2e` (tree `7cde1fbc…`) | `71bdd9d0d9e828a7bbb16d03ab5f30f02d55d846` | `qualification-supervisor.mjs` and `qualification-manifest-20261008.json` only (U-15 and D68-1/2/4/5) |
+| 85 | `FULLSITE-ORDER-HISTORY-CONTINUITY-20261011-SOURCE-REVIEW` revision 1 | `e3b551fbe59ae40cb0e5f6d6dcbbf422e566ac6e` (tree `d6ba3583…`) | `6a995c56d40b74582f0daf6c05c4ee005ca52592` | `OrderHistory.tsx`, `OrderHistoryDetail.tsx`, `OrderHistory.session-continuity.test.tsx` |
+| 86 | `FULLSITE-PARTNER-APPLICATION-CONTINUITY-20261011-SOURCE-REVIEW` revision 1 | `6bd576c520646295c526366c12abf75a6b5182b2` (tree `16e9afbc…`) | `a5271e6a77c04e6ec0b6074cf3c041d41ddaace8` | `pages/partners/Apply.tsx`, `apply.test.tsx` |
+
+Each verdict is published when complete. Nothing was executed.
