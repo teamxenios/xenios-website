@@ -383,3 +383,11 @@ delta, registered at coordinator `ebcbe18`) is ACKNOWLEDGED and IN REVIEW. The t
 - **Publication.** The verdict will be published as doc 81.
 
 Nothing was executed.
+
+## Queue state update (2026-10-11, doc 81 currentness revision 2)
+
+| Board task | Exact target | State |
+| --- | --- | --- |
+| `DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010` revision 2 | source `aa857e4f94df95f09a1402fb1cbf08042a3bc19f`, records `735254e4cc6230479c9bfa821e1c6991389d5266` | COMPLETE: doc 81. **CORRECTIONS REQUIRED IN THE VERIFIER ONLY** (R2C-1, R2C-2). **The four SQL files are accepted now as the currentness definition** (`d44974d1…`, `91ab412b…`, `78534251…`, `8de55983…`; definition `8b631a83…` as recorded). The intake reseal may be authored against it immediately. The currentness receipt and the intake seal stay non-final until the revision 3 byte check |
+
+The next item for this session is the revision 3 byte check (verifier only). Nothing was executed.
