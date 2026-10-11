@@ -50,6 +50,61 @@ const writeNew = (file, value) => {
   finally { fs.closeSync(descriptor); }
   fs.linkSync(temporary, file); // Atomic no-replace publication; an interrupted pending file is not a receipt.
 };
+// Absence is an ENOENT result, never an access or inspection failure.
+function pathAbsent(file) {
+  try { fs.lstatSync(file); return false; }
+  catch (error) { if (error.code === 'ENOENT') return true; throw error; }
+}
+// Initial metadata, precommand refusal and own release records may retry
+// publication once. Exact bytes and IDs are retained; no command is retried.
+function writeInitialRecord(file, value) {
+  const bytes = Buffer.from(JSON.stringify(value, null, 2) + '\n'), sha256 = hash(bytes);
+  const archives = [];
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const temporary = file + '.' + crypto.randomBytes(12).toString('hex') + '.pending';
+    let descriptor = null, identity = null, closed = false, synced = false;
+    try {
+      descriptor = fs.openSync(temporary, 'wx'); identity = fs.fstatSync(descriptor);
+      fs.writeFileSync(descriptor, bytes); fs.fsyncSync(descriptor); synced = true;
+      fs.closeSync(descriptor); descriptor = null; closed = true;
+      fs.linkSync(temporary, file);
+      return { path: file, sha256, recoveredUnpublished: archives };
+    } catch (error) {
+      if (descriptor !== null) {
+        try { fs.closeSync(descriptor); descriptor = null; closed = true; }
+        catch { error.evidenceUncertain = true; }
+      }
+      try {
+        if (!pathAbsent(file)) {
+          const published = fs.lstatSync(file);
+          // A successful no-replace link whose syscall reported an error is
+          // recoverable only by exact inode AND fully written/fsynced bytes.
+          if (identity && identity.ino !== 0 && closed && synced && !published.isSymbolicLink()
+            && published.ino === identity.ino && published.dev === identity.dev
+            && hash(fs.readFileSync(file)) === sha256) return { path: file, sha256, recoveredUnpublished: archives };
+          error.evidenceUncertain = true; // Foreign or uncertain publication: never recover it.
+        } else if (!error.evidenceUncertain) {
+          if (identity) {
+            const pending = fs.lstatSync(temporary);
+            check(closed && identity.ino !== 0 && !pending.isSymbolicLink()
+              && pending.ino === identity.ino && pending.dev === identity.dev, 'initial temporary identity differs');
+            const archived = path.join(path.dirname(file), '.metadata-unpublished-' + crypto.randomBytes(16).toString('hex') + '.json');
+            check(pathAbsent(archived), 'initial metadata archive exists');
+            fs.renameSync(temporary, archived); archives.push(archived);
+          } else check(pathAbsent(temporary), 'unknown initial temporary exists');
+          error.initialPublicationAbsent = true;
+          error.unpublishedArchives = archives;
+        }
+      } catch (preservationError) {
+        error.evidenceUncertain = true;
+        error.message += '; initial publication preservation unresolved: ' + preservationError.message;
+      }
+      error.initialPublicationFailure = true;
+      if (attempt === 0 && error.initialPublicationAbsent && !error.evidenceUncertain) continue;
+      throw error;
+    }
+  }
+}
 let metadataToolchain = null;
 const git = (cwd, args, deadline = Date.now() + 30_000) => {
   check(Date.now() < deadline, 'local Git metadata deadline exhausted');
@@ -284,8 +339,10 @@ function loadAuthority(options) {
     ? Date.parse(resumePreview.value.deadline) : Infinity;
   if (resumePreview?.value.schemaVersion === 'quick-order-paused-continuation-v1')
     check(Number.isFinite(resumeDeadline), 'resume original deadline missing');
-  const authorityDeadline = Math.min(aggregateDeadline, authorityStartedAt + modeWallMs,
-    resumeDeadline);
+  // Metadata may validate and terminalize an expired pause while the original
+  // window remains open. This never extends its started execution deadline:
+  // readPause restores that exact deadline before any admission or command.
+  const authorityDeadline = Math.min(aggregateDeadline, authorityStartedAt + modeWallMs);
   check(Date.now() < authorityDeadline, 'control reads exhausted stage/aggregate/window ceiling');
   const pinDeadline = Math.min(authorityDeadline, Date.now() + 30_000);
   check(manifest.g0.memoryContract.subjectJob.limitBytes === 512 * 1024 * 1024
@@ -1240,9 +1297,16 @@ function assertStageEligibility(manifest, mode) {
     'stage HELD: ' + [...holds.map(row => row.id + ': ' + row.reason),
       ...localHolds.map(row => typeof row === 'string' ? row : JSON.stringify(row)), ...commandHolds].join('; '));
   if (group) assertContinuationSourceGate(group);
-  if (mode === 'G0') check(group.commands
-    .every(command => Number.isSafeInteger(command.maxOwnedProcesses) && command.maxOwnedProcesses >= 3 && command.maxOwnedProcesses <= 3),
-    'G0 three-total-process cap asserted on every command row; four/eight proposals need a separate explicit stage/count decision');
+  if (mode === 'G0') {
+    const counts = { 'parser-self-test': 3, 'exit-zero': 3, 'exit-one': 3, 'deadline-kill': 3,
+      'stdout-cap': 3, 'stderr-cap': 3, 'refusal-path': 3, 'real-child-tree': 4, 'vitest-baseline': 8 };
+    check(group.commands.length === Object.keys(counts).length && group.commands.every(command =>
+      Object.hasOwn(counts, command.id) && command.maxOwnedProcesses === counts[command.id]),
+      'G0 exact approved stage mapping differs; count the complete owned tree including console hosts');
+    check(group.wallMs === 60_000, 'G0 started-helper wall must remain 60,000 ms');
+    // Compiler topology remains separately HELD. No compiler allowance is selected
+    // by the 3/4/8 subject-stage mapping; native proof must establish the whole tree.
+  }
   // A window boolean cannot lift a source hold. Revised exact source and review
   // are required if the original memory/process/bootstrap contract changes.
 }
@@ -1252,14 +1316,26 @@ function acquireRunLock(run) {
   const value = { runId: run.window.runId, mode: run.mode, nonce: crypto.randomBytes(16).toString('hex'),
     manifestSha256: run.manifest._digest, authority: run.authority, at: new Date().toISOString(),
     owner: run.manifest.owner, state: 'EXCLUSIVE_ACTIVE_NO_AUTOMATIC_STALE_RECOVERY' };
-  writeNew(file, value); run.lock = { file, value, digest: hash(fs.readFileSync(file)) };
+  const published = writeInitialRecord(file, value);
+  run.lock = { file, value, digest: published.sha256 };
+  run.initialPublicationRecoveries = published.recoveredUnpublished;
 }
 function releaseRunLock(run, disposition) {
   check(run.lock && hash(fs.readFileSync(run.lock.file)) === run.lock.digest, 'run lock identity changed; hold');
-  writeNew(path.join(run.runRoot, 'run-release-' + run.lock.value.nonce + '.json'), {
-    lockSha256: run.lock.digest, authority: run.authority, at: new Date().toISOString(), disposition });
+  try {
+    writeInitialRecord(path.join(run.runRoot, 'run-release-' + run.lock.value.nonce + '.json'), {
+      lockSha256: run.lock.digest, authority: run.authority, at: new Date().toISOString(), disposition });
+  } catch (error) {
+    if (!error.initialPublicationAbsent || error.evidenceUncertain) throw error;
+    // Only this process, holding this exact lock and known cleanup, can preserve
+    // it under the released name when release-receipt storage is unavailable.
+    check(hash(fs.readFileSync(run.lock.file)) === run.lock.digest, 'own lock changed during release publication');
+    process.stderr.write('Release receipt unpublished; preserving exact own lock under released name: ' + error.message + '\n');
+  }
   // Preserve the exact lock as evidence. No stale-lock removal or deletion.
-  fs.renameSync(run.lock.file, path.join(run.runRoot, 'released-lock-' + run.lock.value.nonce + '.json'));
+  const destination = path.join(run.runRoot, 'released-lock-' + run.lock.value.nonce + '.json');
+  check(pathAbsent(destination), 'released-lock destination exists; preserve lock');
+  fs.renameSync(run.lock.file, destination);
   run.lock = null;
 }
 function loadRun(options) {
@@ -1344,36 +1420,73 @@ async function executeOwned(command, run, remainingMs) {
   recheckChildAdmission(run, command);
   requireCommandTime(run, command);
   run.commandLaunchAttempted = true;
-  run.preLaunchFolder = null;
   const startedAt = new Date().toISOString(), launchAttemptedAt = startedAt;
   const supervisorResidentBytesBefore = process.memoryUsage().rss;
-  const child = spawn(powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-File', helper, '-SpecPath', specFile],
-    { cwd, env: environment, shell: false, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
-  let helperStdout = Buffer.alloc(0), helperStderr = Buffer.alloc(0), overflow = false;
-  const capture = (old, chunk) => {
-    const next = Buffer.concat([old, chunk]); if (next.length > 64 * 1024) { overflow = true; child.kill(); }
-    return next.subarray(0, 64 * 1024);
-  };
-  child.stdout.on('data', chunk => { helperStdout = capture(helperStdout, chunk); });
-  child.stderr.on('data', chunk => { helperStderr = capture(helperStderr, chunk); });
-  // Outer deadline includes compilation/startup. Killing helper closes its Job Object;
-  // no receipt means cleanup remains unresolved, even though kill-on-close applies.
-  let outerExpired = false;
-  const timer = setTimeout(() => { outerExpired = true; child.kill(); }, Math.max(1, Math.min(command.wallMs, run.deadline - Date.now())));
-  const exitPromise = new Promise(resolve => {
-    child.once('error', error => resolve({ code: null, signal: null, error: error.message }));
-    child.once('close', (code, signal) => resolve({ code, signal, error: null }));
-  });
-  const spawnObserved = await new Promise((resolve, reject) => {
-    child.once('error', () => resolve(false));
-    child.once('spawn', () => {
-      run.anyActualChildStarted = true;
-      try { publishActualGroupClock(run, child, command, launchAttemptedAt); resolve(true); }
-      catch (error) { run.clockWitnessUncertain = true; child.kill(); reject(error); }
-    });
-  });
-  const helperExit = await exitPromise;
-  clearTimeout(timer);
+  let child, spawnObserved = false, spawnError = null, clockError = null;
+  let helperStdout = Buffer.alloc(0), helperStderr = Buffer.alloc(0), overflow = false, outerExpired = false;
+  let timer = null, helperExit;
+  try {
+    try {
+      child = spawn(powershell, ['-NoLogo', '-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-File', helper, '-SpecPath', specFile],
+        { cwd, env: environment, shell: false, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    } catch (error) {
+      // A synchronous argument refusal has no ChildProcess. Unknown throws remain
+      // uncertain; neither an error label nor a missing receipt proves absence.
+      spawnError = error;
+      helperExit = { code: null, signal: null, error: error.message, closeObserved: false, synchronous: true };
+    }
+    if (child) {
+      const capture = (old, chunk) => {
+        const next = Buffer.concat([old, chunk]);
+        if (next.length > 64 * 1024) { overflow = true; child.kill(); }
+        return next.subarray(0, 64 * 1024);
+      };
+      child.stdout?.on('data', chunk => { helperStdout = capture(helperStdout, chunk); });
+      child.stderr?.on('data', chunk => { helperStderr = capture(helperStderr, chunk); });
+      helperExit = await new Promise(resolve => {
+        child.once('error', error => { spawnError = error; }); // Wait for CLOSE, not error alone.
+        child.once('close', (code, signal) => resolve({ code, signal, error: spawnError?.message ?? null, closeObserved: true }));
+        child.once('spawn', () => {
+          spawnObserved = true; run.anyActualChildStarted = true; run.preLaunchFolder = null;
+          run.groupConsumed = true; run.firstConsumedCommandId ??= command.id;
+          try { publishActualGroupClock(run, child, command, launchAttemptedAt); }
+          catch (error) { clockError = error; run.clockWitnessUncertain = true; child.kill(); }
+        });
+        // Exhaustion without close is explicitly uncertain and cannot release custody.
+        timer = setTimeout(() => {
+          outerExpired = true; child.kill();
+          resolve({ code: null, signal: null, error: 'helper close not established within command wall', closeObserved: false });
+        }, Math.max(1, Math.min(command.wallMs, run.deadline - Date.now())));
+      });
+    }
+  } finally { if (timer) clearTimeout(timer); }
+  if (!spawnObserved) {
+    const synchronousArgumentRefusal = !child && ['ERR_INVALID_ARG_TYPE', 'ERR_INVALID_ARG_VALUE',
+      'ERR_OUT_OF_RANGE', 'ERR_INVALID_OPT_VALUE'].includes(spawnError?.code);
+    const asynchronousStartRefusal = child && helperExit.closeObserved === true && !child.pid
+      && ['ENOENT', 'EACCES', 'EPERM', 'EMFILE', 'ENFILE', 'ENOMEM', 'EAGAIN'].includes(spawnError?.code)
+      && (child.stdout == null || child.stdout.destroyed) && (child.stderr == null || child.stderr.destroyed);
+    const noSubjectOutputs = [spec.stdoutPath, spec.stderrPath, spec.eventsPath, reportPath, reportPath + '.suites.json']
+      .every(file => pathAbsent(file));
+    if ((synchronousArgumentRefusal || asynchronousStartRefusal) && !overflow && !outerExpired
+      && !run.clockWitnessUncertain && noSubjectOutputs && helperStdout.length === 0 && helperStderr.length === 0) {
+      const proofPath = path.join(evidence, group.id + '-' + run.invocationId + '.no-helper-spawn.json');
+      const proof = { schemaVersion: 'quick-order-no-helper-spawn-v1', runId: run.window.runId, group: group.id,
+        command: command.id, attemptId: run.attemptId, invocationId: run.invocationId,
+        authority: run.authority, manifestSha256: manifest._digest, attemptRecord: run.attemptRecord,
+        launchAttemptedAt, finishedAt: new Date().toISOString(), spawnCalled: true, helperSpawnObserved: false,
+        helperPid: null, errorCode: spawnError.code, closeObserved: helperExit.closeObserved,
+        synchronousArgumentRefusal, asynchronousStartRefusal: Boolean(asynchronousStartRefusal),
+        noSubjectOutputs, cleanupProven: true, commandCompleted: false };
+      writeNew(proofPath, proof);
+      run.noHelperSpawnProof = { path: proofPath, sha256: hash(fs.readFileSync(proofPath)) };
+      const error = nonconsumingAdmission('helper start refused; exact failed-launch evidence proves no helper or subject started', false);
+      error.code = 'HELPER_START_REFUSED_NO_SPAWN_PROVEN'; throw error;
+    }
+    const error = new Error('REFUSED: helper start failed; absence or stream cleanup not proven');
+    error.code = 'HELPER_START_FAILED_CLEANUP_UNPROVEN'; error.evidenceUncertain = true; throw error;
+  }
+  if (clockError) throw clockError; // Actual launch always remains consumed and uncertain.
   fs.writeFileSync(path.join(folder, 'helper-stdout.raw'), helperStdout, { flag: 'wx' });
   fs.writeFileSync(path.join(folder, 'helper-stderr.raw'), helperStderr, { flag: 'wx' });
   let native = null, parseError = null;
@@ -1476,13 +1589,14 @@ function assertContinuationSourceGate(group) {
 
 function initializeInvocationHistory(run) {
   const file = path.join(run.evidence, `${run.group.id}-${run.invocationId}.invocation.json`);
-  writeNew(file, { schemaVersion: 'quick-order-invocation-witness-v1', runId: run.window.runId, group: run.group.id,
+  const invocation = writeInitialRecord(file, { schemaVersion: 'quick-order-invocation-witness-v1', runId: run.window.runId, group: run.group.id,
     invocationId: run.invocationId, invocationStartedAt: new Date(run.authorityStartedAt).toISOString(),
     prelaunchStartedAt: run.prelaunchStartedAt, recordedAt: new Date().toISOString(), manifestSha256: run.manifest._digest,
     aggregateDeadline: new Date(run.aggregateDeadline).toISOString(), authority: run.authority,
     ownershipSha256: run.ownershipSha256, preparationSha256: run.preparationSha256,
     admissionCharge: false, event: 'EXPLICIT_INVOCATION_REQUESTED_NOT_GROUP_STARTED' });
-  run.invocationWitness = { path: file, sha256: hash(fs.readFileSync(file)) };
+  run.invocationWitness = { path: file, sha256: invocation.sha256 };
+  run.initialPublicationRecoveries.push(...invocation.recoveredUnpublished);
   const requestedFile = path.join(run.evidence, run.group.id + '.requested.json');
   if (!fs.existsSync(requestedFile)) {
     const prior = fs.readdirSync(run.evidence).filter(name => name.startsWith(run.group.id + '-'));
@@ -1491,12 +1605,13 @@ function initializeInvocationHistory(run) {
         || name.endsWith('.paused.json') || fs.lstatSync(path.join(run.evidence, name)).isDirectory())
       && !fs.existsSync(run.startedMarker) && !fs.existsSync(path.join(run.evidence, run.group.id + '.group.json')),
       'first requested-group witness missing beside prior execution history');
-    writeNew(requestedFile, { schemaVersion: 'quick-order-requested-group-v1', runId: run.window.runId, group: run.group.id,
+    const requestPublication = writeInitialRecord(requestedFile, { schemaVersion: 'quick-order-requested-group-v1', runId: run.window.runId, group: run.group.id,
       attemptId: run.invocationId, requestedAt: new Date(run.authorityStartedAt).toISOString(),
       firstInvocationId: run.invocationId, firstInvocationWitness: run.invocationWitness,
       recordedAt: new Date().toISOString(), manifestSha256: run.manifest._digest, authority: run.authority,
       aggregateDeadline: new Date(run.aggregateDeadline).toISOString(), actualStartedAt: null,
       event: 'PROSPECTIVE_GROUP_IDENTITY_NOT_ACTUAL_START' });
+    run.initialPublicationRecoveries.push(...requestPublication.recoveredUnpublished);
   }
   const request = boundRecord(requestedFile), value = request.value;
   const requestedAt = Date.parse(value.requestedAt), recordedAt = Date.parse(value.recordedAt);
@@ -1741,13 +1856,12 @@ function readPause(run) {
     'pause does not link its actual preceding invocation and raw parent pause');
   check(Date.parse(value.aggregateDeadline) === run.aggregateDeadline
     && Number.isFinite(Date.parse(value.startedAt)) && Number.isFinite(Date.parse(value.deadline))
-    && Date.parse(value.deadline) === Math.min(Date.parse(value.startedAt) + run.group.wallMs, run.aggregateDeadline)
-    && Date.now() < Date.parse(value.deadline), 'resume may not reset or extend original deadlines');
+    && Date.parse(value.deadline) === Math.min(Date.parse(value.startedAt) + run.group.wallMs, run.aggregateDeadline),
+    'resume may not reset or extend original deadlines');
   check(Number.isFinite(Date.parse(value.latestResumeStartAt))
     && Date.parse(value.latestResumeStartAt) >= Date.parse(value.finishedAt)
-    && Date.parse(value.latestResumeStartAt) <= Date.parse(value.finishedAt) + run.group.continuationPolicy.resumeStartAllowanceMs
-    && run.authorityStartedAt <= Date.parse(value.latestResumeStartAt),
-    'actual resume invocation began after the immutable finite start allowance');
+    && Date.parse(value.latestResumeStartAt) <= Date.parse(value.finishedAt) + run.group.continuationPolicy.resumeStartAllowanceMs,
+    'immutable finite resume-start allowance is malformed');
   const used = pauseUsedPath(run, record.sha256);
   check(!fs.existsSync(used), 'pause has already been consumed by a resume invocation; no branching or replay');
   for (const name of fs.readdirSync(run.evidence).filter(name => name.endsWith('.attempt.json'))) {
@@ -1785,6 +1899,9 @@ function readPause(run) {
       && eq(usedByParent.value.attemptRecord, { path: value.controlRecords.attemptPath, sha256: value.controlRecords.attemptSha256 })
       && eq(usedByParent.value.parentPause, value.parentPause), 'pause chain does not match the actual exclusive prior resume');
   }
+  check(Number.isSafeInteger(value.handshakeWaitSpentMs) && value.handshakeWaitSpentMs >= 0,
+    'prior cumulative handshake charge missing');
+  restoreArtifactRecord(run, value);
   Object.assign(run, { attemptId: value.attemptId, groupConsumed: value.groupConsumed,
     firstConsumedCommandId: value.firstConsumedCommandId, startedMarkerSha256: value.startedMarkerSha256,
     originalStartedAt: value.startedAt, deadline: Date.parse(value.deadline), nextCommandIndex: value.continuation.nextCommandIndex,
@@ -1792,10 +1909,12 @@ function readPause(run) {
     handshakeWaitSpentMs: value.handshakeWaitSpentMs,
     parentPause: { path: record.path, sha256: record.sha256 }, resumeUseMarker: used });
   run.restoredReceipts = receipts;
-  check(Number.isSafeInteger(run.handshakeWaitSpentMs) && run.handshakeWaitSpentMs >= 0,
-    'prior cumulative handshake charge missing');
-  restoreArtifactRecord(run, value);
   run.originalAttemptRecord = value.originalAttemptRecord;
+  run.validatedPause = true;
+  if (Date.now() >= run.deadline || run.authorityStartedAt > Date.parse(value.latestResumeStartAt)) {
+    const error = nonconsumingAdmission('validated started pause exhausted its original deadline or finite resume-start allowance', false);
+    error.code = 'STARTED_PAUSE_TIME_EXHAUSTED'; error.terminalProgress = true; throw error;
+  }
   check(run.admission.materialChange?.sinceRefusalSha256 === record.sha256
     && Date.parse(run.admission.materialChange.at) > Date.parse(value.finishedAt)
     && typeof run.admission.materialChange.description === 'string' && run.admission.materialChange.description.trim().length > 0,
@@ -1833,6 +1952,27 @@ function assertInvocationBudget(run) {
   }
   return state;
 }
+// Failed launch diagnostics are not completed commands. Fresh reentry must bind
+// the exact absence witness, while preserving the published admission charge.
+function hasProvenZeroLaunch(run, value) {
+  if (value.anyChildLaunchAttempted === false) return true;
+  const pointer = value.noHelperSpawnProof;
+  if (!pointer || !DIGEST.test(pointer.sha256 ?? '')) return false;
+  canonicalEvidencePath(run, pointer.path, path.join(run.evidence,
+    value.group + '-' + value.invocationId + '.no-helper-spawn.json'));
+  const proof = boundRecord(pointer.path), p = proof.value;
+  return proof.sha256 === pointer.sha256 && p.schemaVersion === 'quick-order-no-helper-spawn-v1'
+    && p.runId === run.window.runId && p.group === run.group.id && p.invocationId === value.invocationId
+    && p.attemptId === value.attemptId && p.command === run.group.commands[value.continuation.nextCommandIndex]?.id
+    && p.manifestSha256 === run.manifest._digest && eq(stableAuthority(p.authority), stableAuthority(run.authority))
+    && p.attemptRecord?.path === value.controlRecords.attemptPath
+    && p.attemptRecord?.sha256 === value.controlRecords.attemptSha256
+    && p.spawnCalled === true && p.helperSpawnObserved === false && p.helperPid === null
+    && p.noSubjectOutputs === true && p.cleanupProven === true && p.commandCompleted === false
+    && (p.synchronousArgumentRefusal === true && ['ERR_INVALID_ARG_TYPE', 'ERR_INVALID_ARG_VALUE', 'ERR_OUT_OF_RANGE', 'ERR_INVALID_OPT_VALUE'].includes(p.errorCode)
+      || p.asynchronousStartRefusal === true && p.closeObserved === true
+        && ['ENOENT', 'EACCES', 'EPERM', 'EMFILE', 'ENFILE', 'ENOMEM', 'EAGAIN'].includes(p.errorCode));
+}
 function assertFreshGroupStart(run) {
   check(!fs.existsSync(run.startedMarker), 'group already started; require its clean immutable pause, never repeat commands');
   check(!fs.existsSync(path.join(run.evidence, run.group.id + '.group.json')), 'terminal group result cannot restart');
@@ -1857,17 +1997,21 @@ function assertFreshGroupStart(run) {
     canonicalEvidencePath(run, record.path, path.join(run.evidence, `${run.group.id}-${value.invocationId}`
       + (record.path.endsWith('.resume-refused.json') ? '.resume-refused.json' : '.nonconsuming.json')));
     requirePriorEvidence(value.cleanupProven === true && value.evidenceUncertain === false
-      && value.inFlightCommand === null && value.groupConsumed === false && value.anyChildLaunchAttempted === false,
+      && value.inFlightCommand === null && value.groupConsumed === false && hasProvenZeroLaunch(run, value),
       'prior refusal has unknown cleanup or child consumption; preserve sticky uncertainty');
     check(value.runId === run.window.runId && value.group === run.group.id && value.manifestSha256 === run.manifest._digest
       && /^[a-f0-9]{24}$/.test(value.attemptId ?? '') && /^[a-f0-9]{24}$/.test(value.invocationId ?? '')
       && eq(stableAuthority(value.authority), stableAuthority(run.authority)) && value.cleanupProven === true
-      && value.groupConsumed === false && value.anyChildLaunchAttempted === false && value.anyActualChildStarted === false
+      && value.groupConsumed === false && hasProvenZeroLaunch(run, value) && value.anyActualChildStarted === false
       && value.actualStartedAt === null && value.startedAt === null && value.deadline === null && value.groupClock === null
       && value.inFlightCommand === null && value.evidenceUncertain === false && Array.isArray(value.receipts)
       && value.receipts.every(row => row.childLaunchAttempted === false),
       'only clean non-consuming admission refusal with bound in-process progress permits qualified restart');
-    check(value.fixtureFailure !== true, 'genuine in-process fixture failure is permanent for this frozen run');
+    if (value.fixtureFailure === true || value.restartForbidden === true || value.terminalProgress === true) {
+      const error = new Error('REFUSED: prior refusal is not restart-eligible for this frozen run');
+      error.code = value.fixtureFailure ? 'PRIOR_GENUINE_FIXTURE_FAILURE' : 'PRIOR_PERMANENT_REFUSAL';
+      error.restartForbidden = true; throw error;
+    }
     readInvocationWitness(run, value.controlRecords.invocationWitness, value.invocationId);
     check(Date.parse(run.window.approvedAt) <= Date.parse(value.invocationStartedAt)
       && Date.parse(value.invocationStartedAt) <= Date.parse(value.finishedAt) && Date.parse(value.finishedAt) <= Date.now(),
@@ -2037,7 +2181,7 @@ async function runGroup(options) {
       requireCommandTime(run, command);
       await requestCommandAdmission(run, command, run.deadline - group.timeBudget.finalizationMs);
       requireCommandTime(run, command);
-      inFlightCommand = command.id; run.commandLaunchAttempted = false;
+      inFlightCommand = command.id; run.commandLaunchAttempted = false; run.noHelperSpawnProof = null;
       const receipt = await executeOwned(command, run, run.deadline - group.timeBudget.finalizationMs - Date.now());
       anyChildLaunchAttempted ||= run.commandLaunchAttempted;
       const receiptPath = receipt.receiptPath ?? path.join(evidence, `${group.id}-${run.attemptId}-${command.id}`, 'receipt.json');
@@ -2060,9 +2204,24 @@ async function runGroup(options) {
       run.completedCommands.add(command.id); run.nextCommandIndex = index + 1;
     }
   } catch (error) {
+    if (!run.invocationWitness && error.initialPublicationFailure && error.initialPublicationAbsent
+      && !error.evidenceUncertain && !run.commandLaunchAttempted && !attemptRecorded) {
+      // No command or attempt exists. Do not create a malformed refusal pointing
+      // to a missing invocation witness. Preserve the failed metadata separately.
+      releaseRunLock(run, 'INITIAL_INVOCATION_PUBLICATION_REFUSED_NO_NEW_ATTEMPT_OR_COMMAND');
+      process.stdout.write(JSON.stringify({ group: group.id, executionState: 'INITIAL_METADATA_REFUSED',
+        failure: error.message, unpublishedArchives: error.unpublishedArchives,
+        newCommands: 0, newAdmissionAttempts: 0, priorGroupState: 'UNCHANGED',
+        restartEligible: false, nextAction: 'Correct record-storage failure; revalidate original authority and prior history on explicit invocation.' }) + '\n');
+      process.exitCode = 1; return;
+    }
+    run.initialRecordFailureNoAttempt = error.initialPublicationFailure === true
+      && error.initialPublicationAbsent === true && !error.evidenceUncertain
+      && !run.requestRecord && !attemptRecorded && !run.commandLaunchAttempted;
     failure = error.message; failureCode = error.code ?? null;
     terminalProgress = error.terminalProgress === true;
     run.fixtureFailure = error.fixtureFailure === true;
+    run.restartForbidden = error.restartForbidden === true;
     evidenceUncertain ||= error.evidenceUncertain === true || run.fixtureResultUnpublished === true || run.clockWitnessUncertain === true;
     preAttemptResumePreserved = Boolean(run.resumePreview && run.parentPause && !attemptRecorded && !terminalProgress);
     preAttemptRestartPreserved = Boolean(run.restartProgressValidated && !attemptRecorded && !terminalProgress);
@@ -2073,10 +2232,11 @@ async function runGroup(options) {
     if (!attemptRecorded && run.restoredReceipts) receipts = run.restoredReceipts;
     pauseAllowed = error.pauseAllowed !== false;
     anyChildLaunchAttempted ||= run.commandLaunchAttempted;
-    if (!run.commandLaunchAttempted) inFlightCommand = null;
+    if (!run.commandLaunchAttempted || run.noHelperSpawnProof) inFlightCommand = null;
     // Prior in-process receipt count is irrelevant to the proof that no spawn
     // was attempted. An ambiguous marker archive is sticky evidence uncertainty.
-    if (!anyChildLaunchAttempted && run.markerWrittenByInvocation && fs.existsSync(run.startedMarker)) {
+    if ((!anyChildLaunchAttempted || run.noHelperSpawnProof) && !run.anyActualChildStarted
+      && run.markerWrittenByInvocation && fs.existsSync(run.startedMarker)) {
       try {
         const marker = boundRecord(run.startedMarker);
         check(marker.value.runId === window.runId && marker.value.group === group.id
@@ -2084,7 +2244,8 @@ async function runGroup(options) {
           'pre-launch marker ownership ambiguous; hold');
         writeNew(path.join(evidence, group.id + '-' + run.invocationId + '.no-launch.json'), {
           markerSha256: marker.sha256, authority: run.authority, reason: failure,
-          noSpawnCalled: true, noChildCommandExecuted: true, inProcessReceiptCount: receipts.length, groupConsumed: false });
+          noSpawnCalled: !run.commandLaunchAttempted, noHelperSpawnProof: run.noHelperSpawnProof ?? null,
+          noChildCommandExecuted: true, inProcessReceiptCount: receipts.length, groupConsumed: false });
         fs.renameSync(run.startedMarker, path.join(evidence, group.id + '-' + run.invocationId + '.unconsumed-marker.json'));
         run.groupConsumed = false; run.firstConsumedCommandId = null;
         run.startedMarkerSha256 = null;
@@ -2092,7 +2253,7 @@ async function runGroup(options) {
         evidenceUncertain = true; failure += '; marker preservation unresolved: ' + archiveError.message;
       }
     }
-    if (!run.commandLaunchAttempted && run.preLaunchFolder?.invocationId === run.invocationId) {
+    if ((!run.commandLaunchAttempted || run.noHelperSpawnProof) && run.preLaunchFolder?.invocationId === run.invocationId) {
       try {
         const source = run.preLaunchFolder.path, destination = source + '.no-launch-' + run.invocationId;
         ensureOwned(evidence, source); ensureOwned(evidence, destination);
@@ -2107,16 +2268,22 @@ async function runGroup(options) {
     catch (error) {
       failure ??= error.message;
       run.finalizationFailure = error.message;
-      failureCode ??= error.code ?? 'INPUT_OR_DEADLINE_REFUSAL_NOT_RESUMABLE';
+      run.primaryFailureCode = failureCode;
+      failureCode = error.code ?? 'FINALIZATION_INSPECTION_FAILED_NOT_RESUMABLE';
+      pauseAllowed = false;
     }
   }
   const cleanupProven = !evidenceUncertain && inFlightCommand === null && receipts.every(receipt => receipt.cleanupProven);
-  const dependencyAccepted = !failure && receipts.length === group.commands.length && cleanupProven && after !== null;
+  let dependencyAccepted = !failure && receipts.length === group.commands.length && cleanupProven && after !== null;
   const finishedAt = new Date().toISOString(), finishedMs = Date.parse(finishedAt);
   const pauseFit = remainingGroupBudget(run, finishedMs, true);
   let futureAdmission;
   try { futureAdmission = invocationBudgetState(run); }
-  catch (error) { futureAdmission = { futureInvocationFits: false, inspectionFailure: error.message }; }
+  catch (error) {
+    futureAdmission = { futureInvocationFits: false, inspectionFailure: error.message };
+    run.primaryFailureCode ??= failureCode;
+    failure ??= error.message; failureCode = 'INVOCATION_BUDGET_INSPECTION_FAILED'; dependencyAccepted = false;
+  }
   const limits = [];
   const futureDeadline = run.actualStartedAt ? run.deadline : Math.min(finishedMs + group.wallMs, run.aggregateDeadline);
   if (futureDeadline - finishedMs < pauseFit.totalMs) limits.push(run.actualStartedAt ? 'STARTED_GROUP_TIME_EXHAUSTED' : 'AGGREGATE_WINDOW_TIME_EXHAUSTED');
@@ -2133,31 +2300,46 @@ async function runGroup(options) {
     && failureCode === 'NONCONSUMING_ADMISSION_REFUSAL' && cleanupProven && after !== null
     && run.nextCommandIndex === receipts.length && run.nextCommandIndex < group.commands.length
     && limits.length === 0 && actualStartGapFits;
-  const resumeRefusal = Boolean(run.resumePreview && !attemptRecorded);
-  const priorConsumptionNotRestored = fs.existsSync(run.startedMarker) && !run.actualStartedAt;
-  const cleanZeroLaunchRefusal = Boolean(failure && !anyChildLaunchAttempted && !run.anyActualChildStarted
+  if (failure && run.validatedPause && run.actualStartedAt && limits.some(limit =>
+    ['STARTED_GROUP_TIME_EXHAUSTED', 'HANDSHAKE_CAPACITY_EXHAUSTED', 'INVOCATION_BUDGET_EXHAUSTED',
+      'RUN_STOPPED_BY_TERMINAL_GROUP', 'FINITE_RESUME_START_ALLOWANCE_DOES_NOT_FIT'].includes(limit))) {
+    terminalProgress = true; preAttemptResumePreserved = false;
+  }
+  const terminalStartedResume = Boolean(run.resumePreview && run.validatedPause && run.actualStartedAt
+    && run.groupConsumed && terminalProgress);
+  const resumeRefusal = Boolean(run.resumePreview && !attemptRecorded && !terminalStartedResume);
+  const launchAttemptUncertain = Boolean(run.commandLaunchAttempted && !run.noHelperSpawnProof && !run.anyActualChildStarted);
+  const priorConsumptionNotRestored = fs.existsSync(run.startedMarker) && !run.actualStartedAt
+    && !run.markerWrittenByInvocation;
+  const cleanZeroLaunchRefusal = Boolean(failure && (!anyChildLaunchAttempted || run.noHelperSpawnProof) && !run.anyActualChildStarted
     && !run.groupConsumed && !priorConsumptionNotRestored && cleanupProven && !run.fixtureFailure
+    && !run.restartForbidden
     && run.nextCommandIndex === receipts.length && run.invocationWitness);
   const restartEligible = cleanZeroLaunchRefusal && !terminalProgress && limits.length === 0;
+  const restartRequiresFreshInspection = cleanZeroLaunchRefusal && !terminalProgress
+    && Boolean(futureAdmission.inspectionFailure);
   const artifactCommands = receipts.filter(row => ['build', 'no-em-dash-build'].includes(row.command));
   const artifactAccepted = group.id === 'G7' && artifactCommands.length === 2 && artifactCommands.every(row =>
     row.cleanupProven && row.disposition.runnerVerdict === 'PASSED') && after !== null && run.artifactSnapshot !== null;
   const result = { schemaVersion: paused ? 'quick-order-paused-continuation-v1' : 'quick-order-group-result-v1',
     runId: window.runId, group: group.id, manifestSha256: manifest._digest, authority: run.authority,
     g0Acceptance: run.g0Acceptance ?? null, releaseAcceptance: false,
+    initialPublicationRecoveries: run.initialPublicationRecoveries,
     controlRecords: { ownershipSha256: run.ownershipSha256 ?? null, preparationSha256: run.preparationSha256 ?? null,
       attemptPath: run.attemptRecord?.path ?? null, attemptSha256: run.attemptRecord?.sha256 ?? null,
       invocationWitness: run.invocationWitness },
     requestedAt: run.requestedAt, prelaunchStartedAt: run.prelaunchStartedAt, actualStartedAt: run.actualStartedAt,
     startedAt: run.actualStartedAt, invocationStartedAt: new Date(run.authorityStartedAt).toISOString(), finishedAt,
     attemptId: run.attemptId, invocationId: run.invocationId, attemptConsumed: attemptRecorded,
-    groupConsumed: priorConsumptionNotRestored ? null : run.groupConsumed,
-    priorGroupState: priorConsumptionNotRestored ? 'PRIOR_GROUP_CONSUMPTION_NOT_RESTORED' : run.groupConsumed ? 'ACTUALLY_STARTED' : 'UNSTARTED',
+    groupConsumed: priorConsumptionNotRestored || launchAttemptUncertain ? null : run.groupConsumed,
+    priorGroupState: priorConsumptionNotRestored ? 'PRIOR_GROUP_CONSUMPTION_NOT_RESTORED'
+      : launchAttemptUncertain ? 'CURRENT_INVOCATION_LAUNCH_UNRESOLVED' : run.groupConsumed ? 'ACTUALLY_STARTED' : 'UNSTARTED',
     invocationWitness: run.invocationWitness, requestRecord: run.requestRecord, groupClock: run.groupClock,
     originalAttemptRecord: run.originalAttemptRecord ?? null,
     admissionAccounting, startedMarkerSha256: run.startedMarkerSha256 ?? null, parentPause: run.parentPause, parentRefusal: run.parentRefusal,
     handshakeWaitSpentMs: run.handshakeWaitSpentMs, continuationFit: pauseFit, restartEligible,
-    cleanZeroLaunchRefusal, terminalProgress, futureAdmission, eligibilityLimits: limits,
+    cleanZeroLaunchRefusal, restartRequiresFreshInspection, terminalProgress, terminalStartedResume, futureAdmission, eligibilityLimits: limits,
+    noHelperSpawnProof: run.noHelperSpawnProof ?? null, restartForbidden: run.restartForbidden === true,
     latestResumeStartAt: paused ? latestResumeStartAt : null, resumeStartAllowanceMs: allowance,
     aggregateDeadline: new Date(run.aggregateDeadline).toISOString(), staticTimeBudget: run.staticTimeBudget,
     anyChildLaunchAttempted, anyActualChildStarted: run.anyActualChildStarted, firstConsumedCommandId: run.firstConsumedCommandId,
@@ -2167,9 +2349,11 @@ async function runGroup(options) {
       cleanupProven: row.cleanupProven, childLaunchAttempted: row.childLaunchAttempted,
       receiptPath: row.receiptPath ?? null, receiptSha256: row.receiptSha256 ?? null, authority: row.authority,
       subjectMemory: row.subjectMemory, outsideSubjectJob: row.outsideSubjectJob ?? null })),
-    failure, failureCode, finalizationFailure: run.finalizationFailure ?? null, fixtureFailure: run.fixtureFailure === true,
+    failure, failureCode, primaryFailureCode: run.primaryFailureCode ?? null,
+    finalizationFailure: run.finalizationFailure ?? null, fixtureFailure: run.fixtureFailure === true,
     inFlightCommand, evidenceUncertain, dependencyAccepted, cleanupProven,
-    executionState: !cleanupProven ? 'CLEANUP_UNCERTAIN' : dependencyAccepted ? 'COMPLETED'
+    executionState: launchAttemptUncertain ? 'LAUNCH_ATTEMPTED_SPAWN_NOT_ESTABLISHED_CLEANUP_UNCERTAIN'
+      : !cleanupProven ? 'CLEANUP_UNCERTAIN' : dependencyAccepted ? 'COMPLETED'
       : paused ? 'STARTED_PARTIAL_PAUSED' : priorConsumptionNotRestored ? 'REQUEST_REFUSED_PRIOR_GROUP_STATE_UNCHANGED'
         : !run.groupConsumed ? 'UNSTARTED_REFUSED'
         : preAttemptResumePreserved ? 'PARTIAL_PROGRESS_PRESERVED_CURRENT_INVOCATION_REFUSED' : 'STARTED_TERMINAL',
@@ -2182,7 +2366,8 @@ async function runGroup(options) {
       : preAttemptRestartPreserved ? 'RESTART_REFUSED_BEFORE_ADMISSION_PRIOR_ZERO_LAUNCH_PROGRESS_PRESERVED'
       : paused ? 'PAUSED_NEXT_CHILD_NOT_LAUNCHED_CLEANUP_PROVEN_COORDINATOR_CAN_RELEASE'
         : restartEligible ? 'NONCONSUMING_UNSTARTED_REFUSAL_BOUND_PREFIX_FUTURE_ACTUAL_START_ONLY'
-        : cleanZeroLaunchRefusal ? 'NONCONSUMING_UNSTARTED_LIMIT_EXHAUSTED_NO_RESET'
+        : restartRequiresFreshInspection ? 'NONCONSUMING_UNSTARTED_RESTARTABILITY_UNVERIFIED_FRESH_INSPECTION_REQUIRED'
+        : cleanZeroLaunchRefusal ? 'NONCONSUMING_UNSTARTED_NOT_RESTARTABLE_SEE_ELIGIBILITY_LIMITS'
         : run.groupConsumed && failure ? 'TERMINAL_GROUP_FAILURE_NO_COMMAND_REPEAT_CLEANUP_PROVEN'
         : 'OWNED_CHILD_ABSENCE_ESTABLISHED_COORDINATOR_CAN_RELEASE',
     continuation: { status: paused ? 'PAUSED_BEFORE_NEXT_CHILD_ADMISSION' : dependencyAccepted ? 'COMPLETE'
@@ -2190,17 +2375,33 @@ async function runGroup(options) {
       : preAttemptResumePreserved ? 'PRIOR_PAUSE_PRESERVED_NO_NEW_ATTEMPT'
         : preAttemptRestartPreserved ? 'PRIOR_ZERO_LAUNCH_PROGRESS_PRESERVED_NO_NEW_ATTEMPT'
         : restartEligible ? 'NONCONSUMING_UNSTARTED_MATERIAL_CHANGE_RESTART_ONLY'
-          : cleanZeroLaunchRefusal ? 'NONCONSUMING_UNSTARTED_LIMIT_EXHAUSTED_NO_RESET' : 'TERMINAL_NO_AUTOMATIC_REPEAT',
+          : restartRequiresFreshInspection ? 'UNSTARTED_EXPLICIT_REENTRY_REQUIRES_MATERIAL_CHANGE_AND_FRESH_INSPECTION'
+          : cleanZeroLaunchRefusal ? 'NONCONSUMING_UNSTARTED_NOT_RESTARTABLE_SEE_ELIGIBILITY_LIMITS' : 'TERMINAL_NO_AUTOMATIC_REPEAT',
       protocol: 'IMMUTABLE_PAUSE_CHAIN_V1', nextCommandIndex: run.nextCommandIndex,
       nextCommandId: group.commands[run.nextCommandIndex]?.id ?? null, automaticResume: false,
       repeatConsumedCommandAllowed: false, groupAttemptUnchanged: true,
       admissionAccountingDecision: 'CONSERVATIVE_SOURCE_PROPOSAL_PER_EXPLICIT_INVOCATION_CAP9_REQUIRES_REVIEW_AND_FRESH_ACTUAL_DECISION' },
     sourceDecision: 'SOURCE_PREPARATION_NOT_EXECUTION_OR_RELEASE_ACCEPTANCE' };
   const resultPath = path.join(evidence, paused ? group.id + '-' + run.attemptId + '-' + run.invocationId + '.paused.json'
+    : launchAttemptUncertain ? group.id + '-' + run.invocationId + '.launch-unresolved.json'
+    : terminalStartedResume ? group.id + '.group.json'
     : resumeRefusal ? group.id + '-' + run.invocationId + '.resume-refused.json'
       : preAttemptRestartPreserved ? group.id + '-' + run.invocationId + '.restart-refused.json'
       : run.groupConsumed ? group.id + '.group.json' : group.id + '-' + run.invocationId + '.nonconsuming.json');
-  writeNew(resultPath, result);
+  if (run.initialRecordFailureNoAttempt && !attemptRecorded && receipts.length === 0
+    && !run.commandLaunchAttempted && !run.resumePreview
+    && !run.startedMarkerSha256 && !evidenceUncertain && cleanupProven) {
+    try { writeInitialRecord(resultPath, result); }
+    catch (error) {
+      if (!error.initialPublicationAbsent || error.evidenceUncertain) throw error;
+      releaseRunLock(run, 'PRECOMMAND_REFUSAL_PUBLICATION_FAILED_NO_NEW_ATTEMPT_OR_COMMAND');
+      process.stdout.write(JSON.stringify({ group: group.id, executionState: 'PRECOMMAND_RECORD_STORAGE_REFUSED',
+        failure, recordFailure: error.message, newCommands: 0, newAdmissionAttempts: 0,
+        priorGroupState: 'UNCHANGED', receiptPublished: false, restartEligible: false,
+        nextAction: 'Repair record storage, then explicitly revalidate original authority and every prior evidence binding.' }) + '\n');
+      process.exitCode = 1; return;
+    }
+  } else writeNew(resultPath, result);
   // The permanent started marker/failed verdict still prevents command repeat.
   // Known cleanup permits releasing this invocation's lock, even on failure;
   // an ambiguous child, stream, receipt or marker remains sticky and held.

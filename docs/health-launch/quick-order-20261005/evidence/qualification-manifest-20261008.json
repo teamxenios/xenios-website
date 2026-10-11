@@ -24,8 +24,8 @@
   },
   "supervisor": {
     "path": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
-    "sha256": "2a68b06c7cb120a8a31231f0153e9759a067a48c48f058f2e1c93073960411f9",
-    "acceptance": "DOC67_CORRECTION_PENDING_EXACT_ORIGINAL_REVIEW_NOT_RUN",
+    "sha256": "0536b33bfb7c203fcf65312f4e2c0716dd65c569d52e5ff9d3f74c3004e56a11",
+    "acceptance": "U15_D68_AMENDMENT_PENDING_EXACT_ORIGINAL_SOURCE_REVIEW_NOT_RUN",
     "inheritedPasses": 0,
     "manifestPath": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
     "hashMode": "RAW_BYTES; source authored as LF; a CRLF-rewritten checkout refuses, with no normalization into acceptance"
@@ -751,7 +751,7 @@
     "helperStreamLimitBytes": 65536,
     "streamPolicy": "Abort on the cap; retain the first capped raw bytes and observed counts. The application root test itself retains only 16 KiB child tails, not complete child logs.",
     "aggregate": "The absolute minimum of window expiry and approvedAt + 8,400,000 ms includes preparation, idle time, independent G0 acceptance, admission, inventories, commands, cleanup and receipts. No aggregate reset.",
-    "processCeilings": "G0 retains three total processes and an unchanged 60,000 ms execution wall beginning at first successful child spawn. Prelaunch work is charged to the same finite outer aggregate/window. Supervisor + helper + subject + live child needs four; the eight-process Vitest proposal also remains unapproved. G0 subject Jobs retain the separate 512 MiB committed cap and 1,536 MiB available-host floor.",
+    "processCeilings": "Exact G0 mapping: three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. Count the complete applicable owned tree including console hosts. Compilation is separately counted and HELD; no compiler ceiling is selected. Native topology, console-host attribution and cold-bootstrap proof remain prerequisites. 60,000 ms starts at the first Node-observed successful PowerShell helper spawn. Before launch, some dependency reads and the first handshake are bounded only by the unchanged 140-minute aggregate/window. No end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation.",
     "processEventLimitBytes": 4194304,
     "attemptVsGroup": "Every requested invocation has an immutable witness, distinct from a charged admission attempt. Published admission attempts still count under nine. A prospective group identity and completed in-process prefix survive clean zero-launch reentry; its execution wall starts once at the first successful helper child spawn. Once started, its witnessed clock/attempt cannot reset. Every prelaunch check/refusal/reentry uses real original outer time. No automatic retry or repeated control.",
     "resourceRefusalConsumesGroup": false,
@@ -796,7 +796,7 @@
       "totalMs": 8400000,
       "notes": "The unchanged 140-minute aggregate includes all preparation, prelaunch checks/controls/refusals, started-group work, actual G0 review and transitions. The existing nine-minute transition/idle allocation now explicitly includes nominal first-invocation prelaunch setup/parser/first-wait costs; it is not extra permission. All times remain proposed and unmeasured. A started group obtains only its unchanged wall at first actual child spawn, within the same absolute outer deadline.",
       "initialPrelaunchSubdivision": {
-        "status": "STATIC_SOURCE_PROPOSAL_NOT_MEASURED_NOT_NEW_AUTHORITY",
+        "status": "NOMINAL_PLANNING_ALLOCATIONS_NOT_INDEPENDENTLY_ENFORCED_SUBCEILINGS_NOT_MEASURED",
         "initialInvocations": [
           {
             "group": "G0",
@@ -845,7 +845,8 @@
         "initialPrelaunchCeilingTotalMs": 483428,
         "withinUnchangedTransitionAndIdleMs": 540000,
         "remainingTransitionAndIdleMs": 56572,
-        "reentry": "Extra refused/reentry invocations spend actual remaining outer time and applicable existing invocation/wait allowance. Worst-case complete-plan retry fit is not promised; actual under-run or smaller proposal may be required."
+        "reentry": "Extra refused/reentry invocations spend actual remaining outer time and applicable existing invocation/wait allowance. Worst-case complete-plan retry fit is not promised; actual under-run or smaller proposal may be required.",
+        "disclosure": "Fields retaining Ceiling in their historical names are planning arithmetic. Some dependency reads and the first handshake are bounded only by the aggregate. They do not prove an invocation-wide ceiling below the aggregate."
       }
     }
   },
@@ -2184,7 +2185,7 @@
   },
   "g0": {
     "status": "AUTHORED_NOT_RUN_NO_ACCEPTANCE",
-    "trivialCeiling": "G0 numeric wall 60,000 ms, three-process assertion and 512 MiB subject-Job budget are unchanged. The group execution wall begins at first successful helper OS-child spawn; prelaunch work remains charged to original finite aggregate/window. Host floor 1,536 MiB means available capacity, not the subject memory cap. Four/eight proposals remain unapproved.",
+    "trivialCeiling": "60,000 ms starts at the first Node-observed successful PowerShell helper spawn. Before launch, some dependency reads and the first handshake are bounded only by the unchanged 140-minute aggregate/window. No end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation. G0 retains its 512 MiB subject-Job committed-memory cap and 1,536 MiB available-host floor.",
     "unmetAcceptance": [
       "64-bit bootstrap, outer/nested Job ownership, cold Add-Type process count and interruption behavior are NOT RUN.",
       "The required real owned child tree, active-zero and complete termination evidence are not established.",
@@ -2290,7 +2291,7 @@
             "freeDiskFloorGiB": 20,
             "subjectJobCommittedLimitBytes": 536870912,
             "maxOwnedProcesses": 3,
-            "capConflict": "The Node --test parent/worker topology can need four total with the current Node supervisor and PowerShell helper. The G1 handler's source ceiling is four, but applying a standalone four-process prerequisite profile still needs exact reviewed source and actual separate action/stage authority; it does not alter G0's three-process cap.",
+            "capConflict": "Standalone Node TAP calibration retains its separate unapproved three-process proposal. The selected 3/4/8 mapping covers only the exact nine G0 rows; it is not permission for a standalone action, native compiler or changed calibration scope.",
             "outputCaps": "Unchanged common output caps."
           }
         },
@@ -2311,10 +2312,25 @@
     },
     "pauseRule": "Zero child launches never publish a pause. Clean refusals retain raw in-process prefix/prospective identity and permit explicit material-change reentry under unchanged outer/counter/wait limits. The unchanged 60,000 ms group wall starts at first successful helper child spawn. Any post-launch G0 interruption remains terminal; no resumed G0 fit is promised.",
     "explicitCommandCap": {
-      "maximumTotalOwnedProcesses": 3,
-      "assertion": "Every G0 command row remains exactly three under the current source assertion. The unchanged real-child-tree=4 and vitest-baseline=8 proposals therefore refuse. Samuel’s exact stage-count or additional-scope decision is necessary, and a further exact reviewed source amendment must implement it before eligibility changes.",
+      "stageMapping": {
+        "parser-self-test": 3,
+        "exit-zero": 3,
+        "exit-one": 3,
+        "deadline-kill": 3,
+        "stdout-cap": 3,
+        "stderr-cap": 3,
+        "refusal-path": 3,
+        "real-child-tree": 4,
+        "vitest-baseline": 8
+      },
+      "assertion": "Exact G0 mapping: three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. Count the complete applicable owned tree including console hosts. Compilation is separately counted and HELD; no compiler ceiling is selected. Native topology, console-host attribution and cold-bootstrap proof remain prerequisites.",
       "decisionAloneSufficient": false,
-      "followupSourceRequired": "After Samuel’s applicable stage-count or additional-scope decision, a further exact reviewed source amendment is required to change the current unconditional all-row exactly-three assertion. No decision, override value or source change is supplied now."
+      "sourceStatus": "AUTHORED_PENDING_ORIGINAL_BOUNDED_REVIEW",
+      "sourceAuthority": {
+        "commit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+        "path": "docs/coordination/launch-coordination-20261005/QUALIFICATION_TWO_FILE_DIRECT_AUTHORITY_20261011.txt"
+      },
+      "compiler": "SEPARATELY_HELD_NO_CEILING_SELECTED"
     },
     "fullOverheadDisclosure": {
       "status": "AUTHORED_COST_INVENTORY_NOT_MEASURED",
@@ -2333,8 +2349,8 @@
         "In-process parser/refusal receipts and all native/compiler/stream/cleanup/finalization work within applicable command/wall allocations"
       ],
       "staticReadEstimate": "Doc64 estimates about 7.9 GB of full and pinned read-and-hash work at f98. This is source arithmetic, not an observed duration or fit proof.",
-      "limit": "The unchanged 51,000 + 9,000 ms allocation is a ceiling proposal. Actual inventory, hash, compile and responder costs remain unmeasured and held. Exceeding any remaining allowance refuses; it cannot pause G0 or extend the clock.",
-      "clockScope": "Nominal full/pinned inventories, pure controls, admission waits and refusal/reentry are all finite outer work. Only the first confirmed child spawn starts the fixed group wall. Additional reentry checks spend actual outer slack, never reset a started clock."
+      "limit": "51,000 + 9,000 ms is nominal planning allocation, not demonstrated enforcement of every sub-allowance. Actual inventory, dependency read, compile and responder costs remain unmeasured. Some prelaunch operations are aggregate-bound only; started work must fit the unchanged helper wall. G0 cannot pause after launch.",
+      "clockScope": "60,000 ms starts at the first Node-observed successful PowerShell helper spawn. Before launch, some dependency reads and the first handshake are bounded only by the unchanged 140-minute aggregate/window. No end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation."
     }
   },
   "g7": {
@@ -32894,17 +32910,17 @@
       "appliesTo": [
         "G0"
       ],
-      "reason": "The unchanged G0 cap is three; required real-child-tree needs four and the Vitest proposal eight. Samuel’s exact stage-count or additional-scope decision is necessary but not sufficient: a further reviewed source amendment must implement it. No feasible same-file three-process rewrite or source override is asserted.",
+      "reason": "Historical hold ID retained. Samuel selected the exact 3/4/8 stage map; this source implements it. Original successor acceptance and complete owned-tree/console-host evidence remain outstanding. Compiler phase remains separately HELD.",
       "disposition": "EXPLICIT_HOLD",
       "liftRoute": {
         "record": "docs/health-launch/quick-order-20261005/evidence/doc64-prerequisite-resolution-20261008.json",
         "recordSelector": "routes[holdId=G0_THREE_PROCESS_CONTRACT]",
-        "sourceChange": "Resolve Samuel’s exact applicable count/scope decision, then implement and independently review the corresponding source amendment. The current unconditional exactly-three assertion cannot be lifted by changing a record field alone.",
+        "sourceChange": "Original bounded review of this exact U15/D68 successor, followed by separately authorized standalone topology/bootstrap source and proof; no runtime override.",
         "boundedFutureAction": "The referenced dependency record identifies a missing standalone action contract and source/proof prerequisites. No current executable vehicle or argv is provided by this correction.",
         "currentArgv": null,
         "runnableNow": false,
-        "ordering": "After the applicable decision and exact vehicle source acceptance, conclusive cold-bootstrap/process identity evidence under the exact accepted counts. No cap increase is inferred by this record.",
-        "requiredReceipt": "After the applicable decision and exact vehicle source acceptance, conclusive cold-bootstrap/process identity evidence under the exact accepted counts. No cap increase is inferred by this record.",
+        "ordering": "Exact G0 mapping: three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. Count the complete applicable owned tree including console hosts. Compilation is separately counted and HELD; no compiler ceiling is selected. Native topology, console-host attribution and cold-bootstrap proof remain prerequisites.",
+        "requiredReceipt": "Exact accepted standalone topology fixture and actual raw full-tree count/identity/cleanup receipt, including console hosts and separately counted compiler phase. Source-only selection supplies no observation.",
         "originalReviewerDisposition": "Original reviewer accepts the exact vehicle source and eligible action first, then separately accepts its actual retained receipt. A source disposition is not an executed result or reservation.",
         "executionAuthority": "No execution authority exists. Standalone prerequisite actions require a distinct accepted authority/fixture contract and each actual one-shot owner decision, coordinator comparison, original window comparison and later receipt disposition. Held group authority cannot run its own prerequisite.",
         "recordSha256": "1e8955212912b25c246dc6f5c00808c050b3ed7840f7d82c7bc1c79a5a51de57"
@@ -32916,17 +32932,17 @@
       "appliesTo": [
         "G0"
       ],
-      "reason": "Unchanged 60,000 ms started-group wall and original outer window bound all actual work. Prelaunch controls/refusal/reentry are outer time; helper bootstrap, children and post-launch checks are under the witnessed group wall. Nominal inventories and seven 428–429 ms slices remain unmeasured; no actual permitted responder exists.",
+      "reason": "Historical hold ID retained; Samuel selected the started-helper reading. 60,000 ms starts at the first Node-observed successful PowerShell helper spawn. Before launch, some dependency reads and the first handshake are bounded only by the unchanged 140-minute aggregate/window. No end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation. Fit and responder evidence remain unmeasured.",
       "disposition": "EXPLICIT_HOLD",
       "liftRoute": {
         "record": "docs/health-launch/quick-order-20261005/evidence/doc64-prerequisite-resolution-20261008.json",
         "recordSelector": "routes[holdId=G0_ONE_MINUTE_ALL_WORK]",
-        "sourceChange": "After the topology/native supervision contract is resolved and accepted, specify a standalone synthetic all-work fixture that retains all nine G0 command rows, inventories, policy/host admission, handshakes, compile, cleanup and receipt work inside the unchanged 60000 ms.",
+        "sourceChange": "Accept this timing disclosure in the bounded successor; separately scope and accept a standalone fit fixture covering prelaunch and started phases with their actual respective bounds.",
         "boundedFutureAction": "The referenced dependency record identifies a missing standalone action contract and source/proof prerequisites. No current executable vehicle or argv is provided by this correction.",
         "currentArgv": null,
         "runnableNow": false,
         "ordering": "Accepted exact source and frozen all-work profile plus conclusive separately authorized timing/cleanup receipt under its declared cache/compile/responder conditions, without requiring earlier G0 acceptance.",
-        "requiredReceipt": "Before any execution proposal, identify an actually permitted responder and retained measured latency against seven roughly 428 ms slices, plus unchanged process/handle/bootstrap/memory and all-work fit proofs. No responder, probe, budget increase or runnable vehicle is supplied by this source task.",
+        "requiredReceipt": "Raw phase timestamps, full inventory/handshake/compiler/cleanup/receipt costs, original aggregate deadline, first helper spawn and unchanged started wall; no total G0 under 60,000 ms or two minutes inferred.",
         "originalReviewerDisposition": "Original reviewer accepts the exact vehicle source and eligible action first, then separately accepts its actual retained receipt. A source disposition is not an executed result or reservation.",
         "executionAuthority": "No execution authority exists. Standalone prerequisite actions require a distinct accepted authority/fixture contract and each actual one-shot owner decision, coordinator comparison, original window comparison and later receipt disposition. Held group authority cannot run its own prerequisite.",
         "recordSha256": "1e8955212912b25c246dc6f5c00808c050b3ed7840f7d82c7bc1c79a5a51de57"
@@ -33082,8 +33098,8 @@
         "boundedFutureAction": "The referenced dependency record identifies a missing standalone action contract and source/proof prerequisites. No current executable vehicle or argv is provided by this correction.",
         "currentArgv": null,
         "runnableNow": false,
-        "ordering": "Exact source/fixture/runner bytes accepted; no real mandatory HTTP RED used to calibrate. Memory/count conditions must disclose the unchanged G0 cap3 conflict with any proposed total8; no higher count granted.",
-        "requiredReceipt": "Exact source/fixture/runner bytes accepted; no real mandatory HTTP RED used to calibrate. Memory/count conditions must disclose the unchanged G0 cap3 conflict with any proposed total8; no higher count granted.",
+        "ordering": "Exact source/fixture/runner acceptance and a separately authorized standalone calibration action. G0 vitest-baseline count8 does not authorize another standalone stage or compiler allowance.",
+        "requiredReceipt": "Exact source/fixture/runner acceptance and a separately authorized standalone calibration action. G0 vitest-baseline count8 does not authorize another standalone stage or compiler allowance. Retain Windows structured failure and cleanup evidence.",
         "originalReviewerDisposition": "Original reviewer accepts the exact vehicle source and eligible action first, then separately accepts its actual retained receipt. A source disposition is not an executed result or reservation.",
         "executionAuthority": "No execution authority exists. Standalone prerequisite actions require a distinct accepted authority/fixture contract and each actual one-shot owner decision, coordinator comparison, original window comparison and later receipt disposition. Held group authority cannot run its own prerequisite.",
         "recordSha256": "1e8955212912b25c246dc6f5c00808c050b3ed7840f7d82c7bc1c79a5a51de57"
@@ -33270,7 +33286,7 @@
     "orderedGates": [
       {
         "step": 1,
-        "action": "Resolve exact stage-count/additional-scope and executable-family decisions; freeze genuine standalone vehicle authority and native fixture source.",
+        "action": "The G0 stage mapping and helper-wall choices are now recorded. Separately resolve the held compiler/executable-family scope and freeze genuine standalone authority and native fixture source.",
         "execution": false
       },
       {
@@ -33295,8 +33311,8 @@
       }
     ],
     "firstMissingSource": {
-      "sourceTask": "Standalone prerequisite authority and native observer/handle/fixture source require their exact accepted scope and stage-count decisions. This two-file correction does not implement them.",
-      "concreteConflict": "Exact stage-count or additional-source-scope decision and a genuine standalone authority/native vehicle contract. No supported prerequisite entrypoint or native proof exists.",
+      "sourceTask": "Separate standalone prerequisite authority, native observer/handle/fixture source and compiler-phase allowance remain unimplemented/held. The two-file amendment supplies none of those extra paths or executable actions.",
+      "concreteConflict": "Missing accepted standalone authority/native vehicle and compiler-phase contract; complete console-host and owned-tree proof must accompany them. Existing G0 counts are selected source settings, not missing owner choices.",
       "firstPossibleExecutionNow": null,
       "why": "No native prerequisite source/proofs, actual authority or accepted receipts exist; every mode remains held."
     },
@@ -33413,5 +33429,54 @@
       },
       "meaning": "Both inherited records exist in this successor source ancestry. Historical bytes are retained; no 109-of-109 base-preimage claim or new record-only digest is made. The inherited Doc64 dependency clock wording belongs to its historical proposal. Any future standalone source/action proof must bind this successor’s explicit prelaunch/started event meanings; the old record alone is not current execution authority."
     }
+  },
+  "doc68Amendment": {
+    "kind": "EXACT_TWO_FILE_U15_D68_SOURCE_SUCCESSOR",
+    "status": "PENDING_ORIGINAL_BOUNDED_REVIEW",
+    "baseSource": "25858ad94a649a9f7442562e6e0423636d2a3124",
+    "baseReview": "9f570586304e3d1850870437332d17d03d0fbb51",
+    "timingCorrection": "36debe0c54ebc91da8bce9609705299783770046",
+    "transferSource": "ed376ea51bf27574a6af3ebcf642350adeb5841a",
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY",
+    "noExecutionReservation": true,
+    "stageMapping": {
+      "parser-self-test": 3,
+      "exit-zero": 3,
+      "exit-one": 3,
+      "deadline-kill": 3,
+      "stdout-cap": 3,
+      "stderr-cap": 3,
+      "refusal-path": 3,
+      "real-child-tree": 4,
+      "vitest-baseline": 8
+    },
+    "startedHelperWallMs": 60000,
+    "compiler": "SEPARATELY_HELD_NO_CEILING_SELECTED",
+    "corrections": {
+      "U15": "Exact G0 mapping: three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. Count the complete applicable owned tree including console hosts. Compilation is separately counted and HELD; no compiler ceiling is selected. Native topology, console-host attribution and cold-bootstrap proof remain prerequisites.",
+      "D68-1": "Validated started resumes exhausted by time/cap publish terminal group records; later groups stop. No new admission charge, deadline reset or prefix repeat. Metadata validation of an expired pause remains within the original window/aggregate and invocation metadata bound; it restores no runnable deadline, consumes no admission, and launches no command. Only fully validated history can produce the terminal record.",
+      "D68-2": "Initial metadata retries publication once with identical bytes/IDs; only proven own unpublished temporaries are archived outside execution namespaces. Missing invocation witness never creates a malformed restart receipt. Known zero-command storage refusals release only the current exact lock. Unknown or post-command evidence remains sticky.",
+      "D68-4": "Synchronous argument refusal or typed asynchronous start refusal requires absence/close/stream/output proof. Failed launch witness is separate from completed-command receipts. Own launch intent and no-launch outputs are archived, actual launch attempts remain disclosed. Unknown start or cleanup stays held.",
+      "D68-5": "Prior permanent failures cannot become restartable. Finalization and budget-inspection causes remain explicit. Terminal/resume/refusal labels match actual state. The prior restartEligible label alone never permanently blocks clean transient reentry; actual permanent history is distinct from temporary inspection failure.",
+      "D68-3": "60,000 ms starts at the first Node-observed successful PowerShell helper spawn. Before launch, some dependency reads and the first handshake are bounded only by the unchanged 140-minute aggregate/window. No end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation.",
+      "D68-10": "Historical external records and frozen target pins are unchanged; this section supersedes their old pending/stage-count/clock prose only for the new two-file successor. Doc65 acceptance of verifier935aaf1 remains recorded; no new SQL/intake/integration target re-pin."
+    },
+    "carriedLimits": {
+      "D68-6": "Some prelaunch reads/first handshake aggregate-bound only; no sub-aggregate total invocation ceiling claimed.",
+      "D68-7": "Trusted host wall clock; Node spawn observation slightly follows launch attempt.",
+      "D68-8": "Historical restart-refused files are not a separate chain; bound underlying refusal controls progress.",
+      "D68-9": "G0 retry handshake slices can be about367 ms versus first428 ms; G1-G7 pauses require actual30–75second responder path. No named qualified responder or latency measurement supplied."
+    },
+    "remainingPrerequisites": [
+      "Original exact two-file successor review",
+      "Separately scoped accepted standalone native/authority vehicle, bootstrap interruption and console-host topology proof",
+      "Inherited-handle isolation and memory-denial detection proof",
+      "Compiler-phase source/settings and authority, distinct from3/4/8",
+      "Pre-run fit and actual runner failure calibration; G5 actual-root12/G6 typecheck/G7 build remain HELD",
+      "Named permitted responder and measured latency/pause practicality",
+      "Fresh exact-target finite authority/reservation/observations"
+    ],
+    "metadataOnlyVerification": "Byte hashing and textual diff only; no parser, import, tests, compiler, G0, SQL, resource probe or other subject execution"
   }
 }
