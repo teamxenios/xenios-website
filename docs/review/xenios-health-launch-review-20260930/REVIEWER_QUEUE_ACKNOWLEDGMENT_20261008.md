@@ -454,3 +454,25 @@ Doc 83 (transaction composition) remains in review. Nothing was executed.
 | 83 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` revision 2 (`121d098` / `dcf8963`) | COMPLETE: **CORRECTIONS REQUIRED.** One P1 (TC-1: the commit persists the raw stored session hash instead of its SHA-256 in the canonical column) and ten P2. No P0, and the disabled barriers hold. Builder: TC-1 to TC-7 and TC-11. Integrator: TC-8 and TC-9. Samuel or the coordinator: the TC-10 scope decision. Includes a TC-4 mapping ruling extending doc 75 CC-10 |
 
 All four packages (docs 83 to 86) are complete. Nothing was executed.
+
+## Queue state update (2026-10-11, seven new targets)
+
+Samuel relayed the coordinator's status in this session's chat. The coordinator could not reach this session directly.
+These targets are ACKNOWLEDGED and IN REVIEW, run in parallel with the composition first. Identities are resolved from
+Git:
+
+| Doc | Board task | Source | Records |
+| --- | --- | --- | --- |
+| 87 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` **r3** (composition, bounded delta against doc 83) | `69d9e32a5df899985b2877e06e1a778060a021f9` (tree `ac6eb499…`) | `fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1` |
+| 88 | `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` successor (bounded delta against doc 84). The board request still names r2; this target is taken from the builder's frozen handoff, per doc 84's commitment | `f633a771d1751a2af0854c746256131f9d647184` | `fcc98a27546609a83f0a0b79dc3ae954e1999d03` |
+| 89 | `FULLSITE-ORDER-HISTORY-CONTINUITY-20261011-SOURCE-REVIEW` **r2** (OH-1) | `0ced42736335f33f4b74c99c98455a621dd7ffed` | `d30d5b7e9cec08e40b06b2d2347c3e1e867ffc24` |
+| 90 | `D56C2-THREE-PATH-SOURCE-REPAIR-20261010-SOURCE-REVIEW` r1 | `363870945833a356b238d1f9220ecec8d5ccc318` | `60b963c3ff74ff6f6535fc5ae70b72e82bd040ff` |
+| 91 | `FULLSITE-PRODUCTS-SESSION-CONTINUITY-20261011-SOURCE-REVIEW` r1 | `603af3dce672ed2e35fbd9e706b6afe55341df90` | `ca318e61accf230302c1e3f7ae2eac473eed81e8` |
+| 92 | `QUICK-ORDER-CI-WORKFLOW-BYTE-COMPARISON-20261011` r1 (`.github/workflows/quick-order-ci-pilot.yml`) | `e86ffe3991c54497e142adee004a7823fdc72811` | `f76c2fb38a56d8dba80c657a4ded9990c4e2c905` |
+| 93 | `QUICK-ORDER-PRODUCTION-PROFILE-TECHNICAL-REVIEW-20261011` r1 (proposal) | `3709170ec967e190be55771bf0400ae732d6fc84` | `31de10e898ae8181e77ebcc94c9531608306a8d9` |
+
+- **Accepted currentness SQL.** The four files are byte-identical at `69d9e32a`.
+- **Composition r3 scope.** It also changes `AdminAssistedOrderSession.test.tsx` (the TC-10 restoration). Its
+  authority is checked in doc 87.
+
+Nothing was executed.
