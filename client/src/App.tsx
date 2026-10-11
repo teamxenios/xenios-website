@@ -88,12 +88,17 @@ function QuickOrderRoutes() {
     let alive = true, generation = 0, accountEpoch = 0;
     let unsubscribe: (() => void) | undefined;
     let expiry: ReturnType<typeof setTimeout> | undefined;
-    const clear = () => {
-      current.current = null;
-      accountEpoch += 1;
+    const suspendCredentials = () => {
       clearTimeout(expiry);
+      expiry = undefined;
+      if (current.current) current.current = { ...current.current, token: "", expiresAt: 0 };
       for (const controller of inFlight.current) controller.abort();
       inFlight.current.clear();
+    };
+    const clear = () => {
+      suspendCredentials();
+      current.current = null;
+      accountEpoch += 1;
       if (alive) setBoundary(null);
     };
     const observe = (session: Session | null) => {
@@ -101,21 +106,27 @@ function QuickOrderRoutes() {
       const userId = session?.user?.id;
       const token = session?.access_token;
       const expiresAt = typeof session?.expires_at === "number" ? session.expires_at * 1000 : NaN;
+      if (token && isRecoveryAccessToken(token)) { clear(); return; }
+      if (current.current && userId && current.current.userId !== userId) clear();
       if (!userId || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(userId)
-        || !token || isRecoveryAccessToken(token) || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
-        clear(); return;
+        || !token || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+        suspendCredentials(); return;
       }
       const sameAccount = current.current?.userId === userId;
       if (!sameAccount) clear();
       const key = current.current?.key ?? `quick-order:${accountEpoch}:${userId}`;
-      current.current = { key, userId, token, expiresAt };
+      const credential = { key, userId, token, expiresAt };
+      current.current = credential;
       clearTimeout(expiry);
-      // Expiry only closes this UI boundary. It never renews or authenticates.
-      expiry = setTimeout(clear, Math.min(expiresAt - Date.now(), 2_147_483_647));
+      // Expiry revokes transport, not the same-account in-memory recovery key.
+      // An already-queued old timer must not revoke a refreshed credential.
+      expiry = setTimeout(() => {
+        if (current.current === credential) suspendCredentials();
+      }, Math.min(expiresAt - Date.now(), 2_147_483_647));
       if (sameAccount) return; // Token refresh retains the same in-memory attempt.
       const transport: QuickOrderTransport = async (url, init) => {
         const authority = current.current;
-        if (!alive || authority?.key !== key || authority.expiresAt <= Date.now()) throw new Error("Request access unavailable");
+        if (!alive || authority?.key !== key || !authority.token || authority.expiresAt <= Date.now()) throw new Error("Request access unavailable");
         const target = new URL(url, window.location.origin);
         if (target.origin !== window.location.origin || target.hash
           || !/^\/api\/health\/quick-order\/(config|catalog|requests)$/.test(target.pathname)) throw new Error("Request access unavailable");
@@ -132,7 +143,7 @@ function QuickOrderRoutes() {
           const response = await fetch(target.pathname + target.search, {
             ...init, headers, credentials: "same-origin", cache: "no-store", redirect: "error", signal: controller.signal,
           });
-          if (!alive || current.current?.key !== key || current.current.expiresAt <= Date.now() || controller.signal.aborted) throw new Error("Request access unavailable");
+          if (!alive || current.current?.key !== key || !current.current.token || current.current.expiresAt <= Date.now() || controller.signal.aborted) throw new Error("Request access unavailable");
           return response;
         } finally {
           inFlight.current.delete(controller);
@@ -157,7 +168,7 @@ function QuickOrderRoutes() {
         const result = await client.auth.getSession();
         if (alive && generation === readGeneration) observe(result.error ? null : result.data.session);
       } catch {
-        if (alive && generation === readGeneration) clear();
+        if (alive && generation === readGeneration) suspendCredentials();
       }
     }).catch(() => { if (alive) clear(); });
     return () => { alive = false; generation += 1; clear(); unsubscribe?.(); };

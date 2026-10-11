@@ -27,7 +27,8 @@ import type { Request } from "express";
 import { createAssistedOrderViewerResolvers, type AssistedOrderViewerWiring } from "../../../../server/research/assisted-order/express";
 import { PRIVATE_ACCESS_SESSION_ACCESS_ROLE } from "../../../../server/research/early-access/private-access-session-repository";
 import { buildDisabledQuickOrderProduction, type AssistedOrderProductionWiring } from "../../../../server/research/assisted-order/production-deps";
-import { QUICK_ORDER_REPLAY_RPC } from "../../../../server/research/assisted-order/quick-order-repository";
+import { QUICK_ORDER_COMMIT_RPC, QUICK_ORDER_REPLAY_RPC } from "../../../../server/research/assisted-order/quick-order-repository";
+import * as quickOrderRepository from "../../../../server/research/assisted-order/quick-order-repository";
 import type { CommitArguments } from "../../../../server/research/health/quick-order/ports";
 import { ESTIMATE_EXCLUSIONS } from "../../../../server/research/health/quick-order/core.mjs";
 
@@ -407,6 +408,26 @@ function assertActualAppIsDisabled() {
   for (const props of pageControl.calls) expect(props.intakeEnabled).toBe(false);
 }
 
+// Synthetic clock/callback control, not elapsed wall time or a browser run.
+// Capture the actual App expiry callback while leaving UI wait timers real.
+function observeAuthExpiry() {
+  const initialNow = 1_800_000_000_000;
+  let now = initialNow;
+  vi.spyOn(Date, "now").mockImplementation(() => now);
+  const scheduled = vi.spyOn(globalThis, "setTimeout");
+  return {
+    expiresAt: (initialNow + 60_000) / 1000,
+    elapse() { now = initialNow + 60_001; },
+    callback() {
+      const calls = scheduled.mock.calls.filter(([, delay]) => delay === 60_000);
+      expect(calls).toHaveLength(1);
+      const callback = calls[0][0];
+      expect(callback).toBeTypeOf("function");
+      return async () => { await act(async () => { (callback as () => void)(); }); };
+    },
+  };
+}
+
 describe("AUTHORED_NOT_RUN full-App canonical session boundary", () => {
   it("binds a canonical browser account without enabling intake or collecting fields", async () => {
     const auth = installAuth();
@@ -473,6 +494,137 @@ describe("AUTHORED_NOT_RUN full-App canonical session boundary", () => {
     expect(storageWrite).not.toHaveBeenCalled();
     expect(beacon).not.toHaveBeenCalled();
   });
+
+  it.each(["scheduled callback", "expired same-account observation", "missing session observation"])(
+    "preserves an unknown same-key attempt through %s and refresh, while unavailable transport refuses", async expiryKind => {
+      const clock = observeAuthExpiry();
+      const initial = authSession(ACCOUNT_A, "before-expiry", clock.expiresAt);
+      const auth = installAuth(initial), api = installIntakeReplies();
+      pageControl.enabled = true;
+      api.post = async () => { throw new Error("synthetic lost acknowledgment"); };
+      await mountAt(INTAKE_PATH); await prepareSyntheticRequest(); await clickButton("Submit request for review");
+      expect(api.posts).toHaveLength(1);
+      expect(host.textContent).toContain("Confirmation is unresolved");
+      const before = pageControl.calls.at(-1)!;
+      const heldBytes = api.posts[0].body;
+      const fireExpiry = clock.callback();
+      // A missing-session observation must revoke even an unexpired bearer;
+      // otherwise a time check alone would make that negative vacuous.
+      if (expiryKind !== "missing session observation") clock.elapse();
+      if (expiryKind === "scheduled callback") await fireExpiry();
+      else await auth.emit("TOKEN_REFRESHED", expiryKind === "missing session observation" ? null : initial);
+      expect(pageControl.calls.at(-1)!.sessionKey).toBe(before.sessionKey);
+      expect(pageControl.calls.at(-1)!.transport).toBe(before.transport);
+      expect(host.textContent).toContain("Confirmation is unresolved");
+      expect(formInput("fullLegalName").closest("fieldset")?.disabled).toBe(true);
+      const requestsBeforeRetry = fetcher.mock.calls.length;
+      await clickButton("Retry confirmation");
+      expect(fetcher).toHaveBeenCalledTimes(requestsBeforeRetry);
+      expect(api.posts).toHaveLength(1);
+      expect(host.textContent).toContain("Confirmation is unresolved");
+      const refreshed = authSession(ACCOUNT_A, "after-expiry");
+      api.config = { ...syntheticConfig, csrfToken: "synthetic-csrf-after-expiry" };
+      api.post = async () => reply(syntheticReceipt);
+      await auth.emit("TOKEN_REFRESHED", refreshed);
+      expect(pageControl.calls.at(-1)!.sessionKey).toBe(before.sessionKey);
+      expect(pageControl.calls.at(-1)!.transport).toBe(before.transport);
+      await clickButton("Retry confirmation");
+      expect(api.posts).toHaveLength(2);
+      expect(api.posts[1].body).toBe(heldBytes);
+      expect(JSON.parse(String(api.posts[1].body)).idempotencyKey).toBe(JSON.parse(String(heldBytes)).idempotencyKey);
+      expect(new Headers(api.posts[1].headers).get("Authorization")).toBe(`Bearer ${refreshed.access_token}`);
+      expect(new Headers(api.posts[1].headers).get("X-CSRF-Token")).toBe("synthetic-csrf-after-expiry");
+      expect(host.textContent).toContain(syntheticReceipt.publicReference);
+      expect(storageWrite).not.toHaveBeenCalled(); expect(beacon).not.toHaveBeenCalled();
+      assertActualAppIsDisabled();
+    },
+  );
+
+  it("aborts an in-flight POST at expiry, ignores its late receipt after refresh, and recovers identical bytes", async () => {
+    const clock = observeAuthExpiry();
+    const auth = installAuth(authSession(ACCOUNT_A, "in-flight-expiry", clock.expiresAt));
+    const api = installIntakeReplies();
+    let resolve!: (response: Response) => void;
+    api.post = () => new Promise(done => { resolve = done; });
+    pageControl.enabled = true;
+    await mountAt(INTAKE_PATH); await prepareSyntheticRequest(); await clickButton("Submit request for review");
+    await eventually(() => { expect(api.posts).toHaveLength(1); });
+    const before = pageControl.calls.at(-1)!;
+    const heldBytes = api.posts[0].body;
+    const fireExpiry = clock.callback();
+    clock.elapse(); await fireExpiry();
+    expect(api.posts[0].signal?.aborted).toBe(true);
+    expect(pageControl.calls.at(-1)!.sessionKey).toBe(before.sessionKey);
+    const refreshed = authSession(ACCOUNT_A, "after-in-flight-expiry");
+    await auth.emit("TOKEN_REFRESHED", refreshed);
+    await act(async () => { resolve(reply(syntheticReceipt)); });
+    expect(host.textContent).not.toContain(syntheticReceipt.publicReference);
+    expect(host.textContent).toContain("Confirmation is unresolved");
+    expect(formInput("fullLegalName").closest("fieldset")?.disabled).toBe(true);
+    api.config = { ...syntheticConfig, csrfToken: "synthetic-csrf-after-abort" };
+    api.post = async () => reply(syntheticReceipt);
+    await clickButton("Retry confirmation");
+    expect(api.posts).toHaveLength(2);
+    expect(api.posts[1].body).toBe(heldBytes);
+    expect(new Headers(api.posts[1].headers).get("Authorization")).toBe(`Bearer ${refreshed.access_token}`);
+    expect(new Headers(api.posts[1].headers).get("X-CSRF-Token")).toBe("synthetic-csrf-after-abort");
+    expect(host.textContent).toContain(syntheticReceipt.publicReference);
+    expect(pageControl.calls.at(-1)!.sessionKey).toBe(before.sessionKey);
+    expect(pageControl.calls.at(-1)!.transport).toBe(before.transport);
+    expect(storageWrite).not.toHaveBeenCalled(); expect(beacon).not.toHaveBeenCalled();
+    assertActualAppIsDisabled();
+  });
+
+  it("does not let an obsolete queued expiry callback revoke a newer same-account credential", async () => {
+    const clock = observeAuthExpiry();
+    const auth = installAuth(authSession(ACCOUNT_A, "old-timer", clock.expiresAt));
+    installIntakeReplies();
+    await mountAt(INTAKE_PATH);
+    await eventually(() => { expect(pageControl.calls.at(-1)?.transport).toBeTypeOf("function"); });
+    const before = pageControl.calls.at(-1)!;
+    const fireOldExpiry = clock.callback();
+    const refreshed = authSession(ACCOUNT_A, "new-timer", clock.expiresAt + 3600);
+    await auth.emit("TOKEN_REFRESHED", refreshed);
+    clock.elapse(); await fireOldExpiry();
+    const response = await before.transport!("/api/health/quick-order/config", {});
+    expect(response.status).toBe(200);
+    expect(fetcher).toHaveBeenCalledOnce();
+    expect(new Headers(fetcher.mock.calls[0][1].headers).get("Authorization")).toBe(`Bearer ${refreshed.access_token}`);
+    expect(pageControl.calls.at(-1)!.sessionKey).toBe(before.sessionKey);
+    expect(storageWrite).not.toHaveBeenCalled(); expect(beacon).not.toHaveBeenCalled();
+    assertActualAppIsDisabled();
+  });
+
+  it.each(["SIGNED_OUT", "PASSWORD_RECOVERY", "account switch", "expired other account"])(
+    "still discards an expired held request on %s and gives account A a new boundary", async event => {
+      const clock = observeAuthExpiry();
+      const auth = installAuth(authSession(ACCOUNT_A, "held-terminal", clock.expiresAt));
+      const api = installIntakeReplies();
+      pageControl.enabled = true;
+      api.post = async () => { throw new Error("synthetic lost acknowledgment"); };
+      await mountAt(INTAKE_PATH); await prepareSyntheticRequest(); await clickButton("Submit request for review");
+      const before = pageControl.calls.at(-1)!;
+      const fireExpiry = clock.callback();
+      clock.elapse(); await fireExpiry();
+      expect(host.textContent).toContain("Confirmation is unresolved");
+      const otherAccount = event === "account switch" || event === "expired other account";
+      await auth.emit(otherAccount ? "SIGNED_IN" : event as AuthChangeEvent,
+        otherAccount ? authSession(ACCOUNT_B, "other", event === "expired other account" ? 1 : undefined) : null);
+      expect(pageControl.calls.at(-1)!.sessionKey).not.toBe(before.sessionKey);
+      expect(host.textContent).not.toContain("Confirmation is unresolved");
+      expect(host.querySelector<HTMLInputElement>('[name="fullLegalName"]')?.value ?? "").toBe("");
+      const callsBeforeOldTransport = fetcher.mock.calls.length;
+      await expect(before.transport!("/api/health/quick-order/config", {})).rejects.toThrow("Request access unavailable");
+      expect(fetcher).toHaveBeenCalledTimes(callsBeforeOldTransport);
+      await auth.emit("SIGNED_IN", authSession(ACCOUNT_A, "returned"));
+      expect(pageControl.calls.at(-1)!.sessionKey).toContain(ACCOUNT_A);
+      expect(pageControl.calls.at(-1)!.sessionKey).not.toBe(before.sessionKey);
+      expect(host.textContent).not.toContain("Confirmation is unresolved");
+      expect(api.posts).toHaveLength(1);
+      expect(storageWrite).not.toHaveBeenCalled(); expect(beacon).not.toHaveBeenCalled();
+      assertActualAppIsDisabled();
+    },
+  );
 
   it.each(["SIGNED_OUT", "PASSWORD_RECOVERY", "account switch"])("aborts and discards an in-flight request on %s", async event => {
     const auth = installAuth();
@@ -579,6 +731,12 @@ describe("AUTHORED_NOT_RUN canonical server private context and source compositi
   });
   it("composes public session/replay only while every actual new-write gate is unavailable", async () => {
     const { resolvers } = resolverFixture();
+    // The canonical resolver object is frozen. Observe it through a mutable
+    // test wrapper while retaining the actual private-context implementation.
+    const privateContextFor = vi.fn(resolvers.privateContextFor);
+    const observedResolvers = { ...resolvers, privateContextFor };
+    const createExtension = vi.spyOn(quickOrderRepository, "createQuickOrderTransactionExtension"); // Calls the real factory.
+    const enteredAtMonotonicMsFor = vi.fn(() => 75), monotonicNow = vi.fn(() => 100);
     const rpc = vi.fn(async (_name: string, _args?: Readonly<Record<string, unknown>>) => ({ data: null as unknown, error: null }));
     const wiring: AssistedOrderProductionWiring = {
       env: {}, requiredAgreements: [], agreementGate: null,
@@ -588,9 +746,20 @@ describe("AUTHORED_NOT_RUN canonical server private context and source compositi
     // Narrow service fixture; this control cannot qualify the real service/DB.
     const service = { config: async () => ({ enabled: false, requiredAgreements: [] }) } as unknown as NonNullable<Parameters<typeof buildDisabledQuickOrderProduction>[1]["service"]>;
     const ports = buildDisabledQuickOrderProduction(wiring, {
-      service, viewers: resolvers, enteredAtMonotonicMsFor: () => null,
-      monotonicNow: () => 100, csrfSecret: "synthetic-csrf-secret-at-least-thirty-two-bytes",
+      service, viewers: observedResolvers, enteredAtMonotonicMsFor,
+      monotonicNow, csrfSecret: "synthetic-csrf-secret-at-least-thirty-two-bytes",
     })!;
+    expect(createExtension).toHaveBeenCalledOnce();
+    const extension = createExtension.mock.results[0].value as ReturnType<typeof quickOrderRepository.createQuickOrderTransactionExtension>;
+    const beginAttempt = vi.spyOn(extension, "beginAttempt"); // Pass-through, not a stub candidate.
+    const dependencies = createExtension.mock.calls[0][0];
+    expect(dependencies.expectedConfigurationDigest).toBeNull();
+    expect(dependencies.approvedLimitsJson).toBeNull();
+    expect(dependencies.notificationRecipient).toBeNull();
+    expect(dependencies.runtime?.maximumDelayMs).toBe(0);
+    // Explicit refusal-only callback inspection, not qualification of a working
+    // scheduler. Null limits refuse earlier during the actual admission below.
+    expect(() => dependencies.runtime!.schedule(1, () => {})).toThrow("Quick Order cleanup authority is not qualified");
     expect(rpc).not.toHaveBeenCalled(); // Constructing is not a readiness probe.
     expect(ports.productionReady).toBe(false);
     const session = (await ports.session({ headers: { cookie: "synthetic-cookie", authorization: "Bearer synthetic-authorized-member" } } as Request))!;
@@ -599,8 +768,16 @@ describe("AUTHORED_NOT_RUN canonical server private context and source compositi
     expect(JSON.stringify(session)).not.toContain(storedHash);
     expect((await ports.config(session)).enabled).toBe(false);
     const key = "synthetic-idempotency-key-123", payloadHash = "c".repeat(64);
+    const clockReads = monotonicNow.mock.calls.length;
     expect(await ports.getExisting(session, key, payloadHash)).toBeNull();
-    await expect(ports.commit(session, { input: { idempotencyKey: key }, payloadHash } as CommitArguments)).rejects.toThrow();
+    expect(enteredAtMonotonicMsFor).toHaveBeenCalledOnce();
+    expect(monotonicNow).toHaveBeenCalledTimes(clockReads + 1);
+    expect(beginAttempt).toHaveBeenCalledOnce();
+    expect(beginAttempt).toHaveBeenCalledWith(expect.any(Object), `member:${ACCOUNT_A}`, 75);
+    expect(beginAttempt.mock.results[0].value).toBeNull(); // No armed attempt, not a missing-stamp shortcut.
+    expect(privateContextFor).not.toHaveBeenCalled();
+    await expect(ports.commit(session, { input: { idempotencyKey: key }, payloadHash } as CommitArguments))
+      .rejects.toThrow("Quick Order canonical transaction is not qualified");
     expect(rpc).toHaveBeenCalledTimes(1);
     expect(rpc.mock.calls[0][0]).toBe(QUICK_ORDER_REPLAY_RPC);
     rpc.mockResolvedValue({ data: {
@@ -615,6 +792,9 @@ describe("AUTHORED_NOT_RUN canonical server private context and source compositi
     rpc.mockResolvedValueOnce({ data: undefined, error: null });
     await expect(ports.getExisting(session, key)).rejects.toThrow();
     expect(rpc.mock.calls.every(call => call[0] === QUICK_ORDER_REPLAY_RPC)).toBe(true);
+    expect(rpc.mock.calls.filter(call => call[0] === QUICK_ORDER_COMMIT_RPC)).toHaveLength(0);
+    expect(beginAttempt).toHaveBeenCalledOnce();
+    expect(privateContextFor).not.toHaveBeenCalled();
     expect(buildDisabledQuickOrderProduction(wiring, { service: null, viewers: resolvers,
       enteredAtMonotonicMsFor: () => null, monotonicNow: () => 100, csrfSecret: null })).toBeNull();
   });
@@ -627,7 +807,15 @@ describe("AUTHORED_NOT_RUN canonical server private context and source compositi
     expect(rootSource).toContain("monotonicNow: quickOrderMonotonicNow");
     expect(rootSource).toContain("quickOrderEntryTimes.get(req) ?? null");
     expect(rootSource.indexOf("app.use(createQuickOrderContainment())")).toBeLessThan(rootSource.indexOf("express.json("));
+    // Source-text contracts, not an AST analysis or mounted HTTP proof.
+    expect(rootSource.match(/\bdisabledQuickOrderPorts\b/g)).toHaveLength(2);
+    expect(rootSource).toMatch(/const\s+disabledQuickOrderPorts\s*=\s*buildDisabledQuickOrderProduction\(/);
+    expect(rootSource).toMatch(/void\s+disabledQuickOrderPorts\s*;/);
+    // Reject a handler module specifier regardless of named/default/namespace,
+    // side-effect import, dynamic import or require syntax.
+    expect(rootSource).not.toMatch(/["'`][^"'`\r\n]*quick-order\/handler(?:\.[cm]?[jt]s)?["'`]/);
     expect(rootSource).not.toMatch(/import\s*\{[^}]*createQuickOrderHandler/);
+    expect(rootSource).not.toMatch(/\bcreateQuickOrderHandler\s*\(/);
     const deps = readFileSync(new URL("../../../../server/research/assisted-order/production-deps.ts", import.meta.url), "utf8");
     expect(deps).toContain("name !== QUICK_ORDER_REPLAY_RPC");
     expect(deps).toContain("return { data: result.data, error: result.error }");
@@ -635,6 +823,19 @@ describe("AUTHORED_NOT_RUN canonical server private context and source compositi
     expect(deps).toContain("approvedHealthAgreementPairs: []");
     expect(deps).not.toContain('transactionOutcome: "committed"');
     expect(deps).not.toContain('transactionOutcome: "aborted"');
+  });
+  it("records the replacement route contract: one literal-disabled route before the preserved Health redirect", () => {
+    const appSource = readFileSync(new URL("../../App.tsx", import.meta.url), "utf8");
+    const route = '<Route path="/health/quick-order" component={QuickOrderRoutes} />';
+    const redirect = '<Route path="/health"><Redirect to="/" /></Route>';
+    expect(appSource.match(/<Route\b[^>]*\bpath=["']\/health\/quick-order["']/g)).toHaveLength(1);
+    expect(appSource).toContain(route);
+    expect(appSource).toContain(redirect);
+    expect(appSource.indexOf(route)).toBeLessThan(appSource.indexOf(redirect));
+    const mounts = appSource.match(/<QuickOrderPage\b[^>]*\/>/g);
+    expect(mounts).toEqual(['<QuickOrderPage sessionKey={boundary?.key ?? null} transport={boundary?.transport} intakeEnabled={false} />']);
+    // The old null-session expectation is superseded, not restored. The bytes
+    // of App.routes.test.ts stay untouched; this binds the real-session mount.
   });
   it.each([
     ["products-diagnostics/MemberCatalogExperience.tsx", "c54db8933eb9654f55b98f163c68e5ae1d51cc3a"],

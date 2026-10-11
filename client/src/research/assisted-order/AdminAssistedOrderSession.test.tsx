@@ -568,3 +568,123 @@ describe("mounted assisted-order admin session isolation", () => {
     expect(host.querySelector(`a[href="/admin/research/assisted-orders/${requestId}"]`)).not.toBeNull();
   });
 });
+
+describe("Quick Order readback on the existing admin detail", () => {
+  const quickOrderDetail = (): AssistedOrderAdminDetail => ({
+    ...detailA,
+    lines: [{
+      lineId: "33333333-3333-4333-8333-333333333333",
+      productId: "synthetic-product", variantId: "synthetic-variant",
+      productName: "Synthetic pending-price item", specification: "Synthetic variant",
+      format: null, packBasis: null, quantity: 2,
+      minimumQuantity: 1, maximumQuantity: 100, quantityIncrement: 1,
+      workflowMode: "request_pricing", customerActionLabel: "Price on request",
+      unitPriceCents: null, lineEstimateCents: null, currency: "USD",
+      catalogVersion: "synthetic-catalog-v1", priceVersion: null,
+      accessNotice: null, researchUseOnly: false,
+    }],
+    quickOrder: {
+      intake: {
+        schemaVersion: "quick-order-v1",
+        source: "organization",
+        sourceDetail: "<img src=x onerror=synthetic()> Δ gym",
+        declaredCode: "X".repeat(64),
+        affiliationKind: "gym", affiliationDetail: "Synthetic affiliation",
+        confirmedByCustomer: true, confirmedAt: "2026-10-06T12:00:00.000Z",
+        requestAcknowledged: true, reviewState: "captured_unmatched",
+        commissionState: "not_authorized",
+        estimate: { knownSubtotalCents: 0, estimateComplete: false, currency: "USD" },
+      },
+      observation: {
+        state: "observed", observedAt: "2026-10-06T12:00:01.000Z",
+        notification: {
+          status: "pending", attemptCount: 0,
+          nextAttemptAt: "2026-10-06T12:00:00.000Z", completedAt: null,
+        },
+      },
+    },
+  });
+
+  it("renders complete declarations as text and preserves the canonical submitted status", async () => {
+    const view = quickOrderDetail();
+    api.loadAssistedOrderAdminDetail.mockResolvedValue({ ...view, status: "submitted" });
+    await renderDetail();
+    expect(host.textContent).toContain(view.quickOrder!.intake.sourceDetail);
+    expect(host.textContent).toContain("X".repeat(64));
+    expect(host.textContent).toContain("Synthetic affiliation");
+    expect(host.textContent).toContain("Variant: synthetic-variant");
+    expect(host.textContent).toContain("Some prices are pending.");
+    expect(host.textContent).toContain("Recorded state: pending");
+    expect(host.querySelector("img")).toBeNull();
+    expect(host.querySelector("h2")?.textContent).toBe("submitted");
+    expect(host.querySelector('[data-testid="admin-affiliate"]')).not.toBeNull();
+    expect(api.updateAssistedOrderStatus).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { state: "matched_manual" as const, label: "Matched" },
+    { state: "invalid_ignored" as const, label: "Ignored (not a usable code)" },
+  ])("shows current $state separately from the immutable submission review", async ({ state, label }) => {
+    const initial = quickOrderDetail();
+    const view: AssistedOrderAdminDetail = {
+      ...initial, declaredAffiliateCode: "SYNTHETIC", declaredAffiliateCodeState: state,
+      quickOrder: { ...initial.quickOrder!, intake: { ...initial.quickOrder!.intake, declaredCode: "SYNTHETIC" } },
+    };
+    api.loadAssistedOrderAdminDetail.mockResolvedValue(view);
+    await renderDetail();
+    expect(host.textContent).toContain("The declaration review state below was recorded at submission.");
+    expect(host.textContent).toContain("Current affiliate status");
+    expect(host.textContent).toContain("Captured, awaiting attribution review");
+    expect(host.querySelector('[data-testid="admin-affiliate-state"]')?.textContent).toBe(label);
+    expect(host.querySelector('[data-testid="admin-affiliate-code"]')?.textContent).toBe("SYNTHETIC");
+    expect(view.quickOrder!.intake.reviewState).toBe("captured_unmatched");
+    expect(api.updateAssistedOrderStatus).not.toHaveBeenCalled();
+  });
+
+  it("retains intake after an update and reports a failed refresh without resubmission", async () => {
+    const view = quickOrderDetail();
+    const refresh = deferred<AssistedOrderAdminDetail>();
+    api.loadAssistedOrderAdminDetail.mockResolvedValueOnce(view).mockReturnValueOnce(refresh.promise);
+    api.updateAssistedOrderStatus.mockResolvedValue({
+      ...view, status: "reviewing",
+      quickOrder: { intake: view.quickOrder!.intake, observation: { state: "stale" } },
+    });
+    await renderDetail();
+    submitTwice();
+    await flush();
+    expect(api.updateAssistedOrderStatus).toHaveBeenCalledTimes(1);
+    expect(api.loadAssistedOrderAdminDetail).toHaveBeenCalledTimes(2);
+    expect(host.textContent).toContain("Notification state needs refresh.");
+    refresh.reject(new Error("synthetic-private-readback-failure"));
+    await flush();
+    expect(host.textContent).toContain(view.quickOrder!.intake.sourceDetail);
+    expect(host.textContent).toContain("Status saved. Reload this page");
+    expect(host.textContent).not.toContain("synthetic-private-readback-failure");
+    expect(button("Update status")?.disabled).toBe(true);
+    submitTwice();
+    await flush();
+    expect(api.updateAssistedOrderStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it("discards a post-update notification refresh after sign-out", async () => {
+    const view = quickOrderDetail();
+    const refresh = deferred<AssistedOrderAdminDetail>();
+    api.loadAssistedOrderAdminDetail.mockResolvedValueOnce(view).mockReturnValueOnce(refresh.promise);
+    api.updateAssistedOrderStatus.mockResolvedValue({
+      ...view, status: "reviewing",
+      quickOrder: { intake: view.quickOrder!.intake, observation: { state: "stale" } },
+    });
+    await renderDetail();
+    submitTwice();
+    await flush();
+    session.state = "signed_out";
+    session.token = null;
+    await renderDetail();
+    refresh.resolve(view);
+    await flush();
+    expectNoCustomerA();
+    expect(host.textContent).not.toContain(view.quickOrder!.intake.sourceDetail);
+    expect(host.textContent).not.toContain("X".repeat(64));
+    expect(api.updateAssistedOrderStatus).toHaveBeenCalledTimes(1);
+  });
+});

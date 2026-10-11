@@ -134,7 +134,9 @@ export function buildDisabledQuickOrderProduction(
     notificationRecipient: null,
     runtime: {
       now: context.monotonicNow,
-      // Explicit refusal, not a guessed timer budget or cleanup guarantee.
+      // Refusal-only runtime with the canonical private-context resolver above.
+      // Zero is a refusal sentinel, not an approved C-1 operating maximum.
+      // Null limits refuse before private context or any timer can be armed.
       maximumDelayMs: 0,
       schedule() { throw new Error("Quick Order cleanup authority is not qualified"); },
     },
