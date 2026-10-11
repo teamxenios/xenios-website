@@ -3587,7 +3587,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "handoff",
+      "state": "claimed",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -3630,7 +3630,7 @@
         "Real five operational inputs, implemented snapshot S, populated census and external digest/original acceptance before operation.",
         "Fresh separately approved qualification scope/execution reservation; old window expired. Protected mount, SQL installation, push and deployment still unauthorized."
       ],
-      "heartbeatAt": "2026-10-11T21:28:42.139Z",
+      "heartbeatAt": "2026-10-11T21:32:06.316Z",
       "note": "Doc81 r3 acknowledged at exact clean6bf2579 after actual integrator handoff. Same af843 full21 identity/history/authority reactivated for narrowed verifier/intake/evidence stage only. Four accepted currentness SQL bytes and immutable sharedbinding frozen. First verifier source, separate provisional intake successor; PENDING receipts/reviewCommit null, LOCAL_ONLY/NOT_RUN.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
@@ -5299,6 +5299,19 @@
         "currentnessAccepted": true,
         "intakeSourceAccepted": false,
         "execution": "NOT_RUN"
+      },
+      "currentQualificationStage": {
+        "task": "QUICK-ORDER-U15-D68-TWO-FILE-SOURCE-20261011",
+        "state": "EXACT_TWO_FILE_TRANSFER_AND_AMENDMENT_ACTIVE",
+        "lease": "fff69f26-d18d-40cd-bc77-07840a8de11d",
+        "paths": [
+          "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+          "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
+        ],
+        "ack": ".xenios/handoffs/2026-10-11-qualification-two-file-holder-receiver-ack.json",
+        "base": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+        "execution": "NOT_RUN",
+        "publication": "LOCAL_ONLY"
       }
     }
   ]

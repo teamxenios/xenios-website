@@ -3976,6 +3976,23 @@
         "nextWriter": "Same integrator only after coordinator collection and explicit activation",
         "record": "docs/health-launch/quick-order-20261005/B22F_DISABLED_HANDLER_ADMISSION_20261011.md"
       }
+    },
+    {
+      "id": "fff69f26-d18d-40cd-bc77-07840a8de11d",
+      "task": "HEALTH-QUICK-ORDER-20261005",
+      "scopeTaskId": "QUICK-ORDER-U15-D68-TWO-FILE-SOURCE-20261011",
+      "session": "codex-health-quick-order-20261005",
+      "paths": [
+        "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+        "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-11T21:32:06.316Z",
+      "heartbeatAt": "2026-10-11T21:32:06.316Z",
+      "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "authorityCommit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+      "ack": ".xenios/handoffs/2026-10-11-qualification-two-file-holder-receiver-ack.json",
+      "scope": "Exact two-file local copy then bounded U15/D68; all transaction/evidence/foreign source frozen"
     }
   ],
   "rules": [

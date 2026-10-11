@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-U15-D68-TWO-FILE-SOURCE-20261011",
+  "state": "ACTUAL_HOLDER_AND_RECEIVER_ACK_EXCLUSIVE_LEASE_ACTIVE",
+  "at": "2026-10-11T21:32:06.316Z",
+  "sourceHolder": {
+    "session": "codex-health-quick-order-20261005",
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "worktree": "C:/Users/sboad/.codex/worktrees/389a/xenios-website",
+    "source": "ed376ea51bf27574a6af3ebcf642350adeb5841a",
+    "acknowledgment": "Same current source holder explicitly releases these frozen two files for exact local copying; source remains frozen. No replacement owner inferred."
+  },
+  "receiver": {
+    "session": "codex-health-quick-order-20261005",
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "base": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+    "acknowledgment": "Same existing builder accepts the exact two-file transfer and bounded U15/D68 amendment."
+  },
+  "authority": {
+    "commit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+    "path": "docs/coordination/launch-coordination-20261005/QUALIFICATION_TWO_FILE_DIRECT_AUTHORITY_20261011.txt",
+    "humanAttachmentSha256": "203a854d5642d4f43dfa4bc21a5849c666748adef22ef654c7286ff126eb260f"
+  },
+  "bindings": [
+    {
+      "path": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "gitBlob": "a9ba8356442218bd7206beb0e5973632c9a581a1",
+      "rawSha256": "2a68b06c7cb120a8a31231f0153e9759a067a48c48f058f2e1c93073960411f9",
+      "bytes": 188286
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "gitBlob": "30fbf71b204dfc51b77f000bafe135ed3e51d0f8",
+      "rawSha256": "15f4ad9740cd731ee314c3fa8fbb0d26419369319bd0f3d790dea9a0644a49b6",
+      "bytes": 1501610
+    }
+  ],
+  "lease": "fff69f26-d18d-40cd-bc77-07840a8de11d",
+  "competitorsObserved": [],
+  "stage1Records": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+  "stage1LeaseState": "handoff",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}

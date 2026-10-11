@@ -585,9 +585,9 @@
       "tool": "OpenAI Codex desktop",
       "lane": "health-quick-order",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "handoff",
+      "state": "active",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-11T21:28:42.139Z",
+      "heartbeatAt": "2026-10-11T21:32:06.316Z",
       "note": "Doc81 r3 acknowledged at exact clean6bf2579 after actual integrator handoff. Same af843 full21 identity/history/authority reactivated for narrowed verifier/intake/evidence stage only. Four accepted currentness SQL bytes and immutable sharedbinding frozen. First verifier source, separate provisional intake successor; PENDING receipts/reviewCommit null, LOCAL_ONLY/NOT_RUN.",
       "sourceSha": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
       "handoff": ".xenios/handoffs/2026-10-11-doc82-composition-evidence-handoff.json",
@@ -2197,6 +2197,19 @@
         "currentnessAccepted": true,
         "intakeSourceAccepted": false,
         "execution": "NOT_RUN"
+      },
+      "currentQualificationStage": {
+        "task": "QUICK-ORDER-U15-D68-TWO-FILE-SOURCE-20261011",
+        "state": "EXACT_TWO_FILE_TRANSFER_AND_AMENDMENT_ACTIVE",
+        "lease": "fff69f26-d18d-40cd-bc77-07840a8de11d",
+        "paths": [
+          "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+          "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
+        ],
+        "ack": ".xenios/handoffs/2026-10-11-qualification-two-file-holder-receiver-ack.json",
+        "base": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+        "execution": "NOT_RUN",
+        "publication": "LOCAL_ONLY"
       }
     }
   ],
