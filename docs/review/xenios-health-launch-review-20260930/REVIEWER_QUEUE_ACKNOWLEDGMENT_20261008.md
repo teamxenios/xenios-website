@@ -429,3 +429,12 @@ recomputed from Git:
 | 86 | `FULLSITE-PARTNER-APPLICATION-CONTINUITY-20261011-SOURCE-REVIEW` revision 1 | `6bd576c520646295c526366c12abf75a6b5182b2` (tree `16e9afbc…`) | `a5271e6a77c04e6ec0b6074cf3c041d41ddaace8` | `pages/partners/Apply.tsx`, `apply.test.tsx` |
 
 Each verdict is published when complete. Nothing was executed.
+
+## Queue state update (2026-10-11, docs 85 and 86)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 85 | `FULLSITE-ORDER-HISTORY-CONTINUITY-20261011-SOURCE-REVIEW` r1 (`e3b551f` / `6a995c5`) | COMPLETE: **CORRECTIONS REQUIRED.** One P2 (OH-1): a null token during core session verification renders a false "session has ended". Fix: read `memberChecking`, plus tests. Isolation design sound |
+| 86 | `FULLSITE-PARTNER-APPLICATION-CONTINUITY-20261011-SOURCE-REVIEW` r1 (`6bd576c` / `a5271e6`) | COMPLETE: **ACCEPTED WITH NAMED LIMITS** (P3 only) |
+
+Docs 83 (composition) and 84 (supervisor) remain in review. Nothing was executed.

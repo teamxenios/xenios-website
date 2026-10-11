@@ -1,0 +1,453 @@
+{
+ "schemaVersion": 1,
+ "reviews": [
+  "85_ORDER_HISTORY_CONTINUITY_e3b551f_2026-10-11.md",
+  "86_PARTNER_APPLICATION_CONTINUITY_6bd576c_2026-10-11.md"
+ ],
+ "tasks": [
+  "FULLSITE-ORDER-HISTORY-CONTINUITY-20261011-SOURCE-REVIEW revision 1",
+  "FULLSITE-PARTNER-APPLICATION-CONTINUITY-20261011-SOURCE-REVIEW revision 1"
+ ],
+ "workflowRun": "wf_3dc29b99-260",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "One checker and one adversarial verifier per package, verbatim. Reviewer dispositions are in docs 85 and 86. Only example.com test-fixture addresses appear. No file was created, modified or deleted; nothing was executed.",
+ "results": [
+  {
+   "pkg": "order-history",
+   "tag": "OH",
+   "check": {
+    "disposition": "CORRECTIONS_REQUIRED",
+    "summary": "FULLSITE-ORDER-HISTORY-CONTINUITY-20261011-SOURCE-REVIEW r1: source e3b551f (parent 121d098), records 6a995c5. Read-only; nothing was executed. Scope and identity check out: the source commit changes only the three registered paths plus four .xenios continuity records, and the records commit touches only .xenios. Blob IDs 3d3a0d5/3d2af05/5647913, byte counts 7934/10498/17862 and trees d6ba358/afe21a8 all match the registration. The isolation design is sound. Each component works out its displayed state during render by comparing the stored result's request object (token + retry attempt, plus order number on the detail page) with the current one. A layout-effect active flag stops late successes and failures from publishing. Sign-out sends no adapter request. Prior-identity data is never rendered, stale results cannot overwrite current state, and no payment or status values are invented. Adapter, server contract and endpoints are unchanged. One correction is required (OH-1, P2). Both pages treat a null memberToken as 'Please sign in. Your session has ended.' without checking core's memberChecking. Core nulls the token during initial session hydration and on every SIGNED_IN/TOKEN_REFRESHED/USER_UPDATED re-check, so a signed-in customer is falsely told their session ended. The client is also making a session claim the session authority has not made, and sibling pages already handle this. P3 precision items: OH-2, the server's genuine order_not_found is folded into an 'unavailable, try again later' message, and the records describe that limit imprecisely. OH-3, the list page's pre-existing forbidden/503 wording. OH-4, gaps in what the tests can catch. OH-5, useMemo is relied on as a meaning-bearing identity. The tests were written but NOT RUN; there are no pass counts. Neither the pages nor the server route table appear to be mounted at e3b551f, so runtime behaviour is NOT PROVEN.",
+    "checks": [
+     {
+      "item": "Source commit changes only the three paths plus records/continuity; bindings match registration",
+      "status": "MET",
+      "evidence": "git diff --name-status 121d098 e3b551f: M .xenios/ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json, sessions/codex-accepted-source-integration-20261005.json; A OrderHistory.session-continuity.test.tsx; M OrderHistory.tsx, OrderHistoryDetail.tsx. Records 6a995c5 changes only .xenios (adds handoff json). ls-tree blobs 3d3a0d5/3d2af05/5647913, wc -c 7934/10498/17862 and trees d6ba358/afe21a8 match the registration copy. CODE_OWNERSHIP lease 638ec308 lists exactly the three paths. SHA-256 not recomputed (hashing tools are outside the allowed command set)."
+     },
+     {
+      "item": "Prior identity/order data never displayed after session/identity/order context change",
+      "status": "MET",
+      "evidence": "State is derived during render: OrderHistory.tsx:59-61@e3b551f and OrderHistoryDetail.tsx:55-57@e3b551f show loading/unauthorized unless snapshot.request === the current memoized request (token+attempt, plus orderNumber on detail, OrderHistoryDetail.tsx:48-51). The detail title, lead and support block all come from `order`, which is null unless the state is ok (OrderHistoryDetail.tsx:97,112-117). Limit: the previous identity's payload stays in component state memory, not rendered, until the next publish or unmount."
+     },
+     {
+      "item": "Obsolete responses (previous identity, page, retry, unmount, StrictMode) cannot overwrite current state",
+      "status": "MET",
+      "evidence": "Two guards: the per-lifetime `active` flag checked before reading the payload (OrderHistory.tsx:64-72,98@e3b551f; OrderHistoryDetail.tsx:60-68,94), and request-identity matching at render. Retry bumps `attempt` instead of calling load directly (OrderHistory.tsx:189; OrderHistoryDetail.tsx:128,254). A->B->A creates a new memo object, so the first A result is rejected. StrictMode's discarded setup shares the request object, so the active flag is what rejects it there."
+     },
+     {
+      "item": "Unavailable, not-found and access-denied outcomes truthful and distinct",
+      "status": "PARTIAL",
+      "evidence": "Detail no longer turns forbidden/unavailable into the invented 'may belong to a different account' not-found (OrderHistoryDetail.tsx:79-84@e3b551f). Coded denial still renders ResearchDenialNotice (132-133). But: a null token during session checking renders a false 'session has ended' (OH-1). The server's genuine 404 order_not_found is shown as transient 'unavailable' (OH-2). List forbidden/503 still uses 'switched on / nothing is wrong' wording (pre-existing, OH-3)."
+     },
+     {
+      "item": "Canonical adapter/server/session authority preserved; no client-side authority; no new endpoint",
+      "status": "PARTIAL",
+      "evidence": "Same adapter calls and token (OrderHistory.tsx:71; OrderHistoryDetail.tsx:67@e3b551f). adapter.ts, lib/api.ts and server unchanged; no new path. However, the components decide on their own that 'unauthorized' applies from `!memberToken` and ignore core's memberChecking/memberSessionStatus (OH-1)."
+     },
+     {
+      "item": "No payment or order status/economics invented",
+      "status": "MET",
+      "evidence": "Status and amount rendering is unchanged apart from removing the not_found block (diff 121d098..e3b551f). PAYMENT_STATE_META/FULFILLMENT_STATE_META/formatCents keep rendering canonical fields only (OrderHistory.tsx:131-153; OrderHistoryDetail.tsx:136-227). The caught rejection shows only the fixed message 'The connection failed. Please try again.' (OrderHistory.tsx:92; OrderHistoryDetail.tsx:90)."
+     },
+     {
+      "item": "Authored tests discriminate each intended regression",
+      "status": "PARTIAL",
+      "evidence": "Tests that would fail against parent 121d098: the first-commit Witness (test:79-84,137-150,329-342), sign-out with no read (152-161,183-194), stale ok/denied/error after a token switch (163-181), A->B->A (196-209), the stale-before-successor payload getter (211-229), stale retry (231-248), the unmount payload getter (250-267), StrictMode (281-288), X->Y->X (344-365), and forbidden/unavailable plus the real adapter with 404/501/503/HTML200 (367-394). Gaps are listed in OH-4, and no test covers memberChecking (OH-1). AUTHORED_NOT_RUN: no execution, no pass counts."
+     },
+     {
+      "item": "Execution evidence",
+      "status": "NOT_APPLICABLE",
+      "evidence": "Registration and handoff both state execution NOT_RUN. Nothing was run in this review. Any runtime behaviour, including act() settling of the real-adapter fetch chain (api.ts:123 releaseUnusedBody), is NOT PROVEN."
+     }
+    ],
+    "findings": [
+     {
+      "id": "OH-1",
+      "severity": "P2",
+      "title": "Session verification window renders a false 'Your session has ended' (client-side session claim)",
+      "claim": "Both pages show the unauthorized state whenever memberToken is null, without checking memberChecking. Core sets memberToken to null while it verifies a session, so a signed-in customer is told their session ended. This client-side session claim is new in this change; before, only the server's result could produce 'unauthorized'.",
+      "evidence": "OrderHistory.tsx:59-60@e3b551f and OrderHistoryDetail.tsx:55-56@e3b551f: `!memberToken ? { phase: \"unauthorized\" }`. core.tsx:186-187@e3b551f starts with token null and status 'checking'. core.tsx:298,308 null the token and set 'checking' on every verification, which runs on SIGNED_IN/TOKEN_REFRESHED/USER_UPDATED (core.tsx:426-435). kit.tsx:687-694 renders 'Please sign in.' / 'Your session has ended. Sign in again to continue.' with a Member Login button. Sibling convention shows loading while checking: Dashboard.tsx:241-242, AccountOrderDetail.tsx:23-24@e3b551f. The test mock (test:21) supplies only memberToken, so no test covers this. Failure scenario: a signed-in customer hard-loads /research/member/order-history (or a detail URL) and sees 'session has ended' until /api/research/member/me returns. On each hourly TOKEN_REFRESHED, loaded history switches to the sign-in prompt before reloading.",
+      "fix": "In both components, destructure memberChecking from useResearch and derive `memberChecking ? loading : !memberToken ? unauthorized : snapshot match ? snapshot.state : loading`. Keep the no-request rule while checking or the token is null (the effect already returns early). Add tests in the new file: (a) memberChecking=true with token null shows ra-loading, does not show 'Please sign in.' and makes no adapter call; (b) loaded A -> checking/null -> A' (refreshed token) never shows the sign-in prompt or A's stale data; (c) checking -> signed_out with token null shows 'Please sign in.'."
+     },
+     {
+      "id": "OH-2",
+      "severity": "P3",
+      "title": "Genuine server not-found is shown as transient 'unavailable', and the records misstate the limit",
+      "claim": "The server sends a coded 404 order_not_found for missing, malformed or foreign order numbers. The canonical adapter does not opt in to that code, so the page shows 'We could not load this order right now. Please try again later' with a retry that can never succeed. The handoff says 'No genuine missing-record signal is available to this component', which is imprecise: the signal exists, and the out-of-scope adapter discards it.",
+      "evidence": "server/research/orders/http.ts:108,113@e3b551f respond(404, { ok:false, code:'order_not_found' }). adapter.ts:24@e3b551f apiGet without knownNotFoundDenials. lib/api.ts:110-124 maps it to unavailable. OrderHistoryDetail.tsx:129-130,252-260@e3b551f wording and retry. Handoff 6a995c5 .xenios/handoffs/2026-10-11-FULLSITE-ORDER-HISTORY-CONTINUITY-...json:115. The wording is truthful in that it claims neither that the order exists nor that it does not, but not-found is no longer distinct.",
+      "fix": "Restate the named limit precisely: the server emits 404 order_not_found; the canonical adapter (adapter.ts:24, outside this three-path scope) discards it; telling them apart needs a separately authorized adapter opt-in (knownNotFoundDenials ['order_not_found']). Optionally drop the 'right now / try again later' promise of a transient fault from the detail copy, e.g. 'We could not load this order. If this continues, contact support with the order number.'"
+     },
+     {
+      "id": "OH-3",
+      "severity": "P3",
+      "title": "List page's pre-existing forbidden/503 wording claims 'switched on / nothing is wrong'",
+      "claim": "Not introduced by this change, but within the reviewed path: on the list page, an uncoded 403 and a server 503 order_history_unavailable (a failed durable read) both render 'Order history is not available yet... as soon as this is switched on. Nothing is wrong with your account.' with no retry control. The detail page now has neutral wording plus retry and support.",
+      "evidence": "OrderHistory.tsx:83-85,190-191@e3b551f (unchanged from 121d098). server/research/orders/http.ts:86-90 returns 503 order_history_unavailable on a read failure. kit.tsx:686 renders the unavailable empty state with no action.",
+      "fix": "Record as a named limit for this package. If list wording is in a later scope, match the detail page: neutral wording, retry and the support link."
+     },
+     {
+      "id": "OH-4",
+      "severity": "P3",
+      "title": "Test discrimination gaps",
+      "claim": "Most controls would fail if the fix were removed, but some do not discriminate in the way the source-test map claims.",
+      "evidence": "(a) test:269-279 'rejection after unmount without leaking into a new instance' cannot catch removal of the active guard, because component state belongs to one instance and a new instance can never receive the old one's setSnapshot. Against the parent it fails only through Vitest's unhandled-rejection policy, not through an assertion. (b) The reject variants at test:163-181 and 231-248 catch the parent only through that same policy, since the parent had no catch and current text stays intact; they do catch removal of the publish guard in the new code. (c) No test fails if useLayoutEffect is replaced with useEffect, so the claimed layout-cleanup property (OrderHistory.tsx:96-98@e3b551f) is unproven; the display guarantee comes from the render-time identity comparison. (d) test:307-310 and 400-404 call the onRetry prop captured by the kit mock (test:40-43) from denial and list-unavailable states where the UI renders no retry control, so no user can trigger those transitions. (e) No memberChecking coverage (OH-1).",
+      "fix": "Rename or reframe (a) as a crash-safety control, or assert there is no unhandled rejection. Note in the source-test map that (b) depends on Vitest's unhandled-error policy. Either drop the layout-specific claim or add a control that actually separates layout from passive cleanup. Mark (d) as state-mapping controls, not user recovery paths. Add the OH-1 tests."
+     },
+     {
+      "id": "OH-5",
+      "severity": "P3",
+      "title": "useMemo used as a meaning-bearing request identity",
+      "claim": "The request-lifetime identity depends on useMemo keeping the same object for the same token, attempt and order number. React documents useMemo as a performance hint whose cache it may discard. If discarded, an unrelated render would fall back to loading and refetch. This fails safe: no wrong-identity data is shown.",
+      "evidence": "OrderHistory.tsx:56@e3b551f; OrderHistoryDetail.tsx:48-51@e3b551f; the identity comparison at OrderHistory.tsx:61 and OrderHistoryDetail.tsx:57. The stability control at test:128-135 assumes the cache is kept.",
+      "fix": "Either accept and name it as a fail-safe limit, or hold the identity object in state/ref and replace it only when token, attempt or orderNumber change."
+     }
+    ],
+    "deviations": [
+     "No SHA-256 recomputation: hashing is outside the allowed command set (git piped to grep/sed/head/wc). Identity was checked through git blob IDs, committed byte counts and tree IDs, which all match the registration.",
+     "Read context files outside the three paths via git show at e3b551f (orders/adapter.ts, lib/api.ts, ui/kit.tsx, core.tsx, server/research/orders/http.ts, pages/member/Dashboard.tsx, account/AccountOrderDetail.tsx, package.json) to check contracts. All reads were read-only and nothing outside the package was audited.",
+     "Reachability NOT PROVEN: grep at e3b551f found no client route importing OrderHistory/OrderHistoryDetail and no server mount of createCanonicalOrderRouteTable outside tests. All behaviour is latent until mounted, and the endpoint is probably unpublished (SPA HTML 200 maps to unavailable).",
+     "Tests AUTHORED_NOT_RUN. Nothing was executed. Judgments about whether tests discriminate come from reading the source; React 19.2 act() settling of the real-adapter fetch chain (test:382-394) is NOT PROVEN.",
+     "The records' advisory review reports 'No concrete defect identified by inspection' (handoff 6a995c5:176). This review finds OH-1 (P2).",
+     "The handoff's contractLimit wording 'No genuine missing-record signal is available to this component' (handoff:115) is imprecise; see OH-2."
+    ]
+   },
+   "verify": {
+    "disposition": "CORRECTIONS_REQUIRED",
+    "verdicts": [
+     {
+      "id": "OH-1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. OrderHistory.tsx:59-60@e3b551f and OrderHistoryDetail.tsx:55-56@e3b551f show the unauthorized state whenever memberToken is null, and neither reads memberChecking. Core starts with the token null and the status 'checking' (core.tsx:186-188). establishMemberSession nulls the token and sets 'checking' (core.tsx:296-308) on initial hydration, on every token change, and whenever verification is forced. kit.tsx:687-694 then shows 'Please sign in.' / 'Your session has ended.' with a Member Login button. Sibling pages show loading while checking (Dashboard.tsx:241@e3b551f, AccountOrderDetail.tsx:11,23@e3b551f), so the page contradicts the session authority. Two precision corrections. (1) The checker calls this 'new in this change'. That is true of where the claim comes from, but customers already saw it: the parent ran listCanonicalOrders(null), sent no Authorization header, and the server answered 401 'unauthorized' (server/research/orders/http.ts:76-77@e3b551f). Worse, the parent could end stuck on that prompt when the stale 401 arrived after the token-bearing success. The new code removes that race, so this is a defect left in a derivation the change rewrote, not a new regression. (2) The checker says this happens on 'every SIGNED_IN'. In fact a SIGNED_IN with an unchanged token and a member present returns early without nulling (core.tsx:283). The token is nulled on initial hydration, on a SIGNED_IN with a new token, on TOKEN_REFRESHED (a new JWT) and on USER_UPDATED (forced). The proposed fix is safe: memberSessionStatus always leaves 'checking' (core.tsx:271,328,345,350,366,373,378,483,493), so 'loading while checking' cannot spin forever. P2 stands. The package's purpose is truthful session-continuity states, the false prompt is visible on hard load and on every hourly refresh, and the fix takes one line per component."
+     },
+     {
+      "id": "OH-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "The copy concern holds. The server emits a coded 404 order_not_found (server/research/orders/http.ts:108,113@e3b551f). adapter.ts:24 calls apiGet without knownNotFoundDenials, so api.ts:110-124 discards that code and returns unavailable. OrderHistoryDetail.tsx:129-130,252-260 then promises a transient fault ('right now', 'try again later') with a retry that cannot succeed for a missing order, or for an uncoded 403. The 'records misstate the limit' part is weaker than the checker says: handoff:115@6a995c5 does name the cause ('Canonical adapter does not opt into knownNotFoundDenials'), and the component genuinely never receives a missing-record signal. The real imprecisions are calling the server's coded 404 'generic' and not saying that the server emits order_not_found at all. Latent either way: createCanonicalOrderRouteTable has no mount outside its definition at e3b551f, so clients currently get SPA HTML 200, which maps to unavailable."
+     },
+     {
+      "id": "OH-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed pre-existing and unchanged: the diff does not touch OrderHistory.tsx:83-85,190-191. A server 503 order_history_unavailable (a failed durable read, http.ts:86-90) maps to unavailable because api.ts checks the status first (api.ts:110-125), and the page then shows 'not available yet... switched on... no order has been lost' with no retry control (kit.tsx:686). Addition: the new test at test:397-406 asserts 'Order history is not available yet.', which locks this copy in, and that test passes against the parent. Keep it as a named limit of this package."
+     },
+     {
+      "id": "OH-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Each sub-claim checks out. (a) test:269-279 only catches removal of the try/catch: without the active guard, a publish on an unmounted instance does nothing. (b) Correct, but incomplete: the reject variant of test:211-229 also passes against the parent and fails only through Vitest's unhandled-error policy, since loading, no STALE-A and dataAccess-not-called all still hold. vitest.config.ts@e3b551f has no override for that policy. (c) Correct: no control separates useLayoutEffect from useEffect, because the display guarantee is the render-time identity match. (d) Correct: denied renders inside the boundary's ok branch, and the list's unavailable state renders ResearchEmptyState with no action, so harness.retry drives transitions no user can trigger. Further notes: test:128-135 and test:397-406 are preservation controls that also pass against the parent, so they should not be counted as regression discriminators. If the real-adapter control at test:382-394 does not settle within act(), it fails rather than falsely passing."
+     },
+     {
+      "id": "OH-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed and fail-safe. If React discarded the useMemo cache, the request object would differ, render would show loading, and the effect would run again. No other identity's data could appear. Record it as a named limit, or move the identity into state or a ref."
+     }
+    ],
+    "checkChallenges": [
+     {
+      "item": "Source commit changes only the three paths plus records/continuity; bindings match registration",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Rechecked independently. name-status 121d098..e3b551f lists exactly the three paths plus four .xenios files. ls-tree -l gives blobs 3d3a0d5/3d2af05/5647913 at 7934/10498/17862 bytes, and the trees are d6ba358 (source) and afe21a8 (records). The records commit changes no client/server/shared file. CODE_OWNERSHIP adds only the own lease 638ec308 with the three paths, and SESSION_REGISTRY edits only the own session row. SHA-256 not recomputed."
+     },
+     {
+      "item": "Prior identity/order data never displayed after session/identity/order context change",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Holds. The displayed state is derived during render and comes from the snapshot only when snapshot.request === request (OrderHistory.tsx:59-61, OrderHistoryDetail.tsx:55-57). The request object changes on any token, attempt or orderNumber transition, including A->null->A, so no prior payload can match. The title, lead, support block and unavailable buttons all hang off derived state. Core's own same-batch A->A case is the same identity. The Witness control (test:79-84,137-150,329-342) catches the parent's effect-only reset."
+     },
+     {
+      "item": "Obsolete responses cannot overwrite current state",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Holds. Both guards are needed, and they do different jobs. The active flag (OrderHistory.tsx:64-72; OrderHistoryDetail.tsx:60-68) stops a stale publish from replacing the current snapshot. Without it the page would fall back to loading rather than leak data, and test:163-181 would catch that. The render-time match stops display. Removing the early return after await is caught by the payload-getter controls (test:211-229 ok, test:250-267)."
+     },
+     {
+      "item": "Unavailable, not-found and access-denied outcomes truthful and distinct",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Agree. The invented 'different account' not-found is gone and coded denial is kept. Still open: the false sign-in prompt while checking (OH-1), the genuine 404 not being distinguishable plus the transient copy (OH-2), and the pre-existing list 503 wording (OH-3)."
+     },
+     {
+      "item": "Canonical adapter/server/session authority preserved; no client-side authority; no new endpoint",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Adapter, api.ts and server are byte-unchanged, there is no new path, and the bearer token is passed the same way. The only deviation is OH-1: the component claims the session has ended while core reports 'checking'."
+     },
+     {
+      "item": "No payment or order status/economics invented",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Holds. Apart from the removed not_found block and the new unavailable affordance, the diff does not touch status, amount or tracking rendering. The catch path shows only a fixed message and never shows exception text."
+     },
+     {
+      "item": "Authored tests discriminate each intended regression",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Agree. The core regressions are discriminated: first-commit hide, sign-out with no read, stale ok/denied/error, A->B->A, X->Y->X (whose STALE-Y step also covers the reject variant), stale retry, StrictMode, the unmount getter, and forbidden/unavailable/real adapter. The gaps are those in OH-4 plus the 211-229 reject variant, and there is no memberChecking coverage. AUTHORED_NOT_RUN."
+     },
+     {
+      "item": "Execution evidence",
+      "checkerStatus": "NOT_APPLICABLE",
+      "verifierStatus": "NOT_APPLICABLE",
+      "note": "No execution was authorized or performed. All runtime behaviour is NOT PROVEN, and the pages and server route table are unmounted at e3b551f, so the behaviour is latent."
+     }
+    ],
+    "missed": [
+     {
+      "id": "OHV-1",
+      "severity": "P3",
+      "title": "Additional non-discriminating reject variant and unlabeled preservation controls",
+      "claim": "The reject variant of 'keeps the new account loading when stale %s arrives first' passes against parent 121d098 on assertions alone. Two other controls also pass against the parent unchanged, yet the source-test map counts them as discriminating.",
+      "evidence": "test:211-229@e3b551f (reject). Against the parent there is no data access, the B read is still pending so loading holds, the parent showed no 'No orders yet.', and the rejection surfaces only as an unhandled error under Vitest's default policy (vitest.config.ts has no override). test:128-135 and test:397-406 behave the same on the parent (stable load callback; unavailable then retry then empty list).",
+      "fix": "In the source-test map, mark the 211-229 reject variant as depending on Vitest's unhandled-error policy. Label 128-135 and 397-406 as preservation controls rather than regression discriminators."
+     },
+     {
+      "id": "OHV-2",
+      "severity": "P3",
+      "title": "New list test locks in the pre-existing 'not available yet / switched on' copy",
+      "claim": "test:397-406 asserts 'Order history is not available yet.' for the unavailable state. That fixes as expected behaviour copy that is untrue for the server's 503 order_history_unavailable, a failed durable read on a route that is switched on.",
+      "evidence": "test:400-401@e3b551f; OrderHistory.tsx:190-191; server/research/orders/http.ts:86-90; api.ts:110-125 maps 503 to unavailable before parsing.",
+      "fix": "Keep the assertion to the distinction the test exists for: unavailable is not 'No orders yet.'. Drop the copy assertion, or change it when the list wording is corrected under OH-3."
+     }
+    ],
+    "opinion": "OH-1 stands as a P2 correction. While core is verifying a session, it sets memberToken to null and reports 'checking'. Both pages treat that null token as a signed-out session and tell a signed-in customer 'Your session has ended.' This happens on hard load, on a sign-in with a new token, on the hourly token refresh and on USER_UPDATED. Sibling pages already show loading in this state. The fix is one line per component plus three tests, and it is safe because the session status always leaves 'checking'.\n\nEverything else in the isolation design is sound. Render-time identity matching plus a per-lifetime active flag means no other identity's or order's data can be shown. Stale results cannot overwrite current ones. No request is sent without a token. Adapter, server and status/economics bytes are unchanged, and scope and bindings match the registration exactly.\n\nTwo precision points on OH-1. The customer-visible false prompt already existed in the parent, through a request sent with no token that the server answered with 401, and the new code removes the parent's stale-401 race. The checker's 'every SIGNED_IN' overstates it, because core.tsx:283 skips the reset when the token is unchanged.\n\nOH-2 through OH-5 stand as P3. OH-2's 'records misstate' part is softened because the handoff names the adapter opt-in gap. I found two further P3 test-labelling items.\n\nDisposition: CORRECTIONS_REQUIRED for OH-1. Once OH-1 is fixed with its tests, I would accept the package with named limits: OH-2/OH-3 wording, the useMemo fail-safe, tests authored but not run, and pages that are not yet mounted.",
+    "deviations": [
+     "No SHA-256 recomputation, because hashing is outside the allowed commands. Identity was checked through git blob IDs, ls-tree byte counts and tree IDs, which all match.",
+     "I read context files outside the three paths with git show at e3b551f to check contracts: core.tsx, ui/kit.tsx, lib/api.ts, orders/adapter.ts, lib/routes.ts, server/research/orders/http.ts, pages/member/Dashboard.tsx, account/AccountOrderDetail.tsx, package.json and vitest.config.ts. Read-only; I did not audit them beyond these contracts.",
+     "Pipe set deviation: some git output went through 'cat -n' (line numbers) and 'cut -c' (truncation), in addition to grep/sed/head/wc. One command used '2>/dev/null' to suppress stderr, a minor output redirection. I created, modified or deleted no files, and executed nothing beyond git.",
+     "git grep and git rev-parse/ls-tree were used to check reachability and identity. No client route or server mount references OrderHistory, OrderHistoryDetail or createCanonicalOrderRouteTable outside their definitions and the new test, so all behaviour is latent and NOT PROVEN.",
+     "Tests AUTHORED_NOT_RUN. Every discrimination judgment comes from reading the source, and no pass counts exist."
+    ]
+   }
+  },
+  {
+   "pkg": "partner-application",
+   "tag": "PA",
+   "check": {
+    "disposition": "ACCEPTED_WITH_NAMED_LIMITS",
+    "summary": "I reviewed the source only. Nothing was executed, and the authored tests are NOT RUN. Source commit 6bd576c (parent 71e4cc4) changes exactly the two registered paths. Its tree is 16e9afb and its blobs are 26e9d94 (11891 bytes) and 63896a0 (17241 bytes). Those committed bytes contain no CR characters, and the blobs and sizes match the registration. Records commit a5271e6 sits directly on 6bd576c and changes only five .xenios paths; the two source blobs are identical there. I found no P0, P1 or P2 defect.\n\nHow the fix works: Apply now keys a per-principal ApplicationForm on [memberToken, Boolean(member), member.cartScope] (Apply.tsx:42-43@6bd576c), so a token switch, scope switch, sign-out or member removal replaces all form and outcome state in the same commit. Each instance POSTs only with its own token prop (Apply.tsx:50,109), so a stale result can only land on an unmounted instance, and React discards that update.\n\nWhat is preserved and what improved:\n- The receipt shows the immutable submitted snapshot (Apply.tsx:98-104,111,134), not later edits.\n- The fixed research_rep role (Apply.tsx:99), the pending agreement (accepted={false}, Apply.tsx:212) and the canonical adapter, endpoint and Bearer authorization are unchanged.\n- The old copy implying email delivery (\"A confirmation will be sent to ...\") was removed.\n- An unexpected adapter throw now yields a truthful unconfirmed message, and there is no automatic replay.\n- All test traffic goes through stubbed fetch or a spied adapter, so there is no live POST or email.\n\nThe authored tests do catch the key regressions: removing the identity key, rendering the receipt from the mutable email field, the old state-based duplicate guard, and the missing catch. They overstate coverage in two places: the attempt-ownership guards (PA-1) and the trim claim (PA-3). There is also one plausible liveness edge case in the layout cleanup (PA-2) and one labelling issue in the records (PA-4). All four are P3.\n\nNamed limits:\n- A routine Supabase token refresh remounts the form for the same principal. This discards drafts, a displayed receipt, or an in-flight outcome, with no unconfirmed notice. The handoff discloses this.\n- A realistic connection loss still shows the adapter's \"The connection failed. Please try again.\"\n- The adapter's default \"The team will follow up by email.\" can still appear on the receipt.",
+    "checks": [
+     {
+      "item": "Source commit changes only the two registered paths; bindings match",
+      "status": "MET",
+      "evidence": "git diff --name-only 71e4cc4 6bd576c lists only client/src/research/pages/partners/Apply.tsx and apply.test.tsx. The tree is 16e9afb. rev-parse gives blobs 26e9d94 and 63896a0, and cat-file -s and wc -c give 11891 and 17241 bytes with 0 CR characters, all equal to the registration. Records commit a5271e6 has parent 6bd576c and tree 778da24, and changes only .xenios/{ACTIVE_TASKS,CODE_OWNERSHIP,SESSION_REGISTRY}.json, the handoff and the sessions JSON. Both source blobs are unchanged at a5271e6. I did not recompute the raw SHA-256 (tooling restriction), so that is NOT PROVEN."
+     },
+     {
+      "item": "Outcomes stay bound to the submitting identity (principal)",
+      "status": "MET",
+      "evidence": "Apply.tsx:42-43@6bd576c keys ApplicationForm on JSON.stringify([memberToken, Boolean(member), member?.cartScope ?? null]). The memberToken prop at Apply.tsx:50 is therefore fixed for the instance's lifetime, and Apply.tsx:109 POSTs with that token. Mutable names are not part of the key: test apply.test.tsx:302-314@6bd576c keeps a same-token request alive across a display-name change. Tests apply.test.tsx:234 and :340@6bd576c assert Bearer token-a and Bearer token-b on the respective requests."
+     },
+     {
+      "item": "Receipt shows the submitted contact snapshot, not later edits",
+      "status": "MET",
+      "evidence": "The snapshot is captured at Apply.tsx:98-104@6bd576c, the accepted outcome carries submitted.contactEmail (Apply.tsx:111), and the receipt renders outcome.contactEmail (Apply.tsx:134). The parent rendered {email.trim()} at render time (parent Apply.tsx:107@71e4cc4). Test apply.test.tsx:229-252@6bd576c edits email, name, audience and channel while the request is pending, asserts the posted body is unchanged, then asserts the receipt shows original@example.com and never edited@example.com. That test would fail against the parent. The trim part of the claim is not discriminated (PA-3)."
+     },
+     {
+      "item": "Stale completions do not cross identity boundaries",
+      "status": "MET",
+      "evidence": "A key change unmounts the old instance in the same commit, and the new instance has its own state and ref (Apply.tsx:43,50-57@6bd576c). Updates from the old closure land on an unmounted instance and are discarded. Tests apply.test.tsx:254-272 (3 transitions x 4 late results, with a layout-phase CommitProbe expecting EMPTY_FORM), :274-284, :287-300, :316-332 and :334-347@6bd576c all fail if the key is removed. The extra ownership guards at Apply.tsx:61,110,113,119 are defensive and not discriminated (PA-1)."
+     },
+     {
+      "item": "Request failure, retry and unmount preserve the contract",
+      "status": "MET",
+      "evidence": "The catch at Apply.tsx:112-117@6bd576c shows a generic unconfirmed message and hides raw exception text. The finally block clears only its own attempt (Apply.tsx:119). Retry requires an explicit submit (Apply.tsx:74), and nothing replays automatically: apply.test.tsx:266@6bd576c checks the request count, and :381-401 checks calledTimes 1, then 2 only after a click, and that the retry receipt uses retry@example.com. Two limits: the layout-cleanup edge case in PA-2, and the same-principal token-refresh discard (named limit)."
+     },
+     {
+      "item": "Fixed research_rep role, pending agreement, canonical endpoint and authorization preserved",
+      "status": "MET",
+      "evidence": "role: research_rep is at Apply.tsx:99@6bd576c and ResearchAgreementViewer accepted={false} at Apply.tsx:212. applyAsPartner is unchanged: partner.ts:296-298@6bd576c uses PARTNER_API.apply = /api/research/partner/apply (partner.ts:33). The handoff records the adapter blob f9a80a2 as unchanged. The signed-out pre-check (Apply.tsx:87-94) is retained. The original three tests survive verbatim (apply.test.tsx:190-227@6bd576c versus the parent file)."
+     },
+     {
+      "item": "Nothing implies account approval, commission entitlement, verified attribution or successful email delivery",
+      "status": "MET",
+      "evidence": "The commit removes 'A confirmation will be sent to {email}' (parent Apply.tsx:107@71e4cc4), and test apply.test.tsx:250@6bd576c asserts it is absent. Apply.tsx:134@6bd576c states that submission does not approve, certify or activate partner access. The page has no copy about commission, attribution or referral; the agreement text only describes what the agreement covers. Limit: the adapter's default accepted message 'Received. The team will follow up by email.' (partner.ts:277@6bd576c) can still appear. It is a follow-up commitment, not a delivery claim, and it is adapter-owned."
+     },
+     {
+      "item": "Tests make no live POST or email",
+      "status": "MET",
+      "evidence": "Every test either uses stubFetch or deferredFetch (vi.stubGlobal fetch, apply.test.tsx:71-91@6bd576c) or spies on applyAsPartner with mockReturnValueOnce (:364, :384-385). The signed-out tests assert zero calls. No email path exists in the client. The spy tests have no fetch guard, but an unexpected extra call would fall through to apiPost with a relative URL and be caught (lib/api.ts:146-147@6bd576c). Precedent for spyOn on the partner namespace: Campaigns.test.tsx:124,165@6bd576c."
+     },
+     {
+      "item": "Tests discriminate the intended regressions",
+      "status": "PARTIAL",
+      "evidence": "Discriminated: identity-key removal (:254-300, :316-347); receipt rendered from the mutable email (:229-252); the parent's state-based duplicate guard (:349-360, where two synchronous submit dispatches inside one act produce two requests in the parent); and the missing catch (:381-401, plus an unhandled rejection in the :362 reject case). Not discriminated: the attempt-ownership guards and layout cleanup (Apply.tsx:61,110,113,119@6bd576c; PA-1), and the .trim() on contactEmail (PA-3). All tests are NOT RUN."
+     },
+     {
+      "item": "Authored tests executed",
+      "status": "NOT_APPLICABLE",
+      "evidence": "Execution is NOT RUN by design. No pass counts are claimed or inferred."
+     }
+    ],
+    "findings": [
+     {
+      "id": "PA-1",
+      "severity": "P3",
+      "title": "The source-test map credits the tests with proving the attempt-ownership guards, but no test fails if those guards are removed",
+      "claim": "The sourceTestMap entry 'Suppress obsolete asynchronous outcomes' says tests 254-272, 316-347 and 362-379 prove the per-instance attempt identity, the layout cleanup and the ownership checks in success, catch and finally (Apply.tsx:61,110,113,119@6bd576c). None of those tests would fail if the guards were deleted. Only the synchronous in-flight check at Apply.tsx:74 is discriminated.",
+      "evidence": "In every cross-identity case the keyed remount (Apply.tsx:42-43@6bd576c) means the old closure updates an unmounted instance, and React discards that update whatever the ref holds. apply.test.tsx:362-379@6bd576c goes further: it unmounts the whole root (:367) and renders the replacement in a new createRoot (via renderApply, :98-103), so it isolates trivially and would also pass against parent 71e4cc4. Within one mounted instance a second attempt cannot start while the first is pending (Apply.tsx:74), so the checks at 110 and 113 are unreachable except in the PA-2 case. Test :349-360 does discriminate line 74.",
+      "fix": "Restate the map: attribute stale-outcome suppression to the keyed remount, and describe lines 61, 110, 113 and 119 as defensive and untested. Alternatively remove them (see PA-2). If they stay, add a test that tears down layout effects without unmounting the instance."
+     },
+     {
+      "id": "PA-2",
+      "severity": "P3",
+      "title": "The layout cleanup clears the active attempt on any layout-effect teardown, which can leave a mounted form stuck on 'Submitting...'",
+      "claim": "Apply.tsx:61@6bd576c clears activeAttempt whenever layout effects are torn down, not only on unmount, and the setup function restores nothing. If that teardown happens while the same-principal instance stays mounted with a POST pending, lines 110 and 113 drop the result. The outcome then stays 'submitting', the button stays disabled (Apply.tsx:253), and no unconfirmed notice appears. This is not a false success. The verdict is PLAUSIBLE: I have not proven the trigger is reachable in this app.",
+      "evidence": "React 18+ destroys layout effects when an already-revealed Suspense boundary re-suspends outside a transition, and re-runs setup on reveal; React's Activity component does the same. Apply sits inside a Suspense boundary (section.tsx:211-215,407@6bd576c, the L wrapper). The key at Apply.tsx:42-43 already isolates identities, so this cleanup adds no identity protection; its only effect beyond unmount is this case.",
+      "fix": "Remove the cleanup and rely on the keyed instance. Or track mount state in the setup function and, if a pending attempt was orphaned, set the existing unconfirmed error instead of leaving 'submitting'."
+     },
+     {
+      "id": "PA-3",
+      "severity": "P3",
+      "title": "The 'original trimmed receipt email' claim is met by the email input's own sanitization, so the component's .trim() is untested",
+      "claim": "Test apply.test.tsx:229-252@6bd576c enters '  original@example.com  ' and expects 'original@example.com' in the body and the receipt. The type=email input strips leading and trailing whitespace before React's onChange reads the value, so the .trim() at Apply.tsx:101@6bd576c is not exercised. The snapshot-versus-edit property itself is discriminated.",
+      "evidence": "The input is type=\"email\" (Apply.tsx:167@6bd576c). The test sets the value through the prototype setter (apply.test.tsx:121-129). The HTML value-sanitization algorithm for type=email strips newlines and leading and trailing ASCII whitespace; I believe jsdom implements it, but that is unconfirmed here because tests are NOT RUN, so this is PLAUSIBLE.",
+      "fix": "Drop 'trimmed' from the map's test claim, or check the trim against a field that is not sanitized. The behaviour is harmless as written."
+     },
+     {
+      "id": "PA-4",
+      "severity": "P3",
+      "title": "The handoff pairs git blob ids with working-tree byte counts and hashes without labelling which is which",
+      "claim": "In records a5271e6, the handoff sourceFiles list each git blob id next to bytes and a rawSha256 that come from the CRLF working-tree copy, not the committed bytes, and gives no digest domain. The registration copy labels these correctly.",
+      "evidence": "In the handoff at a5271e6, sourceFiles shows Apply.tsx with bytes 12155 and rawSha256 ad739f..., and apply.test.tsx with 17643 and 31b80c..., each beside its gitBlob id. The committed blobs are 11891 and 17241 bytes with 0 CR characters (cat-file -s and wc -c at 6bd576c). 12155 is 11891 plus 264 lines and 17643 is 17241 plus 402 lines, which is consistent with CRLF materialization. The registration labels these values receivedWorkingTreeBinding, with differentNewlineMaterializationDisclosed set to true.",
+      "fix": "In a later records revision, label the digest domain in the handoff sourceFiles, or cite the committed raw bytes alongside the blob ids."
+     }
+    ],
+    "deviations": [
+     "Named limit, disclosed in the handoff: a TOKEN_REFRESHED event (core.tsx:426-435@6bd576c) calls establishMemberSession, which briefly sets member and memberToken to null (core.tsx:296-299@6bd576c). That changes the form key, so a same-principal routine refresh discards drafts, a displayed receipt, or an in-flight outcome. The in-flight case shows no unconfirmed notice. The Apply route is not member-gated (section.tsx:407@6bd576c uses L with member=false), so in the parent this page did not remount on refresh. Server-side duplicate rejection on an explicit resubmit is NOT PROVEN.",
+     "Named limit, adapter-owned and out of scope: a real connection loss on the current attempt never reaches the component catch. apiPost catches the fetch failure (lib/api.ts:146-147@6bd576c) and returns the error 'The connection failed. Please try again.' through submitPartnerRequest. The new unconfirmed copy therefore covers only unexpected adapter throws, and the deferredFetch 'connection rejection' case (apply.test.tsx:182@6bd576c) exercises the adapter mapping, not Apply.tsx:112-117.",
+     "Named limit, adapter-owned: when the server returns no message (as in every test fixture), the receipt renders the adapter's default 'Received. The team will follow up by email.' (partner.ts:277@6bd576c). It is a follow-up commitment, not a delivery claim, and no test asserts against it.",
+     "The spy-based tests (apply.test.tsx:362-401@6bd576c) do not stub fetch as a guard. Any unexpected extra call would reach the real adapter with a relative URL and be caught, so there is no live POST, but there is also no explicit guard.",
+     "The raw SHA-256 of the committed bytes was not recomputed under the allowed tooling: NOT PROVEN. Blob ids, sizes and the LF-only content are verified.",
+     "Server-side authorization, one-partner-per-member enforcement, idempotency and email behaviour were not examined: NOT PROVEN.",
+     "All authored tests are NOT RUN. Whether they discriminate was judged statically."
+    ]
+   },
+   "verify": {
+    "disposition": "ACCEPTED_WITH_NAMED_LIMITS",
+    "verdicts": [
+     {
+      "id": "PA-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with one correction. The keyed remount at Apply.tsx:42-43@6bd576c alone produces every cross-identity test result. Updates from an old closure go to a deleted fiber, which React drops. Deleting the layout cleanup (Apply.tsx:61) or the ownership conditions (110, 113, the `=== attempt` test at 119) would not fail any test. apply.test.tsx:362-379 also uses a fresh createRoot, and its resolve case would pass against the parent. The correction: the checker lists 119 as undiscriminated, but the clearing itself is discriminated. Without it, the explicit retry in apply.test.tsx:381-401@6bd576c is blocked by the guard at line 74 and calledTimes(2) fails. Only the condition on line 119 is untested, and test :349-360 discriminates the line-74 ref check. The comment at Apply.tsx:59-60 is also misleading: a replacement instance has its own ref and can never observe the old one."
+     },
+     {
+      "id": "PA-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld as PLAUSIBLE, with a concrete path the checker did not name. (1) Every partner route renders <L> at the same Switch position (section.tsx:341,407-422@6bd576c). The Switch returns a keyless cloned Route, so the L fiber and its Suspense boundary (section.tsx:211-217) are reused when moving between partner pages. (2) The form's Back link (Apply.tsx:256, PARTNER_ROUTES.home = /research/partners, routes.ts:118) stays enabled while the request is submitting. (3) section.tsx has no startTransition, so this navigation is a synchronous update. If the PartnerLanding chunk is not yet loaded, the already-shown boundary suspends again, hides Apply and runs the cleanup at Apply.tsx:61. (4) If the user returns to /apply before the chunk loads, the same fiber reappears still marked 'submitting' with a null ref. Lines 110 and 113 then drop the result and the button stays disabled (Apply.tsx:253). The parent would have applied the result to the hidden fiber. This is not a false success. I have not shown the path is reachable at runtime, so it stays P3."
+     },
+     {
+      "id": "PA-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld as PLAUSIBLE. The email input is type=\"email\" (Apply.tsx:167@6bd576c), and setById uses the prototype value setter (apply.test.tsx:121-129). Value sanitization therefore strips the surrounding spaces before React reads onChange, so the .trim() at Apply.tsx:101 is never exercised. The legalName and audience trims are not exercised either, because the fixtures have no surrounding whitespace. The snapshot-versus-edit property remains discriminated."
+     },
+     {
+      "id": "PA-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld and verified. The handoff's sourceFiles at a5271e6 pair blobs 26e9d94 and 63896a0 with bytes 12155 and 17643 and with working-tree rawSha256 values, and give no digest-domain label. cat-file -s gives 11891 and 17241, and the Apply.tsx blob contains 0 CR characters. Line counts are 264 and 402, so 11891+264=12155 and 17241+402=17643, which is consistent with CRLF materialization. The registration copy labels both domains correctly (RAW_COMMITTED_GIT_BYTES versus receivedWorkingTreeBinding RAW_PHYSICAL_WORKING_TREE_BYTES). This is a records-precision issue only."
+     }
+    ],
+    "checkChallenges": [
+     {
+      "item": "Source commit changes only the two registered paths; bindings match",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "I independently confirmed every binding. diff --name-only 71e4cc4..6bd576c lists only Apply.tsx and apply.test.tsx. The source tree is 16e9afb. The blobs 26e9d94 and 63896a0 are identical at a5271e6. Records a5271e6 has parent 6bd576c and tree 778da24, and changes only five .xenios paths. The adapter (f9a80a2) and core (482257a) are unchanged at a5271e6, and diff --stat over lib, adapters and core.tsx is empty. The raw SHA-256 of the committed bytes was not recomputed: NOT PROVEN."
+     },
+     {
+      "item": "Outcomes stay bound to the submitting identity (principal)",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The key (Apply.tsx:42@6bd576c) splits identity more finely than the principal: each bearer token counts as its own identity. That errs in the safe direction for isolation. Each instance POSTs only with its fixed prop token (Apply.tsx:50,109). Over-keying on profile fields is caught by test :302-314. Dropping cartScope from the key is caught by the scope-switch transition, and dropping Boolean(member) is caught by :287-300. The cost is the named same-principal reset limit (see PAV-2)."
+     },
+     {
+      "item": "Receipt shows the submitted contact snapshot, not later edits",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The snapshot is taken at Apply.tsx:98-104, the accepted outcome carries contactEmail (Apply.tsx:111), and the receipt renders it (Apply.tsx:134). The parent rendered {email.trim()} (parent Apply.tsx:107@71e4cc4), so test :229-252 fails against the parent. The trim part is not discriminated (PA-3)."
+     },
+     {
+      "item": "Stale completions do not cross identity boundaries",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. The guarantee rests entirely on the keyed remount and React discarding updates to deleted fibers, not on the ref guards (PA-1). The layout-phase CommitProbe in :254-272 also catches a variant that resets state in a layout effect, because the parent's probe runs before the flushed sync re-render. I found no other path for a stale completion to reach a different identity."
+     },
+     {
+      "item": "Request failure, retry and unmount preserve the contract",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "MET with named limits. The catch shows the unconfirmed copy and hides raw text (Apply.tsx:112-117). There is no automatic replay, and retry needs an explicit submit (:381-401). Limits: PA-2 can leave a mounted form stuck on 'Submitting...'. Same-principal re-verification (token refresh, USER_UPDATED) silently discards an in-flight outcome (PAV-2). Neither produces a false success."
+     },
+     {
+      "item": "Fixed research_rep role, pending agreement, canonical endpoint and authorization preserved",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The source preserves all of these: role at Apply.tsx:99, accepted={false} at :212, the adapter unchanged, PARTNER_API.apply at partner.ts:33, apiPost sending the Bearer header (api.ts:90-97). The endpoint and Bearer are pinned by tests :190-206, :234 and :340. The pending agreement and the 'does not approve' copy are not pinned by any test, although the source-test map implies they are (PAV-1)."
+     },
+     {
+      "item": "Nothing implies account approval, commission entitlement, verified attribution or successful email delivery",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The confirmation-delivery copy was removed, and :250 asserts it is gone. The agreement text only describes what the agreement covers. Out of scope and unchanged here: the adapter's default 'Received. The team will follow up by email.' (partner.ts:277). Also, api.ts:139-145 maps any 2xx JSON body without both ok:false and a string code to 'ok', so the adapter would show 'Application received.' for, say, {ok:false} with no code. That behaviour is pre-existing and adapter-owned, and the server response shapes are NOT PROVEN."
+     },
+     {
+      "item": "Tests make no live POST or email",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. Every network test stubs global fetch. The spy tests mock exactly the calls they expect (:364, :384-385). ResearchPartnerShell does not fetch (shells.tsx has only a nav-group useEffect). An unexpected call would reach api.ts with a relative URL, and the catch at api.ts:146-147 would return an error. The spy pattern has precedent at Campaigns.test.tsx:124,165@6bd576c. Whether vi.spyOn on the namespace works under Vitest 4 is NOT RUN. If it did not, :381 would fail loudly and :362 would pass silently, but :362 is non-discriminating anyway."
+     },
+     {
+      "item": "Tests discriminate the intended regressions",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "I agree with PARTIAL, with the PA-1 correction: the finally clearing is discriminated by :381-401. Discriminated: key removal or narrowing, the receipt reading mutable state, the line-74 ref guard (:349-360), and the missing catch (:381, and the unhandled rejection in :362 reject). Not discriminated: the ownership conditions and layout cleanup, the .trim() calls, and the pending agreement and non-approval copy (PAV-1)."
+     },
+     {
+      "item": "Authored tests executed",
+      "checkerStatus": "NOT_APPLICABLE",
+      "verifierStatus": "NOT_APPLICABLE",
+      "note": "Tests are NOT RUN by design, and no pass counts are claimed."
+     }
+    ],
+    "missed": [
+     {
+      "id": "PAV-1",
+      "severity": "P3",
+      "title": "The pending agreement and the non-approval copy are preserved in source but no test pins them, and the source-test map implies otherwise",
+      "claim": "The map row 'Existing contract unchanged' credits the 'Original three ... tests retained' with keeping the 'fixed research_rep payload and pending agreement'. No test asserts accepted={false}, 'You do not sign it here', or 'submission does not approve, certify, or activate partner access'. Deleting any of them would not fail a test.",
+      "evidence": "apply.test.tsx@6bd576c has no assertion matching agreement, sign it, approve, or accepted=. The only copy assertions are 'Application received.', 'Contact email submitted: ...', the absence of 'A confirmation will be sent', and the error and unavailable strings. Source: Apply.tsx:134 and :209-226@6bd576c. Registration sourceTestMap row 6.",
+      "fix": "Either narrow the map row to what the tests actually pin (the endpoint, the wire shape and the Bearer token), or add assertions for the pending-agreement state and the non-approval copy."
+     },
+     {
+      "id": "PAV-2",
+      "severity": "P3",
+      "title": "The named same-principal reset limit is wider than token refresh, and a test pins it as required behavior",
+      "claim": "The handoff and the checker name only TOKEN_REFRESHED. Every same-principal re-verification also remounts the form: USER_UPDATED (forced verification, including cross-tab auth events) and refreshMember. Each discards drafts, a displayed receipt, or an in-flight outcome with no unconfirmed notice. The 'token switch' transition (token-b with the same scope member-a, apply.test.tsx:172) pins the same-principal reset as required, so any later continuity fix must change that test.",
+      "evidence": "core.tsx:426-435@6bd576c passes forceVerification = (event === 'USER_UPDATED'). The short-circuit at core.tsx:283 is skipped when forced, and core.tsx:296-299 sets member and memberToken to null for every new or forced verification. refreshMember forces verification (core.tsx:376). Apply.tsx:42 keys on memberToken and Boolean(member). The cart already restores the same account after re-verification via cartScope (core.tsx:292-295 comment and :320), so a parity approach exists.",
+      "fix": "Disclose the full trigger set in the limits. If continuity matters later, follow the cart's precedent: stash drafts and pending attempt metadata outside the keyed instance, and restore them only when the verified cartScope matches. Update the 'token switch' test intent to match."
+     }
+    ],
+    "opinion": "I reviewed the source only; nothing was executed, and the authored tests are NOT RUN. I agree with the checker's disposition, ACCEPTED_WITH_NAMED_LIMITS, and found no P0, P1 or P2 defect. Scope and bindings check out independently. Source 6bd576c changes exactly Apply.tsx and apply.test.tsx. The tree is 16e9afb and the blobs are 26e9d94 (11891 bytes, LF-only) and 63896a0 (17241 bytes). Records a5271e6 sits directly on the source with tree 778da24 and touches only five .xenios paths. The adapter, core and lib files are unchanged.\n\nWhat the fix guarantees, and why:\n- Isolation comes entirely from keying ApplicationForm on [memberToken, Boolean(member), cartScope] (Apply.tsx:42-43@6bd576c).\n- Any change of identity deletes the old fiber in the same commit, and React drops late updates sent to a deleted fiber.\n- This identity is stricter than the principal: each bearer token counts as its own identity. That is the safe direction for isolation, and it is consistent with core.tsx publishing no principal data while a new token is verified.\n- The receipt is rendered from the immutable submitted snapshot.\n- An unexpected throw yields truthful unconfirmed copy, and nothing replays automatically.\n- The research_rep role, the pending agreement, the canonical endpoint and the Bearer authorization are unchanged.\n- The old copy implying email delivery is removed.\n\nAll four checker findings are upheld at P3:\n- PA-1 needs one correction: the clearing in finally is discriminated by :381-401; only its ownership condition is not.\n- PA-2 is strengthened with a concrete path. The partner routes share one reused L/Suspense boundary, and the Back link stays enabled while submitting. Navigating to an unloaded chunk then coming back can leave the form stuck on 'Submitting...'. That is a liveness regression against the parent, not a false success.\n- PA-3 is plausible: the email input's own sanitization trims the value, so the component's trim is not exercised.\n- PA-4 is verified by the arithmetic: 11891+264=12155 and 17241+402=17643.\n\nI add two P3 items:\n- PAV-1: the pending agreement and the non-approval copy are not test-pinned, though the map implies they are.\n- PAV-2: the same-principal reset also fires on USER_UPDATED and refreshMember, not only on token refresh, and the 'token switch' test pins it as required behavior.\n\nThe remaining limits are the adapter-owned ones the checker named, plus the adapter mapping of a 2xx JSON body without both ok:false and a code to 'accepted'.",
+    "deviations": [
+     "Tests are NOT RUN. Whether they discriminate was judged statically, and no pass counts are claimed or inferred.",
+     "The raw SHA-256 of the committed bytes was not recomputed under the allowed tooling: NOT PROVEN. Blob ids, sizes, the CR count (0 for Apply.tsx), line counts and trees were verified with git.",
+     "PA-2 rests on React 19 Suspense semantics (React ^19.2.0 and wouter ^3.3.5 per package.json@6bd576c): hiding a re-suspended boundary runs layout cleanup, and Switch returns a keyless cloned Route. Whether it is reachable at runtime is NOT PROVEN.",
+     "PA-3 assumes jsdom ^29.1.1 implements type=email value sanitization: NOT PROVEN without execution.",
+     "Whether vi.spyOn on the ESM namespace intercepts calls under Vitest ^4.1.10 is NOT PROVEN. The precedent is Campaigns.test.tsx:124,165@6bd576c. A failed intercept would make :381 fail loudly and :362 pass silently, with no live POST in either case.",
+     "Out of scope and pre-existing: api.ts:139-145@6bd576c maps a 2xx JSON body without both ok:false and a string code to 'ok', and partner.ts:276-278 then shows 'Application received.' What the server actually returns is NOT PROVEN.",
+     "Server-side authorization, one-partner-per-member enforcement, duplicate handling on an explicit resubmit, idempotency and email behaviour were not examined: NOT PROVEN.",
+     "Not a finding: the bearer token appears in the React key. It is already present as a prop and in the context value, so the key adds no new exposure.",
+     "I considered and rejected initial-hydration draft loss: the section holds the gate in 'checking' until refreshMember finishes (core.tsx:496-500@6bd576c), so the form is not interactive during the first verification.",
+     "Only git show, diff, rev-parse and cat-file (piped to grep, sed, head or wc) and Read on the registration copy were used. No files were created, modified or deleted, and no interpreter, test, build, MCP tool or network call was used."
+    ]
+   }
+  }
+ ]
+}
