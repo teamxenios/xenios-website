@@ -6,10 +6,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "accepted-source-integration",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-11T17:16:24.630Z",
-      "note": "Same-session integrator six-source phase active on clean141bdf6 after builder59b2241/records141bdf6 handoff and coordinatorac19cfc activation. Lease8703b782 exact six paths only. Disabled/unmounted/enqueue-only, AUTHORED_NOT_RUN. No application/parser/test/build/SQL/browser execution, push, hosted mutation or schedule change. Source acceptance pending and intake unsealed. Requested gpt-6-astra/ultra; actual NOT_EXPOSED."
+      "heartbeatAt": "2026-10-11T17:20:58.0120582Z",
+      "note": "Six-path disabled source8e01ef8660ab2148078e969b2190808fc37a27ad treec79391328a4fc1671c2feaa284b7404b897b487c complete. Sourcewriter stopped; lease8703 handoff. Only own records/Git checkpoint remains. Canonical private context/root clock/browser session authored; actual intake and handler remain disabled. Controls AUTHORED_NOT_RUN; no execution, push, hosted or schedule change. Sourceacceptance pending/intakeunsealed; no independent reviewer restarted. Requested gpt-6-astra/ultra, actualNOT_EXPOSED."
     },
     {
       "id": "claude-opus5-main",

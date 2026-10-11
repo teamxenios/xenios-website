@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "kind": "ACTUAL_SERIAL_INTEGRATOR_SIX_PATH_SOURCE_HANDOFF",
+  "at": "2026-10-11T17:20:58.0120582Z",
+  "session": "codex-accepted-source-integration-20261005",
+  "chat": "01a0e098-3b23-7233-9b07-877ace092650",
+  "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+  "revision": 1,
+  "branch": "codex/accepted-source-integration-20261005",
+  "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "source": "8e01ef8660ab2148078e969b2190808fc37a27ad",
+  "sourceTree": "c79391328a4fc1671c2feaa284b7404b897b487c",
+  "parent": "141bdf6c08c07797e3d10e4f38a3b7f8b486cd8b",
+  "coordinatorAuthority": "ac19cfc8214c48b950a508eaac54ab1245e0a0da",
+  "sourceRecord": {
+    "path": "docs/health-launch/accepted-source-integration-20261005/SIX_PATH_DISABLED_INTEGRATION_SOURCE_20261011.json",
+    "rawSha256": "1a96f8d957d05f3b52502a4ccabfd2348eacfba7a05ee6c88db88f88b19c5402"
+  },
+  "changedSourceBindings": [
+    {
+      "path": "server/research/assisted-order/express.ts",
+      "gitBlob": "f8095696817a87c1eab938911254d81b2e36c727",
+      "committedLfSha256": "f9b41c88eea2c4d60408e707929db09e9f06bded776864d9aa85c06c33b88cbd",
+      "workingTreeSha256": "240b2f3327f48a46130e443defe43360ef64216f72b1652ec335ddd3ba884972",
+      "workingTreeBytes": 13632,
+      "committedBytes": 13351,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "server/research/assisted-order/ports.ts",
+      "gitBlob": "c0d90401bbc4374f2dc42d27d883f4422e99fcc1",
+      "committedLfSha256": "50341a592e8bc313411e8c527e9a032352e20735307314f9470be141f632ee56",
+      "workingTreeSha256": "b1409fc979d576e51b45203eebda0b58d1fbcc481324777ebac9b5618f5848be",
+      "workingTreeBytes": 15091,
+      "committedBytes": 14661,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "server/research/assisted-order/production-deps.ts",
+      "gitBlob": "618306ebeb3a708edecebfb35a2e1e70856bf79e",
+      "committedLfSha256": "acc6be028071697e60ce934655a36e5cef412db63f9a59bc3b23a9e961f09e06",
+      "workingTreeSha256": "7334f33ac249b5a7723dd5c0f9be9e0780d0da6a49014f8eb1e9c5d898bf8a37",
+      "workingTreeBytes": 12238,
+      "committedBytes": 11949,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "server/index.ts",
+      "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+      "committedLfSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+      "workingTreeSha256": "296f8f29ab6057855aea17b2774220e4701c864d2b31b8ec7c26dce90da02ff5",
+      "workingTreeBytes": 78747,
+      "committedBytes": 77299,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "client/src/App.tsx",
+      "gitBlob": "b98a29c91683cbb1e021c2bae50deb789a63608f",
+      "committedLfSha256": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+      "workingTreeSha256": "d5a71ede6b2626d8d6ca1ac47061c8a22878282776c715995df5921713c35ed0",
+      "workingTreeBytes": 17778,
+      "committedBytes": 17502,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "gitBlob": "80265859d204657841c89106c5c355889c7ba4a3",
+      "committedLfSha256": "f4b713c5fea7d8aa2c5d0def4f40c56a3a64eee9a97a405cfd7a078a7ba6e7d1",
+      "workingTreeSha256": "f4b713c5fea7d8aa2c5d0def4f40c56a3a64eee9a97a405cfd7a078a7ba6e7d1",
+      "workingTreeBytes": 38207,
+      "committedBytes": 38207,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    }
+  ],
+  "sourceCommitAlsoContainsOwnClaimMetadata": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-accepted-source-integration-20261005.json"
+  ],
+  "leaseBefore": {
+    "id": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
+    "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+    "session": "codex-accepted-source-integration-20261005",
+    "state": "active",
+    "claimedAt": "2026-10-11T17:10:35.656Z",
+    "heartbeatAt": "2026-10-11T17:16:24.63Z",
+    "paths": [
+      "server/research/assisted-order/express.ts",
+      "server/research/assisted-order/ports.ts",
+      "server/research/assisted-order/production-deps.ts",
+      "server/index.ts",
+      "client/src/App.tsx",
+      "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    ],
+    "authorityCommit": "ac19cfc8214c48b950a508eaac54ab1245e0a0da",
+    "base": "141bdf6c08c07797e3d10e4f38a3b7f8b486cd8b",
+    "scopeNote": "Actual same-integrator claim after verified builder handoff bda2eb53c06bc21efcf2eef8de26c33daf3aa2dfcfabd86adb0d128bbbf46290 and clean b22f/3221/389a no active exact-path overlap. Only these six source paths plus own records; serial source/Git writer. Disabled/unmounted/enqueue-only; AUTHORED_NOT_RUN, no execution, push, activation or schedule changes. No seventh path or new worker."
+  },
+  "leaseAfter": {
+    "id": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
+    "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+    "session": "codex-accepted-source-integration-20261005",
+    "state": "handoff",
+    "claimedAt": "2026-10-11T17:10:35.656Z",
+    "heartbeatAt": "2026-10-11T17:20:58.0120582Z",
+    "paths": [
+      "server/research/assisted-order/express.ts",
+      "server/research/assisted-order/ports.ts",
+      "server/research/assisted-order/production-deps.ts",
+      "server/index.ts",
+      "client/src/App.tsx",
+      "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    ],
+    "authorityCommit": "ac19cfc8214c48b950a508eaac54ab1245e0a0da",
+    "base": "141bdf6c08c07797e3d10e4f38a3b7f8b486cd8b",
+    "scopeNote": "Actual same-integrator claim after verified builder handoff bda2eb53c06bc21efcf2eef8de26c33daf3aa2dfcfabd86adb0d128bbbf46290 and clean b22f/3221/389a no active exact-path overlap. Only these six source paths plus own records; serial source/Git writer. Disabled/unmounted/enqueue-only; AUTHORED_NOT_RUN, no execution, push, activation or schedule changes. No seventh path or new worker.",
+    "completedAt": "2026-10-11T17:20:58.0120582Z",
+    "sourceCommit": "8e01ef8660ab2148078e969b2190808fc37a27ad",
+    "handoff": ".xenios/handoffs/2026-10-11-QUICK-ORDER-SIX-PATH-SOURCE-codex-accepted-source-integration-20261005.json",
+    "sourceWriterStopped": true,
+    "noAutomaticReactivation": true
+  },
+  "sourceWriterStopped": true,
+  "gitWriterBoundary": "Stop after this records-only checkpoint and read-only commit/status verification.",
+  "sourceAcceptance": "PENDING_ORIGINAL_REVIEW",
+  "execution": "AUTHORED_NOT_RUN_NO_APPLICATION_PARSER_BUILD_TEST_SQL_BROWSER_G0_EXECUTION",
+  "publication": "LOCAL_ONLY_NO_PUSH",
+  "disabled": {
+    "productionReady": false,
+    "enabled": false,
+    "activeHandlerMounted": false,
+    "rawContainment": true,
+    "notificationDeliveryAdded": false
+  },
+  "originalFrozenReview": {
+    "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+    "records": "735254e4cc6230479c9bfa821e1c6991389d5266",
+    "unchanged": true,
+    "intakeResealed": false,
+    "reviewerRestarted": false,
+    "successorAccepted": false
+  },
+  "metadataChecks": {
+    "foreignRowsAndTopFieldsPreservedBeforeSourceCommit": true,
+    "foreignLeaseMutation": false,
+    "ownershipRegistryRawSha256": "b0fb285cdec834fbc2cf87846c8d56439a70f77f9335cdc717fd3036045d67e7",
+    "all35SourceEvidenceWorkingBytesMatchedGitAfterCRLFNormalization": true
+  },
+  "limitations": [
+    "Neither compilation nor behavioral correctness has been executed in this phase. Static readings/hashes are not runtime acceptance.",
+    "The root API remains raw-contained and the App remains disabled. Synthetic positive controls cannot qualify a customer request, production Auth, persistence or notification delivery.",
+    "Browser Auth configuration/bootstrap uses the existing Supabase client; its actual network/session persistence is not tested by the synthetic client. No new Auth store exists. Early Access-only browser identity has no trusted exposed stable key in this scope, so it receives no guessed browser fallback.",
+    "Root entry ordering is a source-text control, not executed Node timing/clock evidence. Qualified timer/transport/cleanup/deployed configuration remain absent.",
+    "All eight customer files and existing builder controls are preserved, not rerun. Existing root test commentary saying integrator stage is future is historical; this phase cannot edit its unleased path or relabel it executed.",
+    "Original independent review target aa857e4f94df95f09a1402fb1cbf08042a3bc19f / records735254e4cc6230479c9bfa821e1c6991389d5266 remains immutable. Intake/currentness SQL and PENDING receipts are unchanged/unsealed.",
+    "No independent reviewer was restarted, contacted or claimed active/accepting this successor."
+  ],
+  "remainingPrerequisites": [
+    "Original reviewer disposition of frozen r2/currentness dependency, intake reseal by the existing builder only after actual acceptance, and exact successor composition review.",
+    "Actual approved Health legal/visibility/destination/configuration/recipient inputs, implemented snapshot and complete authorized census.",
+    "Qualified operational profile and transaction transport with real pre-BEGIN/role/settings/writer-order/cleanup evidence, separately scoped installation actors and targets.",
+    "Fresh exact-target execution authority and exclusive reservation before application imports, typecheck/build/tests, SQL/verifier/browser or G0 work. Preserve failures/timeouts/skips separately when eventually executed.",
+    "Protected-change/exact-hash release review and independent staging/production installation, activation and deployment approvals. None supplied by this checkpoint."
+  ],
+  "nextCoordinatorAction": "Collect this exact local source/tree and separate records commit. Preserve original frozen review; request only the bounded successor review/remaining inputs through authorized coordination. Do not execute, push, install, enable or deploy automatically.",
+  "recordsIdentity": "Containing records-only commit is reported separately after commit; source/tree above is the authored candidate, not an executed runtime.",
+  "requestedModel": "gpt-6-astra",
+  "requestedEffort": "ultra",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}

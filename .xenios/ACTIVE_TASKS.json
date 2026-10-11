@@ -8,8 +8,8 @@
       "title": "Existing disabled integration: exact registry phase and prepared fixed copy boundary",
       "owner": "codex-accepted-source-integration-20261005",
       "priority": "P1",
-      "state": "claimed",
-      "phase": "INTEGRATOR_SIX_SOURCE_ACTIVE_AUTHORED_NOT_RUN",
+      "state": "qa",
+      "phase": "SIX_PATH_SOURCE_COMPLETE_HANDOFF_AUTHORED_NOT_RUN",
       "sourceClaimedAt": "2026-10-11T17:10:35.656Z",
       "sourceLeaseId": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
       "sourceBase": "141bdf6c08c07797e3d10e4f38a3b7f8b486cd8b",
@@ -35,12 +35,17 @@
         "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
       ],
       "authority": "Coordinator21d904fa81835a6c26897df6269d295b95d13110; direct human message01a12bcc-bf04-7432-aa45-9ed470620aa4, question call_719baecbf87e44438894171c9a66a8b7. Approved identity f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd.",
-      "scopeNote": "Actual source phase after builder59b2241/records141bdf6 and coordinatorac19cfc activation. Only exact six source paths; own metadata/evidence allowed. Prior copy62-path grant ended under843092f2 handoff and retained in copyReceipt/copyHandoff. All foreign leases preserved. Disabled/unmounted/enqueue-only. Source acceptance pending; intake/currentness receipts unsealed and unchanged. LOCAL_ONLY/AUTHORED_NOT_RUN; no execution, push, hosted, manifest or schedule changes.",
+      "scopeNote": "Six-path disabled source8e01ef8660ab2148078e969b2190808fc37a27ad treec79391328a4fc1671c2feaa284b7404b897b487c complete. Sourcewriter stopped; lease8703 handoff. Only own records/Git checkpoint remains. Canonical private context/root clock/browser session authored; actual intake and handler remain disabled. Controls AUTHORED_NOT_RUN; no execution, push, hosted or schedule change. Sourceacceptance pending/intakeunsealed; no independent reviewer restarted. Requested gpt-6-astra/ultra, actualNOT_EXPOSED.",
       "requestedModel": "gpt-6-astra",
       "requestedEffort": "ultra",
       "actualModel": "NOT_EXPOSED",
       "actualEffort": "NOT_EXPOSED",
-      "heartbeatAt": "2026-10-11T17:16:24.630Z"
+      "heartbeatAt": "2026-10-11T17:20:58.0120582Z",
+      "sourceCompletedAt": "2026-10-11T17:20:58.0120582Z",
+      "sourceCommit": "8e01ef8660ab2148078e969b2190808fc37a27ad",
+      "sourceTree": "c79391328a4fc1671c2feaa284b7404b897b487c",
+      "sourceRecord": "docs/health-launch/accepted-source-integration-20261005/SIX_PATH_DISABLED_INTEGRATION_SOURCE_20261011.json",
+      "sourceHandoff": ".xenios/handoffs/2026-10-11-QUICK-ORDER-SIX-PATH-SOURCE-codex-accepted-source-integration-20261005.json"
     },
     {
       "id": "QUICK-ORDER-CI-PUBLISHED-BASELINE-COMPARISON-20261010",

@@ -1,0 +1,623 @@
+{
+  "schemaVersion": 1,
+  "kind": "DISABLED_SIX_PATH_SOURCE_HANDOFF_RECORD",
+  "at": "2026-10-11T17:18:56.8219086Z",
+  "session": "codex-accepted-source-integration-20261005",
+  "chat": "01a0e098-3b23-7233-9b07-877ace092650",
+  "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+  "revision": 1,
+  "branch": "codex/accepted-source-integration-20261005",
+  "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "source": "8e01ef8660ab2148078e969b2190808fc37a27ad",
+  "sourceTree": "c79391328a4fc1671c2feaa284b7404b897b487c",
+  "parent": "141bdf6c08c07797e3d10e4f38a3b7f8b486cd8b",
+  "builderSource": "59b22418bf4fb42719c54eb183c738981b37a642",
+  "builderTree": "bef6618c176cbbb8fe20a5e1740abf345947413a",
+  "builderRecords": "141bdf6c08c07797e3d10e4f38a3b7f8b486cd8b",
+  "builderHandoff": {
+    "path": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-handoff.json",
+    "rawSha256": "bda2eb53c06bc21efcf2eef8de26c33daf3aa2dfcfabd86adb0d128bbbf46290",
+    "actualHashMatched": true,
+    "sourceAndGitWriterStoppedPerCommittedHandoff": true
+  },
+  "coordinatorAuthority": "ac19cfc8214c48b950a508eaac54ab1245e0a0da",
+  "directAuthority": {
+    "sourceApproval": "c75485938ecdcd8b3e0d50cd7747ad9e65fb1dee",
+    "registryDisposition": "21d904fa81835a6c26897df6269d295b95d13110",
+    "humanMessage": "01a12bcc-bf04-7432-aa45-9ed470620aa4",
+    "answer": "Approve this exact bounded decision",
+    "notGeneralControlPlaneTakeover": true
+  },
+  "implementationAck": {
+    "baseWasClean": true,
+    "noActiveExactPathOverlapAcross": [
+      "b22f",
+      "3221",
+      "389a"
+    ],
+    "leaseId": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
+    "onlyWriter": "same integrator; no new helper/session/task",
+    "claimedBeforeSourceWrites": true,
+    "observedClaimRecordAt": "2026-10-11T17:10:35.656Z",
+    "claimTimestampNote": "Replaced an initial rounded future 17:11:00 placeholder with the observed post-claim timestamp; not an asserted exact first-write time."
+  },
+  "changedSourceBindings": [
+    {
+      "path": "server/research/assisted-order/express.ts",
+      "gitBlob": "f8095696817a87c1eab938911254d81b2e36c727",
+      "committedLfSha256": "f9b41c88eea2c4d60408e707929db09e9f06bded776864d9aa85c06c33b88cbd",
+      "workingTreeSha256": "240b2f3327f48a46130e443defe43360ef64216f72b1652ec335ddd3ba884972",
+      "workingTreeBytes": 13632,
+      "committedBytes": 13351,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "server/research/assisted-order/ports.ts",
+      "gitBlob": "c0d90401bbc4374f2dc42d27d883f4422e99fcc1",
+      "committedLfSha256": "50341a592e8bc313411e8c527e9a032352e20735307314f9470be141f632ee56",
+      "workingTreeSha256": "b1409fc979d576e51b45203eebda0b58d1fbcc481324777ebac9b5618f5848be",
+      "workingTreeBytes": 15091,
+      "committedBytes": 14661,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "server/research/assisted-order/production-deps.ts",
+      "gitBlob": "618306ebeb3a708edecebfb35a2e1e70856bf79e",
+      "committedLfSha256": "acc6be028071697e60ce934655a36e5cef412db63f9a59bc3b23a9e961f09e06",
+      "workingTreeSha256": "7334f33ac249b5a7723dd5c0f9be9e0780d0da6a49014f8eb1e9c5d898bf8a37",
+      "workingTreeBytes": 12238,
+      "committedBytes": 11949,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "server/index.ts",
+      "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+      "committedLfSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+      "workingTreeSha256": "296f8f29ab6057855aea17b2774220e4701c864d2b31b8ec7c26dce90da02ff5",
+      "workingTreeBytes": 78747,
+      "committedBytes": 77299,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "client/src/App.tsx",
+      "gitBlob": "b98a29c91683cbb1e021c2bae50deb789a63608f",
+      "committedLfSha256": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+      "workingTreeSha256": "d5a71ede6b2626d8d6ca1ac47061c8a22878282776c715995df5921713c35ed0",
+      "workingTreeBytes": 17778,
+      "committedBytes": 17502,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "gitBlob": "80265859d204657841c89106c5c355889c7ba4a3",
+      "committedLfSha256": "f4b713c5fea7d8aa2c5d0def4f40c56a3a64eee9a97a405cfd7a078a7ba6e7d1",
+      "workingTreeSha256": "f4b713c5fea7d8aa2c5d0def4f40c56a3a64eee9a97a405cfd7a078a7ba6e7d1",
+      "workingTreeBytes": 38207,
+      "committedBytes": 38207,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": true
+    }
+  ],
+  "changedOwnMetadata": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-accepted-source-integration-20261005.json"
+  ],
+  "preservedBindings": [
+    {
+      "path": "server/research/health/quick-order/handler.d.mts",
+      "gitBlob": "c66aaf35fdc6bb4a438edb7e7f7dd0e8788db145",
+      "committedLfSha256": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf",
+      "workingTreeSha256": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf",
+      "workingTreeBytes": 1479,
+      "committedBytes": 1479,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "server/research/health/quick-order/handler.mjs",
+      "gitBlob": "fb6cf7acb478f9b15adae7c1d099e5e325ab4952",
+      "committedLfSha256": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a",
+      "workingTreeSha256": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a",
+      "workingTreeBytes": 16529,
+      "committedBytes": 16529,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "gitBlob": "3266ff8475f726037e6b03ddfa434e262432e252",
+      "committedLfSha256": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
+      "workingTreeSha256": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
+      "workingTreeBytes": 5390,
+      "committedBytes": 5390,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "gitBlob": "8b2a7b51d6db7cc34ce35e6ec52c5c2c4023fa16",
+      "committedLfSha256": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
+      "workingTreeSha256": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
+      "workingTreeBytes": 30667,
+      "committedBytes": 30667,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "gitBlob": "e7c8d9f57aab964f47bf6d305297dc392b621e40",
+      "committedLfSha256": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
+      "workingTreeSha256": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
+      "workingTreeBytes": 9743,
+      "committedBytes": 9743,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
+      "committedLfSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+      "workingTreeSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+      "workingTreeBytes": 19984,
+      "committedBytes": 19984,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "gitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+      "committedLfSha256": "318d972ba38d7aaca460f5af07cf9bab98358856a55919e3b59fdebddd0d29df",
+      "workingTreeSha256": "50e4030330542b868e804ff7ce0e7ff958527eb82098f6fda4c0e02f218c5ee9",
+      "workingTreeBytes": 14490,
+      "committedBytes": 14175,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "gitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+      "committedLfSha256": "2de8f721636c1132100e0575fed69ed8bae9e56f280e17c282dd61095acb0f9c",
+      "workingTreeSha256": "e1994fdfc2075d200d52a5b7c47c5d6cc5a8f3980289bf4ffa5039a279b37228",
+      "workingTreeBytes": 17442,
+      "committedBytes": 17229,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "gitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+      "committedLfSha256": "1083046402cb666676f21f5039e33b0a172daea06806c50af85bb28c1f1c4f36",
+      "workingTreeSha256": "132d98f156b0140cce04bfc20ff6fb9495237111b2953a34db118043c47371d5",
+      "workingTreeBytes": 16207,
+      "committedBytes": 15921,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "gitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+      "committedLfSha256": "f2a0255798b2bee752bf10ef53986e7b9971e15e57767d576452377b4ee0d3be",
+      "workingTreeSha256": "b62843ba597878c2d4d5de67adf146214ee031904b61dd0f490b9a98e4aab4a7",
+      "workingTreeBytes": 19376,
+      "committedBytes": 19102,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "gitBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+      "committedLfSha256": "e20b1c55aecf8fa02675ecd7823cb54044bd4ba1d28da2d332341b885a63f6f0",
+      "workingTreeSha256": "e20b1c55aecf8fa02675ecd7823cb54044bd4ba1d28da2d332341b885a63f6f0",
+      "workingTreeBytes": 11565,
+      "committedBytes": 11565,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "gitBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+      "committedLfSha256": "e81747bf0136bd01069521f8fd7a8e2954ee9155cb381fa74b57882622201410",
+      "workingTreeSha256": "e81747bf0136bd01069521f8fd7a8e2954ee9155cb381fa74b57882622201410",
+      "workingTreeBytes": 16324,
+      "committedBytes": 16324,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.tsx",
+      "gitBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+      "committedLfSha256": "77fd81564c4efb969972f9a6f0433c5be9054463837464be2c99eac56d08177c",
+      "workingTreeSha256": "6839925eebe0359db61a112ba623bf0cd2d30d488ca61a51258a0c7fa072a75b",
+      "workingTreeBytes": 3716,
+      "committedBytes": 3678,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "gitBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+      "committedLfSha256": "bd90e658ca78662403df3232bce754fc74a07c9300021a073cc7fe05da831c66",
+      "workingTreeSha256": "bd90e658ca78662403df3232bce754fc74a07c9300021a073cc7fe05da831c66",
+      "workingTreeBytes": 8643,
+      "committedBytes": 8643,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "gitBlob": "307d903f2b83a3252a1dde38f199c88e51cae2af",
+      "committedLfSha256": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
+      "workingTreeSha256": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
+      "workingTreeBytes": 31788,
+      "committedBytes": 31788,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "gitBlob": "f518b2220bda12985f4279adc9eaddb136d60689",
+      "committedLfSha256": "cde91d113aea9cef4c8104da9d51ac78c702f553b05e7476659d2565492eee3b",
+      "workingTreeSha256": "cde91d113aea9cef4c8104da9d51ac78c702f553b05e7476659d2565492eee3b",
+      "workingTreeBytes": 90171,
+      "committedBytes": 90171,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "gitBlob": "d95e246733dbbb9d7df027422c51069efdb46b79",
+      "committedLfSha256": "9cf375e4ecfea2bf1818c6f4008a2842d3e1752e3549dabf4a5c72388828b106",
+      "workingTreeSha256": "9cf375e4ecfea2bf1818c6f4008a2842d3e1752e3549dabf4a5c72388828b106",
+      "workingTreeBytes": 15884,
+      "committedBytes": 15884,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "gitBlob": "d25dae0d6979af6dcb37c07c939f03fba7bf72c5",
+      "committedLfSha256": "12c16a6741f12ddd60f789de073e6b784d38ec5658c609ff819e60dcae455cde",
+      "workingTreeSha256": "12c16a6741f12ddd60f789de073e6b784d38ec5658c609ff819e60dcae455cde",
+      "workingTreeBytes": 15890,
+      "committedBytes": 15890,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "gitBlob": "f3726bf805f252e8c41dc61ea1ae6dbec073b89d",
+      "committedLfSha256": "a4c517f491b6e4e80db6b05cbdce3bfa98d3e8b25f365c954498e3b632f6b8b7",
+      "workingTreeSha256": "a4c517f491b6e4e80db6b05cbdce3bfa98d3e8b25f365c954498e3b632f6b8b7",
+      "workingTreeBytes": 20967,
+      "committedBytes": 20967,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "gitBlob": "b77b75321e34e3ea48e64ae4b9260b2eec63dbb6",
+      "committedLfSha256": "bbc040e6bf7b2656ca5b5a4e0c82d408313346163f4915a4e780784d8af8c1fc",
+      "workingTreeSha256": "bbc040e6bf7b2656ca5b5a4e0c82d408313346163f4915a4e780784d8af8c1fc",
+      "workingTreeBytes": 83410,
+      "committedBytes": 83410,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+      "committedLfSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+      "workingTreeSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+      "workingTreeBytes": 226183,
+      "committedBytes": 226183,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+      "committedLfSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+      "workingTreeSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+      "workingTreeBytes": 17174,
+      "committedBytes": 17174,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+      "committedLfSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+      "workingTreeSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+      "workingTreeBytes": 16996,
+      "committedBytes": 16996,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+      "committedLfSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+      "workingTreeSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+      "workingTreeBytes": 27232,
+      "committedBytes": 27232,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "gitBlob": "120449d62dbc44131d3563868b522476a021a2b1",
+      "committedLfSha256": "2665acf43a800935db407f872dbc0fe0dcdfbedc74c7f869796511c02b8a4b7e",
+      "workingTreeSha256": "2665acf43a800935db407f872dbc0fe0dcdfbedc74c7f869796511c02b8a4b7e",
+      "workingTreeBytes": 210310,
+      "committedBytes": 210310,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+      "committedLfSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+      "workingTreeSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+      "workingTreeBytes": 54259,
+      "committedBytes": 54259,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "b9b5baa7bd274a986b03fff05817876062a6de34",
+      "committedLfSha256": "899fd2650fa718b17df3b4d390c1b143406a84f5688f6725406a1fa2dd52a65d",
+      "workingTreeSha256": "899fd2650fa718b17df3b4d390c1b143406a84f5688f6725406a1fa2dd52a65d",
+      "workingTreeBytes": 54957,
+      "committedBytes": 54957,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "10c5bb140a457a8f9573d445819b3cfaae4083b7",
+      "committedLfSha256": "c1aa004100a3f2fa6b0ce61ea630b25ef6c16e2ed839944fdd674fc2ba046e09",
+      "workingTreeSha256": "c1aa004100a3f2fa6b0ce61ea630b25ef6c16e2ed839944fdd674fc2ba046e09",
+      "workingTreeBytes": 80563,
+      "committedBytes": 80563,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "ce735606fba41175bae48fb7615117982d94bc36",
+      "committedLfSha256": "df943e9085de28f8db72e35c8d869125c9c8c77888845a2826dbe54c31ca94a9",
+      "workingTreeSha256": "df943e9085de28f8db72e35c8d869125c9c8c77888845a2826dbe54c31ca94a9",
+      "workingTreeBytes": 579988,
+      "committedBytes": 579988,
+      "normalizedWorkingBytesMatchGitBlob": true,
+      "changedInSix": false
+    }
+  ],
+  "bindingScope": "Raw working-file SHA-256 and canonical LF Git blob checks only. CRLF/mixed working representations are not confused with committed bytes. No application code imported or executed.",
+  "preliminaryComparisonLimitation": "An initial metadata probe treated Git-only excluded entries as if they contained SHA-256 fields, yielding false rawMatches against absent values; those booleans are not test failures or evidence of edits. The 35-row corrected binding check reconstructs LF Git blob identities from actual bytes. Only the six authorized source paths changed.",
+  "implementation": [
+    {
+      "paths": [
+        "server/research/assisted-order/ports.ts",
+        "server/research/assisted-order/express.ts"
+      ],
+      "result": "Server-private four-field context retained in a WeakMap keyed by exact canonical viewer. Capture cookie before await; resolve live session, use stored hash reader, require member/customer directory match for members. Existing deliberate viewer double digest preserved. No private context on anonymous/admin/copied viewers."
+    },
+    {
+      "paths": [
+        "server/research/assisted-order/production-deps.ts"
+      ],
+      "result": "Reuse same canonical service/catalog callbacks/holds and RPC client. Replay RPC allowlist only; discard any untrusted extra result fields. Missing expected digest/limits/recipient/Health legal/visibility/destination explicitly absent. Zero maximum delay and throwing scheduler explicitly deny admission, not timer/cleanup proof. Ordinary RPC cannot acknowledge transaction outcome."
+    },
+    {
+      "paths": [
+        "server/index.ts"
+      ],
+      "result": "Sample Node HTTP callback entry once before calling Express using root-private request-identity WeakMap. Same monotonic clock supplied to disabled candidate runtime.now. Timestamp is not socket/proxy arrival. Raw containment precedes parsers. Factory is constructed but handler is not imported/mounted. Repository supplies configured owner, canonical constant supplies required role. No fallback owner/config or new data/Auth client."
+    },
+    {
+      "paths": [
+        "client/src/App.tsx"
+      ],
+      "result": "Exact /health/quick-order route uses existing page and canonical browser Auth client. Non-secret per-account boundary rotates on logout/account change; token refresh updates only volatile transport authority. Abort/discard on account change; bounded same-origin authenticated transport. Actual page prop intakeEnabled=false; no production enable flag added."
+    },
+    {
+      "paths": [
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+      ],
+      "result": "Authored full-App session/refusal/recovery/account-change/privacy controls, canonical context and disabled dependency controls, text-only root ordering control and eight frozen customer blob controls. Test-only readiness override explicitly separated from actual false App prop."
+    }
+  ],
+  "authoredControls": [
+    {
+      "id": "INT-CTX-01",
+      "scope": "Captured canonical cookie, successful resolver, stored hash distinct from deliberate viewer double hash; exact verified viewer WeakMap binding.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-CTX-02",
+      "scope": "Missing owner/role, invalid owner, wrong role, wrong-member/absent binding, failed live session, cloned viewer and admin all refuse private context.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-CTX-03",
+      "scope": "Early Access actor comes from canonical opaque customer. Public Quick Order session remains actorId/csrfToken only.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-ROOT-01",
+      "scope": "Text ordering control for Node callback first stamp, no overwrite, private WeakMap, same runtime clock, no replacement timestamp, raw containment before parsers.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-DEP-01",
+      "scope": "Actual disabled factory with synthetic service/Auth/RPC: false readiness/config, strict-null miss, new commit refused, authorized receipt recovery without entry stamp, undefined recovery rejected, copied public session rejected.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-APP-01",
+      "scope": "Actual App with synthetic canonical Auth: disabled production prop always false; no collection, tokens/private context not serialized; no intake transport while disabled.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-APP-02",
+      "scope": "Absent, expired and email-as-identity sessions refuse; late initial session cannot resurrect a signed-out account.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-APP-03",
+      "scope": "TEST-ONLY page-readiness override exercises actual App/session/page: unknown request retains exact bytes/key across token refresh and disable; fresh CSRF/current bearer on recovery.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-APP-04",
+      "scope": "TEST-ONLY page-readiness override: in-flight account switch, sign-out and password recovery abort/discard and do not render late receipt.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-APP-05",
+      "scope": "TEST-ONLY page-readiness override: 401/403/503 preserve unresolved state without inventing receipt or exposing arbitrary server detail.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-APP-06",
+      "scope": "Canonical transport refuses non-intake/cross-origin targets before attaching credentials.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-PRIVACY-01",
+      "scope": "Retained real App/PWA privacy, attribution clearing, no marketing beacon/install promotion, shell/home/control behavior, with Auth explicitly synthetic.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    },
+    {
+      "id": "INT-CUSTOMER-01",
+      "scope": "Eight accepted customer files have immutable blob controls. Identity preservation only, not behavioral re-execution.",
+      "status": "AUTHORED_NOT_RUN",
+      "file": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+    }
+  ],
+  "controlInventoryIsNotPassCount": true,
+  "unchangedBuilderContract": "Builder handler optional derived getExisting payload hash, strict-null miss, recovery-only missing hash, undefined refusal and original one-use attempt/deadline/key/concurrent-uncertain semantics retained byte-identically.",
+  "checksActuallyPerformed": [
+    {
+      "kind": "read_only_git_and_metadata",
+      "command": "git status --short; git rev-parse HEAD; Get-FileHash .xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-handoff.json -Algorithm SHA256",
+      "result": "Clean141bdf6 and exact builder handoff hash before editing."
+    },
+    {
+      "kind": "read_only_text_git",
+      "command": "git diff --check; git diff --cached --check",
+      "exitStatus": 0,
+      "result": "No whitespace errors. Not a compiler, parser, release gate or test."
+    },
+    {
+      "kind": "metadata_json_comparison",
+      "command": "PowerShell ConvertFrom-Json comparisons against git show 141bdf6:<metadata>, excluding only this task/session/new8703 lease.",
+      "result": "Foreign rows and top fields preserved for ACTIVE_TASKS, SESSION_REGISTRY and CODE_OWNERSHIP."
+    },
+    {
+      "kind": "raw_byte_identity",
+      "command": "Get-FileHash; .NET SHA256/SHA1 over working bytes, LF canonicalization and Git blob header, compared with git rev-parse HEAD:<path>.",
+      "result": "All35 corrected Git blob checks match; six authorized source paths changed,29 other source/evidence/customer bindings retained."
+    },
+    {
+      "kind": "ownership_registry_identity",
+      "command": "Get-FileHash docs/coordination/FILE_OWNERSHIP.json -Algorithm SHA256",
+      "result": "b0fb285cdec834fbc2cf87846c8d56439a70f77f9335cdc717fd3036045d67e7 unchanged."
+    },
+    {
+      "kind": "local_source_checkpoint",
+      "command": "git -c core.hooksPath=C:/Users/sboad/.codex/xenios-disabled-hooks -c commit.gpgSign=false commit ...",
+      "exitStatus": 0,
+      "result": "8e01ef8660ab2148078e969b2190808fc37a27ad",
+      "hooksDirectoryVerifiedAbsent": true
+    }
+  ],
+  "execution": {
+    "applicationImports": "NOT_RUN",
+    "syntaxParser": "NOT_RUN",
+    "typecheck": "NOT_RUN",
+    "build": "NOT_RUN",
+    "tests": "AUTHORED_NOT_RUN",
+    "sql": "NOT_RUN",
+    "verifiers": "NOT_RUN",
+    "g0": "NOT_RUN",
+    "browser": "NOT_RUN",
+    "server": "NOT_LAUNCHED",
+    "installs": "NOT_RUN",
+    "nodeVersion": "NOT_INVOKED_THIS_PHASE",
+    "npmVersion": "NOT_INVOKED_THIS_PHASE",
+    "noFullSuitePassClaim": true
+  },
+  "limitations": [
+    "Neither compilation nor behavioral correctness has been executed in this phase. Static readings/hashes are not runtime acceptance.",
+    "The root API remains raw-contained and the App remains disabled. Synthetic positive controls cannot qualify a customer request, production Auth, persistence or notification delivery.",
+    "Browser Auth configuration/bootstrap uses the existing Supabase client; its actual network/session persistence is not tested by the synthetic client. No new Auth store exists. Early Access-only browser identity has no trusted exposed stable key in this scope, so it receives no guessed browser fallback.",
+    "Root entry ordering is a source-text control, not executed Node timing/clock evidence. Qualified timer/transport/cleanup/deployed configuration remain absent.",
+    "All eight customer files and existing builder controls are preserved, not rerun. Existing root test commentary saying integrator stage is future is historical; this phase cannot edit its unleased path or relabel it executed.",
+    "Original independent review target aa857e4f94df95f09a1402fb1cbf08042a3bc19f / records735254e4cc6230479c9bfa821e1c6991389d5266 remains immutable. Intake/currentness SQL and PENDING receipts are unchanged/unsealed.",
+    "No independent reviewer was restarted, contacted or claimed active/accepting this successor."
+  ],
+  "release": {
+    "productionReady": false,
+    "enabled": false,
+    "activeHttpHandlerMounted": false,
+    "rawContainment": true,
+    "notificationMode": "ENQUEUE_ONLY_CANONICAL_OUTBOX_NO_DELIVERY_ADDED",
+    "sourceAcceptance": "PENDING_ORIGINAL_REVIEW",
+    "intakeSeal": "UNSEALED_UNCHANGED",
+    "productionReadyClaim": false,
+    "customerPurchaseReadyClaim": false,
+    "hostedMutation": false,
+    "liveIntake": false,
+    "payment": false,
+    "emailDelivery": false,
+    "push": false,
+    "pr": false,
+    "workflow": false,
+    "schedules": "UNCHANGED"
+  },
+  "remainingPrerequisites": [
+    "Original reviewer disposition of frozen r2/currentness dependency, intake reseal by the existing builder only after actual acceptance, and exact successor composition review.",
+    "Actual approved Health legal/visibility/destination/configuration/recipient inputs, implemented snapshot and complete authorized census.",
+    "Qualified operational profile and transaction transport with real pre-BEGIN/role/settings/writer-order/cleanup evidence, separately scoped installation actors and targets.",
+    "Fresh exact-target execution authority and exclusive reservation before application imports, typecheck/build/tests, SQL/verifier/browser or G0 work. Preserve failures/timeouts/skips separately when eventually executed.",
+    "Protected-change/exact-hash release review and independent staging/production installation, activation and deployment approvals. None supplied by this checkpoint."
+  ],
+  "nextCoordinatorAction": "Collect this exact local source/tree and separate records commit. Preserve original frozen review; request only the bounded successor review/remaining inputs through authorized coordination. Do not execute, push, install, enable or deploy automatically.",
+  "requestedModel": "gpt-6-astra",
+  "requestedEffort": "ultra",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED",
+  "skillUse": {
+    "skill": "supabase",
+    "effect": "Reused canonical Auth/member and RPC authorities; private fields stay server-side, no user metadata grants, no second client/store and no fabricated transaction proof. Query/advisor execution withheld under controlling no-execution scope.",
+    "references": [
+      "https://supabase.com/docs/guides/auth/server-side",
+      "https://supabase.com/changelog",
+      "https://nodejs.org/download/release/v20.19.0/docs/api/http.html#httpcreateserveroptions-requestlistener"
+    ],
+    "changelogMarkdownAttempt": "Unsupported content type; HTML changelog read instead. No SDK/API upgrade or database change."
+  },
+  "handoffPath": ".xenios/handoffs/2026-10-11-QUICK-ORDER-SIX-PATH-SOURCE-codex-accepted-source-integration-20261005.json"
+}

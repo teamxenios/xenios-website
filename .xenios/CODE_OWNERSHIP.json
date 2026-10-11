@@ -5,9 +5,9 @@
       "id": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
       "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
       "session": "codex-accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-11T17:10:35.656Z",
-      "heartbeatAt": "2026-10-11T17:16:24.630Z",
+      "heartbeatAt": "2026-10-11T17:20:58.0120582Z",
       "paths": [
         "server/research/assisted-order/express.ts",
         "server/research/assisted-order/ports.ts",
@@ -18,7 +18,12 @@
       ],
       "authorityCommit": "ac19cfc8214c48b950a508eaac54ab1245e0a0da",
       "base": "141bdf6c08c07797e3d10e4f38a3b7f8b486cd8b",
-      "scopeNote": "Actual same-integrator claim after verified builder handoff bda2eb53c06bc21efcf2eef8de26c33daf3aa2dfcfabd86adb0d128bbbf46290 and clean b22f/3221/389a no active exact-path overlap. Only these six source paths plus own records; serial source/Git writer. Disabled/unmounted/enqueue-only; AUTHORED_NOT_RUN, no execution, push, activation or schedule changes. No seventh path or new worker."
+      "scopeNote": "Actual same-integrator claim after verified builder handoff bda2eb53c06bc21efcf2eef8de26c33daf3aa2dfcfabd86adb0d128bbbf46290 and clean b22f/3221/389a no active exact-path overlap. Only these six source paths plus own records; serial source/Git writer. Disabled/unmounted/enqueue-only; AUTHORED_NOT_RUN, no execution, push, activation or schedule changes. No seventh path or new worker.",
+      "completedAt": "2026-10-11T17:20:58.0120582Z",
+      "sourceCommit": "8e01ef8660ab2148078e969b2190808fc37a27ad",
+      "handoff": ".xenios/handoffs/2026-10-11-QUICK-ORDER-SIX-PATH-SOURCE-codex-accepted-source-integration-20261005.json",
+      "sourceWriterStopped": true,
+      "noAutomaticReactivation": true
     },
     {
       "id": "843092f2-95b2-4724-98c0-744a6324f39a",
