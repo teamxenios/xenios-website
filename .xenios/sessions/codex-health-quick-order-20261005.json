@@ -1,0 +1,1313 @@
+{
+  "id": "codex-health-quick-order-20261005",
+  "tool": "OpenAI Codex desktop",
+  "lane": "health-quick-order",
+  "branch": "codex/accepted-source-integration-20261005",
+  "state": "active",
+  "startedAt": "2026-10-05T19:12:50.193Z",
+  "heartbeatAt": "2026-10-11T16:52:37.180Z",
+  "note": "Actual committed fixed-copy return acknowledged; same builder sole serial source/Git writer in b22f for supplemental3 plus production3 only. Original af843 full21 identity/history retained and other18 held. Original389a aa857/735 immutable. LOCAL_ONLY/NOT_RUN; no push, execution, reviewer or schedule changes.",
+  "sourceSha": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+  "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md",
+  "sourceTree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+  "sourcePushStatus": "LOCAL_ONLY_NEW_PAYLOAD_APPROVAL_REQUIRED",
+  "lastPushedBaseline": "1631323d7cf60f145141e0f82586e64ef7c7d637",
+  "acceptance": {
+    "review": "7dde166bad54e7c5d6b673434d04cd591c93e3e9",
+    "source": "3e82154724ede74b7c5f361f280739eedd60db25",
+    "sourceTree": "04958ec1567b74bccd84e423e179e6269faf6bee",
+    "sqlDraftRepair": "SOURCE_ACCEPT_WITH_LIMITS",
+    "compositionTestSource": "SOURCE_ACCEPT_WITH_LIMITS",
+    "section5C": "HELD_NO_BODY_ELIGIBLE",
+    "execution": "NOT_RUN",
+    "executionReservation": null,
+    "historical": true
+  },
+  "recordsCloseout": {
+    "status": "LOCAL_ONLY_SEPARATE_OUTBOUND_APPROVAL_REQUIRED",
+    "scope": "records-only doc48 closeout",
+    "implementationChanged": false,
+    "pushAttempted": false
+  },
+  "currentnessHeadIntegrity": {
+    "source": "f581b6bd42b5c32cb7791677159522ddf6274aaa",
+    "tree": "9efb20d52e253027b2d3b803a5e11d5ff8ca7541",
+    "execution": "NOT_RUN",
+    "acceptance": "SOURCE_ACCEPT_WITH_LIMITS",
+    "reviewDelivery": "CONFIRMED_BY_COMPLETED_REVIEW",
+    "review": "a2be7e2bac24bc0e7d5ba2275b7c33f4d80b4dde",
+    "status": "SOURCE_ACCEPT_WITH_LIMITS",
+    "records": "30085a641a2101d6578d26fb42a7468a16c8351e"
+  },
+  "qualificationSupervisor": {
+    "source": "25858ad94a649a9f7442562e6e0423636d2a3124",
+    "tree": "c5565bcdb0bf84b744de1cc0abb76c3867c8f165",
+    "record": "docs/health-launch/quick-order-20261005/evidence/doc67-supervisor-source-25858ad.json",
+    "execution": "NOT_RUN",
+    "acceptance": "SOURCE_ACCEPT_WITH_LIMITS_DOC68",
+    "pushAttempted": false,
+    "predecessorSource": "cc584f971d1342acf05a9dd43f97916e38f8072c",
+    "status": "LOCAL_SOURCE_ACCEPTED_EXECUTION_NONE",
+    "G0": "NOT_RUN",
+    "executionReservation": null,
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc67-supervisor-bindings-20261009.json",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc67-supervisor-closure-20261009.json",
+    "supervisorSha256": "2a68b06c7cb120a8a31231f0153e9759a067a48c48f058f2e1c93073960411f9",
+    "manifestSha256": "15f4ad9740cd731ee314c3fa8fbb0d26419369319bd0f3d790dea9a0644a49b6",
+    "review": "c4c6212d42404f985523127a5d023e5cf3694912",
+    "reviewDispositionForPredecessor": "SOURCE_REVISION_REQUIRED_RECORDS_PASS",
+    "records": "feaff6f9c1d148199b68531e2db01d9f0accfba6",
+    "next": "Keep source frozen; actual stage/count and applicable separate source grant, native prerequisites/qualified admission and fresh execution authority remain required. Doc72 native records are independent of Doc71 design.",
+    "predecessorRecords": "866ed38f0f6007d7a87dfc90628c99b3f42afe4a",
+    "reviewDelivery": "COMPLETE_ORIGINAL_REVIEW",
+    "reviewAcknowledgment": "1fb30a7f17a5d9b7f4a0fc29073366a47718022a",
+    "currentReviewDoc": "68",
+    "acceptanceReview": "9f570586304e3d1850870437332d17d03d0fbb51",
+    "timingCorrection": "36debe0c54ebc91da8bce9609705299783770046"
+  },
+  "doc50RecordsCorrection": {
+    "baseline": "6d0fe8655b799bb7e2fd64e508d6f148e4c2f552",
+    "review": "a2be7e2bac24bc0e7d5ba2275b7c33f4d80b4dde",
+    "status": "COMPLETE_LOCAL_RECORDS_ONLY",
+    "implementationChanged": false,
+    "execution": "NOT_RUN",
+    "pushAttempted": false,
+    "records": "11a79001d7a8a6552181f946dda2a8b5177b82cc",
+    "tree": "64ad613726b1055afb5b8e99d45aaab7c344d753",
+    "coordinatorAcknowledgment": "RECEIVED_AND_INDEPENDENTLY_VERIFIED"
+  },
+  "correctedSection5C": {
+    "review": "9a9023e28b7f7faec4274bb3660889519f2b0263",
+    "designSource": "462cf796f662770cf2bbb317bcd6d08d827bcf68",
+    "disposition": "COMPATIBLE_AS_DESIGN",
+    "mandatoryP3CarryForwards": 24,
+    "bodyAuthority": "NONE_IN_RECORDS_SLICE"
+  },
+  "coordinationWorkflow": {
+    "board": "C:/Users/sboad/.codex/worktrees/3221/xenios-website/docs/coordination/launch-coordination-20261005/COORDINATION_STATE.json",
+    "coordinator": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "originalReviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "instruction": "User attachment426d71ae; routine delegated source work only, separate permissions retained",
+    "assignmentDelivery": "RECEIVED_AND_ACKNOWLEDGED",
+    "automation": "HOURLY_SOURCE_QUEUE_UNCHANGED_FIVE_MINUTE_MONITOR_PAUSED",
+    "resultDelivery": "DOC71_LOCAL_FINAL_GIT_COLLECTION_NO_DUPLICATE_REVIEW_MESSAGE"
+  },
+  "doc51DecisionInputAssignment": {
+    "packet": "7b1e606e4e7acfdc0e26fe8f26dcceb9ce1df2c7",
+    "addendumSha256": "655109ea1a6f1f22bb76535bf90ef60199775c352b27d0bc5b4f403932708c09",
+    "dispatch": "DOC51-DECISION-INPUTS-20261008:r1:f581b6bd42b5c32cb7791677159522ddf6274aaa",
+    "status": "COMPLETED_SOURCE_ACCEPT_WITH_LIMITS",
+    "sourceAuthority": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
+    "scopePacket": "1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99",
+    "execution": "NOT_AUTHORIZED",
+    "push": "NOT_AUTHORIZED",
+    "baseline": "11a79001d7a8a6552181f946dda2a8b5177b82cc"
+  },
+  "decisionInputSource": {
+    "source": "e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7",
+    "tree": "bdb31ef330f59ddce89d53238107a3341e04dc86",
+    "definition": "3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74",
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc51-decision-input-bindings-20261008.json",
+    "receipt": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-e90d464.json",
+    "record": "docs/health-launch/quick-order-20261005/evidence/doc51-decision-input-source-e90d464.json",
+    "acceptance": "SOURCE_ACCEPT_WITH_LIMITS",
+    "execution": "NOT_RUN",
+    "reservation": null,
+    "pushAttempted": false,
+    "scope": "Five currentness files only; no atomic commit/source-writer/runtime/installation authority",
+    "reviewStatus": "COMPLETED_DOC53",
+    "reviewAcknowledgment": "c2a78b7c558e70cb73ad1b0ca7f0edcc0350c372",
+    "review": "58c6f586b5242421ebbd63118fa6823d9ef8642c",
+    "records": "5a49ef043c43663c7a19c9b1c1b9988439062240",
+    "contractPrerequisite": "SATISFIED",
+    "findings": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0,
+      "P3": 12
+    }
+  },
+  "doc52SupervisorCorrection": {
+    "task": "DOC52-SUPERVISOR-CORRECTION-20261008",
+    "revision": 2,
+    "assignment": "981ec91e60c67fb582f6d1adb7f935acf844c114",
+    "originalAssignment": "944e63e212c9a9b67c7d5c233d0f6179131e1c11",
+    "review": "56f357e1016ccbe6265c3ed44c5a29902c130f44",
+    "clarification": "27310f070bf5d9ebb3becefef403a96d1d29f7d5",
+    "reviewedSource": "90f4ebd1dcccc5a2ba7c85b4cb9310285120fec8",
+    "baseline": "5a49ef043c43663c7a19c9b1c1b9988439062240",
+    "source": "1e808bab28fac90437de93628a15a7fb0322d53e",
+    "tree": "0fd769d844228c7b9a9352935b25c214cb572493",
+    "state": "SOURCE_CORRECTION_FROZEN_PENDING_ORIGINAL_REVIEW",
+    "packet": "docs/health-launch/quick-order-20261005/DOC52_SUPERVISOR_CORRECTION_PACKET_20261008.md",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc52-supervisor-closure-20261008.json",
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "push": "NOT_AUTHORIZED",
+    "sourceHoldCount": 5,
+    "g1AdditionalHold": "ACTUAL_NODE20_TAP_CAUSE_CALIBRATION",
+    "memory": "G0 subject job512MiB committed cap; host1536MiB available floor; helpers/supervisor outside subject separately disclosed"
+  },
+  "doc53VerifierCorrection": {
+    "task": "DOC53-VERIFIER-RECORDS-CORRECTION-20261008",
+    "revision": 1,
+    "assignment": "81a32afc89e584f8c42fbe47034b5b14a03310f0",
+    "review": "58c6f586b5242421ebbd63118fa6823d9ef8642c",
+    "acceptedSource": "e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7",
+    "baseline": "8e462da35b4319dc6d0c53b0d7b431d0b2c6f562",
+    "state": "LOCAL_SOURCE_COMPLETE_PENDING_EXACT_DELTA_ACCEPTANCE",
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "push": "NOT_AUTHORIZED",
+    "source": "2d2d958f5c45259d5d1134665f3eb5b8caf9c172",
+    "tree": "b7826387a6868bd86501804ba152e861b5e442c4",
+    "packet": "docs/health-launch/quick-order-20261005/DOC53_VERIFIER_RECORDS_PACKET_20261008.md",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc53-verifier-closure-20261008.json",
+    "receipt": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-2d2d958.json",
+    "records": "0d417a918a45ee9e4015f41abba8976e9660c3dd",
+    "independentAcceptance": "SOURCE_ACCEPT_WITH_LIMITS_DOC58",
+    "acceptanceReview": "202ed1a9fb3de6a7d38587fcc5c118a5856e40a7"
+  },
+  "doc55SupervisorCorrection": {
+    "task": "DOC55-SUPERVISOR-CORRECTION-20261008",
+    "revision": 1,
+    "assignment": "340cef49401df9ba36e45044cefb586c9f94668f",
+    "authority": "1b165b15bfd6b575c25d66be7c9c15cce8ee94fa section4",
+    "review": "d97f855874c486da9ed020934b06b0f1b5757aa0",
+    "reviewedSource": "1e808bab28fac90437de93628a15a7fb0322d53e",
+    "baseline": "0d417a918a45ee9e4015f41abba8976e9660c3dd",
+    "state": "LOCAL_SOURCE_FROZEN_WITH_EXPLICIT_HOLDS_PENDING_ORIGINAL_REVIEW",
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "push": "NOT_AUTHORIZED",
+    "source": "defe0733ab419859c1ff42b031c2e9a0e8236891",
+    "tree": "278c69234f86eae990c8ccfbbe9dd0a6f9bada23",
+    "packet": "docs/health-launch/quick-order-20261005/DOC55_SUPERVISOR_CORRECTION_PACKET_20261008.md",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc55-supervisor-closure-20261008.json",
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc55-supervisor-bindings-20261008.json",
+    "sourceHoldCount": 9,
+    "closureRows": 31,
+    "dispositions": {
+      "CORRECTED_IN_SOURCE_NOT_RUN": 24,
+      "EXPLICIT_HOLD": 5,
+      "DEFERRED_PRECISION": 2
+    },
+    "smallestRemainingPrerequisite": "CR-03 continuation accounting rule and reviewed immutable paused-chain source; no multi-child group may run",
+    "records": "8d101ed8a0a83f4a0159154f27161272bd1b4126",
+    "delivery": {
+      "at": "2026-10-08T19:16:02.346Z",
+      "state": "MESSAGE_DENIED_NOT_SENT",
+      "attempts": 2,
+      "tool": "mcp__codex_app__send_message_to_thread",
+      "automaticApprovalReview": "Rejected full handoff, then reference-only request with prior authorization evidence. Reviewer treated destination as unverified and attachment authorization as untrusted.",
+      "retriedAfterSecondDenial": false,
+      "alternateTransportUsed": false,
+      "coordinatorObservation": "Existing coordinator independently reported it is collecting previously frozen local records through the established read-only repository workflow; exact packet collection is not independently acknowledged here.",
+      "reviewerContacted": false,
+      "sourcePacketRecords": "8d101ed8a0a83f4a0159154f27161272bd1b4126",
+      "sourcePacketRecordsTree": "18173cb48e8a9448707cc8bcbee04bd3953dd0cf",
+      "note": "This is a local delivery-failure record only, not another message, new queue, approval, transport or source assignment."
+    },
+    "independentAcceptance": "SOURCE_REVISION_REQUIRED_DOC59",
+    "acceptanceReview": "98bf1826fdc51384a09cf8ba588f89ee6a1219f2"
+  },
+  "doc58VerifierCorrection": {
+    "task": "DOC58-VERIFIER-RECORDS-CORRECTION-20261008",
+    "revision": 1,
+    "assignment": "69a64fcb39d0cf58f93c7c2413fc4fbda9ccd50e",
+    "review": "202ed1a9fb3de6a7d38587fcc5c118a5856e40a7",
+    "acceptedSource": "2d2d958f5c45259d5d1134665f3eb5b8caf9c172",
+    "baseline": "b133cd6ccd23e465a3e1fc1275dd3de7b2402b98",
+    "state": "COMPLETE_SOURCE_ACCEPT_WITH_LIMITS",
+    "paths": [
+      "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md"
+    ],
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "push": "NOT_ATTEMPTED_NOT_AUTHORIZED",
+    "supervisor": "BYTE_FROZEN_DOC59_SOURCE_REVISION_REQUIRED",
+    "delivery": "LOCAL_FINAL_AND_GIT_COLLECTION_ONLY_NO_SOURCE_RESULT_MESSAGE",
+    "source": "7a62e64de1d0120e64aee9a9b04816e5e4c9a1a4",
+    "tree": "1d9502428636a5f12196e44adacfe57e42149251",
+    "parent": "b133cd6ccd23e465a3e1fc1275dd3de7b2402b98",
+    "packet": "docs/health-launch/quick-order-20261005/DOC58_VERIFIER_CORRECTION_PACKET_20261008.md",
+    "record": "docs/health-launch/quick-order-20261005/evidence/doc58-verifier-source-7a62e64.json",
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc58-verifier-bindings-20261008.json",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc58-verifier-closure-20261008.json",
+    "receipt": {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-7a62e64.json",
+      "sha256": "61f478edb4b94cce14c4fbc1df9dac30dffa579d3d7014f4314c58f78f4c8d51",
+      "sha256lf": "61f478edb4b94cce14c4fbc1df9dac30dffa579d3d7014f4314c58f78f4c8d51",
+      "files": 66,
+      "changedEntries": [
+        "docs/health-launch/quick-order-20261005/evidence/doc58-verifier-bindings-20261008.json",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "supabase/verification/research_health_quick_order_currentness_local.mjs"
+      ]
+    },
+    "findings": 11,
+    "authoredControlPairs": 33,
+    "independentAcceptance": "SOURCE_ACCEPT_WITH_LIMITS_DOC63",
+    "completedAt": "2026-10-08T20:42:06.215Z",
+    "acceptanceReview": "829931b6e7e68e55d942ee4ab3a48f6313f75368",
+    "records": "276226f4fff3300bae6116bf05693a5b369c806b",
+    "acceptanceAcknowledgment": "1fb30a7f17a5d9b7f4a0fc29073366a47718022a"
+  },
+  "acceptedCurrentnessSource": {
+    "source": "935aaf1a679aa67d013133521dd7110f66db74a3",
+    "tree": "3a7b5d11f2c5b8d8e472185f1fe1136313c3eae6",
+    "records": "a8285015c2f63748f6e76f1ab4c8a01b5dde8fa1",
+    "review": "e0888517f7287bca40049b57b470d97ccb92b664",
+    "disposition": "SOURCE_ACCEPT_WITH_LIMITS",
+    "closedInSource": [
+      "V63-1",
+      "V63-2",
+      "V63-4"
+    ],
+    "receipt": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc63-20261008.json",
+    "receiptSha256": "24430f71fc4c644eb126c1e9fff350c4c22c3668fa9c46d6f8ccb3b36b806a66",
+    "execution": "NOT_RUN",
+    "manifestAmendment": "EXPLICIT_DOC67_SUCCESSOR_DB_CATEGORY_ONLY_NO_EXECUTION"
+  },
+  "doc59SupervisorCorrection": {
+    "task": "DOC59-SUPERVISOR-CORRECTION-20261008",
+    "revision": 1,
+    "assignment": "475b95f7863096c67eb5c2fc7fc81c005e3d41d5",
+    "review": "98bf1826fdc51384a09cf8ba588f89ee6a1219f2",
+    "base": "276226f4fff3300bae6116bf05693a5b369c806b",
+    "state": "REVIEW_COMPLETE_SOURCE_REVISION_REQUIRED_DOC64",
+    "paths": [
+      "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
+    ],
+    "verifierFrozen": "7a62e64de1d0120e64aee9a9b04816e5e4c9a1a4",
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "push": "NOT_ATTEMPTED_NOT_AUTHORIZED",
+    "delivery": "LOCAL_FINAL_GIT_COLLECTION_ONLY",
+    "source": "f98c41617f7216353b316510cca6c615f3c79a87",
+    "tree": "e64f3989d426fcb99776ec0e8330360fdd7595cb",
+    "parent": "276226f4fff3300bae6116bf05693a5b369c806b",
+    "packet": "docs/health-launch/quick-order-20261005/DOC59_SUPERVISOR_CORRECTION_PACKET_20261008.md",
+    "record": "docs/health-launch/quick-order-20261005/evidence/doc59-supervisor-source-f98c416.json",
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc59-supervisor-bindings-20261008.json",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc59-supervisor-closure-20261008.json",
+    "preservation": "docs/health-launch/quick-order-20261005/evidence/doc59-source-preservation-20261008.json",
+    "vehicles": "docs/health-launch/quick-order-20261005/evidence/doc59-prerequisite-vehicles-20261008.json",
+    "sourceSha256": "8dec38600c8d991d867783e054113b49e4562cc36ba6e3709458119a7149148e",
+    "manifestSha256": "00eb8955d1b342f047f579fedb8180b305988da9dd1b869b9c91146eb84e72ca",
+    "completedAt": "2026-10-08T21:14:24.216Z",
+    "runnableModes": [],
+    "smallestNextSource": "Accepted exact successor followed by missing native prerequisite vehicle/observer/handle/memory source and explicit three-versus-four topology resolution.",
+    "records": "6c3a883b706211a60502b3adeec0d57726495c70",
+    "reviewAcknowledgment": "1fb30a7f17a5d9b7f4a0fc29073366a47718022a",
+    "independentAcceptance": "SOURCE_REVISION_REQUIRED_DOC64",
+    "acceptanceReview": "624551101217e95bc8d7bee6abf89484fbce7caa",
+    "recordsVerdict": "PASS_AS_RECORDS_NOT_EXECUTION"
+  },
+  "doc63VerifierCorrection": {
+    "task": "DOC63-VERIFIER-FORMAT-CORRECTION-20261008",
+    "revision": 1,
+    "assignment": "33ca4197f0b7b9de61822f9a65e3b15b8d8a1820",
+    "review": "829931b6e7e68e55d942ee4ab3a48f6313f75368",
+    "base": "6c3a883b706211a60502b3adeec0d57726495c70",
+    "acceptedSource": "7a62e64de1d0120e64aee9a9b04816e5e4c9a1a4",
+    "state": "COMPLETE_SOURCE_ACCEPT_WITH_LIMITS_DOC65",
+    "paths": [
+      "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md"
+    ],
+    "supervisorFrozen": "f98c41617f7216353b316510cca6c615f3c79a87",
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "push": "NOT_ATTEMPTED_NOT_AUTHORIZED",
+    "delivery": "LOCAL_FINAL_ONLY",
+    "source": "935aaf1a679aa67d013133521dd7110f66db74a3",
+    "tree": "3a7b5d11f2c5b8d8e472185f1fe1136313c3eae6",
+    "parent": "6c3a883b706211a60502b3adeec0d57726495c70",
+    "packet": "docs/health-launch/quick-order-20261005/DOC63_VERIFIER_FORMAT_CORRECTION_PACKET_20261008.md",
+    "record": "docs/health-launch/quick-order-20261005/evidence/doc63-verifier-source-935aaf1.json",
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc63-verifier-bindings-20261008.json",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc63-verifier-closure-20261008.json",
+    "preservation": "docs/health-launch/quick-order-20261005/evidence/doc63-source-preservation-20261008.json",
+    "receipt": {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc63-20261008.json",
+      "sha256": "24430f71fc4c644eb126c1e9fff350c4c22c3668fa9c46d6f8ccb3b36b806a66",
+      "sha256lf": "24430f71fc4c644eb126c1e9fff350c4c22c3668fa9c46d6f8ccb3b36b806a66",
+      "files": 66,
+      "changedEntries": [
+        "docs/health-launch/quick-order-20261005/evidence/doc63-verifier-bindings-20261008.json",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "supabase/verification/research_health_quick_order_currentness_local.mjs"
+      ],
+      "removedEntry": "docs/health-launch/quick-order-20261005/evidence/doc58-verifier-bindings-20261008.json"
+    },
+    "authoredControlPairs": 7,
+    "completedAt": "2026-10-08T23:40:56.652Z",
+    "records": "a8285015c2f63748f6e76f1ab4c8a01b5dde8fa1",
+    "independentAcceptance": "SOURCE_ACCEPT_WITH_LIMITS_DOC65",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "acceptanceReview": "e0888517f7287bca40049b57b470d97ccb92b664"
+  },
+  "currentFourWorkstreamCheckpoint": {
+    "observedAt": "2026-10-08T23:40:05.091Z",
+    "basis": "Read-only current coordinator board and exact committed original Doc62 and Doc63 reports; no new review request or wake.",
+    "acknowledgment": "1fb30a7f17a5d9b7f4a0fc29073366a47718022a",
+    "A": {
+      "source": "cc584f971d1342acf05a9dd43f97916e38f8072c",
+      "tree": "a52060a6922888e952cf0e5a3de5ea4c12e636e9",
+      "records": "866ed38f0f6007d7a87dfc90628c99b3f42afe4a",
+      "review": "c4c6212d42404f985523127a5d023e5cf3694912",
+      "status": "COMPLETE_SOURCE_REVISION_REQUIRED_RECORDS_PASS_DOC67",
+      "successor": {
+        "source": "25858ad94a649a9f7442562e6e0423636d2a3124",
+        "tree": "c5565bcdb0bf84b744de1cc0abb76c3867c8f165",
+        "status": "SOURCE_ACCEPT_WITH_LIMITS_DOC68",
+        "review": "9f570586304e3d1850870437332d17d03d0fbb51",
+        "timingCorrection": "36debe0c54ebc91da8bce9609705299783770046",
+        "execution": "NOT_RUN"
+      }
+    },
+    "B": {
+      "source": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+      "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
+      "records": "f175f3c1bdfed6dc2d0f71733cc5dff63298b160",
+      "review": "e27fa1bdbe0ee699f9cab2ea8feee59e3a5f488a",
+      "status": "COMPLETE_SOURCE_ACCEPT_WITH_LIMITS_DOC62"
+    },
+    "C": {
+      "source": "935aaf1a679aa67d013133521dd7110f66db74a3",
+      "tree": "3a7b5d11f2c5b8d8e472185f1fe1136313c3eae6",
+      "records": "a8285015c2f63748f6e76f1ab4c8a01b5dde8fa1",
+      "review": "e0888517f7287bca40049b57b470d97ccb92b664",
+      "disposition": "SOURCE_ACCEPT_WITH_LIMITS",
+      "closedInSource": [
+        "V63-1",
+        "V63-2",
+        "V63-4"
+      ],
+      "receipt": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc63-20261008.json",
+      "receiptSha256": "24430f71fc4c644eb126c1e9fff350c4c22c3668fa9c46d6f8ccb3b36b806a66",
+      "execution": "NOT_RUN",
+      "manifestAmendment": "EXPLICIT_DOC67_SUCCESSOR_DB_CATEGORY_ONLY_NO_EXECUTION",
+      "status": "COMPLETE_SOURCE_ACCEPT_WITH_LIMITS_DOC65"
+    },
+    "D": {
+      "review": "7ea60dc1ab89c443ef8be3047837526ff8f378f7",
+      "status": "SPECIFICATION_ACCEPT_WITH_LIMITS",
+      "operationalCensus": "NOT_ESTABLISHED"
+    },
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY",
+    "schedules": "UNCHANGED",
+    "statusCorrectionObservedAt": "2026-10-09T19:56:35.900Z"
+  },
+  "doc64SupervisorCorrection": {
+    "task": "DOC64-SUPERVISOR-CORRECTION-20261008",
+    "revision": 1,
+    "assignment": "db4c230599995a34b0b490babd37ac982d3fa4b8",
+    "review": "624551101217e95bc8d7bee6abf89484fbce7caa",
+    "base": "a8285015c2f63748f6e76f1ab4c8a01b5dde8fa1",
+    "state": "REVIEW_COMPLETE_SOURCE_REVISION_REQUIRED_DOC67",
+    "paths": [
+      "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
+    ],
+    "verifierFrozen": "935aaf1a679aa67d013133521dd7110f66db74a3",
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "push": "NOT_ATTEMPTED_NOT_AUTHORIZED",
+    "delivery": "LOCAL_FINAL_GIT_COLLECTION_ONLY",
+    "source": "cc584f971d1342acf05a9dd43f97916e38f8072c",
+    "tree": "a52060a6922888e952cf0e5a3de5ea4c12e636e9",
+    "parent": "a8285015c2f63748f6e76f1ab4c8a01b5dde8fa1",
+    "packet": "docs/health-launch/quick-order-20261005/DOC64_SUPERVISOR_CORRECTION_PACKET_20261008.md",
+    "record": "docs/health-launch/quick-order-20261005/evidence/doc64-supervisor-source-cc584f9.json",
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc64-supervisor-bindings-20261008.json",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc64-supervisor-closure-20261008.json",
+    "preservation": "docs/health-launch/quick-order-20261005/evidence/doc64-source-preservation-20261008.json",
+    "prerequisites": "docs/health-launch/quick-order-20261005/evidence/doc64-prerequisite-resolution-20261008.json",
+    "proseCorrections": "docs/health-launch/quick-order-20261005/evidence/doc64-prose-corrections-20261008.json",
+    "records": "866ed38f0f6007d7a87dfc90628c99b3f42afe4a",
+    "completedAt": "2026-10-09T00:22:31.098Z",
+    "findings": 22,
+    "carriedCC": 10,
+    "carriedCR": 31,
+    "authoredAuthorityControls": 12,
+    "runnableModes": [],
+    "firstExecutableProposal": null,
+    "sourceSha256": "a827a2c42b3291807d64777b9be438e0c50ebac1b8d6b9b7ba7ad37571c35a12",
+    "manifestSha256": "dcea1a240199bacdb66141d164c99850d15922192bc87b07069380c1b66bdbf8",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "independentAcceptance": "SOURCE_REVISION_REQUIRED_DOC67",
+    "acceptanceReview": "c4c6212d42404f985523127a5d023e5cf3694912",
+    "recordsVerdict": "PASS_AS_RECORDS"
+  },
+  "doc67SupervisorCorrection": {
+    "task": "DOC67-SUPERVISOR-CORRECTION-20261009",
+    "revision": 1,
+    "assignment": "5529dcd6f879916752b6ab11b667658248ff56e1",
+    "review": "c4c6212d42404f985523127a5d023e5cf3694912",
+    "base": "866ed38f0f6007d7a87dfc90628c99b3f42afe4a",
+    "state": "COMPLETE_SOURCE_ACCEPT_WITH_LIMITS_DOC68",
+    "paths": [
+      "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
+    ],
+    "acceptedVerifierFrozen": "935aaf1a679aa67d013133521dd7110f66db74a3",
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "push": "NOT_ATTEMPTED_NOT_AUTHORIZED",
+    "delivery": "LOCAL_FINAL_GIT_COLLECTION_ONLY",
+    "source": "25858ad94a649a9f7442562e6e0423636d2a3124",
+    "tree": "c5565bcdb0bf84b744de1cc0abb76c3867c8f165",
+    "parent": "866ed38f0f6007d7a87dfc90628c99b3f42afe4a",
+    "packet": "docs/health-launch/quick-order-20261005/DOC67_SUPERVISOR_CORRECTION_PACKET_20261009.md",
+    "sourceRecord": "docs/health-launch/quick-order-20261005/evidence/doc67-supervisor-source-25858ad.json",
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc67-supervisor-bindings-20261009.json",
+    "closure": "docs/health-launch/quick-order-20261005/evidence/doc67-supervisor-closure-20261009.json",
+    "preservation": "docs/health-launch/quick-order-20261005/evidence/doc67-source-preservation-20261009.json",
+    "completedAt": "2026-10-09T03:55:05.354Z",
+    "records": "feaff6f9c1d148199b68531e2db01d9f0accfba6",
+    "U": 16,
+    "F": 22,
+    "CC": 10,
+    "CR": 31,
+    "sourceSha256": "2a68b06c7cb120a8a31231f0153e9759a067a48c48f058f2e1c93073960411f9",
+    "manifestSha256": "15f4ad9740cd731ee314c3fa8fbb0d26419369319bd0f3d790dea9a0644a49b6",
+    "runnableModes": [],
+    "firstExecutableProposal": null,
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "independentAcceptance": "SOURCE_ACCEPT_WITH_LIMITS",
+    "acceptanceReview": "9f570586304e3d1850870437332d17d03d0fbb51",
+    "timingCorrection": "36debe0c54ebc91da8bce9609705299783770046"
+  },
+  "previousAcceptedCurrentnessSource": {
+    "source": "7a62e64de1d0120e64aee9a9b04816e5e4c9a1a4",
+    "tree": "1d9502428636a5f12196e44adacfe57e42149251",
+    "records": "276226f4fff3300bae6116bf05693a5b369c806b",
+    "review": "829931b6e7e68e55d942ee4ab3a48f6313f75368",
+    "disposition": "SOURCE_ACCEPT_WITH_LIMITS",
+    "Doc58C1": "CLOSED_IN_SOURCE_NOT_RUN",
+    "Doc58C2": "CLOSED_IN_SOURCE_NOT_RUN",
+    "receipt": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-7a62e64.json",
+    "receiptSha256": "61f478edb4b94cce14c4fbc1df9dac30dffa579d3d7014f4314c58f78f4c8d51",
+    "execution": "NOT_RUN",
+    "manifestAmendment": "DOC64_SUCCESSOR_DATABASE_CATEGORY_ACCEPTED7A_DISTINCT_PENDING935_NOT_EXECUTION",
+    "historical": true
+  },
+  "doc71DesignRecordsDelta": {
+    "task": "DOC71-TRANSACTION-DESIGN-RECORDS-DELTA-20261009",
+    "revision": 2,
+    "slot": 1,
+    "state": "LOCAL_RECORDS_FROZEN_READY_FOR_COORDINATOR_COLLECTION",
+    "records": "39203461eaed6ee6284a0d7a597feb9c74c9a39a",
+    "recordsTree": "dad34b252ac497787be8cea77bdae9dde282a129",
+    "base": "45a30bd2c5c0d37c0916f33b01be857151c98da2",
+    "r1Records": "32643e3974f37a18ecb8768d97ec2fc0253248d3",
+    "r1RecordsTree": "c1ec92da5bd098779b39eff0925e1a4a30a0b448",
+    "source": "25858ad94a649a9f7442562e6e0423636d2a3124",
+    "sourceTree": "c5565bcdb0bf84b744de1cc0abb76c3867c8f165",
+    "controllingReview": "56e9ad47b6990d546b218346d6d891fac583573b",
+    "paths": [
+      "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-delta-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-bindings-20261009.json"
+    ],
+    "artifacts": [
+      {
+        "path": "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
+        "rawSha256": "4e8a23b6763e05ddb14b7e3d4216d60b36bafd98f2df19d3f4c64ec7893e4672",
+        "bytes": 105059
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-delta-20261009.json",
+        "rawSha256": "a065a04e6511634ef214e8a9784eddde72c4f61713353391388761f79aacae17",
+        "bytes": 175679
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-bindings-20261009.json",
+        "rawSha256": "ae929902fc50517c574452bf72e50f907eddcbcba93f56c1306e5bc92ef3185c",
+        "bytes": 59455
+      }
+    ],
+    "doc73Findings": 29,
+    "writerRelations": 12,
+    "orderedRows": 21,
+    "eventRows": 48,
+    "guardTriggers": 47,
+    "sourcePaths": 17,
+    "futureEvidencePaths": 4,
+    "sourceBodyGrant": false,
+    "sourceLeaseSatisfied": false,
+    "independentAcceptance": false,
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "executionReservation": null,
+    "push": "LOCAL_ONLY_NOT_ATTEMPTED_NOT_AUTHORIZED",
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "reviewDelivery": "READY_FOR_EXISTING_LOCAL_COORDINATOR_COLLECTION_NOT_SENT",
+    "queued": false,
+    "acknowledged": false,
+    "reviewed": false,
+    "implementationChanged": false,
+    "completedAt": "2026-10-09T22:25:16.370Z",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "carryConditions": [
+      "CC-10",
+      "CC-11",
+      "CC-12",
+      "CC-17",
+      "CC-18",
+      "CC-15-TYPES"
+    ],
+    "remaining": [
+      "Original exact r2 records disposition",
+      "Existing owner decisions2/3/5 and exact exclusive17+4 sourcelease/currentowners",
+      "Complete writer-order proof beforeguard implementation eligibility",
+      "Five realapproved inputs with acceptedimplemented readers→newS→all25census/externaldigest/review→latermanifestrepin",
+      "Qualified total timeout/role/pool mechanism and actual budgets beforeoperational admission"
+    ],
+    "schedules": "UNCHANGED_HOURLY_QUEUE_AND_PAUSED_FIVE_MINUTE_MONITOR"
+  },
+  "doc71DesignRecordsDeltaR1": {
+    "task": "DOC71-TRANSACTION-DESIGN-RECORDS-DELTA-20261009",
+    "revision": 1,
+    "state": "REVIEW_COMPLETE_REVISION_REQUIRED_DOC73",
+    "records": "32643e3974f37a18ecb8768d97ec2fc0253248d3",
+    "recordsTree": "c1ec92da5bd098779b39eff0925e1a4a30a0b448",
+    "base": "feaff6f9c1d148199b68531e2db01d9f0accfba6",
+    "source": "25858ad94a649a9f7442562e6e0423636d2a3124",
+    "sourceTree": "c5565bcdb0bf84b744de1cc0abb76c3867c8f165",
+    "controllingReview": "fe1937706a1f9d5a74337243ce7be6154b8f0b47",
+    "paths": [
+      "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-delta-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-bindings-20261009.json"
+    ],
+    "packet": "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
+    "structured": "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-delta-20261009.json",
+    "bindings": "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-bindings-20261009.json",
+    "sourceBodyGrant": false,
+    "execution": "NOT_RUN_NOT_AUTHORIZED",
+    "executionReservation": null,
+    "push": "LOCAL_ONLY_NOT_AUTHORIZED",
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "reviewDelivery": "COMPLETE_DOC73",
+    "queued": true,
+    "acknowledged": true,
+    "reviewed": true,
+    "correctionRows": 26,
+    "eventRows": 48,
+    "futurePaths": 17,
+    "remaining": [
+      "P/V-to-SQL and L/D/domain/old-parent selector derivation from real inputs/source",
+      "Quality-document loop transaction-wide source-lock ordering",
+      "Actual pre-call timeout/total-transaction mechanism and owner budgets",
+      "Original exact design disposition plus actual stock/source/lease decisions"
+    ],
+    "implementationChanged": false,
+    "completedAt": "2026-10-09T19:56:35.900Z",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "acceptanceReview": "56e9ad47b6990d546b218346d6d891fac583573b"
+  },
+  "doc75RecordsErrata": {
+    "taskId": "DOC71-TRANSACTION-DESIGN-RECORDS-DELTA-20261009",
+    "revision": 3,
+    "kind": "DOC75_FOUR_ITEM_RECORDS_ERRATA_NOT_DESIGN_REWRITE",
+    "review": "7609c42d387b3f7edd8fe3986e8907fce0bb4403",
+    "baseRecords": "39203461eaed6ee6284a0d7a597feb9c74c9a39a",
+    "startHandoff": "301d9b08cb965f6d05ee2f4acf8463e6cdddf0ce",
+    "status": "FROZEN_LOCAL_READY_FOR_ORIGINAL_BYTE_CHECK",
+    "requestedModel": "gpt-6-astra",
+    "requestedEffort": "ultra",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "execution": "NOT_RUN",
+    "push": "LOCAL_ONLY",
+    "sourceGrant": false,
+    "sourceLeaseSatisfied": false,
+    "records": "280193059a6b28fee5645833cb56b7d944ad1c46",
+    "tree": "eb1d5c2583c6b72a50fd75bc30b25a05713a311c",
+    "artifacts": [
+      {
+        "commit": "280193059a6b28fee5645833cb56b7d944ad1c46",
+        "path": "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
+        "gitBlob": "fe50e011e0135e206e1dca8b7205341bcb5757e2",
+        "rawSha256": "0c5c17e0a370d440738a2cfc469b1d23feedf4b5e9edb40f43764750aa98c12f",
+        "bytes": 128858
+      },
+      {
+        "commit": "280193059a6b28fee5645833cb56b7d944ad1c46",
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-delta-20261009.json",
+        "gitBlob": "a99ad1b9b56ba547de463f3763da4f2dadaed4e6",
+        "rawSha256": "811f04fe784425ed0ff3225c27ef5c1ca9d51e86e6c5a40eb01a23a0844b4cef",
+        "bytes": 224734
+      },
+      {
+        "commit": "280193059a6b28fee5645833cb56b7d944ad1c46",
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-transaction-design-bindings-20261009.json",
+        "gitBlob": "0301e861cd417cc8a86e3439a1c67cd258dfd780",
+        "rawSha256": "bb3d4513c021a4034f1676674b17c372b51b2ccb49d66d00f7892f73279a6d29",
+        "bytes": 70359
+      }
+    ],
+    "note": "Doc75 r3 four-item records errata frozen locally at 280193059a6b28fee5645833cb56b7d944ad1c46; original four-item byte check pending, not a new design review. R2 design compatible with conditions at7609c42; source/stock/operating decisions and exact17+4 lease remain unmet. No source changes or execution; no push.",
+    "sourcePreserved": true,
+    "foreignRowsPreserved": true,
+    "byteCheckQueued": false,
+    "byteCheckAcknowledged": false,
+    "byteCheckReviewed": false,
+    "secondaryComparison": "READ_ONLY_PENDING_AFTER_PRIMARY_FREEZE"
+  },
+  "nonproductionProfile": {
+    "taskId": "QUICK-ORDER-NONPRODUCTION-OPERATING-PROFILE-20261010",
+    "revision": 1,
+    "state": "idle",
+    "scope": [
+      "docs/health-launch/quick-order-20261005/NONPRODUCTION_OPERATING_PROFILE_20261010.md",
+      "docs/health-launch/quick-order-20261005/evidence/nonproduction-operating-profile-20261010.json"
+    ],
+    "profileLease": "b24aeeb0-75ad-448d-a157-86f411c1d9e5",
+    "authorityCommit": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+    "actualHumanMessage": "01a12607-a6ec-7de2-b951-b7615d4e5d05",
+    "sourceGrant": "DISPATCHED_EXACT17_PLUS4_LEASE_af843213",
+    "stock": "REQUEST_ONLY_WITNESSES",
+    "operatingModel": "HOLD_UNTIL_SEPARATELY_AUTHORIZED_REACTIVATION_DISABLED_SOURCE",
+    "databaseOwnerCheck": "COMPLETE_DESIGNATED_STEWARD_29297c31_NOT_DEPLOYED_PROOF",
+    "originalReview": "DOC78_IMPLEMENTATION_GATE_SATISFIED_d451a062",
+    "execution": "NOT_RUN",
+    "push": "LOCAL_ONLY",
+    "requestedModel": "gpt-6-astra",
+    "requestedEffort": "ultra",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "status": "FROZEN_PROFILE_ACCEPTED_WITH_CARRIES_SOURCE_AUTHORING_ONLY",
+    "records": "9c4a9b5809162eab9b0669cb6a2f1f2516c06c67",
+    "tree": "d265a25b9b5aea02f71e533e1096ea37b6284a9a",
+    "artifacts": [
+      {
+        "commit": "9c4a9b5809162eab9b0669cb6a2f1f2516c06c67",
+        "path": "docs/health-launch/quick-order-20261005/NONPRODUCTION_OPERATING_PROFILE_20261010.md",
+        "gitBlob": "1c8ac2c6c3d027cc073572401ab96201c5cb2ccf",
+        "rawSha256": "a80eb2a6515aa6958440d0909c5d2157be6db3971a9384c5ed0194a7593aed35",
+        "bytes": 32563
+      },
+      {
+        "commit": "9c4a9b5809162eab9b0669cb6a2f1f2516c06c67",
+        "path": "docs/health-launch/quick-order-20261005/evidence/nonproduction-operating-profile-20261010.json",
+        "gitBlob": "58e642e1c05268f3e960022e565fe0170975fa47",
+        "rawSha256": "82544bf503b5dc2ce9ee8bdda19ec4a5e981f76e51bff1f2dbe8f7c98266d4e2",
+        "bytes": 132036
+      }
+    ]
+  },
+  "doc71DisabledTransactionSource": {
+    "taskId": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
+    "revision": 1,
+    "state": "QUALITY_CLOSURE_FIXTURE_SUCCESSOR_PENDING_ORIGINAL_REVIEW",
+    "source": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
+    "tree": "d0c676b673df6f9f9d587b543df9c745e31e5d39",
+    "leaseId": "af843213-fa11-42b9-8874-f6451ae38034",
+    "frozenAt": "2026-10-10T23:22:40.217Z",
+    "sourceAcceptance": "PENDING_ORIGINAL_REVIEW",
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY_NO_PUSH_AUTHORITY",
+    "implementationGate": {
+      "review": "d451a062cdf054ea5fe943dda03fca209c40cc77",
+      "disposition": "SATISFIED_FOR_DISABLED_SOURCE_ONLY",
+      "coordinator": "52157e37a9ff2f8ad7a07d16f37596d63f040ff8"
+    },
+    "steward": {
+      "session": "codex-accepted-source-integration-20261005",
+      "chatId": "01a0e098-3b23-7233-9b07-877ace092650",
+      "acknowledgment": "EXPLICIT_ACK_RECORDED_BY_EXISTING_COORDINATOR",
+      "finding": "29297c31fa0357ba186620e7e51425d5ce19badd",
+      "scope": "BOUNDED_NONPRODUCTION_ENGINEERING_CHECK_NOT_DATABASE_OBJECT_OWNERSHIP"
+    },
+    "sourceFiles": [
+      {
+        "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+        "rawSha256": "cde91d113aea9cef4c8104da9d51ac78c702f553b05e7476659d2565492eee3b",
+        "bytes": 90171,
+        "lines": 1034,
+        "gitBlob": "f518b2220bda12985f4279adc9eaddb136d60689"
+      },
+      {
+        "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+        "rawSha256": "9cf375e4ecfea2bf1818c6f4008a2842d3e1752e3549dabf4a5c72388828b106",
+        "bytes": 15884,
+        "lines": 179,
+        "gitBlob": "d95e246733dbbb9d7df027422c51069efdb46b79"
+      },
+      {
+        "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+        "rawSha256": "12c16a6741f12ddd60f789de073e6b784d38ec5658c609ff819e60dcae455cde",
+        "bytes": 15890,
+        "lines": 179,
+        "gitBlob": "d25dae0d6979af6dcb37c07c939f03fba7bf72c5"
+      },
+      {
+        "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+        "rawSha256": "a4c517f491b6e4e80db6b05cbdce3bfa98d3e8b25f365c954498e3b632f6b8b7",
+        "bytes": 20967,
+        "lines": 248,
+        "gitBlob": "f3726bf805f252e8c41dc61ea1ae6dbec073b89d"
+      },
+      {
+        "path": "supabase/verification/research_health_quick_order_local.mjs",
+        "rawSha256": "bbc040e6bf7b2656ca5b5a4e0c82d408313346163f4915a4e780784d8af8c1fc",
+        "bytes": 83410,
+        "lines": 995,
+        "gitBlob": "b77b75321e34e3ea48e64ae4b9260b2eec63dbb6"
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "rawSha256": "a1716144e700d0266d9982351d61ec29b9f4a370bea381954d81b4f42c465fc6",
+        "bytes": 197143,
+        "lines": 2056,
+        "gitBlob": "ba1e701a129ef1adffb5a2991317728023bb4769"
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "rawSha256": "97789d216d9d9f37540f00f7697a4a45e359b41a92845964ac5b7d8495f64aac",
+        "bytes": 12640,
+        "lines": 157,
+        "gitBlob": "23e2b6a1080a673a566838505ea317353d435037"
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "rawSha256": "96e0695e189f6b23bbf092551ca23280063cdf6dee096a59428a70d6303bc897",
+        "bytes": 12736,
+        "lines": 158,
+        "gitBlob": "b083a55a5a8e0f6ff4ae0afadd7342cec8df6b2b"
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "rawSha256": "ec87e6c7856c59cb261926e5117af5532a38b3da8a09618e5ff73a7e2ad3731c",
+        "bytes": 24811,
+        "lines": 357,
+        "gitBlob": "e15088fb2ced43875ab320a229538455da43eef4"
+      },
+      {
+        "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "rawSha256": "357bd060826e005229f5a39052b91c0d78fb8276f53ee2ba9c6eecd0b1e460f0",
+        "bytes": 163153,
+        "lines": 2201,
+        "gitBlob": "25894028eeb92af30719543f4f9f5e6d7b8f7f28"
+      },
+      {
+        "path": "server/research/assisted-order/quick-order-repository.ts",
+        "rawSha256": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
+        "bytes": 31788,
+        "lines": 415,
+        "gitBlob": "307d903f2b83a3252a1dde38f199c88e51cae2af"
+      },
+      {
+        "path": "server/research/assisted-order/quick-order-repository.test.ts",
+        "rawSha256": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170",
+        "bytes": 52802,
+        "lines": 911,
+        "gitBlob": "7070fd8a2b3a973908fbe127cdbe68bbd0e9ed4b"
+      },
+      {
+        "path": "server/research/health/quick-order/production.ts",
+        "rawSha256": "66ec299f2dcced2857a0b0dbef4871c625b14f9f397dd0c2e26f0deef2ee91ce",
+        "bytes": 6852,
+        "lines": 115,
+        "gitBlob": "aca2a9a5727a17fdc447c67242fadc5812a80cfd"
+      },
+      {
+        "path": "server/research/health/quick-order/production.test.ts",
+        "rawSha256": "1e766ea84e2a9accd4a46988b4d410f782875bc9218bf00b35fd49ff21d9306f",
+        "bytes": 7185,
+        "lines": 113,
+        "gitBlob": "a1527a72a5fbe55167146fb3d66000b141c05380"
+      },
+      {
+        "path": "server/research/health/quick-order/ports.ts",
+        "rawSha256": "39d0d2da8fd6636c76f951c7a56f87de3a058d5e0c0eed09ed98cdf5ebbe161a",
+        "bytes": 5126,
+        "lines": 86,
+        "gitBlob": "06472a5437f39f0821a3ae9952d1c0a607e25251"
+      },
+      {
+        "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "rawSha256": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb",
+        "bytes": 35156,
+        "lines": 651,
+        "gitBlob": "bffd940fc24d9cc8b1cd179378ec16f7977e0efc"
+      },
+      {
+        "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+        "rawSha256": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0",
+        "bytes": 24468,
+        "lines": 449,
+        "gitBlob": "32cd919a0235cd0c0a55963418c301b5dd86f64b"
+      }
+    ],
+    "evidence": [
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+        "bytes": 54259
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "rawSha256": "590e57ad4d49071e94849e701cbb2b2cb626a7ad2fc8a2d94f6f174d414d36c0",
+        "bytes": 36711
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "rawSha256": "9b5da66331ee795a350637683a88e8e91e8bac95a6475a68bbc3a3e4805559ac",
+        "bytes": 44908
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "rawSha256": "f6bd470e304958f730cbb084d5c2c9e4e1c12cefdf65dca1ed9a4d36a93d1e55",
+        "bytes": 352320
+      }
+    ],
+    "remaining": [
+      {
+        "id": "SEQUENTIAL_SOURCE_SEAL",
+        "requirement": "Original acceptance of exact currentness source, then accepted receipt, then explicit intake dependency-seal successor. No unreviewed bytes are adopted."
+      },
+      {
+        "id": "CANONICAL_SCHEMA_DESCRIPTOR",
+        "requirement": "Source-bound exact column descriptor for the real implemented-S/census. Candidate refuses its absent seal; no new configuration-setting authority."
+      },
+      {
+        "id": "CHECKOUT_PRIVATE_BINDING",
+        "requirement": "Admin-attested checkout branch remains refused without a trusted exact checkout binding; no browser fallback or fifth private-context field invented."
+      },
+      {
+        "id": "FULL_DATABASE_VERIFIER",
+        "requirement": "Canonical quality-command and parent/closure control source added; exact held and unreachable cases remain recorded without bypassing canonical contracts. No qualification execution or success.",
+        "suitePrerequisites": {
+          "currentness": [
+            "Future accepted source/receipt and exact candidate with legitimately resolved schema descriptor; accepted implemented-S/census, immutable input/profile/connection proofs, separately approved execution authority, reviewed driver and explicit future dispatch. None supplied or bypassed here.",
+            "No pinned reviewed quality command deletes documents/tests. Canonical BEFORE guards reject direct child DELETE and real lot cascade; immutable quality_events NO ACTION FK additionally retains command-created documents. Therefore positive QO AFTER DELETE and successful real child cascade coverage are unfilled, not replaced by the three canonical refusals.",
+            "Visible NULL-product/NULL-variant legacy lot parent fixture is unfilled: supabase/research-inventory-reservation-commands.sql:300-303 refuses either NULL identity with inventory lot identity is incomplete, and its BEFORE INSERT/UPDATE(product_id,variant_id,sku) trigger at327-329 applies to supported current writes. An actual preexisting legacy row would need a separately accepted provenance/bootstrap binding, not a weakened guard. Actual visible OUT parents are covered; a JSON NULL operand is not actual visible-NULL-parent evidence.",
+            "Sealed-document/missing-parent control models an OLD resolver operand; it does not establish a successful actual cascade.",
+            "Proposed synthetic upload metadata is format/lifecycle input only; no object was uploaded, inspected or confirmed in hosted storage. Synthetic confirm_upload is a canonical command-state control, not storage proof.",
+            "Expiry/disconnect timing and other prior qualification measurements remain pending. Existing future driver, suite and proof holds are unchanged.",
+            "Material session/legal U/D and price DELETE still reach canonical BEFORE refusal, not Quick Order AFTER guards. The new real quality-command UPDATE controls supersede only the prior missing-quality-UPDATE carry; quality DELETE remains unfilled.",
+            "TRUNCATE CASCADE controls prove guard-family refusal per requested command target; FK cascades still prevent attribution to each individual trigger firing. The exact 47-trigger inventory is separate source-authored coverage.",
+            "Historical CLI remains held and does not dispatch the future suite; exact accepted external proof bytes and a reviewed dispatch increment remain required.",
+            "Disposable postgres login/request/function-owner identities coincide in the authored driver. Future OID assertions are not Supabase/PostgREST topology evidence or observed deployment/enforcement.",
+            "Per-case database lifecycle bounds are authored; total suite command ceilings/runtime/schedule feasibility, transaction-origin budget expiry and disconnect/rollback behavior remain unmeasured.",
+            "Prior C1-12 and 6+16+14 holds remain; source correctness and qualification readiness are not asserted. No SQL, installation, verifier execution, push or deployment occurred."
+          ],
+          "intake": [
+            "All controls AUTHORED / NOT RUN. No syntax/parser/module/SQL/Docker execution performed.",
+            "Actual implemented-S descriptor, accepted census and intake dependency seal are absent. No fixture rewrites frozen SQL or fills source authority.",
+            "Trusted admin-attested checkout-number binding remains absent from four-field context: positive branch cannot be authored honestly against current signature; specific refusal is covered.",
+            "Canonical Early Access member-audience correction and its discriminating controls are authored; independent source acceptance and separately authorized execution remain pending.",
+            "Write-boundary fault cases cover failure before each of five INSERTs and rollback of zero through four prior effects. Failure after the fifth effect, uncertain COMMIT acknowledgment and database restart durability are not covered.",
+            "Hosted Supabase/PostgREST login/request/owner configuration, actual timer/pre-BEGIN/disconnect enforcement and production behavior remain unobserved.",
+            "Full simultaneous writer/revocation timing/fairness matrix, all row-class permutations and transport/adapter end-to-end qualification remain incomplete.",
+            "Canonical bootstrap order and synthetic platform seams are authored from whole pinned files; no successful bootstrap is claimed.",
+            "No external reviewer acceptance or execution eligibility is inferred; both schedules and existing holds unchanged."
+          ]
+        }
+      },
+      {
+        "id": "QOE_01_TO_08",
+        "requirement": "Actual class routes, trusted artifacts, whole HTTP clock, writer/session ordering, target roles/configuration and measurements remain open; source inspection alone closes none."
+      },
+      {
+        "id": "EARLY_ACCESS_PRICE_AUDIENCE",
+        "requirement": "Canonical Early Access member-audience correction and its discriminating controls are authored; independent source acceptance and separately authorized execution remain pending.",
+        "status": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "historicalRequirement": "Frozen intake selects private_early_access for priced early-access requests, but canonical baseline price CHECK permits only retail/member/professional/wholesale/compare_at. Candidate is unchanged; this is a source-contract discrepancy, not an owner-policy decision or a fabricated fixture."
+      }
+    ],
+    "reviewDelivery": "READY_FOR_EXISTING_COORDINATOR_COLLECTION_NO_NEW_REVIEW_DISPATCH",
+    "sourcePaths": 17,
+    "evidencePaths": 4,
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "schedules": "UNCHANGED",
+    "previousSourceCheckpoint": {
+      "source": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+      "records": "0d4309c0159db7bee96e3989e882528efec60de3"
+    }
+  },
+  "currentSourceAcceptance": {
+    "source": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
+    "tree": "d0c676b673df6f9f9d587b543df9c745e31e5d39",
+    "disposition": "PENDING",
+    "execution": "NOT_RUN",
+    "executionReservation": null
+  },
+  "doc71FixtureContinuation": {
+    "coordinatorCheckpoint": "238943cb3041c559252c99129afe112ddb065180",
+    "predecessorSource": "357890561160d59eb649505c6c46e9e5b65a3f08",
+    "predecessorRecords": "a8df1bc5386b6f6b60e621158d0bd5778ccc1783",
+    "source": "3ddc31968bdca01be19ba1d7fdd65f2ffa3ccfdb",
+    "tree": "edffa5c578e15d60006172c9fd09e1196f88fddf",
+    "state": "COHERENT_FIXTURE_SOURCE_FROZEN",
+    "candidateBodies": "PRESERVED",
+    "coverageCounts": {
+      "currentness": 166,
+      "intake": 20,
+      "adapter": 4
+    },
+    "evidence": [
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+        "bytes": 54259
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "rawSha256": "8e0e083250cfa73509baf88f50c6604c20af7838e896c0cc4aade520bb2be442",
+        "bytes": 20160
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "rawSha256": "e056d772b3d0ca63dfbc137506ef2621b32eedc1ff5c6fcadb0fe242b23644ca",
+        "bytes": 28357
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "rawSha256": "f1bb1744ff6050a66567a28f0d42e5a47ed46720f13ebae9c9e13ddc7d3a5e5f",
+        "bytes": 305899
+      }
+    ],
+    "remaining": [
+      {
+        "id": "SEQUENTIAL_SOURCE_SEAL",
+        "requirement": "Original acceptance of exact currentness source, then accepted receipt, then explicit intake dependency-seal successor. No unreviewed bytes are adopted."
+      },
+      {
+        "id": "CANONICAL_SCHEMA_DESCRIPTOR",
+        "requirement": "Source-bound exact column descriptor for the real implemented-S/census. Candidate refuses its absent seal; no new configuration-setting authority."
+      },
+      {
+        "id": "CHECKOUT_PRIVATE_BINDING",
+        "requirement": "Admin-attested checkout branch remains refused without a trusted exact checkout binding; no browser fallback or fifth private-context field invented."
+      },
+      {
+        "id": "FULL_DATABASE_VERIFIER",
+        "requirement": "Concrete bootstrap/control source added in this fixture successor; actual completion/execution remains blocked by the explicit per-suite prerequisites below, source acceptance and fresh execution authority.",
+        "suitePrerequisites": {
+          "currentness": [
+            "Frozen candidate retains NULL accepted implemented-S source-column descriptor in installation/runtime; no synthetic or source-derived fixture substitutes that existing operational input.",
+            "All successor receipts are PENDING and refuse before subprocesses. Independent review of exact source/driver is not observed.",
+            "Fresh execution authority, externally bound accepted schema/census, exact disposable identity/bootstrap receipts, connection-role and pre-BEGIN enforcement proof bytes are not supplied. Authored synthetic hashes are not those proofs.",
+            "The authored future suite entry is not connected to historical CLI; a reviewed binding/dispatch increment must carry the exact external proof inputs without weakening current gates.",
+            "Material session/legal U/D and price DELETE reach canonical BEFORE refusal, not Quick Order AFTER guard. Direct quality document/test U/D also hit their canonical command guards; reviewed quality-command positive fixtures remain unimplemented.",
+            "TRUNCATE CASCADE controls prove guard-family refusal per requested command target; FK cascades prevent attribution to each individual trigger firing. Exact 47-trigger inventory is a separate assertion.",
+            "Cross-revision and mixed/cascading parent-resolution cases, quality-command material U/D positive controls, transaction-origin budget expiry and disconnect/rollback measurement remain additional authored/qualification work.",
+            "Disposable postgres login/request/owner identities coincide. Their observed OIDs are compared, but this does not demonstrate Supabase/PostgREST deployed topology or actual enforcement.",
+            "Per-case fresh database lifecycle is authored with bounds; suite runtime/command ceilings and schedule feasibility are not measured."
+          ],
+          "intake": [
+            "All controls AUTHORED / NOT RUN. No syntax/parser/module/SQL/Docker execution performed.",
+            "Actual implemented-S descriptor, accepted census and intake dependency seal are absent. No fixture rewrites frozen SQL or fills source authority.",
+            "Trusted admin-attested checkout-number binding remains absent from four-field context: positive branch cannot be authored honestly against current signature; specific refusal is covered.",
+            "Baseline Product Control excludes private_early_access price audience. Frozen transaction maps EA actors to that unsupported priced audience; this requires source-contract correction, not another owner policy or data request.",
+            "Write-boundary fault cases cover failure before each of five INSERTs and rollback of zero through four prior effects. Failure after the fifth effect, uncertain COMMIT acknowledgment and database restart durability are not covered.",
+            "Hosted Supabase/PostgREST login/request/owner configuration, actual timer/pre-BEGIN/disconnect enforcement and production behavior remain unobserved.",
+            "Full simultaneous writer/revocation timing/fairness matrix, all row-class permutations and transport/adapter end-to-end qualification remain incomplete.",
+            "Canonical bootstrap order and synthetic platform seams are authored from whole pinned files; no successful bootstrap is claimed.",
+            "No external reviewer acceptance or execution eligibility is inferred; both schedules and existing holds unchanged."
+          ]
+        }
+      },
+      {
+        "id": "QOE_01_TO_08",
+        "requirement": "Actual class routes, trusted artifacts, whole HTTP clock, writer/session ordering, target roles/configuration and measurements remain open; source inspection alone closes none."
+      },
+      {
+        "id": "EARLY_ACCESS_PRICE_AUDIENCE",
+        "requirement": "Frozen intake selects private_early_access for priced early-access requests, but canonical baseline price CHECK permits only retail/member/professional/wholesale/compare_at. Candidate is unchanged; this is a source-contract discrepancy, not an owner-policy decision or a fabricated fixture."
+      }
+    ],
+    "execution": "NOT_RUN",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED"
+  },
+  "doc71PriceAudienceContinuation": {
+    "coordinatorCheckpoint": "d4ccff115ade964379f9ad4e94ae77c34fe28ccf",
+    "predecessorSource": "3ddc31968bdca01be19ba1d7fdd65f2ffa3ccfdb",
+    "predecessorRecords": "792f7547f2dbdc8e8f56d9ce071bf3429f70fb92",
+    "source": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+    "tree": "661563b87ef25b483daa2486041435eaa989b137",
+    "state": "COHERENT_PRICE_CORRECTION_FROZEN",
+    "changedSourcePaths": [
+      "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "supabase/verification/research_health_quick_order_local.mjs"
+    ],
+    "evidence": [
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+        "bytes": 54259
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "rawSha256": "b964033126ab87903ce0689920e3de3505a656f0e6d2d1cdb18bb8bd5e42f271",
+        "bytes": 29794
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "rawSha256": "dc4805c76ff8b74e93fa1fc39d95798da6e77b1d7430460042de770b52d136fd",
+        "bytes": 37991
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "rawSha256": "4402ac8e720248e40bd9030c0fe12f6222ac520bc98b6285d1a4ffa184e3ecf2",
+        "bytes": 314114
+      }
+    ],
+    "remaining": [
+      {
+        "id": "SEQUENTIAL_SOURCE_SEAL",
+        "requirement": "Original acceptance of exact currentness source, then accepted receipt, then explicit intake dependency-seal successor. No unreviewed bytes are adopted."
+      },
+      {
+        "id": "CANONICAL_SCHEMA_DESCRIPTOR",
+        "requirement": "Source-bound exact column descriptor for the real implemented-S/census. Candidate refuses its absent seal; no new configuration-setting authority."
+      },
+      {
+        "id": "CHECKOUT_PRIVATE_BINDING",
+        "requirement": "Admin-attested checkout branch remains refused without a trusted exact checkout binding; no browser fallback or fifth private-context field invented."
+      },
+      {
+        "id": "FULL_DATABASE_VERIFIER",
+        "requirement": "Concrete bootstrap/control source added in this fixture successor; actual completion/execution remains blocked by the explicit per-suite prerequisites below, source acceptance and fresh execution authority.",
+        "suitePrerequisites": {
+          "currentness": [
+            "Frozen candidate retains NULL accepted implemented-S source-column descriptor in installation/runtime; no synthetic or source-derived fixture substitutes that existing operational input.",
+            "All successor receipts are PENDING and refuse before subprocesses. Independent review of exact source/driver is not observed.",
+            "Fresh execution authority, externally bound accepted schema/census, exact disposable identity/bootstrap receipts, connection-role and pre-BEGIN enforcement proof bytes are not supplied. Authored synthetic hashes are not those proofs.",
+            "The authored future suite entry is not connected to historical CLI; a reviewed binding/dispatch increment must carry the exact external proof inputs without weakening current gates.",
+            "Material session/legal U/D and price DELETE reach canonical BEFORE refusal, not Quick Order AFTER guard. Direct quality document/test U/D also hit their canonical command guards; reviewed quality-command positive fixtures remain unimplemented.",
+            "TRUNCATE CASCADE controls prove guard-family refusal per requested command target; FK cascades prevent attribution to each individual trigger firing. Exact 47-trigger inventory is a separate assertion.",
+            "Cross-revision and mixed/cascading parent-resolution cases, quality-command material U/D positive controls, transaction-origin budget expiry and disconnect/rollback measurement remain additional authored/qualification work.",
+            "Disposable postgres login/request/owner identities coincide. Their observed OIDs are compared, but this does not demonstrate Supabase/PostgREST deployed topology or actual enforcement.",
+            "Per-case fresh database lifecycle is authored with bounds; suite runtime/command ceilings and schedule feasibility are not measured."
+          ],
+          "intake": [
+            "All controls AUTHORED / NOT RUN. No syntax/parser/module/SQL/Docker execution performed.",
+            "Actual implemented-S descriptor, accepted census and intake dependency seal are absent. No fixture rewrites frozen SQL or fills source authority.",
+            "Trusted admin-attested checkout-number binding remains absent from four-field context: positive branch cannot be authored honestly against current signature; specific refusal is covered.",
+            "Canonical Early Access member-audience correction and its discriminating controls are authored; independent source acceptance and separately authorized execution remain pending.",
+            "Write-boundary fault cases cover failure before each of five INSERTs and rollback of zero through four prior effects. Failure after the fifth effect, uncertain COMMIT acknowledgment and database restart durability are not covered.",
+            "Hosted Supabase/PostgREST login/request/owner configuration, actual timer/pre-BEGIN/disconnect enforcement and production behavior remain unobserved.",
+            "Full simultaneous writer/revocation timing/fairness matrix, all row-class permutations and transport/adapter end-to-end qualification remain incomplete.",
+            "Canonical bootstrap order and synthetic platform seams are authored from whole pinned files; no successful bootstrap is claimed.",
+            "No external reviewer acceptance or execution eligibility is inferred; both schedules and existing holds unchanged."
+          ]
+        }
+      },
+      {
+        "id": "QOE_01_TO_08",
+        "requirement": "Actual class routes, trusted artifacts, whole HTTP clock, writer/session ordering, target roles/configuration and measurements remain open; source inspection alone closes none."
+      },
+      {
+        "id": "EARLY_ACCESS_PRICE_AUDIENCE",
+        "requirement": "Canonical Early Access member-audience correction and its discriminating controls are authored; independent source acceptance and separately authorized execution remain pending.",
+        "status": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "historicalRequirement": "Frozen intake selects private_early_access for priced early-access requests, but canonical baseline price CHECK permits only retail/member/professional/wholesale/compare_at. Candidate is unchanged; this is a source-contract discrepancy, not an owner-policy decision or a fabricated fixture."
+      }
+    ],
+    "execution": "NOT_RUN",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED"
+  },
+  "doc71QualityClosureContinuation": {
+    "predecessorSource": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+    "predecessorRecords": "0d4309c0159db7bee96e3989e882528efec60de3",
+    "source": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
+    "tree": "d0c676b673df6f9f9d587b543df9c745e31e5d39",
+    "state": "COHERENT_FIXTURE_SUCCESSOR_FROZEN",
+    "changedSourcePaths": [
+      "supabase/verification/research_health_quick_order_currentness_local.mjs"
+    ],
+    "caseIds": [
+      "QC01-document-confirm-material-update",
+      "QC02-stale-version-before-mutation",
+      "QC03-ninth-test-failure-atomic-rollback",
+      "QC04-nine-test-updates-plus-document-exact-ten",
+      "QC05-quality-replay-no-second-epoch",
+      "QC06-document-withdraw-material-update",
+      "QC07-document-cancel-material-update",
+      "QC08-document-reject-material-update",
+      "QC09-document-delete-canonical-refusal",
+      "QC10-test-delete-canonical-refusal",
+      "QC11-lot-cascade-canonical-refusal",
+      "MP-document-mixed-in-out-both-orders",
+      "MP-document-visible-parent-out",
+      "MP-document-in-first-must-not-short-circuit",
+      "MP-document-unresolved-first-must-not-short-circuit",
+      "MP-test-mixed-in-out-both-orders",
+      "MP-test-visible-parent-out",
+      "MP-test-in-first-must-not-short-circuit",
+      "MP-test-unresolved-first-must-not-short-circuit",
+      "MP-sealed-document-precedes-missing-live-parent",
+      "CR01-new-revision-has-own-closure-old-seal-immutable",
+      "CR02-prior-revision-writer-is-out-for-current-head",
+      "CR03-current-revision-writer-invalidates",
+      "CR04-old-revision-cannot-reactivate-current-head",
+      "CR05-unsealed-new-document-and-test-resolve-visible-selected-parent",
+      "CR06-changed-lot-document-test-closure-refuses-reactivation",
+      "CR07-republishing-same-revision-cannot-reseal-new-closure",
+      "CR08-new-revision-captures-complete-child-identities-without-mutation"
+    ],
+    "evidence": [
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+        "bytes": 54259
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "rawSha256": "590e57ad4d49071e94849e701cbb2b2cb626a7ad2fc8a2d94f6f174d414d36c0",
+        "bytes": 36711
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "rawSha256": "9b5da66331ee795a350637683a88e8e91e8bac95a6475a68bbc3a3e4805559ac",
+        "bytes": 44908
+      },
+      {
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "rawSha256": "f6bd470e304958f730cbb084d5c2c9e4e1c12cefdf65dca1ed9a4d36a93d1e55",
+        "bytes": 352320
+      }
+    ],
+    "remaining": [
+      {
+        "id": "SEQUENTIAL_SOURCE_SEAL",
+        "requirement": "Original acceptance of exact currentness source, then accepted receipt, then explicit intake dependency-seal successor. No unreviewed bytes are adopted."
+      },
+      {
+        "id": "CANONICAL_SCHEMA_DESCRIPTOR",
+        "requirement": "Source-bound exact column descriptor for the real implemented-S/census. Candidate refuses its absent seal; no new configuration-setting authority."
+      },
+      {
+        "id": "CHECKOUT_PRIVATE_BINDING",
+        "requirement": "Admin-attested checkout branch remains refused without a trusted exact checkout binding; no browser fallback or fifth private-context field invented."
+      },
+      {
+        "id": "FULL_DATABASE_VERIFIER",
+        "requirement": "Canonical quality-command and parent/closure control source added; exact held and unreachable cases remain recorded without bypassing canonical contracts. No qualification execution or success.",
+        "suitePrerequisites": {
+          "currentness": [
+            "Future accepted source/receipt and exact candidate with legitimately resolved schema descriptor; accepted implemented-S/census, immutable input/profile/connection proofs, separately approved execution authority, reviewed driver and explicit future dispatch. None supplied or bypassed here.",
+            "No pinned reviewed quality command deletes documents/tests. Canonical BEFORE guards reject direct child DELETE and real lot cascade; immutable quality_events NO ACTION FK additionally retains command-created documents. Therefore positive QO AFTER DELETE and successful real child cascade coverage are unfilled, not replaced by the three canonical refusals.",
+            "Visible NULL-product/NULL-variant legacy lot parent fixture is unfilled: supabase/research-inventory-reservation-commands.sql:300-303 refuses either NULL identity with inventory lot identity is incomplete, and its BEFORE INSERT/UPDATE(product_id,variant_id,sku) trigger at327-329 applies to supported current writes. An actual preexisting legacy row would need a separately accepted provenance/bootstrap binding, not a weakened guard. Actual visible OUT parents are covered; a JSON NULL operand is not actual visible-NULL-parent evidence.",
+            "Sealed-document/missing-parent control models an OLD resolver operand; it does not establish a successful actual cascade.",
+            "Proposed synthetic upload metadata is format/lifecycle input only; no object was uploaded, inspected or confirmed in hosted storage. Synthetic confirm_upload is a canonical command-state control, not storage proof.",
+            "Expiry/disconnect timing and other prior qualification measurements remain pending. Existing future driver, suite and proof holds are unchanged.",
+            "Material session/legal U/D and price DELETE still reach canonical BEFORE refusal, not Quick Order AFTER guards. The new real quality-command UPDATE controls supersede only the prior missing-quality-UPDATE carry; quality DELETE remains unfilled.",
+            "TRUNCATE CASCADE controls prove guard-family refusal per requested command target; FK cascades still prevent attribution to each individual trigger firing. The exact 47-trigger inventory is separate source-authored coverage.",
+            "Historical CLI remains held and does not dispatch the future suite; exact accepted external proof bytes and a reviewed dispatch increment remain required.",
+            "Disposable postgres login/request/function-owner identities coincide in the authored driver. Future OID assertions are not Supabase/PostgREST topology evidence or observed deployment/enforcement.",
+            "Per-case database lifecycle bounds are authored; total suite command ceilings/runtime/schedule feasibility, transaction-origin budget expiry and disconnect/rollback behavior remain unmeasured.",
+            "Prior C1-12 and 6+16+14 holds remain; source correctness and qualification readiness are not asserted. No SQL, installation, verifier execution, push or deployment occurred."
+          ],
+          "intake": [
+            "All controls AUTHORED / NOT RUN. No syntax/parser/module/SQL/Docker execution performed.",
+            "Actual implemented-S descriptor, accepted census and intake dependency seal are absent. No fixture rewrites frozen SQL or fills source authority.",
+            "Trusted admin-attested checkout-number binding remains absent from four-field context: positive branch cannot be authored honestly against current signature; specific refusal is covered.",
+            "Canonical Early Access member-audience correction and its discriminating controls are authored; independent source acceptance and separately authorized execution remain pending.",
+            "Write-boundary fault cases cover failure before each of five INSERTs and rollback of zero through four prior effects. Failure after the fifth effect, uncertain COMMIT acknowledgment and database restart durability are not covered.",
+            "Hosted Supabase/PostgREST login/request/owner configuration, actual timer/pre-BEGIN/disconnect enforcement and production behavior remain unobserved.",
+            "Full simultaneous writer/revocation timing/fairness matrix, all row-class permutations and transport/adapter end-to-end qualification remain incomplete.",
+            "Canonical bootstrap order and synthetic platform seams are authored from whole pinned files; no successful bootstrap is claimed.",
+            "No external reviewer acceptance or execution eligibility is inferred; both schedules and existing holds unchanged."
+          ]
+        }
+      },
+      {
+        "id": "QOE_01_TO_08",
+        "requirement": "Actual class routes, trusted artifacts, whole HTTP clock, writer/session ordering, target roles/configuration and measurements remain open; source inspection alone closes none."
+      },
+      {
+        "id": "EARLY_ACCESS_PRICE_AUDIENCE",
+        "requirement": "Canonical Early Access member-audience correction and its discriminating controls are authored; independent source acceptance and separately authorized execution remain pending.",
+        "status": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "historicalRequirement": "Frozen intake selects private_early_access for priced early-access requests, but canonical baseline price CHECK permits only retail/member/professional/wholesale/compare_at. Candidate is unchanged; this is a source-contract discrepancy, not an owner-policy decision or a fabricated fixture."
+      }
+    ],
+    "execution": "NOT_RUN",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED"
+  },
+  "fixedAssemblyCustodyHandoff": {
+    "authorityCommit": "21d904fa81835a6c26897df6269d295b95d13110",
+    "authorityPath": "docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+    "authorityRawSha256": "20a17b3613d40e7fe7bd9e3041a8db01b66e932e56a618df09cd2cd75cde7f5a",
+    "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+    "approvedRegistryCandidate": "b0fb285cdec834fbc2cf87846c8d56439a70f77f9335cdc717fd3036045d67e7",
+    "approvedPatch": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+    "receipt": ".xenios/handoffs/2026-10-11-quick-order-fixed-assembly-custody-handoff.json",
+    "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+    "sourceTree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+    "records": "735254e4cc6230479c9bfa821e1c6991389d5266",
+    "recordsTree": "0748ee8bd2bdc875ea770c860253aa1b3c2e9590",
+    "receiver": {
+      "chat": "01a0e098-3b23-7233-9b07-877ace092650",
+      "session": "codex-accepted-source-integration-20261005",
+      "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "branch": "codex/accepted-source-integration-20261005",
+      "base": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "baseTree": "2498c5a60bb2c5cb53c0ce835a97b31840738deb"
+    },
+    "proposedCopyLease": "843092f2-95b2-4724-98c0-744a6324f39a",
+    "state": "ACTUAL_OUTGOING_CUSTODY_HANDOFF_COPY_PHASE_ONLY",
+    "handedOffAt": "2026-10-11T16:37:17.177Z",
+    "copyPerformedByBuilder": false,
+    "implementationAuthorizedByThisHandoff": false,
+    "returnRule": "No automatic reclaim. Receiver must complete and hand off its fixed-copy lease; coordinator and same builder acknowledge the exact assembled checkpoint and return of applicable existing authority before any next source edit."
+  },
+  "currentIntegrationStage": {
+    "schemaVersion": 1,
+    "at": "2026-10-11T16:52:37.180Z",
+    "kind": "ACTUAL_BUILDER_CUSTODY_RETURN_ACK_AND_SERIAL_SOURCE_CLAIM",
+    "session": "codex-health-quick-order-20261005",
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "coordinatorActivation": "179b5e196c6404f6e9ec998115f646e5fda390e5",
+    "sourceGrant": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+    "ninePathApproval": "docs/coordination/launch-coordination-20261005/NINE_PATH_DISABLED_INTEGRATION_SOURCE_APPROVAL_20261011.json",
+    "copyReturn": {
+      "commit": "38b386afdb275c409dfec4aa603be223a8d5e867",
+      "path": ".xenios/handoffs/2026-10-11-QUICK-ORDER-FIXED-ASSEMBLY-RETURN-codex-accepted-source-integration-20261005.json",
+      "sha256": "4c71ace81ba865150f0bdc4ac402cc454b6720d2c7e984539c9d9e13a02ae946",
+      "actuallyAcknowledged": true
+    },
+    "base": {
+      "commit": "38b386afdb275c409dfec4aa603be223a8d5e867",
+      "tree": "5d6d30fc695a9960b594983dc676c64e751f4e03",
+      "source": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+      "sourceTree": "006ea7f24bbc308e58f40f109065d7a22616bf8e"
+    },
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "originalLease": "af843213-fa11-42b9-8874-f6451ae38034",
+    "supplementalLease": "45b81df8-c988-4d87-a1c0-37cbccb3f97d",
+    "sourcePaths": [
+      "server/research/health/quick-order/handler.mjs",
+      "server/research/health/quick-order/handler.d.mts",
+      "server/research/health/quick-order/root-composition.test.ts",
+      "server/research/health/quick-order/production.ts",
+      "server/research/health/quick-order/production.test.ts",
+      "server/research/health/quick-order/ports.ts"
+    ],
+    "soleSerialSourceGitWriter": true,
+    "integratorSixUnclaimed": true,
+    "originalReviewTargetPreserved": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+    "originalRecords": "735254e4cc6230479c9bfa821e1c6991389d5266",
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY",
+    "schedules": "UNCHANGED",
+    "requestedModel": "gpt-6-astra",
+    "requestedEffort": "ultra",
+    "actualModel": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED"
+  },
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}
