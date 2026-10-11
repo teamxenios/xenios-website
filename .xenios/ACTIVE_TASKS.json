@@ -3587,7 +3587,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "handoff",
+      "state": "active",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -3630,7 +3630,7 @@
         "Real five operational inputs, implemented snapshot S, populated census and external digest/original acceptance before operation.",
         "Fresh separately approved qualification scope/execution reservation; old window expired. Protected mount, SQL installation, push and deployment still unauthorized."
       ],
-      "heartbeatAt": "2026-10-11T19:12:14.310Z",
+      "heartbeatAt": "2026-10-11T21:27:10.654Z",
       "note": "Doc81 r3 acknowledged at exact clean6bf2579 after actual integrator handoff. Same af843 full21 identity/history/authority reactivated for narrowed verifier/intake/evidence stage only. Four accepted currentness SQL bytes and immutable sharedbinding frozen. First verifier source, separate provisional intake successor; PENDING receipts/reviewCommit null, LOCAL_ONLY/NOT_RUN.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
@@ -5274,6 +5274,22 @@
         "stage": "BOTH_COHERENT_CHECKPOINTS_COMPLETE_PENDING_ORIGINAL_REVIEW",
         "execution": "NOT_RUN",
         "publication": "LOCAL_ONLY"
+      },
+      "currentDoc82Stage": {
+        "state": "ACTIVE_DOC82_THREE_EVIDENCE_PATHS_ONLY",
+        "activatedAt": "2026-10-11T21:27:10.654Z",
+        "ack": ".xenios/handoffs/2026-10-11-doc82-evidence-finalization-ack.json",
+        "sourcePaths": [
+          "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+        ],
+        "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "branch": "codex/accepted-source-integration-20261005",
+        "coordinatorCommit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+        "acceptedReview": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+        "otherOriginalPathsHeld": true,
+        "soleSerialSourceGitWriter": true
       }
     }
   ]

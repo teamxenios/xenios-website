@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-11T21:27:10.654Z",
+  "builderChat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+  "session": "codex-health-quick-order-20261005",
+  "base": "5e984caf6867fdc2b3956e1e57c252364fe86728",
+  "baseTree": "d08442e509c0987d2d9948ae4150cfb78bc56b85",
+  "phase": "DOC82_EVIDENCE_FINALIZATION_ONLY",
+  "lease": "af843213-fa11-42b9-8874-f6451ae38034",
+  "actualLeaseState": "active",
+  "paths": [
+    "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+    "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+    "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+  ],
+  "noCompetingWriterObserved": true,
+  "coordinatorCommit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+  "actualReview": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+  "acceptedSource": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+  "acceptedRecords": "b00aed5be48d9b3ff92a62f041ceb8ec344bcb2f",
+  "sourceEdits": false,
+  "intakeAcceptance": "PENDING",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}
