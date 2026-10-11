@@ -3986,13 +3986,17 @@
         "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
         "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-11T21:32:06.316Z",
-      "heartbeatAt": "2026-10-11T21:32:06.316Z",
+      "heartbeatAt": "2026-10-11T21:40:23.658Z",
       "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
       "authorityCommit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
       "ack": ".xenios/handoffs/2026-10-11-qualification-two-file-holder-receiver-ack.json",
-      "scope": "Exact two-file local copy then bounded U15/D68; all transaction/evidence/foreign source frozen"
+      "scope": "Exact two-file local copy then bounded U15/D68; all transaction/evidence/foreign source frozen",
+      "source": "3e5e2ed9faf30aa46f5a81047fa71d55e28bdb2e",
+      "sourceTree": "7cde1fbc846f1a7e1c3eb9e445344c0715a43012",
+      "handoff": ".xenios/handoffs/2026-10-11-qualification-u15-d68-source-handoff.json",
+      "note": "Same builder completed exact copy plus bounded U15/D68 two-file amendment. Source writers stopped; original source review pending; LOCAL ONLY / NOT RUN."
     }
   ],
   "rules": [
