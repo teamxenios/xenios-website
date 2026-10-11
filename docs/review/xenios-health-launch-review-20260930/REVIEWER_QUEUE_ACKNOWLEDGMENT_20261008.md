@@ -361,3 +361,25 @@ The verdict will be published as doc 80. Nothing was executed.
 
 The next review for this session is revision 2 of this task, as a bounded delta against `9c1c92b`. Nothing was
 executed.
+
+## Queue state update (2026-10-11, currentness source revision 2)
+
+This session's own board check found the registration. The coordinator recorded a connection blocker at `0ee85c5`, but
+this session is active. `DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010` **revision 2** (bounded doc 80 correction
+delta, registered at coordinator `ebcbe18`) is ACKNOWLEDGED and IN REVIEW. The targets are recomputed from Git:
+
+| Field | Value |
+| --- | --- |
+| Source | `aa857e4f94df95f09a1402fb1cbf08042a3bc19f` (tree `03eae1a5…`), parent `1fa74ef` |
+| Records | `735254e4cc6230479c9bfa821e1c6991389d5266` (tree `0748ee8b…`) |
+| `…currentness.sql` / `.precheck.sql` / `.postcheck.sql` / `.rollback.md` | raw `d44974d1…` / `91ab412b…` / `78534251…` / `8de55983…` |
+| Verifier `…currentness_local.mjs` | raw `2665acf4…` |
+| Evidence (bindings, intake receipt, currentness receipt, correction map) | `ac7d45ec…` (unchanged), `899fd265…`, `c1aa0041…`, `df943e90…` |
+
+- **Scope of the change.** The source commit changes only the five currentness paths; no intake, adapter or other
+  code path changes.
+- **What is checked.** CS-1 to CS-26 against doc 80, plus a regression check of every changed region against doc 80's
+  findings and the `25858ad` baseline.
+- **Publication.** The verdict will be published as doc 81.
+
+Nothing was executed.
