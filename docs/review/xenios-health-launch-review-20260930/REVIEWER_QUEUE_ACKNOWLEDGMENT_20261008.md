@@ -352,3 +352,12 @@ Samuel relayed the coordinator's status in this session's chat; that is the deli
 - **Context only.** The intake, adapter and readback files are read for compatibility, not for final acceptance.
 
 The verdict will be published as doc 80. Nothing was executed.
+
+## Queue state update (2026-10-11, doc 80 currentness source acceptance)
+
+| Board task | Exact target | State |
+| --- | --- | --- |
+| `DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010` revision 1 | source `9c1c92bcb7a514da9b575a291d0abac67c8ba366` (tree `d0c676b6…`), records `1fa74efd957ee78f8e75f24e25be766062b5de1c` | COMPLETE: doc 80, **CORRECTIONS REQUIRED.** No P0 or P1, and no fail-open path. 15 S2 corrections (CS-1 to CS-15): five SQL, nine verifier, one records. CS-1 (the integrity check matches the family's own indexes and can never pass) is the most consequential. One consolidated correction goes to the same builder within the five currentness paths and four evidence records. The lease and implementation are not reset |
+
+The next review for this session is revision 2 of this task, as a bounded delta against `9c1c92b`. Nothing was
+executed.
