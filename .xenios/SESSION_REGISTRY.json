@@ -6,10 +6,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "accepted-source-integration",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-11T16:43:06Z",
-      "note": "Same-session QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011 r1 registry1eb5191 and fixedcopy3f86463 complete. Exact47snapshots+15files/30hunks;62committed/raw bindings and8ac9customerblobs preserved. Copy843092f2 handed off and actual custodyreturn recorded for samebuilderaf843; coordinator/builder acknowledgment before serialb22f source stage. Integrator8703 unclaimed. Sourceacceptance pending, intakeunsealed, LOCAL_ONLY/NOT_RUN. No execution, push, hosted or schedule changes. Requested gpt-6-astra/ultra; actual NOT_EXPOSED."
+      "heartbeatAt": "2026-10-11T17:16:24.630Z",
+      "note": "Same-session integrator six-source phase active on clean141bdf6 after builder59b2241/records141bdf6 handoff and coordinatorac19cfc activation. Lease8703b782 exact six paths only. Disabled/unmounted/enqueue-only, AUTHORED_NOT_RUN. No application/parser/test/build/SQL/browser execution, push, hosted mutation or schedule change. Source acceptance pending and intake unsealed. Requested gpt-6-astra/ultra; actual NOT_EXPOSED."
     },
     {
       "id": "claude-opus5-main",

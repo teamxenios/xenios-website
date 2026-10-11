@@ -34,6 +34,11 @@ import {
 } from "./audit-store";
 import { enqueueNotificationOnce } from "../outbox";
 import { reviewedHeldVariantIds } from "../master-offerings/reviewed-holds";
+import type { createAssistedOrderViewerResolvers } from "./express";
+import { createQuickOrderTransactionExtension, QUICK_ORDER_REPLAY_RPC } from "./quick-order-repository";
+import { createQuickOrderCanonicalCatalog } from "../health/quick-order/catalog";
+import { createQuickOrderProductionPorts, type QuickOrderProductionWiring } from "../health/quick-order/production";
+import type { QuickOrderPorts } from "../health/quick-order/ports";
 
 export const ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR =
   "RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED";
@@ -86,6 +91,69 @@ export type AssistedOrderProductionWiring = Readonly<{
   log(message: string, source?: string): void;
 }>;
 
+function canonicalCatalogCallbacks(wiring: AssistedOrderProductionWiring) {
+  return createAssistedOrderMasterCatalogCallbacks({
+    serviceFor: wiring.masterOfferingServiceFor,
+    bindingFor: wiring.bindingFor,
+    offeringVariantFor: wiring.offeringVariantFor,
+    catalogVersion: wiring.catalogVersion,
+    reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(),
+  });
+}
+
+/** Disabled composition over the SAME service, catalog and RPC client. No
+ * configuration flag can supply the absent accepted artifacts, operational
+ * profile, Health legal/visibility/destination authority or cleanup proof.
+ * Construction performs no network/probe/write; canonical pinned catalog holds
+ * still use their existing local reader. Raw containment is the only mount.
+ */
+export function buildDisabledQuickOrderProduction(
+  wiring: AssistedOrderProductionWiring,
+  context: Readonly<{
+    service: AssistedOrderProductionComposition["service"];
+    viewers: ReturnType<typeof createAssistedOrderViewerResolvers>;
+    enteredAtMonotonicMsFor: QuickOrderProductionWiring["enteredAtMonotonicMsFor"];
+    monotonicNow(): number;
+    csrfSecret: string | null;
+  }>,
+): QuickOrderPorts | null {
+  if (!context.service) return null;
+  const rpcClient = wiring.supabaseRpc;
+  const extension = createQuickOrderTransactionExtension({
+    async rpc(name, args) {
+      // Ordinary Supabase RPC responses can support the existing replay read,
+      // but are NOT commit, rollback or cancellation acknowledgments. Even a
+      // future mistaken caller cannot use this transport to invoke intake.
+      if (name !== QUICK_ORDER_REPLAY_RPC || !rpcClient) throw new Error("Quick Order transaction transport is not qualified");
+      const result = await rpcClient.rpc(name, args);
+      return { data: result.data, error: result.error };
+    },
+    privateContextFor: (viewer) => context.viewers.privateContextFor(viewer),
+    expectedConfigurationDigest: null,
+    approvedLimitsJson: null,
+    notificationRecipient: null,
+    runtime: {
+      now: context.monotonicNow,
+      // Explicit refusal, not a guessed timer budget or cleanup guarantee.
+      maximumDelayMs: 0,
+      schedule() { throw new Error("Quick Order cleanup authority is not qualified"); },
+    },
+  });
+  return createQuickOrderProductionPorts({
+    viewers: context.viewers,
+    enteredAtMonotonicMsFor: context.enteredAtMonotonicMsFor,
+    service: context.service,
+    csrfSecret: context.csrfSecret,
+    approvedHealthAgreementPairs: [],
+    catalog: createQuickOrderCanonicalCatalog({
+      catalog: canonicalCatalogCallbacks(wiring),
+      visibility: null,
+      destinationEligibility: null,
+    }),
+    assistedOrderExtension: extension,
+  });
+}
+
 export function buildAssistedOrderProduction(
   wiring: AssistedOrderProductionWiring,
 ): AssistedOrderProductionComposition {
@@ -118,17 +186,7 @@ export function buildAssistedOrderProduction(
       : null;
 
   const catalog = new CallbackAssistedOrderCatalogAdapter(
-    createAssistedOrderMasterCatalogCallbacks({
-      serviceFor: wiring.masterOfferingServiceFor,
-      bindingFor: wiring.bindingFor,
-      offeringVariantFor: wiring.offeringVariantFor,
-      catalogVersion: wiring.catalogVersion,
-      // The assisted-order projection must honor the exact same reviewed
-      // formulation holds as the canonical member catalog. Reading the
-      // fail-closed record here makes the production seam impossible to
-      // compose with an accidental empty/default hold set.
-      reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(),
-    }),
+    canonicalCatalogCallbacks(wiring),
   );
 
   const repository = wiring.supabaseRpc

@@ -1,5 +1,8 @@
 import { Switch, Route, Redirect, useLocation } from "wouter";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { getSupabaseBrowser, isRecoveryAccessToken } from "@/lib/supabaseBrowser";
+import type { QuickOrderTransport } from "@/research/quick-order/QuickOrderPage";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -61,6 +64,7 @@ const KAIROS_APP_URL = "https://kairos.xeniostechnology.com";
 // xenios research: the entire section is one lazy chunk so the main bundle does
 // not grow. It carries no product data; the catalog comes from gated server APIs.
 const ResearchSection = lazy(() => import("@/research/section"));
+const QuickOrderPage = lazy(() => import("@/research/quick-order/QuickOrderPage"));
 const RecommendationRecipient = lazy(() => import("@/research/recommendation/Recipient"));
 // Admin dashboard: a large, rarely visited surface (waitlist/LOI/bookings/
 // analytics/research tables). Its own lazy chunk keeps it out of the main
@@ -75,6 +79,93 @@ const CareConsent = lazy(() => import("@/care/CareConsentPendingPage"));
 const CareAppointments = lazy(() => import("@/care/CareAppointmentsPage"));
 const CarePrescriptions = lazy(() => import("@/care/CarePrescriptionsPage"));
 const CarePharmacyOrders = lazy(() => import("@/care/CarePharmacyOrdersPage"));
+
+function QuickOrderRoutes() {
+  const [boundary, setBoundary] = useState<{ key: string; transport: QuickOrderTransport } | null>(null);
+  const current = useRef<{ key: string; userId: string; token: string; expiresAt: number } | null>(null);
+  const inFlight = useRef(new Set<AbortController>());
+  useEffect(() => {
+    let alive = true, generation = 0, accountEpoch = 0;
+    let unsubscribe: (() => void) | undefined;
+    let expiry: ReturnType<typeof setTimeout> | undefined;
+    const clear = () => {
+      current.current = null;
+      accountEpoch += 1;
+      clearTimeout(expiry);
+      for (const controller of inFlight.current) controller.abort();
+      inFlight.current.clear();
+      if (alive) setBoundary(null);
+    };
+    const observe = (session: Session | null) => {
+      if (!alive) return;
+      const userId = session?.user?.id;
+      const token = session?.access_token;
+      const expiresAt = typeof session?.expires_at === "number" ? session.expires_at * 1000 : NaN;
+      if (!userId || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(userId)
+        || !token || isRecoveryAccessToken(token) || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+        clear(); return;
+      }
+      const sameAccount = current.current?.userId === userId;
+      if (!sameAccount) clear();
+      const key = current.current?.key ?? `quick-order:${accountEpoch}:${userId}`;
+      current.current = { key, userId, token, expiresAt };
+      clearTimeout(expiry);
+      // Expiry only closes this UI boundary. It never renews or authenticates.
+      expiry = setTimeout(clear, Math.min(expiresAt - Date.now(), 2_147_483_647));
+      if (sameAccount) return; // Token refresh retains the same in-memory attempt.
+      const transport: QuickOrderTransport = async (url, init) => {
+        const authority = current.current;
+        if (!alive || authority?.key !== key || authority.expiresAt <= Date.now()) throw new Error("Request access unavailable");
+        const target = new URL(url, window.location.origin);
+        if (target.origin !== window.location.origin || target.hash
+          || !/^\/api\/health\/quick-order\/(config|catalog|requests)$/.test(target.pathname)) throw new Error("Request access unavailable");
+        const controller = new AbortController();
+        const abort = () => controller.abort();
+        if (init.signal?.aborted) abort();
+        else init.signal?.addEventListener("abort", abort, { once: true });
+        inFlight.current.add(controller);
+        try {
+          const headers = new Headers(init.headers);
+          // This is transport only. The server's canonical resolver verifies the
+          // token, member binding and private session before granting authority.
+          headers.set("Authorization", `Bearer ${authority.token}`);
+          const response = await fetch(target.pathname + target.search, {
+            ...init, headers, credentials: "same-origin", cache: "no-store", redirect: "error", signal: controller.signal,
+          });
+          if (!alive || current.current?.key !== key || current.current.expiresAt <= Date.now() || controller.signal.aborted) throw new Error("Request access unavailable");
+          return response;
+        } finally {
+          inFlight.current.delete(controller);
+          init.signal?.removeEventListener("abort", abort);
+        }
+      };
+      setBoundary({ key, transport });
+    };
+    // Reuse the canonical browser client, not a new Auth provider or email key.
+    // Browser identity owns only cleanup; it is never server authorization. No
+    // Early Access-only fallback is guessed from a cookie the browser cannot read.
+    void getSupabaseBrowser().then(async (client) => {
+      if (!alive || !client) return;
+      const subscription = client.auth.onAuthStateChange((event, session) => {
+        generation += 1;
+        if (event === "SIGNED_OUT" || event === "PASSWORD_RECOVERY") clear();
+        else observe(session);
+      });
+      unsubscribe = () => subscription.data.subscription.unsubscribe();
+      const readGeneration = generation;
+      try {
+        const result = await client.auth.getSession();
+        if (alive && generation === readGeneration) observe(result.error ? null : result.data.session);
+      } catch {
+        if (alive && generation === readGeneration) clear();
+      }
+    }).catch(() => { if (alive) clear(); });
+    return () => { alive = false; generation += 1; clear(); unsubscribe?.(); };
+  }, []);
+  return <Suspense fallback={<div className="container-x" aria-busy="true" />}>
+    <QuickOrderPage sessionKey={boundary?.key ?? null} transport={boundary?.transport} intakeEnabled={false} />
+  </Suspense>;
+}
 
 function ResearchRoutes() {
   return (
@@ -239,6 +330,7 @@ function Router() {
       {/* Research operations family (Samuel admin presentation, own chunk). */}
       <Route path="/admin/research" component={AdminResearchRoutes} />
       <Route path="/admin/research/*" component={AdminResearchRoutes} />
+      <Route path="/health/quick-order" component={QuickOrderRoutes} />
       <Route path="/health"><Redirect to="/" /></Route>
       <Route path="/r/:code">{({ code }) => <Suspense fallback={<div className="container-x" aria-busy="true" style={{ paddingTop: 96 }} />}><RecommendationRecipient code={code} /></Suspense>}</Route>
       {/* Public clarity entrypoints redirect legacy marketing URLs before the

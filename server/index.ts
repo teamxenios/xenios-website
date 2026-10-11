@@ -137,7 +137,9 @@ import {
   partnerSubmissionsEnabled,
   resolvePartnerPortalPort,
 } from "./research/partners/portal-production";
-import { buildAssistedOrderProduction } from "./research/assisted-order/production-deps";
+import { buildAssistedOrderProduction, buildDisabledQuickOrderProduction, type AssistedOrderProductionWiring } from "./research/assisted-order/production-deps";
+import { createQuickOrderContainment } from "./research/health/quick-order/containment";
+import { PRIVATE_ACCESS_SESSION_ACCESS_ROLE } from "./research/early-access/private-access-session-repository";
 import { createAssistedMemberHistoryReader, withAssistedOrderRequestHistory } from "./research/assisted-order/member-order-history";
 import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
 import { resolveAssistedOrderAuditAuthority } from "./research/assisted-order/audit-store";
@@ -198,7 +200,8 @@ import {
   type FounderCommandCenterAssistedOrderPort,
 } from "./research/founder-command-center-production";
 import { randomUUID } from "crypto";
-import { createServer } from "http";
+import { createServer, type IncomingMessage } from "http";
+import { performance } from "node:perf_hooks";
 
 const app = express();
 // Behind the deployment's reverse proxy, req.ip must be the CLIENT address,
@@ -234,7 +237,16 @@ app.use((req, _res, next) => {
   }
   next();
 });
-const httpServer = createServer(app);
+// One root-private Node callback entry stamp per request, BEFORE Express can
+// normalize a target, inspect origin/auth or parse/retain a body. This is not
+// proxy/socket arrival time. The candidate uses this exact clock and origin.
+const quickOrderMonotonicNow = () => performance.now();
+const quickOrderEntryTimes = new WeakMap<IncomingMessage, number>();
+const enteredAtMonotonicMsFor = (req: IncomingMessage): number | null => quickOrderEntryTimes.get(req) ?? null;
+const httpServer = createServer((req, res) => {
+  if (!quickOrderEntryTimes.has(req)) quickOrderEntryTimes.set(req, quickOrderMonotonicNow());
+  app(req, res);
+});
 
 // Serve the Kairos MVP in place at xeniostechnology.com/kairos by reverse-proxying to the deployed
 // Kairos app (which is built with basePath /kairos, so /kairos/_next and /kairos/api resolve there).
@@ -273,6 +285,9 @@ app.use(
 // The held legacy order endpoint must terminate before any application body
 // parser or rawBody verifier can retain customer-supplied bytes.
 registerLegacyResearchOrderContainment(app);
+// Default-off Quick Order raw boundary. No auth, body retention, handler mount,
+// transaction or notification delivery occurs on this intake path.
+app.use(createQuickOrderContainment());
 
 // Private Early Access stays unavailable, but its exact raw payment-options
 // boundary terminates before JSON/urlencoded parsing and rawBody capture. The
@@ -926,7 +941,7 @@ async function composeAssistedOrderBridge(): Promise<
       ? (getSupabaseAdmin() as unknown as AssistedOrderRpcClient)
       : null,
   });
-  const assistedOrderComposition = buildAssistedOrderProduction({
+  const assistedOrderWiring: AssistedOrderProductionWiring = {
   env: process.env,
   auditAuthority: assistedOrderAudit.authority,
   requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
@@ -981,7 +996,8 @@ async function composeAssistedOrderBridge(): Promise<
     log(assistedOrderAuditLogLine(event), "assisted-order");
   },
   log,
-  });
+  };
+  const assistedOrderComposition = buildAssistedOrderProduction(assistedOrderWiring);
   const assistedOrderViewers = createAssistedOrderViewerResolvers({
     resolveMember: async (req) => {
       const member = await resolveActiveMemberSilently(req);
@@ -1002,7 +1018,25 @@ async function composeAssistedOrderBridge(): Promise<
     earlyAccessBindings: () =>
       earlyAccessPersistence.orderHistory?.bindings ?? null,
     adminEmail: () => (process.env.ADMIN_EMAIL || "").toLowerCase().trim(),
+    privateSessionAuthority: () => {
+      // Read the SAME durable repository owner used by canonical session mint
+      // and resolve. No environment re-parse or in-memory/default owner fallback.
+      const configuredOwnerId = earlyAccessPersistence.mode === "durable"
+        ? earlyAccessPersistence.options.repository?.sessionOwnerId : null;
+      return configuredOwnerId ? { configuredOwnerId, requiredRole: PRIVATE_ACCESS_SESSION_ACCESS_ROLE } : null;
+    },
   });
+  // Compose the disabled successor without mounting its handler. Missing
+  // accepted profile/artifacts/transport remain explicit refusals. Notification
+  // obligations belong to the canonical transaction/outbox, never delivery here.
+  const disabledQuickOrderPorts = buildDisabledQuickOrderProduction(assistedOrderWiring, {
+    service: assistedOrderComposition.service,
+    viewers: assistedOrderViewers,
+    enteredAtMonotonicMsFor,
+    monotonicNow: quickOrderMonotonicNow,
+    csrfSecret: process.env.RESEARCH_SESSION_SECRET ?? null,
+  });
+  void disabledQuickOrderPorts; // No createQuickOrderHandler/active API mount.
   // HL-12 is source-only until the exact pending migrations and financial
   // evidence adapters are qualified. The flag defaults off; no live payment
   // route is activated by a source deployment or by a browser callback.

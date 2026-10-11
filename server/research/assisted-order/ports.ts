@@ -52,6 +52,16 @@ export type AssistedOrderViewer = Readonly<{
   >;
 }>;
 
+/** Private server context, not part of a serializable viewer/session. The
+ * canonical resolver retains it by exact viewer identity. The stored session
+ * hash is NOT earlyAccessSessionHash, which intentionally hashes it again. */
+export type AssistedOrderPrivateSessionContext = Readonly<{
+  rawStoredSessionHash: string;
+  configuredOwnerId: string;
+  actorScope: string;
+  requiredRole: string;
+}>;
+
 export type ResolvedAssistedOrderLine = AssistedOrderLineSnapshot &
   Readonly<{
     authoritativeFingerprint: string;

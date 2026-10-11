@@ -20,7 +20,8 @@ import type {
   AssistedOrderHttpRequest,
   AssistedOrderRouteDescriptor,
 } from "./http";
-import type { AssistedOrderViewer } from "./ports";
+import type { AssistedOrderPrivateSessionContext, AssistedOrderViewer } from "./ports";
+import { PRIVATE_ACCESS_SESSION_ACCESS_ROLE } from "../early-access/private-access-session-repository";
 
 /**
  * The descriptor table takes ONE viewer resolver, so the express request rides
@@ -75,6 +76,9 @@ export type AssistedOrderViewerWiring = Readonly<{
     >;
   }> | null;
   adminEmail(): string;
+  /** Server-owned session repository owner and canonical role, never request
+   * claims. Missing authority leaves new private admission unavailable. */
+  privateSessionAuthority?(): Readonly<{ configuredOwnerId: string; requiredRole: string }> | null;
 }>;
 
 function customerRefOf(candidate: unknown): string | null {
@@ -89,12 +93,44 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
   resolve(request: ExpressAssistedOrderRequest): Promise<AssistedOrderViewer>;
   customer(req: Request): Promise<AssistedOrderViewer>;
   admin(req: Request): Promise<AssistedOrderViewer>;
+  privateContextFor(viewer: AssistedOrderViewer): AssistedOrderPrivateSessionContext | null;
 }> {
+  const privateContexts = new WeakMap<AssistedOrderViewer, AssistedOrderPrivateSessionContext>();
+  const bindPrivateContext = (
+    viewer: AssistedOrderViewer,
+    rawStoredSessionHash: string | null,
+    authority: ReturnType<NonNullable<AssistedOrderViewerWiring["privateSessionAuthority"]>>,
+  ): AssistedOrderViewer => {
+    const actorScope = viewer.actorType === "member" && viewer.memberId && viewer.authUserId
+      && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(viewer.authUserId)
+      ? `member:${viewer.authUserId}`
+      : viewer.actorType === "early_access_session" && viewer.earlyAccessCustomerRef && /^eac_[a-f0-9]{32}$/.test(viewer.earlyAccessCustomerRef)
+        ? `early_access:${viewer.earlyAccessCustomerRef}` : null;
+    if (actorScope && viewer.earlyAccessCustomerRef && viewer.earlyAccessSessionHash
+      && rawStoredSessionHash && /^[a-f0-9]{64}$/.test(rawStoredSessionHash)
+      && authority && /^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/.test(authority.configuredOwnerId)
+      && authority.requiredRole === PRIVATE_ACCESS_SESSION_ACCESS_ROLE) {
+      privateContexts.set(viewer, Object.freeze({
+        rawStoredSessionHash,
+        configuredOwnerId: authority.configuredOwnerId,
+        actorScope,
+        requiredRole: authority.requiredRole,
+      }));
+    }
+    return viewer;
+  };
   const resolvers = {
     async customer(req: Request): Promise<AssistedOrderViewer> {
-      const member = await wiring.resolveMember(req);
-      const doors = wiring.earlyAccess();
+      // Capture once before any await. All canonical cookie readers below see
+      // exactly this input, even if other request state changes during auth.
       const cookieHeader = req.headers.cookie;
+      const doors = wiring.earlyAccess();
+      let authority: ReturnType<NonNullable<AssistedOrderViewerWiring["privateSessionAuthority"]>> = null;
+      try {
+        const configured = wiring.privateSessionAuthority?.();
+        if (configured) authority = Object.freeze({ configuredOwnerId: configured.configuredOwnerId, requiredRole: configured.requiredRole });
+      } catch { /* No private admission without authoritative configuration. */ }
+      const member = await wiring.resolveMember(req);
       let sessionId: string | null = null;
       let earlyAccessCustomer: unknown = null;
       if (doors) {
@@ -135,7 +171,7 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
             identitiesBound = false;
           }
         }
-        return Object.freeze({
+        const viewer = Object.freeze({
           actorType: "member",
           memberId: member.id,
           authUserId: member.authUserId,
@@ -153,10 +189,11 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
           // below deliberately carry none, so their prices fail closed.
           pricingViewer: member.pricingViewer ?? null,
         }) as AssistedOrderViewer;
+        return bindPrivateContext(viewer, identitiesBound ? sessionId : null, authority);
       }
       if (doors && sessionId !== null && sessionId.length > 0) {
         if (earlyAccessCustomer !== null) {
-          return Object.freeze({
+          const viewer = Object.freeze({
             actorType: "early_access_session",
             memberId: null,
             authUserId: null,
@@ -170,6 +207,7 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
             normalizedEmail: null,
             capabilities: CUSTOMER_CAPABILITIES,
           }) as AssistedOrderViewer;
+          return bindPrivateContext(viewer, sessionId, authority);
         }
       }
       // Anonymous: a real viewer object with no capabilities, so the service
@@ -210,6 +248,9 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
   };
   return Object.freeze({
     ...resolvers,
+    privateContextFor(viewer: AssistedOrderViewer): AssistedOrderPrivateSessionContext | null {
+      return privateContexts.get(viewer) ?? null;
+    },
     resolve(request: ExpressAssistedOrderRequest): Promise<AssistedOrderViewer> {
       return request.path.startsWith("/api/admin/")
         ? resolvers.admin(request.express)
