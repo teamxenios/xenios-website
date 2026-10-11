@@ -376,7 +376,55 @@
   "publication": "LOCAL_ONLY_NOT_AUTHORIZED_FOR_PUSH",
   "definitionSha256": "6a95ea28eba3013753c0174f04f244ad6ae8719cf1cfd4c22655a53a51c13f25",
   "currentnessDefinition": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
-  "currentnessDependency": null,
+  "currentnessDependency": {
+    "status": "SOURCE_ACCEPT_WITH_LIMITS",
+    "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+    "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+    "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+    "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+    "receipt": {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "recordsCommit": "279eb93abd7652dd3c1e3591416ea3c6f0221155",
+      "gitBlob": "25931c4205851b80996375fc664985b5d1a1d92a",
+      "rawSha256": "f719499f619adf7135b5cfc6fcdd8039f3278faafcf27c654a9162821d44d123",
+      "bytes": 100942
+    },
+    "acceptedFiles": [
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+        "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+        "bytes": 226183
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+        "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+        "bytes": 17174
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+        "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+        "bytes": 16996
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+        "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+        "bytes": 27232
+      },
+      {
+        "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+        "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+        "bytes": 219791
+      }
+    ],
+    "scope": "CURRENTNESS_FIVE_FILES_ONLY_NONCURRENTNESS_ROWS_IDENTITY_ONLY",
+    "sealStatus": "FINAL_CURRENTNESS_DEPENDENCY_ONLY",
+    "execution": "NOT_RUN"
+  },
   "disclosures": {
     "kind": "AUTHORED_SOURCE_INVENTORY_NOT_ACCEPTED_INSTALLATION_RECEIPT",
     "sharedBindings": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
@@ -468,12 +516,12 @@
       "pg_catalog.uuid"
     ],
     "measurements": "NONE; no subject import, syntax/compiler/build/test, SQL, verifier or probe was executed.",
-    "sealSequence": "Doc81 accepts unchanged four SQL-family files for dependency authoring; provisional8b binding now authored. Wait for original r3 byte check, finalize exact currentness receipt/intake seal, then original transaction composition review. No acceptance fabricated.",
+    "sealSequence": "Shared binding unchanged; accepted264 currentness source and Doc82 review -> frozen currentness receipt at279eb93 with raw digest -> this intake121 dependency -> separate composition records commit. No reverse/self dependency.",
     "installationRefusals": [
       "Currentness complete function inventory, seal format/accepted definition/actual fingerprint and integrity must match. Actual protected source-column descriptor remains absent: transitive currentness installation/integrity still fail closed.",
       "Original r3 byte check and final receipts remain absent: source-authoring permission is not installation authority."
     ],
-    "qualification": "Both receipts PENDING/reviewCommit null and intake NON_FINAL. Source controls only, no execution; remaining S3/S4 prerequisites explicitly recorded in doc81IntakeSuccessor.remaining.",
+    "qualification": "Currentness dependency finalized under actual Doc82. Intake121 and integration/whole composition still await their own original bounded source review. No execution, installation or live eligibility.",
     "fixtureSourceIncrement": {
       "predecessorSource": "357890561160d59eb649505c6c46e9e5b65a3f08",
       "predecessorRecords": "a8df1bc5386b6f6b60e621158d0bd5778ccc1783",
@@ -1825,6 +1873,155 @@
         "Transitive currentness dependency: actual implemented-S/census descriptor remains absent."
       ],
       "change": "NULL dependency guard remains defensive code but the successor now supplies the provisional accepted8b definition; do not describe it as still NULL."
+    },
+    "doc82DependencyFinalization": {
+      "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+      "status": "CURRENTNESS_DEPENDENCY_FINAL_INTAKE_OWN_SOURCE_ACCEPTANCE_PENDING",
+      "dependency": {
+        "status": "SOURCE_ACCEPT_WITH_LIMITS",
+        "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+        "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+        "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+        "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+        "receipt": {
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "recordsCommit": "279eb93abd7652dd3c1e3591416ea3c6f0221155",
+          "gitBlob": "25931c4205851b80996375fc664985b5d1a1d92a",
+          "rawSha256": "f719499f619adf7135b5cfc6fcdd8039f3278faafcf27c654a9162821d44d123",
+          "bytes": 100942
+        },
+        "acceptedFiles": [
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+            "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+            "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+            "bytes": 226183
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+            "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+            "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+            "bytes": 17174
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+            "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+            "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+            "bytes": 16996
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+            "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+            "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+            "bytes": 27232
+          },
+          {
+            "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+            "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+            "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+            "bytes": 219791
+          }
+        ],
+        "scope": "CURRENTNESS_FIVE_FILES_ONLY_NONCURRENTNESS_ROWS_IDENTITY_ONLY",
+        "sealStatus": "FINAL_CURRENTNESS_DEPENDENCY_ONLY",
+        "execution": "NOT_RUN"
+      },
+      "sourceChanges": "NONE",
+      "historicalStatus": "Prior Doc81 NON_FINAL/PENDING-byte-check statements are historical and superseded only for the currentness dependency.",
+      "namedLimits": [
+        {
+          "id": "X-1",
+          "stage": "S3",
+          "limit": "No executed witness that the shadow-type path yields a marker.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "X-2",
+          "stage": "S2_PRECISION",
+          "limit": "EXCEPTION count ignores some string literals; bounded lexical assertion only.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "XV-1",
+          "stage": "S3",
+          "limit": "Dynamic shadow covers three type names only; other entry types have static coverage only.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "Y-1",
+          "stage": "S3",
+          "limit": "Explicit table-ACL loop remains behind fingerprint; no isolated dynamic proof.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "Y-2",
+          "stage": "S2_PRECISION",
+          "limit": "One receipt/map field retains old expected refusal; final accepted behavior is described in Doc82, historical field is not a new observed result.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "Y-3",
+          "stage": "S3",
+          "limit": "Membership fixture assumes anon inherits.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "Y-4",
+          "stage": "S2_PRECISION",
+          "limit": "Historical blocks were edited in place under a label; original commit history remains controlling.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "YV-1",
+          "stage": "S2_SCOPE",
+          "limit": "Non-currentness dependency rows bind identity only. Intake121, integration8e/59 lineage and transaction composition are not accepted.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "YV-2",
+          "stage": "S3",
+          "limit": "Owner-side controls assume a superuser fixture owner.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "CS-27..32;R2C-16..18",
+          "stage": "S3",
+          "limit": "All original later qualification requirements retained, NOT RUN.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "CS-33..36",
+          "stage": "S4",
+          "limit": "All original operational limits retained.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "NULL-DESCRIPTORS",
+          "stage": "S3_S4",
+          "limit": "Descriptor seals remain NULL and fail closed; no expected descriptor inferred from installed state.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        },
+        {
+          "id": "DIGEST-DISCLOSURE",
+          "stage": "SOURCE_METADATA",
+          "limit": "Original reviewer did not independently recompute the recorded definition value or raw hashes; builder standalone byte hashing is separate and is not runtime proof.",
+          "blockingSourceAcceptance": false,
+          "execution": "NOT_RUN"
+        }
+      ],
+      "noExecutionAuthority": true
     }
   }
 }

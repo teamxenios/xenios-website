@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-11T21:28:42.139Z",
+  "builder": "codex-health-quick-order-20261005",
+  "compositionSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+  "compositionTree": "f57044e835a4a4e13c1b0937e32f828760634adc",
+  "precedingRecords": "5e984caf6867fdc2b3956e1e57c252364fe86728",
+  "currentnessReceiptCommit": "279eb93abd7652dd3c1e3591416ea3c6f0221155",
+  "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+  "currentness": {
+    "status": "SOURCE_ACCEPT_WITH_LIMITS",
+    "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+    "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+    "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+    "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+    "receipt": {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "recordsCommit": "279eb93abd7652dd3c1e3591416ea3c6f0221155",
+      "gitBlob": "25931c4205851b80996375fc664985b5d1a1d92a",
+      "rawSha256": "f719499f619adf7135b5cfc6fcdd8039f3278faafcf27c654a9162821d44d123",
+      "bytes": 100942
+    },
+    "acceptedFiles": [
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+        "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+        "bytes": 226183
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+        "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+        "bytes": 17174
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+        "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+        "bytes": 16996
+      },
+      {
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+        "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+        "bytes": 27232
+      },
+      {
+        "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+        "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+        "bytes": 219791
+      }
+    ],
+    "scope": "CURRENTNESS_FIVE_FILES_ONLY_NONCURRENTNESS_ROWS_IDENTITY_ONLY",
+    "sealStatus": "FINAL_CURRENTNESS_DEPENDENCY_ONLY",
+    "execution": "NOT_RUN"
+  },
+  "intake": {
+    "sourceCommit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+    "sourceTree": "f57044e835a4a4e13c1b0937e32f828760634adc",
+    "sourceAcceptance": {
+      "status": "PENDING",
+      "reviewCommit": null
+    },
+    "dependencySeal": "FINAL_CURRENTNESS_DEPENDENCY_ONLY"
+  },
+  "integration": {
+    "source": "8e01ef8660ab2148078e969b2190808fc37a27ad",
+    "builderSource": "59b22418bf4fb42719c54eb183c738981b37a642",
+    "status": "IDENTITY_ONLY_PENDING_COMPOSITION_ACCEPTANCE",
+    "files": [
+      {
+        "path": "server/research/assisted-order/express.ts",
+        "gitBlob": "f8095696817a87c1eab938911254d81b2e36c727",
+        "rawSha256": "f9b41c88eea2c4d60408e707929db09e9f06bded776864d9aa85c06c33b88cbd",
+        "bytes": 13351
+      },
+      {
+        "path": "server/research/assisted-order/ports.ts",
+        "gitBlob": "c0d90401bbc4374f2dc42d27d883f4422e99fcc1",
+        "rawSha256": "50341a592e8bc313411e8c527e9a032352e20735307314f9470be141f632ee56",
+        "bytes": 14661
+      },
+      {
+        "path": "server/research/assisted-order/production-deps.ts",
+        "gitBlob": "618306ebeb3a708edecebfb35a2e1e70856bf79e",
+        "rawSha256": "acc6be028071697e60ce934655a36e5cef412db63f9a59bc3b23a9e961f09e06",
+        "bytes": 11949
+      },
+      {
+        "path": "server/index.ts",
+        "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+        "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+        "bytes": 77299
+      },
+      {
+        "path": "client/src/App.tsx",
+        "gitBlob": "b98a29c91683cbb1e021c2bae50deb789a63608f",
+        "rawSha256": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+        "bytes": 17502
+      },
+      {
+        "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "gitBlob": "80265859d204657841c89106c5c355889c7ba4a3",
+        "rawSha256": "f4b713c5fea7d8aa2c5d0def4f40c56a3a64eee9a97a405cfd7a078a7ba6e7d1",
+        "bytes": 38207
+      },
+      {
+        "path": "server/research/health/quick-order/handler.d.mts",
+        "gitBlob": "c66aaf35fdc6bb4a438edb7e7f7dd0e8788db145",
+        "rawSha256": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf",
+        "bytes": 1479
+      },
+      {
+        "path": "server/research/health/quick-order/handler.mjs",
+        "gitBlob": "fb6cf7acb478f9b15adae7c1d099e5e325ab4952",
+        "rawSha256": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a",
+        "bytes": 16529
+      },
+      {
+        "path": "server/research/health/quick-order/ports.ts",
+        "gitBlob": "3266ff8475f726037e6b03ddfa434e262432e252",
+        "rawSha256": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
+        "bytes": 5390
+      },
+      {
+        "path": "server/research/health/quick-order/production.test.ts",
+        "gitBlob": "8b2a7b51d6db7cc34ce35e6ec52c5c2c4023fa16",
+        "rawSha256": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
+        "bytes": 30667
+      },
+      {
+        "path": "server/research/health/quick-order/production.ts",
+        "gitBlob": "e7c8d9f57aab964f47bf6d305297dc392b621e40",
+        "rawSha256": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
+        "bytes": 9743
+      },
+      {
+        "path": "server/research/health/quick-order/root-composition.test.ts",
+        "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
+        "rawSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+        "bytes": 19984
+      }
+    ]
+  },
+  "sharedBindings": {
+    "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+    "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+    "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+    "bytes": 54259
+  },
+  "namedLimits": [
+    {
+      "id": "X-1",
+      "stage": "S3",
+      "limit": "No executed witness that the shadow-type path yields a marker.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "X-2",
+      "stage": "S2_PRECISION",
+      "limit": "EXCEPTION count ignores some string literals; bounded lexical assertion only.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "XV-1",
+      "stage": "S3",
+      "limit": "Dynamic shadow covers three type names only; other entry types have static coverage only.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "Y-1",
+      "stage": "S3",
+      "limit": "Explicit table-ACL loop remains behind fingerprint; no isolated dynamic proof.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "Y-2",
+      "stage": "S2_PRECISION",
+      "limit": "One receipt/map field retains old expected refusal; final accepted behavior is described in Doc82, historical field is not a new observed result.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "Y-3",
+      "stage": "S3",
+      "limit": "Membership fixture assumes anon inherits.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "Y-4",
+      "stage": "S2_PRECISION",
+      "limit": "Historical blocks were edited in place under a label; original commit history remains controlling.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "YV-1",
+      "stage": "S2_SCOPE",
+      "limit": "Non-currentness dependency rows bind identity only. Intake121, integration8e/59 lineage and transaction composition are not accepted.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "YV-2",
+      "stage": "S3",
+      "limit": "Owner-side controls assume a superuser fixture owner.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CS-27..32;R2C-16..18",
+      "stage": "S3",
+      "limit": "All original later qualification requirements retained, NOT RUN.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "CS-33..36",
+      "stage": "S4",
+      "limit": "All original operational limits retained.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "NULL-DESCRIPTORS",
+      "stage": "S3_S4",
+      "limit": "Descriptor seals remain NULL and fail closed; no expected descriptor inferred from installed state.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "DIGEST-DISCLOSURE",
+      "stage": "SOURCE_METADATA",
+      "limit": "Original reviewer did not independently recompute the recorded definition value or raw hashes; builder standalone byte hashing is separate and is not runtime proof.",
+      "blockingSourceAcceptance": false,
+      "execution": "NOT_RUN"
+    }
+  ],
+  "missingEvidenceFieldsForDependencyFinalization": [],
+  "remainingS3": [
+    {
+      "id": "IMPLEMENTED_S_CENSUS_DESCRIPTOR",
+      "stage": "S3",
+      "status": "ABSENT_NO_FIXTURE_SUBSTITUTION",
+      "requirement": "Exact column descriptor over the12 protected canonical relations for the accepted implemented-S/census; expected_columns/source_column_descriptor_seal remain absent.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "AUTHORITATIVE_INPUT_PACKET",
+      "stage": "S3",
+      "status": "NOT_BOUND_TO_THIS_IMPLEMENTED_SOURCE",
+      "requirement": "Real authoritative catalog, bindings, reconciliation, Health legal and configuration identities, owner-approved applicability/configuration and external expected census digest. Existing completed records stay historical inputs; no inferred replacement policy.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "TRUSTED_CHECKOUT_BINDING",
+      "stage": "S3",
+      "status": "ABSENT_BRANCH_REFUSES",
+      "requirement": "Server-attested canonical checkout identity for admin_attested row8, bound to actor/customer/session/legal provenance and immutable checkout identity; current four-field private context has no such carrier. No browser input, fifth field or fabricated checkout.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "REAL_CONNECTION_RECIPIENT_ENFORCEMENT",
+      "stage": "S3",
+      "status": "NOT_DEPLOYED_OR_MEASURED",
+      "requirement": "Actual approved connection/login/request/function-owner identities, catalog/effective profile binding, pre-BEGIN/disconnect/rollback enforcement and authorized recipient/reader binding. Authored nonproduction profile and steward finding remain distinct from configuration or measurement.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "ADAPTER_RUNTIME_DISPATCH",
+      "stage": "S3",
+      "status": "UNBOUND_NOT_DISPATCHED",
+      "requirement": "Existing Node20.19.0 executable hash; accepted installed tsx4.20.5-family/package-lock transitive file inventory; original source review; exact source/receipt binding and separately authorized future dispatch. No installation or new CLI entry authored.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "FRESH_EXECUTION",
+      "stage": "S3",
+      "status": "NOT_AUTHORIZED",
+      "requirement": "Exact-target application/database proposal, eligible accepted supervisor/procedure, required controls and fresh bounded authority. Previous qualification window remains expired.",
+      "execution": "NOT_RUN"
+    },
+    {
+      "id": "PRODUCTION_ACTIVATION",
+      "stage": "S4",
+      "status": "NOT_AUTHORIZED",
+      "requirement": "Independent exact release acceptance, applicable production inputs/configuration, compatible installation/deployment/rollback/verification authority. Request submission is not payment.",
+      "execution": "NOT_RUN"
+    }
+  ],
+  "sourceChanges": "NONE",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED",
+  "recordFiles": [
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "rawSha256": "f719499f619adf7135b5cfc6fcdd8039f3278faafcf27c654a9162821d44d123",
+      "bytes": 100942
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "rawSha256": "b4c77c0cc5045ddbfbce917ceee2046fabeb85bf33b28b81d94325daa0feeefd",
+      "bytes": 101961
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "rawSha256": "920670dbc933d830cf26e9f493050090653376d48ef341ec5f472be9d4d7c392",
+      "bytes": 636927
+    }
+  ],
+  "lease": "af843213-fa11-42b9-8874-f6451ae38034",
+  "leaseState": "handoff",
+  "sourceWritersStopped": true,
+  "next": "Coordinator registers exact bounded transaction composition with original reviewer; no reviewer contacted by builder. Separate authorized two-file qualification stage may start only after this checkpoint.",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}
