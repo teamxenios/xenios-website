@@ -438,3 +438,11 @@ Each verdict is published when complete. Nothing was executed.
 | 86 | `FULLSITE-PARTNER-APPLICATION-CONTINUITY-20261011-SOURCE-REVIEW` r1 (`6bd576c` / `a5271e6`) | COMPLETE: **ACCEPTED WITH NAMED LIMITS** (P3 only) |
 
 Docs 83 (composition) and 84 (supervisor) remain in review. Nothing was executed.
+
+## Queue state update (2026-10-11, doc 84)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 84 | `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` revision 2 (`3e5e2ed` / `71bdd9d`) | COMPLETE: **SOURCE ACCEPTED WITH LIMITS; EXECUTION ELIGIBILITY NONE.** The U-15 3/4/8 map is exact, the 60 s wall is asserted, the helper is byte-identical, and no limit was raised. SV-1 (console hosts) and SV-2 (compile phase) gate execution. SV-3 and SV-4 (fail-closed regressions) are folded in before resume or G0 acceptance is relied on |
+
+Doc 83 (transaction composition) remains in review. Nothing was executed.
