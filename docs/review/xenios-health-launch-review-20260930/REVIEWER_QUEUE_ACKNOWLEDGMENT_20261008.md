@@ -406,3 +406,11 @@ target is recomputed from Git:
 
 The provisional intake (`121d098` / `5e984ca`) descends from this revision 3, is separate ongoing work under doc 81,
 and is not reviewed here. The verdict will be published as doc 82. Nothing was executed.
+
+## Queue state update (2026-10-11, doc 82 currentness verifier revision 3)
+
+| Board task | Exact target | State |
+| --- | --- | --- |
+| `DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010` revision 3 | source `264e6af20477fabe65aa8d229ed2334fb59d9cc4`, records `b00aed5be48d9b3ff92a62f041ceb8ec344bcb2f` | COMPLETE: doc 82. **R2C-1 and R2C-2 CORRECTED. The doc 81 SQL and definition `8b631a83…` are intact. The currentness family is ACCEPTED WITH NAMED LIMITS.** The currentness receipt and the intake's currentness dependency seal may be finalized. The intake source and the integration changes are not accepted; they go to the transaction composition review |
+
+The next review for this session is the transaction composition review, once it is registered. Nothing was executed.

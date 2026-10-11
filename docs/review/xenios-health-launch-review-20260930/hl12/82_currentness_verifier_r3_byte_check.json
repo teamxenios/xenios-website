@@ -1,0 +1,440 @@
+{
+ "schemaVersion": 1,
+ "review": "82_CURRENTNESS_VERIFIER_R3_264e6af_BYTE_CHECK_2026-10-11.md",
+ "task": "DOC71-CURRENTNESS-SOURCE-ACCEPTANCE-20261010 revision 3",
+ "subject": {
+  "source": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+  "records": "b00aed5be48d9b3ff92a62f041ceb8ec344bcb2f"
+ },
+ "controllingReview": "97c61dfafb8b12ff90e87d045d522a7ad56f07a3",
+ "workflowRun": "wf_d1d1f757-491",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Two checkers and two adversarial verifiers, verbatim. Reviewer disposition is in doc 82. Agents reported read-only command-form deviations only. No file was created, modified or deleted; nothing was executed.",
+ "results": [
+  {
+   "checker": "r2c1-control",
+   "tag": "X",
+   "check": {
+    "summary": "R2C-1 is CORRECTED in revision 3 (verifier blob 26c0cd33 at 264e6af; the cur3 copy matches the committed blob at 2888 lines and 219791 bytes). The control sits at currentness_local.mjs:1546-1569. How it works:\n- **Marker.** pg_temp.doc80_mark() now raises NOTICE 'doc80-marker'. The psql driver collects NOTICE lines from the writer's stderr on both the success and error paths (mjs:1023-1034). A direct call first proves the notice is captured (mjs:1550-1551).\n- **Negatives.** With the shadow domains jsonb, uuid and text present, content.emptyUpdate and content.update both run through doc80Refusal on ctx.writer. Each expects '55000' and 'Quick Order protected source columns drift', the exact text and errcode at sql:1130. All six DOC80_TABLES must be unchanged, and the marker filter must be empty (mjs:1555-1559).\n- **Twin.** The twin drops the domains. The zero-row statement must leave all six relations unchanged, and the material statement must give exactly +1 with the head held (mjs:1560-1567).\n\n**Discrimination (reasoned, NOT RUN).** Revision 1 (9c1c92b sql:983-990) declared every guard variable unqualified, including `timer_values jsonb := '{}'::jsonb`. In this fixture the writer first calls the guard at mjs:1556, after the domains exist, so those variables compile to the pg_temp domains. Their initialisation at block entry runs the domain check, which raises the NOTICE before the descriptor refusal (9c1c92b sql:1019-1023). The NOTICE is not rolled back. The 55000 refusal assertion would still pass, but the zero-marker assertion at mjs:1557 would fail. So the control tells revision 1 from revision 2/3. The accepted guard is fully qualified up to the descriptor check (sql:1090-1130), and its trigger variables are typed by OID, so it should produce zero markers.\n\n**Digest.** Unchanged: r3 mjs:2148-2152 is byte-identical to r2 mjs:2021-2025, and no diff hunk touches section/sha/lf/rollbackBlock.\n\n**SQL and parentage.** The four SQL blobs are identical at aa857e4 and 264e6af. 264e6af changes only the verifier relative to its parent 642978a, whose verifier blob is 120449d6, the same as at aa857e4. aa857e4 is not an ancestor of 264e6af (merge-base 756a906), so a whole-tree aa857e4..264e6af diff spans 278 files. Only the verifier-path diff is meaningful, and its hunk headers match r3_verifier.diff.\n\n**No weakening of other assertions.** The drift loops are a superset of the old four cases with the same messages. The restoreComment and wrong-new-alias changes isolate or add cases. The driver and helpers only add return values and a notices field. The only narrowing is theoretical: the exception count now skips some string literals (X-2), with no effect on the accepted SQL.\n\n**Records.** The receipt (line 1678) and map (lines 10065 and 10679) disclose the function-entry/descriptor-only reach and the session-local fail-closed behaviour.\n\n**Defects.** Two, both NONBLOCKING. X-1: there is no witness for the type path or for capture on the error path, so discrimination rests on PostgreSQL reasoning. X-2: the theoretical lexical narrowing above, which belongs to R2C-5.",
+    "items": [
+     {
+      "item": "R2C-1(1) Marker is a NOTICE that survives statement rollback, collected on the writer connection",
+      "status": "CORRECTED",
+      "evidence": "mjs:1548 sets client_min_messages=notice on ctx.writer. mjs:1549 creates pg_temp.doc80_mark(), which runs `raise notice 'doc80-marker'` and returns true; it needs no table privilege. The driver computes `notices` from per-command stderr with /^NOTICE:\\s+(?:[0-9A-Z]{5}:\\s+)?([^\\r\\n]*)/gm before classifying (mjs:1025). It attaches them to the rejected error (mjs:1027-1028) and to the resolved result (mjs:1034). The positive witness (mjs:1550-1551) requires a direct call to yield exactly ['doc80-marker'], so a prefix or regex mismatch would fail closed. The old temp-table marker (old mjs:1470-1479) is removed (diff lines 136-145)."
+     },
+     {
+      "item": "R2C-1(2) Both guarded updates run through the refusal helper",
+      "status": "CORRECTED",
+      "evidence": "mjs:1555-1559 loops over [content.emptyUpdate, content.update] and calls doc80Refusal(ctx,statement,'55000','Quick Order protected source columns drift'). The connection defaults to ctx.writer (mjs:1421). doc80Refusal returns the failure from doc71ExpectRefusal (mjs:1423, 1426, 633). The statements are `update public.research_product_content set state='in_review' where id='6666…'` and the same with `where false` (mjs:580-581, 605-606). They contain no unqualified casts that could reach the shadow types from the writer's own SQL."
+     },
+     {
+      "item": "R2C-1(3) SQLSTATE and message exactly match the accepted SQL",
+      "status": "CORRECTED",
+      "evidence": "mjs:1556 expects '55000' and 'Quick Order protected source columns drift'. The accepted SQL has `raise exception 'Quick Order protected source columns drift' using errcode='55000'` (sql:1130). The descriptor uses pg_catalog.format_type (sql:1126-1128), which renders shadowed text/uuid/jsonb qualified, so the digest mismatches the trigger comment (sql:1129). Reasoned, NOT RUN. The outcome is pinned to this refusal (FIX item 2); the optional two-outcome variant (FIX item 4) was not taken, so a wrong prediction fails closed."
+     },
+     {
+      "item": "R2C-1(4) All six authority relations are snapshotted and unchanged",
+      "status": "CORRECTED",
+      "evidence": "doc80Refusal snapshots before and after through ctx.observer and asserts deepEqual 'Refusal leaves all six authority relations unchanged' (mjs:1421-1425). doc80Snapshot covers DOC80_TABLES (mjs:1414-1420), which lists authority_head, authority_revisions, currentness_scope_inputs, authority_scope_members, authority_activations and authority_revocations (mjs:1409-1410)."
+     },
+     {
+      "item": "R2C-1(5) Zero marker notices asserted",
+      "status": "CORRECTED",
+      "evidence": "mjs:1557-1558 asserts failure.notices.filter(n=>n==='doc80-marker') deepEqual [] for each statement, with the message 'Qualified function-entry/descriptor path must not invoke a shadow type'. failure.notices comes from the error branch (mjs:1027). If it were absent, .filter would throw, which fails closed."
+     },
+     {
+      "item": "R2C-1(6) No-domain twin runs and takes its normal path",
+      "status": "CORRECTED",
+      "evidence": "mjs:1560 drops all three domains. mjs:1561 records the snapshot and head. mjs:1562-1564 runs the zero-row twin: it must succeed with no marker and leave all six relations unchanged. mjs:1565-1567 runs the material twin: it must succeed with no marker, and doc71AssertHeldDelta(ctx,noDomainHead,1) requires epoch +1, state held and active null (mjs:1159-1163). This matches FIX item 3 and shows that the refusal depends on the shadow domains."
+     },
+     {
+      "item": "R2C-1(7) Control would fail if the source regressed to revision 1's unqualified DECLARE initialisers",
+      "status": "CORRECTED",
+      "evidence": "Reasoned, NOT RUN. In revision 1 (git show 9c1c92b, sql:981-990) the guard declares `changed jsonb; identities jsonb; revision uuid; current_revision uuid; marker text; descriptor_digest text` and `timer_values jsonb := '{}'::jsonb`, all unqualified. In this ctx the writer first calls the guard at mjs:1556, after the domains exist at mjs:1552-1554. Earlier writer calls are publish/activate only: doc71StageSyntheticAuthority (mjs:935-944) and doc80Held (mjs:1432-1436). Under the guard's search_path='' the implicit pg_temp is searched first for types, so these declarations compile to the pg_temp domains. At block entry, plpgsql runs the domain CHECK for NULL-initialised domain variables, and the '{}'::jsonb initialiser casts to the domain. Both call pg_temp.doc80_mark(), which raises NOTICE before the descriptor refusal at 9c1c92b sql:1019-1023. The refusal code and text are unchanged, but notices then contain 'doc80-marker' and mjs:1557 fails. The accepted guard is fully qualified through sql:1130 (sql:1090-1097, 1099-1128), and its TG_ variables are typed by OID, so zero markers are expected. As disclosed at mjs:1568-1569, the dynamic reach covers only function entry and the descriptor; later paths rely on the static checks (mjs:1525-1526)."
+     },
+     {
+      "item": "Definition-digest computation not altered",
+      "status": "CORRECTED",
+      "evidence": "Unchanged. r2 mjs:2021-2025 is byte-identical to r3 mjs:2148-2152: `definition = sha(section(candidate, '$currentness_install$') + section(candidate, '$currentness_fingerprint$'))` and the predecessor check. The diff hunks (old 630, 1019, 1416, 1444, 1467, 1712, 1733, 1827, 1836, 1851-1859) do not reach old 2021-2025 or the helpers sha (mjs:85), lf (mjs:86), section or rollbackBlock. The line offset is +127 (2888 vs 2761 lines). The four SQL blobs (dd7d3e59, 11f32766, c894794a, fc898603) are identical at aa857e4 and 264e6af."
+     },
+     {
+      "item": "No other assertion weakened by the diff",
+      "status": "CORRECTED",
+      "evidence": "- doc71ExpectRefusal (mjs:633) and doc80Refusal (mjs:1426) only add return values.\n- The driver adds a notices field without changing ERROR/FATAL classification (mjs:1026-1028). No whole-result deepEqual depends on the shape.\n- The drift cases are replaced by loops over all 13 DOC80_FUNCTIONS and all 6 DOC80_TABLES, a superset of the old read_current_authority and authority_scope_members cases with identical messages (diff 215-224).\n- wrong-new-transition-alias is added (diff 204-207).\n- restoreComment keeps the expected message and isolates the predicate (diff 233-243).\n- product-control-mismatch keeps the 'must pass the unrelated decision validator' assertion (diff 194-198).\n- The exception-handler check is stricter: it is unanchored, skips comments and adds per-validator counts (mjs:1518-1524). The one theoretical narrowing for other string literals is reported as X-2."
+     },
+     {
+      "item": "R2C-1 FIX item 5 records disclosure",
+      "status": "CORRECTED",
+      "evidence": "The receipt (ev/sql-currentness-source-receipt-doc71-20261009.json:1678) and the map (ev/doc71-disabled-source-correction-map-20261009.json:10065 and 10679) both state: 'Dynamic reach is function-entry and descriptor only; session-local fail-closed behavior disclosed.' The r3 verifier blob 26c0cd33 appears in both receipts and the map. Detailed binding is outside this check's scope."
+     }
+    ],
+    "defects": [
+     {
+      "id": "X-1",
+      "severity": "NONBLOCKING",
+      "title": "No witness that the shadow-type path or error-path capture actually yields a marker",
+      "claim": "The only positive witness calls pg_temp.doc80_mark() directly in a successful SELECT on the writer. Nothing shows that a reference to a shadow type under search_path='' fires the domain CHECK. Nothing shows that a NOTICE raised before an ERROR lands in the rejected error's notices. The discriminating assertion depends on both. So the claim that revision 1 would be caught rests on reasoned PostgreSQL behaviour and shared driver code, NOT RUN.",
+      "evidence": "mjs:1550-1551 (success-path direct-call witness only). mjs:1557 reads failure.notices from the error branch at mjs:1027. The notices array is computed once at mjs:1025 for both branches, so the risk is low. No control creates a search_path='' function with an unqualified jsonb DECLARE before mjs:1555 to show the CHECK fires through a type reference.",
+      "fix": "Before the negatives, while the domains exist, add two witnesses:\n1. A type-path witness: a pg_temp plpgsql function with `set search_path=''` and `declare v jsonb := '{}'::jsonb; begin return true; end`. Calling it must yield at least one 'doc80-marker' notice. This is the revision 1 shape in miniature.\n2. An error-path witness: `do $w$ begin perform pg_temp.doc80_mark(); raise exception 'doc80 witness' using errcode='55000'; end $w$;` through doc71ExpectRefusal, requiring failure.notices to deepEqual ['doc80-marker'].\nDo not use a constant `1/0`; it can fold at plan time, before the marker runs."
+     },
+     {
+      "id": "X-2",
+      "severity": "NONBLOCKING",
+      "title": "Exception-handler count ignores contents of ordinary string literals it does not recognise (theoretical narrowing, R2C-5 scope)",
+      "claim": "doc81LexicalBlocks visits a string literal only if it starts with `create function` or matches the public.research_health_quick_order_ signature form. Other literal contents are blanked. The new count of `exception when` therefore cannot see a handler inside another kind of dynamic SQL literal, for example `execute 'create or replace function …'` or `execute 'do $x$ … exception when … $x$'`. The old raw-text, line-anchored count would have counted a handler at the start of a line inside such a literal. This has no effect on the accepted SQL: its only handlers are at sql:145 and sql:344 inside dollar bodies, and its only dynamic CREATE literal (sql:2245, `pg_catalog.format('create function …`) matches the visited pattern.",
+      "evidence": "mjs:1470-1481 (string handling, visit only on /^\\s*create\\s+function\\b/i or the signature regex). mjs:1518-1519 replaces old `/^\\s*exception\\s+when\\b/gim` over raw candidateText (diff lines 117-121). mjs:1514-1515 discloses that new SQL forms require extending the check.",
+      "fix": "Optional: for the exception count, also scan the raw contents of every non-visited string literal, or assert that no non-visited literal matches /\\bexception\\s+when\\b/i."
+     }
+    ],
+    "deviations": [
+     "Command form: some Bash calls went beyond 'git piped to grep/sed -n/head/wc'. All were read-only, created or changed no files and ran no interpreter, test or SQL:\n- `ls -la` on the cur3 copy directories;\n- `wc -l`/`wc -c -l` and `sed -n` directly on the cur2/cur3 copies;\n- `grep` directly on the findings JSON and the ev/ receipt and map (`-n -o`, `-c`).",
+     "Command form: two Bash invocations used `echo` as a separator between outputs.",
+     "Command form: one pipeline used `sort | uniq -c | sort -rn` after grep on the findings JSON. It returned nothing.",
+     "Git subcommand outside the enumerated list: `git -C C:/xenios-wt/health-review --no-optional-locks merge-base aa857e4 264e6af`. It is read-only and was used to explain why the whole-tree aa857e4..264e6af diff spans 278 files.",
+     "Scope: I read revision 1 SQL bytes with `git show 9c1c92b:supabase/candidates/20261006_research_health_quick_order_currentness.sql` (a commit named in the doc 81 findings) and ran `git grep` over supabase/ at 264e6af for triggers and policies on research_product_content. Both used allowed git subcommands on the review repo."
+    ]
+   },
+   "verify": {
+    "itemChallenges": [
+     {
+      "item": "R2C-1(1) Marker is a NOTICE that survives statement rollback, collected on the writer connection",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Could not refute. The committed blob matches the copy: 264e6af sed -n 1546-1569 and 1023-1028 are identical, and the file is 2888 lines and 219791 bytes, matching the receipt. The driver psql runs as `-X -A -t` reading piped stdin with no -f (mjs:999-1000, 1051). In that mode psql prints server notices without a `psql:<stdin>:N:` locus prefix (reasoned, NOT RUN), so the line-anchored regex at mjs:1025 should match `NOTICE:  00000: doc80-marker` under VERBOSITY verbose. If a prefix did appear, the success-path witness at mjs:1550-1551 would fail. That makes the control unable to pass rather than pass silently."
+     },
+     {
+      "item": "R2C-1(2) Both guarded updates run through the refusal helper",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed. The statements are `update public.research_product_content set state='in_review' where false/where id=...` (mjs:580-581, 605-606), and they contain no type names. doc80Refusal defaults to ctx.writer (mjs:1421). The writer runs in autocommit, so a refusal rolls back only that statement. The later `rollback;` gives only a WARNING, which the driver does not classify as an error. The pg_temp function and domains therefore survive for the second statement and the twin."
+     },
+     {
+      "item": "R2C-1(3) SQLSTATE and message exactly match the accepted SQL",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Text and errcode match sql:1130. Every statement before the descriptor (sql:1099-1128) uses qualified types, grammar keywords (integer), or OID-typed TG_ variables, so the first refusal reached should be the descriptor. For UPDATE the guard must be AFTER/STATEMENT (sql:1107), so all other per-statement code runs first. git grep at 264e6af finds no non-Quick-Order trigger on research_product_content in any canonical source; the only hits are the guard_i/u/d/t triggers at sql:1459-1468. The writer is the postgres superuser (mjs:1108), which bypasses the forced RLS, and the FK on product_id is untouched by a state update. So no other code in the statement path can reach the shadow types. format_type qualifies pg_catalog text/uuid/jsonb when pg_temp shadows them, because temp is first in the implicit path for types (reasoned, NOT RUN). The table has uuid, text and jsonb columns (diagnostics.sql:332-350), so the digest changes."
+     },
+     {
+      "item": "R2C-1(4) All six authority relations snapshotted and unchanged",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed at mjs:1409-1425. The snapshot runs on the observer backend, which does not see the writer's pg_temp objects."
+     },
+     {
+      "item": "R2C-1(5) Zero marker notices asserted",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed at mjs:1557-1558. The rejected Error carries notices computed from the same stderr buffer before branching (mjs:1025-1028). The driver waits for the \\warn end marker on stderr, and psql writes NoticeResponse output before the ERROR line, so a pre-error marker would be in failure.notices."
+     },
+     {
+      "item": "R2C-1(6) No-domain twin runs and takes its normal path",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Tried to break the +1 expectation and could not. noDomainHead is already held from doc80Held (mjs:1542), but the guard's material path always runs `writer_epoch=writer_epoch+1, state='held'` (264e6af sql:1373), so +1 holds from held too. Membership for the same seed and authority is material in other controls (mjs:1639-1647, 1655-1661). The negatives were rolled back, so the row is still 'draft' and the update is material. The guard has a single DECLARE (sql:1090-1097, no nested DECLAREs) and every type is qualified, so compiling it while the domains existed leaves no dangling domain OIDs after the drop. Statements after the descriptor are first prepared in the twin, after the drop."
+     },
+     {
+      "item": "R2C-1(7) Control would fail if source regressed to revision 1's unqualified DECLARE initialisers",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed by reasoning, NOT RUN. 9c1c92b sql:983-988 declares changed/identities/... as jsonb/uuid/text and `timer_values jsonb := '{}'::jsonb`, all unqualified. The descriptor there also casts `::text` and `::regcollation::text`. PL/pgSQL assigns NULL through the domain at block entry for domain-typed variables without a default. domain_in is non-strict, so the CHECK, and with it pg_temp.doc80_mark(), runs before any statement. The guard is compiled per trigger OID, and the writer's earlier calls were publish/activate only (mjs:938-942, 1434), so its first compile happens after mjs:1552-1554. A marker therefore appears and mjs:1557 fails. If an unqualified `::text[]` changed the error instead, doc71ExpectRefusal fails. Either way revision 1 fails the control."
+     },
+     {
+      "item": "Definition-digest computation not altered",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Read both copies: r2 mjs:2021-2025 and r3 mjs:2148-2152 are byte-identical. The committed diff has 10 hunks; none reaches old 2021-2025. `git diff --name-only 264e6af~1 264e6af` lists only the verifier, and aa857e4..264e6af shows no change under supabase/candidates."
+     },
+     {
+      "item": "No other assertion weakened by the diff",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Agree. Every old drift case is kept or widened. restoreComment isolates the predicate rather than relaxing it, and fails closed if the comment is absent. The driver and helpers only add return values. The only narrowing is X-2, which is theoretical."
+     },
+     {
+      "item": "R2C-1 FIX item 5 records disclosure",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "The R2C-1 text in both receipts and the map says the dynamic reach is function-entry and descriptor only. The static-coverage half is not in the R2C-1 text. It sits in the R2C-6 record (receipt:1706, 'Not ... dynamic coverage of post-descriptor paths'). 'session-local fail-closed behavior disclosed' is terse but adequate. The verifier is bound at sourceCommit 264e6af, blob 26c0cd33 and 219791 bytes (receipt:1612-1620)."
+     }
+    ],
+    "defectVerdicts": [
+     {
+      "id": "X-1",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Partly upheld. The error-path half is weak: notices are computed once from the shared stderr before the error branch (mjs:1025-1028), and psql writes NOTICE before ERROR, so a separate error-path witness adds little. The type-path half is a real evidence gap. Whether the control can tell revision 1 from revision 2/3 depends entirely on PostgreSQL running the domain CHECK at PL/pgSQL block entry and on format_type's visibility rule, and nothing in the control exercises that. The suggested pg_temp function with `set search_path=''` and an unqualified jsonb DECLARE would make the discrimination self-evidencing. This is an improvement, not a correctness defect."
+     },
+     {
+      "id": "X-2",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed at diff lines 69-80 (mjs:1470-1481). A single-quoted literal is visited only if it is a CREATE FUNCTION or matches the signature form; otherwise it is blanked. An `exception when` inside any other single-quoted dynamic SQL is therefore invisible, though dollar bodies are always visited. The accepted SQL is unaffected: both of its handlers are inside $publication_shape$/$decision_inputs_shape$ dollar bodies. The finding belongs to R2C-5."
+     }
+    ],
+    "missed": [
+     {
+      "id": "XV-1",
+      "severity": "NONBLOCKING",
+      "title": "Dynamic control only shadows three type names, so pre-descriptor regressions of other bare types go undetected by it",
+      "claim": "The control shadows only jsonb, uuid and text. Revision 1 also had unqualified `'...()'::regprocedure`, `'qo_old_rows'::name`, `null::name`, `'...'::regclass` and `::regcollation` in the function-entry and descriptor path (9c1c92b sql:1014-1017, 1023, 1027). A regression that unqualified only those, leaving jsonb/uuid/text qualified, would produce no marker and the same refusal, so this control would pass. Only the lexical doc81QualifiedSqlAssertions check would catch it; its types list does include name, regclass, regprocedure and regcollation. The records say 'Dynamic reach is function-entry and descriptor only' but do not say the reach is also limited to three type names.",
+      "evidence": "mjs:1552-1554 creates only pg_temp.jsonb, pg_temp.uuid and pg_temp.text. Revision 1's guard has bare reg*/name casts before the descriptor refusal (git show 9c1c92b, sql:1014-1027). Receipt:1678 and map:10065/10679 state only the path reach.",
+      "fix": "Choose one:\n- Also create pg_temp.name, pg_temp.regclass, pg_temp.regprocedure, pg_temp.regcollation and pg_temp.oid domains with the same check(pg_temp.doc80_mark()). The table's columns include none of these types, so the descriptor outcome is unchanged.\n- Or add 'shadowed type names: jsonb, uuid, text only; other bare types are covered lexically' to the R2C-1 record in both receipts and the map."
+     }
+    ],
+    "opinion": "R2C-1 is corrected in revision 3. I could not refute any of the checker's CORRECTED items. The reasoning below is about PostgreSQL behaviour and was NOT RUN.\n\n**Marker and capture.** The marker is a NOTICE. It is collected on the writer's psql stderr on both the success and error paths. A success-path witness pins the regex and the output format, so a format mismatch would make the control unable to pass rather than pass silently.\n\n**Negatives.** Both guarded updates go through doc80Refusal on the writer. Each expects the exact 55000 'Quick Order protected source columns drift' from sql:1130, all six authority relations unchanged, and zero markers. Nothing else in the update path can touch the shadow types:\n- For UPDATE the guard is the AFTER STATEMENT trigger.\n- research_product_content has no other triggers in the canonical sources (git grep).\n- The writer is the postgres superuser, which bypasses the forced RLS.\n- The guard is qualified up to the descriptor and has no nested DECLAREs.\n\n**Twin.** The no-domain twin is valid. The zero-row statement leaves all six relations unchanged. The material statement gives +1 and held even from an already-held head, because the guard's material path always increments the epoch.\n\n**Discrimination.** Against revision 1 the control fails as required. Revision 1's guard has unqualified domain-typed DECLAREs, and the guard is first compiled in the writer session after the domains exist. At block entry the domain CHECK runs and raises the marker before the descriptor refusal, so the zero-marker assertion fails.\n\n**Digest and records.** The definition-digest computation is byte-identical: r2 mjs:2021-2025 equals r3 mjs:2148-2152. The SQL is unchanged, and 264e6af touches only the verifier. The receipts bind blob 26c0cd33, 219791 bytes, at 264e6af.\n\n**Defects.** None BLOCKING. X-1 (no witness for the type path) and X-2 (exception-count narrowing, R2C-5 scope) are upheld as NONBLOCKING. I add XV-1, NONBLOCKING: the dynamic control shadows only jsonb, uuid and text, and the records do not disclose that limit.\n\n**Checker's process.** The checker self-disclosed command-rule breaches (ls, wc/sed/grep run directly on the copies, echo, sort|uniq, git merge-base). All were read-only and none affects the substance.",
+    "deviations": [
+     "Command form: three Bash pipelines of the form `git show <rev>:<path> | sed -n '<range>'` appended `| cut -c1-N` to truncate long SQL lines. cut is not in the allowed pipe list (grep, sed -n, head, wc). They were read-only and created or changed no files.",
+     "Scope: I read revision 1 SQL bytes with `git show 9c1c92b:supabase/candidates/...currentness.sql`, using a commit named in the doc 81 findings. I also ran `git grep` over supabase/ and the canonical predecessor files at 264e6af to look for triggers on research_product_content. Both used allowed git subcommands on the review repo."
+    ]
+   }
+  },
+  {
+   "checker": "r2c2-coverage-records",
+   "tag": "Y",
+   "check": {
+    "summary": "Checker Y verdict: R2C-2 is CORRECTED in the revision 3 verifier, and the records at b00aed5 bind correctly. I found no BLOCKING defect. Nothing was executed; all PostgreSQL behaviour below is reasoned and NOT RUN.\n\n**Verifier**\n- Commit 264e6af changes one file only, the verifier (git show --stat). Its blob 26c0cd3 is 219791 bytes.\n- The drift list loops function-proconfig, function-owner and function-acl over all 13 DOC80_FUNCTIONS (mjs:1402-1408, 1936-1940). It loops table-acl over all six DOC80_TABLES (mjs:1409-1410, 1941). The case count is 56: 8 guard cases, 39 function cases, 6 table cases and 3 other cases.\n- A new membership case grants the owner role to anon in an open transaction (mjs:1966-1983). It checks that the fingerprint is unchanged and expects 'Quick Order currentness function ACL drift'. That error is raised at sql:796-798, inside the explicit function ACL loop (sql:789-800), which runs after the fingerprint check at sql:709-712.\n- All expected messages exist verbatim in the accepted SQL: sql:645, sql:712, and sql:795/798.\n- Each case should discriminate, judged from source:\n  - Proconfig and owner drift fail at sql:637-645, before the fingerprint. If a function were dropped from that inventory, the fingerprint (sql:58-59) would give a different message, so the case would fail.\n  - Function and table ACL grants change proacl or relacl, which are in the fingerprint (sql:59, 61). If an object were dropped from the fingerprint, the loop would raise a different message. If it were dropped from both, there would be no refusal, which mjs:630 rejects.\n- The fixture makes these cases workable: the owner is postgres (mjs:1108-1109), and anon is created with plain NOLOGIN, so it inherits (bootstrap.sql:24).\n- The definition-digest computation is untouched: the diff has no 'definition' references.\n\n**Records**\n- Both receipts and the correction map bind raw SHA-256 6c47b308… with blob 26c0cd3 and 219791 bytes (receipt:344, 1617-1620; intake:344, 1173-1176; map:76-79, 10618-10621). The blob and size match git. I did not recompute the SHA itself, so that is NOT PROVEN here.\n- The four SQL blobs are identical at aa857e4, 264e6af and b00aed5, and the definition digest 8b631a83… is unchanged.\n- The shared bindings record is unchanged: blob ecc7855, 54259 bytes, ac7d45ec…. It does not reference the verifier.\n- Folded in: R2C-4, 5, 6, 7, 8, 9, 10, 12, 13, 14 and 15.\n- Not folded:\n  - R2C-3 is deferred as a precision carry, because changing rollback.md would lapse the doc 81 §3 ruling.\n  - R2C-11 is left to the coordinator.\n- No record claims a pass count, an execution, a final seal or acceptance of revision 3. Execution is NOT_RUN throughout, sourceAcceptance is PENDING, and intakeSeal is NON_FINAL in both receipts and the map.\n\n**Gaps (all NONBLOCKING)**\n- The explicit table ACL loop is still not exercised past the fingerprint. The records disclose this, and the doc 81 fix allowed either one loop or a disclosure.\n- The records' expectedRefusal field does not list the new function ACL drift message.\n- The membership case depends on the fixture's anon role inheriting privileges.\n- Some blocks now labelled historical were edited in place.",
+    "items": [
+     {
+      "item": "R2C-2: function-proconfig drift loops over all 13 DOC80_FUNCTIONS, expecting 'Quick Order exact function inventory mismatch'",
+      "status": "CORRECTED",
+      "evidence": "currentness_local.mjs:1402-1408 lists the 13 signatures, the same set as the SQL inventory at sql:640. mjs:1936-1937 builds one case per signature: \"alter function ... set work_mem='8MB'\" expecting the inventory message. sql:643-645 raises on proconfig before the fingerprint at sql:709-712. Each case is preceded by a positive integrity() call (mjs:1952) and followed by a rollback check (mjs:1964). If a function were dropped from sql:640, pg_get_functiondef in the fingerprint (sql:58) would yield 'schema drift' instead, so the case would fail (reasoned, NOT RUN). The minimum set (activate_revision, resolve_scope, read_strict_authority, guard_source_write) is included."
+     },
+     {
+      "item": "R2C-2: function-owner drift loops over all 13, expecting 'Quick Order exact function inventory mismatch'",
+      "status": "CORRECTED",
+      "evidence": "mjs:1938: \"alter function ... owner to service_role\". sql:642 checks proowner<>current_user inside the inventory check at sql:637-645. The fixture owner is the postgres superuser (mjs:1108-1109), so ALTER OWNER is permitted and integrity() stays callable when it changes its own owner. The fingerprint includes proowner (sql:59), so an object dropped from the inventory would surface a different message (reasoned, NOT RUN)."
+     },
+     {
+      "item": "R2C-2: function-acl drift loops over all 13, expecting 'Quick Order currentness schema drift'",
+      "status": "CORRECTED",
+      "evidence": "mjs:1939: grant execute ... to anon. proacl is in the fingerprint (sql:59), and the refusal is raised at sql:712, before the function ACL loop at sql:789-800. If a function were dropped from the fingerprint only, the loop would raise 'function ACL drift' (sql:795) and the case would fail. If it were dropped from both, there would be no refusal, which mjs:630 rejects."
+     },
+     {
+      "item": "R2C-2: table-acl drift loops over all six DOC80_TABLES",
+      "status": "CORRECTED",
+      "evidence": "mjs:1409-1410 and 1941: grant select ... to authenticated, expecting 'Quick Order currentness schema drift'. relacl is in the fingerprint (sql:61). The owned_relations pattern (sql:49-50) covers all six tables, including scope_inputs, activations and revocations."
+     },
+     {
+      "item": "R2C-2: at least one case reaches the explicit ACL loops past the fingerprint",
+      "status": "CORRECTED",
+      "evidence": "The case is at mjs:1966-1983.\n- Before: the witness shows allowed=false, member=false (mjs:1973-1974).\n- Setup: begin; grant \"<ownerRole>\" to anon (mjs:1977).\n- Witness: allowed=true, member=true (mjs:1978), and the fingerprint is unchanged (mjs:1979).\n- Refusal: 55000 'Quick Order currentness function ACL drift' (mjs:1980), raised by has_function_privilege at sql:796-798, after the fingerprint at sql:709-712.\n- Cleanup: rollback (mjs:1981), the witness is restored (mjs:1982), and integrity() passes again (mjs:1983).\nIn the fixture, anon is created 'nologin' with default INHERIT (bootstrap.sql:24, read via git show) and postgres is not a member of anon, so there is no cycle. This satisfies fix item 3 (function OR table loop). The table ACL loop at sql:806-818 is not reached, and the records disclose this (see Y-1)."
+     },
+     {
+      "item": "Expected messages exist verbatim in the accepted SQL",
+      "status": "CORRECTED",
+      "evidence": "20261006_research_health_quick_order_currentness.sql:645 'Quick Order exact function inventory mismatch'; :712 'Quick Order currentness schema drift'; :795 and :798 'Quick Order currentness function ACL drift'. 'Quick Order currentness definition or schema drift' (sql:2183) does not contain 'currentness schema drift' as a substring, so the substring match cannot be confused."
+     },
+     {
+      "item": "Revision 3 is verifier-only and does not alter the definition-digest computation",
+      "status": "CORRECTED",
+      "evidence": "git show --stat 264e6af: one file, the verifier (+151/-24). Its parent is 642978a. Among currentness paths, git diff aa857e4..264e6af changes only the verifier. r3_verifier.diff (266 lines) equals the live diff and has no 'definition' references. The SQL blobs dd7d3e5, 11f3276, c894794 and fc89860 are identical at aa857e4, 264e6af and b00aed5 (ls-tree)."
+     },
+     {
+      "item": "Records bind revision 3 verifier raw SHA-256 6c47b308…",
+      "status": "CORRECTED",
+      "evidence": "sql-currentness receipt:344, 1617-1620; sql-intake receipt:344, 1173-1176; correction map:76-79, 10618-10621. All give rawSha256/sha256lf 6c47b308…, blob 26c0cd33… and 219791 bytes. The blob matches ls-tree 264e6af and the byte count matches git cat-file -s. I did not recompute the SHA-256 (NOT PROVEN by this checker). The revision 2 verifier hash 2665acf4 remains only in the historical doc80Correction blocks (receipt:1105-1106, intake:953-954, map:9345-9346), which are now labelled HISTORICAL_DOC80_TARGET_AMENDED_BY_DOC81_CORRECTION. The source tree 7591133… matches git log %T."
+     },
+     {
+      "item": "The four SQL hashes and definition digest 8b631a83… are unchanged in the records",
+      "status": "CORRECTED",
+      "evidence": "acceptedSql blocks give d44974d1, 91ab412b, 78534251 and 8de55983 with blobs dd7d3e5, 11f3276, c894794 and fc89860 at aa857e4 (git diff of the receipt and map, records commits). The definition digest 8b631a83… appears at receipt:357-358 and 1628, intake:921 and 1184, and map:9313 and 10629. These hashes match doc 81 lines 94-97."
+     },
+     {
+      "item": "Shared bindings record unchanged (ac7d45ec…)",
+      "status": "CORRECTED",
+      "evidence": "The blob ecc7855 is the same at aa857e4, 6bf2579 and b00aed5. The bindings file is absent from the fcdc31b and b00aed5 --stat. git cat-file -s gives 54259 bytes, matching the records. The record sites are receipt:32 and 1670, intake:32 and 1226, and map:9353 and 10671. The bindings file has no reference to the verifier, 8b631a83 or 2665acf4."
+     },
+     {
+      "item": "Records correct the R2C-2 wording (map:9481 controlNote; receipt DOC80-inventory-drift)",
+      "status": "CORRECTED",
+      "evidence": "Map:9710-9714 controlNote: status AUTHORED_R3_PENDING_REVIEW, with remaining 'Explicit table ACL loop not isolated'. Receipt:1397-1406 and map:10323 carry the new discriminator. The table-loop gap is listed under deferred EXPLICIT_TABLE_ACL_LOOP at receipt:1796 and map:1199/10797. Nits are in Y-2."
+     },
+     {
+      "item": "R2C-3..R2C-15 folded in where cheap",
+      "status": "PARTIAL",
+      "evidence": "Folded (11), per the doc81Correction.findings rows and the diffs:\n- R2C-4: mjs:1953-1963 restores trigger comments; mjs:1923-1926 adds the wrong-new-alias case; mjs:1828 aligns the decision variantId.\n- R2C-5: unanchored EXCEPTION count in doc80SourceAssertions.\n- R2C-6: doc81QualifiedSqlAssertions.\n- R2C-7: intake installationRefusals cite intake.sql:860-861; runtimeRefusals cite intake.sql:404.\n- R2C-8: historicalEA3CurrentnessDefinition plus bindingStatus.\n- R2C-9: IC-1..IC-7, IC-12 and INTAKE-STARTS-WITH in map:1106+ and intake heldControls:1015+.\n- R2C-10: supersededCaseIds and oldToNewCaseIds.\n- R2C-12: staged suitePrerequisites objects.\n- R2C-13: R2-4 sibling fields and the 6+17+14 count.\n- R2C-14: CC-15-TYPES split.\n- R2C-15: semanticChanges entry for revoke_revision.\nNot folded (2):\n- R2C-3 is deferred as S2_PRECISION_CARRY. This is consistent with doc 81 §3/§5: rollback.md is one of the four accepted files, and changing it lapses the ruling.\n- R2C-11 is COORDINATOR_OWNED_NOT_EDITED.\nThe folded P3 items were checked only for presence in the diff, not audited in depth."
+     },
+     {
+      "item": "No record claims a pass count, execution, final seal or revision 3 acceptance; intake seal NON_FINAL",
+      "status": "CORRECTED",
+      "evidence": "Receipt:1802-1806, intake:1358-1362 and map:10803-10807 give sourceAcceptance PENDING with reviewCommit null and intakeSeal NON_FINAL; map:855 says the same. Every new row has execution NOT_RUN. '56 drift invocations plus membership-loop case authored; zero executed' (receipt:1406) is an authored count, not a pass count. Map:10593 'FOUR_SQL_FILES_ACCEPTED_WITH_LIMITS_DOC81_VERIFIER_R3_PENDING' and the status SOURCE_ACCEPT_WITH_LIMITS_FOR_DEPENDENT_AUTHORING accurately reflect doc 81 §3 (lines 88-105, review 97c61df); neither claims revision 3 acceptance. The IC rows use 'AUTHORING_ELIGIBLE_NOW_DOC81_NONFINAL_UNTIL_R3_BYTE_CHECK', consistent with doc 81 §3."
+     }
+    ],
+    "defects": [
+     {
+      "id": "Y-1",
+      "severity": "NONBLOCKING",
+      "title": "Explicit table ACL loop still not discriminated past the fingerprint, and a loop-only omission goes undetected",
+      "claim": "Every table-acl case refuses at the fingerprint (sql:712). The membership case raises in the function ACL loop (sql:796-798) before the table loop at sql:806-818 can run. So the table loop's own aclexplode and has_table_privilege predicates are never independently discriminated. Also, because membership affects all 13 functions at once, dropping a single function from only the loop's name list (sql:789-792) would go undetected. The doc 81 fix allowed recording this instead, and the records do record it.",
+      "evidence": "mjs:1966-1968 says this in a comment. The deferred EXPLICIT_TABLE_ACL_LOOP entry appears at receipt:1796, intake:1352, map:1199 and 10797. Map:9713 has remaining 'Explicit table ACL loop not isolated'. sql:806-818.",
+      "fix": "Optional cheap twin: in an open transaction, run 'grant pg_read_all_data to anon'. This is outside the fingerprint and leaves has_function_privilege unchanged, but makes has_table_privilege(anon, table, 'SELECT') true. Assert the fingerprint is unchanged and expect 55000 'Quick Order currentness table ACL drift' (sql:814-816), then roll back and recheck integrity. PostgreSQL behaviour reasoned, NOT RUN. Otherwise keep the disclosure."
+     },
+     {
+      "id": "Y-2",
+      "severity": "NONBLOCKING",
+      "title": "DOC80-inventory-drift record fields not fully updated for the new case",
+      "claim": "The expectedRefusal field still lists only inventory, schema drift and descriptor drift. It omits 'Quick Order currentness function ACL drift', which the membership case expects. The rewritten discriminator also no longer names the guard, overload, descriptor, history-trigger and seal-WHEN groups it used to list, although its count of 56 includes them.",
+      "evidence": "Receipt:1406-1407 and map:10323-10324, compared with mjs:1910-1935, 1942-1947 and 1980.",
+      "fix": "Add 'Quick Order currentness function ACL drift' (membership loop case) to expectedRefusal, and restore a short list of the non-ACL drift groups in the discriminator."
+     },
+     {
+      "id": "Y-3",
+      "severity": "NONBLOCKING",
+      "title": "Membership-loop case depends on the fixture's anon role inheriting privileges",
+      "claim": "In the fixture, anon is created 'nologin' with the default INHERIT. In PG16+, GRANT takes its default inherit option from the member's rolinherit. That is why has_function_privilege('anon', ...) becomes true once anon is a member of the owner role. Against a NOINHERIT anon, as in managed Supabase, the witness at mjs:1978 would fail closed rather than pass falsely. Reasoned, NOT RUN. The records do not state this specific dependency; only the generic disclaimer that disposable identities are not Supabase topology covers it.",
+      "evidence": "research-assisted-order-bridge-disposable-bootstrap.sql:24 at 264e6af; mjs:1971-1978; map currentness-prerequisite-10.",
+      "fix": "Add one sentence to the R2C-2 record noting that the case requires the fixture's anon role to inherit privileges."
+     },
+     {
+      "id": "Y-4",
+      "severity": "NONBLOCKING",
+      "title": "Blocks relabelled historical were edited in place",
+      "claim": "The doc80Correction blocks were relabelled HISTORICAL_DOC80_TARGET_AMENDED_BY_DOC81_CORRECTION, yet their content was also edited. For example, INTAKE-COMMENT-RESEAL was removed from the currentness receipt's doc80 held list without an IC replacement in that receipt; the IC rows exist only in the map and the intake receipt. The receipt points to an IC12 carry and NON_FINAL seal elsewhere, so nothing is lost overall, but the historical block no longer shows what it held at the time.",
+      "evidence": "git diff 264e6af..b00aed5 of sql-currentness-source-receipt-doc71-20261009.json (hunk at old line 1477) and of the map (hunk at old line 10182). IC rows are at map:1106+ and intake:1015+.",
+      "fix": "Either leave historical blocks byte-stable and record supersession only in doc81Correction, or add a pointer from the historical block to the IC rows."
+     }
+    ],
+    "deviations": [
+     "Bash was used for `wc -c` and `wc -l` directly on the doc 81 findings JSON and on scratchpad copies, rather than only on git command output. These were read-only size and line counts with no output redirection.",
+     "Some git command pipelines used `cut -c1-N` to trim long lines, which is outside the listed grep / sed -n / head / wc filters. Read-only.",
+     "No file was created, modified or deleted. No interpreter, verifier, test, SQL, database, MCP tool, WebFetch, checkout, commit, fetch, push or session contact was used. PostgreSQL behaviour is reasoned, NOT RUN. The raw SHA-256 of the revision 3 verifier was not recomputed, because hashing would need an interpreter; it is NOT PROVEN here beyond the matching blob id and byte count."
+    ]
+   },
+   "verify": {
+    "itemChallenges": [
+     {
+      "item": "R2C-2: function-proconfig drift loops over all 13 DOC80_FUNCTIONS, expecting 'Quick Order exact function inventory mismatch'",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Could not refute. mjs:1402-1408 lists the same 13 signatures as the SQL VALUES list at sql:640, and mjs:1936-1937 builds one case per signature. The fixture sends statements through psql with ON_ERROR_STOP=0 (mjs:999-1000), and the session parser takes the first ERROR code and message (mjs:1026-1027). So if a setup ALTER failed, its own error would be reported, not the expected 55000 inventory message, and the case would fail. It cannot pass vacuously. Discrimination (reasoned, NOT RUN): remove the proconfig predicate (sql:643) or the signature row, and pg_get_functiondef in the fingerprint (sql:58) still changes, so the refusal becomes 'currentness schema drift' and the substring check (mjs:632) fails. All four functions named as the minimum are included."
+     },
+     {
+      "item": "R2C-2: function-owner drift loops over all 13, expecting 'Quick Order exact function inventory mismatch'",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Upheld. The fixture owner is postgres (mjs:1106-1109, psql -U postgres at mjs:1000). A superuser may ALTER OWNER to service_role and bypasses EXECUTE checks. That matters for 'function-owner:currentness_integrity()': ALTER OWNER moves the owner's EXECUTE grant to service_role, and integrity() is then called in the same transaction. With a non-superuser BYPASSRLS owner, which sql:630 permits, that case would fail with 42501 instead of the inventory message. In this fixture it passes, but it depends on the topology (see YV-2). If the owner predicate at sql:642 were dropped, the fingerprint's proowner (sql:59) would raise 'schema drift' instead, so the case discriminates (reasoned, NOT RUN)."
+     },
+     {
+      "item": "R2C-2: function-acl drift loops over all 13, expecting 'Quick Order currentness schema drift'",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Could not refute. The inventory check (sql:637-645) and the guard checks (sql:646-704) do not read proacl, so the first refusal is at sql:712. The owned_functions name filter (sql:52-55) covers all 13, including schema_fingerprint() itself. Drop proacl from the fingerprint and the loop at sql:793-795 raises 'function ACL drift', so the case fails. Drop the function from both and nothing refuses, which mjs:630 rejects."
+     },
+     {
+      "item": "R2C-2: table-acl drift loops over all six DOC80_TABLES",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Could not refute. mjs:1409-1410 and 1941 cover all six tables. relacl is in the fingerprint (sql:61), and the owned_relations patterns (sql:49-50) match every table. No check between sql:713 and sql:805 reads relacl, so a regression that drops relacl from the fingerprint would surface as 'table ACL drift' at sql:812 and fail the case."
+     },
+     {
+      "item": "R2C-2: at least one case reaches the explicit ACL loops past the fingerprint",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Could not refute.\n- The grant can succeed. A superuser grantor needs no ADMIN option. git grep of every pinned bootstrap, canonical and baseline source at 264e6af finds no 'grant anon ... to' and no role creation other than the bootstrap's plain NOLOGIN roles. So postgres is not a member of anon and there is no membership-loop error.\n- PG16+ takes the grant's INHERIT option from anon's rolinherit (true here), so has_function_privilege and pg_has_role MEMBER both turn true.\n- The fingerprint reads no pg_auth_members data, so it is unchanged.\n- The function loop's aclexplode check (sql:793-795) is unchanged, so the refusal comes from has_function_privilege (sql:797-798).\n- It discriminates: remove sql:796-799 and the table loop's has_table_privilege, which inherits the owner's table rights, raises 'table ACL drift' (sql:816), so the case fails.\n- The second ROLLBACK in finally (mjs:1981) only produces a WARNING, which the parser ignores (mjs:1026-1028).\n- The grant is cluster-global but never committed.\nThis meets doc 81 fix item 3 ('function ACL drift' OR 'table ACL drift'). The table loop not being exercised is disclosed (EXPLICIT_TABLE_ACL_LOOP). All PostgreSQL behaviour here is reasoned, NOT RUN."
+     },
+     {
+      "item": "Expected messages exist verbatim in the accepted SQL",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed in the cur2 copy:\n- sql:645 'Quick Order exact function inventory mismatch'\n- sql:712 'Quick Order currentness schema drift'\n- sql:795 and sql:798 'Quick Order currentness function ACL drift'\nNo earlier raise in integrity() contains these substrings."
+     },
+     {
+      "item": "Revision 3 is verifier-only and does not alter the definition-digest computation",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Upheld, with one lineage caveat.\n- git show --stat 264e6af: one file changed, +151/-24, parent 642978a. The parent's verifier blob is 120449d, the same as at aa857e4.\n- The four SQL blobs (dd7d3e5, 11f3276, c894794, fc89860) are identical at aa857e4, 264e6af and b00aed5, and git diff 264e6af b00aed5 -- supabase/ is empty.\n- The definition computation (mjs:2151) and section() are not in the diff.\n- Caveat: aa857e4 is NOT an ancestor of 264e6af. It is absent from git log 264e6af; its parent is 1fa74ef. Outside the currentness paths the two trees differ in about 278 files (see YV-1)."
+     },
+     {
+      "item": "Records bind revision 3 verifier raw SHA-256 6c47b308…",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Upheld as a binding.\n- The value 6c47b308… appears with blob 26c0cd3 and 219791 bytes in all three records, and in the handoff JSON at b00aed5.\n- git cat-file -s 26c0cd3 = 219791.\n- The copy has 2888 lines, matching git show | wc -l, and contains no CR, so equal raw and LF hashes is plausible.\n- I did not recompute the SHA-256 (no interpreter allowed): NOT PROVEN here."
+     },
+     {
+      "item": "The four SQL hashes and definition digest 8b631a83… are unchanged in the records",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Upheld. The acceptedSql blocks give d44974d1, 91ab412b, 78534251 and 8de55983, which match doc 81 §3. The blobs match ls-tree, and the tree 03eae1a matches git log %T of aa857e4. The receipt's top-level definitionSha256 and currentnessDefinition are 8b631a83… (receipt:357-358)."
+     },
+     {
+      "item": "Shared bindings record unchanged (ac7d45ec…)",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Upheld. The blob is ecc7855 at aa857e4, 6bf2579 and b00aed5. git diff 642978a b00aed5 on the bindings file is empty, and cat-file -s is 54259. The design delta it pins under fixedArtifacts is not in currentness.inventory, so the verifier does not load it (mjs:2118-2128). The records correctly disclose that this file is absent from the 264e6af tree."
+     },
+     {
+      "item": "Records correct the R2C-2 wording (map:9481 controlNote; receipt DOC80-inventory-drift)",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Upheld. The over-claim doc 81 objected to (coverage of 'roles/ACL/proconfig') is replaced by accurate text (map:9710-9714; receipt:1406). The remaining gaps are the Y-2 nits: expectedRefusal omits 'function ACL drift', and the non-ACL groups are no longer listed."
+     },
+     {
+      "item": "R2C-3..R2C-15 folded in where cheap",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "I could not upgrade this.\n- Doc 81 §4 explicitly lists R2C-3 under 'Fold into revision 3 where cheap', noting it 'changes the rollback.md hash only'. But §3 says any SQL byte change in revision 3 lapses the ruling, and rollback.md is one of the four accepted files. The builder followed §3 and recorded an S2_PRECISION_CARRY. That is defensible, but the reviewer must rule on it.\n- R2C-11 is the coordinator's record by its own fix text.\n- Spot checks of folded items are consistent:\n  - R2C-4: the same UUID dddd… is used in both the binding and the decision (mjs:1821, 1828).\n  - R2C-9: the IC rows' AUTHORING_ELIGIBLE_NOW status matches the builder permission in doc 81 §3.\n- The other folded items were checked for presence only."
+     },
+     {
+      "item": "No record claims a pass count, execution, final seal or revision 3 acceptance; intake seal NON_FINAL",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Upheld. Both receipts and the map say sourceAcceptance PENDING with reviewCommit null, and intakeSeal NON_FINAL. Every finding row has execution NOT_RUN. The handoff JSON at b00aed5 also says sourceAcceptance PENDING, intakeSeal NON_FINAL and execution NOT_RUN. '56 drift invocations ... zero executed' is an authored count, not a pass count."
+     }
+    ],
+    "defectVerdicts": [
+     {
+      "id": "Y-1",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Correct. Direct table grants refuse at the fingerprint (sql:712), and the membership case raises first in the function loop (sql:797-798). So the table loop (sql:806-818) is never independently discriminated, and dropping one function from only the loop's name list would go undetected. Doc 81 fix item 3 accepts one case reaching either loop, and the gap is disclosed (EXPLICIT_TABLE_ACL_LOOP in all three records). The suggested pg_read_all_data twin is sound (reasoned, NOT RUN): pg_class_aclmask grants SELECT through pg_read_all_data, while proacl, the fingerprint and has_function_privilege are unchanged, so the first refusal would be sql:816."
+     },
+     {
+      "id": "Y-2",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed. receipt:1407 and map:10324 expectedRefusal still read 'Named 55000 exact function/guard inventory, schema drift or descriptor drift', yet mjs:1980 expects 'Quick Order currentness function ACL drift'. The new discriminator also drops the guard, overload, descriptor, history-trigger and seal-WHEN groups that make up the rest of the 56."
+     },
+     {
+      "id": "Y-3",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Confirmed. bootstrap.sql creates anon with plain NOLOGIN (default INHERIT), and PG16+ takes the grant's inherit option from rolinherit. Against a NOINHERIT anon the witness at mjs:1978 fails closed. The case does not pass falsely. The same topology dependency applies to the owner-side cases (YV-2)."
+     },
+     {
+      "id": "Y-4",
+      "upheld": true,
+      "severity": "NONBLOCKING",
+      "note": "Upheld as record hygiene only. The block label HISTORICAL_DOC80_TARGET_AMENDED_BY_DOC81_CORRECTION does declare the amendment. The R2C-9 fix placed the IC rows only in the map and the intake receipt, so their absence from the currentness receipt follows the fix. The pointer that survives is bindingStatus '...SEPARATE_IC12_RESEAL' (receipt:886). The remaining issue is that a block labelled historical no longer shows its original held list (INTAKE-COMMENT-RESEAL removed)."
+     }
+    ],
+    "missed": [
+     {
+      "id": "YV-1",
+      "severity": "NONBLOCKING",
+      "title": "Records silently rebind non-currentness inventory rows from the aa857e4 lineage to the separate 264e6af lineage",
+      "claim": "264e6af does not descend from aa857e4 (aa857e4's parent is 1fa74ef; 264e6af sits on the integration lineage 642978a <- 6bf2579 <- 8e01ef8 <- 141bdf6 <- 59b2241 ...). Commit 264e6af changes only the verifier relative to its parent, and the currentness paths match aa857e4 except for the verifier. But the receipts' top-level files[] and the map's sourceFiles now carry different bytes for non-currentness files that doc 81 did not review. The records label this 'phase: VERIFIER_ONLY_SOURCE' and do not state the lineage difference. The only related disclosure covers the dropped design-delta row.",
+      "evidence": "- git log --oneline 264e6af does not contain aa857e4.\n- git diff 642978a b00aed5 on the currentness receipt changes the rows for AdminAssistedOrderSession.test.tsx, server/index.ts, express.ts, production-deps.ts, health/quick-order ports.ts, production.test.ts and production.ts, and drops the DOC71_TRANSACTION_DESIGN_DELTA row.\n- Map sourceFiles: production.ts goes from blob aca2a9a (6852 bytes) to e7c8d9f (9743), production.test.ts from a1527a7 (7185) to 8b2a7b5 (30667), and ports.ts from 06472a5 to 3266ff8. These blobs match ls-tree 264e6af, so the binding is accurate.\n- Those files were last changed by 8e01ef8, 59b2241 and 3f86463, which are not in aa857e4's history.\n- The intake receipt changes its sourceCommit the same way.",
+      "fix": "Add a doc81Correction.sourceLineage disclosure in both receipts and the map. It should state that 264e6af is on the integration lineage and aa857e4 is not an ancestor. It should state that the four SQL files and the intake files are byte-identical while the verifier is the only changed currentness path. It should list the non-currentness inventory rows rebound to 264e6af, with the commits that changed them, marked outside the doc 81 scope and not reviewed by it."
+     },
+     {
+      "id": "YV-2",
+      "severity": "NONBLOCKING",
+      "title": "Owner-side R2C-2 cases depend on the fixture owner being a superuser",
+      "claim": "The accepted SQL permits a non-superuser BYPASSRLS owner (sql:630). Under such an owner, 'function-owner:currentness_integrity()' would fail with 42501, because ALTER OWNER moves the owner's EXECUTE grant to service_role before integrity() is called in the same transaction. The membership case's GRANT of the owner role to anon would also need ADMIN on that role. In the disposable fixture (owner postgres, a superuser) both work. The R2C-2 records disclose neither dependency, only the generic statement that disposable identities are not Supabase topology.",
+      "evidence": "mjs:1000 (psql -U postgres), mjs:1106-1109 (owner = relowner of provider_fence, 'postgres login/request/owner coincide'), mjs:1938 and mjs:1977, sql:630 and sql:642. PostgreSQL behaviour reasoned, NOT RUN.",
+      "fix": "Add one sentence to the R2C-2 finding rows: the owner and membership cases require the fixture's superuser owner and an INHERIT anon role, and are not evidence for a managed role topology. Optionally assert rolsuper for ownerRole before the loop so the dependency fails loudly."
+     }
+    ],
+    "opinion": "I agree with checker Y: R2C-2 is CORRECTED in the revision 3 verifier, and I found no BLOCKING defect. Nothing was executed; all PostgreSQL behaviour is reasoned and NOT RUN.\n\n**Verifier**\n- The function cases (proconfig, owner and ACL) loop over all 13 DOC80_FUNCTIONS, and the table-ACL case loops over all six DOC80_TABLES. Each expects a message that exists verbatim in the accepted SQL: sql:645, sql:712, and sql:795/798.\n- The new membership case leaves the fingerprint unchanged and reaches the explicit function ACL loop at sql:797-798. That is after the fingerprint check at sql:709-712. The GRANT is legal in the fixture: the grantor is a superuser, and no pinned source creates a membership loop.\n- From source, every control can pass and discriminates. A failing setup statement reports its own error, so no case can pass vacuously.\n- The definition-digest computation is untouched.\n\n**Records at b00aed5**\n- Both receipts and the map bind 6c47b308… together with the matching blob 26c0cd3 and 219791 bytes. The SHA-256 itself was not recomputed and is NOT PROVEN.\n- The four SQL hashes, the tree and the definition digest 8b631a83… are unchanged.\n- The shared bindings record (ac7d45ec…) is byte-unchanged.\n- There is no claim of a pass count, an execution or a final seal. sourceAcceptance is PENDING and intakeSeal is NON_FINAL.\n\n**Fold-in of R2C-3..R2C-15: PARTIAL**\n- R2C-3 is deferred under the doc 81 §3 lapse clause, although §4 listed it as a cheap fold-in. The reviewer needs to rule on it.\n- R2C-11 is coordinator-owned.\n\n**Defects**\n- I uphold Y-1 through Y-4 as NONBLOCKING.\n- I add two NONBLOCKING items:\n  - YV-1: 264e6af is not a descendant of aa857e4. The records silently rebind several non-currentness inventory rows (server/production files) without disclosing the lineage.\n  - YV-2: the owner and membership cases depend on the fixture owner being a superuser.",
+    "deviations": [
+     "Some Bash pipelines used `cut -c1-1500` or `cut -c1-900` to trim long JSON lines from git show output. cut is outside the listed grep / sed -n / head / wc filters. Read-only, no redirection.",
+     "Several Bash calls chained more than one allowed read-only git command with ';' in a single invocation. No cd, echo, variables, loops or output redirection.",
+     "I read the doc 81 findings JSON and markdown through `git show HEAD:...` on the health-review worktree, and once with the Grep tool directly on the findings JSON (a review file). Read-only.",
+     "I used `git grep` and `git show` on pinned sources at 264e6af (the bootstrap SQL, canonical and baseline sources) to check role membership. These reads went through the git object store, not working-tree files. Read-only.",
+     "No file was created, modified or deleted. No interpreter, test, verifier, SQL, database, MCP tool, WebFetch, checkout, commit, fetch, push or session contact was used. The raw SHA-256 of the revision 3 verifier was not recomputed (NOT PROVEN)."
+    ]
+   }
+  }
+ ]
+}
