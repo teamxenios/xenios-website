@@ -1,0 +1,1082 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+  "revision": 1,
+  "classification": "APPROVED_FIXED_SOURCE_COPY_AND_OWN_CONTINUITY_ONLY",
+  "completedAt": "2026-10-11T16:43:06Z",
+  "source": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+  "sourceTree": "006ea7f24bbc308e58f40f109065d7a22616bf8e",
+  "registryCommit": "1eb5191590808e75e6aed67c9d234fec70bfa6c8",
+  "registryTree": "09e2cb71cd5a81bb5c184981f15692a2530d36c1",
+  "registryCandidateHash": "b0fb285cdec834fbc2cf87846c8d56439a70f77f9335cdc717fd3036045d67e7",
+  "registryBlob": "de0cfca89197aff88f3467ef1695c8131073641e",
+  "originalBase": "ac9bbe30869c613053321974ff1978bf972eebf4",
+  "originalBaseTree": "2498c5a60bb2c5cb53c0ce835a97b31840738deb",
+  "authorityCommit": "21d904fa81835a6c26897df6269d295b95d13110",
+  "actualHumanMessage": "01a12bcc-bf04-7432-aa45-9ed470620aa4",
+  "approvedIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+  "outgoingCustody": {
+    "commit": "ed376ea51bf27574a6af3ebcf642350adeb5841a",
+    "tree": "8154b7b3c4fc2ece3b469c44e009c96018925630",
+    "path": ".xenios/handoffs/2026-10-11-quick-order-fixed-assembly-custody-handoff.json",
+    "blob": "bc068f718010ed58bd5c5e9ed85b7651c6e9e57f",
+    "rawSha256": "dab632cc6e378d6b3a1c49c6d449b3f5b0d99ff545a6d429d1f902f41133c410",
+    "beforeAndAfterLeaseObjectsMatched": true,
+    "original21PathsOwnerRevisionClaimAuthorityPreserved": true,
+    "actualState": "handoff",
+    "notSourceInput": true
+  },
+  "copyLease": {
+    "before": {
+      "id": "843092f2-95b2-4724-98c0-744a6324f39a",
+      "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "active",
+      "claimedAt": "2026-10-11T16:40:52Z",
+      "heartbeatAt": "2026-10-11T16:40:52Z",
+      "paths": [
+        "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+        "client/src/research/quick-order/OperatorDeclarations.tsx",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "client/src/research/quick-order/QuickOrderPage.test.tsx",
+        "client/src/research/quick-order/QuickOrderPage.tsx",
+        "client/src/research/quick-order/contracts.test.ts",
+        "client/src/research/quick-order/contracts.ts",
+        "client/src/research/quick-order/quick-order.css",
+        "server/research/health/quick-order/catalog.test.ts",
+        "server/research/health/quick-order/catalog.ts",
+        "server/research/health/quick-order/containment.test.ts",
+        "server/research/health/quick-order/containment.ts",
+        "server/research/health/quick-order/core.d.mts",
+        "server/research/health/quick-order/core.mjs",
+        "server/research/health/quick-order/handler.d.mts",
+        "server/research/health/quick-order/handler.mjs",
+        "server/research/health/quick-order/legal.ts",
+        "server/research/health/quick-order/paths.d.mts",
+        "server/research/health/quick-order/paths.mjs",
+        "server/research/health/quick-order/ports.ts",
+        "server/research/health/quick-order/production.test.ts",
+        "server/research/health/quick-order/production.ts",
+        "server/research/health/quick-order/root-composition.test.ts",
+        "server/research/health/quick-order/static-document.test.ts",
+        "server/research/health/quick-order/tests/core.test.mjs",
+        "server/research/health/quick-order/tests/fixtures.mjs",
+        "server/research/health/quick-order/tests/handler.test.mjs",
+        "server/research/health/quick-order/vite-document.test.ts",
+        "server/research/assisted-order/quick-order-repository.ts",
+        "server/research/assisted-order/quick-order-repository.test.ts",
+        "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "server/research/assisted-order/quick-order-notifications.test.ts",
+        "shared/research/assisted-order/quick-order.ts",
+        "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "shared/research/assisted-order/contract.ts",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/service.ts",
+        "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+        "server/research/assisted-order/communications.ts",
+        "shared/care/paths.ts",
+        "shared/care/paths.test.ts",
+        "client/src/lib/tracking.ts",
+        "client/src/lib/tracking.test.ts",
+        "client/src/lib/attribution.ts",
+        "client/src/lib/attribution.test.ts",
+        "client/src/pwa/PwaLifecycle.tsx",
+        "client/src/pwa/PwaLifecycle.test.tsx",
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts"
+      ],
+      "scopeNote": "COPY ONLY for approved fixed47 snapshots plus15files/30hunks; no new authoring. Registry phase committed1eb5191590808e75e6aed67c9d234fec70bfa6c8 and lease28cc4ef0 handed off. Actual outgoing builder custody receipt ed376ea51bf27574a6af3ebcf642350adeb5841a verified dab632cc6e378d6b3a1c49c6d449b3f5b0d99ff545a6d429d1f902f41133c410; af843 is handoff with21paths/history preserved. No matching activelease or dirtycopypath across b22f/3221/389a at claim. Exact sourceaa857/records735 only; preserve8ac9customerblobs. Copyhandoff ends these rights; no automatic builderreclaim or integrator8703 sourceactivation."
+    },
+    "after": {
+      "id": "843092f2-95b2-4724-98c0-744a6324f39a",
+      "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "handoff",
+      "claimedAt": "2026-10-11T16:40:52Z",
+      "heartbeatAt": "2026-10-11T16:43:06Z",
+      "paths": [
+        "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+        "client/src/research/quick-order/OperatorDeclarations.tsx",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "client/src/research/quick-order/QuickOrderPage.test.tsx",
+        "client/src/research/quick-order/QuickOrderPage.tsx",
+        "client/src/research/quick-order/contracts.test.ts",
+        "client/src/research/quick-order/contracts.ts",
+        "client/src/research/quick-order/quick-order.css",
+        "server/research/health/quick-order/catalog.test.ts",
+        "server/research/health/quick-order/catalog.ts",
+        "server/research/health/quick-order/containment.test.ts",
+        "server/research/health/quick-order/containment.ts",
+        "server/research/health/quick-order/core.d.mts",
+        "server/research/health/quick-order/core.mjs",
+        "server/research/health/quick-order/handler.d.mts",
+        "server/research/health/quick-order/handler.mjs",
+        "server/research/health/quick-order/legal.ts",
+        "server/research/health/quick-order/paths.d.mts",
+        "server/research/health/quick-order/paths.mjs",
+        "server/research/health/quick-order/ports.ts",
+        "server/research/health/quick-order/production.test.ts",
+        "server/research/health/quick-order/production.ts",
+        "server/research/health/quick-order/root-composition.test.ts",
+        "server/research/health/quick-order/static-document.test.ts",
+        "server/research/health/quick-order/tests/core.test.mjs",
+        "server/research/health/quick-order/tests/fixtures.mjs",
+        "server/research/health/quick-order/tests/handler.test.mjs",
+        "server/research/health/quick-order/vite-document.test.ts",
+        "server/research/assisted-order/quick-order-repository.ts",
+        "server/research/assisted-order/quick-order-repository.test.ts",
+        "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "server/research/assisted-order/quick-order-notifications.test.ts",
+        "shared/research/assisted-order/quick-order.ts",
+        "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "shared/research/assisted-order/contract.ts",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/service.ts",
+        "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+        "server/research/assisted-order/communications.ts",
+        "shared/care/paths.ts",
+        "shared/care/paths.test.ts",
+        "client/src/lib/tracking.ts",
+        "client/src/lib/tracking.test.ts",
+        "client/src/lib/attribution.ts",
+        "client/src/lib/attribution.test.ts",
+        "client/src/pwa/PwaLifecycle.tsx",
+        "client/src/pwa/PwaLifecycle.test.tsx",
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/seo/raw-http-document-policy.test.ts"
+      ],
+      "scopeNote": "COPY ONLY for approved fixed47 snapshots plus15files/30hunks; no new authoring. Registry phase committed1eb5191590808e75e6aed67c9d234fec70bfa6c8 and lease28cc4ef0 handed off. Actual outgoing builder custody receipt ed376ea51bf27574a6af3ebcf642350adeb5841a verified dab632cc6e378d6b3a1c49c6d449b3f5b0d99ff545a6d429d1f902f41133c410; af843 is handoff with21paths/history preserved. No matching activelease or dirtycopypath across b22f/3221/389a at claim. Exact sourceaa857/records735 only; preserve8ac9customerblobs. Copyhandoff ends these rights; no automatic builderreclaim or integrator8703 sourceactivation.",
+      "completedAt": "2026-10-11T16:43:06Z",
+      "handoff": ".xenios/handoffs/2026-10-11-QUICK-ORDER-FIXED-ASSEMBLY-RETURN-codex-accepted-source-integration-20261005.json",
+      "copyResult": {
+        "source": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+        "tree": "006ea7f24bbc308e58f40f109065d7a22616bf8e",
+        "record": "docs/health-launch/accepted-source-integration-20261005/NINE_PATH_FIXED_ASSEMBLY_RECEIPT_20261011.json",
+        "status": "EXACT_FIXED_COPY_COMPLETE_LOCAL_ONLY_NOT_RUN"
+      },
+      "custodyReturn": {
+        "kind": "ACTUAL_COPY_PHASE_COMPLETION_AND_CUSTODY_RETURN",
+        "at": "2026-10-11T16:43:06Z",
+        "toSession": "codex-health-quick-order-20261005",
+        "toChat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+        "originalLease": "af843213-fa11-42b9-8874-f6451ae38034",
+        "originalAuthority": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+        "paths": [
+          "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+          "supabase/verification/research_health_quick_order_local.mjs",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+          "supabase/verification/research_health_quick_order_currentness_local.mjs",
+          "server/research/assisted-order/quick-order-repository.ts",
+          "server/research/assisted-order/quick-order-repository.test.ts",
+          "server/research/health/quick-order/production.ts",
+          "server/research/health/quick-order/production.test.ts",
+          "server/research/health/quick-order/ports.ts",
+          "server/research/assisted-order/quick-order-admin-readback.test.ts",
+          "server/research/assisted-order/quick-order-notifications.test.ts",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+        ],
+        "assembledSource": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+        "assembledTree": "006ea7f24bbc308e58f40f109065d7a22616bf8e",
+        "sourceLocation": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "integratorCopyRightsEnded": true,
+        "noConcurrentIntegratorSourceWriter": true,
+        "actualAcknowledgmentFromBuilder": null,
+        "coordinatorActivation": null,
+        "condition": "This is the receiver's actual custody return, not a unilateral foreign lease activation. Coordinator and same builder must acknowledge this exact assembled checkpoint and returned applicable af843 authority before the serial builder3+production3 stage. Integrator8703 remains unclaimed until builder stage handoff and explicit activation. No automatic reclaim or extra source rights."
+      }
+    }
+  },
+  "custodyReturn": {
+    "kind": "ACTUAL_COPY_PHASE_COMPLETION_AND_CUSTODY_RETURN",
+    "at": "2026-10-11T16:43:06Z",
+    "toSession": "codex-health-quick-order-20261005",
+    "toChat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "originalLease": "af843213-fa11-42b9-8874-f6451ae38034",
+    "originalAuthority": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+    "paths": [
+      "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "supabase/verification/research_health_quick_order_local.mjs",
+      "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "server/research/assisted-order/quick-order-repository.ts",
+      "server/research/assisted-order/quick-order-repository.test.ts",
+      "server/research/health/quick-order/production.ts",
+      "server/research/health/quick-order/production.test.ts",
+      "server/research/health/quick-order/ports.ts",
+      "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "server/research/assisted-order/quick-order-notifications.test.ts",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+    ],
+    "assembledSource": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+    "assembledTree": "006ea7f24bbc308e58f40f109065d7a22616bf8e",
+    "sourceLocation": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "integratorCopyRightsEnded": true,
+    "noConcurrentIntegratorSourceWriter": true,
+    "actualAcknowledgmentFromBuilder": null,
+    "coordinatorActivation": null,
+    "condition": "This is the receiver's actual custody return, not a unilateral foreign lease activation. Coordinator and same builder must acknowledge this exact assembled checkpoint and returned applicable af843 authority before the serial builder3+production3 stage. Integrator8703 remains unclaimed until builder stage handoff and explicit activation. No automatic reclaim or extra source rights."
+  },
+  "noOverlapCheck": {
+    "at": "2026-10-11T16:40:52Z",
+    "heads": {
+      "3221": "05e01c41bf94aeb4cc4bef1559f13f72db4a6aee",
+      "b22f": "1eb5191590808e75e6aed67c9d234fec70bfa6c8",
+      "389a": "ed376ea51bf27574a6af3ebcf642350adeb5841a"
+    },
+    "matchingActiveLeases": 0,
+    "dirtyCopyPaths": 0,
+    "scope": "Checked three current registries; actual outgoing owner handoff independently verified, not inferred from age."
+  },
+  "immutableInputs": {
+    "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+    "sourceTree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+    "records": "735254e4cc6230479c9bfa821e1c6991389d5266",
+    "recordsTree": "0748ee8bd2bdc875ea770c860253aa1b3c2e9590"
+  },
+  "exactSnapshotBindings": [
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "47a4a53ea03c09c91d64b81444ad11a83e89458d",
+        "rawSha256": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505",
+        "bytes": 1795
+      }
+    },
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.tsx",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "a2a7936d74849a38c94d7f35995880836f78ed4b",
+        "rawSha256": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da",
+        "bytes": 2798
+      }
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "85503d76eab946eb8ae001116f00cb85f814f72e",
+        "rawSha256": "a03b4c85ed90bd8a97e0ab4872097c37beb80efaa58e8690a8f7866299e0b45e",
+        "bytes": 13740
+      }
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.test.tsx",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "834ea47972aca51b224d1c9e27552d8791c2a638",
+        "rawSha256": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e",
+        "bytes": 20028
+      }
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "2a604a7936c729d6d3daec9838b360cde9c8fcfe",
+        "rawSha256": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b",
+        "bytes": 28846
+      }
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "4cebb50b4dd5e0371d15b53f4c54e2fdf59e7de0",
+        "rawSha256": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14",
+        "bytes": 8744
+      }
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "03104bda26647f7f3a5295cae7be60c64e19799d",
+        "rawSha256": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861",
+        "bytes": 18089
+      }
+    },
+    {
+      "path": "client/src/research/quick-order/quick-order.css",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "39401a001b4f65c7704d8a763c009f8b216a6adb",
+        "rawSha256": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9",
+        "bytes": 5768
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "f81f41dc94538bf2ec052a8fa0d8211c1a24621f",
+        "rawSha256": "a84bf7b06cb03ebfd909105350b06d9acc163c5bb166c12dcb837fcd4dbda113",
+        "bytes": 14320
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "eae50d0e0c6519d95e4d4740a6be6545a4b3bf5a",
+        "rawSha256": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037",
+        "bytes": 11381
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/containment.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "3684be85d0f0944e63c3f868f4c131a043723632",
+        "rawSha256": "e2fe7af309273dafd6e9f3f11dddf560ffabad81aa87fdcbf116a01e7eb3b613",
+        "bytes": 10329
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/containment.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "455584ce9139cea8927b3839d977411b7a32b105",
+        "rawSha256": "b7799c314f8515f4bf7af74a2b905e4efbe7db0a2dcaae0a4927fd11baf862c2",
+        "bytes": 988
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/core.d.mts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "ce893fb5ec3ed7a00608e8596765ef497412c3c8",
+        "rawSha256": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998",
+        "bytes": 1285
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/core.mjs",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "c0f3cbe232147094cc32bf72734b1121be8b87a2",
+        "rawSha256": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35",
+        "bytes": 14548
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/handler.d.mts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "c64ff3f720395a379abf00c7d104f6046078c83d",
+        "rawSha256": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27",
+        "bytes": 1253
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/handler.mjs",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "c2970928760f74fe446a18319f84de53a80cc0c6",
+        "rawSha256": "a1e92095c597c708fde3543fe8a6a49683fd587ed1863537fbc47fbe349f0379",
+        "bytes": 16384
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/legal.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "41d8db389c61579b9c57ec6422abab7543c16579",
+        "rawSha256": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e",
+        "bytes": 1729
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/paths.d.mts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "b2fe58a997f38b516b2d7d228159181b2038518a",
+        "rawSha256": "027f3b9c4bb41e331534b2a951028021190bb1ba5e5d3117f028690cd28f1e54",
+        "bytes": 317
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/paths.mjs",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "cd90620b5c2d1910ae72b6a974c7382cdc510677",
+        "rawSha256": "89c017ecbb5b7ad18b7d7ab5fe0ffdd651ff02a926e1dfd3bde623cd9e68fc88",
+        "bytes": 3835
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "06472a5437f39f0821a3ae9952d1c0a607e25251",
+        "rawSha256": "39d0d2da8fd6636c76f951c7a56f87de3a058d5e0c0eed09ed98cdf5ebbe161a",
+        "bytes": 5126
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "a1527a72a5fbe55167146fb3d66000b141c05380",
+        "rawSha256": "1e766ea84e2a9accd4a46988b4d410f782875bc9218bf00b35fd49ff21d9306f",
+        "bytes": 7185
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "aca2a9a5727a17fdc447c67242fadc5812a80cfd",
+        "rawSha256": "66ec299f2dcced2857a0b0dbef4871c625b14f9f397dd0c2e26f0deef2ee91ce",
+        "bytes": 6852
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "8e5876e7adadbb2960a774c904fe21124f970e49",
+        "rawSha256": "b3a64d4ca827333efb1d196dc2bac7b7b63b04c27d39de2d94c5f7fb82cba8ed",
+        "bytes": 18949
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/static-document.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "654877176e4d19aa1637545ceb5bd968b5ea55c7",
+        "rawSha256": "28929f2c83d72531db98801ae01ff7b6261a208f54d439cc5198fd7adcc27356",
+        "bytes": 9035
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/tests/core.test.mjs",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "4b75a38b7922d2c1db77305876ad71ce46e5a928",
+        "rawSha256": "eacf6db8971f16c9c73537903735d7b6dc71686050d8beba9708461221156d49",
+        "bytes": 12589
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/tests/fixtures.mjs",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "a67bb5ce5509010b99220cfcbc75e0af6e271d65",
+        "rawSha256": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c",
+        "bytes": 5862
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/tests/handler.test.mjs",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "4ffb196fb12921d7491be152fdf2bca05526e669",
+        "rawSha256": "351217aead0ebfabdf42f909cf8dc41b5bee9fd86acf68ed690d83d5b0d67dc0",
+        "bytes": 30375
+      }
+    },
+    {
+      "path": "server/research/health/quick-order/vite-document.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "49e8296f3604d4f56af86262e66cd9da799b8834",
+        "rawSha256": "f6490ceb91dd1e019a768b6dd4e2f852eadf366afafbf16d7566cf0d3ad48c4d",
+        "bytes": 8880
+      }
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "307d903f2b83a3252a1dde38f199c88e51cae2af",
+        "rawSha256": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
+        "bytes": 31788
+      }
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "7070fd8a2b3a973908fbe127cdbe68bbd0e9ed4b",
+        "rawSha256": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170",
+        "bytes": 52802
+      }
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "bffd940fc24d9cc8b1cd179378ec16f7977e0efc",
+        "rawSha256": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb",
+        "bytes": 35156
+      }
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "32cd919a0235cd0c0a55963418c301b5dd86f64b",
+        "rawSha256": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0",
+        "bytes": 24468
+      }
+    },
+    {
+      "path": "shared/research/assisted-order/quick-order.ts",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "550bdcdb9e1aa681e87872d5f26ebb1e8cc5b615",
+        "rawSha256": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2",
+        "bytes": 1991
+      }
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "f518b2220bda12985f4279adc9eaddb136d60689",
+        "rawSha256": "cde91d113aea9cef4c8104da9d51ac78c702f553b05e7476659d2565492eee3b",
+        "bytes": 90171
+      }
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "d95e246733dbbb9d7df027422c51069efdb46b79",
+        "rawSha256": "9cf375e4ecfea2bf1818c6f4008a2842d3e1752e3549dabf4a5c72388828b106",
+        "bytes": 15884
+      }
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "d25dae0d6979af6dcb37c07c939f03fba7bf72c5",
+        "rawSha256": "12c16a6741f12ddd60f789de073e6b784d38ec5658c609ff819e60dcae455cde",
+        "bytes": 15890
+      }
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "f3726bf805f252e8c41dc61ea1ae6dbec073b89d",
+        "rawSha256": "a4c517f491b6e4e80db6b05cbdce3bfa98d3e8b25f365c954498e3b632f6b8b7",
+        "bytes": 20967
+      }
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+        "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+        "bytes": 226183
+      }
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+        "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+        "bytes": 17174
+      }
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+        "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+        "bytes": 16996
+      }
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+        "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+        "bytes": 27232
+      }
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "b77b75321e34e3ea48e64ae4b9260b2eec63dbb6",
+        "rawSha256": "bbc040e6bf7b2656ca5b5a4e0c82d408313346163f4915a4e780784d8af8c1fc",
+        "bytes": 83410
+      }
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "input": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "120449d62dbc44131d3563868b522476a021a2b1",
+        "rawSha256": "2665acf43a800935db407f872dbc0fe0dcdfbedc74c7f869796511c02b8a4b7e",
+        "bytes": 210310
+      }
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "input": {
+        "commit": "735254e4cc6230479c9bfa821e1c6991389d5266",
+        "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+        "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+        "bytes": 54259
+      }
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "input": {
+        "commit": "735254e4cc6230479c9bfa821e1c6991389d5266",
+        "gitBlob": "b9b5baa7bd274a986b03fff05817876062a6de34",
+        "rawSha256": "899fd2650fa718b17df3b4d390c1b143406a84f5688f6725406a1fa2dd52a65d",
+        "bytes": 54957
+      }
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "input": {
+        "commit": "735254e4cc6230479c9bfa821e1c6991389d5266",
+        "gitBlob": "10c5bb140a457a8f9573d445819b3cfaae4083b7",
+        "rawSha256": "c1aa004100a3f2fa6b0ce61ea630b25ef6c16e2ed839944fdd674fc2ba046e09",
+        "bytes": 80563
+      }
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "input": {
+        "commit": "735254e4cc6230479c9bfa821e1c6991389d5266",
+        "gitBlob": "ce735606fba41175bae48fb7615117982d94bc36",
+        "rawSha256": "df943e9085de28f8db72e35c8d869125c9c8c77888845a2826dbe54c31ca94a9",
+        "bytes": 579988
+      }
+    }
+  ],
+  "exactPatchBindings": [
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "987dc429fb6b9d4087756caa96102843587b9200",
+        "rawSha256": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+        "bytes": 22005
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "6d865f3d71ed1ea8bf8957a092e7faa3cc10fd2c",
+        "rawSha256": "1a9eed498adf0144b84d0e52afe9b9e0c250847749289ad295561aec7581ef34",
+        "bytes": 22210
+      }
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "b8cf239396a2332c7903c215ae05f3f5f4ea2a78",
+        "rawSha256": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+        "bytes": 22881
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "8da0f773db6ef4f6dbca145b67232731b8fcf693",
+        "rawSha256": "274493e5b0618222b919adf6ab4d7613b04f58247ed79c5a7d29ab9076772e53",
+        "bytes": 23131
+      }
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "d202e0cf6465bd9ccdae3d3766f365674ca7b8b0",
+        "rawSha256": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+        "bytes": 48209
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "4d8d2f1d2f196a37f0c42c2e18373849f7ecd11a",
+        "rawSha256": "57ea0b0202f0648aa9324ca6f1f24c5dedb1a761d1d4d85a80fda21e8ebacc67",
+        "bytes": 48464
+      }
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "e32eb4dad4512962815322b3d4958dabbff3b419",
+        "rawSha256": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+        "bytes": 10577
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "f495b99bdad726d1644162f859cedc1a87738320",
+        "rawSha256": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc",
+        "bytes": 13374
+      }
+    },
+    {
+      "path": "server/research/assisted-order/communications.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "9b4b5a565d3b3ceb2a77e932fe9f77baa0a3b579",
+        "rawSha256": "91ea8d26fdb82d2607e7a7819cb6cc3168d1763d8e8b8418d57786d907387057",
+        "bytes": 11097
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "91693893337154db7a23bcf9177ba85aeb2f7a3c",
+        "rawSha256": "1c68368095d1c92163155f90cd15de21050abfd1f5856d9408540388c6a18c64",
+        "bytes": 12205
+      }
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "ef4839ccde7e87989196cd69d1040dd81e3e5df9",
+        "rawSha256": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+        "bytes": 1757
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "e3e324419a34f6795918111362317511a8d3727e",
+        "rawSha256": "a15adc22ca9ea55acdf6c21e929fd529547014291ff1810033649c5cc4130fca",
+        "bytes": 1957
+      }
+    },
+    {
+      "path": "shared/care/paths.test.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "ef68613a550dfef645b253b187cb766cc82ba0c7",
+        "rawSha256": "8f00af75cb71e390ffb47e96d157f09dbbe65138233781e9e43501ed7560fd3b",
+        "bytes": 1553
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "804e8378ab55954adf1d5325d173541ffc3ec08d",
+        "rawSha256": "46f89fcd1d781ca69a614ac9bf74fd2958d5ac435453fd996e668f892ccdc902",
+        "bytes": 2895
+      }
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "dc02e9d97ef8d102d0d4265868c9057e76de170a",
+        "rawSha256": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+        "bytes": 6807
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "e0b8137b717ee43c92569c9d6612a0b143737e39",
+        "rawSha256": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+        "bytes": 6895
+      }
+    },
+    {
+      "path": "client/src/lib/tracking.test.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "76214f01b4b98c5440bcaeeeccdd68e9c2ffcc98",
+        "rawSha256": "88591bb2476abbee19615ba02b697092db96ff1534643c510383ca33d3242b24",
+        "bytes": 9423
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "ae87aa418b9ec764a3fd251b26fb54854214a57e",
+        "rawSha256": "e7db8fdd8b2fbf7d02fa3ee152afd4a5ced461afa95ef7767eead46f21ea8fc2",
+        "bytes": 11968
+      }
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "2897926ea13e8d1207730ecbda12fd6209ad5445",
+        "rawSha256": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+        "bytes": 6871
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "f3929cd40d728634038e35db8059ddcceed7cbf9",
+        "rawSha256": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",
+        "bytes": 6927
+      }
+    },
+    {
+      "path": "client/src/lib/attribution.test.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "9ab92895412e2f65841998e1f10cf146a053f9fd",
+        "rawSha256": "fe7831b0c5f210ac9414044b832230ca8647efb09b354d6de388bc9083f550b4",
+        "bytes": 7411
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "337e38037ddbd0cb0900226f4d47703dcb1894bf",
+        "rawSha256": "f3f376bc79ddfdc86b528de1a38954215ab91d4cc82c3e4e2dc4aee6f42a99ed",
+        "bytes": 8946
+      }
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.tsx",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "88cd549248df1ec8979d9794e1c908538bdf3631",
+        "rawSha256": "9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
+        "bytes": 8469
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "8e6f22575454887cb680954ef7f561a9c4c23fb5",
+        "rawSha256": "9b1a354def9f430e450ce1261a3d8fbd269c833423cbff179f68643db22a1d19",
+        "bytes": 8525
+      }
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.test.tsx",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "4582284511081a37930324ff2cb8afbfaeb2e808",
+        "rawSha256": "3303d4bdaafa468d6de80ed94b181499e1a21b11a349fe1a2d8e50528d65fef6",
+        "bytes": 7780
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "ac3a8241acd39a9a38b5848b2108df31e333f6e8",
+        "rawSha256": "53ff9f548e58fa1fdf0bca244b3796c83dad5583c4fca34aa934c759122cecd2",
+        "bytes": 9022
+      }
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "35f76e19c29632d17a3fcfacb8aca8c48195053f",
+        "rawSha256": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+        "bytes": 45647
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "84f9a8e8ab087cd1935fd1a82ebf973d984e67a8",
+        "rawSha256": "50b80817ae4b90b075179e84b22a93f9214ca21f8ba6ac34e6158812c3eaeb45",
+        "bytes": 45684
+      }
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.test.ts",
+      "before": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "94e56b7bb1f8643ab0e8ee88ec40c517107c6c72",
+        "rawSha256": "5299f7c9c0c19d37dca0e79d092cc8b18ac43b8b049c3a7fe4c6ed7bde1a410e",
+        "bytes": 27836
+      },
+      "after": {
+        "commit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "gitBlob": "3df5e7e120e13a123ce6588e72afe1e66c963cf9",
+        "rawSha256": "cdd1c617acc8429c3d3cfe6c2a012fad9b6125a525a68e73ccc12c3190335807",
+        "bytes": 30003
+      }
+    }
+  ],
+  "preservedCustomerBlobs": [
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "binding": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+        "rawSha256": "318d972ba38d7aaca460f5af07cf9bab98358856a55919e3b59fdebddd0d29df",
+        "bytes": 14175
+      },
+      "builderDiffers": true,
+      "required": "PRESERVE_EXACT_AC9_DESTINATION_BLOB"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "binding": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+        "rawSha256": "2de8f721636c1132100e0575fed69ed8bae9e56f280e17c282dd61095acb0f9c",
+        "bytes": 17229
+      },
+      "builderDiffers": true,
+      "required": "PRESERVE_EXACT_AC9_DESTINATION_BLOB"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "binding": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+        "rawSha256": "1083046402cb666676f21f5039e33b0a172daea06806c50af85bb28c1f1c4f36",
+        "bytes": 15921
+      },
+      "builderDiffers": true,
+      "required": "PRESERVE_EXACT_AC9_DESTINATION_BLOB"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "binding": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+        "rawSha256": "f2a0255798b2bee752bf10ef53986e7b9971e15e57767d576452377b4ee0d3be",
+        "bytes": 19102
+      },
+      "builderDiffers": true,
+      "required": "PRESERVE_EXACT_AC9_DESTINATION_BLOB"
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "binding": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+        "rawSha256": "e20b1c55aecf8fa02675ecd7823cb54044bd4ba1d28da2d332341b885a63f6f0",
+        "bytes": 11565
+      },
+      "builderDiffers": true,
+      "required": "PRESERVE_EXACT_AC9_DESTINATION_BLOB"
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "binding": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+        "rawSha256": "e81747bf0136bd01069521f8fd7a8e2954ee9155cb381fa74b57882622201410",
+        "bytes": 16324
+      },
+      "builderDiffers": true,
+      "required": "PRESERVE_EXACT_AC9_DESTINATION_BLOB"
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.tsx",
+      "binding": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+        "rawSha256": "77fd81564c4efb969972f9a6f0433c5be9054463837464be2c99eac56d08177c",
+        "bytes": 3678
+      },
+      "builderDiffers": true,
+      "required": "PRESERVE_EXACT_AC9_DESTINATION_BLOB"
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "binding": {
+        "commit": "ac9bbe30869c613053321974ff1978bf972eebf4",
+        "gitBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+        "rawSha256": "bd90e658ca78662403df3232bce754fc74a07c9300021a073cc7fe05da831c66",
+        "bytes": 8643
+      },
+      "builderDiffers": true,
+      "required": "PRESERVE_EXACT_AC9_DESTINATION_BLOB"
+    }
+  ],
+  "patch": {
+    "file": "NINE_PATH_OPERATOR_PRIVACY_ASSEMBLY_UNAPPLIED_20261011.patch",
+    "rawSha256": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+    "bytes": 32459,
+    "fileCount": 15,
+    "unifiedHunkCount": 30,
+    "allHunksApplied": true
+  },
+  "method": {
+    "snapshots": "Mechanical fixed Git restore of47 individually enumerated previously absent paths, from two approved commits only, core.autocrlf=false. No branch/index reset, whole-tree restore or broad cherry-pick.",
+    "patch": "Approved30 hunks in15files applied using apply_patch; then line-ending-only formatting to exact approved after hashes. No new authored code.",
+    "checks": "47snapshot+15patch working rawSHA256 and committedGitblob match approved input; eightcustomerblobs and nine protected/root/config files unchanged fromac9. Metadata/Git/raw-byte inspection only.",
+    "commit": "Hooks disabled with invocation-local nonexistent hooks directory; signing disabled per invocation. No application parser/import/compiler/tests/verifier/SQL/probes/installation or hooks executed."
+  },
+  "commitClassification": {
+    "registry": {
+      "policyPaths": [
+        "docs/coordination/FILE_OWNERSHIP.json"
+      ],
+      "ownMetadataOrEvidencePaths": 5
+    },
+    "copy": {
+      "fixedSnapshotPaths": 47,
+      "fixedPatchPaths": 15,
+      "ownContinuityPaths": 4,
+      "totalPaths": 66
+    },
+    "returnRecords": "Own custody/evidence/continuity only; no further source delta."
+  },
+  "safety": {
+    "productionReady": "false unchanged",
+    "enabled": "false unchanged",
+    "mountedIntake": false,
+    "rootAndApp": "UNCHANGED_AC9_BYTES; candidate not mounted",
+    "notifications": "enqueue-only contract; no delivery",
+    "SQL": "INERT_SOURCE_ONLY_NOT_REGISTERED_NOT_APPLIED",
+    "receipts": "Exact copied PENDING receipts remain inert; intake dependency not sealed; no acceptance/rebinding inferred",
+    "sourceAcceptance": "PENDING_ORIGINAL_REVIEWER_DELTA",
+    "originalReviewTarget": "aa857/735 remains immutable in389a; ed376 is custody-only"
+  },
+  "serialLocationAcknowledgment": "I, the existing integrator01a0e098, acknowledge the existing b22f assembled candidate as the serial workspace. Same existing builder3+already-grantedproduction3 comes first after exact returned/supplemental authority; integrator6 only after its handoff and coordinator activation. No movinglater389a source imports.",
+  "nextSourceLeases": {
+    "builderSupplement": "45b81df8-c988-4d87-a1c0-37cbccb3f97d",
+    "integratorSix": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
+    "claimedByThisTurn": false
+  },
+  "model": {
+    "requested": "gpt-6-astra",
+    "requestedEffort": "ultra",
+    "actual": "NOT_EXPOSED",
+    "actualEffort": "NOT_EXPOSED",
+    "configurationChanged": false
+  },
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY_NOT_PUSHED",
+  "foreignWorktreeWrites": false,
+  "hostedChanges": false,
+  "protectedManifestChanges": false,
+  "schedules": "UNCHANGED",
+  "newWorkerOrReviewer": false
+}

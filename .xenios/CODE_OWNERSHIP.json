@@ -5,9 +5,9 @@
       "id": "843092f2-95b2-4724-98c0-744a6324f39a",
       "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
       "session": "codex-accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-11T16:40:52Z",
-      "heartbeatAt": "2026-10-11T16:40:52Z",
+      "heartbeatAt": "2026-10-11T16:43:06Z",
       "paths": [
         "client/src/research/quick-order/OperatorDeclarations.test.tsx",
         "client/src/research/quick-order/OperatorDeclarations.tsx",
@@ -72,7 +72,54 @@
         "server/research/seo/raw-http-document-policy.ts",
         "server/research/seo/raw-http-document-policy.test.ts"
       ],
-      "scopeNote": "COPY ONLY for approved fixed47 snapshots plus15files/30hunks; no new authoring. Registry phase committed1eb5191590808e75e6aed67c9d234fec70bfa6c8 and lease28cc4ef0 handed off. Actual outgoing builder custody receipt ed376ea51bf27574a6af3ebcf642350adeb5841a verified dab632cc6e378d6b3a1c49c6d449b3f5b0d99ff545a6d429d1f902f41133c410; af843 is handoff with21paths/history preserved. No matching activelease or dirtycopypath across b22f/3221/389a at claim. Exact sourceaa857/records735 only; preserve8ac9customerblobs. Copyhandoff ends these rights; no automatic builderreclaim or integrator8703 sourceactivation."
+      "scopeNote": "COPY ONLY for approved fixed47 snapshots plus15files/30hunks; no new authoring. Registry phase committed1eb5191590808e75e6aed67c9d234fec70bfa6c8 and lease28cc4ef0 handed off. Actual outgoing builder custody receipt ed376ea51bf27574a6af3ebcf642350adeb5841a verified dab632cc6e378d6b3a1c49c6d449b3f5b0d99ff545a6d429d1f902f41133c410; af843 is handoff with21paths/history preserved. No matching activelease or dirtycopypath across b22f/3221/389a at claim. Exact sourceaa857/records735 only; preserve8ac9customerblobs. Copyhandoff ends these rights; no automatic builderreclaim or integrator8703 sourceactivation.",
+      "completedAt": "2026-10-11T16:43:06Z",
+      "handoff": ".xenios/handoffs/2026-10-11-QUICK-ORDER-FIXED-ASSEMBLY-RETURN-codex-accepted-source-integration-20261005.json",
+      "copyResult": {
+        "source": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+        "tree": "006ea7f24bbc308e58f40f109065d7a22616bf8e",
+        "record": "docs/health-launch/accepted-source-integration-20261005/NINE_PATH_FIXED_ASSEMBLY_RECEIPT_20261011.json",
+        "status": "EXACT_FIXED_COPY_COMPLETE_LOCAL_ONLY_NOT_RUN"
+      },
+      "custodyReturn": {
+        "kind": "ACTUAL_COPY_PHASE_COMPLETION_AND_CUSTODY_RETURN",
+        "at": "2026-10-11T16:43:06Z",
+        "toSession": "codex-health-quick-order-20261005",
+        "toChat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+        "originalLease": "af843213-fa11-42b9-8874-f6451ae38034",
+        "originalAuthority": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+        "paths": [
+          "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+          "supabase/verification/research_health_quick_order_local.mjs",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+          "supabase/verification/research_health_quick_order_currentness_local.mjs",
+          "server/research/assisted-order/quick-order-repository.ts",
+          "server/research/assisted-order/quick-order-repository.test.ts",
+          "server/research/health/quick-order/production.ts",
+          "server/research/health/quick-order/production.test.ts",
+          "server/research/health/quick-order/ports.ts",
+          "server/research/assisted-order/quick-order-admin-readback.test.ts",
+          "server/research/assisted-order/quick-order-notifications.test.ts",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+        ],
+        "assembledSource": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+        "assembledTree": "006ea7f24bbc308e58f40f109065d7a22616bf8e",
+        "sourceLocation": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "integratorCopyRightsEnded": true,
+        "noConcurrentIntegratorSourceWriter": true,
+        "actualAcknowledgmentFromBuilder": null,
+        "coordinatorActivation": null,
+        "condition": "This is the receiver's actual custody return, not a unilateral foreign lease activation. Coordinator and same builder must acknowledge this exact assembled checkpoint and returned applicable af843 authority before the serial builder3+production3 stage. Integrator8703 remains unclaimed until builder stage handoff and explicit activation. No automatic reclaim or extra source rights."
+      }
     },
     {
       "id": "28cc4ef0-650c-4b40-8fb6-c642031b28b4",

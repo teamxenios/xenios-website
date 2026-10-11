@@ -6,10 +6,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "accepted-source-integration",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-11T16:40:52Z",
-      "note": "Same-session QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011 r1 COPY ONLY. Registry phase1eb5191 complete and lease28cc4ef0 handed off. Actual builder custody ed376ea independently verified; exact62-path copy lease843092f2 claimed after no-overlap check. Fixed aa857/735 only; preserve8ac9 customerblobs. Serial b22f route acknowledged; integrator8703 and builder supplemental source stages not activated. No application execution, push, hosted or schedule changes. Requested gpt-6-astra/ultra; actual NOT_EXPOSED."
+      "heartbeatAt": "2026-10-11T16:43:06Z",
+      "note": "Same-session QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011 r1 registry1eb5191 and fixedcopy3f86463 complete. Exact47snapshots+15files/30hunks;62committed/raw bindings and8ac9customerblobs preserved. Copy843092f2 handed off and actual custodyreturn recorded for samebuilderaf843; coordinator/builder acknowledgment before serialb22f source stage. Integrator8703 unclaimed. Sourceacceptance pending, intakeunsealed, LOCAL_ONLY/NOT_RUN. No execution, push, hosted or schedule changes. Requested gpt-6-astra/ultra; actual NOT_EXPOSED."
     },
     {
       "id": "claude-opus5-main",
