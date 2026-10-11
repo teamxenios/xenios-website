@@ -585,9 +585,9 @@
       "tool": "OpenAI Codex desktop",
       "lane": "health-quick-order",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-11T22:59:53.920Z",
+      "heartbeatAt": "2026-10-11T23:07:46.401Z",
       "note": "Doc81 r3 acknowledged at exact clean6bf2579 after actual integrator handoff. Same af843 full21 identity/history/authority reactivated for narrowed verifier/intake/evidence stage only. Four accepted currentness SQL bytes and immutable sharedbinding frozen. First verifier source, separate provisional intake successor; PENDING receipts/reviewCommit null, LOCAL_ONLY/NOT_RUN.",
       "sourceSha": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
       "handoff": ".xenios/handoffs/2026-10-11-doc82-composition-evidence-handoff.json",
@@ -2209,19 +2209,32 @@
           "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
         ],
         "ack": ".xenios/handoffs/2026-10-11-doc84-bounded-s2-owner-ack.json",
-        "state": "DOC84_S2_CORRECTION_ACTIVE",
+        "state": "DOC84_S2_SOURCE_FROZEN_PENDING_ORIGINAL_DELTA_REVIEW",
         "execution": "NOT_RUN",
-        "publication": "LOCAL_ONLY"
+        "publication": "LOCAL_ONLY",
+        "source": "f633a771d1751a2af0854c746256131f9d647184",
+        "tree": "2683c971d83757c746de933b92cf9fb71a6cd434",
+        "handoff": ".xenios/handoffs/2026-10-11-doc84-bounded-s2-source-handoff.json",
+        "executionEligibility": "NONE",
+        "sourceWritersStopped": true
       },
       "currentQualificationCheckpoint": {
         "task": "QUICK-ORDER-U15-D68-TWO-FILE-SOURCE-20261011",
-        "state": "SOURCE_FROZEN_PENDING_ORIGINAL_REVIEW",
-        "source": "3e5e2ed9faf30aa46f5a81047fa71d55e28bdb2e",
-        "tree": "7cde1fbc846f1a7e1c3eb9e445344c0715a43012",
-        "handoff": ".xenios/handoffs/2026-10-11-qualification-u15-d68-source-handoff.json",
+        "revision": 2,
+        "assignmentCommit": "dc1dd8b3def0cbb8734b457525f45afc9fb31a92",
+        "state": "DOC84_S2_SOURCE_FROZEN_PENDING_ORIGINAL_DELTA_REVIEW",
+        "source": "f633a771d1751a2af0854c746256131f9d647184",
+        "tree": "2683c971d83757c746de933b92cf9fb71a6cd434",
+        "handoff": ".xenios/handoffs/2026-10-11-doc84-bounded-s2-source-handoff.json",
         "lease": "fff69f26-d18d-40cd-bc77-07840a8de11d",
+        "paths": [
+          "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+          "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json"
+        ],
         "execution": "NOT_RUN",
-        "publication": "LOCAL_ONLY"
+        "executionEligibility": "NONE",
+        "publication": "LOCAL_ONLY",
+        "sourceWritersStopped": true
       },
       "doc84Acceptance": {
         "review": "7449c659e018fa8a975726cbb4d40e9e59898a04",
