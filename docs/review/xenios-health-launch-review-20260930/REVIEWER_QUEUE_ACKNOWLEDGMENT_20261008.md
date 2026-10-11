@@ -446,3 +446,11 @@ Docs 83 (composition) and 84 (supervisor) remain in review. Nothing was executed
 | 84 | `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` revision 2 (`3e5e2ed` / `71bdd9d`) | COMPLETE: **SOURCE ACCEPTED WITH LIMITS; EXECUTION ELIGIBILITY NONE.** The U-15 3/4/8 map is exact, the 60 s wall is asserted, the helper is byte-identical, and no limit was raised. SV-1 (console hosts) and SV-2 (compile phase) gate execution. SV-3 and SV-4 (fail-closed regressions) are folded in before resume or G0 acceptance is relied on |
 
 Doc 83 (transaction composition) remains in review. Nothing was executed.
+
+## Queue state update (2026-10-11, doc 83)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 83 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` revision 2 (`121d098` / `dcf8963`) | COMPLETE: **CORRECTIONS REQUIRED.** One P1 (TC-1: the commit persists the raw stored session hash instead of its SHA-256 in the canonical column) and ten P2. No P0, and the disabled barriers hold. Builder: TC-1 to TC-7 and TC-11. Integrator: TC-8 and TC-9. Samuel or the coordinator: the TC-10 scope decision. Includes a TC-4 mapping ruling extending doc 75 CC-10 |
+
+All four packages (docs 83 to 86) are complete. Nothing was executed.
