@@ -1304,8 +1304,10 @@ function assertStageEligibility(manifest, mode) {
       Object.hasOwn(counts, command.id) && command.maxOwnedProcesses === counts[command.id]),
       'G0 exact approved stage mapping differs; count the complete owned tree including console hosts');
     check(group.wallMs === 60_000, 'G0 started-helper wall must remain 60,000 ms');
-    // Compiler topology remains separately HELD. No compiler allowance is selected
-    // by the 3/4/8 subject-stage mapping; native proof must establish the whole tree.
+    // Compile phase remains HELD under the existing count-minus-one outer Job:
+    // 2/3/7 including the helper for 3/4/8 rows; no separate compile limit exists.
+    // A higher compile limit needs Samuel's decision and reviewed per-phase source.
+    // The assertions above check the map, not full-tree console-host enforcement.
   }
   // A window boolean cannot lift a source hold. Revised exact source and review
   // are required if the original memory/process/bootstrap contract changes.
@@ -1320,15 +1322,15 @@ function acquireRunLock(run) {
   run.lock = { file, value, digest: published.sha256 };
   run.initialPublicationRecoveries = published.recoveredUnpublished;
 }
-function releaseRunLock(run, disposition) {
+function releaseRunLock(run, disposition, { allowUnpublishedZeroCommandRelease = false } = {}) {
   check(run.lock && hash(fs.readFileSync(run.lock.file)) === run.lock.digest, 'run lock identity changed; hold');
   try {
     writeInitialRecord(path.join(run.runRoot, 'run-release-' + run.lock.value.nonce + '.json'), {
       lockSha256: run.lock.digest, authority: run.authority, at: new Date().toISOString(), disposition });
   } catch (error) {
-    if (!error.initialPublicationAbsent || error.evidenceUncertain) throw error;
-    // Only this process, holding this exact lock and known cleanup, can preserve
-    // it under the released name when release-receipt storage is unavailable.
+    if (!allowUnpublishedZeroCommandRelease || !error.initialPublicationAbsent || error.evidenceUncertain) throw error;
+    // Only the two proven zero-command storage-refusal branches opt in. Normal
+    // preparation/post-command release needs its published receipt or stays held.
     check(hash(fs.readFileSync(run.lock.file)) === run.lock.digest, 'own lock changed during release publication');
     process.stderr.write('Release receipt unpublished; preserving exact own lock under released name: ' + error.message + '\n');
   }
@@ -1455,6 +1457,8 @@ async function executeOwned(command, run, remainingMs) {
         // Exhaustion without close is explicitly uncertain and cannot release custody.
         timer = setTimeout(() => {
           outerExpired = true; child.kill();
+          // At-wall resolution: outputs may still be arriving; a later close/exit
+          // is not recorded. outerExpired keeps cleanup false and the lock held.
           resolve({ code: null, signal: null, error: 'helper close not established within command wall', closeObserved: false });
         }, Math.max(1, Math.min(command.wallMs, run.deadline - Date.now())));
       });
@@ -1570,10 +1574,12 @@ function assertDependencies(run) {
       && g0.value.receipts.some(row => row.command === 'parser-self-test' && row.disposition.dependencyDisposition === 'GREEN'),
       'exact G0 receipt and original reviewer accepting commit absent');
     const completedAt = Date.parse(g0.value.finishedAt), acceptedAt = Date.parse(acceptance.value.acceptedAt);
-    check(Number.isFinite(completedAt) && Number.isFinite(acceptedAt) && completedAt <= acceptedAt
+    if (!(Number.isFinite(completedAt) && Number.isFinite(acceptedAt) && completedAt <= acceptedAt
       && acceptedAt <= completedAt + run.window.executionBudget.g0AcceptanceMs
-      && acceptedAt <= run.aggregateDeadline && acceptedAt <= Date.now(),
-      'independent G0 acceptance exceeded its explicit original aggregate/window review budget');
+      && acceptedAt <= run.aggregateDeadline && acceptedAt <= Date.now())) {
+      const error = new Error('REFUSED: independent G0 acceptance exceeded its explicit original aggregate/window review budget');
+      error.restartForbidden = true; throw error;
+    }
     run.g0Acceptance = { g0ReceiptSha256: g0.sha256, acceptingReview: acceptance.reference, pointerSha256: pointer.sha256 };
     // Source-held bootstrap/memory/process prerequisites are checked separately;
     // neither this acceptance record nor a bootstrapAccepted boolean lifts them.
@@ -1810,11 +1816,10 @@ function restoreArtifactRecord(run, value) {
 }
 function readPause(run) {
   if (!fs.existsSync(run.startedMarker)) {
-    // Recover only the existing unstarted prefix while refusing this mistaken
-    // mode. This is not a restart, admission charge or fixture execution.
-    const prefix = assertFreshGroupStart(run);
-    run.restoredReceipts = prefix;
-    throw new Error('REFUSED: resume requires an actually started paused group; use a separately qualified fresh invocation');
+    // Refuse the mode before any unrelated prefix/material-change inspection.
+    // This does not permanently forbid a later separately validated fresh start.
+    const error = new Error('REFUSED: resume requires an actually started paused group; use a separately qualified fresh invocation');
+    error.code = 'RESUME_REQUIRES_STARTED_PAUSE'; throw error;
   }
   const record = run.resumePreview;
   ensureOwned(run.evidence, record.path);
@@ -1974,6 +1979,18 @@ function hasProvenZeroLaunch(run, value) {
         && ['ENOENT', 'EACCES', 'EPERM', 'EMFILE', 'ENFILE', 'ENOMEM', 'EAGAIN'].includes(p.errorCode));
 }
 function assertFreshGroupStart(run) {
+  try {
+    const receipts = restoreFreshGroupHistory(run);
+    run.restartHistoryValidated = true;
+    return receipts;
+  } catch (error) {
+    // Immutable predicate refusals before restoration cannot advertise restart.
+    // Transient I/O and the material-change check after restoration stay distinct.
+    if (!run.restartProgressValidated && error.message?.startsWith('REFUSED: ')) error.restartForbidden = true;
+    throw error;
+  }
+}
+function restoreFreshGroupHistory(run) {
   check(!fs.existsSync(run.startedMarker), 'group already started; require its clean immutable pause, never repeat commands');
   check(!fs.existsSync(path.join(run.evidence, run.group.id + '.group.json')), 'terminal group result cannot restart');
   const names = fs.readdirSync(run.evidence).filter(name => name.startsWith(run.group.id + '-'));
@@ -2113,7 +2130,7 @@ async function runGroup(options) {
     run.admissionFit = requireGroupTime(run);
     admissionAccounting = assertInvocationBudget(run);
     const attemptPath = path.join(evidence, group.id + '-' + run.invocationId + '.attempt.json');
-    writeNew(attemptPath, {
+    const publishedAttempt = writeInitialRecord(attemptPath, {
       at: new Date().toISOString(), runId: window.runId, group: group.id, attemptId: run.attemptId, invocationId: run.invocationId,
       requestedAt: run.requestedAt, prelaunchStartedAt: run.prelaunchStartedAt, actualStartedAt: run.actualStartedAt,
       startedAt: run.actualStartedAt, deadline: run.actualStartedAt ? new Date(run.deadline).toISOString() : null,
@@ -2122,7 +2139,8 @@ async function runGroup(options) {
       authority: run.authority, manifestSha256: manifest._digest, groupConsumed: run.groupConsumed,
       admissionAccounting, parentPause: run.parentPause, parentRefusal: run.parentRefusal, admissionFit: run.admissionFit,
       accounting: 'Authored proposal: one admission charge per explicit invocation, including resume; one stable group attempt; no command handshake adds another invocation; no owner policy or execution approval inferred.' });
-    run.attemptRecord = { path: attemptPath, sha256: hash(fs.readFileSync(attemptPath)) }; attemptRecorded = true;
+    run.attemptRecord = { path: attemptPath, sha256: publishedAttempt.sha256 }; attemptRecorded = true;
+    run.initialPublicationRecoveries.push(...publishedAttempt.recoveredUnpublished);
     run.originalAttemptRecord ??= run.attemptRecord;
     if (run.resumeUseMarker) writeNew(run.resumeUseMarker, { parentPause: run.parentPause,
       invocationId: run.invocationId, attemptRecord: run.attemptRecord, authority: run.authority,
@@ -2204,11 +2222,13 @@ async function runGroup(options) {
       run.completedCommands.add(command.id); run.nextCommandIndex = index + 1;
     }
   } catch (error) {
+    if (error.initialPublicationFailure && Array.isArray(error.unpublishedArchives))
+      run.initialPublicationRecoveries.push(...error.unpublishedArchives);
     if (!run.invocationWitness && error.initialPublicationFailure && error.initialPublicationAbsent
       && !error.evidenceUncertain && !run.commandLaunchAttempted && !attemptRecorded) {
       // No command or attempt exists. Do not create a malformed refusal pointing
       // to a missing invocation witness. Preserve the failed metadata separately.
-      releaseRunLock(run, 'INITIAL_INVOCATION_PUBLICATION_REFUSED_NO_NEW_ATTEMPT_OR_COMMAND');
+      releaseRunLock(run, 'INITIAL_INVOCATION_PUBLICATION_REFUSED_NO_NEW_ATTEMPT_OR_COMMAND', { allowUnpublishedZeroCommandRelease: true });
       process.stdout.write(JSON.stringify({ group: group.id, executionState: 'INITIAL_METADATA_REFUSED',
         failure: error.message, unpublishedArchives: error.unpublishedArchives,
         newCommands: 0, newAdmissionAttempts: 0, priorGroupState: 'UNCHANGED',
@@ -2266,10 +2286,9 @@ async function runGroup(options) {
   if (!preAttemptResumePreserved && !preAttemptRestartPreserved && (before || (run.resumePreview && attemptRecorded))) {
     try { after = sourceState(run.cwd, manifest, groupWorkDeadline(run), run.artifactSnapshot, run.preparedSourceInventory, 'full'); }
     catch (error) {
-      failure ??= error.message;
       run.finalizationFailure = error.message;
-      run.primaryFailureCode = failureCode;
-      failureCode = error.code ?? 'FINALIZATION_INSPECTION_FAILED_NOT_RESUMABLE';
+      run.finalizationFailureCode = error.code ?? 'FINALIZATION_INSPECTION_FAILED_NOT_RESUMABLE';
+      if (failure === null) { failure = error.message; failureCode = run.finalizationFailureCode; }
       pauseAllowed = false;
     }
   }
@@ -2281,8 +2300,10 @@ async function runGroup(options) {
   try { futureAdmission = invocationBudgetState(run); }
   catch (error) {
     futureAdmission = { futureInvocationFits: false, inspectionFailure: error.message };
-    run.primaryFailureCode ??= failureCode;
-    failure ??= error.message; failureCode = 'INVOCATION_BUDGET_INSPECTION_FAILED'; dependencyAccepted = false;
+    run.budgetInspectionFailureCode = 'INVOCATION_BUDGET_INSPECTION_FAILED';
+    // Future admission inspection cannot revoke complete own-command evidence.
+    // An incomplete started candidate still fails closed; no new hold protocol.
+    if (!dependencyAccepted && failure === null) { failure = error.message; failureCode = run.budgetInspectionFailureCode; }
   }
   const limits = [];
   const futureDeadline = run.actualStartedAt ? run.deadline : Math.min(finishedMs + group.wallMs, run.aggregateDeadline);
@@ -2294,15 +2315,17 @@ async function runGroup(options) {
   const latestResumeStartAt = run.actualStartedAt && group.id !== 'G0'
     ? new Date(Math.min(finishedMs + allowance, run.deadline - pauseFit.totalMs)).toISOString() : null;
   const actualStartGapFits = run.actualStartedAt && run.deadline - finishedMs >= pauseFit.totalMs + allowance;
-  if (run.actualStartedAt && group.id !== 'G0' && run.nextCommandIndex < group.commands.length && !actualStartGapFits)
+  if (attemptRecorded && run.actualStartedAt && group.id !== 'G0' && run.nextCommandIndex < group.commands.length && !actualStartGapFits)
     limits.push('FINITE_RESUME_START_ALLOWANCE_DOES_NOT_FIT');
   const paused = group.id !== 'G0' && anyChildLaunchAttempted && run.groupConsumed && pauseAllowed && attemptRecorded
     && failureCode === 'NONCONSUMING_ADMISSION_REFUSAL' && cleanupProven && after !== null
     && run.nextCommandIndex === receipts.length && run.nextCommandIndex < group.commands.length
     && limits.length === 0 && actualStartGapFits;
-  if (failure && run.validatedPause && run.actualStartedAt && limits.some(limit =>
+  const parentPauseExpiredBeforeAttempt = Boolean(run.validatedPause && !attemptRecorded
+    && finishedMs > Date.parse(run.resumePreview.value.latestResumeStartAt));
+  if (failure && run.validatedPause && run.actualStartedAt && (parentPauseExpiredBeforeAttempt || limits.some(limit =>
     ['STARTED_GROUP_TIME_EXHAUSTED', 'HANDSHAKE_CAPACITY_EXHAUSTED', 'INVOCATION_BUDGET_EXHAUSTED',
-      'RUN_STOPPED_BY_TERMINAL_GROUP', 'FINITE_RESUME_START_ALLOWANCE_DOES_NOT_FIT'].includes(limit))) {
+      'RUN_STOPPED_BY_TERMINAL_GROUP'].includes(limit)))) {
     terminalProgress = true; preAttemptResumePreserved = false;
   }
   const terminalStartedResume = Boolean(run.resumePreview && run.validatedPause && run.actualStartedAt
@@ -2315,9 +2338,11 @@ async function runGroup(options) {
     && !run.groupConsumed && !priorConsumptionNotRestored && cleanupProven && !run.fixtureFailure
     && !run.restartForbidden
     && run.nextCommandIndex === receipts.length && run.invocationWitness);
-  const restartEligible = cleanZeroLaunchRefusal && !terminalProgress && limits.length === 0;
-  const restartRequiresFreshInspection = cleanZeroLaunchRefusal && !terminalProgress
-    && Boolean(futureAdmission.inspectionFailure);
+  const restartHistoryValidated = Boolean(run.restartHistoryValidated || run.restartProgressValidated);
+  if (cleanZeroLaunchRefusal && !restartHistoryValidated) limits.push('RESTART_HISTORY_NOT_VALIDATED');
+  const restartEligible = cleanZeroLaunchRefusal && restartHistoryValidated && !terminalProgress && limits.length === 0;
+  const restartRequiresFreshInspection = cleanZeroLaunchRefusal && restartHistoryValidated && !terminalProgress
+    && limits.length === 1 && limits[0] === 'INVOCATION_BUDGET_UNVERIFIED';
   const artifactCommands = receipts.filter(row => ['build', 'no-em-dash-build'].includes(row.command));
   const artifactAccepted = group.id === 'G7' && artifactCommands.length === 2 && artifactCommands.every(row =>
     row.cleanupProven && row.disposition.runnerVerdict === 'PASSED') && after !== null && run.artifactSnapshot !== null;
@@ -2338,7 +2363,8 @@ async function runGroup(options) {
     originalAttemptRecord: run.originalAttemptRecord ?? null,
     admissionAccounting, startedMarkerSha256: run.startedMarkerSha256 ?? null, parentPause: run.parentPause, parentRefusal: run.parentRefusal,
     handshakeWaitSpentMs: run.handshakeWaitSpentMs, continuationFit: pauseFit, restartEligible,
-    cleanZeroLaunchRefusal, restartRequiresFreshInspection, terminalProgress, terminalStartedResume, futureAdmission, eligibilityLimits: limits,
+    cleanZeroLaunchRefusal, restartHistoryValidated, restartRequiresFreshInspection, terminalProgress, terminalStartedResume,
+    parentPauseExpiredBeforeAttempt, futureAdmission, eligibilityLimits: limits,
     noHelperSpawnProof: run.noHelperSpawnProof ?? null, restartForbidden: run.restartForbidden === true,
     latestResumeStartAt: paused ? latestResumeStartAt : null, resumeStartAllowanceMs: allowance,
     aggregateDeadline: new Date(run.aggregateDeadline).toISOString(), staticTimeBudget: run.staticTimeBudget,
@@ -2349,8 +2375,9 @@ async function runGroup(options) {
       cleanupProven: row.cleanupProven, childLaunchAttempted: row.childLaunchAttempted,
       receiptPath: row.receiptPath ?? null, receiptSha256: row.receiptSha256 ?? null, authority: row.authority,
       subjectMemory: row.subjectMemory, outsideSubjectJob: row.outsideSubjectJob ?? null })),
-    failure, failureCode, primaryFailureCode: run.primaryFailureCode ?? null,
-    finalizationFailure: run.finalizationFailure ?? null, fixtureFailure: run.fixtureFailure === true,
+    failure, failureCode, primaryFailureCode: failureCode,
+    finalizationFailure: run.finalizationFailure ?? null, finalizationFailureCode: run.finalizationFailureCode ?? null,
+    budgetInspectionFailureCode: run.budgetInspectionFailureCode ?? null, fixtureFailure: run.fixtureFailure === true,
     inFlightCommand, evidenceUncertain, dependencyAccepted, cleanupProven,
     executionState: launchAttemptUncertain ? 'LAUNCH_ATTEMPTED_SPAWN_NOT_ESTABLISHED_CLEANUP_UNCERTAIN'
       : !cleanupProven ? 'CLEANUP_UNCERTAIN' : dependencyAccepted ? 'COMPLETED'
@@ -2394,7 +2421,7 @@ async function runGroup(options) {
     try { writeInitialRecord(resultPath, result); }
     catch (error) {
       if (!error.initialPublicationAbsent || error.evidenceUncertain) throw error;
-      releaseRunLock(run, 'PRECOMMAND_REFUSAL_PUBLICATION_FAILED_NO_NEW_ATTEMPT_OR_COMMAND');
+      releaseRunLock(run, 'PRECOMMAND_REFUSAL_PUBLICATION_FAILED_NO_NEW_ATTEMPT_OR_COMMAND', { allowUnpublishedZeroCommandRelease: true });
       process.stdout.write(JSON.stringify({ group: group.id, executionState: 'PRECOMMAND_RECORD_STORAGE_REFUSED',
         failure, recordFailure: error.message, newCommands: 0, newAdmissionAttempts: 0,
         priorGroupState: 'UNCHANGED', receiptPublished: false, restartEligible: false,
@@ -2548,6 +2575,8 @@ function runParserSelfTests(manifest) {
 }
 
 /** Authored G0 definitions. Calling this export would be execution and is not done now. */
+// Historical uncalled definition helper: stream-cap/extra bootstrap and no parser
+// do not describe the authoritative manifest G0 rows. This is not a run vehicle.
 export function selfTestDefinitions(node, ownedRoot) {
   return [
     { id: 'exit-zero', argv: ['-e', 'process.stdout.write("stdout-zero\\n");process.stderr.write("stderr-zero\\n");process.exit(0)'], expectExit: 0 },

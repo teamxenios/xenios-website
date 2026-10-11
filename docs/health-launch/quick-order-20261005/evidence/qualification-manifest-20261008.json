@@ -7,7 +7,7 @@
   "executionReservation": null,
   "window": "EXPIRED_NO_NEW_WINDOW",
   "automation": "PAUSED",
-  "controllingReview": "c4c6212d42404f985523127a5d023e5cf3694912",
+  "controllingReview": "36debe0c54ebc91da8bce9609705299783770046",
   "owner": {
     "sessionId": "codex-health-quick-order-20261005",
     "chatId": "01a10d78-0981-7150-9292-c5cde2730d4d",
@@ -24,8 +24,8 @@
   },
   "supervisor": {
     "path": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
-    "sha256": "0536b33bfb7c203fcf65312f4e2c0716dd65c569d52e5ff9d3f74c3004e56a11",
-    "acceptance": "U15_D68_AMENDMENT_PENDING_EXACT_ORIGINAL_SOURCE_REVIEW_NOT_RUN",
+    "sha256": "ed3c8076856ff7be42ab92bddbbc3ef59b21564322b66c1492509fdee7153f1a",
+    "acceptance": "DOC84_BOUNDED_S2_CORRECTION_PENDING_EXACT_ORIGINAL_SOURCE_REVIEW_NOT_RUN",
     "inheritedPasses": 0,
     "manifestPath": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
     "hashMode": "RAW_BYTES; source authored as LF; a CRLF-rewritten checkout refuses, with no normalization into acceptance"
@@ -751,7 +751,7 @@
     "helperStreamLimitBytes": 65536,
     "streamPolicy": "Abort on the cap; retain the first capped raw bytes and observed counts. The application root test itself retains only 16 KiB child tails, not complete child logs.",
     "aggregate": "The absolute minimum of window expiry and approvedAt + 8,400,000 ms includes preparation, idle time, independent G0 acceptance, admission, inventories, commands, cleanup and receipts. No aggregate reset.",
-    "processCeilings": "Exact G0 mapping: three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. Count the complete applicable owned tree including console hosts. Compilation is separately counted and HELD; no compiler ceiling is selected. Native topology, console-host attribution and cold-bootstrap proof remain prerequisites. 60,000 ms starts at the first Node-observed successful PowerShell helper spawn. Before launch, some dependency reads and the first handshake are bounded only by the unchanged 140-minute aggregate/window. No end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation.",
+    "processCeilings": "Exact G0 mapping remains three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. The source checks command-row counts and derives an outer Job limit of count minus one and inner subject Job limit of count minus two. These limits do not establish complete console-host attribution or enforcement. Node supervisor + PowerShell helper + subject already equals three; any additional counted console host exceeds a three-process row. The real-child-tree row already needs four before applicable console hosts. Compilation remains HELD under the existing count-minus-one outer Job: 2/3/7 including the helper, as the same rule already applies to G1-G7. No separate compile limit exists. Any compile limit above count minus one requires Samuel's separate decision and reviewed per-phase helper source. Native topology, console-host placement and compiler fit remain unproved. Concurrent-versus-cumulative ceiling semantics and launch-edge console flags remain S3 decisions/proof requirements. The prelaunch metadata checkpoint is min(original aggregate/window deadline, invocation start + unchanged group wall). It does not establish an end-to-end invocation ceiling: some prelaunch dependency reads and the first handshake use only the unchanged 140-minute aggregate/window. The 60,000 ms G0 wall starts once at the first Node-observed successful PowerShell helper spawn; no end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation.",
     "processEventLimitBytes": 4194304,
     "attemptVsGroup": "Every requested invocation has an immutable witness, distinct from a charged admission attempt. Published admission attempts still count under nine. A prospective group identity and completed in-process prefix survive clean zero-launch reentry; its execution wall starts once at the first successful helper child spawn. Once started, its witnessed clock/attempt cannot reset. Every prelaunch check/refusal/reentry uses real original outer time. No automatic retry or repeated control.",
     "resourceRefusalConsumesGroup": false,
@@ -772,7 +772,7 @@
       "numericalAdmissionCap": 9,
       "groupAttempts": "At most one child-execution group attempt per selected G0-G7 group; later child launches and resumptions retain it.",
       "admissionCharge": "One charge for each explicit group invocation whose admission attempt record is published, including resume/refusal. Per-command admission handshakes inside that invocation are not additional invocation charges.",
-      "nonCharged": "Preparation remains its own one-shot bounded mode. Static/authority/source/dependency/owned-lock or marker refusal before an invocation attempt record uses no admission attempt. Refused resume before its attempt record preserves the valid immutable pause. A zero-child refusal does not consume the unstarted group; any published invocation attempt still counts under the unchanged nine cap.",
+      "nonCharged": "Preparation remains its own one-shot bounded mode. Static/authority/source/dependency/owned-lock or marker refusal before a published invocation attempt record is not a charged admission attempt. A validated resume refused before attempt publication preserves the parent immutable pause only while its existing latestResumeStartAt and original time, handshake, invocation and terminal-group limits remain valid. It need not fit a newly written pause; that extra allowance applies only after attempt publication. No new deadline or refunded charge.",
       "fullSequence": {
         "initialGroupInvocations": 8,
         "maximumAdditionalInvocations": 1,
@@ -782,7 +782,7 @@
       "pauseConsequences": "Only non-G0 started groups with proven cleanup, sufficient full resumed time, positive wait capacity, finite latestResumeStartAt and a future invocation that fits the unchanged nine cap may publish a pause. G0 remains terminal after launch. A last-child timeout may exhaust all remaining wait capacity and is then terminal, explicitly. No extra wait or attempt is invented.",
       "policyBoundary": "This is a conservative source implementation proposal, not a new owner counting decision. The original reviewer and fresh actual decision must bind it; no alternate pending accounting policy is selected.",
       "terminalGroupRule": "A terminal group result stops the remaining run, including groups that would otherwise be independent. This conservative stop rule preserves all failed/uncertain evidence and refuses later groups. No fresh invocation or marker loss bypasses it; no new approval or restart of the window is implied.",
-      "zeroLaunch": "Every clean zero-launch, unconsumed refusal with proven cleanup may bind a later explicit material-change-qualified invocation, whether its original error is coded or uncoded. Preserve the prospective attempt identity and raw completed in-process prefix; no group wall exists until the first successful child spawn. Actual aggregate/window, invocation and handshake allowance exhaustion still prevent execution. Uncertainty, actual consumption and genuine fixture failure remain sticky.",
+      "zeroLaunch": "A clean unconsumed refusal can advertise restart only after prior history is validated/restored, with proven cleanup, unchanged outer/counter/wait capacity and no prior fixtureFailure, restartForbidden or terminalProgress. Exactly bound proven helper-no-spawn recovery can preserve the prospective identity and raw completed in-process prefix; an unknown launch remains sticky. A prior restartEligible=false label alone never forbids later clean material-change-qualified reentry. Wrong-mode resume is refused before material-change inspection and advertises no unvalidated restart. A proven helper-start refusal after the group has actually started remains terminal with pauseAllowed=false. No group clock exists before first actual helper spawn; no command, deadline or attempt may be reset.",
       "clockInvariant": "The requested/prelaunch clock is not a started-group deadline. Only first actual helper spawn begins the unchanged group wall. All started-group resumes retain its raw launch-clock witness/deadline. Original approval window and aggregate are never reset, extended or refunded."
     },
     "windowBudgetProposal": {
@@ -2291,7 +2291,7 @@
             "freeDiskFloorGiB": 20,
             "subjectJobCommittedLimitBytes": 536870912,
             "maxOwnedProcesses": 3,
-            "capConflict": "Standalone Node TAP calibration retains its separate unapproved three-process proposal. The selected 3/4/8 mapping covers only the exact nine G0 rows; it is not permission for a standalone action, native compiler or changed calibration scope.",
+            "capConflict": "Standalone Node TAP calibration retains its separate unapproved three-process proposal and unchanged --test argv. With test-file isolation, the Node supervisor, PowerShell helper, node --test parent and test worker can require four processes before applicable console hosts, conflicting with that proposal. This topology is reasoned, NOT RUN. The selected 3/4/8 mapping covers only the exact nine G0 rows; it authorizes no standalone action, native compiler or changed calibration scope.",
             "outputCaps": "Unchanged common output caps."
           }
         },
@@ -2323,14 +2323,14 @@
         "real-child-tree": 4,
         "vitest-baseline": 8
       },
-      "assertion": "Exact G0 mapping: three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. Count the complete applicable owned tree including console hosts. Compilation is separately counted and HELD; no compiler ceiling is selected. Native topology, console-host attribution and cold-bootstrap proof remain prerequisites.",
+      "assertion": "Exact G0 mapping remains three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. The source checks command-row counts and derives an outer Job limit of count minus one and inner subject Job limit of count minus two. These limits do not establish complete console-host attribution or enforcement. Node supervisor + PowerShell helper + subject already equals three; any additional counted console host exceeds a three-process row. The real-child-tree row already needs four before applicable console hosts. Compilation remains HELD under the existing count-minus-one outer Job: 2/3/7 including the helper, as the same rule already applies to G1-G7. No separate compile limit exists. Any compile limit above count minus one requires Samuel's separate decision and reviewed per-phase helper source. Native topology, console-host placement and compiler fit remain unproved. Concurrent-versus-cumulative ceiling semantics and launch-edge console flags remain S3 decisions/proof requirements. This adjacent stageMapping object is descriptive and unread; the supervisor checks command-row values against its source constant, not this copy.",
       "decisionAloneSufficient": false,
       "sourceStatus": "AUTHORED_PENDING_ORIGINAL_BOUNDED_REVIEW",
       "sourceAuthority": {
         "commit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
         "path": "docs/coordination/launch-coordination-20261005/QUALIFICATION_TWO_FILE_DIRECT_AUTHORITY_20261011.txt"
       },
-      "compiler": "SEPARATELY_HELD_NO_CEILING_SELECTED"
+      "compiler": "HELD_EXISTING_COUNT_MINUS_ONE_OUTER_JOB_NO_SEPARATE_COMPILE_LIMIT"
     },
     "fullOverheadDisclosure": {
       "status": "AUTHORED_COST_INVENTORY_NOT_MEASURED",
@@ -19836,7 +19836,7 @@
     "groupWallMs": 1500000,
     "ramFloorMiB": 4096,
     "diskFloorGiB": 20,
-    "sourceCheckout": "This unchanged currentness checkout matches accepted 935/Doc65 with its own 66-path receipt 24430f71. Historical 7a/Doc63 remains preserved; never mix its old receipt with new verifier bytes. Separate database-category authority, route, installation and qualification remain absent. Application/HTTP f581 and intake 3e are unchanged.",
+    "sourceCheckout": "These are historical qualification inputs retained from the ed376ea/25858ad transfer-source history: application/HTTP f581, intake 3e82154, and Doc65-accepted currentness 935 with its own 66-path receipt 24430f71. They do not describe the hosting checkout. The Doc84-reviewed 3e5e2ed hosting tree carries Doc82 currentness 264e6af and pending intake 121d098; neither is adopted by these deliberately unchanged qualification pins. Separate database authority, installation and qualification remain absent.",
     "intake": {
       "script": "supabase/verification/research_health_quick_order_local.mjs",
       "sourceCommit": "3e82154724ede74b7c5f361f280739eedd60db25",
@@ -19853,14 +19853,14 @@
       "receipt": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc63-20261008.json",
       "receiptSha256": "24430f71fc4c644eb126c1e9fff350c4c22c3668fa9c46d6f8ccb3b36b806a66",
       "status": "DOC65_SOURCE_ACCEPT_WITH_LIMITS_NOT_EXECUTED_DB_CATEGORY_HELD",
-      "bindingAmendment": "Explicit standing reviewed-successor adoption of accepted935/Doc65 and its exact own receipt in this Doc67 correction only. No verifier/application/source snapshot edits or database execution authority."
+      "bindingAmendment": "Historical Doc67 database-category amendment adopted Doc65-accepted 935 and its exact receipt. That retained qualification binding neither describes the hosting checkout nor authorizes database execution. No runtime source or receipt pin is changed by this prose correction."
     },
     "otherInputs": [
-      "review-599-repair-bindings-20261007.json physically present",
+      "Historical input: review-599-repair-bindings-20261007.json resolves in its pinned transfer-source history; no hosting-checkout presence claim.",
       "Exact frozen base commit objects and git-show dependencies",
       "Receipt LF source hashes checked before separately authorized admission",
-      "Accepted 935 source requires its exact doc63-verifier-bindings-20261008.json and all 66 paths of sql-currentness-source-receipt-doc63-20261008.json; raw receipt 24430f71 matches 66/66 here.",
-      "Historical 7a source and receipt 61f478ed match 66/66 at 7a and 64/66 here; immutable old source/records are retained.",
+      "Historical transfer-source verification recorded receipt 24430f71 matching all 66 paths for accepted 935 and its exact doc63-verifier-bindings-20261008.json. This is not verification of the hosting checkout.",
+      "Historical verification recorded receipt 61f478ed matching 66/66 paths at 7a and 64/66 in the later transfer-source checkout. These counts do not describe the hosting checkout; immutable old source/records are retained.",
       "No database route or execution is supplied by this binding-only category amendment."
     ],
     "missingFacts": [
@@ -19901,7 +19901,7 @@
       "receipt": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-7a62e64.json",
       "receiptSha256": "61f478edb4b94cce14c4fbc1df9dac30dffa579d3d7014f4314c58f78f4c8d51",
       "status": "DOC63_SOURCE_ACCEPT_WITH_LIMITS_NOT_EXECUTED_DB_CATEGORY_HELD",
-      "bindingAmendment": "Accepted 7a/276 supersedes older 2d for this separate database category only. All application/HTTP f581 targets and snapshots remain unchanged. Pending 935/a828 bytes are not independently accepted.",
+      "bindingAmendment": "Historical 7a/276 database-category adoption superseded older 2d. Its description of 935/a828 as pending belongs to that historical state; Doc65 subsequently accepted 935 with limits. Application/HTTP qualification pins remain unchanged.",
       "history": "Correct accepted basis at reviewed cc584f9; preserved history, not a defect."
     },
     "previouslyPendingVerifier": {
@@ -32910,7 +32910,7 @@
       "appliesTo": [
         "G0"
       ],
-      "reason": "Historical hold ID retained. Samuel selected the exact 3/4/8 stage map; this source implements it. Original successor acceptance and complete owned-tree/console-host evidence remain outstanding. Compiler phase remains separately HELD.",
+      "reason": "Historical hold ID retained. Samuel selected the exact G0 3/4/8 mapping. The source checks row counts and derives the two Job limits; complete owned-tree and console-host enforcement remains unproved. Compilation remains HELD under the existing count-minus-one outer Job. Doc84 accepted 3e5e2ed with limits; this corrective successor requires its own disposition.",
       "disposition": "EXPLICIT_HOLD",
       "liftRoute": {
         "record": "docs/health-launch/quick-order-20261005/evidence/doc64-prerequisite-resolution-20261008.json",
@@ -32919,7 +32919,7 @@
         "boundedFutureAction": "The referenced dependency record identifies a missing standalone action contract and source/proof prerequisites. No current executable vehicle or argv is provided by this correction.",
         "currentArgv": null,
         "runnableNow": false,
-        "ordering": "Exact G0 mapping: three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. Count the complete applicable owned tree including console hosts. Compilation is separately counted and HELD; no compiler ceiling is selected. Native topology, console-host attribution and cold-bootstrap proof remain prerequisites.",
+        "ordering": "Exact G0 mapping remains three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. The source checks command-row counts and derives an outer Job limit of count minus one and inner subject Job limit of count minus two. These limits do not establish complete console-host attribution or enforcement. Node supervisor + PowerShell helper + subject already equals three; any additional counted console host exceeds a three-process row. The real-child-tree row already needs four before applicable console hosts. Compilation remains HELD under the existing count-minus-one outer Job: 2/3/7 including the helper, as the same rule already applies to G1-G7. No separate compile limit exists. Any compile limit above count minus one requires Samuel's separate decision and reviewed per-phase helper source. Native topology, console-host placement and compiler fit remain unproved. Concurrent-versus-cumulative ceiling semantics and launch-edge console flags remain S3 decisions/proof requirements.",
         "requiredReceipt": "Exact accepted standalone topology fixture and actual raw full-tree count/identity/cleanup receipt, including console hosts and separately counted compiler phase. Source-only selection supplies no observation.",
         "originalReviewerDisposition": "Original reviewer accepts the exact vehicle source and eligible action first, then separately accepts its actual retained receipt. A source disposition is not an executed result or reservation.",
         "executionAuthority": "No execution authority exists. Standalone prerequisite actions require a distinct accepted authority/fixture contract and each actual one-shot owner decision, coordinator comparison, original window comparison and later receipt disposition. Held group authority cannot run its own prerequisite.",
@@ -33281,7 +33281,7 @@
     "record": "docs/health-launch/quick-order-20261005/evidence/doc64-prerequisite-resolution-20261008.json",
     "recordSha256": "1e8955212912b25c246dc6f5c00808c050b3ed7840f7d82c7bc1c79a5a51de57",
     "status": "DEPENDENCIES_CORRECTED_NATIVE_VEHICLES_NOT_IMPLEMENTED",
-    "binding": "Exact raw dependency-record digest is included in this manifest. It supplies no implemented native fixture, mode, approval, measurement or runnable proposal.",
+    "binding": "The raw dependency-record digest is retained as a historical binding resolved in ed376ea/25858ad transfer-source history, not a record present by hosting-tree ancestry. It supplies no implemented native fixture, mode, approval, measurement or runnable proposal.",
     "currentPrerequisiteMode": null,
     "orderedGates": [
       {
@@ -33371,7 +33371,7 @@
     "reviewedTree": "e64f3989d426fcb99776ec0e8330360fdd7595cb",
     "reviewedRecords": "6c3a883b706211a60502b3adeec0d57726495c70",
     "base": "a8285015c2f63748f6e76f1ab4c8a01b5dde8fa1",
-    "status": "AUTHORED_PENDING_EXACT_ORIGINAL_REVIEW",
+    "status": "HISTORICAL_CORRECTION_SUPERSEDED_BY_DOC68_ACCEPTED_25858AD",
     "sourceClosedPreserved": [
       "CC-02",
       "CC-03",
@@ -33381,7 +33381,8 @@
     "execution": "NOT_RUN",
     "publication": "LOCAL_ONLY",
     "proseCorrectionsRecord": "docs/health-launch/quick-order-20261005/evidence/doc64-prose-corrections-20261008.json",
-    "proseCorrectionsRecordSha256": "512e3b61030c539501692f923a58fd5c3855b9b2de29e308824f5e684f22fa38"
+    "proseCorrectionsRecordSha256": "512e3b61030c539501692f923a58fd5c3855b9b2de29e308824f5e684f22fa38",
+    "pendingVerifierHistory": "pendingVerifierFrozen is the historical field name; its unchanged 935/a828 identity subsequently received Doc65 source acceptance with limits at e0888517f7287bca40049b57b470d97ccb92b664. Nothing executed."
   },
   "doc67Correction": {
     "assignment": "5529dcd6f879916752b6ab11b667658248ff56e1",
@@ -33390,7 +33391,7 @@
     "reviewedTree": "a52060a6922888e952cf0e5a3de5ea4c12e636e9",
     "reviewedRecords": "866ed38f0f6007d7a87dfc90628c99b3f42afe4a",
     "base": "866ed38f0f6007d7a87dfc90628c99b3f42afe4a",
-    "status": "AUTHORED_PENDING_EXACT_ORIGINAL_REVIEW",
+    "status": "HISTORICAL_SOURCE_ACCEPTED_WITH_LIMITS_DOC68_25858AD",
     "execution": "NOT_RUN",
     "sourceClosedPreserved": [
       "F-01 no zero-child pause",
@@ -33427,12 +33428,12 @@
         "inDeltaSelfCorrections": 1,
         "totalLoggedEdits": 109
       },
-      "meaning": "Both inherited records exist in this successor source ancestry. Historical bytes are retained; no 109-of-109 base-preimage claim or new record-only digest is made. The inherited Doc64 dependency clock wording belongs to its historical proposal. Any future standalone source/action proof must bind this successor’s explicit prelaunch/started event meanings; the old record alone is not current execution authority."
+      "meaning": "These inherited records resolve at containedInBase 866ed38 in the ed376ea/25858ad transfer-source history, not through ancestry of the 3e5e2ed hosting tree. This location qualification covers the in-manifest Doc64 pointers in calibrationLiftRoutes, executionPrerequisites, prerequisiteVehicles and doc64Correction. Their paths and hashes remain historical bindings, not current-tree presence or execution authority. The two files were copied exactly; the hosting branch does not descend from 866ed38, 25858ad or ed376ea. Future standalone proof must bind the accepted successor's explicit prelaunch and started-clock meanings."
     }
   },
   "doc68Amendment": {
     "kind": "EXACT_TWO_FILE_U15_D68_SOURCE_SUCCESSOR",
-    "status": "PENDING_ORIGINAL_BOUNDED_REVIEW",
+    "status": "DOC84_ACCEPTED_PRIOR_3E5E2ED_WITH_LIMITS_THIS_S2_CORRECTION_PENDING",
     "baseSource": "25858ad94a649a9f7442562e6e0423636d2a3124",
     "baseReview": "9f570586304e3d1850870437332d17d03d0fbb51",
     "timingCorrection": "36debe0c54ebc91da8bce9609705299783770046",
@@ -33452,15 +33453,15 @@
       "vitest-baseline": 8
     },
     "startedHelperWallMs": 60000,
-    "compiler": "SEPARATELY_HELD_NO_CEILING_SELECTED",
+    "compiler": "HELD_EXISTING_COUNT_MINUS_ONE_OUTER_JOB_NO_SEPARATE_COMPILE_LIMIT",
     "corrections": {
-      "U15": "Exact G0 mapping: three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. Count the complete applicable owned tree including console hosts. Compilation is separately counted and HELD; no compiler ceiling is selected. Native topology, console-host attribution and cold-bootstrap proof remain prerequisites.",
-      "D68-1": "Validated started resumes exhausted by time/cap publish terminal group records; later groups stop. No new admission charge, deadline reset or prefix repeat. Metadata validation of an expired pause remains within the original window/aggregate and invocation metadata bound; it restores no runnable deadline, consumes no admission, and launches no command. Only fully validated history can produce the terminal record.",
-      "D68-2": "Initial metadata retries publication once with identical bytes/IDs; only proven own unpublished temporaries are archived outside execution namespaces. Missing invocation witness never creates a malformed restart receipt. Known zero-command storage refusals release only the current exact lock. Unknown or post-command evidence remains sticky.",
-      "D68-4": "Synchronous argument refusal or typed asynchronous start refusal requires absence/close/stream/output proof. Failed launch witness is separate from completed-command receipts. Own launch intent and no-launch outputs are archived, actual launch attempts remain disclosed. Unknown start or cleanup stays held.",
-      "D68-5": "Prior permanent failures cannot become restartable. Finalization and budget-inspection causes remain explicit. Terminal/resume/refusal labels match actual state. The prior restartEligible label alone never permanently blocks clean transient reentry; actual permanent history is distinct from temporary inspection failure.",
-      "D68-3": "60,000 ms starts at the first Node-observed successful PowerShell helper spawn. Before launch, some dependency reads and the first handshake are bounded only by the unchanged 140-minute aggregate/window. No end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation.",
-      "D68-10": "Historical external records and frozen target pins are unchanged; this section supersedes their old pending/stage-count/clock prose only for the new two-file successor. Doc65 acceptance of verifier935aaf1 remains recorded; no new SQL/intake/integration target re-pin."
+      "U15": "Exact G0 mapping remains three for parser-self-test, exit-zero, exit-one, deadline-kill, stdout-cap, stderr-cap and refusal-path; four for real-child-tree; eight for vitest-baseline. The source checks command-row counts and derives an outer Job limit of count minus one and inner subject Job limit of count minus two. These limits do not establish complete console-host attribution or enforcement. Node supervisor + PowerShell helper + subject already equals three; any additional counted console host exceeds a three-process row. The real-child-tree row already needs four before applicable console hosts. Compilation remains HELD under the existing count-minus-one outer Job: 2/3/7 including the helper, as the same rule already applies to G1-G7. No separate compile limit exists. Any compile limit above count minus one requires Samuel's separate decision and reviewed per-phase helper source. Native topology, console-host placement and compiler fit remain unproved. Concurrent-versus-cumulative ceiling semantics and launch-edge console flags remain S3 decisions/proof requirements. The doc68Amendment.stageMapping copy is descriptive and unread; only command rows are checked against the supervisor source constant.",
+      "D68-1": "Validated started resumes exhausted by original time/cap or parent immutable latestResumeStartAt publish terminal group records; later groups stop. Refusal before attempt publication preserves a still-valid parent pause without requiring a new pause allowance. New-pause fit applies after publication. No new admission charge, deadline reset or prefix repeat. Metadata validation of an expired pause uses min(original aggregate/window deadline, invocation start + unchanged group wall); it restores no runnable deadline, consumes no admission and launches no command. Only fully validated history can produce the terminal record.",
+      "D68-2": "Initial metadata, including invocation/request/attempt records, retries publication once with identical bytes/IDs; only proven own unpublished temporaries are archived outside execution namespaces. Published attempt identity uses the returned exact digest and is charged immediately; proven absence remains uncharged, ambiguous publication is sticky. Missing invocation witness never creates a malformed restart receipt. Release without a published release receipt is opt-in only from the two proven zero-command storage-refusal branches; normal preparation/post-command release stays held on publication failure.",
+      "D68-4": "Synchronous argument refusal or typed asynchronous start refusal requires absence/close/stream/output proof. Failed-launch witness is separate from completed-command receipts. Own launch intent and no-launch outputs are archived; actual launch attempts remain disclosed. An unstarted proven-no-spawn refusal can permit qualified restart; the same refusal in an already-started group remains terminal, pauseAllowed=false. At command-wall expiry the outer timer kills the helper and resolves immediately with closeObserved=false; receipt/output snapshots may precede final termination and late exit code/signal or later bytes are not recorded. outerExpired keeps cleanupProven=false and the lock held. No grace budget is added. Node/libuv error-event proof remains a native S3 prerequisite.",
+      "D68-5": "Immutable prior-evidence predicate refusals before restoration and the late G0 acceptance predicate are restartForbidden. Transient I/O and a correctable material-change check after restoration remain distinct; prior restartEligible=false alone never permanently blocks clean reentry. Mistaken resume reports RESUME_REQUIRES_STARTED_PAUSE first. failureCode retains the primary cause, even if null; finalizationFailureCode and budgetInspectionFailureCode are separate. Fully completed green own evidence remains accepted if future-budget inspection fails; futureAdmission/eligibilityLimits record it. An incomplete started post-attempt pause candidate still becomes terminal on that inspection failure. restartRequiresFreshInspection is true only with validated history and INVOCATION_BUDGET_UNVERIFIED as its sole limit.",
+      "D68-3": "The prelaunch metadata checkpoint is min(original aggregate/window deadline, invocation start + unchanged group wall). It does not establish an end-to-end invocation ceiling: some prelaunch dependency reads and the first handshake use only the unchanged 140-minute aggregate/window. The 60,000 ms G0 wall starts once at the first Node-observed successful PowerShell helper spawn; no end-to-end one-minute or two-minute G0 bound is asserted. Host wall-clock continuity is trusted; backward steps remain a disclosed limitation.",
+      "D68-10": "Historical external records, in-manifest Doc64/67 fields and inherited lift-route pointers are located in the ed376ea/25858ad transfer-source history. Their paths/digests are retained without ancestry or hosting-tree presence claims. Doc68 accepted 25858ad; Doc65 accepted 935/a828 with limits. The hosting tree carries Doc82 currentness264e6af and pending intake121d098. This amendment deliberately does not re-pin any SQL/intake/integration/application target or receipt."
     },
     "carriedLimits": {
       "D68-6": "Some prelaunch reads/first handshake aggregate-bound only; no sub-aggregate total invocation ceiling claimed.",
@@ -33469,14 +33470,86 @@
       "D68-9": "G0 retry handshake slices can be about367 ms versus first428 ms; G1-G7 pauses require actual30–75second responder path. No named qualified responder or latency measurement supplied."
     },
     "remainingPrerequisites": [
-      "Original exact two-file successor review",
+      "Original exact Doc84 bounded S2 corrective-successor review; prior 3e5e2ed source acceptance remains historical and supplies no inherited execution pass",
       "Separately scoped accepted standalone native/authority vehicle, bootstrap interruption and console-host topology proof",
       "Inherited-handle isolation and memory-denial detection proof",
-      "Compiler-phase source/settings and authority, distinct from3/4/8",
+      "Native compiler topology and fit proof under the existing count-minus-one outer Job; separate compiler hold/validation at S3; any higher compile limit or per-phase helper change requires a separate decision",
       "Pre-run fit and actual runner failure calibration; G5 actual-root12/G6 typecheck/G7 build remain HELD",
       "Named permitted responder and measured latency/pause practicality",
       "Fresh exact-target finite authority/reservation/observations"
     ],
     "metadataOnlyVerification": "Byte hashing and textual diff only; no parser, import, tests, compiler, G0, SQL, resource probe or other subject execution"
+  },
+  "doc84Correction": {
+    "assignment": "dc1dd8b3def0cbb8734b457525f45afc9fb31a92",
+    "review": "7449c659e018fa8a975726cbb4d40e9e59898a04",
+    "priorSource": "3e5e2ed9faf30aa46f5a81047fa71d55e28bdb2e",
+    "priorTree": "7cde1fbc846f1a7e1c3eb9e445344c0715a43012",
+    "priorRecords": "71bdd9d0d9e828a7bbb16d03ab5f30f02d55d846",
+    "priorDisposition": "SOURCE_ACCEPTED_WITH_LIMITS_EXECUTION_ELIGIBILITY_NONE",
+    "status": "ONE_BOUNDED_S2_SUCCESSOR_AUTHORED_PENDING_ORIGINAL_REVIEW",
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY",
+    "correctionMap": {
+      "SV-3": "Pre-attempt validated pause uses fixed parent latestResumeStartAt and four original terminal limits. New-pause allowance applies only after attempt publication.",
+      "SV-4": "Own complete green evidence survives future-admission inspection failure; incomplete started post-attempt candidates retain disclosed terminal behavior.",
+      "SV-5": "Compiler count-minus-one and console arithmetic prose corrected without native helper, count, flag or semantics selection.",
+      "SV-6": "Attempt publication uses writeInitialRecord returned digest and recovery archives; charge only proven publication; ambiguous evidence stays held.",
+      "SV-7": "Unpublished release-receipt fallback restricted to the two proven zero-command storage-refusal call sites.",
+      "SV-8": "Prior immutable refusal and late G0 labels corrected; wrong-mode resume primary cause precedes inspection; secondary codes separated; restart inspection is sole-limit and validated-history only.",
+      "SV-9": "At-wall immediate resolution, closeObserved=false, possibly late outputs and missing late exit/signal explicitly disclosed; cleanup remains false/lock held.",
+      "SV-10": "Unapproved TAP three-process profile retains argv/count; reasoned four-process parent/worker conflict restored.",
+      "SV-11": "Doc68 corrected controlling basis, historical Doc64/67/65 statuses and transfer-source locations explicit; current hosting sources and no-repin boundary recorded; prelaunch metadata checkpoint disclosed."
+    },
+    "retainedStageFindings": {
+      "SV-1": {
+        "stage": "S3",
+        "status": "OPEN_EXECUTION_GATE",
+        "requirement": "Applicable console hosts, concurrent/cumulative semantics, frozen launch-edge flags, per-row full-tree arithmetic and enforceable/native-proven count contract. No count raised."
+      },
+      "SV-2": {
+        "stage": "S3",
+        "status": "OPEN_EXECUTION_GATE",
+        "requirement": "A dedicated compiler hold or separately gated compiler receipt, decided compile contract and validation of bootstrapTotalBeforeSubject. Existing count-minus-one alone is not fit. A higher compile cap/per-phase helper needs separate Samuel authority; do not pin all outer Jobs to2."
+      },
+      "SV-12": {
+        "stage": "S3",
+        "status": "DISCLOSED_BEHAVIOR_UNCHANGED",
+        "requirement": "Proven helper-start refusal after actual group start is terminal; pauseAllowed=false. No new continuation enabled."
+      },
+      "SV-13": {
+        "stage": "S3",
+        "status": "OPEN_NATIVE_PROOF",
+        "requirement": "Native fixture evidence for event order, pid, streams, actual process absence and each accepted synchronous/asynchronous code. Current error list unchanged; source reasoning is not native proof."
+      },
+      "SV-14": {
+        "stage": "S3",
+        "status": "NATIVE_LANE_SEPARATE_REBASE_REQUIRED",
+        "review": "0554f6d907ada1e4f491bdfd59db44c4610156fe",
+        "reviewPath": "docs/review/xenios-health-launch-review-20260930/74_DOC72_CONDITIONAL_NATIVE_DELTA_2ec266f_2026-10-09.md",
+        "proposal": "2ec266ff1203fbb5e9603cf16e01c7bfd3cb3f53",
+        "requirement": "Doc74 considers the conditional SOURCE-decision proposal sufficient once N-1 through N-7 are written into decision text, carrying P3 conditions. The proposed source grant takes effect only after the separately authorized pre-effective inventory succeeds. This amendment is neither that decision nor that inventory. Native lane pinned25858ad must rebase onto the accepted two-file successor before its own implementation/review. No native/qualification-win32.cc or executable vehicle is added here."
+      },
+      "SV-15": {
+        "stage": "S4",
+        "status": "DESCRIPTIVE_MAPS_LABELED_NO_RUNTIME_CHANGE",
+        "requirement": "Both stageMapping objects are descriptive/unread; source constant checks command rows only. No runtime cross-check added."
+      },
+      "SV-16": {
+        "stage": "S4",
+        "status": "HISTORICAL_EXPORT_LABELED_NO_RUNTIME_CHANGE",
+        "requirement": "Uncalled selfTestDefinitions list is historical: stream-cap, missing parser and extra bootstrap do not describe authoritative nine G0 rows."
+      }
+    },
+    "nativeEvidenceStillRequired": [
+      "Accepted standalone topology source and actual concurrent/cumulative full-tree identities/counts/cleanup at3/4/8 including applicable console hosts under frozen launch flags.",
+      "Native compile-topology receipt, separately gated compiler contract and actual Samuel decision for any count-minus-one increase.",
+      "G0 all-work fit receipt with raw phase timestamps inside unchanged wall.",
+      "Separate accepted bootstrap-interruption, inherited-handle isolation and memory-cap refusal vehicles and receipts.",
+      "Native helper-start refusal fixture for each accepted error code.",
+      "Named separately authorized responder and measured fit for428ms/367ms admission slices and30–75s pause allowances, or explicit impracticality.",
+      "G1-G6 wall fit, G7 allocation and40 runner calibration rows; existing G5 actual-root12/G6 typecheck/G7 build holds remain."
+    ],
+    "scope": "Same two files only. No new framework, fixture, native helper edit, numerical decision, source/receipt repin, test/import/build/probe/SQL, push, installation, activation or schedule change. No independently accepted or executed result inferred."
   }
 }
