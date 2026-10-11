@@ -1,0 +1,1074 @@
+{
+  "schemaVersion": "quick-order-intake-source-receipt-v1",
+  "sourceCommit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+  "sourceTree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+  "sourceAcceptance": {
+    "status": "PENDING",
+    "reviewCommit": null
+  },
+  "files": [
+    {
+      "path": "client/src/clarity/PublicShell.tsx",
+      "sha256lf": "3ba0d3fd5aff043be7729dfd03c6d048e44241472318c15293f217ea59e0b0dc"
+    },
+    {
+      "path": "client/src/main.tsx",
+      "sha256lf": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "sha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
+      "sha256lf": "0c5c17e0a370d440738a2cfc469b1d23feedf4b5e9edb40f43764750aa98c12f"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "sha256lf": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed"
+    },
+    {
+      "path": "server/index.ts",
+      "sha256lf": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb"
+    },
+    {
+      "path": "server/research/assisted-order/communications.ts",
+      "sha256lf": "1c68368095d1c92163155f90cd15de21050abfd1f5856d9408540388c6a18c64"
+    },
+    {
+      "path": "server/research/assisted-order/express.ts",
+      "sha256lf": "0e0f93fe85f9c2a532c305be24ed08ceb1834806fcece33c78d8ba6d6dcc04ac"
+    },
+    {
+      "path": "server/research/assisted-order/production-boot.test.ts",
+      "sha256lf": "f3494beb131edf7d8b739acc50f9445548bf3614fae0f60ba1bba5ddbab89893"
+    },
+    {
+      "path": "server/research/assisted-order/production-catalog.ts",
+      "sha256lf": "d13240f48cc8755c7cc9a72942453f4824e778b63690d973c75002bb41d97aa3"
+    },
+    {
+      "path": "server/research/assisted-order/production-deps.ts",
+      "sha256lf": "b1d1ae1ce29bfe830fd386d063aaac40d918643cfd9dc6980b61cd70303151e3"
+    },
+    {
+      "path": "server/research/assisted-order/production-env-shape.fixture.json",
+      "sha256lf": "be34e4d26cebbce8bc3bc73a4625786402a13b48bea14bd3ec00e9035cd4a92d"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "sha256lf": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "sha256lf": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "sha256lf": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "sha256lf": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b"
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "sha256lf": "57ea0b0202f0648aa9324ca6f1f24c5dedb1a761d1d4d85a80fda21e8ebacc67"
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "sha256lf": "274493e5b0618222b919adf6ab4d7613b04f58247ed79c5a7d29ab9076772e53"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.ts",
+      "sha256lf": "26266ed95aab6afecdb9b01200867a58cd33cc382d930a737f51a25fd6222cd7"
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.ts",
+      "sha256lf": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037"
+    },
+    {
+      "path": "server/research/health/quick-order/legal.ts",
+      "sha256lf": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e"
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "sha256lf": "39d0d2da8fd6636c76f951c7a56f87de3a058d5e0c0eed09ed98cdf5ebbe161a"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "sha256lf": "1e766ea84e2a9accd4a46988b4d410f782875bc9218bf00b35fd49ff21d9306f"
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "sha256lf": "66ec299f2dcced2857a0b0dbef4871c625b14f9f397dd0c2e26f0deef2ee91ce"
+    },
+    {
+      "path": "server/research/master-offerings/composition.ts",
+      "sha256lf": "e931efee2ed38a005b42e3eaf699f85fc4a659f2397b228051cbd6ca5764e80e"
+    },
+    {
+      "path": "server/research/master-offerings/early-access-retail-pricing.ts",
+      "sha256lf": "d944c93d0c7cd3f71e5efe5211fe94c25425dfc62ce8c3397158e9f84ce8e9cb"
+    },
+    {
+      "path": "server/research/master-offerings/member-pricing-viewer.ts",
+      "sha256lf": "8105b937ede49625bdd28bb14c1817ccef8baaf7ac09b5f76cd72f38a5628312"
+    },
+    {
+      "path": "server/research/master-offerings/price-authority.ts",
+      "sha256lf": "7f43270d50ae6bed46df9be663a07f6d57872641767776abc21a5741db23015e"
+    },
+    {
+      "path": "server/research/master-offerings/reconciliation-authority.ts",
+      "sha256lf": "dfb8a7756a2c7ab344d06c02490a45dab2d324c47d32445f48a863bcc197c429"
+    },
+    {
+      "path": "server/research/master-offerings/reviewed-holds.ts",
+      "sha256lf": "6b53a51cb4a37e8564e588270b27b1dbaafe6dbe111d72f53ea9ae0ab06615ae"
+    },
+    {
+      "path": "server/research/member-auth.ts",
+      "sha256lf": "ff1b57df93e162c99293f38e8f78f8888c6ca6d909c14c0e3b92d7112ad3f915"
+    },
+    {
+      "path": "server/research/partners/referral-v1-attribution.ts",
+      "sha256lf": "aaa0cf8398c8c5a71cdf3b33840b949b9b5b91016547c3b197901ed0204d7881"
+    },
+    {
+      "path": "server/research/pricing/authoritative-price-resolver.ts",
+      "sha256lf": "1f013207ea4217d51d56ba151d224c4434cf0008e74380b2b77659303c06d06a"
+    },
+    {
+      "path": "server/research/products-diagnostics/product-admin-production.ts",
+      "sha256lf": "f4647cb225129d5ed61a2e0c2968850b1ba183ba25de9a64cc86d928d2544867"
+    },
+    {
+      "path": "server/static.ts",
+      "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+    },
+    {
+      "path": "server/vite.ts",
+      "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+    },
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "sha256lf": "1a9eed498adf0144b84d0e52afe9b9e0c250847749289ad295561aec7581ef34"
+    },
+    {
+      "path": "shared/research/assisted-order/quick-order.ts",
+      "sha256lf": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2"
+    },
+    {
+      "path": "supabase/candidates/20260904_research_partner_referral_v1.sql",
+      "sha256lf": "69d6f8558550ffb63caed08bdb5cac6d51c96cf80d9c54a9598685d08f82aefb"
+    },
+    {
+      "path": "supabase/candidates/20260914_research_referral_v1_touch_attribution.sql",
+      "sha256lf": "297d052369c8df25808be805753693c85ec7e0c2ec2624430e5ca2ce33f1db18"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "sha256lf": "12c16a6741f12ddd60f789de073e6b784d38ec5658c609ff819e60dcae455cde"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "sha256lf": "9cf375e4ecfea2bf1818c6f4008a2842d3e1752e3549dabf4a5c72388828b106"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "sha256lf": "a4c517f491b6e4e80db6b05cbdce3bfa98d3e8b25f365c954498e3b632f6b8b7"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "sha256lf": "cde91d113aea9cef4c8104da9d51ac78c702f553b05e7476659d2565492eee3b"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135"
+    },
+    {
+      "path": "supabase/migrations/20260726143000_research_product_control_center.sql",
+      "sha256lf": "b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203"
+    },
+    {
+      "path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+      "sha256lf": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524"
+    },
+    {
+      "path": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+    },
+    {
+      "path": "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+      "sha256lf": "3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28"
+    },
+    {
+      "path": "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+      "sha256lf": "8a84bd82845e726702cdc001bdfce661ced7f74132c68a1338d5a476bd9ec9c6"
+    },
+    {
+      "path": "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+      "sha256lf": "fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c"
+    },
+    {
+      "path": "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+      "sha256lf": "8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b"
+    },
+    {
+      "path": "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+      "sha256lf": "5e0b745ae3d8ff0844e55ba0714fd5f2bb5f446e7523594af8bfce7e1395bf22"
+    },
+    {
+      "path": "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+      "sha256lf": "a15ed8163b618a1de56d779c8b16e1ced31621ccf07d7435a2aa4838e4f3ead2"
+    },
+    {
+      "path": "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+      "sha256lf": "c68ccc679bd04dc2ff6aeb460100ee3e9ec470a58a094274821c5b3f1697a7c1"
+    },
+    {
+      "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+      "sha256lf": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7"
+    },
+    {
+      "path": "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+      "sha256lf": "f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda"
+    },
+    {
+      "path": "supabase/migrations/20260927203000_research_status_recovery.sql",
+      "sha256lf": "98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292"
+    },
+    {
+      "path": "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+      "sha256lf": "2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845"
+    },
+    {
+      "path": "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+      "sha256lf": "f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894"
+    },
+    {
+      "path": "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+      "sha256lf": "434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66"
+    },
+    {
+      "path": "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+      "sha256lf": "6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe"
+    },
+    {
+      "path": "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+      "sha256lf": "0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f"
+    },
+    {
+      "path": "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+      "sha256lf": "8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743"
+    },
+    {
+      "path": "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+      "sha256lf": "512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881"
+    },
+    {
+      "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+      "sha256lf": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875"
+    },
+    {
+      "path": "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
+      "sha256lf": "5386c62508e5f3ae9a3584c936ece35e04fe13c1fef42f1627e3784327de7035"
+    },
+    {
+      "path": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+      "sha256lf": "1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f"
+    },
+    {
+      "path": "supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+      "sha256lf": "91a20f681038a5e845137feb6556c4041b1645f6b2c8f9122bc7c9e85280f477"
+    },
+    {
+      "path": "supabase/research-catalog.sql",
+      "sha256lf": "0e868dcd4bea04a5cc6bdce474ac93d0feae9553bdfcbaf74a448c05b07d4f42"
+    },
+    {
+      "path": "supabase/research-inventory-lots.sql",
+      "sha256lf": "00ccc125f9bfcd428b530e19445c1042b7953b5450dea223707609b87282ee7e"
+    },
+    {
+      "path": "supabase/research-inventory-reservation-commands.sql",
+      "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+    },
+    {
+      "path": "supabase/research-members.sql",
+      "sha256lf": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded"
+    },
+    {
+      "path": "supabase/research-membership.sql",
+      "sha256lf": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8"
+    },
+    {
+      "path": "supabase/research-notification-outbox.sql",
+      "sha256lf": "70cee0109dce7401431de9449a1312076ad61b7081ed31b9b8a9659bc6cca7ac"
+    },
+    {
+      "path": "supabase/research-private-early-access-sessions.sql",
+      "sha256lf": "7365f2a6ae224d8a45e2d32ab437d07ea1e83470314e2f0ba7227f3d3e3eea38"
+    },
+    {
+      "path": "supabase/research-products-diagnostics.sql",
+      "sha256lf": "5d191bc21fea106a934640df8effe82eaf2bf5f445b6a3510f6272233b982013"
+    },
+    {
+      "path": "supabase/research-required-input-readiness.sql",
+      "sha256lf": "ffbd07e9c42703299cc9babe0f7c680bc6a22e88e7fae5c4c0fd66c7a93e6b8f"
+    },
+    {
+      "path": "supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql",
+      "sha256lf": "cabf8355d3cb651cacffd56e44c8d319afee3e35e4ec8e42b49fac9fe3b432d5"
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "sha256lf": "2665acf43a800935db407f872dbc0fe0dcdfbedc74c7f869796511c02b8a4b7e"
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "sha256lf": "bbc040e6bf7b2656ca5b5a4e0c82d408313346163f4915a4e780784d8af8c1fc"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256lf": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"
+    }
+  ],
+  "execution": "NOT_RUN_NO_EXECUTION_AUTHORITY",
+  "publication": "LOCAL_ONLY_NOT_AUTHORIZED_FOR_PUSH",
+  "definitionSha256": "0a475814bc7e0819d6fed86952d7250d85fc1836db6ad42e730df353073b41b1",
+  "currentnessDefinition": null,
+  "currentnessDependency": null,
+  "disclosures": {
+    "kind": "AUTHORED_SOURCE_INVENTORY_NOT_ACCEPTED_INSTALLATION_RECEIPT",
+    "sharedBindings": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+    "builtins": [
+      "pg_catalog.acldefault",
+      "pg_catalog.aclexplode",
+      "pg_catalog.array_agg",
+      "pg_catalog.array_append",
+      "pg_catalog.bool",
+      "pg_catalog.btrim",
+      "pg_catalog.cardinality",
+      "pg_catalog.clock_timestamp",
+      "pg_catalog.convert_to",
+      "pg_catalog.count",
+      "pg_catalog.current_database",
+      "pg_catalog.current_setting",
+      "pg_catalog.date",
+      "pg_catalog.date_part",
+      "pg_catalog.date_trunc",
+      "pg_catalog.encode",
+      "pg_catalog.format_type",
+      "pg_catalog.gen_random_uuid",
+      "pg_catalog.has_function_privilege",
+      "pg_catalog.has_table_privilege",
+      "pg_catalog.hashtextextended",
+      "pg_catalog.int4",
+      "pg_catalog.int8",
+      "pg_catalog.isfinite",
+      "pg_catalog.jsonb",
+      "pg_catalog.jsonb_agg",
+      "pg_catalog.jsonb_array_elements",
+      "pg_catalog.jsonb_array_elements_text",
+      "pg_catalog.jsonb_array_length",
+      "pg_catalog.jsonb_build_array",
+      "pg_catalog.jsonb_build_object",
+      "pg_catalog.jsonb_each",
+      "pg_catalog.jsonb_typeof",
+      "pg_catalog.left",
+      "pg_catalog.length",
+      "pg_catalog.lower",
+      "pg_catalog.numeric",
+      "pg_catalog.obj_description",
+      "pg_catalog.oid",
+      "pg_catalog.pg_advisory_xact_lock",
+      "pg_catalog.pg_attrdef",
+      "pg_catalog.pg_attribute",
+      "pg_catalog.pg_backend_pid",
+      "pg_catalog.pg_class",
+      "pg_catalog.pg_constraint",
+      "pg_catalog.pg_database",
+      "pg_catalog.pg_db_role_setting",
+      "pg_catalog.pg_get_constraintdef",
+      "pg_catalog.pg_get_expr",
+      "pg_catalog.pg_get_function_identity_arguments",
+      "pg_catalog.pg_get_functiondef",
+      "pg_catalog.pg_get_indexdef",
+      "pg_catalog.pg_get_ruledef",
+      "pg_catalog.pg_get_triggerdef",
+      "pg_catalog.pg_get_userbyid",
+      "pg_catalog.pg_index",
+      "pg_catalog.pg_locks",
+      "pg_catalog.pg_policy",
+      "pg_catalog.pg_proc",
+      "pg_catalog.pg_rewrite",
+      "pg_catalog.pg_roles",
+      "pg_catalog.pg_trigger",
+      "pg_catalog.pg_try_advisory_xact_lock_shared",
+      "pg_catalog.regclass",
+      "pg_catalog.regexp_match",
+      "pg_catalog.regprocedure",
+      "pg_catalog.regrole",
+      "pg_catalog.replace",
+      "pg_catalog.row_to_json",
+      "pg_catalog.set_config",
+      "pg_catalog.split_part",
+      "pg_catalog.starts_with",
+      "pg_catalog.string_agg",
+      "pg_catalog.substring",
+      "pg_catalog.text",
+      "pg_catalog.timestamptz",
+      "pg_catalog.to_char",
+      "pg_catalog.to_json",
+      "pg_catalog.to_jsonb",
+      "pg_catalog.to_regclass",
+      "pg_catalog.to_regprocedure",
+      "pg_catalog.transaction_timestamp",
+      "pg_catalog.unnest",
+      "pg_catalog.upper",
+      "pg_catalog.uuid"
+    ],
+    "measurements": "NONE; no subject import, syntax/compiler/build/test, SQL, verifier or probe was executed.",
+    "sealSequence": "Original currentness source acceptance must precede a rebound accepted currentness receipt and the explicitly sealed intake successor. This PENDING inventory cannot satisfy verifier acceptance.",
+    "installationRefusals": [
+      "Expected canonical source-column descriptor remains absent pending accepted implemented-S/census binding; no fixture or caller GUC supplies it."
+    ],
+    "qualification": "Doc80 consolidated source corrections and controls authored only. Exact independent acceptance, actual implemented-S/census and connection/role/profile proofs, reviewed driver and fresh execution authority remain missing. No deployed or measured proof.",
+    "fixtureSourceIncrement": {
+      "predecessorSource": "357890561160d59eb649505c6c46e9e5b65a3f08",
+      "predecessorRecords": "a8df1bc5386b6f6b60e621158d0bd5778ccc1783",
+      "coordinatorContinuation": "238943cb3041c559252c99129afe112ddb065180",
+      "candidateBodies": "UNCHANGED",
+      "authoredCoverage": {
+        "record": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "caseIds": [
+          "TX01",
+          "TX02-research_assisted_order_requests",
+          "TX02-research_assisted_order_lines",
+          "TX02-research_assisted_order_events",
+          "TX02-research_notification_outbox",
+          "TX02-research_health_quick_order_intakes",
+          "TX03",
+          "TX04-member-standing",
+          "TX04-customer-standing",
+          "TX04-session-revoked",
+          "TX04-admin-checkout-held",
+          "TX04-empty-stock",
+          "TX04-quality-failed",
+          "TX04-unapproved-price",
+          "TX04-zero-price",
+          "TX05",
+          "TX06",
+          "TX06-actor-admission",
+          "TX06-row11",
+          "TX07"
+        ],
+        "sourceDependencies": [
+          "supabase/research-membership.sql",
+          "supabase/research-members.sql",
+          "supabase/research-catalog.sql",
+          "supabase/research-inventory-lots.sql",
+          "supabase/research-products-diagnostics.sql",
+          "supabase/migrations/20260726143000_research_product_control_center.sql",
+          "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+          "supabase/research-inventory-reservation-commands.sql",
+          "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+          "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+          "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+          "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+          "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+          "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+          "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+          "supabase/research-private-early-access-sessions.sql",
+          "supabase/research-required-input-readiness.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql"
+        ],
+        "remaining": [
+          {
+            "stage": "S3",
+            "requirement": "All controls AUTHORED / NOT RUN. No syntax/parser/module/SQL/Docker execution performed.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Actual implemented-S descriptor, accepted census and intake dependency seal are absent. No fixture rewrites frozen SQL or fills source authority.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S2",
+            "requirement": "Trusted admin-attested checkout-number binding remains absent from four-field context: positive branch cannot be authored honestly against current signature; specific refusal is covered.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Baseline Product Control excludes private_early_access price audience. Frozen transaction maps EA actors to that unsupported priced audience; this requires source-contract correction, not another owner policy or data request.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Write-boundary fault cases cover failure before each of five INSERTs and rollback of zero through four prior effects. Failure after the fifth effect, uncertain COMMIT acknowledgment and database restart durability are not covered.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S4",
+            "requirement": "Hosted Supabase/PostgREST login/request/owner configuration, actual timer/pre-BEGIN/disconnect enforcement and production behavior remain unobserved.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Full simultaneous writer/revocation timing/fairness matrix, all row-class permutations and transport/adapter end-to-end qualification remain incomplete.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Canonical bootstrap order and synthetic platform seams are authored from whole pinned files; no successful bootstrap is claimed.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "No external reviewer acceptance or execution eligibility is inferred; both schedules and existing holds unchanged.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          }
+        ]
+      },
+      "execution": "NOT_RUN",
+      "sourceCommit": "3ddc31968bdca01be19ba1d7fdd65f2ffa3ccfdb",
+      "sourceTree": "edffa5c578e15d60006172c9fd09e1196f88fddf",
+      "status": "HISTORICAL_3DDC_INVENTORY_DOC80_OVERRIDES_DEFECTIVE_CASES"
+    },
+    "priceAudienceCorrection": {
+      "id": "EARLY_ACCESS_PRICE_AUDIENCE",
+      "status": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+      "predecessorSource": "3ddc31968bdca01be19ba1d7fdd65f2ffa3ccfdb",
+      "predecessorRecords": "792f7547f2dbdc8e8f56d9ce071bf3429f70fb92",
+      "coordinatorContinuation": "d4ccff115ade964379f9ad4e94ae77c34fe28ccf",
+      "canonicalAuthority": {
+        "originalCommit": "500bc88497de4698faf5a92d4e65ee0e58a8b7e6",
+        "namedConstant": "EARLY_ACCESS_RETAIL_PRICE_AUDIENCE",
+        "audience": "member",
+        "sourceVersion": "early-access-retail/2026-08-20",
+        "admission": "Canonical member pricing viewer retains precedence; only an actual Early Access session receives the named retail grant. Candidate locked private identities and accepted decision audience allowlist are independently required.",
+        "distinction": "The separate legacy Early Access catalog audience private_early_access is not the assisted-order master-offerings price authority.",
+        "provenance": [
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/research/master-offerings/early-access-retail-pricing.ts",
+            "gitBlob": "e27649799cfe2ce01cae6986b4132504161b09f1",
+            "rawSha256": "d944c93d0c7cd3f71e5efe5211fe94c25425dfc62ce8c3397158e9f84ce8e9cb",
+            "bytes": 5567
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/research/master-offerings/member-pricing-viewer.ts",
+            "gitBlob": "450c7dd188f03548e9e69e66e418c865d73a5fc5",
+            "rawSha256": "8105b937ede49625bdd28bb14c1817ccef8baaf7ac09b5f76cd72f38a5628312",
+            "bytes": 3226
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/index.ts",
+            "gitBlob": "d27a3da9221fe9ce0c7b992021500859ce7e6e34",
+            "rawSha256": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb",
+            "bytes": 75201
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/research/assisted-order/express.ts",
+            "gitBlob": "29215125e54d10e7c4c10c5afe73261e50e0c4ec",
+            "rawSha256": "0e0f93fe85f9c2a532c305be24ed08ceb1834806fcece33c78d8ba6d6dcc04ac",
+            "bytes": 10641
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/research/assisted-order/production-deps.ts",
+            "gitBlob": "0aee29e96481c7aa7a036e15b129b8b8c3487077",
+            "rawSha256": "b1d1ae1ce29bfe830fd386d063aaac40d918643cfd9dc6980b61cd70303151e3",
+            "bytes": 9342
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/research/assisted-order/production-catalog.ts",
+            "gitBlob": "82f5d2c1d7c1c7d90b2fa798cad7b8c484a7867d",
+            "rawSha256": "d13240f48cc8755c7cc9a72942453f4824e778b63690d973c75002bb41d97aa3",
+            "bytes": 21610
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/research/master-offerings/composition.ts",
+            "gitBlob": "82bccaac207a6bec152276985974ba0702b274a4",
+            "rawSha256": "e931efee2ed38a005b42e3eaf699f85fc4a659f2397b228051cbd6ca5764e80e",
+            "bytes": 8914
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/research/master-offerings/price-authority.ts",
+            "gitBlob": "95ad8f7b3db4ae40e2414e0e0e9ca8899fec8ac2",
+            "rawSha256": "7f43270d50ae6bed46df9be663a07f6d57872641767776abc21a5741db23015e",
+            "bytes": 10233
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "server/research/pricing/authoritative-price-resolver.ts",
+            "gitBlob": "80d9b5ee43de9e8ab2101d59cb623d2ddb492b02",
+            "rawSha256": "1f013207ea4217d51d56ba151d224c4434cf0008e74380b2b77659303c06d06a",
+            "bytes": 12740
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "supabase/migrations/20260726143000_research_product_control_center.sql",
+            "gitBlob": "ac8099d8d507a28e901b2adb674a2acec808b918",
+            "rawSha256": "b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203",
+            "bytes": 35781
+          },
+          {
+            "commit": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+            "path": "docs/health-launch/quick-order-20261005/DOC71_TRANSACTION_DESIGN_DELTA_20261009.md",
+            "gitBlob": "fe50e011e0135e206e1dca8b7205341bcb5757e2",
+            "rawSha256": "0c5c17e0a370d440738a2cfc469b1d23feedf4b5e9edb40f43764750aa98c12f",
+            "bytes": 128858
+          }
+        ]
+      },
+      "changedSourcePaths": [
+        "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+        "supabase/verification/research_health_quick_order_local.mjs"
+      ],
+      "definitionSha256": "0a475814bc7e0819d6fed86952d7250d85fc1836db6ad42e730df353073b41b1",
+      "previousDefinitionSha256": "90551d4383010573336f46d21b2cfc22b3f5d2e774bd17d35adf61cacc5b1eec",
+      "currentnessDefinitionUnchanged": "6c6b27b410f5a32e1fd19288c82e7d79434a1e74e7fffe1997c00111e40f113b",
+      "companionFingerprints": "UNCHANGED_QUERIES_CAPTURE_PG_GET_FUNCTIONDEF",
+      "coverage": {
+        "path": "supabase/verification/research_health_quick_order_local.mjs",
+        "cases": [
+          {
+            "id": "TX05-EA-member-positive",
+            "positiveControl": "Admitted EA and member requests select the valid member price.id/amount while a valid earlier/lower-ID retail decoy is present and both audiences are allowlisted.",
+            "negativeDiscriminator": "The earlier unsupported EA mapping cannot satisfy the priced EA snapshot; generic any-audience selection yields ambiguity or the wrong canonical row.",
+            "assertions": "Five effects per new request, same estimate across distinct actors, actual selected audience member, price.id, amount and independently reconstructed typed sourceVersion.",
+            "stage": "S3"
+          },
+          {
+            "id": "TX05-EA-allowlist-excluded",
+            "positiveControl": "The same activated graph accepts truthful unpriced submission after the refused attempt, reusing the unused actor/key.",
+            "negativeControl": "Valid approved member row exists but the separately hashed decision permits only retail; priced EA snapshot refuses at price comparison.",
+            "expectedRefusal": "55000 / Quick Order price changed / DEFINITE_REFUSAL; zero effects and no retained actor/key.",
+            "stage": "S3"
+          },
+          {
+            "id": "TX05-EA-nonmember-refused",
+            "positiveControl": "A truthful unpriced retry using the same unused key succeeds on the activated retail-only graph.",
+            "negativeControl": "Valid approved retail row exists and both member/retail are allowlisted; retail cannot substitute for the canonical member grant.",
+            "expectedRefusal": "55000 / Quick Order price changed / DEFINITE_REFUSAL; zero effects and no retained actor/key.",
+            "stage": "S3"
+          },
+          {
+            "id": "TX05-EA-private-identity",
+            "positiveControl": "Correctly bound private EA identity commits the canonical priced request.",
+            "negativeControl": "Syntactically valid different EA actor/customer with matching private context actor field still fails the actual locked customer/session binding.",
+            "expectedRefusal": "55000 / Quick Order eligibility changed / DEFINITE_REFUSAL; zero effects and no retained actor/key.",
+            "stage": "S3"
+          }
+        ],
+        "execution": "NOT_RUN"
+      },
+      "fixedSharedBindings": "UNCHANGED_PREDECESSOR_ONLY_ACYCLIC",
+      "policyChanged": false,
+      "sourceAcceptance": "PENDING",
+      "execution": "NOT_RUN",
+      "publication": "LOCAL_ONLY"
+    },
+    "qualityClosureFixtureIncrement": {
+      "kind": "CANONICAL_QUALITY_COMMAND_AND_PARENT_CLOSURE_FIXTURE_SOURCE",
+      "predecessorSource": "ea3f6fbf1159af254382f4f7ddfbb5df3f834793",
+      "predecessorRecords": "0d4309c0159db7bee96e3989e882528efec60de3",
+      "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
+      "changedSourcePaths": [
+        "supabase/verification/research_health_quick_order_currentness_local.mjs"
+      ],
+      "candidateBodies": "UNCHANGED_FROM_EA3F6FB",
+      "canonicalPriceCorrection": "PRESERVED_PENDING_ACCEPTANCE",
+      "coverage": {
+        "record": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "caseIds": [
+          "QC01-document-confirm-material-update",
+          "QC02-stale-version-refusal-leaves-no-effect",
+          "QC03-post-upsert-readiness-whole-statement-atomicity",
+          "QC04-nine-test-updates-plus-document-exact-ten",
+          "QC05-quality-replay-no-second-epoch",
+          "QC06-document-withdraw-material-update",
+          "QC07-document-cancel-material-update",
+          "QC08-document-reject-material-update",
+          "QC09-document-delete-canonical-refusal",
+          "QC10-test-delete-canonical-refusal",
+          "QC11-lot-cascade-canonical-refusal",
+          "MP-document-mixed-in-out-both-orders",
+          "MP-document-visible-parent-out",
+          "MP-document-in-first-must-not-short-circuit",
+          "MP-document-unresolved-first-must-not-short-circuit",
+          "MP-test-mixed-in-out-both-orders",
+          "MP-test-visible-parent-out",
+          "MP-test-in-first-must-not-short-circuit",
+          "MP-test-unresolved-first-must-not-short-circuit",
+          "MP-sealed-document-precedes-missing-live-parent",
+          "CR01-new-revision-has-own-closure-old-seal-immutable",
+          "CR02-prior-revision-writer-is-out-for-current-head",
+          "CR03-current-revision-writer-invalidates",
+          "CR04-old-revision-cannot-reactivate-current-head",
+          "CR05-unsealed-new-document-and-test-resolve-visible-selected-parent",
+          "CR06-changed-lot-document-test-closure-refuses-reactivation",
+          "CR07-republishing-same-revision-cannot-reseal-new-closure",
+          "CR08-new-revision-captures-complete-child-identities-without-mutation"
+        ],
+        "sourceDependencies": [
+          "supabase/research-membership.sql",
+          "supabase/research-members.sql",
+          "supabase/research-catalog.sql",
+          "supabase/research-inventory-lots.sql",
+          "supabase/research-products-diagnostics.sql",
+          "supabase/migrations/20260726143000_research_product_control_center.sql",
+          "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+          "supabase/research-inventory-reservation-commands.sql",
+          "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+          "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+          "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+          "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+          "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+          "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+          "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+          "supabase/research-private-early-access-sessions.sql",
+          "supabase/research-required-input-readiness.sql",
+          "supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql"
+        ],
+        "remaining": [
+          {
+            "stage": "S2",
+            "requirement": "Future accepted source/receipt and exact candidate with legitimately resolved schema descriptor; accepted implemented-S/census, immutable input/profile/connection proofs, separately approved execution authority, reviewed driver and explicit future dispatch. None supplied or bypassed here.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "No pinned reviewed quality command deletes documents/tests. Canonical BEFORE guards reject direct child DELETE and real lot cascade; immutable quality_events NO ACTION FK additionally retains command-created documents. Therefore positive QO AFTER DELETE and successful real child cascade coverage are unfilled, not replaced by the three canonical refusals.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Visible NULL-product/NULL-variant legacy lot parent fixture is unfilled: supabase/research-inventory-reservation-commands.sql:300-303 refuses either NULL identity with inventory lot identity is incomplete, and its BEFORE INSERT/UPDATE(product_id,variant_id,sku) trigger at327-329 applies to supported current writes. An actual preexisting legacy row would need a separately accepted provenance/bootstrap binding, not a weakened guard. Actual visible OUT parents are covered; a JSON NULL operand is not actual visible-NULL-parent evidence.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Sealed-document/missing-parent control models an OLD resolver operand; it does not establish a successful actual cascade.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S4",
+            "requirement": "Proposed synthetic upload metadata is format/lifecycle input only; no object was uploaded, inspected or confirmed in hosted storage. Synthetic confirm_upload is a canonical command-state control, not storage proof.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Expiry/disconnect timing and other prior qualification measurements remain pending. Existing future driver, suite and proof holds are unchanged.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Material session/legal U/D and price DELETE still reach canonical BEFORE refusal, not Quick Order AFTER guards. The new real quality-command UPDATE controls supersede only the prior missing-quality-UPDATE carry; quality DELETE remains unfilled.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "TRUNCATE CASCADE controls prove guard-family refusal per requested command target; FK cascades still prevent attribution to each individual trigger firing. The exact 47-trigger inventory is separate source-authored coverage.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Historical CLI remains held and does not dispatch the future suite; exact accepted external proof bytes and a reviewed dispatch increment remain required.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S4",
+            "requirement": "Disposable postgres login/request/function-owner identities coincide in the authored driver. Future OID assertions are not Supabase/PostgREST topology evidence or observed deployment/enforcement.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S3",
+            "requirement": "Per-case database lifecycle bounds are authored; total suite command ceilings/runtime/schedule feasibility, transaction-origin budget expiry and disconnect/rollback behavior remain unmeasured.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          },
+          {
+            "stage": "S4",
+            "requirement": "Prior C1-12 and 6+16+14 holds remain; source correctness and qualification readiness are not asserted. No SQL, installation, verifier execution, push or deployment occurred.",
+            "status": "HELD_NOT_PROVEN",
+            "execution": "NOT_RUN"
+          }
+        ],
+        "historicalCaseIds": [
+          "QC01-document-confirm-material-update",
+          "QC02-stale-version-before-mutation",
+          "QC03-ninth-test-failure-atomic-rollback",
+          "QC04-nine-test-updates-plus-document-exact-ten",
+          "QC05-quality-replay-no-second-epoch",
+          "QC06-document-withdraw-material-update",
+          "QC07-document-cancel-material-update",
+          "QC08-document-reject-material-update",
+          "QC09-document-delete-canonical-refusal",
+          "QC10-test-delete-canonical-refusal",
+          "QC11-lot-cascade-canonical-refusal",
+          "MP-document-mixed-in-out-both-orders",
+          "MP-document-visible-parent-out",
+          "MP-document-in-first-must-not-short-circuit",
+          "MP-document-unresolved-first-must-not-short-circuit",
+          "MP-test-mixed-in-out-both-orders",
+          "MP-test-visible-parent-out",
+          "MP-test-in-first-must-not-short-circuit",
+          "MP-test-unresolved-first-must-not-short-circuit",
+          "MP-sealed-document-precedes-missing-live-parent",
+          "CR01-new-revision-has-own-closure-old-seal-immutable",
+          "CR02-prior-revision-writer-is-out-for-current-head",
+          "CR03-current-revision-writer-invalidates",
+          "CR04-old-revision-cannot-reactivate-current-head",
+          "CR05-unsealed-new-document-and-test-resolve-visible-selected-parent",
+          "CR06-changed-lot-document-test-closure-refuses-reactivation",
+          "CR07-republishing-same-revision-cannot-reseal-new-closure",
+          "CR08-new-revision-captures-complete-child-identities-without-mutation"
+        ]
+      },
+      "sourceAcceptance": "PENDING",
+      "execution": "NOT_RUN",
+      "publication": "LOCAL_ONLY",
+      "newCliDispatch": false,
+      "status": "HISTORICAL_9C1_INVENTORY_DOC80_PRECISION_OVERRIDES",
+      "precision": "QC02 asserts stale-version refusal with no committed effect; QC03 asserts whole-statement atomicity after readiness refusal. Neither asserts internal check order or observes intermediate epoch changes."
+    },
+    "builtinInventoryMethod": "Lexical pg_catalog identifier inventory in named SQL/companion source; includes catalog relations/types/functions. SQL grammar constructs and extensions.digest are separate. Source reading only, not a runtime dependency measurement.",
+    "runtimeRefusals": [
+      "Approved-limits anchor absent: all material source writes, publish, revoke and activation refuse. This is a runtime admission refusal, not an installation predicate."
+    ],
+    "approvedLimitsCanonicality": "The adapter enforces its canonical carrier serialization. Writer/admin SQL verifies the exact supplied setting bytes against the owner-controlled digest; it does not independently re-encode a canonical serialization. The anchor is the SHA-256 of the exact approved_limits value, unrelated to configuration_raw.",
+    "doc80Correction": {
+      "review": "1b68cdab05658cf3e7a6aeaceabb6fd5ae8d5c80",
+      "reviewedSource": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
+      "reviewDisposition": "CORRECTIONS_REQUIRED",
+      "sourceCommit": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+      "sourceTree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+      "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+      "files": [
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+          "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+          "bytes": 226183,
+          "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a"
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+          "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+          "bytes": 17174,
+          "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803"
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+          "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+          "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+          "bytes": 16996,
+          "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675"
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+          "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+          "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+          "bytes": 27232,
+          "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928"
+        },
+        {
+          "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+          "rawSha256": "2665acf43a800935db407f872dbc0fe0dcdfbedc74c7f869796511c02b8a4b7e",
+          "sha256lf": "2665acf43a800935db407f872dbc0fe0dcdfbedc74c7f869796511c02b8a4b7e",
+          "bytes": 210310,
+          "gitBlob": "120449d62dbc44131d3563868b522476a021a2b1"
+        }
+      ],
+      "status": "AUTHORED_PENDING_INDEPENDENT_REVIEW",
+      "familyEffect": "SOURCE_UNCHANGED_CURRENTNESS_DEPENDENCY_STILL_UNSEALED",
+      "correctionMap": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "acceptanceEvidence": [],
+      "heldControls": [
+        {
+          "id": "ALL-FUTURE-EXECUTION",
+          "stage": "S3",
+          "reason": "Source acceptance, exact receipt/driver review, real implemented-S/census and both descriptor seals, exact six proof byte bindings, and fresh execution authority remain absent. All suites NOT RUN; historical entry intentionally refuses."
+        },
+        {
+          "id": "CS10-PRODUCT-IN-INSERT",
+          "stage": "S2",
+          "reason": "Publication requires selected product to exist; inserting its same key would hit PK, not demonstrate a guard. No absent selected product or forged publication created."
+        },
+        {
+          "id": "CS10-CANONICAL-BEFORE-GUARDS",
+          "stage": "S2",
+          "reason": "Price DELETE; session/legal U/D; quality direct U/D cannot establish positive AFTER-guard behavior through pinned canonical guards. Named P0001 refusals preserved. Existing real quality RPCs cover reachable quality writes; no guard disabled."
+        },
+        {
+          "id": "CS10-GLOBAL-NO-OUT",
+          "stage": "S2",
+          "reason": "Session/legal relations are global predicates; there is no genuine membership OUT branch. Unrelated alias-free insert is a projection bypass, not OUT membership."
+        },
+        {
+          "id": "CS18-INDIVIDUAL-FORMAT-CHECKS",
+          "stage": "S2",
+          "reason": "Source CHECK corrections are companion authored; direct boundary fixtures for each domain/country/offer/lot-parent/document-parent field are not separately authored."
+        },
+        {
+          "id": "CS20-ISOLATED-NEW-FK-MUTATIONS",
+          "stage": "S2",
+          "reason": "New FK predicates are companion source changes; no individually isolated field mutations are claimed. Fingerprint refusal does not prove later predicate dispatch."
+        },
+        {
+          "id": "CS22-REAL-INTAKE-REMNANT",
+          "stage": "S2",
+          "reason": "No accepted dependency-bound intake install exists for a real partial rollback remnant; no stub function or forged accepted seal substitutes for it."
+        },
+        {
+          "id": "CS27-CS32",
+          "stage": "S3",
+          "reason": "Preserve Doc80 later-stage limits: ms/s normalized effective/catalog units; holder idle-timer race; quadratic derive bounds; transaction-only remaining gate budget; JSON float/GUC semantics; alternate accepted server versions. Authored controls are not measured proof."
+        },
+        {
+          "id": "SUBSCRIPTION-DRIVER-CONFIG",
+          "stage": "S3",
+          "reason": "Real subscription fixture requires reviewed disposable logical-WAL configuration and local Unix-socket publisher connectivity; no slot or apply worker is requested. Current historical entry cannot supply these."
+        },
+        {
+          "id": "CS33-CS36",
+          "stage": "S4",
+          "reason": "Profile validity/revocation, maintenance NOWAIT locks, single identity anchor and separate installation anchor workflow remain named operating prerequisites."
+        },
+        {
+          "id": "INTAKE-COMMENT-RESEAL",
+          "stage": "S2",
+          "reason": "CS17 intake comments and actual dependent intake reseal follow accepted exact currentness; intake files untouched."
+        }
+      ],
+      "laterStageConditions": [
+        {
+          "id": "CS-27",
+          "stage": "S3",
+          "title": "Effective and catalog timers accept only ms and s",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "Record the unit and spelling constraint in the profile contract and runbook, or extend the parser to exact conversion of all GUC units with controls."
+        },
+        {
+          "id": "CS-28",
+          "stage": "S3",
+          "title": "Holder sessions race the 1 s idle timeout",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "Keep holders active with pg_sleep (as at mjs:841), or open them before the role settings."
+        },
+        {
+          "id": "CS-29",
+          "stage": "S3",
+          "title": "Derive is quadratic at the parse bounds while all locks are held",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "Measure at qualification; optionally precompute the lookup sets in one pass without changing semantics."
+        },
+        {
+          "id": "CS-30",
+          "stage": "S3",
+          "title": "Remainder check at the gate covers only the transaction budget",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "Record 57014 at the gate as an expected refusal class and add an S3 control."
+        },
+        {
+          "id": "CS-31",
+          "stage": "S3",
+          "title": "jsonb projection comparison is GUC-sensitive for float columns (no current float columns)",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "Carry a condition that any float column in a pinned projection requires typed EXCEPT ALL comparison or a pinned extra_float_digits."
+        },
+        {
+          "id": "CS-32",
+          "stage": "S3",
+          "title": "Version-refusal control needs an alternate server; dead branch; cheap-path seal format-only",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "Register an alternate-version disposable-server control at S3, remove the dead branch, and document that the runtime seal identity is format plus fingerprint only."
+        },
+        {
+          "id": "CS-33",
+          "stage": "S4",
+          "title": "Emergency revocation depends on profile validity, integrity and the absence of foreign gate holders",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "At S4, qualify the revocation route's effective settings and identity, record the app-disable precedence decision, and enumerate foreign holders of (1380471107,1)."
+        },
+        {
+          "id": "CS-34",
+          "stage": "S4",
+          "title": "Publish and activation NOWAIT refuse during autovacuum, ANALYZE or CREATE INDEX CONCURRENTLY on any IN table",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "List these maintenance operations in the activation runbook as refusal sources; retry manually and never inside the body."
+        },
+        {
+          "id": "CS-35",
+          "stage": "S4",
+          "title": "One anchor and a single-identity carrier admit only one writer/admin identity tuple",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "Record now as a named limit and a hard gate at S4 (a shared identity tuple, or per-operation anchor rotation by the owner), or later amend the anchor to a set of per-route carrier digests."
+        },
+        {
+          "id": "CS-36",
+          "stage": "S4",
+          "title": "Anchor cannot be supplied inside the install transaction",
+          "status": "HELD_LATER_STAGE_NOT_PROVEN",
+          "requirement": "Add an S4 runbook condition (a write-freeze window), or a reviewed amendment that binds the anchor atomically with installation."
+        }
+      ],
+      "execution": "NOT_RUN",
+      "publication": "LOCAL_ONLY"
+    }
+  }
+}

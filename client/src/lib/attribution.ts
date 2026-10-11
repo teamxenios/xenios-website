@@ -1,4 +1,4 @@
-import { isCarePath, isHealthGatewayPath } from "@shared/care/paths";
+import { isCarePath, isHealthGatewayPath, isHealthIntakePath } from "@shared/care/paths";
 import {
   MARKETING_ATTRIBUTION_UTM_FIELDS,
   sanitizeMarketingAttributionPath,
@@ -46,6 +46,7 @@ function isSensitiveAttributionLocation(pathname: string, hash: string): boolean
     normalized.startsWith("/admin/") ||
     isCarePath(pathname) ||
     isHealthGatewayPath(pathname) ||
+    isHealthIntakePath(pathname) ||
     isRecoveryHash(hash)
   );
 }

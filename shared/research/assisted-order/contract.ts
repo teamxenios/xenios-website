@@ -5,6 +5,8 @@
  * raw identity-document, or payment-proof fields.
  */
 
+import type { QuickOrderAdminProjection } from "./quick-order";
+
 export const ASSISTED_ORDER_SOURCE = "early_access_manual_order_bridge" as const;
 export const ASSISTED_ORDER_CURRENCY = "USD" as const;
 export const ASSISTED_ORDER_MAX_LINES = 200;
@@ -393,6 +395,8 @@ export type AssistedOrderAdminDetail = Readonly<{
     | "captured_unmatched"
     | "matched_manual"
     | "invalid_ignored";
+  /** Undefined is a legacy producer; the enriched reader must return null or evidence. */
+  quickOrder?: QuickOrderAdminProjection | null;
   timeline: readonly AssistedOrderStatusEventView[];
   documents: readonly AssistedOrderDocumentView[];
   createdAt: string;

@@ -14,7 +14,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocationProperty } from "wouter/use-browser-location";
-import { normalizeCarePath, isHealthGatewayPath } from "@shared/care/paths";
+import { normalizeCarePath, isHealthGatewayPath, isHealthIntakePath } from "@shared/care/paths";
 import { isResearchPath } from "@shared/research/paths";
 import { isRecommendationPath } from "@shared/research/referral-v1";
 import { isRecoveryErrorHash, isRecoveryHash } from "@shared/research/recovery";
@@ -53,6 +53,7 @@ export function isPwaInstallLocationAllowed(pathname: string, hash = ""): boolea
     normalized === "/care" ||
     normalized.startsWith("/care/") ||
     isHealthGatewayPath(pathname) ||
+    isHealthIntakePath(pathname) ||
     isRecoveryHash(hash) ||
     isRecoveryErrorHash(hash)
   ) return false;

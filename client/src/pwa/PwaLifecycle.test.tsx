@@ -67,11 +67,23 @@ describe("PWA sensitive-workflow install policy", () => {
   it.each([
     ["/about", "", true],
     ["/product/", "", true],
+    ["/health/quick-order-other", "", true],
+    ["/health/quick-ordering", "", true],
     ["/RESEARCH/member", "", false],
     ["/%72esearch/member", "", false],
     ["/care/how-it-works", "", false],
     ["/C%61RE", "", false],
     ["/health", "", false],
+    ["/health/quick-order", "", false],
+    ["/health/quick-order/", "", false],
+    ["/HEALTH/QUICK-ORDER", "", false],
+    ["/%68ealth/%71uick-order", "", false],
+    ["/health/quick-order?source=health#details", "", false],
+    ["/health/quick-order", "#details", false],
+    ["/health/quick-order%2F", "", false],
+    ["/health//quick-order", "", false],
+    ["/health/./quick-order", "", false],
+    ["/health/%ZZquick-order", "", false],
     ["/r/r1_opaque", "", false],
     ["/%61dmin/users", "", false],
     ["/checkout/review", "", false],
@@ -90,14 +102,23 @@ describe("PWA sensitive-workflow install policy", () => {
     expect(renderToString(<PwaLifecycle />)).toBe("");
   });
 
-  it("always prevents native auto-install and retains the event from blocked to public", () => {
-    const host = renderLifecycle("/research/reset-password");
+  it.each([
+    "/research/reset-password",
+    "/health/quick-order",
+    "/HEALTH/%71uick-order/",
+  ])("prevents native auto-install on %s and retains the event across public and intake navigation", (path) => {
+    const host = renderLifecycle(path);
     const { event, prompt } = dispatchInstall();
     expect(event.defaultPrevented).toBe(true);
     expect(button(host, "Install")).toBeNull();
     act(() => window.history.pushState(null, "", "/about"));
     expect(button(host, "Install")).not.toBeNull();
     expect(prompt).not.toHaveBeenCalled();
+    act(() => window.history.pushState(null, "", "/health/quick-order"));
+    expect(button(host, "Install")).toBeNull();
+    expect(prompt).not.toHaveBeenCalled();
+    act(() => window.history.replaceState(null, "", "/product"));
+    expect(button(host, "Install")).not.toBeNull();
     act(() => button(host, "Install")!.click());
     expect(prompt).toHaveBeenCalledOnce();
   });
@@ -127,11 +148,11 @@ describe("PWA sensitive-workflow install policy", () => {
     expect(button(host, "Install")).not.toBeNull();
   });
 
-  it("rechecks live location on click and preserves a prompt refused by the race guard", () => {
+  it.each(["/care", "/health/quick-order", "/HEALTH/%71uick-order/"])("rechecks live location on click to %s and preserves a prompt refused by the race guard", (path) => {
     const host = renderLifecycle("/about");
     const { prompt } = dispatchInstall();
     const install = button(host, "Install")!;
-    install.addEventListener("click", () => window.history.pushState(null, "", "/care"), { capture: true, once: true });
+    install.addEventListener("click", () => window.history.pushState(null, "", path), { capture: true, once: true });
     act(() => install.click());
     expect(prompt).not.toHaveBeenCalled();
     expect(button(host, "Install")).toBeNull();
@@ -141,18 +162,23 @@ describe("PWA sensitive-workflow install policy", () => {
     expect(prompt).toHaveBeenCalledOnce();
   });
 
-  it("keeps iOS eligibility while dynamically hiding it on sensitive paths", () => {
+  it.each([
+    ["/health", "/care/eligibility"],
+    ["/health/quick-order", "/HEALTH/%71uick-order/"],
+  ])("keeps iOS eligibility while dynamically hiding it on %s and %s", (initialPath, nextPath) => {
     setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) Version/17.0 Mobile Safari/604.1");
-    const host = renderLifecycle("/health");
+    const host = renderLifecycle(initialPath);
     expect(host.textContent).not.toContain("Add to Home Screen");
     act(() => window.history.pushState(null, "", "/about"));
     expect(host.textContent).toContain("Add to Home Screen");
-    act(() => window.history.replaceState(null, "", "/care/eligibility"));
+    act(() => window.history.replaceState(null, "", nextPath));
     expect(host.textContent).not.toContain("Add to Home Screen");
+    act(() => window.history.pushState(null, "", "/product"));
+    expect(host.textContent).toContain("Add to Home Screen");
   });
 
-  it("shows update notice independently on a sensitive route without auto-applying it", () => {
-    const host = renderLifecycle("/research/member/catalog");
+  it.each(["/research/member/catalog", "/health/quick-order"])("shows update notice independently on %s without auto-applying it", (path) => {
+    const host = renderLifecycle(path);
     const registration = { waiting: { postMessage: vi.fn() } } as unknown as ServiceWorkerRegistration;
     act(() => window.dispatchEvent(new CustomEvent("xenios:pwa-update-available", { detail: { registration } })));
     expect(host.textContent).toContain("A new version of xenios is ready.");

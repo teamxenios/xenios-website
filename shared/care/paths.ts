@@ -47,6 +47,11 @@ export function isCarePath(value: string): boolean {
   return normalized === "/care" || normalized?.startsWith("/care/") === true;
 }
 
+/** Exact sensitive intake namespace, distinct from the public gateway. */
+export function isHealthIntakePath(value: string): boolean {
+  return normalizeCarePath(value) === "/health/quick-order";
+}
+
 /** The exact public umbrella gateway for the Care and Research pathways. */
 export function isHealthGatewayPath(value: string): boolean {
   return normalizeCarePath(value) === "/health";

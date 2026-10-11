@@ -17,6 +17,7 @@ import type {
   AssistedOrderStoredSubmission,
 } from "./ports";
 import { AssistedOrderConflictError } from "./service";
+import { QUICK_ORDER_ADMIN_DETAIL_RPC, decodeQuickOrderAdminEnvelope } from "./quick-order-repository";
 
 export type SupabaseRpcResponse = Readonly<{
   data: unknown;
@@ -416,13 +417,18 @@ export class SupabaseAssistedOrderRepository implements AssistedOrderRepository 
   }
 
   public async getAdmin(requestId: string): Promise<AssistedOrderAdminDetail | null> {
-    const response = await this.client.rpc("research_assisted_order_admin_get", {
+    const response = await this.client.rpc(QUICK_ORDER_ADMIN_DETAIL_RPC, {
       p_request_id: requestId,
     });
     if (response.error) {
-      fail(response, "research_assisted_order_admin_get");
+      fail(response, QUICK_ORDER_ADMIN_DETAIL_RPC);
     }
-    return response.data === null ? null : decodeAdminDetail(response.data);
+    const envelope = decodeQuickOrderAdminEnvelope(response.data, requestId);
+    if (envelope === null) return null;
+    return Object.freeze({
+      ...decodeAdminDetail(envelope.detail),
+      quickOrder: envelope.quickOrder,
+    });
   }
 
   public async listAdmin(query: {

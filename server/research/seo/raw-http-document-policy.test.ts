@@ -275,6 +275,35 @@ describe("raw HTTP route authority", () => {
     });
   });
 
+  it.each([
+    "/health/quick-order",
+    "/HEALTH/QUICK-ORDER/",
+    "/%68ealth/quick-%6frder",
+    "/health/quick-order?ref=SYNTHETIC-QO#review",
+  ])("classifies only the normalized Quick Order intake as a private document: %s", (target) => {
+    expect(defaultResolver.resolve(target)).toMatchObject({
+      status: 200,
+      routeKind: "private",
+      reason: "registered_private_document",
+      indexable: false,
+      robots: RAW_HTTP_NOINDEX_ROBOTS,
+      canonicalPath: null,
+      canonicalUrl: null,
+    });
+    expect(rawHttpStructuredDataForPath(target)).toEqual([]);
+    expect(sitemapPaths).not.toContain("/health/quick-order");
+  });
+
+  it.each([
+    "/health/quick-orders", "/health/quick-order/status", "/health/quick-ordering",
+    "/health%2Fquick-order", "/health//quick-order", "/health/%2e/quick-order",
+  ])("does not promote a Quick Order neighbor or ambiguous path to a served private document: %s", (target) => {
+    expect(defaultResolver.resolve(target)).toMatchObject({
+      status: 404, indexable: false, robots: RAW_HTTP_NOINDEX_ROBOTS,
+      canonicalPath: null, canonicalUrl: null,
+    });
+  });
+
   it("keeps the retired Research quality aliases noindex behind clarity redirects", () => {
     const qualityMatrix = [
       PUBLIC_QUALITY_ROUTES.quality,
@@ -634,6 +663,23 @@ describe("raw HTTP HTML and schema policy", () => {
       expect(response.html, requestTarget).not.toContain('rel="alternate"');
       expect(schemaIdentities(response.html), requestTarget).toEqual([]);
     }
+  });
+
+  it("strips inherited public SEO from the disabled intake document without reflecting its referral query", () => {
+    const response = buildRawHttpDocumentResponse({
+      requestTarget: "/health/quick-order?ref=SYNTHETIC-QO&utm_source=partner#review",
+      templateHtml: inheritedTemplate,
+      structuredData: everyPublicSchema,
+    });
+    expect(response.status).toBe(200);
+    expect(response.headers["X-Robots-Tag"]).toBe(RAW_HTTP_NOINDEX_ROBOTS);
+    expect(count(response.html, 'data-raw-http-policy="robots"')).toBe(1);
+    expect(schemaIdentities(response.html)).toEqual([]);
+    expect(response.html).not.toMatch(/application\/ld\+json|rel="canonical"|property="og:|rel="alternate"|SYNTHETIC-QO|utm_source/);
+    expect(response.html).toContain('rel="stylesheet"');
+    expect(response.html).toContain('type="module"');
+    // This exercises the response builder, not static/Vite serving or refresh.
+    expect(defaultResolver.resolve("/")).toMatchObject({status: 200, indexable: true, routeKind: "public"});
   });
 
   it("allows only exact route-owned singleton schema and drops duplicate identities", () => {

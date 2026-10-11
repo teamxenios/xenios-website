@@ -243,3 +243,59 @@ describe("positive control and event hygiene", () => {
     expect(originalPush).toHaveBeenCalledWith({ from: "about" }, "", "/concepts");
   });
 });
+
+describe("Quick Order document privacy", () => {
+  it.each([
+    "/health/quick-order",
+    "/HEALTH/QUICK-ORDER/",
+    "/%68ealth/quick-%6frder",
+  ])("never initializes a pixel or emits an event on normalized intake %s", async (path) => {
+    setLocation(`${path}?ref=SYNTHETIC-QO`, "#review");
+    const t = await freshTracking();
+    await t.initTracking();
+    expect(pixelScripts()).toHaveLength(0);
+    expect(window.fbq).toBeUndefined();
+    const fbq = vi.fn();
+    window.fbq = fbq;
+    t.track("Lead");
+    t.trackPageView();
+    expect(fbq).not.toHaveBeenCalled();
+  });
+
+  it("rechecks intake privacy after a pending configuration fetch", async () => {
+    let resolveConfig!: (value: any) => void;
+    cfg.value = new Promise((resolve) => { resolveConfig = resolve; }) as any;
+    try {
+      setLocation("/about");
+      const t = await freshTracking();
+      const pending = t.initTracking();
+      setLocation("/health/quick-order?ref=SYNTHETIC-QO");
+      resolveConfig({ metaPixelId: "PIXEL123" });
+      await pending;
+      expect(pixelScripts()).toHaveLength(0);
+      expect(window.fbq).toBeUndefined();
+    } finally {
+      cfg.value = { metaPixelId: "PIXEL123" };
+    }
+  });
+
+  it.each(["pushState", "replaceState"] as const)("crosses public/intake documents before %s exposes the target", async (method) => {
+    const t = await freshTracking();
+    const originalPush = vi.fn(), originalReplace = vi.fn();
+    const assign = vi.fn(), replace = vi.fn();
+    const fakeWindow = {
+      location: { href: "https://xenios.invalid/about" },
+      history: { pushState: originalPush, replaceState: originalReplace },
+    } as unknown as Window;
+    t.installResearchDocumentBoundary(fakeWindow, { assign, replace });
+    fakeWindow.history[method]({}, "", "/health/quick-order?ref=SYNTHETIC-QO");
+    const navigate = method === "pushState" ? assign : replace;
+    expect(navigate).toHaveBeenCalledWith("https://xenios.invalid/health/quick-order?ref=SYNTHETIC-QO");
+    expect(originalPush).not.toHaveBeenCalled();
+    expect(originalReplace).not.toHaveBeenCalled();
+    expect(t.requiresFullDocumentNavigation("https://xenios.invalid/health/quick-order", "/about")).toBe(true);
+    expect(t.requiresFullDocumentNavigation("https://xenios.invalid/health", "/HEALTH/QUICK-ORDER/")).toBe(false);
+    expect(t.requiresFullDocumentNavigation("https://xenios.invalid/health/quick-order", "/health")).toBe(false);
+    expect(t.requiresFullDocumentNavigation("https://xenios.invalid/about", "/products")).toBe(false);
+  });
+});

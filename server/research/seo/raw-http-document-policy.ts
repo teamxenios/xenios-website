@@ -774,6 +774,7 @@ export function createRawHttpDocumentPolicyResolver(
     addPrivate(route);
   }
 
+  addPrivate("/health/quick-order");
   for (const path of KNOWN_NOINDEX_EXACT_PATHS) addPrivate(path);
   for (const pattern of KNOWN_NOINDEX_PATTERNS) addPrivatePattern(pattern);
 
