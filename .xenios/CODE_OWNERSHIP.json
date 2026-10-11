@@ -3793,9 +3793,9 @@
         "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-10T22:26:00.727Z",
-      "heartbeatAt": "2026-10-11T16:52:37.180Z",
+      "heartbeatAt": "2026-10-11T17:00:21.325Z",
       "authorityCommit": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
       "note": "DOC71 quality-command and parent-closure fixture successor 9c1c92bcb7a514da9b575a291d0abac67c8ba366 / tree d0c676b673df6f9f9d587b543df9c745e31e5d39. Same af843213 exact21 lease; only currentness verifier source changed. SQL families and canonical price mapping unchanged; LOCAL ONLY / NOT RUN / PENDING source acceptance.\n2026-10-11 actual owner handoff of frozen aa857/735 custody for the approved fixed-copy phase only. Full21 paths, session, original claim and source grant retained. Builder source writers stopped. No expiry/crash inference; no automatic reclaim.",
       "copyPhaseHandoff": {
@@ -3843,7 +3843,20 @@
           "path": ".xenios/handoffs/2026-10-11-QUICK-ORDER-FIXED-ASSEMBLY-RETURN-codex-accepted-source-integration-20261005.json",
           "sha256": "4c71ace81ba865150f0bdc4ac402cc454b6720d2c7e984539c9d9e13a02ae946",
           "actuallyAcknowledged": true
-        }
+        },
+        "state": "COMPLETE_WRITING_CUSTODY_HANDED_OFF",
+        "sourcePathsHeld": true
+      },
+      "handedOffAt": "2026-10-11T17:00:21.325Z",
+      "handoff": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-handoff.json",
+      "builderIntegrationHandoff": {
+        "source": "59b22418bf4fb42719c54eb183c738981b37a642",
+        "tree": "bef6618c176cbbb8fe20a5e1740abf345947413a",
+        "at": "2026-10-11T17:00:21.325Z",
+        "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "writingCustodyEnded": true,
+        "nextWriter": "Same integrator only after coordinator collection and explicit activation",
+        "record": "docs/health-launch/quick-order-20261005/B22F_DISABLED_HANDLER_ADMISSION_20261011.md"
       }
     },
     {
@@ -3851,9 +3864,9 @@
       "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
       "revision": 1,
       "session": "codex-health-quick-order-20261005",
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-11T16:52:37.180Z",
-      "heartbeatAt": "2026-10-11T16:52:37.180Z",
+      "heartbeatAt": "2026-10-11T17:00:21.325Z",
       "paths": [
         "server/research/health/quick-order/handler.mjs",
         "server/research/health/quick-order/handler.d.mts",
@@ -3861,7 +3874,18 @@
       ],
       "authorityCommit": "179b5e196c6404f6e9ec998115f646e5fda390e5",
       "scopeNote": "Same builder, supplemental3 only in b22f. Serial source/Git writer plus existing af843 dependent3; all other source held. No execution, push or activation.",
-      "ack": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-ack.json"
+      "ack": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-ack.json",
+      "handedOffAt": "2026-10-11T17:00:21.325Z",
+      "handoff": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-handoff.json",
+      "builderIntegrationHandoff": {
+        "source": "59b22418bf4fb42719c54eb183c738981b37a642",
+        "tree": "bef6618c176cbbb8fe20a5e1740abf345947413a",
+        "at": "2026-10-11T17:00:21.325Z",
+        "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "writingCustodyEnded": true,
+        "nextWriter": "Same integrator only after coordinator collection and explicit activation",
+        "record": "docs/health-launch/quick-order-20261005/B22F_DISABLED_HANDLER_ADMISSION_20261011.md"
+      }
     }
   ],
   "rules": [

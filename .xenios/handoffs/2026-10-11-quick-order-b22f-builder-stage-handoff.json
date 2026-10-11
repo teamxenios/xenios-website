@@ -1,0 +1,740 @@
+{
+  "schemaVersion": 1,
+  "kind": "ACTUAL_BUILDER_SOURCE_COMPLETION_AND_SERIAL_CUSTODY_HANDOFF",
+  "at": "2026-10-11T17:00:21.325Z",
+  "session": "codex-health-quick-order-20261005",
+  "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+  "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+  "revision": 1,
+  "source": "59b22418bf4fb42719c54eb183c738981b37a642",
+  "sourceTree": "bef6618c176cbbb8fe20a5e1740abf345947413a",
+  "parent": "3523eb3da33294f4288058c3a7304ed9790daf28",
+  "base": {
+    "commit": "38b386afdb275c409dfec4aa603be223a8d5e867",
+    "tree": "5d6d30fc695a9960b594983dc676c64e751f4e03",
+    "source": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+    "sourceTree": "006ea7f24bbc308e58f40f109065d7a22616bf8e"
+  },
+  "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "branch": "codex/accepted-source-integration-20261005",
+  "coordinatorAuthority": "179b5e196c6404f6e9ec998115f646e5fda390e5",
+  "acknowledgment": {
+    "commit": "3523eb3da33294f4288058c3a7304ed9790daf28",
+    "path": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-ack.json",
+    "sha256": "85ed50626c4102c5a9c8aefb7d05aa6503f5b831c9fe3f19301db5cd75abf948",
+    "actuallyDeliveredToCoordinator": true
+  },
+  "sourceBindings": [
+    {
+      "path": "server/research/health/quick-order/handler.d.mts",
+      "gitBlob": "c66aaf35fdc6bb4a438edb7e7f7dd0e8788db145",
+      "sha256": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf",
+      "bytes": 1479
+    },
+    {
+      "path": "server/research/health/quick-order/handler.mjs",
+      "gitBlob": "fb6cf7acb478f9b15adae7c1d099e5e325ab4952",
+      "sha256": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a",
+      "bytes": 16529
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "gitBlob": "3266ff8475f726037e6b03ddfa434e262432e252",
+      "sha256": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
+      "bytes": 5390
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "gitBlob": "8b2a7b51d6db7cc34ce35e6ec52c5c2c4023fa16",
+      "sha256": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
+      "bytes": 30667
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "gitBlob": "e7c8d9f57aab964f47bf6d305297dc392b621e40",
+      "sha256": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
+      "bytes": 9743
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
+      "sha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+      "bytes": 19984
+    }
+  ],
+  "correctionMap": [
+    {
+      "id": "BI-01",
+      "paths": [
+        "production.ts",
+        "ports.ts"
+      ],
+      "change": "Required root-owned enteredAtMonotonicMsFor(IncomingMessage):number|null, same candidate clock/origin. Read once and validate finite/nonnegative/not future before auth; no performance.now fallback. Request WeakMap retains same authenticated session and admission slot.",
+      "limit": "Root sampler not yet authored here. Node handler entry, not proxy/socket arrival; no deployment or measurement proof."
+    },
+    {
+      "id": "BI-02",
+      "paths": [
+        "handler.mjs",
+        "handler.d.mts",
+        "production.ts",
+        "ports.ts"
+      ],
+      "change": "Handler passes its derived payloadHash as optional third getExisting argument. Concrete adapter awaits actor-scoped strict-null recovery before beginAttempt. Hits/conflicts/errors never derive private proof. Missing hash is recovery-only. Undefined recovery now refuses.",
+      "limit": "Existing repository getExisting/beginAttempt/commitAttempt signatures unchanged. Older two-argument test ports remain compatible; real adapter commit refuses absent binding."
+    },
+    {
+      "id": "BI-03",
+      "paths": [
+        "production.ts"
+      ],
+      "change": "First recovery lookup claims slot before await. Attempt binds original timestamp, session/viewer, key and derived hash. Commit claims and consumes before validation/await; late lookup after refused commit cannot mint. Repeated/concurrent lookups or commits cannot rearm.",
+      "limit": "Private in-process request state only, not cross-process or database idempotency proof. New HTTP requests still require canonical same-key recovery and database enforcement."
+    },
+    {
+      "id": "BI-04",
+      "paths": [
+        "production.ts",
+        "ports.ts"
+      ],
+      "change": "Public actorId/csrfToken and private rawStoredSessionHash/configuredOwnerId/actorScope/requiredRole shapes preserved. Timing stays in adapter WeakMap. Viewer double-hashed earlyAccessSessionHash remains CSRF-only; canonical privateContextFor must provide raw stored hash.",
+      "limit": "Canonical captured-cookie/private-context resolver is integrator-owned and remains unimplemented in this stage."
+    },
+    {
+      "id": "BI-05",
+      "paths": [
+        "production.test.ts",
+        "root-composition.test.ts"
+      ],
+      "change": "Authored admission, invalid clocks, recovery/control ordering, concurrency/one-use, matching context, missing bindings, uncertain same-key recovery, full-handler delay accounting, body/header claims and real-root negative operator controls.",
+      "limit": "AUTHORED_NOT_RUN. Positive handler timing uses a clearly labeled test-only enabled wrapper around disabled production ports. Root positive context/clock/session and actual authorized operator readback remain pending."
+    },
+    {
+      "id": "BI-06",
+      "paths": [
+        "production.ts",
+        "root-composition.test.ts"
+      ],
+      "change": "productionReady=false and config enabled=false remain; actual root/App/containment unmodified. Existing private raw-target/parse-order/header controls retained; no reader or notification cutover.",
+      "limit": "Not live intake, qualification, payment or notification delivery authority."
+    }
+  ],
+  "authoredControls": [
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 39,
+      "source": "it(\"cannot activate through a readiness flag or existing bridge legal set\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 47,
+      "source": "it(\"uses canonical actor identity and scopes CSRF to the verified session\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 57,
+      "source": "it(\"refuses missing credentials, guest identity, capability or signing secret\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 63,
+      "source": "it(\"passes the canonical viewer to catalog and actor-scoped receipt recovery\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 73,
+      "source": "it(\"requires separate Health legal applicability and reuses canonical acknowledgment bytes\", () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 99,
+      "source": "it(\"retains the root stamp across delayed auth, deduplicates the request, and recovers before begin\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 130,
+      "source": "it.each([null, -1, Number.NaN, Number.POSITIVE_INFINITY, 101])(\"refuses new admission with invalid/missing/future stamp %s while retaining receipt recovery\", async stamp => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 143,
+      "source": "it(\"does not replace a failed timestamp lookup or failed/backward clock with now\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 159,
+      "source": "it(\"receipt hits, malformed/failed lookups and recovery-only calls never mint an attempt\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 178,
+      "source": "it.each([\"changed-key\", \"changed-hash\", \"cloned-session\", \"another-session\"] as const)(\"refuses %s without sending and cannot rearm the consumed attempt\", async variant => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 193,
+      "source": "it(\"cannot mint an attempt after a premature refused commit while recovery is pending\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 206,
+      "source": "it(\"claims the admission slot before asynchronous lookup and keeps the constructor-bound extension\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 270,
+      "source": "it(\"counts auth and all later preflight work from the original entry and never serializes timing as private context\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 286,
+      "source": "it(\"refuses an already-expired original deadline before any commit RPC\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 297,
+      "source": "it.each([\"expectedConfigurationDigest\", \"approvedLimitsJson\", \"notificationRecipient\", \"privateContextFor\", \"runtime\"] as const)(\"keeps missing %s admission fail-closed without hiding replay\", async field => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 306,
+      "source": "it(\"preserves early-access viewer double hash for CSRF without substituting it for the stored hash\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 325,
+      "source": "it(\"uses the original key after an uncertain commit, cannot mint a replacement, and recovers without private proof\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 361,
+      "source": "it(\"charges authentication, raw body, recovery, legal and catalog delays to the same original deadline\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 389,
+      "source": "it(\"rejects browser-supplied private context or timing in the body before recovery\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 400,
+      "source": "it.each([null, 101, 0])(\"recovers a valid receipt with stamp %s and without new-write/private authority\", async stamp => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 414,
+      "source": "it(\"refuses conflicting payloads and undefined recovery without new-write preflight\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "line": 425,
+      "source": "it(\"binds the handler-derived hash and refuses disabled writes despite valid injected context and client timing claims\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "line": 284,
+      "source": "it.each([\"/api/health/quick-order\", \"/api/health/quick-order/config\", \"/api/health/quick-order/requests\"])(",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "line": 290,
+      "source": "it.each([",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "line": 305,
+      "source": "it(\"refuses malformed and greater-than-2MiB owned bodies while the unrelated parser remains active\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "line": 323,
+      "source": "it(\"preserves health, public document, redirect and owned loopback proxy controls\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "line": 343,
+      "source": "it(\"keeps canonical operator readback behind the existing unconfigured admin guard\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "line": 357,
+      "source": "it(\"serves the disabled intake as private HTML through the real static root\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "line": 370,
+      "source": "it(\"requires the proposed private cache headers alongside the existing Helmet referrer policy\", async () => {",
+      "status": "AUTHORED_NOT_RUN"
+    }
+  ],
+  "controlCountIsNotPassCount": true,
+  "preservedAcceptedCustomerBlobs": [
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "gitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+      "sha256": "318d972ba38d7aaca460f5af07cf9bab98358856a55919e3b59fdebddd0d29df",
+      "preservedFrom": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "workingTreeSha256": "50e4030330542b868e804ff7ce0e7ff958527eb82098f6fda4c0e02f218c5ee9",
+      "workingTreeDiffersOnlyByCRLF": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "gitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+      "sha256": "2de8f721636c1132100e0575fed69ed8bae9e56f280e17c282dd61095acb0f9c",
+      "preservedFrom": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "workingTreeSha256": "e1994fdfc2075d200d52a5b7c47c5d6cc5a8f3980289bf4ffa5039a279b37228",
+      "workingTreeDiffersOnlyByCRLF": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "gitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+      "sha256": "1083046402cb666676f21f5039e33b0a172daea06806c50af85bb28c1f1c4f36",
+      "preservedFrom": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "workingTreeSha256": "132d98f156b0140cce04bfc20ff6fb9495237111b2953a34db118043c47371d5",
+      "workingTreeDiffersOnlyByCRLF": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "gitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+      "sha256": "f2a0255798b2bee752bf10ef53986e7b9971e15e57767d576452377b4ee0d3be",
+      "preservedFrom": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "workingTreeSha256": "b62843ba597878c2d4d5de67adf146214ee031904b61dd0f490b9a98e4aab4a7",
+      "workingTreeDiffersOnlyByCRLF": true
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "gitBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+      "sha256": "e20b1c55aecf8fa02675ecd7823cb54044bd4ba1d28da2d332341b885a63f6f0",
+      "preservedFrom": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "workingTreeSha256": "e20b1c55aecf8fa02675ecd7823cb54044bd4ba1d28da2d332341b885a63f6f0",
+      "workingTreeDiffersOnlyByCRLF": false
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "gitBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+      "sha256": "e81747bf0136bd01069521f8fd7a8e2954ee9155cb381fa74b57882622201410",
+      "preservedFrom": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "workingTreeSha256": "e81747bf0136bd01069521f8fd7a8e2954ee9155cb381fa74b57882622201410",
+      "workingTreeDiffersOnlyByCRLF": false
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.tsx",
+      "gitBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+      "sha256": "77fd81564c4efb969972f9a6f0433c5be9054463837464be2c99eac56d08177c",
+      "preservedFrom": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "workingTreeSha256": "6839925eebe0359db61a112ba623bf0cd2d30d488ca61a51258a0c7fa072a75b",
+      "workingTreeDiffersOnlyByCRLF": true
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "gitBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+      "sha256": "bd90e658ca78662403df3232bce754fc74a07c9300021a073cc7fe05da831c66",
+      "preservedFrom": "ac9bbe30869c613053321974ff1978bf972eebf4",
+      "workingTreeSha256": "bd90e658ca78662403df3232bce754fc74a07c9300021a073cc7fe05da831c66",
+      "workingTreeDiffersOnlyByCRLF": false
+    }
+  ],
+  "unchangedExcludedBindings": [
+    {
+      "path": "server/index.ts",
+      "gitBlob": "83efc9471ab3c12b82815ba3ec58229354b59445",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "gitBlob": "a82ff3553716873ae0f59f9ffb9c5ba4a082d660",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "server/research/assisted-order/express.ts",
+      "gitBlob": "29215125e54d10e7c4c10c5afe73261e50e0c4ec",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "server/research/assisted-order/ports.ts",
+      "gitBlob": "3dd8dafef4b208c64d189e947e2f55a653052d7d",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "server/research/assisted-order/production-deps.ts",
+      "gitBlob": "0aee29e96481c7aa7a036e15b129b8b8c3487077",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "gitBlob": "85503d76eab946eb8ae001116f00cb85f814f72e",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "gitBlob": "307d903f2b83a3252a1dde38f199c88e51cae2af",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "gitBlob": "f518b2220bda12985f4279adc9eaddb136d60689",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "gitBlob": "d95e246733dbbb9d7df027422c51069efdb46b79",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "gitBlob": "d25dae0d6979af6dcb37c07c939f03fba7bf72c5",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "gitBlob": "f3726bf805f252e8c41dc61ea1ae6dbec073b89d",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "gitBlob": "b77b75321e34e3ea48e64ae4b9260b2eec63dbb6",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "gitBlob": "120449d62dbc44131d3563868b522476a021a2b1",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "b9b5baa7bd274a986b03fff05817876062a6de34",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "10c5bb140a457a8f9573d445819b3cfaae4083b7",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "ce735606fba41175bae48fb7615117982d94bc36",
+      "unchangedFrom": "38b386afdb275c409dfec4aa603be223a8d5e867"
+    }
+  ],
+  "leaseBefore": [
+    {
+      "id": "af843213-fa11-42b9-8874-f6451ae38034",
+      "task": "HEALTH-QUICK-ORDER-20261005",
+      "scopeTaskId": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
+      "revision": 1,
+      "session": "codex-health-quick-order-20261005",
+      "paths": [
+        "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "server/research/assisted-order/quick-order-repository.ts",
+        "server/research/assisted-order/quick-order-repository.test.ts",
+        "server/research/health/quick-order/production.ts",
+        "server/research/health/quick-order/production.test.ts",
+        "server/research/health/quick-order/ports.ts",
+        "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "server/research/assisted-order/quick-order-notifications.test.ts",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-10T22:26:00.727Z",
+      "heartbeatAt": "2026-10-11T16:52:37.180Z",
+      "authorityCommit": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+      "note": "DOC71 quality-command and parent-closure fixture successor 9c1c92bcb7a514da9b575a291d0abac67c8ba366 / tree d0c676b673df6f9f9d587b543df9c745e31e5d39. Same af843213 exact21 lease; only currentness verifier source changed. SQL families and canonical price mapping unchanged; LOCAL ONLY / NOT RUN / PENDING source acceptance.\n2026-10-11 actual owner handoff of frozen aa857/735 custody for the approved fixed-copy phase only. Full21 paths, session, original claim and source grant retained. Builder source writers stopped. No expiry/crash inference; no automatic reclaim.",
+      "copyPhaseHandoff": {
+        "authorityCommit": "21d904fa81835a6c26897df6269d295b95d13110",
+        "authorityPath": "docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+        "authorityRawSha256": "20a17b3613d40e7fe7bd9e3041a8db01b66e932e56a618df09cd2cd75cde7f5a",
+        "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+        "approvedRegistryCandidate": "b0fb285cdec834fbc2cf87846c8d56439a70f77f9335cdc717fd3036045d67e7",
+        "approvedPatch": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+        "receipt": ".xenios/handoffs/2026-10-11-quick-order-fixed-assembly-custody-handoff.json",
+        "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "sourceTree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+        "records": "735254e4cc6230479c9bfa821e1c6991389d5266",
+        "recordsTree": "0748ee8bd2bdc875ea770c860253aa1b3c2e9590",
+        "receiver": {
+          "chat": "01a0e098-3b23-7233-9b07-877ace092650",
+          "session": "codex-accepted-source-integration-20261005",
+          "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+          "branch": "codex/accepted-source-integration-20261005",
+          "base": "ac9bbe30869c613053321974ff1978bf972eebf4",
+          "baseTree": "2498c5a60bb2c5cb53c0ce835a97b31840738deb"
+        },
+        "proposedCopyLease": "843092f2-95b2-4724-98c0-744a6324f39a",
+        "state": "ACTUAL_OUTGOING_CUSTODY_HANDOFF_COPY_PHASE_ONLY",
+        "handedOffAt": "2026-10-11T16:37:17.177Z",
+        "copyPerformedByBuilder": false,
+        "implementationAuthorizedByThisHandoff": false,
+        "returnRule": "No automatic reclaim. Receiver must complete and hand off its fixed-copy lease; coordinator and same builder acknowledge the exact assembled checkpoint and return of applicable existing authority before any next source edit."
+      },
+      "currentStage": {
+        "ack": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-ack.json",
+        "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "branch": "codex/accepted-source-integration-20261005",
+        "activatedAt": "2026-10-11T16:52:37.180Z",
+        "coordinatorCommit": "179b5e196c6404f6e9ec998115f646e5fda390e5",
+        "sourcePaths": [
+          "server/research/health/quick-order/production.ts",
+          "server/research/health/quick-order/production.test.ts",
+          "server/research/health/quick-order/ports.ts"
+        ],
+        "otherOriginalPathsHeld": true,
+        "soleSerialSourceGitWriter": true,
+        "copyReturn": {
+          "commit": "38b386afdb275c409dfec4aa603be223a8d5e867",
+          "path": ".xenios/handoffs/2026-10-11-QUICK-ORDER-FIXED-ASSEMBLY-RETURN-codex-accepted-source-integration-20261005.json",
+          "sha256": "4c71ace81ba865150f0bdc4ac402cc454b6720d2c7e984539c9d9e13a02ae946",
+          "actuallyAcknowledged": true
+        }
+      }
+    },
+    {
+      "id": "45b81df8-c988-4d87-a1c0-37cbccb3f97d",
+      "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+      "revision": 1,
+      "session": "codex-health-quick-order-20261005",
+      "state": "active",
+      "claimedAt": "2026-10-11T16:52:37.180Z",
+      "heartbeatAt": "2026-10-11T16:52:37.180Z",
+      "paths": [
+        "server/research/health/quick-order/handler.mjs",
+        "server/research/health/quick-order/handler.d.mts",
+        "server/research/health/quick-order/root-composition.test.ts"
+      ],
+      "authorityCommit": "179b5e196c6404f6e9ec998115f646e5fda390e5",
+      "scopeNote": "Same builder, supplemental3 only in b22f. Serial source/Git writer plus existing af843 dependent3; all other source held. No execution, push or activation.",
+      "ack": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-ack.json"
+    }
+  ],
+  "leaseAfter": [
+    {
+      "id": "af843213-fa11-42b9-8874-f6451ae38034",
+      "task": "HEALTH-QUICK-ORDER-20261005",
+      "scopeTaskId": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
+      "revision": 1,
+      "session": "codex-health-quick-order-20261005",
+      "paths": [
+        "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "server/research/assisted-order/quick-order-repository.ts",
+        "server/research/assisted-order/quick-order-repository.test.ts",
+        "server/research/health/quick-order/production.ts",
+        "server/research/health/quick-order/production.test.ts",
+        "server/research/health/quick-order/ports.ts",
+        "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "server/research/assisted-order/quick-order-notifications.test.ts",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-10-10T22:26:00.727Z",
+      "heartbeatAt": "2026-10-11T17:00:21.325Z",
+      "authorityCommit": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+      "note": "DOC71 quality-command and parent-closure fixture successor 9c1c92bcb7a514da9b575a291d0abac67c8ba366 / tree d0c676b673df6f9f9d587b543df9c745e31e5d39. Same af843213 exact21 lease; only currentness verifier source changed. SQL families and canonical price mapping unchanged; LOCAL ONLY / NOT RUN / PENDING source acceptance.\n2026-10-11 actual owner handoff of frozen aa857/735 custody for the approved fixed-copy phase only. Full21 paths, session, original claim and source grant retained. Builder source writers stopped. No expiry/crash inference; no automatic reclaim.",
+      "copyPhaseHandoff": {
+        "authorityCommit": "21d904fa81835a6c26897df6269d295b95d13110",
+        "authorityPath": "docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+        "authorityRawSha256": "20a17b3613d40e7fe7bd9e3041a8db01b66e932e56a618df09cd2cd75cde7f5a",
+        "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+        "approvedRegistryCandidate": "b0fb285cdec834fbc2cf87846c8d56439a70f77f9335cdc717fd3036045d67e7",
+        "approvedPatch": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+        "receipt": ".xenios/handoffs/2026-10-11-quick-order-fixed-assembly-custody-handoff.json",
+        "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+        "sourceTree": "03eae1a56cf433e604392440b4d42cb26eef5e56",
+        "records": "735254e4cc6230479c9bfa821e1c6991389d5266",
+        "recordsTree": "0748ee8bd2bdc875ea770c860253aa1b3c2e9590",
+        "receiver": {
+          "chat": "01a0e098-3b23-7233-9b07-877ace092650",
+          "session": "codex-accepted-source-integration-20261005",
+          "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+          "branch": "codex/accepted-source-integration-20261005",
+          "base": "ac9bbe30869c613053321974ff1978bf972eebf4",
+          "baseTree": "2498c5a60bb2c5cb53c0ce835a97b31840738deb"
+        },
+        "proposedCopyLease": "843092f2-95b2-4724-98c0-744a6324f39a",
+        "state": "ACTUAL_OUTGOING_CUSTODY_HANDOFF_COPY_PHASE_ONLY",
+        "handedOffAt": "2026-10-11T16:37:17.177Z",
+        "copyPerformedByBuilder": false,
+        "implementationAuthorizedByThisHandoff": false,
+        "returnRule": "No automatic reclaim. Receiver must complete and hand off its fixed-copy lease; coordinator and same builder acknowledge the exact assembled checkpoint and return of applicable existing authority before any next source edit."
+      },
+      "currentStage": {
+        "ack": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-ack.json",
+        "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "branch": "codex/accepted-source-integration-20261005",
+        "activatedAt": "2026-10-11T16:52:37.180Z",
+        "coordinatorCommit": "179b5e196c6404f6e9ec998115f646e5fda390e5",
+        "sourcePaths": [
+          "server/research/health/quick-order/production.ts",
+          "server/research/health/quick-order/production.test.ts",
+          "server/research/health/quick-order/ports.ts"
+        ],
+        "otherOriginalPathsHeld": true,
+        "soleSerialSourceGitWriter": true,
+        "copyReturn": {
+          "commit": "38b386afdb275c409dfec4aa603be223a8d5e867",
+          "path": ".xenios/handoffs/2026-10-11-QUICK-ORDER-FIXED-ASSEMBLY-RETURN-codex-accepted-source-integration-20261005.json",
+          "sha256": "4c71ace81ba865150f0bdc4ac402cc454b6720d2c7e984539c9d9e13a02ae946",
+          "actuallyAcknowledged": true
+        },
+        "state": "COMPLETE_WRITING_CUSTODY_HANDED_OFF",
+        "sourcePathsHeld": true
+      },
+      "handedOffAt": "2026-10-11T17:00:21.325Z",
+      "handoff": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-handoff.json",
+      "builderIntegrationHandoff": {
+        "source": "59b22418bf4fb42719c54eb183c738981b37a642",
+        "tree": "bef6618c176cbbb8fe20a5e1740abf345947413a",
+        "at": "2026-10-11T17:00:21.325Z",
+        "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "writingCustodyEnded": true,
+        "nextWriter": "Same integrator only after coordinator collection and explicit activation",
+        "record": "docs/health-launch/quick-order-20261005/B22F_DISABLED_HANDLER_ADMISSION_20261011.md"
+      }
+    },
+    {
+      "id": "45b81df8-c988-4d87-a1c0-37cbccb3f97d",
+      "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+      "revision": 1,
+      "session": "codex-health-quick-order-20261005",
+      "state": "handoff",
+      "claimedAt": "2026-10-11T16:52:37.180Z",
+      "heartbeatAt": "2026-10-11T17:00:21.325Z",
+      "paths": [
+        "server/research/health/quick-order/handler.mjs",
+        "server/research/health/quick-order/handler.d.mts",
+        "server/research/health/quick-order/root-composition.test.ts"
+      ],
+      "authorityCommit": "179b5e196c6404f6e9ec998115f646e5fda390e5",
+      "scopeNote": "Same builder, supplemental3 only in b22f. Serial source/Git writer plus existing af843 dependent3; all other source held. No execution, push or activation.",
+      "ack": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-ack.json",
+      "handedOffAt": "2026-10-11T17:00:21.325Z",
+      "handoff": ".xenios/handoffs/2026-10-11-quick-order-b22f-builder-stage-handoff.json",
+      "builderIntegrationHandoff": {
+        "source": "59b22418bf4fb42719c54eb183c738981b37a642",
+        "tree": "bef6618c176cbbb8fe20a5e1740abf345947413a",
+        "at": "2026-10-11T17:00:21.325Z",
+        "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "writingCustodyEnded": true,
+        "nextWriter": "Same integrator only after coordinator collection and explicit activation",
+        "record": "docs/health-launch/quick-order-20261005/B22F_DISABLED_HANDLER_ADMISSION_20261011.md"
+      }
+    }
+  ],
+  "builderSourceWritersStopped": true,
+  "builderGitWriterStoppedAfterRecordsCommit": true,
+  "integratorSixLease": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
+  "integratorSourceActivation": "NOT_GRANTED_BY_THIS_HANDOFF",
+  "nextCoordinatorAction": "Collect exact source/records and actual custody handoff; activate same integrator for its six paths under existing approval. No concurrent builder source/Git writes.",
+  "originalFrozenReview": {
+    "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+    "records": "735254e4cc6230479c9bfa821e1c6991389d5266",
+    "worktree": "C:/Users/sboad/.codex/worktrees/389a/xenios-website",
+    "status": "UNCHANGED_PENDING_ORIGINAL_REVIEW",
+    "intakeDependencySealed": false
+  },
+  "integratorContract": {
+    "entry": "Supply enteredAtMonotonicMsFor(req) from root-owned WeakMap stamped exactly once before Express/path/origin/auth/body; same monotonic source as runtime.now, never a replacement stamp.",
+    "privateContext": "Use canonical captured cookie and verified viewer; bind exact four private values server-side. Do not substitute viewer earlyAccessSessionHash double digest for rawStoredSessionHash. No timing/private fields in public session or browser.",
+    "missingBindings": "Return null/refuse new submissions; retain actor-authorized read-only receipt recovery.",
+    "gates": "Keep root raw containment and both adapter gates disabled, enqueue-only notification obligation. No execution or activation."
+  },
+  "sourceAcceptance": "PENDING_INDEPENDENT_REVIEW_NOT_INFERRED",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED",
+  "metadataChecks": {
+    "sixFileScope": "MATCH",
+    "gitDiffCheck": "CLEAN",
+    "eightAcceptedGitBlobs": "MATCH",
+    "excludedSourceBlobs": "UNCHANGED",
+    "firstRawComparison": "Initially rejected because five existing checkout files use CRLF while approved committed blobs use LF. Follow-up confirms only line-ending representation differs and exact Git blobs match. No customer file changed.",
+    "projectModulesImported": false,
+    "syntaxOrCompilerInvoked": false
+  },
+  "remainingPrerequisites": [
+    "Original reviewer disposition of frozen currentness r2, accepted currentness receipt, intake dependency reseal and resulting transaction composition acceptance.",
+    "Same integrator six-path root/canonical session composition after actual handoff activation, then exact successor independent acceptance.",
+    "Real approved operational inputs/configuration, implemented snapshot and census; deployed role/timer/connection proof remains separate from source.",
+    "Fresh exact-target execution authority/reservation, application/database qualification, authorized install and deployment."
+  ],
+  "requestedModel": "gpt-6-astra",
+  "requestedEffort": "ultra",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED",
+  "record": "docs/health-launch/quick-order-20261005/B22F_DISABLED_HANDLER_ADMISSION_20261011.md"
+}
