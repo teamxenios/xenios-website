@@ -630,6 +630,7 @@ async function doc71ExpectRefusal(connection,statement,code,fragment) {
   assert.ok(failure,'Expected PostgreSQL refusal, not a successful command');
   assert.equal(failure.code,code,'Timeout/transport failure is not the expected SQL refusal');
   assert.ok(failure.message.includes(fragment),`Wrong refusal: expected ${fragment}`);
+  return failure;
 }
 async function doc71GuardInventory(connection) {
   const result=await connection.query(`select c.relname,t.tgname,t.tgenabled,t.tgtype::int as type,
@@ -1019,15 +1020,18 @@ function doc71PsqlSession(database) {
     // stderr being mistaken for success when stdout arrives first.
     if(!pending.stdout.includes(pending.end)||!pending.stderr.includes(pending.end))return;
     const p=pending;pending=null;clearTimeout(p.timer);
+    // Capture the bounded per-command signal before rejecting: NOTICE survives
+    // statement rollback, unlike a marker row written inside that statement.
+    const notices=[...p.stderr.matchAll(/^NOTICE:\s+(?:[0-9A-Z]{5}:\s+)?([^\r\n]*)/gm)].map(m=>m[1]);
     const error=p.stderr.match(/(?:ERROR|FATAL):\s+([0-9A-Z]{5}):\s*([^\r\n]*)/);
-    if(error){p.reject(Object.assign(new Error(error[2]),{code:error[1]}));return;}
-    if(/(?:ERROR|FATAL):/.test(p.stderr)){p.reject(new Error('Unclassified PostgreSQL error'));return;}
+    if(error){p.reject(Object.assign(new Error(error[2]),{code:error[1],notices}));return;}
+    if(/(?:ERROR|FATAL):/.test(p.stderr)){p.reject(Object.assign(new Error('Unclassified PostgreSQL error'),{notices}));return;}
     const rows=[],counts=[];
     for(const line of p.stdout.split(/\r?\n/)) {
       if(line.startsWith('{')){try{rows.push(JSON.parse(line));}catch{p.reject(new Error('Malformed fixture JSON output'));return;}}
       const count=line.match(/^(?:INSERT \d+|UPDATE|DELETE) (\d+)$/);if(count)counts.push(Number(count[1]));
     }
-    p.resolve({rows,rowCount:counts.length?counts.at(-1):rows.length});
+    p.resolve({rows,rowCount:counts.length?counts.at(-1):rows.length,notices});
   };
   child.stdout.on('data',chunk=>receive('stdout',chunk));child.stderr.on('data',chunk=>receive('stderr',chunk));
   const session={pid:null,
@@ -1416,9 +1420,10 @@ async function doc80Snapshot(ctx) {
 }
 async function doc80Refusal(ctx,statement,code,message,connection=ctx.writer) {
   const before=await doc80Snapshot(ctx);
-  await doc71ExpectRefusal(connection,statement,code,message);
+  const failure=await doc71ExpectRefusal(connection,statement,code,message);
   await connection.query('rollback;');
   assert.deepEqual(await doc80Snapshot(ctx),before,'Refusal leaves all six authority relations unchanged');
+  return failure;
 }
 function doc80Activation(fixture,epoch) {
   return `select ${PREFIX}currentness_activate_revision(${q(fixture.publication.revisionId)},${q(epoch)}::pg_catalog.int8,
@@ -1444,10 +1449,81 @@ async function doc80FunctionInventory(ctx) {
     and pg_catalog.starts_with(p.proname,'research_health_quick_order_');`)).rows[0].n;
   assert.equal(count,13,'Overloads or extra currentness functions are not part of this family');
 }
+// Supplemental lexical checks for this frozen SQL dialect, not a SQL parser.
+// Inspect nested dollar bodies separately; masking an outer initializer must
+// not hide a nested function DECLARE. Ordinary and E strings differ in escapes.
+function doc81LexicalBlocks(source) {
+  const blocks=[],blank=s=>s.replace(/[^\r\n]/g,' ');
+  function visit(text) {
+    let code='',i=0;
+    while(i<text.length) {
+      const start=i;
+      if(text.startsWith('--',i)) {const end=text.indexOf('\n',i);i=end<0?text.length:end;code+=blank(text.slice(start,i));continue;}
+      if(text.startsWith('/*',i)) {
+        i+=2;let depth=1;
+        while(i<text.length&&depth){if(text.startsWith('/*',i)){depth++;i+=2;}else if(text.startsWith('*/',i)){depth--;i+=2;}else i++;}
+        assert.equal(depth,0,'Unterminated lexical comment');code+=blank(text.slice(start,i));continue;
+      }
+      const dollar=text.slice(i).match(/^\$(?:[A-Za-z_][A-Za-z_0-9]*)?\$/)?.[0];
+      if(dollar){const end=text.indexOf(dollar,i+dollar.length);assert.ok(end>=0,'Unterminated lexical dollar body');
+        visit(text.slice(i+dollar.length,end));i=end+dollar.length;code+=blank(text.slice(start,i));continue;}
+      const escaped=/[eE]/.test(text[i])&&text[i+1]==="'"&&(i===0||!/[A-Za-z_0-9$]/.test(text[i-1]));
+      if(text[i]==="'"||escaped){
+        i+=escaped?2:1;let literal='',closed=false;
+        while(i<text.length){
+          if(escaped&&text[i]==='\\'){literal+=text.slice(i,i+2);i+=2;}
+          else if(text[i]==="'"&&text[i+1]==="'"){literal+="'";i+=2;}
+          else if(text[i]==="'"){i++;closed=true;break;}else literal+=text[i++];
+        }
+        assert.ok(closed,'Unterminated lexical string');
+        if(/^\s*create\s+function\b/i.test(literal))visit(literal);
+        else if(/^public\.research_health_quick_order_[a-z_]+\([^;]*\)$/i.test(literal))visit('create function '+literal);
+        code+=blank(text.slice(start,i));continue;
+      }
+      if(text[i]==='"'){
+        i++;let closed=false;while(i<text.length){if(text[i]==='"'&&text[i+1]==='"')i+=2;else if(text[i]==='"'){i++;closed=true;break;}else i++;}
+        assert.ok(closed,'Unterminated quoted identifier');code+=text.slice(start,i);continue;
+      }
+      code+=text[i++];
+    }
+    blocks.push(code);
+  }
+  visit(source);return blocks;
+}
+function doc81QualifiedSqlAssertions(source,label) {
+  const ident='(?:"(?:[^"]|"")+"|[A-Za-z_][A-Za-z_0-9$]*)',qualified=ident+'(?:\\s*\\.\\s*'+ident+')*';
+  const types='(?:bool|bytea|int2|int4|int8|int2vector|json|jsonb|name|oid|oidvector|record|regclass|regcollation|regconfig|regdictionary|regnamespace|regoper|regoperator|regproc|regprocedure|regrole|regtype|text|timestamptz|timetz|trigger|uuid|void)';
+  const bareType='(?:'+types+'|"'+types+'")(?=\\s|$|[\\[\\],;()])';
+  const deny=(code,pattern,context)=>assert.equal(new RegExp(pattern,'im').test(code),false,label+': unqualified '+context);
+  for(const code of doc81LexicalBlocks(source)){
+    deny(code,'\\b(?:from|join)\\s+(?:only\\s*\\(?\\s*)?(?:"pg_[^"]+"|pg_[A-Za-z_0-9$]+)(?![A-Za-z_0-9$]|\\s*\\.)(?=\\s|[,;)])','catalog relation');
+    deny(code,'::\\s*'+bareType,'cast type');
+    deny(code,'\\breturns\\s+(?:setof\\s+)?'+bareType,'return type');
+    deny(code,'\\bcast\\s*\\([^;]*?\\bas\\s+'+bareType,'CAST type');
+    deny(code,'\\bcreate\\s+domain\\s+'+qualified+'\\s+as\\s+'+bareType,'domain type');
+    deny(code,'\\badd\\s+(?:column\\s+)?'+ident+'\\s+'+bareType,'added column type');
+    for(const declaration of code.matchAll(/\bdeclare\b([\s\S]*?)\bbegin\b/gi))
+      for(const item of declaration[1].split(';'))deny(item,'^\\s*'+ident+'\\s+(?:constant\\s+)?'+bareType,'DECLARE type');
+    // Frozen signatures use simple scalar/array arguments. SQL grammar types
+    // (integer/boolean/bigint/numeric/timestamp) are deliberately permitted.
+    for(const signature of code.matchAll(new RegExp('\\bfunction\\s+'+qualified+'\\s*\\(([^()]*)\\)','gi')))
+      for(const parameter of signature[1].split(','))deny(parameter,'^\\s*(?:(?:in|out|inout|variadic)\\s+)?(?:'+ident+'\\s+)?'+bareType,'function parameter type');
+    for(const table of code.matchAll(new RegExp('\\bcreate\\s+table\\s+'+qualified+'\\s*\\(([\\s\\S]*?)^\\s*\\);','gim')))
+      deny(table[1],'^\\s*'+ident+'\\s+'+bareType,'table column type');
+  }
+  // Recognized types, frozen signature/table forms and dynamic CREATE/signature
+  // literals only. New SQL forms need extending this check, never inferred proof.
+}
 function doc80SourceAssertions(h) {
-  const exceptionBodies=[...h.candidateText.matchAll(/^\s*exception\s+when\s+others\s+then\s+return\s+false\s*;/gim)];
-  assert.equal(exceptionBodies.length,2);
-  assert.equal([...h.candidateText.matchAll(/^\s*exception\s+when\b/gim)].length,2,'Only the two input validators catch exceptions');
+  const uncommented=doc81LexicalBlocks(h.candidateText).join('\n');
+  assert.equal([...uncommented.matchAll(/\bexception\s+when\b/gi)].length,2,'Only the two input validators catch exceptions, including inline clauses');
+  for(const tag of ['$publication_shape$','$decision_inputs_shape$']) {
+    const body=doc81LexicalBlocks(section(h.candidateText,tag)).join('\n');
+    assert.equal([...body.matchAll(/\bexception\s+when\b/gi)].length,1,tag);
+    assert.equal([...body.matchAll(/\bexception\s+when\s+others\s+then\s+return\s+false\s*;/gi)].length,1,tag);
+  }
+  for(const [label,text] of [['candidate',h.candidateText],['precheck',h.precheckText],['postcheck',h.postcheckText],['rollback',rollbackBlock(h.rollbackText)]])
+    doc81QualifiedSqlAssertions(text,label);
   for(const tag of ['$publish_revision$','$activate_revision$']) {
     const body=section(h.candidateText,tag);
     let previous=-1;
@@ -1467,16 +1543,30 @@ async function doc80RunIntegrityControls(h,binding) {
     await ctx.owner.query(h.candidateText);await ctx.owner.query(h.postcheckText);await doc80FunctionInventory(ctx);
     await doc80Refusal(ctx,`begin;alter table ${PREFIX}authority_activations disable row level security;
       select ${PREFIX}currentness_integrity();`,'55000','Quick Order currentness schema drift',ctx.owner);
-    // A domain marker would reveal resolution through pg_temp even if it ran
-    // under the owner. Zero marker invocations is stronger than checking role.
-    await ctx.writer.query(`create temporary table doc80_marker(role_name pg_catalog.text);
-      create function pg_temp.doc80_mark() returns pg_catalog.bool language plpgsql as $marker$
-      begin insert into pg_temp.doc80_marker values(current_user);return true;end $marker$;
-      create domain pg_temp.jsonb as pg_catalog.jsonb check(pg_temp.doc80_mark());
-      create domain pg_temp.uuid as pg_catalog.uuid check(pg_temp.doc80_mark());
-      create domain pg_temp.text as pg_catalog.text check(pg_temp.doc80_mark());`);
-    await ctx.writer.query(content.emptyUpdate);await ctx.writer.query(content.update);
-    assert.equal((await ctx.writer.query('select count(*)::int as n from pg_temp.doc80_marker;')).rows[0].n,0);
+    // R2C-1: this session-local type shadow fails closed at the descriptor.
+    // NOTICE needs no table privilege and remains observable after refusal.
+    await ctx.writer.query("set client_min_messages=notice;");
+    await ctx.writer.query("create function pg_temp.doc80_mark() returns pg_catalog.bool language plpgsql as $marker$ begin raise notice 'doc80-marker';return true;end $marker$;");
+    assert.deepEqual((await ctx.writer.query('select pg_temp.doc80_mark() as value;')).notices,['doc80-marker'],
+      'Positive witness: the driver actually collects the marker signal');
+    await ctx.writer.query('create domain pg_temp.jsonb as pg_catalog.jsonb check(pg_temp.doc80_mark());'+
+      'create domain pg_temp.uuid as pg_catalog.uuid check(pg_temp.doc80_mark());'+
+      'create domain pg_temp.text as pg_catalog.text check(pg_temp.doc80_mark());');
+    for(const statement of [content.emptyUpdate,content.update]) {
+      const failure=await doc80Refusal(ctx,statement,'55000','Quick Order protected source columns drift');
+      assert.deepEqual(failure.notices.filter(n=>n==='doc80-marker'),[],
+        'Qualified function-entry/descriptor path must not invoke a shadow type');
+    }
+    await ctx.writer.query('drop domain pg_temp.jsonb;drop domain pg_temp.uuid;drop domain pg_temp.text;');
+    const noDomainSnapshot=await doc80Snapshot(ctx),noDomainHead=await doc71Head(ctx.observer);
+    const emptyTwin=await ctx.writer.query(content.emptyUpdate);
+    assert.deepEqual(emptyTwin.notices.filter(n=>n==='doc80-marker'),[]);
+    assert.deepEqual(await doc80Snapshot(ctx),noDomainSnapshot,'No-domain zero-row twin has no authority effect');
+    const materialTwin=await ctx.writer.query(content.update);
+    assert.deepEqual(materialTwin.notices.filter(n=>n==='doc80-marker'),[]);
+    await doc71AssertHeldDelta(ctx,noDomainHead,1);
+    // Shadow-domain negatives do not reach paths after the descriptor check.
+    // doc80SourceAssertions supplies supplemental lexical coverage there.
     const before=await doc80Snapshot(ctx);
     await ctx.owner.query(`create temporary table pg_class as select * from pg_catalog.pg_class where false;
       create temporary table pg_trigger as select * from pg_catalog.pg_trigger where false;`);
@@ -1712,13 +1802,14 @@ async function doc80RunHistoryControls(h,binding) {
     }
   });
 }
-function doc80RebindRaw(fixture,mutate) {
+function doc80RebindRaw(fixture,mutate,mutateDecision=()=>{}) {
   const changed=copy(fixture);mutate(changed.raw);
   for(const [kind,raw] of Object.entries(changed.raw))changed.publication.artifacts.find(a=>a.kind===kind).sha256=sha(raw);
   const decision=JSON.parse(changed.text);
   for(const artifact of changed.publication.artifacts.filter(a=>a.kind!=='normalized_decision_inputs'))
     decision.artifacts[artifact.kind==='health_legal'?'healthLegal':artifact.kind]={path:artifact.path,sha256:artifact.sha256};
   decision.configurationVersion=decision.artifacts.configuration.sha256;
+  mutateDecision(decision);
   return {...changed,...bindDecision(changed.publication,decision)};
 }
 async function doc80RunCarrierControls(h,binding) {
@@ -1733,7 +1824,9 @@ async function doc80RunCarrierControls(h,binding) {
   for(const [id,mutate,message] of mutations)for(const negative of [false,true])await doc71WithFresh(h,binding,
     {seedSql:doc80SelectedSeed(),profile:'valid-synthetic-writer',authority:'pristine'},async ctx=>{
       const now=(await ctx.owner.query("select to_char(clock_timestamp() at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') as instant;")).rows[0].instant;
-      const base=doc71SyntheticAuthorityFixture(now),fixture=negative?doc80RebindRaw(base,mutate):base;
+      const base=doc71SyntheticAuthorityFixture(now),fixture=negative?doc80RebindRaw(base,mutate,decision=>{
+        if(id==='product-control-mismatch')decision.offerRules[0].variantId='dddddddd-dddd-4ddd-8ddd-dddddddddddd';
+      }):base;
       await doc80StageInput(ctx,fixture);
       assert.equal((await ctx.owner.query(`select ${decisionCall(fixture)} as valid;`)).rows[0].valid,true,id+' must pass the unrelated decision validator');
       if(negative)await doc80Refusal(ctx,`select ${publishCall(fixture)};`,'55000',message);
@@ -1827,6 +1920,10 @@ ${empty?'':newId+','+DOC71_FIXTURE_IDS.product+',overview\n'}\\.
       create trigger research_health_quick_order_guard_u after update on ${table} referencing old table as wrong_old new table as qo_new_rows
       for each statement execute function ${PREFIX}guard_source_write();alter table ${table} enable always trigger research_health_quick_order_guard_u;`,
       'Quick Order exact platform guard inventory drift'],
+    ['wrong-new-transition-alias',`drop trigger research_health_quick_order_guard_u on ${table};
+      create trigger research_health_quick_order_guard_u after update on ${table} referencing old table as qo_old_rows new table as wrong_new
+      for each statement execute function ${PREFIX}guard_source_write();alter table ${table} enable always trigger research_health_quick_order_guard_u;`,
+      'Quick Order exact platform guard inventory drift'],
     ['guard-column-list',`drop trigger research_health_quick_order_guard_t on ${table};
       create trigger research_health_quick_order_guard_t before update of state on ${table}
       for each statement execute function ${PREFIX}guard_source_write();alter table ${table} enable always trigger research_health_quick_order_guard_t;`,
@@ -1836,10 +1933,12 @@ ${empty?'':newId+','+DOC71_FIXTURE_IDS.product+',overview\n'}\\.
       for each statement execute function ${PREFIX}guard_source_write('synthetic-argument');
       alter table ${table} enable always trigger research_health_quick_order_guard_t;`,
       'Quick Order exact platform guard inventory drift'],
-    ['function-proconfig',`alter function ${PREFIX}read_current_authority() set work_mem='8MB';`,'Quick Order exact function inventory mismatch'],
-    ['function-owner',`alter function ${PREFIX}read_current_authority() owner to service_role;`,'Quick Order exact function inventory mismatch'],
-    ['function-acl',`grant execute on function ${PREFIX}read_current_authority() to anon;`,'Quick Order currentness schema drift'],
-    ['table-acl',`grant select on ${PREFIX}authority_scope_members to authenticated;`,'Quick Order currentness schema drift'],
+    ...DOC80_FUNCTIONS.flatMap(signature=>[
+      ['function-proconfig:'+signature,'alter function '+PREFIX+signature+" set work_mem='8MB';",'Quick Order exact function inventory mismatch'],
+      ['function-owner:'+signature,'alter function '+PREFIX+signature+' owner to service_role;','Quick Order exact function inventory mismatch'],
+      ['function-acl:'+signature,'grant execute on function '+PREFIX+signature+' to anon;','Quick Order currentness schema drift'],
+    ]),
+    ...DOC80_TABLES.map(name=>['table-acl:'+name,'grant select on '+PREFIX+name+' to authenticated;','Quick Order currentness schema drift']),
     ['descriptor-live-column',`alter table ${table} add column doc80_unaccepted_column pg_catalog.text;`,'Quick Order source-column descriptor drift'],
     ['history-trigger-disabled',`alter table ${PREFIX}authority_activations disable trigger research_health_quick_order_history_immutable_1;`,'Quick Order currentness schema drift'],
     ['seal-trigger-when',`drop trigger research_health_quick_order_scope_insert_seal on ${PREFIX}authority_scope_members;
@@ -1851,9 +1950,37 @@ ${empty?'':newId+','+DOC71_FIXTURE_IDS.product+',overview\n'}\\.
     await doc80FunctionInventory(ctx);
     for(const [id,setup,message] of drift){
       await ctx.owner.query(`select ${PREFIX}currentness_integrity() as value;`);
-      await doc80Refusal(ctx,`begin;${setup}select ${PREFIX}currentness_integrity();`,'55000',message,ctx.owner);
+      let restoreComment='';
+      const trigger=['wrong-transition-alias','wrong-new-transition-alias'].includes(id)?'research_health_quick_order_guard_u':
+        ['guard-column-list','guard-argument'].includes(id)?'research_health_quick_order_guard_t':null;
+      if(trigger) {
+        const comment=(await ctx.owner.query('select pg_catalog.obj_description(oid,\'pg_trigger\') as comment from pg_catalog.pg_trigger where tgrelid='+q(table)+'::pg_catalog.regclass and tgname='+q(trigger)+';')).rows[0].comment;
+        assert.match(comment,/^RHQOC_SOURCE_COLUMNS_V1:/,'Capture the accepted descriptor marker before DROP');
+        restoreComment='comment on trigger '+trigger+' on '+table+' is '+q(comment)+';';
+      }
+      // UPDATE OF cannot be added to a TRUNCATE trigger in PostgreSQL: that
+      // fixture also changes the event type; it does not isolate tgattr alone.
+      await doc80Refusal(ctx,'begin;'+setup+restoreComment+'select '+PREFIX+'currentness_integrity();','55000',message,ctx.owner);
       await ctx.owner.query(`select ${PREFIX}currentness_integrity() as value;`);
     }
+    // Membership is outside this schema fingerprint. Exercise the explicit
+    // function ACL loop, not merely the earlier fingerprint refusal. The later
+    // table ACL loop is still not independently discriminated by this case.
+    const aclSignature=PREFIX+DOC80_FUNCTIONS[0],ownerRole=ctx.profile.ownerRole.name;
+    assert.match(ownerRole,/^[a-z_][a-z0-9_]*$/);
+    const aclWitness='select pg_catalog.has_function_privilege(\'anon\','+q(aclSignature)+',\'EXECUTE\') as allowed,'+
+      'pg_catalog.pg_has_role(\'anon\','+q(ownerRole)+',\'MEMBER\') as member;';
+    const beforeAcl=(await ctx.owner.query(aclWitness)).rows[0];
+    assert.deepEqual(beforeAcl,{allowed:false,member:false});
+    const fingerprint=(await ctx.owner.query('select '+PREFIX+'currentness_schema_fingerprint() as value;')).rows[0].value;
+    try {
+      await ctx.owner.query('begin;grant "'+ownerRole+'" to anon;');
+      assert.deepEqual((await ctx.owner.query(aclWitness)).rows[0],{allowed:true,member:true});
+      assert.equal((await ctx.owner.query('select '+PREFIX+'currentness_schema_fingerprint() as value;')).rows[0].value,fingerprint);
+      await doc80Refusal(ctx,'select '+PREFIX+'currentness_integrity();','55000','Quick Order currentness function ACL drift',ctx.owner);
+    } finally { await ctx.owner.query('rollback;'); }
+    assert.deepEqual((await ctx.owner.query(aclWitness)).rows[0],beforeAcl);
+    await ctx.owner.query('select '+PREFIX+'currentness_integrity() as value;');
     for(const phase of [h.precheckText,h.postcheckText]){
       // An already-open fixture transaction contains the whole original phase;
       // its BEGIN does not create a nested transaction. The expected error and
