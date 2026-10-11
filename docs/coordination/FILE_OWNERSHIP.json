@@ -416,7 +416,6 @@
       "mode": "write",
       "state": "deployed",
       "patterns": [
-        "server/index.ts",
         "server/research/capabilities.test.ts",
         "server/research/capabilities.ts",
         "server/research/commerce/acceptance-harness.ts",
@@ -951,17 +950,14 @@
         "server/research/assisted-order/catalog-adapter.ts",
         "server/research/assisted-order/communications.ts",
         "server/research/assisted-order/defaults.ts",
-        "server/research/assisted-order/express.ts",
         "server/research/assisted-order/google-mirror.ts",
         "server/research/assisted-order/http-e2e.test.ts",
         "server/research/assisted-order/http.ts",
         "server/research/assisted-order/index.ts",
         "server/research/assisted-order/memory-repository.ts",
         "server/research/assisted-order/mount.ts",
-        "server/research/assisted-order/ports.ts",
         "server/research/assisted-order/production-catalog.test.ts",
         "server/research/assisted-order/production-catalog.ts",
-        "server/research/assisted-order/production-deps.ts",
         "server/research/assisted-order/production-wiring.test.ts",
         "server/research/assisted-order/production.ts",
         "server/research/assisted-order/service.test.ts",
@@ -985,6 +981,21 @@
         "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
         "supabase/production/research-assisted-order-bridge-rollback-notes.md",
         "supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql"
+      ]
+    },
+    {
+      "id": "OWNER-W2-QUICK-ORDER-DISABLED-INTEGRATION-20261011",
+      "owner": "Website 2",
+      "lane": "release-manager",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "server/research/assisted-order/express.ts",
+        "server/research/assisted-order/ports.ts",
+        "server/research/assisted-order/production-deps.ts",
+        "server/index.ts",
+        "client/src/App.tsx",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
       ]
     }
   ],

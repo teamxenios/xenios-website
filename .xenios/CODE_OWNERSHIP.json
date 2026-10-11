@@ -2,6 +2,18 @@
   "schemaVersion": 1,
   "leases": [
     {
+      "id": "28cc4ef0-650c-4b40-8fb6-c642031b28b4",
+      "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "handoff",
+      "claimedAt": "2026-10-11T16:36:08Z",
+      "heartbeatAt": "2026-10-11T16:38:53Z",
+      "completedAt": "2026-10-11T16:38:53Z",
+      "handoff": "docs/health-launch/accepted-source-integration-20261005/NINE_PATH_REGISTRY_AND_COPY_PREFLIGHT_20261011.json",
+      "paths": ["docs/coordination/FILE_OWNERSHIP.json"],
+      "scopeNote": "REGISTRY phase only, actual human approval message 01a12bcc-bf04-7432-aa45-9ed470620aa4 at coordinator21d904fa81835a6c26897df6269d295b95d13110. Exact approved candidate b0fb285cdec834fbc2cf87846c8d56439a70f77f9335cdc717fd3036045d67e7. Bounded disposition, not incumbent acknowledgment, unassigned finding or general CONTROL-PLANE takeover. Checked b22f/3221/389a: matching older leases released/handoff, registry files clean, no active matching writer. Copy843092f2 and source8703b782 remain unclaimed. Own metadata/evidence only in b22f; no foreign worktree writes, execution or push."
+    },
+    {
       "id": "a150b9b5-7985-488c-9d52-e0667422e564",
       "task": "QUICK-ORDER-CI-PUBLISHED-BASELINE-COMPARISON-20261010",
       "session": "codex-accepted-source-integration-20261005",
