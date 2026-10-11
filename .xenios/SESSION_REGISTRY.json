@@ -585,9 +585,9 @@
       "tool": "OpenAI Codex desktop",
       "lane": "health-quick-order",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "handoff",
+      "state": "active",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-11T23:07:46.401Z",
+      "heartbeatAt": "2026-10-11T23:13:08.920Z",
       "note": "Doc81 r3 acknowledged at exact clean6bf2579 after actual integrator handoff. Same af843 full21 identity/history/authority reactivated for narrowed verifier/intake/evidence stage only. Four accepted currentness SQL bytes and immutable sharedbinding frozen. First verifier source, separate provisional intake successor; PENDING receipts/reviewCommit null, LOCAL_ONLY/NOT_RUN.",
       "sourceSha": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
       "handoff": ".xenios/handoffs/2026-10-11-doc82-composition-evidence-handoff.json",
@@ -2243,6 +2243,39 @@
         "records": "71bdd9d0d9e828a7bbb16d03ab5f30f02d55d846",
         "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
         "executionEligibility": "NONE"
+      },
+      "currentDoc83Stage": {
+        "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+        "revision": 1,
+        "state": "ACKNOWLEDGED_EXACT13_LEASE_ACTIVE",
+        "assignmentCommit": "bee6ae528631be6443c4c1e58af8acbd40e85afb",
+        "base": "fcc98a27546609a83f0a0b79dc3ae954e1999d03",
+        "lease": "ddc54431-bcfb-46c5-beae-a48a7bc44f02",
+        "paths": [
+          "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+          "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+          "supabase/verification/research_health_quick_order_local.mjs",
+          "server/research/assisted-order/quick-order-repository.ts",
+          "server/research/assisted-order/quick-order-repository.test.ts",
+          "server/research/health/quick-order/ports.ts",
+          "server/research/assisted-order/quick-order-admin-readback.test.ts",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+        ],
+        "ack": ".xenios/handoffs/2026-10-11-doc83-builder-correction-owner-ack.json",
+        "execution": "NOT_RUN",
+        "publication": "LOCAL_ONLY"
+      },
+      "doc83Review": {
+        "review": "16d2731c928cdd40c810df764b14b68f0d995eb9",
+        "source": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+        "records": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+        "disposition": "CORRECTIONS_REQUIRED",
+        "currentnessSourceUnchanged": true
       }
     }
   ],
