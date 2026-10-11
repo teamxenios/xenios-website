@@ -3587,7 +3587,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "claimed",
+      "state": "handoff",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -3614,24 +3614,25 @@
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
       ],
       "dependsOn": [],
-      "scopeNote": "Exact conditional17+4 source grant; Doc78 accepted; lease af843213-fa11-42b9-8874-f6451ae38034; frozen records and all excluded paths unchanged.",
+      "scopeNote": "Existing exact conditional17+4 grant narrowed by the Doc83 assignment to nine source and four evidence paths under lease ddc54431-bcfb-46c5-beae-a48a7bc44f02. Builder stage complete and handed off; frozen currentness/supervisor source unchanged; no additional authority.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
-      "sourceSha": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
-      "sourceTree": "f57044e835a4a4e13c1b0937e32f828760634adc",
+      "sourceSha": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+      "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
       "baseAcceptance": {
         "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "review": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
         "disposition": "SOURCE ACCEPT; not release-qualified"
       },
-      "handoff": ".xenios/handoffs/2026-10-11-doc82-composition-evidence-handoff.json",
+      "handoff": ".xenios/handoffs/2026-10-11-doc83-builder-source-correction-handoff.json",
       "blockedOn": [
-        "Doc81 accepts four currentness SQL files for dependency authoring now; original R3 verifier byte check before final receipt/intake seal and composition acceptance.",
-        "Actual pre-BEGIN route/timer/role/configuration-artifact proofs, writer census ordering and target measurements remain QOE-01 through QOE-08 carries.",
-        "Real five operational inputs, implemented snapshot S, populated census and external digest/original acceptance before operation.",
-        "Fresh separately approved qualification scope/execution reservation; old window expired. Protected mount, SQL installation, push and deployment still unauthorized."
+        "Serial integrator TC8/9/10 successor and stopped-writer handoff",
+        "Original byte confirmation of amended currentness receipt and exact composition source disposition",
+        "Accepted descriptor/census, authoritative input/checkout/connection/recipient bindings",
+        "Protected-change dispositions, accepted qualification procedure and fresh bounded execution authority",
+        "Exact authorized installation/deployment/activation"
       ],
-      "heartbeatAt": "2026-10-11T23:13:08.920Z",
-      "note": "Doc81 r3 acknowledged at exact clean6bf2579 after actual integrator handoff. Same af843 full21 identity/history/authority reactivated for narrowed verifier/intake/evidence stage only. Four accepted currentness SQL bytes and immutable sharedbinding frozen. First verifier source, separate provisional intake successor; PENDING receipts/reviewCommit null, LOCAL_ONLY/NOT_RUN.",
+      "heartbeatAt": "2026-10-11T23:29:29.168Z",
+      "note": "Doc83 bounded nine-file builder correction frozen at 5c59cf44b55bb4d433ce4b6978c4aa988206f1c8. Currentness five-file source acceptance retained; amended receipt bytes and intake correction remain pending original review. Exact ddc54431 lease handed off, writer stopped. Same integrator TC8/9/10 must complete before final four-evidence composition reconciliation. LOCAL_ONLY / NOT_RUN.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
         "status": "REFUSED_RELEASED",
@@ -3651,7 +3652,7 @@
         "currentReservation": null,
         "currentResourceObservation": null
       },
-      "sourcePushStatus": "LOCAL_ONLY_NOT_AUTHORIZED",
+      "sourcePushStatus": "LOCAL_ONLY",
       "lastPushedBaseline": "1631323d7cf60f145141e0f82586e64ef7c7d637",
       "acceptance": {
         "review": "7dde166bad54e7c5d6b673434d04cd591c93e3e9",
@@ -4634,7 +4635,7 @@
           "records": "0d4309c0159db7bee96e3989e882528efec60de3"
         }
       },
-      "currentSourceAcceptance": "PENDING_ORIGINAL_R3_BYTE_CHECK_AND_INTAKE_COMPOSITION_REVIEW",
+      "currentSourceAcceptance": "DOC83_CORRECTED_BUILDER_SOURCE_PENDING_ORIGINAL_REVIEW; CURRENTNESS_FIVE_FILES_ACCEPTED_UNCHANGED; AMENDED_RECEIPT_BYTE_CONFIRMATION_PENDING",
       "doc71FixtureContinuation": {
         "coordinatorCheckpoint": "238943cb3041c559252c99129afe112ddb065180",
         "predecessorSource": "357890561160d59eb649505c6c46e9e5b65a3f08",
@@ -5276,7 +5277,7 @@
         "publication": "LOCAL_ONLY"
       },
       "currentDoc82Stage": {
-        "state": "ACTIVE_DOC82_THREE_EVIDENCE_PATHS_ONLY",
+        "state": "COMPLETE_THREE_EVIDENCE_PATHS_HANDED_OFF",
         "activatedAt": "2026-10-11T21:27:10.654Z",
         "ack": ".xenios/handoffs/2026-10-11-doc82-evidence-finalization-ack.json",
         "sourcePaths": [
@@ -5289,7 +5290,8 @@
         "coordinatorCommit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
         "acceptedReview": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
         "otherOriginalPathsHeld": true,
-        "soleSerialSourceGitWriter": true
+        "soleSerialSourceGitWriter": true,
+        "history": "Doc82 stage completed before Doc83; old receipt defects are superseded only by the bounded pending Doc83 records amendment."
       },
       "currentDoc82Checkpoint": {
         "compositionSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
@@ -5349,7 +5351,7 @@
       "currentDoc83Stage": {
         "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
         "revision": 1,
-        "state": "ACKNOWLEDGED_EXACT13_LEASE_ACTIVE",
+        "state": "BUILDER_SOURCE_FROZEN_WRITER_STOPPED_PENDING_SERIAL_INTEGRATOR",
         "assignmentCommit": "bee6ae528631be6443c4c1e58af8acbd40e85afb",
         "base": "fcc98a27546609a83f0a0b79dc3ae954e1999d03",
         "lease": "ddc54431-bcfb-46c5-beae-a48a7bc44f02",
@@ -5370,7 +5372,11 @@
         ],
         "ack": ".xenios/handoffs/2026-10-11-doc83-builder-correction-owner-ack.json",
         "execution": "NOT_RUN",
-        "publication": "LOCAL_ONLY"
+        "publication": "LOCAL_ONLY",
+        "source": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+        "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+        "handoff": ".xenios/handoffs/2026-10-11-doc83-builder-source-correction-handoff.json",
+        "completedAt": "2026-10-11T23:29:29.168Z"
       },
       "doc83Review": {
         "review": "16d2731c928cdd40c810df764b14b68f0d995eb9",
@@ -5378,6 +5384,21 @@
         "records": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
         "disposition": "CORRECTIONS_REQUIRED",
         "currentnessSourceUnchanged": true
+      },
+      "currentDoc83Checkpoint": {
+        "source": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+        "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+        "handoff": ".xenios/handoffs/2026-10-11-doc83-builder-source-correction-handoff.json",
+        "currentnessRecords": "6fa81440be5186128944bac1313299da7db4bc8a",
+        "originalReview": "16d2731c928cdd40c810df764b14b68f0d995eb9",
+        "sourceAcceptance": "PENDING",
+        "finalCompositionSeal": false,
+        "execution": "NOT_RUN",
+        "publication": "LOCAL_ONLY"
+      },
+      "doc83SupersededContinuityText": {
+        "note": "Doc81 r3 acknowledged at exact clean6bf2579 after actual integrator handoff. Same af843 full21 identity/history/authority reactivated for narrowed verifier/intake/evidence stage only. Four accepted currentness SQL bytes and immutable sharedbinding frozen. First verifier source, separate provisional intake successor; PENDING receipts/reviewCommit null, LOCAL_ONLY/NOT_RUN.",
+        "scopeNote": "Exact conditional17+4 source grant; Doc78 accepted; lease af843213-fa11-42b9-8874-f6451ae38034; frozen records and all excluded paths unchanged."
       }
     }
   ]

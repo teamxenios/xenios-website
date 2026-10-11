@@ -1,7 +1,7 @@
 {
   "schemaVersion": "quick-order-intake-source-receipt-v1",
-  "sourceCommit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
-  "sourceTree": "f57044e835a4a4e13c1b0937e32f828760634adc",
+  "sourceCommit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+  "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
   "sourceAcceptance": {
     "status": "PENDING",
     "reviewCommit": null
@@ -61,7 +61,7 @@
     },
     {
       "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
-      "sha256lf": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb"
+      "sha256lf": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5"
     },
     {
       "path": "server/research/assisted-order/quick-order-notifications.test.ts",
@@ -69,11 +69,11 @@
     },
     {
       "path": "server/research/assisted-order/quick-order-repository.test.ts",
-      "sha256lf": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170"
+      "sha256lf": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138"
     },
     {
       "path": "server/research/assisted-order/quick-order-repository.ts",
-      "sha256lf": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b"
+      "sha256lf": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482"
     },
     {
       "path": "server/research/assisted-order/service.ts",
@@ -97,7 +97,7 @@
     },
     {
       "path": "server/research/health/quick-order/ports.ts",
-      "sha256lf": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767"
+      "sha256lf": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f"
     },
     {
       "path": "server/research/health/quick-order/production.test.ts",
@@ -173,19 +173,19 @@
     },
     {
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
-      "sha256lf": "03f8135bf6a4472f3c7d5e07ef71b823c3b35108053abdad7a32a5c1473113c5"
+      "sha256lf": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3"
     },
     {
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
-      "sha256lf": "291907e12b2067cc4dead132a0d3b4935580555534afa7eeeacafd560c8d873d"
+      "sha256lf": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9"
     },
     {
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
-      "sha256lf": "9fc0d252323bba4845b6efa70e15b6350ff33d28c148f86fd1affcd19f790d0b"
+      "sha256lf": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571"
     },
     {
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
-      "sha256lf": "63262e90010e30c80e743a7c8ee0272d9a504009d3be6137128e9f634e8f4758"
+      "sha256lf": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112"
     },
     {
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
@@ -345,7 +345,7 @@
     },
     {
       "path": "supabase/verification/research_health_quick_order_local.mjs",
-      "sha256lf": "584014153bf62401368f6110be6448a2adb0184c69d616ff962e4307205a46a9"
+      "sha256lf": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b"
     },
     {
       "path": "vitest.config.ts",
@@ -370,24 +370,51 @@
     {
       "path": "package-lock.json",
       "sha256lf": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"
+    },
+    {
+      "path": "supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql",
+      "sha256lf": "7c1d1da7cac376528d4fc995241595fc4e9430821a009a97a7abdec2bff7b938"
+    },
+    {
+      "path": "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+      "sha256lf": "4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014"
+    },
+    {
+      "path": "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+      "sha256lf": "452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f"
+    },
+    {
+      "path": "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+      "sha256lf": "a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0"
+    },
+    {
+      "path": "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+      "sha256lf": "4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69"
+    },
+    {
+      "path": "supabase/candidates/20260921_research_assisted_order_member_history.sql",
+      "sha256lf": "c0ae0cf3f737cc32163fe06984688fd640043f15d7511205caa574f3a3409a7e"
     }
   ],
   "execution": "NOT_RUN_NO_EXECUTION_AUTHORITY",
   "publication": "LOCAL_ONLY_NOT_AUTHORIZED_FOR_PUSH",
-  "definitionSha256": "6a95ea28eba3013753c0174f04f244ad6ae8719cf1cfd4c22655a53a51c13f25",
+  "definitionSha256": "10e9e2e3c9ba6f86c6768f783aabd69b02f987cfe8540cdba8f2f6679c512b1a",
   "currentnessDefinition": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
   "currentnessDependency": {
-    "status": "SOURCE_ACCEPT_WITH_LIMITS",
+    "status": "PENDING_ORIGINAL_AMENDED_RECEIPT_BYTE_CONFIRMATION",
     "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
     "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
-    "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+    "reviewCommit": null,
+    "acceptedSourceReviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
     "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
     "receipt": {
+      "commit": "6fa81440be5186128944bac1313299da7db4bc8a",
       "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
-      "recordsCommit": "279eb93abd7652dd3c1e3591416ea3c6f0221155",
-      "gitBlob": "25931c4205851b80996375fc664985b5d1a1d92a",
-      "rawSha256": "f719499f619adf7135b5cfc6fcdd8039f3278faafcf27c654a9162821d44d123",
-      "bytes": 100942
+      "gitBlob": "2f09dc370e689d60a22e6031955ef87d0dce1367",
+      "rawSha256": "263261e68d7fce2b7f87bf555bb235cc6b9e9b6703e61aa085fb888e6e01423f",
+      "sha256lf": "263261e68d7fce2b7f87bf555bb235cc6b9e9b6703e61aa085fb888e6e01423f",
+      "bytes": 122098,
+      "recordsCommit": "6fa81440be5186128944bac1313299da7db4bc8a"
     },
     "acceptedFiles": [
       {
@@ -421,12 +448,12 @@
         "bytes": 219791
       }
     ],
-    "scope": "CURRENTNESS_FIVE_FILES_ONLY_NONCURRENTNESS_ROWS_IDENTITY_ONLY",
-    "sealStatus": "FINAL_CURRENTNESS_DEPENDENCY_ONLY",
+    "scope": "CURRENTNESS_CODE_ACCEPTANCE_RETAINED_RECEIPT_AMENDMENT_UNCONFIRMED",
+    "sealStatus": "PENDING_AMENDED_RECEIPT_CONFIRMATION_AND_COMPOSITION_REBIND",
     "execution": "NOT_RUN"
   },
   "disclosures": {
-    "kind": "AUTHORED_SOURCE_INVENTORY_NOT_ACCEPTED_INSTALLATION_RECEIPT",
+    "kind": "BUILDER_SOURCE_RECEIPT_PENDING_ORIGINAL_REVIEW_AND_FINAL_COMPOSITION",
     "sharedBindings": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
     "builtins": [
       "pg_catalog.acldefault",
@@ -494,6 +521,7 @@
       "pg_catalog.pg_try_advisory_xact_lock_shared",
       "pg_catalog.regclass",
       "pg_catalog.regexp_match",
+      "pg_catalog.regnamespace",
       "pg_catalog.regprocedure",
       "pg_catalog.regrole",
       "pg_catalog.replace",
@@ -516,12 +544,13 @@
       "pg_catalog.uuid"
     ],
     "measurements": "NONE; no subject import, syntax/compiler/build/test, SQL, verifier or probe was executed.",
-    "sealSequence": "Shared binding unchanged; accepted264 currentness source and Doc82 review -> frozen currentness receipt at279eb93 with raw digest -> this intake121 dependency -> separate composition records commit. No reverse/self dependency.",
+    "sealSequence": "Historical Doc82 -> currentness receipt 279eb93 -> intake dependency seal and composition records together in dcf8963, with no digest of either inside the other. New sequence: committed PENDING currentness receipt amendment -> this explicitly identified PENDING intake dependency -> original byte/source confirmation -> integrator handoff and separately frozen final composition/reconciliation. No new FINAL seal is claimed.",
     "installationRefusals": [
-      "Currentness complete function inventory, seal format/accepted definition/actual fingerprint and integrity must match. Actual protected source-column descriptor remains absent: transitive currentness installation/integrity still fail closed.",
-      "Original r3 byte check and final receipts remain absent: source-authoring permission is not installation authority."
+      "Currentness inventory/seal/fingerprint/integrity must match. Authoritative implemented-S source-column descriptor and census remain NOT_COMPLETED; installed schema is NOT_OBSERVED. No positive installation or commit is claimed.",
+      "Doc82 accepted the unchanged currentness source only. The records-only amended receipt and new dependent intake source are pending original confirmation; source-authoring permission is not installation authority.",
+      "Install/rollback timer admission is an unresolved S4 prerequisite. Unset timers can queue canonical writers at ShareRowExclusive/AccessExclusive DDL locks; require effective owner-approved timer carrier values before installation."
     ],
-    "qualification": "Currentness dependency finalized under actual Doc82. Intake121 and integration/whole composition still await their own original bounded source review. No execution, installation or live eligibility.",
+    "qualification": "Original r3 byte check is complete for unchanged currentness source only. Doc83 required corrections to intake/composition. This builder source and amended receipt dependency await original review; integrator TC8/9/10 and final composition are still pending. No execution, installation or live intake eligibility.",
     "fixtureSourceIncrement": {
       "predecessorSource": "357890561160d59eb649505c6c46e9e5b65a3f08",
       "predecessorRecords": "a8df1bc5386b6f6b60e621158d0bd5778ccc1783",
@@ -656,7 +685,8 @@
       "execution": "NOT_RUN",
       "sourceCommit": "3ddc31968bdca01be19ba1d7fdd65f2ffa3ccfdb",
       "sourceTree": "edffa5c578e15d60006172c9fd09e1196f88fddf",
-      "status": "HISTORICAL_3DDC_INVENTORY_DOC80_OVERRIDES_DEFECTIVE_CASES"
+      "status": "HISTORICAL_3DDC_INVENTORY_DOC80_OVERRIDES_DEFECTIVE_CASES",
+      "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
     },
     "priceAudienceCorrection": {
       "id": "EARLY_ACCESS_PRICE_AUDIENCE",
@@ -798,7 +828,8 @@
       "execution": "NOT_RUN",
       "publication": "LOCAL_ONLY",
       "historicalEA3CurrentnessDefinition": "6c6b27b410f5a32e1fd19288c82e7d79434a1e74e7fffe1997c00111e40f113b",
-      "bindingStatus": "HISTORICAL_EA3_SUPERSEDED_BY_DOC81_8B631A83_SEPARATE_IC12_RESEAL"
+      "bindingStatus": "HISTORICAL_EA3_SUPERSEDED_BY_DOC81_8B631A83_SEPARATE_IC12_RESEAL",
+      "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
     },
     "qualityClosureFixtureIncrement": {
       "kind": "CANONICAL_QUALITY_COMMAND_AND_PARENT_CLOSURE_FIXTURE_SOURCE",
@@ -972,13 +1003,14 @@
       "publication": "LOCAL_ONLY",
       "newCliDispatch": false,
       "status": "HISTORICAL_9C1_INVENTORY_DOC80_PRECISION_OVERRIDES",
-      "precision": "QC02 asserts stale-version refusal with no committed effect; QC03 asserts whole-statement atomicity after readiness refusal. Neither asserts internal check order or observes intermediate epoch changes."
+      "precision": "QC02 asserts stale-version refusal with no committed effect; QC03 asserts whole-statement atomicity after readiness refusal. Neither asserts internal check order or observes intermediate epoch changes.",
+      "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
     },
     "builtinInventoryMethod": "Lexical pg_catalog identifier inventory in named SQL/companion source; includes catalog relations/types/functions. SQL grammar constructs and extensions.digest are separate. Source reading only, not a runtime dependency measurement.",
     "runtimeRefusals": [
-      "Own expectedConfigurationDigest/approved_limits missing or unequal:55000 Quick Order approved limits binding unavailable, exact DEFINITE_REFUSAL detail.",
-      "Own NULL/short offering match before resolver:55000 Quick Order scope unavailable, exact DEFINITE_REFUSAL detail.",
-      "Transitive unmarked currentness integrity/seal55000 does not establish a definite adapter outcome; synthetic mappings retain OUTCOME_UNCERTAIN. Real wire proof NOT RUN."
+      "Distinct closed SQL markers classify catalog/price/offer/witness/estimate drift, terms drift, invalid input including eligibility/verified-link, held/authority/currentness unavailability and retryable refusal. Adapter classification requires confirmed abort metadata for transmitted refusals; unmarked or unknown transmission outcomes remain uncertain.",
+      "Admission and gate budget exhaustion use the retryable class. These are authored source assertions, NOT RUN or independently accepted; no automatic retry or authority inference.",
+      "The canonical Early Access assisted-order pricing grant selects member; legacy private_early_access is a separate catalog audience, not the master-offerings price authority."
     ],
     "approvedLimitsCanonicality": "Intake compares caller expectedConfigurationDigest with catalog approved_limits bytes. This is consistency, not authority against EXECUTE holders; adapter carrier canonicalization does not independently authorize SQL callers.",
     "doc80Correction": {
@@ -1224,7 +1256,8 @@
         }
       ],
       "execution": "NOT_RUN",
-      "publication": "LOCAL_ONLY"
+      "publication": "LOCAL_ONLY",
+      "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
     },
     "doc81Correction": {
       "revision": 3,
@@ -1435,7 +1468,8 @@
       "referenceDocs": [
         "https://www.postgresql.org/docs/17/plpgsql-errors-and-messages.html",
         "https://www.postgresql.org/docs/17/role-membership.html"
-      ]
+      ],
+      "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
     },
     "semanticChanges": [
       {
@@ -1807,20 +1841,21 @@
       "schedules": "UNCHANGED",
       "checkMethod": "Read source; builtin byte/hash/Git/JSON metadata and git diff --check only. No source imports/parser/compiler/tests/SQL/verifier/hosted operation.",
       "actualModel": "NOT_EXPOSED",
-      "actualEffort": "NOT_EXPOSED"
+      "actualEffort": "NOT_EXPOSED",
+      "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
     },
     "currentStageRequirements": [
       {
         "id": "SOURCE_ACCEPTANCE",
         "stage": "S2",
-        "requirement": "Original r3 byte check and exact intake/composition source disposition",
-        "status": "PENDING"
+        "requirement": "Doc82 r3 byte check is satisfied for the accepted currentness five-file source only. The amended receipt bytes, new intake source, dependent seal and final integrated composition have not been accepted.",
+        "status": "PENDING_ORIGINAL_DOC83_SUCCESSOR_AND_AMENDED_RECEIPT_REVIEW"
       },
       {
         "id": "IMPLEMENTED_S_CENSUS_DESCRIPTOR",
         "stage": "S3",
-        "status": "ABSENT_NO_FIXTURE_SUBSTITUTION",
-        "requirement": "Exact column descriptor over the12 protected canonical relations for the accepted implemented-S/census; expected_columns/source_column_descriptor_seal remain absent.",
+        "status": "NOT_COMPLETED",
+        "requirement": "Authoritative implemented-S source descriptor and populated census evidence are absent; expected_columns, source_column_descriptor_seal and external expected census digest remain unbound. No fixtures or inferred inputs.",
         "execution": "NOT_RUN"
       },
       {
@@ -1834,7 +1869,7 @@
         "id": "TRUSTED_CHECKOUT_BINDING",
         "stage": "S3",
         "status": "ABSENT_BRANCH_REFUSES",
-        "requirement": "Server-attested canonical checkout identity for admin_attested row8, bound to actor/customer/session/legal provenance and immutable checkout identity; current four-field private context has no such carrier. No browser input, fifth field or fabricated checkout.",
+        "requirement": "Canonical admin_attested row-8 commerce checkout binding is absent. It is distinct from the Git checkout identity; no browser fallback, fifth private-context field or invented checkout.",
         "execution": "NOT_RUN"
       },
       {
@@ -1847,8 +1882,8 @@
       {
         "id": "ADAPTER_RUNTIME_DISPATCH",
         "stage": "S3",
-        "status": "UNBOUND_NOT_DISPATCHED",
-        "requirement": "Existing Node20.19.0 executable hash; accepted installed tsx4.20.5-family/package-lock transitive file inventory; original source review; exact source/receipt binding and separately authorized future dispatch. No installation or new CLI entry authored.",
+        "status": "UNDISPATCHED",
+        "requirement": "Node 20.19.0 executable hash, accepted installed tsx 4.20.5-family and package-lock transitive inventory, exact reviewed source/receipt and separately authorized dispatch remain required. No install or execution occurred.",
         "execution": "NOT_RUN"
       },
       {
@@ -1864,6 +1899,128 @@
         "status": "NOT_AUTHORIZED",
         "requirement": "Independent exact release acceptance, applicable production inputs/configuration, compatible installation/deployment/rollback/verification authority. Request submission is not payment.",
         "execution": "NOT_RUN"
+      },
+      {
+        "id": "INSTALLED_SCHEMA",
+        "stage": "S3",
+        "status": "NOT_OBSERVED",
+        "requirement": "No hosted or installed schema observation is authorized or supplied; source schema identity is a proposal only."
+      },
+      {
+        "id": "CURRENTNESS_RECEIPT_BYTE_CONFIRMATION",
+        "stage": "S2",
+        "status": "PENDING",
+        "requirement": "ORIGINAL_REVIEWER_CURRENTNESS_AMENDED_RECEIPT_BYTE_CONFIRMATION_PENDING"
+      },
+      {
+        "id": "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
+        "stage": "S2",
+        "status": "PENDING",
+        "requirement": "After the same integrator handoff, bind the actual composed Git tree in a separately confirmed receipt successor while preserving the five accepted currentness files and definition. Do not silently edit the shared record or claim the historical receipt matches the new checkout."
+      },
+      {
+        "id": "PROTECTED_SEAM_DISPOSITION",
+        "stage": "S3/S4",
+        "status": "SEPARATE_DISPOSITION_REQUIRED",
+        "paths": [
+          {
+            "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+            "path": "server/index.ts",
+            "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+            "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+            "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+            "bytes": 77299
+          },
+          {
+            "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+            "path": "server/research/health/quick-order/root-composition.test.ts",
+            "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
+            "rawSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+            "sha256lf": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+            "bytes": 19984
+          },
+          {
+            "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+            "path": "client/src/App.tsx",
+            "gitBlob": "b98a29c91683cbb1e021c2bae50deb789a63608f",
+            "rawSha256": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+            "sha256lf": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+            "bytes": 17502
+          }
+        ],
+        "requirement": "Separate explicit protected-change/GATE-01 dispositions before qualification or release. These are the Doc83 reviewed blobs; any successor must be named separately. No expected-hash or manifest update authorized."
+      },
+      {
+        "id": "TC-20",
+        "stage": "S3",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "Relations first opened after decisionAt can still wait on relation locks",
+        "requirement": "Take zero-row reads before the head lock, or add these first-touch locks to the S3 wait and total-timeout qualification.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      {
+        "id": "TC-21",
+        "stage": "S3",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "The FINAL dependency seal is unreachable and must be re-bound once the descriptor is bound",
+        "requirement": "State in the records that the seal is final only for the uninstallable 8b631a83 revision. Binding the descriptor requires a new currentness definition, an intake re-seal and re-review. Count no positive install or commit control before then.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      {
+        "id": "TC-22",
+        "stage": "S3",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "Verifier controls are unreachable on these bytes and hold-timing, budget, post-fifth-write and version-phase cases remain held",
+        "requirement": "Keep these as named S3 holds. Label the adapter controls UNDISPATCHED. Add the cheap held-before-activation and expired-window twins when qualification opens.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      {
+        "id": "TC-23",
+        "stage": "S3",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "Deadline delay granularity and rounding are undefined",
+        "requirement": "Qualify the scheduler's granularity and floor rounding at S3.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      {
+        "id": "TC-24",
+        "stage": "S3",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "The actual bridge-enabled root and the real Auth client are unqualified; the App admits members only",
+        "requirement": "At S3: run a bridge-enabled root qualification (ports stay unmounted, containment answers, boot survives a composition failure); run a real-browser Auth qualification; confirm that first enablement is member-only, or add an attested EA boundary requirement.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      {
+        "id": "TC-25",
+        "stage": "S3",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "Protected-seam dispositions are outstanding for server/index.ts, root-composition.test.ts and App.tsx",
+        "requirement": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      {
+        "id": "TC-26",
+        "stage": "S3",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "The Doc82 schema/checkout binding step has no explicit disposition",
+        "requirement": "Record: descriptor and census NOT_COMPLETED because the source is absent (S3); installed schema NOT_OBSERVED; trusted checkout ABSENT_BRANCH_REFUSES; the Git checkout identity kept separate.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      {
+        "id": "TC-27",
+        "stage": "S4",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "Install and rollback have no timer admission now that the compiled timers are removed",
+        "requirement": "Refuse unless effective lock and statement timers are armed and equal an owner-approved carrier field, or carry it as a named S4 installation prerequisite with a disclosure of the queueing blast radius.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      },
+      {
+        "id": "TC-28",
+        "stage": "S4",
+        "status": "HELD_LATER_STAGE_NOT_PROVEN",
+        "title": "No operator signal for uncertain or retryable outcomes, and the recovery read is unbounded",
+        "requirement": "Before live operation, require an operator signal (adapter-only option: throw non-conflict outcomes as plain Error) and a whole-request bound that covers recovery without depending on the intake profile.",
+        "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
       }
     ],
     "installationRefusalHistory": {
@@ -2021,7 +2178,390 @@
           "execution": "NOT_RUN"
         }
       ],
-      "noExecutionAuthority": true
+      "noExecutionAuthority": true,
+      "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
+    },
+    "snapshot": {
+      "sourceCommit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+      "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+      "intakeSourceDecision": "PENDING_ORIGINAL_REVIEW",
+      "acceptedCurrentnessSource": {
+        "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+        "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+        "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+        "decision": "SOURCE_ACCEPT_WITH_LIMITS"
+      },
+      "amendedCurrentnessReceiptDecision": "PENDING_ORIGINAL_BYTE_CONFIRMATION",
+      "dependentSealDecision": "PENDING_NOT_FINAL",
+      "execution": "NOT_RUN"
+    },
+    "doc83RecordsCorrection": {
+      "id": "DOC83_RECORDS_AMENDMENT_20261011_V1",
+      "review": {
+        "commit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
+        "path": "docs/review/xenios-health-launch-review-20260930/83_TRANSACTION_COMPOSITION_121d098_2026-10-11.md",
+        "gitBlob": "a61b11dad407ce96d3325f3ad5e6f43bc94fea78",
+        "rawSha256": "a492647c7bd34bdd428bedbfdda5b88ccc8d9e3f65b9a18c36130fe9c05efc2b",
+        "sha256lf": "a492647c7bd34bdd428bedbfdda5b88ccc8d9e3f65b9a18c36130fe9c05efc2b",
+        "bytes": 11876
+      },
+      "assignment": {
+        "commit": "bee6ae528631be6443c4c1e58af8acbd40e85afb",
+        "path": "docs/coordination/launch-coordination-20261005/DOC83_BUILDER_CONSOLIDATED_CORRECTION_ASSIGNMENT_20261011.json",
+        "gitBlob": "f7c34972e0561112b8ee21a8c8d57a03018be328",
+        "rawSha256": "c0bad031208c56404656fbfc14455daa0290123b7f69bee50cb787ae501183d2",
+        "sha256lf": "6d0426db679679789c45b5cc8c4074f65fc49dca247a5e33ba0da6f6d2444717",
+        "bytes": 76919
+      },
+      "status": "AUTHORED_NOT_RUN_PENDING_ORIGINAL_REVIEW",
+      "historicalReceipt": {
+        "sourceCommit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+        "sourceTree": "f57044e835a4a4e13c1b0937e32f828760634adc",
+        "sourceAcceptance": {
+          "status": "PENDING",
+          "reviewCommit": null
+        },
+        "definitionSha256": "6a95ea28eba3013753c0174f04f244ad6ae8719cf1cfd4c22655a53a51c13f25",
+        "currentnessDependency": {
+          "status": "SOURCE_ACCEPT_WITH_LIMITS",
+          "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+          "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+          "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+          "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+          "receipt": {
+            "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+            "recordsCommit": "279eb93abd7652dd3c1e3591416ea3c6f0221155",
+            "gitBlob": "25931c4205851b80996375fc664985b5d1a1d92a",
+            "rawSha256": "f719499f619adf7135b5cfc6fcdd8039f3278faafcf27c654a9162821d44d123",
+            "bytes": 100942
+          },
+          "acceptedFiles": [
+            {
+              "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+              "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+              "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+              "bytes": 226183
+            },
+            {
+              "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+              "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+              "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+              "bytes": 17174
+            },
+            {
+              "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+              "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+              "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+              "bytes": 16996
+            },
+            {
+              "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+              "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+              "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+              "bytes": 27232
+            },
+            {
+              "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+              "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+              "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+              "bytes": 219791
+            }
+          ],
+          "scope": "CURRENTNESS_FIVE_FILES_ONLY_NONCURRENTNESS_ROWS_IDENTITY_ONLY",
+          "sealStatus": "FINAL_CURRENTNESS_DEPENDENCY_ONLY",
+          "execution": "NOT_RUN"
+        }
+      },
+      "historicalCurrentFieldsBeforeDoc83": {
+        "sealSequence": "Shared binding unchanged; accepted264 currentness source and Doc82 review -> frozen currentness receipt at279eb93 with raw digest -> this intake121 dependency -> separate composition records commit. No reverse/self dependency.",
+        "qualification": "Currentness dependency finalized under actual Doc82. Intake121 and integration/whole composition still await their own original bounded source review. No execution, installation or live eligibility.",
+        "installationRefusals": [
+          "Currentness complete function inventory, seal format/accepted definition/actual fingerprint and integrity must match. Actual protected source-column descriptor remains absent: transitive currentness installation/integrity still fail closed.",
+          "Original r3 byte check and final receipts remain absent: source-authoring permission is not installation authority."
+        ],
+        "runtimeRefusals": [
+          "Own expectedConfigurationDigest/approved_limits missing or unequal:55000 Quick Order approved limits binding unavailable, exact DEFINITE_REFUSAL detail.",
+          "Own NULL/short offering match before resolver:55000 Quick Order scope unavailable, exact DEFINITE_REFUSAL detail.",
+          "Transitive unmarked currentness integrity/seal55000 does not establish a definite adapter outcome; synthetic mappings retain OUTCOME_UNCERTAIN. Real wire proof NOT RUN."
+        ]
+      },
+      "consumedPathCoverage": {
+        "method": "GIT_BLOB_METADATA_AND_EXPLICIT_SOURCE_TEXT_PATH_LISTS_ONLY_NOT_VERIFIER_EXECUTION",
+        "sourceCommit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+        "verifier": {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "supabase/verification/research_health_quick_order_local.mjs",
+          "gitBlob": "6720110dbe253f9b7dfe106c3e08ad0fab87c3f4",
+          "rawSha256": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+          "sha256lf": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+          "bytes": 127690
+        },
+        "groups": {
+          "OWN": [
+            "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+            "supabase/verification/research_health_quick_order_local.mjs"
+          ],
+          "BINDINGS": [
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json"
+          ],
+          "BOOTSTRAP": [
+            "supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql"
+          ],
+          "OUTBOX": [
+            "supabase/research-notification-outbox.sql"
+          ],
+          "MIGRATIONS": [
+            "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+            "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+            "supabase/migrations/20260927203000_research_status_recovery.sql",
+            "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+            "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+            "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+            "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+            "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+            "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+            "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+            "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+            "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+            "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+            "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+            "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+            "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
+            "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+            "supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql"
+          ],
+          "TRANSACTION_PREDECESSORS": [
+            "supabase/research-membership.sql",
+            "supabase/research-members.sql",
+            "supabase/research-catalog.sql",
+            "supabase/research-inventory-lots.sql",
+            "supabase/research-products-diagnostics.sql",
+            "supabase/migrations/20260726143000_research_product_control_center.sql",
+            "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+            "supabase/research-inventory-reservation-commands.sql",
+            "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+            "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+            "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+            "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+            "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+            "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+            "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+            "supabase/research-private-early-access-sessions.sql",
+            "supabase/research-required-input-readiness.sql"
+          ],
+          "CURRENTNESS": [
+            "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql"
+          ],
+          "DOC81_ADAPTER_SOURCE_PATHS": [
+            "server/research/assisted-order/quick-order-repository.ts",
+            "shared/research/assisted-order/contract.ts",
+            "server/research/health/quick-order/handler.mjs",
+            "server/research/health/quick-order/core.mjs",
+            "server/research/health/quick-order/paths.mjs",
+            "package.json",
+            "package-lock.json"
+          ],
+          "MEMBER_HISTORY": [
+            "supabase/candidates/20260921_research_assisted_order_member_history.sql"
+          ],
+          "FIXED_BINDING_INVENTORY": [
+            "shared/research/assisted-order/contract.ts",
+            "server/research/assisted-order/supabase-repository.ts",
+            "server/research/assisted-order/service.ts",
+            "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+            "server/research/assisted-order/communications.ts",
+            "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+            "server/research/health/quick-order/ports.ts",
+            "server/research/health/quick-order/production.ts",
+            "server/research/health/quick-order/catalog.ts",
+            "server/research/health/quick-order/legal.ts",
+            "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+            "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+            "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+            "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+            "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+            "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+            "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+            "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+            "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
+            "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+            "supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+            "client/src/main.tsx",
+            "client/src/clarity/PublicShell.tsx",
+            "client/src/research/quick-order/QuickOrderPage.tsx",
+            "server/static.ts",
+            "server/vite.ts",
+            "server/research/assisted-order/production-boot.test.ts",
+            "server/research/assisted-order/production-env-shape.fixture.json",
+            "vitest.config.ts",
+            "server/research/products-diagnostics/product-admin-production.ts",
+            "server/research/catalog/member-catalog-service.ts",
+            "server/research/member-auth.ts",
+            "server/research/master-offerings/member-pricing-viewer.ts",
+            "server/research/master-offerings/composition.ts",
+            "server/research/master-offerings/reviewed-holds.ts",
+            "server/research/master-offerings/reconciliation-authority.ts",
+            "server/research/partners/referral-v1-attribution.ts",
+            "supabase/research-required-input-readiness.sql",
+            "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+            "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+            "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+            "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+            "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+            "supabase/research-private-early-access-sessions.sql",
+            "supabase/candidates/20260904_research_partner_referral_v1.sql",
+            "supabase/candidates/20260914_research_referral_v1_touch_attribution.sql",
+            "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+            "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+            "supabase/research-notification-outbox.sql",
+            "supabase/migrations/20260927203000_research_status_recovery.sql",
+            "shared/research/assisted-order/quick-order.ts",
+            "server/research/assisted-order/quick-order-repository.ts",
+            "server/research/assisted-order/quick-order-repository.test.ts",
+            "server/research/assisted-order/quick-order-admin-readback.test.ts",
+            "server/research/assisted-order/quick-order-notifications.test.ts"
+          ]
+        },
+        "missingDeclaredConsumedPaths": [],
+        "addedPins": [
+          {
+            "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+            "path": "supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql",
+            "gitBlob": "26e099ef3763467581d39beba2ac24e9057a2ede",
+            "rawSha256": "7c1d1da7cac376528d4fc995241595fc4e9430821a009a97a7abdec2bff7b938",
+            "sha256lf": "7c1d1da7cac376528d4fc995241595fc4e9430821a009a97a7abdec2bff7b938",
+            "bytes": 1267
+          },
+          {
+            "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+            "path": "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+            "gitBlob": "3a35b2849fbf901d7ab5a1e8856a75930721b4ff",
+            "rawSha256": "4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014",
+            "sha256lf": "4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014",
+            "bytes": 5581
+          },
+          {
+            "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+            "path": "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+            "gitBlob": "97495c60c0a27a3a0606ac63a6921ea914f3cd26",
+            "rawSha256": "452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f",
+            "sha256lf": "452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f",
+            "bytes": 4328
+          },
+          {
+            "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+            "path": "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+            "gitBlob": "5b19e2191844a1766a1ab9efa5eeb73d35b88b7b",
+            "rawSha256": "a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0",
+            "sha256lf": "a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0",
+            "bytes": 16696
+          },
+          {
+            "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+            "path": "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+            "gitBlob": "b9432ece0868683bbd9e3d710b2bb4b4d160561b",
+            "rawSha256": "4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69",
+            "sha256lf": "4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69",
+            "bytes": 9888
+          },
+          {
+            "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+            "path": "supabase/candidates/20260921_research_assisted_order_member_history.sql",
+            "gitBlob": "a4c7cfec242eee332e9c8fe1b743c363159abac6",
+            "rawSha256": "c0ae0cf3f737cc32163fe06984688fd640043f15d7511205caa574f3a3409a7e",
+            "sha256lf": "c0ae0cf3f737cc32163fe06984688fd640043f15d7511205caa574f3a3409a7e",
+            "bytes": 11319
+          }
+        ],
+        "limitation": "This inventory establishes identity membership only. It does not execute load(), prove runtime coverage, establish installed dependencies, or clear source/receipt/execution gates."
+      },
+      "acceptedCurrentnessSource": {
+        "status": "SOURCE_ACCEPT_WITH_LIMITS",
+        "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+        "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+        "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+        "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+        "scope": "ONLY_FOUR_CURRENTNESS_SQL_FILES_PLUS_R3_VERIFIER_AND_RECORDED_DEFINITION",
+        "files": [
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+            "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+            "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+            "bytes": 226183
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+            "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+            "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+            "bytes": 17174
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+            "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+            "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+            "bytes": 16996
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+            "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+            "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+            "bytes": 27232
+          },
+          {
+            "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+            "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+            "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+            "bytes": 219791
+          }
+        ],
+        "execution": "NOT_RUN",
+        "installationEligibility": "NONE"
+      },
+      "currentnessReceiptByteConfirmation": "PENDING",
+      "checkoutRebind": {
+        "id": "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
+        "status": "PENDING_ORIGINAL_BYTE_CONFIRMATION_AND_FINAL_COMPOSITION",
+        "reason": "The amended receipt still binds source 264e6af. Its non-currentness inventory includes newer adapter files and the later integrator client test. New checkout bytes cannot be reported as matching those historical pins. The receipt remains PENDING and is not runnable qualification evidence.",
+        "currentlyChangedPaths": [
+          "server/research/assisted-order/quick-order-repository.ts",
+          "server/research/assisted-order/quick-order-repository.test.ts",
+          "server/research/assisted-order/quick-order-admin-readback.test.ts",
+          "server/research/health/quick-order/ports.ts"
+        ],
+        "laterIntegrationPath": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+        "next": "After the same integrator handoff, bind the actual composed Git tree in a separately confirmed receipt successor while preserving the five accepted currentness files and definition. Do not silently edit the shared record or claim the historical receipt matches the new checkout."
+      },
+      "schemaAndCheckout": {
+        "descriptor": "NOT_COMPLETED",
+        "populatedCensus": "NOT_COMPLETED",
+        "reason": "Authoritative source descriptor/census evidence absent; no fixture substitution",
+        "installedSchema": "NOT_OBSERVED",
+        "trustedCommerceCheckout": "ABSENT_BRANCH_REFUSES",
+        "expectedCensusDigest": null,
+        "checkoutBinding": null,
+        "gitSource": {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "tree": "b1dc591ec12d02e7093f2470028ca01f8bd39895"
+        },
+        "gitAndCommerceCheckoutAreDistinct": true
+      },
+      "missingEvidenceFieldsForDependencyFinalization": [
+        "ORIGINAL_REVIEWER_CURRENTNESS_AMENDED_RECEIPT_BYTE_CONFIRMATION_PENDING",
+        "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
+        "INTAKE_SOURCE_AND_DEPENDENCY_RESEAL_ACCEPTANCE_PENDING",
+        "INTEGRATOR_TC8_TC9_TC10_SOURCE_HANDOFF_PENDING",
+        "FINAL_COMPOSITION_AND_ONE_SHARED_BINDING_RECONCILIATION_DEFERRED"
+      ],
+      "sharedBinding": "UNCHANGED_BYTE_FOR_BYTE; currentness historical pins and intake source pin preserved; any successor reconciliation deferred",
+      "finalComposition": "DEFERRED_UNTIL_SAME_INTEGRATOR_TC8_TC9_TC10_HANDOFF_AND_ORIGINAL_CONFIRMATION",
+      "execution": "NOT_RUN",
+      "publication": "LOCAL_ONLY",
+      "schedules": "UNCHANGED"
     }
   }
 }

@@ -4042,9 +4042,9 @@
         "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-11T23:13:08.920Z",
-      "heartbeatAt": "2026-10-11T23:13:08.920Z",
+      "heartbeatAt": "2026-10-11T23:29:29.168Z",
       "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
       "branch": "codex/accepted-source-integration-20261005",
       "assignmentCommit": "bee6ae528631be6443c4c1e58af8acbd40e85afb",
@@ -4069,8 +4069,14 @@
         "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
       ],
-      "stage": "B_BUILDER_SOURCE_CORRECTION_BEFORE_SERIAL_INTEGRATOR",
-      "allPriorLeaseRowsPreserved": true
+      "stage": "BUILDER_COMPLETE_WAITING_SERIAL_INTEGRATOR_THEN_RECORDS",
+      "allPriorLeaseRowsPreserved": true,
+      "handedOffAt": "2026-10-11T23:29:29.168Z",
+      "sourceCommit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+      "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+      "handoff": ".xenios/handoffs/2026-10-11-doc83-builder-source-correction-handoff.json",
+      "writerStopped": true,
+      "noAutomaticReclaim": true
     }
   ],
   "rules": [

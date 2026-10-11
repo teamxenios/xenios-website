@@ -2,129 +2,146 @@
   "schemaVersion": "doc71-disabled-source-correction-map-v1",
   "taskId": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
   "revision": 3,
-  "sourceCommit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
-  "sourceTree": "f57044e835a4a4e13c1b0937e32f828760634adc",
-  "sourceStatus": "DISABLED_COMPOSITION_FROZEN_CURRENTNESS_DEPENDENCY_FINAL_INTAKE_COMPOSITION_PENDING",
+  "sourceCommit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+  "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+  "sourceStatus": "BUILDER_CORRECTION_SOURCE_AUTHORED_NOT_RUN_PENDING_ORIGINAL_REVIEW_FINAL_COMPOSITION_DEFERRED",
   "execution": "NOT_RUN",
   "publication": "LOCAL_ONLY",
   "sourceFiles": [
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
-      "rawSha256": "63262e90010e30c80e743a7c8ee0272d9a504009d3be6137128e9f634e8f4758",
-      "sha256lf": "63262e90010e30c80e743a7c8ee0272d9a504009d3be6137128e9f634e8f4758",
-      "gitBlob": "8826e3b367a05823e69004ce7784f6b904f550a0",
-      "bytes": 93752
+      "gitBlob": "415a9a09652d1719fc6176a6e48cad6854ec449e",
+      "rawSha256": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112",
+      "sha256lf": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112",
+      "bytes": 101994
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
-      "rawSha256": "291907e12b2067cc4dead132a0d3b4935580555534afa7eeeacafd560c8d873d",
-      "sha256lf": "291907e12b2067cc4dead132a0d3b4935580555534afa7eeeacafd560c8d873d",
-      "gitBlob": "66f510e62f58461386a0879b84b32a3f607332e5",
-      "bytes": 16050
+      "gitBlob": "5d5e1aa1f1cf9aef5d94bc6b3cb2585bcab69b95",
+      "rawSha256": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9",
+      "sha256lf": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9",
+      "bytes": 19895
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
-      "rawSha256": "03f8135bf6a4472f3c7d5e07ef71b823c3b35108053abdad7a32a5c1473113c5",
-      "sha256lf": "03f8135bf6a4472f3c7d5e07ef71b823c3b35108053abdad7a32a5c1473113c5",
-      "gitBlob": "a42fda1dde85e6227c2782b54f8bd7c8e647b578",
-      "bytes": 16056
+      "gitBlob": "146e9ef92c4e5a153961b9f2de0027c7c286dc61",
+      "rawSha256": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3",
+      "sha256lf": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3",
+      "bytes": 19901
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
-      "rawSha256": "9fc0d252323bba4845b6efa70e15b6350ff33d28c148f86fd1affcd19f790d0b",
-      "sha256lf": "9fc0d252323bba4845b6efa70e15b6350ff33d28c148f86fd1affcd19f790d0b",
-      "gitBlob": "8daa5c5aeee3b600f0ab8d7cb962114e5ece2f1d",
-      "bytes": 21232
+      "gitBlob": "13585a4df545a9041fc4e2898d98ebf29cdc8246",
+      "rawSha256": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571",
+      "sha256lf": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571",
+      "bytes": 22130
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/verification/research_health_quick_order_local.mjs",
-      "rawSha256": "584014153bf62401368f6110be6448a2adb0184c69d616ff962e4307205a46a9",
-      "sha256lf": "584014153bf62401368f6110be6448a2adb0184c69d616ff962e4307205a46a9",
-      "gitBlob": "446061124a9fd44118cf1ef2a6851f54979506de",
-      "bytes": 93031
+      "gitBlob": "6720110dbe253f9b7dfe106c3e08ad0fab87c3f4",
+      "rawSha256": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+      "sha256lf": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+      "bytes": 127690
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
       "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
       "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
-      "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
       "bytes": 226183
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
       "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
       "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
-      "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
       "bytes": 17174
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
       "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
       "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
-      "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
       "bytes": 16996
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
       "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
       "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
-      "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
       "bytes": 27232
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
       "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
       "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
-      "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
       "bytes": 219791
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "server/research/assisted-order/quick-order-repository.ts",
-      "rawSha256": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
-      "sha256lf": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
-      "gitBlob": "307d903f2b83a3252a1dde38f199c88e51cae2af",
-      "bytes": 31788
+      "gitBlob": "f001222499689c482eab183d642efd50f2d24634",
+      "rawSha256": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482",
+      "sha256lf": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482",
+      "bytes": 33891
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "server/research/assisted-order/quick-order-repository.test.ts",
-      "rawSha256": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170",
-      "sha256lf": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170",
-      "gitBlob": "7070fd8a2b3a973908fbe127cdbe68bbd0e9ed4b",
-      "bytes": 52802
+      "gitBlob": "d2547502d681877d6adade0ab4f72236d8cab000",
+      "rawSha256": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138",
+      "sha256lf": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138",
+      "bytes": 64297
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "server/research/health/quick-order/production.ts",
+      "gitBlob": "e7c8d9f57aab964f47bf6d305297dc392b621e40",
       "rawSha256": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
       "sha256lf": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
-      "gitBlob": "e7c8d9f57aab964f47bf6d305297dc392b621e40",
       "bytes": 9743
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "server/research/health/quick-order/production.test.ts",
+      "gitBlob": "8b2a7b51d6db7cc34ce35e6ec52c5c2c4023fa16",
       "rawSha256": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
       "sha256lf": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
-      "gitBlob": "8b2a7b51d6db7cc34ce35e6ec52c5c2c4023fa16",
       "bytes": 30667
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "server/research/health/quick-order/ports.ts",
-      "rawSha256": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
-      "sha256lf": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
-      "gitBlob": "3266ff8475f726037e6b03ddfa434e262432e252",
-      "bytes": 5390
+      "gitBlob": "df020ea3b729a6f6c96f46f546bd29b245759ff6",
+      "rawSha256": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f",
+      "sha256lf": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f",
+      "bytes": 5549
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
-      "rawSha256": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb",
-      "sha256lf": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb",
-      "gitBlob": "bffd940fc24d9cc8b1cd179378ec16f7977e0efc",
-      "bytes": 35156
+      "gitBlob": "f47443ef97a74c6d592f804f81f45e40bd258ebc",
+      "rawSha256": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5",
+      "sha256lf": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5",
+      "bytes": 36728
     },
     {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
       "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "gitBlob": "32cd919a0235cd0c0a55963418c301b5dd86f64b",
       "rawSha256": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0",
       "sha256lf": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0",
-      "gitBlob": "32cd919a0235cd0c0a55963418c301b5dd86f64b",
       "bytes": 24468
     }
   ],
@@ -163,7 +180,7 @@
     },
     {
       "id": "C-6",
-      "implementation": "Session-entry observation clock, pre-send expiry, uncertain post-send failures, explicit aborted SQLSTATE mapping and no automatic retry.",
+      "implementation": "enteredAtMonotonicMsFor(req) reads the timestamp set once at Node HTTP entry, never refreshed at session lookup. Recovery is authorized before a new attempt; clock/context remain bound to the canonical session and viewer. Node entry is not proxy arrival. Pre-send expiry and confirmed-abort classification remain authored, not measured.",
       "disposition": "AUTHORED_PENDING_INDEPENDENT_REVIEW_NOT_EXECUTION_PROOF",
       "stage": "S2"
     },
@@ -852,9 +869,9 @@
   "remaining": [
     {
       "id": "SEQUENTIAL_SOURCE_SEAL",
-      "requirement": "Frozen accepted currentness receipt at279eb93; intake own source and whole composition remain PENDING.",
+      "requirement": "Historical currentness receipt279eb93 and intake seal/composition dcf8963 are retained as history. Amended currentness receipt bytes and dependent intake seal are PENDING; final composition waits for integrator handoff and original confirmation.",
       "stage": "S2",
-      "status": "CURRENTNESS_RECEIPT_AND_INTAKE_DEPENDENCY_FINAL"
+      "status": "PENDING_AMENDED_RECEIPT_CONFIRMATION_AND_FINAL_COMPOSITION"
     },
     {
       "id": "CANONICAL_SCHEMA_DESCRIPTOR",
@@ -1174,17 +1191,19 @@
     },
     {
       "id": "IC-7",
-      "status": "PROVISIONALLY_BOUND_PENDING_R3_BYTE_CHECK",
-      "change": "Corrected legal guard bound by unchanged accepted8b definition plus integrity; no new legal resolver or policy.",
+      "status": "DOC82_PRIOR_DEPENDENCY_FINAL_NEW_RECORDS_AMENDMENT_PENDING",
+      "change": "Original r3 byte check satisfied for unchanged currentness code; historical Doc82 dependent binding finalized. Newly amended receipt bytes and explicitly identified intake dependency are pending original confirmation; no repeated old r3 review or final successor claim.",
       "stage": "S2",
-      "execution": "NOT_RUN"
+      "execution": "NOT_RUN",
+      "historicalStatusBeforeDoc83": "PROVISIONALLY_BOUND_PENDING_R3_BYTE_CHECK"
     },
     {
       "id": "IC-12",
-      "status": "PROVISIONALLY_REBOUND_NON_FINAL",
-      "change": "Historical EA3 binding superseded by explicit accepted8b definition. Earlier hash retained as history.",
+      "status": "DOC82_PRIOR_DEPENDENCY_FINAL_NEW_RECORDS_AMENDMENT_PENDING",
+      "change": "Original r3 byte check satisfied for unchanged currentness code; historical Doc82 dependent binding finalized. Newly amended receipt bytes and explicitly identified intake dependency are pending original confirmation; no repeated old r3 review or final successor claim.",
       "stage": "S2",
-      "execution": "NOT_RUN"
+      "execution": "NOT_RUN",
+      "historicalStatusBeforeDoc83": "PROVISIONALLY_REBOUND_NON_FINAL"
     },
     {
       "id": "INTAKE-STARTS-WITH",
@@ -1211,8 +1230,8 @@
     {
       "id": "IMPLEMENTED_S_CENSUS_DESCRIPTOR",
       "stage": "S3",
-      "status": "ABSENT_NO_FIXTURE_SUBSTITUTION",
-      "requirement": "Exact column descriptor over the12 protected canonical relations for the accepted implemented-S/census; expected_columns/source_column_descriptor_seal remain absent.",
+      "status": "NOT_COMPLETED",
+      "requirement": "Authoritative implemented-S source descriptor and populated census evidence are absent; expected_columns, source_column_descriptor_seal and external expected census digest remain unbound. No fixtures or inferred inputs.",
       "execution": "NOT_RUN"
     },
     {
@@ -1226,7 +1245,7 @@
       "id": "TRUSTED_CHECKOUT_BINDING",
       "stage": "S3",
       "status": "ABSENT_BRANCH_REFUSES",
-      "requirement": "Server-attested canonical checkout identity for admin_attested row8, bound to actor/customer/session/legal provenance and immutable checkout identity; current four-field private context has no such carrier. No browser input, fifth field or fabricated checkout.",
+      "requirement": "Canonical admin_attested row-8 commerce checkout binding is absent. It is distinct from the Git checkout identity; no browser fallback, fifth private-context field or invented checkout.",
       "execution": "NOT_RUN"
     },
     {
@@ -1239,8 +1258,8 @@
     {
       "id": "ADAPTER_RUNTIME_DISPATCH",
       "stage": "S3",
-      "status": "UNBOUND_NOT_DISPATCHED",
-      "requirement": "Existing Node20.19.0 executable hash; accepted installed tsx4.20.5-family/package-lock transitive file inventory; original source review; exact source/receipt binding and separately authorized future dispatch. No installation or new CLI entry authored.",
+      "status": "UNDISPATCHED",
+      "requirement": "Node 20.19.0 executable hash, accepted installed tsx 4.20.5-family and package-lock transitive inventory, exact reviewed source/receipt and separately authorized dispatch remain required. No install or execution occurred.",
       "execution": "NOT_RUN"
     },
     {
@@ -1256,6 +1275,134 @@
       "status": "NOT_AUTHORIZED",
       "requirement": "Independent exact release acceptance, applicable production inputs/configuration, compatible installation/deployment/rollback/verification authority. Request submission is not payment.",
       "execution": "NOT_RUN"
+    },
+    {
+      "id": "SOURCE_ACCEPTANCE",
+      "stage": "S2",
+      "requirement": "Doc82 r3 byte check is satisfied for the accepted currentness five-file source only. The amended receipt bytes, new intake source, dependent seal and final integrated composition have not been accepted.",
+      "status": "PENDING_ORIGINAL_DOC83_SUCCESSOR_AND_AMENDED_RECEIPT_REVIEW"
+    },
+    {
+      "id": "INSTALLED_SCHEMA",
+      "stage": "S3",
+      "status": "NOT_OBSERVED",
+      "requirement": "No hosted or installed schema observation is authorized or supplied; source schema identity is a proposal only."
+    },
+    {
+      "id": "CURRENTNESS_RECEIPT_BYTE_CONFIRMATION",
+      "stage": "S2",
+      "status": "PENDING",
+      "requirement": "ORIGINAL_REVIEWER_CURRENTNESS_AMENDED_RECEIPT_BYTE_CONFIRMATION_PENDING"
+    },
+    {
+      "id": "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
+      "stage": "S2",
+      "status": "PENDING",
+      "requirement": "After the same integrator handoff, bind the actual composed Git tree in a separately confirmed receipt successor while preserving the five accepted currentness files and definition. Do not silently edit the shared record or claim the historical receipt matches the new checkout."
+    },
+    {
+      "id": "PROTECTED_SEAM_DISPOSITION",
+      "stage": "S3/S4",
+      "status": "SEPARATE_DISPOSITION_REQUIRED",
+      "paths": [
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "server/index.ts",
+          "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+          "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+          "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+          "bytes": 77299
+        },
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "server/research/health/quick-order/root-composition.test.ts",
+          "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
+          "rawSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+          "sha256lf": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+          "bytes": 19984
+        },
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "client/src/App.tsx",
+          "gitBlob": "b98a29c91683cbb1e021c2bae50deb789a63608f",
+          "rawSha256": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+          "sha256lf": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+          "bytes": 17502
+        }
+      ],
+      "requirement": "Separate explicit protected-change/GATE-01 dispositions before qualification or release. These are the Doc83 reviewed blobs; any successor must be named separately. No expected-hash or manifest update authorized."
+    },
+    {
+      "id": "TC-20",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Relations first opened after decisionAt can still wait on relation locks",
+      "requirement": "Take zero-row reads before the head lock, or add these first-touch locks to the S3 wait and total-timeout qualification.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-21",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "The FINAL dependency seal is unreachable and must be re-bound once the descriptor is bound",
+      "requirement": "State in the records that the seal is final only for the uninstallable 8b631a83 revision. Binding the descriptor requires a new currentness definition, an intake re-seal and re-review. Count no positive install or commit control before then.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-22",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Verifier controls are unreachable on these bytes and hold-timing, budget, post-fifth-write and version-phase cases remain held",
+      "requirement": "Keep these as named S3 holds. Label the adapter controls UNDISPATCHED. Add the cheap held-before-activation and expired-window twins when qualification opens.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-23",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Deadline delay granularity and rounding are undefined",
+      "requirement": "Qualify the scheduler's granularity and floor rounding at S3.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-24",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "The actual bridge-enabled root and the real Auth client are unqualified; the App admits members only",
+      "requirement": "At S3: run a bridge-enabled root qualification (ports stay unmounted, containment answers, boot survives a composition failure); run a real-browser Auth qualification; confirm that first enablement is member-only, or add an attested EA boundary requirement.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-25",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Protected-seam dispositions are outstanding for server/index.ts, root-composition.test.ts and App.tsx",
+      "requirement": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-26",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "The Doc82 schema/checkout binding step has no explicit disposition",
+      "requirement": "Record: descriptor and census NOT_COMPLETED because the source is absent (S3); installed schema NOT_OBSERVED; trusted checkout ABSENT_BRANCH_REFUSES; the Git checkout identity kept separate.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-27",
+      "stage": "S4",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Install and rollback have no timer admission now that the compiled timers are removed",
+      "requirement": "Refuse unless effective lock and statement timers are armed and equal an owner-approved carrier field, or carry it as a named S4 installation prerequisite with a disclosure of the queueing blast radius.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-28",
+      "stage": "S4",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "No operator signal for uncertain or retryable outcomes, and the recovery read is unbounded",
+      "requirement": "Before live operation, require an operator signal (adapter-only option: throw non-conflict outcomes as plain Error) and a whole-request bound that covers recovery without depending on the intake profile.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
     }
   ],
   "generationRepair": {
@@ -1263,7 +1410,7 @@
     "resolution": "Regenerated only owned currentness files from frozen3f7601d source using literal callback replacements; preserved other dirty code.",
     "verification": "Final source sizes/raw hashes above; text/diff metadata only, no source execution."
   },
-  "independentAcceptance": "PENDING; original Claude reviewer remains the sole acceptance reviewer.",
+  "independentAcceptance": "PENDING; original Claude reviewer remains the sole acceptance reviewer. Retained Doc82 currentness source acceptance does not accept amended receipt bytes, new intake source or final composition.",
   "schedules": "UNCHANGED",
   "previousSourceCheckpoint": {
     "source": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
@@ -8426,7 +8573,8 @@
     ],
     "sourceCommit": "3ddc31968bdca01be19ba1d7fdd65f2ffa3ccfdb",
     "sourceTree": "edffa5c578e15d60006172c9fd09e1196f88fddf",
-    "status": "HISTORICAL_FIXTURE_INVENTORY_SUPERSEDED_WHERE_DOC80_NAMES_A_CORRECTION"
+    "status": "HISTORICAL_FIXTURE_INVENTORY_SUPERSEDED_WHERE_DOC80_NAMES_A_CORRECTION",
+    "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
   },
   "priceAudienceCorrection": {
     "id": "EARLY_ACCESS_PRICE_AUDIENCE",
@@ -8568,7 +8716,8 @@
     "execution": "NOT_RUN",
     "publication": "LOCAL_ONLY",
     "historicalEA3CurrentnessDefinition": "6c6b27b410f5a32e1fd19288c82e7d79434a1e74e7fffe1997c00111e40f113b",
-    "bindingStatus": "HISTORICAL_EA3_SUPERSEDED_BY_DOC81_8B631A83_SEPARATE_IC12_RESEAL"
+    "bindingStatus": "HISTORICAL_EA3_SUPERSEDED_BY_DOC81_8B631A83_SEPARATE_IC12_RESEAL",
+    "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
   },
   "qualityClosureFixtureIncrement": {
     "kind": "CANONICAL_QUALITY_COMMAND_AND_PARENT_CLOSURE_FIXTURE_SOURCE",
@@ -9355,7 +9504,8 @@
     "execution": "NOT_RUN",
     "publication": "LOCAL_ONLY",
     "newCliDispatch": false,
-    "status": "HISTORICAL_9C1_SOURCE_INVENTORY_WITH_DOC80_PRECISION_OVERRIDES"
+    "status": "HISTORICAL_9C1_SOURCE_INVENTORY_WITH_DOC80_PRECISION_OVERRIDES",
+    "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
   },
   "doc80Correction": {
     "revision": 2,
@@ -10658,7 +10808,8 @@
       "https://www.postgresql.org/docs/17/sql-createsubscription.html",
       "https://www.postgresql.org/docs/17/catalog-pg-subscription-rel.html"
     ],
-    "status": "HISTORICAL_DOC80_TARGET_AMENDED_BY_DOC81_CORRECTION"
+    "status": "HISTORICAL_DOC80_TARGET_AMENDED_BY_DOC81_CORRECTION",
+    "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
   },
   "doc81Correction": {
     "revision": 3,
@@ -10869,7 +11020,8 @@
     "referenceDocs": [
       "https://www.postgresql.org/docs/17/plpgsql-errors-and-messages.html",
       "https://www.postgresql.org/docs/17/role-membership.html"
-    ]
+    ],
+    "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
   },
   "doc81IntakeSuccessor": {
     "sourceCommit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
@@ -11221,20 +11373,21 @@
     "schedules": "UNCHANGED",
     "checkMethod": "Read source; builtin byte/hash/Git/JSON metadata and git diff --check only. No source imports/parser/compiler/tests/SQL/verifier/hosted operation.",
     "actualModel": "NOT_EXPOSED",
-    "actualEffort": "NOT_EXPOSED"
+    "actualEffort": "NOT_EXPOSED",
+    "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
   },
   "currentStageRequirements": [
     {
       "id": "SOURCE_ACCEPTANCE",
       "stage": "S2",
-      "requirement": "Original r3 byte check and exact intake/composition source disposition",
-      "status": "PENDING"
+      "requirement": "Doc82 r3 byte check is satisfied for the accepted currentness five-file source only. The amended receipt bytes, new intake source, dependent seal and final integrated composition have not been accepted.",
+      "status": "PENDING_ORIGINAL_DOC83_SUCCESSOR_AND_AMENDED_RECEIPT_REVIEW"
     },
     {
       "id": "IMPLEMENTED_S_CENSUS_DESCRIPTOR",
       "stage": "S3",
-      "status": "ABSENT_NO_FIXTURE_SUBSTITUTION",
-      "requirement": "Exact column descriptor over the12 protected canonical relations for the accepted implemented-S/census; expected_columns/source_column_descriptor_seal remain absent.",
+      "status": "NOT_COMPLETED",
+      "requirement": "Authoritative implemented-S source descriptor and populated census evidence are absent; expected_columns, source_column_descriptor_seal and external expected census digest remain unbound. No fixtures or inferred inputs.",
       "execution": "NOT_RUN"
     },
     {
@@ -11248,7 +11401,7 @@
       "id": "TRUSTED_CHECKOUT_BINDING",
       "stage": "S3",
       "status": "ABSENT_BRANCH_REFUSES",
-      "requirement": "Server-attested canonical checkout identity for admin_attested row8, bound to actor/customer/session/legal provenance and immutable checkout identity; current four-field private context has no such carrier. No browser input, fifth field or fabricated checkout.",
+      "requirement": "Canonical admin_attested row-8 commerce checkout binding is absent. It is distinct from the Git checkout identity; no browser fallback, fifth private-context field or invented checkout.",
       "execution": "NOT_RUN"
     },
     {
@@ -11261,8 +11414,8 @@
     {
       "id": "ADAPTER_RUNTIME_DISPATCH",
       "stage": "S3",
-      "status": "UNBOUND_NOT_DISPATCHED",
-      "requirement": "Existing Node20.19.0 executable hash; accepted installed tsx4.20.5-family/package-lock transitive file inventory; original source review; exact source/receipt binding and separately authorized future dispatch. No installation or new CLI entry authored.",
+      "status": "UNDISPATCHED",
+      "requirement": "Node 20.19.0 executable hash, accepted installed tsx 4.20.5-family and package-lock transitive inventory, exact reviewed source/receipt and separately authorized dispatch remain required. No install or execution occurred.",
       "execution": "NOT_RUN"
     },
     {
@@ -11278,6 +11431,128 @@
       "status": "NOT_AUTHORIZED",
       "requirement": "Independent exact release acceptance, applicable production inputs/configuration, compatible installation/deployment/rollback/verification authority. Request submission is not payment.",
       "execution": "NOT_RUN"
+    },
+    {
+      "id": "INSTALLED_SCHEMA",
+      "stage": "S3",
+      "status": "NOT_OBSERVED",
+      "requirement": "No hosted or installed schema observation is authorized or supplied; source schema identity is a proposal only."
+    },
+    {
+      "id": "CURRENTNESS_RECEIPT_BYTE_CONFIRMATION",
+      "stage": "S2",
+      "status": "PENDING",
+      "requirement": "ORIGINAL_REVIEWER_CURRENTNESS_AMENDED_RECEIPT_BYTE_CONFIRMATION_PENDING"
+    },
+    {
+      "id": "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
+      "stage": "S2",
+      "status": "PENDING",
+      "requirement": "After the same integrator handoff, bind the actual composed Git tree in a separately confirmed receipt successor while preserving the five accepted currentness files and definition. Do not silently edit the shared record or claim the historical receipt matches the new checkout."
+    },
+    {
+      "id": "PROTECTED_SEAM_DISPOSITION",
+      "stage": "S3/S4",
+      "status": "SEPARATE_DISPOSITION_REQUIRED",
+      "paths": [
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "server/index.ts",
+          "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+          "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+          "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+          "bytes": 77299
+        },
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "server/research/health/quick-order/root-composition.test.ts",
+          "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
+          "rawSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+          "sha256lf": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+          "bytes": 19984
+        },
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "client/src/App.tsx",
+          "gitBlob": "b98a29c91683cbb1e021c2bae50deb789a63608f",
+          "rawSha256": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+          "sha256lf": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+          "bytes": 17502
+        }
+      ],
+      "requirement": "Separate explicit protected-change/GATE-01 dispositions before qualification or release. These are the Doc83 reviewed blobs; any successor must be named separately. No expected-hash or manifest update authorized."
+    },
+    {
+      "id": "TC-20",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Relations first opened after decisionAt can still wait on relation locks",
+      "requirement": "Take zero-row reads before the head lock, or add these first-touch locks to the S3 wait and total-timeout qualification.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-21",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "The FINAL dependency seal is unreachable and must be re-bound once the descriptor is bound",
+      "requirement": "State in the records that the seal is final only for the uninstallable 8b631a83 revision. Binding the descriptor requires a new currentness definition, an intake re-seal and re-review. Count no positive install or commit control before then.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-22",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Verifier controls are unreachable on these bytes and hold-timing, budget, post-fifth-write and version-phase cases remain held",
+      "requirement": "Keep these as named S3 holds. Label the adapter controls UNDISPATCHED. Add the cheap held-before-activation and expired-window twins when qualification opens.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-23",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Deadline delay granularity and rounding are undefined",
+      "requirement": "Qualify the scheduler's granularity and floor rounding at S3.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-24",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "The actual bridge-enabled root and the real Auth client are unqualified; the App admits members only",
+      "requirement": "At S3: run a bridge-enabled root qualification (ports stay unmounted, containment answers, boot survives a composition failure); run a real-browser Auth qualification; confirm that first enablement is member-only, or add an attested EA boundary requirement.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-25",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Protected-seam dispositions are outstanding for server/index.ts, root-composition.test.ts and App.tsx",
+      "requirement": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-26",
+      "stage": "S3",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "The Doc82 schema/checkout binding step has no explicit disposition",
+      "requirement": "Record: descriptor and census NOT_COMPLETED because the source is absent (S3); installed schema NOT_OBSERVED; trusted checkout ABSENT_BRANCH_REFUSES; the Git checkout identity kept separate.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-27",
+      "stage": "S4",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "Install and rollback have no timer admission now that the compiled timers are removed",
+      "requirement": "Refuse unless effective lock and statement timers are armed and equal an owner-approved carrier field, or carry it as a named S4 installation prerequisite with a disclosure of the queueing blast radius.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+    },
+    {
+      "id": "TC-28",
+      "stage": "S4",
+      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "title": "No operator signal for uncertain or retryable outcomes, and the recovery read is unbounded",
+      "requirement": "Before live operation, require an operator signal (adapter-only option: throw non-conflict outcomes as plain Error) and a whole-request bound that covers recovery without depending on the intake profile.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
     }
   ],
   "doc82Finalization": {
@@ -11571,6 +11846,873 @@
       }
     ],
     "sourceChanges": "NONE",
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY",
+    "schedules": "UNCHANGED",
+    "doc83HistoricalLabel": "HISTORICAL_TARGET_AND_DISPOSITION_ONLY; current Doc83 status is recorded separately. Historical pending/final labels are not the amended receipt verdict."
+  },
+  "doc83RecordsCorrection": {
+    "id": "DOC83_RECORDS_AMENDMENT_20261011_V1",
+    "status": "INTERMEDIATE_BUILDER_RECORDS_NOT_FINAL_COMPOSITION",
+    "review": {
+      "commit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
+      "path": "docs/review/xenios-health-launch-review-20260930/83_TRANSACTION_COMPOSITION_121d098_2026-10-11.md",
+      "gitBlob": "a61b11dad407ce96d3325f3ad5e6f43bc94fea78",
+      "rawSha256": "a492647c7bd34bdd428bedbfdda5b88ccc8d9e3f65b9a18c36130fe9c05efc2b",
+      "sha256lf": "a492647c7bd34bdd428bedbfdda5b88ccc8d9e3f65b9a18c36130fe9c05efc2b",
+      "bytes": 11876
+    },
+    "structuredChecks": {
+      "commit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/83_transaction_composition_findings.json",
+      "gitBlob": "4fc9bc1a1be7d9273e6d599734535fb0f6cb2047",
+      "rawSha256": "8308a3a87ffa9e0e556a59761cbe8d30934f4393becc72cc3a2e6e3d94868cf7",
+      "sha256lf": "8308a3a87ffa9e0e556a59761cbe8d30934f4393becc72cc3a2e6e3d94868cf7",
+      "bytes": 293789
+    },
+    "assignment": {
+      "commit": "bee6ae528631be6443c4c1e58af8acbd40e85afb",
+      "path": "docs/coordination/launch-coordination-20261005/DOC83_BUILDER_CONSOLIDATED_CORRECTION_ASSIGNMENT_20261011.json",
+      "gitBlob": "f7c34972e0561112b8ee21a8c8d57a03018be328",
+      "rawSha256": "c0bad031208c56404656fbfc14455daa0290123b7f69bee50cb787ae501183d2",
+      "sha256lf": "6d0426db679679789c45b5cc8c4074f65fc49dca247a5e33ba0da6f6d2444717",
+      "bytes": 76919
+    },
+    "builderSource": {
+      "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+      "tree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+      "files": [
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+          "gitBlob": "415a9a09652d1719fc6176a6e48cad6854ec449e",
+          "rawSha256": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112",
+          "sha256lf": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112",
+          "bytes": 101994
+        },
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+          "gitBlob": "5d5e1aa1f1cf9aef5d94bc6b3cb2585bcab69b95",
+          "rawSha256": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9",
+          "sha256lf": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9",
+          "bytes": 19895
+        },
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+          "gitBlob": "146e9ef92c4e5a153961b9f2de0027c7c286dc61",
+          "rawSha256": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3",
+          "sha256lf": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3",
+          "bytes": 19901
+        },
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+          "gitBlob": "13585a4df545a9041fc4e2898d98ebf29cdc8246",
+          "rawSha256": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571",
+          "sha256lf": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571",
+          "bytes": 22130
+        },
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "supabase/verification/research_health_quick_order_local.mjs",
+          "gitBlob": "6720110dbe253f9b7dfe106c3e08ad0fab87c3f4",
+          "rawSha256": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+          "sha256lf": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+          "bytes": 127690
+        },
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "server/research/assisted-order/quick-order-repository.ts",
+          "gitBlob": "f001222499689c482eab183d642efd50f2d24634",
+          "rawSha256": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482",
+          "sha256lf": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482",
+          "bytes": 33891
+        },
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "server/research/assisted-order/quick-order-repository.test.ts",
+          "gitBlob": "d2547502d681877d6adade0ab4f72236d8cab000",
+          "rawSha256": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138",
+          "sha256lf": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138",
+          "bytes": 64297
+        },
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "server/research/health/quick-order/ports.ts",
+          "gitBlob": "df020ea3b729a6f6c96f46f546bd29b245759ff6",
+          "rawSha256": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f",
+          "sha256lf": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f",
+          "bytes": 5549
+        },
+        {
+          "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+          "gitBlob": "f47443ef97a74c6d592f804f81f45e40bd258ebc",
+          "rawSha256": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5",
+          "sha256lf": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5",
+          "bytes": 36728
+        }
+      ],
+      "definitionSha256": "10e9e2e3c9ba6f86c6768f783aabd69b02f987cfe8540cdba8f2f6679c512b1a"
+    },
+    "correctionMap": [
+      {
+        "from": "TC-1",
+        "to": "TC-1",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Persist the canonical additional SHA-256 of the private stored-session lookup key in request.early_access_session_hash. Canonical customer_status ownership controls accept the double-hashed viewer key and reject raw/wrong keys; actor_id remains the separate opaque actor scope. AUTHORED, not observed."
+      },
+      {
+        "from": "TC-2",
+        "to": "TC-2",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Replace blanket commit/guard refusals in precheck/postcheck with the exact currentness inventory/definition/fingerprint/integrity dependency gate and exact five-signature intake present state. Verifier authors absent precheck/install/postcheck and present precheck/reapply/postcheck twins."
+      },
+      {
+        "from": "TC-3",
+        "to": "TC-3",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Qualify non-keyword types and casts with pg_catalog in intake DDL, fingerprint and DO blocks; rebind the definition. Three fresh-backend admin/replay/commit shadow-domain controls retain positive markers and no-domain twins. No SQL execution."
+      },
+      {
+        "from": "TC-4",
+        "to": "TC-4",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Closed definite-refusal markers distinguish catalog drift (409 catalog_changed), terms drift (409 terms_changed), invalid input including eligibility/verified-link (422 invalid_input), held/authority/currentness unavailability (503), and retryable refusal (503). Missing/ambiguous identities are marked explicitly. Transmitted classification requires confirmed abort; unknown or unmarked responses remain uncertain. No page/handler policy change."
+      },
+      {
+        "from": "TC-5",
+        "to": "TC-5",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Author witnessed actor-key overlap for same-key replay and changed-payload conflict, with A holding the actor key and B blocked; separately author shared-only grant and queued exclusive-writer refusal. Reentrant refusal checks exact effects, empty recovery and allowed retry. Synthetic limits preserve required timer relationships."
+      },
+      {
+        "from": "TC-6",
+        "to": "TC-6",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Assert exact retained envelope/detail/line keys and submission-derived values, canonical seeded member UUID, event/companion/receipt plus outbox recipient/template/payload; compare eight additional canonical relation snapshots for unrelated writes. These are authored assertions, not durable database proof."
+      },
+      {
+        "from": "TC-7",
+        "to": "TC-7",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Author 24 focused identity/temporal/agreement/private-context/quantity/destination/readiness/estimate/witness negatives and 15 profile/session/catalog negatives with positive twins, exact marker/message, no effects and no saved key. Recovery under zero lock timeout and without SET ROLE is distinct from new admission."
+      },
+      {
+        "from": "TC-8",
+        "to": "TC-8",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Builder adapter/health-port comments corrected to canonical resolver/refusal-only runtime; integrator composition/factory behavior pending."
+      },
+      {
+        "from": "TC-9",
+        "to": "TC-10",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Same integrator context/composition and operator-test lineage reconciliation pending."
+      },
+      {
+        "from": "TC-11",
+        "to": "TC-11",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Five consumed baseline pins restored to both receipts; intake member_history candidate additionally pinned. Amended currentness receipt byte confirmation and final rebind pending."
+      },
+      {
+        "from": "TC-12",
+        "to": "TC-12",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Check SELECT and UPDATE privileges separately, include row-share and INSERT relations, and require EXECUTE for callees using marked admission refusals; do not substitute BYPASSRLS for actual privileges."
+      },
+      {
+        "from": "TC-13",
+        "to": "TC-13",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Both admission and final-gate budget exhaustion use 55P03 with DEFINITE_REFUSAL_RETRYABLE. Adapter controls distinguish confirmed-abort retryability from uncertain transmission; no automatic body retry."
+      },
+      {
+        "from": "TC-14",
+        "to": "TC-14",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Use exact starts_with prefix checks for approved settings, currentness inventory and actor kinds, remove duplicated version/isolation admission and constant template predicates, and rebind the actual definition/raw identities."
+      },
+      {
+        "from": "TC-15",
+        "to": "TC-15",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Current wording corrected; historical records labeled; original currentness source acceptance distinguished from unconfirmed amended receipt. C-6 is one Node HTTP-entry timestamp, not proxy arrival; intake-before-currentness rollback order remains required."
+      },
+      {
+        "from": "TC-16",
+        "to": "TC-16",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Verifier authored dependency/receipt and carrier-order checks, literal-prefix decoy discrimination, exact reader-header refusal, distinct pre-resolver marker, price-version no-effect/retry and inventory/fingerprint drift controls. Canonical uniqueness, timer/native limits and undispatched adapter controls remain explicitly limited."
+      },
+      {
+        "from": "TC-17",
+        "to": "TC-17",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Adapter controls distinguish closed refusal classes, confirmed abort, no-abort uncertainty, pre-send expiry, sync post-transmission throw and malformed committed receipts; admin-readback negatives isolate invalid retained receipt shapes. Notification/root-composition paths excluded from this builder patch; original root/header/notification concerns are carried, not falsely closed. Root changes require protected disposition."
+      },
+      {
+        "from": "TC-18",
+        "to": "TC-18",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Integrator actor-form and held-scope disposition remain pending."
+      },
+      {
+        "from": "TC-19",
+        "to": "TC-19",
+        "status": "AUTHORED_OR_CARRIED_PENDING_ORIGINAL_REVIEW",
+        "change": "Immutable authority/assembly artifacts, historical lease windows, and App/index baseline reconciliation recorded; no protected acceptance inferred."
+      }
+    ],
+    "verifierAuthoredCorrection": {
+      "sourceCommit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+      "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "status": "AUTHORED_NOT_RUN_PENDING_ORIGINAL_REVIEW",
+      "groups": [
+        {
+          "finding": "TC1",
+          "controls": "Canonical customer_status RPC with NULL member/token accepts the double-hashed viewer key; raw and incorrect hashes return NULL; no request stores a raw private-session lookup key. Event actor_id remains the separate opaque actor scope.",
+          "ids": [
+            "TC1-EA-owned-status-double-hash"
+          ]
+        },
+        {
+          "finding": "TC2",
+          "controls": "Explicit absent precheck/install/postcheck and present precheck/reapply/postcheck, preserving the provider boundary and existing exact rollback controls."
+        },
+        {
+          "finding": "TC3",
+          "controls": "Three fresh-backend temp-domain controls (admin, replay, commit) with one positive stderr NOTICE marker, four shadow type names, zero additional marker notices, and no-domain twins. Retained admin bytes match with only fresh observedAt excluded."
+        },
+        {
+          "finding": "TC5",
+          "controls": "Two actor-key races witness A holding the exact actor advisory key while waiting on row 11, then B queued behind A; deterministic replay/conflict outcomes. Shared-only grant and observed queued-exclusive-writer refusal are separate. Reentrant admission has exact no-effect, no-key and retry controls. Synthetic overlap limits preserve the required relationships."
+        },
+        {
+          "finding": "TC6",
+          "controls": "Exact envelope/detail/line key sets and input/fixture-derived values, original seeded member UUID, timeline, companion, receipt, outbox recipient/template/payload and fresh observation shape. Eight additional canonical relation snapshots detect unexpected mutation; actor races and negative controls carry those snapshots."
+        },
+        {
+          "finding": "TC7",
+          "controls": "24 parameterized identity, temporal, agreement, private-context, quantity, destination, readiness, estimate and witness negatives, each with a fresh positive control, exact message/marker, no effects and no saved key. 15 parameterized profile/session/catalog negatives have positive controls. Existing-receipt recovery under lock_timeout=0 and no SET ROLE is distinct from new-key admission."
+        },
+        {
+          "finding": "TC16",
+          "controls": "Anchored dependency/receipt/disclosure and carrier-order assertions; LIKE-decoy setting discrimination with restored same-key success; exact strict-reader header message; pre-resolver marker site; price-version refusal/no-key/retry; inventory and fingerprint currentness drift at all three precheck/reapply/postcheck gates. Stale held wording corrected."
+        }
+      ],
+      "heldOrLimited": [
+        "No subject imports, parser/syntax/compiler checks, tests, SQL, Docker or probes were performed. Root used metadata and text-edit scripts only. These are authored controls, not observations or acceptance.",
+        "Real implemented-S/source-column descriptor, accepted census/input packet, trusted admin-attested checkout binding, accepted intake receipt and fresh execution authority remain absent; the original gates remain intact.",
+        "Canonical one-active-price uniqueness prevents an honest price-ambiguous positive-reachability fixture. No duplicate row or disabled constraint is used.",
+        "Canonical private-session exact-role CHECK prevents a stored-role mismatch from reaching the final intake comparison; the CHECK refusal and input-role refusal are separate controls.",
+        "Alternate server version and max_prepared_transactions cases need an independently authorized alternate server. They are not represented by local GUC simulation.",
+        "Explicit transaction-budget branches remain defence in depth: a correctly armed native transaction_timeout normally terminates first. No timer-disabling fixture is presented as their proof.",
+        "Failure at the fifth write boundary rolls back four prior effects; it does not demonstrate a fault after all five writes, uncertain COMMIT, transport cancellation, or deployed timing.",
+        "The retained callable adapter mapping suite is not dispatched by the historical verifier CLI; installed runtime closure and independent execution authority remain required.",
+        "These controls do not establish PostgREST role/connection configuration, real provider measurements, pre-BEGIN timer arming, live customer intake or production approval."
+      ],
+      "helperMetadata": {
+        "path": "C:/Users/sboad/AppData/Local/Temp/qo-doc83-verifier-proposal-map.json",
+        "rawSha256": "e37b2cbf9de1e6d9fe56e76bba2936d1255e651bbece5d1c25f929ca13084ebe"
+      }
+    },
+    "historicalMapIdentity": {
+      "sourceCommit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+      "sourceTree": "f57044e835a4a4e13c1b0937e32f828760634adc",
+      "sourceStatus": "DISABLED_COMPOSITION_FROZEN_CURRENTNESS_DEPENDENCY_FINAL_INTAKE_COMPOSITION_PENDING",
+      "independentAcceptance": "PENDING; original Claude reviewer remains the sole acceptance reviewer."
+    },
+    "historicalC6": {
+      "id": "C-6",
+      "implementation": "Session-entry observation clock, pre-send expiry, uncertain post-send failures, explicit aborted SQLSTATE mapping and no automatic retry.",
+      "disposition": "AUTHORED_PENDING_INDEPENDENT_REVIEW_NOT_EXECUTION_PROOF",
+      "stage": "S2"
+    },
+    "acceptedCurrentnessSource": {
+      "status": "SOURCE_ACCEPT_WITH_LIMITS",
+      "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+      "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+      "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+      "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+      "scope": "ONLY_FOUR_CURRENTNESS_SQL_FILES_PLUS_R3_VERIFIER_AND_RECORDED_DEFINITION",
+      "files": [
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+          "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+          "bytes": 226183
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+          "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+          "bytes": 17174
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+          "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+          "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+          "bytes": 16996
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+          "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+          "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+          "bytes": 27232
+        },
+        {
+          "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+          "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+          "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+          "bytes": 219791
+        }
+      ],
+      "execution": "NOT_RUN",
+      "installationEligibility": "NONE"
+    },
+    "currentnessReceipt": {
+      "commit": "6fa81440be5186128944bac1313299da7db4bc8a",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "2f09dc370e689d60a22e6031955ef87d0dce1367",
+      "rawSha256": "263261e68d7fce2b7f87bf555bb235cc6b9e9b6703e61aa085fb888e6e01423f",
+      "sha256lf": "263261e68d7fce2b7f87bf555bb235cc6b9e9b6703e61aa085fb888e6e01423f",
+      "bytes": 122098,
+      "recordsCommit": "6fa81440be5186128944bac1313299da7db4bc8a"
+    },
+    "currentnessReceiptByteConfirmation": "PENDING",
+    "checkoutRebind": {
+      "id": "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
+      "status": "PENDING_ORIGINAL_BYTE_CONFIRMATION_AND_FINAL_COMPOSITION",
+      "reason": "The amended receipt still binds source 264e6af. Its non-currentness inventory includes newer adapter files and the later integrator client test. New checkout bytes cannot be reported as matching those historical pins. The receipt remains PENDING and is not runnable qualification evidence.",
+      "currentlyChangedPaths": [
+        "server/research/assisted-order/quick-order-repository.ts",
+        "server/research/assisted-order/quick-order-repository.test.ts",
+        "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "server/research/health/quick-order/ports.ts"
+      ],
+      "laterIntegrationPath": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "next": "After the same integrator handoff, bind the actual composed Git tree in a separately confirmed receipt successor while preserving the five accepted currentness files and definition. Do not silently edit the shared record or claim the historical receipt matches the new checkout."
+    },
+    "provenance": {
+      "authorityArtifacts": [
+        {
+          "commit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+          "path": "docs/coordination/launch-coordination-20261005/NINE_PATH_DISABLED_INTEGRATION_SOURCE_APPROVAL_20261011.json",
+          "gitBlob": "90ad0af3e28081ea3ec75a26fb65d696584d7c89",
+          "rawSha256": "c5c1883333513b7554d724af53b53c91108f3f30cf5ef28dd31674bb4f295def",
+          "sha256lf": "2b9cec7a8f24a815c538def17fd4680a9d04b3c248ba6e106b782f489416ad76",
+          "bytes": 6768,
+          "role": "EXTERNAL_COORDINATOR_AUTHORITY_REFERENCE_NO_LOCAL_COPY_CLAIM"
+        },
+        {
+          "commit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+          "path": "docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+          "gitBlob": "66024389a6978e1756233a8660226e196efc9f69",
+          "rawSha256": "20a17b3613d40e7fe7bd9e3041a8db01b66e932e56a618df09cd2cd75cde7f5a",
+          "sha256lf": "b2c9010b1327953258aca920cb174d337b5a7933e4f973d9b1b23dfaa52575e1",
+          "bytes": 33842,
+          "role": "EXTERNAL_COORDINATOR_AUTHORITY_REFERENCE_NO_LOCAL_COPY_CLAIM"
+        },
+        {
+          "commit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+          "path": "docs/coordination/launch-coordination-20261005/NINE_PATH_DISABLED_INTEGRATION_DIRECT_AUTHORITY_20261011.txt",
+          "gitBlob": "41d7ace9954b0c4513d5a8f97083affb0cdee902",
+          "rawSha256": "4fbe1d96858789ece46b35a9dea504f28c97060623ad6146e4f85ec54a895a72",
+          "sha256lf": "4fbe1d96858789ece46b35a9dea504f28c97060623ad6146e4f85ec54a895a72",
+          "bytes": 241,
+          "role": "EXTERNAL_COORDINATOR_AUTHORITY_REFERENCE_NO_LOCAL_COPY_CLAIM"
+        },
+        {
+          "commit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+          "path": "docs/coordination/launch-coordination-20261005/QUALIFICATION_TWO_FILE_DIRECT_AUTHORITY_20261011.txt",
+          "gitBlob": "d00ea7139efce0bb03fd5d7a963866bae032b249",
+          "rawSha256": "203a854d5642d4f43dfa4bc21a5849c666748adef22ef654c7286ff126eb260f",
+          "sha256lf": "d31e89ebafe020b9f635dd977b78e234c3028bfab22276ea524e362ee4785e2b",
+          "bytes": 14625,
+          "role": "SEPARATE_TWO_FILE_AUTHORITY_NOT_PART_OF_THIS_COMPOSITION"
+        }
+      ],
+      "artifactsPresence": "External immutable coordinator Git objects, not files copied into this checkout. These references are history and bounded authority, not new permission.",
+      "historicalOwnershipRecord": {
+        "commit": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+        "path": ".xenios/CODE_OWNERSHIP.json",
+        "gitBlob": "78b9960f1f49e7a60babeb0a3ec20d0d087d00b1",
+        "rawSha256": "87ceaf4d7826d23b5ff525dc5439ea60a29beac6283467a492fe33eab3e80276",
+        "sha256lf": "87ceaf4d7826d23b5ff525dc5439ea60a29beac6283467a492fe33eab3e80276",
+        "bytes": 198485
+      },
+      "historicalLeases": [
+        {
+          "id": "8703b782-aefc-4cfa-a5ba-7200aea8bd5a",
+          "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+          "session": "codex-accepted-source-integration-20261005",
+          "state": "handoff",
+          "claimedAt": "2026-10-11T17:10:35.656Z",
+          "heartbeatAt": "2026-10-11T17:20:58.0120582Z",
+          "completedAt": "2026-10-11T17:20:58.0120582Z",
+          "handedOffAt": null,
+          "authorityCommit": "ac19cfc8214c48b950a508eaac54ab1245e0a0da",
+          "paths": [
+            "server/research/assisted-order/express.ts",
+            "server/research/assisted-order/ports.ts",
+            "server/research/assisted-order/production-deps.ts",
+            "server/index.ts",
+            "client/src/App.tsx",
+            "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+          ],
+          "sourceCommit": "8e01ef8660ab2148078e969b2190808fc37a27ad",
+          "scope": "HISTORICAL_WINDOW_ONLY_NO_CURRENT_LEASE_OR_CONTINUOUS_AUTHORITY_INFERENCE"
+        },
+        {
+          "id": "843092f2-95b2-4724-98c0-744a6324f39a",
+          "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+          "session": "codex-accepted-source-integration-20261005",
+          "state": "handoff",
+          "claimedAt": "2026-10-11T16:40:52Z",
+          "heartbeatAt": "2026-10-11T16:43:06Z",
+          "completedAt": "2026-10-11T16:43:06Z",
+          "handedOffAt": null,
+          "authorityCommit": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+          "paths": [
+            "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+            "client/src/research/quick-order/OperatorDeclarations.tsx",
+            "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+            "client/src/research/quick-order/QuickOrderPage.test.tsx",
+            "client/src/research/quick-order/QuickOrderPage.tsx",
+            "client/src/research/quick-order/contracts.test.ts",
+            "client/src/research/quick-order/contracts.ts",
+            "client/src/research/quick-order/quick-order.css",
+            "server/research/health/quick-order/catalog.test.ts",
+            "server/research/health/quick-order/catalog.ts",
+            "server/research/health/quick-order/containment.test.ts",
+            "server/research/health/quick-order/containment.ts",
+            "server/research/health/quick-order/core.d.mts",
+            "server/research/health/quick-order/core.mjs",
+            "server/research/health/quick-order/handler.d.mts",
+            "server/research/health/quick-order/handler.mjs",
+            "server/research/health/quick-order/legal.ts",
+            "server/research/health/quick-order/paths.d.mts",
+            "server/research/health/quick-order/paths.mjs",
+            "server/research/health/quick-order/ports.ts",
+            "server/research/health/quick-order/production.test.ts",
+            "server/research/health/quick-order/production.ts",
+            "server/research/health/quick-order/root-composition.test.ts",
+            "server/research/health/quick-order/static-document.test.ts",
+            "server/research/health/quick-order/tests/core.test.mjs",
+            "server/research/health/quick-order/tests/fixtures.mjs",
+            "server/research/health/quick-order/tests/handler.test.mjs",
+            "server/research/health/quick-order/vite-document.test.ts",
+            "server/research/assisted-order/quick-order-repository.ts",
+            "server/research/assisted-order/quick-order-repository.test.ts",
+            "server/research/assisted-order/quick-order-admin-readback.test.ts",
+            "server/research/assisted-order/quick-order-notifications.test.ts",
+            "shared/research/assisted-order/quick-order.ts",
+            "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+            "supabase/verification/research_health_quick_order_local.mjs",
+            "supabase/verification/research_health_quick_order_currentness_local.mjs",
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+            "shared/research/assisted-order/contract.ts",
+            "server/research/assisted-order/supabase-repository.ts",
+            "server/research/assisted-order/service.ts",
+            "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+            "server/research/assisted-order/communications.ts",
+            "shared/care/paths.ts",
+            "shared/care/paths.test.ts",
+            "client/src/lib/tracking.ts",
+            "client/src/lib/tracking.test.ts",
+            "client/src/lib/attribution.ts",
+            "client/src/lib/attribution.test.ts",
+            "client/src/pwa/PwaLifecycle.tsx",
+            "client/src/pwa/PwaLifecycle.test.tsx",
+            "server/research/seo/raw-http-document-policy.ts",
+            "server/research/seo/raw-http-document-policy.test.ts"
+          ],
+          "sourceCommit": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+          "scope": "HISTORICAL_WINDOW_ONLY_NO_CURRENT_LEASE_OR_CONTINUOUS_AUTHORITY_INFERENCE"
+        },
+        {
+          "id": "af843213-fa11-42b9-8874-f6451ae38034",
+          "task": "HEALTH-QUICK-ORDER-20261005",
+          "session": "codex-health-quick-order-20261005",
+          "state": "handoff",
+          "claimedAt": "2026-10-10T22:26:00.727Z",
+          "heartbeatAt": "2026-10-11T21:28:42.139Z",
+          "completedAt": null,
+          "handedOffAt": "2026-10-11T21:28:42.139Z",
+          "authorityCommit": "bfe7f270e2dd3d46b77c634ca1f2963b2c30426d",
+          "paths": [
+            "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+            "supabase/verification/research_health_quick_order_local.mjs",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+            "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+            "supabase/verification/research_health_quick_order_currentness_local.mjs",
+            "server/research/assisted-order/quick-order-repository.ts",
+            "server/research/assisted-order/quick-order-repository.test.ts",
+            "server/research/health/quick-order/production.ts",
+            "server/research/health/quick-order/production.test.ts",
+            "server/research/health/quick-order/ports.ts",
+            "server/research/assisted-order/quick-order-admin-readback.test.ts",
+            "server/research/assisted-order/quick-order-notifications.test.ts",
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+          ],
+          "copyPhaseHandoff": {
+            "handedOffAt": "2026-10-11T16:37:17.177Z",
+            "source": "aa857e4f94df95f09a1402fb1cbf08042a3bc19f",
+            "records": "735254e4cc6230479c9bfa821e1c6991389d5266",
+            "authorityCommit": "21d904fa81835a6c26897df6269d295b95d13110",
+            "state": "ACTUAL_OUTGOING_CUSTODY_HANDOFF_COPY_PHASE_ONLY"
+          },
+          "stageHistory": [
+            {
+              "activatedAt": "2026-10-11T16:52:37.180Z",
+              "state": "COMPLETE_WRITING_CUSTODY_HANDED_OFF",
+              "coordinatorCommit": "179b5e196c6404f6e9ec998115f646e5fda390e5",
+              "sourcePaths": [
+                "server/research/health/quick-order/production.ts",
+                "server/research/health/quick-order/production.test.ts",
+                "server/research/health/quick-order/ports.ts"
+              ]
+            },
+            {
+              "activatedAt": "2026-10-11T18:58:55.658Z",
+              "state": "COMPLETE_WRITING_CUSTODY_HANDED_OFF",
+              "coordinatorCommit": "e6abab18e2b675bd2a5b8015153bd6befe85d5e9",
+              "sourcePaths": [
+                "supabase/verification/research_health_quick_order_currentness_local.mjs",
+                "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+                "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+                "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+                "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+                "supabase/verification/research_health_quick_order_local.mjs",
+                "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+                "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+                "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+              ]
+            }
+          ],
+          "currentStage": {
+            "activatedAt": "2026-10-11T21:27:10.654Z",
+            "state": "COMPLETE_THREE_EVIDENCE_PATHS_HANDED_OFF",
+            "coordinatorCommit": "2af09f5c935b4c124e7809c8e861e06ccc4680ae",
+            "sourcePaths": [
+              "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+              "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+              "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+            ]
+          },
+          "sourceCommit": null,
+          "scope": "HISTORICAL_WINDOW_ONLY_NO_CURRENT_LEASE_OR_CONTINUOUS_AUTHORITY_INFERENCE"
+        },
+        {
+          "id": "45b81df8-c988-4d87-a1c0-37cbccb3f97d",
+          "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
+          "session": "codex-health-quick-order-20261005",
+          "state": "handoff",
+          "claimedAt": "2026-10-11T16:52:37.180Z",
+          "heartbeatAt": "2026-10-11T17:00:21.325Z",
+          "completedAt": null,
+          "handedOffAt": "2026-10-11T17:00:21.325Z",
+          "authorityCommit": "179b5e196c6404f6e9ec998115f646e5fda390e5",
+          "paths": [
+            "server/research/health/quick-order/handler.mjs",
+            "server/research/health/quick-order/handler.d.mts",
+            "server/research/health/quick-order/root-composition.test.ts"
+          ],
+          "sourceCommit": "59b22418bf4fb42719c54eb183c738981b37a642",
+          "scope": "HISTORICAL_WINDOW_ONLY_NO_CURRENT_LEASE_OR_CONTINUOUS_AUTHORITY_INFERENCE"
+        }
+      ],
+      "leaseWindowLimit": "af843213 includes separate documented stages and a copy custody handoff. Its first and last timestamps are not a continuous 21-path write grant.",
+      "baselineReconciliation": [
+        {
+          "path": "client/src/App.tsx",
+          "identities": [
+            {
+              "commit": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
+              "path": "client/src/App.tsx",
+              "gitBlob": "92b80e6169a7ec005e3084c2e27e2f3a31a698bd",
+              "rawSha256": "1a0ba37c1c14b8be9ced93c052d6df8a3362bbb72edc74ba75583ce3d388d94f",
+              "sha256lf": "1a0ba37c1c14b8be9ced93c052d6df8a3362bbb72edc74ba75583ce3d388d94f",
+              "bytes": 12656
+            },
+            {
+              "commit": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+              "path": "client/src/App.tsx",
+              "gitBlob": "a82ff3553716873ae0f59f9ffb9c5ba4a082d660",
+              "rawSha256": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+              "sha256lf": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+              "bytes": 12430
+            },
+            {
+              "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+              "path": "client/src/App.tsx",
+              "gitBlob": "b98a29c91683cbb1e021c2bae50deb789a63608f",
+              "rawSha256": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+              "sha256lf": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+              "bytes": 17502
+            }
+          ],
+          "disposition": "Historical approval baseline -> separately authorized destination assembly baseline -> reviewed composition. Assembly authority explicitly says author App/index on destination; no whole-root copy or automatic protected acceptance."
+        },
+        {
+          "path": "server/index.ts",
+          "identities": [
+            {
+              "commit": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
+              "path": "server/index.ts",
+              "gitBlob": "d27a3da9221fe9ce0c7b992021500859ce7e6e34",
+              "rawSha256": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb",
+              "sha256lf": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb",
+              "bytes": 75201
+            },
+            {
+              "commit": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+              "path": "server/index.ts",
+              "gitBlob": "83efc9471ab3c12b82815ba3ec58229354b59445",
+              "rawSha256": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+              "sha256lf": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+              "bytes": 74992
+            },
+            {
+              "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+              "path": "server/index.ts",
+              "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+              "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+              "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+              "bytes": 77299
+            }
+          ],
+          "disposition": "Historical approval baseline -> separately authorized destination assembly baseline -> reviewed composition. Assembly authority explicitly says author App/index on destination; no whole-root copy or automatic protected acceptance."
+        }
+      ],
+      "assemblyMeaning": "The separate assembly authority authorizes App/index authoring on the destination; it does not make later protected changes accepted.",
+      "twoFileQualificationAuthority": "The separately bound two-file qualification authority is not part of this composition and grants no execution here."
+    },
+    "operatorTestLineage": {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "predecessor": {
+        "commit": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
+        "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+        "gitBlob": "951e363078830b74057fc9132cc0a9102cff3359",
+        "rawSha256": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+        "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+        "bytes": 32255
+      },
+      "reviewedComposition": {
+        "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+        "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+        "gitBlob": "9221e855ec74b5584d0560cdccaa602b0613ee95",
+        "rawSha256": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7",
+        "sha256lf": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7",
+        "bytes": 26301
+      },
+      "status": "TC10_INTEGRATOR_RECONCILIATION_PENDING_NO_SHARED_BINDING_CHANGE",
+      "finding": "Doc83 IE-3: 120 operator-readback test lines from 9118a82 absent in reviewed composition. This is identity-only lineage, not a compatibility acceptance."
+    },
+    "schemaAndCheckout": {
+      "descriptor": "NOT_COMPLETED",
+      "populatedCensus": "NOT_COMPLETED",
+      "reason": "Authoritative source descriptor/census evidence absent; no fixture substitution",
+      "installedSchema": "NOT_OBSERVED",
+      "trustedCommerceCheckout": "ABSENT_BRANCH_REFUSES",
+      "expectedCensusDigest": null,
+      "checkoutBinding": null,
+      "gitSource": {
+        "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+        "tree": "b1dc591ec12d02e7093f2470028ca01f8bd39895"
+      },
+      "gitAndCommerceCheckoutAreDistinct": true
+    },
+    "gitCheckoutWitness": {
+      "workspace": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "branch": "codex/accepted-source-integration-20261005",
+      "freezeSource": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+      "freezeTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+      "observedCheckoutHead": "6fa81440be5186128944bac1313299da7db4bc8a",
+      "sourcePathComparison": "ALL_NINE_LEASED_SOURCE_PATHS_BYTE_EQUAL_EXPLICIT_SOURCE_COMMIT",
+      "wholeCheckoutStatus": "",
+      "wholeCheckoutClaim": "Actual metadata snapshot only; records edits may be present and no blanket clean-tree claim is made. This is Git checkout identity, not commerce checkout authority."
+    },
+    "historicalAcceptedSqlIdentity": "Earlier acceptedSql source aa857e4 is the historical acceptance target. Its b22f absolute path is a checkout location, not an ancestry assertion; the authorized assembly copied exact bytes. Preserve that history and bind the current source separately.",
+    "protectedSeamDisposition": {
+      "id": "PROTECTED_SEAM_DISPOSITION",
+      "stage": "S3/S4",
+      "status": "SEPARATE_DISPOSITION_REQUIRED",
+      "paths": [
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "server/index.ts",
+          "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+          "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+          "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+          "bytes": 77299
+        },
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "server/research/health/quick-order/root-composition.test.ts",
+          "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
+          "rawSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+          "sha256lf": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+          "bytes": 19984
+        },
+        {
+          "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+          "path": "client/src/App.tsx",
+          "gitBlob": "b98a29c91683cbb1e021c2bae50deb789a63608f",
+          "rawSha256": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+          "sha256lf": "53936cf67cb35810e436ed8da2ff590d1897ec0c8996ad1a9edb98ad17779b3f",
+          "bytes": 17502
+        }
+      ],
+      "requirement": "Separate explicit protected-change/GATE-01 dispositions before qualification or release. These are the Doc83 reviewed blobs; any successor must be named separately. No expected-hash or manifest update authorized."
+    },
+    "exactLaterStageRequirements": [
+      {
+        "id": "TC-20",
+        "severity": "P3",
+        "stage": "S3",
+        "sources": "IAV-2",
+        "anchor": "supabase/candidates/20261005_research_health_quick_order_intake.sql:644-646,:689,:697-700,:709-716@121d0987",
+        "title": "Relations first opened after decisionAt can still wait on relation locks",
+        "claim": "research_product_prices, the shipping regions, required inputs and the readiness tables take AccessShareLock after the last 'wait'. Safety holds under the shared gate. r3 MD:476-477 carves out only insert-time waits.",
+        "fix": "Take zero-row reads before the head lock, or add these first-touch locks to the S3 wait and total-timeout qualification.",
+        "owner": "builder 01a10d78"
+      },
+      {
+        "id": "TC-21",
+        "severity": "P3",
+        "stage": "S3",
+        "sources": "IAV-3",
+        "anchor": "supabase/candidates/20261006_research_health_quick_order_currentness.sql:600-603,:2164-2165@264e6af; intake.sql:554-555,:854,:888-899@121d0987",
+        "title": "The FINAL dependency seal is unreachable and must be re-bound once the descriptor is bound",
+        "claim": "integrity() refuses while the descriptor is NULL, so every install and commit refuses today; the commit's refusal is unmarked and becomes OUTCOME_UNCERTAIN. Binding the descriptor changes the currentness definition away from 8b631a83.",
+        "fix": "State in the records that the seal is final only for the uninstallable 8b631a83 revision. Binding the descriptor requires a new currentness definition, an intake re-seal and re-review. Count no positive install or commit control before then.",
+        "owner": "builder 01a10d78 (records)"
+      },
+      {
+        "id": "TC-22",
+        "severity": "P3",
+        "stage": "S3",
+        "sources": "IB-7 + IB-8 + IB-11 + IB-14 + IBV-6 (C-10 hold)",
+        "anchor": "supabase/verification/research_health_quick_order_local.mjs:173-174,:222-224,:371,:632-652,:662-747,:920-933@121d0987",
+        "title": "Verifier controls are unreachable on these bytes and hold-timing, budget, post-fifth-write and version-phase cases remain held",
+        "claim": "Remaining gaps:\n- the adapter mapping controls are never dispatched;\n- there are no held-before-activation, window or epoch-change controls;\n- the budget branches are effectively unreachable;\n- the 600 ms timing margins are tight;\n- nothing fails after the fifth write or at commit;\n- there is no C-10 alternate-server control.",
+        "fix": "Keep these as named S3 holds. Label the adapter controls UNDISPATCHED. Add the cheap held-before-activation and expired-window twins when qualification opens.",
+        "owner": "builder 01a10d78"
+      },
+      {
+        "id": "TC-23",
+        "severity": "P3",
+        "stage": "S3",
+        "sources": "IC-7",
+        "anchor": "server/research/assisted-order/quick-order-repository.ts:206-209,:366-369,:381@121d0987",
+        "title": "Deadline delay granularity and rounding are undefined",
+        "claim": "performance.now() produces fractional delays, and the runtime contract forbids clamping.",
+        "fix": "Qualify the scheduler's granularity and floor rounding at S3.",
+        "owner": "builder 01a10d78"
+      },
+      {
+        "id": "TC-24",
+        "severity": "P3",
+        "stage": "S3",
+        "sources": "ID-5 + IDV-2 + ID-8",
+        "anchor": "root-composition.test.ts:141; client/src/App.tsx:146-164; production-deps.ts:120; server/index.ts:1021-1039,:1466@121d0987",
+        "title": "The actual bridge-enabled root and the real Auth client are unqualified; the App admits members only",
+        "claim": "The root suite disables the bridge, so the ports are never composed. Every App control mocks getSupabaseBrowser, but the real page now fetches /api/config and starts Auth for every visitor. EA-only actors cannot reach intake from the browser.",
+        "fix": "At S3: run a bridge-enabled root qualification (ports stay unmounted, containment answers, boot survives a composition failure); run a real-browser Auth qualification; confirm that first enablement is member-only, or add an attested EA boundary requirement.",
+        "owner": "integrator 01a0e098"
+      },
+      {
+        "id": "TC-25",
+        "severity": "P3",
+        "stage": "S3",
+        "sources": "ID-7",
+        "anchor": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:369-372,:447-450,:1254-1255@121d0987",
+        "title": "Protected-seam dispositions are outstanding for server/index.ts, root-composition.test.ts and App.tsx",
+        "claim": "The entry-listener, middleware-order and route/provider changes need a new protected-change review, and the registered hashes differ from the recorded baselines.",
+        "fix": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
+        "owner": "Samuel/coordinator protected-change review (integrator 01a0e098 and builder 01a10d78 supply bytes)"
+      },
+      {
+        "id": "TC-26",
+        "severity": "P3",
+        "stage": "S3",
+        "sources": "IE-5",
+        "anchor": "doc71-disabled-source-correction-map-20261009.json:11114-11122; sql-intake-source-receipt-doc71-20261009.json:1513-1541,:1700-1708@dcf8963",
+        "title": "The Doc82 schema/checkout binding step has no explicit disposition",
+        "claim": "The nulls are correct and nothing is invented, but there is no NOT_OBSERVED label, and the Git checkout identity is conflated with the row-8 commerce checkout.",
+        "fix": "Record: descriptor and census NOT_COMPLETED because the source is absent (S3); installed schema NOT_OBSERVED; trusted checkout ABSENT_BRANCH_REFUSES; the Git checkout identity kept separate.",
+        "owner": "builder 01a10d78 (records)"
+      },
+      {
+        "id": "TC-27",
+        "severity": "P3",
+        "stage": "S4",
+        "sources": "IAV-4",
+        "anchor": "supabase/candidates/20261005_research_health_quick_order_intake.sql:858-866@121d0987; rollback.md:40-46@121d0987",
+        "title": "Install and rollback have no timer admission now that the compiled timers are removed",
+        "claim": "With unset timers, the ShareRowExclusive and AccessExclusive DDL locks can queue every canonical writer.",
+        "fix": "Refuse unless effective lock and statement timers are armed and equal an owner-approved carrier field, or carry it as a named S4 installation prerequisite with a disclosure of the queueing blast radius.",
+        "owner": "builder 01a10d78 / installation owner"
+      },
+      {
+        "id": "TC-28",
+        "severity": "P3",
+        "stage": "S4",
+        "sources": "IC-6 + IC-8",
+        "anchor": "server/research/health/quick-order/handler.mjs:104-111,:202-203; quick-order-repository.ts:177-187,:342; production.ts:130-132@121d0987",
+        "title": "No operator signal for uncertain or retryable outcomes, and the recovery read is unbounded",
+        "claim": "InputError subclasses bypass reportUnavailable. The replay RPC has no whole-request bound. No effect today, because no sink is defined.",
+        "fix": "Before live operation, require an operator signal (adapter-only option: throw non-conflict outcomes as plain Error) and a whole-request bound that covers recovery without depending on the intake profile.",
+        "owner": "builder 01a10d78 / handler authority"
+      }
+    ],
+    "qualificationRequirements": "(b) S3 qualification requirements. These are not pre-source requirements, and none is waived.\n1. A bound column descriptor and census (IMPLEMENTED_S_CENSUS_DESCRIPTOR), the resulting new currentness definition and receipt, then the intake re-seal and re-review (TC-21). Count no positive control before then.\n2. The authoritative input packet, the trusted checkout binding carrier, and real connection and recipient enforcement, as already registered.\n3. Adapter runtime dispatch (Node 20.19.0 and the tsx inventory) under separate authority. Label the mapping controls UNDISPATCHED until then (TC-22).\n4. Fresh bounded execution authority for a disposable run of:\n   - the intake verifier, including the TC-5, TC-6 and TC-7 controls and the pg_temp shadow-domain negative (TC-3);\n   - the timing matrix: hold before activation, window, epoch change, revocation during the wait;\n   - post-fifth-write and commit faults;\n   - a C-10 alternate server;\n   - wider timing margins.\n5. The wait inventory, including first-touch relation locks after decisionAt (TC-20), and scheduler granularity and rounding (TC-23).\n6. A bridge-enabled root composition qualification, plus a real-browser Auth/config qualification on the intake page (TC-24).\n7. Schema and checkout dispositions: descriptor and census NOT_COMPLETED, installed schema NOT_OBSERVED (TC-26).\n8. Separate explicit protected-change/GATE-01 dispositions for server/index.ts (0557ef2c), root-composition.test.ts (cf6ebaa3) and App.tsx (b98a29c9). The manifest forbids successor route, provider and middleware changes without review. No expected hash or manifest may be rewritten (TC-25).",
+    "configurationAndInstallation": "(c) S4 configuration and installation requirements:\n- Owner-approved operating values (no compiled defaults): the timer carrier and digest, approved limits, the recipient, and the Health legal set and class-4 values.\n- Install and rollback timer admission, or a named prerequisite with a blast-radius disclosure (TC-27).\n- A whole-request bound covering recovery, and an operator signal for OUTCOME_UNCERTAIN and DEFINITE_REFUSAL_RETRYABLE (TC-28).\n- CS-33..36 operational limits.\n- The intake-before-currentness rollback order. It is enforced on the currentness side; the intake rollback.md must state it (TC-15).\n- Independent exact release acceptance and deployment/rollback authority (PRODUCTION_ACTIVATION).\n- Request submission is not payment.",
+    "missingEvidenceFieldsForDependencyFinalization": [
+      "ORIGINAL_REVIEWER_CURRENTNESS_AMENDED_RECEIPT_BYTE_CONFIRMATION_PENDING",
+      "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
+      "INTAKE_SOURCE_AND_DEPENDENCY_RESEAL_ACCEPTANCE_PENDING",
+      "INTEGRATOR_TC8_TC9_TC10_SOURCE_HANDOFF_PENDING",
+      "FINAL_COMPOSITION_AND_ONE_SHARED_BINDING_RECONCILIATION_DEFERRED"
+    ],
+    "historicalEmptyMissingEvidenceClaim": "doc82Finalization.missingEvidenceFieldsForDependencyFinalization=[] is preserved as a labeled historical statement and is superseded by this nonempty current list.",
+    "sharedBindings": {
+      "identity": {
+        "commit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+        "rawSha256": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+        "sha256lf": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+        "bytes": 54259
+      },
+      "status": "UNCHANGED_SUCCESSOR_RECONCILIATION_DEFERRED",
+      "reason": "Do not break accepted currentness source264 or intake source checkout pinning. Reconcile only in a separately frozen final composition under the existing owner and original byte confirmation."
+    },
+    "finalComposition": "DEFERRED_UNTIL_SAME_INTEGRATOR_HANDOFF_AND_ORIGINAL_CONFIRMATION",
     "execution": "NOT_RUN",
     "publication": "LOCAL_ONLY",
     "schedules": "UNCHANGED"
