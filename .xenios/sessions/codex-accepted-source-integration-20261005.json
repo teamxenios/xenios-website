@@ -3,8 +3,8 @@
   "tool": "OpenAI Codex desktop",
   "lane": "doc83-integrator-correction",
   "branch": "codex/accepted-source-integration-20261005",
-  "state": "active",
+  "state": "handoff_ready",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-11T23:33:00Z",
-  "note": "Doc83 TC8/9/10 exact four-path source correction in same b22f after stopped builder source5c59cf44/records7b08bd73. Exclusive lease f57c582d-0527-4792-9389-849cf4e60105 active. Source authoring and local hooks-disabled Git only; AUTHORED_NOT_RUN. No changes to builder nine files/four evidence, currentness, supervisor, bf834f90-owned continuity, disabled barriers or protected manifests. Products and Order History separate frozen checkpoints not copied. Original reviewer preserved; actual model/effort NOT_EXPOSED."
+  "heartbeatAt": "2026-10-11T23:39:49.0443548Z",
+  "note": "Doc83 TC8/9/10 four-path correction frozen locally at source 69d9e32a5df899985b2877e06e1a778060a021f9, tree ac6eb49906d5ec1d22115c9b643a064611f3e76a; handoff .xenios/handoffs/2026-10-11-doc83-integrator-correction-handoff.json. Lease f57c582d-0527-4792-9389-849cf4e60105 HANDOFF; source writer stopped for same builder four-evidence reconciliation. AUTHORED_NOT_RUN, LOCAL_ONLY. Nine builder source files/four evidence files, accepted currentness, supervisor, bf834f90 continuity and protected expected hashes/manifests unchanged. No tests, builds, SQL, probes, push, hosted changes, activation or schedules. Original Claude review remains pending for this successor; actual model/effort NOT_EXPOSED."
 }

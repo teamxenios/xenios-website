@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-DOC83-INTEGRATOR-CORRECTION-20261011",
+  "revision": 1,
+  "state": "INTEGRATOR_SOURCE_FROZEN_FOR_BUILDER_RECORDS_THEN_ORIGINAL_DELTA_REVIEW",
+  "at": "2026-10-11T23:39:49.0443548Z",
+  "owner": {
+    "session": "codex-accepted-source-integration-20261005",
+    "chat": "01a0e098-3b23-7233-9b07-877ace092650",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005"
+  },
+  "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+  "sourceTree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+  "sourceParent": "094457f08884ebc1a030510fbc76aaa27b510b86",
+  "incomingSource": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+  "incomingSourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+  "recordsBase": "7b08bd73137296ef0bd0ea5a9311045a486d26fd",
+  "recordsBaseTree": "63fe1b56ef659a3cf93084f8f9acdaddde830fe9",
+  "recordsTip": "Resolve the Git commit containing this handoff; no self-referential SHA or pushed-commit claim.",
+  "classification": [
+    {
+      "path": "client/src/App.tsx",
+      "kind": "RUNTIME_BEHAVIOR",
+      "delta": "Credential suspension versus terminal account reset only, inside QuickOrderRoutes."
+    },
+    {
+      "path": "server/research/assisted-order/production-deps.ts",
+      "kind": "RUNTIME_COMMENT_ONLY",
+      "delta": "Refusal-only runtime/sentinel wording; executable factory bytes unchanged."
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "kind": "TEST_SOURCE_ONLY",
+      "delta": "TC8 valid-stamp real-factory controls; TC9 expiry/recovery controls; TC10 exact disabled-route replacement."
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "kind": "TEST_SOURCE_RESTORATION",
+      "delta": "Exact accepted 120-line readback block restored, no removals; blob 951e363078830b74057fc9132cc0a9102cff3359."
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "client/src/App.tsx",
+      "gitBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+      "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+      "bytes": 18079,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "server/research/assisted-order/production-deps.ts",
+      "gitBlob": "226cac2930a2006ac9d79e12c2c99499fcb693ed",
+      "rawSha256": "adb32a0b6f847afcdd2f6e998193aa328e819c844099b6446c06556c9abc7875",
+      "bytes": 12108,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "gitBlob": "349d3ea94c8b285460783a23043fe61b9b21ee6e",
+      "rawSha256": "823a99bae4a9af94dd6f0242fed9fb6875796b4843e324c8f3a17216b1bc98e8",
+      "bytes": 51238,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "gitBlob": "951e363078830b74057fc9132cc0a9102cff3359",
+      "rawSha256": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+      "bytes": 32255,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    }
+  ],
+  "preservedClientBindings": [
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "gitBlob": "f495b99bdad726d1644162f859cedc1a87738320",
+      "rawSha256": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc",
+      "bytes": 13374,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    {
+      "path": "client/src/App.routes.test.ts",
+      "gitBlob": "7acd744a25d6b8edcfd2fa92550398408e6b7325",
+      "rawSha256": "e9cf735fa1fbb5f519f73df136ca3479d297e93f8a4476794ba433d9778dc3bb",
+      "bytes": 3629,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    }
+  ],
+  "authority": {
+    "ninePathRawSha256": "4fbe1d96858789ece46b35a9dea504f28c97060623ad6146e4f85ec54a895a72",
+    "tc10DelegationRawSha256": "ee7ebb05e0e5e3ebb845f32488fff7ce390c92dfb3899986499b3f91023d8108",
+    "tc10ActualDisposition": "02cb90935511e3c48c97539b7da7022494f9f211",
+    "originalReview": "16d2731c928cdd40c810df764b14b68f0d995eb9",
+    "assignmentCommit": "f4ae7e39bf9d8f62c76adb5600400fba57965c62",
+    "assignmentPath": "docs/coordination/launch-coordination-20261005/DOC83_INTEGRATOR_CONSOLIDATED_CORRECTION_ASSIGNMENT_20261011.json",
+    "assignmentGitBlob": "f78b57a16103b8b173baa6c200561f45b64eeb7c",
+    "claimCommit": "094457f08884ebc1a030510fbc76aaa27b510b86",
+    "receivingAck": "msg_0f2569fb2809ea47016acc18b261d487d181a836670f8bfcf5",
+    "leaseId": "f57c582d-0527-4792-9389-849cf4e60105",
+    "leaseState": "handoff",
+    "sourceWriterStopped": true,
+    "ownedPaths": [
+      "server/research/assisted-order/production-deps.ts",
+      "client/src/App.tsx",
+      "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx"
+    ],
+    "unrelatedContinuityLeaseUnchanged": "bf834f90-14a8-4e7a-abb9-f12913cd262c",
+    "scope": "Source authoring, local hooks-disabled commits and own metadata only. The narrower no-execution/no-push scope supersedes general continuity execution/publication steps."
+  },
+  "corrections": [
+    {
+      "id": "TC-8",
+      "state": "CORRECTION_AUTHORED_NOT_RUN",
+      "paths": [
+        "server/research/assisted-order/production-deps.ts",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+      ],
+      "changes": [
+        "Uses actual disabled factory and real extension, pass-through beginAttempt spy, valid original-entry stamp 75 against synthetic monotonic time 100.",
+        "Observes real canonical private-context resolver through a mutable test wrapper because the canonical resolver object is frozen.",
+        "After strict-null replay miss: real beginAttempt called once with original stamp and returns null; private context remains uncalled; exact canonical-transaction-not-qualified commit error; zero commit RPCs and all calls replay-only.",
+        "Inspects null digest/limits/recipient; zero maximumDelayMs refusal sentinel and throwing schedule explicitly inspected.",
+        "Root source controls require only declaration plus void use of disabledQuickOrderPorts, reject direct handler module specifiers across import forms and named handler import/call.",
+        "Factory comment now accurately distinguishes supplied canonical resolver/refusal-only runtime from absent operational timer/configuration."
+      ],
+      "ruling": "Assignment f4ae7e39 records the zero sentinel as an accepted design interpretation, not a production engineering maximum. No operating timer or profile selected.",
+      "limits": [
+        "Null limits are the first effective admission refusal; the composed test does not independently isolate every downstream gate.",
+        "The direct schedule callback assertion is a refusal inspection, not elapsed-time, cleanup, cancellation or installed-timer proof.",
+        "Root text assertions are lexical controls, not AST, mounted HTTP or deployment qualification."
+      ]
+    },
+    {
+      "id": "TC-9",
+      "state": "CORRECTION_AUTHORED_NOT_RUN",
+      "paths": [
+        "client/src/App.tsx",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+      ],
+      "changes": [
+        "Expiry clears bearer/expiry and aborts transport-owned controllers while retaining the same in-memory key and transport.",
+        "Expiry callback is bound to its credential object, so an obsolete queued callback cannot suspend a newer refresh.",
+        "Expired same-account or missing-session observations suspend credentials; initial invalid/expired/no-session observations still establish no boundary.",
+        "Sign-out, password recovery, changed user identity (including expired other-user observation), and unmount retain terminal reset behavior.",
+        "Pre-fetch and post-fetch token/expiry/key checks and aborted-signal refusal remain; server authorization is unchanged."
+      ],
+      "authoredControls": [
+        "Unknown POST, actual captured expiry callback, refused retry before fetch, same-account refresh, identical payload/key, refreshed bearer and CSRF.",
+        "Expired same-account auth observation retains recovery.",
+        "Null observation while the previous bearer is still unexpired refuses transport, separately discriminating suspension from time expiry.",
+        "In-flight POST expires; transport aborts; old synthetic receipt after refresh cannot surface; identical retry recovers.",
+        "Obsolete queued expiry callback after refresh leaves current transport usable.",
+        "After expiry, SIGNED_OUT/PASSWORD_RECOVERY/account switch/expired other-account clear data, invalidate old transport and give returning account A a new key.",
+        "No storage writes/beacons, and every actual production App call remains intakeEnabled=false."
+      ],
+      "limits": [
+        "Synthetic Date.now plus invocation of the actual captured callback; not wall-clock scheduling or a real-browser run.",
+        "Auth/API are synthetic and readiness override is test-only. No live Auth, persistence, server or provider claim.",
+        "The Supabase auth checklist informed keeping browser continuity separate from server authority; no hosted read/query or auth policy change occurred."
+      ]
+    },
+    {
+      "id": "TC-10",
+      "state": "RESTORATION_AND_REPLACEMENT_CONTROLS_AUTHORED_NOT_RUN",
+      "paths": [
+        "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
+      ],
+      "restoration": {
+        "acceptedSource": "25858ad94a649a9f7442562e6e0423636d2a3124",
+        "originSource": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
+        "previousBlob": "9221e855ec74b5584d0560cdccaa602b0613ee95",
+        "restoredBlob": "951e363078830b74057fc9132cc0a9102cff3359",
+        "rawSha256": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+        "addedLines": 120,
+        "removedLines": 0,
+        "rendererUnchangedBlob": "f495b99bdad726d1644162f859cedc1a87738320"
+      },
+      "routeDisposition": {
+        "oldPath": "client/src/App.routes.test.ts",
+        "oldPathUnchangedBlob": "7acd744a25d6b8edcfd2fa92550398408e6b7325",
+        "obsoleteAcceptedBlob": "4f890537b639ec18e6500226e72b023de73a145a",
+        "replacementPath": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "replacementBlob": "349d3ea94c8b285460783a23043fe61b9b21ee6e",
+        "controls": [
+          "Exactly one /health/quick-order source route bound to QuickOrderRoutes.",
+          "One QuickOrderPage mount with literal intakeEnabled={false}, not an enable flag.",
+          "Exact route precedes preserved /health redirect."
+        ],
+        "disclosure": "The old null-session expectation is superseded, not restored. Its file bytes are untouched. The replacement binds the approved real-session mount; no claim the old accepted route contract is unchanged."
+      },
+      "limitations": "Builder must reconcile all four evidence records and disclose the prior restoration/route disposition. Original reviewer has not accepted this successor."
+    }
+  ],
+  "preservedBuilderPaths": [
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "gitBlob": "415a9a09652d1719fc6176a6e48cad6854ec449e",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "gitBlob": "5d5e1aa1f1cf9aef5d94bc6b3cb2585bcab69b95",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "gitBlob": "146e9ef92c4e5a153961b9f2de0027c7c286dc61",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "gitBlob": "13585a4df545a9041fc4e2898d98ebf29cdc8246",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "gitBlob": "6720110dbe253f9b7dfe106c3e08ad0fab87c3f4",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "gitBlob": "f001222499689c482eab183d642efd50f2d24634",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "gitBlob": "d2547502d681877d6adade0ab4f72236d8cab000",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "gitBlob": "df020ea3b729a6f6c96f46f546bd29b245759ff6",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "gitBlob": "f47443ef97a74c6d592f804f81f45e40bd258ebc",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "ecc785558b75e87c8e642a9424c3c3d8c7ace73a",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "eeb5b06e17681caa6a07518b10a1e06379ac6e1e",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "2f09dc370e689d60a22e6031955ef87d0dce1367",
+      "unchangedFromBuilderHandoff": true
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "db161965e43f2a6df958f33119a8dc1829158a0a",
+      "unchangedFromBuilderHandoff": true
+    }
+  ],
+  "preservation": {
+    "comparison": "git diff --name-only 7b08bd73137296ef0bd0ea5a9311045a486d26fd 69d9e32a5df899985b2877e06e1a778060a021f9",
+    "applicationDeltaExactlyFourOwnedPaths": true,
+    "otherChangesOnlyOwnClaimMetadata": true,
+    "builderNineSourceAndFourEvidenceBlobsUnchanged": true,
+    "acceptedCurrentnessFiveSourceFilesUnchanged": true,
+    "supervisorAndManifestUnchanged": true,
+    "protectedExpectedHashesUnchanged": true,
+    "authLegalPaymentAuthorityUnchanged": true,
+    "productionIntakeEnabled": false,
+    "transactionHandlerMounted": false,
+    "enqueueOnlyPreserved": true,
+    "sqlCandidateRegisteredOrApplied": false,
+    "separateProductsAndOrderHistoryWorkNotCopied": true
+  },
+  "review": {
+    "priorCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
+    "priorSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
+    "priorRecords": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+    "priorDisposition": "CORRECTIONS_REQUIRED",
+    "priorCounts": {
+      "P0": 0,
+      "P1": 1,
+      "P2": 10
+    },
+    "priorCountsNotRelabeledAsSuccessorResults": true,
+    "successorAcceptance": "PENDING_ORIGINAL_DELTA_REVIEW",
+    "successorReviewed": false,
+    "internalAdvice": "Two read-only helpers inspected source/diffs only. A frozen-resolver spy defect and null-observation test ambiguity were corrected before the source commit. This is not Claude acceptance.",
+    "otherFindings": "TC1-7/11 and relevant P3 builder/coordinator findings retain their separately recorded disposition. This handoff does not close them."
+  },
+  "currentness": {
+    "acceptedSource": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+    "acceptedReview": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+    "codeAndDefinitionUnchanged": true,
+    "amendedReceiptCommit": "6fa81440be5186128944bac1313299da7db4bc8a",
+    "amendedReceiptRawSha256": "263261e68d7fce2b7f87bf555bb235cc6b9e9b6703e61aa085fb888e6e01423f",
+    "originalByteConfirmation": "PENDING",
+    "dependentIntakeFinalSeal": "NON_FINAL",
+    "warning": "Current four builder evidence records remain at incoming bytes and do not yet bind this successor. In particular restored admin-test bytes require truthful receipt rebinding; no final seal inferred."
+  },
+  "validation": {
+    "executed": [
+      "Read-only Git/status/diff/file/JSON metadata inspection.",
+      "git diff --check and git diff --cached --check: exit 0 (whitespace only).",
+      "git hash-object AdminAssistedOrderSession.test.tsx matches accepted blob 951e363078830b74057fc9132cc0a9102cff3359.",
+      "Raw committed Git blob bytes hashed through git cat-file blob binary stream and .NET SHA-256; no text reconstruction.",
+      "Local source commit with nonexisting hooks path and GPG signing disabled."
+    ],
+    "applicationTests": "NOT_RUN",
+    "typecheck": "NOT_RUN",
+    "build": "NOT_RUN",
+    "sql": "NOT_RUN",
+    "importsParsersCompilers": "NOT_RUN",
+    "browserNativeHttpResourceProbes": "NOT_RUN",
+    "fullSuite": "NOT_RUN",
+    "noEmDashOrOtherReleaseGates": "NOT_RUN",
+    "historicalRuns": "No historical pass/failure/timeout/skipped evidence relabeled.",
+    "commandNotes": [
+      "An initial rg wildcard operand failed on Windows; corrected with directory plus -g. Not an application result.",
+      "First own-metadata patch failed exact-context verification; corrected array comma context before writing. Not a test run.",
+      "No Node/npm execution or version claim in this source-only correction."
+    ]
+  },
+  "next": {
+    "builder": "Coordinator collects this local stopped-writer handoff, then assigns the SAME builder exclusive four-evidence reconciliation. No concurrent source/Git writer; no unrequested tests/push.",
+    "originalReviewer": "After exact composition records freeze, original Claude reviewer performs the bounded Doc83 delta review and confirms amended currentness receipt bytes. Do not present internal source reasoning as independent acceptance.",
+    "execution": "S3/S4 remain held pending exact descriptor/census, authoritative inputs, complete target/schema/checkout and connection/recipient bindings, required protected dispositions, accepted procedure/supervisor and fresh exact-target execution authority.",
+    "protectedSeam": "App.tsx blob changed to b5cc8edcc1040eca4009d8e1b68627ae7492d459; retain SEPARATE_DISPOSITION_REQUIRED and existing index/root-composition holds. Do not rewrite expected hashes or manifest.",
+    "live": "No deployment, activation, managed SQL, hosted config, email, money or clinical action authorized. Request submission is not payment."
+  },
+  "outbound": {
+    "publication": "LOCAL_ONLY",
+    "pushed": false,
+    "nativeMessage": "Not sent; coordinator collects existing local Git handoff."
+  },
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}

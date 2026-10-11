@@ -6,10 +6,10 @@
       "id": "QUICK-ORDER-DOC83-INTEGRATOR-CORRECTION-20261011",
       "revision": 1,
       "owner": "codex-accepted-source-integration-20261005",
-      "state": "in_progress",
-      "phase": "SERIAL_INTEGRATOR_SOURCE_ONLY",
+      "state": "handoff",
+      "phase": "SOURCE_FROZEN_FOR_BUILDER_RECORDS_RECONCILIATION",
       "claimedAt": "2026-10-11T23:33:00Z",
-      "heartbeatAt": "2026-10-11T23:33:00Z",
+      "heartbeatAt": "2026-10-11T23:39:49.0443548Z",
       "leaseId": "f57c582d-0527-4792-9389-849cf4e60105",
       "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
       "branch": "codex/accepted-source-integration-20261005",
@@ -36,7 +36,12 @@
       "requestedModel": "gpt-6-astra",
       "requestedEffort": "ultra",
       "actualModel": "NOT_EXPOSED",
-      "actualEffort": "NOT_EXPOSED"
+      "actualEffort": "NOT_EXPOSED",
+      "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+      "sourceTree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+      "handoff": ".xenios/handoffs/2026-10-11-doc83-integrator-correction-handoff.json",
+      "sourceWriterStopped": true,
+      "successorAcceptance": "PENDING_ORIGINAL_DELTA_REVIEW"
     },
     {
       "id": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",
