@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "status": "TARGETED_PASS_WITH_OPEN_SOURCE_FINDING",
+  "candidate": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+  "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+  "reviewedBase": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "reservation": "bda1b19691ce10e685bffb6c01ec78ec616f668e LOCAL-DOC99-3A-FIRST-TARGETED-20261012",
+  "result": {
+    "passed": 72,
+    "failed": 0,
+    "skipped": 0,
+    "files": 2,
+    "exit": 0,
+    "timedOut": false,
+    "startedUtc": "2026-10-12T21:35:28.081Z",
+    "endedUtc": "2026-10-12T21:36:20.197Z",
+    "finalizedUtc": "2026-10-12T21:36:21.057Z"
+  },
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "workerProvenance": "Observed actual launcher, Vitest and fork-worker Windows executable paths all use pinned Node. This is a point-in-time OS observation, not every-child self-attestation. Nested Vite esbuild executable also observed.",
+  "actualWrapperCases": 5,
+  "raw": {
+    "receipt": "receipt.json",
+    "receiptSha256": "4e0258439b3e33de4f0145218ea3dec40652701ffdbdf180acc2b88b32f9481b",
+    "log": "run.log",
+    "logSha256": "75c084aeb821c26bcb7842d56d4ae7eb8191a1209c0072ecd27b262fe28bc81e",
+    "report": "vitest-results.json",
+    "reportSha256": "b42ee4c83a1bed1f92220bfef2292396c9bdd82b213d072f819db59651292da5"
+  },
+  "postcheck": {
+    "at": "2026-10-12T21:36:38.6811859Z",
+    "remainingOwnedOrMatching": [],
+    "receipt": {
+      "candidate": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+      "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+      "status": "COMPLETED_REQUIRES_INDEPENDENT_PROCESS_POSTCHECK",
+      "startedUtc": "2026-10-12T21:35:28.081Z",
+      "childEndedUtc": "2026-10-12T21:36:20.197Z",
+      "finalizedUtc": "2026-10-12T21:36:21.057Z",
+      "childExitCode": 0,
+      "supervisorExitCode": 0,
+      "timedOut": false,
+      "sourceInvariant": true,
+      "postPinsMatch": true,
+      "nodeVersion": "v20.19.0",
+      "npmVersion": "10.8.2",
+      "postNpmVersion": "10.8.2",
+      "reporter": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\vitest-results.json",
+        "bytes": 27587,
+        "sha256": "b42ee4c83a1bed1f92220bfef2292396c9bdd82b213d072f819db59651292da5",
+        "success": true,
+        "numPassedTests": 72,
+        "numFailedTests": 0,
+        "numPendingTests": 0,
+        "numTodoTests": 0,
+        "numTotalTests": 72,
+        "exactFileCount": 2,
+        "assertionCount": 72
+      },
+      "logSha256": "75c084aeb821c26bcb7842d56d4ae7eb8191a1209c0072ecd27b262fe28bc81e",
+      "childPid": 36284
+    },
+    "source": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "status": null
+  },
+  "warning": "jsdom Window.scrollTo not implemented warnings retained in raw output; no real layout or browser behavior proved.",
+  "openSourceFinding": "Late obsolete SPA completion can overwrite restored uncertainty or clear a newer draft. Existing passing test deliberately never settles the obsolete promise. Same Fable source trace agrees; requires named regression and narrow correction before source qualification.",
+  "fiveRequiredSourceGroups": {
+    "fullVitest": "NOT_RUN",
+    "typecheck": "NOT_RUN",
+    "realApiRequest": "PASS five cases inside this exact targeted receipt; future changed successor requires rebinding",
+    "protectionCLIAndCompanion": "NOT_RUN",
+    "build": "NOT_RUN"
+  },
+  "reviewRegistration": "NOT_REGISTERED; not a complete source-review packet",
+  "releaseOnly": "Browser durable lost-response, admin UI PATCH, route uniqueness and existing production-row precheck tracked separately; not prerequisites to delivering an otherwise complete source-review packet.",
+  "boundaries": "No new server, SQL, browser, install, hosted mutation, email, money, push or deployment. Payment hold and privacy sweep unchanged."
+}

@@ -427,7 +427,7 @@
       "sha256": "ecf54d637b1788ecccf7a439da6c287b29b6fdb2b7df86f60a0b7ee159f5949d"
     },
     "scope": "Exactly Page, draft-store and their two tests. Server payment hold, EarlyAccessRoute/privacy sweep, API source, SQL and manifest unchanged.",
-    "targeted": "NOT_RUN; fresh physical matching dependency copy being prepared; original 7a2 receipts remain historical.",
+    "targeted": "3a03ad65 PASS 72/72 across exact two client files, exit0/no timeout/no skipped, 21:35:28.081-21:36:20.197Z; Node20.19.0/npm10.8.2. Source/pins unchanged and independent process postcheck empty. Receipt doc99-r3/ACTUAL_RESULT.json. Late-unmounted-response risk remains open; this is not final source qualification.",
     "integratorSourceConcerns": [
       "Late completion of an obsolete SPA mount can overwrite the restored uncertain draft through new direct refusal writes. Source trace only, not yet reproduced in executed test; returned to same Fable owner.",
       "Deferred regression asserts storage after settle, not inside submit invocation; must prove synchronous pre-POST persistence."

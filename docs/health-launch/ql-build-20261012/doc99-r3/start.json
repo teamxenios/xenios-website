@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "action": "QL_DOC99_TWO_CLIENT_FILES_20261012",
+  "candidate": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+  "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+    "C:\\xenios-wt\\doc99-correction\\node_modules\\vitest\\vitest.mjs",
+    "run",
+    "--config",
+    "vitest.config.ts",
+    "--maxWorkers",
+    "1",
+    "--no-file-parallelism",
+    "--reporter",
+    "verbose",
+    "--reporter",
+    "json",
+    "--outputFile.json",
+    "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\vitest-results.json",
+    "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+    "client/src/research/assisted-order/draft-store.test.ts"
+  ],
+  "cwd": "C:/xenios-wt/doc99-correction",
+  "testFiles": [
+    "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+    "client/src/research/assisted-order/draft-store.test.ts"
+  ],
+  "runnerSha256": "7d8404d7d7b99ba05b567109c4a814958f3c17a3342eddc0efc9a80dad4bfabc",
+  "pinsPath": "C:/Users/sboad/.codex/tmp/ql-doc99-targeted-20261012/pins.json",
+  "pinsSha256": "bf51552bcbd748426bb6170a38abc7e4c2cb6c20a4cfe3584c70d0c5f7b5aaac",
+  "pins": {
+    "schemaVersion": 1,
+    "candidate": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+    "nodeVersion": "v20.19.0",
+    "npmVersion": "10.8.2",
+    "files": [
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+        "sha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js",
+        "sha256": "3ce7cba6f5128dd5f54c98b6a5036b0f850496878cc2e21044b675fe3c594e3e"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/package.json",
+        "sha256": "c24c86166b39e4a7df131f03a8bbe904703de8fad44485bcf527d4de7806d6c6"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/lib/cli.js",
+        "sha256": "bbcf260a5c9c25e8789fe26905951d52a76d9723ce15416c3174f8c732cf2d17"
+      },
+      {
+        "path": "C:/Program Files/Git/cmd/git.exe",
+        "sha256": "37c5725818d602e951ba2563b870d62763322956b73373da4c33a0b566a80bc9"
+      },
+      {
+        "path": "C:/Windows/System32/cmd.exe",
+        "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a"
+      },
+      {
+        "path": "C:/Windows/System32/taskkill.exe",
+        "sha256": "75f4aed9bf21d8f9b2b1a2ddbc1f2c7e4e0aef8b3b94bd5eda02d9d84c34f33f"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/tmp/ql-doc99-targeted-20261012/run-targeted.cjs",
+        "sha256": "7d8404d7d7b99ba05b567109c4a814958f3c17a3342eddc0efc9a80dad4bfabc"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/package.json",
+        "sha256": "32aa3da519b9377d43d30731e60f75a5ff2fe5d0f57d719b43081ef6adf280b4"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/package-lock.json",
+        "sha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/.npmrc",
+        "sha256": "6d5c57b99119abf207f8554d3cc743ce6578e6baea2a67317ba21d98bc303aa7"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/tsconfig.json",
+        "sha256": "74cb25011ea689d2b3f8412f14e8a61fed78f02e511d272a30346e871f03eded"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/vitest.config.ts",
+        "sha256": "b175309ea7ca8cf0805fccb169e067c9d923fdac9a810237ff22969451833fee"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/vite.config.ts",
+        "sha256": "ded50d975bb3fa372bd3c85689dc234eb079309a54eaae72f1a5dd6c0bce5f92"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "sha256": "67554e6801326b3ec0ad22d906f76132f7a69758d6f056d4b9cb1fd83a630aa0"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/client/src/research/assisted-order/draft-store.ts",
+        "sha256": "4cdef16068e196020e09b559cadac27c7e9b1b4d37f31b04a195dd78714b8a1e"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "sha256": "1b9e9bf0fac1efc79db09c5cffa45bfc54307f2817050977c9b79f1639d0d7c8"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/client/src/research/assisted-order/draft-store.test.ts",
+        "sha256": "8940319df7c9b7256c9eaf65661c5a3f2410fd89334760bdc678c1fee6327b2b"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/client/src/research/assisted-order/api.ts",
+        "sha256": "4394ade790dbea3693b35a9c0b873c1ff8008111a2f6b33439ce74a129495395"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/.package-lock.json",
+        "sha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/vitest/package.json",
+        "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/vitest/vitest.mjs",
+        "sha256": "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/vitest/dist/cli.js",
+        "sha256": "2aa6bcb906e952ee722fe631dd34c9f87d28e4244716197156c6274d17f28aac"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/vitest/dist/config.js",
+        "sha256": "0ab30953d20f3f2c9662d4ea4d174dc0506483e0afaf02fd84713bbc391972cd"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/vitest/dist/worker.js",
+        "sha256": "2c6f0ef645441490f9d62675eb672bd500d90de521ca4bbc92bc062104a47ae6"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/vitest/dist/environments.js",
+        "sha256": "8156dfcdb5b172c63d4edaecdb047412d39fdb4e85b2673ef173d08467500362"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/vite/package.json",
+        "sha256": "2ce2b783ef4f4511544fa045355e7076f192b1331f6801214173d1910518f5d7"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/vite/dist/node/index.js",
+        "sha256": "8b142bd1231a46bf2cad4c05b3f76de5b183064ee771b9934fbaffb70b914652"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/jsdom/package.json",
+        "sha256": "def961b4c0a5fe3c37f68fb2b35fc80707975a1c0ff4f8d39ff5b7106c387e5c"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/jsdom/lib/api.js",
+        "sha256": "22a63aa40bad13ea909a115b0c49fbae3493a291414765221942fc5d4396356f"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/react/package.json",
+        "sha256": "51966ae9c8c377ff592b5d69c980966992101bc6791bf83a1e5c7ad9bcefa7f4"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/react/index.js",
+        "sha256": "60caffdecbdc5db3bc4ec4e83df9488345ccb271d07533b9210bf5750918d97e"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/react-dom/package.json",
+        "sha256": "447acd72cdb6a966d9db967729e286e7cbb4a09ea61fddd45e12c2a97fd4cfb6"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/react-dom/client.js",
+        "sha256": "00e348ab3d6bc2eef908345d0bc4e008c95bcfecec060dfda5c4967953761396"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/esbuild/package.json",
+        "sha256": "cb7d5b1fe478f8cbaae566a86031b6fdf5f7d444354f35d1cb3cba9adf6d2935"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/esbuild/lib/main.js",
+        "sha256": "0d1241812c443111d39475dfc66836003e9ef8b87e54d990dd67df29d20010e1"
+      },
+      {
+        "path": "C:/xenios-wt/doc99-correction/node_modules/@esbuild/win32-x64/esbuild.exe",
+        "sha256": "cae1bbc86f4df800b01d99e28aea0a154b02243de6797e98f48a9b88a64a7be0"
+      }
+    ]
+  },
+  "environment": {
+    "SYSTEMROOT": "C:\\Windows",
+    "WINDIR": "C:\\Windows",
+    "COMSPEC": "C:/Windows/System32/cmd.exe",
+    "PATH": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64;C:\\Program Files\\Git\\cmd;C:\\Windows\\System32;C:\\Windows",
+    "PATHEXT": ".COM;.EXE;.BAT;.CMD",
+    "USERPROFILE": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\home",
+    "HOME": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\home",
+    "APPDATA": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\home\\AppData\\Roaming",
+    "LOCALAPPDATA": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\home\\AppData\\Local",
+    "TEMP": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\tmp",
+    "TMP": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\tmp",
+    "NODE_ENV": "test",
+    "CI": "1",
+    "NODE_OPTIONS": "--max-old-space-size=1024",
+    "NO_COLOR": "1",
+    "TSX_DISABLE_CACHE": "1",
+    "NPM_CONFIG_USERCONFIG": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\user.npmrc",
+    "NPM_CONFIG_GLOBALCONFIG": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\global.npmrc",
+    "NPM_CONFIG_CACHE": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\npm-cache",
+    "NPM_CONFIG_PREFIX": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\npm-prefix",
+    "NPM_CONFIG_DEVDIR": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\node-gyp-cache",
+    "NPM_CONFIG_OFFLINE": "true",
+    "NPM_CONFIG_FETCH_RETRIES": "0",
+    "NPM_CONFIG_AUDIT": "false",
+    "NPM_CONFIG_FUND": "false",
+    "NPM_CONFIG_UPDATE_NOTIFIER": "false",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\gitconfig",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "coordinatorStopAt": "2026-10-12T21:41:04.720Z",
+  "timeoutMs": 180000,
+  "cleanupMarginMs": 15000,
+  "attempts": 1,
+  "automaticRetries": 0,
+  "nodeVersion": "v20.19.0",
+  "heapMiB": 1024,
+  "preparedUtc": "2026-10-12T21:35:27.503Z",
+  "status": "RUNNING",
+  "childCleanupConfirmed": false,
+  "dependencyMode": "Physical project-local copy with separate donor npm-ci provenance; no install by this runner.",
+  "limits": [
+    "Only the two named client unit/component files; no full-suite, build, browser, server, SQL or hosted qualification.",
+    "Real api.ts wrapper cases use stubbed fetch. Reviewed test code, not this supervisor, provides that mock boundary.",
+    "No credentials or inherited application environment. No external network operation authorized; no OS network sandbox claim.",
+    "No aggregate memory containment, child-worker self-attestation or independent process-cleanup claim.",
+    "Pinned dependency entry files and lock metadata, not a complete recursive byte attestation of every installed dependency."
+  ],
+  "preSource": {
+    "head": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+    "status": "",
+    "lockSha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8"
+  },
+  "npmVersion": "10.8.2",
+  "startedUtc": "2026-10-12T21:35:28.081Z",
+  "absoluteFinalizeBefore": "2026-10-12T21:38:42.081Z"
+}

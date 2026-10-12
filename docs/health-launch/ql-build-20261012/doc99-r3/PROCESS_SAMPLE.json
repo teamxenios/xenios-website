@@ -1,0 +1,40 @@
+{
+  "at": "2026-10-12T21:35:45.6835221Z",
+  "processes": [
+    {
+      "ProcessId": 34068,
+      "ParentProcessId": 36108,
+      "ExecutablePath": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+      "CommandLine": "\"C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe\" C:/Users/sboad/.codex/tmp/ql-doc99-targeted-20261012/run-targeted.cjs C:/Users/sboad/.codex/tmp/ql-doc99-targeted-20261012/pins.json bf51552bcbd748426bb6170a38abc7e4c2cb6c20a4cfe3584c70d0c5f7b5aaac 2026-10-12T21:41:04.720Z",
+      "CreationDate": "2026-10-12T16:35:27.323599-05:00"
+    },
+    {
+      "ProcessId": 36284,
+      "ParentProcessId": 34068,
+      "ExecutablePath": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+      "CommandLine": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe C:\\xenios-wt\\doc99-correction\\node_modules\\vitest\\vitest.mjs run --config vitest.config.ts --maxWorkers 1 --no-file-parallelism --reporter verbose --reporter json --outputFile.json C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\vitest-results.json client/src/research/assisted-order/AssistedOrderPage.test.tsx client/src/research/assisted-order/draft-store.test.ts",
+      "CreationDate": "2026-10-12T16:35:28.085881-05:00"
+    },
+    {
+      "ProcessId": 36400,
+      "ParentProcessId": 36284,
+      "ExecutablePath": "C:\\xenios-wt\\doc99-correction\\node_modules\\vite\\node_modules\\@esbuild\\win32-x64\\esbuild.exe",
+      "CommandLine": "C:\\xenios-wt\\doc99-correction\\node_modules\\vite\\node_modules\\@esbuild\\win32-x64\\esbuild.exe --service=0.27.7 --ping",
+      "CreationDate": "2026-10-12T16:35:29.97136-05:00"
+    },
+    {
+      "ProcessId": 32336,
+      "ParentProcessId": 36284,
+      "ExecutablePath": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+      "CommandLine": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe --experimental-import-meta-resolve --require C:/xenios-wt/doc99-correction/node_modules/vitest/suppress-warnings.cjs --conditions node --conditions development C:\\xenios-wt\\doc99-correction\\node_modules\\vitest\\dist\\workers\\forks.js",
+      "CreationDate": "2026-10-12T16:35:30.137491-05:00"
+    }
+  ],
+  "start": {
+    "startedUtc": "2026-10-12T21:35:28.081Z",
+    "candidate": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+    "nodeVersion": "v20.19.0",
+    "npmVersion": "10.8.2"
+  }
+}

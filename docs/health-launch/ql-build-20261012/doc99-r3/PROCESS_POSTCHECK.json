@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-12T21:36:38.6811859Z",
+  "remainingOwnedOrMatching": [],
+  "receipt": {
+    "candidate": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+    "status": "COMPLETED_REQUIRES_INDEPENDENT_PROCESS_POSTCHECK",
+    "startedUtc": "2026-10-12T21:35:28.081Z",
+    "childEndedUtc": "2026-10-12T21:36:20.197Z",
+    "finalizedUtc": "2026-10-12T21:36:21.057Z",
+    "childExitCode": 0,
+    "supervisorExitCode": 0,
+    "timedOut": false,
+    "sourceInvariant": true,
+    "postPinsMatch": true,
+    "nodeVersion": "v20.19.0",
+    "npmVersion": "10.8.2",
+    "postNpmVersion": "10.8.2",
+    "reporter": {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-targeted-20261012\\run1\\vitest-results.json",
+      "bytes": 27587,
+      "sha256": "b42ee4c83a1bed1f92220bfef2292396c9bdd82b213d072f819db59651292da5",
+      "success": true,
+      "numPassedTests": 72,
+      "numFailedTests": 0,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "numTotalTests": 72,
+      "exactFileCount": 2,
+      "assertionCount": 72
+    },
+    "logSha256": "75c084aeb821c26bcb7842d56d4ae7eb8191a1209c0072ecd27b262fe28bc81e",
+    "childPid": 36284
+  },
+  "source": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+  "status": null
+}
