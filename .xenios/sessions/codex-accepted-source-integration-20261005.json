@@ -5,10 +5,10 @@
   "branch": "codex/tc25-app-manifest-20261012",
   "state": "active",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-12T20:26:37.104Z",
-  "currentResult": "Original Doc101 be35aa7 accepts supporta4a44bf WITH_NAMED_LIMITS; AS-1P2nonblocking remainsopen. Docs99QLr2 and100six/Appcheck remainIN_REVIEW. QL7a2 exact CLI/build/36companion/typecheck PASS;64client+66server remain separate. TSC4b8a2f7 exit0/no diagnostics/112.299s/no timeout. Route bindingb45fa60 prepared, notrun; fullsuite971-file effects inventoried90f2434 and notrun. Supporta4a44bf remains independently13PASS. No source change, new release or qualified payment method.",
+  "heartbeatAt": "2026-10-12T20:36:27.781Z",
+  "currentResult": "QL7a2 exact static routePASS448registrations/439sites,42.650s,exit0/no timeout,source unchanged. Earlier build/protection/typecheck evidence retained, focused runs separate. Doc101support acceptedwithnamedlimits;99/100pending. No fullsuite/browser/release or operational payment claimed.",
   "currentTask": "QL-STANDALONE-BUILD-EVIDENCE-20261012",
   "currentLease": "e5449218-2ac0-4341-82cf-534a3e8ae8cd",
-  "currentScope": "Own QL evidence/handoff lease e544 current, frozen source candidates unchanged. Candidate-specific remaining qualification and exact bounded static gates under actual user0ada direction; no application/source edits or implicit fullsuite/SQL. Foreign continuity/source reservations untouched. Existing coordinator owns shared resource windows and original review transport.",
-  "note": "Consumed original Doc101be35aa7 acceptancewithnamedlimits; support sourcea4a44bf unchangedclean, AS-1P2nonblocking remainsopen. Records-only update, no rerun or integration. Docs99/100stillinreview. Routebindingb45fa60notrun awaitingfreshwindow; expiredTSCwindownotreused."
+  "currentScope": "Existing ownQL evidence/handoff leasee544, latest directuser21ccc candidate qualification/release preparation and separate public-access delegation. No source change or implicit SQL/hostedwrite; existing coordinator resource and ownership boundaries.",
+  "note": "QL7a2 route gate PASS exit0 448 registrations 439 sites,42.650s; source unchanged. Slot released. Doc101 accepted,99/100 pending; fullsuite and valid preview provenance next, no hosted write."
 }

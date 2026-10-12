@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "at": "2026-10-12T20:25:47Z",
+  "at": "2026-10-12T20:38:00Z",
   "kind": "TENSA_LAUNCH_RECONCILED_ACTUAL_RESULTS",
   "session": "codex-accepted-source-integration-20261005",
   "sourceBrief": {
@@ -83,7 +83,20 @@
     ],
     "review": "ACKNOWLEDGED_AND_IN_REVIEW by original Claude reviewer a2ffb6cff621723adf3c42a8c71569f875009250 after actual Samuel relay. Doc99 revision2 exact7a2/tree28617, not accepted yet. Earlier transport failures remain history, not current blocker.",
     "next": "Consume Doc99 when committed without restarting source work; exactQL build/protection/typecheck passed in separate receipts. Fullsuite effects require concrete safe disposition; staticroute binding prepared; applicable browser/release records still pending.",
-    "historicalReviewDelivery": "Registered at coordinator d1138ad57653e8be059f634863ee761040fc08ec. Actual delivery NOT_SUBMITTED: existing Claude Desktop composer and window-control operations timed out without typing/submission; native supported attach found no background job for existing interactive reviewer. Latest coordinator5fa884c844161280e09e78fdd48eb64cc5e78cb9 preserves blocker. No new reviewer or alternate transport retry. AppDoc98 does not accept QL."
+    "historicalReviewDelivery": "Registered at coordinator d1138ad57653e8be059f634863ee761040fc08ec. Actual delivery NOT_SUBMITTED: existing Claude Desktop composer and window-control operations timed out without typing/submission; native supported attach found no background job for existing interactive reviewer. Latest coordinator5fa884c844161280e09e78fdd48eb64cc5e78cb9 preserves blocker. No new reviewer or alternate transport retry. AppDoc98 does not accept QL.",
+    "routeUniqueness": {
+      "status": "PASS",
+      "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "tree": "28617c360f487803baa556d33158c4e95df471f1",
+      "result": "docs/health-launch/ql-build-20261012/route-check/ACTUAL_RESULT.json",
+      "registrations": 448,
+      "callSites": 439,
+      "exit": 0,
+      "timedOut": false,
+      "attempts": 1,
+      "endedUtc": "2026-10-12T20:35:49.685Z",
+      "scope": "Static registrations, not mounted/browser authorization"
+    }
   },
   "protection": {
     "currentChange": "Exactly two historical fileHashes.files values carried from6d9 under current protection-owner custody, approved identical source blobs; all other manifest/source/test/script/dependency/migration bytes unchanged.",
@@ -422,7 +435,7 @@
     "identityReconciliation": "1645c4d271e990f1b89f6e2d77f01722dbf693a0:docs/health-launch/ql-build-20261012/REMAINING_RELEASE_REQUIREMENTS_20261012.json; exact IDs and visibility compared.420-2legacy+6new-1shipping=423;418sharedrawIDs,zero duplicatevariants; no count padding or availability inference."
   },
   "production": {
-    "checkedReadOnlyAt": "2026-10-12T19:25:19.1148527Z",
+    "checkedReadOnlyAt": "2026-10-12T20:30:58.8412234Z",
     "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
     "service": "srv-d8s9vej7uimc7384dfcg",
     "deployment": "dep-daqft3vf3r2c73b7e88g",
@@ -439,7 +452,7 @@
     "identityLimit": "Current Render control-plane deployment association plus public health200; health itself does not attest source SHA.",
     "stagingDistinct": "srv-d9h4f4m7r5hc73ctjng0 https://xenios-research-staging.onrender.com",
     "newRelease": null,
-    "reason": "Actual independent QL disposition, complete applicable qualification/dependency/legal/config/release inputs remain unmet. Conditional release authority not spent on unqualified successor."
+    "reason": "Doc99 and remaining full-suite/browser/release prerequisites not complete. Existing conditional authority retained; no duplicate general GO requested and no deployment."
   },
   "boundaries": {
     "fullSuiteRerun": false,
@@ -459,17 +472,17 @@
   "checkpoint": {
     "publication": "LOCAL_ONLY; no push/merge/CI/deploy authorized by these receipts",
     "sourceWorktrees": "QL42ac49e/supportfa7de0a/build7a2/b22f876ede5 all clean at final verification",
-    "activeJobs": "No own compiler/test/build active after typecheck normalexit. Staticroute notstarted; originalreviewer independently active.",
+    "activeJobs": "Staticroute completed exit0 at20:35:49.685; ownedchild andcommand scans empty. No own app/test/build/browser/SQL active.",
     "recordsBranch": "codex/tc25-app-manifest-20261012",
     "recordsWorktree": "C:/xenios-wt/tc25-app-manifest-20261012",
-    "evidenceTipBeforeHandoff": "dc4dab1cd77e52d8fcf8c15e08942ae7da93b4e1",
-    "nextFirstAction": "Consume new Doc99/100 when published; Doc101 accepted with named limits, not pending. Coordinator owns freshroutewindow and ASV-5 registration aliases; do not use expired typecheck window. No accepted-support source change or combinedcandidate."
+    "evidenceTipBeforeHandoff": "d98c939caeaa3894f98059575751626147ad7d86",
+    "nextFirstAction": "Finish exact local full-suite and genuine clean-install preview boundaries with existing coordinator; collect actual Doc99/100 independently. Public access task is a separate Fable scope request, not an acknowledged start."
   },
-  "next": "Preserve support source acceptance and unresolvedAS-1/P3IDs; qualify exact selected independentcandidate before release. QLroute bindingb45fa60 remainsNOT_RUN pendingfreshwindow; fullsuite containmentdisposition remains. No repeated13-test run, historicalpaymentsearch or newsource correction needed for Doc101acceptance. Existingpaymentowner stillneeds Samuel ONE current protectedconfigurationreference oractualcustodian.",
+  "next": "QL routePASS added with immutable raw evidence; QL unchanged. Full-suite local engine/server containment and genuine preview provenance are exact next execution prerequisites. Paymentowner needs only one current protected instructions reference ORactual custodian; no history search repeated. Doc101 acceptance retained independently.",
   "currentInstruction": {
-    "path": "C:/Users/sboad/.codex/attachments/0ada60b9-885b-4cdd-abe9-e66aaa035244/Pasted text.txt",
-    "sha256": "389777721040734d728c1b402c6a57c4885197d2a9ae0cda03b5eb199c06f675",
-    "scope": "Preserve frozen separate candidates; actual original review delivery, remaining qualification, catalog identity comparison and one current payment-method confirmation. No completed correction redispatch."
+    "path": "C:/Users/sboad/.codex/attachments/21ccc15e-477b-4d01-bdff-8a5eb12a60d5/Pasted text.txt",
+    "sha256": "9eff48db9db4363fa13f5d82cb402daaa6643bc76ef8b49373d4fad645fba7e8",
+    "interpretation": "Direct user request: finish frozen independent QL qualification and prepare actual release artifacts now; deploy each accepted and qualified increment under existing conditional authority, without duplicate general GO. Separate public-access successor with existing Fable owner; private authorization and payment verification remain protected. Intro review-queue assertion is superseded by actual Doc101 acceptance."
   },
   "originalReviewer": {
     "acknowledgment": "a2ffb6cff621723adf3c42a8c71569f875009250",
@@ -500,6 +513,20 @@
     "qualifiedReleaseCandidate": null,
     "provisionalTarget": "QL7a2 remains furthest qualified standalone request increment; not paidcheckout; no automatic support bundle.",
     "warnings": "Build remains PASS_WITH_WARNINGS. Mixedimportunchangedbaseline stops one homechunk split; mainchunk506335B>500000advisory by6335, no exactbaselineartifactcomparison. No warningfatalrulefound, no performanceclearance.",
-    "selectionAfterDoc101": "Support is a source-accepted small alternative, but needs its own protection/build/typecheck/fullsuite/release qualifications; QL remains current prepared staticroute target. Neither release-selected or deployed."
+    "selectionAfterDoc101": "Support is a source-accepted small alternative, but needs its own protection/build/typecheck/fullsuite/release qualifications; QL remains current prepared staticroute target. Neither release-selected or deployed.",
+    "routeUniqueness": {
+      "status": "PASS",
+      "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "tree": "28617c360f487803baa556d33158c4e95df471f1",
+      "result": "docs/health-launch/ql-build-20261012/route-check/ACTUAL_RESULT.json",
+      "registrations": 448,
+      "callSites": 439,
+      "exit": 0,
+      "timedOut": false,
+      "attempts": 1,
+      "endedUtc": "2026-10-12T20:35:49.685Z",
+      "scope": "Static registrations, not mounted/browser authorization"
+    },
+    "releasePreparation": "Current REMAINING_RELEASE_REQUIREMENTS_20261012.json includes exact9-path classification, payload-not-executed, rollbackrisk, site-record provenance gap and actual local engine/preview prerequisites."
   }
 }

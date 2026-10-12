@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "at": "2026-10-12T20:25:47Z",
+  "at": "2026-10-12T20:38:00Z",
   "kind": "CANDIDATE_SPECIFIC_REMAINING_RELEASE_REQUIREMENTS",
   "instruction": {
-    "path": "C:/Users/sboad/.codex/attachments/0ada60b9-885b-4cdd-abe9-e66aaa035244/Pasted text.txt",
-    "sha256": "389777721040734d728c1b402c6a57c4885197d2a9ae0cda03b5eb199c06f675",
-    "interpretation": "User expressly designated pasted text as request. Existing candidates preserved; review and actual remaining requirements, not new corrections or combined release."
+    "path": "C:/Users/sboad/.codex/attachments/21ccc15e-477b-4d01-bdff-8a5eb12a60d5/Pasted text.txt",
+    "sha256": "9eff48db9db4363fa13f5d82cb402daaa6643bc76ef8b49373d4fad645fba7e8",
+    "interpretation": "Direct user request: finish frozen independent QL qualification and prepare actual release artifacts now; deploy each accepted and qualified increment under existing conditional authority, without duplicate general GO. Separate public-access successor with existing Fable owner; private authorization and payment verification remain protected. Intro review-queue assertion is superseded by actual Doc101 acceptance."
   },
   "originalReviewer": {
     "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
     "title": "Multi-document project review",
     "delivery": "ACTUAL_USER_RELAY_CONFIRMED_BY_ORIGINAL_REVIEWER_COMMIT",
     "acknowledgment": "a2ffb6cff621723adf3c42a8c71569f875009250:docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
-    "quoteMeaning": "Samuel relayed coordinator submission in original chat; registrations and d67 handoff read from Git. All3 ACKNOWLEDGED_AND_IN_REVIEW, not accepted.",
+    "quoteMeaning": "Actual original acknowledgment of all three targets at a2ff; Doc101 later accepted with named limits at be35aa7. Docs99/100 remain in review at latest local reviewer branch; no remote freshness or execution inferred.",
     "targets": [
       {
         "doc": 99,
@@ -103,12 +103,12 @@
         "Exact7a2 CLI PASS",
         "Exact7a2 companion36PASS",
         "Exact7a2 production buildPASS with warnings",
-        "Exact7a2 typecheckPASS4b8a2f7"
+        "Exact7a2 typecheckPASS4b8a2f7",
+        "Exact7a2 static route uniqueness PASS: 448 registrations /439 call sites, one42.650s run, exit0/no timeout; raw receipt/log in route-check/"
       ],
       "missing": [
         "Original independent disposition",
         "Candidate-applicable full suite PASS",
-        "Route uniqueness executed result",
         "Release diff-scan/manifest/site records applicable exact-candidate qualification",
         "Applicable supported request/status/staff-readback browser/journey evidence",
         "Installed dependency compatibility and current legal/config inputs for released scope",
@@ -224,7 +224,23 @@
     "arithmetic": "420 -2 superseded legacy identities +6 canonical identities -1 shipping exclusion =423",
     "visibility": "Existing flag/admission/search/paging visibility unchanged; request_access not purchase permission. No count padding/truncation/hiding change made. Counts not live stock/price release/availability.",
     "commonTextDelta": "LibidoCream mo_3d043e2a35ceaa045986/mov_06beec21c59fe7842f18 punctuation em-dash to colon; identity/Care state unchanged.",
-    "evidenceLevel": "Builtin read-only exact Git JSON/source comparison, not application run or original-review acceptance."
+    "evidenceLevel": "Builtin read-only exact Git JSON/source comparison, not application run or original-review acceptance.",
+    "separateAccessSuccessor": {
+      "status": "AUDITED_DISPATCH_REQUESTED_NO_FABLE_ACK",
+      "owner": "Existing Fable lead through existing coordinator",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+      ],
+      "QLPreimages": [
+        "9f58e556318f925f1ff887ea0ab8e9edef66f249",
+        "04bfe4c293e85685ae37c59e12eff51391f85851"
+      ],
+      "finding": "Authorized catalog browsing is incorrectly coupled to bridge/config submission readiness; service.catalog separately enforces current viewer authority.",
+      "contract": "Existing confirmed EA session plus successful canonical catalog GET may browse regardless of submission config. Continuation still requires agreed && blocked===null && bridgeState.kind===enabled. Keep auth refusals, Care withholding, holds, current-price/order rereads unchanged.",
+      "tests": "Valid session/config unavailable/catalog success -> visible rows/noPOST; pending/failed config no implied purchase; missing/expired session/catalog401/403 denied; agreement/affirmative readiness gate continuation; paging/search/identity/held rows unchanged.",
+      "publicLimit": "This is authorized-session browsing, not signed-out public catalog. Public publication contract lacks production authority implementation/API/page mount. Do not publish internal DTOs or disable access flags."
+    }
   },
   "payment": {
     "owner": "Existing payment owner, operational verifierSamuel Boadu",
@@ -247,7 +263,7 @@
     "newRelease": null,
     "mutation": false,
     "lastReadOnlyKnownSource": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
-    "lastObservation": "2026-10-12T19:25:19.1148527Z; Render association plushealth200, not served SHA attestation",
+    "lastObservation": "2026-10-12T20:30:58.8412234Z; explicit Render workspace/service latest3 deploys and public health200. Current live dep-daqft3vf3r2c73b7e88g points to794; no queued/running among3 returned, not exhaustive all-deploy census. Health body lacks SHA.",
     "destination": "srv-d8s9vej7uimc7384dfcg in tea-d8nhh6a8qa3s73f4ocj0",
     "rollbackCandidate": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d; must reverify current service and predecessor immediately before actual release",
     "stop": "No qualified original disposition or full remaining checks yet; no deployment"
@@ -263,6 +279,101 @@
     "payment": false,
     "push": false,
     "merge": false,
-    "deploy": false
+    "deploy": false,
+    "staticRouteExecuted": true,
+    "preparationOnly": true
+  },
+  "previousInstruction": {
+    "path": "C:/Users/sboad/.codex/attachments/0ada60b9-885b-4cdd-abe9-e66aaa035244/Pasted text.txt",
+    "sha256": "389777721040734d728c1b402c6a57c4885197d2a9ae0cda03b5eb199c06f675",
+    "interpretation": "User expressly designated pasted text as request. Existing candidates preserved; review and actual remaining requirements, not new corrections or combined release."
+  },
+  "releasePreparation": {
+    "status": "PREPARED_INCOMPLETE_NOT_DEPLOYABLE",
+    "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+    "tree": "28617c360f487803baa556d33158c4e95df471f1",
+    "baseline": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "baselineTree": "ca9d77ce95bede22b40315fa4cbcdee91de2312c",
+    "exactChangedPaths": {
+      "runtime": [
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/draft-store.ts",
+        "server/research/assisted-order/service.ts"
+      ],
+      "tests": [
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/draft-store.test.ts",
+        "server/research/assisted-order/http-e2e.test.ts",
+        "server/research/assisted-order/service.test.ts"
+      ],
+      "protectionRecords": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/health-launch/ql-protection-carryforward-20261012/APPROVAL_AND_PREIMAGE.json"
+      ]
+    },
+    "diffCheck": {
+      "command": "git diff --check 79414143d4355d5d3d14cd5fe6e5a536dc68d99d 7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "result": "Initial no-diagnostic observation at20:36 had no isolated exit. Separate builtin Git check repeated at20:40 with explicit exit $LASTEXITCODE returned0/no diagnostics. This is whitespace diff-check only, not manifest/ownership/security approval."
+    },
+    "changes": {
+      "migrations": [],
+      "newRoutes": [],
+      "packageLock": [],
+      "environment": [],
+      "configuration": [],
+      "tables": [],
+      "functions": [],
+      "RLS": [],
+      "privileges": []
+    },
+    "existingProcedures": [
+      "docs/revenue-launch/20260907/RESOURCE_HUB_HARDENING_RELEASE_PACKET_8be.md:71-118 (structure only, not historical identities/flags)",
+      "docs/research-launch/XENIOS_RESEARCH_ROLLBACK_PLAN_2026-08-28.md:85-165"
+    ],
+    "destination": {
+      "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+      "service": "srv-d8s9vej7uimc7384dfcg",
+      "origin": "https://xeniostechnology.com",
+      "branch": "release/early-access-code-session-checkout",
+      "autoDeploy": "no",
+      "payload": {
+        "commitId": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+        "clearCache": "do_not_clear"
+      },
+      "payloadExecuted": false
+    },
+    "preconditions": [
+      "Actual Doc99 disposition and applicable executed full-suite/browser/release evidence",
+      "Fresh single-writer/service/workspace/current-live/active-or-queued-deploy checks",
+      "Exact source/tree/ancestry and installed dependency, legal/config compatibility",
+      "Existing release-manifest schema and independent ownership attestation, no invented PASS fields",
+      "Actual endpoint baseline, explicit supported smoke and stop criteria"
+    ],
+    "effects": "Code-only deploy would restart existing application/workers; ordinary due outbox/jobs may execute. No flag, migration or payment activation requested. Do not describe restart as zero-effect.",
+    "rollback": {
+      "candidate": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+      "compatibility": "No migration/package/config delta in9-path QL diff; recheck actual hosted state before release/rollback.",
+      "importantRisk": "Rolling back removes QL12 fail-closed hold and restores the known legacy arbitrary-reference paid-transition path. Rollback is not permission to use that path or alter payment configuration.",
+      "steps": "Preserve failure/deploy/log evidence; use attested exact compatible predecessor under release-window authority; unchanged config; verify served identity, critical endpoints and five-full-minute health/error observation. No migration replay/history deletion."
+    },
+    "postdeploy": "Render exact commit/build association plus served asset/version proof and actual supported journey smoke are distinct. Health200 alone has no SHA; current local chunk hashes cannot attest a remotely rebuilt artifact. Existing30GET comparison includes config/catalog/refusals; do not import historical broad allowances.",
+    "siteRecords": "Exact QL site registry still carries historical c545a70/dep-dag8l567bikc738a1nj0. Generator reads chosen committed non-record revision, not arbitrary working-tree corrections. Coordinate owned canonical state, retain separate runtime-vs-records provenance; do not generate in tc25 and relabel it7a2.",
+    "manifest": "No validator-ready QL manifest claimed. Required schema test entries allow PASS only; unresolved results must not be populated with synthetic passes."
+  },
+  "executionPrerequisites": {
+    "fullSuite": {
+      "status": "NOT_RUN",
+      "preflight": "FULL_SUITE_EFFECT_PREFLIGHT_20261012.json",
+      "actualLocalEngine": "Docker CLI installed; explicit desktop-linux context endpoint npipe:////./pipe/dockerDesktopLinuxEngine is absent, docker version reports connection failure. Native exit not separately captured. No engine startup/container/image pull/SQL attempted.",
+      "portSnapshot": "No local54321/54322/5237 listener observed20:29-20:30; snapshot not lasting ownership.",
+      "required": "Existing coordinator must bind permitted isolated local engine, image/network policy, real-boot fixed54321/wildcard/outbox effects, owned process/container cleanup and fresh finite resource window. Do not disable CI SQL groups to label partial result full."
+    },
+    "browser": {
+      "status": "NOT_RUN",
+      "existingMechanism": "scripts/evidence/build-candidate-preview.mjs plus scripts/preview-research.mjs",
+      "actualGap": "Current passing donor-copy build lacks dist/evidence-provenance.json. Existing validator requires actual npm ci --no-audit --no-fund with exactNode/npm/lock/source provenance. No forged stamp or validator relaxation.",
+      "next": "Use fresh clean same7a2 checkout and genuine existing install/build procedure in coordinator resource window, retaining earlier build/receipts separately.",
+      "limits": "Owned local Supabase fixture only implements nonce/session RPCs and refuses other writes. Suitable for layout/client gating; fallback catalog is not canonical-full-catalog or durable submitted-request/operator/payment proof."
+    }
   }
 }
