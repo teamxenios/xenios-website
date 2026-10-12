@@ -1,10 +1,10 @@
 {
   "schemaVersion": "doc71-disabled-source-correction-map-v1",
   "taskId": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
-  "revision": 6,
+  "revision": 7,
   "sourceCommit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
   "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
-  "sourceStatus": "REVISION5_VERIFIER_AND_RECORDS_FROZEN_PENDING_ORIGINAL_DELTA",
+  "sourceStatus": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
   "execution": "NOT_RUN",
   "publication": "LOCAL_ONLY",
   "sourceFiles": [
@@ -766,11 +766,12 @@
           {
             "part": "QUALIFICATION_AUTHORED",
             "stage": "S2",
-            "status": "AUTHORED_PENDING_ORIGINAL_R5_REVIEW",
+            "status": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
             "reviewReferences": [
               "16d2731c928cdd40c810df764b14b68f0d995eb9",
               "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
-              "4ab2fe6db6fa02c874df11916c84a6299576e906"
+              "4ab2fe6db6fa02c874df11916c84a6299576e906",
+              "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
             ],
             "execution": "NOT_RUN"
           },
@@ -780,7 +781,7 @@
             "status": "ACTUAL_IMPLEMENTED_S_CENSUS_UNBOUND"
           }
         ],
-        "status": "RUNTIME_TYPES_ACCEPTED_DOC87_SHADOW_CORRECTION_PENDING_R5",
+        "status": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
         "reviewReferences": [
           {
             "doc": 83,
@@ -796,10 +797,15 @@
             "doc": 94,
             "commit": "4ab2fe6db6fa02c874df11916c84a6299576e906",
             "finding": "R4C1_AND_R4C4"
+          },
+          {
+            "doc": 95,
+            "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+            "finding": "R4C1_THROUGH_R4C7_SOURCE_ACCEPTED_WITH_NAMED_LIMITS"
           }
         ],
         "currentCorrection": {
-          "status": "AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW_NOT_RUN",
+          "status": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
           "attribution": "Doc87 marker, exact canonical25 allowlist and innermost caller rule unchanged. Reject intake/DO or unknown innermost callers; PL/pgSQL schema is enforceable, SQL-function diagnostics generally expose only bare names.",
           "sessions": {
             "admin": "Successful shadow control plus no-domain twin and unchanged effects",
@@ -1052,18 +1058,18 @@
       "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
       "field": "remaining"
     },
-    "currentSource": "Original revision5 bounded verifier/records disposition and every-pin reconfirmation",
-    "then": "Exact Doc94 section3 serial finalization only after actual acceptance",
+    "currentSource": "COMPLETE: Doc95 accepted source25741f0 and reconfirmed both102pin sets; exact three receipt finalization commits completed.",
+    "then": "Register the three exact receipt diffs with the original reviewer for the Doc95 spot-check; do not restart composition review.",
     "operational": [
       "IMPLEMENTED_S_COLUMN_DESCRIPTOR_AND_POPULATED_CENSUS",
       "AUTHORITATIVE_OPERATIONAL_INPUTS_AND_EXTERNAL_EXPECTED_CENSUS_DIGEST",
       "QUALIFIED_CONNECTION_PROFILE_AND_RECIPIENT_BINDINGS",
       "TRUSTED_ROW8_COMMERCE_CHECKOUT",
-      "PROTECTED_SEAM_DISPOSITIONS",
+      "TC25_FOUNDER_AUTHORIZED_MANIFEST_HASH_AMENDMENT",
       "ACCEPTED_QUALIFICATION_PROCEDURE_AND_FRESH_EXECUTION_AUTHORITY",
       "AUTHORIZED_INSTALLATION_AND_RELEASE_ACTIVATION"
     ],
-    "qualification": "Separate accepted procedure, implemented-S descriptor/census, operational inputs, protected-seam decisions and fresh execution authority",
+    "qualification": "Separate S3 owner/action: implemented-S descriptor/census and external expected digest, descriptor definition and all-three-site reseal, authoritative operational inputs, real connection/recipient and trusted checkout bindings, exact TC25 founder-authorized manifest amendment, accepted procedure and fresh execution authority.",
     "execution": "NOT_RUN"
   },
   "generationRepair": {
@@ -1071,7 +1077,14 @@
     "resolution": "Regenerated only owned currentness files from frozen3f7601d source using literal callback replacements; preserved other dirty code.",
     "verification": "Final source sizes/raw hashes above; text/diff metadata only, no source execution."
   },
-  "independentAcceptance": "PENDING_ORIGINAL_REVISION5_DELTA_AND_EVERY_PIN_RECONFIRMATION",
+  "independentAcceptance": {
+    "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+    "disposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS",
+    "reviewTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 5,
+    "pinConfirmation": "COMPLETE_102_EACH_ZERO_MISMATCHES",
+    "execution": "NOT_RUN"
+  },
   "schedules": "UNCHANGED",
   "previousSourceCheckpoint": {
     "source": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
@@ -11044,8 +11057,9 @@
     {
       "id": "SOURCE_ACCEPTANCE",
       "stage": "S2",
-      "requirement": "Actual original revision5 delta acceptance and every-pin reconfirmation, then exact Doc94 section3 finalization sequence. Operational prerequisites remain separate.",
-      "status": "REVISION5_REBOUND_PENDING_ORIGINAL_DELTA_AND_PIN_RECONFIRMATION"
+      "requirement": "Doc95 source acceptance and all102pin confirmation complete; three serial receipt steps committed. Source-only record state; S3 inputs, descriptor reseal, qualification and release remain separate.",
+      "status": "DOC95_SOURCE_ACCEPTED_AND_EXACT_RECEIPTS_FINALIZED",
+      "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
     },
     {
       "id": "IMPLEMENTED_S_CENSUS_DESCRIPTOR",
@@ -11105,23 +11119,25 @@
     {
       "id": "CURRENTNESS_RECEIPT_BYTE_CONFIRMATION",
       "stage": "S2",
-      "status": "REVISION5_REBOUND_PENDING_ORIGINAL_DELTA_AND_PIN_RECONFIRMATION",
-      "requirement": "Actual original revision5 delta acceptance and every-pin reconfirmation, then exact Doc94 section3 finalization sequence. Operational prerequisites remain separate."
+      "status": "DOC95_SOURCE_ACCEPTED_AND_EXACT_RECEIPTS_FINALIZED",
+      "requirement": "Doc95 source acceptance and all102pin confirmation complete; three serial receipt steps committed. Source-only record state; S3 inputs, descriptor reseal, qualification and release remain separate.",
+      "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
     },
     {
       "id": "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
       "stage": "S2",
-      "status": "REVISION5_REBOUND_PENDING_ORIGINAL_DELTA_AND_PIN_RECONFIRMATION",
-      "requirement": "Actual original revision5 delta acceptance and every-pin reconfirmation, then exact Doc94 section3 finalization sequence. Operational prerequisites remain separate."
+      "status": "DOC95_SOURCE_ACCEPTED_AND_EXACT_RECEIPTS_FINALIZED",
+      "requirement": "Doc95 source acceptance and all102pin confirmation complete; three serial receipt steps committed. Source-only record state; S3 inputs, descriptor reseal, qualification and release remain separate.",
+      "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
     },
     {
       "id": "PROTECTED_SEAM_DISPOSITION",
       "stage": "S3/S4",
-      "status": "SEPARATE_DISPOSITION_REQUIRED",
+      "status": "EXACT_APP_DISPOSITION_RECORDED_MANIFEST_HASH_AMENDMENT_PENDING",
       "paths": [
         {
           "path": "server/index.ts",
-          "status": "SEPARATE_DISPOSITION_REQUIRED",
+          "status": "UNCHANGED_ON_THIS_LINE_NO_ADDITIONAL_DISPOSITION_REQUIRED",
           "reviewedDoc83": {
             "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
             "path": "server/index.ts",
@@ -11132,7 +11148,7 @@
             "digestDomain": "RAW_COMMITTED_GIT_BYTES"
           },
           "currentCandidate": {
-            "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+            "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
             "path": "server/index.ts",
             "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
             "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
@@ -11140,11 +11156,19 @@
             "bytes": 77299,
             "digestDomain": "RAW_COMMITTED_GIT_BYTES"
           },
-          "noHashOrManifestChange": true
+          "noHashOrManifestChange": true,
+          "currentReconciliation": {
+            "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+            "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+            "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+            "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+            "sha256lf": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+            "bytes": 48064
+          }
         },
         {
           "path": "server/research/health/quick-order/root-composition.test.ts",
-          "status": "SEPARATE_DISPOSITION_REQUIRED",
+          "status": "UNCHANGED_ON_THIS_LINE_NO_ADDITIONAL_DISPOSITION_REQUIRED",
           "reviewedDoc83": {
             "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
             "path": "server/research/health/quick-order/root-composition.test.ts",
@@ -11155,7 +11179,7 @@
             "digestDomain": "RAW_COMMITTED_GIT_BYTES"
           },
           "currentCandidate": {
-            "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+            "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
             "path": "server/research/health/quick-order/root-composition.test.ts",
             "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
             "rawSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
@@ -11163,11 +11187,19 @@
             "bytes": 19984,
             "digestDomain": "RAW_COMMITTED_GIT_BYTES"
           },
-          "noHashOrManifestChange": true
+          "noHashOrManifestChange": true,
+          "currentReconciliation": {
+            "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+            "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+            "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+            "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+            "sha256lf": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+            "bytes": 48064
+          }
         },
         {
           "path": "client/src/App.tsx",
-          "status": "SEPARATE_DISPOSITION_REQUIRED",
+          "status": "EXACT_HUMAN_DISPOSITION_RECORDED_MANIFEST_HASH_AMENDMENT_PENDING",
           "reviewedDoc83": {
             "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
             "path": "client/src/App.tsx",
@@ -11178,7 +11210,7 @@
             "digestDomain": "RAW_COMMITTED_GIT_BYTES"
           },
           "currentCandidate": {
-            "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+            "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
             "path": "client/src/App.tsx",
             "gitBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
             "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
@@ -11186,10 +11218,27 @@
             "bytes": 18079,
             "digestDomain": "RAW_COMMITTED_GIT_BYTES"
           },
-          "noHashOrManifestChange": true
+          "noHashOrManifestChange": true,
+          "currentReconciliation": {
+            "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+            "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+            "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+            "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+            "sha256lf": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+            "bytes": 48064
+          },
+          "humanDispositionReceipt": {
+            "commit": "8cc1fc6ddd894d44c6618cabbad03f5ceba9f0f2",
+            "path": "docs/coordination/launch-coordination-20261005/TC25_EXACT_DISABLED_APP_ACTUAL_HUMAN_DISPOSITION_20261012.json",
+            "gitBlob": "ff70b94148ca0bba39b5e96f579f1926e82bffc7",
+            "rawSha256": "baeafc4429065e5755c9b1a7f6e2175f3012226e2b262d1c54d3ba4473566516",
+            "sha256lf": "baeafc4429065e5755c9b1a7f6e2175f3012226e2b262d1c54d3ba4473566516",
+            "bytes": 3307
+          }
         }
       ],
-      "requirement": "App successor b5cc8edc plus existing index/root baselines require separate protected dispositions. No manifest or expected-hash update."
+      "requirement": "Actual human disposition is recorded and matches accepted App blob b5cc8edcc1040eca4009d8e1b68627ae7492d459 at source25741f0. Before integration or qualification, the only remaining TC25 step is one founder-authorized CORE_SITE_PROTECTION_MANIFEST.json hash amendment covering both the 0d22757 hub-restore line and Quick Order diff. server/index.ts and root-composition.test.ts are unchanged on this line and need no additional disposition. No manifest/hash/GATE01 edit or execution is authorized here.",
+      "currentReviewCommit": "582c763fa1158894b24fb62465c132da32c2f739"
     },
     {
       "id": "TC-20",
@@ -11234,10 +11283,11 @@
     {
       "id": "TC-25",
       "stage": "S3",
-      "status": "HELD_LATER_STAGE_NOT_PROVEN",
+      "status": "EXACT_APP_DISPOSITION_RECORDED_MANIFEST_HASH_AMENDMENT_PENDING",
       "title": "Protected-seam dispositions are outstanding for server/index.ts, root-composition.test.ts and App.tsx",
-      "requirement": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
-      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      "requirement": "Actual human disposition is recorded and matches accepted App blob b5cc8edcc1040eca4009d8e1b68627ae7492d459 at source25741f0. Before integration or qualification, the only remaining TC25 step is one founder-authorized CORE_SITE_PROTECTION_MANIFEST.json hash amendment covering both the 0d22757 hub-restore line and Quick Order diff. server/index.ts and root-composition.test.ts are unchanged on this line and need no additional disposition. No manifest/hash/GATE01 edit or execution is authorized here.",
+      "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
+      "currentReviewCommit": "582c763fa1158894b24fb62465c132da32c2f739"
     },
     {
       "id": "TC-26",
@@ -12433,7 +12483,7 @@
   },
   "doc83CompositionReconciliation": {
     "id": "DOC94_REVISION5_VERIFIER_AND_FOUR_EVIDENCE_REBIND_20261012",
-    "status": "REVISION5_REBOUND_PENDING_ORIGINAL_DELTA_AND_PIN_RECONFIRMATION",
+    "status": "DOC95_SOURCE_ACCEPTED_EXACT_RECEIPT_FINALIZATION_COMPLETE_NOT_RUN",
     "sourceOrigin": {
       "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
       "tree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
@@ -12613,7 +12663,7 @@
     "protectedSeams": [
       {
         "path": "server/index.ts",
-        "status": "SEPARATE_DISPOSITION_REQUIRED",
+        "status": "UNCHANGED_ON_THIS_LINE_NO_ADDITIONAL_DISPOSITION_REQUIRED",
         "reviewedDoc83": {
           "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
           "path": "server/index.ts",
@@ -12624,7 +12674,7 @@
           "digestDomain": "RAW_COMMITTED_GIT_BYTES"
         },
         "currentCandidate": {
-          "commit": "38915cf4318594607098717389113869e3eff0da",
+          "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
           "path": "server/index.ts",
           "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
           "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
@@ -12632,11 +12682,19 @@
           "bytes": 77299,
           "digestDomain": "RAW_COMMITTED_GIT_BYTES"
         },
-        "noHashOrManifestChange": true
+        "noHashOrManifestChange": true,
+        "currentReconciliation": {
+          "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+          "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+          "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+          "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+          "sha256lf": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+          "bytes": 48064
+        }
       },
       {
         "path": "server/research/health/quick-order/root-composition.test.ts",
-        "status": "SEPARATE_DISPOSITION_REQUIRED",
+        "status": "UNCHANGED_ON_THIS_LINE_NO_ADDITIONAL_DISPOSITION_REQUIRED",
         "reviewedDoc83": {
           "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
           "path": "server/research/health/quick-order/root-composition.test.ts",
@@ -12647,7 +12705,7 @@
           "digestDomain": "RAW_COMMITTED_GIT_BYTES"
         },
         "currentCandidate": {
-          "commit": "38915cf4318594607098717389113869e3eff0da",
+          "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
           "path": "server/research/health/quick-order/root-composition.test.ts",
           "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
           "rawSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
@@ -12655,11 +12713,19 @@
           "bytes": 19984,
           "digestDomain": "RAW_COMMITTED_GIT_BYTES"
         },
-        "noHashOrManifestChange": true
+        "noHashOrManifestChange": true,
+        "currentReconciliation": {
+          "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+          "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+          "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+          "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+          "sha256lf": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+          "bytes": 48064
+        }
       },
       {
         "path": "client/src/App.tsx",
-        "status": "SEPARATE_DISPOSITION_REQUIRED",
+        "status": "EXACT_HUMAN_DISPOSITION_RECORDED_MANIFEST_HASH_AMENDMENT_PENDING",
         "reviewedDoc83": {
           "commit": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
           "path": "client/src/App.tsx",
@@ -12670,7 +12736,7 @@
           "digestDomain": "RAW_COMMITTED_GIT_BYTES"
         },
         "currentCandidate": {
-          "commit": "38915cf4318594607098717389113869e3eff0da",
+          "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
           "path": "client/src/App.tsx",
           "gitBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
           "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
@@ -12678,7 +12744,23 @@
           "bytes": 18079,
           "digestDomain": "RAW_COMMITTED_GIT_BYTES"
         },
-        "noHashOrManifestChange": true
+        "noHashOrManifestChange": true,
+        "currentReconciliation": {
+          "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+          "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+          "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+          "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+          "sha256lf": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+          "bytes": 48064
+        },
+        "humanDispositionReceipt": {
+          "commit": "8cc1fc6ddd894d44c6618cabbad03f5ceba9f0f2",
+          "path": "docs/coordination/launch-coordination-20261005/TC25_EXACT_DISABLED_APP_ACTUAL_HUMAN_DISPOSITION_20261012.json",
+          "gitBlob": "ff70b94148ca0bba39b5e96f579f1926e82bffc7",
+          "rawSha256": "baeafc4429065e5755c9b1a7f6e2175f3012226e2b262d1c54d3ba4473566516",
+          "sha256lf": "baeafc4429065e5755c9b1a7f6e2175f3012226e2b262d1c54d3ba4473566516",
+          "bytes": 3307
+        }
       }
     ],
     "schemaAndCheckout": {
@@ -12707,15 +12789,13 @@
       "recipient": "APPROVED_OPERATIONAL_RECIPIENT_AND_ENFORCEMENT_BINDING_NOT_SUPPLIED",
       "noNewOwnerDecisions": true
     },
-    "missingEvidenceFieldsForDependencyFinalization": [
-      "ACTUAL_ORIGINAL_REVISION5_ACCEPTANCE_AND_EVERY_PIN_RECONFIRMATION",
-      "EXACT_RULED_CURRENTNESS_FINALIZATION_SUCCESSOR"
-    ],
+    "missingEvidenceFieldsForDependencyFinalization": [],
     "sourceAcceptance": {
       "runtime": "ACCEPTED_WITH_NAMED_LIMITS_DOC87_UNCHANGED",
       "DC1": "EXACT_ACCEPTED_DOC94_UNCHANGED",
-      "newVerifier": "PENDING_ORIGINAL_REVISION5",
-      "wholeComposition": "PENDING_ORIGINAL_REVISION5"
+      "newVerifier": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
+      "wholeComposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
+      "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
     },
     "currentnessReceiptByteConfirmation": {
       "previous": {
@@ -12737,22 +12817,33 @@
         "source": "38915cf4318594607098717389113869e3eff0da",
         "records": "02c1748dee7c1d7e6453aaf993182dcc80e3db65"
       },
-      "current": "REVISION5_PENDING_ORIGINAL_RECONFIRMATION",
-      "metadataOnly": "Builder recomputed all102raw/LF identities; not independent acceptance"
+      "current": {
+        "complete": true,
+        "document": 95,
+        "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+        "currentnessPins": 102,
+        "intakePins": 102,
+        "mismatches": 0,
+        "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+        "receiptCandidate": "54ffba10459efe0e191428b86a2c913e56c5f829",
+        "acceptedCurrentnessFivePinsUnchanged": true,
+        "definitionUnchanged": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe"
+      },
+      "metadataOnly": "Original Doc95 independently reconfirmed all102pins; builder raw Git/JSON comparison after finalization confirms zero pins changed, not execution."
     },
-    "dependentIntakeSeal": "NON_FINAL",
+    "dependentIntakeSeal": "FINAL_CURRENTNESS_DEPENDENCY_ONLY",
     "execution": "NOT_RUN",
     "publication": "LOCAL_ONLY",
     "schedules": "UNCHANGED",
     "currentnessReceipt": {
-      "commit": "57c5aa5303b9d9b92c85a796b73674737b61ba13",
+      "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
       "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
-      "gitBlob": "9178947cd345fb503ed356d9f45c8402e2c51899",
-      "rawSha256": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
-      "sha256lf": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
-      "bytes": 183668,
+      "gitBlob": "8c058c4c459186e336e3aaff4f13c698ccbf4423",
+      "rawSha256": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+      "sha256lf": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+      "bytes": 186264,
       "digestDomain": "RAW_COMMITTED_GIT_BYTES",
-      "recordsCommit": "57c5aa5303b9d9b92c85a796b73674737b61ba13"
+      "recordsCommit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834"
     },
     "currentFindingDispositions": [
       {
@@ -12813,9 +12904,9 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "RUNTIME_TYPES_CORRECTED; DOC94_R4C1_VERIFIER_CORRECTION_AUTHORED_PENDING_R5",
+        "currentDisposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
         "correction": {
-          "status": "AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW_NOT_RUN",
+          "status": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
           "attribution": "Doc87 marker, exact canonical25 allowlist and innermost caller rule unchanged. Reject intake/DO or unknown innermost callers; PL/pgSQL schema is enforceable, SQL-function diagnostics generally expose only bare names.",
           "sessions": {
             "admin": "Successful shadow control plus no-domain twin and unchanged effects",
@@ -12862,14 +12953,14 @@
             "details": "jsonb/text/uuid shadow session fails closed at accepted descriptor gate. Post-gate intake type qualification is static coverage; dynamic shadow coverage is admin, replay and pre-gate commit attribution only. Authored controls have not executed."
           }
         },
-        "independentClosure": "PENDING_ORIGINAL_REVISION5",
+        "independentClosure": "DOC95_SOURCE_ACCEPTED_WITH_NAMED_LIMITS",
         "execution": "NOT_RUN",
         "priorRevision3AuthoredState": {
           "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
           "independentClosure": "PENDING_ORIGINAL_REVIEW",
           "stage": "S2"
         },
-        "currentReviewCommit": "4ab2fe6db6fa02c874df11916c84a6299576e906"
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       },
       {
         "id": "TC-4",
@@ -13151,16 +13242,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
-        "correction": "Revision5 has identical102pins at candidate54ffba10459efe0e191428b86a2c913e56c5f829:0added/2rewritten/100unchanged. Accepted currentness five files and8b definition are unchanged. Doc94 reconfirmed historical R4 pins; original R5 reconfirmation and separate permitted finalization remain pending.",
-        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "currentDisposition": "DOC95_ALL102PINS_CONFIRMED_EXACT_FINALIZATION_COMPLETE",
+        "correction": "Doc95 independently reconfirmed identical102pins at54ffba10, zero mismatches; all three receipt finalization steps preserve every pin, source header and definition. This source seal is for the descriptor-unbound8b631a83 line, not installation or qualification.",
+        "independentClosure": "DOC95_SOURCE_AND_BINDING_CONFIRMED_NOT_EXECUTED",
         "execution": "NOT_RUN",
         "priorRevision3AuthoredState": {
           "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
           "independentClosure": "PENDING_ORIGINAL_REVIEW",
           "stage": "S2"
         },
-        "currentReviewCommit": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
         "priorRevision4Correction": "Revision4 now has identical102pins at candidate114d517:0added/3rewritten/99unchanged. Acceptedcurrentness fivefiles/8b definition unchanged; originalrevision4 pinreconfirmation and permitted laterfinalization remain pending."
       },
       {
@@ -13490,16 +13581,16 @@
         "owner": "Samuel/coordinator protected-change review (integrator 01a0e098 and builder 01a10d78 supply bytes)",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
-        "correction": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
-        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "currentDisposition": "HUMAN_DISPOSITION_RECORDED_MANIFEST_HASH_AMENDMENT_PENDING",
+        "correction": "Actual human disposition is recorded and matches accepted App blob b5cc8edcc1040eca4009d8e1b68627ae7492d459 at source25741f0. Before integration or qualification, the only remaining TC25 step is one founder-authorized CORE_SITE_PROTECTION_MANIFEST.json hash amendment covering both the 0d22757 hub-restore line and Quick Order diff. server/index.ts and root-composition.test.ts are unchanged on this line and need no additional disposition. No manifest/hash/GATE01 edit or execution is authorized here.",
+        "independentClosure": "REVIEWER582C_MATCH_CONFIRMED_MANIFEST_REMAINS_OPEN",
         "execution": "NOT_RUN",
         "priorRevision3AuthoredState": {
           "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
           "independentClosure": "PENDING_ORIGINAL_REVIEW",
           "stage": "S3"
         },
-        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
+        "currentReviewCommit": "582c763fa1158894b24fb62465c132da32c2f739"
       },
       {
         "id": "TC-26",
@@ -15601,12 +15692,35 @@
       "existingTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
       "requestedRevision": 5,
       "owner": "ORIGINAL_REVIEWER_ONLY",
-      "queued": "NOT_REPORTED_BY_BUILDER",
-      "acknowledged": "NOT_OBSERVED_FOR_REVISION5",
+      "queued": "COMPLETED_EXISTING_REVISION5_TASK",
+      "acknowledged": "OBSERVED_IN_DOC95_REPORT_AT_a2c443d",
       "previousRevision": 4,
       "previousReview": "4ab2fe6db6fa02c874df11916c84a6299576e906",
       "scope": "R4C1..7 bounded verifier/records delta and all102pin reconfirmation",
-      "execution": "NOT_RUN"
+      "execution": "NOT_RUN",
+      "priorBuilderRegistrationStatus": {
+        "existingTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+        "requestedRevision": 5,
+        "owner": "ORIGINAL_REVIEWER_ONLY",
+        "queued": "NOT_REPORTED_BY_BUILDER",
+        "acknowledged": "NOT_OBSERVED_FOR_REVISION5",
+        "previousRevision": 4,
+        "previousReview": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+        "scope": "R4C1..7 bounded verifier/records delta and all102pin reconfirmation",
+        "execution": "NOT_RUN"
+      },
+      "acknowledgmentEvidence": {
+        "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+        "path": "docs/review/xenios-health-launch-review-20260930/95_COMPOSITION_R5_25741f0_ACCEPTANCE_2026-10-12.md",
+        "copy": "CLAUDE_DOC95_PUBLIC_VERDICT_D4E6A50D_20261012.md",
+        "gitBlob": "e4c257588be1499015671729786aee47eee4e311",
+        "rawSha256": "b9aefe3554eee57d3be69d67e3bf576a76002c4a6ed6aa7efa90028bde2c61d5",
+        "bytes": 8918
+      },
+      "reviewed": true,
+      "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "disposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS",
+      "next": "THREE_RECEIPT_DIFF_SPOT_CHECK_ONLY"
     },
     "remainingStageConditions": [
       {
@@ -15765,16 +15879,16 @@
         "owner": "Samuel/coordinator protected-change review (integrator 01a0e098 and builder 01a10d78 supply bytes)",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
-        "correction": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
-        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "currentDisposition": "HUMAN_DISPOSITION_RECORDED_MANIFEST_HASH_AMENDMENT_PENDING",
+        "correction": "Actual human disposition is recorded and matches accepted App blob b5cc8edcc1040eca4009d8e1b68627ae7492d459 at source25741f0. Before integration or qualification, the only remaining TC25 step is one founder-authorized CORE_SITE_PROTECTION_MANIFEST.json hash amendment covering both the 0d22757 hub-restore line and Quick Order diff. server/index.ts and root-composition.test.ts are unchanged on this line and need no additional disposition. No manifest/hash/GATE01 edit or execution is authorized here.",
+        "independentClosure": "REVIEWER582C_MATCH_CONFIRMED_MANIFEST_REMAINS_OPEN",
         "execution": "NOT_RUN",
         "priorRevision3AuthoredState": {
           "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
           "independentClosure": "PENDING_ORIGINAL_REVIEW",
           "stage": "S3"
         },
-        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
+        "currentReviewCommit": "582c763fa1158894b24fb62465c132da32c2f739"
       },
       {
         "id": "TC-26",
@@ -15861,7 +15975,7 @@
         "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       }
     ],
-    "qualificationRequirements": "(b) S3 qualification requirements. These are not pre-source requirements, and none is waived.\n1. A bound column descriptor and census (IMPLEMENTED_S_CENSUS_DESCRIPTOR), the resulting new currentness definition and receipt, then the intake re-seal and re-review (TC-21). Count no positive control before then.\n2. The authoritative input packet, the trusted checkout binding carrier, and real connection and recipient enforcement, as already registered.\n3. Adapter runtime dispatch (Node 20.19.0 and the tsx inventory) under separate authority. Label the mapping controls UNDISPATCHED until then (TC-22).\n4. Fresh bounded execution authority for a disposable run of:\n   - the intake verifier, including the TC-5, TC-6 and TC-7 controls and the pg_temp shadow-domain negative (TC-3);\n   - the timing matrix: hold before activation, window, epoch change, revocation during the wait;\n   - post-fifth-write and commit faults;\n   - a C-10 alternate server;\n   - wider timing margins.\n5. The wait inventory, including first-touch relation locks after decisionAt (TC-20), and scheduler granularity and rounding (TC-23).\n6. A bridge-enabled root composition qualification, plus a real-browser Auth/config qualification on the intake page (TC-24).\n7. Schema and checkout dispositions: descriptor and census NOT_COMPLETED, installed schema NOT_OBSERVED (TC-26).\n8. Separate explicit protected-change/GATE-01 dispositions for server/index.ts (0557ef2c), root-composition.test.ts (cf6ebaa3) and App.tsx (b98a29c9). The manifest forbids successor route, provider and middleware changes without review. No expected hash or manifest may be rewritten (TC-25).",
+    "qualificationRequirements": "(b) S3 qualification requirements. These are not pre-source requirements, and none is waived.\n1. A bound column descriptor and census (IMPLEMENTED_S_CENSUS_DESCRIPTOR), the resulting new currentness definition and receipt, then the intake re-seal and re-review (TC-21). Count no positive control before then.\n2. The authoritative input packet, the trusted checkout binding carrier, and real connection and recipient enforcement, as already registered.\n3. Adapter runtime dispatch (Node 20.19.0 and the tsx inventory) under separate authority. Label the mapping controls UNDISPATCHED until then (TC-22).\n4. Fresh bounded execution authority for a disposable run of:\n   - the intake verifier, including the TC-5, TC-6 and TC-7 controls and the pg_temp shadow-domain negative (TC-3);\n   - the timing matrix: hold before activation, window, epoch change, revocation during the wait;\n   - post-fifth-write and commit faults;\n   - a C-10 alternate server;\n   - wider timing margins.\n5. The wait inventory, including first-touch relation locks after decisionAt (TC-20), and scheduler granularity and rounding (TC-23).\n6. A bridge-enabled root composition qualification, plus a real-browser Auth/config qualification on the intake page (TC-24).\n7. Schema and checkout dispositions: descriptor and census NOT_COMPLETED, installed schema NOT_OBSERVED (TC-26).\n8. Actual human disposition is recorded and matches accepted App blob b5cc8edcc1040eca4009d8e1b68627ae7492d459 at source25741f0. Before integration or qualification, the only remaining TC25 step is one founder-authorized CORE_SITE_PROTECTION_MANIFEST.json hash amendment covering both the 0d22757 hub-restore line and Quick Order diff. server/index.ts and root-composition.test.ts are unchanged on this line and need no additional disposition. No manifest/hash/GATE01 edit or execution is authorized here.",
     "configurationAndInstallation": "(c) S4 configuration and installation requirements:\n- Owner-approved operating values (no compiled defaults): the timer carrier and digest, approved limits, the recipient, and the Health legal set and class-4 values.\n- Install and rollback timer admission, or a named prerequisite with a blast-radius disclosure (TC-27).\n- A whole-request bound covering recovery, and an operator signal for OUTCOME_UNCERTAIN and DEFINITE_REFUSAL_RETRYABLE (TC-28).\n- CS-33..36 operational limits.\n- The intake-before-currentness rollback order. It is enforced on the currentness side; the intake rollback.md must state it (TC-15).\n- Independent exact release acceptance and deployment/rollback authority (PRODUCTION_ACTIVATION).\n- Request submission is not payment.",
     "semanticRulingRequired": {
       "finding": "TC-4",
@@ -16398,7 +16512,7 @@
       "evidence": "Doc87 recomputed every pin in both 102-row receipts at a044293 and reported zero mismatches. That confirms identity, not acceptance of non-currentness rows."
     },
     "doc87FinalizationConstraints": {
-      "status": "INACTIVE_PENDING_ACTUAL_ORIGINAL_REVISION5_ACCEPTANCE_AND_PIN_RECONFIRMATION",
+      "status": "EXACT_ENVELOPE_PERFORMED_AFTER_DOC95_ACCEPTANCE",
       "ruling": "4ab2fe6db6fa02c874df11916c84a6299576e906",
       "section": 3,
       "currentness": {
@@ -16439,11 +16553,53 @@
         "separateStep": true,
         "prerequisite": "Actual original r5 composition source acceptance",
         "status": "SOURCE_ACCEPT_WITH_LIMITS",
-        "reviewCommit": "Actual r5 acceptance commit; not invented here"
+        "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       },
-      "furtherReview": "None required if later successors exactly match ruled envelope; original reviewer spot-checks registration. No present finalization.",
+      "furtherReview": "Original reviewer spot-check of the three registered diffs only; no new composition review if the envelope matches.",
       "TC21": "Implemented-S descriptor changes currentness definition and requires a separately accepted reseal.",
-      "performed": false
+      "performed": true,
+      "acceptanceReview": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "actualSteps": [
+        {
+          "order": 1,
+          "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+          "identity": {
+            "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+            "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+            "gitBlob": "8c058c4c459186e336e3aaff4f13c698ccbf4423",
+            "rawSha256": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+            "sha256lf": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+            "bytes": 186264,
+            "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+          }
+        },
+        {
+          "order": 2,
+          "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+          "identity": {
+            "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+            "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+            "gitBlob": "e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc",
+            "rawSha256": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+            "sha256lf": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+            "bytes": 196825,
+            "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+          }
+        },
+        {
+          "order": 3,
+          "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+          "identity": {
+            "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+            "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+            "gitBlob": "6021c556511e6e41daa10625be26ca660e2a1372",
+            "rawSha256": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+            "sha256lf": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+            "bytes": 196881,
+            "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+          }
+        }
+      ]
     },
     "doc87NamedLimits": [
       {
@@ -16539,14 +16695,12 @@
       "AUTHORITATIVE_OPERATIONAL_INPUTS_AND_EXTERNAL_EXPECTED_CENSUS_DIGEST",
       "QUALIFIED_CONNECTION_PROFILE_AND_RECIPIENT_BINDINGS",
       "TRUSTED_ROW8_COMMERCE_CHECKOUT",
-      "PROTECTED_SEAM_DISPOSITIONS",
+      "TC25_FOUNDER_AUTHORIZED_MANIFEST_HASH_AMENDMENT",
       "ACCEPTED_QUALIFICATION_PROCEDURE_AND_FRESH_EXECUTION_AUTHORITY",
       "AUTHORIZED_INSTALLATION_AND_RELEASE_ACTIVATION"
     ],
     "operationalReadinessPrerequisitesMeaning": "Later S3/S4 prerequisites. They do not block the source receipt finalization permitted by Doc87 on unchanged8b631a83; the descriptor remains uninstallable and any later descriptor change requires a separately accepted reseal.",
-    "missingEvidenceFieldsForIntakeOwnFinalization": [
-      "ACTUAL_ORIGINAL_REVISION5_COMPOSITION_SOURCE_ACCEPTANCE"
-    ],
+    "missingEvidenceFieldsForIntakeOwnFinalization": [],
     "doc87PriorIntermediateStatus": {
       "status": "DOC87_RUNTIME_ACCEPTED_WITH_NAMED_LIMITS_INTERMEDIATE_VERIFIER_CORRECTION_AUTHORED_RECEIPTS_FROZEN",
       "candidateCheckout": {
@@ -18320,6 +18474,15 @@
         "pins": "RECONFIRMED_102_PER_RECEIPT_ZERO_MISMATCHES_3_CHANGED_99_UNCHANGED",
         "currentSuccessor": "doc94Revision5"
       }
+    },
+    "intakeReceipt": {
+      "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "6021c556511e6e41daa10625be26ca660e2a1372",
+      "rawSha256": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+      "sha256lf": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+      "bytes": 196881,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
     }
   },
   "builderAssignmentRevision": 5,
@@ -18335,7 +18498,7 @@
       "digestDomain": "RAW_COMMITTED_GIT_BYTES"
     },
     "historicalField": "doc87BuilderCorrection",
-    "supersededBy": "doc94Revision5",
+    "supersededBy": "doc95RecordsFinalization (current source decision and receipt finalization); historical source corrections remain preserved.",
     "revisionChronology": {
       "history": [
         {
@@ -18433,7 +18596,7 @@
         "git": "GIT_NO_LAZY_FETCH=1 for Git children; no Git network or subject execution performed."
       }
     },
-    "independentClosure": "PENDING_ORIGINAL_REVISION5",
+    "independentClosure": "HISTORICAL_RECORD_CURRENT_DISPOSITION_IN_DOC95",
     "execution": "NOT_RUN"
   },
   "doc87VerifierCheckpointHistory": {
@@ -19097,7 +19260,7 @@
     }
   },
   "doc94ReceiptNarrativeArchive": {
-    "meaning": "Exact historical disclosure values removed from receipts for headroom; not current acceptance or finalization.",
+    "meaning": "Historical receipt narrative is preserved in reviewed map dacc90cf93a89da375689d6ebbacaf3d3b5a685d, blob d01de5e2651ed143b401a5c909d2eeb48f6a876d. Original leaf values were retained from currentness d5eedb4d@9a55e38 and intake ad0ce3c5@9a55e38; archived doc87WholeFamilyRebind also contains explicit Doc90 governance additions. Historical statuses do not override Doc95 acceptance or the registered finalization successors.",
     "currentness": {
       "fixtureSourceIncrement": {
         "predecessorSource": "357890561160d59eb649505c6c46e9e5b65a3f08",
@@ -24290,7 +24453,7 @@
     },
     "sourceControls": {
       "R4C1": {
-        "status": "AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW_NOT_RUN",
+        "status": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
         "attribution": "Doc87 marker, exact canonical25 allowlist and innermost caller rule unchanged. Reject intake/DO or unknown innermost callers; PL/pgSQL schema is enforceable, SQL-function diagnostics generally expose only bare names.",
         "sessions": {
           "admin": "Successful shadow control plus no-domain twin and unchanged effects",
@@ -24338,7 +24501,7 @@
         }
       },
       "R4C2": {
-        "status": "AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW_NOT_RUN",
+        "status": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
         "identity": "Committed receipt sourceCommit/sourceTree equal dependency header (rebased checkpoint); actual Git tree/blob/raw SHA256/length checks retained.",
         "newOneLeafNegatives": [
           "sourceCommit",
@@ -24349,7 +24512,7 @@
           "sourceAcceptance.status"
         ],
         "positiveTwins": "Unmodified valid observations before and after every single-value mutation; expected named assertion required.",
-        "acceptedIdentity": "Unchanged five accepted currentness pins plus definition recomputation enforce accepted code identity. Dependency sourceCommit/sourceTree are the rebased receipt header, not accepted264e6af tree.",
+        "acceptedIdentity": "Accepted currentness identity is carried by all five receipt pins, reconfirmed by the original reviewer. The intake verifier byte-enforces the three consumed currentness files (.sql, .precheck.sql, .postcheck.sql) plus the definition recomputation; currentness.rollback.md and research_health_quick_order_currentness_local.mjs are receipt-pinned and reconfirmed, with five-file coverage in the sibling currentness verifier. Dependency sourceCommit/sourceTree identify the rebased receipt header, not the accepted264e6af tree.",
         "informationalNotEnforced": [
           "dependency.receipt.commit equality with recordsCommit",
           "sha256lf equality with rawSha256",
@@ -24359,11 +24522,11 @@
           "Additional acceptedCodeSource tree check"
         ],
         "descriptor": "Optional pg_catalog. text spelling supported; qualified and unqualified NULL negatives with bound positive twins.",
-        "git": "GIT_NO_LAZY_FETCH=1 for Git children; no Git network or subject execution performed."
+        "git": "The no-lazy-fetch guarantee presumes Git >= 2.44, or a full clone already containing every object the verifier reads. Host Git version and clone completeness were not established by this source acceptance. No additional Git version probe, verifier invocation or source change is authorized by this records finalization."
       },
       "R4C3": {
         "descriptor": "Optional pg_catalog. text spelling supported; qualified and unqualified NULL negatives with bound positive twins.",
-        "git": "GIT_NO_LAZY_FETCH=1 for Git children; no Git network or subject execution performed."
+        "git": "The no-lazy-fetch guarantee presumes Git >= 2.44, or a full clone already containing every object the verifier reads. Host Git version and clone completeness were not established by this source acceptance. No additional Git version probe, verifier invocation or source change is authorized by this records finalization."
       },
       "R4C4": {
         "coverage": [
@@ -26744,7 +26907,7 @@
           "No-domain twin performs successful commit countDelta[1,1,1,1,1] and replay",
           "Correct three-success-controls claims; carry accepted COMMIT-POST-GATE-SHADOW"
         ],
-        "disposition": "AUTHORED_PENDING_ORIGINAL_R5_REVIEW",
+        "disposition": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS_DOC95",
         "implementation": {
           "status": "AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW_NOT_RUN",
           "attribution": "Doc87 marker, exact canonical25 allowlist and innermost caller rule unchanged. Reject intake/DO or unknown innermost callers; PL/pgSQL schema is enforceable, SQL-function diagnostics generally expose only bare names.",
@@ -26795,7 +26958,8 @@
         },
         "optionalNotSelected": [
           "timestamptz-only shadow session"
-        ]
+        ],
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       },
       {
         "id": "R4C-2",
@@ -26805,7 +26969,7 @@
           "Negatives discriminate definition, currentnessDefinition, reviewCommit and status checks",
           "Use dependency header (rebased checkpoint) tree wording; disclose accepted identity enforced by unchanged five pins plus definition recompute"
         ],
-        "disposition": "AUTHORED_PENDING_ORIGINAL_R5_REVIEW",
+        "disposition": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS_DOC95",
         "implementation": {
           "status": "AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW_NOT_RUN",
           "identity": "Committed receipt sourceCommit/sourceTree equal dependency header (rebased checkpoint); actual Git tree/blob/raw SHA256/length checks retained.",
@@ -26818,7 +26982,7 @@
             "sourceAcceptance.status"
           ],
           "positiveTwins": "Unmodified valid observations before and after every single-value mutation; expected named assertion required.",
-          "acceptedIdentity": "Unchanged five accepted currentness pins plus definition recomputation enforce accepted code identity. Dependency sourceCommit/sourceTree are the rebased receipt header, not accepted264e6af tree.",
+          "acceptedIdentity": "Accepted currentness identity is carried by all five receipt pins, reconfirmed by the original reviewer. The intake verifier byte-enforces the three consumed currentness files (.sql, .precheck.sql, .postcheck.sql) plus the definition recomputation; currentness.rollback.md and research_health_quick_order_currentness_local.mjs are receipt-pinned and reconfirmed, with five-file coverage in the sibling currentness verifier. Dependency sourceCommit/sourceTree identify the rebased receipt header, not the accepted264e6af tree.",
           "informationalNotEnforced": [
             "dependency.receipt.commit equality with recordsCommit",
             "sha256lf equality with rawSha256",
@@ -26828,11 +26992,12 @@
             "Additional acceptedCodeSource tree check"
           ],
           "descriptor": "Optional pg_catalog. text spelling supported; qualified and unqualified NULL negatives with bound positive twins.",
-          "git": "GIT_NO_LAZY_FETCH=1 for Git children; no Git network or subject execution performed."
+          "git": "The no-lazy-fetch guarantee presumes Git >= 2.44, or a full clone already containing every object the verifier reads. Host Git version and clone completeness were not established by this source acceptance. No additional Git version probe, verifier invocation or source change is authorized by this records finalization."
         },
         "optionalNotSelected": [
           "Additional acceptedCodeSource tree check"
-        ]
+        ],
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       },
       {
         "id": "R4C-3",
@@ -26841,12 +27006,13 @@
           "Descriptor-null precheck/postcheck regex accepts optional pg_catalog. qualification; authored discriminating negatives for both spellings",
           "Author GIT_NO_LAZY_FETCH=1 for Git children, no Git network execution"
         ],
-        "disposition": "AUTHORED_PENDING_ORIGINAL_R5_REVIEW",
+        "disposition": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS_DOC95",
         "implementation": {
           "descriptor": "Optional pg_catalog. text spelling supported; qualified and unqualified NULL negatives with bound positive twins.",
-          "git": "GIT_NO_LAZY_FETCH=1 for Git children; no Git network or subject execution performed."
+          "git": "The no-lazy-fetch guarantee presumes Git >= 2.44, or a full clone already containing every object the verifier reads. Host Git version and clone completeness were not established by this source acceptance. No additional Git version probe, verifier invocation or source change is authorized by this records finalization."
         },
-        "optionalNotSelected": []
+        "optionalNotSelected": [],
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       },
       {
         "id": "R4C-4",
@@ -26857,7 +27023,7 @@
           "Handle PL/pgSQL assignment quote wrapper with authored fixture, or narrow rendering claim exactly",
           "Make actual verifier canonical caller set authoritative, preserve canonical ownership carveout"
         ],
-        "disposition": "AUTHORED_PENDING_ORIGINAL_R5_REVIEW",
+        "disposition": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS_DOC95",
         "implementation": {
           "coverage": [
             "bytea",
@@ -26885,7 +27051,8 @@
         },
         "optionalNotSelected": [
           "Extra documents_json event requirements"
-        ]
+        ],
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       },
       {
         "id": "R4C-5",
@@ -26896,7 +27063,7 @@
           "Prune redundant receipt narrative into correction map, preserve required data/keysets and unchanged-row enumeration; currentness receipt leaves >=2048B below262144B",
           "No finalization now and no obsolete legitimateR4pins allowance"
         ],
-        "disposition": "RULE_RECORDED_FINALIZATION_NOT_PERFORMED",
+        "disposition": "SOURCE_ACCEPTED_RULE_PERFORMED_IN_DOC95_FINALIZATION",
         "implementation": {
           "status": "INACTIVE_PENDING_ACTUAL_ORIGINAL_REVISION5_ACCEPTANCE_AND_PIN_RECONFIRMATION",
           "ruling": "4ab2fe6db6fa02c874df11916c84a6299576e906",
@@ -26945,7 +27112,8 @@
           "TC21": "Implemented-S descriptor changes currentness definition and requires a separately accepted reseal.",
           "performed": false
         },
-        "optionalNotSelected": []
+        "optionalNotSelected": [],
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       },
       {
         "id": "R4C-6",
@@ -26956,7 +27124,7 @@
           "Separate TC10 accepted349d3ea9@69d9e32 from DC1accepted1ad35398@38915cf",
           "Explain only verifier and required record rows can change against priorcomposition; fivecurrentness pins/8b631a83 unchanged"
         ],
-        "disposition": "AUTHORED_PENDING_ORIGINAL_R5_REVIEW",
+        "disposition": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS_DOC95",
         "implementation": {
           "TC10": {
             "original": {
@@ -26977,6 +27145,20 @@
           "laterRevision4Delta": "Authored at doc83CompositionReconciliation.doc87Revision4Rebind; original Doc94 reconfirmed0added3rewritten99unchanged. Current revision5 delta lives in doc94Revision5.receiptDelta.",
           "erratum": "Historical map counter regressed3 to2 atfa1286a; intermediate map4 then r4 map5. Prior assignment was4/composition4; current map6 is separate from builder assignment5/composition review5.",
           "intakeDeltaComparedTo": {
+            "commit": "77168a903f81d378d55562aeca959bde2063493f",
+            "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+            "gitBlob": "7a09060c9bc188ca039368e49fa08e647322f900",
+            "rawSha256": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+            "sha256lf": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+            "bytes": 221027,
+            "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+          },
+          "CC15Citations": [
+            "16d2731c928cdd40c810df764b14b68f0d995eb9",
+            "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+            "4ab2fe6db6fa02c874df11916c84a6299576e906"
+          ],
+          "revision5IntakeDeltaBase": {
             "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
             "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
             "gitBlob": "ad0ce3c54b696509c065af8fc27413bbf452a5fc",
@@ -26985,13 +27167,10 @@
             "bytes": 256966,
             "digestDomain": "RAW_COMMITTED_GIT_BYTES"
           },
-          "CC15Citations": [
-            "16d2731c928cdd40c810df764b14b68f0d995eb9",
-            "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
-            "4ab2fe6db6fa02c874df11916c84a6299576e906"
-          ]
+          "intakeDeltaMeaning": "Historical revision4 intake delta was corrected from the currentness predecessor1cbdb0d8 to the intake predecessor7a09060c@77168a9; this is the correction R4C6 evidences."
         },
-        "optionalNotSelected": []
+        "optionalNotSelected": [],
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       },
       {
         "id": "R4C-7",
@@ -27002,7 +27181,7 @@
           "governingDoc90.governedPaths includes full ProductPage.tsx and ProductPage.subscription.test.tsx paths",
           "In-tree d50b4671/ce94ff42 remain under Doc62 acceptance until actual authorized D56 combination; no D56 copy or qualification credit"
         ],
-        "disposition": "ACTUAL_INTEGRATOR_RECORD_INPUT_INCORPORATED",
+        "disposition": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS_DOC95",
         "implementation": {
           "input": {
             "commit": "58a7892a181d8a8f7979f5ffec0cf4d571510b4e",
@@ -27070,7 +27249,8 @@
             "execution": "NOT_RUN"
           }
         },
-        "optionalNotSelected": []
+        "optionalNotSelected": [],
+        "currentReviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
       }
     ],
     "coordinatorR4C8": {
@@ -27140,6 +27320,457 @@
       "execution": "NOT_RUN"
     },
     "finalizationPerformed": false,
-    "executionReservation": null
+    "executionReservation": null,
+    "acceptedPacketIdentity": {
+      "commit": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "d01de5e2651ed143b401a5c909d2eeb48f6a876d",
+      "rawSha256": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+      "sha256lf": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+      "bytes": 1538019
+    },
+    "packetMeaning": "Historical reviewed revision5 packet: records/receipt identities and finalizationPerformed=false describe the accepted pre-finalization target. Current completed receipt successors and spot-check registration are in doc95RecordsFinalization; do not rebind this original target.",
+    "currentDisposition": {
+      "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "sourceDisposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS",
+      "currentFinalization": "COMPLETED_THREE_SERIAL_RECORD_STEPS",
+      "currentRecordsPointer": "doc95RecordsFinalization"
+    }
+  },
+  "finalizationAssignmentRevision": 1,
+  "doc95RecordsFinalization": {
+    "task": "QUICK-ORDER-DOC95-RECEIPT-FINALIZATION-20261012",
+    "assignmentRevision": 1,
+    "mapRevision": 7,
+    "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+    "assignment": {
+      "commit": "8cc1fc6ddd894d44c6618cabbad03f5ceba9f0f2",
+      "path": "docs/coordination/launch-coordination-20261005/DOC95_EXISTING_BUILDER_RECORDS_FINALIZATION_20261012.json",
+      "gitBlob": "fd6a28c386c50a3314944689dea52598e5fce672",
+      "rawSha256": "e07573903a0cf4142ec01091287517df5aeeaa3ddd6f59884571c5c80dff2872",
+      "sha256lf": "e07573903a0cf4142ec01091287517df5aeeaa3ddd6f59884571c5c80dff2872",
+      "bytes": 7154,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    "originalReview": {
+      "document": 95,
+      "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+      "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+      "records": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+      "handoff": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+      "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+      "disposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "pins": {
+        "currentness": 102,
+        "intake": 102,
+        "mismatches": 0
+      },
+      "reportedModel": "claude-fable-5-1",
+      "actualEffort": "NOT_EXPOSED",
+      "report": {
+        "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+        "path": "docs/review/xenios-health-launch-review-20260930/95_COMPOSITION_R5_25741f0_ACCEPTANCE_2026-10-12.md",
+        "copy": "CLAUDE_DOC95_PUBLIC_VERDICT_D4E6A50D_20261012.md",
+        "gitBlob": "e4c257588be1499015671729786aee47eee4e311",
+        "rawSha256": "b9aefe3554eee57d3be69d67e3bf576a76002c4a6ed6aa7efa90028bde2c61d5",
+        "bytes": 8918
+      },
+      "findings": {
+        "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+        "path": "docs/review/xenios-health-launch-review-20260930/hl12/95_composition_r5_narrow_check.json",
+        "copy": "CLAUDE_DOC95_PUBLIC_FINDINGS_D4E6A50D_20261012.json",
+        "gitBlob": "0a65e92709654c3242c2c8dfeb444da24637c408",
+        "rawSha256": "73eb3878278106ab52acf366a185aec523f7bc79f837402be53600aac19d5a3a",
+        "bytes": 143065
+      },
+      "execution": "NOT_RUN",
+      "reviewTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+      "revision": 5,
+      "reviewComplete": true,
+      "finalization": "GO_EXACT_DOC94_DOC95_RECORDS_ENVELOPE_ONLY"
+    },
+    "previousAcceptedPacket": {
+      "commit": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "d01de5e2651ed143b401a5c909d2eeb48f6a876d",
+      "rawSha256": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+      "sha256lf": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+      "bytes": 1538019
+    },
+    "receiptCandidate": {
+      "commit": "54ffba10459efe0e191428b86a2c913e56c5f829",
+      "tree": "45531814fe0c8a40e18f14ddf200b6626878aad0"
+    },
+    "sharedBinding": {
+      "commit": "54ffba10459efe0e191428b86a2c913e56c5f829",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "25c996226bcbcdbaa358b000c66883ad6ea8da0e",
+      "rawSha256": "720254715f92bf5e28770f5a55d77c7a53d26de9ddc51b28e2a16797f685f009",
+      "sha256lf": "720254715f92bf5e28770f5a55d77c7a53d26de9ddc51b28e2a16797f685f009",
+      "bytes": 176261,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    "steps": [
+      {
+        "order": 1,
+        "phase": "currentness",
+        "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+        "tree": "540adc85492ecec16e790907ac31360706f75cae",
+        "before": {
+          "commit": "f381fd767f3f96ef1456f9b8a78a72f7cc5720a8",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "gitBlob": "9178947cd345fb503ed356d9f45c8402e2c51899",
+          "rawSha256": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
+          "sha256lf": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
+          "bytes": 183668,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "after": {
+          "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "gitBlob": "8c058c4c459186e336e3aaff4f13c698ccbf4423",
+          "rawSha256": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+          "sha256lf": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+          "bytes": 186264,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "exactChangedFields": [
+          "disclosures.doc95Finalization",
+          "sourceAcceptance.reviewCommit",
+          "sourceAcceptance.status"
+        ],
+        "cap": 262144,
+        "headroom": 75880,
+        "pinsChanged": 0,
+        "diff": {
+          "command": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--binary",
+            "--full-index",
+            "f381fd767f3f96ef1456f9b8a78a72f7cc5720a8",
+            "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+            "--",
+            "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json"
+          ],
+          "rawSha256": "f48a9d9fd086104ca8ba1d198d3b4221ed2a8db96bfc37abc5916dccddc50a07",
+          "bytes": 3607,
+          "patch": "diff --git a/docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json b/docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json\nindex 9178947cd345fb503ed356d9f45c8402e2c51899..8c058c4c459186e336e3aaff4f13c698ccbf4423 100644\n--- a/docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json\n+++ b/docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json\n@@ -3,8 +3,8 @@\n   \"sourceCommit\": \"54ffba10459efe0e191428b86a2c913e56c5f829\",\n   \"sourceTree\": \"45531814fe0c8a40e18f14ddf200b6626878aad0\",\n   \"sourceAcceptance\": {\n-    \"status\": \"PENDING\",\n-    \"reviewCommit\": null\n+    \"status\": \"SOURCE_ACCEPT_WITH_LIMITS\",\n+    \"reviewCommit\": \"29ccf647aa0dc332b334f4dd9c62f6396a85282b\"\n   },\n   \"files\": [\n     {\n@@ -3452,6 +3452,51 @@\n       \"ownSourceAcceptance\": \"PENDING\",\n       \"dependencySeal\": \"NON_FINAL\",\n       \"execution\": \"NOT_RUN\"\n+    },\n+    \"doc95Finalization\": {\n+      \"kind\": \"EXACT_DOC94_SECTION3_DOC95_STEP1_FINALIZATION\",\n+      \"sourceAcceptance\": {\n+        \"document\": 82,\n+        \"reviewCommit\": \"29ccf647aa0dc332b334f4dd9c62f6396a85282b\"\n+      },\n+      \"bindingConfirmation\": [\n+        {\n+          \"document\": 87,\n+          \"reviewCommit\": \"77a2caeda45ffc664d7ab71ab24aa163dda308b6\",\n+          \"scope\": \"Historical revision3 pins\"\n+        },\n+        {\n+          \"document\": 94,\n+          \"reviewCommit\": \"4ab2fe6db6fa02c874df11916c84a6299576e906\",\n+          \"scope\": \"Historical revision4 pins and finalization envelope\"\n+        },\n+        {\n+          \"document\": 95,\n+          \"reviewCommit\": \"d4e6a50dc11b3e91d2241dde63be4d33a287fb67\",\n+          \"scope\": \"Revision5 source acceptance and all102pins in both receipts, zero mismatches\"\n+        }\n+      ],\n+      \"supersession\": \"Embedded PENDING/NON_FINAL narrative in this currentness receipt is historical and superseded for source acceptance and binding confirmation by this disclosure and top-level sourceAcceptance. This does not establish execution, installed configuration, operational readiness, or acceptance of future changed bytes.\",\n+      \"archivedNarrative\": {\n+        \"commit\": \"dacc90cf93a89da375689d6ebbacaf3d3b5a685d\",\n+        \"path\": \"docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json\",\n+        \"gitBlob\": \"d01de5e2651ed143b401a5c909d2eeb48f6a876d\",\n+        \"rawSha256\": \"8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318\",\n+        \"sha256lf\": \"8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318\",\n+        \"bytes\": 1538019,\n+        \"digestDomain\": \"RAW_COMMITTED_GIT_BYTES\",\n+        \"fields\": [\n+          \"doc94ReceiptNarrativeArchive.currentness\",\n+          \"doc94ReceiptNarrativeArchive.intake\"\n+        ],\n+        \"meaning\": \"Exact accepted correction-map identity holding the archived narrative referenced by both receipts\"\n+      },\n+      \"recordsPrecision\": {\n+        \"R5C1\": \"Receipts and sibling currentness verifier cover five accepted currentness files. The intake verifier byte-enforces three of those five plus definition recomputation; its five-pin wording is not proof that it loads all five.\",\n+        \"R5C2\": \"GIT_NO_LAZY_FETCH requires Git>=2.44. Alternatively use a full clone containing every required object, with no missing promisor objects or network fetch. No Git version or deployed behavior is measured by this record.\"\n+      },\n+      \"execution\": \"NOT_RUN\",\n+      \"publication\": \"LOCAL_ONLY\"\n     }\n   }\n }\n"
+        },
+        "execution": "NOT_RUN"
+      },
+      {
+        "order": 2,
+        "phase": "dependency",
+        "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+        "tree": "a5cfb19eff90f52fe0ac0e18c51af830d5b30edd",
+        "before": {
+          "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "gitBlob": "d3441396bf99fe3f3715845d9b1d0caf15d4e00d",
+          "rawSha256": "c622e4a650a40504669fffc22d0af6b956400cd980a500ab4e99b8dc03423f88",
+          "sha256lf": "c622e4a650a40504669fffc22d0af6b956400cd980a500ab4e99b8dc03423f88",
+          "bytes": 196833,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "after": {
+          "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "gitBlob": "e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc",
+          "rawSha256": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+          "sha256lf": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+          "bytes": 196825,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "exactChangedFields": [
+          "currentnessDependency.receipt.bytes",
+          "currentnessDependency.receipt.commit",
+          "currentnessDependency.receipt.gitBlob",
+          "currentnessDependency.receipt.rawSha256",
+          "currentnessDependency.receipt.recordsCommit",
+          "currentnessDependency.receipt.sha256lf",
+          "currentnessDependency.reviewCommit",
+          "currentnessDependency.sealStatus",
+          "currentnessDependency.status"
+        ],
+        "cap": 262144,
+        "headroom": 65319,
+        "pinsChanged": 0,
+        "diff": {
+          "command": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--binary",
+            "--full-index",
+            "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+            "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+            "--",
+            "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json"
+          ],
+          "rawSha256": "35388eb6013e6225a0e87b90edb21e5628f35d879eeea6c9908e6b168ba9cf8e",
+          "bytes": 2626,
+          "patch": "diff --git a/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json b/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\nindex d3441396bf99fe3f3715845d9b1d0caf15d4e00d..e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc 100644\n--- a/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\n+++ b/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\n@@ -421,20 +421,20 @@\n   \"definitionSha256\": \"10e9e2e3c9ba6f86c6768f783aabd69b02f987cfe8540cdba8f2f6679c512b1a\",\n   \"currentnessDefinition\": \"8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe\",\n   \"currentnessDependency\": {\n-    \"status\": \"PENDING_ORIGINAL_REVISION5_RECEIPT_PIN_RECONFIRMATION\",\n+    \"status\": \"SOURCE_ACCEPT_WITH_LIMITS\",\n     \"sourceCommit\": \"54ffba10459efe0e191428b86a2c913e56c5f829\",\n     \"sourceTree\": \"45531814fe0c8a40e18f14ddf200b6626878aad0\",\n-    \"reviewCommit\": null,\n+    \"reviewCommit\": \"29ccf647aa0dc332b334f4dd9c62f6396a85282b\",\n     \"definitionSha256\": \"8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe\",\n     \"receipt\": {\n-      \"commit\": \"57c5aa5303b9d9b92c85a796b73674737b61ba13\",\n+      \"commit\": \"bfeb36fcd70b3fc5615bd9977e20966f8932b834\",\n       \"path\": \"docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json\",\n-      \"gitBlob\": \"9178947cd345fb503ed356d9f45c8402e2c51899\",\n-      \"rawSha256\": \"b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341\",\n-      \"sha256lf\": \"b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341\",\n-      \"bytes\": 183668,\n+      \"gitBlob\": \"8c058c4c459186e336e3aaff4f13c698ccbf4423\",\n+      \"rawSha256\": \"8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9\",\n+      \"sha256lf\": \"8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9\",\n+      \"bytes\": 186264,\n       \"digestDomain\": \"RAW_COMMITTED_GIT_BYTES\",\n-      \"recordsCommit\": \"57c5aa5303b9d9b92c85a796b73674737b61ba13\"\n+      \"recordsCommit\": \"bfeb36fcd70b3fc5615bd9977e20966f8932b834\"\n     },\n     \"acceptedCodeSource\": \"264e6af20477fabe65aa8d229ed2334fb59d9cc4\",\n     \"acceptedCodeReviewCommit\": \"29ccf647aa0dc332b334f4dd9c62f6396a85282b\",\n@@ -485,7 +485,7 @@\n         \"digestDomain\": \"RAW_COMMITTED_GIT_BYTES\"\n       }\n     ],\n-    \"sealStatus\": \"NON_FINAL_PENDING_ORIGINAL_REVISION5_RECONFIRMATION\",\n+    \"sealStatus\": \"FINAL_CURRENTNESS_DEPENDENCY_ONLY\",\n     \"scope\": \"REVISION5_RECORDS_REBIND_WITH_UNCHANGED_ACCEPTED_CURRENTNESS_CODE\",\n     \"execution\": \"NOT_RUN\"\n   },\n"
+        },
+        "execution": "NOT_RUN"
+      },
+      {
+        "order": 3,
+        "phase": "source",
+        "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+        "tree": "005a9fb36e1d4d2a29c127e00e50cd420501778b",
+        "before": {
+          "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "gitBlob": "e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc",
+          "rawSha256": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+          "sha256lf": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+          "bytes": 196825,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "after": {
+          "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "gitBlob": "6021c556511e6e41daa10625be26ca660e2a1372",
+          "rawSha256": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+          "sha256lf": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+          "bytes": 196881,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "exactChangedFields": [
+          "sourceAcceptance.reviewCommit",
+          "sourceAcceptance.status"
+        ],
+        "cap": 262144,
+        "headroom": 65263,
+        "pinsChanged": 0,
+        "diff": {
+          "command": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--binary",
+            "--full-index",
+            "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+            "73553cfc7efd2714643933cae05029b2d5d1ad66",
+            "--",
+            "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json"
+          ],
+          "rawSha256": "86cbd2651fcf8f28a104076878ca6c26f6b7a339a7ae3e7940076c92ce587796",
+          "bytes": 855,
+          "patch": "diff --git a/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json b/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\nindex e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc..6021c556511e6e41daa10625be26ca660e2a1372 100644\n--- a/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\n+++ b/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\n@@ -3,8 +3,8 @@\n   \"sourceCommit\": \"54ffba10459efe0e191428b86a2c913e56c5f829\",\n   \"sourceTree\": \"45531814fe0c8a40e18f14ddf200b6626878aad0\",\n   \"sourceAcceptance\": {\n-    \"status\": \"PENDING\",\n-    \"reviewCommit\": null\n+    \"status\": \"SOURCE_ACCEPT_WITH_LIMITS\",\n+    \"reviewCommit\": \"d4e6a50dc11b3e91d2241dde63be4d33a287fb67\"\n   },\n   \"files\": [\n     {\n"
+        },
+        "execution": "NOT_RUN"
+      }
+    ],
+    "finalReceipts": {
+      "currentness": {
+        "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "gitBlob": "8c058c4c459186e336e3aaff4f13c698ccbf4423",
+        "rawSha256": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+        "sha256lf": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+        "bytes": 186264,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      "intake": {
+        "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "gitBlob": "6021c556511e6e41daa10625be26ca660e2a1372",
+        "rawSha256": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+        "sha256lf": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+        "bytes": 196881,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      }
+    },
+    "preserved": {
+      "eachReceiptPins": 102,
+      "pinsChanged": 0,
+      "pinMismatches": 0,
+      "headersUnchanged": true,
+      "keysetsUnchanged": true,
+      "existingDisclosuresUnchanged": true,
+      "sharedBindingUnchanged": true,
+      "sourceFilesChanged": [],
+      "currentnessDefinition": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+      "intakeDefinition": "10e9e2e3c9ba6f86c6768f783aabd69b02f987cfe8540cdba8f2f6679c512b1a"
+    },
+    "precision": {
+      "R5C1": "Accepted currentness identity is carried by all five receipt pins, reconfirmed by the original reviewer. The intake verifier byte-enforces the three consumed currentness files (.sql, .precheck.sql, .postcheck.sql) plus the definition recomputation; currentness.rollback.md and research_health_quick_order_currentness_local.mjs are receipt-pinned and reconfirmed, with five-file coverage in the sibling currentness verifier. Dependency sourceCommit/sourceTree identify the rebased receipt header, not the accepted264e6af tree.",
+      "R5C2": "The no-lazy-fetch guarantee presumes Git >= 2.44, or a full clone already containing every object the verifier reads. Host Git version and clone completeness were not established by this source acceptance. No additional Git version probe, verifier invocation or source change is authorized by this records finalization.",
+      "R5C4": {
+        "tool": "git diff --check",
+        "scope": {
+          "base": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+          "head": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+          "paths": [
+            "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json"
+          ]
+        },
+        "result": "NO_WHITESPACE_ERRORS",
+        "meaning": "Records-diff whitespace only; not subject verification or execution."
+      },
+      "R5C5": {
+        "historicalRevision4IntakePredecessor": {
+          "commit": "77168a903f81d378d55562aeca959bde2063493f",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "gitBlob": "7a09060c9bc188ca039368e49fa08e647322f900",
+          "rawSha256": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+          "sha256lf": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+          "bytes": 221027,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "revision5Base": {
+          "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "gitBlob": "ad0ce3c54b696509c065af8fc27413bbf452a5fc",
+          "rawSha256": "1635c1d3a60687cea7d45ce370020e233e5990edc5e89b0d82be76fa8a5dde7c",
+          "sha256lf": "1635c1d3a60687cea7d45ce370020e233e5990edc5e89b0d82be76fa8a5dde7c",
+          "bytes": 256966,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        }
+      },
+      "R5C6": {
+        "disclosure": "disclosures.doc95Finalization",
+        "archivedNarrative": {
+          "commit": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+          "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+          "gitBlob": "d01de5e2651ed143b401a5c909d2eeb48f6a876d",
+          "rawSha256": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+          "sha256lf": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+          "bytes": 1538019
+        }
+      }
+    },
+    "TC25": {
+      "humanReceipt": {
+        "commit": "8cc1fc6ddd894d44c6618cabbad03f5ceba9f0f2",
+        "path": "docs/coordination/launch-coordination-20261005/TC25_EXACT_DISABLED_APP_ACTUAL_HUMAN_DISPOSITION_20261012.json",
+        "gitBlob": "ff70b94148ca0bba39b5e96f579f1926e82bffc7",
+        "rawSha256": "baeafc4429065e5755c9b1a7f6e2175f3012226e2b262d1c54d3ba4473566516",
+        "sha256lf": "baeafc4429065e5755c9b1a7f6e2175f3012226e2b262d1c54d3ba4473566516",
+        "bytes": 3307
+      },
+      "reviewerReconciliation": {
+        "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+        "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+        "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+        "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+        "sha256lf": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+        "bytes": 48064
+      },
+      "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+      "tree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+      "App": {
+        "path": "client/src/App.tsx",
+        "gitBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+        "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+        "bytes": 18079,
+        "humanDisposition": "APPROVED_EXACT_DISABLED_APP_PROTECTED_DISPOSITION",
+        "sourceAcceptance": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+        "manifestHashAmendment": "STILL_UNAUTHORIZED"
+      },
+      "remaining": "Actual human disposition is recorded and matches accepted App blob b5cc8edcc1040eca4009d8e1b68627ae7492d459 at source25741f0. Before integration or qualification, the only remaining TC25 step is one founder-authorized CORE_SITE_PROTECTION_MANIFEST.json hash amendment covering both the 0d22757 hub-restore line and Quick Order diff. server/index.ts and root-composition.test.ts are unchanged on this line and need no additional disposition. No manifest/hash/GATE01 edit or execution is authorized here.",
+      "manifest": {
+        "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "newAppHash": "sha256:1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+        "coverage": "Both 0d22757 hub-restore redirect removal and approved QuickOrder App diff",
+        "authority": "Separate founder approval required; current App receipt explicitly excludes Manifest/hash/GATE01 edits",
+        "editNow": false
+      },
+      "actualHumanReceipt": {
+        "decisionId": "TC25-EXACT-DISABLED-APP-PROTECTED-DISPOSITION-20261012",
+        "kind": "ACTUAL_DIRECT_HUMAN_STRUCTURED_QUESTION_REPLY",
+        "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
+        "questionItemId": "[\"request_user_input_async\",\"call_Yt41de4TB8YR4stKqink7Nww\",0]",
+        "actualAnswer": "Approve this exact disabled App disposition (Recommended)",
+        "receivedClockObservation": "2026-10-12T14:30:33.000Z",
+        "exactUserMessageTimestamp": "NOT_EXPOSED",
+        "recordedAt": "2026-10-12T14:31:52.561Z",
+        "actualDecision": "APPROVED_EXACT_DISABLED_APP_PROTECTED_DISPOSITION",
+        "path": "client/src/App.tsx",
+        "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+        "tree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+        "records": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+        "recordsTree": "d8bc4590a4ec4ad2f243a86592d8e5dab4f75d1b",
+        "blob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+        "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+        "bytes": 18079,
+        "fullDiff": {
+          "file": "TC25_EXACT_DISABLED_APP_PROTECTED_DISPOSITION_DIFF_20261012.patch",
+          "rawSha256": "a0cad085015462c300ecda507f2000c1b2764dfb33fbbc351d0934c27a6e18cd",
+          "bytes": 7800,
+          "numstat": "104\t1\tclient/src/App.tsx"
+        },
+        "expiryDelta": {
+          "file": "TC25_EXACT_APP_EXPIRY_DELTA_20261012.patch",
+          "rawSha256": "9c4d0dc7c11ef2697fb69545025e24cba77ccc82c443e49f0176f115a85222b2",
+          "bytes": 4531,
+          "numstat": "22\t11\tclient/src/App.tsx"
+        },
+        "purpose": [
+          "Canonical browser Auth reuse and route-local transport limited to three QuickOrder API doors",
+          "Lazy /health/quick-order route before retained /health redirect, literal intakeEnabled={false}",
+          "Credential expiry suspends credentials/aborts requests while retaining same-account in-memory recovery key",
+          "Obsolete queued expiry timer cannot invalidate refreshed credentials; missing/expired transport refused before/afterfetch",
+          "Sign-out, passwordrecovery, accountchange and unmount clearboundary; unrelatedAppproviders/routes unchanged"
+        ],
+        "currentCustodian": {
+          "reservation": "OWNER-W2-QUICK-ORDER-DISABLED-INTEGRATION-20261011",
+          "session": "codex-accepted-source-integration-20261005",
+          "thread": "01a0e098-3b23-7233-9b07-877ace092650",
+          "leases": "8703b782 and f57c582d HANDOFF/stopped; no active App writer in frozenR5 registry"
+        },
+        "preserved": {
+          "intakeEnabled": false,
+          "routeScope": "/health/quick-order with retained /health redirect",
+          "canonicalAuthAndThreeApiDoors": true,
+          "unrelatedRoutesAndProvidersUnchanged": true,
+          "recoveryLimit": "Same-account in-memory retention; no reload/durablebrowser recovery claim"
+        },
+        "authorityMeaning": "Only the exact whole App seam disposition covering existingwiring andexpirycorrection. The otherTC25protectedpaths andqualification/releaseconditions are not waived.",
+        "explicitExclusions": [
+          "Manifest/hash/GATE01 edits",
+          "Any new application source implementation or source transfer",
+          "Tests/G0/qualification execution",
+          "Push/PR/workflow trigger",
+          "Activation/payment/notifications",
+          "Deployment",
+          "Schedule changes"
+        ],
+        "independentAssistedOrder": "Retaining existingApp remains independent of this fullQO disposition",
+        "originalR5SourceAcceptance": false
+      },
+      "actualHumanReceiptMeaning": "Historical verbatim actual human receipt retained. The originalR5SourceAcceptance:false and otherProtectedPaths wording reflect its recording time; Doc95 acceptance and reviewer582c reconciliation above are the current dispositions."
+    },
+    "namedLimits": {
+      "R5C3": "Historical block-level labels sufficient; per-string pointers optional, not selected unless useful records-only.",
+      "R5C7": "TC21 must bind integrity seal, expected-columns descriptor and pre/postcheck seals in one separately accepted reseal; sibling verifier refuses partial binding. No change now.",
+      "R5C8": "Exact descriptor-drift control attainability remains source-reasoned/NOT_RUN; first authorized disposable run confirms.",
+      "existing": "Carry all Doc94 limits, TC17partial, TC18 and stagedTC20–28; source acceptance does not establish operational or measured proof."
+    },
+    "spotCheck": {
+      "owner": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+      "scope": "Exact three receipt diffs and envelope only",
+      "queued": "NOT_REPORTED_BY_BUILDER",
+      "acknowledged": "NOT_OBSERVED_FOR_FINALIZATION_SPOT_CHECK",
+      "reviewed": false,
+      "fullCompositionReview": "COMPLETE_DOC95_DO_NOT_RESTART"
+    },
+    "nextS3Action": "Separate S3 owner/action: implemented-S descriptor/census and external expected digest, descriptor definition and all-three-site reseal, authoritative operational inputs, real connection/recipient and trusted checkout bindings, exact TC25 founder-authorized manifest amendment, accepted procedure and fresh execution authority.",
+    "execution": "NOT_RUN",
+    "executionReservation": null,
+    "publication": "LOCAL_ONLY",
+    "schedules": "UNCHANGED"
   }
 }
