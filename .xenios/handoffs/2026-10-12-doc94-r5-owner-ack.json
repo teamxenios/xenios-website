@@ -1,0 +1,168 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+  "revision": 5,
+  "compositionReviewRevision": 5,
+  "at": "2026-10-12T04:39:07.650Z",
+  "owner": {
+    "session": "codex-health-quick-order-20261005",
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005"
+  },
+  "base": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+  "baseTree": "355bb8ad7bda9fbc8a7e3dd2e152271d70c57a06",
+  "source": "38915cf4318594607098717389113869e3eff0da",
+  "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+  "actualAcknowledgment": "Same existing builder acknowledges Doc94 correction assignment, verifies clean stopped r4 handoff and claims the exact five-path lease. Transaction runtime and DC1 remain frozen; one verifier plus four serial evidence records only. Finalization remains inactive until actual original r5 acceptance and pin reconfirmation.",
+  "lease": {
+    "id": "dbb9252a-fac7-4559-a290-e4e6b71bfc52",
+    "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+    "revision": 5,
+    "session": "codex-health-quick-order-20261005",
+    "state": "active",
+    "paths": [
+      "supabase/verification/research_health_quick_order_local.mjs",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+    ],
+    "claimedAt": "2026-10-12T04:39:07.650Z",
+    "heartbeatAt": "2026-10-12T04:39:07.650Z",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "recordsBase": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+    "sourceBase": "38915cf4318594607098717389113869e3eff0da",
+    "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+    "stage": "DOC94_ONE_VERIFIER_AND_FOUR_EVIDENCE_BOUNDED_SUCCESSOR",
+    "ack": ".xenios/handoffs/2026-10-12-doc94-r5-owner-ack.json",
+    "priorLeaseNotReclaimed": "c87a4ffd-12e1-477d-8122-525b5ecd3b3f"
+  },
+  "assignment": {
+    "commit": "baf62ada37ffe1bc06354c580226c3cdf80f13c4",
+    "path": "docs/coordination/launch-coordination-20261005/DOC94_R5_EXISTING_BUILDER_CORRECTION_20261012.json",
+    "gitBlob": "a42d28b9b51c85a5bd53b02a63cb87078f6eab2c",
+    "rawSha256": "fe1c11d6a55ccf8e00047e8ef53ebabbc79f6ca76935be37752e608ea7e84427",
+    "bytes": 11633
+  },
+  "controllingOriginalVerdict": {
+    "observedAt": "2026-10-12T04:33:59.251Z",
+    "document": 94,
+    "verdictCommit": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "reportedReviewerModel": "claude-opus-5-5",
+    "actualEffort": "NOT_EXPOSED",
+    "taskId": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 4,
+    "source": "38915cf4318594607098717389113869e3eff0da",
+    "tree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+    "records": "02c1748dee7c1d7e6453aaf993182dcc80e3db65",
+    "recordsTree": "a60b61a0566d8c0e1f8de642e9554cfa43626f4b",
+    "disposition": "CORRECTIONS_REQUIRED",
+    "p0": 0,
+    "p1": 0,
+    "p2": 1,
+    "materialBlockingFinding": "R4C-1",
+    "affectedSourcePath": "supabase/verification/research_health_quick_order_local.mjs",
+    "transactionRuntime": "UNCHANGED_ACCEPTED_WITH_NAMED_LIMITS_DOC87",
+    "DC1": "EXACT_ACCEPTED",
+    "newNamedLimit": {
+      "name": "COMMIT-POST-GATE-SHADOW",
+      "disposition": "ACCEPTED",
+      "reason": "jsonb/text/uuid temporary type shadows fail closed at the accepted currentness descriptor gate; post-gate resolution remains covered statically and via admin/replay plus pre-gate commit attribution"
+    },
+    "originalPinReconfirmation": {
+      "complete": true,
+      "currentnessPins": 102,
+      "intakePins": 102,
+      "mismatches": 0,
+      "rewritten": 3,
+      "unchanged": 99,
+      "changedPaths": [
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json"
+      ],
+      "acceptedCurrentnessFivePinsUnchanged": true,
+      "definitionUnchanged": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+      "commit": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+      "document": 94,
+      "source": "38915cf4318594607098717389113869e3eff0da",
+      "records": "02c1748dee7c1d7e6453aaf993182dcc80e3db65"
+    },
+    "report": {
+      "path": "docs/review/xenios-health-launch-review-20260930/94_COMPOSITION_R4_38915cf_DELTA_2026-10-12.md",
+      "copy": "CLAUDE_DOC94_PUBLIC_VERDICT_4AB2FE6D_20261012.md",
+      "gitBlob": "4abd527b2ce9f7026a58ca34634ab89874648cf0",
+      "rawSha256": "4d0ab8b6b2f27961b4e08b039450d7561ed678d529745194dd881ec814b317f6",
+      "bytes": 14645
+    },
+    "publishedStructuredFindings": {
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/94_composition_r4_delta_findings.json",
+      "copy": "CLAUDE_DOC94_PUBLIC_FINDINGS_4AB2FE6D_20261012.json",
+      "gitBlob": "86fd29c7e5e4bfcbdfda2ed43942424a1cb73b73",
+      "rawSha256": "3fcfafcd6a093f058abfc63a35e589c81f723e60a048a750b818ed221076c09e",
+      "bytes": 207139
+    },
+    "publication": "PUSHED_BY_ORIGINAL_REVIEWER_NOT_COORDINATOR",
+    "remoteRef": "refs/heads/claude/xenios-health-launch-review-20260930",
+    "remoteHead": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+    "execution": "NOT_RUN",
+    "noRepeatTransactionDesignOrRuntimeReview": true,
+    "finalization": "HELD_UNTIL_ACTUAL_REVISION5_ACCEPTANCE_AND_PIN_RECONFIRMATION",
+    "coordinatorItems": "R4C-8",
+    "integratorItems": "R4C-7_RECORD_INPUT_NO_CONCURRENT_EVIDENCE_WRITE",
+    "noReviewerWakeNeeded": true
+  },
+  "priorHandoff": {
+    "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+    "path": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-rebind-handoff.json",
+    "gitBlob": "5fd18e2268ab2bc869a32907981fd0cd6779dbe4",
+    "rawSha256": "5d93d84a68fb59efc0318a4d4dada1096b190a45638dbd432c3457c0420bcc99",
+    "bytes": 87593
+  },
+  "inputBindings": [
+    {
+      "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "gitBlob": "ff2f95d727588370eca37265bf9a60bd10d6bd73",
+      "rawSha256": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+      "bytes": 145384
+    },
+    {
+      "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "35f2dc4a3c26a7470be5c8b58a141e771e5b2eaa",
+      "rawSha256": "51977d9c99b16a96e3044c89165e0d62f12a497b03cffd977871423b9e5557f2",
+      "bytes": 169465
+    },
+    {
+      "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "d5eedb4d77b410b67f7ca78646a7eaec6cd5b158",
+      "rawSha256": "bf89a29776fa3bd08981e3ad1845c88f819f4ed339067a340d17623666a7cc94",
+      "bytes": 244766
+    },
+    {
+      "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "ad0ce3c54b696509c065af8fc27413bbf452a5fc",
+      "rawSha256": "1635c1d3a60687cea7d45ce370020e233e5990edc5e89b0d82be76fa8a5dde7c",
+      "bytes": 256966
+    },
+    {
+      "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "adc122f35418bc738e7a562057d13494d27e3f12",
+      "rawSha256": "4a9be05b29a78e62b95f18dc983f075dd454b29db862960f6d5f2e4bbc4aae85",
+      "bytes": 1122000
+    }
+  ],
+  "finalization": "INACTIVE",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}

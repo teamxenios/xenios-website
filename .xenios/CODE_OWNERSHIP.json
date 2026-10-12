@@ -4221,6 +4221,30 @@
       "recordsTree": "a60b61a0566d8c0e1f8de642e9554cfa43626f4b",
       "handoff": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-rebind-handoff.json",
       "automaticReclaim": false
+    },
+    {
+      "id": "dbb9252a-fac7-4559-a290-e4e6b71bfc52",
+      "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+      "revision": 5,
+      "session": "codex-health-quick-order-20261005",
+      "state": "active",
+      "paths": [
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+      ],
+      "claimedAt": "2026-10-12T04:39:07.650Z",
+      "heartbeatAt": "2026-10-12T04:39:07.650Z",
+      "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "branch": "codex/accepted-source-integration-20261005",
+      "recordsBase": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+      "sourceBase": "38915cf4318594607098717389113869e3eff0da",
+      "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+      "stage": "DOC94_ONE_VERIFIER_AND_FOUR_EVIDENCE_BOUNDED_SUCCESSOR",
+      "ack": ".xenios/handoffs/2026-10-12-doc94-r5-owner-ack.json",
+      "priorLeaseNotReclaimed": "c87a4ffd-12e1-477d-8122-525b5ecd3b3f"
     }
   ],
   "rules": [
