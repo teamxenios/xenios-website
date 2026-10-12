@@ -1,0 +1,794 @@
+{
+ "archive": "doc 100 six-entry baseline amendment scope review and App protection-check assessment",
+ "reviewer": "session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-fable-5-1)",
+ "workflowRun": "wf_abc92d07-206",
+ "execution": "NOT_RUN",
+ "reviewerByteChecks": {
+  "manifestDelta": "d907096c->f6da5aa: 6 leaves changed in fileHashes.files, 0 added, 0 removed; before sha256 95445fdf, after 1e6f6b35",
+  "sixHashes": "each new value == LF sha256 of the file at f6da5aa and at 25741f0; none match 79414143",
+  "chain": "d907096c..f6da5aa touches manifest, approval record, .xenios only",
+  "founderApproval": "attachment 8030ec4f sha256 da648fb2aa8d8f66cc4a15da00fdbe1644486c43bb731a40aef0b7438e1a5814 (8671 B); line 23 = SAMUEL: I APPROVE THE EXACT SIX-ENTRY BASELINE AMENDMENT.; board copy 5672569 blob 2e1fe0ef byte-identical",
+  "preparedPatch": "blob 0486609f sha256 c7e7445d97d1317250151d2b0afbb5066254c4419cdb4743d8cf8d26280a0c33 equals the record",
+  "doc98Timing": "doc 98 published 2026-10-12T18:31:16Z; CLI run 18:36:09Z"
+ },
+ "result": {
+  "lenses": [
+   {
+    "lens": "six-entry-scope-and-authority",
+    "tag": "SX",
+    "review": {
+     "verdict": "SX lens: the six-entry amendment f6da5aa is exactly what it claims to be (six fileHashes.files leaves, nothing else), each new hash is bound by receipts produced by others to the identical blob at 25741f0 = d907096c = f6da5aa = branch tip, and every old-to-new pair had already been reviewed at source level in the original reviewer's own docs (32/34/35 for index.css/Navbar/Footer; 37/41 for PwaLifecycle/tracking/attribution; 95 for the whole 25741f0 tree). No never-reviewed bytes are blessed and no test is weakened: no P0/P1. The one material gap is authority evidence: the founder message exists in Git only as a raw sha256 plus a one-sentence quote with paraphrased conditions (P2, NOT PROVEN verbatim); the reviewer should confirm the actual user message directly before accepting. The remaining composition state (server/static.ts hard mismatch; server/index.ts and server/research/index.ts seam warnings) is correctly described and remains NOT RUN. Nothing was executed or hashed by this lens.",
+     "checks": [
+      {
+       "item": "(a) Bytes pinned: six file blobs identical at f6da5aa, 25741f0, base d907096c and branch tip",
+       "status": "MET",
+       "evidence": "git ls-tree at f6da5aa, 25741f0, d907096c and codex/tc25-app-manifest-20261012 (tip 1645c4d) all give index.css 3e21b412, PwaLifecycle 8e6f2257, Navbar 8ceb5184, Footer 341e24ed, tracking e0b8137b, attribution f3929cd4; App.tsx b5cc8edc at all four. These equal every entries[].sourceBlob in docs/health-launch/tc25-app-manifest-20261012/six-entry/ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json@f6da5aa. git log 25741f0..tip -- client/ server/ shared/ package*.json scripts/ is empty."
+      },
+      {
+       "item": "(a) New hash equals LF sha256 of those blobs (not computed by this lens; receipts by others)",
+       "status": "MET",
+       "evidence": "Executed R2 CLI stdout docs/health-launch/tc25-app-manifest-20261012/r2/protection-cli-stdout.log@e275d344 lists actual sha256 for the same blobs at 3ec5ec0: index.css b475a8ee, PwaLifecycle 9b1a354d, Navbar 6cdfbb0f, Footer 420b45dc, tracking 8d62f7a1, attribution 6b1ab473; r2/inherited-hash-bindings.json@e275d344 binds each to blob ids identical to f6da5aa. Independently: review doc 32_ACCEPTANCE_FINANCE_MC01_CORE_ABC_2026-10-05.md:185-187 and 34_INTEGRATION_756a906_SOURCE_COMPOSITION_2026-10-05.md:35 (IC2 trio), 41_QUICK_ORDER_MOUNT_ac36e60_DELTA_2026-10-06.md:41,69-71 (F9 trio), hl12/41_claude-gate-ac36e60.out:74-89; F9 record NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json@21d904fa:566-636 (blob+rawSha256 for tracking/attribution/PwaLifecycle). All agree with the six new manifest values."
+      },
+      {
+       "item": "(a) Did each file change between deployed 79414143 and 25741f0, and where",
+       "status": "MET",
+       "evidence": "git log --name-only 79414143..f6da5aa: index.css changed in cfdfd4e, fef7b31, c213707, 756a906; Navbar in 8315710, cfdfd4e, 756a906; Footer in cfdfd4e, 756a906; PwaLifecycle/tracking/attribution only in 3f86463. All six blobs differ at 79414143 (7a10d47e, d525e85d, 00874244, 88cd5492, dc02e9d9, 2897926e). The intermediate index.css/Navbar/Footer changes were already re-pinned (old hashes introduced at 7396f53 for index.css, 98b43d6 for Navbar and Footer; manifest fileHashes.$comment@f6da5aa:670-675), so the old-to-new delta per row is exactly one reviewed change set."
+      },
+      {
+       "item": "(a) Current board branch",
+       "status": "PARTIAL",
+       "evidence": "codex/xenios-launch-coordination-20261005 tip 1fbbdea carries the OLD blobs for all six (33efcb63, 596f1c3c, 9bfc38ae, 88cd5492, dc02e9d9, 2897926e) and manifest blob 241fc344. The new baseline describes the accepted line codex/tc25-app-manifest-20261012 only; the board branch is a records branch and must not be read as the accepted source line."
+      },
+      {
+       "item": "(b) IC2 rows (index.css, Navbar, Footer): source previously reviewed and review covers the baselined behaviour",
+       "status": "MET",
+       "evidence": "Old baseline blobs (index.css 33efcb63 @7396f53, Navbar 596f1c3c and Footer 9bfc38ae @98b43d6) equal the blobs at IC2 base 3eaa017; new blobs equal 70cd421a = c93bf5a = 756a906 = f6da5aa. So the reviewed delta 3eaa017..70cd421a (BRAND.healthDisplayName in Navbar/Footer; index.css health-accent-rule token, .btn focus-visible, footer brand rule, forced-colors) spans exactly old-to-new. Reviewed in INTEGRATION_REQUEST.txt@561596358 (lists the three exact hashes, says founder protected-hash approval absent), CLAUDE_CORE_IC2_ACCEPTANCE.txt@561596358 (SOURCE-LEVEL ACCEPT at c93bf5a; same three pairs 'ready for Samuel's explicit approval'), and the original reviewer's docs 32:185-187, 33:44-45, 34:35, 35 (756a906 acceptance)."
+      },
+      {
+       "item": "(b) F9 rows (PwaLifecycle, tracking, attribution): source previously reviewed and review covers the baselined behaviour",
+       "status": "MET",
+       "evidence": "Old baseline blobs (PwaLifecycle 88cd5492 @045e8ea; tracking dc02e9d9 and attribution 2897926e @c9c81bb) equal the F9 base ac9bbe30 'before' blobs in NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json@21d904fa:566-636; 'after' blobs at aa857e4f equal 3f86463 = f6da5aa. git diff 3f86463^ 3f86463 on the three files is exactly the isHealthIntakePath import extension plus one predicate line each (two in tracking.ts). Reviewed in the original reviewer's doc 41_QUICK_ORDER_MOUNT_ac36e60_DELTA_2026-10-06.md:41,69-71,88-93 (ACCEPT WITH LIMITS, exact hunks and tests) and doc 37:83-84; founder approved the fixed assembly (NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json@21d904fa:7-13, excluding 'protected manifests/hashes/GATE01' at :794); doc 95 accepted the whole composition at 25741f0 (95_COMPOSITION_R5_25741f0_ACCEPTANCE_2026-10-12.md:3,30)."
+      },
+      {
+       "item": "(c) Manifest diff is exactly six leaves in fileHashes.files with no comment/zone/route/test change",
+       "status": "MET",
+       "evidence": "git diff d907096c f6da5aa -- docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json: six changed lines (678, 680, 682, 683, 695, 696), all inside fileHashes.files (block opens @f6da5aa:676; seamBaselineHashes @:717). git diff --stat d907096c f6da5aa: only .xenios/* (claim commit 871b437), the approval record and the manifest; f6da5aa itself touches 2 files (manifest 12 lines, record 147 lines). server/core-site-protection.test.ts unchanged (checks at :318-324 fileHashes.files and :385-388 seamBaselineHashes.files confirmed by sed). Key set unchanged (38 hard entries: 31+7 at R2, 37+1 after)."
+      },
+      {
+       "item": "(d) Approval record identities match Git",
+       "status": "PARTIAL",
+       "evidence": "manifestBlobBefore ceec20e2 = ls-tree d907096c; manifestBlobAfter 69cf6b44 = ls-tree f6da5aa and tip; cat-file -s 69cf6b44 = 118175 (and ceec20e2 = 118175); grep -c CR on the blob = 0 so LF bytes equal blob bytes; sha256 95445fdf / 1e6f6b35 established by the reviewer, not recomputed here. Patch raw sha256 c7e7445d is NOT a Git object (cat-file -t fails): NOT PROVEN by this lens; but the committed patch docs/health-launch/tc25-app-manifest-20261012/reconciliation/SIX_SOURCE_AUTHORIZED_HASH_PAIRS_UNAPPLIED.patch is blob 0486609f at d907096c, f6da5aa and tip (added once in 554e799), and its content is exactly the six substitutions applied."
+      },
+      {
+       "item": "(e) Authority: founder message preserved verbatim; conditions demonstrated rather than asserted",
+       "status": "PARTIAL",
+       "evidence": "Record quotes one sentence ('SAMUEL: I APPROVE THE EXACT SIX-ENTRY BASELINE AMENDMENT.') and paraphrases conditions; source is C:/Users/sboad/.codex/attachments/8030ec4f-.../Pasted text.txt (8671 bytes, raw da648fb2), outside Git. git log --all for '*Pasted text.txt', '*TC25_SIX_ACTUAL_HUMAN_APPROVAL*' finds no committed copy; ls-tree -r of the tip finds none; the scratch ql/ directory has no TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt either. Verbatim text NOT PROVEN. Conditions: 'proposal identity' demonstrated at blob level only; 'previously authorized source bytes' demonstrated per row by this lens (see (b)) though the record cites only IC2/F9 records that disclaim baseline approval; 'only six entries plus necessary records' demonstrated by diff; 'register for bounded review' in progress (REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md:626 item 100; registration originalReviewer.delivered=false)."
+      },
+      {
+       "item": "(f) Remaining composition state: one hard mismatch (static) and two seam warnings",
+       "status": "MET",
+       "evidence": "R2 stdout @e275d344 lists server/static.ts expected 9cd3e1c3 actual b7a76417 (manifest fileHashes.files @f6da5aa:704) and seam warnings server/index.ts expected 1d6594d6 actual 9c024afb, server/research/index.ts expected b8db03cf actual 5b9f683b (seamBaselineHashes.files @f6da5aa:1256-1257). Those three manifest entries are untouched by the diff and the three blobs are unchanged 3ec5ec0 to tip (7fade5dc, 0557ef2c, 6220347d; also bound at 25741f0/876ede5 in r2/inherited-hash-bindings.json). Hence 37/1 hard and 3/2 seam (five seam entries @:1255-1259) by reading only; NOT RUN."
+      },
+      {
+       "item": "(g) Exclusions honoured (no App, runtime, tests, static redirect, server seams changed)",
+       "status": "MET",
+       "evidence": "git diff --stat d907096c f6da5aa lists no client/, server/, shared/ or test paths; App.tsx blob b5cc8edc and seamBaselineHashes App entry 1ee2d576 unchanged; git log 25741f0..tip over client/ server/ shared/ package.json package-lock.json scripts/ is empty."
+      }
+     ],
+     "findings": [
+      {
+       "id": "SX-1",
+       "severity": "P2",
+       "title": "Founder approval for a protection-baseline change is not preserved verbatim in Git; conditions are the integrator's paraphrase",
+       "claim": "The only committed evidence of the authority is a raw sha256 of an out-of-Git attachment, one quoted sentence, and a paraphrased condition list written by the same session that applied the change; whether the message bound the six full hash values (as doc 32, doc 41 and PROTECTION_DISPOSITIONS_20261012.json:233 'one consolidated six-pair decision using these full hashes' required) or only the patch identity cannot be established from Git.",
+       "evidence": "docs/health-launch/tc25-app-manifest-20261012/six-entry/ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json@f6da5aa authority.source/rawSha256/exactApproval/conditions; .xenios/ACTIVE_TASKS.json@871b437 authority field; git log --all -- '*Pasted text.txt' '*TC25_SIX_ACTUAL_HUMAN_APPROVAL*' returns nothing; scratch ql/ listing has no copy; commit author on f6da5aa is the shared identity Samuel Boadu <team@xeniostechnology.com> also used on 21d904fa and 561596358, so authorship does not evidence the founder.",
+       "fix": "Reviewer confirms the actual user message 01a13180-f3a3-76e2-9e3f-bfc47e1038ba / attachment 8030ec4f directly (the registration claims 'Actual public human userMessage independently read') and records which identities it named; optionally commit a verbatim copy whose raw sha256 equals da648fb2... beside the approval record. Do not accept on the paraphrase alone."
+      },
+      {
+       "id": "SX-2",
+       "severity": "P3",
+       "title": "Approval record's per-row provenance omits the original reviewer's own source acceptances and keeps contradictory 'remaining' text",
+       "claim": "Each entries[].sourceApproval cites only INTEGRATION_REQUEST.txt@561596358 or the F9 authority record, both of which disclaim protected-hash approval, and every row's 'remaining' field still reads 'must obtain ... before any amendment'; the stronger evidence that the bytes were independently reviewed (docs 32/34/35 for the IC2 trio, docs 37/41 for the F9 trio, doc 95 for the 25741f0 tree) is not cited.",
+       "evidence": "ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json@f6da5aa entries[*].sourceApproval.remaining and application.historicalSourceApprovalNotes; review docs 32_...md:185-187, 34_...md:35, 41_...md:41,69-71, 95_...md:3,30.",
+       "fix": "Record-only follow-up: add the reviewer doc numbers and lines per row and mark the 'remaining' text as historical in-line, so a later reader does not conclude the amendment was applied without source review."
+      },
+      {
+       "id": "SX-3",
+       "severity": "P3",
+       "title": "Manifest self-documentation now lags the pinned bytes (no $comment old-to-new entry; zone text pre-dates IC2/F9)",
+       "claim": "Every prior re-pin appended a dated old/new line to fileHashes.$comment; this amendment appended none, and the zone text for the six files still describes earlier scopes (tracking/attribution: '/health gateway and /r' only; PwaLifecycle sensitive list without Health intake; Navbar/Footer/index.css: 'Only runtime candidate cfdfd4e'). The tripwire is unaffected, but the manifest alone no longer explains why these hashes are pinned.",
+       "evidence": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json@f6da5aa:664-675 (comment convention), :402-408, :426-427, :514-517, :532-535, :550-553; git diff d907096c f6da5aa shows no comment change (consistent with the founder's 'only six existing entries' scope).",
+       "fix": "Separate comment-only manifest amendment under its own approval that records the six old/new pairs with the reviewer doc references; no hash or zone semantics change."
+      },
+      {
+       "id": "SX-4",
+       "severity": "P3",
+       "title": "Prepared-patch identity c7e7445d is a raw sha256, not a Git object; 'proposalUnchanged' is corroborated only at blob level",
+       "claim": "The record's preparedProposal.rawSha256 cannot be verified from Git objects and this lens computed no hashes; blob identity 0486609f of the committed patch is stable across d907096c, f6da5aa and the tip and its content equals the applied diff, but the raw-hash claim itself is NOT PROVEN here.",
+       "evidence": "git cat-file -t c7e7445d: not a valid object; git ls-tree d907096c f6da5aa codex/tc25-app-manifest-20261012 -- docs/health-launch/tc25-app-manifest-20261012/reconciliation/SIX_SOURCE_AUTHORIZED_HASH_PAIRS_UNAPPLIED.patch all 0486609f; git log --name-status shows a single add in 554e799.",
+       "fix": "Reviewer recomputes sha256 of blob 0486609f once and records it beside the registration."
+      },
+      {
+       "id": "SX-5",
+       "severity": "P3",
+       "title": "Custody claim is asserted, with coordinator acknowledgment explicitly not claimed",
+       "claim": "The F9 approval text required 'current custody before any amendment'; the integrator claimed a fresh lease in 871b437 and states 'No active manifest lease collision' and coordinatorAcknowledgment NOT_CLAIMED. The nearest prior manifest lease (App amendment) shows sourceWriterStopped true, but this lens did not exhaustively verify the state of every historical lease naming the manifest path.",
+       "evidence": ".xenios/CODE_OWNERSHIP.json@871b437 (new lease tc25-six-baseline-records-20261012); .xenios/CODE_OWNERSHIP.json@d907096c:34-45 (App lease, sourceWriterStopped true) and many older leases naming docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json; ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json@f6da5aa custody block.",
+       "fix": "Reviewer treats custody as asserted; if the continuity contract requires a protection-owner or coordinator acknowledgment for manifest writes, obtain it after the fact and record it, without reopening the byte scope."
+      }
+     ],
+     "deviations": [
+      "Did not read the CLAUDE.md-mandated session files (.xenios/MASTER_CORPUS.md, FULL_VISION.md, build status, handoffs, ownership) because the task's hard rules restrict Read/Grep/Glob to the review records dir and the scratch ql/ dir; no edit was made, so the 'before any edit' precondition never arose.",
+      "One git show of the 33 KB F9 record exceeded the tool output cap and the harness itself persisted the output to C:\\Users\\sboad\\.claude\\projects\\C--Users-sboad-Downloads-xenios-website\\...\\tool-results\\bjdxmagve.txt (outside the allowed directories). I did not create, read or touch that file; I re-queried the record with git show piped to grep/sed instead.",
+      "One CR-count command used bash ANSI-C quoting (grep -c $'\\r'); this is a literal, not a variable, but is noted in case it is read as one. A prior attempt with grep -P exited 2 on a locale error with no side effects.",
+      "Used git ls-tree -r --name-only and git log --all within the allowed verb list; all Bash was git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|cat-file|rev-parse piped to grep/sed/head. No checkout, fetch, commit, push, interpreter, test, MCP, WebFetch or session contact; no files created, modified or deleted.",
+      "No sha256 was computed by this lens; every hash equality relies on receipts produced by others (R2 CLI stdout at e275d344, reviewer docs 32/34/37/41 and hl12 gate outputs, the F9 and IC2 records) cross-checked against Git blob identities. The manifest sha256 values 95445fdf/1e6f6b35 are taken from the reviewer's established result."
+     ]
+    },
+    "verify": {
+     "verdicts": [
+      {
+       "id": "SX-1",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Upheld in substance, but the lens's evidence is wrong in the other direction and must be replaced. A committed copy of the founder message DOES exist: docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt was added at 5672569 (2026-10-12 14:25:52 -0500) on codex/xenios-launch-coordination-20261005, blob 2e1fe0ef, 8671 bytes (= the record's bytes), unchanged at the current tip 8b8c1e3; 5672569 is an ancestor of the 1fbbdea tip the lens cited (git log 1fbbdea..5672569 is empty; ls-tree 1fbbdea has the file), so 'git log --all returns nothing / no committed copy on the board' was a failed check, not a fact. What the copy shows is the real issue: it is an advisor-drafted recommendation whose approval sentence sits inside a code block introduced by 'This is a proposed founder approval ... Sending it supplies that decision; I have not applied or issued it'; the block lists the six paths and binds the hashes only by reference ('Resolve the exact proposal identity and complete expected hashes from the committed reconciliation/handoff at the records tip' d907096c) and contains no hash value at all (grep for the six new hashes and c7e7445d: no match; only the words 'hashes' at :44,:53,:103). The founder's own designating message (id 01a13180 per TC25_SIX_AND_CONSOLIDATED_HUMAN_PROVENANCE_20261012.json@5672569) is still not in Git, and the raw sha256 da648fb2 is NOT PROVEN by this verifier (size consistent only). The lens's fix stands: confirm the send directly, and note that the paraphrased conditions are a fair but incomplete summary (see SXV-3)."
+      },
+      {
+       "id": "SX-2",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed byte-for-byte: every entries[].sourceApproval.remaining in ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json@f6da5aa still reads 'must obtain/locate exact old-to-new baseline approval ... before any amendment', with only application.historicalSourceApprovalNotes explaining it; the reviewer's own source acceptances (32_...md:183-187, 33:44-45, 34:35, 35:33, 41:3-9,38-41,69-71, 95:3,30) are not cited. Record precision only; the cited IC2/F9 records do exist at 561596358 and 21d904fa with the stated content."
+      },
+      {
+       "id": "SX-3",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed: git diff d907096c f6da5aa touches only manifest lines 678/680/682/683/695/696; no fileHashes.$comment line was appended although the App amendment 3ec5ec0 did add one (98_...md:17) and every earlier re-pin at :633-675 did. Zone text still describes earlier scopes: tracking/attribution '/health gateway and ... /r' (@f6da5aa:402,408), PwaLifecycle without the intake path (:426), Navbar/Footer/index.css 'Only runtime candidate cfdfd4e' (:514-517,:532-535,:550-553). The founder text's 'Amend only the six corresponding existing baseline entries' arguably licensed omitting the comment, so a separate comment-only amendment is the right fix."
+      },
+      {
+       "id": "SX-4",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed: git cat-file -t c7e7445d... fails ('Not a valid object name'); the patch is blob 0486609f at d907096c, f6da5aa and tip dc4dab1, added once at 554e799 (git log --all --name-status); its six -/+ pairs are line-identical to the applied diff. PROTECTION_DISPOSITIONS_20261012.json@d907096c:228 records the same raw hash c7e7445d, so the record is internally consistent, but the raw-hash claim remains NOT PROVEN here."
+      },
+      {
+       "id": "SX-5",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Narrowed. .xenios/CODE_OWNERSHIP.json@871b437 holds 154 lease ids and exactly two with state 'active': the new tc25-six-baseline-records-20261012 (:5-12, names the manifest) and bf834f90 (:3662-3675, paths .xenios/PROJECT_STATE.json etc., not the manifest). Every other lease naming docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json is handoff/released/stale (e.g. :40-54 App lease handoff with sourceWriterStopped true; :2450 stale). So 'no active manifest lease collision' is corroborated by the file, not merely asserted. What stays asserted is the coordinator acknowledgment (NOT_CLAIMED) and 'prior source-builder idle and b22f clean at 876ede5'."
+      }
+     ],
+     "checkChallenges": [
+      {
+       "item": "(a) Six file blobs identical at f6da5aa, 25741f0, base d907096c and branch tip",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Re-verified with one ls-tree per revision (the lens's multi-tree form 'git ls-tree A B C D -- paths' only honours the first tree-ish; the others are parsed as paths). index.css 3e21b412, PwaLifecycle 8e6f2257, Navbar 8ceb5184, Footer 341e24ed, tracking e0b8137b, attribution f3929cd4, App b5cc8edc at 25741f0, 3ec5ec0, d907096c, f6da5aa and the current tip dc4dab1 (the branch has moved five commits past the 1645c4d the lens cited; all records-only). git log 25741f0..dc4dab1 -- client/ server/ shared/ package.json package-lock.json scripts/ vite.config.ts tsconfig.json is empty."
+      },
+      {
+       "item": "(a) New hash equals LF sha256 of those blobs (receipts by others)",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Not computed here. R2 stdout @e275d344 lists the six actual hashes against the same blobs; r2/inherited-hash-bindings.json@e275d344 binds blobs at 25741f0/876ede5/3ec5ec0; the same six values appear in the reviewer's own 32_...md:185-187, 34_...md:35, 35_...md:33, 41_...md:38,41,69-71 and hl12/41_claude-gate-ac36e60.out:74-89; the F9 record @21d904fa:566-636 gives blob+rawSha256 for the three F9 files. Old-hash to old-blob binding is additionally established by the reviewer's 29_...md:27-29 (e37a5b94=596f1c3c, 25da700f=9bfc38ae, 70d3302a=33efcb63) and by the deployed manifest 79414143:docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:663,675,676 pinning 9594f398/258eda22/2c406d8a while the deployed blobs are 88cd5492/dc02e9d9/2897926e."
+      },
+      {
+       "item": "(a) Which commits changed each file between deployed 79414143 and 25741f0",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Confirmed by git log --name-only 79414143..f6da5aa and --full-history 79414143..3eaa017 for index.css (c213707, fef7b31, cfdfd4e). Old pins trace cleanly: 7396f53 and c213707 both carry index.css 33efcb63 = 3eaa017; 98b43d6 and cfdfd4e both carry Navbar 596f1c3c / Footer 9bfc38ae = 3eaa017; between 3eaa017 and 70cd421a exactly one commit (70cd421) touches the three IC2 files; F9 trio changed only in 3f86463 (parent 1eb5191) whose blobs equal aa857e4f and ac9bbe30 (before)."
+      },
+      {
+       "item": "(a) Current board branch",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "MET",
+       "note": "Board tip moved from 1fbbdea to 8b8c1e3 (two more records commits); it still carries the OLD six blobs (33efcb63, 596f1c3c, 9bfc38ae, 88cd5492, dc02e9d9, 2897926e) and manifest 241fc344. The lens's reading (records branch, not the accepted source line) is correct; its PARTIAL label was about which tip is 'current', which is now settled."
+      },
+      {
+       "item": "(b) IC2 rows previously reviewed; review covers baselined behaviour",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Verified the delta: git diff 3eaa017 70cd421a is Footer 1 line and Navbar 3 lines (BRAND.publicName to BRAND.healthDisplayName) and index.css +16/-1 (health shell comment, --health-accent-rule token, .clarity-public-shell .btn:focus-visible, footer brand rule, forced-colors overrides). INTEGRATION_REQUEST.txt@561596358 lists the three exact successor hashes and says 'Samuel has NOT yet supplied exact protected-hash approval'; CLAUDE_CORE_IC2_ACCEPTANCE.txt@561596358 is SOURCE-LEVEL ACCEPT at c93bf5a with the old/new table. The reviewer's 32:183-187 (browser-qualified at 70cd421), 33:44-45, 34:35, 35:33 cover the same bytes by hash."
+      },
+      {
+       "item": "(b) F9 rows previously reviewed; review covers baselined behaviour",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Verified: git diff 3f86463^ 3f86463 on the three files is exactly the isHealthIntakePath import extension plus one predicate line each (two in tracking.ts); aa857e4f blobs equal f6da5aa blobs; F9 before blobs (@21d904fa:569,599,629) equal the old-baseline blobs. One wording correction: 41_...md:3-9 is 'SOURCE: ACCEPT WITH LIMITS' with 'All regression tests are NOT RUN by anyone', so the lens's 'exact hunks and tests' should read 'hunks reviewed, tests authored NOT RUN'. The F9 founder answer (@21d904fa:4-9, 'Approve this exact bounded decision') excludes 'protected manifests/hashes/GATE01' (:794). 95_...md:3,30 accepts the composition at 25741f0."
+      },
+      {
+       "item": "(c) Manifest diff is exactly six leaves; no comment/zone/route/test change",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git diff d907096c f6da5aa -- manifest: six -/+ pairs at 678,680,682,683,695,696, all inside fileHashes.files (:676-715), in place; --stat 12 lines; f6da5aa touches 2 files (manifest 12, record 147). 38 hard entries before and after; seamBaselineHashes.files has five entries (:1255-1259) untouched. server/core-site-protection.test.ts blob 1a35a5c8 (:318-324 and :385-388 as described) and scripts/acceptance/verify-core-site-protection.mjs blob c30371fd unchanged at 25741f0, 3ec5ec0, d907096c, f6da5aa and tip. Whole-range diffstat d907096c..f6da5aa: three .xenios control files, .xenios/sessions/codex-accepted-source-integration-20261005.json, the record and the manifest; nothing else."
+      },
+      {
+       "item": "(d) Approval record identities match Git",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "ceec20e2 = manifest at 3ec5ec0 and d907096c; 69cf6b44 = manifest at f6da5aa and tip; cat-file -s gives 118175 for both and 'git show | wc -c' gives 118175; preflight.sourceTree 0c5a2b11 = 25741f0^{tree}; e275d344 is an ancestor of f6da5aa (0 commits in f6da5aa..e275d344). c7e7445d is not a Git object. My CR check (grep -P '\\r') failed on a locale error, so 'no CR bytes' is NOT PROVEN by me; it is only circumstantial (claimed LF size equals blob size). sha256 95445fdf/1e6f6b35 rest on the reviewer (doc 98:19 for 95445fdf) and the record, not recomputed."
+      },
+      {
+       "item": "(e) Authority: founder message preserved verbatim; conditions demonstrated vs asserted",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Evidence corrected (see SX-1): the attachment IS committed at 5672569 on the board (blob 2e1fe0ef, 8671 B), was already present at the 1fbbdea tip the lens cited, and is referenced by TC25_SIX_AND_CONSOLIDATED_HUMAN_PROVENANCE_20261012.json and TC25_SIX_BASELINE_SCOPE_REVIEW_REGISTRATION_20261012.json (both @5672569); COORDINATION_STATE.json and three other board files carry the same path/hash. Conditions: 'proposal unchanged' demonstrated at blob level (0486609f stable) and asserted at raw level; 'each new baseline matches the previously authorized source identified in that reconciliation' demonstrated (record sourceBlob = 25741f0 = 70cd421a for IC2 = aa857e4f for F9); 'only six entries plus necessary records' and 'Preserve their actual manifest locations' demonstrated by the in-place diff; 'Register the exact successor' done at 5672569 and acknowledged at REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md:626 (the scratch registration copy's originalReviewer.delivered=false predates that); 'Keep the previous failed protection result' honoured (e275d344 is an ancestor; the range deletes nothing outside .xenios/manifest). Not demonstrated: that Samuel himself sent the attachment (his message is only id 01a13180), and the raw sha256."
+      },
+      {
+       "item": "(f) Remaining composition state: one hard mismatch (static) and two seam warnings",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "R2 stdout @e275d344: server/static.ts expected 9cd3e1c3 actual b7a76417; SEAM CONTENT CHANGED server/index.ts and server/research/index.ts (bindings: 1d6594d6 vs 9c024afb, b8db03cf vs 5b9f683b). Manifest @f6da5aa still pins 9cd3e1c3 (:704), 1d6594d6 (:1256), b8db03cf (:1257); blobs 7fade5dc/0557ef2c/6220347d unchanged at 25741f0, 3ec5ec0, d907096c, f6da5aa and tip. Hence 37/1 hard, 3/2 seam by reading; nothing executed."
+      },
+      {
+       "item": "(g) Exclusions honoured",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "No client/, server/, shared/, scripts/, package or test path in the d907096c..f6da5aa diffstat; App.tsx b5cc8edc and seamBaselineHashes App 1ee2d576 unchanged; record excludes list @f6da5aa names static, both seams, runtime, tests, other manifest fields, payment, production."
+      }
+     ],
+     "missed": [
+      {
+       "id": "SXV-1",
+       "severity": "P3",
+       "title": "The committed founder approval binds the six pairs by reference, not by hash value, and is an advisor-drafted text whose approval act is the founder's send",
+       "claim": "PROTECTION_DISPOSITIONS_20261012.json@d907096c:233 required 'one consolidated six-pair decision using these full hashes'. The committed approval text contains no hash value; it names the six paths and delegates 'Resolve the exact proposal identity and complete expected hashes from the committed reconciliation/handoff at the records tip' d907096c to the integrator, and it is framed by its author as 'a proposed founder approval ... Sending it supplies that decision'. Because d907096c is immutable and holds exactly one six-pair proposal (patch blob 0486609f; rows at PROTECTION_DISPOSITIONS:25-139), the reference is unambiguous and consistent with the precedent the reviewer accepted in doc 98 (pasted request preserved at 04b4cc70), but the letter of :233 was not met and the founder never stated the values.",
+       "evidence": "codex/xenios-launch-coordination-20261005:docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt@5672569 (lines 'Send this to the existing Codex coordinator', 'This is a proposed founder approval', item 1 'Resolve the exact proposal identity and complete expected hashes', :44,:53,:103 the only 'hash' mentions; no sha256 anywhere); PROTECTION_DISPOSITIONS_20261012.json@d907096c:228-233; 98_TC25_APP_MANIFEST_AMENDMENT_3ec5ec0_2026-10-12.md:22.",
+       "fix": "In the acceptance, state explicitly that authority is by reference to records tip d907096c (patch blob 0486609f, six rows) rather than by stated hash values, that the text was drafted by an advisor and issued by the founder's send, and that the reviewer confirmed the send directly; treat this as the governing shape of the approval, not as a gap in the bytes."
+      },
+      {
+       "id": "SXV-2",
+       "severity": "P3",
+       "title": "Lens check (e) reported a search that could not have returned empty: the committed approval copy pre-dates the board tip the lens cited",
+       "claim": "The lens's receipt 'git log --all -- *Pasted text.txt *TC25_SIX_ACTUAL_HUMAN_APPROVAL* finds no committed copy; ls-tree -r of the tip finds none' is contradicted by Git: 5672569 adds docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt and is an ancestor of 1fbbdea (git log 1fbbdea..5672569 is empty; ls-tree 1fbbdea shows blob 2e1fe0ef). The lens's conclusion that Git holds only a hash and a one-sentence quote was therefore a failed check (likely the tc25 tip was listed instead of the board, or the pathspec quoting failed), and its SX-1 fix ('optionally commit a verbatim copy') asks for something that already exists.",
+       "evidence": "git log --all --name-status -- '*TC25_SIX_ACTUAL_HUMAN_APPROVAL*' -> A at 5672569; git ls-tree 1fbbdea and 8b8c1e3 -- that path -> 2e1fe0ef; git cat-file -s -> 8671; git grep da648fb2 over the board tip hits COORDINATION_STATE.json:75725-75727, QUICK_ORDER_FIRST_SPRINT_20261006.json:73420-73422, QUICK_ORDER_RELEASE_CLOSURE_20261011.json:43853-43855, SOURCE_QUEUE_CONTINUATION_20261008.json:855-857, QL_TWO_BASELINE_ACTUAL_APPROVAL_AND_PREIMAGE_20261012.json:16-17.",
+       "fix": "Reviewer reads the committed copy at 5672569 (not the paraphrase) and, if a raw-hash check is wanted, recomputes sha256 of blob 2e1fe0ef once against da648fb2; no new commit is needed."
+      },
+      {
+       "id": "SXV-3",
+       "severity": "P3",
+       "title": "Approval record's condition paraphrase drops three explicit conditions that the committed text imposes (all of which were in fact honoured)",
+       "claim": "authority.conditions in ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json@f6da5aa summarises the text as 'Confirm proposal identity and previously authorized source bytes; only six existing entries plus necessary records. Register exact successor for bounded review', omitting 'Preserve their actual manifest locations', 'Keep the previous failed protection result in the record' and 'Do not claim this amendment alone clears the whole composition'. Git shows all three were met (in-place lines 678-696; e275d344 is an ancestor and nothing was deleted; remainingFullComposition and preserve fields), so this is record precision, but a reader of the record alone cannot see the full condition set.",
+       "evidence": "TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt@5672569 item 1 (lines after 'Amend only the six corresponding existing baseline entries'); ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json@f6da5aa authority.conditions, application.diff, preserve, remainingFullComposition.",
+       "fix": "Record-only follow-up: quote the condition block verbatim (or cite the board copy by commit and blob) beside the paraphrase."
+      },
+      {
+       "id": "SXV-4",
+       "severity": "P3",
+       "title": "No executed test receipt for the three F9 files' new predicates is cited anywhere in the baseline chain",
+       "claim": "The F9 trio's regression tests were 'authored, NOT RUN' at review (41_...md:6-7,80), the F9 authority record is execution NOT_RUN (@21d904fa:796), R2 skipped Vitest, and the QL runs cited by the handoff (64 client at 7ac40837, 66 server at 21d7291f) target a different file set. Baselining is a bytes decision and the bytes were statically reviewed, so this is not a P0, but the reviewer should not read the amendment as implying the isHealthIntakePath behaviour was ever exercised by a test run.",
+       "evidence": "41_QUICK_ORDER_MOUNT_ac36e60_DELTA_2026-10-06.md:6-7,80-94; NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json@21d904fa:796; TC25_SIX_ACTUAL_HANDOFF_F9D34BE4_20261012.json@5672569 QL.actualClientRun/actualServerRun; r2/protection-cli-stdout.log@e275d344.",
+       "fix": "State 'tests for tracking/attribution/PwaLifecycle predicates: NOT PROVEN RUN' as a named limit of the acceptance; a later qualification run under the existing test authority can close it without touching the baseline."
+      }
+     ],
+     "opinion": "The lens's structural verdict survives adversarial checking from the bytes: the amendment f6da5aa changes exactly six fileHashes.files leaves in place (manifest lines 678, 680, 682, 683, 695, 696), nothing else in the manifest, no source, no test and no CLI; each new value is bound by receipts produced by others (R2 stdout and bindings at e275d344, the reviewer's own docs 29/32/34/35/37/41 and gate outputs, the F9 record) to blobs that are identical at 25741f0, 3ec5ec0, d907096c, f6da5aa and the moved tip dc4dab1; each old-to-new pair spans exactly one reviewed change set (3eaa017..70cd421a for index.css/Navbar/Footer, 3f86463 for PwaLifecycle/tracking/attribution) that the original reviewer accepted at source level, and the whole tree was accepted at 25741f0 (doc 95). No never-reviewed bytes are blessed and no test is weakened: no P0 or P1. Where the lens went wrong is authority evidence, and in the direction that favours the record: a committed copy of the founder's attachment exists on the board at 5672569 (8671 bytes, present at the very tip the lens cited), so 'no committed copy' was a failed check. Reading that copy settles the lens's open question: the approval binds the six pairs by reference to records tip d907096c and names no hash value, and the text is an advisor-drafted 'proposed founder approval' whose force comes from Samuel sending it; his own designating words remain outside Git and the raw sha256 is unrecomputed here. Custody is better than the lens allowed (the ownership file at 871b437 has no other active manifest lease), the scope registration was acknowledged by the reviewer (queue item 100), and the remaining composition state (static.ts hard mismatch; server/index.ts and server/research/index.ts seam warnings) is correctly described and NOT RUN. Recommended disposition for the reviewer: accept the six-entry scope with named limits once the send of attachment 8030ec4f is confirmed in-chat, recording that approval was by reference to d907096c, that the manifest comment/zone text now lags the pins, and that the F9 predicates have no executed test receipt in this chain.",
+     "deviations": [
+      "Did not read the CLAUDE.md-mandated session files (.xenios/MASTER_CORPUS.md, FULL_VISION.md, build status, handoffs, ownership) because the task's hard rules confine Read/Grep/Glob to the review records dir and the scratch ql/ dir; no edit was made, so the 'before any edit' precondition never arose.",
+      "One malformed command: 'git ls-tree f6da5aa 25741f0 d907096c codex/tc25-app-manifest-20261012 -- <paths>' treats only the first argument as a tree (the rest become pathspecs); it was read-only and I re-ran one ls-tree per revision. One compound line produced 'fatal: ambiguous argument codex\\tc25-app-manifest-20261012;.xenios\\handoffs\\...' from shell path mangling; the second half ran, and I read the six-entry handoff from its board copy (TC25_SIX_ACTUAL_HANDOFF_F9D34BE4_20261012.json, blob ffd82b5e) rather than re-reading .xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json on the tc25 branch, so the two copies were not byte-compared.",
+      "Two 'grep -c -P \\r' CR checks exited 2 with a locale error and produced no result; no ANSI-C quoting, variables, loops, redirection, cd or echo were used. All Bash was git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep|cat-file|rev-parse piped to grep/sed -n/head/wc; git log --all, git log --full-history and git grep over two refs were used within those verbs. No checkout, fetch, commit, push, interpreter, test, MCP, WebFetch or session contact; no file created, modified or deleted; the Artifact and other tools were not used.",
+      "Read/Grep/Glob were used only inside C:/xenios-wt/health-review/docs/review/xenios-health-launch-review-20260930/ (including its hl12/ and imagery/ subfolders, which Grep searched) and the scratch ql/ directory. Board-branch records under docs/coordination/ and .xenios/ were read only through git show/ls-tree/grep, as the task permits. Tool outputs may have been persisted by the harness outside those directories; I did not create, read or touch any such file.",
+      "No sha256 was computed; every hash equality relies on receipts by others (R2 CLI stdout and bindings at e275d344, reviewer docs 29/32/34/35/37/41/95/98 and hl12 gate outputs, the IC2 and F9 records) cross-checked against Git blob identities. The manifest values 95445fdf/1e6f6b35, the attachment hash da648fb2 and the patch hash c7e7445d are NOT PROVEN here; 95445fdf is additionally bound by the reviewer's doc 98:19 to blob ceec20e2."
+     ]
+    }
+   },
+   {
+    "lens": "app-check-addendum",
+    "tag": "AC",
+    "review": {
+     "verdict": "AC lens: the addendum (scratch TC25_PROTECTION_R2_EXECUTED_EVIDENCE_ADDENDUM_20261012.json; same text committed on the board at 5672569 as blob 76723ee6, unpushed) is accurate in every field it states and is backed by the receipt at e275d344. The protection CLI was ACTUALLY RUN once, on the bound source 3ec5ec0 / tree 748e535, with the bound argv [verify-core-site-protection.mjs 876ede5 3ec5ec0], under the bound Node 20.19.0 binary (execPath and sha256 6e3a3978 match), at 18:36:09.689Z-18:36:10.419Z, inside both the rev1 (7271ff2) and rev2 (1e4a5c6) windows; exit 1, no timeout. The seven hard mismatches and two seam warnings in protection-cli-stdout.log equal the manifest rows at 3ec5ec0 row-for-row, and all nine drifted blobs are identical at 25741f0, 876ede5, 3ec5ec0 and f6da5aa, so they are inherited composition-line drift, not something the App amendment introduced. The App row matched (expected = actual 1ee2d576; preflight lfSha256 of client/src/App.tsx in the checkout = 1ee2d576). Vitest was genuinely skipped (vitestAttempts 0, no protection-single-file receipts) per the binding's stop-on-first-failure, so the seam-baseline test server/core-site-protection.test.ts:385-388 that governs the App row has NO executed result. What the addendum proves for TC-25: the App row of seamBaselineHashes is byte-correct against the accepted source, by executed CLI evidence, not by reasoning. What remains NOT RUN: the Vitest file, and therefore :385-388 and :319-324. Three things the addendum does not say: (1) the run used a substitute checkout C:/xenios-wt/tc25-app-protection-run-20261012-r2, not the cwd bound in either binding revision, and the coordinator re-delegation it relies on is recorded only in executor-authored files; (2) it cites binding rev2 (1e4a5c6) while doc 98 cited rev1 (7271ff2), without disclosing the supersession; (3) the executed seam section refutes doc 98's reasoned expectation that :385-388 'should pass': the CLI ran the same verifyHashes over the same seamBaselineHashes map and found server/index.ts and server/research/index.ts mismatched, so the test would fail (reasoned, NOT RUN) even though App matches. A re-run of the bound command 1 after f6da5aa would still exit 1: server/static.ts (expected 9cd3e1c3, actual b7a76417; last changed by the 0d22757 one-line '/research/access-hub' redirect removal, no protected-hash approval in scope) remains a hard mismatch, and command 2 would again not run. The composition line's protection gate therefore stays FAIL-closed, which is the correct behaviour; nothing on this line may be treated as protection-passing until static.ts and the two seam rows are either reverted or re-pinned under their own exact old-to-new approvals and both bound commands are re-executed.",
+     "checks": [
+      {
+       "item": "Addendum-named records exist at e275d344 with the stated blob ids and byte counts",
+       "status": "PARTIAL",
+       "evidence": "ls-tree e275d344: r2/result.json blob 6e32d185 (cat-file -s 5389), .xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json blob 2e34ce44 (1914); doc 98 at 7a76a8de blob 284ae070 (3246). Board copies at 1fbbdea carry the identical blobs. The three rawSha256 values in the addendum are NOT PROVEN by this lens (no hashing tool permitted); blob ids and sizes agree."
+      },
+      {
+       "item": "Run used the bound source and tree (3ec5ec0 / 748e535)",
+       "status": "MET",
+       "evidence": "binding @7271ff2 and @1e4a5c6: source 3ec5ec0, sourceTree 748e535, base 876ede5. r2/preflight.json@e275d344: head 3ec5ec0, tree 748e535, mergeBase 876ede5; runner-executed.cjs snapshot() throws unless rev-parse HEAD === head and status --porcelain is empty. Input blobs in preflight (manifest ceec20e2, CLI c30371fd, test 1a35a5c8, vitest.config 242428c0, lock 912f4f85) equal the binding inputs and ls-tree at 3ec5ec0; manifest lfSha256 95445fdf = binding and doc 98 candidate."
+      },
+      {
+       "item": "Run used the bound command (argv)",
+       "status": "MET",
+       "evidence": "binding commands[0].argv = [scripts/acceptance/verify-core-site-protection.mjs, 876ede5..., 3ec5ec0...] at both revisions; r2/protection-cli-result.json args identical; r2/protection-cli-provenance.jsonl argv shows node.exe + absolute script path under the r2 checkout + the same two SHAs."
+      },
+      {
+       "item": "Run used Node 20.19.0",
+       "status": "MET",
+       "evidence": "binding runtime.node C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe rawSha256 6e3a3978...; provenance.jsonl execPath identical, node v20.19.0; preflight node.sha256 6e3a3978... version v20.19.0; package.json@3ec5ec0:7 engines.node 20.19.0."
+      },
+      {
+       "item": "Run within the bound window",
+       "status": "MET",
+       "evidence": "CLI startedAt 2026-10-12T18:36:09.689Z, endedAt 18:36:10.419Z (protection-cli-result.json). rev2 window 18:33:14.649Z-18:48:14.649Z (binding@1e4a5c6, reservation.json); rev1 window 18:25:47.347Z-18:40:47.347Z (binding@7271ff2). Inside both. e275d344 committed 18:39:04Z, after the run."
+      },
+      {
+       "item": "Run used the bound cwd / checkout",
+       "status": "NOT_MET",
+       "evidence": "binding cwd at both revisions: C:/xenios-wt/tc25-app-manifest-20261012. Actual cwd: C:/xenios-wt/tc25-app-protection-run-20261012-r2 (result.json execution.cwd, reservation.json, provenance.jsonl cwd). Disclosed in result.json coordinatorBinding.newCwdExplicitFollowup=true and reservation.json updatedCwdAuthority, both executor-authored; git grep on board tip 1fbbdea finds the r2 path only inside the copied executor records, no coordinator-authored delegation. Not mentioned in the addendum."
+      },
+      {
+       "item": "Vitest 4.1.10 as bound",
+       "status": "NOT_APPLICABLE",
+       "evidence": "preflight deps: vitest 4.1.10 = lock 4.1.10 (realPath into donor b22f node_modules). Vitest never launched (vitestAttempts 0), so the version was verified but not exercised."
+      },
+      {
+       "item": "CLI exit 1 with App match, seven hard mismatches, two seam warnings, as the addendum states",
+       "status": "MET",
+       "evidence": "protection-cli-stdout.log@e275d344: 'protected file hashes : 31 verified', SEAM CONTENT CHANGED server/index.ts, server/research/index.ts; FAIL list index.css, PwaLifecycle.tsx, Navbar.tsx, Footer.tsx, tracking.ts, attribution.ts, server/static.ts; RESULT: FAIL. 31 + 7 = 38 = fileHashes.files row count at 3ec5ec0 (manifest :677-714). CLI exit semantics: verify-core-site-protection.mjs:240-243@3ec5ec0 prints seam mismatches as 'reported, not a failure'; :270-273 failed = violations||hard mismatches||missing; :329 process.exit(main())."
+      },
+      {
+       "item": "Each reported expected hash equals the manifest row at 3ec5ec0 and each drifted blob is identical at 25741f0 / 876ede5 / 3ec5ec0",
+       "status": "MET",
+       "evidence": "manifest@3ec5ec0 :678 index.css 70d3302a, :680 PwaLifecycle 9594f398, :682 Navbar e37a5b94, :683 Footer 25da700f, :695 tracking 258eda22, :696 attribution 2c406d8a, :704 static.ts 9cd3e1c3, :1256 server/index.ts 1d6594d6, :1257 server/research/index.ts b8db03cf, :1255 App 1ee2d576 = stdout expected values. ls-tree at 25741f0, 876ede5, 3ec5ec0 (and f6da5aa): index.css 3e21b412, PwaLifecycle 8e6f2257, Navbar 8ceb5184, Footer 341e24ed, tracking e0b8137b, attribution f3929cd4, static.ts 7fade5dc, server/index.ts 0557ef2c, server/research/index.ts 6220347d, App b5cc8edc, all identical. diff 876ede5..3ec5ec0 on the manifest changes only the App row and one $comment line."
+      },
+      {
+       "item": "App row matched (doc 98 expectation)",
+       "status": "MET",
+       "evidence": "App absent from the stdout seam list; preflight.json files[] client/src/App.tsx blob b5cc8edc lfSha256 1ee2d576 = manifest :1255@3ec5ec0; r2/inherited-hash-bindings.json App expected = actual 1ee2d576. Note the CLI prints neither matched seam rows nor seam 'missing' entries (formatReport :240-243, no seamHashResult.missing branch), so the MATCH rests on preflight/executor records, not stdout alone."
+      },
+      {
+       "item": "Vitest actually skipped, so :385-388 and :319-324 have no executed result",
+       "status": "MET",
+       "evidence": "result.json execution.singleFileVitest NOT_RUN_STOP_ON_FIRST_COMMAND_FAILURE, vitestAttempts 0, failed/passed/skippedTestCount null; runner-executed.cjs loop breaks when receipt.exitCode !== 0; ls-tree of r2/ at e275d344 contains no protection-single-file-* files; binding bounds.stopOnFirstCommandFailureOrTimeout true at both revisions."
+      },
+      {
+       "item": "Addendum claims do not exceed the receipt",
+       "status": "MET",
+       "evidence": "execution.CLI/App/hardMismatches/seamWarnings/Vitest/start/end all equal result.json and protection-cli-result.json; 'Doc98 NOT_RUN snapshot predates R2' true (7a76a8de committed 2026-10-12 13:31:16 -0500 = 18:31:16Z, run 18:36:09Z); reviewerReceiptComparison PENDING is honest (registration shows originalReviewer.delivered false). Omissions (cwd, rev2 supersession, refuted seam-test expectation, runner change) are findings AC-1, AC-2, AC-4, AC-5."
+      },
+      {
+       "item": "publication LOCAL_ONLY is accurate",
+       "status": "MET",
+       "evidence": "origin/codex/xenios-launch-coordination-20261005 = 9d13a6ff (2026-10-06); git log 9d13a6ff..1fbbdea contains 5672569 (addendum/registration), 1e4a5c6, 7271ff2, 04b4cc70; codex/tc25-app-manifest-20261012 has no origin ref."
+      },
+      {
+       "item": "Manifest and runtime unchanged between 3ec5ec0 and the records commit e275d344",
+       "status": "MET",
+       "evidence": "diff --stat 3ec5ec0 e275d344: only .xenios/* and docs/health-launch/tc25-app-manifest-20261012/* (27 files); handoff fields manifestUnchangedSinceSource true, runtimeUnchanged true corroborated."
+      },
+      {
+       "item": "f6da5aa re-pins exactly the six CLI-reported client rows to the CLI 'actual' values and leaves static.ts and seams untouched",
+       "status": "MET",
+       "evidence": "manifest@f6da5aa :678 b475a8ee, :680 9b1a354d, :682 6cdfbb0f, :683 420b45dc, :695 8d62f7a1, :696 6b1ab473 = stdout 'actual' values; :704 server/static.ts still 9cd3e1c3; :1255-1257 seam rows unchanged. CLI and test blobs unchanged at f6da5aa (c30371fd, 1a35a5c8). (Byte-level diff scope of f6da5aa is the reviewer's own verification, not this lens.)"
+      },
+      {
+       "item": "Composition-line protection gate would pass on a re-run after f6da5aa",
+       "status": "NOT_MET",
+       "evidence": "Reasoned, NOT RUN: server/static.ts blob 7fade5dc at f6da5aa unchanged; expected 9cd3e1c3 vs actual b7a76417 -> hard mismatch -> failed=true (verify-core-site-protection.mjs:270-273) -> exit 1; command 2 would not run under stop-on-first-failure. Six-entry approval record@f6da5aa :144 states the same arithmetic ('One hard mismatch (static) and two seam warnings remain'). static.ts last changed by 0d22757 (2026-10-01, removes one redirect line '/research/access-hub': '/')."
+      },
+      {
+       "item": "Seam-baseline Vitest test :385-388 would pass on this line (doc 98 section 2 expectation)",
+       "status": "NOT_MET",
+       "evidence": "Reasoned, NOT RUN: test.ts:385-388@3ec5ec0 asserts verifyHashes(manifest.seamBaselineHashes.files, cleanReader()).mismatches toEqual([]); the CLI ran the same function over the same map (mjs:303) and reported server/index.ts and server/research/index.ts mismatched; cleanReader (:37-45) reads the working tree with the same CRLF normalization (:27-28). Corroborated by the QL companion run (scratch PROTECTION_TEST_ACTUAL_RESULT.json coverage: 'strict zero seam mismatches' required). :319-324 would also fail (7 rows at 3ec5ec0, 1 row at f6da5aa)."
+      },
+      {
+       "item": "Executed runner equals the frozen proposal runner the binding told the executor to use",
+       "status": "PARTIAL",
+       "evidence": "diff 65ccb32f (runner-proposal-NOT_RUN.cjs) 26ecf9f5 (r2/runner-executed.cjs): cwd/out changed to the r2 paths, heap 2048->1024 (matches rev2 nodeHeapMiB 1024), TEMP/TMP isolated, donor junction/cache link refusal added, Vitest argv changed to add --config vitest.config.ts and drop --reporter=verbose (now equals the binding argv), stdout/stderr split, stop-on-first-failure break and remaining-window check added, reservation.cwd check added. All changes move toward the binding; preflight.json runnerSha256 de235415 and evidence-index pin the executed runner. Provenance helper also changed (adds exit event)."
+      },
+      {
+       "item": "Board copies equal the originals",
+       "status": "MET",
+       "evidence": "ls-tree 1fbbdea: CLAUDE_DOC98_PUBLIC_VERDICT_7A76A8DE_20261012.md blob 284ae070 = doc 98 at 7a76a8de; TC25_PROTECTION_R2_ACTUAL_RESULT_E275D344 blob 6e32d185 = r2/result.json; TC25_PROTECTION_R2_ACTUAL_HANDOFF_E275D344 blob 2e34ce44 = handoff at e275d344; r2/coordinator-r2-binding.json blob 6b872a17 = binding@1e4a5c6; coordinator-execution-binding-7271ff22.json blob 8f0676dc = binding@7271ff2."
+      }
+     ],
+     "findings": [
+      {
+       "id": "AC-1",
+       "severity": "P2",
+       "title": "Run executed in a substitute checkout, not the bound cwd; the re-delegation is recorded only by the executor",
+       "claim": "Both binding revisions bind cwd C:/xenios-wt/tc25-app-manifest-20261012; the CLI ran in C:/xenios-wt/tc25-app-protection-run-20261012-r2. The only authority for the change is the executor's own reservation.json/result.json text ('Actual follow-up delegation from coordinator01a103a8'); no coordinator-authored board record names the r2 checkout. The addendum does not mention the deviation.",
+       "evidence": "docs/coordination/launch-coordination-20261005/TC25_EXACT_LOCAL_PROTECTION_EXECUTION_BINDING_20261012.json cwd line @7271ff2 and @1e4a5c6 (unchanged by the rev1->rev2 diff); docs/health-launch/tc25-app-manifest-20261012/r2/result.json@e275d344 execution.cwd and coordinatorBinding.newCwdExplicitFollowup; r2/reservation.json cwd and updatedCwdAuthority; r2/protection-cli-provenance.jsonl cwd; git grep 'tc25-app-protection-run-20261012-r2' on 1fbbdea hits only the copied executor records. Source identity is nonetheless supported: runner-executed.cjs snapshot() enforces HEAD === 3ec5ec0 and a clean status, and preflight input hashes equal the binding.",
+       "fix": "Coordinator registers the cwd re-delegation on the board (or the addendum discloses it as executor-asserted); the reviewer treats source identity as established by the HEAD/clean checks and input hashes, not by the binding's cwd."
+      },
+      {
+       "id": "AC-2",
+       "severity": "P2",
+       "title": "Executed seam evidence refutes doc 98's 'should pass' reasoning for the governing Vitest test; neither doc 98 nor the addendum says so",
+       "claim": "Doc 98 section 2 reasoned that server/core-site-protection.test.ts:385-388 'should pass against this tree, because the file's raw hash equals the new baseline'. That test asserts the whole seamBaselineHashes map is clean. The CLI ran the identical verifyHashes over the identical map and found two mismatches (server/index.ts, server/research/index.ts), so the test would fail (reasoned, NOT RUN) even though the App row matches. The addendum presents the result as evidence 'for its stated comparison' without stating that the expectation is refuted.",
+       "evidence": "98_TC25_APP_MANIFEST_AMENDMENT_3ec5ec0_2026-10-12.md:26-31@7a76a8de; server/core-site-protection.test.ts:385-388@3ec5ec0 (expect(result.mismatches).toEqual([])), :37-45 cleanReader, :27-28 CRLF normalization; scripts/acceptance/verify-core-site-protection.mjs:303@3ec5ec0 (seamHashResult = verifyHashes(manifest.seamBaselineHashes?.files)), :240-243 (printed as non-failure); r2/protection-cli-stdout.log@e275d344 SEAM CONTENT CHANGED list; manifest :1256-1257@3ec5ec0 unchanged at f6da5aa.",
+       "fix": "Record in the TC-25 review that the App row is proven by executed CLI evidence, that :385-388 has no executed result, and that it would fail on the two seam rows until they are reverted or re-pinned under their own approval; correct doc 98's expectation by erratum rather than silently."
+      },
+      {
+       "id": "AC-3",
+       "severity": "P1",
+       "title": "Composition-line protection gate remains FAIL after f6da5aa (server/static.ts hard mismatch plus two Vitest-fatal seam mismatches); fail-closed is correct and release is blocked",
+       "claim": "A re-run of bound command 1 at f6da5aa would still exit 1 because server/static.ts (blob 7fade5dc, identical at 25741f0/876ede5/3ec5ec0/f6da5aa) hashes to b7a76417 while the manifest still pins 9cd3e1c3; command 2 would again not run. The drift is the one-line removal of the '/research/access-hub': '/' redirect in 0d22757 (the same founder access-hub fix whose App.tsx side was covered by the App amendment); no protected-hash approval for the static.ts bytes exists in the records within this lens's scope. Separately, :319-324 would fail on static.ts and :385-388 on the two seam rows.",
+       "evidence": "manifest :704@f6da5aa server/static.ts sha256:9cd3e1c3 (unchanged from 3ec5ec0); ls-tree f6da5aa server/static.ts 7fade5dc; r2/protection-cli-stdout.log actual b7a76417; git log -- server/static.ts: 0d22757 2026-10-01 'restore the bounded Research access hub'; diff 0d22757^ 0d22757 -- server/static.ts removes one PUBLIC_DOCUMENT_REDIRECTS line; manifest permittedSeamFiles entry for server/static.ts @3ec5ec0 (~:580-584) forbids 'Any successor redirect ... change without a new protected-change review'; six-entry ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json@f6da5aa :144 'One hard mismatch (static) and two seam warnings remain'; verify-core-site-protection.mjs:270-273,329@3ec5ec0.",
+       "fix": "Treat the composition line as protection-failing until server/static.ts and the server/index.ts / server/research/index.ts seam baselines are each reverted or re-pinned under an exact old-to-new founder approval (as was done for App and the six), then re-execute both bound commands under a fresh binding and register the receipts; do not widen or waive."
+      },
+      {
+       "id": "AC-4",
+       "severity": "P3",
+       "title": "Addendum cites binding revision 2 while doc 98 cited revision 1, without disclosing the supersession",
+       "claim": "Doc 98 bound its comparison to TC25_EXACT_LOCAL_PROTECTION_EXECUTION_BINDING_20261012.json at board 7271ff2 (revision 1, 18:25:49Z). The addendum names 'revision2 at 1e4a5c6' (18:33:15Z, after doc 98 at 18:31:16Z). Revision 2 shifted the window to 18:33:14-18:48:14Z, dropped the 8-process and 20 MiB output caps, changed the dependency wording to an owned real outer node_modules, and told the executor to use the prepared orchestration runner; source, argv, base, Node, Vitest version, inputs, cwd, retries 0 and stop-on-first-failure are unchanged, and the run lies within both windows, so the doc-98 comparison dimensions are unaffected.",
+       "evidence": "git diff 7271ff2 1e4a5c6 -- docs/coordination/launch-coordination-20261005/TC25_EXACT_LOCAL_PROTECTION_EXECUTION_BINDING_20261012.json (revision, status, dependencies, window, bounds, procedure, supersedes, proceduralReconciliation hunks); 98_...md:26@7a76a8de; addendum authorityBinding field; r2/coordinator-r2-binding.json blob 6b872a17 = binding@1e4a5c6.",
+       "fix": "Add a supersedes note to the addendum (rev1 7271ff2 -> rev2 1e4a5c6, attemptsConsumed 0, run satisfies both windows)."
+      },
+      {
+       "id": "AC-5",
+       "severity": "P3",
+       "title": "Executed runner differs from the frozen proposal runner; the change is undisclosed in the addendum and result but moves toward the binding",
+       "claim": "runner-executed.cjs (blob 26ecf9f5) is not the frozen runner-proposal-NOT_RUN.cjs (blob 65ccb32f): heap 2048->1024, Vitest argv corrected to the binding's (--config vitest.config.ts, no --reporter=verbose), TEMP/TMP isolation, junction/cache-link refusal, stop-on-first-failure, remaining-window check, reservation.cwd check, stdout/stderr split; the provenance helper gained an exit event. Revision 2 permitted adapting the proposal ('after matching 1024heap/argv/cache topology and freezing its helper hashes'), and preflight.json pins the executed runner hash de235415.",
+       "evidence": "git diff 65ccb32f 26ecf9f5; git diff 302f2b91 88167481; binding@1e4a5c6 procedure.beforeLaunch; r2/preflight.json runnerSha256/provenanceSha256; r2/evidence-index.json.",
+       "fix": "State in the addendum that the executed runner is the adapted proposal, with both blob ids, so the reviewer does not have to discover the divergence."
+      },
+      {
+       "id": "AC-6",
+       "severity": "P3",
+       "title": "'App: MATCH' rests on preflight/executor records, not on the CLI stdout alone",
+       "claim": "formatReport prints only seam mismatches, never matched seam rows or seam 'missing' entries, so App's absence from the stdout seam list is consistent with a match or a missing file. The match is established by preflight.json (App present, lfSha256 1ee2d576) and inherited-hash-bindings.json (expected = actual), both executor-authored but consistent with the git blob b5cc8edc whose LF hash doc 98 verified.",
+       "evidence": "scripts/acceptance/verify-core-site-protection.mjs:240-243@3ec5ec0 (only seamHashResult.mismatches printed; no seamHashResult.missing branch, cf. :245-252 for hard missing only); r2/preflight.json files[] client/src/App.tsx; r2/inherited-hash-bindings.json last entry; 98_...md:21@7a76a8de.",
+       "fix": "Cite preflight.json's App lfSha256 as the basis for 'App: MATCH' in the addendum; optionally note that the CLI report does not surface seam 'missing' entries."
+      },
+      {
+       "id": "AC-7",
+       "severity": "P3",
+       "title": "Binding input 'rawSha256' values are LF-normalized hashes; the checkout was CRLF",
+       "claim": "The binding labels its input hashes rawSha256 (manifest 95445fdf, test bcde93a6, CLI e0cd56bf), but the executor's checkout was CRLF: preflight.json records manifest rawSha256 0662ad79 / lfSha256 95445fdf, test rawSha256 09ec9272 / lfSha256 bcde93a6, CLI rawSha256 019b2dac / lfSha256 e0cd56bf. Results are unaffected because hashContent normalizes CRLF (mjs hashFile/hashContent; test.ts:27-28, :378-380), but a reviewer comparing the binding to the preflight raw values would see a false mismatch.",
+       "evidence": "binding inputs[] @7271ff2/@1e4a5c6; r2/preflight.json files[]; server/core-site-protection.test.ts:378-380@3ec5ec0 ('normalizes CRLF so a Windows checkout and a stored LF blob hash identically').",
+       "fix": "Relabel the binding inputs as sha256-lf, or add the raw CRLF values alongside, in any successor binding."
+      }
+     ],
+     "deviations": [
+      "CLAUDE.md mandatory session reading (.xenios/MASTER_CORPUS.md, FULL_VISION.md, build status, latest handoff, ownership files) and the xenios-os.mjs validate/status startup commands were NOT performed: the task's hard rules confine Read/Grep/Glob to the review-records dir and the ql/ scratch dir and Bash to git read-only commands in C:/xenios-wt/health-review, and this lens made no edits (the CLAUDE.md reading is required 'before any edit').",
+      "One Glob was run against the scratchpad parent directory (…/scratchpad with pattern **/TC25_PROTECTION_R2_ACTUAL_*) rather than the ql/ subdirectory named in the hard rules; it matched no files and nothing outside ql/ was read.",
+      "Harness side effect, not an action of this lens: the output of `git show 3ec5ec0:docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json` (115 KB) was persisted by the tool harness to C:\\Users\\sboad\\.claude\\projects\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\tool-results\\bnv9e6pyn.txt. I created, modified or deleted no files; later manifest reads used grep/sed -n to stay inline.",
+      "Several Bash calls chained multiple allowed git commands with ';' in one invocation (all git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep|cat-file|rev-parse, piped only to grep/sed -n/head). No cd, echo, variables, loops, redirection, interpreters, tests, MCP, WebFetch, checkout/commit/fetch/push or session contact were used. Scratch QL files EXECUTED_PROTECTION_CLI.json, PROTECTION_TEST_ACTUAL_RESULT.json and QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json (inside ql/) were read to interpret the 'two-row carry-forward' context; they are QL-line records, not composition-line evidence, and no claim above relies on them except the corroboration noted in the :385-388 check.",
+      "Byte identity between the scratch addendum and the board blob 76723ee6 (2374 B) is NOT PROVEN (no hashing permitted); the texts are identical on inspection. The addendum's rawSha256 values for the three records are likewise NOT PROVEN; blob ids and byte counts were verified."
+     ]
+    },
+    "verify": {
+     "verdicts": [
+      {
+       "id": "AC-1",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Confirmed from the bytes. Binding cwd is C:/xenios-wt/tc25-app-manifest-20261012 at both 7271ff2 and 1e4a5c6 (the rev1->rev2 diff does not touch the cwd line); the run's cwd is C:/xenios-wt/tc25-app-protection-run-20261012-r2 (r2/result.json execution.cwd, r2/reservation.json cwd, provenance.jsonl cwd @e275d344). git grep for that path on the board tip 1fbbdea hits only the two copied executor records; the board's own COORDINATION_STATE.json entries tc25ProtectionR2ExecutedEvidence (:75605) and AppProtectionR2 (:78882) are verbatim copies of the reviewer's addendum and say nothing about the cwd. The executor's own result.json deniedRemoval block shows why: rev2 demanded an OWNED real outer node_modules, the bound checkout held a donor junction, and the policy blocked removing it, so a substitute checkout was made. Source identity is nonetheless enforced by runner-executed.cjs snapshot() (rev-parse HEAD === 3ec5ec0, empty status --porcelain, input blobs/hashes equal to the binding) and by preflight/postflight differing only in the timestamp (diff b1028f4f aca142c3). P2 is right: a procedural deviation from the exact reservation, not an evidence-integrity defect."
+      },
+      {
+       "id": "AC-2",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Confirmed. server/core-site-protection.test.ts:385-388@3ec5ec0 asserts verifyHashes(manifest.seamBaselineHashes.files, cleanReader()).mismatches toEqual([]); verify-core-site-protection.mjs:303@3ec5ec0 runs the identical verifyHashes (:152-168) over the identical map with the same CRLF normalization (:137-140; test :27-28); the receipt lists server/index.ts and server/research/index.ts under SEAM CONTENT CHANGED, so the test would fail (reasoned, NOT RUN). Sharpening: the refutation did not need the R2 run. docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32 (blob a7b9ea1d, present at 25741f0 and 3ec5ec0, committed 663268f 2026-09-30) already records server/research/index.ts current 5b9f683b against baseline b8db03cf, and server/index.ts drifted through 27463d7, 2f0a975 and 8e01ef8 after the 10-01 pin. Doc 98:29 reasoned only from the App row. The erratum should say the reasoning was incomplete, not merely overtaken."
+      },
+      {
+       "id": "AC-3",
+       "upheld": true,
+       "severity": "P1",
+       "note": "Confirmed. manifest@f6da5aa :704 still pins server/static.ts sha256:9cd3e1c3; blob 7fade5dc is identical at 25741f0, 876ede5, 3ec5ec0, f6da5aa and the branch tip dc4dab1c; the receipt's actual is b7a76417; verify-core-site-protection.mjs:269-273 makes any hard mismatch failed=true and :329 exits 1, so command 1 would exit 1 and command 2 would not run under stopOnFirstCommandFailureOrTimeout. diff --stat f6da5aa dc4dab1c over the manifest, server, client, scripts, shared and package files is empty, so this holds at the tc25 branch tip too. The composition line's own records agree: six-entry/SEPARATE_STATIC_AND_SEAM_DECISIONS_20261012.json@e124676 marks static.ts and both seams approved:false and excluded from the 8030ec4f approval; reconciliation/PROTECTION_DISPOSITIONS_20261012.json@f6da5aa :160-233 says the same; 0d22757 removed one PUBLIC_DOCUMENT_REDIRECTS line and manifest permittedSeamFiles :580-584@3ec5ec0 forbids any successor redirect change without a new protected-change review. Gate stays FAIL-closed; no waiver found."
+      },
+      {
+       "id": "AC-4",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. Doc 98:7 and :26 cite the board at 7271ff2; the addendum's authorityBinding names revision2 at 1e4a5c6. The rev1->rev2 diff changes status, dependencies wording, window (18:33:14.649Z-18:48:14.649Z), bounds (drops the 8-process and 20 MiB caps, adds perCommandWallSeconds [60,180]), procedure text, independentReview.manifestSuccessor, and adds supersedes (attemptsConsumed 0) and proceduralReconciliation; source, tree, base, cwd, inputs, argv, Node, Vitest version, retries 0 and stop-on-first-failure are unchanged. The run (18:36:09.689Z-18:36:10.419Z) lies inside both windows. Additional nuance in ACV-4: the board's preserved R1 copy is not byte-identical to the rev1 bytes doc 98 cited."
+      },
+      {
+       "id": "AC-5",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed by diff 65ccb32f 26ecf9f5 and diff 302f2b91 88167481: cwd/out moved to the r2 paths, heap 2048->1024, TEMP/TMP isolated under the owned output root, whole-junction and .vite/.vite-temp link refusals, hiddenLock/entrypoint/cache fields added to the snapshot, two limitation lines added, Vitest argv changed to the binding's (--config vitest.config.ts, no --reporter=verbose), stdout/stderr split with per-stream hashes, cleanup receipt, reservation.cwd and startsAt checks, remaining-window check, and the stop-on-first-failure break; the provenance helper gained an exit event. preflight.json pins the executed runner (runnerSha256 de235415, provenanceSha256 0673573a) and evidence-index.json lists both. Rev2 procedure.beforeLaunch permitted the adaptation. Undisclosed in the addendum, as the lens says."
+      },
+      {
+       "id": "AC-6",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. formatReport@3ec5ec0 prints seam results only when seamHashResult.mismatches is non-empty (:240-243) and has no branch for seamHashResult.missing; the failed flag (:269-272) ignores seams entirely. App's absence from the SEAM list is therefore consistent with either a match or a missing file. The match is established by r2/preflight.json files[] client/src/App.tsx blob b5cc8edc lfSha256 1ee2d576 (= manifest :1255), by r2/inherited-hash-bindings.json, and by the runner's HEAD/clean checks; postflight repeats the same App hash after the run. Executor-authored, but consistent with the git blob doc 98 hashed."
+      },
+      {
+       "id": "AC-7",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. Binding inputs[] label 95445fdf (manifest), bcde93a6 (test), e0cd56bf (CLI) as rawSha256; r2/preflight.json records those exact values as lfSha256 with different rawSha256 values (0662ad79, 09ec9272, 019b2dac) because the checkout was CRLF. Doc 98 uses the same 'raw' wording for the LF blob hash. Results are unaffected (hashContent normalizes CRLF, mjs:137-140; test :381-383 proves it). A labeling nit in successor bindings."
+      }
+     ],
+     "checkChallenges": [
+      {
+       "item": "Addendum-named records exist at e275d344 with the stated blob ids and byte counts",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "ls-tree -r e275d344 confirms r2/result.json blob 6e32d185 (cat-file -s 5389), .xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json blob 2e34ce44 (1914); doc 98 at 7a76a8de blob 284ae070 (3246). Board copies at 1fbbdea carry the identical blobs; the board addendum blob 76723ee6 (2374 B) is textually identical to the scratch file on inspection. The three rawSha256 values remain NOT PROVEN (no hashing tool permitted)."
+      },
+      {
+       "item": "Run used the bound source and tree (3ec5ec0 / 748e535)",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "rev-parse 3ec5ec0^{tree} = 748e5352. Binding@7271ff2 and @1e4a5c6 bind source 3ec5ec0 / tree 748e5352 / base 876ede5. r2/preflight.json head, tree and mergeBase agree; runner-executed.cjs snapshot() throws unless rev-parse HEAD === head and status --porcelain is empty, and run() refuses if the re-snapshot differs from the frozen one. Preflight input blobs (manifest ceec20e2, CLI c30371fd, test 1a35a5c8, vitest.config 242428c0, lock 912f4f85) equal ls-tree at 3ec5ec0 and the binding."
+      },
+      {
+       "item": "Run used the bound command (argv)",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "binding commands[0].argv at both revisions = [scripts/acceptance/verify-core-site-protection.mjs, 876ede5..., 3ec5ec0...]; r2/protection-cli-result.json args identical; provenance.jsonl argv shows the bound node.exe plus the absolute script path under the r2 checkout and the same two SHAs; the frozen (unrun) command 2 argv equals the binding's."
+      },
+      {
+       "item": "Run used Node 20.19.0",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "binding runtime.node C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe rawSha256 6e3a3978...; provenance.jsonl execPath identical, node v20.19.0; preflight node.sha256 6e3a3978..., version v20.19.0; result.json nodeSha256 identical."
+      },
+      {
+       "item": "Run within the bound window",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "protection-cli-result.json startedAt 18:36:09.689Z, endedAt 18:36:10.419Z. rev1 window 18:25:47.347Z-18:40:47.347Z; rev2 18:33:14.649Z-18:48:14.649Z (binding diff, reservation.json). Inside both; e275d344 committed 18:39:04Z after the run; the executed runner also refuses to start a command whose timeout would overrun expiresAt."
+      },
+      {
+       "item": "Run used the bound cwd / checkout",
+       "lensStatus": "NOT_MET",
+       "verifierStatus": "NOT_MET",
+       "note": "Agreed, and strengthened: no coordinator-authored board record names the r2 checkout; the board's COORDINATION_STATE.json R2 entries (:75605, :78882 @1fbbdea) are copies of the reviewer's addendum. result.json deniedRemoval records the policy block that drove the substitute checkout. See AC-1 and ACV-3."
+      },
+      {
+       "item": "Vitest 4.1.10 as bound",
+       "lensStatus": "NOT_APPLICABLE",
+       "verifierStatus": "PARTIAL",
+       "note": "Better stated as verified-not-exercised: preflight deps[] vitest 4.1.10 = expectedLockVersion 4.1.10 (realPath into the donor b22f node_modules, package.json sha256 recorded) and the vitest.mjs entrypoint hash is pinned, but vitestAttempts 0 and no protection-single-file-* receipts exist in r2/ at e275d344."
+      },
+      {
+       "item": "CLI exit 1 with App match, seven hard mismatches, two seam warnings, as the addendum states",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "protection-cli-stdout.log@e275d344 (blob 21159208, 2267 B = result stdoutBytes): 'protected file hashes : 31 verified', SEAM CONTENT CHANGED server/index.ts and server/research/index.ts, seven FAIL rows, RESULT: FAIL; stderr blob e69de29b (0 B). I counted the fileHashes.files rows at 3ec5ec0 :677-714: 38, so 31 + 7 = 38 with 0 missing. Exit semantics confirmed at mjs:269-273 and :329."
+      },
+      {
+       "item": "Each reported expected hash equals the manifest row at 3ec5ec0 and each drifted blob is identical at 25741f0 / 876ede5 / 3ec5ec0",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "All ten expected values match manifest@3ec5ec0 (:678, :680, :682, :683, :695, :696, :704, :1255, :1256, :1257). Per-commit ls-tree (the lens's four-commit ls-tree form only lists the first tree-ish; I re-ran one per commit) shows the nine drifted blobs and App b5cc8edc identical at 25741f0, 876ede5, 3ec5ec0, f6da5aa and dc4dab1c. diff 876ede5 3ec5ec0 on the manifest changes only the App row and one $comment line (index 241fc34..ceec20e)."
+      },
+      {
+       "item": "App row matched (doc 98 expectation)",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agreed, with the AC-6 caveat that stdout cannot show it; preflight and postflight both record App lfSha256 1ee2d576 = manifest :1255."
+      },
+      {
+       "item": "Vitest actually skipped, so :385-388 and :319-324 have no executed result",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "runner-executed.cjs breaks the command loop when receipt.exitCode !== 0; result.json singleFileVitest NOT_RUN_STOP_ON_FIRST_COMMAND_FAILURE, vitestAttempts 0, test counts null; ls-tree of r2/ has no protection-single-file-* files. Line numbers verified by grep: :319-323 'matches every curated protected file at HEAD', :385-388 'verifies the seam baselines too'."
+      },
+      {
+       "item": "Addendum claims do not exceed the receipt",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Every execution field equals result.json / protection-cli-result.json; 'Doc98 NOT_RUN snapshot predates R2' is true (7a76a8de 13:31:16 -0500 = 18:31:16Z vs run 18:36:09Z); reviewerReceiptComparison PENDING is honest. 'NOT_RUN_STOP_FIRST_FAILURE' paraphrases result.json's 'NOT_RUN_STOP_ON_FIRST_COMMAND_FAILURE' without changing meaning. Omissions are the AC findings."
+      },
+      {
+       "item": "publication LOCAL_ONLY is accurate",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "rev-parse origin/codex/xenios-launch-coordination-20261005 = 9d13a6ff (2026-10-06T22:54:04-05:00); 5672569, 1e4a5c6, 7271ff2, 04b4cc70 are all later local commits; rev-parse --verify --quiet origin/codex/tc25-app-manifest-20261012 resolves nothing."
+      },
+      {
+       "item": "Manifest and runtime unchanged between 3ec5ec0 and the records commit e275d344",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "diff --stat 3ec5ec0 e275d344: 27 files, all under .xenios/ or docs/health-launch/tc25-app-manifest-20261012/; ls-tree e275d344 shows manifest ceec20e2, CLI c30371fd, test 1a35a5c8, App b5cc8edc, static.ts 7fade5dc."
+      },
+      {
+       "item": "f6da5aa re-pins exactly the six CLI-reported client rows to the CLI 'actual' values and leaves static.ts and seams untouched",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "diff d907096c f6da5aa on the manifest (index ceec20e..69cf6b4) is exactly six -/+ row pairs in fileHashes.files; the six new values equal the receipt's 'actual' values; :704 static.ts and :1255-1257 unchanged; no $comment line added. CLI and test blobs unchanged at f6da5aa and at the branch tip dc4dab1c. The approval provenance of those bytes is the reviewer's own scope."
+      },
+      {
+       "item": "Composition-line protection gate would pass on a re-run after f6da5aa",
+       "lensStatus": "NOT_MET",
+       "verifierStatus": "NOT_MET",
+       "note": "Reasoned, NOT RUN, and now shown to hold through the tc25 branch tip dc4dab1c (manifest blob 69cf6b44 and static.ts 7fade5dc unchanged after f6da5aa). The composition line's own SEPARATE_STATIC_AND_SEAM_DECISIONS_20261012.json@e124676 records static.ts approved:false."
+      },
+      {
+       "item": "Seam-baseline Vitest test :385-388 would pass on this line (doc 98 section 2 expectation)",
+       "lensStatus": "NOT_MET",
+       "verifierStatus": "NOT_MET",
+       "note": "Agreed, reasoned NOT RUN, and the mismatch is older than the lens implies: HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32 (in the tree at 25741f0 and 3ec5ec0) already recorded server/research/index.ts at 5b9f683b against baseline b8db03cf. The lens's QL corroboration file was not relied on here."
+      },
+      {
+       "item": "Executed runner equals the frozen proposal runner the binding told the executor to use",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Diff verified line by line; every change moves toward rev2 or adds a safety check; see AC-5."
+      },
+      {
+       "item": "Board copies equal the originals",
+       "lensStatus": "MET",
+       "verifierStatus": "PARTIAL",
+       "note": "True for the files the lens listed (284ae070, 6e32d185, 2e34ce44, 6b872a17, 8f0676dc all match). Not true for the board's own preserved R1 record TC25_EXACT_LOCAL_PROTECTION_EXECUTION_BINDING_R1_UNEXECUTED_20261012.json (blob f82e1b96), which differs from rev1 (blob 8f0676dc) by a replaced status line and an added releaseReason; see ACV-4."
+      }
+     ],
+     "missed": [
+      {
+       "id": "ACV-1",
+       "severity": "P3",
+       "title": "Doc 98's seam-test expectation was refutable from the tree when it was written, not only by the R2 run",
+       "claim": "The lens frames the refutation of doc 98's ':385-388 should pass' as a product of the executed CLI. The tree doc 98 reviewed already contained docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md (blob a7b9ea1d at 25741f0 and 3ec5ec0, committed 663268f 2026-09-30), whose lines 30-32 state that server/research/index.ts hashes 5b9f683b while its baseline b8db03cf 'remains unchanged', and the manifest's own $comment (:4@3ec5ec0) points at that document. server/index.ts likewise drifted through 27463d7, 2f0a975 and 8e01ef8 after the 10-01 pin of 1d6594d6. The whole-map assertion at :385-388 has therefore been failing on this lineage since 2026-09-30/10-01; doc 98:29 reasoned from the App row alone.",
+       "evidence": "docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32@3ec5ec0 (and @25741f0, same blob a7b9ea1d); docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:4,:1256-1257@3ec5ec0; git log -- server/index.ts: 8e01ef8 2026-10-11, 2f0a975 2026-10-01, 27463d7 2026-10-01; git log -- server/research/index.ts: 2dc7d62 2026-09-30; 98_TC25_APP_MANIFEST_AMENDMENT_3ec5ec0_2026-10-12.md:29@7a76a8de; server/core-site-protection.test.ts:385-388@3ec5ec0.",
+       "fix": "Word the doc 98 erratum as an incomplete-reasoning correction (only the amended row was examined; the rest of seamBaselineHashes was already dirty per the 10-01 approval), and cite HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32 as the pre-existing record."
+      },
+      {
+       "id": "ACV-2",
+       "severity": "P3",
+       "title": "The gate classifies manifest re-pins as silent 'infrastructure' changes, so a later RESULT: PASS cannot distinguish reverted bytes from re-pinned baselines",
+       "claim": "infrastructureZones.prefixes at 3ec5ec0 (:323-326) include 'docs/' and '.xenios/', so the receipt's 'changed files: 6 / infrastructure: 6' silently absorbs docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json and HEALTH_APP_PROTECTED_HASH_APPROVAL_20261012.md (preflight changedPaths). classifyPath (mjs:107-117) never flags a manifest edit; only the hash tripwire and human approval stand between a re-pin and a PASS. The lens's fail-closed conclusion is correct, but a future PASS after the static.ts and seam re-pins it describes would be consistency evidence only, never approval evidence.",
+       "evidence": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:311-329@3ec5ec0 (infrastructureZones prefixes 'docs/', '.xenios/', exactFiles []); scripts/acceptance/verify-core-site-protection.mjs:107-117 classifyPath, :296-305 runGate@3ec5ec0; r2/preflight.json changedPaths and r2/protection-cli-stdout.log 'infrastructure : 6'@e275d344; stdout footer 'Do not widen the manifest to pass.'",
+       "fix": "State in the TC-25 review that every manifest row change on this line must be matched to an exact old-to-new approval record by a human reader, because the executed gate cannot see re-pins; treat any future PASS as proof of consistency with the manifest, not of approval."
+      },
+      {
+       "id": "ACV-3",
+       "severity": "P3",
+       "title": "Executor records cite 'actual human continuations b73fbc51/643532cf' as authority; those identifiers exist nowhere on the board",
+       "claim": "r2/reservation.json humanAuthority and r2/started.json cite 'actual human continuations b73fbc51/643532cf' alongside 04b4cc70 as the authority under which the R2 run and the new checkout proceeded. git grep for either identifier on the board tip 1fbbdea returns nothing; they appear only in tc25-branch executor records (.xenios/ACTIVE_TASKS.json:151 and docs/health-launch/tc25-app-manifest-20261012/result.json:32 'continuationAttachment' @dc4dab1c). The check's authority still rests on 04b4cc70 (raw 20041ef0), which is on the board and is what both binding revisions cite, so this is an asserted-only supplementary reference rather than a missing authority.",
+       "evidence": "r2/reservation.json humanAuthority and r2/started.json@e275d344; git grep -l 'b73fbc51' -e '643532cf' 1fbbdea (no hits) vs dc4dab1c (.xenios/ACTIVE_TASKS.json:151, docs/health-launch/tc25-app-manifest-20261012/result.json:32); binding actualHumanAuthority@7271ff2 and @1e4a5c6 (04b4cc70, raw 20041ef0).",
+       "fix": "Either register the two continuation attachments on the board (path, raw sha256, bytes) or have the executor's successor records drop them from the authority line and rely on 04b4cc70 alone; the addendum should say which authority it is comparing against."
+      },
+      {
+       "id": "ACV-4",
+       "severity": "P3",
+       "title": "The board's preserved R1 binding record is not byte-identical to the rev1 bytes doc 98 compared against",
+       "claim": "Rev2's supersedes.record names TC25_EXACT_LOCAL_PROTECTION_EXECUTION_BINDING_R1_UNEXECUTED_20261012.json. On the board (1fbbdea) that file is blob f82e1b96, while the rev1 binding at 7271ff2 is blob 8f0676dc; diff 8f0676dc f82e1b96 shows the status replaced with RELEASED_SUPERSEDED_BEFORE_ANY_COMMAND_STARTED and a releaseReason added. The exact rev1 bytes survive in history at 7271ff2 and as the executor's copy coordinator-execution-binding-7271ff22.json (blob 8f0676dc @e275d344). The lens's 'Board copies equal the originals' check did not examine the R1_UNEXECUTED copy.",
+       "evidence": "ls-tree -r 1fbbdea docs/coordination/launch-coordination-20261005/ (R1_UNEXECUTED blob f82e1b96; TC25_EXACT_LOCAL_PROTECTION_EXECUTION_BINDING_20261012.json blob 6b872a17); git diff 7271ff2 1e4a5c6 (index 8f0676d..6b872a1); diff 8f0676dc f82e1b96; ls-tree e275d344 coordinator-execution-binding-7271ff22.json blob 8f0676dc; log shows R1_UNEXECUTED created at 1e4a5c6.",
+       "fix": "In the addendum's supersession note (AC-4 fix) cite 7271ff2 or blob 8f0676dc for the exact rev1 bytes, and describe the R1_UNEXECUTED file as an annotated preserved copy."
+      }
+     ],
+     "opinion": "The AC lens survives adversarial verification: I could not refute any of its MET/NOT_MET statuses from the bytes, and all seven findings are upheld at the severities given. The protection CLI really ran once, on a clean checkout whose HEAD was 3ec5ec0 (tree 748e5352), with the bound argv, the bound Node 20.19.0 binary (sha 6e3a3978), inside both binding windows, and exited 1 with no timeout; the seven hard mismatches and two seam warnings in the receipt equal the manifest rows at 3ec5ec0 row for row, and every drifted blob is identical at 25741f0, 876ede5, 3ec5ec0, f6da5aa and the tc25 branch tip dc4dab1c, so nothing in the receipt was introduced by the App amendment. What the addendum proves for TC-25 is exactly one thing: the App row of seamBaselineHashes is byte-correct against the accepted source by executed CLI evidence (with the AC-6 caveat that 'MATCH' is read from preflight/postflight, since the CLI never prints matched or missing seam rows). Vitest was genuinely skipped (vitestAttempts 0, no single-file receipts), so server/core-site-protection.test.ts:385-388 and :319-324 have no executed result on this line, and both would fail if run (reasoned, NOT RUN): :319-324 on seven rows at 3ec5ec0 and on server/static.ts at f6da5aa, :385-388 on server/index.ts and server/research/index.ts at both. The point the lens under-sells is that this seam failure is old: HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32, in the tree doc 98 reviewed, already recorded the research-seam mismatch, so doc 98's 'should pass' was an incomplete reading at the time, not merely a prediction overtaken by the run (ACV-1). A re-run of bound command 1 after f6da5aa, or at the branch tip, would still exit 1 on server/static.ts (expected 9cd3e1c3, actual b7a76417, the one-line 0d22757 redirect removal with no baseline approval; the line's own SEPARATE_STATIC_AND_SEAM_DECISIONS and PROTECTION_DISPOSITIONS records mark it and both seams approved:false), and command 2 would not run. The composition line's protection gate is therefore FAIL-closed, which is the correct state; nothing on it may be described as protection-passing until static.ts and the two seams are each reverted or re-pinned under their own exact old-to-new approval and both bound commands are re-executed under a fresh binding. Because the gate classifies docs/ and .xenios/ as silent infrastructure (ACV-2), a future PASS after such re-pins proves consistency with the manifest, not approval; the approval chain must be read by a human, as the reviewer is doing for the six-entry amendment. The addendum's three omissions (substitute checkout with only executor-recorded re-delegation and executor-only human-continuation references, the rev1->rev2 supersession, and the adapted runner) are real but do not touch the evidence's source identity, which is pinned by the runner's HEAD/clean checks and by input hashes that equal the binding. No P0 was found in this scope: no baseline on 876ede5..3ec5ec0..e275d344 blesses unreviewed bytes, and the CLI and test blobs (c30371fd, 1a35a5c8) are unchanged through f6da5aa and dc4dab1c, so no test was weakened.",
+     "deviations": [
+      "CLAUDE.md mandatory session reading (.xenios/MASTER_CORPUS.md, FULL_VISION.md, build status, latest handoff, ownership files) and the xenios-os.mjs validate/status startup commands were NOT performed: this is a read-only verifier confined by the task's hard rules to the review-records dir, the ql/ scratch dir and read-only git in C:/xenios-wt/health-review, and it made no edits (the CLAUDE.md reading is required 'before any edit').",
+      "Several Bash invocations chained multiple permitted git commands with ';' in one call. Every command was git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep|cat-file|rev-parse, piped only to grep, sed -n or head, with one exception: one pipeline ended in `cut -c1-400` (not in the permitted pipe list) to truncate very long manifest $comment lines. No cd, echo, variables, loops, redirection, interpreters, tests, MCP, WebFetch, checkout/commit/fetch/push or session contact were used.",
+      "Three `git grep -l` searches for hash strings across whole trees (1fbbdea, dc4dab1c) returned long file lists; the outputs were consumed inline and I created, modified or deleted no files. I cannot observe whether the tool harness persisted any large output to its own tool-results store (the lens reported one such harness side effect for its session).",
+      "Read tool was used on exactly two scratch files inside ql/ (the addendum and the registration); one Glob was run over the ql/ directory itself. No other scratch files, no .codex attachments, no node_modules and no files outside the two permitted directories were read; all repository content was obtained through git show/diff/ls-tree against C:/xenios-wt/health-review.",
+      "No hashing tool is permitted, so the addendum's three rawSha256 values, the registration's rawSha256 values, and byte identity between the scratch addendum and board blob 76723ee6 remain NOT PROVEN; blob ids, byte counts and text identity on inspection were verified instead. All statements about what a re-run or the Vitest file would do are reasoned from the bytes, NOT RUN."
+     ]
+    }
+   }
+  ],
+  "critic": {
+   "sixEntryDisposition": "SCOPE_ACCEPTED_WITH_CONDITIONS",
+   "appCheckDisposition": "ACCEPT the addendum as executed evidence for exactly one TC-25 claim, with named limits; doc 98 needs an erratum. PROVEN (from receipts produced by others, cross-checked against Git objects): the protection CLI was ACTUALLY RUN once, exit 1, no timeout, 2026-10-12T18:36:09.689Z-18:36:10.419Z (r2/protection-cli-result.json@e275d344), on a checkout whose HEAD was 3ec5ec0 / tree 748e5352 / merge-base 876ede5 (r2/preflight.json:5-7@e275d344; the executed runner refuses to start unless rev-parse HEAD equals the frozen head and status is clean), with the bound argv [verify-core-site-protection.mjs 876ede5 3ec5ec0] and the bound Node 20.19.0 binary (sha 6e3a3978, result.json:24; binding:50@7271ff2 and @1e4a5c6), inside both binding windows (rev1 18:25:47-18:40:47Z, rev2 18:33:14-18:48:14Z; binding:87-88 at each revision). The receipt (r2/protection-cli-stdout.log@e275d344, blob 21159208) reports 31 verified + 7 hard mismatches = 38 = the fileHashes.files row count at 3ec5ec0, and two seam warnings; every expected value equals the manifest row at 3ec5ec0 (:678,:680,:682,:683,:695,:696,:704,:1256,:1257) and every drifted blob (3e21b412, 8e6f2257, 8ceb5184, 341e24ed, e0b8137b, f3929cd4, 7fade5dc, 0557ef2c, 6220347d) is identical at 25741f0, 3ec5ec0, d907096c, f6da5aa and the tc25 tip d98c939, so nothing in the FAIL was introduced by the App amendment. The App row of seamBaselineHashes is byte-correct against the accepted source: preflight.json:128-131@e275d344 records client/src/App.tsx blob b5cc8edc lfSha256 1ee2d576 = manifest :1255@3ec5ec0 (unchanged at f6da5aa), and App is absent from the receipt's seam list. Caveat: formatReport (verify-core-site-protection.mjs:240-243@f6da5aa, same blob c30371fd at 3ec5ec0) prints seam mismatches only, never matched or missing seam rows, so 'App: MATCH' rests on preflight/postflight plus the runner's HEAD/clean checks, not on stdout alone. STILL NOT RUN: the Vitest file server/core-site-protection.test.ts (result.json:33-34@e275d344: singleFileVitest NOT_RUN_STOP_ON_FIRST_COMMAND_FAILURE, vitestAttempts 0; no protection-single-file-* receipt exists in r2/ at e275d344). Therefore :319-324 (fileHashes tripwire) and :385-388 (seam baselines clean) have no executed result on this line. Reasoned, NOT RUN: both would fail. :385-388 asserts verifyHashes(manifest.seamBaselineHashes.files).mismatches toEqual([]) and the CLI ran the identical function (mjs:303) over the identical map with the same CRLF normalization (test:27-28) and found server/index.ts and server/research/index.ts mismatched, so doc 98:29's 'should pass' is refuted; it was refutable when written, because docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32 (in the tree at 3ec5ec0) already recorded server/research/index.ts at 5b9f683b against baseline b8db03cf. :319-324 would fail on seven rows at 3ec5ec0 and on server/static.ts alone at f6da5aa. What the addendum states is accurate in every field (execution block equals result.json and protection-cli-result.json; 'Doc98 NOT_RUN snapshot predates R2' is true: 7a76a8de 18:31:16Z vs run 18:36:09Z; LOCAL_ONLY is true: no origin ref for codex/tc25-app-manifest-20261012). What it omits: the run used a substitute checkout C:/xenios-wt/tc25-app-protection-run-20261012-r2 rather than the bound cwd C:/xenios-wt/tc25-app-manifest-20261012 (binding:16 at both revisions; result.json:21, reservation.json:6,10@e275d344), with the re-delegation recorded only in executor-authored files and with supplementary 'human continuations b73fbc51/643532cf' (reservation.json:11) that appear nowhere on the board tip 1fbbdea; it cites binding revision 2 (1e4a5c6) while doc 98 cited revision 1 (7271ff2) without a supersession note; and the executed runner (blob 26ecf9f5) is an adapted form of the frozen proposal (65ccb32f: 32+/12-, cwd, heap 2048->1024, Vitest argv to --config vitest.config.ts, stop-on-first-failure break, link refusals). None of these touch source identity, which is pinned by the HEAD/clean checks and input blobs equal to the binding (manifest ceec20e2, CLI c30371fd, test 1a35a5c8).",
+   "verdict": "From the bytes, the six-entry amendment f6da5aa (parent 871b437, base d907096c) is exactly what it claims: git diff d907096c f6da5aa on docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json (index ceec20e..69cf6b4) is six in-place -/+ pairs at lines 678, 680, 682, 683, 695, 696, all inside fileHashes.files; the commit touches only the manifest (12 lines) and the new approval record (147 lines); 871b437 touches four .xenios control files; no client/, server/, shared/, scripts/ or package path changes between 25741f0 and the tc25 tip d98c939, and the manifest, test (blob 1a35a5c8) and CLI (c30371fd) are unchanged from f6da5aa to that tip. Each new value re-pins bytes whose source change was independently reviewed and whose old pin was itself the founder's stated baseline: index.css/Navbar/Footer old pins 70d3302a/e37a5b94/25da700f were introduced at 7396f53/98b43d6 on blobs 33efcb63/596f1c3c/9bfc38ae = the blobs at IC2 base 3eaa017, which Samuel named verbatim as the only authorized pre-edit baselines on 2026-10-03 (doc 30:7-26); exactly one commit, 70cd421 (Footer 1 line, Navbar 3, index.css +16/-1), takes them to 3e21b412/8ceb5184/341e24ed = 25741f0 = f6da5aa, and the reviewer accepted those bytes by hash (docs 32:185-187, 33:44-45, 34:35, 35:33). PwaLifecycle/tracking/attribution old pins 9594f398/258eda22/2c406d8a are the deployed manifest's values (79414143:663,675,676) on the deployed blobs 88cd5492/dc02e9d9/2897926e = the F9 'before' rows (NINE_PATH...json@21d904fa:566-636); exactly one commit, 3f86463, changes them (isHealthIntakePath import plus one predicate line each, two in tracking.ts) to 8e6f2257/e0b8137b/f3929cd4 = f6da5aa, reviewed in doc 41:3-9,41,69-71; doc 95:3,30 accepted the whole 25741f0 tree. The six new hash values are bound to those blobs by the executed R2 receipt (protection-cli-stdout.log@e275d344 'actual' lines) and by the reviewer's own gate output hl12/41_claude-gate-ac36e60.out:74-89; nothing was hashed by this lens. No never-reviewed bytes are blessed and no test is weakened: no P0. The disposition is WITH_CONDITIONS rather than clean because the authority criterion is met only in part from Git. The SX lens was wrong that no committed copy of the founder message exists: it is at 5672569 on the board (docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt, blob 2e1fe0ef, 8671 bytes, present at 1fbbdea and at the current board tip 0c933db). Reading it settles the shape of the approval: it is an advisor-drafted 'proposed founder approval' whose force is the founder's send; its approval block names the six paths, binds the hashes only by reference ('Resolve the exact proposal identity and complete expected hashes from the committed reconciliation/handoff at the records tip' d907096c) and contains no hash value; every condition it imposes is demonstrated in Git (proposal unchanged: patch blob 0486609f identical at d907096c and f6da5aa and line-identical to the applied diff; each new baseline equals the previously authorized source blob; six entries only, in place; static/seams/source/tests untouched; successor registered at 5672569 and acknowledged at REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md:626 item 100; failed R2 result preserved as ancestor e275d344; record disclaims clearing the composition). What Git cannot show: that Samuel sent it (message 01a13180 is only an id in integrator-authored provenance), and that the committed copy's raw sha256 equals the da648fb2 cited before the amendment in .xenios/ACTIVE_TASKS.json:14@871b437 (19:11:34Z, 39 s before f6da5aa; the copy was committed at 19:25:52Z; size matches; NOT PROVEN here). Conditions: (1) the reviewer confirms the send directly with Samuel and records that approval was by reference to d907096c's single six-pair proposal, not by stated values (PROTECTION_DISPOSITIONS:233 and doc 30:23-24 asked for per-pair hash approval); (2) the reviewer recomputes sha256 of blob 2e1fe0ef once against da648fb2; (3) the acceptance names its limits: F9 predicates have no executed test receipt, manifest $comment/zone text lags the pins, the record's per-row 'remaining' text is stale and its condition paraphrase omits three honoured conditions, custody has no coordinator ACK; (4) record-only follow-ups (comment-only manifest amendment under its own approval; record precision) are not blocking. The App-check addendum proves the App seam row by executed CLI evidence and nothing more; Vitest is NOT RUN. The composition line's protection gate remains FAIL-closed on server/static.ts plus two seam mismatches, all excluded from the 8030ec4f approval by its own text, each with named source and protection owners and approved:false.",
+   "upheld": [
+    {
+     "id": "SE-1",
+     "severity": "P1",
+     "anchor": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:704@f6da5aa; server/static.ts blob 7fade5dc @25741f0/3ec5ec0/d907096c/f6da5aa/d98c939; r2/protection-cli-stdout.log@e275d344; scripts/acceptance/verify-core-site-protection.mjs:269-273,329@f6da5aa",
+     "title": "Composition-line protection gate remains FAIL after f6da5aa; fail-closed is correct and release stays blocked [AC-3]",
+     "claim": "server/static.ts still pins 9cd3e1c3 while the blob 7fade5dc hashes to b7a76417 (receipt), so a re-run of bound command 1 at f6da5aa or at the tc25 tip d98c939 (manifest 69cf6b44 unchanged) would set failed=true and exit 1, and command 2 would not run under stopOnFirstCommandFailureOrTimeout. The drift is the one-line removal of '/research/access-hub': '/' from PUBLIC_DOCUMENT_REDIRECTS in 0d22757 (2026-10-01); the line's own records mark it approved:false (six-entry/SEPARATE_STATIC_AND_SEAM_DECISIONS_20261012.json:6-20@e124676; reconciliation/PROTECTION_DISPOSITIONS_20261012.json static row @d907096c) and the founder text excludes it. Separately :319-324 would fail on static.ts and :385-388 on the two seams (reasoned, NOT RUN).",
+     "fix": "Treat the composition line as protection-failing until server/static.ts and both seams are each reverted or re-pinned under their own exact old-to-new founder approval by their named owners, then re-execute both bound commands under a fresh binding and register receipts; do not widen or waive."
+    },
+    {
+     "id": "SE-2",
+     "severity": "P2",
+     "anchor": "codex/xenios-launch-coordination-20261005:docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt@5672569 (blob 2e1fe0ef, 8671 B); six-entry/ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json authority block @f6da5aa; .xenios/ACTIVE_TASKS.json:14@871b437; PROTECTION_DISPOSITIONS_20261012.json:233@d907096c; 30_PROTECTED_EDIT_AUTHORIZATION_ABC_2026-10-03.md:23-24",
+     "title": "Founder approval is an advisor-drafted text binding the six pairs by reference, with no hash value; the approval act (the send) and the copy's raw hash are outside what Git proves; the record's condition paraphrase is incomplete [SX-1 corrected, SXV-1, SXV-2, SXV-3]",
+     "claim": "Contrary to the SX lens, a committed copy exists (added at 5672569, ancestor of 1fbbdea, still at 0c933db). It shows the approval block sits under 'This is a proposed founder approval ... Sending it supplies that decision', lists the six paths, delegates hash resolution to records tip d907096c, and contains no sha256. Because d907096c holds exactly one six-pair proposal (patch blob 0486609f, identical at f6da5aa, line-identical to the applied diff) the reference is unambiguous and matches the doc 98 precedent, but the letter of 'one consolidated six-pair decision using these full hashes' and the founder's own 2026-10-03 'explicitly approve each old-to-new hash pair' were met by reference. Samuel's send (message 01a13180) is attested only by integrator/coordinator records; the committed copy's equality to da648fb2 (cited pre-amendment at 871b437, 19:11:34Z; copy committed 19:25:52Z) is NOT PROVEN here. The record's authority.conditions omits 'Preserve their actual manifest locations', 'Keep the previous failed protection result in the record' and 'Do not claim this amendment alone clears the whole composition', all of which Git shows were honoured.",
+     "fix": "Reviewer confirms the send directly with Samuel and records that the approval was by reference to d907096c (patch 0486609f, six rows), not by stated values; recomputes sha256 of blob 2e1fe0ef once against da648fb2; record-only follow-up quotes the condition block verbatim or cites the board copy by commit and blob beside the paraphrase. Do not accept on the paraphrase alone."
+    },
+    {
+     "id": "SE-3",
+     "severity": "P2",
+     "anchor": "TC25_EXACT_LOCAL_PROTECTION_EXECUTION_BINDING_20261012.json:16@7271ff2 and @1e4a5c6; r2/result.json:16,21@e275d344; r2/reservation.json:6,10-11@e275d344; git grep b73fbc51/643532cf on 1fbbdea (none) vs d98c939 (.xenios/ACTIVE_TASKS.json, r2/reservation.json, r2/started.json, result.json)",
+     "title": "R2 ran in a substitute checkout, not the bound cwd; the re-delegation and two 'human continuation' identifiers are recorded only by the executor [AC-1, ACV-3]",
+     "claim": "Both binding revisions bind cwd C:/xenios-wt/tc25-app-manifest-20261012; the CLI ran in C:/xenios-wt/tc25-app-protection-run-20261012-r2. The only authority for the change is executor-authored text (updatedCwdAuthority, newCwdExplicitFollowup), and reservation.json cites 'actual human continuations b73fbc51/643532cf' that exist nowhere on the board tip. The addendum does not mention either. Source identity is nonetheless enforced by the runner's HEAD===3ec5ec0 and clean-status checks and by input blobs equal to the binding, so this is a procedural deviation from the reservation, not an evidence-integrity defect.",
+     "fix": "Coordinator registers the cwd re-delegation on the board, or the addendum discloses it as executor-asserted; either register the two continuation attachments (path, raw sha256, bytes) or drop them and rely on 04b4cc70 alone. The reviewer treats source identity as established by the HEAD/clean checks and input hashes."
+    },
+    {
+     "id": "SE-4",
+     "severity": "P2",
+     "anchor": "98_TC25_APP_MANIFEST_AMENDMENT_3ec5ec0_2026-10-12.md:29; server/core-site-protection.test.ts:385-388@3ec5ec0 (blob 1a35a5c8); verify-core-site-protection.mjs:303,240-243@3ec5ec0; docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32@3ec5ec0",
+     "title": "Executed seam evidence refutes doc 98's ':385-388 should pass'; the refutation was available from the tree when doc 98 was written [AC-2, ACV-1]",
+     "claim": "The test asserts the whole seamBaselineHashes map is clean; the CLI ran the identical verifyHashes over the identical map and reported server/index.ts and server/research/index.ts mismatched, so the test would fail (reasoned, NOT RUN) although the App row matches. HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32, in the tree doc 98 reviewed, already recorded the research seam at 5b9f683b against baseline b8db03cf; doc 98 reasoned from the App row alone. Neither doc 98 nor the addendum states the refutation.",
+     "fix": "Issue a doc 98 erratum worded as an incomplete-reasoning correction: the App row is proven by executed CLI evidence; :385-388 has no executed result and would fail on the two seam rows until they are reverted or re-pinned under their own approval."
+    },
+    {
+     "id": "SE-5",
+     "severity": "P3",
+     "anchor": "six-entry/ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json entries[*].sourceApproval.remaining and application.historicalSourceApprovalNotes @f6da5aa; review docs 30:7-26, 32:185-187, 33:44-45, 34:35, 35:33, 41:3-9,41,69-71, 95:3,30",
+     "title": "Approval record's per-row provenance omits the reviewer's source acceptances and the founder's 2026-10-03 baseline authorization, and keeps stale 'must obtain ... before any amendment' text [SX-2]",
+     "claim": "Each row cites only INTEGRATION_REQUEST.txt@561596358 (which says at :83 'Samuel has NOT yet supplied exact protected-hash approval') or the F9 record (which excludes 'protected manifests/hashes/GATE01' at :794), and every row's 'remaining' field still reads as if the amendment were pending. The stronger chain (doc 30 naming the exact old baselines; docs 32/34/35 and 41 accepting the exact new bytes; doc 95 accepting 25741f0) is not cited.",
+     "fix": "Record-only follow-up: add the reviewer doc numbers and lines per row, cite doc 30 for the IC2 baselines, and mark the 'remaining' text historical in-line."
+    },
+    {
+     "id": "SE-6",
+     "severity": "P3",
+     "anchor": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:664-675 (comment convention), :402-408, :426, :514-517, :532-535, :550-553 @f6da5aa; git diff d907096c f6da5aa (no $comment change)",
+     "title": "Manifest self-documentation lags the pinned bytes: no dated old-to-new $comment line, zone text pre-dates IC2/F9 [SX-3]",
+     "claim": "Every earlier re-pin, including the App amendment at 3ec5ec0 (doc 98:17), appended a dated $comment entry; this one appended none, and the zone text still describes earlier scopes ('/health gateway and /r' for tracking/attribution, PwaLifecycle without the intake path, 'Only runtime candidate cfdfd4e' for Navbar/Footer/index.css). The tripwire is unaffected, and the founder's 'Amend only the six corresponding existing baseline entries' arguably licensed the omission.",
+     "fix": "Separate comment-only manifest amendment under its own approval recording the six old/new pairs with reviewer doc references; no hash or zone semantics change."
+    },
+    {
+     "id": "SE-7",
+     "severity": "P3",
+     "anchor": "six-entry/ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json preparedProposal.rawSha256 @f6da5aa; PROTECTION_DISPOSITIONS_20261012.json:228@d907096c; git cat-file -t c7e7445d... fails; reconciliation/SIX_SOURCE_AUTHORIZED_HASH_PAIRS_UNAPPLIED.patch blob 0486609f @d907096c and @f6da5aa",
+     "title": "Prepared-patch identity c7e7445d is a raw sha256, not a Git object; 'proposalUnchanged' is corroborated at blob level only [SX-4]",
+     "claim": "The raw hash cannot be verified from Git objects and this lens computed none; the committed patch is blob 0486609f at both d907096c and f6da5aa and its six -/+ pairs are line-identical to the applied diff, so the proposal is demonstrably unchanged at blob level while the raw-hash claim remains NOT PROVEN.",
+     "fix": "Reviewer recomputes sha256 of blob 0486609f once and records it beside the registration."
+    },
+    {
+     "id": "SE-8",
+     "severity": "P3",
+     "anchor": ".xenios/CODE_OWNERSHIP.json:5-14@871b437 (lease tc25-six-baseline-records-20261012, state active; only one other active lease at :3672 not naming the manifest); six-entry record custody.coordinatorAcknowledgment @f6da5aa",
+     "title": "Custody is corroborated by the ownership file but coordinator acknowledgment is NOT_CLAIMED [SX-5 narrowed]",
+     "claim": "The ownership file at the claim commit shows exactly two active leases, only the new one naming the manifest, so 'no active manifest lease collision' is file-backed rather than merely asserted; what stays asserted is the coordinator ACK and 'prior source-builder idle and b22f clean at 876ede5'.",
+     "fix": "Treat custody as adequate for a records-only write; if the continuity contract requires a coordinator or protection-owner acknowledgment for manifest writes, obtain and record it after the fact without reopening the byte scope."
+    },
+    {
+     "id": "SE-9",
+     "severity": "P3",
+     "anchor": "41_QUICK_ORDER_MOUNT_ac36e60_DELTA_2026-10-06.md:6-7,80; NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json:796@21d904fa (execution NOT_RUN); r2/result.json:33-34@e275d344",
+     "title": "No executed test receipt exists for the PwaLifecycle/tracking/attribution predicates anywhere in the baseline chain [SXV-4; corrects SX check (b) wording]",
+     "claim": "Doc 41 is 'SOURCE: ACCEPT WITH LIMITS' with 'All regression tests are NOT RUN by anyone'; the F9 authority record is execution NOT_RUN; R2 skipped Vitest. Baselining is a bytes decision and the bytes were statically reviewed, so this is a named limit, not a defect in the amendment.",
+     "fix": "State 'tests for the isHealthIntakePath predicates: NOT PROVEN RUN' as a named limit of the acceptance; a later qualification run under existing test authority can close it without touching the baseline."
+    },
+    {
+     "id": "SE-10",
+     "severity": "P3",
+     "anchor": "scratch ql/TC25_PROTECTION_R2_EXECUTED_EVIDENCE_ADDENDUM_20261012.json:20 (revision2 at 1e4a5c6) vs 98_...md:7,26 (7271ff2); board 1fbbdea R1_UNEXECUTED blob f82e1b96 vs rev1 blob 8f0676dc (git diff: status line replaced, releaseReason added)",
+     "title": "Addendum cites binding revision 2 without disclosing the supersession, and the board's preserved R1 copy is not byte-identical to the rev1 bytes doc 98 compared against [AC-4, ACV-4]",
+     "claim": "Rev2 shifted the window, dropped process/output caps and permitted the adapted runner; source, tree, base, cwd, argv, Node, Vitest version and stop-on-first-failure are unchanged and the run lies inside both windows, so doc 98's comparison dimensions are unaffected. The exact rev1 bytes survive at 7271ff2 and as r2's coordinator-execution-binding-7271ff22.json (8f0676dc).",
+     "fix": "Add a supersession note to the addendum (rev1 7271ff2 -> rev2 1e4a5c6, attemptsConsumed 0, run satisfies both windows) citing 7271ff2 or blob 8f0676dc for the exact rev1 bytes."
+    },
+    {
+     "id": "SE-11",
+     "severity": "P3",
+     "anchor": "git diff 65ccb32f 26ecf9f5 (runner-proposal-NOT_RUN.cjs vs r2/runner-executed.cjs: 32+/12-; cwd, --max-old-space-size 2048->1024, TEMP/TMP isolation, junction refusals, Vitest argv --config vitest.config.ts, reservation.cwd/window check, stop-on-first-failure break); r2/preflight.json:170 runnerSha256 de235415",
+     "title": "Executed runner is an adapted form of the frozen proposal runner; the divergence is undisclosed in the addendum and result [AC-5]",
+     "claim": "Every change moves toward binding rev2 or adds a safety check, and preflight pins the executed runner hash, but the reviewer has to discover the divergence from the blobs.",
+     "fix": "State in the addendum that the executed runner is the adapted proposal, with both blob ids."
+    },
+    {
+     "id": "SE-12",
+     "severity": "P3",
+     "anchor": "verify-core-site-protection.mjs:240-243@f6da5aa (seam mismatches only; no seam missing branch); r2/preflight.json:128-131@e275d344 (App lfSha256 1ee2d576); manifest :1255@3ec5ec0",
+     "title": "'App: MATCH' rests on preflight/postflight and the runner's HEAD/clean checks, not on CLI stdout alone [AC-6]",
+     "claim": "App's absence from the receipt's seam list is consistent with a match or a missing file; the match is established by the executor-authored preflight, which is consistent with the git blob b5cc8edc doc 98 hashed.",
+     "fix": "Cite preflight.json's App lfSha256 as the basis for 'App: MATCH' in the addendum."
+    },
+    {
+     "id": "SE-13",
+     "severity": "P3",
+     "anchor": "binding inputs[] @7271ff2/@1e4a5c6 ('rawSha256' 95445fdf, bcde93a6, e0cd56bf) vs r2/preflight.json files[] (those values as lfSha256; different rawSha256 values); server/core-site-protection.test.ts:27-28@f6da5aa",
+     "title": "Binding input 'rawSha256' labels are LF-normalized hashes while the checkout was CRLF [AC-7]",
+     "claim": "Results are unaffected because hashContent normalizes CRLF, but a reader comparing the binding to preflight raw values sees a false mismatch.",
+     "fix": "Relabel as sha256-lf or add raw CRLF values in any successor binding."
+    },
+    {
+     "id": "SE-14",
+     "severity": "P3",
+     "anchor": "manifest infrastructureZones prefixes 'docs/', '.xenios/' @3ec5ec0; verify-core-site-protection.mjs classifyPath / runGate @3ec5ec0; receipt 'infrastructure : 6'",
+     "title": "The gate classifies manifest re-pins as silent infrastructure, so a future RESULT: PASS cannot distinguish reverted bytes from re-pinned baselines [ACV-2]",
+     "claim": "Only the hash tripwire and human approval stand between a re-pin and a PASS; any PASS after the static/seam re-pins is consistency evidence, not approval evidence.",
+     "fix": "State in the TC-25 review that every manifest row change on this line must be matched by a human reader to an exact old-to-new approval record."
+    }
+   ],
+   "rejected": [
+    {
+     "id": "SX-1 (evidence clause: 'git log --all ... finds no committed copy; ls-tree of the tip finds none')",
+     "reason": "Failed check, not a fact. docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt was added at 5672569 (2026-10-12T14:25:52-05:00), blob 2e1fe0ef, cat-file -s 8671; git log 1fbbdea..5672569 is empty so it was already in the 1fbbdea tip the lens cited, and it is present at the current board tip 0c933db. The finding's substance (authority by reference; send and raw hash outside Git) is carried as SE-2 with corrected evidence; the lens's fix 'optionally commit a verbatim copy' is moot."
+    },
+    {
+     "id": "SX check (b) wording 'exact hunks and tests' for doc 41",
+     "reason": "41_QUICK_ORDER_MOUNT_ac36e60_DELTA_2026-10-06.md:3-9 and :80 state 'All regression tests are NOT RUN by anyone' and '(authored, NOT RUN)'; the hunks were reviewed, the tests were not executed. Carried as SE-9."
+    },
+    {
+     "id": "SX check (a) 'Current board branch' PARTIAL",
+     "reason": "Not a defect of the amendment. The board (codex/xenios-launch-coordination-20261005, now 0c933db) is a records branch that carries the pre-amendment source blobs and manifest 241fc344 by design; the accepted line is codex/tc25-app-manifest-20261012 (now d98c939), on which no source or manifest byte changed after f6da5aa."
+    },
+    {
+     "id": "SX-5 as originally scoped ('custody asserted')",
+     "reason": "Narrowed rather than upheld as written: .xenios/CODE_OWNERSHIP.json@871b437 shows exactly two active leases (:8 the new six-baseline lease naming the manifest; :3672 a lease not naming it), so the no-collision claim is file-backed. Only the coordinator ACK remains asserted; carried as SE-8."
+    }
+   ],
+   "remainingCompositionProtectionState": "By reading only, NOT RUN, at f6da5aa and unchanged through the tc25 tip d98c939 (manifest blob 69cf6b44; diff f6da5aa..d98c939 over the manifest, server/, client/, scripts/, shared/ and package files is empty): fileHashes.files has 38 entries, 37 match and 1 hard mismatch; seamBaselineHashes.files has 5 entries (:1255-1259), 3 match and 2 mismatch. (1) HARD: server/static.ts, manifest :704 expects 9cd3e1c3, blob 7fade5dc hashes to b7a76417 (receipt @e275d344); drift = 0d22757 (2026-10-01, 'fix(health): restore the bounded Research access hub') removing the single PUBLIC_DOCUMENT_REDIRECTS line '/research/access-hub': '/'; source owner codex-xenios-health-launch-implementation-20260930 via the HL-17 historical handoff (not a live lease), protection owner OWNER-W2-CONTROL-PLANE / Website 2 release-manager; approved:false (SEPARATE_STATIC_AND_SEAM_DECISIONS_20261012.json:6-20@e124676; PROTECTION_DISPOSITIONS_20261012.json static row @d907096c: 'EXPLICIT_PROTECTED_SOURCE_AND_BASELINE_DISPOSITION_OPEN'); excluded by the founder text ('This approval excludes: server/static.ts'). (2) SEAM: server/index.ts, :1256 expects 1d6594d6, blob 0557ef2c hashes to 9c024afb; cumulative drift from 3562c03 through cb9b8d6, 5809b72, 27463d7, 2f0a975 and 8e01ef8 (2026-10-11 disabled Quick Order composition); owner: historical Health core source owner plus the existing integrator codex-accepted-source-integration-20261005 for the QO hunk, protection OWNER-W2-CONTROL-PLANE; approved:false; the record forbids dispositioning only the last QO hunk. (3) SEAM: server/research/index.ts, :1257 expects b8db03cf, blob 6220347d hashes to 5b9f683b; drift = 2dc7d62 (quote-gateway GET/POST admission); owner: historical Health source owner, task HEALTH-HL12-QUOTE-GATEWAY-20260930, handoff lease dcba6b55, protection OWNER-W2-CONTROL-PLANE; approved:false; expressly excluded from the 2026-10-01 two-hash amendment (HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-32). Consequences, reasoned from verify-core-site-protection.mjs:269-273,329 and server/core-site-protection.test.ts:319-324,385-388 (blobs c30371fd and 1a35a5c8 unchanged since before 25741f0): bound command 1 would print RESULT: FAIL and exit 1 on static.ts alone; command 2 would not start; if the Vitest file were run, :319-324 would fail on static.ts and :385-388 on both seams. The two seam rows are nonfatal to the CLI but fatal to the test, so the CLI's exit code understates the test state. The gate is FAIL-closed, which is correct; no waiver exists in any record in scope. Nothing on this line may be described as protection-passing until each of the three is reverted or re-pinned under an exact old-to-new founder approval obtained through its named owners, and both bound commands are re-executed under a fresh binding with registered receipts. Because docs/ and .xenios/ are silent infrastructure to the classifier, a later PASS must be read against the approval records by a human, as this review did for the six rows.",
+   "deviations": [
+    "Did not perform the CLAUDE.md mandatory session reading (.xenios/MASTER_CORPUS.md, FULL_VISION.md, build status, latest handoff, ownership files) or the xenios-os.mjs validate/status startup commands: the task's hard rules confine Read/Grep/Glob to the review-records dir and the scratch ql/ dir and Bash to read-only git against C:/xenios-wt/health-review, and this lens made no edit, so the 'before any edit' precondition never arose.",
+    "Several Bash invocations chained multiple permitted git commands with ';' in one call; one pipeline used `cut -c1-N` (not in the permitted pipe list of grep/sed -n/head/wc) to truncate very long manifest $comment and JSON lines; `git log -S<hash>` (pickaxe) and `git grep -l` over two whole trees (1fbbdea, d98c939) were used within the 'log' and 'grep' verbs. No cd, echo, variables, loops, redirection, interpreters, tests, MCP, WebFetch, checkout/commit/fetch/push or session contact; no file created, modified or deleted.",
+    "One `git cat-file -t c7e7445d...` returned exit 128 'Not a valid object name'; that is the expected result (the value is a raw sha256, not a Git object) and the command was read-only. One `git ls-tree d907096c f6da5aa -- <path>` used the multi-tree-ish form, which treats the second argument as a pathspec; I re-ran it per revision.",
+    "Read was used on five files only: two scratch files in ql/ (registration, addendum) and review docs 98, 41 (two ranges), 95 and 30; Grep searched the review dir including its hl12/ and imagery/ subfolders; one Glob in the review dir. All repository content, including board-branch and .xenios records, was obtained through git show/diff/ls-tree/log/grep/cat-file/rev-parse. I cannot observe whether the tool harness persisted any output to its own tool-results store; I did not create, read or touch any such file.",
+    "No sha256 was computed. Every hash equality relies on receipts produced by others (R2 CLI stdout at e275d344, reviewer gate outputs hl12/41_claude-gate-ac36e60.out, reviewer docs 29/30/32/33/34/35/37/41/95/98, the F9 and IC2 records) cross-checked against Git blob identities. NOT PROVEN by this lens: manifest sha256 95445fdf/1e6f6b35 (taken from the reviewer), attachment hash da648fb2 against blob 2e1fe0ef, patch hash c7e7445d against blob 0486609f, the addendum's and registration's rawSha256 values, and byte identity between the scratch addendum/registration and board blobs 76723ee6/46616281 (text-identical on inspection of the fields compared). No CR-byte check was performed.",
+    "All statements about what a CLI re-run or the Vitest file would do are reasoned from the bytes at f6da5aa and d98c939, NOT RUN. The Node 20.19.0 / Vitest 4.1.10 facts for the App check were read from the binding, preflight and result records, not re-verified against any binary."
+   ]
+  }
+ }
+}

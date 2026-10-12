@@ -636,3 +636,11 @@ separately; separate passing runs are not evidence for any combined tree. Nothin
 | 101 | `ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-SOURCE-REVIEW-20261012` r1 (`a4a44bf` / `fa7de0a`) | COMPLETE: **ACCEPTED WITH NAMED LIMITS.** The one-line copy is truthful on every path that shows it; tests discriminate; the 13/13 receipt binds the exact candidate. P2 follow-up AS-1 (case list is a mount-time snapshot); P3 residue. Independent increment; not evidence for any combined tree |
 
 Docs 99 (QL r2) and 100 (six-entry and App check) remain in review. Nothing was executed.
+
+## Queue state update (2026-10-12, doc 100)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 100 | `TC25-SIX-BASELINE-SCOPE-REVIEW` r1 (`f6da5aa` / `f9d34be4`) | COMPLETE: **SCOPE ACCEPTED.** Six rows only; each re-pins bytes reviewed in docs 30/32-35 and 37/41/95; founder approval verified verbatim (`da648fb2…`, board copy `5672569`); prepared-patch hash verified. **App check:** the CLI ran at `3ec5ec0` (exit 1), the App row matched, Vitest NOT RUN. **Doc 98 erratum:** the seam test would fail on two other seam rows. **Composition line gate still FAILS** on `server/static.ts` plus two seams, each needing its own owner's old-to-new approval (SE-1, P1 for that line's release) |
+
+Doc 99 (QL r2) remains in review. Nothing was executed.
