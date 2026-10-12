@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12T20:24:50Z",
+  "kind": "ORIGINAL_DOC101_SOURCE_ACCEPTANCE_CONSUMED",
+  "originalReviewer": {
+    "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "commit": "be35aa7e0907722fe8363c058f31a07bff617be5",
+    "report": "docs/review/xenios-health-launch-review-20260930/101_ACCOUNT_SUPPORT_OUTCOME_a4a44bf_2026-10-12.md",
+    "archive": "docs/review/xenios-health-launch-review-20260930/hl12/101_account_support_outcome_review.json",
+    "mainRead": "Complete report and archive read from exact Git object, not only user summary",
+    "testsExecutedByReviewer": false
+  },
+  "target": {
+    "task": "ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-SOURCE-REVIEW-20261012",
+    "revision": 1,
+    "source": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+    "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
+    "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937",
+    "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d"
+  },
+  "disposition": "ACCEPTED_WITH_NAMED_LIMITS",
+  "scope": "Source acceptance of independent one-text-node correction plus tests, not release qualification or execution authorization.",
+  "acceptedEvidence": {
+    "focusedTests": "13/13 syntheticjsdom passed under pinned Node20.19/Vitest4.1.10 in preserved owner run; reviewer reconciled candidate/tree/argv/counts/timestamps/log/blob identity, did not execute tests or recomputeSHA256.",
+    "dependencies": "Donor privatephysical node_modules identity by lock/metadata and recordedselectedhashes, not full installed-tree provenance.",
+    "runtime": "Nonconfirmation copy truthful on every reaching path; server-authored definitive refusals retain not-recorded copy; no state/API/route/payment change."
+  },
+  "severityScope": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 1,
+    "interpretation": "Doc101 scope only, not project-wide clearance. AS-1 explicitly nonblocking source acceptance and remains open."
+  },
+  "findings": [
+    {
+      "id": "AS-1",
+      "severity": "P2",
+      "title": "Copy directs the customer to a case list that is a mount-time snapshot and will not show the possibly-recorded case until reload",
+      "status": "OPEN_NAMED_LIMIT_OR_FOLLOWUP",
+      "disposition": "Separate optional source successor: refetch after uncertain outcome or instruct reload; not required before this source acceptance."
+    },
+    {
+      "id": "AS-2",
+      "severity": "P3",
+      "title": "Denial and rate-limit distinctions are not driven through the real wrapper in the scoped test file",
+      "status": "OPEN_NAMED_LIMIT_OR_FOLLOWUP",
+      "disposition": "Preserve original published finding and its limits; no automatic source change."
+    },
+    {
+      "id": "AS-3",
+      "severity": "P3",
+      "title": "Pre-existing: a 400 validation denial renders sign-in blame copy (out of scope, unchanged)",
+      "status": "OPEN_NAMED_LIMIT_OR_FOLLOWUP",
+      "disposition": "Preserve original published finding and its limits; no automatic source change."
+    },
+    {
+      "id": "AS-4",
+      "severity": "P3",
+      "title": "Named evidence limits: synthetic jsdom run, donor-copied node_modules without full-tree digest, hashes not independently recomputed",
+      "status": "OPEN_NAMED_LIMIT_OR_FOLLOWUP",
+      "disposition": "Preserve original published finding and its limits; no automatic source change."
+    },
+    {
+      "id": "ASV-1",
+      "severity": "P3",
+      "title": "The uncertain-outcome notice is cleared by any edit, so the 'check your case history' instruction is transient",
+      "status": "OPEN_NAMED_LIMIT_OR_FOLLOWUP",
+      "disposition": "Preserve original published finding and its limits; no automatic source change."
+    },
+    {
+      "id": "ASV-2",
+      "severity": "P3",
+      "title": "Three non-envelope definitive refusals outside routes.ts map to the uncertain copy (truthful, imprecise, effectively unreachable)",
+      "status": "OPEN_NAMED_LIMIT_OR_FOLLOWUP",
+      "disposition": "Preserve original published finding and its limits; no automatic source change."
+    },
+    {
+      "id": "ASV-3",
+      "severity": "P3",
+      "title": "Pre-existing cause misattribution in two definitive refusals, unchanged here",
+      "status": "OPEN_NAMED_LIMIT_OR_FOLLOWUP",
+      "disposition": "Preserve original published finding and its limits; no automatic source change."
+    },
+    {
+      "id": "ASV-4",
+      "severity": "P3",
+      "title": "Checker citation correction for the base error test",
+      "status": "CITATION_CORRECTION_RECORDED_BY_REVIEWER",
+      "disposition": "Preserve original published finding and its limits; no automatic source change."
+    },
+    {
+      "id": "ASV-5",
+      "severity": "P3",
+      "title": "Registration copy filenames do not match the scratch files as presented",
+      "status": "OPEN_NAMED_LIMIT_OR_FOLLOWUP",
+      "disposition": "Existing coordinator should reconcile copy aliases to canonical records paths, preserving original receipt bytes/history."
+    }
+  ],
+  "canonicalEvidenceIndex": [
+    {
+      "name": "SOURCE_AND_TEST_RESULT.json",
+      "path": "docs/health-launch/account-support-outcome-20261012/SOURCE_AND_TEST_RESULT.json",
+      "meaning": "Source/test result summary; not raw execution receipt",
+      "gitBlob": "71499372562617a92bd8c5c8a0631b2879017e19",
+      "bytes": 7137,
+      "registrationAlias": "SUPPORT_OUTCOME_ACTUAL_SOURCE_TEST_RECEIPT_FA7DE0A5_20261012.json"
+    },
+    {
+      "name": "receipt.json",
+      "path": "docs/health-launch/account-support-outcome-20261012/receipt.json",
+      "meaning": "Actual launcher execution receipt",
+      "gitBlob": "95cb6d2aaf95937b19839aca6aa95356163fa39e",
+      "bytes": 1601
+    },
+    {
+      "name": "run.log",
+      "path": "docs/health-launch/account-support-outcome-20261012/run.log",
+      "meaning": "Actual focused-run text log",
+      "gitBlob": "917f948a5464500794b3948fb0a4b9131cf5a812",
+      "bytes": 2803,
+      "registrationAlias": "SUPPORT_OUTCOME_ACTUAL_TEST_LOG_FA7DE0A5_20261012.log",
+      "reviewScratchAlias": "support_run.log"
+    }
+  ],
+  "remainingRelease": [
+    "Exact released support candidate protection disposition/CLI/companion gate",
+    "Candidate-applicable build/typecheck/fullsuite and route controls as required by existing release procedure",
+    "Applicable support browser/journey evidence",
+    "Exact candidate release manifest/config/dependency/rollback/authority and served-version checks"
+  ],
+  "carryGuard": "QL7a2 build/protection/typecheck evidence does not become supporta4a44bf evidence. Any composition needs its exact tree and applicable checks. No automatic source amendment to accepted a4a44bf.",
+  "otherReviewTargets": {
+    "Doc99": "QLr2 7a2bf7533f5c26d98e0bdb34a862852942b2914e remains IN_REVIEW",
+    "Doc100": "Six-entry f6da5aa6154cc62bdbec34ce29a0a5759fb84136 plus App-check addendum remains IN_REVIEW"
+  },
+  "currentSelection": "Support is now source-accepted; neither independent candidate is release-qualified. Keep source candidates frozen and separate; no automatic combination or deploy selection.",
+  "actions": {
+    "recordsOnly": true,
+    "sourceChanges": false,
+    "testsRun": false,
+    "buildRun": false,
+    "sourceIntegration": false,
+    "push": false,
+    "deploy": false,
+    "SQL": false,
+    "hostedChanges": false,
+    "realEmail": false,
+    "payment": false
+  }
+}

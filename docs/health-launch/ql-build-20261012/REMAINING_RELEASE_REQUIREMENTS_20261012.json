@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "at": "2026-10-12T20:03:48Z",
+  "at": "2026-10-12T20:25:47Z",
   "kind": "CANDIDATE_SPECIFIC_REMAINING_RELEASE_REQUIREMENTS",
   "instruction": {
     "path": "C:/Users/sboad/.codex/attachments/0ada60b9-885b-4cdd-abe9-e66aaa035244/Pasted text.txt",
@@ -41,7 +41,17 @@
         "source": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
         "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
         "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937",
-        "verdict": null
+        "verdict": {
+          "commit": "be35aa7e0907722fe8363c058f31a07bff617be5",
+          "disposition": "ACCEPTED_WITH_NAMED_LIMITS",
+          "source": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+          "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
+          "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937",
+          "P0": 0,
+          "P1": 0,
+          "P2": 1,
+          "limits": "AS-1P2 explicitly nonblocking followup, not closed. All P3 IDs preserved in consumed record; reviewer executed no tests."
+        }
       }
     ],
     "scope": "Separate source dispositions; submitted receipts not reviewer-executed tests. Doc95/97 stay closed. Earlier transport failure retained as history, no longer current delivery blocker.",
@@ -50,7 +60,7 @@
   "selection": {
     "qualifiedReleaseCandidate": null,
     "provisionalQualificationTarget": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
-    "reason": "QL has exact build/protection plus applicable focused evidence; support is smaller source diff but lacks those own-tree gates and carries old manifest hashes. Neither independently accepted/qualified yet. Do not combine automatically.",
+    "reason": "QL has actual build/protection/typecheck gates plus focused evidence but Doc99 pending. Support is smaller and nowsourceaccepted Doc101, but lacks own applicable protection/build/typecheck/fullsuite. Neither releasequalified; no automaticcombination.",
     "truthfulQLScope": "Request recovery corrections and fail-closed payment-transition hold, not operational paid checkout.",
     "truthfulSupportScope": "Uncertain-outcome wording and draft-preservation regressions, not backend idempotency or QL correction."
   },
@@ -92,11 +102,12 @@
         "64client and66server as separate runs with recorded unchanged-byte applicability",
         "Exact7a2 CLI PASS",
         "Exact7a2 companion36PASS",
-        "Exact7a2 production buildPASS with warnings"
+        "Exact7a2 production buildPASS with warnings",
+        "Exact7a2 typecheckPASS4b8a2f7"
       ],
       "missing": [
         "Original independent disposition",
-        "Candidate-applicable full suite and typecheck PASS",
+        "Candidate-applicable full suite PASS",
         "Route uniqueness executed result",
         "Release diff-scan/manifest/site records applicable exact-candidate qualification",
         "Applicable supported request/status/staff-readback browser/journey evidence",
@@ -106,10 +117,10 @@
     },
     "support": {
       "carry": [
-        "Own13 focused testsPASS"
+        "Own13 focused testsPASS",
+        "Doc101 originalsourceacceptancebe35aa7 WITH_NAMED_LIMITS; AS-1P2nonblocking remainsopen"
       ],
       "missing": [
-        "Original independent disposition",
         "Candidate-applicable full suite/typecheck/build",
         "Own exact protection disposition/CLI/companion checks; two historical stale baseline entries need existing protection custody",
         "Route uniqueness and release diff/manifest/site records",
@@ -117,7 +128,7 @@
         "Same conditional release destination/rollback/config/dependency/postdeploy requirements"
       ]
     },
-    "fullSuiteAndTypecheckDecision": "Required genuine missing qualification for both candidates. No exemption/candidate-applicable old exact-tree evidence found. New execution needs frozen command/runtime/dependencies, finite one-heavy window, no broad/rerun consent inferred.",
+    "fullSuiteAndTypecheckDecision": "Fullsuite required and not executed for eithercandidate. ExactQL typecheck nowPASS; support needsownapplicabletypecheck. No exemption or olddifferent-tree evidence borrowed. Fullsuite effects/preflight are explicit and no SQL/boot gating skipped silently.",
     "historicalEvidence": "Do not relabel production794 or different full-composition trees; preserve refused/skipped/failed runs. Combining candidates requires actual combined-tree checks."
   },
   "warnings": {

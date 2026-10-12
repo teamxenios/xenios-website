@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "at": "2026-10-12T20:15:27.804Z",
+  "at": "2026-10-12T20:25:47Z",
   "kind": "TENSA_LAUNCH_RECONCILED_ACTUAL_RESULTS",
   "session": "codex-accepted-source-integration-20261005",
   "sourceBrief": {
@@ -383,7 +383,7 @@
     "limits": "Local source/historical fixture, not newly executed suite, price publication, hosted count or universal orderability.",
     "owner": "Existing catalog/detail reservations preserved",
     "independentSupportFinding": {
-      "status": "IMPLEMENTED_FOCUSED_TEST_PASS_NOT_RELEASE_QUALIFIED",
+      "status": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS_NOT_RELEASE_QUALIFIED",
       "branch": "codex/account-support-outcome-20261012",
       "source": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
       "sourceTree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
@@ -415,8 +415,9 @@
       "coverage": "Thrown callback and real API wrapper with mocked transport rejection/201 body loss; full form draft retained, one POST/no automatic retry, no invented case/success/non-recording guarantee; existing denial/rate-limit/doc tests retained.",
       "containment": "Private physical matching dependency copy, zero reparse points, scrubbed environment,1worker/no-file-parallelism,1024MB heap,3minute cap. No installation or clean rebuild claimed. Optional full installed-byte inventory manually stopped without digest; not an application timeout.",
       "limits": "No browser/build/typecheck/full-suite/release qualification. Own base794 manifest still contains two historical baselines; separate QL CLI PASS not relabelled as support protection pass. Both source candidates preserved separately; no integration.",
-      "review": "ACKNOWLEDGED_AND_IN_REVIEW original a2ffb6c Doc101 exacta4a44bf/tree2c123d9. Verdict pending; independent fromQL.",
-      "historicalReviewDelivery": "NOT_DELIVERED_NOT_ACCEPTED; existing coordinator has exact frozen source and result"
+      "review": "Original Doc101 be35aa7e0907722fe8363c058f31a07bff617be5 ACCEPTED_WITH_NAMED_LIMITS for exacta4a44bf/tree2c123d9/recordsfa7de0a.13/13 submittedreceipt acceptedwithsynthetic/dependencylimits; no reviewerexecution. AS-1P2 followup nonblocking acceptance, unresolved; no sourcecorrection applied.",
+      "historicalReviewDelivery": "NOT_DELIVERED_NOT_ACCEPTED; existing coordinator has exact frozen source and result",
+      "reviewFindingsIndex": "docs/health-launch/ql-build-20261012/DOC101_ACCEPTANCE_CONSUMED_20261012.json"
     },
     "identityReconciliation": "1645c4d271e990f1b89f6e2d77f01722dbf693a0:docs/health-launch/ql-build-20261012/REMAINING_RELEASE_REQUIREMENTS_20261012.json; exact IDs and visibility compared.420-2legacy+6new-1shipping=423;418sharedrawIDs,zero duplicatevariants; no count padding or availability inference."
   },
@@ -454,17 +455,17 @@
     "money": false,
     "schedules": "UNCHANGED"
   },
-  "reviewRegistration": "Coordinatorc21f510eaa81f2888bf1a11d44799c39932b2f34 exact3 targets now acknowledged by originalreviewera2ffb6c. Doc99 QLr2 at7a2; Doc100sixr1 atf6da5aa; Doc101support r1 ata4a44bf. AllIN_REVIEW, noneaccepted at lastread.",
+  "reviewRegistration": "Original3 registrations ACKa2ff; Doc101support nowACCEPTED_WITH_NAMED_LIMITS atbe35aa7. Doc99QLr2 at7a2 andDoc100sixr1 atf6da5aa/Appcheckaddendum remainIN_REVIEW. No duplicateprompt or closedreview restart.",
   "checkpoint": {
     "publication": "LOCAL_ONLY; no push/merge/CI/deploy authorized by these receipts",
     "sourceWorktrees": "QL42ac49e/supportfa7de0a/build7a2/b22f876ede5 all clean at final verification",
     "activeJobs": "No own compiler/test/build active after typecheck normalexit. Staticroute notstarted; originalreviewer independently active.",
     "recordsBranch": "codex/tc25-app-manifest-20261012",
     "recordsWorktree": "C:/xenios-wt/tc25-app-manifest-20261012",
-    "evidenceTipBeforeHandoff": "b45fa602223b4d653d4751eafed16d85b7834a83",
-    "nextFirstAction": "Consume current coordinator freshroutewindow if issued and actual original Doc99/100/101 independently. Resolve fullsuite effects before any complete run. No repeat reconciliation or automatic source change."
+    "evidenceTipBeforeHandoff": "dc4dab1cd77e52d8fcf8c15e08942ae7da93b4e1",
+    "nextFirstAction": "Consume new Doc99/100 when published; Doc101 accepted with named limits, not pending. Coordinator owns freshroutewindow and ASV-5 registration aliases; do not use expired typecheck window. No accepted-support source change or combinedcandidate."
   },
-  "next": "Original reviewer is in review, not undelivered: consume separate committed Doc99/100/101. Complete exact pending route/fullsuite and remaining applicable release qualification without bundling frozen candidates. Existing payment owner needs Samuel's ONE current protected configuration reference or actual custodian. No qualified deploy yet.",
+  "next": "Preserve support source acceptance and unresolvedAS-1/P3IDs; qualify exact selected independentcandidate before release. QLroute bindingb45fa60 remainsNOT_RUN pendingfreshwindow; fullsuite containmentdisposition remains. No repeated13-test run, historicalpaymentsearch or newsource correction needed for Doc101acceptance. Existingpaymentowner stillneeds Samuel ONE current protectedconfigurationreference oractualcustodian.",
   "currentInstruction": {
     "path": "C:/Users/sboad/.codex/attachments/0ada60b9-885b-4cdd-abe9-e66aaa035244/Pasted text.txt",
     "sha256": "389777721040734d728c1b402c6a57c4885197d2a9ae0cda03b5eb199c06f675",
@@ -478,16 +479,27 @@
     "verdicts": {
       "Doc99": null,
       "Doc100": null,
-      "Doc101": null
+      "Doc101": {
+        "commit": "be35aa7e0907722fe8363c058f31a07bff617be5",
+        "disposition": "ACCEPTED_WITH_NAMED_LIMITS",
+        "source": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+        "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
+        "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937",
+        "P0": 0,
+        "P1": 0,
+        "P2": 1,
+        "limits": "AS-1P2 explicitly nonblocking followup, not closed. All P3 IDs preserved in consumed record; reviewer executed no tests."
+      }
     }
   },
   "remainingReleaseRequirements": {
     "assessment": "1645c4d271e990f1b89f6e2d77f01722dbf693a0:docs/health-launch/ql-build-20261012/REMAINING_RELEASE_REQUIREMENTS_20261012.json",
-    "delta": "QL typecheck nowPASS, replacing only prior missing-typecheck status; other missing items remain.",
+    "delta": "QL typecheckPASS4b8a2f7; supportoriginalsourceacceptancebe35aa7 now closes its disposition item only. Neither candidate has completed all remaining applicable gates. No borrowing QLresults for support or automatically combining.",
     "fullSuitePreflight": "90f2434:docs/health-launch/ql-build-20261012/FULL_SUITE_EFFECT_PREFLIGHT_20261012.json, timestamp corrected in4b8a2f7",
     "fullSuite": "NOT_RUN;971staticfiles. TruthyCI activates2DockerSQLgroups;4realbootcases have wildcardlisteners/fixedunowned54321/outboxpolling/childcleanup concerns. No implicit SQL grant or gate weakening; no source/test/config changed.",
     "qualifiedReleaseCandidate": null,
     "provisionalTarget": "QL7a2 remains furthest qualified standalone request increment; not paidcheckout; no automatic support bundle.",
-    "warnings": "Build remains PASS_WITH_WARNINGS. Mixedimportunchangedbaseline stops one homechunk split; mainchunk506335B>500000advisory by6335, no exactbaselineartifactcomparison. No warningfatalrulefound, no performanceclearance."
+    "warnings": "Build remains PASS_WITH_WARNINGS. Mixedimportunchangedbaseline stops one homechunk split; mainchunk506335B>500000advisory by6335, no exactbaselineartifactcomparison. No warningfatalrulefound, no performanceclearance.",
+    "selectionAfterDoc101": "Support is a source-accepted small alternative, but needs its own protection/build/typecheck/fullsuite/release qualifications; QL remains current prepared staticroute target. Neither release-selected or deployed."
   }
 }
