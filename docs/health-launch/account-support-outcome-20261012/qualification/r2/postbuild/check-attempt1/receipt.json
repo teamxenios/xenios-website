@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "mode": "check",
+  "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+  "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+    "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node_modules\\npm\\bin\\npm-cli.js",
+    "run",
+    "check",
+    "--",
+    "--incremental",
+    "false"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website",
+  "runnerSha256": "b6d4900ca46c9daafa05201f087320da3d78e2cebbfb4798adc5019e0b3e969a",
+  "pinsPath": "C:/Users/sboad/.codex/tmp/support-postbuild-20261012/pins.json",
+  "pinsSha256": "1b3379f7cf49c17b51776efee92279a1d873188b226363a32164369e27a8e5d0",
+  "pins": {
+    "schemaVersion": 1,
+    "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+    "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+    "nodeVersion": "v20.19.0",
+    "npmVersion": "10.8.2",
+    "files": [
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+        "sha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js",
+        "sha256": "3ce7cba6f5128dd5f54c98b6a5036b0f850496878cc2e21044b675fe3c594e3e"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/package.json",
+        "sha256": "c24c86166b39e4a7df131f03a8bbe904703de8fad44485bcf527d4de7806d6c6"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/lib/cli.js",
+        "sha256": "bbcf260a5c9c25e8789fe26905951d52a76d9723ce15416c3174f8c732cf2d17"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/npm.cmd",
+        "sha256": "21b46c69ad6e2f231f02a9e120f4ba6c8e75fef5a45637103002eab99f888ab8"
+      },
+      {
+        "path": "C:/Program Files/Git/cmd/git.exe",
+        "sha256": "37c5725818d602e951ba2563b870d62763322956b73373da4c33a0b566a80bc9"
+      },
+      {
+        "path": "C:/Windows/System32/cmd.exe",
+        "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a"
+      },
+      {
+        "path": "C:/Windows/System32/taskkill.exe",
+        "sha256": "75f4aed9bf21d8f9b2b1a2ddbc1f2c7e4e0aef8b3b94bd5eda02d9d84c34f33f"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/package.json",
+        "sha256": "32aa3da519b9377d43d30731e60f75a5ff2fe5d0f57d719b43081ef6adf280b4"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/package-lock.json",
+        "sha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/.npmrc",
+        "sha256": "6d5c57b99119abf207f8554d3cc743ce6578e6baea2a67317ba21d98bc303aa7"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/tsconfig.json",
+        "sha256": "74cb25011ea689d2b3f8412f14e8a61fed78f02e511d272a30346e871f03eded"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/vitest.config.ts",
+        "sha256": "b175309ea7ca8cf0805fccb169e067c9d923fdac9a810237ff22969451833fee"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/server/core-site-protection.test.ts",
+        "sha256": "c85c87e14a17922673c01e41eb082a8e2847148be95b03df51d4013eca803940"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "sha256": "4fb73d7cfac6fcf653a657f771e534a33319e13616f845ea7d34ef1a6afcb4c1"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/scripts/acceptance/verify-core-site-protection.mjs",
+        "sha256": "019b2dac87dbc8d2ec37cb4ccf881628c512bcaeda95defc922dbf119bb09b07"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/client/src/lib/content.ts",
+        "sha256": "f7593841752348cf086838e55b1d83efb9e4e44dfcd995846390716629f5436f"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/client/src/lib/careers.ts",
+        "sha256": "ce100e17b9d8269a35e933a844e8a6e053c1f36ff957f70248e26e7f37b1aaeb"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/.package-lock.json",
+        "sha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/.bin/tsc.cmd",
+        "sha256": "54c7c33889f405746bfaba0fda5e725d4a88b77a708d41806408b4662f88d509"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/typescript/package.json",
+        "sha256": "16af7ea27880259b39ff8f123566aaec815cdca1c3ab8d28330c8b652055ccf0"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/typescript/bin/tsc",
+        "sha256": "8d5fa5bd883fec0979fc2004f1fe1d99aef40570155d550eadc0b03b55513bf0"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/typescript/lib/tsc.js",
+        "sha256": "08e6b5db2bd9ee78fc577ec6dd6bfeca3bc42eaee5c7b582fafc289883f7613d"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/vitest/package.json",
+        "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/vitest/vitest.mjs",
+        "sha256": "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/vite/package.json",
+        "sha256": "2ce2b783ef4f4511544fa045355e7076f192b1331f6801214173d1910518f5d7"
+      },
+      {
+        "path": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules/esbuild/package.json",
+        "sha256": "cb7d5b1fe478f8cbaae566a86031b6fdf5f7d444354f35d1cb3cba9adf6d2935"
+      }
+    ]
+  },
+  "environment": {
+    "SYSTEMROOT": "C:\\Windows",
+    "WINDIR": "C:\\Windows",
+    "COMSPEC": "C:/Windows/System32/cmd.exe",
+    "PATH": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64;C:\\Program Files\\Git\\cmd;C:\\Windows\\System32;C:\\Windows",
+    "PATHEXT": ".COM;.EXE;.BAT;.CMD",
+    "USERPROFILE": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\home",
+    "HOME": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\home",
+    "APPDATA": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\home\\AppData\\Roaming",
+    "LOCALAPPDATA": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\home\\AppData\\Local",
+    "TEMP": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\tmp",
+    "TMP": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\tmp",
+    "NODE_OPTIONS": "--max-old-space-size=1536",
+    "NO_COLOR": "1",
+    "TSX_DISABLE_CACHE": "1",
+    "NPM_CONFIG_USERCONFIG": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\user.npmrc",
+    "NPM_CONFIG_GLOBALCONFIG": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\global.npmrc",
+    "NPM_CONFIG_CACHE": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\npm-cache",
+    "NPM_CONFIG_PREFIX": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\npm-prefix",
+    "NPM_CONFIG_DEVDIR": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\node-gyp-cache",
+    "NPM_CONFIG_OFFLINE": "true",
+    "NPM_CONFIG_FETCH_RETRIES": "0",
+    "NPM_CONFIG_AUDIT": "false",
+    "NPM_CONFIG_FUND": "false",
+    "NPM_CONFIG_UPDATE_NOTIFIER": "false",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": "C:\\Users\\sboad\\.codex\\tmp\\support-postbuild-20261012\\check\\gitconfig",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "coordinatorStopAt": "2026-10-12T21:46:00.920Z",
+  "timeoutMs": 300000,
+  "cleanupMarginMs": 15000,
+  "attempts": 1,
+  "automaticRetries": 0,
+  "nodeVersion": "v20.19.0",
+  "heapMiB": 1536,
+  "preparedUtc": "2026-10-12T21:38:44.608Z",
+  "status": "PREFLIGHT_FAILED_NO_JOB_STARTED",
+  "childCleanupConfirmed": false,
+  "limits": [
+    "No installation, build, browser, SQL, hosted action or credential-bearing environment.",
+    "No kernel network or aggregate memory sandbox; code capability follows the separately reviewed exact command.",
+    "Node/npm are pinned; no child-worker self-attestation or independent process-cleanup claim."
+  ],
+  "preSource": {
+    "head": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+    "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+    "status": "",
+    "lockSha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8"
+  },
+  "preflightError": {
+    "name": "Error",
+    "code": null
+  },
+  "logBytes": 0,
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "finalizedUtc": "2026-10-12T21:38:47.030Z",
+  "supervisorExitCode": 1,
+  "forcedExit": false
+}

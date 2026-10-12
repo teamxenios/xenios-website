@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "status": "PREFLIGHT_FAILED_TYPECHECK_NOT_RUN",
+  "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+  "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+  "reservation": "c27f7df5e248620c9b68963d29f82f4e866c9d08",
+  "preparedUtc": "2026-10-12T21:38:44.608Z",
+  "finalizedUtc": "2026-10-12T21:38:47.030Z",
+  "supervisorExit": 1,
+  "compilerStarted": false,
+  "rawReceipt": "receipt.json",
+  "rawLog": "run.log",
+  "sourcePrecheck": "Exact clean source/tree/lock passed",
+  "failure": "npm --version probe rejected before npmVersion assignment. Existing supervisor recorded Error/code:null, without a detailed timeout reason.",
+  "causeAssessment": "Likely the two-second npm probe ceiling given timing and later successful identical-environment diagnostic; inference, not confirmed original exception detail.",
+  "diagnostic": {
+    "diagnosticOnly": true,
+    "startedUtc": "2026-10-12T21:39:20.218Z",
+    "endedUtc": "2026-10-12T21:39:21.037Z",
+    "elapsedMs": 819,
+    "command": "Pinned Node/npm --version only; no compiler or lifecycle",
+    "timeoutMs": 10000,
+    "error": null,
+    "stdout": "10.8.2\n",
+    "stderr": "npm warn config production Use `--omit=dev` instead.\n",
+    "originalProbeResultStillFailed": true
+  },
+  "postcheck": "No owned/matching Node processes observed after invocation; no source change. No automatic typecheck retry.",
+  "resultsNotTransferred": "Original support focused13/13, own28-hashCLI PASS and genuine build PASS remain their separate actual results. This failed preflight supplies no typecheck result and has no bearing on QL72."
+}
