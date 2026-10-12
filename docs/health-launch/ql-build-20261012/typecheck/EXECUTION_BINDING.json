@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "action": "QL_EXACT_CANDIDATE_TYPECHECK_20261012",
+  "status": "PREPARED_NOT_RUN_PENDING_FRESH_WINDOW",
+  "executor": "01a0e098-3b23-7233-9b07-877ace092650",
+  "session": "codex-accepted-source-integration-20261005",
+  "authority": "Actual user0ada directs applicable remaining release qualification under recorded conditional authority. Current policy requires candidate-applicable typecheck; coordinator acknowledges concrete qualification proposals. No permission from templates or expired windows.",
+  "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "tree": "28617c360f487803baa556d33158c4e95df471f1",
+  "cwd": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
+  "scratch": "C:/Users/sboad/.codex/tmp/ql-typecheck-20261012",
+  "launch": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "C:/Users/sboad/.codex/tmp/ql-typecheck-20261012/run-typecheck.cjs",
+    "<actual fresh coordinator stop UTC>"
+  ],
+  "launcherSha256": "ce3490379ce1fb0f196994eccc243b0557f402dc7be9f2cbf6150da40f88995f",
+  "effectiveCommand": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website/node_modules/typescript/bin/tsc",
+    "--project",
+    "tsconfig.json",
+    "--incremental",
+    "false"
+  ],
+  "sourceConfigBlob": "cb406c8a0f64787c157f1ff61c52f791b4b2a5ae",
+  "equivalentGate": "package.json check invokes tsc using unchanged tsconfig. Explicit project plus incremental=false forces full checking without old build-info reuse; noEmit=true retained, no compiler checks removed.",
+  "runtime": {
+    "node": "v20.19.0",
+    "nodeSha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "typescript": "5.6.3",
+    "packageJsonSha256": "16af7ea27880259b39ff8f123566aaec815cdca1c3ab8d28330c8b652055ccf0",
+    "npm": "NOT_INVOKED",
+    "dependencies": "Same privatephysical existing copy with lock/metadata/selectedpackage hashes rechecked by launcher; no install or clean-rebuild claim"
+  },
+  "effects": {
+    "compiler": "Static source/declaration parsing/resolution only; no tsconfig plugins/custom transformers, no application entrypoints imported or executed.",
+    "filesystem": "Reads configured client/e2e/shared/server sources; noEmit and incremental=false, outputs only fresh own run.log/receipt/home/temp. No source/cache deletion or dist mutation.",
+    "network": "No command requests network/provider/database/browser; environment freshly allowlisted without credentials. Not OS firewall guarantee.",
+    "scope": "Ordinary TypeScript release requirement, not physical transaction G0/S3, SQL, source acceptance or full-suite qualification."
+  },
+  "environment": "Exact launcher allowlist; pinned Node PATH/privateHOME/TEMP, NODE_ENV test,4096MiB Node heap, no root/client env inputs admitted.",
+  "bounds": {
+    "wallMs": 300000,
+    "nodeHeapMiB": 4096,
+    "oneHeavyJob": true,
+    "retries": 0,
+    "deadline": "Requires full300seconds remaining before coordinator stop UTC",
+    "cleanup": "Only spawned child PID/tree on timeout; preserve diagnostics and stop first failure/denial/timeout, no rerun or alternate tool",
+    "kernelAggregateCaps": "NOT_ENFORCED_NOT_G0"
+  },
+  "outputs": [
+    "C:/Users/sboad/.codex/tmp/ql-typecheck-20261012/run.log",
+    "C:/Users/sboad/.codex/tmp/ql-typecheck-20261012/receipt.json"
+  ],
+  "exclusions": [
+    "fullsuite",
+    "newbuild",
+    "Vitest",
+    "server/browser",
+    "SQL",
+    "installation",
+    "hostedconfig",
+    "push/merge/deploy",
+    "email/payment"
+  ],
+  "prerequisites": "Read actual new coordinator reservation, verify clean exact candidate/runtime/dependencies/launcher/no owned overlapping heavy job/fresh outputs. Does not start by being committed."
+}
