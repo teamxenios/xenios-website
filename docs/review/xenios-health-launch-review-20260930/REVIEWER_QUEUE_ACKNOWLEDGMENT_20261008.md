@@ -513,3 +513,17 @@ Doc 87 (composition r3) remains in review. Nothing was executed.
 
 The Doc 83 correction review and all seven targets acknowledged at `c3e7337` are complete (docs 87 to 93). Nothing was
 executed.
+
+## Queue state update (2026-10-12, composition revision 4)
+
+Samuel relayed the frozen successor in this session's chat; the coordinator's prepared submission is read from its
+checkout as data. The target is **ACKNOWLEDGED and IN REVIEW**, as the same task, bounded to doc 87's corrections, with
+identities resolved from Git:
+
+| Doc | Board task | Source | Records | Scope |
+| --- | --- | --- | --- | --- |
+| 94 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` **r4** (bounded delta against doc 87, `77a2cae`) | `38915cf4318594607098717389113869e3eff0da` (tree `b06c1a3c…`) | `02c1748dee7c1d7e6453aaf993182dcc80e3db65` (tree `a60b61a0…`); receipts bind `114d5177` (tree `a449e534…`) | R3C-1(b), R3C-2, R3C-3, R3C-4, R3C-5 (records only) and DC-1 (two composition-test rows removed). Code paths changed since `69d9e32`: only `research_health_quick_order_local.mjs` and `QuickOrderApp.composition.test.tsx` |
+
+Pin re-confirmation is done as part of this review. All 102 pins in both receipts were recomputed against `114d5177`:
+zero mismatches. Exactly three rows changed (the verifier, the composition test and the shared bindings record). The
+five currentness pins and `8b631a83` are unchanged. Nothing was executed.
