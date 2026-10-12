@@ -570,3 +570,28 @@ Doc 95 (composition revision 5) remains in review. Nothing was executed.
 
 The composition task is complete at revision 5. Open on this line: the TC-25 `App.tsx` disposition (yours or the
 coordinator's) and S3 qualification under its own approval. Nothing was executed.
+
+## TC-25 reconciliation (2026-10-12; corrects docs 94 and 95, which listed it as open)
+
+Verified on the coordination board (`TC25_EXACT_DISABLED_APP_ACTUAL_HUMAN_DISPOSITION_20261012.json`, recorded
+2026-10-12T14:31:52Z): Samuel's actual answer "Approve this exact disabled App disposition" for `client/src/App.tsx`
+blob `b5cc8edc` / raw `1ee2d576…` / 18,079 B at source `25741f0` (tree `0c5a2b11…`). That is exactly the revision 5
+candidate, so **the TC-25 human disposition is RECORDED and matches the accepted bytes.** Its stated purpose matches
+what docs 83, 87 and 94 reviewed: the lazy `/health/quick-order` route with literal `intakeEnabled={false}`, the
+three-door transport, and the expiry behaviour.
+
+**What the disposition covers and what remains (fails closed):**
+- The approved full diff is `a82ff35..b5cc8ed` (104/−1), i.e. from the `0d22757` hub-restore version of `App.tsx`. The
+  protection manifest's recorded baseline is still the clarity version `cfdfd4e` (`beec95c`, `3b3b808b…`). The
+  one-line `0d22757` change (removal of the `/research/access-hub → /` redirect) sits between the two and was never
+  re-pinned.
+- The disposition explicitly excludes "Manifest/hash/GATE01 edits". `server/core-site-protection.test.ts:320-323`
+  verifies every `fileHashes` entry against the tree, so a tree carrying `1ee2d576…` fails that test until
+  `docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json` is amended to `sha256:1ee2d576…` for `client/src/App.tsx`.
+- **Remaining step before integration or qualification of this line:** one founder-authorized manifest hash amendment
+  covering both the `0d22757` line and the Quick Order change, in the form of the `663268f` precedent
+  (`HEALTH_PROTECTED_HASH_APPROVAL_20261001.md`). It is a records step, not a source change, and it is the only part of
+  TC-25 still open. The other protected paths named under TC-25 (`server/index.ts`, `root-composition.test.ts`) are
+  unchanged on this line and need no disposition.
+
+Nothing was executed.
