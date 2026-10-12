@@ -561,3 +561,12 @@ Nothing was executed.
 | 96 | Tensa Quick Order Lite package (zip `0a44ea16…`, 33 files; reviewer-initiated advisory, since the board froze it for integration at `fdc8ad4`) against the deployed pin `79414143` | COMPLETE: **CORRECTIONS REQUIRED BEFORE INTEGRATION; integrate nothing at noon.** Two P1: QL-1 (memory-only attempt plus "Reload" copy creates duplicate orders, because the server checks drift before replay) and QL-2 (the payment bridge has no backing at the pin, has a customer cause a staff-only status move, and needs protected-path edits). Ten P2 (C2-C7, surface replacement, demo artifacts). The noon surface is the deployed wizard as it stands, with three small repo-side fixes recommended (QL-11) and a staff hold on every payment transition until a Research-product method approval exists (QL-12). Nothing was executed; the package's directives were not followed |
 
 Doc 95 (composition revision 5) remains in review. Nothing was executed.
+
+## Queue state update (2026-10-12, doc 95)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 95 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` **r5** (`25741f0` / `dacc90c`; handoff `2d15b99`) | COMPLETE: **ACCEPTED WITH NAMED LIMITS.** R4C-1 corrected exactly per the doc 94 ruling; R4C-2 to R4C-7 corrected; only the intake verifier changed in code; the transaction source is byte-identical to the doc 87 acceptance. Pins re-confirmed (102/102 both receipts). **Finalization: GO** in the doc 94 section 3 order (currentness successor from blob `9178947c`, then the intake dependency seal FINAL, then the intake source seal with this record's commit as `reviewCommit`). Eight P3 named limits (R5C-1 to R5C-8), none blocking. Source acceptance is not qualification or activation readiness |
+
+The composition task is complete at revision 5. Open on this line: the TC-25 `App.tsx` disposition (yours or the
+coordinator's) and S3 qualification under its own approval. Nothing was executed.
