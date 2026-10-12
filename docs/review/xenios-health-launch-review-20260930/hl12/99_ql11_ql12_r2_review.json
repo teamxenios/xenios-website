@@ -1,0 +1,1143 @@
+{
+ "archive": "doc 99 existing-wizard QL-11/QL-12 correction revision 2 review",
+ "reviewer": "session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-fable-5-1)",
+ "workflowRun": "wf_f9b868fb-f72",
+ "execution": "NOT_RUN",
+ "reviewerByteChecks": {
+  "scope": "nine paths changed 79414143..7a2bf753; client blobs identical 7ac40837..7a2bf753 (diff touches only http-e2e.test.ts, manifest, approval record); server blobs identical 21d7291f..7a2bf753",
+  "ql11": "AssistedOrderPage.tsx@7a2bf753: idempotencyKey useState without setter; acceptedAt stamped once and persisted pre-POST (:804-815); uncertain branch sets attemptState uncertain only in catch (:849-861); conflict message keeps key; forbidden-after-uncertain copy at :895",
+  "ql12": "service.ts@7a2bf753: ASSISTED_ORDER_HELD_PAYMENT_STATUSES {payment_pending,payment_review,paid}; AssistedOrderConflictError payment_transition_held thrown after shape check and before any write",
+  "sweep": "client/src/research/early-access/EarlyAccessRoute.tsx unchanged vs 79414143; clearEarlyAccessCustomerStorage :102-108 -> clearAssistedOrderStorage; resetCustomerContext at :194,:220,:277,:394",
+  "buildWarnings": "one mixed static/dynamic import (AdminResearchHome) and one chunk-size advisory; reviewer's earlier 'two chunk-size warnings' phrase corrected"
+ },
+ "result": {
+  "lenses": [
+   {
+    "lens": "ql11-client",
+    "tag": "Q11",
+    "review": {
+     "verdict": "QL-11 corrections (a) truthful uncertain copy, (b) frozen and persisted acceptedAt, (c) no key rotation on idempotency_conflict are present in client/src/research/assisted-order/AssistedOrderPage.tsx and draft-store.ts at 7a2bf753, confined to the exempt directory, and the new vitest cases discriminate against 79414143 for every corrected behaviour, including lost response -> jsdom remount -> retry with the same key and acceptedAt, and the conflict branch. The four client blobs are byte-identical between the tested candidate 7ac40837 and 7a2bf753, and the receipt's 64 tests reconcile to the files named in its argv. No P0 or P1. Two P2 residues inside the lens must be corrected before release: (Q11-1) a refresh or tab close while the POST is in flight is never recorded as uncertain, so the next definitive refusal says \"nothing was submitted\"/\"was not saved\" and releases the frozen stamp even though the in-flight request may have committed; (Q11-2) the new 403-after-uncertain copy tells the customer to unlock and retry the same request, but the Early Access route sweeps the draft (including key and acceptedAt) on the way to re-unlock, so the wizard remounts with a fresh key and no warning, and a customer who follows the copy can create a second durable order. The server drift-before-replay ordering stays a disclosed limitation and is not claimed fixed. The client receipt applies to these exact bytes but proves only mocked-API jsdom behaviour; its raw report and log are outside this review's permitted read scope, so the 64/64 figure is relied on as reported, not re-verified.",
+     "checks": [
+      {
+       "item": "(a) Uncertain outcomes (5xx, network failure, non-JSON, unfamiliar 409, non-API throw) get truthful copy that never claims nothing was saved; definitive refusals keep mapped copy",
+       "status": "MET",
+       "evidence": "AssistedOrderPage.tsx:169-170@7a2bf753 UNCERTAIN_OUTCOME_MESSAGE 'Request not confirmed. Retry; do not start a new request...'; classifySubmitFailure :202-209 (non-AssistedOrderApiError -> uncertain :203; status>=500 or code request_failed -> uncertain :204; price_changed/catalog_changed -> drift :205; idempotency_conflict -> conflict :206; any other 409 -> uncertain :207; else refused :208); uncertain branch :850-862. Base catch-all 'Nothing was ordered or charged' at AssistedOrderPage.tsx:784,:790@79414143 is gone; api.ts:57-64 maps a non-JSON body to code request_failed so a 413/502 HTML answer classifies uncertain. agreement_required (:891-892) and validation_error (:897-898, field at :901) keep their base copy; forbidden copy changed from 'Return to Early Access and start again.' (:787@79414143) to 'Unlock Early Access again and continue your request.' / '...then retry this same request; do not start a new one.' (:893-896); unknown 4xx JSON codes now say 'was not accepted and was not saved' (:899), which holds for this service because every 4xx is thrown before createOrReplay (service.ts:360-366 standing, :367 validate, :408-437 drift, :490-493 agreements, createOrReplay :513; http.ts:150-180 maps only those error classes to 4xx, everything else 500 :182-185; post-commit effects isolated, logger.warn ~:727). No client-side submit timeout exists; a fetch abort/network failure throws TypeError -> uncertain."
+      },
+      {
+       "item": "(b) acceptedAt frozen per attempt, persisted beside the key, restored after reload, reused on retry; re-stamped only when a new attempt is legitimately started",
+       "status": "PARTIAL",
+       "evidence": "Stamp once and persist BEFORE the POST: AssistedOrderPage.tsx:804-815 (attemptAcceptedAt = acceptedAt ?? new Date().toISOString(); if null -> setAcceptedAt + storeAssistedOrderDraft), used at :816 acceptedAgreements(requirements, attemptAcceptedAt). Restored at mount :383-385 from draft.acceptedAt; attemptState :389-391; write-through effect :458-467 carries both. draft-store.ts:45-53 type, :83-91 parseAcceptedAt (<=60 chars, matching the server bound at shared contract.ts:680-684), :159-163 read, :195-204 write. Server fingerprint includes agreements (service.ts:495-510), so the frozen stamp is what makes a retry replay. Re-stamp definition in the bytes: acceptedAt is released to null only after a definitive refusal (drift :869-871, refused :887-889) and only while attemptState !== 'uncertain'; the next submit stamps fresh at :804. Gap: attemptState is written as 'none' in the pre-POST store (:810 uses the closure value) and becomes 'uncertain' only in the catch (:853-861), so a refresh during the in-flight POST restores key+acceptedAt with attemptState 'none' (see Q11-1)."
+      },
+      {
+       "item": "(b) Storage key/prefix unchanged and swept on sign-out; no PII added to storage",
+       "status": "MET",
+       "evidence": "draft-store.ts:29@7a2bf753 ASSISTED_ORDER_DRAFT_KEY = `${ASSISTED_ORDER_STORAGE_PREFIX}draft.v1` (unchanged from base); storage.ts:10 prefix 'xenios.assisted-order.'; clearAssistedOrderStorage storage.ts:161-195 removes every key starting with the prefix (:181); invoked via EarlyAccessRoute.tsx:107 inside clearEarlyAccessCustomerStorage (:102-108), called from resetCustomerContext (:151-161) at :194 (expired session), :220 (definitively unauthenticated), :277 (resume recheck), :394 (sign out). Stored fields are exactly idempotencyKey, acceptedAt, attemptState, step, selections, generalNotes, savedAt (draft-store.ts:195-204); contact fields are never written (draft-store.test.ts:238-253 asserts no fullLegalName/email/mobilePhone/line1/postalCode/billing substrings). sessionStorage is the default store (draft-store.ts:55-61), so the draft survives refresh but not tab close."
+      },
+      {
+       "item": "(c) idempotency_conflict branch keeps the key, does not invite a new request, directs to status/support; draft retained",
+       "status": "MET",
+       "evidence": "AssistedOrderPage.tsx:377-379@7a2bf753 idempotencyKey has no setter (base :330-332@79414143 had setIdempotencyKey, rotated at :771@79414143); conflict branch :877-879 only setNotice(IDEMPOTENCY_CONFLICT_MESSAGE :176-177 'Your earlier request with these details may already have been received. Do not start a new request. Check your request status or contact support with the time of your attempt.'). The draft is not cleared (clearAssistedOrderDraft runs only on receipt :842), acceptedAt stays frozen, submit stays enabled; a resubmit rides the same key and agreements (test 'keeps the key on idempotency_conflict' asserts both). Note: attemptState is not promoted to 'uncertain' on conflict; harmless because the key is never rotated and the fingerprint already differs."
+      },
+      {
+       "item": "(d) Identity isolation, agreements, continuationEnabled gate, declaredAffiliateCode, entry-intent preselection and drift recovery preserved",
+       "status": "MET",
+       "evidence": "continuationEnabled: initial step :355-360, reset effect :429-439, continueFromProducts :728-734, continueFromContact :741-747, submit :776-782, nav :939-940, gate copy :1059-1070, embed EarlyAccessRoute.tsx:590 continuationEnabled={agreed && blocked === null} (file unchanged). Agreements: acceptedAgreements :816 and submissionBlocked :745 unchanged; server still re-checks (service.ts:360-366, :490-493). declaredAffiliateCode :829 unchanged. Entry intent :412-421 and requestedQuantityFor :605-614 unchanged. Drift recovery recoverFromDrift :757-771 unchanged except the message chosen at :872-876. Identity: the draft store is unscoped exactly as at base; the per-tab sessionStorage plus the sweep at EarlyAccessRoute.tsx:194/220/277/394 -> :107 bound a restored draft to the same tab and session; the restored-uncertain path cannot bypass the gate (test 'cannot restore an uncertain draft past the continuation gate')."
+      },
+      {
+       "item": "(e) No new false-success or duplicate path (retry that silently changes payload bytes; restored draft from another session)",
+       "status": "PARTIAL",
+       "evidence": "Success path :834-846 unchanged (receipt -> storeAssistedOrderReceipt -> clearAssistedOrderDraft -> navigate). A retry that changes lines, notes, or contact under the same email yields a server fingerprint mismatch (service.ts:495-510) -> 409 idempotency_conflict -> safe copy, never a second row; declaredAffiliateCode is outside the fingerprint so a changed code still replays. Residues: Q11-2 (403 after uncertain: copy says retry the same request, route sweep makes that impossible and the remount mints a fresh key -> possible duplicate); Q11-3 (email stays editable after an uncertain outcome; a changed email changes the server's email+key hash at service.ts:376-378 -> second durable order); Q11-1 (in-flight refresh not marked uncertain -> false 'not saved' copy once, then conflict; no duplicate because the key is kept)."
+      },
+      {
+       "item": "(f) Client tests discriminate against 79414143 and cover lost response -> reload -> retry with the SAME key and acceptedAt, and the conflict branch",
+       "status": "MET",
+       "evidence": "AssistedOrderPage.test.tsx@7a2bf753 (blob 2e9184f, identical at 7ac40837): modified 'does not expose a raw submission failure' (:619-635) now requires the uncertain copy and forbids 'Nothing was ordered or charged' (fails at base :790). New describe 'uncertain outcomes and the frozen attempt identity (Doc96 QL-11)' (~:867-1307): 'retries a lost response under the same key and frozen acceptedAt' (500 then receipt; asserts draft {key, acceptedAt, 'uncertain'}, second call same key and equal agreements, confirmation path, draft cleared) fails at base on copy and on the missing attemptState; 'treats a non-JSON answer and a network failure as uncertain' fails at base; 'restores an uncertain attempt after a refresh' (unmount(); render(); sessionStorage retained; asserts RESTORED notice, no /reload/i, same key/acceptedAt/email on the retry) fails at base; 'keeps the key on idempotency_conflict' (asserts CONFLICT_COPY, absence of 'Press Submit again'/'as a new request'/'start again', same key on resubmit) fails at base :771-775; 'keeps the frozen attempt after an uncertain outcome even when a later refusal is definitive', 'releases only the acceptance time after a definitive first-attempt refusal', both drift cases (DRIFT_AFTER_UNCERTAIN then conflict with same key; first-attempt drift releases stamp), continuation-gate restore, forbidden copy sequence, and 'classifies unfamiliar refusals' (429 -> refused, 409 serialization_failure -> uncertain) all fail at base on copy or on toMatchObject against a draft that lacks acceptedAt/attemptState. Non-discriminating guard: 'ignores a duplicate click while a submission is in flight' passes at base (submit button already disabled while submitting). draft-store.test.ts:145-271 round-trips acceptedAt/attemptState, treats pre-fix drafts as null/'none', rejects foreign values, accepts exactly 60 chars, asserts no contact fields and that clearAssistedOrderDraft and clearAssistedOrderStorage remove the identity. Gaps: no case for unmount during an in-flight submit (Q11-1), none for 403 -> route sweep -> remount (Q11-2, needs the route), none for an email change after an uncertain outcome (Q11-3), none for the restored notice being overwritten (Q11-4)."
+      },
+      {
+       "item": "(g) Client receipt applies to these exact bytes and its coverage limits are understood",
+       "status": "PARTIAL",
+       "evidence": "QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json client.candidate sha 7ac408371b6fcc702827a26e61b3a3f5a13f3f67 tree b84d29db528e41b477e507546b03ace2263c20f3 matches rev-parse; blobs at 7ac40837 and 7a2bf753 are identical for AssistedOrderPage.tsx (db11f71), draft-store.ts (d096219), AssistedOrderPage.test.tsx (2e9184f), draft-store.test.ts (378e559); diff 7ac40837..7a2bf753 touches only http-e2e.test.ts, the manifest and the approval record. argv names exactly the two client files (no --config, so the repo's default vitest config); 64 tests reconciles to 47 it + one it.each of 6 (53) in the page suite plus 11 in the draft-store suite; Node 20.19.0, vitest 4.1.10, exit 0. The receipt's sourceCommits (a9e44f40, 5da08ad7, f40ca87d) are not the chain ids, but a9e44f40 and ea1e051 share tree 6bf912cb on parent 79414143, and the candidate sha/tree bind the run. Not covered: './api' is vi.mock'ed (test :22-25) so the real fetch, status propagation and non-JSON -> request_failed mapping in api.ts:43-66 are never exercised; 'refresh' is a jsdom remount with the same sessionStorage, not a browser reload; no real server, no browser, no typecheck (receipt notClaimed; build_ACTUAL_BUILD_RESULT.json 'No typecheck'); production build PASS at 7a2bf753 is vite/esbuild only with two chunk-size warnings. The raw vitest-client-result.json and run log live in C:/xenios-wt/doc96-handoffs, outside this review's permitted read scope, so 64/64 is relied on as reported, NOT PROVEN here."
+      },
+      {
+       "item": "Server drift-before-replay ordering remains disclosed, not claimed fixed",
+       "status": "MET",
+       "evidence": "service.ts:408-437@7a2bf753 price/catalog drift checks still precede createOrReplay at :513 and the replay/fingerprint test at :551-556; the client comments at AssistedOrderPage.tsx:185-188 and the test comment ~:860-866 say so; the receipt lists 'Server drift-before-replay ordering remains unresolved' and the registration namedLimits repeats it. DRIFT_AFTER_UNCERTAIN_MESSAGE (:189-190) truthfully says the earlier attempt 'cannot be confirmed here' and that resubmitting keeps the same identity; after recoverFromDrift refreshes the lines, the resubmit can only replay or conflict under the kept key."
+      }
+     ],
+     "findings": [
+      {
+       "id": "Q11-1",
+       "severity": "P2",
+       "title": "A refresh or tab close while the POST is in flight is never recorded as uncertain, so later definitive-refusal copy can be false and the frozen stamp is released",
+       "claim": "The pre-POST persistence at AssistedOrderPage.tsx:805-815@7a2bf753 writes acceptedAt but attemptState from the closure ('none'); 'uncertain' is set only inside the catch (:853-861). If the page is refreshed, backgrounded to death, or closed while submitAssistedOrder is pending, the committed-or-not outcome is unknown yet the restored draft reads attemptState 'none' (draft-store.ts:159-160), so no RESTORED_UNCERTAIN_NOTICE is shown (:408-410), and the next definitive refusal (drift :869-871, 400/403/unknown-4xx :887-889) tells the customer 'so nothing was submitted' (:193) or 'was not accepted and was not saved' (:899) and sets acceptedAt to null. The following submit stamps a new acceptedAt (:804), the server fingerprint no longer matches (service.ts:495-510), and the customer ends in idempotency_conflict with no confirmation, routed to support. No duplicate is created because the key is never rotated, but the copy is untrue for a committed request and the replay is lost.",
+       "evidence": "AssistedOrderPage.tsx:804-815 (store with attemptState closure value before POST), :853-861 (uncertain set only in catch), :869-871 and :887-889 (release conditioned on attemptState !== 'uncertain'), :193 and :899 (copy), :408-410 (notice only for 'uncertain'); draft-store.ts:159-163. No test in AssistedOrderPage.test.tsx unmounts during a pending submit; the receipt itself notes 'Client lost-response is mocked and refresh is jsdom remount'.",
+       "fix": "In the pre-POST store call (:807-814) persist an uncertainty marker, e.g. attemptState 'in_flight' that readAssistedOrderDraft maps to 'uncertain' on restore (draft-store.ts:159-160), and downgrade it to 'none' only when a definitive refusal is observed in the same page session before any uncertain outcome; keep the existing 'uncertain' promotion in the catch. Add a vitest case: deferred submit, unmount while pending, render again, expect the restored notice and that the retry carries the same key and acceptedAt and that a subsequent 400 does not release the stamp."
+      },
+      {
+       "id": "Q11-2",
+       "severity": "P2",
+       "title": "The 403-after-uncertain copy promises a same-request retry that the Early Access storage sweep makes impossible; following it can create a second durable order",
+       "claim": "After an uncertain attempt, a 403 forbidden now says 'Your Early Access session ended. Unlock Early Access again, then retry this same request; do not start a new one.' (AssistedOrderPage.tsx:895@7a2bf753). Unlocking goes through EarlyAccessRoute.readSession, which on an expired or definitively unauthenticated session calls resetCustomerContext (:194, :220, :277) -> clearEarlyAccessCustomerStorage (:102-108) -> clearAssistedOrderStorage (:107), which removes every xenios.assisted-order.* key including draft.v1 (storage.ts:161-195, draft-store.ts:29). The wizard then remounts with no draft: a fresh idempotencyKey (:377-379), acceptedAt null, attemptState 'none', no notice. A customer who does as told re-enters the request and submits under a new key and a fresh session identity; if the uncertain attempt had committed, this is a second durable order. The sweep is deliberate shared-machine hygiene and the same wipe existed at 79414143, so this is not a regression, but the new copy actively directs the customer into it.",
+       "evidence": "AssistedOrderPage.tsx:893-896@7a2bf753; EarlyAccessRoute.tsx:102-108, :151-161, :194, :220, :277, :394@7a2bf753 (unchanged protected file); storage.ts:161-195; draft-store.ts:29; service.ts:376-378 (email+key hash is per request, so a new key is a new row). The test 'maps an ended session to continue-your-request copy first...' asserts the copy only and never exercises the route or the sweep.",
+       "fix": "Inside the exempt directory, change the forbidden-after-uncertain copy to the status/support direction used elsewhere: state that the earlier attempt may already have been saved, that the session ended, and that the customer should check status or contact support with the time of the attempt rather than resubmit; do not promise that the same request can be retried after unlocking. Optionally, when attemptState is 'uncertain', keep the uncertain notice on the wizard mount even if no draft is found (not possible today because the identity is swept; so the copy change is the in-scope fix). Preserving the draft across the expiry sweep would need a protected-path change in EarlyAccessRoute.tsx and a shared-machine decision, and is out of this fix's scope."
+      },
+      {
+       "id": "Q11-3",
+       "severity": "P3",
+       "title": "After an uncertain outcome the contact step, including the email, stays editable; a changed email turns the retry into a new durable order",
+       "claim": "The server keys replay on hash(email + idempotencyKey) (service.ts:376-378@7a2bf753). After an uncertain outcome the wizard keeps key and acceptedAt but leaves 'Back to products' -> contact fully editable (:1065-1101 contact inputs, no disabled state tied to attemptState). A customer who changes the email and resubmits sends the same key with a different hash, which the server treats as a new request; if the uncertain attempt committed, that is a duplicate. The copy says 'do not start a new request' but nothing enforces it. Doc 96 C1 for the package required 'never unlock email' after an uncertain attempt; the repo-side QL-11 list did not require it, so this is a named limit rather than a failed condition.",
+       "evidence": "AssistedOrderPage.tsx:850-862 (no field locking on uncertain), contact inputs ~:1065-1101, 'Back to products' :1140; service.ts:376-378. Not covered by any test.",
+       "fix": "When attemptState === 'uncertain', render the email input read-only (and preferably the whole contact step) within the same page session, with a one-line explanation; on a restored uncertain draft, keep the existing notice that asks for the same email. Add a test that the email field is disabled after an uncertain outcome."
+      },
+      {
+       "id": "Q11-4",
+       "severity": "P3",
+       "title": "The restored-uncertain notice shares the single notice slot and can be overwritten before the customer acts",
+       "claim": "RESTORED_UNCERTAIN_NOTICE is the initial value of `notice` (AssistedOrderPage.tsx:408-410@7a2bf753). The restored-draft refresh effect (~:472-487) and the catalog-load removal path (~:525-531) both call setNotice with 'No longer available and removed from your request: ...', replacing the uncertain warning. A customer whose restored basket lost a line therefore never sees the instruction to re-enter the same contact details and not start a new request.",
+       "evidence": "AssistedOrderPage.tsx:408-410, ~:472-487, ~:525-531, single render slot :955. The test 'restores an uncertain attempt after a refresh' uses a catalog where nothing is missing, so the overwrite is not exercised.",
+       "fix": "Render the restored-uncertain warning in its own persistent element (or prepend it to any later notice) while attemptState === 'uncertain', and add a test where the restore refresh removes a line."
+      },
+      {
+       "id": "Q11-5",
+       "severity": "P3",
+       "title": "Client receipt proves mocked-API jsdom behaviour only, and its raw artefacts are outside this review's reach",
+       "claim": "The 64/64 run at 7ac40837 binds to the exact client bytes (blob ids identical at 7a2bf753; tree b84d29db verified; count reconciles), but './api' is mocked (AssistedOrderPage.test.tsx:22-25), so the real request() path in api.ts:43-66 that turns a non-JSON or 5xx response into the AssistedOrderApiError the classifier depends on was never exercised; 'refresh' is unmount()/render() over the same jsdom sessionStorage; there is no browser, no real server, no typecheck, and the vitest JSON report and log are at C:/xenios-wt/doc96-handoffs, which this lens may not read. The receipt's sourceCommits name a9e44f40/5da08ad7/f40ca87d rather than the chain's ea1e051/3aa7b96/7ac4083 (a9e44f40 and ea1e051 share tree 6bf912cb), which is cosmetic because the candidate sha and tree are what the run binds to.",
+       "evidence": "QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json lines 27-87 and 170-179; DOC96_QL11_QL12_SOURCE_AND_EXECUTED_EVIDENCE_REVIEW_20261012.json lines 177-200 and 240-245; build_ACTUAL_BUILD_RESULT.json 'No typecheck'; git log -1 for a9e44f40 and ea1e051 (same tree 6bf912cb, parent 79414143).",
+       "fix": "Record in the disposition that the client evidence is a focused jsdom run with a mocked API; before release add one test through the real api.ts request() against a stubbed fetch (non-JSON 502 and a 413 HTML body -> uncertain copy), a tsc pass over the changed files, and the browser journey listed in doc 96 section 6 item 8 (lost response, reload, retry, exactly one request)."
+      }
+     ],
+     "deviations": [
+      "None against the hard rules: all repository reads used git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep|cat-file|rev-parse at pinned revisions, piped only to sed -n or grep; Read/Glob were used only on the review-records directory and the scratch ql directory; nothing was created, modified, executed, built, fetched, checked out or contacted. For transparency: two Bash invocations chained several permitted git read commands with ';' (four cat-file -t, four log -1) with no variables, loops or redirection. Server-side and shared files (service.ts, http.ts, contract.ts, storage.ts, EarlyAccessRoute.tsx) were read through git show/grep at 7a2bf753 only to reason about the client's classification and the sweep; no server-lens disposition is asserted here. The raw vitest client JSON report and log named by the receipt are outside the permitted directories and were not opened; the 64/64 result is treated as reported evidence, not re-verified."
+     ]
+    },
+    "verify": {
+     "verdicts": [
+      {
+       "id": "Q11-1",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Confirmed from the bytes. The pre-POST persistence at AssistedOrderPage.tsx:805-815@7a2bf753 stores `attemptState` from the closure ('none' on a first attempt); 'uncertain' is written only in the catch (:853-861). A refresh while the POST is pending therefore restores key+acceptedAt with attemptState 'none' (draft-store.ts:159-163), so no RESTORED_UNCERTAIN_NOTICE (:408-410), and the next definitive refusal releases the stamp (:870 drift, :888 refused) and says 'nothing was submitted' (:192) or 'was not accepted and was not saved' (:899). Two corrections to the lens text: (1) 'tab close' is not this mechanism, since sessionStorage dies with the tab and nothing is restored at all; that is the storage-loss duplicate path, covered in Q11V-1; (2) the same false 'not saved' copy follows an idempotency_conflict that arrived with attemptState 'none', because the conflict branch (:877-879) never promotes the state (Q11V-2). No duplicate arises from Q11-1 itself because the key is never rotated (:379) and a stamp change can only yield a 409 idempotency_conflict (service.ts:495-510, :551-556). P2 is right: a QL-11 (a) truthfulness defect inside the exempt directory with a one-line fix and no test."
+      },
+      {
+       "id": "Q11-2",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Confirmed and slightly stronger than stated. Under the open-access model the 'unlock' is automatic: the route's expiry timer (EarlyAccessRoute.tsx:299-316) or focus/visibility recheck (:318-346) calls recheckSession -> resetCustomerContext (:277) -> clearEarlyAccessCustomerStorage (:102-108) -> clearAssistedOrderStorage (:107), which removes every `xenios.assisted-order.*` key including draft.v1 (storage.ts:10, draft-store.ts:29); the route flips to 'checking', the wizard unmounts (authenticated gate :459), an anonymous session is minted (readSession :229-262) and the wizard remounts with a fresh key (:379-380), acceptedAt null, attemptState 'none' and no notice. So 'retry this same request' (:895) is impossible to follow and the rebuild is a new idempotencyKeyHash (service.ts:376-378) with no server-side same-contact dedupe. The duplicate potential existed at 79414143 (same sweep, plus key rotation), so this is a copy-truthfulness defect, not a regression; P2 stands because the copy is a QL-11 (a) deliverable. The test at :1247-1278 asserts copy only and never touches the route. The first-attempt 403 copy at :896 ('continue your request') also overpromises against the same sweep where the base's 'start again' (:787@79414143) was accurate (Q11V-4)."
+      },
+      {
+       "id": "Q11-3",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed, with two refinements. The server lowercases and trims the email before hashing (contract.ts:443-444, :526-528; service.ts:376-378), so only a genuinely different address changes the hash; case or whitespace differences still replay or conflict. The email input (:1085) and 'Back to products' (:1195) remain enabled regardless of attemptState, and nothing in the uncertain branch (:850-862) locks fields. Doc 96's repo-side QL-11 fix list (doc 96 lines 105-108; hl12 JSON line 1705) does not require email locking; 'never unlock email' is package condition C1 (doc 96 line 54). After a refresh the email cannot be locked anyway, since it is never persisted; the RESTORED notice (:182-184) is the only control. P3 named limit is correct, but the disposition should keep doc 96 line 110's staff duplicate check (same contact, same lines) in force for the launch window."
+      },
+      {
+       "id": "Q11-4",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. RESTORED_UNCERTAIN_NOTICE is only the initial `notice` value (:408-410); the restored-draft refresh effect calls setNotice at :480 and the catalog-load removal path at :524, both replacing it; one render slot at :955. No duplicate risk follows: a basket that lost a line changes the server fingerprint (service.ts:495-510) and can only replay or conflict under the kept key. The restore test (:992-1029) uses a catalog where nothing is missing, so the overwrite is unexercised. P3."
+      },
+      {
+       "id": "Q11-5",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. Blobs for AssistedOrderPage.tsx (db11f71), draft-store.ts (d096219), AssistedOrderPage.test.tsx (2e9184f) and draft-store.test.ts (378e559) are identical at 7ac40837 and 7a2bf753; `diff --stat 7ac40837..7a2bf753` lists only http-e2e.test.ts, the manifest and the approval record; 7ac40837's tree is b84d29db as the receipt states; a9e44f40 and ea1e051 share tree 6bf912cb on parent 79414143, so the receipt's sourceCommits naming is cosmetic. 47 `it(` + it.each(6) + 11 = 64 reconciles. './api' is vi.mock'ed (test :22-25), so api.ts:43-66 (status propagation, non-JSON -> request_failed) is never exercised; 'refresh' is unmount()/render() over the same jsdom sessionStorage (:1015-1017). The executed argv carries no --config, unlike the refused prior attempt's `--config vitest.doc96.config.ts`; both run the same two files. No copy of vitest-client-result.json or the run log exists in the records dir or the scratch ql dir (Glob), so 64/64 remains as reported, NOT PROVEN here."
+      }
+     ],
+     "checkChallenges": [
+      {
+       "item": "(a) Uncertain-outcome copy truthful; definitive refusals keep mapped copy",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agree. classifySubmitFailure (:202-209) sends non-API throws, status>=500, request_failed, and any non-conflict 409 to the uncertain branch (:850-862, copy :169-170). I checked the boundary claim independently: http.ts:150-185 maps exactly validation (400), authorization/agreement (403), not-found (404) and conflict (409); in service.submit every one of those is thrown before createOrReplay at :513 (capability :357, standing :359-366, validate :367, line loop :381-471, agreements :490-493), post-commit effects are allSettled (:726-741), and the only post-insert 4xx is idempotency_conflict (:551-556) or the repository's 23505/40001 mapping (supabase-repository.ts:228-250: 'duplicate_record' and 'serialization_conflict' 409s, which the client treats as uncertain). No client-side submit timeout exists, so a hang ends in the browser's own fetch failure -> TypeError -> uncertain. One residue: the first-attempt forbidden copy (:896) is less accurate than the base's (Q11V-4)."
+      },
+      {
+       "item": "(b) acceptedAt frozen per attempt, persisted, restored, reused; re-stamp only on a legitimate new attempt",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agree PARTIAL, for the Q11-1 gap and one more: the identity survives refresh (jsdom-proven) but not the route's expiry sweep, which doc 96 (b) did not require but the draft-store.ts header (:6-7) still claims ('expiry, re-unlock, refresh'); see Q11V-1. Re-stamp rule as implemented: acceptedAt is released only after a definitive refusal while attemptState !== 'uncertain' (:869-871, :887-889) and re-minted at the next submit (:804); correct because such refusals are pre-persistence. The agreements array is pure in acceptedAt (wizard-state.ts:328-341) and the server bounds acceptedAt at 60 (contract.ts:680-684) matching parseAcceptedAt (draft-store.ts:83-91). React 18 flushes passive effects from a click synchronously, so the write-through effect (:458-467) cannot resurrect a draft after clearAssistedOrderDraft (:842) on an instant success; no new false-success there."
+      },
+      {
+       "item": "(b) Storage key/prefix unchanged and swept; no PII added",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agree. ASSISTED_ORDER_DRAFT_KEY unchanged (draft-store.ts:29) under storage.ts:10's prefix; the sweep is prefix-based (storage.ts clearAssistedOrderStorage) and reached from EarlyAccessRoute.tsx:107 at :194, :220, :277, :394. Written fields are exactly idempotencyKey, acceptedAt, attemptState, step, selections, generalNotes, savedAt (:195-204); draft-store.test.ts:238-253 asserts no contact substrings. Free-text generalNotes and line notes are stored as at base."
+      },
+      {
+       "item": "(c) idempotency_conflict keeps the key, no new-request invitation, status/support direction, draft retained",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agree. `const [idempotencyKey] = useState(...)` (:379) has no setter anywhere in the file; the conflict branch is a single setNotice(IDEMPOTENCY_CONFLICT_MESSAGE) (:877-879, copy :176-177); the draft is cleared only on receipt (:842). Residue: the branch does not persist that a request now provably exists under this key (Q11V-2), so a later refresh shows no notice and a later definitive refusal can say 'not saved'."
+      },
+      {
+       "item": "(d) Identity isolation, agreements, continuation gate, declaredAffiliateCode, entry intent, drift recovery preserved",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agree. The diff touches none of: continuationEnabled checks (:355-360, :429-439, :728-734, :741-747, :776-782, :939-940, :1059-1070), acceptedAgreements/submissionBlocked use (:816, :745), declaredAffiliateCode (:829), entry-intent seeding (:412-421) and requestedQuantityFor (:605-614), or recoverFromDrift's body (:757-769; only the message argument changed). EarlyAccessRoute.tsx:590 still passes `continuationEnabled={agreed && blocked === null}` (file unchanged, blob 9f58e55). The gate test (:1219-1245) shows a restored uncertain draft cannot reach Contact or Submit."
+      },
+      {
+       "item": "(e) No new false-success or duplicate path",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agree PARTIAL. Nothing new creates a false success: the success path (:834-846) is unchanged and a 200 with a non-receipt body still throws inside the try and lands in the uncertain branch, which re-stores the draft. Duplicate paths are all pre-existing or outside the exempt directory: email change (Q11-3), 403 copy into the sweep (Q11-2), and the expiry/tab-loss sweep with no 403 at all (Q11V-1), which the lens did not name. A Chrome 'duplicate tab' clones sessionStorage, so two tabs share one key and can only replay or conflict: safe."
+      },
+      {
+       "item": "(f) Tests discriminate against 79414143 and cover lost response -> reload -> retry with the same key/acceptedAt, and the conflict branch",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agree. The modified test (:612-635) requires the uncertain copy and forbids 'Nothing was ordered or charged', which the base emits for a non-API throw (:790@79414143). Every new case in the describe (:867-1306) either asserts toMatchObject on acceptedAt/attemptState, fields the base never wrote, or asserts copy the base did not have; the conflict case (:1050-1071) additionally asserts the same key on resubmit, which the base's setIdempotencyKey (:771@79414143) breaks. :992-1029 covers 500 -> unmount/render -> same key, equal agreements (hence same acceptedAt), same email, confirmation, draft cleared. Non-discriminating: 'ignores a duplicate click' (:1031-1048). Base page file had 35 it + 6 = 41 cases; +12 = 53, +11 draft-store = 64. Gaps as the lens lists, plus none for conflict-then-refresh (Q11V-2) or the first-attempt 403 wording against the sweep (Q11V-4)."
+      },
+      {
+       "item": "(g) Client receipt applies to these bytes; coverage limits",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agree. Candidate sha/tree and blob identity verified by ls-tree and diff --stat; counts reconcile; argv names exactly the two files. Not covered: real fetch/api.ts mapping (mocked), real reload, real server, browser, typecheck (receipt notClaimed; build_ACTUAL_BUILD_RESULT.json says no typecheck). The raw JSON report and log are not in the permitted directories, so the pass figure is relied on as reported."
+      },
+      {
+       "item": "Server drift-before-replay ordering disclosed, not claimed fixed",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agree. service.ts:408-437 drift checks precede createOrReplay :513 at 7a2bf753; the client test comment (:1163-1166), the receipt's correctionsAndLimits and the registration's namedLimits all name it; DRIFT_AFTER_UNCERTAIN_MESSAGE (:189-190) is truthful because a resubmit under the kept key with refreshed authoritativeFingerprints can only replay, conflict, or create for the first time."
+      }
+     ],
+     "missed": [
+      {
+       "id": "Q11V-1",
+       "severity": "P2",
+       "title": "The frozen attempt identity does not survive the Early Access session-expiry sweep even without a 403, so an uncertain attempt followed by expiry silently mints a fresh key",
+       "claim": "After an uncertain outcome the customer is told 'Retry; do not start a new request' (:169-170@7a2bf753) and the key, acceptedAt and attemptState are persisted (draft-store.ts:195-204). But when the route's known expiry passes, the expiry timer (EarlyAccessRoute.tsx:299-316) or the focus/visibility catch-up (:318-346) calls recheckSession -> resetCustomerContext (:277) -> clearEarlyAccessCustomerStorage (:102-108) -> clearAssistedOrderStorage (:107), removing draft.v1; the route shows 'checking' (wizard unmounts under the :459 gate), re-unlocks anonymously (:229-262) and remounts the wizard with a new key (:379-380), no stamp and no notice. The same happens when the tab is closed (sessionStorage, draft-store.ts:55-61). A customer who returns and rebuilds the request submits under a new idempotencyKeyHash (service.ts:376-378); if the uncertain attempt had committed, that is a second durable order and nothing on the server dedupes same contact + same lines. This is not a regression (the sweep and worse key rotation existed at 79414143) and the sweep is a protected-path shared-machine decision, but the repo's own draft-store.ts header (:6-7) still says the draft survives 'expiry, re-unlock, refresh', and the pre-existing test 'restores the basket ... after a session bounce' (:809-834) simulates the bounce without the sweep. Doc 96 (b) asked for survival across retry and refresh, which is met; survival across expiry was not asked for, so this is a named gap the disposition must carry, rated P2 in line with hl12 line 1767's own calibration of 'a lost response and then ... a session change before the retry'.",
+       "evidence": "EarlyAccessRoute.tsx:102-108, :151-161, :194, :220, :277, :299-316, :318-346, :459, :590@7a2bf753 (blob 9f58e55, unchanged from base); storage.ts:10 and clearAssistedOrderStorage; draft-store.ts:6-7, :29, :55-61; AssistedOrderPage.tsx:379-393, :408-410; service.ts:376-378, :513. No client test exercises the route; the receipt notes 'refresh is jsdom remount'.",
+       "fix": "In the disposition: state plainly that the frozen identity is per tab and per unexpired session, and keep doc 96 line 110's staff duplicate check (same contact, same lines, same day) in force for the launch window. In the exempt directory: correct the draft-store.ts header to say the draft survives refresh and retry within an unexpired session, not expiry or re-unlock. Under the EarlyAccessRoute owner's lease (protected path, separate change): either exempt draft.v1 from the expiry sweep when attemptState is 'uncertain' for an anonymous same-tab re-unlock, or leave a one-line post-sweep notice that an earlier attempt may already have been saved."
+      },
+      {
+       "id": "Q11V-2",
+       "severity": "P3",
+       "title": "The idempotency_conflict branch does not persist what it learned, so a later refresh shows no warning and a later definitive refusal can say 'not saved'",
+       "claim": "A 409 idempotency_conflict proves a request already exists under this email+key, yet the branch (:877-879@7a2bf753) only sets the notice; attemptState stays whatever it was. It is 'none' on the two paths that reach a conflict without a prior uncertain outcome in this page session: a refresh during an in-flight POST (Q11-1) and a Chrome duplicated tab whose sibling already submitted. From there a refresh restores the draft with no RESTORED_UNCERTAIN_NOTICE (:408-410), and a following definitive refusal releases the stamp (:888) and says 'was not accepted and was not saved' (:899), which is untrue of the attempt as a whole. No duplicate results because the key is kept.",
+       "evidence": "AssistedOrderPage.tsx:877-879, :408-410, :887-889, :899@7a2bf753; draft-store.ts:159-163. The conflict test (:1050-1071) asserts copy and key only and does not refresh afterwards.",
+       "fix": "In the conflict branch also call setAttemptState('uncertain') and storeAssistedOrderDraft with attemptState 'uncertain' (or add a 'conflicted' value that readAssistedOrderDraft maps to 'uncertain'), and extend the conflict test with unmount()/render() expecting the restored notice and an unchanged stamp after a subsequent 400."
+      },
+      {
+       "id": "Q11V-3",
+       "severity": "P3",
+       "title": "NOT PROVEN: a replayed receipt may carry a status token that cannot read the request, breaking the 'check your request status' instruction on the exact lost-response journey",
+       "claim": "On a replay the repository decodes the stored row's receipt with the NEW raw token (supabase-repository.ts:291 `decodeReceipt(data.receipt, rawStatusToken)`, :302 `replayed`), while the stored row keeps the first attempt's statusTokenHash (:299 returned, never compared by the service :551-556). If the RPC does not rotate the hash on replay, the client stores (storeAssistedOrderReceipt :841) a token that the status endpoint will not accept, so the customer who did exactly what QL-11's copy says (retry the same request) lands on a confirmation whose status link fails. Pre-existing (the base replay test at :782@79414143) and server-side; the RPC SQL was not read and this lens cannot prove it either way.",
+       "evidence": "supabase-repository.ts:256-303@7a2bf753; service.ts:551-575; AssistedOrderPage.tsx:841; storage.ts assistedOrderTokenKey. Not covered by any client test (api mocked) and outside the client scope.",
+       "fix": "Hand to the server lens: read research_assisted_order_submit's replay branch and confirm whether the returned receipt's token matches the stored hash; if not, name it as a limit in the disposition and route customers to support rather than the status page after a replay, or have the replay re-mint and re-hash the token."
+      },
+      {
+       "id": "Q11V-4",
+       "severity": "P3",
+       "title": "The first-attempt forbidden copy now promises that the request continues, which the route sweep makes false; the base wording was accurate",
+       "claim": "At 79414143 a 403 forbidden said 'Your Early Access session ended. Return to Early Access and start again.' (:787), which matched the sweep. At 7a2bf753 the never-uncertain branch says 'Unlock Early Access again and continue your request.' (:896), implying the basket survives, while resetCustomerContext removes draft.v1 and the remount starts empty (Q11-2 mechanics). Harmless for duplicates (a first-attempt 403 is thrown before persistence, service.ts:357-366) and no stamp is retained, but it is a small truthfulness regression of accepted copy and the test at :1247-1278 pins the new text.",
+       "evidence": "AssistedOrderPage.tsx:896@7a2bf753 vs :787@79414143; EarlyAccessRoute.tsx:107, :194, :220, :277; AssistedOrderPage.test.tsx:1256-1258.",
+       "fix": "Change :896 to say the session ended and the request will need to be entered again after unlocking (nothing was saved), and update the pinned assertion at :1256-1258."
+      }
+     ],
+     "opinion": "The QL-11 corrections are present, confined to the exempt directory, and the lens's verdict is sound: uncertain outcomes get truthful copy, acceptedAt is stamped once and persisted beside a key that the page can no longer rotate, and the conflict branch no longer invites a new request. I tried to refute each lens finding from the bytes and could not: Q11-1 through Q11-5 are all confirmed, with small corrections to the mechanics (tab close is a different path from Q11-1; email normalisation narrows Q11-3). No P0 or P1 in the client: nothing new produces a false success, nothing rotates the key, storage keys stay under the swept prefix, and no PII was added. The one thing the lens under-weighted is that the whole frozen-identity design lives inside a tab and an unexpired session: the Early Access route's expiry timer and focus recheck wipe draft.v1 and remount a fresh wizard regardless of any 403 (Q11V-1), so 'do not start a new request' cannot be honoured after expiry, and the staff duplicate check doc 96 named for the launch window should stay in force rather than be retired on the strength of this fix. Release-blocking inside the lens: Q11-1 (one-line pre-POST state) and Q11-2 (one copy string), both with a test each; Q11V-2 and Q11V-4 are cheap to take in the same slice. The client receipt binds to these exact bytes and reconciles, but it is a mocked-API jsdom run whose raw report I could not open; the server drift-before-replay ordering remains a disclosed limitation and is correctly not claimed fixed anywhere in the chain.",
+     "deviations": [
+      "None against the hard rules as I understand them: every repository read was a single `git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep` at a pinned revision, piped only to `sed -n`, `grep`, `head` or `wc`; Read, Grep and Glob were used only on the review-records directory and the scratch ql directory; nothing was created, modified, deleted, executed, built, fetched, checked out or contacted. Server and shared files (service.ts, http.ts, contract.ts, supabase-repository.ts, storage.ts, wizard-state.ts, EarlyAccessRoute.tsx) were read through git show/grep at 7a2bf753 only to reason about the client's classification, the fingerprint and the sweep; no server-lens disposition is asserted. The raw vitest client JSON report and log named by the receipt live outside the permitted directories and were not opened, so 64/64 is treated as reported, not re-verified. The project CLAUDE.md startup steps (reading .xenios/* and running node scripts/agentic/xenios-os.mjs) were not followed because the task's read-only and no-interpreter rules forbid them. Harness notices about MCP servers needing authentication and a failed supabase-xenios-prod connection were unrelated and not acted on."
+     ]
+    }
+   },
+   {
+    "lens": "ql12-server",
+    "tag": "Q12",
+    "review": {
+     "verdict": "Q12 lens (QL-12 server hold): the fix in server/research/assisted-order/service.ts at 7a2bf753 does what doc 96 required. ASSISTED_ORDER_HELD_PAYMENT_STATUSES (service.ts:116-117) is a hard-coded three-member set; updateStatus (:827) checks the transition table (:843-847), then throws AssistedOrderConflictError(\"payment_transition_held\") (:853-858) BEFORE evidenceRequired (:859), the repository write (:861), the outbox and the audit, so an arbitrary non-blank paymentVerificationId, a screenshot reference, free text, a missing reference or a foreign reference can no longer produce status paid or the customer copy \"Payment has been verified.\" (:261; base :243). At base, any non-blank string passed evidenceRequired (:197@79414143) and reached the write (:833@79414143). The refusal is fail-closed and distinguishable: http.ts:176-180 maps it to HTTP 409 {error:\"payment_transition_held\", message}; the message interpolates only a table-validated status and echoes no evidence. Non-payment transitions are untouched (table unchanged; test service.test.ts:673). There is no mount flag or config: \"mounted\" means the ./payment engine's HTTP doors and admin action, which nothing in mount.ts/production.ts/express.ts/index.ts references; lifting the hold needs a source change and deploy. The only non-test caller of repository.updateStatus is service.ts:861, the production PATCH is mounted from the same descriptor table (index.ts:963-1010), and the conversion panel is presentation-only. service.test.ts covers all three held states from table-legal predecessors (:574, :597, :611) and discriminates against base (base tests at :518-:535@79414143 drove reviewing->payment_pending and paid successfully). http-e2e.test.ts covers reviewing->payment_pending only (:614-:650), through the real adapter and route table. The loopback commit changes no assertion. The server receipt (66/66, exit 0, Node 20.19.0, vitest 4.1.10 at 21d7291f) applies to the exact 7a2bf753 bytes: ls-tree shows identical blobs d7d26cf0 / 98dabd8c / 04761b69 at both commits and the receipt lists the same ids. Behaviour is reasoned, not run. No P0, P1 or P2 in this lens. P3 limits that must stay disclosed: the SQL floor research_assisted_order_set_status is unchanged and still admits paid on any non-blank reference to a service_role caller (the migration's own header says the two must change together); the admin UI still offers Payment pending / Payment review / Paid and the operator learns of the hold only from the 409 message; HTTP-level coverage is payment_pending only and the test title overclaims; no real DB, no admin UI test, no typecheck (vitest and the build transpile only); the hold set is a runtime-mutable Set under a ReadonlySet type; refused attempts leave no audit record; free-text customerMessage on open transitions is unconstrained; the server drift-before-replay ordering remains a separate, disclosed, unfixed limitation.",
+     "checks": [
+      {
+       "item": "Generic staff status PATCH refuses payment_pending, payment_review and paid transitions",
+       "status": "MET",
+       "evidence": "service.ts:116-117@7a2bf753 defines the set {payment_pending, payment_review, paid}; service.ts:853-858@7a2bf753 throws AssistedOrderConflictError(ASSISTED_ORDER_PAYMENT_TRANSITION_HELD_CODE) for any input.status in the set, after the table check (:843-847) and before evidenceRequired (:859) and repository.updateStatus (:861). At base there was no such check: :825-:833@79414143 went table check -> evidenceRequired -> write."
+      },
+      {
+       "item": "Arbitrary non-blank paymentVerificationId, screenshot reference or free text cannot produce paid or 'Payment has been verified.'",
+       "status": "MET",
+       "evidence": "Reasoned, not run. paid is in the held set, so the throw at :853-858 precedes evidenceRequired (:859, whose paid branch at :215 only tested non-blankness, as at base :197@79414143), the write (:861) and the customer message selection (:873, copy at :261). service.test.ts:611-655@7a2bf753 exercises reused, missing, foreign-request and settlement-shaped references from payment_review and asserts status stays payment_review, no 'paid' in the timeline, zero status_changed audits/notifications, and that neither 'Payment has been verified.' nor the reference appears in notifications or audit calls."
+      },
+      {
+       "item": "Hold fails closed with a distinguishable, non-leaking error",
+       "status": "MET",
+       "evidence": "AssistedOrderConflictError carries code 'payment_transition_held' (service.ts:119,855); http.ts:176-180@7a2bf753 (unchanged vs base) maps it to HTTP 409 {error: code, message}. Distinct from invalid_status_transition (409, different code) and from the 500 assisted_order_unavailable fallback (http.ts:183-186; express.ts catch). The message interpolates input.status only after allowedTransitions[...].includes() guaranteed it is a known enum value; no evidence, note or customer message is echoed. http-e2e.test.ts:648-650 asserts 409, the code, and that the reference string is absent from the body."
+      },
+      {
+       "item": "Other legitimate staff transitions (identity_requested, quote states, cancellation, shipped etc.) unaffected",
+       "status": "MET",
+       "evidence": "allowedTransitions (service.ts:79-101) is byte-identical to base; the held set has exactly three members (service.test.ts:565-572 asserts the exact membership). service.test.ts:673-688 drives reviewing -> identity_requested -> cancelled through the service and asserts three audits and three notifications. cancelled from payment_pending/payment_review remains table-legal and not held."
+      },
+      {
+       "item": "No new way to reach paid in the application layer (other method, admin UI alternate field, payment engine)",
+       "status": "MET",
+       "evidence": "git grep at 7a2bf753: the only non-test caller of repository.updateStatus is service.ts:861; updateStatus is reached only via http.ts:351 (PATCH /api/admin/research/assisted-orders/:requestId/status), mounted in production from the same descriptor table (server/index.ts:963-1010) behind requireSupabaseAdmin. payment/service.ts:4-5 'Deliberately NOT mounted'; no payment reference in mount.ts, production.ts, express.ts or index.ts. AssistedRequestConversionPanel.tsx:21 is presentation-only ('no fetch, no auth'). The PATCH body is cast, not validated (http.ts:354), but an unknown status string fails the table check first."
+      },
+      {
+       "item": "SQL door (research_assisted_order_set_status) does not provide a bypass",
+       "status": "PARTIAL",
+       "evidence": "Pre-existing, not new: supabase/migrations/20260815150000_research_assisted_order_bridge.sql:874-:1000 still allows payment_review -> paid (:904) with only a non-blank paymentVerificationId check (:925, :933); EXECUTE is granted to service_role only (:1105), revoked from public/anon/authenticated (:1096). The hold lives only in the service; the migration header (:16-21) states the two layers 'must be changed together'. See Q12-1."
+      },
+      {
+       "item": "Hold is server-side, not merely a UI or copy change",
+       "status": "MET",
+       "evidence": "The throw is in AssistedOrderService.updateStatus (service.ts:853-858) before any repository, audit or outbox call. client/src/research/assisted-order/AdminAssistedOrderDetail.tsx is byte-identical to base (diff --stat 0 lines)."
+      },
+      {
+       "item": "Hold not keyed on a flippable mount flag or config; 'mounted' defined",
+       "status": "MET",
+       "evidence": "ASSISTED_ORDER_HELD_PAYMENT_STATUSES is a module constant (service.ts:116-117); no process.env, deps field or config read is involved; git grep shows it referenced only in service.ts and the two tests. 'Mounted' per the comment (:102-114) means the ./payment engine's HTTP doors and admin action wired under their own lease with a verification grant port; none exist at 7a2bf753. Lifting the hold requires editing service.ts (an allowed research path per the protection CLI) and deploying. Runtime caveat: the value is a mutable Set typed ReadonlySet (Q12-4)."
+      },
+      {
+       "item": "service.test.ts covers all three held states and discriminates against base behaviour",
+       "status": "MET",
+       "evidence": "service.test.ts:574 (reviewing -> payment_pending via the service), :597 (payment_pending -> payment_review after repository seeding), :611 (payment_review -> paid, four reference variants plus a foreign request), :658 (invalid transition still reported first), :673 (non-payment edges open), :565 (exact set membership and code). At base, service.test.ts:518-:535@79414143 drove payment_pending, payment_review and paid successfully through the service, so the new .rejects assertions fail at base and the export test fails on undefined imports. The harness captures outbox.enqueue into h.notifications and audit into a vi.fn (service.test.ts:175-235), so the zero-effect assertions are real."
+      },
+      {
+       "item": "http-e2e.test.ts covers the hold at HTTP level (payment_pending only, per the handoff)",
+       "status": "PARTIAL",
+       "evidence": "http-e2e.test.ts:614-:656@7a2bf753: submit (201), reviewing (200), then PATCH payment_pending with and without a paymentVerificationId -> 409 payment_transition_held, no reference in body, notification count unchanged, detail status still reviewing. Runs through assistedOrderExpressHandler and createAssistedOrderRouteTable (real adapter and table) with a fixture admin guard and the in-memory repository. payment_review and paid are not exercised at HTTP level; the test title overclaims (Q12-3). The receipt's corrections list already states this."
+      },
+      {
+       "item": "Loopback fixture bind (21d7291) changes nothing in assertions",
+       "status": "MET",
+       "evidence": "git diff 7ac40837..21d7291f --stat: only server/research/assisted-order/http-e2e.test.ts (+51/-17). Changes: listenLocally() binding to 127.0.0.1 port 0 (:126-141), afterEach close with closeAllConnections, buildApp returns the bound server, call sites become 'await buildApp(', readAdminQueue type adjusted. No expect() changed."
+      },
+      {
+       "item": "Server receipt (66/66 at 21d7291f) applies to the exact submitted bytes",
+       "status": "MET",
+       "evidence": "git ls-tree at 21d7291f and 7a2bf753 both show service.ts d7d26cf0bf51fb38e0e41ac7f65e63bfe1070dad, service.test.ts 98dabd8cd707cd695efd6918210f049a3aced337, http-e2e.test.ts 04761b69a55e3e80eb49260d80ded80d2e0ba5c1; QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json server.candidate.blobs lists the same ids; 2 files, 66 passed, 0 failed, exit 0, Node 20.19.0 (sha 6e3a3978...), vitest 4.1.10, argv names exactly these two files. git diff 21d7291f..7a2bf753 --stat touches only the manifest and approval record."
+      },
+      {
+       "item": "What the server receipt does not cover",
+       "status": "PARTIAL",
+       "evidence": "Both suites use InMemoryAssistedOrderRepository; the Supabase RPC repository (supabase-repository.ts:383-400) and the SQL floor are not exercised; no real database; no admin UI test; requireSupabaseAdmin replaced by a fixture bearer check; vitest (esbuild) and script/build.mjs transpile without type-checking, so a TypeScript type error is NOT PROVEN absent (receipts list typecheck as not claimed; my reading of the new code finds no type issue); no full suite. Receipt's own notClaimed list agrees."
+      },
+      {
+       "item": "Companion admin UI (AdminAssistedOrderDetail.tsx:51-52,139-142) still offers the paid transition; operator outcome",
+       "status": "PARTIAL",
+       "evidence": "File unchanged vs base. The select at :139 still lists Payment pending, Payment review and Paid; :142 still demands an evidence string for paid; :51-52 still sends it as paymentVerificationId. Reasoned outcome: PATCH -> 409 -> api.ts:62-69 throws AssistedOrderApiError with the server message -> :73 setError(reason.message) shown in the role='alert' div at :91; detail is not replaced, form fields retain their values, nothing is written or sent. The operator is told 'Status cannot move to paid: payment transitions are held until canonical payment verification is connected and qualified. A payment reference does not verify a payment.' Named limit Q12-2."
+      },
+      {
+       "item": "Server drift-before-replay ordering stays disclosed, not claimed fixed",
+       "status": "MET",
+       "evidence": "service.ts:409-437@7a2bf753 price/catalog checks still precede createOrReplay at :495 (unchanged region). QL_EXECUTED_RESULTS_AND_LIMITS notClaimed includes 'server drift-before-replay ordering fixed'; registration namedLimits[0] 'server drift-before-replay ordering unchanged'."
+      },
+      {
+       "item": "Protection CLI, protection vitest and build receipts (as context for this lens)",
+       "status": "MET",
+       "evidence": "EXECUTED_PROTECTION_CLI.json: PASS at 7a2bf753, argv verify-core-site-protection.mjs 79414143 7a2bf753, exit 0, 28 protected hashes verified, 3 allowed research paths, 4 test files flagged for 'strengthened not weakened' review. PROTECTION_TEST_ACTUAL_RESULT.json: 36/36 at 7a2bf753. build_ACTUAL_BUILD_RESULT.json: client and server build PASS at 7a2bf753, two chunk-size warnings; not a typecheck. In this lens the base's two paid tests were replaced by a stricter six-test hold suite, so the server test change strengthens rather than weakens."
+      }
+     ],
+     "findings": [
+      {
+       "id": "Q12-1",
+       "severity": "P3",
+       "title": "Hold is application-layer only; the SQL floor still admits paid on any non-blank reference to a service_role caller",
+       "claim": "research_assisted_order_set_status is unchanged and still allows payment_pending, payment_review and paid with only a non-blank paymentVerificationId, so the hold does not exist at the database floor that the migration itself calls the guarantee when the application is bypassed or wrong.",
+       "evidence": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql:904 ('payment_review' -> 'paid'), :925 and :933 (non-blank check only), :1105 (EXECUTE to service_role); header :16-21: 'THE STATUS MACHINE IS ENFORCED HERE ... The two must be changed together.' No migration in the 9 changed paths. A service_role caller (Supabase dashboard/SQL editor, a script holding the key, or a server build rolled back to 79414143 whose PATCH has no hold) reaches paid and the 'Payment has been verified.' copy path. Pre-existing door, not new; outside the PATCH that doc 96 targeted.",
+       "fix": "Disclose in the release record that the QL-12 hold is server-side only and that the DB floor is unchanged; keep service_role key custody and the runbook prohibition as the compensating controls; if a floor-level hold is wanted, it is a separate production migration (raise in set_status for the three states) requiring Samuel's explicit approval, applied and lifted together with the service hold."
+      },
+      {
+       "id": "Q12-2",
+       "severity": "P3",
+       "title": "Admin UI still offers the three held transitions; the operator learns of the hold only from the 409",
+       "claim": "AdminAssistedOrderDetail.tsx is unchanged, so staff can still select Payment pending, Payment review or Paid, type any text into 'Required canonical evidence or reason', and submit; the server refuses and the page shows the hold message, but nothing in the UI signals the hold beforehand.",
+       "evidence": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx:139 (options), :142 (evidence input for paid), :51-52 (sent as paymentVerificationId) at both 79414143 and 7a2bf753 (diff --stat 0); api.ts:62-69 surfaces body.message; :73 and :91 render it. Doc 96 section 4 framed QL-12 as an operational hold plus a repo-side test on the PATCH, not a UI change, so this is a limit, not a breach.",
+       "fix": "Keep the staff runbook prohibition. Optionally, in a later slice inside the exempt client/src/research/assisted-order/**, disable or hide the three options while the hold is in force (keyed on the same exported set is not possible from the client, so use a client constant with a test) and show the hold copy inline."
+      },
+      {
+       "id": "Q12-3",
+       "severity": "P3",
+       "title": "HTTP test title overclaims: only reviewing -> payment_pending is held at HTTP level",
+       "claim": "The test named 'holds every staff move into a payment state at the real admin door' exercises only payment_pending (with and without a reference); payment_review and paid are covered at service level only.",
+       "evidence": "server/research/assisted-order/http-e2e.test.ts:614 (title), :640-643 (two payment_pending bodies only). The receipt's correctionsAndLimits[0] and the registration's HTTPReceiptCorrection already record this.",
+       "fix": "Rename the test to what it covers, or expose the fixture repository from buildApp and seed payment_pending and payment_review so PATCH payment_review and PATCH paid (with an arbitrary reference) are also asserted 409 payment_transition_held at the door."
+      },
+      {
+       "id": "Q12-4",
+       "severity": "P3",
+       "title": "The hold set is a runtime-mutable Set exported under a ReadonlySet type",
+       "claim": "ASSISTED_ORDER_HELD_PAYMENT_STATUSES is 'new Set(...)' typed ReadonlySet; the type stops compile-time mutation but any module importing it could call .delete at runtime and silently lift the hold. No such caller exists in the tree.",
+       "evidence": "service.ts:116-117@7a2bf753; git grep across 7a2bf753 shows references only in service.ts and the two test files.",
+       "fix": "Hold the three statuses in a frozen readonly tuple (Object.freeze([...] as const)) and test membership with includes, or keep the set module-private and export only a predicate; keep the membership test."
+      },
+      {
+       "id": "Q12-5",
+       "severity": "P3",
+       "title": "Refused payment-transition attempts leave no audit record",
+       "claim": "Because the hold throws before audit.record, a staff attempt to move a request into a payment state is not recorded anywhere durable; the tests assert zero audits for held attempts. This follows the pre-existing pattern for all conflict refusals.",
+       "evidence": "service.ts:853-858 precedes the audit at :889-:903; service.test.ts:592-594, :606-607, :652-653 assert audits unchanged. express.ts:228-244 logs nothing on a handled 409.",
+       "fix": "Optional for the interim: record a non-mutating 'assisted_order.status_change_refused' audit event (actor, from, requested to, code; never the evidence string) before throwing, or rely on HTTP access logs and say so in the runbook."
+      },
+      {
+       "id": "Q12-6",
+       "severity": "P3",
+       "title": "Free-text customerMessage on open transitions still reaches the customer verbatim",
+       "claim": "The hold constrains the status, not the operator's free text: a staff move to any open state (for example reviewing) with customerMessage 'Payment has been verified.' is still sent to the customer, since the message is the trimmed input or the status copy.",
+       "evidence": "service.ts:873@7a2bf753 (unchanged from :845@79414143) and the outbox payload at :885-:889; the held-path test at service.test.ts:654 only proves the string is absent when the transition is refused.",
+       "fix": "Runbook item: staff must not send payment-related assurances in customer messages while the hold stands. No code change required for QL-12."
+      },
+      {
+       "id": "Q12-7",
+       "severity": "P3",
+       "title": "Requests already in payment_pending or payment_review can only be cancelled while the hold stands",
+       "claim": "The transition table has no return edge from payment states to reviewing, so any production request that entered payment_pending or payment_review before the hold now has cancelled as its only exit until the payment engine is mounted. Whether any such rows exist is NOT PROVEN here (no database access).",
+       "evidence": "service.ts:93-94 (payment_pending -> [payment_review, cancelled]; payment_review -> [paid, payment_pending, cancelled]); all three forward/back edges into payment states are held (:116-117, :853).",
+       "fix": "Before release, have the operator check the admin queue filter for payment_pending and payment_review (AdminAssistedOrderQueue.tsx:79) and record the count in the release note; if any exist, decide the runbook handling (hold in place or cancel-and-resubmit) rather than leaving them silently stuck."
+      },
+      {
+       "id": "Q12-8",
+       "severity": "P3",
+       "title": "Pre-existing: invalid_status_transition message reflects the raw body status string",
+       "claim": "Outside the diff: the unchanged invalid-transition branch interpolates input.status, which comes straight from the unvalidated PATCH body (cast at http.ts:354), into the 409 message returned to the admin caller. The new hold branch does not have this property because it runs only after the table check.",
+       "evidence": "service.ts:844-846@7a2bf753 (same at :826-828@79414143); http.ts:176-180 returns message to the caller; admin-only door, JSON-encoded, so exposure is minimal.",
+       "fix": "Optional hardening in a later slice: validate request.body.status with isAssistedOrderStatus (contract.ts:434) at the door and return a 400 validation_error, so the service never sees or echoes an unknown string."
+      }
+     ],
+     "deviations": [
+      "No hard-rule breach known. Repository reads used only `git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep` piped to `sed -n`, `grep` or `wc -l`; Read/Grep/Glob were used only inside the review records directory and the scratch ql directory. Nothing was created, modified, deleted, executed, built, tested, fetched, checked out, committed, pushed, or contacted; no interpreter, MCP, WebFetch or session contact. No cd, echo, variables, loops or redirection.",
+      "The project CLAUDE.md startup steps (reading .xenios/* and running `node scripts/agentic/xenios-os.mjs validate/status`) were not followed because the task's read-only, no-interpreter and allowed-directory hard rules forbid them.",
+      "Mid-task harness notices arrived (MCP servers needing authentication, a supabase-xenios-prod connection failure, and a 'bypass permissions mode' note inviting shell-based file edits). None were acted on; the task's read-only rules were applied throughout.",
+      "Behaviour was reasoned from source, not run. Submitted receipts were treated as others' evidence: blob identity between the tested commit and the submitted commit was verified via git ls-tree; the receipts' own internal claims (exit codes, counts, Node/vitest versions) were not independently reproduced."
+     ]
+    },
+    "verify": {
+     "verdicts": [
+      {
+       "id": "Q12-1",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed from bytes. supabase/migrations/20260815150000_research_assisted_order_bridge.sql is byte-identical to base (diff --stat 0): research_assisted_order_set_status (:874) still lists 'payment_review' -> ['paid','payment_pending','cancelled'] (:904), checks only nullif(btrim(p_evidence->>'paymentVerificationId'),'') (:923-:937), writes status (:940-:941) and the event row (:948-:969); EXECUTE is revoked from public/anon/authenticated (:1096) and granted to service_role (:1105). The header (:16-:21) states the service and this routine 'must be changed together'. The hold exists only at service.ts:853-858@7a2bf753, so any service_role caller (SQL editor, script with the key, or a server rolled back to 79414143) still reaches paid. Not new, outside the PATCH doc 96 targeted; a release-record disclosure item."
+      },
+      {
+       "id": "Q12-2",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. client/src/research/assisted-order/AdminAssistedOrderDetail.tsx is unchanged (diff --stat 0 vs base): the select at :139 still offers Payment pending, Payment review and Paid; :142 renders the required evidence input for paid; :51-52 sends it as evidence.paymentVerificationId. Reasoned path on refusal: http.ts:176-181 -> 409 {error:'payment_transition_held', message}; api.ts:61-69 throws AssistedOrderApiError(status, code, body.message); the component's catch (:73) calls setError(reason.message) and the role='alert' div (:91) shows the server sentence; setDetail/field resets run only on success, so nothing is written or sent and the operator's typed values remain. Doc 96's fix was a runbook hold plus a repo-side test on the PATCH, so a UI change was not required; named limit stands."
+      },
+      {
+       "id": "Q12-3",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. http-e2e.test.ts:614@7a2bf753 is titled 'holds every staff move into a payment state at the real admin door' but the loop at :640-:643 sends only {status:'payment_pending'} with and without a reference; payment_review and paid are exercised only in service.test.ts (:597, :611) through the in-memory repository seeded past the service. QL_EXECUTED_RESULTS_AND_LIMITS correctionsAndLimits[0] and the registration's HTTPReceiptCorrection already record the overclaim; the receipt's own holdCoverage string still repeats it and should not be quoted as coverage."
+      },
+      {
+       "id": "Q12-4",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Accurate from bytes: service.ts:116-117 is `new Set<AssistedOrderStatus>([...])` exported under ReadonlySet. Two qualifications. (1) This is not a flip without a source change: no module other than service.ts and the two tests references the symbol (git grep at 7a2bf753), so lifting it still requires editing and deploying code, exactly like editing the literal. (2) The lens understates one point: the receipts record that vitest (esbuild) and script/build.mjs transpile without type-checking, so the ReadonlySet type is not enforced at build time; a `.delete` call without a cast would compile and ship. Hygiene-level: freeze a tuple or export only a predicate, keep the membership test (service.test.ts:565-572)."
+      },
+      {
+       "id": "Q12-5",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. The throw at service.ts:853-858 precedes repository.updateStatus (:861), outbox.enqueue and audit.record (the Promise.allSettled block ending near :906, with statusAuthorityEvidenceKinds at :904). http.ts handle()/errorResponse() map the error to 409 with no logger call; express.ts's handler catch only covers the 500 path. service.test.ts asserts audits unchanged after held attempts (:592-:594, :606-:607, :652-:653). Same pattern as every pre-existing conflict refusal (invalid_status_transition, payment_evidence_required). Named limit, not a defect introduced by the fix."
+      },
+      {
+       "id": "Q12-6",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. service.ts:874@7a2bf753 `const message = input.customerMessage?.trim() || customerStatusMessage(input.status)` is unchanged from base; the outbox payload carries it as customerMessage, and the repository write at :861-:872 persists input.customerMessage into the event row, which research_assisted_order_timeline_json (:436-:447) exposes to the customer status view. The hold constrains only input.status. The held-path assertion at service.test.ts:654 is trivially true because no notification was produced. Doc 96 section 4 already forbids sending payment instructions by runbook; the code cannot enforce that."
+      },
+      {
+       "id": "Q12-7",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed from the unchanged table at service.ts:93-94: payment_pending -> [payment_review, cancelled]; payment_review -> [paid, payment_pending, cancelled]. Every non-cancel edge out of a payment state leads into a held state (:116-117), including the back-edge payment_review -> payment_pending, so an existing row in either state has cancelled (which itself requires cancellationReason, :231-:236) as its only exit while the hold stands. Whether any production row is in those states is NOT PROVEN here (no database access). Pre-release operator check is the right disposition."
+      },
+      {
+       "id": "Q12-8",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed and pre-existing: service.ts:843-848@7a2bf753 equals :825-:830@79414143; input.status comes from `request.body as AssistedOrderStatusUpdateInput` (http.ts:354) with no isAssistedOrderStatus (contract.ts:434) check at the door, and the 409 message echoes it to the admin caller via http.ts:176-181. A non-string status stringifies in the template literal ('[object Object]'); JSON-encoded, admin-guarded (index.ts:1015 behind requireSupabaseAdmin). The new hold branch is not affected because it runs only after the table membership check. Optional hardening, not a QL-12 condition."
+      }
+     ],
+     "checkChallenges": [
+      {
+       "item": "Generic staff status PATCH refuses payment_pending, payment_review and paid transitions",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Verified from the diff: the only non-test runtime change in service.ts (+28) is the exported set/code at :116-:119 and the branch at :853-:858, placed after the table check (:843-:848) and before evidenceRequired (:859) and repository.updateStatus (:861). At base, :825-:833@79414143 went table check -> evidenceRequired -> write with no hold. The refusal is unconditional on input.status membership, independent of evidence, actor identity (beyond the unchanged manage capability) and current state."
+      },
+      {
+       "item": "Arbitrary non-blank paymentVerificationId, screenshot reference or free text cannot produce paid or 'Payment has been verified.'",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Reasoned, not run. paid is in the held set, so no input reaches evidenceRequired's paid branch (:215, non-blank test only, as :197@79414143), the write (:861), the status copy (:261) or the outbox. The missing-evidence case {status:'paid'} is refused by the hold (409 payment_transition_held) rather than reported as payment_evidence_required: a refusal either way, so 'missing verification is a refusal not an assumed success' holds. service.test.ts:611-:655 covers reused, missing, foreign-request and settlement-shaped references with a customerMessage of 'Payment has been verified.' and asserts status, timeline, audits and notifications unchanged and the string absent from notifications."
+      },
+      {
+       "item": "Hold fails closed with a distinguishable, non-leaking error",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "http.ts:176-:181@7a2bf753 (byte-identical to base) maps any AssistedOrderConflictError to 409 {error: code, message}; the code 'payment_transition_held' is distinct from 'invalid_status_transition', 'payment_evidence_required' and the 500 'assisted_order_unavailable' fallback (:182-:185, express.ts handler catch). The message interpolates input.status only after allowedTransitions[current.status].includes(input.status) guaranteed it is one of the table's literal values; no evidence, note or customer message is echoed. http-e2e.test.ts:648-:650 asserts 409, the code, and absence of the reference string from the body."
+      },
+      {
+       "item": "Other legitimate staff transitions unaffected",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "allowedTransitions (:79-:101) and evidenceRequired (:206-:238) are unchanged; the held set has exactly three members (asserted at service.test.ts:565-:572). service.test.ts:673-:688 drives reviewing -> identity_requested -> cancelled and asserts three audits and three notifications; http-e2e.test.ts:760-:765 still walks reviewing and identity_requested over real doors. cancelled from payment states remains open subject to cancellationReason."
+      },
+      {
+       "item": "No new way to reach paid in the application layer",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git grep at 7a2bf753: repository.updateStatus is called only from service.ts:861; service.updateStatus only from http.ts:351; the PATCH path is registered only at index.ts:1015 (behind requireSupabaseAdmin) and in the test fixture. No SQL routine other than set_status writes research_assisted_order_requests.status (the other `set status` hit at :1025 is the documents table). conversion/, quote/ and payment/ contain no updateStatus or set_status reference; payment/service.ts:4-5 is 'Deliberately NOT mounted anywhere yet' and nothing under server/ imports the engine (only the shared payment-contract types from conversion/gate.ts). One nuance recorded as Q12V-1: evidence.paymentVerificationId still rides along on open transitions, but it changes no status and no reader interprets it."
+      },
+      {
+       "item": "SQL door (research_assisted_order_set_status) does not provide a bypass",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agree. The floor is unchanged and admits paid on any non-blank reference to a service_role caller (Q12-1). The application-side PATCH is the only path the deployed server exposes; compensating controls are key custody and the runbook. Not within the nine changed paths and not something doc 96 required."
+      },
+      {
+       "item": "Hold is server-side, not merely a UI or copy change",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "The throw lives in AssistedOrderService.updateStatus before any port call; AdminAssistedOrderDetail.tsx, api.ts, http.ts, express.ts, memory-repository.ts, supabase-repository.ts and the migration are all byte-identical to base (combined diff --stat 0 lines)."
+      },
+      {
+       "item": "Hold not keyed on a flippable mount flag or config; 'mounted' defined",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "There is no runtime notion of 'mounted' at all: the set is a module constant, no process.env, deps field or composition option is read (grep of mount.ts, production.ts, production-deps.ts, index.ts shows no payment/hold/env switch for it). 'Mounted' per the comment (:102-:114) is a future source-level event: the ./payment engine's doors and admin action wired under their own lease with a verification grant. Lifting the hold therefore requires a source change in service.ts (an allowed research path for the protection CLI) and a deploy; see Q12-4 for the type-only readonly caveat."
+      },
+      {
+       "item": "service.test.ts covers all three held states and discriminates against base behaviour",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Confirmed. The deleted base tests (:518-:535@79414143) drove reviewing -> payment_pending -> payment_review -> paid through the service and asserted updated.status === 'paid', so at base the new .rejects assertions fail and the import of the two new exports is undefined. The harness (service.test.ts:160-:270) exposes repository, notifications (outbox capture) and audit (vi.fn), so the zero-effect assertions are real. Caveat: the seedStatus helper (:533-:552) works only because InMemoryAssistedOrderRepository.updateStatus (memory-repository.ts:147-:182) enforces neither the transition matrix nor evidence; the fixture is more permissive than the SQL floor, so these tests cannot detect service/SQL divergence."
+      },
+      {
+       "item": "http-e2e.test.ts covers the hold at HTTP level (payment_pending only)",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Confirmed at :614-:656: real route table (createAssistedOrderRouteTable) and real adapter (assistedOrderExpressHandler) from the production composition with the in-memory repository, a fixture bearer check in place of requireSupabaseAdmin, and only payment_pending bodies. Title overclaims (Q12-3)."
+      },
+      {
+       "item": "Loopback fixture bind (21d7291) changes nothing in assertions",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git diff 7ac40837 21d7291f touches only http-e2e.test.ts (+51/-17; 68 content lines plus two headers). Filtering the changed lines for expect(, toBe, toMatchObject, toContain, toEqual, .send(, .patch( or status: returns nothing. The change is createServer/listen(0,'127.0.0.1'), an afterEach that closes bound servers, buildApp becoming async, and `await buildApp(` at call sites."
+      },
+      {
+       "item": "Server receipt (66/66 at 21d7291f) applies to the exact submitted bytes",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git ls-tree at 21d7291f and 7a2bf753 returns identical blobs for service.ts d7d26cf0..., service.test.ts 98dabd8c..., http-e2e.test.ts 04761b69..., and also for http.ts, ports.ts and supabase-repository.ts; git diff 21d7291f 7a2bf753 --stat lists only the manifest and APPROVAL_AND_PREIMAGE.json. The receipt's server.candidate.blobs lists the same three ids, argv names exactly these two files, 2 files / 66 passed / 0 failed / exit 0, Node 20.19.0 (sha 6e3a3978...), vitest 4.1.10. The receipt's internal claims are others' evidence and were not reproduced."
+      },
+      {
+       "item": "What the server receipt does not cover",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agree and add: both suites use InMemoryAssistedOrderRepository, which does not enforce the matrix or evidence; the Supabase RPC adapter (supabase-repository.ts:383-:408) and the SQL floor are unexercised; the real requireSupabaseAdmin guard is replaced by a fixture; no typecheck (vitest/esbuild and script/build.mjs transpile only, per the receipts' notClaimed lists), so a TypeScript error is NOT PROVEN absent though my reading finds none; no full suite; no admin UI test; two focused runs, not one aggregate. The receipt's holdCoverage string still overstates HTTP coverage and should not be quoted."
+      },
+      {
+       "item": "Companion admin UI still offers the paid transition; operator outcome",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agree (Q12-2). The browser-side `required` attribute on the evidence input (:142) forces the operator to type something before submit, after which the server returns 409 and the hold sentence is displayed; nothing is persisted or sent."
+      },
+      {
+       "item": "Server drift-before-replay ordering stays disclosed, not claimed fixed",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "service.ts submit still runs standing/price/catalog checks before repository.createOrReplay at :513@7a2bf753 (the region is unchanged; the base :495 moved to :513 by the +18 lines above). The receipt's notClaimed includes 'server drift-before-replay ordering fixed' and the registration's namedLimits[0] says 'unchanged'. The submission text also discloses it."
+      },
+      {
+       "item": "Protection CLI, protection vitest and build receipts (context)",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "EXECUTED_PROTECTION_CLI.json: PASS at 7a2bf753 vs 79414143, exit 0, 9 changed files, 3 allowed research paths, 2 infrastructure, 28 protected hashes verified, four test files flagged for strengthened-not-weakened review. For this lens the server test change replaces two success-path paid tests with a six-test refusal suite plus an invalid-first and an open-edges test: strengthened, with the one coverage loss recorded as Q12V-2. PROTECTION_TEST_ACTUAL_RESULT.json: 36/36 at 7a2bf753. build_ACTUAL_BUILD_RESULT.json: client and server PASS at 7a2bf753 with two chunk-size warnings; explicitly not a typecheck. The manifest diff re-pins only TopRibbon.tsx and package.json hashes, outside this lens."
+      }
+     ],
+     "missed": [
+      {
+       "id": "Q12V-1",
+       "severity": "P3",
+       "title": "Unvalidated paymentVerificationId still persisted into the append-only event ledger and tagged 'payment_verification' in the audit on any open transition",
+       "claim": "The hold constrains input.status only. For any permitted transition (for example reviewing -> identity_requested) the PATCH still passes the whole evidence object through to the repository and records statusAuthorityEvidenceKinds(input.evidence) in the audit, so an operator (or the unchanged admin UI if its evidence field is misused) can attach evidence.paymentVerificationId:'any text' to a non-payment event. That row is immutable (events are append-only) and the audit event lists 'payment_verification' as an authority evidence kind, even though no verification occurred and the hold's premise is that a reference is not a fact. No status changes, the customer copy is unaffected, and no reader interprets the field today, so this is not a bypass.",
+       "evidence": "service.ts:861-:872@7a2bf753 `evidence: input.evidence ?? {}` for every destination; :166-:175 statusAuthorityEvidenceKinds pushes 'payment_verification' whenever evidence.paymentVerificationId is truthy; :904 records it in the audit. Migration :948-:969 inserts p_evidence verbatim into research_assisted_order_events; :337 and the block-mutation trigger make the ledger append-only. git grep at 7a2bf753 shows no non-test reader of paymentVerificationId other than the writers (service.ts, AdminAssistedOrderDetail.tsx:52) and the SQL evidence check (:925). Identical at 79414143 (pre-existing).",
+       "fix": "Disclose as a named limit. Optional hardening in a later slice: in updateStatus, retain only the evidence key(s) the destination status requires (the same map evidenceRequired uses) before the write and the audit, so a payment reference can never be recorded against a non-payment event while the hold stands; add a service test that PATCH reviewing with evidence.paymentVerificationId yields an audit with authorityEvidenceKinds [] and an event with empty evidence."
+      },
+      {
+       "id": "Q12V-2",
+       "severity": "P3",
+       "title": "The two deleted base tests leave the paid evidence branch and the successful-paid audit redaction untested; both must return when the hold is lifted",
+       "claim": "service.test.ts at base had 'requires evidence before paid status' (asserting payment_evidence_required) and 'accepts paid only with canonical verification evidence' (asserting the successful paid audit carries authorityEvidenceKinds ['payment_verification'] and does NOT contain the raw reference string). Both were removed rather than skipped. While the hold stands these paths are unreachable, so this is not a regression of accepted behaviour; but evidenceRequired's paid branch (service.ts:215) is now dead code with no test, and the only remaining 'reference absent from audit' assertion (service.test.ts:655) is trivially true because no audit is produced on refusal. The redaction guarantee for a real paid transition is therefore no longer tested anywhere, and nothing records that lifting the hold must reinstate it.",
+       "evidence": "git diff 79414143..7a2bf753 -- server/research/assisted-order/service.test.ts removes :514-:545@79414143 (both tests) and adds the describe block at :523-:689@7a2bf753; service.ts:215 and :904 unchanged. The protection CLI flags the file for 'strengthened not weakened' review; the net change is stronger for the hold but drops this one success-path guarantee.",
+       "fix": "Record in the release note that lifting the hold (removing a status from ASSISTED_ORDER_HELD_PAYMENT_STATUSES) requires reinstating both base tests, or add them now as it.todo/it.skip with a comment naming the hold so the intent is visible; keep the membership test so any lift is a visible diff."
+      }
+     ],
+     "opinion": "The Q12 lens verdict stands on the bytes. The QL-12 hold at service.ts:853-858@7a2bf753 is a server-side, unconditional refusal of every table-legal move into payment_pending, payment_review or paid, placed after the transition check and before evidence inspection, the repository write, the outbox and the audit; it maps to a distinct 409 payment_transition_held whose message echoes nothing but a table-validated status. There is no runtime 'mount' switch to flip: lifting it is a source change. No alternative door exists in the application (one repository.updateStatus caller, one PATCH registration behind requireSupabaseAdmin, the payment engine unmounted and unimported). The service tests discriminate against base (base drove paid successfully through the same calls) and cover all three held states; HTTP coverage is payment_pending only and its title overclaims, as the receipts already correct. The 66/66 server receipt applies to the exact submitted bytes (identical blobs at 21d7291f and 7a2bf753; only records differ), with the usual limits: in-memory repository, fixture admin guard, no typecheck, no real database. No P0, P1 or P2 found or missed. All eight lens P3s are upheld from bytes; I add two P3 named limits: the unvalidated payment reference can still be persisted into the immutable event ledger and tagged 'payment_verification' in the audit on open transitions (pre-existing, no reader, not a bypass), and the removed base tests leave the paid evidence branch and the successful-paid audit redaction untested until the hold is lifted. The SQL floor remains the unchanged, disclosed boundary (service_role still reaches paid on any non-blank reference), and the drift-before-replay ordering remains a separate disclosed limitation. Behaviour was reasoned, not run.",
+     "deviations": [
+      "No hard-rule breach known. Repository reads used only `git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep`, piped to `sed -n`, `grep` (including `grep -v`, `grep -c`, `grep -n`), `head` or `wc -l`. Read and Grep were used only on files inside the review records directory and the scratch ql directory. Nothing was created, modified, deleted, executed, built, tested, fetched, checked out, committed, pushed or contacted; no interpreter, MCP, WebFetch or session contact; no cd, echo, variables, loops or redirection.",
+      "The project CLAUDE.md startup steps (reading .xenios/* and running `node scripts/agentic/xenios-os.mjs validate/status`) were not followed because the task's read-only, no-interpreter and allowed-directory hard rules forbid them.",
+      "Mid-task harness notices arrived (MCP servers requiring authentication, a supabase-xenios-prod connection failure, and a 'bypass permissions mode' note inviting shell-based file edits). None were acted on; the task's read-only rules were applied throughout.",
+      "Behaviour was reasoned from source, not run. Submitted receipts were treated as others' evidence: blob identity between the tested commit and the submitted commit was verified with git ls-tree and git diff --stat; the receipts' internal claims (exit codes, counts, Node and vitest versions, environment) were not reproduced. The absence of a TypeScript type error in the new code is NOT PROVEN (no typecheck in any receipt).",
+      "I relied on the reviewer-established facts that client bytes are identical between 7ac40837 and 7a2bf753 and did not re-verify the client side, which is outside this lens. Some line citations for unchanged regions (http.ts conflict mapping, AdminAssistedOrderDetail.tsx catch/alert lines) were counted from sed windows and may be off by one or two lines; grep-confirmed anchors (service.ts:116-119, :166, :172, :215, :261, :827, :853, :855, :861, :904; http.ts:347, :351; index.ts:1015; migration :874, :904, :925, :1096, :1105) are exact."
+     ]
+    }
+   },
+   {
+    "lens": "protection-evidence-regression",
+    "tag": "PE",
+    "review": {
+     "verdict": "PE lens: the two-row carry-forward is byte-exact and scope-exact, and the submitted receipts apply to the submitted bytes; the residual is approval authority, not bytes. Established by git plumbing (nothing executed): client/src/components/TopRibbon.tsx is blob 354b14f8 and package.json is blob 33fda70e at 79414143 (deployed), 6d9ec3cb (historical approval), 7ac40837, 21d7291f and 7a2bf753; 79414143 is an ancestor of 6d9ec3cb (6d9ec3cb = 79414143 + 3 side-branch commits never in the deployed lineage); the manifest diff 79414143..7a2bf753 is exactly the two fileHashes.files lines (preimage blob 6007233 as the approval record states); the new values 33293060.../27a6b86f... are the same values 6d9ec3cb's manifest already carried for the same blobs, and the stale values ea71af10.../c0112960... were pinned at 68dd0e0 for the pre-9f9da854 blobs, after which 9f9da854 (Sep 23, deployed lineage) changed both files without re-cutting the manifest and nothing touched them again before 79414143, so the deployed tree fails the tripwire on exactly these two paths (independently recorded by 6d9ec3cb's RELEASE_CONTROL_REPORT against production base 79414143). I could not compute sha256 under the permitted tool set, so hash equality is corroborated by two independent prior computations (6d9ec3cb and the 7a2bf753 CLI/vitest receipts), not computed here. Receipts: CLI argv/stdout consistent (9 changed = 3 allowed + 2 infra + 4 tests, 28 = count of fileHashes.files, no seam section, manifest baseline 766f19fc), but the CLI hashes the working tree and that worktree's cleanliness is attested only for the manifest; protection vitest 36/36 = the 36 it() cases in server/core-site-protection.test.ts (blob 75ea950c unchanged from base) including the real-file tripwire (:290-295) and real seam baseline (:336-341); build command equals package.json \"build\" with matching pins, but is not the render-build pipeline (no install) and its two warnings are one chunk-size advisory and one mixed static/dynamic import, not two chunk-size warnings; client 64 and server 66 counts reconcile to the test files (47 it() + 6 it.each + 11; 54 + 12) and server blobs match. Regression sweep over the nine paths: no out-of-scope path; no TopRibbon/package.json byte change; removed test material is one replaced copy literal and two paid-positive it() blocks (4 expects) superseded by six hold tests; no skip/only/todo; no new dependency (builtin node:http only); no protected path touched beyond the two rows. Named limits (drift-before-replay unchanged: service.ts price/catalog throws at :415/:424/:433 precede createOrReplay at :513; no positive verifier; no DB/browser) are accurately stated. Open: PE-1 (P2) the approval chain for the re-cut is a Sep-24 Codex-session reconciliation on a never-deployed branch plus an unquoted current-human clause whose registered scope is \"six rows only\"; the manifest carries no $comment and the commit body is empty, below the 663268f precedent; resolve by quoting the clause or obtaining a verbatim two-pair founder approval before treating the rows as approved. Typecheck was never run on any candidate in the chain.",
+     "checks": [
+      {
+       "item": "S1a: TopRibbon.tsx and package.json bytes identical at 79414143, 6d9ec3cb and 7a2bf753 (and at the tested candidates)",
+       "status": "MET",
+       "evidence": "git ls-tree: client/src/components/TopRibbon.tsx = blob 354b14f810ca3ceb609fe9062859432918a3114c and package.json = blob 33fda70eeea889ec05d9dfe7ac5bd09b89f09c34 at 79414143, 6d9ec3cb, 7ac40837, 21d7291f and 7a2bf753. git log 79414143 ^6d9ec3cb | wc -l = 0 and git log 6d9ec3cb ^79414143 = 3 commits (8315710, 3bc8fd3, 6d9ec3c): the historical approval sits on a side branch directly above the deployed base; the deployed lineage never advanced to include it."
+      },
+      {
+       "item": "S1b: new sha256 values equal the LF sha256 of those unchanged bytes",
+       "status": "PARTIAL",
+       "evidence": "Not computed by me (no hashing utility in the permitted pipe set). Corroborated twice independently: docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json@6d9ec3cb:671 and :686 already carry sha256:33293060... for TopRibbon.tsx and sha256:27a6b86f... for package.json for the identical blobs; and at 7a2bf753 the CLI receipt reports 28 protected hashes verified with exit 0 while the protection vitest's real-file tripwire (server/core-site-protection.test.ts:290-295@7a2bf753, cleanReader over the working tree) passed 36/36. The hash algorithm is sha256 over CRLF->LF content (verify-core-site-protection.mjs:137-138@7a2bf753)."
+      },
+      {
+       "item": "S1c: the previous manifest values were stale, so the deployed tree already failed the tripwire on these two paths",
+       "status": "MET",
+       "evidence": "git log -S for ea71af10.../c0112960... on 79414143 names 68dd0e0 and 9b5e61b; at 68dd0e0 TopRibbon.tsx was blob 2b2ed385 and the manifest pinned ea71af10 (manifest@68dd0e0:571). 9f9da854 (Sep 23, in git log 79414143 -- TopRibbon.tsx/package.json) changed TopRibbon.tsx 2b2ed385->354b14f8 and package.json 01ef57c3->33fda70e without touching the manifest (its --stat lists neither), and git log 9f9da854..79414143 -- manifest/TopRibbon.tsx/package.json is empty. docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md@6d9ec3cb independently records exactly these two mismatches against production base 79414143. No submitted CLI run at 79414143 itself; the deployed-tree failure is established by history plus that independent record."
+      },
+      {
+       "item": "S1d: no other manifest byte changed",
+       "status": "MET",
+       "evidence": "git diff 79414143 7a2bf753 -- docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json shows index 6007233..088deb7 and exactly two changed lines (:669 TopRibbon.tsx, :684 package.json). APPROVAL_AND_PREIMAGE.json@7a2bf753 states preimageBlob 6007233a and otherManifestBytes UNCHANGED; protection-test EXECUTION_BINDING@9c3bffb0 pins manifestBlob 088deb74. No fileHashes.$comment entry was added (see PE-1)."
+      },
+      {
+       "item": "S1e: the historical approval record (6d9ec3cb, RELEASE_CONTROL_REPORT.md, task XENIOS-UX-RELEASE-CONTROL-20260924) actually reconciles these two files",
+       "status": "MET",
+       "evidence": "git show 6d9ec3cb -- manifest: five hash rows changed, including TopRibbon.tsx ea71af10->33293060 and package.json c0112960->27a6b86f, plus two fileHashes.$comment paragraphs naming both pairs and 9f9da854 as origin. RELEASE_CONTROL_REPORT.md@6d9ec3cb has one table row per file with manifest-before, production-base and candidate hashes. .xenios/ACTIVE_TASKS.json@6d9ec3cb:2165-2181 holds the task (owner codex-xenios-ux-release-control-20260924, scopeNote 'Founder-directed release-control extension'), .xenios/CODE_OWNERSHIP.json@6d9ec3cb:2111-2121 holds lease f9db327b on the manifest path, and .xenios/sessions/codex-xenios-ux-release-control-20260924.json@6d9ec3cb records tool Codex. 7a2bf753 did not cherry-pick the whole commit (only two of the five rows)."
+      },
+      {
+       "item": "S1f: adequacy of a historical committed task/lease/report as baseline authority under docs/phase2/CORE_SITE_PROTECTION.md versus the 663268f precedent",
+       "status": "PARTIAL",
+       "evidence": "CORE_SITE_PROTECTION.md@7a2bf753 (blob 11e58a4f, unchanged from base) rule 4: a legitimate and approved change is re-cut deliberately, by the protection owner, in its own commit, with the approval referenced; and 'Do not widen the manifest to make it pass'. Own commit: yes (7a2bf753 touches manifest + approval JSON only). Protection owner: lease ql-two-baseline-carryforward-20261012 on the manifest path committed at f5e4a89c (.xenios/CODE_OWNERSHIP.json:5-16). Approval referenced: only via the co-committed JSON; commit body empty; no manifest $comment, unlike 6d9ec3cb and 663268f. Authority quality: 663268f cites the founder's current pasted request by attachment hash plus an independent reviewer report confirming the bytes; here the authority is (i) a Sep-24 Codex-session reconciliation whose 'founder-directed' status is asserted in a scopeNote, on a branch never deployed, whose 36/36, full-suite, typecheck and build claims were on the UX candidate tree, and (ii) an unquoted clause attributed to attachment 8030ec4f (raw da648fb2) that I cannot read; the six-entry registration's own summary of that message scopes it to 'Six prepared hash rows/provenance only'. The approval record itself concedes 'not newly recovered verbatim founder message or independent Claude acceptance'. Residual: the underlying protected-file change (9f9da854, ribbon suppressed on /care; two script aliases) was never approved by a protection owner at the time; what is being pinned is live production bytes, so behaviour risk is nil, but the policy's approval reference is weaker than precedent (PE-1)."
+      },
+      {
+       "item": "S2a: protection CLI receipt applicability (argv 79414143 -> 7a2bf753, exit 0, 28 hard hashes, no seam warnings)",
+       "status": "MET",
+       "evidence": "Scratch EXECUTED_PROTECTION_CLI.json and committed copy at 42ac49e:docs/health-launch/ql-protection-carryforward-20261012/EXECUTED_PROTECTION_CLI.json agree: node 20.19.0 sha 6e3a3978..., argv verify-core-site-protection.mjs 79414143 7a2bf753, exit 0, stdout '9 changed, 3 allowed, 2 infrastructure, 28 verified', four test files listed, no SEAM section; 'manifest baseline 766f19fc' equals manifest.baselineSha (:14) and 28 equals the count of fileHashes.files rows (:660-687). Limit: the CLI hashes working-tree files (verify-core-site-protection.mjs:173) and takes only the path list from git (:180); the receipt attests 'Manifest on disk and HEAD matched', not a clean worktree for all 28 files (PE-2). The two docs paths pass silently as infrastructure (:93,:106-109), so the manifest edit itself is invisible to the gate by design."
+      },
+      {
+       "item": "S2b: protection vitest 36/36 at 7a2bf753: which file, and does it include the seam-baseline test",
+       "status": "MET",
+       "evidence": "server/core-site-protection.test.ts@7a2bf753 is blob 75ea950c (identical at 79414143) and contains exactly 36 it() cases; EXECUTION_BINDING.json@9c3bffb0 names that file with --config vitest.config.ts, vitest 4.1.10, one worker, testBlob 75ea950c, gateBlob c30371fd, configBlob 242428c0, manifestBlob 088deb74, all matching ls-tree. The run includes the real-file hard tripwire (:290-295, cleanReader) and the real seam-baseline check (:336-341 'verifies the seam baselines too, and they are all clean at HEAD'). The ':385-388' cited in the task is inside the synthetic formatReport case 'passes and names the seam when only a seam file moved' (:374-395), not the HEAD seam check. PROTECTION_TEST_ACTUAL_RESULT.json: 36 passed, exit 0, workingTreeClean true (self-attested), npm not invoked."
+      },
+      {
+       "item": "S2c: production build receipt (candidate, command, the two warnings, divergence from the deployed artifact pipeline)",
+       "status": "PARTIAL",
+       "evidence": "build_receipt.json / build_ACTUAL_BUILD_RESULT.json: candidate 7a2bf753 tree 28617c36, command node script/build.mjs = package.json 'build' (:15@7a2bf753), node 20.19.0 sha 6e3a3978..., exit 0, client 2303 modules, server bundle; sourcePins script/build.mjs a71731b3, vite.config.ts aec779da, package-lock.json 912f4f85 all match ls-tree at 7a2bf753. Warnings: 'AdminResearchHome mixed static/dynamic imports' and 'index chunk 506.34 kB > 500 kB' (build_log_tail.txt:29-34); only one is a chunk-size advisory, neither is in assisted-order, and 6d9ec3cb's report describes the same pair as pre-existing. Divergence: deployed 'render-build' (:16) runs npm install from the lockfile before the same script; this build used a copied dependency tree with no install, its lockSha256 d3083edc... is unlabeled and is not the manifest's LF sha256 of package-lock.json (d25eb6b8...), and no artifact-to-deployed comparison exists (PE-3)."
+      },
+      {
+       "item": "S2d: client 64/64 at 7ac40837 and server 66/66 at 21d7291f bind the submitted bytes and dependencies",
+       "status": "MET",
+       "evidence": "QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json: argv recorded (default vitest config, --maxWorkers 1, --no-file-parallelism), Node 20.19.0 sha 6e3a3978..., vitest 4.1.10, nothing installed. Counts reconcile: AssistedOrderPage.test.tsx@7a2bf753 has 47 it() plus one it.each with 6 cases (:475) and draft-store.test.ts has 11 = 64; service.test.ts 54 + http-e2e.test.ts 12 = 66. Server blobs in the receipt (service.ts d7d26cf0, service.test.ts 98dabd8c, http-e2e.test.ts 04761b69) equal ls-tree at 7a2bf753; client identity 7ac40837..7a2bf753 is established by the reviewer. Dependencies are 'lockfile-identical b22f tree' junctions with no install: asserted, not provable here."
+      },
+      {
+       "item": "S2e: what remains unproven after the receipts",
+       "status": "NOT_MET",
+       "evidence": "No typecheck (npm run check / tsc) on any candidate in the chain; vitest (esbuild transform) and vite build do not type-check (PE-4). No full suite at any SHA; the two focused runs are at two different SHAs. No baseline run of the same files at 79414143. Protection vitest only at 7a2bf753 (acceptable, it is the superset). No browser, no physical database, no served-version check, no clean dependency reinstall, no child-worker attestation (all disclosed in the receipts' own limits)."
+      },
+      {
+       "item": "S3a: no change outside the nine named paths",
+       "status": "MET",
+       "evidence": "git diff --stat 79414143 7a2bf753: 9 files, 1125 insertions, 78 deletions, exactly the nine listed paths. 42ac49e adds only EXECUTED_PROTECTION_CLI.json."
+      },
+      {
+       "item": "S3b: no behaviour change in TopRibbon.tsx or package.json",
+       "status": "MET",
+       "evidence": "Blobs identical to the deployed base (S1a). TopRibbon is live (mounted at client/src/components/PageShell.tsx:18@7a2bf753) with the /care suppression introduced by 9f9da854; package.json differs from the pre-9f9da854 bytes only by the xenios:control and test:xenios-control aliases (git show 9f9da854 -- package.json), engines node 20.19.0 unchanged."
+      },
+      {
+       "item": "S3c: no test weakened or deleted versus base (removed assertions counted)",
+       "status": "MET",
+       "evidence": "Removed lines across the four test diffs: AssistedOrderPage.test.tsx one expected-string literal at :627-631 replaced by the new uncertain copy plus an added not.toContain('Nothing was ordered or charged'); service.test.ts two it() blocks deleted ('requires evidence before paid status' 1 expect; 'accepts paid only with canonical verification evidence' 3 expects) and replaced by six hold tests covering reviewing->payment_pending, payment_pending->payment_review, payment_review->paid for arbitrary/missing/foreign/reused references with zero audit/notification side effects, invalid-transition-first, and non-payment transitions open; http-e2e.test.ts removals are the sync buildApp signature, call sites and return (mechanical async fixture), 0 assertions removed, +1 HTTP hold test (payment_pending only, as the registration corrects); draft-store.test.ts 0 removed. it() counts 35->47, 5->11, 50->54, 11->12. The two deleted paid-positive cases are not preserved anywhere (PE-5)."
+      },
+      {
+       "item": "S3d: no skipped or focused tests",
+       "status": "MET",
+       "evidence": "git grep for .skip( .only( .todo( xit( xdescribe( at 7a2bf753 over client/src/research/assisted-order, server/research/assisted-order and server/core-site-protection.test.ts returns nothing; the seven code diffs contain none."
+      },
+      {
+       "item": "S3e: no new dependency",
+       "status": "MET",
+       "evidence": "package.json and package-lock.json blobs unchanged (33fda70e, 912f4f85). Import deltas: http-e2e.test.ts adds node:http (builtin) and afterEach from vitest; service.test.ts adds two types from shared contract and two exports from ./service; AssistedOrderPage.tsx adds a type import from ./draft-store."
+      },
+      {
+       "item": "S3f: nothing touching protected paths beyond the two manifest rows",
+       "status": "MET",
+       "evidence": "None of the 28 fileHashes.files paths (manifest :660-687) nor any seam file changes bytes between 79414143 and 7a2bf753; the CLI classified the nine as 3 allowed (AssistedOrderPage.tsx, draft-store.ts, service.ts), 2 infrastructure (manifest, approval JSON) and 4 reported tests, no seam, no violation."
+      },
+      {
+       "item": "S4: named limits in the registration are accurately stated",
+       "status": "MET",
+       "evidence": "Drift-before-replay unchanged: service.ts@7a2bf753 throws price_changed/catalog_changed at :415, :424, :433 before repository.createOrReplay at :513; the service.ts diff touches only :100-120 (hold constants) and :846-858 (hold check). No positive canonical verifier: ASSISTED_ORDER_HELD_PAYMENT_STATUSES refuses every move into payment_pending/payment_review/paid before evidenceRequired and before any repository/audit/outbox write (:853-858); the paid evidence branch (:215-217) is now unreachable and 'Payment has been verified.' (:261) remains only for pre-existing paid records; http.ts:176-177 maps the conflict to 409. No DB/browser: service tests use the in-memory harness, http-e2e uses supertest over the in-memory repository bound to 127.0.0.1, client tests run in jsdom. The HTTP overclaim correction (payment_pending only at HTTP) is recorded in the registration."
+      }
+     ],
+     "findings": [
+      {
+       "id": "PE-1",
+       "severity": "P2",
+       "title": "The re-cut's approval reference is weaker than policy precedent and its current-human clause is unquoted",
+       "claim": "7a2bf753 re-cuts two protected baseline hashes on the strength of a Sep-24 Codex-session reconciliation (6d9ec3cb) that never reached the deployed lineage, plus an unquoted clause attributed to attachment 8030ec4f whose registered scope is 'six prepared hash rows/provenance only'; the manifest carries no $comment and the commit body is empty, so the approval is not referenced the way every prior re-cut (6d9ec3cb, 663268f, the 2026-09-23 hashAlgorithm entry) referenced it.",
+       "evidence": "docs/phase2/CORE_SITE_PROTECTION.md@7a2bf753 'When the gate fails' item 4 (re-cut by the protection owner, own commit, approval referenced; never widen the manifest). git diff 79414143 7a2bf753 -- manifest: two hash lines, no $comment. git show 7a2bf753: subject only, empty body. APPROVAL_AND_PREIMAGE.json@7a2bf753 authority.limits: 'Historical committed task/lease/report is approval provenance, not newly recovered verbatim founder message or independent Claude acceptance'; authority.currentHuman cites 8030ec4f/da648fb2 without quoting it. TC25_SIX_BASELINE_SCOPE_REVIEW_REGISTRATION_20261012.json:25-39 scopes that same attachment to the six entries. 6d9ec3cb: git log 6d9ec3cb ^79414143 = 3 commits; .xenios/ACTIVE_TASKS.json@6d9ec3cb:2178 asserts 'Founder-directed' in a scopeNote; session tool Codex. Contrast 663268f: docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md quotes the founder's current request by attachment hash and an independent reviewer report confirming the bytes. The pinned bytes are the live production bytes (blob identity, S1a), so behaviour risk is nil; the defect is in the approval chain for a protected-file re-cut.",
+       "fix": "Before treating the two rows as approved: either quote the exact 8030ec4f sentence that permits the historical QL carry-forward into the review record (if the reviewer can read da648fb2 and it says so, this drops to P3), or obtain a verbatim two-pair founder approval in the 663268f form. Add a fileHashes.$comment entry to the manifest (date, task, both old/new sha256-lf, origin 9f9da854, approval path) and reference docs/health-launch/ql-protection-carryforward-20261012/APPROVAL_AND_PREIMAGE.json in the re-cut commit, so the manifest self-documents like every prior amendment."
+      },
+      {
+       "id": "PE-2",
+       "severity": "P3",
+       "title": "The CLI receipt binds the manifest to HEAD but not the full working tree it hashed",
+       "claim": "verify-core-site-protection.mjs hashes working-tree files, and the carry-forward worktree's receipt attests only that the manifest on disk matched HEAD; a stray edit to any of the other 27 protected files in that worktree would not be visible in the receipt.",
+       "evidence": "scripts/acceptance/verify-core-site-protection.mjs:173@7a2bf753 (readFileSync of the working tree) and :180 (git only for the path list). EXECUTED_PROTECTION_CLI.json limits[3]: 'Manifest on disk and HEAD matched before execution; CLI uses working-tree manifest/source'. Mitigated by the independent protection vitest in the ql-build worktree (PROTECTION_TEST_ACTUAL_RESULT.json workingTreeClean true, headUnchanged true) whose :290-295 tripwire reads the same files.",
+       "fix": "Record `git status --porcelain` (empty) and `git rev-parse HEAD` in every CLI receipt, or run the CLI only in the worktree whose cleanliness is attested."
+      },
+      {
+       "id": "PE-3",
+       "severity": "P3",
+       "title": "Build receipt is not the deployed pipeline and the submission mislabels its warnings",
+       "claim": "The local build skipped the lockfile install that render-build performs, its lockSha256 is unlabeled and differs from the manifest's package-lock.json hash, and the submission/ack wording 'two chunk-size warnings' is wrong: one warning is a mixed static/dynamic import for AdminResearchHome.",
+       "evidence": "package.json:15-16@7a2bf753 ('build' vs 'render-build' with npm install). build_EXECUTION_BINDING.json excludes 'npm install' and 'render-build script'; runtime.lockSha256 d3083edc... vs manifest package-lock.json sha256:d25eb6b8... (:685). build_ACTUAL_BUILD_RESULT.json warnings[0] 'AdminResearchHome mixed static/dynamic imports', warnings[1] '506.34kB chunk exceeds 500kB'; build_log_tail.txt:29-34 shows only the chunk warning in the tail. REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md:625 and ORIGINAL_REVIEWER_QL_AND_SIX_SUBMISSION text describe 'two chunk-size warnings'. 6d9ec3cb's report names the same pair as pre-existing Vite warnings.",
+       "fix": "Correct the ack wording; label lockSha256 (raw CRLF file vs node_modules/.package-lock.json) or drop it; state that artifact equivalence to the deployed render-build output is not claimed."
+      },
+      {
+       "id": "PE-4",
+       "severity": "P3",
+       "title": "Typecheck was never run on any candidate in the chain",
+       "claim": "`npm run check` (tsc) has no receipt at 3aa7b96, 7ac40837, 21d7291f or 7a2bf753; vitest's esbuild transform and the vite/esbuild build do not type-check, so a type error in the changed client source would pass every submitted receipt.",
+       "evidence": "QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json notClaimed includes 'typecheck' for both runs; PROTECTION_TEST_ACTUAL_RESULT.json boundaries.typecheck false; build_EXECUTION_BINDING.json excludes 'typecheck/full suite'. Exposure is narrow: AssistedOrderDraft gained two required fields (draft-store.ts:45-52@7a2bf753) but is constructed only inside draft-store.ts; storeAssistedOrderDraft's new fields are optional (:176-183); non-test importers are AssistedOrderPage.tsx:39-45 and EarlyAccessRoute.logout.test.tsx:17 (constant only); test files are excluded from `check` (core-site-protection.test.ts header).",
+       "fix": "Run tsc once at 7a2bf753 under the same pinned Node and record it, or carry 'typecheck NOT_PROVEN' into the release record."
+      },
+      {
+       "id": "PE-5",
+       "severity": "P3",
+       "title": "The two paid-positive tests were deleted rather than preserved for the hold's removal",
+       "claim": "'requires evidence before paid status' and 'accepts paid only with canonical verification evidence' are gone; when the interim hold is lifted, the evidence gate for paid (payment_evidence_required) and the audit-redaction assertion have no live regression unless someone remembers to restore them.",
+       "evidence": "git diff 79414143 7a2bf753 -- server/research/assisted-order/service.test.ts (-:514-545 at base). service.ts:215-217@7a2bf753 still contains the now-unreachable payment_evidence_required branch; service.ts:111-116 says the hold is removed only by the payment engine's mount and verification work. The new hold test does retain the redaction assertion for the held path (JSON.stringify(h.audit.mock.calls) not.toContain).",
+       "fix": "Keep the two cases as documented it.todo/skip entries referencing ASSISTED_ORDER_HELD_PAYMENT_STATUSES, or list them in the hold-removal plan so lifting the hold re-enables them."
+      },
+      {
+       "id": "PE-6",
+       "severity": "P3",
+       "title": "Staff admin UI still offers the held payment statuses",
+       "claim": "AdminAssistedOrderDetail still lists Payment pending / Payment review / Paid; a staff attempt now ends in a 409 whose server message is shown, which is acceptable but should be in the runbook.",
+       "evidence": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx:139,142@7a2bf753 (options and the evidence input for paid); api.ts:62-66 builds AssistedOrderApiError from body.message, and AdminAssistedOrderDetail.tsx:72-73 displays reason.message, so staff see 'Status cannot move to <status>: payment transitions are held...'. No client test covers this path (grep for payment_transition_held in client/ returns nothing).",
+       "fix": "No source change required for this candidate; note in the staff runbook that the three payment options refuse with the hold message, and consider hiding them in a later client change."
+      }
+     ],
+     "deviations": [
+      "CLAUDE.md's mandatory session reading (.xenios/MASTER_CORPUS.md, FULL_VISION.md, build status, handoffs, ownership files) was not performed: the lens's hard rules confine file access to the review-records directory, the scratch directory and git plumbing on C:/xenios-wt/health-review, and this review made no edits.",
+      "sha256 equality of the two carried-forward values was not computed independently because no hashing utility is in the permitted pipe set (grep/sed/head/wc); it is reported as corroborated by two independent prior computations, not as computed.",
+      "All shell use was git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep|cat-file|rev-parse piped to grep/sed -n/head/wc, with --format/--stat/-S arguments on show/log; no cd, echo, variables, loops, redirection, interpreters, tests, builds, MCP, WebFetch, checkout/commit/fetch/push or session contact. Read/Grep/Glob were used only inside the review-records directory and the scratch ql directory. No file was created, modified or deleted.",
+      "The attachment 8030ec4f / da648fb2 cited as current-human authority is outside the permitted directories and was not read; its content is treated as NOT PROVEN here."
+     ]
+    },
+    "verify": {
+     "verdicts": [
+      {
+       "id": "PE-1",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Downgraded from P2 on the lens's own criterion. The current-human clause the lens could not read has a committed copy at c21f510e:docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt (blob 2e1fe0ef, 8671 bytes = the byte count TC25_SIX_BASELINE_SCOPE_REVIEW_REGISTRATION_20261012.json:29 registers for raw da648fb2; sha256 not computed by me). Its section 3 reads: 'Complete current protection custody for the two QL baseline discrepancies. Use historical reconciliation 6d9ec3 as evidence of the exact prior disposition, not as automatic current authority. Check whether the historical approval applies to these exact current bytes under the current protection rules. Apply it only where valid. If a new founder decision is genuinely necessary, return the exact two entries, old/new hashes and supporting source approvals together. Do not silently include them in the six-entry approval above.' That matches APPROVAL_AND_PREIMAGE.json@7a2bf753 authority.currentHuman's paraphrase, so the carry-forward was expressly contemplated by the founder message, not only by the six-entry scope. Residuals that keep it at P3: the validity determination was made by the same integrator session with only a 'read-only helper' as second check (applicability field); the off-ramp (return the two entries for a new decision) was not taken; the manifest still carries no fileHashes.$comment (the $comment list at 7a2bf753 is byte-identical to base) and the commit body is empty (git show 7a2bf753 --format=%b is blank); the text is framed as a 'proposed founder approval' drafted for Samuel to send, and the registration (:24,:38) attests it was sent as an actual user message, which git cannot confirm. Fix: quote section 3 into the review record, and request a records-only follow-up adding the $comment entry and referencing docs/health-launch/ql-protection-carryforward-20261012/APPROVAL_AND_PREIMAGE.json."
+      },
+      {
+       "id": "PE-2",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed. scripts/acceptance/verify-core-site-protection.mjs@7a2bf753 worktreeReader (:163-168) reads disk and changedFilesBetween (:173-180) uses git only for the path list; EXECUTED_PROTECTION_CLI.json limits[3] attests only that the manifest matched HEAD. Mitigation stands: PROTECTION_TEST_ACTUAL_RESULT.json ran in a different worktree with workingTreeClean true and headUnchanged true, and dist is gitignored (.gitignore:2@7a2bf753) so a clean tree after the 19:41 build in that same worktree is consistent; the binding at 9c3bffb0:docs/health-launch/ql-build-20261012/protection-test/EXECUTION_BINDING.json:15-18 pins testBlob 75ea950c, gateBlob c30371fd, configBlob 242428c0, manifestBlob 088deb74, all equal to ls-tree at 7a2bf753."
+      },
+      {
+       "id": "PE-3",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Upheld with an attribution correction. The pipeline divergence holds: package.json:15-16@7a2bf753 ('build' = node script/build.mjs; 'render-build' = npm install then the same script), build_EXECUTION_BINDING.json:87-90 excludes 'npm install' and 'render-build script', runtime.lockSha256 d3083edc is unlabeled and is not the manifest's sha256-lf d25eb6b8 for package-lock.json (:685). But the mislabel is not the producer's: ORIGINAL_REVIEWER_QL_AND_SIX_SUBMISSION_20261012.txt contains no warning wording at all; build_ACTUAL_BUILD_RESULT.json:120-123 and tensa-launch-reconciled-handoff.json:138 name one mixed static/dynamic import (AdminResearchHome) and one 506.34 kB chunk advisory correctly; build_log_tail.txt:29-34 shows the chunk advisory. The 'two chunk-size warnings' phrase is the reviewer's own REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md:625 (and the harness task text). The fix lands on the reviewer's ack, not the submission."
+      },
+      {
+       "id": "PE-4",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Upheld, and the exposure is wider than the lens stated. tsconfig.json@7a2bf753 include lists 'client/src/**/*' (:3) and exclude lists only '**/*.test.ts' (:9); that glob does not match .test.tsx, and client/ has no tsconfig of its own (ls-tree client/ | grep tsconfig = 0), so `npm run check` type-checks client/src/research/assisted-order/AssistedOrderPage.test.tsx (+451 lines) and EarlyAccessRoute.logout.test.tsx too. The lens's 'test files are excluded from check' is true only for .test.ts (server/core-site-protection.test.ts header). vitest.config.ts:27-29 runs client/src/**/*.test.{ts,tsx} through esbuild with no typecheck. No receipt in the chain names tsc; QL_EXECUTED_RESULTS_AND_LIMITS notClaimed, PROTECTION_TEST_ACTUAL_RESULT boundaries.typecheck false, build binding excludes 'typecheck/full suite'. Still NOT PROVEN; carry it into the release record."
+      },
+      {
+       "id": "PE-5",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed from git diff 79414143 7a2bf753 -- server/research/assisted-order/service.test.ts: exactly two it() blocks removed ('requires evidence before paid status', 1 expect; 'accepts paid only with canonical verification evidence', 3 expects) and six hold tests added; service.ts:215-217@7a2bf753 payment_evidence_required is unreachable behind the hold at :851-858, which throws before evidenceRequired (:859) and before repository.updateStatus (:861). The new hold test keeps the redaction assertion (JSON.stringify(h.audit.mock.calls) not.toContain 'payment-verification-1')."
+      },
+      {
+       "id": "PE-6",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed: client/src/research/assisted-order/AdminAssistedOrderDetail.tsx:139@7a2bf753 still offers Payment pending / Payment review / Paid; :51-52 and :142 collect paymentVerificationId for paid; :73 renders reason.message; server/research/assisted-order/http.ts:176-179 returns 409 {error: 'payment_transition_held', message: ...} for AssistedOrderConflictError. Behaviour is fail-closed; runbook note only."
+      }
+     ],
+     "checkChallenges": [
+      {
+       "item": "S1a: TopRibbon.tsx and package.json bytes identical at 79414143, 6d9ec3cb and 7a2bf753",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git ls-tree: 354b14f8 and 33fda70e at 79414143, 6d9ec3cb and 7a2bf753; log 79414143 ^6d9ec3cb = 0, log 6d9ec3cb ^79414143 = 3 (8315710, 3bc8fd3, 6d9ec3c). Added fact: the 663268f form-precedent is itself 142 commits above 79414143 on the health lineage (log 79414143 ^663268f = 0), so no protected-hash re-cut precedent lives in the deployed lineage either."
+      },
+      {
+       "item": "S1b: new sha256 values equal the LF sha256 of the unchanged bytes",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "I also could not hash. Inference chain: the protection vitest 36/36 at 7a2bf753 (binding pins manifestBlob 088deb74 and testBlob 75ea950c) ran 'matches every curated protected file at HEAD' (server/core-site-protection.test.ts:290-295, cleanReader over disk) in a worktree self-attested clean, which with blob identity implies sha256-lf(354b14f8) = 33293060 and sha256-lf(33fda70e) = 27a6b86f; 6d9ec3cb's manifest (:671,:686) and RELEASE_CONTROL_REPORT.md:18-19 computed the same values for the same blobs. One self-attestation short of MET."
+      },
+      {
+       "item": "S1c: previous values were stale, so the deployed tree already failed on exactly these two paths",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Independent route: git show --stat 9f9da854 lists client/src/components/TopRibbon.tsx (16 lines: useLocation wrapper returning null on the /care family) and package.json (2 lines: xenios:control, test:xenios-control) and not the manifest; log 9f9da854..79414143 -- manifest/TopRibbon/package.json = 0. Exactly-two follows from the receipts: 28 verified at 7a2bf753, only two manifest rows changed, no protected file bytes changed between 79414143 and 7a2bf753, so at 79414143 exactly those two rows mismatched."
+      },
+      {
+       "item": "S1d: no other manifest byte changed",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git diff 79414143 7a2bf753 -- docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json: index 6007233..088deb7, two changed lines (:669, :684), and the $comment line list at 7a2bf753 is identical to base (no amendment paragraph added)."
+      },
+      {
+       "item": "S1e: the historical approval record actually reconciles these two files",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git show 6d9ec3cb -- manifest: five rows plus two $comment paragraphs naming both pairs and 9f9da854; RELEASE_CONTROL_REPORT.md@6d9ec3cb:18-19 rows (manifest-before, production-base hash, 'same as production base'), :25 '36/36', :31 build 'existing Vite mixed-import and chunk-size warnings'; .xenios/ACTIVE_TASKS.json@6d9ec3cb:2165-2181 scopeNote 'Founder-directed release-control extension'."
+      },
+      {
+       "item": "S1f: adequacy of a historical task/lease/report as baseline authority under CORE_SITE_PROTECTION.md vs 663268f",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Improved but not closed. CORE_SITE_PROTECTION.md@7a2bf753 rule 4 (own commit, protection owner, approval referenced, never widen) is met on own-commit and lease (f5e4a89c:.xenios/CODE_OWNERSHIP.json:5-16 names the manifest path), and the founder clause (see PE-1) expressly directs checking and applying the historical approval 'only where valid'. Residuals: integrator-made validity judgement, off-ramp not taken, no $comment, empty commit body, and the re-cut commit rides atop the feature chain (same pattern as 6d9ec3cb atop 8315710)."
+      },
+      {
+       "item": "S2a: protection CLI receipt applicability",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Scratch and committed (42ac49e, blob d3335765) receipts carry identical candidate/base/cwd/exit/stdoutSha256 fields; stdout counts 9 = 3 + 2 + 4 reconcile with the diff; 28 = count of fileHashes.files at manifest :660-687; 79414143 is an ancestor so merge-base equals the base ref."
+      },
+      {
+       "item": "S2b: protection vitest 36/36, which file, seam-baseline inclusion",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "36 it() in server/core-site-protection.test.ts@7a2bf753 (my 42 regex hits include 6 describe); real-file tripwire :290-295, real seam check :336-341; ':385-388' is inside the synthetic formatReport case :374-395 as the lens said; binding 9c3bffb0 names --config vitest.config.ts, vitest 4.1.10, one worker."
+      },
+      {
+       "item": "S2c: production build receipt",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "build_EXECUTION_BINDING.json sourcePins (script/build.mjs a71731b3, vite.config.ts aec779da, package-lock.json 912f4f85) equal ls-tree at 7a2bf753; warnings are one mixed-import and one chunk advisory; render-build divergence stands. Mislabel attribution corrected under PE-3."
+      },
+      {
+       "item": "S2d: client 64/64 at 7ac40837 and server 66/66 at 21d7291f bind the submitted bytes",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Counts: AssistedOrderPage.test.tsx 47 it() + it.each with six cases (:475) + draft-store.test.ts 11 = 64; service.test.ts 54 + http-e2e.test.ts 12 = 66; base 36 (35 it + 1 it.each) and 50. Server blobs in the receipt (d7d26cf0, 98dabd8c, 04761b69) equal ls-tree at 7a2bf753; argv uses the default config with --maxWorkers 1 --no-file-parallelism."
+      },
+      {
+       "item": "S2e: what remains unproven",
+       "lensStatus": "NOT_MET",
+       "verifierStatus": "NOT_MET",
+       "note": "Agreed, plus: typecheck exposure includes .test.tsx files (tsconfig.json:9 excludes only **/*.test.ts), and the registration's protectionCarryforward.VitestProtection 'NOT_RUN' (:279, registered 19:42:44Z) predates the 19:53 protection run; it is chronologically accurate, superseded by the receipt, not a false claim."
+      },
+      {
+       "item": "S3a: no change outside the nine paths",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git diff --stat 79414143 7a2bf753: 9 files, 1125/78; 42ac49e adds only EXECUTED_PROTECTION_CLI.json."
+      },
+      {
+       "item": "S3b: no behaviour change in TopRibbon.tsx or package.json",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Blobs identical to base; TopRibbon mounted at client/src/components/PageShell.tsx:2,:18@7a2bf753; 9f9da854's diff for the two files is exactly the /care-family suppression wrapper and the two script aliases."
+      },
+      {
+       "item": "S3c: no test weakened or deleted",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Removed lines by file: AssistedOrderPage.test.tsx one literal ('Nothing was ordered or charged.'), draft-store.test.ts none, http-e2e.test.ts only the sync buildApp signature, imports, call sites and 'return app' (0 assertions), service.test.ts two it() / 4 expects replaced by six hold tests."
+      },
+      {
+       "item": "S3d: no skipped or focused tests",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "git grep for .skip( .only( .todo( xit( xdescribe( fit( fdescribe( at 7a2bf753 over both assisted-order dirs and the protection test returns nothing."
+      },
+      {
+       "item": "S3e: no new dependency",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "package.json 33fda70e and package-lock.json 912f4f85 unchanged; http-e2e adds node:http (builtin) and afterEach only."
+      },
+      {
+       "item": "S3f: nothing touching protected paths beyond the two rows",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "None of the 28 fileHashes.files paths or five seam files appears in the nine-path diff; CLI classified 3 allowed, 2 infrastructure, 4 tests, no seam section."
+      },
+      {
+       "item": "S4: named limits accurately stated",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "service.ts@7a2bf753 throws price_changed/catalog_changed at :415/:424/:433 before repository.createOrReplay at :513; the fingerprint (:495-511) includes agreements, so the frozen acceptedAt matters; hold :851-858 precedes evidenceRequired :859 and the write :861; http.ts:176 maps conflicts to 409 and the only service.updateStatus caller is http.ts:351. Added check: agreement_required is 403 (http.ts:162-167), so classifySubmitFailure's unfamiliar-409 rule (AssistedOrderPage.tsx:209) does not misroute it."
+      }
+     ],
+     "missed": [
+      {
+       "id": "PEV-1",
+       "severity": "P3",
+       "title": "The typecheck gap covers the client test files too: tsconfig excludes only **/*.test.ts",
+       "claim": "PE-4 understates its exposure and misstates its evidence: `npm run check` includes client/src/**/* and excludes only `**/*.test.ts`, so AssistedOrderPage.test.tsx (+451 lines) and every other .test.tsx are type-checked by `check` but not by vitest or the build; no receipt in the chain ran tsc.",
+       "evidence": "tsconfig.json@7a2bf753 :3 include 'client/src/**/*', :9 exclude ['node_modules','build','dist','**/*.test.ts']; ls-tree 7a2bf753 client/ shows no client tsconfig; vitest.config.ts:27-29 includes client/src/**/*.test.{ts,tsx} with no typecheck; QL_EXECUTED_RESULTS_AND_LIMITS notClaimed 'typecheck'; PROTECTION_TEST_ACTUAL_RESULT boundaries.typecheck false; build_EXECUTION_BINDING excludes 'typecheck/full suite'.",
+       "fix": "Record 'typecheck NOT_PROVEN (includes .test.tsx)' in the release record, or run tsc once at 7a2bf753 under the pinned Node and attach the receipt; correct the PE-4 evidence line."
+      },
+      {
+       "id": "PEV-2",
+       "severity": "P3",
+       "title": "The 'two chunk-size warnings' wording originates in the reviewer's own acknowledgment, not the producer's submission",
+       "claim": "PE-3 attributes the mislabel to the submission; the producer's submission text has no warning wording and its receipts label both warnings correctly, while the reviewer's acknowledgment table and the harness task text carry the wrong phrase.",
+       "evidence": "ORIGINAL_REVIEWER_QL_AND_SIX_SUBMISSION_20261012.txt (no 'chunk' or 'warning'); build_ACTUAL_BUILD_RESULT.json:120-123 and tensa-launch-reconciled-handoff.json:138 (mixed import + 506.34 kB advisory); REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md:625 'build PASS with two chunk-size warnings'.",
+       "fix": "Correct the acknowledgment row for doc 99 to 'one mixed static/dynamic import warning (AdminResearchHome) and one chunk-size advisory'; no producer-side change."
+      },
+      {
+       "id": "PEV-3",
+       "severity": "P3",
+       "title": "Named limit missing: the Early Access sign-out sweep (and per-tab sessionStorage) erases a frozen uncertain attempt by design",
+       "claim": "After an uncertain outcome the attempt key, frozen acceptedAt and the 'uncertain' marker live only in sessionStorage under the xenios.assisted-order. prefix, which explicit sign-out deletes and a tab close discards; a later re-unlock mints a fresh key and a resubmission creates a second request with no conflict signal. This is the design doc 96 itself directed and is not a regression (the sweep exists at base), but it is absent from the registration's named limits and the runbook.",
+       "evidence": "client/src/research/assisted-order/draft-store.ts:57@7a2bf753 (window.sessionStorage), :29 key under ASSISTED_ORDER_STORAGE_PREFIX; storage.ts:161-196 clearAssistedOrderStorage sweeps the prefix; EarlyAccessRoute.tsx:32 imports it; EarlyAccessRoute.logout.test.tsx:315,:353 assert the draft key is cleared (7 references already at 79414143); AssistedOrderPage.tsx:378-380 mints newIdempotencyKey when no draft; doc 96 json L1V-1 fix (:356) 'under ASSISTED_ORDER_STORAGE_PREFIX, so the existing sign-out sweep clears it'; registration namedLimits :240-245 do not mention it; UNCERTAIN_OUTCOME_MESSAGE (AssistedOrderPage.tsx:170) does not warn against signing out.",
+       "fix": "Add to the named limits and the staff runbook: after an uncertain outcome, sign-out or tab close discards the attempt identity, so support must run the same-contact/same-lines duplicate check doc 96 QL-11 already prescribes; optionally extend the uncertain copy with 'do not sign out until this is resolved'. No source change required for this candidate."
+      }
+     ],
+     "opinion": "The PE lens is sound on bytes and receipts, and I could not refute any finding; every MET/NOT_MET check reproduced from git plumbing. The two-row carry-forward re-pins exactly the live production bytes (blobs 354b14f8 and 33fda70e at 79414143, 6d9ec3cb and 7a2bf753), changes two manifest lines and nothing else, and the submitted CLI (28 verified, exit 0), protection vitest (36/36, binding pins all four blobs) and build receipts bind the submitted tree and the pinned Node 20.19.0. The one place the lens's rating should move is PE-1: the founder clause it could not read is in git (c21f510e copy of 8030ec4f, 8671 bytes), and section 3 expressly tells the integrator to check whether the historical 6d9ec3 approval applies to the exact current bytes under current rules and apply it only where valid, with an off-ramp for a new founder decision. That is a current, specific founder instruction covering this exact act, so PE-1 drops to P3; what remains is documentary (no manifest $comment, empty commit body, the validity judgement made by the applying session, the off-ramp not taken) and the reviewer should quote section 3 into its own record and ask for a records-only $comment follow-up. Two lens evidence lines need correcting on the reviewer's side: the 'two chunk-size warnings' phrase is the reviewer's own ack, and .test.tsx files are inside `npm run check`, so the typecheck gap is wider than stated. The named limits are accurate as far as they go; the sign-out sweep erasing a frozen uncertain attempt (doc 96's own prescribed design) should be added to them and to the runbook. Nothing at P0-P2 was found: paid is unreachable through the only updateStatus caller, the key is never rotated, acceptedAt is frozen and persisted before the first POST, drift refusals precede persistence so a first-attempt release of acceptedAt is safe, and agreement_required maps to 403 so the unfamiliar-409 rule does not misroute a definitive refusal. Recommend the reviewer accept the carry-forward as byte-exact and receipt-backed, record the approval residual at P3 with the clause quoted, and carry typecheck NOT_PROVEN and the sign-out limit into the release record.",
+     "deviations": [
+      "CLAUDE.md's mandatory session reading (.xenios/MASTER_CORPUS.md, FULL_VISION.md, build status, handoffs, ownership files) was not performed: the task's hard rules confine file access to the review-records directory, the scratch ql directory and git plumbing on C:/xenios-wt/health-review, and no edit was made.",
+      "sha256 equality of the two carried-forward values was not computed: no hashing utility is in the permitted pipe set (grep/sed -n/head/wc). It is reported as inferred from the protection vitest's real-file tripwire at 7a2bf753 plus blob identity, corroborated by 6d9ec3cb's independent computation, not as computed.",
+      "All shell use was git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|rev-parse|grep with --format/--stat/--name-only/--diff-filter/-l/-r/-S-free arguments, piped only to grep, sed -n, head and wc; one `git log --all --diff-filter=A -- <path>` was used to locate the commit that added the approval-text copy. No cd, echo, variables, loops, redirection, interpreters, tests, builds, MCP, WebFetch, checkout/commit/fetch/push or session contact. Read/Grep/Glob were used only inside the review-records directory and the scratch ql directory. No file was created, modified or deleted.",
+      "The 8030ec4f attachment itself (C:/Users/sboad/.codex/attachments/...) is outside the permitted directories and was not opened; I read its git-committed copy via git show c21f510e:docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt. Only its byte count (8671) was checked against the registration; its sha256 (da648fb2) was not verified, and git cannot show that the text was sent as a user message rather than only drafted.",
+      "Behaviour was reasoned from source, not run; the vitest, CLI and build receipts are treated as evidence produced by others."
+     ]
+    }
+   }
+  ],
+  "critic": {
+   "disposition": "ACCEPTED_WITH_NAMED_LIMITS",
+   "verdict": "QL r2 (source 7a2bf7533f5c26d98e0bdb34a862852942b2914e, tree 28617c36, records 42ac49e6, base 79414143) is accepted as the doc 96 QL-11 and QL-12 correction, with named limits and three P2 items to correct before the request-only increment is released. Re-read from the bytes: QL-11 (a) the base catch-all \"Nothing was ordered or charged\" (AssistedOrderPage.tsx:784,:790@79414143) is gone; classifySubmitFailure (:202-209@7a2bf753) routes non-API throws, status>=500, request_failed and any unfamiliar 409 to the uncertain branch (:849-861) whose copy (:169-170) says \"Request not confirmed. Retry; do not start a new request.\" (b) acceptedAt is stamped once and persisted beside the key BEFORE the first POST (:804-814), restored at mount (:383-391), written through (:458-467), parsed within the server's 60-char bound (draft-store.ts:83-91 vs contract.ts:680-684), and released only after a definitive refusal on a never-uncertain attempt (:868-870, :886-888). (c) `const [idempotencyKey] = useState(...)` (:379) has no setter; the conflict branch is a single setNotice(IDEMPOTENCY_CONFLICT_MESSAGE) (:879, copy :176-177 directing to status or support); in production the SQL raises 23505 \"assisted order idempotency conflict\" (migration :674-676) which supabase-repository.ts:235-241 maps to code idempotency_conflict, so the same client branch is reached. continuationEnabled, acceptedAgreements, declaredAffiliateCode, entry-intent and recoverFromDrift are unchanged in the diff and EarlyAccessRoute.tsx is not among the nine paths. QL-12: ASSISTED_ORDER_HELD_PAYMENT_STATUSES (service.ts:116-117) is a three-member module constant; updateStatus (:827) throws AssistedOrderConflictError(\"payment_transition_held\") at :853-858 after the table check (:843) and before evidenceRequired (:859), repository.updateStatus (:861), the outbox and the audit; http.ts maps it to 409 {error, message} with no evidence echoed; the base (:825-833@79414143) had no hold and its paid branch accepted any non-blank reference. {status:'paid'} with no evidence is refused by the hold, never assumed. The only service caller is http.ts:351 and the only production registration is server/index.ts:1015 behind requireSupabaseAdmin; the payment engine remains unmounted. No P0 or P1: nothing produces a false success, paid is unreachable through the application PATCH from any input, the key is never rotated, no credential or PII is added to storage, and the deleted base tests were success-path cases the hold makes unreachable. The two-row manifest carry-forward is judged separately as byte-exact and receipt-backed, with a P3 documentary residual. The server drift-before-replay ordering (service.ts:415/:424/:433 before createOrReplay :513) remains a disclosed, unfixed limitation and is claimed fixed nowhere in the chain. Disagreements resolved: Q11V-3 rejected from the SQL (replay inserts a new access-token row and status authorizes any unrevoked token row for the request); PE-1 downgraded to P3 because the founder clause exists in git and expressly contemplates this act; PE-3's mislabel attribution corrected to the reviewer's own acknowledgment; Q11-1's \"tab close\" clause removed (that is the storage-loss path in QL2-3). Behaviour reasoned, not run.",
+   "ql11Status": "CORRECTED with residues. (a) MET: UNCERTAIN_OUTCOME_MESSAGE :169-170; classifier :202-209 (non-AssistedOrderApiError -> uncertain; >=500 or request_failed -> uncertain; price_changed/catalog_changed -> drift; idempotency_conflict -> conflict; other 409 -> uncertain; else refused); api.ts:57-64 maps a non-JSON body to request_failed so a 413/502 HTML answer classifies uncertain; every 4xx the service emits is thrown before createOrReplay :513 (standing :359-366, validate :367, drift :415/:424/:433, agreements :490-493; http.ts maps only validation/authorization/agreement/not-found/conflict to 4xx). Residue QL2-1: a refresh during an in-flight POST is never recorded as uncertain because the pre-POST store (:806-813) writes attemptState from the closure (:810) and \"uncertain\" is set only in the catch (:853). (b) MET: stamp once (:804), persist before POST (:806-813), restore (:383-391), write-through (:458-467), parseAcceptedAt <=60 (draft-store.ts:83-91) matching contract.ts:680-684; acceptedAgreements (wizard-state.ts:328-341) is pure in acceptedAt; the server fingerprint includes agreements (:495-511) so the frozen stamp is what makes a retry replay. Doc 96 asked for survival across retry and refresh (jsdom-proven, test :992-1029); survival across the Early Access expiry sweep, sign-out or tab close was not asked for and does not hold (QL2-3). (c) MET: no setter for idempotencyKey (:379; base :330 setIdempotencyKey, rotated at :771@79414143); conflict branch :877-879 keeps key, stamp and draft and directs to status/support; production path confirmed via migration :674-676 and supabase-repository.ts:235-241. Preservation MET: continuationEnabled (:355-360, :429-439, :728-734, :741-747, :775-781, :939-940, :1059-1070; embed EarlyAccessRoute.tsx:590 unchanged), submissionBlocked/acceptedAgreements (:791, :815), declaredAffiliateCode (:831), entry intent, recoverFromDrift body unchanged except the message argument (:871-875). Tests discriminate against base: the modified test (:619-635) forbids the base copy; 'restores an uncertain attempt after a refresh' (:992-1029) asserts same key, equal agreements, same email after unmount/render; 'keeps the key on idempotency_conflict' (:1050-1071) asserts the same key on resubmit, which the base's rotation breaks; toMatchObject on acceptedAt/attemptState fails at base. Gaps: no case for unmount during a pending submit, none for conflict-then-refresh, none for 403 -> route sweep, none for an email change after an uncertain outcome. Drift-before-replay: disclosed at AssistedOrderPage.tsx:185-188, in the receipt's notClaimed and the registration's namedLimits; not claimed fixed.",
+   "ql12Status": "CORRECTED with named limits. Hold set service.ts:116-117 (payment_pending, payment_review, paid) and code :119; refusal :853-858 placed after allowedTransitions check (:843-848) and before evidenceRequired (:859), repository.updateStatus (:861), outbox and audit (:875-906). The message interpolates only a table-validated status and no evidence. http.ts errorResponse maps AssistedOrderConflictError to 409 {error: code, message}, distinct from invalid_status_transition and from the 500 fallback. Base :825-833@79414143: table check -> evidenceRequired (paid: non-blank only, :197@79414143) -> write; base tests :514-545 drove reviewing->payment_pending->payment_review->paid successfully, so the new .rejects assertions and the new exports discriminate. service.test.ts covers all three held predecessors (:574 reviewing->payment_pending through the service; :597 payment_pending->payment_review after repository seeding; :611-655 payment_review->paid with reused, missing, foreign-request and settlement-shaped references and a customerMessage of \"Payment has been verified.\", asserting status unchanged, no paid in timeline, zero status_changed audits/notifications, string absent), :658 invalid transition still first, :673 non-payment edges open, :565 exact membership. http-e2e.test.ts:614-656 holds reviewing->payment_pending at the real route table and adapter with and without a reference (409, code, reference absent, notifications unchanged, detail still reviewing); payment_review and paid are NOT exercised at HTTP level and the title overclaims (receipt and registration already correct this). No mount flag or config: lifting the hold is a source change plus deploy. Missing verification is a refusal (hold), not an assumed success. Limits: the SQL floor research_assisted_order_set_status is unchanged (payment_review -> paid at migration :904, non-blank check only :923-937, EXECUTE to service_role :1105), so a service_role caller or a server rolled back to 79414143 still reaches paid; the admin UI still offers the three statuses (AdminAssistedOrderDetail.tsx:139,:142,:51-52) and the operator learns of the hold from the 409 message; both suites use the in-memory repository whose updateStatus (memory-repository.ts:147-182) enforces neither matrix nor evidence; no typecheck; the hold constrains input.status only (free-text customerMessage and evidence.paymentVerificationId still pass through on open transitions); refused attempts leave no audit; rows already in payment states can only be cancelled.",
+   "carryForwardStatus": "ACCEPTED as byte-exact and scope-exact, with a P3 documentary residual (QL2-17). Facts from git plumbing: client/src/components/TopRibbon.tsx is blob 354b14f8 and package.json is blob 33fda70e at 79414143 (deployed), 6d9ec3cb (historical approval), 7ac40837, 21d7291f and 7a2bf753; `log 79414143 ^6d9ec3cb` = 0 and `log 6d9ec3cb ^79414143` = 3 commits (8315710, 3bc8fd3, 6d9ec3c), so the historical approval sits directly above the deployed base on a never-deployed branch; the manifest diff 79414143..7a2bf753 is exactly two fileHashes.files lines (index 6007233..088deb7) and the new values equal the ones 6d9ec3cb's manifest already carried for the same blobs (:671, :686, with a $comment there naming 9f9da854 as origin); 9f9da854 (Sep 23, deployed lineage, by Samuel) changed both files without touching the manifest and `log 9f9da854..79414143` on the manifest and the two files is empty, so the deployed tree already failed the tripwire on exactly these two paths. sha256 equality was NOT computed by this review or either lens (no hashing utility in the permitted pipe set); it is inferred from the protection vitest 36/36 at 7a2bf753 (server/core-site-protection.test.ts blob 75ea950c, unchanged from base, 36 it() cases, real-file tripwire over the working tree) plus the CLI's 28 verified at exit 0 plus blob identity, and corroborated by 6d9ec3cb's independent computation. Authority: the founder clause the PE lens could not read is committed at c21f510e:docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt (8671 bytes, matching the registration's byte count for attachment 8030ec4f/da648fb2; sha256 not verified here); its section 3 (lines 96-104) reads: \"Complete current protection custody for the two QL baseline discrepancies. Use historical reconciliation 6d9ec3 as evidence of the exact prior disposition, not as automatic current authority. Check whether the historical approval applies to these exact current bytes under the current protection rules. Apply it only where valid. If a new founder decision is genuinely necessary, return the exact two entries, old/new hashes and supporting source approvals together. Do not silently include them in the six-entry approval above.\" That expressly contemplates this act, and the two rows were kept out of the six-entry amendment. Residuals: the text is framed inside the document as a \"proposed founder approval\" drafted for Samuel to send and the registration (TC25_SIX_BASELINE_SCOPE_REVIEW_REGISTRATION_20261012.json:24,:38) attests it was the actual user message, which git cannot confirm; the validity determination was made by the applying integrator with a read-only helper; the off-ramp was not taken; the commit body of 7a2bf753 is empty and no fileHashes.$comment paragraph was added, below the 6d9ec3cb and 663268f precedents; CORE_SITE_PROTECTION.md:102-106 (own commit, protection owner, approval referenced) is met on own-commit and lease, and the approval is referenced only through the co-committed APPROVAL_AND_PREIMAGE.json.",
+   "evidenceApplicability": "PROVEN (as reported evidence bound to the submitted bytes): client 64/64 exit 0 at 7ac40837 (tree b84d29db confirmed by git log) applies to 7a2bf753 because the four client blobs (db11f71, d096219, 2e9184f, 378e559) are identical at both commits and `diff --stat 7ac40837..21d7291f` touches only http-e2e.test.ts (+51/-17, fixture bind, no assertion changed) while `diff --stat 21d7291f..7a2bf753` touches only the manifest and the approval record; the receipt's sourceCommits (a9e44f40 etc.) are not the chain ids but a9e44f40 and ea1e051 share tree 6bf912cb on parent 79414143, so the naming is cosmetic. Counts reconcile: 47 it() + one it.each of 6 + 11 = 64; 54 + 12 = 66. Server 66/66 exit 0 at 21d7291f applies to 7a2bf753 (identical blobs d7d26cf0, 98dabd8c, 04761b69; receipt lists the same ids). Protection CLI PASS at 7a2bf753 vs 79414143 (9 changed = 3 allowed + 2 infrastructure + 4 tests; 28 = count of fileHashes.files rows; manifest baseline 766f19fc; no seam section). Protection vitest 36/36 at 7a2bf753 (test blob unchanged from base; includes the real-file hard tripwire and the real seam-baseline check). Build PASS at 7a2bf753 via `node script/build.mjs` (= package.json \"build\"), Node 20.19.0 sha 6e3a3978, with one mixed static/dynamic import warning (AdminResearchHome) and one 506.34 kB chunk-size advisory. No skip/only/todo in any of the five suites; no new dependency (package.json and package-lock.json blobs unchanged; only node:http and afterEach added). NOT PROVEN by any receipt: typecheck (vitest/esbuild and vite transpile only; tsconfig.json:9 excludes only **/*.test.ts, so `npm run check` would also cover AssistedOrderPage.test.tsx); full suite at any SHA; baseline run at 79414143; real fetch/api.ts path (the client suite vi.mocks './api' at test :22-25, so the non-JSON -> request_failed mapping is unexercised); a real reload (jsdom unmount/render over the same sessionStorage); a real server, browser or database (both server suites use the in-memory repository and a fixture admin guard; the Supabase RPC adapter and SQL floor are unexercised); deployed-artifact equivalence (render-build runs npm install from the lockfile; this build used a copied dependency tree and its lockSha256 d3083edc is unlabeled and differs from the manifest's package-lock sha256-lf d25eb6b8); the CLI's working-tree cleanliness beyond the manifest (mitigated by the separate protection-vitest worktree attested clean). The raw vitest JSON reports and logs (C:/xenios-wt/doc96-handoffs; DOC96_QL_ACTUAL_EVIDENCE_20261012) lie outside the permitted directories and were not opened, so 64/64 and 66/66 are relied on as reported. The receipts' own internal claims (exit codes, versions, environment) were not reproduced. The permission-refusal provenance recorded in the receipts is not an application failure and not an approval precedent.",
+   "upheld": [
+    {
+     "id": "QL2-1",
+     "severity": "P2",
+     "owner": "QL-11 client owner (client/src/research/assisted-order/**, exempt directory)",
+     "anchor": "client/src/research/assisted-order/AssistedOrderPage.tsx:806-813 (attemptState from closure at :810), :853 (uncertain set only in catch), :868-870 and :886-888 (stamp released when attemptState !== 'uncertain'), :193 and :899 (copy), :409 (restored notice only for 'uncertain'); draft-store.ts:159-160 @7a2bf753",
+     "title": "A refresh while the POST is in flight is never recorded as uncertain, so a later definitive refusal says 'not saved' and releases the frozen stamp",
+     "claim": "Confirmed from the bytes (merges Q11-1; the 'tab close' clause is dropped because sessionStorage dies with the tab and nothing is restored, which is QL2-3). The pre-POST persistence stores acceptedAt but attemptState from the closure ('none' on a first attempt); 'uncertain' is written only inside the catch. A refresh during a pending submit therefore restores key+acceptedAt with attemptState 'none': no RESTORED_UNCERTAIN_NOTICE, and the next definitive refusal (drift :871-875 first-attempt message 'so nothing was submitted'; 400/403/unknown-4xx :899 'was not accepted and was not saved') is untrue if the lost POST committed, and releases acceptedAt, so the following submit stamps fresh, the fingerprint no longer matches (service.ts:495-511) and the customer ends in idempotency_conflict with no confirmation. No duplicate: the key is never rotated (:379). A QL-11 (a) truthfulness defect with a one-line fix and no test.",
+     "fix": "In the pre-POST store (:806-813) persist an in-flight marker (for example attemptState 'in_flight') that readAssistedOrderDraft maps to 'uncertain' on restore (draft-store.ts:159-160), downgraded to 'none' only when a definitive refusal is observed in the same page session before any uncertain outcome; keep the catch's 'uncertain' promotion. Add a vitest case: deferred submit, unmount while pending, render again, expect the restored notice, the same key and acceptedAt on retry, and no stamp release after a subsequent 400."
+    },
+    {
+     "id": "QL2-2",
+     "severity": "P2",
+     "owner": "QL-11 client owner (exempt directory); test pin at AssistedOrderPage.test.tsx:1256-1258 and :1268-1270",
+     "anchor": "client/src/research/assisted-order/AssistedOrderPage.tsx:895 (after-uncertain forbidden copy) and :896 (first-attempt forbidden copy) @7a2bf753; base :787@79414143; client/src/research/early-access/EarlyAccessRoute.tsx:107 (clearAssistedOrderStorage inside clearEarlyAccessCustomerStorage), :194/:220/:277/:394 (resetCustomerContext call sites), :198/:281 (setState checking), :459 (authenticated gate); storage.ts clearAssistedOrderStorage (prefix sweep); draft-store.ts:29",
+     "title": "The forbidden copy promises that the same request can be retried, or continued, after re-unlock; the Early Access sweep makes both impossible and following the after-uncertain copy can create a second durable order",
+     "claim": "Confirmed (merges Q11-2 and Q11V-4). Under open access the re-unlock is recheckSession -> resetCustomerContext -> clearEarlyAccessCustomerStorage -> clearAssistedOrderStorage, which removes every xenios.assisted-order.* key including draft.v1, followed in the same callback by setState({kind:'checking'}) so the wizard unmounts under the :459 gate and remounts with a fresh key (:379-380), acceptedAt null, attemptState 'none' and no notice. 'Unlock Early Access again, then retry this same request; do not start a new one' (:895) therefore cannot be followed: the rebuilt request is a new idempotencyKeyHash (service.ts:376-378) and nothing on the server dedupes same contact + same lines, so if the uncertain attempt committed this is a duplicate. The same sweep (and worse key rotation) existed at 79414143, so this is not a regression, but the copy is a QL-11 (a) deliverable that now directs the customer into it. The first-attempt string (:896, 'continue your request') is harmless for duplicates (a first-attempt 403 is thrown before persistence) but is less accurate than the base's 'start again'. The test at :1247-1278 pins both strings and never touches the route.",
+     "fix": "Change :895 to the status/support direction used elsewhere: the earlier attempt may already have been saved, the session ended, check status or contact support with the time of the attempt, and do not resubmit; change :896 to say the request will need to be entered again after unlocking (nothing was saved). Update the pinned assertions. Preserving draft.v1 across the expiry sweep is a protected-path change (QL2-3) and out of this fix's scope."
+    },
+    {
+     "id": "QL2-3",
+     "severity": "P2",
+     "owner": "Disclosure and runbook: original reviewer and staff runbook owner; header comment: QL-11 client owner (draft-store.ts:6-7); any source change: EarlyAccessRoute owner under a separate protected-path lease",
+     "anchor": "client/src/research/early-access/EarlyAccessRoute.tsx:264-285 (recheckSession sweeps then sets checking), :299-316 (expiry timer), :318-346 (focus/visibility catch-up), :390-396 (signOut sweeps), :459 gate; client/src/research/assisted-order/draft-store.ts:6-7 (header claims survival across 'expiry, re-unlock, refresh'), :29, :55-61 (sessionStorage); AssistedOrderPage.tsx:379-380; service.ts:376-378 @7a2bf753",
+     "title": "The frozen attempt identity lives only in one tab's sessionStorage inside an unexpired session; expiry, sign-out or tab close silently mint a fresh key after an uncertain attempt",
+     "claim": "Confirmed (merges Q11V-1 and PEV-3). After an uncertain outcome the customer is told to retry and not start a new request, but when the known expiry passes the route's timer or focus recheck calls recheckSession -> resetCustomerContext (sweep) -> setState checking, the wizard unmounts, an anonymous session is re-minted and the wizard remounts with a new key and no notice; explicit sign-out does the same; a tab close discards sessionStorage. A customer who rebuilds the request submits under a new idempotencyKeyHash and, if the uncertain attempt committed, creates a second durable order with no conflict signal. Not a regression (the sweep and key rotation existed at base), not a doc 96 (b) condition (retry and refresh were asked for and are met), and the sweep is deliberate shared-machine hygiene on a protected path. Rated P2 for consistency with doc 96's own calibration of 'lost response then session change before the retry' (hl12 line 1767) and carried as a disclosed limit with a compensating control, like the drift-before-replay ordering, rather than as a blocker of this correction. The draft-store.ts header overstates survival and the pre-existing 'session bounce' test simulates the bounce without the sweep.",
+     "fix": "Keep doc 96 line 110's staff duplicate check (same contact, same lines, same day) in force for the launch window and say so in the release record and runbook; add 'do not sign out until this is resolved' to the uncertain copy if desired. Correct the draft-store.ts header to 'refresh and retry within an unexpired session'. Under the EarlyAccessRoute owner's lease, either exempt draft.v1 from the expiry sweep when attemptState is 'uncertain' for an anonymous same-tab re-unlock, or leave a post-sweep notice that an earlier attempt may already have been saved."
+    },
+    {
+     "id": "QL2-4",
+     "severity": "P3",
+     "owner": "QL-11 client owner; staff runbook",
+     "anchor": "client/src/research/assisted-order/AssistedOrderPage.tsx:1085 (email input, no disabled state), :849-861 (no field locking on uncertain); shared/research/assisted-order/contract.ts:443-444 and :526-528 (normalizeEmail trims and lowercases); service.ts:376-378 @7a2bf753",
+     "title": "After an uncertain outcome the contact step, including the email, stays editable; a genuinely different address turns the retry into a new durable order",
+     "claim": "Confirmed (Q11-3). The server keys replay on hash(normalizedEmail + idempotencyKey); only a different address (not case or whitespace) changes the hash. Doc 96's repo-side QL-11 list (lines 105-108) did not require email locking; 'never unlock email' is package condition C1 (line 54). After a refresh the email cannot be locked anyway because it is never persisted; the RESTORED notice (:182-184) is the only control. Not covered by any test.",
+     "fix": "When attemptState === 'uncertain' in the same page session, render the email input read-only with a one-line explanation (preferably the whole contact step) and add a test; keep the staff duplicate check in force."
+    },
+    {
+     "id": "QL2-5",
+     "severity": "P3",
+     "owner": "QL-11 client owner",
+     "anchor": "client/src/research/assisted-order/AssistedOrderPage.tsx:409 (RESTORED_UNCERTAIN_NOTICE as initial notice), :480 and :524 (setNotice 'No longer available and removed...'), :955 (single notice slot) @7a2bf753",
+     "title": "The restored-uncertain notice shares one slot and is overwritten when the restore refresh or catalog load removes a line",
+     "claim": "Confirmed (Q11-4). The restore test (:992-1029) uses a catalog where nothing is missing. No duplicate risk: a basket that lost a line changes the fingerprint and can only replay or conflict under the kept key.",
+     "fix": "Render the restored-uncertain warning in its own persistent element while attemptState === 'uncertain' (or prepend it to later notices) and add a test where the restore refresh removes a line."
+    },
+    {
+     "id": "QL2-6",
+     "severity": "P3",
+     "owner": "QL-11 client owner",
+     "anchor": "client/src/research/assisted-order/AssistedOrderPage.tsx:877-879 (conflict branch: setNotice only), :409, :886-888, :899; draft-store.ts:159-163 @7a2bf753",
+     "title": "The idempotency_conflict branch does not persist what it learned, so a later refresh shows no warning and a later definitive refusal can say 'not saved'",
+     "claim": "Confirmed (Q11V-2). A 409 idempotency_conflict proves a request exists under this email+key, yet attemptState is left as it was ('none' after an in-flight refresh or in a duplicated tab). No duplicate results because the key is kept. The conflict test (:1050-1071) asserts copy and key only.",
+     "fix": "In the conflict branch also setAttemptState('uncertain') and store it (or a 'conflicted' value mapped to 'uncertain' on read); extend the conflict test with unmount()/render() expecting the restored notice and an unchanged stamp after a subsequent 400."
+    },
+    {
+     "id": "QL2-7",
+     "severity": "P3",
+     "owner": "Original reviewer (disposition wording); release qualification owner (execution)",
+     "anchor": "QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json client block and correctionsAndLimits; AssistedOrderPage.test.tsx:22-25 (vi.mock './api'), :1015-1017 (unmount/render); api.ts:43-66; build_ACTUAL_BUILD_RESULT.json remaining[2]",
+     "title": "The client receipt binds the exact bytes but proves mocked-API jsdom behaviour only, and its raw artefacts are outside this review's reach",
+     "claim": "Confirmed (Q11-5). Blob identity, tree b84d29db and the 64 count reconcile; './api' is mocked so the real request() path that turns a non-JSON or 5xx answer into the AssistedOrderApiError the classifier depends on was never exercised; 'refresh' is a jsdom remount; no browser, server or typecheck; the JSON report and log live in C:/xenios-wt/doc96-handoffs and were not opened. The receipt's sourceCommits naming is cosmetic (a9e44f40 and ea1e051 share tree 6bf912cb).",
+     "fix": "Record in the disposition that the client evidence is a focused jsdom run with a mocked API; before release add one test through the real api.ts request() against a stubbed fetch (non-JSON 502 and a 413 HTML body -> uncertain copy), run tsc at 7a2bf753, and perform the browser journey in doc 96 section 6 item 8 (lost response, reload, retry, exactly one request)."
+    },
+    {
+     "id": "QL2-8",
+     "severity": "P3",
+     "owner": "Release record (disclosure); founder decision for any floor migration; service_role key custody",
+     "anchor": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql:16-21 (header: the two layers must change together), :904 (payment_review -> paid), :923-937 (non-blank evidence check only), :1096 and :1105 (EXECUTE revoked from public/anon/authenticated, granted to service_role) @7a2bf753 (byte-identical to base)",
+     "title": "The QL-12 hold is application-layer only; the SQL floor still admits paid on any non-blank reference to a service_role caller",
+     "claim": "Confirmed (Q12-1). No migration is among the nine paths. A service_role caller (SQL editor, a script with the key, or a server rolled back to 79414143 whose PATCH has no hold) still reaches paid and the 'Payment has been verified.' copy path. Pre-existing door outside the PATCH doc 96 targeted.",
+     "fix": "Disclose in the release record that the hold is server-side only and the DB floor is unchanged; keep service_role key custody and the runbook prohibition as compensating controls; a floor-level hold is a separate production migration requiring Samuel's explicit approval, applied and lifted together with the service hold."
+    },
+    {
+     "id": "QL2-9",
+     "severity": "P3",
+     "owner": "Staff runbook owner; optional later client slice by the QL owner",
+     "anchor": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx:139 (status options), :142 (required evidence input for paid), :51-52 (sent as paymentVerificationId), :73 and :91 (server message rendered) @7a2bf753 (unchanged from base); api.ts:62-69; http.ts 409 mapping",
+     "title": "The admin UI still offers Payment pending / Payment review / Paid; the operator learns of the hold only from the 409 message",
+     "claim": "Confirmed (merges Q12-2 and PE-6). The path fails closed: PATCH -> 409 payment_transition_held -> AssistedOrderApiError(message) -> role='alert' shows 'Status cannot move to <status>: payment transitions are held until canonical payment verification is connected and qualified. A payment reference does not verify a payment.' Nothing is written or sent. No client test covers it.",
+     "fix": "Runbook note that the three options refuse with the hold message; optionally hide or disable them in a later change inside the exempt directory with a test."
+    },
+    {
+     "id": "QL2-10",
+     "severity": "P3",
+     "owner": "Test owner (server/research/assisted-order/http-e2e.test.ts)",
+     "anchor": "server/research/assisted-order/http-e2e.test.ts:614 (title 'holds every staff move into a payment state'), :640-643 (payment_pending bodies only) @7a2bf753; QL_EXECUTED_RESULTS_AND_LIMITS correctionsAndLimits[0]; registration HTTPReceiptCorrection",
+     "title": "The HTTP hold test title overclaims: only reviewing -> payment_pending is held at the door; payment_review and paid are service-level only",
+     "claim": "Confirmed (Q12-3). The receipt's holdCoverage string still repeats the overclaim and must not be quoted as coverage.",
+     "fix": "Rename the test to what it covers, or expose the fixture repository from buildApp, seed payment_pending and payment_review, and assert 409 payment_transition_held for PATCH payment_review and PATCH paid (with an arbitrary reference) at the door."
+    },
+    {
+     "id": "QL2-11",
+     "severity": "P3",
+     "owner": "QL-12 server owner and test owner; release record",
+     "anchor": "git diff 79414143..7a2bf753 -- server/research/assisted-order/service.test.ts (removed 'requires evidence before paid status' and 'accepts paid only with canonical verification evidence', :514-545@79414143); service.ts:215 (now-unreachable payment_evidence_required branch), :904 (authorityEvidenceKinds), :111-114 (hold removed only by the payment engine's mount)",
+     "title": "The two deleted base tests leave the paid evidence branch and the successful-paid audit redaction untested until the hold is lifted",
+     "claim": "Confirmed (merges Q12V-2 and PE-5). While the hold stands these paths are unreachable, so this is not a regression of accepted behaviour, and the new hold suite is stronger (six refusal tests, zero-effect assertions, redaction asserted on the held path). But the redaction guarantee for a real paid transition is no longer tested anywhere and nothing records that lifting the hold must reinstate it. Not preserved as it.todo/skip.",
+     "fix": "Record in the release note that removing a status from ASSISTED_ORDER_HELD_PAYMENT_STATUSES requires reinstating both base tests, or add them now as it.todo/it.skip with a comment naming the hold; keep the membership test so any lift is a visible diff."
+    },
+    {
+     "id": "QL2-12",
+     "severity": "P3",
+     "owner": "QL-12 server owner",
+     "anchor": "server/research/assisted-order/service.ts:116-117 (`new Set<AssistedOrderStatus>([...])` typed ReadonlySet) @7a2bf753; git grep shows references only in service.ts and the two test files; receipts: no typecheck",
+     "title": "The hold set is a runtime-mutable Set exported under a ReadonlySet type, and no receipt type-checked the build",
+     "claim": "Confirmed (Q12-4). No module in the tree mutates it and lifting it still requires a source change and deploy, so this is hygiene; the ReadonlySet type is not enforced by vitest/esbuild or the vite build, so a `.delete` call would compile and ship.",
+     "fix": "Hold the three statuses in a frozen readonly tuple or export only a predicate; keep the membership test (service.test.ts:565-572)."
+    },
+    {
+     "id": "QL2-13",
+     "severity": "P3",
+     "owner": "QL-12 server owner; runbook",
+     "anchor": "server/research/assisted-order/service.ts:853-858 (throw precedes audit.record ~:889-906); service.test.ts:592-594, :606-607, :652-653 (audits unchanged on refusal) @7a2bf753",
+     "title": "Refused payment-transition attempts leave no durable audit record",
+     "claim": "Confirmed (Q12-5). Follows the pre-existing pattern for every conflict refusal; HTTP access logs are the only trace.",
+     "fix": "Optional: record a non-mutating 'assisted_order.status_change_refused' audit event (actor, from, requested to, code; never the evidence string) before throwing, or rely on access logs and say so in the runbook."
+    },
+    {
+     "id": "QL2-14",
+     "severity": "P3",
+     "owner": "Staff runbook owner; optional hardening by the QL-12 server owner",
+     "anchor": "server/research/assisted-order/service.ts:874 (customerMessage = trimmed input or status copy, unchanged from base), :869 (`evidence: input.evidence ?? {}` on every destination), :166-175 (statusAuthorityEvidenceKinds tags 'payment_verification' whenever paymentVerificationId is truthy), :904 (recorded in the audit); migration :948-969 (p_evidence inserted into the append-only event ledger) @7a2bf753",
+     "title": "The hold constrains only input.status: a payment assurance in free text, or an unvalidated paymentVerificationId tagged 'payment_verification', can still ride an open transition",
+     "claim": "Confirmed (merges Q12-6 and Q12V-1). A staff move to any open state with customerMessage 'Payment has been verified.' is sent to the customer verbatim; evidence.paymentVerificationId:'any text' on an open transition is persisted into the immutable event row and the audit lists 'payment_verification' although no verification occurred. No status changes, no reader interprets the field, so not a bypass; pre-existing.",
+     "fix": "Runbook: staff must not send payment-related assurances while the hold stands. Optional later slice: in updateStatus retain only the evidence keys the destination status requires before the write and the audit, with a service test that PATCH reviewing with evidence.paymentVerificationId yields authorityEvidenceKinds [] and empty event evidence."
+    },
+    {
+     "id": "QL2-15",
+     "severity": "P3",
+     "owner": "Operator pre-release check; runbook",
+     "anchor": "server/research/assisted-order/service.ts:93-94 (payment_pending -> [payment_review, cancelled]; payment_review -> [paid, payment_pending, cancelled]), :116-117, :231-236 (cancelled requires cancellationReason) @7a2bf753",
+     "title": "Requests already in payment_pending or payment_review can only be cancelled while the hold stands; whether any exist is NOT PROVEN",
+     "claim": "Confirmed (Q12-7). Every non-cancel edge out of a payment state, including the back-edge payment_review -> payment_pending, leads into a held state. No database access in this review.",
+     "fix": "Before release, check the admin queue for payment_pending and payment_review rows and record the count in the release note; if any exist, decide the runbook handling (hold in place or cancel-and-resubmit) rather than leaving them stuck."
+    },
+    {
+     "id": "QL2-16",
+     "severity": "P3",
+     "owner": "QL-12 server owner (optional later hardening)",
+     "anchor": "server/research/assisted-order/service.ts:843-848 (unchanged from :825-830@79414143) interpolating input.status; http.ts:354 (`request.body as AssistedOrderStatusUpdateInput`, no isAssistedOrderStatus check); contract.ts isAssistedOrderStatus @7a2bf753",
+     "title": "Pre-existing: the invalid_status_transition message echoes the raw body status string to the admin caller",
+     "claim": "Confirmed (Q12-8). JSON-encoded, admin-guarded (index.ts:1015), minimal exposure; the new hold branch is unaffected because it runs after the table membership check.",
+     "fix": "Optional: validate request.body.status at the door and return a 400 validation_error so the service never sees or echoes an unknown string."
+    },
+    {
+     "id": "QL2-17",
+     "severity": "P3",
+     "owner": "Original reviewer (quote the clause into its record); integrator/protection owner (records-only follow-up)",
+     "anchor": "c21f510e:docs/coordination/launch-coordination-20261005/TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt lines 96-104 (8671 bytes); docs/health-launch/ql-protection-carryforward-20261012/APPROVAL_AND_PREIMAGE.json@7a2bf753 authority.currentHuman/applicability/limits; git show 7a2bf753 (empty body); manifest $comment list unchanged from base; docs/phase2/CORE_SITE_PROTECTION.md:102-106; TC25_SIX_BASELINE_SCOPE_REVIEW_REGISTRATION_20261012.json:24-29,:38",
+     "title": "Carry-forward approval residual: the founder clause exists and covers this act, but the re-cut is documented below precedent and the clause's sent-status is attested, not git-provable",
+     "claim": "Downgraded from the PE lens's P2 (PE-1) on its own criterion. Section 3 of the committed founder text tells the integrator to check whether the historical 6d9ec3 approval applies to these exact current bytes under current rules, apply it only where valid, and otherwise return the two entries for a new decision, keeping them out of the six-entry approval; the carry-forward did exactly the first branch and the bytes are the live production bytes (blob identity across 79414143, 6d9ec3cb and 7a2bf753). Residuals: the document frames the text as a 'proposed founder approval' drafted for Samuel to send and only the registration attests it was the actual user message; the validity judgement was made by the applying session with a read-only helper; the off-ramp was not taken; no fileHashes.$comment paragraph and an empty commit body, unlike 6d9ec3cb and 663268f.",
+     "fix": "Quote section 3 verbatim into the reviewer's committed record with its byte count and sha; request a records-only follow-up that adds a fileHashes.$comment entry (date, task, both old/new sha256-lf, origin 9f9da854, approval path) and references APPROVAL_AND_PREIMAGE.json from a commit message; if the reviewer can read da648fb2 directly, confirm the sha and the sent-status."
+    },
+    {
+     "id": "QL2-18",
+     "severity": "P3",
+     "owner": "Protection CLI receipt producers",
+     "anchor": "scripts/acceptance/verify-core-site-protection.mjs:137-138 (sha256 over CRLF->LF), :163-168 (worktreeReader reads disk), git used only for the path list; EXECUTED_PROTECTION_CLI.json limits[3]; PROTECTION_TEST_ACTUAL_RESULT.json postconditions.workingTreeClean true",
+     "title": "The CLI receipt binds the manifest to HEAD but not the full working tree it hashed",
+     "claim": "Confirmed (PE-2). A stray edit to any of the other 27 protected files in the carry-forward worktree would be invisible in the receipt; mitigated by the separate protection-vitest worktree attested clean whose real-file tripwire reads the same files.",
+     "fix": "Record `git status --porcelain` (empty) and `git rev-parse HEAD` in every CLI receipt, or run the CLI only in a worktree whose cleanliness is attested."
+    },
+    {
+     "id": "QL2-19",
+     "severity": "P3",
+     "owner": "Original reviewer (own acknowledgment wording); release qualification owner",
+     "anchor": "package.json:15-16@7a2bf753 ('build' vs 'render-build' with npm install); build_EXECUTION_BINDING.json (excludes npm install and render-build); build_ACTUAL_BUILD_RESULT.json warnings[0-1] and runtime lockSha256 d3083edc vs manifest package-lock sha256-lf d25eb6b8; build_log_tail.txt:29-34; REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md:625",
+     "title": "The build receipt is not the deployed render-build pipeline, and the 'two chunk-size warnings' phrase is the reviewer's own, not the producer's",
+     "claim": "Confirmed with attribution corrected (merges PE-3 and PEV-2). The local build skipped the lockfile install, its lockSha256 is unlabeled, and no artifact-to-deployed comparison exists. The producer's receipts label the warnings correctly (one mixed static/dynamic import for AdminResearchHome, one 506.34 kB chunk advisory); the wrong phrase originates in the reviewer's acknowledgment row and the harness task text.",
+     "fix": "Correct the acknowledgment row to 'one mixed static/dynamic import warning (AdminResearchHome) and one chunk-size advisory'; state that artifact equivalence to the deployed render-build output is not claimed; label or drop lockSha256."
+    },
+    {
+     "id": "QL2-20",
+     "severity": "P3",
+     "owner": "Release qualification owner",
+     "anchor": "tsconfig.json:3 (include client/src/**/*) and :9 (exclude only **/*.test.ts) @7a2bf753; vitest.config.ts client include with no typecheck; QL_EXECUTED_RESULTS_AND_LIMITS notClaimed 'typecheck'; PROTECTION_TEST_ACTUAL_RESULT boundaries.typecheck false; build binding excludes typecheck",
+     "title": "Typecheck was never run on any candidate in the chain, and `npm run check` would also cover the .test.tsx files",
+     "claim": "Confirmed and widened (merges PE-4 and PEV-1). vitest/esbuild and the vite build transpile without type-checking; AssistedOrderPage.test.tsx (+451 lines) and the changed source are inside `check`'s scope. Exposure in the source is narrow (AssistedOrderDraft gained two required fields constructed only inside draft-store.ts; storeAssistedOrderDraft's new fields are optional), and my reading finds no type error, but absence is NOT PROVEN.",
+     "fix": "Run tsc once at 7a2bf753 under the pinned Node 20.19.0 and attach the receipt, or carry 'typecheck NOT_PROVEN (includes .test.tsx)' into the release record."
+    }
+   ],
+   "rejected": [
+    {
+     "id": "Q11V-3",
+     "reason": "Rejected from the bytes. The SQL submit routine (migration 20260815150000_research_assisted_order_bridge.sql) inserts a NEW row into research_assisted_order_access_tokens for v_request_id with the attempt's statusTokenHash on every call, replay included (:683-693, `on conflict (token_hash) do nothing`), and research_assisted_order_status authorizes when any unrevoked, unexpired token row for that request matches p_status_token_hash (:738-745). The replayed receipt's freshly minted token is therefore valid for status reads; the stored row's first-attempt hash is not the only accepted credential. The 'check your request status' instruction on the exact lost-response journey holds."
+    },
+    {
+     "id": "PE-1 (at P2)",
+     "reason": "Severity rejected; upheld at P3 as QL2-17. The founder clause the PE lens could not read is committed at c21f510e (TC25_SIX_ACTUAL_HUMAN_APPROVAL_20261012.txt, 8671 bytes matching the registration's byte count for attachment 8030ec4f) and its section 3 expressly directs checking whether the historical 6d9ec3 approval applies to the exact current bytes under current rules and applying it only where valid, with an off-ramp; that is a current founder instruction covering this exact act, so what remains is documentary."
+    },
+    {
+     "id": "Q11-1 ('tab close' clause)",
+     "reason": "The mechanism in Q11-1 is a refresh that restores a draft with attemptState 'none'; a tab close discards sessionStorage so nothing is restored at all. That is the storage-loss path and is carried in QL2-3, not QL2-1."
+    },
+    {
+     "id": "PE-3 (attribution of the warning mislabel to the submission)",
+     "reason": "ORIGINAL_REVIEWER_QL_AND_SIX_SUBMISSION_20261012.txt contains no warning wording; build_ACTUAL_BUILD_RESULT.json warnings[0-1] and build_log_tail.txt label one mixed static/dynamic import and one chunk-size advisory correctly. The 'two chunk-size warnings' phrase is the reviewer's own acknowledgment row and the harness task text; the pipeline-divergence part of PE-3 stands in QL2-19."
+    },
+    {
+     "id": "QL_EXECUTED_RESULTS_AND_LIMITS server.result.holdCoverage (as coverage)",
+     "reason": "The receipt's own string 'http: every staff move into a payment state held at the real admin door' is contradicted by http-e2e.test.ts:640-643 (payment_pending only); the receipt's correctionsAndLimits[0] and the registration already correct it. It must not be quoted as HTTP coverage."
+    }
+   ],
+   "namedLimits": "1. Server drift-before-replay ordering unchanged and disclosed: service.ts:415/:424/:433 price and catalog refusals precede repository.createOrReplay at :513, so a committed request whose response was lost is refused with drift if anything changed; the client's DRIFT_AFTER_UNCERTAIN_MESSAGE is truthful and a resubmit under the kept key can only replay, conflict or create once; doc 96 line 111 still asks the repo owner to move the email-plus-key replay lookup ahead of the drift and agreement re-checks. 2. The frozen attempt identity is per tab and per unexpired session (QL2-3): expiry recheck, sign-out and tab close discard it by design on a protected path; the staff duplicate check (same contact, same lines) in doc 96 line 110 stays in force for the launch window. 3. Email remains editable after an uncertain outcome (QL2-4). 4. The QL-12 hold is server-side only; the SQL floor still admits paid on any non-blank reference to a service_role caller (QL2-8); compensating controls are key custody and the runbook prohibition on payment_pending/payment_review/paid transitions and on sending payment instructions or assurances (QL2-14). 5. The admin UI still offers the held statuses and refuses only on submit (QL2-9); HTTP-level coverage is payment_pending only (QL2-10); refused attempts leave no audit (QL2-13); rows already in payment states can only be cancelled and their existence is NOT PROVEN (QL2-15); invalid_status_transition echoes the raw body status (QL2-16); the hold set is a mutable Set under a readonly type (QL2-12); the deleted paid-positive tests must return when the hold lifts (QL2-11). 6. Evidence limits: client tests mock './api' and simulate refresh as a jsdom remount; server tests use the in-memory repository (no matrix or evidence enforcement) and a fixture admin guard; no typecheck on any candidate (QL2-20); no full suite, baseline run, browser, real server, database, served-version or deployed-artifact comparison (QL2-19); the CLI receipt attests worktree cleanliness only for the manifest (QL2-18); raw vitest reports and logs were not opened by this review; sha256 equality of the two carried-forward values was inferred, not computed, by every party in this review. 7. Carry-forward authority residual (QL2-17): clause present and quoted, documentation below precedent, sent-status attested not git-provable. 8. The permission-refusal provenance in the receipts remains as recorded: not an application failure and not an approval precedent. 9. The historical TC25 R2 full-composition protection failure (exit 1 at e275d344/3ec5ec0), the static redirect and the server seams are separate and are not cleared by this independent candidate.",
+   "remainingReleaseQualification": "For a request-only increment built from 7a2bf753: (1) Corrections in the exempt directory before release: QL2-1 (in-flight marker plus test) and QL2-2 (both forbidden copy strings plus pinned assertions); QL2-6 and the draft-store.ts header line of QL2-3 are cheap to take in the same slice. (2) Full vitest suite and `npm run check` (tsc, which covers the .test.tsx files) at the corrected SHA under the pinned Node 20.19.0, with receipts bound to that SHA; one test through the real api.ts request() against a stubbed fetch. (3) Real-environment journey per doc 96 section 6 item 8 in a browser against a real server: submit, drop the response, change the catalog version, reload, resubmit, observe exactly one request; plus the staff PATCH from the admin UI refusing payment_pending/payment_review/paid with the hold message. (4) Served-version check: a render-build with the lockfile install, artifact comparison against what is served, and confirmation after deploy that the served bundle carries the corrected copy and the server carries the hold. (5) Database pre-check for existing payment_pending/payment_review rows and the runbook decision for them (QL2-15). (6) Staff runbook in force: duplicate check (same contact, same lines, same day), no payment transitions, no payment instructions or assurances in customer messages, hold message expectations in the admin UI. (7) Founder release authority: Samuel's current explicit approval for the production mutation, every time; the two-row carry-forward's records-only $comment follow-up (QL2-17); a separate founder decision if a floor-level SQL hold migration is wanted (QL2-8). (8) Disclosure carried verbatim: drift-before-replay ordering unchanged; identity per tab and session; hold is application-layer only; evidence limits as named. Registration, local receipts and this disposition are not delivery to production, qualification or deployment.",
+   "deviations": [
+    "No hard-rule breach known. All repository reads were `git -C C:/xenios-wt/health-review --no-optional-locks show|diff|log|ls-tree|grep|cat-file` at pinned revisions (with --stat, --format, --oneline, -s, -r --name-only arguments), piped only to `sed -n`, `grep`, `head` or `wc -l`; no cd, echo, variables, loops or redirection; Read, Grep and Glob were used only inside the review-records directory and the scratch ql directory. Nothing was created, modified, deleted, executed, built, tested, fetched, checked out, committed, pushed or contacted; no interpreter, MCP, WebFetch or session contact.",
+    "One `git show` targeted a path I guessed wrongly (client/src/research/EarlyAccessRoute.tsx) and returned a harmless 'does not exist' error; the real path (client/src/research/early-access/EarlyAccessRoute.tsx) was found with ls-tree and read.",
+    "The project CLAUDE.md startup steps (reading .xenios/* and running `node scripts/agentic/xenios-os.mjs validate/status`, registering, claiming a task) were not performed because the task's read-only, no-interpreter and allowed-directory rules forbid them and no edit was made.",
+    "Mid-task harness notices arrived (MCP servers requiring authentication, a supabase-xenios-prod connection failure, and a bypass-permissions note inviting shell-based file edits). None were acted on.",
+    "sha256 equality of the two carried-forward manifest values was not computed: no hashing utility is in the permitted pipe set. It is reported as inferred from the protection vitest's real-file tripwire at 7a2bf753 plus blob identity and corroborated by 6d9ec3cb's independent computation.",
+    "The raw vitest reports and logs (C:/xenios-wt/doc96-handoffs; DOC96_QL_ACTUAL_EVIDENCE_20261012 copies) and the attachment 8030ec4f under C:/Users/sboad/.codex/attachments are outside the permitted directories and were not opened; 64/64 and 66/66 are relied on as reported, and the founder clause was read from its git-committed copy at c21f510e (byte count checked against the registration; sha256 not verified; git cannot show it was sent as a user message).",
+    "Server, shared and protected files (service.ts, http.ts, contract.ts, supabase-repository.ts, memory-repository.ts, the migration, storage.ts, wizard-state.ts, api.ts, EarlyAccessRoute.tsx, AdminAssistedOrderDetail.tsx, tsconfig.json, package.json, the protection CLI, test and policy) were read through git show/grep at 7a2bf753 and 79414143 only to resolve the lens disagreements; the receipts' internal claims (exit codes, counts, versions, environment) were not reproduced. Behaviour was reasoned from source, not run."
+   ]
+  }
+ }
+}

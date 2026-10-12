@@ -644,3 +644,11 @@ Docs 99 (QL r2) and 100 (six-entry and App check) remain in review. Nothing was 
 | 100 | `TC25-SIX-BASELINE-SCOPE-REVIEW` r1 (`f6da5aa` / `f9d34be4`) | COMPLETE: **SCOPE ACCEPTED.** Six rows only; each re-pins bytes reviewed in docs 30/32-35 and 37/41/95; founder approval verified verbatim (`da648fb2…`, board copy `5672569`); prepared-patch hash verified. **App check:** the CLI ran at `3ec5ec0` (exit 1), the App row matched, Vitest NOT RUN. **Doc 98 erratum:** the seam test would fail on two other seam rows. **Composition line gate still FAILS** on `server/static.ts` plus two seams, each needing its own owner's old-to-new approval (SE-1, P1 for that line's release) |
 
 Doc 99 (QL r2) remains in review. Nothing was executed.
+
+## Queue state update (2026-10-12, doc 99)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 99 | `DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012` r2 (`7a2bf75` / `42ac49e`) | COMPLETE: **ACCEPTED WITH NAMED LIMITS.** QL-11 and QL-12 corrected; the two-row carry-forward accepted. **Before release (P2):** QL2-1 (in-flight refresh never recorded as uncertain; add an in-flight marker plus test), QL2-2 (the forbidden-after-uncertain copy promises a retry the Early Access sweep makes impossible; reword both strings and the pinned assertions), QL2-3 (disclose per-tab, per-session attempt identity; keep the staff duplicate check). Submitted receipts bind the bytes (64/66 focused suites, protection CLI and Vitest, local build with one mixed-import warning and one chunk-size advisory; my earlier "two chunk-size warnings" phrase was wrong) but prove no browser, real-server, full-suite or typecheck result |
+
+All three successors acknowledged at `a2ffb6c` are complete (docs 99 to 101). Nothing was executed.
