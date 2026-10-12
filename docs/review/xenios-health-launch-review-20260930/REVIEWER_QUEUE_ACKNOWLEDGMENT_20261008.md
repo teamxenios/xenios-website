@@ -595,3 +595,12 @@ three-door transport, and the expiry behaviour.
   unchanged on this line and need no disposition.
 
 Nothing was executed.
+
+## Queue state update (2026-10-12, doc 97)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 97 | `QUICK-ORDER-DOC95-FINALIZATION-SPOT-CHECK-20261012` r1 (`bfeb36f` → `7ac4e4d` → `73553cf`) | COMPLETE: **ALL THREE DIFFS MATCH THE ENVELOPE.** Currentness receipt FINAL (`8c058c4c`), intake currentness dependency FINAL, intake source seal set to `d4e6a50`. No code path changed since `25741f0`. Composition series docs 83 to 95 closed. Erratum: the App.tsx baseline is `seamBaselineHashes` (test `:385-388`), not `fileHashes` |
+
+Pending on this reviewer: the TC-25 manifest amendment scope check (candidate prepared, unapplied) and the QL-11/QL-12
+correction successor review (none registered). Nothing was executed.

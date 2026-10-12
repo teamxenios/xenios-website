@@ -1,0 +1,103 @@
+{
+ "archive": "doc 97 Doc95 finalization three-diff spot-check (reviewer-computed, no workflow)",
+ "reviewer": "session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-fable-5-1)",
+ "task": "QUICK-ORDER-DOC95-FINALIZATION-SPOT-CHECK-20261012 r1 (registered 2026-10-12T17:49:36Z, reviewOwner this session)",
+ "execution": "NOT_RUN",
+ "method": "Each finalized receipt parsed and flattened leaf-by-leaf against its envelope base; blob ids and raw sha256 recomputed from git objects; chain scope via git diff --name-only",
+ "envelopeBase": {
+  "currentness": "9178947c @2d15b99 (183668 B, raw b085b12e)",
+  "intake": "d3441396 @2d15b99 (196833 B, raw c622e4a6)"
+ },
+ "steps": [
+  {
+   "order": 1,
+   "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+   "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+   "gitBlob": "8c058c4c459186e336e3aaff4f13c698ccbf4423",
+   "bytes": 186264,
+   "rawSha256": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+   "changedLeaves": [
+    "sourceAcceptance.status PENDING->SOURCE_ACCEPT_WITH_LIMITS",
+    "sourceAcceptance.reviewCommit null->29ccf647aa0dc332b334f4dd9c62f6396a85282b"
+   ],
+   "addedKeys": [
+    "disclosures.doc95Finalization (27 leaves)"
+   ],
+   "removed": 0,
+   "frozenConfirmed": [
+    "102 files rows identical",
+    "sourceCommit/sourceTree 54ffba10/45531814",
+    "definitionSha256 and currentnessDefinition 8b631a83",
+    "11 top-level keys",
+    "sourceAcceptance key set {reviewCommit,status}",
+    "all pre-existing disclosures keys and values",
+    "currentnessDependency null"
+   ],
+   "newKeyCites": [
+    "doc 82 reviewCommit 29ccf647",
+    "doc 87 77a2cae",
+    "doc 94 4ab2fe6",
+    "doc 95 d4e6a50",
+    "supersession of embedded PENDING/NON_FINAL",
+    "archived narrative map dacc90c / blob d01de5e2 / raw 8d6cb3c7 / 1538019 B",
+    "R5C1 and R5C2 precision statements"
+   ],
+   "sizeHeadroom": 75880,
+   "verdict": "MATCHES ENVELOPE"
+  },
+  {
+   "order": 2,
+   "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+   "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+   "gitBlob": "e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc",
+   "bytes": 196825,
+   "rawSha256": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+   "changedLeaves": [
+    "currentnessDependency.status -> SOURCE_ACCEPT_WITH_LIMITS",
+    "currentnessDependency.reviewCommit -> 29ccf647",
+    "currentnessDependency.sealStatus -> FINAL_CURRENTNESS_DEPENDENCY_ONLY",
+    "currentnessDependency.receipt.{commit,recordsCommit} -> bfeb36fc",
+    "currentnessDependency.receipt.gitBlob -> 8c058c4c",
+    "currentnessDependency.receipt.{rawSha256,sha256lf} -> 8dfbd075...",
+    "currentnessDependency.receipt.bytes -> 186264"
+   ],
+   "added": 0,
+   "removed": 0,
+   "frozenConfirmed": [
+    "102 files rows identical",
+    "currentnessDependency.sourceCommit/sourceTree 54ffba10/45531814 unchanged",
+    "currentnessDependency.definitionSha256 8b631a83 unchanged",
+    "intake sourceAcceptance still PENDING at this step"
+   ],
+   "verdict": "MATCHES ENVELOPE (exactly the nine ruled leaves)"
+  },
+  {
+   "order": 3,
+   "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+   "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+   "gitBlob": "6021c556511e6e41daa10625be26ca660e2a1372",
+   "bytes": 196881,
+   "rawSha256": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+   "changedLeaves": [
+    "sourceAcceptance.status PENDING->SOURCE_ACCEPT_WITH_LIMITS",
+    "sourceAcceptance.reviewCommit null->d4e6a50dc11b3e91d2241dde63be4d33a287fb67"
+   ],
+   "added": 0,
+   "removed": 0,
+   "frozenConfirmed": [
+    "102 files rows identical",
+    "currentness receipt unchanged bfeb36fc->73553cfc"
+   ],
+   "verdict": "MATCHES ENVELOPE"
+  }
+ ],
+ "chainScope": "2d15b99..73553cfc changes only the two receipts, .xenios registries and one handoff; 25741f0..73553cfc changes no code path",
+ "boardRegistrationMatchesGit": true,
+ "tc25ManifestAmendment": {
+  "status": "UNAPPLIED_ACTUAL_FOUNDER_RECORDS_AUTHORITY_REQUIRED (board TC25_EXACT_APP_MANIFEST_AMENDMENT_DECISION_20261012.json)",
+  "manifestAppHashAtR5AndBoardTip": "sha256:3b3b808b (clarity baseline)",
+  "proposed": "sha256:1ee2d576",
+  "note": "reviewer checks exact scope when the applied successor is registered"
+ },
+ "ql11ql12Successor": "none registered; board holds the seven-path ownership boundary, Fable lead start record and directives only"
+}
