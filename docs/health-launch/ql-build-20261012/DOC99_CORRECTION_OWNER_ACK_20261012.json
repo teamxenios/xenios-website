@@ -1,7 +1,9 @@
 {
   "schemaVersion": 1,
   "at": "2026-10-12",
-  "status": "CURRENT_PARENT_CUSTODY_ACK_RECEIVING_FABLE_LEASE_REQUIRED",
+  "status": "CURRENT_PARENT_CUSTODY_AND_EXCLUSIVE_LEASE_ACK_RECEIVING_FABLE_ACK_REQUIRED",
+  "revision": 2,
+  "currentExclusiveLease": "19d2ed9a-ba59-413a-9dc3-f09e272c9bca revision2, exact four source paths plus own disjoint records",
   "userInstructionSha256": "85e75479aa839e5dac6667d5de59b2a2234ce27b22942733e730dc5b87f6792e",
   "review": "fa0228e170308737324c1b30a231d7ed03386e87",
   "registryAuthority": "c27853fb824d87eb6f962b4b9af28e6482cdb6a6 OWNER-DOC96-BOUNDED-WIZARD-PAYMENT-20261012",

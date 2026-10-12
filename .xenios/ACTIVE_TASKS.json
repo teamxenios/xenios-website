@@ -7,12 +7,15 @@
       "owner": "codex-accepted-source-integration-20261005",
       "state": "claimed",
       "paths": [
-        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/draft-store.ts",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/draft-store.test.ts",
         "docs/health-launch/ql-build-20261012/",
         "docs/health-launch/account-support-outcome-20261012/qualification/",
         ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"
       ],
-      "scope": "Same release/test owner, separate evidence. Current coordinator bounded custody ACK adds ONLY two historical TopRibbon/package fileHashes.files carryforward pairs in a separate support records-only successor ofa4; exact preimage6007233, source/test bytes unchanged. No other manifest field or application/test/ownership-rule edit. QL four client paths delegated exclusively to same Fable under4b94816; no competing writer. Project-local locked npm-ci/build covered, not global/Docker/SQL; fresh resource bindings before heavy execution.",
+      "scope": "Revision2: current parent exclusive four-path QL source lease underc278, delegated solely to existing Fableda after actual receiving ACK, base7a2; no parent/other source writer, no tests executed by source assignment. ScopeQL2-1/2,3header,6 conflict persistence and real-wrapper test within existingPage.test. All server/API/EA/SQL/admin/other paths excluded. Support manifest path released after freeze f4358b5; accepted support code/tests unchanged. Records and independent qualification retained. Project-local locked npm-ci/build covered, not global/Docker/SQL; fresh heavy windows required.",
       "authority": "Direct user 2026-10-12 DOC101 qualification message; rawhuman20041 lines203-222 and21ccc retained. Original source acceptance and13/13 preserved; AS1 nonblocking and P3 findings unchanged.",
       "claimedAt": "2026-10-12T20:56:45.088Z"
     },
