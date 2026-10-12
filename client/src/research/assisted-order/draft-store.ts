@@ -11,6 +11,13 @@ import { catalogItemKey } from "./wizard-state";
 // the attempt's idempotency key so a resumed submission replays as the SAME
 // request instead of creating a second one.
 //
+// Beside the key sit the attempt's frozen acceptedAt (the server fingerprints
+// it, so a retry must resend the same value to replay) and the attempt state,
+// which turns "uncertain" the moment a submission ends without a definitive
+// answer and never turns back: from then on the key and timestamp are kept
+// through every retry and refresh, so the earlier request can be replayed or
+// conflict, but never be duplicated.
+//
 // WHAT IS NEVER STORED: names, email, phone, addresses, or anything from the
 // contact step. That matches the pendingOrderStore decision: contact details
 // live in memory only. Stored prices are estimates for display; the server
@@ -23,6 +30,12 @@ export const ASSISTED_ORDER_DRAFT_KEY = `${ASSISTED_ORDER_STORAGE_PREFIX}draft.v
 
 export type AssistedOrderWizardStep = "products" | "contact" | "review";
 
+// "none": no submission has been attempted under this key, or every attempt
+// was refused before anything could be persisted. "uncertain": at least one
+// attempt ended without a definitive answer (network failure, 5xx, non-JSON
+// body), so the request may already exist server-side.
+export type AssistedOrderAttemptState = "none" | "uncertain";
+
 const wizardSteps: readonly AssistedOrderWizardStep[] = [
   "products",
   "contact",
@@ -31,6 +44,8 @@ const wizardSteps: readonly AssistedOrderWizardStep[] = [
 
 export type AssistedOrderDraft = Readonly<{
   idempotencyKey: string;
+  acceptedAt: string | null;
+  attemptState: AssistedOrderAttemptState;
   step: AssistedOrderWizardStep;
   selections: readonly AssistedOrderSelection[];
   generalNotes: string;
@@ -61,6 +76,18 @@ function isCatalogItem(value: unknown): value is AssistedOrderCatalogItem {
     (item.unitPriceCents === null || typeof item.unitPriceCents === "number") &&
     typeof item.catalogVersion === "string"
   );
+}
+
+// The frozen acceptance timestamp travels as the bounded free text the server
+// accepts for agreements.*.acceptedAt. Anything else reads as "not stamped".
+const MAX_ACCEPTED_AT_LENGTH = 60;
+
+function parseAcceptedAt(value: unknown): string | null {
+  return typeof value === "string" &&
+    value.length > 0 &&
+    value.length <= MAX_ACCEPTED_AT_LENGTH
+    ? value
+    : null;
 }
 
 function parseSelection(value: unknown): AssistedOrderSelection | null {
@@ -127,8 +154,14 @@ export function readAssistedOrderDraft(
     const step = wizardSteps.includes(record.step as AssistedOrderWizardStep)
       ? (record.step as AssistedOrderWizardStep)
       : "products";
+    // Only the exact "uncertain" marker survives a read; anything else (an
+    // older draft, a typo, a foreign value) is the safe "none".
+    const attemptState: AssistedOrderAttemptState =
+      record.attemptState === "uncertain" ? "uncertain" : "none";
     return Object.freeze({
       idempotencyKey: record.idempotencyKey,
+      acceptedAt: parseAcceptedAt(record.acceptedAt),
+      attemptState,
       step,
       selections: Object.freeze(selections),
       generalNotes:
@@ -143,6 +176,10 @@ export function readAssistedOrderDraft(
 export function storeAssistedOrderDraft(
   draft: Readonly<{
     idempotencyKey: string;
+    // Optional so a caller that has not attempted a submission yet stores the
+    // "not stamped" / "none" defaults without naming them.
+    acceptedAt?: string | null;
+    attemptState?: AssistedOrderAttemptState;
     step: AssistedOrderWizardStep;
     selections: AssistedOrderSelectionMap;
     generalNotes: string;
@@ -158,6 +195,8 @@ export function storeAssistedOrderDraft(
       ASSISTED_ORDER_DRAFT_KEY,
       JSON.stringify({
         idempotencyKey: draft.idempotencyKey,
+        acceptedAt: draft.acceptedAt ?? null,
+        attemptState: draft.attemptState ?? "none",
         step: draft.step,
         selections: Array.from(draft.selections.values()),
         generalNotes: draft.generalNotes,
@@ -169,7 +208,10 @@ export function storeAssistedOrderDraft(
   }
 }
 
-/** Called after a successful submission so the next request starts clean. */
+/**
+ * Called after a successful submission so the next request, and its attempt
+ * identity (key, frozen acceptedAt, attempt state), starts clean.
+ */
 export function clearAssistedOrderDraft(
   storage?: Storage | null,
 ): void {

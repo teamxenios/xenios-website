@@ -40,6 +40,7 @@ import {
   draftSelectionMap,
   readAssistedOrderDraft,
   storeAssistedOrderDraft,
+  type AssistedOrderAttemptState,
   type AssistedOrderWizardStep,
 } from "./draft-store";
 import { refreshSelectionSnapshots } from "./selection-refresh";
@@ -159,6 +160,52 @@ function billingFromContact(contact: ContactState): AssistedOrderAddressInput {
 function newIdempotencyKey(): string {
   const key = globalThis.crypto?.randomUUID?.();
   return key ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+// Copy for outcomes the browser cannot know. After a network failure, a 5xx
+// or a non-JSON answer the server may already hold the request, so nothing
+// here may claim that nothing was ordered, and nothing may invite a fresh
+// request. The only safe instruction is to retry the SAME attempt.
+const UNCERTAIN_OUTCOME_MESSAGE =
+  "Request not confirmed. Retry; do not start a new request. If retrying keeps failing, check your request status or contact support with the time of your attempt.";
+
+// The key was already used for a request with different details. Whether
+// that earlier request is the one the customer meant is not knowable here,
+// so the key is kept and the customer is sent to status or support, never
+// to a new submission.
+const IDEMPOTENCY_CONFLICT_MESSAGE =
+  "Your earlier request with these details may already have been received. Do not start a new request. Check your request status or contact support with the time of your attempt.";
+
+// Shown when a draft whose last attempt was uncertain is restored (refresh,
+// session re-unlock). Contact details are never persisted, so the retry only
+// replays as the same request if the customer re-enters the same details.
+const RESTORED_UNCERTAIN_NOTICE =
+  "An earlier attempt to send this request may already have been saved. Retrying continues that same attempt: enter the same contact details and email address as before, and do not start a new request.";
+
+// Drift after an uncertain attempt. The server checks price and catalog drift
+// before it looks for a replay, so a saved earlier attempt cannot be confirmed
+// from here. The key is kept, so a resubmission can only replay, conflict, or
+// create the request for the first time, never duplicate it.
+const DRIFT_AFTER_UNCERTAIN_MESSAGE =
+  "Pricing or availability changed. An earlier attempt to send this request may already have been saved and cannot be confirmed here. Submitting again keeps the same request identity and will not create a second request.";
+
+const DRIFT_FIRST_ATTEMPT_MESSAGE =
+  "Pricing or availability changed while you were reviewing, so nothing was submitted.";
+
+type SubmitFailureKind = "uncertain" | "drift" | "conflict" | "refused";
+
+// Classifies a failed submission by what the server can be KNOWN to have done.
+// Definitive refusals (validation, agreement standing, authorization, and
+// drift on a first attempt) are thrown before the request is persisted. A
+// network failure, a 5xx, a non-JSON body or an unfamiliar 409 may have
+// landed after persistence, so they are uncertain.
+function classifySubmitFailure(reason: unknown): SubmitFailureKind {
+  if (!(reason instanceof AssistedOrderApiError)) return "uncertain";
+  if (reason.status >= 500 || reason.code === "request_failed") return "uncertain";
+  if (reason.code === "price_changed" || reason.code === "catalog_changed") return "drift";
+  if (reason.code === "idempotency_conflict") return "conflict";
+  if (reason.status === 409) return "uncertain";
+  return "refused";
 }
 
 function ProductCard(props: {
@@ -327,8 +374,22 @@ export function AssistedOrderPage({
       return "";
     }
   });
-  const [idempotencyKey, setIdempotencyKey] = useState(
+  // The attempt key is minted once and never rotated by this page: a key that
+  // changed after an uncertain outcome is how a duplicate order is made.
+  const [idempotencyKey] = useState(
     () => draft?.idempotencyKey ?? newIdempotencyKey(),
+  );
+  // The acceptance timestamp is stamped once per attempt key and then frozen.
+  // The server fingerprints acceptedAt, so a retry that restamped it would
+  // stop replaying and read as a DIFFERENT request under the same key.
+  const [acceptedAt, setAcceptedAt] = useState<string | null>(
+    () => draft?.acceptedAt ?? null,
+  );
+  // "uncertain" once any submission under this key ended without a definitive
+  // answer. From then on the key and timestamp are kept for every retry and
+  // refresh, and no copy may invite a fresh request.
+  const [attemptState, setAttemptState] = useState<AssistedOrderAttemptState>(
+    () => draft?.attemptState ?? "none",
   );
   const [contact, setContact] = useState<ContactState>(initialContact);
   const [search, setSearch] = useState("");
@@ -344,7 +405,9 @@ export function AssistedOrderPage({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(() =>
+    draft?.attemptState === "uncertain" ? RESTORED_UNCERTAIN_NOTICE : null,
+  );
   const refreshedDraft = useRef(false);
   const [, navigate] = useLocation();
 
@@ -393,8 +456,15 @@ export function AssistedOrderPage({
   // a session expiry or re-unlock costs the customer nothing but their
   // contact fields.
   useEffect(() => {
-    storeAssistedOrderDraft({ idempotencyKey, step, selections, generalNotes });
-  }, [idempotencyKey, step, selections, generalNotes]);
+    storeAssistedOrderDraft({
+      idempotencyKey,
+      acceptedAt,
+      attemptState,
+      step,
+      selections,
+      generalNotes,
+    });
+  }, [idempotencyKey, acceptedAt, attemptState, step, selections, generalNotes]);
 
   // A restored draft carries yesterday's snapshots. Re-resolve them once
   // against the live catalog so the customer reviews CURRENT server values;
@@ -727,7 +797,23 @@ export function AssistedOrderPage({
       setError("Select at least one product.");
       return;
     }
-    const agreements = acceptedAgreements(requirements, new Date().toISOString());
+    // Stamp once per attempt key, then reuse. Persisted BEFORE the first POST:
+    // the write-through effect alone would run after the request was already
+    // in flight, and a refresh after a lost response must retry the identical
+    // attempt rather than mint a new one.
+    const attemptAcceptedAt = acceptedAt ?? new Date().toISOString();
+    if (acceptedAt === null) {
+      setAcceptedAt(attemptAcceptedAt);
+      storeAssistedOrderDraft({
+        idempotencyKey,
+        acceptedAt: attemptAcceptedAt,
+        attemptState,
+        step,
+        selections,
+        generalNotes,
+      });
+    }
+    const agreements = acceptedAgreements(requirements, attemptAcceptedAt);
     const input: AssistedOrderSubmitInput = {
       idempotencyKey,
       contact: {
@@ -760,35 +846,59 @@ export function AssistedOrderPage({
         )}`,
       );
     } catch (reason) {
-      if (reason instanceof AssistedOrderApiError) {
-        if (reason.code === "price_changed" || reason.code === "catalog_changed") {
-          await recoverFromDrift(
-            "Pricing or availability changed while you were reviewing, so nothing was submitted.",
-          );
-        } else if (reason.code === "idempotency_conflict") {
-          // The key was already used for a DIFFERENT request. This edited
-          // submission is genuinely new, so it gets a fresh key; nothing
-          // was created by this attempt.
-          setIdempotencyKey(newIdempotencyKey());
-          setNotice(
-            "Your earlier request with these details was already received in a different form. Press Submit again to send this version as a new request.",
-          );
-        } else {
-          setError(
-            reason.code === "agreement_required"
-              ? "Review and accept the current Research Use Policy before submitting."
-              : reason.code === "forbidden"
-              ? "Your Early Access session ended. Return to Early Access and start again."
-              : reason.code === "validation_error"
-                ? "Review the highlighted information and try again."
-                : "The order request could not be submitted. Nothing was ordered or charged. Please try again.",
-          );
-          setFieldError(reason.code === "validation_error" ? reason.field ?? null : null);
+      const failure = classifySubmitFailure(reason);
+      if (failure === "uncertain") {
+        // The server may hold this request already. Freeze the attempt for
+        // good, say so truthfully, and never offer a fresh request.
+        setAttemptState("uncertain");
+        storeAssistedOrderDraft({
+          idempotencyKey,
+          acceptedAt: attemptAcceptedAt,
+          attemptState: "uncertain",
+          step,
+          selections,
+          generalNotes,
+        });
+        setError(UNCERTAIN_OUTCOME_MESSAGE);
+      } else if (failure === "drift") {
+        // Refused before persistence on a first attempt, so the acceptance
+        // time is released like any other definitive refusal. After an
+        // uncertain attempt the same refusal proves nothing, because the
+        // server checks drift before it looks for a replay, so everything
+        // stays frozen; the key is kept either way.
+        if (attemptState !== "uncertain") {
+          setAcceptedAt(null);
         }
-      } else {
-        setError(
-          "The order request could not be submitted. Nothing was ordered or charged. Please try again.",
+        await recoverFromDrift(
+          attemptState === "uncertain"
+            ? DRIFT_AFTER_UNCERTAIN_MESSAGE
+            : DRIFT_FIRST_ATTEMPT_MESSAGE,
         );
+      } else if (failure === "conflict") {
+        // Never rotate the key here: the earlier request may be the real one.
+        setNotice(IDEMPOTENCY_CONFLICT_MESSAGE);
+      } else {
+        // A definitive refusal, thrown before anything was persisted. On a
+        // never-uncertain attempt the acceptance time is released so the
+        // corrected submission is stamped when it is actually accepted; after
+        // an uncertain attempt everything stays frozen.
+        const code = reason instanceof AssistedOrderApiError ? reason.code : "";
+        const field = reason instanceof AssistedOrderApiError ? reason.field : undefined;
+        if (attemptState !== "uncertain") {
+          setAcceptedAt(null);
+        }
+        setError(
+          code === "agreement_required"
+            ? "Review and accept the current Research Use Policy before submitting."
+            : code === "forbidden"
+              ? attemptState === "uncertain"
+                ? "Your Early Access session ended. Unlock Early Access again, then retry this same request; do not start a new one."
+                : "Your Early Access session ended. Unlock Early Access again and continue your request."
+              : code === "validation_error"
+                ? "Review the highlighted information and try again."
+                : "The order request was not accepted and was not saved. Please review your details and try again.",
+        );
+        setFieldError(code === "validation_error" ? field ?? null : null);
       }
     } finally {
       setSubmitting(false);
