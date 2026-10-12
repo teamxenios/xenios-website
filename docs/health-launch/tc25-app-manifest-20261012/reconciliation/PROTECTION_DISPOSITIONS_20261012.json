@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-12T18:50:51Z",
+  "classification": "READ_ONLY_FORENSIC_RECONCILIATION_WITH_UNAPPLIED_PROPOSAL",
+  "session": "codex-accepted-source-integration-20261005",
+  "authority": {
+    "attachment": "33d0eac5-334d-4415-b675-924138875f8e/Pasted text.txt",
+    "rawSha256": "d71d429cc86bbd354bfbf50854a15c8a3700ec5d25b1b11639284d73bfd9bae6",
+    "scope": "Resolve exact discrepancies, source relationship, actual tests/reviewer/payment evidence. No new production/payment/database authority."
+  },
+  "preserved": {
+    "appAmendment": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
+    "tree": "748e53522ba8ef94ba05b0286a97c0200ee2bb61",
+    "applicationSource": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "applicationTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+    "compositionBase": "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+    "R1": "d1a8f27a27832ea0b2a89ae68462684c14ed61fa: NOT RUN, zero attempts",
+    "R2": "e275d344e0ced7f683218b4dac3b1b7b63f01764: CLI exit1, no timeout, seven hard-hash mismatches and two seam warnings; Vitest NOT RUN per stop-first-failure",
+    "rawLogSha256": "16a633ac030033d63d54c3f64624e912bd22c271f7b9edb01e2601d4ad933db4",
+    "sameBlobsAcrossAcceptedBaseTested": true,
+    "receiptFinalization": "Doc95/97 closed, not reopened"
+  },
+  "sevenHardFailureDispositions": [
+    {
+      "path": "client/src/index.css",
+      "expectedSha256": "70d3302a8b4f5d22aa324c3728ae51963d12222ab880c29fcd3f8ea3e477d0e6",
+      "observedSha256": "b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049",
+      "observedBlob": "3e21b412fd8cea68000311c16a91134335c7d283",
+      "expectedEntryIntroduction": "7396f53dcedb154991f8f9b23accaee137286fdd",
+      "firstDivergingChangeOnTestedAncestry": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "cause": "Adds the Health gradient token/footer accent, public-shell button focus selector and forced-colors support.",
+      "byteRepresentation": "Real source delta; expected matches introduction and pre-divergence parent; stored LF and normalized checkout agree; not CRLF/generated-file drift.",
+      "classification": "SOURCE_COMPOSITION_AUTHORIZED_EXACT_BASELINE_DISPOSITION_OPEN",
+      "applicableApproval": {
+        "source": "561596358cbe5ba6b8d5a5a93f85e7df611b2479:docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
+        "sourceProducer": "70cd421a6ab79513744f531d921b3ece61044874",
+        "approvalScope": "Accepted exact source integration, including these three observed hashes; explicitly says founder exact protected-hash approval absent. CLAUDE_CORE_IC2_ACCEPTANCE.txt is source acceptance, not a baseline grant.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+      },
+      "owner": {
+        "source": "codex-accepted-source-integration-20261005 (completed composition; no new runtime edit claimed)",
+        "protection": "OWNER-W2-CONTROL-PLANE / Website 2 release-manager; App-only delegation does not extend"
+      },
+      "requiredCorrection": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.tsx",
+      "expectedSha256": "9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
+      "observedSha256": "9b1a354def9f430e450ce1261a3d8fbd269c833423cbff179f68643db22a1d19",
+      "observedBlob": "8e6f22575454887cb680954ef7f561a9c4c23fb5",
+      "expectedEntryIntroduction": "045e8ea7235469e6213dd38fcb8fb446b2f80380",
+      "firstDivergingChangeOnTestedAncestry": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+      "cause": "Adds isHealthIntakePath import and excludes intake paths from installation prompts.",
+      "byteRepresentation": "Real source delta; expected matches introduction and pre-divergence parent; stored LF and normalized checkout agree; not CRLF/generated-file drift.",
+      "classification": "SOURCE_COMPOSITION_AUTHORIZED_EXACT_BASELINE_DISPOSITION_OPEN",
+      "applicableApproval": {
+        "source": "21d904fa81835a6c26897df6269d295b95d13110:docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+        "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+        "approvedPatchSha256": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+        "approvalScope": "Actual fixed-copy F9 authority; protected manifests/hashes/GATE-01 excluded. Copy custody ended after assembly. Source acceptance does not authorize baseline refresh.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+      },
+      "owner": {
+        "source": "codex-accepted-source-integration-20261005 (completed composition; no new runtime edit claimed)",
+        "protection": "OWNER-W2-CONTROL-PLANE / Website 2 release-manager; App-only delegation does not extend"
+      },
+      "requiredCorrection": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+    },
+    {
+      "path": "client/src/components/Navbar.tsx",
+      "expectedSha256": "e37a5b94cb07674e8f4471ddc37b9a5e8a6f848d300408ba67ff3b706941eb1f",
+      "observedSha256": "6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a",
+      "observedBlob": "8ceb5184f9095ffec930a9bd3983678b5e2b04bb",
+      "expectedEntryIntroduction": "98b43d68d3e0a2f63e14ec5ad5afd7abe2f9fb80",
+      "firstDivergingChangeOnTestedAncestry": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "cause": "Three BRAND.publicName to BRAND.healthDisplayName substitutions in header accessible name, visible brand and mobile heading.",
+      "byteRepresentation": "Real source delta; expected matches introduction and pre-divergence parent; stored LF and normalized checkout agree; not CRLF/generated-file drift.",
+      "classification": "SOURCE_COMPOSITION_AUTHORIZED_EXACT_BASELINE_DISPOSITION_OPEN",
+      "applicableApproval": {
+        "source": "561596358cbe5ba6b8d5a5a93f85e7df611b2479:docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
+        "sourceProducer": "70cd421a6ab79513744f531d921b3ece61044874",
+        "approvalScope": "Accepted exact source integration, including these three observed hashes; explicitly says founder exact protected-hash approval absent. CLAUDE_CORE_IC2_ACCEPTANCE.txt is source acceptance, not a baseline grant.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+      },
+      "owner": {
+        "source": "codex-accepted-source-integration-20261005 (completed composition; no new runtime edit claimed)",
+        "protection": "OWNER-W2-CONTROL-PLANE / Website 2 release-manager; App-only delegation does not extend"
+      },
+      "requiredCorrection": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+    },
+    {
+      "path": "client/src/components/Footer.tsx",
+      "expectedSha256": "25da700fcea32178d19fc21a3d6db4192d11b403418b7fa83100b4c88d9e2a3a",
+      "observedSha256": "420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb",
+      "observedBlob": "341e24ed1f9984efe17a1ed854d3a9fe7ba1aba0",
+      "expectedEntryIntroduction": "98b43d68d3e0a2f63e14ec5ad5afd7abe2f9fb80",
+      "firstDivergingChangeOnTestedAncestry": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "cause": "Home-link accessible name and visible brand use BRAND.healthDisplayName.",
+      "byteRepresentation": "Real source delta; expected matches introduction and pre-divergence parent; stored LF and normalized checkout agree; not CRLF/generated-file drift.",
+      "classification": "SOURCE_COMPOSITION_AUTHORIZED_EXACT_BASELINE_DISPOSITION_OPEN",
+      "applicableApproval": {
+        "source": "561596358cbe5ba6b8d5a5a93f85e7df611b2479:docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
+        "sourceProducer": "70cd421a6ab79513744f531d921b3ece61044874",
+        "approvalScope": "Accepted exact source integration, including these three observed hashes; explicitly says founder exact protected-hash approval absent. CLAUDE_CORE_IC2_ACCEPTANCE.txt is source acceptance, not a baseline grant.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+      },
+      "owner": {
+        "source": "codex-accepted-source-integration-20261005 (completed composition; no new runtime edit claimed)",
+        "protection": "OWNER-W2-CONTROL-PLANE / Website 2 release-manager; App-only delegation does not extend"
+      },
+      "requiredCorrection": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "expectedSha256": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "observedSha256": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+      "observedBlob": "e0b8137b717ee43c92569c9d6612a0b143737e39",
+      "expectedEntryIntroduction": "c9c81bbc62429b09543e858dff2b6779684232f4",
+      "firstDivergingChangeOnTestedAncestry": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+      "cause": "Adds intake paths to tracking refusal and Health document privacy classification.",
+      "byteRepresentation": "Real source delta; expected matches introduction and pre-divergence parent; stored LF and normalized checkout agree; not CRLF/generated-file drift.",
+      "classification": "SOURCE_COMPOSITION_AUTHORIZED_EXACT_BASELINE_DISPOSITION_OPEN",
+      "applicableApproval": {
+        "source": "21d904fa81835a6c26897df6269d295b95d13110:docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+        "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+        "approvedPatchSha256": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+        "approvalScope": "Actual fixed-copy F9 authority; protected manifests/hashes/GATE-01 excluded. Copy custody ended after assembly. Source acceptance does not authorize baseline refresh.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+      },
+      "owner": {
+        "source": "codex-accepted-source-integration-20261005 (completed composition; no new runtime edit claimed)",
+        "protection": "OWNER-W2-CONTROL-PLANE / Website 2 release-manager; App-only delegation does not extend"
+      },
+      "requiredCorrection": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "expectedSha256": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "observedSha256": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",
+      "observedBlob": "f3929cd40d728634038e35db8059ddcceed7cbf9",
+      "expectedEntryIntroduction": "c9c81bbc62429b09543e858dff2b6779684232f4",
+      "firstDivergingChangeOnTestedAncestry": "3f86463d6d3a6cc0b7c04de5745a78646b620766",
+      "cause": "Adds intake paths to sensitive-location attribution refusal.",
+      "byteRepresentation": "Real source delta; expected matches introduction and pre-divergence parent; stored LF and normalized checkout agree; not CRLF/generated-file drift.",
+      "classification": "SOURCE_COMPOSITION_AUTHORIZED_EXACT_BASELINE_DISPOSITION_OPEN",
+      "applicableApproval": {
+        "source": "21d904fa81835a6c26897df6269d295b95d13110:docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+        "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+        "approvedPatchSha256": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+        "approvalScope": "Actual fixed-copy F9 authority; protected manifests/hashes/GATE-01 excluded. Copy custody ended after assembly. Source acceptance does not authorize baseline refresh.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+      },
+      "owner": {
+        "source": "codex-accepted-source-integration-20261005 (completed composition; no new runtime edit claimed)",
+        "protection": "OWNER-W2-CONTROL-PLANE / Website 2 release-manager; App-only delegation does not extend"
+      },
+      "requiredCorrection": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+    },
+    {
+      "path": "server/static.ts",
+      "expectedSha256": "9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004",
+      "observedSha256": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+      "observedBlob": "7fade5dc250b6a466bab34838b0d7c885bc2c1fd",
+      "expectedEntryIntroduction": "bf50fed4532a63e78f06100c2363ca898df8d0d9",
+      "firstDivergingChangeOnTestedAncestry": "0d22757ab458862c4a9ded6eae7812cc17a06116",
+      "cause": "Removes only the /research/access-hub -> / redirect-map entry.",
+      "byteRepresentation": "Real source delta; expected matches introduction and pre-divergence parent; stored LF and normalized checkout agree; not CRLF/generated-file drift.",
+      "classification": "EXPLICIT_PROTECTED_SOURCE_AND_BASELINE_DISPOSITION_OPEN",
+      "applicableApproval": {
+        "source": "docs/health-launch/HL17_ACCESS_HUB_20261001.md; .xenios/handoffs/2026-10-01T14-15-03-333Z-HEALTH-HL17-ACCESS-HUB-RESTORE-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "approvalScope": "Intentional HL-17 source provenance; handoff expressly requires fresh exact-byte protected review and owner disposition. Current App approval covers App only, not server/static.ts.",
+        "remaining": "Excluded from six-pair proposal. Existing HL-17/source owner and protection owner must obtain exact Access Hub/static source and baseline disposition; otherwise correct/exclude through actual source owner. No runtime defect is established by hash arithmetic."
+      },
+      "owner": {
+        "source": "codex-xenios-health-launch-implementation-20260930 (historical handoff, not a new write lease)",
+        "protection": "OWNER-W2-CONTROL-PLANE / Website 2 release-manager; App-only delegation does not extend"
+      },
+      "requiredCorrection": "Excluded from six-pair proposal. Existing HL-17/source owner and protection owner must obtain exact Access Hub/static source and baseline disposition; otherwise correct/exclude through actual source owner. No runtime defect is established by hash arithmetic."
+    }
+  ],
+  "twoSeamWarningDispositions": [
+    {
+      "path": "server/index.ts",
+      "expectedSha256": "1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315",
+      "observedSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+      "observedBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+      "expectedEntryIntroduction": "663268fdf537da9349327c097d431dabeef56a70",
+      "firstDivergingChangeOnTestedAncestry": "3562c03f3bd26b4a9ec165c0f17b1f96256abb23",
+      "laterSourceChanges": [
+        "cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb",
+        "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "27463d764ba01219c67081a3548ffdc3ff7d2b40",
+        "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
+        "8e01ef8660ab2148078e969b2190808fc37a27ad"
+      ],
+      "cause": "Cumulative durable payment-effects/disposition/provider journal/execution/settlement composition and disabled Quick Order containment, entry clock, canonical-auth resolver and disabled ports wiring.",
+      "applicableApproval": "663268f pins only prior 1d6594... bytes. Later source review/disabled assembly does not grant a whole-file 9c024a... protected baseline update. Do not disposition only the last QO hunk while accepting the earlier cumulative changes.",
+      "requiredCorrection": "Separate cumulative exact-byte seam/source and baseline disposition by existing source/protection owner. Excluded from six-pair proposal.",
+      "owner": "Historical Health core source owner plus existing integrator for QO hunk; OWNER-W2-CONTROL-PLANE for baseline. No historical handoff silently reclaimed.",
+      "cliDisposition": "NONFATAL_WARNING_NOT_A_HARD_FAILURE",
+      "testPolicy": "server/core-site-protection.test.ts:385-388 requires no seam mismatches. That test was NOT RUN in R2; this is static policy interpretation, not a failed-test count."
+    },
+    {
+      "path": "server/research/index.ts",
+      "expectedSha256": "b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
+      "observedSha256": "5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188",
+      "observedBlob": "6220347de6b123ca7e62e2f759b17dec6476093e",
+      "expectedEntryIntroduction": "9b5e61b53feb547a9fd384d02e75b0c2755546c8",
+      "firstDivergingChangeOnTestedAncestry": "2dc7d6264d7c6286f49c711d729a268868752327",
+      "laterSourceChanges": [],
+      "cause": "Admits exact XRR quote GET and quote-accept POST through the outer wall; downstream authorization remains separate.",
+      "applicableApproval": "HEALTH_PROTECTED_HASH_APPROVAL_20261001.md at663268f expressly excludes these current bytes despite report22/F10 source closure at reviewer c2e4beaa796015dd08134c009c0aaebbbb48644f.",
+      "requiredCorrection": "Separate cumulative exact-byte seam/source and baseline disposition by existing source/protection owner. Excluded from six-pair proposal.",
+      "owner": "Historical Health core source owner plus existing integrator for QO hunk; OWNER-W2-CONTROL-PLANE for baseline. No historical handoff silently reclaimed.",
+      "cliDisposition": "NONFATAL_WARNING_NOT_A_HARD_FAILURE",
+      "testPolicy": "server/core-site-protection.test.ts:385-388 requires no seam mismatches. That test was NOT RUN in R2; this is static policy interpretation, not a failed-test count."
+    }
+  ],
+  "boundedProposal": {
+    "file": "SIX_SOURCE_AUTHORIZED_HASH_PAIRS_UNAPPLIED.patch",
+    "rawSha256": "c7e7445d97d1317250151d2b0afbb5066254c4419cdb4743d8cf8d26280a0c33",
+    "status": "UNAPPLIED_REQUIRES_EXACT_BASELINE_APPROVAL_AND_CUSTODY",
+    "targetManifestBlob": "ceec20e2ea36774fbe480313fbea14c8237546ff",
+    "targetManifestSha256Lf": "95445fdf1855560460da2283d06f9dda733e373c1258611ec278cd499e74a23d",
+    "scope": "Exactly six fileHashes entries with demonstrated source composition authority. No App/seam/static hash, route, zone, source, assertion or timeout changes. Approval provenance must be recorded separately if later granted.",
+    "excluded": [
+      "server/static.ts",
+      "server/index.ts",
+      "server/research/index.ts"
+    ],
+    "validation": "git apply --check --unidiff-zero passed without applying. This is patch syntax/context validation, not an application/protection test.",
+    "completeProtectionPassAfterProposal": false,
+    "decision": "Locate existing exact protected-baseline grant or obtain one consolidated six-pair decision using these full hashes. Do not repeat App approval. Resolve conditional static and cumulative seam source dispositions before proposing their own baseline changes."
+  },
+  "independentReview": {
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "commit": "7a76a8dec776d912da21efe57193c0b8ce910f2a",
+    "report": "docs/review/xenios-health-launch-review-20260930/98_TC25_APP_MANIFEST_AMENDMENT_3ec5ec0_2026-10-12.md",
+    "registration": "Reviewer expressly acknowledges coordinator7271ff22 local registration",
+    "appScope": "ACCEPTED_EXACT_ONE_HASH_AMENDMENT",
+    "historicalExecutionSnapshot": "Doc98 NOT RUN predates actual R2 executed FAIL; retain both by date, not a contradiction or retroactive PASS",
+    "R2EvidenceComparison": "Delivered to coordinator for original reviewer; later acknowledgment/disposition not observed at this record",
+    "QLSourceReview": "No correction successor acceptance observed",
+    "newIndependentAcceptanceClaimed": false
+  },
+  "limits": {
+    "sourceChanges": false,
+    "manifestChanges": false,
+    "testChanges": false,
+    "applicationTestsExecutedByThisReconciliation": false,
+    "fullSuiteRerun": false,
+    "gateRerun": false,
+    "push": false,
+    "merge": false,
+    "SQL": false,
+    "hostedConfiguration": false,
+    "deployment": false,
+    "paymentOrEmail": false,
+    "productionStateReobserved": false,
+    "Lite": "PARKED",
+    "schedules": "UNCHANGED"
+  }
+}

@@ -1,0 +1,21 @@
+diff --git a/docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json b/docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json
+--- a/docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json
++++ b/docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json
+@@ -678 +678 @@
+-      "client/src/index.css": "sha256:70d3302a8b4f5d22aa324c3728ae51963d12222ab880c29fcd3f8ea3e477d0e6",
++      "client/src/index.css": "sha256:b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049",
+@@ -680 +680 @@
+-      "client/src/pwa/PwaLifecycle.tsx": "sha256:9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
++      "client/src/pwa/PwaLifecycle.tsx": "sha256:9b1a354def9f430e450ce1261a3d8fbd269c833423cbff179f68643db22a1d19",
+@@ -682 +682 @@
+-      "client/src/components/Navbar.tsx": "sha256:e37a5b94cb07674e8f4471ddc37b9a5e8a6f848d300408ba67ff3b706941eb1f",
++      "client/src/components/Navbar.tsx": "sha256:6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a",
+@@ -683 +683 @@
+-      "client/src/components/Footer.tsx": "sha256:25da700fcea32178d19fc21a3d6db4192d11b403418b7fa83100b4c88d9e2a3a",
++      "client/src/components/Footer.tsx": "sha256:420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb",
+@@ -695 +695 @@
+-      "client/src/lib/tracking.ts": "sha256:258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
++      "client/src/lib/tracking.ts": "sha256:8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+@@ -696 +696 @@
+-      "client/src/lib/attribution.ts": "sha256:2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
++      "client/src/lib/attribution.ts": "sha256:6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",

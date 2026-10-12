@@ -3,6 +3,18 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "TC25-PROTECTION-DISPOSITION-20261012",
+      "owner": "codex-accepted-source-integration-20261005",
+      "state": "claimed",
+      "claimedAt": "2026-10-12T18:46:29Z",
+      "leaseId": "tc25-protection-disposition-records-20261012",
+      "base": "e275d344e0ced7f683218b4dac3b1b7b63f01764",
+      "branch": "codex/tc25-app-manifest-20261012",
+      "paths": ["docs/health-launch/tc25-app-manifest-20261012/reconciliation/", ".xenios/handoffs/2026-10-12-tc25-protection-disposition-handoff.json"],
+      "authority": "Actual human-designated continuation attachment33d0eac5, raw SHA256 d71d429cc86bbd354bfbf50854a15c8a3700ec5d25b1b11639284d73bfd9bae6. Same integrator continues exact failure/lineage/approval reconciliation. No source, manifest, tests or execution changes.",
+      "publication": "LOCAL_ONLY"
+    },
+    {
       "id": "TC25-PROTECTION-R2-EVIDENCE-20261012",
       "owner": "codex-accepted-source-integration-20261005",
       "state": "handoff",

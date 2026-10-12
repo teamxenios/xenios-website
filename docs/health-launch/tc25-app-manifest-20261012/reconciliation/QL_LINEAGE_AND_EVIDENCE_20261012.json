@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-12T18:57:00Z",
+  "status": "INDEPENDENT_EXISTING_WIZARD_INCREMENT_NOT_RELEASE_QUALIFIED",
+  "lineage": {
+    "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "baseTree": "ca9d77ce95bede22b40315fa4cbcdee91de2312c",
+    "ql11": "a9e44f4075b3627e17c4238e1a683f6ad4c1d7b2",
+    "ql11Tree": "6bf912cb7ba2c3b547f213ee9a784083d331b204",
+    "ql12": "5da08ad72de8d4b6917e431b27d4488d5579d213",
+    "ql12Tree": "5604dd3a2ebe95083ad70505d99e8837663ffa0a",
+    "combinedSource": "3aa7b96938f63b0a2a5049b57bfaa9fe236b4cb2",
+    "combinedTree": "8eaf017a6d5cf8fde252badc81c0c48f1b32fd20",
+    "combinedParent": "ea1e05180cc9098a3fc5c0edd9cb4fe0131bd483",
+    "parentParent": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "completeSourceDiff": {
+      "paths": [
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/draft-store.ts",
+        "server/research/assisted-order/service.ts"
+      ],
+      "additions": 211,
+      "deletions": 31
+    },
+    "comparisonTargets": [
+      "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+      "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+      "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86"
+    ],
+    "mergeBaseForEachTarget": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "neitherBranchAncestorOfOther": true,
+    "qlAppBlob": "fd9396ab30464e1b23d1cfe792292cecc8ba62dd",
+    "compositionAppBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+    "independentInScope": true,
+    "independentlyReleasableNow": false,
+    "reason": "No full Quick Order runtime/App/SQL/manifest imported. Own tests, protection disposition, source review and applicable mounted/operational release checks remain. Independence is not a blanket gate exemption.",
+    "newBranchCreatedByThisAudit": false
+  },
+  "candidateSpecificProtection": {
+    "method": "Read-only git cat-file bytes, UTF-8, CRLF-to-LF SHA256 arithmetic against candidate's own unchanged manifest. NOT an executed gate.",
+    "manifestBlob": "6007233a68aa50eb043bcaec9a1eea933425dcde",
+    "hardMatches": 26,
+    "hardMismatches": 2,
+    "seamMatches": 5,
+    "seamMismatches": 0,
+    "missing": 0,
+    "firstDivergence": "9f9da8540fc64573614d37bed95a0f991dd79a09",
+    "preDivergenceParent": "e06b155489577287f4152a05e21b2f1833252fc5",
+    "sourceBlobsUnchangedFromBase": true,
+    "rows": [
+      {
+        "path": "client/src/components/TopRibbon.tsx",
+        "expected": "ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666",
+        "actual": "33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad",
+        "oldBlob": "2b2ed38516b6f68e4f455537207c8a1df81fb32f",
+        "newBlob": "354b14f810ca3ceb609fe9062859432918a3114c",
+        "cause": "Imports useLocation, wraps original TopRibbonContent and suppresses promotional ribbon for exact /care and /care/*."
+      },
+      {
+        "path": "package.json",
+        "expected": "c01129601999b1e6b2f02790af0245350182e08fcf739fe40174e4b004c9e081",
+        "actual": "27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748",
+        "oldBlob": "01ef57c318f1f5c4cea6f67886ebc0645568340b",
+        "newBlob": "33fda70eeea889ec05d9dfe7ac5bd09b89f09c34",
+        "cause": "Adds only xenios:control and test:xenios-control script aliases; no dependency, engine or existing script change in that delta."
+      }
+    ],
+    "newlyLocatedHistoricalReconciliation": {
+      "commit": "6d9ec3cb615f0c48102e74974e777c07e7039eba",
+      "report": "docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md",
+      "exactSameTwoPairs": true,
+      "broaderCommitHasFiveHashEdits": true,
+      "classification": "PREVIOUSLY_RECONCILED_IDENTICAL_BYTES_MISSING_FROM_794_BASED_BRANCH",
+      "authorityRecord": {
+        "task": "XENIOS-UX-RELEASE-CONTROL-20260924",
+        "owner": "codex-xenios-ux-release-control-20260924",
+        "scope": "Committed contemporaneous ACTIVE_TASKS records founder-directed release-control extension restricted to reviewed hashes against production79414143 and UX8315710f.",
+        "lease": "f9db327b-b7df-4730-821d-3175a73cba4c",
+        "leaseRecord": ".xenios/CODE_OWNERSHIP.json at6d9ec3 records exact manifest transfer and exclusive lease.",
+        "originalVerbatimFounderMessageRetrieved": false,
+        "independentClaudeAcceptanceOfHistoricalAmendmentClaimed": false
+      },
+      "carriedBy": [
+        "cfdfd4e66429cee03ad3c59113ce22dd1469f0ef",
+        "98b43d68d3e0a2f63e14ec5ad5afd7abe2f9fb80"
+      ],
+      "technicalApplicability": "Source blobs identical at historical reconciliation, later retained manifests and QL source. QL fork794 predates manifest reconciliation; exact two-entry carry-forward is technically applicable unchanged.",
+      "initialAuditCorrection": "Initial bounded search did not locate disposition. Coordinator supplied6d9ec3; root and read-only helper verified exact same pairs plus committed founder-directed task/lease. Do not claim no prior approval record exists or ask founder to approve the same bytes again merely because QL branch lacks the later records.",
+      "currentCustody": "OWNER-W2-CONTROL-PLANE owns manifest. Current seven-path QL grant excludes it. Existing protection owner must bind a narrow two-entry carry-forward and provenance under current custody; do not cherry-pick full five-entry amendment or import newer whole manifest.",
+      "remaining": "Two-entry protection-owner carry-forward, exact candidate review and actual applicable protection/test execution. No mutation by this read-only audit."
+    }
+  },
+  "tests": {
+    "authoredCommit": "f40ca87d51027aeed6d4d7552ce5f76aaf52bd48",
+    "authoredTree": "cc2f3f548e1ab46c3442905d89c32f2b3d8dc7a3",
+    "testOnlyChangedFiles": [
+      "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+      "client/src/research/assisted-order/draft-store.test.ts",
+      "server/research/assisted-order/service.test.ts",
+      "server/research/assisted-order/http-e2e.test.ts"
+    ],
+    "testOnlyDiff": {
+      "additions": 797,
+      "deletions": 29
+    },
+    "assembledSuccessorObserved": "7ac408371b6fcc702827a26e61b3a3f5a13f3f67",
+    "assembledTree": "b84d29db528e41b477e507546b03ace2263c20f3",
+    "assembledParent": "3aa7b96938f63b0a2a5049b57bfaa9fe236b4cb2",
+    "untrackedConfig": "vitest.doc96.config.ts",
+    "actualExecution": "NOT_RUN_PERMISSION_REFUSAL_BEFORE_EXECUTION",
+    "frozenCandidateReceipt": {
+      "path": "C:/xenios-wt/doc96-handoffs/frozen-candidate-7ac40837.json",
+      "rawSha256": "bbd5c415268a4823a33ab2e7cfc4fcc3488fc762c484b0ba6583cdc89bbc88cb",
+      "frozenAt": "2026-10-12T18:48:43Z",
+      "refusedAtReported": "2026-10-12T18:49Z",
+      "reportedResult": "Vitest command refused by Claude Code auto-mode permission layer; no retry attempted",
+      "evidenceLevel": "Actual source-owner frozen handoff inspected; raw permission-event record and any subsequent executed receipt not observed by this audit",
+      "sevenSourceAndTestBlobsBound": true,
+      "publication": "LOCAL_ONLY_NO_PUSH"
+    },
+    "passCount": null,
+    "failCount": null,
+    "skipCount": null,
+    "exitCode": null,
+    "rootLaunchedTests": false,
+    "sourceOwnerCommitTimeStatement": "Authored only; nothing executed. Later frozen-candidate handoff separately records permission refusal before execution. No passing execution receipt observed.",
+    "preparedTicket": "C:/xenios-wt/doc96-handoffs/execution-ticket-doc96-unit.json",
+    "ticketObservedStatus": "Prepared ticket remains historical; frozen-candidate receipt supplies exact candidate fields but reports permission refusal, not execution",
+    "runtimePreparation": {
+      "nodePath": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+      "nodeBinarySha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+      "requestedNode": "v20.19.0",
+      "npmObserved": null,
+      "workerProvenanceObserved": false,
+      "lockfileSha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8",
+      "installedLockMetadataSha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94",
+      "originalTicketWorkers": 2,
+      "applicableControls": "Coordinator must reconcile the reported permission refusal through the permitted approval mechanism before any execution. No retry or alternate executor/tool to bypass the refusal. A future permitted run still needs its own source/test/config identities, runtime/dependencies, owned cache/temp and one-heavy window. TC25 skipped Vitest is not resumed; full S3 conditions are not automatically imported into focused unit scope."
+    },
+    "coverage": [
+      {
+        "requirement": "Attempt key and acceptedAt survive retry and refresh",
+        "authored": "Client retry tests plus draft round-trip and jsdom remount",
+        "limitation": "Not real browser refresh/auth recovery; execution unverified"
+      },
+      {
+        "requirement": "Response loss, duplicate clicks, truthful unknown/conflict copy",
+        "authored": "Mocked rejection then receipt, in-flight duplicate guard, conflict/refusal copy cases",
+        "limitation": "Not actual durable commit followed by response loss; execution unverified"
+      },
+      {
+        "requirement": "Server drift-before-replay",
+        "authored": "Pins client key preservation and truthful copy on drift refusal",
+        "limitation": "Server revalidation still precedes repository replay; limitation remains open"
+      },
+      {
+        "requirement": "QL12 arbitrary/missing/wrong-order/reused references and unavailable verification",
+        "authored": "Service predecessor states and blanket hold; HTTP payment_pending refusal",
+        "limitation": "Foreign/reused references are synthetic strings refused by hold, not real canonical evidence. HTTP case does not exercise every held status. No operational paid transition established"
+      }
+    ]
+  },
+  "receivingAcknowledgments": {
+    "lead": "C:/xenios-wt/doc96-handoffs/lead-ql11-source-ack-and-handoff.json",
+    "ql12": "C:/xenios-wt/doc96-handoffs/ql12-source-ack.json",
+    "ql12Handoff": "C:/xenios-wt/doc96-handoffs/ql12-source-handoff.json",
+    "tests": "C:/xenios-wt/doc96-handoffs/tests-owner-ack.json",
+    "testsHandoff": "C:/xenios-wt/doc96-handoffs/tests-owner-handoff.json",
+    "observed": true,
+    "leadSession": "da289215-87ed-4b4b-bbda-c9af49bda5bc",
+    "childIdentity": "Harness reports in-process fork labels/worktrees/scopes; no separate child session UUID exposed. Do not invent UUIDs."
+  },
+  "review": "Original reviewer remains independent. Actual correction-successor acceptance not observed; coordinator obtains changed-source review and separately submits real run receipts.",
+  "nextAction": "Coordinator reconciles the permission refusal and obtains any required permitted approval before the existing Fable test owner can execute. Do not reroute around the refusal or resume TC25 skipped Vitest. Separately bind the historical exact two-hash carry-forward to current protection custody, without importing unrelated full-composition changes."
+}

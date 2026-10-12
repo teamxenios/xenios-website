@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-12T18:52:12Z",
+  "status": "CURRENT_PRODUCT_METHOD_APPROVAL_AND_CONFIGURATION_UNVERIFIED",
+  "owner": {
+    "reconciliation": "codex-accepted-source-integration-20261005 / chat01a0e098-3b23-7233-9b07-877ace092650",
+    "assignment": "b683a06b1515f8979d2619b52ea9ed0b1a1a6944:docs/coordination/launch-coordination-20261005/MORNING_STAFFED_ORDERING_PRODUCT_PAYMENT_AND_CONTRACT_RECONCILIATION_20261012.json",
+    "qlImplementation": "da289215-87ed-4b4b-bbda-c9af49bda5bc, QL11/QL12 only; not a new finance-mount writer",
+    "sourceCustody": "Broader payment interfaces/mounts/SQL not included in current seven-path delegation. Existing financial/source owners and integrator must resolve exact custody before broader edits."
+  },
+  "actualBusinessDecision": {
+    "reference": "04b4cc70e809486230c12cef6a5d8530967f9dc2:docs/coordination/launch-coordination-20261005/ACTUAL_FOUNDER_MANIFEST_CUSTODY_AND_CONDITIONAL_RELEASE_AUTHORITY_20261012.json:65",
+    "intent": "Selected manual product invoicing for eligible product purchases; not waiting for every provider.",
+    "verified": false,
+    "enabled": false,
+    "conditions": [
+      "Existing unchanged actual destination recovered privately",
+      "Current receiving-account authority",
+      "Permitted commercial/product use",
+      "Accurate instructions and actual payment mechanism",
+      "Authorized operator independently verifies real receiving transaction with canonical retention"
+    ],
+    "noRepeatedProcessorChoiceRequest": true
+  },
+  "methods": [
+    {
+      "method": "Cash App",
+      "receivingOwner": "Samuel-associated historical invoice label",
+      "configurationReference": null,
+      "productScopeApproval": "Conditional business intent only; current operational applicability unverified",
+      "verificationOwner": "Not bound to an actual method record",
+      "state": "UNVERIFIED_NOT_ENABLED"
+    },
+    {
+      "method": "PayPal",
+      "receivingOwner": "Samuel-associated historical invoice label",
+      "configurationReference": null,
+      "productScopeApproval": "Conditional business intent only; current operational applicability unverified",
+      "verificationOwner": "Not bound to an actual method record",
+      "state": "UNVERIFIED_NOT_ENABLED"
+    },
+    {
+      "method": "Apple Pay-labeled invoice option",
+      "receivingOwner": "Samuel-associated historical invoice label",
+      "configurationReference": null,
+      "productScopeApproval": "Actual mechanism must be verified; not an integrated website wallet claim",
+      "verificationOwner": "Not bound to an actual method record",
+      "state": "UNVERIFIED_NOT_ENABLED"
+    },
+    {
+      "method": "Venmo",
+      "receivingOwner": "Harry-associated historical invoice label",
+      "configurationReference": null,
+      "productScopeApproval": "Conditional business intent only; current operational applicability unverified",
+      "verificationOwner": "Not bound to an actual method record",
+      "state": "UNVERIFIED_NOT_ENABLED"
+    },
+    {
+      "method": "Zelle",
+      "state": "HELD_EXPLICIT_NO_ZELLE_OPTION_ON_INVOICES"
+    },
+    {
+      "method": "ACH/wire/Other",
+      "state": "CONTACT_REQUEST_ONLY_UNTIL_ACTUAL_AUTHORITY_AND_INSTRUCTIONS"
+    }
+  ],
+  "firstQualifiedMethod": null,
+  "meaning": "No authoritative current qualified method established by inspected evidence, not proof that approval does not exist. No destinations, account numbers, credentials or live environment values were read or copied.",
+  "configurationPointers": {
+    "registry": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d:server/research/early-access/commerce/payment-method-registry.ts:43 EARLY_ACCESS_PAYMENT_METHOD_REGISTRY",
+    "instructions": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d:server/research/early-access/commerce/payment-instructions-config.ts:50 EARLY_ACCESS_PAYMENT_INSTRUCTIONS",
+    "requiredSnapshot": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d:server/research/commerce/manual-order-payments.ts:177 requires configuration, instructions, approval, verification and enablement references, named roles and timestamps",
+    "actualReferenceValuesEstablished": false
+  },
+  "integration": {
+    "wizardBaseline": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "registryMountedFor": "Separate flag-gated /api/research/early-access/cart/:cartCheckoutNumber/payment-instructions at server/research/early-access/register.ts:1255",
+    "notWizardMethod": "Selected assisted-order route does not consume that registry; no production new AssistedOrderPaymentService caller located at the baseline.",
+    "existingPaymentService": "server/research/assisted-order/payment/service.ts:301 accepted quote; :380 instructions; :562 explicit verifier authority. Exists but unmounted/unqualified for this wizard.",
+    "savedInstalledEvidence": "MORNING_STAFFED_ORDERING_PRODUCT_PAYMENT_AND_CONTRACT_ACTUAL_RESULT_20261012.json reports absent research_assisted_order_financial_state and incomplete verification-reference validation in inspected set_status body. No new SQL inspection or transitive database behavior claim.",
+    "ql12": "3aa7b969 service.ts refuses entry into payment_pending/payment_review/paid. It does not establish settlement, an approved method or separate fulfillment eligibility."
+  },
+  "nextExactAction": {
+    "evidence": "Recover a non-secret exact configuration/approval reference for the first historically intended method meeting all current conditions; do not invent a destination or require all methods.",
+    "engineering": "Under actual financial/source custody, bind accepted immutable invoice/quote version, exact amount/currency and order to permitted method instructions, authorized real transaction observation, canonical durable verification and single-use evidence; keep fulfillment eligibility separate.",
+    "qualification": "Exact authorized isolated synthetic target must prove persistence/readback, response loss, replay/concurrency, rejected/mismatched/unavailable verification and notification/audit outcomes. Existing QL unit tests do not prove those financial facts.",
+    "operational": "Prior record leaves operating hours and distinct threshold/risk second approver unresolved; no SOP exemption."
+  },
+  "candidateSeparation": "Full Quick Order source25741f0 and existing wizard correction3aa7b969 are separate; do not import full financial/SQL chain merely to remove a payment hold.",
+  "actions": {
+    "sourceEdits": false,
+    "tests": false,
+    "hostedInspection": false,
+    "SQL": false,
+    "newFinanceOwner": false,
+    "paymentOrEmail": false,
+    "deployment": false
+  }
+}
