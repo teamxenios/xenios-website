@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "actionId": "TC25-LOCAL-PROTECTION-CHECK-20261012",
+  "revision": 1,
+  "status": "COORDINATOR_RESERVED_EXACT_SCOPE_UNDER_ACTUAL_CURRENT_FOUNDER_CHECK_AUTHORITY",
+  "actualHumanAuthority": {
+    "receipt": "ACTUAL_FOUNDER_MANIFEST_CUSTODY_AND_CONDITIONAL_RELEASE_AUTHORITY_20261012.json",
+    "commit": "04b4cc70e809486230c12cef6a5d8530967f9dc2",
+    "rawRequestSha256": "20041ef092f750a4a2ebbe7c4bdfb5cff3d4bf0d93b5a2f3aa4aebededb6eee3",
+    "scope": "ExactAppmanifest amendment and run applicable protectioncheck; scoped local/synthetic tests. Does not claim human selected the procedural timestamps or runtime resource numbers."
+  },
+  "executor": "01a0e098-3b23-7233-9b07-877ace092650",
+  "source": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
+  "sourceTree": "748e53522ba8ef94ba05b0286a97c0200ee2bb61",
+  "base": "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+  "cwd": "C:/xenios-wt/tc25-app-manifest-20261012",
+  "inputs": [
+    {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "gitBlob": "ceec20e2ea36774fbe480313fbea14c8237546ff",
+      "rawSha256": "95445fdf1855560460da2283d06f9dda733e373c1258611ec278cd499e74a23d",
+      "bytes": 118175
+    },
+    {
+      "path": "scripts/acceptance/verify-core-site-protection.mjs",
+      "gitBlob": "c30371fdb01a371874ea6d6352689fff72cf9324",
+      "rawSha256": "e0cd56bf2986deb9a6accad78fa876705e954f3045a0c200494ec009b340fe0a",
+      "bytes": 13359
+    },
+    {
+      "path": "server/core-site-protection.test.ts",
+      "gitBlob": "1a35a5c8ab81a22e56e23e3d7f365c99fbc8162d",
+      "rawSha256": "bcde93a62b4156b0b66319c767ac82ff5ac4444e4ed5274a4d147d70dc8c3b95",
+      "bytes": 22103
+    },
+    {
+      "path": "vitest.config.ts",
+      "gitBlob": "242428c09e76d16da672e70e48bb885f90c71026",
+      "rawSha256": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0",
+      "bytes": 1713
+    },
+    {
+      "path": "package-lock.json",
+      "gitBlob": "912f4f85e9a078ed97ed2b67ce8d1de09490eb29",
+      "rawSha256": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
+      "bytes": 262653
+    }
+  ],
+  "runtime": {
+    "node": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe",
+    "version": "20.19.0",
+    "rawSha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "dependencies": "Existing b22f node_modules, matching all531 installed package versions/integrity/resolved to selectedlock, read-only junction in isolatedcheckout; no install",
+    "installedHiddenLockRawSha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94",
+    "Vitest": "4.1.10",
+    "Vite": "7.3.5",
+    "jsdom": "29.1.1",
+    "allRuntimeAndSelectedInstalledHashesMustBeVerifiedByExecutorBeforeLaunch": true
+  },
+  "commands": [
+    {
+      "order": 1,
+      "attempts": 1,
+      "argv": [
+        "scripts/acceptance/verify-core-site-protection.mjs",
+        "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+        "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86"
+      ],
+      "wallTimeoutSeconds": 60
+    },
+    {
+      "order": 2,
+      "attempts": 1,
+      "argv": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "server/core-site-protection.test.ts",
+        "--config",
+        "vitest.config.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "wallTimeoutSeconds": 180
+    }
+  ],
+  "window": {
+    "startsAt": "2026-10-12T18:25:47.347Z",
+    "expiresAt": "2026-10-12T18:40:47.347Z",
+    "totalMinutes": 15,
+    "selectedBy": "COORDINATOR_OPERATIONAL_BOUND_WITHIN_ACTUAL_SCOPED_CHECK_AUTHORITY",
+    "noExpiredQualificationWindowReused": true
+  },
+  "bounds": {
+    "oneHeavyJob": true,
+    "reservationExclusiveForNamedExecutor": true,
+    "otherCoordinatorDispatchedLocalTests": "HELD_UNTIL_RELEASE",
+    "nodeHeapMiB": 1024,
+    "heapPropagatesThroughNODE_OPTIONS": true,
+    "maxTestWorkers": 1,
+    "fileParallelism": false,
+    "maxOwnedProcessesIncludingConsoleHosts": 8,
+    "outputBytes": 20971520,
+    "noSilentOutputTruncationClaim": true,
+    "retries": 0,
+    "stopOnFirstCommandFailureOrTimeout": true,
+    "noDBNetworkCredentialsProvidersMessagesChargesCompilerBuildOrFullSuite": true
+  },
+  "procedure": {
+    "beforeLaunch": "Verify exactcandidate/binaries/dependency/config and literalcommands; do not add npmci/typecheck/build/fullsuite. Bind existing accepted bounded process/cleanup machinery without newframework/helper/permissionchange. If required standalone containment is unavailable, report preciseblocker and do not invoke fullS3/G0/supervisor as substitute.",
+    "cleanup": "Stop only this reservation-owned commandtree ontimeout/cap/childfailure; preserve all outputs/failedreceipts/checkout/dependencyjunction until exacthandoff; no unrelated processes or Docker volumes",
+    "after": "Record actualsource/argv/start/end/exit/cappedoutput/runtime/cleanup; preserve any unrelated protectedhash refusals, no baseline weakening or other repin."
+  },
+  "independentReview": {
+    "AppSource": "Exact human approval and Doc95/97 accepted unchangedsource context",
+    "manifestSuccessor": "Original appliedsuccessor spot-check pending, not required to author/run this expressly requested standalone protection evidence; required applicable independent disposition before release",
+    "notQualificationApprovalWindowComparison": true
+  },
+  "scopeBoundary": {
+    "route": "STANDALONE_EXACT_TC25_PROTECTION_ONLY_NOT_G_GROUP",
+    "S3": "NOT_EXECUTED_OR_CERTIFIED",
+    "qualificationSupervisor": "NOT_INVOKED",
+    "qualificationManifest": "NOT_INVOKED",
+    "G0": "NOT_INVOKED_NO_G_GROUP_ADMISSION_OR_WAIVER_CLAIMED",
+    "fiveInputsDescriptorCensus": "Remain fullQO S3 prerequisites, unchanged by this standalone protectioncheck",
+    "release": "No push/activation/deploy from testreservation"
+  },
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY"
+}

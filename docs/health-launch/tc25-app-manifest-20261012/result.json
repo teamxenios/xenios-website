@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-12T18:29:02.208Z",
+  "status": "EXACT_MANIFEST_APPLIED_PROTECTION_CHECK_NOT_RUN",
+  "base": "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+  "custodyCommit": "340d167e4a500526732d93b265579bbc29f3341a",
+  "amendmentCommit": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
+  "amendmentTree": "748e53522ba8ef94ba05b0286a97c0200ee2bb61",
+  "applicationSourceUnchanged": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+  "applicationSourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+  "manifest": {
+    "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "blob": "ceec20e2ea36774fbe480313fbea14c8237546ff",
+    "sha256Lf": "95445fdf1855560460da2283d06f9dda733e373c1258611ec278cd499e74a23d",
+    "bytesLf": 118175,
+    "delta": "Only one App seam expected hash plus exact prepared provenance comment",
+    "exactApprovedPatchSha256": "5e539cea6f5f683ee4d5c23dec0e6108fde83519d164907a51aa7054e917f516"
+  },
+  "app": {
+    "path": "client/src/App.tsx",
+    "blob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+    "sha256Lf": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+    "bytesLf": 18079,
+    "rawWindowsCheckoutSha256": "9aaf2c8155b1be27028cd9ede701c72c2a11ab9d24d5de9efa824e2dab200d10",
+    "intakeEnabled": false,
+    "changed": false
+  },
+  "approval": {
+    "record": "docs/phase2/HEALTH_APP_PROTECTED_HASH_APPROVAL_20261012.md",
+    "actualFounderReceiptCommit": "04b4cc70e809486230c12cef6a5d8530967f9dc2",
+    "rawRequestSha256": "20041ef092f750a4a2ebbe7c4bdfb5cff3d4bf0d93b5a2f3aa4aebededb6eee3",
+    "continuationAttachment": "b73fbc51-8a40-4df1-b20a-38298a2ce32f/Pasted text.txt",
+    "continuationRawSha256": "2321218a6608c8b1c2cd779947b07881db8613dcd393a71284499d2b5df1534a",
+    "doc97SnapshotReconciliation": "Earlier authority-required snapshot superseded only for this exact amendment by actual current founder approval, not source acceptance alone. No repeated composition review or duplicate approval."
+  },
+  "verification": {
+    "staticExactCandidate": "MATCH",
+    "staticRuntimeTestsScriptsPackagesDiffFrom876": "EMPTY",
+    "gitDiffCheck": "PASS",
+    "helperStaticScopeReview": "No material contradiction; not original independent acceptance",
+    "nodeVersionExecuted": "v20.19.0",
+    "npmVersionExecuted": "10.8.2",
+    "nodeExecutableSha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "preflightFreeze": "EXECUTED_METADATA_ONLY_NOT_A_PROTECTION_TEST",
+    "protectionCli": "NOT_RUN",
+    "protectionSingleFile": "NOT_RUN",
+    "applicationTests": "NOT_RUN",
+    "typecheck": "NOT_RUN",
+    "build": "NOT_RUN",
+    "fullSuite": "NOT_RUN",
+    "testExitStatus": null,
+    "passed": null,
+    "failed": null,
+    "timedOut": null,
+    "skipped": null,
+    "reason": "No test command launched; no test counts or exit status inferred from static checks or freeze output."
+  },
+  "executionBinding": {
+    "coordinatorCommit": "7271ff22d19801e1792fad9aa6a1b30fd721b2a4",
+    "copy": "coordinator-execution-binding-7271ff22.json",
+    "windowStart": "2026-10-12T18:25:47.347Z",
+    "windowEnd": "2026-10-12T18:40:47.347Z",
+    "executorReservationReleased": true,
+    "releaseCommunicatedToCoordinator": "Existing authorized chat01a103a8; no owned test process exists",
+    "proposalDisposition": "SUPERSEDED_NOT_EXECUTED",
+    "mismatches": [
+      "Proposed2048MiB differs from reserved1024MiB heap",
+      "Proposed argv differs from ticket explicit --config vitest.config.ts",
+      "Whole donor node_modules junction allows Vite/Vitest donor-cache writes; no Vitest started",
+      "Proposed runner does not enforce8 owned-process/20MiB output caps"
+    ],
+    "decisiveMissingPrerequisite": "Existing accepted standalone process/output containment and cleanup launcher. Old run-check is hardwired b22f without caps; native containment only inside full qualification-supervisor, expressly excluded by ticket. No extraction/new helper/compiler/full S3 invocation substituted.",
+    "nextAction": "Coordinator supplies existing accepted standalone launcher or reconciles exact procedural mechanism under current authority. Bind literal commands, heap, owned dependency/cache topology and fresh finite reservation before actual run. No repeated founder approval.",
+    "S3G0": "NOT_RUN_NOT_WAIVED; not substituted as prerequisite for file-only protection check"
+  },
+  "cleanup": {
+    "applicationOrTestProcessStarted": false,
+    "newDependencyInstallation": false,
+    "wholeNodeModulesJunction": "STILL_PRESENT_UNQUALIFIED_FOR_TESTS",
+    "junctionTarget": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website/node_modules",
+    "junctionRemoval": "Tool policy rejected validated nonrecursive junction-removal command before execution; no bypass attempted",
+    "donorDataDeletion": false,
+    "rawProposalEvidencePreserved": true
+  },
+  "separateRegistry": {
+    "commit": "c27853fb824d87eb6f962b4b9af28e6482cdb6a6",
+    "path": "docs/coordination/FILE_OWNERSHIP.json",
+    "exactCandidateSha256": "db588f1fcbb647f5570246a4b61a8781f99a995561773db70f98dda3e4894d13",
+    "coordinatorWriterReturned": true,
+    "fableLead": "da289215-87ed-4b4b-bbda-c9af49bda5bc",
+    "receivingChildrenAndCorrections": "Coordinator/Fable owned; not independently observed by manifest executor. No implemented/passing claim.",
+    "doesNotDependOnThisManifest": true
+  },
+  "independentReview": "Applied-amendment registration requested through existing coordinator; original reviewer ACK/acceptance not observed",
+  "publication": "LOCAL_ONLY",
+  "push": false,
+  "deployment": false,
+  "migration": false,
+  "productionOrStagingMutated": false,
+  "realEmailOrMoney": false,
+  "Lite": "PARKED_UNCHANGED",
+  "schedules": "UNCHANGED"
+}
