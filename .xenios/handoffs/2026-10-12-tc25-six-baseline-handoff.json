@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12T19:13:38Z",
+  "session": "codex-accepted-source-integration-20261005",
+  "task": "TC25-SIX-BASELINE-AMENDMENT-20261012",
+  "branch": "codex/tc25-app-manifest-20261012",
+  "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
+  "actualHumanAuthority": {
+    "attachment": "8030ec4f-6c0f-4770-8946-7759eb0c518b",
+    "rawSha256": "da648fb2aa8d8f66cc4a15da00fdbe1644486c43bb731a40aef0b7438e1a5814"
+  },
+  "base": "d907096c24078e951ed988dc1f6a5af8d564e337",
+  "claim": "871b4370fd7336f42f41e51e8a553d55ba1dd866",
+  "amendment": "f6da5aa6154cc62bdbec34ce29a0a5759fb84136",
+  "amendmentTree": "fce45cdea651b8728f172439771cd34b4ff3a1b4",
+  "evidenceRecords": "e1246766ddd032669bb5d49ee5e86704dd220ce6",
+  "evidenceRecordsTree": "e6beaeaea1b5748359e256c674d169cd7a2df094",
+  "applicationSourceUnchanged": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+  "applicationSourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+  "sixEntryResult": {
+    "status": "APPLIED",
+    "filesInAmendment": 2,
+    "manifest": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "field": "fileHashes.files",
+    "substitutions": 6,
+    "manifestBlob": "69cf6b4412955305c69bc9054a984159bc1f96cb",
+    "manifestSha256Lf": "1e6f6b351c2a5101218b3568be8119d6aa48f21c7191990cda91326719aeff76",
+    "approval": "docs/health-launch/tc25-app-manifest-20261012/six-entry/ACTUAL_APPROVAL_AND_PREFLIGHT_20261012.json",
+    "scopeCheck": "PASS_BY_ROOT_AND_READ_ONLY_HELPER_NOT_INDEPENDENT_CLAUDE_VERDICT",
+    "originalReviewerScopeStatus": "Exact successor sent to existing coordinator for bounded registration; actual reviewer acknowledgment/acceptance not yet observed"
+  },
+  "sourceInvariance": {
+    "runtime": true,
+    "tests": true,
+    "scripts": true,
+    "dependencies": true,
+    "migrations": true,
+    "otherManifestBytes": true,
+    "oldR2FailurePreserved": true,
+    "oldAppApprovalPreserved": true
+  },
+  "postAmendmentArithmetic": {
+    "method": "Read-only Git bytes and SHA256, not protection CLI/test execution",
+    "hardMatches": 37,
+    "hardMismatches": [
+      "server/static.ts"
+    ],
+    "seamMatches": 3,
+    "seamMismatches": [
+      "server/index.ts",
+      "server/research/index.ts"
+    ],
+    "missing": 0,
+    "releasePass": false
+  },
+  "QL": {
+    "source": "3aa7b96938f63b0a2a5049b57bfaa9fe236b4cb2",
+    "sourceTree": "8eaf017a6d5cf8fde252badc81c0c48f1b32fd20",
+    "independentOfFullComposition": true,
+    "firstTestCandidate": "7ac408371b6fcc702827a26e61b3a3f5a13f3f67",
+    "firstTestTree": "b84d29db528e41b477e507546b03ace2263c20f3",
+    "serverTestSuccessor": "21d7291f97dbd67026d1f0b31fab82ff56002be7",
+    "serverTestTree": "81c70bc1a4621b54e482362e5023c35b58d03253",
+    "originalRefusal": "NOT_RUN at18:49Z, reported [Auto-Mode Bypass]; never relabelled failed test",
+    "actualClientRun": {
+      "passed": 64,
+      "failed": 0,
+      "pending": 0,
+      "exitCode": 0,
+      "timeout": false,
+      "startUtc": "2026-10-12T19:00:43.898Z",
+      "endUtc": "2026-10-12T19:01:29.879Z"
+    },
+    "actualServerRun": {
+      "passed": 66,
+      "failed": 0,
+      "pending": 0,
+      "exitCode": 0,
+      "timeout": false,
+      "startUtc": "2026-10-12T19:02:20.203Z",
+      "endUtc": "2026-10-12T19:02:25.935Z"
+    },
+    "interpretation": "130 passing tests across two focused runs, not one-SHA full suite. Only HTTP fixture changes between their candidates; client/runtime bytes unchanged.",
+    "permission": "Version2 owner ticket reports changed bounded setup under existing local test authority; actual native permission resolution event/supported mechanism not yet supplied. Do not infer authority from execution success; no further execution by this integrator.",
+    "provenance": "Pinned Node20.19.0 invocation/checksum corroborated; no npm invocation or worker self-attestation. Existing matching package installation reused; no clean reinstall claimed.",
+    "coverageLimits": "HTTP tests payment_pending only; all3 payment states at service layer. Mocked response loss and jsdom refresh; no canonical payment verification. Server drift-before-replay unresolved.",
+    "protectionCustody": "Historical exact TopRibbon/package pairs at6d9ec3 apply byte-for-byte, but current protection-owner custody/actual successor not yet observed. Not included in six-entry amendment.",
+    "review": "Original-reviewer source registration acknowledgment/disposition not yet observed; requested through existing coordinator",
+    "evidence": "docs/health-launch/tc25-app-manifest-20261012/six-entry/QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json"
+  },
+  "payment": {
+    "firstQualifiedMethod": null,
+    "namedVerifier": "Samuel Boadu",
+    "missing": "Actual configurationRef/version/instructionsRef; current receiving-owner and product-use approval; method-specific observation access and received/final rule; verification/enablement evidence. Samuel supplies own-method facts or configuration custodian; Harry supplies his Venmo owner/access facts if that method is used.",
+    "furtherStaffingInputs": "Samuel's hours and distinct threshold/risk second administrator remain unset.",
+    "question": "One nonsecret input request presented to user; manual-invoice intent not reopened.",
+    "evidence": "docs/health-launch/tc25-app-manifest-20261012/six-entry/FIRST_PAYMENT_METHOD_EXACT_INPUTS_20261012.json",
+    "noPaidCheckoutClaim": true
+  },
+  "separateCompositionDecisions": {
+    "static": "Recommend retain exact one-redirect deletion under its own protected-source and baseline approval; not granted by six-entry decision.",
+    "researchSeam": "Quote gateway GET/accept-POST only; existing Health source owner and protection owner must disposition exact file.",
+    "rootSeam": "Cumulative financial and disabledQO source; source owners must cover whole current file, then exact baseline approval. Last QO hunk alone insufficient.",
+    "assertion": "Clean seam assertion unchanged. CLI nonfatal warnings are not waived.",
+    "packet": "docs/health-launch/tc25-app-manifest-20261012/six-entry/SEPARATE_STATIC_AND_SEAM_DECISIONS_20261012.json"
+  },
+  "coordination": {
+    "coordinator": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "successorMessageDelivered": true,
+    "currentCoordinatorCustodyAck": "NOT_CLAIMED",
+    "custodyBasis": "Fresh direct human exact amendment authority, own current non-overlapping manifest lease, prior builder idle/clean and exact preimage confirmed. General control-plane ownership retained. No historical handoff or foreign reservation overwritten."
+  },
+  "nextActions": [
+    "Coordinator registers exact six-entry successor for original bounded review and returns actual disposition.",
+    "Current protection owner binds independent QL two-pair carry-forward and any resulting candidate identity; no full-composition prerequisite imported.",
+    "Existing execution owner supplies actual permission-refusal resolution evidence; no automatic rerun.",
+    "Original reviewer assesses QL changed source and submitted runs separately from App/six-entry scope.",
+    "Samuel/receiving owner supplies precise nonsecret payment facts; existing finance owner implements against actual observation workflow, not invented evidence."
+  ],
+  "publication": {
+    "status": "LOCAL_ONLY",
+    "finalPushedSha": null,
+    "reason": "Not an exact qualified increment; independent review, applicable protection and release conditions remain."
+  },
+  "boundaries": {
+    "applicationTestsRunByThisChat": false,
+    "protectionCLIRerun": false,
+    "build": false,
+    "fullSuite": false,
+    "push": false,
+    "merge": false,
+    "deploy": false,
+    "hostedConfiguration": false,
+    "SQL": false,
+    "payment": false,
+    "email": false,
+    "schedules": "UNCHANGED",
+    "Lite": "PARKED",
+    "Doc95Doc97": "CLOSED_NOT_REOPENED"
+  },
+  "lease": "tc25-six-baseline-records-20261012",
+  "leaseDisposition": "HANDOFF",
+  "sessionState": "handoff_ready"
+}

@@ -5,14 +5,15 @@
     {
       "id": "TC25-SIX-BASELINE-AMENDMENT-20261012",
       "owner": "codex-accepted-source-integration-20261005",
-      "state": "claimed",
+      "state": "qa",
       "claimedAt": "2026-10-12T19:07:24Z",
       "leaseId": "tc25-six-baseline-records-20261012",
       "base": "d907096c24078e951ed988dc1f6a5af8d564e337",
       "branch": "codex/tc25-app-manifest-20261012",
       "paths": ["docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json", "docs/health-launch/tc25-app-manifest-20261012/six-entry/", ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json"],
       "authority": "Actual user-designated attachment8030ec4f; raw SHA256 da648fb2aa8d8f66cc4a15da00fdbe1644486c43bb731a40aef0b7438e1a5814 directly authorizes this existing integrator's exact six-entry amendment on d907096. Current manifest unchanged, no active manifest lease in CODE_OWNERSHIP, prior source owner remains idle/clean at876ede5. Fresh exact scope claimed under current human authority; coordinator notified, separate current coordinator ACK not claimed. No runtime/tests/static/seams/payment/production grant.",
-      "publication": "LOCAL_ONLY"
+      "publication": "LOCAL_ONLY",
+      "handoff": {"session": "codex-accepted-source-integration-20261005", "sha": "f6da5aa6154cc62bdbec34ce29a0a5759fb84136", "records": "e1246766ddd032669bb5d49ee5e86704dd220ce6", "file": ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json", "at": "2026-10-12T19:13:38Z"}
     },
     {
       "id": "TC25-PROTECTION-DISPOSITION-20261012",
