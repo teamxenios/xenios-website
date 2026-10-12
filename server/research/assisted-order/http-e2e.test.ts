@@ -9,9 +9,10 @@
 // composed production service with the in-memory repository port. No mocks of
 // the code under test — only the infrastructure ports are fixtures.
 
-import express, { type RequestHandler } from "express";
+import { createServer, type Server } from "node:http";
+import express, { type Express, type RequestHandler } from "express";
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import type {
   AssistedOrderCatalogQuery,
   AssistedOrderSubmitInput,
@@ -122,7 +123,40 @@ function submitInput(): AssistedOrderSubmitInput {
   };
 }
 
-function buildApp(
+// Supertest's request(app) would call app.listen(0) on EVERY interface for
+// each request. The synthetic fixture instead binds once, explicitly to
+// 127.0.0.1 on an ephemeral port, hands supertest the already-bound server
+// (so it never listens itself), and closes it in owned teardown, so no
+// listener outlives the test that opened it.
+const boundServers: Server[] = [];
+
+async function listenLocally(app: Express): Promise<Server> {
+  const server = createServer(app);
+  await new Promise<void>((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      server.off("error", reject);
+      resolve();
+    });
+  });
+  boundServers.push(server);
+  return server;
+}
+
+afterEach(async () => {
+  await Promise.all(
+    boundServers.splice(0).map(
+      (server) =>
+        new Promise<void>((resolve) => {
+          // Node 18.2+: drop idle keep-alive sockets so close() cannot hang.
+          (server as { closeAllConnections?: () => void }).closeAllConnections?.();
+          server.close(() => resolve());
+        }),
+    ),
+  );
+});
+
+async function buildApp(
   onCatalogQuery?: (query: AssistedOrderCatalogQuery) => void,
   options: Readonly<{
     agreementAccepted?: boolean;
@@ -283,10 +317,10 @@ function buildApp(
   app.get("/api/admin/research/assisted-orders/:requestId", requireAdmin, door("GET", "/api/admin/research/assisted-orders/:requestId"));
   app.patch("/api/admin/research/assisted-orders/:requestId/status", requireAdmin, door("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireAdmin, door("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
-  return app;
+  return listenLocally(app);
 }
 
-function readAdminQueue(app: ReturnType<typeof buildApp>) {
+function readAdminQueue(app: Awaited<ReturnType<typeof buildApp>>) {
   return request(app)
     .get("/api/admin/research/assisted-orders")
     .set("authorization", ADMIN_BEARER);
@@ -296,7 +330,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
   it("resolves the submit viewer once and passes only its canonical Auth UUID to attribution", async () => {
     let memberResolveCount = 0;
     const attributionInputs: Array<{ cookieHeader: string | undefined; actorAuthUserId: string | null }> = [];
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       onMemberResolve: () => { memberResolveCount += 1; },
       attribution: {
         resolve: async (input) => {
@@ -317,7 +351,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
 
   it("parses the structured customer Action group without deriving button copy", async () => {
     let observed: AssistedOrderCatalogQuery | undefined;
-    const app = buildApp((query) => {
+    const app = await buildApp((query) => {
       observed = query;
     });
 
@@ -340,7 +374,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
 
   it("rejects tampered Action and workflow tokens instead of broadening the catalog", async () => {
     const observed: AssistedOrderCatalogQuery[] = [];
-    const app = buildApp((query) => observed.push(query));
+    const app = await buildApp((query) => observed.push(query));
 
     const invalidAction = await request(app)
       .get("/api/research/early-access/assisted-orders/catalog")
@@ -366,7 +400,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
 
   it("accepts an agreement-complete live Early Access customer without a member session", async () => {
     let observedCustomerRef: string | null = null;
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       onStandingViewer: (customerRef) => {
         observedCustomerRef = customerRef;
       },
@@ -388,7 +422,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
   it("requires durable Early Access standing from an otherwise active member", async () => {
     let notificationCount = 0;
     let observedCustomerRef: string | null = "not-called";
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       onNotification: () => {
         notificationCount += 1;
       },
@@ -417,7 +451,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
     let identityResolveCount = 0;
     let notificationCount = 0;
     let observedCustomerRef: string | null = "not-called";
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       bindingMemberId: OTHER_MEMBER_ID,
       onBindingResolve: () => {
         bindingResolveCount += 1;
@@ -455,7 +489,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
     let identityResolveCount = 0;
     let notificationCount = 0;
     let observedCustomerRef: string | null = "not-called";
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       earlyAccessSessionAuthenticated: false,
       onIdentityResolve: () => {
         identityResolveCount += 1;
@@ -489,7 +523,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
     let bindingResolveCount = 0;
     let identityResolveCount = 0;
     let observedCustomerRef: string | null = null;
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       onBindingResolve: () => {
         bindingResolveCount += 1;
       },
@@ -520,7 +554,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
   it("fails closed when the durable member/customer binding cannot be read", async () => {
     let notificationCount = 0;
     let observedCustomerRef: string | null = "not-called";
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       bindingThrows: true,
       onNotification: () => {
         notificationCount += 1;
@@ -549,7 +583,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
   it("rejects forged agreement pairs when durable standing is absent, with no write or notification", async () => {
     let notificationCount = 0;
     let observedCustomerRef: string | null = null;
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       agreementAccepted: false,
       onNotification: () => {
         notificationCount += 1;
@@ -579,7 +613,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
 
   it("holds every staff move into a payment state at the real admin door, with no customer notification", async () => {
     let notifications = 0;
-    const app = buildApp(undefined, {
+    const app = await buildApp(undefined, {
       onNotification: () => {
         notifications += 1;
       },
@@ -625,7 +659,7 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
   });
 
   it("walks the whole journey over real doors", async () => {
-    const app = buildApp();
+    const app = await buildApp();
 
     // 1. The CTA's config probe: enabled, with the exact legal pairs.
     const config = await request(app).get(
