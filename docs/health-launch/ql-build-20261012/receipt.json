@@ -1,0 +1,44 @@
+{
+  "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "tree": "28617c360f487803baa556d33158c4e95df471f1",
+  "command": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "script/build.mjs"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
+  "nodeVersion": "v20.19.0",
+  "nodeBinarySha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+  "npm": "NOT_INVOKED",
+  "startedUtc": "2026-10-12T19:41:34.106Z",
+  "timeoutMs": 420000,
+  "environmentKeys": [
+    "SYSTEMROOT",
+    "WINDIR",
+    "COMSPEC",
+    "PATH",
+    "PATHEXT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "HOME",
+    "APPDATA",
+    "LOCALAPPDATA",
+    "NODE_ENV",
+    "NODE_OPTIONS",
+    "CI",
+    "NO_COLOR"
+  ],
+  "distPrecheck": {
+    "absoluteTarget": "C:\\Users\\sboad\\.codex\\worktrees\\ql-build-20261012\\xenios-website\\dist",
+    "existed": false,
+    "relativeTarget": "dist"
+  },
+  "kernelAggregateCaps": "NOT_ENFORCED_NOT_G0",
+  "dependencyMode": "Private physical existing matching copy; no install",
+  "endedUtc": "2026-10-12T19:42:07.180Z",
+  "exitCode": 0,
+  "signal": null,
+  "timedOut": false,
+  "logSha256": "1d5d5edc5dc239c039dbf49555a24308e15ead78dc93efd93928243453a4265b",
+  "outputBytes": 35965
+}

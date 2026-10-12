@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "kind": "QL_STANDALONE_PRODUCTION_BUILD_ACTUAL_RESULT",
+  "status": "PASS_LOCAL_BUILD_NOT_RELEASE_QUALIFICATION",
+  "executor": "01a0e098-3b23-7233-9b07-877ace092650",
+  "session": "codex-accepted-source-integration-20261005",
+  "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "tree": "28617c360f487803baa556d33158c4e95df471f1",
+  "worktree": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
+  "branchMode": "Detached exact candidate, clean before and after; no source edits",
+  "authority": {
+    "preparedBinding": "cd6b3cc4764a86c9b08b196cc31ad54faf94c0d4:docs/health-launch/ql-build-20261012/EXECUTION_BINDING.json",
+    "preparedBindingSha256": "6cfa070669f73c044cc9effeedfe6a397020e98ebc9d3250cedf34199fcbd429",
+    "coordinator": "e2b44083db4b0aceef8699eb7842d11843f79597",
+    "reservation": "LOCAL-QL-BUILD-7A2-20261012",
+    "reservationPath": "docs/coordination/launch-coordination-20261005/QL_STANDALONE_BUILD_EXACT_RESERVATION_20261012.json",
+    "bindingPath": "docs/coordination/launch-coordination-20261005/QL_STANDALONE_BUILD_ACTUAL_OWNER_BINDING_20261012.json",
+    "opens": "2026-10-12T19:40:23.411Z",
+    "lastStart": "2026-10-12T19:48:23.411Z",
+    "closes": "2026-10-12T19:55:23.411Z",
+    "scope": "Actual04b4 local QL build grant and fresh owner/window binding; not historical TC25 R2 test window or S3/G0.",
+    "reservationRelease": "Integrator requested release immediately after completion. Coordinator acknowledged actual33second PASS and stated release; no further job launched."
+  },
+  "execution": {
+    "command": [
+      "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+      "script/build.mjs"
+    ],
+    "node": "v20.19.0",
+    "nodeBinarySha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "npm": "10.8.2 separately checked previously; not invoked by build",
+    "start": "2026-10-12T19:41:34.106Z",
+    "end": "2026-10-12T19:42:07.180Z",
+    "exit": 0,
+    "signal": null,
+    "timedOut": false,
+    "attempts": 1,
+    "client": {
+      "result": "PASS",
+      "transformedModules": 2303,
+      "reportedSeconds": 24.87
+    },
+    "server": {
+      "result": "PASS",
+      "reportedSeconds": 2.194
+    },
+    "environment": "Fresh allowlist, private home/cache/temp, NODE_ENV production,2048MiB Node heap, pinned Node PATH; no managed/provider credentials. Not an OS network-isolation guarantee.",
+    "caps": "One heavy job,420second wall,0retries. No kernel aggregate memory/PID/output hard caps claimed; not G0.",
+    "cleanup": "Normal child exit; timeout cleanup not triggered. Owned launcher PID scan empty after completion. No full-machine/native-descendant census claimed. All dist evidence retained; no cleanup deletion."
+  },
+  "dependencies": {
+    "preparation": "Private physical copy of already tested support dependency tree, no installation or clean dependency rebuild.",
+    "copiedFiles": 37927,
+    "copyFailures": 0,
+    "robocopyExit": 1,
+    "reparsePoints": 0,
+    "lockSha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8",
+    "installedMetadataSha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94",
+    "packageIdentityChecks": [
+      {
+        "name": "vite",
+        "version": "7.3.5",
+        "packageJsonSha256": "2ce2b783ef4f4511544fa045355e7076f192b1331f6801214173d1910518f5d7"
+      },
+      {
+        "name": "esbuild",
+        "version": "0.25.12",
+        "packageJsonSha256": "cb7d5b1fe478f8cbaae566a86031b6fdf5f7d444354f35d1cb3cba9adf6d2935"
+      },
+      {
+        "name": "@vitejs/plugin-react",
+        "version": "5.2.0",
+        "packageJsonSha256": "162dae2eb246170739d7899d2ce1715a3e17f775fcd75a674da6be6f681225d6"
+      },
+      {
+        "name": "@tailwindcss/vite",
+        "version": "4.3.1",
+        "packageJsonSha256": "28fdb712cd226c46d3c1d8eb8a2795abcbf2729f325dd495bc02ac07d6263bb8"
+      },
+      {
+        "name": "@tailwindcss/oxide",
+        "version": "4.3.1",
+        "packageJsonSha256": "83eaa2b7314758b8824a017073ef9efc6125fec8c26b42d9dabb970dd963e0b1"
+      },
+      {
+        "name": "@replit/vite-plugin-runtime-error-modal",
+        "version": "0.0.4",
+        "packageJsonSha256": "37ab39486b564dd350da923cb6febe88467ce97134eae9d1f2c3f2069ea856ce"
+      }
+    ],
+    "limit": "Selected package metadata identity, not complete dependency-tree provenance or clean npm install."
+  },
+  "artifacts": {
+    "manifest": "ARTIFACT_MANIFEST.json",
+    "manifestSha256": "742560044e47acb4d6598ecb571055207f2fea78b4d13060d84f933d3604f4a4",
+    "fileCount": 346,
+    "bytes": 10634832,
+    "server": {
+      "path": "dist/index.cjs",
+      "sha256": "9efdbf2021e9f77f2d26819b2440060b490cd7fbf8754b747124d26a720ead35"
+    },
+    "index": {
+      "path": "dist/public/index.html",
+      "sha256": "6bacca7615cecb4bccf1396ad9ca1de8fb0367a327f8da1c7cca69b7ffacb479"
+    },
+    "receipt": {
+      "path": "receipt.json",
+      "sha256": "fcbab2bae4f7ba63586730f7f667c1540f6bd9cb1062d786c1a5cdac2a932551"
+    },
+    "log": {
+      "path": "build.log",
+      "bytes": 35965,
+      "sha256": "1d5d5edc5dc239c039dbf49555a24308e15ead78dc93efd93928243453a4265b"
+    },
+    "launcher": {
+      "path": "run-build.cjs",
+      "sha256": "d2d5b50cf52fd26276ed7fad598ceec6c62301130c0ac3320d289ff529389919"
+    }
+  },
+  "warnings": [
+    "AdminResearchHome mixed static/dynamic imports prevent separate chunk placement.",
+    "Main506.34kB chunk exceeds500kB advisory. No baseline comparison or performance clearance claimed."
+  ],
+  "remaining": [
+    "Original independent reviewer delivery and acceptance pending.",
+    "Existing protection Vitest not run; assess applicability and fresh permitted binding/window first.",
+    "No typecheck/full suite/browser/no-em-dash release-gate or hosted qualification executed by this build.",
+    "Support candidatea4a44bf6 remains separate:13focused testsPASS, no build/protection qualification borrowed.",
+    "Payment method, actual independent verification and controlled paid/fulfillment remain unqualified."
+  ],
+  "boundaries": {
+    "sourceChanged": false,
+    "dependencyInstalled": false,
+    "serverStarted": false,
+    "browserStarted": false,
+    "SQL": false,
+    "hostedConfiguration": false,
+    "push": false,
+    "merge": false,
+    "deploy": false,
+    "email": false,
+    "money": false
+  },
+  "chronology": "Prepared binding retains NOT_STARTED historical state. This append-only actual result records subsequent permitted execution. All refused/skipped/failed historical runs remain distinct."
+}
