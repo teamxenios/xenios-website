@@ -41,6 +41,7 @@ import {
   readAssistedOrderDraft,
   storeAssistedOrderDraft,
   type AssistedOrderAttemptState,
+  type AssistedOrderStoredAttemptState,
   type AssistedOrderWizardStep,
 } from "./draft-store";
 import { refreshSelectionSnapshots } from "./selection-refresh";
@@ -191,6 +192,19 @@ const DRIFT_AFTER_UNCERTAIN_MESSAGE =
 
 const DRIFT_FIRST_ATTEMPT_MESSAGE =
   "Pricing or availability changed while you were reviewing, so nothing was submitted.";
+
+// A 403 after an uncertain attempt. Re-unlocking Early Access runs the
+// protected-path storage sweep, which deletes this draft with its key and
+// timestamp, so "retry the same request after unlocking" is a promise this
+// page cannot keep. The only truthful direction is status or support.
+const FORBIDDEN_AFTER_UNCERTAIN_MESSAGE =
+  "Your Early Access session ended. An earlier attempt to send this request may already have been saved. Do not resubmit it: check your request status or contact support with the time of your attempt.";
+
+// A 403 on a never-uncertain attempt is thrown before anything is persisted,
+// and the same sweep empties the basket on re-unlock, so the request has to be
+// entered again.
+const FORBIDDEN_FIRST_ATTEMPT_MESSAGE =
+  "Your Early Access session ended and nothing was saved. Unlock Early Access again and enter your request again.";
 
 type SubmitFailureKind = "uncertain" | "drift" | "conflict" | "refused";
 
@@ -409,6 +423,10 @@ export function AssistedOrderPage({
     draft?.attemptState === "uncertain" ? RESTORED_UNCERTAIN_NOTICE : null,
   );
   const refreshedDraft = useRef(false);
+  // True only while a POST is outstanding. Read by the write-through effect so
+  // a re-render during the request keeps the in-flight marker in the draft
+  // instead of overwriting it with the page's pre-answer state.
+  const inFlight = useRef(false);
   const [, navigate] = useLocation();
 
   useEffect(() => {
@@ -459,7 +477,10 @@ export function AssistedOrderPage({
     storeAssistedOrderDraft({
       idempotencyKey,
       acceptedAt,
-      attemptState,
+      // While a POST is outstanding the stored state is the in-flight marker
+      // (unless the attempt is already uncertain), whatever this render says.
+      attemptState:
+        inFlight.current && attemptState !== "uncertain" ? "in_flight" : attemptState,
       step,
       selections,
       generalNotes,
@@ -797,22 +818,28 @@ export function AssistedOrderPage({
       setError("Select at least one product.");
       return;
     }
-    // Stamp once per attempt key, then reuse. Persisted BEFORE the first POST:
-    // the write-through effect alone would run after the request was already
-    // in flight, and a refresh after a lost response must retry the identical
-    // attempt rather than mint a new one.
+    // Stamp once per attempt key, then reuse: a refresh after a lost response
+    // must retry the identical attempt rather than mint a new one.
     const attemptAcceptedAt = acceptedAt ?? new Date().toISOString();
     if (acceptedAt === null) {
       setAcceptedAt(attemptAcceptedAt);
-      storeAssistedOrderDraft({
-        idempotencyKey,
-        acceptedAt: attemptAcceptedAt,
-        attemptState,
-        step,
-        selections,
-        generalNotes,
-      });
     }
+    // Persisted BEFORE every POST, not only the first. The in-flight marker
+    // records that this attempt has left the browser with its outcome unknown:
+    // a page lost from here on restores as uncertain, with the same key and
+    // timestamp, instead of restoring clean and later claiming nothing was
+    // saved. An attempt that is already uncertain stays uncertain.
+    const storedAttemptState: AssistedOrderStoredAttemptState =
+      attemptState === "uncertain" ? "uncertain" : "in_flight";
+    inFlight.current = true;
+    storeAssistedOrderDraft({
+      idempotencyKey,
+      acceptedAt: attemptAcceptedAt,
+      attemptState: storedAttemptState,
+      step,
+      selections,
+      generalNotes,
+    });
     const agreements = acceptedAgreements(requirements, attemptAcceptedAt);
     const input: AssistedOrderSubmitInput = {
       idempotencyKey,
@@ -834,6 +861,7 @@ export function AssistedOrderPage({
     setSubmitting(true);
     try {
       const receipt = await submitAssistedOrder(input);
+      inFlight.current = false;
       // Local persistence is best-effort and atomic per receipt. A browser
       // quota/privacy failure must never reinterpret this accepted server
       // request as a failed submission; the path still carries its safe
@@ -846,6 +874,9 @@ export function AssistedOrderPage({
         )}`,
       );
     } catch (reason) {
+      // The POST has answered, or failed to: the flight is over either way, and
+      // what follows records the real outcome in place of the marker.
+      inFlight.current = false;
       const failure = classifySubmitFailure(reason);
       if (failure === "uncertain") {
         // The server may hold this request already. Freeze the attempt for
@@ -868,6 +899,14 @@ export function AssistedOrderPage({
         // stays frozen; the key is kept either way.
         if (attemptState !== "uncertain") {
           setAcceptedAt(null);
+          storeAssistedOrderDraft({
+            idempotencyKey,
+            acceptedAt: null,
+            attemptState: "none",
+            step,
+            selections,
+            generalNotes,
+          });
         }
         await recoverFromDrift(
           attemptState === "uncertain"
@@ -876,6 +915,18 @@ export function AssistedOrderPage({
         );
       } else if (failure === "conflict") {
         // Never rotate the key here: the earlier request may be the real one.
+        // A conflict also proves that SOMETHING was already saved under this
+        // key, so the attempt is uncertain from now on and stays so across a
+        // refresh; the restored draft says so.
+        setAttemptState("uncertain");
+        storeAssistedOrderDraft({
+          idempotencyKey,
+          acceptedAt: attemptAcceptedAt,
+          attemptState: "uncertain",
+          step,
+          selections,
+          generalNotes,
+        });
         setNotice(IDEMPOTENCY_CONFLICT_MESSAGE);
       } else {
         // A definitive refusal, thrown before anything was persisted. On a
@@ -885,15 +936,25 @@ export function AssistedOrderPage({
         const code = reason instanceof AssistedOrderApiError ? reason.code : "";
         const field = reason instanceof AssistedOrderApiError ? reason.field : undefined;
         if (attemptState !== "uncertain") {
+          // The server answered and refused before persisting: the in-flight
+          // marker written before this POST is cleared with the stamp.
           setAcceptedAt(null);
+          storeAssistedOrderDraft({
+            idempotencyKey,
+            acceptedAt: null,
+            attemptState: "none",
+            step,
+            selections,
+            generalNotes,
+          });
         }
         setError(
           code === "agreement_required"
             ? "Review and accept the current Research Use Policy before submitting."
             : code === "forbidden"
               ? attemptState === "uncertain"
-                ? "Your Early Access session ended. Unlock Early Access again, then retry this same request; do not start a new one."
-                : "Your Early Access session ended. Unlock Early Access again and continue your request."
+                ? FORBIDDEN_AFTER_UNCERTAIN_MESSAGE
+                : FORBIDDEN_FIRST_ATTEMPT_MESSAGE
               : code === "validation_error"
                 ? "Review the highlighted information and try again."
                 : "The order request was not accepted and was not saved. Please review your details and try again.",
@@ -901,6 +962,7 @@ export function AssistedOrderPage({
         setFieldError(code === "validation_error" ? field ?? null : null);
       }
     } finally {
+      inFlight.current = false;
       setSubmitting(false);
     }
   };

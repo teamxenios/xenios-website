@@ -210,6 +210,7 @@ describe("assisted order draft store", () => {
         ["none", ""],
         [true, null],
         ["UNCERTAIN", "x".repeat(61)],
+        ["IN_FLIGHT", 42],
         [null, undefined],
       ];
       for (const [attemptState, acceptedAt] of corrupt) {
@@ -267,6 +268,51 @@ describe("assisted order draft store", () => {
       clearAssistedOrderStorage(storage);
       expect(readAssistedOrderDraft(storage)).toBeNull();
       expect(storage.length).toBe(0);
+    });
+
+    // Doc99 QL2-1. The wizard writes "in_flight" just before a POST. A page
+    // lost while it is set cannot know whether the request committed, so the
+    // reader reports the restored attempt as uncertain, never as clean.
+    it("stores the in-flight marker and reads it back as uncertain", () => {
+      const storage = fakeStorage();
+      storeAssistedOrderDraft(
+        {
+          idempotencyKey: "key-1",
+          acceptedAt: "2026-10-12T12:00:00.000Z",
+          attemptState: "in_flight",
+          step: "review",
+          selections: stampedSelections(),
+          generalNotes: "",
+        },
+        storage,
+      );
+      const raw = JSON.parse(storage.getItem(ASSISTED_ORDER_DRAFT_KEY)!) as Record<string, unknown>;
+      expect(raw.attemptState).toBe("in_flight");
+      expect(readAssistedOrderDraft(storage)).toMatchObject({
+        idempotencyKey: "key-1",
+        acceptedAt: "2026-10-12T12:00:00.000Z",
+        attemptState: "uncertain",
+      });
+    });
+
+    it("keeps the frozen stamp beside an in-flight marker, so a restored retry replays the same attempt", () => {
+      const storage = fakeStorage();
+      storeAssistedOrderDraft(
+        {
+          idempotencyKey: "key-2",
+          acceptedAt: "t".repeat(60),
+          attemptState: "in_flight",
+          step: "contact",
+          selections: stampedSelections(),
+          generalNotes: "note",
+        },
+        storage,
+      );
+      const draft = readAssistedOrderDraft(storage)!;
+      expect(draft.acceptedAt).toBe("t".repeat(60));
+      expect(draft.attemptState).toBe("uncertain");
+      expect(draft.step).toBe("contact");
+      expect(draft.generalNotes).toBe("note");
     });
   });
 });

@@ -3,8 +3,17 @@ import { ASSISTED_ORDER_STORAGE_PREFIX } from "./storage";
 import type { AssistedOrderSelection, AssistedOrderSelectionMap } from "./wizard-state";
 import { catalogItemKey } from "./wizard-state";
 
-// The wizard's in-progress draft, persisted so an Early Access session bounce
-// (expiry, re-unlock, refresh) does not cost the customer their basket.
+// The wizard's in-progress draft, persisted so a refresh or a retry within ONE
+// unexpired Early Access session, in the same tab, does not cost the customer
+// their basket or their attempt identity.
+//
+// WHAT IT DOES NOT SURVIVE, BY DESIGN: session expiry, sign-out and re-unlock
+// (the protected-path sweep removes every assisted-order key, this one
+// included) and closing the tab (sessionStorage dies with it). After any of
+// those a rebuilt request submits under a new key and the server cannot
+// signal a conflict with an earlier attempt. The release runbook and the staff
+// duplicate check cover that window; the sweep itself belongs to the Early
+// Access route owner and is not changed here.
 //
 // WHAT IS STORED: the selected catalog rows (the server's own projection,
 // display-only), quantities, per-line and general notes, the current step, and
@@ -35,6 +44,16 @@ export type AssistedOrderWizardStep = "products" | "contact" | "review";
 // attempt ended without a definitive answer (network failure, 5xx, non-JSON
 // body), so the request may already exist server-side.
 export type AssistedOrderAttemptState = "none" | "uncertain";
+
+// What the STORE accepts is one state wider. "in_flight" is written just
+// before a POST and means: this attempt has left the browser and its outcome
+// is not yet known. If the page is lost while it is set (refresh, navigation),
+// nothing can say whether the request committed, so a restored draft reads it
+// as "uncertain". In the same uninterrupted page it is replaced by the real
+// outcome: "uncertain" after a lost answer or a conflict, "none" after a
+// definitive pre-persistence refusal (only when no earlier attempt under this
+// key was uncertain).
+export type AssistedOrderStoredAttemptState = AssistedOrderAttemptState | "in_flight";
 
 const wizardSteps: readonly AssistedOrderWizardStep[] = [
   "products",
@@ -154,10 +173,14 @@ export function readAssistedOrderDraft(
     const step = wizardSteps.includes(record.step as AssistedOrderWizardStep)
       ? (record.step as AssistedOrderWizardStep)
       : "products";
-    // Only the exact "uncertain" marker survives a read; anything else (an
-    // older draft, a typo, a foreign value) is the safe "none".
+    // "uncertain" survives a read, and so does an interrupted "in_flight": a
+    // page lost mid-POST cannot know whether the request committed, so the
+    // restored attempt is treated as uncertain. Anything else (an older draft,
+    // a typo, a foreign value) is the safe "none".
     const attemptState: AssistedOrderAttemptState =
-      record.attemptState === "uncertain" ? "uncertain" : "none";
+      record.attemptState === "uncertain" || record.attemptState === "in_flight"
+        ? "uncertain"
+        : "none";
     return Object.freeze({
       idempotencyKey: record.idempotencyKey,
       acceptedAt: parseAcceptedAt(record.acceptedAt),
@@ -179,7 +202,7 @@ export function storeAssistedOrderDraft(
     // Optional so a caller that has not attempted a submission yet stores the
     // "not stamped" / "none" defaults without naming them.
     acceptedAt?: string | null;
-    attemptState?: AssistedOrderAttemptState;
+    attemptState?: AssistedOrderStoredAttemptState;
     step: AssistedOrderWizardStep;
     selections: AssistedOrderSelectionMap;
     generalNotes: string;

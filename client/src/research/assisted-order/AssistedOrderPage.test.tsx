@@ -7,6 +7,7 @@ import type {
   AssistedOrderCatalogPage,
   AssistedOrderReceipt,
   AssistedOrderStatusView,
+  AssistedOrderSubmitInput,
 } from "../../../../shared/research/assisted-order/contract";
 
 const api = vi.hoisted(() => ({
@@ -1047,6 +1048,67 @@ describe("AssistedOrderPage", () => {
       expect(window.location.pathname).toBe(CONFIRMATION_PATH);
     });
 
+    it("records a submission lost mid-flight as uncertain, restores it with the same key and acceptedAt, and never releases the stamp afterwards", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder
+        .mockReturnValueOnce(lost.promise)
+        .mockRejectedValueOnce(
+          new AssistedOrderApiError(400, "validation_error", "Enter a valid email address.", "contact.email"),
+        )
+        .mockResolvedValueOnce(receipt);
+      render();
+      await settle();
+      await reachReview();
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      // The attempt has left the browser; the draft already says so.
+      const first = submitCall(0);
+      const stamp = acceptedAtOf(first);
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: stamp,
+        attemptState: "in_flight",
+      });
+
+      // The page is lost while the POST is still outstanding. The promise is
+      // deliberately never settled: no answer ever reached this page.
+      unmount();
+      render();
+      await settle();
+
+      expect(byTestId("order-notice")?.textContent).toContain(RESTORED_COPY);
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: stamp,
+        attemptState: "uncertain",
+      });
+
+      // A definitive refusal now cannot release the stamp: the lost POST may
+      // have committed, and this page has no uninterrupted knowledge of it.
+      await reviewFromRestoredContact();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toBe(
+        "Review the highlighted information and try again. (contact.email)",
+      );
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: stamp,
+        attemptState: "uncertain",
+      });
+      expect(submitCall(1).idempotencyKey).toBe(first.idempotencyKey);
+      expect(acceptedAtOf(submitCall(1))).toBe(stamp);
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(3);
+      expect(submitCall(2).idempotencyKey).toBe(first.idempotencyKey);
+      expect(acceptedAtOf(submitCall(2))).toBe(stamp);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+    });
+
     it("keeps the key on idempotency_conflict and never invites a new request", async () => {
       api.submitAssistedOrder.mockRejectedValue(conflict());
       render();
@@ -1062,12 +1124,25 @@ describe("AssistedOrderPage", () => {
       expect(document.body.textContent).not.toContain("start again");
       const key = submitCall(0).idempotencyKey;
       expect(readDraft().idempotencyKey).toBe(key);
+      // What the conflict proved is persisted: something already exists under
+      // this key, so the attempt is uncertain from now on (Doc99 QL2-6).
+      expect(readDraft()).toMatchObject({
+        acceptedAt: acceptedAtOf(submitCall(0)),
+        attemptState: "uncertain",
+      });
 
       click(byTestId("order-submit"));
       await settle(20);
       expect(api.submitAssistedOrder).toHaveBeenCalledTimes(2);
       expect(submitCall(1).idempotencyKey).toBe(key);
       expect(submitCall(1).agreements).toEqual(submitCall(0).agreements);
+
+      // A refresh after the conflict restores the learned uncertainty.
+      unmount();
+      render();
+      await settle();
+      expect(byTestId("order-notice")?.textContent).toContain(RESTORED_COPY);
+      expect(readDraft()).toMatchObject({ idempotencyKey: key, attemptState: "uncertain" });
     });
 
     it("keeps the frozen attempt after an uncertain outcome even when a later refusal is definitive", async () => {
@@ -1244,7 +1319,7 @@ describe("AssistedOrderPage", () => {
       });
     });
 
-    it("maps an ended session to continue-your-request copy first, and to retry-the-same-request copy after an uncertain attempt", async () => {
+    it("maps an ended session to enter-again copy first, and to status-or-support copy after an uncertain attempt", async () => {
       api.submitAssistedOrder
         .mockRejectedValueOnce(forbidden())
         .mockRejectedValueOnce(unavailable())
@@ -1253,10 +1328,12 @@ describe("AssistedOrderPage", () => {
       await settle();
       await reachReview();
 
+      // Thrown before persistence, and re-unlocking sweeps the draft: the
+      // request has to be entered again, and the copy says exactly that.
       click(byTestId("order-submit"));
       await settle(20);
       expect(byTestId("order-error")?.textContent).toBe(
-        "Your Early Access session ended. Unlock Early Access again and continue your request.",
+        "Your Early Access session ended and nothing was saved. Unlock Early Access again and enter your request again.",
       );
       expect(readDraft()).toMatchObject({ acceptedAt: null, attemptState: "none" });
 
@@ -1264,11 +1341,17 @@ describe("AssistedOrderPage", () => {
       await settle(20);
       expect(readDraft().attemptState).toBe("uncertain");
 
+      // After an uncertain attempt the same sweep makes "retry the same
+      // request after unlocking" impossible to honour, so the copy never
+      // promises it: status or support, with the time of the attempt.
       click(byTestId("order-submit"));
       await settle(20);
-      expect(byTestId("order-error")?.textContent).toBe(
-        "Your Early Access session ended. Unlock Early Access again, then retry this same request; do not start a new one.",
+      const copy = byTestId("order-error")?.textContent ?? "";
+      expect(copy).toBe(
+        "Your Early Access session ended. An earlier attempt to send this request may already have been saved. Do not resubmit it: check your request status or contact support with the time of your attempt.",
       );
+      expect(copy).not.toMatch(/retry/i);
+      expect(copy).not.toMatch(/unlock/i);
       expect(document.body.textContent).not.toContain("start again");
       const key = submitCall(0).idempotencyKey;
       for (const call of api.submitAssistedOrder.mock.calls) {
@@ -1546,5 +1629,123 @@ describe("AssistedOrderStatusPage verified identity", () => {
     expect(api.loadAssistedOrderStatus).not.toHaveBeenCalled();
     expect(byTestId("order-status-heading")?.textContent).toBe("Request status");
     expect(host!.textContent).toContain("not valid or has expired");
+  });
+});
+
+// Doc99 release item 2. Every other test above mocks "./api", so the real
+// request() path that turns a non-JSON or 5xx answer into the error the
+// wizard's classifier depends on was never exercised. These cases import the
+// actual module and stub only the global fetch; api.ts itself is unchanged.
+describe("the real api request path against a stubbed fetch (Doc99 release item 2)", () => {
+  type ActualApi = typeof import("./api");
+  type CapturedInit = { method?: string; credentials?: string; body?: unknown };
+
+  const submitInput: AssistedOrderSubmitInput = {
+    idempotencyKey: "key-real-request",
+    contact: {
+      fullLegalName: "Ada Researcher",
+      email: "ada@example.org",
+      mobilePhone: "+1 555 010 2000",
+      ageConfirmed: true,
+      shippingAddress: {
+        line1: "1 Research Way",
+        city: "Boston",
+        region: "MA",
+        postalCode: "02110",
+        countryCode: "US",
+      },
+      billingSameAsShipping: true,
+    },
+    agreements: [
+      { kind: "research_use_policy", version: "2026-05", acceptedAt: "2026-10-12T12:00:00.000Z" },
+    ],
+    lines: [{ productId: directRuoItem.productId, variantId: directRuoItem.variantId, quantity: 1 }],
+  };
+
+  /** The minimal surface request() reads from a fetch Response. */
+  function answer(status: number, body: string) {
+    return {
+      ok: status >= 200 && status < 300,
+      status,
+      json: async () => JSON.parse(body) as unknown,
+    };
+  }
+
+  async function actualApi(): Promise<ActualApi> {
+    return vi.importActual<ActualApi>("./api");
+  }
+
+  async function failureOf(promise: Promise<unknown>): Promise<unknown> {
+    return promise.then(
+      () => null,
+      (reason: unknown) => reason,
+    );
+  }
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("turns a non-JSON 502 into request_failed, which the wizard treats as uncertain", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(answer(502, "<html>Bad Gateway</html>"));
+    vi.stubGlobal("fetch", fetchMock);
+    const { submitAssistedOrder } = await actualApi();
+
+    const outcome = await failureOf(submitAssistedOrder(submitInput));
+    expect(outcome).toBeInstanceOf(AssistedOrderApiError);
+    expect(outcome).toMatchObject({ status: 502, code: "request_failed" });
+    expect((outcome as Error).message).not.toContain("Bad Gateway");
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0] as [string, CapturedInit];
+    expect(url).toBe("/api/research/early-access/assisted-orders");
+    expect(init.method).toBe("POST");
+    expect(init.credentials).toBe("include");
+    expect(JSON.parse(String(init.body))).toMatchObject({ idempotencyKey: "key-real-request" });
+  });
+
+  it("turns an HTML 413 into request_failed as well", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(answer(413, "<html>Request Entity Too Large</html>")));
+    const { submitAssistedOrder } = await actualApi();
+    await expect(submitAssistedOrder(submitInput)).rejects.toMatchObject({
+      status: 413,
+      code: "request_failed",
+      message: "The request could not be completed.",
+    });
+  });
+
+  it("keeps the server's own code and message on a JSON 500", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        answer(
+          500,
+          JSON.stringify({
+            error: "assisted_order_unavailable",
+            message: "The assisted order service is temporarily unavailable.",
+          }),
+        ),
+      ),
+    );
+    const { submitAssistedOrder } = await actualApi();
+    await expect(submitAssistedOrder(submitInput)).rejects.toMatchObject({
+      status: 500,
+      code: "assisted_order_unavailable",
+      message: "The assisted order service is temporarily unavailable.",
+    });
+  });
+
+  it("lets a network failure surface as a plain error, never as a refusal", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    const { submitAssistedOrder } = await actualApi();
+    const outcome = await failureOf(submitAssistedOrder(submitInput));
+    expect(outcome).toBeInstanceOf(TypeError);
+    expect(outcome).not.toBeInstanceOf(AssistedOrderApiError);
+  });
+
+  it("returns the receipt on a JSON 200", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(answer(200, JSON.stringify(receipt))));
+    const { submitAssistedOrder } = await actualApi();
+    await expect(submitAssistedOrder(submitInput)).resolves.toEqual(receipt);
   });
 });
