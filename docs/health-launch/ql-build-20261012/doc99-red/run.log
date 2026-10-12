@@ -1,0 +1,223 @@
+
+ RUN  v4.1.10 C:/xenios-wt/doc99-followup
+
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > keeps Care products out of the research request path 367ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > keeps held products out of both Research ordering and the Care route 296ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > offers four structured Action groups and composes them with search and Family 1186ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > hides stale cards while a new filter loads and aborts the obsolete request 845ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > shows a customer-safe retry state without leaking a raw catalog error 572ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > explains an authorization-gated catalog without claiming a connection failure 280ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > announces a filter-specific empty state and provides an accessible clear action 571ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > labels pending products Request Order without changing their request-only mode 310ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > honors a product-specific lower limit and increment in the quantity control 304ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > prefills exact server-mapped intent only after the customer chooses Add 289ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > never prefills a missing_mapping current option from an earlier match 296ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > never prefills a changed_variant current option from an earlier match 285ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > never prefills a lower_limit current option from an earlier match 294ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > never prefills a wrong_increment current option from an earlier match 294ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > never prefills a family_mismatch current option from an earlier match 299ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > never prefills a stale_quantity current option from an earlier match 294ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > resolves standalone retained intent before narrowing the catalog, without auto-adding 558ms
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > marks the current wizard step and disables unavailable future steps 311ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > allows embedded browsing but withholds Contact until the outer gate is complete 297ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > cannot restore a gated embedded draft into Contact or Review 289ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > removes a selected row if a fresh catalog response makes it held 576ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > does not expose a raw acknowledgment configuration failure 362ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > does not expose a raw submission failure 409ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > maps missing durable agreement standing to fixed customer-safe copy 406ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > submits the full request with server-published acknowledgments and a durable idempotency key 435ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > does not report a server-accepted request as failed when receipt storage is unavailable 404ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > omits the RUO confirmation when no RUO line is selected 389ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > replays a retry after failure with the SAME idempotency key 493ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > restores the basket and idempotency key from the draft after a session bounce 636ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > re-resolves current server values when the submission hits price drift 424ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > retries a lost response under the same key and frozen acceptedAt, then clears the draft on the replayed receipt 563ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > treats a non-JSON answer and a network failure as uncertain, never as nothing saved 440ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > restores an uncertain attempt after a refresh with the same key and acceptedAt, and says so 795ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > ignores a duplicate click while a submission is in flight 433ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > records a submission lost mid-flight as uncertain, restores it with the same key and acceptedAt, and never releases the stamp afterwards 829ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ × client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > cannot have a definitive refusal that answers a page already lost overwrite the restored attempt 720ms
+   → expected { …(7) } to match object { …(3) }
+(4 matching properties omitted from actual)
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ × client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > repopulates nothing when a lost page's POST answers after the protected sweep 453ms
+   → expected '{"idempotencyKey":"e0111c34-d8b3-4ffe…' to be null
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ × client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > stores no credential and navigates nowhere when a lost page's POST succeeds after the protected sweep 454ms
+   → expected '{"requestId":"req-1","publicReference…' to be null
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ × client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > leaves a newer attempt's draft intact when an older page's POST succeeds after the sweep 769ms
+   → expected null not to be null
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > keeps the key on idempotency_conflict and never invites a new request 718ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > keeps the frozen attempt after an uncertain outcome even when a later refusal is definitive 443ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > releases only the acceptance time after a definitive first-attempt refusal and keeps the key 443ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > keeps the attempt key when drift is refused after an uncertain attempt and does not claim nothing was submitted 456ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > releases the acceptance time on a first-attempt drift refusal, where nothing was persisted, and keeps the key 482ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > cannot restore an uncertain draft past the continuation gate, and keeps its identity intact 297ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > maps an ended session to enter-again copy first, and to status-or-support copy after an uncertain attempt 468ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > classifies unfamiliar refusals by what the server can be known to have done 441ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderConfirmationPage landmarks > renders no main element of its own — MinimalChrome supplies the page main (P2-4) 6ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderConfirmationPage landmarks > does not report a server-accepted request as failed when the sessionStorage getter is denied 431ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderConfirmationPage landmarks > never claims received or submitted from an arbitrary URL alone 6ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderConfirmationPage landmarks > stays neutral when the browser denies the sessionStorage getter 4ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderConfirmationPage landmarks > rejects a malformed path and a receipt whose embedded reference does not match 5ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderStatusPage verified identity > reads owner-linked requests with the current bearer and renders nullable estimates and opaque tracking 40ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderStatusPage verified identity > removes A's request during a B identity read and rejects A's late refresh 70ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderStatusPage verified identity > hides ready request details during member verification without making a new read 40ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderStatusPage verified identity > does not echo an arbitrary reference before the server verifies it 40ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderStatusPage verified identity > keeps a refused or missing request neutral 30ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderStatusPage verified identity > rejects a malformed reference without calling the API 15ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > the real api request path against a stubbed fetch (Doc99 release item 2) > turns a non-JSON 502 into request_failed, which the wizard treats as uncertain 5ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > the real api request path against a stubbed fetch (Doc99 release item 2) > turns an HTML 413 into request_failed as well 4ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > the real api request path against a stubbed fetch (Doc99 release item 2) > keeps the server's own code and message on a JSON 500 3ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > the real api request path against a stubbed fetch (Doc99 release item 2) > lets a network failure surface as a plain error, never as a refusal 3ms
+ ✓ client/src/research/assisted-order/AssistedOrderPage.test.tsx > the real api request path against a stubbed fetch (Doc99 release item 2) > returns the receipt on a JSON 200 4ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > round-trips selections, notes, step and the idempotency key 3ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > persists no contact fields at all 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > reads malformed content as no draft 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > recovers an unknown step and a broken quantity to safe values 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > clears on demand and under the sign-out sweep 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > attempt identity (frozen acceptedAt and attempt state) > round-trips the frozen acceptedAt and attempt state beside the key 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > attempt identity (frozen acceptedAt and attempt state) > reads a draft written before attempt identity existed as not stamped and none 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > attempt identity (frozen acceptedAt and attempt state) > stores the not-stamped defaults when a caller omits the attempt identity 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > attempt identity (frozen acceptedAt and attempt state) > recovers a foreign attempt state and an unusable acceptedAt to the safe values 1ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > attempt identity (frozen acceptedAt and attempt state) > persists no contact fields beside the attempt identity 1ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > attempt identity (frozen acceptedAt and attempt state) > clears the attempt identity with the draft, on demand and under the sign-out sweep 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > attempt identity (frozen acceptedAt and attempt state) > stores the in-flight marker and reads it back as uncertain 0ms
+ ✓ client/src/research/assisted-order/draft-store.test.ts > assisted order draft store > attempt identity (frozen acceptedAt and attempt state) > keeps the frozen stamp beside an in-flight marker, so a restored retry replays the same attempt 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > cannot have a definitive refusal that answers a page already lost overwrite the restored attempt
+AssertionError: expected { …(7) } to match object { …(3) }
+(4 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "acceptedAt": "2026-10-12T21:47:27.025Z",
+-   "attemptState": "uncertain",
++   "acceptedAt": null,
++   "attemptState": "none",
+    "idempotencyKey": "2b5e2264-4a52-4aa4-a219-be1531202bea",
+  }
+
+ ❯ client/src/research/assisted-order/AssistedOrderPage.test.tsx:1157:27
+    1155|       );
+    1156|       await settle(20);
+    1157|       expect(readDraft()).toMatchObject({
+       |                           ^
+    1158|         idempotencyKey: first.idempotencyKey,
+    1159|         acceptedAt: stamp,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > repopulates nothing when a lost page's POST answers after the protected sweep
+AssertionError: expected '{"idempotencyKey":"e0111c34-d8b3-4ffe…' to be null
+
+- Expected:
+null
+
++ Received:
+"{\"idempotencyKey\":\"e0111c34-d8b3-4ffe-865b-84c62b4f1501\",\"acceptedAt\":\"2026-10-12T21:47:27.767Z\",\"attemptState\":\"uncertain\",\"step\":\"review\",\"selections\":[{\"item\":{\"productId\":\"prod-a\",\"variantId\":\"var-a\",\"productName\":\"Alpha Peptide\",\"family\":\"research_peptides_materials\",\"channel\":\"research\",\"specification\":\"10 mg\",\"format\":\"Vial\",\"packBasis\":\"Per vial\",\"minimumQuantity\":1,\"maximumQuantity\":100,\"quantityIncrement\":1,\"unitPriceCents\":2500,\"currency\":\"USD\",\"workflowMode\":\"direct_order_request\",\"actionLabel\":\"Add to order request\",\"accessNotice\":null,\"researchUseOnly\":true,\"catalogVersion\":\"cat-1\",\"priceVersion\":\"price-1\"},\"quantity\":1,\"notes\":\"\"}],\"generalNotes\":\"\",\"savedAt\":\"2026-10-12T21:47:27.805Z\"}"
+
+ ❯ client/src/research/assisted-order/AssistedOrderPage.test.tsx:1195:64
+    1193|       lost.reject(unavailable());
+    1194|       await settle(20);
+    1195|       expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNul…
+       |                                                                ^
+    1196|       expect(sessionStorage.length).toBe(0);
+    1197|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > stores no credential and navigates nowhere when a lost page's POST succeeds after the protected sweep
+AssertionError: expected '{"requestId":"req-1","publicReference…' to be null
+
+- Expected:
+null
+
++ Received:
+"{\"requestId\":\"req-1\",\"publicReference\":\"XRR-20260819-ABCDEF1234\",\"status\":\"submitted\",\"createdAt\":\"2026-08-19T00:00:00.000Z\",\"estimatedTotalCents\":5000,\"currency\":\"USD\",\"lines\":[],\"nextSteps\":[\"We will confirm availability and payment details before fulfillment.\"]}"
+
+ ❯ client/src/research/assisted-order/AssistedOrderPage.test.tsx:1214:88
+    1212|       lost.resolve(receipt);
+    1213|       await settle(20);
+    1214|       expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.pu…
+       |                                                                                        ^
+    1215|       expect(sessionStorage.getItem(assistedOrderTokenKey(receipt.publ…
+    1216|       expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNul…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  client/src/research/assisted-order/AssistedOrderPage.test.tsx > AssistedOrderPage > uncertain outcomes and the frozen attempt identity (Doc96 QL-11) > leaves a newer attempt's draft intact when an older page's POST succeeds after the sweep
+AssertionError: expected null not to be null
+ ❯ readDraft client/src/research/assisted-order/AssistedOrderPage.test.tsx:889:23
+    887|     function readDraft(): StoredDraft {
+    888|       const raw = sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY);
+    889|       expect(raw).not.toBeNull();
+       |                       ^
+    890|       return JSON.parse(raw!) as StoredDraft;
+    891|     }
+ ❯ client/src/research/assisted-order/AssistedOrderPage.test.tsx:1247:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 72 passed (76)
+   Start at  16:46:53
+   Duration  40.49s (transform 652ms, setup 0ms, import 1.62s, tests 22.70s, environment 15.63s)
+
+JSON report written to C:/Users/sboad/.codex/tmp/ql-doc99-red-20261012/run1/vitest-results.json

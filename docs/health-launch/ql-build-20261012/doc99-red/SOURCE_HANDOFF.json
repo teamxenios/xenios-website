@@ -1,0 +1,29 @@
+{
+  "record": "DOC99 QL2-1 follow-up, step 1: test-only controls, frozen for Core's re-run",
+  "frozenAtUtc": "2026-10-12T21:40:13Z",
+  "lead": { "sessionId": "da289215-87ed-4b4b-bbda-c9af49bda5bc", "model": "claude-fable-5-1", "effort": "max", "children": "none" },
+  "custody": "same four-path custody renewed by the parent for the narrow QL2-1 follow-up after the first receipt (72/72 on 3a03ad65, run1)",
+  "base": { "sha": "3a03ad650d16442b622796fd614d6dcf47384ea2", "tree": "8b31864708d06997ef718dd22f915a9d8350398d", "receipt": "ql-doc99-targeted-20261012/run1/receipt.json, 72 passed, 0 failed, retained" },
+  "target": {
+    "sha": "9d7bfe4b32b09e887a0ee23b12eae007c6dd94dd",
+    "tree": "dc79ee5b04aaaf1fe6f0dbde944fa654311dc35e",
+    "parent": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "worktree": "C:/xenios-wt/doc99-followup",
+    "branch": "codex/assisted-order-doc99-followup-20261012",
+    "changedFiles": [
+      { "path": "client/src/research/assisted-order/AssistedOrderPage.test.tsx", "oldBlob": "ce9d73c46ac76f4f0b474aab6574c1f34413757b", "newBlob": "d59ecf43a27e96966346b8e2daaca5998288baeb", "diffstat": "+143 -2" }
+    ],
+    "sourceUnchanged": "AssistedOrderPage.tsx db11f713 -> b36aa81f (as at 3a03ad65), draft-store.ts 97557ad3, draft-store.test.ts 19841888, server tree identical; verified by git diff against 3a03ad65"
+  },
+  "controls": [
+    { "name": "records a submission lost mid-flight as uncertain ... (strengthened)", "change": "the draft is captured synchronously inside the submit mock before the deferred promise is returned and must already carry in_flight and the frozen acceptedAt", "expectedOnCurrentSource": "PASS" },
+    { "name": "cannot have a definitive refusal that answers a page already lost overwrite the restored attempt", "expectedOnCurrentSource": "FAIL: the stale closure writes acceptedAt null and attemptState none over the restored uncertain draft (page 942)" },
+    { "name": "repopulates nothing when a lost page's POST answers after the protected sweep", "expectedOnCurrentSource": "FAIL: the stale uncertain branch writes the old draft back (page 885)" },
+    { "name": "stores no credential and navigates nowhere when a lost page's POST succeeds after the protected sweep", "expectedOnCurrentSource": "FAIL: the stale success path stores the receipt and token and navigates (page 869-871)" },
+    { "name": "leaves a newer attempt's draft intact when an older page's POST succeeds after the sweep", "expectedOnCurrentSource": "FAIL: the stale success path clears the newer draft and navigates (page 870-871)" }
+  ],
+  "expectedReRun": "the strengthened in-flight control passes; the four late-completion controls fail on 9d7bfe4b exactly where the hazard sits; every other test unchanged from the 72/72 run",
+  "nextStep": "after Core's re-run receipt, the guarded source fix on the same branch, same four paths: lifecycle generation plus key-and-acceptedAt storage ownership before any post-await write, clear, state, navigation or drift recovery; write-through guarded after the privacy sweep; drift recovery rechecked after its await; tri-state probe so storage-unavailable keeps the in-memory accepted-receipt behaviour; EarlyAccessRoute sweep, api.ts, service and hold untouched; plus the remaining controls (retired-without-sweep success, drift await recheck, probe and ownership unit tests)",
+  "writerState": "STOPPED for the re-run; no source edit while it runs",
+  "execution": "NOT_RUN"
+}

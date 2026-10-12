@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "status": "REPRODUCED_FOUR_FAILURES_NOT_QUALIFICATION_PASS",
+  "candidate": "9d7bfe4b32b09e887a0ee23b12eae007c6dd94dd",
+  "tree": "dc79ee5b04aaaf1fe6f0dbde944fa654311dc35e",
+  "reviewedBase": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "runtimeUnchangedFrom": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+  "reservation": "9c21863c56b2a2e823d5dbfbfe5be1ebdc559691 LOCAL-DOC99-9D-RED-TARGETED-20261012",
+  "startedUtc": "2026-10-12T21:46:51.433Z",
+  "endedUtc": "2026-10-12T21:47:33.95Z",
+  "finalizedUtc": "2026-10-12T21:47:34.523Z",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+    "C:\\xenios-wt\\doc99-followup\\node_modules\\vitest\\vitest.mjs",
+    "run",
+    "--config",
+    "vitest.config.ts",
+    "--maxWorkers",
+    "1",
+    "--no-file-parallelism",
+    "--reporter",
+    "verbose",
+    "--reporter",
+    "json",
+    "--outputFile.json",
+    "C:\\Users\\sboad\\.codex\\tmp\\ql-doc99-red-20261012\\run1\\vitest-results.json",
+    "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+    "client/src/research/assisted-order/draft-store.test.ts"
+  ],
+  "passed": 72,
+  "failed": 4,
+  "pending": 0,
+  "total": 76,
+  "exit": 1,
+  "timedOut": false,
+  "attempts": 1,
+  "failures": [
+    "AssistedOrderPage uncertain outcomes and the frozen attempt identity (Doc96 QL-11) cannot have a definitive refusal that answers a page already lost overwrite the restored attempt",
+    "AssistedOrderPage uncertain outcomes and the frozen attempt identity (Doc96 QL-11) repopulates nothing when a lost page's POST answers after the protected sweep",
+    "AssistedOrderPage uncertain outcomes and the frozen attempt identity (Doc96 QL-11) stores no credential and navigates nowhere when a lost page's POST succeeds after the protected sweep",
+    "AssistedOrderPage uncertain outcomes and the frozen attempt identity (Doc96 QL-11) leaves a newer attempt's draft intact when an older page's POST succeeds after the sweep"
+  ],
+  "sourceInvariant": true,
+  "postPinsMatch": true,
+  "rawHashes": [
+    {
+      "path": "receipt.json",
+      "sha256": "d886252c8602ae132c7b8501d1c99668951fd1e6c78916bc27b844eb4a6126ee"
+    },
+    {
+      "path": "run.log",
+      "sha256": "68d747d25ee04f4ea425bc8a8e8fed5c725e2f85e67cb6ee5bab058674dc200e"
+    },
+    {
+      "path": "vitest-results.json",
+      "sha256": "1739f9c3cbb6f7c8c2820dc06a69df2fe793165b8d2d38a585922d38a6f9b787"
+    }
+  ],
+  "postcheck": {
+    "at": "2026-10-12T21:47:41.6085804Z",
+    "processes": [],
+    "sourceClean": true
+  },
+  "priorRun": "72/72 at3a preserved in doc99-r3; not relabelled or aggregated",
+  "prePostControl": "Strengthened synchronous assertion passed; the four late-completion controls failed.",
+  "processProvenance": "Point-in-time observed supervisor, Vitest and fork worker full-path Node20 binary; nested Vite esbuild0.27.7. Not all-descendant self-attestation or OS sandbox.",
+  "limits": [
+    "Synthetic jsdom and mocked API transport, not browser/durable database or release qualification.",
+    "No runtime edits, no real email, money, SQL, hosted configuration or deploy.",
+    "Test-only source handoff raw SHA df39a0c7d5a163ca1142ebce91d400e9fea658da5e262efff8696db901383240 retained.",
+    "Same Fable sole writer receives reproduction for agreed followup; no source-review registration yet."
+  ]
+}
