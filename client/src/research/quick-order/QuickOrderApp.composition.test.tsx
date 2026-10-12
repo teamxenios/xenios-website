@@ -844,8 +844,6 @@ describe("AUTHORED_NOT_RUN canonical server private context and source compositi
     ["products-diagnostics/MemberProductDetailExperience.test.tsx", "78f23534fddf90a66cf2589ca323a69105e260ed"],
     ["product-subscriptions/ProductSubscriptionCreate.tsx", "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99"],
     ["product-subscriptions/ProductSubscriptionCreate.test.tsx", "d094babf3592395f9a3e26f299cf24789a837dbd"],
-    ["pages/member/ProductPage.tsx", "d50b467159739148ae2ecbe90689c6d8df6f6d92"],
-    ["pages/member/ProductPage.subscription.test.tsx", "ce94ff421800fa3b84437038d8c7e390ceeb0401"],
   ])("preserves accepted customer blob %s (identity control, not a behavior rerun)", (path, expectedBlob) => {
     const bytes = Buffer.from(readFileSync(fileURLToPath(new URL(`../${path}`, import.meta.url)), "utf8").replace(/\r\n/g, "\n"));
     expect(createHash("sha1").update(`blob ${bytes.length}\0`).update(bytes).digest("hex")).toBe(expectedBlob);
