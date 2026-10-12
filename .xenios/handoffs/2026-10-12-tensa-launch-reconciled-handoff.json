@@ -96,7 +96,8 @@
       "receipt": "42ac49e640a53726107990ec95c977d7f1f3cc56:docs/health-launch/ql-protection-carryforward-20261012/EXECUTED_PROTECTION_CLI.json",
       "environment": "Builtins-only/no application imports/dependencies/network; environment allowlist, no service credential inheritance. Distinct permitted standalone protection check, not retry of denied application run."
     },
-    "protectionVitest": "NOT_RUN",
+    "protectionVitest": "NOT_RUN; applicable companion36test gate has fresh prepared binding at ee4bea60b49ae547ed77e8106b0600b7ee216524, docs/health-launch/ql-build-20261012/protection-test/EXECUTION_BINDING.json. Await fresh coordinator one-heavy reservation; do not reuse released build or skipped historicalR2 window.",
+    "protectionTestApplicability": "Main/helper read-only inspection: existing procedure requires CLI plus companion test. Strict zero seam mismatches, tamper/delete/classifier negatives and route/slug anti-rot; synthetic classifiers do not replace exact-base CLI. Static content/careers imports only, no app/provider startup. Vitest dependencies execute and write private caches; not builtins-only or OS-enforced isolation. No new reviewer disposition.",
     "standaloneQLBuild": {
       "status": "PASS_LOCAL_BUILD_NOT_RELEASE_QUALIFICATION",
       "binding": "cd6b3cc4764a86c9b08b196cc31ad54faf94c0d4:docs/health-launch/ql-build-20261012/EXECUTION_BINDING.json",
@@ -212,6 +213,7 @@
     "retrieval": {
       "local": "Bounded hidden/no-ignore Downloads and Codex attachments title/person/date search and registered Oct11 archive inventories did not locate Tim/Dallas PDFs, named Sept12 invoice drafts or Sept23 full-thread archive. References only.",
       "connectedDrive": "Existing coordinator reported exact-title searches empty; not an original Library retrieval.",
+      "coordinatorNewRetrieval": "Current coordinator reports original September invoice PDFs accessible through existing Business Gmail connection and is privately checking provenance/payment labels. Integrator has not independently read those attachments or current-account evidence. Earlier bounded local/Drive/Pages searches remain as historical limitations; no claim that originals are absent.",
       "connectedPages": "Exact Tim and Dallas filenames each returned only unrelated Your guide to pages metadata; no original file reference. Search does not prove Library originals absent.",
       "originalLibraryFileId": null,
       "secretMaterialCopied": false

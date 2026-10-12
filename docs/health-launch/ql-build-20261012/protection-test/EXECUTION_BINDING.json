@@ -1,5 +1,7 @@
 {
   "schemaVersion": 1,
+  "bindingRevision": 2,
+  "preparedPredecessor": "ee4bea60b49ae547ed77e8106b0600b7ee216524 revision1 never executed. Coordinator requested180second finite bound; only wall/deadline and launcher hash updated before first run.",
   "action": "QL_STANDALONE_PROTECTION_TEST_20261012",
   "status": "PREPARED_NOT_RUN_PENDING_FRESH_COORDINATOR_WINDOW",
   "executor": "01a0e098-3b23-7233-9b07-877ace092650",
@@ -22,7 +24,7 @@
     "C:/Users/sboad/.codex/tmp/ql-protection-test-20261012/run-test.cjs",
     "<actual coordinator reservation stop UTC>"
   ],
-  "launcherSha256": "4384547103d197eb35f97cf84ca29357f1846dc24fd23c6236edc69142479e3a",
+  "launcherSha256": "a040fb382fd04f02d7847402e7ba2d2bc164de2382cdc040c662361fcbab5ab8",
   "effectiveCommand": [
     "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
     "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website/node_modules/vitest/vitest.mjs",
@@ -54,7 +56,7 @@
   "filesystem": "Only this private scratch output/home/temp and existing private node_modules Vite/Vitest caches may be written. Retained dist untouched. No source/test/config/dependency mutation, install or deletion.",
   "environment": "Fresh allowlist as exact launcher; production/provider/database credentials absent, no root/client test env files allowed, private home/temp; Node1024MiB heap.",
   "bounds": {
-    "wallMs": 120000,
+    "wallMs": 180000,
     "nodeHeapMiB": 1024,
     "workers": 1,
     "fileParallelism": false,
