@@ -4415,13 +4415,15 @@
       "task": "INDEPENDENT-INCREMENTS-RELEASE-QUALIFICATION-20261012",
       "session": "codex-accepted-source-integration-20261005",
       "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "docs/health-launch/ql-build-20261012/",
         "docs/health-launch/account-support-outcome-20261012/qualification/",
         ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"
       ],
       "state": "active",
       "claimedAt": "2026-10-12T20:56:45.092Z",
-      "heartbeatAt": "2026-10-12T21:01:38.312Z"
+      "heartbeatAt": "2026-10-12T21:06:00Z",
+      "narrowManifestExtension": "Current coordinator actual bounded custody ACK: only historical TopRibbon/package fileHashes.files pairs, in separate supporta4 successor at support-qualification-20261012; preimage6007233. No other manifest/source changes; no broad control-plane takeover. Release exact manifest path after freeze."
     }
   ],
   "rules": [
