@@ -6,10 +6,10 @@
       "id": "QUICK-ORDER-DOC83-INTEGRATOR-CORRECTION-20261011",
       "revision": 2,
       "owner": "codex-accepted-source-integration-20261005",
-      "state": "in_progress",
-      "phase": "DOC87_DC1_APPROVED_TWO_ROW_SOURCE_ONLY",
+      "state": "handoff",
+      "phase": "DOC87_DC1_SOURCE_FROZEN_FOR_SERIAL_BUILDER_REBIND",
       "claimedAt": "2026-10-12T02:03:53Z",
-      "heartbeatAt": "2026-10-12T02:03:53Z",
+      "heartbeatAt": "2026-10-12T02:06:05Z",
       "leaseId": "c826b318-18a3-4d01-9b71-d4fafd6ca452",
       "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
       "branch": "codex/accepted-source-integration-20261005",
@@ -67,8 +67,8 @@
       "requestedEffort": "ultra",
       "actualModel": "NOT_EXPOSED",
       "actualEffort": "NOT_EXPOSED",
-      "sourceWriterStopped": false,
-      "gitWriterStopped": false,
+      "sourceWriterStopped": true,
+      "gitWriterStopped": true,
       "successorAcceptance": "PENDING_ORIGINAL_R4_DELTA_AND_PIN_RECONFIRMATION",
       "scope": "Delete only the two approved old ProductPage identity rows; preserve remaining six rows and every other source byte. No D56 copy, optional R3C5, builder evidence/verifier/SQL, protected manifest or registry changes. No execution, push or receipt finalization. Stop for same-builder serial four-evidence custody.",
       "history": [
@@ -113,7 +113,13 @@
           "sourceWriterStopped": true,
           "successorAcceptance": "PENDING_ORIGINAL_DELTA_REVIEW"
         }
-      ]
+      ],
+      "source": "38915cf4318594607098717389113869e3eff0da",
+      "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+      "sourceFileBlob": "1ad353980b1d1aa5a3e79891207d4c55891daf32",
+      "sourceRawSha256": "79ef310cd8d03915dcc14e65a7d686e5ab304e157502cb53ad2fbf1e910466c4",
+      "handoff": ".xenios/handoffs/2026-10-12-doc87-dc1-two-row-handoff.json",
+      "next": "Same builder fresh exclusive four-evidence lease after integrator Git/source stop; no finalization by integrator."
     },
     {
       "id": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-20261011",

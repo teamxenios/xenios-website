@@ -9,13 +9,20 @@
       "paths": [
         "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-12T02:03:53Z",
-      "heartbeatAt": "2026-10-12T02:03:53Z",
+      "heartbeatAt": "2026-10-12T02:06:05Z",
       "base": "d8591e31be3b31bfd822ed9b3634236b897432de",
       "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
       "branch": "codex/accepted-source-integration-20261005",
-      "scopeNote": "Fresh actual one-file claim after current custody ACK and recorded direct exact human two-row exception. Existing source owner/session; no automatic reclaim of old HANDOFF leases and no foreign reservation expiry. Only two old ProductPage identity row removals plus own task/session/lease/handoff metadata. Builder83d2a260 stopped/handoff preserved. No builder evidence, runtime/API/SQL/verifier/D56 copy/protected manifest, execution, push or live changes."
+      "scopeNote": "Fresh actual one-file claim after current custody ACK and recorded direct exact human two-row exception. Existing source owner/session; no automatic reclaim of old HANDOFF leases and no foreign reservation expiry. Only two old ProductPage identity row removals plus own task/session/lease/handoff metadata. Builder83d2a260 stopped/handoff preserved. No builder evidence, runtime/API/SQL/verifier/D56 copy/protected manifest, execution, push or live changes.",
+      "handedOffAt": "2026-10-12T02:06:05Z",
+      "source": "38915cf4318594607098717389113869e3eff0da",
+      "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+      "handoff": ".xenios/handoffs/2026-10-12-doc87-dc1-two-row-handoff.json",
+      "sourceWriterStopped": true,
+      "gitWriterStopped": true,
+      "nextCustody": "Same builder serial four-evidence rebind under its own fresh exact lease; no automatic claim or receipt finalization."
     },
     {
       "id": "f57c582d-0527-4792-9389-849cf4e60105",

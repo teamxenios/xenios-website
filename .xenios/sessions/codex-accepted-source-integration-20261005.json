@@ -3,8 +3,8 @@
   "tool": "OpenAI Codex desktop",
   "lane": "doc87-dc1-two-row-exception",
   "branch": "codex/accepted-source-integration-20261005",
-  "state": "active",
+  "state": "handoff_ready",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-12T02:03:53Z",
-  "note": "Same integrator resumes existing Doc83 task revision2 at clean b22f d8591e31 after builder verifier checkpoint5a0206c/handoff. Direct Samuel answer 'Approve this exact two-row exception' recorded in coordinator assignment; fresh one-file lease c826b318-18a3-4d01-9b71-d4fafd6ca452 for exact composition blob349d3ea to1ad3539 only. Preserve six other rows/every other source byte, foreign registry/lease histories and builder records. No D56 copy/optionalR3C5/receipt edits/finalization/execution/push/live/schedules. Stop before serial same-builder four-evidence rebind. Actual model/effort NOT_EXPOSED."
+  "heartbeatAt": "2026-10-12T02:06:05Z",
+  "note": "Doc87 DC-1 exact approved two-row exception frozen at 38915cf4318594607098717389113869e3eff0da / tree b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b; composition blob1ad353980b1d1aa5a3e79891207d4c55891daf32 / raw79ef310cd8d03915dcc14e65a7d686e5ab304e157502cb53ad2fbf1e910466c4. One-file lease c826b318-18a3-4d01-9b71-d4fafd6ca452 HANDOFF; Git/source writer stopped after coherent records commit. Other6 rows/every other source byte and builder4evidence unchanged. Exact handoff .xenios/handoffs/2026-10-12-doc87-dc1-two-row-handoff.json for same-builder fresh serial evidence lease. LOCAL_ONLY/SOURCE_AUTHORED_NOT_RUN. No D56 copy/optionalR3C5/receipt finalization/tests/imports/build/SQL/probes/push/live/schedules; original R4 review/pin reconfirmation pending. Actual model/effort NOT_EXPOSED."
 }
