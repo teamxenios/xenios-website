@@ -313,7 +313,7 @@
     },
     "diffCheck": {
       "command": "git diff --check 79414143d4355d5d3d14cd5fe6e5a536dc68d99d 7a2bf7533f5c26d98e0bdb34a862852942b2914e",
-      "result": "Initial no-diagnostic observation at20:36 had no isolated exit. Separate builtin Git check repeated at20:40 with explicit exit $LASTEXITCODE returned0/no diagnostics. This is whitespace diff-check only, not manifest/ownership/security approval."
+      "result": "Initial no-diagnostic observation had no isolated exit. A separate builtin Git check with explicit exit $LASTEXITCODE returned0/no diagnostics; exact invocation timestamp was not recorded. This is whitespace diff-check only, not manifest/ownership/security approval."
     },
     "changes": {
       "migrations": [],
@@ -372,8 +372,10 @@
       "status": "NOT_RUN",
       "existingMechanism": "scripts/evidence/build-candidate-preview.mjs plus scripts/preview-research.mjs",
       "actualGap": "Current passing donor-copy build lacks dist/evidence-provenance.json. Existing validator requires actual npm ci --no-audit --no-fund with exactNode/npm/lock/source provenance. No forged stamp or validator relaxation.",
-      "next": "Use fresh clean same7a2 checkout and genuine existing install/build procedure in coordinator resource window, retaining earlier build/receipts separately.",
-      "limits": "Owned local Supabase fixture only implements nonce/session RPCs and refuses other writes. Suitable for layout/client gating; fallback catalog is not canonical-full-catalog or durable submitted-request/operator/payment proof."
+      "next": "Use fresh clean same7a2 checkout and genuine existing install/build procedure in coordinator resource window, retaining earlier build/receipts separately. Earlier actual conditional-authority record explicitly has newInstallationPermission:false; exact local npm-ci/install-build action referred to existing coordinator for current permitted mechanism, not a duplicate release GO.",
+      "installScope": "Existing builder requires Node20.19.0 and sibling npm10.8.2; genuine npm ci --no-audit --no-fund then npm run build, clean SHA/tree/lock checks and exact dist inventory. Fresh private npm config/cache/temp, no inherited application credentials. Registry downloads and native esbuild postinstalls/optional bufferutil node-gyp-build are real effects, not read-only. Preserve lock unchanged; 411 dependency records lack resolved/integrity, so exact-lock hash is not full tarball-integrity coverage. No install performed.",
+      "captureScope": "Existing Chromium1228 file version149.0.7827.55 available, no browser download required. Default matrix103routes/1133captures is not a small probe; its720CSSpx+DSF2 case is viewport proxy, not true200percent browser zoom, and has no400percent case. Existing wizard route is /research/early-access/order-request, not /health/quick-order.",
+      "limits": "Owned local Supabase fixture only implements nonce/session RPCs and refuses other writes. Suitable for layout/client gating; fallback catalog is not canonical-full-catalog or durable submitted-request/operator/payment proof. Vite/in-memory supplemental harness is UI_PRESENTATION_ONLY, not exact production-build or payment qualification."
     }
   }
 }
