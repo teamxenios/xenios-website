@@ -106,6 +106,8 @@ const quote = value => value === null ? 'null' : "'"+String(value).replaceAll("'
 const j = value => quote(JSON.stringify(value))+'::jsonb';
 const childEnv = Object.fromEntries(['PATH','SystemRoot','WINDIR','TEMP','TMP','USERPROFILE','HOME']
   .filter(key => process.env[key] !== undefined).map(key => [key,process.env[key]]));
+// Refuse missing promisor objects locally; Git children may not lazily fetch.
+const gitChildEnv=Object.freeze({...childEnv,GIT_NO_LAZY_FETCH:'1'});
 const outputLimit = 4*1024*1024;
 const activeChildren=new Set();
 let interrupted=null;
@@ -115,7 +117,7 @@ process.on('SIGINT',onInt);process.on('SIGTERM',onTerm);
 function run(command,args,{input='',timeout=30_000,allowAfterInterrupt=false,captureDiagnostics=false,binaryStdout=false}={}) {
   if(interrupted&&!allowAfterInterrupt) return Promise.reject(new Error('Interrupted before child launch'));
   return new Promise((resolve,reject) => {
-    const child=spawn(command,args,{cwd:ROOT,env:childEnv,windowsHide:true,stdio:['pipe','pipe','pipe']});
+    const child=spawn(command,args,{cwd:ROOT,env:command==='git'?gitChildEnv:childEnv,windowsHide:true,stdio:['pipe','pipe','pipe']});
     activeChildren.add(child);
     const stdout=[],stderr=[]; let bytes=0,stopped=false,timedOut=false;
     const stop=()=>{if(!stopped){stopped=true;child.kill();}};
@@ -153,7 +155,7 @@ function uniqueBlock(text,delimiter) {
 // All actual calls remain below the existing source-acceptance and FINAL gates.
 const DOC87_IDENTITY_MESSAGES=Object.freeze({
   sourceTree:'Intake source tree differs from Git',
-  dependencySourceTree:'Accepted currentness source tree differs from Git',
+  dependencySourceTree:'Dependency header (rebased checkpoint) tree differs from Git',
   dependencyReceiptBlob:'Committed dependency receipt blob differs',
   dependencyReceiptSha256:'Committed dependency receipt raw SHA256 differs',
   dependencyReceiptBytes:'Committed dependency receipt byte length differs',
@@ -185,6 +187,83 @@ function doc87ReceiptIdentityControls(expected,observed){
     doc87AssertIdentity(expected,observed); // The original remains a valid twin.
     process.stdout.write('INTAKE_RECEIPT_IDENTITY_CONTROL '+JSON.stringify({
       id:'R3C3-'+field,result:'OBSERVED_GIT_METADATA_ONLY',sqlExecution:'NONE',
+    })+'\n');
+  }
+}
+
+// Doc94 R4C-2: compare the committed receipt with the dependency header,
+// whose source identity is the rebased checkpoint retained at finalization.
+function doc94AssertCommittedDependencyReceipt(committed,dependency){
+  assert.equal(committed.schemaVersion,'quick-order-currentness-source-receipt-v1');
+  assert.equal(committed.sourceAcceptance?.status,'SOURCE_ACCEPT_WITH_LIMITS',
+    'Committed currentness receipt is not executable acceptance');
+  assert.equal(committed.sourceAcceptance?.reviewCommit,dependency.reviewCommit,
+    'Committed currentness receipt acceptance review differs');
+  assert.match(committed.sourceCommit??'',/^[a-f0-9]{40}$/);
+  assert.match(committed.sourceTree??'',/^[a-f0-9]{40}$/);
+  assert.equal(committed.sourceCommit,dependency.sourceCommit,
+    'Committed currentness receipt source commit differs from dependency header');
+  assert.equal(committed.sourceTree,dependency.sourceTree,
+    'Committed currentness receipt source tree differs from dependency header');
+  assert.equal(committed.definitionSha256,dependency.definitionSha256,
+    'Committed currentness receipt definition differs');
+  assert.equal(committed.currentnessDefinition,dependency.definitionSha256,
+    'Committed currentness receipt currentness definition differs');
+}
+function doc94CommittedReceiptControls(committed,dependency){
+  // Explicit cases are independent of the assertion helper's field enumeration.
+  // Each mutation changes one leaf of the Git-decoded receipt. These controls
+  // discriminate comparisons, not the provenance of the observed Git bytes.
+  const changedHex=value=>(value[0]==='0'?'1':'0')+value.slice(1);
+  const controls=[
+    {id:'sourceCommit',negative:{...committed,sourceCommit:changedHex(committed.sourceCommit)},
+      message:'Committed currentness receipt source commit differs from dependency header'},
+    {id:'sourceTree',negative:{...committed,sourceTree:changedHex(committed.sourceTree)},
+      message:'Committed currentness receipt source tree differs from dependency header'},
+    {id:'definitionSha256',negative:{...committed,definitionSha256:changedHex(committed.definitionSha256)},
+      message:'Committed currentness receipt definition differs'},
+    {id:'currentnessDefinition',negative:{...committed,currentnessDefinition:changedHex(committed.currentnessDefinition)},
+      message:'Committed currentness receipt currentness definition differs'},
+    {id:'reviewCommit',negative:{...committed,sourceAcceptance:{...committed.sourceAcceptance,
+      reviewCommit:changedHex(committed.sourceAcceptance.reviewCommit)}},
+      message:'Committed currentness receipt acceptance review differs'},
+    {id:'status',negative:{...committed,sourceAcceptance:{...committed.sourceAcceptance,status:'PENDING'}},
+      message:'Committed currentness receipt is not executable acceptance'},
+  ];
+  for(const control of controls){
+    doc94AssertCommittedDependencyReceipt(committed,dependency);
+    assert.throws(()=>doc94AssertCommittedDependencyReceipt(control.negative,dependency),error=>
+      error?.code==='ERR_ASSERTION'&&error.message.startsWith(control.message),
+      'One-value committed-receipt negative must reach its intended check: '+control.id);
+    doc94AssertCommittedDependencyReceipt(committed,dependency);
+    process.stdout.write('INTAKE_RECEIPT_HEADER_CONTROL '+JSON.stringify({
+      id:'R4C2-'+control.id,result:'OBSERVED_METADATA_COMPARISON_ONLY',sqlExecution:'NONE',
+    })+'\n');
+  }
+}
+function doc94AssertDescriptorBound(source){
+  assert.doesNotMatch(source,
+    /source_column_descriptor_seal\s+constant\s+(?:pg_catalog\.)?text\s*:=\s*null\s*;/i,
+    'Currentness check still has no accepted descriptor; no disposable child may start');
+}
+function doc94DescriptorGateControls(){
+  // Source-text comparison fixtures only: this dummy non-null literal is never
+  // an accepted descriptor, never installed, and never substituted into source.
+  const literal="'"+'a'.repeat(64)+"'";
+  for(const control of [
+    {id:'unqualified',type:'text'},
+    {id:'qualified',type:'pg_catalog.text'},
+  ]){
+    const prefix='source_column_descriptor_seal constant '+control.type+' := ';
+    const positive=prefix+literal+';',negative=prefix+'null;';
+    doc94AssertDescriptorBound(positive);
+    assert.throws(()=>doc94AssertDescriptorBound(negative),error=>
+      error?.code==='ERR_ASSERTION'&&error.message.startsWith(
+        'Currentness check still has no accepted descriptor; no disposable child may start'),
+      'Descriptor null refusal must discriminate the '+control.id+' spelling');
+    doc94AssertDescriptorBound(positive);
+    process.stdout.write('INTAKE_DESCRIPTOR_GATE_CONTROL '+JSON.stringify({
+      id:'R4C3-descriptor-'+control.id,result:'OBSERVED_SOURCE_TEXT_COMPARISON_ONLY',sqlExecution:'NONE',
     })+'\n');
   }
 }
@@ -262,22 +341,17 @@ doc87AssertIdentity(identityExpected,identityObserved,[
   'dependencyReceiptBlob','dependencyReceiptSha256','dependencyReceiptBytes',
 ]);
 const committedDependencyReceipt=JSON.parse(dependencyReceiptRaw.toString('utf8'));
-assert.equal(committedDependencyReceipt.schemaVersion,'quick-order-currentness-source-receipt-v1');
-assert.equal(committedDependencyReceipt.sourceAcceptance?.status,'SOURCE_ACCEPT_WITH_LIMITS',
-  'Committed currentness receipt is not executable acceptance');
-assert.equal(committedDependencyReceipt.sourceAcceptance?.reviewCommit,dependency.reviewCommit,
-  'Committed currentness receipt acceptance review differs');
-assert.match(committedDependencyReceipt.sourceCommit??'',/^[a-f0-9]{40}$/);
-assert.match(committedDependencyReceipt.sourceTree??'',/^[a-f0-9]{40}$/);
-assert.equal(committedDependencyReceipt.definitionSha256,dependency.definitionSha256,
-  'Committed currentness receipt definition differs');
-assert.equal(committedDependencyReceipt.currentnessDefinition,dependency.definitionSha256,
-  'Committed currentness receipt currentness definition differs');
+doc94AssertCommittedDependencyReceipt(committedDependencyReceipt,dependency);
+doc94CommittedReceiptControls(committedDependencyReceipt,dependency);
 identityExpected.dependencyReceiptSourceTree=committedDependencyReceipt.sourceTree;
 identityObserved.sourceTree=await doc87GitOid(receipt.sourceCommit+'^{tree}');
 identityObserved.dependencySourceTree=await doc87GitOid(dependency.sourceCommit+'^{tree}');
-// The rebased receipt's source checkpoint may differ from the independently
-// accepted currentness source. Validate both trees without conflating them.
+// These checks bind the dependency header (rebased checkpoint) tree and the
+// committed receipt header, which must match. The accepted currentness source
+// identity is carried by the unchanged five pins and definition recompute,
+// not an acceptedCodeSource tree check. Informational fields not enforced here:
+// dependency.receipt.commit/sha256lf aliases, its exact key set, commit-object
+// type and ancestry/order. No additional acceptance is inferred from them.
 identityObserved.dependencyReceiptSourceTree=await doc87GitOid(committedDependencyReceipt.sourceCommit+'^{tree}');
 Object.freeze(identityExpected);Object.freeze(identityObserved);
 doc87AssertIdentity(identityExpected,identityObserved);
@@ -324,11 +398,11 @@ assert.equal(embeddedDefinition.length,1,'Exactly one explicit currentness defin
 assert.equal(embeddedDefinition[0][1],receipt.currentnessDefinition);
 
 const currentnessCandidate=await load(CURRENTNESS+'.sql');
+doc94DescriptorGateControls();
 assert.doesNotMatch(currentnessCandidate,/expected_columns\s*:=\s*null\s*;/i,
   'Implemented-S column descriptor is absent; synthetic bootstrap never supplies its seal');
-for(const suffix of ['.precheck.sql','.postcheck.sql'])assert.doesNotMatch(await load(CURRENTNESS+suffix),
-  /source_column_descriptor_seal\s+constant\s+text\s*:=\s*null\s*;/i,
-  'Currentness check still has no accepted descriptor; no disposable child may start');
+for(const suffix of ['.precheck.sql','.postcheck.sql'])
+  doc94AssertDescriptorBound(await load(CURRENTNESS+suffix));
 assert.equal(sha(uniqueBlock(currentnessCandidate,'$currentness_install$')+
   uniqueBlock(currentnessCandidate,'$currentness_fingerprint$')),receipt.currentnessDefinition,
   'Currentness dependency must bind its exact unchanged candidate bytes');
@@ -1158,11 +1232,17 @@ async function doc83AssertReadback(p,result,envelope,decisionAt){
 }
 // Doc87 R3C-1(b). These controls attribute NOTICEs; they do not repair the
 // canonical CS-2 exposure or prove all type resolution safe. Runtime domains are
-// exactly jsonb/text/uuid/timestamptz in three fresh-backend admin/replay/commit
-// paths. bytea, oid, regclass/regnamespace/regprocedure/regrole, bool/int4/int8,
-// record (a pseudotype), and the install/pre/post/rollback DO paths are NOT runtime
-// shadow-covered here. numeric/boolean/integer keyword spellings are distinct.
-// Canonical ::date and canonical write-target trigger exposure remain carried.
+// exactly jsonb/text/uuid/timestamptz in fresh-backend admin/replay success paths
+// and commit DECLARE/pre-gate attribution. Doc94 COMMIT-POST-GATE-SHADOW is an
+// accepted limit: the shadowed new commit refuses at the currentness descriptor;
+// its no-domain twin must commit successfully, then replay without new effects.
+// bytea, oid, regclass/regnamespace/regprocedure/regrole, bool/int4/int8, record
+// (a pseudotype), the intake's ::pg_catalog.date (intake.sql:811), and the
+// install/pre/post/rollback DO paths are NOT runtime shadow-covered here.
+// Empty-array forms such as array[]::pg_catalog.text[] and '{}'::pg_catalog.uuid[]
+// do not evaluate element-domain checks; non-empty element coverage is distinct.
+// numeric/boolean/integer keyword spellings are distinct. Canonical ::date and
+// canonical write-target trigger exposure remain carried to the canonical owner.
 const doc87ShadowTypes=Object.freeze(['jsonb','text','uuid','timestamptz']);
 const doc87ShadowMarker='DOC87_SHADOW_DOMAIN_CALLED';
 const doc87IntakeFrames=new Set([
@@ -1175,8 +1255,11 @@ const doc87IntakeFrames=new Set([
 // readiness source domain_readiness and its manifest-hash callee (lines208/238:
 // jsonb_agg(...)::text); canonical COA migration quality/allocatable;
 // paid-hold/history/evidence/no-funds/provider-journal/settlement migrations for
-// the pinned nineteen write-target triggers. Unknown or differently schemed
-// frames refuse, including any canonical callee not enumerated below.
+// the pinned nineteen write-target triggers. This exact Set is the authoritative
+// CANONICAL-CS-2 caller list for these controls; unknown names refuse. Schema
+// identity is enforceable only where a PL/pgSQL frame renders a schema. SQL
+// frames render a bare proname, and a visible PL/pgSQL function may also be bare;
+// the public-qualified source call graph is the separate boundary for those.
 const doc87CanonicalFrames=new Set([
   'research_assisted_order_line_json','research_assisted_order_lines_json',
   'research_assisted_order_timeline_json','research_assisted_order_documents_json',
@@ -1208,9 +1291,11 @@ function doc87ContextFrames(context){
     const frame=doc87DiagnosticFrame(line);
     if(frame){frames.push(frame);continue;}
     // PostgreSQL emits the SQL text between function frames in a quoted wrapper.
-    // This bounded grammar accepts only that explicit wrapper, never arbitrary
-    // unparsed lines. Unexpected diagnostic spellings fail closed for inspection.
-    if(/^(?:SQL statement|SQL expression) "/.test(line)){
+    // The supported wrappers are SQL statement, SQL expression and PL/pgSQL
+    // assignment. Unquoted SQL-function and lineless PL/pgSQL frames remain excluded.
+    // A SQL-text line ending in a double quote may terminate this bounded wrapper
+    // early; unexpected following lines fail closed (NOTICE-CONTEXT-FORMAT).
+    if(/^(?:SQL statement|SQL expression|PL\/pgSQL assignment) "/.test(line)){
       let quoted=line;
       while(!quoted.endsWith('"')&&i+1<lines.length)quoted+='\n'+lines[++i].trim();
       assert.ok(quoted.endsWith('"'),'DOC87 malformed SQL context wrapper');
@@ -1282,6 +1367,16 @@ function doc87ShadowAttributionControls(){
     [{type:'uuid',origin:'probe',frame:'doc87_probe'}]);
   assert.deepEqual(doc87AttributeShadowNotices(diagnostic(markerFrame+'\nPL/pgSQL function public.research_domain_readiness(text) line 4 during statement block local variable initialization\n'+outer)),
     [{type:'jsonb',origin:'canonical',frame:'research_domain_readiness'}]);
+  const assignmentWrapper='PL/pgSQL assignment "v_keys := (SELECT\n  \'[]\'::jsonb)"';
+  const assignmentCaller='PL/pgSQL function public.research_domain_readiness(pg_catalog.text) line 4 at assignment';
+  assert.deepEqual(doc87AttributeShadowNotices(diagnostic(markerFrame+'\n'+assignmentWrapper+'\n'+assignmentCaller+'\n'+outer)),
+    [{type:'jsonb',origin:'canonical',frame:'research_domain_readiness'}]);
+  assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\n'+assignmentWrapper+'\n'+outer+'\n'+canonical)),
+    /intake-owned type resolution/);
+  assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\nPL/pgSQL assignment "unterminated\n'+canonical)),
+    /malformed SQL context wrapper|cannot swallow/);
+  assert.deepEqual(doc87AttributeShadowNotices(valid.replace('doc87_mark(text)','doc87_mark(pg_catalog.text)')
+    .replace('admin_detail(uuid)','admin_detail(pg_catalog.uuid)')),doc87AttributeShadowNotices(valid));
   assert.throws(()=>doc87AttributeShadowNotices('NOTICE:  00000: '+doc87ShadowMarker+':jsonb\nLOCATION:  exec_stmt_raise, pl_exec.c:3911\n'),/exactly one captured CONTEXT/);
   assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame)),/identifiable innermost caller/);
   assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\nSQL function "unknown_canonical" statement 1')),/unknown innermost marker caller/);
@@ -1292,7 +1387,11 @@ function doc87ShadowAttributionControls(){
   assert.throws(()=>doc87AttributeShadowNotices(valid.replace(':jsonb\n',':bytea\n')),/malformed marker/);
   assert.throws(()=>doc87AttributeShadowNotices(valid.replace('pg_temp_7.doc87_mark','public.doc87_mark')),/owned temporary function/);
   assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\nPL/pgSQL function public.doc87_probe() line 2 at PERFORM')),/positive probe schema differs/);
-  assert.throws(()=>doc87AttributeShadowNotices(valid.replace('"research_assisted_order_documents_json"','"other.research_assisted_order_documents_json"')),/canonical frame schema differs/);
+  // SQL frames do not expose a schema. Exercise the enforceable non-public
+  // PL/pgSQL rendering rather than inventing a quoted-schema SQL frame.
+  assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+
+    '\nPL/pgSQL function other.research_domain_readiness(pg_catalog.text) line 4 at assignment')),
+    /canonical frame schema differs/);
   for(const name of doc87IntakeFrames){
     const inner=name==='inline_code_block'?'PL/pgSQL function inline_code_block line 3 at PERFORM':
       'PL/pgSQL function '+name+'(jsonb) line 3 at assignment';
@@ -1325,6 +1424,37 @@ async function doc83ShadowControls(g,savedPayload,savedResult){
     else if(kind==='replay')statement='select public.research_health_quick_order_replay('+quote(savedPayload.actorScope)+'::pg_catalog.text,'+
       quote(sha('xenios:health:quick-order:key:v1|'+savedPayload.actorScope+'|'+savedPayload.submission.input.idempotencyKey))+'::pg_catalog.text)::pg_catalog.text;';
     else statement='select public.research_health_quick_order_commit('+quote(JSON.stringify(p))+'::pg_catalog.jsonb)::pg_catalog.text;';
+    if(kind==='commit'){
+      // Doc94 R4C-1: no accepted currentness SQL, descriptor or fingerprint is
+      // patched to make a shadowed commit pass. A bound descriptor must detect
+      // format_type visibility drift before any write. TC-21 still gates startup.
+      let failure;
+      try {await startupSql(diagnostics+setup+'set role service_role;'+statement,{captureDiagnostics:true});}
+      catch(error){failure=error;}
+      sqlFailure(failure,'55000','Quick Order source-column descriptor drift');
+      assert.match(failure.stderr,/^(?:psql:[^\r\n]*?:[0-9]+:\s*)?ERROR:\s+55000: Quick Order source-column descriptor drift\r?$/m,
+        'Doc94 requires the exact descriptor-drift error, not a different 55000 refusal');
+      const attribution=doc87AttributeShadowNotices(failure.stderr);
+      for(const type of doc87ShadowTypes)assert.ok(attribution.some(event=>event.origin==='probe'&&event.type===type),
+        'DOC87 missing positive domain/NOTICE/CONTEXT probe: '+type);
+      const canonical=attribution.filter(event=>event.origin==='canonical');
+      assert.deepEqual(await effectCounts(),before,'Descriptor-drift refusal cannot leave canonical effects');
+
+      const twin=await startupSql(diagnostics+'set role service_role;'+statement,{captureDiagnostics:true});
+      assert.ok(!twin.stderr.includes(doc87ShadowMarker));assert.deepEqual(doc87AttributeShadowNotices(twin.stderr),[]);
+      const twinOutput=rows(twin.stdout).at(-1);assert.ok(twinOutput);
+      await assertCommitted(p,{result:twinOutput});
+      const committedCounts=await effectCounts();countDelta(before,committedCounts,[1,1,1,1,1]);
+      const replay=await startupSql(diagnostics+'set role service_role;'+statement,{captureDiagnostics:true});
+      assert.ok(!replay.stderr.includes(doc87ShadowMarker));assert.deepEqual(doc87AttributeShadowNotices(replay.stderr),[]);
+      const replayOutput=rows(replay.stdout).at(-1);assert.ok(replayOutput);
+      assert.deepEqual(replayOutput,{...twinOutput,replayed:true});
+      await assertCommitted(p,{replayed:true,result:replayOutput});
+      assert.deepEqual(await effectCounts(),committedCounts,'No-domain replay cannot repeat any effect');
+      txPass('TC3-shadow-commit','Four typed probes attributed from exact descriptor-drift failure stderr; no intake-owned or unknown innermost caller; unchanged effects. '+
+        'No-domain twin commits five effects then replays without new effects. COMMIT-POST-GATE-SHADOW accepted limit; canonical attribution='+JSON.stringify(canonical));
+      continue;
+    }
     const observed=await startupSql(diagnostics+setup+'set role service_role;'+statement,{captureDiagnostics:true});
     const attribution=doc87AttributeShadowNotices(observed.stderr);
     for(const type of doc87ShadowTypes)assert.ok(attribution.some(event=>event.origin==='probe'&&event.type===type),
@@ -1333,7 +1463,6 @@ async function doc83ShadowControls(g,savedPayload,savedResult){
     const output=rows(observed.stdout).at(-1);assert.ok(output);
     if(kind==='admin'){assert.equal(output.requestId,savedResult.requestId);assert.deepEqual(await effectCounts(),before);}
     else if(kind==='replay'){assert.equal(output.publicReceipt.requestId,savedResult.requestId);assert.deepEqual(await effectCounts(),before);}
-    else {await assertCommitted(p,{result:output});countDelta(before,await effectCounts(),[1,1,1,1,1]);}
     const twin=await startupSql(diagnostics+'set role service_role;'+statement,{captureDiagnostics:true});
     assert.ok(!twin.stderr.includes(doc87ShadowMarker));assert.deepEqual(doc87AttributeShadowNotices(twin.stderr),[]);
     const twinOutput=rows(twin.stdout).at(-1);
@@ -1343,7 +1472,7 @@ async function doc83ShadowControls(g,savedPayload,savedResult){
       const retained=copy(output),twinRetained=copy(twinOutput);
       delete retained.enrichment.observation.observedAt;delete twinRetained.enrichment.observation.observedAt;
       assert.deepEqual(twinRetained,retained);
-    }else assert.deepEqual(twinOutput,kind==='commit'?{...output,replayed:true}:output);
+    }else assert.deepEqual(twinOutput,output);
     txPass('TC3-shadow-'+kind,'Four named domain probes with captured NOTICE/CONTEXT; no intake-owned innermost caller; canonical attribution='+
       JSON.stringify(canonical)+'; exact no-domain twin. Coverage limits are declared beside doc87ShadowTypes; canonical CS-2 exposure remains carried.');
   }
