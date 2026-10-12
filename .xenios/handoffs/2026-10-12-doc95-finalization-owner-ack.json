@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-DOC95-RECEIPT-FINALIZATION-20261012",
+  "at": "2026-10-12T17:36:25.162Z",
+  "actualAcknowledgment": "Same builder verified clean stopped r5 handoff, Doc95 actual acceptance and exact envelope; claims fresh exclusive three-record lease. Frozen source/shared binding/102pins unchanged. Three receipt steps committed serially; map narrative separate. No execution, manifest amendment or publication authority.",
+  "owner": {
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "session": "codex-health-quick-order-20261005",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005"
+  },
+  "base": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+  "assignment": {
+    "commit": "8cc1fc6ddd894d44c6618cabbad03f5ceba9f0f2",
+    "path": "docs/coordination/launch-coordination-20261005/DOC95_EXISTING_BUILDER_RECORDS_FINALIZATION_20261012.json",
+    "gitBlob": "fd6a28c386c50a3314944689dea52598e5fce672",
+    "rawSha256": "e07573903a0cf4142ec01091287517df5aeeaa3ddd6f59884571c5c80dff2872",
+    "sha256lf": "e07573903a0cf4142ec01091287517df5aeeaa3ddd6f59884571c5c80dff2872",
+    "bytes": 7154,
+    "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+  },
+  "lease": {
+    "id": "26d2748c-4aff-4766-8ece-10137f21d234",
+    "task": "QUICK-ORDER-DOC95-RECEIPT-FINALIZATION-20261012",
+    "revision": 1,
+    "session": "codex-health-quick-order-20261005",
+    "state": "active",
+    "paths": [
+      "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+    ],
+    "claimedAt": "2026-10-12T17:36:25.162Z",
+    "heartbeatAt": "2026-10-12T17:36:25.162Z",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "base": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+    "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+    "ack": ".xenios/handoffs/2026-10-12-doc95-finalization-owner-ack.json",
+    "priorLeaseNotReclaimed": "dbb9252a-fac7-4559-a290-e4e6b71bfc52",
+    "scope": "THREE_RECORDS_ONLY_DOC95_EXACT_FINALIZATION_AND_MAP_PRECISION"
+  },
+  "controllingReview": {
+    "document": 95,
+    "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+    "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+    "records": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+    "handoff": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "disposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS",
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "pins": {
+      "currentness": 102,
+      "intake": 102,
+      "mismatches": 0
+    },
+    "reportedModel": "claude-fable-5-1",
+    "actualEffort": "NOT_EXPOSED",
+    "report": {
+      "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "path": "docs/review/xenios-health-launch-review-20260930/95_COMPOSITION_R5_25741f0_ACCEPTANCE_2026-10-12.md",
+      "copy": "CLAUDE_DOC95_PUBLIC_VERDICT_D4E6A50D_20261012.md",
+      "gitBlob": "e4c257588be1499015671729786aee47eee4e311",
+      "rawSha256": "b9aefe3554eee57d3be69d67e3bf576a76002c4a6ed6aa7efa90028bde2c61d5",
+      "bytes": 8918
+    },
+    "findings": {
+      "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/95_composition_r5_narrow_check.json",
+      "copy": "CLAUDE_DOC95_PUBLIC_FINDINGS_D4E6A50D_20261012.json",
+      "gitBlob": "0a65e92709654c3242c2c8dfeb444da24637c408",
+      "rawSha256": "73eb3878278106ab52acf366a185aec523f7bc79f837402be53600aac19d5a3a",
+      "bytes": 143065
+    },
+    "execution": "NOT_RUN",
+    "reviewTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 5,
+    "reviewComplete": true,
+    "finalization": "GO_EXACT_DOC94_DOC95_RECORDS_ENVELOPE_ONLY"
+  },
+  "tc25": {
+    "at": "2026-10-12T17:33:31.732Z",
+    "reviewCommit": "582c763fa1158894b24fb62465c132da32c2f739",
+    "report": {
+      "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+      "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+      "copy": "CLAUDE_TC25_PUBLIC_RECONCILIATION_582C763F_20261012.md",
+      "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+      "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+      "bytes": 48064
+    },
+    "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "path": "client/src/App.tsx",
+    "gitBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+    "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+    "bytes": 18079,
+    "humanDisposition": "MATCHES_EXACT_R5_CANDIDATE_ALREADY_GRANTED",
+    "actualReceipt": "TC25_EXACT_DISABLED_APP_ACTUAL_HUMAN_DISPOSITION_20261012.json",
+    "remaining": "ONE_EXACT_FOUNDER_AUTHORIZED_MANIFEST_HASH_AMENDMENT_COVERING_HUB_RESTORE_AND_QO_DIFF",
+    "manifest": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "noManifestPermissionInAppDisposition": true,
+    "otherProtectedPaths": "server/index.ts and server/research/health/quick-order/root-composition.test.ts unchanged on this line; no additional disposition needed",
+    "execution": "NOT_RUN"
+  },
+  "archive": {
+    "commit": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+    "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+    "gitBlob": "d01de5e2651ed143b401a5c909d2eeb48f6a876d",
+    "rawSha256": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+    "sha256lf": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+    "bytes": 1538019,
+    "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+  },
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}
