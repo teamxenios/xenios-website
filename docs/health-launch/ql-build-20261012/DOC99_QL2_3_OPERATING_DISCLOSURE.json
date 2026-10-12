@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "finding": "QL2-3",
+  "appliesTo": "Existing assisted-order wizard; Doc99 successor 3a03ad650d16442b622796fd614d6dcf47384ea2 and any separately identified narrow correction",
+  "attemptLifetime": "The idempotency key and frozen acceptedAt belong to this browser tab's unexpired Early Access session. Draft storage can preserve them across a refresh or retry within that session. They are not a cross-session, cross-tab, cross-device or account recovery mechanism.",
+  "privacyBoundary": "Session expiry, sign-out and re-unlock retain the existing protected-path storage sweep. Closing a tab ends its sessionStorage lifetime. A rebuilt request can therefore receive a new key. No privacy or authentication exception is introduced to preserve the draft.",
+  "uncertainOutcome": "A pending or interrupted POST may have persisted even when the browser did not receive a receipt. A later validation, drift or authorization refusal does not establish that an earlier uncertain attempt was never saved. Do not advise creating a new request merely to obtain a response.",
+  "staffDuplicateCheck": {
+    "owner": "Existing authorized staffed ordering operator; Samuel Boadu is the recorded operational owner",
+    "trigger": "Customer reports an uncertain submission, or a request appears to repeat after a session/tab change",
+    "compare": [
+      "Same contact, using authorized staff access to existing saved requests",
+      "Same product and variant lines and quantities",
+      "Same day and reported attempt time, with timezone recorded in the operational case where appropriate"
+    ],
+    "action": "Check for the earlier persisted request before issuing a second invoice or advancing duplicate fulfillment. Resolve uncertain matches through the existing support/order workflow. This is a staff comparison, not a new automated merge or deletion rule.",
+    "privacy": "Do not copy customer contact details, raw payment evidence, private credentials or case contents into repository evidence. This record contains procedures only."
+  },
+  "serverLimit": "This client correction does not fix the server's drift-before-replay ordering. A changed catalog or agreement can still produce a refusal before the server returns a stored replay. Stable client identity is necessary but is not proof of successful replay under changed server state.",
+  "paymentBoundary": "A saved request, reference or customer payment report is not verification of received funds. The QL-12 payment hold stays in force. Invoicing, authorized independent payment verification and fulfillment eligibility remain separate controls.",
+  "releaseEvidence": "This disclosure satisfies an operating-record deliverable only. It is not proof that the successor passed tests, that a request was durably saved exactly once, that an operator read it, or that anything was deployed."
+}
