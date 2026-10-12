@@ -8,12 +8,12 @@
       "branch": "codex/tc25-app-manifest-20261012",
       "state": "active",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-12T20:36:27.781Z",
-      "currentResult": "QL7a2 exact static routePASS448registrations/439sites,42.650s,exit0/no timeout,source unchanged. Earlier build/protection/typecheck evidence retained, focused runs separate. Doc101support acceptedwithnamedlimits;99/100pending. No fullsuite/browser/release or operational payment claimed.",
-      "currentTask": "QL-STANDALONE-BUILD-EVIDENCE-20261012",
-      "currentLease": "e5449218-2ac0-4341-82cf-534a3e8ae8cd",
-      "currentScope": "Existing ownQL evidence/handoff leasee544, latest directuser21ccc candidate qualification/release preparation and separate public-access delegation. No source change or implicit SQL/hostedwrite; existing coordinator resource and ownership boundaries.",
-      "note": "QL7a2 route gate PASS exit0 448 registrations 439 sites,42.650s; source unchanged. Slot released. Doc101 accepted,99/100 pending; fullsuite and valid preview provenance next, no hosted write."
+      "heartbeatAt": "2026-10-12T21:01:38.312Z",
+      "currentResult": "Supporta4 exact protectionCLI executedFAILexit1:26matched, twohistorical baselines TopRibbon/package, sourceunchanged.13focusedPASS/sourceaccepted remainseparate. Ownbuild/typecheck/browser NOTRUN. QLroutePASS448/439; genuinepreviewbuildbindingpreparedNOTRUN. No hostedwrite.",
+      "currentTask": "INDEPENDENT-INCREMENTS-RELEASE-QUALIFICATION-20261012",
+      "currentLease": "19d2ed9a-ba59-413a-9dc3-f09e272c9bca",
+      "currentScope": "Records-only independentQL+support qualification under latestdirectuser. Frozenruntime/tests preserved. Actualhumanbuild scope covers necessary locked project-local npm-ci, not global/Docker/SQL. One-heavy coordinator windows; no protectionmanifest edit granted by this lease.",
+      "note": "Supporta4 protectionCLI FAIL twohistoricalhashes;26matched,sourceunchanged. Separate support/QLprojectnpmci buildbindings prepared,noheavy run. Originalsupportacceptance/13PASS unchanged."
     },
     {
       "id": "claude-opus5-main",

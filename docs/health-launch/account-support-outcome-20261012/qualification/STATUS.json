@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12T21:00:19Z",
+  "candidate": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+  "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
+  "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+  "sourceAcceptance": "be35aa7e0907722fe8363c058f31a07bff617be5 Doc101 ACCEPTED_WITH_NAMED_LIMITS",
+  "focusedEvidence": "Own13/13 receipt atfa7de0a unchanged, not rerun",
+  "sourceChanged": false,
+  "protection": {
+    "status": "FAIL",
+    "exit": 1,
+    "timeout": false,
+    "attempts": 1,
+    "start": "2026-10-12T21:00:11.965Z",
+    "end": "2026-10-12T21:00:12.652Z",
+    "matched": 26,
+    "mismatches": [
+      "client/src/components/TopRibbon.tsx",
+      "package.json"
+    ],
+    "changedPaths": {
+      "allowed": [
+        "client/src/research/account-portal/views/SupportView.tsx"
+      ],
+      "test": [
+        "client/src/research/account-portal/views/support-documents.test.tsx"
+      ]
+    },
+    "unexpectedChangedPaths": 0,
+    "sourceComparison": "Both mismatched protected files are unchanged794..a4. Candidate own historical manifest still expects earlier bytes. Failure remainsFAIL, not waived or relabeled by QL result.",
+    "command": [
+      "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+      "scripts/acceptance/verify-core-site-protection.mjs",
+      "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+      "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616"
+    ],
+    "receipt": "protection-receipt.json",
+    "log": "protection-run.log",
+    "logSha256": "3de363367e9d31b2689f1e68debb7abd10c8b3dea4793002f0a0dd145b261364",
+    "supervisor": "run-protection.cjs",
+    "supervisorSha256": "c053d67276819d3536f41341d6a3ee494a36912991552e66693b2ebaf50edbd1",
+    "next": "Exact historical two-entry provenance/custody applicability determination; no baseline or source changed, no exemption. Separate support protection result required after any legitimate control disposition."
+  },
+  "build": {
+    "status": "NOT_RUN",
+    "binding": "PREVIEW_BUILD_EXECUTION_BINDING.json",
+    "reason": "Prepared same-source fresh local npm-ci+build, pending fresh coordinator heavy window"
+  },
+  "typecheck": {
+    "status": "NOT_RUN",
+    "next": "Use actual support install after build; own pinned static compiler run"
+  },
+  "browser": {
+    "status": "NOT_RUN",
+    "required": [
+      "Accepted uncertainty message on uncertain synthetic submission",
+      "Definitive refusals keep correct recorded behavior",
+      "Case list remains mount-time snapshot; AS1 stays nonblocking namedlimit"
+    ],
+    "noLiveSubmission": true
+  },
+  "release": {
+    "status": "NOT_QUALIFIED_NOT_DEPLOYED",
+    "remaining": "Protection disposition/executed companion, build/typecheck/fullsuite asapplicable, browser, existingrelease controls/currentproduction/no-overwrite/rollback/servedproof."
+  },
+  "findings": "AS1 open nonblocking; AS2/AS3/AS4/ASV1/ASV2/ASV3/ASV5 open namedlimits; ASV4 citationcorrectionrecorded. No runtime followup included.",
+  "otherCandidates": "NoQL tests or source accepted here; Docs99/100 untouched.",
+  "boundaries": {
+    "server": false,
+    "SQL": false,
+    "installation": false,
+    "hostedMutation": false,
+    "email": false,
+    "payment": false
+  }
+}

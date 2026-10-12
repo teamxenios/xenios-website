@@ -1,0 +1,28 @@
+{
+  "action": "SUPPORT_EXACT_PROTECTION_CLI_20261012",
+  "candidate": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+  "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
+  "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+  "command": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "scripts/acceptance/verify-core-site-protection.mjs",
+    "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website",
+  "node": "v20.19.0",
+  "npm": "NOT_INVOKED",
+  "startedUtc": "2026-10-12T21:00:11.965Z",
+  "timeoutMs": 60000,
+  "attempts": 1,
+  "retries": 0,
+  "scope": "Existing builtins-only protection CLI; reads own candidate manifest/protected files and Git diff, no app imports/install/network/DB/server.",
+  "exitCode": 1,
+  "timedOut": false,
+  "signal": null,
+  "errorCode": null,
+  "endedUtc": "2026-10-12T21:00:12.652Z",
+  "postHead": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+  "postStatus": "",
+  "logSha256": "3de363367e9d31b2689f1e68debb7abd10c8b3dea4793002f0a0dd145b261364"
+}

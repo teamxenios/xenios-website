@@ -1,0 +1,27 @@
+core-site protection gate
+  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8
+  comparing         : 79414143d4355d5d3d14cd5fe6e5a536dc68d99d..a4a44bf6436f7e4ff21d5d5ebcda35b478c02616
+  changed files     : 2
+  allowed (research/care) : 1
+  infrastructure          : 0
+  protected file hashes   : 26 verified
+
+TEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.
+Review must still confirm each one was STRENGTHENED, not weakened. Lowering
+an existing safety or regression gate to make a build pass is forbidden):
+  - client/src/research/account-portal/views/support-documents.test.tsx
+
+FAIL: protected file content changed (hash mismatch against the baseline).
+  - client/src/components/TopRibbon.tsx
+      expected sha256:ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666
+      actual   sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad
+  - package.json
+      expected sha256:c01129601999b1e6b2f02790af0245350182e08fcf739fe40174e4b004c9e081
+      actual   sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748
+
+RESULT: FAIL
+
+What to do: see docs/phase2/CORE_SITE_PROTECTION.md. Either move the change
+into client/src/research, client/src/care, server/research, server/care, or
+shared/research, or request an exclusive seam lease if the change genuinely
+needs one of the permitted seam files. Do not widen the manifest to pass.
