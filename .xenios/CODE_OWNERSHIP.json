@@ -4258,14 +4258,14 @@
       "task": "QUICK-ORDER-DOC95-RECEIPT-FINALIZATION-20261012",
       "revision": 1,
       "session": "codex-health-quick-order-20261005",
-      "state": "active",
+      "state": "handoff",
       "paths": [
         "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
         "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
       ],
       "claimedAt": "2026-10-12T17:36:25.162Z",
-      "heartbeatAt": "2026-10-12T17:36:25.162Z",
+      "heartbeatAt": "2026-10-12T17:45:24.811Z",
       "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
       "branch": "codex/accepted-source-integration-20261005",
       "base": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
@@ -4273,7 +4273,13 @@
       "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
       "ack": ".xenios/handoffs/2026-10-12-doc95-finalization-owner-ack.json",
       "priorLeaseNotReclaimed": "dbb9252a-fac7-4559-a290-e4e6b71bfc52",
-      "scope": "THREE_RECORDS_ONLY_DOC95_EXACT_FINALIZATION_AND_MAP_PRECISION"
+      "scope": "THREE_RECORDS_ONLY_DOC95_EXACT_FINALIZATION_AND_MAP_PRECISION",
+      "completedAt": "2026-10-12T17:45:24.811Z",
+      "handoff": ".xenios/handoffs/2026-10-12-doc95-receipt-finalization-handoff.json",
+      "records": "77c70bb275dd961a6291fe57d3717342a8374ccc",
+      "sourceWriterStopped": true,
+      "gitWriterStopped": true,
+      "stopEffectiveAt": "THIS_HANDOFF_COMMIT_COMPLETION"
     }
   ],
   "rules": [

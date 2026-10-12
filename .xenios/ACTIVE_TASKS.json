@@ -3706,7 +3706,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "claimed",
+      "state": "handoff",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -3733,24 +3733,24 @@
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
       ],
       "dependsOn": [],
-      "scopeNote": "Existing exact conditional17+4 grant narrowed by the Doc83 assignment to nine source and four evidence paths under lease ddc54431-bcfb-46c5-beae-a48a7bc44f02. Builder stage complete and handed off; frozen currentness/supervisor source unchanged; no additional authority.",
+      "scopeNote": "Doc95 exact three-record evidence lease26d2748c complete; source25741f0 accepted with named limits, receipts finalized in three serial commits and map precision recorded. No source changes or new execution/publication authority.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
-      "sourceSha": "38915cf4318594607098717389113869e3eff0da",
-      "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+      "sourceSha": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+      "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
       "baseAcceptance": {
         "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "review": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
         "disposition": "SOURCE ACCEPT; not release-qualified"
       },
-      "handoff": ".xenios/handoffs/2026-10-12-doc95-finalization-owner-ack.json",
+      "handoff": ".xenios/handoffs/2026-10-12-doc95-receipt-finalization-handoff.json",
       "blockedOn": [
         "Same originalreviewer exactrevision4 bounded disposition and every-pinreconfirmation.",
         "Permitted source-receipt finalization in stated order only after actual review prerequisites.",
         "Separate implemented-S descriptor/census and real inputs/connection/recipient/checkout readiness.",
         "Separate protected dispositions, fresh exact-target execution authority, installation/deployment/activation authority."
       ],
-      "heartbeatAt": "2026-10-12T17:36:25.162Z",
-      "note": "Doc95 accepted composition; exact three-step receipt finalization and map precision only under fresh3record lease. Frozen source, shared binding and pins unchanged. LOCAL_ONLY/NOT_RUN.",
+      "heartbeatAt": "2026-10-12T17:45:24.811Z",
+      "note": "Doc95 source acceptance recorded; exact3serial receipt steps and map precision complete. Same original reviewer spot-check only; frozen source/shared binding/102pins unchanged. Writer stops at handoff commit. LOCAL_ONLY/NOT_RUN; no execution reservation.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
         "status": "REFUSED_RELEASED",
@@ -4753,7 +4753,7 @@
           "records": "0d4309c0159db7bee96e3989e882528efec60de3"
         }
       },
-      "currentSourceAcceptance": "PENDING_ORIGINAL_REVISION4_DELTA",
+      "currentSourceAcceptance": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
       "doc71FixtureContinuation": {
         "coordinatorCheckpoint": "238943cb3041c559252c99129afe112ddb065180",
         "predecessorSource": "357890561160d59eb649505c6c46e9e5b65a3f08",
@@ -5491,7 +5491,8 @@
         "handoff": ".xenios/handoffs/2026-10-12-doc94-r5-verifier-evidence-handoff.json",
         "sourceWriterStopped": true,
         "gitWriterStopped": true,
-        "next": "Existing coordinator registers this exact successor on the SAME original composition-review task revision5. Actual original verifier/records delta acceptance and every-pin reconfirmation precede the exact Doc94 section3 finalization sequence."
+        "next": "Existing coordinator registers this exact successor on the SAME original composition-review task revision5. Actual original verifier/records delta acceptance and every-pin reconfirmation precede the exact Doc94 section3 finalization sequence.",
+        "historicalMeaning": "Prior source/build phase retained. Current source acceptance and receipt closeout are in currentDoc95Stage/currentDoc95Checkpoint."
       },
       "doc83Review": {
         "review": "16d2731c928cdd40c810df764b14b68f0d995eb9",
@@ -5795,7 +5796,7 @@
       },
       "currentDoc95Stage": {
         "task": "QUICK-ORDER-DOC95-RECEIPT-FINALIZATION-20261012",
-        "state": "ACTUAL_CUSTODY_ACK_FRESH_THREE_RECORD_LEASE_ACTIVE",
+        "state": "DOC95_THREE_RECEIPTS_AND_MAP_COMPLETE_WRITER_STOPPED",
         "lease": "26d2748c-4aff-4766-8ece-10137f21d234",
         "base": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
         "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
@@ -5807,7 +5808,29 @@
         ],
         "ack": ".xenios/handoffs/2026-10-12-doc95-finalization-owner-ack.json",
         "execution": "NOT_RUN",
+        "publication": "LOCAL_ONLY",
+        "records": "77c70bb275dd961a6291fe57d3717342a8374ccc",
+        "recordsTree": "e8c200108623f9b9ef1f16e2d405e4bf0b68b9df",
+        "completedAt": "2026-10-12T17:45:24.811Z",
+        "handoff": ".xenios/handoffs/2026-10-12-doc95-receipt-finalization-handoff.json",
+        "sourceWriterStopped": true,
+        "gitWriterStopped": true,
+        "next": "Existing coordinator collects this exact records packet and registers only the three diffs for the original reviewer spot-check. Composition review is complete. Separate S3 descriptor/census, operational bindings, TC25 manifest approval and fresh execution prerequisites remain."
+      },
+      "currentDoc95Checkpoint": {
+        "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+        "tree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+        "records": "77c70bb275dd961a6291fe57d3717342a8374ccc",
+        "recordsTree": "e8c200108623f9b9ef1f16e2d405e4bf0b68b9df",
+        "handoff": ".xenios/handoffs/2026-10-12-doc95-receipt-finalization-handoff.json",
+        "sourceDisposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
+        "execution": "NOT_RUN",
         "publication": "LOCAL_ONLY"
+      },
+      "priorTopLevelSourceStatusBeforeDoc95": {
+        "sourceSha": "38915cf4318594607098717389113869e3eff0da",
+        "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+        "currentSourceAcceptance": "PENDING_ORIGINAL_REVISION4_DELTA"
       }
     }
   ]

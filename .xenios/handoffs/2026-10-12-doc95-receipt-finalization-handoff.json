@@ -1,0 +1,534 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-DOC95-RECEIPT-FINALIZATION-20261012",
+  "finalizationAssignmentRevision": 1,
+  "mapRevision": 7,
+  "builderSourceRevision": 5,
+  "compositionReviewRevision": 5,
+  "at": "2026-10-12T17:45:24.811Z",
+  "owner": {
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "session": "codex-health-quick-order-20261005",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005"
+  },
+  "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+  "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+  "records": "77c70bb275dd961a6291fe57d3717342a8374ccc",
+  "recordsTree": "e8c200108623f9b9ef1f16e2d405e4bf0b68b9df",
+  "sourceStatus": "SOURCE_ACCEPT_WITH_NAMED_LIMITS_DOC95_NOT_RUN",
+  "controllingReview": {
+    "document": 95,
+    "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+    "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+    "records": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+    "handoff": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "disposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS",
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "pins": {
+      "currentness": 102,
+      "intake": 102,
+      "mismatches": 0
+    },
+    "reportedModel": "claude-fable-5-1",
+    "actualEffort": "NOT_EXPOSED",
+    "report": {
+      "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "path": "docs/review/xenios-health-launch-review-20260930/95_COMPOSITION_R5_25741f0_ACCEPTANCE_2026-10-12.md",
+      "copy": "CLAUDE_DOC95_PUBLIC_VERDICT_D4E6A50D_20261012.md",
+      "gitBlob": "e4c257588be1499015671729786aee47eee4e311",
+      "rawSha256": "b9aefe3554eee57d3be69d67e3bf576a76002c4a6ed6aa7efa90028bde2c61d5",
+      "bytes": 8918
+    },
+    "findings": {
+      "commit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/95_composition_r5_narrow_check.json",
+      "copy": "CLAUDE_DOC95_PUBLIC_FINDINGS_D4E6A50D_20261012.json",
+      "gitBlob": "0a65e92709654c3242c2c8dfeb444da24637c408",
+      "rawSha256": "73eb3878278106ab52acf366a185aec523f7bc79f837402be53600aac19d5a3a",
+      "bytes": 143065
+    },
+    "execution": "NOT_RUN",
+    "reviewTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 5,
+    "reviewComplete": true,
+    "finalization": "GO_EXACT_DOC94_DOC95_RECORDS_ENVELOPE_ONLY"
+  },
+  "assignment": {
+    "commit": "8cc1fc6ddd894d44c6618cabbad03f5ceba9f0f2",
+    "path": "docs/coordination/launch-coordination-20261005/DOC95_EXISTING_BUILDER_RECORDS_FINALIZATION_20261012.json",
+    "gitBlob": "fd6a28c386c50a3314944689dea52598e5fce672",
+    "rawSha256": "e07573903a0cf4142ec01091287517df5aeeaa3ddd6f59884571c5c80dff2872",
+    "sha256lf": "e07573903a0cf4142ec01091287517df5aeeaa3ddd6f59884571c5c80dff2872",
+    "bytes": 7154,
+    "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+  },
+  "lease": {
+    "id": "26d2748c-4aff-4766-8ece-10137f21d234",
+    "task": "QUICK-ORDER-DOC95-RECEIPT-FINALIZATION-20261012",
+    "revision": 1,
+    "session": "codex-health-quick-order-20261005",
+    "state": "handoff",
+    "paths": [
+      "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+    ],
+    "claimedAt": "2026-10-12T17:36:25.162Z",
+    "heartbeatAt": "2026-10-12T17:36:25.162Z",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "base": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+    "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+    "ack": ".xenios/handoffs/2026-10-12-doc95-finalization-owner-ack.json",
+    "priorLeaseNotReclaimed": "dbb9252a-fac7-4559-a290-e4e6b71bfc52",
+    "scope": "THREE_RECORDS_ONLY_DOC95_EXACT_FINALIZATION_AND_MAP_PRECISION",
+    "sourceWriterStopped": true,
+    "gitWriterStopped": true,
+    "stopEffectiveAt": "THIS_HANDOFF_COMMIT_COMPLETION"
+  },
+  "receiptCandidate": {
+    "commit": "54ffba10459efe0e191428b86a2c913e56c5f829",
+    "tree": "45531814fe0c8a40e18f14ddf200b6626878aad0"
+  },
+  "sharedBinding": {
+    "commit": "54ffba10459efe0e191428b86a2c913e56c5f829",
+    "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+    "gitBlob": "25c996226bcbcdbaa358b000c66883ad6ea8da0e",
+    "rawSha256": "720254715f92bf5e28770f5a55d77c7a53d26de9ddc51b28e2a16797f685f009",
+    "sha256lf": "720254715f92bf5e28770f5a55d77c7a53d26de9ddc51b28e2a16797f685f009",
+    "bytes": 176261,
+    "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+  },
+  "finalReceipts": {
+    "currentness": {
+      "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "8c058c4c459186e336e3aaff4f13c698ccbf4423",
+      "rawSha256": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+      "sha256lf": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+      "bytes": 186264,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    "intake": {
+      "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "6021c556511e6e41daa10625be26ca660e2a1372",
+      "rawSha256": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+      "sha256lf": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+      "bytes": 196881,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    }
+  },
+  "correctionMap": {
+    "commit": "77c70bb275dd961a6291fe57d3717342a8374ccc",
+    "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+    "gitBlob": "ab7e0668a34b6dd14438a5c7751e12cc69c400ee",
+    "rawSha256": "d687c7a533cca2b17d00db9fd66d97f14e6c57774d130dbd2535f62c5d256eda",
+    "sha256lf": "d687c7a533cca2b17d00db9fd66d97f14e6c57774d130dbd2535f62c5d256eda",
+    "bytes": 1584533,
+    "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+  },
+  "threeSerialReceiptDiffs": [
+    {
+      "order": 1,
+      "phase": "currentness",
+      "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+      "tree": "540adc85492ecec16e790907ac31360706f75cae",
+      "before": {
+        "commit": "f381fd767f3f96ef1456f9b8a78a72f7cc5720a8",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "gitBlob": "9178947cd345fb503ed356d9f45c8402e2c51899",
+        "rawSha256": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
+        "sha256lf": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
+        "bytes": 183668,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      "after": {
+        "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "gitBlob": "8c058c4c459186e336e3aaff4f13c698ccbf4423",
+        "rawSha256": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+        "sha256lf": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+        "bytes": 186264,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      "exactChangedFields": [
+        "disclosures.doc95Finalization",
+        "sourceAcceptance.reviewCommit",
+        "sourceAcceptance.status"
+      ],
+      "cap": 262144,
+      "headroom": 75880,
+      "pinsChanged": 0,
+      "diff": {
+        "command": [
+          "git",
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--binary",
+          "--full-index",
+          "f381fd767f3f96ef1456f9b8a78a72f7cc5720a8",
+          "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+          "--",
+          "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json"
+        ],
+        "rawSha256": "f48a9d9fd086104ca8ba1d198d3b4221ed2a8db96bfc37abc5916dccddc50a07",
+        "bytes": 3607,
+        "patch": "diff --git a/docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json b/docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json\nindex 9178947cd345fb503ed356d9f45c8402e2c51899..8c058c4c459186e336e3aaff4f13c698ccbf4423 100644\n--- a/docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json\n+++ b/docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json\n@@ -3,8 +3,8 @@\n   \"sourceCommit\": \"54ffba10459efe0e191428b86a2c913e56c5f829\",\n   \"sourceTree\": \"45531814fe0c8a40e18f14ddf200b6626878aad0\",\n   \"sourceAcceptance\": {\n-    \"status\": \"PENDING\",\n-    \"reviewCommit\": null\n+    \"status\": \"SOURCE_ACCEPT_WITH_LIMITS\",\n+    \"reviewCommit\": \"29ccf647aa0dc332b334f4dd9c62f6396a85282b\"\n   },\n   \"files\": [\n     {\n@@ -3452,6 +3452,51 @@\n       \"ownSourceAcceptance\": \"PENDING\",\n       \"dependencySeal\": \"NON_FINAL\",\n       \"execution\": \"NOT_RUN\"\n+    },\n+    \"doc95Finalization\": {\n+      \"kind\": \"EXACT_DOC94_SECTION3_DOC95_STEP1_FINALIZATION\",\n+      \"sourceAcceptance\": {\n+        \"document\": 82,\n+        \"reviewCommit\": \"29ccf647aa0dc332b334f4dd9c62f6396a85282b\"\n+      },\n+      \"bindingConfirmation\": [\n+        {\n+          \"document\": 87,\n+          \"reviewCommit\": \"77a2caeda45ffc664d7ab71ab24aa163dda308b6\",\n+          \"scope\": \"Historical revision3 pins\"\n+        },\n+        {\n+          \"document\": 94,\n+          \"reviewCommit\": \"4ab2fe6db6fa02c874df11916c84a6299576e906\",\n+          \"scope\": \"Historical revision4 pins and finalization envelope\"\n+        },\n+        {\n+          \"document\": 95,\n+          \"reviewCommit\": \"d4e6a50dc11b3e91d2241dde63be4d33a287fb67\",\n+          \"scope\": \"Revision5 source acceptance and all102pins in both receipts, zero mismatches\"\n+        }\n+      ],\n+      \"supersession\": \"Embedded PENDING/NON_FINAL narrative in this currentness receipt is historical and superseded for source acceptance and binding confirmation by this disclosure and top-level sourceAcceptance. This does not establish execution, installed configuration, operational readiness, or acceptance of future changed bytes.\",\n+      \"archivedNarrative\": {\n+        \"commit\": \"dacc90cf93a89da375689d6ebbacaf3d3b5a685d\",\n+        \"path\": \"docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json\",\n+        \"gitBlob\": \"d01de5e2651ed143b401a5c909d2eeb48f6a876d\",\n+        \"rawSha256\": \"8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318\",\n+        \"sha256lf\": \"8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318\",\n+        \"bytes\": 1538019,\n+        \"digestDomain\": \"RAW_COMMITTED_GIT_BYTES\",\n+        \"fields\": [\n+          \"doc94ReceiptNarrativeArchive.currentness\",\n+          \"doc94ReceiptNarrativeArchive.intake\"\n+        ],\n+        \"meaning\": \"Exact accepted correction-map identity holding the archived narrative referenced by both receipts\"\n+      },\n+      \"recordsPrecision\": {\n+        \"R5C1\": \"Receipts and sibling currentness verifier cover five accepted currentness files. The intake verifier byte-enforces three of those five plus definition recomputation; its five-pin wording is not proof that it loads all five.\",\n+        \"R5C2\": \"GIT_NO_LAZY_FETCH requires Git>=2.44. Alternatively use a full clone containing every required object, with no missing promisor objects or network fetch. No Git version or deployed behavior is measured by this record.\"\n+      },\n+      \"execution\": \"NOT_RUN\",\n+      \"publication\": \"LOCAL_ONLY\"\n     }\n   }\n }\n"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "order": 2,
+      "phase": "dependency",
+      "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+      "tree": "a5cfb19eff90f52fe0ac0e18c51af830d5b30edd",
+      "before": {
+        "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "gitBlob": "d3441396bf99fe3f3715845d9b1d0caf15d4e00d",
+        "rawSha256": "c622e4a650a40504669fffc22d0af6b956400cd980a500ab4e99b8dc03423f88",
+        "sha256lf": "c622e4a650a40504669fffc22d0af6b956400cd980a500ab4e99b8dc03423f88",
+        "bytes": 196833,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      "after": {
+        "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "gitBlob": "e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc",
+        "rawSha256": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+        "sha256lf": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+        "bytes": 196825,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      "exactChangedFields": [
+        "currentnessDependency.receipt.bytes",
+        "currentnessDependency.receipt.commit",
+        "currentnessDependency.receipt.gitBlob",
+        "currentnessDependency.receipt.rawSha256",
+        "currentnessDependency.receipt.recordsCommit",
+        "currentnessDependency.receipt.sha256lf",
+        "currentnessDependency.reviewCommit",
+        "currentnessDependency.sealStatus",
+        "currentnessDependency.status"
+      ],
+      "cap": 262144,
+      "headroom": 65319,
+      "pinsChanged": 0,
+      "diff": {
+        "command": [
+          "git",
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--binary",
+          "--full-index",
+          "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
+          "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+          "--",
+          "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json"
+        ],
+        "rawSha256": "35388eb6013e6225a0e87b90edb21e5628f35d879eeea6c9908e6b168ba9cf8e",
+        "bytes": 2626,
+        "patch": "diff --git a/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json b/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\nindex d3441396bf99fe3f3715845d9b1d0caf15d4e00d..e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc 100644\n--- a/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\n+++ b/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\n@@ -421,20 +421,20 @@\n   \"definitionSha256\": \"10e9e2e3c9ba6f86c6768f783aabd69b02f987cfe8540cdba8f2f6679c512b1a\",\n   \"currentnessDefinition\": \"8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe\",\n   \"currentnessDependency\": {\n-    \"status\": \"PENDING_ORIGINAL_REVISION5_RECEIPT_PIN_RECONFIRMATION\",\n+    \"status\": \"SOURCE_ACCEPT_WITH_LIMITS\",\n     \"sourceCommit\": \"54ffba10459efe0e191428b86a2c913e56c5f829\",\n     \"sourceTree\": \"45531814fe0c8a40e18f14ddf200b6626878aad0\",\n-    \"reviewCommit\": null,\n+    \"reviewCommit\": \"29ccf647aa0dc332b334f4dd9c62f6396a85282b\",\n     \"definitionSha256\": \"8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe\",\n     \"receipt\": {\n-      \"commit\": \"57c5aa5303b9d9b92c85a796b73674737b61ba13\",\n+      \"commit\": \"bfeb36fcd70b3fc5615bd9977e20966f8932b834\",\n       \"path\": \"docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json\",\n-      \"gitBlob\": \"9178947cd345fb503ed356d9f45c8402e2c51899\",\n-      \"rawSha256\": \"b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341\",\n-      \"sha256lf\": \"b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341\",\n-      \"bytes\": 183668,\n+      \"gitBlob\": \"8c058c4c459186e336e3aaff4f13c698ccbf4423\",\n+      \"rawSha256\": \"8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9\",\n+      \"sha256lf\": \"8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9\",\n+      \"bytes\": 186264,\n       \"digestDomain\": \"RAW_COMMITTED_GIT_BYTES\",\n-      \"recordsCommit\": \"57c5aa5303b9d9b92c85a796b73674737b61ba13\"\n+      \"recordsCommit\": \"bfeb36fcd70b3fc5615bd9977e20966f8932b834\"\n     },\n     \"acceptedCodeSource\": \"264e6af20477fabe65aa8d229ed2334fb59d9cc4\",\n     \"acceptedCodeReviewCommit\": \"29ccf647aa0dc332b334f4dd9c62f6396a85282b\",\n@@ -485,7 +485,7 @@\n         \"digestDomain\": \"RAW_COMMITTED_GIT_BYTES\"\n       }\n     ],\n-    \"sealStatus\": \"NON_FINAL_PENDING_ORIGINAL_REVISION5_RECONFIRMATION\",\n+    \"sealStatus\": \"FINAL_CURRENTNESS_DEPENDENCY_ONLY\",\n     \"scope\": \"REVISION5_RECORDS_REBIND_WITH_UNCHANGED_ACCEPTED_CURRENTNESS_CODE\",\n     \"execution\": \"NOT_RUN\"\n   },\n"
+      },
+      "execution": "NOT_RUN"
+    },
+    {
+      "order": 3,
+      "phase": "source",
+      "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+      "tree": "005a9fb36e1d4d2a29c127e00e50cd420501778b",
+      "before": {
+        "commit": "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "gitBlob": "e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc",
+        "rawSha256": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+        "sha256lf": "886e3ed1388022cd49ea7fafbf84a4824fc2fabf51bfbc72eb780affe08ea0ba",
+        "bytes": 196825,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      "after": {
+        "commit": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "gitBlob": "6021c556511e6e41daa10625be26ca660e2a1372",
+        "rawSha256": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+        "sha256lf": "0e606fd10312125e97766b00e47532d6a06b06fdb6a9c4eec50084949dc0aeb7",
+        "bytes": 196881,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      "exactChangedFields": [
+        "sourceAcceptance.reviewCommit",
+        "sourceAcceptance.status"
+      ],
+      "cap": 262144,
+      "headroom": 65263,
+      "pinsChanged": 0,
+      "diff": {
+        "command": [
+          "git",
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--binary",
+          "--full-index",
+          "7ac4e4d3d4bd7b780044aaccf2863ce25129a568",
+          "73553cfc7efd2714643933cae05029b2d5d1ad66",
+          "--",
+          "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json"
+        ],
+        "rawSha256": "86cbd2651fcf8f28a104076878ca6c26f6b7a339a7ae3e7940076c92ce587796",
+        "bytes": 855,
+        "patch": "diff --git a/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json b/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\nindex e3c18dc1ebae0d96f3ee1ff6a9d8274cce6757fc..6021c556511e6e41daa10625be26ca660e2a1372 100644\n--- a/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\n+++ b/docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json\n@@ -3,8 +3,8 @@\n   \"sourceCommit\": \"54ffba10459efe0e191428b86a2c913e56c5f829\",\n   \"sourceTree\": \"45531814fe0c8a40e18f14ddf200b6626878aad0\",\n   \"sourceAcceptance\": {\n-    \"status\": \"PENDING\",\n-    \"reviewCommit\": null\n+    \"status\": \"SOURCE_ACCEPT_WITH_LIMITS\",\n+    \"reviewCommit\": \"d4e6a50dc11b3e91d2241dde63be4d33a287fb67\"\n   },\n   \"files\": [\n     {\n"
+      },
+      "execution": "NOT_RUN"
+    }
+  ],
+  "metadata": {
+    "method": "RAW_LOCAL_GIT_JSON_AND_CRYPTO_ONLY",
+    "eachReceiptPins": 102,
+    "pinsChanged": 0,
+    "pinMismatches": 0,
+    "headersUnchanged": true,
+    "keysetsUnchanged": true,
+    "existingDisclosuresUnchanged": true,
+    "sharedBindingUnchanged": true,
+    "sourceFilesChanged": [],
+    "currentnessDefinition": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+    "intakeDefinition": "10e9e2e3c9ba6f86c6768f783aabd69b02f987cfe8540cdba8f2f6679c512b1a",
+    "changedPaths": [
+      ".xenios/ACTIVE_TASKS.json",
+      ".xenios/CODE_OWNERSHIP.json",
+      ".xenios/SESSION_REGISTRY.json",
+      ".xenios/handoffs/2026-10-12-doc95-finalization-owner-ack.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json"
+    ],
+    "recordWhitespace": {
+      "tool": "git diff --check",
+      "base": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+      "head": "77c70bb275dd961a6291fe57d3717342a8374ccc",
+      "paths": [
+        "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+      ],
+      "result": "NO_WHITESPACE_ERRORS",
+      "meaning": "Only the three records diff was checked; no application, SQL, verifier or test execution."
+    }
+  },
+  "recordsPrecision": {
+    "R5C1": "Accepted currentness identity is carried by all five receipt pins, reconfirmed by the original reviewer. The intake verifier byte-enforces the three consumed currentness files (.sql, .precheck.sql, .postcheck.sql) plus the definition recomputation; currentness.rollback.md and research_health_quick_order_currentness_local.mjs are receipt-pinned and reconfirmed, with five-file coverage in the sibling currentness verifier. Dependency sourceCommit/sourceTree identify the rebased receipt header, not the accepted264e6af tree.",
+    "R5C2": "The no-lazy-fetch guarantee presumes Git >= 2.44, or a full clone already containing every object the verifier reads. Host Git version and clone completeness were not established by this source acceptance. No additional Git version probe, verifier invocation or source change is authorized by this records finalization.",
+    "R5C4": {
+      "tool": "git diff --check",
+      "scope": {
+        "base": "2d15b9932ed7ccc55b727ca398354741e851c5cf",
+        "head": "73553cfc7efd2714643933cae05029b2d5d1ad66",
+        "paths": [
+          "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json"
+        ]
+      },
+      "result": "NO_WHITESPACE_ERRORS",
+      "meaning": "Records-diff whitespace only; not subject verification or execution."
+    },
+    "R5C5": {
+      "historicalRevision4IntakePredecessor": {
+        "commit": "77168a903f81d378d55562aeca959bde2063493f",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "gitBlob": "7a09060c9bc188ca039368e49fa08e647322f900",
+        "rawSha256": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+        "sha256lf": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+        "bytes": 221027,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      "revision5Base": {
+        "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "gitBlob": "ad0ce3c54b696509c065af8fc27413bbf452a5fc",
+        "rawSha256": "1635c1d3a60687cea7d45ce370020e233e5990edc5e89b0d82be76fa8a5dde7c",
+        "sha256lf": "1635c1d3a60687cea7d45ce370020e233e5990edc5e89b0d82be76fa8a5dde7c",
+        "bytes": 256966,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      }
+    },
+    "R5C6": {
+      "disclosure": "disclosures.doc95Finalization",
+      "archivedNarrative": {
+        "commit": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "gitBlob": "d01de5e2651ed143b401a5c909d2eeb48f6a876d",
+        "rawSha256": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+        "sha256lf": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+        "bytes": 1538019
+      }
+    }
+  },
+  "TC25": {
+    "humanReceipt": {
+      "commit": "8cc1fc6ddd894d44c6618cabbad03f5ceba9f0f2",
+      "path": "docs/coordination/launch-coordination-20261005/TC25_EXACT_DISABLED_APP_ACTUAL_HUMAN_DISPOSITION_20261012.json",
+      "gitBlob": "ff70b94148ca0bba39b5e96f579f1926e82bffc7",
+      "rawSha256": "baeafc4429065e5755c9b1a7f6e2175f3012226e2b262d1c54d3ba4473566516",
+      "sha256lf": "baeafc4429065e5755c9b1a7f6e2175f3012226e2b262d1c54d3ba4473566516",
+      "bytes": 3307
+    },
+    "reviewerReconciliation": {
+      "commit": "582c763fa1158894b24fb62465c132da32c2f739",
+      "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+      "gitBlob": "46b527984783f263710f45239fe34fb4887474a5",
+      "rawSha256": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+      "sha256lf": "46b17addbba9c83a24afc99304717a7f3b903dc137db7f22a4a669a17757dd51",
+      "bytes": 48064
+    },
+    "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "tree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+    "App": {
+      "path": "client/src/App.tsx",
+      "gitBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+      "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+      "bytes": 18079,
+      "humanDisposition": "APPROVED_EXACT_DISABLED_APP_PROTECTED_DISPOSITION",
+      "sourceAcceptance": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+      "manifestHashAmendment": "STILL_UNAUTHORIZED"
+    },
+    "remaining": "Actual human disposition is recorded and matches accepted App blob b5cc8edcc1040eca4009d8e1b68627ae7492d459 at source25741f0. Before integration or qualification, the only remaining TC25 step is one founder-authorized CORE_SITE_PROTECTION_MANIFEST.json hash amendment covering both the 0d22757 hub-restore line and Quick Order diff. server/index.ts and root-composition.test.ts are unchanged on this line and need no additional disposition. No manifest/hash/GATE01 edit or execution is authorized here.",
+    "manifest": {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "newAppHash": "sha256:1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+      "coverage": "Both 0d22757 hub-restore redirect removal and approved QuickOrder App diff",
+      "authority": "Separate founder approval required; current App receipt explicitly excludes Manifest/hash/GATE01 edits",
+      "editNow": false
+    },
+    "actualHumanReceipt": {
+      "decisionId": "TC25-EXACT-DISABLED-APP-PROTECTED-DISPOSITION-20261012",
+      "kind": "ACTUAL_DIRECT_HUMAN_STRUCTURED_QUESTION_REPLY",
+      "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
+      "questionItemId": "[\"request_user_input_async\",\"call_Yt41de4TB8YR4stKqink7Nww\",0]",
+      "actualAnswer": "Approve this exact disabled App disposition (Recommended)",
+      "receivedClockObservation": "2026-10-12T14:30:33.000Z",
+      "exactUserMessageTimestamp": "NOT_EXPOSED",
+      "recordedAt": "2026-10-12T14:31:52.561Z",
+      "actualDecision": "APPROVED_EXACT_DISABLED_APP_PROTECTED_DISPOSITION",
+      "path": "client/src/App.tsx",
+      "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+      "tree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+      "records": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+      "recordsTree": "d8bc4590a4ec4ad2f243a86592d8e5dab4f75d1b",
+      "blob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+      "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+      "bytes": 18079,
+      "fullDiff": {
+        "file": "TC25_EXACT_DISABLED_APP_PROTECTED_DISPOSITION_DIFF_20261012.patch",
+        "rawSha256": "a0cad085015462c300ecda507f2000c1b2764dfb33fbbc351d0934c27a6e18cd",
+        "bytes": 7800,
+        "numstat": "104\t1\tclient/src/App.tsx"
+      },
+      "expiryDelta": {
+        "file": "TC25_EXACT_APP_EXPIRY_DELTA_20261012.patch",
+        "rawSha256": "9c4d0dc7c11ef2697fb69545025e24cba77ccc82c443e49f0176f115a85222b2",
+        "bytes": 4531,
+        "numstat": "22\t11\tclient/src/App.tsx"
+      },
+      "purpose": [
+        "Canonical browser Auth reuse and route-local transport limited to three QuickOrder API doors",
+        "Lazy /health/quick-order route before retained /health redirect, literal intakeEnabled={false}",
+        "Credential expiry suspends credentials/aborts requests while retaining same-account in-memory recovery key",
+        "Obsolete queued expiry timer cannot invalidate refreshed credentials; missing/expired transport refused before/afterfetch",
+        "Sign-out, passwordrecovery, accountchange and unmount clearboundary; unrelatedAppproviders/routes unchanged"
+      ],
+      "currentCustodian": {
+        "reservation": "OWNER-W2-QUICK-ORDER-DISABLED-INTEGRATION-20261011",
+        "session": "codex-accepted-source-integration-20261005",
+        "thread": "01a0e098-3b23-7233-9b07-877ace092650",
+        "leases": "8703b782 and f57c582d HANDOFF/stopped; no active App writer in frozenR5 registry"
+      },
+      "preserved": {
+        "intakeEnabled": false,
+        "routeScope": "/health/quick-order with retained /health redirect",
+        "canonicalAuthAndThreeApiDoors": true,
+        "unrelatedRoutesAndProvidersUnchanged": true,
+        "recoveryLimit": "Same-account in-memory retention; no reload/durablebrowser recovery claim"
+      },
+      "authorityMeaning": "Only the exact whole App seam disposition covering existingwiring andexpirycorrection. The otherTC25protectedpaths andqualification/releaseconditions are not waived.",
+      "explicitExclusions": [
+        "Manifest/hash/GATE01 edits",
+        "Any new application source implementation or source transfer",
+        "Tests/G0/qualification execution",
+        "Push/PR/workflow trigger",
+        "Activation/payment/notifications",
+        "Deployment",
+        "Schedule changes"
+      ],
+      "independentAssistedOrder": "Retaining existingApp remains independent of this fullQO disposition",
+      "originalR5SourceAcceptance": false
+    },
+    "actualHumanReceiptMeaning": "Historical verbatim actual human receipt retained. The originalR5SourceAcceptance:false and otherProtectedPaths wording reflect its recording time; Doc95 acceptance and reviewer582c reconciliation above are the current dispositions."
+  },
+  "namedLimits": {
+    "R5C3": "Historical block-level labels sufficient; per-string pointers optional, not selected unless useful records-only.",
+    "R5C7": "TC21 must bind integrity seal, expected-columns descriptor and pre/postcheck seals in one separately accepted reseal; sibling verifier refuses partial binding. No change now.",
+    "R5C8": "Exact descriptor-drift control attainability remains source-reasoned/NOT_RUN; first authorized disposable run confirms.",
+    "existing": "Carry all Doc94 limits, TC17partial, TC18 and stagedTC20–28; source acceptance does not establish operational or measured proof."
+  },
+  "spotCheck": {
+    "owner": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "scope": "Exact three receipt diffs and envelope only",
+    "queued": "NOT_REPORTED_BY_BUILDER",
+    "acknowledged": "NOT_OBSERVED_FOR_FINALIZATION_SPOT_CHECK",
+    "reviewed": false,
+    "fullCompositionReview": "COMPLETE_DOC95_DO_NOT_RESTART"
+  },
+  "sourceReview": {
+    "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 5,
+    "acknowledgment": "OBSERVED_AT_a2c443d_AS_REPORTED_IN_DOC95",
+    "reviewed": true,
+    "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+    "disposition": "SOURCE_ACCEPT_WITH_NAMED_LIMITS"
+  },
+  "actualNextPrerequisite": "Existing coordinator collects this exact records packet and registers only the three diffs for the original reviewer spot-check. Composition review is complete. Separate S3 descriptor/census, operational bindings, TC25 manifest approval and fresh execution prerequisites remain.",
+  "operationalPrerequisites": [
+    "IMPLEMENTED_S_COLUMN_DESCRIPTOR_AND_POPULATED_CENSUS",
+    "AUTHORITATIVE_OPERATIONAL_INPUTS_AND_EXTERNAL_EXPECTED_CENSUS_DIGEST",
+    "QUALIFIED_CONNECTION_PROFILE_AND_RECIPIENT_BINDINGS",
+    "TRUSTED_ROW8_COMMERCE_CHECKOUT",
+    "TC25_FOUNDER_AUTHORIZED_MANIFEST_HASH_AMENDMENT",
+    "ACCEPTED_QUALIFICATION_PROCEDURE_AND_FRESH_EXECUTION_AUTHORITY",
+    "AUTHORIZED_INSTALLATION_AND_RELEASE_ACTIVATION"
+  ],
+  "operationalEvidence": {
+    "descriptor": "NOT_COMPLETED",
+    "populatedCensus": "NOT_COMPLETED",
+    "expectedCensusDigest": null,
+    "reason": "The real authoritative implemented-S column descriptor, populated census and external expected-digest artifact have not been supplied. No fixtures substitute.",
+    "installedSchema": "NOT_OBSERVED",
+    "trustedCommerceCheckout": "ABSENT_BRANCH_REFUSES",
+    "checkoutBinding": null,
+    "gitSourceOrigin": {
+      "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+      "tree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+      "meaning": "REVISION5_ONE_VERIFIER_SUCCESSOR_RUNTIME_AND_DC1_UNCHANGED_PENDING_ORIGINAL_REVIEW"
+    },
+    "gitAndCommerceCheckoutAreDistinct": true,
+    "genericDisabledSourceAuthoringBlockedByOperationalInputs": false
+  },
+  "qualification": "Separate S3 owner/action: implemented-S descriptor/census and external expected digest, descriptor definition and all-three-site reseal, authoritative operational inputs, real connection/recipient and trusted checkout bindings, exact TC25 founder-authorized manifest amendment, accepted procedure and fresh execution authority.",
+  "delivery": "EXISTING_COORDINATOR_READABLE_LOCAL_GIT_WORKFLOW_ONLY_NO_OUTBOUND_TRANSPORT_RETRY",
+  "execution": "NOT_RUN",
+  "executionReservation": null,
+  "publication": "LOCAL_ONLY",
+  "operationalQuickOrder": false,
+  "schedules": "UNCHANGED",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}
