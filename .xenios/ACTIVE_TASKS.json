@@ -5,7 +5,10 @@
     {
       "id": "TC25-PROTECTION-R2-EVIDENCE-20261012",
       "owner": "codex-accepted-source-integration-20261005",
-      "state": "claimed",
+      "state": "handoff",
+      "handoffAt": "2026-10-12T18:38:33.159Z",
+      "handoff": ".xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json",
+      "source": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
       "claimedAt": "2026-10-12T18:36:37Z",
       "leaseId": "tc25-protection-r2-records-20261012",
       "base": "d1a8f27a27832ea0b2a89ae68462684c14ed61fa",

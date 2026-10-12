@@ -1,0 +1,29 @@
+{
+  "id": "protection-cli",
+  "exe": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe",
+  "args": [
+    "scripts/acceptance/verify-core-site-protection.mjs",
+    "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+    "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86"
+  ],
+  "timeoutMs": 60000,
+  "exitCode": 1,
+  "signal": null,
+  "startedAt": "2026-10-12T18:36:09.689Z",
+  "endedAt": "2026-10-12T18:36:10.419Z",
+  "pid": 31876,
+  "timedOut": false,
+  "error": null,
+  "logSha256": "16a633ac030033d63d54c3f64624e912bd22c271f7b9edb01e2601d4ad933db4",
+  "logBytes": 2267,
+  "stdoutSha256": "16a633ac030033d63d54c3f64624e912bd22c271f7b9edb01e2601d4ad933db4",
+  "stdoutBytes": 2267,
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrBytes": 0,
+  "cleanup": {
+    "rootCloseObserved": true,
+    "timeoutTreeTerminationAttempted": false,
+    "nativeJobOrFullDescendantCleanupCertified": false
+  },
+  "provenanceSha256": "f2f9b6843d7e56395f99372784df8823b647e28c893e5184040a63f75542b23c"
+}

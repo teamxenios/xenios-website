@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "hashConvention": "Raw copied bytes as saved; Git may checkout CRLF, use LF normalization where these text sources are checked out differently. Original raw hashes below bind retained execution files.",
+  "files": [
+    {
+      "name": "postflight.json",
+      "sha256": "b923876629f844eb396fe555491c5b05051311fa407aed9864a926dd48bb0ef4",
+      "bytes": 9496
+    },
+    {
+      "name": "preflight.json",
+      "sha256": "074bc0884b4263d37dfa16139c81b62f601b837298e6a3f84376b1a4876145a3",
+      "bytes": 9496
+    },
+    {
+      "name": "protection-cli-provenance.jsonl",
+      "sha256": "f2f9b6843d7e56395f99372784df8823b647e28c893e5184040a63f75542b23c",
+      "bytes": 718
+    },
+    {
+      "name": "protection-cli-result.json",
+      "sha256": "c87dfb774921b84b622285ab4c24cc8c3c5fe70b158f433327f6a0096c130091",
+      "bytes": 1023
+    },
+    {
+      "name": "protection-cli-stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "protection-cli-stdout.log",
+      "sha256": "16a633ac030033d63d54c3f64624e912bd22c271f7b9edb01e2601d4ad933db4",
+      "bytes": 2267
+    },
+    {
+      "name": "protection-cli.log",
+      "sha256": "16a633ac030033d63d54c3f64624e912bd22c271f7b9edb01e2601d4ad933db4",
+      "bytes": 2267
+    },
+    {
+      "name": "reservation.json",
+      "sha256": "273ab721c3afa7ef4245e26f77e608ea9acd11f5c055d22fe627df4b961aa9d6",
+      "bytes": 1140
+    },
+    {
+      "name": "started.json",
+      "sha256": "039d9631da951fc0dcf5f5b4240b14127b097566eae2990867b8e080eb46a774",
+      "bytes": 1312
+    },
+    {
+      "name": "runner-executed.cjs",
+      "sha256": "de235415b4597265e5f89e160ca2ad7006b7a8fffd74d8cd4a59b53f86beda30",
+      "bytes": 9221
+    },
+    {
+      "name": "runtime-provenance-executed.cjs",
+      "sha256": "0673573a30709314bfdda55fe7a00b0e5353e62981564700555bf3c6f6910a0e",
+      "bytes": 668
+    },
+    {
+      "name": "coordinator-r2-binding.json",
+      "sha256": "d7fab72834a0d3a94b702eb2c40c5745de1048ac5a766699caba56d87abe3460",
+      "bytes": 7435
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-12T18:36:09.688Z",
+  "preflightSha256": "074bc0884b4263d37dfa16139c81b62f601b837298e6a3f84376b1a4876145a3",
+  "reservation": {
+    "revision": 2,
+    "coordinatorCommit": "1e4a5c652169d486aa1bb54f350b9f5a063a360a",
+    "head": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
+    "tree": "748e53522ba8ef94ba05b0286a97c0200ee2bb61",
+    "cwd": "C:/xenios-wt/tc25-app-protection-run-20261012-r2",
+    "startsAt": "2026-10-12T18:33:14.649Z",
+    "expiresAt": "2026-10-12T18:48:14.649Z",
+    "actualCoordinatorAck": true,
+    "updatedCwdAuthority": "Actual follow-up delegation from coordinator01a103a8 to existing integrator01a0e098 explicitly selects a new isolated test checkout at same3ec/tree748, preserves original checkout/junction and retains R2 window. Public executor ACK sent before launch.",
+    "humanAuthority": "Actual approved request04b4cc70 raw20041ef0 and actual human continuationsb73fbc51/643532cf; no repeat manifest approval",
+    "scope": "Exactly explicit876-to3ec protection CLI60s then one protection test file180s, once each, stop first failure,1024MiB inherited Node heap, one worker/no parallelism, owned cache/temp, existing dependencies only",
+    "notClaimed": "No kernel PID or aggregateRSS or hard output cap, no full qualification/G0/SQL/build/live execution"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "session": "codex-accepted-source-integration-20261005",
+  "task": "TC25-PROTECTION-R2-EVIDENCE-20261012",
+  "source": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
+  "tree": "748e53522ba8ef94ba05b0286a97c0200ee2bb61",
+  "applicationSource": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+  "applicationTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+  "branch": "codex/tc25-app-manifest-20261012",
+  "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
+  "executionWorktree": "C:/xenios-wt/tc25-app-protection-run-20261012-r2",
+  "priorRecords": "d1a8f27a27832ea0b2a89ae68462684c14ed61fa",
+  "result": "docs/health-launch/tc25-app-manifest-20261012/r2/result.json",
+  "tests": "Protection CLI actually ran once under Node20.19.0: EXIT1, no timeout. Seven inherited hard-hash mismatches, two nonfatal seam warnings; App matches. Vitest NOT_RUN_STOP_FIRST_FAILURE.",
+  "testCounts": "NOT_APPLICABLE_CLI_HASH_FAILURES_ARE_NOT_FAILED_TEST_COUNTS",
+  "runtimeUnchanged": true,
+  "manifestUnchangedSinceSource": true,
+  "sourceWriterStopped": true,
+  "executionReservation": "RELEASED_EARLY",
+  "lease": "tc25-protection-r2-records-20261012",
+  "nextAction": "Existing coordinator reconciles the seven inherited hard hashes and two seam warnings with their exact owner approvals/reviewed baseline chain; do not broaden this App-only amendment. Register this failed check beside the original review packet. Any further execution needs its own applicable instruction/window; no automatic rerun.",
+  "review": {
+    "sourceScopeRegistration": "Requested through established coordinator under actual human instruction; direct reviewer ACK not observed by executor",
+    "sourceScopeAcceptance": "NOT_CLAIMED",
+    "protectionPassing": "NO",
+    "doc95Doc97": "COMPLETE_NOT_REOPENED"
+  },
+  "publication": "LOCAL_ONLY",
+  "finalPushedSha": null,
+  "deployment": false,
+  "schedules": "UNCHANGED"
+}

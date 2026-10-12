@@ -1,0 +1,228 @@
+{
+  "at": "2026-10-12T18:36:10.826Z",
+  "cwd": "C:/xenios-wt/tc25-app-protection-run-20261012-r2",
+  "base": "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+  "head": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
+  "tree": "748e53522ba8ef94ba05b0286a97c0200ee2bb61",
+  "mergeBase": "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+  "changedPaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "docs/phase2/HEALTH_APP_PROTECTED_HASH_APPROVAL_20261012.md"
+  ],
+  "node": {
+    "path": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe",
+    "sha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "version": "v20.19.0"
+  },
+  "npm": {
+    "cli": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node_modules\\npm\\bin\\npm-cli.js",
+    "version": "10.8.2"
+  },
+  "dependencyRoot": "C:\\xenios-wt\\tc25-app-protection-run-20261012-r2\\node_modules",
+  "deps": [
+    {
+      "name": "vitest",
+      "version": "4.1.10",
+      "expectedLockVersion": "4.1.10",
+      "engines": {
+        "node": "^20.0.0 || ^22.0.0 || >=24.0.0"
+      },
+      "realPath": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\node_modules\\vitest\\package.json",
+      "sha256": "caa41f04799bd42f3cfd100c4282e630d77ffc7deb1e7e4927794fcb7f137f34"
+    },
+    {
+      "name": "vite",
+      "version": "7.3.5",
+      "expectedLockVersion": "7.3.5",
+      "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+      },
+      "realPath": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\node_modules\\vite\\package.json",
+      "sha256": "2ce2b783ef4f4511544fa045355e7076f192b1331f6801214173d1910518f5d7"
+    },
+    {
+      "name": "esbuild",
+      "version": "0.25.12",
+      "expectedLockVersion": "0.25.12",
+      "engines": {
+        "node": ">=18"
+      },
+      "realPath": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\node_modules\\esbuild\\package.json",
+      "sha256": "cb7d5b1fe478f8cbaae566a86031b6fdf5f7d444354f35d1cb3cba9adf6d2935"
+    },
+    {
+      "name": "@vitest/runner",
+      "version": "4.1.10",
+      "expectedLockVersion": "4.1.10",
+      "engines": null,
+      "realPath": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\node_modules\\@vitest\\runner\\package.json",
+      "sha256": "88a637f7e421c0f0e092b372cde1213a0be40805eff30fac2f1e855470805c76"
+    },
+    {
+      "name": "@vitest/utils",
+      "version": "4.1.10",
+      "expectedLockVersion": "4.1.10",
+      "engines": null,
+      "realPath": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\node_modules\\@vitest\\utils\\package.json",
+      "sha256": "d058535cc6050983cdab9a43e3718e6e390f235ff77e2674228d126f1440b216"
+    },
+    {
+      "name": "@vitest/expect",
+      "version": "4.1.10",
+      "expectedLockVersion": "4.1.10",
+      "engines": null,
+      "realPath": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\node_modules\\@vitest\\expect\\package.json",
+      "sha256": "30518dc5848df4c551cc30e3230cbf904c66c4534353c485171a41864449a298"
+    },
+    {
+      "name": "@vitest/snapshot",
+      "version": "4.1.10",
+      "expectedLockVersion": "4.1.10",
+      "engines": null,
+      "realPath": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\node_modules\\@vitest\\snapshot\\package.json",
+      "sha256": "c28b453f99c70e20b13dcfba1a5bbd8d950fcadb403994b52c70181e8cde8fd0"
+    }
+  ],
+  "files": [
+    {
+      "path": "package.json",
+      "blob": "36e8fbc63aa1b81eff8a64622c8de28937bbb6c7",
+      "rawSha256": "e77531f2a256d94c2cd92b676b156d856bf6d484a0adc28c95b3eda53c86fca4",
+      "lfSha256": "89d5d2160381ea23967d56fcf666643d51dbb779fc652d82181bd2379a53828b"
+    },
+    {
+      "path": "package-lock.json",
+      "blob": "912f4f85e9a078ed97ed2b67ce8d1de09490eb29",
+      "rawSha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8",
+      "lfSha256": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"
+    },
+    {
+      "path": "vitest.config.ts",
+      "blob": "242428c09e76d16da672e70e48bb885f90c71026",
+      "rawSha256": "b175309ea7ca8cf0805fccb169e067c9d923fdac9a810237ff22969451833fee",
+      "lfSha256": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"
+    },
+    {
+      "path": "server/core-site-protection.test.ts",
+      "blob": "1a35a5c8ab81a22e56e23e3d7f365c99fbc8162d",
+      "rawSha256": "09ec9272caaee719dca969751d861f8ec6db7d81ad3bd6c8b218ed5cb6383d94",
+      "lfSha256": "bcde93a62b4156b0b66319c767ac82ff5ac4444e4ed5274a4d147d70dc8c3b95"
+    },
+    {
+      "path": "scripts/acceptance/verify-core-site-protection.mjs",
+      "blob": "c30371fdb01a371874ea6d6352689fff72cf9324",
+      "rawSha256": "019b2dac87dbc8d2ec37cb4ccf881628c512bcaeda95defc922dbf119bb09b07",
+      "lfSha256": "e0cd56bf2986deb9a6accad78fa876705e954f3045a0c200494ec009b340fe0a"
+    },
+    {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "blob": "ceec20e2ea36774fbe480313fbea14c8237546ff",
+      "rawSha256": "0662ad79f231c0e50a1cc8ea32450cb915c8988b680a7d5e7e4473828d05ed97",
+      "lfSha256": "95445fdf1855560460da2283d06f9dda733e373c1258611ec278cd499e74a23d"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "blob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+      "rawSha256": "9aaf2c8155b1be27028cd9ede701c72c2a11ab9d24d5de9efa824e2dab200d10",
+      "lfSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0"
+    },
+    {
+      "path": "client/src/lib/content.ts",
+      "blob": "708a97fe72053415b2f53543dab44c074ccbecb1",
+      "rawSha256": "e4b6a807ed6f8174d61779a61f3730d2873bd330902f09bd8e854a58056a774d",
+      "lfSha256": "505468087f7f96148d3e112b428ed8c3b39a125d159511d28d81fb641c05e2f0"
+    },
+    {
+      "path": "client/src/lib/careers.ts",
+      "blob": "b0b3f88177865ff7d125cf407d83e97d9bd686a7",
+      "rawSha256": "c110702bbf70303b2bf011dc1b065b2232733266a30cf136866283bccb0cfe42",
+      "lfSha256": "6537ae7d836233b81405fd3888155a77bf0e54c02a6ae353b9c1351a6e8309a4"
+    }
+  ],
+  "hiddenLockSha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94",
+  "entrypoints": [
+    {
+      "path": "vitest/vitest.mjs",
+      "sha256": "39db22f579acf5639bbb17a261408debbde03f4692c0c439e77e7f13aeba74d6"
+    },
+    {
+      "path": "vite/dist/node/index.js",
+      "sha256": "8b142bd1231a46bf2cad4c05b3f76de5b183064ee771b9934fbaffb70b914652"
+    },
+    {
+      "path": "esbuild/lib/main.js",
+      "sha256": "0d1241812c443111d39475dfc66836003e9ef8b87e54d990dd67df29d20010e1"
+    },
+    {
+      "path": "@esbuild/win32-x64/esbuild.exe",
+      "sha256": "cae1bbc86f4df800b01d99e28aea0a154b02243de6797e98f48a9b88a64a7be0"
+    }
+  ],
+  "caches": {
+    "vite": "C:\\xenios-wt\\tc25-app-protection-run-20261012-r2\\node_modules\\.vite",
+    "viteTemp": "C:\\xenios-wt\\tc25-app-protection-run-20261012-r2\\node_modules\\.vite-temp",
+    "temp": "C:\\Users\\sboad\\.codex\\tmp\\tc25-protection-r2-20261012\\temp"
+  },
+  "runnerSha256": "de235415b4597265e5f89e160ca2ad7006b7a8fffd74d8cd4a59b53f86beda30",
+  "provenanceSha256": "0673573a30709314bfdda55fe7a00b0e5353e62981564700555bf3c6f6910a0e",
+  "limitations": [
+    "Selected dependency metadata/entrypoint hashes and historical Node20 reinstall receipt, not exhaustive installed-byte attestation",
+    "File-only protection checks; no full S3/G0, application build, browser, SQL or live qualification",
+    "No kernel PID or aggregate RSS caps, no machine-enforced hard output cap; raw outputs preserved",
+    "Startup/exit provenance covers Node processes inheriting NODE_OPTIONS, not complete native descendant census"
+  ],
+  "commands": [
+    {
+      "id": "protection-cli",
+      "exe": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe",
+      "args": [
+        "scripts/acceptance/verify-core-site-protection.mjs",
+        "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+        "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86"
+      ],
+      "timeoutMs": 60000
+    },
+    {
+      "id": "protection-single-file",
+      "exe": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "server/core-site-protection.test.ts",
+        "--config",
+        "vitest.config.ts",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "timeoutMs": 180000
+    }
+  ],
+  "environment": {
+    "inheritedKeys": [
+      "SystemRoot",
+      "WINDIR",
+      "TEMP",
+      "TMP",
+      "USERPROFILE",
+      "APPDATA",
+      "LOCALAPPDATA",
+      "COMSPEC",
+      "PATHEXT",
+      "PATH",
+      "CI",
+      "NO_COLOR",
+      "NODE_OPTIONS"
+    ],
+    "NODE_OPTIONS": "--max-old-space-size=1024 --require=C:/Users/sboad/.codex/tmp/tc25-runtime-provenance-20261012.cjs",
+    "CI": "1",
+    "TEMP": "C:\\Users\\sboad\\.codex\\tmp\\tc25-protection-r2-20261012\\temp",
+    "TMP": "C:\\Users\\sboad\\.codex\\tmp\\tc25-protection-r2-20261012\\temp",
+    "networkInputs": "NO_APP_OR_PROVIDER_ENV_FORWARDED"
+  },
+  "fixtureScope": "Existing pure synthetic classifier/mutation tests plus file reads; no application server or database",
+  "cleanup": "No server or DB started. Terminate only known owned command process tree on timeout. Preserve raw logs and Node exit provenance; do not claim native owned-Job/G0 proof. Preserve original checkout/junction and isolated owned cache tree."
+}

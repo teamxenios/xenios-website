@@ -5,9 +5,11 @@
       "id": "tc25-protection-r2-records-20261012",
       "task": "TC25-PROTECTION-R2-EVIDENCE-20261012",
       "session": "codex-accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
+      "handoffAt": "2026-10-12T18:38:33.159Z",
+      "handoff": ".xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json",
       "claimedAt": "2026-10-12T18:36:37Z",
-      "heartbeatAt": "2026-10-12T18:36:37Z",
+      "heartbeatAt": "2026-10-12T18:38:33.159Z",
       "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
       "paths": ["docs/health-launch/tc25-app-manifest-20261012/r2/", ".xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json"],
       "scope": "Own executed R2 result records only after immutable3ec5ec0 check; all historical R1 NOT_RUN evidence and manifest/runtime/test bytes preserved. Same integrator current receiving ACK; no foreign writer or broad lease release."
