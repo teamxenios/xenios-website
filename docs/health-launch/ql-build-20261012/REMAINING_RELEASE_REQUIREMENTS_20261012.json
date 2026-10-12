@@ -1,4 +1,26 @@
 {
+  "currentProgress": {
+    "at": "2026-10-12T21:48:53.1155644Z",
+    "phase": "QL2_1_REPRODUCED_RETURNED_TO_SAME_WRITER",
+    "candidate": "9d7bfe4b32b09e887a0ee23b12eae007c6dd94dd",
+    "tree": "dc79ee5b04aaaf1fe6f0dbde944fa654311dc35e",
+    "runtimeParent": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "targeted": {
+      "passed": 72,
+      "failed": 4,
+      "skipped": 0,
+      "exit": 1,
+      "timedOut": false,
+      "records": "aca908d8030633d081ab70169d96460078741873",
+      "meaning": "All four new late-completion controls reproduced actual defects. Earlier3a72pass run remains separate."
+    },
+    "writer": "Same Fable da289215, existing four-path custody; RED receipt sent through existing coordinator for already-agreed source followup.",
+    "publication": "Records through aca908d8030633d081ab70169d96460078741873 pushed successfully to origin/codex/tc25-app-manifest-20261012. No PR, merge or deploy.",
+    "support": "f435 own CLI/build PASS; check attempt1 failed metadata preflight before compiler. Corrected scratch supervisor prepared, no retry yet, support remains lower heavy-job priority than ready QL.",
+    "sourceReview": "Final successor not yet frozen or registered. Required full Vitest/typecheck/protection/build receipts remain pending for final bytes. RealAPI5 passed in both targeted snapshots; no transfer to future bytes.",
+    "release": "Browser/admin/routes/production-row precheck tracked separately; none waives source receipt. INTAKE_LIVE false; PAID_ORDER_READY false.",
+    "next": "Same Fable guarded source fix and fresh green binding. Complete final-source receipts; deliver to original reviewer through existing channel. No duplicate implementation instruction to reviewer."
+  },
   "schemaVersion": 1,
   "at": "2026-10-12T21:24:45.631Z",
   "kind": "CANDIDATE_SPECIFIC_REMAINING_RELEASE_REQUIREMENTS",
