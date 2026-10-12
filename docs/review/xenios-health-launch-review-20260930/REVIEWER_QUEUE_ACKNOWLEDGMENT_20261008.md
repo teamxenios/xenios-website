@@ -527,3 +527,11 @@ identities resolved from Git:
 Pin re-confirmation is done as part of this review. All 102 pins in both receipts were recomputed against `114d5177`:
 zero mismatches. Exactly three rows changed (the verifier, the composition test and the shared bindings record). The
 five currentness pins and `8b631a83` are unchanged. Nothing was executed.
+
+## Queue state update (2026-10-12, doc 94)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 94 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` **r4** (`38915cf` / `02c1748`) | COMPLETE: **CORRECTIONS REQUIRED**, limited to one verifier control. R4C-1 (P2): the commit shadow control can never pass, because the accepted currentness `integrity()` fails closed under the shadows by design. That is a doc 87 specification error. Exact fix ruled, and named limit COMMIT-POST-GATE-SHADOW accepted. The transaction source is unchanged and stays accepted. **DC-1 exact and accepted.** **Pins re-confirmed** (102/102 in both receipts; currentness pins and `8b631a83` unchanged). **Finalization envelope ruled** (section 3) and performed only after r5. P3 fold-ins: R4C-2 to R4C-8 |
+
+Nothing was executed.
