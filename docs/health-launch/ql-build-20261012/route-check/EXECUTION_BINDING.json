@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12T20:14:55Z",
+  "action": "QL_EXACT_CANDIDATE_ROUTE_UNIQUENESS_20261012",
+  "status": "PREPARED_NOT_RUN_PENDING_FRESH_WINDOW",
+  "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "tree": "28617c360f487803baa556d33158c4e95df471f1",
+  "executor": "01a0e098-3b23-7233-9b07-877ace092650",
+  "session": "codex-accepted-source-integration-20261005",
+  "cwd": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
+  "authority": "Actual user0ada requests applicable candidate release qualification. This is existing static route gate, not new application execution or permission to broaden into fullsuite/SQL. Coordinator binds fresh finite resource reservation before run.",
+  "command": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website/node_modules/tsx/dist/cli.mjs",
+    "scripts/acceptance/verify-route-uniqueness.ts",
+    "--sha",
+    "7a2bf7533f5c26d98e0bdb34a862852942b2914e"
+  ],
+  "launch": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "C:/Users/sboad/.codex/tmp/ql-route-check-20261012/run-route-check.cjs",
+    "<fresh coordinator stop UTC>"
+  ],
+  "launcherSha256": "cb0c3c9337da1326db8f2fdba0fae628be9460eb6daef717c21a6e7509f9943c",
+  "pins": {
+    "scannerBlob": "4f0a474a2b1f9345bdab6eb722b7dc062d4a5f73",
+    "tsconfigBlob": "cb406c8a0f64787c157f1ff61c52f791b4b2a5ae",
+    "node": "v20.19.0",
+    "nodeSha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "tsxVersion": "4.22.4",
+    "tsxCliSha256": "5d5b2a9f9cf4d6a8b44326b676417e00b42ad04037ed173b7af82ea8146a4fc0",
+    "typescriptVersion": "5.6.3",
+    "typescriptRuntimeSha256": "f316520790d4db220a10d890c5f85310e26a1bd3c104b8d3b5eb62ba0491651b",
+    "nestedEsbuildVersion": "0.28.1",
+    "nestedEsbuildExeSha256": "ec02ee9b14ab332416fedd10614dfb80eed5304d94f67745067c011934a8c3c3",
+    "gitExeSha256": "37c5725818d602e951ba2563b870d62763322956b73373da4c33a0b566a80bc9",
+    "dependencies": "Same existing privatephysical copy, lock/metadata and selected exact artifacts rechecked; no install/clean rebuild claim"
+  },
+  "effects": {
+    "sourceReads": "Main fully read scanner. Builtins+TypeScript runtime only; release-manifest import is type-only. Reads697 committed server/shared TS files with git ls-tree then serialgit show; parses AST, no source modules imported.",
+    "runner": "tsx starts same-Node loader child, local Windows named pipe and nested esbuild transform service. TSX_DISABLE_CACHE=1 set before imports prevents shared legacy-cache pruning; privateTEMP/TMP/HOME retained. Normal IPC/temp/log artifacts are admitted, not pure-read-only tooling.",
+    "network": "No application/server/provider/DB/browser or network command requested. Fresh environment lacks credentials; not OS firewall guarantee.",
+    "scope": "Static API method/path duplicates/unresolved paths, not mounted behavior/auth/client routes or browser proof."
+  },
+  "bounds": {
+    "wallMs": 300000,
+    "nodeHeapMiB": 1024,
+    "oneHeavyJob": true,
+    "retries": 0,
+    "requiresFullWindow": true,
+    "kernelAggregateCaps": "NOT_ENFORCED",
+    "cleanup": "Only own spawned child PID/tree on timeout; retain raw result; no automatic retry/alternate pipeline"
+  },
+  "environment": "Exact launcher allowlist: verified pinnedNode+Git PATH, Windows builtins, privatehome/tmp, TSX_DISABLE_CACHE=1, NODE_ENV=test, boundedNODE_OPTIONS, NO_COLOR. CI and DB/provider/update flags absent.",
+  "outputs": [
+    "C:/Users/sboad/.codex/tmp/ql-route-check-20261012/run.log",
+    "C:/Users/sboad/.codex/tmp/ql-route-check-20261012/receipt.json"
+  ],
+  "prerequisites": "Fresh coordinator reservation; recheck exact clean source/runtime/dependencies/launcher/sourcepins, no owned overlappingheavy processes, no previousoutput, freshmemorypreflight. Does not begin by being committed.",
+  "exclusions": [
+    "application source/test edits",
+    "fullsuite",
+    "SQL/Docker",
+    "installation",
+    "server/browser",
+    "managed configuration",
+    "push/merge/deploy",
+    "real email/payment"
+  ]
+}
