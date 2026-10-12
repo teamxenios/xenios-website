@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-12T18:58:00Z",
+  "session": "codex-accepted-source-integration-20261005",
+  "task": "TC25-PROTECTION-DISPOSITION-20261012",
+  "branch": "codex/tc25-app-manifest-20261012",
+  "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
+  "baseRecords": "e275d344e0ced7f683218b4dac3b1b7b63f01764",
+  "evidenceRecords": "554e799dab59fbc82c47813e53ed78da97e5393d",
+  "evidenceRecordsTree": "84720b3106a74a4c749e4a224cf7e42effa9d405",
+  "status": "FORENSIC_RECONCILIATION_COMPLETE_RELEASE_CONDITIONS_OPEN",
+  "candidates": {
+    "fullComposition": {
+      "applicationSource": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+      "applicationTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+      "appAmendment": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
+      "amendmentTree": "748e53522ba8ef94ba05b0286a97c0200ee2bb61",
+      "status": "HELD_EXECUTED_PROTECTION_FAILURE"
+    },
+    "existingWizard": {
+      "source": "3aa7b96938f63b0a2a5049b57bfaa9fe236b4cb2",
+      "sourceTree": "8eaf017a6d5cf8fde252badc81c0c48f1b32fd20",
+      "withAuthoredTests": "7ac408371b6fcc702827a26e61b3a3f5a13f3f67",
+      "testCandidateTree": "b84d29db528e41b477e507546b03ace2263c20f3",
+      "status": "INDEPENDENT_SCOPE_NOT_YET_RELEASE_QUALIFIED"
+    }
+  },
+  "index": {
+    "sevenHardFailuresAndTwoWarnings": "docs/health-launch/tc25-app-manifest-20261012/reconciliation/PROTECTION_DISPOSITIONS_20261012.json",
+    "sixPairProposal": "docs/health-launch/tc25-app-manifest-20261012/reconciliation/SIX_SOURCE_AUTHORIZED_HASH_PAIRS_UNAPPLIED.patch",
+    "QLLineageAuthorityTests": "docs/health-launch/tc25-app-manifest-20261012/reconciliation/QL_LINEAGE_AND_EVIDENCE_20261012.json",
+    "paymentEvidence": "docs/health-launch/tc25-app-manifest-20261012/reconciliation/PAYMENT_EVIDENCE_AND_NEXT_BOUNDARY_20261012.json"
+  },
+  "dispositions": {
+    "seven": "All seven are real source changes, not line-ending/generated-file discrepancies. Six have exact composition/source authority but no established baseline grant. Static Access Hub redirect removal additionally requires its protected source disposition. Existing protection owner retains custody; no manifest edit made.",
+    "warnings": "Two CLI-nonfatal server seam warnings remain separate. Clean-seam Vitest assertion would require disposition, but it was not executed and is not counted as two failed tests.",
+    "proposal": "Exactly six old/new hash pairs, syntax/context checked, UNAPPLIED. It does not fix static or seam entries and does not produce protection PASS. Prior App-only approval does not authorize it.",
+    "QL": "Independent 794-based existing-wizard increment; do not transfer seven full-composition failures. Its own two mismatches match prior exact reconciliation at6d9ec3. Existing protection owner must carry forward only those pairs with current custody; do not repeat the same founder decision or cherry-pick all five historical edits."
+  },
+  "runHistory": [
+    {
+      "id": "TC25_R1",
+      "evidence": "d1a8f27a27832ea0b2a89ae68462684c14ed61fa",
+      "status": "NOT_RUN",
+      "attempts": 0
+    },
+    {
+      "id": "TC25_R2",
+      "evidence": "e275d344e0ced7f683218b4dac3b1b7b63f01764",
+      "status": "EXECUTED_FAIL",
+      "exitCode": 1,
+      "timeout": false,
+      "node": "v20.19.0",
+      "npm": "10.8.2",
+      "hardMismatches": 7,
+      "seamWarnings": 2,
+      "appHashMatches": true,
+      "vitest": "NOT_RUN_STOP_FIRST_FAILURE"
+    },
+    {
+      "id": "QL_FROZEN_7ac4083",
+      "evidence": "C:/xenios-wt/doc96-handoffs/frozen-candidate-7ac40837.json",
+      "status": "NOT_RUN_PERMISSION_REFUSAL_REPORTED_18_49Z",
+      "attemptedExecutionResult": "Command refused before tests ran; no retry reported",
+      "pass": null,
+      "fail": null,
+      "skip": null,
+      "exitCode": null,
+      "rawPermissionEventObserved": false
+    }
+  ],
+  "review": {
+    "originalReviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "doc98Commit": "7a76a8dec776d912da21efe57193c0b8ce910f2a",
+    "appScope": "ACCEPTED",
+    "registration": "ACKNOWLEDGED",
+    "R2EvidenceDisposition": "NOT_YET_OBSERVED",
+    "QLCorrectionDisposition": "NOT_YET_OBSERVED",
+    "coordination": "Existing coordinator notified; no independent review claimed beyond Doc98 and no reviewer test execution requested."
+  },
+  "checksThisAudit": [
+    {
+      "command": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe scripts/agentic/xenios-os.mjs validate",
+      "result": "PASS continuity JSON/task/lease validation"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "git apply --check --unidiff-zero docs/health-launch/tc25-app-manifest-20261012/reconciliation/SIX_SOURCE_AUTHORIZED_HASH_PAIRS_UNAPPLIED.patch",
+      "result": "PASS syntax/context only; patch not applied"
+    },
+    {
+      "command": "git diff --name-only e275d344e0ced7f683218b4dac3b1b7b63f01764 -- client server scripts docs/phase2",
+      "result": "EMPTY; runtime, tests, scripts and manifest unchanged"
+    },
+    {
+      "command": "Read-only helper cross-check of six SHA/tree pairs, seven frozen blobs and six-pair patch hash",
+      "result": "PASS, only material correction was recording QL permission refusal; incorporated"
+    }
+  ],
+  "nextActions": [
+    {
+      "owner": "Existing protection/release owner via coordinator",
+      "action": "Bind current custody for historical identical QL two-pair carry-forward. Reconcile full-composition exact approval gaps using matrix; six-pair proposal remains unapplied."
+    },
+    {
+      "owner": "Existing Fable test lead and coordinator",
+      "action": "Resolve permission refusal through permitted approval mechanism. No retry, alternate tool/executor bypass or TC25 skipped-step resumption. If execution later permitted, use an independently finalized bounded run and collect actual receipts."
+    },
+    {
+      "owner": "Original independent reviewer via existing coordinator",
+      "action": "Compare R2 failed evidence and exact QL successor separately from accepted App scope. Preserve Doc95/97 closure."
+    },
+    {
+      "owner": "Existing payment reconciliation and financial source owners",
+      "action": "Recover first applicable method's non-secret current configuration/approval reference; bind invoice/version/amount/currency to real authorized verification, single-use evidence and separate fulfillment eligibility under actual source custody."
+    }
+  ],
+  "decisionBoundary": {
+    "repeatAppApproval": false,
+    "repeatProcessorSelection": false,
+    "QLHistoricalTwoPairReapproval": false,
+    "fullComposition": "Exact baseline authorization for six proposed pairs not established. Static and cumulative server seams remain outside proposal. Coordinator should present one consolidated actionable decision only after existing authority search/source dispositions, not a blanket hash-refresh request.",
+    "testPermission": "Actual execution is blocked by reported permission refusal. User's general source/test scope does not authorize bypassing the permission mechanism.",
+    "payment": "Manual invoicing intent already selected; first current qualified method reference remains unverified, not evidence that every provider choice must block engineering."
+  },
+  "publication": {
+    "status": "LOCAL_ONLY",
+    "finalPushedSha": null,
+    "reason": "Conditional publication/release prerequisites remain unsatisfied; do not trigger CI/deploy through an unqualified push.",
+    "coordinatorCanReadLocalCommit": true
+  },
+  "boundaries": {
+    "sourceChanged": false,
+    "manifestChanged": false,
+    "testChanged": false,
+    "applicationTestsRunByAudit": false,
+    "fullSuiteRun": false,
+    "merge": false,
+    "push": false,
+    "SQL": false,
+    "hostedConfiguration": false,
+    "deploy": false,
+    "realEmail": false,
+    "money": false,
+    "schedules": "UNCHANGED",
+    "Lite": "PARKED"
+  },
+  "lease": "tc25-protection-disposition-records-20261012",
+  "sessionState": "handoff_ready",
+  "sourceWriter": "STOPPED"
+}

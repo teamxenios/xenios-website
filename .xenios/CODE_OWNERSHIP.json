@@ -5,9 +5,9 @@
       "id": "tc25-protection-disposition-records-20261012",
       "task": "TC25-PROTECTION-DISPOSITION-20261012",
       "session": "codex-accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-12T18:46:29Z",
-      "heartbeatAt": "2026-10-12T18:57:00Z",
+      "heartbeatAt": "2026-10-12T18:58:00Z",
       "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
       "paths": ["docs/health-launch/tc25-app-manifest-20261012/reconciliation/", ".xenios/handoffs/2026-10-12-tc25-protection-disposition-handoff.json"],
       "scope": "Same-session receiving ACK for exact read-only forensic findings and own evidence records only. No runtime, manifest, test or earlier receipt edits; no execution window claimed; no other owner's files or stale reservations changed."
