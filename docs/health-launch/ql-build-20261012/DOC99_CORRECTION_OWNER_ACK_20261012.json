@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12",
+  "status": "CURRENT_PARENT_CUSTODY_ACK_RECEIVING_FABLE_LEASE_REQUIRED",
+  "userInstructionSha256": "85e75479aa839e5dac6667d5de59b2a2234ce27b22942733e730dc5b87f6792e",
+  "review": "fa0228e170308737324c1b30a231d7ed03386e87",
+  "registryAuthority": "c27853fb824d87eb6f962b4b9af28e6482cdb6a6 OWNER-DOC96-BOUNDED-WIZARD-PAYMENT-20261012",
+  "parentOwner": "codex-accepted-source-integration-20261005 / 01a0e098-3b23-7233-9b07-877ace092650",
+  "receivingOwner": "Existing native Fable lead da289215-87ed-4b4b-bbda-c9af49bda5bc through existing coordinator",
+  "base": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "baseTree": "28617c360f487803baa556d33158c4e95df471f1",
+  "paths": [
+    "client/src/research/assisted-order/AssistedOrderPage.tsx",
+    "client/src/research/assisted-order/draft-store.ts",
+    "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+    "client/src/research/assisted-order/draft-store.test.ts"
+  ],
+  "scope": "Separate successor: QL2-1 explicit pre-POST in-flight persistence, restore as uncertain with stable key/acceptedAt and deferred/unmount/restore/retry regression; QL2-2 truthful status/support versus clean re-entry copy and assertions; QL2-3 header lifetime disclosure; QL2-6 persist conflict uncertainty as requested by Doc99 section4. Real api.request test with stubbed fetch may be included in the existing Page test without changing api source. No unrelated P3 correction.",
+  "exclusiveOperationalAck": "This parent has no application source writer or heavy job active, will not edit these four paths, and acknowledges their bounded use by the same existing Fable owner after its actual receiving ACK and exact active lease. Parent records-only lease19d2 remains disjoint. This is not a claim that Fable has already acknowledged, edited or tested.",
+  "preservation": "Reviewed7a2 remains immutable. Server hold/service/server tests, api source, EarlyAccessRoute privacy/auth sweep, SQL/adminUI/manifest and all other reservations excluded. Separate EA custody decision does not block these four already granted paths.",
+  "qualification": "No fresh npm-ci/build of old7a2. Retain old exact PASS receipts. New source needs actual Node20.19.0 full Vitest and npm run check, affected tests/real wrapper, real server/browser/DB prerequisites, routes and applicable render-build/served release evidence. No mocked boundary substituted for required durable proof.",
+  "reviewer": "Do not restart completed Docs99-101. Register one narrow successor only after exact source/evidence handoff.",
+  "execution": "NO_RUNTIME_WRITE_OR_TEST_IN_THIS_ACK"
+}
