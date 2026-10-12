@@ -1,5 +1,6 @@
 {
   "$comment": [
+    "2026-10-12 proposed exact TC25 App-only amendment: replaces the clarity seam hash with the source25741f0 App blob b5cc8edcc1040eca4009d8e1b68627ae7492d459, 18079 B, sha256-lf1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0. Covers the0d22757 one-line access-hub redirect removal plus separately approved disabled QuickOrder composition. Original reviewer582c763f confirms source approval; actual founder manifest approval must be separately recorded before applying. No other hashes/zones/routes/runtime/tests/GATE settings or production action change.",
     "2026-10-01: founder exact two-hash baseline amendment, task HEALTH-EXACT-PROTECTED-HASH-AMENDMENT-20261001. Approval and independent review provenance: docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md. Only server/routes.ts hard hash and server/index.ts seam hash are amended. No later bytes, Research index baseline, route/zone expansion or production action is authorized.",
     "The authoritative core-site protection record for Phase 2.",
     "Samuel's directive: the main xenios website outside /health, /research and /care must not be",
@@ -1251,7 +1252,7 @@
       "2026-09-10, founder-requested native payment integration, task XENIOS-NATIVE-FINISH-20260910, exclusive lease 4f6f5a15-3d86-4230-8ece-5df25ee4d5fe: independent reviewer /root/native_finish_review accepted server/index.ts at application 2578d9c31b1521d43d7fb96ef261e0d05b39716d against preserved A parent 27f84b2c0bb8f1e6fdc53424429a630d5f771ede. Exactly three added lines and no removals: import, one registerDurableCheckoutSurface call in the existing commerce block with canonical active-member/admin guards, and whitespace. All existing protected registration, middleware, CSP, session, static-serving and error-handling bytes/order are unchanged. No startup mutation or provider activation. This separate evidence-only re-pin preserves the original full-suite failure and unchanged isolated pgcrypto pass; no test or protected zone is weakened. old sha256:38548a591dffb501031db01874257de6799b61cb3632d9c5d58529287978cce5, new sha256:19be62a6ee9ccc2857230ed86633b14f618dd882e598f1f50d28df3599a35583. Local implementation authority only; not production approval."
     ],
     "files": {
-      "client/src/App.tsx": "sha256:3b3b808b23cccdf8d2e2179fd30349b3ae299137a8a4a5f33525e0a304828d80",
+      "client/src/App.tsx": "sha256:1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
       "server/index.ts": "sha256:1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315",
       "server/research/index.ts": "sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
