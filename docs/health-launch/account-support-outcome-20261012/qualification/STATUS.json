@@ -44,8 +44,9 @@
     "limits": "Local production build, NOT render-build, no server/browser, no all-descendant runtime self-attestation; same accepted support application bytes."
   },
   "typecheck": {
-    "status": "NOT_RUN",
-    "next": "Prepared exact own f435 postbuild binding at e712289; no execution, QL targeted first."
+    "status": "PREFLIGHT_FAILED_TYPECHECK_NOT_RUN",
+    "evidence": "5e906faafa8a0e4b7cccf9e61b1fb4082c1de706:r2/postbuild/check-attempt1/ACTUAL_RESULT.json",
+    "next": "Preserve original failed npm-version preflight and successful read-only diagnostic. Any runner correction or compiler attempt needs a fresh bounded reservation; no automatic retry. QL successor tests keep priority."
   },
   "browser": {
     "status": "NOT_RUN",
