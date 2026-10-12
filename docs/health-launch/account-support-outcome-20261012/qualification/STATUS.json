@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "at": "2026-10-12T21:09:00Z",
+  "at": "2026-10-12T21:24:45.631Z",
   "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
   "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
   "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
@@ -21,13 +21,31 @@
     "companion": "NOT_RUN"
   },
   "build": {
-    "status": "NOT_RUN",
-    "binding": "r2/PREVIEW_BUILD_EXECUTION_BINDING.json",
-    "reason": "Exact newf435 genuine install/build binding ready, fresh coordinator window pending; olda4 build binding NOT_RUN superseded."
+    "status": "PASS_WITH_RECORDED_WARNINGS",
+    "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+    "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+    "record": "bfaaff9e2593cee8d4a08e7a968b7dd6c831e7d7",
+    "receipt": "r2/build-receipt.json",
+    "log": "r2/build-run.log",
+    "logSha256": "430f47e43a6d00f23d85c9a753263eeff341156eba00c77716e96713a483bda5",
+    "start": "2026-10-12T21:11:15.769Z",
+    "end": "2026-10-12T21:15:47.518Z",
+    "exit": 0,
+    "timeout": false,
+    "attempts": 1,
+    "node": "v20.19.0",
+    "npm": "10.8.2",
+    "command": "npm ci --no-audit --no-fund, then npm run build, using full-path pinned Node/npm and private environment",
+    "artifacts": 346,
+    "bytes": 10632920,
+    "inventorySha256": "8fdf24da5e3411365c4d1fbab918c2aaf249707d727b5ab6ac2d4632b0e3635e",
+    "warnings": "One mixed static/dynamic import warning and one chunk-size advisory retained.",
+    "postcheck": "All 346 inventoried artifact hashes/sizes rechecked; owned processes gone; source/lock clean unchanged.",
+    "limits": "Local production build, NOT render-build, no server/browser, no all-descendant runtime self-attestation; same accepted support application bytes."
   },
   "typecheck": {
     "status": "NOT_RUN",
-    "next": "Use actual support install after build; own pinned static compiler run"
+    "next": "Prepared exact own f435 postbuild binding at e712289; no execution, QL targeted first."
   },
   "browser": {
     "status": "NOT_RUN",
@@ -47,7 +65,7 @@
   "boundaries": {
     "server": false,
     "SQL": false,
-    "installation": false,
+    "installation": "Executed necessary project-local npm-ci only, privately configured; no system install",
     "hostedMutation": false,
     "email": false,
     "payment": false

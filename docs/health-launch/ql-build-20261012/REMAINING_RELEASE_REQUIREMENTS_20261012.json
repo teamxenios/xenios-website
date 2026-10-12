@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "at": "2026-10-12T21:09:00Z",
+  "at": "2026-10-12T21:24:45.631Z",
   "kind": "CANDIDATE_SPECIFIC_REMAINING_RELEASE_REQUIREMENTS",
   "instruction": {
     "path": "C:/Users/sboad/.codex/attachments/21ccc15e-477b-4d01-bdff-8a5eb12a60d5/Pasted text.txt",
@@ -74,8 +74,8 @@
   },
   "selection": {
     "qualifiedReleaseCandidate": null,
-    "provisionalQualificationTarget": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
-    "reason": "Support separate control-only successor with unchanged accepted code/tests and actual own28-hash CLI PASS; remaining checks pending. QL7a2 needs bounded source successor, so fresh7a2 npm-ci/build held. No automatic combination.",
+    "provisionalQualificationTarget": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "reason": "Latest user prioritizes corrected existing wizard. New source3a frozen; targeted-first and bounded late-response followup. Support independent actual build/CLI pass retained, no application combination.",
     "truthfulQLScope": "Request recovery corrections and fail-closed payment-transition hold, not operational paid checkout.",
     "truthfulSupportScope": "Uncertain-outcome wording and draft-preservation regressions, not backend idempotency or QL correction."
   },
@@ -408,5 +408,56 @@
     "owner": "Existing Fableda via existing coordinator",
     "scope": "Four client source/test paths only; actual receivingACK then sourcework. KeepQL12serverhold/EAprivacy/auth/source7a2snapshot.",
     "status": "CURRENT_PARENT_EXCLUSIVE_ACK_PUBLISHED_RECEIVING_ACK_PENDING"
+  },
+  "doc99Correction": {
+    "at": "2026-10-12T21:24:45.631Z",
+    "instruction": "C:/Users/sboad/Downloads/CODEX_FINISH_QL_SUCCESSOR_AND_RELEASE.txt",
+    "instructionSha256": "ec82aaf2f4354ce32cbe00d8e77b08c099bdbc4ac890c777a55a68d2164fcbaa",
+    "source": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+    "branch": "codex/assisted-order-doc99-correction-20261012",
+    "worktree": "C:/xenios-wt/doc99-correction",
+    "writer": "Same Fable da289215; sole four-path writer, frozen handoff says STOPPED",
+    "receivingAck": {
+      "path": "C:/xenios-wt/doc96-handoffs/doc99-lead-receiving-ack-and-lease.json",
+      "sha256": "932f10333befb21202d5df33a4d692b9043a5c0826dbc31654eeb5015d3bf914"
+    },
+    "handoff": {
+      "path": "C:/xenios-wt/doc96-handoffs/doc99-successor-handoff-3a03ad65.json",
+      "sha256": "ecf54d637b1788ecccf7a439da6c287b29b6fdb2b7df86f60a0b7ee159f5949d"
+    },
+    "scope": "Exactly Page, draft-store and their two tests. Server payment hold, EarlyAccessRoute/privacy sweep, API source, SQL and manifest unchanged.",
+    "targeted": "NOT_RUN; fresh physical matching dependency copy being prepared; original 7a2 receipts remain historical.",
+    "integratorSourceConcerns": [
+      "Late completion of an obsolete SPA mount can overwrite the restored uncertain draft through new direct refusal writes. Source trace only, not yet reproduced in executed test; returned to same Fable owner.",
+      "Deferred regression asserts storage after settle, not inside submit invocation; must prove synchronous pre-POST persistence."
+    ],
+    "sourceReview": "NOT_REGISTERED; successor source-review receipts pending. Browser/admin/route/DB precheck are separate release conditions, not mislabelled source-review prerequisites.",
+    "intakeLive": false,
+    "paidOrderReady": false,
+    "deployment": false
+  },
+  "supportExecutedBuild": {
+    "status": "PASS_WITH_RECORDED_WARNINGS",
+    "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+    "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+    "record": "bfaaff9e2593cee8d4a08e7a968b7dd6c831e7d7",
+    "receipt": "r2/build-receipt.json",
+    "log": "r2/build-run.log",
+    "logSha256": "430f47e43a6d00f23d85c9a753263eeff341156eba00c77716e96713a483bda5",
+    "start": "2026-10-12T21:11:15.769Z",
+    "end": "2026-10-12T21:15:47.518Z",
+    "exit": 0,
+    "timeout": false,
+    "attempts": 1,
+    "node": "v20.19.0",
+    "npm": "10.8.2",
+    "command": "npm ci --no-audit --no-fund, then npm run build, using full-path pinned Node/npm and private environment",
+    "artifacts": 346,
+    "bytes": 10632920,
+    "inventorySha256": "8fdf24da5e3411365c4d1fbab918c2aaf249707d727b5ab6ac2d4632b0e3635e",
+    "warnings": "One mixed static/dynamic import warning and one chunk-size advisory retained.",
+    "postcheck": "All 346 inventoried artifact hashes/sizes rechecked; owned processes gone; source/lock clean unchanged.",
+    "limits": "Local production build, NOT render-build, no server/browser, no all-descendant runtime self-attestation; same accepted support application bytes."
   }
 }

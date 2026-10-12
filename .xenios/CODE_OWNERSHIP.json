@@ -4425,7 +4425,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-12T20:56:45.092Z",
-      "heartbeatAt": "2026-10-12T21:06:00Z",
+      "heartbeatAt": "2026-10-12T21:24:45.631Z",
       "narrowManifestExtension": "Completed/released21:08Z after freeze f4358b5. No active manifest claim remains.",
       "revision": 2,
       "sourceBase": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
