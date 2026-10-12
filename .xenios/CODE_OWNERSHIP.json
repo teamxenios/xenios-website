@@ -6,8 +6,12 @@
       "task": "QL-STANDALONE-BUILD-EVIDENCE-20261012",
       "session": "codex-accepted-source-integration-20261005",
       "state": "active",
-      "paths": ["docs/health-launch/ql-build-20261012/", ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"],
-      "scope": "Existing integrator own build evidence/continuity only. Exact7a2 isolated build root; no runtime path lease or production authority. Current source owners remain frozen."
+      "paths": [
+        "docs/health-launch/ql-build-20261012/",
+        ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"
+      ],
+      "scope": "Existing integrator own build evidence/continuity only. Exact7a2 isolated build root; no runtime path lease or production authority. Current source owners remain frozen.",
+      "heartbeatAt": "2026-10-12T19:38:47.172Z"
     },
     {
       "id": "account-support-outcome-two-paths-20261012",

@@ -97,6 +97,14 @@
       "environment": "Builtins-only/no application imports/dependencies/network; environment allowlist, no service credential inheritance. Distinct permitted standalone protection check, not retry of denied application run."
     },
     "protectionVitest": "NOT_RUN",
+    "standaloneQLBuild": {
+      "status": "PREPARED_NOT_STARTED_PENDING_COORDINATOR_WINDOW",
+      "binding": "cd6b3cc4764a86c9b08b196cc31ad54faf94c0d4:docs/health-launch/ql-build-20261012/EXECUTION_BINDING.json",
+      "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "worktree": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
+      "scope": "Actual04b4 local QL build authority; unchanged existing production build script, private copied dependencies, no application server startup. Not S3/G0 or deployment.",
+      "bounds": "One heavy job;420second wall;2048MiB Node heap;0retries;only fresh isolated dist is removable;no managed/provider credentials."
+    },
     "fullComposition": {
       "sixApplied": "f6da5aa6154cc62bdbec34ce29a0a5759fb84136",
       "records": "f9d34be4d4d106c03620a23e8eb31915f63552d6",
@@ -226,6 +234,16 @@
     }
   },
   "catalog": {
+    "lineageWarning": "The423 customer projection below belongs ONLY to the separate full f9d34be composition, not independent QL7a2 or support794 lineage. No full catalog source imported into either frozen small candidate.",
+    "independentQLCatalog": {
+      "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "datasetBlob": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+      "serviceBlob": "e9021f6c1dba243e70251994e5c37369c76d34fa",
+      "canonicalProducts": 420,
+      "customerProjectionRows": 420,
+      "shippingTreatment": "No service shipping exclusion in this older independent lineage; assisted-order keeps shipping rows visible with ordering held. Do not subtract one or claim423 here.",
+      "limits": "Local conditional projection, not live count. Full corrected catalog is a distinct accepted-source integration/qualification lane."
+    },
     "source": "f9d34be4d4d106c03620a23e8eb31915f63552d6",
     "datasetBlob": "4a1bb489a22e1d8f03649b4404f4c3430b3bbcf7",
     "reviewWorkbookRows": 426,
