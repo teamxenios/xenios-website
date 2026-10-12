@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12T19:22:47Z",
+  "session": "codex-accepted-source-integration-20261005",
+  "task": "QL-HISTORICAL-PROTECTION-CARRYFORWARD-20261012",
+  "currentLease": "ql-two-baseline-carryforward-20261012",
+  "claimRecords": "f5e4a89cc9c643a2d5fb77bfe78e191f28f1e375",
+  "claimWorktree": "C:/xenios-wt/tc25-app-manifest-20261012",
+  "branch": "codex/ql-protection-carryforward-20261012",
+  "worktree": "C:/Users/sboad/.codex/worktrees/ql-protection-carryforward-20261012/xenios-website",
+  "base": "21d7291f97dbd67026d1f0b31fab82ff56002be7",
+  "baseTree": "81c70bc1a4621b54e482362e5023c35b58d03253",
+  "applicationSource": "3aa7b96938f63b0a2a5049b57bfaa9fe236b4cb2",
+  "applicationSourceTree": "8eaf017a6d5cf8fde252badc81c0c48f1b32fd20",
+  "authority": {
+    "currentHuman": "User-designated8030ec4f continuation expressly permits applying historical QL approval only after exact-byte/current-rule applicability check; latest direct TENSA adoption preserves those controls.",
+    "currentHumanAttachmentSha256": "da648fb2aa8d8f66cc4a15da00fdbe1644486c43bb731a40aef0b7438e1a5814",
+    "consolidatedBriefSha256": "2484ac27dc8692111ae7cb22e5acb1297fd3b10d9f3d3e586dc86ee07d04990d",
+    "coordinator": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "currentCustodyAck": "Observed direct coordinator messages in existing integrator chat: SAME integrator may perform exact applicable two-entry carryforward from6d9 ontoQL21d using current lease/preimage/approval determination; custody acknowledgment is not new source/hash consent.",
+    "governingRule": "docs/phase2/CORE_SITE_PROTECTION.md: unexpected mismatch must be traced; legitimate approved change is re-cut deliberately by protection owner in its own commit with approval referenced.",
+    "historicalApprovalCommit": "6d9ec3cb615f0c48102e74974e777c07e7039eba",
+    "historicalTask": "XENIOS-UX-RELEASE-CONTROL-20260924",
+    "historicalLease": "f9db327b-b7df-4730-821d-3175a73cba4c",
+    "historicalReport": "docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md",
+    "applicability": "Committed founder-directed task, exclusive lease and report explicitly reconcile these two pre-existing production-lineage changes. Identical source blobs at production794, approval6d9 and tested21d; no changed behavior or additional hash accepted. Main integrator and read-only helper checked independently.",
+    "limits": "Historical committed task/lease/report is approval provenance, not newly recovered verbatim founder message or independent Claude acceptance. No historical lease reused. General OWNER-W2-CONTROL-PLANE custody retained. Exact two rows are separate from six-entryf6da5aa."
+  },
+  "manifest": {
+    "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "preimageBlob": "6007233a68aa50eb043bcaec9a1eea933425dcde",
+    "field": "fileHashes.files",
+    "entries": [
+      {
+        "path": "client/src/components/TopRibbon.tsx",
+        "oldSha256Lf": "ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666",
+        "newSha256Lf": "33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad",
+        "unchangedSourceBlob": "354b14f810ca3ceb609fe9062859432918a3114c",
+        "originalSource": "9f9da8540fc64573614d37bed95a0f991dd79a09",
+        "behavior": "Pre-existing Care-family ribbon suppression. No source change in this amendment."
+      },
+      {
+        "path": "package.json",
+        "oldSha256Lf": "c01129601999b1e6b2f02790af0245350182e08fcf739fe40174e4b004c9e081",
+        "newSha256Lf": "27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748",
+        "unchangedSourceBlob": "33fda70eeea889ec05d9dfe7ac5bd09b89f09c34",
+        "originalSource": "9f9da8540fc64573614d37bed95a0f991dd79a09",
+        "behavior": "Pre-existing two release-control script aliases. No dependency, engine or runtime changes."
+      }
+    ],
+    "otherManifestBytes": "UNCHANGED",
+    "wholeHistoricalCommitCherryPicked": false
+  },
+  "executionBeforeFreeze": "NOT_RUN; applicable protection CLI candidate binding follows commit. No Vitest retry, imports, build, installation or SQL.",
+  "priorEvidence": {
+    "client": "64 PASS on7ac408371b6fcc702827a26e61b3a3f5a13f3f67, exit0; source/client bytes unchanged here",
+    "server": "66 PASS on21d7291f97dbd67026d1f0b31fab82ff56002be7, exit0; source/test bytes unchanged here",
+    "aggregate": "Two focused runs, not a one-SHA full suite",
+    "nativeRefusal": "Initial NOT_RUN preserved; actual permission-resolution event still missing from published evidence",
+    "fullCompositionR2": "Historical protection exit1 at e275d344e0ced7f683218b4dac3b1b7b63f01764 preserved; this independent candidate does not clear that composition"
+  },
+  "review": "PENDING_ORIGINAL_REVIEWER; AppDoc98 and Doc95/97 not reopened",
+  "publication": "LOCAL_ONLY_NOT_RELEASE_QUALIFIED",
+  "boundaries": {"runtimeChanged": false, "testsChanged": false, "scriptsChanged": false, "dependenciesChanged": false, "migrationsChanged": false, "push": false, "merge": false, "deploy": false, "hostedConfiguration": false, "payment": false, "email": false}
+}

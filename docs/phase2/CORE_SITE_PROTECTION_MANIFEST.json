@@ -666,7 +666,7 @@
       "client/src/components/Footer.tsx": "sha256:cef8d1891e42b2213dd90324fafea257a7164d762af7ef7bb05ea14b30176247",
       "client/src/components/PageShell.tsx": "sha256:c4d279945f15efde4f1304b507a2e56e7f3ea3b92739fc23528789205d7fbe15",
       "client/src/components/SeoHead.tsx": "sha256:5744060dcb0cc512bd6edb5e04b98c2631d8d90ff1aaa76fe0ff0e0b87a47957",
-      "client/src/components/TopRibbon.tsx": "sha256:ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666",
+      "client/src/components/TopRibbon.tsx": "sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad",
       "client/src/components/Wordmark.tsx": "sha256:878c3f3710b7d1c1cedf841268cee65061148af24173788a354023d8b5c90ec6",
       "client/src/components/ExternalRedirect.tsx": "sha256:72e9709bfa674dcc138a4156edf4fa73aed0c3014c53bba5c37c7c10ff88459a",
       "client/src/pages/Home.tsx": "sha256:6200f6faaa62232c1c39dd23c392184a3fc3f93fa4f0550f6daadcb9d3890ee9",
@@ -681,7 +681,7 @@
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
       "server/static.ts": "sha256:3b0813133a6f0533b5880c47dc6f3187d6409f839f8cfcecb7070e6286e561f1",
-      "package.json": "sha256:c01129601999b1e6b2f02790af0245350182e08fcf739fe40174e4b004c9e081",
+      "package.json": "sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748",
       "package-lock.json": "sha256:d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
       "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924"
