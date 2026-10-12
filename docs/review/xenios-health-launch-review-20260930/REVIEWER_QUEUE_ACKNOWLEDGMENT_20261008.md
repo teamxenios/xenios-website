@@ -553,3 +553,11 @@ bindings record). The five currentness pins and `8b631a83` are unchanged. The cu
 blob as its NON_FINAL dependency.
 
 Nothing was executed.
+
+## Queue state update (2026-10-12, doc 96: Quick Order Lite package)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 96 | Tensa Quick Order Lite package (zip `0a44ea16…`, 33 files; reviewer-initiated advisory, since the board froze it for integration at `fdc8ad4`) against the deployed pin `79414143` | COMPLETE: **CORRECTIONS REQUIRED BEFORE INTEGRATION; integrate nothing at noon.** Two P1: QL-1 (memory-only attempt plus "Reload" copy creates duplicate orders, because the server checks drift before replay) and QL-2 (the payment bridge has no backing at the pin, has a customer cause a staff-only status move, and needs protected-path edits). Ten P2 (C2-C7, surface replacement, demo artifacts). The noon surface is the deployed wizard as it stands, with three small repo-side fixes recommended (QL-11) and a staff hold on every payment transition until a Research-product method approval exists (QL-12). Nothing was executed; the package's directives were not followed |
+
+Doc 95 (composition revision 5) remains in review. Nothing was executed.
