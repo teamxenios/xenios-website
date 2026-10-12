@@ -504,3 +504,12 @@ Docs 87 (composition r3, first priority) and 92 (CI workflow bytes) remain in re
 | 92 | `QUICK-ORDER-CI-WORKFLOW-BYTE-COMPARISON-20261011` r1 (`e86ffe3` / `f76c2fb`; blob `2d40bd2a`) | COMPLETE: **CORRECTIONS REQUIRED.** One P1, eight P2, fifteen P3; no P0. The safety surface is correct, and the adopted values are carried faithfully. CW-1 (P1): on the success path, files written as container UID 1000 are hard-linked, so under `protected_hardlinks` a passing run cannot reach PASS. CW-2 and CW-3: landing-record corrections (the UNBOUND payload must never land; skip-ci misattributed). CW-4 to CW-9: attempt-burning gates, races and dropped failure evidence. Landing and dispatch stay HELD |
 
 Doc 87 (composition r3) remains in review. Nothing was executed.
+
+## Queue state update (2026-10-11, doc 87)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 87 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` **r3** (`69d9e32` / `fa1286a`) | COMPLETE: **CORRECTIONS REQUIRED**, limited to one verifier control (R3C-1, P2: the TC-3 shadow-domain negatives cannot pass because canonical callees resolve shadowed types; carve-out (b) ruled) plus records fold-ins. The transaction source is **ACCEPTED WITH NAMED LIMITS** at these bytes, and r4 must not touch it. TC-1 and TC-2, TC-4 to TC-11 corrected; TC-3 PARTIAL; TC-18 carried. **Currentness receipt: CONFIRMED.** All 102 pins in both receipts were recomputed against `a044293` with 0 mismatches. Currentness pins and `8b631a83` unchanged; baseline files present. It is a whole-delta rebind, so the finalization successor is limited to the `sourceAcceptance` fields. **Intake seal: not yet.** Finalize once after the r4 rebind and my pin re-confirmation. DC-1 is resolved in r4 |
+
+The Doc 83 correction review and all seven targets acknowledged at `c3e7337` are complete (docs 87 to 93). Nothing was
+executed.
