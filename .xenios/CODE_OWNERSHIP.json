@@ -2,6 +2,17 @@
   "schemaVersion": 1,
   "leases": [
     {
+      "id": "tc25-six-baseline-records-20261012",
+      "task": "TC25-SIX-BASELINE-AMENDMENT-20261012",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "active",
+      "claimedAt": "2026-10-12T19:07:24Z",
+      "heartbeatAt": "2026-10-12T19:07:24Z",
+      "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
+      "paths": ["docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json", "docs/health-launch/tc25-app-manifest-20261012/six-entry/", ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json"],
+      "scope": "Fresh one-time direct human authorization for exactly six existing fileHashes.files entries and own approval/evidence records. Prior source builder idle with clean876ede5, target manifest unchanged, no active manifest path lease collision. Existing coordinator notified; no new ACK invented. General Website2 control-plane ownership retained; all other hash/seam/source reservations excluded."
+    },
+    {
       "id": "tc25-protection-disposition-records-20261012",
       "task": "TC25-PROTECTION-DISPOSITION-20261012",
       "session": "codex-accepted-source-integration-20261005",
