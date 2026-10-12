@@ -3,6 +3,26 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "TC25-EXACT-APP-MANIFEST-AMENDMENT-20261012",
+      "owner": "codex-accepted-source-integration-20261005",
+      "state": "claimed",
+      "claimedAt": "2026-10-12T18:21:43.256Z",
+      "leaseId": "tc25-app-manifest-integrator-20261012",
+      "base": "876ede5bb7e78fe9834900c4d9ca2924458b4698",
+      "branch": "codex/tc25-app-manifest-20261012",
+      "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/phase2/HEALTH_APP_PROTECTED_HASH_APPROVAL_20261012.md",
+        "docs/health-launch/tc25-app-manifest-20261012/",
+        ".xenios/handoffs/2026-10-12-tc25-app-manifest-handoff.json"
+      ],
+      "authority": "Actual founder pasted request rawSHA256 20041ef092f750a4a2ebbe7c4bdfb5cff3d4bf0d93b5a2f3aa4aebededb6eee3, recorded at coordinator04b4cc70e809486230c12cef6a5d8530967f9dc2; one-time exact patch5e539cea6f5f683ee4d5c23dec0e6108fde83519d164907a51aa7054e917f516 only.",
+      "custody": "Actual builder ACK msg_0f39ac48c4ef0110016acd251e230087d1bd5c4571cf4f9af3 in chat01a10d78: clean876ede5b, source/Git writer stopped, helper finished, no pending dirty work or writer in manifest/provenance/Doc96 scopes. Existing integrator accepts exclusive manifest custody in this isolated checkout. No historical reservation released.",
+      "execution": "Applicable bounded local protection check only after exact candidate/runtime/dependencies/command/window binding; full S3 remains held.",
+      "publication": "LOCAL_ONLY_PENDING_CONDITIONAL_RELEASE_PREREQUISITES"
+    },
+    {
       "id": "QUICK-ORDER-DOC83-INTEGRATOR-CORRECTION-20261011",
       "revision": 2,
       "owner": "codex-accepted-source-integration-20261005",
