@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "status": "ACTUAL_EXECUTED_RESULTS_COLLECTED_AUTHORITY_DISPOSITION_SEPARATE",
+  "source": "C:/xenios-wt/doc96-handoffs",
+  "rawEvidenceSha256": {
+    "unit-run-receipt-client.json": "f86fe83d9f29048af5c276d6d5738c3ef77390078248f7762cc017d6e37ac7ef",
+    "unit-run-receipt-server.json": "79af26093208fb162c8c117d6cb95f4830392832763bb90983b989326059d573",
+    "vitest-client-result.json": "e4e62791829d509c7b6422ad061bf4741b453038be5d97542afece055af971fb",
+    "vitest-server-result.json": "d6b2cb6091b2647b442e1920e95c52d50f5134cb89fd010ac879c4c1652f8552",
+    "vitest-client-run.log": "1c60761e765b0dd01be6005e9d6583ce8e8fc3b32c4f88a6238927d303fc33f8",
+    "vitest-server-run.log": "d8797a09ef63b1abc0373592111427d57c42d31ab557a4c7b6deeb7bd15feb8c",
+    "execution-ticket-doc96-unit-v2.json": "7e9c80e8e286ff6c8823bc7bc078cdccad96f0a318cc80ff8a8a39392e3d4901",
+    "launcher.mjs": "1d55f5a364f63d375a0e2c9dd58e7a8a2b537a54da5c79ecf17f8abe9563cc3f"
+  },
+  "priorAttempt": {
+    "candidate": "7ac408371b6fcc702827a26e61b3a3f5a13f3f67",
+    "time": "2026-10-12T18:49Z",
+    "status": "NOT_RUN_PERMISSION_REFUSAL",
+    "reportedReason": "[Auto-Mode Bypass]",
+    "rawPermissionEventObserved": false,
+    "operationFromHistoricalTicket": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe node_modules/vitest/vitest.mjs run --config vitest.doc96.config.ts --maxWorkers 2 --reporter verbose --reporter json --outputFile.json C:/xenios-wt/doc96-handoffs/vitest-client-result.json client/src/research/assisted-order/AssistedOrderPage.test.tsx client/src/research/assisted-order/draft-store.test.ts",
+    "workingDirectory": "C:/xenios-wt/doc96-exec",
+    "boundaryReported": "Claude Code auto-mode permission review",
+    "supportedEscalationOrApprovalEvent": "NOT_ESTABLISHED_FROM_PUBLIC_RECEIPTS; existing native execution owner/coordinator must supply actual supported resolution, not infer it from successful later execution",
+    "userActionRequired": "NOT_ESTABLISHED; no generic reapproval requested by this collector"
+  },
+  "client": {
+    "receipt": "DOC96 unit ticket revision 2, client command",
+    "candidate": {
+      "root": "C:/xenios-wt/doc96-unit",
+      "sha": "7ac408371b6fcc702827a26e61b3a3f5a13f3f67",
+      "tree": "b84d29db528e41b477e507546b03ace2263c20f3",
+      "sourceCommits": [
+        "a9e44f4075b3627e17c4238e1a683f6ad4c1d7b2 (QL-11)",
+        "5da08ad72de8d4b6917e431b27d4488d5579d213 (QL-12)",
+        "f40ca87d51027aeed6d4d7552ce5f76aaf52bd48 (tests)"
+      ]
+    },
+    "command": {
+      "launcher": "C:/Users/sboad/.claude/jobs/da289215/tmp/unit/launcher.mjs",
+      "node": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe v20.19.0 sha256 6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+      "argv": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers",
+        "1",
+        "--no-file-parallelism",
+        "--reporter",
+        "verbose",
+        "--reporter",
+        "json",
+        "--outputFile.json",
+        "C:/xenios-wt/doc96-handoffs/vitest-client-result.json",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/draft-store.test.ts"
+      ],
+      "environment": "scrubbed by the launcher: no inherited variables; NODE_ENV=test, NODE_OPTIONS=--max-old-space-size=1024, CI=1, NO_COLOR=1, Windows system paths, scratch TEMP/HOME",
+      "dependencies": "owned real outer node_modules of package junctions into the lockfile-identical b22f tree; vitest 4.1.10, vite 7.3.5, jsdom 29.1.1, react 19.2.7; nothing installed"
+    },
+    "timing": {
+      "launchedUtc": "2026-10-12T19:00:43.833Z",
+      "vitestStartLocal": "14:00:45",
+      "endedUtc": "2026-10-12T19:01:29.879Z",
+      "launcherMs": 45981,
+      "vitestDuration": "44.22s (transform 954ms, import 1.91s, tests 21.28s, environment 20.40s)",
+      "ceiling": "7 minutes, not reached"
+    },
+    "result": {
+      "testFiles": "2 passed (2)",
+      "tests": "64 passed (64)",
+      "failed": 0,
+      "exitCode": 0,
+      "timedOut": false,
+      "jsonReport": "C:/xenios-wt/doc96-handoffs/vitest-client-result.json",
+      "consoleLog": "C:/xenios-wt/doc96-handoffs/vitest-client-run.log",
+      "noise": "jsdom prints 'Not implemented: Window's scrollTo() method' on the wizard's scrollTo calls; pre-existing, not a failure"
+    },
+    "scope": "client files only; the server command is bound separately after the loopback fixture successor 8b38e1c96d05765bfdeb838c0240405d997d5b2c is frozen into the root",
+    "notClaimed": [
+      "typecheck",
+      "build",
+      "full suite",
+      "baseline rerun",
+      "qualification",
+      "deployment"
+    ]
+  },
+  "server": {
+    "receipt": "DOC96 unit ticket revision 2, server command",
+    "candidate": {
+      "root": "C:/xenios-wt/doc96-unit",
+      "sha": "21d7291f97dbd67026d1f0b31fab82ff56002be7",
+      "tree": "81c70bc1a4621b54e482362e5023c35b58d03253",
+      "sourceCommits": [
+        "a9e44f4075b3627e17c4238e1a683f6ad4c1d7b2 (QL-11)",
+        "5da08ad72de8d4b6917e431b27d4488d5579d213 (QL-12)",
+        "f40ca87d51027aeed6d4d7552ce5f76aaf52bd48 (tests)",
+        "8b38e1c96d05765bfdeb838c0240405d997d5b2c (tests successor: http-e2e fixture on 127.0.0.1 with owned cleanup)"
+      ],
+      "blobs": {
+        "server/research/assisted-order/service.ts": "d7d26cf0bf51fb38e0e41ac7f65e63bfe1070dad",
+        "server/research/assisted-order/service.test.ts": "98dabd8cd707cd695efd6918210f049a3aced337",
+        "server/research/assisted-order/http-e2e.test.ts": "04761b69a55e3e80eb49260d80ded80d2e0ba5c1"
+      }
+    },
+    "command": {
+      "launcher": "C:/xenios-wt/doc96-handoffs/launcher.mjs (copy of the job-local launcher)",
+      "node": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe v20.19.0 sha256 6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+      "argv": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers",
+        "1",
+        "--no-file-parallelism",
+        "--reporter",
+        "verbose",
+        "--reporter",
+        "json",
+        "--outputFile.json",
+        "C:/xenios-wt/doc96-handoffs/vitest-server-result.json",
+        "server/research/assisted-order/service.test.ts",
+        "server/research/assisted-order/http-e2e.test.ts"
+      ],
+      "environment": "scrubbed by the launcher: no inherited variables; NODE_ENV=test, NODE_OPTIONS=--max-old-space-size=1024, CI=1, NO_COLOR=1, Windows system paths, scratch TEMP/HOME",
+      "network": "HTTP fixture bound to 127.0.0.1 port 0 per test and closed in owned teardown; no other listener",
+      "dependencies": "owned real outer node_modules of package junctions into the lockfile-identical b22f tree; supertest 7.2.2, express 5.2.1, vitest 4.1.10; nothing installed"
+    },
+    "timing": {
+      "launchedUtc": "2026-10-12T19:02:20.145Z",
+      "endedUtc": "2026-10-12T19:02:25.935Z",
+      "launcherMs": 5732,
+      "vitestDuration": "5.13s (transform 496ms, import 4.19s, tests 503ms)",
+      "ceiling": "7 minutes, not reached",
+      "overallBudget": "both commands finished within the 15-minute window that started 2026-10-12T19:00:43Z"
+    },
+    "result": {
+      "testFiles": "2 passed (2)",
+      "tests": "66 passed (66)",
+      "failed": 0,
+      "exitCode": 0,
+      "timedOut": false,
+      "jsonReport": "C:/xenios-wt/doc96-handoffs/vitest-server-result.json",
+      "consoleLog": "C:/xenios-wt/doc96-handoffs/vitest-server-run.log",
+      "holdCoverage": "service: hold at reviewing -> payment_pending, payment_pending -> payment_review, payment_review -> paid for arbitrary, missing, foreign and reused references, invalid transitions still first, non-payment transitions still open; http: every staff move into a payment state held at the real admin door with no customer notification; full journey over real doors"
+    },
+    "combinedWithClientReceipt": "client 64/64 on 7ac40837 (client files unchanged by the successor; blobs identical), server 66/66 on 21d7291f; executed total 130 passed, 0 failed",
+    "notClaimed": [
+      "typecheck",
+      "build",
+      "full suite",
+      "baseline rerun",
+      "qualification",
+      "deployment",
+      "server drift-before-replay ordering fixed"
+    ]
+  },
+  "rootVerification": {
+    "rawReportsAndLogsAgree": true,
+    "clientPassed": 64,
+    "serverPassed": 66,
+    "failed": 0,
+    "pending": 0,
+    "bothExitCode": 0,
+    "bothTimedOut": false,
+    "aggregateMeaning": "130 passing tests across TWO separately bound focused runs; not one full-suite run or one-SHA aggregate",
+    "successorDiff": "7ac40837..21d7291f changes only HTTP fixture test file; +51/-17; client and runtime bytes unchanged",
+    "testOnlyProducer": "8b38e1c96d05765bfdeb838c0240405d997d5b2c",
+    "testOnlyProducerTree": "5aa4d2f374bf35ff707d09f3b9d1530613539d68"
+  },
+  "correctionsAndLimits": [
+    "Owner server receipt overstates HTTP coverage: actual HTTP test exercises payment_pending only; all three held payment states are tested at service level.",
+    "Initial permission refusal remains separate. Revision2 ticket reports a materially changed bounded setup and conditional coordinator reconsideration; underlying permission-layer disposition is not retained here. Execution is not proof of authorization.",
+    "Source-owner NOT_RUN handoff refers to authored test commit before later assembled execution. Preserve chronology rather than retroactively rewriting it.",
+    "No baseline run observed. jsdom scrollTo diagnostics are non-failing in these runs; historical preexistence not independently established by these receipts.",
+    "Pinned Node path/checksum and invocation corroborated by launcher/log. Child-worker process.version/execPath attestations absent; npm not invoked. Shared installed packages are lockfile-matching, not a proven clean Node20 reinstall or immutable installed-tree hash.",
+    "Client lost-response is mocked and refresh is jsdom remount; no real browser or durable commit/response-loss fault qualification.",
+    "Foreign/reused verification strings are blanket-refused, not authenticated against canonical financial evidence. No paid checkout, settlement or fulfillment proof.",
+    "Server drift-before-replay ordering remains unresolved.",
+    "No typecheck/build/full suite/protection/baseline rerun, SQL, browser, S3/G0 or deployment evidence supplied."
+  ],
+  "permissionNextAction": "Existing execution owner/coordinator identifies actual denied operation, boundary and permitted resolution in native channel. No rerun or alternative executor by this collector.",
+  "independentReview": "Original reviewer remains independent. QL source and execution acceptance not yet observed by this collector; coordinator registration requested.",
+  "rootExecutedApplicationTests": false
+}

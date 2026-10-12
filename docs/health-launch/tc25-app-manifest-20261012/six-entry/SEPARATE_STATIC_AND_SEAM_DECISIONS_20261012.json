@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "status": "SEPARATE_COMPOSITION_DECISIONS_NOT_INCLUDED_IN_SIX_APPROVAL",
+  "authorityExclusion": "8030ec4f user request explicitly excludes static redirect and both server seams",
+  "static": {
+    "path": "server/static.ts",
+    "sourceCommit": "0d22757ab458862c4a9ded6eae7812cc17a06116",
+    "blob": "7fade5dc250b6a466bab34838b0d7c885bc2c1fd",
+    "oldSha256": "9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004",
+    "newSha256": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+    "exactDiff": " export const PUBLIC_DOCUMENT_REDIRECTS: Readonly<Record<string, string>> =\n   Object.freeze({\n     \"/health\": \"/\",\n-    \"/research/access-hub\": \"/\",\n     \"/research/partners\": \"/partners\",",
+    "before": "Exact GET/HEAD /research/access-hub permanently redirects to / with query retained.",
+    "after": "Existing document policy and Research Access Hub route handle request. Existing source tests expect200, no Location, private/noindex metadata and no canonical/social/structured-data authority. This is source expectation, not newly executed behavior.",
+    "limits": "No new Auth/role/API/commerce authority. Other redirect entries unchanged. Existing browser cached301 eviction is not established.",
+    "recommendation": "Retain exact one-entry deletion subject to explicit protected-source acceptance and exact one-entry baseline authorization. Do not reinstate homepage redirect solely to satisfy old hash.",
+    "sourceOwner": "codex-xenios-health-launch-implementation-20260930",
+    "historicalTask": "HEALTH-HL17-ACCESS-HUB-RESTORE-20261001",
+    "historicalLease": "1d83dba6-1e9d-4b80-8f92-2ee0c7a3bc85 HANDOFF; not a current write grant",
+    "protectionOwner": "OWNER-W2-CONTROL-PLANE / Website2 release-manager",
+    "approved": false
+  },
+  "seams": [
+    {
+      "path": "server/index.ts",
+      "expectedSha256": "1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315",
+      "observedSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+      "observedBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+      "expectedEntryIntroduction": "663268fdf537da9349327c097d431dabeef56a70",
+      "firstDivergingChangeOnTestedAncestry": "3562c03f3bd26b4a9ec165c0f17b1f96256abb23",
+      "laterSourceChanges": [
+        "cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb",
+        "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "27463d764ba01219c67081a3548ffdc3ff7d2b40",
+        "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
+        "8e01ef8660ab2148078e969b2190808fc37a27ad"
+      ],
+      "cause": "Cumulative durable payment-effects/disposition/provider journal/execution/settlement composition and disabled Quick Order containment, entry clock, canonical-auth resolver and disabled ports wiring.",
+      "applicableApproval": "663268f pins only prior 1d6594... bytes. Later source review/disabled assembly does not grant a whole-file 9c024a... protected baseline update. Do not disposition only the last QO hunk while accepting the earlier cumulative changes.",
+      "requiredCorrection": "Separate cumulative exact-byte seam/source and baseline disposition by existing source/protection owner. Excluded from six-pair proposal.",
+      "owner": "Historical Health core source owner plus existing integrator for QO hunk; OWNER-W2-CONTROL-PLANE for baseline. No historical handoff silently reclaimed.",
+      "cliDisposition": "NONFATAL_WARNING_NOT_A_HARD_FAILURE",
+      "testPolicy": "server/core-site-protection.test.ts:385-388 requires no seam mismatches. That test was NOT RUN in R2; this is static policy interpretation, not a failed-test count.",
+      "smallestValidResolution": "Health financial source owner and existing disabled-QO integrator disposition the cumulative exact current file, then protection owner obtains corresponding whole-file baseline authorization. Last QO hunk approval alone is insufficient.",
+      "approved": false
+    },
+    {
+      "path": "server/research/index.ts",
+      "expectedSha256": "b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
+      "observedSha256": "5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188",
+      "observedBlob": "6220347de6b123ca7e62e2f759b17dec6476093e",
+      "expectedEntryIntroduction": "9b5e61b53feb547a9fd384d02e75b0c2755546c8",
+      "firstDivergingChangeOnTestedAncestry": "2dc7d6264d7c6286f49c711d729a268868752327",
+      "laterSourceChanges": [],
+      "cause": "Admits exact XRR quote GET and quote-accept POST through the outer wall; downstream authorization remains separate.",
+      "applicableApproval": "HEALTH_PROTECTED_HASH_APPROVAL_20261001.md at663268f expressly excludes these current bytes despite report22/F10 source closure at reviewer c2e4beaa796015dd08134c009c0aaebbbb48644f.",
+      "requiredCorrection": "Separate cumulative exact-byte seam/source and baseline disposition by existing source/protection owner. Excluded from six-pair proposal.",
+      "owner": "Historical Health source owner, quote-gateway task HEALTH-HL12-QUOTE-GATEWAY-20260930, handoff lease dcba6b55-84ac-4019-95ba-d4fba7a08d42; protection OWNER-W2-CONTROL-PLANE. No Quick Order hunk in this file.",
+      "cliDisposition": "NONFATAL_WARNING_NOT_A_HARD_FAILURE",
+      "testPolicy": "server/core-site-protection.test.ts:385-388 requires no seam mismatches. That test was NOT RUN in R2; this is static policy interpretation, not a failed-test count.",
+      "smallestValidResolution": "Existing source owner confirms previously reviewed exact quote-gateway delta; protection owner obtains current exact whole-file baseline authorization and amends only this seam entry. No source rewrite indicated.",
+      "approved": false
+    }
+  ],
+  "cleanSeamRequirement": {
+    "path": "server/core-site-protection.test.ts:385-388",
+    "assertion": "const result = verifyHashes(manifest.seamBaselineHashes.files, cleanReader()); expect(result.mismatches).toEqual([]); expect(result.missing).toEqual([]);",
+    "cli": "Nonfatal seam warning; does not waive separate test assertion",
+    "newExecution": false,
+    "weakenAssertion": false
+  },
+  "QLDependency": "None demonstrated; keep these issues on composition track, not prerequisites for independent QL tests/review.",
+  "correctionToPriorOwnerText": "Prior generic research-seam owner text mentioned integrator QO hunk. Research seam has no QO hunk: only historical quote gateway change."
+}
