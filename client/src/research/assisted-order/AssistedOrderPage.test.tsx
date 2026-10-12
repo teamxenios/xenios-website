@@ -1377,6 +1377,128 @@ describe("AssistedOrderPage", () => {
       expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).not.toBeNull();
     });
 
+    // A failed own write must forgive only the store lagging behind this page
+    // by its own last successful write. A readable store that is empty after
+    // this page's own write (the sweep ran while the page was still mounted)
+    // or that holds another attempt is never this page's to touch, whatever
+    // the failure flag says; and a page that no longer owns the store may not
+    // reclaim it, or send, on the next click.
+    function refuseDraftWrites() {
+      const nativeSetItem = Storage.prototype.setItem;
+      return vi.spyOn(Storage.prototype, "setItem").mockImplementation(function (
+        this: Storage,
+        key,
+        value,
+      ) {
+        if (String(key) === ASSISTED_ORDER_DRAFT_KEY) {
+          throw new DOMException("Quota exceeded", "QuotaExceededError");
+        }
+        return nativeSetItem.call(this, key, value);
+      });
+    }
+
+    it("after a failed own write, a sweep while still mounted still wins: a late success stores no credential and navigates nowhere", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValueOnce(lost.promise);
+      render();
+      await settle();
+      await reachReview();
+      expect(readDraft().idempotencyKey).toBeTruthy();
+
+      // The steps stored the draft. The pre-POST write is refused, then writes
+      // work again: a failed write is on record while the store is readable.
+      const quota = refuseDraftWrites();
+      click(byTestId("order-submit"));
+      await settle(20);
+      quota.mockRestore();
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+
+      // The session ends while the page is still mounted: the sweep empties
+      // the store, and nothing this page learns later may refill it.
+      clearAssistedOrderStorage();
+      const pathBefore = window.location.pathname;
+      lost.resolve(receipt);
+      await settle(20);
+      expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).toBeNull();
+      expect(sessionStorage.getItem(assistedOrderTokenKey(receipt.publicReference))).toBeNull();
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+      expect(sessionStorage.length).toBe(0);
+      expect(window.location.pathname).toBe(pathBefore);
+    });
+
+    it("after a failed own write, a sweep while still mounted still wins: a late refusal repopulates nothing", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValueOnce(lost.promise);
+      render();
+      await settle();
+      await reachReview();
+      const quota = refuseDraftWrites();
+      click(byTestId("order-submit"));
+      await settle(20);
+      quota.mockRestore();
+
+      clearAssistedOrderStorage();
+      lost.reject(unavailable());
+      await settle(20);
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+      expect(sessionStorage.length).toBe(0);
+    });
+
+    it("a still-mounted page whose draft was swept can neither reclaim the store nor send on the next click", async () => {
+      api.submitAssistedOrder.mockResolvedValue(receipt);
+      render();
+      await settle();
+      await reachReview();
+      expect(readDraft().idempotencyKey).toBeTruthy();
+
+      // The session ends while the page is still mounted.
+      clearAssistedOrderStorage();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+      expect(sessionStorage.length).toBe(0);
+      expect(byTestId("order-error")?.textContent).toContain("Your Early Access session ended");
+      expect(window.location.pathname).toBe("/research/early-access/order-request");
+    });
+
+    it("a foreign draft written while this page's own writes were failing wins over the failure flag", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValueOnce(lost.promise);
+      render();
+      await settle();
+      await reachReview();
+      const quota = refuseDraftWrites();
+      click(byTestId("order-submit"));
+      await settle(20);
+      quota.mockRestore();
+      const ownKey = submitCall(0).idempotencyKey;
+
+      // Another attempt now owns the store (the sweep followed by a fresh
+      // wizard, written here directly): neither this page's identity nor its
+      // last successful write.
+      clearAssistedOrderStorage();
+      sessionStorage.setItem(
+        ASSISTED_ORDER_DRAFT_KEY,
+        JSON.stringify({
+          idempotencyKey: "foreign-attempt",
+          acceptedAt: null,
+          attemptState: "none",
+          step: "products",
+          selections: [{ item: directRuoItem, quantity: 1, notes: "" }],
+          generalNotes: "",
+          savedAt: "2026-10-12T12:00:00.000Z",
+        }),
+      );
+      expect(ownKey).not.toBe("foreign-attempt");
+      const pathBefore = window.location.pathname;
+      lost.resolve(receipt);
+      await settle(20);
+      expect(readDraft()).toMatchObject({ idempotencyKey: "foreign-attempt", attemptState: "none" });
+      expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).toBeNull();
+      expect(window.location.pathname).toBe(pathBefore);
+    });
+
     it("keeps the key on idempotency_conflict and never invites a new request", async () => {
       api.submitAssistedOrder.mockRejectedValue(conflict());
       render();
