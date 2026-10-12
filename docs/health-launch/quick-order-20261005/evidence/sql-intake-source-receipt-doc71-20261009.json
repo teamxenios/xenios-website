@@ -421,20 +421,20 @@
   "definitionSha256": "10e9e2e3c9ba6f86c6768f783aabd69b02f987cfe8540cdba8f2f6679c512b1a",
   "currentnessDefinition": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
   "currentnessDependency": {
-    "status": "PENDING_ORIGINAL_REVISION5_RECEIPT_PIN_RECONFIRMATION",
+    "status": "SOURCE_ACCEPT_WITH_LIMITS",
     "sourceCommit": "54ffba10459efe0e191428b86a2c913e56c5f829",
     "sourceTree": "45531814fe0c8a40e18f14ddf200b6626878aad0",
-    "reviewCommit": null,
+    "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
     "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
     "receipt": {
-      "commit": "57c5aa5303b9d9b92c85a796b73674737b61ba13",
+      "commit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834",
       "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
-      "gitBlob": "9178947cd345fb503ed356d9f45c8402e2c51899",
-      "rawSha256": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
-      "sha256lf": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
-      "bytes": 183668,
+      "gitBlob": "8c058c4c459186e336e3aaff4f13c698ccbf4423",
+      "rawSha256": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+      "sha256lf": "8dfbd0751ed7fe8b26daf30fc7b4fca2e5e79078725f1d502c55cc037d996aa9",
+      "bytes": 186264,
       "digestDomain": "RAW_COMMITTED_GIT_BYTES",
-      "recordsCommit": "57c5aa5303b9d9b92c85a796b73674737b61ba13"
+      "recordsCommit": "bfeb36fcd70b3fc5615bd9977e20966f8932b834"
     },
     "acceptedCodeSource": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
     "acceptedCodeReviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
@@ -485,7 +485,7 @@
         "digestDomain": "RAW_COMMITTED_GIT_BYTES"
       }
     ],
-    "sealStatus": "NON_FINAL_PENDING_ORIGINAL_REVISION5_RECONFIRMATION",
+    "sealStatus": "FINAL_CURRENTNESS_DEPENDENCY_ONLY",
     "scope": "REVISION5_RECORDS_REBIND_WITH_UNCHANGED_ACCEPTED_CURRENTNESS_CODE",
     "execution": "NOT_RUN"
   },
