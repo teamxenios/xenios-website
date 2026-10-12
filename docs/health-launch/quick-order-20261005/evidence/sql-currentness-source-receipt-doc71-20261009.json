@@ -3,8 +3,8 @@
   "sourceCommit": "54ffba10459efe0e191428b86a2c913e56c5f829",
   "sourceTree": "45531814fe0c8a40e18f14ddf200b6626878aad0",
   "sourceAcceptance": {
-    "status": "PENDING",
-    "reviewCommit": null
+    "status": "SOURCE_ACCEPT_WITH_LIMITS",
+    "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b"
   },
   "files": [
     {
@@ -3452,6 +3452,51 @@
       "ownSourceAcceptance": "PENDING",
       "dependencySeal": "NON_FINAL",
       "execution": "NOT_RUN"
+    },
+    "doc95Finalization": {
+      "kind": "EXACT_DOC94_SECTION3_DOC95_STEP1_FINALIZATION",
+      "sourceAcceptance": {
+        "document": 82,
+        "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b"
+      },
+      "bindingConfirmation": [
+        {
+          "document": 87,
+          "reviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+          "scope": "Historical revision3 pins"
+        },
+        {
+          "document": 94,
+          "reviewCommit": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+          "scope": "Historical revision4 pins and finalization envelope"
+        },
+        {
+          "document": 95,
+          "reviewCommit": "d4e6a50dc11b3e91d2241dde63be4d33a287fb67",
+          "scope": "Revision5 source acceptance and all102pins in both receipts, zero mismatches"
+        }
+      ],
+      "supersession": "Embedded PENDING/NON_FINAL narrative in this currentness receipt is historical and superseded for source acceptance and binding confirmation by this disclosure and top-level sourceAcceptance. This does not establish execution, installed configuration, operational readiness, or acceptance of future changed bytes.",
+      "archivedNarrative": {
+        "commit": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+        "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+        "gitBlob": "d01de5e2651ed143b401a5c909d2eeb48f6a876d",
+        "rawSha256": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+        "sha256lf": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+        "bytes": 1538019,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES",
+        "fields": [
+          "doc94ReceiptNarrativeArchive.currentness",
+          "doc94ReceiptNarrativeArchive.intake"
+        ],
+        "meaning": "Exact accepted correction-map identity holding the archived narrative referenced by both receipts"
+      },
+      "recordsPrecision": {
+        "R5C1": "Receipts and sibling currentness verifier cover five accepted currentness files. The intake verifier byte-enforces three of those five plus definition recomputation; its five-pin wording is not proof that it loads all five.",
+        "R5C2": "GIT_NO_LAZY_FETCH requires Git>=2.44. Alternatively use a full clone containing every required object, with no missing promisor objects or network fetch. No Git version or deployed behavior is measured by this record."
+      },
+      "execution": "NOT_RUN",
+      "publication": "LOCAL_ONLY"
     }
   }
 }
