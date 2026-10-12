@@ -1,0 +1,14 @@
+core-site protection gate
+  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8
+  comparing         : 79414143d4355d5d3d14cd5fe6e5a536dc68d99d..f4358b521fc89551e31ce40bb040a5ffbacd8050
+  changed files     : 4
+  allowed (research/care) : 1
+  infrastructure          : 2
+  protected file hashes   : 28 verified
+
+TEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.
+Review must still confirm each one was STRENGTHENED, not weakened. Lowering
+an existing safety or regression gate to make a build pass is forbidden):
+  - client/src/research/account-portal/views/support-documents.test.tsx
+
+RESULT: PASS

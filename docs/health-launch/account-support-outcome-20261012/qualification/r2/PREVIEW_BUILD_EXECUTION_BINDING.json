@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "action": "SUPPORT_EXACT_PREVIEW_NPMCI_BUILD_20261012",
+  "status": "PREPARED_NOT_RUN_PENDING_COORDINATOR_WINDOW",
+  "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+  "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+  "executor": "01a0e098-3b23-7233-9b07-877ace092650",
+  "session": "codex-accepted-source-integration-20261005",
+  "lease": "19d2ed9a-ba59-413a-9dc3-f09e272c9bca",
+  "cwd": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website",
+  "checkout": "Fresh physical exact f4358b5 support release-control successor, clean, no node_modules/dist; branch codex/support-release-qualification-20261012. Accepted a4 code/tests identical. NOT a combined QL release.",
+  "authority": {
+    "actualHuman": "Raw20041ef092f750a4a2ebbe7c4bdfb5cff3d4bf0d93b5a2f3aa4aebededb6eee3, sections203-222 authorizes scoped local/synthetic tests/build and installed-dependency evidence;21ccc9eff48d requires browser/release qualification. Latest directuser expressly adds unchanged Doc101 support qualification independently.",
+    "reconciliation": "Earlier coordinator newInstallationPermission:false annotation was not quoted human prohibition. Main reread original, withdrew unnecessary project-local npm-ci approval question. Necessary ordinary locked project install covered; global/toolchain installation, Docker/server/SQL not included. Old receipt preserved, no permission settings or denial bypass."
+  },
+  "command": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "scripts/evidence/build-candidate-preview.mjs",
+    "--sha",
+    "f4358b521fc89551e31ce40bb040a5ffbacd8050"
+  ],
+  "launcher": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "C:/Users/sboad/.codex/tmp/support-preview-build-r2-20261012/run-preview-build.cjs",
+    "<fresh coordinator stopUTC>"
+  ],
+  "launcherSha256": "e53a071b76367b9f95ac2c095cfa5b011e0ae1c483c1facb258ca64def510a7a",
+  "pins": {
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js": "3ce7cba6f5128dd5f54c98b6a5036b0f850496878cc2e21044b675fe3c594e3e",
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/package.json": "c24c86166b39e4a7df131f03a8bbe904703de8fad44485bcf527d4de7806d6c6",
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node_modules/npm/lib/cli.js": "bbcf260a5c9c25e8789fe26905951d52a76d9723ce15416c3174f8c732cf2d17",
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/npm.cmd": "21b46c69ad6e2f231f02a9e120f4ba6c8e75fef5a45637103002eab99f888ab8",
+    "C:/Program Files/Git/cmd/git.exe": "37c5725818d602e951ba2563b870d62763322956b73373da4c33a0b566a80bc9",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/scripts/evidence/build-candidate-preview.mjs": "889c561597e3bf376e62af994e39bb064bda37967de223aaf937fec50cc907b0",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/scripts/evidence/lib/provenance.mjs": "ba227736911cad45af19ef52eec033ca480f78efe162186c1a86ac46c88142d2",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/scripts/evidence/lib/immutable-dist.mjs": "ebb4ff9954be25eb9e8e784f0f68418aec98cbe4064c5ee67b429640602792ff",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/script/build.mjs": "f0b8175c54d3398d5d62a1aa363d4e80440c1b8c4cde14472f4396fb974900dc",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/vite.config.ts": "ded50d975bb3fa372bd3c85689dc234eb079309a54eaae72f1a5dd6c0bce5f92",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/package.json": "32aa3da519b9377d43d30731e60f75a5ff2fe5d0f57d719b43081ef6adf280b4",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/package-lock.json": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/.npmrc": "6d5c57b99119abf207f8554d3cc743ce6578e6baea2a67317ba21d98bc303aa7",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/tsconfig.json": "74cb25011ea689d2b3f8412f14e8a61fed78f02e511d272a30346e871f03eded"
+  },
+  "runtime": {
+    "node": "v20.19.0",
+    "npm": "10.8.2",
+    "actualVersionChecks": "Launcher + unchanged builder execute sibling npm version checks; no inherited global npm or Node24.",
+    "descendants": "npm prepends ancestor node_modules/.bin: fresh ancestry checked absent, lock no node/npm/git bin declarations. Private prefix prevents npm.cmd selecting replacement CLI. Not child self-attestation."
+  },
+  "effectiveCommands": [
+    "Sibling npm ci --no-audit --no-fund",
+    "Sibling npm run build -> node script/build.mjs",
+    "Sibling npm --version and existing clean Git/source/lock checks; helper computes real dist inventory/provenance"
+  ],
+  "environment": "Full literal allowlist in launcher: Windows basics+pinned Node/Git PATH; private HOME/TEMP/npm cache/prefix/node-gyp cache; separate blank user/global npmrc; preserved repository npmrc. NODE_ENV unset duringinstall, no CI/app/provider/DB/proxy credentials; only supplied1536MiB NODE_OPTIONS; public registry; foregroundscripts; fetchretries0/fetchtimeout60s. No ignore-scripts/omit-optional/lockrepair.",
+  "bounds": {
+    "oneHeavyJob": true,
+    "wallMs": 900000,
+    "cleanupMarginMs": 15000,
+    "nodeHeapMiB": 1536,
+    "attempts": 1,
+    "retries": 0,
+    "minimumRemainingWindowMs": 915000,
+    "aggregateNativeMemoryNetworkIsolation": "NOT_ENFORCED_NOT_G0",
+    "preflight": "Fresh availableRAM/ownedheavy scan; require at least1.5GiB free and coordinator slot. Stop unsuitablecapacity, do not stop unrelatedprocesses.",
+    "cleanup": "Ownedchild tree taskkill once ontimeout; absolute finalizer beforestopUTC, boundedpostchecks; failed/unconfirmed cleanup gets incomplete receipt, not success."
+  },
+  "effects": {
+    "writeTargets": [
+      "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules",
+      "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/dist",
+      "C:/Users/sboad/.codex/tmp/support-preview-build-r2-20261012"
+    ],
+    "existingDataDeletion": "No existing node_modules/dist permitted. Existing build helper removes/recreates only this verifiedfresh checkout dist, no other checkout touched.",
+    "network": [
+      "registry.npmjs.org for locked dependency and esbuild native downloads",
+      "nodejs.org if optional bufferutil node-gyp fallback needs Node headers/checksums/node.lib"
+    ],
+    "lifecycle": [
+      "esbuild0.18.20/0.25.12/0.27.7/0.28.1 native validation/npm or directdownload fallback",
+      "optionalbufferutil4.1.0 prebuild or node-gyp compile",
+      "Darwin-onlyfsevents2.3.3 not Windows; no rootinstall lifecycle"
+    ],
+    "lockLimit": "411dependencyrecords lackresolved/integrity; exactlockbinding not fulltarballintegrity guarantee. Preserveexactlock, failonchange; no dependencyversionrepair."
+  },
+  "outputs": [
+    "C:/Users/sboad/.codex/tmp/support-preview-build-r2-20261012/run.log",
+    "C:/Users/sboad/.codex/tmp/support-preview-build-r2-20261012/receipt.json",
+    "C:/Users/sboad/.codex/tmp/support-preview-build-r2-20261012/npm-cache/_logs",
+    "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/dist/evidence-provenance.json"
+  ],
+  "success": "Actualhelperexit0, cleanidenticalsource/lock, genuineprovenance/npmversions/artifactinventory, actual ownedprocesspostcheck. Build warnings retained. Notbrowser/fullsuite/deploy result.",
+  "exclusions": [
+    "Application/test/manifest edits",
+    "Fullsuite/typecheck/server/browser start",
+    "Docker/SQL/hosted writes",
+    "Global/toolchain/browser installation",
+    "Merge/push/deploy",
+    "Realemail/payment"
+  ],
+  "sourceAcceptance": "Doc101 accepted a4 code/test blobs unchanged. Newf435 release-control metadata separately recorded under exact currentcustody; not independent source-reviewclaim.",
+  "supersedes": "Originala4 preview binding PREPARED_NOT_RUN preserved. Different release tree explicitlybound; no second installation attempt."
+}
