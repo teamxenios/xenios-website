@@ -100,6 +100,24 @@ const allowedTransitions: Readonly<Record<AssistedOrderStatus, readonly Assisted
     cancelled: [],
   });
 
+// INTERIM PAYMENT HOLD (Doc96 QL-12).
+//
+// The generic staff status PATCH used to accept `paid` on the strength of any
+// non-blank free-text `paymentVerificationId`, and the customer was then told
+// "Payment has been verified." No canonical payment verification authority is
+// mounted on this service: the payment engine under ./payment is deliberately
+// unmounted and carries its own verification grant, and no port here can
+// resolve a reference against the correct order, invoice, amount or method.
+// Until that authority is connected and qualified, every transition INTO a
+// payment state is refused before any repository, audit or outbox mutation.
+// A reference, screenshot or customer claim is evidence to review, never a
+// fact that money arrived. This hold is removed only by the payment engine's
+// own mount and verification work, not by loosening this set.
+export const ASSISTED_ORDER_HELD_PAYMENT_STATUSES: ReadonlySet<AssistedOrderStatus> =
+  new Set<AssistedOrderStatus>(["payment_pending", "payment_review", "paid"]);
+
+export const ASSISTED_ORDER_PAYMENT_TRANSITION_HELD_CODE = "payment_transition_held";
+
 type AssistedOrderUploadMimeType =
   | "image/jpeg"
   | "image/png"
@@ -826,6 +844,16 @@ export class AssistedOrderService {
       throw new AssistedOrderConflictError(
         "invalid_status_transition",
         `Status cannot move from ${current.status} to ${input.status}.`,
+      );
+    }
+    // Shape first, then the hold: an impossible move (submitted -> paid) is
+    // still reported as an invalid transition, so staff see the real reason;
+    // a legal move into a payment state is then refused by the hold before
+    // evidence is examined and before anything is written, audited or sent.
+    if (ASSISTED_ORDER_HELD_PAYMENT_STATUSES.has(input.status)) {
+      throw new AssistedOrderConflictError(
+        ASSISTED_ORDER_PAYMENT_TRANSITION_HELD_CODE,
+        `Status cannot move to ${input.status}: payment transitions are held until canonical payment verification is connected and qualified. A payment reference does not verify a payment.`,
       );
     }
     evidenceRequired(input.status, input);
