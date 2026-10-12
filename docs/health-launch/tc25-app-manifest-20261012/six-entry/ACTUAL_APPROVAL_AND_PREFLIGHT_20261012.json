@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-12T19:05:09Z",
+  "actualSentTime": "NOT_EXPOSED_NOT_BACKDATED",
+  "status": "ACTUAL_DIRECT_USER_APPROVAL_EXACT_SIX_ENTRIES",
+  "authority": {
+    "source": "C:/Users/sboad/.codex/attachments/8030ec4f-6c0f-4770-8946-7759eb0c518b/Pasted text.txt",
+    "rawSha256": "da648fb2aa8d8f66cc4a15da00fdbe1644486c43bb731a40aef0b7438e1a5814",
+    "designation": "User expressly says pasted text contains the request",
+    "exactApproval": "SAMUEL: I APPROVE THE EXACT SIX-ENTRY BASELINE AMENDMENT.",
+    "conditions": "Confirm proposal identity and previously authorized source bytes; only six existing entries plus necessary records. Register exact successor for bounded review."
+  },
+  "startingRecords": "d907096c24078e951ed988dc1f6a5af8d564e337",
+  "priorAppAmendment": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86",
+  "priorR2Evidence": "e275d344e0ced7f683218b4dac3b1b7b63f01764",
+  "preparedProposal": {
+    "path": "SIX_SOURCE_AUTHORIZED_HASH_PAIRS_UNAPPLIED.patch",
+    "rawSha256": "c7e7445d97d1317250151d2b0afbb5066254c4419cdb4743d8cf8d26280a0c33",
+    "targetManifest": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "manifestBlobBefore": "ceec20e2ea36774fbe480313fbea14c8237546ff",
+    "manifestSha256LfBefore": "95445fdf1855560460da2283d06f9dda733e373c1258611ec278cd499e74a23d",
+    "proposalUnchanged": true
+  },
+  "preflight": {
+    "method": "Read-only pinned Node20 SHA256 over Git LF bytes and JSON field comparison",
+    "passed": true,
+    "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+    "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+    "allSixCurrentSourceBlobsIdentical": true
+  },
+  "entries": [
+    {
+      "path": "client/src/index.css",
+      "location": "fileHashes.files",
+      "oldSha256": "70d3302a8b4f5d22aa324c3728ae51963d12222ab880c29fcd3f8ea3e477d0e6",
+      "newSha256": "b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049",
+      "sourceBlob": "3e21b412fd8cea68000311c16a91134335c7d283",
+      "sourceApproval": {
+        "source": "561596358cbe5ba6b8d5a5a93f85e7df611b2479:docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
+        "sourceProducer": "70cd421a6ab79513744f531d921b3ece61044874",
+        "approvalScope": "Accepted exact source integration, including these three observed hashes; explicitly says founder exact protected-hash approval absent. CLAUDE_CORE_IC2_ACCEPTANCE.txt is source acceptance, not a baseline grant.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+      }
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.tsx",
+      "location": "fileHashes.files",
+      "oldSha256": "9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
+      "newSha256": "9b1a354def9f430e450ce1261a3d8fbd269c833423cbff179f68643db22a1d19",
+      "sourceBlob": "8e6f22575454887cb680954ef7f561a9c4c23fb5",
+      "sourceApproval": {
+        "source": "21d904fa81835a6c26897df6269d295b95d13110:docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+        "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+        "approvedPatchSha256": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+        "approvalScope": "Actual fixed-copy F9 authority; protected manifests/hashes/GATE-01 excluded. Copy custody ended after assembly. Source acceptance does not authorize baseline refresh.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+      }
+    },
+    {
+      "path": "client/src/components/Navbar.tsx",
+      "location": "fileHashes.files",
+      "oldSha256": "e37a5b94cb07674e8f4471ddc37b9a5e8a6f848d300408ba67ff3b706941eb1f",
+      "newSha256": "6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a",
+      "sourceBlob": "8ceb5184f9095ffec930a9bd3983678b5e2b04bb",
+      "sourceApproval": {
+        "source": "561596358cbe5ba6b8d5a5a93f85e7df611b2479:docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
+        "sourceProducer": "70cd421a6ab79513744f531d921b3ece61044874",
+        "approvalScope": "Accepted exact source integration, including these three observed hashes; explicitly says founder exact protected-hash approval absent. CLAUDE_CORE_IC2_ACCEPTANCE.txt is source acceptance, not a baseline grant.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+      }
+    },
+    {
+      "path": "client/src/components/Footer.tsx",
+      "location": "fileHashes.files",
+      "oldSha256": "25da700fcea32178d19fc21a3d6db4192d11b403418b7fa83100b4c88d9e2a3a",
+      "newSha256": "420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb",
+      "sourceBlob": "341e24ed1f9984efe17a1ed854d3a9fe7ba1aba0",
+      "sourceApproval": {
+        "source": "561596358cbe5ba6b8d5a5a93f85e7df611b2479:docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
+        "sourceProducer": "70cd421a6ab79513744f531d921b3ece61044874",
+        "approvalScope": "Accepted exact source integration, including these three observed hashes; explicitly says founder exact protected-hash approval absent. CLAUDE_CORE_IC2_ACCEPTANCE.txt is source acceptance, not a baseline grant.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval before any amendment."
+      }
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "location": "fileHashes.files",
+      "oldSha256": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "newSha256": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+      "sourceBlob": "e0b8137b717ee43c92569c9d6612a0b143737e39",
+      "sourceApproval": {
+        "source": "21d904fa81835a6c26897df6269d295b95d13110:docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+        "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+        "approvedPatchSha256": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+        "approvalScope": "Actual fixed-copy F9 authority; protected manifests/hashes/GATE-01 excluded. Copy custody ended after assembly. Source acceptance does not authorize baseline refresh.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+      }
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "location": "fileHashes.files",
+      "oldSha256": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "newSha256": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",
+      "sourceBlob": "f3929cd40d728634038e35db8059ddcceed7cbf9",
+      "sourceApproval": {
+        "source": "21d904fa81835a6c26897df6269d295b95d13110:docs/coordination/launch-coordination-20261005/NINE_PATH_OWNERSHIP_ASSEMBLY_DIRECT_AUTHORITY_20261011.json",
+        "approvedAssemblyIdentity": "f9f28be2af8e2b2ead989214074d2dec98ce52eb9254601b6a6516f72e9338cd",
+        "approvedPatchSha256": "83f185554ba3ff0c1cf1cbf0e9126a9758de999260f4ff435c9c259bca530d88",
+        "approvalScope": "Actual fixed-copy F9 authority; protected manifests/hashes/GATE-01 excluded. Copy custody ended after assembly. Source acceptance does not authorize baseline refresh.",
+        "remaining": "Exact six-pair proposal contains this row. Protection owner must obtain/locate exact old-to-new baseline approval and current custody before any amendment."
+      }
+    }
+  ],
+  "custody": {
+    "status": "FRESH_EXACT_DIRECT_USER_SCOPE_CLAIMED_BY_EXISTING_INTEGRATOR",
+    "requestedViaCoordinator": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "intendedExecutor": "codex-accepted-source-integration-20261005",
+    "ownRecordsLease": "tc25-six-baseline-records-20261012",
+    "claimCommit": "871b4370fd7336f42f41e51e8a553d55ba1dd866",
+    "basis": "Latest direct human instruction authorizes existing integrator's six-entry change from d907096. No active manifest lease collision; prior source-builder idle and b22f clean at876ede5. Manifest preimage unchanged. Current exact lease covers manifest and own records only; general Website2 control-plane ownership retained.",
+    "coordinatorAcknowledgment": "NOT_CLAIMED: notified and asked for confirmation; fresh direct human scope plus verified writer/lease state is the basis, not a fabricated ACK or old App-only approval"
+  },
+  "excludes": [
+    "server/static.ts",
+    "server/index.ts",
+    "server/research/index.ts",
+    "QL historical TopRibbon/package baseline carry-forward",
+    "runtime source",
+    "tests",
+    "other manifest fields/comments/hashes",
+    "payment configuration/destinations",
+    "production execution/deployment"
+  ],
+  "application": {
+    "status": "APPLIED_EXACT_SIX_BASELINE_ENTRIES",
+    "manifestBlobAfter": "69cf6b4412955305c69bc9054a984159bc1f96cb",
+    "manifestSha256LfAfter": "1e6f6b351c2a5101218b3568be8119d6aa48f21c7191990cda91326719aeff76",
+    "manifestBytesLf": 118175,
+    "diff": "Exactly six lines removed and six replaced in fileHashes.files; every other manifest byte unchanged after LF normalization",
+    "sourceAndTestsUnchanged": true,
+    "scopeVerification": "PASS: current manifest equals old manifest with only the six approved old/new substitutions; restoring those six values gives deep JSON equality with preimage",
+    "historicalSourceApprovalNotes": "The per-entry sourceApproval records above retain their pre-decision remaining language as historical provenance. This new actual human approval supplies the formerly missing six-entry baseline authorization only."
+  },
+  "remainingFullComposition": "One hard mismatch (static) and two seam warnings remain by read-only arithmetic; not a new protection-run verdict.",
+  "preserve": "Historical seven-hard/two-seam R2 failure remains immutable. App scope accepted separately. Doc95/97 remain closed, Lite parked, schedules unchanged.",
+  "publication": "LOCAL_ONLY_PENDING_APPLICABLE_CONDITIONS"
+}
