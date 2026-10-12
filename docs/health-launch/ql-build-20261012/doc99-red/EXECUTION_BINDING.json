@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "status": "PREPARED_NOT_RUN",
+  "candidate": "9d7bfe4b32b09e887a0ee23b12eae007c6dd94dd",
+  "tree": "dc79ee5b04aaaf1fe6f0dbde944fa654311dc35e",
+  "cwd": "C:/xenios-wt/doc99-followup",
+  "runner": "C:/Users/sboad/.codex/tmp/ql-doc99-red-20261012/run-targeted.cjs",
+  "runnerSha256": "a3a689f93b5370fdeafe799cbb226dcc86ce4a50137a5baad6f2a0830dff1f91",
+  "pins": "C:/Users/sboad/.codex/tmp/ql-doc99-red-20261012/pins.json",
+  "pinsSha256": "a95acb184e19d3b74694d1276d9961fc2130461a7298d3a54d040a5ab3530516",
+  "invocation": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "C:/Users/sboad/.codex/tmp/ql-doc99-red-20261012/run-targeted.cjs",
+    "C:/Users/sboad/.codex/tmp/ql-doc99-red-20261012/pins.json",
+    "a95acb184e19d3b74694d1276d9961fc2130461a7298d3a54d040a5ab3530516",
+    "FRESH_COORDINATOR_STOP_AT_UTC_REQUIRED"
+  ],
+  "testFiles": [
+    "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+    "client/src/research/assisted-order/draft-store.test.ts"
+  ],
+  "timeoutMs": 180000,
+  "cleanupMarginMs": 15000,
+  "heapMiB": 1024,
+  "workers": 1,
+  "fileParallelism": false,
+  "attempts": 1,
+  "automaticRetries": 0,
+  "bail": "Existing suite behavior; stop after first failed command, no automatic rerun.",
+  "environment": "Fresh explicit Windows/runtime/home/temp/npm offline/test CI=1 environment. No inherited provider/database/app credentials. See exact runner for full effective child argv/env.",
+  "effects": "Synthetic jsdom/component and actual API wrapper with mocked fetch only. No server/browser/SQL/install/hosted writes. Not kernel network/process sandbox.",
+  "dependencyPreparation": {
+    "donor": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website/node_modules",
+    "donorEvidence": "bfaaff9e2593cee8d4a08e7a968b7dd6c831e7d7 genuine Node20 npm-ci receipt",
+    "mode": "Fresh physical copy; not new npm-ci in QL worktree, not link/shared cache",
+    "command": "robocopy /E /COPY:DAT /DCOPY:DAT /R:0 /W:0 /XJ /XD .vite .vite-temp /NFL /NDL /NJH /NP",
+    "exit": 1,
+    "meaning": "Successful Robocopy copy; 37926 files, 2651 copied directories, zero failures",
+    "logSha256": "b83be30004cec66950a0ee6a3761a269fcb033b1a23abfe746b5a9b807b0c19c",
+    "metadataSha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94",
+    "reparsePoints": 0,
+    "configMatch": "package/package-lock/.npmrc/TS/Vitest/Vite inputs exactly match donor",
+    "limitations": "Entry files and metadata pinned; not exhaustive installed byte manifest. No donor build or test result transferred."
+  },
+  "preflight": "Clean exact SHA/tree, input pins, no env files or tool shadows, fresh output run1, at least 1.5GiB free physical RAM, fresh nonoverlapping coordinator slot. Source owner frozen.",
+  "postcheck": "Exact source/tree/pins unchanged, npm10.8.2, actual reporter exact two files and no skipped tests, raw log hashes, owned process/descendant observation after exit.",
+  "sourceConcern": "Test-only target keeps 3a runtime unchanged. Four new late-completion controls expected to fail; strengthened synchronous pre-POST capture expected to pass. Actual results must be preserved without interpreting expected failure as qualification pass.",
+  "releases": "No independent acceptance, full-suite, durable browser, or deployment claim.",
+  "preparedAt": "2026-10-12T21:45:03.1944138Z",
+  "supervisorDelta": "Only target/scratch identity and metadata diagnostics; 10s metadata probe cap remains inside unchanged execution/absolute deadlines. Syntax check passed. Original support preflight failure remains retained.",
+  "freePhysicalKiB": 1930096
+}
