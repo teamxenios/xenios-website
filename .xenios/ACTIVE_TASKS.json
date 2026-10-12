@@ -3,6 +3,20 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "TC25-PROTECTION-R2-EVIDENCE-20261012",
+      "owner": "codex-accepted-source-integration-20261005",
+      "state": "claimed",
+      "claimedAt": "2026-10-12T18:36:37Z",
+      "leaseId": "tc25-protection-r2-records-20261012",
+      "base": "d1a8f27a27832ea0b2a89ae68462684c14ed61fa",
+      "branch": "codex/tc25-app-manifest-20261012",
+      "paths": ["docs/health-launch/tc25-app-manifest-20261012/r2/", ".xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json"],
+      "authority": "Current actual human continuations b73fbc51 and643532cf; coordinator R2 binding1e4a5c65 and explicit follow-up new test checkout. Same integrator owns exact result records; no application or protected hash edits.",
+      "actualResult": "CLI exit1; Vitest NOT_RUN under stop-first-failure; no retries; one-heavy reservation released after CLI completion.",
+      "sourceWriterStopped": true,
+      "publication": "LOCAL_ONLY"
+    },
+    {
       "id": "TC25-EXACT-APP-MANIFEST-AMENDMENT-20261012",
       "owner": "codex-accepted-source-integration-20261005",
       "state": "handoff",
