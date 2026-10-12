@@ -535,3 +535,21 @@ five currentness pins and `8b631a83` are unchanged. Nothing was executed.
 | 94 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` **r4** (`38915cf` / `02c1748`) | COMPLETE: **CORRECTIONS REQUIRED**, limited to one verifier control. R4C-1 (P2): the commit shadow control can never pass, because the accepted currentness `integrity()` fails closed under the shadows by design. That is a doc 87 specification error. Exact fix ruled, and named limit COMMIT-POST-GATE-SHADOW accepted. The transaction source is unchanged and stays accepted. **DC-1 exact and accepted.** **Pins re-confirmed** (102/102 in both receipts; currentness pins and `8b631a83` unchanged). **Finalization envelope ruled** (section 3) and performed only after r5. P3 fold-ins: R4C-2 to R4C-8 |
 
 Nothing was executed.
+
+## Queue state update (2026-10-12, composition revision 5)
+
+The board registration (`NINE_PATH_DISABLED_INTEGRATION_SOURCE_REVIEW_REQUEST_20261011.json`, revision 5) and the
+frozen packet were read from Git. The target is **ACKNOWLEDGED and IN REVIEW** as the same task, bounded to doc 94's
+R4C-1 ruling and the R4C-2 to R4C-8 fold-ins:
+
+| Doc | Board task | Source | Records | Scope |
+| --- | --- | --- | --- | --- |
+| 95 | `QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011` **r5** (narrow check against doc 94, `4ab2fe6`) | `25741f0b5fdff6320214227a896c2b6320c1fb9a` (tree `0c5a2b11…`) | `dacc90cf93a89da375689d6ebbacaf3d3b5a685d`; handoff `2d15b9932ed7ccc55b727ca398354741e851c5cf`; receipts bind `54ffba10` (tree `45531814…`) | Only `research_health_quick_order_local.mjs` changed in code (+160/−31). Everything after `25741f0` is records and `.xenios` |
+
+**Pin re-confirmation (done).** All 102 pins in both receipts at `2d15b99` were recomputed against `54ffba10`: zero
+mismatches, identical across receipts. Exactly two rows changed against revision 4 (the verifier and the shared
+bindings record). The five currentness pins and `8b631a83` are unchanged. The currentness receipt is now 183,668 B
+(blob `9178947c`, raw `b085b12e…`) with 78,476 B of headroom; the intake receipt is 196,833 B and binds that exact
+blob as its NON_FINAL dependency.
+
+Nothing was executed.
