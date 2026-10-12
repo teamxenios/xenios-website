@@ -6,14 +6,14 @@
       "tool": "OpenAI Codex desktop",
       "lane": "ql-standalone-build-evidence",
       "branch": "codex/tc25-app-manifest-20261012",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-12T19:55:00Z",
+      "heartbeatAt": "2026-10-12T20:01:54.491Z",
       "currentResult": "QL7a2 exact protection CLI, production build and36companion testsPASS;64client+66server receipts remain separate. Supporta4a44bf6/tree2c123d9 one-line truthful error correction+13focusedPASS, recordsfa7de0a. Build evidencef4f875d; companion7bcae121; all localonly. Original reviewer targets registered, not delivered or accepted. Render remains live794/health200, no release. Original historical invoice previews located by coordinator with truncation limits, but no method currently qualified or enabled.",
       "currentTask": "QL-STANDALONE-BUILD-EVIDENCE-20261012",
-      "currentLease": "ql-standalone-build-records-20261012",
+      "currentLease": "e5449218-2ac0-4341-82cf-534a3e8ae8cd",
       "currentScope": "Completed two historical QL hash carryforwards under current custody and separate support two-path copy/regression slice. Both exact leases HANDOFF; original frozen sources, tests and records preserved. Foreign continuity/source reservations untouched; no publication/deploy/managed/payment actions. Existing coordinator owns review delivery and release qualification.",
-      "note": "Own build/companion evidence lease HANDOFF; source/test/manifest unchanged. Node20.19 buildPASS33seconds,36companionPASS/no timeout; both slots release requested, no active owned job. Prior skips/refusals preserved. Latest consolidated own handoff .xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json. No foreign continuity edits, no new review session or production authority inferred."
+      "note": "User0ada adopted continuation: preserve frozen QL/support, existing original-reviewer delivery via coordinator, assess only remaining candidate-specific release requirements/build warnings/catalog identities. Records-only continuation, no source/runtime/test rerun/hosted mutation."
     },
     {
       "id": "claude-opus5-main",

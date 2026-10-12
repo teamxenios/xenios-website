@@ -5,27 +5,63 @@
     {
       "id": "QL-STANDALONE-BUILD-EVIDENCE-20261012",
       "owner": "codex-accepted-source-integration-20261005",
-      "state": "qa",
-      "leaseId": "ql-standalone-build-records-20261012",
+      "state": "claimed",
+      "leaseId": "e5449218-2ac0-4341-82cf-534a3e8ae8cd",
       "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
-      "paths": ["docs/health-launch/ql-build-20261012/", ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"],
-      "scope": "Own exact standalone build binding/results only. Actual04b4 scoped local QL build authority, coordinator one-heavy reservation required before start. No source/dependency/script changes, no install, no S3/G0 or release.",
+      "paths": [
+        "docs/health-launch/ql-build-20261012/",
+        ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"
+      ],
+      "scope": "Existing own QL evidence and handoff paths only. User0ada continuation authorizes bounded remaining-release assessment, actual original-review delivery status and catalog/warning distinctions. Completed build/test receipts frozen; no source/dependency/script changes, reruns, installation, S3/G0 or release implied by this records lease.",
       "execution": "PASS_LOCAL_BUILD_AND_COMPANION_PROTECTION_TEST_SEPARATE_RUNS",
-      "companionTest": {"records": "7bcae121ccc00423ecfadc0a4e59538b18733cf2", "tests": 36, "passed": 36, "exit": 0, "timeout": false, "attempts": 1, "endedAt": "2026-10-12T19:53:49.855Z", "reservationRelease": "Requested immediately on completion", "sourceUnchanged": true},
-      "result": {"records": "f4f875d598f7a32e00ed02b4a8ce0eb1913a02bd", "exit": 0, "timeout": false, "attempts": 1, "endedAt": "2026-10-12T19:42:07.180Z", "reservationReleased": "Coordinator acknowledged", "sourceUnchanged": true}
+      "companionTest": {
+        "records": "7bcae121ccc00423ecfadc0a4e59538b18733cf2",
+        "tests": 36,
+        "passed": 36,
+        "exit": 0,
+        "timeout": false,
+        "attempts": 1,
+        "endedAt": "2026-10-12T19:53:49.855Z",
+        "reservationRelease": "Requested immediately on completion",
+        "sourceUnchanged": true
+      },
+      "result": {
+        "records": "f4f875d598f7a32e00ed02b4a8ce0eb1913a02bd",
+        "exit": 0,
+        "timeout": false,
+        "attempts": 1,
+        "endedAt": "2026-10-12T19:42:07.180Z",
+        "reservationReleased": "Coordinator acknowledged",
+        "sourceUnchanged": true
+      },
+      "claimedAt": "2026-10-12T20:01:54.370Z"
     },
     {
       "id": "ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-20261012",
       "owner": "codex-accepted-source-integration-20261005",
       "state": "qa",
-      "handoff": {"sha": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616", "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8", "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937", "file": ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json", "result": "13_FOCUSED_PASS_NOT_RELEASE_QUALIFIED", "at": "2026-10-12T19:34:34Z"},
+      "handoff": {
+        "sha": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+        "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
+        "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937",
+        "file": ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json",
+        "result": "13_FOCUSED_PASS_NOT_RELEASE_QUALIFIED",
+        "at": "2026-10-12T19:34:34Z"
+      },
       "claimedAt": "2026-10-12T19:28:00Z",
       "leaseId": "account-support-outcome-two-paths-20261012",
       "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "branch": "codex/account-support-outcome-20261012",
-      "paths": ["client/src/research/account-portal/views/SupportView.tsx", "client/src/research/account-portal/views/support-documents.test.tsx", "docs/health-launch/account-support-outcome-20261012/"],
+      "paths": [
+        "client/src/research/account-portal/views/SupportView.tsx",
+        "client/src/research/account-portal/views/support-documents.test.tsx",
+        "docs/health-launch/account-support-outcome-20261012/"
+      ],
       "authority": "Actual ongoing full-site source direction and direct TENSA adoption; existing coordinator01a103a8 confirms current narrow custody to SAME integrator. No structural reservation matches exact two paths; historical UX-AUTH-ACCOUNT-CONTINUITY lease d582ed2b is HANDOFF. Existing OWNER-W5 pages/Support.tsx reservation is a different path and remains unchanged.",
-      "preimages": {"SupportView.tsx": "e9c20bfacc3eb27aea851ae066de3839612a28fd", "support-documents.test.tsx": "ddffbf22b30d87664eefa413ed018f049c2ee245"},
+      "preimages": {
+        "SupportView.tsx": "e9c20bfacc3eb27aea851ae066de3839612a28fd",
+        "support-documents.test.tsx": "ddffbf22b30d87664eefa413ed018f049c2ee245"
+      },
       "scope": "Truthful uncertain-outcome customer copy plus focused regression only; no API/payment/price/route/manifest change. Separate frozen successor.",
       "publication": "LOCAL_ONLY_PENDING_APPLICABLE_REVIEW_AND_QUALIFICATION"
     },
@@ -33,13 +69,22 @@
       "id": "QL-HISTORICAL-PROTECTION-CARRYFORWARD-20261012",
       "owner": "codex-accepted-source-integration-20261005",
       "state": "qa",
-      "handoff": {"sha": "7a2bf7533f5c26d98e0bdb34a862852942b2914e", "records": "42ac49e640a53726107990ec95c977d7f1f3cc56", "file": ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json", "result": "STANDALONE_PROTECTION_CLI_PASS_NOT_RELEASE_QUALIFICATION"},
+      "handoff": {
+        "sha": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+        "records": "42ac49e640a53726107990ec95c977d7f1f3cc56",
+        "file": ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json",
+        "result": "STANDALONE_PROTECTION_CLI_PASS_NOT_RELEASE_QUALIFICATION"
+      },
       "claimedAt": "2026-10-12T19:22:47Z",
       "leaseId": "ql-two-baseline-carryforward-20261012",
       "base": "21d7291f97dbd67026d1f0b31fab82ff56002be7",
       "branch": "codex/ql-protection-carryforward-20261012",
       "worktree": "C:/Users/sboad/.codex/worktrees/ql-protection-carryforward-20261012/xenios-website",
-      "paths": ["docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json", "docs/health-launch/ql-protection-carryforward-20261012/", ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"],
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/health-launch/ql-protection-carryforward-20261012/",
+        ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"
+      ],
       "authority": "Same integrator; actual user-designated8030 permits applicable historical QL reconciliation, latest direct TENSA adoption preserves controls. Current coordinator01a103a8 explicitly acknowledges exact current manifest custody for this integrator. Current rule CORE_SITE_PROTECTION.md permits protection-owner separately committed approved baseline reconciliation. Historical founder-directed task/lease/report at6d9ec3 applies to identical TopRibbon/package blobs at base794 and tested21d; no new source/hash consent inferred.",
       "excludes": "All application/test/script/migration bytes, other hashes, full-composition static/seams, permission-refused Vitest retry, publication/release until applicable conditions are met.",
       "publication": "LOCAL_ONLY"
@@ -52,10 +97,20 @@
       "leaseId": "tc25-six-baseline-records-20261012",
       "base": "d907096c24078e951ed988dc1f6a5af8d564e337",
       "branch": "codex/tc25-app-manifest-20261012",
-      "paths": ["docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json", "docs/health-launch/tc25-app-manifest-20261012/six-entry/", ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json"],
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/health-launch/tc25-app-manifest-20261012/six-entry/",
+        ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json"
+      ],
       "authority": "Actual user-designated attachment8030ec4f; raw SHA256 da648fb2aa8d8f66cc4a15da00fdbe1644486c43bb731a40aef0b7438e1a5814 directly authorizes this existing integrator's exact six-entry amendment on d907096. Current manifest unchanged, no active manifest lease in CODE_OWNERSHIP, prior source owner remains idle/clean at876ede5. Fresh exact scope claimed under current human authority; coordinator notified, separate current coordinator ACK not claimed. No runtime/tests/static/seams/payment/production grant.",
       "publication": "LOCAL_ONLY",
-      "handoff": {"session": "codex-accepted-source-integration-20261005", "sha": "f6da5aa6154cc62bdbec34ce29a0a5759fb84136", "records": "e1246766ddd032669bb5d49ee5e86704dd220ce6", "file": ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json", "at": "2026-10-12T19:13:38Z"}
+      "handoff": {
+        "session": "codex-accepted-source-integration-20261005",
+        "sha": "f6da5aa6154cc62bdbec34ce29a0a5759fb84136",
+        "records": "e1246766ddd032669bb5d49ee5e86704dd220ce6",
+        "file": ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json",
+        "at": "2026-10-12T19:13:38Z"
+      }
     },
     {
       "id": "TC25-PROTECTION-DISPOSITION-20261012",
@@ -65,10 +120,18 @@
       "leaseId": "tc25-protection-disposition-records-20261012",
       "base": "e275d344e0ced7f683218b4dac3b1b7b63f01764",
       "branch": "codex/tc25-app-manifest-20261012",
-      "paths": ["docs/health-launch/tc25-app-manifest-20261012/reconciliation/", ".xenios/handoffs/2026-10-12-tc25-protection-disposition-handoff.json"],
+      "paths": [
+        "docs/health-launch/tc25-app-manifest-20261012/reconciliation/",
+        ".xenios/handoffs/2026-10-12-tc25-protection-disposition-handoff.json"
+      ],
       "authority": "Actual human-designated continuation attachment33d0eac5, raw SHA256 d71d429cc86bbd354bfbf50854a15c8a3700ec5d25b1b11639284d73bfd9bae6. Same integrator continues exact failure/lineage/approval reconciliation. No source, manifest, tests or execution changes.",
       "publication": "LOCAL_ONLY",
-      "handoff": {"session": "codex-accepted-source-integration-20261005", "sha": "554e799dab59fbc82c47813e53ed78da97e5393d", "file": ".xenios/handoffs/2026-10-12-tc25-protection-disposition-handoff.json", "at": "2026-10-12T18:58:00Z"}
+      "handoff": {
+        "session": "codex-accepted-source-integration-20261005",
+        "sha": "554e799dab59fbc82c47813e53ed78da97e5393d",
+        "file": ".xenios/handoffs/2026-10-12-tc25-protection-disposition-handoff.json",
+        "at": "2026-10-12T18:58:00Z"
+      }
     },
     {
       "id": "TC25-PROTECTION-R2-EVIDENCE-20261012",
@@ -81,7 +144,10 @@
       "leaseId": "tc25-protection-r2-records-20261012",
       "base": "d1a8f27a27832ea0b2a89ae68462684c14ed61fa",
       "branch": "codex/tc25-app-manifest-20261012",
-      "paths": ["docs/health-launch/tc25-app-manifest-20261012/r2/", ".xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json"],
+      "paths": [
+        "docs/health-launch/tc25-app-manifest-20261012/r2/",
+        ".xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json"
+      ],
       "authority": "Current actual human continuations b73fbc51 and643532cf; coordinator R2 binding1e4a5c65 and explicit follow-up new test checkout. Same integrator owns exact result records; no application or protected hash edits.",
       "actualResult": "CLI exit1; Vitest NOT_RUN under stop-first-failure; no retries; one-heavy reservation released after CLI completion.",
       "sourceWriterStopped": true,
