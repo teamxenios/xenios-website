@@ -1,0 +1,13 @@
+{
+ "archive": "doc 98 TC-25 App.tsx manifest amendment scope check (reviewer-computed, no workflow)",
+ "reviewer": "session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-fable-5-1)",
+ "execution": "NOT_RUN",
+ "target": {"commit": "3ec5ec036a69cef107f17e59e0eb5bb3178d1f86", "branch": "codex/tc25-app-manifest-20261012 (local only)", "parent": "340d167e4a500526732d93b265579bbc29f3341a", "ancestorOfAcceptedSource": "25741f0 is an ancestor"},
+ "filesChanged": ["docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json (3 lines: 1 hash row replaced, 1 provenance comment added)", "docs/phase2/HEALTH_APP_PROTECTED_HASH_APPROVAL_20261012.md (new, 105 lines)"],
+ "codePathsChanged": [],
+ "hashRow": {"field": "seamBaselineHashes.files[client/src/App.tsx]", "previous": "sha256:3b3b808b23cccdf8d2e2179fd30349b3ae299137a8a4a5f33525e0a304828d80", "applied": "sha256:1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0"},
+ "byteChecks": {"appliedManifestRawSha256": "95445fdf1855560460da2283d06f9dda733e373c1258611ec278cd499e74a23d", "approvedCandidateSha256": "95445fdf1855560460da2283d06f9dda733e373c1258611ec278cd499e74a23d", "preAmendmentManifestBlob": "241fc344445a12dbf7861232248393a742105526", "boardPatchRawSha256": "5e539cea6f5f683ee4d5c23dec0e6108fde83519d164907a51aa7054e917f516", "appliedDiffPlusMinusLinesEqualBoardPatch": true, "appTsxBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459", "appTsxRawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0", "appTsxBytes": 18079},
+ "authority": {"record": "docs/phase2/HEALTH_APP_PROTECTED_HASH_APPROVAL_20261012.md @3ec5ec0", "founderRequestObservedAt": "2026-10-12T18:16:38.438Z", "founderRequestRawSha256": "20041ef092f750a4a2ebbe7c4bdfb5cff3d4bf0d93b5a2f3aa4aebededb6eee3", "preservedAt": "04b4cc70e809486230c12cef6a5d8530967f9dc2", "coversHubLineAndDisabledQuickOrder": true, "precedent": "663268f / HEALTH_PROTECTED_HASH_APPROVAL_20261001.md"},
+ "protectionCheck": {"status": "NOT_RUN", "binding": "TC25_EXACT_LOCAL_PROTECTION_EXECUTION_BINDING_20261012.json @7271ff2 (source 3ec5ec0; verify-core-site-protection.mjs + server/core-site-protection.test.ts; Vitest 4.1.10)", "governingTest": "server/core-site-protection.test.ts:385-388 (seam baselines)", "reasonedExpectation": "pass, since App.tsx raw hash equals the new baseline; NOT a result"},
+ "disposition": "SCOPE_ACCEPTED_PROTECTION_CHECK_EVIDENCE_PENDING"
+}

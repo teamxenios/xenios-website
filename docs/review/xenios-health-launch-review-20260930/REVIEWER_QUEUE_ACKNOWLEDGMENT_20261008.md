@@ -604,3 +604,12 @@ Nothing was executed.
 
 Pending on this reviewer: the TC-25 manifest amendment scope check (candidate prepared, unapplied) and the QL-11/QL-12
 correction successor review (none registered). Nothing was executed.
+
+## Queue state update (2026-10-12, doc 98)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 98 | TC-25 App.tsx manifest amendment `3ec5ec0` (local branch `codex/tc25-app-manifest-20261012`; board registration `7271ff2`) | COMPLETE: **SCOPE ACCEPTED.** Exactly one hash row (`seamBaselineHashes.files["client/src/App.tsx"]` → `1ee2d576…`) plus the approval record; applied bytes equal the approved candidate `95445fdf…`; `App.tsx` there is the accepted blob `b5cc8edc`; authority traces to Samuel's pasted request observed 18:16:38Z (`20041ef0…`). **Protection check NOT RUN**; its executed receipt is the remaining TC-25 evidence |
+
+Pending on this reviewer: the protection-check receipt comparison when registered, and the QL-11/QL-12 correction
+successor review (none registered). Nothing was executed.
