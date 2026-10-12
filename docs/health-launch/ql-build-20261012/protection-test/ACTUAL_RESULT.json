@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "kind": "QL_COMPANION_PROTECTION_TEST_ACTUAL_RESULT",
+  "status": "PASS",
+  "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "tree": "28617c360f487803baa556d33158c4e95df471f1",
+  "worktree": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
+  "binding": "9c3bffb03b5d9f2d60c526565e0fe771254cf69d revision2",
+  "bindingRawSha256": "cb9aaa44124bf6a005527d86effe96f35e6db5321ae36cece2bdb437881be728",
+  "launcherSha256": "a040fb382fd04f02d7847402e7ba2d2bc164de2382cdc040c662361fcbab5ab8",
+  "coordinatorReservation": "b866f97ccd7f6848ee097689e42b140da9c62312:docs/coordination/launch-coordination-20261005/QL_COMPANION_PROTECTION_TEST_EXACT_RESERVATION_20261012.json",
+  "reservationId": "LOCAL-QL-PROTECTION-7A2-20261012",
+  "reservationWindow": {
+    "start": "2026-10-12T19:53:12.733Z",
+    "end": "2026-10-12T20:01:12.733Z",
+    "lastStart": "2026-10-12T19:58:12.733Z"
+  },
+  "execution": {
+    "start": "2026-10-12T19:53:47.380Z",
+    "end": "2026-10-12T19:53:49.855Z",
+    "exit": 0,
+    "timedOut": false,
+    "signal": null,
+    "attempts": 1,
+    "files": 1,
+    "tests": 36,
+    "passed": 36,
+    "failed": 0,
+    "pending": 0,
+    "todo": 0,
+    "reportedDurationMs": 997,
+    "node": "v20.19.0",
+    "nodeSha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "npm": "NOT_INVOKED",
+    "vitest": "4.1.10",
+    "workers": 1,
+    "fileParallelism": false,
+    "heapMiB": 1024,
+    "wallMs": 180000
+  },
+  "outputs": {
+    "receipt": {
+      "path": "receipt.json",
+      "rawAndCopySha256": "827ff7de957a9cda5c129f7df9e69242cc70f6c5c334ad2a6db2ddd2783e1399"
+    },
+    "log": {
+      "path": "run.log",
+      "rawAndCopySha256": "90fc466f9eae4fb46e7daee42075f6755001f65e41a65e5149473e7609119cc6"
+    },
+    "report": {
+      "path": "result.json",
+      "rawSha256": "280c6c487adaef8258eceb30a9dff5a8c975654884897a96272175bdf5a05eb8",
+      "repoCopySha256": "b2ac16294c0e7d59e15b277946607eb1eb0eff498421ec96059e910dbcb5314a",
+      "copyDifference": "Repository text copy adds final LF only; original unchanged at private scratch path."
+    },
+    "originalDirectory": "C:/Users/sboad/.codex/tmp/ql-protection-test-20261012"
+  },
+  "postconditions": {
+    "headUnchanged": true,
+    "workingTreeClean": true,
+    "sourceTestManifestModified": false,
+    "childPid": 26644,
+    "childExitedNormally": true,
+    "timeoutCleanupUsed": false,
+    "ownedProcessCheck": "No matching child26644 or Node command containing own QL build/protection scratch paths after completion; not full-machine/native-descendant census.",
+    "artifactsDeleted": false,
+    "buildDistRetained": true,
+    "reservationRelease": "Requested immediately on completion; no further run launched."
+  },
+  "coverage": "All36 existing classifier/tamper/deletion/route/slug and hard/seam hash checks passed, including strict zero seam mismatches. Synthetic classifier tests do not independently prove actual794..7a2 diff; separate CLI42ac49e receipt remains required.",
+  "limitations": [
+    "No child-worker self-attestation or clean dependency reinstall claimed; full-path pinned Node with current private existing dependencies.",
+    "No kernel aggregate memory/PID/output hard caps or OS network-isolation guarantee; not S3/G0.",
+    "Historical TC25 R2 at3ec skipped companion test remains NOT_RUN. This separate candidate/test blob first run does not overwrite prior refusals/skips/failures.",
+    "QL64client+66server focused receipts, build receipt, this36test receipt and support13test receipt are distinct; not a full-suite aggregate.",
+    "Independent review delivery/acceptance, remaining applicable qualification and actual payment verification still unmet."
+  ],
+  "boundaries": {
+    "fullSuite": false,
+    "typecheck": false,
+    "server": false,
+    "browser": false,
+    "SQL": false,
+    "install": false,
+    "push": false,
+    "merge": false,
+    "deploy": false,
+    "hostedConfiguration": false,
+    "payment": false,
+    "email": false
+  }
+}

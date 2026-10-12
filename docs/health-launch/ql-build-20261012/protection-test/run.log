@@ -1,0 +1,46 @@
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website
+
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > PASSES a change set that touches only research and care 4ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > allows only the explicitly approved /hino static subtree under client/public 1ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > FAILS a change set that touches client/src/pages/Home.tsx 0ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > FAILS unrelated global presentation changes while reporting the hash-locked shell seam 0ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > PASSES a permitted seam file but REPORTS it as a seam, not as an ordinary allowed change 1ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > reports a seam file that also sits under an allowed prefix as a SEAM, never silently allowed 0ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > treats Windows backslash paths the same as git's forward-slash paths 0ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > FAILS an unrelated server route file and an unrelated API surface 0ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > admits only the reviewed global exact-byte changes as reported, hash-locked seams 1ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > admits only the exact PWA display seam and keeps registration, worker and app shell protected 1ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > still FAILS adjacent font and dependency paths instead of widening a subtree 0ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > allows the gate's own infrastructure so the protection tooling can exist in the repo 0ms
+ ✓ server/core-site-protection.test.ts > the changed-file classifier > distinguishes scripts/ (tooling, allowed) from script/ (the production build, protected) 0ms
+ ✓ server/core-site-protection.test.ts > test files pass but are always reported > reports a test file rather than silently allowing it, wherever it lives 1ms
+ ✓ server/core-site-protection.test.ts > test files pass but are always reported > reports a test even inside an allowed Research zone, because lowering a gate is forbidden anywhere 0ms
+ ✓ server/core-site-protection.test.ts > test files pass but are always reported > does not mistake a non-test source file for a test 0ms
+ ✓ server/core-site-protection.test.ts > test files pass but are always reported > warns in the report that a touched test must have been strengthened, not weakened 1ms
+ ✓ server/core-site-protection.test.ts > test files pass but are always reported > still FAILS a protected source file even when a test file is changed alongside it 0ms
+ ✓ server/core-site-protection.test.ts > the protected file hash tripwire > matches every curated protected file at HEAD 35ms
+ ✓ server/core-site-protection.test.ts > the protected file hash tripwire > FAILS when a protected file is tampered with 2ms
+ ✓ server/core-site-protection.test.ts > the protected file hash tripwire > FAILS every mutation of the reviewed typography and dependency seam bytes 7ms
+ ✓ server/core-site-protection.test.ts > the protected file hash tripwire > FAILS when a protected file is deleted 0ms
+ ✓ server/core-site-protection.test.ts > the protected file hash tripwire > normalizes CRLF so a Windows checkout and a stored LF blob hash identically 0ms
+ ✓ server/core-site-protection.test.ts > the protected file hash tripwire > verifies the seam baselines too, and they are all clean at HEAD 14ms
+ ✓ server/core-site-protection.test.ts > the gate report > fails and lists every violating path when protected files change 0ms
+ ✓ server/core-site-protection.test.ts > the gate report > fails on a hash mismatch even when every changed path is allowed 0ms
+ ✓ server/core-site-protection.test.ts > the gate report > passes and names the seam when only a seam file moved 0ms
+ ✓ server/core-site-protection.test.ts > route-section matching > does not mistake /careers for the /care surface 0ms
+ ✓ server/core-site-protection.test.ts > route-section matching > keeps every allowed write-zone prefix slash-terminated, so server/careers.ts could never match server/care/ 1ms
+ ✓ server/core-site-protection.test.ts > the manifest cannot rot: every protected route is real > declares every route that App.tsx actually registers, and no route it does not 4ms
+ ✓ server/core-site-protection.test.ts > the manifest cannot rot: every protected route is real > excludes every /health, /research, /care and /admin/research route from the protected set 3ms
+ ✓ server/core-site-protection.test.ts > the manifest cannot rot: every protected route is real > lists the ICP slugs that ICP_BY_SLUG actually defines, both directions 92ms
+ ✓ server/core-site-protection.test.ts > the manifest cannot rot: every protected route is real > lists the careers slugs the live careers.ts actually defines, both directions 30ms
+ ✓ server/core-site-protection.test.ts > the manifest cannot rot: every protected route is real > does not claim a product-family route that does not exist 1ms
+ ✓ server/core-site-protection.test.ts > the manifest cannot rot: every protected route is real > names only seam files that exist, and only allowed write zones that exist 8ms
+ ✓ server/core-site-protection.test.ts > the manifest cannot rot: every protected route is real > pins the baseline sha it was built from 0ms
+
+ Test Files  1 passed (1)
+      Tests  36 passed (36)
+   Start at  14:53:48
+   Duration  997ms (transform 168ms, setup 0ms, import 203ms, tests 214ms, environment 0ms)
+
+JSON report written to C:/Users/sboad/.codex/tmp/ql-protection-test-20261012/result.json
