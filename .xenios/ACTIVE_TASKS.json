@@ -3,9 +3,24 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
-      "id": "QL-HISTORICAL-PROTECTION-CARRYFORWARD-20261012",
+      "id": "ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-20261012",
       "owner": "codex-accepted-source-integration-20261005",
       "state": "claimed",
+      "claimedAt": "2026-10-12T19:28:00Z",
+      "leaseId": "account-support-outcome-two-paths-20261012",
+      "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+      "branch": "codex/account-support-outcome-20261012",
+      "paths": ["client/src/research/account-portal/views/SupportView.tsx", "client/src/research/account-portal/views/support-documents.test.tsx", "docs/health-launch/account-support-outcome-20261012/"],
+      "authority": "Actual ongoing full-site source direction and direct TENSA adoption; existing coordinator01a103a8 confirms current narrow custody to SAME integrator. No structural reservation matches exact two paths; historical UX-AUTH-ACCOUNT-CONTINUITY lease d582ed2b is HANDOFF. Existing OWNER-W5 pages/Support.tsx reservation is a different path and remains unchanged.",
+      "preimages": {"SupportView.tsx": "e9c20bfacc3eb27aea851ae066de3839612a28fd", "support-documents.test.tsx": "ddffbf22b30d87664eefa413ed018f049c2ee245"},
+      "scope": "Truthful uncertain-outcome customer copy plus focused regression only; no API/payment/price/route/manifest change. Separate frozen successor.",
+      "publication": "LOCAL_ONLY_PENDING_APPLICABLE_REVIEW_AND_QUALIFICATION"
+    },
+    {
+      "id": "QL-HISTORICAL-PROTECTION-CARRYFORWARD-20261012",
+      "owner": "codex-accepted-source-integration-20261005",
+      "state": "qa",
+      "handoff": {"sha": "7a2bf7533f5c26d98e0bdb34a862852942b2914e", "records": "42ac49e640a53726107990ec95c977d7f1f3cc56", "file": ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json", "result": "STANDALONE_PROTECTION_CLI_PASS_NOT_RELEASE_QUALIFICATION"},
       "claimedAt": "2026-10-12T19:22:47Z",
       "leaseId": "ql-two-baseline-carryforward-20261012",
       "base": "21d7291f97dbd67026d1f0b31fab82ff56002be7",

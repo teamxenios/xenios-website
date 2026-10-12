@@ -2,10 +2,23 @@
   "schemaVersion": 1,
   "leases": [
     {
+      "id": "account-support-outcome-two-paths-20261012",
+      "task": "ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-20261012",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "active",
+      "claimedAt": "2026-10-12T19:28:00Z",
+      "heartbeatAt": "2026-10-12T19:28:00Z",
+      "paths": ["client/src/research/account-portal/views/SupportView.tsx", "client/src/research/account-portal/views/support-documents.test.tsx", "docs/health-launch/account-support-outcome-20261012/"],
+      "scope": "Current coordinator exact two-path custody acknowledgment; truthful uncertainty copy and regression. Preimages e9c20bf/ddffbf2 verified at production794 and21d. No old reservation released; no API/payment/price/route/manifest changes. Helper may implement solely inside this lease; root owns Git and execution."
+    },
+    {
       "id": "ql-two-baseline-carryforward-20261012",
       "task": "QL-HISTORICAL-PROTECTION-CARRYFORWARD-20261012",
       "session": "codex-accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
+      "handoffAt": "2026-10-12T19:28:00Z",
+      "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "records": "42ac49e640a53726107990ec95c977d7f1f3cc56",
       "claimedAt": "2026-10-12T19:22:47Z",
       "heartbeatAt": "2026-10-12T19:23:10.808Z",
       "worktree": "C:/Users/sboad/.codex/worktrees/ql-protection-carryforward-20261012/xenios-website",

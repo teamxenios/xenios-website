@@ -1,0 +1,320 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12T19:25:19Z",
+  "kind": "TENSA_LAUNCH_RECONCILED_ACTUAL_RESULTS",
+  "session": "codex-accepted-source-integration-20261005",
+  "sourceBrief": {
+    "path": "C:/Users/sboad/Downloads/TENSA_CODEX_LAUNCH_MASTER_HANDOFF.md",
+    "sha256": "2484ac27dc8692111ae7cb22e5acb1297fd3b10d9f3d3e586dc86ee07d04990d",
+    "authority": "Direct user reply adopted brief; attachment alone not treated as independent authority. Current Git/results override its stale NOT_RUN and unapplied statements."
+  },
+  "owners": {
+    "coordinator": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "integrator": "01a0e098-3b23-7233-9b07-877ace092650",
+    "fable": "da289215-87ed-4b4b-bbda-c9af49bda5bc",
+    "independentReviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "newReviewer": false,
+    "Doc95Doc97": "CLOSED_NOT_REOPENED",
+    "Lite": "PARKED"
+  },
+  "QL": {
+    "owner": "Existing Fable source/test owners; this integrator protection only",
+    "source": "3aa7b96938f63b0a2a5049b57bfaa9fe236b4cb2",
+    "sourceTree": "8eaf017a6d5cf8fde252badc81c0c48f1b32fd20",
+    "testedServerSuccessor": "21d7291f97dbd67026d1f0b31fab82ff56002be7",
+    "testedServerTree": "81c70bc1a4621b54e482362e5023c35b58d03253",
+    "protectionSuccessor": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+    "protectionTree": "28617c360f487803baa556d33158c4e95df471f1",
+    "protectionRecords": "42ac49e640a53726107990ec95c977d7f1f3cc56",
+    "recordsTree": "ca696152a365d60df5a40aa277dd6abf1144383c",
+    "branch": "codex/ql-protection-carryforward-20261012",
+    "worktree": "C:/Users/sboad/.codex/worktrees/ql-protection-carryforward-20261012/xenios-website",
+    "claim": "f5e4a89cc9c643a2d5fb77bfe78e191f28f1e375",
+    "lease": "ql-two-baseline-carryforward-20261012",
+    "tests": [
+      {
+        "candidate": "7ac408371b6fcc702827a26e61b3a3f5a13f3f67",
+        "suite": "client",
+        "passed": 64,
+        "failed": 0,
+        "pending": 0,
+        "exit": 0,
+        "timeout": false,
+        "start": "2026-10-12T19:00:43.898Z",
+        "end": "2026-10-12T19:01:29.879Z"
+      },
+      {
+        "candidate": "21d7291f97dbd67026d1f0b31fab82ff56002be7",
+        "suite": "server",
+        "passed": 66,
+        "failed": 0,
+        "pending": 0,
+        "exit": 0,
+        "timeout": false,
+        "start": "2026-10-12T19:02:20.203Z",
+        "end": "2026-10-12T19:02:25.935Z"
+      }
+    ],
+    "testEvidence": "f9d34be4d4d106c03620a23e8eb31915f63552d6:docs/health-launch/tc25-app-manifest-20261012/six-entry/QL_EXECUTED_RESULTS_AND_LIMITS_20261012.json",
+    "interpretation": "130 passing focused tests across TWO runs/candidates, not full-suite or one-SHA aggregate. Only HTTP fixture differs; no rerun by integrator.",
+    "runtime": "Node20.19.0 directly invoked, binary SHA6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c; npm not invoked; no worker self-attestation/clean dependency reinstall claimed",
+    "refusal": "18:49Z initial native permission refusal remains NOT_RUN. New public owner account permission-resolution.json reports changed narrower calls admitted via ordinary Bash response; no permission rule, mode, override or separate approval event exposed. Original refusal is not retroactively resolved. Review the reported mechanism and limits, not an absent record or blanket execution permission.",
+    "newOwnerRecords": {
+      "permissionAccount": {"path": "C:/xenios-wt/doc96-handoffs/permission-resolution.json", "sha256": "3e980ef12f20909ea3335989c60232ee2745048e937f8092ecef7dd0d9febe5c"},
+      "httpCoverageCorrection": {"path": "C:/xenios-wt/doc96-handoffs/unit-run-receipt-server-correction-addendum.json", "sha256": "973ecf07b7d2d4059c571a894f1fc4afa5c9864a001da2928521e1e547a933a4"},
+      "frozenOwnerHandoff": {"path": "C:/xenios-wt/doc96-handoffs/frozen-handoff-21d7291f.json", "sha256": "efd3ea81e7263b80d437631de0cb6997a6495dcea0ec3ce9529f033ce1c05764"},
+      "interpretation": "Owner-reported ordinary tool responses, not an independently recovered provider admission event. Original refusal and raw receipts unchanged. Local Vite cache paths reduce donor writes; package junctions are not a general read-only isolation guarantee.",
+      "sourceWriter": "STOPPED"
+    },
+    "limits": [
+      "HTTP tests only payment_pending; all3 states service-level.",
+      "Mocked response-loss/jsdom remount, not real browser/durable interrupted-write qualification.",
+      "Server drift-before-replay remains open.",
+      "Fake/foreign/reused strings refused; not actual canonical payment verification-ledger qualification."
+    ],
+    "review": "Original-reviewer QL source/test disposition NOT_YET_OBSERVED. Coordinator registering bounded existing successor; AppDoc98 does not accept QL.",
+    "next": "Original source/test delta disposition including published permission account; remaining applicable build/typecheck/protection tests/browser/release controls under compliant frozen execution ticket."
+  },
+  "protection": {
+    "currentChange": "Exactly two historical fileHashes.files values carried from6d9 under current protection-owner custody, approved identical source blobs; all other manifest/source/test/script/dependency/migration bytes unchanged.",
+    "scopeCheck": "PASS by main and read-only helper; not Claude acceptance",
+    "approvalRecord": "7a2bf7533f5c26d98e0bdb34a862852942b2914e:docs/health-launch/ql-protection-carryforward-20261012/APPROVAL_AND_PREIMAGE.json",
+    "CLI": {
+      "result": "PASS",
+      "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+      "command": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe scripts/acceptance/verify-core-site-protection.mjs 79414143d4355d5d3d14cd5fe6e5a536dc68d99d 7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "start": "2026-10-12T19:24:38.232Z",
+      "end": "2026-10-12T19:24:38.775Z",
+      "exit": 0,
+      "timeout": false,
+      "capMilliseconds": 30000,
+      "changedPaths": 9,
+      "hardHashesVerified": 28,
+      "seamWarnings": 0,
+      "stdoutSha256": "a4cb1e9f498998d08118a41482c272c77ffa7c0f1f10a5d6a6a7bf37ddb8e432",
+      "receipt": "42ac49e640a53726107990ec95c977d7f1f3cc56:docs/health-launch/ql-protection-carryforward-20261012/EXECUTED_PROTECTION_CLI.json",
+      "environment": "Builtins-only/no application imports/dependencies/network; environment allowlist, no service credential inheritance. Distinct permitted standalone protection check, not retry of denied application run."
+    },
+    "protectionVitest": "NOT_RUN",
+    "fullComposition": {
+      "sixApplied": "f6da5aa6154cc62bdbec34ce29a0a5759fb84136",
+      "records": "f9d34be4d4d106c03620a23e8eb31915f63552d6",
+      "historicalR2": "e275d344e0ced7f683218b4dac3b1b7b63f01764 ACTUAL EXIT1 preserved",
+      "remainingHardMismatch": "server/static.ts",
+      "remainingSeams": [
+        "server/index.ts",
+        "server/research/index.ts"
+      ],
+      "next": "Existing source/protection owners obtain distinct exact source/baseline dispositions; clean seam assertion unchanged.",
+      "independentQLDependency": false
+    }
+  },
+  "payment": {
+    "firstQualifiedMethod": null,
+    "receivingConfigurationChanged": false,
+    "methods": [
+      {
+        "method": "Cash App",
+        "source": "Tim_Ingram_Final_Invoice_2026-09-22.pdf / XH 20260922 TI 001 historical citation",
+        "currentReceivingOwner": null,
+        "historicalAssociation": "Samuel",
+        "productApprovalRef": null,
+        "configurationRef": null,
+        "observationAccess": "NOT_ESTABLISHED",
+        "verifier": "Samuel Boadu",
+        "status": "HELD_PENDING_CURRENT_EVIDENCE"
+      },
+      {
+        "method": "PayPal",
+        "source": "Same historical invoice citation",
+        "currentReceivingOwner": null,
+        "historicalAssociation": "Samuel",
+        "productApprovalRef": null,
+        "configurationRef": null,
+        "observationAccess": "NOT_ESTABLISHED",
+        "verifier": "Samuel Boadu",
+        "status": "HELD_PENDING_CURRENT_EVIDENCE"
+      },
+      {
+        "method": "Venmo",
+        "source": "Same historical invoice citation",
+        "currentReceivingOwner": null,
+        "historicalAssociation": "Harry",
+        "productApprovalRef": null,
+        "configurationRef": null,
+        "observationAccess": "Harry authority plus independent verifier access needed",
+        "verifier": "Samuel Boadu",
+        "status": "HELD_PENDING_CURRENT_EVIDENCE"
+      },
+      {
+        "method": "Apple Pay invoice label",
+        "source": "Same historical invoice citation",
+        "currentReceivingOwner": null,
+        "historicalAssociation": "Samuel",
+        "productApprovalRef": null,
+        "configurationRef": null,
+        "observationAccess": "Actual person-to-person mechanism not established; not native checkout",
+        "verifier": "Samuel Boadu",
+        "status": "HELD_PENDING_CURRENT_EVIDENCE"
+      },
+      {
+        "method": "Zelle",
+        "source": "Later no-Zelle-on-invoices direction",
+        "currentReceivingOwner": null,
+        "productApprovalRef": null,
+        "configurationRef": null,
+        "observationAccess": null,
+        "verifier": null,
+        "status": "HELD_EXCLUDED"
+      },
+      {
+        "method": "ACH / wire",
+        "source": "Historical presentation category only",
+        "currentReceivingOwner": null,
+        "productApprovalRef": null,
+        "configurationRef": null,
+        "observationAccess": null,
+        "verifier": null,
+        "status": "CONTACT_ONLY"
+      },
+      {
+        "method": "Other manual",
+        "source": "Historical staff-contact choice only",
+        "currentReceivingOwner": null,
+        "productApprovalRef": null,
+        "configurationRef": null,
+        "observationAccess": null,
+        "verifier": null,
+        "status": "CONTACT_ONLY"
+      }
+    ],
+    "retrieval": {
+      "local": "Bounded hidden/no-ignore Downloads and Codex attachments title/person/date search and registered Oct11 archive inventories did not locate Tim/Dallas PDFs, named Sept12 invoice drafts or Sept23 full-thread archive. References only.",
+      "connectedDrive": "Existing coordinator reported exact-title searches empty; not an original Library retrieval.",
+      "connectedPages": "Exact Tim and Dallas filenames each returned only unrelated Your guide to pages metadata; no original file reference. Search does not prove Library originals absent.",
+      "originalLibraryFileId": null,
+      "secretMaterialCopied": false
+    },
+    "smallestRequiredInput": "Samuel identifies the existing protected current configuration/instruction record or its actual custodian for ONE chosen method, with current receiving-owner/product-use approval and how Samuel independently observes matching funds and pending/held/reversal state. If Venmo, Harry confirms account authority and observation access. No recipient coordinates/credentials/raw evidence requested.",
+    "Lawrence": "UNVERIFIED; CC/contact association is not receiving ownership"
+  },
+  "invoicing": {
+    "businessChoice": "STAFFED_MANUAL_INVOICING_FOR_ELIGIBLE_PRODUCTS_ALREADY_SELECTED",
+    "owner": "Existing financial implementation owner; Samuel operational verifier",
+    "status": "NOT_QUALIFIED_END_TO_END",
+    "missing": [
+      "Qualified method evidence above",
+      "Actual request to final invoice version/amount and canonical evidence binding",
+      "Method-specific observation source/access and received/available criteria",
+      "Controlled paid transition and separate fulfillment gates proven with actual permitted mechanism"
+    ],
+    "guard": "QL12 fail-closed guard is not functioning paid checkout; no fabricated verification records or historical paid labels promoted.",
+    "staff": {
+      "named": "Samuel Boadu",
+      "duties": [
+        "queue",
+        "final invoice/availability",
+        "independent payment verification",
+        "fulfillment",
+        "refunds",
+        "support"
+      ],
+      "hours": null,
+      "distinctSecondAdmin": null,
+      "authorityRecord": "ed9d80345d8b378556e7e623e62185125b4ae5cc:MORNING_STAFFED_ORDERING_ACTUAL_OWNER_AND_SQL_APPROVAL_20261012.json"
+    }
+  },
+  "catalog": {
+    "source": "f9d34be4d4d106c03620a23e8eb31915f63552d6",
+    "datasetBlob": "4a1bb489a22e1d8f03649b4404f4c3430b3bbcf7",
+    "reviewWorkbookRows": 426,
+    "internalCanonicalProducts": 424,
+    "internalCanonicalVariants": 424,
+    "shippingExcluded": "GRP-0364",
+    "customerProjectionRows": 423,
+    "audiences": [
+      {
+        "surface": "Public /products",
+        "count": 0,
+        "meaning": "Pathway page; zero individual variant cards"
+      },
+      {
+        "surface": "Authorized Early Access/assisted-order",
+        "count": 423,
+        "meaning": "Local conditional catalog projection; admission/configuration still governs"
+      },
+      {
+        "surface": "Authorized /research/member/catalog and admin same master API",
+        "count": 423,
+        "meaning": "Exact full-catalog flags/allowlist still govern"
+      },
+      {
+        "surface": "/research/member/products",
+        "count": null,
+        "meaning": "Different mounted Product Control API; current hosted count not established"
+      },
+      {
+        "surface": "Full Quick Order",
+        "count": null,
+        "meaning": "Qualified census absent; production visibility null/default-off"
+      },
+      {
+        "surface": "Organization/Care/provider",
+        "count": null,
+        "meaning": "Not established by scoped evidence"
+      }
+    ],
+    "historicalCoverage": {
+      "numeric": 173,
+      "careWithheld": 242,
+      "quoteOnly": 2,
+      "unbound": 6
+    },
+    "limits": "Local source/historical fixture, not newly executed suite, price publication, hosted count or universal orderability.",
+    "owner": "Existing catalog/detail reservations preserved",
+    "independentSupportFinding": {
+      "status": "CUSTODY_REQUESTED_NOT_EDITED",
+      "paths": [
+        "client/src/research/account-portal/views/SupportView.tsx",
+        "client/src/research/account-portal/views/support-documents.test.tsx"
+      ],
+      "finding": "Generic error after potentially persisted submission claims request not recorded/account unchanged. Narrow truthful uncertainty copy and regression proposed, no API/payment/route change."
+    }
+  },
+  "production": {
+    "checkedReadOnlyAt": "2026-10-12T19:25:19.1148527Z",
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deployment": "dep-daqft3vf3r2c73b7e88g",
+    "deploymentStatus": "live",
+    "deployedSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "branch": "release/early-access-code-session-checkout",
+    "autoDeploy": "off",
+    "origin": "https://xeniostechnology.com",
+    "health": {
+      "url": "https://xeniostechnology.com/api/health",
+      "status": 200,
+      "commitExposed": false
+    },
+    "identityLimit": "Current Render control-plane deployment association plus public health200; health itself does not attest source SHA.",
+    "stagingDistinct": "srv-d9h4f4m7r5hc73ctjng0 https://xenios-research-staging.onrender.com",
+    "newRelease": null,
+    "reason": "Actual independent QL disposition, complete applicable qualification/dependency/legal/config/release inputs remain unmet. Conditional release authority not spent on unqualified successor."
+  },
+  "boundaries": {
+    "fullSuiteRerun": false,
+    "build": false,
+    "typecheck": false,
+    "SQL": false,
+    "installation": false,
+    "push": false,
+    "merge": false,
+    "deploy": false,
+    "hostedConfiguration": false,
+    "realEmail": false,
+    "money": false,
+    "schedules": "UNCHANGED"
+  },
+  "next": "Complete original bounded QL review with new public owner refusal/admission account; remaining applicable checks only under valid frozen execution. Separate support path custody and full-site owners continue. Qualify ONE real existing method from protected current evidence; never substitute historical invoice/reference for authority."
+}
