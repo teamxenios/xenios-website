@@ -496,3 +496,11 @@ was executed.
 | 93 | `QUICK-ORDER-PRODUCTION-PROFILE-TECHNICAL-REVIEW-20261011` r1 (`3709170` / `31de10e`) | COMPLETE: **PROPOSAL REVISION REQUIRED.** Four P2 and eleven P3; no P0 or P1. The arithmetic holds, and the values are labelled unmeasured. The proposal must state four source-forced consequences: the PP-1 gate-entry objective (unattainable under normal contention), a login role per class with role-wide timers (PP-2), the owner-identity anchor path (PP-3), and no enforcement point for the 19,250 ms writer bound (PP-4). No value chosen; nothing authorized |
 
 Docs 87 (composition r3, first priority) and 92 (CI workflow bytes) remain in review. Nothing was executed.
+
+## Queue state update (2026-10-11, doc 92)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 92 | `QUICK-ORDER-CI-WORKFLOW-BYTE-COMPARISON-20261011` r1 (`e86ffe3` / `f76c2fb`; blob `2d40bd2a`) | COMPLETE: **CORRECTIONS REQUIRED.** One P1, eight P2, fifteen P3; no P0. The safety surface is correct, and the adopted values are carried faithfully. CW-1 (P1): on the success path, files written as container UID 1000 are hard-linked, so under `protected_hardlinks` a passing run cannot reach PASS. CW-2 and CW-3: landing-record corrections (the UNBOUND payload must never land; skip-ci misattributed). CW-4 to CW-9: attempt-burning gates, races and dropped failure evidence. Landing and dispatch stay HELD |
+
+Doc 87 (composition r3) remains in review. Nothing was executed.
