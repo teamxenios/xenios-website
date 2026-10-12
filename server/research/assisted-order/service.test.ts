@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import type {
   AssistedOrderCatalogItem,
+  AssistedOrderStatus,
+  AssistedOrderStatusUpdateInput,
   AssistedOrderSubmitInput,
 } from "../../../shared/research/assisted-order/contract";
 import type {
@@ -34,6 +36,8 @@ import {
   type SupabaseRpcClient,
 } from "./supabase-repository";
 import {
+  ASSISTED_ORDER_HELD_PAYMENT_STATUSES,
+  ASSISTED_ORDER_PAYMENT_TRANSITION_HELD_CODE,
   AssistedOrderAgreementRequiredError,
   AssistedOrderAuthorizationError,
   AssistedOrderConflictError,
@@ -511,37 +515,177 @@ describe("AssistedOrderService", () => {
     expect(view?.requestId).toBe(receipt.requestId);
   });
 
-  it("requires evidence before paid status", async () => {
-    const h = harness();
-    const receipt = await h.service.submit(memberViewer, input());
-    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
-    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_pending" });
-    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_review" });
-    await expect(
-      h.service.updateStatus(adminViewer, receipt.requestId, { status: "paid" }),
-    ).rejects.toMatchObject({ code: "payment_evidence_required" });
-  });
+  // Doc96 QL-12. The generic staff PATCH used to accept 'paid' on any
+  // non-blank free-text reference, and the customer was then told "Payment
+  // has been verified." No canonical payment verification authority is
+  // mounted on this service, so every move INTO a payment state is held
+  // before any write, audit or notification. Every predecessor state below is
+  // LEGAL in the transition table, so what refuses is the hold, not the table.
+  describe("payment transition hold (Doc96 QL-12)", () => {
+    type Harness = ReturnType<typeof harness>;
 
-  it("accepts paid only with canonical verification evidence", async () => {
-    const h = harness();
-    const receipt = await h.service.submit(memberViewer, input());
-    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
-    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_pending" });
-    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_review" });
-    const updated = await h.service.updateStatus(adminViewer, receipt.requestId, {
-      status: "paid",
-      evidence: { paymentVerificationId: "payment-verification-1" },
+    /**
+     * Walks a request along table-legal edges straight through the repository,
+     * bypassing the service, so the hold can be exercised from predecessor
+     * states the service itself can no longer reach.
+     */
+    async function seedStatus(
+      h: Harness,
+      requestId: string,
+      path: readonly AssistedOrderStatus[],
+    ): Promise<void> {
+      let from: AssistedOrderStatus = "submitted";
+      for (const to of path) {
+        await h.repository.updateStatus({
+          requestId,
+          fromStatus: from,
+          toStatus: to,
+          actorId: "seed-for-test",
+          actorType: "system",
+          customerMessage: null,
+          internalNote: null,
+          evidence: {},
+          occurredAt: "2026-08-15T12:00:00.000Z",
+        });
+        from = to;
+      }
+    }
+
+    function statusEffects(h: Harness) {
+      return {
+        audits: h.audit.mock.calls
+          .map((call) => call[0] as { eventType: string })
+          .filter((event) => event.eventType === "assisted_order.status_changed"),
+        notifications: h.notifications.filter(
+          (intent) => intent.eventType === "assisted_order.status_changed",
+        ),
+      };
+    }
+
+    it("exports exactly the three held payment statuses and the refusal code", () => {
+      expect(Array.from(ASSISTED_ORDER_HELD_PAYMENT_STATUSES).sort()).toEqual([
+        "paid",
+        "payment_pending",
+        "payment_review",
+      ]);
+      expect(ASSISTED_ORDER_PAYMENT_TRANSITION_HELD_CODE).toBe("payment_transition_held");
     });
-    expect(updated.status).toBe("paid");
-    const auditEvent = h.audit.mock.calls
-      .map((call) => call[0])
-      .find((event) => event.eventType === "assisted_order.status_changed" && event.evidence.to === "paid");
-    expect(auditEvent?.evidence).toEqual({
-      from: "payment_review",
-      to: "paid",
-      authorityEvidenceKinds: ["payment_verification"],
+
+    it("refuses reviewing -> payment_pending before any write, audit or notification", async () => {
+      const h = harness();
+      const receipt = await h.service.submit(memberViewer, input());
+      await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+      const before = statusEffects(h);
+      expect(before.audits).toHaveLength(1);
+      expect(before.notifications).toHaveLength(1);
+
+      await expect(
+        h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_pending" }),
+      ).rejects.toBeInstanceOf(AssistedOrderConflictError);
+      await expect(
+        h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_pending" }),
+      ).rejects.toMatchObject({ code: ASSISTED_ORDER_PAYMENT_TRANSITION_HELD_CODE });
+
+      const detail = await h.service.adminDetail(adminViewer, receipt.requestId);
+      expect(detail.status).toBe("reviewing");
+      expect(detail.timeline.map((event) => event.status)).toEqual(["submitted", "reviewing"]);
+      const after = statusEffects(h);
+      expect(after.audits).toHaveLength(before.audits.length);
+      expect(after.notifications).toHaveLength(before.notifications.length);
     });
-    expect(JSON.stringify(auditEvent)).not.toContain("payment-verification-1");
+
+    it("refuses payment_pending -> payment_review even when the request was legally seeded there", async () => {
+      const h = harness();
+      const receipt = await h.service.submit(memberViewer, input());
+      await seedStatus(h, receipt.requestId, ["reviewing", "payment_pending"]);
+      await expect(
+        h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_review" }),
+      ).rejects.toMatchObject({ code: "payment_transition_held" });
+      expect((await h.service.adminDetail(adminViewer, receipt.requestId)).status).toBe(
+        "payment_pending",
+      );
+      expect(statusEffects(h).audits).toHaveLength(0);
+      expect(statusEffects(h).notifications).toHaveLength(0);
+    });
+
+    it("refuses paid from payment_review for an arbitrary, missing, foreign or reused reference, and never says payment was verified", async () => {
+      const h = harness();
+      const receipt = await h.service.submit(memberViewer, input());
+      const other = await h.service.submit(memberViewer, input({ idempotencyKey: "submit-2" }));
+      await seedStatus(h, receipt.requestId, ["reviewing", "payment_pending", "payment_review"]);
+      await seedStatus(h, other.requestId, ["reviewing", "payment_pending", "payment_review"]);
+
+      // A reference presented first against another request...
+      await expect(
+        h.service.updateStatus(adminViewer, other.requestId, {
+          status: "paid",
+          evidence: { paymentVerificationId: "payment-verification-1" },
+        }),
+      ).rejects.toMatchObject({ code: "payment_transition_held" });
+
+      const attempts: readonly AssistedOrderStatusUpdateInput[] = [
+        // ...then reused here, as arbitrary non-blank free text, with a staff
+        // message that must never reach the customer.
+        {
+          status: "paid",
+          evidence: { paymentVerificationId: "payment-verification-1" },
+          customerMessage: "Payment has been verified.",
+        },
+        // Nothing at all.
+        { status: "paid" },
+        // A reference that names a different request.
+        { status: "paid", evidence: { paymentVerificationId: other.requestId } },
+        // A reference shaped like a settlement for the other request.
+        { status: "paid", evidence: { paymentVerificationId: other.publicReference + ":wire-0001" } },
+      ];
+      for (const attempt of attempts) {
+        await expect(
+          h.service.updateStatus(adminViewer, receipt.requestId, attempt),
+        ).rejects.toMatchObject({ code: "payment_transition_held" });
+      }
+
+      for (const requestId of [receipt.requestId, other.requestId]) {
+        const detail = await h.service.adminDetail(adminViewer, requestId);
+        expect(detail.status).toBe("payment_review");
+        expect(detail.timeline.map((event) => event.status)).not.toContain("paid");
+      }
+      expect(statusEffects(h).audits).toHaveLength(0);
+      expect(statusEffects(h).notifications).toHaveLength(0);
+      expect(JSON.stringify(h.notifications)).not.toContain("Payment has been verified.");
+      expect(JSON.stringify(h.audit.mock.calls)).not.toContain("payment-verification-1");
+    });
+
+    it("still reports an impossible move as an invalid transition first", async () => {
+      const h = harness();
+      const receipt = await h.service.submit(memberViewer, input());
+      await expect(
+        h.service.updateStatus(adminViewer, receipt.requestId, {
+          status: "paid",
+          evidence: { paymentVerificationId: "payment-verification-1" },
+        }),
+      ).rejects.toMatchObject({ code: "invalid_status_transition" });
+      await expect(
+        h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_review" }),
+      ).rejects.toMatchObject({ code: "invalid_status_transition" });
+      expect((await h.service.adminDetail(adminViewer, receipt.requestId)).status).toBe("submitted");
+    });
+
+    it("leaves non-payment transitions open, so the hold is not over-broad", async () => {
+      const h = harness();
+      const receipt = await h.service.submit(memberViewer, input());
+      await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+      const requested = await h.service.updateStatus(adminViewer, receipt.requestId, {
+        status: "identity_requested",
+      });
+      expect(requested.status).toBe("identity_requested");
+      const cancelled = await h.service.updateStatus(adminViewer, receipt.requestId, {
+        status: "cancelled",
+        evidence: { cancellationReason: "customer withdrew the request" },
+      });
+      expect(cancelled.status).toBe("cancelled");
+      expect(statusEffects(h).audits).toHaveLength(3);
+      expect(statusEffects(h).notifications).toHaveLength(3);
+    });
   });
 
   it("does not collect government ID until identity is requested", async () => {

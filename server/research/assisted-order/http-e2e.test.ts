@@ -577,6 +577,53 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
     expect(queue.body).toMatchObject({ total: 0, items: [] });
   });
 
+  it("holds every staff move into a payment state at the real admin door, with no customer notification", async () => {
+    let notifications = 0;
+    const app = buildApp(undefined, {
+      onNotification: () => {
+        notifications += 1;
+      },
+    });
+    const submitted = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send(submitInput());
+    expect(submitted.status).toBe(201);
+    const statusPath =
+      "/api/admin/research/assisted-orders/" + submitted.body.requestId + "/status";
+
+    const reviewing = await request(app)
+      .patch(statusPath)
+      .set("authorization", ADMIN_BEARER)
+      .send({ status: "reviewing" });
+    expect(reviewing.status).toBe(200);
+    const afterReviewing = notifications;
+
+    // Doc96 QL-12: a table-legal edge into a payment state is refused by the
+    // hold at the door, before any write or customer notification, and a
+    // free-text reference changes nothing.
+    for (const body of [
+      { status: "payment_pending" },
+      { status: "payment_pending", evidence: { paymentVerificationId: "payment-verification-1" } },
+    ]) {
+      const held = await request(app)
+        .patch(statusPath)
+        .set("authorization", ADMIN_BEARER)
+        .send(body);
+      expect(held.status).toBe(409);
+      expect(held.body).toMatchObject({ error: "payment_transition_held" });
+      expect(JSON.stringify(held.body)).not.toContain("payment-verification-1");
+    }
+    expect(notifications).toBe(afterReviewing);
+
+    const detail = await request(app)
+      .get("/api/admin/research/assisted-orders/" + submitted.body.requestId)
+      .set("authorization", ADMIN_BEARER);
+    expect(detail.status).toBe(200);
+    expect(detail.body.status).toBe("reviewing");
+  });
+
   it("walks the whole journey over real doors", async () => {
     const app = buildApp();
 

@@ -624,9 +624,12 @@ describe("AssistedOrderPage", () => {
     click(byTestId("order-submit"));
     await settle(20);
 
+    // A thrown non-API error is an UNCERTAIN outcome: the request may already
+    // be saved, so the copy must not claim that nothing was ordered.
     expect(byTestId("order-error")?.textContent).toContain(
-      "The order request could not be submitted. Nothing was ordered or charged.",
+      "Request not confirmed. Retry; do not start a new request.",
     );
+    expect(document.body.textContent).not.toContain("Nothing was ordered or charged");
     expect(document.body.textContent).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
     expect(document.body.textContent).not.toContain("do-not-expose");
   });
@@ -852,6 +855,452 @@ describe("AssistedOrderPage", () => {
     // Still on review, now showing the CURRENT server price.
     expect(document.body.textContent).toContain("$27.00");
     expect(window.location.pathname).toBe("/research/early-access/order-request");
+  });
+
+  // Doc96 QL-11. The wizard used to claim "Nothing was ordered or charged"
+  // after outcomes it could not know, restamped acceptedAt on every submit (so
+  // a retry under the persisted key fingerprinted as a different request) and
+  // rotated the key on idempotency_conflict. These cases pin the corrected
+  // behaviour. They exercise the CLIENT keeping its attempt identity only: the
+  // server still checks price and catalog drift before it looks for a replay,
+  // and nothing here claims otherwise.
+  describe("uncertain outcomes and the frozen attempt identity (Doc96 QL-11)", () => {
+    const UNCERTAIN_COPY = "Request not confirmed. Retry; do not start a new request.";
+    const CONFLICT_COPY =
+      "Your earlier request with these details may already have been received. Do not start a new request.";
+    const RESTORED_COPY = "An earlier attempt to send this request may already have been saved.";
+    const DRIFT_AFTER_UNCERTAIN_COPY =
+      "Pricing or availability changed. An earlier attempt to send this request may already have been saved";
+    const CONFIRMATION_PATH =
+      "/research/early-access/order-request/confirmation/" + receipt.publicReference;
+
+    type StoredDraft = {
+      idempotencyKey: string;
+      acceptedAt: string | null;
+      attemptState: string;
+      step: string;
+    };
+
+    function readDraft(): StoredDraft {
+      const raw = sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY);
+      expect(raw).not.toBeNull();
+      return JSON.parse(raw!) as StoredDraft;
+    }
+
+    function submitCall(index: number) {
+      return api.submitAssistedOrder.mock.calls[index][0];
+    }
+
+    /** Every pair in one submission carries the one frozen stamp. */
+    function acceptedAtOf(call: { agreements: readonly { acceptedAt: string }[] }): string {
+      const stamps = new Set(call.agreements.map((agreement) => agreement.acceptedAt));
+      expect(stamps.size).toBe(1);
+      return Array.from(stamps)[0];
+    }
+
+    const unavailable = () =>
+      new AssistedOrderApiError(500, "assisted_order_unavailable", "Try again.");
+    const forbidden = () =>
+      new AssistedOrderApiError(403, "forbidden", "This request is not authorized.");
+    const conflict = () =>
+      new AssistedOrderApiError(
+        409,
+        "idempotency_conflict",
+        "This submission key was already used for a different request.",
+      );
+
+    /** Products -> contact -> review with every acknowledgment ticked. */
+    async function reachReview() {
+      click(byTestId("order-card-add-" + directRuoItem.variantId));
+      click(byTestId("order-continue-contact"));
+      fillContact();
+      click(byTestId("order-continue-review"));
+      await settle(20);
+      checkAllAcknowledgments();
+    }
+
+    /** A restored draft lands on contact: contact data is never persisted. */
+    async function reviewFromRestoredContact() {
+      fillContact();
+      click(byTestId("order-continue-review"));
+      await settle(20);
+      checkAllAcknowledgments();
+    }
+
+    it("retries a lost response under the same key and frozen acceptedAt, then clears the draft on the replayed receipt", async () => {
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(unavailable())
+        .mockResolvedValueOnce(receipt);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+
+      expect(byTestId("order-error")?.textContent).toContain(UNCERTAIN_COPY);
+      expect(document.body.textContent).not.toContain("Nothing was ordered or charged");
+      const first = submitCall(0);
+      const stamp = acceptedAtOf(first);
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: stamp,
+        attemptState: "uncertain",
+      });
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(2);
+      const second = submitCall(1);
+      expect(second.idempotencyKey).toBe(first.idempotencyKey);
+      expect(second.agreements).toEqual(first.agreements);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+    });
+
+    it("treats a non-JSON answer and a network failure as uncertain, never as nothing saved", async () => {
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(
+          new AssistedOrderApiError(413, "request_failed", "<html>Request Entity Too Large</html>"),
+        )
+        .mockRejectedValueOnce(new TypeError("Failed to fetch"));
+      render();
+      await settle();
+      await reachReview();
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toContain(UNCERTAIN_COPY);
+      expect(document.body.textContent).not.toContain("Request Entity Too Large");
+      expect(readDraft().attemptState).toBe("uncertain");
+      const key = submitCall(0).idempotencyKey;
+      const stamp = acceptedAtOf(submitCall(0));
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toContain(UNCERTAIN_COPY);
+      expect(document.body.textContent).not.toContain("Failed to fetch");
+      expect(document.body.textContent).not.toContain("Nothing was ordered or charged");
+      expect(submitCall(1).idempotencyKey).toBe(key);
+      expect(acceptedAtOf(submitCall(1))).toBe(stamp);
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: key,
+        acceptedAt: stamp,
+        attemptState: "uncertain",
+      });
+    });
+
+    it("restores an uncertain attempt after a refresh with the same key and acceptedAt, and says so", async () => {
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(unavailable())
+        .mockResolvedValueOnce(receipt);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      const first = submitCall(0);
+      const before = readDraft();
+      expect(before.attemptState).toBe("uncertain");
+
+      // The refresh: unmount (session expiry + re-unlock), then a fresh mount.
+      unmount();
+      render();
+      await settle();
+
+      expect(byTestId("order-notice")?.textContent).toContain(RESTORED_COPY);
+      expect(document.body.textContent).not.toMatch(/reload/i);
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: before.idempotencyKey,
+        acceptedAt: before.acceptedAt,
+        attemptState: "uncertain",
+      });
+
+      // Contact details were never persisted; the same ones are re-entered.
+      await reviewFromRestoredContact();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(2);
+      const second = submitCall(1);
+      expect(second.idempotencyKey).toBe(first.idempotencyKey);
+      expect(second.agreements).toEqual(first.agreements);
+      expect(second.contact.email).toBe(first.contact.email);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+    });
+
+    it("ignores a duplicate click while a submission is in flight", async () => {
+      const inFlight = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValue(inFlight.promise);
+      render();
+      await settle();
+      await reachReview();
+
+      click(byTestId("order-submit"));
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+      expect(byTestId<HTMLButtonElement>("order-submit")?.disabled).toBe(true);
+
+      inFlight.resolve(receipt);
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+    });
+
+    it("keeps the key on idempotency_conflict and never invites a new request", async () => {
+      api.submitAssistedOrder.mockRejectedValue(conflict());
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+
+      expect(byTestId("order-notice")?.textContent).toContain(CONFLICT_COPY);
+      expect(document.body.textContent).not.toContain("Press Submit again");
+      expect(document.body.textContent).not.toContain("as a new request");
+      expect(document.body.textContent).not.toMatch(/reload/i);
+      expect(document.body.textContent).not.toContain("start again");
+      const key = submitCall(0).idempotencyKey;
+      expect(readDraft().idempotencyKey).toBe(key);
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(2);
+      expect(submitCall(1).idempotencyKey).toBe(key);
+      expect(submitCall(1).agreements).toEqual(submitCall(0).agreements);
+    });
+
+    it("keeps the frozen attempt after an uncertain outcome even when a later refusal is definitive", async () => {
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(unavailable())
+        .mockRejectedValueOnce(
+          new AssistedOrderApiError(
+            400,
+            "validation_error",
+            "Enter a valid mobile phone.",
+            "contact.mobilePhone",
+          ),
+        );
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      const frozen = readDraft();
+      expect(frozen.attemptState).toBe("uncertain");
+      expect(frozen.acceptedAt).not.toBeNull();
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toBe(
+        "Review the highlighted information and try again. (contact.mobilePhone)",
+      );
+      expect(document.body.textContent).not.toContain("Enter a valid mobile phone.");
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: frozen.idempotencyKey,
+        acceptedAt: frozen.acceptedAt,
+        attemptState: "uncertain",
+      });
+      expect(submitCall(1).idempotencyKey).toBe(submitCall(0).idempotencyKey);
+      expect(submitCall(1).agreements).toEqual(submitCall(0).agreements);
+    });
+
+    it("releases only the acceptance time after a definitive first-attempt refusal and keeps the key", async () => {
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(
+          new AssistedOrderApiError(
+            400,
+            "validation_error",
+            "Enter a valid email address.",
+            "contact.email",
+          ),
+        )
+        .mockResolvedValueOnce(receipt);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      const first = submitCall(0);
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: null,
+        attemptState: "none",
+      });
+
+      // Enough wall-clock time for a fresh stamp to differ.
+      await settle(10);
+      click(byTestId("order-submit"));
+      await settle(20);
+      const second = submitCall(1);
+      expect(second.idempotencyKey).toBe(first.idempotencyKey);
+      const firstStamp = acceptedAtOf(first);
+      const secondStamp = acceptedAtOf(second);
+      expect(secondStamp).not.toBe(firstStamp);
+      expect(Date.parse(secondStamp)).toBeGreaterThan(Date.parse(firstStamp));
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+    });
+
+    it("keeps the attempt key when drift is refused after an uncertain attempt and does not claim nothing was submitted", async () => {
+      const repriced = { ...directRuoItem, unitPriceCents: 2700, priceVersion: "price-2" };
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(unavailable())
+        .mockRejectedValueOnce(new AssistedOrderApiError(409, "price_changed", "The price changed."))
+        .mockRejectedValueOnce(conflict());
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      const first = submitCall(0);
+      const frozen = readDraft();
+      expect(frozen.attemptState).toBe("uncertain");
+
+      // The server checks price and catalog drift BEFORE it looks for a
+      // replay, so a saved earlier attempt comes back as a 409 here. The
+      // client keeps the attempt identity; it does not change, and cannot
+      // repair, that server ordering.
+      api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([repriced]));
+      click(byTestId("order-submit"));
+      await settle(20);
+      const notice = byTestId("order-notice")?.textContent ?? "";
+      expect(notice).toContain(DRIFT_AFTER_UNCERTAIN_COPY);
+      expect(notice).not.toContain("nothing was submitted");
+      expect(document.body.textContent).toContain("$27.00");
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: frozen.acceptedAt,
+        attemptState: "uncertain",
+      });
+
+      // A further submit rides the SAME key: the saved request can replay or
+      // conflict, never be duplicated under an automatically minted key.
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(3);
+      const third = submitCall(2);
+      expect(third.idempotencyKey).toBe(first.idempotencyKey);
+      expect(third.agreements).toEqual(first.agreements);
+      expect(third.lines[0].expectedUnitPriceCents).toBe(2700);
+      expect(byTestId("order-notice")?.textContent).toContain(CONFLICT_COPY);
+    });
+
+    it("releases the acceptance time on a first-attempt drift refusal, where nothing was persisted, and keeps the key", async () => {
+      const repriced = { ...directRuoItem, unitPriceCents: 2700, priceVersion: "price-2" };
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(new AssistedOrderApiError(409, "price_changed", "The price changed."))
+        .mockResolvedValueOnce(receipt);
+      render();
+      await settle();
+      await reachReview();
+      api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([repriced]));
+      click(byTestId("order-submit"));
+      await settle(20);
+      const first = submitCall(0);
+      expect(byTestId("order-notice")?.textContent).toContain(
+        "Pricing or availability changed while you were reviewing, so nothing was submitted.",
+      );
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: null,
+        attemptState: "none",
+      });
+
+      await settle(10);
+      click(byTestId("order-submit"));
+      await settle(20);
+      const second = submitCall(1);
+      expect(second.idempotencyKey).toBe(first.idempotencyKey);
+      expect(Date.parse(acceptedAtOf(second))).toBeGreaterThan(Date.parse(acceptedAtOf(first)));
+      expect(second.lines[0].expectedUnitPriceCents).toBe(2700);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+    });
+
+    it("cannot restore an uncertain draft past the continuation gate, and keeps its identity intact", async () => {
+      sessionStorage.setItem(
+        ASSISTED_ORDER_DRAFT_KEY,
+        JSON.stringify({
+          idempotencyKey: "draft-uncertain-gate",
+          acceptedAt: "2026-10-12T12:00:00.000Z",
+          attemptState: "uncertain",
+          step: "review",
+          selections: [{ item: directRuoItem, quantity: 1, notes: "" }],
+          generalNotes: "",
+          savedAt: "2026-10-12T12:00:00.000Z",
+        }),
+      );
+
+      render({ embedded: true, continuationEnabled: false });
+      await settle();
+
+      expect(byTestId("order-notice")?.textContent).toContain(RESTORED_COPY);
+      expect(byTestId("order-contact-name")).toBeNull();
+      expect(byTestId("order-submit")).toBeNull();
+      expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: "draft-uncertain-gate",
+        acceptedAt: "2026-10-12T12:00:00.000Z",
+        attemptState: "uncertain",
+      });
+    });
+
+    it("maps an ended session to continue-your-request copy first, and to retry-the-same-request copy after an uncertain attempt", async () => {
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(forbidden())
+        .mockRejectedValueOnce(unavailable())
+        .mockRejectedValueOnce(forbidden());
+      render();
+      await settle();
+      await reachReview();
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toBe(
+        "Your Early Access session ended. Unlock Early Access again and continue your request.",
+      );
+      expect(readDraft()).toMatchObject({ acceptedAt: null, attemptState: "none" });
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(readDraft().attemptState).toBe("uncertain");
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toBe(
+        "Your Early Access session ended. Unlock Early Access again, then retry this same request; do not start a new one.",
+      );
+      expect(document.body.textContent).not.toContain("start again");
+      const key = submitCall(0).idempotencyKey;
+      for (const call of api.submitAssistedOrder.mock.calls) {
+        expect(call[0].idempotencyKey).toBe(key);
+      }
+      expect(readDraft()).toMatchObject({ idempotencyKey: key, attemptState: "uncertain" });
+    });
+
+    it("classifies unfamiliar refusals by what the server can be known to have done", async () => {
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(new AssistedOrderApiError(429, "rate_limited", "Slow down."))
+        .mockRejectedValueOnce(new AssistedOrderApiError(409, "serialization_failure", "Retry."));
+      render();
+      await settle();
+      await reachReview();
+
+      // A JSON 4xx from this service is thrown before persistence.
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toBe(
+        "The order request was not accepted and was not saved. Please review your details and try again.",
+      );
+      expect(document.body.textContent).not.toContain("Slow down.");
+      expect(readDraft()).toMatchObject({ acceptedAt: null, attemptState: "none" });
+
+      // An unfamiliar 409 may have landed after persistence: uncertain.
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toContain(UNCERTAIN_COPY);
+      expect(readDraft().attemptState).toBe("uncertain");
+      expect(submitCall(1).idempotencyKey).toBe(submitCall(0).idempotencyKey);
+    });
   });
 });
 
