@@ -36,6 +36,8 @@ import { ASSISTED_ORDER_DRAFT_KEY } from "./draft-store";
 import { orderEntryIntentFromSearch } from "../early-access/orderEntryIntent";
 import {
   assistedOrderReceiptKey,
+  assistedOrderTokenKey,
+  clearAssistedOrderStorage,
   storeAssistedOrderReceipt,
 } from "./storage";
 
@@ -1050,8 +1052,14 @@ describe("AssistedOrderPage", () => {
 
     it("records a submission lost mid-flight as uncertain, restores it with the same key and acceptedAt, and never releases the stamp afterwards", async () => {
       const lost = deferred<AssistedOrderReceipt>();
+      // Captured synchronously inside the POST, before any promise settles:
+      // the marker must already be in storage when the request leaves.
+      const captured: { draftAtPost: string | null } = { draftAtPost: null };
       api.submitAssistedOrder
-        .mockReturnValueOnce(lost.promise)
+        .mockImplementationOnce(() => {
+          captured.draftAtPost = sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY);
+          return lost.promise;
+        })
         .mockRejectedValueOnce(
           new AssistedOrderApiError(400, "validation_error", "Enter a valid email address.", "contact.email"),
         )
@@ -1062,9 +1070,16 @@ describe("AssistedOrderPage", () => {
 
       click(byTestId("order-submit"));
       await settle(20);
-      // The attempt has left the browser; the draft already says so.
+      // The attempt has left the browser; the draft already says so, and it
+      // said so BEFORE the POST was issued, not merely after it settled.
       const first = submitCall(0);
       const stamp = acceptedAtOf(first);
+      expect(captured.draftAtPost).not.toBeNull();
+      expect(JSON.parse(String(captured.draftAtPost))).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: stamp,
+        attemptState: "in_flight",
+      });
       expect(readDraft()).toMatchObject({
         idempotencyKey: first.idempotencyKey,
         acceptedAt: stamp,
@@ -1107,6 +1122,132 @@ describe("AssistedOrderPage", () => {
       expect(acceptedAtOf(submitCall(2))).toBe(stamp);
       expect(window.location.pathname).toBe(CONFIRMATION_PATH);
       expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+    });
+
+    // Late completions. A POST issued by a page that has since been lost can
+    // still settle inside the same JavaScript context (SPA navigation, the
+    // route's recheck remount, this harness). The attempt identity now belongs
+    // to whichever page restored it, or to nobody after the protected sweep;
+    // the old page's answer must not write over that.
+    it("cannot have a definitive refusal that answers a page already lost overwrite the restored attempt", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder
+        .mockReturnValueOnce(lost.promise)
+        .mockResolvedValueOnce(receipt);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      const first = submitCall(0);
+      const stamp = acceptedAtOf(first);
+
+      // The page is lost mid-flight and comes back as uncertain.
+      unmount();
+      render();
+      await settle();
+      expect(byTestId("order-notice")?.textContent).toContain(RESTORED_COPY);
+
+      // Now the old POST answers with a definitive refusal. Its page is gone;
+      // the refusal must not reach the restored attempt's storage or copy.
+      lost.reject(
+        new AssistedOrderApiError(400, "validation_error", "Enter a valid email address.", "contact.email"),
+      );
+      await settle(20);
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: stamp,
+        attemptState: "uncertain",
+      });
+      expect(byTestId("order-notice")?.textContent).toContain(RESTORED_COPY);
+      expect(document.body.textContent).not.toContain("was not saved");
+      expect(document.body.textContent).not.toContain("Review the highlighted information");
+
+      // The restored page's retry still rides the same attempt identity.
+      await reviewFromRestoredContact();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(2);
+      expect(submitCall(1).idempotencyKey).toBe(first.idempotencyKey);
+      expect(acceptedAtOf(submitCall(1))).toBe(stamp);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+    });
+
+    it("repopulates nothing when a lost page's POST answers after the protected sweep", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValueOnce(lost.promise);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(readDraft().attemptState).toBe("in_flight");
+
+      // Session expiry or sign-out: the route sweeps every assisted-order key
+      // and unmounts the wizard. The sweep is the route owner's; it is only
+      // invoked here, never changed.
+      unmount();
+      clearAssistedOrderStorage();
+      expect(sessionStorage.length).toBe(0);
+
+      lost.reject(unavailable());
+      await settle(20);
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+      expect(sessionStorage.length).toBe(0);
+    });
+
+    it("stores no credential and navigates nowhere when a lost page's POST succeeds after the protected sweep", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValueOnce(lost.promise);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+
+      unmount();
+      clearAssistedOrderStorage();
+      const pathBefore = window.location.pathname;
+
+      lost.resolve(receipt);
+      await settle(20);
+      expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).toBeNull();
+      expect(sessionStorage.getItem(assistedOrderTokenKey(receipt.publicReference))).toBeNull();
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+      expect(sessionStorage.length).toBe(0);
+      expect(window.location.pathname).toBe(pathBefore);
+    });
+
+    it("leaves a newer attempt's draft intact when an older page's POST succeeds after the sweep", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValueOnce(lost.promise);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      const oldKey = submitCall(0).idempotencyKey;
+
+      // Sweep, then a fresh wizard with a fresh attempt of its own.
+      unmount();
+      clearAssistedOrderStorage();
+      render();
+      await settle();
+      click(byTestId("order-card-add-" + directRuoItem.variantId));
+      await settle(20);
+      const fresh = readDraft();
+      expect(fresh.idempotencyKey).not.toBe(oldKey);
+      expect(fresh.attemptState).toBe("none");
+      const pathBefore = window.location.pathname;
+
+      // The older page's POST now succeeds. Its receipt belongs to a page and
+      // a session that no longer exist here.
+      lost.resolve(receipt);
+      await settle(20);
+      expect(readDraft()).toMatchObject({ idempotencyKey: fresh.idempotencyKey, attemptState: "none" });
+      expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).toBeNull();
+      expect(window.location.pathname).toBe(pathBefore);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
     });
 
     it("keeps the key on idempotency_conflict and never invites a new request", async () => {
