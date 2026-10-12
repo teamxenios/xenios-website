@@ -1,0 +1,959 @@
+{
+ "archive": "doc 93 production operating profile proposal technical review",
+ "reviewer": "session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-opus-5-5)",
+ "workflowRun": "wf_41baadc1-b58",
+ "execution": "NOT_RUN",
+ "reviewerByteChecks": {
+  "PP-1": "proposal md:63-73@3709170e writer statement 12000, lock=gate 6000, reserve 1000; currentness.sql:1322-1325@264e6af carrier relations; guard is AFTER ... FOR EACH STATEMENT (currentness.sql:1378-1379)",
+  "blobs": "json b9f44603 54645 bytes; md 3b5d2b24 31671 bytes"
+ },
+ "result": {
+  "lenses": [
+   {
+    "lens": "completeness-relations",
+    "tag": "PP1",
+    "review": {
+     "verdict": "PP1 completeness-relations lens on proposal 3709170e (version 2026-10-11.r1): no P0 or P1 findings, three P2 findings to correct before Samuel decides, and five P3 findings. I recomputed every relation by hand and all of them hold. Intake: 0 < 200 < 1000; 750 < 3000 < 4500; hold 4500 + 1000 = 5500; attempt 750 + 4500 + 1000 + 750 = 7000. Writer: 750 < 12000 < 16000; lock 6000 = gate 6000; gate 6000 >= 5500, a margin of 500 (it was 1000 in the nonproduction profile); gate + reserve 7000 < 12000 < 16000; release 16000 + 1000 = 17000; attempt 750 + 16000 + 1000 + 1500 = 19250. Every ceiling is at or below the accepted nonproduction values. The JSON and Markdown values match each other. Every value is labelled proposed and unmeasured, nothing is presented as measured, and no default is copied from the starter plan. Each relation the source checks (currentness.sql:1316-1325 and 1349-1362@264e6af; intake.sql:465-505@121d0987) is satisfied, and the effective writer lock_timeout is forced to exactly 6000. The three P2 findings: (1) the 7000ms statement-clock objective at the writer gate cannot be met with the proposed writer values once more than 5000ms has passed before the gate. One full permitted lock wait, including the normal wait behind an intake's row hold, already exceeds that, so this is a regression from the nonproduction profile. (2) The doc 78 LV-2 consequence for the whole writer route, and its catalog-wide reach, is not registered. (3) The private-session revoke has no stated lock-wait relation to the intake hold, and no class or values. The P3 findings cover gaps in which conditions are carried forward and in completeness: the two carriers' copies of the intake and writer limits must be equal; the revoke-reach limit CS-33 and the install-window limit CS-36 are not carried; install and rollback timers (TC-27) and a recovery bound (TC-28) are missing; there is no per-field map of what happens when each timer expires; the too-large rule is only implicit; effective-level relations are overclaimed; and the deadlock_timeout default and its privilege restriction need a caveat. Nothing was executed, and this review does not approve any live profile.",
+     "checks": [
+      {
+       "item": "Every value has a unit, class, scope, affected operations, refusal behaviour and responsible actor",
+       "status": "PARTIAL",
+       "evidence": "Unit (ms), intake and writer values, status, rationale, enforcement scope and measurement links are present for all 11 fields (json:157-322@3709170e). operationalClasses maps writer to materialWriter, publish, activation and revoke (json:324-350). Missing: what happens when each timer expires (SQLSTATE and session effect) for each field; the private-session revoke class has no values or owner (md:76, json:914); there is no install/rollback class and no recovery bound; writer acquisitionMs, responseMs and attemptDeadlineMs name no enforcement point on existing platform writer routes or owner administration. Samuel is named as live approver; installer and owner are UNKNOWN (json:960-966)."
+      },
+      {
+       "item": "Positive finite values",
+       "status": "MET",
+       "evidence": "All 20 numeric fields are positive integers (json:131-156). The source refuses anything that does not match ^[1-9][0-9]*$ (currentness.sql:1311-1314@264e6af; intake.sql:458-462@121d0987)."
+      },
+      {
+       "item": "Absent, zero, invalid, too-large and unrecognized values refuse",
+       "status": "PARTIAL",
+       "evidence": "Missing, zero, negative, fractional, unknown-key and unsupported-unit values refuse (md:106, json:384-385); the source enforces closed keys, the positive-integer regex, unique keys and ms|s units (currentness.sql:1263-1314, 1330-1334). Too-large is handled only by 'effective <= field' plus digest binding. The nonproduction rule 'exact value is the maximum for that field' and its 24000 maximum (NP json:295-296@9c4a9b5) are not restated, and 'safe-integer' (json:384) is narrower than the source's int64 bound. All proposed timers display as ms or s (200ms, 750ms, 1s, 3s, 4500ms, 6s, 12s, 16s), so they are compatible with CS-27."
+      },
+      {
+       "item": "For every class, idle < statement < transaction",
+       "status": "MET",
+       "evidence": "Intake 750 < 3000 < 4500; writer 750 < 12000 < 16000 (json:133-155; md:90-92). Checked by the source on both carrier and effective values (currentness.sql:1316-1317, 1349-1350)."
+      },
+      {
+       "item": "Intake lock < deadlock",
+       "status": "MET",
+       "evidence": "200 < 1000 (md:90). Source checks: intake.sql:470 and 499@121d0987."
+      },
+      {
+       "item": "Writer gate >= intake transaction + cleanup",
+       "status": "MET",
+       "evidence": "6000 >= 4500 + 1000 = 5500 (md:93-94); source currentness.sql:1323. The margin narrows from 1000 to 500, which md:73 discloses."
+      },
+      {
+       "item": "Remainder at gate >= gate + reserve",
+       "status": "PARTIAL",
+       "evidence": "Transaction clock: 16000 - elapsed >= 7000, so gate entry is admitted up to 9000ms elapsed (currentness.sql:1360-1363). Statement clock: an objective only, and not implemented (json:355-356, md:104). With 12000 - 7000 = 5000, the objective fails after 5000ms of pre-gate elapsed time. That is less than writer lock 6000 and the intake hold 5500 (PP1-1)."
+      },
+      {
+       "item": "Revoke, publish and activation gate wait vs intake hold (doc 75 R2-7)",
+       "status": "MET",
+       "evidence": "Gate wait 6000 >= intake whole hold 5500 (json:303; md:73). Intake TRY is non-blocking and runs once (intake.sql:641). Revoke behind writer-class holders (up to 17000) is mentioned only as 'prior holders' (see PP1-5)."
+      },
+      {
+       "item": "Route-wide writer lock_timeout range between intake whole hold and writer gate ceiling (doc 78 LV-2)",
+       "status": "PARTIAL",
+       "evidence": "The source collapses the range to a single point: carrier lock == gate (currentness.sql:1324), effective <= field (:1342-1343), effective >= gate (:1352). So the effective value is exactly 6000, inside [5500, 6000]. json:388 states 'must equal6000ms', but the consequence for every statement on the route, the role-wide catalog reach, and the fact that intake and writer cannot share one login role are not registered (PP1-2)."
+      },
+      {
+       "item": "Arithmetic recomputed independently",
+       "status": "MET",
+       "evidence": "Every line in md:89-99 recomputes correctly, as do derivedTargets json:351-358 (5500, 17000, 7000, 7000). Additional derived values: maximum source-admitted gate entry 9000ms elapsed, where statement remaining is 3000 < gate 6000; pre-gate statement allowance 5000 (nonproduction: 7000)."
+      },
+      {
+       "item": "Differences from the accepted nonproduction values are justified",
+       "status": "PARTIAL",
+       "evidence": "There is a rationale for each field and an overall blast-radius basis (json:129, json:157-322, md:13, md:102). Two relation changes are not justified: the halved gate-over-hold margin is disclosed but not argued; and the pre-gate statement allowance fell from 7000 (equal to the nonproduction lock 7000, and >= the nonproduction hold 6000) to 5000 (below lock 6000 and hold 5500)."
+      },
+      {
+       "item": "No value presented as measured",
+       "status": "MET",
+       "evidence": "Every field is PROPOSED_PRODUCTION_UNMEASURED_NOT_APPROVED with installed values null (json:165-317). derivedTargets are UNMEASURED_TARGETS_NOT_INSTALLED_TIMERS (json:357). Provider metadata is explicitly not capacity (json:124-127). The deadlock value of 1000 is framed as the nonproduction reference, not as a measurement (PP1-8 caveat)."
+      },
+      {
+       "item": "Production values are proposals for Samuel's decision",
+       "status": "MET",
+       "evidence": "md:5, md:9-15; json:6, json:17-19, json:968-971: 'REFUSE_UNTIL_REQUIRED_BINDINGS_EVIDENCE_AND_EXPLICIT_LIVE_APPROVAL'. The proposal is not a carrier (json:392)."
+      },
+      {
+       "item": "Private-session revoke lock wait vs intake row hold (doc 78 QOE-06)",
+       "status": "PARTIAL",
+       "evidence": "Only 'writer-equivalent outer ceilings' are given (md:76, json:496, json:914). There is no explicit relation saying the session-revoke route's effective lock wait must be >= 5500, no register entry, no class or values, and no owner. Intake holds the session row FOR SHARE (intake.sql:631@121d0987) (PP1-3)."
+      },
+      {
+       "item": "Cross-carrier consistency of the intake and writer sections",
+       "status": "PARTIAL",
+       "evidence": "The gate relation is checked only against the writer carrier's own intake section (currentness.sql:1323), while intake enforces its own carrier (intake.sql:470-505). json:411 binds profileVersion but does not state that both carriers' sections must be equal (PP1-4)."
+      },
+      {
+       "item": "Carried named limits for S4 (CS-33 to CS-36, TC-27, TC-28)",
+       "status": "PARTIAL",
+       "evidence": "CS-30 is carried as PPM-05 and CS-35 is carried in substance (md:136-138). CS-33 (revoke depends on profile validity), CS-36 (install-window refusal), TC-27 (install/rollback timers) and TC-28 (recovery bound) are not restated. They are referenced only as Doc82 'named limitations' (json:34)."
+      },
+      {
+       "item": "JSON and Markdown values agree",
+       "status": "MET",
+       "evidence": "md:64-74 equals json:131-156 equals fieldDecisions json:157-322 for all 20 values. Release targets agree (md:9, json:352-353)."
+      }
+     ],
+     "findings": [
+      {
+       "id": "PP1-1",
+       "severity": "P2",
+       "title": "Statement-clock gate headroom objective is unattainable with the proposed writer values; regression from the nonproduction relation",
+       "claim": "The proposal keeps an objective of at least 7000ms remaining 'on both clocks' at writer gate entry, and justifies writer statement 12000 as leaving '5000 beyond gate+reserve at statement origin'. The statement clock starts with the DML. The guard is an AFTER STATEMENT trigger, so the statement's own row-lock waits, each allowed up to the route lock_timeout of 6000, happen before the gate check. The objective therefore needs pre-gate elapsed <= 12000 - 7000 = 5000ms, which is less than one permitted lock wait (6000) and less than the intake whole hold (5500). A material writer that waits behind an intake's FOR SHARE on a lot, document, test, legal-binding or session-binding row for the full hold reaches the gate with 6500 < 7000. The source's transaction-only check admits gate entry up to 9000ms elapsed, where only 3000ms of statement time remains against a 6000ms gate wait. In the nonproduction profile the allowance was 15000 - 8000 = 7000, equal to its lock of 7000 and at least its hold of 6000. The production narrowing (statement -3000 against gate + reserve -1000) breaks a property the accepted profile had, and the rationale does not say so. The outcome is fail-closed (57014 or 55P03), so this is a refusal-rate and decision-transparency defect, not an unsafe relation.",
+       "evidence": "md:67, md:96, md:104@3709170e; json:213, json:355-356, json:386-389@3709170e; currentness.sql:1360-1363 (transaction-only remainder) and :1378 (AFTER ... FOR EACH STATEMENT guard)@264e6af; intake.sql:570-573, :608, :627-628, :631 FOR SHARE witnesses@121d0987; NP json:158-170@9c4a9b5 (lock 7000, statement 15000, minimum statement remaining 8000); doc 80 CS-30 (hl12/80...json:2500-2509).",
+       "fix": "Do not choose a value; state the relation for Samuel. Add the derived bound: maximum pre-gate statement elapsed for the objective = writer.statementTimeoutMs - (gateWaitMs + postGateReserveMs) = 5000, which is below writer lockTimeoutMs (6000) and the intake whole hold (5500). Then present one of two options. (a) A proposed relation such as writer.statementTimeoutMs >= writer.lockTimeoutMs + gateWaitMs + postGateReserveMs (or >= intake hold + gate + reserve), which would restore the nonproduction property while staying below writer transaction. (b) Withdraw minimumStatementRemainingAtWriterGateProposalMs as an objective and register 57014-at-gate as an expected writer refusal class (CS-30) in the 'Decision brought to Samuel' section. Reword 'leaves 5000 beyond gate+reserve at statement origin' so it is clearly true only at 0ms elapsed."
+      },
+      {
+       "id": "PP1-2",
+       "severity": "P2",
+       "title": "Doc 78 LV-2 route-wide writer lock_timeout consequence, now a single point, is not registered",
+       "claim": "Doc 78 LV-2 required the route-wide writer lock_timeout bound to be registered as a decision-3 blast-radius consequence. Under the accepted source the bound is a single point: carrier lock == gate, effective <= field, effective >= gate, so the effective value is exactly 6000ms. That value applies to every lock acquisition of every statement on every material-writer and owner-admin route, not only to gate waits, and any other value refuses all material platform writes, including before first publication, as well as publish, activation and revoke. In addition, statement, transaction and idle must equal the pg_db_role_setting values for the exact login-role/database pair. So 12000/16000/750 become the settings for every session of the writer login role, including unrelated traffic sharing it. Intake (3000/4500) and writer (12000/16000) catalog values differ, so the two classes cannot share one login-role/database pair, and on today's single shared service_role route at least one class always refuses (doc 78 QOE-01). json:388 states 'must equal6000ms', but neither the route-wide nor the role-wide reach is presented for Samuel's decision.",
+       "evidence": "json:168, json:388, json:419, json:826@3709170e; md:64, md:106, md:123@3709170e; currentness.sql:1324, :1342-1345 (effective <= field; startup catalog equality), :1352 (effective lock >= gate)@264e6af; doc 78 LV-2 (hl12/78_nonproduction_profile_gate_findings.json:1192-1199) and QOE-01 (78 MD:89).",
+       "fix": "In section 3 and the Samuel decision text, register the following without changing any value: (1) the effective writer lock_timeout must be exactly gateWaitMs (6000) on every material-writer and admin route, and it governs every statement's lock waits there; (2) the writer and intake statement, transaction and idle values become role-wide startup settings for their exact login-role/database pairs and affect all sessions of those roles; (3) because their catalog values differ, intake and writer require distinct login-role/database pairs (or a reviewed amendment); (4) link these consequences to PPM-03 and PPM-07."
+      },
+      {
+       "id": "PP1-3",
+       "severity": "P2",
+       "title": "Private-session revoke has no stated lock-wait relation to the intake row hold, and no values, refusal mapping or owner",
+       "claim": "Intake holds the private session row FOR SHARE for its whole transaction (up to the 5500ms hold). The session revoke is a separate row UPDATE that waits on that row under its route's lock_timeout. Doc 78 QOE-06 required either binding a route whose effective lock wait is at least the intake whole hold, or registering that private-session revoke may refuse while an intake on that session is in flight. The proposal offers only 'writer-equivalent outer ceilings'. That phrase does not say whether the lock wait is included, gives no values or route class, and no owner. operationalClasses omits the class entirely. If the revoke ran on an intake-class route (lock 200ms) it would refuse under any concurrent intake. The proposal notes that the existing logout returns HTTP 200 even when the durable revoke fails, so the user-visible logout would still report success.",
+       "evidence": "md:76, md:117, md:206, md:223@3709170e; json:324-350 (no session class), json:496, json:677, json:914@3709170e; intake.sql:631 (session row FOR SHARE)@121d0987; doc 78 QOE-06 (78 MD:94) and fix text (hl12/78...json:970).",
+       "fix": "Add an explicit proposed relation: the session-revoke route's effective lock_timeout >= intake.transactionTimeoutMs + intake.cleanupMs (5500ms), which excludes the intake route. Alternatively, register 'private-session revoke may refuse while an intake on that session is in flight', together with the logout-200 consequence. Name the unit, class and route, the 55P03/57014 mapping, and the responsible session owner (via the coordinator, currently UNKNOWN), all still subject to that owner's review."
+      },
+      {
+       "id": "PP1-4",
+       "severity": "P3",
+       "title": "Cross-carrier equality of the intake and writer sections is not stated",
+       "claim": "The writer carrier and the intake carrier each contain both intake and writer sections, and each source path checks the gate >= intake transaction + cleanup relation only within its own carrier. If the two independently frozen carriers differed (for example, the intake carrier allowing a longer intake transaction with a matching larger gate in its own copy), both would pass the source checks while the actual intake hold exceeded the actual writer gate. That would silently violate R2-7. json:411 binds only profileId/profileVersion.",
+       "evidence": "json:411, json:419-421, json:423@3709170e; currentness.sql:1300-1325@264e6af; intake.sql:449-473@121d0987.",
+       "fix": "State that both carriers' intake and writer sections must equal proposedLimits exactly, or at minimum that the intake carrier's intake fields are <= the writer carrier's intake fields. Make this a PPM-10 freeze check, because the source does not compare the two carriers."
+      },
+      {
+       "id": "PP1-5",
+       "severity": "P3",
+       "title": "Revocation refusal reach (CS-33) and the install-window refusal (CS-36) are not restated for production",
+       "claim": "Emergency authority revoke depends on a valid writer carrier, matching identities, integrity, an effective lock_timeout of exactly 6000, and the absence of foreign or earlier gate holders. Writer-class holders can hold the gate for up to 17000ms against revoke's 6000ms wait. The proposal's platformConsequences names only material-write refusal. The proposal also repeats 'No guard installation until every affected writer has required valid configuration'. Under CS-36 that cannot be satisfied, because the anchor table is created inside the install transaction, so all material platform writes refuse until the owner's COMMENT. A write-freeze window or a reviewed amendment is required, and neither is mentioned.",
+       "evidence": "json:303, json:826, json:834-835@3709170e; md:165-166, md:206@3709170e; doc 80 CS-33 and CS-36 (hl12/80_currentness_source_acceptance_findings.json:2533-2575); doc 82 MD:73.",
+       "fix": "In the refusal section, add: revoke refuses under an invalid or missing writer profile, identity, integrity failure or effective-lock drift, and may refuse behind writer or foreign gate holders (up to 17000 versus 6000). The app disable precedes revoke. Carry CS-36 as an S4 write-freeze or amendment prerequisite next to the 'no guard before valid configuration' rule."
+      },
+      {
+       "id": "PP1-6",
+       "severity": "P3",
+       "title": "Operation classes without proposed bounds: install/rollback timers (TC-27), recovery whole-request bound (TC-28), and writer client-side fields with no consumer",
+       "claim": "Section 3 is titled 'Complete proposed values', yet: install and rollback DDL, whose ShareRowExclusive and AccessExclusive locks can queue every canonical writer, have no proposed timers and are not carried as a named S4 prerequisite (TC-27). Same-key recovery was removed from the intake class (the nonproduction intake scope included replay) without proposing the profile-independent whole-request bound TC-28 requires. Writer acquisitionMs, responseMs and attemptDeadlineMs name Node or gateway enforcement points, but existing platform writer routes (excluded from edits) and owner administration have no consumer for them, so for those routes the fields are consistency checks only.",
+       "evidence": "md:58-74, md:76@3709170e; json:249-292, json:326-329, json:427-437@3709170e; NP json:121@9c4a9b5 (intake scope included same-key replay); doc 83 TC-27 and TC-28 (hl12/83_transaction_composition_findings.json:2515-2535); doc 78 C-12.",
+       "fix": "Either propose bounds for install/rollback and recovery, or carry TC-27 and TC-28 as explicit S4 prerequisites with a disclosure of the queueing blast radius. Mark writer acquisition, response and attempt as having no enforcement point or owner on existing platform and admin routes until one is designated."
+      },
+      {
+       "id": "PP1-7",
+       "severity": "P3",
+       "title": "No per-field expiry and refusal mapping; too-large rule only implicit",
+       "claim": "The nonproduction steward map gave the expiry outcome for each limit. The production fieldDecisions give none: lock 55P03 (statement abort), statement 57014, transaction 25P04 and idle 25P03 (session termination), acquisition expiry (definite refusal before transmission), response expiry (OUTCOME_UNCERTAIN), and gate expiry for writer routes, whose HTTP mapping is unknown. Too-large protection depends on 'effective <= field' plus digest binding. The nonproduction rule that the exact value is the field maximum, and its global maximum, are not restated, and 'safe-integer' is narrower than the source's int64 acceptance.",
+       "evidence": "json:157-322, json:384-385, json:828-836@3709170e; md:106@3709170e; NP json:295-298@9c4a9b5; steward map 29297c31 QUICK_ORDER_NONPRODUCTION_ENFORCEMENT_CHECK_20261010.md:158-182; currentness.sql:1311-1314@264e6af.",
+       "fix": "Add an expiry/refusal column to fieldDecisions for each class. State that each carrier field equals the approved value exactly and acts as its ceiling (too-large means a field differing from the approved bytes, or effective > field). Reconcile 'safe-integer' with the source's representation bound."
+      },
+      {
+       "id": "PP1-8",
+       "severity": "P3",
+       "title": "Effective-level relations overstated; deadlock_timeout default and privilege caveat missing",
+       "claim": "json:388 says 'Shorter effective values still require all relations', but the source re-checks only idle < statement < transaction, intake lock < deadlock, and writer lock >= gate at the effective level. It does not check gate + reserve < effective writer statement, so an installed shorter writer statement (for example, below 7000) would pass the source while every gate wait gets cut off by 57014. That rule therefore depends on qualification, not on the source. Separately, deadlockTimeoutMs 1000 equals PostgreSQL's documented default (1s), and the parameter can be changed only by superusers or holders of SET privilege. The target's effective value may be provider-controlled, and a passing readback would not show that anyone configured or measured it.",
+       "evidence": "json:188-202, json:388@3709170e; md:66@3709170e; currentness.sql:1349-1352@264e6af; postgresql.org/docs/17/runtime-config-locks.html (deadlock_timeout: default 1s; 'Only superusers and users with the appropriate SET privilege can change this setting').",
+       "fix": "Split the rules into relations the source enforces on effective values and relations that only qualification or configuration review can establish (effective writer statement > gate + reserve). Note that 1000 coincides with the server default and needs privileged configuration, so the effective value stays unknown under PPM-02 and PPM-04."
+      }
+     ],
+     "deviations": [
+      "Several Bash pipelines used `cut -c` to shorten long lines, which is outside the permitted pipe set (grep, sed -n, head, wc). They were read-only and wrote nothing.",
+      "One Bash pipeline used `sort | uniq -c` to count review-condition ids cited in the proposal JSON. This is outside the permitted pipe set; it was read-only and wrote nothing.",
+      "Two Bash calls chained two git read commands with `&&` or `;`. No cd, echo, variables, loops or redirection were used.",
+      "I used ToolSearch to load the WebFetch schema, then made one WebFetch read of postgresql.org/docs/17/runtime-config-locks.html, which is an allowed source. All PostgreSQL behaviour cited is reasoned from documentation and was NOT RUN.",
+      "I used the Read tool on the registration JSON in the scratchpad (C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/seven/PRODUCTION_PROFILE_ORIGINAL_TECHNICAL_REVIEW_REQUEST_20261011.json) and on doc 78 in C:/xenios-wt/health-review/docs/review/xenios-health-launch-review-20260930/.",
+      "I did not recompute the raw SHA-256 values or blob ids for the two proposal files. I read their content with git show at 3709170e only.",
+      "No file was created, modified or deleted. No interpreter, SQL, database, MCP data tool, checkout, commit, fetch or push was used, and no other session was contacted."
+     ]
+    },
+    "verify": {
+     "verdicts": [
+      {
+       "id": "PP1-1",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Recomputed: writer statement 12000 - (gate 6000 + reserve 1000) = 5000ms of pre-gate allowance. That is below writer lock 6000 and below the intake whole hold 4500 + 1000 = 5500. In the nonproduction profile it was 15000 - 8000 = 7000, equal to its lock of 7000 and at least its hold of 6000 (NP json:158-170@9c4a9b5). The guard is an AFTER ... FOR EACH STATEMENT trigger (currentness.sql:1378-1379@264e6af), and intake holds the lot, document and test rows (intake.sql:608,627-628@121d0987) and the session-binding and legal-binding rows (:572-573) FOR SHARE. So a writer that waits the full hold arrives at the gate with 6500 < 7000. Two corrections to the lens. (a) The 5000 figure is already disclosed (md:67, json:213@3709170e). What is missing is its comparison with lock and hold, and CS-30's fix of registering 57014-at-gate as an expected refusal class (80 json:2500-2509). (b) Source admitting gate entry with only 3000ms of statement time left is not a regression: the NP transaction check also admits entry at 12000 elapsed with 15000 - 12000 = 3000 left. Reasoned, not run: the carrier requires singleRpcAutocommit=true (currentness.sql:1298), so the statement and transaction clocks start almost together. The statement clock therefore always binds first, and the transaction-age check at :1360-1363 (entry up to 9000 elapsed) never does. The problem is structural, not an edge case. It fails closed, so P2 transparency, not P1."
+      },
+      {
+       "id": "PP1-2",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Confirmed. The LV-2 fix explicitly asks that this route-wide lower and upper bound be registered as a decision-3 blast-radius consequence (78 json:1197-1199). The proposal only says the lock 'must equal6000ms' (json:388) and that 'shared pools may affect unrelated transactions' (json:826). Source forces distinct login-role/database pairs: each pair holds one approved_limits key (currentness.sql:1248-1252), intake requires routeClass 'intake' (intake.sql:416@121d0987) and writer requires 'writer' (currentness.sql:1268,1572,1779). Doc 78 S4's 'Distinct routes per class, or a reviewed amendment' (78 MD:233) is not restated. Supporting evidence from supabase.com/docs/guides/database/postgres/timeouts (fetched, NOT RUN): PostgREST connects as `authenticator`, and service_role falls back to authenticator's 8s statement_timeout. On the only known route (doc 78 QOE-01's shared service_role client), the writer startup statement, transaction and idle values would therefore apply to authenticator, which serves all API traffic, and only one of the two classes could use that pair. Minor citation slip: effective<=field is :1335-1336, not :1342-1343."
+      },
+      {
+       "id": "PP1-3",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Downgraded from P2. Doc 78 QOE-06 gives the session owner the S4 job of binding a sufficient wait or registering the delay (78 MD:94). The proposal registers the delay: 'Private-session revoke is a distinct row UPDATE that can wait behind the earlier session share lock' (md:206). It also discloses that logout returns 200 (md:117) and carries QOE-06 as PPM-08 (json:907-914). The NP profile also gave no session-revoke values (NP json:397). What remains is precision: say that 'writer-equivalent outer ceilings' includes an effective lock wait of at least 5500 (writer 6000 meets that), or say that the revoke may refuse with 55P03 while an intake holds the row (intake.sql:631)."
+      },
+      {
+       "id": "PP1-4",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Verified. Intake checks gate >= intake transaction + cleanup only inside its own carrier (intake.sql:471@121d0987), and the writer does the same inside the writer carrier (currentness.sql:1323@264e6af). profileVersion binding (json:411) does not compare values. Divergent carriers would break R2-7 without either check noticing. The outcome is writer 55P03 refusals, which fail closed, so P3 is right."
+      },
+      {
+       "id": "PP1-5",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Upheld, narrowed. Revoke failure is partly covered already: 'A timeout is not successful revocation' (md:206) and 'Failed/uncertain revoke stays administratively disabled' (json:835). Still missing: CS-33, that revoke depends on profile validity, integrity and identity (80 json:2533-2542); and CS-36, that the anchor cannot be supplied inside the install transaction (80 json:2566-2575). Because of CS-36, the rule 'No guard is to be installed before every affected writer has required valid configuration' (md:165, json:826) cannot be met without a write-freeze window or an amendment."
+      },
+      {
+       "id": "PP1-6",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Verified TC-27 (install/rollback DDL with no timer admission, 83 json:2515-2524) and TC-28 (unbounded recovery read, 83 json:2526-2535). Neither is proposed or carried. md:31 leaves Docs83-86 in force, but a production timer profile is the natural place to propose install, rollback and recovery bounds, or to carry them as S4 items. Removing replay from the intake class (NP json:121 vs json:328) is consistent with C-7, which leaves TC-28's bound without an owner. The point that writer acquisition, response and attempt have no consumer on existing platform routes is valid."
+      },
+      {
+       "id": "PP1-7",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Narrowed. The refusals section already maps SQLSTATEs: 55P03/40P01/40001 to retryable 503; 25P03/25P04 and after-transmission expiry to OUTCOME_UNCERTAIN; 57014 not safe-retry proof (json:831-833). The real gaps are: the per-field link in fieldDecisions; acquisition and response expiry before versus after transmission; the HTTP mapping of gate 55P03/57014 on existing writer routes; and the dropped 24000 global maximum (NP json:295-296). 'safe-integer' is stricter than source's int64 bound, so it is a carrier-authoring rule, not an inconsistency. It only needs a note that source does not enforce it."
+      },
+      {
+       "id": "PP1-8",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Upheld, reframed. json:388 is a normative requirement, and md:106 correctly describes what the SQL checks, so the proposal does not overclaim source enforcement. What is missing is who enforces gate+reserve < effective writer statement. Source checks it on the carrier only (currentness.sql:1325) and not on effective values (:1349-1352). Concrete case: with Supabase's documented 8s authenticator default (supabase.com/docs, NOT RUN), an effective writer statement of 8000 passes source (<= 12000; 750 < 8000 < transaction) and leaves 1000ms of pre-gate allowance. The deadlock_timeout caveat (1s server default, superuser or SET privilege needed) is valid as the lens quoted it."
+      }
+     ],
+     "checkChallenges": [
+      {
+       "item": "Every value has a unit, class, scope, affected operations, refusal behaviour and responsible actor",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agree. Add PP1V-1: acquisitionMs 750 names no enforcement point that can represent sub-second values (json:248-262, md:70)."
+      },
+      {
+       "item": "Positive finite values",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Rechecked 9 intake and 11 writer values, all positive integers (json:131-156). Source regex ^[1-9][0-9]*$ at currentness.sql:1311-1314."
+      },
+      {
+       "item": "Absent, zero, invalid, too-large and unrecognized values refuse",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "At effective level, R2-6 holds in source. A '0' value or a unit other than ms|s fails the regex (currentness.sql:1331-1334), and effective > field refuses (:1335-1336). All proposed values display as ms or s. At carrier level, 'too-large' is bounded only by the digest. The 24000 maximum is gone and nothing replaces it."
+      },
+      {
+       "item": "For every class, idle < statement < transaction",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "750<3000<4500 and 750<12000<16000. Note that lens md:90-92 should be md:92-93."
+      },
+      {
+       "item": "Intake lock < deadlock",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "200<1000; intake.sql:470 (carrier) and :499 (effective)."
+      },
+      {
+       "item": "Writer gate >= intake transaction + cleanup",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "6000 >= 5500, margin 500, which md:73 discloses (NP margin was 1000)."
+      },
+      {
+       "item": "Remainder at gate >= gate + reserve",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Source enforces only the transaction clock (16000-7000 = entry up to 9000 elapsed). Under the required singleRpcAutocommit, the statement clock always binds first, and the 7000 objective holds only while pre-gate time stays at or under 5000."
+      },
+      {
+       "item": "Revoke, publish and activation gate wait vs intake hold (doc 75 R2-7)",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "All three use writer lock = gate = 6000 >= 5500 (75 MD:165-168), so the 'register' alternative is not needed. Waiting behind writer-class holders is CS-33 (PP1-5)."
+      },
+      {
+       "item": "Route-wide writer lock_timeout range (doc 78 LV-2)",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Effective is pinned to exactly 6000 (currentness.sql:1324, 1335, 1352), which lies inside [5500, 6000]. The LV-2 registration asked for at 78 json:1199 is absent."
+      },
+      {
+       "item": "Arithmetic recomputed independently",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Recomputed independently: 5500, 7000 (intake attempt), 6000>=5500, 7000<12000, 17000, 19250; gate-entry limit 9000; pre-gate allowance 5000 (NP 7000). Every ceiling is at or below NP. All correct."
+      },
+      {
+       "item": "Differences from accepted nonproduction values are justified",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agree. Also, acquisition dropped from 1000 to 750 although the steward's own map chose 1s because the PostgREST pool timeout is seconds-valued (29297c31 MD:161). That change is not justified (PP1V-1)."
+      },
+      {
+       "item": "No value presented as measured",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Every field is PROPOSED_PRODUCTION_UNMEASURED_NOT_APPROVED with installed values null. derivedTargets are labelled UNMEASURED (json:357). deadlock 1000 is labelled as a reference, not a target setting (json:198)."
+      },
+      {
+       "item": "Production values are proposals for Samuel's decision",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "json:6, 17-19, 968-971; md:5, 15. Nothing here implies live activation; operationalAdmission is REFUSE."
+      },
+      {
+       "item": "Private-session revoke lock wait vs intake row hold (QOE-06)",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "PARTIAL is right, but md:206 registers the wait, so the finding is P3, not P2."
+      },
+      {
+       "item": "Cross-carrier consistency of the intake and writer sections",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Verified at intake.sql:471 and currentness.sql:1323."
+      },
+      {
+       "item": "Carried named limits for S4 (CS-33 to CS-36, TC-27, TC-28)",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "CS-35 is carried (md:131-133, PPM-03). CS-30 is carried as PPM-05 but without its refusal-class fix. CS-33, CS-36, TC-27 and TC-28 are absent."
+      },
+      {
+       "item": "JSON and Markdown values agree",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "All 20 values match across md:64-74, json:131-156 and fieldDecisions. The NP reference columns match NP json:120-170@9c4a9b5. Blobs b9f44603 and 3b5d2b24 match the registration."
+      }
+     ],
+     "missed": [
+      {
+       "id": "PP1V-1",
+       "severity": "P3",
+       "title": "acquisitionMs 750 has no named enforcement point that can represent it; the steward's own map chose 1s for that reason",
+       "claim": "The steward's nonproduction map named PostgREST db-pool-acquisition-timeout as the pool-checkout enforcement point and noted it is 'seconds-valued, so1s is the proposed conversion'. The production proposal lowers acquisition to 750ms for both classes, says only 'Actual gateway/pool/client boundary', and never addresses representability. A Node-side timer around an HTTP RPC cannot separate pool-checkout wait from wait after transmission. Its expiry after send is therefore OUTCOME_UNCERTAIN, not a definite acquisition refusal. The 750ms figure can be neither configured at the named enforcement point nor enforced as a definite refusal by the client.",
+       "evidence": "29297c31 QUICK_ORDER_NONPRODUCTION_ENFORCEMENT_CHECK_20261010.md:161 (blob 8a91e94, unchanged at 3709170e); json:248-262 and md:70@3709170e; refusals 'uncertain' json:832. postgrest.org docs returned HTTP 429/301, so the seconds unit rests on the steward's citation (NOT verified, NOT RUN).",
+       "fix": "Name the acquisition enforcement point and its unit granularity. If that point accepts whole seconds only, either keep 1000 there and recompute the attempt sum (intake 1000+4500+1000+750=7250), or state that 750 is enforced only before transmission in Node, with uncertainty after send. Choose no value here."
+      },
+      {
+       "id": "PP1V-2",
+       "severity": "P3",
+       "title": "Intake refusal window caused by each writer-class transaction is not derived or registered",
+       "claim": "Intake makes exactly one non-blocking shared TRY. Every material write, publish, activation and authority revoke holds the exclusive gate until its outer transaction ends. Each writer-class transaction therefore makes every new intake refuse for up to the writer release target of 17000ms (21000 in NP). If the lock manager also refuses a TRY that conflicts with a queued exclusive request, add up to the 6000ms gate wait (reasoned, NOT RUN). As a result, writer and admin activity directly bounds intake availability. The proposal says only that shorter ceilings 'can also cause more refusals' and invents no refusal SLA. It does not present this derived relation for Samuel's decision.",
+       "evidence": "intake.sql:641@121d0987 (single pg_try_advisory_xact_lock_shared); currentness.sql:1369@264e6af (pg_advisory_xact_lock held for the transaction); md:13, md:61, json:353 (17000)@3709170e.",
+       "fix": "Add a derived line: per writer-class transaction, intake refusal exposure <= writer release target (17000), plus any queued gate wait. Link it to PPM-07's unplanned-refusal denominators. Change no value."
+      }
+     ],
+     "opinion": "The lens holds up well. I recomputed every relation independently, and all of them hold: 200<1000; 750<3000<4500; 750<12000<16000; 4500+1000=5500; lock = gate = 6000 >= 5500 (margin 500); 6000+1000=7000<12000; 16000+1000=17000; 750+4500+1000+750=7000; 750+16000+1000+1500=19250. The transaction check admits gate entry up to 9000ms elapsed. The pre-gate statement allowance is 5000ms (7000 in the nonproduction profile). Every ceiling is at or below the nonproduction value. The JSON, the Markdown and the registered blobs agree. I found no P0 or P1. Nothing presents a guessed default as measured, no relation is unsafe (every failure mode refuses), and nothing implies live activation; operationalAdmission is REFUSE until bindings, evidence and Samuel's explicit live approval.\n\nI uphold PP1-1 and PP1-2 at P2. PP1-1 needs two corrections: the 5000 allowance is already disclosed at md:67; what is missing is its comparison with lock 6000 and hold 5500, and CS-30's refusal-class fix. And source admitting gate entry with only 3000ms of statement time left was equally true in the nonproduction profile, so that part is not a regression. The carrier's required singleRpcAutocommit makes the statement clock always bind before the transaction clock, so the shortfall is structural. For PP1-2, Supabase's documented PostgREST login role `authenticator` gives concrete weight: on the only known route, the writer startup values would become settings for all API traffic, and intake could not share that login-role/database pair.\n\nI downgrade PP1-3 to P3, because md:206 already registers the session-revoke wait, as doc 78 QOE-06 allows, and PPM-08 carries the item. I uphold PP1-4 through PP1-8 at P3. PP1-7 is narrowed because the SQLSTATE mapping already exists at json:831-833. PP1-8 is reframed as a missing enforcement owner rather than an overclaim, since md:106 describes the source accurately.\n\nI add two P3 findings. PP1V-1: acquisitionMs 750 has no named enforcement point that can represent it; the steward's own map chose 1s because the PostgREST pool timeout is seconds-valued. PP1V-2: the intake refusal window that each writer-class transaction causes (up to 17000ms, plus any queued gate wait) is not derived.\n\nA few lens citations are one line off (md:90 should be 91, md:93-94 should be 94-95; effective<=field is at currentness.sql:1335-1336). None of this changes a finding. Consistent numbers are not measured behaviour, and this review approves no live profile.",
+     "deviations": [
+      "One Bash call ran `wc -l` directly on a review-record file (doc 78), not through git. It was read-only and wrote nothing.",
+      "I used `git grep` and `git ls-tree -l` (permitted git subcommands) to check proposal and steward-record blob ids and sizes against the registration, and to search for acquisition-timeout wording.",
+      "I used ToolSearch to load WebFetch. docs.postgrest.org returned HTTP 429 and postgrest.org returned a 301 to it, so nothing was retrieved from PostgREST and the seconds unit for db-pool-acquisition-timeout rests on steward record 29297c31:161. I made one allowed WebFetch of supabase.com/docs/guides/database/postgres/timeouts (authenticator login role, 8s fallback). All PostgreSQL, PostgREST and Supabase behaviour cited is reasoned from documentation or memory, and NOT RUN.",
+      "The claim that a TRY may fail against a queued exclusive request (PP1V-2) is reasoned from PostgreSQL lock-manager behaviour from memory. It is not verified against documentation and is NOT RUN; the finding stands on the held-gate window alone.",
+      "I accepted the lens's quoted PostgreSQL deadlock_timeout documentation (1s default, SET privilege) without re-fetching it.",
+      "I used Read on the registration JSON in the scratchpad and on doc 75, doc 78 and the hl12 78/80/83 JSON in the review records dir, and Glob and Grep on the hl12 directory.",
+      "I did not recompute raw SHA-256 digests; I confirmed only Git blob ids and sizes.",
+      "No file was created, modified or deleted. No interpreter, SQL, database, MCP data tool, checkout, commit, fetch or push was used, and no other session was contacted."
+     ]
+    }
+   },
+   {
+    "lens": "enforcement-routing-anchor",
+    "tag": "PP2",
+    "review": {
+     "verdict": "PP2 (enforcement, routing and anchor), r1 at 3709170e / records 31de10e8: CORRECTIONS RECOMMENDED BEFORE SAMUEL'S DECISION. No P0 and no P1. Six P2 and five P3.\n\nThe proposal is honest:\n- Every value is labelled UNMEASURED, and every installed value is UNKNOWN.\n- No production default is presented as measured.\n- Nothing authorizes installation, activation or reactivation. One P3 wording ambiguity is at MD:15.\n\nIts gaps are in routing and operation, where unchanged source forces consequences the proposal leaves out.\n- **Anchor tuple (PP2-1).** It offers a \"legitimate common tuple\" that the source makes impossible without giving the application owner privileges, and it omits CS-35's anchor-rotation option.\n- **Emergency revoke (PP2-2).** It does not record that revoke depends on the anchor and profile (CS-33).\n- **Class routes (PP2-3).** It does not carry doc 78 U-3. The source in fact requires a distinct login role per class.\n- **Blast radius (PP2-4).** It does not disclose that the session-terminating timers apply to every session of each class's login route.\n- **Install precondition (PP2-5).** CS-36 makes \"valid configuration before guards\" impossible as written.\n- **Writer bound (PP2-6).** The headline 19,250 ms writer/admin bound has no enforcement point in source.\n\nBindings checked from Git:\n- Blobs b9f44603 (54,645 bytes) and 3b5d2b24 (31,671 bytes) match the registration.\n- Trees 839d8b68 and 9a32da27 match the registration.\n- Records commit 31de10e8 does not touch either proposal path.\n- Raw SHA-256 was not recomputed, because no hashing tool was permitted.\n\nNOT RUN. Read-only.",
+     "checks": [
+      {
+       "item": "Distinct routes per class or a reviewed amendment (doc 78 U-3 / QOE-01; S4 hard gate)",
+       "status": "PARTIAL",
+       "evidence": "EP-02 says to bind login/request/owner/class (MD:113@3709170e), and PPM-03 lists pools and login routes (MD:218). Neither states the U-3 requirement or recomputes it. The source forces a distinct session_user login role per class: the carrier is keyed by (login, database) (intake.sql:396-397@121d0987; currentness.sql:1248-1249@264e6af), and routeClass is single-valued, 'intake' (intake.sql:416) versus 'writer' (currentness.sql:1268). Doc 78 marks this as a P2 hard gate at S4 (78:89, :234). See PP2-3."
+      },
+      {
+       "item": "Shared writer/admin digest anchor: CS-35, one identity tuple",
+       "status": "PARTIAL",
+       "evidence": "The single global anchor and the full-tuple seal are stated correctly (MD:134-136; JSON:421-422). PPM-03 still offers 'legitimate unchanged-source common routing' (MD:218; JSON:864). The source makes that impossible without owner privileges on the application route. CS-35's owner per-operation rotation option (hl12/80 json:2563) is omitted. See PP2-1."
+      },
+      {
+       "item": "Anchor installation: CS-36, the anchor cannot be supplied inside the install transaction",
+       "status": "NOT_MET",
+       "evidence": "Not named anywhere in MD or JSON. The install runs as one transaction: begin at currentness.sql:11@264e6af, anchor relation created at :391, guard triggers enabled from :1380, commit at :2260. It sets no COMMENT, and the owner supplies the anchor separately (:444-448). This conflicts with MD:15, MD:165 and JSON:826/:924. See PP2-5."
+      },
+      {
+       "item": "Pre-BEGIN arming mechanism",
+       "status": "PARTIAL",
+       "evidence": "The proposal correctly requires arming before BEGIN, and correctly says SET, SET ROLE, in-function readback and attestation strings are not proof (MD:113, :123; JSON:418). It does not state the mechanism the source forces. Effective statement, transaction and idle values must equal pg_db_role_setting for the exact (session_user, database) pair (intake.sql:486-494; currentness.sql:1340-1346). That makes them login-route-wide settings. See PP2-4."
+      },
+      {
+       "item": "transaction_timeout (PG17) blast radius",
+       "status": "NOT_MET",
+       "evidence": "'Blast radius' is used only for lock-hold exposure (MD:68). JSON:826 says only that 'shared pools may affect unrelated transactions'. PG17 docs: transaction_timeout and idle_in_transaction_session_timeout terminate the session, and setting either globally 'would affect all sessions'. The proposal does not say that each class's values bind every session of that login role. See PP2-4."
+      },
+      {
+       "item": "Pool and gateway timeouts",
+       "status": "PARTIAL",
+       "evidence": "Acquisition is placed inside the shared attempt budget (MD:70; JSON:260), and no pool size is invented (MD:86). acquisitionMs 750 cannot be expressed in the only identified server mechanism. The steward describes that mechanism, PostgREST's acquisition timeout, as seconds-valued and instance-wide (steward 29297c31:161). A client-side abort lands after transmission and is therefore uncertain. See PP2-7."
+      },
+      {
+       "item": "Effects on intake (replay, one shared TRY, refusal mapping, uncertainty)",
+       "status": "MET",
+       "evidence": "EP-03 (MD:114) and EP-07 (MD:118); MD:202-204; JSON:828-833. Replay bypasses the profile only for a previously committed receipt. Exactly one shared TRY, with no upgrade. 55P03, 40P01 and 40001 map to the 503 with the same key, and 57014 and 23505 are not promoted."
+      },
+      {
+       "item": "Material platform writers, including refusal before first publication when limits are missing",
+       "status": "MET",
+       "evidence": "MD:161: 'material profile refusal applies before first publication too'. JSON:826: 'Missing profile refuses material writes even with no publication'. EP-04 (MD:115)."
+      },
+      {
+       "item": "Revocation, including CS-33 emergency revocation dependence and the decision-3 rule that missing limits refuse revoke",
+       "status": "PARTIAL",
+       "evidence": "Covered: no source-table locks, timeout is not revocation, app disable comes first, and failure stays disabled (MD:206-208; JSON:834-835). CS-33 is not named. The proposal does not say that missing or invalid limits, integrity drift, or an anchor sealing a different tuple refuse revoke (currentness.sql:1741, :1764-1769, :1782-1787@264e6af). See PP2-2."
+      },
+      {
+       "item": "Refusals outside READ COMMITTED",
+       "status": "MET",
+       "evidence": "MD:161 says the refusal applies to OUT, equal-projection, quantity-only and zero-row statements. Every guarded relation in JSON:699-819 is marked REFUSE_BEFORE_CLASSIFICATION, and JSON:830 covers it. Source at currentness.sql:1102-1103 matches."
+      },
+      {
+       "item": "NOWAIT refusals during maintenance (CS-34)",
+       "status": "PARTIAL",
+       "evidence": "The 12 SHARE NOWAIT locks and the stall they cause are described (MD:116, :163). The proposal does not name the refusal sources (autovacuum, ANALYZE, CREATE INDEX CONCURRENTLY, or any in-flight ROW EXCLUSIVE writer) and has no measurement row for them. See PP2-8."
+      },
+      {
+       "item": "Installer and activation-operator identities",
+       "status": "MET",
+       "evidence": "Database owner, installer, artifact owner and live operator are recorded as null/UNKNOWN, and exact designation is required before any privileged action (JSON:962-966; MD:238). The steward is explicitly not the SQL owner (JSON:944)."
+      },
+      {
+       "item": "Guard precondition: every writer route carries a valid profile before guards are installed",
+       "status": "PARTIAL",
+       "evidence": "Stated at MD:15, MD:165, JSON:826 and JSON:924. As worded it cannot be met under unchanged source, for two reasons. The anchor cannot exist before installation (CS-36, PP2-5). And only one writer/admin tuple can be valid at a time (CS-35, PP2-1)."
+      },
+      {
+       "item": "Honest target-measurement limits: no measured claims and no guessed defaults presented as measured",
+       "status": "MET",
+       "evidence": "MD:5, :11, :13, :102. JSON:6, :129, :357. PPM-01 to PPM-10 are all UNKNOWN_NOT_MEASURED. MD:212: 'UNKNOWN never means zero or pass'. statementRemainderIsSeparatelyImplemented is false (JSON:356)."
+      },
+      {
+       "item": "Completeness of the target-measurement list for this lens",
+       "status": "PARTIAL",
+       "evidence": "Missing rows: the CS-36 install-to-anchor window; CS-34 maintenance refusal rate; TC-27 install DDL lock queueing; whether a writer-class attempt deadline is enforceable at all; and termination of unrelated traffic under route-wide timers (PPM-07 covers this only generically)."
+      },
+      {
+       "item": "Nothing authorizes installation, activation or reactivation",
+       "status": "MET",
+       "evidence": "MD:5, :15, :17, :208, :225. JSON:17-19, :424 (NOT_AUTHORIZED_OR_PERFORMED), :970-971 (REFUSE_UNTIL_...EXPLICIT_LIVE_APPROVAL), :979. Minor wording ambiguity at MD:15 (PP2-11)."
+      },
+      {
+       "item": "Writer-class attempt, acquisition and response bounds have an enforcement point",
+       "status": "NOT_MET",
+       "evidence": "MD:11 says writers and owner administration are bounded to 19,250 ms, and JSON:290 places that bound on the Node HTTP entry clock. The writer routes contain no deadline, timeout or abort code at 121d0987. They use the shared admin client, which has no fetch or timeout override (server/supabase.ts:54-66@121d0987). Owner administration is SQL-only. See PP2-6."
+      }
+     ],
+     "findings": [
+      {
+       "id": "PP2-1",
+       "severity": "P2",
+       "title": "PPM-03 offers a common writer/admin tuple the source makes unreachable without owner privileges, and omits CS-35's rotation option",
+       "claim": "Under unchanged source, one global anchor seals exactly one carrier. That carrier binds loginRole=session_user, requestRole=current_setting('role') or session_user, and ownerRole=current_user=O.\n\nThe owner functions publish, activation and revoke are SECURITY INVOKER and refuse unless current_user is O. The material guard is SECURITY DEFINER and sees the writer's role GUC (for example service_role). For one tuple to admit both, the application writers would need request role O, or would need to log in as O. Both give the application route owner privileges, which the proposal itself forbids.\n\nSo the 'legitimate unchanged-source common routing' offered in PPM-03 has no legitimate solution. The only unchanged-source option is CS-35's per-operation anchor rotation by the owner, and the proposal omits it. Rotation has consequences of its own: while the anchor seals the admin tuple, every material platform write refuses, including before publication. The JSON:970 approval condition 'bound to ... compatible routes' therefore cannot be met without rotation or an amendment.",
+       "evidence": "Proposal: MD:136 and MD:218@3709170e; JSON:422 and :864.\nSource at currentness.sql@264e6af:\n- guard is SECURITY DEFINER at :1089, with request role at :1243-1244 and identity match at :1271-1276;\n- publish is INVOKER at :1520, with the owner check at :1550 and identity at :1575-1580;\n- revoke is INVOKER at :1732, with the owner check at :1757 and identity at :1782-1787;\n- the single anchor read is at :1253-1258.\nDoc 80 CS-35 (80:115; hl12/80 json:2555-2563): 'Admin (owner request role) and service_role writers cannot both be admitted under one anchor'. Its fix: 'a shared identity tuple, or per-operation anchor rotation by the owner, or ... per-route carrier digests'.",
+       "fix": "Restate PPM-03 and §5. Under unchanged source, a common tuple requires application owner privileges and is therefore excluded. The only unchanged-source path is owner per-operation anchor rotation. Name its consequences: material writes refuse while the admin tuple is anchored; the owner performs and records each rotation; and every rotation needs its own frozen carrier digest. Otherwise require the separately reviewed amendment (a set of per-route carrier digests). Bind this choice into the live-profile decision text."
+      },
+      {
+       "id": "PP2-2",
+       "severity": "P2",
+       "title": "Emergency and administrative revocation omit CS-33: revoke depends on integrity, a valid profile and the anchor sealing the owner's tuple",
+       "claim": "The revocation and hold text says only that revoke takes no table locks, that a timeout is not revocation, and that app disable comes first.\n\nRevoke first runs integrity(). It then requires a valid writer carrier at its own login, an anchor equal to that carrier's SHA-256, and an identity match that includes requestRole and ownerRole. It also requires at least gate+reserve (7,000 ms) of transaction budget remaining, and a gate acquired within lock_timeout.\n\nIn steady state the anchor must seal the material-writer tuple, or platform writes refuse. In that state the owner's revoke refuses with 55000 until the owner rewrites the anchor COMMENT, and rewriting it in turn refuses all material writes. The same refusal follows from any carrier or integrity drift.\n\nThe decision-3 consequence that missing or invalid writer limits refuse revoke as well as material writes is not stated. JSON:829 says only 'refuses new admission'. CS-33 is not named.",
+       "evidence": "Proposal: MD:117, MD:206, MD:208@3709170e; JSON:829, :834-835.\nSource: currentness.sql:1741 (integrity), :1758-1763 (carrier), :1764-1769 (anchor), :1782-1787 (identity), :1878 (budget), :1883 (gate)@264e6af.\nDoc 80 CS-33 (80:113; hl12/80 json:2533-2541): 'Revoke is not an unconditional stop'. Its fix includes the revocation route's identity and 'record the app-disable precedence decision'.",
+       "fix": "Name CS-33 in EP-06 and §7. State that closing new application admission is the only stop that does not depend on the profile. State that DB revoke additionally requires valid integrity, a valid writer carrier and an anchor sealing the owner's tuple, so under PP2-1 it needs an owner anchor rotation step first, with material writes refusing from then on. Add that step to the administrative sequence. Add 'missing or invalid limits also refuse revoke' to the refusals."
+      },
+      {
+       "id": "PP2-3",
+       "severity": "P2",
+       "title": "Doc 78 U-3 class separation is not carried; the source requires a distinct login role per class, and today's single client hosts both",
+       "claim": "The pg_db_role_setting row for a (login, database) pair carries exactly one approved_limits value. Intake refuses unless routeClass='intake', and every writer/admin path refuses unless routeClass='writer'. So intake and writer need distinct session_user login roles, not just distinct pools.\n\nThe proposed values also make a single route refuse one class. Intake needs an effective transaction_timeout of at most 4,500 ms, equal to the catalog. A writer needs at least 7,000 ms remaining at the gate.\n\nThe Quick Order intent, all 24 mapped writer routes, the rate limiter and early-access session persistence all go through one shared service_role admin client. Production operation therefore requires a new class route through excluded seams, or a reviewed amendment.\n\nThe proposal says the decision does not approve a new connection design (MD:15), but never says that operation is impossible without one. It also does not carry QOE-01's 'no blanket shared-role timeout change'.",
+       "evidence": "Source:\n- intake.sql:396-397 and :416@121d0987;\n- currentness.sql:1248-1249 and :1268@264e6af;\n- server/supabase.ts:54-66@121d0987;\n- shared-client callers inventory-admin/production.ts:73,265; product-admin-production.ts:284; required-inputs.ts:263; early-access/persistence/production-deps.ts:609,627@121d0987.\nDoc 78: 78:89 (P2 hard gate at S4) and 78:234 (distinct routes per class); hl12/78 json:1327-1333 (U-3).\nSteward: 29297c31:220.\nProposal: MD:15, MD:113, MD:218.",
+       "fix": "Add an explicit S4 hard gate. Each class needs its own session_user login role, which the source requires; a single route refuses one class (4,500 versus at least 7,000 remaining). The current shared client cannot carry both classes, so operation needs a separately authorized class route through the excluded seams (server/supabase.ts, server/index.ts, production-deps.ts and the writer files) or a reviewed amendment. Carry 'no blanket shared-role timeout change'. Bind all of this into the live-profile decision as a precondition, not as an unknown."
+      },
+      {
+       "id": "PP2-4",
+       "severity": "P2",
+       "title": "Session-terminating timers bind every session of each class's login route, and the proposal does not disclose it",
+       "claim": "The source requires effective statement, transaction and idle values to equal the login role's role-in-database catalog settings. That makes pre-BEGIN arming a login-route-wide setting, not a per-request one.\n\nEvery other session of that login in that database inherits the class values. In PG17, transaction_timeout and idle_in_transaction_session_timeout terminate the whole session, which kills the pooled physical connection and any unrelated work on it.\n\nSupabase documents one designated login user per API server. If a class uses that login, all API traffic gets transaction 4,500 ms, idle 750 ms and statement 3,000 ms for intake, or 16,000 ms, 750 ms and 12,000 ms for writers. If the owner's ordinary login carries the admin carrier, migrations, installation and maintenance inherit 16,000 ms and 750 ms.\n\nWhichever route hosts logout or session revoke inherits that class's lock_timeout. On the intake route that is 200 ms, against an intake hold of 5,500 ms, while logout still returns HTTP 200.\n\n'Blast radius' in the proposal refers only to lock exposure.",
+       "evidence": "Source: intake.sql:486-494@121d0987; currentness.sql:1340-1346@264e6af.\nPG17 runtime-config-client (fetched): transaction_timeout 'Terminate any session that spans longer than ...'; 'Setting transaction_timeout in postgresql.conf is not recommended because it would affect all sessions'.\nSupabase timeouts doc: 'Each API server uses a designated user for connecting to the database'.\nDoc 78: 78:143.\nProposal: MD:68, MD:106, MD:117; JSON:826, :903.\nSteward 29297c31:130 warns not to infer the login name. This finding is conditional on whichever login is actually used.",
+       "fix": "Add a route-wide-effect statement. The class values become role-in-database settings of each class's login role and apply to all its sessions; timer expiry terminates sessions. Require each class login to be dedicated, or enumerate its other consumers and their exposure. State the logout/session-revoke inheritance. Add a target measurement of refusals and terminations of unrelated traffic under the route-wide values (extend PPM-07)."
+      },
+      {
+       "id": "PP2-5",
+       "severity": "P2",
+       "title": "Guard precondition cannot be met as worded: CS-36 refusal window between install and the owner's anchor COMMENT",
+       "claim": "The install creates the anchor relation and enables all 47 guard triggers inside one transaction, and sets no anchor. The owner can only COMMENT after COMMIT. From COMMIT until that COMMENT, every material write on the 12 relations refuses with 55000 ('binding unavailable'), including before publication.\n\nThe pg_db_role_setting carrier can be staged in advance; the anchor cannot. The proposal's rule that no guard is installed before every affected writer has valid configuration therefore cannot be met literally. The proposal does not name CS-36, a write-freeze window, or an amendment that binds the anchor atomically. The refusal window is also missing from the platform-write refusals Samuel is asked to accept (JSON:970).",
+       "evidence": "Source at currentness.sql@264e6af: begin at :11; anchor table at :391; owner supplies the anchor separately, 'No value is supplied by this candidate' at :444-448; guard enablement from :1380; commit at :2260.\nDoc 80 CS-36 (80:116; hl12/80 json:2566-2574): 'All material platform writes refuse between install and the owner's COMMENT'.\nDoc 82: 82:73.\nProposal: MD:15, MD:165; JSON:826, :924, :970.",
+       "fix": "Name CS-36. Reword the precondition: every writer carrier is staged before install, and the anchor follows in a declared write-freeze window. Writers are disabled, the window's duration is bounded and measured on the target, and the owner performs the COMMENT. Alternatively require a reviewed atomic-anchor amendment. Add the window to the platform consequences and to PPM-09/PPM-10."
+      },
+      {
+       "id": "PP2-6",
+       "severity": "P2",
+       "title": "The headline 19,250 ms bound for writers and owner administration has no enforcement point in source",
+       "claim": "The decision text says the proposal bounds material writers and owner administration to 19,250 ms, and JSON places attemptDeadlineMs on the Node HTTP entry clock.\n\nThat clock exists only in the Quick Order composition. The material writer routes (excluded files, unchanged since 25858ad) contain no deadline, timeout or abort code, and the shared client has no fetch or timeout override. Owner administration is SQL-only, with no Node path at all.\n\nFor the writer class, attemptDeadlineMs, acquisitionMs and responseMs are relation fields only. SQL checks their sum, and nothing consumes them. Only lock, statement, transaction and idle, plus the 17,000 ms release target, act in the database.",
+       "evidence": "Proposal: MD:11, MD:72, MD:76; JSON:290; EP-01 is Quick Order-only (MD:112).\nSource: the attempt sum is only checked, at currentness.sql:1318-1320@264e6af. git grep for deadline, timeout, AbortSignal or enteredAtMonotonic in inventory-admin, product-admin-production.ts and required-inputs.ts@121d0987 finds nothing. server/supabase.ts:59-62@121d0987. Writer files are excluded under doc 78 C-12 (78:206-208).",
+       "fix": "Restate MD:11 and the writer fieldDecisions. For writers and owner administration, only the database timers are enforceable, with 17,000 ms as the database release target. The writer attempt, acquisition and response values are carrier-relation fields with no consumer until separately authorized writer-route changes exist, or an explicit disposition records them as unenforced. Add this to PPM-05."
+      },
+      {
+       "id": "PP2-7",
+       "severity": "P3",
+       "title": "acquisitionMs 750 cannot be expressed in the only identified pool mechanism, so a client abort makes the outcome uncertain",
+       "claim": "The steward identified one mechanism that bounds checkout: PostgREST's acquisition timeout, which is seconds-valued and instance-wide. The nonproduction 1,000 ms was its 1 s conversion. 750 ms cannot be represented there, and that setting would also apply to all API traffic.\n\nA Node-side 750 ms abort cannot tell a pool wait from execution. After transmission it is OUTCOME_UNCERTAIN, not a definite acquisition refusal. This fails closed with the same key, but the field's stated meaning has no enforcement point at that granularity.",
+       "evidence": "Proposal: MD:70; JSON:249-261 (enforcement 'Actual gateway/pool/client boundary').\nSteward 29297c31:161: 'it is seconds-valued, so 1s is the proposed conversion'.\nhl12/78 json:1305 (POOL ACQUISITION: instance-wide).\ndocs.postgrest.org returned HTTP 429, so this rests on the steward's citation.",
+       "fix": "State the intended mechanism and its units. If acquisition is client-side, record that expiry after transmission is uncertain and not a refusal. If it is PostgREST, choose a value the setting can represent and disclose that it is instance-wide. Choosing the value is Samuel's call; the reviewer does not pick one."
+      },
+      {
+       "id": "PP2-8",
+       "severity": "P3",
+       "title": "CS-34: publish and activation NOWAIT refusal sources and their frequency are not listed",
+       "claim": "The proposal describes the stall the 12 SHARE locks cause, but not why they refuse. SHARE NOWAIT refuses whenever any of the 12 tables holds a conflicting lock: SHARE UPDATE EXCLUSIVE (autovacuum, ANALYZE, CREATE INDEX CONCURRENTLY) or ROW EXCLUSIVE (any in-flight writer). On a production database these are routine. There is no runbook line and no measurement row.",
+       "evidence": "Proposal: MD:116, MD:163; JSON:338.\nSource: currentness.sql:1665-1676 and :2045-2056@264e6af.\nDoc 80 CS-34 (80:114; hl12/80 json:2544-2552).",
+       "fix": "Add CS-34 to the affected operations and §7: maintenance and in-flight writers are refusal sources, retries are manual and never inside the body. Add the refusal rate on the target to PPM-09."
+      },
+      {
+       "id": "PP2-9",
+       "severity": "P3",
+       "title": "TC-27 install and rollback timer admission is not carried, and no installation lock or statement policy is proposed",
+       "claim": "The proposal sets values for every operating class, but not for the privileged installation and rollback that create triggers and alter the 12 production tables. With timers unset, those DDL locks can queue every canonical writer. If installation runs on a login that carries writer startup timers, the long install transaction can be ended by transaction_timeout; that fails safe but blocks the install.",
+       "evidence": "Doc 83 TC-27 (83:116; hl12/83 json:2515-2522): install and rollback have no timer admission.\nSource: guard DDL at currentness.sql:1380 onward@264e6af.\nProposal: JSON:381 says only noInstallerTimersAsOperatingProof.",
+       "fix": "Carry TC-27 as a named S4 installation prerequisite. Either propose installation and rollback lock and statement fields under owner approval, or defer them explicitly, with the queueing blast radius disclosed and the installation login named (PPM-02)."
+      },
+      {
+       "id": "PP2-10",
+       "severity": "P3",
+       "title": "The cross-class gate relation is checked within each carrier, not across the two carriers",
+       "claim": "Each route checks writer gate >= intake transaction + cleanup using only its own carrier's sections. Distinct login roles (PP2-3) mean two carriers with two digests: the intake constructor digest and the writer anchor. Nothing requires their intake and writer sections to be identical.\n\nIf the intake carrier allowed a longer hold than the writer carrier's intake section, the writer gate could time out on a legitimately admitted intake. That is a 55P03 writer refusal: availability only, fail-closed.",
+       "evidence": "Source: intake.sql:471@121d0987; currentness.sql:1323, :1627, :1834, :2005@264e6af.\nProposal: JSON:411 binds only profileId/profileVersion.",
+       "fix": "Require byte-identical intake and writer sections in every carrier, matching the approved profile, and record that cross-carrier equality in the PPM-10 attestation."
+      },
+      {
+       "id": "PP2-11",
+       "severity": "P3",
+       "title": "MD:15 wording implies guard installation may be authorized once writers are configured",
+       "claim": "'It does not authorize guard installation before every affected writer has valid configuration' can be read as authorizing installation afterwards. JSON:970 says unconditionally that a yes 'does not install guards', and PPM-10 requires separate installation authority. MD:15 also omits reactivation from its list.",
+       "evidence": "MD:15, MD:225@3709170e; JSON:424, :970-971.",
+       "fix": "Reword it unconditionally: the decision does not authorize guard installation, which additionally requires every writer to carry valid configuration (see PP2-5) and separate installation authority. Add live reactivation to the list."
+      }
+     ],
+     "deviations": [
+      "One Bash call used 'echo ---' as an output separator, and several calls chained commands with ';'. The hard rules list echo as forbidden. Nothing was redirected and no file was written.",
+      "WebFetch to postgrest.org returned a 301 redirect to docs.postgrest.org, a subdomain of the permitted domain. That fetch returned HTTP 429. The PostgREST acquisition-timeout units therefore rest on steward 29297c31:161 and the doc 78 archive. The PostgreSQL 17 and Supabase docs were fetched successfully.",
+      "Raw SHA-256 of the two proposal files was not recomputed, because no interpreter or hashing tool was permitted. Instead, git ls-tree confirmed the blob IDs, byte sizes and both trees against the registration.",
+      "Review records were read from the review worktree at HEAD c3e7337, not pinned to a specific records commit. The proposal, source and steward documents were read pinned, with git show.",
+      "PostgreSQL, PostgREST and Supabase behaviour is reasoned from documentation and source. NOT RUN."
+     ]
+    },
+    "verify": {
+     "verdicts": [
+      {
+       "id": "PP2-1",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Confirmed from source, and the core logic survives refutation.\n- **The guard** is SECURITY DEFINER (currentness.sql:1089@264e6af). It reads request_role from the 'role' setting, falling back to session_user (:1243-1244). A SECURITY DEFINER switch does not change that setting, so the guard sees the caller's request role, for example service_role.\n- **Publish, revoke and activation** are SECURITY INVOKER (:1520, :1732, :1902) and refuse unless current_user equals O (:1550, :1757).\n- **One anchor** (:1253-1258) seals loginRole=session_user, requestRole and ownerRole (:1271-1276 and :1575-1580).\n\nA tuple shared by application writers and owner administration therefore needs the application request role, or the application login, to be O. The proposal itself excludes that (MD:136, JSON:422). JSON:422's 'Current production route compatibility UNKNOWN' is wrong on this point: the source already determines that no compatible tuple exists without owner identity on the application route.\n\nExtensions:\n- Owner direct DML on the 12 relations also refuses under the steady-state application anchor (see PP2V-3).\n- The refusal window during rotation holds because each rotation must be committed separately. Every route asserts singleRpcAutocommit=true (:1298; publish equivalent), which forbids bundling COMMENT, RPC and COMMENT in one transaction. Inside one transaction, an uncommitted anchor would be invisible to concurrent writers. The fix should state that.\n\nPrecision on the fix: 'every rotation needs its own frozen carrier digest' overstates it. Two frozen carriers suffice, one per tuple, each with its own digest. A rotation switches the anchor between them."
+      },
+      {
+       "id": "PP2-2",
+       "upheld": true,
+       "severity": "P3",
+       "note": "The source facts are right: integrity (:1741), carrier (:1759-1763), anchor (:1764-1769), identity (:1782-1787), budget (:1876-1878) and gate (:1884)@264e6af. Downgraded for four reasons:\n- Samuel already accepted the decision-3 consequence that missing or invalid writer limits refuse revoke.\n- The proposal puts authority revoke in the writer class (MD:76; JSON:346-349), and its badConfig refusal (JSON:829) applies to all writer admission, so refusal of revoke follows from the text.\n- CS-33's recorded fix element, app-disable precedence, is present: disable first, and failure or uncertainty stays disabled (MD:208; JSON:834-835).\n- Doc 82:73 carries CS-33 to S4, and the proposal preserves Doc82's named limitations (MD:37; JSON:34).\n\nThe outcome is fail-safe. What remains: name CS-33, and add the owner anchor-rotation step (from PP2-1) to the administrative sequence, since steady-state revoke refuses without it."
+      },
+      {
+       "id": "PP2-3",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Confirmed. There is one approved_limits key per (login, database): intake.sql:396-400@121d0987 and currentness.sql:1248-1252@264e6af. routeClass is single-valued: 'intake' at intake.sql:416, 'writer' at currentness.sql:1268. Separately, the arithmetic also forces separate routes. At an effective transaction_timeout of 4,500 ms, writers fail the at-least-7,000 ms gate remainder check (:1361-1363).\n\nShared client confirmed:\n- inventory-admin/production.ts:73, :265, :415;\n- product-admin-production.ts:284, :972;\n- required-inputs.ts:263;\n- early-access/persistence/production-deps.ts:609, :627;\n- the assisted-order wiring in index.ts, including disabled Quick Order at :1032-1039.\n\nDoc 78 U-3 (hl12/78:1327-1333) is a P2 S4 hard gate that includes 'No blanket shared-role timeout', and the proposal does not carry it. Precision: the 24 mappings include logout (session revoke), so they are 23 platform-writer mappings plus one session revoke. The fix should also absorb PP2-4's route-wide statement."
+      },
+      {
+       "id": "PP2-4",
+       "upheld": true,
+       "severity": "P3",
+       "note": "The mechanism is right. Statement, transaction and idle values must equal the catalog values for the (session_user, database) pair (intake.sql:486-494; currentness.sql:1338-1346), so they are login-route-wide. PG17 transaction_timeout and idle_in_transaction_session_timeout terminate the session.\n\nDowngraded because:\n- The finding is conditional on a non-dedicated class login, which U-3's 'no blanket shared-role timeout' already forbids. It should fold into PP2-3's S4 gate.\n- Doc 78 already records that login-time settings are 'shared by the whole route' (78:143).\n- The owner-login inheritance is doc 78 KV-2 (hl12/78:778-781), P3/S4.\n- The proposal gestures at the effect: 'shared pools may affect unrelated transactions' (JSON:826), 'session termination must be observed' (JSON:185), and 'effect on unrelated requests' (PPM-07).\n\nEvidence corrections:\n- PG17's 'would affect all sessions' warning concerns postgresql.conf. It is attached to statement_timeout, lock_timeout and transaction_timeout, not to idle_in_transaction_session_timeout (re-fetched). Applying it to role-in-database settings is an analogy, not a quotation.\n- On a PostgREST login, impersonated-role statement settings (anon 3s, authenticated 8s per the Supabase timeouts doc) apply per transaction. So statement 3,000 is not imposed uniformly, but transaction 4,500 and idle 750 are, and statement values above the transaction value are ignored.\n- The logout lock_timeout inheritance is conditional on placement (PPM-08)."
+      },
+      {
+       "id": "PP2-5",
+       "upheld": true,
+       "severity": "P3",
+       "note": "The source is confirmed: begin at :11, anchor relation at :391, owner-supplied anchor note at :444-448, guards enabled from :1380, commit at :2260@264e6af. psql single-transaction mode cannot help, because the file carries its own BEGIN and COMMIT.\n\nDowngraded because:\n- CS-36 is a registered P3 S4 named limit (80:116; hl12/80:2566-2574), carried by doc 82:73. The proposal preserves Doc82's named limitations (MD:37; JSON:34).\n- The proposal does record the anchor as a separate, later owner step: 'owner-installed later' (JSON:421) and 'owner comment anchor' (PPM-10, MD:225).\n- Installation is outside this decision (JSON:970).\n- The precondition wording is doc 78's own S4 text (78:93, :236). It predates CS-36 and is not a new error in this proposal.\n\nThe outcome is fail-closed. Remedy: name CS-36 and declare the write-freeze window."
+      },
+      {
+       "id": "PP2-6",
+       "upheld": true,
+       "severity": "P2",
+       "note": "Confirmed. No deadline, timeout, AbortSignal or enteredAtMonotonic appears in the writer files or in server/supabase.ts@121d0987. The admin client has no fetch override (supabase.ts:59-62). SQL only checks the sum (currentness.sql:1318-1320). Owner administration has no Node entry at all.\n\nJSON:290 places writer attemptDeadlineMs on the Node HTTP entry clock, and MD:11 states the 19,250 ms bound in the decision headline. Both should be corrected before Samuel decides.\n\nExtension: even for intake, acquisitionMs and responseMs have no separate consumer. Node uses only the sum check and intake.attemptDeadlineMs (quick-order-repository.ts:243, :273@121d0987), and only in the disabled composition."
+      },
+      {
+       "id": "PP2-7",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Steward 29297c31:161 confirms the mechanism is seconds-valued, so 1 s was the conversion. 750 ms cannot be represented there, and that setting is instance-wide (hl12/78:422). acquisitionMs is consumed only through the sum (quick-order-repository.ts:243), so a 1 s mechanism would eat into the other components of the attempt. Fail-closed."
+      },
+      {
+       "id": "PP2-8",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed: 12 SHARE NOWAIT locks at :1665-1676 and :2045-2056@264e6af. SHARE conflicts with SHARE UPDATE EXCLUSIVE (autovacuum, ANALYZE, CREATE INDEX CONCURRENTLY) and with ROW EXCLUSIVE (any open DML transaction). With NOWAIT, the request fails instead of waiting, so autovacuum is not cancelled.\n\nExtension: research_early_access_session_bindings is SHARE-locked even though its INSERT is unguarded (MD:161). In-flight customer session-binding INSERTs therefore refuse publish and activation, and are stalled by them."
+      },
+      {
+       "id": "PP2-9",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Valid. TC-27 (hl12/83:2515-2522) is anchored on the intake install (intake.sql:858-866@121d0987) and rollback.md. The currentness install at 264e6af:11-12 sets only search_path, so the same gap applies there. The fix should also cite doc 78 KV-2 (hl12/78:778-781): admin timers on the owner login would bound installers. Arguably at the edge of an operating-profile scope, but a reasonable carry."
+      },
+      {
+       "id": "PP2-10",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Confirmed: intake.sql:471@121d0987 and currentness.sql:1323@264e6af each check only their own carrier's sections. Node does the same (quick-order-repository.ts:261). Binding profileId and profileVersion (JSON:411) does not force byte-identical sections. Availability only."
+      },
+      {
+       "id": "PP2-11",
+       "upheld": true,
+       "severity": "P3",
+       "note": "Wording only. MD:7 and MD:208 already reserve live reactivation to Samuel, and JSON:970-971 is unconditional. MD:15 should be made unconditional, and reactivation added to its list."
+      }
+     ],
+     "checkChallenges": [
+      {
+       "item": "Distinct routes per class or a reviewed amendment (doc 78 U-3 / QOE-01)",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agreed. EP-02 (MD:113) and PPM-03 (MD:218) list routes as unknown. Neither carries U-3's requirement of distinct login roles per class, or 'no blanket shared-role timeout' (hl12/78:1333)."
+      },
+      {
+       "item": "Shared writer/admin anchor: CS-35, one identity tuple",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agreed. CS-35's substance, the single-tuple constraint, is stated correctly (MD:136; JSON:421-422). What is missing: the source rules out a common tuple without owner identity, and the rotation option is absent."
+      },
+      {
+       "item": "Anchor installation: CS-36, the anchor cannot be supplied inside the install transaction",
+       "lensStatus": "NOT_MET",
+       "verifierStatus": "PARTIAL",
+       "note": "Challenged. The proposal records the anchor as a separate, later owner step: 'owner-installed later' (JSON:421) and 'owner comment anchor' (PPM-10, MD:225/JSON:933). It also preserves Doc82's named limitations (MD:37; JSON:34). Only the refusal window and its reconciliation with MD:165 are missing."
+      },
+      {
+       "item": "Pre-BEGIN arming mechanism",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "MET",
+       "note": "Challenged. The lens says the proposal 'does not state the mechanism the source forces'. That is refuted. MD:106 says SQL 'requires startup statement/transaction/idle catalog equality for the exact login/database'. JSON:385 says the same, and JSON:419 gives pg_db_role_setting at the exact session_user/database. The omitted route-wide consequence belongs to PP2-4, not to this item."
+      },
+      {
+       "item": "transaction_timeout (PG17) blast radius",
+       "lensStatus": "NOT_MET",
+       "verifierStatus": "PARTIAL",
+       "note": "Challenged. The proposal acknowledges these effects:\n- 'shared pools may affect unrelated transactions' (JSON:826);\n- 'session termination must be observed' (JSON:185);\n- 'effect on unrelated requests' (PPM-07, MD:222).\n\nIt does not state that the class values bind every session of the class login and terminate co-tenant sessions. Also, the lens over-reads PG17's postgresql.conf 'all sessions' warning, which is not attached to idle_in_transaction_session_timeout."
+      },
+      {
+       "item": "Pool and gateway timeouts",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agreed. 750 ms cannot be represented in the seconds-valued mechanism (steward 29297c31:161). Acquisition is consumed only through the sum (quick-order-repository.ts:243)."
+      },
+      {
+       "item": "Effects on intake (replay, one shared TRY, refusal mapping, uncertainty)",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agreed (MD:114, :118, :202-204; JSON:828-833). Node mapping matches: quick-order-repository.ts:295-300@121d0987."
+      },
+      {
+       "item": "Material platform writers, including refusal before first publication when limits are missing",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agreed, and verified in source. With revision null, the membership skip at currentness.sql:1226 is not taken. Every non-empty change therefore reaches integrity and admission (:1229-1258) and refuses without limits or anchor."
+      },
+      {
+       "item": "Revocation, including CS-33 and the decision-3 rule that missing limits refuse revoke",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agreed, with less weight than the lens gives it. Refusal of revoke follows from writer-class membership (MD:76; JSON:346-349) combined with badConfig (JSON:829). App-disable precedence is recorded (MD:208). CS-33 and the anchor-rotation dependency are not named."
+      },
+      {
+       "item": "Refusals outside READ COMMITTED",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agreed. currentness.sql:1102-1103 runs before classification (MD:161; JSON:817, :830)."
+      },
+      {
+       "item": "NOWAIT refusals during maintenance (CS-34)",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agreed. The stall is described (MD:116, :163). The refusal sources and a measurement are missing. Session-binding INSERTs are an additional source (PP2-8 extension)."
+      },
+      {
+       "item": "Installer and activation-operator identities",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agreed (JSON:962-966; MD:238)."
+      },
+      {
+       "item": "Guard precondition: every writer route carries a valid profile before guards are installed",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agreed. As worded it cannot be met literally, because of CS-35 and CS-36. It is doc 78's own S4 text (78:236), so it is a carry-forward precision gap rather than a new error."
+      },
+      {
+       "item": "Honest target-measurement limits: no measured claims and no guessed defaults presented as measured",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agreed. Nothing is labelled measured. deadlockTimeoutMs 1000 coincides with PG17's built-in 1s default without saying so (PP2V-1), but it is labelled PROPOSED_PRODUCTION_UNMEASURED (JSON:195). That is a P3 disclosure, not a guessed default presented as measured."
+      },
+      {
+       "item": "Completeness of the target-measurement list",
+       "lensStatus": "PARTIAL",
+       "verifierStatus": "PARTIAL",
+       "note": "Agreed. Also missing: the effective TimeZone/DateStyle route arming and its effect on co-tenant sessions (PP2V-2), and owner direct DML refusing under the application anchor (PP2V-3)."
+      },
+      {
+       "item": "Nothing authorizes installation, activation or reactivation",
+       "lensStatus": "MET",
+       "verifierStatus": "MET",
+       "note": "Agreed (JSON:6, :17-19, :424, :970-971, :979; MD:5, :15, :208). MD:15 has a wording ambiguity only."
+      },
+      {
+       "item": "Writer-class attempt, acquisition and response bounds have an enforcement point",
+       "lensStatus": "NOT_MET",
+       "verifierStatus": "NOT_MET",
+       "note": "Agreed, and verified by git grep at 121d0987 together with supabase.ts:54-66. Owner administration has no Node path. For intake, only the total attempt deadline is consumed (quick-order-repository.ts:273)."
+      }
+     ],
+     "missed": [
+      {
+       "id": "PP2V-1",
+       "severity": "P3",
+       "title": "deadlockTimeoutMs 1000 equals the PostgreSQL 17 built-in default (1s), and the proposal does not say so",
+       "claim": "SQL checks only that effective deadlock_timeout is at or below its field (currentness.sql:1328-1336@264e6af; intake.sql:476-484@121d0987), and that intake lock is below deadlock.\n\nA target that never configured deadlock_timeout reports '1s', which equals 1000 and passes. A 'retained' value is therefore indistinguishable from an unconfigured one.\n\nJSON:200 says the value needs 'privilege to configure', but the default passes without any privilege. If the target has raised the setting, every class refuses.",
+       "evidence": "Proposal: MD:66 and JSON:189-201@3709170e.\nPG17 runtime-config-locks (fetched): 'The default is one second (1s)'; 'Only superusers and users with the appropriate SET privilege can change this setting'.",
+       "fix": "Disclose that 1000 coincides with the PG17 default. State that admission passing on the default is not evidence of configuration. Have PPM-04 record the effective value and its source on each class route."
+      },
+      {
+       "id": "PP2V-2",
+       "severity": "P3",
+       "title": "TimeZone and DateStyle are route-wide too: 'ISO, YMD' differs from the PG built-in default and changes date parsing for co-tenant sessions",
+       "claim": "Every class compares the effective TimeZone and DateStyle with carrier fields (currentness.sql:1353-1354@264e6af; intake.sql:501-502@121d0987). Functions cannot use a plain SET, so these values must be armed on the class login route.\n\nThe proposed DateStyle 'ISO, YMD' (MD:80; JSON:362) differs from PostgreSQL's built-in 'ISO, MDY'. The second component governs how ambiguous date input is interpreted, so every other session on that login would parse such dates differently.\n\nThe route-wide disclosure (PP2-4) and PPM-04 cover only timers.",
+       "evidence": "PG17 runtime-config-client (fetched): DateStyle's 'built-in default is ISO, MDY'; the second component is the 'input/output specification for year/month/day ordering'.\nProposal: MD:80 and JSON:360-362@3709170e.",
+       "fix": "Add TimeZone and DateStyle to the route-wide settings statement and to PPM-04's measurements. Require a dedicated class login, or an enumeration of co-tenant consumers affected by the DateStyle change."
+      },
+      {
+       "id": "PP2V-3",
+       "severity": "P3",
+       "title": "Owner direct DML and DO batches on the 12 relations refuse under the steady-state writer anchor",
+       "claim": "A material change made by the owner fires the SECURITY DEFINER guard with the owner's own tuple: loginRole is the owner login, and requestRole is O or session_user. While the anchor seals the application writer tuple (PP2-1), the hash comparison at currentness.sql:1255-1258 refuses with 55000. That covers owner data corrections, backfills and migration data steps, including before publication. TRUNCATE always refuses (:1133).\n\nThe proposal lists direct owner DML only as a census item (MD:165; JSON:695), not as a refusal consequence in platformConsequences (JSON:826).",
+       "evidence": "currentness.sql:1225-1229, :1239-1277 and :1253-1258@264e6af.\nProposal: MD:165; JSON:695, :826@3709170e.",
+       "fix": "Add to the platform consequences: under unchanged source, owner material DML needs an anchor rotation to the owner tuple, with material application writes refusing meanwhile, or a reviewed amendment. Record it in the PP2-1 rotation procedure and in the PPM-09 census."
+      }
+     ],
+     "opinion": "The lens holds up on substance. No P0 or P1 was found, and I found nothing that would warrant one:\n- **Arithmetic.** I recomputed every relation, and all hold: 200<1000; 750<3000<4500; 750<12000<16000; 6000=6000; 6000>=4500+1000=5500; 6000+1000=7000<12000; 750+4500+1000+750=7000; 750+16000+1000+1500=19250; 16000+1000=17000.\n- **NP reference.** Every value is at or below its counterpart.\n- **Honesty.** Nothing is labelled measured, and every installed value is null (UNKNOWN).\n- **Authority.** No text authorizes installation, activation or reactivation (JSON:970-971; MD:208).\n\n**Verified from source:**\n- **The single-anchor impossibility (PP2-1).** The SECURITY DEFINER guard sees the caller's 'role' setting, the INVOKER admin functions require current_user equal to O, and one COMMENT anchor seals the whole tuple.\n- **Login role per class (PP2-3).** There is one approved_limits key per (login, database), and routeClass is single-valued.\n- **The unenforced writer bound (PP2-6).** It has no consumer anywhere in the writer routes or the admin client.\n\nThe bindings re-check:\n- Blob IDs, byte sizes and both trees match the registration.\n- Records commit 31de10e8 touches only .xenios records.\n- Those records carry raw digests 598cb8bb… and b1dfbe67…, matching the registration.\n\n**Severity changes:**\n- **PP2-2 (CS-33) to P3.** Refusal of revoke follows from writer-class membership plus badConfig, Samuel already accepted it under decision 3, and app-disable precedence is recorded.\n- **PP2-4 to P3.** It depends on a non-dedicated login, which U-3 already forbids. It should fold into PP2-3. Its PG17 quotation is also over-read.\n- **PP2-5 (CS-36) to P3.** It is an already-registered S4 named limit that the proposal preserves by reference. The proposal records the anchor as a later owner step, and installation is outside this decision.\n\nThat leaves three P2 items to correct before Samuel decides:\n- **PP2-1.** State that, under the proposal's own exclusion, the only unchanged-source paths are owner anchor rotation or an amendment.\n- **PP2-3.** Carry U-3: a distinct login per class, and no blanket shared-role timeout.\n- **PP2-6.** The 19,250 ms bound for writers and owner administration is enforceable only through the database timers.\n\n**Status challenges:**\n- **Pre-BEGIN arming mechanism: PARTIAL to MET.** MD:106 and JSON:385 state the catalog-equality mechanism. The lens's claim that the proposal omits it is refuted.\n- **CS-36: NOT_MET to PARTIAL.**\n- **transaction_timeout blast radius: NOT_MET to PARTIAL.**\n\n**Added:** three P3 items.\n- **PP2V-1.** deadlockTimeoutMs equals the PostgreSQL default, which the proposal does not disclose.\n- **PP2V-2.** TimeZone and DateStyle are route-wide too, and 'ISO, YMD' changes how co-tenant sessions parse ambiguous dates.\n- **PP2V-3.** Owner direct DML refuses under the steady-state application anchor.\n\nFinal tally: three P2 (PP2-1, PP2-3, PP2-6) and eleven P3. This is a lens verification for the single original reviewer, not a disposition, an approval or a chosen value. NOT RUN.",
+     "deviations": [
+      "Several Bash pipelines used 'cut -c' (and one used 'tail -8'). Neither is on the permitted pipe list (grep/sed -n/head/wc). A few calls also chained git commands with ';'. All of it was read-only, with no redirection and no file written.",
+      "I ran plain 'grep -n' through Bash against review-record files: docs 80-83, hl12/78 and hl12/83 JSON. The rules require the Grep tool for those files. Read-only.",
+      "I read review records (docs 78, 80, 83 and the hl12 archives) from the review worktree at HEAD c3e7337, without pinning to a records commit. I read the proposal, the SQL, the TypeScript source and the steward document pinned, with git show or git grep at their exact commits.",
+      "Raw SHA-256 of the two proposal files was not recomputed, because no hashing tool was permitted. git ls-tree and cat-file confirmed the blob IDs, sizes and both trees. git grep confirmed that the records commit carries the registered raw digests.",
+      "WebFetch succeeded for postgresql.org/docs/17 (runtime-config-client and runtime-config-locks) and for supabase.com/docs (the timeouts page). PostgREST docs were not fetched, so the acquisition-timeout units rest on steward 29297c31:161.",
+      "I read two harness-persisted output files, from my own git show commands, in the session's tool-results directory.",
+      "The claim that the 'role' setting survives a SECURITY DEFINER switch, and every other PostgreSQL, PostgREST or Supabase behaviour here, is reasoned from documentation and source. NOT RUN."
+     ]
+    }
+   }
+  ],
+  "critic": {
+   "disposition": "PROPOSAL_REVISION_REQUIRED",
+   "verdict": "QUICK-ORDER-PRODUCTION-PROFILE-TECHNICAL-REVIEW-20261011 r1 (source 3709170e, records 31de10e8): PROPOSAL REVISION REQUIRED. There is no P0 or P1. Four P2 findings remain (PP-1 to PP-4), along with eleven P3 (PP-5 to PP-15).\n\nBindings, re-checked from Git: blob b9f44603 (54,645 bytes) and blob 3b5d2b24 (31,671 bytes) match the registration. Raw SHA-256 was not recomputed.\n\nArithmetic, recomputed from the bytes; every relation holds:\n- intake: 200 < 1000 and 750 < 3000 < 4500;\n- writer: 750 < 12000 < 16000;\n- intake hold 4500 + 1000 = 5500, and writer lock = gate = 6000 >= 5500;\n- 6000 + 1000 = 7000 < 12000, and the writer release target is 16000 + 1000 = 17000;\n- attempts: 750 + 4500 + 1000 + 750 = 7000 (intake) and 750 + 16000 + 1000 + 1500 = 19250 (writer).\n\nEvery ceiling is at or below its nonproduction value. JSON and Markdown agree. Every value is labelled PROPOSED_PRODUCTION_UNMEASURED_NOT_APPROVED, and every installed value is null. Nothing authorizes installation, activation or reactivation (json:424, json:970-971, md:208).\n\nWhat remains are four decision-relevant corrections, each forced by unchanged source:\n- **PP-1.** The proposed writer statement value (12000) makes the retained 7000ms statement-clock gate objective impossible to meet structurally once more than 5000ms has passed before the gate. That is below one permitted lock wait (6000) and the intake hold (5500), and it is a regression from the nonproduction property statement >= lock + gate + reserve.\n- **PP-2.** The source requires a distinct login role per class and role-wide startup settings, and it pins the effective writer lock_timeout at exactly 6000 for every writer route. The proposal does not carry Doc78 QOE-01, U-3 or LV-2 to Samuel.\n- **PP-3.** A common writer/admin anchor tuple exists only if the application request identity is the owner O. CS-35's per-operation rotation option, and its refusal consequences, are omitted.\n- **PP-4.** The headline 19,250ms bound for writers and owner administration has no enforcement point. Only the database timers (17,000ms release target) act.\n\nDisagreements were resolved from the bytes:\n- downgraded to P3: PP1-3, PP2-2, PP2-4 (folded into PP-2) and PP2-5;\n- the pre-BEGIN mechanism check is MET (md:106, json:385, json:419);\n- CS-36 and transaction_timeout blast radius are PARTIAL.\n\nConsistent numbers are not measured behaviour. This is a technical assessment only. It chooses no value and approves no live profile, installation, activation or reactivation. NOT RUN.",
+   "upheld": [
+    {
+     "id": "PP-1",
+     "severity": "P2",
+     "anchor": "production-operating-profile-proposal-20261011.md:67,:104@3709170e; .json:213,:355-356,:386-389@3709170e; supabase/candidates/20261006_research_health_quick_order_currentness.sql:1325,:1357-1363,:1378-1379@264e6af; supabase/candidates/20261005_research_health_quick_order_intake.sql:572,:608,:627-628,:631@121d0987; steward map 29297c31 QUICK_ORDER_NONPRODUCTION_ENFORCEMENT_CHECK_20261010.md:170 (headroom: statement>=8000); doc 80 CS-30 (hl12/80_currentness_source_acceptance_findings.json:2500-2508). Merges PP1-1, verifier-corrected.",
+     "title": "Writer statement value makes the retained 7000ms statement-clock gate objective unattainable under normal contention; regression from the nonproduction relation",
+     "claim": "**The arithmetic.** Writer statement 12000 - (gate 6000 + reserve 1000) leaves 5000ms of pre-gate statement allowance. That is below one permitted writer row-lock wait (lock = gate = 6000) and below the intake whole hold (4500 + 1000 = 5500).\n\n**Why the row waits count.** The guard is an AFTER ... FOR EACH STATEMENT trigger (currentness.sql:1378-1379). The DML's own row waits therefore come before the gate check. Intake holds rows FOR SHARE for up to 5500ms: lots, documents and tests (intake.sql:608, :627-628), and session-binding and legal-binding rows (:572-573). A writer that waits one full intake hold reaches the gate with at most 6500ms of statement time, which is less than 7000.\n\n**Why it is structural.** The carrier attests singleRpcAutocommit, so the statement and transaction clocks start almost together. The statement clock therefore always binds before the source's transaction-only remainder check, which admits entry up to 9000ms elapsed (:1357-1363). The shortfall is structural, not an edge case.\n\n**The regression.** The nonproduction profile satisfied statement >= lock + gate + reserve (15000 = 7000 + 7000 + 1000), and its 7000ms allowance was at least its 6000ms hold. Production fails both: 12000 < 13000, and 5000 < 5500.\n\n**What the proposal says.** md:67 and json:213 state the 5000 figure only 'at statement origin'. md:104, json:355 and PPM-05 keep a 7000ms objective 'on both clocks' without deriving that the proposed values defeat it. CS-30's fix, to register 57014 at the gate as an expected refusal class, is not carried.\n\n**Severity.** The outcome fails closed (57014 or 55P03), so this is P2 decision transparency, not an unsafe relation.\n\n**Rejected sub-claim.** Gate entry with only 3000ms of statement time left is not new; the nonproduction profile had the same.",
+     "fix": "Choose no value. Add the derived bound: the maximum pre-gate statement time that still meets the objective = writer.statementTimeoutMs - gateWaitMs - postGateReserveMs = 5000. Say that this is below writer.lockTimeoutMs (6000) and the intake hold (5500).\n\nThen present Samuel with exactly one of:\n- **(a) A carrier-level relation.** writer.statementTimeoutMs >= writer.lockTimeoutMs + gateWaitMs + postGateReserveMs, which is the nonproduction property. A weaker form is >= intake hold + gateWaitMs + postGateReserveMs. Statement must stay below transaction, and the attempt sum must be recomputed.\n- **(b) Withdrawal.** Withdraw minimumStatementRemainingAtWriterGateProposalMs as an objective. Register 57014 at the gate, including statement-clock refusal after a full permitted row wait, as an expected writer and admin refusal class under CS-30, with an S3 control.\n\nReword md:67 and json:213 so that '5000 beyond gate+reserve' is stated as true only at 0ms elapsed."
+    },
+    {
+     "id": "PP-2",
+     "severity": "P2",
+     "anchor": "md:15, :106, :113, :218@3709170e; json:388, :419, :826@3709170e; currentness.sql:1248-1252, :1268, :1324, :1335-1336, :1338-1346, :1350-1355@264e6af; intake.sql:396-400, :416, :486-494@121d0987; server/supabase.ts:54-66@121d0987; doc 78 MD:89 (QOE-01, P2 hard gate at S4), MD:233 (distinct routes per class); hl12/78 json:1327-1333 (U-3), :1193-1199 (LV-2), :775-781 (KV-2). Merges PP1-2, PP2-3 and PP2-4.",
+     "title": "Source-forced class-routing consequences are not presented: a distinct login role per class, role-wide startup settings, and a route-wide writer lock_timeout of exactly 6000",
+     "claim": "**One login role per class.** The carrier lives in the single pg_db_role_setting row for the exact (session_user, database) pair, and it carries exactly one routeClass: 'intake' at intake.sql:416, 'writer' at currentness.sql:1268. Intake and writer therefore need distinct session_user login roles, not just distinct pools. The values force the same split: intake's effective transaction is at most 4500, while a writer needs at least 7000 remaining at the gate.\n\n**Role-wide startup settings.** Effective statement, transaction and idle values must equal that row's catalog values (intake.sql:486-494; currentness.sql:1338-1346). So 3000/4500/750 and 12000/16000/750 become startup settings for every session of each class's login. Transaction and idle expiry terminate the session (25P04 and 25P03).\n\n**Writer lock_timeout pinned at 6000.** The effective writer lock_timeout must be exactly 6000:\n- carrier lock must equal gate (:1324);\n- effective must not exceed the field (:1335-1336);\n- effective must be at least gate (:1354).\n\nThat value governs every lock wait of every statement on every material-writer and owner-admin route. Any other value refuses all material writes, including before publication, and also publish, activation and revoke.\n\n**Today's single route.** The only route today is the one shared service_role admin client (supabase.ts:54-66). It hosts the inventory, product and required-input writers and session persistence, so at least one class always refuses on it.\n\n**What is not carried.**\n- Doc78 QOE-01, a P2 hard gate at S4.\n- Doc78 U-3: 'No blanket shared-role timeout'.\n- Doc78 LV-2: register the route-wide bound as a decision-3 consequence.\n\njson:388 says only that the lock 'must equal 6000ms'. json:826 says only that 'shared pools may affect unrelated transactions'. md:15 says the decision does not approve a new connection design, without saying that operation is impossible without one.",
+     "fix": "Register the following in §3, §5 and §6 and in the Samuel decision text, changing no value.\n\n1. **One login per class.** The source requires each class to have its own session_user login role. Operation therefore needs either a separately authorized class route through the excluded seams (server/supabase.ts, server/index.ts, production-deps.ts and the writer files) or a reviewed amendment. State this as a precondition, not an unknown.\n2. **Role-wide settings.** Each class's statement, transaction and idle values, plus TimeZone and DateStyle (see PP-14), become role-in-database settings that apply to every session of that login. Require a dedicated login per class, or list its co-tenant consumers and their session-termination exposure. Carry U-3 ('no blanket shared-role timeout change') and KV-2 (owner and installer login inheritance).\n3. **Writer lock_timeout.** The effective writer lock_timeout must equal gateWaitMs on every writer and admin route, and it governs every statement there (LV-2). State the consequence: any other value refuses.\n4. **Measurements.** Extend PPM-03 and PPM-07 to cover refusals and session terminations of unrelated traffic under these route-wide values."
+    },
+    {
+     "id": "PP-3",
+     "severity": "P2",
+     "anchor": "md:136, :208, :218@3709170e; json:421-422, :835, :864, :970@3709170e; currentness.sql:1089, :1225-1258, :1243-1246, :1271-1276, :1520, :1550, :1732, :1757, :1902, :1928@264e6af; doc 80 CS-35 (hl12/80 json:2555-2563). Merges PP2-1, PP2V-3 and the rotation half of PP2-2.",
+     "title": "Shared writer/admin anchor: a 'legitimate common tuple' exists only if the application request identity is the owner O; CS-35's rotation option and its refusal consequences are omitted",
+     "claim": "**What the anchor seals.** One COMMENT anchor (:1253-1258) seals one carrier. That carrier fixes:\n- loginRole = session_user;\n- requestRole = current_setting('role'), or session_user (:1243-1244);\n- ownerRole = current_user = O (:1246, :1271-1276).\n\n**Why one tuple cannot admit both.** The material guard is SECURITY DEFINER (:1089) and sees the caller's role setting, for example service_role. Publish, revoke and activation are SECURITY INVOKER (:1520, :1732, :1902) and refuse unless current_user = O (:1550, :1757, :1928). One tuple therefore admits both kinds of caller only if application writers have the same login and request role as the owner route. That means request role O on the application route, which is owner identity the proposal itself excludes (md:136, json:422), unless PPM-02 shows it is already the case.\n\nYet PPM-03 (md:218, json:864) still asks to 'demonstrate legitimate unchanged-source common routing', and json:422 calls compatibility UNKNOWN.\n\n**The omitted option.** CS-35's fix also lists per-operation anchor rotation by the owner, which the proposal omits. Under rotation:\n- while the admin tuple is anchored, every material platform write refuses with 55000, including before publication;\n- under the steady-state application anchor, the owner's direct DML and backfills on the 12 relations refuse (:1225-1258);\n- steady-state owner revoke refuses until a rotation, so the emergency sequence needs a rotation step.\n\nThe json:970 condition 'bound to ... compatible routes' cannot be met without one of three things: rotation, owner identity on the application route, or an amendment.",
+     "fix": "Restate §5, PPM-03 and json writerConstraint. Under unchanged source, a common tuple requires the application's login and request identity to equal the owner route's, that is, request role O. If O is not already that role, the path is excluded, with no grants.\n\nName the only other unchanged-source path: owner per-operation anchor rotation between two separately frozen carriers, one per tuple. Each rotation is committed separately, consistent with the singleRpcAutocommit attestation. State its consequences:\n- material writes and owner direct DML refuse while the admin tuple is anchored;\n- revoke requires a rotation first, so add that step to the administrative sequence (json:835, md:208);\n- the owner performs and records each rotation.\n\nOtherwise require the reviewed amendment, a set of per-route carrier digests. Bind the chosen path into the live-profile decision text."
+    },
+    {
+     "id": "PP-4",
+     "severity": "P2",
+     "anchor": "md:11, :72, :76@3709170e; json:249-292 (writer acquisitionMs, responseMs, attemptDeadlineMs; json:290 enforcement)@3709170e; server/research/assisted-order/quick-order-repository.ts:243, :247, :261, :273@121d0987; server/supabase.ts:59-62@121d0987; currentness.sql:1318-1320@264e6af; doc 78 C-12 (78 MD:205-208). Merges PP2-6 and the writer-field part of PP1-6.",
+     "title": "The headline 19,250ms bound for writers and owner administration, and the writer acquisition, response and attempt fields, have no enforcement point",
+     "claim": "md:11 tells Samuel the proposal bounds 'material writers and owner administration to 19,250ms', and json:290 places attemptDeadlineMs on the Node HTTP entry clock. That clock exists only in the disabled Quick Order composition.\n\n**What Node consumes.** Only the sum check and intake.attemptDeadlineMs (quick-order-repository.ts:243, :273).\n\n**What the writer routes have.**\n- git grep at 121d0987 finds no deadline, timeout or abort code in the inventory, product and required-input writer files.\n- server/supabase.ts:59-62 creates the admin client with no fetch or timeout override.\n- Those files are excluded from edits (C-12).\n- Owner administration is SQL-only, with no Node entry.\n\nFor writers, attempt, acquisition and response are carrier-relation fields only, checked as a sum at :1318-1320. Only lock, statement, transaction and idle act, with a 17,000ms database release target.",
+     "fix": "Restate md:11 and the writer rows of fieldDecisions. For material writers and owner administration, only the database timers are enforceable: transaction 16000 + cleanup 1000 gives the 17,000ms database release target.\n\nThe writer attempt, acquisition and response values are carrier-consistency fields with no consumer. Say so until separately authorized writer-route changes exist, or record them as unenforced by explicit disposition. Note that even for intake, acquisition and response have no separate consumer; only the sum and the intake attempt deadline are used. Add this to PPM-05."
+    },
+    {
+     "id": "PP-5",
+     "severity": "P3",
+     "anchor": "md:76, :117, :206, :223@3709170e; json:914@3709170e; intake.sql:631@121d0987; doc 78 MD:94 (QOE-06). Merges PP1-3 (downgraded) and PP2-4's logout point.",
+     "title": "Private-session revoke wait relation is imprecise",
+     "claim": "md:206 registers that the revoke can wait behind the session share lock, and PPM-08 carries QOE-06. That meets Doc78's 'register the delay' alternative.\n\nHowever, 'writer-equivalent outer ceilings' (md:76) does not say whether it includes an effective lock wait of at least the intake hold (5500). On an intake-class route (lock 200), revoke would hit 55P03 under any concurrent intake on that session (intake.sql:631 FOR SHARE), while logout still returns HTTP 200 (md:117).",
+     "fix": "State one of the following:\n- the session-revoke route's effective lock_timeout >= intake.transactionTimeoutMs + intake.cleanupMs (5500), which excludes the intake route; or\n- revoke may refuse with 55P03 while an intake holds the session row, together with the logout-200 consequence.\n\nIn either case, name the session owner through the coordinator."
+    },
+    {
+     "id": "PP-6",
+     "severity": "P3",
+     "anchor": "json:411, :419-421@3709170e; intake.sql:471-474@121d0987; currentness.sql:1323-1326@264e6af; quick-order-repository.ts:261@121d0987. Merges PP1-4 and PP2-10.",
+     "title": "Cross-carrier equality of the intake and writer sections is not required",
+     "claim": "Each path checks writer gate >= intake transaction + cleanup only against its own carrier. Binding profileId and profileVersion does not force the two carriers' sections to be identical.\n\nIf the carriers diverged, both checks would pass while the real intake hold exceeded the real writer gate, silently breaking R2-7. The outcome is availability only: writer 55P03 refusals.",
+     "fix": "Require byte-identical intake and writer sections in every carrier, equal to the approved profile. Make that a PPM-10 freeze check, because the source does not compare carriers."
+    },
+    {
+     "id": "PP-7",
+     "severity": "P3",
+     "anchor": "md:15, :165, :206-208@3709170e; json:421, :826, :829, :834-835@3709170e; currentness.sql:11, :391, :444-448, :1379, :2260, :1741-1787, :1876-1884@264e6af; hl12/80 json:2533-2541 (CS-33), :2566-2574 (CS-36); doc 82 MD:73. Merges PP1-5, the remainder of PP2-2 and PP2-5 (both downgraded).",
+     "title": "CS-33 and CS-36 are not carried by name, and the guard precondition cannot be met as worded",
+     "claim": "**CS-33.** Revoke refuses when integrity, carrier, anchor, identity, budget or gate checks fail. This follows from writer-class membership plus badConfig, and app-disable precedence is recorded (md:208).\n\n**CS-36.** The install creates the anchor relation and enables the guards inside one transaction, and sets no anchor (:11, :391, :444-448, :2260). From COMMIT until the owner's COMMENT, every material write refuses.\n\nSo 'no guard before every writer has valid configuration' (md:165, json:826), which is Doc78's own S4 text, cannot be met literally: carriers can be staged in advance, but the anchor cannot.",
+     "fix": "Name CS-33 and CS-36. Reword the precondition: carriers are staged before install, and the anchor COMMENT follows in a declared, bounded write-freeze window with writers disabled. Alternatively, require a reviewed atomic-anchor amendment. Add the window to the platform consequences and to PPM-09 and PPM-10."
+    },
+    {
+     "id": "PP-8",
+     "severity": "P3",
+     "anchor": "md:116, :161, :163@3709170e; json:338@3709170e; currentness.sql:1665-1676, :2045-2056@264e6af; hl12/80 json:2544-2552 (CS-34). From PP2-8.",
+     "title": "CS-34: the refusal sources for publish and activation NOWAIT locks are not listed",
+     "claim": "SHARE NOWAIT refuses against SHARE UPDATE EXCLUSIVE locks (autovacuum, ANALYZE, CREATE INDEX CONCURRENTLY) and against ROW EXCLUSIVE locks (any open DML) on any of the 12 tables.\n\nThis includes unguarded session-binding INSERTs (md:161). Those INSERTs refuse publish and activation, and are themselves stalled for up to 17000ms by a held SHARE lock. The proposal has no runbook line and no measurement for any of this.",
+     "fix": "List these refusal sources. State that retries are manual only and never inside the body. Add the target refusal rate to PPM-09."
+    },
+    {
+     "id": "PP-9",
+     "severity": "P3",
+     "anchor": "md:35@3709170e; json:381@3709170e; currentness.sql:11-12@264e6af; intake.sql:858-866@121d0987; hl12/83 json:2515-2535 (TC-27, TC-28); hl12/78 json:775-781 (KV-2). Merges the TC-27 and TC-28 parts of PP1-6, and PP2-9.",
+     "title": "No proposal or carry for install and rollback timers (TC-27), or for the recovery whole-request bound (TC-28)",
+     "claim": "**Install and rollback.** These DDL locks (ShareRowExclusive and AccessExclusive) can queue every canonical writer, yet they have no proposed timers and are not carried. An installer on a login that carries operating timers can be ended by transaction_timeout (KV-2).\n\n**Recovery.** Removing replay from the intake class leaves TC-28's whole-request bound with no owner.\n\nDoc83 is still pending, and md:35 leaves it untouched.",
+     "fix": "Carry TC-27, TC-28 and KV-2 by reference as named S4 prerequisites, with their existing owners: the builder, the installation owner and the handler authority. Name an installation login that carries no operating timers, disclose the queueing blast radius, and require a recovery bound that does not depend on the profile."
+    },
+    {
+     "id": "PP-10",
+     "severity": "P3",
+     "anchor": "json:157-322, :384, :828-836@3709170e; md:106@3709170e; steward 29297c31 MD:176 (Maximum timeout field 24000); currentness.sql:1311-1314@264e6af. From PP1-7, narrowed.",
+     "title": "No per-field expiry and refusal mapping, and the dropped global maximum is not addressed",
+     "claim": "json:831-833 maps SQLSTATEs at class level. fieldDecisions still lack:\n- a per-field expiry outcome;\n- acquisition and response expiry, before versus after transmission;\n- the HTTP mapping of gate 55P03 and 57014 on existing writer routes.\n\nThe nonproduction global maximum of 24000 is neither restated nor replaced. 'safe-integer' is stricter than the source's int64 bound; that is an authoring rule, not an inconsistency.",
+     "fix": "Add an expiry/refusal column to fieldDecisions. State that each carrier field equals the approved value exactly and acts as its ceiling, or state a replacement maximum. Note that the source does not enforce 'safe-integer'."
+    },
+    {
+     "id": "PP-11",
+     "severity": "P3",
+     "anchor": "json:188-201, :388@3709170e; md:66, :106@3709170e; currentness.sql:1325, :1350-1355@264e6af; PostgreSQL 17 runtime-config-locks (deadlock_timeout default 1s; quoted from the lens fetch). Merges PP1-8 (reframed) and PP2V-1.",
+     "title": "Who enforces 'gate + reserve < effective writer statement' is unnamed, and deadlockTimeoutMs 1000 coincides with the server default",
+     "claim": "**The unnamed check.** The source checks gate + reserve < statement on the carrier only (:1325). On effective values it checks only idle < statement < transaction, writer lock >= gate, TimeZone and DateStyle (:1350-1355). An effective writer statement of 7000 or less passes the source but leaves no gate room. json:388 states the rule normatively without naming who qualifies it.\n\n**The deadlock default.** deadlockTimeoutMs 1000 equals PostgreSQL's default of 1s. An unconfigured target passes, and a target that has raised the setting refuses every class.",
+     "fix": "Split the rules into those the source enforces on effective values and those only qualification or configuration review can establish. Put the effective-statement relation under PPM-04 and PPM-05. Disclose that 1000 is the server default, and that a pass on the default is not evidence of configuration. PPM-04 should record the effective value and its source."
+    },
+    {
+     "id": "PP-12",
+     "severity": "P3",
+     "anchor": "md:70@3709170e; json:249-261@3709170e; steward 29297c31 MD:161; quick-order-repository.ts:243@121d0987. Merges PP1V-1 and PP2-7.",
+     "title": "acquisitionMs 750 has no named enforcement point that can represent it",
+     "claim": "The steward's only identified checkout mechanism (PostgREST db-pool-acquisition-timeout) is seconds-valued and instance-wide; that is why the nonproduction value was 1000. A 750ms client-side abort cannot tell a pool wait from execution, so expiry after send is OUTCOME_UNCERTAIN, not a definite refusal. The outcome fails closed.",
+     "fix": "Name the mechanism and its units. If the value must be enforced in whole seconds, the value is Samuel's choice. Otherwise state that 750 is enforced only before transmission, with uncertainty after send, and disclose the instance-wide scope."
+    },
+    {
+     "id": "PP-13",
+     "severity": "P3",
+     "anchor": "intake.sql:641@121d0987; currentness.sql:1369, :1686, :1884, :2066@264e6af; md:13@3709170e; json:353@3709170e. From PP1V-2, corrected.",
+     "title": "Intake refusal exposure per writer-class transaction is not derived",
+     "claim": "Intake makes exactly one non-blocking shared TRY. Every writer-class transaction makes every new intake refuse with 503 while it holds the exclusive gate. Reasoned, NOT RUN: the same may apply while it waits for the gate.\n\nThe gate wait and hold both lie inside the writer transaction, so the total exposure is at most 17000ms (transaction + cleanup). Writer and admin activity therefore directly bounds intake availability.",
+     "fix": "Add a derived line: intake refusal exposure per writer-class transaction <= the writer release target, 17000ms. Link it to PPM-07's unplanned-refusal denominators. Change no value."
+    },
+    {
+     "id": "PP-14",
+     "severity": "P3",
+     "anchor": "md:80@3709170e; json:360-362@3709170e; currentness.sql:1353-1354@264e6af; intake.sql:501-502@121d0987. From PP2V-2.",
+     "title": "TimeZone and DateStyle are route-wide too, and 'ISO, YMD' differs from the PostgreSQL built-in default",
+     "claim": "Each class compares the effective TimeZone and DateStyle with its carrier. They must therefore be armed on the class login. 'ISO, YMD' differs from the built-in 'ISO, MDY', so co-tenant sessions on that login would parse ambiguous date input differently. ISO output is unchanged.",
+     "fix": "Include TimeZone and DateStyle in PP-2's route-wide settings statement and in PPM-04's measurements, or require a dedicated class login."
+    },
+    {
+     "id": "PP-15",
+     "severity": "P3",
+     "anchor": "md:15, :208@3709170e; json:970-971@3709170e. From PP2-11.",
+     "title": "md:15 wording implies guard installation could be authorized once writers are configured",
+     "claim": "'It does not authorize guard installation before every affected writer has valid configuration' can be read as conditional. json:970 is unconditional, and md:15's list omits reactivation.",
+     "fix": "Reword md:15 unconditionally: the decision authorizes no guard installation, role grant, connection design, budget increase, intake activation or live reactivation. Installation additionally requires PP-7's precondition and separate installation authority."
+    }
+   ],
+   "rejected": [
+    {
+     "id": "PP1-1 (sub-claim)",
+     "reason": "Source admitting gate entry with only 3000ms of statement time left is not a regression. In the nonproduction profile, the transaction check admitted entry at 12000ms elapsed (20000 - 8000), when statement time remaining was 15000 - 12000 = 3000."
+    },
+    {
+     "id": "PP1-3 at P2",
+     "reason": "Downgraded to P3 as PP-5. md:206 registers the session-revoke delay, which Doc78 QOE-06 allows (78 MD:94). PPM-08 carries the item, and the nonproduction profile also gave no session-revoke values."
+    },
+    {
+     "id": "PP2-2 at P2",
+     "reason": "Downgraded to P3 as PP-7. Refusal of revoke under bad configuration follows from writer-class membership (json:346) plus badConfig (json:829), and Samuel accepted it under decision 3. App-disable precedence is recorded (md:208, json:835), and doc 82 MD:73 carries CS-33 to S4. The anchor-rotation dependency moved to PP-3."
+    },
+    {
+     "id": "PP2-4 as a separate P2",
+     "reason": "Folded into PP-2. Its PostgreSQL 17 quotation ('would affect all sessions') concerns postgresql.conf and is not attached to idle_in_transaction_session_timeout, so it applies to role-in-database settings only by analogy."
+    },
+    {
+     "id": "PP2-5 at P2",
+     "reason": "Downgraded to P3 as PP-7. CS-36 is a registered S4 named limit carried by doc 82 MD:73. The proposal records the anchor as an owner step taken later (json:421), and installation is outside this decision (json:970). The precondition wording is Doc78's own S4 text."
+    },
+    {
+     "id": "PP2 check: pre-BEGIN arming mechanism PARTIAL",
+     "reason": "Refuted, so the check is MET. md:106, json:385 and json:419 state the catalog-equality mechanism for the exact session_user and database. The omitted route-wide consequence belongs to PP-2."
+    },
+    {
+     "id": "PP2 checks: CS-36 and transaction_timeout blast radius NOT_MET",
+     "reason": "Both are PARTIAL. json:421 and PPM-10 record the anchor as a later owner step. json:185, json:826 and PPM-07 acknowledge session termination and effects on unrelated requests, though not the role-wide reach."
+    },
+    {
+     "id": "PP1-8 framing as an overclaim",
+     "reason": "md:106 accurately describes what the SQL checks. The defect is a missing enforcement owner for the effective-statement relation (PP-11), not an overstatement of source enforcement."
+    },
+    {
+     "id": "PP1-7 'no SQLSTATE mapping' and 'safe-integer inconsistency'",
+     "reason": "json:831-833 maps the SQLSTATEs at class level. 'safe-integer' is stricter than the source's int64 bound (currentness.sql:1312-1313); it is a carrier-authoring rule, not an inconsistency. The finding is narrowed to PP-10."
+    },
+    {
+     "id": "PP2-1 fix: 'every rotation needs its own frozen carrier digest'",
+     "reason": "Two frozen carriers suffice, one per identity tuple, each with its own digest. A rotation switches the anchor between them."
+    },
+    {
+     "id": "PP2-1 verifier: singleRpcAutocommit 'forbids' bundling rotations",
+     "reason": "Narrowed. singleRpcAutocommit is an attested carrier boolean that the source only checks is true. Bundling COMMENT, RPC and COMMENT in one transaction would falsify the attestation; the source does not mechanically refuse it. Separate commits are an attestation requirement."
+    },
+    {
+     "id": "PP1V-2 'plus any queued gate wait'",
+     "reason": "Not additive. The gate wait and the hold both lie inside the writer's outer transaction, so total intake refusal exposure is at most 17000ms (transaction 16000 + cleanup 1000)."
+    },
+    {
+     "id": "PP2-3 '24 mapped writer routes'",
+     "reason": "Corrected. The 24 source-known mappings are 23 platform-writer mappings plus POST /api/research/early-access/logout, which is the session revoke."
+    }
+   ],
+   "samuelDecisionPoints": "Samuel decides the following. This review chooses no value and authorizes nothing.\n\n1. **Numeric profile.** Whether to adopt the intake and writer values (lock, statement, transaction, idle, deadlock, cleanup, acquisition, response, attempt, gate, reserve) once corrected. In particular:\n   - the PP-1 choice: either a carrier relation writer.statement >= writer.lock + gate + reserve (the nonproduction property), or accepting 57014 at the gate as an expected writer and admin refusal class (CS-30);\n   - the gate-over-hold margin of 500ms (nonproduction 1000);\n   - how acquisitionMs is represented and enforced (PP-12).\n\n2. **Platform consequences to accept.**\n   - Material writes refuse when limits are missing or invalid, including before publication; revoke also refuses (already accepted under r3 decision 3).\n   - Effective writer lock_timeout equals the gate on every writer and admin route.\n   - Class timers, TimeZone and DateStyle become role-wide startup settings, and timer expiry terminates sessions.\n   - Publish and activation SHARE locks stall platform DML for up to 17000ms, and NOWAIT refusals happen during maintenance.\n   - Intake refusal exposure is up to 17000ms per writer-class transaction.\n   - All material writes refuse in a write-freeze window between install and the owner's anchor COMMENT.\n\n3. **Routing and anchor path.**\n   - Distinct class login routes, which need a separately authorized connection design through excluded seams, or a reviewed amendment.\n   - For writer and admin, one of: the application request role equals O (only if already true; no grants), owner per-operation anchor rotation with its refusal windows, or a reviewed per-route-digest amendment.\n\n4. **Writer end-to-end bound.** Accept that only the database timers bound writers and owner administration (17000ms release target), or separately authorize writer-route deadline changes later.\n\n5. **Private-session revoke.** Bind an effective wait of at least 5500ms, or accept refusal or delay while an intake holds the row, with logout still returning HTTP 200.\n\n6. **Reactivation responsibility.** Samuel alone approves any live reactivation, with no automatic reactivation. Revoked revisions need a new revision. Under later explicit authority the sequence is: disable new admission first, then revoke, then verify. The live reactivation operator is UNKNOWN (json:965) and must be designated.\n\n7. **Activation and installation operators.** Designate, through the coordinator, the actual database owner O, the configuration installer, the configuration artifact owner and the live activation/reactivation operator. All are UNKNOWN (json:962-966).\n\n8. **Binding.** The live-profile decision must bind this exact version and its raw digest (or a corrected successor), plus the named evidence.",
+   "measurementAndInstallationPrerequisites": "Everything below is UNKNOWN until measured or attested on the exact target, under separate execution approval and within existing resource and window caps. UNKNOWN never means pass.\n\n**Measurements: PPM-01 to PPM-10, plus additions**\n- **PPM-01:** target and served version.\n- **PPM-02:** identities, owner O and installer.\n- **PPM-03:** class routes and the anchor path; add the PP-2 and PP-3 conditions.\n- **PPM-04:** armed versus effective versus catalog timers before BEGIN. Add effective TimeZone and DateStyle, the source of deadlock_timeout, and the qualified relation gate + reserve < effective writer statement.\n- **PPM-05:** whole attempt and statement/transaction headroom at the gate. Add an S3 control for 57014 at the gate (CS-30), and the PP-4 writer-bound disposition.\n- **PPM-06:** cleanup and lock release within 5500ms (intake) and 17000ms (writer).\n- **PPM-07:** target fit. Add refusals and session terminations of unrelated traffic under role-wide values, and the per-writer intake refusal exposure (PP-13).\n- **PPM-08:** session-revoke ordering and wait.\n- **PPM-09:** writer and lock-participant census. Add owner direct-DML refusal under the anchor, and the CS-34 NOWAIT refusal rate including session-binding INSERTs.\n- **PPM-10:** exact carrier bytes, the two digests and constructor delivery. Add the cross-carrier equality check (PP-6) and the owner COMMENT anchor.\n\n**Installation (S4)**\n- Separate installation authority, plus a designated installer and artifact owner.\n- Distinct session_user login per class, or a reviewed amendment, with no blanket shared-role timeout.\n- A resolved anchor path (PP-3).\n- Every writer carrier staged before install, with the CS-36 write-freeze window bounded and measured, or an atomic-anchor amendment.\n- TC-27 install and rollback timer admission, on an installation login that carries no operating timers (KV-2).\n- The TC-28 recovery whole-request bound and operator signal.\n- The session-revoke disposition.\n- Handler authority for the whole-request deadline.\n- The frozen snapshot with the real inputs, census and publication.\n- Doc83 to Doc86 dispositions remain controlling and pending where they are pending.\n\nNo guard installation, role grant, pool change, comment anchor, activation or reactivation is authorized by this review.",
+   "deviations": [
+    "Two Bash pipelines piped git show output through 'cut -c' to shorten lines for line-number lookup. cut is outside the permitted grep/sed -n/head/wc set. Both were read-only, with no redirection and no file written.",
+    "I used Read on the scratchpad registration JSON, and Read/Grep/Glob on review records (doc 78 Markdown, and the hl12 78, 80 and 83 JSON) in the health-review worktree at its current HEAD. These were not pinned to records commit 31de10e8, whose contents I did not inspect. The proposal, the SQL, the TypeScript and the steward record were read pinned, with git show or git grep at their exact commits.",
+    "Raw SHA-256 was not recomputed. Only blob IDs and byte sizes were confirmed against the registration, with git ls-tree.",
+    "I made no WebFetch. The PostgreSQL, PostgREST and Supabase behaviour cited rests on the lens and verifier fetches or on memory, and is reasoned, NOT RUN. That covers: the deadlock_timeout 1s default and SET privilege; the DateStyle built-in default 'ISO, MDY'; the seconds-valued PostgREST acquisition timeout (steward 29297c31:161); the 'role' setting surviving a SECURITY DEFINER switch; a shared TRY failing against a queued exclusive request; role-in-database settings applying to all sessions of that login; and uncommitted COMMENT not being visible to concurrent sessions.",
+    "The lens and verifier outputs disclosed their own deviations: cut, sort, uniq, tail and echo pipelines, plain grep on review files, chained git commands, and HEAD-unpinned record reads. These are carried as disclosed and not repeated.",
+    "No file was created, modified or deleted. No interpreter, SQL, database, MCP data tool, checkout, commit, fetch or push was used, and no session was contacted."
+   ]
+  }
+ }
+}
