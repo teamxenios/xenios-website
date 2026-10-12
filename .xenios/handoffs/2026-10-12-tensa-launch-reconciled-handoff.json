@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "at": "2026-10-12T19:55:00Z",
+  "at": "2026-10-12T20:15:27.804Z",
   "kind": "TENSA_LAUNCH_RECONCILED_ACTUAL_RESULTS",
   "session": "codex-accepted-source-integration-20261005",
   "sourceBrief": {
@@ -60,9 +60,18 @@
     "runtime": "Node20.19.0 directly invoked, binary SHA6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c; npm not invoked; no worker self-attestation/clean dependency reinstall claimed",
     "refusal": "18:49Z initial native permission refusal remains NOT_RUN. New public owner account permission-resolution.json reports changed narrower calls admitted via ordinary Bash response; no permission rule, mode, override or separate approval event exposed. Original refusal is not retroactively resolved. Review the reported mechanism and limits, not an absent record or blanket execution permission.",
     "newOwnerRecords": {
-      "permissionAccount": {"path": "C:/xenios-wt/doc96-handoffs/permission-resolution.json", "sha256": "3e980ef12f20909ea3335989c60232ee2745048e937f8092ecef7dd0d9febe5c"},
-      "httpCoverageCorrection": {"path": "C:/xenios-wt/doc96-handoffs/unit-run-receipt-server-correction-addendum.json", "sha256": "973ecf07b7d2d4059c571a894f1fc4afa5c9864a001da2928521e1e547a933a4"},
-      "frozenOwnerHandoff": {"path": "C:/xenios-wt/doc96-handoffs/frozen-handoff-21d7291f.json", "sha256": "efd3ea81e7263b80d437631de0cb6997a6495dcea0ec3ce9529f033ce1c05764"},
+      "permissionAccount": {
+        "path": "C:/xenios-wt/doc96-handoffs/permission-resolution.json",
+        "sha256": "3e980ef12f20909ea3335989c60232ee2745048e937f8092ecef7dd0d9febe5c"
+      },
+      "httpCoverageCorrection": {
+        "path": "C:/xenios-wt/doc96-handoffs/unit-run-receipt-server-correction-addendum.json",
+        "sha256": "973ecf07b7d2d4059c571a894f1fc4afa5c9864a001da2928521e1e547a933a4"
+      },
+      "frozenOwnerHandoff": {
+        "path": "C:/xenios-wt/doc96-handoffs/frozen-handoff-21d7291f.json",
+        "sha256": "efd3ea81e7263b80d437631de0cb6997a6495dcea0ec3ce9529f033ce1c05764"
+      },
       "interpretation": "Owner-reported ordinary tool responses, not an independently recovered provider admission event. Original refusal and raw receipts unchanged. Local Vite cache paths reduce donor writes; package junctions are not a general read-only isolation guarantee.",
       "sourceWriter": "STOPPED"
     },
@@ -72,8 +81,9 @@
       "Server drift-before-replay remains open.",
       "Fake/foreign/reused strings refused; not actual canonical payment verification-ledger qualification."
     ],
-    "review": "Registered at coordinator d1138ad57653e8be059f634863ee761040fc08ec. Actual delivery NOT_SUBMITTED: existing Claude Desktop composer and window-control operations timed out without typing/submission; native supported attach found no background job for existing interactive reviewer. Latest coordinator5fa884c844161280e09e78fdd48eb64cc5e78cb9 preserves blocker. No new reviewer or alternate transport retry. AppDoc98 does not accept QL.",
-    "next": "Original source/test delta disposition including published permission account; standalone build and36companion protection tests now PASS in distinct receipts. Remaining applicable typecheck/browser/release controls require compliant frozen execution ticket. Do not rerun full suite merely to reconcile records."
+    "review": "ACKNOWLEDGED_AND_IN_REVIEW by original Claude reviewer a2ffb6cff621723adf3c42a8c71569f875009250 after actual Samuel relay. Doc99 revision2 exact7a2/tree28617, not accepted yet. Earlier transport failures remain history, not current blocker.",
+    "next": "Consume Doc99 when committed without restarting source work; exactQL build/protection/typecheck passed in separate receipts. Fullsuite effects require concrete safe disposition; staticroute binding prepared; applicable browser/release records still pending.",
+    "historicalReviewDelivery": "Registered at coordinator d1138ad57653e8be059f634863ee761040fc08ec. Actual delivery NOT_SUBMITTED: existing Claude Desktop composer and window-control operations timed out without typing/submission; native supported attach found no background job for existing interactive reviewer. Latest coordinator5fa884c844161280e09e78fdd48eb64cc5e78cb9 preserves blocker. No new reviewer or alternate transport retry. AppDoc98 does not accept QL."
   },
   "protection": {
     "currentChange": "Exactly two historical fileHashes.files values carried from6d9 under current protection-owner custody, approved identical source blobs; all other manifest/source/test/script/dependency/migration bytes unchanged.",
@@ -130,12 +140,27 @@
       "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
       "tree": "28617c360f487803baa556d33158c4e95df471f1",
       "worktree": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
-      "execution": {"start": "2026-10-12T19:41:34.106Z", "end": "2026-10-12T19:42:07.180Z", "exit": 0, "timeout": false, "attempts": 1, "node": "v20.19.0", "npm": "NOT_INVOKED"},
+      "execution": {
+        "start": "2026-10-12T19:41:34.106Z",
+        "end": "2026-10-12T19:42:07.180Z",
+        "exit": 0,
+        "timeout": false,
+        "attempts": 1,
+        "node": "v20.19.0",
+        "npm": "NOT_INVOKED"
+      },
       "receiptSha256": "fcbab2bae4f7ba63586730f7f667c1540f6bd9cb1062d786c1a5cdac2a932551",
       "logSha256": "1d5d5edc5dc239c039dbf49555a24308e15ead78dc93efd93928243453a4265b",
       "artifactManifestSha256": "742560044e47acb4d6598ecb571055207f2fea78b4d13060d84f933d3604f4a4",
-      "artifacts": {"files": 346, "bytes": 10634832, "retained": true},
-      "warnings": ["Mixed static/dynamic AdminResearchHome import", "Main506.34kB chunk exceeds500kB advisory; no performance clearance or baseline comparison"],
+      "artifacts": {
+        "files": 346,
+        "bytes": 10634832,
+        "retained": true
+      },
+      "warnings": [
+        "Mixed static/dynamic AdminResearchHome import",
+        "Main506.34kB chunk exceeds500kB advisory; no performance clearance or baseline comparison"
+      ],
       "cleanup": "Normal child exit, no timeout cleanup or deletion. Own launcher scan empty; no full-machine/native descendant census claimed.",
       "scope": "Actual04b4 local QL build authority; unchanged existing production build script, private copied dependencies, no application server startup. Not S3/G0 or deployment.",
       "bounds": "One heavy job;420second wall;2048MiB Node heap;0retries;only fresh isolated dist is removable;no managed/provider credentials."
@@ -151,6 +176,31 @@
       ],
       "next": "Existing source/protection owners obtain distinct exact source/baseline dispositions; clean seam assertion unchanged.",
       "independentQLDependency": false
+    },
+    "standaloneQLTypecheck": {
+      "status": "PASS",
+      "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "tree": "28617c360f487803baa556d33158c4e95df471f1",
+      "records": "4b8a2f7f30a679fe92f8a9ca9386efad27595e42",
+      "emptyLogRecords": "b45fa602223b4d653d4751eafed16d85b7834a83",
+      "resultPath": "docs/health-launch/ql-build-20261012/typecheck/ACTUAL_RESULT.json",
+      "start": "2026-10-12T20:11:00.758Z",
+      "end": "2026-10-12T20:12:53.057Z",
+      "exit": 0,
+      "timeout": false,
+      "diagnostics": 0,
+      "attempts": 1,
+      "node": "v20.19.0",
+      "typescript": "5.6.3",
+      "unchangedConfig": "--project tsconfig.json --incremental false; noEmit true",
+      "sourceUnchanged": true,
+      "reservation": "8b8c1e3ecbf8bd85425f03416564fbd45f6bdfd7 LOCAL-QL-TYPECHECK-7A2-20261012; immediate release requested",
+      "limits": "No app/test/server/SQL execution. Midrun low free memory recorded. Not fullsuite, originalacceptance, paidcheckout or release."
+    },
+    "routeUniqueness": {
+      "status": "PREPARED_NOT_RUN_PENDING_FRESH_WINDOW",
+      "binding": "b45fa602223b4d653d4751eafed16d85b7834a83:docs/health-launch/ql-build-20261012/route-check/EXECUTION_BINDING.json",
+      "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e"
     }
   },
   "payment": {
@@ -241,7 +291,12 @@
       "secretMaterialCopied": false
     },
     "smallestRequiredInput": "Samuel identifies the existing protected current configuration/instruction record or its actual custodian for ONE chosen method, with current receiving-owner/product-use approval and how Samuel independently observes matching funds and pending/held/reversal state. If Venmo, Harry confirms account authority and observation access. No recipient coordinates/credentials/raw evidence requested.",
-    "Lawrence": "UNVERIFIED; CC/contact association is not receiving ownership"
+    "Lawrence": "UNVERIFIED; CC/contact association is not receiving ownership",
+    "firstUnansweredField": {
+      "person": "Samuel Boadu",
+      "field": "ONE intended method's existing current protected instruction/configuration reference or actual custodian",
+      "owner": "Existing coordinator/payment owner, pending question retained, no historical search repeated"
+    }
   },
   "invoicing": {
     "businessChoice": "STAFFED_MANUAL_INVOICING_FOR_ELIGIBLE_PRODUCTS_ALREADY_SELECTED",
@@ -343,14 +398,27 @@
         "client/src/research/account-portal/views/support-documents.test.tsx"
       ],
       "finding": "Corrected generic error after potentially persisted submission: uncertainty and check-history guidance instead of false not-recorded/account-unchanged assurance. Runtime diff is one copy line; no API/payment/route behavior change.",
-      "result": {"tests": 13, "passed": 13, "failed": 0, "pending": 0, "files": 1, "exit": 0, "timeout": false, "attempts": 1, "start": "2026-10-12T19:31:50.872Z", "end": "2026-10-12T19:32:21.206Z"},
+      "result": {
+        "tests": 13,
+        "passed": 13,
+        "failed": 0,
+        "pending": 0,
+        "files": 1,
+        "exit": 0,
+        "timeout": false,
+        "attempts": 1,
+        "start": "2026-10-12T19:31:50.872Z",
+        "end": "2026-10-12T19:32:21.206Z"
+      },
       "node": "v20.19.0; separately checked npm10.8.2; npm not invoked by test",
       "evidence": "docs/health-launch/account-support-outcome-20261012/SOURCE_AND_TEST_RESULT.json",
       "coverage": "Thrown callback and real API wrapper with mocked transport rejection/201 body loss; full form draft retained, one POST/no automatic retry, no invented case/success/non-recording guarantee; existing denial/rate-limit/doc tests retained.",
       "containment": "Private physical matching dependency copy, zero reparse points, scrubbed environment,1worker/no-file-parallelism,1024MB heap,3minute cap. No installation or clean rebuild claimed. Optional full installed-byte inventory manually stopped without digest; not an application timeout.",
       "limits": "No browser/build/typecheck/full-suite/release qualification. Own base794 manifest still contains two historical baselines; separate QL CLI PASS not relabelled as support protection pass. Both source candidates preserved separately; no integration.",
-      "review": "NOT_DELIVERED_NOT_ACCEPTED; existing coordinator has exact frozen source and result"
-    }
+      "review": "ACKNOWLEDGED_AND_IN_REVIEW original a2ffb6c Doc101 exacta4a44bf/tree2c123d9. Verdict pending; independent fromQL.",
+      "historicalReviewDelivery": "NOT_DELIVERED_NOT_ACCEPTED; existing coordinator has exact frozen source and result"
+    },
+    "identityReconciliation": "1645c4d271e990f1b89f6e2d77f01722dbf693a0:docs/health-launch/ql-build-20261012/REMAINING_RELEASE_REQUIREMENTS_20261012.json; exact IDs and visibility compared.420-2legacy+6new-1shipping=423;418sharedrawIDs,zero duplicatevariants; no count padding or availability inference."
   },
   "production": {
     "checkedReadOnlyAt": "2026-10-12T19:25:19.1148527Z",
@@ -375,7 +443,7 @@
   "boundaries": {
     "fullSuiteRerun": false,
     "build": "QL7a2_ONLY_PASS; support and full composition build not run by this slice",
-    "typecheck": false,
+    "typecheck": "QL7a2_STATIC_TYPECHECK_PASS_ONLY",
     "SQL": false,
     "installation": false,
     "push": false,
@@ -386,7 +454,40 @@
     "money": false,
     "schedules": "UNCHANGED"
   },
-  "reviewRegistration": "Coordinatorc21f510eaa81f2888bf1a11d44799c39932b2f34 registers exactthree targets:QLrevision2 at7a2,six-entryrevision1 atf6da5aa,supportrevision1 ata4a44bf. Still NOT_DELIVERED,not original reviewer acceptance. Existing single prepared message and original session preserved.",
-  "checkpoint": {"publication": "LOCAL_ONLY; no push/merge/CI/deploy authorized by these receipts", "sourceWorktrees": "QL42ac49e/supportfa7de0a/build7a2/b22f876ede5 all clean at final verification", "activeJobs": "None owned; helpers complete; no preview server started", "recordsBranch": "codex/tc25-app-manifest-20261012", "recordsWorktree": "C:/xenios-wt/tc25-app-manifest-20261012", "evidenceTipBeforeHandoff": "7bcae121ccc00423ecfadc0a4e59538b18733cf2", "nextFirstAction": "Read original-reviewer current delivery/disposition and coordinator remaining applicable qualification binding. No automatic test rerun, no reinterpretation of historical NOT_RUN. Foreign active continuity lease and source reservations untouched."},
-  "next": "Deliver existing original-reviewer packet through a supported available mechanism or actual user action; no alternate-session transport bypass. Review frozen QL and support separately. Complete applicable remaining qualification before release. Samuel identifies one protected existing current configuration/instruction record or actual custodian with receiving-owner/product-use approval and observation workflow; no payment destinations/credentials requested."
+  "reviewRegistration": "Coordinatorc21f510eaa81f2888bf1a11d44799c39932b2f34 exact3 targets now acknowledged by originalreviewera2ffb6c. Doc99 QLr2 at7a2; Doc100sixr1 atf6da5aa; Doc101support r1 ata4a44bf. AllIN_REVIEW, noneaccepted at lastread.",
+  "checkpoint": {
+    "publication": "LOCAL_ONLY; no push/merge/CI/deploy authorized by these receipts",
+    "sourceWorktrees": "QL42ac49e/supportfa7de0a/build7a2/b22f876ede5 all clean at final verification",
+    "activeJobs": "No own compiler/test/build active after typecheck normalexit. Staticroute notstarted; originalreviewer independently active.",
+    "recordsBranch": "codex/tc25-app-manifest-20261012",
+    "recordsWorktree": "C:/xenios-wt/tc25-app-manifest-20261012",
+    "evidenceTipBeforeHandoff": "b45fa602223b4d653d4751eafed16d85b7834a83",
+    "nextFirstAction": "Consume current coordinator freshroutewindow if issued and actual original Doc99/100/101 independently. Resolve fullsuite effects before any complete run. No repeat reconciliation or automatic source change."
+  },
+  "next": "Original reviewer is in review, not undelivered: consume separate committed Doc99/100/101. Complete exact pending route/fullsuite and remaining applicable release qualification without bundling frozen candidates. Existing payment owner needs Samuel's ONE current protected configuration reference or actual custodian. No qualified deploy yet.",
+  "currentInstruction": {
+    "path": "C:/Users/sboad/.codex/attachments/0ada60b9-885b-4cdd-abe9-e66aaa035244/Pasted text.txt",
+    "sha256": "389777721040734d728c1b402c6a57c4885197d2a9ae0cda03b5eb199c06f675",
+    "scope": "Preserve frozen separate candidates; actual original review delivery, remaining qualification, catalog identity comparison and one current payment-method confirmation. No completed correction redispatch."
+  },
+  "originalReviewer": {
+    "acknowledgment": "a2ffb6cff621723adf3c42a8c71569f875009250",
+    "path": "docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+    "delivery": "Actual Samuel relay confirmed in original committed ACK",
+    "duplicatePrompt": false,
+    "verdicts": {
+      "Doc99": null,
+      "Doc100": null,
+      "Doc101": null
+    }
+  },
+  "remainingReleaseRequirements": {
+    "assessment": "1645c4d271e990f1b89f6e2d77f01722dbf693a0:docs/health-launch/ql-build-20261012/REMAINING_RELEASE_REQUIREMENTS_20261012.json",
+    "delta": "QL typecheck nowPASS, replacing only prior missing-typecheck status; other missing items remain.",
+    "fullSuitePreflight": "90f2434:docs/health-launch/ql-build-20261012/FULL_SUITE_EFFECT_PREFLIGHT_20261012.json, timestamp corrected in4b8a2f7",
+    "fullSuite": "NOT_RUN;971staticfiles. TruthyCI activates2DockerSQLgroups;4realbootcases have wildcardlisteners/fixedunowned54321/outboxpolling/childcleanup concerns. No implicit SQL grant or gate weakening; no source/test/config changed.",
+    "qualifiedReleaseCandidate": null,
+    "provisionalTarget": "QL7a2 remains furthest qualified standalone request increment; not paidcheckout; no automatic support bundle.",
+    "warnings": "Build remains PASS_WITH_WARNINGS. Mixedimportunchangedbaseline stops one homechunk split; mainchunk506335B>500000advisory by6335, no exactbaselineartifactcomparison. No warningfatalrulefound, no performanceclearance."
+  }
 }

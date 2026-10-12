@@ -5,10 +5,10 @@
   "branch": "codex/tc25-app-manifest-20261012",
   "state": "active",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-12T20:01:54.491Z",
-  "currentResult": "QL7a2 exact protection CLI, production build and36companion testsPASS;64client+66server receipts remain separate. Supporta4a44bf6/tree2c123d9 one-line truthful error correction+13focusedPASS, recordsfa7de0a. Build evidencef4f875d; companion7bcae121; all localonly. Original reviewer targets registered, not delivered or accepted. Render remains live794/health200, no release. Original historical invoice previews located by coordinator with truncation limits, but no method currently qualified or enabled.",
+  "heartbeatAt": "2026-10-12T20:15:27.804Z",
+  "currentResult": "Original reviewer a2ffb6c ACKNOWLEDGED_AND_IN_REVIEW all3 exact targets; no verdict yet. QL7a2 exact CLI/build/36companion/typecheck PASS;64client+66server remain separate. TSC4b8a2f7 exit0/no diagnostics/112.299s/no timeout. Route bindingb45fa60 prepared, notrun; fullsuite971-file effects inventoried90f2434 and notrun. Supporta4a44bf remains independently13PASS. No source change, new release or qualified payment method.",
   "currentTask": "QL-STANDALONE-BUILD-EVIDENCE-20261012",
   "currentLease": "e5449218-2ac0-4341-82cf-534a3e8ae8cd",
-  "currentScope": "Completed two historical QL hash carryforwards under current custody and separate support two-path copy/regression slice. Both exact leases HANDOFF; original frozen sources, tests and records preserved. Foreign continuity/source reservations untouched; no publication/deploy/managed/payment actions. Existing coordinator owns review delivery and release qualification.",
-  "note": "User0ada adopted continuation: preserve frozen QL/support, existing original-reviewer delivery via coordinator, assess only remaining candidate-specific release requirements/build warnings/catalog identities. Records-only continuation, no source/runtime/test rerun/hosted mutation."
+  "currentScope": "Own QL evidence/handoff lease e544 current, frozen source candidates unchanged. Candidate-specific remaining qualification and exact bounded static gates under actual user0ada direction; no application/source edits or implicit fullsuite/SQL. Foreign continuity/source reservations untouched. Existing coordinator owns shared resource windows and original review transport.",
+  "note": "Original reviewer ACKa2ff all3 inreview. ExactQL TSC PASS112.299s exit0 at4b8a2f7; no source change. Fullsuite effects inventoried90f2434, notrun. Staticroute first-run bindingb45fa60 pending fresh coordinator window. No hosted or payment mutations."
 }
