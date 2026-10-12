@@ -4,12 +4,12 @@
     {
       "id": "codex-accepted-source-integration-20261005",
       "tool": "OpenAI Codex desktop",
-      "lane": "doc83-integrator-correction",
+      "lane": "doc87-dc1-two-row-exception",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-11T23:39:49.0443548Z",
-      "note": "Doc83 TC8/9/10 four-path correction frozen locally at source 69d9e32a5df899985b2877e06e1a778060a021f9, tree ac6eb49906d5ec1d22115c9b643a064611f3e76a; handoff .xenios/handoffs/2026-10-11-doc83-integrator-correction-handoff.json. Lease f57c582d-0527-4792-9389-849cf4e60105 HANDOFF; source writer stopped for same builder four-evidence reconciliation. AUTHORED_NOT_RUN, LOCAL_ONLY. Nine builder source files/four evidence files, accepted currentness, supervisor, bf834f90 continuity and protected expected hashes/manifests unchanged. No tests, builds, SQL, probes, push, hosted changes, activation or schedules. Original Claude review remains pending for this successor; actual model/effort NOT_EXPOSED."
+      "heartbeatAt": "2026-10-12T02:03:53Z",
+      "note": "Same integrator resumes existing Doc83 task revision2 at clean b22f d8591e31 after builder verifier checkpoint5a0206c/handoff. Direct Samuel answer 'Approve this exact two-row exception' recorded in coordinator assignment; fresh one-file lease c826b318-18a3-4d01-9b71-d4fafd6ca452 for exact composition blob349d3ea to1ad3539 only. Preserve six other rows/every other source byte, foreign registry/lease histories and builder records. No D56 copy/optionalR3C5/receipt edits/finalization/execution/push/live/schedules. Stop before serial same-builder four-evidence rebind. Actual model/effort NOT_EXPOSED."
     },
     {
       "id": "claude-opus5-main",
