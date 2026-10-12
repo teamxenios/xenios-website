@@ -8,12 +8,12 @@
       "branch": "codex/tc25-app-manifest-20261012",
       "state": "active",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-12T19:38:47.172Z",
+      "heartbeatAt": "2026-10-12T19:46:38Z",
       "currentResult": "QL records-only successor7a2bf753 protection CLI PASS, actual64+66focused runs preserved separately. Fable normal-tool refusal/admission account now published; original refusal unchanged. Support sourcea4a44bf6 /tree2c123d9 independently authored from794,13focused testsPASS; recordsfa7de0a. Original reviewer targets registered but not delivered due existing UI transport failure; no acceptance or production release claimed. Current Render live794, public health200. First method remains unqualified pending current protected configuration/ownership/product/access evidence.",
       "currentTask": "QL-STANDALONE-BUILD-EVIDENCE-20261012",
       "currentLease": "ql-standalone-build-records-20261012",
       "currentScope": "Completed two historical QL hash carryforwards under current custody and separate support two-path copy/regression slice. Both exact leases HANDOFF; original frozen sources, tests and records preserved. Foreign continuity/source reservations untouched; no publication/deploy/managed/payment actions. Existing coordinator owns review delivery and release qualification.",
-      "note": "Separate authorized QL localbuild binding cd6b3cc ready for7a2 exact; isolated clean root/dist absent/private physical deps, no active test. Awaiting actual coordinator one-heavy window before build, no S3/G0 borrowed. Prior QL/support source leases remain HANDOFF."
+      "note": "QL7a2 production build PASS,33seconds,Node20.19,exit0,no timeout; immutable receipts and346-file artifact manifest at f4f875d598f7a32e00ed02b4a8ce0eb1913a02bd. Build slot release acknowledged. No active job; read-only existing protection test applicability assessment only, no skipped historical run resumed. Prior QL/support source leases remain HANDOFF."
     },
     {
       "id": "claude-opus5-main",
