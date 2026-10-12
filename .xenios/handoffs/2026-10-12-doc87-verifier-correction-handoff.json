@@ -1,0 +1,469 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12T01:21:09.855Z",
+  "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+  "builderAssignmentRevision": 3,
+  "compositionReviewRevision": 4,
+  "mapRevision": 4,
+  "owner": {
+    "session": "codex-health-quick-order-20261005",
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005"
+  },
+  "source": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+  "sourceTree": "99935681a3aaf62ae34cbcd2b2bf2c99142f74d5",
+  "sourceParent": "ca7b07703f880bd28ca039dc48fb124b37d4f222",
+  "controllingReview": {
+    "observedAt": "2026-10-12T01:06:49.150Z",
+    "document": 87,
+    "verdictCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "reportedReviewerModel": "claude-opus-5-5",
+    "effort": "NOT_EXPOSED",
+    "taskId": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 3,
+    "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+    "tree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+    "records": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+    "recordsTree": "c146ebff5763aa4b2e0789ff0d687bd538154e15",
+    "disposition": "CORRECTIONS_REQUIRED",
+    "report": {
+      "path": "docs/review/xenios-health-launch-review-20260930/87_COMPOSITION_R3_69d9e32_DELTA_2026-10-11.md",
+      "copy": "CLAUDE_DOC87_PUBLIC_VERDICT_77a2caed_20261011.md",
+      "gitBlob": "aeb489ce487d42e5d77479e46315ba55a36aa319",
+      "rawSha256": "63596d62fd8d9bc1eb008314c08215e4665baae18e55c5a1be4169a5aa06c027",
+      "bytes": 17550
+    },
+    "publishedStructuredFindings": {
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/87_composition_r3_delta_findings.json",
+      "copy": "CLAUDE_DOC87_PUBLIC_FINDINGS_77a2caed_20261011.json",
+      "rawSha256": "8b861c703dc0f6123558429b4db2225fc4ae5b4bee901954d42d5a6b51af68bf",
+      "bytes": 169828
+    },
+    "sourceTests": "AUTHORED_NOT_RUN",
+    "execution": "NOT_RUN",
+    "publication": "PUSHED_BY_ORIGINAL_REVIEWER_NOT_COORDINATOR"
+  },
+  "status": "INTERMEDIATE_VERIFIER_MAP_SOURCE_FROZEN_WRITER_STOPPED",
+  "checkpoint": {
+    "source": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+    "sourceTree": "99935681a3aaf62ae34cbcd2b2bf2c99142f74d5",
+    "correctionMap": {
+      "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "cf5f3c206167e207f72643948976edda667bc0ac",
+      "rawSha256": "6a1077c64774f332d26d12c49473118085b8599707e35f6056f4388e1d8fa56f",
+      "sha256lf": "6a1077c64774f332d26d12c49473118085b8599707e35f6056f4388e1d8fa56f",
+      "bytes": 981540
+    },
+    "verifier": {
+      "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "gitBlob": "ff2f95d727588370eca37265bf9a60bd10d6bd73",
+      "rawSha256": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+      "sha256lf": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+      "bytes": 145384
+    },
+    "runtimeOrigin": "69d9e32a5df899985b2877e06e1a778060a021f9",
+    "runtimeAcceptance": "DOC87_ACCEPTED_WITH_NAMED_LIMITS",
+    "sourceAcceptance": "NEW_VERIFIER_AND_RECORDS_PENDING_ORIGINAL_R4_REVIEW",
+    "receiptRebind": "NOT_PERFORMED",
+    "currentnessBinding": "REVISION3_CONFIRMED_NOT_FINAL_REVISION4_RECONFIRMATION_PENDING",
+    "handoff": ".xenios/handoffs/2026-10-12-doc87-verifier-correction-handoff.json",
+    "writerStopped": true,
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY"
+  },
+  "changedPaths": [
+    "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+    "supabase/verification/research_health_quick_order_local.mjs"
+  ],
+  "changedFileIdentities": [
+    {
+      "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "cf5f3c206167e207f72643948976edda667bc0ac",
+      "rawSha256": "6a1077c64774f332d26d12c49473118085b8599707e35f6056f4388e1d8fa56f",
+      "sha256lf": "6a1077c64774f332d26d12c49473118085b8599707e35f6056f4388e1d8fa56f",
+      "bytes": 981540
+    },
+    {
+      "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "gitBlob": "ff2f95d727588370eca37265bf9a60bd10d6bd73",
+      "rawSha256": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+      "sha256lf": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+      "bytes": 145384
+    }
+  ],
+  "authoring": {
+    "R3C1": "Explicit innermost NOTICE/CONTEXT attribution with four domain probes,25 canonical frame names, five intake/DO refusal frames and exact no-domain twins; named type/DO/diagnostic limitations retained.",
+    "R3C3": "Exact committed dependency receipt blob/raw hash/length plus intake/accepted-dependency/rebased-receipt tree comparisons; six isolated one-value negatives with positive twins, all authored only.",
+    "R3C2": "16added/12rewritten/74unchanged immutable historical receipt delta and restricted later finalization sequence.",
+    "R3C4": "Candidate-wrapper coupling, separate supervisor pair, actual lease windows, monotonic map counter, original sentinel ruling, source/operational limit separation and corrected current dispositions."
+  },
+  "retainedRuntime": {
+    "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+    "tree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+    "status": "DOC87_ACCEPTED_WITH_NAMED_LIMITS",
+    "review": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+    "unchangedSourceInventoryCount": 26,
+    "unchangedSourceInventory": [
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "client/src/App.tsx",
+        "gitBlob": "b5cc8edcc1040eca4009d8e1b68627ae7492d459",
+        "rawSha256": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+        "sha256lf": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0",
+        "bytes": 18079,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+        "gitBlob": "951e363078830b74057fc9132cc0a9102cff3359",
+        "rawSha256": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+        "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+        "bytes": 32255,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "gitBlob": "349d3ea94c8b285460783a23043fe61b9b21ee6e",
+        "rawSha256": "823a99bae4a9af94dd6f0242fed9fb6875796b4843e324c8f3a17216b1bc98e8",
+        "sha256lf": "823a99bae4a9af94dd6f0242fed9fb6875796b4843e324c8f3a17216b1bc98e8",
+        "bytes": 51238,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/index.ts",
+        "gitBlob": "0557ef2c1a071d85f78ba8ea0d90fd894e333d47",
+        "rawSha256": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+        "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe",
+        "bytes": 77299,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/assisted-order/express.ts",
+        "gitBlob": "f8095696817a87c1eab938911254d81b2e36c727",
+        "rawSha256": "f9b41c88eea2c4d60408e707929db09e9f06bded776864d9aa85c06c33b88cbd",
+        "sha256lf": "f9b41c88eea2c4d60408e707929db09e9f06bded776864d9aa85c06c33b88cbd",
+        "bytes": 13351,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/assisted-order/ports.ts",
+        "gitBlob": "c0d90401bbc4374f2dc42d27d883f4422e99fcc1",
+        "rawSha256": "50341a592e8bc313411e8c527e9a032352e20735307314f9470be141f632ee56",
+        "sha256lf": "50341a592e8bc313411e8c527e9a032352e20735307314f9470be141f632ee56",
+        "bytes": 14661,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/assisted-order/production-deps.ts",
+        "gitBlob": "226cac2930a2006ac9d79e12c2c99499fcb693ed",
+        "rawSha256": "adb32a0b6f847afcdd2f6e998193aa328e819c844099b6446c06556c9abc7875",
+        "sha256lf": "adb32a0b6f847afcdd2f6e998193aa328e819c844099b6446c06556c9abc7875",
+        "bytes": 12108,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "gitBlob": "f47443ef97a74c6d592f804f81f45e40bd258ebc",
+        "rawSha256": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5",
+        "sha256lf": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5",
+        "bytes": 36728,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+        "gitBlob": "32cd919a0235cd0c0a55963418c301b5dd86f64b",
+        "rawSha256": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0",
+        "sha256lf": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0",
+        "bytes": 24468,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/assisted-order/quick-order-repository.test.ts",
+        "gitBlob": "d2547502d681877d6adade0ab4f72236d8cab000",
+        "rawSha256": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138",
+        "sha256lf": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138",
+        "bytes": 64297,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/assisted-order/quick-order-repository.ts",
+        "gitBlob": "f001222499689c482eab183d642efd50f2d24634",
+        "rawSha256": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482",
+        "sha256lf": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482",
+        "bytes": 33891,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/health/quick-order/handler.d.mts",
+        "gitBlob": "c66aaf35fdc6bb4a438edb7e7f7dd0e8788db145",
+        "rawSha256": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf",
+        "sha256lf": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf",
+        "bytes": 1479,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/health/quick-order/handler.mjs",
+        "gitBlob": "fb6cf7acb478f9b15adae7c1d099e5e325ab4952",
+        "rawSha256": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a",
+        "sha256lf": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a",
+        "bytes": 16529,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/health/quick-order/ports.ts",
+        "gitBlob": "df020ea3b729a6f6c96f46f546bd29b245759ff6",
+        "rawSha256": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f",
+        "sha256lf": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f",
+        "bytes": 5549,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/health/quick-order/production.test.ts",
+        "gitBlob": "8b2a7b51d6db7cc34ce35e6ec52c5c2c4023fa16",
+        "rawSha256": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
+        "sha256lf": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9",
+        "bytes": 30667,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/health/quick-order/production.ts",
+        "gitBlob": "e7c8d9f57aab964f47bf6d305297dc392b621e40",
+        "rawSha256": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
+        "sha256lf": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc",
+        "bytes": 9743,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "server/research/health/quick-order/root-composition.test.ts",
+        "gitBlob": "cf6ebaa38f26d4cb75fbb405f8e5fe9e2e9e9a2f",
+        "rawSha256": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+        "sha256lf": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f",
+        "bytes": 19984,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+        "gitBlob": "146e9ef92c4e5a153961b9f2de0027c7c286dc61",
+        "rawSha256": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3",
+        "sha256lf": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3",
+        "bytes": 19901,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+        "gitBlob": "5d5e1aa1f1cf9aef5d94bc6b3cb2585bcab69b95",
+        "rawSha256": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9",
+        "sha256lf": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9",
+        "bytes": 19895,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+        "gitBlob": "13585a4df545a9041fc4e2898d98ebf29cdc8246",
+        "rawSha256": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571",
+        "sha256lf": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571",
+        "bytes": 22130,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+        "gitBlob": "415a9a09652d1719fc6176a6e48cad6854ec449e",
+        "rawSha256": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112",
+        "sha256lf": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112",
+        "bytes": 101994,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+        "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+        "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+        "bytes": 16996,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+        "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+        "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+        "bytes": 17174,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+        "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+        "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+        "bytes": 27232,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+        "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+        "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+        "bytes": 226183,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      },
+      {
+        "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+        "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+        "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+        "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+        "bytes": 219791,
+        "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+      }
+    ]
+  },
+  "frozenRecords": [
+    {
+      "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "9ed979381cee9a9aef516c230a300830f67d5a72",
+      "rawSha256": "38441c87df26873014277e7e6e0b5f81e87fda1290f29b51e169bdca465e906c",
+      "sha256lf": "38441c87df26873014277e7e6e0b5f81e87fda1290f29b51e169bdca465e906c",
+      "bytes": 149868,
+      "unchangedSince": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1"
+    },
+    {
+      "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "1cbdb0d8b5858afa6a49a54b110aa528701808c9",
+      "rawSha256": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+      "sha256lf": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+      "bytes": 209031,
+      "unchangedSince": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1"
+    },
+    {
+      "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "7a09060c9bc188ca039368e49fa08e647322f900",
+      "rawSha256": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+      "sha256lf": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+      "bytes": 221027,
+      "unchangedSince": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1"
+    }
+  ],
+  "receiptFamilyRebound": false,
+  "currentnessFinalized": false,
+  "intakeDependencyFinal": false,
+  "intakeOwnSealFinal": false,
+  "sourceReceiptFinalizationPrerequisites": [
+    "EXACT_AUTHORIZED_DC1_SUCCESSOR_AND_SERIAL_HANDOFF",
+    "REVISION4_WHOLE_FAMILY_REBIND_TO_ACTUAL_NEW_BYTES",
+    "ORIGINAL_EVERY_PIN_RECONFIRMATION_OF_REVISION4",
+    "PERMITTED_CURRENTNESS_FINALIZATION_SUCCESSOR_IMMUTABLE_BLOB_HASH_LENGTH"
+  ],
+  "intakeOwnSourceFinalizationPrerequisites": [
+    "EXACT_REVISION4_COMPOSITION_SOURCE_ACCEPTANCE"
+  ],
+  "operationalReadinessPrerequisites": [
+    "IMPLEMENTED_S_COLUMN_DESCRIPTOR_AND_POPULATED_CENSUS",
+    "AUTHORITATIVE_OPERATIONAL_INPUTS_AND_EXTERNAL_EXPECTED_CENSUS_DIGEST",
+    "QUALIFIED_CONNECTION_PROFILE_AND_RECIPIENT_BINDINGS",
+    "TRUSTED_ROW8_COMMERCE_CHECKOUT",
+    "PROTECTED_SEAM_DISPOSITIONS",
+    "ACCEPTED_QUALIFICATION_PROCEDURE_AND_FRESH_EXECUTION_AUTHORITY",
+    "AUTHORIZED_INSTALLATION_AND_RELEASE_ACTIVATION"
+  ],
+  "prerequisiteDistinction": "Operational inputs, qualification and deployment are later prerequisites and do not replace or block source-only finalization permitted after original pin confirmation. Source finalization never makes the uninstallable descriptor or live customer intake ready.",
+  "custody": {
+    "lease": {
+      "id": "83d2a260-aaed-4f3b-aca7-793f7a43c6ad",
+      "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+      "revision": 3,
+      "session": "codex-health-quick-order-20261005",
+      "state": "handoff",
+      "paths": [
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+      ],
+      "claimedAt": "2026-10-12T01:10:26.978Z",
+      "heartbeatAt": "2026-10-12T01:21:09.855Z",
+      "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "branch": "codex/accepted-source-integration-20261005",
+      "recordsBase": "44cb6f795488214e669b1c99f3f85217e086ea64",
+      "sourceBase": "69d9e32a5df899985b2877e06e1a778060a021f9",
+      "stage": "DOC87_VERIFIER_MAP_FROZEN_WAITING_AUTHORIZED_DC1_SERIAL_SUCCESSOR",
+      "ack": ".xenios/handoffs/2026-10-12-doc87-builder-correction-owner-ack.json",
+      "sourceWrites": [
+        "supabase/verification/research_health_quick_order_local.mjs"
+      ],
+      "receiptRebinding": "NOT_PERFORMED_REQUIRES_AUTHORIZED_DC1_AND_NEW_EXCLUSIVE_CUSTODY",
+      "handedOffAt": "2026-10-12T01:21:09.855Z",
+      "writerStopped": true,
+      "sourceCommit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
+      "sourceTree": "99935681a3aaf62ae34cbcd2b2bf2c99142f74d5",
+      "handoff": ".xenios/handoffs/2026-10-12-doc87-verifier-correction-handoff.json"
+    },
+    "previousAcknowledgment": {
+      "commit": "ca7b07703f880bd28ca039dc48fb124b37d4f222",
+      "path": ".xenios/handoffs/2026-10-12-doc87-builder-correction-owner-ack.json",
+      "gitBlob": "9e2f3fa4f132f395a7302a6151357bc6c4afbe49",
+      "rawSha256": "194c1e2a475a103c7a77007dd7b81c7950ab1502990acea8ffad875b1f11bd69",
+      "sha256lf": "194c1e2a475a103c7a77007dd7b81c7950ab1502990acea8ffad875b1f11bd69",
+      "bytes": 9829
+    },
+    "otherLeasesUnchanged": true,
+    "automaticReclaim": false
+  },
+  "review": {
+    "task": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 4,
+    "queued": "NOT_REGISTERED_FOR_INTERMEDIATE_CHECKPOINT",
+    "acknowledged": "NOT_OBSERVED_FOR_REVISION4",
+    "owner": "ORIGINAL_REVIEWER_ONLY",
+    "next": "Exact authorized DC1 composition-test successor and stopped integrator writer; then same builder receives explicit serial evidence custody for shared-binding/currentness/intake/map rebind. Original reviewer performs narrowrevision4 delta and every-pin reconfirmation before permitted finalization."
+  },
+  "delivery": "Existing coordinator-readable local Git workflow only; no native message retry, alternate transport, push or duplicate review dispatch.",
+  "verification": {
+    "kind": "RAW_GIT_BYTES_EVIDENCE_JSON_AND_WHITESPACE_ONLY",
+    "diffCheck": "PASS",
+    "changedPaths": 2,
+    "acceptedRuntimeInventoryUnchanged": true,
+    "frozenRecordsUnchanged": true,
+    "subjectImportsParsersSyntaxCompilersTestsVerifiersSql": "NOT_RUN",
+    "backendDiagnosticCompatibility": "NOT_OBSERVED"
+  },
+  "next": "Exact authorized DC1 composition-test successor and stopped integrator writer; then same builder receives explicit serial evidence custody for shared-binding/currentness/intake/map rebind. Original reviewer performs narrowrevision4 delta and every-pin reconfirmation before permitted finalization.",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "executionReservation": null,
+  "schedules": "UNCHANGED",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}
