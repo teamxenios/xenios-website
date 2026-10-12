@@ -1,0 +1,71 @@
+{
+  "handoff": "DOC99 required four-path correction successor, frozen",
+  "frozenAtUtc": "2026-10-12T21:20:04Z",
+  "lead": {
+    "sessionId": "da289215-87ed-4b4b-bbda-c9af49bda5bc",
+    "nativeName": "Xenios Doc96 assisted-order implementation [4e72ab]",
+    "model": "claude-fable-5-1",
+    "effort": "max",
+    "claudeCode": "2.1.296",
+    "children": "none; the lead authored all four paths; no child identity exists to expose"
+  },
+  "custody": {
+    "parentAck": "4b94816086d3c4ffe99b6c524019070437d87b9b (rev 1), 3da2c072fc5ba6746326321e913e05594d6b7a17 (rev 2, lease 19d2ed9a-ba59-413a-9dc3-f09e272c9bca)",
+    "receivingAck": "C:/xenios-wt/doc96-handoffs/doc99-lead-receiving-ack-and-lease.json and the lead's public message before the first edit",
+    "review": "fa0228e170308737324c1b30a231d7ed03386e87 (Doc99)",
+    "registryAuthority": "c27853fb824d87eb6f962b4b9af28e6482cdb6a6 OWNER-DOC96-BOUNDED-WIZARD-PAYMENT-20261012"
+  },
+  "base": { "sha": "7a2bf7533f5c26d98e0bdb34a862852942b2914e", "tree": "28617c360f487803baa556d33158c4e95df471f1", "immutable": true },
+  "successor": {
+    "sha": "3a03ad650d16442b622796fd614d6dcf47384ea2",
+    "tree": "8b31864708d06997ef718dd22f915a9d8350398d",
+    "parent": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+    "worktree": "C:/xenios-wt/doc99-correction",
+    "branch": "codex/assisted-order-doc99-correction-20261012",
+    "diffstat": "4 files changed, 357 insertions(+), 25 deletions(-); every other path byte-identical to the base",
+    "lineEndings": "CRLF working copies preserved; git blobs LF-normalized"
+  },
+  "scope": [
+    { "path": "client/src/research/assisted-order/AssistedOrderPage.tsx", "baseBlob": "db11f713f31e0f428d4000750df48b9b98688b08", "newBlob": "b36aa81f040f2c8b010c1549b0e4b948425ad0ff", "delta": "+92 -? (hunks: import, two forbidden copy constants, inFlight ref, write-through marker, pre-POST in-flight store on every POST, flight ended on answer/catch/finally, marker cleared on definitive refusal and first-attempt drift, conflict persists uncertainty, forbidden copy constants used)" },
+    { "path": "client/src/research/assisted-order/draft-store.ts", "baseBlob": "d096219bba85e03037a80bf4b38992ad474e9100", "newBlob": "97557ad39dccc135d2f7aa58f86008f29f8a74ad", "delta": "header lifetime disclosure; AssistedOrderStoredAttemptState = AssistedOrderAttemptState | in_flight; reader maps in_flight to uncertain; store accepts the stored type" },
+    { "path": "client/src/research/assisted-order/AssistedOrderPage.test.tsx", "baseBlob": "2e9184ffc9c47f961fc29d2c489b05420bdd40bd", "newBlob": "ce9d73c46ac76f4f0b474aab6574c1f34413757b", "delta": "type import; new in-flight lost-page test; conflict test asserts persisted uncertainty and restored notice; forbidden-copy test retitled and re-pinned; new describe with five real request() cases against a stubbed fetch" },
+    { "path": "client/src/research/assisted-order/draft-store.test.ts", "baseBlob": "378e5593bddc0d6684cc46ea19b0957c056d1f61", "newBlob": "1984188873cb1ec2412b3a25d3f431b1f0e970dd", "delta": "corrupt-table row IN_FLIGHT/42; two in-flight marker tests" }
+  ],
+  "findingToCorrectionMap": {
+    "QL2-1": {
+      "source": "AssistedOrderPage.tsx: inFlight ref; pre-POST store on every submit writes attemptState in_flight (or keeps uncertain) with the frozen acceptedAt; write-through effect writes in_flight while a POST is outstanding; inFlight cleared when the POST answers (success, catch, finally); definitive refusal and first-attempt drift store acceptedAt null plus attemptState none only when attemptState is not uncertain. draft-store.ts: stored type widened with in_flight; readAssistedOrderDraft maps in_flight to uncertain.",
+      "tests": "AssistedOrderPage.test.tsx 'records a submission lost mid-flight as uncertain, restores it with the same key and acceptedAt, and never releases the stamp afterwards' (deferred submit, draft shows in_flight, unmount while pending, remount shows the restored notice with the same key and stamp, a later 400 keeps the stamp and uncertain, the retry replays with the same key and stamp). draft-store.test.ts 'stores the in-flight marker and reads it back as uncertain', 'keeps the frozen stamp beside an in-flight marker', IN_FLIGHT casing row in the corrupt table."
+    },
+    "QL2-2": {
+      "source": "AssistedOrderPage.tsx: FORBIDDEN_AFTER_UNCERTAIN_MESSAGE = 'Your Early Access session ended. An earlier attempt to send this request may already have been saved. Do not resubmit it: check your request status or contact support with the time of your attempt.'; FORBIDDEN_FIRST_ATTEMPT_MESSAGE = 'Your Early Access session ended and nothing was saved. Unlock Early Access again and enter your request again.'",
+      "tests": "AssistedOrderPage.test.tsx 'maps an ended session to enter-again copy first, and to status-or-support copy after an uncertain attempt' (exact strings; after-uncertain copy contains no retry or unlock instruction; same key throughout)."
+    },
+    "QL2-3": {
+      "source": "draft-store.ts header: survives a refresh or retry within one unexpired session in the same tab; expiry, sign-out, re-unlock and tab close lose the identity by design; rebuilt requests submit under a new key with no conflict signal; runbook and staff duplicate check cover the window; the sweep belongs to the route owner.",
+      "tests": "none required; disclosure only. The runbook and release record are the coordinator's."
+    },
+    "QL2-6": {
+      "source": "AssistedOrderPage.tsx conflict branch: setAttemptState(uncertain) and a synchronous store with attemptState uncertain beside the unchanged key and frozen acceptedAt, then the existing conflict notice.",
+      "tests": "AssistedOrderPage.test.tsx conflict test now asserts the persisted uncertain state with the first call's stamp and the restored notice after unmount and remount."
+    },
+    "releaseItem2": {
+      "source": "none (api.ts unchanged)",
+      "tests": "AssistedOrderPage.test.tsx describe 'the real api request path against a stubbed fetch': non-JSON 502 and HTML 413 become request_failed with the generic message; JSON 500 keeps its code and message; a rejected fetch surfaces as TypeError, not AssistedOrderApiError; JSON 200 resolves the receipt; the POST goes to /api/research/early-access/assisted-orders with credentials include and the idempotency key in the body."
+    },
+    "notChanged": ["service.ts and the payment hold", "service.test.ts and http-e2e.test.ts", "api.ts", "EarlyAccessRoute.tsx and the storage sweep", "SQL, admin UI, manifest, protection records", "every P3 named limit"]
+  },
+  "authoredControls": {
+    "state": "AUTHORED_NOT_EXECUTED",
+    "executedTestCount": 0,
+    "claims": "no test, typecheck, build, install, server, browser, SQL, push or deployment was run; the old r2 receipts (64/64 at 7ac40837, 66/66 at 21d7291f) remain the only executed evidence and they bind the base, not this successor"
+  },
+  "qualificationForCore": "per the parent ACK: Node 20.19.0 full Vitest and npm run check at this SHA, the affected tests including the real request wrapper, then the real-environment journey, routes and served evidence under Core's own binding",
+  "cleanupState": {
+    "successorWorktree": "C:/xenios-wt/doc99-correction at 3a03ad65, clean; no node_modules; keep for Core",
+    "leadCheckout": "C:/xenios-wt/assisted-order-doc96-fable-20261012 at a9e44f40, clean, untouched by this successor",
+    "earlierRoots": "doc96-ql12-guard, doc96-tests, doc96-unit, doc96-exec unchanged since the previous handoff",
+    "scratch": "C:/Users/sboad/.claude/jobs/da289215/tmp/doc99 (spec, applier, extracted anchor, commit message) is job-local and disposable",
+    "pushes": "none; all branches local only"
+  },
+  "writerStop": "The lead has stopped writing. No further edit will be made to the four paths unless the same custody is renewed for a named correction."
+}

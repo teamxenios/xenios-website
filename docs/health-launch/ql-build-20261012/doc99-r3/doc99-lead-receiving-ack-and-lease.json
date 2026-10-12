@@ -1,0 +1,45 @@
+{
+  "record": "DOC99 four-path correction successor: receiving acknowledgment and active lease (lead side)",
+  "receivedAtUtc": "2026-10-12T21:20Z",
+  "lead": {
+    "sessionId": "da289215-87ed-4b4b-bbda-c9af49bda5bc",
+    "nativeName": "Xenios Doc96 assisted-order implementation [4e72ab]",
+    "model": "claude-fable-5-1",
+    "effort": "max",
+    "claudeCode": "2.1.296",
+    "children": "none; the lead is the sole writer of all four paths for this successor"
+  },
+  "parentCustody": {
+    "ackCommit": "4b94816086d3c4ffe99b6c524019070437d87b9b (revision 1) and 3da2c072fc5ba6746326321e913e05594d6b7a17 (revision 2)",
+    "ackPath": "docs/health-launch/ql-build-20261012/DOC99_CORRECTION_OWNER_ACK_20261012.json",
+    "lease": "19d2ed9a-ba59-413a-9dc3-f09e272c9bca revision 2, task INDEPENDENT-INCREMENTS-RELEASE-QUALIFICATION-20261012, parent codex-accepted-source-integration-20261005 / 01a0e098-3b23-7233-9b07-877ace092650",
+    "registryAuthority": "c27853fb824d87eb6f962b4b9af28e6482cdb6a6 OWNER-DOC96-BOUNDED-WIZARD-PAYMENT-20261012",
+    "consolidatedAssignment": "515c0cfd docs/coordination/launch-coordination-20261005/DOC99_REQUIRED_FOUR_PATH_CONSOLIDATED_ASSIGNMENT_20261012.json (task DOC99-QL-REQUIRED-FOUR-PATH-CORRECTION-20261012)",
+    "review": "fa0228e170308737324c1b30a231d7ed03386e87 (Doc99)"
+  },
+  "base": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "baseTree": "28617c360f487803baa556d33158c4e95df471f1",
+  "scope": [
+    { "path": "client/src/research/assisted-order/AssistedOrderPage.tsx", "baseBlob": "db11f713f31e0f428d4000750df48b9b98688b08" },
+    { "path": "client/src/research/assisted-order/draft-store.ts", "baseBlob": "d096219bba85e03037a80bf4b38992ad474e9100" },
+    { "path": "client/src/research/assisted-order/AssistedOrderPage.test.tsx", "baseBlob": "2e9184ffc9c47f961fc29d2c489b05420bdd40bd" },
+    { "path": "client/src/research/assisted-order/draft-store.test.ts", "baseBlob": "378e5593bddc0d6684cc46ea19b0957c056d1f61" }
+  ],
+  "exclusions": [
+    "server/research/assisted-order/** including service.ts and its tests (hold unchanged)",
+    "client/src/research/assisted-order/api.ts and every other assisted-order file",
+    "client/src/research/early-access/EarlyAccessRoute.tsx and the storage sweep",
+    "SQL, migrations, admin UI, manifest, protection records, .xenios registries, foreign handoffs",
+    "execution of any kind: tests, typecheck, build, install, server, browser, SQL, push, deploy"
+  ],
+  "successor": {
+    "worktree": "C:/xenios-wt/doc99-correction",
+    "branch": "codex/assisted-order-doc99-correction-20261012",
+    "parent": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+    "shape": "one consolidated commit touching only the four paths",
+    "corrections": ["QL2-1 in-flight marker persisted before every POST, restored as uncertain, cleared only by a definitive refusal with no prior uncertainty", "QL2-2 forbidden copy: status or support after an uncertain attempt; re-enter after unlock on a clean attempt", "QL2-3 draft-store header lifetime disclosure", "QL2-6 conflict persists uncertainty without key rotation", "release item 2: real api.request path against a stubbed fetch inside the existing Page test"]
+  },
+  "preservation": "Reviewed 7a2bf753 immutable; old r2 receipts and handoffs untouched; foreign corpus rows untouched",
+  "publication": "LOCAL_ONLY_NO_PUSH",
+  "execution": "NOT_RUN; Core binds and runs the successor's qualification separately"
+}
