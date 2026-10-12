@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "status": "PREPARED_NOT_RUN",
+  "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+  "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+  "sourceAcceptance": "Doc101 a4 code/tests unchanged; support independent. Own genuine npmci/build receipt bfaaff9e2593cee8d4a08e7a968b7dd6c831e7d7.",
+  "priority": "Use only if no ready QL targeted run; one-heavy serialized through existing coordinator",
+  "cwd": "C:/Users/sboad/.codex/worktrees/support-qualification-20261012/xenios-website",
+  "launcher": "C:/Users/sboad/.codex/tmp/support-postbuild-r2-20261012/run-check.cjs",
+  "launcherSha256": "f34f4346509acb958e2e6a471aa17d16d5529df4cb47ee652faf6b0c6ec1bee9",
+  "pins": "C:/Users/sboad/.codex/tmp/support-postbuild-r2-20261012/pins.json",
+  "pinsSha256": "1b3379f7cf49c17b51776efee92279a1d873188b226363a32164369e27a8e5d0",
+  "runtime": "Full-path Node20.19.0/siblingnpm10.8.2; dependencies from current successful genuine freshnpmci, not donor. Requiredentry/package/installedmetadata/config/source pins frozenafterinstall.",
+  "commands": [
+    {
+      "mode": "check",
+      "argv": [
+        "<full Node20 path>",
+        "<launcher>",
+        "check",
+        "<pins>",
+        "<pinsSha256>",
+        "<fresh stopUTC>"
+      ],
+      "effective": "PinnedNode siblingnpm run check -- --incremental false -> installedtsc; no precheck/postcheck hooks",
+      "wallMs": 300000,
+      "cleanupMarginMs": 15000,
+      "heapMiB": 1536
+    },
+    {
+      "mode": "protection",
+      "argv": [
+        "<full Node20 path>",
+        "<launcher>",
+        "protection",
+        "<pins>",
+        "<pinsSha256>",
+        "<fresh stopUTC>"
+      ],
+      "effective": "PinnedNode node_modules/vitest/vitest.mjs run --config vitest.config.ts --maxWorkers 1 --no-file-parallelism --reporter verbose --reporter json --outputFile.json <private> server/core-site-protection.test.ts",
+      "wallMs": 180000,
+      "cleanupMarginMs": 15000,
+      "heapMiB": 1024
+    }
+  ],
+  "environment": "Literal allowlist Windows basics/NodeGitPATH/privateHOME/TEMP/npm config/cache/prefix; NPMoffline; no inherited app/DB/provider/CI/loader flags. No existing modes outputs/retry; no networkrequested. Typecheck noEmit/incrementalfalse. Protection onlybuiltins Git/source-protection assertions.",
+  "bounds": "One mode per actual reservedwindow, oneattempt each; stopfirstfailure; 20MiBlogcap, absolute deadline/incompletecleanupstatus, boundedpostchecks, actualexternalprocesscheckrequired. No OSaggregate/network enforcement claim orworker self-attestation.",
+  "preflight": "Node --check launcher passed; not applicationtest. FreshRAM>=1.5GiB/no competing ownedheavy; exactsourceclean/pins/source precheck and actualwindow before invocation.",
+  "excludes": [
+    "No installation/build/server/browser/SQL/hosted/email/payment",
+    "No fullsuite/13focused rerun",
+    "No source/test/manifest edit",
+    "No push/deploy"
+  ],
+  "supersedes": "Source-only supervisor correction, not an application change. Original check attempt1 at 21:38:44.608Z failed metadata preflight before compiler start, retained in check-attempt1; no unchanged retry.",
+  "metadataProbeCorrection": "10s max per probe within unchanged job/absolute caps; records fixed executable/argv, timings, exit and sanitized error. Read-only same-environment npm diagnostic at21:39:20.218Z exited0 in819ms, not a typecheck.",
+  "outputs": "Fresh support-postbuild-r2-20261012/check and /protection, both absent at preparation. Separate reservations required."
+}
