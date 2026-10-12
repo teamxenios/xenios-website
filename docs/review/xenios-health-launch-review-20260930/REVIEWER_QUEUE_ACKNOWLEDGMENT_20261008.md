@@ -613,3 +613,18 @@ correction successor review (none registered). Nothing was executed.
 
 Pending on this reviewer: the protection-check receipt comparison when registered, and the QL-11/QL-12 correction
 successor review (none registered). Nothing was executed.
+
+## Queue state update (2026-10-12, three registered successors: docs 99 to 101)
+
+Samuel relayed the coordinator's submission in this session's chat; the registrations at coordinator `c21f510e` and the
+reconciled handoff at `d67a5ed2` were read from Git. All three are **ACKNOWLEDGED and IN REVIEW**, run in parallel
+with QL first. Identities resolved from Git:
+
+| Doc | Board task | Source | Records | Base | Scope |
+| --- | --- | --- | --- | --- | --- |
+| 99 | `DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012` **r2** | `7a2bf7533f5c26d98e0bdb34a862852942b2914e` (tree `28617c36…`) | `42ac49e640a53726107990ec95c977d7f1f3cc56` | `79414143` (deployed lineage) | `AssistedOrderPage.tsx`, `draft-store.ts`, `service.ts` and their four tests; plus the two-row protection carry-forward (`TopRibbon.tsx`, `package.json`, source unchanged) and its approval record. Submitted evidence: 64 client (at `7ac40837`), 66 server (at `21d7291f`), protection CLI PASS, protection Vitest 36/36, build PASS with two chunk-size warnings |
+| 100 | `TC25-SIX-BASELINE-SCOPE-REVIEW` r1 (six-entry amendment) | `f6da5aa6154cc62bdbec34ce29a0a5759fb84136` (tree `fce45cde…`) | `f9d34be4d4d106c03620a23e8eb31915f63552d6` | `d907096c` (after the App amendment `3ec5ec0`) | six `fileHashes` rows (`index.css`, `PwaLifecycle.tsx`, `Navbar.tsx`, `Footer.tsx`, `tracking.ts`, `attribution.ts`) plus the approval record; also the App protection-check receipt doc 98 was waiting for |
+| 101 | `ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-SOURCE-REVIEW-20261012` r1 | `a4a44bf6436f7e4ff21d5d5ebcda35b478c02616` (tree `2c123d9f…`) | `fa7de0a596bac6c8a1b290fd5b2a7358c26a5937` | `79414143` | `SupportView.tsx` (one line) and `support-documents.test.tsx`; 13/13 focused tests at `a4a44bf6` |
+
+Submitted receipts are treated as evidence, not as tests this reviewer ran. The three candidates are reviewed
+separately; separate passing runs are not evidence for any combined tree. Nothing was executed.
