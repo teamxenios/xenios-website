@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+  "revision": 3,
+  "compositionReviewRevision": 4,
+  "at": "2026-10-12T01:10:26.978Z",
+  "owner": {
+    "session": "codex-health-quick-order-20261005",
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005"
+  },
+  "base": "44cb6f795488214e669b1c99f3f85217e086ea64",
+  "baseTree": "32d8ea748f6f0ff933f65a90304f76812f904ec7",
+  "acceptedTransactionSource": "69d9e32a5df899985b2877e06e1a778060a021f9",
+  "acceptedTransactionTree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+  "actualAcknowledgment": "Same builder explicitly claims only the existing intake verifier plus four evidence files after observing exact clean44cb6f and prior HANDOFF custody. First phase edits verifier and correction map only; receipt family and all accepted runtime/client/adapter/SQL bytes remain frozen.",
+  "assignment": {
+    "path": "C:/Users/sboad/.codex/worktrees/3221/xenios-website/docs/coordination/launch-coordination-20261005/DOC87_R4_EXISTING_BUILDER_CORRECTION_20261011.json",
+    "rawSha256": "b22b4774d183343eca19ec7a055c1b846849f00ece32f50b8324e413bba31431",
+    "bytes": 6589,
+    "observedCoordinatorHead": "f75f0037debc220a82936f4899105322bd070c11",
+    "commitContainingAssignment": null,
+    "meaning": "Exact coordinator-prepared assignment snapshot; it is not claimed to be committed when the containing commit is unavailable.",
+    "required": {
+      "R3C1": "Use original option(b) canonical carve-out: attribute each markerNOTICE to innermost capturedCONTEXT; forbid markers from five intake-owned frames and DO blocks, permit only explicit canonical frame allowlist; cover non-keyword types or disclose exact coverage. Do not relax assertion or modify canonical SQL/callees.",
+      "R3C2": "Enumerate actual receipt delta:16added,12rewritten noncurrentness,74unchanged rows; whole-delta rebind not add-only; enforce Doc87 section2 finalization differences and262144B cap.",
+      "R3C3": "Add committed Git comparison for dependency receipt blob/raw hash/byte length and rev-parse exact sourceTree, with one-value negatives in authored verifier. No execution.",
+      "R3C4": "Candidate customer_status wrapper coupling; disclose supervisor pair;ddc54431/f57c582d leases; monotonic revision chronology; originalDoc83TC8 sentinel ruling; integrity-onlySTRICT,decoder/CHECK parity andconfiguration422/TC28operator signal limits."
+    },
+    "sequence": [
+      "Acknowledge exact current custody/base; explicitly claim verifier+four evidence paths before writes; preserve historical leases and foreign rows",
+      "Complete coherent verifier+correction-map source checkpoint now; report exact SHA/tree and altered paths",
+      "DC1 composition-test source action is PENDING explicit protected-hash/preservation exception; do not edit composition test, App, SQL, adapter, manifest or canonical source",
+      "Keep currentness/intake receipts NON_FINAL; do not perform final whole-family rebind until the exact authorized DC1 successor is present and integratorGitwriter has stopped",
+      "After exactDC1 successor and serial custody handoff, commit sharedbinding first; currentnessreceipt and dependentintakereceipt next; correctionmap/handoff; both inventories identical actualpins",
+      "Register existing compositionreviewr4 once after coherent combinedsource+records freeze. Original narrowdelta+every-pin reconfirmation required",
+      "Only after actual reconfirmation: currentnessreceipt statusSOURCE_ACCEPT_WITH_LIMITS/review29ccf647 plusDoc87label and allowedR4pins; then dependencysealFINAL against actual prior receiptblob/definition. Intakeownsource seal remainsNON_FINAL until actual composition acceptance"
+    ],
+    "authority": {
+      "copy": "WEBSITE_COMPLETION_EXPLICIT_DIRECT_AUTHORITY_20261011.txt",
+      "rawSha256": "e7cc53c11f0333e708d9e459d01c9d8eaa0761646d708d0c3f0971b0004edac7",
+      "bodySourceGrant": "Existing exact authoring/delegation; original verdict is acceptance guidance, not new execution or sensitive-scope permission"
+    }
+  },
+  "controllingReview": {
+    "observedAt": "2026-10-12T01:06:49.150Z",
+    "document": 87,
+    "verdictCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "reportedReviewerModel": "claude-opus-5-5",
+    "effort": "NOT_EXPOSED",
+    "taskId": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 3,
+    "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+    "tree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+    "records": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+    "recordsTree": "c146ebff5763aa4b2e0789ff0d687bd538154e15",
+    "disposition": "CORRECTIONS_REQUIRED",
+    "report": {
+      "path": "docs/review/xenios-health-launch-review-20260930/87_COMPOSITION_R3_69d9e32_DELTA_2026-10-11.md",
+      "copy": "CLAUDE_DOC87_PUBLIC_VERDICT_77a2caed_20261011.md",
+      "gitBlob": "aeb489ce487d42e5d77479e46315ba55a36aa319",
+      "rawSha256": "63596d62fd8d9bc1eb008314c08215e4665baae18e55c5a1be4169a5aa06c027",
+      "bytes": 17550
+    },
+    "publishedStructuredFindings": {
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/87_composition_r3_delta_findings.json",
+      "copy": "CLAUDE_DOC87_PUBLIC_FINDINGS_77a2caed_20261011.json",
+      "rawSha256": "8b861c703dc0f6123558429b4db2225fc4ae5b4bee901954d42d5a6b51af68bf",
+      "bytes": 169828
+    },
+    "sourceTests": "AUTHORED_NOT_RUN",
+    "execution": "NOT_RUN",
+    "publication": "PUSHED_BY_ORIGINAL_REVIEWER_NOT_COORDINATOR"
+  },
+  "lease": {
+    "id": "83d2a260-aaed-4f3b-aca7-793f7a43c6ad",
+    "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+    "revision": 3,
+    "session": "codex-health-quick-order-20261005",
+    "state": "active",
+    "paths": [
+      "supabase/verification/research_health_quick_order_local.mjs",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+    ],
+    "claimedAt": "2026-10-12T01:10:26.978Z",
+    "heartbeatAt": "2026-10-12T01:10:26.978Z",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "recordsBase": "44cb6f795488214e669b1c99f3f85217e086ea64",
+    "sourceBase": "69d9e32a5df899985b2877e06e1a778060a021f9",
+    "stage": "DOC87_VERIFIER_AND_CORRECTION_MAP_BEFORE_DC1_SERIAL_HANDOFF",
+    "ack": ".xenios/handoffs/2026-10-12-doc87-builder-correction-owner-ack.json",
+    "sourceWrites": [
+      "supabase/verification/research_health_quick_order_local.mjs"
+    ],
+    "receiptRebinding": "HELD_UNTIL_AUTHORIZED_DC1_SUCCESSOR_AND_EXCLUSIVE_HANDOFF"
+  },
+  "inputBindings": [
+    {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "gitBlob": "6720110dbe253f9b7dfe106c3e08ad0fab87c3f4",
+      "rawSha256": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b",
+      "bytes": 127690
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "9ed979381cee9a9aef516c230a300830f67d5a72",
+      "rawSha256": "38441c87df26873014277e7e6e0b5f81e87fda1290f29b51e169bdca465e906c",
+      "bytes": 149868
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "7a09060c9bc188ca039368e49fa08e647322f900",
+      "rawSha256": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+      "bytes": 221027
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "1cbdb0d8b5858afa6a49a54b110aa528701808c9",
+      "rawSha256": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+      "bytes": 209031
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "7042eb1a48c1f42e0c18578c3ccc39c507ad315d",
+      "rawSha256": "099fe81c7b76c42dc22ab8f5a6dbeca1c12cfc61656e1b9b71e7dca54925d0f1",
+      "bytes": 906220
+    }
+  ],
+  "previousHandoff": {
+    "path": ".xenios/handoffs/2026-10-11-doc83-composition-evidence-handoff.json",
+    "commit": "44cb6f795488214e669b1c99f3f85217e086ea64",
+    "rawSha256": "f55295c8c4f6c253c1e867ea5929206b5f7a0e63a46c71e2f4a786e0dd14f5e8"
+  },
+  "nonoverlappingActiveLeases": [
+    {
+      "id": "bf834f90-14a8-4e7a-abb9-f12913cd262c",
+      "task": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/DECISIONS.md",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T06:26:41.299Z",
+      "heartbeatAt": "2026-10-01T18:24:01.294Z"
+    }
+  ],
+  "sourceAcceptance": "DOC87_RUNTIME_ACCEPTED_WITH_NAMED_LIMITS_VERIFIER_CORRECTION_PENDING",
+  "receiptBindingConfirmation": "DOC87_CONFIRMED_784e8c1_CURRENTNESS_BINDING_NOT_FINAL",
+  "DC1": "HELD_APPLICABLE_PRESERVATION_HASH_EXCEPTION_AND_SERIAL_SUCCESSOR_REQUIRED",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED"
+}
