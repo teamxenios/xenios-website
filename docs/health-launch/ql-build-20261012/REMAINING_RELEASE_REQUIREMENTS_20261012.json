@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "at": "2026-10-12T20:38:00Z",
+  "at": "2026-10-12T21:09:00Z",
   "kind": "CANDIDATE_SPECIFIC_REMAINING_RELEASE_REQUIREMENTS",
   "instruction": {
     "path": "C:/Users/sboad/.codex/attachments/21ccc15e-477b-4d01-bdff-8a5eb12a60d5/Pasted text.txt",
@@ -12,7 +12,7 @@
     "title": "Multi-document project review",
     "delivery": "ACTUAL_USER_RELAY_CONFIRMED_BY_ORIGINAL_REVIEWER_COMMIT",
     "acknowledgment": "a2ffb6cff621723adf3c42a8c71569f875009250:docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
-    "quoteMeaning": "Actual original acknowledgment of all three targets at a2ff; Doc101 later accepted with named limits at be35aa7. Docs99/100 remain in review at latest local reviewer branch; no remote freshness or execution inferred.",
+    "quoteMeaning": "All3 actual published dispositions read from original reviewer branchfa0228e. No review pending until new correction registered. Reviewer ran nothing.",
     "targets": [
       {
         "doc": 99,
@@ -21,7 +21,18 @@
         "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
         "tree": "28617c360f487803baa556d33158c4e95df471f1",
         "records": "42ac49e640a53726107990ec95c977d7f1f3cc56",
-        "verdict": null
+        "verdict": {
+          "commit": "fa0228e170308737324c1b30a231d7ed03386e87",
+          "disposition": "ACCEPTED_WITH_NAMED_LIMITS_PRE_RELEASE_QL2_1_2_3_REQUIRED",
+          "P0": 0,
+          "P1": 0,
+          "required": [
+            "QL2-1",
+            "QL2-2",
+            "QL2-3"
+          ],
+          "otherOpen": "QL2-4 through QL2-20 retained by original IDs; QL2-6 included per section4."
+        }
       },
       {
         "doc": 100,
@@ -32,7 +43,11 @@
         "records": "f9d34be4d4d106c03620a23e8eb31915f63552d6",
         "registration": "docs/coordination/launch-coordination-20261005/TC25_SIX_BASELINE_SCOPE_REVIEW_REGISTRATION_20261012.json",
         "note": "Third target read from actual registration; reviewer uses shortened task label but exact source matches.",
-        "verdict": null
+        "verdict": {
+          "commit": "93f43c12b58b15bc5d657845d7e7e93b20a21d99",
+          "disposition": "SIX_ENTRY_SCOPE_ACCEPTED_APP_CLI_LIMITED_EVIDENCE_ACCEPTED",
+          "composition": "FAIL: server/static.ts hard plus server/index.ts and server/research/index.ts seams; SE-1P1 for composition only; original owners retained. App companion Vitest NOT_RUN."
+        }
       },
       {
         "doc": 101,
@@ -59,8 +74,8 @@
   },
   "selection": {
     "qualifiedReleaseCandidate": null,
-    "provisionalQualificationTarget": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
-    "reason": "QL has actual build/protection/typecheck gates plus focused evidence but Doc99 pending. Support is smaller and nowsourceaccepted Doc101, but lacks own applicable protection/build/typecheck/fullsuite. Neither releasequalified; no automaticcombination.",
+    "provisionalQualificationTarget": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+    "reason": "Support separate control-only successor with unchanged accepted code/tests and actual own28-hash CLI PASS; remaining checks pending. QL7a2 needs bounded source successor, so fresh7a2 npm-ci/build held. No automatic combination.",
     "truthfulQLScope": "Request recovery corrections and fail-closed payment-transition hold, not operational paid checkout.",
     "truthfulSupportScope": "Uncertain-outcome wording and draft-preservation regressions, not backend idempotency or QL correction."
   },
@@ -107,28 +122,30 @@
         "Exact7a2 static route uniqueness PASS: 448 registrations /439 call sites, one42.650s run, exit0/no timeout; raw receipt/log in route-check/"
       ],
       "missing": [
-        "Original independent disposition",
+        "QL2-1/2 correction successor + QL2-3 runbook/disclosure; QL2-6 conflict persistence per Doc99; then one original narrow review",
         "Candidate-applicable full suite PASS",
         "Release diff-scan/manifest/site records applicable exact-candidate qualification",
         "Applicable supported request/status/staff-readback browser/journey evidence",
         "Installed dependency compatibility and current legal/config inputs for released scope",
-        "Exact deploy payload/destination/rollback/stop and side-effect record, postdeploy served identity and smoke"
+        "Exact deploy payload/destination/rollback/stop and side-effect record, postdeploy served identity and smoke",
+        "Realapi.ts request wrapper test; required real lost-response durable exactly-one-request browser and admin PATCH refusal via UI; DB existing payment_pending/payment_review precheck through actual owner/authority, no mutation"
       ]
     },
     "support": {
       "carry": [
         "Own13 focused testsPASS",
-        "Doc101 originalsourceacceptancebe35aa7 WITH_NAMED_LIMITS; AS-1P2nonblocking remainsopen"
+        "Doc101 originalsourceacceptancebe35aa7 WITH_NAMED_LIMITS; AS-1P2nonblocking remainsopen",
+        "Control-only successor f4358b5/tree5a6a401: samea4 application/tests; exactCLI28hashesPASS exit0 at21:07:04Z; priora4 CLIexit1 preserved separately"
       ],
       "missing": [
         "Candidate-applicable full suite/typecheck/build",
-        "Own exact protection disposition/CLI/companion checks; two historical stale baseline entries need existing protection custody",
+        "Own companion protection test and remaining exact release checks; historical two-pin disposition completed under current custody",
         "Route uniqueness and release diff/manifest/site records",
         "Applicable support browser path proof",
         "Same conditional release destination/rollback/config/dependency/postdeploy requirements"
       ]
     },
-    "fullSuiteAndTypecheckDecision": "Fullsuite required and not executed for eithercandidate. ExactQL typecheck nowPASS; support needsownapplicabletypecheck. No exemption or olddifferent-tree evidence borrowed. Fullsuite effects/preflight are explicit and no SQL/boot gating skipped silently.",
+    "fullSuiteAndTypecheckDecision": "Fullsuite not executed on either final candidate. Old7a2 typecheckPASS4b8a2f7 reconciles reviewed packet limitQL2-20; does not prove new QL successor. Support own typecheck still NOT_RUN. No silently disabled SQL/boot groups.",
     "historicalEvidence": "Do not relabel production794 or different full-composition trees; preserve refused/skipped/failed runs. Combining candidates requires actual combined-tree checks."
   },
   "warnings": {
@@ -266,22 +283,19 @@
     "lastObservation": "2026-10-12T20:30:58.8412234Z; explicit Render workspace/service latest3 deploys and public health200. Current live dep-daqft3vf3r2c73b7e88g points to794; no queued/running among3 returned, not exhaustive all-deploy census. Health body lacks SHA.",
     "destination": "srv-d8s9vej7uimc7384dfcg in tea-d8nhh6a8qa3s73f4ocj0",
     "rollbackCandidate": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d; must reverify current service and predecessor immediately before actual release",
-    "stop": "No qualified original disposition or full remaining checks yet; no deployment"
+    "stop": "No qualified new candidate: support further execution pending; QL required source corrections and qualification pending; composition protection remains blocked. No deployment."
   },
   "actionsThisAssessment": {
     "sourceEdits": false,
     "applicationTests": false,
-    "buildRerun": false,
     "fullSuiteRerun": false,
     "installation": false,
     "hostedWrites": false,
-    "emails": false,
+    "email": false,
     "payment": false,
-    "push": false,
-    "merge": false,
     "deploy": false,
-    "staticRouteExecuted": true,
-    "preparationOnly": true
+    "executedSupportProtection": true,
+    "supportControlMetadataChanged": true
   },
   "previousInstruction": {
     "path": "C:/Users/sboad/.codex/attachments/0ada60b9-885b-4cdd-abe9-e66aaa035244/Pasted text.txt",
@@ -289,7 +303,7 @@
     "interpretation": "User expressly designated pasted text as request. Existing candidates preserved; review and actual remaining requirements, not new corrections or combined release."
   },
   "releasePreparation": {
-    "status": "PREPARED_INCOMPLETE_NOT_DEPLOYABLE",
+    "status": "OLD_7A2_PREPARATION_HELD_PENDING_CORRECTED_SUCCESSOR",
     "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
     "tree": "28617c360f487803baa556d33158c4e95df471f1",
     "baseline": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
@@ -343,7 +357,7 @@
       "payloadExecuted": false
     },
     "preconditions": [
-      "Actual Doc99 disposition and applicable executed full-suite/browser/release evidence",
+      "Doc99 complete with mandatory client corrections; new successor and applicable full-suite/browser/release evidence required",
       "Fresh single-writer/service/workspace/current-live/active-or-queued-deploy checks",
       "Exact source/tree/ancestry and installed dependency, legal/config compatibility",
       "Existing release-manifest schema and independent ownership attestation, no invented PASS fields",
@@ -372,10 +386,27 @@
       "status": "NOT_RUN",
       "existingMechanism": "scripts/evidence/build-candidate-preview.mjs plus scripts/preview-research.mjs",
       "actualGap": "Current passing donor-copy build lacks dist/evidence-provenance.json. Existing validator requires actual npm ci --no-audit --no-fund with exactNode/npm/lock/source provenance. No forged stamp or validator relaxation.",
-      "next": "Use fresh clean same7a2 checkout and genuine existing install/build procedure in coordinator resource window, retaining earlier build/receipts separately. Earlier actual conditional-authority record explicitly has newInstallationPermission:false; exact local npm-ci/install-build action referred to existing coordinator for current permitted mechanism, not a duplicate release GO.",
+      "next": "Original fresh7a2 install/build now HELD for required correction successor, not awaiting source-review. Necessary local locked npm-ci is covered by actual human build/browser scope, earlier newInstallationPermission:false was coordinator annotation not human prohibition. Supportf435 newbinding under qualification/r2, awaiting finite coordinator window; olda4 binding NOT_RUN preserved.",
       "installScope": "Existing builder requires Node20.19.0 and sibling npm10.8.2; genuine npm ci --no-audit --no-fund then npm run build, clean SHA/tree/lock checks and exact dist inventory. Fresh private npm config/cache/temp, no inherited application credentials. Registry downloads and native esbuild postinstalls/optional bufferutil node-gyp-build are real effects, not read-only. Preserve lock unchanged; 411 dependency records lack resolved/integrity, so exact-lock hash is not full tarball-integrity coverage. No install performed.",
       "captureScope": "Existing Chromium1228 file version149.0.7827.55 available, no browser download required. Default matrix103routes/1133captures is not a small probe; its720CSSpx+DSF2 case is viewport proxy, not true200percent browser zoom, and has no400percent case. Existing wizard route is /research/early-access/order-request, not /health/quick-order.",
       "limits": "Owned local Supabase fixture only implements nonce/session RPCs and refuses other writes. Suitable for layout/client gating; fallback catalog is not canonical-full-catalog or durable submitted-request/operator/payment proof. Vite/in-memory supplemental harness is UI_PRESENTATION_ONLY, not exact production-build or payment qualification."
     }
+  },
+  "currentInstruction": {
+    "path": "C:/Users/sboad/.codex/attachments/548aec07-86ba-47cc-b649-501978f24912/Pasted text.txt",
+    "sha256": "85e75479aa839e5dac6667d5de59b2a2234ce27b22942733e730dc5b87f6792e",
+    "meaning": "All three reviews complete; existing Fable performs separate bounded Doc99 successor, support unchanged independently qualified."
+  },
+  "qualificationEvidenceReconciliation": {
+    "typecheck": "Existing7a2 PASS4b8a2f7f30a679fe92f8a9ca9386efad27595e42, actual20:11:00.758–20:12:53.057Z,112.299s,exit0/0diagnostics, exactNode20.19 directTypeScript5.6.3 --project tsconfig.json --incremental false. Rawreceipt/logb45fa602223b4d653d4751eafed16d85b7834a83. Do not edit original Doc99 statement or apply this to newsource.",
+    "route": "Existing exact7a2 route448/439 PASS3fc019c4df67eb70538434d7d8697203bafd0bb8 retained, not newsourceproof.",
+    "warnings": "One mixed static/dynamic AdminResearchHome import warning; one chunk-size advisory. No warning-fatal change or measured performance clearance."
+  },
+  "qlCorrection": {
+    "ack": "3da2c072fc5ba6746326321e913e05594d6b7a17",
+    "lease": "19d2ed9a-ba59-413a-9dc3-f09e272c9bca revision2",
+    "owner": "Existing Fableda via existing coordinator",
+    "scope": "Four client source/test paths only; actual receivingACK then sourcework. KeepQL12serverhold/EAprivacy/auth/source7a2snapshot.",
+    "status": "CURRENT_PARENT_EXCLUSIVE_ACK_PUBLISHED_RECEIVING_ACK_PENDING"
   }
 }
