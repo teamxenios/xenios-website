@@ -476,3 +476,15 @@ Git:
   authority is checked in doc 87.
 
 Nothing was executed.
+
+## Queue state update (2026-10-11, docs 88 to 91)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 88 | `DOC67-SUPERVISOR-CORRECTION-DELTA-20261009` successor (`f633a77` / `fcc98a2`) | COMPLETE: **SOURCE ACCEPTED WITH LIMITS; EXECUTION ELIGIBILITY NONE.** SV-3 to SV-11 are corrected. No limit changed, and the helper is byte-identical. SV-1 and SV-2 remain open execution gates. P3 only (SS-1/SSV-1, SS-2, SS-3a) |
+| 89 | `FULLSITE-ORDER-HISTORY-CONTINUITY-20261011-SOURCE-REVIEW` r2 (`0ced427` / `d30d5b7`) | COMPLETE: **OH-1 CORRECTED; ACCEPTED WITH NAMED LIMITS** (P3 only) |
+| 90 | `D56C2-THREE-PATH-SOURCE-REPAIR-20261010-SOURCE-REVIEW` r1 (`3638709` / `60b963c`) | COMPLETE: **SOURCE ACCEPTED WITH NAMED LIMITS**, plus integration condition DC-1 (P2). D56C2 changes the two ProductPage blobs that `QuickOrderApp.composition.test.tsx:847-848@69d9e32a` pins. It must be resolved before D56C2 and composition r3 share a tree; the order is decided in doc 87 |
+| 91 | `FULLSITE-PRODUCTS-SESSION-CONTINUITY-20261011-SOURCE-REVIEW` r1 (`603af3d` / `ca318e6`) | COMPLETE: **ACCEPTED WITH NAMED LIMITS** (P3 only). It contains D56C2, so DC-1 applies to its tree too |
+
+Docs 87 (composition r3, first priority), 92 (CI workflow bytes) and 93 (production profile) remain in review. Nothing
+was executed.

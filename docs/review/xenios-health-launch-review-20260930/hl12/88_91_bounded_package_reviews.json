@@ -1,0 +1,1165 @@
+{
+ "archive": "docs 88-91 bounded package reviews",
+ "reviewer": "session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-opus-5-5)",
+ "workflowRun": "wf_27692927-f09",
+ "execution": "NOT_RUN",
+ "reviewerByteChecks": {
+  "supervisor_sha256_f633a771": "ed3c8076856ff7be42ab92bddbbc3ef59b21564322b66c1492509fdee7153f1a",
+  "manifest_sha256_f633a771": "f5decbe9998203dfd5784586b804fb403cb61f97fc53f9c284c6b04156a92004",
+  "DC-1_pins_at_69d9e32a": "QuickOrderApp.composition.test.tsx:847-848 pin ProductPage.tsx d50b4671 and ProductPage.subscription.test.tsx ce94ff42; D56C2 36387094 has 3df04f38 and ad27b8ee",
+  "OH-1": "OrderHistory.tsx:52-65@0ced427 reads memberChecking and derives loading first"
+ },
+ "results": [
+  {
+   "pkg": "supervisor-successor",
+   "tag": "SS",
+   "check": {
+    "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
+    "summary": "SS package, the Doc84 bounded S2 correction. Source f633a771 (tree 2683c971) was compared with the Doc84-accepted 3e5e2ed. Records are fcc98a27. NOTHING WAS RUN. All Windows, Node, libuv and Job Object behaviour is reasoned from source only and is NOT PROVEN.\n\nDisposition: SOURCE ACCEPTED WITH LIMITS. EXECUTION ELIGIBILITY: NONE.\n\nScope holds. The ancestry is 3e5e2ed -> 71bdd9d (records) -> 086cf86 (owner ack, records only) -> f633a77 -> fcc98a2. f633a77 touches only qualification-supervisor.mjs and qualification-manifest-20261008.json. fcc98a2 touches only the three .xenios registries and the new handoff.\n\nBindings match the handoff:\n- Supervisor: blob d2e20a8, 204,885 bytes.\n- Manifest: blob fb55451, 1,520,981 bytes.\n- Exact two-file diff: 58,218 bytes.\n- The raw SHA-256 values (supervisor ed3c80..., manifest f5decbe..., diff 03945aa..., helper f9d00bf...) were not recomputed: NOT PROVEN.\n\nUnchanged:\n- The embedded helper is byte-identical. The first supervisor hunk is at @@ -1304, after the helper region.\n- No numeric or boolean manifest leaf changed. The only changes are string leaves plus the new doc84Correction block and a new pendingVerifierHistory string.\n- No limit, stage count, wall or cap changed. The stage map and the 60,000 ms assertion are unchanged context lines.\n- All five G0 correctionHolds remain EXPLICIT_HOLD (manifest:2805-2811, 32908-33115@f633a771).\n\nThe corrections:\n- SV-3 and SV-4 are corrected exactly as the Doc84 critic specified.\n- SV-5 through SV-11 are corrected in source comments and manifest prose, and the handoff restates SV-3 through SV-11 in its correction map.\n- SV-1 and SV-2 stay open S3 execution gates (retainedStageFindings OPEN_EXECUTION_GATE, manifest:33504-33512). They are not claimed closed.\n- SV-12 to SV-14 are now disclosed. SV-15 and SV-16 are labelled.\n\nPreservation holds:\n- run.deadline is assigned only at :1649 (guarded), :1912 (validated restore) and :2097 (prelaunch aggregate).\n- The completed-command check at :2153 is unchanged.\n- The cleanupProven formula at :2295 is unchanged.\n- Ambiguous attempt publication is sticky. The lock release without a receipt is now opt-in only from the two zero-command branches.\n\nThree P3 residuals travel as limits; none blocks acceptance:\n- SS-1: the late-G0-acceptance restartForbidden also covers clock-relative and malformed clauses.\n- SS-2: two advisory labels are imprecise.\n- SS-3: three small prose and comment leftovers.\n\nNo P0, P1 or P2. No authored test discriminates the corrected finalization paths; correctness rests on source tracing.\n\nWhat still prevents execution is unchanged from doc 84 section 3: SV-1, SV-2, G0_ONE_MINUTE_ALL_WORK, the other three holds, SV-13, the responder, calibration, the native-lane rebase, fresh authority and raw SHA-256 verification.\n\nNo registration copy for f633a77/fcc98a2 exists in the named registration directory, so the task text, doc 84 and the fcc98a2 handoff served as the request.",
+    "checks": [
+     {
+      "item": "Commit scope: source changes only the two scoped paths; records commit changes only records/continuity",
+      "status": "MET",
+      "evidence": "git show --stat f633a771: only qualification-manifest-20261008.json (139 lines) and qualification-supervisor.mjs (93 lines). Parent is 086cf86; chain 3e5e2ed->71bdd9d->086cf86->f633a77. fcc98a27 (parent f633a77) touches only .xenios/ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json and .xenios/handoffs/2026-10-11-doc84-bounded-s2-source-handoff.json. git diff --stat 3e5e2ed..f633a77 shows only those two files plus .xenios records/owner-ack/prior handoff."
+     },
+     {
+      "item": "Byte bindings recorded in handoff and manifest",
+      "status": "PARTIAL",
+      "evidence": "Diff index lines f53b743..d2e20a8 and 72c3f09..fb55451 match handoff sourceBindings. git show f633a771:<path> | wc -c gives 204885 and 1520981, and the exact two-file diff | wc -c gives 58218, matching handoff exactDiff.bytes. Raw SHA-256 values (manifest supervisor.sha256 ed3c8076..., manifest f5decbe9..., diff 03945aa6..., nativeHelperSha256 f9d00bf2...) were not recomputed (no hash tool permitted): NOT PROVEN. A wrong supervisor.sha256 would fail closed at the runtime git-show check."
+     },
+     {
+      "item": "Embedded Windows helper byte-identical",
+      "status": "MET",
+      "evidence": "The first supervisor hunk of git diff 3e5e2ed f633a771 is @@ -1304 (assertStageEligibility). WINDOWS_HELPER sits around lines 759-900 (doc 84 SC checks), so no helper byte changed. Handoff records nativeHelperUnchanged true."
+     },
+     {
+      "item": "No limit, stage count, wall, cap or numeric leaf changed",
+      "status": "MET",
+      "evidence": "The stage-map constant and the wallMs===60_000 assertion are unchanged context lines (qualification-supervisor.mjs:1300-1306@f633a771). Filtering the manifest diff to non-string-leaf lines leaves only the new doc84Correction object structure, so no numeric or boolean leaf changed. The TAP profile keeps maxOwnedProcesses 3 (manifest:2293). G0 stageMapping values 3/4/8 are unchanged context."
+     },
+     {
+      "item": "SV-3: a validated resume refused before its attempt record goes terminal only on limits that end the existing pause",
+      "status": "CORRECTED",
+      "evidence": "FINITE_RESUME_START_ALLOWANCE_DOES_NOT_FIT is now pushed only when attemptRecorded (qualification-supervisor.mjs:2318-2319@f633a771). The terminal test (:2324-2330) is parentPauseExpiredBeforeAttempt (validatedPause && !attemptRecorded && finishedMs > parent latestResumeStartAt; that timestamp is validated finite at :1869 before validatedPause is set at :1918) OR one of STARTED_GROUP_TIME_EXHAUSTED, HANDSHAKE_CAPACITY_EXHAUSTED, INVOCATION_BUDGET_EXHAUSTED, RUN_STOPPED_BY_TERMINAL_GROUP. This is exactly the critic's SV-3 list, and all four are monotone. STARTED_PAUSE_TIME_EXHAUSTED stays terminal through its thrown terminalProgress (:1921, catch :2242). Hand trace of doc 84's SB-1 example (refusal at f+20 s inside a 45 s allowance): FINITE is not pushed, finishedMs <= latestResumeStartAt, so preAttemptResumePreserved stays true. The result is <G>-<inv>.resume-refused.json with PARTIAL_PROGRESS_PRESERVED_CURRENT_INVOCATION_REFUSED, and the pause survives. Converse case (refusal after latestResumeStartAt) is now terminal at G.group.json. INVOCATION_BUDGET_UNVERIFIED does not kill a pause. After the attempt is recorded, FINITE still blocks paused (:2320-2323) and the outcome remains STARTED_TERMINAL (label nuance in SS-2). Manifest M:775 and D68-1 (M:33459) now state this. NOT RUN."
+     },
+     {
+      "item": "SV-4: a budget-inspection failure for a complete group is recorded only in futureAdmission/eligibilityLimits",
+      "status": "CORRECTED",
+      "evidence": "The catch at qualification-supervisor.mjs:2300-2307@f633a771 no longer touches dependencyAccepted. It sets futureAdmission.inspectionFailure and a separate budgetInspectionFailureCode. It sets failure and failureCode only when !dependencyAccepted && failure === null. :2312-2313 then pushes INVOCATION_BUDGET_UNVERIFIED into eligibilityLimits. A green G0 or other complete group therefore stays executionState COMPLETED, continuation COMPLETE and dependencyAccepted true, matching the 25858ad behaviour doc 84 asked for. An incomplete started post-attempt pause candidate still fails closed (limits non-empty, so not paused: STARTED_TERMINAL). That is disclosed in D68-5 (M:33462) and doc84Correction.correctionMap.SV-4. Later admissions re-inspect through assertInvocationBudget (:1948-1958), so the change opens no bypass."
+     },
+     {
+      "item": "SV-5: compiler and console-host wording and N=3 arithmetic",
+      "status": "CORRECTED",
+      "evidence": "Source comment at qualification-supervisor.mjs:1307-1310@f633a771 now says the compile phase stays HELD under the count-minus-one outer Job (2/3/7), that no separate compile limit exists, and that the assertions check the map, not full-tree console-host enforcement. Manifest M:754, M:2326 assertion, M:32922 ordering and doc68Amendment.U15 now carry: 'Node supervisor + PowerShell helper + subject already equals three; any additional counted console host exceeds a three-process row. The real-child-tree row already needs four before applicable console hosts.' Compiler labels at M:2333 and M:33456 read HELD_EXISTING_COUNT_MINUS_ONE_OUTER_JOB_NO_SEPARATE_COMPILE_LIMIT. 'This source implements it' is replaced by 'complete owned-tree and console-host enforcement remains unproved' (M:32913)."
+     },
+     {
+      "item": "SV-6: attempt record published through writeInitialRecord",
+      "status": "CORRECTED",
+      "evidence": "qualification-supervisor.mjs:2133-2143@f633a771: the attempt record uses writeInitialRecord. It takes the returned digest instead of re-reading the file, and pushes recoveredUnpublished. The catch at :2225-2226 records unpublishedArchives into initialPublicationRecoveries, which the result record carries. On proven absence after one identical-bytes retry, attemptRecorded stays false, the temporary is archived under '.metadata-unpublished-*' (outside the G- name filter), and no .pending orphan remains. The next fresh start's .pending sticky scan (:2002-2005) therefore cannot strand the run. Ambiguous publication sets evidenceUncertain (catch :2245), so cleanupProven is false and the lock is held. The charge counts only published .attempt.json files (invocationBudgetState :1930)."
+     },
+     {
+      "item": "SV-7: release-receipt fallback restricted",
+      "status": "CORRECTED",
+      "evidence": "releaseRunLock gains an opt-in allowUnpublishedZeroCommandRelease, defaulting to false (qualification-supervisor.mjs:1325-1339@f633a771). Only the two zero-command branches pass true (:2231 and :2424). Preparation (:1090) and post-command (:2435) now rethrow, so the lock stays held, as at 25858ad. D68-2 prose (M:33460) states this."
+     },
+     {
+      "item": "SV-8: restartForbidden labels and primary failure code",
+      "status": "CORRECTED",
+      "evidence": "The assertFreshGroupStart wrapper (qualification-supervisor.mjs:1981-1992@f633a771) marks any 'REFUSED: ' raised before restartProgressValidated (:2086) as restartForbidden. Transient non-REFUSED I/O and the material-change check after restore stay restartable. The late G0 acceptance throws restartForbidden (:1576-1582); see SS-1 for its over-breadth. The wrong-mode resume now throws RESUME_REQUIRES_STARTED_PAUSE before any prefix or material-change inspection (:1818-1823). RESTART_HISTORY_NOT_VALIDATED (:2342) blocks restartEligible for refusals raised before history validation. failureCode keeps the primary cause, and finalizationFailureCode and budgetInspectionFailureCode are separate fields (:2289-2291, :2378-2380). restartRequiresFreshInspection requires validated history and INVOCATION_BUDGET_UNVERIFIED as the sole limit (:2344-2345). The guard (:2027-2030) still ignores restartEligible, so no shortcut opens. The wrong-mode resume record (receipts []) remains compatible with the next fresh start's max-progress prefix selection (:2068-2071)."
+     },
+     {
+      "item": "SV-9: outer-timer at-wall resolution mapped",
+      "status": "CORRECTED",
+      "evidence": "Comment added at qualification-supervisor.mjs:1460-1461@f633a771. D68-4 (M:33461) discloses immediate resolution, closeObserved=false, snapshots that may precede termination, an unrecorded late exit/signal, outerExpired keeping cleanupProven false with the lock held, and no grace budget. The optional bounded grace was not adopted, and the behaviour is unchanged. The secondary 'error alone no longer resolves after spawn' change remains unmapped (SS-3)."
+     },
+     {
+      "item": "SV-10: TAP four-process conflict restored",
+      "status": "CORRECTED",
+      "evidence": "manifest:2294@f633a771 capConflict restores the reasoned four-process conflict (Node supervisor, PowerShell helper, node --test parent, test worker), keeps the --test argv and maxOwnedProcesses 3 unapproved, marks the topology NOT RUN, and keeps the scoping sentence."
+     },
+     {
+      "item": "SV-11: stale controllingReview, doc64/doc67 statuses, ancestry/location claims, M:785, prelaunch checkpoint",
+      "status": "CORRECTED",
+      "evidence": "Changes in manifest@f633a771:\n- controllingReview (M:10) changes c4c6212 -> 36debe0.\n- doc64Correction.status (M:33374) is HISTORICAL_CORRECTION_SUPERSEDED_BY_DOC68_ACCEPTED_25858AD, plus pendingVerifierHistory (M:33385), which cites Doc65 e088851. I confirmed e088851 as the doc 65 commit.\n- doc67Correction.status (M:33394) is HISTORICAL_SOURCE_ACCEPTED_WITH_LIMITS_DOC68_25858AD.\n- The ancestry claim (M:33431) is restated as transfer-source location and covers the Doc64 lift-route pointers.\n- The database 'here' claims (M:19839, 19856, otherInputs, 19904) are marked historical, naming the hosting Doc82 264e6af and pending 121d098 trees and saying nothing is re-pinned.\n- M:785 is rewritten.\n- The prelaunch checkpoint min(aggregate, start + wall) is stated at M:754 and D68-3.\n- SV-14 cites doc 74 review 0554f6d, confirmed.\nOne residual nit about which review controllingReview should name: SS-3."
+     },
+     {
+      "item": "SV-1 remains a disclosed execution gate (not silently closed)",
+      "status": "MET",
+      "evidence": "No console-host term was added to the Job limits (:787/:853/:1407 unchanged, inside or before the unchanged helper region). G0_THREE_PROCESS_CONTRACT is still EXPLICIT_HOLD (manifest:32908-32914@f633a771), with its reason now saying enforcement is unproved. retainedStageFindings.SV-1 is OPEN_EXECUTION_GATE (M:33507) and is restated in the handoff. extraOwnedHostProcesses:1 (M:171) is unchanged and stays inside the open gate."
+     },
+     {
+      "item": "SV-2 remains a disclosed execution gate (not silently closed)",
+      "status": "MET",
+      "evidence": "No compile-phase hold row or bootstrapTotalBeforeSubject validation was added. retainedStageFindings.SV-2 is OPEN_EXECUTION_GATE (M:33512). doc68Amendment.remainingPrerequisites[3] names native compiler topology and fit proof, a separate compiler hold and validation at S3, and a separate decision for any higher limit. No outer Job is pinned to 2."
+     },
+     {
+      "item": "Original started deadlines preserved",
+      "status": "MET",
+      "evidence": "The only run.deadline writes are :1649 (guarded by an early return once started), :1912 (validated restore) and :2097 (prelaunch aggregate) in qualification-supervisor.mjs@f633a771. No diff hunk assigns a deadline. The SV-3 cutoff reads the parent's immutable latestResumeStartAt and changes no allowance."
+     },
+     {
+      "item": "Completed-command protection preserved",
+      "status": "MET",
+      "evidence": "check(!run.completedCommands.has(command.id)) at qualification-supervisor.mjs:2153@f633a771 and the skip logic are unchanged. The mistaken-resume change restores no receipts, and terminal paths still carry restoredReceipts."
+     },
+     {
+      "item": "Cleanup uncertainty preserved (unproven cleanup never green or released)",
+      "status": "MET",
+      "evidence": "cleanupProven at qualification-supervisor.mjs:2295@f633a771 is unchanged. SV-4 does not touch cleanupProven. SV-6 ambiguity leads to evidenceUncertain. SV-7 narrows lock release. The post-command release at :2435 is still gated on cleanupProven."
+     },
+     {
+      "item": "Records truthful and complete",
+      "status": "MET",
+      "evidence": "The fcc98a2 handoff records execution NOT_RUN, executionEligibility NONE, review PENDING_NO_INHERITED_ACCEPTANCE (not queued or acknowledged), LOCAL_ONLY, pushAttempted false and schedules UNCHANGED. Its changedExistingManifestLeaves list matches every changed existing leaf in the diff; the new leaves are pendingVerifierHistory and doc84Correction. sourceLocations land on the named functions (releaseRunLock 1325, readPause 1817, attemptPublication 2133, parentPauseCutoff 2324, restartLabels 2341)."
+     },
+     {
+      "item": "Execution eligibility remains NONE",
+      "status": "MET",
+      "evidence": "executionAuthorization and executionReservation are null and window is EXPIRED_NO_NEW_WINDOW (manifest:6-8, unchanged). The five G0 correctionHolds are retained (M:2805-2811). runGroup still refuses held commands before admission (qualification-supervisor.mjs:2124-2126@f633a771)."
+     },
+     {
+      "item": "Authored tests discriminate the corrections",
+      "status": "NOT_APPLICABLE",
+      "evidence": "The delta authors and changes no tests. runParserSelfTests is unchanged, and no vehicle exercises the SV-3/4/6/7/8 finalization paths. Correctness comes from source tracing only: NOT RUN, NOT PROVEN by execution. The bounded scope (doc84Correction.scope) excludes new fixtures."
+     },
+     {
+      "item": "No regression introduced",
+      "status": "MET",
+      "evidence": "Traced:\n- After the attempt is recorded, a FINITE-only failure still lands at G.group.json as STARTED_TERMINAL (labels only differ, SS-2).\n- A wrong-mode resume no longer validates history, but later fresh starts still detect leftover attempts, folders or launch clocks through the binding checks at :1997-1999 and :2054-2083. It releases only its own lock, and no launch occurs.\n- When finalization fails, pauseAllowed=false and after=null still block a pause even though failureCode keeps NONCONSUMING_ADMISSION_REFUSAL.\n- Preparation and post-command lock retention matches 25858ad.\nRemaining nits are SS-1 to SS-3, all P3."
+     }
+    ],
+    "findings": [
+     {
+      "id": "SS-1",
+      "severity": "P3",
+      "title": "Late-G0-acceptance restartForbidden also covers clock-relative and malformed clauses",
+      "claim": "Doc 84 SV-8 asked that 'the late G0-acceptance check' be restartForbidden. The amendment attaches restartForbidden to the whole compound predicate. That includes !Number.isFinite(acceptedAt) and acceptedAt > Date.now(), which are not lateness. acceptedAt is an externally committed reviewer timestamp, while Date.now() is the local host clock. A future-dated acceptance (cross-host skew) or a malformed timestamp would therefore write a G1+ refusal record with restartForbidden:true. Every later fresh start of that group then refuses PRIOR_PERMANENT_REFUSAL, even after the clock catches up. This fails closed (nothing launches) and the trigger is narrow, but it makes a transient condition permanent. D68-5 (M:33462) calls this the 'late G0 acceptance predicate'.",
+      "evidence": "qualification-supervisor.mjs:1576-1582@f633a771: if (!(isFinite(completedAt) && isFinite(acceptedAt) && completedAt <= acceptedAt && acceptedAt <= completedAt + g0AcceptanceMs && acceptedAt <= aggregateDeadline && acceptedAt <= Date.now())) { error.restartForbidden = true }. The catch copies it to the record (:2244, :2368). The next fresh start refuses (:2027-2030). Doc 84 SV-8 fix text; manifest D68-5 at M:33462@f633a771. Reasoned, NOT RUN.",
+      "fix": "Set restartForbidden only for the immutable lateness clauses: a finite acceptedAt after completedAt + g0AcceptanceMs or after aggregateDeadline, or before completedAt. Leave non-finite or future-dated acceptance as a plain refusal. Otherwise, disclose the clock-relative permanence under D68-5/D68-7. No limit change."
+     },
+     {
+      "id": "SS-2",
+      "severity": "P3",
+      "title": "Two advisory label imprecisions after the SV-3/SV-8 changes",
+      "claim": "(a) A clean zero-launch refusal raised before history validation gets the reservation and continuation labels NONCONSUMING_UNSTARTED_NOT_RESTARTABLE_SEE_ELIGIBILITY_LIMITS, with the single limit RESTART_HISTORY_NOT_VALIDATED. This covers the wrong-mode resume and transient pre-history I/O. Yet the source comment and M:785 say such refusals do not forbid later material-change reentry, and the guard does allow it. The record's verdict reads 'not restartable' where the true state is 'restartability unvalidated'. (b) A validated resume that fails after its attempt is recorded, with FINITE_RESUME_START_ALLOWANCE_DOES_NOT_FIT as its only blocking limit, now writes terminalProgress:false and terminalStartedResume:false. The same record says executionState STARTED_TERMINAL and continuation TERMINAL_NO_AUTOMATIC_REPEAT at G.group.json (3e5e2ed wrote true for both). Outcomes, paths and the stop rule are unchanged. Labels only; no reader in the supervisor.",
+      "evidence": "(a) qualification-supervisor.mjs:1819-1820, :2341-2343 and the label ternaries at :2385-2405@f633a771; M:785. (b) :2318-2330 (FINITE removed from the terminal list), :2331-2332 (terminalStartedResume requires terminalProgress), and resultPath through run.groupConsumed to G.group.json. invocationBudgetState counts that record as terminal regardless (:1935-1937).",
+      "fix": "(a) Label refusals with unvalidated history as e.g. NONCONSUMING_UNSTARTED_RESTARTABILITY_UNVALIDATED_REVALIDATE_ON_REENTRY. (b) Set terminalStartedResume for any consumed validated-resume STARTED_TERMINAL record, or document that terminalProgress marks only monotone-limit exhaustion. Labels only; no limit change."
+     },
+     {
+      "id": "SS-3",
+      "severity": "P3",
+      "title": "Small residual prose and comment gaps",
+      "claim": "(a) SV-9's second unmapped change is still not named in D68-4: since 3e5e2ed, an 'error' event alone after spawn no longer resolves executeOwned, which now waits for close or the wall. Only the inline code comment states it. (b) The writeInitialRecord header comment still lists only 'initial metadata, precommand refusal and own release records', although attempt records now use it (the manifest D68-2 text is correct). (c) The top-level controllingReview names doc 68's 36debe0, but this successor answers doc 84 (7449c65). Doc 84 appears only in doc84Correction.review. None of these has a runtime effect: the supervisor reads no controllingReview, doc84Correction, doc68Amendment or stageMapping field.",
+      "evidence": "(a) qualification-supervisor.mjs:1449@f633a771 ('Wait for CLOSE, not error alone'); M:33461 D68-4; doc 84 SV-9 claim. (b) qualification-supervisor.mjs:58-59 vs :2133@f633a771. (c) M:10 and M:33483-33485@f633a771; git log confirms 7449c65 is the doc 84 review commit. A grep of the supervisor for those field names returns a count of 0.",
+      "fix": "Add one D68-4 sentence on close-only waiting after spawn. Extend the writeInitialRecord comment to cover attempt records. Point controllingReview at 7449c65, or label it as the base's controlling review. Prose only."
+     }
+    ],
+    "deviations": [
+     "Bash went beyond the literal 'git show <commit>:<path>' and 'git diff <base> <commit> -- <path>' forms. All extra calls were read-only, with -C and --no-optional-locks: git log --oneline (with --stat, -1 and path filters) for ancestry and review-commit identity; git show --stat/--name-only/--format=%H%n%P%n%T on f633a77 and fcc98a2; git diff --stat for 3e5e2ed..f633a77 and f633a77..fcc98a2; git show fcc98a2:<handoff>; and one git diff over both paths in a single command piped to wc -c.",
+     "The harness saved oversized outputs of two allowed commands, the manifest diff and the handoff git show, under C:\\Users\\sboad\\.claude\\projects\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\tool-results\\ (brhjieprw.txt, bgj9exsdm.txt). I issued no redirect, read them with Read and Grep, and did not delete them.",
+     "The named registration directory (scratchpad\\seven) holds no registration copy for f633a771/fcc98a27 (grep for f633a77, fcc98a2 and 7449c65 found nothing). I read DOC68_TWO_FILE_AMENDMENT_SOURCE_REVIEW_REQUEST_20261011.json, which is the prior 3e5e2ed registration. For this package I relied on the task text, doc 84 and its hl12 findings archive, and the fcc98a2 handoff.",
+     "I did not read the contents of the assignment record dc1dd8b or the owner acknowledgment at 086cf86, only their file stats. Claims about them rest on the handoff.",
+     "Raw SHA-256 values were not recomputed because no hash tool is permitted; only git blob IDs, byte counts and the exact-diff byte count were verified.",
+     "Windows Job Object, console-host, libuv and Node spawn/close semantics are reasoned from source only: NOT RUN, NOT PROVEN.",
+     "I created, modified and deleted no file. I ran no interpreter, test, supervisor, SQL, MCP tool, WebFetch, checkout, commit, fetch or push, and contacted no session."
+    ]
+   },
+   "verify": {
+    "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
+    "verdicts": [
+     {
+      "id": "SS-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with narrower reach. The whole compound predicate carries restartForbidden (qualification-supervisor.mjs:1576-1582@f633a771). Only the clause acceptedAt <= Date.now() is genuinely transient. The others are effectively immutable: acceptedAt comes from a committed reviewer record behind a no-replace pointer, so a non-finite value, a value before completedAt, or a value past completedAt+g0AcceptanceMs or the aggregate stays that way. Permanence also attaches only on a first-time fresh start of a G1+ group. In that case restoreFreshGroupHistory returns early at :2011 without setting restartProgressValidated, the record becomes <G>-<inv>.nonconsuming.json carrying restartForbidden:true, and the next start refuses PRIOR_PERMANENT_REFUSAL (:2027-2030). During a qualified restart, preAttemptRestartPreserved routes the record to .restart-refused.json instead. The history scan at :2000 never reads those files (carried limit D68-8), so there the flag is advisory and the immutable clauses simply refuse again. Fails closed. See SSV-1 for the same over-breadth in the SV-8 wrapper."
+     },
+     {
+      "id": "SS-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with a correction to (a). For a wrong-mode resume, resumeRefusal comes before cleanZeroLaunchRefusal in the reservation ternary. Its reservationDisposition is therefore CURRENT_INVOCATION_RESUME_REFUSED_PRIOR_GROUP_STATE_UNCHANGED (:2392). Only continuation.status reads NONCONSUMING_UNSTARTED_NOT_RESTARTABLE_SEE_ELIGIBILITY_LIMITS (:2401 is false because cleanZeroLaunchRefusal is true; the value comes from :2406). Fresh-start refusals raised before history validation (transient I/O in restoreFreshGroupHistory, initializeInvocationHistory or assertContinuationSourceGate) get the NOT_RESTARTABLE text on both labels, although the guard (:2027) admits a later material-change reentry. (b) is confirmed. FINITE was removed from the terminal list (:2326-2328), so a post-attempt validated-resume failure blocked only by FINITE writes terminalProgress:false and terminalStartedResume:false. It is still written to G.group.json as STARTED_TERMINAL with continuation TERMINAL_NO_AUTOMATIC_REPEAT. invocationBudgetState keys on dependencyAccepted (:1931-1935), and nothing reads terminalProgress from G.group.json, so these are labels only."
+     },
+     {
+      "id": "SS-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Only part (a) is upheld. D68-4 (manifest doc68Amendment.corrections.D68-4@f633a771) maps the at-wall resolution but not the post-spawn change where an 'error' event alone no longer resolves; only the comment at :1449 states it. Doc 84's SV-9 fix asked to map the at-wall resolution, closeObserved:false and late output, so this is optional. (b) is weak. D68-2 now defines 'Initial metadata, including invocation/request/attempt records', so the comment at :58-59 ('Initial metadata ...') already covers attempt records. (c) is refuted as a defect. Doc 84's SV-11 claim reads 'controllingReview is still c4c6212 (doc 67's), not 36debe0', and the builder set exactly 36debe0. doc84Correction.review carries 7449c65, which I confirmed by git show is the doc 84 review commit. Renaming the field is optional hygiene."
+     }
+    ],
+    "checkChallenges": [
+     {
+      "item": "Commit scope: source changes only the two scoped paths; records commit changes only records/continuity",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "git show --stat f633a771 lists only the manifest (139 lines) and the supervisor (93 lines); its parent is 086cf86. fcc98a27 touches only the three .xenios registries and the new handoff. git diff --stat 3e5e2ed..fcc98a2 also shows the 086cf86 owner-ack and the prior 71bdd9d handoff, both records. The records commit also moves the umbrella HEALTH-QUICK-ORDER-20261005 task from claimed to handoff and the session from active to handoff. That is continuity bookkeeping, not a scope breach."
+     },
+     {
+      "item": "Byte bindings recorded in handoff and manifest",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "I re-measured independently. Blob indexes are f53b743..d2e20a8 and 72c3f09..fb55451. Sizes are 204,885 and 1,520,981 bytes, and the exact two-file diff is 58,218 bytes. All match the handoff sourceBindings and exactDiff. Raw SHA-256 values (ed3c80..., f5decbe..., 03945aa..., helper f9d00bf...) were not recomputed: NOT PROVEN."
+     },
+     {
+      "item": "Embedded Windows helper byte-identical",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "WINDOWS_HELPER spans qualification-supervisor.mjs:759-897@f633a771. The first supervisor hunk is @@ -1304 with identical old and new offsets, so no helper byte changed."
+     },
+     {
+      "item": "No limit, stage count, wall, cap or numeric leaf changed",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "I filtered the diff to lines that are not string leaves. The only remaining lines are the otherInputs/remainingPrerequisites array strings, the new doc84Correction object braces and its string arrays, and supervisor code lines. No numeric or boolean value changed. The stage constant (:1301-1302) and the wallMs===60_000 assertion (:1306) are context lines. The G0 correctionHolds at manifest:2805-2811 are unchanged."
+     },
+     {
+      "item": "SV-3: a validated resume refused before its attempt record goes terminal only on limits that end the existing pause",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed at :2318-2330@f633a771. I added a consistency check. Before the attempt record, this invocation's pauseFit = remainingGroupBudget(run, finishedMs, true) uses the same restored nextCommandIndex, the full setupMs, unchanged handshakeWaitSpentMs and the same finalization as the parent pause. So for finishedMs <= parent latestResumeStartAt (<= deadline - parent pauseFit.totalMs), STARTED_GROUP_TIME_EXHAUSTED cannot fire. The four retained limits and parentPauseExpiredBeforeAttempt are mutually consistent and monotone. Thrown terminal codes from requireGroupTime (:1197-1206) and readPause (:1919-1922) are monotone by the same arithmetic. The manifest nonCharged text (M:775) and D68-1 now match the code. Residual labels: SS-2(b)."
+     },
+     {
+      "item": "SV-4: a budget-inspection failure for a complete group is recorded only in futureAdmission/eligibilityLimits",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Parity with 25858ad:2118-2119 is confirmed: the catch there only filled futureAdmission. The successor (:2300-2307) leaves dependencyAccepted untouched and sets failure only when !dependencyAccepted && failure===null. In practice that happens only when cleanup is uncertain without a thrown failure, which is already CLEANUP_UNCERTAIN. An incomplete started pause candidate still loses the pause through INVOCATION_BUDGET_UNVERIFIED in limits; this is disclosed in D68-5."
+     },
+     {
+      "item": "SV-5: compiler and console-host wording and N=3 arithmetic",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "The source comment (:1307-1310) and manifest processCeilings, explicitCommandCap.assertion, executionPrerequisites[0].reason/ordering and doc68Amendment U15/compiler all state the count-minus-one compile bound (2/3/7). They say no separate compile limit exists, give Node+helper+subject=3, and say real-child-tree needs 4 before hosts. 'Implements' is qualified."
+     },
+     {
+      "item": "SV-6: attempt record published through writeInitialRecord",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed (:2133-2143, catch :2225-2226). The archive name is '.metadata-unpublished-<32hex>.json' (:94). It matches neither the G- prefix filter nor the '.attempt.json' suffix used by readPause's parent-pause scan (:1872-1874) and invocationBudgetState (:1930). An archived temporary of a resume attempt therefore cannot falsely claim the pause or charge the budget. If both the attempt write and the later result writeNew fail, the exception escapes before the lock release and the lock stays held, which fails closed. Any stray temporary would be a writeNew one and is caught as sticky by the .pending scan at :2002-2005. One note: if the retry itself ends evidenceUncertain, the first attempt's archive is not attached to that error. This sits in the unchanged writeInitialRecord, is fail-closed and affects information only."
+     },
+     {
+      "item": "SV-7: release-receipt fallback restricted",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "Confirmed. The opt-in defaults to false (:1325). Only :2231 and :2424 pass true. :1090 and :2435 now rethrow, matching 25858ad:1257-1264, which had no fallback (writeNew then rename). D68-2 prose matches."
+     },
+     {
+      "item": "SV-8: restartForbidden labels and primary failure code",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED_WITH_P3_RESIDUALS",
+      "note": "The mechanics are confirmed. Wrong-mode resume now throws first (:1818-1823). The wrapper is at :1981-1992. restartHistoryValidated gating is at :2341-2345. failureCode keeps the primary cause, and finalizationFailureCode and budgetInspectionFailureCode are separate. I traced the wrong-mode resume record W against the next fresh start. The handshake charge comes from the max across records (:2081). originalAttemptRecord falls back to another record. Attempts must be referenced by their own records (:2059-2064). W carries receipts [], which is compatible. Residuals: SS-1 and SSV-1, where the wrapper and the G0 predicate also make clock-relative refusals permanent, and the SS-2 labels."
+     },
+     {
+      "item": "SV-9: outer-timer at-wall resolution mapped",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "The comment is at :1460-1461. D68-4 discloses immediate resolution, closeObserved=false, snapshots that may come before termination, an unrecorded late exit/signal, outerExpired keeping cleanup false with the lock held, and no grace budget. The 'error alone' change is unmapped (SS-3a, optional)."
+     },
+     {
+      "item": "SV-10: TAP four-process conflict restored",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "capConflict at manifest:2294@f633a771 restores the supervisor + helper + node --test parent + worker = 4 conflict and marks it NOT RUN. maxOwnedProcesses stays 3 (unchanged numeric leaf)."
+     },
+     {
+      "item": "SV-11: stale controllingReview, doc64/doc67 statuses, ancestry/location claims, M:785, prelaunch checkpoint",
+      "checkerStatus": "CORRECTED",
+      "verifierStatus": "CORRECTED",
+      "note": "controllingReview is now 36debe0, exactly as doc 84's SV-11 text asked. I confirmed 36debe0, e088851 (doc 65) and 0554f6d (doc 74) by git show and git log. The doc64/67 statuses, pendingVerifierHistory, the database 'here' prose, the inheritedRecordBasis location qualification (which covers the calibrationLiftRoutes, executionPrerequisites, prerequisiteVehicles and doc64Correction pointers), zeroLaunch (M:785) and the min(aggregate, start+wall) checkpoint (which matches :345) are all present. handoff changedExistingManifestLeaves matches every changed existing leaf in the diff."
+     },
+     {
+      "item": "SV-1 remains a disclosed execution gate (not silently closed)",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The helper and Job-limit arithmetic are untouched. G0_THREE_PROCESS_CONTRACT is EXPLICIT_HOLD (manifest:32914). retainedStageFindings.SV-1 is OPEN_EXECUTION_GATE, and the handoff matches."
+     },
+     {
+      "item": "SV-2 remains a disclosed execution gate (not silently closed)",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "No compile hold row or bootstrapTotalBeforeSubject validation was added, and no outer Job is pinned to 2. retainedStageFindings.SV-2 is OPEN_EXECUTION_GATE, and remainingPrerequisites[3] names the S3 work."
+     },
+     {
+      "item": "Original started deadlines preserved",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "grep finds run.deadline set only at :1649 (inside publishActualGroupClock, after the actualStartedAt early return), at :1912 (validated restore) and at :2097 (prelaunch aggregate)."
+     },
+     {
+      "item": "Completed-command protection preserved",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": ":2153 is unchanged. Held commands are refused at :2126-2128; the checker cited :2124-2126, a one-line drift."
+     },
+     {
+      "item": "Cleanup uncertainty preserved (unproven cleanup never green or released)",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "cleanupProven (:2295) is unchanged. The general release at :2435 is still gated on cleanupProven and now needs a published receipt."
+     },
+     {
+      "item": "Records truthful and complete",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The handoff records execution NOT_RUN, executionEligibility NONE, review PENDING_NO_INHERITED_ACCEPTANCE with queued and acknowledged false, LOCAL_ONLY, pushAttempted false and schedules UNCHANGED. The source locations I checked land correctly: 1325, 1817, 1993, 2133, 2290, 2303, 2324 and 2341. The D68-5 word 'Immutable' is imprecise (SSV-1)."
+     },
+     {
+      "item": "Execution eligibility remains NONE",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Manifest lines 6-8 still show executionAuthorization null, executionReservation null and EXPIRED_NO_NEW_WINDOW. All five G0 holds are retained, and eight EXPLICIT_HOLD dispositions remain."
+     },
+     {
+      "item": "Authored tests discriminate the corrections",
+      "checkerStatus": "NOT_APPLICABLE",
+      "verifierStatus": "NOT_APPLICABLE",
+      "note": "No test was authored or changed. Not one corrected path (SV-3/4/6/7/8) has a discriminating vehicle, so correctness rests only on source tracing: NOT PROVEN by execution. The bounded scope forbids new fixtures."
+     },
+     {
+      "item": "No regression introduced",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "I also checked whether W's new resume-refused record could satisfy the records.length>0 gate at :2009-2010 and hide lost-record progress. It cannot. Per-type bindings still catch orphan attempts (:2064), in-process receipts (:2073) and folders (:2076). Orphan unconsumed-marker or no-launch files imply a prior attempt, because the marker is written after the attempt. A lost result record leaves the prior lock held, so W cannot run at all. W launches nothing and releases only its own lock."
+     }
+    ],
+    "missed": [
+     {
+      "id": "SSV-1",
+      "severity": "P3",
+      "title": "The SV-8 wrapper makes clock-relative history refusals permanent, though D68-5 calls them immutable",
+      "claim": "assertFreshGroupStart marks every 'REFUSED: ' error raised before restartProgressValidated as restartForbidden. Some of those predicates compare stored timestamps with the local clock. One is restoreFreshGroupHistory's Date.parse(value.finishedAt) <= Date.now(). Another is readInvocationWitness's Date.parse(value.recordedAt) <= Date.now(), reached from restoreFreshGroupHistory and from readCompletedPrefix. If the host clock steps backward, a limitation disclosed under D68-3/D68-7, a fresh start of a group with prior zero-launch records then writes <G>-<inv>.nonconsuming.json with restartForbidden:true. Every later fresh start refuses PRIOR_PERMANENT_REFUSAL even after the clock recovers. At 3e5e2ed the same refusal was transient. D68-5 describes the wrapper's scope as 'Immutable prior-evidence predicate refusals', which overstates it. This is the same class as SS-1, but at a different site the checker did not name. It fails closed, nothing launches and no limit changes.",
+      "evidence": "qualification-supervisor.mjs:1981-1992@f633a771 (wrapper; the condition is !run.restartProgressValidated && message startsWith 'REFUSED: '); :2032-2035 (readInvocationWitness, then the finishedAt <= Date.now() check, refusal 'zero-launch refusal clocks are not anchored to a real invocation'); :1713 (recordedAt <= Date.now() inside readInvocationWitness); :1792 (readCompletedPrefix calls readInvocationWitness, before restartProgressValidated at :2086); :2244 copies the flag to the record; :2027-2030 refuses later starts. Manifest doc68Amendment.corrections.D68-5@f633a771. Reasoned, NOT RUN.",
+      "fix": "Keep restartForbidden for immutable predicates only. Raise the clock-relative checks (:2034 and the witness check at :1713 when reached through history validation) with a distinct code and without the flag, or exclude them in the wrapper. Otherwise state in D68-5/D68-7 that a backward clock step during history validation permanently forbids restart for that group. This is a prose or labelling change only, with no limit change."
+     }
+    ],
+    "opinion": "SS adversarial verification. Subject: source f633a771 (tree 2683c971), records fcc98a27, compared with the Doc84-accepted 3e5e2ed. NOTHING WAS RUN. All Windows, Node, libuv and Job Object behaviour is reasoned from source only and is NOT PROVEN.\n\nMy disposition: SOURCE ACCEPTED WITH LIMITS. EXECUTION ELIGIBILITY: NONE.\n\n**What I verified independently:**\n- Scope: f633a77 changes only the two files, and fcc98a2 changes only the three registries and the new handoff.\n- Bindings: blob IDs, the byte counts 204,885 and 1,520,981, and the exact-diff size of 58,218 bytes all match. Raw SHA-256 values were not recomputed: NOT PROVEN.\n- The embedded helper is byte-identical. It sits at lines 759-897, and the first hunk is at 1304.\n- No numeric or boolean leaf, stage map, wall or cap changed.\n- run.deadline is set only at :1649, :1912 and :2097. The completed-command guard is still at :2153, and the cleanupProven formula is still at :2295.\n- SV-1 and SV-2 stay open S3 execution gates. All five G0 holds remain, and the authorization fields are null.\n\n**The corrections are real:**\n- SV-3 now ties a refused pre-attempt resume to the parent pause's fixed latestResumeStartAt plus four monotone limits. I checked that, before the attempt record, this invocation's pauseFit equals the parent's, so the retained limits cannot contradict the cutoff.\n- SV-4 restores 25858ad's behaviour: an inspection failure only fills futureAdmission. I confirmed this from 25858ad:2118-2119.\n- SV-6: the attempt archives use a name that no G- prefix or .attempt.json scan matches, so an archived resume attempt cannot claim the pause or charge the budget.\n- SV-7: the fallback is opt-in and matches 25858ad's no-fallback release at the other call sites.\n- SV-8: the wrong-mode resume record W stays compatible with a later fresh start. W cannot hide lost-record progress, because the per-type binding checks still apply and a lost result record leaves the prior lock held.\n\n**Residuals, all P3 and fail-closed:**\n- SS-1 is upheld but narrowed. Only the acceptedAt <= Date.now() clause is transient, and permanence attaches only on a first-time fresh start; during a restart the record goes to .restart-refused.json, which the history scan ignores (D68-8).\n- SSV-1 (new) is the same over-breadth inside the SV-8 wrapper. The clock-relative checks at :2034 and :1713 now make a refusal after a backward clock step permanent, and D68-5 calls these predicates 'immutable'.\n- SS-2 is upheld with a correction. A wrong-mode resume's reservation label is the resume-refused label at :2392; only its continuation label reads NOT_RESTARTABLE. The post-attempt FINITE case is labelled terminalProgress:false although it is written to G.group.json.\n- SS-3 is narrowed to the unmapped 'error alone' change. The attempt-record comment is covered by D68-2's definition of initial metadata. controllingReview follows doc 84's own SV-11 text.\n\nNo P0, P1 or P2. No authored test discriminates any corrected path.\n\n**What still prevents execution** is unchanged from doc 84 section 3, plus SSV-1 as a label or disclosure item:\n- SV-1 and SV-2;\n- G0_ONE_MINUTE_ALL_WORK and the other three holds;\n- SV-13 native start-failure proof;\n- the responder;\n- calibration;\n- the native-lane rebase;\n- fresh authority;\n- raw SHA-256 verification.",
+    "deviations": [
+     "Bash went beyond the literal 'git show <commit>:<path>' and 'git diff <base> <commit> -- <path>' forms. Every extra call was read-only, with -C and --no-optional-locks:\n- git log --oneline on the records commit and on the doc 84/doc 74 review paths;\n- git show --stat --format on f633a771, fcc98a27, 7449c65, e088851 and 36debe0;\n- git diff --stat 3e5e2ed..fcc98a2;\n- git show of the fcc98a2 handoff;\n- git diff over the three registries between f633a77 and fcc98a2;\n- git show of the accepted 25858ad supervisor piped to grep, to compare releaseRunLock and the budget-inspection catch.",
+     "Several pipelines used 'cut -c' to truncate long lines, and one used 'grep -v'. cut is not in the permitted pipe set (grep, sed -n, head, wc). Output only; nothing was written.",
+     "The named registration directory (scratchpad\\seven) holds no registration copy for f633a771/fcc98a27; Glob lists seven other requests. For this package I relied on the task text, doc 84, its hl12 findings archive and the fcc98a2 handoff.",
+     "I did not read the contents of the assignment record dc1dd8b or the owner acknowledgment at 086cf86. Claims about them rest on the handoff and the registry diffs.",
+     "Raw SHA-256 values were not recomputed because no hash tool is permitted. Only blob IDs, byte counts and the exact-diff byte count were verified.",
+     "Windows Job Object, console-host, libuv and Node spawn/close semantics are reasoned from source only: NOT RUN, NOT PROVEN.",
+     "I created, modified and deleted no file. I ran no interpreter, test, supervisor, SQL, MCP tool, WebFetch, checkout, commit, fetch or push, and contacted no session."
+    ]
+   }
+  },
+  {
+   "pkg": "order-history-r2",
+   "tag": "OR",
+   "check": {
+    "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
+    "summary": "Order History revision 2 (source 0ced427, records d30d5b7, base e3b551f) is SOURCE ACCEPTED WITH NAMED LIMITS. Nothing was run, and the authored tests are NOT RUN.\n\nOH-1 is corrected in both components:\n- **Reads:** each component reads memberChecking from useResearch (OrderHistory.tsx:52@0ced427, OrderHistoryDetail.tsx:44@0ced427).\n- **Rendering:** each shows loading while checking. It shows unauthorized only when checking has finished and there is no token. Otherwise it uses the snapshot match (OrderHistory.tsx:62-66, OrderHistoryDetail.tsx:55-59).\n- **Request identity:** memberChecking is part of the request identity (OrderHistory.tsx:56-59, OrderHistoryDetail.tsx:48-51).\n- **No early reads:** no read is sent while checking or without a token (OrderHistory.tsx:74, OrderHistoryDetail.tsx:67).\n\nThe new tests separate the fix from the parent for both list and detail, and they would catch a partial fix:\n- test:145, test:168 and test:203 fail against e3b551f, which renders 'Please sign in.' while checking.\n- test:221 catches removal of the checking guard.\n- test:236 catches leaving memberChecking out of the request identity.\n\nThe OH-4, OHV-1 and OHV-2 label corrections are present in the source:\n- The rejection test after unmount is renamed as a crash-safety control.\n- The reject variants that depend on Vitest's unhandled-error policy are commented.\n- The claim that layout cleanup runs before passive cleanup is removed.\n- Callbacks invoked by the test, not by a rendered button, are labelled synthetic.\n- Preservation controls are labelled.\n- The list test no longer pins the 'not available yet' copy (test:540).\n\nThe original isolation design and canonical authority are intact. Render-time identity matching, the per-lifetime active flag, opaque request identity, the no-tokenless-read rule and the safe catch are all still in place. The adapter, server, shared code, presentation, core and kit are unchanged.\n\nThe scope is exact. The source commit changes only the three scoped paths plus four continuity files, and the records commit changes only five .xenios files. Git blob ids, tree ids and byte counts match the registration.\n\nThere are two P3 findings:\n- **OR-1:** the records map says the reject variant at test:343 can detect removal of the publish guard. It cannot.\n- **OR-2:** a pre-existing copy limit. A failed session verification is shown as 'Your session has ended'.\n\nCarried without waiver: OH-2, OH-3, OH-5, and NOT PROVEN execution and reachability.",
+    "checks": [
+     {
+      "item": "Scope: source commit changes only the three scoped paths plus continuity records",
+      "status": "MET",
+      "evidence": "git diff --name-only 6a995c5..0ced427: the three client/src/research/orders paths plus .xenios/ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json and sessions/codex-accepted-source-integration-20261005.json. e3b551f..d30d5b7 adds only the two .xenios handoffs. Nothing under adapter, server, shared, core or kit changes."
+     },
+     {
+      "item": "Records commit is records-only and matches its declared path list",
+      "status": "MET",
+      "evidence": "0ced427..d30d5b7 changes exactly the five .xenios paths listed in recordsCommitExpectedPaths (handoff DOC85-R2 json, lines 120-126@d30d5b7). git diff --stat for client/server/shared is empty."
+     },
+     {
+      "item": "Bindings: blob ids, tree ids and committed byte counts match the registration",
+      "status": "MET",
+      "evidence": "ls-tree@0ced427 gives 34d05c4b (OrderHistory.tsx), c09f8696 (Detail) and e92394e8 (test). Trees are f574f360 (source) and 906c63f5 (records). wc -c of the blobs gives 8062, 10624 and 24303, matching the registration (lines 17-55). Raw SHA-256 values were not recomputed (no hashing tool allowed): NOT PROVEN by me."
+     },
+     {
+      "item": "OH-1: both components read memberChecking from useResearch",
+      "status": "MET",
+      "evidence": "OrderHistory.tsx:52@0ced427 and OrderHistoryDetail.tsx:44@0ced427 destructure { memberToken, memberChecking }. Core exposes memberChecking = status === 'checking' (core.tsx:149,188,607@0ced427)."
+     },
+     {
+      "item": "OH-1: loading while checking; unauthorized only when not checking and no token",
+      "status": "MET",
+      "evidence": "OrderHistory.tsx:62-66 and OrderHistoryDetail.tsx:55-59: memberChecking ? loading : !memberToken ? unauthorized : snapshot?.request === request ? snapshot.state : loading. This matches the sibling convention at AccountOrderDetail.tsx:23-24@0ced427. kit.tsx:684-694 renders ra-loading for loading and 'Please sign in.' / 'Your session has ended.' / 'Member Login' only for unauthorized."
+     },
+     {
+      "item": "OH-1: no request while checking or without a token",
+      "status": "MET",
+      "evidence": "OrderHistory.tsx:74 and OrderHistoryDetail.tsx:67: if (request.memberChecking || !request.memberToken) return. The effect depends on [request], and request includes memberChecking (OrderHistory.tsx:56-59, Detail:48-51), so cleanup revokes an in-flight lifetime when checking starts."
+     },
+     {
+      "item": "OH-1 tests: memberChecking=true with a null token shows loading, not 'Please sign in.', and makes no request; the result shows after checking completes",
+      "status": "MET",
+      "evidence": "test:145-166@0ced427, for list and detail. expectChecking (test:109-116) asserts ra-loading and no sign-in copy in the DOM or the last commit, and that neither adapter is called and nothing is pending. After verification it asserts one canonical read with the verified token (and orderNumber), then VERIFIED-INITIAL, no loader, and no sign-in copy in any commit. Against e3b551f, the unauthorized branch fails expectChecking: this test discriminates. NOT RUN."
+     },
+     {
+      "item": "OH-1 tests: loaded A, then checking with a null token, then refreshed A' shows no sign-in prompt and no stale data; checking ending signed out shows sign-in",
+      "status": "MET",
+      "evidence": "test:168-201: during checking, stale product, tracking, order number and support are hidden; the read uses A'; the transition commits contain no 'Please sign in.', 'Your session has ended.' or stale marker. test:203-217: the prompt appears only once memberChecking is false, with no adapter call. Both fail against e3b551f."
+     },
+     {
+      "item": "OH-1 tests would catch a partial fix",
+      "status": "MET",
+      "evidence": "test:221-234 (token kept while checking): removing the request.memberChecking guard makes the adapter get called during checking and leaves two reads pending, so it fails. test:236-253: leaving memberChecking out of the request identity revives BEFORE-SAME-TOKEN-CHECK through the same memo object with no new read, so it fails. A loading branch only on the first mount fails test:168. Each test runs for both list and detail via describe.each."
+     },
+     {
+      "item": "OH-4: tests labelled correctly (crash safety, unhandled-rejection policy, layout claim, synthetic callbacks)",
+      "status": "MET",
+      "evidence": "test:403-405 renames the unmounted rejection test as a crash-safety control. Comments at test:291-292, 341-342 and 363-364 state the reject variants' dependence on Vitest's unhandled-error policy. The layout-before-passive claim is dropped: OrderHistory.tsx:101-102 comment, test:87, and test:466 renamed 'in the first navigation commit'. Synthetic callbacks are labelled at test:100, 441 and 445. The in-source labels are accurate; see OR-1 for one overclaim in the records map."
+     },
+     {
+      "item": "OHV-1: reject variant at the old 211-229 and the preservation controls labelled",
+      "status": "MET",
+      "evidence": "The reject variant is now at test:343 with comment test:341-342. The stable-render control at test:255-256 is labelled 'Preservation control'. The unavailable/empty list control at test:534-536 is labelled preservation/state mapping."
+     },
+     {
+      "item": "OHV-2: list test no longer pins the untrue 'not available yet' copy",
+      "status": "MET",
+      "evidence": "test:540 asserts harness.boundaryState === 'unavailable' (captured at test:46) and that the text is not 'No orders yet.'. The 'Order history is not available yet.' assertion is removed and appears nowhere else in the test file."
+     },
+     {
+      "item": "Original isolation properties remain intact",
+      "status": "MET",
+      "evidence": "Render-time snapshot identity matching: OrderHistory.tsx:62-66, Detail:55-59. Per-lifetime active flag with an early return before reading the payload: OrderHistory.tsx:69-72,77,103; Detail:62-65,70,96. The identity is an opaque object and never a token-valued key (test:262). The catch hides exception text (OrderHistory.tsx:96-98). A pre-checking snapshot cannot revive after a checking window because the memo deps change. The only component diff hunks are the memberChecking additions and one comment."
+     },
+     {
+      "item": "Canonical authority unchanged",
+      "status": "MET",
+      "evidence": "Adapter calls are unchanged: listCanonicalOrders(token) at OrderHistory.tsx:76 and getCanonicalOrder(token, orderNumber) at Detail:69. The status/amount mapping and presentation imports are unchanged. adapter.ts, lib/api.ts, server, shared, core.tsx and kit.tsx have no diff between e3b551f and d30d5b7."
+     },
+     {
+      "item": "OH-2 / OH-3 / OH-5 carried, not waived",
+      "status": "MET",
+      "evidence": "Handoff namedLimits (d30d5b7, lines 200-222) and registration lines 99-117 keep them OPEN_CARRIED / OPEN_CARRIED_FAIL_SAFE. The list copy at OrderHistory.tsx:195-196 and the detail copy at Detail:131-132 are unchanged. The useMemo identity is retained (OH-5)."
+     },
+     {
+      "item": "Execution, reachability and live behaviour",
+      "status": "NOT_APPLICABLE",
+      "evidence": "Tests are authored but NOT RUN, with no compiler, typecheck or build. Pages and the canonical route table are unmounted per Doc85. Real core lifecycle and browser behaviour are NOT PROVEN. The records state this (handoff validation block, lines 370-389)."
+     }
+    ],
+    "findings": [
+     {
+      "id": "OR-1",
+      "severity": "P3",
+      "title": "Records map overclaims what the test:343 reject variant can detect",
+      "claim": "The source-test map says the reject variant of 'keeps the new account loading when stale %s arrives first' can catch removal of the new publish guard. It cannot. While B's read is still pending, a stale error snapshot carries the obsolete request identity. Render-time identity matching hides it, so every assertion still passes. Against the original parent, this variant is caught only by Vitest's unhandled-error policy. The in-source comment at test:341-342 is accurate. The map entries for test:293 and test:365 are accurate, because there the successor resolves before the stale completion overwrites it.",
+      "evidence": "Handoff .xenios/handoffs/2026-10-11-FULLSITE-ORDER-HISTORY-DOC85-R2-codex-accepted-source-integration-20261005.json:300@d30d5b7 and registration FULLSITE_ORDER_HISTORY_SOURCE_REVIEW_REQUEST_20261011.json:207. Suppose `if (active)` is removed from publish (OrderHistory.tsx:71 / OrderHistoryDetail.tsx:64@0ced427). The A rejection then calls setSnapshot({request: reqA, state: error}). Rendering compares it with reqB (OrderHistory.tsx:66), finds no match and shows loading. test:355-358 still holds: no getter access, ra-loading present, no 'STALE-A', no 'No orders yet.'. test:359-360 then shows CURRENT-B. Compare test:300-307 and 374-381, where CURRENT-B / NEWEST-RETRY would be replaced by loading.",
+      "fix": "Records only, no source change. Restate the test:343 reject entry: it relies only on Vitest's unhandled-error policy against the original parent and does not detect removal of the catch-path active guard in the current code. Keep the 'can catch removal' wording for the test:293 and test:365 entries."
+     },
+     {
+      "id": "OR-2",
+      "severity": "P3",
+      "title": "Carried copy limit: a failed session verification is shown as 'Your session has ended'",
+      "claim": "Once checking ends, both pages derive unauthorized from the token being null. This covers core's 'verification_failed' as well as 'signed_out', including a network failure on /api/research/member/me and coded denials such as recovery_session. The customer is then told the session ended. The OH-1 rule that Doc85 prescribed and the sibling AccountOrderDetail convention both behave this way, and it already existed at e3b551f. It is not a revision-2 regression and does not block acceptance.",
+      "evidence": "OrderHistory.tsx:64-65 and OrderHistoryDetail.tsx:57-58@0ced427. core.tsx:263-272 and 341-352@0ced427 call clearMemberState('verification_failed') and set the token to null. The context exposes memberSessionStatus and memberDenial (core.tsx:150,153@0ced427), and neither page uses them. kit.tsx:688-693 renders the session-ended copy.",
+      "fix": "Name this as a limit. Change the copy only under a separately scoped decision, for example routing on memberSessionStatus/memberDenial. Do not change it under this bounded correction."
+     }
+    ],
+    "deviations": [
+     "Besides git show and git diff, I used other read-only git commands: git log (commit chain), git ls-tree and git rev-parse (blob and tree ids) and git grep at the source commit. None of them writes anything.",
+     "Raw SHA-256 digests in the registration were not recomputed, because no hashing tool was allowed. Git blob ids, tree ids and committed byte counts (via git show | wc -c) were verified instead. Working-tree bindings were not checked, because no worktree files were read.",
+     "I read files outside the three scoped paths, via git show at 0ced427 only, as context for OH-1 and the sibling convention: client/src/research/core.tsx, client/src/research/ui/kit.tsx and client/src/research/account/AccountOrderDetail.tsx.",
+     "The source commit's parent is 6a995c56 (the revision-1 records commit), not e3b551f directly. 6a995c56 changes only .xenios records, so the code diff against base e3b551f is unchanged.",
+     "Whether the tests discriminate was judged by manual source reasoning only. No test, mutation run, parser or typecheck was executed."
+    ]
+   },
+   "verify": {
+    "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
+    "verdicts": [
+     {
+      "id": "OR-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. In the reject variant at test:343@0ced427, B's read is still pending when the stale A rejection arrives. Suppose the catch-path guard `if (active)` is removed from publish (OrderHistory.tsx:71, OrderHistoryDetail.tsx:64). The rejection then writes setSnapshot({request: reqA, state: error}). The render at OrderHistory.tsx:66 / Detail:59 compares that against reqB, finds no match and stays on loading. So test:355-358 all hold, and test:359-360 then shows CURRENT-B. The ok variant cannot catch the publish guard either, because the line-77/70 `if (!active) return` exits first. The test:293 and test:365 entries are accurate, because there the successor has already published and a stale write would replace it with loading. The overclaim is in the handoff (:300@d30d5b7) and the registration (:207), not in the source comment at test:341-342. Records-only P3."
+     },
+     {
+      "id": "OR-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld as a carried limit. Once checking ends, both pages derive unauthorized purely from a null token (OrderHistory.tsx:64-65, Detail:57-58@0ced427). That also covers clearMemberState('verification_failed'): a network failure at core.tsx:347-352, or a coded 403 such as recovery_session at core.tsx:335-345. kit.tsx:690-692 then says 'Your session has ended.' Behaviour was the same at e3b551f, and at 121d098 through the null-token 401. Doc85 prescribed exactly this rule, and it matches AccountOrderDetail.tsx:23-24. It is not a revision-2 regression and does not block acceptance."
+     }
+    ],
+    "checkChallenges": [
+     {
+      "item": "Scope: source commit changes only the three scoped paths plus continuity records",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. git diff --name-status 6a995c5..0ced427 lists the three orders paths plus the four .xenios continuity files. 0ced427..d30d5b7 lists four modified .xenios files and one new handoff. The CODE_OWNERSHIP lease covers the same three paths. Its state goes active, then back to handoff in the records commit. The lease is not widened and no foreign rows changed. The revision-1 handoff is untouched."
+     },
+     {
+      "item": "Records commit is records-only and matches its declared path list",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. One citation is off: recordsCommitExpectedPaths sits at handoff lines 115-121@d30d5b7, not 120-126. Two others drift as well: namedLimits is at 192-216, not 200-222, and the validation block is at 381-422, not 370-389. The substance is unaffected."
+     },
+     {
+      "item": "Bindings: blob ids, tree ids and committed byte counts match the registration",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Independently confirmed with git ls-tree -l and rev-parse. Blobs: 34d05c4b (8062), c09f8696 (10624), e92394e8 (24303). Trees: f574f360 and 906c63f5. The working-tree byte deltas (+226 and +266) equal the files' line counts, which fits CRLF. Raw SHA-256 values are NOT PROVEN (no hashing tool)."
+     },
+     {
+      "item": "OH-1: both components read memberChecking from useResearch",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "OrderHistory.tsx:52 and OrderHistoryDetail.tsx:44@0ced427. Core derives memberChecking = status==='checking' (core.tsx:188) and exposes it at :607. Core is unchanged from e3b551f."
+     },
+     {
+      "item": "OH-1: loading while checking; unauthorized only when not checking and no token",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed at OrderHistory.tsx:62-66 and Detail:55-59. React 19 with createRoot (package.json:99-101, main.tsx:1,16) batches core's setMemberToken(null) and setMemberSessionStatus('checking') (core.tsx:298,308). It also batches the authenticated pair at :327-328. So no intermediate render has a null token while not checking, and there is no residual sign-in flash. See ORV-2 for a narrow path where checking never ends."
+     },
+     {
+      "item": "OH-1: no request while checking or without a token",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "OrderHistory.tsx:74 and Detail:67. Identity includes memberChecking (56-59, 48-51), so entering checking runs the old lifetime's cleanup. A captured retry fired during checking only makes a new checking identity, and the effect returns early."
+     },
+     {
+      "item": "OH-1 tests: checking with a null token shows loading, no sign-in and no request; the result shows after checking",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "test:145-166. Against e3b551f the null-token branch renders unauthorized, so expectChecking (test:109-116) fails. It discriminates. NOT RUN. Commit snapshots cover only the test's root.render commits, not internal setSnapshot commits. That is sufficient here."
+     },
+     {
+      "item": "OH-1 tests: loaded A, then checking/null, then A' shows no prompt or stale data; checking ending signed out shows sign-in",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "test:168-201 and 203-217 fail at e3b551f. One precision issue: test:211 also pins the kit copy 'Your session has ended.', beyond Doc85's prescribed assertion (ORV-1)."
+     },
+     {
+      "item": "OH-1 tests would catch a partial fix",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Mutations checked by hand:\n- Removing the checking guard fails test:221.\n- Leaving memberChecking out of identity fails test:236, even if memberChecking is added to the effect deps, because the same memo object revives the old snapshot at render.\n- Removing the checking render branch fails test:145.\n- Removing the !memberToken guard fails test:203/280.\nOne variant passes every test: consulting checking only when the token is null. It is functionally equivalent, because no snapshot can ever exist for a checking identity."
+     },
+     {
+      "item": "OH-4: tests labelled correctly",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The in-source labels at test:87, 100, 291-292, 341-342, 363-364, 403-405, 441, 445, 466 and 534-535 are accurate. The OrderHistory.tsx:101-102 comment no longer claims layout-before-passive. The one records overclaim is OR-1."
+     },
+     {
+      "item": "OHV-1: reject variant and preservation controls labelled",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The labels are present. The map's extra clause on the 343 entry reintroduces an overclaim (OR-1)."
+     },
+     {
+      "item": "OHV-2: list test no longer pins untrue copy",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "test:540 asserts boundaryState==='unavailable'. The 'not available yet' assertion is gone from the file. ORV-1 notes the same pinning pattern at test:211 for the unauthorized copy."
+     },
+     {
+      "item": "Original isolation properties remain intact",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The component diff is only the memberChecking additions and one comment. test:417 (StrictMode, same request object) is the one control where identity matching cannot hide a missing publish guard, and it is unchanged. Old-identity snapshots stay in component memory but can never match again, so they can never render. This is pre-existing accepted design."
+     },
+     {
+      "item": "Canonical authority unchanged",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Adapter calls are listCanonicalOrders(token) at :76 and getCanonicalOrder(token, orderNumber) at Detail:69. adapter.ts, presentation, core, kit, lib, server and shared have no diff from e3b551f to d30d5b7."
+     },
+     {
+      "item": "OH-2 / OH-3 / OH-5 carried, not waived",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The handoff (192-216@d30d5b7) and the registration (99-122) carry them OPEN. The copy at OrderHistory.tsx:195-196 and Detail:131-132 is unchanged, and useMemo is retained."
+     },
+     {
+      "item": "Execution, reachability and live behaviour",
+      "checkerStatus": "NOT_APPLICABLE",
+      "verifierStatus": "NOT_PROVEN",
+      "note": "This should be NOT_PROVEN, not NOT_APPLICABLE: missing evidence is NOT PROVEN. The tests are authored and NOT RUN. There was no typecheck or build, the pages are unmounted, and real core lifecycle and browser behaviour are unqualified."
+     }
+    ],
+    "missed": [
+     {
+      "id": "ORV-1",
+      "severity": "P3",
+      "title": "New OH-1 test pins the kit's 'Your session has ended.' copy, the same pattern OHV-2 removed",
+      "claim": "Doc85's prescribed test (c) required only that 'Please sign in.' appears once checking ends signed out. test:211 also asserts 'Your session has ended.' That copy is untrue for a visitor who never had a session, and for verification_failed (OR-2). Pinning it in this page's regression suite ties any later OR-2 copy fix to editing these tests, which is the concern OHV-2 corrected for the list's unavailable copy.",
+      "evidence": "OrderHistory.session-continuity.test.tsx:210-212@0ced427 (test:211 `expect(text()).toContain(\"Your session has ended.\")`). kit.tsx:690-692@0ced427. Doc85 hl12 OH-1 fix (c). The negative assertions in expectChecking (test:112,115) are fine.",
+      "fix": "Under any later bounded touch of this file: drop test:211, or replace it with `expect(harness.boundaryState).toBe(\"unauthorized\")`. Keep the 'Please sign in.', no-loader and no-read assertions. Not blocking."
+     },
+     {
+      "id": "ORV-2",
+      "severity": "P3",
+      "title": "Narrow core path keeps 'checking' forever, so the OH-1 rule then shows indefinite loading",
+      "claim": "Doc85's safety rationale says the status always leaves 'checking'. That is not universal. On initial hydration, refreshMember calls establishMemberSession(token, true). For a persisted recovery-grade token (or a token without a normal first-factor AMR), it returns null without changing status, while recovery is not 'pending' (for example a new tab with no sessionStorage marker). So memberSessionStatus stays at its initial 'checking'. If the legacy body.authed opens the gate, member routes render. Order History then shows Loading with no retry and no sign-in route, where e3b551f showed the sign-in prompt. The result is fail-safe: no data and no false success. It matches the sibling convention and is core-owned, outside this scope. A getJson rejection on /api/research/me also leaves gate 'checking', but layout.tsx:392 then hides every member page, so that path does not reach these pages. PLAUSIBLE only: reachability depends on a persisted recovery session surviving cleanup and on legacy password auth, and the pages are currently unmounted.",
+      "evidence": "core.tsx:187 (initial 'checking'), 280-281 (early return null with no status change), 364-376 (refreshMember awaits it), 426-430 (auth events also skip recovery tokens), 500 (setGate from body?.authed)@0ced427. supabaseBrowser.ts:35-40 (isRecoveryAccessToken also covers tokens without a normal first-factor AMR). OrderHistory.tsx:62-63, Detail:55-56.",
+      "fix": "Name this as a carried core limit in the records. No change in this three-path scope. A separately scoped core decision could make hydration end in 'signed_out' or 'verification_failed' when establishMemberSession refuses a recovery-grade token."
+     }
+    ],
+    "opinion": "My disposition is SOURCE ACCEPTED WITH NAMED LIMITS for Order History revision 2 (source 0ced427, records d30d5b7, base e3b551f). Nothing was run, and the authored tests are NOT RUN.\n\nOH-1 is correctly fixed in both components:\n- Each reads memberChecking.\n- Each shows loading while checking, and shows the sign-in prompt only when checking has finished and there is no token.\n- memberChecking is part of the request identity.\n- No read is sent while checking or without a token.\n\nReact 19 with createRoot batches core's token and status updates, so there is no residual sign-in flash. The five new test definitions run for both list and detail. They discriminate against e3b551f, and against the likely partial fixes: a missing guard, a missing identity field or a missing render branch.\n\nThe original isolation and canonical-authority properties are untouched:\n- render-time identity matching;\n- the per-lifetime active flag;\n- the StrictMode control;\n- the safe catch;\n- an unchanged adapter, core, kit and server.\n\nScope, blob ids, tree ids and byte counts match the registration. The in-source labels for OH-4, OHV-1 and OHV-2 are accurate.\n\nI uphold both checker findings at P3:\n- **OR-1:** the records claim that the test:343 reject variant can catch removal of the publish guard. It cannot, because render-time matching hides the stale write.\n- **OR-2:** pre-existing session-ended copy for verification_failed.\n\nI add two P3 items:\n- **ORV-1:** test:211 pins 'Your session has ended.'\n- **ORV-2 (plausible):** a narrow core path never leaves 'checking'. The page then shows indefinite loading. That is fail-safe, but it means Doc85's 'always leaves checking' is overstated.\n\nNone of these is P0, P1 or P2. Carried without waiver: OH-2, OH-3, OH-5, OR-1 and OR-2 (records/copy), and NOT PROVEN execution and reachability. Raw SHA-256 was not recomputed.",
+    "deviations": [
+     "Besides git show and git diff, I used other read-only git commands: git log, git diff --name-status/--stat, git ls-tree -l, git rev-parse and git grep. None of them writes anything.",
+     "I piped some git show output to `cat -n` for line numbers, which is not in the allowed grep/sed -n/head/wc list. I also chained a few read-only git commands with && and ;. Nothing was written.",
+     "I read files outside the three scoped paths, via git show at 0ced427 only, for context: core.tsx, ui/kit.tsx, layout.tsx, account/AccountOrderDetail.tsx, lib/supabaseBrowser.ts, package.json and main.tsx (via git grep).",
+     "I read the Doc85 report with Read and searched the hl12 JSON with Grep in the review records dir. I read the registration copy in the scratchpad 'seven' directory. No other worktree files.",
+     "Raw SHA-256 digests were not recomputed, because no hashing tool was allowed. Git blob ids, tree ids and byte counts were verified instead. Working-tree bindings were not checked.",
+     "Whether the tests discriminate was judged by manual mutation reasoning only. No test, typecheck, parser or interpreter was executed."
+    ]
+   }
+  },
+  {
+   "pkg": "d56c2",
+   "tag": "DC",
+   "check": {
+    "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
+    "summary": "D56C2 source 36387094 (records 60b963c3, parent f4adea6b) does exactly what the approved proposal asks for. The proposal is at 2df7ca8:docs/coordination/launch-coordination-20261005/CUSTOMER_D56C2_THREE_PATH_SOURCE_PROPOSAL_20261009.md (blob 2076bf79). The human approval is recorded on the board: D56C2_SOURCE_APPROVAL_PROVENANCE_20261010.json, raw SHA-256 cd4fe2cd.\n\nThe source change is two runtime edits plus test source:\n- memberCatalogApi.ts:19 makes the detail call opt in to [\"product_not_found\"]. The list call is unchanged.\n- ProductPage.tsx:54-57 maps denied + product_not_found to the existing \"Product not found.\" view with its Return to products link.\n- Generic, uncoded, unknown-code, malformed or HTML 404s, typed 501/503, and the HTML-200 app fallback all stay unavailable through the unchanged api.ts:110-134. A network rejection stays the sanitized, retryable error.\n- No other product is ever shown: the missing branch never sets a product, and the generation guard (line 30) and scope masking (lines 75-77) are untouched.\n- Subscription and purchasing stay disabled (line 92: product null, commerceEnabled false). The nine existing tests are byte-for-byte unchanged apart from one added import.\n\nThe 25 new test cases run the real page, adapter and API client against synthetic fetch responses; only the subscription writer is mocked. The positive case fails if either runtime edit is removed. The 12 unavailable rows, the three auth/membership rows, the network/retry case, the catalog-list leak check, and the old-success-after-missing and A-to-B-to-A cases all catch realistic regressions. Tests were not run.\n\nOwnership is recorded:\n- f4adea6b moved only adapter and page from OWNER-W2-PR85-INTEGRATION to OWNER-W2-D56C2-NARROW-SOURCE-20261011, with the receiving owner's acknowledgment (msg_0f2569fb).\n- Lease 885c8e0e covers all three paths and is now in handoff.\n- The subscription test was kept out of the registry transfer. Its custody stays with the same session (lease d0897045, workstream C return). The foreign product-subscribe.test.tsx reservation is untouched.\n- The source commit changes only the three scoped paths plus four of the session's own continuity files. The records commit adds only continuity files and the handoff.\n\nOne integration blocker (DC-1, P1): QuickOrderApp.composition.test.tsx, both in this tree and at the current Quick Order frozen source 69d9e32a, requires ProductPage.tsx and ProductPage.subscription.test.tsx to hash to the pre-D56C2 blobs. Two of its identity rows therefore always fail in any tree that contains D56C2, and neither the D56C2 nor the coordinator records say so. Remaining findings are P3.",
+    "checks": [
+     {
+      "item": "Approved proposal located and approval bound to it",
+      "status": "MET",
+      "evidence": "Proposal at 2df7ca8:docs/coordination/launch-coordination-20261005/CUSTOMER_D56C2_THREE_PATH_SOURCE_PROPOSAL_20261009.md (the root path given in the task does not exist; blob 2076bf79). Board record D56C2_SOURCE_APPROVAL_PROVENANCE_20261010.json binds the same commit, path and blob, raw SHA-256 cd4fe2cd, the same three paths, conditional on the owner acknowledgment and an exclusive lease. The approval text adds: No tests, push or schedule changes."
+     },
+     {
+      "item": "Commit changes only the scoped paths plus records/continuity",
+      "status": "MET",
+      "evidence": "Diff f4adea6b..36387094: the three scoped paths plus .xenios/ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json and sessions/codex-accepted-source-integration-20261005.json, each touching only this session's own entry. Diff 36387094..60b963c3: the same four files plus the new D56C2 handoff; nothing under client, server, shared or docs. client/src/research/lib/api.ts stays blob bcf1d6d6. docs/coordination/FILE_OWNERSHIP.json, the backend and memberCatalogApi.test.ts are unchanged."
+     },
+     {
+      "item": "Base and source identity",
+      "status": "MET",
+      "evidence": "Base blobs a07cbc87, d50b4671 and ce94ff42 equal the proposal's current blobs. Source blobs 2c4d9c2f (586 bytes), 3df04f38 (3795) and ad27b8ee (17945) and trees b1732b45 / 9f94115a match the registration. SHA-256 values were not recomputed, because no interpreter is permitted here."
+     },
+     {
+      "item": "Adapter opts in on the detail call only",
+      "status": "MET",
+      "evidence": "client/src/research/adapters/memberCatalogApi.ts:19@36387094 passes [\"product_not_found\"]. getMemberCatalog at lines 9-13 is unchanged. In api.ts:114-121@36387094 only a 404 with application/json, ok===false and a string code on the allowlist becomes a denial; everything else is unavailable."
+     },
+     {
+      "item": "Exact coded denial is kept apart from generic 404/501/503/network/HTML unavailable",
+      "status": "MET",
+      "evidence": "ProductPage.tsx:54-57@36387094 maps only kind==='denied' && code==='product_not_found' to state ok. api.ts:110-134 keeps typed 501/503, HTML and generic 404, and the HTML-200 fallback as unavailable. A network failure gives error (api.ts:146-147) and renders the retryable ResearchErrorState. Status-agnostic routing on the code is noted in DC-3."
+     },
+     {
+      "item": "No other product is substituted",
+      "status": "MET",
+      "evidence": "load() clears product before the await (ProductPage.tsx:27). The missing branch never sets a product. The generation guard (line 30), slug-equality check (lines 34-40) and scope masking (lines 75-77) are unchanged. The backend emits the code only for a null product: server/research/catalog/member-catalog-routes.ts:96@36387094."
+     },
+     {
+      "item": "Accepted subscription/customer behaviour preserved",
+      "status": "MET",
+      "evidence": "The page diff is +4 lines only. ProductSubscriptionCreate still gets product={null} and commerceEnabled={false} (ProductPage.tsx:92) and returns null when visible===false (ProductSubscriptionCreate.tsx:93). The existing describe block (test lines 53-150) is unchanged apart from one added import at line 9."
+     },
+     {
+      "item": "Positive test discriminates (real pipeline)",
+      "status": "MET",
+      "evidence": "ProductPage.subscription.test.tsx:178-191@36387094: a deferred JSON 404 renders the loading state first, then 'Product not found.' and the /research/member/products href. It checks the exact GET init, the bearer token, same-origin and no-store, and that there is no form or createSubscription call. Without the adapter edit the result is unavailable; without the page edit the denial falls to unavailable at line 58. Either way expectMissing fails. Only fetch and commerce are doubled, and no ApiResult mock bypasses the adapter. Rendered strings were confirmed in MemberProductDetailExperience.tsx:162-172 and kit.tsx:14-35 and 686-692."
+     },
+     {
+      "item": "Unavailable, auth, network and list-leak cases discriminate",
+      "status": "MET",
+      "evidence": "Test lines 193-213: 12 rows (counted). Each catches a plausible weakening (any-404, code without ok, 501/503 opt-in, HTML parse). Lines 215-225: 401 despite the code, and uncoded 403, show sign-in; membership_inactive 403 stays unavailable, which catches a page change mapping any denial to missing. Lines 227-243: the transport detail is hidden, Try again works, fetch is called twice. Lines 245-255: real getMemberCatalog still returns unavailable, which catches an opt-in leaking into the list call or a default allowlist."
+     },
+     {
+      "item": "Late-response and scope-isolation tests discriminate",
+      "status": "PARTIAL",
+      "evidence": "Lines 286-297 (old success after current missing) and 299-313 (A-to-B-to-A, fetch called 3 times) fail if the generation guard is removed. Lines 268-284 and 315-323 do not (DC-2)."
+     },
+     {
+      "item": "Narrow D56C2 reservation delegation recorded",
+      "status": "MET",
+      "evidence": "f4adea6b removes exactly the adapter and page patterns from OWNER-W2-PR85-INTEGRATION and adds OWNER-W2-D56C2-NARROW-SOURCE-20261011 (docs/coordination/FILE_OWNERSHIP.json:998-1008@36387094). The disposition handoff .xenios/handoffs/2026-10-11-D56C2-NARROW-REGISTRY-DISPOSITION-codex-launch-coordination-20261005.json records the receiving owner's acknowledgment msg_0f2569fb with matching base blobs. Lease 885c8e0e (CODE_OWNERSHIP.json:4-26@60b963c3) covers all three paths, claimedAt 22:13:50Z (commit 22:17:20Z), and is now in handoff with the source writer stopped."
+     },
+     {
+      "item": "ProductPage.subscription.test.tsx custody respected",
+      "status": "MET",
+      "evidence": "The test is not in the registry transfer: removedExactPatterns lists two paths and d56SeparatelyPreservedTest is set. No FILE_OWNERSHIP rule covers it. Custody is the same session's lease d0897045 (workstreamCReturnReceived, four C paths), which 885c8e0e also covers. No foreign lease covers it. The foreign product-subscribe.test.tsx reservation is kept unchanged. Another workstream's identity pin on this file is DC-1."
+     },
+     {
+      "item": "Approval said 'No tests' while test source was authored",
+      "status": "MET",
+      "evidence": "The proposal explicitly lists the test path and says to author regression source but execute nothing. The provenance record says testSourceAuthoringCoveredByExactProposal true and testExecutionAuthorized false. Registration and handoff say execution NOT_RUN."
+     },
+     {
+      "item": "Excluded consumers unaffected",
+      "status": "MET",
+      "evidence": "memberCatalogApi.test.ts@36387094 checks the detail call with a 503 and objectContaining, so the third argument and the 404-only branch do not affect it. No other client file references product_not_found apart from denials.ts and its test."
+     },
+     {
+      "item": "Cross-workstream identity controls stay consistent",
+      "status": "NOT_MET",
+      "evidence": "QuickOrderApp.composition.test.tsx:646-651@36387094 and :847-848@69d9e32a pin ProductPage.tsx to d50b4671 and the subscription test to ce94ff42. D56C2 changes them to 3df04f38 and ad27b8ee (DC-1)."
+     },
+     {
+      "item": "Execution of authored tests",
+      "status": "NOT_APPLICABLE",
+      "evidence": "Nothing was executed. Pass/fail of the authored tests is NOT PROVEN; this review judges only whether they discriminate."
+     }
+    ],
+    "findings": [
+     {
+      "id": "DC-1",
+      "severity": "P1",
+      "title": "D56C2 breaks the Quick Order composition test's pinned customer-blob identity rows, and no record says so",
+      "claim": "The Quick Order composition test requires ProductPage.tsx and ProductPage.subscription.test.tsx to keep their accepted Doc62 git blob ids. D56C2 changes both files, so two identity rows always fail in the D56C2 tree and in any integration with the current Quick Order frozen source. Neither the D56C2 handoff and registration nor the coordinator's D56C2 records mention it.",
+      "evidence": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx:646-651@363870945833a356b238d1f9220ecec8d5ccc318 LF-normalizes each file, hashes it as a git blob, and expects pages/member/ProductPage.tsx = d50b467159739148ae2ecbe90689c6d8df6f6d92 and ProductPage.subscription.test.tsx = ce94ff421800fa3b84437038d8c7e390ceeb0401. The same pins are present at base f4adea6b:646-647 and at Quick Order frozen source 69d9e32a:847-848, whose own tree still has the old blobs. The D56C2 tree has 3df04f38 and ad27b8ee. The merge base of 69d9e32a and 36387094 is 3e5e2ed9. The D56C2 handoff (60b963c3 .xenios/handoffs/2026-10-11-D56C2-SOURCE-HANDOFF-...json) claims under preservation that Quick Order is unchanged, and a search for 'composition', 'QuickOrderApp' or 'accepted customer blob' finds nothing in it or in the board's D56C2 records. The Quick Order release-closure and sprint records mention 3df04f38 only as a mirror of the D56C2 binding, with no pin re-disposition.",
+      "fix": "Record the dependency in the D56C2 records and on the coordinator board. Before any integration or qualification that combines D56C2 with the Quick Order line, either the Quick Order path owner re-pins the two rows to 3df04f3890b2ebd539163c4c62d6b226039b584f and ad27b8ee18f7fb879321e05aa0d8499b8c16fcb6 under its own lease and authority, or the coordinator records that D56C2 supersedes that identity control. Quick Order receipt pin-match claims must not carry over to a tree containing D56C2 until then. The D56C2 source needs no change."
+     },
+     {
+      "id": "DC-2",
+      "severity": "P3",
+      "title": "Two of the late-response cases would still pass with the generation guard removed",
+      "claim": "The 'old typed404 after current success' cases and the 'typed404 after unmount' case cannot fail if the generation check at ProductPage.tsx:30 is deleted. The product_not_found branch only sets state to ok and never touches product, so a stale denial changes nothing on screen. Detached roots render nothing anyway.",
+      "evidence": "ProductPage.subscription.test.tsx:268-284 and 315-323@363870945833a356b238d1f9220ecec8d5ccc318. ProductPage.tsx:54-57 calls only setState(\"ok\"), with state already ok and product still the current one. The guard is covered by lines 286-297 and 299-313 and by the existing tests at 94-139. The registration lists all four under 'Account/slug isolation and late responses'.",
+      "fix": "No source change needed. In records, label lines 268 and 315 as guards against a future change in which the missing branch clears or replaces the product, and list 286 and 299 as the tests that actually catch a removed generation guard."
+     },
+     {
+      "id": "DC-3",
+      "severity": "P3",
+      "title": "The missing-product view keys on the code regardless of HTTP status, and no test pins that",
+      "claim": "Any denied result carrying product_not_found renders 'Product not found.', not just a JSON 404. That includes a coded 403 (api.ts:107) or any non-404 JSON body with ok:false (api.ts:139-141). Before this change those showed unavailable. The canonical backend emits the code only on 404, and the handoff discloses this, but no test fixes the intended behaviour for non-404 statuses.",
+      "evidence": "client/src/research/pages/member/ProductPage.tsx:54@363870945833a356b238d1f9220ecec8d5ccc318. client/src/research/lib/api.ts:7-9, 104-108 and 136-141@36387094 (route on code, never on message). server/research/catalog/member-catalog-routes.ts:96@36387094. 60b963c3 handoff holds.apiStatusPolicy. The 12 rows cover only 404, typed 501/503 and HTML 200. Nothing is shown or claimed falsely, and the page only reads.",
+      "fix": "Accept this as a named behaviour consistent with the route-on-code envelope policy. Optionally, in a later bounded revision, add one row (for example a typed 403 or 500 product_not_found) that fixes the intended result."
+     },
+     {
+      "id": "DC-4",
+      "severity": "P3",
+      "title": "Own continuity record still lists the old ProductPage blobs as the immutable accepted source",
+      "claim": "The same session's lease d0897045 still lists ProductPage.tsx d50b4671 and ProductPage.subscription.test.tsx ce94ff42 as immutable accepted Doc62 source. It has no pointer to the D56C2 successor (lease 885c8e0e, source 36387094), so a reader of CODE_OWNERSHIP sees an accepted-source identity that no longer matches the branch tip.",
+      "evidence": ".xenios/CODE_OWNERSHIP.json d0897045 entry, immutableAcceptedSource.files (ProductPage rows near lines 268-275@60b963c3ff74ff6f6535fc5ae70b72e82bd040ff), unchanged by both D56C2 commits.",
+      "fix": "In a later own-records update, add a successor reference on d0897045 noting that D56C2 36387094 / 885c8e0e supersedes those two blobs, pending source acceptance. Do not rewrite the historical Doc62 acceptance."
+     }
+    ],
+    "deviations": [
+     "The D56C2 handoff and registration claim Quick Order is preserved and frozen, but do not disclose that the change breaks two pinned identity rows in QuickOrderApp.composition.test.tsx at both 36387094 and Quick Order frozen source 69d9e32a (DC-1).",
+     "The proposal's 'exact exclusive lease before edits' rests only on recorded timestamps. Lease 885c8e0e was activated in the same commit as the source edits (claimedAt 2026-10-11T22:13:50Z, commit 22:17:20Z); there is no separate pre-edit lease commit. Edit timing is NOT PROVEN from Git.",
+     "The human approval text reads 'No tests'. The coordinator recorded it as no test execution, with authoring of test source covered by the exact proposal, which explicitly includes the test path. This review accepts that reading as consistent with the proposal.",
+     "The task gave the proposal path at the root of 2df7ca8. The actual path is docs/coordination/launch-coordination-20261005/CUSTOMER_D56C2_THREE_PATH_SOURCE_PROPOSAL_20261009.md (blob 2076bf79), which matches the approval provenance record.",
+     "The registration labels the SHA-256 values RAW_COMMITTED_GIT_BYTES, while the builder handoff calls the same values committedLfSha256 and reports CRLF working-tree hashes separately. The labels differ but the values agree. Blob ids and byte sizes were verified here; SHA-256 was not recomputed because no interpreter is permitted.",
+     "All authored tests are NOT RUN. Pass/fail and timing behaviour under act() are NOT PROVEN; the judgement covers only whether they discriminate."
+    ]
+   },
+   "verify": {
+    "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
+    "verdicts": [
+     {
+      "id": "DC-1",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Confirmed. QuickOrderApp.composition.test.tsx:646-647@36387094 and :847-848@69d9e32a pin ProductPage.tsx to d50b4671 and ProductPage.subscription.test.tsx to ce94ff42. D56C2 changes them to 3df04f38 and ad27b8ee, so those two identity rows fail in the D56C2 tree itself and in any tree built on it (products-continuity and production-profile both contain 36387094). The Quick Order line since merge base 3e5e2ed9 never touched those pin rows or the three D56C2 paths. No D56C2 record on the board (D56C2_* and COORDINATION_STATE) mentions the composition test. Release-closure mentions 3df04f38 only as a mirror. Three qualifiers: (a) this is not a D56C2 source defect, because the composition test is outside the grant and the proposal excluded 'protected-hash acceptance'; (b) the composition test is itself pending acceptance; (c) the fix overstates the effect on the receipts (see DCV-2). The handoff's preservation block lists quickOrderSource 8e01ef86, which is the very commit that introduced the now-failing pins. The same integrator session re-froze Quick Order at 69d9e32a (23:38Z), about 80 minutes after freezing D56C2 (22:18Z), and still kept the stale pins (DCV-3)."
+     },
+     {
+      "id": "DC-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed with one correction. Test 268 cannot fail when only the generation guard (ProductPage.tsx:30) is removed: a stale denial just calls setState('ok') on an already-ok state with the current product. It fails only if the guard is removed AND the missing branch also clears or replaces the product. With the guard in place, a stale denial is thrown away anyway, so the checker's relabel ('guards against a missing branch that clears the product') is incomplete. Test 315 discriminates nothing beyond GET-only, because setState after unmount does nothing. The guard is really covered by tests 286 and 299 (A-to-B-to-A, fetch called 3 times) and existing tests 94 and 127."
+     },
+     {
+      "id": "DC-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed, and refined. ApiResult carries no status, so ProductPage.tsx:54 routes on the code alone. One untested asymmetry: on 403, api.ts:104-108 needs only typeof code === 'string' (no ok:false), so a 403 body {code:'product_not_found'} renders 'Product not found.'. The same body on a JSON 404 stays unavailable (the 'missing ok' row, test line 197). api.ts:139-141 also maps any other non-501/503 JSON body with ok:false plus that code (including 200 and 500) to missing. The canonical backend emits the code only at member-catalog-routes.ts:96 on 404. No other server path on /api/research/member/products/:slug emits it; commerce routes.ts:447 is /api/research/products/:slug. Nothing false about identity or success is shown. P3 stands, and the handoff's holds.apiStatusPolicy discloses it."
+     },
+     {
+      "id": "DC-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. In the d0897045 entry at 60b963c3, immutableAcceptedSource still lists ProductPage d50b4671 and the subscription test ce94ff42, custody 'IMMUTABLE_FREEZE_ONLY'. Neither D56C2 commit adds a successor pointer. A reader restoring the 'accepted' bytes from this record would silently revert D56C2. A records-only fix is correct."
+     }
+    ],
+    "checkChallenges": [
+     {
+      "item": "Approved proposal located and approval bound to it",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Blob 2076bf79 is confirmed at 2df7ca8, which is on codex/xenios-launch-coordination-20261005. The file was added at 32178c87 (2026-10-09) and never changed afterwards, so nothing was edited after approval. The approval text (208 bytes) and the provenance record bind the same commit, path and blob and the three paths."
+     },
+     {
+      "item": "Commit changes only the scoped paths plus records/continuity",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "I checked the whole range 3e5e2ed9..60b963c3, not just the two commits. It touches the three scoped paths, docs/coordination/FILE_OWNERSHIP.json (coordinator commit f4adea6b only: two patterns moved), the coordinator's own continuity and handoff, and the integrator's own continuity and handoff. Nothing else under client, server or shared changed. api.ts (bcf1d6d6) and memberCatalogApi.test.ts (0231662c) are unchanged."
+     },
+     {
+      "item": "Base and source identity",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "rev-parse gives trees b1732b45 (source), 9f94115a (records) and 0f704e3b (base). Blob sizes are 586, 3795 and 17945. Handoff blob fdb1682e (10959 bytes) is identical to the board copy D56C2_COMPLETED_SOURCE_ACTUAL_HANDOFF_20261011.json. SHA-256 was not recomputed, because no interpreter is permitted."
+     },
+     {
+      "item": "Adapter opts in on the detail call only",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "memberCatalogApi.ts:19@36387094 opts in; getMemberCatalog at lines 9-13 is unchanged. The only other client consumer of getMemberProductDetail is memberCatalogApi.test.ts. Its fake 503 response has no body, so it is unaffected."
+     },
+     {
+      "item": "Exact coded denial is kept apart from generic 404/501/503/network/HTML unavailable",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Holds for the 404, 501, 503, HTML, HTML-200 and network paths. The status-agnostic limit is DC-3, including the 403 asymmetry where only a code is needed."
+     },
+     {
+      "item": "No other product is substituted",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The runtime code is correct: load() clears the product at ProductPage.tsx:27 before the await, and the missing branch never sets a product. That safety rests entirely on line 27, and no test pins it (DCV-1). Before D56C2 the missing view was effectively unreachable: api.ts:139 turns {ok:false, code} into denied before adaptMemberProductDetail's not_found branch (memberCatalog.ts:687-688) can see it. D56C2 makes line 27 carry the weight for the first time."
+     },
+     {
+      "item": "Accepted subscription/customer behaviour preserved",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "ProductPage.tsx:92 still passes product={null} and commerceEnabled={false}. ProductSubscriptionCreate.tsx:93 returns null when not visible. The wrapper at line 87 stays hidden when product is null. The diff confirms the nine existing tests are unchanged apart from the import at line 9. The foreign product-subscribe.test.tsx has no product_not_found or JSON 404 fixture, so it is unaffected."
+     },
+     {
+      "item": "Positive test discriminates (real pipeline)",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Test 178: without the adapter edit, api.ts:123 makes the result unavailable; without the page edit, line 58 does. Either way the 'Product not found.' and 'not available' assertions fail. Rendered strings were checked in MemberProductDetailExperience.tsx:162-172 and kit.tsx:16, 29-33 and 684-693."
+     },
+     {
+      "item": "Unavailable, auth, network and list-leak cases discriminate",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Mostly true. Small caveats: the 'nonstring code' row (line 200) cannot catch removal of the typeof guard, because Array.includes on an array value is already false (DCV-5). The 'unknown code' row catches only combined api and page weakenings. The membership_inactive 403, 401 and uncoded 403 rows, the network/retry case and the list-leak case do discriminate."
+     },
+     {
+      "item": "Late-response and scope-isolation tests discriminate",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Agree. Beyond DC-2, none of the 34 tests has a resolved product in state when a current-scope product_not_found arrives (DCV-1)."
+     },
+     {
+      "item": "Narrow D56C2 reservation delegation recorded",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The approval asked for a 'current owner acknowledgment', meaning the Website 2 reservation. Samuel's later direct authority (WEBSITE_COMPLETION_EXPLICIT_DIRECT_AUTHORITY_20261011.txt, section 3, about lines 159-196 on the board) explicitly delegates superseding the stale reservation for exactly these two paths without the unreachable historical contact. The receiving owner ack msg_0f2569fb and the no-competing-writer evidence are recorded. Lease 885c8e0e was already recorded as PREPARED_NOT_ACTIVE at f4adea6b, before the source commit. The 'temporary' nature is not encoded (DCV-4)."
+     },
+     {
+      "item": "ProductPage.subscription.test.tsx custody respected",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "No FILE_OWNERSHIP pattern or glob covers it; the only glob is scripts/acceptance/**. d0897045 (freeze-only, handoff) and 885c8e0e are both the same session's leases. The d9ff89ea subscription-intent lease appears only as historical transfer and return references."
+     },
+     {
+      "item": "Approval said 'No tests' while test source was authored",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "The approval covers the 'existing three-path proposal', which lists the test as a writable path and says 'author regression source but execute nothing'. Reading 'No tests' as no execution is the only reading that leaves the third path meaningful."
+     },
+     {
+      "item": "Excluded consumers unaffected",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed for memberCatalogApi.test.ts, product-subscribe.test.tsx, Products.tsx (list adapter unchanged) and the backend. The CI pilot runs only three server tests, so it is unaffected."
+     },
+     {
+      "item": "Cross-workstream identity controls stay consistent",
+      "checkerStatus": "NOT_MET",
+      "verifierStatus": "NOT_MET",
+      "note": "Only the composition test's identity rows break. The two 102-file Quick Order receipts pin QuickOrderApp.composition.test.tsx itself, not the D56C2 paths, so their pins are unaffected unless that test is re-pinned (DCV-2). Historical records that still list the old blobs (NINE_PATH receipt, customer-accepted-assembly bindings, SIX_PATH record) are read by no script, test or workflow."
+     },
+     {
+      "item": "Execution of authored tests",
+      "checkerStatus": "NOT_APPLICABLE",
+      "verifierStatus": "NOT_APPLICABLE",
+      "note": "Nothing was executed. Pass/fail is NOT PROVEN."
+     }
+    ],
+    "missed": [
+     {
+      "id": "DCV-1",
+      "severity": "P2",
+      "title": "No test pins no-substitution when a previously shown product is in state and the new scope returns product_not_found",
+      "claim": "The missing branch only sets state to ok. The only thing stopping the previous product from showing under the new slug or account is setProduct(null) at ProductPage.tsx:27. If that line were removed, or moved after the await, slug or account B would show A's product identity under B's route and account: wrong-identity data. All 25 new and 9 existing tests would still pass. In 268 the stale response is a denial; in 286 and 299 A is deferred and never resolves first; the existing tests 111 and 127 only use success responses, which overwrite the product.",
+      "evidence": "client/src/research/pages/member/ProductPage.tsx:27,54-57,75-77@363870945833a356b238d1f9220ecec8d5ccc318. Scope masking does not help once load() sets loadedScope to the new scope at line 25: displayedProduct becomes the stale product as soon as state is ok. Before D56C2 this branch was effectively unreachable, because api.ts:139-141 turns {ok:false, code} into denied before memberCatalog.ts:687-688 can return not_found. Test file lines 268-323 and 94-149@36387094 contain no case where a resolved product precedes a current-scope typed 404.",
+      "fix": "In a bounded revision of ProductPage.subscription.test.tsx (in D56C2 scope), before qualification, add one it.each(['account','slug']) case: A resolves (h1 'Synthetic Research'), change scope, B returns response(missing, 404), then expectMissing() and assert 'Synthetic Research' is absent. No runtime change needed."
+     },
+     {
+      "id": "DCV-2",
+      "severity": "P2",
+      "title": "DC-1's fix misstates the receipt impact and omits the re-pin cascade",
+      "claim": "DC-1 says Quick Order receipt pin-match claims must not carry over to a tree containing D56C2. That is wrong. The two 102-file receipts (sql-currentness and sql-intake source receipts) do not pin any D56C2 path; they pin QuickOrderApp.composition.test.tsx itself, and D56C2 leaves its bytes unchanged. What does not carry over is the composition test passing. DC-1's remedy (a), re-pinning the two rows, changes that test's bytes and so invalidates both receipts' pins and the frozen Quick Order source 69d9e32a. That reopens exactly the 'original source acceptance and receipt confirmation' still pending for Quick Order. Remedy (b) leaves a test that will fail every time in any executed qualification run that includes it.",
+      "evidence": "fa1286a8:docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json:31 and sql-intake-source-receipt-doc71-20261009.json:31 pin client/src/research/quick-order/QuickOrderApp.composition.test.tsx by sha256lf. A git grep for pages/member/ProductPage or memberCatalogApi in both receipts finds nothing. Board DOC83_COMPOSITION_ACTUAL_EVIDENCE_HANDOFF_44cb6f79_20261011.json receiptChecks: files 102, allCommittedPinsMatch true.",
+      "fix": "The coordinator records the dependency and decides the order. Either the Quick Order path owner re-pins now, before Quick Order receipt confirmation closes, folding the change into the pending revision so receipts are confirmed once; or the coordinator records an explicit supersession and excludes those two rows from qualification. Correct DC-1's wording: the receipt pins carry over; the composition test's pass does not."
+     },
+     {
+      "id": "DCV-3",
+      "severity": "P3",
+      "title": "The same integrator's later Quick Order freeze and session row diverge from D56C2 without cross-reference",
+      "claim": "Session codex-accepted-source-integration-20261005 froze D56C2 at 22:18Z. It then froze Quick Order Doc83 correction 69d9e32a at 23:38Z with the pre-D56C2 pins, and its note says 'protected expected hashes/manifests unchanged', without mentioning D56C2. The session's SESSION_REGISTRY row now differs between the two lines (lane, branch, heartbeat and note), so integrating them needs a manual merge of that row. Picking either side as-is would overwrite the other line's continuity state.",
+      "evidence": "60b963c3:.xenios/SESSION_REGISTRY.json row: lane d56c2-product-not-found, branch codex/d56c2-source-20261011. fa1286a8:.xenios/SESSION_REGISTRY.json same row: lane doc83-integrator-correction, branch codex/accepted-source-integration-20261005, heartbeat 2026-10-11T23:39:49Z. 69d9e32a commit time 18:38:30 -0500.",
+      "fix": "At integration, merge the row by hand to keep both lanes' state, and cross-reference D56C2 in the Quick Order records (together with DC-1)."
+     },
+     {
+      "id": "DCV-4",
+      "severity": "P3",
+      "title": "The 'temporary' reservation delegation has no expiry or return condition",
+      "claim": "Samuel delegated 'temporary ownership administration' for the two paths. The receiving rule OWNER-W2-D56C2-NARROW-SOURCE-20261011 is state 'active' with no expiry, return-to-Website-2 condition or release trigger. It stays active after the D56C2 lease went to handoff and the source writer stopped.",
+      "evidence": "docs/coordination/FILE_OWNERSHIP.json receiving rule (lines ~998-1008)@36387094. Board D56C2_NARROW_RESERVATION_ACTUAL_DISPOSITION_20261011.json scope.d56TemporaryReservationAdministration. Lease 885c8e0e is in handoff at 60b963c3.",
+      "fix": "In a later coordinator records update, add the return or release condition (for example, after source acceptance or integration) so the narrow rule does not become a permanent second owner of the two Website 2 paths."
+     },
+     {
+      "id": "DCV-5",
+      "severity": "P3",
+      "title": "The 'nonstring code' row cannot catch removal of the typeof guard",
+      "claim": "Even without the typeof check at api.ts:117, knownNotFoundDenials.includes(['product_not_found']) is false, because Array.includes uses SameValueZero on an array value. The row passes either way, so the registration overstates what the table discriminates.",
+      "evidence": "client/src/research/lib/api.ts:117@36387094. ProductPage.subscription.test.tsx:200@36387094.",
+      "fix": "No source change needed. Note in records that the row guards only against coercion (for example String(code)); optionally add a number-code row in a later revision."
+     }
+    ],
+    "opinion": "I accept the D56C2 source with named limits. The runtime change is exactly the approved two-line delta: the detail call opts in to product_not_found (memberCatalogApi.ts:19), and the page maps that one code to the existing missing view (ProductPage.tsx:54-57). api.ts, the backend and the list adapter are untouched. Generic, uncoded, malformed and HTML 404s, typed 501/503, the HTML-200 fallback and network failures stay unavailable or retryable error as before. Purchasing stays disabled. The test custody and the narrow two-path transfer are recorded: Samuel's direct delegation, the receiving ack, and the lease prepared before the source commit. Nothing changed outside the scoped paths.\n\nI uphold all four checker findings, with corrections:\n- **DC-1 (P1):** a real integration blocker, but not a D56C2 source defect. Its effect on the receipts is misstated, and its re-pin remedy would invalidate both 102-file Quick Order receipts (DCV-2). The cheapest order is to re-pin inside the still-pending Quick Order revision, before receipt confirmation.\n- **DC-2 (P3):** 268 needs two simultaneous regressions to fail; 315 checks nothing beyond GET-only.\n- **DC-3 (P3):** stands, plus a 403 asymmetry where a code alone is enough.\n- **DC-4 (P3):** stands.\n\nOne missed gap matters more than DC-2. D56C2 makes the missing view reachable for the first time, and its protection against showing the previous product rests on the untested setProduct(null) at line 27. One more test pair (A resolves, then B returns a typed 404) should be added before qualification (DCV-1, P2).\n\nNothing was executed, and all test outcomes are NOT PROVEN.",
+    "deviations": [
+     "Lease timing: the checker says the exclusive lease rests only on timestamps. More precisely, lease 885c8e0e's id and three paths were committed as PREPARED_NOT_ACTIVE in the coordinator's disposition at f4adea6b (22:12:41Z), before the source commit. Only its activation is in the same commit as the edits (claimedAt 22:13:50Z, commit 22:17:20Z). Whether the edits happened after activation is NOT PROVEN from Git.",
+     "The approval's 'current owner acknowledgment' condition was met through Samuel's later explicit delegation, which authorizes superseding the stale reservation without the unreachable historical holder, plus the receiving owner's ack. There was no Website 2 holder acknowledgment. This is consistent with the human instruction, but it is a substitution, not a literal match to the original condition.",
+     "The D56C2 handoff and checkpoint list quickOrderSource 8e01ef86 as preserved. That commit introduced the composition identity rows D56C2 now breaks. The bytes are preserved, but the test's pass is not, and this is undisclosed.",
+     "The proposal is at docs/coordination/launch-coordination-20261005/CUSTOMER_D56C2_THREE_PATH_SOURCE_PROPOSAL_20261009.md@2df7ca8 (blob 2076bf79), not at the root path the task gives.",
+     "The registration labels SHA-256 values RAW_COMMITTED_GIT_BYTES while the handoff calls them committedLfSha256. The values agree. Blob ids, sizes and trees were verified; SHA-256 was not recomputed (no interpreter permitted).",
+     "Other worktrees (389a, 3221, d56c2-source-20261011) were not read, as instructed. The receiving ack's claims about historical checkouts and the absence of dirty conflicts are taken from Git records only.",
+     "All authored tests are NOT RUN. Judgements cover only whether they discriminate; pass/fail and act() timing are NOT PROVEN."
+    ]
+   }
+  },
+  {
+   "pkg": "products-continuity",
+   "tag": "PC",
+   "check": {
+    "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
+    "summary": "Products continuity source 603af3dc (records ca318e61) passes this read-only review with named limits. I found nothing at P0, P1 or P2, and three P3 items. Scope matches the registration: the source commit (parent 7baa6300) changes exactly Products.tsx and Products.integration.test.ts. The blobs (ae2787bb, 0945f296), byte counts (3451 and 20557) and trees (5db45d1e and 662bc44d) all match the registration. The records commit changes only .xenios continuity files plus its own source record. The D56 files and every dependency (memberCatalogApi.ts, ProductPage.tsx, ProductPage.subscription.test.tsx, memberCatalog.ts, lib/api.ts, MemberCatalogExperience.tsx) are byte-identical to D56 source 36387094.\n\nThe fix has three parts. First, each result is tied to a memoized request object built from {memberToken, memberChecking, attempt}, and the page shows a stored result only when that object matches the current render (Products.tsx:38-41, 86). Second, each layout effect has an `active` lifetime flag that drops any reply arriving after the effect is cleaned up, before the payload is adapted or published (Products.tsx:45-83, guards at :52 and :70). Third, the page fetches nothing while the session is still being checked or when there is no token (:49), shows loading while checking and the sign-in message only once the session has settled with no token (:87-89), and a retry can only advance its own still-current attempt (:91-96).\n\nThe previous mapping of results to states is unchanged: 401 and uncoded 403 show sign-in; coded denials, 404, 501, 503, HTML and malformed projections show unavailable; other failures show an error; an empty success stays a normal empty catalog. Nothing about price or eligibility changes.\n\nThe authored tests do separate the main protections from weaker versions. They catch dropping the same-request check (the first-commit test), keying on token instead of request identity (the A→B→A revisit test and the test that returns to the same token after checking), dropping the lifetime flag (an old success payload left unread, the after-successor timing, the StrictMode and unmount tests), dropping the retry guard (the token-transition, revisit and in-flight tests), and dropping the no-fetch-while-checking guard. The synthetic catalog fixture passes the real card validator, so the expectCard checks are meaningful. All tests are AUTHORED_NOT_RUN, so passing is NOT PROVEN.\n\nThe three P3 items: the catch path labels an adaptation fault as a connection failure; a few redundant guards and individual test legs do not have a test that would catch their removal on its own; and some state from the previous session stays held in memory without being shown.",
+    "checks": [
+     {
+      "item": "Scope: source commit changes only the two scoped paths; records commit only records/continuity; bindings match registration",
+      "status": "MET",
+      "evidence": "git diff --raw 7baa6300..603af3dc lists only Products.integration.test.ts (870c4d40->0945f296) and Products.tsx (f632a104->ae2787bb); bytes 3451/20557; tree 5db45d1e, records tree 662bc44d; ca318e61 (parent 603af3dc) touches only .xenios/ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json, sessions/codex-accepted-source-integration-20261005.json, a new handoff, and docs/health-launch/.../PRODUCTS_SESSION_CONTINUITY_SOURCE_20261011.json"
+     },
+     {
+      "item": "No prior identity's catalog shown after a context change (A->B, checking/null, checking/retained, sign-out)",
+      "status": "MET",
+      "evidence": "Products.tsx:86@603af3dc keeps a stored result only when snapshot.request === request, decided during the same render, before any effect; :100 passes EMPTY_CATALOG unless state==='ok'; :102 passes errorMessage only for error. The test file records the first committed props and DOM through a wrapper around the real presentation (Products.integration.test.ts:20-32, 163-187@603af3dc)"
+     },
+     {
+      "item": "Obsolete responses cannot overwrite current state",
+      "status": "MET",
+      "evidence": "The `active` flag at Products.tsx:46/52/70/80@603af3dc drops late replies before adaptMemberCatalog runs or setSnapshot is called; the same-request check at :86 is a second barrier. Tests at :207-240 cover success/401/uncoded 403/coded 403/503/500/network, both before and after the successor completes, and assert an old success payload's getter is never read"
+     },
+     {
+      "item": "Retained retry callbacks cannot start a request with a captured token or revive an old lifetime",
+      "status": "MET",
+      "evidence": "Products.tsx:91-96@603af3dc: retry checks activeRequest.current === request and only calls setAttempt(v=>v+1); the new request always reads the current context token (:38-41, :51). Tests :260-280 (revisit), :282-305 (token-transition leg), :307-326, :328-341"
+     },
+     {
+      "item": "Revisit identity (A->B->A) does not revive the first A request",
+      "status": "MET",
+      "evidence": "useMemo creates a new request object on every dependency change (Products.tsx:38-41@603af3dc); test :260-280 needs the latest A reply, and returns old-a while still loading, which rules out masking keyed on the token string"
+     },
+     {
+      "item": "Cleanup lifetimes (unmount, StrictMode double effect with same request identity)",
+      "status": "MET",
+      "evidence": "Products.tsx:79-82@603af3dc; tests :343-361 (old payload getter unread, no further renders after unmount) and :363-375 (the cleaned-up StrictMode first run is ignored even though it holds the same request object, which shows the `active` flag is needed beyond the same-request check)"
+     },
+     {
+      "item": "Canonical checking/null barrier: loading while memberChecking, not a false sign-in or empty state; settled null shows sign-in",
+      "status": "MET",
+      "evidence": "Products.tsx:87-89@603af3dc; ResearchRouteBoundary renders ra-loading for loading and 'Your session has ended.' only for unauthorized (ui/kit.tsx:684-695@603af3dc). Core clears the token at checking start (core.tsx:298,308) and sets the token together with authenticated (core.tsx:327-328). Tests :136-161, :189-205"
+     },
+     {
+      "item": "No request without a token or while checking",
+      "status": "MET",
+      "evidence": "Products.tsx:49@603af3dc returns before getMemberCatalog when checking or the token is null, and retry repeats the guard at :94. Tests :136-149 and :151-161 assert zero fetch calls; :189-205 requires a fresh read even when the token returns to A"
+     },
+     {
+      "item": "Adapter/catalog/denial/unavailable/empty semantics preserved and distinct",
+      "status": "MET",
+      "evidence": "Mapping at Products.tsx:53-68@603af3dc matches the parent's: ok->adapt (failure->unavailable), unauthorized|forbidden->unauthorized, denied|unavailable->unavailable, else error with result.message. lib/api.ts:100-148 and memberCatalog.ts are unchanged. Tests :377-399, :401-408, :422-429. A new catch path for an exception thrown during adaptation is an addition (see PC-1)"
+     },
+     {
+      "item": "No price or eligibility change",
+      "status": "MET",
+      "evidence": "Products.tsx has no price or eligibility logic; memberCatalog.ts (price/readiness/selection validators) and memberCatalogApi.ts are byte-identical to D56 source 36387094 (empty diff); fixtures use price/readiness/selection null with displayState 'unavailable' (test :70-76)"
+     },
+     {
+      "item": "Authored tests catch removal of the main barriers (same-request check, identity vs token, lifetime flag, retry guard, checking guard)",
+      "status": "MET",
+      "evidence": "Removing the check at :86 fails test :176-185; keying on the token fails :271-275 and :199-201 (retained-A case); removing :52 fails the old-payload-getter assertions at :227, :254, :357, :371 and expectCard at :232 (after timing); removing the activeRequest check fails the counts at :298, :276, :338; removing :49 fails :144. The fixture passes card() in memberCatalog.ts:308-375 and adaptMemberCatalog :592-680, so expectCard is meaningful"
+     },
+     {
+      "item": "Every added guard has its own test that fails when only that guard is removed",
+      "status": "PARTIAL",
+      "evidence": "The catch-path lifetime check (Products.tsx:70), the cleanup ref reset (:81), and retry's checking/token re-check (:94) have no test that fails on their removal alone (see PC-2)"
+     },
+     {
+      "item": "Executed evidence",
+      "status": "NOT_APPLICABLE",
+      "evidence": "Source-only review; every added and retained test is AUTHORED_NOT_RUN per the registration; passing is NOT PROVEN (named limit)"
+     },
+     {
+      "item": "D56C2 review not duplicated; D56 paths preserved",
+      "status": "MET",
+      "evidence": "git diff 36387094..603af3dc on memberCatalogApi.ts, ProductPage.tsx and ProductPage.subscription.test.tsx is empty; D56 content was not re-reviewed"
+     }
+    ],
+    "findings": [
+     {
+      "id": "PC-1",
+      "severity": "P3",
+      "title": "Adaptation exception is presented as a connection failure",
+      "claim": "The new catch path turns an exception thrown while adapting the catalog into a retryable error that says 'The connection failed. Please try again.', which is a specific and false diagnosis. The records call this a 'fixed generic error'. No data is exposed and no success is shown falsely (the catalog stays empty).",
+      "evidence": "Products.tsx:69-75@603af3dc sets errorMessage 'The connection failed. Please try again.'. getMemberCatalog never throws, because lib/api.ts:146-148@603af3dc already turns transport failures into {kind:'error'}, so this catch runs only for faults after a successful transport, such as adaptMemberCatalog throwing. Products.integration.test.ts:418@603af3dc locks in this copy. The records doc 'changes' entry says 'fixed generic error'. A deterministic adaptation fault will fail again on every retry.",
+      "fix": "Pass no message, so ResearchErrorState falls back to its generic line (ui/kit.tsx:29@603af3dc), or use a neutral fixed string. Alternatively classify the case as 'unavailable', consistent with invalid_projection. Update the assertion at test:418 to match."
+     },
+     {
+      "id": "PC-2",
+      "severity": "P3",
+      "title": "Some guards and test legs lack controls that catch their removal on their own; PC-05 witness overstates",
+      "claim": "Several guards are redundant with others, so no test fails when only one of them is removed. The PC-05 witness claims more than the control actually shows.",
+      "evidence": "There is no control for an obsolete adaptation exception, so removing the lifetime check at Products.tsx:70@603af3dc goes undetected (network rejection is normalized inside apiGet, lib/api.ts:146-148). The cleanup ref reset at :81 and retry's re-check of checking and token at :94 are also undetected when removed, because the effect guard at :49 and React's no-op on setState after unmount block the same paths. In test 'ignores a prior error retry after token transition, checking, sign-out and remount' (:282-305), only the token-transition leg (:289-291, count checked at :298) fails when the activeRequest check is removed. The checking and sign-out legs stay at zero reads because of :49, and the remount leg because setState on an unmounted component does nothing. The registration's PC-05 witness ('Old callback cannot issue extra reads after transition/checking/sign-out/remount') implies each leg tests the guard.",
+      "fix": "Add a control in which A's reply throws during adaptation after an A->B transition, both before and after B completes, and assert that B's state is kept. Narrow the PC-05 witness to say that only the token-transition leg isolates the retry guard; the other legs are covered by the no-token/checking effect guard and React's unmount behaviour."
+     },
+     {
+      "id": "PC-3",
+      "severity": "P3",
+      "title": "State from the previous session stays in memory, though it is never shown",
+      "claim": "After a context change the old snapshot, including the previous identity's catalog, remains in component state until it is replaced or the component unmounts. Separately, the search, lane and category state inside the presentation component survives an in-place token change. A previous user's typed search text could therefore stay visible in the search input after an A->B switch that happens without navigation (for example a sign-in in another tab). No catalog records are rendered in either case.",
+      "evidence": "Products.tsx:42 and :86@603af3dc hide the mismatched snapshot but do not clear it. MemberCatalogExperience.tsx:168-170@603af3dc holds useState for query/lane/category and is always mounted by Products (Products.tsx:98-104), with the route boundary rendered inside it. None of the PC controls checks presentation-local input. In the normal flow, sign-out routes through /research/sign-in, which remounts the page.",
+      "fix": "Optional follow-up outside this two-path increment: clear the snapshot when the request no longer matches, and give the presentation a key per member identity, not per token, so that routine token refreshes do not reset the filters. This is not a blocker."
+     }
+    ],
+    "deviations": [
+     "The records doc describes the new adaptation-exception handling as a 'fixed generic error', but Products.tsx:74@603af3dc shows connection-failure copy (PC-1).",
+     "The registration's PC-05 witness claims that the old callback is blocked across the transition, checking, sign-out and remount legs. Only the token-transition leg isolates the activeRequest guard; the other legs are blocked independently by Products.tsx:49 or by React's no-op after unmount (PC-2).",
+     "No scope deviation: the source commit touches only the two registered paths, the records commit only continuity records, and the D56 and dependency files are byte-identical to 36387094.",
+     "Execution: all controls are AUTHORED_NOT_RUN; no passing assertion count is claimed or proven. The test with a token kept while checking is synthetic, because core clears the token when checking starts (core.tsx:298,308@603af3dc), as the registration itself states."
+    ]
+   },
+   "verify": {
+    "disposition": "SOURCE_ACCEPTED_WITH_LIMITS",
+    "verdicts": [
+     {
+      "id": "PC-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed, and the checker's reasoning holds. getMemberCatalog can never reject: everything in request() sits inside one try, and the catch-all returns {kind:'error'} (lib/api.ts:88-89, 146-148@603af3dc). So the new catch at Products.tsx:69-75@603af3dc runs only when adaptMemberCatalog throws. The copy it shows is byte-identical to apiGet's transport-failure message (lib/api.ts:147), so the error is mislabeled as a connection failure. That also contradicts the records' 'fixed generic error' (records doc :45@ca318e61) and the usual malformed-projection-to-unavailable mapping. Context: in the parent, the same throw was an unhandled rejection that left the page loading forever (parent Products.tsx:29-36, 58), so this is a net improvement. No data is exposed and nothing is wrongly shown as successful, so P3 is correct."
+     },
+     {
+      "id": "PC-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with one correction to its remedy. The :70 lifetime check is not just untested: under the current dependencies it can never be false. No await sits between the :52 check and anything in the try that can throw (adaptMemberCatalog and setSnapshot at :53-68 run synchronously), and getMemberCatalog never rejects (lib/api.ts:146-148). An obsolete reply therefore returns at :52 before adaptation runs. The proposed control ('A's reply throws during adaptation after an A->B transition') would never reach :70 and would pass with or without the guard. A test that catches :70's removal needs getMemberCatalog mocked to reject after the transition, which this real-apiGet harness does not do. The rest stands: the :81 cleanup reset and the :94 checking/token re-check are redundant with :49 and with React ignoring setState after unmount, and in test :282-305 only the token-transition leg (:289-291, counted at :298) isolates the activeRequest guard. See PCV-2 for the same overstatement in two more tests."
+     },
+     {
+      "id": "PC-3",
+      "upheld": false,
+      "severity": "REJECTED",
+      "note": "Rejected as stated. The visible consequence it describes (a previous user's search text or filters surviving an in-place A->B switch) cannot happen in the production route. Products is mounted only through <L member> -> RequireMember (section.tsx:207-218, 381@603af3dc). RequireMember renders a placeholder instead of its children while memberChecking (MemberArea.tsx:18-24) and redirects when member is null (:25-34). Core sends every token change through token=null plus status 'checking' (core.tsx:294-308) or through clearMemberState (:263-273). Auth events, including SIGNED_IN from another tab, go through establishMemberSession (:425-436). So any identity change unmounts Products, discarding both the snapshot and the presentation's useState. The code-level point is true but practically unreachable: a stale snapshot only stays in memory within one mount, i.e. the same identity, the dev-only gallery with a fixed token (gallery.tsx:7-10, 236-246), or the synthetic tests. Clearing the mismatched snapshot is optional hardening, not a finding."
+     }
+    ],
+    "checkChallenges": [
+     {
+      "item": "Scope: source changes only the two paths; records only continuity; bindings match",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Independently confirmed. diff --raw 7baa6300..603af3dc shows only Products.integration.test.ts (870c4d4->0945f29) and Products.tsx (f632a10->ae2787b), at 3451 and 20557 bytes. Tree 5db45d1e and records tree 662bc44d match the registration. ca318e61 adds or modifies only .xenios/{ACTIVE_TASKS,CODE_OWNERSHIP,SESSION_REGISTRY}.json, the sessions file, one new handoff, and the docs/health-launch source record. There is no diff under client, shared or server from D56 36387094 to 7baa6300, and none under shared, server, adapters or lib from 7baa6300 to 603af3dc. Nothing else imports Products (only section.tsx:111, gallery.tsx:28 and the test), and no other test pins the Products.tsx source text."
+     },
+     {
+      "item": "No prior identity's catalog shown after a context change",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. The mask at :86 is decided during render, and :100 and :102 pass a catalog or message only when they belong to the current request. Only the token-B case of PC-01 (:163-187) catches removal of :86: in the checking and null cases, state is loading or unauthorized whatever the mask does. That case is sufficient. Extra point: in routed production, RequireMember unmounts Products on any identity change, so the mask is a second layer of defence."
+     },
+     {
+      "item": "Obsolete responses cannot overwrite current state",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. Precision note: with :52 removed, a stale non-success reply in the 'before' timing is still hidden by :86, so those six cases pass. The 'after' timing catches the removal for all seven kinds: the stale write replaces B's snapshot, the page falls back to loading, and expectCard at :232 fails. The success kind is also caught by the getter assertion at :227. The 'network' kind is normalized to the same 'error' path inside apiGet, as the registration's PC-03 limit says."
+     },
+     {
+      "item": "Retained retry callbacks cannot start a captured-token request or revive an old lifetime",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. Removing the activeRequest check (:94) is caught by :298 (token-transition leg), :276 (revisit, 4 reads instead of 3), :322 (old callback after the real button click) and :338. The checking, sign-out and remount legs of :282-305, the oldRetry call in :242-258, and the call after unmount in :343-361 do not catch it (PCV-2)."
+     },
+     {
+      "item": "Revisit identity (A->B->A)",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "MET stands, but the checker's evidence is wrong. Test :260-280 does NOT rule out a render mask keyed on the token string: firstA's reply is dropped at :52, because its lifetime ended at the A->B commit, before anything is stored, so a token-keyed :86 would still pass. What the test rules out is a token-keyed retry guard: retryA would match A3 and cause a 4th read. A token-keyed mask is caught by :189-205 in both variants (null and retained A), not only the retained-A case."
+     },
+     {
+      "item": "Cleanup lifetimes (unmount, StrictMode same identity)",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. The StrictMode test (:363-375) is the one case where removing :52 would actually display obsolete data: the double-invoked effect shares the committed request object, so :86 cannot tell the two lifetimes apart. The test catches this at :371 and :372. In the unmount test the getter assertion at :357 is decisive; the retry call is trivially a no-op."
+     },
+     {
+      "item": "Canonical checking/null barrier",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed at the component level (:87-89, kit.tsx:684-695). Missing from the checker: in production, RequireMember (MemberArea.tsx:18-34) is the outer barrier, so Products' own checking and null branches are defence in depth and only reachable in direct composition. The tests render Products without RequireMember. That is a valid synthetic control, but it is not route-composition evidence."
+     },
+     {
+      "item": "No request without a token or while checking",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. Removing either half of :49 is caught: the checking half by :136-149 with the retained token, the null-token half by :151-161 and the null case of :136."
+     },
+     {
+      "item": "Adapter/catalog/denial/unavailable/empty semantics preserved",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed against parent Products.tsx:35-54 and the unchanged lib/api.ts:100-148. The only addition is the catch path (PC-1). Previously a null token produced a fetch and a server 401; now it shows unauthorized with no fetch. The visible state is the same, and the records' policyDelta discloses the change honestly."
+     },
+     {
+      "item": "No price or eligibility change",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed. No diff in shared, server, adapters or lib. Fixture items use price, readiness and selection null with displayState 'unavailable'."
+     },
+     {
+      "item": "Authored tests catch removal of the main barriers",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Upheld with the evidence correction above (:271-275 catches a token-keyed retry guard, not a token-keyed mask). I checked that the fixture passes card() (memberCatalog.ts:308-375): the lane is in PRODUCT_LANES, 'member' is in CART_PURCHASE_AUDIENCES, there are no forbidden keys, price(null) and readiness(null) return null, and priceIsCurrent(null) is true. So expectCard is a meaningful check."
+     },
+     {
+      "item": "Every added guard has its own test that fails when only that guard is removed",
+      "checkerStatus": "PARTIAL",
+      "verifierStatus": "PARTIAL",
+      "note": "Upheld. Refinement: with the real apiGet, :70 cannot be tested at all, because it is never false (PCV-1). :81 and the re-check at :94 are redundant and safe."
+     },
+     {
+      "item": "Executed evidence",
+      "checkerStatus": "NOT_APPLICABLE",
+      "verifierStatus": "NOT_APPLICABLE",
+      "note": "Every control is AUTHORED_NOT_RUN, so passing is NOT PROVEN. As a plausibility check I traced act() flushing and the mock-hoisting order (React is imported before ./Products, and observed comes from vi.hoisted). I found nothing that would obviously fail, but that is not evidence."
+     },
+     {
+      "item": "D56C2 not duplicated; D56 paths preserved",
+      "checkerStatus": "MET",
+      "verifierStatus": "MET",
+      "note": "Confirmed with an empty diff stat from 36387094 to 603af3dc over adapters, lib/api.ts, products-diagnostics, core.tsx, ui/kit.tsx, ProductPage.tsx and its subscription test, MemberArea.tsx and section.tsx."
+     }
+    ],
+    "missed": [
+     {
+      "id": "PCV-1",
+      "severity": "P3",
+      "title": "The catch-path lifetime check cannot fail under current dependencies, and PC-2's proposed control would not catch its removal",
+      "claim": "Products.tsx:70@603af3dc is defensive code that is never false today. An obsolete reply cannot reach the catch with active=false, so the control PC-2 recommends (A's adaptation throws after A->B) would pass with or without the guard.",
+      "evidence": "Products.tsx:51-52: after the only await, `if (!active) return;` comes before any code that can throw. Lines :53-68 contain no await, so `active` cannot change before adaptMemberCatalog or setSnapshot throws. getMemberCatalog -> apiGet -> request() wraps its whole body in try/catch and returns {kind:'error'} (lib/api.ts:88-89, 146-148), so it never rejects. Any exception reaching :69 therefore comes from synchronous code that ran after :52 had confirmed active===true.",
+      "fix": "Optional. Either document :70 as protection against a future apiGet that rejects, or add a control that mocks getMemberCatalog (vi.mock of adapters/memberCatalogApi) to reject after an A->B transition, before and after B completes, and asserts that B's state is kept. Do not add the adaptation-throw control PC-2 proposes; it cannot catch the guard's removal."
+     },
+     {
+      "id": "PCV-2",
+      "severity": "P3",
+      "title": "PC-03 and PC-06 witnesses overstate the retained-callback coverage in the same way as PC-05",
+      "claim": "The oldRetry call in 'discards a pending success after entering checking=%s with no token' and the retry call after unmount in 'does not adapt or publish an obsolete completion after unmount' pass even when the activeRequest guard is removed. Their witnesses ('also discard pending success and old retry'; 'unmounted retry is ignored') imply they test the guard.",
+      "evidence": "Test :242-258@603af3dc: without the :94 guard, oldRetry calls setAttempt, the new request is (null, checking|false, 1), and :49 skips the read, so the count of 1 at :256 still holds. Test :343-361: oldRetry calls setState on an unmounted fiber, which React ignores, so :360 holds regardless. Registration PC-03 and PC-06 witnesses: scratchpad/seven/PRODUCTS_SESSION_CONTINUITY_SOURCE_REVIEW_REQUEST_20261011.json:137, 170.",
+      "fix": "Narrow both witnesses. In those legs, the read barrier is the guard at :49 and React's handling of updates after unmount, not the retry guard. The retry guard is isolated only by :289-291/:298, :271/:276, :321-322 and :335-338."
+     }
+    ],
+    "opinion": "I agree with the checker's disposition: source accepted with named limits. I found nothing at P0, P1 or P2.\n\n**What is right**\n- **Scope:** the commit changes only the two scoped files. Every dependency is byte-identical to D56.\n- **Fix design:** it uses two independent barriers:\n  - The lifetime flag at :52 drops an obsolete reply before it is adapted or stored.\n  - The render-time request-identity mask at :86 hides any snapshot from an earlier request in the same render that changes the context.\n- **Session and retry guards:** the page never reads while checking or without a token (:49). Retries can only advance the request that is still current (:91-96).\n- **Existing semantics:** the ok, unauthorized, unavailable, error and empty mappings match the parent exactly. Price and eligibility code is untouched.\n- **Tests:** they catch removal of each main barrier. The StrictMode control (:363-375) is the strongest, because it is the only case where the identity mask alone would let obsolete data through.\n\n**Corrections to the checker**\n1. **PC-2's remedy is wrong.** The :70 guard can never be false today: no await sits after the :52 check, and apiGet never rejects. The proposed adaptation-throw control would pass with or without the guard. Only a getMemberCatalog mock that rejects could catch its removal (PCV-1).\n2. **PC-3 is not reachable in production.** RequireMember unmounts Products while memberChecking and redirects when member is null. Core routes every identity change through null plus checking, so neither the old snapshot nor the presentation's search or filter state survives an A->B switch.\n3. **Evidence for the revisit test is misattributed.** The A->B->A test catches a token-keyed retry guard, not a token-keyed render mask. The mask is covered by :189-205, in both variants.\n\n**Remaining limits**\n- PC-1: misleading 'connection failed' copy for adaptation exceptions (P3).\n- Witness overstatements in PC-03, PC-05 and PC-06 (PC-2, PCV-2).\n- All controls are AUTHORED_NOT_RUN, so passing is NOT PROVEN.\n- The tests render Products outside RequireMember (synthetic composition), so they are not route-level evidence.",
+    "deviations": [
+     "Records say the adaptation exception gets a 'fixed generic error' (records doc :45@ca318e61; handoff :52). The page actually shows apiGet's connection-failure copy (Products.tsx:74@603af3dc, identical to lib/api.ts:147). PC-1 is upheld.",
+     "The PC-05 witness, and the matching witness legs in PC-03 ('old retry') and PC-06 ('unmounted retry is ignored'), claim more than the controls show. Only the token-transition, revisit, button-retry and in-flight legs isolate the activeRequest guard. The other legs are blocked by :49 or by React ignoring setState after unmount (PC-2, PCV-2).",
+     "Checker's PC-2 remedy: the proposed adaptation-throw control would not catch removal of the :70 guard. That guard cannot be false under the current apiGet (PCV-1).",
+     "Checker's PC-3: the in-place A->B case where search or filter text persists is unreachable in the routed app. RequireMember (MemberArea.tsx:18-34@603af3dc) unmounts Products on checking and on a null member, and core routes all token changes through checking (core.tsx:263-273, 294-308, 425-436). PC-3 is rejected.",
+     "Checker's revisit evidence: test :260-280 does not rule out a token-keyed render mask, because :52 drops firstA before anything is stored. It rules out a token-keyed retry guard. The token-keyed mask is ruled out by :189-205 (both variants).",
+     "Composition limit: every control renders Products directly in a synthetic ResearchContext, without RequireMember. In production, Products' own checking and null branches are defence in depth behind RequireMember. No route-level composition evidence exists.",
+     "Process observation, not a source defect: the records say both local commits ran with core.hooksPath pointed at an absent 'disabled-hooks' directory (records doc :212-213@ca318e61), so no repository commit hooks ran. This is disclosed.",
+     "No scope deviation: the source commit touches only the two registered paths, the records commit only continuity and its source record, and D56 and all dependencies are byte-identical to 36387094.",
+     "Execution: all controls are AUTHORED_NOT_RUN. No passing count is claimed and none is proven. The checking-with-retained-token fixture is synthetic, as the registration states."
+    ]
+   }
+  }
+ ]
+}
