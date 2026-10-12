@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "status": "PASS_LOCAL_NPM_CI_AND_PRODUCTION_BUILD_WITH_WARNINGS",
+  "candidate": "f4358b521fc89551e31ce40bb040a5ffbacd8050",
+  "tree": "5a6a401c23ee7a5b149a5360359e0a0015d6ded1",
+  "reservation": "27823ddaf70601120c1b333fcbaeb25c29bd13ec LOCAL-SUPPORT-PREVIEW-F435-20261012",
+  "start": "2026-10-12T21:11:15.769Z",
+  "end": "2026-10-12T21:15:47.518Z",
+  "durationSeconds": 271.749,
+  "exit": 0,
+  "timeout": false,
+  "attempts": 1,
+  "command": "Pinned Node20.19.0 scripts/evidence/build-candidate-preview.mjs --sha f4358b521fc89551e31ce40bb040a5ffbacd8050",
+  "effective": "Sibling npm10.8.2 ci --no-audit --no-fund, then npm run build -> node script/build.mjs",
+  "installation": "531 packages; genuine fresh locked project-local install. No lock change, no Node24 tooling inherited. 411 lock entries lack resolved/integrity, so lock identity not complete tarball-integrity claim.",
+  "installedMetadataSha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94",
+  "logSha256": "430f47e43a6d00f23d85c9a753263eeff341156eba00c77716e96713a483bda5",
+  "provenanceSha256": "c0ee5cd22d535d7c9bd0e623d9d504457b86fc1395203293db1ab2a6713afaed",
+  "inventorySha256": "8fdf24da5e3411365c4d1fbab918c2aaf249707d727b5ab6ac2d4632b0e3635e",
+  "artifactPostcheck": {
+    "at": "2026-10-12T21:16:11.6015898Z",
+    "files": 346,
+    "totalBytes": 10632920,
+    "eachRecordedFileHashAndSizeMatched": true,
+    "requiredEntriesPresent": true,
+    "extraFileInventoryRecheck": "Existing preview validator will compare complete inventory before serving; all recorded file hashes manually rechecked now.",
+    "serverIndexSha256": "f8ebc413eb2bb1ceb3f3d484e3c9b2af91183618ec0df86cccbef9b9745bedc6",
+    "publicIndexSha256": "8045219488f6441b7b8aa08ab0bd4b0182535e99d37d17ed30e224c1a85a3a06"
+  },
+  "processPostcheck": "After launcher completion, observed PIDs10336/30260/33320/36440 absent and no Node command matching owned checkout/scratch. No server started. This is observed process cleanup, not kernel Job enforcement.",
+  "warnings": [
+    "One mixed static/dynamic AdminResearchHome import warning",
+    "One main chunk-size advisory (506.34kB, gzip152.27kB)",
+    "npm production config deprecation and npm update notice retained; no version update acted on"
+  ],
+  "source": "Clean exact HEAD/tree, package-lock hash d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8 unchanged.",
+  "limits": [
+    "Not render-build script; hosted path uses global-prefix npm update and non-ci install separately",
+    "Not fullsuite/typecheck/companion/browser or deployment result",
+    "Procedural one-heavy/heap only, no aggregate kernel/network sandbox claim",
+    "No all-descendant self-attestation; main/builder/sibling npm pinned and lifecycle PATH prechecked"
+  ],
+  "release": "NOT_QUALIFIED_NOT_DEPLOYED; support independent from required QL successor",
+  "rawEvidence": [
+    "build-receipt.json",
+    "build-run.log",
+    "build-provenance.json"
+  ]
+}
