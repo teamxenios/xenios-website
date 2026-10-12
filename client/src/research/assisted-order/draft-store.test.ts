@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import type { AssistedOrderCatalogItem } from "../../../../shared/research/assisted-order/contract";
 import {
   ASSISTED_ORDER_DRAFT_KEY,
+  attemptOwnsStoredDraft,
   clearAssistedOrderDraft,
   draftSelectionMap,
+  probeAssistedOrderDraft,
   readAssistedOrderDraft,
   storeAssistedOrderDraft,
 } from "./draft-store";
@@ -314,5 +316,85 @@ describe("assisted order draft store", () => {
       expect(draft.step).toBe("contact");
       expect(draft.generalNotes).toBe("note");
     });
+  });
+});
+
+describe("storage probe and attempt ownership (Doc99 QL2-1 follow-up)", () => {
+  const selections = () => addOrUpdateSelection(new Map(), item, 2);
+
+  it("keeps unavailable, absent and present apart", () => {
+    expect(probeAssistedOrderDraft(null)).toEqual({ kind: "unavailable" });
+
+    const denied = fakeStorage();
+    denied.getItem = () => {
+      throw new DOMException("denied", "SecurityError");
+    };
+    expect(probeAssistedOrderDraft(denied)).toEqual({ kind: "unavailable" });
+
+    const empty = fakeStorage();
+    expect(probeAssistedOrderDraft(empty)).toEqual({ kind: "absent" });
+    empty.setItem(ASSISTED_ORDER_DRAFT_KEY, "{not json");
+    expect(probeAssistedOrderDraft(empty)).toEqual({ kind: "absent" });
+
+    const stored = fakeStorage();
+    storeAssistedOrderDraft(
+      {
+        idempotencyKey: "key-1",
+        acceptedAt: "2026-10-12T12:00:00.000Z",
+        attemptState: "in_flight",
+        step: "review",
+        selections: selections(),
+        generalNotes: "",
+      },
+      stored,
+    );
+    const probe = probeAssistedOrderDraft(stored);
+    expect(probe.kind).toBe("present");
+    if (probe.kind === "present") {
+      expect(probe.draft).toMatchObject({
+        idempotencyKey: "key-1",
+        acceptedAt: "2026-10-12T12:00:00.000Z",
+        attemptState: "uncertain",
+      });
+    }
+  });
+
+  it("reports whether a store succeeded", () => {
+    const draft = { idempotencyKey: "key-1", step: "products" as const, selections: selections(), generalNotes: "" };
+    expect(storeAssistedOrderDraft(draft, fakeStorage())).toBe(true);
+    expect(storeAssistedOrderDraft(draft, null)).toBe(false);
+    const full = fakeStorage();
+    full.setItem = () => {
+      throw new DOMException("Quota exceeded", "QuotaExceededError");
+    };
+    expect(storeAssistedOrderDraft(draft, full)).toBe(false);
+  });
+
+  it("judges ownership by key and stamp, by emptiness after a store, and by reachability", () => {
+    const stored = fakeStorage();
+    storeAssistedOrderDraft(
+      {
+        idempotencyKey: "key-1",
+        acceptedAt: "stamp-1",
+        attemptState: "in_flight",
+        step: "review",
+        selections: selections(),
+        generalNotes: "",
+      },
+      stored,
+    );
+    const present = probeAssistedOrderDraft(stored);
+    expect(attemptOwnsStoredDraft({ idempotencyKey: "key-1", acceptedAt: "stamp-1" }, true, present)).toBe(true);
+    expect(attemptOwnsStoredDraft({ idempotencyKey: "key-1", acceptedAt: "stamp-2" }, true, present)).toBe(false);
+    expect(attemptOwnsStoredDraft({ idempotencyKey: "key-1", acceptedAt: null }, true, present)).toBe(false);
+    expect(attemptOwnsStoredDraft({ idempotencyKey: "key-2", acceptedAt: "stamp-1" }, true, present)).toBe(false);
+
+    const absent = probeAssistedOrderDraft(fakeStorage());
+    expect(attemptOwnsStoredDraft({ idempotencyKey: "key-1", acceptedAt: null }, false, absent)).toBe(true);
+    expect(attemptOwnsStoredDraft({ idempotencyKey: "key-1", acceptedAt: null }, true, absent)).toBe(false);
+
+    const unavailable = probeAssistedOrderDraft(null);
+    expect(attemptOwnsStoredDraft({ idempotencyKey: "key-1", acceptedAt: "stamp-1" }, true, unavailable)).toBe(true);
+    expect(attemptOwnsStoredDraft({ idempotencyKey: "key-1", acceptedAt: "stamp-1" }, false, unavailable)).toBe(true);
   });
 });

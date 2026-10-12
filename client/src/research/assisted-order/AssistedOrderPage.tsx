@@ -36,11 +36,15 @@ import {
   type AssistedOrderWizardConfig,
 } from "./wizard-state";
 import {
+  attemptOwnsStoredDraft,
   clearAssistedOrderDraft,
   draftSelectionMap,
+  probeAssistedOrderDraft,
   readAssistedOrderDraft,
   storeAssistedOrderDraft,
+  type AssistedOrderAttemptIdentity,
   type AssistedOrderAttemptState,
+  type AssistedOrderDraftInput,
   type AssistedOrderStoredAttemptState,
   type AssistedOrderWizardStep,
 } from "./draft-store";
@@ -427,6 +431,34 @@ export function AssistedOrderPage({
   // a re-render during the request keeps the in-flight marker in the draft
   // instead of overwriting it with the page's pre-answer state.
   const inFlight = useRef(false);
+  // Lifecycle generation. A submit closure captures the value when it starts
+  // and compares after every await: a changed value means this page was lost
+  // (unmounted) and the closure is retired, whatever it learned.
+  const generation = useRef(0);
+  useEffect(
+    () => () => {
+      generation.current += 1;
+    },
+    [],
+  );
+  // Whether this page ever managed to store its draft, and whether its own
+  // last write failed. Once a draft was stored, a reachable but empty store
+  // means the draft was taken away (the protected-path sweep, or a receipt):
+  // the page owns nothing and writes nothing more. A page whose own writes
+  // fail keeps working in memory, exactly as before.
+  const storedOnce = useRef(false);
+  const storeFailed = useRef(false);
+  const persistDraft = (draft: AssistedOrderDraftInput): void => {
+    if (storeAssistedOrderDraft(draft)) {
+      storedOnce.current = true;
+      storeFailed.current = false;
+    } else {
+      storeFailed.current = true;
+    }
+  };
+  const ownsAttempt = (attempt: AssistedOrderAttemptIdentity): boolean =>
+    storeFailed.current ||
+    attemptOwnsStoredDraft(attempt, storedOnce.current, probeAssistedOrderDraft());
   const [, navigate] = useLocation();
 
   useEffect(() => {
@@ -474,7 +506,12 @@ export function AssistedOrderPage({
   // a session expiry or re-unlock costs the customer nothing but their
   // contact fields.
   useEffect(() => {
-    storeAssistedOrderDraft({
+    // Only the page that owns the stored attempt may write it. After the
+    // protected-path sweep, or after a receipt cleared the draft, the store is
+    // empty although this page had written before: it owns nothing and must
+    // not repopulate it.
+    if (!ownsAttempt({ idempotencyKey, acceptedAt })) return;
+    persistDraft({
       idempotencyKey,
       acceptedAt,
       // While a POST is outstanding the stored state is the in-flight marker
@@ -775,9 +812,12 @@ export function AssistedOrderPage({
   // Pricing or availability moved between review and submission. Re-resolve
   // every selection against the live catalog and keep the customer on review:
   // the request now carries current server values and they decide again.
-  const recoverFromDrift = async (message: string) => {
+  const recoverFromDrift = async (message: string, stillOwned: () => boolean) => {
     try {
       const result = await refreshSelectionSnapshots(selections);
+      // The refresh took time. A page lost or disowned meanwhile (unmounted,
+      // or swept) may not apply what came back.
+      if (!stillOwned()) return;
       setSelections(result.selections);
       const removed =
         result.missing.length > 0
@@ -785,6 +825,7 @@ export function AssistedOrderPage({
           : "";
       setNotice(`${message}${removed} Please review the updated request and submit again.`);
     } catch {
+      if (!stillOwned()) return;
       setNotice(`${message} Please go back to products, review current values, and submit again.`);
     }
   };
@@ -824,6 +865,19 @@ export function AssistedOrderPage({
     if (acceptedAt === null) {
       setAcceptedAt(attemptAcceptedAt);
     }
+    // What this closure expects to find in the store, and the page generation
+    // it belongs to. Both are checked after every await, before anything is
+    // written, cleared, shown or navigated: a POST that answers a page already
+    // lost, or whose draft the protected-path sweep took away, may act on
+    // nothing. The expected stamp moves only on this closure's own authorized
+    // transitions (a release sets it to null), so a legitimate current-page
+    // recovery is never mistaken for a foreign draft.
+    const gen = generation.current;
+    const expected: { idempotencyKey: string; acceptedAt: string | null } = {
+      idempotencyKey,
+      acceptedAt: attemptAcceptedAt,
+    };
+    const stillOwned = (): boolean => gen === generation.current && ownsAttempt(expected);
     // Persisted BEFORE every POST, not only the first. The in-flight marker
     // records that this attempt has left the browser with its outcome unknown:
     // a page lost from here on restores as uncertain, with the same key and
@@ -832,7 +886,7 @@ export function AssistedOrderPage({
     const storedAttemptState: AssistedOrderStoredAttemptState =
       attemptState === "uncertain" ? "uncertain" : "in_flight";
     inFlight.current = true;
-    storeAssistedOrderDraft({
+    persistDraft({
       idempotencyKey,
       acceptedAt: attemptAcceptedAt,
       attemptState: storedAttemptState,
@@ -862,6 +916,12 @@ export function AssistedOrderPage({
     try {
       const receipt = await submitAssistedOrder(input);
       inFlight.current = false;
+      // Terminal handling belongs to the page that still owns this attempt. A
+      // page that was lost, or whose draft the protected-path sweep took away,
+      // stores no credential, clears nothing and navigates nowhere: the request
+      // exists server-side, and the page that owns the attempt now resolves it
+      // by replaying the same key and stamp.
+      if (!stillOwned()) return;
       // Local persistence is best-effort and atomic per receipt. A browser
       // quota/privacy failure must never reinterpret this accepted server
       // request as a failed submission; the path still carries its safe
@@ -877,12 +937,15 @@ export function AssistedOrderPage({
       // The POST has answered, or failed to: the flight is over either way, and
       // what follows records the real outcome in place of the marker.
       inFlight.current = false;
+      // A lost page, or a page whose draft is no longer its own, learns
+      // nothing it may act on: no state, no storage, no recovery.
+      if (!stillOwned()) return;
       const failure = classifySubmitFailure(reason);
       if (failure === "uncertain") {
         // The server may hold this request already. Freeze the attempt for
         // good, say so truthfully, and never offer a fresh request.
         setAttemptState("uncertain");
-        storeAssistedOrderDraft({
+        persistDraft({
           idempotencyKey,
           acceptedAt: attemptAcceptedAt,
           attemptState: "uncertain",
@@ -899,7 +962,7 @@ export function AssistedOrderPage({
         // stays frozen; the key is kept either way.
         if (attemptState !== "uncertain") {
           setAcceptedAt(null);
-          storeAssistedOrderDraft({
+          persistDraft({
             idempotencyKey,
             acceptedAt: null,
             attemptState: "none",
@@ -907,11 +970,15 @@ export function AssistedOrderPage({
             selections,
             generalNotes,
           });
+          // This closure's own authorized transition: from here on it expects
+          // a released stamp in the store, not the one it was issued with.
+          expected.acceptedAt = null;
         }
         await recoverFromDrift(
           attemptState === "uncertain"
             ? DRIFT_AFTER_UNCERTAIN_MESSAGE
             : DRIFT_FIRST_ATTEMPT_MESSAGE,
+          stillOwned,
         );
       } else if (failure === "conflict") {
         // Never rotate the key here: the earlier request may be the real one.
@@ -919,7 +986,7 @@ export function AssistedOrderPage({
         // key, so the attempt is uncertain from now on and stays so across a
         // refresh; the restored draft says so.
         setAttemptState("uncertain");
-        storeAssistedOrderDraft({
+        persistDraft({
           idempotencyKey,
           acceptedAt: attemptAcceptedAt,
           attemptState: "uncertain",
@@ -939,7 +1006,7 @@ export function AssistedOrderPage({
           // The server answered and refused before persisting: the in-flight
           // marker written before this POST is cleared with the stamp.
           setAcceptedAt(null);
-          storeAssistedOrderDraft({
+          persistDraft({
             idempotencyKey,
             acceptedAt: null,
             attemptState: "none",
@@ -947,6 +1014,9 @@ export function AssistedOrderPage({
             selections,
             generalNotes,
           });
+          // This closure's own authorized transition: the released stamp is
+          // what it expects to find from now on.
+          expected.acceptedAt = null;
         }
         setError(
           code === "agreement_required"

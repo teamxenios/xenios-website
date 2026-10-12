@@ -1250,6 +1250,133 @@ describe("AssistedOrderPage", () => {
       expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
     });
 
+    it("hands a late success to the page that owns the attempt: the lost page stores nothing, the restored page replays", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder
+        .mockReturnValueOnce(lost.promise)
+        .mockResolvedValueOnce(receipt);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      const first = submitCall(0);
+      const stamp = acceptedAtOf(first);
+      const pathBefore = window.location.pathname;
+
+      // Lost without a sweep: the draft stays in the store, in flight. The
+      // late success belongs to a page that no longer exists.
+      unmount();
+      lost.resolve(receipt);
+      await settle(20);
+      expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).toBeNull();
+      expect(window.location.pathname).toBe(pathBefore);
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: first.idempotencyKey,
+        acceptedAt: stamp,
+        attemptState: "in_flight",
+      });
+
+      // The page that restores the attempt owns it and resolves it: the same
+      // key and stamp replay the committed request and reach the receipt.
+      render();
+      await settle();
+      expect(byTestId("order-notice")?.textContent).toContain(RESTORED_COPY);
+      await reviewFromRestoredContact();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(2);
+      expect(submitCall(1).idempotencyKey).toBe(first.idempotencyKey);
+      expect(acceptedAtOf(submitCall(1))).toBe(stamp);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+    });
+
+    it("discards a drift recovery that completes after the page was lost", async () => {
+      const repriced = { ...directRuoItem, unitPriceCents: 2700, priceVersion: "price-2" };
+      const refresh = deferred<AssistedOrderCatalogPage>();
+      api.submitAssistedOrder.mockRejectedValueOnce(
+        new AssistedOrderApiError(409, "price_changed", "The price changed."),
+      );
+      render();
+      await settle();
+      await reachReview();
+      // The refresh that follows the 409 is held open.
+      api.loadAssistedOrderCatalog.mockReturnValue(refresh.promise);
+      click(byTestId("order-submit"));
+      await settle(20);
+      // The release happened before the refresh: the stamp is gone, the key stays.
+      const key = submitCall(0).idempotencyKey;
+      expect(readDraft()).toMatchObject({ idempotencyKey: key, acceptedAt: null, attemptState: "none" });
+
+      unmount();
+      refresh.resolve(catalogPage([repriced]));
+      await settle(20);
+      expect(readDraft()).toMatchObject({ idempotencyKey: key, acceptedAt: null, attemptState: "none" });
+    });
+
+    it("applies nothing from a drift recovery that completes after the protected sweep", async () => {
+      const repriced = { ...directRuoItem, unitPriceCents: 2700, priceVersion: "price-2" };
+      const refresh = deferred<AssistedOrderCatalogPage>();
+      api.submitAssistedOrder.mockRejectedValueOnce(
+        new AssistedOrderApiError(409, "price_changed", "The price changed."),
+      );
+      render();
+      await settle();
+      await reachReview();
+      api.loadAssistedOrderCatalog.mockReturnValue(refresh.promise);
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(readDraft()).toMatchObject({ acceptedAt: null, attemptState: "none" });
+
+      // The route's sweep runs while the refresh is still in flight and the
+      // wizard is still mounted for the rest of that tick: whatever comes back
+      // may neither be applied nor written.
+      clearAssistedOrderStorage();
+      refresh.resolve(catalogPage([repriced]));
+      await settle(20);
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+      expect(sessionStorage.length).toBe(0);
+      expect(byTestId("order-notice")?.textContent ?? "").not.toContain("Pricing or availability changed");
+      expect(document.body.textContent).not.toContain("$27.00");
+    });
+
+    it("keeps the accepted-receipt path when its own storage writes start failing after an earlier success", async () => {
+      api.submitAssistedOrder
+        .mockRejectedValueOnce(
+          new AssistedOrderApiError(400, "validation_error", "Enter a valid email address.", "contact.email"),
+        )
+        .mockResolvedValueOnce(receipt);
+      render();
+      await settle();
+      await reachReview();
+      // The draft written during the wizard steps is in the store. From here
+      // on every draft write is refused (quota), so the store goes stale while
+      // the page keeps working in memory, as it always has.
+      const nativeSetItem = Storage.prototype.setItem;
+      vi.spyOn(Storage.prototype, "setItem").mockImplementation(function (
+        this: Storage,
+        key,
+        value,
+      ) {
+        if (String(key) === ASSISTED_ORDER_DRAFT_KEY) {
+          throw new DOMException("Quota exceeded", "QuotaExceededError");
+        }
+        return nativeSetItem.call(this, key, value);
+      });
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(byTestId("order-error")?.textContent).toContain("Review the highlighted information");
+
+      await settle(10);
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(2);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+      expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).not.toBeNull();
+    });
+
     it("keeps the key on idempotency_conflict and never invites a new request", async () => {
       api.submitAssistedOrder.mockRejectedValue(conflict());
       render();

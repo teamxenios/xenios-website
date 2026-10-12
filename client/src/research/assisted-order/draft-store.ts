@@ -196,22 +196,29 @@ export function readAssistedOrderDraft(
   }
 }
 
+export type AssistedOrderDraftInput = Readonly<{
+  idempotencyKey: string;
+  // Optional so a caller that has not attempted a submission yet stores the
+  // "not stamped" / "none" defaults without naming them.
+  acceptedAt?: string | null;
+  attemptState?: AssistedOrderStoredAttemptState;
+  step: AssistedOrderWizardStep;
+  selections: AssistedOrderSelectionMap;
+  generalNotes: string;
+}>;
+
+/**
+ * Writes the draft and reports whether the store accepted it. A page uses the
+ * answer to learn that it has owned a stored draft (see attemptOwnsStoredDraft)
+ * and to keep working in memory when its own writes start failing.
+ */
 export function storeAssistedOrderDraft(
-  draft: Readonly<{
-    idempotencyKey: string;
-    // Optional so a caller that has not attempted a submission yet stores the
-    // "not stamped" / "none" defaults without naming them.
-    acceptedAt?: string | null;
-    attemptState?: AssistedOrderStoredAttemptState;
-    step: AssistedOrderWizardStep;
-    selections: AssistedOrderSelectionMap;
-    generalNotes: string;
-  }>,
+  draft: AssistedOrderDraftInput,
   storage?: Storage | null,
-): void {
+): boolean {
   const target = storage ?? defaultStorage();
   if (!target) {
-    return;
+    return false;
   }
   try {
     target.setItem(
@@ -226,8 +233,10 @@ export function storeAssistedOrderDraft(
         savedAt: new Date().toISOString(),
       }),
     );
+    return true;
   } catch {
     // Storage can be full or unavailable; the wizard still works in memory.
+    return false;
   }
 }
 
@@ -258,4 +267,69 @@ export function draftSelectionMap(
     map.set(catalogItemKey(selection.item), selection);
   }
   return map;
+}
+
+// A three-way read that keeps apart what a plain null read conflates: a store
+// that cannot be reached at all (privacy mode, denied getter) and a store that
+// is reachable but holds no usable draft (never written, swept by the
+// protected path, or cleared after a receipt).
+export type AssistedOrderDraftProbe =
+  | Readonly<{ kind: "unavailable" }>
+  | Readonly<{ kind: "absent" }>
+  | Readonly<{ kind: "present"; draft: AssistedOrderDraft }>;
+
+export function probeAssistedOrderDraft(
+  storage?: Storage | null,
+): AssistedOrderDraftProbe {
+  const target = storage ?? defaultStorage();
+  if (!target) {
+    return Object.freeze({ kind: "unavailable" as const });
+  }
+  let raw: string | null;
+  try {
+    raw = target.getItem(ASSISTED_ORDER_DRAFT_KEY);
+  } catch {
+    return Object.freeze({ kind: "unavailable" as const });
+  }
+  if (raw === null) {
+    return Object.freeze({ kind: "absent" as const });
+  }
+  const draft = readAssistedOrderDraft(target);
+  return draft
+    ? Object.freeze({ kind: "present" as const, draft })
+    : Object.freeze({ kind: "absent" as const });
+}
+
+/** The identity a page expects its stored attempt to carry. */
+export type AssistedOrderAttemptIdentity = Readonly<{
+  idempotencyKey: string;
+  acceptedAt: string | null;
+}>;
+
+/**
+ * Whether a page may still write, clear or act on the stored draft on behalf
+ * of an attempt. It owns the attempt when the store holds exactly that
+ * identity (same key AND same acceptedAt), when the store cannot be reached
+ * at all (the page keeps its in-memory behaviour), or when the store is empty
+ * and the page never managed to store a draft (a fresh page about to create
+ * one). A reachable but empty store after the page HAD stored a draft means
+ * someone else removed it, the protected-path sweep or a terminal receipt,
+ * and the page owns nothing from then on.
+ */
+export function attemptOwnsStoredDraft(
+  attempt: AssistedOrderAttemptIdentity,
+  storedOnce: boolean,
+  probe: AssistedOrderDraftProbe,
+): boolean {
+  switch (probe.kind) {
+    case "unavailable":
+      return true;
+    case "absent":
+      return !storedOnce;
+    case "present":
+      return (
+        probe.draft.idempotencyKey === attempt.idempotencyKey &&
+        probe.draft.acceptedAt === attempt.acceptedAt
+      );
+  }
 }
