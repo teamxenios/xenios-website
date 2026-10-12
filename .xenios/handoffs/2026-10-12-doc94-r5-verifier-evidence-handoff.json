@@ -1,0 +1,1348 @@
+{
+  "schemaVersion": 1,
+  "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+  "revision": 5,
+  "compositionReviewRevision": 5,
+  "mapRevision": 6,
+  "at": "2026-10-12T04:48:32.806Z",
+  "owner": {
+    "session": "codex-health-quick-order-20261005",
+    "chat": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005"
+  },
+  "source": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+  "sourceTree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+  "records": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+  "recordsTree": "d8bc4590a4ec4ad2f243a86592d8e5dab4f75d1b",
+  "sourceStatus": "FROZEN_AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW",
+  "controllingReview": {
+    "observedAt": "2026-10-12T04:33:59.251Z",
+    "document": 94,
+    "verdictCommit": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+    "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "reportedReviewerModel": "claude-opus-5-5",
+    "actualEffort": "NOT_EXPOSED",
+    "taskId": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "revision": 4,
+    "source": "38915cf4318594607098717389113869e3eff0da",
+    "tree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+    "records": "02c1748dee7c1d7e6453aaf993182dcc80e3db65",
+    "recordsTree": "a60b61a0566d8c0e1f8de642e9554cfa43626f4b",
+    "disposition": "CORRECTIONS_REQUIRED",
+    "p0": 0,
+    "p1": 0,
+    "p2": 1,
+    "materialBlockingFinding": "R4C-1",
+    "affectedSourcePath": "supabase/verification/research_health_quick_order_local.mjs",
+    "transactionRuntime": "UNCHANGED_ACCEPTED_WITH_NAMED_LIMITS_DOC87",
+    "DC1": "EXACT_ACCEPTED",
+    "newNamedLimit": {
+      "name": "COMMIT-POST-GATE-SHADOW",
+      "disposition": "ACCEPTED",
+      "reason": "jsonb/text/uuid temporary type shadows fail closed at the accepted currentness descriptor gate; post-gate resolution remains covered statically and via admin/replay plus pre-gate commit attribution"
+    },
+    "originalPinReconfirmation": {
+      "complete": true,
+      "currentnessPins": 102,
+      "intakePins": 102,
+      "mismatches": 0,
+      "rewritten": 3,
+      "unchanged": 99,
+      "changedPaths": [
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json"
+      ],
+      "acceptedCurrentnessFivePinsUnchanged": true,
+      "definitionUnchanged": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+      "commit": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+      "document": 94,
+      "source": "38915cf4318594607098717389113869e3eff0da",
+      "records": "02c1748dee7c1d7e6453aaf993182dcc80e3db65"
+    },
+    "report": {
+      "path": "docs/review/xenios-health-launch-review-20260930/94_COMPOSITION_R4_38915cf_DELTA_2026-10-12.md",
+      "copy": "CLAUDE_DOC94_PUBLIC_VERDICT_4AB2FE6D_20261012.md",
+      "gitBlob": "4abd527b2ce9f7026a58ca34634ab89874648cf0",
+      "rawSha256": "4d0ab8b6b2f27961b4e08b039450d7561ed678d529745194dd881ec814b317f6",
+      "bytes": 14645
+    },
+    "publishedStructuredFindings": {
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/94_composition_r4_delta_findings.json",
+      "copy": "CLAUDE_DOC94_PUBLIC_FINDINGS_4AB2FE6D_20261012.json",
+      "gitBlob": "86fd29c7e5e4bfcbdfda2ed43942424a1cb73b73",
+      "rawSha256": "3fcfafcd6a093f058abfc63a35e589c81f723e60a048a750b818ed221076c09e",
+      "bytes": 207139
+    },
+    "publication": "PUSHED_BY_ORIGINAL_REVIEWER_NOT_COORDINATOR",
+    "remoteRef": "refs/heads/claude/xenios-health-launch-review-20260930",
+    "remoteHead": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+    "execution": "NOT_RUN",
+    "noRepeatTransactionDesignOrRuntimeReview": true,
+    "finalization": "HELD_UNTIL_ACTUAL_REVISION5_ACCEPTANCE_AND_PIN_RECONFIRMATION",
+    "coordinatorItems": "R4C-8",
+    "integratorItems": "R4C-7_RECORD_INPUT_NO_CONCURRENT_EVIDENCE_WRITE",
+    "noReviewerWakeNeeded": true
+  },
+  "assignment": {
+    "commit": "baf62ada37ffe1bc06354c580226c3cdf80f13c4",
+    "path": "docs/coordination/launch-coordination-20261005/DOC94_R5_EXISTING_BUILDER_CORRECTION_20261012.json",
+    "gitBlob": "a42d28b9b51c85a5bd53b02a63cb87078f6eab2c",
+    "rawSha256": "fe1c11d6a55ccf8e00047e8ef53ebabbc79f6ca76935be37752e608ea7e84427",
+    "bytes": 11633
+  },
+  "lease": {
+    "id": "dbb9252a-fac7-4559-a290-e4e6b71bfc52",
+    "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+    "revision": 5,
+    "session": "codex-health-quick-order-20261005",
+    "state": "handoff",
+    "paths": [
+      "supabase/verification/research_health_quick_order_local.mjs",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+    ],
+    "claimedAt": "2026-10-12T04:39:07.650Z",
+    "heartbeatAt": "2026-10-12T04:39:07.650Z",
+    "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "recordsBase": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+    "sourceBase": "38915cf4318594607098717389113869e3eff0da",
+    "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+    "stage": "DOC94_ONE_VERIFIER_AND_FOUR_EVIDENCE_BOUNDED_SUCCESSOR",
+    "ack": ".xenios/handoffs/2026-10-12-doc94-r5-owner-ack.json",
+    "priorLeaseNotReclaimed": "c87a4ffd-12e1-477d-8122-525b5ecd3b3f",
+    "sourceWriterStopped": true,
+    "gitWriterStopped": true,
+    "stopEffectiveAt": "THIS_HANDOFF_COMMIT_COMPLETION"
+  },
+  "review": {
+    "existingTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+    "requestedRevision": 5,
+    "owner": "ORIGINAL_REVIEWER_ONLY",
+    "queued": "NOT_REPORTED_BY_BUILDER",
+    "acknowledged": "NOT_OBSERVED_FOR_REVISION5",
+    "previousRevision": 4,
+    "previousReview": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+    "scope": "R4C1..7 bounded verifier/records delta and all102pin reconfirmation",
+    "execution": "NOT_RUN"
+  },
+  "receiptCandidate": {
+    "commit": "54ffba10459efe0e191428b86a2c913e56c5f829",
+    "tree": "45531814fe0c8a40e18f14ddf200b6626878aad0",
+    "meaning": "REVISION5_SHARED_BINDING_CHECKPOINT_WITH_SOURCE_BYTES_EQUAL_FROZEN_VERIFIER_SOURCE"
+  },
+  "serialRecords": {
+    "sharedBinding": {
+      "commit": "54ffba10459efe0e191428b86a2c913e56c5f829",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+      "gitBlob": "25c996226bcbcdbaa358b000c66883ad6ea8da0e",
+      "rawSha256": "720254715f92bf5e28770f5a55d77c7a53d26de9ddc51b28e2a16797f685f009",
+      "sha256lf": "720254715f92bf5e28770f5a55d77c7a53d26de9ddc51b28e2a16797f685f009",
+      "bytes": 176261,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    "currentness": {
+      "commit": "57c5aa5303b9d9b92c85a796b73674737b61ba13",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+      "gitBlob": "9178947cd345fb503ed356d9f45c8402e2c51899",
+      "rawSha256": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
+      "sha256lf": "b085b12ea1ff3e83c41e9fa44a52bcf548d5174ee08d23a4ca5608547dc2e341",
+      "bytes": 183668,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    "intake": {
+      "commit": "c1c70e2afe4a18725aac8343199c2a07d319667d",
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+      "gitBlob": "d3441396bf99fe3f3715845d9b1d0caf15d4e00d",
+      "rawSha256": "c622e4a650a40504669fffc22d0af6b956400cd980a500ab4e99b8dc03423f88",
+      "sha256lf": "c622e4a650a40504669fffc22d0af6b956400cd980a500ab4e99b8dc03423f88",
+      "bytes": 196833,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    "correctionMap": {
+      "commit": "dacc90cf93a89da375689d6ebbacaf3d3b5a685d",
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+      "gitBlob": "d01de5e2651ed143b401a5c909d2eeb48f6a876d",
+      "rawSha256": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+      "sha256lf": "8d6cb3c7396a7fc9d56e1deefac08a67a184987e79afc7b306bc4a2d49d07318",
+      "bytes": 1538019,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    }
+  },
+  "correctionMap": {
+    "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
+    "field": "doc94Revision5.correctionMap",
+    "ids": [
+      "R4C-1",
+      "R4C-2",
+      "R4C-3",
+      "R4C-4",
+      "R4C-5",
+      "R4C-6",
+      "R4C-7"
+    ]
+  },
+  "sourceControls": {
+    "R4C1": {
+      "status": "AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW_NOT_RUN",
+      "attribution": "Doc87 marker, exact canonical25 allowlist and innermost caller rule unchanged. Reject intake/DO or unknown innermost callers; PL/pgSQL schema is enforceable, SQL-function diagnostics generally expose only bare names.",
+      "sessions": {
+        "admin": "Successful shadow control plus no-domain twin and unchanged effects",
+        "replay": "Successful shadow replay plus no-domain twin and unchanged effects",
+        "commit": "Shadow expects SQLSTATE55000 exact Quick Order source-column descriptor drift; attribute failure stderr, require all four owned typed probe events and unchanged effects. No-domain twin then commits with [1,1,1,1,1], followed by replay with no further effects."
+      },
+      "runtimeDomains": [
+        "jsonb",
+        "text",
+        "uuid",
+        "timestamptz"
+      ],
+      "notRuntimeProbed": [
+        "bytea",
+        "oid",
+        "regclass",
+        "regnamespace",
+        "regprocedure",
+        "regrole",
+        "bool",
+        "int4",
+        "int8",
+        "record pseudotype",
+        "install/precheck/postcheck/rollback DO paths",
+        "canonical date casts",
+        "intake ::pg_catalog.date at intake.sql:811",
+        "empty-array forms: element checks execute only for non-empty casts"
+      ],
+      "diagnosticGrammar": "Authored SQL statement, SQL expression and PL/pgSQL assignment quoted-wrapper controls. Unsupported or malformed renderings fail closed; no captured PostgreSQL diagnostics yet.",
+      "canonicalCallerAuthority": {
+        "path": "supabase/verification/research_health_quick_order_local.mjs",
+        "symbol": "doc87CanonicalFrames",
+        "count": 25,
+        "owner": "Existing canonical source owners; no canonical body repair or acceptance inferred"
+      },
+      "optionalNotSelected": [
+        "timestamptz-only commit shadow",
+        "required canonical documents_json event"
+      ],
+      "postGateLimit": {
+        "id": "COMMIT-POST-GATE-SHADOW",
+        "disposition": "ACCEPTED_NAMED_LIMIT",
+        "review": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+        "details": "jsonb/text/uuid shadow session fails closed at accepted descriptor gate. Post-gate intake type qualification is static coverage; dynamic shadow coverage is admin, replay and pre-gate commit attribution only. Authored controls have not executed."
+      }
+    },
+    "R4C2": {
+      "status": "AUTHORED_PENDING_ORIGINAL_REVISION5_REVIEW_NOT_RUN",
+      "identity": "Committed receipt sourceCommit/sourceTree equal dependency header (rebased checkpoint); actual Git tree/blob/raw SHA256/length checks retained.",
+      "newOneLeafNegatives": [
+        "sourceCommit",
+        "sourceTree",
+        "definitionSha256",
+        "currentnessDefinition",
+        "sourceAcceptance.reviewCommit",
+        "sourceAcceptance.status"
+      ],
+      "positiveTwins": "Unmodified valid observations before and after every single-value mutation; expected named assertion required.",
+      "acceptedIdentity": "Unchanged five accepted currentness pins plus definition recomputation enforce accepted code identity. Dependency sourceCommit/sourceTree are the rebased receipt header, not accepted264e6af tree.",
+      "informationalNotEnforced": [
+        "dependency.receipt.commit equality with recordsCommit",
+        "sha256lf equality with rawSha256",
+        "Exact committed-dependency-receipt key set",
+        "Additional explicit ^{commit} check",
+        "Git ancestry/order check",
+        "Additional acceptedCodeSource tree check"
+      ],
+      "descriptor": "Optional pg_catalog. text spelling supported; qualified and unqualified NULL negatives with bound positive twins.",
+      "git": "GIT_NO_LAZY_FETCH=1 for Git children; no Git network or subject execution performed."
+    },
+    "R4C3": {
+      "descriptor": "Optional pg_catalog. text spelling supported; qualified and unqualified NULL negatives with bound positive twins.",
+      "git": "GIT_NO_LAZY_FETCH=1 for Git children; no Git network or subject execution performed."
+    },
+    "R4C4": {
+      "coverage": [
+        "bytea",
+        "oid",
+        "regclass",
+        "regnamespace",
+        "regprocedure",
+        "regrole",
+        "bool",
+        "int4",
+        "int8",
+        "record pseudotype",
+        "install/precheck/postcheck/rollback DO paths",
+        "canonical date casts",
+        "intake ::pg_catalog.date at intake.sql:811",
+        "empty-array forms: element checks execute only for non-empty casts"
+      ],
+      "grammar": "Authored SQL statement, SQL expression and PL/pgSQL assignment quoted-wrapper controls. Unsupported or malformed renderings fail closed; no captured PostgreSQL diagnostics yet.",
+      "canonicalCallerAuthority": {
+        "path": "supabase/verification/research_health_quick_order_local.mjs",
+        "symbol": "doc87CanonicalFrames",
+        "count": 25,
+        "owner": "Existing canonical source owners; no canonical body repair or acceptance inferred"
+      }
+    }
+  },
+  "acceptedSourcePreserved": {
+    "transaction": "UNCHANGED_ACCEPTED_WITH_NAMED_LIMITS_DOC87",
+    "DC1": {
+      "source": "38915cf4318594607098717389113869e3eff0da",
+      "gitBlob": "1ad353980b1d1aa5a3e79891207d4c55891daf32",
+      "review": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+      "disposition": "EXACT_TWO_ROW_CORRECTION_ACCEPTED"
+    },
+    "currentness": {
+      "status": "SOURCE_ACCEPT_WITH_LIMITS",
+      "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+      "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+      "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+      "definitionSha256": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe",
+      "scope": "EXACT_UNCHANGED_FIVE_CURRENTNESS_SOURCE_FILES_ONLY",
+      "files": [
+        {
+          "commit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "gitBlob": "dd7d3e59589fadb5a03258741a868c440026ec2a",
+          "rawSha256": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+          "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135",
+          "bytes": 226183,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        {
+          "commit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "gitBlob": "11f32766fb83744f534c0e42779357935cd2a803",
+          "rawSha256": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+          "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e",
+          "bytes": 17174,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        {
+          "commit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+          "gitBlob": "c894794a2f8044a0f5a8489bfa56135a3b91e675",
+          "rawSha256": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+          "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f",
+          "bytes": 16996,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        {
+          "commit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+          "gitBlob": "fc8986031fc94a0f6f8cb7035404d2adc9b07928",
+          "rawSha256": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+          "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff",
+          "bytes": 27232,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        {
+          "commit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+          "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+          "gitBlob": "26c0cd33d710492349c0ebbb5d3e8f4870612c82",
+          "rawSha256": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+          "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094",
+          "bytes": 219791,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        }
+      ],
+      "execution": "NOT_RUN",
+      "installationEligibility": "NONE"
+    },
+    "definition": "8b631a8323394d8277986b3be6560a494bf541e102e93ad263a7a5990e3baabe"
+  },
+  "metadata": {
+    "method": "RAW_LOCAL_GIT_JSON_AND_CRYPTO_ONLY",
+    "checkedPins": 102,
+    "mismatches": 0,
+    "receiptPinsIdentical": true,
+    "delta": {
+      "currentness": {
+        "comparedTo": {
+          "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "gitBlob": "d5eedb4d77b410b67f7ca78646a7eaec6cd5b158",
+          "rawSha256": "bf89a29776fa3bd08981e3ad1845c88f819f4ed339067a340d17623666a7cc94",
+          "sha256lf": "bf89a29776fa3bd08981e3ad1845c88f819f4ed339067a340d17623666a7cc94",
+          "bytes": 244766,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "counts": {
+          "before": 102,
+          "after": 102,
+          "added": 0,
+          "rewritten": 2,
+          "unchanged": 100,
+          "removed": 0
+        },
+        "added": [],
+        "rewritten": [
+          {
+            "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+            "beforeSha256lf": "51977d9c99b16a96e3044c89165e0d62f12a497b03cffd977871423b9e5557f2",
+            "afterSha256lf": "720254715f92bf5e28770f5a55d77c7a53d26de9ddc51b28e2a16797f685f009"
+          },
+          {
+            "path": "supabase/verification/research_health_quick_order_local.mjs",
+            "beforeSha256lf": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+            "afterSha256lf": "a0ba2c1d72ae6257bcf432eb234b8787be0e35ec103e355b019ec2a09c277a17"
+          }
+        ],
+        "unchanged": [
+          {
+            "path": "client/src/App.tsx",
+            "sha256lf": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0"
+          },
+          {
+            "path": "client/src/clarity/PublicShell.tsx",
+            "sha256lf": "3ba0d3fd5aff043be7729dfd03c6d048e44241472318c15293f217ea59e0b0dc"
+          },
+          {
+            "path": "client/src/main.tsx",
+            "sha256lf": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162"
+          },
+          {
+            "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+            "sha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc"
+          },
+          {
+            "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+            "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e"
+          },
+          {
+            "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+            "sha256lf": "79ef310cd8d03915dcc14e65a7d686e5ab304e157502cb53ad2fbf1e910466c4"
+          },
+          {
+            "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+            "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+          },
+          {
+            "path": "package-lock.json",
+            "sha256lf": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"
+          },
+          {
+            "path": "package.json",
+            "sha256lf": "89d5d2160381ea23967d56fcf666643d51dbb779fc652d82181bd2379a53828b"
+          },
+          {
+            "path": "server/index.ts",
+            "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe"
+          },
+          {
+            "path": "server/research/assisted-order/communications.ts",
+            "sha256lf": "1c68368095d1c92163155f90cd15de21050abfd1f5856d9408540388c6a18c64"
+          },
+          {
+            "path": "server/research/assisted-order/express.ts",
+            "sha256lf": "f9b41c88eea2c4d60408e707929db09e9f06bded776864d9aa85c06c33b88cbd"
+          },
+          {
+            "path": "server/research/assisted-order/ports.ts",
+            "sha256lf": "50341a592e8bc313411e8c527e9a032352e20735307314f9470be141f632ee56"
+          },
+          {
+            "path": "server/research/assisted-order/production-boot.test.ts",
+            "sha256lf": "f3494beb131edf7d8b739acc50f9445548bf3614fae0f60ba1bba5ddbab89893"
+          },
+          {
+            "path": "server/research/assisted-order/production-catalog.ts",
+            "sha256lf": "d13240f48cc8755c7cc9a72942453f4824e778b63690d973c75002bb41d97aa3"
+          },
+          {
+            "path": "server/research/assisted-order/production-deps.ts",
+            "sha256lf": "adb32a0b6f847afcdd2f6e998193aa328e819c844099b6446c06556c9abc7875"
+          },
+          {
+            "path": "server/research/assisted-order/production-env-shape.fixture.json",
+            "sha256lf": "be34e4d26cebbce8bc3bc73a4625786402a13b48bea14bd3ec00e9035cd4a92d"
+          },
+          {
+            "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+            "sha256lf": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5"
+          },
+          {
+            "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+            "sha256lf": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0"
+          },
+          {
+            "path": "server/research/assisted-order/quick-order-repository.test.ts",
+            "sha256lf": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138"
+          },
+          {
+            "path": "server/research/assisted-order/quick-order-repository.ts",
+            "sha256lf": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482"
+          },
+          {
+            "path": "server/research/assisted-order/service.ts",
+            "sha256lf": "57ea0b0202f0648aa9324ca6f1f24c5dedb1a761d1d4d85a80fda21e8ebacc67"
+          },
+          {
+            "path": "server/research/assisted-order/supabase-repository.ts",
+            "sha256lf": "274493e5b0618222b919adf6ab4d7613b04f58247ed79c5a7d29ab9076772e53"
+          },
+          {
+            "path": "server/research/catalog/member-catalog-service.ts",
+            "sha256lf": "26266ed95aab6afecdb9b01200867a58cd33cc382d930a737f51a25fd6222cd7"
+          },
+          {
+            "path": "server/research/health/quick-order/catalog.ts",
+            "sha256lf": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037"
+          },
+          {
+            "path": "server/research/health/quick-order/core.mjs",
+            "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+          },
+          {
+            "path": "server/research/health/quick-order/handler.d.mts",
+            "sha256lf": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf"
+          },
+          {
+            "path": "server/research/health/quick-order/handler.mjs",
+            "sha256lf": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a"
+          },
+          {
+            "path": "server/research/health/quick-order/legal.ts",
+            "sha256lf": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e"
+          },
+          {
+            "path": "server/research/health/quick-order/paths.mjs",
+            "sha256lf": "89c017ecbb5b7ad18b7d7ab5fe0ffdd651ff02a926e1dfd3bde623cd9e68fc88"
+          },
+          {
+            "path": "server/research/health/quick-order/ports.ts",
+            "sha256lf": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f"
+          },
+          {
+            "path": "server/research/health/quick-order/production.test.ts",
+            "sha256lf": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9"
+          },
+          {
+            "path": "server/research/health/quick-order/production.ts",
+            "sha256lf": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc"
+          },
+          {
+            "path": "server/research/health/quick-order/root-composition.test.ts",
+            "sha256lf": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f"
+          },
+          {
+            "path": "server/research/master-offerings/composition.ts",
+            "sha256lf": "e931efee2ed38a005b42e3eaf699f85fc4a659f2397b228051cbd6ca5764e80e"
+          },
+          {
+            "path": "server/research/master-offerings/early-access-retail-pricing.ts",
+            "sha256lf": "d944c93d0c7cd3f71e5efe5211fe94c25425dfc62ce8c3397158e9f84ce8e9cb"
+          },
+          {
+            "path": "server/research/master-offerings/member-pricing-viewer.ts",
+            "sha256lf": "8105b937ede49625bdd28bb14c1817ccef8baaf7ac09b5f76cd72f38a5628312"
+          },
+          {
+            "path": "server/research/master-offerings/price-authority.ts",
+            "sha256lf": "7f43270d50ae6bed46df9be663a07f6d57872641767776abc21a5741db23015e"
+          },
+          {
+            "path": "server/research/master-offerings/reconciliation-authority.ts",
+            "sha256lf": "dfb8a7756a2c7ab344d06c02490a45dab2d324c47d32445f48a863bcc197c429"
+          },
+          {
+            "path": "server/research/master-offerings/reviewed-holds.ts",
+            "sha256lf": "6b53a51cb4a37e8564e588270b27b1dbaafe6dbe111d72f53ea9ae0ab06615ae"
+          },
+          {
+            "path": "server/research/member-auth.ts",
+            "sha256lf": "ff1b57df93e162c99293f38e8f78f8888c6ca6d909c14c0e3b92d7112ad3f915"
+          },
+          {
+            "path": "server/research/partners/referral-v1-attribution.ts",
+            "sha256lf": "aaa0cf8398c8c5a71cdf3b33840b949b9b5b91016547c3b197901ed0204d7881"
+          },
+          {
+            "path": "server/research/pricing/authoritative-price-resolver.ts",
+            "sha256lf": "1f013207ea4217d51d56ba151d224c4434cf0008e74380b2b77659303c06d06a"
+          },
+          {
+            "path": "server/research/products-diagnostics/product-admin-production.ts",
+            "sha256lf": "f4647cb225129d5ed61a2e0c2968850b1ba183ba25de9a64cc86d928d2544867"
+          },
+          {
+            "path": "server/static.ts",
+            "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+          },
+          {
+            "path": "server/vite.ts",
+            "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+          },
+          {
+            "path": "shared/research/assisted-order/contract.ts",
+            "sha256lf": "1a9eed498adf0144b84d0e52afe9b9e0c250847749289ad295561aec7581ef34"
+          },
+          {
+            "path": "shared/research/assisted-order/quick-order.ts",
+            "sha256lf": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2"
+          },
+          {
+            "path": "supabase/candidates/20260904_research_partner_referral_v1.sql",
+            "sha256lf": "69d6f8558550ffb63caed08bdb5cac6d51c96cf80d9c54a9598685d08f82aefb"
+          },
+          {
+            "path": "supabase/candidates/20260914_research_referral_v1_touch_attribution.sql",
+            "sha256lf": "297d052369c8df25808be805753693c85ec7e0c2ec2624430e5ca2ce33f1db18"
+          },
+          {
+            "path": "supabase/candidates/20260921_research_assisted_order_member_history.sql",
+            "sha256lf": "c0ae0cf3f737cc32163fe06984688fd640043f15d7511205caa574f3a3409a7e"
+          },
+          {
+            "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+            "sha256lf": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3"
+          },
+          {
+            "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+            "sha256lf": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9"
+          },
+          {
+            "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+            "sha256lf": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571"
+          },
+          {
+            "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+            "sha256lf": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112"
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+            "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f"
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+            "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e"
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+            "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff"
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+            "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135"
+          },
+          {
+            "path": "supabase/migrations/20260726143000_research_product_control_center.sql",
+            "sha256lf": "b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203"
+          },
+          {
+            "path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+            "sha256lf": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524"
+          },
+          {
+            "path": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+            "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+          },
+          {
+            "path": "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+            "sha256lf": "3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28"
+          },
+          {
+            "path": "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+            "sha256lf": "8a84bd82845e726702cdc001bdfce661ced7f74132c68a1338d5a476bd9ec9c6"
+          },
+          {
+            "path": "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+            "sha256lf": "fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c"
+          },
+          {
+            "path": "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+            "sha256lf": "8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b"
+          },
+          {
+            "path": "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+            "sha256lf": "5e0b745ae3d8ff0844e55ba0714fd5f2bb5f446e7523594af8bfce7e1395bf22"
+          },
+          {
+            "path": "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+            "sha256lf": "a15ed8163b618a1de56d779c8b16e1ced31621ccf07d7435a2aa4838e4f3ead2"
+          },
+          {
+            "path": "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+            "sha256lf": "c68ccc679bd04dc2ff6aeb460100ee3e9ec470a58a094274821c5b3f1697a7c1"
+          },
+          {
+            "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+            "sha256lf": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7"
+          },
+          {
+            "path": "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+            "sha256lf": "f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda"
+          },
+          {
+            "path": "supabase/migrations/20260927203000_research_status_recovery.sql",
+            "sha256lf": "98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292"
+          },
+          {
+            "path": "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+            "sha256lf": "4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014"
+          },
+          {
+            "path": "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+            "sha256lf": "2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845"
+          },
+          {
+            "path": "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+            "sha256lf": "f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894"
+          },
+          {
+            "path": "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+            "sha256lf": "452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f"
+          },
+          {
+            "path": "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+            "sha256lf": "434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66"
+          },
+          {
+            "path": "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+            "sha256lf": "6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe"
+          },
+          {
+            "path": "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+            "sha256lf": "0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f"
+          },
+          {
+            "path": "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+            "sha256lf": "a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0"
+          },
+          {
+            "path": "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+            "sha256lf": "8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743"
+          },
+          {
+            "path": "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+            "sha256lf": "4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69"
+          },
+          {
+            "path": "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+            "sha256lf": "512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881"
+          },
+          {
+            "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+            "sha256lf": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875"
+          },
+          {
+            "path": "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
+            "sha256lf": "5386c62508e5f3ae9a3584c936ece35e04fe13c1fef42f1627e3784327de7035"
+          },
+          {
+            "path": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+            "sha256lf": "1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f"
+          },
+          {
+            "path": "supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+            "sha256lf": "91a20f681038a5e845137feb6556c4041b1645f6b2c8f9122bc7c9e85280f477"
+          },
+          {
+            "path": "supabase/research-catalog.sql",
+            "sha256lf": "0e868dcd4bea04a5cc6bdce474ac93d0feae9553bdfcbaf74a448c05b07d4f42"
+          },
+          {
+            "path": "supabase/research-inventory-lots.sql",
+            "sha256lf": "00ccc125f9bfcd428b530e19445c1042b7953b5450dea223707609b87282ee7e"
+          },
+          {
+            "path": "supabase/research-inventory-reservation-commands.sql",
+            "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+          },
+          {
+            "path": "supabase/research-members.sql",
+            "sha256lf": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded"
+          },
+          {
+            "path": "supabase/research-membership.sql",
+            "sha256lf": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8"
+          },
+          {
+            "path": "supabase/research-notification-outbox.sql",
+            "sha256lf": "70cee0109dce7401431de9449a1312076ad61b7081ed31b9b8a9659bc6cca7ac"
+          },
+          {
+            "path": "supabase/research-private-early-access-sessions.sql",
+            "sha256lf": "7365f2a6ae224d8a45e2d32ab437d07ea1e83470314e2f0ba7227f3d3e3eea38"
+          },
+          {
+            "path": "supabase/research-products-diagnostics.sql",
+            "sha256lf": "5d191bc21fea106a934640df8effe82eaf2bf5f445b6a3510f6272233b982013"
+          },
+          {
+            "path": "supabase/research-required-input-readiness.sql",
+            "sha256lf": "ffbd07e9c42703299cc9babe0f7c680bc6a22e88e7fae5c4c0fd66c7a93e6b8f"
+          },
+          {
+            "path": "supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql",
+            "sha256lf": "cabf8355d3cb651cacffd56e44c8d319afee3e35e4ec8e42b49fac9fe3b432d5"
+          },
+          {
+            "path": "supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql",
+            "sha256lf": "7c1d1da7cac376528d4fc995241595fc4e9430821a009a97a7abdec2bff7b938"
+          },
+          {
+            "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+            "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094"
+          },
+          {
+            "path": "vitest.config.ts",
+            "sha256lf": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"
+          }
+        ],
+        "removed": [],
+        "wholeFamilyRebind": true
+      },
+      "intake": {
+        "comparedTo": {
+          "commit": "9a55e38672a4e9ab64876b16dd8b9918f2c4318a",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "gitBlob": "ad0ce3c54b696509c065af8fc27413bbf452a5fc",
+          "rawSha256": "1635c1d3a60687cea7d45ce370020e233e5990edc5e89b0d82be76fa8a5dde7c",
+          "sha256lf": "1635c1d3a60687cea7d45ce370020e233e5990edc5e89b0d82be76fa8a5dde7c",
+          "bytes": 256966,
+          "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+        },
+        "counts": {
+          "before": 102,
+          "after": 102,
+          "added": 0,
+          "rewritten": 2,
+          "unchanged": 100,
+          "removed": 0
+        },
+        "added": [],
+        "rewritten": [
+          {
+            "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+            "beforeSha256lf": "51977d9c99b16a96e3044c89165e0d62f12a497b03cffd977871423b9e5557f2",
+            "afterSha256lf": "720254715f92bf5e28770f5a55d77c7a53d26de9ddc51b28e2a16797f685f009"
+          },
+          {
+            "path": "supabase/verification/research_health_quick_order_local.mjs",
+            "beforeSha256lf": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+            "afterSha256lf": "a0ba2c1d72ae6257bcf432eb234b8787be0e35ec103e355b019ec2a09c277a17"
+          }
+        ],
+        "unchanged": [
+          {
+            "path": "client/src/App.tsx",
+            "sha256lf": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0"
+          },
+          {
+            "path": "client/src/clarity/PublicShell.tsx",
+            "sha256lf": "3ba0d3fd5aff043be7729dfd03c6d048e44241472318c15293f217ea59e0b0dc"
+          },
+          {
+            "path": "client/src/main.tsx",
+            "sha256lf": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162"
+          },
+          {
+            "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+            "sha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc"
+          },
+          {
+            "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+            "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e"
+          },
+          {
+            "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+            "sha256lf": "79ef310cd8d03915dcc14e65a7d686e5ab304e157502cb53ad2fbf1e910466c4"
+          },
+          {
+            "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+            "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+          },
+          {
+            "path": "package-lock.json",
+            "sha256lf": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"
+          },
+          {
+            "path": "package.json",
+            "sha256lf": "89d5d2160381ea23967d56fcf666643d51dbb779fc652d82181bd2379a53828b"
+          },
+          {
+            "path": "server/index.ts",
+            "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe"
+          },
+          {
+            "path": "server/research/assisted-order/communications.ts",
+            "sha256lf": "1c68368095d1c92163155f90cd15de21050abfd1f5856d9408540388c6a18c64"
+          },
+          {
+            "path": "server/research/assisted-order/express.ts",
+            "sha256lf": "f9b41c88eea2c4d60408e707929db09e9f06bded776864d9aa85c06c33b88cbd"
+          },
+          {
+            "path": "server/research/assisted-order/ports.ts",
+            "sha256lf": "50341a592e8bc313411e8c527e9a032352e20735307314f9470be141f632ee56"
+          },
+          {
+            "path": "server/research/assisted-order/production-boot.test.ts",
+            "sha256lf": "f3494beb131edf7d8b739acc50f9445548bf3614fae0f60ba1bba5ddbab89893"
+          },
+          {
+            "path": "server/research/assisted-order/production-catalog.ts",
+            "sha256lf": "d13240f48cc8755c7cc9a72942453f4824e778b63690d973c75002bb41d97aa3"
+          },
+          {
+            "path": "server/research/assisted-order/production-deps.ts",
+            "sha256lf": "adb32a0b6f847afcdd2f6e998193aa328e819c844099b6446c06556c9abc7875"
+          },
+          {
+            "path": "server/research/assisted-order/production-env-shape.fixture.json",
+            "sha256lf": "be34e4d26cebbce8bc3bc73a4625786402a13b48bea14bd3ec00e9035cd4a92d"
+          },
+          {
+            "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+            "sha256lf": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5"
+          },
+          {
+            "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+            "sha256lf": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0"
+          },
+          {
+            "path": "server/research/assisted-order/quick-order-repository.test.ts",
+            "sha256lf": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138"
+          },
+          {
+            "path": "server/research/assisted-order/quick-order-repository.ts",
+            "sha256lf": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482"
+          },
+          {
+            "path": "server/research/assisted-order/service.ts",
+            "sha256lf": "57ea0b0202f0648aa9324ca6f1f24c5dedb1a761d1d4d85a80fda21e8ebacc67"
+          },
+          {
+            "path": "server/research/assisted-order/supabase-repository.ts",
+            "sha256lf": "274493e5b0618222b919adf6ab4d7613b04f58247ed79c5a7d29ab9076772e53"
+          },
+          {
+            "path": "server/research/catalog/member-catalog-service.ts",
+            "sha256lf": "26266ed95aab6afecdb9b01200867a58cd33cc382d930a737f51a25fd6222cd7"
+          },
+          {
+            "path": "server/research/health/quick-order/catalog.ts",
+            "sha256lf": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037"
+          },
+          {
+            "path": "server/research/health/quick-order/core.mjs",
+            "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+          },
+          {
+            "path": "server/research/health/quick-order/handler.d.mts",
+            "sha256lf": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf"
+          },
+          {
+            "path": "server/research/health/quick-order/handler.mjs",
+            "sha256lf": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a"
+          },
+          {
+            "path": "server/research/health/quick-order/legal.ts",
+            "sha256lf": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e"
+          },
+          {
+            "path": "server/research/health/quick-order/paths.mjs",
+            "sha256lf": "89c017ecbb5b7ad18b7d7ab5fe0ffdd651ff02a926e1dfd3bde623cd9e68fc88"
+          },
+          {
+            "path": "server/research/health/quick-order/ports.ts",
+            "sha256lf": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f"
+          },
+          {
+            "path": "server/research/health/quick-order/production.test.ts",
+            "sha256lf": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9"
+          },
+          {
+            "path": "server/research/health/quick-order/production.ts",
+            "sha256lf": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc"
+          },
+          {
+            "path": "server/research/health/quick-order/root-composition.test.ts",
+            "sha256lf": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f"
+          },
+          {
+            "path": "server/research/master-offerings/composition.ts",
+            "sha256lf": "e931efee2ed38a005b42e3eaf699f85fc4a659f2397b228051cbd6ca5764e80e"
+          },
+          {
+            "path": "server/research/master-offerings/early-access-retail-pricing.ts",
+            "sha256lf": "d944c93d0c7cd3f71e5efe5211fe94c25425dfc62ce8c3397158e9f84ce8e9cb"
+          },
+          {
+            "path": "server/research/master-offerings/member-pricing-viewer.ts",
+            "sha256lf": "8105b937ede49625bdd28bb14c1817ccef8baaf7ac09b5f76cd72f38a5628312"
+          },
+          {
+            "path": "server/research/master-offerings/price-authority.ts",
+            "sha256lf": "7f43270d50ae6bed46df9be663a07f6d57872641767776abc21a5741db23015e"
+          },
+          {
+            "path": "server/research/master-offerings/reconciliation-authority.ts",
+            "sha256lf": "dfb8a7756a2c7ab344d06c02490a45dab2d324c47d32445f48a863bcc197c429"
+          },
+          {
+            "path": "server/research/master-offerings/reviewed-holds.ts",
+            "sha256lf": "6b53a51cb4a37e8564e588270b27b1dbaafe6dbe111d72f53ea9ae0ab06615ae"
+          },
+          {
+            "path": "server/research/member-auth.ts",
+            "sha256lf": "ff1b57df93e162c99293f38e8f78f8888c6ca6d909c14c0e3b92d7112ad3f915"
+          },
+          {
+            "path": "server/research/partners/referral-v1-attribution.ts",
+            "sha256lf": "aaa0cf8398c8c5a71cdf3b33840b949b9b5b91016547c3b197901ed0204d7881"
+          },
+          {
+            "path": "server/research/pricing/authoritative-price-resolver.ts",
+            "sha256lf": "1f013207ea4217d51d56ba151d224c4434cf0008e74380b2b77659303c06d06a"
+          },
+          {
+            "path": "server/research/products-diagnostics/product-admin-production.ts",
+            "sha256lf": "f4647cb225129d5ed61a2e0c2968850b1ba183ba25de9a64cc86d928d2544867"
+          },
+          {
+            "path": "server/static.ts",
+            "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+          },
+          {
+            "path": "server/vite.ts",
+            "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+          },
+          {
+            "path": "shared/research/assisted-order/contract.ts",
+            "sha256lf": "1a9eed498adf0144b84d0e52afe9b9e0c250847749289ad295561aec7581ef34"
+          },
+          {
+            "path": "shared/research/assisted-order/quick-order.ts",
+            "sha256lf": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2"
+          },
+          {
+            "path": "supabase/candidates/20260904_research_partner_referral_v1.sql",
+            "sha256lf": "69d6f8558550ffb63caed08bdb5cac6d51c96cf80d9c54a9598685d08f82aefb"
+          },
+          {
+            "path": "supabase/candidates/20260914_research_referral_v1_touch_attribution.sql",
+            "sha256lf": "297d052369c8df25808be805753693c85ec7e0c2ec2624430e5ca2ce33f1db18"
+          },
+          {
+            "path": "supabase/candidates/20260921_research_assisted_order_member_history.sql",
+            "sha256lf": "c0ae0cf3f737cc32163fe06984688fd640043f15d7511205caa574f3a3409a7e"
+          },
+          {
+            "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+            "sha256lf": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3"
+          },
+          {
+            "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+            "sha256lf": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9"
+          },
+          {
+            "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+            "sha256lf": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571"
+          },
+          {
+            "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+            "sha256lf": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112"
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+            "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f"
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+            "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e"
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+            "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff"
+          },
+          {
+            "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+            "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135"
+          },
+          {
+            "path": "supabase/migrations/20260726143000_research_product_control_center.sql",
+            "sha256lf": "b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203"
+          },
+          {
+            "path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+            "sha256lf": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524"
+          },
+          {
+            "path": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+            "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+          },
+          {
+            "path": "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+            "sha256lf": "3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28"
+          },
+          {
+            "path": "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+            "sha256lf": "8a84bd82845e726702cdc001bdfce661ced7f74132c68a1338d5a476bd9ec9c6"
+          },
+          {
+            "path": "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+            "sha256lf": "fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c"
+          },
+          {
+            "path": "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+            "sha256lf": "8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b"
+          },
+          {
+            "path": "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+            "sha256lf": "5e0b745ae3d8ff0844e55ba0714fd5f2bb5f446e7523594af8bfce7e1395bf22"
+          },
+          {
+            "path": "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+            "sha256lf": "a15ed8163b618a1de56d779c8b16e1ced31621ccf07d7435a2aa4838e4f3ead2"
+          },
+          {
+            "path": "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+            "sha256lf": "c68ccc679bd04dc2ff6aeb460100ee3e9ec470a58a094274821c5b3f1697a7c1"
+          },
+          {
+            "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+            "sha256lf": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7"
+          },
+          {
+            "path": "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+            "sha256lf": "f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda"
+          },
+          {
+            "path": "supabase/migrations/20260927203000_research_status_recovery.sql",
+            "sha256lf": "98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292"
+          },
+          {
+            "path": "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+            "sha256lf": "4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014"
+          },
+          {
+            "path": "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+            "sha256lf": "2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845"
+          },
+          {
+            "path": "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+            "sha256lf": "f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894"
+          },
+          {
+            "path": "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+            "sha256lf": "452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f"
+          },
+          {
+            "path": "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+            "sha256lf": "434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66"
+          },
+          {
+            "path": "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+            "sha256lf": "6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe"
+          },
+          {
+            "path": "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+            "sha256lf": "0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f"
+          },
+          {
+            "path": "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+            "sha256lf": "a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0"
+          },
+          {
+            "path": "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+            "sha256lf": "8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743"
+          },
+          {
+            "path": "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+            "sha256lf": "4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69"
+          },
+          {
+            "path": "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+            "sha256lf": "512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881"
+          },
+          {
+            "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+            "sha256lf": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875"
+          },
+          {
+            "path": "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
+            "sha256lf": "5386c62508e5f3ae9a3584c936ece35e04fe13c1fef42f1627e3784327de7035"
+          },
+          {
+            "path": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+            "sha256lf": "1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f"
+          },
+          {
+            "path": "supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+            "sha256lf": "91a20f681038a5e845137feb6556c4041b1645f6b2c8f9122bc7c9e85280f477"
+          },
+          {
+            "path": "supabase/research-catalog.sql",
+            "sha256lf": "0e868dcd4bea04a5cc6bdce474ac93d0feae9553bdfcbaf74a448c05b07d4f42"
+          },
+          {
+            "path": "supabase/research-inventory-lots.sql",
+            "sha256lf": "00ccc125f9bfcd428b530e19445c1042b7953b5450dea223707609b87282ee7e"
+          },
+          {
+            "path": "supabase/research-inventory-reservation-commands.sql",
+            "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+          },
+          {
+            "path": "supabase/research-members.sql",
+            "sha256lf": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded"
+          },
+          {
+            "path": "supabase/research-membership.sql",
+            "sha256lf": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8"
+          },
+          {
+            "path": "supabase/research-notification-outbox.sql",
+            "sha256lf": "70cee0109dce7401431de9449a1312076ad61b7081ed31b9b8a9659bc6cca7ac"
+          },
+          {
+            "path": "supabase/research-private-early-access-sessions.sql",
+            "sha256lf": "7365f2a6ae224d8a45e2d32ab437d07ea1e83470314e2f0ba7227f3d3e3eea38"
+          },
+          {
+            "path": "supabase/research-products-diagnostics.sql",
+            "sha256lf": "5d191bc21fea106a934640df8effe82eaf2bf5f445b6a3510f6272233b982013"
+          },
+          {
+            "path": "supabase/research-required-input-readiness.sql",
+            "sha256lf": "ffbd07e9c42703299cc9babe0f7c680bc6a22e88e7fae5c4c0fd66c7a93e6b8f"
+          },
+          {
+            "path": "supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql",
+            "sha256lf": "cabf8355d3cb651cacffd56e44c8d319afee3e35e4ec8e42b49fac9fe3b432d5"
+          },
+          {
+            "path": "supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql",
+            "sha256lf": "7c1d1da7cac376528d4fc995241595fc4e9430821a009a97a7abdec2bff7b938"
+          },
+          {
+            "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+            "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094"
+          },
+          {
+            "path": "vitest.config.ts",
+            "sha256lf": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"
+          }
+        ],
+        "removed": [],
+        "wholeFamilyRebind": true
+      }
+    },
+    "currentnessBytes": 183668,
+    "cap": 262144,
+    "headroom": 78476,
+    "onlyChangedSource": [
+      "supabase/verification/research_health_quick_order_local.mjs"
+    ],
+    "whitespace": "PASS"
+  },
+  "finalization": {
+    "status": "INACTIVE_PENDING_ACTUAL_ORIGINAL_REVISION5_ACCEPTANCE_AND_PIN_RECONFIRMATION",
+    "ruling": "4ab2fe6db6fa02c874df11916c84a6299576e906",
+    "section": 3,
+    "currentness": {
+      "base": "EXACT_REVISION5_CURRENTNESS_RECEIPT_BLOB_RECONFIRMED_BY_ORIGINAL_REVIEWER",
+      "exactChanges": {
+        "sourceAcceptance.status": "SOURCE_ACCEPT_WITH_LIMITS",
+        "sourceAcceptance.reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+        "disclosures.ONE_NEW_KEY": "Cite Doc82 acceptance, Docs87/94 and actual r5 binding confirmation; declare embedded PENDING/NON_FINAL strings superseded."
+      },
+      "everythingElseFrozen": [
+        "All 102 files pins",
+        "sourceCommit and sourceTree header",
+        "definitionSha256 and currentnessDefinition",
+        "Exact 11 top-level keys",
+        "Exact sourceAcceptance key set: reviewCommit,status",
+        "All existing disclosures values and keys"
+      ],
+      "maxBytes": 262144,
+      "minRevision5HeadroomBytes": 2048
+    },
+    "intakeDependency": {
+      "after": "Actual finalized currentness receipt is committed",
+      "exactChanges": {
+        "status": "SOURCE_ACCEPT_WITH_LIMITS",
+        "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b",
+        "sealStatus": "FINAL_CURRENTNESS_DEPENDENCY_ONLY",
+        "receipt.commit/recordsCommit/gitBlob/rawSha256/sha256lf/bytes": "Actual finalized currentness receipt identity"
+      },
+      "unchanged": [
+        "sourceCommit",
+        "sourceTree",
+        "definitionSha256",
+        "all remaining dependency fields"
+      ],
+      "headerEquality": "sourceCommit/sourceTree equal currentness receipt header; finalization preserves that header"
+    },
+    "intakeOwnSource": {
+      "separateStep": true,
+      "prerequisite": "Actual original r5 composition source acceptance",
+      "status": "SOURCE_ACCEPT_WITH_LIMITS",
+      "reviewCommit": "Actual r5 acceptance commit; not invented here"
+    },
+    "furtherReview": "None required if later successors exactly match ruled envelope; original reviewer spot-checks registration. No present finalization.",
+    "TC21": "Implemented-S descriptor changes currentness definition and requires a separately accepted reseal.",
+    "performed": false
+  },
+  "recordInputs": {
+    "integrator": {
+      "commit": "58a7892a181d8a8f7979f5ffec0cf4d571510b4e",
+      "path": "docs/coordination/launch-coordination-20261005/DOC94_R4C7_ACTUAL_INTEGRATOR_RECORD_INPUT_20261012.json",
+      "gitBlob": "0812e6dcd4c387be03768fd3671973e00773cac7",
+      "rawSha256": "0fe1fcc764449c99c9c888f11cc7eff1dc97bfad6a5781833863516600d6929b",
+      "sha256lf": "0fe1fcc764449c99c9c888f11cc7eff1dc97bfad6a5781833863516600d6929b",
+      "bytes": 4089,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    },
+    "coordinator": {
+      "commit": "58a7892a181d8a8f7979f5ffec0cf4d571510b4e",
+      "path": "docs/coordination/launch-coordination-20261005/DOC94_R4C8_COORDINATOR_RECORD_RECONCILIATION_20261012.json",
+      "gitBlob": "1576d53e13bf240cd5492883419e577747fb2ded",
+      "rawSha256": "a0ffd87912ec92d6aa638c7ca95fd2da4b6f0e4a46477412f4182ab137f98f7e",
+      "sha256lf": "a0ffd87912ec92d6aa638c7ca95fd2da4b6f0e4a46477412f4182ab137f98f7e",
+      "bytes": 10486,
+      "digestDomain": "RAW_COMMITTED_GIT_BYTES"
+    }
+  },
+  "actualNextPrerequisite": "Existing coordinator registers this exact successor on the SAME original composition-review task revision5. Actual original verifier/records delta acceptance and every-pin reconfirmation precede the exact Doc94 section3 finalization sequence.",
+  "operationalPrerequisites": [
+    "IMPLEMENTED_S_COLUMN_DESCRIPTOR_AND_POPULATED_CENSUS",
+    "AUTHORITATIVE_OPERATIONAL_INPUTS_AND_EXTERNAL_EXPECTED_CENSUS_DIGEST",
+    "QUALIFIED_CONNECTION_PROFILE_AND_RECIPIENT_BINDINGS",
+    "TRUSTED_ROW8_COMMERCE_CHECKOUT",
+    "PROTECTED_SEAM_DISPOSITIONS",
+    "ACCEPTED_QUALIFICATION_PROCEDURE_AND_FRESH_EXECUTION_AUTHORITY",
+    "AUTHORIZED_INSTALLATION_AND_RELEASE_ACTIVATION"
+  ],
+  "operationalEvidence": {
+    "descriptor": "NOT_COMPLETED",
+    "populatedCensus": "NOT_COMPLETED",
+    "expectedCensusDigest": null,
+    "reason": "The real authoritative implemented-S column descriptor, populated census and external expected-digest artifact have not been supplied. No fixtures substitute.",
+    "installedSchema": "NOT_OBSERVED",
+    "trustedCommerceCheckout": "ABSENT_BRANCH_REFUSES",
+    "checkoutBinding": null,
+    "gitSourceOrigin": {
+      "commit": "25741f0b5fdff6320214227a896c2b6320c1fb9a",
+      "tree": "0c5a2b11e363a11f950671b928b55086b3f77f81",
+      "meaning": "REVISION5_ONE_VERIFIER_SUCCESSOR_RUNTIME_AND_DC1_UNCHANGED_PENDING_ORIGINAL_REVIEW"
+    },
+    "gitAndCommerceCheckoutAreDistinct": true,
+    "genericDisabledSourceAuthoringBlockedByOperationalInputs": false
+  },
+  "qualification": "NOT_RUN; independent accepted procedure, implemented-S descriptor/census, authoritative input/configuration bindings, protected-seam dispositions and fresh execution authority remain separate prerequisites.",
+  "delivery": "EXISTING_COORDINATOR_READABLE_LOCAL_GIT_WORKFLOW_ONLY_NO_OUTBOUND_TRANSPORT_RETRY",
+  "execution": "NOT_RUN",
+  "executionReservation": null,
+  "publication": "LOCAL_ONLY",
+  "schedules": "UNCHANGED",
+  "actualModel": "NOT_EXPOSED",
+  "actualEffort": "NOT_EXPOSED"
+}
