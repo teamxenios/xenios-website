@@ -1,10 +1,10 @@
 {
   "schemaVersion": "doc71-disabled-source-correction-map-v1",
   "taskId": "DOC71-DISABLED-TRANSACTION-SOURCE-20261009",
-  "revision": 2,
+  "revision": 4,
   "sourceCommit": "69d9e32a5df899985b2877e06e1a778060a021f9",
   "sourceTree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
-  "sourceStatus": "COMBINED_SOURCE_FROZEN_RECORDS_RECONCILED_PENDING_ORIGINAL_DELTA_REVIEW",
+  "sourceStatus": "DOC87_RUNTIME_ACCEPTED_WITH_NAMED_LIMITS_INTERMEDIATE_VERIFIER_CORRECTION_AUTHORED_RECEIPTS_FROZEN",
   "execution": "NOT_RUN",
   "publication": "LOCAL_ONLY",
   "sourceFiles": [
@@ -253,7 +253,7 @@
     }
   ],
   "gate": "d451a062cdf054ea5fe943dda03fca209c40cc77",
-  "leaseId": "e1c90dfe-27a8-4e4d-9270-d1543b68f7d0",
+  "leaseId": "83d2a260-aaed-4f3b-aca7-793f7a43c6ad",
   "doc78": [
     {
       "id": "C-1",
@@ -1568,7 +1568,7 @@
     "resolution": "Regenerated only owned currentness files from frozen3f7601d source using literal callback replacements; preserved other dirty code.",
     "verification": "Final source sizes/raw hashes above; text/diff metadata only, no source execution."
   },
-  "independentAcceptance": "PENDING_ORIGINAL_COMPOSITION_DELTA_REVIEW; retained currentness code acceptance does not accept this receipt amendment or combined source.",
+  "independentAcceptance": "Doc87 accepts runtime at69d9e32 with named limits and confirms revision3 receipt bindings. This new verifier/map checkpoint is pending original revision4 review; composition and seals are not final.",
   "schedules": "UNCHANGED",
   "previousSourceCheckpoint": {
     "source": "9c1c92bcb7a514da9b575a291d0abac67c8ba366",
@@ -11541,8 +11541,8 @@
     {
       "id": "SOURCE_ACCEPTANCE",
       "stage": "S2",
-      "requirement": "Original reviewer must confirm this actual amended currentness receipt before any final intake dependency seal; combined source acceptance is separate.",
-      "status": "PENDING_ORIGINAL_COMPOSITION_DELTA_AND_RECEIPT_CONFIRMATION"
+      "requirement": "Do not reopen accepted runtime. Complete bounded verifier/map, authorizedDC1 and serial receipts, then original narrowreview/pinconfirmation.",
+      "status": "DOC87_RUNTIME_ACCEPTED_WITH_LIMITS_NEW_VERIFIER_AND_COMPOSITION_R4_PENDING"
     },
     {
       "id": "IMPLEMENTED_S_CENSUS_DESCRIPTOR",
@@ -11602,14 +11602,14 @@
     {
       "id": "CURRENTNESS_RECEIPT_BYTE_CONFIRMATION",
       "stage": "S2",
-      "status": "PENDING",
-      "requirement": "ORIGINAL_CURRENTNESS_AMENDED_RECEIPT_BYTE_CONFIRMATION"
+      "status": "REVISION3_CONFIRMED_REVISION4_RECONFIRMATION_PENDING",
+      "requirement": "Doc87 confirms1cbdb0d8; new verifier/DC1 bytes require revision4 rebind before re-confirmation and finalization."
     },
     {
       "id": "CURRENTNESS_NONCURRENTNESS_CHECKOUT_REBIND_PENDING",
       "stage": "S2",
-      "status": "REBIND_AUTHORED_PENDING_ORIGINAL_CONFIRMATION",
-      "requirement": "Both receipts now pin the exact records-only candidate checkpoint and shared binding; the source origin and retained code acceptance remain separate."
+      "status": "REVISION3_BINDING_CONFIRMED_REVISION4_REBIND_HELD_DC1",
+      "requirement": "Full revision3 delta recorded; do not update receipts before exactDC1 successor and serial custody."
     },
     {
       "id": "PROTECTED_SEAM_DISPOSITION",
@@ -12923,11 +12923,12 @@
     "execution": "NOT_RUN",
     "publication": "LOCAL_ONLY",
     "schedules": "UNCHANGED",
-    "doc83Revision2HistoricalLabel": "HISTORICAL_PACKET_ONLY; current source/receipt status is in doc83CompositionReconciliation. Prior pending/final and integrator-wait fields do not describe this frozen successor."
+    "doc83Revision2HistoricalLabel": "HISTORICAL_PACKET_ONLY; current source/receipt status is in doc83CompositionReconciliation. Prior pending/final and integrator-wait fields do not describe this frozen successor.",
+    "doc87HistoricalLabel": "Historical Doc83 correction record retained. Current dispositions, limits and pending actions are in doc83CompositionReconciliation and doc87BuilderCorrection; stale pending claims here are not current status."
   },
   "doc83CompositionReconciliation": {
     "id": "DOC83_COMPOSITION_EVIDENCE_REVISION2_20261011",
-    "status": "AUTHORED_PENDING_ORIGINAL_REVIEW_NONFINAL",
+    "status": "DOC87_RUNTIME_ACCEPTED_WITH_NAMED_LIMITS_INTERMEDIATE_VERIFIER_CORRECTION_AUTHORED_RECEIPTS_FROZEN",
     "sourceOrigin": {
       "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
       "tree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
@@ -13086,7 +13087,14 @@
       },
       "status": "RESTORED_AND_REPLACEMENT_CONTROLS_AUTHORED_PENDING_ORIGINAL_REVIEW",
       "originalReviewAccepted": false,
-      "execution": "NOT_RUN"
+      "execution": "NOT_RUN",
+      "doc87Disposition": {
+        "review": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+        "correction": "CORRECTED_AT_SOURCE",
+        "execution": "NOT_RUN",
+        "wholeComposition": "CORRECTIONS_REQUIRED",
+        "preservedPriorFields": "Historical revision3 record at time of authoring; this explicit disposition supersedes its pending-review status."
+      }
     },
     "protectedSeams": [
       {
@@ -13186,19 +13194,33 @@
       "noNewOwnerDecisions": true
     },
     "missingEvidenceFieldsForDependencyFinalization": [
-      "ORIGINAL_CURRENTNESS_AMENDED_RECEIPT_BYTE_CONFIRMATION",
-      "ORIGINAL_COMPOSITION_DELTA_SOURCE_DISPOSITION",
-      "FINAL_INTAKE_SEAL_AFTER_DEPENDENCY_ACCEPTANCE",
-      "IMPLEMENTED_S_COLUMN_DESCRIPTOR_AND_POPULATED_CENSUS",
-      "AUTHORITATIVE_OPERATIONAL_INPUTS_AND_EXTERNAL_EXPECTED_CENSUS_DIGEST",
-      "QUALIFIED_CONNECTION_PROFILE_AND_RECIPIENT_BINDINGS",
-      "TRUSTED_ROW8_COMMERCE_CHECKOUT",
-      "PROTECTED_SEAM_DISPOSITIONS",
-      "ACCEPTED_QUALIFICATION_PROCEDURE_AND_FRESH_EXECUTION_AUTHORITY",
-      "AUTHORIZED_INSTALLATION_AND_RELEASE_ACTIVATION"
+      "EXACT_AUTHORIZED_DC1_SUCCESSOR_AND_SERIAL_HANDOFF",
+      "REVISION4_WHOLE_FAMILY_REBIND_TO_ACTUAL_NEW_BYTES",
+      "ORIGINAL_EVERY_PIN_RECONFIRMATION_OF_REVISION4",
+      "PERMITTED_CURRENTNESS_FINALIZATION_SUCCESSOR_IMMUTABLE_BLOB_HASH_LENGTH"
     ],
-    "sourceAcceptance": "PENDING",
-    "currentnessReceiptByteConfirmation": "PENDING",
+    "sourceAcceptance": {
+      "runtime": "ACCEPTED_WITH_NAMED_LIMITS",
+      "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+      "tree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+      "review": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+      "composition": "CORRECTIONS_REQUIRED",
+      "newVerifier": "AUTHORED_PENDING_ORIGINAL_REVIEW"
+    },
+    "currentnessReceiptByteConfirmation": {
+      "revision3": "CONFIRMED_FAITHFUL_BINDING",
+      "review": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+      "receipt": {
+        "commit": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+        "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+        "gitBlob": "1cbdb0d8b5858afa6a49a54b110aa528701808c9",
+        "rawSha256": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+        "sha256lf": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+        "bytes": 209031
+      },
+      "final": false,
+      "revision4": "PENDING_AUTHORIZED_DC1_REBIND_AND_ORIGINAL_RECONFIRMATION"
+    },
     "dependentIntakeSeal": "NON_FINAL",
     "execution": "NOT_RUN",
     "publication": "LOCAL_ONLY",
@@ -13226,10 +13248,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
-        "correction": "Persist the canonical additional SHA-256 of the private stored-session lookup key in request.early_access_session_hash. Canonical customer_status ownership controls accept the double-hashed viewer key and reject raw/wrong keys; actor_id remains the separate opaque actor scope. AUTHORED, not observed.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
+        "correction": "Canonical viewer double hash correction accepted; authored control is the candidate customer_status wrapper over canonical M71. Its MD5-guarded authorization correction creates the disclosed cross-workstream dependency; no deployed behavior is proven.",
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-2",
@@ -13243,10 +13271,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Replace blanket commit/guard refusals in precheck/postcheck with the exact currentness inventory/definition/fingerprint/integrity dependency gate and exact five-signature intake present state. Verifier authors absent precheck/install/postcheck and present precheck/reapply/postcheck twins.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-3",
@@ -13260,10 +13294,55 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
-        "correction": "Qualify non-keyword types and casts with pg_catalog in intake DDL, fingerprint and DO blocks; rebind the definition. Three fresh-backend admin/replay/commit shadow-domain controls retain positive markers and no-domain twins. No SQL execution.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "currentDisposition": "PARTIAL_RUNTIME_CORRECTED_VERIFIER_R3C1_AUTHORED_PENDING_R4_REVIEW",
+        "correction": {
+          "status": "AUTHORED_PENDING_ORIGINAL_REVIEW_NOT_RUN",
+          "option": "DOC87_OPTION_B_CANONICAL_CARVE_OUT",
+          "attribution": "Capture verbose NOTICE plus SHOW_CONTEXT always in only the three shadow sessions. Skip the owned marker helper and attribute to the innermost actual caller. Reject all five intake function names and inline_code_block even when outer frames are canonical; accept only the explicit25-name canonical allowlist or the owned positive probe. Outer intake frames do not invalidate a canonical innermost caller.",
+          "positiveControls": "Each of jsonb/text/uuid/timestamptz has an actual domain cast through an owned probe in each fresh admin/replay/commit backend. Retain exact no-domain twins and effect/readback checks; admin observedAt remains the only omitted dynamic field.",
+          "coverage": {
+            "runtimeDomains": [
+              "jsonb",
+              "text",
+              "uuid",
+              "timestamptz"
+            ],
+            "notRuntimeProbed": [
+              "bytea",
+              "oid",
+              "regclass",
+              "regnamespace",
+              "regprocedure",
+              "regrole",
+              "bool",
+              "int4",
+              "int8",
+              "record pseudotype",
+              "install/precheck/postcheck/rollback DO paths",
+              "canonical date casts"
+            ],
+            "keywordSpellings": [
+              "numeric",
+              "boolean",
+              "integer"
+            ],
+            "fullTypeOrDOResolutionProof": false
+          },
+          "authoredDiagnosticControls": "Valid canonical+outer-intake and owned probe frames; prefixed psql diagnostics; SQL and PL/pgSQL renderings; all allowed canonical names; missing/duplicate/malformed CONTEXT; malformed SQL wrappers; wrong severity code/type/schema; unknown caller; each forbidden intake/DO innermost caller with outer canonical.",
+          "sourceAnchors": [
+            "research_required_input_manifest_hash: research-required-input-readiness.sql208/238/509",
+            "canonical frame list and attribution helpers adjacent to doc83ShadowControls"
+          ],
+          "noAdditionalMarkerNoticeClaim": "SUPERSEDED_BY_EXPLICIT_INNERMOST_CALLER_ATTRIBUTION; canonical notices are retained and disclosed, not ignored or counted as intake failure."
+        },
+        "independentClosure": "DOC87_PARTIAL",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-4",
@@ -13277,10 +13356,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Closed definite-refusal markers distinguish catalog drift (409 catalog_changed), terms drift (409 terms_changed), invalid input including eligibility/verified-link (422 invalid_input), held/authority/currentness unavailability (503), and retryable refusal (503). Missing/ambiguous identities are marked explicitly. Transmitted classification requires confirmed abort; unknown or unmarked responses remain uncertain. No page/handler policy change.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-5",
@@ -13294,10 +13379,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Author witnessed actor-key overlap for same-key replay and changed-payload conflict, with A holding the actor key and B blocked; separately author shared-only grant and queued exclusive-writer refusal. Reentrant refusal checks exact effects, empty recovery and allowed retry. Synthetic limits preserve required timer relationships.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-6",
@@ -13311,10 +13402,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Assert exact retained envelope/detail/line keys and submission-derived values, canonical seeded member UUID, event/companion/receipt plus outbox recipient/template/payload; compare eight additional canonical relation snapshots for unrelated writes. These are authored assertions, not durable database proof.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-7",
@@ -13328,10 +13425,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Author 24 focused identity/temporal/agreement/private-context/quantity/destination/readiness/estimate/witness negatives and 15 profile/session/catalog negatives with positive twins, exact marker/message, no effects and no saved key. Recovery under zero lock timeout and without SET ROLE is distinct from new admission.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-8",
@@ -13345,7 +13448,7 @@
         "owner": "integrator 01a0e098 (composition test, production-deps.ts); builder 01a10d78 (adapter and ports comments)",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": {
           "id": "TC-8",
           "state": "CORRECTION_AUTHORED_NOT_RUN",
@@ -13361,15 +13464,21 @@
             "Root source controls require only declaration plus void use of disabledQuickOrderPorts, reject direct handler module specifiers across import forms and named handler import/call.",
             "Factory comment now accurately distinguishes supplied canonical resolver/refusal-only runtime from absent operational timer/configuration."
           ],
-          "ruling": "Assignment f4ae7e39 records the zero sentinel as an accepted design interpretation, not a production engineering maximum. No operating timer or profile selected.",
+          "ruling": "Original Doc83 16d2731c928cdd40c810df764b14b68f0d995eb9 TC8 is the zero-sentinel ruling; Doc87 confirms the comment plus actual valid-stamp/refusal controls meet it. f4ae7e39 is assignment provenance, not the ruling. No operational maximum was selected.",
           "limits": [
             "Null limits are the first effective admission refusal; the composed test does not independently isolate every downstream gate.",
             "The direct schedule callback assertion is a refusal inspection, not elapsed-time, cleanup, cancellation or installed-timer proof.",
             "Root text assertions are lexical controls, not AST, mounted HTTP or deployment qualification."
           ]
         },
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-9",
@@ -13383,7 +13492,7 @@
         "owner": "integrator 01a0e098",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": {
           "id": "TC-9",
           "state": "CORRECTION_AUTHORED_NOT_RUN",
@@ -13413,8 +13522,14 @@
             "The Supabase auth checklist informed keeping browser continuity separate from server authority; no hosted read/query or auth policy change occurred."
           ]
         },
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-10",
@@ -13428,10 +13543,10 @@
         "owner": "Samuel/coordinator scope decision; then builder 01a10d78 (records) or the newly authorized path owner",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": {
           "id": "TC-10",
-          "state": "RESTORATION_AND_REPLACEMENT_CONTROLS_AUTHORED_NOT_RUN",
+          "state": "CORRECTED_AT_SOURCE_PER_DOC87_NOT_RUN",
           "paths": [
             "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
             "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
@@ -13459,10 +13574,17 @@
             ],
             "disclosure": "The old null-session expectation is superseded, not restored. Its file bytes are untouched. The replacement binds the approved real-session mount; no claim the old accepted route contract is unchanged."
           },
-          "limitations": "Builder must reconcile all four evidence records and disclose the prior restoration/route disposition. Original reviewer has not accepted this successor."
+          "limitations": "Doc87 accepts the TC10 restoration/replacement source correction at69d9e32. Route assertions are source-text contracts. Composition remains corrections-required for R3C1/records/DC1; this is not execution or protected-seam acceptance.",
+          "historicalRevision3Limitations": "Builder must reconcile all four evidence records and disclose the prior restoration/route disposition. Original reviewer has not accepted this successor."
         },
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-11",
@@ -13476,10 +13598,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
-        "correction": "Both actual receipts now pin all declared consumed baseline paths and the reconciled ONE shared binding at the exact records-only candidate; intake also includes member_history. Amended currentness byte confirmation remains pending and dependent intake is NON_FINAL.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
+        "correction": "Doc87 confirms both102-row receipt bindings and the unchanged currentness five files. R3C2 enumerates the complete16-added/12-rewritten/74-unchanged delta. New verifier and eventualDC1 pins require revision4 rebind and original re-confirmation before finalization.",
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-12",
@@ -13493,10 +13621,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Check SELECT and UPDATE privileges separately, include row-share and INSERT relations, and require EXECUTE for callees using marked admission refusals; do not substitute BYPASSRLS for actual privileges.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-13",
@@ -13510,10 +13644,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Both admission and final-gate budget exhaustion use 55P03 with DEFINITE_REFUSAL_RETRYABLE. Adapter controls distinguish confirmed-abort retryability from uncertain transmission; no automatic body retry.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-14",
@@ -13527,10 +13667,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Use exact starts_with prefix checks for approved settings, currentness inventory and actor kinds, remove duplicated version/isolation admission and constant template predicates, and rebind the actual definition/raw identities.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-15",
@@ -13544,10 +13690,16 @@
         "owner": "builder 01a10d78 (comments and evidence records); coordinator (ACTIVE_TASKS and SESSION_REGISTRY state)",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
-        "correction": "Current wording corrected; historical records labeled; original currentness source acceptance distinguished from unconfirmed amended receipt. C-6 is one Node HTTP-entry timestamp, not proxy arrival; intake-before-currentness rollback order remains required.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "currentDisposition": "BUILDER_WORDING_CORRECTED_COORDINATOR_STATE_NOT_PROVEN",
+        "correction": "Builder source/record wording corrected. Doc87 confirms revision3 amended receipt binding; revision4 rebind and pin re-confirmation remain pending. Node entry is not proxy arrival; rollback remains intake-before-currentness. Coordinator TC15 board-state alignment remains NOT_PROVEN and belongs to R3C6.",
+        "independentClosure": "DOC87_BUILDER_SOURCE_CORRECTED_COORDINATOR_STATE_NOT_PROVEN",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-16",
@@ -13561,10 +13713,16 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "CORRECTED_AT_SOURCE_PER_DOC87",
         "correction": "Verifier authored dependency/receipt and carrier-order checks, literal-prefix decoy discrimination, exact reader-header refusal, distinct pre-resolver marker, price-version no-effect/retry and inventory/fingerprint drift controls. Canonical uniqueness, timer/native limits and undispatched adapter controls remain explicitly limited.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-17",
@@ -13578,15 +13736,21 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "PARTIAL_CARRIED_NOTIFICATION_AND_PROTECTED_ROOT_CONTROLS",
         "correction": "Adapter controls distinguish closed refusal classes, confirmed abort, no-abort uncertainty, pre-send expiry, sync post-transmission throw and malformed committed receipts; admin-readback negatives isolate invalid retained receipt shapes. Notification/root-composition paths excluded from this builder patch; original root/header/notification concerns are carried, not falsely closed. Root changes require protected disposition.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRY",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-18",
         "severity": "P3",
-        "stage": "S2",
+        "stage": "S3",
         "sources": "IC-9",
         "anchor": "server/research/health/quick-order/production.ts:13,:69,:76@121d0987 vs quick-order-repository.ts:275-280, express.ts:104-108, intake.sql:290,:353@121d0987",
         "title": "session() admits actor forms that the adapter, express and SQL refuse",
@@ -13595,10 +13759,22 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "P3_SOURCE_CONDITION_HELD_NO_CORRECTION_IN_THIS_SCOPE",
-        "correction": "session() actor-form inconsistency remains at production.ts; this evidence-only phase and prior nine-file correction did not authorize a change there. Original bounded review must disposition it; no actor predicate or policy invented.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "currentDisposition": "P3_CARRIED_TO_S3_BY_ORIGINAL_RULING",
+        "correction": {
+          "id": "TC18-ACTOR-FORM-CARRY",
+          "severity": "P3",
+          "stage": "S3",
+          "disposition": "ORIGINAL_REVIEWER_CARRY_RULING",
+          "details": "Case-insensitive UUID or unrestricted earlyAccessCustomerRef admitted by session() can later refuse and recovery can return503. Canonical issuance does not create those forms. Shared actor derivation is preferred at the next production.ts touch; no current S2 correction or new decision is required."
+        },
+        "independentClosure": "DOC87_CARRY_RULING",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "P3_SOURCE_CONDITION_HELD_NO_CORRECTION_IN_THIS_SCOPE",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-19",
@@ -13612,10 +13788,16 @@
         "owner": "builder 01a10d78 (records); coordinator (authority references)",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+        "currentDisposition": "SOURCE_PROVENANCE_ACCEPTED_MISSING_WINDOWS_NOW_RECORDED_PENDING_R4_REVIEW",
         "correction": "Exact approval/assembly artifacts, prior lease windows and new exclusive custody are bound. TC10 direct ordinary-test delegation, accepted readback restoration and precise route replacement are explicit. Current App b5cc8edc and index/root baselines remain SEPARATE_DISPOSITION_REQUIRED.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_SOURCE_CORRECTED_NOT_EXECUTED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CORRECTION_AUTHORED_PENDING_ORIGINAL_REVIEW",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-20",
@@ -13631,8 +13813,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Take zero-row reads before the head lock, or add these first-touch locks to the S3 wait and total-timeout qualification.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-21",
@@ -13648,8 +13836,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Descriptor remains absent, and the unchanged 8b631a83 currentness definition is uninstallable. Binding a real descriptor requires a separately scoped new currentness definition, intake reseal and original review; no positive install or commit result claimed. Current intake marks integrity refusal unavailable; the older unmarked observation remains historical.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-22",
@@ -13665,8 +13859,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Keep these as named S3 holds. Label the adapter controls UNDISPATCHED. Add the cheap held-before-activation and expired-window twins when qualification opens.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-23",
@@ -13682,8 +13882,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Qualify the scheduler's granularity and floor rounding at S3.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-24",
@@ -13699,8 +13905,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "At S3: run a bridge-enabled root qualification (ports stay unmounted, containment answers, boot survives a composition failure); run a real-browser Auth qualification; confirm that first enablement is member-only, or add an attested EA boundary requirement.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-25",
@@ -13716,8 +13928,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-26",
@@ -13748,8 +13966,14 @@
           "gitAndCommerceCheckoutAreDistinct": true,
           "genericDisabledSourceAuthoringBlockedByOperationalInputs": false
         },
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_RECORDS_DISPOSITION_CARRIED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "RECORDS_DISPOSITION_AUTHORED_UNDERLYING_EVIDENCE_MISSING",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-27",
@@ -13765,8 +13989,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Refuse unless effective lock and statement timers are armed and equal an owner-approved carrier field, or carry it as a named S4 installation prerequisite with a disclosure of the queueing blast radius.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S4"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-28",
@@ -13782,8 +14012,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Before live operation, require an operator signal (adapter-only option: throw non-conflict outcomes as plain Error) and a whole-request bound that covers recovery without depending on the intake profile.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S4"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       }
     ],
     "fullSourceInventory": [
@@ -14951,7 +15187,7 @@
     "integratorCorrections": [
       {
         "id": "TC-8",
-        "state": "CORRECTION_AUTHORED_NOT_RUN",
+        "state": "CORRECTED_AT_SOURCE_PER_DOC87_NOT_RUN",
         "paths": [
           "server/research/assisted-order/production-deps.ts",
           "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
@@ -14964,16 +15200,19 @@
           "Root source controls require only declaration plus void use of disabledQuickOrderPorts, reject direct handler module specifiers across import forms and named handler import/call.",
           "Factory comment now accurately distinguishes supplied canonical resolver/refusal-only runtime from absent operational timer/configuration."
         ],
-        "ruling": "Assignment f4ae7e39 records the zero sentinel as an accepted design interpretation, not a production engineering maximum. No operating timer or profile selected.",
+        "ruling": "Original Doc83 16d2731c928cdd40c810df764b14b68f0d995eb9 TC8 is the zero-sentinel ruling; Doc87 confirms the comment plus actual valid-stamp/refusal controls meet it. f4ae7e39 is assignment provenance, not the ruling. No operational maximum was selected.",
         "limits": [
           "Null limits are the first effective admission refusal; the composed test does not independently isolate every downstream gate.",
           "The direct schedule callback assertion is a refusal inspection, not elapsed-time, cleanup, cancellation or installed-timer proof.",
           "Root text assertions are lexical controls, not AST, mounted HTTP or deployment qualification."
-        ]
+        ],
+        "priorRevision3State": "CORRECTION_AUTHORED_NOT_RUN",
+        "currentReview": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+        "historicalAssignmentRulingText": "Assignment f4ae7e39 records the zero sentinel as an accepted design interpretation, not a production engineering maximum. No operating timer or profile selected."
       },
       {
         "id": "TC-9",
-        "state": "CORRECTION_AUTHORED_NOT_RUN",
+        "state": "CORRECTED_AT_SOURCE_PER_DOC87_NOT_RUN",
         "paths": [
           "client/src/App.tsx",
           "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
@@ -14998,11 +15237,13 @@
           "Synthetic Date.now plus invocation of the actual captured callback; not wall-clock scheduling or a real-browser run.",
           "Auth/API are synthetic and readiness override is test-only. No live Auth, persistence, server or provider claim.",
           "The Supabase auth checklist informed keeping browser continuity separate from server authority; no hosted read/query or auth policy change occurred."
-        ]
+        ],
+        "priorRevision3State": "CORRECTION_AUTHORED_NOT_RUN",
+        "currentReview": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-10",
-        "state": "RESTORATION_AND_REPLACEMENT_CONTROLS_AUTHORED_NOT_RUN",
+        "state": "CORRECTED_AT_SOURCE_PER_DOC87_NOT_RUN",
         "paths": [
           "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
           "client/src/research/quick-order/QuickOrderApp.composition.test.tsx"
@@ -15030,7 +15271,10 @@
           ],
           "disclosure": "The old null-session expectation is superseded, not restored. Its file bytes are untouched. The replacement binds the approved real-session mount; no claim the old accepted route contract is unchanged."
         },
-        "limitations": "Builder must reconcile all four evidence records and disclose the prior restoration/route disposition. Original reviewer has not accepted this successor."
+        "limitations": "Doc87 accepts the TC10 restoration/replacement source correction at69d9e32. Route assertions are source-text contracts. Composition remains corrections-required for R3C1/records/DC1; this is not execution or protected-seam acceptance.",
+        "priorRevision3State": "RESTORATION_AND_REPLACEMENT_CONTROLS_AUTHORED_NOT_RUN",
+        "currentReview": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+        "historicalLimitations": "Builder must reconcile all four evidence records and disclose the prior restoration/route disposition. Original reviewer has not accepted this successor."
       }
     ],
     "integratorHandoff": {
@@ -15426,9 +15670,12 @@
           "bytes": 51238,
           "digestDomain": "RAW_COMMITTED_GIT_BYTES"
         },
-        "status": "RESTORED_AND_REPLACEMENT_CONTROLS_AUTHORED_PENDING_ORIGINAL_REVIEW",
-        "originalReviewAccepted": false,
-        "execution": "NOT_RUN"
+        "status": "TC10_CORRECTION_ACCEPTED_AT_SOURCE_DOC87_COMPOSITION_CORRECTIONS_REMAIN",
+        "originalReviewAccepted": true,
+        "execution": "NOT_RUN",
+        "historicalOriginalReviewAccepted": false,
+        "acceptanceScope": "TC10 restoration/replacement only at69d9e32, not the whole revision4 candidate, execution or protected changes",
+        "acceptanceReview": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       "evidenceLease": {
         "id": "e1c90dfe-27a8-4e4d-9270-d1543b68f7d0",
@@ -15451,7 +15698,8 @@
         "assignmentCommit": "c5b6f6029f07c7debb39460317d3281d93e64915",
         "stage": "FOUR_EVIDENCE_ONLY_NO_APPLICATION_SOURCE_WRITES",
         "ack": ".xenios/handoffs/2026-10-11-doc83-composition-evidence-owner-ack.json",
-        "authority": "Existing direct-human 17+4 evidence scope; coordinator Doc83 revision2 after serial integrator handoff"
+        "authority": "Existing direct-human 17+4 evidence scope; coordinator Doc83 revision2 after serial integrator handoff",
+        "snapshotMeaning": "Historical active-at-recording snapshot. e1c90dfe is now HANDOFF; not continuing authority."
       },
       "integratorLease": {
         "ninePathRawSha256": "4fbe1d96858789ece46b35a9dea504f28c97060623ad6146e4f85ec54a895a72",
@@ -15474,23 +15722,227 @@
         ],
         "unrelatedContinuityLeaseUnchanged": "bf834f90-14a8-4e7a-abb9-f12913cd262c",
         "scope": "Source authoring, local hooks-disabled commits and own metadata only. The narrower no-execution/no-push scope supersedes general continuity execution/publication steps."
+      },
+      "doc87AddedSerialLeaseWindows": [
+        {
+          "id": "ddc54431-bcfb-46c5-beae-a48a7bc44f02",
+          "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+          "session": "codex-health-quick-order-20261005",
+          "paths": [
+            "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+            "supabase/verification/research_health_quick_order_local.mjs",
+            "server/research/assisted-order/quick-order-repository.ts",
+            "server/research/assisted-order/quick-order-repository.test.ts",
+            "server/research/health/quick-order/ports.ts",
+            "server/research/assisted-order/quick-order-admin-readback.test.ts",
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+          ],
+          "state": "handoff",
+          "claimedAt": "2026-10-11T23:13:08.920Z",
+          "heartbeatAt": "2026-10-11T23:29:29.168Z",
+          "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+          "branch": "codex/accepted-source-integration-20261005",
+          "assignmentCommit": "bee6ae528631be6443c4c1e58af8acbd40e85afb",
+          "authority": "Existing exact17+4 actual human grant; accepted Doc78 prerequisite; bounded Doc83 source correction",
+          "ack": ".xenios/handoffs/2026-10-11-doc83-builder-correction-owner-ack.json",
+          "sourceBase": "f633a771d1751a2af0854c746256131f9d647184",
+          "recordsBase": "fcc98a27546609a83f0a0b79dc3ae954e1999d03",
+          "narrowSourcePaths": [
+            "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+            "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+            "supabase/verification/research_health_quick_order_local.mjs",
+            "server/research/assisted-order/quick-order-repository.ts",
+            "server/research/assisted-order/quick-order-repository.test.ts",
+            "server/research/health/quick-order/ports.ts",
+            "server/research/assisted-order/quick-order-admin-readback.test.ts"
+          ],
+          "evidencePaths": [
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+            "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+          ],
+          "stage": "BUILDER_COMPLETE_WAITING_SERIAL_INTEGRATOR_THEN_RECORDS",
+          "allPriorLeaseRowsPreserved": true,
+          "handedOffAt": "2026-10-11T23:29:29.168Z",
+          "sourceCommit": "5c59cf44b55bb4d433ce4b6978c4aa988206f1c8",
+          "sourceTree": "b1dc591ec12d02e7093f2470028ca01f8bd39895",
+          "handoff": ".xenios/handoffs/2026-10-11-doc83-builder-source-correction-handoff.json",
+          "writerStopped": true,
+          "noAutomaticReclaim": true,
+          "recordedIn": {
+            "commit": "ca7b07703f880bd28ca039dc48fb124b37d4f222",
+            "path": ".xenios/CODE_OWNERSHIP.json",
+            "gitBlob": "e31ae8d6825e6e2add5c1276dbb8da4cd0b390cd",
+            "rawSha256": "e24c754e611ef25b989ddeeeef4f8398d0834004002ec224dfb65b3d0bdf3eeb",
+            "sha256lf": "e24c754e611ef25b989ddeeeef4f8398d0834004002ec224dfb65b3d0bdf3eeb",
+            "bytes": 209653
+          },
+          "meaning": "ACTUAL_SERIAL_HISTORICAL_WINDOW_NOT_CURRENT_AUTHORITY"
+        },
+        {
+          "id": "f57c582d-0527-4792-9389-849cf4e60105",
+          "task": "QUICK-ORDER-DOC83-INTEGRATOR-CORRECTION-20261011",
+          "session": "codex-accepted-source-integration-20261005",
+          "state": "handoff",
+          "claimedAt": "2026-10-11T23:33:00Z",
+          "heartbeatAt": "2026-10-11T23:39:49.0443548Z",
+          "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+          "branch": "codex/accepted-source-integration-20261005",
+          "base": "7b08bd73137296ef0bd0ea5a9311045a486d26fd",
+          "assignmentCommit": "f4ae7e39bf9d8f62c76adb5600400fba57965c62",
+          "paths": [
+            "server/research/assisted-order/production-deps.ts",
+            "client/src/App.tsx",
+            "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+            "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx"
+          ],
+          "scopeNote": "Actual claim after same integrator four-path ACK, unchanged path bytes and stopped-builder ddc54431 HANDOFF at7b08bd73. One serial source/Git/own-continuity writer. No builder evidence/currentness/supervisor/protected manifest changes. bf834f90 continuity lease and all historical rows preserved. No tests/import/parser/compiler/probes/SQL/hosted/push/schedules.",
+          "handoffAt": "2026-10-11T23:39:49.0443548Z",
+          "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+          "sourceTree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+          "handoff": ".xenios/handoffs/2026-10-11-doc83-integrator-correction-handoff.json",
+          "sourceWriterStopped": true,
+          "recordedIn": {
+            "commit": "ca7b07703f880bd28ca039dc48fb124b37d4f222",
+            "path": ".xenios/CODE_OWNERSHIP.json",
+            "gitBlob": "e31ae8d6825e6e2add5c1276dbb8da4cd0b390cd",
+            "rawSha256": "e24c754e611ef25b989ddeeeef4f8398d0834004002ec224dfb65b3d0bdf3eeb",
+            "sha256lf": "e24c754e611ef25b989ddeeeef4f8398d0834004002ec224dfb65b3d0bdf3eeb",
+            "bytes": 209653
+          },
+          "meaning": "ACTUAL_SERIAL_HISTORICAL_WINDOW_NOT_CURRENT_AUTHORITY"
+        }
+      ],
+      "doc87CurrentLease": {
+        "id": "83d2a260-aaed-4f3b-aca7-793f7a43c6ad",
+        "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
+        "revision": 3,
+        "session": "codex-health-quick-order-20261005",
+        "state": "active",
+        "paths": [
+          "supabase/verification/research_health_quick_order_local.mjs",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+        ],
+        "claimedAt": "2026-10-12T01:10:26.978Z",
+        "heartbeatAt": "2026-10-12T01:10:26.978Z",
+        "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "branch": "codex/accepted-source-integration-20261005",
+        "recordsBase": "44cb6f795488214e669b1c99f3f85217e086ea64",
+        "sourceBase": "69d9e32a5df899985b2877e06e1a778060a021f9",
+        "stage": "DOC87_VERIFIER_AND_CORRECTION_MAP_BEFORE_DC1_SERIAL_HANDOFF",
+        "ack": ".xenios/handoffs/2026-10-12-doc87-builder-correction-owner-ack.json",
+        "sourceWrites": [
+          "supabase/verification/research_health_quick_order_local.mjs"
+        ],
+        "receiptRebinding": "HELD_UNTIL_AUTHORIZED_DC1_SUCCESSOR_AND_EXCLUSIVE_HANDOFF",
+        "ackCommit": "ca7b07703f880bd28ca039dc48fb124b37d4f222",
+        "snapshotMeaning": "Active custody at source authoring; final handoff separately records writer stop."
+      },
+      "supervisorRangeDisclosure": {
+        "range": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb..69d9e32a5df899985b2877e06e1a778060a021f9",
+        "commits": [
+          {
+            "commit": "6766d51d39f981b0dda9347fc0de955acde966ac",
+            "files": [
+              {
+                "commit": "6766d51d39f981b0dda9347fc0de955acde966ac",
+                "path": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+                "gitBlob": "30fbf71b204dfc51b77f000bafe135ed3e51d0f8",
+                "rawSha256": "15f4ad9740cd731ee314c3fa8fbb0d26419369319bd0f3d790dea9a0644a49b6",
+                "sha256lf": "15f4ad9740cd731ee314c3fa8fbb0d26419369319bd0f3d790dea9a0644a49b6",
+                "bytes": 1501610
+              },
+              {
+                "commit": "6766d51d39f981b0dda9347fc0de955acde966ac",
+                "path": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+                "gitBlob": "a9ba8356442218bd7206beb0e5973632c9a581a1",
+                "rawSha256": "2a68b06c7cb120a8a31231f0153e9759a067a48c48f058f2e1c93073960411f9",
+                "sha256lf": "2a68b06c7cb120a8a31231f0153e9759a067a48c48f058f2e1c93073960411f9",
+                "bytes": 188286
+              }
+            ]
+          },
+          {
+            "commit": "3e5e2ed9faf30aa46f5a81047fa71d55e28bdb2e",
+            "files": [
+              {
+                "commit": "3e5e2ed9faf30aa46f5a81047fa71d55e28bdb2e",
+                "path": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+                "gitBlob": "72c3f0967adf902528edbb3b822f41facefd8ff4",
+                "rawSha256": "1e608cba7867a0329ff892f0662375536ded6d26cd82584f08bf226f54227258",
+                "sha256lf": "1e608cba7867a0329ff892f0662375536ded6d26cd82584f08bf226f54227258",
+                "bytes": 1507706
+              },
+              {
+                "commit": "3e5e2ed9faf30aa46f5a81047fa71d55e28bdb2e",
+                "path": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+                "gitBlob": "f53b743705402b271faff098c2e6909a8e3ad7d6",
+                "rawSha256": "0536b33bfb7c203fcf65312f4e2c0716dd65c569d52e5ff9d3f74c3004e56a11",
+                "sha256lf": "0536b33bfb7c203fcf65312f4e2c0716dd65c569d52e5ff9d3f74c3004e56a11",
+                "bytes": 202480
+              }
+            ]
+          },
+          {
+            "commit": "f633a771d1751a2af0854c746256131f9d647184",
+            "files": [
+              {
+                "commit": "f633a771d1751a2af0854c746256131f9d647184",
+                "path": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+                "gitBlob": "fb554512385cb40da4b144104294bafece62281d",
+                "rawSha256": "f5decbe9998203dfd5784586b804fb403cb61f97fc53f9c284c6b04156a92004",
+                "sha256lf": "f5decbe9998203dfd5784586b804fb403cb61f97fc53f9c284c6b04156a92004",
+                "bytes": 1520981
+              },
+              {
+                "commit": "f633a771d1751a2af0854c746256131f9d647184",
+                "path": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+                "gitBlob": "d2e20a8b1235edce4c43e2b8bd1d9ac4eea61a87",
+                "rawSha256": "ed3c8076856ff7be42ab92bddbbc3ef59b21564322b66c1492509fdee7153f1a",
+                "sha256lf": "ed3c8076856ff7be42ab92bddbbc3ef59b21564322b66c1492509fdee7153f1a",
+                "bytes": 204885
+              }
+            ]
+          }
+        ],
+        "status": "SEPARATELY_AUTHORIZED_PAIR_OUTSIDE_COMPOSITION_ACCEPTANCE",
+        "governingReview": "Doc88; no verdict inferred here",
+        "finalPairUnchangedAt": [
+          "69d9e32a5df899985b2877e06e1a778060a021f9",
+          "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1"
+        ],
+        "notConsumedByTransactionVerifiers": true,
+        "qualificationPins": "Rebind only when qualification opens under the supervisor owner; no changes in this checkpoint."
       }
     },
     "reviewRequest": {
       "existingTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
-      "requestedRevision": 3,
+      "requestedRevision": 4,
       "owner": "ORIGINAL_REVIEWER_ONLY",
-      "queued": "NOT_REPORTED_BY_BUILDER",
-      "acknowledged": "NOT_OBSERVED_FOR_THIS_PACKET",
-      "receiptByteConfirmationSubstep": "REQUIRED_BEFORE_FINAL_INTAKE_SEAL",
-      "previousRevision": 2,
-      "previousReviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      "queued": "NOT_REGISTERED_FOR_THIS_INTERMEDIATE_CHECKPOINT",
+      "acknowledged": "NOT_OBSERVED_FOR_REVISION4",
+      "registrationPrerequisite": "Exact authorized DC1 successor, serial handoff, coherent whole-family rebind.",
+      "previousRevision": 3,
+      "previousReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+      "previousReviewAcknowledgment": "c3e7337 as reported by original Doc87; full acknowledgment commit not asserted here"
     },
     "remainingStageConditions": [
       {
         "id": "TC-18",
         "severity": "P3",
-        "stage": "S2",
+        "stage": "S3",
         "sources": "IC-9",
         "anchor": "server/research/health/quick-order/production.ts:13,:69,:76@121d0987 vs quick-order-repository.ts:275-280, express.ts:104-108, intake.sql:290,:353@121d0987",
         "title": "session() admits actor forms that the adapter, express and SQL refuse",
@@ -15499,10 +15951,22 @@
         "owner": "builder 01a10d78",
         "reviewedAtSource": "121d0987ed138f7377dd00ecc6ff1c6c26cf2deb",
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
-        "currentDisposition": "P3_SOURCE_CONDITION_HELD_NO_CORRECTION_IN_THIS_SCOPE",
-        "correction": "session() actor-form inconsistency remains at production.ts; this evidence-only phase and prior nine-file correction did not authorize a change there. Original bounded review must disposition it; no actor predicate or policy invented.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "currentDisposition": "P3_CARRIED_TO_S3_BY_ORIGINAL_RULING",
+        "correction": {
+          "id": "TC18-ACTOR-FORM-CARRY",
+          "severity": "P3",
+          "stage": "S3",
+          "disposition": "ORIGINAL_REVIEWER_CARRY_RULING",
+          "details": "Case-insensitive UUID or unrestricted earlyAccessCustomerRef admitted by session() can later refuse and recovery can return503. Canonical issuance does not create those forms. Shared actor derivation is preferred at the next production.ts touch; no current S2 correction or new decision is required."
+        },
+        "independentClosure": "DOC87_CARRY_RULING",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "P3_SOURCE_CONDITION_HELD_NO_CORRECTION_IN_THIS_SCOPE",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S2"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-20",
@@ -15518,8 +15982,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Take zero-row reads before the head lock, or add these first-touch locks to the S3 wait and total-timeout qualification.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-21",
@@ -15535,8 +16005,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Descriptor remains absent, and the unchanged 8b631a83 currentness definition is uninstallable. Binding a real descriptor requires a separately scoped new currentness definition, intake reseal and original review; no positive install or commit result claimed. Current intake marks integrity refusal unavailable; the older unmarked observation remains historical.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-22",
@@ -15552,8 +16028,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Keep these as named S3 holds. Label the adapter controls UNDISPATCHED. Add the cheap held-before-activation and expired-window twins when qualification opens.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-23",
@@ -15569,8 +16051,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Qualify the scheduler's granularity and floor rounding at S3.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-24",
@@ -15586,8 +16074,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "At S3: run a bridge-enabled root qualification (ports stay unmounted, containment answers, boot survives a composition failure); run a real-browser Auth qualification; confirm that first enablement is member-only, or add an attested EA boundary requirement.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-25",
@@ -15603,8 +16097,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Obtain separate explicit protected-change/GATE-01 dispositions before any qualification or release. Do not update hashes or the manifest automatically.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-26",
@@ -15635,8 +16135,14 @@
           "gitAndCommerceCheckoutAreDistinct": true,
           "genericDisabledSourceAuthoringBlockedByOperationalInputs": false
         },
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_RECORDS_DISPOSITION_CARRIED",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "RECORDS_DISPOSITION_AUTHORED_UNDERLYING_EVIDENCE_MISSING",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S3"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-27",
@@ -15652,8 +16158,14 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Refuse unless effective lock and statement timers are armed and equal an owner-approved carrier field, or carry it as a named S4 installation prerequisite with a disclosure of the queueing blast radius.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S4"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       },
       {
         "id": "TC-28",
@@ -15669,30 +16181,853 @@
         "reviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9",
         "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
         "correction": "Before live operation, require an operator signal (adapter-only option: throw non-conflict outcomes as plain Error) and a whole-request bound that covers recovery without depending on the intake profile.",
-        "independentClosure": "PENDING_ORIGINAL_REVIEW",
-        "execution": "NOT_RUN"
+        "independentClosure": "DOC87_CARRIED_STAGE_CONDITION",
+        "execution": "NOT_RUN",
+        "priorRevision3AuthoredState": {
+          "currentDisposition": "CARRIED_STAGE_CONDITION_NOT_SATISFIED",
+          "independentClosure": "PENDING_ORIGINAL_REVIEW",
+          "stage": "S4"
+        },
+        "currentReviewCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6"
       }
     ],
     "qualificationRequirements": "(b) S3 qualification requirements. These are not pre-source requirements, and none is waived.\n1. A bound column descriptor and census (IMPLEMENTED_S_CENSUS_DESCRIPTOR), the resulting new currentness definition and receipt, then the intake re-seal and re-review (TC-21). Count no positive control before then.\n2. The authoritative input packet, the trusted checkout binding carrier, and real connection and recipient enforcement, as already registered.\n3. Adapter runtime dispatch (Node 20.19.0 and the tsx inventory) under separate authority. Label the mapping controls UNDISPATCHED until then (TC-22).\n4. Fresh bounded execution authority for a disposable run of:\n   - the intake verifier, including the TC-5, TC-6 and TC-7 controls and the pg_temp shadow-domain negative (TC-3);\n   - the timing matrix: hold before activation, window, epoch change, revocation during the wait;\n   - post-fifth-write and commit faults;\n   - a C-10 alternate server;\n   - wider timing margins.\n5. The wait inventory, including first-touch relation locks after decisionAt (TC-20), and scheduler granularity and rounding (TC-23).\n6. A bridge-enabled root composition qualification, plus a real-browser Auth/config qualification on the intake page (TC-24).\n7. Schema and checkout dispositions: descriptor and census NOT_COMPLETED, installed schema NOT_OBSERVED (TC-26).\n8. Separate explicit protected-change/GATE-01 dispositions for server/index.ts (0557ef2c), root-composition.test.ts (cf6ebaa3) and App.tsx (b98a29c9). The manifest forbids successor route, provider and middleware changes without review. No expected hash or manifest may be rewritten (TC-25).",
     "configurationAndInstallation": "(c) S4 configuration and installation requirements:\n- Owner-approved operating values (no compiled defaults): the timer carrier and digest, approved limits, the recipient, and the Health legal set and class-4 values.\n- Install and rollback timer admission, or a named prerequisite with a blast-radius disclosure (TC-27).\n- A whole-request bound covering recovery, and an operator signal for OUTCOME_UNCERTAIN and DEFINITE_REFUSAL_RETRYABLE (TC-28).\n- CS-33..36 operational limits.\n- The intake-before-currentness rollback order. It is enforced on the currentness side; the intake rollback.md must state it (TC-15).\n- Independent exact release acceptance and deployment/rollback authority (PRODUCTION_ACTIVATION).\n- Request submission is not payment.",
     "semanticRulingRequired": {
       "finding": "TC-4",
-      "status": "ORIGINAL_REVIEWER_RULING_PENDING",
-      "details": "Review explicit held/authority 503 and eligibility/verified-link 422 classification against Doc75 CC-10; authored mapping is not independent acceptance."
+      "status": "RESOLVED_BY_ORIGINAL_DOC87",
+      "review": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+      "details": "TC4 corrected; explicit closed markers and confirmed-abort mapping accepted. Owner mismatch422 is eligibility refusal; server-wide configuration signaling remains TC28/S4."
     },
     "acyclicBindingPlan": {
       "edgeDirection": "consumer record -> already committed dependency identity",
       "nodes": [
-        "immutable application source origin69d",
-        "prior shared-binding candidate checkpoint",
-        "prior pending currentness receipt records",
-        "this intake receipt and map without mutual or self digests"
+        "intermediate verifier/map source checkpoint",
+        "exact authorized DC1 successor and serial handoff",
+        "ONE shared binding candidate commit",
+        "currentness receipt committed identity",
+        "dependent intake receipt",
+        "map/handoff without mutual or self digests"
       ],
       "noFutureReceiptHashInBinding": true,
       "noOwnReceiptPathInFiles": true,
       "noMutualIntakeMapHash": true,
       "noSelfCommitIdentity": true,
-      "finalReceiptAcceptance": false
-    }
+      "finalReceiptAcceptance": false,
+      "historicalRevision3Nodes": [
+        "immutable application source origin69d",
+        "prior shared-binding candidate checkpoint",
+        "prior pending currentness receipt records",
+        "this intake receipt and map without mutual or self digests"
+      ],
+      "executionState": "NOT_PERFORMED_FOR_REVISION4_PENDING_DC1"
+    },
+    "doc87SupersededRevision3Snapshot": {
+      "sourceStatus": "COMBINED_SOURCE_FROZEN_RECORDS_RECONCILED_PENDING_ORIGINAL_DELTA_REVIEW",
+      "independentAcceptance": "PENDING_ORIGINAL_COMPOSITION_DELTA_REVIEW; retained currentness code acceptance does not accept this receipt amendment or combined source.",
+      "reconciliationStatus": "AUTHORED_PENDING_ORIGINAL_REVIEW_NONFINAL",
+      "sourceAcceptance": "PENDING",
+      "currentnessReceiptByteConfirmation": "PENDING",
+      "semanticRulingRequired": {
+        "finding": "TC-4",
+        "status": "ORIGINAL_REVIEWER_RULING_PENDING",
+        "details": "Review explicit held/authority 503 and eligibility/verified-link 422 classification against Doc75 CC-10; authored mapping is not independent acceptance."
+      },
+      "reviewRequest": {
+        "existingTask": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+        "requestedRevision": 3,
+        "owner": "ORIGINAL_REVIEWER_ONLY",
+        "queued": "NOT_REPORTED_BY_BUILDER",
+        "acknowledged": "NOT_OBSERVED_FOR_THIS_PACKET",
+        "receiptByteConfirmationSubstep": "REQUIRED_BEFORE_FINAL_INTAKE_SEAL",
+        "previousRevision": 2,
+        "previousReviewCommit": "16d2731c928cdd40c810df764b14b68f0d995eb9"
+      }
+    },
+    "doc87ReceiptDelta": {
+      "id": "R3C-2",
+      "status": "WHOLE_DELTA_REBIND_CONFIRMED_BY_DOC87_NOT_ADD_ROWS_ONLY",
+      "comparison": {
+        "before": {
+          "commit": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "gitBlob": "25931c4205851b80996375fc664985b5d1a1d92a",
+          "rawSha256": "f719499f619adf7135b5cfc6fcdd8039f3278faafcf27c654a9162821d44d123",
+          "sha256lf": "f719499f619adf7135b5cfc6fcdd8039f3278faafcf27c654a9162821d44d123",
+          "bytes": 100942
+        },
+        "after": {
+          "commit": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "gitBlob": "1cbdb0d8b5858afa6a49a54b110aa528701808c9",
+          "rawSha256": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+          "sha256lf": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+          "bytes": 209031
+        }
+      },
+      "headerBefore": {
+        "sourceCommit": "264e6af20477fabe65aa8d229ed2334fb59d9cc4",
+        "sourceTree": "7591133429a11f8e4aa6a7ad57a236fe9222201d",
+        "sourceAcceptance": {
+          "status": "SOURCE_ACCEPT_WITH_LIMITS",
+          "reviewCommit": "29ccf647aa0dc332b334f4dd9c62f6396a85282b"
+        }
+      },
+      "headerAfter": {
+        "sourceCommit": "a044293d6782493c4b1ed5296ada6435a3dbac0b",
+        "sourceTree": "f80dc744b38d925c9c8838aad2ced5d8d7e4c983",
+        "sourceAcceptance": {
+          "status": "PENDING",
+          "reviewCommit": null
+        }
+      },
+      "counts": {
+        "before": 86,
+        "after": 102,
+        "added": 16,
+        "rewrittenNoncurrentness": 12,
+        "unchanged": 74,
+        "removed": 0
+      },
+      "added": [
+        {
+          "path": "client/src/App.tsx",
+          "sha256lf": "1ee2d576ea617ff74f76ff345a916c2d88352828af003e2f855b42611b6a76a0"
+        },
+        {
+          "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+          "sha256lf": "823a99bae4a9af94dd6f0242fed9fb6875796b4843e324c8f3a17216b1bc98e8"
+        },
+        {
+          "path": "package-lock.json",
+          "sha256lf": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74"
+        },
+        {
+          "path": "package.json",
+          "sha256lf": "89d5d2160381ea23967d56fcf666643d51dbb779fc652d82181bd2379a53828b"
+        },
+        {
+          "path": "server/research/assisted-order/ports.ts",
+          "sha256lf": "50341a592e8bc313411e8c527e9a032352e20735307314f9470be141f632ee56"
+        },
+        {
+          "path": "server/research/health/quick-order/core.mjs",
+          "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+        },
+        {
+          "path": "server/research/health/quick-order/handler.d.mts",
+          "sha256lf": "3cb9bb216e18a62816e897abd81b72c8c8b93a1064cb232ea483434125ad0ecf"
+        },
+        {
+          "path": "server/research/health/quick-order/handler.mjs",
+          "sha256lf": "a7c65c7f39c7c2c462985fafd8ff0c838f5aa4f787fd5d2b249bf411b982804a"
+        },
+        {
+          "path": "server/research/health/quick-order/paths.mjs",
+          "sha256lf": "89c017ecbb5b7ad18b7d7ab5fe0ffdd651ff02a926e1dfd3bde623cd9e68fc88"
+        },
+        {
+          "path": "server/research/health/quick-order/root-composition.test.ts",
+          "sha256lf": "bf654d9ce294ea1af5e3530985f1be8d7476cc67bc65707a3a90efb887ef3c9f"
+        },
+        {
+          "path": "supabase/candidates/20260921_research_assisted_order_member_history.sql",
+          "sha256lf": "c0ae0cf3f737cc32163fe06984688fd640043f15d7511205caa574f3a3409a7e"
+        },
+        {
+          "path": "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+          "sha256lf": "4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014"
+        },
+        {
+          "path": "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+          "sha256lf": "452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f"
+        },
+        {
+          "path": "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+          "sha256lf": "a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0"
+        },
+        {
+          "path": "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+          "sha256lf": "4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69"
+        },
+        {
+          "path": "supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql",
+          "sha256lf": "7c1d1da7cac376528d4fc995241595fc4e9430821a009a97a7abdec2bff7b938"
+        }
+      ],
+      "rewritten": [
+        {
+          "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+          "beforeSha256lf": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7",
+          "afterSha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e"
+        },
+        {
+          "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+          "beforeSha256lf": "ac7d45ecc2ef85e8bdb9c6be47b566074e09573125cb45f86ab63d4b652ca5ed",
+          "afterSha256lf": "38441c87df26873014277e7e6e0b5f81e87fda1290f29b51e169bdca465e906c"
+        },
+        {
+          "path": "server/research/assisted-order/production-deps.ts",
+          "beforeSha256lf": "acc6be028071697e60ce934655a36e5cef412db63f9a59bc3b23a9e961f09e06",
+          "afterSha256lf": "adb32a0b6f847afcdd2f6e998193aa328e819c844099b6446c06556c9abc7875"
+        },
+        {
+          "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+          "beforeSha256lf": "68dc83b4ed5d097dce327dddaeca6be87f02c70f9c10800b00524d0a73867cdb",
+          "afterSha256lf": "0513f6a5d833db2159ce0870393f221e40ab21ffed6190367916911f4d92b9b5"
+        },
+        {
+          "path": "server/research/assisted-order/quick-order-repository.test.ts",
+          "beforeSha256lf": "ce464915d2aae2220def001ed037b687ef33ba8a0c928566c4ddc4e83130b170",
+          "afterSha256lf": "e223f5e34c07287b2cf771d76d492ffdbcfa806cfd25e274c0a44d89de550138"
+        },
+        {
+          "path": "server/research/assisted-order/quick-order-repository.ts",
+          "beforeSha256lf": "df83e07c8e2843d54b96ac9b2bfd050d65c1670868f17f046eb97fa9578f448b",
+          "afterSha256lf": "82fe25192af7db18464014e221f7ef2b37bded0d378811c7371557d413727482"
+        },
+        {
+          "path": "server/research/health/quick-order/ports.ts",
+          "beforeSha256lf": "ac749fac3ae9357ff60305e95018cdcbd1c5ca32d547e7ce7a496610b531a767",
+          "afterSha256lf": "cb49b8badf928cbd2c28d00a340f615696be17b60e475c30fd0cbead9b33702f"
+        },
+        {
+          "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+          "beforeSha256lf": "12c16a6741f12ddd60f789de073e6b784d38ec5658c609ff819e60dcae455cde",
+          "afterSha256lf": "33d28b8cd6a2fdd6428bab0a9610f652cfb8cefcd4826c3c356e575bb54860b3"
+        },
+        {
+          "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+          "beforeSha256lf": "9cf375e4ecfea2bf1818c6f4008a2842d3e1752e3549dabf4a5c72388828b106",
+          "afterSha256lf": "c0d5543563b369ad9b041eb05a7f1f7d72470690e5ed090780280ef48b120ca9"
+        },
+        {
+          "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+          "beforeSha256lf": "a4c517f491b6e4e80db6b05cbdce3bfa98d3e8b25f365c954498e3b632f6b8b7",
+          "afterSha256lf": "f02e7985b5f3a6d3fb281a30850eb6becc7f985709c7b37bd179903d048d8571"
+        },
+        {
+          "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+          "beforeSha256lf": "cde91d113aea9cef4c8104da9d51ac78c702f553b05e7476659d2565492eee3b",
+          "afterSha256lf": "8a9dbf6523ec81f9d909985f6d506e72540fa304f019bfbe9d5c6153eed42112"
+        },
+        {
+          "path": "supabase/verification/research_health_quick_order_local.mjs",
+          "beforeSha256lf": "bbc040e6bf7b2656ca5b5a4e0c82d408313346163f4915a4e780784d8af8c1fc",
+          "afterSha256lf": "d4285618fee73c08f10f8618dc837a7bb298db82501af1a686cf3f9a26c4582b"
+        }
+      ],
+      "unchanged": [
+        {
+          "path": "client/src/clarity/PublicShell.tsx",
+          "sha256lf": "3ba0d3fd5aff043be7729dfd03c6d048e44241472318c15293f217ea59e0b0dc"
+        },
+        {
+          "path": "client/src/main.tsx",
+          "sha256lf": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162"
+        },
+        {
+          "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+          "sha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc"
+        },
+        {
+          "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+          "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+        },
+        {
+          "path": "server/index.ts",
+          "sha256lf": "9c024afb67592ae8a851f82b6dd9e09e5dfba5ea38c550b478aa61b7d5632afe"
+        },
+        {
+          "path": "server/research/assisted-order/communications.ts",
+          "sha256lf": "1c68368095d1c92163155f90cd15de21050abfd1f5856d9408540388c6a18c64"
+        },
+        {
+          "path": "server/research/assisted-order/express.ts",
+          "sha256lf": "f9b41c88eea2c4d60408e707929db09e9f06bded776864d9aa85c06c33b88cbd"
+        },
+        {
+          "path": "server/research/assisted-order/production-boot.test.ts",
+          "sha256lf": "f3494beb131edf7d8b739acc50f9445548bf3614fae0f60ba1bba5ddbab89893"
+        },
+        {
+          "path": "server/research/assisted-order/production-catalog.ts",
+          "sha256lf": "d13240f48cc8755c7cc9a72942453f4824e778b63690d973c75002bb41d97aa3"
+        },
+        {
+          "path": "server/research/assisted-order/production-env-shape.fixture.json",
+          "sha256lf": "be34e4d26cebbce8bc3bc73a4625786402a13b48bea14bd3ec00e9035cd4a92d"
+        },
+        {
+          "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+          "sha256lf": "0d2ffb93a066396f0c34dde1b3784196367f4b02e4b4e8baf06f1253eac99ca0"
+        },
+        {
+          "path": "server/research/assisted-order/service.ts",
+          "sha256lf": "57ea0b0202f0648aa9324ca6f1f24c5dedb1a761d1d4d85a80fda21e8ebacc67"
+        },
+        {
+          "path": "server/research/assisted-order/supabase-repository.ts",
+          "sha256lf": "274493e5b0618222b919adf6ab4d7613b04f58247ed79c5a7d29ab9076772e53"
+        },
+        {
+          "path": "server/research/catalog/member-catalog-service.ts",
+          "sha256lf": "26266ed95aab6afecdb9b01200867a58cd33cc382d930a737f51a25fd6222cd7"
+        },
+        {
+          "path": "server/research/health/quick-order/catalog.ts",
+          "sha256lf": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037"
+        },
+        {
+          "path": "server/research/health/quick-order/legal.ts",
+          "sha256lf": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e"
+        },
+        {
+          "path": "server/research/health/quick-order/production.test.ts",
+          "sha256lf": "1f8905d5099c562b36b6cb66bde780bcf36b32965b4eedb9df6ff7b0180739a9"
+        },
+        {
+          "path": "server/research/health/quick-order/production.ts",
+          "sha256lf": "068fd7a7514e1370ea469f745c703c01ea045117268f2c23c9b7615c78794bbc"
+        },
+        {
+          "path": "server/research/master-offerings/composition.ts",
+          "sha256lf": "e931efee2ed38a005b42e3eaf699f85fc4a659f2397b228051cbd6ca5764e80e"
+        },
+        {
+          "path": "server/research/master-offerings/early-access-retail-pricing.ts",
+          "sha256lf": "d944c93d0c7cd3f71e5efe5211fe94c25425dfc62ce8c3397158e9f84ce8e9cb"
+        },
+        {
+          "path": "server/research/master-offerings/member-pricing-viewer.ts",
+          "sha256lf": "8105b937ede49625bdd28bb14c1817ccef8baaf7ac09b5f76cd72f38a5628312"
+        },
+        {
+          "path": "server/research/master-offerings/price-authority.ts",
+          "sha256lf": "7f43270d50ae6bed46df9be663a07f6d57872641767776abc21a5741db23015e"
+        },
+        {
+          "path": "server/research/master-offerings/reconciliation-authority.ts",
+          "sha256lf": "dfb8a7756a2c7ab344d06c02490a45dab2d324c47d32445f48a863bcc197c429"
+        },
+        {
+          "path": "server/research/master-offerings/reviewed-holds.ts",
+          "sha256lf": "6b53a51cb4a37e8564e588270b27b1dbaafe6dbe111d72f53ea9ae0ab06615ae"
+        },
+        {
+          "path": "server/research/member-auth.ts",
+          "sha256lf": "ff1b57df93e162c99293f38e8f78f8888c6ca6d909c14c0e3b92d7112ad3f915"
+        },
+        {
+          "path": "server/research/partners/referral-v1-attribution.ts",
+          "sha256lf": "aaa0cf8398c8c5a71cdf3b33840b949b9b5b91016547c3b197901ed0204d7881"
+        },
+        {
+          "path": "server/research/pricing/authoritative-price-resolver.ts",
+          "sha256lf": "1f013207ea4217d51d56ba151d224c4434cf0008e74380b2b77659303c06d06a"
+        },
+        {
+          "path": "server/research/products-diagnostics/product-admin-production.ts",
+          "sha256lf": "f4647cb225129d5ed61a2e0c2968850b1ba183ba25de9a64cc86d928d2544867"
+        },
+        {
+          "path": "server/static.ts",
+          "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+        },
+        {
+          "path": "server/vite.ts",
+          "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+        },
+        {
+          "path": "shared/research/assisted-order/contract.ts",
+          "sha256lf": "1a9eed498adf0144b84d0e52afe9b9e0c250847749289ad295561aec7581ef34"
+        },
+        {
+          "path": "shared/research/assisted-order/quick-order.ts",
+          "sha256lf": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2"
+        },
+        {
+          "path": "supabase/candidates/20260904_research_partner_referral_v1.sql",
+          "sha256lf": "69d6f8558550ffb63caed08bdb5cac6d51c96cf80d9c54a9598685d08f82aefb"
+        },
+        {
+          "path": "supabase/candidates/20260914_research_referral_v1_touch_attribution.sql",
+          "sha256lf": "297d052369c8df25808be805753693c85ec7e0c2ec2624430e5ca2ce33f1db18"
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+          "sha256lf": "785342514257040685a68ce5aadc2723b8741ddd226bc9e35c537ff2628b205f"
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+          "sha256lf": "91ab412bf9f95f3470ca0854621e15409930570f11f7c1b0ffb2489e4451c22e"
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+          "sha256lf": "8de5598353ced0a68a733c6f06ecc6b04675e7831376c06acbf01efed3cae5ff"
+        },
+        {
+          "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+          "sha256lf": "d44974d1826328b0b2be99b2b1cc9b5d4e8f456d4e8f8f62335a09e586354135"
+        },
+        {
+          "path": "supabase/migrations/20260726143000_research_product_control_center.sql",
+          "sha256lf": "b1589eb24405d4700206d25541b647479afee34c2cd05422da70df2179876203"
+        },
+        {
+          "path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+          "sha256lf": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524"
+        },
+        {
+          "path": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+          "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+        },
+        {
+          "path": "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+          "sha256lf": "3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28"
+        },
+        {
+          "path": "supabase/migrations/20260804121000_research_early_access_commerce_persistence.sql",
+          "sha256lf": "8a84bd82845e726702cdc001bdfce661ced7f74132c68a1338d5a476bd9ec9c6"
+        },
+        {
+          "path": "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+          "sha256lf": "fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c"
+        },
+        {
+          "path": "supabase/migrations/20260807193000_research_early_access_cart_checkout.sql",
+          "sha256lf": "8bf36cedb3cfe523f77c2853a5ea259859c7d067825b846dc8602ba9dbcdbe3b"
+        },
+        {
+          "path": "supabase/migrations/20260808100000_research_early_access_cart_completion.sql",
+          "sha256lf": "5e0b745ae3d8ff0844e55ba0714fd5f2bb5f446e7523594af8bfce7e1395bf22"
+        },
+        {
+          "path": "supabase/migrations/20260809120000_research_early_access_cart_duplicate_guard.sql",
+          "sha256lf": "a15ed8163b618a1de56d779c8b16e1ced31621ccf07d7435a2aa4838e4f3ead2"
+        },
+        {
+          "path": "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+          "sha256lf": "c68ccc679bd04dc2ff6aeb460100ee3e9ec470a58a094274821c5b3f1697a7c1"
+        },
+        {
+          "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+          "sha256lf": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7"
+        },
+        {
+          "path": "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+          "sha256lf": "f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda"
+        },
+        {
+          "path": "supabase/migrations/20260927203000_research_status_recovery.sql",
+          "sha256lf": "98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292"
+        },
+        {
+          "path": "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+          "sha256lf": "2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845"
+        },
+        {
+          "path": "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+          "sha256lf": "f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894"
+        },
+        {
+          "path": "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+          "sha256lf": "434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66"
+        },
+        {
+          "path": "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+          "sha256lf": "6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe"
+        },
+        {
+          "path": "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+          "sha256lf": "0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f"
+        },
+        {
+          "path": "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+          "sha256lf": "8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743"
+        },
+        {
+          "path": "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+          "sha256lf": "512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881"
+        },
+        {
+          "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+          "sha256lf": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875"
+        },
+        {
+          "path": "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
+          "sha256lf": "5386c62508e5f3ae9a3584c936ece35e04fe13c1fef42f1627e3784327de7035"
+        },
+        {
+          "path": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+          "sha256lf": "1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f"
+        },
+        {
+          "path": "supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+          "sha256lf": "91a20f681038a5e845137feb6556c4041b1645f6b2c8f9122bc7c9e85280f477"
+        },
+        {
+          "path": "supabase/research-catalog.sql",
+          "sha256lf": "0e868dcd4bea04a5cc6bdce474ac93d0feae9553bdfcbaf74a448c05b07d4f42"
+        },
+        {
+          "path": "supabase/research-inventory-lots.sql",
+          "sha256lf": "00ccc125f9bfcd428b530e19445c1042b7953b5450dea223707609b87282ee7e"
+        },
+        {
+          "path": "supabase/research-inventory-reservation-commands.sql",
+          "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+        },
+        {
+          "path": "supabase/research-members.sql",
+          "sha256lf": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded"
+        },
+        {
+          "path": "supabase/research-membership.sql",
+          "sha256lf": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8"
+        },
+        {
+          "path": "supabase/research-notification-outbox.sql",
+          "sha256lf": "70cee0109dce7401431de9449a1312076ad61b7081ed31b9b8a9659bc6cca7ac"
+        },
+        {
+          "path": "supabase/research-private-early-access-sessions.sql",
+          "sha256lf": "7365f2a6ae224d8a45e2d32ab437d07ea1e83470314e2f0ba7227f3d3e3eea38"
+        },
+        {
+          "path": "supabase/research-products-diagnostics.sql",
+          "sha256lf": "5d191bc21fea106a934640df8effe82eaf2bf5f445b6a3510f6272233b982013"
+        },
+        {
+          "path": "supabase/research-required-input-readiness.sql",
+          "sha256lf": "ffbd07e9c42703299cc9babe0f7c680bc6a22e88e7fae5c4c0fd66c7a93e6b8f"
+        },
+        {
+          "path": "supabase/verification/research-20260819-cart-migrations-disposable-bootstrap.sql",
+          "sha256lf": "cabf8355d3cb651cacffd56e44c8d319afee3e35e4ec8e42b49fac9fe3b432d5"
+        },
+        {
+          "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+          "sha256lf": "6c47b308b394cd70e1a6e381fb3b75b8737390bef5b366d79dfffe770fac7094"
+        },
+        {
+          "path": "vitest.config.ts",
+          "sha256lf": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"
+        }
+      ],
+      "removed": [],
+      "immutableHistoricalDelta": true,
+      "laterRevision4Delta": "NOT_YET_AUTHORED; separate from this historical comparison",
+      "currentnessFiveFiles": "UNCHANGED_ACCEPTED_SOURCE_264e6af_AND_DEFINITION_8b631a83",
+      "evidence": "Doc87 recomputed every pin in both 102-row receipts at a044293 and reported zero mismatches. That confirms identity, not acceptance of non-currentness rows."
+    },
+    "doc87FinalizationConstraints": {
+      "status": "HELD_FOR_AUTHORIZED_DC1_SUCCESSOR_THEN_R4_REBIND_AND_ORIGINAL_PIN_RECONFIRMATION",
+      "sequence": [
+        "Freeze this verifier and correction map without moving any shared-binding or receipt bytes.",
+        "Obtain exact authorized DC1 composition-test successor and serial stopped-writer handoff; no automatic lease reclaim.",
+        "Commit the ONE shared binding first, currentness receipt next, dependent intake receipt next, then correction map/handoff; inventories must bind identical actual paths and bytes.",
+        "Register existing composition review revision4 once for original narrow delta plus every-pin re-confirmation. No receipt finalization before actual confirmation.",
+        "After confirmation, currentness finalization changes only sourceAcceptance.status/reviewCommit to SOURCE_ACCEPT_WITH_LIMITS/29ccf647, one Doc87 binding-confirmation label, and legitimate revision4 changed pins as permitted by Doc87 section2.",
+        "Then intake currentness dependency seal becomes FINAL_CURRENTNESS_DEPENDENCY_ONLY against that actual prior finalized currentness blob/hash/length and unchanged definition.",
+        "Intake own source seal stays NON_FINAL until exact revision4 composition acceptance. A later implemented-S descriptor changes the definition and requires a separate reseal."
+      ],
+      "currentnessByteCap": 262144,
+      "reviewedCurrentnessBytes": 209031,
+      "reviewedRemainingBytes": 53113,
+      "frozenRecords": [
+        {
+          "commit": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+          "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
+          "gitBlob": "9ed979381cee9a9aef516c230a300830f67d5a72",
+          "rawSha256": "38441c87df26873014277e7e6e0b5f81e87fda1290f29b51e169bdca465e906c",
+          "sha256lf": "38441c87df26873014277e7e6e0b5f81e87fda1290f29b51e169bdca465e906c",
+          "bytes": 149868,
+          "diskRawSha256": "38441c87df26873014277e7e6e0b5f81e87fda1290f29b51e169bdca465e906c",
+          "diskBytes": 149868,
+          "status": "UNCHANGED_THIS_CHECKPOINT_NOT_REBOUND_TO_NEW_VERIFIER"
+        },
+        {
+          "commit": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
+          "gitBlob": "1cbdb0d8b5858afa6a49a54b110aa528701808c9",
+          "rawSha256": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+          "sha256lf": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+          "bytes": 209031,
+          "diskRawSha256": "04518cab0eea13dc73a31a3f64db5e44c8878dda80df2422870ce071c795fd49",
+          "diskBytes": 209031,
+          "status": "UNCHANGED_THIS_CHECKPOINT_NOT_REBOUND_TO_NEW_VERIFIER"
+        },
+        {
+          "commit": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+          "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-doc71-20261009.json",
+          "gitBlob": "7a09060c9bc188ca039368e49fa08e647322f900",
+          "rawSha256": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+          "sha256lf": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+          "bytes": 221027,
+          "diskRawSha256": "1fd4e56b7229aac741cd74a7aa8ad5b790f5c074f1e7781b2eff8b9156215914",
+          "diskBytes": 221027,
+          "status": "UNCHANGED_THIS_CHECKPOINT_NOT_REBOUND_TO_NEW_VERIFIER"
+        }
+      ],
+      "existingReceiptRebindingNotPerformed": true,
+      "importantDistinction": "The whole-family revision4 rebind is a separate preceding records phase. The restricted finalization successor is permitted only after the original reviewer reconfirms those exact pins."
+    },
+    "doc87NamedLimits": [
+      {
+        "id": "CANONICAL-CS-2",
+        "owner": "EXISTING_CANONICAL_OWNER",
+        "disposition": "CARRIED_NO_CANONICAL_BODY_CHANGE",
+        "details": "Canonical admin_get/admin_json/documents_json, research_domain_readiness, research_required_input_manifest_hash, lot_is_allocatable/lot_quality_ready and write-target trigger functions retain pre-existing unqualified type exposure. The intake adds no new reach. Explicit attribution is not repair or acceptance of canonical exposure."
+      },
+      {
+        "id": "TC1-CANDIDATE-WRAPPER",
+        "details": "Candidate customer_status wrapper over canonical M71. The disposable baseline loads the Order History candidate with its MD5-guarded M71 authorization correction. This is a cross-workstream pin dependency, not deployed canonical proof.",
+        "identity": {
+          "commit": "69d9e32a5df899985b2877e06e1a778060a021f9",
+          "path": "supabase/candidates/20260921_research_assisted_order_member_history.sql",
+          "gitBlob": "a4c7cfec242eee332e9c8fe1b743c363159abac6",
+          "rawSha256": "c0ae0cf3f737cc32163fe06984688fd640043f15d7511205caa574f3a3409a7e",
+          "sha256lf": "c0ae0cf3f737cc32163fe06984688fd640043f15d7511205caa574f3a3409a7e",
+          "bytes": 11319
+        }
+      },
+      {
+        "id": "INTEGRITY-ONLY-STRICT",
+        "stage": "S3",
+        "details": "Doc87 accepts remaining STRICT sites as reachable through integrity breach only (intake.sql at69d9e32:601,733-734,746-747,783,802-803). Unmarked confirmed-abort errors can map to OUTCOME_UNCERTAIN and retain the key. The refuted price-race claim is not reopened."
+      },
+      {
+        "id": "DECODER-CANONICAL-CHECK-PARITY",
+        "stage": "S3",
+        "details": "Complete parity of accepted decoder inputs with canonical CHECK/FK/type constraints at the five INSERTs is not established by source acceptance. Unmarked canonical refusals can remain OUTCOME_UNCERTAIN. Qualification must address this assumption."
+      },
+      {
+        "id": "CONFIGURATION-422",
+        "stage": "S4",
+        "details": "A binding not owned by the configured owner is an eligibility422 refusal, explicitly compatible under Doc87 and Doc83 section2. Server-wide misconfiguration still requires TC28 operator signaling; no change to UNAVAILABLE was required by the controlling verdict."
+      },
+      {
+        "id": "TC18-ACTOR-FORM-CARRY",
+        "severity": "P3",
+        "stage": "S3",
+        "disposition": "ORIGINAL_REVIEWER_CARRY_RULING",
+        "details": "Case-insensitive UUID or unrestricted earlyAccessCustomerRef admitted by session() can later refuse and recovery can return503. Canonical issuance does not create those forms. Shared actor derivation is preferred at the next production.ts touch; no current S2 correction or new decision is required."
+      },
+      {
+        "id": "TC9-MEMORY-RETENTION",
+        "details": "Same-account personal data and held attempt stay in page memory after token expiry until sign-out, password recovery, account change or unmount. Transport refuses expired credentials; preservation is not durable client storage."
+      },
+      {
+        "id": "ROUTE-CONTROL-SOURCE-TEXT",
+        "details": "The composition route assertions are source-text contracts, not mounted HTTP, browser or deployed behavior. Optional page controls under R3C5 belong to the integrator; this builder checkpoint changes no page tests."
+      },
+      {
+        "id": "TC17-CARRIED-CONTROLS",
+        "details": "Notification assertions and protected root-composition assertions remain carried; no new protected-file authority or source correction inferred."
+      },
+      {
+        "id": "NOTICE-CONTEXT-FORMAT",
+        "stage": "S3",
+        "details": "Verbose NOTICE/CONTEXT schema spelling and multiline rendering are source-reasoned, not captured or measured. Unsupported legitimate diagnostic renderings fail closed and need exact captured evidence before a correction; no backend execution occurred."
+      }
+    ],
+    "sourceContextInventoryReferenceMeaning": "Existing inventories and sourceFiles are immutable revision3/source69d9e32 or candidatea044293 identities. They do not bind this newly authored verifier; its exact raw identity is in doc87BuilderCorrection. Whole-family rebind is deliberately pending.",
+    "operationalReadinessPrerequisites": [
+      "IMPLEMENTED_S_COLUMN_DESCRIPTOR_AND_POPULATED_CENSUS",
+      "AUTHORITATIVE_OPERATIONAL_INPUTS_AND_EXTERNAL_EXPECTED_CENSUS_DIGEST",
+      "QUALIFIED_CONNECTION_PROFILE_AND_RECIPIENT_BINDINGS",
+      "TRUSTED_ROW8_COMMERCE_CHECKOUT",
+      "PROTECTED_SEAM_DISPOSITIONS",
+      "ACCEPTED_QUALIFICATION_PROCEDURE_AND_FRESH_EXECUTION_AUTHORITY",
+      "AUTHORIZED_INSTALLATION_AND_RELEASE_ACTIVATION"
+    ],
+    "operationalReadinessPrerequisitesMeaning": "Later S3/S4 prerequisites. They do not block the source receipt finalization permitted by Doc87 on unchanged8b631a83; the descriptor remains uninstallable and any later descriptor change requires a separately accepted reseal.",
+    "missingEvidenceFieldsForIntakeOwnFinalization": [
+      "EXACT_REVISION4_COMPOSITION_SOURCE_ACCEPTANCE"
+    ]
+  },
+  "builderAssignmentRevision": 3,
+  "compositionReviewRevision": 4,
+  "doc87BuilderCorrection": {
+    "schemaVersion": 1,
+    "phase": "INTERMEDIATE_VERIFIER_AND_CORRECTION_MAP_CHECKPOINT_BEFORE_DC1",
+    "mapRevision": 4,
+    "builderAssignmentRevision": 3,
+    "compositionReviewRevision": 4,
+    "revisionChronology": {
+      "history": [
+        {
+          "commit": "dcf896356892ef670b72a9aaaf124f176f7d9b83",
+          "revision": 3
+        },
+        {
+          "commit": "7b08bd73137296ef0bd0ea5a9311045a486d26fd",
+          "revision": 3
+        },
+        {
+          "commit": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+          "revision": 2
+        }
+      ],
+      "current": 4,
+      "erratum": "Historical map counter regressed3 to2 atfa1286a. Preserve that history and resume4, separately from builder assignment3 and composition review4."
+    },
+    "authorityAcknowledgment": {
+      "commit": "ca7b07703f880bd28ca039dc48fb124b37d4f222",
+      "path": ".xenios/handoffs/2026-10-12-doc87-builder-correction-owner-ack.json",
+      "gitBlob": "9e2f3fa4f132f395a7302a6151357bc6c4afbe49",
+      "rawSha256": "194c1e2a475a103c7a77007dd7b81c7950ab1502990acea8ffad875b1f11bd69",
+      "sha256lf": "194c1e2a475a103c7a77007dd7b81c7950ab1502990acea8ffad875b1f11bd69",
+      "bytes": 9829
+    },
+    "assignment": {
+      "path": "C:/Users/sboad/.codex/worktrees/3221/xenios-website/docs/coordination/launch-coordination-20261005/DOC87_R4_EXISTING_BUILDER_CORRECTION_20261011.json",
+      "rawSha256": "b22b4774d183343eca19ec7a055c1b846849f00ece32f50b8324e413bba31431",
+      "bytes": 6589,
+      "observedCoordinatorHead": "f75f0037debc220a82936f4899105322bd070c11",
+      "commitContainingAssignment": null,
+      "meaning": "Exact coordinator-prepared assignment snapshot; it is not claimed to be committed when the containing commit is unavailable.",
+      "required": {
+        "R3C1": "Use original option(b) canonical carve-out: attribute each markerNOTICE to innermost capturedCONTEXT; forbid markers from five intake-owned frames and DO blocks, permit only explicit canonical frame allowlist; cover non-keyword types or disclose exact coverage. Do not relax assertion or modify canonical SQL/callees.",
+        "R3C2": "Enumerate actual receipt delta:16added,12rewritten noncurrentness,74unchanged rows; whole-delta rebind not add-only; enforce Doc87 section2 finalization differences and262144B cap.",
+        "R3C3": "Add committed Git comparison for dependency receipt blob/raw hash/byte length and rev-parse exact sourceTree, with one-value negatives in authored verifier. No execution.",
+        "R3C4": "Candidate customer_status wrapper coupling; disclose supervisor pair;ddc54431/f57c582d leases; monotonic revision chronology; originalDoc83TC8 sentinel ruling; integrity-onlySTRICT,decoder/CHECK parity andconfiguration422/TC28operator signal limits."
+      },
+      "sequence": [
+        "Acknowledge exact current custody/base; explicitly claim verifier+four evidence paths before writes; preserve historical leases and foreign rows",
+        "Complete coherent verifier+correction-map source checkpoint now; report exact SHA/tree and altered paths",
+        "DC1 composition-test source action is PENDING explicit protected-hash/preservation exception; do not edit composition test, App, SQL, adapter, manifest or canonical source",
+        "Keep currentness/intake receipts NON_FINAL; do not perform final whole-family rebind until the exact authorized DC1 successor is present and integratorGitwriter has stopped",
+        "After exactDC1 successor and serial custody handoff, commit sharedbinding first; currentnessreceipt and dependentintakereceipt next; correctionmap/handoff; both inventories identical actualpins",
+        "Register existing compositionreviewr4 once after coherent combinedsource+records freeze. Original narrowdelta+every-pin reconfirmation required",
+        "Only after actual reconfirmation: currentnessreceipt statusSOURCE_ACCEPT_WITH_LIMITS/review29ccf647 plusDoc87label and allowedR4pins; then dependencysealFINAL against actual prior receiptblob/definition. Intakeownsource seal remainsNON_FINAL until actual composition acceptance"
+      ],
+      "authority": {
+        "copy": "WEBSITE_COMPLETION_EXPLICIT_DIRECT_AUTHORITY_20261011.txt",
+        "rawSha256": "e7cc53c11f0333e708d9e459d01c9d8eaa0761646d708d0c3f0971b0004edac7",
+        "bodySourceGrant": "Existing exact authoring/delegation; original verdict is acceptance guidance, not new execution or sensitive-scope permission"
+      }
+    },
+    "controllingReview": {
+      "observedAt": "2026-10-12T01:06:49.150Z",
+      "document": 87,
+      "verdictCommit": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+      "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+      "reportedReviewerModel": "claude-opus-5-5",
+      "effort": "NOT_EXPOSED",
+      "taskId": "QUICK-ORDER-DISABLED-INTEGRATION-SOURCE-REVIEW-20261011",
+      "revision": 3,
+      "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+      "tree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+      "records": "fa1286a8a37b9b2cbc7127dfef0f5527f100a1c1",
+      "recordsTree": "c146ebff5763aa4b2e0789ff0d687bd538154e15",
+      "disposition": "CORRECTIONS_REQUIRED",
+      "report": {
+        "path": "docs/review/xenios-health-launch-review-20260930/87_COMPOSITION_R3_69d9e32_DELTA_2026-10-11.md",
+        "copy": "CLAUDE_DOC87_PUBLIC_VERDICT_77a2caed_20261011.md",
+        "gitBlob": "aeb489ce487d42e5d77479e46315ba55a36aa319",
+        "rawSha256": "63596d62fd8d9bc1eb008314c08215e4665baae18e55c5a1be4169a5aa06c027",
+        "bytes": 17550
+      },
+      "publishedStructuredFindings": {
+        "path": "docs/review/xenios-health-launch-review-20260930/hl12/87_composition_r3_delta_findings.json",
+        "copy": "CLAUDE_DOC87_PUBLIC_FINDINGS_77a2caed_20261011.json",
+        "rawSha256": "8b861c703dc0f6123558429b4db2225fc4ae5b4bee901954d42d5a6b51af68bf",
+        "bytes": 169828
+      },
+      "sourceTests": "AUTHORED_NOT_RUN",
+      "execution": "NOT_RUN",
+      "publication": "PUSHED_BY_ORIGINAL_REVIEWER_NOT_COORDINATOR"
+    },
+    "acceptedRuntime": {
+      "source": "69d9e32a5df899985b2877e06e1a778060a021f9",
+      "tree": "ac6eb49906d5ec1d22115c9b643a064611f3e76a",
+      "review": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
+      "status": "ACCEPTED_WITH_NAMED_LIMITS_BYTE_IDENTICAL_IN_THIS_PHASE"
+    },
+    "verifierCheckpoint": {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "rawSha256": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+      "sha256lf": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
+      "bytes": 145384,
+      "containingSourceCommit": "RESOLVED_IN_FOLLOWING_EXACT_SHA_HANDOFF_NOT_SELF_REFERENTIAL"
+    },
+    "changedPaths": [
+      "supabase/verification/research_health_quick_order_local.mjs",
+      "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
+    ],
+    "sourceControls": {
+      "R3C1": {
+        "status": "AUTHORED_PENDING_ORIGINAL_REVIEW_NOT_RUN",
+        "option": "DOC87_OPTION_B_CANONICAL_CARVE_OUT",
+        "attribution": "Capture verbose NOTICE plus SHOW_CONTEXT always in only the three shadow sessions. Skip the owned marker helper and attribute to the innermost actual caller. Reject all five intake function names and inline_code_block even when outer frames are canonical; accept only the explicit25-name canonical allowlist or the owned positive probe. Outer intake frames do not invalidate a canonical innermost caller.",
+        "positiveControls": "Each of jsonb/text/uuid/timestamptz has an actual domain cast through an owned probe in each fresh admin/replay/commit backend. Retain exact no-domain twins and effect/readback checks; admin observedAt remains the only omitted dynamic field.",
+        "coverage": {
+          "runtimeDomains": [
+            "jsonb",
+            "text",
+            "uuid",
+            "timestamptz"
+          ],
+          "notRuntimeProbed": [
+            "bytea",
+            "oid",
+            "regclass",
+            "regnamespace",
+            "regprocedure",
+            "regrole",
+            "bool",
+            "int4",
+            "int8",
+            "record pseudotype",
+            "install/precheck/postcheck/rollback DO paths",
+            "canonical date casts"
+          ],
+          "keywordSpellings": [
+            "numeric",
+            "boolean",
+            "integer"
+          ],
+          "fullTypeOrDOResolutionProof": false
+        },
+        "authoredDiagnosticControls": "Valid canonical+outer-intake and owned probe frames; prefixed psql diagnostics; SQL and PL/pgSQL renderings; all allowed canonical names; missing/duplicate/malformed CONTEXT; malformed SQL wrappers; wrong severity code/type/schema; unknown caller; each forbidden intake/DO innermost caller with outer canonical.",
+        "sourceAnchors": [
+          "research_required_input_manifest_hash: research-required-input-readiness.sql208/238/509",
+          "canonical frame list and attribution helpers adjacent to doc83ShadowControls"
+        ],
+        "noAdditionalMarkerNoticeClaim": "SUPERSEDED_BY_EXPLICIT_INNERMOST_CALLER_ATTRIBUTION; canonical notices are retained and disclosed, not ignored or counted as intake failure."
+      },
+      "R3C3": {
+        "status": "AUTHORED_PENDING_ORIGINAL_REVIEW_NOT_RUN",
+        "changes": "Preserve binary Git stdout for the committed dependency receipt. Compare Git blob, raw SHA256 and exact byte length before decoding; verify intake source tree, accepted currentness source tree and independently rebased dependency receipt header tree by rev-parse. Preserve all source acceptance and FINAL dependency gates before Git or SQL child startup.",
+        "negativeFields": [
+          "sourceTree",
+          "dependencySourceTree",
+          "dependencyReceiptBlob",
+          "dependencyReceiptSha256",
+          "dependencyReceiptBytes",
+          "dependencyReceiptSourceTree"
+        ],
+        "isolation": "Each authored negative changes exactly one well-formed expected identity while keeping actual Git observations fixed; its expected refusal identifies that comparison. Each has the unchanged positive twin before and after. These metadata controls were not executed.",
+        "extraChecks": "Committed receipt acceptance/review/definition must match dependency claims; currentness byte cap is262144. Rebased receipt source checkpoint is distinct from originally accepted currentness source.",
+        "newConsumedSourcePaths": []
+      }
+    },
+    "R3C2": "See doc83CompositionReconciliation.doc87ReceiptDelta and doc87FinalizationConstraints.",
+    "R3C4": "See current findings, doc87NamedLimits, addedSerialLeaseWindows, supervisorRangeDisclosure and separate revision counters.",
+    "pendingIntegrator": {
+      "DC1": "HELD_EXACT_PRESERVATION_HASH_EXCEPTION_AND_SERIAL_SUCCESSOR_REQUIRED",
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "recommended": "Remove only two ProductPage identity rows while retaining other six; governing Doc90. No builder edit or permission inferred.",
+      "R3C5": "Optional page controls/source-text label belong to existing integrator. Memory-retention limit recorded now."
+    },
+    "coordinatorR3C6": "Coordinator owns App.routes.test.ts blob erratum7acd744a and TC15 board alignment; no board edit or closure claimed here.",
+    "supervisorR3C7": "Owner rebinds manifest to exact later accepted bytes only when qualification opens.",
+    "execution": "NOT_RUN",
+    "publication": "LOCAL_ONLY",
+    "schedules": "UNCHANGED",
+    "independentClosure": "PENDING_ORIGINAL_REVISION4_DELTA",
+    "nextPrerequisite": "Exact authorized DC1 successor with integrator writer stopped, then serial ONE-binding/currentness/intake/map freeze and original narrow delta/every-pin confirmation."
   }
 }

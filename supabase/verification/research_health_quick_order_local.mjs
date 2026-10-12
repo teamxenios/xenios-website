@@ -112,7 +112,7 @@ let interrupted=null;
 const interrupt=signal=>{interrupted=signal;process.exitCode=2;for(const child of activeChildren)child.kill();};
 const onInt=()=>interrupt('SIGINT'),onTerm=()=>interrupt('SIGTERM');
 process.on('SIGINT',onInt);process.on('SIGTERM',onTerm);
-function run(command,args,{input='',timeout=30_000,allowAfterInterrupt=false,captureDiagnostics=false}={}) {
+function run(command,args,{input='',timeout=30_000,allowAfterInterrupt=false,captureDiagnostics=false,binaryStdout=false}={}) {
   if(interrupted&&!allowAfterInterrupt) return Promise.reject(new Error('Interrupted before child launch'));
   return new Promise((resolve,reject) => {
     const child=spawn(command,args,{cwd:ROOT,env:childEnv,windowsHide:true,stdio:['pipe','pipe','pipe']});
@@ -127,10 +127,13 @@ function run(command,args,{input='',timeout=30_000,allowAfterInterrupt=false,cap
     child.on('close',(code,signal)=>{
       clearTimeout(timer);activeChildren.delete(child);
       // Decode once after concatenation: UTF-8 characters may span chunks.
-      const out=Buffer.concat(stdout).toString('utf8'),err=Buffer.concat(stderr).toString('utf8');
+      const outBytes=Buffer.concat(stdout),out=outBytes.toString('utf8'),err=Buffer.concat(stderr).toString('utf8');
       if(code!==0||stopped||(interrupted&&!allowAfterInterrupt)) reject(Object.assign(new Error('Bounded child refused or failed'),
         {code,signal,timedOut,interrupted,stdout:out,stderr:err,outputLimitExceeded:bytes>outputLimit}));
-      else resolve(captureDiagnostics?{stdout:out,stderr:err}:out); // Preserve exact Git stdout by default; notices are explicit control evidence.
+      else {
+        const value=binaryStdout?outBytes:out;
+        resolve(captureDiagnostics?{stdout:value,stderr:err}:value);
+      } // Text callers keep exact stdout; binary callers retain every original byte.
     });
     child.stdin.end(input);
   });
@@ -146,6 +149,46 @@ function uniqueBlock(text,delimiter) {
   const sections=text.split(delimiter); assert.equal(sections.length,3,'Expected one literal source block');
   return sections[1];
 }
+// DOC87 R3C-3: these helpers check metadata only. They never confer acceptance.
+// All actual calls remain below the existing source-acceptance and FINAL gates.
+const DOC87_IDENTITY_MESSAGES=Object.freeze({
+  sourceTree:'Intake source tree differs from Git',
+  dependencySourceTree:'Accepted currentness source tree differs from Git',
+  dependencyReceiptBlob:'Committed dependency receipt blob differs',
+  dependencyReceiptSha256:'Committed dependency receipt raw SHA256 differs',
+  dependencyReceiptBytes:'Committed dependency receipt byte length differs',
+  dependencyReceiptSourceTree:'Dependency receipt source tree differs from Git',
+});
+function doc87AssertIdentity(expected,observed,fields=Object.keys(DOC87_IDENTITY_MESSAGES)){
+  for(const field of fields)assert.equal(observed[field],expected[field],DOC87_IDENTITY_MESSAGES[field]);
+}
+async function doc87GitOid(expression){
+  // Expressions are built only from already validated full object IDs and the
+  // exact fixed receipt path. This command returns an object ID, not file bytes.
+  const value=await run('git',['rev-parse','--verify','--end-of-options',expression]);
+  assert.match(value,/^[a-f0-9]{40}\r?\n$/,'Expected exactly one full Git object ID');
+  return value.replace(/\r?\n$/,'');
+}
+function doc87ReceiptIdentityControls(expected,observed){
+  // Each negative changes exactly one well-formed claimed value. The observed
+  // bytes/tree identities are those read from Git above, never fake SQL data.
+  for(const field of Object.keys(DOC87_IDENTITY_MESSAGES)){
+    doc87AssertIdentity(expected,observed); // Valid control before the mutation.
+    const wrong={...expected};
+    wrong[field]=field==='dependencyReceiptBytes'?expected[field]+1:
+      (expected[field][0]==='0'?'1':'0')+expected[field].slice(1);
+    if(field==='dependencyReceiptBytes')assert.ok(Number.isSafeInteger(wrong[field])&&wrong[field]>0);
+    else assert.match(wrong[field],field==='dependencyReceiptSha256'?/^[a-f0-9]{64}$/:/^[a-f0-9]{40}$/);
+    assert.throws(()=>doc87AssertIdentity(wrong,observed),error=>
+      error?.code==='ERR_ASSERTION'&&error.message.startsWith(DOC87_IDENTITY_MESSAGES[field]),
+      'One-value negative must fail at its intended identity comparison: '+field);
+    doc87AssertIdentity(expected,observed); // The original remains a valid twin.
+    process.stdout.write('INTAKE_RECEIPT_IDENTITY_CONTROL '+JSON.stringify({
+      id:'R3C3-'+field,result:'OBSERVED_GIT_METADATA_ONLY',sqlExecution:'NONE',
+    })+'\n');
+  }
+}
+
 const args=process.argv.slice(2);
 assert.equal(args.length,7,'Explicit disposable flag and external receipt/hash/source commit required');
 assert.equal(args[0],'--allow-disposable-intake'); assert.equal(args[1],'--receipt');
@@ -194,6 +237,52 @@ assert.equal(receipt.disclosures.sharedBindings,BINDINGS);
 
 assert.equal(receipt.schemaVersion,'quick-order-intake-source-receipt-v1');
 assert.equal(receipt.sourceCommit,args[6]); assert.ok(Array.isArray(receipt.files));
+// Keep this below every existing sourceAcceptance/status/sealStatus check.
+// A PENDING or NON_FINAL receipt still refuses before any Git or SQL child.
+assert.ok(dependency.receipt.bytes<=262144,'Dependency receipt exceeds the currentness verifier byte cap');
+const dependencyReceiptSpec=dependency.receipt.recordsCommit+':'+dependency.receipt.path;
+const dependencyReceiptBlob=await doc87GitOid(dependencyReceiptSpec);
+const dependencyReceiptRaw=await run('git',['--no-pager','show','--no-ext-diff','--no-textconv',dependencyReceiptSpec],{binaryStdout:true});
+assert.ok(Buffer.isBuffer(dependencyReceiptRaw),'Git receipt stdout must remain binary');
+const identityExpected={
+  sourceTree:receipt.sourceTree,
+  dependencySourceTree:dependency.sourceTree,
+  dependencyReceiptBlob:dependency.receipt.gitBlob,
+  dependencyReceiptSha256:dependency.receipt.rawSha256,
+  dependencyReceiptBytes:dependency.receipt.bytes,
+};
+const identityObserved={
+  dependencyReceiptBlob,
+  dependencyReceiptSha256:sha(dependencyReceiptRaw),
+  dependencyReceiptBytes:dependencyReceiptRaw.length,
+};
+// Compare the bytes before decoding the committed JSON. No trim, newline
+// reconstruction, working-tree receipt substitution, or learned expected hash.
+doc87AssertIdentity(identityExpected,identityObserved,[
+  'dependencyReceiptBlob','dependencyReceiptSha256','dependencyReceiptBytes',
+]);
+const committedDependencyReceipt=JSON.parse(dependencyReceiptRaw.toString('utf8'));
+assert.equal(committedDependencyReceipt.schemaVersion,'quick-order-currentness-source-receipt-v1');
+assert.equal(committedDependencyReceipt.sourceAcceptance?.status,'SOURCE_ACCEPT_WITH_LIMITS',
+  'Committed currentness receipt is not executable acceptance');
+assert.equal(committedDependencyReceipt.sourceAcceptance?.reviewCommit,dependency.reviewCommit,
+  'Committed currentness receipt acceptance review differs');
+assert.match(committedDependencyReceipt.sourceCommit??'',/^[a-f0-9]{40}$/);
+assert.match(committedDependencyReceipt.sourceTree??'',/^[a-f0-9]{40}$/);
+assert.equal(committedDependencyReceipt.definitionSha256,dependency.definitionSha256,
+  'Committed currentness receipt definition differs');
+assert.equal(committedDependencyReceipt.currentnessDefinition,dependency.definitionSha256,
+  'Committed currentness receipt currentness definition differs');
+identityExpected.dependencyReceiptSourceTree=committedDependencyReceipt.sourceTree;
+identityObserved.sourceTree=await doc87GitOid(receipt.sourceCommit+'^{tree}');
+identityObserved.dependencySourceTree=await doc87GitOid(dependency.sourceCommit+'^{tree}');
+// The rebased receipt's source checkpoint may differ from the independently
+// accepted currentness source. Validate both trees without conflating them.
+identityObserved.dependencyReceiptSourceTree=await doc87GitOid(committedDependencyReceipt.sourceCommit+'^{tree}');
+Object.freeze(identityExpected);Object.freeze(identityObserved);
+doc87AssertIdentity(identityExpected,identityObserved);
+doc87ReceiptIdentityControls(identityExpected,identityObserved);
+
 const pinned=new Map();
 for(const item of receipt.files) {
   assert.deepEqual(Object.keys(item).sort(),['path','sha256lf']);
@@ -1067,40 +1156,196 @@ async function doc83AssertReadback(p,result,envelope,decisionAt){
   assert.equal(direct.eventType,'assisted_order.submitted');assert.deepEqual(direct.payload,outboxPayload);
   assert.equal(direct.actorId,p.actorScope);assert.equal(direct.actorType,p.actorScope.startsWith('member:')?'member':'early_access_session');
 }
+// Doc87 R3C-1(b). These controls attribute NOTICEs; they do not repair the
+// canonical CS-2 exposure or prove all type resolution safe. Runtime domains are
+// exactly jsonb/text/uuid/timestamptz in three fresh-backend admin/replay/commit
+// paths. bytea, oid, regclass/regnamespace/regprocedure/regrole, bool/int4/int8,
+// record (a pseudotype), and the install/pre/post/rollback DO paths are NOT runtime
+// shadow-covered here. numeric/boolean/integer keyword spellings are distinct.
+// Canonical ::date and canonical write-target trigger exposure remain carried.
+const doc87ShadowTypes=Object.freeze(['jsonb','text','uuid','timestamptz']);
+const doc87ShadowMarker='DOC87_SHADOW_DOMAIN_CALLED';
+const doc87IntakeFrames=new Set([
+  'research_health_quick_order_intake_closed','research_health_quick_order_intake_valid',
+  'research_health_quick_order_admin_detail','research_health_quick_order_replay',
+  'research_health_quick_order_commit','inline_code_block',
+]);
+// Exact canonical frame names, not a prefix exemption. Source anchors: bridge
+// migration 20260815150000 line/lines/timeline/documents/admin JSON + admin_get;
+// readiness source domain_readiness and its manifest-hash callee (lines208/238:
+// jsonb_agg(...)::text); canonical COA migration quality/allocatable;
+// paid-hold/history/evidence/no-funds/provider-journal/settlement migrations for
+// the pinned nineteen write-target triggers. Unknown or differently schemed
+// frames refuse, including any canonical callee not enumerated below.
+const doc87CanonicalFrames=new Set([
+  'research_assisted_order_line_json','research_assisted_order_lines_json',
+  'research_assisted_order_timeline_json','research_assisted_order_documents_json',
+  'research_assisted_order_admin_json','research_assisted_order_admin_get',
+  'research_domain_readiness','research_required_input_manifest_hash','research_lot_is_allocatable',
+  'research_lot_quality_ready','research_lot_quality_tests_ready',
+  'research_assisted_order_events_block_mutation','research_assisted_order_paid_hold_guard',
+  'research_assisted_order_paid_event_guard',
+  'research_assisted_order_observed_cancel_guard','research_assisted_order_history_progression_guard',
+  'research_assisted_order_disposition_terminal_guard','research_assisted_order_disposition_cancel_event_guard',
+  'research_assisted_order_disposition_immutable','research_assisted_order_disposition_effects_outbox_guard',
+  'research_assisted_order_payment_effects_outbox_guard','research_assisted_order_provider_financial_guard',
+  'research_assisted_order_provider_settled_request_guard','research_assisted_order_provider_settlement_event_guard',
+  'research_assisted_order_provider_settled_evidence_immutable',
+]);
+function doc87DiagnosticFrame(line){
+  if(/^PL\/pgSQL function inline_code_block line [1-9][0-9]* (?:at|during) .+$/.test(line))
+    return {name:'inline_code_block',schema:'',kind:'plpgsql'};
+  let m=line.match(/^PL\/pgSQL function ((?:[a-z_][a-z_0-9]*\.)?[a-z_][a-z_0-9]*)\([^()\r\n]*\) line [1-9][0-9]* (?:at|during) .+$/);
+  let kind='plpgsql';
+  if(!m){m=line.match(/^SQL function "((?:[a-z_][a-z_0-9]*\.)?[a-z_][a-z_0-9]*)" (?:statement [1-9][0-9]*|during startup)$/);kind='sql';}
+  if(!m)return null;
+  const parts=m[1].split('.');return {name:parts.at(-1),schema:parts.length===2?parts[0]:'',kind};
+}
+function doc87ContextFrames(context){
+  const lines=context.split('\n'),frames=[];
+  for(let i=0;i<lines.length;i++){
+    const line=lines[i].trim();if(!line)continue;
+    const frame=doc87DiagnosticFrame(line);
+    if(frame){frames.push(frame);continue;}
+    // PostgreSQL emits the SQL text between function frames in a quoted wrapper.
+    // This bounded grammar accepts only that explicit wrapper, never arbitrary
+    // unparsed lines. Unexpected diagnostic spellings fail closed for inspection.
+    if(/^(?:SQL statement|SQL expression) "/.test(line)){
+      let quoted=line;
+      while(!quoted.endsWith('"')&&i+1<lines.length)quoted+='\n'+lines[++i].trim();
+      assert.ok(quoted.endsWith('"'),'DOC87 malformed SQL context wrapper');
+      assert.ok(!/\n(?:PL\/pgSQL function|SQL function|CONTEXT:|LOCATION:)/.test(quoted),
+        'DOC87 a malformed wrapper cannot swallow a diagnostic frame');
+      continue;
+    }
+    assert.fail('DOC87 unknown or malformed CONTEXT line: '+line);
+  }
+  return frames;
+}
+function doc87AttributeShadowNotices(stderr){
+  assert.equal(typeof stderr,'string');assert.ok(!stderr.includes('\u001b'),'DOC87 ANSI diagnostics unsupported');
+  const lines=stderr.replace(/\r\n/g,'\n').split('\n'),blocks=[];let block=null;
+  const header=/^(?:psql:[^\n]*?:[0-9]+:\s*)?(NOTICE|WARNING|ERROR|FATAL|PANIC|INFO|LOG|DEBUG[1-5]):\s*(.*)$/;
+  for(const line of lines){
+    const match=line.match(header);
+    if(match){if(block)blocks.push(block);block={severity:match[1],head:match[2],lines:[]};}
+    else if(block)block.lines.push(line);
+    else assert.ok(!line.includes(doc87ShadowMarker),'DOC87 orphan marker without diagnostic header');
+  }
+  if(block)blocks.push(block);
+  const events=[];
+  for(const diagnostic of blocks){
+    if(!diagnostic.head.includes(doc87ShadowMarker)){
+      assert.ok(!diagnostic.lines.some(line=>line.includes(doc87ShadowMarker)),
+        'DOC87 marker text outside an attributable NOTICE header');continue;
+    }
+    assert.equal(diagnostic.severity,'NOTICE','DOC87 marker severity differs');
+    const marker=diagnostic.head.match(/^00000: DOC87_SHADOW_DOMAIN_CALLED:(jsonb|text|uuid|timestamptz)$/);
+    assert.ok(marker,'DOC87 malformed marker or unknown shadow type');
+    const contexts=diagnostic.lines.map((line,index)=>/^CONTEXT:\s*/.test(line)?index:-1).filter(index=>index>=0);
+    assert.equal(contexts.length,1,'DOC87 marker requires exactly one captured CONTEXT');
+    const start=contexts[0],location=diagnostic.lines.findIndex((line,index)=>index>start&&/^LOCATION:\s*/.test(line));
+    assert.ok(location>start,'DOC87 verbose marker LOCATION missing');
+    assert.ok(diagnostic.lines.slice(0,start).every(line=>line.trim()===''),'DOC87 unexpected pre-CONTEXT detail');
+    assert.ok(diagnostic.lines.slice(location+1).every(line=>line.trim()===''),'DOC87 trailing diagnostic context');
+    const context=[diagnostic.lines[start].replace(/^CONTEXT:\s*/,''),...diagnostic.lines.slice(start+1,location)].join('\n');
+    const frames=doc87ContextFrames(context);
+    assert.ok(frames.length>=2,'DOC87 marker needs an identifiable innermost caller');
+    const markerFrame=frames[0],caller=frames[1];
+    assert.equal(markerFrame.name,'doc87_mark');assert.equal(markerFrame.kind,'plpgsql');
+    assert.match(markerFrame.schema,/^pg_temp(?:_[0-9]+)?$/,'DOC87 marker must be the owned temporary function');
+    // Only the innermost actual caller is attribution. Outer intake frames are
+    // expected when an accepted intake function invokes a canonical callee.
+    // An intake innermost frame is forbidden even with outer canonical frames.
+    assert.ok(!doc87IntakeFrames.has(caller.name),'DOC87 intake-owned type resolution: '+caller.name);
+    if(caller.name==='doc87_probe'){
+      assert.match(caller.schema,/^pg_temp(?:_[0-9]+)?$/,'DOC87 positive probe schema differs');
+      events.push({type:marker[1],origin:'probe',frame:caller.name});continue;
+    }
+    assert.ok(caller.schema===''||caller.schema==='public','DOC87 canonical frame schema differs');
+    assert.ok(doc87CanonicalFrames.has(caller.name),'DOC87 unknown innermost marker caller: '+caller.name);
+    events.push({type:marker[1],origin:'canonical',frame:caller.name});
+  }
+  return events;
+}
+function doc87ShadowAttributionControls(){
+  // Authored diagnostic fixtures test attribution itself. These strings are not
+  // claimed to be captured backend evidence; live sessions below supply that.
+  const markerFrame='PL/pgSQL function pg_temp_7.doc87_mark(text) line 1 at RAISE';
+  const canonical='SQL function "research_assisted_order_documents_json" statement 1';
+  const outer='PL/pgSQL function research_health_quick_order_admin_detail(uuid) line 44 at assignment';
+  const diagnostic=(body,type='jsonb')=>'NOTICE:  00000: '+doc87ShadowMarker+':'+type+'\nCONTEXT:  '+body+'\nLOCATION:  exec_stmt_raise, pl_exec.c:3911\n';
+  const valid=diagnostic(markerFrame+'\nSQL statement "SELECT \'[]\'::jsonb"\n'+canonical+'\n'+outer);
+  assert.deepEqual(doc87AttributeShadowNotices(valid),[{type:'jsonb',origin:'canonical',frame:'research_assisted_order_documents_json'}]);
+  assert.deepEqual(doc87AttributeShadowNotices(valid.replace('NOTICE:','psql:<stdin>:19: NOTICE:')),doc87AttributeShadowNotices(valid));
+  assert.deepEqual(doc87AttributeShadowNotices(diagnostic(markerFrame+'\nPL/pgSQL function pg_temp_7.doc87_probe() line 2 at PERFORM','uuid')),
+    [{type:'uuid',origin:'probe',frame:'doc87_probe'}]);
+  assert.deepEqual(doc87AttributeShadowNotices(diagnostic(markerFrame+'\nPL/pgSQL function public.research_domain_readiness(text) line 4 during statement block local variable initialization\n'+outer)),
+    [{type:'jsonb',origin:'canonical',frame:'research_domain_readiness'}]);
+  assert.throws(()=>doc87AttributeShadowNotices('NOTICE:  00000: '+doc87ShadowMarker+':jsonb\nLOCATION:  exec_stmt_raise, pl_exec.c:3911\n'),/exactly one captured CONTEXT/);
+  assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame)),/identifiable innermost caller/);
+  assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\nSQL function "unknown_canonical" statement 1')),/unknown innermost marker caller/);
+  assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\nSQL function broken\n'+canonical)),/unknown or malformed CONTEXT/);
+  assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\nSQL statement "unterminated\n'+canonical)),/malformed SQL context wrapper|cannot swallow/);
+  assert.throws(()=>doc87AttributeShadowNotices(valid.replace('CONTEXT:  ','CONTEXT:  \nCONTEXT:  ')),/exactly one captured CONTEXT/);
+  assert.throws(()=>doc87AttributeShadowNotices(valid.replace('00000:','01000:')),/malformed marker/);
+  assert.throws(()=>doc87AttributeShadowNotices(valid.replace(':jsonb\n',':bytea\n')),/malformed marker/);
+  assert.throws(()=>doc87AttributeShadowNotices(valid.replace('pg_temp_7.doc87_mark','public.doc87_mark')),/owned temporary function/);
+  assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\nPL/pgSQL function public.doc87_probe() line 2 at PERFORM')),/positive probe schema differs/);
+  assert.throws(()=>doc87AttributeShadowNotices(valid.replace('"research_assisted_order_documents_json"','"other.research_assisted_order_documents_json"')),/canonical frame schema differs/);
+  for(const name of doc87IntakeFrames){
+    const inner=name==='inline_code_block'?'PL/pgSQL function inline_code_block line 3 at PERFORM':
+      'PL/pgSQL function '+name+'(jsonb) line 3 at assignment';
+    assert.throws(()=>doc87AttributeShadowNotices(diagnostic(markerFrame+'\n'+inner+'\n'+canonical)),/intake-owned type resolution/);
+  }
+  // Do not silently reduce canonical attribution to one known example.
+  for(const name of doc87CanonicalFrames)assert.equal(doc87AttributeShadowNotices(
+    diagnostic(markerFrame+'\nSQL function "'+name+'" during startup\n'+outer))[0].frame,name);
+  assert.deepEqual(doc87AttributeShadowNotices(''),[]);
+}
 async function doc83ShadowControls(g,savedPayload,savedResult){
-  const marker='DOC83_SHADOW_DOMAIN_CALLED';
-  const setup=`set client_min_messages=notice;create temporary table doc83_temp_environment(x pg_catalog.int4);
-    create function pg_temp.doc83_mark() returns pg_catalog.bool language plpgsql as $marker$ begin raise notice '${marker}';return true;end $marker$;
-    select pg_temp.doc83_mark();
-    create domain pg_temp.jsonb as pg_catalog.jsonb check(pg_temp.doc83_mark());
-    create domain pg_temp.text as pg_catalog.text check(pg_temp.doc83_mark());
-    create domain pg_temp.uuid as pg_catalog.uuid check(pg_temp.doc83_mark());
-    create domain pg_temp.timestamptz as pg_catalog.timestamptz check(pg_temp.doc83_mark());`;
+  doc87ShadowAttributionControls();
+  // SHOW_CONTEXT defaults are insufficient for NOTICE attribution. Keep this
+  // local to shadow sessions; startupSql already captures stdout/stderr and sets
+  // VERBOSITY verbose. No accepted SQL or canonical function body is modified.
+  const diagnostics='\\set SHOW_CONTEXT always\n';
+  const setup='set client_min_messages=notice;create temporary table doc87_temp_environment(x pg_catalog.int4);'+
+    'create function pg_temp.doc87_mark(p_type pg_catalog.text) returns pg_catalog.bool language plpgsql as $marker$ '+
+    'begin raise notice \'DOC87_SHADOW_DOMAIN_CALLED:%\',p_type;return true;end $marker$;'+
+    doc87ShadowTypes.map(type=>'create domain pg_temp.'+type+' as pg_catalog.'+type+' check(pg_temp.doc87_mark('+quote(type)+'));').join('')+
+    'create function pg_temp.doc87_probe() returns pg_catalog.bool language plpgsql as $probe$ begin '+
+    'perform \'{}\'::pg_temp.jsonb;perform \'probe\'::pg_temp.text;'+
+    'perform \'10000000-0000-4000-8000-000000000001\'::pg_temp.uuid;'+
+    'perform \'2026-10-06T12:00:00Z\'::pg_temp.timestamptz;return true;end $probe$;'+
+    'select pg_temp.doc87_probe();';
   for(const kind of ['admin','replay','commit']){
     const p=transactionPayload(g,'synthetic-shadow-'+kind),before=await effectCounts();
     let statement;
-    if(kind==='admin')statement=`select public.research_health_quick_order_admin_detail(${quote(savedResult.requestId)}::pg_catalog.uuid)::pg_catalog.text;`;
-    else if(kind==='replay')statement=`select public.research_health_quick_order_replay(${quote(savedPayload.actorScope)}::pg_catalog.text,${quote(sha('xenios:health:quick-order:key:v1|'+savedPayload.actorScope+'|'+savedPayload.submission.input.idempotencyKey))}::pg_catalog.text)::pg_catalog.text;`;
-    else statement=`select public.research_health_quick_order_commit(${quote(JSON.stringify(p))}::pg_catalog.jsonb)::pg_catalog.text;`;
-    // Fresh backend avoids a previously compiled PL/pgSQL type-resolution cache.
-    const observed=await startupSql(setup+'set role service_role;'+statement,{captureDiagnostics:true});
-    assert.equal((observed.stderr.match(new RegExp(marker,'g'))??[]).length,1,'Only the explicit positive marker call may emit a notice');
+    if(kind==='admin')statement='select public.research_health_quick_order_admin_detail('+quote(savedResult.requestId)+'::pg_catalog.uuid)::pg_catalog.text;';
+    else if(kind==='replay')statement='select public.research_health_quick_order_replay('+quote(savedPayload.actorScope)+'::pg_catalog.text,'+
+      quote(sha('xenios:health:quick-order:key:v1|'+savedPayload.actorScope+'|'+savedPayload.submission.input.idempotencyKey))+'::pg_catalog.text)::pg_catalog.text;';
+    else statement='select public.research_health_quick_order_commit('+quote(JSON.stringify(p))+'::pg_catalog.jsonb)::pg_catalog.text;';
+    const observed=await startupSql(diagnostics+setup+'set role service_role;'+statement,{captureDiagnostics:true});
+    const attribution=doc87AttributeShadowNotices(observed.stderr);
+    for(const type of doc87ShadowTypes)assert.ok(attribution.some(event=>event.origin==='probe'&&event.type===type),
+      'DOC87 missing positive domain/NOTICE/CONTEXT probe: '+type);
+    const canonical=attribution.filter(event=>event.origin==='canonical');
     const output=rows(observed.stdout).at(-1);assert.ok(output);
     if(kind==='admin'){assert.equal(output.requestId,savedResult.requestId);assert.deepEqual(await effectCounts(),before);}
     else if(kind==='replay'){assert.equal(output.publicReceipt.requestId,savedResult.requestId);assert.deepEqual(await effectCounts(),before);}
     else {await assertCommitted(p,{result:output});countDelta(before,await effectCounts(),[1,1,1,1,1]);}
-    const twin=await startupSql('set role service_role;'+statement,{captureDiagnostics:true});
-    assert.ok(!twin.stderr.includes(marker));
+    const twin=await startupSql(diagnostics+'set role service_role;'+statement,{captureDiagnostics:true});
+    assert.ok(!twin.stderr.includes(doc87ShadowMarker));assert.deepEqual(doc87AttributeShadowNotices(twin.stderr),[]);
     const twinOutput=rows(twin.stdout).at(-1);
     if(kind==='admin'){
       assert.match(output.enrichment.observation.observedAt,/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
       assert.match(twinOutput.enrichment.observation.observedAt,/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
       const retained=copy(output),twinRetained=copy(twinOutput);
-      // This observation timestamp is intentionally fresh; every retained field must match.
       delete retained.enrichment.observation.observedAt;delete twinRetained.enrichment.observation.observedAt;
       assert.deepEqual(twinRetained,retained);
     }else assert.deepEqual(twinOutput,kind==='commit'?{...output,replayed:true}:output);
-    txPass('TC3-shadow-'+kind,'Fresh same-backend domain shadows, observable positive NOTICE and no domain invocation; exact no-domain twin');
+    txPass('TC3-shadow-'+kind,'Four named domain probes with captured NOTICE/CONTEXT; no intake-owned innermost caller; canonical attribution='+
+      JSON.stringify(canonical)+'; exact no-domain twin. Coverage limits are declared beside doc87ShadowTypes; canonical CS-2 exposure remains carried.');
   }
 }
 async function doc83Wait(sql,accept,description){
