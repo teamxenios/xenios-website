@@ -2,6 +2,21 @@
   "schemaVersion": 1,
   "leases": [
     {
+      "id": "ql-two-baseline-carryforward-20261012",
+      "task": "QL-HISTORICAL-PROTECTION-CARRYFORWARD-20261012",
+      "session": "codex-accepted-source-integration-20261005",
+      "state": "active",
+      "claimedAt": "2026-10-12T19:22:47Z",
+      "heartbeatAt": "2026-10-12T19:23:10.808Z",
+      "worktree": "C:/Users/sboad/.codex/worktrees/ql-protection-carryforward-20261012/xenios-website",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/health-launch/ql-protection-carryforward-20261012/",
+        ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"
+      ],
+      "scope": "Current exact two-entry fileHashes.files carryforward from6d9 onto unchanged21d source, own approval/evidence records, separately committed. Coordinator custody ACK observed in current conversation. General control-plane ownership and foreign/earlier leases preserved. No application execution window or permission escalation claimed."
+    },
+    {
       "id": "tc25-six-baseline-records-20261012",
       "task": "TC25-SIX-BASELINE-AMENDMENT-20261012",
       "session": "codex-accepted-source-integration-20261005",
@@ -9,7 +24,11 @@
       "claimedAt": "2026-10-12T19:07:24Z",
       "heartbeatAt": "2026-10-12T19:13:38Z",
       "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
-      "paths": ["docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json", "docs/health-launch/tc25-app-manifest-20261012/six-entry/", ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json"],
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/health-launch/tc25-app-manifest-20261012/six-entry/",
+        ".xenios/handoffs/2026-10-12-tc25-six-baseline-handoff.json"
+      ],
       "scope": "Fresh one-time direct human authorization for exactly six existing fileHashes.files entries and own approval/evidence records. Prior source builder idle with clean876ede5, target manifest unchanged, no active manifest path lease collision. Existing coordinator notified; no new ACK invented. General Website2 control-plane ownership retained; all other hash/seam/source reservations excluded."
     },
     {
@@ -20,7 +39,10 @@
       "claimedAt": "2026-10-12T18:46:29Z",
       "heartbeatAt": "2026-10-12T18:58:00Z",
       "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
-      "paths": ["docs/health-launch/tc25-app-manifest-20261012/reconciliation/", ".xenios/handoffs/2026-10-12-tc25-protection-disposition-handoff.json"],
+      "paths": [
+        "docs/health-launch/tc25-app-manifest-20261012/reconciliation/",
+        ".xenios/handoffs/2026-10-12-tc25-protection-disposition-handoff.json"
+      ],
       "scope": "Same-session receiving ACK for exact read-only forensic findings and own evidence records only. No runtime, manifest, test or earlier receipt edits; no execution window claimed; no other owner's files or stale reservations changed."
     },
     {
@@ -33,7 +55,10 @@
       "claimedAt": "2026-10-12T18:36:37Z",
       "heartbeatAt": "2026-10-12T18:38:33.159Z",
       "worktree": "C:/xenios-wt/tc25-app-manifest-20261012",
-      "paths": ["docs/health-launch/tc25-app-manifest-20261012/r2/", ".xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json"],
+      "paths": [
+        "docs/health-launch/tc25-app-manifest-20261012/r2/",
+        ".xenios/handoffs/2026-10-12-tc25-app-protection-r2-handoff.json"
+      ],
       "scope": "Own executed R2 result records only after immutable3ec5ec0 check; all historical R1 NOT_RUN evidence and manifest/runtime/test bytes preserved. Same integrator current receiving ACK; no foreign writer or broad lease release."
     },
     {

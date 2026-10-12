@@ -3,6 +3,20 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "QL-HISTORICAL-PROTECTION-CARRYFORWARD-20261012",
+      "owner": "codex-accepted-source-integration-20261005",
+      "state": "claimed",
+      "claimedAt": "2026-10-12T19:22:47Z",
+      "leaseId": "ql-two-baseline-carryforward-20261012",
+      "base": "21d7291f97dbd67026d1f0b31fab82ff56002be7",
+      "branch": "codex/ql-protection-carryforward-20261012",
+      "worktree": "C:/Users/sboad/.codex/worktrees/ql-protection-carryforward-20261012/xenios-website",
+      "paths": ["docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json", "docs/health-launch/ql-protection-carryforward-20261012/", ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"],
+      "authority": "Same integrator; actual user-designated8030 permits applicable historical QL reconciliation, latest direct TENSA adoption preserves controls. Current coordinator01a103a8 explicitly acknowledges exact current manifest custody for this integrator. Current rule CORE_SITE_PROTECTION.md permits protection-owner separately committed approved baseline reconciliation. Historical founder-directed task/lease/report at6d9ec3 applies to identical TopRibbon/package blobs at base794 and tested21d; no new source/hash consent inferred.",
+      "excludes": "All application/test/script/migration bytes, other hashes, full-composition static/seams, permission-refused Vitest retry, publication/release until applicable conditions are met.",
+      "publication": "LOCAL_ONLY"
+    },
+    {
       "id": "TC25-SIX-BASELINE-AMENDMENT-20261012",
       "owner": "codex-accepted-source-integration-20261005",
       "state": "qa",
