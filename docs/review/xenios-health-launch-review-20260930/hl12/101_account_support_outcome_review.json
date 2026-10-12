@@ -1,0 +1,226 @@
+{
+ "archive": "doc 101 account support uncertain-outcome correction review",
+ "reviewer": "session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-fable-5-1)",
+ "workflowRun": "wf_3dbd853b-c52",
+ "execution": "NOT_RUN",
+ "reviewerByteChecks": {
+  "diff": "SupportView.tsx one text node at :195; support-documents.test.tsx +95/-3; nothing else vs 79414143",
+  "errorMapping": "api.ts:26-56@a4a44bf6 returns error only for transport rejection, non-envelope/unparseable body, or error envelope; 401/403 non-envelope -> denied; denied envelopes returned as-is",
+  "submitHandler": "SupportView.tsx:104-122 clears draft only on ok"
+ },
+ "result": {
+  "check": {
+   "disposition": "ACCEPTED_WITH_NAMED_LIMITS",
+   "summary": "Candidate a4a44bf6 (parent 79414143, tree 2c123d9f) changes exactly two paths: one JSX text node in SupportView.tsx (line 195) and +95/-3 in support-documents.test.tsx; no server, shared, api.ts, dependency, route, payment or protection-manifest path moves. Reasoned from source, the outcome===\"error\" branch is reached in production only through accountPortalFetch returning {kind:\"error\"}, which it does for a transport rejection, for any non-envelope/unparseable body on a non-401/403 status (including 201 with a lost body and proxy pages), and for a server 500 envelope that guarded() emits only after the handler threw, where the Supabase insert().select().single() chain can already have persisted the row. Every definitive refusal (400 invalid_support_case, 429 rate_limited, 401/403 guard or wall denials) arrives as a denied envelope or a 401/403 status and renders the unchanged denied/rate_limited copy that still says \"Your request was not recorded\"; the dead ungraduated fallback is not wired in production. The new copy is therefore truthful on every path that reaches it and is strictly more conservative than the base copy, which asserted non-recording for the same uncertain paths. Draft (category, subject, description) is retained on error/denied/rate_limited and cleared only on ok, unchanged from base. The tests discriminate: the three new/rewritten error cases assert the alert text equals the new copy and reject the base wording, so they fail at 79414143; the it.each pair drives the real createAccountSupportCase/accountPortalFetch with a stubbed global fetch (transport throw; 201 Response with json() rejecting), asserts one POST to /api/research/customer-account/support with the trimmed body, no retry, draft retained, prior case retained, no status element, and raw error strings not rendered. No .only/.skip/.todo; result.json reports 13/13 passed, 0 pending, 0 todo. The receipt binds candidate and tree to the frozen clean HEAD via the launcher, pins the Node binary, root lock and installed-metadata hashes, matches argv and 13 names in run.log; blob ids and byte sizes for the records files match the registration. Named limits: synthetic jsdom evidence only, no browser, backend, idempotency, build or typecheck; node_modules identity rests on lock/metadata hashes with no full-tree digest; sha256 values were not independently recomputed. One P2 (case-history list is a mount-time snapshot, so the copy directs the customer to a list that cannot show the possibly-recorded case until a reload) and three P3 notes; none require correction before acceptance.",
+   "checks": [
+    {
+     "item": "(1) When outcome===\"error\" arises; whether definitive 4xx/5xx are wrongly turned into uncertain copy",
+     "status": "MET",
+     "evidence": "SupportView.tsx:106-122@a4a44bf6 sets error only on {kind:\"error\"} (115-116) or a throw (118-119); identical at 79414143 (diff touches line 195 only). Production onSubmit is createAccountSupportCase (client/src/research/account/AccountSupport.tsx:17@a4a44bf6) -> accountPortalFetch (api.ts:26-56@a4a44bf6), which never throws: fetch rejection -> error (53-55); non-envelope or unparseable body on non-401/403 status -> error (47-52), covering 201-with-lost-body, proxy HTML, 5xx; 401/403 non-envelope -> denied account_access_denied (49-51); any envelope with kind!==\"ok\" returned as-is regardless of status (48). Server: 400 -> {kind:\"denied\",reason:\"invalid_support_case\"} (server/research/customer-account/routes.ts:160@a4a44bf6); 429 -> {kind:\"denied\",reason:\"rate_limited\"} (174-176); guard pass with no identity -> 401 denied (97); handler throw -> 500 {kind:\"error\"} (100-104) only after openCase ran, where insert(row).select(\"*\").single() (production-support.ts:163-168) can persist and still throw support_write_failed. So every definitive refusal renders the denied/rate_limited copy (SupportView.tsx:193-194, unchanged, both still state \"Your request was not recorded\"); only genuinely non-definitive paths reach line 195. support_capability_pending fallback (production.ts:216-224) is dead in production: server/index.ts:1191@a4a44bf6 wires createSupabaseMemberQuestionsSupportSource."
+    },
+    {
+     "item": "(2) New copy truthful for every reaching path; 'case history' is a real place in the portal at this base",
+     "status": "PARTIAL",
+     "evidence": "Copy at SupportView.tsx:195@a4a44bf6 asserts only non-confirmation and a check-before-resubmit instruction; no path reaching it is definitively not-recorded (see check 1), and base copy at SupportView.tsx:195@79414143 (\"The request could not be recorded. Your account was not changed.\") was false for transport loss, 201 body loss and post-insert 500s. A case-history section exists on the same page: SupportView.tsx:209-228@a4a44bf6 (\"Support history\" / \"Your cases\", rendered from cases + createdCases), fed by loadAccountSupport (AccountSupport.tsx:9; api.ts:123-124) which reads the same research_member_questions rows openCase inserts (production-support.ts:114-121, 152-168), and reachable from the shell nav (AccountPortalShell.tsx:23) at /research/account/support (lib/routes.ts:49). PARTIAL because useAccountResource (resource.tsx:64-95@a4a44bf6) fetches once per (loader, token) identity and nothing refetches after an error outcome, so the list the copy points at cannot show a case persisted during the lost exchange until reload/navigation (AS-1). The page's own caveat at SupportView.tsx:227 (\"Case-history completeness is not reported here\") and the receipt's defect note acknowledge this."
+    },
+    {
+     "item": "(3) Draft retained after uncertain outcome, cleared after ok; nothing else changed in behaviour",
+     "status": "MET",
+     "evidence": "SupportView.tsx:108-117@a4a44bf6: setSubject(\"\")/setDescription(\"\") only inside result.kind===\"ok\" (110-111); denied/rate_limited/error branches and the catch call setOutcome only; category state untouched in all branches. git diff 79414143 a4a44bf6 -- SupportView.tsx is a single-line replacement at 195 (2 +-), so runtime state, handlers, validation (19-33), focus effect (59-61) and outcome resets on edit (65,79,154) are byte-identical to base."
+    },
+    {
+     "item": "(4) Tests discriminate (fail at base), cover 201-body-loss, network failure, denial and rate-limit distinctions through the real wrapper with mocked transport; no skipped/only",
+     "status": "PARTIAL",
+     "evidence": "At 79414143 the error test asserted toContain(\"The request could not be recorded\") (support-documents.test.tsx:108-118@79414143); at a4a44bf6 lines 120-122, 152-153 and 198-199 assert querySelector('[role=\"alert\"]').textContent === uncertainSupportOutcome and not.toMatch(/could not be recorded|was not recorded|account was not changed/i), which the base alert text fails on both counts. The it.each at 159-205 imports the real createAccountSupportCase (line 9), stubs only globalThis.fetch (176), and for \"transport rejects\" throws TypeError from fetch (171) while for \"created response body is lost\" returns new Response(null,{status:201}) with json() mocked to reject (172-174); it asserts fetchMock called once (187), path /api/research/customer-account/support and POST (189-190), trimmed body (191-195), draft retained (196-197), uncertain alert (198), no status element (200), prior case retained (201-202), raw error strings absent (203). The thrown-callback case (128-157) covers the SupportView catch branch with untrimmed draft and category retained. Denial (207-219) and rate limit (82-106) remain mocked-onSubmit tests with added negative assertions on the uncertain copy (103, 218); the only wrapper-level denial coverage is the pre-existing 429 passthrough in api.test.ts:103-113@a4a44bf6, and no test drives 401/403 non-envelope or a 400 invalid_support_case envelope through accountPortalFetch into SupportView (AS-2, pre-existing gap). Whole file read: no .only/.skip/.todo; result.json@fa7de0a5 numPendingTests 0, numTodoTests 0, 13 passed; afterEach unstubs globals and restores mocks (53-54)."
+    },
+    {
+     "item": "(5) Receipt applies to the exact bytes (candidate/tree, files 1, 13 passed, argv, Node sha) and its limits are named",
+     "status": "MET",
+     "evidence": "git log -1 a4a44bf6: tree 2c123d9ff27a13f1a3871ce5672dddd554d1dcc8, parent 79414143; receipt.json@fa7de0a5 (blob 95cb6d2a) candidate a4a44bf6, tree 2c123d9f, exitCode 0, signal null, timedOut false, startedUtc 2026-10-12T19:31:50.872Z; run-focused.cjs@fa7de0a5 line 10 refuses unless git rev-parse HEAD equals the argv SHA and status --porcelain is empty, line 12 pins node binary sha256 6e3a3978..., lines 13-14 pin package-lock.json and node_modules/.package-lock.json hashes, line 26 argv matches the receipt command verbatim (vitest run --maxWorkers 1 --no-file-parallelism, single file). run.log@fa7de0a5 lists 13 test names that match the 8+5 it() blocks in the file at a4a44bf6; result.json numTotalTestSuites 3, numTotalTests 13, numPassedTests 13, numFailedTests 0, success true, startTime 1791833513124 (19:31:53Z) consistent with log \"Start at 14:31:53\" (-0500). Records commit fa7de0a5 tree f6e752f2 matches registration recordsTree; blob 71499372 (SOURCE_AND_TEST_RESULT.json) is 7137 bytes and blob 917f948a (run.log) is 2803 bytes, matching the registration's byte counts; the scratch copies read here are content-identical to those paths. Named limits (SOURCE_AND_TEST_RESULT.json limits[] and provenance): synthetic jsdom, no browser/API/durable interrupted-write/payment qualification, no build/typecheck/full suite/protection run, dependencySource copied from a donor worktree with fullInstalledTreeDigest null, childWorkerSelfAttestation not captured. sha256 values were not independently recomputed under this review's tool budget."
+    },
+    {
+     "item": "(6) Scope: only the two paths changed; no protected path; no API/route/payment change",
+     "status": "MET",
+     "evidence": "git diff --name-only 79414143 a4a44bf6 | wc -l = 2; diff --stat limited to server, shared, client/src/research/account-portal/api.ts, package.json, package-lock.json, .xenios is empty. Blob ids: SupportView.tsx e9c20bfa -> 4ab78bb6, support-documents.test.tsx ddffbf22 -> fb1c9ba8, every other blob in views/ identical at both revs (ls-tree). docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json@79414143 names public-site routes and six fileHashes rows only; grep for account-portal|SupportView|support-documents in it returns nothing. Commit message \"fix(account): report uncertain support submission outcomes truthfully\", author Samuel Boadu."
+    },
+    {
+     "item": "Base identity: 79414143 is the deployed lineage pin the review record uses",
+     "status": "MET",
+     "evidence": "REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md lines 561 and 625 describe 79414143 as \"the deployed pin\" / \"(deployed lineage)\"; line 627 registers this task r1 with the same source, records and base identities read here; git log shows 79414143 = \"feat(research): complete manual payment choices\" on top of 7a2ca4a3."
+    },
+    {
+     "item": "Lease/claim object and prior ownership references resolve",
+     "status": "MET",
+     "evidence": "git cat-file -t ecdb90502d8e7931f1de998391b72a82c6dd29aa = commit. .xenios/ACTIVE_TASKS.json@79414143 line 1614 lists support-documents.test.tsx inside a large historical path set; custody resolution is recorded in the registration (\"historical d582 lease HANDOFF not reused\") and is the coordinator's determination, not re-adjudicated here."
+    }
+   ],
+   "findings": [
+    {
+     "id": "AS-1",
+     "severity": "P2",
+     "title": "Copy directs the customer to a case list that is a mount-time snapshot and will not show the possibly-recorded case until reload",
+     "claim": "\"Check your case history before submitting again\" points at the same page's \"Your cases\" section, but that list is loaded once per (loader, token) identity and nothing refetches after an error outcome, so a case that was persisted during the lost exchange stays invisible until the customer reloads or navigates away and back; a customer who checks the stale list and resubmits creates the duplicate the copy is trying to prevent. Not a regression: the base copy asserted non-recording and invited an immediate resubmit on the same paths.",
+     "evidence": "SupportView.tsx:195 and :209-228@a4a44bf6 (list = createdCases + cases prop; createdCases only grows on ok at 109); AccountSupport.tsx:9,17@a4a44bf6 (cases from useAccountResource(loadAccountSupport, memberToken), onSubmit does not touch the resource); resource.tsx:64-95@a4a44bf6 (effect keyed on request identity only; no refetch API exposed); SupportView.tsx:227 caveat \"Case-history completeness is not reported here\"; SOURCE_AND_TEST_RESULT.json defect note \"no claim that currently loaded history is fresh or complete\".",
+     "fix": "In a follow-up slice (not required for this acceptance): after setOutcome(\"error\"), trigger a reload of loadAccountSupport (e.g. a refresh token/dependency passed into useAccountResource, or a page-level reload callback) and merge the fresh list, or at minimum word the copy \"reload this page and check your case history before submitting again\" and add a test that the list shows a server-visible new case after an uncertain outcome."
+    },
+    {
+     "id": "AS-2",
+     "severity": "P3",
+     "title": "Denial and rate-limit distinctions are not driven through the real wrapper in the scoped test file",
+     "claim": "The new it.each covers only the two error paths through accountPortalFetch; denial (auth_required) and rate_limited still arrive via a mocked onSubmit, and no test anywhere drives a 401/403 non-envelope response or a 400 {kind:\"denied\",reason:\"invalid_support_case\"} envelope through accountPortalFetch into SupportView to prove they render the \"not recorded\" copies rather than the uncertain one. Pre-existing gap, not introduced by this change.",
+     "evidence": "support-documents.test.tsx:82-106, 207-219@a4a44bf6 use vi.fn(async () => ({kind:\"denied\",...})); api.test.ts:103-113@a4a44bf6 covers only the 429 envelope passthrough; api.test.ts:74-80 it.each([401,403,500]) exercises downloadAccountDocument, not accountPortalFetch; api.ts:49-51 mapping of 401/403 to account_access_denied is untested.",
+     "fix": "Extend the it.each at support-documents.test.tsx:159 with cases: fetch resolves new Response(\"<html>\",{status:401}) -> expect denied copy; Response(JSON {kind:\"denied\",reason:\"invalid_support_case\"},{status:400}) -> expect denied copy; Response(JSON {kind:\"denied\",reason:\"rate_limited\"},{status:429}) -> expect rate_limited copy; each asserting not.toContain(uncertainSupportOutcome)."
+    },
+    {
+     "id": "AS-3",
+     "severity": "P3",
+     "title": "Pre-existing: a 400 validation denial renders sign-in blame copy (out of scope, unchanged)",
+     "claim": "A server 400 {kind:\"denied\",reason:\"invalid_support_case\"} maps to outcome \"denied\" and renders \"This sign-in cannot open a support request. Your request was not recorded.\" The non-recording claim is true, but the cause attribution is wrong. Effectively unreachable from this form because client validation (subject 4-120, description 10-1200, enum category) is stricter than the server's (1-200, 1-5000); unchanged by this candidate.",
+     "evidence": "SupportView.tsx:113-114, 194@a4a44bf6 and @79414143 (identical); routes.ts:153-162@a4a44bf6; SupportView.tsx:24-30 vs routes.ts:157-158.",
+     "fix": "Optional separate slice: map reason \"invalid_support_case\" to a validation-specific message. No action needed for this acceptance."
+    },
+    {
+     "id": "AS-4",
+     "severity": "P3",
+     "title": "Named evidence limits: synthetic jsdom run, donor-copied node_modules without full-tree digest, hashes not independently recomputed",
+     "claim": "The receipt proves the focused file passed at the exact candidate under a pinned Node binary and pinned lock/metadata hashes, but the installed dependency tree was copied from another worktree and identified only by those two hashes (fullInstalledTreeDigest null); no build, typecheck, full suite, protection run or browser evidence exists for a4a44bf6; this review matched blob ids and byte sizes but could not recompute sha256 values with its read-only tool budget.",
+     "evidence": "receipt.json@fa7de0a5 dependencyMode; SOURCE_AND_TEST_RESULT.json provenance.fullInstalledTreeDigest null, inventoryAttempt cancelled, childWorkerSelfAttestation \"Not captured\", limits[0..2]; run-focused.cjs lines 13-14 pin only package-lock.json and node_modules/.package-lock.json.",
+     "fix": "Carry these limits into the promotion gate: bind the candidate to the existing protection/build/typecheck qualification before release, as the receipt's own \"next\" field already requires. No source correction."
+    }
+   ],
+   "deviations": [
+    "Four git show outputs were piped through `cat -n` for line numbering, which is a read-only pipe target not in the enumerated list (grep/sed -n/head/wc); no file outside the allowed directories was read and nothing was created, modified or executed.",
+    "Several Bash calls chained two or three allowed git commands with `;` in one invocation for efficiency; each command was an allowed read-only git subcommand on C:/xenios-wt/health-review with --no-optional-locks.",
+    "No other deviations: no checkout/fetch/commit/push, no interpreter or test run, no MCP, WebFetch, or session contact; Read/Grep/Glob were used only on the review records directory and the scratch directory."
+   ]
+  },
+  "verify": {
+   "disposition": "ACCEPTED_WITH_NAMED_LIMITS",
+   "verdicts": [
+    {
+     "id": "AS-1",
+     "upheld": true,
+     "severity": "P2",
+     "note": "Confirmed from bytes. useAccountResource (resource.tsx:64-90@a4a44bf6) keys its single fetch on the (loader, token) identity; loadAccountSupport is a module-level const (api.ts:123-124) and AccountSupport.tsx:9,17 exposes no refetch, so the 'Your cases' list (SupportView.tsx:209-228) cannot show a row persisted during a lost exchange until reload/navigation. Additionally the uncertain alert itself is cleared by any field or category edit (SupportView.tsx:65,79,154 setOutcome('idle')), so the guidance is transient. Not a regression: base copy at SupportView.tsx:195@79414143 asserted non-recording on the same paths and invited immediate resubmission. P2 stands; not P1 because duplicates are made less likely than at base, not more."
+    },
+    {
+     "id": "AS-2",
+     "upheld": true,
+     "severity": "P3",
+     "note": "Confirmed. support-documents.test.tsx:82-106 and 207-219@a4a44bf6 use vi.fn onSubmit stubs; the only wrapper-level refusal coverage is api.test.ts:103-113 (429 envelope) and api.test.ts:47-53 (ok envelope on 500 refused). api.ts:49-51 (401/403 non-envelope -> account_access_denied) and a 400 {kind:'denied',reason:'invalid_support_case'} envelope are not driven through accountPortalFetch into SupportView anywhere. Server side has routes.test.ts:205-234 for the 400/429 shapes, so the gap is client-wrapper-to-view only. Pre-existing; the two new it.each cases at 159-205 do go through the real wrapper with only globalThis.fetch stubbed (line 176)."
+    },
+    {
+     "id": "AS-3",
+     "upheld": true,
+     "severity": "P3",
+     "note": "Confirmed and unchanged by the candidate. SupportView.tsx:113-114 maps any denied reason other than rate_limited to 'denied' and renders the sign-in copy at 194; routes.ts:154-161 answers 400 invalid_support_case. Effectively unreachable from this form: client validation (SupportView.tsx:24-30: subject 4-120, description 10-1200, select bound to SUPPORT_CASE_CATEGORIES) is strictly tighter than the server's (routes.ts:155-158: 1-200, 1-5000, same enum)."
+    },
+    {
+     "id": "AS-4",
+     "upheld": true,
+     "severity": "P3",
+     "note": "Confirmed. run-focused.cjs@fa7de0a5 lines 10-14 bind HEAD, clean status, Node binary sha, package-lock.json and node_modules/.package-lock.json hashes only; provenance.fullInstalledTreeDigest is null and dependencySource is a donor worktree copy. No build/typecheck/full-suite/protection/browser evidence exists for a4a44bf6. I likewise could not recompute any sha256 under the read-only git-only budget; I matched blob ids and byte sizes (71499372/7137, 917f948a/2803, 95cb6d2a/1601) and content of the scratch copies against the shown blobs."
+    }
+   ],
+   "checkChallenges": [
+    {
+     "item": "(1) When outcome==='error' arises; whether definitive 4xx/5xx are wrongly turned into uncertain copy",
+     "checkerStatus": "MET",
+     "verifierStatus": "MET",
+     "note": "Independently traced. SupportView.tsx:106-122@a4a44bf6 (identical at base) sets error only on {kind:'error'} or a throw. Production onSubmit is createAccountSupportCase (AccountSupport.tsx:17) -> accountPortalFetch (api.ts:26-56), which never throws: fetch rejection -> error (53-55); body parsed with .catch(()=>null) (47); any envelope with kind!=='ok' is returned as-is regardless of status, and an ok envelope only when response.ok (48); 401/403 non-envelope -> denied account_access_denied (49-51); every other non-envelope -> error (52), which covers 201-with-lost-body. Server: 400 -> denied invalid_support_case (routes.ts:160); 429 -> denied rate_limited (174-176); guard-pass-without-identity -> 401 denied (97); handler throw -> 500 {kind:'error'} (100-104) only after openCase ran, where insert(row).select('*').single() (production-support.ts:163-168) can persist and still reject. Guard (member-auth.ts:179-212) answers 503/401/403 with {ok:false,...} non-envelopes: 401/403 -> denied copy; the 503 'Not configured.' plus the API 404 {message:'Not Found'} (server/index.ts:1353-1355) and the global error handler {message} (1331-1345) are the only definitive non-recordings that reach the uncertain copy, and each also fails the GET /support load through the same guard, so the view does not mount under them. The ungraduated support_capability_pending fallback (production.ts) is not wired: server/index.ts:1191 injects createSupabaseMemberQuestionsSupportSource. No definitive refusal is rendered as a false statement; the copy asserts only non-confirmation. Checker's citations verified line-accurate."
+    },
+    {
+     "item": "(2) New copy truthful for every reaching path; 'case history' is a real place in the portal at this base",
+     "checkerStatus": "PARTIAL",
+     "verifierStatus": "PARTIAL",
+     "note": "Agree. Copy at SupportView.tsx:195@a4a44bf6 makes no recording claim either way; the base copy was false for transport loss, 201 body loss and post-insert 500s. The case list is real and on the same page (SupportView.tsx:209-228 'Support history'/'Your cases'), reachable from the shell nav (AccountPortalShell.tsx:23 label 'Support') at /research/account/support (lib/routes.ts:49), fed by loadAccountSupport (api.ts:123-124) reading MEMBER_QUESTIONS_TABLE (production-support.ts:154-160), the same table openCase inserts into (162-170). PARTIAL for the AS-1 snapshot staleness, which the page's own caveat at line 227 and the receipt's defect note already acknowledge."
+    },
+    {
+     "item": "(3) Draft retained after uncertain outcome, cleared after ok; nothing else changed in behaviour",
+     "checkerStatus": "MET",
+     "verifierStatus": "MET",
+     "note": "Confirmed. git diff 79414143 a4a44bf6 -- SupportView.tsx is exactly one JSX text replacement at line 195 (1+/1-). setSubject('')/setDescription('') occur only inside result.kind==='ok' (110-111); category is never reset in any branch; denied/rate_limited/error/catch branches call setOutcome only; busy is released in finally (121). Validation (19-33), focus effect (59-61) and outcome resets on edit (65,79,154) are byte-identical to base."
+    },
+    {
+     "item": "(4) Tests discriminate (fail at base), cover 201-body-loss, network failure, denial and rate-limit distinctions through the real wrapper with mocked transport; no skipped/only",
+     "checkerStatus": "PARTIAL",
+     "verifierStatus": "PARTIAL",
+     "note": "Agree, with one citation correction. Discrimination: at a4a44bf6 lines 120, 152 and 198 assert querySelector('[role=\"alert\"]').textContent toBe(uncertainSupportOutcome) (undefined if no alert, so not vacuous) and lines 122/153/199 reject /could not be recorded|was not recorded|account was not changed/i; the base alert text 'The request could not be recorded. Your account was not changed.' fails both, so all four new/rewritten error cases fail at 79414143 while the file still compiles there (api.ts and types.ts unchanged). The base error test is at support-documents.test.tsx:102-116@79414143 with its toContain assertion at line 114 (hunk header @@ -111,10 +117,93 @@), not 108-118 as the checker cited. The it.each (159-205) imports the real createAccountSupportCase (line 9) and stubs only globalThis.fetch (176): transport TypeError (171) and new Response(null,{status:201}) with json() mocked to reject (172-174); asserts one fetch (187), POST to /api/research/customer-account/support (189-190), trimmed body (191-195), draft retained (196-197), no status element (200), one prior card retained with the existing subject (201-202), and raw error strings absent (203). Denial and rate limit remain mocked-onSubmit (AS-2). Whole file read: no .only/.skip/.todo; afterEach unstubs and restores (53-54). 8+5 it() blocks = 13, matching run.log and result.json."
+    },
+    {
+     "item": "(5) Receipt applies to the exact bytes and its limits are named",
+     "checkerStatus": "MET",
+     "verifierStatus": "MET",
+     "note": "Confirmed with added decoding. git log a4a44bf6: tree 2c123d9ff27a13f1a3871ce5672dddd554d1dcc8, parent 79414143, author Samuel Boadu, subject 'fix(account): report uncertain support submission outcomes truthfully'. fa7de0a5: tree f6e752f2 (matches registration recordsTree), parent 9016d71 whose parent is a4a44bf6; the fa7de0a5 delta versus 9016d71 is run.log added plus one prose string in SOURCE_AND_TEST_RESULT.json ('330.72MiB reported' -> '330.72m in tool display'). receipt.json (blob 95cb6d2a, 1601 B): candidate a4a44bf6, tree 2c123d9f, exitCode 0, signal null, timedOut false, startedUtc 19:31:50.872Z, endedUtc 19:32:21.206Z, logSha256 2fac30db... equal to the registration's log rawSha256. run-focused.cjs line 10 refuses unless git rev-parse HEAD equals the argv SHA and status --porcelain is empty; 12-14 pin Node binary, package-lock.json and node_modules/.package-lock.json; 26 builds argv identical to the receipt command; 27 records rev-parse HEAD^{tree}. result.json: numTotalTests 13, passed 13, failed 0, pending 0, todo 0, success true; startTime 1791833513124 decodes to 2026-10-12T19:31:53.124Z (2.25 s after startedUtc, matching run.log 'Start at 14:31:53' at UTC-5); suite endTime 1791833541155 = 19:32:21.155Z, 51 ms before endedUtc. The 13 fullName values match run.log and the file. Scratch copies read here are content-identical to the shown blobs; sha256 not recomputed. Limits as named in SOURCE_AND_TEST_RESULT.json limits[] and provenance (synthetic jsdom only; donor node_modules without full-tree digest; no build/typecheck/full suite/protection/browser; childWorkerSelfAttestation not captured)."
+    },
+    {
+     "item": "(6) Scope: only the two paths changed; no protected path; no API/route/payment change",
+     "checkerStatus": "MET",
+     "verifierStatus": "MET",
+     "note": "Confirmed, with the manifest evidence restated. git diff --stat 79414143 a4a44bf6: 2 files, SupportView.tsx 1+/1-, support-documents.test.tsx 93+/2-. Blob ids match the receipt's before/after (e9c20bfa -> 4ab78bb6; ddffbf22 -> fb1c9ba8). No server/, shared/, api.ts, package or .xenios path moves. docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json@79414143 is not silent on this tree: its protected globs carry an exemptSubtrees entry 'client/src/research/**' (lines 342-349) and allowedWriteZones.prefixes includes 'client/src/research/' (line 374), so both scoped paths sit inside the Research write zone and outside protection. The checker's 'public-site routes and six fileHashes rows only' description is incomplete but its conclusion is correct."
+    },
+    {
+     "item": "Base identity: 79414143 is the deployed lineage pin the review record uses",
+     "checkerStatus": "MET",
+     "verifierStatus": "MET",
+     "note": "REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md lines 625 and 627 register docs 99 and 101 against base '79414143 (deployed lineage)' with this task's exact source, records and scope; git log shows 79414143 'feat(research): complete manual payment choices' as the direct parent of a4a44bf6."
+    },
+    {
+     "item": "Lease/claim object and prior ownership references resolve",
+     "checkerStatus": "MET",
+     "verifierStatus": "MET",
+     "note": "git cat-file -t ecdb90502d8e7931f1de998391b72a82c6dd29aa = commit. Custody wording in the registration and receipt ('same integrator exact two-path lease', historical d582 handoff not reused) is the coordinator's determination; not re-adjudicated here."
+    }
+   ],
+   "missed": [
+    {
+     "id": "ASV-1",
+     "severity": "P3",
+     "title": "The uncertain-outcome notice is cleared by any edit, so the 'check your case history' instruction is transient",
+     "claim": "updateSubject, updateDescription and the category onChange all call setOutcome('idle'), so the alert that tells the customer to check history before resubmitting disappears the moment they touch the draft to adjust it; nothing then stands between an edited draft and a second POST. Combined with AS-1 this makes the in-page duplicate guard weaker than the copy suggests. Pre-existing lifecycle; the base copy vanished the same way, so not a regression.",
+     "evidence": "client/src/research/account-portal/views/SupportView.tsx:65,79,152-155@a4a44bf6 and identical @79414143; submit at 104-105 also resets to idle before the call; no persisted 'last submission uncertain' flag exists.",
+     "fix": "Optional follow-up with AS-1: keep an uncertain-outcome flag until the next submission resolves (or until an explicit dismiss), and add a test that editing a field after an uncertain outcome does not remove the notice. No change required for this acceptance."
+    },
+    {
+     "id": "ASV-2",
+     "severity": "P3",
+     "title": "Three non-envelope definitive refusals outside routes.ts map to the uncertain copy (truthful, imprecise, effectively unreachable)",
+     "claim": "A guard 503 {ok:false,message:'Not configured.'}, the API 404 {message:'Not Found'} and the global error handler's {message} body all fall through api.ts:52 to {kind:'error'} and render 'We couldn't confirm whether your support request was recorded', although no write happened. The sentence remains literally true (the client cannot confirm), it is strictly better than the base copy for the uncertain paths, and each of these conditions also fails the GET /support load through the same guard so AccountResourceBoundary shows its error state and SupportView never mounts. Named for completeness of the 'definitive refusal mislabelled as uncertain' hunt; not a defect requiring correction.",
+     "evidence": "server/research/member-auth.ts:179@a4a44bf6 (503 non-envelope); server/index.ts:1353-1355 (API 404 JSON) and 1331-1345 (global error handler); client/src/research/account-portal/api.ts:47-52; resource.tsx:131-138 (page-level error state); AccountSupport.tsx:9,16 (list load gates the view).",
+     "fix": "None required. If a future slice wants finer copy, have accountPortalFetch distinguish a 4xx non-envelope (definitive, 'not recorded') from 5xx/transport/201-body-loss (uncertain); keep the server envelope as the source of truth."
+    },
+    {
+     "id": "ASV-3",
+     "severity": "P3",
+     "title": "Pre-existing cause misattribution in two definitive refusals, unchanged here",
+     "claim": "(a) accountSupportSubmissionAllowed uses durableFailurePolicy 'deny', so when the durable rate-limit RPC is unavailable or errors the write is refused as 'support_rate_limited' and the customer reads 'Too many support requests were submitted recently' although they submitted nothing recently. (b) A thrown guard error (for example an auth-provider outage) answers 401 'Sign in required.' and renders 'This sign-in cannot open a support request'. In both cases 'Your request was not recorded' is true; only the stated cause is wrong. Outside the two-path scope and byte-identical at base.",
+     "evidence": "server/research/rate-limit.ts:48-62@a4a44bf6 (catch -> deny returns false); server/research/support-rate-limit.ts:34-41; production-support.ts:126-127,171-176; routes.ts:174-176; member-auth.ts:209-212; SupportView.tsx:193-194.",
+     "fix": "Optional separate slice: surface a distinct 503 'support temporarily unavailable, not recorded' envelope when the limiter authority is absent, and a distinct reason for guard exceptions. No action for this acceptance."
+    },
+    {
+     "id": "ASV-4",
+     "severity": "P3",
+     "title": "Checker citation correction for the base error test",
+     "claim": "The checker cites the base error test as support-documents.test.tsx:108-118@79414143. The test actually spans lines 102-116 with the toContain('The request could not be recorded') assertion at line 114; the discrimination conclusion is unaffected.",
+     "evidence": "git diff hunk header '@@ -111,10 +117,93 @@' whose first removed line is the toContain at old line 114; git show 79414143:...support-documents.test.tsx | sed -n '95,135p' places it(...) at 102 and the closing brace at 116.",
+     "fix": "Record the corrected line range in the review record."
+    },
+    {
+     "id": "ASV-5",
+     "severity": "P3",
+     "title": "Registration copy filenames do not match the scratch files as presented",
+     "claim": "The registration's log.copy names 'SUPPORT_OUTCOME_ACTUAL_TEST_LOG_FA7DE0A5_20261012.log', which is absent from the scratch directory; the log was supplied as 'support_run.log' and its content matches blob 917f948a (2803 B). The registration's result.copy 'SUPPORT_OUTCOME_ACTUAL_SOURCE_TEST_RECEIPT_FA7DE0A5_20261012.json' is a copy of SOURCE_AND_TEST_RESULT.json (blob 71499372, 7137 B), not of receipt.json (blob 95cb6d2a, 1601 B), despite the 'RECEIPT' name. Evidence is intact; the names could mislead a later reader.",
+     "evidence": "SUPPORT_OUTCOME_EXACT_SOURCE_REVIEW_REGISTRATION_20261012.json lines 22 and 30; Glob of the scratch ql/ directory; git ls-tree -r -l fa7de0a5 docs/health-launch/account-support-outcome-20261012/.",
+     "fix": "When the packet is delivered to the original reviewer, name the copies after the records paths they mirror (SOURCE_AND_TEST_RESULT.json, receipt.json, run.log) or add the missing log copy under the registered name."
+    }
+   ],
+   "opinion": "Accept with the named limits. I tried to break the candidate in the four ways the brief asked for and could not. There is no definitive-refusal path that the new copy turns into a false statement: every server-authored refusal (400, 429, 401, 403) still renders the unchanged 'not recorded' copies, and the only inputs that reach line 195 are transport loss, non-envelope bodies, and the post-openCase 500, exactly the cases where the base copy was lying. Draft and category survive every non-ok branch, and the diff is a single text node, so no state, handler or validation moved. The four rewritten error tests fail at 79414143 on an exact-text assertion plus a negative regex, and the it.each pair really does exercise accountPortalFetch with only fetch stubbed, one POST, no retry. The receipt binds the candidate SHA and tree through a launcher that refuses a dirty or mismatched HEAD, and its timestamps, counts and test names reconcile across receipt.json, result.json and run.log to within seconds and milliseconds. The genuine weakness is the one the checker already named as AS-1: the copy sends the customer to a list that is a mount-time snapshot, and (ASV-1) the notice itself vanishes on the first keystroke, so the duplicate guard is advisory. Relative to base that is still a strict improvement, which is why it stays P2 and not P1. What this acceptance does not say: nothing here is browser, backend, idempotency, build, typecheck or protection evidence; the dependency tree is a donor copy identified by two hashes; and no sha256 was recomputed in this review.",
+   "deviations": [
+    "Seven `git show` outputs were piped through `cat -n` for line numbering; `cat -n` is a read-only pipe target not in the enumerated grep/sed -n/head/wc list. No file outside the two allowed directories was read directly and nothing was created, modified, executed or deleted.",
+    "`git log` was invoked with `--format` and `git diff` with `--stat`; both are enumerated subcommands (log, diff) run read-only against C:/xenios-wt/health-review with --no-optional-locks.",
+    "One `git grep` output was piped through `grep -v` before `head`; both are allowed targets.",
+    "No other deviations: Read/Grep/Glob were used only on the review records directory and the scratch ql/ directory; no cd, echo, variables, loops, redirection or command chaining; no interpreter, test run, MCP, WebFetch, checkout/fetch/commit/push, or session contact; sha256 values were not recomputed because no hashing command is in the allowed set."
+   ]
+  }
+ }
+}

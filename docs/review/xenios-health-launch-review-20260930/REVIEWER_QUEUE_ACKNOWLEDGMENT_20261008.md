@@ -628,3 +628,11 @@ with QL first. Identities resolved from Git:
 
 Submitted receipts are treated as evidence, not as tests this reviewer ran. The three candidates are reviewed
 separately; separate passing runs are not evidence for any combined tree. Nothing was executed.
+
+## Queue state update (2026-10-12, doc 101)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 101 | `ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-SOURCE-REVIEW-20261012` r1 (`a4a44bf` / `fa7de0a`) | COMPLETE: **ACCEPTED WITH NAMED LIMITS.** The one-line copy is truthful on every path that shows it; tests discriminate; the 13/13 receipt binds the exact candidate. P2 follow-up AS-1 (case list is a mount-time snapshot); P3 residue. Independent increment; not evidence for any combined tree |
+
+Docs 99 (QL r2) and 100 (six-entry and App check) remain in review. Nothing was executed.
