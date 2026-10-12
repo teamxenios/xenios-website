@@ -3,6 +3,16 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "QL-STANDALONE-BUILD-EVIDENCE-20261012",
+      "owner": "codex-accepted-source-integration-20261005",
+      "state": "claimed",
+      "leaseId": "ql-standalone-build-records-20261012",
+      "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "paths": ["docs/health-launch/ql-build-20261012/", ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json"],
+      "scope": "Own exact standalone build binding/results only. Actual04b4 scoped local QL build authority, coordinator one-heavy reservation required before start. No source/dependency/script changes, no install, no S3/G0 or release.",
+      "execution": "NOT_STARTED"
+    },
+    {
       "id": "ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-20261012",
       "owner": "codex-accepted-source-integration-20261005",
       "state": "qa",

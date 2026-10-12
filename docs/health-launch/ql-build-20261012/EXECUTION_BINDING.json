@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "action": "QL_STANDALONE_PRODUCTION_BUILD_20261012",
+  "status": "PREPARED_NOT_STARTED_PENDING_COORDINATOR_WINDOW",
+  "executor": "01a0e098-3b23-7233-9b07-877ace092650",
+  "session": "codex-accepted-source-integration-20261005",
+  "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "tree": "28617c360f487803baa556d33158c4e95df471f1",
+  "cwd": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
+  "headMode": "Detached exact immutable candidate; no source edits",
+  "authority": "Actual user04b4cc70 localExecution explicitly includes scoped QL synthetic tests and build; adopted TENSA brief preserves controls. Current coordinator asks this standalone build binding before one-heavy reservation. Not relying on earlier TC25 R2 test-only window or S3 receipts.",
+  "command": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "script/build.mjs"
+  ],
+  "launchCommand": [
+    "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "C:/Users/sboad/.codex/tmp/ql-build-20261012/run-build.cjs"
+  ],
+  "launcherSha256": "d2d5b50cf52fd26276ed7fad598ceec6c62301130c0ac3320d289ff529389919",
+  "sourcePins": {
+    "script/build.mjs": "a71731b3e52a6f22712329fa63d16693069c8f1b",
+    "vite.config.ts": "aec779da413354fc7b4c7ff8bbe3ae74ed78a8b7",
+    "package-lock.json": "912f4f85e9a078ed97ed2b67ce8d1de09490eb29"
+  },
+  "runtime": {
+    "node": "20.19.0",
+    "npm": "10.8.2 previously separately checked, not invoked by build",
+    "nodeSha256": "6e3a39787e667d50487f7335c85636c2823a53e636d73c2c841d45da4e57906c",
+    "lockSha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8",
+    "installedMetadataSha256": "962b226705a406a95c5d5fe92d887e309c885a8a465cc4697a540bfb1d097e94",
+    "dependencyPreparation": "Private physical copy of the already tested support dependency tree, excluding .vite/.vite-temp/.cache and junctions; no installation. Reparse/selected package identity checks before launch."
+  },
+  "prechecks": {
+    "cleanExactHead": true,
+    "dist": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website/dist",
+    "distExisted": false,
+    "rootReparsePoint": false,
+    "destructiveScope": "Unchanged build removes only this absent isolated dist; realpath, containment, absence reasserted immediately before spawn. Vite empties only its dist/public child. No other directory deletion.",
+    "environmentFiles": "Only tracked .env.example; no root/client .env,.env.local,.env.production,.env.production.local; launcher rechecks absence.",
+    "diskFreeBytesObserved": 57923584000
+  },
+  "environment": {
+    "fromScratch": true,
+    "keys": [
+      "SYSTEMROOT",
+      "WINDIR",
+      "COMSPEC",
+      "PATH",
+      "PATHEXT",
+      "TEMP",
+      "TMP",
+      "USERPROFILE",
+      "HOME",
+      "APPDATA",
+      "LOCALAPPDATA",
+      "NODE_ENV",
+      "NODE_OPTIONS",
+      "CI",
+      "NO_COLOR"
+    ],
+    "NODE_ENV": "production",
+    "NODE_OPTIONS": "--max-old-space-size=2048",
+    "PATH": "Pinned Node plus Windows system paths only; no service credentials copied",
+    "homeTemp": "C:/Users/sboad/.codex/tmp/ql-build-20261012",
+    "providerDatabaseCredentials": "ABSENT_BY_ENV_CONSTRUCTION",
+    "REPL_ID": "ABSENT",
+    "serverStarted": false,
+    "network": "No network-dependent command, app/API/browser or hosted calls in this procedure; not an OS firewall guarantee"
+  },
+  "bounds": {
+    "oneHeavyJob": true,
+    "wallSeconds": 420,
+    "nodeHeapMiB": 2048,
+    "retries": 0,
+    "timeoutCleanup": "Only child PID and descendants via taskkill /T; ordinary existing orchestration, not native G0 certification",
+    "kernelAggregateMemoryOrPidCaps": "NOT_ENFORCED_NOT_CLAIMED",
+    "outputHardCap": "NOT_ENFORCED; full raw stdout/stderr retained; wall bounded",
+    "failure": "Stop after first failure/timeout, preserve outputs; no automatic rerun/installation"
+  },
+  "applicability": {
+    "scope": "Ordinary production artifact compilation for independent existing wizard, not S3/native G-group or actual transaction qualification",
+    "procedure": "Existing unchanged script/build.mjs invokes Vite production bundle then esbuild server bundle, not server startup; guarded dev cartographer disabled in production without REPL_ID.",
+    "G0": "Not invoked, no full Quick Order prerequisite waived or borrowed. Prior R2/QL Vitest skipped/refused operations not resumed.",
+    "review": "Original QL registration pending delivery/acceptance; required before release, not retrospectively supplied by this local build.",
+    "productionInputs": "No live legal/payment/config adopted or enabled by compiled artifacts",
+    "excludes": [
+      "npm install",
+      "render-build script",
+      "typecheck/full suite",
+      "SQL",
+      "server/browser launch",
+      "source edits",
+      "publish/push/deploy",
+      "hosted config",
+      "payment",
+      "real email"
+    ]
+  },
+  "recordsScope": "docs/health-launch/ql-build-20261012/ plus existing integrator own continuity/handoff",
+  "outputs": "Private isolated dist and private dependency caches/scratch logs only. Retain completed artifacts for review; no broad cleanup."
+}
