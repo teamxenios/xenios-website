@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-12T20:03:48Z",
+  "kind": "CANDIDATE_SPECIFIC_REMAINING_RELEASE_REQUIREMENTS",
+  "instruction": {
+    "path": "C:/Users/sboad/.codex/attachments/0ada60b9-885b-4cdd-abe9-e66aaa035244/Pasted text.txt",
+    "sha256": "389777721040734d728c1b402c6a57c4885197d2a9ae0cda03b5eb199c06f675",
+    "interpretation": "User expressly designated pasted text as request. Existing candidates preserved; review and actual remaining requirements, not new corrections or combined release."
+  },
+  "originalReviewer": {
+    "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "title": "Multi-document project review",
+    "delivery": "ACTUAL_USER_RELAY_CONFIRMED_BY_ORIGINAL_REVIEWER_COMMIT",
+    "acknowledgment": "a2ffb6cff621723adf3c42a8c71569f875009250:docs/review/xenios-health-launch-review-20260930/REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md",
+    "quoteMeaning": "Samuel relayed coordinator submission in original chat; registrations and d67 handoff read from Git. All3 ACKNOWLEDGED_AND_IN_REVIEW, not accepted.",
+    "targets": [
+      {
+        "doc": 99,
+        "task": "DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012",
+        "revision": 2,
+        "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+        "tree": "28617c360f487803baa556d33158c4e95df471f1",
+        "records": "42ac49e640a53726107990ec95c977d7f1f3cc56",
+        "verdict": null
+      },
+      {
+        "doc": 100,
+        "task": "TC25-SIX-BASELINE-EXACT-SCOPE-REVIEW-20261012",
+        "revision": 1,
+        "source": "f6da5aa6154cc62bdbec34ce29a0a5759fb84136",
+        "tree": "fce45cdea651b8728f172439771cd34b4ff3a1b4",
+        "records": "f9d34be4d4d106c03620a23e8eb31915f63552d6",
+        "registration": "docs/coordination/launch-coordination-20261005/TC25_SIX_BASELINE_SCOPE_REVIEW_REGISTRATION_20261012.json",
+        "note": "Third target read from actual registration; reviewer uses shortened task label but exact source matches.",
+        "verdict": null
+      },
+      {
+        "doc": 101,
+        "task": "ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-SOURCE-REVIEW-20261012",
+        "revision": 1,
+        "source": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+        "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8",
+        "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937",
+        "verdict": null
+      }
+    ],
+    "scope": "Separate source dispositions; submitted receipts not reviewer-executed tests. Doc95/97 stay closed. Earlier transport failure retained as history, no longer current delivery blocker.",
+    "duplicateRequestSent": false
+  },
+  "selection": {
+    "qualifiedReleaseCandidate": null,
+    "provisionalQualificationTarget": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+    "reason": "QL has exact build/protection plus applicable focused evidence; support is smaller source diff but lacks those own-tree gates and carries old manifest hashes. Neither independently accepted/qualified yet. Do not combine automatically.",
+    "truthfulQLScope": "Request recovery corrections and fail-closed payment-transition hold, not operational paid checkout.",
+    "truthfulSupportScope": "Uncertain-outcome wording and draft-preservation regressions, not backend idempotency or QL correction."
+  },
+  "governingEvidence": [
+    {
+      "path": ".github/workflows/checks.yml",
+      "lines": [
+        19,
+        29,
+        39,
+        53,
+        54
+      ],
+      "meaning": "Full suite, typecheck, build, protection and route uniqueness configured. Configuration is not proof jobs ran or branch protection enforcement. CI major20 is not exact20.19 runtime attestation."
+    },
+    {
+      "path": "docs/coordination/release-manifest.schema.json",
+      "line": 209,
+      "meaning": "focused/fullSuite/typecheck/build/diffCheck required"
+    },
+    {
+      "path": "scripts/acceptance/verify-release-manifest.ts",
+      "line": 1274,
+      "meaning": "Requires PASS+command+checkedAt for each; also rollback and smoke records. Declared status does not authenticate logs."
+    },
+    {
+      "path": "tsconfig.json",
+      "line": 9,
+      "meaning": "Excludes *.test.ts, not *.test.tsx. Both submitted candidates change .test.tsx, so old typecheck cannot be silently carried."
+    },
+    {
+      "path": "docs/coordination/launch-coordination-20261005/ACTUAL_FOUNDER_MANIFEST_CUSTODY_AND_CONDITIONAL_RELEASE_AUTHORITY_20261012.json",
+      "meaning": "Current conditional release authority requires exact candidate/original review/applicable evidence/legal-config/dependency compatibility/rollback/side-effects/served proof. Not a new policy decision."
+    }
+  ],
+  "remaining": {
+    "QL": {
+      "carry": [
+        "64client and66server as separate runs with recorded unchanged-byte applicability",
+        "Exact7a2 CLI PASS",
+        "Exact7a2 companion36PASS",
+        "Exact7a2 production buildPASS with warnings"
+      ],
+      "missing": [
+        "Original independent disposition",
+        "Candidate-applicable full suite and typecheck PASS",
+        "Route uniqueness executed result",
+        "Release diff-scan/manifest/site records applicable exact-candidate qualification",
+        "Applicable supported request/status/staff-readback browser/journey evidence",
+        "Installed dependency compatibility and current legal/config inputs for released scope",
+        "Exact deploy payload/destination/rollback/stop and side-effect record, postdeploy served identity and smoke"
+      ]
+    },
+    "support": {
+      "carry": [
+        "Own13 focused testsPASS"
+      ],
+      "missing": [
+        "Original independent disposition",
+        "Candidate-applicable full suite/typecheck/build",
+        "Own exact protection disposition/CLI/companion checks; two historical stale baseline entries need existing protection custody",
+        "Route uniqueness and release diff/manifest/site records",
+        "Applicable support browser path proof",
+        "Same conditional release destination/rollback/config/dependency/postdeploy requirements"
+      ]
+    },
+    "fullSuiteAndTypecheckDecision": "Required genuine missing qualification for both candidates. No exemption/candidate-applicable old exact-tree evidence found. New execution needs frozen command/runtime/dependencies, finite one-heavy window, no broad/rerun consent inferred.",
+    "historicalEvidence": "Do not relabel production794 or different full-composition trees; preserve refused/skipped/failed runs. Combining candidates requires actual combined-tree checks."
+  },
+  "warnings": {
+    "buildResult": "PASS_WITH_WARNINGS_NOT_WARNING_FREE",
+    "mixedImport": {
+      "module": "client/src/research/pages/adminx/AdminResearchHome.tsx",
+      "imports": "adminx-section.tsx staticAdminScreen at3,lazyHome at12 plus shared exports imported by pages",
+      "baseline": "Same relevant source/config/dependency blobs at794..7a2",
+      "impact": "Prevents independent home-module splitting; admin section retains separate chunk. No authority bypass demonstrated."
+    },
+    "mainChunk": {
+      "bytes": 506335,
+      "reportedGzipKB": 152.26,
+      "advisoryThreshold": 500000,
+      "excessBytes": 6335,
+      "baselineComparison": "No exact794 artifact found; cannot claim unchanged size or regression."
+    },
+    "disposition": "Nonfatal under inspected unchanged build/config/workflow; no warning-fatal/hard500kB rule found. Keep recorded for original reviewer, no threshold suppression/refactor. No measured performance clearance."
+  },
+  "catalog": {
+    "QL": {
+      "source": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+      "datasetBlob": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+      "products": 420,
+      "variants": 420,
+      "conditionalProjection": 420
+    },
+    "full": {
+      "source": "f9d34be4d4d106c03620a23e8eb31915f63552d6",
+      "datasetBlob": "4a1bb489a22e1d8f03649b4404f4c3430b3bbcf7",
+      "products": 424,
+      "variants": 424,
+      "workbookRows": 426,
+      "conditionalProjection": 423
+    },
+    "sharedRawIdentities": 418,
+    "duplicateVariantIds": 0,
+    "QLOnly": [
+      {
+        "group": "GRP-0402",
+        "product": "Hexarelin5mg",
+        "offering": "mo_2aaac3a06aa0dd6b2923",
+        "variant": "mov_7c55d415a9574e9ebda7"
+      },
+      {
+        "group": "GRP-0407",
+        "product": "Oxytocin10mg",
+        "offering": "mo_1dd0658eb7bf15f91900",
+        "variant": "mov_256cb0423eb6d2a77f65"
+      }
+    ],
+    "fullOnly": [
+      {
+        "group": "GRP-0421",
+        "offering": "mo_c4698a34aaaf7aec47b2",
+        "variant": "mov_14b4034bef7ef37d9fc8"
+      },
+      {
+        "group": "GRP-0422",
+        "offering": "mo_2babbadce5172426bde2",
+        "variant": "mov_f61758881da2b7bfa539"
+      },
+      {
+        "group": "GRP-0423",
+        "offering": "mo_f40119d9a74b2af15be6",
+        "variant": "mov_cb3642e564392fa86dda"
+      },
+      {
+        "group": "GRP-0424",
+        "offering": "mo_c77c4659a519b58ac795",
+        "variant": "mov_be54afb7419ed7240752"
+      },
+      {
+        "group": "GRP-0425",
+        "offering": "mo_3eec45f31e19795343f1",
+        "variant": "mov_c26ef47dfbbe46f7e090"
+      },
+      {
+        "group": "GRP-0426",
+        "offering": "mo_a535d8a2951bc7c6c0a3",
+        "variant": "mov_3c8ca424d78153fd931a"
+      }
+    ],
+    "bindings": "Full six remain binding_pending; legacy GRP0402/0407 bindings archived_not_transferred. Formulation hold0422 preserved.",
+    "shipping": {
+      "group": "GRP-0364",
+      "offering": "mo_003b0c272099eeb1f114",
+      "variant": "mov_9b65ad5bb184691e19e0",
+      "rawRetainedBoth": true,
+      "fullExcludedByStableIdentity": true,
+      "QL": "Visible for reconciliation, ordering held"
+    },
+    "arithmetic": "420 -2 superseded legacy identities +6 canonical identities -1 shipping exclusion =423",
+    "visibility": "Existing flag/admission/search/paging visibility unchanged; request_access not purchase permission. No count padding/truncation/hiding change made. Counts not live stock/price release/availability.",
+    "commonTextDelta": "LibidoCream mo_3d043e2a35ceaa045986/mov_06beec21c59fe7842f18 punctuation em-dash to colon; identity/Care state unchanged.",
+    "evidenceLevel": "Builtin read-only exact Git JSON/source comparison, not application run or original-review acceptance."
+  },
+  "payment": {
+    "owner": "Existing payment owner, operational verifierSamuel Boadu",
+    "historicalDiscovery": "Completed; not repeated",
+    "qualifiedMethod": null,
+    "firstUnansweredHumanField": {
+      "person": "Samuel Boadu",
+      "field": "ONE intended method's existing current protected instruction/configuration reference or actual custodian"
+    },
+    "remainingCurrentEvidence": [
+      "Receiving-owner and permitted-product-use confirmation",
+      "Authorized observation access",
+      "Independent matching and received/held/reversal criteria",
+      "Correct final invoice/version/amount/currency and fulfillment connection"
+    ],
+    "Zelle": "HELD",
+    "scope": "No destinations/secrets/raw payment evidence requested or copied; no real payment verification fabricated."
+  },
+  "production": {
+    "newRelease": null,
+    "mutation": false,
+    "lastReadOnlyKnownSource": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "lastObservation": "2026-10-12T19:25:19.1148527Z; Render association plushealth200, not served SHA attestation",
+    "destination": "srv-d8s9vej7uimc7384dfcg in tea-d8nhh6a8qa3s73f4ocj0",
+    "rollbackCandidate": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d; must reverify current service and predecessor immediately before actual release",
+    "stop": "No qualified original disposition or full remaining checks yet; no deployment"
+  },
+  "actionsThisAssessment": {
+    "sourceEdits": false,
+    "applicationTests": false,
+    "buildRerun": false,
+    "fullSuiteRerun": false,
+    "installation": false,
+    "hostedWrites": false,
+    "emails": false,
+    "payment": false,
+    "push": false,
+    "merge": false,
+    "deploy": false
+  }
+}
