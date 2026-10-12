@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-12T20:13:00Z",
+  "status": "READ_ONLY_EFFECT_INVENTORY_NO_SUITE_EXECUTION",
+  "candidate": "7a2bf7533f5c26d98e0bdb34a862852942b2914e",
+  "tree": "28617c360f487803baa556d33158c4e95df471f1",
+  "worktree": "C:/Users/sboad/.codex/worktrees/ql-build-20261012/xenios-website",
+  "config": {
+    "path": "vitest.config.ts",
+    "blob": "242428c09e76d16da672e70e48bb885f90c71026",
+    "selectedFiles": {
+      "server": 606,
+      "client": 323,
+      "shared": 42,
+      "total": 971
+    },
+    "countsMeaning": "Static tracked-file universe, not collected/executed test cases.",
+    "defaults": "Existing Vitest4.1.10 forks, isolation true; no custom setup/globalsetup/plugins/exclusions; per-file jsdom; no assertion timeout changes."
+  },
+  "authority": "Actual user0ada asks remaining applicable qualification, not silent gate exemption or broadened live/SQL actions. Concrete complete-suite effects need coordinated disposition before execution. Existing static compiler binding remains separate.",
+  "auditMethod": "Three read-only helpers inspected existing config, selected tests, transitive paths and historical receipts. Main read actual CI selector/Docker body. Static source inventory is not an OS side-effect guarantee or independent review.",
+  "proposedCommand": [
+    "<pinned fullpath Node20.19>",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "vitest.config.ts",
+    "--pool=forks",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--allowOnly=false",
+    "--reporter=default",
+    "--reporter=json",
+    "--outputFile.json=<fresh owned report>"
+  ],
+  "boundsProposal": {
+    "wallSeconds": 1800,
+    "workers": 1,
+    "retries": 0,
+    "heap": "Per-process Node bound to be selected with current resource preflight, not aggregate kernel cap.",
+    "status": "PROPOSAL_NOT_A_RESERVATION"
+  },
+  "effects": [
+    {
+      "file": "server/release-control-plane.test.ts",
+      "lines": "214,1601-1768",
+      "effect": "Truthy CI or XENIOS_RUN_PG16_VERIFIER=1 runs Docker postgres:16, applies/replays local SQL and removes container. No network-none; implicit image pull possible; some calls unbounded and cleanup exception swallowed.",
+      "disposition": "Do not inherit CI. CI='false' or '0' still enables this. Conditional skipped result with CI absent is not CI-equivalent full qualification."
+    },
+    {
+      "file": "server/research/products-diagnostics/variant-strength-write-gate-sql.test.ts",
+      "lines": "60,536-805",
+      "effect": "Same truthy CI/opt-in Docker selector, local migrations/replay/verifier/rollback.",
+      "disposition": "Separate exact local-DB execution scope before activation; no SQL run yet."
+    },
+    {
+      "file": "server/research/early-access/durable-restart.pg.test.ts",
+      "lines": "19-22,48-76",
+      "effect": "Any XENIOS_TEST_PG_URL enables actual DB writes.",
+      "disposition": "Unset; no inherited target."
+    },
+    {
+      "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+      "lines": "39-40,255-320",
+      "effect": "Any XENIOS_TEST_PG_URL enables actual schema/migration/fixture writes.",
+      "disposition": "Unset; no inherited target."
+    },
+    {
+      "file": "server/research/partners/referral-v1-database.test.ts and referral-v1-touch-attribution.database.test.ts",
+      "effect": "XENIOS_REFERRAL_V1_DISPOSABLE_PG=1 enables rehearsal using WSL PostgreSQL or Docker and SQL.",
+      "disposition": "Unset; separate optional DB qualification."
+    },
+    {
+      "file": "server/research/assisted-order/production-boot.test.ts",
+      "lines": "85-89,126-178,258 onward",
+      "effect": "Four unconditional real tsx application boots. Explicit synthetic env nevertheless supplies fixed Supabase127.0.0.1:54321, placeholder provider keys, founding activation. Actual server/index.ts listener0.0.0.0; starts outbox polling after60s when URL/key present. child.kill lacks awaited descendant exit.",
+      "disposition": "UNRESOLVED complete-suite containment/owned endpoint/listener/cleanup scope. No automatic removal; a run excluding this file must remain PARTIAL with this group NOT_RUN."
+    },
+    {
+      "file": "server/research/early-access/release/first-release-review.test.ts",
+      "lines": "19-23,243-245",
+      "effect": "UPDATE_FIRST_RELEASE_DOC=1 writes tracked docs.",
+      "disposition": "Unset."
+    },
+    {
+      "file": "121 server files using Supertest",
+      "effect": "May bind ephemeral wildcard local listeners, not universally loopback-only.",
+      "disposition": "Fresh scope must admit synthetic local listeners; not managed HTTP."
+    },
+    {
+      "file": "server/research/e2e/new-account-qa-harness.test.ts",
+      "lines": "41",
+      "effect": "Fixed local port5237.",
+      "disposition": "Check/reserve exact port without stopping unrelated occupant."
+    },
+    {
+      "file": "client/src/research/early-access/catalog-contract.test.tsx",
+      "effect": "Supertest on real early-access registration with synthetic identity/config and real deployment catalog reader.",
+      "disposition": "Scrub credentials; exact committed catalog only."
+    },
+    {
+      "file": "client/src/research/account-portal/views/care-route-contract.test.tsx",
+      "effect": "Supertest on actual routes with memory ports/synthetic member.",
+      "disposition": "Admit synthetic local HTTP, not managed Care."
+    },
+    {
+      "file": "client tracking.test.ts",
+      "effect": "Positive control inserts external Meta script DOM node.",
+      "disposition": "Keep existing jsdom without external-resource loading; not real-browser substitute."
+    },
+    {
+      "file": "Vitest/Vite and fixture dependencies",
+      "effect": "Execute dependencies, write normal private caches/temp fixtures; some tests spawn read-only Git or dry-run CLI.",
+      "disposition": "Private physical deps/scratch; allow pinned Git PATH; inspect post-source dirt; static scanning not kernel containment."
+    }
+  ],
+  "dataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "blob": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+    "products": 420,
+    "bound": 417,
+    "reader": "Unconditional real whole-catalog coverage reader; missing committed dataset throws. Explicitly pin own dataset or leave override unset; no external override/private workbook injection. Keep legitimate skips visible."
+  },
+  "history": [
+    {
+      "name": "ADP-G1",
+      "pass": 19443,
+      "fail": 3,
+      "skip": 85,
+      "exit": 1,
+      "seconds": 1426.967,
+      "applicable": false
+    },
+    {
+      "name": "September resource-hub c350ab1",
+      "pass": 15997,
+      "skip": 59,
+      "exit": 0,
+      "seconds": 960.11,
+      "pool": "threads",
+      "applicable": false
+    },
+    {
+      "name": "October5 aggregate",
+      "result": "NOT_RUN after low RAM observations",
+      "applicable": false
+    },
+    {
+      "name": "September failed initial runs",
+      "seconds": [
+        1276.31,
+        2707.77
+      ],
+      "limit": "Latter lacks terminal exit receipt; not clean aggregate",
+      "applicable": false
+    }
+  ],
+  "alternatives": "One unfiltered exact-source run preferred if complete effects scope/reservation admitted. Existing disjoint server/shared/client groups possible, but compare executed file union to971 and preserve separate receipts, skipped/failed/NOT_RUN states. Do not call partitioned runs a single aggregate.",
+  "excludedByExistingConfig": "Standalone scripts/evidence/*.test.mjs and node:test scripts have separate procedures. No new exclusions introduced.",
+  "result": "NOT_RUN. No full-suite command, DB, provider, network call, installation, source edit or test modification performed by this preflight."
+}
