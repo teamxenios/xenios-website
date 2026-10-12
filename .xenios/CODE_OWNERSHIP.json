@@ -5,10 +5,17 @@
       "id": "account-support-outcome-two-paths-20261012",
       "task": "ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-20261012",
       "session": "codex-accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
+      "handoffAt": "2026-10-12T19:34:34Z",
+      "source": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616",
+      "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937",
       "claimedAt": "2026-10-12T19:28:00Z",
-      "heartbeatAt": "2026-10-12T19:28:00Z",
-      "paths": ["client/src/research/account-portal/views/SupportView.tsx", "client/src/research/account-portal/views/support-documents.test.tsx", "docs/health-launch/account-support-outcome-20261012/"],
+      "heartbeatAt": "2026-10-12T19:29:48.174Z",
+      "paths": [
+        "client/src/research/account-portal/views/SupportView.tsx",
+        "client/src/research/account-portal/views/support-documents.test.tsx",
+        "docs/health-launch/account-support-outcome-20261012/"
+      ],
       "scope": "Current coordinator exact two-path custody acknowledgment; truthful uncertainty copy and regression. Preimages e9c20bf/ddffbf2 verified at production794 and21d. No old reservation released; no API/payment/price/route/manifest changes. Helper may implement solely inside this lease; root owns Git and execution."
     },
     {

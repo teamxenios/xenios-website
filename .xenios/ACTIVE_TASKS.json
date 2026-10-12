@@ -5,7 +5,8 @@
     {
       "id": "ACCOUNT-SUPPORT-UNCERTAIN-OUTCOME-20261012",
       "owner": "codex-accepted-source-integration-20261005",
-      "state": "claimed",
+      "state": "qa",
+      "handoff": {"sha": "a4a44bf6436f7e4ff21d5d5ebcda35b478c02616", "tree": "2c123d9ff27a13f1a3871ce5672dddd554d1dcc8", "records": "fa7de0a596bac6c8a1b290fd5b2a7358c26a5937", "file": ".xenios/handoffs/2026-10-12-tensa-launch-reconciled-handoff.json", "result": "13_FOCUSED_PASS_NOT_RELEASE_QUALIFIED", "at": "2026-10-12T19:34:34Z"},
       "claimedAt": "2026-10-12T19:28:00Z",
       "leaseId": "account-support-outcome-two-paths-20261012",
       "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
