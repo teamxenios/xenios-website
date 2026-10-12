@@ -585,13 +585,13 @@
       "tool": "OpenAI Codex desktop",
       "lane": "health-quick-order",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-12T02:09:44.026Z",
-      "note": "Doc87 assignment4: fresh four-evidence lease after actual approvedDC1 serial handoff. Source38915cf4 frozen; sharedbinding/currentness/intake/map records only. All source/seals remain nonfinal pending originalr4 review and pinreconfirmation. LOCAL_ONLY/NOT_RUN.",
-      "sourceSha": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
-      "handoff": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-owner-ack.json",
-      "sourceTree": "99935681a3aaf62ae34cbcd2b2bf2c99142f74d5",
+      "heartbeatAt": "2026-10-12T02:17:09.200Z",
+      "note": "Doc87 assignment4 four-evidence rebind complete: all102pins checked inbothreceipts,0mismatches,3changedpins; fiveacceptedcurrentness pins and8bdefinition unchanged. Exact approvedDC1 incorporated as sourceidentity. Source/GitwriterSTOPPED afterthisrecordscommit; freshleaseHANDOFF. Originalr4delta/pinreconfirmation pending; allsealsNON_FINAL,LOCAL_ONLY/NOT_RUN.",
+      "sourceSha": "38915cf4318594607098717389113869e3eff0da",
+      "handoff": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-rebind-handoff.json",
+      "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
       "sourcePushStatus": "LOCAL_ONLY_NOT_AUTHORIZED",
       "lastPushedBaseline": "1631323d7cf60f145141e0f82586e64ef7c7d637",
       "acceptance": {
@@ -1530,7 +1530,7 @@
           "records": "0d4309c0159db7bee96e3989e882528efec60de3"
         }
       },
-      "currentSourceAcceptance": "NEW_VERIFIER_AND_RECORDS_PENDING_ORIGINAL_R4_REVIEW",
+      "currentSourceAcceptance": "PENDING_ORIGINAL_REVISION4_DELTA",
       "doc71FixtureContinuation": {
         "coordinatorCheckpoint": "238943cb3041c559252c99129afe112ddb065180",
         "predecessorSource": "357890561160d59eb649505c6c46e9e5b65a3f08",
@@ -2249,7 +2249,7 @@
         "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
         "revision": 4,
         "compositionReviewRevision": 4,
-        "state": "ACTUAL_CUSTODY_ACK_FRESH_FOUR_EVIDENCE_LEASE_ACTIVE",
+        "state": "FOUR_EVIDENCE_REBIND_COMPLETE_WRITER_STOPPED_PENDING_ORIGINAL_R4",
         "lease": "c87a4ffd-12e1-477d-8122-525b5ecd3b3f",
         "base": "77168a903f81d378d55562aeca959bde2063493f",
         "source": "38915cf4318594607098717389113869e3eff0da",
@@ -2262,7 +2262,14 @@
         ],
         "ack": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-owner-ack.json",
         "execution": "NOT_RUN",
-        "publication": "LOCAL_ONLY"
+        "publication": "LOCAL_ONLY",
+        "completedAt": "2026-10-12T02:17:09.200Z",
+        "handoff": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-rebind-handoff.json",
+        "recordsCommit": "02c1748dee7c1d7e6453aaf993182dcc80e3db65",
+        "recordsTree": "a60b61a0566d8c0e1f8de642e9554cfa43626f4b",
+        "sourceWriterStopped": true,
+        "gitWriterStopped": true,
+        "next": "Existing coordinator collects this exact source/records/handoff and registers the SAME original composition review task revision4 once. Original bounded Doc87/DC1 delta and every-pin reconfirmation remain unmet. Only afterward may a separately sequenced record finalize currentness and the intake dependency; intake own source seal requires actual composition acceptance."
       },
       "doc83Review": {
         "review": "16d2731c928cdd40c810df764b14b68f0d995eb9",
@@ -2272,39 +2279,29 @@
         "currentnessSourceUnchanged": true
       },
       "currentDoc83Checkpoint": {
-        "source": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
-        "sourceTree": "99935681a3aaf62ae34cbcd2b2bf2c99142f74d5",
-        "correctionMap": {
-          "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
-          "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
-          "gitBlob": "cf5f3c206167e207f72643948976edda667bc0ac",
-          "rawSha256": "6a1077c64774f332d26d12c49473118085b8599707e35f6056f4388e1d8fa56f",
-          "sha256lf": "6a1077c64774f332d26d12c49473118085b8599707e35f6056f4388e1d8fa56f",
-          "bytes": 981540
-        },
-        "verifier": {
-          "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
-          "path": "supabase/verification/research_health_quick_order_local.mjs",
-          "gitBlob": "ff2f95d727588370eca37265bf9a60bd10d6bd73",
-          "rawSha256": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
-          "sha256lf": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
-          "bytes": 145384
-        },
-        "runtimeOrigin": "69d9e32a5df899985b2877e06e1a778060a021f9",
-        "runtimeAcceptance": "DOC87_ACCEPTED_WITH_NAMED_LIMITS",
-        "sourceAcceptance": "NEW_VERIFIER_AND_RECORDS_PENDING_ORIGINAL_R4_REVIEW",
-        "receiptRebind": "NOT_PERFORMED",
-        "currentnessBinding": "REVISION3_CONFIRMED_NOT_FINAL_REVISION4_RECONFIRMATION_PENDING",
-        "handoff": ".xenios/handoffs/2026-10-12-doc87-verifier-correction-handoff.json",
-        "writerStopped": true,
+        "source": "38915cf4318594607098717389113869e3eff0da",
+        "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+        "candidateCommit": "114d5177cfe7fe26fe57b0189d271cba49407477",
+        "candidateTree": "a449e5345f368c6344341e99a389c7c3638e06de",
+        "currentnessReceiptRecords": "71ef82329164513bd2838102a8e33d9499370fb4",
+        "intakeReceiptRecords": "0679c2b7e644af91b004da7ccc42093abef1ce64",
+        "recordsCommit": "02c1748dee7c1d7e6453aaf993182dcc80e3db65",
+        "recordsTree": "a60b61a0566d8c0e1f8de642e9554cfa43626f4b",
+        "handoff": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-rebind-handoff.json",
+        "sourceAcceptance": "PENDING_ORIGINAL_REVISION4_DELTA",
+        "runtime69dAcceptance": "DOC87_ACCEPTED_WITH_NAMED_LIMITS",
+        "currentnessReceiptAcceptance": "REVISION4_PENDING_ORIGINAL_PIN_RECONFIRMATION",
+        "finalCompositionSeal": false,
+        "sourceWriterStopped": true,
+        "gitWriterStopped": true,
         "execution": "NOT_RUN",
         "publication": "LOCAL_ONLY"
       },
       "blockedOn": [
-        "Exact authorized DC1 composition-test successor plus serial handoff; no automatic evidence lease reclaim.",
-        "Revision4 whole-family binding/receipt freeze and original narrow delta/every-pin reconfirmation; then source finalization in the Doc87 order.",
-        "Separate operational prerequisites: implemented-S descriptor/census and real input, connection, recipient, checkout bindings.",
-        "Separate protected dispositions and exact-target qualification under fresh authority; then installation/deployment/activation authority."
+        "Same originalreviewer exactrevision4 bounded disposition and every-pinreconfirmation.",
+        "Permitted source-receipt finalization in stated order only after actual review prerequisites.",
+        "Separate implemented-S descriptor/census and real inputs/connection/recipient/checkout readiness.",
+        "Separate protected dispositions, fresh exact-target execution authority, installation/deployment/activation authority."
       ],
       "doc83SupersededContinuityText": {
         "note": "Doc81 r3 acknowledged at exact clean6bf2579 after actual integrator handoff. Same af843 full21 identity/history/authority reactivated for narrowed verifier/intake/evidence stage only. Four accepted currentness SQL bytes and immutable sharedbinding frozen. First verifier source, separate provisional intake successor; PENDING receipts/reviewCommit null, LOCAL_ONLY/NOT_RUN."
@@ -2421,36 +2418,25 @@
         "currentSourceAcceptance": "DOC87_RUNTIME_ACCEPTED_WITH_NAMED_LIMITS_VERIFIER_CORRECTION_PENDING"
       },
       "currentDoc87Checkpoint": {
-        "source": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
-        "sourceTree": "99935681a3aaf62ae34cbcd2b2bf2c99142f74d5",
-        "correctionMap": {
-          "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
-          "path": "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json",
-          "gitBlob": "cf5f3c206167e207f72643948976edda667bc0ac",
-          "rawSha256": "6a1077c64774f332d26d12c49473118085b8599707e35f6056f4388e1d8fa56f",
-          "sha256lf": "6a1077c64774f332d26d12c49473118085b8599707e35f6056f4388e1d8fa56f",
-          "bytes": 981540
-        },
-        "verifier": {
-          "commit": "5a0206c4cfd5f8efb85573f37678c1fe87279da5",
-          "path": "supabase/verification/research_health_quick_order_local.mjs",
-          "gitBlob": "ff2f95d727588370eca37265bf9a60bd10d6bd73",
-          "rawSha256": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
-          "sha256lf": "2d44e299baa4203d91fca435e4fe547b90776c188c4181aa9ee8ca5665ff5614",
-          "bytes": 145384
-        },
-        "runtimeOrigin": "69d9e32a5df899985b2877e06e1a778060a021f9",
-        "runtimeAcceptance": "DOC87_ACCEPTED_WITH_NAMED_LIMITS",
-        "sourceAcceptance": "NEW_VERIFIER_AND_RECORDS_PENDING_ORIGINAL_R4_REVIEW",
-        "receiptRebind": "NOT_PERFORMED",
-        "currentnessBinding": "REVISION3_CONFIRMED_NOT_FINAL_REVISION4_RECONFIRMATION_PENDING",
-        "handoff": ".xenios/handoffs/2026-10-12-doc87-verifier-correction-handoff.json",
-        "writerStopped": true,
+        "source": "38915cf4318594607098717389113869e3eff0da",
+        "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
+        "candidateCommit": "114d5177cfe7fe26fe57b0189d271cba49407477",
+        "candidateTree": "a449e5345f368c6344341e99a389c7c3638e06de",
+        "currentnessReceiptRecords": "71ef82329164513bd2838102a8e33d9499370fb4",
+        "intakeReceiptRecords": "0679c2b7e644af91b004da7ccc42093abef1ce64",
+        "recordsCommit": "02c1748dee7c1d7e6453aaf993182dcc80e3db65",
+        "recordsTree": "a60b61a0566d8c0e1f8de642e9554cfa43626f4b",
+        "handoff": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-rebind-handoff.json",
+        "sourceAcceptance": "PENDING_ORIGINAL_REVISION4_DELTA",
+        "runtime69dAcceptance": "DOC87_ACCEPTED_WITH_NAMED_LIMITS",
+        "currentnessReceiptAcceptance": "REVISION4_PENDING_ORIGINAL_PIN_RECONFIRMATION",
+        "finalCompositionSeal": false,
+        "sourceWriterStopped": true,
+        "gitWriterStopped": true,
         "execution": "NOT_RUN",
         "publication": "LOCAL_ONLY",
-        "controllingReview": "77a2caeda45ffc664d7ab71ab24aa163dda308b6",
-        "taskRevision": 3,
-        "mapRevision": 4,
+        "assignmentRevision": 4,
+        "mapRevision": 5,
         "compositionReviewRevision": 4
       },
       "doc87Revision3History": {

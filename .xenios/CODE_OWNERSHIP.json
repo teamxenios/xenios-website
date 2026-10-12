@@ -4193,7 +4193,7 @@
       "task": "QUICK-ORDER-DOC83-BUILDER-CORRECTION-20261011",
       "revision": 4,
       "session": "codex-health-quick-order-20261005",
-      "state": "active",
+      "state": "handoff",
       "paths": [
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-bindings-20261009.json",
         "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-doc71-20261009.json",
@@ -4201,16 +4201,26 @@
         "docs/health-launch/quick-order-20261005/evidence/doc71-disabled-source-correction-map-20261009.json"
       ],
       "claimedAt": "2026-10-12T02:09:44.026Z",
-      "heartbeatAt": "2026-10-12T02:09:44.026Z",
+      "heartbeatAt": "2026-10-12T02:17:09.200Z",
       "worktree": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
       "branch": "codex/accepted-source-integration-20261005",
       "recordsBase": "77168a903f81d378d55562aeca959bde2063493f",
       "sourceBase": "38915cf4318594607098717389113869e3eff0da",
       "sourceTree": "b06c1a3c0b55e98f2fac3e3bfc47f7772fc4223b",
-      "stage": "DOC87_R4_SERIAL_FOUR_EVIDENCE_REBIND",
+      "stage": "FOUR_EVIDENCE_REBIND_FROZEN_PENDING_ORIGINAL_R4",
       "ack": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-owner-ack.json",
       "sourceWrites": [],
-      "priorLeaseNotReclaimed": "83d2a260-aaed-4f3b-aca7-793f7a43c6ad"
+      "priorLeaseNotReclaimed": "83d2a260-aaed-4f3b-aca7-793f7a43c6ad",
+      "handedOffAt": "2026-10-12T02:17:09.200Z",
+      "sourceWriterStopped": true,
+      "gitWriterStopped": true,
+      "writerStopped": true,
+      "stopEffectiveAt": "COHERENT_HANDOFF_RECORDS_COMMIT_COMPLETION",
+      "sourceCommit": "38915cf4318594607098717389113869e3eff0da",
+      "recordsCommit": "02c1748dee7c1d7e6453aaf993182dcc80e3db65",
+      "recordsTree": "a60b61a0566d8c0e1f8de642e9554cfa43626f4b",
+      "handoff": ".xenios/handoffs/2026-10-12-doc87-r4-four-evidence-rebind-handoff.json",
+      "automaticReclaim": false
     }
   ],
   "rules": [
