@@ -210,6 +210,17 @@ const FORBIDDEN_AFTER_UNCERTAIN_MESSAGE =
 const FORBIDDEN_FIRST_ATTEMPT_MESSAGE =
   "Your Early Access session ended and nothing was saved. Unlock Early Access again and enter your request again.";
 
+// The page no longer owns its stored attempt: the protected-path sweep ran
+// while it stayed mounted, or another attempt took the store. Lost ownership
+// alone proves nothing about the session and nothing about what the server
+// holds, so neither copy claims an ended session or an unsaved request. An
+// attempt that left this page (a stamp was issued and never released, or an
+// uncertain outcome) may already be saved, and only status or support can say.
+const STORE_LOST_MESSAGE =
+  "This request can no longer be sent from this page. Return to Early Access and enter your request again.";
+const STORE_LOST_AFTER_ATTEMPT_MESSAGE =
+  "This request can no longer be sent from this page, and an earlier attempt may already have been saved. Do not resubmit it: check your request status or contact support with the time of your attempt.";
+
 type SubmitFailureKind = "uncertain" | "drift" | "conflict" | "refused";
 
 // Classifies a failed submission by what the server can be KNOWN to have done.
@@ -448,17 +459,39 @@ export function AssistedOrderPage({
   // fail keeps working in memory, exactly as before.
   const storedOnce = useRef(false);
   const storeFailed = useRef(false);
+  // The identity this page last managed to write. While its own writes fail,
+  // the store may lag behind the page by exactly this identity, and that lag
+  // is the only thing a failed write forgives.
+  const lastPersisted = useRef<AssistedOrderAttemptIdentity | null>(null);
   const persistDraft = (draft: AssistedOrderDraftInput): void => {
     if (storeAssistedOrderDraft(draft)) {
       storedOnce.current = true;
       storeFailed.current = false;
+      lastPersisted.current = {
+        idempotencyKey: draft.idempotencyKey,
+        acceptedAt: draft.acceptedAt ?? null,
+      };
     } else {
       storeFailed.current = true;
     }
   };
-  const ownsAttempt = (attempt: AssistedOrderAttemptIdentity): boolean =>
-    storeFailed.current ||
-    attemptOwnsStoredDraft(attempt, storedOnce.current, probeAssistedOrderDraft());
+  const ownsAttempt = (attempt: AssistedOrderAttemptIdentity): boolean => {
+    const probe = probeAssistedOrderDraft();
+    if (attemptOwnsStoredDraft(attempt, storedOnce.current, probe)) {
+      return true;
+    }
+    // A readable store that is empty after this page's own write, or that
+    // holds any other identity, is never this page's to touch, whatever its
+    // own write failures say. Only its last successful write is forgiven.
+    const last = lastPersisted.current;
+    return (
+      storeFailed.current &&
+      probe.kind === "present" &&
+      last !== null &&
+      probe.draft.idempotencyKey === last.idempotencyKey &&
+      probe.draft.acceptedAt === last.acceptedAt
+    );
+  };
   const [, navigate] = useLocation();
 
   useEffect(() => {
@@ -857,6 +890,20 @@ export function AssistedOrderPage({
     }
     if (selections.size === 0) {
       setError("Select at least one product.");
+      return;
+    }
+    // Ownership preflight, before anything is stamped, written or sent. A page
+    // whose stored attempt was taken away while it stayed mounted (the
+    // protected-path sweep), or replaced by another attempt, may neither
+    // reclaim the store nor send. Lost ownership alone proves nothing about
+    // the session or about earlier attempts, so the copy claims neither; an
+    // attempt that left this page may already be saved.
+    if (!ownsAttempt({ idempotencyKey, acceptedAt })) {
+      setError(
+        attemptState === "uncertain" || acceptedAt !== null
+          ? STORE_LOST_AFTER_ATTEMPT_MESSAGE
+          : STORE_LOST_MESSAGE,
+      );
       return;
     }
     // Stamp once per attempt key, then reuse: a refresh after a lost response

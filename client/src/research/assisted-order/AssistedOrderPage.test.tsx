@@ -1458,8 +1458,45 @@ describe("AssistedOrderPage", () => {
       expect(api.submitAssistedOrder).not.toHaveBeenCalled();
       expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
       expect(sessionStorage.length).toBe(0);
-      expect(byTestId("order-error")?.textContent).toContain("Your Early Access session ended");
+      // Lost ownership alone proves nothing about the session or about what
+      // the server holds, so the copy claims neither.
+      const copy = byTestId("order-error")?.textContent ?? "";
+      expect(copy).toContain("can no longer be sent from this page");
+      expect(copy).not.toContain("session ended");
+      expect(copy).not.toContain("saved");
       expect(window.location.pathname).toBe("/research/early-access/order-request");
+    });
+
+    it("after a suppressed late success, the next click neither sends nor claims the request was not saved", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValueOnce(lost.promise);
+      render();
+      await settle();
+      await reachReview();
+      click(byTestId("order-submit"));
+      await settle(20);
+      const first = submitCall(0);
+      const stamp = acceptedAtOf(first);
+
+      // The sweep runs while the page is still mounted; the late success is
+      // then rightly suppressed. The page keeps its issued stamp: a request
+      // under this key may exist on the server.
+      clearAssistedOrderStorage();
+      lost.resolve(receipt);
+      await settle(20);
+      expect(sessionStorage.length).toBe(0);
+      expect(window.location.pathname).toBe("/research/early-access/order-request");
+
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+      expect(sessionStorage.length).toBe(0);
+      const copy = byTestId("order-error")?.textContent ?? "";
+      expect(copy).toContain("may already have been saved");
+      expect(copy).toContain("check your request status");
+      expect(copy).not.toContain("session ended");
+      expect(copy).not.toContain("nothing was saved");
+      expect(stamp).toBeTruthy();
     });
 
     it("a foreign draft written while this page's own writes were failing wins over the failure flag", async () => {
