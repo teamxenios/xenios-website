@@ -652,3 +652,30 @@ Doc 99 (QL r2) remains in review. Nothing was executed.
 | 99 | `DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012` r2 (`7a2bf75` / `42ac49e`) | COMPLETE: **ACCEPTED WITH NAMED LIMITS.** QL-11 and QL-12 corrected; the two-row carry-forward accepted. **Before release (P2):** QL2-1 (in-flight refresh never recorded as uncertain; add an in-flight marker plus test), QL2-2 (the forbidden-after-uncertain copy promises a retry the Early Access sweep makes impossible; reword both strings and the pinned assertions), QL2-3 (disclose per-tab, per-session attempt identity; keep the staff duplicate check). Submitted receipts bind the bytes (64/66 focused suites, protection CLI and Vitest, local build with one mixed-import warning and one chunk-size advisory; my earlier "two chunk-size warnings" phrase was wrong) but prove no browser, real-server, full-suite or typecheck result |
 
 All three successors acknowledged at `a2ffb6c` are complete (docs 99 to 101). Nothing was executed.
+
+## Registration request (2026-10-12): doc 99 QL2-1 / QL2-2 correction successor
+
+**Status: AWAITING_SUCCESSOR.** Checked at board tip `65e34cf`: the QL branch `codex/ql-protection-carryforward-20261012`
+still ends at `42ac49e`, no commit on any branch touches `AssistedOrderPage.tsx` after `7a2bf753`, and no registration
+names a QL2-1/QL2-2 successor. This request is made once; the review starts when the registration exists.
+
+**The registration must bind, from Git:**
+1. Source commit and tree of the frozen successor, its base (`7a2bf753`), and the exact changed paths (expected: only
+   `AssistedOrderPage.tsx`, `draft-store.ts` and their two tests under `client/src/research/assisted-order/`; any other
+   path must be named and justified).
+2. The QL2-1 mapping: where the in-flight marker is persisted before the POST, how the draft reader maps it to
+   `uncertain` on restore, when it is downgraded, and the new regression (submit with a pending response → unmount or
+   reload → restore → retry with the same key and `acceptedAt`; a later refusal must not say the earlier attempt was not
+   saved).
+3. The QL2-2 mapping: the replaced copy at the two forbidden branches and the updated pinned assertions, with the
+   privacy sweep untouched (`EarlyAccessRoute.tsx` unchanged).
+4. The QL2-3 disclosure in the release record and runbook (one tab, one session; staff duplicate check: same contact,
+   same lines, same day).
+5. Receipts bound to the successor's exact bytes: full Vitest and `npm run check` on Node 20.19.0; the real `api.ts`
+   `request()` test; protection CLI and companion test; build. The `7a2bf753` typecheck PASS may be attached as
+   historical evidence for its own bytes only.
+6. Separately registered, if available: the browser lost-response journey, the admin PATCH refusal from the UI, the
+   route and release checks, and the database pre-check for existing payment-state rows. These are release conditions;
+   their absence does not block the source review.
+
+Nothing was executed.
