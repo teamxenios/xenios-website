@@ -804,3 +804,53 @@ failed on the lockfile invariant as verified above; disposition with the owners.
 Last processed board tip `bdecd53`, records tip `6c7106a`. Next check 01:07 CDT.
 
 Nothing was executed.
+
+## Overnight check 4 (2026-10-13 01:10 CDT / 06:10Z): protected `render-build` correction proposed, unapplied, awaiting Samuel; pre-checked
+
+Board tip `389af0e` (four commits since `bdecd53`), records tip `757b020` (four since `6c7106a`), follow-up tip still
+`dd3f532`. Candidate unchanged; nothing registered to me; no deployment; no browser, admin-PATCH or staff-readback
+evidence (browser R2 remains on capacity hold, available RAM 1,652 MiB against the 2,048 MiB external floor).
+
+**What landed.** The owners took option (b) from check 3. An exact, **unapplied** two-hunk patch
+(`doc103-render-build-correction-proposal-20261013/PROPOSED_CHANGE.patch`, sha256 `f79e0e56…`) changes one token in
+`package.json` (`render-build`: `npm install` → `npm ci`, flags and the global `npm@10.8.2` bootstrap unchanged) and the
+`package.json` row of `docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json` `fileHashes.files`
+(`27a6b86f…` → `5cc063f6…`); an earlier broader draft that also rewrote the seam description is retained as
+`HISTORICAL_R1_BROADER_UNAPPLIED.patch` and not proposed. One decision has been put to Samuel through the coordinator's
+async question channel (`DOC103_PROTECTED_BUILD_ACTUAL_QUESTION_DELIVERY_20261013.json`, decision identity `67e0f9b5…`,
+`humanApproval: None`): approve the two-line protected-file correction plus a one-time two-path custody disposition for
+the same integrator. The board also records that the Render workspace confirmation question is now answered from a prior
+human record ("Use My Workspace"), with read-only provider metadata and no hosted mutation.
+
+**Pre-check of the unapplied patch (so doc 104 is fast when a revision lands).**
+- Hash arithmetic holds. `package.json@dd3f532` is blob sha256 `27a6b86f…` (LF, 5,648 B), the current manifest row.
+  Applying exactly the one-token replacement (one occurrence) yields sha256 `5cc063f6…` (5,643 B), the proposed row.
+  The manifest's hashes are blob-byte (LF) hashes: its `package-lock.json` row `d25eb6b8…` equals the LF blob hash I
+  computed in check 3.
+- The two hunks are sufficient for the hash gate. `package.json` occurs three times in the manifest at `dd3f532`:
+  `protectedPaths` (line 336, unchanged by a content edit), `permittedSeamFiles.files` (line 542, descriptive seam
+  text) and `fileHashes.files` (line 684, the row the patch updates). It is **not** in `seamBaselineHashes.files`
+  (line 1225 ff.), so no second hash row is missed. The governing test (`server/core-site-protection.test.ts:143-150`,
+  `:306-315`) reads expected hashes from `manifest.fileHashes.files`, so a re-pinned row and a matching file pass it;
+  the protection CLI will still report `package.json` as a seam file touched against the base and expect the exclusive
+  lease the custody disposition is meant to supply.
+- One documentation inconsistency, not a gate failure: after the two-hunk patch the seam text at line 542 still
+  describes `package.json` as "hash-locked Fontsource dependency declarations only" and forbids "any script … change".
+  The broader draft corrected that text; the narrowed patch does not. I will name it as a limit in doc 104 unless the
+  applied revision carries the text correction (which would change the manifest hash the owners have already computed,
+  `15004dad…`, so they should decide before freezing).
+- Expected effect on the release condition: with `npm ci` the lockfile is not rewritten (the `npm ci` build in check 1
+  left it byte-identical), so a literal render-build rerun of the corrected candidate should pass the source invariant
+  for the same reason that run passed. That is a prediction, not evidence; the receipt decides.
+
+**Reviewer position.** The decision whether to grant the protected-file exception and custody delegation is Samuel's;
+nothing here approves it. If approved and applied, the result is a new candidate (two files beyond `dd3f532`:
+`package.json` and the manifest) and I will run the narrow doc 104 check on registration or on sight: the two hunks, the
+recomputed hashes, the protection CLI and companion receipts at the new SHA, the targeted pair, and the full suite or an
+owner-recorded reason it is unaffected (the full suite executes `core-site-protection.test.ts`, which reads the
+manifest, so at minimum that file and the CLI must be rebound to the new SHA).
+
+**Queue state.** Doc 103 stands; nothing new owed. Last processed board tip `389af0e`, records tip `757b020`. Next
+check 02:07 CDT.
+
+Nothing was executed.

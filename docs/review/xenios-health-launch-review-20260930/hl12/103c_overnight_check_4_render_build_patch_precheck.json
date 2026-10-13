@@ -1,0 +1,61 @@
+{
+  "record": "103c",
+  "kind": "overnight-check",
+  "checkIndex": 4,
+  "observedAt": "2026-10-13T06:10:49Z",
+  "observedAtLocal": "2026-10-13 01:10 CDT",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "observedTips": { "board": "389af0e", "records": "757b020", "followUp": "dd3f532" },
+  "candidate": {
+    "sha": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+    "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+    "changedSinceDoc103": false,
+    "newRegistrationForReviewer": false,
+    "deployment": false
+  },
+  "proposal": {
+    "status": "UNAPPLIED; one async decision presented to Samuel; humanApproval none at observation",
+    "patch": "docs/health-launch/ql-build-20261012/doc103-render-build-correction-proposal-20261013/PROPOSED_CHANGE.patch",
+    "patchSha256Prefix": "f79e0e562fc5b987",
+    "hunk1": "package.json scripts.render-build: 'npm install --no-audit --no-fund --production=false' -> 'npm ci --no-audit --no-fund --production=false' (global npm@10.8.2 bootstrap and node script/build.mjs unchanged)",
+    "hunk2": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json fileHashes.files['package.json']: 27a6b86f... -> 5cc063f6...",
+    "proposedManifestSha256Prefix": "15004dad9cda3b10",
+    "broaderDraftNotProposed": "HISTORICAL_R1_BROADER_UNAPPLIED.patch (also rewrote the permittedSeamFiles text)",
+    "decisionDelivery": "DOC103_PROTECTED_BUILD_ACTUAL_QUESTION_DELIVERY_20261013.json, decisionIdentity 67e0f9b5..., tool request_user_input_async accepted",
+    "decisionAsk": "approve the two-line protected-file correction plus a one-time two-path custody disposition for the same integrator",
+    "decisionOwner": "Samuel; reviewer does not approve"
+  },
+  "reviewerPrecheck": {
+    "packageJsonAtCandidate": { "blobSha256": "27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748", "bytes": 5648, "lineEndings": "LF" },
+    "oneTokenReplacementOccurrences": 1,
+    "patchedPackageJsonSha256": "5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1",
+    "patchedBytes": 5643,
+    "matchesProposedManifestRow": true,
+    "manifestHashBasis": "LF blob bytes (package-lock.json row d25eb6b8... equals the LF blob hash computed in check 3)",
+    "packageJsonOccurrencesInManifest": {
+      "protectedPaths": 336,
+      "permittedSeamFiles.files": 542,
+      "fileHashes.files": 684,
+      "seamBaselineHashes.files": "absent (section starts line 1225)"
+    },
+    "twoHunksSufficientForHashGate": true,
+    "governingTest": "server/core-site-protection.test.ts:143-150 and :306-315 read manifest.fileHashes.files",
+    "cliExpectation": "package.json reported as a seam file touched vs base; exclusive lease expected (the custody disposition)",
+    "documentationInconsistency": "permittedSeamFiles text at line 542 still says 'hash-locked Fontsource dependency declarations only' and forbids any script change; narrowed patch leaves it; to be named in doc 104 unless corrected before freeze (which changes the manifest hash)",
+    "expectedReleaseEffect": "npm ci does not rewrite the lockfile (check 1 run left it byte-identical), so a literal render-build rerun should pass the source invariant; prediction, not evidence"
+  },
+  "otherNew": {
+    "renderWorkspace": "prior human record found: 'Use My Workspace'; read-only provider metadata; no hosted mutation; live marker is not served-SHA",
+    "browserR2": "capacity hold; available RAM 1651.7 MiB < 2048 MiB external floor",
+    "pending": "QS-2 operator attestation; browser lost-response journey; admin PATCH refusal via UI; staff readback; served-version check; release authority"
+  },
+  "doc104Plan": "on registration or on sight of the applied revision: the two hunks, recomputed hashes, protection CLI + companion receipts at the new SHA, targeted pair, full suite or an owner-recorded reason it is unaffected (core-site-protection.test.ts reads the manifest, so it and the CLI must be rebound at minimum)",
+  "queueState": {
+    "doc103": "stands; nothing owed",
+    "lastProcessedBoardTip": "389af0e",
+    "lastProcessedRecordsTip": "757b020",
+    "nextCheck": "2026-10-13 02:07 CDT"
+  }
+}
