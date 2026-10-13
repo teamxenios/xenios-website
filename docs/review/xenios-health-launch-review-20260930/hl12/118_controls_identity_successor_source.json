@@ -1,0 +1,43 @@
+{
+  "doc": 118,
+  "title": "Revision 18: finalization-controls parent identity-acquisition successor (source only)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "boardTipRead": "1cd62ca",
+  "verdict": "SOURCE_ACCEPTED_WITH_RETAINED_LIMITS_NO_CORRECTION",
+  "application": { "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "changed": false },
+  "core": { "commit": "60f64fc095c81b1743e321ab56467ee2bf3c8163", "tree": "6560661e9fbe73644b00c89ef5419e68dcdea801", "namespace": "doc104-baseline-reconciliation-20261013/finalization-controls-identity-source-proposal/" },
+  "predecessor": { "commit": "d7c64c558ecdf161b372bda723e41218f2f2d052", "tree": "0d59451d27f1f5f5c91c47589c862a8bdebaad6e", "parent": "17125 B 69453f4308ba6b6161a829df49abcf3be394babd1ab6b46eca76d04b27e25bde", "preserved": true },
+  "files": {
+    "parent": { "bytes": 17188, "sha256": "31674d820569aa999c00f0d4520f84c01c55b776d41eee0d8899bd93a03084f5", "blob": "64b8f42e0a9e3e9c3e8bdd9f2091e4d1f84bdb6d" },
+    "late-second-quiet.ps1": "8247 B 1661a218a502127e4e67f2b97a9326d330e68f340b1d2e8e845af143b57341fd",
+    "late-receipt-write.ps1": "8248 B f3e8af5324b46823558fd6da88951254a1947bd23fb0f14e84072a5b056e4296",
+    "write-failure.ps1": "8243 B 2663618f36184212d72c075a79cd557f3aaf6ea7a8fc074ea1a9345c30d9119d",
+    "r3-finalization.slice.ps1.txt": "3762 B 7c685cef (identical to doc 115)",
+    "r3-write-functions.slice.ps1.txt": "403 B 9587eb57 (identical to doc 115)",
+    "pins": "3153 B dd690c5b84e5e23cfb768746200cdfe1c244dd54e01636f7272212387bc8eac8 (8 rows)",
+    "proposal": "7065 B f289f5cf383b269e8df81a5ff449d55248fa63d978adbd6750f9e622ff4e08e6",
+    "mechanicalDiff": "14666 B 4e71442cca75c2b7f7c85d5d4a5a9de4df41f63a226952b7e8af83d0c16a8464 (cumulative vs doc 115 source; hunks equal my diff)",
+    "rootPacketByteIdentical": true,
+    "recordsWorktree": { "path": "C:/xenios-wt/tc25-app-manifest-20261012", "head": "2876254", "allSixAtPinnedPaths": true }
+  },
+  "deltas": {
+    "doc115ParentToSuccessor": ["$fRoot new namespace; $fOut attempt-identity-r1", "row gains phase/failurePhase/exceptionType/innerExceptionType/identityAttempts/identityLastObservation/identityLastExceptionType/identityLastInnerExceptionType; identity loop lines 86-122 replaces the two immediate identity lines", "phase markers CHILD_EXIT, CASE_EVIDENCE", "COMPLETE on success; failurePhase + exception type names in per-case catch", "nothing else"],
+    "d7ToSuccessor": "one inserted line 112: if($p.HasExited){throw 'CHILD_EXITED_BEFORE_IDENTITY'} immediately before the verified branch",
+    "fixtures": "lines 13-14 only ($dOut prefix and $cTicket.output literal -> attempt-identity-r1); identical between d7 and 60f",
+    "slices": "byte-identical to doc 115",
+    "pins": "rows 1-2 unchanged; rows 3-8 relocated to new namespace (backslash spelling, normalized by F-Norm); only row 7 (0-based, parent) differs from d7"
+  },
+  "identityLoop": {
+    "lines": "86-122",
+    "sequence": ["Start; record pid; acquire handle", "deadline check (5 s child / 20 s work) -> IDENTITY_OR_WORK_DEADLINE", "HasExited -> CHILD_EXITED_BEFORE_IDENTITY", "attempt++; Refresh(); StartTime; MainModule in try; catch records READ_EXCEPTION + exception/inner type names only", "post-read deadline check", "creation stability -> CHILD_CREATION_CHANGED", "post-read HasExited (new) -> CHILD_EXITED_BEFORE_IDENTITY", "creation + non-blank executable: must normalize to pinned pwsh else CHILD_EXECUTABLE (no retry); VERIFIED", "else HasExited check; Sleep 10 ms", "streams attached only after VERIFIED"],
+    "properties": ["same retained handle: StartTime cannot drift, PID reuse cannot substitute", "no restart/respawn", "wrong executable refused immediately", "exited-before-identity never qualifies", "time-bounded, not attempt-bounded", "types only; no messages/stacks/env/private paths", "fixed phase vocabulary CHILD_START/CHILD_IDENTITY/CHILD_STREAMS/CHILD_EXIT/CASE_EVIDENCE/COMPLETE"]
+  },
+  "unchanged": ["ticket binding and bounds 20000/10000/30000/5000 ms, 512 MiB, 16384 B, 1 attempt, 0 retries, 0 stops", "pin-file hash via ticket; exact eight inputs; pinned runtime; R3/fixture slice binding", "child env/argv; 16 KiB cap; exit-1/lifetime/stdout-empty assertions; case inventory and per-case assertions", "partial preservation; dispose only after exit; no kill", "post pins; finalization deadline; provisional status", "application 8e85daa; docs 104-117; accepted receipts; doc 117 diagnostic disposition"],
+  "retainedLimits": ["post-read HasExited is a sample, not atomic", "synchronous metadata reads cooperative; overrun rejected, not interrupted", "streams attach after identity; harmless for these fixtures", "doc 115 §5-§6 limits and predicates still apply (synthetic negatives only; ticket without BOM; clean child stderr; Root slot reservation)"],
+  "owed": ["new finite ticket binding whole pin file dd690c5b + eight rows, output attempt-identity-r1, fresh 512 MiB reading, exclusive slot", "actual run: three children exit 1 with exact evidence, parent exit 0, outer timing, post pins, independent closure of exact child identities", "no carry-over of consumed R1/R2 tickets; no aggregation of R2 first case", "real Git diff check separately: census < 1 s, shim/CIM identity, pre-identity/config/default-index facts, host-exclusive 30 s window (doc 114 §8)"],
+  "notReinterpreted": ["actual R1 80a778e3 (counter read failure before cases)", "actual R2 21f777df (first case proven; second child identity failure; third not run)"],
+  "executionConsent": false
+}
