@@ -1034,3 +1034,13 @@ Nothing was executed.
 Closed and unchanged: application `8e85daa`/`25507c2f`, build reuse, QS-2, QS-R5, docs 104–107. Still owed: controls
 15/36, three CLI receipts (production state inside the QS-R6 window), 17-path manifest validation, browser outcome,
 QS-R1, QS-R4, release authority. Last processed board tip `c267e18`. Nothing was executed.
+
+## Queue state update (2026-10-13 15:3x CDT, doc 109)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 109 | Browser driver target-attachment observability, revision 10 (proposal `2610b8af…`, records `56231f6d`; prior driver `08f62b4e…` 39,288 B → proposed `b2f0901d…` 40,786 B; harness `60b025ee…` unchanged; application `8e85daa` unchanged) | COMPLETE: **SOURCE ACCEPTED, observability scope only.** My diff: two hunks, one modified initializer line plus twenty added lines; old bytes reconstruct exactly from the new file; archive patch identical. Records are capped at 64 with an overflow counter, store only a type whitelist, a URL class, presence/equality booleans and the driver's own phase/case labels — no IDs, URLs, bodies, tokens or customer data; no new `await`; predicate, `closeTarget` and `fail('UNEXPECTED_BROWSER_TARGET')` byte-identical; nothing refused before is accepted now. Not a diagnosis of R2, not a rerun, not an admission. |
+
+Closed and unchanged: application, build reuse, QS-2, QS-R5, docs 104–108. Still owed (unchanged from doc 108):
+controls 15/36, three CLI receipts, 17-path manifest validation, browser outcome, QS-R1, QS-R4, release authority.
+Last processed board tip `a245fc7`. Nothing was executed.

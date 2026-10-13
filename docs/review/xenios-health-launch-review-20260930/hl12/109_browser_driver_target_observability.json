@@ -1,0 +1,36 @@
+{
+  "doc": 109,
+  "title": "Browser driver, sanitized target-attachment observability: bounded source review (revision 10)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "SOURCE_ACCEPTED_OBSERVABILITY_SCOPE",
+  "verdictScope": "driver source delta only; not a diagnosis of R2, not a rerun, not an admission; application 8e85daa, build 3dd3d96, QS-2, QS-R5, docs 104-108 unchanged",
+  "registration": { "task": "DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012", "revision": 10, "registeredAt": "2026-10-13T20:08:13.269Z", "proposalSha256": "2610b8afe7b156001673d74dd8489bcc10ee8c25fba769784069f209def0beb0", "records": "56231f6daa170154c6e24a04a8428473f3a61cee", "failedRun": "be27606b9efe5a84e45ba5af59f8f2a3572b1d4e" },
+  "bytes": {
+    "prior": { "file": "ql-browser-driver.mjs", "bytes": 39288, "sha256": "08f62b4eb7276b52040ae32487d2a4869a46fcbf500c671120fffaa6a13ee370" },
+    "proposed": { "file": "ql-browser-driver-observation-proposed.mjs", "bytes": 40786, "sha256": "b2f0901ddf5e0503e9c460b899be8e5afa0ca9e6101e063d3dcea348d27ad798" },
+    "diff": { "hunks": 2, "modifiedLines": 1, "addedLines": 20, "removedLines": 0, "archivePatchIdentical": true, "oldBytesReconstructedFromNew": true, "lineEndings": "LF" }
+  },
+  "addedBehavior": {
+    "location": "inside onAttachedTarget before the unchanged acceptance predicate",
+    "cap": 64,
+    "overflowCounter": "targetAttachmentRecordsOmitted",
+    "recordFields": ["phase", "case", "type (whitelist of 8 else UNKNOWN)", "urlClass (ABOUT_BLANK | CANONICAL_ORIGIN | OTHER_ORIGIN | UNPARSEABLE)", "hasQueryOrFragment (bool|null)", "browserLevelHandler", "acceptingPage", "phaseOpen", "waitingForDebugger", "knownTarget", "sameCreatedTarget", "sameContext", "samePageSession", "acceptedByExistingPredicate"],
+    "rawIdentityStored": false,
+    "urlStored": false,
+    "newAwait": false,
+    "predicateUnchanged": true,
+    "closeTargetAndFailUnchanged": true,
+    "originInScope": "destructured from options at line 31; demanded ^http://127.0.0.1:\\d+$ at line 32"
+  },
+  "outerValidation": { "runner": "run-durable-browser.cjs:493-496 validates status/cdpClosed/runtimeExceptions/case names, not evidence key set", "harnessUnchanged": "60b025ee", "casesAndFencesUnchanged": true },
+  "namedLimits": [
+    "R2 cause remains unknown; no benign-target or Chromium-warning causal claim",
+    "phase/case are free strings bounded by driver constants",
+    "driver pin 08f62b4e -> b2f0901d must be re-frozen in binding/runner before any run",
+    "no diagnostic run, window, admission or human scope exists or is implied"
+  ],
+  "boardTipRead": "a245fc7"
+}
