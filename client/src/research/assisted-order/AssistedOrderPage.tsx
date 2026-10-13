@@ -457,12 +457,21 @@ export function AssistedOrderPage({
   // means the draft was taken away (the protected-path sweep, or a receipt):
   // the page owns nothing and writes nothing more. A page whose own writes
   // fail keeps working in memory, exactly as before.
-  const storedOnce = useRef(false);
+  // A page restored from a draft already owns that draft: a previous page in
+  // this tab wrote it, and it is this page's last known persisted identity.
+  // Seeding both refs from the restored draft (Doc102 QS-1) means a restored
+  // page whose own writes fail from its first render is still forgiven that
+  // lag on its receipt, refusal and uncertain paths, instead of dropping its
+  // own committed success, and is still disowned after the sweep (store
+  // absent, draft once stored). A fresh page is unchanged.
+  const storedOnce = useRef(draft !== null);
   const storeFailed = useRef(false);
   // The identity this page last managed to write. While its own writes fail,
   // the store may lag behind the page by exactly this identity, and that lag
   // is the only thing a failed write forgives.
-  const lastPersisted = useRef<AssistedOrderAttemptIdentity | null>(null);
+  const lastPersisted = useRef<AssistedOrderAttemptIdentity | null>(
+    draft ? { idempotencyKey: draft.idempotencyKey, acceptedAt: draft.acceptedAt } : null,
+  );
   const persistDraft = (draft: AssistedOrderDraftInput): void => {
     if (storeAssistedOrderDraft(draft)) {
       storedOnce.current = true;
