@@ -1079,3 +1079,17 @@ No corrections. Closed and unchanged: application `8e85daa`/`25507c2f`, build re
 overall: `verify:production-state` (before 2026-10-20T13:49:12Z), protection CLI `79414143 8e85daa`, manifest validation
 run after the owed artifacts, browser outcome, QS-R4, release authority. Last processed board tip `3d65f29`. Nothing was
 executed; no agents were used.
+
+## Queue state update (2026-10-13 17:0x CDT, doc 113)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 113 A | Actual `npm run verify:production-state` receipt at `8e85daa`/`25507c2f` under the R3 profile (Core `daaa6478`, Root `04280624`; admission `9b1994a2…`, receipt `99157ea2…`, cli-result `09b6a983…`, run.log `67843d4b…`, ready `7816c1d4…`, ACK `7e1d026a…`, closure `a07597c7…`) | **ACCEPTED — closes doc 105 §2 item 3.** Expected identity set exactly as the ticket requires (`79414143` / `8e85daa` / `release/early-access-code-session-checkout`); wrapper PID 48532 under supervisor 41852, ticks `639275244686164090` recomputed from `createdUtc`, ACK 21:41:11.783Z before CLI 21:41:11.925Z–21:41:55.913Z, strict command equality, exit 0, `cliResultPassed`; 92 pins and clean exact source pre/post; G0 1,940.55 MiB available; two quiets; independent closure 21:42:43Z, nine identities absent. Output `Trusted release baseline accepted: 79414143… / dep-daqft3vf3r2c73b7e88g.`, inside the QS-R6 window (expires 2026-10-20T13:49:12Z). Not a provider readback or served identity. |
+| 113 B | Actual protection CLI `79414143 8e85daa` receipt under the R3 profile (Core `e82d3cac`, Root `7e3c58a5`; admission `40d0955a…`, receipt `64b03d3b…`, cli-result `4320c0c3…`, run.log `da9f12eb…`, ready `2d4314ae…`, ACK `2314cf2f…`, closure `e8ebb35f…`) | **ACCEPTED — closes doc 105 §2 item 5.** Command array equals the literal `[node, …\verify-core-site-protection.mjs, 79414143…, 8e85daa…]`; wrapper PID 51936 under supervisor 7332, ticks `639275248059652120` recomputed, ACK 21:46:48.505Z before CLI 21:46:48.740Z–21:46:49.452Z, exit 0; pins/source invariants; G0 2,056.51 MiB available; two quiets; independent closure 21:47:15Z, three identities absent. `RESULT: PASS`, 17 changed / 3 allowed / 8 infrastructure / 5 tests / 1 seam / 28 hashes — equal to my own classification of `git diff --name-only 79414143 8e85daa` by the gate's rules at `8e85daa`. Limit retained as Core and Root state it: the 0.7 s CLI child (PID 52452) was not a separately observed OS identity; its exit rests on the observed wrapper's record. |
+
+No corrections. All three static CLI receipts under the R3 profile are now accepted (docs 111, 113). Closed and unchanged:
+application `8e85daa`/`25507c2f`, build reuse, QS-2, QS-R5, docs 104–112. Still owed: bounded Git diff-check parent and
+receipt (proposal `1632d4d` seen on the records branch, not registered to me, not assessed), final manifest with
+`diffCheck` + placed attestation `20a03bb6…` + built alternate index + real 95 pins + live default-index pin + ticket/G0
++ actual `verify:release-manifest` receipt, browser outcome, QS-R1/QS-R4/QS-R7, release authority. Last processed board
+tip `2d29f7e`. Nothing was executed; no agents were used.
