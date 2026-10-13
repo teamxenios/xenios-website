@@ -955,3 +955,50 @@ release-side conditions QS-R1–R4 and the carried doc 103 §3 items remain open
 
 Doc 104 stands (companion bound at `5817055`). Last processed board tip `074364a`, records tip `a8f4e42`. Nothing was
 executed.
+
+## Queue state update (2026-10-13 12:5x CDT): r6 registration acknowledged; QS-2 attested; QS-R5 proposal assessed; qualification at `8e85daa` still owed; browser run in progress
+
+Read-only check at 12:48 CDT (board `dd3236f`, records `f5fdfbc`). The local browser qualification is running under
+Codex's protection; nothing here touches it, and no multi-agent review was run.
+
+- **Registration.** `DOC104_QS_R3_APPLIED_SUCCESSOR_BOUNDED_REVIEW_REGISTRATION_20261013.json` registers revision 6
+  on the existing task to me for `8e85daa`/`25507c2f` (16:52:57Z) and records doc 105 (`1d88d60`) with the verdict
+  string and the QS-R5 note intact. Acknowledged.
+- **QS-2 — now attested.** `DOC105_ACTUAL_PRIMARY_INTAKE_ADOPTION_AND_ACCESS_20261013.json` (16:59:11Z) carries the
+  named primary operating owner's express text reading and adopting `QL_REQUEST_ONLY_RELEASE_RUNBOOK_20261012.md`
+  by hash (`6eb81b3a…`, 3,932 B), `operatingResponsibilitiesAccepted: true` (duplicate checks, truthful recovery
+  guidance, request-only payment hold), bound to `8e85daa`, plus a fresh access recheck: server-confirmed admin identity
+  via `/api/admin/me` and the assisted-orders queue list visible with rows. **Disposition: the runbook-in-force
+  attestation required by doc 103 §3 / doc 105 is satisfied for `8e85daa` by a named human with verified queue-list
+  access.** Limits carried, not reopened: the reply arrived through the coordinator's question tool (no separate
+  message id or send timestamp); no SLA, staffing or backup owner is claimed; no row was opened and no newly saved
+  request was read back, so staff readback stays under the browser/readback condition; the manifest must bind this
+  runbook hash. The earlier denied-access and pending-adoption records are superseded as current state only.
+- **QS-R5 — owner proposal assessed.** `QS_R5_RANGE_FACTS_AND_OWNER_PROPOSAL.json` proposes using `8e85daa` for
+  this isolated request-only release and keeping `0f92ca7`/`2b4888e` as historical lineages, never as merge parents;
+  it measures the release-ref update as 194 Git paths of which 17 differ from provider-live (matches my count) and
+  177 are byte-identical to live. **Consistent with doc 105 §3 provided** the control-plane owner records it as the
+  decision (the file says it is not owner acceptance), the push target is the release ref only, and no merge of
+  `8e85daa` into the records/board/review lineages, or the reverse, happens without a reconciliation. Not blocking
+  qualification.
+- **Qualification at `8e85daa` — nothing accepted yet.** `doc105-corrected-payload/SOURCE_FREEZE.json` still lists
+  `verify:migration-dag`, `verify:production-state` (window ends 2026-10-20T13:49:12Z), the protection CLI
+  `79414143 8e85daa` and the release manifest as NOT RUN/AWAITING; `check:release-control-plane` and the
+  release-control-plane vitest run are likewise unexecuted (the owners noted their runner's "check mode" invoked the
+  generic `npm run check`, which doc 105 already reuses; the owed command is `check:release-control-plane`). The
+  `pure26` run (26 synthetic reporter assertions, exit 0) and the reporter-control payloads are harness controls, which
+  their own records label "not application qualification"; I do not count them against any owed item. The seven owed
+  items of doc 105 §2 are unchanged.
+- **Browser (in progress, not reviewed).** `local-browser-r1-start` records the bridge started 17:41:03Z with
+  2,163 MiB available against the 2,048 MiB floor, physical source `3dd3d96` (the built artifacts) and release source
+  `8e85daa` both pinned and clean, status "started, not a browser pass". **Advance disposition:** because the client,
+  server, shared, script trees and lockfile are identical between `3dd3d96` and `8e85daa` (the delta is control-plane
+  records and one test), a browser result bound to the `3dd3d96` artifacts transfers to `8e85daa` on input identity
+  once the run records both identities, which it does. The restart claim will be limited to what the run actually
+  exercises; customer-session persistence will not be inferred from staff readback.
+- **One-time request through this channel.** Please register, as they complete: the seven execution receipts at
+  `8e85daa` (doc 105 §2 items 1–7), the browser run's outcome and cleanup record, the admin payment-state refusal and
+  staff-readback receipts, and the control-plane owner's QS-R5 decision. I will assess each on sight and remain
+  available without polling.
+
+Last processed board tip `dd3236f`, records tip `f5fdfbc`. Nothing was executed.
