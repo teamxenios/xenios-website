@@ -1,0 +1,52 @@
+{
+  "doc": 119,
+  "title": "Revision 19: incident intake-closure recovery plan at 8e85daa (source and document review)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "boardTipRead": "a33301b",
+  "verdict": "SOURCE_COMPATIBLE_HOLD_PRESERVING_CONTAINMENT_THREE_TEXT_CORRECTIONS_NOT_ROLLBACK_NOT_QUALIFIED_NOT_AUTHORIZED",
+  "application": { "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "changed": false },
+  "packet": {
+    "path": "DOC118_INCIDENT_INTAKE_CLOSURE_RECOVERY_PROPOSAL_20261013/",
+    "EXACT_PROPOSAL.json": "2854 B 442020f29ffa72ac",
+    "EXACT_ROLLBACK_OR_INTAKE_CLOSURE_DECISION_SOURCE_ONLY.txt": "7187 B 98e3e1cb (index-equal)",
+    "RENDER_CLOSURE_METHOD_R2_PRIMARY_DOCUMENTATION.txt": "6520 B 836f26fa (index-equal)",
+    "CORE_PAYMENT_HOLD_PRESERVING_ROLLBACK_COMPARISON.json": "12105 B identical to Core blob cf2def9c at 1961e810",
+    "sourceAnchorsVerified": { "production-deps.ts": "26e2719c041b59dfd8a4376006b3a64050ff434a", "production.ts": "cd156aae1e3f3bed7604ab6a5a8e294568de3112", "server/index.ts": "56d0d3ab515620c3b9c4b593da607bc55c5075fe", "service.ts(hold)": "d7d26cf0 identical at 3dd3d96 and 8e85daa; payment_transition_held line 119" },
+    "renderDocumentation": "owner-asserted; not fetched by reviewer"
+  },
+  "sourceFacts": {
+    "parse": "production-deps.ts:92 env[RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED] === 'true'; exact case-sensitive untrimmed; any other value disables",
+    "bootEvaluated": "buildAssistedOrderProduction called once in composeAssistedOrderBridge() in the boot IIFE (index.ts:1291); handlers bound to the result; no per-request re-read; new process required",
+    "disabledComposition": "production.ts:78-85 {enabled:false, service:null, refusalReason:'assisted_order_bridge_disabled'} before dependency checks; AssistedOrderService never constructed; log 'assisted order bridge not mounted: assisted_order_bridge_disabled ...' (index.ts:1023)",
+    "doors": { "count": 10, "customer": ["GET config", "GET catalog", "POST submit", "GET :publicReference", "POST upload-url", "POST complete"], "admin": ["GET queue", "GET :requestId", "PATCH status", "POST download-url"], "disabledShapes": "config 200 {enabled:false, code:assisted_order_unavailable, reason}; others 503 {error:assisted_order_unavailable, message, reason}; Cache-Control no-store", "adminOrdering": "requireSupabaseAdmin first; unauthenticated probe sees 401/403, authenticated admin sees 503", "wallOrdering": "app.use(researchPageGate) at 377 precedes doors; config/catalog admitted openly, submit openly to handler gate, parameterized paths by anchored regex (server/research/index.ts:333-371,424-441)", "bootOrdering": "doors registered before registerRoutes (1329), static (1363), listen (1374); no later shadowing", "pinnedBy": "production-boot.test.ts:284-300 disabled expectations" },
+    "alsoClosed": ["founder command center assisted-order card -> unavailable (port undefined at index.ts:1028; founder-command-center-production.ts:475-484)"],
+    "notClosed": ["member account order history (/api/research/orders family, index.ts:518-521) reads M71 RPC research_assisted_order_member_history with the service-role client independent of the flag: authenticated members read their own historical XRR requests read-only", "outbox worker (startOutboxWorker, 1288) continues to dispatch previously enqueued assisted-order notification intents"],
+    "secondOrder": "early-access persistence productionCommerceEnabled includes the bridge flag (persistence/production-deps.ts:331-336); agreement-policy refusal remains forced only if RESEARCH_EARLY_ACCESS_ENABLED==='true' or cart enabled; recorded snapshots 2026-09-05/07 show EA true, cart false; confirm current",
+    "client": "api.ts:149 throws assisted_orders_disabled on enabled:false; AssistedOrderCta.tsx renders unavailable unless enabled:true; SPA keeps serving",
+    "servedIdentity": "/api/health has no commit identity (routes.ts:202; health.test.ts:9); founder command center release.runtime_sha echoes RENDER_GIT_COMMIT when 40-hex (founder-command-center-production.ts:1021-1039) behind its own auth; provider deploy record is association, not served proof",
+    "inRepoPrecedent": ["PHASE_ZERO_PRODUCTION_PACKET.md fail-safe: flag false, verify doors refuse, preserve rows", "PHASE_ZERO_WIRING_RC_MANIFEST.json rollback strategy flag_off_first_then_runtime", "supabase/production/research-assisted-order-bridge-rollback-notes.md: containment without dropping is the preferred path"]
+  },
+  "stopCondition": {
+    "assistedOrderLaneIncident": "SATISFIED_IN_SOURCE: intake/status/documents/admin queue/transitions/founder card close at next boot; records and hold-bearing source untouched; no 794; nothing dropped; stronger than hold preservation because no transition code runs",
+    "rollback": "NOT_CLAIMED_AND_NOT_PROVIDED: restores/fixes nothing; for shared-runtime defects outside the lane no source-grounded hold-preserving rollback exists (794 loses hold; 3dd shares application, not rollback-qualified); report the limitation",
+    "staffReadback": "correctly claimed lost: admin doors 503 behind admin auth; founder card unavailable; out-of-band handling of outstanding requests",
+    "customerReadback": "NOT all closed: member account history remains read-only (correction 1)"
+  },
+  "corrections": [
+    { "id": 1, "target": "effects statement", "text": "ten bridge doors close (config 200 enabled:false reason assisted_order_bridge_disabled; nine others 503 with that reason; admin doors only after requireSupabaseAdmin); founder card unavailable; member account order history continues read-only via the M71 member-history RPC and is not a bridge door; previously enqueued outbox notifications continue; 'no customer message' = no operator-sent message" },
+    { "id": 2, "target": "read-only post-check procedure", "text": "three unauthenticated GETs: config (200 enabled:false code assisted_order_unavailable reason assisted_order_bridge_disabled), catalog (503 same reason), status by well-formed non-existent reference XRR-00000000-0000000000 (503 same reason; 403/404 while enabled); one authenticated admin GET of the queue (503 same reason); boot log line; served identity via founder command center release.runtime_sha or provider deploy record with the explicit note that /api/health cannot confirm the commit; reason string distinguishes flag-off from dependency refusals; no POST probe; no real request" },
+    { "id": 3, "target": "preflight", "text": "record current RESEARCH_EARLY_ACCESS_ENABLED / RESEARCH_EARLY_ACCESS_CART_ENABLED (expected true/false) so the agreement-policy refusal stays forced by the EA flag; record trigger class = assisted-order lane and the residual limitation for other classes; no automatic reopen; reopening is a separately qualified recovery" }
+  ],
+  "prerequisites": [
+    "target-specific human authority (Samuel) for the single env mutation + one same-SHA containment deploy, accepting temporary loss of customer and staff assisted-order access; clause 6 of 20041ef and direct continuations do not record it",
+    "Core authenticated method verification at the authorized boundary: service/workspace identity, current ref/source, exact current env row, no pending config edits or deploys, no newer work, auto-deploy off, availability of Save only and Deploy a specific commit; Render documentation facts owner-asserted; REST PUT replace-all and connector without commitId correctly excluded",
+    "finite ticket: one attempt, zero retries, preserved receipts (save outcome, deploy id + commit, build, served identity, post-checks); stop on failed/unknown; no 794, DB, role, payment, profile change or customer message",
+    "trigger: confirmed shared 8e request-safety/payment-hold incident after 8e is served; incident grants no live-write/SQL/data authority",
+    "independent closure: new process serving (served identity + disabled responses); failed deploy leaves old config/process; Save only closes nothing"
+  ],
+  "notReopened": ["accepted application 8e85daa", "CLI/protection/static receipts", "docs 117 and 118", "3dd/794 dispositions in the Core comparison (source identity facts agree)"],
+  "executionConsent": false
+}
