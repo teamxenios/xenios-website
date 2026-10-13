@@ -1055,3 +1055,14 @@ Last processed board tip `a245fc7`. Nothing was executed.
 Unchanged: application `8e85daa`/`25507c2f`, build reuse, QS-2, QS-R5, docs 104–109; browser R2 failed-closed. Still owed:
 three CLI receipts, alternate-index export and 17-path manifest validation, test-evidence assembly, browser outcome,
 QS-R4, release authority. Last processed board tip `77e0191`. Nothing was executed.
+
+## Queue state update (2026-10-13 16:3x CDT, doc 111)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 111 | Actual `npm run verify:migration-dag` receipt at `8e85daa`/`25507c2f` under the R3 profile (Core `cb2f7423`, Root `66d1ca52`; receipt `f805cb04…`, cli-result `c91dfe2f…`, run.log `4fc6d69b…`, ready `aff6c293…`, ACK `1f3cbbd3…`, closure `46d950cf…`, admission `32cb8b43…`; controller `55b7ff04…`, pins `305cc2e2…`, wrapper `e3898fe7…`) | **ACCEPTED — closes doc 105 §2 item 4.** Real handshake verified from bytes: wrapper PID 25916 under supervisor 17032, OS-observed ticks `639275206851110420` recomputed from `createdUtc`, ACK at 20:38:07.716Z before CLI start 20:38:07.831Z, strict command equality, exit 0 within window, `cliResultPassed` true; 92 pins and clean exact source pre/post; two quiet observations; independent closure 20:38:58Z (0 matches, 0 stops, Chrome untouched). Output `Migration DAG accepted: 37 nodes, canonical checksums verified.` Limits retained (not kernel guarantee; checked-in records only). |
+
+Unchanged: application, build reuse, QS-2, QS-R5, docs 104–110. Still owed: `verify:production-state` (before
+2026-10-20T13:49:12Z), protection CLI `79414143 8e85daa`, alternate-index export + 17-path manifest validation with the
+`20a03bb6…` attestation, test-evidence assembly, browser outcome, QS-R4, release authority. Last processed board tip
+`aa65266`. Nothing was executed.
