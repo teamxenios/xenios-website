@@ -1,0 +1,37 @@
+{
+  "doc": 117,
+  "title": "Revision 17 B: diagnostic runner/parent successor with positive guarded-open predicates, byte confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "boardTipRead": "74e930a",
+  "verdict": "CONFIRMED_EXACT_DOC116_S1_CORRECTION_NOTHING_ELSE",
+  "application": { "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "changed": false },
+  "core": { "commit": "0b60154728558bf8f6d991528b571d4371556d13", "tree": "415170a8850b45eb17239a02538049f390e103aa", "canonicalPath": "doc104-baseline-reconciliation-20261013/target-lifecycle-diagnostic-runner-source-proposal/", "metadataPath": "doc104-baseline-reconciliation-20261013/doc116-open-guard-successor/" },
+  "files": {
+    "parent": { "bytes": 12575, "sha256": "1b82d025ac0613292507a1cf4d2fb6aa7b0d5588f69c7153ee29c50e2411ead4", "blob": "459a38787e13ae97c93b9f70db149c974e93a774", "preimage": "12432 B 7fb7af42101a667e5fd31f0fdbe6f8a80074600f21763e150db21fd3c864f472" },
+    "runner": { "bytes": 32526, "sha256": "4770729afcea7ca1bb6bf8b9634755fdaef2f130b6c5604757b1806878a3a32e", "blob": "27758fa462cff8f5b02788fc52d649e4341d04b5", "preimage": "32412 B 2a4da63579554fd8d1132aa2cdf5a1442c9dc17a7ae6655f2b13bb8f6162187e" },
+    "pins": { "bytes": 13831, "sha256": "9aa9e9165e8b35cc331c239b972913daa5c5fe0ef239326b80d0511f461b9773", "blob": "296a8c3ae66aceedeab53f4ad0348431e4e28748", "preimage": "13831 B 782efd649f297955fc6f1bbb374c0ed068f09d22ae994cda476c21faafb7b155" },
+    "guardUnchanged": "2290 B 7aa38c2d",
+    "historicalProposalUnchanged": "9049 B d584bef9 (describes d57d9c88 preimage)",
+    "SOURCE_SUCCESSOR.json": "6518 B c6ad9fe20004ab6dada6334362922fe5b12daaa3cfe9b3614020a4285782ae85",
+    "MECHANICAL_DIFF.patch": "6380 B b073cbc7d231694b28521c06d20c6a70851702360ad3136d0ecebafe086b4262",
+    "rootPacketByteIdentical": true,
+    "recordsWorktree": { "path": "C:/xenios-wt/tc25-app-manifest-20261012", "head": "2876254", "successorAtPinnedPaths": true }
+  },
+  "insertedStrings": {
+    "runner": { "line": 345, "text": "&&receipt.openGuard?.attempts===1&&receipt.openGuard?.delegated===true&&receipt.openGuard?.instanceCaptured===true", "bytes": 114, "occurrencesNew": 1, "occurrencesOld": 0, "position": "after receipt.postPinsMatched, before original restored/sendRestored/activeProbes/anchors conditions", "removalRestoresPreimage": true },
+    "parent": { "line": 130, "text": " -and $qualResult.openGuard.attempts -eq 1 -and $qualResult.openGuard.delegated -eq $true -and $qualResult.openGuard.instanceCaptured -eq $true", "bytes": 143, "occurrencesNew": 1, "occurrencesOld": 0, "position": "after postPinsMatched, before original openGuard.restored/sendRestored/journeyCredit/quiets/terminal-failure conditions", "removalRestoresPreimage": true },
+    "crBytes": 0,
+    "allOriginalConditionsRetained": true
+  },
+  "pins": { "rows": 55, "changedZeroBasedIndexes": [52, 53], "changedFields": "bytes and sha256 only; paths unchanged", "other53RowsIdentical": true, "topLevelKeysIdentical": true, "changedLines": 8, "sizeUnchanged": true },
+  "runnerConstantsUnchanged": ["TOOL_ROOT literal", "cdp.mjs digest 12a76cec", "driver digest b2f0901d", "adapter digest f79528ec"],
+  "effect": "diagnostic status reachable only if exactly one open() on the guarded prototype was captured and delegated after revalidation => driver class is the patched class => adapter send patch covers every Page.navigate => 'before navigation' statuses truthful",
+  "notReopened": ["same class / driver import path", "19 Chromium arguments", "accepted adapter f79528ec", "native optional branch", "bounds 120+60/180 s, 256 MiB heap, 2048 MiB floor", "journeyCredit false", "privacy scope incl. DevToolsActivePort solely in private retained profile, no archive/export/copy/delete"],
+  "retainedPrerequisites": ["separately applicable source/runtime authority", "exact finite Root ticket: whole pin file + 55 raw inputs (56 incl. parent), Core owner, unchanged 8e85daa/25507c2f and 3dd3d96/7a4ce7c3, metadata policy string, fresh run-r1/parent-r1", "fresh 2048 MiB floors, exclusive job, no competing admitted group", "raw two-root identity and pins pre/post", "launch chain not self-matching the competing regex", "actual outer start/end/exit/lifetime, post pins, owned closure with two quiets, independent exact-identity closure", "no actual diagnostic/profile/socket/browser from this source; no nine-case journey credit"],
+  "notReviewed": "controls successor d7c64c55 (Core correcting a post-read HasExited finding; not submitted)",
+  "unchanged": ["application 8e85daa", "docs 104-116", "accepted receipts", "accepted driver/adapter"],
+  "executionConsent": false
+}

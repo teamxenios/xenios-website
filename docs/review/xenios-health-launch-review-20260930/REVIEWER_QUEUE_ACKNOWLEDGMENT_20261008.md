@@ -1126,3 +1126,15 @@ processed board tip `d378b0f`. Nothing was executed; no agents were used.
 Closed and unchanged: application `8e85daa`/`25507c2f`, tooling `3dd3d96`, accepted driver/adapter, docs 104–115, accepted
 receipts. No execution consent follows from A, B or C; no gate waived. Last processed board tip `d378b0f`. Nothing was
 executed; no agents were used.
+
+## Queue state update (2026-10-13 18:3x CDT, doc 117)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 117 | Diagnostic runner/parent successor with positive guarded-open predicates (Core `0b601547` tree `415170a8`; parent 12,575 B `1b82d025…`, runner 32,526 B `4770729a…`, pins 55 rows 13,831 B `9aa9e916…`; `SOURCE_SUCCESSOR.json` `c6ad9fe2…`, `MECHANICAL_DIFF.patch` `b073cbc7…`; Root `diagnostic/` + `diagnostic-successor/` byte-identical) | **CONFIRMED — exactly the doc 116 §1 correction, nothing else.** One inserted string per file, present once and absent from the reviewed preimages: runner line 345 `&&receipt.openGuard?.attempts===1&&…delegated===true&&…instanceCaptured===true` (114 B) and parent line 130 ` -and $qualResult.openGuard.attempts -eq 1 -and …delegated -eq $true -and …instanceCaptured -eq $true` (143 B); removing each restores `2a4da635…` / `7fb7af42…` byte for byte; every original condition retained; no CR bytes; `TOOL_ROOT` and the hard-coded `cdp`/driver/adapter digests unchanged. Pins: only rows 52/53 (0-based) change bytes and hash, paths unchanged, other 53 rows and keys identical, size unchanged. Guard, historical PROPOSAL, driver and adapter untouched. Records worktree `2876254` holds the successor at the pinned paths. Doc 116 mechanics acceptance now applies to this successor. Controls successor `d7c64c55` not submitted, not reviewed. |
+
+Retained prerequisites unchanged (doc 116 §6 / doc 117 §3): separately applicable authority, exact finite Root ticket (whole
+pin file + 55 raw inputs), fresh 2,048 MiB floors and exclusive job, raw two-root identity and pins pre/post, no self-matching
+launch ancestor, actual outer timing, post pins, owned closure and independent closure. No actual diagnostic, profile,
+socket, browser or nine-case journey credit follows. Closed and unchanged: application `8e85daa`/`25507c2f`, docs 104–116,
+accepted receipts. Last processed board tip `74e930a`. Nothing was executed; no agents were used.
