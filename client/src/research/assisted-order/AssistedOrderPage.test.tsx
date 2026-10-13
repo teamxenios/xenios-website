@@ -1536,6 +1536,94 @@ describe("AssistedOrderPage", () => {
       expect(window.location.pathname).toBe(pathBefore);
     });
 
+    // Doc102 QS-1. A page restored from a draft that a previous page in this
+    // tab wrote owns that draft from its first render, even when its own
+    // writes fail from then on: the restored identity is its last known
+    // persisted one. It must still complete its own committed success, and it
+    // must still be disowned by the sweep.
+    function writeRestorableDraft(idempotencyKey: string) {
+      sessionStorage.setItem(
+        ASSISTED_ORDER_DRAFT_KEY,
+        JSON.stringify({
+          idempotencyKey,
+          acceptedAt: null,
+          attemptState: "none",
+          step: "review",
+          selections: [{ item: directRuoItem, quantity: 1, notes: "" }],
+          generalNotes: "",
+          savedAt: "2026-10-12T12:00:00.000Z",
+        }),
+      );
+    }
+
+    it("completes a committed receipt on a restored unstamped page whose draft writes fail from the first render", async () => {
+      api.submitAssistedOrder.mockResolvedValue(receipt);
+      writeRestorableDraft("restored-unstamped");
+      // Draft writes are refused before the page ever renders. Receipt writes
+      // are not, so the stored receipt itself can be asserted.
+      refuseDraftWrites();
+      render();
+      await settle();
+      expect(readDraft()).toMatchObject({
+        idempotencyKey: "restored-unstamped",
+        acceptedAt: null,
+        attemptState: "none",
+      });
+
+      await reviewFromRestoredContact();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+      expect(submitCall(0).idempotencyKey).toBe("restored-unstamped");
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+      expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).not.toBeNull();
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+      expect(byTestId("order-error")).toBeNull();
+    });
+
+    it("still cleans up and navigates when every storage write fails on a restored unstamped page", async () => {
+      api.submitAssistedOrder.mockResolvedValue(receipt);
+      writeRestorableDraft("restored-unstamped-all");
+      // Every write is refused, receipt writes included, so no physically
+      // persisted receipt is asserted: only the safe cleanup and the
+      // non-secret confirmation navigation of an accepted request.
+      vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+        throw new DOMException("Quota exceeded", "QuotaExceededError");
+      });
+      render();
+      await settle();
+      await reviewFromRestoredContact();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+      expect(window.location.pathname).toBe(CONFIRMATION_PATH);
+      expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
+      expect(byTestId("order-error")).toBeNull();
+    });
+
+    it("cannot store a credential or navigate when the sweep precedes a late success on a restored page whose writes fail", async () => {
+      const lost = deferred<AssistedOrderReceipt>();
+      api.submitAssistedOrder.mockReturnValueOnce(lost.promise);
+      writeRestorableDraft("restored-unstamped-swept");
+      refuseDraftWrites();
+      render();
+      await settle();
+      await reviewFromRestoredContact();
+      click(byTestId("order-submit"));
+      await settle(20);
+      expect(api.submitAssistedOrder).toHaveBeenCalledTimes(1);
+
+      // The session ends while the page is still mounted, before the answer.
+      clearAssistedOrderStorage();
+      const pathBefore = window.location.pathname;
+      lost.resolve(receipt);
+      await settle(20);
+      expect(sessionStorage.getItem(assistedOrderReceiptKey(receipt.publicReference))).toBeNull();
+      expect(sessionStorage.getItem(assistedOrderTokenKey(receipt.publicReference))).toBeNull();
+      expect(sessionStorage.length).toBe(0);
+      expect(window.location.pathname).toBe(pathBefore);
+    });
+
     it("keeps the key on idempotency_conflict and never invites a new request", async () => {
       api.submitAssistedOrder.mockRejectedValue(conflict());
       render();
