@@ -1,0 +1,50 @@
+{
+  "doc": 107,
+  "title": "Static-CLI observed-primary execution profile R2: narrow trust/handshake review (revision 8)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CORRECTIONS_REQUIRED",
+  "verdictScope": "execution-profile mechanism only; application 8e85daa/25507c2f, build reuse, operating attestation, QS-R5 and docs 104-106 unchanged and closed",
+  "registration": { "task": "DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012", "revision": 8, "registeredAt": "2026-10-13T19:41:25.210Z", "proposalHash": "303cc35eba0f2044f03ddd8c55393d0de374928f67f9bcca8ae9cfeb0b256a2f", "records": "6193379ae60227a40501ce1c49b7b726522882a5" },
+  "frozenFilesVerified": {
+    "run-static-cli-r2.cjs": "44592 B 68f738b361309baa708bca81c6728c369b03bd11a2e675376620aa56bb9269b8",
+    "static-primary-wrapper-r1.cjs": "5964 B e3898fe70e9387f6043b82e71275da182eee8d2a131c2029a362df17572d2939",
+    "pins-static-cli-r2.json": "18263 B 3880381c5cd7d346381f4c5633de3f2bb49cdcf092a1b74eecdfcdea2d9f245a (92 entries)",
+    "execute-admitted-static-cli-r2.ps1": "8791 B cfbaa67507f09d04fa1b58610cea370fffca3c02109054d0c3949da9d933ea5d",
+    "verify-static-primary-controls-r1.cjs": "3822 B 44f33dabd439f53bd432f7ae4c164f5bdf188804d2219640d5b810087369091f",
+    "pinSpotChecks": "package.json 5cc063f6 (LF blob), package-lock.json d25eb6b8 (LF), CURRENT_PRODUCTION_STATE.json 9987f467, verify-production-state.ts 8057a46d, release-control-plane.test.ts 9fbea381, manifest 15004dad, wrapper e3898fe7, identity helpers c9d5d4f3/f3a92fa2"
+  },
+  "findings": [
+    {
+      "id": "P1-1",
+      "severity": "P1",
+      "claim": "Controller result gate can never pass: raw JSON.stringify equality between wrapper-reported command (forward-slash NODE/NPM literals) and controller expected array (path.join -> backslashes on win32)",
+      "evidence": "run-static-cli-r2.cjs:7 (node:path), :12-14 (RUNTIME/NODE/NPM via path.join), :239-241 (cliArgs), :541 (JSON.stringify comparison, no normalization; normalized() at :64 unused here); static-primary-wrapper-r1.cjs:10-11 (forward-slash literals), :19-24 (commandFor), :68 (record.command verbatim)",
+      "consequence": "every exit-0 run of any mode ends EXACT_CLI_RESULT_REFUSED / FAILED_OR_INCOMPLETE; fail-closed, no false pass; profile cannot produce its receipts",
+      "smallestCorrection": "controller only: compare path elements under normalized() on both sides, or define NODE/NPM as the wrapper's forward-slash literals; re-pin controller, pins file and parent $qualExpected hash; wrapper and pure36 unchanged",
+      "provingCheck": "pure control that builds the controller's expected array as the controller does for all three modes and asserts the controller's comparison succeeds against commandFor(mode); fails at 68f738, passes after correction; then one actual run per mode under its own admission",
+      "notCaughtByPure36": "pure36 asserts commandFor(mode)[0] === ack.executablePath (wrapper literal), never the controller comparison"
+    }
+  ],
+  "acceptedMechanism": {
+    "readyAtomic": "wx + rename; refuses pre-existing ready/ack/result; controller waits <=30s and validates pid/ppid/mode/candidate/tree/wrapper hash/workStopAt/startedAt window",
+    "ackFromOsObservation": "owned depth-0 row with pinned node exe via identity helper; ACK fields pid/parentPid/creationTicks/createdUtc/executablePath/observedUtc/workStopAt; wx + rename; refuses existing ACK",
+    "wrapperGate": "exact 12-key set, protocol, mode, candidate, tree, own digest, own pid/ppid, pinned node path, same workStopAt, ticks==createdUtc, created in [start-30s,start], observed in [start,now], now<stop, now-start<=30s; ACK file regular/non-symlink/<=4KiB/realpath; ACK_DEADLINE exit 1",
+    "oneCommand": "commandFor: three modes else CLI_MODE_REFUSED; started flag -> SECOND_CLI_REFUSED; protection literal 79414143/8e85daa; production-state XENIOS_EXPECTED_* only, no XENIOS_OBSERVED_*",
+    "resultBinding": "cli-result.json wx; controller requires protocol/mode/candidate/tree/wrapperPid==child.pid/wrapper hash/ackSha256==digest(ack)/observedPrimary byte-equal/exit 0/no signal/within window/startedUtc>=observedUtc",
+    "envPinsBudgets": "allowlisted env, NPM_CONFIG_OFFLINE, heap 1024, inherited NODE_OPTIONS/NODE_PATH refused, bin-shadow refused, 92 pins pre/post, source clean/non-shallow pre/post, npm 10.8.2 pre/post, 180s work + 60s cleanup = 240s, zero retries, two quiet observations, exact pid+ticks kills only",
+    "parentScript": "ticket hash, exact invocation array, finite window <=20 min, lastStart=end-270s, fresh outputs, pre/post pins, no competing qualification processes, 1536 MiB floor x3, cleared env, no force-kill"
+  },
+  "retainedLimits": [
+    "ACK integrity is filesystem-domain (no nonce/MAC); forgery can only fail a run",
+    "creationTicks/createdUtc consistency is supervisor-sourced; authenticity rests on the pinned R3 identity helper",
+    "wrapper descendants (npm -> cmd.exe -> node tsx) adopted via identity helper reconciliation, not the depth-0 rule",
+    "pure36 prepared, not run; proves wrapper gate and mapping only",
+    "production-state mode bounded by QS-R6 window (until 2026-10-20T13:49:12Z); does not satisfy QS-R7",
+    "inert leftover reportPath/testFiles fields",
+    "30s readiness/ACK tolerances"
+  ],
+  "boardTipRead": "6296268"
+}

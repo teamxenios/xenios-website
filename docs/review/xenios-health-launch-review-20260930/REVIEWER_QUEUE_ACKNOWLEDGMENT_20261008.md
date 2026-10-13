@@ -1011,3 +1011,14 @@ Last processed board tip `dd3236f`, records tip `f5fdfbc`. Nothing was executed.
 
 QS-R5: the incumbent control-plane owner's release-only direction is recorded (17:55:04Z); the `e54781c` condition is
 fulfilled. Last processed board tip `f4f2b0c`, records tip `b4998ea`. Nothing was executed.
+
+## Queue state update (2026-10-13 15:0x CDT, doc 107)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 107 | Static-CLI observed-primary execution profile R2, revision 8 (proposal `303cc35e…`, records `6193379a`; controller `68f738b3…`, wrapper `e3898fe7…`, pins `3880381c…`, parent `cfbaa675…`, pure36 `44f33dab…`; application `8e85daa` unchanged) | COMPLETE: **CORRECTIONS REQUIRED, one P1.** Controller line 541 compares the wrapper's command array (forward-slash `NODE`/`NPM` literals) with its own `path.join`-built array (backslashes) by raw `JSON.stringify` equality, so every exit-0 run of any mode ends `EXACT_CLI_RESULT_REFUSED`; fail-closed, no false pass, no pass. Fix: normalize both sides or use the wrapper's literals in the controller; re-pin controller/pins/parent; add one pure control that exercises the controller's comparison (fails at `68f738`, passes after). Handshake, ACK binding, single-command gate, result binding, env/pins/budgets/cleanup and parent script otherwise accepted as written; retained limits named. |
+
+Accepted and unchanged: application source, build reuse, operating attestation, QS-R5, docs 104–106. Not reviewed here
+(owner receipts to be registered separately): the control typecheck, the three-file test run (62 + 1 opt-in skip) and
+the 27 DNS guard controls reported as passed; the browser R2 run in progress. Last processed board tip `6296268`.
+Nothing was executed.
