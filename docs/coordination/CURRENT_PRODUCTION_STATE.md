@@ -1,5 +1,15 @@
 # Current production state
 
+## Provider deployment identity — 2026-10-13T13:49:12Z
+
+The trusted baseline is `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`, provider deployment `dep-daqft3vf3r2c73b7e88g`, reported live since `2026-09-24T10:43:29.274153Z` on `release/early-access-code-session-checkout`, with auto-deploy off. This is the authenticated provider association recorded at Git commit `d1da8f22ae3058e552788a7019a0fea35cc0b33f`, in `docs/health-launch/ql-build-20261012/doc104-locked-build-20261013/PRODUCTION_PROVIDER_READBACK.json` (raw SHA-256 `f70e0fed3d944de7a03a7011020c9c2f4d8e7ae59b058a368aa5d66090e2ec85`).
+
+This observation does not prove served `RENDER_GIT_COMMIT`, current HTTP health, installed SQL or permissions, customer persistence or staff readback. Runtime configuration and database evidence below remain dated historical observations; the provider read does not refresh them. `3dd3d966…` remains a separate local candidate. `79414143` predates the QL-12 application payment hold and is not automatically a safe rollback.
+
+## Retained historical record
+
+The following text is preserved from the inherited September record, rather than re-attested as current production. Its old “current” statements refer only to those dated observations.
+
 ## Correction — 2026-09-14
 
 **Current production is `c545a70eb694d990842ad1259df4f0786dab92c9`, tree

@@ -3,7 +3,7 @@ flowchart LR
   %% docs/coordination/history and are historical, not current attestations.
   PREVDB5["Superseded db5a2d44<br/>HISTORICAL; deactivated<br/>Care admin reliability"]
   PROD["Historical ff3c4962<br/>SUPERSEDED / COMPATIBLE ROLLBACK<br/>dep-dafcm567bikc7382rhng"]
-  LIVE3814["Production 3814c68<br/>AUDITED_BASELINE<br/>dep-dag1reu7bikc73e16ie0<br/>Hub installed / disabled; observation PASS"]
+  LIVE3814["Historical 3814c68<br/>SUPERSEDED_AUDITED_BASELINE<br/>dep-dag1reu7bikc73e16ie0<br/>Hub installed / disabled; observation PASS"]
   HARDENING8BE["Corrected candidate 8be5d582<br/>Local + API41 + browser15/45 PASS<br/>B attestation pending; not deployed"]
   RESOURCE_OLD["Historical c350ab1<br/>STRICT V3 FAILED; superseded<br/>original evidence retained"]
   RESOURCE["Pinned Hub/UI 3814c68<br/>DEPLOYED / ACTIVATION BLOCKED<br/>e55 applied20260908143724; Hub=false"]
@@ -105,3 +105,6 @@ flowchart LR
   class EDITORIAL,PR117,PR106,PR144,ORDER_EVIDENCE,PAYOUT,HOME gate;
   class FOUNDER authority;
   class EFB,R10H,RUNTIME,DB9SMOKE,EVIDENCE,E641,C015,R3C,PACKET candidate;
+  %% Provider identity only, observed 2026-10-13T13:49:12Z; no served/runtime/DB proof refreshed.
+  CURRENT794["Trusted baseline 79414143<br/>AUDITED_BASELINE: provider metadata only<br/>dep-daqft3vf3r2c73b7e88g<br/>Served version and journeys not verified"]
+  LIVE3814 -.->|historical baseline lineage| CURRENT794

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
   "generatedAt": "2026-08-02T02:02:07Z",
-  "productionBaselineReconciledAt": "2026-09-08T14:45:55.787734Z",
-  "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+  "productionBaselineReconciledAt": "2026-10-13T13:49:12Z",
+  "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
   "checksumScope": "canonical Git blob bytes at each release-ancestor sourceSha and optional sourcePath, or productionSha and path when sourceSha is omitted; upstreamReviewedSourceSha preserves archival review attribution without making the gate depend on an unreachable object; managed copies must byte-match the pinned source",
   "migrations": [
     {
@@ -778,6 +778,7 @@
     "The two nodes without sourceSha were byte-verified at productionSha 3daa3f4aef9d0fcac7fd4ffd941e0b8bdf3dc212 before this baseline changed. No current database aggregate or managed-ledger observation was refreshed on 2026-08-28; per-node applied-state claims retain only their own dated historical evidence and must not be generalized into current counts.",
     "The protected order requires both reservation commands and the variant strength write gate before persistent cart, followed by fulfillment supplier operations -> affiliate professional operations -> pricing lineage -> RLS retro hardening.",
     "No pending migration may be marked applied until the authenticated managed ledger shows its exact version and the post-apply security, privilege, row-count, and dependency invariants pass.",
-    "Account/partner candidates applied as managed history versions 20260907143147 and 20260907143204 are recorded separately in supabase/MIGRATIONS.md and the account/partner deployment report. Their exact candidate bytes are preserved; no retrospective managed file copy or migration-history repair is introduced. Resource Hub applied once as20260908143724 on2026-09-08 with exact full pre/postchecks PASS; do not replay either copy. Enabled managed delivery remains unqualified."
+    "Account/partner candidates applied as managed history versions 20260907143147 and 20260907143204 are recorded separately in supabase/MIGRATIONS.md and the account/partner deployment report. Their exact candidate bytes are preserved; no retrospective managed file copy or migration-history repair is introduced. Resource Hub applied once as20260908143724 on2026-09-08 with exact full pre/postchecks PASS; do not replay either copy. Enabled managed delivery remains unqualified.",
+    "2026-10-13T13:49:12Z reconciles only the trusted production SHA to authenticated provider metadata. All migration entries, checksums, source identities and dated applied-state evidence remain unchanged; no SQL, managed ledger or database permission was inspected. The two entries without sourceSha have identical immutable Git blobs at the frozen candidate and 79414143."
   ]
 }
