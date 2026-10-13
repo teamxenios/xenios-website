@@ -1,0 +1,1437 @@
+{
+ "archive": "doc 103 QL correction successor r4 (dd3f532) narrow check: QS-1 fix and rebound receipts (reviewer-computed, no workflow)",
+ "reviewer": "session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-fable-5-1)",
+ "execution": "NOT_RUN",
+ "target": {
+  "source": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+  "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+  "base": "00fdbf4a971752e9b9182b1404adad2dd1e7e675",
+  "branchTip": "codex/assisted-order-doc99-followup-20261012 = dd3f532",
+  "commits": [
+   "cc47345 test (+88 lines, three controls)",
+   "dd3f532 fix (AssistedOrderPage.tsx +11/-2)"
+  ],
+  "changedPaths": [
+   "client/src/research/assisted-order/AssistedOrderPage.tsx",
+   "client/src/research/assisted-order/AssistedOrderPage.test.tsx"
+  ],
+  "registration": "none on the board at review time"
+ },
+ "reviewerByteChecks": {
+  "fixEqualsRuling": "storedOnce = useRef(draft !== null); lastPersisted = useRef(draft ? {idempotencyKey, acceptedAt} : null) at AssistedOrderPage.tsx:457-475@dd3f532; no other source change",
+  "rowWalk": "restored {K,null} with failing writes: pre-POST write fails, store {K,null}, expected {K,now}; fallback storeFailed && present && lastPersisted {K,null} matches -> owns -> receipt path proceeds. After sweep: store absent, storedOnce true -> disowned. Fresh page: draft null -> unchanged",
+  "testsDiscriminate": "all three new controls fail at 00fdbf4a: tests 1-2 because the old refs disown the restored page before navigation; test 3 because storedOnce=false kept ownership of an absent store after the sweep",
+  "noSkips": "0 .skip/.only/.todo in the changed test at dd3f532"
+ },
+ "receipts": {
+  "fullSuiteR5": {
+   "observedUtc": "2026-10-13T02:02:48.8619345Z",
+   "candidate": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "status": "PASSED_LOCAL_WITH_AUTHORED_SKIPS_NOT_CI_EQUIVALENT",
+   "executionStatus": "PASSED",
+   "cleanupStatus": "OBSERVED_COMPLETE_NOT_KERNEL_GUARANTEE",
+   "supervisorExit": 0,
+   "childExit": 0,
+   "startedUtc": "2026-10-13T01:44:23.312Z",
+   "childEndedUtc": "2026-10-13T02:02:10.349Z",
+   "finalizedUtc": "2026-10-13T02:02:19.401Z",
+   "aggregateElapsedMs": 1080284,
+   "receiptHash": "e6c2129daa2d80192ef89869b8abcf1bf8aa9677dca02b88276881119e804ee9",
+   "reportHash": "be6aa23aea3b607bf53360eb5b265589528f206c9555cd3b358a7c32b37ea093",
+   "logHash": "a457e4597dc42fe5cad6a66f454c9dc2082e95e52f8c5d24a578c58379b17cb2",
+   "node": "v20.19.0",
+   "npm": "10.8.2",
+   "reportSuccess": true,
+   "counts": {
+    "numPassedTests": 18067,
+    "numFailedTests": 0,
+    "numPendingTests": 85,
+    "numTodoTests": 0,
+    "numTotalTests": 18152
+   },
+   "assertionStatuses": [
+    {
+     "Name": "passed",
+     "Count": 18067
+    },
+    {
+     "Name": "skipped",
+     "Count": 85
+    }
+   ],
+   "fileCount": 971,
+   "fileDuplicates": [],
+   "selectionExact": true,
+   "selectionCount": 971,
+   "selectionDelta": [],
+   "skips": [
+    {
+     "file": "server/release-control-plane.test.ts",
+     "fullName": "migration DAG validator executes the complete production verifier against canonical production-shaped PostgreSQL",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/durable-restart.pg.test.ts",
+     "fullName": "a durable session survives the process that issued it instance A: a correct password mints a session in PostgreSQL",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/durable-restart.pg.test.ts",
+     "fullName": "a durable session survives the process that issued it instance B: a brand-new process accepts the cookie A issued",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/durable-restart.pg.test.ts",
+     "fullName": "a durable session survives the process that issued it instance C: after logout, no later process will accept it again",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/durable-restart.pg.test.ts",
+     "fullName": "a durable session survives the process that issued it a forged cookie is refused by a fresh process",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "the identity facts this design rests on derives every offering and variant id from the canonical key alone",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "the identity facts this design rests on cannot recover the canonical key from the deployed dataset",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "five mutations of the real master workbook reproduces the known catalog shape before any mutation",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "five mutations of the real master workbook 1. renames SS-31 and carries its offering id",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "five mutations of the real master workbook 1b. carries every SS-31 variant id, which the rename also moved",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "five mutations of the real master workbook 2. reads the edited Epithalon label as the same variant",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "five mutations of the real master workbook 3. reports Larazotide as added",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "five mutations of the real master workbook 4. reports Adamax as retired, with the ids that stop resolving",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "five mutations of the real master workbook 5. reports the Oxytocin availability change at both levels",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "five mutations of the real master workbook changes nothing else in a 1,121-offering catalog",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "a partial rename inside one canonical group is reported as a split, never as a rename",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/catalog-revision-real-workbook.test.ts",
+     "fullName": "a partial rename inside one canonical group still shows a human the connection, as a proposal",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/master-offerings/real-catalog-sort-facets.test.ts",
+     "fullName": "the real generated catalog is not generated on this machine",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority preserves legacy evidence and refuses blind migration replay",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority resolves Auth UUID through member UUID to canonical partner and denies ineligible issuance",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority atomically replays concurrent issue with newly generated token candidates; changed intent conflicts",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority passes the final read-only transfer plus touch capability postcheck",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority resolves exact issue and revoke replays before mutable account eligibility",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority rolls back link, audit and idempotency together when audit insertion fails; retry recovers",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority retains exactly one concurrent first-valid visitor capture and one audit event",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority binds once per Auth account and per capture across retries/concurrent devices",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority preserves the first binding and appends CAS-protected future-only admin transfers",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority keeps a valid historical claim eligible after link expiry while partner state remains authoritative",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority rejects self referral at signed capture and at later Auth binding",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority rejects forged provenance, unregistered links and wrong ownership",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority refuses expired capture and historical expired-touch binding without new evidence",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority waits for an external suspension row lock and refuses a stale eligibility decision",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority confines browser/service permissions and prohibits direct evidence mutation",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority ignores service-role pg_temp catalog shadows in authority and mutation guards",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority fails authority closed after privilege or guard drift",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority makes established partner identity immutable and preserves replay after account closure",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority allows only a canonical first Auth claim for a partner-linked null identity",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority executes exact same-transaction privacy cleanup without deleting unrelated link visitors",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority rolls back unfinished privacy cleanup, preserves legacy rows, and refuses unrelated admin-actor erasure",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority serializes a legacy no-FK binding writer across privacy identity deletion",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority deletes only canonical legacy bindings that directly reference the privacy subject",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority serializes direct partner creation against concurrent member deletion",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority returns bounded internal admin lineage without raw subject hashes, names or emails",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority rehearses service-only canonical request/order lineage, exclusions, caps and missing-source refusal",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority also installs cleanly without a legacy binding table using the reusable preview runtime",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-database.test.ts",
+     "fullName": "Referral V1 disposable PostgreSQL authority refuses malformed baseline partner/member/Auth identity before installing irreversible guards",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate refuses the transfer-capable base until the exact touch operation upgrades readiness",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate executes through the existing service-role dispatcher and writes no attribution events",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate does not disclose a touch to another browser or resolve a missing touch",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate rejects extra partnerId at the actual RPC boundary",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate rejects extra commissionRateBasisPoints at the actual RPC boundary",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate rechecks authenticated self-referral at submission while guest attribution stays provisional",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate rejects malformed payload null without throwing",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate rejects malformed payload undefined without throwing",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate rejects malformed payload {} without throwing",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate rejects malformed payload {\"touchId\":\"bad\",\"subjectKeyHash\":\"short\"} without throwing",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate rechecks revocation and partner suspension rather than trusting the sealed claim",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate refuses historical expired touches while all immutable guards stay enabled",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate keeps the helper internal and denies anonymous/authenticated RPC execution",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/partners/referral-v1-touch-attribution.database.test.ts",
+     "fullName": "executable referral touch attribution candidate refuses replay atomically and leaves the installed operation working",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/products-diagnostics/variant-strength-write-gate-sql.test.ts",
+     "fullName": "PostgreSQL 16 executable strength-gate qualification applies twice, executes all probes, rolls back full/absent/partial states, and reapplies",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/commerce/persistence/subscription-transition-migration.test.ts",
+     "fullName": "uncommitted DB-owner subscription transition packet uses one locked database transaction for CAS, state, event, and replay result",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/commerce/persistence/subscription-transition-migration.test.ts",
+     "fullName": "uncommitted DB-owner subscription transition packet preserves Q1-50 and refuses Q51 at both schema and command boundaries",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/commerce/persistence/subscription-transition-migration.test.ts",
+     "fullName": "uncommitted DB-owner subscription transition packet keeps both RPCs server-only and search-path hardened",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL strength-registry mirror repair: 78 rows, the eight non-disputed, every gate decision unchanged",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL a pre-existing PUBLIC proof bucket is converged to PRIVATE by the chain, not skipped",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL identity: unique emails, single-use tokens, bind-once sessions",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL placement: order, reservation, immutable line, immutable money, and invoice land together",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL a placement whose invoice money disagrees with the order money is REFUSED whole",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL proofs: chain sequence enforced, state moves to under_review and never further",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL settlement: exactly once, first verifier preserved, transaction reference single-use",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL a settlement claiming the wrong amount or currency is an integrity fault, not a commit",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL dispatch: only after settlement, sequenced, and one fulfillment forever",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL reservation expiry after money was submitted raises ONE admin exception, resolved by a named human",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL supplier confirmations: recorded with the full SUPPLIER_CONFIRMED_ON_DEMAND shape, expiring, withdrawable",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL agreements, shipping, and referral grants answer from their tables and fail closed when empty",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL proof objects: reserved once, constraint-checked in the database as well",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL the release ledger and the audit trail persist and read back",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL append-only: nothing, not even the owner, rewrites a ledger row or an audit row",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL RLS and grants: browser roles reach neither the tables nor the functions",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL reservation holds: idempotent insert, one per draft, pure transitions, append-only exceptions",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL settledTransactionRefs: every reference that ever settled, across ALL orders (F4)",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL supplier-confirmation PORT: insert, truthful byId, clock-derived liveness, caller-stamped withdraw",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL unit holds: recorded prohibitions survive, withdraw is a state change, rows never delete",
+     "status": "skipped"
+    },
+    {
+     "file": "server/research/early-access/persistence/early-access-durable-commerce.pg.test.ts",
+     "fullName": "Early Access durable persistence against real PostgreSQL restart survival: a second, independent connection pool sees every fact",
+     "status": "skipped"
+    }
+   ],
+   "skipDeltaVersus00f": [],
+   "companion": [
+    {
+     "name": "C:/xenios-wt/doc99-followup/server/core-site-protection.test.ts",
+     "status": "passed",
+     "assertionCount": 36,
+     "assertionStatuses": [
+      {
+       "Name": "passed",
+       "Count": 36
+      }
+     ],
+     "assertions": [
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier PASSES a change set that touches only research and care",
+       "status": "passed",
+       "title": "PASSES a change set that touches only research and care",
+       "duration": 5.823500000000024,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier allows only the explicitly approved /hino static subtree under client/public",
+       "status": "passed",
+       "title": "allows only the explicitly approved /hino static subtree under client/public",
+       "duration": 1.1324999999999932,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier FAILS a change set that touches client/src/pages/Home.tsx",
+       "status": "passed",
+       "title": "FAILS a change set that touches client/src/pages/Home.tsx",
+       "duration": 0.402499999999975,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier FAILS unrelated global presentation changes while reporting the hash-locked shell seam",
+       "status": "passed",
+       "title": "FAILS unrelated global presentation changes while reporting the hash-locked shell seam",
+       "duration": 0.3998999999999455,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier PASSES a permitted seam file but REPORTS it as a seam, not as an ordinary allowed change",
+       "status": "passed",
+       "title": "PASSES a permitted seam file but REPORTS it as a seam, not as an ordinary allowed change",
+       "duration": 0.6447999999999752,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier reports a seam file that also sits under an allowed prefix as a SEAM, never silently allowed",
+       "status": "passed",
+       "title": "reports a seam file that also sits under an allowed prefix as a SEAM, never silently allowed",
+       "duration": 0.4171000000000049,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier treats Windows backslash paths the same as git's forward-slash paths",
+       "status": "passed",
+       "title": "treats Windows backslash paths the same as git's forward-slash paths",
+       "duration": 0.3453000000000088,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier FAILS an unrelated server route file and an unrelated API surface",
+       "status": "passed",
+       "title": "FAILS an unrelated server route file and an unrelated API surface",
+       "duration": 0.29349999999999454,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier admits only the reviewed global exact-byte changes as reported, hash-locked seams",
+       "status": "passed",
+       "title": "admits only the reviewed global exact-byte changes as reported, hash-locked seams",
+       "duration": 1.2860000000000014,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier admits only the exact PWA display seam and keeps registration, worker and app shell protected",
+       "status": "passed",
+       "title": "admits only the exact PWA display seam and keeps registration, worker and app shell protected",
+       "duration": 0.7991999999999848,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier still FAILS adjacent font and dependency paths instead of widening a subtree",
+       "status": "passed",
+       "title": "still FAILS adjacent font and dependency paths instead of widening a subtree",
+       "duration": 0.4124999999999659,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier allows the gate's own infrastructure so the protection tooling can exist in the repo",
+       "status": "passed",
+       "title": "allows the gate's own infrastructure so the protection tooling can exist in the repo",
+       "duration": 0.3996999999999957,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the changed-file classifier"
+       ],
+       "fullName": "the changed-file classifier distinguishes scripts/ (tooling, allowed) from script/ (the production build, protected)",
+       "status": "passed",
+       "title": "distinguishes scripts/ (tooling, allowed) from script/ (the production build, protected)",
+       "duration": 0.280399999999986,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "test files pass but are always reported"
+       ],
+       "fullName": "test files pass but are always reported reports a test file rather than silently allowing it, wherever it lives",
+       "status": "passed",
+       "title": "reports a test file rather than silently allowing it, wherever it lives",
+       "duration": 2.0820999999999685,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "test files pass but are always reported"
+       ],
+       "fullName": "test files pass but are always reported reports a test even inside an allowed Research zone, because lowering a gate is forbidden anywhere",
+       "status": "passed",
+       "title": "reports a test even inside an allowed Research zone, because lowering a gate is forbidden anywhere",
+       "duration": 0.4585999999999899,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "test files pass but are always reported"
+       ],
+       "fullName": "test files pass but are always reported does not mistake a non-test source file for a test",
+       "status": "passed",
+       "title": "does not mistake a non-test source file for a test",
+       "duration": 0.299000000000035,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "test files pass but are always reported"
+       ],
+       "fullName": "test files pass but are always reported warns in the report that a touched test must have been strengthened, not weakened",
+       "status": "passed",
+       "title": "warns in the report that a touched test must have been strengthened, not weakened",
+       "duration": 0.5652000000000044,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "test files pass but are always reported"
+       ],
+       "fullName": "test files pass but are always reported still FAILS a protected source file even when a test file is changed alongside it",
+       "status": "passed",
+       "title": "still FAILS a protected source file even when a test file is changed alongside it",
+       "duration": 0.26979999999997517,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the protected file hash tripwire"
+       ],
+       "fullName": "the protected file hash tripwire matches every curated protected file at HEAD",
+       "status": "passed",
+       "title": "matches every curated protected file at HEAD",
+       "duration": 30.010299999999972,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the protected file hash tripwire"
+       ],
+       "fullName": "the protected file hash tripwire FAILS when a protected file is tampered with",
+       "status": "passed",
+       "title": "FAILS when a protected file is tampered with",
+       "duration": 1.6591999999999985,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the protected file hash tripwire"
+       ],
+       "fullName": "the protected file hash tripwire FAILS every mutation of the reviewed typography and dependency seam bytes",
+       "status": "passed",
+       "title": "FAILS every mutation of the reviewed typography and dependency seam bytes",
+       "duration": 12.25320000000005,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the protected file hash tripwire"
+       ],
+       "fullName": "the protected file hash tripwire FAILS when a protected file is deleted",
+       "status": "passed",
+       "title": "FAILS when a protected file is deleted",
+       "duration": 0.4375,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the protected file hash tripwire"
+       ],
+       "fullName": "the protected file hash tripwire normalizes CRLF so a Windows checkout and a stored LF blob hash identically",
+       "status": "passed",
+       "title": "normalizes CRLF so a Windows checkout and a stored LF blob hash identically",
+       "duration": 0.34669999999999845,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the protected file hash tripwire"
+       ],
+       "fullName": "the protected file hash tripwire verifies the seam baselines too, and they are all clean at HEAD",
+       "status": "passed",
+       "title": "verifies the seam baselines too, and they are all clean at HEAD",
+       "duration": 2.928200000000004,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the gate report"
+       ],
+       "fullName": "the gate report fails and lists every violating path when protected files change",
+       "status": "passed",
+       "title": "fails and lists every violating path when protected files change",
+       "duration": 0.487700000000018,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the gate report"
+       ],
+       "fullName": "the gate report fails on a hash mismatch even when every changed path is allowed",
+       "status": "passed",
+       "title": "fails on a hash mismatch even when every changed path is allowed",
+       "duration": 0.3657000000000039,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the gate report"
+       ],
+       "fullName": "the gate report passes and names the seam when only a seam file moved",
+       "status": "passed",
+       "title": "passes and names the seam when only a seam file moved",
+       "duration": 0.5643000000000029,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "route-section matching"
+       ],
+       "fullName": "route-section matching does not mistake /careers for the /care surface",
+       "status": "passed",
+       "title": "does not mistake /careers for the /care surface",
+       "duration": 0.3369999999999891,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "route-section matching"
+       ],
+       "fullName": "route-section matching keeps every allowed write-zone prefix slash-terminated, so server/careers.ts could never match server/care/",
+       "status": "passed",
+       "title": "keeps every allowed write-zone prefix slash-terminated, so server/careers.ts could never match server/care/",
+       "duration": 0.8722000000000207,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the manifest cannot rot: every protected route is real"
+       ],
+       "fullName": "the manifest cannot rot: every protected route is real declares every route that App.tsx actually registers, and no route it does not",
+       "status": "passed",
+       "title": "declares every route that App.tsx actually registers, and no route it does not",
+       "duration": 4.5154,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the manifest cannot rot: every protected route is real"
+       ],
+       "fullName": "the manifest cannot rot: every protected route is real excludes every /health, /research, /care and /admin/research route from the protected set",
+       "status": "passed",
+       "title": "excludes every /health, /research, /care and /admin/research route from the protected set",
+       "duration": 3.1662999999999784,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the manifest cannot rot: every protected route is real"
+       ],
+       "fullName": "the manifest cannot rot: every protected route is real lists the ICP slugs that ICP_BY_SLUG actually defines, both directions",
+       "status": "passed",
+       "title": "lists the ICP slugs that ICP_BY_SLUG actually defines, both directions",
+       "duration": 4.31230000000005,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the manifest cannot rot: every protected route is real"
+       ],
+       "fullName": "the manifest cannot rot: every protected route is real lists the careers slugs the live careers.ts actually defines, both directions",
+       "status": "passed",
+       "title": "lists the careers slugs the live careers.ts actually defines, both directions",
+       "duration": 2.977700000000027,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the manifest cannot rot: every protected route is real"
+       ],
+       "fullName": "the manifest cannot rot: every protected route is real does not claim a product-family route that does not exist",
+       "status": "passed",
+       "title": "does not claim a product-family route that does not exist",
+       "duration": 0.79200000000003,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the manifest cannot rot: every protected route is real"
+       ],
+       "fullName": "the manifest cannot rot: every protected route is real names only seam files that exist, and only allowed write zones that exist",
+       "status": "passed",
+       "title": "names only seam files that exist, and only allowed write zones that exist",
+       "duration": 10.377400000000023,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      },
+      {
+       "ancestorTitles": [
+        "the manifest cannot rot: every protected route is real"
+       ],
+       "fullName": "the manifest cannot rot: every protected route is real pins the baseline sha it was built from",
+       "status": "passed",
+       "title": "pins the baseline sha it was built from",
+       "duration": 0.3748000000000502,
+       "failureMessages": [],
+       "meta": {},
+       "tags": []
+      }
+     ]
+    }
+   ],
+   "pinsRehashed": 2444,
+   "pinMismatch": [],
+   "ownedObserved": 120,
+   "liveExactOwned": [],
+   "matchingProcesses": [],
+   "listeners": [],
+   "head": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "actualTree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "sourceStatus": [],
+   "allProbesClosed": true,
+   "fixture": {
+    "host": "127.0.0.1",
+    "port": 54321,
+    "acquired": true,
+    "stopped": true,
+    "requests": {
+     "GET auth 200": 4,
+     "POST rpc 503": 4
+    },
+    "closureReason": "AFTER_CONFIRMED_CHILD_CLEANUP",
+    "closedAfterConfirmedChildren": true
+   },
+   "sourceInvariant": true,
+   "postPinsMatch": true,
+   "deadline": {
+    "aggregateExceeded": false,
+    "cleanupExceeded": false,
+    "expiredTarget": "NONE"
+   },
+   "limits": [
+    "Unfiltered default local Vitest selection, NOT CI equivalence. Authored PG opt-ins remain absent; every skip is retained.",
+    "No hosted qualification, durable SQL proof, build, browser, real email, payment, or release authority.",
+    "54321 is an owned empty-read/write-refusing synthetic upstream, not an OS network sandbox. Other sockets are not fenced.",
+    "Production-boot children reconstruct fixture env: pinned process.execPath survives but NODE_OPTIONS does not. App children bind 0.0.0.0.",
+    "One Vitest worker with 1024 MiB Node old-space cap, NOT an aggregate memory limit or cap on boot grandchildren.",
+    "PID/creation/handle observations and bounded cleanup, NOT a kernel Job Object or race-free complete descendant census.",
+    "The 1800s aggregate budget is cooperative. The timer first arms after synchronous preflight; reads, hashing, JSON and finalization cannot be interrupted by it.",
+    "Input byte/count caps bound admitted work size, not filesystem latency or wall time. No watchdog or enforced hard wall-clock limit is present.",
+    "Dependency entry-file and lock pins are not a complete recursive dependency byte attestation. See dependencyProvenance.",
+    "R3 snapshot10s / after-completion cadence5s / cleanup60s are finite proposed controller budgets, not a measured capacity guarantee. Cleanup remains inside1800s total.",
+    "A failed helper or unresolved ownership still fails closed. No automatic suite retry, unknown PID termination, wildcard kill or PID-tree kill is added."
+   ],
+   "cleanupDetail": {
+    "rawStopReason": "NORMAL_EXIT",
+    "receiptCleanupActionsFieldPresent": false,
+    "killProbesRecorded": 0,
+    "conclusion": "No supervisor KillExact action is recorded; verified against optional field writer and metadata probe list, not inferred from a null query result.",
+    "quietCleanupSnapshots": [
+     "2026-10-13T02:02:15.4266903Z",
+     "2026-10-13T02:02:18.027323Z"
+    ],
+    "ownedAliveAfterAbsorb": [
+     [],
+     []
+    ],
+    "fixture": "Owned 127.0.0.1:54321 fixture remained during quiet child snapshots, then closed after confirmed child cleanup; independent postcheck found no listeners.",
+    "unresolvedEvents": "Four missing-executable child identities each PENDING_RECHECK then GONE_ON_RECHECK; no ownership/kill authority inferred."
+   },
+   "publication": "LOCAL_ONLY",
+   "priorRuns": "R4 preflight failed without starting a test job; preserved separately. Historical 00f R3 18064/85/0 is not transferred. R5 adds three new regression assertions to the unchanged 85 authored skips.",
+   "remaining": "Typecheck, standalone protection CLI, fresh build and candidate source review pending; browser/admin-PATCH/route/served-version and release conditions remain separate."
+  },
+  "fullSuiteR4NoJob": {
+   "candidate": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "classification": "PREFLIGHT_FAILED_NO_JOB_STARTED_NOT_AN_APPLICATION_TEST_RESULT",
+   "admission": "DOC102_QS1_FULL_LOCAL_VITEST_R4_EXACT_RESERVATION_20261013.json",
+   "dispatchUtc": "2026-10-13T01:31:32.6018275Z",
+   "aggregateStartedUtc": "2026-10-13T01:31:32.659Z",
+   "finalizedUtc": "2026-10-13T01:31:36.381Z",
+   "supervisorExit": 1,
+   "shellExit": 1,
+   "executionStatus": "NOT_STARTED",
+   "cleanupStatus": "NO_JOB_STARTED",
+   "fixtureAcquired": false,
+   "testPassFailCounts": null,
+   "rawReceiptSha256": "cc2bc458ab75787101e086f5f7ecc0f54261c324eee04f39f87594c123e6b123",
+   "runnerSha256": "48c09fa36099b73fafb49e6a050e9c1407132cdb7177fc1c148509276b67a866",
+   "pinsSha256": "fcc9c8ed9614d4e9c70f35b746ff9e8bd22bffcc81c4350c934483c9ad7fe662",
+   "rawFailure": {
+    "name": "Error",
+    "code": null,
+    "reason": "UNCLASSIFIED_CONTROL_ERROR"
+   },
+   "baseline": {
+    "observedUtc": "2026-10-13T01:31:36.3100666Z",
+    "processCount": 445,
+    "stdoutBytes": 100417,
+    "sha256": "ebd54710ce6694bb4489e9fdf13c2ff1da1577d11624d99cfacb08d62ba65a57",
+    "ownedAlive": [],
+    "relevantListeners": [],
+    "rawRowsRetained": false
+   },
+   "diagnosis": {
+    "status": "LIKELY_PARENT_SHELL_SELF_COLLISION_NOT_PROVEN_FROM_RETAINED_ROWS",
+    "mechanism": "owned-processes.ps1 normalizes every other process command line and marks a literal checkout-root substring as rootMention. run-full.cjs excludes only its own supervisor PID from the baseline collision guard, not its parent shell. The dispatch shell included the literal checkout root in a pre-dispatch CIM filter. Therefore that invocation can reject its own otherwise benign parent. The receipt retains only the snapshot hash/count, not the offending identity; do not claim a proven historical PID or replace the raw generic error.",
+    "minimalRemedy": "Keep every guard unchanged. Finish read-only pre-dispatch checks in a separate completed invocation. Any newly admitted attempt uses fresh scratch/output and a bare full-path Node command from the records root, with no checkout-root literal in the parent command. No automatic retry under the consumed R4 admission."
+   },
+   "independentPostcheck": {
+    "observedUtc": "2026-10-13T01:34:25.8743118Z",
+    "pinsRehashed": 2444,
+    "pinMismatches": [],
+    "matchingNodeEsbuildChromeProcesses": [],
+    "fixedPortListeners": [],
+    "sourceHeadUnchanged": true,
+    "sourceTreeUnchanged": true,
+    "sourceClean": true
+   },
+   "priorEvidence": "91/91 targeted GREEN remains valid for dd3; 88/91 historical RED with all three new assertions failing is retained separately. The 18,064-pass full-suite R3 belongs only to older 00f source and is not transferred.",
+   "hostedMutations": false,
+   "publication": "LOCAL_ONLY"
+  },
+  "targetedGreen": {
+   "observedUtc": "2026-10-13T01:22:45.3974619Z",
+   "snapshotUtc": "2026-10-13T01:22:45.0098454Z",
+   "source": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "startedUtc": "2026-10-13T01:21:32.979Z",
+   "childEndedUtc": "2026-10-13T01:22:17.528Z",
+   "finalizedUtc": "2026-10-13T01:22:25.806Z",
+   "receiptSha256": "260f81e5d8d432f910cd0a303d3c5728203c0a831e64c72038b0e086628f53a3",
+   "reportSha256": "954ccbc6015e147fcd7c9583a86d2d34fad404708b4af890263f806b63ba49f6",
+   "logSha256": "8e2950fa713c94198dcdb0edc4d81c0aac20bed936b5f008bad46bb8f46b7847",
+   "statusCounts": [
+    {
+     "Name": "passed",
+     "Count": 91
+    }
+   ],
+   "fileCounts": [
+    {
+     "name": "C:/xenios-wt/doc99-followup/client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+     "status": "passed",
+     "assertions": 75
+    },
+    {
+     "name": "C:/xenios-wt/doc99-followup/client/src/research/assisted-order/draft-store.test.ts",
+     "status": "passed",
+     "assertions": 16
+    }
+   ],
+   "newControls": [
+    {
+     "fullName": "AssistedOrderPage uncertain outcomes and the frozen attempt identity (Doc96 QL-11) completes a committed receipt on a restored unstamped page whose draft writes fail from the first render",
+     "status": "passed"
+    },
+    {
+     "fullName": "AssistedOrderPage uncertain outcomes and the frozen attempt identity (Doc96 QL-11) still cleans up and navigates when every storage write fails on a restored unstamped page",
+     "status": "passed"
+    },
+    {
+     "fullName": "AssistedOrderPage uncertain outcomes and the frozen attempt identity (Doc96 QL-11) cannot store a credential or navigate when the sweep precedes a late success on a restored page whose writes fail",
+     "status": "passed"
+    }
+   ],
+   "realApiControls": [
+    {
+     "fullName": "the real api request path against a stubbed fetch (Doc99 release item 2) turns a non-JSON 502 into request_failed, which the wizard treats as uncertain",
+     "status": "passed"
+    },
+    {
+     "fullName": "the real api request path against a stubbed fetch (Doc99 release item 2) turns an HTML 413 into request_failed as well",
+     "status": "passed"
+    },
+    {
+     "fullName": "the real api request path against a stubbed fetch (Doc99 release item 2) keeps the server's own code and message on a JSON 500",
+     "status": "passed"
+    },
+    {
+     "fullName": "the real api request path against a stubbed fetch (Doc99 release item 2) lets a network failure surface as a plain error, never as a refusal",
+     "status": "passed"
+    },
+    {
+     "fullName": "the real api request path against a stubbed fetch (Doc99 release item 2) returns the receipt on a JSON 200",
+     "status": "passed"
+    }
+   ],
+   "ownedObserved": 4,
+   "liveExactOwned": [],
+   "runMentionProcesses": [],
+   "ownedPidListeners": [],
+   "rawPinMismatchCount": 0,
+   "sourceInvariant": true,
+   "postPinsMatch": true,
+   "node": "v20.19.0",
+   "npm": "10.8.2",
+   "allMetadataProbesClosed": true,
+   "cleanupActions": [],
+   "supervisorExit": 0,
+   "sessionExit": 0,
+   "sourceStatus": null,
+   "classification": "TARGETED_PASS_SYNTHETIC_NOT_BROWSER_OR_RELEASE_QUALIFICATION",
+   "limitations": [
+    "Node 20.19.0/npm10.8.2; physical donor-derived dependencies, selected pins not recursive dependency attestation.",
+    "Synthetic jsdom and stubbed fetch; no actual database persistence, browser or hosted validation.",
+    "Full suite, typecheck, protection CLI and companion, build, source verdict and separate release conditions remain."
+   ]
+  },
+  "protectionCli": {
+   "observedUtc": "2026-10-13T02:29:19.5488485+00:00",
+   "candidate": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "comparisonBase": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+   "startedUtc": "2026-10-13T02:28:31.123Z",
+   "endedUtc": "2026-10-13T02:28:31.36Z",
+   "childExit": 0,
+   "supervisorExit": 0,
+   "timedOut": false,
+   "sourceInvariant": true,
+   "postPinsMatch": true,
+   "runnerUnchanged": true,
+   "node": "v20.19.0",
+   "npm": "NOT_INVOKED",
+   "pinCount": 5,
+   "pinMismatch": [],
+   "scopedJobs": [],
+   "fixedPortListeners": [],
+   "head": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "treeActual": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "sourceStatus": null,
+   "receiptHash": "c3d6afdbfb540b6cbd64ad011ef9ecae493e0e6efd80691d2ccca38ca6c68bfa",
+   "logHash": "82394f0bbe4602dd90d1ac8a81545b3f520eaa752c900e145ae6848c08ffc7a0",
+   "runnerHash": "f745a1811dd37abe4143761fe6a4d858940017897244e6c31f405aebeee095e0",
+   "limits": [
+    "60-second child timeout; not an aggregate hard deadline or descendant-cleanup guarantee. Coordinator reserves the serial window and performs any required owned-process postcheck.",
+    "No kernel network or aggregate memory sandbox."
+   ],
+   "status": "PASS_PROTECTION_CLI_PENDING_COORDINATOR_RESOURCE_DISPOSITION",
+   "protectedHashesVerified": 28,
+   "changedPathsComparedToHistoricalProduction": 9,
+   "sourceReviewMeaning": "Standalone CLI plus complete 36-test companion already passed within R5. No separate companion run or duplicate assertion count.",
+   "runtimeObservationLimit": "The approved runner synchronously awaits direct child and synchronous Git operations but does not persist native PIDs/creation ticks. No historical PID census or complete descendant cleanup proof is asserted. Postcheck observes no current scoped Node/esbuild/browser processes or fixed-port listeners, not a retrospective exact-identity census.",
+   "externalExec": {
+    "chunkId": "6f79e0",
+    "exitCode": 0,
+    "wallSeconds": 1.2874543,
+    "closed": true
+   },
+   "publication": "LOCAL_ONLY"
+  },
+  "typecheck": {
+   "observedUtc": "2026-10-13T02:23:33.2211181+00:00",
+   "candidate": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "command": [
+    "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+    "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node_modules\\npm\\bin\\npm-cli.js",
+    "run",
+    "check",
+    "--",
+    "--incremental",
+    "false"
+   ],
+   "node": "v20.19.0",
+   "npm": "10.8.2",
+   "postNpm": "10.8.2",
+   "status": "COMPLETED_REQUIRES_INDEPENDENT_PROCESS_POSTCHECK",
+   "executionStatus": "EXIT_ZERO_PENDING_REPORT",
+   "startedUtc": "2026-10-13T02:21:41.902Z",
+   "childEndedUtc": "2026-10-13T02:22:49.949Z",
+   "finalizedUtc": "2026-10-13T02:22:55.922Z",
+   "childExit": 0,
+   "supervisorExit": 0,
+   "failure": null,
+   "sourceInvariant": true,
+   "postPinsMatch": true,
+   "cleanupStatus": "TWO_QUIET_OBSERVATIONS_NOT_KERNEL_GUARANTEE",
+   "cleanupConfirmed": true,
+   "quietObservations": [
+    {
+     "observedUtc": "2026-10-13T02:22:53.0439003Z",
+     "processSnapshotIndex": 10
+    },
+    {
+     "observedUtc": "2026-10-13T02:22:55.8343752Z",
+     "processSnapshotIndex": 11
+    }
+   ],
+   "cleanupActions": [],
+   "unclosedProbeCount": 0,
+   "primaryObserved": true,
+   "ownedIdentities": [
+    {
+     "pid": 37408,
+     "parentPid": 39404,
+     "creationTicks": "639274549019049540",
+     "createdUtc": "2026-10-13T02:21:41.904954Z",
+     "executablePath": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+     "rootMention": false,
+     "scratchMention": false,
+     "depth": 0,
+     "basis": "direct_spawn_and_current_exact_parent",
+     "anchorKind": "qualification_command",
+     "firstSeenUtc": "2026-10-13T02:21:44.1896808Z",
+     "aliveLastObservation": false,
+     "lastObservedUtc": "2026-10-13T02:22:55.8343752Z"
+    },
+    {
+     "pid": 38752,
+     "parentPid": 37408,
+     "creationTicks": "639274549019111030",
+     "createdUtc": "2026-10-13T02:21:41.911103Z",
+     "executablePath": "C:\\WINDOWS\\system32\\conhost.exe",
+     "rootMention": false,
+     "scratchMention": false,
+     "depth": 1,
+     "basis": "simultaneously_observed_exact_parent",
+     "firstSeenUtc": "2026-10-13T02:21:44.1896808Z",
+     "aliveLastObservation": false,
+     "lastObservedUtc": "2026-10-13T02:22:55.8343752Z"
+    },
+    {
+     "pid": 33784,
+     "parentPid": 37408,
+     "creationTicks": "639274549025000190",
+     "createdUtc": "2026-10-13T02:21:42.500019Z",
+     "executablePath": "C:\\Windows\\System32\\cmd.exe",
+     "rootMention": false,
+     "scratchMention": false,
+     "depth": 1,
+     "basis": "simultaneously_observed_exact_parent",
+     "firstSeenUtc": "2026-10-13T02:21:44.1896808Z",
+     "aliveLastObservation": false,
+     "lastObservedUtc": "2026-10-13T02:22:55.8343752Z"
+    },
+    {
+     "pid": 38144,
+     "parentPid": 33784,
+     "creationTicks": "639274549025384320",
+     "createdUtc": "2026-10-13T02:21:42.538432Z",
+     "executablePath": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+     "rootMention": true,
+     "scratchMention": false,
+     "depth": 2,
+     "basis": "simultaneously_observed_exact_parent",
+     "firstSeenUtc": "2026-10-13T02:21:44.1896808Z",
+     "aliveLastObservation": false,
+     "lastObservedUtc": "2026-10-13T02:22:55.8343752Z"
+    }
+   ],
+   "unresolved": [],
+   "currentAmbiguous": [],
+   "metadataStatuses": [
+    {
+     "Name": "COMPLETED",
+     "Count": 20
+    }
+   ],
+   "pinsRehashed": 44,
+   "pinMismatches": [],
+   "liveOwned": [],
+   "scopedJobs": [],
+   "listeners": [],
+   "head": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "actualTree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "sourceStatus": null,
+   "receiptSha256": "380aea903d6e209ac70d976e457df5c404a025f935897f16307fb2c6f3338fae",
+   "logSha256": "c1bedf9d8096257155ca988c77e50a0a564d3decfcc34cf9423f0b52db43e5ef",
+   "log": "npm warn config production Use `--omit=dev` instead.\n\n> rest-express@1.0.0 check\n> tsc --incremental false\n\n",
+   "limits": [
+    "Only the existing npm typecheck command or complete core-site-protection companion test; each mode needs its own admission and fresh output.",
+    "Protection CLI remains separate. No full suite, build, browser, application server, SQL, hosted qualification or inherited application environment.",
+    "No external network operation authorized; no OS network sandbox, aggregate memory containment or child-worker self-attestation.",
+    "Observed exact PID+creation+executable cleanup only; no PID tree/name/substring kill. Unresolved identities block a clean result.",
+    "Two quiet process/listener observations and separate external process postcheck are required; no kernel cleanup guarantee.",
+    "Check: 300-second work plus 60-second cleanup within 360 seconds; protection: 180 plus 60 within 240. Work includes setup/preflight; synchronous work is not preemptible.",
+    "Pinned dependency entries and lock metadata are not a recursive byte attestation of every installed file.",
+    "Protection reporter must contain exactly the complete named file, positive assertion count and no failing/pending/todo assertions; no fixed passing count is assumed."
+   ],
+   "outcome": "PASS_EXACT_CANDIDATE_TYPECHECK_WITH_INDEPENDENT_POSTCHECK",
+   "commandEvidence": {
+    "observedChain": "Pinned Node npm PID37408 -> native cmd.exe33784 -> pinned Node tsc38144; conhost38752. Identities bound by recorded creation ticks, not PID alone.",
+    "basis": "Actual admission command, pinned package check/tsc.cmd/TypeScript bytes, stdout tsc --incremental false, and observed exact executable ancestry. Not per-child runtime self-attestation.",
+    "tsconfigLimit": "Existing **/*.test.ts exclusion remains. AssistedOrderPage.test.tsx is included; draft-store.test.ts is not TypeScript-covered by this gate."
+   },
+   "externalExec": {
+    "sessionId": 58625,
+    "closed": true,
+    "exitCode": 0
+   },
+   "publication": "LOCAL_ONLY"
+  },
+  "buildR1": {
+   "schemaVersion": 1,
+   "classification": "FAILED_SUPERVISOR_PROCESS_OBSERVATION_NO_COMPLETED_BUILD",
+   "candidate": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+   "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+   "execSession": 39159,
+   "execExitCode": 1,
+   "childStartedUtc": "2026-10-13T02:40:23.817Z",
+   "childEndedUtc": "2026-10-13T02:40:56.910Z",
+   "supervisorFinalizedUtc": "2026-10-13T02:41:03.904Z",
+   "node": "v20.19.0",
+   "npm": "10.8.2",
+   "attempts": 1,
+   "automaticRetries": 0,
+   "firstWindow": "Expired last-start without any invocation; preserved separately. It is not an attempted build.",
+   "renewedAdmission": "DOC102_QS1_FRESH_BUILD_EXACT_ADMISSION_20261013.json, window revision 2. Actual invocation followed preflight 2026-10-13T02:40:10.6019363Z, within its start window.",
+   "preflight": {
+    "ramMiB": 1948.57421875,
+    "pins": 22,
+    "mismatches": 0,
+    "sourceClean": true,
+    "injectedNodeConfig": false,
+    "scopedJobs": 0,
+    "nodeModulesAbsent": true,
+    "distAbsent": true,
+    "run1Absent": true
+   },
+   "cause": {
+    "stopReason": "PROCESS_OBSERVATION_FAILED",
+    "failure": "METADATA_PROBE_TIMEOUT",
+    "probe": 8,
+    "configuredTimeoutMs": 10000,
+    "startedUtc": "2026-10-13T02:40:38.591Z",
+    "endedUtc": "2026-10-13T02:40:57.208Z",
+    "elapsedMs": 18617,
+    "eventualProbeExitCode": 0,
+    "stopRequestedUtc": "2026-10-13T02:40:48.658Z",
+    "qualification": "Late successful metadata output does not convert the failed supervisor attempt to PASS. No application compiler diagnostic was emitted; exact underlying slow metadata stage is not established."
+   },
+   "cleanup": {
+    "receiptStatus": "TWO_QUIET_OBSERVATIONS_NOT_KERNEL_GUARANTEE",
+    "recordedActions": [
+     {
+      "pid": 38916,
+      "creationTicks": "639274560238200660",
+      "status": "KILLED"
+     },
+     {
+      "pid": 39568,
+      "creationTicks": "639274560243095980",
+      "status": "ALREADY_EXITED"
+     }
+    ],
+    "quietUtc": [
+     "2026-10-13T02:41:01.8638181Z",
+     "2026-10-13T02:41:03.8307384Z"
+    ],
+    "unclosedProbes": 0,
+    "externalObservedUtc": "2026-10-13T02:41:44.8535560Z",
+    "exactOwnedGone": [
+     {
+      "pid": 38916,
+      "creationTicks": "639274560238200660"
+     },
+     {
+      "pid": 38188,
+      "creationTicks": "639274560238266430"
+     },
+     {
+      "pid": 39568,
+      "creationTicks": "639274560243095980"
+     }
+    ],
+    "scopedJobs": 0,
+    "listeners54321And5237": 0,
+    "limit": "Observed known PID plus creation identities and scoped current process absence, not exhaustive kernel descendant containment."
+   },
+   "postState": {
+    "all22PinsMatch": true,
+    "sourceCleanAndUnchanged": true,
+    "lockUnchanged": true,
+    "nodeModulesPresent": true,
+    "distPresent": false,
+    "provenancePresent": false,
+    "partialDependenciesPreserved": true
+   },
+   "raw": {
+    "receipt": {
+     "path": "receipt.json",
+     "bytes": 34140,
+     "sha256": "ebdbea85788475d7b8429e2ffe6672a72eda90b63016c046ae8b3e7cd9ce8d71"
+    },
+    "log": {
+     "path": "run.log",
+     "bytes": 53,
+     "sha256": "be373507976c21dd0d87488b1a32a2ddefbdf784333a1f41b7db9d576fd6a129",
+     "content": "npm production configuration warning only; no completed install or build result"
+    },
+    "start": {
+     "path": "start.json",
+     "bytes": 16705,
+     "sha256": "5a452c9a363c09ab81a2b9ea2639a82203777419d6e0d78558d85d057a12419e"
+    }
+   },
+   "next": "Coordinator disposition of this consumed attempt and evidence-backed separate execution preparation, preserving the failed checkout. No automatic retry or source change.",
+   "publication": "LOCAL_ONLY",
+   "reviewPacketComplete": false,
+   "deployment": false,
+   "hostedMutation": false,
+   "productionQueryRepeated": false
+  }
+ }
+}

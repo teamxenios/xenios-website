@@ -699,3 +699,11 @@ The review covers the three doc 99 remedies, the two guarded-source follow-up co
 | 102 | `DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012` **r3** (`00fdbf4a` / packet `80eebec5` / addendum `7594b1fd`) | COMPLETE: **CORRECTIONS REQUIRED, one P1 (QS-1).** QL2-1 and QL2-2 corrected per doc 99; QL2-6 folded in; QL2-3 source half corrected, record half a release condition (QS-2). The guard commits are fail-safe and remove a latent base defect, but a restored unstamped page whose storage writes fail drops its own committed success (`:460-465`, `:971`): fix is two ref initialisers seeded from the restored draft plus two tests. All five receipt groups bind `00fdbf4a`; full suite R3 18,064/85/0 genuine. Release conditions listed separately (QS-2, QS-3 approved pre-check, browser journey, admin PATCH, route, render-build, authority) |
 
 Nothing was executed.
+
+## Queue state update (2026-10-13, doc 103)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 103 | QL correction successor **r4** `dd3f532` (tree `7e155e33`; two commits on `00fdbf4a`; not yet registered on the board) | COMPLETE: **SOURCE ACCEPTED WITH NAMED LIMITS.** QS-1 corrected exactly as ruled; two files; three discriminating tests. Bound and green at `dd3f532`: targeted, typecheck, protection CLI (28), companion (36/36 in R5), full suite R5 18,067/85/0. **Fresh build NOT PROVEN** (supervisor observation failure, no compiler diagnostic): a release condition. Release conditions in doc 103 §3 |
+
+Nothing was executed.
