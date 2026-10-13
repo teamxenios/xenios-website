@@ -934,3 +934,15 @@ and are reported separately from the source verdict.
 | 104 | `DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012` **r5** (`3dd3d96` / tree `7a4ce7c3`; registered 2026-10-13T13:54:17Z; records `7eb49fc`→`d8052eb`) | COMPLETE: **SOURCE ACCEPTED WITH NAMED LIMITS.** Applied diff is exactly the approved two-hunk patch (`f79e0e56…`); doc 103 runtime acceptance carried. Execution at this SHA: protection CLI PASS (bound), literal `render-build` with `npm ci` PASS (bound; lockfile byte-identical; 346 artifacts, inventory `a5a4ed43…`); whole-36 companion run still owed; targeted pair, typecheck, route accepted on input identity; full suite accepted for 970/971 files conditional on the companion receipt. Release-side QS-R1–R4 plus carried doc 103 §3 conditions open. |
 
 Registration r5 acknowledged. Last processed board tip `4002f55`, records tip `d8052eb`. Nothing was executed.
+
+## Doc 104 companion receipt bound (2026-10-13 10:5x CDT): the one owed execution item is closed
+
+`doc104-locked-build-20261013/companion-r2-passed/` (records `8bce296`…`194a523`): `vitest run --config vitest.config.ts
+--maxWorkers 1 --no-file-parallelism --reporter verbose … server/core-site-protection.test.ts` under pinned Node
+v20.19.0 in the LF checkout of the exact candidate, worktree HEAD `3dd3d96` with clean status before and after
+(`sourceInvariant: true`), 15:18:03–15:18:05Z, child exit 0, supervisor exit 0, **36 passed / 0 failed / 0 todo**,
+7 suites, independent postcheck passed; `run.log` sha256 `61bc7fba…` recomputed from the committed bytes equals the
+receipt. R1 (`companion-r1-observer-failed`) also recorded 36 passing assertions but failed its process-observation
+qualification; it is preserved, not relabeled, and R2 is the bound result. With this, doc 104 §2's conditional reuse of
+the full suite (970/971 files on input identity) is no longer conditional. Doc 104's source verdict is unchanged;
+release-side conditions QS-R1–R4 and the carried doc 103 §3 items remain open. Nothing was executed.
