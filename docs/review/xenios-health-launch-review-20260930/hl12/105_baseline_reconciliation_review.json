@@ -1,0 +1,69 @@
+{
+  "doc": 105,
+  "title": "Production-baseline reconciliation on the release candidate (8e85daa): bounded applied-diff review (QS-R3)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "verdict": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS",
+  "verdictScope": "applied diff only; qualification at this SHA entirely owed; QS-R5 lineage reconciliation owed before any merge",
+  "registration": { "status": "none naming the reviewer at board 074364a; reviewed on sight per approval text 'register the bounded review'", "boardTipRead": "074364a", "recordsTipRead": "a8f4e42" },
+  "target": {
+    "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee",
+    "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219",
+    "parent": "3dd3d9667ba56859101b27abad1791777013c6de",
+    "parentTree": "7a4ce7c382a1cb44981fb0df2790ece16def2ba0",
+    "branch": "codex/doc104-production-baseline-reconciliation-20261013 (local only)",
+    "committedLocal": "2026-10-13 11:11:43 -0500",
+    "changedBlobs": {
+      "docs/coordination/ACTIVE_RELEASE_GRAPH.json": "eaefcc0c->1ffbedd8",
+      "docs/coordination/ACTIVE_RELEASE_GRAPH.mmd": "ba0917c6->df4dd368",
+      "docs/coordination/CURRENT_PRODUCTION_STATE.json": "2ac56c2a->aa78d599",
+      "docs/coordination/CURRENT_PRODUCTION_STATE.md": "791d4f29->6151766a",
+      "docs/coordination/FILE_OWNERSHIP.json": "035c61be->f92824fe",
+      "docs/coordination/MIGRATION_DAG.json": "e1a2c7af->8d85ef1c",
+      "server/release-control-plane.test.ts": "aa27c53a->9ca5f3cc"
+    },
+    "equalsFrozenPatch": { "patchSha256": "e5fffc31688b90569b28838a9a279297fe92875520e88acda974d4a910760d7a", "bytes": 21264, "files": 7, "hunks": 17, "plusMinus": "+62/-26 (decision record says +57)", "perFileHunksIdentical": true, "afterBlobsEqualDecisionRows": true, "reviewerReapplyReproducesBytes": true }
+  },
+  "approval": {
+    "boardRecord": "DOC104_QS_R3_ACTUAL_DIRECT_HUMAN_APPROVAL_20261013.txt @074364a",
+    "textBytes": 987,
+    "textSha256": "2834b8fa46c0b26b5cd6854fef20c4a2176ddeea89a80414060728d2ecd0e1d7",
+    "decisionIdentity": "7e4b4b9d03bd066b564cd955b8d48c563ff97cd5df16d830804629a593a6b13e",
+    "decisionFileSha256Prefix": "df243235e7153a89",
+    "clausesChecked": { "sevenPathsOnly": true, "preimagesVerifiedBeforeApply": "owner record SOURCE_HANDOFF: 7/7 preimages, 14/14 fixtures", "baselineStillMatchesProvider": "owner re-read 16:08-16:10Z (PRODUCTION_PROVIDER_CURRENTNESS.json), not Git-verifiable", "runtimeDepsLockUnchanged": true, "historicalEvidencePreserved": "relocated to historicalEvidence (12 rows)", "negativeControlsUnchanged": true, "noWeakenedTests": "expect() 180 -> 180; four constant/expectation edits", "noExpansion": true, "appliedViaExistingOwnerIsolatedSuccessor": "lease 6b4775a 16:10:40Z -> commit 16:11:43Z -> custody returned 02e1fca; registry restored to b0fb285c", "affectedQualification": "OWED", "registerBoundedReview": "OWED (coordinator)", "documentPermittedReuse": "addressed in doc 105 section 2" }
+  },
+  "providerConsistency": { "readbackSha256": "f70e0fed3d944de7a03a7011020c9c2f4d8e7ae59b058a368aa5d66090e2ec85", "allNewIdentityLiteralsPresent": true, "authorProseNotInReadback": ["node owner 'Website 2 / release-manager'", "node type/state words", "edge relation"] },
+  "staticSemantics": { "testAssertionsReadingControlPlane": "19/19 hold", "supersededStateAccepted": true, "historicalEvidenceIgnored": true, "lastSuccessfulValidationAbsent": true, "deploymentIdPattern": true, "migrationDagSourceShaLess": "2 entries identical at c545a70/79414143/3dd3d96; checksums match", "ancestry": "79414143..3dd3d96 = 13 commits", "tscCannotFail": true, "protectionGate": "docs/ infrastructure + test reported; no pinned hash touched", "buildEmbedding": "none; dist identity expected unchanged" },
+  "executionAtSuccessor": {
+    "status": "NONE (records: newTestRuns 0, newBrowserRuns 0)",
+    "owed": [
+      "npm run check:release-control-plane",
+      "vitest run server/release-control-plane.test.ts (incl. canonical-checksum case)",
+      "vitest run server/research/assisted-order/audit-store-sql.test.ts server/research/inventory-admin/integration.test.ts",
+      "npm run verify:migration-dag",
+      "npm run verify:production-state with expected 79414143 / head 8e85daa / branch release/early-access-code-session-checkout, between 2026-10-13T13:44:12Z and 2026-10-20T13:49:12Z",
+      "node scripts/acceptance/verify-core-site-protection.mjs 79414143 8e85daa (17 paths; predicted 3/8/5/1 PASS)",
+      "QS-R2 release manifest over the 17-path 79414143..8e85daa delta"
+    ],
+    "reuseAcceptedOnInputIdentity": ["npm run check", "static route uniqueness", "targeted pair 91/91", "whole-36 companion", "literal render-build + npm ci (inventory a5a4ed43)", "full-suite R5 except the three vitest files above"]
+  },
+  "releaseSide": {
+    "QS-R5": "P2 new: records/board/review lineages already reconciled to 79414143 at 0f92ca7 (2026-09-26, verifiedAt 2026-09-26T19:14:17.985Z, 4 evidence rows) and 2b4888e (test); 3dd3d96 predates (merge-base 79414143); 8e85daa reconciles differently (13:49:12Z, 1 row, SUPERSEDED_AUDITED_BASELINE/production_baseline); merge conflicts on 5/7 paths; decision record did not disclose; one record must be chosen and the test re-pinned before any merge; does not block qualification of 8e85daa on the release lineage",
+    "QS-R6": "P2: verify:production-state valid only until 2026-10-20T13:49:12Z; vitest cannot detect expiry",
+    "QS-R7": "P2: 'still matches' met at application by owner re-read 16:08-16:10Z; re-check immediately before any deployment",
+    "carried": { "QS-R1": "second authority message untranscribed", "QS-R2": "manifest now 17 paths", "QS-R4": "delivery, deploy-time build log with npm ci, served RENDER_GIT_COMMIT = 8e85daa", "QS-2": "primary operating owner designated; runbookReadAcknowledged false, operatingCoverageAttested false, verifiedAccess false; designation is not attestation", "browserAdmin": "capacity hold (idle helper tree 36 MiB insufficient)", "staffReadback": "open", "releaseAuthority": "open; rollback caveat now in patched state record" }
+  },
+  "namedLimits": [
+    "ACTIVE_RELEASE_GRAPH.mmd mislabels 3814c68 as SUPERSEDED_AUDITED_BASELINE and draws LIVE3814->CURRENT794 (JSON supersedes production-c545a70); no reader",
+    "evidence row and .md cite readback at records commit d1da8f22, not an ancestor of the successor; board copy uncited",
+    "stale narrative comment at test lines 47-49",
+    "derived records still say c545a70: docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.*, .xenios/PROJECT_STATE.json, .xenios/RELEASE_STATE.json; admin surface reads the generated record at runtime",
+    "no docs/coordination/history archive or historicalSnapshots entry for the superseded record",
+    "custody-before-write attested by record timestamps only; first custody receipt cited wrong message id, corrected at 02e1fca; commit under shared machine identity",
+    "FILE_OWNERSHIP.json has four live blobs across lineages",
+    "new node owner/type/state prose diverges from the 2026-09-26 record (QS-R5)",
+    "all validator/test outcomes are static predictions; receipt binary pins not derivable from Git"
+  ],
+  "workflow": { "runId": "wf_609e11fd-d83", "agents": 7, "toolUses": 220, "lenses": ["semantics", "scope", "consequences"], "criticDisposition": "CORRECTIONS_BEFORE_APPROVAL (premise 'unapplied' was already false; bytes exact and safe)", "reviewerResolution": "approval had been recorded and applied before publication; reviewed as applied successor; corrections carried as QS-R5/QS-R6 and named limits", "executedAnything": false }
+}

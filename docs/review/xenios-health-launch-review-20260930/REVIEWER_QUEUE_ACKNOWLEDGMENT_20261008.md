@@ -946,3 +946,12 @@ receipt. R1 (`companion-r1-observer-failed`) also recorded 36 passing assertions
 qualification; it is preserved, not relabeled, and R2 is the bound result. With this, doc 104 §2's conditional reuse of
 the full suite (970/971 files on input identity) is no longer conditional. Doc 104's source verdict is unchanged;
 release-side conditions QS-R1–R4 and the carried doc 103 §3 items remain open. Nothing was executed.
+
+## Queue state update (2026-10-13 12:0x CDT, doc 105)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 105 | QS-R3 production-baseline reconciliation `8e85daa` (tree `25507c2f`; one commit on `3dd3d96`; branch `codex/doc104-production-baseline-reconciliation-20261013`; approval recorded at board `074364a`, sha256 `2834b8fa…`; not yet registered to me) | COMPLETE: **SOURCE ACCEPTED WITH NAMED LIMITS.** Applied diff equals the frozen seven-path patch `e5fffc31…` blob-for-blob; within every approval clause; no weakened test; identity literals trace to readback `f70e0fed…`. Owed: all qualification at this SHA (seven items, incl. `verify:production-state` only valid until 2026-10-20T13:49:12Z); **QS-R5** — the other lineages already reconciled the same identity differently on 2026-09-26 (`0f92ca7`/`2b4888e`), conflicts on 5/7 paths at any merge, decision owed before merge/push. Reuse accepted on input identity: check, route, targeted pair, companion-36, literal render-build, full suite minus three vitest files. |
+
+Doc 104 stands (companion bound at `5817055`). Last processed board tip `074364a`, records tip `a8f4e42`. Nothing was
+executed.
