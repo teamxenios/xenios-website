@@ -707,3 +707,53 @@ Nothing was executed.
 | 103 | QL correction successor **r4** `dd3f532` (tree `7e155e33`; two commits on `00fdbf4a`; not yet registered on the board) | COMPLETE: **SOURCE ACCEPTED WITH NAMED LIMITS.** QS-1 corrected exactly as ruled; two files; three discriminating tests. Bound and green at `dd3f532`: targeted, typecheck, protection CLI (28), companion (36/36 in R5), full suite R5 18,067/85/0. **Fresh build NOT PROVEN** (supervisor observation failure, no compiler diagnostic): a release condition. Release conditions in doc 103 §3 |
 
 Nothing was executed.
+
+## Overnight check 1 (2026-10-12 22:57 CDT / 2026-10-13T03:57Z): revision 4 registration acknowledged; doc 103's fresh-build condition settled
+
+Hourly read-only board checks run tonight under Samuel's authorization (22:51 CDT) until 08:00 CDT. This is the first.
+Board tip `65f8f47`; follow-up branch tip still `dd3f532`; evidence branch `codex/tc25-app-manifest-20261012` tip `9d3e764`.
+
+**Registration (priority A).** Board commit `5707cdc` (2026-10-13T03:07:22Z) registers revision 4 on the existing task
+`DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012` with the actual doc 103 disposition
+(`COMPLETE_SOURCE_ACCEPTED_WITH_NAMED_LIMITS_RELEASE_QUALIFICATION_PENDING`), packet
+`DOC103_SUCCESSOR_R4_ACCEPTED_SOURCE_PACKET_20261013.json` (board copy sha256 `46c2f6b6…`). The board copy of doc 103
+(`CLAUDE_DOC103_FINAL_PUBLIC_VERDICT_2795CE8A_20261013.md`) is byte-identical to my published bytes at `2795ce8`
+(sha256 `e69692fb…`). The candidate is unchanged (`dd3f532e…`, tree `7e155e33…`), so no further source review is owed.
+Acknowledged.
+
+**Fresh build (doc 103 §3, previously NOT PROVEN): now proven.** `doc103-build-r2-20261013/` at `f3a3fa2`:
+candidate `dd3f532e…`, tree `7e155e33…`, Node v20.19.0 (binary sha256 `6e3a3978…`), npm 10.8.2,
+`npm ci --no-audit --no-fund` in a clean candidate checkout with `node_modules` and `dist` absent at preflight (22 pins
+matched; `package-lock.json` sha256 `d3083edc…` identical before and after), then `node script/build.mjs` (the `build`
+script at `dd3f532`): child exit 0, supervisor exit 0, vite 7.3.5 "2303 modules transformed … built in 20.23s", server
+bundle `dist/index.cjs` 1.7 MB, 346 artifacts / 10,637,058 B, inventory sha256 `94b3865b…`. Independent reconciliation
+`PASS_FRESH_LOCAL_NPMCI_BUILD_WITH_RECORDED_WARNINGS`; board root rehash
+`ROOT_INDEPENDENT_R2_ARTIFACT_INVENTORY_REHASH_PASS` (03:09:54Z). I recomputed sha256 over the committed bytes of
+`receipt.json` (`fed616a6…`), `run.log` (`5a402fc5…`) and `evidence-provenance.json` (`e89a9b07…`); all three match the
+receipt, the reconciliation and the board record. Warnings are exactly the two already named: one mixed static/dynamic
+import (`AdminResearchHome.tsx`, log line 35) and one chunk-size advisory (line 336); neither is introduced by this
+candidate. The receipts are the builder's evidence, not my runs.
+
+**Still open on the build side.** The literal `render-build` script (`npm install -g npm@10.8.2 && npm install … &&
+node script/build.mjs`, same compiler step, different install path) was attempted once in
+`doc103-render-build-r1-20261013/` (`d8e813c`) and FAILED on supervisor observation (`METADATA_PROBE_TIMEOUT`, work
+snapshot 34.5 s against a 30 s budget, supervisor exit 1, no `dist`); it is not a compiler diagnostic. Whether the
+proven `npm ci` build plus the hosted platform's own deploy-time build log satisfies the "render-build" condition is the
+coordinator's disposition to record; what is proven is the fresh lockfile build of the exact candidate.
+
+**Route uniqueness.** `DOC103_ACCEPTANCE_AND_ROUTE_APPLICABILITY_ACTUAL_20261013.json` carries the `00fdbf4a` static
+route receipt (448 registrations / 439 call sites, exit 0, receipt sha256 `a61f9f3d…`) to `dd3f532` on the stated
+basis that all 697 scanned server/shared blobs, the scanner blob and its configuration are unchanged by the two-client-file
+delta. The premise matches my own diff in doc 103 (`AssistedOrderPage.tsx` and its test only). Accepted as the static
+Express gate only, which is all the record claims; it is not a mounted-client-route, authorization or served-identity
+check.
+
+**Browser / admin / readback (priority B).** `doc103-browser-metadata-600s-20261013/` FAILED at its metadata deadline
+with no browser execution (one captured output chunk is truncated and the limitation is disclosed); a 900 s producer is
+admitted but NOT RUN pending owner acknowledgment (`9d3e764`). No lost-response journey, admin PATCH refusal, staff
+readback, QL2-3/QS-2 runbook-in-force attestation or served-version evidence exists yet. Nothing to review.
+
+**Queue state.** Doc 103 stands; condition "fresh build" closed by evidence; remaining release conditions as in doc 103
+§3 minus that one. Last processed board tip `65f8f47`. Next check at 23:07 CDT; quiet unless something new lands.
+
+Nothing was executed.

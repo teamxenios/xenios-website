@@ -1,0 +1,103 @@
+{
+  "record": "103a",
+  "kind": "overnight-check",
+  "checkIndex": 1,
+  "observedAt": "2026-10-13T03:57:30Z",
+  "observedAtLocal": "2026-10-12 22:57 CDT",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "authorization": "Samuel, 2026-10-12 22:51 CDT: hourly read-only board checks until 08:00 America/Chicago 2026-10-13",
+  "executed": false,
+  "observedTips": {
+    "board": "65f8f47",
+    "followUpBranch": "dd3f532",
+    "evidenceBranch": "9d3e764"
+  },
+  "candidate": {
+    "sha": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+    "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+    "changedSinceDoc103": false
+  },
+  "registration": {
+    "boardCommit": "5707cdcf9e4f44b5016cb92546869f75344a81e9",
+    "registeredAt": "2026-10-13T03:07:22.359Z",
+    "task": "DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012",
+    "revision": 4,
+    "status": "COMPLETE_SOURCE_ACCEPTED_WITH_NAMED_LIMITS_RELEASE_QUALIFICATION_PENDING",
+    "packet": "DOC103_SUCCESSOR_R4_ACCEPTED_SOURCE_PACKET_20261013.json",
+    "packetSha256Prefix": "46c2f6b61235d6ad",
+    "boardCopyOfDoc103": "CLAUDE_DOC103_FINAL_PUBLIC_VERDICT_2795CE8A_20261013.md",
+    "boardCopyByteIdenticalToPublished": true,
+    "doc103Sha256Prefix": "e69692fbc6e68ef9",
+    "disposition": "ACKNOWLEDGED; no further source review owed while the candidate is unchanged"
+  },
+  "freshBuild": {
+    "doc103Condition": "fresh build NOT PROVEN",
+    "newState": "PROVEN_BY_BUILDER_EVIDENCE",
+    "record": "docs/health-launch/ql-build-20261012/doc103-build-r2-20261013/",
+    "recordCommit": "f3a3fa2",
+    "node": "v20.19.0",
+    "nodeBinarySha256Prefix": "6e3a39787e667d50",
+    "npm": "10.8.2",
+    "install": "npm ci --no-audit --no-fund",
+    "preflight": { "pinsMatched": 22, "nodeModulesAbsent": true, "distAbsent": true, "cleanCandidate": true },
+    "packageLockSha256Prefix": "d3083edc542cd123",
+    "lockUnchangedPrePost": true,
+    "buildScript": "node script/build.mjs",
+    "childExitCode": 0,
+    "supervisorExitCode": 0,
+    "childStartedUtc": "2026-10-13T03:03:15.078Z",
+    "childEndedUtc": "2026-10-13T03:06:13.536Z",
+    "vite": "7.3.5, 2303 modules transformed, built in 20.23s",
+    "serverBundle": "dist/index.cjs 1.7mb",
+    "artifacts": 346,
+    "artifactBytes": 10637058,
+    "inventorySha256Prefix": "94b3865bac0f9fd0",
+    "independentReconciliation": "PASS_FRESH_LOCAL_NPMCI_BUILD_WITH_RECORDED_WARNINGS",
+    "boardRootRehash": "ROOT_INDEPENDENT_R2_ARTIFACT_INVENTORY_REHASH_PASS (2026-10-13T03:09:54Z)",
+    "reviewerRecomputedSha256Prefixes": {
+      "receipt.json": "fed616a61eedf540",
+      "run.log": "5a402fc5055d28ec",
+      "evidence-provenance.json": "e89a9b0712a2e4bf",
+      "allMatchCrossReferences": true
+    },
+    "warnings": [
+      "mixed static/dynamic import: client/src/research/pages/adminx/AdminResearchHome.tsx (run.log line 35)",
+      "chunk-size advisory: some chunks larger than 500 kB after minification (run.log line 336)"
+    ],
+    "warningsNewToCandidate": false
+  },
+  "renderScriptBuild": {
+    "script": "npm install -g npm@10.8.2 && npm install --no-audit --no-fund --production=false && node script/build.mjs",
+    "record": "docs/health-launch/ql-build-20261012/doc103-render-build-r1-20261013/",
+    "recordCommit": "d8e813c",
+    "status": "FAILED_PROCESS_MONITOR_TIMEOUT_AND_INCOMPLETE_IN_RUN_CLEANUP",
+    "cause": "METADATA_PROBE_TIMEOUT; work snapshot 34.468s vs 30s budget; supervisor exit 1; dist absent",
+    "compilerDiagnostic": false,
+    "dispositionOwner": "coordinator"
+  },
+  "routeUniqueness": {
+    "record": "DOC103_ACCEPTANCE_AND_ROUTE_APPLICABILITY_ACTUAL_20261013.json",
+    "carriedFrom": "00fdbf4a971752e9b9182b1404adad2dd1e7e675",
+    "originalResult": "PASS_STATIC_ROUTE_GATE_ONLY 448/439 exit 0",
+    "originalReceiptSha256Prefix": "a61f9f3d2ecc363e",
+    "basis": "697 scanned server/shared blobs, scanner blob and configuration unchanged by the two-client-file delta",
+    "premiseMatchesReviewerDiff": true,
+    "acceptedAs": "static Express gate only"
+  },
+  "browserAdminReadback": {
+    "metadata600s": "FAILED_METADATA_DEADLINE_NO_BROWSER_EXECUTION (one captured chunk truncated, disclosed)",
+    "metadata900s": "admitted, NOT RUN pending owner acknowledgment (9d3e764)",
+    "lostResponseJourney": "no evidence yet",
+    "adminPatchRefusalViaUi": "no evidence yet",
+    "staffReadback": "no evidence yet",
+    "qs2RunbookInForce": "pending",
+    "servedVersionCheck": "not applicable before deployment"
+  },
+  "queueState": {
+    "doc103": "stands; fresh-build condition closed by evidence; other §3 conditions open",
+    "lastProcessedBoardTip": "65f8f47",
+    "nextCheck": "2026-10-12 23:07 CDT",
+    "closeout": "2026-10-13 08:00 CDT"
+  }
+}
