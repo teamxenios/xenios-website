@@ -1022,3 +1022,15 @@ Accepted and unchanged: application source, build reuse, operating attestation, 
 (owner receipts to be registered separately): the control typecheck, the three-file test run (62 + 1 opt-in skip) and
 the 27 DNS guard controls reported as passed; the browser R2 run in progress. Last processed board tip `6296268`.
 Nothing was executed.
+
+## Queue state update (2026-10-13 15:2x CDT, doc 108)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 108 A | Static-CLI profile R3 correction, revision 9 (proposal `c287f4bd…`, records `158cfa06`; controller `55b7ff04…`, pins `305cc2e2…`, CLI parent `2a72dd9e…`, discriminator `18cbff0a…`, LIGHT parent `35a7e1b0…`; wrapper `e3898fe7…`/pure36 unchanged) | COMPLETE: **SOURCE ACCEPTED for the bounded control stage.** Controller differs from refused `68f738…` in exactly three lines (NODE/NPM forward-slash literals, self-filename); pins change only the controller entry; parent only the R3 identities; the discriminator exercises the controller's real comparison (old mismatch / new match / refusals). Controls 15 and 36 NOT RUN; three CLI receipts still owed. |
+| 108 B | Completed owner receipts at `8e85daa` | **ACCEPTED:** `check:release-control-plane` (records `358d8d7a`; exit 0; literal tsc over 4 scripts + test; 91 pins; HEAD clean; raw archive; log `e8c95d04…` recomputed) — doc 105 §2 item 1; combined three-file Vitest (records `258e2afb`; 63 tests: 62 passed, 1 authored PG16 opt-in skip, 0 failed; HEAD clean; log `1bedd108…` recomputed) — items 2–3, not a full suite; 27 DNS guard controls (records `1b772418`; 27/0; pins old/new harness) — closes doc 106's named limit, not browser evidence. |
+| — | Browser R2 | **FAILED-CLOSED by owner** (records `be27606b`): `UNEXPECTED_BROWSER_TARGET`, 0 cases/requests, cleanup and closure verified; not diagnosed here; browser outcome still owed. |
+
+Closed and unchanged: application `8e85daa`/`25507c2f`, build reuse, QS-2, QS-R5, docs 104–107. Still owed: controls
+15/36, three CLI receipts (production state inside the QS-R6 window), 17-path manifest validation, browser outcome,
+QS-R1, QS-R4, release authority. Last processed board tip `c267e18`. Nothing was executed.
