@@ -1,0 +1,71 @@
+{
+  "doc": 115,
+  "title": "Revision 16 A/B: diff-check parent R3 byte confirmation; three finalization proving controls (source only)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "boardTipRead": "d378b0f",
+  "application": { "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "changed": false },
+  "rootPacket": "DOC114_NEXT_SOURCE_PREREQUISITES_REVIEW_READY_20261013/ (diff-r3/, controls/); every Root file byte-identical to the Core blob its ROOT_RAW_INDEX names",
+  "A": {
+    "verdict": "CONFIRMED_ONE_HUNK_DOC114_S6_APPLIED",
+    "core": { "commit": "50e2609a7489ab7a931ed449a19760f1bde46efa", "tree": "e3c6e6c24fb31b2f647434b3e73e88b852ba4362", "prefix": "exact-diff-check-runner-r3-source-proposal/" },
+    "parent": { "bytes": 19110, "sha256": "b98f7a25945f4f2afaccbe8520cdae0875b91b957c07956c71a0f832bb409401", "blob": "4d228e8721cdf7bdd5e4079df3085a27df6108f2" },
+    "predecessorR2": { "bytes": 19110, "sha256": "74e17f7f7ff0b44baa6531fc320676d46e88e5096b5c52d7db98ccad96ad73ab", "preserved": true },
+    "delta": { "line": "  foreach($p in $dHandles){$p.Dispose()}", "removedAtR2": 252, "insertedAtR3": 236, "anchor": "after $dRecord.cleanupStopElapsedMs, before try{ do{ first cleanup census", "sameBytes": true, "crBytes": 0, "lines": 289, "identicalAfterRemovingThatLine": true, "otherDelta": "none" },
+    "rootProof": { "file": "ROOT_R3_ONE_HUNK_BYTE_PROOF.json", "agrees": true },
+    "pinsTemplate": { "bytes": 1915, "sha256": "8ffbaa4f69c53bb3297c5c8d62e83af66414febc733e2502416cc743729ff501", "deltaFromR2Template": "self row path + sha256 only, and the note", "otherFiveRows": "retained historical observations; re-verify at admission" },
+    "proposal": { "bytes": 4180, "sha256": "eec6e70f49144e24f328c0196dd2e38d9507f49561080fe946a13580aba63c1e", "citesDoc114": "66005a4", "boundsUnchanged": true, "executedAsSource": false },
+    "recordsWorktree": { "path": "C:/xenios-wt/tc25-app-manifest-20261012", "head": "2dc8616", "r3AtPinnedPath": "b98f7a25 19110 B" },
+    "effect": "doc 114 R2 acceptance carries to R3 unchanged; the doc 114 §6 alternative control is no longer needed; doc 114 §8 proving checks 2-5 remain owed (5 is addressed in source by B)"
+  },
+  "B": {
+    "verdict": "SOURCE_ACCEPTED_THREE_SYNTHETIC_NEGATIVE_CONTROLS_WITH_PREDICATES",
+    "core": { "commit": "2dc861677f2bcd964496d2d733f65486acdcb710", "tree": "341de43cb917235eb4e7c082d1710165b1ad70e5", "prefix": "exact-diff-finalization-controls-source-proposal/" },
+    "files": {
+      "r3-finalization.slice.ps1.txt": "3762 B 7c685cefde5c9708be16576d6cf44d7e775aa0b6132eeec205feb9f14c3fc8e0",
+      "r3-write-functions.slice.ps1.txt": "403 B 9587eb57c461c69cdbd3f1988658d127f0999c22399f370caec1a171e70ae0aa",
+      "late-second-quiet.ps1": "8229 B 9bc429c5523062917c2351b81818a56b70c8e752fa38193474ece96960c14430",
+      "late-receipt-write.ps1": "8230 B 454da196e3a68c2ea4f9d6aa956963c0ec9e286a8f43264c916fa4b1651380cf",
+      "write-failure.ps1": "8225 B c4bbc67634680a73f5744341fe6153fd1615af95147218585798c1dfa1cfb1a8",
+      "execute-admitted-finalization-controls-proposed.ps1": "14826 B fcd6fd15a77639c0bb30869a49a53dffc93feaa52008e725db89275ffc1448f6",
+      "PINNED_INPUTS_SOURCE_ONLY.json": "3031 B 61859a8b1ae4b79be37476e58724b33ba8ef746fec9d547eae582a77d4e97353 (8 rows; ticket binds it as ninth)",
+      "PROPOSAL.json": "9860 B a3ac41f7f673e3c98ec469faf6d269789d92e8389dec7f3a9a51f8101d9f7b52"
+    },
+    "sliceBinding": { "finalizationSlice": "R3 bytes 15348..EOF, R3 line 229 }finally{ through exit 0 + two trailing LF; one occurrence in R3 and as suffix of each fixture", "writeSlice": "R3 lines 46-51; one occurrence in R3 and in each fixture", "fixturesDifferOnlyAt": "line 5 $cCase", "fixtureShape": "122 lines, 62 preamble lines, no CR", "parentRederives": "R3 hash == ticket r3Sha256; R3 EndsWith(tail) && Contains(writes) (min 1000/200 chars); each fixture EndsWith(tail) && Contains(writes) (lines 49-56)" },
+    "fixture": {
+      "ticket": "hash == argument; approved, mode doc114-finalization-controls, Core owner, r3Sha256 b98f7a25, now within starts..ends; output == attempt-r1; parent dir must exist; ancestors reparse-free; case dir must not exist; created fresh",
+      "syntheticState": "$dClock mutable object from 1000 ms; D-Utc SIMULATED_MS_<n>; D-Observe: third call throws, sets 1100 then 17000 (late-second-quiet) or 1700, returns empty live/ambiguous with simulated=true; D-StopExact throws; $dHandles/$dOwned empty; candidate SIMULATED_FINALIZATION_CONTROL_NOT_RELEASE + R3 digest + case",
+      "writers": "byte-exact D-Write/D-Json; original D-Json captured; wrapper calls original then only late-receipt-write/receipt.json advances clock to 17000 after real write+flush returned; R3 tail appended after empty try {",
+      "realIO": "CreateNew + Flush(true) in the fresh private case dir only; control-setup.json; write-failure pre-creates sentinel receipt.json 'CONTROL_CREATE_NEW_COLLISION'+LF with the original D-Write; no ACL/permission change; stdout empty",
+      "expected": {
+        "late-second-quiet": "cleanupStop 16000; quiet@1100; census returns 17000 -> CLEANUP_DEADLINE -> failure CLEANUP_INCOMPLETE; quiets 1; FAILED_OR_INCOMPLETE; receipt written at 17000 -> terminal-failure.json afterWriteElapsedMs 17000; exit 1",
+        "late-receipt-write": "quiets 1100/1700; PRELIMINARY_REQUIRES_OUTER_EXIT_TIMING_AND_INDEPENDENT_CLOSURE; receipt written; clock 17000 -> terminal-failure.json; exit 1; provisional receipt untouched",
+        "write-failure": "quiets 1100/1700; PRELIMINARY in memory; CreateNew on sentinel raises IOException -> stderr FINAL_RECEIPT_WRITE_FAILED_OR_INCOMPLETE; no terminal-failure file; exit 1; sentinel bytes unchanged"
+      }
+    },
+    "parent": {
+      "ticket": "reparse-free; hash == argument; approved/mode/owner/r3Sha256/output/exclusiveExecutionReserved; bounds 20000/10000/30000/5000 ms, 512 MiB, 16384 B, attempts 1, retries 0, processStops 0; window <= 20 min, lastStart == ends - 45 s, now within",
+      "pins": "pin-file hash == ticket pinsSha256; exactly 8 normalized paths {self, pwsh, R3, two slices, three fixtures}; each reparse-free, bytes, lowercase sha256; re-verified post plus pin file and ticket hashes",
+      "runtime": "MainModule == pinned pwsh",
+      "g0": "output absent; nearest existing ancestor reparse-free; OS free/available/commit >= 512 MiB; lastStart recheck",
+      "perCase": "work deadline; pinned pwsh child -NoProfile -NonInteractive -File <fixture> -AdmissionSha256; cleared env (System32 PATH, private HOME/USERPROFILE/TEMP/TMP, DOTNET_CLI_TELEMETRY_OPTOUT); identity from retained handle (pid, StartTime, MainModule == pwsh); 1 KiB async reads both streams, 16 KiB combined cap; 5 s child deadline; exit must be 1, lifetime <= 5000 ms, stdout empty; case dir exactly control-setup.json + receipt.json (+ terminal-failure.json except write-failure), no subdirs/reparse, files <= 16 KiB; setup binding; case assertions; files hashed; first failure preserves partials and rethrows (no later fixture runs); dispose only after exit; no kill",
+      "finalization": "finalizationStop = min(30000, start+10000); receipt status PRELIMINARY_THREE_NEGATIVE_CONTROLS_PROVEN_REQUIRES_OUTER_EXIT_AND_CLOSURE or FAILED_OR_INCOMPLETE; post-write overrun -> terminal-failure.json; exit 0 only if no failure, 3 rows passed, none unclosed, both deadlines unexpired at final line"
+    },
+    "proves": ["late second census not credited (quiet count 1, cleanup failure recorded)", "late-written provisional receipt coexists with terminal failure and exit 1", "receipt write failure -> stderr marker, exit 1, colliding file untouched"],
+    "doesNotProve": ["real census time", "shim handle-to-CIM key equality", "five-line pre-identity output", "Git config facts", "effect of the R3 disposal move on a real census", "any positive path"],
+    "observations": [
+      "fixture reads ticket via UTF8.GetString+ConvertFrom-Json (BOM would fail), parent via Get-Content -Raw; predicate: ticket UTF-8 without BOM",
+      "child env lacks APPDATA/LOCALAPPDATA/PSModulePath; any pwsh stderr noise fails closed (UNEXPECTED_STDERR / exact marker)",
+      "5 s child budget includes pwsh cold start + one real 500 ms sleep; 20 s work covers three children + post pins",
+      "no in-parent competing-process census; exclusiveExecutionReserved is Root's claim; predicate: Root reserves slot, no concurrent admitted group",
+      "MainModule transient unreadability -> CHILD_EXECUTABLE/generic failure, never pass",
+      "pins bind fixture bytes; mislabelled fixture fails SETUP_BINDING; edited fixture fails INPUT_PIN_MISMATCH"
+    ],
+    "noCorrections": true
+  },
+  "stillOwed": ["actual diff-check: fresh finite Root ticket with R3 self row, five rows re-verified, live index re-hashed, doc 114 §7 config facts at admission/closure, census<1 s, shim key equality, five-line pre-identity, outer exit/timing, independent closure", "controls: finite ticket, Root slot reservation, actual run with outer exit 0/timing/closure", "C: owned-endpoint diagnostic runner (doc 116)", "manifest validation run", "browser outcome", "QS-R1/QS-R4/QS-R7", "release authority"],
+  "unchanged": ["application 8e85daa", "docs 104-114", "accepted receipts 108/110/111/113", "ownership attestation 20a03bb6"],
+  "executionConsent": false
+}

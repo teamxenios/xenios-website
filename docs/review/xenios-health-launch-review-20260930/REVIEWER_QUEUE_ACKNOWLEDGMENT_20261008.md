@@ -1105,3 +1105,14 @@ consent follows; the Doc 110 runner does not admit this command; Doc 112 C stays
 diff receipt and bound index/manifest/95-pin inputs exist. Still owed overall: this diff-check receipt, manifest validation
 run, browser outcome, QS-R1/QS-R4/QS-R7, release authority. Last processed board tip `2426584`. Nothing was executed; no
 agents were used.
+
+## Queue state update (2026-10-13 17:5x CDT, doc 115)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 115 A | Diff-check parent R3 byte confirmation (Core `50e2609a` tree `e3c6e6c2`; parent 19,110 B `b98f7a25…`; R2 `74e17f7f…`; pins template `8ffbaa4f…`; proposal `eec6e70f…`; Root `diff-r3/` byte-identical, `ROOT_R3_ONE_HUNK_BYTE_PROOF`) | **CONFIRMED.** Exactly one line `foreach($p in $dHandles){$p.Dispose()}` moved from R2 line 252 to R3 line 236 (before the first cleanup census); same bytes, no CR, identical text after removing that line; pins template changes only the self row. Doc 114 R2 acceptance carries to R3; the §6 alternative control is no longer needed; §8 proving checks 2–5 remain owed. Records worktree `2dc8616` holds R3 at the pinned path. |
+| 115 B | Three finalization proving controls, source only (Core `2dc86167` tree `341de43c`; slices `7c685cef…` 3,762 B / `9587eb57…` 403 B; fixtures `9bc429c5…` / `454da196…` / `c4bbc676…`; sequential parent `fcd6fd15…` 14,826 B; 8-row pins `61859a8b…`; proposal `a3ac41f7…`) | **SOURCE ACCEPTED as three synthetic negative controls, with predicates.** Finalization slice = R3 line 229 → EOF (one occurrence; suffix of every fixture); write slice = R3 lines 46–51 (one occurrence each); fixtures differ only at `$cCase`; explicit simulated clock/census/time; real `CreateNew`+flush only in fresh private case dirs; expected exit 1 with exact receipt / terminal-failure / sentinel evidence; `candidate` marked simulated, never release credit; parent binds eight inputs plus pin file via ticket, pinned pwsh child only, 5 s/20 s/10 s/30 s, 512 MiB, 16 KiB caps, stop at first mismatch, no kills, provisional status only. Proves the three finalization behaviours only; census time, shim key equality, five-line pre-identity, config facts and any positive path remain separate. Predicates: ticket UTF-8 without BOM; clean pwsh stderr under the reduced child env; Root slot reservation (no in-parent competing census). No corrections. |
+
+Closed and unchanged: application `8e85daa`/`25507c2f`, docs 104–114, accepted receipts, ownership attestation. No execution
+consent follows. C (owned-endpoint pre-navigation diagnostic runner, Core `d57d9c88`) follows separately as doc 116. Last
+processed board tip `d378b0f`. Nothing was executed; no agents were used.
