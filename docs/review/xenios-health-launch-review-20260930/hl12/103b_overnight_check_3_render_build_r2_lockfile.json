@@ -1,0 +1,77 @@
+{
+  "record": "103b",
+  "kind": "overnight-check",
+  "checkIndex": 3,
+  "observedAt": "2026-10-13T05:10:47Z",
+  "observedAtLocal": "2026-10-13 00:10 CDT",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "observedTips": { "board": "bdecd53", "records": "6c7106a", "followUp": "dd3f532" },
+  "candidate": {
+    "sha": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+    "tree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+    "changedSinceDoc103": false,
+    "newRegistrationForReviewer": false,
+    "deployment": false
+  },
+  "literalRenderBuildR2": {
+    "record": "docs/health-launch/ql-build-20261012/doc103-render-build-r2-20261013/",
+    "recordCommit": "91080ee7e7058919ab032fa1186881af07ae9436",
+    "command": "npm run render-build",
+    "script": "npm install -g npm@10.8.2 && npm install --no-audit --no-fund --production=false && node script/build.mjs",
+    "node": "v20.19.0",
+    "nodeBinarySha256Prefix": "6e3a39787e667d50",
+    "npm": "10.8.2 (process-private prefix)",
+    "childStartedUtc": "2026-10-13T04:54:11.212Z",
+    "childEndedUtc": "2026-10-13T04:57:09.907Z",
+    "childExitCode": 0,
+    "supervisorExitCode": 1,
+    "status": "FAILED_SOURCE_CHANGED_DESPITE_COMPILER_EXIT_ZERO",
+    "failure": "SOURCE_CHANGED",
+    "compiler": "npm install added 531 packages; vite 7.3.5, 2303 modules, built in 16.10s; dist/index.cjs 1.7mb",
+    "postRunArtifactBytes": 10637058,
+    "artifactInventoryIndependentlyRehashed": false,
+    "onlyChangedTrackedPath": "package-lock.json",
+    "reconciliationSha256Prefix": "238e85fa02f5712b",
+    "receiptSha256Prefix": "2f681ebac3c89090",
+    "ownersClassification": "not a qualified PASS; invariant not weakened; no repair, normalization, waiver or retry"
+  },
+  "reviewerLockfileVerification": {
+    "committedBlob": "912f4f85e9a078ed97ed2b67ce8d1de09490eb29",
+    "committedBlobLfLines": 9010,
+    "committedBlobLfSha256Prefix": "d25eb6b816b616cf",
+    "beforeCopySha256Prefix": "d3083edc542cd123",
+    "beforeCopyBytes": 271663,
+    "beforeCopyEqualsCrlfConvertedCommittedBlob": true,
+    "afterCopySha256Prefix": "4d6c0215df86125f",
+    "afterCopyBytes": 270749,
+    "lockfileVersionBeforeAfter": [3, 3],
+    "packageEntriesBeforeAfter": [673, 673],
+    "entriesAddedOrRemoved": 0,
+    "onlyDifference": "libc array removed from 21 entries (63 lines)",
+    "affectedEntriesAllOptionalPlatformPackages": true,
+    "affectedSample": ["@rollup/rollup-linux-arm-gnueabihf", "@rollup/rollup-linux-arm64-gnu", "@rollup/rollup-linux-arm64-musl"],
+    "libcValuesSeen": ["glibc", "musl"],
+    "changedCriticalFields": "NONE (version, resolved, integrity, dependencies, optionalDependencies, peerDependencies, dev, optional, os, cpu, engines, bin, license all identical)",
+    "reading": "lockfile-format rewrite by npm 10.8.2, which does not emit libc; not a dependency change; not a compiler diagnostic"
+  },
+  "openDispositions": {
+    "owner": "coordinator / build-script source owner",
+    "optionA": "keep render-build unchanged; record this diff proof as a named limit of the render-build receipt",
+    "optionB": "change render-build to a lockfile-preserving install (npm ci); edits package.json, which is in the core-site-protection manifest (server/core-site-protection.test.ts:147,311); new revision -> manifest reconciliation -> new source check (doc 104)",
+    "reviewerChooses": false
+  },
+  "otherRecordsRead": {
+    "releaseEnvelopeDraft": "doc103-release-preparation-20261013/DD3_RELEASE_EVIDENCE_BINDING_DRAFT.json (6c7106a): releaseReady false; nine net paths vs 79414143; QS-1 delta vs 00fdbf4a = AssistedOrderPage.tsx + test; cites doc 103 blob d9710b59",
+    "browser": "900s metadata inventory COMPLETED (not browser qualification); browser R1 FAILED_OUTER_RESOURCE_ADMISSION; R2 NOT_INVOKED_EXTERNAL_MEMORY_BELOW_2048_MIB; no lost-response journey, admin refusal or staff readback evidence",
+    "releaseTarget": "23:18 CDT priority target recorded missed with unmet conditions",
+    "pending": "QS-2 operator attestation; Render workspace confirmation; served-version check; release authority"
+  },
+  "queueState": {
+    "doc103": "stands; npm ci fresh build proven (check 1); literal render-build compiler exit 0 but run failed on lockfile invariant; remaining §3 conditions open",
+    "lastProcessedBoardTip": "bdecd53",
+    "lastProcessedRecordsTip": "6c7106a",
+    "nextCheck": "2026-10-13 01:07 CDT"
+  }
+}

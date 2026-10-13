@@ -757,3 +757,50 @@ readback, QL2-3/QS-2 runbook-in-force attestation or served-version evidence exi
 §3 minus that one. Last processed board tip `65f8f47`. Next check at 23:07 CDT; quiet unless something new lands.
 
 Nothing was executed.
+
+## Overnight check 3 (2026-10-13 00:10 CDT / 05:10Z): literal `render-build` R2 failed only on a lockfile rewrite; no new target
+
+Check 2 (23:10 CDT) found nothing actionable and published nothing. This check: board tip `bdecd53` (seven commits since
+`1d8dfcb`), records tip `6c7106a` (eleven since `c234adf`), follow-up tip still `dd3f532`. Candidate unchanged; nothing
+registered to me; no deployment; no browser, admin-PATCH or staff-readback evidence (the 900 s input-metadata producer
+COMPLETED its inventory; browser R1 was refused at outer resource admission and R2 was not invoked, memory below the
+2048 MiB floor). The first-release priority target (23:18 CDT) is recorded as missed, with its unmet conditions.
+
+**New evidence on the one build-side condition.** `doc103-render-build-r2-20261013/` (`91080ee`), the literal
+`npm run render-build` at the exact candidate (`dd3f532e…`, tree `7e155e33…`, Node v20.19.0 binary `6e3a3978…`,
+npm 10.8.2 bootstrapped into a process-private prefix): the child ran 04:54:11–04:57:09Z and **exited 0**: `npm install`
+added 531 packages, vite 7.3.5 built 2303 modules in 16.10 s, server bundle `dist/index.cjs` 1.7 MB, post-run artifact
+bytes 10,637,058 (the same total as the proven `npm ci` build, inventory not independently rehashed). The supervisor then
+**failed the run with `SOURCE_CHANGED`** (`FAILED_SOURCE_CHANGED_DESPITE_COMPILER_EXIT_ZERO`, supervisor exit 1) because
+the only tracked path that changed was `package-lock.json` (271,663 → 270,749 B). The owners classify it correctly as
+not a qualified PASS and have not weakened the invariant, repaired or retried.
+
+**What I verified myself from the committed before/after copies.** The "before" copy is byte-for-byte the candidate's
+committed lockfile (blob `912f4f85`, 9,010 LF lines) in its CRLF working-tree form (sha256 `d3083edc…`; I reproduced that
+hash by CRLF-converting the blob). Parsing both files: `lockfileVersion` 3 unchanged; 673 package entries before and
+after, none added or removed; **the only difference is the removal of the `libc` array from 21 entries**, all optional
+platform packages (the `@rollup/rollup-linux-*-gnu`/`-musl` family and peers; values `glibc`/`musl`), 63 lines; **no
+`version`, `resolved`, `integrity`, dependency, `os`/`cpu`, `dev`/`optional` or any other field changed.** The committed
+lock carries `libc` fields that npm 10.8.2 does not emit; the script's `npm install` rewrote the file without them. The
+dependency graph the compiler consumed is the one the lockfile pins.
+
+**Reading.** The condition "render-build with the lockfile install" is not yet satisfied as literally specified, but the
+failure is a lockfile-format rewrite by the pinned npm, not a dependency change and not a compiler diagnostic. Two
+dispositions are open to the owners, and neither is mine to choose: (a) keep the script unchanged and record this exact
+diff proof as a named limit of the render-build receipt (no source change; the hosted build host would perform the same
+transient rewrite inside its container); or (b) change `render-build` to a lockfile-preserving install (`npm ci`), which
+edits `package.json`, a file in the core-site-protection manifest (`server/core-site-protection.test.ts:147,311`), and
+therefore produces a new revision needing manifest reconciliation and a new source check here (doc 104). The integrator's
+handoff already names "coordinator disposition of protected build-script remedy" as the next step.
+
+**Other new records, read, nothing owed.** `DD3_RELEASE_EVIDENCE_BINDING_DRAFT.json` (`6c7106a`): `releaseReady: false`,
+nine net paths versus production `79414143` (three runtime, four test, two release-control), the QS-1 delta versus
+`00fdbf4a` correctly stated as `AssistedOrderPage.tsx` and its test only; it cites doc 103 at `2795ce8` by blob
+`d9710b59`. Board `bdecd53` records the running R2 and the browser resource holds; QS-2 operator attestation and the
+Render workspace confirmation remain pending; no new questions are addressed to me.
+
+**Queue state.** Doc 103 stands. Fresh `npm ci` build: proven (check 1). Literal render-build: compiler exit 0, run
+failed on the lockfile invariant as verified above; disposition with the owners. Everything else in doc 103 §3 open.
+Last processed board tip `bdecd53`, records tip `6c7106a`. Next check 01:07 CDT.
+
+Nothing was executed.
