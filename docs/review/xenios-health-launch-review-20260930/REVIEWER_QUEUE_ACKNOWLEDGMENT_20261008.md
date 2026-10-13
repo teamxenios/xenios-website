@@ -1066,3 +1066,16 @@ Unchanged: application, build reuse, QS-2, QS-R5, docs 104–110. Still owed: `v
 2026-10-20T13:49:12Z), protection CLI `79414143 8e85daa`, alternate-index export + 17-path manifest validation with the
 `20a03bb6…` attestation, test-evidence assembly, browser outcome, QS-R4, release authority. Last processed board tip
 `aa65266`. Nothing was executed.
+
+## Queue state update (2026-10-13 16:5x CDT, doc 112)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 112 A | G0 refusal telemetry successor `9bcfbc75…` (10,033 B, commit `76eb5881`) on accepted R3 CLI parent `2a72dd9e…` | **SOURCE ACCEPTED.** One hunk, refusal-branch body only: predicates and unconditional throw byte-identical; telemetry from the already-measured object plus failing-floor booleans and constants; `CreateNew` fresh write; explicit recording failure; no new measurement (3 CIM calls both), no retry path, browser floor untouched. Execution needs a new finite ticket. |
+| 112 B | Target-lifecycle diagnostic adapter `f79528ec…` (6,264 B, commit `143cc684`) with design `ab19e272` | **SOURCE ACCEPTED, diagnostic scope only.** Rejects `Page.navigate` before any I/O, delegates all target decisions to the unchanged driver `b2f0901d…`, retains the first observed refusal, nested unconditional restoration, finite bounded drain/`Browser.close`/CDP close, sanitized capped evidence, `journeyCredit` false; calls match pinned `cdp.mjs` `12a76cec…` exactly. Parent predicates (sole pinned-class use, owned endpoint, pins, bounds, exact-identity closure) retained; no window or admission exists. |
+| 112 C | Release-manifest validator profile: controller `e8e47ad1…`, wrapper `d6f7b0d6…` (@`0c29e3bb`), parent R2 `06d4fb93…` (@`6d199875`), 95-pin template `2d1b563c…` | **SOURCE ACCEPTED for the profile; not executable yet.** Single mode `verify:release-manifest`; alternate index and expected-identity variables child-only; default index bound (ticket row + resolved path + pre/post digest in both parent and controller); inherited index/event variables refused; local refs required; manifest/attestation/alternate index pinned pre/post; strict comparator matches by inspection. Expected artifact blob for the overlay entry `6c0a4113a2a48e188dbafd794aa733c6cb32ba9a`. Owed: three unbound pins, built alternate index + exact-entry proof, `diffCheck` receipt, real pins file, live default-index pin, finite ticket + G0. Partial manifest carries my doc 110 attestation (`20a03bb6…`) and a reuse partition consistent with docs 105/108. |
+
+No corrections. Closed and unchanged: application `8e85daa`/`25507c2f`, build reuse, QS-2, QS-R5, docs 104–111. Still owed
+overall: `verify:production-state` (before 2026-10-20T13:49:12Z), protection CLI `79414143 8e85daa`, manifest validation
+run after the owed artifacts, browser outcome, QS-R4, release authority. Last processed board tip `3d65f29`. Nothing was
+executed; no agents were used.

@@ -1,0 +1,50 @@
+{
+  "doc": 112,
+  "title": "Revision 13: G0 refusal telemetry (A), target-lifecycle diagnostic adapter (B), release-manifest validator profile with parent R2 (C)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "packet": { "path": "DOC111_NEXT_SOURCE_PROFILE_REVIEW_READY_20261013/", "boardTipRead": "3d65f29", "packetInventory": "2514 B b4f0ed036408f8d377be4a735fb60251116f62b1c8916ca0cb2595dede296419", "sourceInventory": "5466 B f85aa627421b4834e79752012667643884f891de4b49240f464dca420c4f9fd5", "allFilesRehashed": true },
+  "application": { "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "changed": false },
+  "A_g0": {
+    "verdict": "SOURCE_ACCEPTED",
+    "file": "execute-admitted-static-cli-refusal-observation-proposed-r1.ps1", "commit": "76eb588159e04bb15725159dacc204d2766a4cbd", "bytes": 10033, "sha256": "9bcfbc759556c7fa42e2ae2e13e648a8a7c3b8160e09cff53f0d6b764f3c3126",
+    "base": "accepted R3 CLI parent 2a72dd9e (8791 B)",
+    "diff": "one hunk: refusal-branch body only",
+    "predicatesUnchanged": "osFreeMiB<1536 OR availableMiB<1536 OR commitHeadroomMiB<1536", "throwUnchanged": "AFFECTED_MODE_RESOURCE_FLOOR, unconditional",
+    "telemetry": "ordered record from existing $qualResource + failedFloors booleans + mode/source/tree/admissionSha256 + parentInvocations=1/supervisorLaunched=false/validatorLaunched=false/automaticRetries=0; stderr; CreateNew refusal.json with FileShare.None; recording failure -> stderr G0_REFUSAL_RECORD_WRITE_FAILED",
+    "newMeasurements": 0, "cimCallsBeforeAfter": [3, 3], "retryPath": "none; OUTPUT_NOT_FRESH precedes and the refusal leaves its directory", "browserFloorTouched": false,
+    "limits": ["earlier refusals b66f119c/da04d290 remain numerically unknown", "same block reused in manifest parent R2"]
+  },
+  "B_diagnostic": {
+    "verdict": "SOURCE_ACCEPTED_DIAGNOSTIC_SCOPE_ONLY",
+    "adapter": { "file": "diagnostic-adapter-proposed.mjs", "commit": "143cc684c45d4bbdc91f94c9683d728b89171772", "bytes": 6264, "sha256": "f79528ec5378d6273bbcad4c135cce259995cf9ab3df7cb7d69a810a482b6291", "parentAdapter": "a0bb4a18 5019 B fc4aeec9 (superseded)" },
+    "design": { "commit": "ab19e2729069baa36927ca2e48ae5b55c69f2a19", "PROPOSAL.json": "1d101fd3", "SELECTED_EXISTING_TOOL_DEPENDENCY_PINS.json": "506ec8c6 (40 rows)", "acceptedDriver": "b2f0901d" },
+    "verified": {
+      "preNavigationBoundary": "Page.navigate rejected before original send; all other methods incl. Target.closeTarget delegated",
+      "driverGuardsUnchanged": "public factory only; control/record refuse; clientFiles []; adminOverviewExpectedDenialsApproved false; no private function rewrite",
+      "driverApiExists": "createQlBrowserDriver returns runFresh/drain/evidence/failure getter; runFresh -> begin creates context + about:blank target before first navigate",
+      "firstRefusalRetained": true, "nestedUnconditionalRestoration": true, "boundedDrainAndTeardown": "min(5000, remaining) ms; finite positive remaining required; Browser.close via original send with {timeoutMs}; bounded connection.close",
+      "pinnedClassFit": "cdp.mjs 12a76cec send(method, params={}, sessionId, {timeoutMs}={}), close(), this.ws; chrome.mjs 01f53d2d",
+      "evidenceSanitizedCapped": "doc 109 records <=64 + counts + codeOf-filtered error codes; journeyCredit false",
+      "statusLogic": "ORIGINAL_TARGET_REFUSAL_OBSERVED_BEFORE_NAVIGATION | PRE_NAVIGATION_BOUNDARY_REACHED_NO_REFUSAL_OBSERVED | DIAGNOSTIC_FAILED_OR_INCOMPLETE"
+    },
+    "parentPredicatesRetained": ["sole use of exact pinned CDP class (prototype patch is process-global)", "verified owned loopback endpoint before first captured connection", "module/tool/dependency pins", "finite work/cleanup bounds", "exact-identity two-quiet + independent process closure", "browser floor 2048 MiB"],
+    "limits": ["Promise.race bounds observation, not cancellation", "boundary-only result cannot exclude navigation/application-triggered failure", "no runner, window, admission or closure evidence exists"]
+  },
+  "C_manifestProfile": {
+    "verdict": "SOURCE_ACCEPTED_PROFILE_WITH_PARENT_R2_NOT_EXECUTABLE_YET",
+    "files": { "controller": "run-manifest-cli-proposed-r1.cjs 45375 B e8e47ad1eb0bea7ccec3ea09292fc3dc22c7009170151a38b406e27d5a41bba1 (@0c29e3bb)", "wrapper": "manifest-primary-wrapper-proposed-r1.cjs 6178 B d6f7b0d665690aea4a66b7141aad654990de00a7b6900efdafb97dadd8b2d823 (@0c29e3bb)", "parentR2": "execute-admitted-manifest-proposed-r2.ps1 11210 B 06d4fb934497d6b087dab3998cad42ff677f9ed0441574b20f266ffefc22c06d (@6d199875)", "parentR1Superseded": "4dad7cb9 9241 B", "template": "pins-manifest-proposed-r1.TEMPLATE.json 18742 B 2d1b563c (95 entries; 3 unbound: manifest, review artifact, alternate index)" },
+    "baselines": { "controller": "55b7ff04 (R3)", "wrapper": "e3898fe7", "parent": "2a72dd9e" },
+    "controllerDelta": ["single mode release-manifest", "GIT_INDEX_FILE/GITHUB_EVENT_PATH inherited -> refused", "runner+pins in profile dir", "95 pins incl. MANIFEST/REVIEW/ALTERNATE_INDEX required and verified pre/post", "alias must be tsx scripts/acceptance/verify-release-manifest.ts, no pre/post hooks", "MANIFEST/REVIEW/ALTERNATE_INDEX physical; manifest-review.index.lock refused", "GIT_OPTIONAL_LOCKS=0 in child env", "sourceState refuses overlay, resolves default index path, refuses index.lock, records default index digest; sourceMatches requires it unchanged post-run", "base/head must resolve locally (no validator fetch)", "cliArgs [npm-cli, run, verify:release-manifest, --, MANIFEST]; strict comparator unchanged"],
+    "wrapperDelta": ["single mode", "commandFor [NODE,NPM,run,verify:release-manifest,--,MANIFEST] same literals as controller", "inherited GIT_INDEX_FILE refused", "child-only env overlay: GIT_INDEX_FILE, XENIOS_EXPECTED_PRODUCTION_SHA 79414143, XENIOS_EXPECTED_HEAD_SHA 8e85daa, XENIOS_EXPECTED_OWNERSHIP_SHA256 bb4ea1f7", "output validator-r1"],
+    "parentR2Delta": ["mode release-manifest", "inherited GIT_INDEX_FILE/GITHUB_EVENT_PATH refused", "profile roots/ticket", "pins hash from ticket frozen-input row (ticket hash-bound)", "exactly one default-index frozenInputs row at canonical path with positive bytes+sha; actual path resolved read-only must match", "--no-optional-locks dirty check", "competing-process regex extended", "same refusal telemetry as A", "Get-QualPin pre/post asserts default index byte-identical"],
+    "overlay": { "childOnly": true, "alternateIndexSpec": "full 8e85daa tree + exactly one stage-0 mode 100644 entry at docs/health-launch/ql-build-20261012/release-manifest-8e85daa/integration-ownership-review.json", "expectedArtifactBlob": "6c0a4113a2a48e188dbafd794aa733c6cb32ba9a (git hash-object --no-filters over the 1027-byte 20a03bb6 artifact)", "defaultIndexObservedByOwners": "630285 B 02415548 (not verifiable by reviewer)", "cleanIndexClaim": false },
+    "partialManifest": { "schemaVersion": 2, "lane": "existing-request-intake-release", "files": 17, "integrationOwnershipReviewMatchesDoc110": true, "reviewArtifactSha256": "20a03bb6cfcafadd5d17fa739f15ade96e233e91c05ae5e99b6e9c4b1172057e", "testSlots": { "focused": "reuse dd3f532 91/91 (doc 105)", "fullSuite": "reuse R5 (doc 105)", "typecheck": "actual 8e85daa check:release-control-plane (doc 108)", "build": "reuse 3dd3d96 literal render-build (doc 104)", "diffCheck": null }, "reusePartition": "18005+84 historical (dd3f532) / 62+1 current (8e85daa) / 36 companion (3dd3d96) — consistent with docs 105/108" },
+    "owedBeforeExecution": ["final manifest bytes incl. diffCheck receipt", "placed attestation artifact (20a03bb6) and built alternate index with exact-entry proof", "real pins-manifest-proposed-r1.json with whole-file hash in ticket", "live default-index pin at admission", "finite ticket + fresh G0 (1536 floor)", "one attempt, zero retries"],
+    "limits": ["index stat refresh would fail closed (post-pin/post-source), never open; GIT_OPTIONAL_LOCKS=0 / --no-optional-locks mitigate", "validator 7-day windows apply at run time (attestation to 2026-10-20T20:31Z; production-state evidence to 2026-10-20T13:49:12Z)", "lane must not change (doc 110)", "15/36 controls do not cover the new command/overlay/default-index branches; only the actual run binds them"]
+  },
+  "unchanged": ["application 8e85daa", "build 3dd3d96 reuse", "QS-2", "QS-R5", "docs 104-111 incl. doc 111 DAG receipt"],
+  "noCorrections": true
+}
