@@ -1002,3 +1002,12 @@ Codex's protection; nothing here touches it, and no multi-agent review was run.
   available without polling.
 
 Last processed board tip `dd3236f`, records tip `f5fdfbc`. Nothing was executed.
+
+## Queue state update (2026-10-13 14:1x CDT, doc 106)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 106 | Browser-qualification harness R2, revision 7 (packet `405586ee…`, records `721c124c`; harness `60b025ee…` on R1 `34a094e2…`; application `8e85daa` and build `3dd3d96` unchanged) | COMPLETE: **SOURCE ACCEPTED WITH NAMED LIMITS, harness scope.** Sole behaviour change verified from bytes: `dns.lookup` answers exactly `("127.0.0.1", fn)` on `nextTick` with `(null, "127.0.0.1", 4)`; every other shape and `dns.resolve` still refuse; outer/bind runners and binding change only scratch paths and re-pinned digests. R1 stays failed-closed (0 Chromium cases). Not a browser pass; R2 not admitted; 27 guard controls unexecuted. |
+
+QS-R5: the incumbent control-plane owner's release-only direction is recorded (17:55:04Z); the `e54781c` condition is
+fulfilled. Last processed board tip `f4f2b0c`, records tip `b4998ea`. Nothing was executed.

@@ -1,0 +1,33 @@
+{
+  "doc": 106,
+  "title": "Browser-qualification harness, R2 loopback dns.lookup exception: narrow test-control review (revision 7)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS",
+  "verdictScope": "test-harness control change only; application 8e85daa/25507c2f and physical build 3dd3d96/7a4ce7c3 unchanged and still accepted; not a browser pass; no execution grant",
+  "registration": { "task": "DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012", "revision": 7, "registeredAt": "2026-10-13T18:56:34.655Z", "packetHash": "405586ee2dedbb50ca8e53468af4e1320c4140e499cdace3f0aedcdf4f8be58c", "records": "721c124c312a93ed870efc9243f5d3c22ccdccd2", "archive": "DOC105_BROWSER_R2_LITERAL_LOOKUP_SOURCE_ONLY_REVIEW_20261013/" },
+  "r1Failure": { "records": "ae036d0ab98fbf9e952adab27cf2a07dd5acfde9", "started": "2026-10-13T17:41:06Z", "firstCause": "OUTBOUND_REFUSED (fresh phase, before Chromium)", "outer": "WORK_PHASE_TIMEOUT @18:13:53Z", "chromiumCases": 0, "cleanupVerified": true, "reinterpreted": false, "refusedApiLabelledInReceipt": false },
+  "diagnostic": { "records": "e1aa85ebc5b7c45b837ce5bf2061e473368e66db", "status": "PASS_ISOLATED_API_ONLY", "shows": "Node 20 server.listen(port,'127.0.0.1') calls dns.lookup(address, callback) before bind", "limit": "proves Node interaction, not the exact uninstrumented R1 call site" },
+  "bytesVerified": {
+    "packetFilesRehashed": "9/9 match PACKET.json",
+    "harnessR1": { "sha256Prefix": "34a094e27164bc00", "bytes": 48204 },
+    "harnessR2": { "sha256Prefix": "60b025eea90fb33d", "bytes": 48579 },
+    "outerR1toR2": "8d60caa9 -> 7fa93cf5 (scratch path + 3 re-pinned digests only)",
+    "bindR1toR2": "4e08b8fc -> ed36ca86 (scratch path + 4 re-pinned digests only)",
+    "bindingR1toR2": "2507a7a9 -> eccbb889: scratchRoot, preparedAt, schemaVersion v1->v2, added runnerCorrectionR2 (browserExecution NOT_ADMITTED); cases/validations/sqlLineage(7)/floors byte-identical",
+    "reviewerDiffMatchesSuppliedPatch": true,
+    "harnessDelta": ["ROOT scratch constant", "PROPOSAL_HASH pin", "dns.lookup: blanket refused -> exact (2 args, literal 127.0.0.1, function) nextTick (null,'127.0.0.1',4); all other shapes refused(); dns.resolve still refused"]
+  },
+  "semantics": { "refused": "logs OUTBOUND_REFUSED, sets fatal, throws synchronously (unchanged)", "installedBeforeSyncBuiltinESMExportsAndAppImport": true, "onlyListenCall": "harness.ts:574 server.listen(a.port, '127.0.0.1')", "socketFenceUnchanged": "connect restricted to 127.0.0.1:qualification port (harness.ts:187)", "otherFencesUnchanged": ["http/https/tls", "fetch allowlist (one loopback auth-user GET)", "child_process"], "outboundReachWidened": false },
+  "namedLimits": [
+    "27 guard controls proposed, not run; VM timeout covers setup only; correction in progress separately",
+    "R2 browser execution not admitted; fresh G0/capacity reading required; result binds to 3dd3d96 artifacts and transfers to 8e85daa per e54781c",
+    "any application two-argument dns.lookup('127.0.0.1', cb) also receives the synthetic answer; socket fence prevents wider reach; keep as narrow as written",
+    "R1 refused API inferred from diagnostic, not labelled in receipt"
+  ],
+  "qsR5": { "record": "DOC105_QS_R5_ACTUAL_CONTROL_PLANE_OWNER_RELEASE_ONLY_DISPOSITION_20261013.json", "at": "2026-10-13T17:55:04Z", "direction": "8e85daa record/test for this isolated release only; 0f92ca7/2b4888e historical; no cross-lineage merge without owner reconciliation; release ref only after checks", "fulfilsE54781cCondition": true, "isHumanPushOrDeployConsent": false },
+  "boardTipRead": "f4f2b0c",
+  "recordsTipRead": "b4998ea"
+}
