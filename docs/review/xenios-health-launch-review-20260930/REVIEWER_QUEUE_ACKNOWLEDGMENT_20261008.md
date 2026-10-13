@@ -1044,3 +1044,14 @@ QS-R1, QS-R4, release authority. Last processed board tip `c267e18`. Nothing was
 Closed and unchanged: application, build reuse, QS-2, QS-R5, docs 104–108. Still owed (unchanged from doc 108):
 controls 15/36, three CLI receipts, 17-path manifest validation, browser outcome, QS-R1, QS-R4, release authority.
 Last processed board tip `a245fc7`. Nothing was executed.
+
+## Queue state update (2026-10-13 15:4x CDT, doc 110)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 110 A | Pure-control receipts, revision 11: mapping-15 (records `05918a16`, receipt `2c38adfa…`) and wrapper-36 (records `b693afd3`, receipt `2c1fad81…`) at `8e85daa` | **ACCEPTED as bound receipts.** 15/0 and 36/0, exit 0, pins pre/post (old/new controller, wrapper, controls, parents, pwsh/git/node) match the archived bytes, source clean, independent closures. Prove the controller comparison and wrapper gate only. The static-CLI profile may proceed to its three actual CLI receipts under separate tickets/G0; no execution permission from this verdict. |
+| 110 B | Integration-ownership-review attestation for `79414143..8e85daa`, lane `existing-request-intake-release` | **PUBLISHED.** Independently recomputed with the validator's rules: 17 paths (digest `3d260180…`), trusted base policy `bb4ea1f7…` (48 write rules), findings 4 UNOWNED / 13 WRONG_LANE / 0 CONFLICT (digest `d7d21615…`) — all equal the template. Artifact `artifacts/integration-ownership-review-8e85daa.json`, 1,027 B, sha256 `20a03bb6cfcafadd5d17fa739f15ade96e233e91c05ae5e99b6e9c4b1172057e`, `reviewedAt` 2026-10-13T20:31:14.950Z, identity this session. Attests reviewed ownership findings only; not release approval, push consent or a manifest PASS; a lane change invalidates it; valid to 2026-10-20T20:31Z. |
+
+Unchanged: application `8e85daa`/`25507c2f`, build reuse, QS-2, QS-R5, docs 104–109; browser R2 failed-closed. Still owed:
+three CLI receipts, alternate-index export and 17-path manifest validation, test-evidence assembly, browser outcome,
+QS-R4, release authority. Last processed board tip `77e0191`. Nothing was executed.

@@ -1,0 +1,19 @@
+{
+  "artifactSchemaVersion": 1,
+  "kind": "xenios.integration-ownership-review",
+  "attestation": {
+    "baseSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "headSha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee",
+    "trustedBaseOwnershipPolicySha256": "bb4ea1f78ec70ef749ad881650a38ce274a48a801bab5b95c4aac21cb42eed92",
+    "gitDiffPathInventorySha256": "3d26018051343bd77e91c834a764905ad39e8576933f03a0556f0fdef3e0458a",
+    "ownershipFindingInventorySha256": "d7d2161505cda3e8de6906260d844b11d943d72a2f20a88d018cca9622c89582",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 4,
+      "WRONG_LANE_OWNER": 13,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "Original independent acceptance reviewer: Claude session 6abf1edf-2b16-476e-8305-23b9a0014e06 (claude-fable-5-1), branch claude/xenios-health-launch-review-20260930",
+    "reviewedAt": "2026-10-13T20:31:14.950Z",
+    "reviewArtifactPath": "docs/health-launch/ql-build-20261012/release-manifest-8e85daa/integration-ownership-review.json"
+  }
+}
