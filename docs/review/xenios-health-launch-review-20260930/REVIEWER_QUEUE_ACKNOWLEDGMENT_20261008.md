@@ -926,3 +926,11 @@ applicability and release-side consequences), each with an adversarial verifier,
 is executed. Doc 104 and `hl12/104_*.json` follow when the lenses close; execution receipts (protection CLI and
 companion at the new SHA, literal render-build, targeted pair, full-suite applicability) are assessed as they arrive
 and are reported separately from the source verdict.
+
+## Queue state update (2026-10-13 09:3x CDT, doc 104)
+
+| Doc | Board task | State |
+| --- | --- | --- |
+| 104 | `DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012` **r5** (`3dd3d96` / tree `7a4ce7c3`; registered 2026-10-13T13:54:17Z; records `7eb49fc`→`d8052eb`) | COMPLETE: **SOURCE ACCEPTED WITH NAMED LIMITS.** Applied diff is exactly the approved two-hunk patch (`f79e0e56…`); doc 103 runtime acceptance carried. Execution at this SHA: protection CLI PASS (bound), literal `render-build` with `npm ci` PASS (bound; lockfile byte-identical; 346 artifacts, inventory `a5a4ed43…`); whole-36 companion run still owed; targeted pair, typecheck, route accepted on input identity; full suite accepted for 970/971 files conditional on the companion receipt. Release-side QS-R1–R4 plus carried doc 103 §3 conditions open. |
+
+Registration r5 acknowledged. Last processed board tip `4002f55`, records tip `d8052eb`. Nothing was executed.

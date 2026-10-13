@@ -1,0 +1,79 @@
+{
+  "doc": 104,
+  "title": "Existing-wizard release candidate, locked Render install (3dd3d96): narrow applied-diff review",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "publishedAt": "2026-10-13T14:3xZ (08:3x-09:3x CDT review window)",
+  "executed": false,
+  "verdict": "SOURCE_ACCEPTED_WITH_NAMED_LIMITS",
+  "verdictScope": "applied diff only; execution evidence tracked separately; doc 103 runtime acceptance carried unchanged (application trees identical)",
+  "registration": {
+    "file": "DOC104_SUCCESSOR_R5_SOURCE_REVIEW_REGISTRATION_20261013.json",
+    "task": "DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012",
+    "revision": 5,
+    "registeredAt": "2026-10-13T13:54:17.183Z",
+    "reviewOwner": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "pickupAck": "1a07bb4",
+    "boardTipRead": "4002f55",
+    "recordsTipRead": "d8052eb"
+  },
+  "target": {
+    "sha": "3dd3d9667ba56859101b27abad1791777013c6de",
+    "tree": "7a4ce7c382a1cb44981fb0df2790ece16def2ba0",
+    "parent": "dd3f532e7f8c6a586eabb9b370ae34f86dea0789",
+    "parentTree": "7e155e3329b6469e8c7485ebc938bfe1cfb34630",
+    "branch": "codex/doc104-locked-build-20261013",
+    "committedLocal": "2026-10-13 08:30:25 -0500",
+    "changedBlobs": [
+      { "path": "package.json", "from": "33fda70eeea889ec05d9dfe7ac5bd09b89f09c34", "to": "3f2403bca1d033e4be81eaa7c55e6d45eaf1decc", "lfSha256From": "27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748", "lfSha256To": "5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1", "bytesFromTo": [5648, 5643], "change": "scripts.render-build: npm install -> npm ci (byte 503, line 16); nothing else" },
+      { "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json", "from": "088deb74044d945c2e7d2cdb7827647785042038", "to": "394ea52ace30ccc540dd7fa2ca1347e45e17542c", "lfSha256From": "321563b118392518", "lfSha256To": "15004dad9cda3b10cba4afb011ac03794c7c8d526643b48cdafe72997aea8491", "bytes": 97451, "change": "fileHashes.files['package.json'] row only (line 684)" }
+    ],
+    "unchanged": { "package-lock.json": "912f4f85e9a078ed97ed2b67ce8d1de09490eb29", "client": "0c67538114d4eeb93e5833f3c4b4e8f411679450", "server": "f162007688ec24dcc77dd47c8d6ec9a8bba9357a", "shared": "847c964e1861f81a251e954527cbe82e616d74bb", "allOtherRootEntries": true }
+  },
+  "approval": {
+    "textSha256": "80af988637ddd7552d199d8615141ec05447204c60973b3fecf856a835dedfc9",
+    "decisionIdentity": "67e0f9b5d782d47f4d74d7f840c496d7c67222871c26cd05f276ee706bb92914",
+    "decisionFileRawSha256": "fa914a7b3dd6426bc56724727ff94111cfb7877d8f4cace1f54311221963bfdf",
+    "patchSha256": "f79e0e562fc5b987fe1dac2e33ef223e7dc1e62e399e0b4234c96a6921f07a76",
+    "appliedDiffEqualsPatchPerFileHunks": true,
+    "patchHasNoIndexLines_blobBindingViaDecisionFile": true,
+    "scopeAndProhibitionsHonoured": true,
+    "exceptionRecordedOutOfTree": true,
+    "custody": { "ackAndLeaseCommit": "2634966 @13:29:47Z", "sourceWrite": "13:30:25Z", "returnCommit": "9bbb88b @13:32:16Z", "registryUntouchedInCandidate": true, "leasePaths": 3, "approvalWording": "two-file; third path covered by decision file's bounded registry executor" }
+  },
+  "gateSemanticsAt3dd3d96": { "packageJsonClass": "seam (reported)", "manifestClass": "infrastructure", "fileHashesMatch": "28/28", "seamBaselinesMatch": "5/5", "companionLiteralPins": 0, "testsMentionRenderBuild": 0, "oldHashOtherPins": "only historical preimage in ql-protection-carryforward-20261012/APPROVAL_AND_PREIMAGE.json" },
+  "npmCiPreconditions": { "lockfileVersion": 3, "lockRootMatchesPackageJson": true, "npmrc": "production=false, fund=false, audit=false", "engines": { "node": "20.19.0", "npm": "10.8.2" }, "packageManagerField": null },
+  "executionEvidence": {
+    "protectionCli": { "status": "PASS_BOUND", "command": "node scripts/acceptance/verify-core-site-protection.mjs 79414143 3dd3d96", "cwd": "C:/xenios-wt/doc104-locked-build", "window": "2026-10-13T13:44:29.860Z-13:44:30.420Z", "exitCode": 0, "supervisorExitCode": 0, "headCleanPrePost": true, "report": { "changedFiles": 10, "allowed": 3, "infrastructure": 2, "test": 4, "seam": ["package.json"], "protectedHashesVerified": 28, "result": "PASS" }, "runLogSha256Recomputed": "8ebcadbe4c3f3e1b23d5d0ef0ee77aecec3ee10f075e67d618afa0de1360b9dc", "records": "bc715da/7eb49fc", "limits": "worktree-hash semantics (clean-HEAD capture present); seam lease satisfied by recorded delegation; no PIDs retained" },
+    "literalRenderBuildR2": { "status": "PASS_BOUND", "records": "fbf1145 (+ RECONCILIATION d8052eb)", "checkout": "fresh detached LF, node_modules/dist absent", "executedScriptLogLine4": "npm install -g npm@10.8.2 && npm ci --no-audit --no-fund --production=false && node script/build.mjs", "window": "2026-10-13T14:21:06.060Z-14:25:52.915Z", "childExitCode": 0, "supervisorExitCode": 0, "lockBeforeAfterLfSha256": "d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74", "lockBytes": 262653, "lockEqualsCommittedBlob": true, "sourceInvariant": true, "artifacts": 346, "artifactBytes": 10633438, "inventorySha256": "a5a4ed43efffacfda95ae0e067b6c8ee4b5618d181f53f28e454bce65fd803d2", "independentPostcheckRehashed": 346, "recomputedByReviewer": { "receipt.json": "18b2693cb6621c23", "run.log": "3a3171d01c389296", "render-build-artifacts.json": "fb4ffdd0c0103c7d" }, "warnings": "known two (mixed import AdminResearchHome.tsx; chunk-size advisory)", "satisfiesFreshBuildConditionAtSuccessor": true },
+    "literalRenderBuildR1": { "status": "REFUSED_BEFORE_NPM", "cause": "physical CRLF checkout vs LF index; frozen-source runtime refused; not a build result" },
+    "artifactDeltaVsDd3f532NpmCiBuild": { "samePaths": 346, "identical": 320, "differing": 26, "differingAllTextUnderDistPublic": true, "serverBundleIdentical": true, "hashedChunksIdentical": true, "binariesIdentical": "117/117", "byteDelta": -3620, "reading": "consistent with CRLF vs LF checkout line-ending normalization; inference from inventories, not a re-hash" },
+    "stillOwed": ["companion suite whole-36 at 3dd3d96 with clean-HEAD capture (vitest run server/core-site-protection.test.ts)"],
+    "reuseDispositions": {
+      "targetedPair91": "ACCEPTED on input identity (client tree, vitest/vite/tsconfig, lockfile identical; no package.json/manifest reader); successor run optional",
+      "fullSuiteR5": "ACCEPTED for 970/971 files CONDITIONAL on the companion receipt; receipt pins root package.json (CRLF 32aa3da5 at dd3f532 vs 74953f1a at 3dd3d96) so this is reasoning, not a pin match",
+      "typecheck": "ACCEPTED (tsconfig/sources identical; scripts not a compiler input)",
+      "staticRoute": "ACCEPTED (server/shared and scanner identical; receipt bound to 00fdbf4a; tree-identity statement covers later SHAs)"
+    }
+  },
+  "releaseSide": {
+    "QS-R1": "P2: second human message id 01a1357a… cited as execution authority has no committed transcription/provenance (first message does)",
+    "QS-R2": "P2: release manifest for 3dd3d96 required (headSha bound; files == ten-path production delta; 7-day evidence window, dd3f532 receipts stale after 2026-10-20)",
+    "QS-R3": "P2 pre-existing: CURRENT_PRODUCTION_STATE baseline c545a70 behind live 79414143; verify-production-state OBSERVED_BASELINE_MISMATCH; release-control-plane.test.ts:49 hard-codes PRODUCTION_SHA -> correction is a reviewed source change",
+    "QS-R4": "served identity: provider readback 13:49Z buildCommand npm run render-build, startCommand npm run start, autoDeploy off, deploy branch release/early-access-code-session-checkout; 3dd3d96 local-only; delivery, deploy-time build log with npm ci, served RENDER_GIT_COMMIT=3dd3d96 remain; rollback caveat 79414143 predates QL-12 hold",
+    "carried": ["browser lost-response journey", "admin PATCH refusal via UI", "staff readback", "QS-2 attestation naming 3dd3d96/7a4ce7c3", "release authority with destination/rollback/no-overwrite checks"]
+  },
+  "namedLimits": [
+    "manifest seam prose stale and no in-manifest amendment comment (approval constraint; exception out of tree)",
+    "no root .gitattributes; checkout line endings machine-dependent (R1 refusal, artifact text deltas)",
+    "411/672 lock entries lack resolved/integrity (version lock, not integrity pin; pre-existing)",
+    "unsigned commit under shared machine identity",
+    "consumed R1 admission narrated npm install (erratum recorded); provenance 'no new SHA yet' never corrected; board leaves still say registration pending",
+    "START_XENIOS.ps1:57 npm install --production=false (outside scope; would rewrite lock in a qualification worktree)",
+    "stale claimed task row XENIOS-AUDIT-RELEASE-CONTROL-20260926 overlapping manifest/FILE_OWNERSHIP/companion test",
+    "DEPLOYMENT.md names script/build.ts (actual script/build.mjs)",
+    "--production=false deprecated; accepted by npm 10.8.2 in both literal runs",
+    "binary pins not derivable from Git; execution events are owner records bound by committed bytes"
+  ],
+  "workflow": { "runId": "wf_387c9242-c39", "agents": 7, "toolUses": 225, "lenses": ["exactness", "authority", "applicability"], "verifierRefutations": ["ACR-1 (registration since landed)", "ACR-8 (wrong path named)"], "criticVerdict": "ACCEPT_WITH_NAMED_LIMITS", "executedAnything": false }
+}
