@@ -681,7 +681,7 @@
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
       "server/static.ts": "sha256:3b0813133a6f0533b5880c47dc6f3187d6409f839f8cfcecb7070e6286e561f1",
-      "package.json": "sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748",
+      "package.json": "sha256:5cc063f65b19feab6e5a951fc88e7266f3db32f9d833820c592cd6a7dad9a6f1",
       "package-lock.json": "sha256:d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
       "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924"

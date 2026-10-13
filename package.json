@@ -13,7 +13,7 @@
     "dev:client": "vite dev --port 5000",
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "node script/build.mjs",
-    "render-build": "npm install -g npm@10.8.2 && npm install --no-audit --no-fund --production=false && node script/build.mjs",
+    "render-build": "npm install -g npm@10.8.2 && npm ci --no-audit --no-fund --production=false && node script/build.mjs",
     "start": "NODE_ENV=production node dist/index.cjs",
     "check": "tsc",
     "check:release-control-plane": "tsc --noEmit --strict --skipLibCheck --target ES2022 --module NodeNext --moduleResolution NodeNext --allowImportingTsExtensions --types node,vitest/globals scripts/acceptance/verify-release-manifest.ts scripts/acceptance/verify-migration-dag.ts scripts/acceptance/verify-route-uniqueness.ts scripts/acceptance/verify-production-state.ts server/release-control-plane.test.ts",
