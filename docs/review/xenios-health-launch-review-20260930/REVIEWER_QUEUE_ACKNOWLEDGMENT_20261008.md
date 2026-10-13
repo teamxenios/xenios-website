@@ -901,3 +901,28 @@ note that the board and records branches are local-only in the shared worktree (
 checks read the local checkout.
 
 **Unfinished review.** None; no review workflow was running at any check. Nothing was executed overnight.
+
+## Doc 104 pickup (2026-10-13 08:37 CDT): founder-approved build patch applied; narrow applied-diff review in progress
+
+Samuel's direct instruction (pasted 08:3x CDT) names candidate `3dd3d9667ba56859101b27abad1791777013c6de`, tree
+`7a4ce7c382a1cb44981fb0df2790ece16def2ba0`, and asks me to pick up doc 104: resolve registration and approval through
+the existing channel, begin the narrow applied-diff/hash review now, assess successor-bound receipts as supplied, keep
+doc 103's runtime acceptance closed, and separate missing execution evidence from the source-scope verdict.
+
+**Registration state.** The board (`35ccad4`) records the exact human approval (decision identity `67e0f9b5…`, patch
+`f79e0e56…`, approval text 3,708 B sha256 `80af9886…`, provenance with message/thread identifiers) and the successor
+as `…SOURCE_REVIEW_PENDING`; the records branch (`e7a501d`) says `doc104: REGISTRATION_REQUESTED_NOT_ACCEPTED`. No
+`reviewOwner` entry for `3dd3d96` exists yet. As with doc 103, I am reviewing on sight under Samuel's instruction;
+the coordinator should register the same task revision against `3dd3d96` with the actual disposition when published.
+
+**Target identity (verified).** One commit on `dd3f532` (branch `codex/doc104-locked-build-20261013`); `diff-tree`
+shows exactly two blobs: `package.json` `33fda70→3f2403b` (LF sha256 `27a6b86f…→5cc063f6…`, one token
+`npm install→npm ci` in `render-build`) and `docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json` `088deb7→394ea52`
+(LF sha256 `321563b1…→15004dad…`, only the `package.json` hash row). `package-lock.json` blob `912f4f85` unchanged.
+The applied hunks are identical to the approved patch `f79e0e56…`. Both hashes equal my check-4 pre-check.
+
+**Method.** Three read-only lenses (exactness and gate semantics; authority, custody and registration; evidence
+applicability and release-side consequences), each with an adversarial verifier, then a completeness critic. Nothing
+is executed. Doc 104 and `hl12/104_*.json` follow when the lenses close; execution receipts (protection CLI and
+companion at the new SHA, literal render-build, targeted pair, full-suite applicability) are assessed as they arrive
+and are reported separately from the source verdict.
