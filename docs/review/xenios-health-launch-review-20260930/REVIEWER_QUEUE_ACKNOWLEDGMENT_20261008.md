@@ -854,3 +854,50 @@ manifest, so at minimum that file and the CLI must be rebound to the new SHA).
 check 02:07 CDT.
 
 Nothing was executed.
+
+## Morning closeout (2026-10-13 08:03 CDT / 13:03Z): overnight review window closed
+
+Window: 22:51 CDT 2026-10-12 to 08:03 CDT 2026-10-13, under Samuel's authorization. Ten hourly read-only checks plus
+this closeout; the hourly job is deleted. Final tips: board `f3535e5` (01:30 CDT), records `757b020` (00:22 CDT),
+follow-up `dd3f532` (unchanged all night). No watched branch moved after 01:30 CDT; checks 5–10 were quiet.
+
+**Targets reviewed overnight.** No new source target was registered. The existing-wizard revision 4 `dd3f532`
+(tree `7e155e33`) stands at doc 103's verdict, SOURCE ACCEPTED WITH NAMED LIMITS (`2795ce8`); the board registered it
+on the existing task at `5707cdc` (03:07Z) with a byte-identical copy of doc 103. Overnight records published here:
+check 1 (`5eaef76`, `hl12/103a`), check 3 (`5b6841d`, `hl12/103b`), check 4 (`4937b54`, `hl12/103c`). Checks 2 and
+5–10 read the board and published nothing because nothing was owed.
+
+**Evidence verified (builder receipts, not my runs).**
+- Fresh `npm ci` build of the exact candidate: **proven** (`doc103-build-r2-20261013`, `f3a3fa2`; Node 20.19.0,
+  lockfile unchanged, exit 0, 346 artifacts; receipt/log/provenance hashes recomputed and matched). Doc 103 §3's
+  "fresh build NOT PROVEN" is closed; the coordinator records it as settled at `f3535e5`.
+- Literal `npm run render-build` R2 (`91080ee`): compiler exit 0, run **failed** the source invariant because
+  `npm install` rewrote `package-lock.json`; I verified the only change is removal of `libc` from 21 optional platform
+  entries, no dependency change. Not a qualified pass.
+- Route uniqueness: the `00fdbf4a` static receipt (448/439, exit 0) carried to `dd3f532` on verified unchanged inputs;
+  accepted as the static gate only.
+- Proposed remedy: an **unapplied** two-hunk patch (`render-build` → `npm ci`; manifest `package.json` row
+  `27a6b86f…` → `5cc063f6…`). Pre-checked: hashes reproduce from the candidate blob, the two hunks suffice for the hash
+  gate, the manifest's seam text (line 542) is left stale. The protected-file exception and custody delegation were put
+  to Samuel (decision identity `67e0f9b5…`); `humanApproval: null` as of `f3535e5`. Nothing here approves it.
+
+**Deployed results, kept separate from source acceptance: none.** No deployment occurred overnight. The board's own
+state is DD3 LOCAL ONLY / NOT DEPLOYED / RELEASE QUALIFICATION INCOMPLETE; INTAKE LIVE false; PAID-ORDER READY false;
+production lineage remains `79414143`. The owners recorded the 23:18 CDT first-release target as missed with its unmet
+conditions. Source acceptance of `dd3f532` is not qualification, installation or deployment.
+
+**Remaining release conditions (doc 103 §3, open).** Literal render-build pass or a recorded disposition of the
+lockfile rewrite; browser lost-response journey proving exactly one persisted request (browser R1 refused at resource
+admission, R2 not invoked: RAM below the 2,048 MiB floor; input inventory complete); admin PATCH refusal of the three
+held states via the UI; authorized staff readback; QS-2 operating disclosure bound to the released SHA with a
+runbook-in-force attestation (pending); served-version check after deployment; Samuel's current release authority with
+destination, rollback and no-overwrite checks. Closed overnight by others: Render workspace confirmation found in a prior
+human record ("Use My Workspace"); QS-3 pre-check registered once and consumed.
+
+**Pending registrations / inaccessible evidence.** Nothing is registered to me. A narrow doc 104 check becomes owed
+only if the protected patch is approved and applied (new SHA: `package.json` and the manifest; protection CLI and
+companion, targeted pair, full suite or an owner-recorded unaffected reason). No evidence I needed was inaccessible;
+note that the board and records branches are local-only in the shared worktree (their remotes are stale), so these
+checks read the local checkout.
+
+**Unfinished review.** None; no review workflow was running at any check. Nothing was executed overnight.
