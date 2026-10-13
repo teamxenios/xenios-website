@@ -679,3 +679,15 @@ names a QL2-1/QL2-2 successor. This request is made once; the review starts when
    their absence does not block the source review.
 
 Nothing was executed.
+
+## Queue state update (2026-10-12/13, doc 102: QL correction successor, revision 3)
+
+**ACKNOWLEDGED and IN REVIEW.** The AWAITING_SUCCESSOR status above is superseded. Identities resolved from Git:
+
+| Doc | Board task | Source | Base | Records | Scope |
+| --- | --- | --- | --- | --- | --- |
+| 102 | `DOC96-EXISTING-WIZARD-QL11-QL12-DELTA-REVIEW-20261012` **r3** (doc 99 QL2-1/QL2-2/QL2-3 correction successor; registered 2026-10-12T23:24:23Z) | `00fdbf4a971752e9b9182b1404adad2dd1e7e675` (tree `7658adc8…`), the tip of `codex/assisted-order-doc99-followup-20261012`; five commits on the reviewed base | `7a2bf753` | packet `80eebec5` (sha256 `a87f1dde…` verified); executed full-suite addendum `7594b1fd` (addendum `6698bffd…` and `run.log` `3cfdbc9e…` verified) | exactly four paths: `AssistedOrderPage.tsx`, `AssistedOrderPage.test.tsx`, `draft-store.ts`, `draft-store.test.ts`. `EarlyAccessRoute.tsx`, `service.ts` and the admin UI are byte-identical to the base |
+
+**Received as evidence, not run here:** targeted 88/88; typecheck PASS (`npm run check`); protection CLI PASS (28) and companion 36/36; build PASS (fresh `npm ci`, not render-build); full suite R3 at `00fdbf4a`: 18,064 passed, 85 skipped, 0 failed, 965 files passed and 6 skip-only, child exit 0 (R1 and R2 incomplete and preserved). The four changed test files contain no `.skip`, `.todo` or `.only`. The QL2-3 operating disclosure (`a657fad1…`, outside the candidate tree) is received.
+
+The review covers the three doc 99 remedies, the two guarded-source follow-up commits beyond them, and evidence binding. Browser, admin-PATCH, route, served-version and database pre-checks remain release conditions, not source-review blockers. Nothing was executed.
