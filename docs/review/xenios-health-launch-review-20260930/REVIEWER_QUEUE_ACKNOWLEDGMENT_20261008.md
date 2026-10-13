@@ -1093,3 +1093,15 @@ receipt (proposal `1632d4d` seen on the records branch, not registered to me, no
 `diffCheck` + placed attestation `20a03bb6…` + built alternate index + real 95 pins + live default-index pin + ticket/G0
 + actual `verify:release-manifest` receipt, browser outcome, QS-R1/QS-R4/QS-R7, release authority. Last processed board
 tip `2d29f7e`. Nothing was executed; no agents were used.
+
+## Queue state update (2026-10-13 17:2x CDT, doc 114)
+
+| Doc | Target | State |
+| --- | --- | --- |
+| 114 | Exact Git diff-check parent R2, source only (Core `de2a76f2` tree `96f78876`, parent `execute-admitted-exact-diff-check-r2.ps1` 19,110 B `74e17f7f…`, pins template `6261c53e…`, `PROPOSAL.json` `931cfb29…`; Root copy byte-identical, `ROOT_RAW_INDEX.json` `faecd329…`; R1 `1632d4d2` `18a68932…` 16,590 B, common prefix 15,447 B, lines 1–230 identical, tail only) | **SOURCE ACCEPTED as fail-closed; one minimal correction recommended before any ticket.** Literal command bound in ticket and use; six exact pins with reparse-free ancestry, re-hashed post-run; G0 incl. absent output dir as one-attempt enforcement; pre/post `rev-parse`/`status` invariants with `GIT_OPTIONAL_LOCKS=0` and empty hash-verified configs; 17-path identity bound to the validator's canonical inventory digest `3d260180…`; both streams raw, combined 2 MiB cap, persisted and hashed, partials never complete; handle-derived identity fails closed on early exit; exact-handle kills only; deadlines checked before/after every census, after kills, after disposal, after the measured write and at exit; receipt never `COMPLETED`. Open item (§6): Git `Process` handles stay open through the cleanup census; if `Win32_Process` lists handle-held exited processes the run ends `CLEANUP_DEADLINE` (never a pass) and the single attempt is spent. Correction: move `foreach($p in $dHandles){$p.Dispose()}` from line 252 to before the first cleanup census (after line 235); or prove the census excludes such processes with one control. Proving checks and admission predicates listed in the doc; repo-level Git config is unpinned but currently inert and should be recorded at admission and closure. |
+
+Closed and unchanged: application `8e85daa`/`25507c2f`, docs 104–113, accepted receipts, ownership attestation. No execution
+consent follows; the Doc 110 runner does not admit this command; Doc 112 C stays accepted and unexecutable until the actual
+diff receipt and bound index/manifest/95-pin inputs exist. Still owed overall: this diff-check receipt, manifest validation
+run, browser outcome, QS-R1/QS-R4/QS-R7, release authority. Last processed board tip `2426584`. Nothing was executed; no
+agents were used.
