@@ -1,0 +1,23 @@
+{
+  "doc": 147,
+  "title": "Correction to Doc 146 section 6, repair A",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "httpFetched": false,
+  "verdict": "CORRECTED_DOC146_OVERSTATED_FREEVIRTUALMEMORY_EQUIVALENCE",
+  "corrects": { "doc": 146, "commit": "7cfb69a93d0d965e353a64105b1f2a47185cd543", "section": "6 repair A", "claim": "FreeVirtualMemory documented as unused available virtual memory, that is, commit limit minus commit charge", "status": "second half was reviewer inference, not documentation" },
+  "unchangedInDoc146": ["diagnostic completeness", "timestamp-method sufficiency", "known-process closure", "blocking predicate", "repair B"],
+  "documentation": {
+    "FreeVirtualMemory": "defined only as virtual memory currently unused and available (KB); CIM_OperatingSystem example is free RAM plus free paging space; no mapping to system commit limit minus commit charge",
+    "MEMORYSTATUSEX.ullAvailPageFile": "process-limited available commit; at most the system-wide value; documentation directs to GetPerformanceInfo CommitLimit - CommitTotal for system-wide",
+    "PERFORMANCE_INFORMATION": "pages plus PageSize; system commit headroom = (CommitLimit - CommitTotal) x PageSize; available physical = PhysicalAvailable x PageSize"
+  },
+  "corrected": [
+    "system commit cannot be taken from FreeVirtualMemory on documentary grounds; equivalence gap, not a measured difference; needs a documented system-wide source (GetPerformanceInfo, or existing performance counters if readable in time)",
+    "FreePhysicalMemory vs AvailableBytes closeness (15-63 MiB in three runs) is empirical only, not documented equality and not a commit mapping; keep the OS physical check and add a documented available-physical source",
+    "keep both 512 MiB floors (physical and system commit) and all failure/missing/invalid/late refusals"
+  ],
+  "executionConsent": false
+}
