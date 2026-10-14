@@ -1,0 +1,29 @@
+{
+  "doc": 138,
+  "title": "Two-arm PerfOS diagnostic source: disposition",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CORRECTION_REQUIRED_TWO_SMALL_CHANGES_ORDINARY_ARM_FIRST_AND_KEEP_NON_CIM_QUERY_FAILURES_OTHERWISE_COMPATIBLE",
+  "core": { "commit": "3121696e0d1fd4a03c41170bfdbd6a9e67884595", "tree": "1982b0c0408f8be73e0d930789d2b626f012e151", "parent": "cc7b675686cd913852d6888b89a9d387dc265ab3", "namespace": "two-arm-perfos-diagnostic-source-proposal/" },
+  "rootPacket": "none registered at review time; Core blobs bound directly",
+  "files": { "collector": "15798 B 00d01769cf1829e51c22bb7df8b50becee429166e7a3a99ae251d7b7237e00ab", "child": "5003 B 1820f1e26e5d1be563002b38597ddabcdc1159e5172c4f332198eb3d9f0d163a", "actionContract": "13394 B 36e9817e", "handoff": "13888 B baaefd78", "rawByteIndex": "3090 B 1783a84f", "contractPinsMatch": true },
+  "compatible": {
+    "child": "binds arm, ticket hash, own path, pinned pwsh; exactly the accepted query; counts rows without reading properties; times the query alone; on CimException records type, NativeErrorCode number+name, MessageId, ErrorData CIMStatusCode and MessageID (allowlisted, shape-checked); no inner walk or serialization; one JSON line <= 4 KiB; 10 s deadline",
+    "collectorBinding": "ticket path/hash, mode, owner, reservation, output, three refs; window <= 20 min, lastStart = ends - 20 s, anchor inside; contract hash, source paths, exact bounds (20 s whole, 10 s per arm, 2 s provider, 4 KiB/16 KiB, 32 rows, 1 attempt per arm, 0 retries, 0 stops); rehash self/child/pwsh before each arm and at the end; fresh output, reparse-free ancestor",
+    "arms": "rebuilt: cleared env with the post-change table incl. both opt-outs; ordinary: inherited env unread plus both opt-outs; each: retained handle, live identity with pinned executable, 512 B async reads to EOF under 4 KiB, handle exit/lifetime < 10 s, exit 0 and empty stderr, one closed-key record",
+    "pairRecord": "not a test pass, no G0 credit; incomplete summary with current process record on refusal; no stops or retries",
+    "nativeCommand": "set POWERSHELL_TELEMETRY_OPTOUT=1&& set DOTNET_CLI_TELEMETRY_OPTOUT=1&& <pinned pwsh> -NoProfile -File <collector> -AdmissionSha256 ACTUAL_ADMISSION_SHA256 -NativeLaunchUtc ACTUAL_PRELAUNCH_UTC; quote-free, no space before &&; uppercase placeholders fail input binding; 18000-token output limit fits 16 KiB"
+  },
+  "requiredCorrections": [
+    { "id": 1, "what": "ordinary arm first", "change": "collector line 100 -> @('ordinary','rebuilt'); line 92 -> 'ordinary|rebuilt'; contract arms order and futureAdmission.arms to match", "why": "first formatted-counter read may pay a warm-up cost (Doc 120's 1 s variant timed out on this host); with rebuilt first, 'rebuilt fails, ordinary succeeds' is confounded by warm-up (the contract itself lists it); with ordinary first, 'ordinary succeeds, rebuilt fails' cannot be warm-up and 'ordinary fails, rebuilt succeeds' points to warm-up/transient; no query added" },
+    { "id": 2, "what": "keep non-CIM query failures", "change": "child line 66 else{$cRecord.failure='NON_CIM_QUERY_EXCEPTION'} -> else{$cRecord.status='QUERY_FAILED';$cRecord.failure=$null;$cExit=0}", "why": "otherwise a timeout or wrapper exception aborts the pair at CHILD_EXIT_OR_STDERR_PROTOCOL, discards the child's record and skips the second arm, losing the exception type; the inner try holds only the query pipeline and the row counter (cap has its own flag), so any other caught exception is the query's; type already shape-checked; collector accepts QUERY_FAILED with null CIM fields", "alternative": "collector embeds the child's capped stdout in its incomplete summary (larger change)" }
+  ],
+  "provingCheck": "narrow byte confirmation that the revised files differ from these blobs only by those lines",
+  "fidelityLimits": ["rebuilt arm starts pwsh directly; R3 supervisor ran under CMD (environment passed through plus CMD's internal drive entries)", "in R3 the PerfOS query was the second CIM call (after Win32_OperatingSystem); in each arm it is the first", "rebuilt arm home/temp point at the diagnostic scratch"],
+  "interpretationCorrectedOrder": { "ordinaryFails_rebuiltFailsSameCode": "host or provider state; environment not implicated", "ordinarySucceeds_rebuiltFails": "environment implicated, not warm-up; narrow environment proposal follows", "ordinaryFails_rebuiltSucceeds": "warm-up or transient; R3 most likely hit the same", "bothSucceed": "not reproduced; transient or warm-up at 03:56; fresh admission of unchanged accepted sources reasonable", "always": "record gives type, codes and elapsed, not proof of cause" },
+  "remaining": ["two corrections frozen, then narrow byte confirmation", "Root admission: ticket at fixed path with contract hash, corrected arm order, three refs, exclusive reservation, finite window, substituted native command, absent output", "collector's own opt-out comes from the native prefix (topmost pwsh)"],
+  "notClaimed": ["execution consent", "G0 result", "counter credit", "release credit"],
+  "executionConsent": false
+}
