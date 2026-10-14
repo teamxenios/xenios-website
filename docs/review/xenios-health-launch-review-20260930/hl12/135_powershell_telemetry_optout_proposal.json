@@ -1,0 +1,35 @@
+{
+  "doc": 135,
+  "title": "PowerShell telemetry opt-out proposal: exact-candidate source disposition",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "SOURCE_COMPATIBLE_EXACT_CANDIDATE_ADDENDUM_APPLICABILITY_BOUND_CONDITIONS_EXECUTOR_OPTOUT_AND_FRESH_OUTPUT_PATHS",
+  "core": { "commit": "149f9fd7c8b522a6bf549a7dae03cbf0b1be8105", "tree": "c4e838335f23d27f2360a1bfe86a3b2a652c2125", "parent": "555bb2e96fe0ce444bde0a265f8fdbefa133cf42", "namespace": "powershell-telemetry-source-proposal/ (review-only .proposed files)" },
+  "rootPacket": "none registered at review time; Core blobs bound directly",
+  "files": {
+    "supervisor": { "base": "2d97340f bfbe6d19 23155 B", "proposed": "23187 B 63caac95a01ddbbc5a802586336baeef16a7a50c1fcf01cf5a5d22812965347b", "edit": "fixture-child env table + POWERSHELL_TELEMETRY_OPTOUT='1'" },
+    "manifest": { "base": "2d97340f 32dcd697 26295 B", "proposed": "26295 B 8cb217ebe1e4eb0e348ae4802b2386b79f28c60be7c7d83dbf6a1fdc1310f508", "edit": "both supervisor pin rows -> 23187 / 63caac95" },
+    "caller": { "base": "82fe41df b2225a0d 25455 B", "proposed": "25487 B 1ae35909eb0598096dbc185ed3970759a74da8a357480ac279dd3044751e906f", "edit": "L-Start env table + opt-out; $lManifestHash -> 8cb217eb" },
+    "executor": { "base": "82fe41df fa7f72d2 17176 B", "proposed": "17208 B c80cb8c31b85fed6de8993ba1bfd534e09032e65b95303054645b5a315a5dafa", "edit": "caller-child env table + opt-out; caller hash 1ae35909, pin 25487" },
+    "patches": { "complete": "10201 B bc102c93", "dependentManifestCallerHash": "3574 B 5458404f" },
+    "handoff": "11665 B a848ca85",
+    "rawByteIndex": "10297 B 535867f8"
+  },
+  "verification": { "method": "rebuilt each proposed file from its current blob plus only the listed substitutions and compared bytes", "eachSubstitutionOccursOnce": true, "allProposedEqualRebuild": true, "staleSupervisorRefsInManifest": 0, "crossPinsConsistent": true, "optOutOccurrencesPerFile": 1, "bytesAddedPerKey": 32, "observerUnchangedAndMatchesByPath": true, "closureFollowsManifestPins": true },
+  "coverage": { "caller": "executor table", "cmdSupervisorObserverClosure": "caller L-Start table", "counterFixtures": "supervisor table", "schemeNode": "variable ignored by node", "notCovered": "executor process itself (started by native transport with operator environment)" },
+  "addendumApplicability": { "addendum": "d201070f 44413e31 (describes 2d97340f / manifest 32dcd697; byte-unchanged; caller pins by hash)", "binding": "its mandatory observer-result gate applies unchanged to successor supervisor 63caac95 and manifest 8cb217eb", "reason": "gate implemented by caller and enforced against the frozen observer, neither of which changes logic; supervisor change only adds a fixture-child env key; manifest change only re-pins the supervisor", "historicalFields": "remain historical; not to be read as naming the successor" },
+  "remainingBeforeAnyRun": [
+    "Root source/manifest permission to apply; then hash confirmation that canonical files equal the .proposed hashes",
+    "executor process opt-out before start via a separately reviewed per-invocation native-entry binding, or an explicitly recorded residual",
+    "fresh private output paths: caller-counter-cmd-r3 and executor-counter-cmd-r3 are occupied by failed R3 and required absent; scheme prior-receipt path follows the caller path; recommend folding the path change into the same apply step, with its own narrow byte confirmation",
+    "Doc 134 G0 question still open; the rebuilt-environment lane should use the post-change environment, with pre-start opt-out in both lanes",
+    "fresh admission with all four new identities, the addendum binding above, exclusive reservation, finite window, real 512 MiB admission, absent outputs"
+  ],
+  "doesNotAddress": "R3 G0 generic PerfOS failure (cause still unknown)",
+  "publicationNote": "agree: raw telemetry.uuid and startup-profile files and the records-branch ancestry containing them stay local; exclude from any push/publication",
+  "notClaimed": ["execution consent", "application of the proposal", "G0 credit", "counter credit"],
+  "unchanged": ["application 8e85daa", "tooling 3dd3d96", "512/2048 MiB floors", "all bounds", "consumed tickets"],
+  "executionConsent": false
+}
