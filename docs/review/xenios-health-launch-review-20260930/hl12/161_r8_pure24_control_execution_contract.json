@@ -1,0 +1,28 @@
+{
+  "doc": 161,
+  "title": "R8 pure 24-control execution contract",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFIRMED_SUFFICIENT_FOR_PURE_UNIT_SCOPE_ONLY_WITH_ACCEPTANCE_FRAMING_AND_LIMITS",
+  "binding": { "commit": "14bdf5a44d285af12e2f5e59709aa305c9cc999d", "tree": "5e086f7c44519d74f95a2791c9a801155fd098b1", "parent": "9e1ddbc05dbd61f8cd7269f96285931f1d0ff892", "newFiles": 1, "template": "CONTROL_EXECUTION_TEMPLATE.json 23330 B adc2bda0b531227c9ea81e22dc2d459cae66f69d3a7d34975a3133670bb7656e blob 851af1ee6e650be6cbdee01de6fb11d0445d2128", "rootMirrorIdentical": true },
+  "pins": { "fixture": "6871 B 5118b1939cf897cef0dec8e803cf5c9b74b20f16d0f729884a84164dcf63bd6f blob 848639fd (Doc 160)", "runtime": "pwsh.exe 301368 B 362a356c", "diskMatches": true, "requiredClosure": "14620 B a153292c blob 1e6be1b8", "canonicalClosureNow": "R7 7081 B 02dd023e; fixture would refuse on its pin today" },
+  "command": { "bytes": 498, "sha256": "7338a1fc1d7ece68a96b813feda8f5e79e15bb489349903d8f6097db022c30c4", "form": "Doc 137 prefix + pinned pwsh -NoProfile -File fixture + 1><stdout> 2><stderr>", "quotes": false, "spaceBeforeAmpersands": false, "ampersandPairs": 1, "pipes": 0, "spacesInPaths": false, "options": "cmd.exe, login false, Core worktree, yield 1000, max output 3000" },
+  "outputs": { "stdout": "C:/Users/sboad/.codex/tmp/doc180-r8-pure24-control-20261014.stdout.bin", "stderr": "C:/Users/sboad/.codex/tmp/doc180-r8-pure24-control-20261014.stderr.bin", "parentExists": true, "bothAbsentNow": true },
+  "whyRouteAndSufficiency": "existing executor closed to counter/scheme and needs caller receipt, gate and closure; fixture starts no process, makes no CIM/resource/network/write call, evaluates 24 in-memory vectors against the pinned hash-checked helper block and prints one JSON only if all match; final native return with exit 0 plus complete redirected files suffices; no descendants means files complete once pwsh and its cmd parent return",
+  "timingEvidence": "native tool waited about 10 s before yielding despite 1000 ms request: R6 counter final at 7.31 s, postcheck final at 0.54 s, R7 counter session at 10.005 s; a sub-5 s run should return final",
+  "acceptance": [
+    "first native result final, no session, exit 0, finite wall time < 5000 ms, empty combined output",
+    "stdout <= 16384 B, exactly one line: compact JSON, UTF-8 without BOM, one line ending, no other bytes; kind PURE_CLOSURE_IDENTITY_CONTROLS, sourceSha256 a153292c, count 24, 24 cases in template order with equal case/expected/actual, realProcessesQueried/timingMeasured/groupAcceptance false; missing, extra, duplicated, reordered or unequal entries fail",
+    "stderr exists and is exactly 0 B",
+    "fixture, applied closure and runtime rehashed immediately before and after, equal to pins",
+    "both output paths freshly absent immediately before, reparse-free parent chain, sole-owner reservation; collision means no invocation",
+    "any failure, session or late result preserved as is; no stop, retry or retroactive pass"
+  ],
+  "limits": ["environment inherited from the native tool, not the executor's cleared table; module paths inherited; acceptable for an exact-output pure check, not group evidence", "PowerShell engine startup/cache writes not claimed absent", "5 s is a post-return check, not enforced termination; output cap is a file-length check", "no separate EOF flag, retained-handle lifetime or process-absence claim", "valid only after five-path exception, application and original applied-byte confirmation; fixture refuses before then by design"],
+  "held": ["Samuel's exact corrected five-path exception, payload 8a36051545d3f5068e23d236101165d501e7efdc995a48a5d929c26814c8b8b4, pending", "same-owner application and original applied-byte confirmation", "Root binds exact command, paths, source/runtime hashes and limits under section 6 with finite window, exclusive slot and fresh absence checks", "fresh Core readiness and one call", "separate fresh 32-case counter window/ticket, original comparison, admission and one call"],
+  "unchanged": ["R7 ticket 790af2ce FAILED, outputs not reused", "payment and security holds open", "fixed one-hour target missed, not reset"],
+  "notClaimed": ["counter, scheme, closure, resource, browser or release credit", "execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
