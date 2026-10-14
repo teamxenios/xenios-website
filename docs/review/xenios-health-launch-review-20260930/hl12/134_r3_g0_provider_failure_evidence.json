@@ -1,0 +1,62 @@
+{
+  "doc": 134,
+  "title": "Counter R3: actual G0 provider failure, evidence and source disposition",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "LAUNCH_BOUNDARY_RUNTIME_PROVEN_G0_FAILURE_HOST_OR_PROVIDER_CAUSE_UNKNOWN_NO_SOURCE_DEFECT_ESTABLISHED_TELEMETRY_OPTOUT_FINDING",
+  "core": { "commit": "78ab1418c109c3b93ebfa6931b3701b1c86e7e7e", "tree": "b425c3c28797da7888f97e08d7d1aa5e6471bd19", "parent": "1a63b45ef168a15d345b3fbc1d3512c6eb60b5a1" },
+  "rootMirror": { "path": "DOC132_R3_ACTUAL_IMMUTABLE_20261014/", "filesCompared": 21, "byteIdentical": true },
+  "consumedTicket": { "sha256": "5bddf2a1096af0bb7210c71cac4e64b5ba125449e65e10e95dd377f5058462a3", "bytes": 12820, "reusable": false },
+  "processes": {
+    "executor": { "exit": 1, "lifetime": "4.7928 s native", "recordedBy": "native transport" },
+    "caller": { "pid": 54484, "creationUtc": "2026-10-14T03:56:01.3982502Z", "exit": 1, "lifetimeMs": 4133.4308, "recordedBy": "executor retained handle" },
+    "cmd": { "pid": 33360, "creationUtc": "2026-10-14T03:56:02.1292728Z", "exit": 1, "lifetimeMs": 3176.3909, "recordedBy": "caller retained handle" },
+    "supervisor": { "pid": 44076, "creationUtc": "2026-10-14T03:56:02.1631637Z", "exit": 1, "exitUtc": "2026-10-14T03:56:05.2930892Z", "lifetimeMs": 3129.9255, "recordedBy": "caller retained handle and observer retained handle (agree)" },
+    "observer": { "pid": 45272, "creationUtc": "2026-10-14T03:56:02.4761222Z", "exit": 1, "lifetimeMs": 2891.0688, "recordedBy": "caller retained handle" }
+  },
+  "launchBoundaryProven": ["backslash CMD started the supervisor as direct child", "caller discovery found exactly one supervisor", "observer handle vs CIM creation 0.0007 ms, CMD ancestor correct", "observer created after supervisor creation and before its exit", "CMD and observer streams to EOF; supervisor stderr via CMD (not direct capture, recorded as such)", "observer rows bind supervisor identity and actual exit", "caller refused ACTUAL_PROCESS_EXIT_FAILURE; no gate, no closure; executor refused"],
+  "g0Failure": {
+    "line": 148,
+    "operation": "Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory -OperationTimeoutSec 2",
+    "message": "A general error occurred that is not covered by a more specific error code.",
+    "stderr": "693 B 431d51491d09f31ac403d2bbb08dbb85cf4b48443bb214fbbe542a59679503c9 (rendered uncaught error record; pre-admission section has no receipt by design)",
+    "notCaptured": ["exception type", "NativeErrorCode", "CIM error data", "call duration"],
+    "priorLine139": "Win32_OperatingSystem completed; value not retained",
+    "notEvidenceOf": ["low memory", "RESOURCE_FLOOR", "MEMORY_COUNTER_READ_LATE (line 151 is after the call)"],
+    "timeoutPath": "probably not: Doc 120's 1 s timeout on this host reported 'Timed out'; duration unrecorded so not fully excluded",
+    "beforeAnyFixture": "attempt directory (line 168) never created; 0 cases"
+  },
+  "sourceDefect": {
+    "established": false,
+    "facts": ["Doc 118 parent read this class successfully on this host (2070.6 MiB available, 6807.5 MiB commit headroom) in its normal environment without a timeout", "Doc 120 1 s variant timed out, normal environment as far as recorded", "R3 is the first read under the caller's rebuilt environment (SYSTEMROOT, WINDIR, COMSPEC, PATH, HOME/USERPROFILE/TEMP/TMP private, DOTNET_CLI_TELEMETRY_OPTOUT; lacks SystemDrive, ProgramData, ALLUSERSPROFILE, APPDATA, LOCALAPPDATA, COMPUTERNAME, USERNAME, PROCESSOR_ARCHITECTURE, NUMBER_OF_PROCESSORS)", "WMI works under that environment: Win32_OperatingSystem (supervisor) and Win32_Process (observer) completed"],
+    "assessment": "performance classes are computed in WMI's provider host; no known client-environment mechanism fails them while other classes succeed; environment is an unexcluded candidate, not a finding",
+    "hostOrProviderCause": "UNKNOWN",
+    "noSupportFor": ["API change", "timeout change", "floor change", "manifest change"]
+  },
+  "nextDiagnosticQuestion": {
+    "question": "does the accepted query Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory -OperationTimeoutSec 2 return exactly one row within 2 s now, once under the caller's exact rebuilt environment and once under the operator's ordinary environment, each in a fresh pinned pwsh",
+    "recordOnFailure": ["CimException type", "NativeErrorCode", "CIM error data code and message ID", "elapsed ms", "row count"],
+    "memoryValuesNeeded": false,
+    "outcomes": { "bothFailSameCode": "host/provider state; environment cleared", "rebuiltFailsOrdinarySucceeds": "environment implicated; narrow environment proposal with re-review", "bothSucceed": "transient host state at 03:56; fresh admission of unchanged accepted sources reasonable" },
+    "scope": "two read-only queries of one class; no other provider call, retry or stop",
+    "executionConsent": false
+  },
+  "telemetryFinding": {
+    "evidence": "telemetry.uuid (16 B) written by pwsh into both private home directories (executor and caller outputs); created only when PowerShell telemetry is enabled",
+    "consequence": "caller, supervisor and observer ran with PowerShell telemetry on; each start may have attempted an outbound send; conflicts with stated no-network isolation; unrelated to the G0 failure",
+    "cause": "caller, executor and frozen supervisor child environments set DOTNET_CLI_TELEMETRY_OPTOUT but not POWERSHELL_TELEMETRY_OPTOUT; clearing drops any user-level setting",
+    "smallestCorrection": "add POWERSHELL_TELEMETRY_OPTOUT='1' to the caller and executor environment tables; frozen supervisor fixture children still lack it unless revised; Root records that deviation or requests a supervisor revision",
+    "artifactHandling": "telemetry.uuid files are pseudonymous device identifiers; keep local, do not publish"
+  },
+  "r3ReservationBasis": {
+    "facts": ["caller, CMD, supervisor and observer exits from retained handles; supervisor exit from two independent handles agreeing to the tick", "closure never started", "executor exit from native transport", "attempt-counter-r1 absent: supervisor failed at line 148, fixture children start only after directory creation at line 168, no process launch on lines 137-168"],
+    "assessment": "sufficient factual basis for Root to decide the R3 reservation without a further observation; stronger than R2 because the supervisor was captured",
+    "residuals": ["executor exit from transport only", "system-created console hosts and WMI provider activity not observed and not R3-owned", "no global absence or cleanup claim"],
+    "decisionOwner": "Root"
+  },
+  "notClaimed": ["execution consent", "counter PASS", "G0 PASS", "reservation release"],
+  "unchanged": ["Doc 128 supervisor acceptance", "Doc 132 caller acceptance", "consumed ticket non-reusable", "application 8e85daa", "tooling 3dd3d96", "floors 512/2048"],
+  "executionConsent": false
+}
