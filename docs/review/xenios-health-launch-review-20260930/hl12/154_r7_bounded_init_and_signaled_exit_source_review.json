@@ -1,0 +1,41 @@
+{
+  "doc": 154,
+  "title": "R7 bounded initialization and signaled exit: source review",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "SOURCE_COMPATIBLE_WITH_DOC152_METHOD_A_NO_REQUIRED_CORRECTION_THREE_RECORDED_LIMITATIONS",
+  "doc153TransportCorrection": { "stale": "packet reached the reviewer by Samuel's paste; Computer Use kept paused", "actual": "Samuel reversed the pause (observed 2026-10-14T17:49:59Z); Root delivered once via Computer Use at 2026-10-14T17:53:33Z", "evidence": ["DOC158_ACTUAL_HUMAN_RESUME_ORIGINAL_REVIEWER_TRANSPORT_20261014.json", "DOC158_ACTUAL_SINGLE_FROZEN_DOC154_REVIEW_PACKET_DELIVERY_20261014.json"], "doc153VerdictUnchanged": true },
+  "binding": { "commit": "2ce4992e9a5abc3706d4bd1b1174219a34fa0b1f", "tree": "21686b3ee9f0459df03aa20fb10eb9bcdbcd1fd8", "parent": "5d63dacac29811ec56f20ef6c8e7ba0f5ba9ee46", "newFiles": 19, "proposed": 13, "gitattributes": "* -text", "bindings": "22563 B 09e78def94e65ffc998b6f845efec2a8dd7e89ef11667e329a698f9358bbec52", "patch": "176185 B 39d2696a543615d9a882973ce91f1347b69d5c3c6e169f03c2961d564334271a", "checks": "11600 B fd64c8260ff1cd1dcf1f4bee0f22fad2e8a994c9326a5ee5ea6692eb36216de1", "handoff": "2319 B 826be09e5bb8269493d17afecfc2bed0de2734a76fc2c611abd17aee87bcdef3", "packet": "3680 B 9a89e3a1c148b3157f5ca7e587c7a5490082ea1031c85f975bdaf34b401ac820 embedded byte-identical", "canonicalUnchangedAt": ["5d63daca", "2ce4992e", "240de0df"] },
+  "afterImages": {
+    "supervisor": "35636 B 78fdd4e4", "controlsParent": "29009 B 2fc0fae1", "fixture": "17496 B ab33ffc3", "requirements": "13558 B df0e9e05", "controlsPins": "3001 B 5d24b832", "controlsHandoff": "15462 B a16021bb", "manifest": "46371 B c389a41568cb37dcfac11855c01da05378d561e47bf1b810795a601e95815d35", "diffRunner": "30954 B f43d5669", "diffPins": "1856 B e1705589", "diffProposal": "5479 B cd98bc69", "caller": "25737 B 7e65bdcaa8026ac5d731adb936e303acf60c27926831464c92f82f57c970fcd9", "executor": "17331 B 28e5cf85", "closure": "7081 B 02dd023e"
+  },
+  "methodAConditions": {
+    "phases": "MET: shared gate times Add-Type + ABI init first with no API (Read throws before Initialize); fresh OS < 1000 ms; K32GetPerformanceInfo + validation + floors < 2000 ms supervisor/controls, < 1000 ms diff",
+    "initBoundNotMeasured": "MET: measuredFit false; R6 >= 2000 and < 4930.45 ms kept as only measurement",
+    "fenceAndArithmetic": "MET for the gate (age + 5000 + 1000 + read < 30000; each phase rechecks); NOT shown for post-gate bodies; supplied in this review; all limits fail closed",
+    "truthfulSemantics": "MET: KEEP_EXISTING_COMBINED_BUDGETS and Doc 149 combined wording superseded for future runs only; receipt fields renamed; R6 evidence not rewritten",
+    "diagnosability": "MET: failure before lateness in every phase; one closed G0_REFUSAL JSON stderr line with phase, kind, token, start flags, durations and budgets; no resource values, stack or environment; boundary refusals carry durations",
+    "signaledExit": "MET: caller L-Exit and executor caller-exit wait on WaitForExit(0) within existing deadlines; PROCESS_SIGNAL_DEADLINE",
+    "fixturesAndPins": "MET: original 25 names and order kept, 7 added; validator 41 lines, gate 70 lines, adapter 73 lines byte-identical; manifest c389a415 pinned with cap 46371; executor pins caller 25737 B 7e65bdca; unchanged pins match disk",
+    "noAdditions": "MET: no launcher, observer, cache, prewarm or persisted assembly; closure one literal root; diff competing-work check moved inside the refusal handler unchanged"
+  },
+  "remainingTimeArithmetic": [
+    { "runner": "supervisor counter", "bound": "120 s aggregate from process start", "effect": "gate ends by 30 s; body keeps at least 85 s" },
+    { "runner": "supervisor scheme", "bound": "30 s aggregate from process start", "effect": "gate must end by 25 s; work window 25 s minus gate end, below the 20 s work budget once the gate ends after 5 s" },
+    { "runner": "controls parent", "bound": "30 s clock starts after the gate", "effect": "lifetime can reach startup + gate (<= 8 s) + 30 s; stated parent lifetime < 30 s checked only afterwards" },
+    { "runner": "diff runner", "bound": "30 s clock starts after the gate", "effect": "lifetime can reach startup + gate (<= 7 s) + 30 s; stated whole-process lifetime < 30 s checked only afterwards" }
+  ],
+  "arithmeticConclusion": "no silent pass; scheme fails through its aggregate, controls and diff at the external lifetime check; slow gate plus heavy body is a foreseeable failure; each run proves its own fit",
+  "coverage": {
+    "provenByCases": ["phase order via call counts", "real-time lateness for OS and read", "real-time failure over lateness for OS and read", "initialization failure", "closed refusal record keys, numbers and start flags", "original validator and floor logic"],
+    "arithmeticOnly": "4 classifiers call the shared threshold with supplied scalars; timingMeasured false; prove comparison and failure precedence at 5000 and 1000 ms only",
+    "onlyRealRuns": ["real cold initialization success and duration", "real OS and native read times", "initialization-late refusal measured end to end", "diff runner 1000 ms read", "each runner's post-gate fit", "signaled-exit waits under real termination", "refusal line reaching preserved stream files"]
+  },
+  "identities": { "outputRoot": "C:/Users/sboad/.codex/tmp/ql-doc154-r7-synthetic-proving-20261014 (absent)", "ticketPath": "unchanged; fresh ticket replaces the held copy of consumed c73c8827, already archived byte-identically in Root's Doc 153 archive", "newTicketFields": "initBudgetMs 5000 and osBudgetMs 1000 for supervisor, controls and diff tickets" },
+  "observation": "supervisor and controls parent check case-child lifetime < 5000 (or <= 5000) without a finite or non-negative check after EOF + HasExited; EOF on the child's own pipes follows exit-time setting in practice; ordering not enforced; evidence review will treat any non-finite or negative child lifetime as failure",
+  "unchanged": ["canonical application held for Samuel's exact 13-path exception (draft)", "R6 FAILED 0 of 25 with invalid caller record", "caller 46104 reservation held; postcheck window expired NOT RUN", "no window or ticket requested", "payment and security holds"],
+  "notClaimed": ["measured timing", "process closure", "counter or browser qualification", "security disposition", "deployment", "execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
