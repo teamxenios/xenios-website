@@ -1,0 +1,21 @@
+{
+  "doc": 137,
+  "title": "Native telemetry entry: corrected prefix confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFIRMED_DOC136_CORRECTION_MET_EXACTLY",
+  "record": { "path": "DOC136_NATIVE_POWERSHELL_TELEMETRY_ENTRY_R2_UNAPPLIED_20261014.json", "bytes": 5004, "sha256": "4a8692af9177539c4fbca184d7f0b9c2d1c7fc9ef49fa4543a4ecdf9ccbea333", "boardCommit": "72e7cea1a56cdc909d8f357fe4d4ef611c6dae06", "workingCopyEqualsBlob": true },
+  "prefix": { "text": "set POWERSHELL_TELEMETRY_OPTOUT=1&& ", "bytes": 36, "sha256": "063b76d42d199740276a601a2347e1994b1620bc080514718a5342d692a89d3b", "matchesRequired": true, "quotes": 0, "spaceBeforeAmpersands": false },
+  "template": { "doubleQuotes": 0, "ampersandPairs": 1, "otherMetacharactersOutsidePlaceholders": [], "remainderIdenticalToRejectedRecord": true },
+  "nativeOptionsUnchanged": true,
+  "limitsUnchanged": true,
+  "sourceBinding": { "commit": "cc7b675686cd913852d6888b89a9d387dc265ab3", "tree": "e9390248fe420475071a64acb21d4c7a9695ae09", "review": "3a03772c (Doc 136)", "identities": { "supervisor": "63caac95", "manifest": "8cb217eb", "caller": "af0c4241", "executor": "9044e615" } },
+  "supersededRecord": { "sha256": "ee19acc11159cf13155e08679c7a27b104e4dd7e9d308b0d2a8137ee3d3b668a", "status": "historical, rejected, never invoked" },
+  "notAdded": ["optional guard", "helper", "source edit", "environment query", "global setting"],
+  "limitsRetained": ["startup/exit behaviour untested", "other operator environment entries unknown and uninspected", "opt-out is intent, not proof of no outbound traffic", "angle-bracket placeholders are redirection characters; only a fully substituted, externally frozen command may run", "telemetry.uuid absence in the three r4 private homes is the post-run evidence for child processes; executor cache not covered"],
+  "remaining": ["Root source/manifest permission to apply, then hash confirmation of the four canonical files", "Doc 134 G0 question open; PerfOS comparison native command to carry the same prefix, checked when registered", "fresh counter admission with the four identities, this prefix, substituted command, exclusive reservation, finite window, real 512 MiB admission, absent r4 outputs"],
+  "notClaimed": ["execution consent", "application", "G0 credit", "counter credit"],
+  "executionConsent": false
+}
