@@ -1,0 +1,26 @@
+{
+  "doc": 140,
+  "title": "Two-arm PerfOS diagnostic: actual approval, action and window comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "about 2026-10-14T12:25Z",
+  "verdict": "MATCHES_APPROVAL_SOURCE_ACTION_BOUNDS_AND_WINDOW_RULE",
+  "approvalRecord": { "path": "DOC140_ACTUAL_HUMAN_SOURCE_AND_DIAGNOSTIC_APPROVALS_20261014.json", "bytes": 18813, "sha256": "a4d31e63666e53b490b7917f33729001a9217bfec01714ff70d1eb685517b118", "boardCommit": "e832b56c4cc8380b70907bb12a9d186d70584b9b", "answer": "Approve this one bounded local diagnostic", "decision": "fe4e1b95222f2e4f3d5d62d42f0c2f8e9680ecf1400dc710d959e0c23248270d", "acknowledgedAt": "2026-10-14T12:11:24.000Z", "messageIdAndReceiveTime": "not exposed; not treated as missing consent because the acknowledgment is clock-observed" },
+  "matches": { "source": "0bc62fe7 / d4d43d1b", "contract": "14970 B e4b53989", "collector": "15798 B d8e990cb", "child": "5023 B c4dbfc0b", "nativeCommand": "quote-free two-set prefix + pinned pwsh + collector + two placeholders (Doc 138; meets Docs 136/137)", "bounds": "20 s, 10 s, 2 s, 4/16 KiB, 32 rows, 1, 0, 0", "arms": "ordinary then rebuilt (after exit, EOF and full 10 s)", "output": "ql-doc134-two-arm-perfos-20261014-r1", "operation": "<= 2 unchanged queries; no other query, memory values, environment export, stop or cleanup" },
+  "sourceApprovalSeparate": "febaf2b1 gives no runtime authority; diagnostic pins bind its files if the Core head moves; execution tree recorded before admission",
+  "window": { "starts": "2026-10-14T12:11:24.000Z", "ends": "2026-10-14T12:31:24.000Z", "lastStart": "2026-10-14T12:31:04.000Z", "durationMinutes": 20, "lastStartIsEndsMinus20s": true, "collectorRule": "lines 84-85", "oneAttempt": true, "renewable": false, "lateLaunch": "prelaunch after 12:31:04 -> FINITE_WINDOW refusal, window consumed" },
+  "completeResultRequires": {
+    "native": "exit 0, no active session, complete untruncated output within 18000 tokens; real prelaunch UTC inside the window",
+    "collector": "one PERFOS_ARM_CAPTURE per arm (ordinary then rebuilt) with identity, handle exit, lifetime < 10 s, both EOF, stdout/stderr hashes, closed-key child record; then PERFOS_PAIR_SUMMARY 2/2 with conservative native budget",
+    "perArm": "exit 0, empty stderr, QUERY_COMPLETED with row count or QUERY_FAILED with type and allowlisted codes; QUERY_FAILED is a completed observation of a failure, never G0, pass or cause proof",
+    "timing": "native wall time, external UTC start/return and child stopwatch kept distinct; external monotonic null",
+    "incomplete": "refusal, late arm, unresolved exit or capture gap -> INCOMPLETE, reservation held, no stop/retry, preserve records",
+    "after": "collector, child, contract and pwsh pins unchanged",
+    "judgedAgainst": "Doc 138 interpretation table"
+  },
+  "rootItemsRemaining": ["same-owner custody", "exclusive slot", "current pins", "absent output", "ticket at fixed path with contract hash, arm order, bounds and three references", "fully substituted native command frozen just before invocation"],
+  "notClaimed": ["G0 result", "test credit", "release credit"],
+  "executionConsent": "the human approval is Samuel's; this comparison adds no authority"
+}
