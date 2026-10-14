@@ -1,0 +1,23 @@
+{
+  "doc": 124,
+  "title": "Revision 22 A: counter-read controls successor final byte confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "boardTipRead": "a9c631a",
+  "verdict": "CONFIRMED_DOC123_PROJECTION_PLUS_TWO_LITERALS_NOTHING_ELSE_NOT_EXECUTION_CONSENT",
+  "application": { "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "changed": false },
+  "tooling": { "sha": "3dd3d9667ba56859101b27abad1791777013c6de", "tree": "7a4ce7c382a1cb44981fb0df2790ece16def2ba0" },
+  "core": { "commit": "adce58de05795bccdbd2d042f3be8ec98a6c5694", "tree": "1cdaf95049e6d9cb0fc674f5af17d86dd5a50769", "namespace": "finalization-controls-counter-source-proposal/" },
+  "root": { "path": "DOC123_REVISION22_COUNTER_ASSEMBLY_REVIEW_READY_20261014/", "files": 11, "allByteIdenticalToCoreBlobs": true },
+  "parent": { "bytes": 19072, "sha256": "fc6ea41b6e728a2e8f43e226d83ec721571c2aa756ff9da1213f08ba2d197432", "base60f": "17188 B 31674d82", "doc123Projection": "19074 B e605b2dc28216b497cf9a8e18142ac38318e1d1cac358dde97ceec130dbd9d1a", "literalChanges": [ { "line": 4, "field": "$fRoot", "from": "finalization-controls-identity-source-proposal", "to": "finalization-controls-counter-source-proposal" }, { "line": 8, "field": "$fOut", "from": "attempt-identity-r1", "to": "attempt-counter-r1" } ], "reversalRestoresProjection": true, "otherDifferingLines": 0, "lines": 236, "crBytes": 0, "optionalFinalExitAgeCondition": "absent (as stated)", "counterBlockLines": "62-89 = doc 123 hunk unchanged" },
+  "fixtures": { "late-second-quiet.ps1": "8245 B ae93d88e6294503d1e91bdf8d23a7a1b99bb56f227c7c1708d414a8eb0fae4e8", "late-receipt-write.ps1": "8246 B dbd874941c10982177a1570c9e435b98d92e7a9562481722a3916e1873285d07", "write-failure.ps1": "8241 B 3bc3bf434c7a733137eb84c7ac8fe2970d688f79950b2348a1cafdf0f9d0fa51", "deltaFrom60f": "lines 13-14 only, identity->counter output literals; no identity literal remaining; same line counts" },
+  "slices": { "r3-finalization.slice.ps1.txt": "3762 B 7c685cef identical", "r3-write-functions.slice.ps1.txt": "403 B 9587eb57 identical" },
+  "pins": { "bytes": 3087, "sha256": "647ff6b649c8bc6d4e0b49a6ea1a6538353f3451cec995d075cc4b04c55be53d", "rows": 8, "unchangedRows": ["R3 parent b98f7a25 19110 B", "pwsh 362a356c 301368 B"], "relocatedRows": 6, "relocatedHashesMatchPacketFiles": true, "r3Sha256": "b98f7a25", "ninthInputInTicket": "the pin file itself" },
+  "recordsWorktree": { "path": "C:/xenios-wt/tc25-app-manifest-20261012", "head": "c0beeca", "parentFixturePinsAtPinnedPaths": true },
+  "unchanged": ["old identity-namespace inputs", "all consumed tickets and prior failures", "512 MiB floors", "20 s work / 10 s finalization ceilings", "5 s child, 16 KiB caps, 1 attempt, 0 retries, 0 stops", "real Git diff census limit", "docs 117-123"],
+  "acceptancePredicateUnchanged": "real parent OS lifetime < 30000 ms AND exit 0 AND three children exit 1 with exact evidence AND post pins AND independent closure",
+  "owedBeforeRun": ["new finite ticket: mode doc114-finalization-controls, output attempt-counter-r1, pinsSha256 647ff6b6, nine frozen inputs, unchanged bounds, real window lastStart = ends-45 s, UTF-8 no BOM, explicit 2 s counter sub-operation statement", "applicable human-scope check", "fresh positive 512 MiB reading in the admitted run", "exclusive slot", "external observer: parent creation/exit/lifetime", "counter synthetic proving under its own authority (doc 125)", "independent closure"],
+  "executionConsent": false
+}
