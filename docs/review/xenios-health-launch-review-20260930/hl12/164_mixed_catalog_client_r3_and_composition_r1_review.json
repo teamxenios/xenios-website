@@ -1,0 +1,73 @@
+{
+  "doc": 164,
+  "title": "Mixed-catalog request intent: Doc 163 client correction and mounting composition review",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "DOC163_CLIENT_CORRECTION_ACCEPTED; COMPOSITION_GUARDS_SOUND; MATERIAL_SCOPE_CORRECTION_REPLACES_LIVE_ASSISTED_ORDER_ENTRY_DECISION_REQUIRED; STAFF_READBACK_NOT_OPERATIONAL_WHILE_CARE_DISABLED",
+  "binding": {
+    "compositionR1": { "commit": "e73479657e28efa7af831322cb8427ed8504b2d3", "tree": "2b85d4ce5ad856636eafe7a05e6d4185155aab23", "parent": "fdbe3e80908c2d50f10bcd47ece5cd3176fde7e8", "files": 27, "manifest": "15249 B e12cf5e1bc0f807000e21276461175fa5a50a6e20ffb8214ff0cf148578cab66", "delta": "50008 B 7920da6e2223dc8a2a279546b5c6b012c5f185d24d7097cc9a8db01f61f16839", "cumulative": "161762 B 1306e37dc847f2a199d956f65ffa573969041f35813ce72d55f6fb6d1a8f7e8f" },
+    "handoffRecord": { "commit": "253e0ade91b59921caff0efd4f2987e4cfaa03c1", "tree": "10704622751c4311523618b98528a2d50d0a2327", "adds": "composition-r1/HANDOFF.json only" },
+    "clientR3": { "commit": "b938e604846fe9a0bfb068a553e3c3114031c6cf", "tree": "e36922e5496ed5a32cb9da8587dd3d33da1e8968", "parent": "253e0ade91b59921caff0efd4f2987e4cfaa03c1", "files": 15, "manifest": "7232 B 723bba9a1154248a4116e17d1ebb61da9e599ff780bb3ae9fb5f05ccd99dd81a", "delta": "20697 B ab4e7dbbb5e774113d5c5e3843179768f0f4112e8af7bfa031807dd6d74d5fce", "cumulative": "173241 B c229375097b445b3a4c6f71bc20a8b256d696b9ba4373450fea44294109b93af" },
+    "committedBlobsMatchReviewedBytes": true,
+    "existingFileBeforeImagesEqual8eBlobs": 6,
+    "chain": "R2 -> composition-r1 -> client-r3; each client-r3 before-image equals the composition-r1 after-image, or R2 where composition-r1 left the file alone",
+    "patchesAppliedOrParsed": false,
+    "outOfScope": ["bf33c7ca separate staff-read alternative", "a467117c its handoff"]
+  },
+  "doc163Correction": {
+    "disposition": "ACCEPTED",
+    "statusExposure": "RequestIntentHttpError only for a well-formed envelope with code ^[a-z][a-z0-9_]{0,79}$; missing or malformed body stays unknown",
+    "knownRefusal": "400/401/403/429 on the first actual POST; counter increments inside the post callback after the marker write, immediately before submit",
+    "unlockRequires": ["same mounted instance", "frozen payload still the one sent", "owned marker removed and verified gone"],
+    "unlockEffect": "discard frozen payload and key, uncheck acknowledgments, cause-specific not-saved guidance, fresh attempt allowed",
+    "staysUnknown": ["409", "any 5xx", "network failure", "malformed or missing body", "any refusal after an earlier POST", "stale mount", "ownership change", "storage failure"],
+    "tests": "8 new declarations, not run",
+    "scope": "client only; Doc 163 optional recommendations remain optional and open"
+  },
+  "compositionSound": {
+    "darkByDefault": "RESEARCH_REQUEST_INTENT_ENABLED=true plus valid origin, RPC client, agreement gate and non-empty canonical legal pairs; form-acknowledgment kinds cannot pose as legal pairs; disabled answers 503 with no RPC",
+    "origin": "exact configured SITE_URL (https, or http on localhost; no credentials/path/query); POST requires exact Origin, JSON and same-origin Fetch Metadata when present; no Host-derived origin; referral cookie not reused",
+    "rateLimit": "existing atomic research_rate_limit_hit RPC keyed by purpose prefix plus SHA-256 of trusted request IP; unknown IP, RPC error or non-boolean -> 503; denial -> 429; no memory fallback; bounds 120/min reads and 20/600s writes need qualification",
+    "standing": "identical to existing bridge: live member or Early Access session with session hash, customer ref, durable agreement gate",
+    "bearer": "Authorization not resolving to a member with auth user ID -> 401, never cookie fallback",
+    "headersAndWriters": "private no-store, no-referrer, noindex; no outbox/mirror/payment/provider/supplier writer",
+    "seam": "server/index.ts: typed extraction of existing wiring plus one registrar call; body parser earlier; careAccess and viewer resolvers in scope; no synchronous constructor throw; reviewedHeldSpecifications already called and memoized by the existing bridge",
+    "wall": "exact GET config/catalog/staff, exact POST root/recover, one anchored lowercase-UUID staff detail regex; no prefix exemption; submit path '' matches exact POST entry",
+    "customerEntry": "both doors render the same form keyed by identity; recovery or failed verification blocks with support path; UI continuation gated by existing standing, server authoritative; clinical hint = full-family neutral scan, exactly one requestable match, quantity cap 100 matches SQL, explicit Add, no redirect; CTA outside legacy cart mount; sign-out sweep byte-identical",
+    "staffPage": "/care/request-intents in existing Care section switch, not-found default kept; careApiFetch sends only a non-recovery Supabase bearer; server Care permission and DB clinical_admin authoritative; website admin alone insufficient",
+    "manifest": "exactly two seamBaselineHashes lines; new values equal after-image SHA-256; client paths inside allowed write zones; App.tsx, logging, lockfile unchanged"
+  },
+  "materialScopeCorrection": {
+    "fact": "section.tsx routes /research/early-access/order-request to RequestIntentEntry instead of AssistedOrderPage; the storefront All products section renders the request form; bridgeState now comes from the request-intent config",
+    "baselineEvidence": ["server/research/assisted-order/production-env-shape.fixture.json (captured read-only 2026-08-29): RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true", "server/research/assisted-order/production-wiring.test.ts: bridge live since the 2026-08-21 launch"],
+    "manifestClaimCorrected": "'Existing AssistedOrderPage, service, wizard-state and payment guard unchanged' is true of the files only; no customer route reaches the wizard; confirmation/status pages and old server doors remain",
+    "flagOffConsequence": "storefront loses All products; every authenticated Early Access customer sees the unavailable notice; order-request page cannot submit; live journey gone until flag, schema and RPCs are live",
+    "requiredBeforeApplication": ["A: Samuel explicitly approves replacing the live journey; release enables the new flag in the same window as the qualified schema; manifest states the replacement", "B: keep the existing assisted-order entry as fallback while the request-intent flag is off"],
+    "chosenByReview": false
+  },
+  "requiredIntegrationItems": [
+    "EarlyAccessRoute.storefront.test.tsx stubs only /assisted-orders/config and /assisted-orders/catalog and drives wizard test IDs; predicted to fail (not run); update it and add tests for the route wiring, Care section and Care page (the 14 new declarations do not cover them)",
+    "/care/request-intents absent from the raw HTTP document policy known Care paths; direct load returns HTTP 404 with the app shell; register as a known private noindex document",
+    "seam re-pin lacks the seamBaselineHashes.$comment provenance entry (old hash, new hash, lease, reason) every earlier re-pin carries; add at application under the actual custody lease"
+  ],
+  "recommended": [
+    "share one cached config request between the CTA and the storefront probe; fix the now-false shared-request comment",
+    "register the request-intent API after the existing ten assisted-order doors",
+    "staff sign-in return path and admission of /care/request-intents to the sign-in return list"
+  ],
+  "staffGap": "unchanged and not accepted as operational: Care hard-disabled refuses everyone at requireCarePermission and the DB check; separate reader bf33c7ca needs its own review; no enablement, role or operator inferred",
+  "remainingPrerequisites": [
+    "Section 4 decision",
+    "staff authority: reviewed separate reader or Samuel's explicit Care decision",
+    "disposable DB rehearsal of R2 SQL (Doc 163 list); confirm hosted research_rate_limit_hit (supabase/research-referral-fraud.sql) and Care foundation tables; migration placement and registration",
+    "protected custody for the narrow server/index.ts and server/research/index.ts seam edit and the manifest re-pin with provenance",
+    "the three required integration items",
+    "local qualification on a disposable application of the client-r3 cumulative patch to 8e85daa (26 paths; do not also apply deltas): typecheck, 53 declared plus affected baseline tests, seam/protection/route-census/release checks, production build, browser journey with flag off and on including staff readback once an authority exists",
+    "hosted: valid SITE_URL, legal applicability to mixed requests, flag only after schema is live, release with Samuel's explicit approval"
+  ],
+  "unchanged": ["R2 and R8 not re-reviewed", "R8 and Docs 160-163 closed", "application 8e85daa unchanged", "failed 790af2ce stays FAILED", "payment and security holds open"],
+  "notClaimed": ["tests", "typecheck", "build", "patch application", "database or SQL execution", "browser or runtime qualification", "goal live", "execution consent", "push or deployment consent", "human approval", "test credit"],
+  "executionConsent": false
+}
