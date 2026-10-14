@@ -1218,3 +1218,34 @@ Source27 binding note (2026-10-13 22:41 CDT): Root's `DOC130_SOURCE27_MINIMAL_CO
 Doc 134 binding note (2026-10-13 23:12 CDT): Doc 134 answers Root's `DOC132_COUNTER_R3_G0_FAILURE_ORIGINAL_REVIEW_PROMPT_20261014.txt` (review-ready packet over Core `78ab1418`) and accounts for Core's `G0_SOURCE_ONLY_DIAGNOSIS.json` at `555bb2e9`. It agrees the root cause is unresolved and that no environment addition is justified by the failure; Doc 134 section 5 is the answer to that diagnosis's minimum-next-decision question. On `telemetry.uuid`: its presence proves PowerShell telemetry was enabled in those processes, not that network traffic occurred; Doc 134 states only that each start may have attempted a send, and the opt-out finding stands on the isolation statement alone. Verdict unchanged.
 
 Applied-source hash confirmation (2026-10-14 12:26 UTC): Core `c7f852aa` (tree `51257d25`, parent `0bc62fe7`) applies the approved four-file exception. The canonical files now equal the Docs 135/136 hashes exactly: supervisor 23,187 B `63caac95`, manifest 26,295 B `8cb217eb`, caller 25,487 B `af0c4241`, executor 17,208 B `9044e615`. The commit touches only those four files plus the three continuity files. The two-arm diagnostic namespace has no diff since `0bc62fe7`, so its Doc 139/140 pins still hold under this head, and the observer, closure and observer-gate addendum are the same blobs as at `d201070f`. This closes the Docs 135/136 post-application hash condition; it is not runtime proof or credit.
+
+Overnight review-service closeout (2026-10-14 08:01 CDT, original reviewer 6abf1edf-2b16-476e-8305-23b9a0014e06). The overnight idle check (`cc21004b`) is cancelled and no new recurrence was created. No review is mid-flight.
+
+Verdicts issued overnight, each bound to its exact candidate:
+- Doc 130, CMD binding successor `9e5e545d`: correction required. The R2 archive showed CMD took `/c` from its forward-slash image path and ran `md`.
+- Doc 131, R2 postcheck proposal `a715a5bb`: bounded action compatible.
+- Doc 132, CMD image path correction `82fe41df`: confirmed.
+- Doc 133, actual R2 postcheck `1a63b45e`: evidence accepted as a complete zero-row observation; the missing external timer did not block Root's decision.
+- Doc 134, counter R3 `78ab1418`: launch boundary runtime-proven; G0 PerfOS failure cause unknown with no source defect established; PowerShell telemetry opt-out finding.
+- Doc 135, telemetry opt-out proposal `149f9fd7`: exact candidate compatible; observer-gate addendum bound to the successor.
+- Doc 136, r4 output paths `cc7b6756`: confirmed; native entry needed the quote-free form.
+- Doc 137, quote-free native prefix: confirmed.
+- Doc 138, two-arm PerfOS diagnostic `3121696e`: two corrections required (ordinary arm first; keep non-CIM failures).
+- Doc 139, corrections `0bc62fe7`: confirmed.
+- Doc 140, actual diagnostic approval and window 12:11:24–12:31:24Z: matches. That window expired unexecuted.
+- Doc 141, new window 12:43:01–13:03:01Z: matches, window-only change.
+- Queue notes: Source27 bound to Doc 132; Doc 134 bound to Core's diagnosis; the applied four-file exception at `c7f852aa` equals the Docs 135/136 hashes.
+
+Execution evidence actually accepted overnight: the R2 failure archive (failure evidence only), the R2 postcheck observation, and the R3 archive (launch boundary only, failure evidence otherwise). No counter, scheme, browser, G0 or release credit was given.
+
+Remaining conditions:
+- Root: admission and invocation of the two-arm diagnostic inside 12:43:01–13:03:01Z, or the window lapses.
+- Original reviewer: evidence review of any diagnostic result against Docs 138 and 140.
+- Core: then a fresh counter admission with the applied identities and the quote-free native command.
+- Core and Root, in order: the scheme group, the controls, the diff check, the browser journey, the manifest validation and the release decision.
+- Security owner: credential exposure stays an explicit release condition.
+No deployment evidence was supplied, so none is assessed.
+
+Delivery limitation, stated once for the coordinator: from now on this session has no scheduled wake-up, so a new registration is reviewed only when a message is delivered into this session.
+
+This review-service closeout is separate from the application's release status. It says nothing about whether the website is deployed or ready.
