@@ -1,0 +1,37 @@
+{
+  "doc": 163,
+  "title": "Mixed-catalog request intent, revision 2: source review",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "ONE_NARROW_CLIENT_CORRECTION_REQUIRED_BEFORE_MOUNTING; DESIGN_OTHERWISE_SOUND_AGAINST_8e85daa; STAFF_READBACK_BLOCKED_BY_CARE_DISABLED_IN_PRODUCTION",
+  "binding": { "commit": "fdbe3e80908c2d50f10bcd47ece5cd3176fde7e8", "tree": "1cefb73005275b0950727cd7b7289b5d02f367ee", "parent": "58cd065e0c2baed5840bbd92c374aadef85c7963", "manifest": "19650 B d5eb4ac0e182d1732ed28feca0e4c493a79b195090639060f0eac44435b46507", "patch": "120576 B 29768ea68c9ddf50a81f4ac48103ad9c0f7c2a4400f3ba5ea32c6f80a02f958e", "r2Receipt": "1794 B 85b6e67c6906de1da0ce3c934661f2d7762a8f9cc4bf2da66b4394fdf5f73cd1", "rootFrozenIdentical": true, "patchAddsOnly": 15, "absentAtBaseline": 15, "reconstructExactly": 15, "existingFilesTouched": 0, "r2Change": "four single-$ delimiters to $$ in the two staff_list functions only" },
+  "sound": {
+    "catalog": "full viewer-scoped master scan via existing reader and pathway authorities, fail-closed on partial scan; baseline 420 products, one variant each; excludes only non-merchandise (2) and coming-soon/planned (none at baseline); clinical care-pathway (244) requestable without price; held/restricted requestable with restriction shown and stored; families, workflow modes and display states match baseline",
+    "ownerIsolation": "owner only from authenticated viewer (member auth user ID; Early Access customer ref + session hash); email never establishes ownership; recovery requires same owner",
+    "minimumData": "contact, dated acknowledgments, exact lines; no notes/documents/medical answers/payment facts; closed key sets in TS and SQL; browser keeps only an attempt marker under the existing sign-out sweep prefix",
+    "atomicity": "single security-definer insert on (owner, attempt) on conflict do nothing then committed-winner read; changed facts conflict; lines and audit together or nothing; service looks up attempt before standing/catalog/legal so a saved attempt always replays",
+    "receipt": "saved only after a validated receipt; reference derived from stored ID; whitelisted pending-only fields",
+    "staffAuthorization": "app: exact enabled Care capability + care:administer; DB: active clinical_admin assignment + approved enabled Care row; service_role-only functions; private schema with no table grants, forced RLS, no policies; actor from verified principal; no direct Data API path",
+    "baselineParity": "billing copied from shipping when same; 200 lines, no duplicates, per-item max 100 match SQL; SHA-256 hex hasher fits 64-hex checks; Care subjectId is auth user ID; care tables have the used columns; client imports exist; catalog strings within 300 chars",
+    "commerceRefusal": "unchanged; no approve/pay/prescribe/convert/fulfill/upload endpoint"
+  },
+  "requiredCorrection": {
+    "where": ["request-intent-api.ts", "RequestIntentForm.tsx"],
+    "problem": "every non-OK response becomes 'unconfirmed'; form shows the recovery notice and locks editing; reload leaves only the check-earlier-request screen; first-POST 400/401/403/429 means the server refused before any write, and retrying the same frozen attempt cannot succeed for deterministic refusals, so the customer is stuck and the guidance is not truthful",
+    "fix": "expose HTTP status; on the first POST of an attempt treat 400/401/403/429 as not saved with cause-specific guidance, clear the marker and allow edit/resubmit under a fresh attempt; keep 409, every 5xx, network failures, malformed bodies and any refusal on a retry as uncertain; add written tests for both branches",
+    "scope": "client only; not a security change"
+  },
+  "recommended": ["rpc-repository maps check violation 23514 and request_intent_invalid 22023 (rolled back) to a definite invalid-request code instead of 503 uncertain", "SQL contact cap 6000 bytes can be below TS-valid maximum multibyte text; raise it or bound it in TS", "billing address collected for an unapproved request via the reused contract; defensible for follow-up, not needed for intent"],
+  "integrationBlockers": [
+    "Care enablement: staff readback needs the Care capability enabled and approved, CARE_ENABLED and CARE_ENABLE_APPROVED, and an active clinical_admin assignment; baseline records Care hard-disabled in production; enabling opens all /api/care; requires Samuel's explicit production decision or a separately reviewed change to an existing staff authority; no authority created here",
+    "Care tables come from supabase/care-access-foundation.sql outside migrations; rehearsal and registration must account for it",
+    "disposable DB rehearsal before registration: role-setting check inside security-definer functions admits service_role via PostgREST and refuses others; forced RLS without policies works for the owner (bypass rights); insert-or-replay under concurrency; TS-SQL parity; immutability; staff guards",
+    "migration placement and registration, then the separate mount/guard/manifest packet for existing customer and staff shells, each with its own review and custody",
+    "runtime qualification and release including the browser journey for save, retry, recovery, refusal and staff readback; no notification path, staff must poll the queue"
+  ],
+  "unchanged": ["R8 and Docs 160-162 closed", "application 8e85daa unchanged", "failed 790af2ce stays FAILED", "payment and security holds open"],
+  "notClaimed": ["tests", "database or SQL execution", "browser or runtime qualification", "goal live", "execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
