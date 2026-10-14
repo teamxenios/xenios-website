@@ -1,0 +1,40 @@
+{
+  "doc": 150,
+  "title": "R6 application: twelve-path hash confirmation and standing-scope comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFIRMED_EXACT_TWELVE_PATH_APPLICATION_EQUALS_DOC149_BYTES; STANDING_SCOPE_COMPATIBLE_FOR_ONE_COUNTER_GROUP_NO_UNCOVERED_ACTION",
+  "applied": { "commit": "240de0df7c6de6cfca8c9a20e882dfc1bd02a7bb", "tree": "bff718a17416c68e43b14a75348c20db7157250d", "parent": "3bb19a3153ebb0c52f1f3ef634a3c4b9dbced030", "changedPaths": 12, "allModifications": true, "pathSetEqualsApprovedPayload": "ef9862363067eac6dc20014b23b855207d93c6cb1ebdff6cd6e9e6b12798d40d", "blobIdsEqualFrozenProposed": true, "sha256AndSizeEqualDoc149": true, "worktreeEqualsBlobs": true },
+  "afterImages": [
+    ["execute-admitted-finalization-controls-proposed.ps1", 24763, "31bd76fa2415b016a52daaacd85897c3beaf78adf179c9e9024585366a688fb5"],
+    ["counter-synthetic-case.ps1", 11154, "2659ba56d9f5c4b20cca9c3cec889c57dda0ae221d6c38913cbb75d71ab586c8"],
+    ["SYNTHETIC_PROVING_SOURCE_REQUIREMENTS.json", 6094, "3bbb02dc516ea5fd2dc480190f4996a3b38f7ca1d4889bb3af198a36ba66a6e6"],
+    ["controls PINNED_INPUTS_SOURCE_ONLY.json", 3093, "befd8b2e0c5afeb3b71570c638a3a3b589455dd8984cf76b4c1c2f6dd80f16e5"],
+    ["ASSEMBLED_SOURCE_HANDOFF.json", 7907, "a6e56e563c8eed9c119bc2ee86807deca7c4f05f4f6ed1fed07c9955ed45ecaf"],
+    ["execute-admitted-synthetic-proving.ps1", 29819, "f0290d1555c6bb4d2c39fc132fa3cfeefde34107a5db6958b9aacda5c8cdeaf2"],
+    ["SOURCE_MANIFEST.json", 34182, "93a557cf1ec2845fbf866907bdd9ff70bc5cef607afe2ee454da06e481239bf5"],
+    ["execute-admitted-exact-diff-check-r3.ps1", 25537, "d26eac2251e5ede6e9bce51371d744d00066f25b613ceb2ad3108232ece3df24"],
+    ["diff PINNED_INPUTS_SOURCE_ONLY.json", 1881, "2af16af7e3f7cfb63a6ac223227bd69f30941bd0d9ffb3713579cee5bd7dcd58"],
+    ["diff PROPOSAL.json", 5016, "343ad57710f46c3586ddecca85e9127c7bf56a23499706130ce79613d3b93af3"],
+    ["invoke-proving-with-observer-gate.ps1", 25487, "3b1dfdee17e3a0af26c5b27971e391a220f76035ea07a6a37d8becbf4d0c06ea"],
+    ["capture-proving-caller.ps1", 17208, "d042053b23760d581e5a0db9a7d4eea2609447b00ee9be6f319bfbaf8e96c609"]
+  ],
+  "scope": { "vsCanonicalBase5ee7f88": "only the twelve plus R5/R6 proposal directories", "preservedDependencies": "8 byte-identical at 5ee7f88 and 240de0df", "afterApplication": "37b15b7 adds only DOC150_R6_CANONICAL_APPLICATION_RECEIPT_20261014.json; twelve unchanged; worktree clean", "governingDecisionRecord": "22035 B 062969bb56acc4689fdecf9076c7929bfeee29d6f5236efe6ed566403368bf15 unchanged", "rootVerificationRecord": "DOC151_ACTUAL_TWELVE_PATH_CANONICAL_APPLICATION_VERIFIED_20261014.json 11074 B f903e57b agrees", "applicationCandidate": "240de0df changes nothing outside the twelve tooling files; candidate 8e85daa (tree 25507c2f) is a separate commit and its branch still points at it" },
+  "standingScope": {
+    "rootRecord": "DOC151_CURRENT_R6_STANDING_SYNTHETIC_SCOPE_APPLICABILITY_20261014.json 5024 B cdeff314ab965f50f4faac8394e6a02e2e7d92f64eec644d3af4b078f4150dda",
+    "authority": "ACTUAL_FOUNDER_MANIFEST_CUSTODY_AND_CONDITIONAL_RELEASE_20261012.txt 14993 B 20041ef092f750a4a2ebbe7c4bdfb5cff3d4bf0d93b5a2f3aa4aebededb6eee3; section 6 sentence verbatim; recorded by Root 2026-10-12 as Samuel's actual pasted request",
+    "coverage": "applicable local/synthetic tests and build for independently qualified increments; exclusions (production schema/data/role, new payment destinations/providers, money movement, higher spending, unreviewed Quick Order activation) do not apply to the counter group",
+    "precedent": "Root DOC129_CURRENT_STANDING_RUNTIME_APPLICABILITY_20261014.json applied section 6 to counter and scheme under the same limits",
+    "r6Delta": "one local read-only memory query in the same G0 slot replaced by an in-process compiled GetPerformanceInfo call; no network, provider, credential, customer, production or browser action added",
+    "doc150SourceApproval": "edit permission for twelve protected files only; neither grants nor revokes runtime scope",
+    "doc146": "consumed diagnostic/clock approvals contribute nothing",
+    "limitsMatchSource": { "executorOuterMs": "210000 = caller + 30000", "captureMs": "185000 = caller + 5000", "callerMs": 180000, "aggregateMs": 120000, "workMs": 90000, "cmdMs": "125000 = aggregate + 5000", "observerMs": "135000 frozen observer unchanged", "childMs": 5000, "closureMs": 10000, "osQuery": "CIM timeout 1 s, fails at 1000 ms", "nativeRead": "fails at 2000 ms inside 30 s fence", "floorMiB": 512, "maxWindowMinutes": 20 },
+    "uncoveredAction": null,
+    "notCovered": ["scheme, controls, diff check and browser each need their own comparison; browser keeps its separate gates", "no window, ticket, slot or consent created", "before invocation: Root freezes actual window and ticket and the original compares them; fresh same-Core custody; exclusive slot; fresh output paths"]
+  },
+  "unchanged": "timing fit unproved; counter 2 s guards do not establish diff 1 s, controls parent, browser 2048 MiB, journey or deployment; payment and security holds unchanged",
+  "notClaimed": ["execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
