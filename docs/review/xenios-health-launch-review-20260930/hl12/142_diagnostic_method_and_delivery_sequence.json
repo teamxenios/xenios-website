@@ -1,0 +1,24 @@
+{
+  "doc": 142,
+  "title": "Two-arm PerfOS diagnostic: method concurrence and delivery-sequence deficiency",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "METHOD_CONCUR_DELIVERY_SEQUENCE_ONE_DEFICIENCY_ANCHOR_MUST_BE_SAMPLED_BY_INVOKING_OWNER",
+  "rootCheckpoint": { "commit": "56b46a77e9e96d8cad61f7fe7c433ad051710cc5", "tree": "12d6cf83267138efe239fa8ae5897cfb2875d9a3", "records": { "scope": "DOC143_IMMEDIATE_REQUEST_ONLY_ACTUAL_SCOPE_20261014.json 2488 B ca2803f8f9cd6c7c3f3d78eae7ebb3cd6b2d83ee658fb385bdf77596678fb05c", "secondWindowClosure": "DOC143_DOC141_SECOND_WINDOW_UNEXECUTED_ROOT_CLOSURE_20261014.json 3184 B c4e31f55a35c33f4034419cb6ef745a7a5200fb878edefd1b46eda16ba71f0ae", "methodRecommendation": "DOC143_ONE_METHOD_EXECUTION_OWNER_RECOMMENDATION_20261014.json 2386 B 03330222dc4674e5715eaecd9a7dda605dae633c878498946d38e796c02b49ad" } },
+  "methodConcurrence": { "concur": true, "what": "one invocation of the unchanged 0bc62fe7 diagnostic (Docs 138/139) under applied c7f852aa / head bb3f8e62; limits, arm order, privacy, network and cleanup as accepted; no source change, platform or supervisor", "basis": "latest executed failure R3 line 148 PerfOS, cause unknown; both windows unexecuted; no authorized equivalent browser path", "notCredit": ["customer journey", "G0", "release"], "remainingConditions": ["proving", "browser", "admin/readback", "diff", "manifest", "security", "release", "deployment", "served identity"] },
+  "deficiency": {
+    "guard": "collector budget measured from -NativeLaunchUtc: line 75 age < 20 s at start; lines 98, 116, 118 require anchor age + elapsed + 10 s < 20 s before output and before each arm launch, so both arms must launch within 10 s of the anchor; first arm alone ~2-4 s",
+    "problem": "Root-sampled anchor puts Root composition, cross-session delivery and Core's model turn inside that 10 s",
+    "evidence": ["R2 postcheck: Root admission recorded 2026-10-14T03:42:35.367Z, Core call started 2026-10-14T03:43:48.868Z (~73 s)", "second window: handoff did not arrive before lastStart (Root closure c4e31f55)"],
+    "consequence": "likely WHOLE_ALLOWANCE_UNAVAILABLE or STALE_OR_FUTURE_ANCHOR refusal before any query; consumes a third approved window with no diagnostic information",
+    "smallestCorrection": "Root freezes ticket, ticket hash, command template with hash substituted, native options and the anchor rule; Core samples the prelaunch UTC as its last action before the native call (ideally the same tool step), substitutes only that value, records it with its own external start/return and the full command as run",
+    "notAWeakening": ["all collector checks unchanged (format, anchor <= collector process start, age < 20 s, >= 10 s remaining per arm, window bounds)", "forward-dating impossible; backdating only shrinks the executor's budget", "native tool wall time remains independent duration evidence", "20 s bound measures the run, not inter-agent messaging"],
+    "replaces": "'no self-anchor' in the delivery sequence; a correction of sampling location, not a waiver"
+  },
+  "windowOnlyStandingConcurrence": "future approval changing only starts/ends/lastStart, byte-identical otherwise to the Doc 141 approval, window <= 20 min and lastStart = ends - 20 s: covered by Doc 141; Root records the mechanical comparison and proceeds; reviewer confirms afterwards; any other difference needs a prior comparison",
+  "correctedSequence": ["nonvolatile source/pin/custody/output/options reads before requesting a window", "window approval; window-only check per above; Root slot and fixed ticket", "Core verifies ticket hash and current head and declares FINAL READY", "Root sends the frozen command template with the ticket hash and the anchor rule; Root does not sample the time", "Core samples UTC and invokes immediately, no record write, reread or poll between", "Core then records anchor, external start/return, native wall time, exit, session state and full output", "if Core cannot sample and invoke inside lastStart: stop, no call, retry or extension"],
+  "evidenceRequirements": "unchanged from Doc 140",
+  "executionConsent": false
+}
