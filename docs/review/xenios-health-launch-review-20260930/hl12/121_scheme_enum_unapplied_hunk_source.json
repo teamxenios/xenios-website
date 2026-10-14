@@ -1,0 +1,21 @@
+{
+  "doc": 121,
+  "title": "Revision 20 B: unapplied privacy-safe URL-scheme enum hunk for the accepted driver (source only)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "boardTipRead": "3a5eb39",
+  "verdict": "SOURCE_COMPATIBLE_UNAPPLIED_ONE_HUNK_NO_CORRECTION_NOT_PERMISSION_TO_APPLY_OR_RUN",
+  "application": { "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "changed": false },
+  "core": { "commit": "2e1557ff115590cb4f679fbd231cae2f9352434b", "tree": "c35327db576b848dbc3bad2866bf2d354627054d", "prefix": "target-scheme-telemetry-source-proposal/" },
+  "files": { "EXACT_DIFF.patch": "2029 B e3b942fc1376e36c8efaedaa62d5595e73ad8682ba86ad2da0e6d9c6c4666c6d", "BYTE_PROOF.json": "750 B 6b13f6ce", "PROPOSAL.json": "5569 B f8b28a24", "rootCopiesByteIdentical": true },
+  "base": { "driver": "doc 109 ql-browser-driver-observation-proposed.mjs", "bytes": 40786, "sha256": "b2f0901ddf5e0503e9c460b899be8e5afa0ca9e6101e063d3dcea348d27ad798", "sameBytesPinnedAndRunInDoc120": true },
+  "projection": { "hunks": 1, "preimageLines": "260-268", "preimageUniqueInBase": true, "oldLines": 9, "newLines": 15, "projectedBytes": 41303, "projectedSha256": "5c90b077810736064e18a40832e5b4d2aa7260f748404a8163cd6eb4761cf9aa", "matchesByteProof": true, "prefixUnchanged": true, "suffixUnchanged": true, "method": "textual application; not parsed/imported/executed" },
+  "field": { "name": "urlSchemeClass", "values": ["HTTP", "HTTPS", "WS", "WSS", "ABOUT", "CHROME", "CHROME_UNTRUSTED", "CHROME_EXTENSION", "DEVTOOLS", "DATA", "BLOB", "FILE", "OTHER_PROTOCOL", "UNPARSEABLE"], "lookup": "Object.hasOwn(schemeClasses, observedUrl.protocol) inside the existing try; UNPARSEABLE initialised before try", "rawEmitted": "none (protocol text never written; BLOB outer scheme only; URL constructor lower-cases scheme)", "nodeSupport": "Object.hasOwn in Node 20", "nameElsewhereInBase": false },
+  "unchangedOutsideHunk": ["64-record cap (line 258) and overflow counter (274)", "urlClass and hasQueryOrFragment logic", "acceptance predicate (275-277)", "Target.closeTarget + UNEXPECTED_BROWSER_TARGET (278-279)", "19 Chromium arguments", "guard, adapter, runner, parent, pins"],
+  "proving": ["separately valid source-test scope: each of 12 schemes, unknown parseable scheme, relative URL, malformed URL with private canary components; serialized record contains only enum + existing booleans, never a canary byte", "about:blank / canonical-origin / other-origin classes and acceptance/refusal paths unchanged", "64 cap and overflow counter unchanged", "synthetic tests are not browser evidence and not evidence about the two OTHER_ORIGIN service workers"],
+  "assemblyIfEverApplied": ["runner line 388 hard-codes driver digest b2f0901d (EXACT_ACCEPTED_MODULES) -> runner successor changing that one literal", "pins row 49 (driver path/size/hash) and runner row -> new pins", "parent self row -> successor", "fresh output and private-profile names; new finite ticket; fresh 2048 MiB admission", "each successor needs narrow byte comparison before any ticket", "never overwrite doc 117 inputs or the doc 120 archive; base driver copy at the diagnostic path unchanged"],
+  "custody": ["zero application navigation", "zero journey credit", "actual outer exit timing + independent closure again", "no reading of a future scheme value as ownership, cause or benignity; no guard relaxation"],
+  "executionConsent": false
+}

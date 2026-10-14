@@ -1,0 +1,22 @@
+{
+  "doc": 122,
+  "title": "Revision 20 C: doc 119 three text corrections confirmed in the corrected incident-closure proposal",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "boardTipRead": "3a5eb39",
+  "verdict": "CONFIRMED_TEXT_ONLY_NO_REOPENING_NO_CONSENT",
+  "file": "DOC119_CORRECTED_EXACT_INCIDENT_CLOSURE_PROPOSAL_20261013.json",
+  "predecessor": { "path": "DOC118_INCIDENT_INTAKE_CLOSURE_RECOVERY_PROPOSAL_20261013/EXACT_PROPOSAL.json", "sha256": "442020f29ffa72ac30c47c6a3b2b77a68702da7c44023cb433f320e0656facba", "originalReview": "94738405daf166dd5bffa12c206b41ea490a1124", "predecessorHashVerified": true },
+  "structuralDiff": { "changedScalars": ["status", "at", "operation.effects", "trigger", "questionStatus"], "addedObjects": ["predecessor", "readOnlyPostchecks", "preflightAdditions"], "removed": [], "unchanged": ["candidate", "destination", "operator", "operation.serviceLevelSetting/save/deploy/attempts/automaticRetries/reopen", "required", "sourceAnchors", "documentation", "negativeChoices", "publication"] },
+  "corrections": {
+    "1_effects": "ten bridge doors unavailable at boot (config 200 enabled:false code/reason; nine 503 with reason; four admin doors after requireSupabaseAdmin, unauth 401/403); founder card unavailable; authenticated member M71 order history read-only remains; previously enqueued outbox notifications continue; no operator-sent messages — matches doc 119 §3.1",
+    "2_postchecks": "GET config 200 enabled:false code assisted_order_unavailable reason assisted_order_bridge_disabled; GET catalog 503 reason; GET status XRR-00000000-0000000000 503 reason (403/404 when enabled); authenticated admin GET queue 503 reason; boot log line; served identity via authorized founder command center release.runtime_sha, /api/health not commit proof, provider record association only; no POST/real request — matches doc 119 §3.2",
+    "3_preflight": "RESEARCH_EARLY_ACCESS_ENABLED expected exactly true, RESEARCH_EARLY_ACCESS_CART_ENABLED expected exactly false, confirm current; incidentClass ASSISTED_ORDER_LANE_ONLY; residual: no qualified hold-preserving rollback for outside-lane shared-runtime defects; no automatic reopen; trigger carries the lane boundary — matches doc 119 §3.3"
+  },
+  "notReopened": ["flag reach (doc 119)", "approval"],
+  "stillMissing": ["current authenticated method verification", "finite incident window", "Samuel's target-specific flag-mutation + same-SHA deploy decision", "operational qualification"],
+  "claimsNotMade": ["rollback", "online admin readback"],
+  "executionConsent": false
+}
