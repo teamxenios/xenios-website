@@ -1,0 +1,52 @@
+{
+  "doc": 136,
+  "title": "R4 private output paths and native telemetry entry: narrow confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "OUTPUT_PATHS_CONFIRMED_NATIVE_ENTRY_COMPATIBLE_IN_INTENT_ONE_CORRECTION_REMOVE_QUOTES",
+  "outputProposal": {
+    "core": { "commit": "cc7b675686cd913852d6888b89a9d387dc265ab3", "tree": "e9390248fe420475071a64acb21d4c7a9695ae09", "parent": "149f9fd7c8b522a6bf549a7dae03cbf0b1be8105" },
+    "rootMirror": { "path": "DOC135_R4_OUTPUT_UNAPPLIED_FROZEN_20261014/", "files": 9, "byteIdentical": true },
+    "narrowPatch": "4420 B f3a78f1c",
+    "completePatch": "11848 B f9a127d3 (alternative view)",
+    "caller": { "base": "149f 1ae35909", "edits": ["$lOutput caller-<group>-cmd-r3 -> -cmd-r4", "scheme prior receipt caller-counter-cmd-r3 -> -cmd-r4"], "rebuiltEqualsProposed": true, "bytes": 25487, "sha256": "af0c4241ec65b17071e4eec9303e23e7f1053ed46e395b96b21bb207c911b929", "remainingCmdR3": 0 },
+    "executor": { "base": "149f c80cb8c3", "edits": ["$eCallerHash -> af0c4241", "executor and caller roots -cmd-r3 -> -cmd-r4"], "rebuiltEqualsProposed": true, "bytes": 17208, "sha256": "9044e61536060caf9b587c0e1c75910b14f05164f96912c275e1c3a97d6b5233", "callerPin25487": true, "remainingCmdR3": 0 },
+    "supervisorUnchanged": "63caac95 23187 B",
+    "manifestUnchanged": "8cb217eb 26295 B",
+    "optOutStillOncePerTable": true,
+    "attemptOutputUnchanged": "attempt-<group>-r1 (never created by R3)"
+  },
+  "bindingsToFinalIdentities": {
+    "finalIdentities": { "supervisor": "63caac95", "manifest": "8cb217eb", "caller": "af0c4241", "executor": "9044e615" },
+    "observerGate": "d201070f / 44413e31 applies unchanged; output paths do not touch gate logic; historical fields stay historical",
+    "requirements": "82fe41df requirements/handoff historical; ticket carries caller af0c4241/25487, executor 9044e615/17208, outputs caller-<group>-cmd-r4 and executor-<group>-cmd-r4, manifest 8cb217eb, addendum 44413e31, scheme prior receipt at r4 path",
+    "fixedFieldsKept": { "callerDoc128": "8af08bc463709752771c7ade4cd385796add7026", "executorDoc129": "cab6120bbc1c9fffc2864935f9ad1ca16a6eb0d2" },
+    "newDispositionRefs": "callerSourceDispositionRef and executorComparisonRef cite Docs 130, 132, 135, 136 at their commits",
+    "unchanged": ["all bounds", "invocation arrays", "guards", "one attempt, zero retry, zero stop"],
+    "ordering": "scheme needs an actual owner-accepted r4 counter receipt first"
+  },
+  "nativeEntry": {
+    "record": { "path": "DOC134_NATIVE_POWERSHELL_TELEMETRY_ENTRY_UNAPPLIED_20261014.json", "bytes": 3898, "sha256": "ee19acc11159cf13155e08679c7a27b104e4dd7e9d308b0d2a8137ee3d3b668a", "rootCommit": "6037035d76da610e117785e02746f9e9d529bdb0", "workingCopyEqualsBlob": true },
+    "purpose": "only way to opt out the executor process itself; scope right (this invocation and descendants; no setx, global setting, helper or extra CMD)",
+    "requiredCorrection": {
+      "evidence": "R1 (a7632d92): submitted command began with a plain quote and contained no backslash-quote; CMD's error text shows it received two backslash-quote pairs around the pwsh path",
+      "consequence": "proposed prefix reaches CMD as set \\\"POWERSHELL_TELEMETRY_OPTOUT=1\\\", defining variable '\\\"POWERSHELL_TELEMETRY_OPTOUT' = '1\\\"'; assignment succeeds, && launches pwsh without the opt-out, no error",
+      "use": "set POWERSHELL_TELEMETRY_OPTOUT=1&& <pinned pwsh> -NoProfile -File <canonical executor path> -ProvingGroup <group> -AdmissionSha256 <fresh ticket hash>",
+      "noSpaceBeforeAmpersands": "value must be exactly '1'; '1 ' is not accepted by PowerShell and leaves telemetry on",
+      "precedent": "R2's quote-free native command passed through the transport intact"
+    },
+    "placeholders": "<...> are CMD redirection characters; external admission must hold the complete substituted command; never run the template",
+    "evidenceWithoutProbe": "after a run, PowerShell telemetry.uuid absent under AppData/Local/Microsoft/PowerShell in executor-<group>-cmd-r4 (caller), caller-<group>-cmd-r4 (CMD/supervisor/observer/closure) and attempt-<group>-r1 (fixtures); R3 had it in both private homes; does not cover the executor (operator cache)",
+    "optionalGuard": "executor refuses at start unless $env:POWERSHELL_TELEMETRY_OPTOUT is exactly '1' (detects, cannot prevent, startup telemetry); changes executor bytes, needs re-pin and confirmation"
+  },
+  "remaining": [
+    "correct the native-entry prefix to the quote-free form and freeze it; reviewer confirms against Doc 136",
+    "Root source/manifest permission to apply; then hash confirmation of canonical files 63caac95, 8cb217eb, af0c4241, 9044e615",
+    "Doc 134 G0 question open; any two-way diagnostic needs its own binding with pre-start opt-out in both arms",
+    "fresh counter admission with these identities, corrected native command, exclusive reservation, finite window, real 512 MiB admission, absent r4 outputs"
+  ],
+  "notClaimed": ["execution consent", "application", "G0 credit", "counter credit"],
+  "executionConsent": false
+}
