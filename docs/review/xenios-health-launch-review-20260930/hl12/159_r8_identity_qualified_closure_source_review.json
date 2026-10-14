@@ -1,0 +1,42 @@
+{
+  "doc": 159,
+  "title": "R8 identity-qualified closure: source review",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "ONE_NARROW_CORRECTION_REQUIRED_EXECUTABLE_ONLY_FOR_IDENTITY_MATCHES; OTHERWISE_COMPATIBLE_WITH_DOC158",
+  "binding": { "commit": "e280d5e1ec4ccbf851b25c7ee39c2d6bf35a5383", "tree": "4a69ffd5e3fd47f8581d3feddb6bc7c8d5f5c7e0", "parent": "bfb007e6f6712621d1c0683de49cea85e30c55b9", "newFiles": 11, "otherPathsChanged": 0, "bindings": "11542 B b001548f103126186bbd2315ebfd944c012792a3d63396d7b60855169d9f8025", "patch": "27213 B a1a6fd46abbabfbd2220b58186b1c7d5e5076d31f861acd5e407b0afc553e5d9", "controls": "6110 B 07e1d08932a8209ada42329292f1a04d95fd2e7f070a0dd5fce82cad4fe518a7", "rootMirrorIdentical": 11 },
+  "targets": [
+    { "file": "verify-proving-closure.ps1", "before": "7081 B", "after": "14324 B e7ed1c46a4c0e0e432db2a8b27b6a90ed44ec926adbe9a2a5a08f10afe782ae6", "change": "identity helpers, gate binding, row retention, new root" },
+    { "file": "execute-admitted-synthetic-proving.ps1", "before": "35636 B", "after": "35636 B aaf3f093730b79578fc0017125b1da48b319f8f8941bcf64b8b6b3fdc7e43137", "change": "output root literal only" },
+    { "file": "SOURCE_MANIFEST.json", "before": "46371 B", "after": "46451 B b9f40a334ef0523c2d6d38f8cb6f4137d79da1069e18ffc097aa7f8188a7a1f1", "change": "closure template +2 entries, supervisor and closure pins, two output roots; cases unchanged" },
+    { "file": "invoke-proving-with-observer-gate.ps1", "before": "25737 B", "after": "25874 B 511b669a68da9be600b1d83411e421b118bea99f8b1d8a0a06e33e06b14df4df", "change": "manifest hash and exact cap 46451, new root, passes captured gate hash, requires closure record to echo it" },
+    { "file": "capture-proving-caller.ps1", "before": "17331 B", "after": "17331 B a1e13aec", "change": "new root, caller pin 25874 B 511b669a" }
+  ],
+  "canonicalUnchangedSinceR7": true,
+  "outputRootAbsent": "C:/Users/sboad/.codex/tmp/ql-doc171-r8-synthetic-proving-20261014",
+  "rules": {
+    "identityNotId": "MET with correction: ID + creation within 10000 ticks (1 ms inclusive); same identity with different executable refuses",
+    "self": "MET: own ID, start time and $PSHOME pwsh.exe excluded only on ID + creation match; wrong executable refuses; self ID with different creation not exempt",
+    "missingIdentity": "MET for known identities: missing/invalid ID, creation or executable in parent, CMD, observer, case or worker records refuses; 7-digit creation strings; pre-1970 or unspecified-kind refuses",
+    "observerGate": "MET: -ObserverGateSha256 must equal gate hash before read; status, group, admission, observer ID, exit 0, EOF, stdout hash checked; rehashed after quiets; caller passes its captured gate hash and requires echo",
+    "schemeWorker": "MET: parent==runner counts only if created within runner lifetime +/- 1 ms; else reused parent; missing runner exit refuses",
+    "retainedRows": "MET: raw ID, parent ID, creation and executable plus classification kept per quiet; refusal writes one CLOSURE_IDENTITY_REFUSAL JSON line",
+    "unchangedLimits": "MET: two quiets, 500 ms, 1 s query timeout, 10 s closure, post-pins, outer-success and case checks unchanged"
+  },
+  "requiredCorrection": {
+    "where": "Q-ClassifyObservedIdentity",
+    "change": "validate ID, parent ID and creation first; classify self, known, worker-child or reuse from them; require a valid matching executable only for rows whose ID and creation match self or a known identity; for reused-ID or reused-parent rows record any executable but neither require nor format-validate it; missing or invalid creation still refuses for every row",
+    "why": "rows that are only reused IDs currently refuse as CLOSURE_IDENTITY_UNKNOWN whenever Windows hides the path (SYSTEM or other-user processes), restoring a reuse false failure; no false pass either way",
+    "addVectors": ["reused ID with no executable -> not present", "reused ID with non-drive path such as \\SystemRoot\\System32\\smss.exe -> not present", "Local-kind DateTime creation at and just past the 1 ms boundary"],
+    "keep": "every existing vector including exact identity without executable fails; update count literal",
+    "scope": "same five paths plus controls file, usual pin cascade; narrow diff re-review"
+  },
+  "observations": ["pure vectors never see real CIM data; an unspecified-kind CreationDate would refuse every observed row including self (closed failure, recorded); reviewer understanding is Local; only a real run settles it", "retained rows count against the caller's existing 16 KiB closure stream cap; many benign reuse rows would fail closed", "controls dot-source the exact helper block after pinning the whole closure by size and hash; acceptable pinned pure control; dynamic code stays pinned to exact bytes"],
+  "controlsReview": { "vectors": 20, "coverage": "reuse, self, exact, missing and malformed fields, 1 ms boundary both sides, self ID different creation, CIM microsecond precision, out-of-scope, scheme in/before/after lifetime, missing worker and historical identity", "processOrResourceCalls": 0, "notRun": true },
+  "heldPrerequisites": ["Core re-freezes corrected unapplied proposal; original narrow review", "Samuel's new exact five-path protected exception", "same-owner custody and application; original applied-byte confirmation", "corrected controls actually run as a local section 6 source check, result recorded", "Root freezes a fresh independently authorized window and ticket with the new gate argument, new raw pins and R8 output root; original comparison", "Core acknowledgment, Root admission, Core final readiness", "one fresh 32-case run"],
+  "unchanged": ["R7 ticket 790af2ce consumed FAILED, no credit, outputs not reused", "Root operational release under Doc 158 stands", "application 8e85daa unchanged", "scheme, controls, diff, browser, manifest, security (hold open), provider and live checks separate"],
+  "notClaimed": ["execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
