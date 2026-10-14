@@ -1,0 +1,31 @@
+{
+  "doc": 153,
+  "title": "Single-PID caller postcheck: binding and window comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "2026-10-14T17:53Z-17:56Z",
+  "verdict": "PAYLOAD_ACTION_SCOPE_CONFIRMED; WINDOW_LAPSED_UNEXECUTED_NOT_USABLE; CORRECTION_WINDOW_ONLY",
+  "records": { "packet": "1912 B 524aaea26beba110b426907144305f8c9712180be887ee21c00e84ff0dd9a366 (equals Root DOC154 prompt)", "binding": "DOC154_EXACT_SINGLE_CALLER_POSTCHECK_BINDING_UNADMITTED_20261014.json 12740 B 33e0a6c7368049224d161cfe0c75876a7d8302a620bd843e84fe96f036faa37d", "expiry": "DOC154_ACTUAL_SINGLE_CALLER_POSTCHECK_WINDOW_EXPIRED_NOT_RUN_20261014.json recorded 2026-10-14T16:56:14.894Z" },
+  "window": { "starts": "2026-10-14T16:33:08.382Z", "ends": "2026-10-14T16:53:08.382Z", "lastStart": "2026-10-14T16:52:58.382Z", "packetReceivedApprox": "2026-10-14T17:53Z", "status": "LAPSED_ZERO_INVOCATIONS_ZERO_QUERIES", "successor": "window fields only; same payload bytes, command hash and absent output path; narrow window comparison and fresh Core acknowledgment" },
+  "payload": {
+    "command": "Doc 137 quote-free prefix + pinned pwsh -NoProfile -EncodedCommand; sha256 c23d2e31da6b61d84448e59295bbb1d88be9766aa20d80795b6c56f330a5c2c8; no quotes; no space before &&",
+    "decode": "base64 UTF-16LE no BOM equals bound decodedPayloadLf; 2439 B UTF-8 sha256 28e165469d13930f84f708a8d09add723e8abbb476298e55d4c9590b31136ce3",
+    "query": "one Get-CimInstance root/cimv2 OperationTimeoutSec 2; exact text sha256 251311362e11e3db86a8c958dedb04d6376bce593013ba143d58cd5477d7d70e; ProcessId, ParentProcessId, CreationDate; PID 46104 only",
+    "absent": ["stop", "other process cmdlets", "Add-Type", "dynamic invocation", "call operator"],
+    "bounds": "10 s internal envelope; 32-row cap; >1 row ambiguous; 16000 B evidence cap; CreateNew record in fresh private directory (absent now); one attempt; no retry; exit 0 only when complete inside envelope",
+    "scope": "Doc 152 section 4 observation; Doc 131 failed-run postcheck class under section 6 20041ef0; not the consumed counter ticket or the Doc 146 window"
+  },
+  "closureInterpretation": {
+    "closesCaller": "complete query with zero rows, or a row whose creation differs from 2026-10-14T16:10:45.2358933Z by more than 1 ms; Root may release the reservation as operationally closed",
+    "heldForSamuel": "same creation within 1 ms; nothing stopped",
+    "alsoHeld": "incomplete, late, ambiguous or errored",
+    "guardFit": "CIM creation carries microseconds; observer CIM vs handle creation for the supervisor differed by 0.0006 ms today",
+    "unchanged": "counter qualification FAILED; no EOF or exit-time repair; no global closure",
+    "foreseeable": "slow provider fails closed and spends the window; a filtered Win32_Process query with a 1 s timeout completed during the caller's discovery step today"
+  },
+  "transport": "packet reached the reviewer by Samuel's paste; Root records Computer Use kept paused; R7 review packet 3680 B 9a89e3a1 prepared but undelivered; R7 not reviewed",
+  "notClaimed": ["execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
