@@ -1,0 +1,38 @@
+{
+  "doc": 158,
+  "title": "R7 counter run: PID-reuse closure failure, operational closure and remedy",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "FAILED_NO_GROUP_CREDIT; EARLIEST_BOUNDARY_INDEPENDENT_CLOSURE_LINE75_SELF_MATCH_BY_PID_REUSE; OPERATIONAL_CLOSURE_SUPPORTED_BY_RETAINED_EVIDENCE; ONE_UNAPPLIED_IDENTITY_QUALIFIED_CLOSURE_CORRECTION; FRESH_BOUNDED_SUCCESSOR_RUN_REQUIRED",
+  "evidence": { "coreCommit": "bfb007e6f6712621d1c0683de49cea85e30c55b9", "tree": "100a7d64085fa0d9e2f7305154e0954b3b5a2cd6", "parent": "eeb5c17cff025abaabf47a6d444499990377a164", "newFiles": 6, "receipt": "29146 B 355b88e6b680ae95b838c7439ec9f18c4e4508f91ea05bb4d06ba56c2a1039a4", "rawRunFiles": "119149 B b3a48735f67e9f084fbaad45449901d9c412c693a6a89345d6d80fd285500b08", "rawFilesDecoded": "88 files, 74917 B, all hashes match", "rootCollection": "DOC170_ACTUAL_R7_COUNTER32_CLOSURE_FAILURE_COLLECTED_20261014.json binds receipt, raw set, commit, ticket and command" },
+  "call": { "ticket": "790af2ce4f80f2cfef9a8c171a0c675b9f1894befbf5c0aa15c0a79d619697a0", "command": "9acaae245eaaefb06a802a10963baf29b69ebd9c5a26a25d7c2b810f918ee531", "submitted": "2026-10-14T18:51:02.794Z", "session": "94287 returned after 10 s, same session polled twice", "ended": "2026-10-14T18:51:33.593Z exit 1 EXECUTOR_FAILED_OR_INCOMPLETE", "invocations": 1, "retries": 0, "stops": 0 },
+  "chain": {
+    "gate": "supervisor 63492 init 788.48 ms, OS 182.37 ms, read 72.31 ms; floors met",
+    "cases": "32 passed preliminary; lifetimes finite 485.49-2664.16 ms",
+    "exits": "supervisor 0 at 27910.29 ms; observer gate PASS; CMD 20680 and observer 63336 exit 0 with EOF",
+    "closure": "PID 63340 created 2026-10-14T18:51:32.1870127Z; case negative-headroom was PID 63340 created 2026-10-14T18:51:15.3095327Z with valid exit about 0.57 s later; filter of bare IDs (lines 44-64); line 75 throws on any row; query ProcessId=63340 necessarily returned the closure's own row; no rows retained, other matches unknowable",
+    "afterwards": "caller CLOSURE_ACTUAL_RESULT_FAILURE; executor recorded caller exit 1, lifetime 30097.69 ms, EOF true, then CALLER_EXIT_OR_STDERR_FAILURE"
+  },
+  "credit": "none; group FAILED; old failure not relabelled",
+  "observationsOnly": ["first real cold init/OS/read succeeded within budgets for this supervisor on this host", "signaled-exit fixes worked; every recorded exit valid including executor's caller record", "real-clock refusal lines reached preserved stream files", "counter body fit 27.9 s of 120 s", "not shown: scheme, controls, diff fit; browser"],
+  "operationalClosure": { "supported": true, "basis": ["supervisor, CMD, observer and closure: retained-handle exits after signaled waits", "caller: executor's signaled exit record", "executor: ended inside the native session that returned its exit code", "32 case children: valid non-zero exit times", "supervisor streams inherited through CMD, which reached EOF", "fixture starts no compiler, CIM or native process"], "notClaimed": ["global absence", "lifetime of any unknown process"], "newQueryNeeded": false },
+  "remedy": {
+    "scope": "same Core, own namespace, unapplied; verify-proving-closure.ps1 and dependent pins only",
+    "conditions": [
+      "identity not ID: a row counts as known only if ID and creation match a recorded identity within 1 ms; matching ID with different creation is a recorded reuse, not counted",
+      "self: explicit rule excludes the closure's own ID and creation",
+      "missing identity fails closed: every known ID needs a hash-bound creation; observer creation exists only in the caller gate record, so bind it by hash or another reviewed path, or fail closed; bare-ID match never read as absence",
+      "scheme worker check identity-qualified: child counts only if created between the runner's recorded creation and exit; guard not weakened",
+      "retain every observed row's ID, parent ID and creation in both quiets",
+      "controls in the existing fixture or control style: reused ID not present; self not present; exact identity present and fails; missing identity fails",
+      "unchanged: two quiets, 500 ms spacing, 10 s closure limit, EOF, floors, budgets and every other guard"
+    ]
+  },
+  "reuseOfExistingOutputs": { "acceptable": false, "reasons": ["failed closure kept no rows to re-evaluate", "a later closure observes a different moment and cannot produce the same caller-run receipt", "cross-run composition is an unreviewed evidence rule", "ticket 790af2ce consumed"], "required": "one fresh bounded successor counter run of all 32 cases under the corrected closure; this run preserved as failed evidence" },
+  "prerequisites": ["Core freezes the unapplied correction; original review", "Samuel's exact protected-path exception; original applied-byte confirmation", "Root freezes a fresh section 6 window and ticket; original comparison", "fresh Core acknowledgment, Root admission, Core final readiness", "one call"],
+  "held": ["scheme", "controls", "diff", "browser", "payment hold", "security hold"],
+  "notClaimed": ["execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
