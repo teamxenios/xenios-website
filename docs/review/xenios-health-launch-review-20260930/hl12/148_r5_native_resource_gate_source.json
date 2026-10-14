@@ -1,0 +1,37 @@
+{
+  "doc": 148,
+  "title": "R5 native resource gate: source disposition",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CORRECTION_REQUIRED_ONE_BLOCKING_DEFECT_CALLER_MANIFEST_SIZE_CAP_PLUS_MATERIAL_TIMING_FINDING_OTHERWISE_SOURCE_COMPATIBLE",
+  "binding": { "commit": "bc45acb620790dfbac0c1a98d130afe99b4b1772", "tree": "7d08ad523c3491fdc432fc2b3eb98334cdea80c2", "parent": "5ee7f88f6fe4b5ad55ddd858dbc4b0b5cb1dfe7c", "files": 17, "proposed": 12, "records": 5, "canonicalEdits": 0, "freezeIndex": "10322 B e8c342eaf8ad43b4317f045676f90504dc957ec7dbe8c5739bfb81d0201c6daa", "sourceBindings": "29290 B b9d7212c5e0de6de5e711a3ac30748bb9ffb3620f4809a533c54e6c2313e9e52", "completePatch": "108077 B 3ab54aa972290b4e891f991ff599999f8f7475493d2436beb12c0266b2f9e7be", "rootArchiveIdentical": 5, "worktreeEqualsBlobs": true, "lineEndingNote": "proposal folder lacks .gitattributes (canonical folders have '* -text'); git archive export converts line endings on this host; raw-blob identity unaffected" },
+  "verified": {
+    "diffs": "each .proposed diffs cleanly against its 5ee7f88f canonical blob; caller and executor change one pin line each",
+    "byteIdenticalCopies": { "adapter62Lines": ["supervisor", "parent", "diff"], "validator40Lines": ["supervisor", "parent", "fixture", "diff"], "slice24Lines": "once in supervisor and once in parent; equals fixture slice body", "fixtureNative": "no Add-Type, no DllImport" },
+    "adapter": "Pack=8 sequential; 104 B x64 / 56 B x86; offsets {0,8,...,80,88,92,96} / {0,4,...,52} match SDK PERFORMANCE_INFORMATION; kernel32!K32GetPerformanceInfo ExactSpelling, System32-only search, 4-byte BOOL; cb set and checked; any exception -> MEMORY_NATIVE_READ_FAILED; preloaded type refused",
+    "validator": "one native + one OS row; closed keys; success true; pointer width == process and structure size; non-bool integer value types (no null/NaN/inf/negative/fraction/>UInt64); page > 0; available <= physical; 32-bit page counts fit UInt32; checked page x bytes; commit total > limit -> RESOURCE_FLOOR; outputs OS free KB/1024, available = PhysicalAvailable x PageSize, commit headroom = (CommitLimit - CommitTotal) x PageSize; three 512 MiB floors and 30 s fence kept",
+    "semantics": "system commit per documented GetPerformanceInfo derivation; closes Doc 147 gap; OS physical check retained",
+    "fixture": "25 cases traced: defaults 1024 MiB, valid-floor exactly 512 on all three, low cases 511; every refusal reaches its token; late wins over throw; manifest 25 case contracts equal fixture table",
+    "pinChain": "manifest counter pins (supervisor, parent, fixture, requirements) and scheme supervisor pin equal proposed bytes; caller pins proposed manifest 93a557cf; executor pins proposed caller 01ffd16b at 25487 B; fixture pins proposed parent 31bd76fa",
+    "workBudget": "25 cases fit unchanged 90 s work and 5 s child limit (longest ~2.6 s)"
+  },
+  "blockingDefect": {
+    "where": "proposed caller invoke-proving-with-observer-gate.ps1 line 181: L-Regular $lManifest 26295;L-Regular $lAddendum 4015 (throws INPUT_SHAPE when length > cap)",
+    "consequence": "proposed manifest is 34182 B; every counter or scheme run refuses at caller input binding before CMD, supervisor or G0, consuming an approved window with no information",
+    "smallestCorrection": "change 26295 to 34182 (exact cap, original pattern); caller length stays 25487 B, only its hash changes; re-pin executor caller hash",
+    "provingCheck": "data only: every size cap in the chain >= pinned size of the file it guards (caller manifest cap = manifest bytes; addendum cap 4015; executor caller pin = caller bytes; closure manifest cap 131072)",
+    "whyMissed": "mechanical checks compared hashes, not caps"
+  },
+  "materialTimingFinding": {
+    "issue": "timed read includes cold in-process Add-Type C# compile within 2000 ms (counter parent, supervisor) and 1000 ms (diff-check runner); compile feasibility unproven; bound was introduced to limit the provider read; compile cost unrelated to memory availability and of unknown duration here; 1000 ms risks a refusal unrelated to resources; supervisor late refusal leaves no receipt, only the stderr token",
+    "smallestCorrection": "time Add-Type as its own explicit recorded step in the same G0 phase with its own finite bound folded into the parent-age fence arithmetic; apply 2000/1000 ms to [Xenios.ResourceGateR5]::Read() alone; write both durations to stderr before any late refusal; not a hidden prewarm",
+    "ifKept": "first admitted run is the proof; a late refusal is a foreseeable outcome",
+    "status": "correction recommended, owner's decision"
+  },
+  "nonBlocking": ["no fixture case for OS row count other than one or pointer-width mismatch (validator checks both)", "proposal folder lacks .gitattributes"],
+  "remaining": ["section 3 correction (and section 4 if adopted) frozen with re-pins, then narrow byte confirmation", "canonical protected-body/supervisor/manifest exceptions (Root/Samuel), not lifted by this review", "first actual compile/ABI/native read only in an admitted run; fixture stubs the adapter, so its 25 cases prove validator and slice only", "fresh counter admission and the rest of the release path"],
+  "notClaimed": ["execution consent", "source-application authority", "test credit"],
+  "executionConsent": false
+}
