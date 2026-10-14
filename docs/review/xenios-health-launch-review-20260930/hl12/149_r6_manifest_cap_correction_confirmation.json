@@ -1,0 +1,24 @@
+{
+  "doc": 149,
+  "title": "R6 manifest cap correction: narrow confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFIRMED_DOC148_BLOCKING_DEFECT_FIXED_EXACTLY_SOURCE_COMPATIBLE_WITH_RETAINED_TIMING_LIMITATION",
+  "binding": { "commit": "3bb19a3153ebb0c52f1f3ef634a3c4b9dbced030", "tree": "21916cac65c85b7b775ab15be9ae501e4f38c8b4", "parent": "bc45acb620790dfbac0c1a98d130afe99b4b1772", "files": 19, "proposed": 12, "records": 6, "gitattributes": "* -text (closes Doc 148 hygiene note)", "freezeIndex": "11040 B a66f43aadc1580520d0347b5c24d887b2a79377b6661820e60ea446aaf0bde23", "sourceBindings": "27225 B a4ee2cb1a11d7981dc5873f98506900f265508240a18ee083585ae8c5f93b3ea", "narrowPatch": "3151 B 8ab14c8e54470add1b030d6121c476a2bd462a5821698b4ff473d543ded6b68b", "completePatch": "108883 B f7bc4827447eb755c37ee65b1634e99ceb467fe6a8c7cf9d8cb1095b6dc958cd", "rootArchiveIdentical": 6, "worktreeEqualsBlobs": true },
+  "delta": { "identicalToR5": 10, "changed": { "caller": "line 181 L-Regular $lManifest 26295 -> 34182; 25487 B 3b1dfdee17e3a0af26c5b27971e391a220f76035ea07a6a37d8becbf4d0c06ea", "executor": "line 17 $eCallerHash -> 3b1dfdee; 17208 B d042053b23760d581e5a0db9a7d4eea2609447b00ee9be6f319bfbaf8e96c609" } },
+  "capsAndPins": { "callerManifestCap": "34182 == manifest bytes; caller still pins manifest 93a557cf", "addendumCap": "4015 == frozen addendum bytes", "executorPins": "caller 3b1dfdee at 25487 B", "closureManifestCap": "131072 >= manifest" },
+  "unchanged": "native adapter, validator, slices and 25 cases exactly as Doc 148",
+  "retainedTimingLimitation": "owner keeps combined cold compile + native read within 2000 ms (counter parent and supervisor) and 1000 ms (diff runner); unchanged 30 s fence, floors, refusals; no separate init, prewarm or bound extension (Doc 148 'if kept'); first independently admitted run of each runner must prove its own fit; late refusal foreseeable; supervisor late refusal leaves only the stderr token, no duration",
+  "proofFromSuccessfulCounterG0": {
+    "conditions": "memorySource GetPerformanceInfo, counterReadMs < 2000, finite derived values above floors, run continues past G0",
+    "proves": ["for that one fresh pwsh process on this host under the caller's rebuilt environment: Add-Type compiled cold within 2000 ms", "adapter runtime assertions passed (x64 size 104 and every field offset; mismatch throws before the call)", "K32GetPerformanceInfo returned success with cb unchanged", "validator accepted every field", "three floors held"],
+    "stubs": "25 stub outcomes prove validator and slice logic only, not the adapter",
+    "doesNotProve": ["raw recomputation (receipt keeps derived MiB and timings, not the page snapshot)", "32-bit path", "other hosts or OS states including cold OS after reboot", "diff runner 1000 ms fit (its own admitted run)", "finalization-controls parent fit (separate process and environment; same bytes; needs its own run)", "browser 2048 MiB admission (separate runner and floor)"],
+    "scheme": "same supervisor G0 bytes; shows its own fit in its own run"
+  },
+  "remaining": ["canonical twelve-path protected-body/supervisor/manifest/hash exceptions held for Samuel's actual decision; not lifted here", "after application, hash confirmation of the twelve canonical files against these .proposed bytes", "fresh counter admission (its G0 provides the counter-path proof)", "then scheme, controls, diff check, browser, manifest, security, release, deployment, served identity"],
+  "notClaimed": ["execution consent", "source-application authority", "test credit"],
+  "executionConsent": false
+}
