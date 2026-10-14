@@ -1,0 +1,15 @@
+{
+  "doc": 145,
+  "title": "Full direct approval with replacing window: actual comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "about 2026-10-14T13:32Z",
+  "verdict": "MATCHES_SAME_DOC143_PAYLOAD_ONE_VALID_REPLACING_WINDOW",
+  "approvalRecord": { "path": "DOC146_ACTUAL_FULL_DIRECT_HUMAN_CLOCK_EXCEPTION_WINDOW_APPROVAL_20261014.json", "bytes": 12994, "sha256": "a2890065eb722792b0ff8f69c9a444292183144ac49fa14d35a6839b7d833c23", "boardCommit": "a40ecac0449a8ad275c80cfb6ab3619a04e3a5f1", "opening": "I APPROVE THE EXACT DOC143 CLOCK-ROLE EXCEPTION AND ONE 20-MINUTE EXECUTION WINDOW", "decision": "60ee895974719d76b1559ee17c2855e45f7da95f4814a1ad0f70753370f7a826", "preparedRecord": "e60ce3cd 12565 B at 521ccafb", "controllingReview": "Doc 143 @ 18514f58", "embeddedPayloadEqualsPrepared": true, "identityRecomputed": true, "acknowledgedAt": "2026-10-14T13:28:48.000Z" },
+  "window": { "starts": "2026-10-14T13:28:48.000Z", "ends": "2026-10-14T13:48:48.000Z", "lastStart": "2026-10-14T13:48:28.000Z", "durationMinutes": 20, "lastStartIsEndsMinus20s": true },
+  "replaces": { "record": "DOC145 (Doc 144 comparison)", "window": "2026-10-14T13:24:23Z-13:44:23Z", "beforeTicketOrCall": true, "sharedAttempts": 1, "queriesSoFar": 0, "addsAttempt": false, "earlierWindowRevived": false },
+  "remaining": ["Root slot and fixed ticket", "Core FINAL READY", "Root frozen hash-bound command", "Core real unadjusted last-action UTC sample and single call starting by 13:48:28Z", "evidence review against Docs 138/140"],
+  "notClaimed": ["G0 result", "test credit", "release credit"]
+}
