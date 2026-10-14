@@ -1,0 +1,23 @@
+{
+  "doc": 139,
+  "title": "Two-arm PerfOS diagnostic corrections: narrow byte confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFIRMED_DOC138_CORRECTIONS_EXACT_SOURCE_COMPATIBLE_WITH_RECORDED_LIMITS_NOT_RUNTIME_PROVEN",
+  "core": { "commit": "0bc62fe7f676e11865aa50265baa347525f36a71", "tree": "d4d43d1b0cbb71681c15e48aa35ff47553e848a2", "parent": "3121696e0d1fd4a03c41170bfdbd6a9e67884595" },
+  "rootPacket": "none registered at review time; Core blobs bound directly",
+  "files": {
+    "collector": { "bytes": 15798, "sha256": "d8e990cba3bbd08ad741094e4432590dcc46a8b125d8f2a85262256881237bbc", "change": "line 92 'ordinary|rebuilt'; line 100 @('ordinary','rebuilt'); no other line" },
+    "child": { "bytes": 5023, "sha256": "c4dbfc0bf540888f8061662a79366ae1a97eeec19e079e8f2ed6711086ae0040", "change": "line 66 non-CIM query exception -> status QUERY_FAILED, failure null, exit 0; no other line" },
+    "actionContract": { "bytes": 14970, "sha256": "e4b53989ebf06926c99f242962d8fcd167ddef559c805d25c6688abb74995c9c", "change": "arms ordinary=1 rebuilt=2; futureAdmission.arms ordinary,rebuilt; source pins = actual script hashes; bounds, native command and options unchanged; text adjusted (timing, failure output, interpretation, fidelity limits, sourceBase 3121696e, doc138Correction block)" },
+    "delta": "DOC138_SOURCE_DELTA.patch 14920 B b5dae40d",
+    "handoff": "19082 B 4115e434",
+    "rawByteIndex": "5416 B 2347dec4"
+  },
+  "armEnvironmentsUnchanged": true,
+  "remaining": ["Root admission: ticket binding new contract hash and arms ordinary,rebuilt; three refs citing Docs 138/139; exclusive reservation; window <= 20 min; absent output; fully substituted quote-free native command with real prelaunch timestamp", "after a run: two arm records, pair summary and native result judged against the Doc 138 table; diagnostic reading only"],
+  "notClaimed": ["execution consent", "cause proof", "G0 result", "counter credit"],
+  "executionConsent": false
+}
