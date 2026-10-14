@@ -1,0 +1,70 @@
+{
+  "doc": 165,
+  "title": "Pending-intake staff-read alternative, r1: source review",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "ACCEPTED_AS_SOURCE_DESIGN_BOUNDED_DEFAULT_OFF_PENDING_READ; ONE_MATERIAL_CLAIM_CORRECTION_NO_CODE_CHANGE_ACTOR_PRESENCE_SERVER_ATTESTED; DO_NOT_APPROVE_SCOPE_ROW_UNTIL_EXPOSED_CREDENTIAL_CONDITION_CLOSED; NOT_OPERATIONAL",
+  "binding": {
+    "source": { "commit": "bf33c7ca545136a7e8e902d0ec311c119cff774c", "tree": "e9fb3b43a59489b081d1db763e544cda99b9cc83", "parent": "b938e604846fe9a0bfb068a553e3c3114031c6cf" },
+    "records": { "commit": "a467117c03877b9390217a4ae73895e073b2a9e5", "tree": "5cd8541ba1f382a199088b533222dd5a46d3dfe9", "adds": "staff-read-alternative-r1/HANDOFF.json only" },
+    "baseChain": ["8e85daa156ab04837fc5bfb73c0e661bba83cfee", "fdbe3e80 R2", "e7347965 composition-r1", "b938e604 client-r3"],
+    "artifacts": {
+      "SOURCE_MANIFEST.json": "9201 B 884ee17758fd10f3fd34793395d01237cceea510d26a258d81f099c920556fd1",
+      "DELTA_AFTER_CLIENT_R3.patch": "36727 B f8c70e7e0b7dc92552768705d4afcaa16307054a9bd419d291b22a5ae1ddb7ea",
+      "CUMULATIVE_AGAINST_8e.patch": "191002 B 1d8c59d6beb2eea430b5a0ee84e469ac6d5fd7fa65f5bcba7a6c1a7d30a368cb",
+      "REVIEW_AND_QUALIFICATION.md": "8865 B 2d3b908a576ecb2d7fe4b6e62eef6ba9bdaad87e9139eb6f64acbb95dcaf63b9"
+    },
+    "committedBlobsMatchReviewedBytes": 20,
+    "beforeImagesEqualLatestPrior": { "fromR2": 5, "fromCompositionR1": 2 },
+    "patchFileSections": { "delta": 9, "cumulative": 28 },
+    "patchesAppliedOrParsed": false,
+    "notReviewed": ["86302a5a and 2b9dbc41 Option B composition-r2; its before-images for production.ts and production.test.ts equal this alternative's after-images"]
+  },
+  "canonicalParity": {
+    "resolver": "existing resolvePrincipal: bearer, provider-verified via anon.auth.getUser, recovery-purpose rejection (otp/magiclink/recovery or no normal first factor), active roles revoked_at is null plus care_patients lookup in parallel, recognized Care roles only; no capability read; unconfigured fallback never authorizes",
+    "permission": "only clinical_admin maps to care:administer; SQL requires the same role with the same revoked_at predicate",
+    "capabilityRegistry": "care_capabilities.capability_key has no check; table check requires approval fields when enabled; every existing reader and verifier filters on capability_key='care'; foundation verifier row count is informational and would read 2; care-prescription-pharmacy.sql resets only the care row",
+    "roleAudit": "same shape and order as requireCarePermission; permission care:administer and outcomes within table checks; audit failure denies with 503; allowed row is an application role decision only"
+  },
+  "sound": {
+    "gates": "exact RESEARCH_REQUEST_INTENT_STAFF_READ_ENABLED==='true' per request (else 503 before identity or audit); then canonical identity (401) and role (403); adapter/patient-index/audit failures 503 without diagnostics",
+    "binding": "context built from the verified principal; service re-checks and passes principal.subjectId; staff routes accept only the page query key and no body",
+    "wholeCareIndependence": "guard never calls loadCapabilityStatus; SQL dropped the care key; whole Care disabled plus approved scope allows pending reads only; whole Care enabled without scope denies in SQL; requireCarePermission, /api/care and Care env flags untouched",
+    "sql": "staff_get and staff_list each require service_role role setting, non-null actor with live clinical_admin and an enabled approved request_intent_pending_read row on every call; access_events written in the same call; invoker wrappers, definer private functions with empty search_path, executable only by service_role; no capability or role writes",
+    "revocation": "role and scope re-checked at read time; flag re-read per request",
+    "intakeOffRoutes": "only GET/HEAD /staff and /staff/<UUID> bypass the intake switch and reach only guarded handlers; config/catalog/submit/recover closed; other staff paths and mutation methods 503; wall stricter (exact path, lowercase UUID)",
+    "privateData": "private no-store no-referrer noindex on every response; detail returns contact, agreements, lines; reader rejects non-pending lines; no approve/pay/prescribe/supplier/fulfillment/document endpoint",
+    "negativeTests": "15 written, not run, aimed correctly against the real code"
+  },
+  "materialClaimCorrection": {
+    "claim": "SQL readers independently require auth.uid consistency",
+    "fact": "the RPC client is the Supabase service-role admin client; its JWT has no subject so auth.uid() is null and the clause never denies; a user JWT would be refused by the role check anyway",
+    "proves": "named actor holds clinical_admin and scope is approved; not that the actor made the request",
+    "consequence": "a service-role key holder can enumerate a clinical_admin user ID and read every pending request through the staff RPCs once the scope row is approved; direct table reads stay revoked even from service_role; access_events would name that actor",
+    "required": ["state this accurately in the manifest, qualification notes and the static test name", "do not approve the request_intent_pending_read row until the exposed-credential condition is closed and service-role key rotation is confirmed"],
+    "codeChange": false
+  },
+  "recommended": [
+    "map SQL 42501 request_intent_private_review_required to 403 private_review_access_required and give staff routes their own 503 text instead of request_outcome_unconfirmed plus the customer recovery notice (the composition test currently pins 503)",
+    "role audit cannot distinguish pending-read from whole-Care decisions once whole Care is enabled; access_events remains the read record",
+    "HEAD on a detail path runs the full read and records staff_read with no body; serve GET only or record the intent",
+    "with the flag on, each unauthenticated request writes one append-only role-audit row, bounded at 120/min per IP; include in the resource and abuse window",
+    "activation is lighter than whole Care: database approval plus one flag instead of two"
+  ],
+  "rehearsalPrerequisites": [
+    "reconcile hosted history of care-access-foundation.sql and care-eligibility-intake.sql (care_patients queried on every staff request; resolver fails closed without it)",
+    "role setting is service_role inside the definer functions through PostgREST; auth.uid() null with the service key does not wrongly deny; a user JWT is refused",
+    "function owner can read the forced-RLS foundation tables via bypass rights, else every read silently denies",
+    "only service_role executes wrappers and private functions; anon/authenticated refused; schema usage correct",
+    "scope matrix: approved allows; missing/disabled/pending/unapproved denies; enabled care row alone denies; whole Care disabled plus scope allows pending reads only; absent/revoked/other role and wrong actor deny; revocation between application resolution and SQL read denies",
+    "access_events insert atomic with the read; read-write transaction (admin client rpc default); role-audit inserts succeed and failure denies",
+    "Doc 163 R2 items: immutability, owner isolation, create/replay concurrency, validator parity"
+  ],
+  "thenPrerequisites": ["exact source exception and current protected custody", "68 declared tests, HTTP route/method checks with intake off and on, HEAD behavior, headers on every staff response including errors, typecheck, build, browser staff journey"],
+  "activationPrerequisites": ["close the exposed-credential condition and rotate the service-role key", "real clinical_admin assignment for an adopted operator (names deferred as recorded)", "approved scope row with a named approver", "flag on", "each with Samuel's explicit authority"],
+  "unchanged": ["Doc 164 findings stand: material scope correction, three integration items, staff readback not operational", "Option B not reviewed", "R2 and R8 not re-reviewed", "R8 and Docs 160-163 closed", "application 8e85daa unchanged", "failed 790af2ce stays FAILED", "payment and security holds open"],
+  "notClaimed": ["tests", "typecheck", "build", "patch application", "database or SQL execution", "browser or runtime qualification", "staff access verified", "activation", "execution consent", "push or deployment consent", "human approval", "test credit"],
+  "executionConsent": false
+}
