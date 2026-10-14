@@ -1,0 +1,25 @@
+{
+  "doc": 162,
+  "title": "R8 applied-byte confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFIRMED_EXACT_FIVE_PATH_R8_APPLICATION_EQUALS_DOC160_BYTES_UNDER_ACTUAL_HUMAN_GRANT",
+  "humanGrant": { "quote": "DOC187_ACTUAL_HUMAN_R8_EXACT_FIVE_PATH_SOURCE_APPROVAL_20261014.txt 1875 B", "text": "I APPROVE THE EXACT CORRECTED R8 FIVE-FILE SOURCE EXCEPTION.", "decision": "DOC180_CORRECTED_R8_EXACT_FIVE_PATH_SOURCE_EXCEPTION_DECISION_READY_20261014.json", "payloadIdentity": "8a36051545d3f5068e23d236101165d501e7efdc995a48a5d929c26814c8b8b4", "payloadRecomputed": true, "proposal": "9e1ddbc05dbd61f8cd7269f96285931f1d0ff892", "scope": "only the five exact canonical paths and after-images; source application only", "excludes": ["queries", "tests", "new execution windows", "credentials", "production", "payments", "pushes", "deployment"], "provenance": "Root records direct user message in coordinator chat" },
+  "application": { "commit": "b28942eb26d0b732fae7b2d14f5e8fbee60a00ca", "tree": "cf719c27d870ce25fffe98244b8ad708fa080d8e", "parent": "14bdf5a44d285af12e2f5e59709aa305c9cc999d", "modifications": 5, "nonDocsChanges": 0, "app": "8e85daa tree 25507c2f untouched", "postApply": "b68019a719d833fe45172eec44889b752b4eba75 adds only APPLICATION_RECEIPT.json; five files unchanged" },
+  "files": [
+    { "file": "verify-proving-closure.ps1", "bytes": 14620, "sha256": "a153292c96626a4fbdbb5c697369e327a49cafac01fbb70a75e4ae419c112415", "blob": "1e6be1b89fd62ae4818de23aa1681c25c9964b86" },
+    { "file": "execute-admitted-synthetic-proving.ps1", "bytes": 35636, "sha256": "aaf3f093730b79578fc0017125b1da48b319f8f8941bcf64b8b6b3fdc7e43137", "blob": "529a0aca2b06046143f186d906fcbe8514e809a0" },
+    { "file": "SOURCE_MANIFEST.json", "bytes": 46451, "sha256": "e4cf642548e6996ae605b4a262429f099bbed934bb1c7f004859ddde3b682e55", "blob": "19ec711bb38dfd6d60e091affe9afb3b35be4700" },
+    { "file": "invoke-proving-with-observer-gate.ps1", "bytes": 25874, "sha256": "daa0d1edd2f96f82c921b858503ca67abb32b132a92c0ae191cb44dfa239e848", "blob": "119de678fe421141981a6551728e19ec9f6e91b1" },
+    { "file": "capture-proving-caller.ps1", "bytes": 17331, "sha256": "476f648f63446e475b221844f0ea82550c2d5de9ef22589e8bbc7e346ce58196", "blob": "e9ff91b35591a65d756fc8b65cb25a31802408d5" }
+  ],
+  "checks": { "blobsEqualProposed9e1ddbc0": true, "beforeStatesEqualR7Canonical1911873d": true, "worktreeEqualsBlobs": true, "rootFrozenCopiesIdentical": "DOC188_APPLIED_R8_EXACT_FIVE_SOURCE_FROZEN_20261014" },
+  "dispositionsUnchanged": { "doc160": "c751ad972cd9ebbb4cf9d78a85ed46dddbb8a127", "doc161": "f327ad3a74a66f01033ad1d40ae295d1be246e16" },
+  "enabled": "canonical closure now the R8 bytes the pure24 fixture pins (14620 B a153292c); fixture unchanged 5118b193; Doc 161 contract can now produce a meaningful result",
+  "remainingGap": ["Root section 6 scope binding for the one pure-unit run (no record yet)", "finite window and exclusive slot", "fresh absence of both output paths (absent now)", "pre-call hashes of fixture, applied closure and pwsh.exe", "fresh Core readiness and one call under Doc 161 acceptance", "original review of the actual result", "then the fresh 32-case counter window, ticket, comparison, admission and one call"],
+  "unchanged": ["ticket 790af2ce consumed FAILED, 93 files preserved, not reused", "application 8e85daa and completed qualification unchanged", "security and payment holds open", "no expected output is a pass"],
+  "notClaimed": ["controls run", "qualification", "execution authority", "execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
