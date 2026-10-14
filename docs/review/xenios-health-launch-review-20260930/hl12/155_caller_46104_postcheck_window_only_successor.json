@@ -1,0 +1,20 @@
+{
+  "doc": 155,
+  "title": "Single-PID caller postcheck: window-only successor comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "2026-10-14T18:10:11Z-18:10:19Z",
+  "verdict": "CONFIRMED_WINDOW_ONLY_SUCCESSOR_BYTE_IDENTICAL_EXCEPT_THREE_WINDOW_FIELDS_NO_DEFECT",
+  "records": { "old": "DOC154_EXACT_SINGLE_CALLER_POSTCHECK_BINDING_UNADMITTED_20261014.json 12740 B 33e0a6c7368049224d161cfe0c75876a7d8302a620bd843e84fe96f036faa37d", "successor": "DOC160_EXACT_SINGLE_CALLER_POSTCHECK_WINDOW_ONLY_SUCCESSOR_UNADMITTED_20261014.json 12740 B b2660a0216ee4c6033bf2266c488759ddca4e7c711fcd22f90867ddb01b6bb7d", "frozen": "DOC160_ACTUAL_ONE_POSTCHECK_WINDOW_ONLY_SUCCESSOR_FROZEN_20261014.json 6741 B b2555b67045198327aca79d0ea2b8fd4c63d9d6fa9d642aa50a436a130a5ef24" },
+  "comparison": { "sameLength": true, "differingLines": ["window.starts", "window.ends", "window.lastStart"], "jsonEqualWithOldWindowRestored": true, "unchanged": "payload 28e16546, command c23d2e31, query 25131136, options, pinned pwsh, output path, limits, closure interpretation, original preparedAt, PID 46104 with creation 16:10:45.2358933Z", "doc153CarriesOver": true },
+  "window": { "starts": "2026-10-14T18:04:37.000Z", "ends": "2026-10-14T18:24:37.000Z", "lastStart": "2026-10-14T18:24:27.000Z", "minutes": 20, "lastStartRule": "ends minus 10 s, same as old", "oneAttempt": true, "automaticExtension": false },
+  "outputAbsent": true,
+  "distinctWindow": "separate window under existing section 6 failed-run postcheck class; not an extension; not the consumed counter ticket or Doc 146 window; old window stays EXPIRED_NOT_RUN with 0 queries",
+  "stillRequired": ["Core acknowledgment of this exact successor", "Root sole admission", "Core final readiness and one call before 2026-10-14T18:24:27.000Z"],
+  "ifMissed": "NOT_RUN; no automatic extension",
+  "resultMeaning": { "closesCallerReservationOnly": "complete zero rows, or creation differing by more than 1 ms", "heldForSamuel": "matching, late, incomplete or ambiguous", "counter": "FAILED unchanged" },
+  "notClaimed": ["execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
