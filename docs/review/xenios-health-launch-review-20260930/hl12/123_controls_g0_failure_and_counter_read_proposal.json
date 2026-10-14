@@ -1,0 +1,48 @@
+{
+  "doc": 123,
+  "title": "Revision 21: controls G0 counter-read failure (evidence) and unapplied two-second counter-read proposal (source)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "application": { "sha": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "tree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "changed": false },
+  "tooling": { "sha": "3dd3d9667ba56859101b27abad1791777013c6de", "tree": "7a4ce7c382a1cb44981fb0df2790ece16def2ba0" },
+  "failure": {
+    "verdict": "ACCEPTED_AS_PRESERVED_G0_REFUSAL_EVIDENCE_ZERO_CONTROLS",
+    "core": { "commit": "0425d5509792217b4cbbb566c89f723bd1368a0e", "tree": "381c8fe7f719447a5b7ade748443557d47726f41", "prefix": "finalization-controls-doc118-g0-failure/" },
+    "root": { "path": "DOC118_CONTROLS_G0_FAILURE_ACTUAL_RAW_20261013/", "files": 16, "allByteIdenticalToCoreBlobs": true },
+    "hashes": { "ACTUAL_RESULT.json": "6307 B ef08e3fcfb03e6ad38da19ab1f772ef295179a539e46d0d04163d4be38575ac8", "INDEPENDENT_CLOSURE.json": "4083 B e7b59298", "OUTER_OBSERVATION.json": "1182 B bd1c7210", "PRE_INVOCATION_BINDING.json": "15204 B 56f3d1e8", "TOOL_EXECUTION_RECORD.json": "1796 B 4036e984", "raw/ADMISSION.json": "14334 B 6cf810d013b503bf09b19d5bde7ff1834387608235362bbe44e972f78d9eedf7", "raw/source": "nine inputs equal doc 118 bytes (parent 31674d82, fixtures 1661a218/f3e8af53/2663618f, slices 7c685cef/9587eb57, pins dd690c5b, R3 b98f7a25)" },
+    "ticket": { "mode": "doc114-finalization-controls", "output": "attempt-identity-r1", "pinsSha256": "dd690c5b", "frozenInputs": 9, "bounds": "20000/10000/30000/5000 ms, 512 MiB, 16384 B, 1/0/0", "window": "2026-10-13T23:42:44.602Z-23:57:44.602Z lastStart = ends-45 s", "utf8NoBom": true, "preInvocationBinding": "23:48:26.57Z nine inputs matched, output absent, parent not invoked", "consumed": true },
+    "parent": { "pid": 51472, "creationUtc": "2026-10-13T23:48:51.9054363Z", "exitUtc": "2026-10-13T23:48:53.8870548Z", "lifetimeMs": 1981.6185, "exitCode": 1, "observerPid": 35780, "cmdAncestorPid": 52764, "failedCommand": "Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory -OperationTimeoutSec 1", "parentLine": 64, "phase": "G0 before output creation and control children", "casesExecuted": 0, "childrenLaunched": 0, "outputCreated": false, "receiptCreated": false, "identityLoopExecuted": false, "capacityReading": null, "floorSatisfied": null },
+    "closure": { "observedUtc": "2026-10-13T23:49:18.2432249Z", "completedUtc": "2026-10-13T23:49:18.5179571Z", "observerPid": 41944, "queriedPids": [51472, 52764, 35780], "allAbsent": true, "outputExists": false, "postNinePinsMatch": true, "ticketUnchanged": true, "processStops": 0, "memoryRead": false, "scopeAdequate": "no child spawned; output dir precedes every spawn and was never created" },
+    "priorRuns": { "metadata1077": "rejected before any invocation", "r1": "42eb consumed, same G0 read failure, zero cases (80a778e3)", "r2": "49ca consumed, first case proved, second child identity failure, third not run (21f777df)", "aggregation": false },
+    "interpretation": "timeout says nothing about RAM; accepted R3 static parents and diagnostic parent read the same counter class without a timeout and succeeded (docs 111/113/120); the one-second bound was the failing element",
+    "toolTranscriptLabelled": "tool-returned text, not raw OS stderr"
+  },
+  "proposal": {
+    "verdict": "SOURCE_COMPATIBLE_WITH_RETAINED_LIMITS_NO_CORRECTION_NOT_RUNTIME_PERMISSION",
+    "core": { "commit": "78b591e2fe52f2085d1b9826184af0ee3508bafa", "tree": "0653495428e5dd890617791e12693432a7d1efeb" },
+    "root": { "path": "DOC122_REVISION21_COUNTER_SOURCE_REVIEW_READY_20261013/", "files": { "EXACT_DIFF.patch": "3431 B 4ded07e4273f4941b6a08ac0bb46ee8e96f82983967e06eacf34c99b6d89b69f", "BYTE_PROOF.json": "954 B", "ASSESSMENT.json": "4711 B", "PROPOSAL.json": "6144 B" }, "allByteIdenticalToCoreBlobs": true },
+    "base": { "parent": "60f64fc0 execute-admitted-finalization-controls-proposed.ps1", "bytes": 17188, "sha256": "31674d820569aa999c00f0d4520f84c01c55b776d41eee0d8899bd93a03084f5", "sameBytesAsFailurePacketParent": true },
+    "projection": { "hunks": 1, "preimageLines": "62-66", "preimageUnique": true, "oldLines": 5, "newLines": 28, "projectedBytes": 19074, "projectedSha256": "e605b2dc28216b497cf9a8e18142ac38318e1d1cac358dde97ceec130dbd9d1a", "matchesByteProof": true, "prefixUnchanged": true, "suffixUnchanged": true, "retainsOldPaths": "finalization-controls-identity-source-proposal / attempt-identity-r1 -> not an executable successor", "method": "textual application; not parsed/executed" },
+    "hunkSemantics": {
+      "osQuery": "Win32_OperatingSystem -OperationTimeoutSec 1 unchanged (line 63)",
+      "anchor": "Stopwatch started (66); parent age sampled once from Process.StartTime (67); NaN/Inf/negative -> COUNTER_PARENT_AGE_UNKNOWN",
+      "beforeQuery": "age+elapsed+2000 >= 30000 -> COUNTER_OUTER_BUDGET_UNAVAILABLE (exactly 2000 remaining refuses; strictly more proceeds)",
+      "query": "one Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory -OperationTimeoutSec 2 (72); thrown timeout terminates under ErrorActionPreference Stop before any output",
+      "afterQuery": "read >= 2000 ms or envelope >= 30000 -> MEMORY_COUNTER_READ_LATE even on successful return",
+      "shape": "row count must be 1; AvailableBytes/CommitLimit/CommittedBytes via PSObject.Properties (null when absent, no strict-mode throw); null/NaN/Inf/negative -> MEMORY_COUNTER_READING_UNKNOWN; failed [double] conversion terminates (not swallowed)",
+      "record": "original keys/values + counterOperationTimeoutSec 2, counterReadMs, counterBeforeOuterMs, counterAfterOuterMs (numbers)",
+      "derived": "osFree/available/commit MiB NaN/Inf -> RESOURCE_READING_UNKNOWN; negative commit headroom -> RESOURCE_FLOOR via unchanged line 88",
+      "floors": "three 512 MiB comparisons byte-identical",
+      "postValidation": "age+elapsed >= 30000 -> COUNTER_OUTER_BUDGET_EXPIRED (89); then unchanged LAST_START_EXPIRED, output creation, $fClock start",
+      "suffixDependence": "no later reference to $fMem or $fOs; $fResource used once",
+      "notAdded": ["retry", "warm-up", "fallback", "second query", "API substitution", "PInvoke/Add-Type/import", "loop/daemon", "stop authority"]
+    },
+    "budget": { "fenceProtects": "the counter read only", "ceilings": "work 20 s / finalization 10 s measured by $fClock after G0; not reservations", "authoritative": "independent OS creation->exit lifetime < 30000 ms; parent exit 0 or PRELIMINARY alone insufficient", "acceptancePredicate": "external lifetime < 30000 ms AND parent exit 0 AND three children exit 1 with exact evidence AND post pins AND independent closure", "optionalNotRequired": "add the age+Stopwatch test to the parent's final exit line so self-report matches the external gate (separate one-condition hunk)" },
+    "syntheticProvingMinimum": { "shadowGetCimInstance": ["zero rows -> MEMORY_COUNTER_READING_UNKNOWN", "two rows -> same", "row missing CommitLimit -> same", "null AvailableBytes -> same", "negative/NaN -> same", "sleep 2000 ms then valid -> MEMORY_COUNTER_READ_LATE", "throw -> terminating exit 1, no later output", "valid fast row below 512 -> RESOURCE_FLOOR", "valid fast row >= floors -> continues past line 89 with four numeric fields"], "firstCallMustAnswerOsShape": true, "ageBranches": "COUNTER_PARENT_AGE_UNKNOWN / COUNTER_OUTER_BUDGET_UNAVAILABLE / COUNTER_OUTER_BUDGET_EXPIRED read real Process.StartTime; not drivable without changing the slice; a ~28 s self-sleep fixture would need its own bounded parent and ticket; arithmetic verified by reading", "notA": ["controls run", "RAM measurement", "reliability claim"] },
+    "bindingBeforeAppliedSuccessor": ["new frozen namespace; patched parent with $fRoot/$fOut literals changed to a fresh attempt name", "three fixtures with only their two output literals changed", "byte-identical copies of the two R3 slices", "eight-row pin file: R3 and pwsh rows unchanged, six relocated rows with new hashes", "new finite ticket: new pinsSha256, new output, unchanged bounds, nine frozen inputs, real issuance window, explicit statement permitting the 2 s counter sub-operation", "applicable human-scope check", "fresh positive 512 MiB reading in the admitted run", "exclusive slot; external observer recording parent creation/exit/lifetime; independent closure of parent/ancestor/observer/children", "narrow byte confirmation of the final successor bytes (this hunk + literal changes, nothing else) before a ticket", "projection e605b2dc is not the successor; consumed tickets stay consumed"]
+  },
+  "unchanged": ["docs 117-122", "accepted head/SQL/app/static proofs", "Git-diff census limit", "browser 2048 floor", "fixtures, R3 slices, driver, flags, profiles"],
+  "executionConsent": false
+}
