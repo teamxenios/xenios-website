@@ -1,0 +1,44 @@
+{
+  "doc": 146,
+  "title": "Two-arm PerfOS diagnostic: actual result disposition",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "EVIDENCE_ACCEPTED_COMPLETE_TWO_ARM_DIAGNOSTIC_ENVIRONMENT_NOT_IMPLICATED_BLOCKING_PREDICATE_IS_BOUNDED_PERFOS_READ_IN_G0_SLICE",
+  "binding": { "core": { "commit": "5ee7f88f6fe4b5ad55ddd858dbc4b0b5cb1dfe7c", "tree": "4af23779aa9461abc1a069153a0a513c3b9de161", "parent": "bb3f8e62b7c98270d50eccf6aa286125f8302f8a" }, "receipt": { "path": "DOC146_TWO_ARM_PERFOS_ACTUAL_NATIVE_RECEIPT_20261014.json", "bytes": 15967, "sha256": "4e2f1d158b2f8d742c73c0b3ae4ce53294946062789b037a393204db4d6b262d", "rootArchiveIdentical": true }, "nativeOutput": { "path": "DOC146_ACTUAL_TWO_ARM_DIAGNOSTIC_FROZEN_20261014/NATIVE_OUTPUT.jsonl", "bytes": 3195, "sha256": "4b355298379a1eff299cafa363ec607cd58db8c8668e97babd2016a6353a244b", "records": 3 }, "namespaceUnchangedSince0bc62fe7": true, "applicationUnchanged": true, "authority": { "approval": "a2890065 (Doc 145 85af9b05)", "ticket": "006cd807", "slot": "f9ab2fc8", "frozenCommand": "d511ca13", "window": "2026-10-14T13:28:48Z-13:48:48Z, lastStart 13:48:28Z" } },
+  "completeness": {
+    "native": "chunk 31d34f, exit 0, no session, 799 tokens / 18000, 3 records",
+    "arms": { "ordinary": { "pid": 57700, "creationUtc": "2026-10-14T13:39:13.5635186Z", "exit": 0, "lifetimeMs": 2572.3237, "eof": "both", "stdoutBytes": 471, "stderrBytes": 0, "status": "QUERY_FAILED", "queryElapsedMs": 2170.0197, "exceptionType": "Microsoft.Management.Infrastructure.CimException", "nativeErrorCode": 1, "nativeErrorName": "Failed", "cimStatusCode": 1, "nativeBudgetAtLaunchMs": 609.4887 }, "rebuilt": { "pid": 57048, "creationUtc": "2026-10-14T13:39:16.2521134Z", "exit": 0, "lifetimeMs": 2583.125, "eof": "both", "stdoutBytes": 470, "stderrBytes": 0, "status": "QUERY_FAILED", "queryElapsedMs": 2160.6016, "exceptionType": "Microsoft.Management.Infrastructure.CimException", "nativeErrorCode": 1, "nativeErrorName": "Failed", "cimStatusCode": 1, "nativeBudgetAtLaunchMs": 3301.099 } },
+    "pair": "2 attempted, 2 complete, driver 34924, retries 0, stops 0, reservation not released",
+    "timing": { "externalUtcMs": 6014, "nativeWallMs": 5809.0489, "driverConservativeMs": 5926.6448, "externalMonotonic": null },
+    "postPins": "all four unchanged at 2026-10-14T13:39:41Z",
+    "outputAbsentBefore": "2026-10-14T13:35:56Z",
+    "complete": true,
+    "limitation": "metadataRejected true in both records: message IDs existed but failed the shape check and are null; codes recorded; not blocking"
+  },
+  "sampling": { "method": "new Date().toISOString() in the same orchestration step immediately before the native call; only a pure in-memory window guard and the single substitution between", "consistency": ["anchor 13:39:12.975Z", "driver created 13:39:13.0234587Z (48.5 ms later)", "native wall 205 ms below external UTC span (tool overhead)"], "verdict": "ACCEPTED_AS_SUFFICIENT_FOR_THIS_DIAGNOSTIC", "limitation": "order rests on the disclosed method and consistency, not independent proof; collector acceptance alone would not show it" },
+  "interpretation": {
+    "environment": "not implicated: identical codes and near-identical times in both arms (Doc 138 table row 1); second (rebuilt) arm also failed, so no warm-up rescue within ~3 s",
+    "timeoutCoincidence": "both failures ~160 ms after the 2 s provider timeout",
+    "hostHistory": { "unboundedReads": "succeeded (Doc 118 diagnostic parent; static CLI, affected-mode and browser R2 runners)", "oneSecond": "Doc 120: Timed out", "twoSecond": "R3 and both arms: generic Failed at ~2.16 s" },
+    "mostLikely": "the query takes longer than 2 s on this host and the expiry surfaces as a generic failure; inference strongly supported, not proven (no message ID retained, no recorded duration of a successful read)",
+    "notCredit": ["memory measurement", "G0", "counter", "browser", "customer", "release", "cause proof"]
+  },
+  "closure": { "arms": "57700 and 57048 handle-recorded exit 0 within lifetimes; each runs one CIM query and starts no process", "driver": "34924 ended with native exit 0, no session, 5809 ms", "cleanup": false, "stopsNeeded": false, "sufficientForRootReservationDecision": true, "residuals": ["driver exit from native transport only", "WMI provider-host activity not owned by this run"] },
+  "blockingPredicate": {
+    "predicate": "@(Get-CimInstance Win32_PerfFormattedData_PerfOS_Memory -OperationTimeoutSec 2) must return exactly one row with read time < 2000 ms (supervisor lines 148-152; same slice in counter parent and fixture)",
+    "refusesAtG0In": ["counter proving", "scheme proving (same supervisor)", "finalization controls"],
+    "sameDependency": "release diff-check runner G0: execute-admitted-exact-diff-check-r3.ps1 line 200, same class with -OperationTimeoutSec 1",
+    "unaffected": "runners that read the class without a timeout"
+  },
+  "smallestCorrection": {
+    "A_recommended": { "what": "take admission figures from Win32_OperatingSystem alone (already read at line 139; completed within 1 s under the rebuilt environment in R3)", "available": "FreePhysicalMemory tracked PerfOS AvailableBytes within 15-63 MiB in three successful runs (2100.75/2070.57, 2073.17/2010.46, 2086.35/2070.73 MiB), in either direction: same quantity sampled at a different instant; the counter reading is a second sample, not an independent safeguard; keep the 512 MiB floor", "commit": "FreeVirtualMemory (documented as unused available virtual memory = commit limit minus commit charge) with the 512 MiB floor; equivalence from documentation, not yet observed on this host", "effect": "removes the failing read instead of guessing a duration" },
+    "B": { "what": "keep the class with a longer bound", "weakness": "unbounded reads succeed but no duration recorded, so any bound is unproven; changes the 2000 ms late check, 30 s fence arithmetic and fixture timeout expectations" },
+    "scopeEither": ["counter parent", "fixture expectations (refusal cases rebased)", "supervisor slice", "manifest", "diff-check runner G0"],
+    "provingCheckA": "one bounded Win32_OperatingSystem read under the rebuilt environment returns exactly one row with finite non-negative FreePhysicalMemory, FreeVirtualMemory and TotalVirtualMemorySize, FreeVirtualMemory <= TotalVirtualMemorySize, within 1 s; rebased fixture refusal cases supply the negative side",
+    "owner": "Core proposes; nothing here authorizes it"
+  },
+  "next": ["Root reservation decision (may rest on closure section)", "Core G0-slice correction proposal (A or B, including diff-check runner), narrow review, proving check, fresh counter admission", "unchanged release path: scheme, controls, diff check, browser journey, manifest, security, release, deployment, served identity"],
+  "executionConsent": false
+}
