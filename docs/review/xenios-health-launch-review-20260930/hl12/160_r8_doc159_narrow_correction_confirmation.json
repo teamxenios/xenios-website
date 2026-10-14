@@ -1,0 +1,23 @@
+{
+  "doc": 160,
+  "title": "R8 narrow successor: Doc 159 correction confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFIRMED_DOC159_CORRECTION_EXACT_PINS_CASCADE_EXACT_R8_SOURCE_COMPATIBLE_WITH_DOC158",
+  "binding": { "commit": "9e1ddbc05dbd61f8cd7269f96285931f1d0ff892", "tree": "7cd4bf04dc7ba264d7930141b3b9dccce4e212ff", "parent": "134d246ca25d37b4109b2540b60e7cc14f6e1cc7", "newFiles": 11, "rootMirrorIdentical": 11, "bindings": "10118 B 740eb3751776ab27fd595bddd8ee0724d9c11c484e699c1e2a6e67095ab38d91", "completePatch": "27513 B a40cd0f2d3dddc21ebce0cb0b31c2e86fd5cfb9bb53a17c72b7d6cb8865054ed (five targets)", "narrowPatch": "10864 B 84f872ce3931aaaed2cc9a448b5f12fa1aad47788dd87e71130e6f6e46ea5d9b (four targets plus controls)", "parentAdds": "only the unadmitted control-template record; not reviewed; not the controls execution contract", "e280FilesUnchanged": true, "canonicalR7Unchanged": true, "outputRootAbsent": true },
+  "correction": { "order": "parse ID, parent ID and creation first (missing or invalid refuses); full identity incl. valid matching executable only inside self or known ID+creation branches (missing exe UNKNOWN, different exe MISMATCH); worker-child, reused-parent and reused-ID rows classified from ID, parent and creation with any executable kept, not required or validated", "otherwiseUnchanged": "gate binding and echo, row retention, refusal record, scheme lifetime, two quiets, 500 ms, 1 s query, 10 s limit, post-pins" },
+  "pins": [
+    { "file": "verify-proving-closure.ps1", "after": "14620 B a153292c96626a4fbdbb5c697369e327a49cafac01fbb70a75e4ae419c112415", "change": "classifier only" },
+    { "file": "execute-admitted-synthetic-proving.ps1", "after": "35636 B aaf3f093730b79578fc0017125b1da48b319f8f8941bcf64b8b6b3fdc7e43137", "change": "none, identical to e280" },
+    { "file": "SOURCE_MANIFEST.json", "after": "46451 B e4cf642548e6996ae605b4a262429f099bbed934bb1c7f004859ddde3b682e55", "change": "closure pin in counter and scheme only" },
+    { "file": "invoke-proving-with-observer-gate.ps1", "after": "25874 B daa0d1edd2f96f82c921b858503ca67abb32b132a92c0ae191cb44dfa239e848", "change": "manifest hash only; cap 46451 unchanged" },
+    { "file": "capture-proving-caller.ps1", "after": "17331 B 476f648f63446e475b221844f0ea82550c2d5de9ef22589e8bbc7e346ce58196", "change": "caller pin hash only; size 25874 unchanged" }
+  ],
+  "controls": { "file": "6871 B 5118b1939cf897cef0dec8e803cf5c9b74b20f16d0f729884a84164dcf63bd6f", "pinsClosure": "14620 B a153292c", "vectors": 24, "kept": 20, "added": ["reused ID no executable -> REUSED", "reused ID \\SystemRoot\\System32\\smss.exe -> REUSED", "Local-kind creation exactly 1 ms -> KNOWN_PRESENT", "Local-kind creation just past 1 ms -> REUSED"], "expectedOutcomesFollowByReading": true, "processQueryWriteNetworkCalls": 0, "run": false },
+  "held": ["Samuel's new exact five-path protected exception (e280 payload never asked, superseded)", "same-owner application and original applied-byte confirmation", "actual local run of the 24 controls under a reviewed execution contract, result recorded", "fresh independently authorized 32-case window and ticket with new gate argument, pins and R8 root; original comparison", "Core acknowledgment, Root admission, Core final readiness, one call"],
+  "unchanged": ["ticket 790af2ce consumed FAILED, 93 files preserved, no output reuse", "application 8e85daa unchanged", "security hold open, no remediation confirmed", "browser, diff, final manifest, provider and live verification separate"],
+  "notClaimed": ["controls run", "timing", "closure proof", "qualification", "execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
