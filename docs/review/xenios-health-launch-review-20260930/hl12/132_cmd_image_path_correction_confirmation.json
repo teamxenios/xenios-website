@@ -1,0 +1,37 @@
+{
+  "doc": 132,
+  "title": "CMD image path correction: narrow byte confirmation against Doc 130",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFIRMED_DOC130_CORRECTION_MET_SOURCE_COMPATIBLE_WITH_RETAINED_LIMITS_NOT_RUNTIME_PROVEN",
+  "core": { "commit": "82fe41df7bcd168e02c9dc28d778191bfa347946", "tree": "1fef61bc7c1fc4de6a3206342072627c9ce73e17", "parent": "a715a5bb502cfda0b119a04d22d0df56547e8241", "namespace": "sequential-synthetic-cmd-binding-successor-proposal/ (in-place edit of the unaccepted 9e5e545d namespace)" },
+  "rootPacket": "none registered at review time; Core blobs bound directly",
+  "files": {
+    "caller": { "bytes": 25455, "sha256": "b2225a0d8a199a85b7d08f86e2f8b7b5dee81cbd6665507c3c4d6252cfa452af", "blob": "81af0ac77444493f2c7993effa1907a3f6bde975" },
+    "executor": { "bytes": 17176, "sha256": "fa7f72d2fdcc00c5aebf55471bb7cfca03e705f622dc3d825ce87d15ce362258", "blob": "6bf35fe23c5cadc9567b5770accbc36b6a39bef8" },
+    "requirements": { "bytes": 11145, "sha256": "46f375d763142e8a8d7b4e31783409f245e7289f91cc93673f28eb2dfa5da14c", "blob": "40cb838e72d3530b54427b7f041b14d660c75861" },
+    "handoff": { "bytes": 16090, "sha256": "4e69a191a402d273a386ab797e5650875d6b8f095e87e85770b836594d4fba81", "blob": "3315c006b7f827b5b86951dfa1c0ad76de393887" },
+    "delta": { "bytes": 7671, "sha256": "1e1a5d49f1dbe44d1f81b53e969825807362a56673c5a0fd2b0a43821ee57e44", "blob": "9593770a4c989f6531ec032bb7ff034f27c63e53" }
+  },
+  "changesAgainst9e5e545d": {
+    "caller": "line 19 only: $lCmd='C:/Windows/System32/cmd.exe' -> $lCmd='C:\\Windows\\System32\\cmd.exe' (literal in single quotes; length unchanged; $lCmd uses still 199/202/235)",
+    "executor": "caller hash constant only -> b2225a0d; 25455-byte pin and all capture logic unchanged",
+    "requirements": "sourceSha256 and newCallerSha256 -> b2225a0d; supervisorDirectParent states C:\\Windows\\System32\\cmd.exe",
+    "handoff": "repins the four files; future-admission executor sourceSha256 fa7f72d2; doc130Correction block (dfbcbe3d, superseded diagnosis, no runtime attempt)",
+    "delta": "exactly the three changed files; changed lines equal the real diff"
+  },
+  "commitScope": ["3 .xenios continuity files", "5 namespace files above"],
+  "optionalGuardAdded": false,
+  "optionalProvingCheckExecuted": false,
+  "unchangedFromDoc130": ["allowlisted unquoted backslash literal", "separator-normalized discovery and observer matching", "direct CMD parent and unique live supervisor barrier", "retained identities/exits/lifetimes, EOF and caps", "gate before closure", "private -cmd-r3 outputs", "all bounds", "executor review"],
+  "remainingBeforeCounterRun": [
+    "Root decision on held R2 reservation (Doc 131 postcheck can inform it)",
+    "optional proving check: C:\\Windows\\System32\\cmd.exe /d /s /c exit 7 with caller launch settings -> exit 7, nothing created; else next startup barrier is first runtime evidence",
+    "fresh counter ticket binding caller b2225a0d/25455, executor fa7f72d2/17176, requirements 46f375d7, native command template for the executor path, disposition refs doc 130 and doc 132 commits, exclusive reservation, finite window, real 512 MiB supervisor admission, absent -cmd-r3 and attempt-counter-r1 outputs",
+    "owner acceptance only on native exit 0 + complete output, CALLER_EXECUTOR_CAPTURE_PASS, caller exit 0 under limit, gate PASS, independent closure, supervisor/children contracts"
+  ],
+  "unchanged": ["application 8e85daa", "tooling 3dd3d96", "frozen proving sources", "floors", "failures and occupied outputs", "security incident hold"],
+  "executionConsent": false
+}
