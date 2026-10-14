@@ -1,0 +1,19 @@
+{
+  "doc": 141,
+  "title": "Two-arm PerfOS diagnostic: new window approval comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "about 2026-10-14T12:54Z",
+  "verdict": "MATCHES_WINDOW_ONLY_CHANGE_AND_WINDOW_RULE",
+  "approvalRecord": { "path": "DOC141_ACTUAL_HUMAN_NEW_DIAGNOSTIC_WINDOW_APPROVAL_20261014.json", "bytes": 9331, "sha256": "8212b68c5549612508421997be6de4af6e489d0f45b3296ca032c56382f6cf2f", "boardCommit": "b99f1fe3850beda8f42c629089d904c78aa24c2c", "answer": "Approve the new 20-minute window", "decision": "c1a8e6a507752f3f25348300d4fda865032b1e000a0173c1dac5b747fd457a9c", "acknowledgedAt": "2026-10-14T12:43:01.000Z" },
+  "payloadIdenticalToDoc140Approval": ["actionContract", "sourceFiles", "runtime", "nativeEntry", "bounds", "arms", "output", "operation", "allowedOutput", "owner", "session", "task", "lease", "worktree"],
+  "immutableDiagnosticSource": "0bc62fe7 / d4d43d1b (Docs 138/139)",
+  "currentHead": { "commit": "bb3f8e62b7c98270d50eccf6aa286125f8302f8a", "tree": "072488c8ea8ad3ed28da8477f5ee84d93e25a88f", "adds": "expiry receipt + continuity on applied c7f852aa", "diagnosticNamespaceDiffSince0bc62fe7": "none" },
+  "oldWindow": "2026-10-14T12:11:24Z-12:31:24Z expired unexecuted (0 attempts, 0 queries); closed, not reused",
+  "newWindow": { "starts": "2026-10-14T12:43:01.000Z", "ends": "2026-10-14T13:03:01.000Z", "lastStart": "2026-10-14T13:02:41.000Z", "durationMinutes": 20, "lastStartIsEndsMinus20s": true, "oneAttempt": true, "renewable": false },
+  "completeResultRequires": "unchanged from Doc 140: native exit 0, no session, untruncated; two arm captures (ordinary then rebuilt) with identity, exit, EOF, hashes; 2/2 summary; unchanged pins; QUERY_COMPLETED or QUERY_FAILED per arm (never G0, pass or cause proof); distinct timing, monotonic null; otherwise INCOMPLETE with reservation held",
+  "rootItemsRemaining": ["custody", "slot", "pins", "absent output", "fresh fixed-path ticket", "substituted native command"],
+  "notClaimed": ["G0 result", "test credit", "release credit"]
+}
