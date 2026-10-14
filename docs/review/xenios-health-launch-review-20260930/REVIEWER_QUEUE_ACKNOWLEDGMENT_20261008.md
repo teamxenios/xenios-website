@@ -1203,3 +1203,5 @@ floors and governors. No execution consent. Last processed board tip `a9c631a`. 
 
 Closed and unchanged: docs 120–131, application `8e85daa`/`25507c2f`, tooling `3dd3d96`, consumed tickets. No execution consent;
 no authority inferred from review. Nothing was executed; no agents were used.
+
+Source27 binding note (2026-10-13 22:41 CDT): Root's `DOC130_SOURCE27_MINIMAL_CORRECTION_ORIGINAL_REVIEW_PROMPT_20261014.txt` requests the narrow byte confirmation of Core `82fe41df` (tree `1fef61bc`). Doc 132 at `6a27be67` is that confirmation. Root's `DOC130_MINIMAL_CORRECTION_REVIEW_READY_20261014/` copies of the caller, executor, requirements, handoff and delta are byte-identical to the Core blobs Doc 132 confirmed, so Doc 132 now also binds Root's packet. No second review; verdict unchanged: CONFIRMED, source-compatible with retained limits, not runtime-proven, no execution credit.
