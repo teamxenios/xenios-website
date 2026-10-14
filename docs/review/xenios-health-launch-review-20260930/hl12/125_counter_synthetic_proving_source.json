@@ -1,0 +1,34 @@
+{
+  "doc": 125,
+  "title": "Revision 22 B: counter-read synthetic proving fixture (source only)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "boardTipRead": "a9c631a",
+  "verdict": "SOURCE_COMPATIBLE_NO_REQUIRED_CORRECTION_SUPERVISOR_REQUIREMENTS_LISTED_NOT_EXECUTION_CONSENT",
+  "fixture": { "name": "counter-synthetic-case.ps1", "bytes": 7237, "sha256": "c43d4b22dd005088e48ac9d688c6b7664279f737d7a5c76d69ad59cfd770bdad", "core": "adce58de05795bccdbd2d042f3be8ec98a6c5694", "rootCopyIdentical": true, "crBytes": 0 },
+  "parentPin": { "line": "5-8", "sha256": "fc6ea41b6e728a2e8f43e226d83ec721571c2aa756ff9da1213f08ba2d197432", "mismatchToken": "SYNTHETIC_PARENT_PIN_MISMATCH (terminating before try)" },
+  "slice": { "parentLines": "62-89", "fixtureLines": "56-83", "identical": true, "lines": 28, "occurrencesParent": 1, "occurrencesFixture": 1, "sha256With28LinesAndTrailingLF": "58cf74d1c2e3861a (as Root states)" },
+  "shadow": { "mechanism": "script function Get-CimInstance (resolved ahead of the cmdlet); ClassName positional, OperationTimeoutSec named", "call1": "Win32_OperatingSystem timeout 1 else SYNTHETIC_OS_CALL_MISMATCH; FreePhysicalMemory 511*1024 KiB (low-os) / 512*1024 (valid-floor) / 1024*1024", "call2": "count==2, Win32_PerfFormattedData_PerfOS_Memory timeout 2 else SYNTHETIC_COUNTER_CALL_MISMATCH; call recorded before any throw", "defaultRow": "AvailableBytes 1024MB, CommitLimit 2048MB, CommittedBytes 1024MB" },
+  "cases": {
+    "MEMORY_COUNTER_READING_UNKNOWN": ["zero-rows", "two-rows", "missing-commit-limit", "null-available", "negative-available", "nan-available", "infinite-limit"],
+    "MEMORY_COUNTER_READ_LATE": ["late-read (Sleep 2000 ms then valid row)"],
+    "SYNTHETIC_COUNTER_THROW": ["counter-throws (propagation through @() to the slice catch; real CIM timeout text would surface as UNEXPECTED_SYNTHETIC_ERROR)"],
+    "RESOURCE_FLOOR": ["low-os 511 MiB", "low-available 511MB", "low-commit headroom 511", "negative-headroom -1"],
+    "valid": ["valid-floor 512/512/512 exact", "valid-fast 1024/1024/1024"],
+    "allCasesTwoCalls": true
+  },
+  "contract": { "expectedRefusal": "exit 1, exact token on stderr, stdout empty", "unexpected": "exit 2, SYNTHETIC_EXPECTATION_MISMATCH (wrong token, no token, or call count != 2)", "valid": "exit 0, one compact JSON line {kind SYNTHETIC_COUNTER_SLICE_ONLY, case, calls 2, ramMeasured false, releaseCredit false, resource}; asserts counterOperationTimeoutSec 2, counterReadMs < 2000, counterAfterOuterMs < 30000, floor 512, browserAdmission false, four timing fields ValueType/finite/non-negative, osFree/available/commit == expected MiB", "stdoutDiscipline": "no emitting statement before line 102 (List.Add, OrderedDictionary.Remove, Thread.Sleep return nothing)", "strictMode": "null-valued hashtable lookups and $fResource[$name] do not throw; $null -cne $null is false" },
+  "notDone": ["real CIM query", "RAM measurement", "file write", "process spawn", "clock or age manipulation", "parent-age branches (real fixture age; read-verified in doc 123)", "self-admission"],
+  "supervisorRequirements": [
+    "compare stderr tokens after trimming trailing CR/LF (Console.Error.WriteLine emits CRLF; requirements list token + \\n)",
+    "treat any stderr other than the exact expected token as failure (pre-try pin failure emits a full error record with exit 1)",
+    "pin fixture c43d4b22 and parent fc6ea41b before and after; re-derive slice containment textually (parent Contains fixture lines 56-83)",
+    "size work/aggregate ceilings for fifteen sequential pwsh children (each ~1-3 s; late-read +2000 ms); each child strictly < 5000 ms; 16 KiB caps; exit codes 1/0 expected, 2 = mismatch failure; no retries; no stops",
+    "optional robustness: late-read Sleep margin (e.g. 2050 ms) to remove any dependence on clock agreement under one attempt"
+  ],
+  "establishesWhenRun": ["exact slice refuses empty/multiple/missing/null/negative/non-finite readings", "refuses a late return", "propagates a throw", "applies the three floors incl. negative headroom", "accepts the exact floor", "records the four timing fields"],
+  "doesNotEstablish": ["RAM", "real two-second counter success on this host", "parent-age branches", "finalization controls", "Git diff census", "browser behaviour", "release readiness"],
+  "executionConsent": false
+}
