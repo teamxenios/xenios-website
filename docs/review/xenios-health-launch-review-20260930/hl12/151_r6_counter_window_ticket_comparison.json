@@ -1,0 +1,29 @@
+{
+  "doc": 151,
+  "title": "R6 counter group: actual window and ticket comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "2026-10-14T16:04Z-16:07Z",
+  "verdict": "CONFIRMED_COUNTER_R6_WINDOW_TICKET_COMMAND_INPUTS_MATCH_APPLIED_SOURCE_BOUNDS_AND_SECTION6_SCOPE_NO_DEFECT",
+  "records": { "ticket": "DOC123_SYNTHETIC_PROVING_ADMISSION_20261014.json 11343 B c73c8827771802317188c407432ae1d5c52ee68ab1f4b0bf60b319b1cd24125e", "admission": "DOC151_COUNTER_R6_ACTUAL_ADMISSION_20261014.json 6545 B e45de1492399da2a8c534e8175739a5b4745d48977668a585dbe59ab2ffa0eca", "reservation": "DOC151_COUNTER_R6_EXCLUSIVE_RESERVATION_20261014.json 2208 B 87d7aba3449527e4af0d6d7e2b0698ed0457ce153fd959abb7afea561b6f8be2" },
+  "source": { "applied": "240de0df7c6de6cfca8c9a20e882dfc1bd02a7bb", "tree": "bff718a17416c68e43b14a75348c20db7157250d", "coreCheckpoint": "37b15b7bfa76abcdf57fc9cffa5a5ecf441ff433", "doc150": "fb5c77773df287f627ec2f54b306b02bf9b255e6" },
+  "checks": {
+    "fixedTicketPath": "equals hard-coded path in supervisor, caller and executor",
+    "outputs": { "supervisor": "attempt-counter-r1", "caller": "caller-counter-cmd-r4", "executor": "executor-counter-cmd-r4", "allAbsent": true, "priorAttemptDirectoriesPreserved": true },
+    "bindingFields": "approved, mode, group counter, owner 01a0e098, exclusive reservation, readBudgetMs 2000, manifest 93a557cf, addendum 44413e31, doc128 8af08bc, doc129 cab6120, six non-empty references, reservation references agree",
+    "supervisorBounds": { "workMs": 90000, "finalizationMs": 10000, "aggregateMs": 120000, "childMs": 5000, "minimumAvailableMiB": 512, "childOutputBytes": 16384, "attempts": 1, "retries": 0, "processStops": 0 },
+    "callerBounds": { "callerMs": 180000, "failureReserveMs": 5000, "observerMs": 135000, "cmdMs": 125000, "supervisorDiscoveryMs": 5000, "closureMs": 10000, "preflightMs": 10000, "combinedStreamBytes": 16384 },
+    "executorBounds": { "outerMs": 210000, "callerMs": 180000, "captureMs": 185000, "identityMs": 5000, "preflightMs": 10000, "failureReserveMs": 5000, "combinedStreamBytes": 16384 },
+    "window": { "starts": "2026-10-14T16:00:36.000Z", "ends": "2026-10-14T16:20:36.000Z", "lastStart": "2026-10-14T16:17:51.000Z = ends - 165 s", "executorPreflightBefore": "2026-10-14T16:17:36.000Z", "minutes": 20, "format": "ms Z", "doc146Reuse": false, "offset": false },
+    "pins": "7 selected inputs equal manifest counter files in order; 7 selected + 5 additional match disk sizes and hashes; pwsh 301368 B 362a356c equals executor pin; cmd.exe 327680 B a6e3b3b2",
+    "cases": 25,
+    "nativeCommand": { "prefix": "set POWERSHELL_TELEMETRY_OPTOUT=1&& (36 B 063b76d42d199740276a601a2347e1994b1620bc080514718a5342d692a89d3b, Doc 137 fb0807b)", "rest": "ticket executor invocation + -AdmissionSha256 c73c8827", "quotes": false, "spaceBeforeAmpersands": false, "dotnet": false, "nativeLaunchUtc": false, "shell": "C:/Windows/System32/cmd.exe", "workdir": "C:/xenios-wt/tc25-app-manifest-20261012" },
+    "authority": "section 6 20041ef0 as compared in Doc 150; one counter group only"
+  },
+  "held": ["scheme", "controls", "browser", "diff check"],
+  "runLimits": "late, failed or incomplete fails; no memory, global closure, 32-bit, browser or diff credit; start before 16:17:51Z with executor preflight before 16:17:36Z; a missed start lapses the ticket, no extension or reuse",
+  "notClaimed": ["execution consent", "human approval", "test credit", "dispatch"],
+  "executionConsent": false
+}
