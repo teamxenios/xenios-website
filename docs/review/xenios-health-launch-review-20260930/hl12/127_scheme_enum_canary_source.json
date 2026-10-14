@@ -1,0 +1,20 @@
+{
+  "doc": 127,
+  "title": "Revision 23 B: scheme-enum canary test source (source only)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "SOURCE_COMPATIBLE_NO_REQUIRED_CORRECTION_SUPERVISOR_REQUIREMENTS_LISTED_NO_TEST_PASS_CLAIMED",
+  "file": { "name": "scheme-enum-synthetic-source.test.cjs", "bytes": 8050, "sha256": "ad9b6548e2219211564ab0030dda3ce30a1ee71d7a7905b67775b7eb2bb9a831", "core": "2dc4ec4eff6745b2cbb33c0f983ab683de10c17d", "rootCopyIdentical": true },
+  "pinnedInputs": { "old": "browser-target-observation-source-proposal/ql-browser-driver-observation-proposed.mjs b2f0901d", "new": "target-scheme-diagnostic-source-proposal/ql-browser-driver-observation-proposed.mjs 5c90b077", "mechanism": "whole-file sha256 asserted at module load (PINNED_DRIVER_BYTES)" },
+  "slice": { "start": "  const onAttachedTarget = (params, allowExpectedPage = false) => track(async () => {", "end": "  conn.on('Target.attachedToTarget', params => onAttachedTarget(params, true));", "uniqueAndOrderedAsserted": true, "verifiedUniqueInBoth": true, "oldLines": 26, "newLines": 32, "usesDemand": false, "freeIdentifiersSupplied": ["track", "evidence", "sessions", "origin", "phase", "caseName", "acceptingPage", "phaseOpen", "targetId", "contextId", "sid", "send", "fail", "URL", "Boolean", "Object"], "evaluation": "vm.runInNewContext(slice + '\\nonAttachedTarget;', context, {timeout: 1000}) returns the handler" },
+  "collaborators": { "track": "Promise.resolve().then(operation)", "send": "asserts Target.closeTarget with canary target id and null session; counts closes", "fail": "records first code", "sessions": "fresh Map", "evidence": "{targetAttachments: [], targetAttachmentRecordsOmitted: 0}" },
+  "tests": { "count": 19, "schemeCases": { "count": 15, "expected": ["HTTP", "HTTPS", "WS", "WSS", "ABOUT", "CHROME", "CHROME_UNTRUSTED", "CHROME_EXTENSION", "DEVTOOLS", "DATA", "BLOB (outer scheme)", "FILE", "OTHER_PROTOCOL (synthetic-private-canary-7db4: hyphenated valid scheme)", "UNPARSEABLE (relative)", "UNPARSEABLE (unbalanced IPv6 bracket)"], "refusal": "service_worker with acceptingPage false: one close + UNEXPECTED_BROWSER_TARGET in both slices" }, "matrices": { "count": 3, "combinationsEach": 8, "urls": ["about:blank -> ABOUT_BLANK/ABOUT", "canonical origin + suffix -> CANONICAL_ORIGIN/HTTP", "other https -> OTHER_ORIGIN/HTTPS"], "acceptance": "only acceptingPage && allowExpectedPage && type page && about:blank (matches slice predicate); sessions 1 else 0; close/fail inverse" }, "cap": { "attachments": 65, "records": 64, "omitted": 1, "closes": 65, "oldNewEqual": true } },
+  "assertionsPerRecord": ["urlSchemeClass equals expected", "exactly 15 keys (closed set)", "keys from browserLevelHandler onward boolean (hasQueryOrFragment may be null when unparseable)", "serialized record contains no canary byte (canary present in host/path/query/fragment/target/context/session)", "new record minus urlSchemeClass JSON-equals old record (incl. key order)", "old and new sandbox states identical"],
+  "notDone": ["driver import", "socket", "browser", "network", "application code", "test execution"],
+  "supervisorRequirements": ["pin the test file ad9b6548 and Node 20.19.0; the test pins the two drivers itself", "literal argv: node --test <file>; capture both streams under a cap; require exit 0 with 19 passing tests", "outer timing and independent closure", "pins must cover both driver files at the absolute records paths the test reads"],
+  "establishesWhenPassed": ["enum mapping for the extracted handler text", "privacy (no canary bytes)", "unchanged row shape and key order", "unchanged acceptance and refusal", "64 cap and overflow"],
+  "doesNotEstablish": ["browser evidence", "target ownership or cause", "diagnostic result", "release readiness"],
+  "executionConsent": false
+}
