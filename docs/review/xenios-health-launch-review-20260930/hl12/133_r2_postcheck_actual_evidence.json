@@ -1,0 +1,40 @@
+{
+  "doc": 133,
+  "title": "Actual Doc 131 R2 postcheck: evidence disposition",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "EVIDENCE_ACCEPTED_COMPLETE_SELECTED_RELATION_OBSERVATION_TIMING_FIELD_GAP_NOT_BLOCKING_ROOT_DECISION",
+  "core": { "commit": "1a63b45ef168a15d345b3fbc1d3512c6eb60b5a1", "tree": "11bad566578d7f448aaa1d45d8ada8d68c00522c", "parent": "cf4ab5ccac6be10cd3af959cf150107ad2415510" },
+  "rootArchive": { "path": "DOC131_R2_FAILURE_POSTCHECK_ACTUAL_IMMUTABLE_20261014/", "files": 6, "byteIdenticalToCore": true },
+  "admission": { "sha256": "211a5ec9f10467128cc949bbbc02f7583dce34049d42b12c0085a0b698c1d2c2", "rootCommit": "941cfb1771fd53202a071d0c400d8686fe57c3ad", "binding": "5fe688ae (verified earlier: encoded command decodes to reviewed payload)", "limits": "1 attempt, 1 query, 2 s provider, 10 s total, 32 rows, 16 KiB, 0 retry, 0 stop", "window": "03:42:40.367Z-03:44:40.367Z, lastStart 03:44:30.367Z" },
+  "evidence": {
+    "preflightUtc": "2026-10-14T03:43:29.1560279Z",
+    "nativeCommandSha256": "d0cea4f2 (operator record; tool result does not echo the command)",
+    "externalUtc": { "start": "2026-10-14T03:43:48.868Z", "return": "2026-10-14T03:43:49.950Z", "ms": 1082 },
+    "nativeElapsedMs": 756.3113,
+    "nativeExit": 0,
+    "sessionLeftOpen": false,
+    "terminalOutput": "R2_OBSERVATION_RECORD_WRITTEN\\r\\n (exact, untruncated)",
+    "queryUtc": { "start": "2026-10-14T03:43:49.3956033Z", "end": "2026-10-14T03:43:49.7982714Z", "ms": 402.668 },
+    "payloadStopwatchMs": 400.1658,
+    "result": { "operationStatus": "QUERY_COMPLETED", "observedRows": 0, "retainedRows": 0, "queryCount": 1, "retries": 0, "processStops": 0 },
+    "observationRecord": "352 B 23663c54dc095d8e116f209ad3dc4d6a78290c08073b6623dcbf97cb4609da35",
+    "retainedBytes": 383,
+    "postPinsUtc": "2026-10-14T03:44:11.5215908Z",
+    "postPins": "all nine unchanged; binding and admission unchanged; clean source"
+  },
+  "timeChecks": { "startInsideWindowBeforeLastStart": true, "returnBeforeWindowEnd": true, "queryNestedInsideCall": true, "stopwatchVsQueryUtcDeltaMs": 2.5, "preflightBeforeCall": true, "postPinsAfterCall": true },
+  "timingGap": {
+    "missing": "separate external monotonic duration (operator timer unavailable)",
+    "whyNotBlocking": ["completion is proven by native exit 0, no open session, exact marker and complete QUERY_COMPLETED record; the payload writes the marker only after flushing the record and only when the query completed inside its own 10 s check", "exceeding 10 s would need a ~9 s backward clock step during a 1 s call plus the tool elapsed and the monotonic payload stopwatch both being wrong in the same direction; three counters agree at sub-second scale"],
+    "remains": "deviation from the binding's evidence form; strictBindingFullySatisfied stays false; tool elapsed is not relabeled as the missing field"
+  },
+  "zeroRowMeaning": "WQL no-match returns empty without error; syntax/provider failure raises an error and would yield QUERY_FAILED_OR_INCOMPLETE under -ErrorAction Stop; so zero is a real negative: at 03:43:49Z no process had PID 58428 or 55812 and none had either as parent",
+  "residual": ["departed transient processes and their descendants not observed", "executor 43380 not covered", "no global absence, cleanup or group-closure claim"],
+  "forRootDecision": "observation + caller and CMD exits from retained handles + executor exit 1 from native transport + absent attempt-counter-r1 + unchanged R2 pins = the factual basis Doc 131 described; no further Doc 131 invariant prevents Root's reservation decision; open items are Root's: accept the timing-field deviation or not, and the release decision",
+  "notClaimed": ["strict-binding PASS", "execution consent", "reservation release", "R2 PASS", "counter/scheme/browser/control proof"],
+  "unchanged": ["Doc 132 source acceptance of 82fe41df", "R2 reservation HELD until Root decides"],
+  "executionConsent": false
+}
