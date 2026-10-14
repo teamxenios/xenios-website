@@ -1,0 +1,54 @@
+{
+  "doc": 152,
+  "title": "R6 counter run: failure evidence, closure and one method decision",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "FAILED_ZERO_CREDIT; EARLIEST_BOUNDARY_SUPERVISOR_G0_MEMORY_COUNTER_READ_LATE_LINE262; RESERVATION_CLOSED_EXCEPT_CALLER_46104_NEEDS_ONE_BOUNDED_OBSERVATION; METHOD_A_SELECTED_WITH_CONDITIONS_AND_REQUIRED_EXIT_TIME_RACE_CORRECTION",
+  "binding": { "receiptCommit": "6cc733c155ac590e142f44e1631b7c2327d429e4", "receiptTree": "f1744b0e22f02137d71a2d0737ceded2abdb7295", "rawFreeze": "5d63dacac29811ec56f20ef6c8e7ba0f5ba9ee46", "rawTree": "6c7ce07ffe4a5e4e2e2e89838aaa7643816e6640", "rootCollection": "DOC153_ACTUAL_R6_COUNTER_FAILURE_COLLECTED_20261014.json 4056 B 1583a02bf157e29eb241eb8b415e92ec7455b58d896b305da7c769dba4f869c1", "receipt": "33797 B 5a2c75c55d498ca32aa605dac10780e3b0057db099f3b2edafebabaf8f6bf8b5", "consumedTicket": "11343 B c73c8827", "archivedFilesMatch": 13, "toolingUnchanged": "240de0df..5d63daca", "postPins": "all twelve named" },
+  "boundary": {
+    "nativeCall": "16:10:44.441Z-16:10:51.970Z, exit 1, no session, output EXECUTOR_FAILED_OR_INCOMPLETE",
+    "earliest": "supervisor 64096 closed token MEMORY_COUNTER_READ_LATE line 262 via CMD-captured stderr",
+    "whichHalf": "read >= 2000 ms; process-age half impossible (supervisor lifetime 4930.45 ms)",
+    "timedReadCovers": "Add-Type cold compile (line 202), ABI size/offset assertions and K32GetPerformanceInfo call (line 203)",
+    "notEstablished": ["compile share of the time", "whether the read would have succeeded (late check precedes failure check)"],
+    "cases": "0 of 25; no attempt directory; no resource values; no exact read ms",
+    "chain": "observer exit row binds supervisor exit 1 at 16:10:51.326Z; caller ACTUAL_PROCESS_EXIT_FAILURE, no gate, no closure; executor CALLER_ACTUAL_LIFETIME_OR_IDENTITY_FAILURE"
+  },
+  "credit": "none: no counter, G0, memory, timing-fit, closure, browser, diff or release credit",
+  "missingClosure": {
+    "absent": ["observer gate", "independent closure", "caller receipt"],
+    "executorCallerRecord": "INVALID and not repaired: exit code 1 with zero-file-time exit and negative lifetime",
+    "mechanism": ".NET Windows HasExited reports exit once the exit code is not STILL_ACTIVE, which can precede the handle being signaled; ExitTime read in that gap is zero; caller had set exit 1 and begun terminating about 16:10:51.76Z",
+    "eofFalse": "consistent with executor throwing at the exit check before draining; inference, not evidence of a live writer",
+    "sameRaceInCaller": "L-Exit reads ExitTime right after HasExited without waiting; valid times for CMD, supervisor and observer in this run"
+  },
+  "reservation": {
+    "closedByRetainedEvidence": ["CMD 63252", "supervisor 64096", "observer 62652", "executor 61256 via synchronous native cmd return"],
+    "nothingFurtherStarted": "no attempt directory, no case child, no closure",
+    "notClosed": "caller 46104 shown to have begun terminating, not finished",
+    "boundedObservation": "Doc 131 failed-run postcheck class under section 6: one read-only lookup of PID 46104 only, compared with creation 2026-10-14T16:10:45.2358933Z; no census, no other process, no stop",
+    "ifAbsentOrDifferentCreation": "caller closed; Root may release the reservation as operationally closed",
+    "ifSameProcessPresent": "no stop; reservation stays held for Samuel",
+    "qualification": "FAILED regardless; no global closure claim"
+  },
+  "method": {
+    "selected": "A: bounded repair of the existing native adapter separating cold initialization from the fresh read (Doc 148 separate-initialization option)",
+    "conditions": [
+      "phases: timed init (Add-Type compile + ABI assertions, no API call) first; then fresh OS query < 1000 ms; then native read (K32GetPerformanceInfo call + validation only) < 2000 ms supervisor and controls parent, < 1000 ms diff runner",
+      "init bound 5000 ms is proposed, not measured; only measurement: combined >= 2000 and < 4930 ms in this run; nothing establishes it for colder states or other runners",
+      "init + OS + read inside the unchanged 30 s process-age fence; floors, refusals and outer bounds unchanged; arithmetic shown per runner",
+      "truthful semantics: KEEP_EXISTING_COMBINED_BUDGETS and Doc 149 combined wording superseded for future runs; requirements, manifest notes and receipt fields state the separate init bound; nothing labelled unchanged scope",
+      "diagnosability: distinct refusals for init late, init failed, read late, read failed; lateness must not mask failure; any G0 refusal persists measured init and read durations (numbers only, no resource values)",
+      "required companion correction: executor caller-exit read and caller L-Exit read ExitTime only after the retained handle is signaled, within existing bounds, failing closed otherwise",
+      "25 cases cover each new refusal; any change to case count, shared 24-line slice, manifest or pin chain disclosed and rebound",
+      "no new launcher, observer, cache, prewarm, persisted compiled assembly or test platform"
+    ],
+    "notSelected": "compiler-free adapter rewrite (replaces reviewed adapter code rather than re-timing it)",
+    "authority": "source-authoring direction only; application needs Samuel's actual protected-path exception after a frozen proposal and original review; runtime needs fresh admission and window; c73c8827 consumed"
+  },
+  "unchanged": "payment and security holds; application 8e85daa and accepted reviews not reopened; scheme, controls, diff and browser held",
+  "notClaimed": ["execution consent", "human approval", "test credit"],
+  "executionConsent": false
+}
