@@ -373,6 +373,7 @@ const KNOWN_NOINDEX_EXACT_PATHS = Object.freeze([
   "/care/provider-review",
   "/care/support",
   "/care/reviews",
+  "/care/request-intents",
   "/care/eligibility",
   "/care/consent",
   "/care/appointments",

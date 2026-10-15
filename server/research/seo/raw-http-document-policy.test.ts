@@ -594,6 +594,14 @@ describe("raw HTTP HTML and schema policy", () => {
     expect(schemaIdentities(response.html)).toEqual([]);
   });
 
+  it("recognizes the exact pending-request screen as private without opening child paths", () => {
+    const resolver = createRawHttpDocumentPolicyResolver();
+    expect(resolver.resolve("/care/request-intents")).toMatchObject({
+      status: 200, routeKind: "private", reason: "registered_private_document",
+      indexable: false, robots: RAW_HTTP_NOINDEX_ROBOTS, canonicalUrl: null,
+    });
+    expect(resolver.resolve("/care/request-intents/export")).toMatchObject({ status: 404, indexable: false });
+  });
   it("serves private and unknown documents with raw noindex and zero public schema", () => {
     const cases = [
       ["/admin", 200],
@@ -603,6 +611,9 @@ describe("raw HTTP HTML and schema policy", () => {
       ["/research/apply/review", 200],
       ["/care/provider-review", 200],
       ["/care/reviews", 200],
+      ["/care/request-intents", 200],
+      ["/care/request-intents?from=sign-in", 200],
+      ["/care/request-intents/private-export", 404],
       ["/review/seo", 404],
       ["/careers/missing", 404],
       ["/research/documents/private.pdf", 404],

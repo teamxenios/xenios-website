@@ -339,6 +339,10 @@ export function registerResearchApi(app: Express) {
     // them makes the feature look ABSENT instead of closed.
     "/early-access/assisted-orders/config",
     "/early-access/assisted-orders/catalog",
+    // Neutral request doors retain their own customer/Care guards downstream.
+    "/early-access/request-intents/config",
+    "/early-access/request-intents/catalog",
+    "/early-access/request-intents/staff",
   ]);
   const EARLY_ACCESS_OPEN_WRITE_PATHS = new Set([
     "/early-access/unlock",
@@ -369,6 +373,8 @@ export function registerResearchApi(app: Express) {
     // exact required agreement versions. Reaching it through the wall reaches
     // a refusal, never a stored request.
     "/early-access/assisted-orders",
+    "/early-access/request-intents",
+    "/early-access/request-intents/recover",
   ]);
   // The order routes carry an order number, so they cannot be a Set entry. They
   // are ANCHORED against the exact generated shape instead of a bare prefix:
@@ -729,7 +735,8 @@ export function registerResearchApi(app: Express) {
         (EARLY_ACCESS_OPEN_READ_PATHS.has(req.path) ||
           EARLY_ACCESS_ORDER_READ.test(req.path) ||
           EARLY_ACCESS_CART_READ.test(req.path) ||
-          EARLY_ACCESS_ASSISTED_ORDER_READ.test(req.path))) ||
+          EARLY_ACCESS_ASSISTED_ORDER_READ.test(req.path) ||
+          /^\/early-access\/request-intents\/staff\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(req.path))) ||
       (req.method === "POST" &&
         (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) ||
           EARLY_ACCESS_ORDER_WRITE.test(req.path) ||

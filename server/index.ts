@@ -137,7 +137,8 @@ import {
   partnerSubmissionsEnabled,
   resolvePartnerPortalPort,
 } from "./research/partners/portal-production";
-import { buildAssistedOrderProduction } from "./research/assisted-order/production-deps";
+import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from "./research/assisted-order/production-deps";
+import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
 import { createAssistedMemberHistoryReader, withAssistedOrderRequestHistory } from "./research/assisted-order/member-order-history";
 import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
 import { resolveAssistedOrderAuditAuthority } from "./research/assisted-order/audit-store";
@@ -883,7 +884,7 @@ async function composeAssistedOrderBridge(): Promise<
       ? (getSupabaseAdmin() as unknown as AssistedOrderRpcClient)
       : null,
   });
-  const assistedOrderComposition = buildAssistedOrderProduction({
+  const assistedOrderWiring: AssistedOrderProductionWiring = {
   env: process.env,
   auditAuthority: assistedOrderAudit.authority,
   requiredAgreements: earlyAccessPersistence.options.requiredAgreements,
@@ -938,7 +939,8 @@ async function composeAssistedOrderBridge(): Promise<
     log(assistedOrderAuditLogLine(event), "assisted-order");
   },
   log,
-  });
+  };
+  const assistedOrderComposition = buildAssistedOrderProduction(assistedOrderWiring);
   const assistedOrderViewers = createAssistedOrderViewerResolvers({
     resolveMember: async (req) => {
       const member = await resolveActiveMemberSilently(req);
@@ -1014,6 +1016,8 @@ async function composeAssistedOrderBridge(): Promise<
   app.get("/api/admin/research/assisted-orders/:requestId", requireSupabaseAdmin, assistedOrderDoor("GET", "/api/admin/research/assisted-orders/:requestId"));
   app.patch("/api/admin/research/assisted-orders/:requestId/status", requireSupabaseAdmin, assistedOrderDoor("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
+  // Preserve registration of all existing doors before the optional new composition.
+  registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,

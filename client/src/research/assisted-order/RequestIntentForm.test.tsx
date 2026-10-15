@@ -1,0 +1,276 @@
+// @vitest-environment jsdom
+import { act } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../../../../shared/research/assisted-order/form";
+import type { RequestIntentCatalogItem, RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
+import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
+import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
+import { RequestIntentForm } from "./RequestIntentForm";
+import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
+import { RequestIntentService, type CreateIntent, type StoredIntent } from "../../../../server/research/assisted-order/request-intent/service";
+import { sha256AssistedOrderHasher } from "../../../../server/research/assisted-order/defaults";
+import type { AssistedOrderViewer } from "../../../../server/research/assisted-order/ports";
+vi.mock("./assisted-order.css", () => ({ default: {} }));
+(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+const reference = "XRI-30000000000040008000000000000001";
+const receipt = { kind: "unapproved_selection_request" as const, requestId: "30000000-0000-4000-8000-000000000001",
+  publicReference: reference, status: "pending_review" as const, createdAt: "2026-10-14T12:00:00.000Z" };
+function item(id: string, clinical: boolean): RequestIntentCatalogItem {
+  return {
+    productId: id, variantId: id + "-variant", productName: "Synthetic " + id, family: clinical ? "clinical_formulations_503a" : "research_peptides_materials",
+    channel: "synthetic", specification: "Synthetic variant", format: null, packBasis: null, minimumQuantity: 1, maximumQuantity: 100, quantityIncrement: 1,
+    unitPriceCents: null, currency: "USD", workflowMode: clinical ? "provider_request" : "request_pricing",
+    actionLabel: "Add to request", accessNotice: null, researchUseOnly: !clinical, catalogVersion: "synthetic", priceVersion: null,
+    sourceSelection: { family: "synthetic", slug: id, variantId: id + "-source" },
+    selectableForReview: true, intentExclusion: null, clinicalReviewRequired: clinical,
+    sourceDisplayState: clinical ? "care_pathway" : "request_access", sourceVariantDisplayState: clinical ? "care_pathway" : "request_access", sourceRefusal: null,
+  };
+}
+function makeApi() {
+  return {
+    config: vi.fn(async () => ({ legal: [{ kind: "fixture-terms", version: "fixture-v1", label: "Synthetic legal requirement" }],
+      form: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((ack) => ({ id: ack.id, scope: ack.scope, copy: ack.copy, ...assistedOrderFormPair(ack) })) })),
+    catalog: vi.fn(async () => ({ items: [item("clinical", true), item("research", false)],
+      total: 2, page: 1, pageSize: 24, families: ["clinical_formulations_503a", "research_peptides_materials"], channels: [], workflowModes: [] })),
+    submit: vi.fn(async (_input: RequestIntentInput): Promise<unknown> => receipt),
+    recover: vi.fn(async (_key: string) => receipt),
+    staff: vi.fn(),
+    staffQueue: vi.fn(async () => ({ items: [], total: 0, page: 1, pageSize: 25 })),
+  } satisfies RequestIntentApi;
+}
+
+function makeRoundTrip() {
+  const base = makeApi(), rows = new Map<string, CreateIntent>();
+  const viewer: AssistedOrderViewer = { actorType: "member", memberId: "synthetic-member",
+    authUserId: "20000000-0000-4000-8000-000000000001", normalizedEmail: null,
+    earlyAccessSessionHash: null, capabilities: new Set(["assisted_orders:submit"]) };
+  const saved = (record: CreateIntent): StoredIntent => ({
+    receipt: { kind: record.detail.kind, requestId: record.detail.requestId, publicReference: record.detail.publicReference,
+      status: record.detail.status, createdAt: record.detail.createdAt }, fingerprint: record.fingerprint,
+  });
+  const service = new RequestIntentService({
+    catalog: { list: async () => base.catalog(), resolveMany: async (_viewer, identities) =>
+      identities.map((identity) => [item("clinical", true), item("research", false)]
+        .find((row) => row.productId === identity.productId && row.variantId === identity.variantId) ?? null) },
+    repository: {
+      findAttempt: async (owner, attempt) => { const record = rows.get(owner + ":" + attempt); return record ? saved(record) : null; },
+      createOrReplay: async (record) => {
+        const key = record.ownerHash + ":" + record.attemptHash;
+        if (!rows.has(key)) rows.set(key, record);
+        return saved(rows.get(key)!);
+      },
+    },
+    standing: { accepted: async () => true },
+    legal: { requiredAgreements: async () => [{ kind: "fixture-terms", version: "fixture-v1" }] },
+    hasher: sha256AssistedOrderHasher,
+    ids: { uuid: () => receipt.requestId, publicReference: () => "unused", opaqueToken: () => "unused" },
+    clock: { now: () => new Date() },
+  });
+  const api: RequestIntentApi = {
+    ...base, submit: (input) => service.submit(viewer, input), recover: (key) => service.recover(viewer, key),
+    staff: async (id) => {
+      const result = await service.staffRead({ subjectId: "synthetic-clinical-admin", roles: ["clinical_admin"] },
+        { rail: "care", state: "enabled", enabled: true, publicMessage: "", checkedAt: new Date().toISOString() },
+        { get: async (requestId) => [...rows.values()].find((row) => row.detail.requestId === requestId)?.detail ?? null, list: async () => ({ items: [], total: 0, page: 1, pageSize: 25 }) }, id);
+      if (!result) throw new Error("Not found");
+      return result;
+    },
+  };
+  return { api, rows };
+}
+
+let host: HTMLDivElement, root: Root;
+beforeEach(() => { sessionStorage.clear(); host = document.createElement("div"); document.body.append(host); root = createRoot(host); });
+afterEach(async () => { await act(async () => root.unmount()); host.remove(); sessionStorage.clear(); });
+async function render(api: RequestIntentApi) { await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} />)); }
+async function click(text: string) {
+  const button = [...host.querySelectorAll("button")].find((entry) => entry.textContent === text);
+  expect(button).toBeTruthy();
+  await act(async () => button!.click());
+}
+async function type(input: HTMLInputElement, value: string) {
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, value);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+async function prepare(api: RequestIntentApi) {
+  await render(api);
+  await click("Add Synthetic clinical to request");
+  await click("Add Synthetic research to request");
+  const quantity = [...host.querySelectorAll("input[type=number]")][0] as HTMLInputElement;
+  await type(quantity, "2");
+  await click("Continue to contact");
+  for (const [name, value] of Object.entries({
+    name: "Synthetic Customer", email: "synthetic@example.invalid", phone: "+15555550123",
+    shippingLine1: "1 Synthetic Street", shippingCity: "Test", shippingRegion: "TX", shippingPostalCode: "00000", shippingCountryCode: "US",
+  })) await type(host.querySelector('input[name="' + name + '"]')!, value);
+  await act(async () => (host.querySelector('input[name="age"]') as HTMLInputElement).click());
+  await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+  await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+}
+describe("mixed private request customer form source", () => {
+  it("round-trips the form through the real intent service to one memory repository and authorized staff readback", async () => {
+    const { api, rows } = makeRoundTrip();
+    await prepare(api); await click("Submit for review");
+    expect(rows.size).toBe(1);
+    expect(host.textContent).toContain(reference);
+    const detail = await api.staff(receipt.requestId);
+    expect(detail.lines.map((line) => [line.productId, line.quantity, line.reviewState]))
+      .toEqual([["clinical", 2, "pending"], ["research", 1, "pending"]]);
+    // Real component/service contract, synthetic identities/repository. Not HTTP, SQL or live authorization proof.
+  });
+  it("submits both exact identities and quantities only after review, with explicit acknowledgment facts", async () => {
+    const api = makeApi();
+    await prepare(api);
+    expect(api.submit).not.toHaveBeenCalled();
+    await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    const payload = api.submit.mock.calls[0][0];
+    expect(payload.lines).toEqual([
+      { productId: "clinical", variantId: "clinical-variant", quantity: 2 },
+      { productId: "research", variantId: "research-variant", quantity: 1 },
+    ]);
+    expect(payload.agreements.every((entry) => entry.accepted === true)).toBe(true);
+    expect(host.textContent).toContain(reference);
+    expect(host.textContent).toContain("Each item is pending review");
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(payload).not.toHaveProperty("paymentVerificationId");
+    expect(payload).not.toHaveProperty("medicalHistory");
+  });
+  it("marks before POST and retries a lost response using identical payload, key and acceptance timestamp", async () => {
+    const api = makeApi();
+    api.submit.mockImplementationOnce(async (payload) => {
+      const marker = JSON.parse(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)!);
+      expect(marker.key).toBe(payload.idempotencyKey);
+      expect(marker.state).toBe("in_flight");
+      expect(payload.agreements.every((entry) => entry.acceptedAt === marker.acceptedAt)).toBe(true);
+      throw new Error("synthetic lost response");
+    });
+    await prepare(api);
+    await click("Submit for review");
+    expect(host.textContent).not.toContain(reference);
+    const first = api.submit.mock.calls[0][0];
+    await click("Retry same request");
+    expect(api.submit.mock.calls[1][0]).toEqual(first);
+    expect(host.textContent).toContain(reference);
+  });
+  it("refresh restores only the same attempt and recovers its real saved reference, without storing clinical selections", async () => {
+    const api = makeApi();
+    api.submit.mockRejectedValueOnce(new Error("synthetic lost response"));
+    await prepare(api); await click("Submit for review");
+    const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)!;
+    expect(marker).not.toContain("clinical");
+    expect(marker).not.toContain("synthetic@example");
+    expect(Object.keys(JSON.parse(marker)).sort()).toEqual(["acceptedAt", "key", "state"]);
+    await act(async () => root.unmount());
+    root = createRoot(host);
+    await render(api);
+    expect(host.textContent).toContain("Check your earlier request");
+    await click("Check saved request");
+    expect(api.recover).toHaveBeenCalledWith(JSON.parse(marker).key);
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(host.textContent).toContain(reference);
+  });
+  it("malformed successful body never becomes a saved confirmation or a replacement key", async () => {
+    const api = makeApi(); api.submit.mockResolvedValueOnce("<html>");
+    await prepare(api); await click("Submit for review");
+    expect(host.textContent).not.toContain(reference);
+    expect(host.textContent).toContain("could not confirm");
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).not.toBeNull();
+  });
+  it("private staff display retrieves all pending lines without commercial controls", async () => {
+    const api = makeApi();
+    api.staff.mockResolvedValue({ ...receipt, contact: { fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid", mobilePhone: "+15555550123" },
+      agreements: [], lines: [item("clinical", true), item("research", false)].map((row) => ({
+        ...row, quantity: 2, reviewState: "pending", sourceVariantId: row.sourceSelection!.variantId,
+      })) });
+    await act(async () => root.render(<RequestIntentStaffReadback api={api} />));
+    await type(host.querySelector("input")!, reference);
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    expect(api.staff).toHaveBeenCalledWith(receipt.requestId);
+    expect(host.textContent).toContain("Synthetic clinical");
+    expect(host.textContent).toContain("Synthetic research");
+    expect(host.textContent).toContain("Pending clinical review");
+    expect(host.textContent).toContain("Pending internal review");
+    expect([...host.querySelectorAll("button")].some((button) => /approve|paid|fulfill/i.test(button.textContent ?? ""))).toBe(false);
+  });
+});
+
+describe("mixed request mounted-entry contracts", () => {
+  it("does not continue when the existing access/standing shell is closed", async () => {
+    const api = makeApi();
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} continuationEnabled={false} />));
+    await click("Add Synthetic clinical to request");
+    const next = [...host.querySelectorAll("button")].find((button) => button.textContent === "Continue to contact");
+    expect(next?.disabled).toBe(true);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("resolves a clinical link through the neutral catalog without adding it or redirecting", async () => {
+    const api = makeApi();
+    const clinical = { ...item("clinical", true), sourceSelection: {
+      family: "clinical_formulations_503a", slug: "clinical", variantId: "clinical-source",
+    } };
+    const catalog: RequestIntentApi["catalog"] = async (query) => ({
+      items: [clinical], total: 1, page: query.page ?? 1, pageSize: query.pageSize ?? 24,
+      families: ["clinical_formulations_503a"], channels: [], workflowModes: [],
+    });
+    const coupledApi = { ...api, catalog };
+    await act(async () => root.render(<RequestIntentForm api={coupledApi} storage={sessionStorage} entryIntent={{
+      family: "clinical_formulations_503a", slug: "clinical", variantId: "clinical-source", quantity: 2, action: "CARE",
+    }} />));
+    expect(host.querySelector('a[href="/care/schedule"]')).toBeNull();
+    expect(host.textContent).toContain("0 selected");
+    await click("Add linked selection for review");
+    const quantity = host.querySelector<HTMLInputElement>("input[type=number]");
+    expect(quantity?.value).toBe("2");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+});
+
+describe("Doc163 known first refusal versus prior uncertainty", () => {
+  it("shows not-saved guidance, clears the marker and lets a first refusal start a fresh explicit attempt", async () => {
+    const api = makeApi();
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(400, "current_acknowledgments_required"));
+    await prepare(api); await click("Submit for review");
+    const first = api.submit.mock.calls[0][0];
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(host.textContent).toContain("This request was not saved.");
+    expect(host.textContent).toContain("Reload the current requirements");
+    expect(host.textContent).not.toContain("Retry same request");
+    const edit = [...host.querySelectorAll("button")].find((entry) => entry.textContent === "Edit selection");
+    expect(edit?.disabled).toBe(false);
+    await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+    await click("Submit for review");
+    const second = api.submit.mock.calls[1][0];
+    expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
+    expect(host.textContent).toContain(receipt.publicReference);
+  });
+  it("retains the exact key, acceptedAt and edit lock when a lost reply is followed by a known retry refusal", async () => {
+    const api = makeApi();
+    api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(400, "current_acknowledgments_required"));
+    await prepare(api); await click("Submit for review");
+    const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
+    await click("Retry same request");
+    expect(api.submit.mock.calls[1][0]).toEqual(api.submit.mock.calls[0][0]);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(host.textContent).not.toContain("This request was not saved.");
+    expect(host.textContent).toContain("Retry same request");
+    const edit = [...host.querySelectorAll("button")].find((entry) => entry.textContent === "Edit selection");
+    expect(edit?.disabled).toBe(true);
+  });
+  it("keeps a first conflict or server failure uncertain and recoverable", async () => {
+    const api = makeApi();
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(409, "attempt_conflict"));
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_outcome_unconfirmed"));
+    await prepare(api); await click("Submit for review");
+    const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
+    expect(marker).not.toBeNull();
+    await click("Retry same request");
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(host.textContent).not.toContain("This request was not saved.");
+  });
+});

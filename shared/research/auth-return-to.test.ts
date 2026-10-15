@@ -39,6 +39,14 @@ describe("shared credential-free auth navigation", () => {
       .toBe("/research/member/catalog/research_vials/bpc-157?variant=fixture.1&qty=2&intent=buy_now");
   });
 
+  it("allows the exact private pending-review return without actor, token or nested authority", () => {
+    expect(researchAuthPath("/research/sign-in", "/care/request-intents"))
+      .toBe("/research/sign-in?returnTo=%2Fcare%2Frequest-intents");
+    expect(safeResearchReturnTo("/care/request-intents?actor=other&token=SECRET&role=clinical_admin"))
+      .toBe("/care/request-intents");
+    expect(safeResearchReturnTo("/care/request-intents/export")).toBeNull();
+  });
+
   it("drops duplicate, nested, overlong and malformed allowed parameters", () => {
     for (const query of ["tab=payment&tab=tracking", "from=https://outside.invalid", "tab=access_token%3DSECRET", "qty=101", "variant=" + "v".repeat(81), "variant=%252f", "variant=private%40example.invalid", "intent=paid"]) {
       expect(safeResearchReturnTo(`/research/account?${query}`)).toBe("/research/account");

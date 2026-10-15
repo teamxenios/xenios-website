@@ -1,3 +1,4 @@
+import CareRequestIntentPage, { CARE_REQUEST_INTENT_PATH } from "./CareRequestIntentPage";
 import { useLocation } from "wouter";
 import { normalizeCarePath } from "@shared/care/paths";
 import CareClinicianReviewQueuePage, {
@@ -25,6 +26,8 @@ export default function CareSection() {
   const path = normalizeCarePath(location);
 
   switch (path) {
+    case CARE_REQUEST_INTENT_PATH:
+      return <CareRequestIntentPage />;
     case CARE_CLINICIAN_REVIEW_PATH:
       return <CareClinicianReviewQueuePage />;
     case CARE_PUBLIC_PATHS.home:

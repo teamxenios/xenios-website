@@ -1,22 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
-import {
-  AssistedOrderCta,
-  useAssistedOrderBridgeState,
-} from "../assisted-order/AssistedOrderCta";
+import { useAssistedOrderBridgeState } from "../assisted-order/AssistedOrderCta";
+import { OrderRequestCta } from "../assisted-order/OrderRequestEntry";
+import { readOrderRequestContinuity, useOrderRequestMode } from "../assisted-order/order-request-mode";
 import { Suspense, lazy } from "react";
 
 /** The full canonical catalog, loaded on demand so the storefront shell stays small. */
 const FullCanonicalCatalog = lazy(() =>
-  import("../assisted-order/AssistedOrderPage").then((m) => ({
-    default: m.AssistedOrderPage,
+  import("../assisted-order/OrderRequestEntry").then((m) => ({
+    default: m.OrderRequestEntry,
   })),
 );
 
 import { EarlyAccessUnlockForm } from "./EarlyAccessUnlockForm";
-import { OrderEntryIntentNotice } from "./OrderEntryIntentNotice";
-import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "./orderEntryIntent";
+import { orderEntryIntentFromSearch } from "./orderEntryIntent";
 import { EarlyAccessStepper } from "./EarlyAccessStepper";
 import { EarlyAccessCatalogSection, type EarlyAccessCatalogSelection } from "./EarlyAccessCatalogSection";
 import {
@@ -109,7 +107,6 @@ export function clearEarlyAccessCustomerStorage(): void {
 
 export default function EarlyAccessRoute() {
   const entryIntent = orderEntryIntentFromSearch(typeof window === "undefined" ? "" : window.location.search);
-  const [entryResolution, setEntryResolution] = useState<OrderEntryIntentResolution | null>(null);
   const [state, setState] = useState<GateState>({ kind: "checking" });
   // Whether the SERVER says this customer has agreed. It starts false on every
   // load and is only ever set from a server answer, so a refresh re-asks rather
@@ -140,9 +137,16 @@ export default function EarlyAccessRoute() {
   // were active at once.
   const [embeddedOrderStep, setEmbeddedOrderStep] =
     useState<EmbeddedOrderStep>("products");
-  // Asked once, shared with the CTA below, so the storefront and the door
-  // cannot disagree about whether ordering is open.
+  // One mode probe is shared by CTA and catalog. Existing bridge readiness
+  // still governs its fallback; a failure of the new probe never means off.
   const bridgeState = useAssistedOrderBridgeState();
+  const requestMode = useOrderRequestMode(state.kind === "authenticated",
+    state.kind === "authenticated" ? state.expiresAt ?? "current-session" : "closed");
+  const retainedRequest = (() => {
+    if (state.kind !== "authenticated") return false;
+    try { return readOrderRequestContinuity(window.sessionStorage) !== "none"; }
+    catch { return true; }
+  })();
   const catalogRef = useRef<HTMLDivElement | null>(null);
   const nextStepsRef = useRef<HTMLDivElement | null>(null);
   const lastExpiredSessionRef = useRef<string | null>(null);
@@ -458,12 +462,7 @@ export default function EarlyAccessRoute() {
 
       {state.kind === "authenticated" && (
         <>
-        {entryIntent ? <div className="container-x pt-6"><OrderEntryIntentNotice
-          intent={entryIntent}
-          enabled={bridgeState.kind === "enabled"}
-          onResolved={setEntryResolution}
-          showAssistedAction
-        /></div> : null}
+        <div className="container-x"><OrderRequestCta mode={requestMode} /></div>
         <EarlyAccessCartMount
           onExitEarlyAccess={signOut}
           fallback={
@@ -559,11 +558,6 @@ export default function EarlyAccessRoute() {
                   separate order-request link, so a customer looking at the
                   storefront could not see most of what Xenios sells.
                 */}
-                {embeddedOrderStep === "products" ? (
-                  <div className="mb-4">
-                    <AssistedOrderCta />
-                  </div>
-                ) : null}
                 {/*
                   ALL PRODUCTS — the full canonical catalog, on the storefront
                   itself rather than behind a separate link. Same product
@@ -571,7 +565,7 @@ export default function EarlyAccessRoute() {
                   action router as the featured set above, so a row's button
                   says the same thing wherever the customer meets it.
                 */}
-                {bridgeState.kind === "enabled" ? (
+                {requestMode.kind === "mixed" || bridgeState.kind === "enabled" || retainedRequest ? (
                   <section className="mt-8" data-testid="early-access-full-catalog">
                     <h2 className="xenios-early-access-section-heading">
                       {embeddedOrderStep === "products"
@@ -581,12 +575,12 @@ export default function EarlyAccessRoute() {
                           : "Review and submit"}
                     </h2>
                     <Suspense
-                      fallback={<p className="xenios-order-notice">Loading the full research catalogue.</p>}
+                      fallback={<p className="xenios-order-notice">Loading the full request catalog.</p>}
                     >
                       <FullCanonicalCatalog
+                        mode={requestMode}
                         embedded
                         entryIntent={entryIntent}
-                        entryResolution={entryResolution}
                         continuationEnabled={agreed && blocked === null}
                         onStepChange={setEmbeddedOrderStep}
                       />

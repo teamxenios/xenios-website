@@ -15,6 +15,12 @@ import { createRoot, type Root } from "react-dom/client";
 import { act } from "react";
 import EarlyAccessRoute from "./EarlyAccessRoute";
 import { resetAssistedOrderConfigCache } from "../assisted-order/api";
+import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "@shared/research/assisted-order/form";
+import { REQUEST_INTENT_ATTEMPT_KEY } from "../assisted-order/request-intent-attempt";
+vi.mock("../core", () => ({ useResearch: () => ({
+  member: null, memberToken: null, memberChecking: false, memberSessionStatus: "signed_out", recovery: "none",
+}) }));
+vi.mock("../assisted-order/assisted-order.css", () => ({ default: {} }));
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -162,6 +168,7 @@ type AgreementFixture = "accepted" | "required" | "unverified" | "locked";
 
 function stubFetch(options: {
   bridgeEnabled: boolean;
+  mixedMode?: "off" | "on" | "unknown";
   agreement?: AgreementFixture;
   featuredUnits?: readonly unknown[];
 }) {
@@ -201,6 +208,26 @@ function stubFetch(options: {
     if (path.endsWith("/early-access/catalog")) {
       return jsonResponse({ ok: true, units: options.featuredUnits ?? FEATURED_UNITS });
     }
+    if (path.endsWith("/request-intents/config")) {
+      if (options.mixedMode === "unknown") return jsonResponse({ enabled: false, error: "request_intent_unavailable" }, 503);
+      if (options.mixedMode !== "on") return jsonResponse({ enabled: false, error: "request_intent_disabled" }, 503);
+      return jsonResponse({ enabled: true, requiredAgreements: [{ kind: "early_access_terms", version: "v1" }],
+        formAcknowledgments: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((ack) => ({
+          id: ack.id, scope: ack.scope, ...assistedOrderFormPair(ack), copy: ack.copy,
+        })) });
+    }
+    if (path.includes("/request-intents/catalog")) {
+      const query = new URL(path, "https://synthetic.invalid").searchParams;
+      const rows = CANONICAL_ITEMS.filter((row) => !query.get("family") || row.family === query.get("family")).map((row) => ({
+        ...row, unitPriceCents: row.workflowMode === "provider_request" ? null : row.unitPriceCents,
+        sourceSelection: { family: row.family, slug: row.productName.toLowerCase(), variantId: row.variantId },
+        selectableForReview: true, intentExclusion: null, clinicalReviewRequired: row.workflowMode === "provider_request",
+        sourceDisplayState: "request_access", sourceVariantDisplayState: "request_access", sourceRefusal: null,
+      }));
+      return jsonResponse({ items: rows, total: rows.length, page: Number(query.get("page") ?? 1),
+        pageSize: Number(query.get("pageSize") ?? 24), families: ["research_peptides_materials", "clinical_formulations_503a"],
+        channels: [], workflowModes: [] });
+    }
     if (path.includes("/assisted-orders/config")) {
       return jsonResponse({
         enabled: options.bridgeEnabled,
@@ -232,6 +259,7 @@ function stubFetch(options: {
     return jsonResponse({ ok: true });
   });
   vi.stubGlobal("fetch", stub);
+  return stub;
 }
 
 async function renderStorefront() {
@@ -257,6 +285,7 @@ beforeEach(() => {
   document.body.appendChild(container);
   root = createRoot(container);
   window.sessionStorage.clear();
+  window.history.replaceState(null, "", "/research/early-access");
 });
 
 afterEach(() => {
@@ -287,6 +316,57 @@ describe("the unified Early Access storefront", () => {
     expect(
       allProducts!.compareDocumentPosition(featured!) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
+  });
+
+  it("keeps the actual legacy catalog and wizard when the mixed feature is explicitly off", async () => {
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "off" });
+    await renderStorefront();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.textContent).not.toContain("Request intake is currently unavailable");
+    expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(1);
+  });
+  it("opens the mixed catalog without depending on the old bridge and shares one readiness probe with its CTA", async () => {
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on" });
+    await renderStorefront();
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(container.textContent).toContain("Estradiol");
+    expect(container.textContent).toContain("Clinical review required. Not a prescription.");
+    expect(container.textContent).toContain("Open request and recovery");
+    // A separate form config read retrieves its own current legal requirements.
+    // CTA and storefront together use ONE readiness probe, not two.
+    expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(2);
+  });
+  it("does not treat unavailable mixed readiness as permission to use the old submit path", async () => {
+    stubFetch({ bridgeEnabled: true, mixedMode: "unknown" });
+    await renderStorefront();
+    expect(container.querySelector('[data-testid="request-door-held"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+  });
+  it("keeps an existing intent marker on its own recovery path when the feature is off", async () => {
+    const marker = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+      acceptedAt: "2026-10-14T12:00:00Z", state: "in_flight" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, marker);
+    stubFetch({ bridgeEnabled: true, mixedMode: "off" });
+    await renderStorefront();
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(container.textContent).toContain("will not start a different request");
+  });
+  it("passes a clinical link to the real mixed form without adding or redirecting it", async () => {
+    window.history.replaceState(null, "", "/research/early-access?family=clinical_formulations_503a&slug=estradiol&variant=pcv_care_1&qty=2&intent=care");
+    stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    await renderStorefront();
+    expect(container.textContent).toContain("Selection from your link");
+    expect(container.textContent).toContain("Requested quantity: 2");
+    const add = [...container.querySelectorAll("button")].find((button) => button.textContent === "Add linked selection for review");
+    expect(add).toBeTruthy();
+    expect(container.textContent).toContain("0 selected.");
+    act(() => add!.click());
+    expect(container.textContent).toContain("1 selected.");
+    expect(window.location.pathname).toBe("/research/early-access");
   });
 
   it("omits a malformed Featured category without hiding or changing the product", async () => {
