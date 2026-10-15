@@ -1,0 +1,48 @@
+{
+  "doc": 178,
+  "title": "Mixed browser test extension and input bindings for 84178ce1",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T06:22Z-06:30Z",
+  "verdict": "SUFFICIENT; NO_MATERIAL_DEFECT; NEW_MIXED_BROWSER_TEST_SCOPE_HONESTLY_BOUNDED; FRAMEWORK_LF_CALLSITE_METADATA_BINDINGS_EXACT; DNS27_RECEIPT_APPLIES_TO_UNCHANGED_FENCE; NOT_ADMISSION_NOT_RESULT",
+  "method": "committed Git objects; one historical non-active framework scratch file read as a base; no command named an active source or scratch path",
+  "binding": {
+    "packet": { "commit": "d10e8852b220a94773002b124e961fd2599886ba", "tree": "6e811ec8c4275350e7e3397a36ee120244687344", "parent": "824c97d4", "files": 16, "PACKET.json": "3113 B 96f77389" },
+    "rebuilds": {
+      "harness.ts": "base 48579 B 60b025ee -> 57733 B fc8e200c, 15 edits",
+      "ql-browser-driver.mjs": "base 39288 B 08f62b4e -> 56680 B 54b313fb, 15 edits",
+      "prepare-input-pins.cjs": "base 9223 B a43c26fb (historical scratch) -> 9239 B 02988485, 5 edits",
+      "run-durable-browser.cjs": "base 43722 B 7fa93cf5 -> 43735 B ed4b059c, 9 edits",
+      "bind-and-run-durable-browser.cjs": "base 21466 B ed36ca86 -> 21508 B de97bd90, 19 edits"
+    },
+    "allEditsUniqueBothDirections": true, "originalsUnchanged": true, "isolatedAfterimagesOnly": true
+  },
+  "newTest": {
+    "gap": "old browser-r2 mounts only legacy assisted-order doors and cannot prove the mixed RequestIntentForm",
+    "harness": "real registerRequestIntentApi (request-intent/production.ts) with real catalog/service/RPC adapter; two synthetic offerings (research, clinical care_pathway), empty price map; RPC fake allows only research_rate_limit_hit (exact key/limits), find_attempt, create_or_replay; all other RPCs incl. staff refused; records capped at 8, exactly 2 pending lines, .invalid contact, exact-fingerprint replay-or-conflict; stated not SQL/constraints/race/audit durability/real Auth; mixed starts disabled and is enabled once by a fresh-phase control; staff flag always false; Care deps resolve no principal; audit hook throws if reached; mixed routes allowlisted fresh-phase only; staff GET allowed only to be denied; legacy SQL/retry/admin/payment-hold/reopen assertions retained",
+    "driver": "separate browser context; user Chrome untouched; pathway guidance, quantities 2 and 3, review panel; double click -> exactly one POST; marker xenios.assisted-order.intent-attempt.v1 (matches storage.ts) verified via CDP before each POST, digests only; saved lines equal catalog projection key for key, both families, acceptance times; dropped response + same-mount retry reproduces exact body/key/acceptedAt with no new record; drop + reload + marker-only recovery restores no PII/selection and reaches same record; staff GET 503 private_review_unavailable with unchanged state; census cross-check 3 records / 4 POST observations / 3 creates; all awaited UI strings exist in 84178ce1 form; requestIp falls back to socket address",
+    "scope": "own allowlisted app, not the real research wall or server/index.ts composition; volatile mixed records lost on process reopen, only legacy SQL reopen proves durability; representative synthetic interaction, not full production catalog, SQL, Auth, PostgREST or staff proof; stated correctly in code and evidence labels",
+    "disposition": "ACCEPTED"
+  },
+  "frameworkCallsiteDns": {
+    "frameworkEdits": "bindings only: roots, scratch, candidate/tree, harness/binding/notes/client-inventory/producer/outer/driver pins, build receipt 0aac8e0c and artifact inventory 72f5ae02 (Doc 176), public census 349 files 8888576 B (equals R2 artifact inventory public entries: 350 minus 1799814 B index.cjs); process-local core.autocrlf true->false in outer and producer matching LF R2 checkout; no timeout/cleanup/fence/schema comparison removed",
+    "callsite": "invoke-browser-g0-and-run.ps1 6691 B b1f8790e = accepted focused entry + grant prefix + existing Get-QlPin; hash-matched coordinator-admission.json approved:true, exact candidate/tree/sourceRoot, runId mixed-r1, port 5237, budget 5730000 ms, reservedUntil 09:00Z; notBefore >= 06:06:49.497Z, latestStart <= 07:24:30Z (bridge also enforces notBefore <= now <= latestStart); now+5760000 ms <= 09:00Z (start by 07:24:00Z); pins bridge and unchanged G0 947bba10; one G0 with old refusal checks, then all three raw readings >= 2048 MiB (1536 classification is not browser admission); existing bridge with 256 MiB heap; no grant exists; no approved:true fixture bundled",
+    "dns27": "controls (verify-loopback-lookup-controls-r2.cjs) extract and test the harness loopback lookup-guard block in isolation; block byte-identical in base and new harness (436 B f027d00c, present once); outer Chrome --host-resolver-rules untouched; receipt applies to the unchanged fence only, not the new harness's other content; grant guardControlsReceiptPin must name the exact existing receipt bytes; no fresh 27-control run claimed",
+    "disposition": "EXACT_AND_ADEQUATE"
+  },
+  "metadataWindowAuthority": {
+    "producer": "no application/engine import, no listener; pinned Node 20.19.0, exactly 256 MiB heap, output must not exist; cooperative 900000 ms budget with byte/count caps; lstat/realpath/read/hash every tracked non-test file and every private node_modules file; Git process-local autocrlf=false",
+    "metadataWindow": { "start": "2026-10-15T06:21:48.653Z", "end": "2026-10-15T07:00:00.000Z", "invocations": 1 },
+    "metadataPrerequisites": ["this comparison", "Core fresh READY", "exclusive slot", "new ticket", "copy scope"],
+    "metadataOutput": "complete inventory/hash UNKNOWN until actual native completion; partial output fails and is preserved; no automatic retry; then its own narrow currentness review before browser admission",
+    "browserWindow": { "start": "2026-10-15T06:06:49.497Z", "end": "2026-10-15T09:00:00.000Z", "gateCompletionBy": "07:24Z", "outerStartBy": "07:24:30Z", "budgets": "75 s fresh actions, 20 s reopen, 5730 s total unchanged", "rawPasses": 6, "requires": ["fresh 2048 MiB G0", "Core FINAL READY", "single-use Root ticket", "owned cleanup"], "extension": false },
+    "authority": "Docs 279/282 plus 223/239 cover ordinary test preparation; isolated scratch copies with no canonical or protected edits; no held protected application needed"
+  },
+  "notes": ["mixed cases share the unchanged 75 s fresh-action window with legacy cases; exceeding it fails closed; no fit promised; no budget enlarged", "Doc 175 discipline applies to metadata and browser groups: while active, no session (reviewer included) references source or scratch"],
+  "holds": ["security OPEN; staff reads HELD; staging decision Doc 247 pending", "phase A return PENDING", "SQL cases 228 NOT RUN", "production 7bba is not 84178ce1", "no payment, fulfillment, push or deploy"],
+  "unchanged": ["R8 and Docs 160-177 closed", "failed runs and consumed tickets as recorded"],
+  "notClaimed": ["admission", "invocation", "browser result", "metadata result", "SQL", "Auth", "staff", "deployment", "execution, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
