@@ -1,0 +1,30 @@
+{
+  "doc": 194,
+  "title": "KAN-31 urgent delivery: verdict, a correction to Doc 193, and the execution path",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "preparedAtUtc": "2026-10-15T21:30Z-21:31Z",
+  "request": "Samuel's urgent 60-minute M0 request",
+  "verdict": "UNCHANGED_CHANGES_REQUIRED_DOC193; NO_NEW_CANDIDATE_SINCE (Core 770eb7a is a separate source-only input-mechanism record, reviewed bytes untouched); NOTHING_ACCEPTED_TO_MEET_DEADLINE; NOTHING_EXECUTABLE_NOW",
+  "doc193": "36fe6e5bebb5da656f571492a14d696a33a49d14",
+  "deliveryChannel": "no Codex coordinator session reachable (ListAgents shows only offline Claude peers); delivery is this pushed record plus Samuel's relay; KAN-31 cannot be written from here, Root relays",
+  "correctionToDoc193": {
+    "said": "section 2 last sentence: fix changes 'only the finalizer, plus its pins in the launcher and supervisor FIXED'",
+    "actual": "finalize-managed-evidence.UNAPPLIED.mjs is not pinned by the launcher, supervisor, G0 entry or harness (checked by text search); correction changes only the finalizer file and later its own finalizer-admission pins",
+    "consequence": "finalizer defect does not block the browser HTTP/UI run or the Doc399 postcheck; blocks only the final PASS determination; the finding itself stands as written"
+  },
+  "executionPath": {
+    "earliestBlockingCondition": "authority and evidence gap, not a code defect: no verified secure input mechanism and no local launch custodian (Doc 403: not verified, not identified; Core 770eb7a: launcher only inherits a parent environment, no injector or custodian exists)",
+    "smallestCorrection": "Samuel or Root designate a real local launch custodian and an approved nonsecret-named injection method for the listed staging inputs (including service-role key and session secret) into the exact launcher process; no value retrieved or invented by reviewers or agents",
+    "alsoRequiredBeforeRun": ["guard checks: new guard's offline companion actually executed; G0 entry refuses without its receipt (28 passed, 0 failed, 0 provider calls, guard 4a8fd720, companion 88cabcac, Node 20.19.0)", "program checks: syntax, type and offline checks of the new programs", "source7: custody, fresh inventory (producer e0c2d7b9) and pins", "exceptions: protected-copy, egress and config exceptions plus materialization permission", "grant: Root's exact grant (resource, exclusivity, finite window) with realStaging flags and a secureMechanismReference", "memory: fresh G0 with all three readings >= 2048 MiB; last two attempts saw about 1623 and 1700 MiB available, so a resource change is likely needed", "approval: Samuel's exact approval of staging effects (one session, nonce exchange, agreement acceptance, limiter writes, 3 retained synthetic requests and events)"],
+    "afterRun": "best status HTTP_UI_CLEANUP_COMPLETE_PENDING_INDEPENDENT_DB; then separate Doc399 approval for the populated query or substitution, and its single execution",
+    "beforeAnyPass": "Doc 193 finalizer correction and reviewer re-review limited to changed bytes; then finalizer run on actual pins; then independent final-result review",
+    "parallelNowSourceOnly": "finalizer correction; executing offline guard companion and syntax checks once Root authorizes those local checks"
+  },
+  "holds": ["staff", "security (KAN-85)", "payment", "phase A", "manifest", "live verification"],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
