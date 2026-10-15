@@ -1,0 +1,57 @@
+{
+  "doc": 185,
+  "title": "e33 current-66 runner, pins, window, preparation and reuse",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T11:30Z-11:35Z",
+  "packet": "Root 5eb0084 DOC335 5002 B c24af141",
+  "controlling": "Docs 183 and 184 stay controlling and are not reopened",
+  "verdict": "RUNNER_PROFILE_ENTRIES_G0_PINS_WINDOW_SUFFICIENT_NO_DISCREPANCY; PREPARATION_PROPOSAL_SUFFICIENT_WITH_THREE_CONDITIONS; EXACT_TREE_REUSE_ACCEPTED_BOUNDED_FOR_BUILD176_FOCUSED220_GENERIC_TSC177_UNCHANGED_INPUTS_ONLY; NOT_ADMISSION_TICKET_COPY_OR_RESULT",
+  "identity": { "commit": "6e614a53ccef1db7e19d64000bc83f0c3a14d5bd", "tree": "7e164416125ab07610e314221fbae4baf75cfa07", "files": "10 documents + 4 .xenios ACK metadata files", "hashes": { "run-check-r2.cjs": "5de63524", "pins-r2.proposed.json": "fbe8e649", "invoke-first-build-g0.ps1": "4f2898d8", "NATIVE_ENTRY_CHECK.ps1.txt": "2f3fb42e", "NATIVE_ENTRY_REGRESSION.ps1.txt": "f1d4adf6", "PROPOSAL.json": "2dfc811a", "EXACT_LITERAL_DELTAS.json": "4c937a8d", "ENTRY_LITERAL_DELTAS.json": "b7341843", "EXACT_TREE_REUSE_ARGUMENT.json": "94604a46", "SOURCE_VERIFICATION.json": "c5b265a5" }, "rootDoc334FrozenCopiesIdentical": true },
+  "runner": {
+    "changes": "15 literal changes from Doc 182 runner b096bbb9, each once; forward gives 5de63524 (42235 B) exactly, reverse gives base exactly",
+    "binds": ["root, scratch (.../runner), candidate e33c12a9, tree ab4415f0, action label", "new frozen CURRENT_SELECTION", "every guard reference switched from historical to current selection", "receipt and text fields"],
+    "historicalSelection": "byte-identical; used only as provenance in the receipt",
+    "unchanged": "no guard, environment, cleanup, budget, cap or helper changed",
+    "profileDigestsRecomputed": { "method": "run 309 actual Vitest names plus three new names", "releaseControl55": "99bcf044", "auditStore5": "f998eba9", "inventory6": "4ddc27eb", "combined66Unique": "7a936af7", "oldNamesSameMethod": "1a67f0d4, combined 74d3fe24 = run 309 receipt" },
+    "guards": { "refusesOn": ["file count other than exactly 3, unexpected, duplicate or empty file", "assertion name empty, containing CR/LF/NUL, or duplicated globally", "status outside passed/failed/skipped/todo/pending"], "requires": ["each file's count, name digest, passed and skipped counts match, 0 failed/pending/todo", "66 assertions in total", "exactly one skip, the named PG16 test, in the release-control file", "reporter totals agree", "65 passed, success true, every file passed"], "consequence": "missing, extra, renamed or duplicate assertion fails" },
+    "expectedValues": "65 + 1 is an expected value, not a result",
+    "disposition": "SUFFICIENT"
+  },
+  "entriesG0PinsWindow": {
+    "g0": "947bba10 -> 4f2898d8: only candidate and tree result literals (1 each)",
+    "entries": "df44f7f0 -> 2f3fb42e (check), 2f863a58 -> f1d4adf6 (regression); seven declared changes each: scratch (3), G0 path, stop 12:30Z (3), action, candidate, tree, pins hash; all exact forward and reverse",
+    "entriesUnchanged": "reserves 360000/240000 ms, 1536 MiB floor on all three metrics, 30 s freshness and capture limits, 8 KiB stdout cap, empty stderr, pinned PS7 and Node",
+    "pins": { "count": 91, "composition": "81 root-relative (exactly the runner's required list) + 10 external", "equalToDoc182": 88, "changed": "runner (path + 5de63524), scanner 157ac000, test f9518705", "candidateDiff": "the two source files are exactly the files that differ between 84178ce1 and e33c12a9", "trackedPinsEqualE33LfBlobs": "53/53", "totalBytes": "102235961 = 102225494 + 4853 + 4195 + 1419" },
+    "window": { "record": "Root 328 d920d1c", "start": "2026-10-15T11:11:56.032Z", "stop": "2026-10-15T12:30:00.000Z", "extensionOrRetry": false, "entriesCarry": "12:30Z", "latestG0Completion": "12:24Z check, 12:26Z regression", "runnerStartLimit": "refuses if launch time + aggregate budget passes 12:30Z", "priorWindow": "window 302 closed; tickets 307 and 309 consumed" },
+    "windowCapacity": "with one heavy job at a time, preparation (<=360 s), its separate sufficiency review, and check then regression must all fit before 12:24Z/12:26Z; whatever does not fit lapses, no extension",
+    "disposition": "SUFFICIENT"
+  },
+  "preparation": {
+    "sourceCheckout": "detached git worktree add of e33c12a9 from existing full-history repository, process-local core.autocrlf=false, core.eol=lf, core.hooksPath=NUL, core.longpaths=true; tracked files then matched to verified 4893-entry LF archive; ZIP is not a substitute",
+    "dependencies": "read-only robocopy of donor node_modules into absent destination with /E /COPY:DAT /DCOPY:DAT /R:0 /W:0 /XJ; only native exit 1 accepted; nothing installed or overwritten; donor not modified",
+    "checksAfterCopy": "all 4893 source blobs, all 91 actual destination pins, lock and dependency provenance before READY; lock has 673 packages and no link entries",
+    "conditionsForRootGrant": [
+      "reparse check: /XJ silently skips junctions and symlinks so robocopy cannot refuse them; before copying run a donor census enumerating reparse points explicitly, any non-zero count refuses the copy; after copying compare names and lengths against a donor enumeration that does not skip reparse entries",
+      "worktree side effects: git worktree add writes metadata under the source repository's .git/worktrees/ and the new root depends on that repository's object store; the grant should name this, record the shared repository's local end-of-line and filter settings and that .gitattributes is unchanged, and include owned git worktree remove cleanup; no tracked phase A path is touched",
+      "copied caches: donor node_modules may carry caches from earlier runs (e.g. Vitest result caches); they affect ordering only, not pass/fail, but the inventory must record them so they are not silent"
+    ],
+    "disposition": "SUFFICIENT_WITH_THREE_CONDITIONS"
+  },
+  "reuse": {
+    "diff": "whole-tree diff 84178ce1 -> e33c12a9 is exactly the two tooling/test paths, so all 24 named blobs are necessarily identical",
+    "references": "every reference to either path in e33c12a9 (excluding docs and .md files): outside the two files they are comments (hardening-contract.ts, mount files), package.json script strings, .xenios registry rows, and test files outside all three scopes (core-site-protection.test.ts, mount.test.ts); the only executable import of the scanner is in the changed test",
+    "build176": "entry server/index.ts plus Vite client root, no glob, no scripts/ read; ACCEPTED as unchanged-runtime-input evidence; not a new e33 build or proof of served version",
+    "genericTypecheck177": "tsconfig includes client/src, e2e, shared, server and one preview script, excludes **/*.test.ts; no included file imports either path; ACCEPTED for unchanged generic scope",
+    "focused220": "none of the 16 files is or imports either path; their file reads target server/index.ts, client sections, sitemap, index.html and the SQL candidate, none changed; Vitest config has no setup files and is unchanged; ACCEPTED for that named scope only",
+    "mandatoryNewRuns": "release-control compiler and current-66 regression must still run fresh; aa521d7 credit does not transfer",
+    "disposition": "ACCEPTED_BOUNDED"
+  },
+  "limits": ["pins are expected values; actual destination bytes, donor inventory and copy file count/size not measured", "regression 309 stays FAILED; 66 tests NOT_RUN; 445/454 unmeasured", "phase A 40-path return still pending"],
+  "holds": ["browser resource requirement", "Doc 247 DB", "security exposure", "staff reads", "final manifest", "full suite", "static checks", "diff", "live verification"],
+  "actionableDisposition": "Root may issue a concrete preparation grant once it adds conditions 1-3; after the actual copy and required post-copy measurements, a separate preparation-sufficiency review follows; then for each of check and regression separately: fresh READY, slot, ticket, fresh G0 and external postcheck, all within 12:30Z",
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
