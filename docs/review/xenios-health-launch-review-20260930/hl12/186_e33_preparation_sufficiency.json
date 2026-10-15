@@ -1,0 +1,28 @@
+{
+  "doc": 186,
+  "title": "e33 preparation sufficiency",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T12:16Z-12:18Z",
+  "packet": "Root DOC343 3233 B 327c2736",
+  "verdict": "CONFIRMED_PREPARATION_SUFFICIENT_UNDER_DOC185; ALL_THREE_CONDITIONS_MET; FIRST_COPY_340_STAYS_FAILED; EXISTING_COPY_VERIFIED_BY_ROOT341_METADATA_CONTINUATION_WITHOUT_RECOPY; NOT_COMPILER_OR_TEST_CREDIT_NOT_ADMISSION",
+  "evidence": { "commit": "d63ef4391e509f756c59296ead5ff10482616655", "tree": "b21fabfdb15388e7966cb90032e0935cf154414b", "actual": "PREPARATION_R1_METADATA_CONTINUATION_ACTUAL.json 1255568 B b3474ee8", "command": "PREPARATION_R1_METADATA_CONTINUATION_COMMAND.json 17627 B b3bab358" },
+  "firstAttempt": "copy 340 11:58:34Z-11:59:19Z exit 1 SOURCE_COUNT_REFUSAL; capture truncated; zero source blobs verified; ticket b2c3e8e2 consumed; cause: ZIP has 5254 entries = 4893 files + 361 directory entries; FAILED and preserved",
+  "continuation": "Root 341 metadata-only, 'not an extension/reuse' of the copy ticket; 12:04:32Z-12:05:38Z (66 s); all 13 native git commands exit 0 with full capture; no recopy, test, G0 or browser",
+  "checks": {
+    "source": "4893 rows (path, blob, length) equal git ls-tree -r -l e33c12a9 as a set; manifest recomputes to 5ffdec9b, 196099837 B; LF ZIP files carry the same blobs",
+    "newRoot": "HEAD e33c12a9, tree ab4415f0, not shallow, clean status",
+    "pins": "91 actual destination pins equal fbe8e649 exactly in paths and hashes, 102235961 B; input pins identical before and after",
+    "condition1Reparse": "census enumerates every entry and records reparse points rather than skipping them; donor before, donor after and destination all 40581 entries: 37927 files, 2654 directories, 346250952 B, 0 reparse points; all three inventories same digest 6a81994e",
+    "locks": "package lock d25eb6b8 (673 packages, no links) and hidden lock af5d78e1 (531) identical in donor and destination",
+    "condition2SharedGitAdmin": "common directory C:/Users/sboad/Downloads/xenios-website/.git; exactly one admin entry added (source7), none removed; local core.autocrlf, core.eol, core.safecrlf, core.attributesfile and filter.* unset; effective autocrlf=true from system configuration, which the runner excludes; tracked .gitattributes (* -text) unchanged; info attributes absent; owned source7 removal PENDING",
+    "condition3Caches": "all 16 carried items listed: .vite (including a Vitest results.json), .vite-temp, 10 package tsbuildinfo and .eslintcache files; ordering only"
+  },
+  "limits": ["beyond the 28 pinned node_modules files, dependency files verified by name, type and length as Doc 185 asked, not by content hash; donor reuse, not a fresh install", "owned worktree removal still owed", "regression 309 stays FAILED; 66 tests NOT_RUN", "window closes 12:30Z; compiler latest G0 12:24Z and regression 12:26Z, run one after the other; anything that does not fit lapses, no extension"],
+  "beforeEachGroup": ["fresh FINAL_READY", "one-use ticket", "G0", "postcheck"],
+  "holds": ["browser", "security", "Doc 247", "phase A return", "final manifest", "live verification"],
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
