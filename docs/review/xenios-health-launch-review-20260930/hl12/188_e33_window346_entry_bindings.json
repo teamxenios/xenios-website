@@ -1,0 +1,31 @@
+{
+  "doc": 188,
+  "title": "e33 window 346 and its two entry bindings",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T13:43Z-13:45Z",
+  "packet": "delivered in chat; Root 083ef51/b2c1d75",
+  "verdict": "SUFFICIENT; NO_DISCREPANCY; EACH_NEW_ENTRY_DIFFERS_FROM_DOC185_ONLY_IN_THREE_STOP_LITERALS_1230_TO_1430; RUNNER_PINS_G0_SOURCE_PREPARED_COPY_UNCHANGED; NEW_SEPARATE_WINDOW; NOT_TICKET_ADMISSION_RESULT_OR_CONSENT",
+  "core": { "commit": "9b2ced1e7d28082ebe3d9b120ed84e66d5f6a417", "tree": "258cbe85e47fa1c33e930461839b0f3240170faf", "newFilesOnly": 5 },
+  "entries": {
+    "check": "NATIVE_ENTRY_CHECK_WINDOW346.ps1.txt 3365 B f2a13eee; base 2f3fb42e",
+    "regression": "NATIVE_ENTRY_REGRESSION_WINDOW346.ps1.txt 3395 B b6b22732; base f1d4adf6",
+    "transformation": "each base contains 2026-10-15T12:30:00.000Z three times; replacing all three with 14:30:00.000Z gives the new bytes exactly, reversing restores the base exactly; new copies contain no 12:30 literal",
+    "unchangedLiterals": "no path, action, command, reserve (360000/240000 ms), heap, G0 floor, freshness, stdout/stderr limit or cleanup literal changed"
+  },
+  "unchangedBlobs6e614a53To9b2ced1e": { "runner": "a22b4a84 (5de63524)", "pins": "080b55fc (fbe8e649)", "g0": "d1244593 (4f2898d8)", "oldEntries": "both byte-identical" },
+  "finalReady": "FINAL_READY_WINDOW346.json 5850 B 74f60f07, matches packet",
+  "freshCurrentness": "13:38:28-29Z: HEAD e33c12a9, tree ab4415f0, clean, not shallow; 91 recorded pins equal fbe8e649 exactly (102235961 B); no G0 or application command invoked; output absence as Core recorded it",
+  "window": { "root346": "8a9dd395: 13:35:29.704Z-14:30:00Z, no extension or retry; latest G0 completion 14:24Z compiler, 14:26Z regression, run one after the other; window 328 expired with zero compiler or regression invocations and is not reused", "root347": "64d87ece: human direction to obtain fresh independently authorized window, readiness, resource admission and tickets for compiler check and 66-test regression; preserve all failures; finish source7 cleanup", "consistency": "entries and runner's own start limit (launch time + aggregate budget at or before stop) both enforce 14:30Z" },
+  "limits": [
+    "before each group separately: fresh post-review READY, exclusive slot, one-use ticket, fresh CLI G0 (1536 MiB on all three metrics, under 30 s), owned closure with independent postcheck; CLI G0 cannot admit the browser",
+    "exact entry body runs in pinned PS7 exec_command with login false, never through -File on the .txt",
+    "source7 cleanup after required use and evidence under existing Doc 338 procedure; only the owned worktree may be removed",
+    "regression 309 FAILED, copy 340 FAILED and Doc 186 acceptance all stand"
+  ],
+  "holds": ["browser capacity", "Doc 247 DB", "security and staff", "phase A return", "final manifest", "live verification"],
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
