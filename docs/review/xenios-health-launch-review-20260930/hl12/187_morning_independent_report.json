@@ -1,0 +1,52 @@
+{
+  "doc": 187,
+  "title": "Morning independent report: mixed request-intake release",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "preparedAtUtc": "2026-10-15T12:47Z-12:48Z",
+  "method": "read-only: committed Git objects only; nothing run, queried or deployed; no credentials; no agents",
+  "overnightJob": "recurring 35c5a7a1 deleted at 07:47 local",
+  "liveStatus": "NOT_LIVE",
+  "summary": "No release candidate has been deployed and no customer-path evidence exists; no candidate is ready for the established release decision",
+  "verifiedEvidence": [
+    { "area": "source", "detail": "40-path application 47f49adf, then six-path correction 84178ce1 (keyed by member.cartScope)", "docs": "166-168, 174 (f7bee698)" },
+    { "area": "build", "detail": "literal npm run render-build on 84178ce1, Node 20.19.0/npm 10.8.2: PASS, archive 2d502f0a", "doc": "176 (dbb7b899)" },
+    { "area": "focusedTests", "detail": "16 files, 220/220 passed, 0 failed or skipped, archive 1155dfd2", "doc": "177 (d0a5be85)" },
+    { "area": "genericTypecheck", "detail": "npm run check -- --incremental false: exit 0, 0 diagnostics, archive 824c97d4", "doc": "177 (d0a5be85)" },
+    { "area": "browserMechanism", "detail": "mixed request-intent harness over two synthetic rows and volatile RPC: mechanism accepted, not run", "docs": "178 (72a2647a), 181 (c0aabe63)" },
+    { "area": "inputInventory", "detail": "3909 source + 37927 dependency pins, current for 84178ce1", "doc": "179 (798fc9b3)" },
+    { "area": "browserAttempts", "detail": "both REFUSED at external 2048 MiB G0 floor (host capacity; available 1623 and 1700 MiB); no browser started", "docs": "180 (92c7eb90), 182 (ca78a508)" },
+    { "area": "releaseControlCheck", "detail": "literal npm run check:release-control-plane on 84178ce1: PASS, compiler only, receipt 09d0e45e (aa521d7)", "doc": "183 (66da5feb)" },
+    { "area": "threeFileRegression", "detail": "84178ce1: FAILED, 61 passed, 1 failed, 1 named PG16 skip, receipt 1985e96a (47164e7); five NON_API_ROUTE_PATH findings for the directly mounted request-intent router, a release-control coverage gap", "doc": "183 (66da5feb)" },
+    { "area": "successorE33", "detail": "two-path scanner/test fix applied byte-exact under human-approved Doc 318/324 exception; custody returned and acknowledged", "docs": "183, 184 (8ae7c41a)" },
+    { "area": "current66Runner", "detail": "runner, profile, entries, G0, 91 pins and window sufficient; reuse of build/focused/generic-tsc credit accepted as unchanged-input evidence only", "doc": "185 (e4929c37)" },
+    { "area": "e33Preparation", "detail": "fresh full-history source and donor dependency copy verified: 4893 source blobs, 91 pins, zero reparse points; first copy attempt 340 stays FAILED", "doc": "186 (1dc11e10)" }
+  ],
+  "passedWithReceipts": [
+    "build PASS: 84178ce1 render-build, archive 2d502f0a (Doc 176)",
+    "focused tests PASS: 220/220 across 16 files, archive 1155dfd2 (Doc 177)",
+    "generic typecheck PASS: 0 diagnostics, archive 824c97d4 (Doc 177)",
+    "release-control compiler check PASS on 84178ce1: Core aa521d7, receipt 09d0e45e, log e8c95d04 (Doc 183); compiler only, does not carry over to e33c12a9"
+  ],
+  "qualificationStepsNotTests": ["input inventory (Doc 179)", "e33 preparation verification (Doc 186)"],
+  "notPassed": ["regression 309 FAILED", "both browser attempts REFUSED, never ran", "e33 compiler and current-66 regression NOT RUN"],
+  "openConditions": [
+    "successor fresh controls: e33c12a9 prepared and Doc 186 confirmed preparation at 12:18Z, but release-control compiler and current-66 regression never admitted or run before Root 328 window closed at 12:30Z; Root/Core no commits since 12:11Z; Root DOC344 records reviewer transport blocked ('Claude minimized'); new window, fresh READY, tickets and G0 required; owned source7 worktree removal still owed",
+    "mixed browser journey NOT RUN: needs a concrete host resource change from Samuel, Chrome preserved, then a fresh 2048 MiB G0",
+    "full suite, static checks, release diff and final manifest not done",
+    "hosted DB: Doc 247 staging restore pending human approval (Root DOC333); SQL cases (Doc 228) NOT RUN; managed persistence, Auth and PostgREST not exercised",
+    "privileged staff reads HELD until security exposure closed and service-role rotation confirmed",
+    "phase A: 40-path lease abb400e5 still active; return and finalizer PENDING",
+    "production state (Root-recorded provider metadata DOC332/339, reviewer did not query Render): live service runs commit 7bba4b6e, a 2026-09-21 docs commit, via manual deploy dep-db83lo8n... created 02:30:57Z; actor and reason unknown; not any candidate"
+  ],
+  "security": { "reported": "a replacement Supabase key was saved in Render", "notConfirmedByAnyArtifactSeen": ["runtime verification that production uses it", "other consumers of the old key", "old-key revocation", "closure"], "owner": "security owner must confirm these", "status": "OPEN; nothing in this report infers closure" },
+  "readiness": {
+    "47f49adf": "NOT_READY: superseded; its focused and typecheck failures led to the 84178ce1 correction",
+    "84178ce1": "NOT_READY: release-control regression FAILED",
+    "e33c12a9": "NOT_READY: source and tooling reviewed, environment prepared, but mandatory compiler and current-66 regression NOT RUN; browser journey, DB, security, staff, phase A, full suite and manifest conditions open"
+  },
+  "liveDeploymentAndCustomerPath": "NOT_PROVEN: no candidate deployed; production runs 7bba4b6e per Root's provider record; no customer-path evidence (no real request saved, read back or reviewed on a live candidate)",
+  "executionConsent": false
+}
