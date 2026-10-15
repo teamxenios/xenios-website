@@ -1,0 +1,46 @@
+{
+  "doc": 172,
+  "title": "First literal build of 47f49adf: actual evidence disposition",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T03:32Z-03:36Z",
+  "verdict": "LOCAL_LITERAL_BUILD_CREDIT_SUPPORTED_47f49adf_WINDOWS_HOST; POLLING_DEVIATION_RECORDED_NOT_MATERIAL_TO_BUILD_CREDIT_NO_WAIVER; DEPS_AND_ARTIFACTS_MAY_SUPPORT_SEPARATELY_ADMITTED_FOCUSED_TESTS_WITH_CONDITIONS; ZERO_TEST_TYPECHECK_BROWSER_SQL_PERSISTENCE_STAFFREAD_DEPLOYMENT_CREDIT",
+  "binding": {
+    "core": { "commit": "18fe8d29ce84e539e2a3392476e6b8050d669b91", "tree": "4279aa4b418d1a9ae570acd3fb08a468ffb739d7", "parent": "f3424ff4", "files": 68 },
+    "root": "Doc246 at 26fa69c; frozen copies equal Core files",
+    "pins": { "buildResult": "9666 B 870ee867", "supervisorReceipt": "53237 B 3813c166", "rawArchiveInventory": "13772 B afb03338", "executionCapture": "46425 B 761fba0b", "independentPostchecks": "145469 B deec0955" },
+    "ticket": "07024dd5 (Doc244 f819819) used once; no retry, stop, detach or relaunch"
+  },
+  "g0": { "entry": "8edcfb98", "nativeExit": 0, "wallMs": 2445.8561, "stdoutBytes": 999, "stderrBytes": 0, "osFreeMiB": 1725.51, "availableMiB": 1723.58, "commitMiB": 7762.57, "observedAt": "2026-10-15T03:12:02.818Z", "phasesMs": { "init": 1518.7, "os": 331.5, "read": 63.7 }, "outer": "G0_ACCEPTED_BUILD_ENTERING" },
+  "build": {
+    "command": "npm run render-build (npm install -g npm@10.8.2 && npm ci --no-audit --no-fund --production=false && node script/build.mjs) in private prefix",
+    "node": "v20.19.0", "npm": "10.8.2",
+    "npmCi": "added 531 packages; lock d25eb6b8 before and after",
+    "client": "Vite 7.3.5, 2312 modules, built in 14.66 s; OrderRequestEntry, RequestIntentEntry, AssistedOrderPage chunks present",
+    "server": "esbuild dist/index.cjs 1.7 MB in 2003 ms",
+    "child": "03:12:09.468Z-03:14:29.436Z, exit 0, NORMAL_EXIT, not timed out",
+    "supervisor": "exit 0, finalized 03:14:39.659Z; managed session exit 0 at 03:14:42.369Z; within 720 s cap ending 03:24:03.045Z",
+    "warnings": ["npm --production deprecation", "chunks over 500 kB advisory"]
+  },
+  "postchecks": {
+    "artifacts": "03:18:33.74Z: clean 47f49adf/a2a8e79d, 28 pins, exact 350 dist files 10687773 B, no reparse points, 22 selected installed files (16 private npm + 6 deps) rehashed, three lock copies d25eb6b8, inventory hash matches",
+    "processes": "03:16:54.98Z: 8 owned identities gone, no listeners, probes or stops; PID 82648 reused by unrelated Chrome (different creation/executable), untouched",
+    "firstAttempt": "17b77a read-only path-expression failure retained; 6e69ec parentheses-only correction passed; not a build retry"
+  },
+  "pollingDeviation": {
+    "fact": "Doc244 asked for <=30 s owner polling; one coordinator send_message held the owner ~49 s before the next write_stdin; earlier poll request time not captured; five polls of session 61342 ending in native exit 0",
+    "materiality": "NOT_MATERIAL_TO_BUILD_CREDIT: cadence governs observation, not execution; session kept; supervisor enforced its own budgets and monitoring; all evidence from supervisor files and native exit; no intervention needed or permitted",
+    "waiver": "none granted or inferred; Doc244 protocol not perfectly followed, recorded",
+    "recommendation": "avoid long coordinator calls between polls, or record cadence as best-effort"
+  },
+  "focusedTestUse": {
+    "disposition": "MAY_SUPPORT_SEPARATELY_ADMITTED_FOCUSED_TESTS_AND_TYPECHECK",
+    "conditions": ["immediately before use: rehash lock and 22 selected installed files, clean checkout at HEAD/tree, 28 pins, no change since 03:18:33Z", "own source/window/selection/pins/current admission; only heavy job; not authorized by this packet", "dependency integrity is lock-derived plus 22-file sample, not full transitive closure", "Windows-local; no Render/Linux, startup or browser parity", "run1 exists so the build runner would refuse a rerun in this scratch (by design)", "tests must not count this build as test evidence; dist is a local artifact, not a deployment artifact"]
+  },
+  "open": ["97 test declarations NOT RUN", "security exposure OPEN; privileged staff reads HELD", "disposable Auth/PostgREST bootstrap unmet (Root)", "live manual revision 7bba is not 47f49adf", "custody phase A abb400e5 active, return PENDING"],
+  "unchanged": ["R8 and Docs 160-171 closed", "790af2ce FAILED; tickets 404727c5, 264a4c65, 07024dd5 consumed", "payment and security holds open"],
+  "notClaimed": ["tests", "typecheck", "browser", "SQL", "persistence", "staff read", "deployment", "production", "waiver", "execution, admission, push or deployment consent", "human approval"],
+  "executionConsent": false
+}
