@@ -1,0 +1,41 @@
+{
+  "doc": 195,
+  "title": "KAN-31 finalizer provenance correction: changed bytes only",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T21:39Z-21:43Z",
+  "packet": "delivered in chat; Root relays to Jira",
+  "verdict": "PASS_SOURCE_ONLY; DOC193_FINDING_RESOLVED; NO_NEW_MATERIAL_DEFECT; BROWSER_APPARATUS_674f4ade_AS_CORRECTED_BY_51962b33_PASS_AT_SOURCE_SCOPE; DOC193_SECTION4_NOTES_STAND; NO_EXECUTION_GRANTED; DOC194_RUNTIME_PREREQUISITES_UNCHANGED",
+  "identity": {
+    "commit": "51962b332e7cd6957cfbcdbac34b481fbd61089b", "tree": "32bf0012ad734ea4ba78e8210a392a9b7270c3ae", "parent": "770eb7a6eb38fec3bc60a9c9f68ba92f557f6f8b", "localOnly": true,
+    "changedPathsInDirectory": { "finalize-managed-evidence.UNAPPLIED.mjs": "12461 B 97ea7529 (modified)", "finalizer-provenance-controls.UNAPPLIED.mjs": "7786 B c2628ebf (new)", "DOC193_FINALIZER_PROVENANCE_CORRECTION_UNAPPLIED.md": "7632 B 25127e87 (new)", "IDENTITY_MANIFEST.json": "13658 B f5bbafe3 (modified)", "INDEPENDENT_READBACK_INPUT_CONTRACT.json": "b81601f5 (modified)", "COMPLETE_UNAPPLIED_SOURCE_REVIEW_PACKET.md": "51978085 (modified)" },
+    "outsideDirectory": "only the parent's separate input-mechanism record",
+    "manifestArtifactsMatch": "22/22 by bytes and SHA-256",
+    "unchanged": "driver d98dab35, launcher, supervisor, G0, harness, adapter, guard, policy, rules; nothing pins the finalizer (Doc 194), so no cascade"
+  },
+  "findingPointByPoint": {
+    "executedToolArguments": "executedToolArgumentsPin read by pin; keys exactly project_id,query; project_id === 'tetynodzrtmdbuzgboro'",
+    "queryEqualsRenderedTemplate": "template pinned, must be 5782 B d5814a37; reviewer confirmed exactly one __BINDINGS_UTF8_HEX__ (inside decode(...,'hex')) and two __BINDINGS_SHA256__; expected UTF-8 is replace(hex of bindingRaw) then replaceAll(sha256(bindingRaw)), compared byte for byte with args.query",
+    "rootRecords": ["pinned approval, admission and consumption records with fixed schemas and Root's coordinator thread", "all three carry candidate, tree, run, project, template, bindings, query hash and bytes, and one ticket UUID", "oneAttempt and 0 retries; exclusive window; CONSUMED_ONCE_COMPLETE, attempts === 1, toolCallId", "chain pins: admission to approval, consumption to approval and admission, all three to tool-arguments pin", "consumption pins native result; approval and admission pin bindings, template, outer and browser evidence", "window ordering: approved <= admitted <= invoked; notBefore <= invoked <= latestStart; returned <= returnBy; recorded >= returned; browser cleanup ended <= invoked; approval and admission windows equal; exact ISO timestamps"],
+    "humanApproval": "actualHumanApprovalRecordPin must equal approval's humanApprovalRecordPin, matching SHA, nonempty reference, mode === 'EXACT_POPULATED_DOC399_QUERY'; no bounded-template authority accepted",
+    "noOpCallbackReplaced": "callback requires provenance-validated native-result SHA and compact-bindings SHA, runs after provenance validation",
+    "finalizerAndDriverIdentity": "main requires finalizer's own pinned path equal import.meta.url, and driver pin path plus d98dab35; Root binds finalizer's reviewed hash in external admission",
+    "outerReceiptFields": "runId, endedAt (toISOString), anchors[].closed, activeProbeCount, fixtureBinding all exist in unchanged supervisor; fixtureBinding matched by path, bytes and SHA, extra fields ignored"
+  },
+  "offlineControls": {
+    "status": "SOURCE_ONLY_NOT_RUN; all nine traced statically as written",
+    "positive": "satisfies every gate",
+    "refusals": ["one-byte query change (BEGIN READ ONLY; occurs exactly once in template, so mutation is real)", "wrong project (production reference)", "admission query-hash mismatch", "approval query-hash mismatch", "different consumed ticket", "two attempts", "late return", "empty human reference"],
+    "refusalBehavior": "each reaches its intended code first; mutated records re-pinned with dependent links refreshed; native result unchanged",
+    "optionalFurtherRefusals": ["extra tool-argument key", "mismatched human-record pin", "broken authority-chain pin", "mismatched evidence pin"],
+    "reliance": "controls must actually be run, with receipt pinned, before anyone relies on them"
+  },
+  "limits": ["records are trusted: hash consistency authenticates no human or provider; finalizer cannot verify human record's content (e.g. whether it names this exact query hash); Root must anchor actual human, approval, admission and consumption records; reviewer's independent final-result review will read them", "same file twice: approved tool-arguments file and executed capture are the same pinned file; Root's consumption record (toolCallId) attests actual execution", "lowercase hex: rendering must use lowercase hex as Buffer.toString('hex') produces; any other rendering refused"],
+  "whatCanProceed": "unchanged from Doc 194, nothing executable now; still required: verified secure input mechanism and local launch custodian (Doc 403; Core 770eb7a), executed guard companion and finalizer controls, syntax and offline checks, source7 custody and pins, exceptions, Root's grant and fresh G0 >= 2048 MiB, Samuel's approval of staging effects, separate Doc399 exact-populated-query authority, reviewer's final-result review; this correction gates only the final PASS",
+  "holds": ["staff", "security", "payment", "phase A", "manifest", "live verification"],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
