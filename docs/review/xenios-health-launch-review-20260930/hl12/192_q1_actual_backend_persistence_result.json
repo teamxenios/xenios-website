@@ -1,0 +1,35 @@
+{
+  "doc": 192,
+  "title": "Q1 actual backend persistence result (KAN-26 / XRM-2006)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T20:03Z-20:04Z",
+  "packet": "delivered in chat",
+  "verdict": "PASS_BACKEND_SQL_RESULT_ONLY; THREE_APPROVED_CALLS_ONCE_EACH_IN_ADMITTED_WINDOW_WITH_DOC191_LITERALS; EVERY_RETURNED_VALUE_EQUALS_EXPECTATION; PARTIAL_KAN26_27_DATABASE_EVIDENCE; NO_ISSUE_DONE; NOT_LIVE",
+  "identity": {
+    "evidence": { "commit": "e218151fcef60e01c7c57387f80a91f816f81ba7", "tree": "2fa35f510b42f33c851aa0176c2996b9124ce024", "files": { "A": "1167 B 1a429284", "B": "1227 B 321acf58", "C": "1110 B 16c643f5", "receipt": "Q1_EXECUTION_RECEIPT 5976 B ee61da0f", "admissionVerification": "LOCAL_ADMISSION_VERIFICATION 1825 B ecb6111d" }, "matchesRootDoc394FrozenCopies": "4741ac5eb9d68dbc1e2d43139341fc7d0043aef9" },
+    "approval": "Root DOC392: human answer 'Approve exact Q1 staging persistence qualification' bound to payload 38b39a7b, decision 030e6bf3 and Doc 191 (68979d46); Root's record, reviewer did not witness it",
+    "admission": "Root DOC393 23277 B d6a2a506 at a752dc64 carries exactly reviewed A/B/C queries (cf942474, ae3722c0, 9bd6ca42) against tetynodzrtmdbuzgboro; fresh get_project at 19:52:42Z showed ACTIVE_HEALTHY for that exact staging project",
+    "window": { "T0": "19:53:03.482Z", "A": "started 19:53:38.045Z, deadline 19:55:03Z, 2090 ms", "B": "started 19:53:52.109Z, deadline 19:58:03Z, 2241 ms", "C": "started 19:54:01.452Z, deadline 20:01:33Z, 1323 ms", "expiry": "20:03:03Z", "allBeforeExpiry": true, "ticketsConsumedOnce": true, "retriesExtraQueriesCleanupCancellations": 0, "slotClosed": "19:54:18.624Z" }
+  },
+  "results": {
+    "shape": "each response isError false, exactly one row",
+    "A": "create_before_commit: stored receipt kind unapproved_selection_request, status pending_review, request ID 7c805ac4-...-ab8c31, reference XRI-7C805AC401604F3E8AF5AE5454AB8C31, createdAt 2026-10-15T19:53:40.982556+00:00; fingerprint 2c291eaa",
+    "B": "independent_recovery in separate read-only call: read_only true; stored receipt identical to A's including createdAt to the microsecond; different_owner_hidden true; cross-call durability evidence",
+    "C": "controls_and_scoped_readback: all 12 fields equal expectation; fixture match, replay preserved receipt, conflicting fingerprint refused, invalid kind refused all true; request_rows 1, submission_events 1; Auth, PostgREST, concurrency, staff all false; booleans reachable only after every DO-block assertion passed, so raw row is direct evidence"
+  },
+  "limits": [
+    "scope covers backend SQL through execute_sql as postgres with SET ROLE service_role; not Supabase Auth, real Early Access cookie, PostgREST, application HTTP, catalog or legal eligibility, concurrency, browser, or staff and Care readback",
+    "clock domains: native createdAt 19:53:40.982556Z about 847 ms later than executor A return 19:53:40.135Z; now() is transaction start, so database clock at least about 0.85 s ahead of executor clock; preserved unadjusted, must not be compared or used for ordering; no native duration or wire-time claim",
+    "C literal ROLLBACK raised no SQL error, but no independent global transaction-closure assertion",
+    "one immutable synthetic request and one submitted event stay on staging permanently; access-event sequence advanced; future staging staff-queue reads will show them",
+    "fingerprint client-supplied and compared, not recomputed (Doc 191 limit 3)",
+    "fixture path must not be described as a live or customer path"
+  ],
+  "remainingForJira": { "KAN-26": "real customer session submits through app HTTP and PostgREST and gets server-confirmed reference", "KAN-27": "real response-loss, reload and same-attempt recovery through the app", "KAN-31": "isolated browser journey with mixed selection, saved reference, retry, unauthorized denial, then staff readback after security closure (KAN-85)", "release": "custody (phase A return), release manifest, deployment and live verification" },
+  "jiraCommentDraft": { "issue": "KAN-26", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
