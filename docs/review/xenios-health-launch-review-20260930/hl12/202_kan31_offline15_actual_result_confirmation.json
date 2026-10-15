@@ -1,0 +1,26 @@
+{
+  "doc": 202,
+  "title": "KAN-31 offline15 actual result: confirmation against Doc 201",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "2026-10-15T22:32Z-22:32Z",
+  "verdict": "CONFIRMED_OFFLINE15_R1_CLOSED_NO_MATERIAL_GAP_WITH_DISCLOSED_LIMITS; SYNTAX_AND_SYNTHETIC_MOCK_CONTROLS_ONLY; NO_BROWSER_TLS_PROVIDER_SQL_STAGING_SETUP_PRODUCTION_CREDIT; NO_2048_BROWSER_ADMISSION",
+  "identity": { "commit": "e105902d9581b98c57bd24cd86baca2dfcf0882c", "tree": "888f99a8e63379bfa31176edfab187f2ac95886a", "parent": "98ce20e1a85f9a3569b6932096ec2feb7aa1ee2e", "localOnly": true, "additiveFiles": { "EXECUTED_RESULT_AND_LIMITATIONS.json": "9972 B 2f0b73f1", "NATIVE_EXECUTION_AND_CLOSURE.json": "13924 B f60f4c4e", "RAW_FILES_LOSSLESS.json": "38487 B 059e5431", "RENDERED_CLOSURE_COMMAND.txt": "7457 B c83b3855" }, "rootDoc421": "3473 B 883ea678", "tc25CleanWithLongpaths": true },
+  "doc201Conditions": {
+    "invocation": "parent command 508 B hash matches: & '<pinned pwsh>' -NoProfile -NonInteractive -File '<parent path>' -AdmissionSha256 '8f7736fe...' then exit $LASTEXITCODE, pinned outer shell, login false; full pinned path and exact native exit; tool exit 0, outer output empty as expected",
+    "preflight": "22:27:34.407Z OFFLINE15_FRESH_PRECHECK_MATCH, clean, 19 inputs verified, 98ce20e1/3cf2137a, full history, output absent",
+    "parentReceipt": "receipt.json 28134 B 63ecd01b; status PRELIMINARY_OFFLINE_CHECKS_COMPLETE_REQUIRES_INDEPENDENT_CLOSURE, failure null, 0 stops; created 22:27:34.877Z (after window start, before lastStart 22:37:59.700Z), ended 22:27:39.815Z, 4573 ms; LIGHT 1108/1112/7774 MiB vs 512 floor",
+    "fifteenCases": "every row name and command equal plan case in order; passed, exit 0, hasExited, terminatedOwnedHandle false (self-exited), no failure; 32 raw files re-hash losslessly; 15 stderr files 0 B and separate; node v20.19.0; 10 JS syntax silent; TS 1 file 0 errors typecheck false; PS 2 files 0 errors; guard 28 passed 0 failed 0 provider calls; finalizer 9 controls 0 provider calls 0 authority records",
+    "tuples": "exactly 16 in order (parent then 15 rows); PID and creation strings verbatim in raw receipt text; executables pinned pwsh for parent and plan command[0] per row; tuple JSON 2294 B sha256 60b1a44e recorded before call with receipt hash",
+    "renderedClosure": "equals template 802baa69 with exactly three substitutions (tuple JSON, its hash, stop 2026-10-15T22:43:44.700Z); bytes and hash c83b3855 match bound command",
+    "closureResult": "native exit 0 22:28:19.979-22:28:21.882Z; two observations over 16 unique PIDs at 22:28:20.971Z and 22:28:21.779Z, both knownIdentitiesAbsent, observed empty, queries 323/293 ms; 1715 ms total (<10 s), before window end; no stops or retries; no Git-helper proof, no global guarantee claimed",
+    "post": "22:29:21Z 19 pins and parent still match; source and history clean"
+  },
+  "limits": ["outer channel combined; case streams separate and archived", "OS argv not observed; no exact exit time, timing bounded", "synchronous Git helpers checked by parent LASTEXITCODE, not PID proof", "outer transport process outside the 16 identities", "LIGHT ~1108 MiB gives no browser admission"],
+  "status": { "offlineControls": "browser-path prerequisites now executed and closed; source acceptance of offline binding (Docs 196, 197) unchanged", "stillOpen": ["Samuel's concrete authority for secure input setup and invoker", "Root's decision and authority records and browser grant with invocationActor", "source7 custody", "staging-effects authority", "fresh 2048 MiB G0", "Doc399 exact-query authority", "reviewer's final-result review"] },
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
