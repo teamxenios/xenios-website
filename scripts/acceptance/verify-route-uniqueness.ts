@@ -326,6 +326,98 @@ function resolveStaticStrings(
   return resolved === null ? null : [resolved];
 }
 
+/**
+ * Resolve only direct static mounts of a factory returning its own Express
+ * Router. Unsupported bindings stay NON_API_ROUTE_PATH. Runtime mounts,
+ * baseUrl, middleware order and relative req.path are not modified.
+ */
+function directMountedRouterPrefixes(
+  registration: ts.CallExpression,
+  unit: SourceUnit,
+  index: SourceIndex,
+): string[] | null {
+  if (!ts.isPropertyAccessExpression(registration.expression)
+    || !ts.isIdentifier(registration.expression.expression)
+    || registration.expression.expression.text !== "router") return null;
+  let parent: ts.Node | undefined = registration.parent;
+  while (parent && !ts.isFunctionDeclaration(parent)) {
+    if (ts.isArrowFunction(parent) || ts.isFunctionExpression(parent)) return null;
+    parent = parent.parent;
+  }
+  if (!parent || !ts.isFunctionDeclaration(parent) || !parent.name || !parent.body) return null;
+  const factory = parent;
+  const factoryName = factory.name!.text;
+  const declarations = factory.body!.statements.flatMap((statement) =>
+    ts.isVariableStatement(statement) ? [...statement.declarationList.declarations] : []);
+  const routers = declarations.filter((declaration) =>
+    ts.isIdentifier(declaration.name) && declaration.name.text === "router");
+  const declaration = routers.length === 1 ? routers[0] : undefined;
+  const initializer = declaration?.initializer;
+  if (!initializer || !ts.isCallExpression(initializer)
+    || !ts.isIdentifier(initializer.expression) || initializer.arguments.length !== 0) return null;
+  const constructorName = initializer.expression.text;
+  const constructorImport = unit.imports.get(constructorName);
+  if (constructorImport?.module !== "express" || constructorImport.imported !== "Router"
+    || factory.parameters.some((parameter) => !ts.isIdentifier(parameter.name)
+      || ["router", constructorName].includes(parameter.name.text))) return null;
+  const last = factory.body!.statements.at(-1);
+  if (!last || !ts.isReturnStatement(last) || !last.expression
+    || !ts.isIdentifier(last.expression) || last.expression.text !== "router") return null;
+
+  let escapedRouter = false;
+  const inspectRouter = (node: ts.Node): void => {
+    if (ts.isIdentifier(node) && node.text === constructorName
+      && node !== initializer.expression) escapedRouter = true;
+    if (ts.isIdentifier(node) && node.text === "router"
+      && node !== declaration!.name && node !== last.expression) {
+      const access = node.parent;
+      const call = access.parent;
+      if (!ts.isPropertyAccessExpression(access) || access.expression !== node
+        || !ts.isCallExpression(call) || call.expression !== access
+        || ![...ROUTE_METHODS, "use"].includes(access.name.text)
+        || (access.name.text === "use" && call.arguments.length !== 1)) escapedRouter = true;
+    }
+    ts.forEachChild(node, inspectRouter);
+  };
+  inspectRouter(factory.body!);
+  if (escapedRouter) return null;
+
+  const prefixes: string[] = [];
+  let invalidUse = false;
+  for (const caller of index.values()) {
+    const names = new Set<string>(caller.file === unit.file ? [factoryName] : []);
+    for (const [name, binding] of caller.imports) {
+      if (binding.imported === factoryName
+        && moduleCandidates(caller.file, binding.module).includes(unit.file)) names.add(name);
+    }
+    if (names.size === 0) continue;
+    const inspectUse = (node: ts.Node): void => {
+      if (ts.isIdentifier(node) && names.has(node.text)
+        && node !== factory.name && !ts.isImportSpecifier(node.parent)) {
+        const invocation = node.parent;
+        const mount = invocation.parent;
+        if (!ts.isCallExpression(invocation) || invocation.expression !== node
+          || !ts.isCallExpression(mount) || !mount.arguments.slice(1).includes(invocation)
+          || !ts.isPropertyAccessExpression(mount.expression)
+          || !ts.isIdentifier(mount.expression.expression)
+          || mount.expression.expression.text !== "app"
+          || mount.expression.name.text !== "use") {
+          invalidUse = true;
+        } else {
+          const paths = resolveStaticStrings(
+            mount.arguments[0], caller, index, enclosingFiniteBindings(mount, caller, index),
+          );
+          if (!paths?.length || paths.some((path) => !path.startsWith("/api/"))) invalidUse = true;
+          else prefixes.push(...paths.map(normalizeRoutePath));
+        }
+      }
+      ts.forEachChild(node, inspectUse);
+    };
+    inspectUse(caller.sourceFile);
+  }
+  return invalidUse || prefixes.length === 0 ? null : prefixes;
+}
+
 function scanUnit(unit: SourceUnit, index: SourceIndex): RouteScanResult {
   const routes: RouteRegistration[] = [];
   const issues: ValidationIssue[] = [];
@@ -342,7 +434,13 @@ function scanUnit(unit: SourceUnit, index: SourceIndex): RouteScanResult {
     ) {
       callSites += 1;
       const argument = node.arguments[0];
-      const resolved = resolveStaticStrings(argument, unit, index, enclosingFiniteBindings(node, unit, index));
+      let resolved = resolveStaticStrings(argument, unit, index, enclosingFiniteBindings(node, unit, index));
+      if (resolved?.every((path) => path.startsWith("/") && !path.startsWith("/api/"))) {
+        const prefixes = directMountedRouterPrefixes(node, unit, index);
+        const relativePaths = resolved;
+        if (prefixes) resolved = prefixes.flatMap((prefix) =>
+          relativePaths.map((path) => prefix + path));
+      }
       const line = unit.sourceFile.getLineAndCharacterOfPosition(node.getStart(unit.sourceFile)).line + 1;
       if (resolved === null || resolved.length === 0) {
         issues.push({

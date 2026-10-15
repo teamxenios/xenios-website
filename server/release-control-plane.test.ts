@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readdirSync, readFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { relative, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -1847,6 +1848,88 @@ describe("route uniqueness validator", () => {
     ]);
   });
 
+  it("resolves a directly mounted returned Express router without changing its relative runtime paths", () => {
+    const result = extractExpressRouteScan(
+      `
+        import { Router } from "express";
+        function createIntake() {
+          const router = Router();
+          router.use(guard);
+          router.get("/catalog", handler);
+          router.post("/", handler);
+          return router;
+        }
+        app.use("/api/intake", secure, createIntake());
+      `,
+      "fixture.ts",
+    );
+    expect(result.issues).toEqual([]);
+    expect(result.callSites).toBe(2);
+    expect(result.routes.map((route) => route.method + " " + route.path)).toEqual([
+      "GET /api/intake/catalog", "POST /api/intake",
+    ]);
+  });
+
+  it("keeps relative router registrations closed for absent, dynamic, non-API or escaped factory mounts", () => {
+    const factory = `
+      import { Router } from "express";
+      function createIntake() {
+        const router = Router();
+        router.get("/catalog", handler);
+        return router;
+      }
+    `;
+    for (const use of [
+      "",
+      'app.use(process.env.PREFIX, createIntake());',
+      'app.use("/public", createIntake());',
+      'const alias = createIntake; app.use("/api/intake", alias());',
+      'const instance = createIntake(); app.use("/api/intake", instance);',
+    ]) {
+      const result = extractExpressRouteScan(factory + use, "unsupported.ts");
+      expect(result.routes).toEqual([]);
+      expect(result.callSites).toBe(1);
+      expect(result.issues).toEqual([expect.objectContaining({ code: "NON_API_ROUTE_PATH" })]);
+    }
+    const shadowed = extractExpressRouteScan(
+      factory.replace('function createIntake()', 'function createIntake(Router)')
+        + 'app.use("/api/intake", createIntake(other));', "shadowed.ts",
+    );
+    expect(shadowed.routes).toEqual([]);
+    expect(shadowed.issues).toEqual([expect.objectContaining({ code: "NON_API_ROUTE_PATH" })]);
+  });
+
+  it("counts direct imported factory mounts and retains duplicate route rejection", () => {
+    const root = mkdtempSync(resolve(tmpdir(), "xenios-route-mount-"));
+    try {
+      mkdirSync(resolve(root, "server"));
+      writeFileSync(resolve(root, "server/router.ts"), `
+        import { Router } from "express";
+        export function createIntake() {
+          const router = Router();
+          router.get("/catalog", handler);
+          return router;
+        }
+      `);
+      writeFileSync(resolve(root, "server/production.ts"), `
+        import { createIntake as makeIntake } from "./router";
+        app.use("/api/intake", secure, makeIntake(deps));
+        app.use("/api/intake/", secure, makeIntake(deps));
+      `);
+      const result = scanExpressRouteResult(root);
+      expect(result.issues).toEqual([]);
+      expect(result.callSites).toBe(1);
+      expect(result.routes.map((route) => route.path)).toEqual([
+        "/api/intake/catalog", "/api/intake/catalog",
+      ]);
+      expect(validateRouteUniqueness(result.routes)).toEqual([
+        expect.objectContaining({ code: "DUPLICATE_ROUTE" }),
+      ]);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it("covers every current Express API call site and finite registration", () => {
     const result = scanExpressRouteResult(ROOT);
     expect(result.issues).toEqual([]);
@@ -2147,8 +2230,23 @@ describe("route uniqueness validator", () => {
     // The roster the operator scans, over the same research_orders authority as
     // the queue and the order file. Mounted rather than removed from the nav
     // because orders are launch-critical and the rest of that loop now works.
-    expect(result.callSites).toBe(439);
-    expect(result.routes).toHaveLength(448);
+    // Six intended doors on the mixed-request successor: one config
+    // registration plus five paths on its directly mounted Router.
+    // Pin the exact method/path set as well as totals, preserving all
+    // duplicate, unresolved and NON_API fail-closed checks. These proposed
+    // totals require a measured qualified successor run before acceptance.
+    expect(result.routes.filter((route) =>
+      route.path.startsWith("/api/research/early-access/request-intents"))
+      .map((route) => route.method + " " + route.path).sort()).toEqual([
+      "GET /api/research/early-access/request-intents/catalog",
+      "GET /api/research/early-access/request-intents/config",
+      "GET /api/research/early-access/request-intents/staff",
+      "GET /api/research/early-access/request-intents/staff/:requestId",
+      "POST /api/research/early-access/request-intents",
+      "POST /api/research/early-access/request-intents/recover",
+    ]);
+    expect(result.callSites).toBe(445);
+    expect(result.routes).toHaveLength(454);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
