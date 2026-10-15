@@ -5,7 +5,7 @@
   "model": "claude-opus-5-5 (same session)",
   "executed": false,
   "agentsUsed": 0,
-  "reviewedAtUtc": "2026-10-15T08:29Z-08:47Z",
+  "reviewedAtUtc": "2026-10-15T08:29Z-08:36Z",
   "packet": "Root 961ef38 DOC304 4033 B 6d230323",
   "verdict": "R2_REFUSED_AS_DESIGNED_HOST_CAPACITY_NOT_DEFECT_NO_CREDIT; CLI_BINDINGS_SUFFICIENT_NO_DISCREPANCY; NOT_ADMISSION_NOT_CONSENT_NOT_PASS",
   "r2Refusal": {

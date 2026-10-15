@@ -15,7 +15,7 @@ Reviewer: original reviewer `6abf1edf-2b16-476e-8305-23b9a0014e06`, Opus 5.5, sa
 objects only, with no command naming an active source or scratch path, and no active native group. Nothing run, no
 agents. Docs 174–181 stay closed.
 - **Packet.** Root `961ef38` DOC304 (4,033 B, `6d230323…`).
-- **Timing.** Reviewed at 2026-10-15T08:29–08:47Z.
+- **Timing.** Reviewed at 2026-10-15T08:29–08:36Z.
 
 Archive: `hl12/182_r2_refusal_classification_and_release_control_cli_bindings.json`.
 
