@@ -1,0 +1,28 @@
+{
+  "doc": 180,
+  "title": "Mixed browser attempt: actual G0 refusal at the 2,048 MiB browser floor",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T07:28Z-07:31Z",
+  "verdict": "REFUSED_AS_DESIGNED; BROWSER_NOT_RUN; HOST_CAPACITY_BELOW_EXTERNAL_2048_FLOOR; NOT_APPLICATION_DEFECT; NO_TEST_CREDIT",
+  "admission": { "root": "Doc290 642cf37", "ticket": "07b730a0 consumed", "coreFinalReady": "a07c3b83", "grant": "coordinator-admission.json 6994 B 2b45b2b9 approved:true, candidate 84178ce1, tree 24d3fa00, runId mixed-r1, port 5237, budget 5730000 ms, notBefore 07:13:14.947Z, latestStart 07:24:30Z, reservedUntil 09:00Z, DNS receipt guard-controls-r2-actual/receipt.json 5834 B" },
+  "outcome": {
+    "invocation": "unchanged accepted entry once; native chunk d0e702 exit 1 in 2.1185 s",
+    "g0": { "status": "THRESHOLDS_SATISFIED_REQUIRES_OUTER_CONFIRMATION", "internal1536": "all three true", "observedAt": "2026-10-15T07:15:56.690Z", "osFreeMiB": 1632.457, "availableMiB": 1623.309, "commitMiB": 5916.504, "resultBytes": 988, "stderrBytes": 0 },
+    "refusal": "osFree and available below 2048 MiB; entry line 41 threw BROWSER_EXTERNAL_2048_RESOURCE_FLOOR (the stricter browser floor accepted in Doc 178); internal 1536 pass does not admit a browser",
+    "downstream": "G0 once; zero bridge/outer/harness/browser attempts, zero assertions, zero raw passes, no stops; no managed session remains",
+    "archive": { "commit": "671a27636ad19e9302b9de25ee5cfd260f374ac6", "tree": "674244705fcf7a5790f3626e6e4c2da415e70dc1", "files": { "ACTUAL_EXECUTION.json": "19291 B eed0ee3e", "HANDOFF.json": "1870 B 3898ce29", "POSTCHECK_AND_ARCHIVE.json": "145828 B 68862dd6", "coordinator-admission.json": "6994 B 2b45b2b9", "g0-browser-r1-result.json": "988 B d83d8401", "g0-browser-r1-stderr.txt": "0 B" } },
+    "postcheck": "Root 291 at 07:18:01Z: built and canonical 84178ce1/24d3fa00 clean, bounded input pins unchanged, no run/supervisor/binding directories"
+  },
+  "captureLimitation": "entry throws at line 41 before the outer G0 summary writer (lines 45-46), so g0-browser-r1-outer.json is absent; evidence is native exit/wall time, persisted G0 result and empty stderr; no substitute receipt, census or browser cleanup claim, none needed; matches Doc 169 non-material note; NOT material",
+  "creditPreserved": ["build Doc 176", "focused 220/220 and typecheck 0 Doc 177", "mixed test mechanism Doc 178", "inventory Doc 179"],
+  "noCredit": "no browser credit of any kind; no application defect inferred",
+  "consumed": "ticket 07b730a0; window 282 not extended",
+  "successor": "Root 292 distinct source-binding window to 10:00Z (gate 08:24Z, outer start 08:24:30Z); R2 bindings not frozen; nothing approved for unknown bytes; no admission inferred",
+  "capacity": "reported idle resets (Root 07:21:22Z, resource owner) have unmeasured effect; capacity must be shown by a fresh G0 under new comparison, READY and ticket",
+  "open": ["hosted SQL and staging decision Doc 247", "security exposure", "privileged staff reads", "phase A return and final manifest", "live verification"],
+  "liveStatus": "NOT_LIVE; no push, deployment, secret or provider change",
+  "executionConsent": false
+}
