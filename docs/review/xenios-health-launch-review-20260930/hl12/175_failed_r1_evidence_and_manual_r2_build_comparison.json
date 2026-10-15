@@ -1,0 +1,52 @@
+{
+  "doc": 175,
+  "title": "Failed 84178ce R1 build evidence and the manual R2 successor",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T04:56Z-05:00Z",
+  "verdict": "R1_FAILED_AS_RECORDED_NO_BUILD_CREDIT; OWNERSHIP_GUARD_CORRECT_UNCHANGED; ROOT_ATTRIBUTION_STRONGLY_CORRELATED_NOT_PID_PROVEN; MITIGATION_ADEQUATE_IF_ALL_SESSIONS_INCLUDING_REVIEWER_COMPLY; MANUAL_R2_BINDINGS_PREPARATION_WINDOW_AUTHORITY_SUFFICIENT; NOT_ADMISSION; NO_R2_CREDIT",
+  "r1": {
+    "archive": { "commit": "c7155f490c63ced5083740815603db981f0b8b6d", "tree": "14a8323df4b7bbb1d156c92a4d3c690ebd8c3308", "files": 68, "raw": 63, "records": 5, "receipt": "53703 B ddd4f3f6", "log": "592 B 4b8cb1c8" },
+    "ticket": "c3c1da84 consumed",
+    "child": "2026-10-15T04:42:05.401Z-04:44:08.212Z exit 4294967295 (-1)",
+    "supervisor": "exit 1, finalized 04:44:12.534Z",
+    "failure": "OWNERSHIP_OBSERVATION_UNRESOLVED / PROCESS_OBSERVATION_FAILED; not a timeout",
+    "buildState": "log ends at 'added 531 packages in 2m'; no npm ci exit-0 evidence; node script/build.mjs never ran; no compiler output; renderBuildCompleted false",
+    "closure": "source and pins invariant; cleanup killed only owned primary 83232 under policy, others already exited; independent 04:45:42Z check: 8 owned identities and supervisor 83164 gone, no scoped processes/listeners/extra stops",
+    "disposition": "FAILED_NO_BUILD_CREDIT"
+  },
+  "cause": {
+    "trigger": "snapshot 017 at 04:44:03.888Z: unowned pwsh PID 79148, parent 17324 (same host as managed entry shell 83016), created 04:44:00.3137Z, scratchMention true, rootMention false; not supervisor 83164, ancestor or owned",
+    "guard": "refusal on ambiguity is correct fail-closed behavior; unchanged",
+    "rootAccount": "Root read-only PowerShell metadata command (chunk 1369b8, 1.43 s) containing the exact scratch path, reading g0-r2-outer.json and run1/start.json during the run; timing, parent and path match; tool does not expose PIDs",
+    "attribution": "STRONG_CORRELATION_NOT_PID_PROOF; operational overlap, not application error"
+  },
+  "mitigation": {
+    "rule": "while an admitted managed group is active, no owner runs a Windows shell/status/metadata command referencing that group's source or scratch path; Root only supported app wait snapshots; Core only write_stdin waits <=30 s; real times and latency recorded",
+    "assessment": "ADEQUATE_IF_ALL_SESSIONS_ON_HOST_COMPLY; the guard matches any process command line mentioning the path",
+    "reviewerCommitment": "this reviewer runs no command referencing an active group's source or scratch during an admitted window; reviewer scratch checks ran ~04:37Z and ~04:57Z, outside R1's 04:42-04:44Z run and before R2 activation",
+    "rootStaleRunningCorrection": "stands"
+  },
+  "r2": {
+    "core": { "commit": "d1f1b748a64f7a13f0e59ea1c9882a72d972f1e7", "tree": "7b2e476ae1d666d56c381c217d12899a99783019" },
+    "runner": "39601 B 2569b88e = 954b99b7 with only SCRATCH (-r2-) and ACTION (_R2_) changed",
+    "entry": "3210 B b5079020 = 94090792 with three lines changed: run root, admission label MIXED_84178CE_LITERAL_BUILD_R2_20261015, final runner call with R2 paths and pins 139e93f2; G0 call still uses R1-slot script 947bba10 (physically confirmed) with -StopAtUtc 2026-10-15T05:30:00.000Z; candidate/tree checks unchanged",
+    "pins": "5880 B 139e93f2, 28; paths moved to R2 scratch; only runner self-pin value changed; candidate 84178ce1, tree 24d3fa00, node, npm and source pins unchanged",
+    "unchanged": "G0 functions, R7 slice, ownership guard, budgets, floors, Node 20.19.0, npm 10.8.2, private prefix, script",
+    "disposition": "EXACT"
+  },
+  "preparationWindowAuthority": {
+    "preparation": "grant 28b96c5d; receipt 9f26d3a2 (tree 40ed4c60); once 04:52:05.059Z-04:52:10.032Z, native exit 0, full capture; independent postcheck PASS 04:52:30.975Z; reviewer read-only check: scratch holds only source/, run-render-build.cjs 2569b88e, pins.json 139e93f2; HEAD 84178ce1, tree 24d3fa00, full history; six corrected files equal LF blobs; no node_modules, dist, run1 or G0 outputs; failed R1 scratch preserved",
+    "window": { "start": "2026-10-15T04:50:02.527Z", "stop": "2026-10-15T05:30:00.000Z", "lastFullStart": "2026-10-15T05:18:00.000Z" },
+    "limits": "720 s aggregate (480 work + 240 cleanup), 1536 MiB heap, all three G0 floors >=1536 MiB unchanged; manual separately reviewed successor, not automatic retry; no ticket reuse or extension",
+    "authority": "Docs 223/239; same owner under active lease abb400e5; phase A return PENDING",
+    "stillRequired": ["Core fresh FINAL READY", "exclusive slot", "new single-use Root ticket", "fresh G0", "full remaining time"],
+    "disposition": "SUFFICIENT"
+  },
+  "holds": ["no R2 build/test/typecheck/browser/SQL/persistence/staff-read/deploy credit", "84178ce still needs rebound focused and typecheck slots (Doc 174)", "security exposure OPEN; privileged staff reads HELD", "live revision 7bba is neither candidate"],
+  "unchanged": ["R8 and Docs 160-174 closed", "790af2ce FAILED; tickets 404727c5, 264a4c65, 07024dd5, c3c1da84; failed focused and typecheck results as recorded", "payment and security holds open"],
+  "notClaimed": ["admission", "invocation", "PID-level attribution", "build/test/qualification result", "execution, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
