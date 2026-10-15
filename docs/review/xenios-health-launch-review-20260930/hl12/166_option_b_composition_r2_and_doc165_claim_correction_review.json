@@ -1,0 +1,78 @@
+{
+  "doc": 166,
+  "title": "Option B composition-r2 and the Doc 165 claim correction",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "COMPOSITION_R2_OPTION_B_ACCEPTED_AS_SOURCE; ONE_REQUIRED_METADATA_CLARIFICATION_MANIFEST_CUSTODY_SENTENCE; NO_CODE_CHANGE_REQUIRED; DOC165_CLAIM_CORRECTION_ACCEPTED_RESOLVES_DOC165",
+  "binding": {
+    "compositionR2": { "commit": "86302a5a522fb47c34e25852a4ebb7832051f5c2", "tree": "61755a20d3e20e5bee30ad990114196195efed21", "parent": "a467117c03877b9390217a4ae73895e073b2a9e5", "records": "2b9dbc410877558f07e7c4a5ed6be15df0089f50",
+      "artifacts": { "SOURCE_MANIFEST.json": "16024 B 31024c38584b2cb42c06d5b7b38ce1b8dc20ad75bc9c7af4955fab9e69e16fc2", "DELTA_AFTER_STAFF_R1.patch": "55795 B d113268c0d359dee36fc0788d02cfdb3ae0d3844e8cfe57994f48bc4339827d6", "CUMULATIVE_AGAINST_8e.patch": "237960 B 7219df63abb6002983648371fab45ee64a504bcaa9fa9f9e4e5dccf00d508034", "REVIEW_AND_CUSTODY.md": "10432 B 3dcba0fc5333838fb36be378a72b5ad2342415175c18b1dc966546e10e426417" },
+      "committedFilesMatch": 36, "beforeImagesLatestPrior": { "compositionR1": 5, "staffR1": 2 }, "beforeImagesExact8e": 5, "acceptedClientR3Untouched": 6, "patchSections": { "delta": 19, "cumulative": 40 } },
+    "claimR2": { "commit": "c97a370464ae7a57e6c40d7f68a494ed686ace7f", "tree": "29349896c5d5ba2b88397422490abe13e43c0fa4", "parent": "c382d33bb852ffb5ece8363db97d3ae893fac2e6", "records": "bc3a20280a3593c8882a6044718e8b3d6862ff73",
+      "artifacts": { "SOURCE_MANIFEST.json": "7662 B 7fd72ad220d649468f285996efe14e2c49b4cc09339ea225505aaf2956c6045f", "CLAIM_AND_QUALIFICATION.txt": "8596 B c8e7d23206f221e94e9309d5aa238c260edf1ef069c3298b023cc07b5d7dec94", "DELTA_AFTER_COMPOSITION_R2.patch": "1092 B 7811b163f6b552ed8189e79cfc757192f7b1ff47d27862dfbcc6d4cbd574efe8", "CUMULATIVE_AGAINST_8e.patch": "237971 B ab4b52da1ade2047a4fbc5149c827ff0bf8a4202de43cda6cd9c05f171428542", "CUMULATIVE_SOURCE_INDEX.json": "54567 B 798e9bdb68f7b2583049e0a6ff08195b3165411ea6d3999803788a6d48bc47c4" },
+      "sourceIndex": "40 paths; every after-image equals the latest layer across R2, composition-r1, client-r3, staff-r1, composition-r2, claim-r2; 11 existing at 8e85daa with matching blobs; 29 new",
+      "cumulativeDiffersFromCompositionR2": "one title line and its blob only" },
+    "readForComparisonOnly": ["c382d33b application-preconditions-r1 custody wording"],
+    "patchesAppliedOrParsed": false
+  },
+  "optionBContinuity": {
+    "serverDiscriminator": "config returns 503 {enabled:false,error:request_intent_disabled} only for an unset flag or exactly 'false', before the rate limiter with no RPC; every other state (true with missing prerequisites, malformed values) returns request_intent_unavailable",
+    "clientDiscriminator": "legacy only on that exact 503 body; mixed only on 200 enabled:true with parseable config; 429, network, non-JSON or other shapes read unavailable; no retry, no global cache",
+    "retainedAttempts": "read-only selector; valid mixed marker keeps mixed even when off/unknown (recovery may 503, support before replacement); legacy uncertain/interrupted/stamped/selected draft keeps legacy even when mixed on; both, unreadable or inaccessible storage block; legacy reader has no expiry",
+    "stableChoice": "door locked once a real door is chosen; owner change remounts via key; recovery or failed verification closes",
+    "legacyParity": "storefront uses the legacy bridge shared probe again (dark bridge hides catalog as at baseline); standalone legacy page computes the same URL hint and ignores the passed resolution; confirmation/status routes, ten old doors and sign-out sweep unchanged",
+    "mixedOn": "full mixed form without the old bridge; one owner-scoped probe shared by CTA and storefront; form loads its own legal config; standalone door outside the cart mount",
+    "disposition": "ACCEPTED"
+  },
+  "testSource": {
+    "added": 29,
+    "breakdown": { "selector": 5, "entry": 8, "storefront": 5, "carePage": 4, "careSection": 1, "integrationSourceText": 3, "serverDiscriminator": 1, "documentPolicy": 1, "signInReturn": 1 },
+    "assessment": "aimed at the real boundaries; baseline storefront cases default to off and still drive the real legacy wizard including the dark-bridge case; new strings and fixtures match the code",
+    "gap": "no test pins an unset (current production default) or malformed flag; code correct by inspection",
+    "executed": false
+  },
+  "documentPolicyReturnRegistrar": {
+    "documentPolicy": "/care/request-intents exact known path registered private: 200, noindex, no canonical; child paths 404",
+    "signInReturn": "exact returnTo for the page; robots noindex,nofollow; shared list admits only that exact path; sanitizer drops actor/token/role keys",
+    "registrarOrder": "registerRequestIntentApi after all ten legacy registrations, checked in source by the integration test; server/index.ts 1a3fb0b7 as recorded",
+    "disposition": "ACCEPTED"
+  },
+  "provenanceAndCustody": {
+    "correct": "manifest vs 8e85daa: one new seamBaselineHashes.$comment entry placed first, server/index.ts 2ae01b4d->1a3fb0b7, server/research/index.ts b8db03cf->000da4da; truthful lease=UNASSIGNED authority=UNGRANTED custody-return=PENDING; docs lease 19d2ed9a not custody; manifest hash not pinned elsewhere; protection test compares seam hashes to files",
+    "conflict": "frozen comment says 'At application, replace ONLY those three pending values ... then freeze/review'; c382d33b and the claim note correctly put custody-return after the real return; bounded substitution cannot change the sentence; APPLICATION_CUSTODY_PENDING label would outlive completion",
+    "required": ["preferred: metadata-only successor rewording the comment to the two-stage order and relabeling, before the pending manifest is frozen into an application", "alternative: the single source/custody decision explicitly states the two-stage order governs over the comment's 'at application' wording"],
+    "correctSequence": ["Samuel's exact source/custody decision covering 40 paths and the procedure; real exclusive protected lease registered", "canonical copy of the 39 fixed files plus manifest with lease and authority only; custody-return PENDING", "original reviewer applied-byte confirmation (39 files equal pins; manifest differs from template only in the two values)", "qualification under that custody", "real custody return and owner acknowledgment recorded", "finalizer with its own valid authority (returned lease not reused) fills custody-return only, freezes and measures the final manifest, re-runs protection/seam checks on final bytes; original reviewer final record confirmation"]
+  },
+  "doc165ClaimCorrection": {
+    "disposition": "ACCEPTED_RESOLVES_DOC165",
+    "change": "sql-contract.test.ts title only: 'bounds private staff readback by real auth identity, role assignment and capability' -> 'declares staff-reader checks for service-role context, a named actor's role and approved scope'; assertions byte-identical",
+    "notes": "service-role admin call has null auth.uid so the clause is vacuous; database proves server-named actor's live role and approved scope, not presence; service-key holder could impersonate an eligible actor once scope approved; static assertions prove text not effect",
+    "hold": "scope must not be approved until the exposed-credential condition is closed and key rotation confirmed; security authority NONE",
+    "preserved": "Doc 165 rehearsal list and recommendations"
+  },
+  "recommended": [
+    "held-state copy: offer reload/retry instead of 'before a replacement' when no prior attempt exists; word inaccessible storage separately from an earlier request",
+    "legacy-mode layout differs from baseline: CTA at top outside the cart mount and visible through embedded steps (baseline: products step only); link notice inside the catalog section with enabled fixed true; record as accepted or restore",
+    "probe scoped to session expiry can unmount the catalog section and lose an unsaved mixed form if the session is extended at expiry while mixed is on and the legacy bridge is off; scope to owner or keep mounted while re-probing",
+    "notes-only legacy draft is not treated as retained",
+    "add unset and malformed flag cases to the server discriminator test"
+  ],
+  "combinedScope": {
+    "coverage": "Docs 163-166 together cover all 40 final after-images in source index 798e9bdb at source level: R2 Doc 163; composition-r1 Doc 164 (scope corrected by Option B); client-r3 Doc 164; staff-r1 Doc 165; composition-r2 and claim-r2 Doc 166",
+    "notCovered": "no applied tree exists; nothing ran",
+    "doc164ItemsResolved": ["material scope correction", "storefront test", "document policy", "seam provenance (subject to the custody clarification)", "shared probe", "registrar order", "staff sign-in return"]
+  },
+  "remainingConditions": [
+    "manifest custody-sentence clarification",
+    "Samuel's exact source exception and a current exclusive protected lease (neither held; docs lease 19d2ed9a is not custody)",
+    "application per the section 5 sequence with applied-byte and final record confirmations",
+    "separately authorized execution: disposable DB, rate-limiter, Care foundation and patient-index rehearsal; typecheck, build, affected and baseline tests, browser runs in both modes and with retained attempts, protection and release controls",
+    "staff activation chain per Doc 165: exposed-credential closure, real clinical_admin assignment (names deferred), scope approval, flag",
+    "hosted: valid SITE_URL, legal applicability, flags (both default off)"
+  ],
+  "unchanged": ["client-r3 acceptance", "staff design acceptance", "Doc 163 optional recommendations", "R8 and Docs 160-165 closed", "application 8e85daa unchanged", "failed 790af2ce stays FAILED", "payment and security holds open"],
+  "notClaimed": ["tests", "typecheck", "build", "patch application", "applied tree", "database or SQL execution", "browser or runtime qualification", "custody", "execution, query, role, flag or grant consent", "source-application, push or deployment consent", "human approval", "test credit"],
+  "executionConsent": false
+}
