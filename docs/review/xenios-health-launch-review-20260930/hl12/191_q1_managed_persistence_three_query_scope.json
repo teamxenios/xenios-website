@@ -1,0 +1,41 @@
+{
+  "doc": 191,
+  "title": "Q1 managed-persistence proposal: three queries, source and scope (KAN-26 / XRM-2006)",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T19:39Z-19:45Z",
+  "packet": "Root 02eb8a2 DOC388 bb68fe8a, delivered in chat; reviewer has no Atlassian access of its own, Root relays",
+  "verdict": "PASS_SOURCE_AND_SCOPE_ONLY; NO_MATERIAL_DEFECT; THREE_LITERAL_QUERIES_MATCH_INSTALLED_E33_REQUEST_INTENT_SQL_AND_FAIL_CLOSED; NOT_APPROVAL_ADMISSION_OR_EXECUTION; NO_JIRA_ISSUE_COMPLETED",
+  "identity": {
+    "payload": "DOC387 payload identity recomputes to 38b39a7baa8fa3a33dc027533c247e5ecf599d85d756f1668d98c611cae108fe (SHA-256 of compact JSON.stringify)",
+    "queries": { "A": "cf942474, 3029 B", "B": "ae3722c0, 1013 B", "C": "9bd6ca42, 6478 B", "queryArgumentEqualsFile": true },
+    "target": "staging tetynodzrtmdbuzgboro; production project excluded",
+    "fixtureLiteralsAEqualC": true,
+    "hashLiterals": "all six are 64 lowercase hex characters",
+    "sourceSql": "supabase/candidates/mixed_catalog_request_intent.sql at e33c12a9 is c50a5462 as payload states; I3 installation contains that body byte-identical except trailing commit;"
+  },
+  "inspection": {
+    "callerRole": "create_or_replay and find_attempt are security definer with search_path='' and refuse unless current_setting('role')='service_role'; A/B use SET LOCAL ROLE service_role; C uses set_config('role','service_role',true) in its DO block then restores saved value (none) before postgres-only readback; matches production path where PostgREST runs as service_role; service_role holds schema usage and execute on public invoker wrappers and private functions; transaction-local only, no role, grant, Auth user or clinical capability changes",
+    "transactions": "A BEGIN...COMMIT with 5 s statement, 1 s lock, 10 s idle, 30 s transaction (transaction_timeout exists in Postgres 17; guard requires 170006); receipt row precedes COMMIT so durability credited only by B's separate read; B BEGIN READ ONLY...ROLLBACK, find_attempt only selects; C ends in ROLLBACK with negative controls in BEGIN...EXCEPTION subtransactions; I3's actual execute_sql response returned its SELECT row ahead of trailing ROLLBACK, so receipt rows expected back",
+    "fixtureVsValidators": "detail keys subset of allowed set, kind unapproved_selection_request, status pending_review; contact allowed keys, ageConfirmed true, strings 1-320 chars, both addresses complete; one agreement accepted true with parseable acceptedAt; two unique lines with allowed keys and reviewState pending, clinical line provider_request with clinicalReviewRequired true, other direct_order_request, quantities 2 and 3, not-for-sale display states avoided; expected XRI-7C805AC401604F3E8AF5AE5454AB8C31 matches table CHECK formula",
+    "replayConflictInvalid": "replay: same owner and attempt with new requestId hits ON CONFLICT (owner_hash, attempt_hash) DO NOTHING, stored row reread, fingerprint matches, original receipt unchanged, no event inserted; conflict: different fingerprint raises 23505 request_intent_attempt_conflict, C catches that SQLSTATE and message exactly, app maps same pair to 409 attempt_conflict in rpc-repository.ts; invalid: bad kind raises 22023 request_intent_invalid before any insert; any other outcome re-raised so C fails",
+    "responses": "shape {receipt:{kind,requestId,publicReference,status,createdAt},fingerprint} equals what app parser whitelists; createdAt is to_jsonb(timestamptz) at full precision so C's equality against created_at is exact; C's final booleans are constants reached only if every assertion passed; Auth, PostgREST, concurrency and staff claims honestly false",
+    "namespaceIsolation": "A pre-check refuses if any of three fixture IDs or either owner hash exists; B confirms second owner hash with same attempt returns NULL; C readback scoped to fixture IDs only: exactly one row, complete contact/agreements/lines, one submitted event, no rows for negative IDs, returns only booleans",
+    "counts": "seven public RPC calls (1+2+4) as declared; one synthetic request and one event retained by design; access-event identity sequence advances by one"
+  },
+  "limits": [
+    "RLS bypass: Q1 does not itself assert postgres bypasses RLS; pre-check and readback on force-RLS policy-free private tables depend on it, as do definer functions; I3 asserted tables owned by postgres with forced RLS and no policies; if bypass absent, definer insert refused (A fails) and C readback mismatches, so no false pass",
+    "session_user evidenced only by I3's apply_migration guard; if execute_sql context differs, A refuses with Q1_CONTEXT_MISMATCH and the call is spent",
+    "fingerprint: database stores client-supplied fingerprint and compares it, does not recompute it; Q1 proves database idempotency, not app's canonical fingerprinting",
+    "retained fixture stays on staging permanently because deny_mutation triggers block deletion; will appear in future staging staff-queue reads, labeled synthetic",
+    "not covered: sequential only; no concurrency, Supabase Auth or real cookie session, PostgREST or HTTP transport, canonical catalog or legal eligibility, staff or Care readback, browser, or deployment",
+    "observation only, not re-reviewed: I3 actual postcheck output carries an ...-I2-... scope label from postcheck text reused from I2; I3 receipt itself scoped I3"
+  ],
+  "prerequisitesBeforeAnyCall": ["approval: Samuel's exact approval of payload 38b39a7b; required, not received; this review grants nothing", "readiness: same Core's fresh FINAL READY with all three literals retained and hashed", "target health: fresh get_project exact ID and org, ACTIVE_HEALTHY, not production", "exclusivity: one exclusive staging operation, known consumers quiescent", "window: new 10-minute window from actual admission, A by +2 min, B by +5, C by +8.5; no retry, cleanup, extension or reuse", "stopping: stop at first error, lost or truncated response, or mismatch; preserve a possibly committed A", "re-review needed only if any literal, the payload or the target changes"],
+  "credit": { "canCredit": "database-level persistence across separate calls, native receipt and reference, sequential replay/conflict/invalid refusal, owner-hash isolation, fixture-only privileged readback; partial KAN-26/27 database evidence", "cannotCredit": "KAN-26 durable request with server-confirmed reference end to end, KAN-27 response loss and reload recovery, KAN-31 browser journey; each still needs real Auth, HTTP, cookie binding, browser and staff access" },
+  "jiraCommentDraft": { "issue": "KAN-26", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
