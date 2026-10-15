@@ -1,0 +1,105 @@
+# OPTIONAL isolated source-only qualification.
+# Runs ONLY after this workflow is committed and pushed to the isolated overlay
+# branch; the workflow need not exist on main for a push event.
+# Does not query production, apply SQL, use secrets, deploy, or lift holds.
+name: Xenios E33 exact 66-case cloud check
+
+on:
+  push:
+    branches:
+      - codex/e33-regression-overlay-20261015
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xenios-e33-exact66-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  exact-e33-offline-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout isolated overlay tools from this push
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: qualification-tools
+          persist-credentials: false
+
+      - name: Checkout frozen application commit, without touching its branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: e33c12a999536cc87c7c0153e482220c533b9624
+          path: candidate
+          fetch-depth: 0 # release-control tests validate ancestry and Git source pins
+          persist-credentials: false
+
+      - name: Prove pinned application HEAD, tree, clean source, and protected files
+        shell: bash
+        working-directory: candidate
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "e33c12a999536cc87c7c0153e482220c533b9624"
+          test "$(git rev-parse HEAD^{tree})" = "ab4415f0e1fb85171aeb9242ace0eb309d9651bf"
+          test -z "$(git status --porcelain)"
+          test "$(git rev-parse HEAD:scripts/acceptance/verify-route-uniqueness.ts)" = "84674e1938932a50fe5a742d7cb904ec7b089445"
+          test "$(git rev-parse HEAD:server/release-control-plane.test.ts)" = "ad3b131ad4350c98c115adbb4319baa28a63b1fc"
+          test "$(git rev-parse HEAD:server/research/assisted-order/audit-store-sql.test.ts)" = "e7ef7aad9063cc7719d057c06b3a0b0e4a0e2a44"
+          test "$(git rev-parse HEAD:server/research/inventory-admin/integration.test.ts)" = "748ee42cbe472d510b318ac3e2bb9326a5a40c05"
+
+      - name: Set up exact runtime Node version
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '20.19.0'
+
+      - name: Execute report-validator negative and positive controls
+        shell: bash
+        run: node --test qualification-tools/tests/verify_vitest_66_report.test.mjs
+
+      - name: Use npm version from accepted source
+        shell: bash
+        run: npm install --global npm@10.8.2 --no-audit --no-fund
+
+      - name: Install dependencies from frozen package-lock (no shared cache)
+        working-directory: candidate
+        shell: bash
+        run: npm ci --no-audit --no-fund
+
+      - name: Execute e33 compiler on exact source
+        working-directory: candidate
+        shell: bash
+        run: npm run check:release-control-plane
+
+      - name: Execute exact 3-file 66-declaration Vitest regression
+        working-directory: candidate
+        shell: bash
+        env:
+          # Test file opts into real PG16 when CI is truthy. No managed PG16
+          # is authorized by this overlay; preserve reviewed 65 + 1 skip.
+          CI: ''
+          XENIOS_RUN_PG16_VERIFIER: ''
+        run: |
+          set -euo pipefail
+          test -z "$CI"
+          test -z "$XENIOS_RUN_PG16_VERIFIER"
+          ./node_modules/.bin/vitest run \
+            server/release-control-plane.test.ts \
+            server/research/assisted-order/audit-store-sql.test.ts \
+            server/research/inventory-admin/integration.test.ts \
+            --maxWorkers=1 --fileParallelism=false \
+            --reporter=json --outputFile=./xenios-e33-vitest-66.json
+
+      - name: Verify all 66 exact reviewed fullName identities and 65 + 1 outcomes
+        working-directory: candidate
+        shell: bash
+        run: node ../qualification-tools/tools/verify_vitest_66_report.mjs ./xenios-e33-vitest-66.json
+
+      - name: Preserve only the nonsecret offline test report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: xenios-e33-exact-reviewed-66
+          path: candidate/xenios-e33-vitest-66.json
+          if-no-files-found: warn
+          retention-days: 7
