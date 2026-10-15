@@ -1,0 +1,37 @@
+{
+  "doc": 182,
+  "title": "Second browser refusal, and the release-control CLI bindings and window",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T08:29Z-08:47Z",
+  "packet": "Root 961ef38 DOC304 4033 B 6d230323",
+  "verdict": "R2_REFUSED_AS_DESIGNED_HOST_CAPACITY_NOT_DEFECT_NO_CREDIT; CLI_BINDINGS_SUFFICIENT_NO_DISCREPANCY; NOT_ADMISSION_NOT_CONSENT_NOT_PASS",
+  "r2Refusal": {
+    "archive": { "commit": "09286601e7a4bcb57f6b90405ac8b02c756c4c00", "tree": "4d983f547394a24444ced4530896ef6044b0413f", "files": 6, "g0Result": "995 B 4fbc6ffe", "stderr": "0 B", "grant": "7018 B 14529191, equals Root DOC300", "executionAndHandoff": "equal Root DOC301 frozen copies" },
+    "admissionConformedToDoc181": ["approved, oneAttempt, runId mixed-r2, ticket 18611b86", "inputMetadataPin exactly the R1 path, 11365704 B, e5bf5147", "DNS27 receipt pin 5834 B", "launcher/outer/driver pins equal Doc 181 hashes", "window notBefore 07:58:23.475Z, latest start 08:24:30Z, reserved until 10:00Z", "READY 07:53:32Z within 5 min of ticket 07:58:23Z; currentness 08:00:17Z; grant copy exact 08:01:24Z"],
+    "earliestFailingCondition": "entry line 41 at G0 08:01:35.637Z: requires all three raw readings >= 2048 MiB; osFree 1700.832 and available 1700.105 under (shortfall 347.89); commit 6381.078 passed; threw BROWSER_EXTERNAL_2048_RESOURCE_FLOOR; native 79f4f6 exit 1 in 1.888 s",
+    "passedBefore": "G0 exit 0, under 30 s, stdout <= 8 KiB, empty stderr; line 40 kind/candidate/tree/status and all three internal 1536 MiB comparisons true",
+    "classification": "REFUSED_AS_DESIGNED (same as Doc 180); HOST_CAPACITY; NOT_APPLICATION_DEFECT; NO_TEST_OR_BROWSER_CREDIT",
+    "downstream": "zero bridge/outer/harness/browser attempts, zero assertions, zero raw passes, no stops",
+    "captureGap": "missing outer summary is the same non-material throw-path gap as Docs 169/180; no substitute receipt, census or cleanup claim, none needed",
+    "capacityChange": "available +76.8 MiB vs R1, not attributed to any cause, still short",
+    "postcheck": "08:02:26Z source and inputs unchanged; Root 301 verified all six files and 479 bounded pins",
+    "tickets": "290 and 300 both consumed",
+    "next": "no automatic third attempt; needs a concrete resource change (Samuel's, Chrome preserved), fresh READY, new ticket, fresh 2048 MiB G0"
+  },
+  "cliBindings": {
+    "proposal": { "commit": "bba1ac0c60e6f60f18f1eeca786fd5a64f539919", "tree": "7c2ade95e8d1368802560272984aa06244b9e27c", "files": 8, "hashes": { "BINDING_SCOPE.json": "16810 B bde2feb2", "SOURCE_VERIFICATION.json": "77409 B 8933f728", "run-check-r2.cjs": "40816 B b096bbb9", "NATIVE_ENTRY_CHECK.ps1.txt": "3331 B df44f7f0", "NATIVE_ENTRY_REGRESSION.ps1.txt": "3361 B 2f863a58", "pins-r2.proposed.json": "21000 B 747e230f" }, "rootDoc303FrozenCopiesIdentical": true },
+    "runner": { "baseline": "affected-check-actual/run-check-r2.cjs 40676 B e1b22ac2 (Doc105, fba76fd)", "changes": "6, each once: root, scratch, candidate, tree, action label, dependency-provenance text", "forwardExact": true, "reverseExact": true, "modes": { "check": "npm run check:release-control-plane; 300 s + 60 s; child heap 1536 MiB", "regression": "vitest run, one worker, exactly the three tests; 180 s + 60 s; child heap 1024 MiB; pass requires exactly the historical Doc105 identity selection" }, "checkScriptEqualsCandidatePackageJson": true },
+    "entries": { "baseline": "accepted generic-typecheck entry 3274 B fa50c3d3; pattern only, no test credit carries over", "check": "7 replacements: scratch (3), G0 prefix (4), label, stop 09:30Z (3), runner name, pins name, pins hash", "regression": "same 7 plus mode 'regression' and reserve 240000 ms (=180 s + 60 s)", "forwardAndReverseExact": true, "unchanged": "G0 helper 947bba10, internal 1536 MiB thresholds, 30 s freshness and capture limits, 8 KiB stdout and empty-stderr checks, cleanup" },
+    "pins": { "count": 91, "composition": "81 under candidate root (53 tracked + 28 node_modules) + 10 external", "requiredSetExact": true, "helperHashesEqualRunnerConstants": true, "futureRunnerPin": "b096bbb9", "trackedPinsEqualCandidateBlobs": "53/53", "versusOldDoc105Pins": "88 equal; 3 differ: runner (path+hash), docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json, server/index.ts", "candidateChangesAmongPinned": "exactly those two source files changed 8e85daa -> 84178ce1", "unchangedInputs": "three tests, package.json, lock, .npmrc, tsconfig.json, vitest config", "copyGrant": "Root 303 maps exactly runner 40816 B and pins-r2.json 21000 B 747e230f" },
+    "windowAndAction": { "record": "Root 302 baec631", "start": "2026-10-15T08:08:25.095Z", "stop": "2026-10-15T09:30:00.000Z", "extensionOrRetry": false, "entryStop": "09:30Z three times in both entries", "latestG0Completion": "09:24Z check, 09:26Z regression", "runnerStartLimit": "refuses if launch time + aggregate budget exceeds 09:30Z", "actionLabels": "MIXED_84178CE_RELEASE_CONTROLS_{CHECK,REGRESSION}_20261015", "disposition": "CONSISTENT" },
+    "disposition": "SUFFICIENT_NO_DISCREPANCY"
+  },
+  "limits": ["bytes of 28 node_modules pins, 10 external pins and the 102225494 B total are recorded by Root, not re-read by the reviewer", "three tests use static names so identity drift is not expected; if it happens it fails as FAILED_OR_INCOMPLETE and is not reinterpreted", "named PG16 opt-in skip retained not passed; no PostgreSQL or CI result claimed", "inventory-admin integration test reads server/index.ts (changed in 84178ce1) directly; release-control-plane test imports the route-uniqueness verifier, which may read changed route sources indirectly; results must come from the new run; 63 = 62 + 1 historical figures are expectations, not results", "CLI entries carry no notBefore literal, as in the accepted pattern; ticket and grant must bind the start", "CLI G0 checks only 1536 MiB and can never admit a browser", "Doc 175 rule applies"],
+  "beforeEachGroupSeparately": ["owner fresh READY", "current 91 pins", "absent outputs", "one exclusive slot", "new actual Root ticket and grant", "fresh G0", "owned postchecks", "no fallback from the first group to the second"],
+  "stillOpen": ["full suite", "static checks", "diff", "final manifest", "hosted DB and staging decision Doc 247", "security exposure", "privileged staff reads", "phase A return", "live verification"],
+  "liveStatus": "NOT_LIVE; no deployment, secret, provider or payment change",
+  "executionConsent": false
+}
