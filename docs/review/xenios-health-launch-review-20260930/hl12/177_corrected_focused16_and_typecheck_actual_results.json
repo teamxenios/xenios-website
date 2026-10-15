@@ -1,0 +1,37 @@
+{
+  "doc": 177,
+  "title": "Corrected 84178ce focused16 and generic typecheck: actual results",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T05:50Z-05:54Z",
+  "verdict": "LOCAL_FOCUSED16_PASS_220_OF_220_AND_LOCAL_GENERIC_TYPECHECK_PASS_ZERO_DIAGNOSTICS_FOR_84178ce1_WINDOWS_HOST; NAMED_LIMITS; NO_BROWSER_FULLSUITE_RELEASECONTROL_SQL_PERSISTENCE_REALAUTH_STAFF_SECURITY_DEPLOY_CREDIT",
+  "method": "committed Git objects only; no command named any source or scratch path",
+  "focused": {
+    "archive": { "commit": "1155dfd21d8aa39725f29a15ecaa14b8046b6199", "tree": "01cf32ca031575785985e51ac2e43d720272aa58", "files": 17, "raw": 13, "records": 4 },
+    "ticket": "dca1e389 used once (Root 271)",
+    "g0": { "nativeExit": 0, "wallMs": 1468.7, "stdoutBytes": 998, "stderrBytes": 0, "osFreeMiB": 1716.5, "availableMiB": 1712.4, "commitMiB": 6871.1, "browserAdmission": false },
+    "run": "child 05:29:28.249Z-05:30:29.250Z exit 0 NORMAL_EXIT; supervisor exit 0 at 05:30:35.930Z; no cleanup actions; source and pins invariant at 84178ce1/24d3fa00",
+    "report": { "file": "vitest-results.json 90598 B ee4b71a7", "receipt": "682526 B 73b95ea2", "success": true, "suites": "40/40 passed", "tests": "220/220 passed", "failed": 0, "pending": 0, "todo": 0, "files": 16, "allFilesPassed": true, "selectionExactMatch": true, "ciEquivalent": false },
+    "notable": "corrected Care head assertion and round-trip context test pass; six new canonical-namespace cases pass with child-form boundary stubs",
+    "independent": { "closure": "05:31:32.54Z: none of 8 known identities (7 owned + supervisor 81232) present, no scoped, no listeners, fixture ports 54321/5237 clear, 0 stops", "pins": "05:32:19.69Z: 2472 focused pins, 28 build pins, 22 installed, lock, clean full-history checkout, report union PASS (Core record, Root 273 rematched)" },
+    "disposition": "LOCAL_FOCUSED16_PASS"
+  },
+  "typecheck": {
+    "archive": { "commit": "824c97d4744046281ab02b20af53aa00786f48ac", "tree": "cf1843c6ce381d478240a7499a3ca2bc8d98f432", "files": 61, "raw": 57, "records": 4 },
+    "ticket": "b28ab79e used once (Root 274) after focused closure",
+    "g0": { "nativeExit": 0, "wallMs": 1200.7, "stdoutBytes": 987, "stderrBytes": 0, "osFreeMiB": 2103.6, "availableMiB": 2103.5, "commitMiB": 7293.5 },
+    "run": "npm run check -- --incremental false; child 05:39:24.211Z-05:40:48.070Z exit 0 NORMAL_EXIT, not timed out; supervisor exit 0 at 05:40:53.314Z; no cleanup actions or unresolved identities; source and pins invariant",
+    "log": "108 B c1bedf9d: only npm --production warning and 'tsc --incremental false'; zero TypeScript diagnostics",
+    "receipt": "49208 B fc19b306",
+    "independent": { "closure": "05:41:37.33Z: none of 5 known identities (4 owned + supervisor 76828) present, no scoped/listeners/stops", "pins": "05:42:51.92Z: 44 typecheck pins, 28 build pins, 22 installed, lock, canonical clean full-history source PASS (Core record, Root 275 rematched)" },
+    "disposition": "LOCAL_GENERIC_TYPECHECK_PASS"
+  },
+  "discipline": "same managed session, write_stdin waits <=30 s only; Root app waits only while active; independent closure before next group; real clocks/latency preserved; no detach, retry, overlap or guard relaxation",
+  "namedLimits": ["local, not CI-equivalent, not full suite; generic check is not the release-control plane", "receipt label PASSED_LOCAL_WITH_AUTHORED_SKIPS_NOT_CI_EQUIVALENT is template wording; actual report has no skipped/pending/todo; no skips inferred", "local fixture acquired and stopped with zero requests: availability and closure only, not fixture behavior, real Auth, PostgREST or DB", "namespace cases prove UI keying with stubbed child forms, not live identity", "pure process-identity test pinned, not executed; 21 metadata probes are not assertions", "Windows-local; no Render/Linux, startup or browser parity", "archive long-path and raw-CRLF attempts retained; resolved via process-local long paths and native blob identity, no byte/config/test rerun", "47f49adf focused (2 failing) and typecheck (6 errors) failures and 84178ce R1 build failure remain failed; no credit transfer; this pass belongs to 84178ce1 alone"],
+  "remaining": ["synthetic browser journey (separate 2048 MiB admission)", "any required full-suite/release-control checks", "disposable DB qualification and application", "real Auth and persistence proof", "staff readback HELD; security OPEN; staging decision Doc 247 pending", "phase A return and final manifest PENDING, must bind the final candidate", "push and deploy not authorized by this review; production 7bba is not 84178ce1"],
+  "unchanged": ["R8 and Docs 160-176 closed", "790af2ce FAILED; consumed tickets as recorded", "payment and security holds open"],
+  "notClaimed": ["browser", "full suite", "release-control", "SQL", "persistence", "real Auth", "staff read", "security", "deployment", "execution, admission, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
