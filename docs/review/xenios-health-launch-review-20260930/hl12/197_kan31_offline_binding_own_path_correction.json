@@ -1,0 +1,22 @@
+{
+  "doc": 197,
+  "title": "KAN-31 offline binding: own-path correction, changed bytes only",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T22:01Z-22:02Z",
+  "notInScope": "separate human staging-input source f744aae/db182046",
+  "verdict": "CONFIRMED_DOC196_FINDING_RESOLVED; OFFLINE_EXECUTION_BINDING_79c27226_AS_CORRECTED_BY_db03e216_PASS_AT_SOURCE_SCOPE; NOT_PARSE_QUALIFICATION_TICKET_OR_EXECUTION",
+  "doc196": "66a88ebdf6dc564243aea7a9c9f8ebe6860e10b0",
+  "correction": { "commit": "db03e216cdea09582697446a5bbb2b18515270dd", "tree": "40136602afb2c2615e5863d683eec0924aa90934", "parent": "db182046603907ec737891aa1dd9e41a1f01edbc", "pathsChangedVsParent": { "execute-admitted-offline-controls.UNAPPLIED.ps1": "27053 B 6488fba2", "BINDING_IDENTITIES_SOURCE_ONLY.json": "1621 B d48ff663" }, "bindingDirVs79c27226": "only those two paths; plan unchanged 205cbe0d" },
+  "parentDiff": "exactly line 59: if($qualTicket.parentPin.path.Replace('\\','/').ToLowerInvariant() -cne $PSCommandPath.Replace('\\','/').ToLowerInvariant()){throw 'PARENT_SOURCE_PIN_REQUIRED'}; the correction Doc 196 specified, matching line 60 normalization; size grows by exactly the 72 inserted characters; no other line changed",
+  "identityDiff": "only parent bytes and sha256 fields: 26981 -> 27053 B, e50adf1f -> 6488fba2",
+  "unchanged": "plan, commands, result contracts, R7 region, bounds, controls",
+  "failureBehavior": "missing parentPin.path still fails closed: the method call on null throws before any child runs, and Get-QualPin would refuse anyway",
+  "outstanding": ["bounded parse and qualification of corrected parent 6488fba2, plus the no-dispatch reading that both slash forms of the same path are accepted", "independent parent and child PID plus creation-time closure", "Root's actual one-use ticket at fixed path with new parent hash and raw SHA bound externally; old ticket and hash not transferred", "owner readiness, exclusive light slot, clean records HEAD and tree, all 19 pins current", "any non-zero parent exit is a failure whatever the receipt says (Doc 196 limit 1)"],
+  "browserHoldsUnchanged": ["secure input setup and startup authority (Samuel's acceptance of local input custody is not setup or startup)", "source7 runtime custody", "staging-effects authority", "fresh 2048 MiB admission", "Doc399 exact-query authority"],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
