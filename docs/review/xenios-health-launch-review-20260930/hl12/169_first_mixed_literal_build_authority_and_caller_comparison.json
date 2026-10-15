@@ -1,0 +1,55 @@
+{
+  "doc": 169,
+  "title": "First mixed-source literal build: authority, window and caller comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T02:10Z-02:16Z",
+  "verdict": "TECHNICALLY_SUFFICIENT_FOR_ONE_ADMITTED_FIRST_SLOT; NO_MATERIAL_DEFECT; ONE_UNRECORDED_PRE_INVOCATION_CONDITION_TRANSPORT_DURATION; NOT_ADMISSION_NOT_INVOCATION_NOT_CAPACITY_PASS",
+  "authority": {
+    "doc223": { "commit": "5abe801", "file": "2760 B 717731d1390b84662c957d6f69b328f3da995221e1e69db548442f573a9d82bf", "item3": "Run the actual application tests, typecheck, build and synthetic browser journey.", "limit": "human not verifiable beyond Root's record and native message ID; Root 218 paraphrase not used" },
+    "doc226": { "file": "18956 B 96a23c3bc4c2519398f7a4b94c83863a9b413ff11b7cea131e3933151715357a", "window": { "start": "2026-10-15T02:08:44.528Z", "stop": "2026-10-15T02:53:44.528Z", "lastBuildStart": "2026-10-15T02:41:44.528Z" }, "selectedBy": "Root operational job admission, not a separately human-approved window", "extension": false, "retry": false, "status": "conditional; original comparison PENDING; execution NOT_RUN" },
+    "custody": "same Core under phase A lease abb400e5, return PENDING (Doc 167 step 4)",
+    "exclusions": ["tests", "typecheck", "browser", "SQL", "DB", "security", "credentials", "push", "deploy", "shared npm/OS/Git settings"]
+  },
+  "runner": {
+    "new": "39598 B baaf43b128cfff93e16ecd9851f7c555ff16efe61edbc8bc40b34cf116a9a3f4 (equals Root frozen copy)",
+    "old": "literal-build-r2-pass 39577 B bed37e9bece2a6d7aa0fbba60a7c1a24960090ec74a364e581b9fb4fe043a227",
+    "scalarChanges": ["SCRATCH", "CANDIDATE", "TREE", "ACTION"],
+    "reverseRecoversOld": true,
+    "unchanged": "480s work + 240s cleanup, 720s cooperative cap, 1536 MiB heap, 20 MiB logs, private-prefix npm@10.8.2 + npm ci + node script/build.mjs",
+    "selfChecks": "pinned node v20.19.0 without NODE_OPTIONS/execArgv; exact runner path; pins hash/schema; 28 pins rehashed with deadline; mandatory set; no node_modules/dist/.env/ancestor .bin; registry-only lock; isolated git config; checkout HEAD 47f49adf, tree a2a8e79d, empty status (line 275); launch + 720s <= stop"
+  },
+  "pins": { "file": "5853 B ce9ccf79d226847ef52818ec34cb8452ab75fa925a5af9dca0fa47b6defcca06 (equals Root frozen copy)", "entries": 28, "sharedUnchanged": 19, "relocated": 9, "onlyValueChange": "runner self-pin baaf43b1", "sourcePinsUnchanged": 8 },
+  "g0Adapter": {
+    "file": "15941 B 4630d6b07363f6cdaae0c35f4638a8a4da4f33a658a0ba5d54ec09625381992f blob 39ef1fef50ca1046c54192c7bac60226d0351b8d (equals Root frozen copy)",
+    "acceptedSlice": "12131 B e11e657d6e0bd83dba278b24ac8297ac18072d844ba9c60b27b002f013978a7c, lines 156-337 of 1911873d execute-admitted-synthetic-proving.ps1 (35636 B 78fdd4e4); present once, byte for byte; 512 floor unchanged",
+    "outsideSlice": "3810 B: param, strict mode, callsite",
+    "callsite": "exact UTC stop with >=30s left; pinned pwsh path; Get-XeniosResourceAdmission 2000 once (ordered dictionary keyed osFreeMiB/availableMiB/commitMiB); three >=1536 booleans; process age <30s before and after serialization; one closed JSON <=8192 B; exit 0 only without failure"
+  },
+  "nativeEntry": {
+    "sha256Recomputed": "bd6c386b6a00c7ce300e310572c5c22be56dd337158e30fea15fc075ae1ee7ba",
+    "sequence": ["refuse if prior G0 outputs exist", "one pinned-pwsh G0 call with stderr to file, Stopwatch, UTC before/after, LASTEXITCODE", "refuse and write g0-outer.json on exit!=0, >=30000 ms, stdout >8192 B or any stderr", "parse JSON; require kind, candidate, tree, status, floor 1536 and all three booleans", "require observation <30s old and now+720s <= stop (start by 02:41:44.528Z)", "record acceptance; pinned node runner with pins, pins hash, same stop; exit with runner code"],
+    "preparationOrder": "absent-only scratch; detached 47f49adf checkout with core.autocrlf=false and longpaths at creation only; runner and pins copies; then the single entry",
+    "failClosed": true, "retries": 0, "processKills": 0
+  },
+  "requiredBeforeInvocation": [
+    "same Core fresh FINAL READY, exclusive heavy slot, no competing job; scratch still absent",
+    "the four preparation commands and their postconditions (runner re-checks pins, HEAD/tree, cleanliness and injection at startup)",
+    "NOT RECORDED IN DOC 226: the exec transport must allow the combined step to finish (~752 s worst case) without killing or detaching the shell; confirm and set before invocation",
+    "run the entry under pwsh 7.x (Windows PowerShell 5.1 stderr behavior would still refuse but with less evidence)",
+    "build check must pass by 2026-10-15T02:41:44.528Z; otherwise the slot lapses"
+  ],
+  "nonMaterial": [
+    "freshness check parses observedAt after ConvertFrom-Json date conversion (kind/culture dependent); parse error refuses; the <30s wall bound on the same call already guarantees freshness",
+    "throw refusals (closed-result and timing checks) do not write g0-outer.json; evidence only in transport output",
+    "detached checkout registers a worktree in shared repository metadata; record and remove/prune after the slot",
+    "any stray adapter stdout makes the JSON unparseable and refuses",
+    "a last-moment start can pass the entry check and then be refused by the runner's own launch check (fails closed)"
+  ],
+  "capacity": "NOT_ASSESSED; current memory not read; historical R7 reading ~1403 MiB would not meet the 1536 floor, so refusal is a realistic outcome",
+  "unchanged": ["custody phase A active, return PENDING", "Samuel security handoff unresolved; no credential retrieval; staff-read scope HELD", "R8 and Docs 160-168 closed", "790af2ce FAILED", "payment and security holds open"],
+  "notClaimed": ["admission", "invocation", "G0 result", "build result", "capacity pass", "qualification pass", "execution, push, deployment or production consent", "human approval", "test or capacity credit"],
+  "executionConsent": false
+}
