@@ -1,0 +1,45 @@
+{
+  "doc": 176,
+  "title": "84178ce R2 build evidence, and the corrected focused and typecheck bindings",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "workflowUsed": false,
+  "reviewedAtUtc": "2026-10-15T05:22Z-05:28Z",
+  "verdict": "LOCAL_LITERAL_BUILD_CREDIT_SUPPORTED_84178ce1_WINDOWS_HOST; CORRECTED_FOCUSED_TYPECHECK_BINDINGS_SUFFICIENT; NOT_ADMISSION; NEW_FOCUSED_TYPECHECK_NOT_RUN; NO_BROWSER_FULLSUITE_SQL_STAFF_SECURITY_DEPLOY_CREDIT",
+  "method": "committed Git objects only; no command named any active source or scratch path (Doc 175 discipline)",
+  "r2Build": {
+    "archive": { "commit": "2d502f0a197233746d458867142da7a0cb7cc053", "tree": "91973a85c3ce2c3cb7632bf97cd033027686bdfa", "files": 66, "raw": 62, "records": 4 },
+    "ticket": "3a86c9ae used once", "runner": "2569b88e", "pins": "139e93f2",
+    "g0": { "nativeExit": 0, "window": "05:02:10.515Z-05:02:12.039Z", "wallMs": 1525.31, "stdoutBytes": 994, "stderrBytes": 0, "osFreeMiB": 2070.1, "availableMiB": 2068.7, "commitMiB": 7431.2, "outer": "G0_ACCEPTED_BUILD_ENTERING" },
+    "build": "child 05:02:17.548Z-05:04:38.763Z exit 0 NORMAL_EXIT, not timed out; supervisor exit 0 at 05:04:45.559Z within cap 05:14:12.130Z; renderBuildCompleted true; no cleanup actions; whole render-build chain 0 shows npm ci completed (subcommand exits not separately instrumented); 531 packages; Vite 7.3.5 2312 modules 12.97 s; server 1285 ms",
+    "warnings": ["npm --production deprecation", "AdminResearchHome mixed dynamic/static import", "chunk-size advisory"],
+    "records": { "receipt": "0aac8e0c", "artifactInventory": "72f5ae02" },
+    "independent": { "processes": "05:05:28.75Z: none of 8 known identities (7 owned + supervisor 82180) present, no scoped, no listeners, 0 stops", "artifacts": "05:05:57.31Z: exact 350 dist files 10688390 B, 22 selected installed rehashed, 28 pins, 3 locks, clean 84178ce1/24d3fa00" },
+    "limits": "point-in-time cleanup and selected dependency coverage; not kernel proof, whole closure, Render/Linux parity or browser; only write_stdin waits, no interleaved owner commands",
+    "r1": "failed R1 remains FAILED; no credit transfer",
+    "disposition": "LOCAL_LITERAL_BUILD_CREDIT_SUPPORTED"
+  },
+  "bindings": {
+    "core": { "commit": "d7cd426a53a95c52dc6e116b08db2ec829606d32", "tree": "f815487bd117484afc752e244d22ac470a95fc8f", "files": 14 },
+    "focused": { "runner": "a1cd68f8", "pins": "1b0b0235 (2472)", "entry": "0a166cc4" },
+    "typecheck": { "runner": "05efb4c7", "pins": "40055f58 (44)", "entry": "fa50c3d3" },
+    "runners": "each = its 47f49adf version (edab84df / 404d1e95) with exactly five constants changed: ROOT (R2 build source in place), CANDIDATE, TREE, SCRATCH, action; SELECTED 16, fixture hash, allowOnly=false, retry 0, single worker, budgets, heaps, guards, process-only LF Git config unchanged",
+    "helpers": "owned-processes.ps1, process-identity.cjs, process-identity.test.cjs, selection-reporter.cjs byte-identical",
+    "entries": "each = its 47f49adf version (54b53e4a / df2ddfb7) with seven bindings across six lines: run root; G0 script correction-84178ce-build-slot-r1 947bba10; stop 06:15:00.000Z; labels MIXED_84178CE_{FOCUSED,TYPECHECK}_SLOT_R1_20261015; closed-result candidate/tree; window 600000/360000 ms; final runner call with new pins hash",
+    "pins": "path sets identical after scratch normalization; focused value changes only runner + exactly the six corrected files, 2435 tracked-source pins = 84178ce1 blobs; typecheck only runner, 15 tracked = blobs; other top-level fields unchanged except candidate/tree/provenance; bound inputs exact, ignored caches not a new closure",
+    "notResults": "six new authored cases and pinned pure identity test",
+    "materialization": "8-file copy map proposed, not granted or performed; scratch must be absent; no source/dependency/dist copy or install",
+    "disposition": "SUFFICIENT"
+  },
+  "windowAuthorityRule": {
+    "window": { "start": "2026-10-15T05:06:32.310Z", "stop": "2026-10-15T06:15:00.000Z", "theoreticalLastStart": { "focused": "06:05Z", "typecheck": "06:09Z" }, "note": "Root's stricter 720 s reserve makes effective last admission earlier; R2 build 05:30Z stop unchanged and unrelated" },
+    "authority": "Docs 223/239; same owner under active lease abb400e5; phase A return PENDING; each group: copy grant, Core fresh FINAL READY, new single-use Root ticket, fresh G0; strict serial after native completion and owned closure",
+    "operatingRule": "Doc 175 discipline covers the R2 build source used in place and both group scratch folders; while a group runs, no session (reviewer included) runs a command referencing them; Root only app waits"
+  },
+  "holds": ["no test/typecheck/browser/full-suite/SQL/persistence/staff-read/security/deploy credit for 84178ce", "phase A return and final manifest PENDING", "security exposure OPEN; privileged staff reads HELD", "live revision 7bba is neither candidate"],
+  "unchanged": ["R8 and Docs 160-175 closed", "790af2ce FAILED; consumed tickets; failed 47f49adf focused/typecheck and failed 84178ce R1 as recorded", "payment and security holds open"],
+  "notClaimed": ["admission", "invocation", "focused or typecheck result", "execution, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
