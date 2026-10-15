@@ -1,0 +1,46 @@
+{
+  "doc": 174,
+  "title": "Six-path correction 84178ce and its build-slot rebinding",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T04:35Z-04:41Z",
+  "verdict": "CORRECTION_ACCEPTED_AS_SOURCE; BUILD_SLOT_REBINDINGS_SUFFICIENT; PREPARATION_CAPTURE_LIMIT_RECORDED_NOT_MATERIAL; NOT_ADMISSION; NO_BUILD_TEST_TYPECHECK_BROWSER_SQL_STAFF_SECURITY_DEPLOY_CREDIT",
+  "actualFailures": {
+    "focused": "Core 2903f156: 214 assertions, 212 passed, 2 failed (CareRequestIntentPage noindex; RequestIntentForm staff readback round trip), 0 skipped",
+    "typecheck": "Core a273128: 6 errors: TS2339 member.id missing on MemberInfo x3 (OrderRequestEntry.tsx, RequestIntentEntry.tsx x2), TS2353 stale staff-context fixture 'rail' (RequestIntentForm.test.tsx), TS2345 string|string[] in express.ts x2",
+    "status": "FAILED as recorded; normal exits, closure/source/pin checks passed; no retry or pass claim"
+  },
+  "reviewerRecordCorrection": "Docs 164 and 166 accepted entries keyed by member?.id; MemberInfo has no id, so the key was always 'early-access-session' and an account switch would not remount the form; tests mocked a member { id } the real type never provides; the typecheck caught what I missed",
+  "correction": {
+    "commit": "84178ce1ae60af6d2032507e3209a42eb861fdd4", "tree": "24d3fa00f1128dc989cd2d092acf97b30bf9fd1b", "parent": "47f49adf",
+    "paths": ["client/src/research/assisted-order/OrderRequestEntry.tsx", "client/src/research/assisted-order/RequestIntentEntry.tsx", "server/research/assisted-order/request-intent/express.ts", "client/src/care/CareRequestIntentPage.test.tsx", "client/src/research/assisted-order/RequestIntentForm.test.tsx", "client/src/research/assisted-order/OrderRequestEntry.test.tsx"],
+    "stat": "80 insertions, 15 deletions",
+    "root257Patch": "15433 B 092d8ed6 equals git diff 47f49adf..84178ce1 in content",
+    "protectedOrSeamPaths": 0, "appliedManifestUnchanged": "dd99bc37",
+    "ownerKey": "member.cartScope accepted only if isResearchCartScope (64 lowercase hex); canonical opaque server-derived domain-separated SHA-256 of auth_user_id, never authorization evidence; signed out uses 'early-access-session'; missing/empty/malformed scope or null-while-authenticated refuses with support message and no form; token-only rerender retains; different scope remounts; server paths still authorize",
+    "express": "typeof id !== 'string' guard before the UUID regex; fails closed on arrays; fixes TS2345",
+    "tests": "Care page asserts hoisted document.head robots 'noindex, nofollow' (none beforehand); form round trip uses pending-read context with purpose and actor; entry tests use typed MemberInfo and recovery 'pending'; six new cases across both real entry components with child forms stubbed; written not run; not live Auth proof",
+    "custodyAuthority": "within active phase A lease abb400e5, no overlap; recorded run instruction plus Samuel's overnight repair direction; no protected exception needed; Doc 168 confirmation covered 47f49adf only; final manifest finalization and final-record confirmation must bind the final candidate",
+    "disposition": "ACCEPTED"
+  },
+  "buildSlot": {
+    "core": { "commit": "aad83e136a2695bfca4c32ad2d8370f9d337aa2a", "tree": "eb0ab11563c791d9f7fc8287a96e97f52ba5a04a" },
+    "root": "Doc258 at 8af0ac6",
+    "runner": "39598 B 954b99b7 = baaf43b1 + 4 unique constants (scratch, candidate, tree, action), exact both directions",
+    "g0": "15919 B 947bba10 = 8b1e85ed + candidate/tree literals only, exact both directions; R7 slice e11e657d unchanged",
+    "entry": "3201 B 94090792 = 8edcfb98 + declared bindings only (run root, adapter path, label, closed-result candidate/tree, stop 05:30:00.000Z, final runner call with pins 0018cb57)",
+    "pins": "5853 B 0018cb57, 28; candidate/tree rebound, scratch paths moved; only value change is the runner self-pin; none of the six corrected files among the runner's eight source pins",
+    "preparation": "receipt bb0b253b (tree 4e261ae4); read-only check: scratch holds only source/, run-render-build.cjs 954b99b7 and pins.json 0018cb57; HEAD 84178ce1, tree 24d3fa00, full history; six corrected files equal LF blobs; no node_modules, dist, run1 or G0 outputs; 47f49adf scratch untouched",
+    "captureLimitation": "native preparation exit 0 but Git stderr error-record serialization truncated the complete capture; partial capture and independent state proof retained, not a recreation; NOT material because state is independently confirmed and the runner re-verifies at startup; read-only postcheck typo corrected without re-materialization",
+    "window": { "start": "2026-10-15T04:24:33.469Z", "stop": "2026-10-15T05:30:00.000Z", "lastFullStart": "2026-10-15T05:18:00.000Z" },
+    "controls": "Docs 223/239; pinned pwsh 7 login false; G0 all three >=1536 MiB, exit 0, <30 s, <=8192 B stdout, no stderr, fresh UTC; literal npm run render-build with private process-only npm prefix/cache/home/temp, includes fresh npm ci; write_stdin waits <=30 s, no interleaved tools, latency recorded; no old ticket, retry or extension",
+    "disposition": "SUFFICIENT"
+  },
+  "stillRequired": ["Core fresh FINAL READY, exclusive single heavy job, Root new ticket; one G0 and one conditional build", "Doc 173 slots are bound to 47f49adf; the corrected candidate needs its own rebound focused and typecheck slots and fresh admission; prior results stay FAILED"],
+  "holds": ["no build/test/typecheck/browser/SQL/persistence/staff-read/deploy credit for 84178ce", "phase A return and final manifest PENDING", "security exposure OPEN; privileged staff reads HELD", "live revision 7bba is neither candidate"],
+  "unchanged": ["R8 and Docs 160-173 closed", "790af2ce FAILED; tickets 404727c5, 264a4c65, 07024dd5; failed focused and typecheck results as recorded", "payment and security holds open"],
+  "notClaimed": ["admission", "invocation", "build, test, typecheck or qualification result", "execution, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
