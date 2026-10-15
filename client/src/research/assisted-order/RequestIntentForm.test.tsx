@@ -72,7 +72,7 @@ function makeRoundTrip() {
     ...base, submit: (input) => service.submit(viewer, input), recover: (key) => service.recover(viewer, key),
     staff: async (id) => {
       const result = await service.staffRead({ subjectId: "synthetic-clinical-admin", roles: ["clinical_admin"] },
-        { rail: "care", state: "enabled", enabled: true, publicMessage: "", checkedAt: new Date().toISOString() },
+        { purpose: "request_intent_pending_read", actorSubjectId: "synthetic-clinical-admin", enabled: true },
         { get: async (requestId) => [...rows.values()].find((row) => row.detail.requestId === requestId)?.detail ?? null, list: async () => ({ items: [], total: 0, page: 1, pageSize: 25 }) }, id);
       if (!result) throw new Error("Not found");
       return result;

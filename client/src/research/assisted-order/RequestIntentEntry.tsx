@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useResearch } from "../core";
+import { isResearchCartScope } from "../cart-session";
 import type { StorefrontIntent } from "../storefront/entry-intent";
 import { orderEntryIntentFromSearch } from "../early-access/orderEntryIntent";
 import { createRequestIntentApi } from "./request-intent-api";
@@ -34,6 +35,8 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
   entryIntent?: StorefrontIntent | null;
 }>) {
   const { member, memberToken, memberChecking, recovery, memberSessionStatus } = useResearch();
+  const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
+    : memberSessionStatus === "signed_out" ? "early-access-session" : null;
   const [standing, setStanding] = useState(false);
   useEffect(() => {
     if (embedded) return;
@@ -43,7 +46,7 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
       if (current) setStanding(value.kind === "accepted");
     }).catch(() => { if (current) setStanding(false); });
     return () => { current = false; };
-  }, [embedded, member?.id, memberSessionStatus]);
+  }, [embedded, owner, memberSessionStatus]);
   const tokenRef = useRef(memberToken);
   tokenRef.current = memberToken;
   const api = useMemo(() => createRequestIntentApi(() => tokenRef.current), []);
@@ -54,9 +57,11 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
     return <section role="alert"><p>Complete secure account recovery or contact support before submitting a request.</p>
       <a href="/support">Contact support</a></section>;
   }
-  // Key by identity, never token. Routine token refresh does not discard a
-  // volatile attempt; an account switch cannot keep another person's form.
-  return <RequestIntentForm key={member?.id ?? "early-access-session"} api={api}
+  if (owner === null) return <section role="alert">
+    <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/support">Contact support</a></section>;
+  // Key by the confirmed opaque owner, never token. Token-only rerenders keep
+  // the form; account switches remount it. Checking/recovery renders no form.
+  return <RequestIntentForm key={owner} api={api}
     embedded={embedded} continuationEnabled={embedded ? continuationEnabled : standing}
     onStepChange={onStepChange} entryIntent={hint} />;
 }

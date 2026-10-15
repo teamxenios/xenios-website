@@ -34,10 +34,11 @@ async function mount() {
 }
 describe("private pending-request page (synthetic provider, real canonical transport)", () => {
   it("requires sign-in, keeps noindex and returns to the exact private page", async () => {
+    expect(document.head.querySelector('meta[name="robots"]')).toBeNull();
     await mount();
     expect(container.querySelector("a")?.getAttribute("href"))
       .toBe("/research/sign-in?returnTo=%2Fcare%2Frequest-intents");
-    expect(container.querySelector('meta[name="robots"]')?.getAttribute("content")).toContain("noindex");
+    expect(document.head.querySelector('meta[name="robots"]')?.getAttribute("content")).toBe("noindex, nofollow");
     expect(fetch).not.toHaveBeenCalled();
   });
   it("uses the existing non-recovery bearer transport, not website email or query authority", async () => {

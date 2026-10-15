@@ -1,5 +1,6 @@
 import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { useResearch } from "../core";
+import { isResearchCartScope } from "../cart-session";
 import type { StorefrontIntent } from "../storefront/entry-intent";
 import { OrderEntryIntentNotice } from "../early-access/OrderEntryIntentNotice";
 import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "../early-access/orderEntryIntent";
@@ -55,11 +56,17 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode }) {
 }
 export function OrderRequestEntry(props: Props) {
   const { member, memberChecking, memberSessionStatus, recovery } = useResearch();
-  const owner = member?.id ?? "early-access-session";
+  // The verified member projection exposes an opaque scope, not an id. This
+  // React key isolates volatile UI; it does not authorize any server operation.
+  const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
+    : memberSessionStatus === "signed_out" ? "early-access-session" : null;
   const standaloneMode = useOrderRequestMode(props.mode === undefined && !memberChecking
-    && memberSessionStatus !== "checking" && recovery === "none" && memberSessionStatus !== "verification_failed", owner);
+    && memberSessionStatus !== "checking" && recovery === "none" && memberSessionStatus !== "verification_failed"
+    && owner !== null, owner ?? "unconfirmed-member");
   if (memberChecking || memberSessionStatus === "checking") return <p role="status">Checking your existing session...</p>;
   if (recovery !== "none" || memberSessionStatus === "verification_failed") return <section role="alert">
     <p>Complete secure account recovery or contact support before continuing this request.</p><a href="/support">Contact support</a></section>;
+  if (owner === null) return <section role="alert">
+    <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/support">Contact support</a></section>;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode} />;
 }

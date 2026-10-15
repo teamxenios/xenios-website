@@ -3,21 +3,23 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { OrderRequestEntry } from "./OrderRequestEntry";
+import type { MemberInfo, MemberSessionStatus, RecoveryState } from "../core";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { ASSISTED_ORDER_DRAFT_KEY } from "./draft-store";
 
-const auth = vi.hoisted(() => ({ member: null as null | { id: string }, memberChecking: false,
-  memberSessionStatus: "signed_out", recovery: "none" }));
+const auth = vi.hoisted(() => ({ member: null as MemberInfo | null, memberToken: null as string | null, memberChecking: false,
+  memberSessionStatus: "signed_out" as MemberSessionStatus, recovery: "none" as RecoveryState }));
 vi.mock("../core", () => ({ useResearch: () => auth }));
 vi.mock("./AssistedOrderPage", () => ({ AssistedOrderPage: (props: { embedded?: boolean }) =>
   <div data-testid="legacy-form">{props.embedded ? "embedded" : "standalone"}</div> }));
 vi.mock("./RequestIntentEntry", () => ({ RequestIntentEntry: (props: { embedded?: boolean; entryIntent?: { action: string } }) =>
   <div data-testid="mixed-form">{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}</div> }));
+vi.mock("./RequestIntentForm", () => ({ RequestIntentForm: () => <div data-testid="private-form">Volatile form boundary</div> }));
 vi.mock("../early-access/OrderEntryIntentNotice", () => ({ OrderEntryIntentNotice: () => <p>Legacy hint resolver</p> }));
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let container: HTMLDivElement, root: Root;
 beforeEach(() => {
-  Object.assign(auth, { member: null, memberChecking: false, memberSessionStatus: "signed_out", recovery: "none" });
+  Object.assign(auth, { member: null, memberToken: null, memberChecking: false, memberSessionStatus: "signed_out", recovery: "none" });
   window.sessionStorage.clear(); window.history.replaceState(null, "", "/research/early-access/order-request");
   container = document.createElement("div"); document.body.appendChild(container); root = createRoot(container);
 });
@@ -25,6 +27,9 @@ afterEach(() => { act(() => root.unmount()); container.remove(); vi.unstubAllGlo
 async function render(element: React.ReactNode) {
   await act(async () => { root.render(element); });
   for (let i = 0; i < 5; i++) await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+}
+function member(cartScope?: string): MemberInfo {
+  return { firstName: "Synthetic", status: "active", applicationStatus: "active", cartScope };
 }
 describe("actual front-door selection and preservation (child form boundary stubs)", () => {
   it("selects legacy only from the exact explicit-off response at the standalone door", async () => {
@@ -76,15 +81,62 @@ describe("actual front-door selection and preservation (child form boundary stub
     expect(container.textContent).toContain("do not submit a replacement");
   });
   it("does not carry a mounted owner form across account changes or account recovery", async () => {
-    auth.member = { id: "synthetic-a" };
+    auth.memberSessionStatus = "authenticated";
+    auth.member = member("a".repeat(64));
     await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
     const prior = container.querySelector('[data-testid="mixed-form"]');
-    auth.member = { id: "synthetic-b" };
+    auth.member = member("b".repeat(64));
     await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
     expect(container.querySelector('[data-testid="mixed-form"]')).not.toBe(prior);
-    auth.recovery = "active";
+    auth.recovery = "pending";
     await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
     expect(container.querySelector('[data-testid="mixed-form"]')).toBeNull();
     expect(container.textContent).toContain("Complete secure account recovery");
   });
 });
+
+for (const entry of ["door", "private-entry"] as const) {
+  describe(`${entry} canonical member namespace (form boundary stubs, not live identity proof)`, () => {
+    const selector = entry === "door" ? '[data-testid="mixed-form"]' : '[data-testid="private-form"]';
+    async function mount() {
+      if (entry === "door") await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
+      else {
+        const { RequestIntentEntry } = await vi.importActual<typeof import("./RequestIntentEntry")>("./RequestIntentEntry");
+        await render(<RequestIntentEntry embedded />);
+      }
+    }
+    it("retains a confirmed owner across token-only refresh and remounts for another canonical scope", async () => {
+      auth.memberSessionStatus = "authenticated";
+      auth.member = member("a".repeat(64)); auth.memberToken = "synthetic-first";
+      await mount();
+      const original = container.querySelector(selector);
+      expect(original).not.toBeNull();
+      // This models a confirmed-owner rerender, not a guarantee through an auth checking/unmount phase.
+      auth.member = member("a".repeat(64)); auth.memberToken = "synthetic-refreshed";
+      await mount(); expect(container.querySelector(selector)).toBe(original);
+      auth.member = member("b".repeat(64));
+      await mount(); expect(container.querySelector(selector)).not.toBeNull();
+      expect(container.querySelector(selector)).not.toBe(original);
+    });
+    it("removes a prior owner's form and refuses missing, malformed or unconfirmed member namespaces", async () => {
+      auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
+      await mount(); expect(container.querySelector(selector)).not.toBeNull();
+      for (const value of [member(), member(""), member("synthetic-invalid"), null]) {
+        auth.member = value;
+        await mount();
+        expect(container.querySelector(selector)).toBeNull();
+        expect(container.querySelector('[data-testid="legacy-form"]')).toBeNull();
+        expect(container.textContent).toContain("Your account could not be confirmed");
+      }
+    });
+    it("remounts when leaving the confirmed member for the signed-out early-access boundary", async () => {
+      auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
+      await mount(); const original = container.querySelector(selector);
+      expect(original).not.toBeNull();
+      auth.member = null; auth.memberToken = null; auth.memberSessionStatus = "signed_out";
+      await mount();
+      expect(container.querySelector(selector)).not.toBeNull();
+      expect(container.querySelector(selector)).not.toBe(original);
+    });
+  });
+}

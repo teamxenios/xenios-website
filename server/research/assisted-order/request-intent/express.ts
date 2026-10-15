@@ -90,7 +90,7 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
   }));
   router.get("/staff/:requestId", deps.readRateLimit, requirePendingRequestIntentRead(deps.care, deps.staffReadEnabled), handle(async (req, res) => {
     const id = req.params.requestId;
-    if (!/^[0-9a-f-]{36}$/i.test(id)) throw new AssistedOrderValidationError("requestId", "Invalid request identity.");
+    if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new AssistedOrderValidationError("requestId", "Invalid request identity.");
     const result = await deps.service.staffRead(
       res.locals.requestIntentStaffPrincipal as CarePrincipal,
       res.locals.requestIntentStaffReadContext as RequestIntentStaffReadContext, deps.staffReader, id,
