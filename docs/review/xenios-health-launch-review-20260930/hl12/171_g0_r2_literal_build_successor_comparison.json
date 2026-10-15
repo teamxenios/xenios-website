@@ -1,0 +1,54 @@
+{
+  "doc": 171,
+  "title": "G0 R2 literal-build successor: diagnostic result and narrow comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T03:05Z-03:10Z",
+  "verdict": "SUFFICIENT; NO_MATERIAL_ISSUE; DIAGNOSTIC_CONFIRMS_DOC170_CAUSE; NOT_ADMISSION_NOT_INVOCATION; NOT_CAPACITY_BUILD_TEST_OR_DEPLOYMENT_RESULT",
+  "binding": {
+    "root": "Doc242 at 7e28fda",
+    "core": { "commit": "f3424ff4d7b99b0d5db0c03102e5b7d08d0def30", "tree": "fafe3618330445b9f1faeed016053e6d21058b66", "parent": "8e6723d" },
+    "actualResult": "11108 B 642a265add698b4a384802601dae3f48268a540d911d1fa8d258551aa67da255",
+    "adapterR2": "15919 B 8b1e85ed127faedee74b6f335bc425d4b74eff18a232da8585205b6230ae5d40",
+    "entryR2": "3202 B 8edcfb98e1ba63f0fe5420af29fe95c6d5c6f53adf5d3c02ea1bc75b797e5ec2",
+    "proposal": "17069 B 624b57691550f49b4abece1d38ca9ad4201332af173df46aa39ef96b3086b3b0",
+    "ready": "8196 B 1f50f1bd563a03ea1054c50144f59b512d5e99baf3bf56764f233c8712b69fd7",
+    "reuseCheck": "19561 B 6de7489877132f44b7654f58048bda55a7bb268771c110e7b90dd3ba1d078455",
+    "rootCopiesEqualCore": true
+  },
+  "diagnostic": {
+    "ticket": "264a4c65 used once", "native": "6df5fe exit 1, tool wall 0.6014555 s",
+    "result": "ARGUMENT_AND_FORMAT_CHECK, System.Management.Automation.RuntimeException, InvalidOperation, process age 296 ms; no R7, memory or build",
+    "interpretation": "matches the Doc 170 confirming signal: advanced script leaves $args unset and StrictMode read throws; token throw would report OperationStopped; stop input well-formed",
+    "limits": "merged output only, no separate stderr; FullyQualifiedErrorId and message not captured; fixture exit 1 is the reproduced fault",
+    "disposition": "CONFIRMED"
+  },
+  "adapterR2": {
+    "change": "old 15941 B 4630d6b0 minus its single '$args.Count -ne 0 -or ' (22 B) equals new byte for byte; no $args left",
+    "guard": "if($StopAtUtc -cnotmatch ...){throw 'G0_INVOCATION_BINDING'}; advanced binding rejects extra named/positional args before the body (nonzero exit + stderr, entry refuses)",
+    "acceptedR7Slice": "12131 B e11e657d unchanged",
+    "staticScan": "no script:/global: references; no variable read without assignment or parameter in the newly reachable code",
+    "disposition": "ACCEPTED"
+  },
+  "entryR2": {
+    "changesReverseToOld": "bd6c386b6a00c7ce300e310572c5c22be56dd337158e30fea15fc075ae1ee7ba",
+    "changes": ["adapter path r1->r2", "g0-r2-result.json / g0-r2-stderr.txt / g0-r2-outer.json (required absent)", "stop literal 2026-10-15T03:41:00.000Z in G0 arg, window check and runner arg", "admission label DOC242_G0_R2_LITERAL_BUILD_20261015", "ConvertFrom-Json -DateKind String"],
+    "unchanged": "floors, phase budgets, closed-result checks, <30 s, <=8192 B, empty stderr, full 720 s rule, continuous G0->build",
+    "stopLiteral": "satisfies adapter \\.\\d{3}Z format and runner ISO round trip",
+    "dateFix": "Root metadata 86c1b5 shows default ConvertFrom-Json DateTime then implicit string conversion drops zone and ms and Parse reads local (5 h shift); false refusal in Root precheck; in the old entry it would have made freshness meaningless (wall bound still held); corrects Doc 169's kind/culture-dependent note; -DateKind String preserves UTC; works in the pinned shell (Root precheck 97e468 exit 0)",
+    "disposition": "ACCEPTED"
+  },
+  "reuseWindowCapture": {
+    "reuse": "Core 02:57:30.99Z read-only check: 28 pins match, clean full-history 47f49adf/a2a8e79d, no run1/deps/dist/r2 outputs; prep commands correctly not repeated; runner re-checks at startup; must be repeated immediately before activation; runner baaf43b1 and pins ce9ccf79 unchanged",
+    "window": { "start": "2026-10-15T02:56:00.000Z", "stop": "2026-10-15T03:41:00.000Z", "lastFullStart": "2026-10-15T03:29:00.000Z", "basis": "recorded human run instructions Docs 223 and 239; not an extension; not a human exact-window claim", "consumedNotReused": ["404727c5", "264a4c65"] },
+    "capture": "managed exec session, pinned pwsh 7, login false, held >=780 s, no detach/stop/relaunch, yield is not a timeout; satisfies the Doc 169 transport condition",
+    "disposition": "SUFFICIENT"
+  },
+  "stillRequired": ["Core fresh FINAL READY, exclusive single heavy job, fresh reuse re-check", "Root new ticket; one G0 and one conditional build, no retry"],
+  "limits": ["refusal still possible in newly reachable code (R7 read, thresholds, age checks); fails closed", "capacity unknown; historical ~1403 MiB below the 1536 floor", "no tests/typecheck/browser/SQL/production/security in scope", "security exposure OPEN; privileged staff reads HELD", "current manual production 7bba is not mixed source 47f49adf"],
+  "unchanged": ["custody phase A active, return PENDING", "R8 and Docs 160-170 closed", "790af2ce FAILED; tickets 404727c5 and 264a4c65 consumed", "payment and security holds open"],
+  "notClaimed": ["admission", "invocation", "capacity, build, test or qualification result", "execution, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
