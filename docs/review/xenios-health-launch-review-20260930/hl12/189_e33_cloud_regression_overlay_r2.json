@@ -1,0 +1,50 @@
+{
+  "doc": 189,
+  "title": "e33 isolated cloud-regression overlay R2",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T15:10Z-15:16Z",
+  "method": "static review of extracted package plus committed Git objects; overlay's 16 controls, workflow, tests and network queries not run; no agents; accepted application and docs 163-188 not reopened",
+  "inputs": { "zip": "XENIOS_E33_CLOUD_REGRESSION_OVERLAY_R2_20261015.zip 19243 B f4116b34", "handoffs": "CODEX_INTEGRATION_HANDOFF.md and CLAUDE_REVIEW_HANDOFF.md delivered in chat, byte-identical to copies inside the ZIP" },
+  "verdict": "ACCEPTABLE_FOR_NARROW_PURPOSE; NO_MATERIAL_DEFECT; R1_OBJECTIONS_1_2_3_RESOLVED (objection 3 SHA-to-tag correspondence is author readback, not verified by reviewer); OPTIONAL_ISOLATED_CLOUD_EVIDENCE_ROUTE_FOR_E33; NOT_QUALIFICATION_EVIDENCE_UNTIL_ACTUAL_RUN_REVIEWED; NOT_PUSH_MERGE_DEPLOY_OR_PRODUCTION_AUTHORITY; NO_HOLD_LIFTED; FLEET_NOT_UNPAUSED",
+  "packageIntegrity": { "entries": 10, "pathTraversal": false, "manifestRowsMatch": "9/9", "hashes": { "workflow": "726cec8a", "validator": "eb6d941f", "contract": "acd3b338", "controlTests": "6dc06213" }, "validatorContractPin": "acd3b338", "scope": "adds only workflow, validator, contract and tests; changes no application file" },
+  "objection1FakeNames": {
+    "contractMatchesDerivation": "66 names exactly the set derived from run 309 actual Vitest report plus three new route-scanner names (Docs 183/185), file by file 55/5/6; full digests equal runner CURRENT_SELECTION 99bcf044, f998eba9, 4ddc27eb, combined 7a936af7",
+    "validatorRequires": ["exactly 3 suites matched by path suffix, no duplicates", "totals exactly 66, 65 passed, 1 pending, 0 failed, 0 todo, success true", "suite status passed and exact per-file counts", "each fullName non-empty, free of CR/LF/NUL, ending in its own title, unique globally", "each file's observed name digest equal to reviewed one, same for global digest"],
+    "onlyAllowedSkip": "PG16 title in release-control file; exactly one contract name carries that title",
+    "result": "synthetic, renamed, missing, extra or duplicate names cannot pass",
+    "status": "RESOLVED"
+  },
+  "objection2PushTrigger": {
+    "trigger": "on: push to codex/e33-regression-overlay-20261015 only, no workflow_dispatch",
+    "checkout": "e33c12a9 by full SHA, fetch-depth 0, persist-credentials false",
+    "checks": "asserts HEAD, tree ab4415f0 and clean status; four blob pins (84674e19, ad3b131a, e7ef7aad, 748ee42c) equal e33c12a9 blobs",
+    "commitAvailability": "e33c12a9 already on origin/codex/mixed-request-intent-20261015 in reviewer's fetched refs; checkout by SHA reachable",
+    "status": "RESOLVED"
+  },
+  "objection3MovableTags": {
+    "pins": { "checkout": "11d5960a326750d5838078e36cf38b85af677262", "setupNode": "49933ea5288caeca8642d1e84afbd3f7d6820020", "uploadArtifact": "ea165f8d65b6e75b540449e92b4886f43607fa02" },
+    "noTagRemains": true,
+    "unverified": "README says these were the commits behind refs/tags/v4 at readback; not verified by reviewer query; integrator must confirm by readback before pushing",
+    "status": "RESOLVED_IN_FORM"
+  },
+  "newDefectsChecked": {
+    "pg16OptIn": "test condition process.env.CI || XENIOS_RUN_PG16_VERIFIER === '1'; Vitest step sets both to empty strings and asserts with test -z, so named skip preserved; no other env var read in the three files (DYNAMIC_PATH and PREFIX appear only in fixture text)",
+    "commitMissingFromGitHub": "WAVE2_UPSTREAM_REVIEW_SHA 2542f8da not on any ref, may be absent in fresh clone; isReleaseAncestor maps any git error to false so the test still sees MIGRATION_SOURCE_NOT_RELEASE_ANCESTOR; all other migration DAG source SHAs on remote refs",
+    "permissionsAndSecrets": "contents: read, no secrets, only the JSON report uploaded",
+    "gating": "compiler, regression and validator failures all fail the job",
+    "result": "NONE_MATERIAL"
+  },
+  "limits": [
+    "different environment: Linux ubuntu-latest with fresh npm ci is cloud evidence; does not reproduce the reviewed Windows runner's 91 raw pins, owned process closure, G0 resource gate, isolated npm and git configuration; whether it can stand in for Docs 185/188 local admission is the release owner's decision",
+    "command differences: --fileParallelism=false instead of reviewed --no-file-parallelism; JSON reporter only; config found implicitly; network npm install -g npm@10.8.2; with --maxWorkers=1 none changes outcomes; reviewed literals would be cleaner",
+    "pushing the overlay branch needs separate valid authority",
+    "a run must produce the actual job ID, checkout SHA, compiler result, full Vitest JSON and validator exit, all reviewed; an Actions failure is a real failure; the 16 control passes are not the 66-case run",
+    "regression 309 FAILED and copy 340 FAILED stand"
+  ],
+  "holds": ["browser capacity", "Doc 247 DB", "security and staff", "phase A return", "final manifest", "live verification"],
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
