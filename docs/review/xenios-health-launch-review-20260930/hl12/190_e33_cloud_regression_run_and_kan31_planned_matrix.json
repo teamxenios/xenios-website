@@ -1,0 +1,43 @@
+{
+  "doc": 190,
+  "title": "e33 cloud regression run, receipt reconciliation, and the planned KAN-31 matrix",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T19:26Z-19:30Z",
+  "method": "committed Git objects plus read-only GitHub Actions metadata and logs; nothing executed, mutated or re-run",
+  "packet": { "zip": "Xenios_Codex_Claude_Jira_Handoff_2026-10-15.zip 15220 B e6ac351c", "reviewerBrief": "02_CLAUDE_REVIEWER_PROMPT.md f778c870", "protocol": "03_TEAM_JIRA_PROTOCOL.md 512224d5", "delivery": "chat" },
+  "accessStatus": { "jiraConfluence": "NOT_AVAILABLE: no Atlassian connector in this session; cannot read KAN-2, KAN-31 or XENENG or post to them; connecting would change persistent configuration and need interactive OAuth, so not attempted; no Jira activity claimed; section 6 comment text ready for an authorized owner to post", "github": "read-only via existing gh login, metadata and logs only" },
+  "reconciliation": {
+    "e33CompilerLocalWindows": "PASS (compiler only): Core c9cf257, ticket 7803a266 consumed, exit 0, 0 diagnostics, independent owned postcheck PASS",
+    "e33Current66LocalWindows": "NOT_RUN: Core d9d92f6, Samuel paused all work; no READY, ticket or G0",
+    "e33Current66Cloud": "PASS_BOUNDED: run 38764174056",
+    "stagingI3": "PASS_WITHIN_SCOPE: Core bf7f4a9, one installation and one structural postcheck (9 empty tables, 30 functions, privileges, 240-min sessions) on staging tetynodzrtmdbuzgboro, not production; earlier I1 refusal, D1 diagnosis, I2 syntax failure preserved; receipt excludes real Auth/PostgREST, customer submission, retry and persistence",
+    "browser": "NOT_RUN: Core cd64f5e readiness and coverage gaps documented, no journey executed",
+    "production": "NOT_THE_CANDIDATE: Root DOC332/339, live service on 7bba4b6e, manual deploy, actor and reason unknown",
+    "securityKAN85": "OPEN: no closure evidence seen"
+  },
+  "cloudRunDisposition": {
+    "run": "38764174056, push on codex/e33-regression-overlay-20261015",
+    "head": "303042fa88773119a97234220c49e15a765a1305, parent exactly e33c12a9; diff adds only the four overlay files byte-identical to Doc 189 package (workflow 726cec8a, validator eb6d941f, contract acd3b338, tests 6dc06213)",
+    "attempt1": "failure but job never started: annotation 'The job was not started because your account is locked due to a billing issue'; zero steps ran; not a hidden test failure; attempt 2 not a retry of a failed test",
+    "attempt2": { "job": 116529564534, "window": "16:06:02Z-16:07:40Z", "steps": "all 12 succeeded", "logShows": ["checkout of e33c12a9 ('HEAD is now at e33c12a9')", "HEAD, tree, clean-status and four blob-pin assertions passing", "Node v20.19.0 and npm 10.8.2", "checker controls 16 run, 16 passed, 0 failed", "npm ci and literal npm run check:release-control-plane succeeding", "three-file Vitest step exiting 0 with CI and XENIOS_RUN_PG16_VERIFIER empty", "validator printing ACCEPTED_EXACT_66_REPORT (candidate e33c12a9, 66 total, 65 passed, 1 skipped, PostgreSQL NOT_RUN)"] },
+    "artifact": "xenios-e33-exact-reviewed-66 ID 11989721095, 3945 B, digest sha256:4e3581f646ad53eee5bdc04a47fe94dec21613498088a743847b59e54149a6c2",
+    "logCopy": "full attempt-2 log saved as review copy, 1005 lines, b0fb04e1",
+    "answers": "e33 scanner fix makes the release-control regression that failed on 84178ce1 (run 309: 61 passed, 1 failed) pass with the exact reviewed identities in this environment; run 309 itself stays FAILED",
+    "verdict": "PASS_BOUNDED",
+    "limits": ["environment: Linux ubuntu-latest with fresh npm ci, not the reviewed Windows runner with 91 raw pins, owned closure and G0; whether cloud evidence stands in for local regression admission is the release owner's decision", "artifact: not downloaded or re-parsed by reviewer; acceptance rests on validator's logged output (reviewed in Doc 189) and step gating", "PostgreSQL: PG16 verifier test skipped by design; not managed-database coverage", "command differences as noted in Doc 189; none changes outcomes"]
+  },
+  "stillAbsentBeforeRelease": ["real persistence and reference (KAN-26): managed staging DB with real Auth and PostgREST, genuine pending request and reference, idempotent retry; I3 installed prerequisites only", "staff readback (KAN-29): HELD until security exposure closed (KAN-85) and staff-read flag enabled by its owner", "browser journey (KAN-31): not run; earlier host blocker was G0 memory capacity", "release evidence (KAN-33): full suite, static checks, diff, final manifest; phase A 40-path return pending", "deployment and live verification (KAN-35): authorized release owner reconciles release branch, then verifies served SHA, deploy ID, synthetic pending request, retry, staff readback and access denial", "owned cleanup: source7 removal still owed"],
+  "kan31PlannedMatrix": {
+    "status": "PLANNED_NONE_EXECUTED",
+    "environment": "qualified staging with real Auth and PostgREST and I3 prerequisites, never production; synthetic identities only",
+    "source": "expected results from e33c12a9 request-intent/express.ts, production.ts, service.ts, staff-read-authority.ts; Jira KAN-31 acceptance criteria not readable here, must be reconciled before use",
+    "rows": 15,
+    "cases": ["flag off: config 503 enabled:false, no submit control", "eligible member picks clinical + nonclinical in one draft with exact variant and quantity", "submit with current acknowledgments: 200 genuine reference, exactly one pending-review row, no payment/approval/prescription/order", "missing acknowledgments: 400 current_acknowledgments_required, nothing saved", "dropped response, same attempt or /recover: same reference, one row", "same key changed items: 409 attempt_conflict", "stale selection: 400 selection_requires_refresh", "signed out or non-member bearer: 401 authentication_required", "cross-origin: 403 request_origin_not_authorized", "rate limit 429 rate_limited; limiter unavailable 503", "second member or staff routes: 401/403; staff routes 503 private_review_unavailable while flag off", "authorized staff after KAN-85 and flag on: exact pending request; unauthorized staff 403 private_review_access_required", "admin mark-paid: no route; 409 unapproved_intent_has_no_commercial_authority (KAN-32)", "backend/RPC failure: 503 request_outcome_unconfirmed with recovery notice, never 'not saved'", "375 px mobile full flow and errors: usable, clear errors, no token or personal data in URLs"]
+  },
+  "jiraCommentDraft": { "issue": "KAN-33", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
