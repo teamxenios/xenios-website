@@ -1,0 +1,54 @@
+{
+  "doc": 170,
+  "title": "Query-free pre-G0 callsite test: light-job comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T02:39Z-02:46Z",
+  "delivery": "Root typed delivery failed (Doc 235, window minimized, nothing sent); taken under Samuel's overnight reviewer brief",
+  "verdict": "SUFFICIENT_FOR_ONE_ADMITTED_LIGHT_JOB; NO_MATERIAL_DEFECT; NOT_ADMISSION_NOT_INVOCATION; NOT_BUILD_TEST_CAPACITY_OR_QUALIFICATION_RESULT",
+  "firstSlotOutcome": {
+    "records": ["Root Doc233 04bbca9/f3fae99", "Core fabf816"],
+    "g0": "one call, 493 ms, native exit 1, 610 B stdout, empty stderr, G0_PREFLIGHT_OPERATION_FAILED, resource null, phaseDiagnostic null, process age 353 ms",
+    "calls": "zero build, install, app compiler, test, browser",
+    "ticket": "404727c5 consumed, no retry",
+    "doc226Slot": "last start 02:41:44.528Z passed; slot over",
+    "sourceReading": "null phaseDiagnostic with generic token means the new callsite's own catch, not R7 tokenization; JSON on stdout with empty stderr means the try was reached"
+  },
+  "packet": {
+    "commit": "2395533",
+    "prompt": "2914 B 1bccafa2ecf9de318e544c73d294ba68abc02babf76de8262bce9f1ab716675c (equals Doc235 undelivered packet)",
+    "ready": "4689 B 35fc57f8b44ea2cf5bb0c8ae4b63c165a377bdeafa6b61cf250a2aa811f035ef",
+    "fixture": "2995 B f60aa1ff0c5659cb006ab7f03a7f014ddd31e7e6ede18eaae906639d5c783372 (equals Core 8e6723d copy, tree 16a70b3b)",
+    "proposal": "9355 B 2ff889acffba4d4cf5bc247787b8146ba384e2eed854e4006b9f38ae8a3b3859",
+    "nativeEntrySha256Recomputed": "5a2f5f87a3648bf4430c4c0e07c445c5d2223fb84b0f3585853798702f19ab92"
+  },
+  "fidelity": {
+    "context": "same advanced-script param, EAP Stop, StrictMode Latest, pinned pwsh -File, same argument",
+    "byteIdenticalAdapterLines": 12,
+    "fiveExpressions": ["argument and format check", "deadline parse", "30-second window check", "self runtime path", "pinned-runtime comparison"],
+    "additions": "stage markers, exception CLR type, ErrorCategory; closed JSON <=8192 B; process age checked twice",
+    "absent": ["Get-XeniosResourceAdmission", "Add-Type", "Get-CimInstance", "R7 definitions", "node", "npm", "build", "browser", "credentials", "persistent changes"],
+    "disposition": "ACCEPTED"
+  },
+  "authorityWindowCapture": {
+    "authority": "Doc 223 run/debug instruction; not a new framework; no consumed-ticket reuse",
+    "window": { "start": "2026-10-15T02:33:35.813Z", "stop": "2026-10-15T02:53:44.528Z", "lastStart": "2026-10-15T02:53:14.528Z" },
+    "capture": "existing managed exec session, pinned pwsh 7, login false: native exit, UTC before/after, tool wall time, complete stdout and stderr; late/incomplete/unknown is not a qualified diagnostic",
+    "owner": "docs lease (no application code executed); application phase A abb400e5 unchanged",
+    "stillRequired": ["Core fresh acknowledgment", "Root exclusive admission", "pin checks"],
+    "disposition": "SUFFICIENT"
+  },
+  "hypothesis": {
+    "cause": "$args is not populated in an advanced script ([Parameter()] attribute); under Set-StrictMode -Version Latest reading it throws; generic catch yields G0_PREFLIGHT_OPERATION_FAILED in milliseconds before any resource read",
+    "confirmingSignal": "stage ARGUMENT_AND_FORMAT_CHECK, System.Management.Automation.RuntimeException, category InvalidOperation (a token throw reports OperationStopped; the fixed stop input is well-formed)",
+    "smallestCorrectionIfConfirmed": "remove '$args.Count -ne 0 -or' from the adapter callsite (advanced binding already rejects extra arguments); one-expression successor with narrow original comparison, then a fresh G0/build admission; runner, pins and entry unchanged",
+    "ifAllPass": "failure lies in the R7 call area; do not widen this job; prepare the next smallest stage test separately",
+    "optional": "capture FullyQualifiedErrorId (e.g. VariableIsUndefined)",
+    "status": "HYPOTHESIS_FROM_SOURCE_ONLY"
+  },
+  "unchanged": ["build, tests, typecheck, browser, persistence, deployment not run", "database disposable bootstrap reported unmet", "security: replacement key saved in Render; runtime verification, other consumers, old-key revocation and closure unconfirmed; exposure OPEN; privileged staff reads HELD", "custody phase A active, return PENDING", "R8 and Docs 160-169 closed", "790af2ce and ticket 404727c5 FAILED", "payment and security holds open"],
+  "notClaimed": ["admission", "invocation", "diagnostic result", "build/test/capacity/qualification result", "execution, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
