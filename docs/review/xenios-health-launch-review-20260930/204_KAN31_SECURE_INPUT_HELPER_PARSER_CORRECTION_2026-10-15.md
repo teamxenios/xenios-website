@@ -13,7 +13,7 @@
 Reviewer: original reviewer `6abf1edf-2b16-476e-8305-23b9a0014e06`, Opus 5.5, same session. Read-only: Git objects,
 hashes and my own byte comparison; no execution; no agents. Docs 202 and 203 and unchanged application and browser
 source are preserved.
-- **Timing.** Compared at 2026-10-15T23:43–23:41Z.
+- **Timing.** Compared at 2026-10-15T23:39–23:41Z.
 - **Jira.** Root relays.
 
 Archive: `hl12/204_kan31_secure_input_helper_parser_correction.json`.
