@@ -1,0 +1,45 @@
+{
+  "doc": 173,
+  "title": "Focused16 and generic typecheck slots: narrow source and entry comparison",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T03:46Z-03:53Z",
+  "verdict": "SUFFICIENT; NO_MATERIAL_ISSUE; ONE_REQUIRED_CLARIFICATION_DOC172_REUSE_CONDITION_MEANS_BOUND_INPUTS; NOT_ADMISSION_NOT_INVOCATION; TESTS_AND_TYPECHECK_NOT_RUN",
+  "binding": {
+    "core": { "commit": "4a662adb7edfe1a85387d340a2ea501f2dbfb680", "tree": "4da55f6481b7f2e652efdeb18128f9efd58c8251", "parent": "18fe8d29", "files": 13 },
+    "root": "Doc250 at 677c34a; frozen proposal 32fe041b, materialization e45c36f9, reuse comparison c2961f21 and both entries equal Core",
+    "focused": { "pins": "2472 entries 596066 B 6457a76a", "runner": "55368 B edab84df", "entry": "3254 B 54b53e4a" },
+    "typecheck": { "pins": "44 entries 9675 B 3a0ce4d4", "runner": "33758 B 404d1e95", "entry": "3279 B df2ddfb7" },
+    "helpersUnchanged": { "owned-processes.ps1": "f3a92fa2", "process-identity.cjs": "c9d5d4f3" }
+  },
+  "runners": {
+    "focused": { "base": "ql-doc102-qs1-full-r5-20261013/run-full.cjs 54178 B 74824f58 (physical matches)", "replacements": 17, "eachUniqueAndExact": true, "forwardReproduces": true, "reverseReproducesBase": true, "covers": "root/scratch/candidate/tree, fixture raw hash, FILE_COUNT->SELECTED, timeout 1800000->600000 and wording, process-only autocrlf true->false, reporters verbose+json+selection reporter + selected paths, action label, selection wording, expected filter restricted to SELECTED" },
+    "typecheck": { "base": "companion-r2-passed/run-check.cjs 33738 B d71208c2", "replacements": 5, "eachUniqueAndExact": true, "forwardReproduces": true, "reverseReproducesBase": true, "covers": "root, scratch, candidate, tree, action" }
+  },
+  "selectionLimitsFixture": {
+    "selection": "SELECTED equals the 16 test files among the 40 applied paths, no duplicates; 97 authored declarations are not a result count",
+    "vitest": "one fork, maxWorkers 1, no file parallelism, allowOnly=false, retry 0; 600000 ms aggregate with 60000 ms cleanup inside, stop-1000 ms reserve; 1024 MiB heap; runner requires start+600 s <= stop",
+    "fixture": "production-env-shape.fixture.json pinned be34e4d2 = 47f49adf blob (old bd1cfc4a was the CRLF raw hash); helper scripts/evidence/lib/preview-supabase-fixture.mjs unchanged since the R5 candidate; exactly four local RPCs (issue nonce, exchange nonce, session active, revoke session); all other methods/RPCs refused, service role refused; owned listener 127.0.0.1:54321; proves nothing about real Auth, PostgREST, DB or persistence",
+    "canary": "base had no mandatory named canary; selected-union, fixture and process guards retained",
+    "typecheck": "npm run check -- --incremental false; scripts.check must be exactly tsc with no pre/post hooks and no tsc shadow; 300000 ms work + 60000 ms cleanup; 1536 MiB heap; launch+360 s <= stop"
+  },
+  "pinsMaterialization": {
+    "focusedPins": "2435 tracked-source pins equal 47f49adf blobs; 38 of 40 applied paths pinned, all matching; protection manifest and SQL candidate (read by sql-contract.test.ts) bound by HEAD/tree/empty porcelain status in both runners; plus 23 installed dependency files and toolchain/helper files",
+    "typecheckPins": "15 tracked files equal blobs; manifest pin is applied dd99bc37 (correct, not the pending template); plus 19 installed files incl. typescript/tsc",
+    "materialization": "exactly 8 files into fresh group folders, each matching its pin (focused: runner, pins, two helpers, helper test, selection reporter; typecheck: runner, pins); group folder must be absent; no new checkout, install or build; Doc 172 dependencies"
+  },
+  "entriesWindowAuthorityCapture": {
+    "entries": "both reproduce from R2 entry 8edcfb98 through 12 declared changes (group run root, three outputs, stop 04:45:00.000Z, labels, build->qualification wording, window 600000/360000 ms, final group runner call with pins and hash); R2 adapter 8b1e85ed unchanged; FIRST_LITERAL_BUILD_G0 is a resource tag only; DateKind String and all G0 refusal checks retained",
+    "windows": { "start": "2026-10-15T03:30:00.000Z", "stop": "2026-10-15T04:45:00.000Z", "focusedLastFullStart": "2026-10-15T04:35:00.000Z", "typecheckLastFullStart": "2026-10-15T04:39:00.000Z", "serial": true, "g0PerGroup": 1, "ticketPerGroup": "separate Root ticket", "retries": 0, "extension": false },
+    "authority": "Doc 223 item 3 and Doc 239 cover tests and typecheck; each group still needs Core fresh FINAL READY, exclusive heavy slot and prior owned closure",
+    "capture": "same managed session held; only write_stdin wait requests <=30 s, no interleaved calls; actual transport delay recorded; answers the Doc 172 recommendation",
+    "disposition": "SUFFICIENT"
+  },
+  "requiredClarification": "Doc 172 'nothing changed since 03:18:33Z' means the bound inputs (lock, 22 selected installed files, 28 build pins, each group's pins, HEAD/tree/empty status), not every byte under ignored node_modules; focused-run test caches there do not block typecheck if the fresh checks pass; any change to a bound input still refuses",
+  "limits": ["last-instant starts fail closed (runner launch check, 1000 ms reserve); start well before 04:35Z and 04:39Z", "release-control source not admitted; final manifest pending real return", "no full suite, browser, SQL, security, hosted, push or deploy permission", "security exposure OPEN; privileged staff reads HELD", "live revision 7bba is not 47f49adf", "custody phase A active, return PENDING"],
+  "unchanged": ["R8 and Docs 160-172 closed", "790af2ce FAILED; tickets 404727c5, 264a4c65, 07024dd5 consumed", "payment and security holds open"],
+  "notClaimed": ["admission", "invocation", "test results", "typecheck result", "qualification credit", "execution, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
