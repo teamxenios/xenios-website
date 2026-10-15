@@ -1,0 +1,48 @@
+{
+  "doc": 167,
+  "title": "Manifest custody wording r3: conformity with Doc 166",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "CONFORMS; DOC166_REQUIRED_CLARIFICATION_RESOLVED_BY_PREFERRED_ROUTE; NO_OTHER_CHANGE",
+  "binding": {
+    "source": { "commit": "96aa00c839cdeb49311ba131533184548c2206f5", "tree": "370969b3ee566acc62aaecc97eba301bf4c03589", "parent": "bc3a20280a3593c8882a6044718e8b3d6862ff73" },
+    "records": { "commit": "fdd21e7e403df0ce07e948f10be391c2f2e37ee1", "tree": "4064211fb0b2514c8d0b8ffeb411fa35ac492446", "adds": "manifest-custody-r3/HANDOFF.json only" },
+    "artifacts": {
+      "SOURCE_MANIFEST.json": "8216 B 4ac7ece444804e7d40115f5b21d68b2680380d916ed92282f1d9fbcb219e7eb6",
+      "DELTA_AFTER_CLAIM_R2.patch": "6031 B d86cfce3f1ab6590c71d8f0201e439f7998df7395cc18638015385fffc999bc1",
+      "CUMULATIVE_AGAINST_8e.patch": "238471 B b8b77b7ee68fba187a68d31a29a64f003c2e737f44707dae7bf11d4d0324d950",
+      "CUMULATIVE_SOURCE_INDEX.json": "54855 B a935911b4290e27f189d37ecc7b6d0ec404df556f6636d4bba077562f9e61ccd",
+      "SOURCE_APPLICATION_PROCEDURE.txt": "7042 B 7ab9ed173fee8f20db992dbac8343a725396118207ae1abffdc35f849a91e83c",
+      "manifestBefore": "98841 B ff65e38442f1247a513f10daaac7378d4032d1282e517932ca497e199962a0fb blob f0db4f0e3d76bc1820d69b12280b35971395ef69",
+      "manifestAfter": "99341 B 89c17ed3c186616eac26099ab785fdfaea06d13bb1272f1d8c66089093f81213 blob edc9703655927bf256f217e33b261fbd9b59bfb5"
+    },
+    "manifestBeforeEqualsCompositionR2After": true
+  },
+  "checks": {
+    "physicalLinesChanged": 1,
+    "edits": ["APPLICATION_CUSTODY_PENDING -> APPLICATION_CUSTODY_RECORD", "'At application, replace ONLY those three pending values...' sentence -> Doc 166 two-stage order"],
+    "reversalRecoversBefore": true,
+    "placeholdersUnfilled": { "lease=UNASSIGNED": 1, "authority=UNGRANTED": 1, "custody-return=PENDING": 1 },
+    "manifestParses": true,
+    "seamFilePinsUnchanged": { "server/index.ts": "1a3fb0b77ba14c5007582c4a891fcfa113ff07556b38cb95854706a8e130e813", "server/research/index.ts": "000da4dafc8bd8eab95db7a378772ef7936473d586c043ca7b661d21178e1c29" },
+    "commentEntries": "533 before and after; only the new first entry differs",
+    "otherContentIdentical": true,
+    "wordingMatchesDoc166Section5": true,
+    "procedureFileConsistent": true,
+    "index": "same 40 paths (11 existing at 8e85daa, 29 new); only the manifest after entry changed; before entries unchanged",
+    "cumulativePatch": "differs from claim-r2 only in the manifest hunk and its blob",
+    "deltaSections": 1
+  },
+  "retained": [
+    "Docs 163-166 cover all 40 final paths at source level with this manifest after-image",
+    "non-blocking findings from Docs 163, 165 and 166 open and optional",
+    "Samuel's exact source/custody decision and a real exclusive protected lease not held; docs lease 19d2ed9a gives none",
+    "execution separately authorized: DB, rate-limiter, Care foundation and patient-index rehearsal; typecheck, build, tests, browser; protection and release controls",
+    "security authority NONE; pending staff-read scope stays unapproved until exposed-credential closure and service-role rotation confirmed; names deferred",
+    "R8 and Docs 160-166 closed; 8e85daa unchanged; 790af2ce FAILED; payment and security holds open"
+  ],
+  "notClaimed": ["tests", "patch application", "applied tree", "custody", "execution consent", "source-application, push or deployment consent", "human approval", "test credit"],
+  "executionConsent": false
+}
