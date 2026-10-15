@@ -1,0 +1,47 @@
+{
+  "doc": 179,
+  "title": "Mixed browser input inventory: actual completeness and currentness",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T07:02Z-07:06Z",
+  "verdict": "SUITABLE; INVENTORY_COMPLETE_AND_CURRENT_FOR_84178ce1; SOURCE_SET_EQUALS_TRACKED_NONTEST_FILES; ALL_3909_SOURCE_PINS_EQUAL_BLOBS; CAPS_HOLD; NOT_BROWSER_GRANT_NOT_ADMISSION",
+  "method": "committed Git objects and Git's own tree/blobs; no active source or scratch read or named",
+  "binding": {
+    "archive": { "commit": "5ded37086f25b29bd9582b639c5718c8192d5111", "tree": "93b1bc3ba55dfeeef28ba2e88c7f457c7319c96a", "parent": "640af7ef", "files": 8 },
+    "inventory": "11365704 B e5bf514767d39d40e7010d8e796bc79512d49f8ca325106e4b2c7124dd232591",
+    "stdout": "275092 B 5fcb8cfd", "stderr": "0 B", "producer": "9239 B 02988485 (equals Doc 178 producer)",
+    "receipt": "11841 B 564f3aa7", "postcheck": "65177 B 38fa3416", "capture": "568 B b7e6eafe", "handoff": "3314 B c80ccb35",
+    "ticket": "dd7dd7a6 used once", "window": "Doc 178 metadata window 06:21:48.653Z-07:00Z"
+  },
+  "run": {
+    "nativeCapture": "06:42:38.642Z-06:51:53.598Z, 554959 ms within 900000 ms cooperative budget; producer deadline 06:57:38.710Z, 345 s remaining at completion",
+    "outcome": "native exit 0, stdout 275092 B, stderr 0 B; one attempt, no retry, no stops",
+    "notDone": "no application import, browser, resource, listener, process or SQL activity",
+    "progress": "final COMPLETE; 7/7 Git calls; 4893 tracked, 984 excluded tests, 3909 sources completed, 37927 dependencies enumerated; output hash e5bf5147 equals archived file",
+    "labelQuirk": "final stdout line labels the input total 530992067 B as 'bytes' beside the output path; the file is 11365704 B"
+  },
+  "inventory": {
+    "identity": "schema ql_durable_browser_input_pins_prepared_v1, status PREPARED_NOT_EXECUTION_ADMISSION, candidate 84178ce1, tree 24d3fa00; pre and post Git state identical and clean; applicationImported/engineStarted/executionApproved false",
+    "counts": { "source": 3909, "dependencies": 37927, "uniqueTotal": 41836, "excludedUnique": 984 },
+    "scopes": "all dependency pins under node_modules/, no source pin there",
+    "bytes": { "sum": 530992067, "equalsDeclared": true, "cap": 536870912, "maxFile": 24456173, "fileCap": 134217728, "dependencyCountCap": 50000 },
+    "sourceSetExact": "unquoted NUL-separated git ls-tree: source + exclusions = all 4893 tracked files of 84178ce1, no overlap; initial default-quoting comparison falsely differed on non-ASCII names, corrected, not a finding",
+    "sourceHashes": "all 3909 source pins match 84178ce1 blobs in size and SHA-256 (git cat-file --batch); lock pin is accepted LF d25eb6b8",
+    "exclusions": "all 984 are test paths (test/spec/__tests__/test dir/e2e/fixture patterns); not skipped or passed tests",
+    "dependencyPins": "as recorded by the producer; not independently re-read by Root or reviewer; independent consistency is Core's 06:53:44Z postcheck (output hash/schema, 28 build pins, 22 sampled installed files, canonical CRLF d3083edc and actual LF d25eb6b8 locks, clean full-history checkouts); no whole-filesystem proof claimed"
+  },
+  "suitability": {
+    "disposition": "SUITABLE_AS_BROWSER_INPUT_INVENTORY_FOR_84178ce1",
+    "stillRequiredAtAdmission": ["fresh check of these and other fixed pins at admission", "Root final copies of the seven Doc 178 files and their currentness", "Core fresh FINAL READY and exclusive slot", "actual hash-matched coordinator-admission.json (none exists) naming the existing DNS27 receipt bytes", "fresh G0 with all three raw readings >= 2048 MiB", "new single-use Root ticket", "owned cleanup"],
+    "metadataWindowIsNotBrowserGrant": true,
+    "browserWindow": { "stop": "2026-10-15T09:00:00.000Z", "gateCompletionBy": "07:24Z", "outerStartBy": "07:24:30Z", "budgets": "5730 s total, 75 s fresh actions, 20 s reopen", "rawPasses": 6, "extension": false },
+    "discipline": "Doc 175 rule applies throughout"
+  },
+  "scope": "two synthetic catalog rows, volatile RPC, own allowlisted app; not full real catalog, research wall, server/index.ts composition, managed SQL, Auth, PostgREST or privileged staff reads",
+  "holds": ["security OPEN; staff HELD; staging Doc 247 pending", "phase A return PENDING", "SQL cases 228 NOT RUN", "no payment, fulfillment, push or deploy"],
+  "unchanged": ["actual build (Doc 176), focused 220/220 and typecheck 0 (Doc 177) stand", "failures as recorded", "R8 and Docs 160-178 closed"],
+  "notClaimed": ["browser grant", "admission", "browser or qualification result", "whole-filesystem dependency proof", "execution, push, deployment or production consent", "human approval"],
+  "executionConsent": false
+}
