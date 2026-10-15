@@ -1,0 +1,43 @@
+{
+  "doc": 196,
+  "title": "KAN-31 offline execution binding: new delta only",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T21:49Z-21:54Z",
+  "packet": "delivered in chat; Root relays to Jira",
+  "verdict": "CHANGES_REQUIRED_MINIMAL; ONE_LINE_OPERABILITY_DEFECT_IN_PARENT_OWN_PATH_CHECK_LIKELY_REFUSES_CORRECT_ONE_USE_TICKET_BEFORE_ANY_CHILD; REST_CONFORMS; NOT_TICKET_PARSE_OR_QUALIFICATION",
+  "identity": {
+    "commit": "79c272262c1619be7757d1b9194c89f6f4e7692c", "tree": "08f7b5634b1e0e5a440622ec7fec3e66f4ee150d", "parent": "51962b332e7cd6957cfbcdbac34b481fbd61089b", "localOnly": true, "additiveFiles": 4, "acceptedSubtreeUnchanged": true,
+    "files": { "OFFLINE_COMMAND_BINDING_SOURCE_ONLY.json": "19910 B 205cbe0d", "execute-admitted-offline-controls.UNAPPLIED.ps1": "26981 B e50adf1f", "OFFLINE_BINDING_HANDOFF_SOURCE_ONLY.md": "10617 B b24767cd", "BINDING_IDENTITIES_SOURCE_ONLY.json": "1621 B f0a6d70e (self-excluded)" },
+    "baseParent": "committed in Root Doc106 pass archive (285a50c), equals declared 8861 B 1bf5b4ad; has no own-path or MainModule check and no R7 region, both new here"
+  },
+  "earliestMaterialDefect": {
+    "where": "execute-admitted-offline-controls.UNAPPLIED.ps1 line 59: if($qualTicket.parentPin.path -cne $PSCommandPath){throw 'PARENT_SOURCE_PIN_REQUIRED'}",
+    "problem": "case-sensitive string comparison with no separator normalization; every pin in this fleet, including the handoff's planned -File argument, uses forward-slash paths; on Windows $PSCommandPath is normally the resolved backslash form; a correctly prepared ticket would throw at line 59, after the ticket is consumed by invocation but before any child runs, wasting the single-use attempt; line 60 already normalizes its runtime path (.Replace('\\','/').ToLowerInvariant()), line 59 does not",
+    "correction": "compare normalized forms as line 60 does: $qualTicket.parentPin.path.Replace('\\','/').ToLowerInvariant() -cne $PSCommandPath.Replace('\\','/').ToLowerInvariant(); optionally resolve both with [IO.Path]::GetFullPath first; Get-QualPin already hash-pins the file itself",
+    "whatChanges": "only the parent's bytes and its identity record; ticket's parentPin hash must be the new one",
+    "provingCheck": "offline only: a parse plus a no-dispatch reading that the comparison accepts forward-slash and backslash spellings of the same path and refuses a different path",
+    "alternativeNotPreferred": "Root writes parentPin.path in the exact runtime $PSCommandPath form, but that form is unverified here"
+  },
+  "verifiedConformity": [
+    "closed scope: exactly 15 serial cases (node --version; ten node --max-old-space-size=128 --check; TypeScript parse; PowerShell parse; guard companion; finalizer companion); every executable and every path in every argument among the 19 pinned inputs, including typescript.js 5.6.3, its package.json, the Doc399 template read by the finalizer companion, and companion import targets; ten --check targets are exactly the ten .mjs/.cjs afterimages",
+    "parse literals: TypeScript requires ts.version === '5.6.3', then createSourceFile on harness.UNAPPLIED.ts and parseDiagnostics only, prints {status:'TYPESCRIPT_PARSE_ONLY',files:1,errors,typecheck:false}, exits 1 on any error; PowerShell runs Parser.ParseFile on the two frozen scripts only, no dot-sourcing, prints {status:'POWERSHELL_PARSE_ONLY',files:2,errors}",
+    "result contracts: empty stderr required; --check must print nothing; version line exactly v20.19.0; each other case one JSON line with exact fields (guard companion prints browserQualification and nativeTlsCompatibilityProved, finalizer companion prints its five fields); any other kind refused",
+    "exceptional cleanup (Root's correction to earlier draft): every successful Start() reaches finally; identity (PID and StartTime) captured from fresh owned handle, no attach by PID, no live MainModule requirement; stream tasks started, wait bounded by 14 s; drain bounded by smallest of remaining 15 s, 300 s parent age and window end, before GetResult; on any failure, primary failure, phase and type recorded and rethrown; in finally only the same Process object is killed, only inside the window, closure waited at most 1 s; readers disposed; process object disposed only after closure confirmed; any forced, uncertain or failed closure sets passed = false; run stops at first failure",
+    "R7 region: 181 lines between markers text-identical to 947bba10 and to the reviewed browser capacity copy; embedded light floor 512 MiB on all three readings, cold-init/OS/read budgets 5 s / 1 s / 2 s, 30 s age gate used unchanged; does not admit the browser",
+    "bounds: window at most 20 minutes, lastStart = end - 345 s; parent age capped at 300 s, 225 s reserved after G0 (15 x 15 s); each child under 15 s; output capped at 1 MiB per file and 1 MiB total, collected then checked, not hard-capped while streaming, as disclosed; no retry, no parallelism",
+    "ticket and environment: ticket binds mode, one attempt, 0 retries, exclusive window, stop rule (fresh owned handle only), owner, plan hash, output path, source commit; pre and post checks cover records HEAD and tree, full history, clean tree, all pins; scoped competing-job check plus resource owner's attestation required; each child's environment cleared to OS paths and private home and temp directories with telemetry opt-outs; no NODE_OPTIONS, staging inputs or credentials",
+    "best status PRELIMINARY_OFFLINE_CHECKS_COMPLETE_REQUIRES_INDEPENDENT_CLOSURE; never self-accepts"
+  ],
+  "limits": [
+    "exit and receipt can disagree: a late Qual-Budget after the receipt is written (line 339) can exit non-zero while the receipt reads complete; Root must treat any non-zero parent exit as failure",
+    "still to happen: bounded parse and qualification of this new parent; independent parent and child PID plus creation-time closure; Root's actual ticket at the fixed path with raw SHA bound externally; owner readiness; exclusive light slot; clean records HEAD and tree; all 19 pins current",
+    "not covered: parse cases cover syntax only, companions synthetic or mocked; no browser, TLS, staging, Doc399 or credential credit",
+    "browser holds unchanged: secure input mechanism and custodian, source7 runtime custody, staging-effects authority, fresh 2048 MiB browser admission, Doc399 exact-query authority"
+  ],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
