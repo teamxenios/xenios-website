@@ -1,0 +1,45 @@
+{
+  "doc": 168,
+  "title": "Applied phase A: original applied-byte and custody confirmation",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "verdict": "APPLIED_BYTES_CONFIRMED; MANIFEST_TEMPLATE_PLUS_EXACTLY_TWO_PERMITTED_FILLS; CUSTODY_RECORDS_CONSISTENT_WITH_DOC167_ORDER; PHASE_A_ACTIVE_RETURN_PENDING",
+  "doc167OrderStep": 3,
+  "application": {
+    "commit": "47f49adf5fcb65880da324045d488e8c29e995f4", "tree": "a2a8e79d8aec655b97a97e8329ae53ed4c83331c",
+    "parent": "8e85daa156ab04837fc5bfb73c0e661bba83cfee", "parentTree": "25507c2f1568c35dc4984555ec619f2ed03a8219", "singleParent": true,
+    "branch": "codex/mixed-request-intent-20261015", "worktree": "C:/xenios-wt/mixed-request-intent-20261015", "fullHistory": true,
+    "worktreeClean": true, "onRemoteBranches": 0,
+    "changedPaths": { "total": 40, "added": 29, "modified": 11, "equalsConfirmedIndex": "a935911b4290e27f189d37ecc7b6d0ec404df556f6636d4bba077562f9e61ccd", "extraPaths": 0 },
+    "preimages": { "modifiedParentBlobsEqualIndex": 11, "addedAbsentAtParent": 29 },
+    "fixedAfterimagesMatching": 39,
+    "physicalFilesEqualCommittedBlobs": 40, "physicalFilesWithCrlf": 0,
+    "crlfResolutionRecord": "f0a0856b0c544c07e0c02e4cee29b57a828aabd1 DOC220 6768 B 792cf9c4cc2899e964e795ec16c363dd37726ec3734adb6f6b4f88b80c030b08; no committed-content effect"
+  },
+  "manifest": {
+    "applied": "99604 B dd99bc373c21354e6f21e0e488fd84e2a8187ec6eadada3bd0711099609a6719 blob a3d6809c52eedcf3e651096ddec097e45a87be5f",
+    "template": "99341 B 89c17ed3c186616eac26099ab785fdfaea06d13bb1272f1d8c66089093f81213",
+    "fills": { "lease": "abb400e5-c7cb-45db-bc76-dcb83b008738", "authority": "b169c9dc146bf8479e2d14cf1a65e008324ef22e:docs/coordination/launch-coordination-20261005/DOC217_ACTUAL_HUMAN_DOC216_SOURCE_APPROVAL_AND_ROOT_CUSTODIAN_ACCEPTANCE_20261015.json#sha256=370397a2008711b1d60760e6320766d3a0f3574a533272ef7136bba9a65c94f0" },
+    "custodyReturn": "PENDING",
+    "twoFillReconstructionEqualsApplied": true,
+    "parses": true,
+    "seamPins": { "server/index.ts": "1a3fb0b77ba14c5007582c4a891fcfa113ff07556b38cb95854706a8e130e813", "server/research/index.ts": "000da4dafc8bd8eab95db7a378772ef7936473d586c043ca7b661d21178e1c29" }
+  },
+  "custodyRecords": {
+    "decisionDoc216": { "commit": "b169c9dc146bf8479e2d14cf1a65e008324ef22e", "file": "48841 B f21c886ae364896b05d32081a4b290fe3aa39cd4a374d9513259742ed6c240d7", "payloadIdentityRecomputed": "16cb139e76a273091ac300cbcd10e430c0841bf78877a57edfc045a759ea6935", "binds": ["96aa00c8", "index a935911b", "cumulative b8b77b7e", "template 89c17ed3"], "pinsEqualIndex": 40, "procedure": "two-stage; requires original applied-byte confirmation" },
+    "authorityDoc217": { "commit": "b169c9dc146bf8479e2d14cf1a65e008324ef22e", "file": "2151 B 370397a2008711b1d60760e6320766d3a0f3574a533272ef7136bba9a65c94f0", "records": "human approval of payload 16cb139e local only; Root registry/delegation/return custodian acceptance; first fills lease and authority only, return PENDING", "limit": "human answer not independently verifiable beyond Root's recorded IDs" },
+    "receivingAck": { "at": "2026-10-15T01:28:18Z", "beforeLeaseClaimAndWrite": true },
+    "registration": { "commit": "11f88f789561f7692209c188dd1e38103bc45fe8", "tree": "8d5abecb40d712863f83d90566dfdf73175ba0d9", "additiveOnly": true, "taskRow": "FULL-CATALOG-MIXED-REQUEST-INTENT-20261014 claimed, 40 paths", "lease": "abb400e5-c7cb-45db-bc76-dcb83b008738 active, 40 paths", "existingRowsChanged": 0, "otherActiveLeaseOverlap": 0 },
+    "order": ["grant 2026-10-15T01:24:45Z", "ack 01:28:18Z", "lease claim 01:29:00Z", "application commit 01:36:15Z", "control receipt"],
+    "controlReceipt": { "commit": "2824e8966f04d359379a06e61f1ec77f951fc765", "tree": "c7ecdfc0a026292ea808928766ebb88f68951527", "file": "APPLIED_SOURCE_RECEIPT.json 23949 B 6bf39afb46628fdf71c65ae4a2a42fd801acb8edfa90646edcad62db22a76086", "addsOnly": 1 }
+  },
+  "custodyState": { "phaseALease": "abb400e5 active", "custodyReturn": "PENDING", "finalizerLease": "none", "phaseB": "not started" },
+  "nextInDoc167Order": ["separately authorized qualification under this custody", "real return with receiving owner's acknowledgment", "finalizer under its own valid authority fills only custody-return, freezes and measures the manifest, re-runs protection and seam checks", "original final-record confirmation"],
+  "qualificationNote": "worktree has core.autocrlf=true; files on disk are correct now, but a re-checkout could turn them back into CRLF and break raw-byte hash checks; verify raw bytes before relying on them",
+  "notCovered": "Doc 218 launch directive (tests, typecheck, build, browser, security closure and rotation, DB qualification and application, push, deploy, live proof) neither verified nor admitted",
+  "unchanged": ["security authority NONE; pending staff-read scope unapproved until exposed-credential closure and confirmed service-role rotation; names deferred", "R8 and Docs 160-167 closed", "790af2ce FAILED", "payment and security holds open", "97 authored test declarations not run"],
+  "notClaimed": ["tests", "typecheck", "build", "database", "browser", "release qualification", "custody return", "execution, qualification, push, deployment or production consent", "test credit"],
+  "executionConsent": false
+}
