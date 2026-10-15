@@ -1,0 +1,24 @@
+{
+  "doc": 200,
+  "title": "KAN-31 Doc418 actual result: confirmation against Doc 199",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "2026-10-15T22:19Z-22:22Z",
+  "verdict": "CONFIRMED_DOC418_CLOSED_NO_MATERIAL_GAP_WITH_DISCLOSED_LIMITS; NOT_OFFLINE15_ADMISSION; NO_BROWSER_SETUP_STAGING_SQL_OR_PRODUCTION_CREDIT",
+  "identity": { "commit": "98ce20e1a85f9a3569b6932096ec2feb7aa1ee2e", "tree": "3cf2137a44eadccc9e7cc4e9eb9d77646c6aef8b", "parent": "db03e216cdea09582697446a5bbb2b18515270dd", "localOnly": true, "additiveFiles": { "EXECUTED_RESULT_AND_LIMITATIONS.json": "6118 B 4379bbf2", "NATIVE_TOOL_RECEIPTS.json": "21788 B c63b391c", "RENDERED_CLOSURE_COMMAND.txt": "3358 B 77c13069" }, "rootDoc419": "3879 B cd083609", "offlineBindingDirUnchangedFromDb03e216": true, "tc25CleanWithLongpaths": true },
+  "doc199Conditions": {
+    "shellAndArgv": "pinned pwsh path, login false, requested texts hash exactly to pins 406360be/fc975d1a/77c13069; OS argv and -NoProfile not independently observed (limit, not material: outputs are exactly the literal's single expected JSON line)",
+    "windowAndFreshness": "resource requested 22:17:37.637Z, process start ~22:17:37.69Z, inside window before lastStart; parse creation 22:17:39.6527Z minus resource at = 191.9 ms (<30000); parse returned 22:17:40.213Z, upper bound 561 ms (<15 s lifetime, <14 s wait); closure 22:17:54.153-22:17:55.791Z; all before 22:28:59.810Z",
+    "cleanTree": "before/after clean, full history, 19 pins and parent match; reviewer rechecked HEAD 98ce20e1 with longpaths: clean",
+    "substitution": "rendered closure = template + exactly three substitutions (PID 120584, creation 2026-10-15T22:17:39.6526552Z, stop 2026-10-15T22:28:59.810Z); retained before invocation; equals requested command; parse output with raw CRLF hashes to recorded 3bb73212",
+    "failureRules": "exits 0/0/0, one expected JSON line each; resource 2275/2275/8008 MiB vs 512 floor, init 941 / os 326 / read 95 ms; parse 0 errors, same accepted, different refused, 0 dispatches; closure PID 120584 KNOWN_IDENTITY_ABSENT twice, 817 ms apart, queries 306/296 ms, total 1502 ms; no retries, stops or reuse",
+    "offline15": "not run; needs own fresh exact ticket"
+  },
+  "limits": ["combined output, not separate stdout/stderr files; empty stderr supported only by output being exactly the expected line; no independent empty-stderr artifact claimed", "no exact native exit UTC; bounded by tool return and two absence observations", "closure covers parse identity only, not global; resource and closure processes covered by exit-0 completion only", "LIGHT only; 2275 MiB observation gives no browser admission or qualification"],
+  "forward": ["future tickets bind records-only successor 98ce20e1/3cf2137a, not db03e216; binding directory and 19 pins unchanged", "offline15 needs Root's separate fresh exact ticket and prerequisites, exclusive light slot, independent closure, non-zero exit is failure", "browser holds unchanged"],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
