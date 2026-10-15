@@ -1,0 +1,35 @@
+{
+  "doc": 181,
+  "title": "Mixed browser R2: binding deltas, inventory reuse and the new window",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T07:45Z-07:48Z",
+  "pickup": "Root DOC297 ORIGINAL_PROMPT (3467 B e84fbbfe) picked up by the overnight check before any UI delivery",
+  "verdict": "SUFFICIENT; NO_DISCREPANCY; FIVE_R2_FILES_EXACT_REVERSIBLE_REBINDINGS_OF_ACCEPTED_R1; DOC179_INVENTORY_REUSE_SOUND_WITH_TWO_CONDITIONS; WINDOW_CONSISTENT; NOT_ADMISSION_NOT_CAPACITY_PASS",
+  "binding": { "core": { "commit": "df0b32f384a9e925f08f8095ddd1f89c9c086dc3", "tree": "09786f0bdbdd383a1e4530152a62d1871805aea6", "files": 9 }, "reuseRecord": "BINDING_REUSE_AND_NEXT_ACTION.json 19935 B 11c09725", "deltas": "EXACT_LITERAL_DELTAS.json 9984 B b47c1565", "reviewedBase": "d10e8852" },
+  "deltas": {
+    "QUALIFICATION_BINDING.json": "8a3553f6 -> 6687de44: authority cites Doc 292; reuse cites Doc 179; window 07:23:48.629Z-10:00Z; gate 08:24Z; outer start 08:24:30Z",
+    "harness.ts": "fc8e200c -> e53e1e19: scratch path; binding hash",
+    "run-durable-browser.cjs": "ed4b059c -> 6b554df8: scratch path; harness and binding pins",
+    "bind-and-run-durable-browser.cjs": "de97bd90 -> e6fba6cd: SCRATCH line only; harness, binding and outer pins",
+    "invoke-browser-g0-and-run.ps1": "b1f8790e -> fe30b36c: scratch (4); mixed-r2; g0-browser-r2- (4); label _SLOT_R2_; notBefore 07:23:48.629Z; stop 10:00Z (4); latestStart 08:24:30Z; bridge pin",
+    "allForwardAndReverseExact": true,
+    "behaviorUnchanged": "no assertion, guard, budget, floor, binary, environment, helper or cleanup literal changed; external all-three 2048 MiB check and G0 947bba10 unchanged",
+    "unchangedR1Inputs": { "ql-browser-driver.mjs": "54b313fb", "CLIENT_DIST_PREPARED.json": "5ab9ca42", "HARNESS_SOURCE_NOTES.md": "28250564 (historical provenance only, not R2 authority)" }
+  },
+  "inventoryReuse": {
+    "mechanism": "R2 bridge keeps PREPARED and METADATA_PRODUCER at R1 paths; reuses inventory e5bf5147 (11365704 B) and producer 02988485 (in FIXED) without re-running or copying",
+    "soundness": ["inventory binds source/dependency paths of the same installed 84178ce1/24d3fa00 root, not browser scratch/run", "bridge accepts it only through grant inputMetadataPin with path == PREPARED; readPin checks bytes and hash", "bridge re-checks schema, status, candidate/tree, root, node, matching clean pre/post Git state, false flags, pin uniqueness, root scopes, byte cap", "six full raw passes re-read pins physically, so drift since 06:51Z refuses rather than passing", "Core 07:36:13Z: both sources clean and full-history; 24 sampled and lock pins current"],
+    "conditions": ["future grant inputMetadataPin must be exactly the R1 path, 11365704 B, e5bf5147", "R1 inventory and producer files must stay present and unchanged at their R1 paths until the R2 run completes; no cleanup or re-materialization"],
+    "notClaimed": "no new whole-dependency scan",
+    "disposition": "SOUND_WITH_CONDITIONS"
+  },
+  "window": { "record": "Root 292 cb02f560", "start": "2026-10-15T07:23:48.629Z", "stop": "2026-10-15T10:00:00.000Z", "gateCompletionBy": "08:24Z", "outerStartBy": "08:24:30Z", "entryChecks": "notBefore >= 07:23:48.629Z; latestStart <= 08:24:30Z (bridge also enforces); reservedUntil 10:00Z; now+5760000 ms <= 10:00Z (start by 08:24:00Z)", "budgets": "5730 s total, 75 s fresh actions, 20 s reopen, six raw passes, all three >= 2048 MiB unchanged", "noReuse": "R1 ticket 07b730a0 consumed; window 282 not reused", "disposition": "CONSISTENT" },
+  "stillRequired": ["Root's seven R2 copies prepared source-only and verified byte-identical", "Core fresh FINAL READY and exclusive slot", "current pins and no existing outputs", "new actual single-use Root ticket", "hash-matched grant carrying the section 2 metadata pin and the existing DNS27 receipt pin", "fresh G0 with all three readings >= 2048 MiB", "owned cleanup"],
+  "limits": ["idle resets have unmeasured effect; no capacity pass inferred; Doc 180 refusal stands", "Doc 175 rule applies", "REMAINING_QUALIFICATION_GAPS.json is a source-only map; does not reopen Doc 176/177 credit; no blanket credit for older full-suite runs or controls", "mixed scope unchanged: two synthetic rows, volatile RPC, own allowlisted app; legacy SQL reopen separate"],
+  "holds": ["hosted DB and staging decision Doc 247", "security exposure", "privileged staff reads", "phase A return and final manifest", "live verification"],
+  "liveStatus": "NOT_LIVE; no push, deployment, secret, provider, clinical or payment change",
+  "executionConsent": false
+}
