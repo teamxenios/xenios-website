@@ -1,0 +1,53 @@
+{
+  "doc": 193,
+  "title": "KAN-31 native-staging browser apparatus: source review",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-15T21:15Z-21:27Z",
+  "packet": "delivered in chat; Root relays to Jira",
+  "verdict": "CHANGES_REQUIRED; ONE_MATERIAL_FINDING_IN_FINALIZER_POSTCHECK_BINDING; REST_CONFORMS_WITH_NON_BLOCKING_NOTES; NOT_APPLICATION_EXECUTION_MATERIALIZATION_OR_CREDENTIAL_AUTHORITY",
+  "identity": {
+    "commit": "674f4ade617ba49fdce7e9608a7b7d7b4fae350a", "tree": "33f4061c6bfc72409592f00a254443cb615880ff", "parent": "883012f9e2fa19c40e66456b614e906047b3c120", "changedPathsVsParent": 16, "localOnly": true,
+    "primary": { "COMPLETE_UNAPPLIED_SOURCE_REVIEW_PACKET.md": "13728 B 4e8724d7", "IDENTITY_MANIFEST.json": "5d4d6dba", "FULL_BEFORE_AFTER_REVERSIBLE_RULES.json": "168cfa8c" },
+    "manifestArtifactsMatch": "20/20; three historical fragments superseded as declared",
+    "copiedPrograms": { "harness.UNAPPLIED.ts": "e53e1e19 -> bb2019e3", "run-durable-browser.UNAPPLIED.cjs": "6b554df8 -> c1a909d6", "bind-and-run-durable-browser.UNAPPLIED.cjs": "e6fba6cd -> 94a02e3f", "prepare-input-pins.UNAPPLIED.cjs": "02988485 -> e0c2d7b9", "invoke-browser-capacity.UNAPPLIED.ps1": "947bba10 -> 5ae7e36a", "invoke-browser-g0-and-run.UNAPPLIED.ps1": "fe30b36c -> 3ede090e", "ql-browser-driver.UNAPPLIED.mjs": "54b313fb -> d98dab35" },
+    "beforeImagesEqualAcceptedCommittedBytes": true,
+    "rulesNote": "whole-file replacements, so full after-images and diffs read rather than relying on the rules",
+    "doc399Template": "unchanged 5782 B d5814a37"
+  },
+  "materialFinding": {
+    "where": "finalize-managed-evidence.UNAPPLIED.mjs lines 19-25 and 43-44",
+    "packetClaim": "finalizer 'consumes ... the actual approved postcheck record'",
+    "codeDoes": ["takes a.actualPostcheck.{attempts, completeExpectedTimelyResult, approvedScopeMatched, ticketConsumed}, a.originalTemplateSha256 and a.projectId as inline self-declared admission fields", "pins no approval, admission or ticket record", "never checks executed postcheck's tool arguments (project and query text)", "calls verifyManagedReadback(..., () => true), turning the driver's independent-readback gate into a no-op"],
+    "stillSound": "native row bound to exact BOUND_FIXTURES bytes because Doc399 hashes raw document inside SQL and verifier checks bindings_sha256; per-case content and cardinality come from the database",
+    "gap": "nothing proves that row came from the approved Doc399 template rendered with exactly those bindings against tetynodzrtmdbuzgboro; a differently produced result with the right fields would still be finalized as PASS_BOUNDED_MANAGED_CUSTOMER_JOURNEY",
+    "minimalCorrection": "in the finalizer read by pin (1) exact executed tool arguments (project_id and query bytes) as retained by executor and (2) Root's postcheck admission and approval record; demand project_id === 'tetynodzrtmdbuzgboro', query byte-equal to pinned template d5814a37 with two placeholders rendered from bindingRaw (hex once, sha256(bindingRaw) twice), admission record names same query hash, ticket and single consumption; replace () => true with this validator or remove the hook",
+    "provingCheck": "offline only: finalizer refuses when native result pin is paired with a query differing by one byte from rendered template, a different project_id, or an admission record whose query hash differs; no SQL or provider call; only finalizer plus its pins in launcher and supervisor FIXED change"
+  },
+  "verifiedConformity": [
+    "entry and capacity: G0 entry binds grant, launcher and capacity pins, and new guard's own offline companion receipt (28 passed, 0 provider calls, guard 4a8fd720, companion 88cabcac); capacity call site requires all three readings >= 2048 MiB, R7 bodies unchanged, only floor and labels move; input-pins producer rebinds constants only",
+    "launcher: PGlite pins removed, adapter, egress and fixture-bindings pinned; grant must name verified secure-mechanism reference; listed input names read then deleted from process.env and passed only to spawned supervisor, step stays blocked until a real binding is granted (Doc 403); client inventory keeps 84178ce1 attribution",
+    "supervisor: one customer phase, inner free-memory floor 2048 MiB; exact runtime binding of policy hash, source, tree, expiry, nonce; control actions limited to bind_expected, arm_mixed_response_loss, observations, close; BOUND_FIXTURES.json written once from terminal observation and hash-bound into receipt; best status HTTP_UI_CLEANUP_COMPLETE_PENDING_INDEPENDENT_DB, never PASS",
+    "harness: admission, Node and harness pins checked; all source, dependency and extension pins hashed at start and finish; 14 native entry imports pinned; client assets from immutable snapshots; environment reduced to OS variables plus whitelisted inputs; egress guard installed before adapter; loopback-only listener, owned sockets drained, write-once receipt",
+    "egress guard: only staging origin through listed RPC POSTs and three product-table GETs; socket, TLS and DNS only for that host under approved fetch's async context; http, https, child_process and dns.resolve refused; first refusal poisons the guard",
+    "adapter: exact admission and policy hash; only listed inputs and required values; ceilings per RPC and table, outbound and in-flight budget, 4 MiB response cap, 10 s per-call timeout, fixed table query shapes; durable persistence enforced, no memory fallback; native configuration and policy agreement checked; loopback, origin and JSON required for mutations; Authorization refused; staff and Care throw; direct commerce prohibited; retail pricing projection preserved, Care prices withheld natively; any RPC error fatal; all 18 native exports exist in e33; registerRequestIntentApi reads exactly the 8 wiring fields supplied; persistence and composition signatures match",
+    "pre-POST binding holds against e33: attempt hash is plain sha256(idempotencyKey) (defaults.ts); client posts contact already normalized (shared validateAddress, billing set to shipping, normalized typed values, no organizationName); agreements survive normalization unchanged; 13-field line projection mapping sourceSelection.variantId equals service line construction",
+    "three cases: one double-click POST; lost response then exact same-body, same-key, same-acceptedAt retry; lost response then reload, PII-free storage and marker-only /recover; three distinct IDs required; staff gets 503; legacy CUSTOMER, PATCH and admin paths blocked before dispatch by allowed()",
+    "bindings to postcheck: fixture-bindings requires terminal error-free RPCs with exactly 3 creates and 5 finds, one native create per attempt, receipt tied to browser ID and reference, hash-bound pre-POST expectation; Doc399 compares jsonb exactly per case with hashes and microsecond created_at"
+  ],
+  "nonBlockingNotes": [
+    "ceiling scope: ceilings and budgets apply only to traffic through the adapter's client; a client created inside a native module would be path-restricted by the guard but uncounted; a guard-side marker set by guardedFetch with other fetches refused would make the adapter the only network path",
+    "possible spurious failure: control endpoint requires inFlight === 0 at bind_expected; background RPCs in flight at the intercepted POST would fail the run (closed); consider waiting briefly for quiescence",
+    "comment accuracy: adapter comment 'never become process.env' inaccurate in composed run because harness places whitelisted inputs into child's process.env; document this or keep them out unless a pinned module needs them",
+    "import closure: transitive imports enforced by whole-inventory hashing at start and finish, not per import; small time-of-check gap",
+    "untested compatibility as packet states: TLS, Undici and async-context compatibility; /api/research/me and assisted-orders/config 404s against the 84178ce1 client; syntax and type validity; required offline checks and runtime remain the judges"
+  ],
+  "stillOwed": ["finalizer correction and its re-review limited to changed bytes", "syntax, type and offline guard checks with the 28 expected assertions actually executed", "source7 custody, inventory and pins", "verified secure input mechanism and local launch custodian (Doc 403: not verified, not identified)", "protected-copy, egress and config exceptions", "resource, exclusivity and window grant with fresh 2048 MiB G0", "separate Doc399 query authority", "independent final-result review"],
+  "q1I3Tickets": "consumed",
+  "holds": ["staff", "security", "payment", "phase A", "manifest", "live verification"],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
