@@ -5,7 +5,7 @@
   "model": "claude-opus-5-5 (same session)",
   "executed": false,
   "agentsUsed": 0,
-  "reviewedAtUtc": "2026-10-15T09:27Z-09:36Z",
+  "reviewedAtUtc": "2026-10-15T09:26Z-09:33Z",
   "packet": "Root 1afb10c DOC314 5002 B 975be468; supersedes DOC313 4489 B, never sent",
   "verdict": "CHECK_PASSED_COMPILER_ONLY; REGRESSION_FAILED_REAL_NOT_IDENTITY_DRIFT; CORRECTION_TECHNICALLY_SUFFICIENT_FOR_OBSERVED_FAILURE_NO_MATERIAL_DISCREPANCY; NOT_ACCEPTED_FOR_APPLICATION; FAILED_RUN_STAYS_FAILED",
   "check": {

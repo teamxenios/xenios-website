@@ -11,7 +11,7 @@ the failed run stays FAILED.
 Reviewer: original reviewer `6abf1edf-2b16-476e-8305-23b9a0014e06`, Opus 5.5, same session. Read-only: committed Git
 objects only. Nothing compiled, parsed by a runtime, tested or probed; no agents. Docs 174–182 stay closed.
 - **Packet.** Root `1afb10c` DOC314 (5,002 B, `975be468…`). It supersedes DOC313 (4,489 B), which was never sent.
-- **Timing.** Reviewed at 2026-10-15T09:27–09:36Z.
+- **Timing.** Reviewed at 2026-10-15T09:26–09:33Z.
 
 Archive: `hl12/183_release_control_results_and_route_mount_correction.json`.
 
