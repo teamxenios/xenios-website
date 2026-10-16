@@ -7,10 +7,19 @@ on:
         description: Exact approved Core executable-proposal commit
         required: true
       qualification_artifact_id:
-        description: Approved same-repository nonsecret input/tools archive artifact ID
+        description: Exact accepted tools-only artifact ID 12033375179
         required: true
       qualification_zip_sha256:
         description: Approved SHA-256 of downloaded artifact ZIP
+        required: true
+      run_manifest_json:
+        description: Approved nonsecret run manifest UTF-8 JSON, at most 32768 bytes
+        required: true
+      provider_proof_json:
+        description: Approved nonsecret provider/session-custody proof JSON, at most 8192 bytes
+        required: true
+      run_manifest_sha256:
+        description: Exact approved SHA-256 of run_manifest_json UTF-8 bytes
         required: true
 permissions:
   contents: read
@@ -39,13 +48,15 @@ jobs:
           ARTIFACT_ID: ${{ inputs.qualification_artifact_id }}
           ZIP_SHA: ${{ inputs.qualification_zip_sha256 }}
           SOURCE_COMMIT: ${{ inputs.source_commit }}
-          XENIOS_FROZEN_MANIFEST_SHA256: ${{ vars.XENIOS_FROZEN_MANIFEST_SHA256 }}
+          RUN_MANIFEST_JSON: ${{ inputs.run_manifest_json }}
+          PROVIDER_PROOF_JSON: ${{ inputs.provider_proof_json }}
+          XENIOS_FROZEN_MANIFEST_SHA256: ${{ inputs.run_manifest_sha256 }}
         shell: bash
         run: |
           set -euo pipefail
           [[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$ARTIFACT_ID" =~ ^[0-9]+$ ]]
-          [[ "$ZIP_SHA" =~ ^[0-9a-f]{64}$ ]]
+          test "$ARTIFACT_ID" = 12033375179
+          test "$ZIP_SHA" = 73e53b02184fa27a2a863869c6daf17e38a1c452b6d5eefbbbb246fd4c109874
           test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
           test "$(node --version)" = v20.19.0
           test "$(npm --version)" = 10.8.2
@@ -73,7 +84,26 @@ jobs:
               return h.hexdigest()
           root=pathlib.Path(os.environ["RUNNER_TEMP"])/"qualification"
           root.mkdir(mode=0o700)
-          with zipfile.ZipFile(root.parent/"input.zip") as z:
+          # Existing producer artifact wraps an immutable tools-only ZIP.
+          # No input archive is uploaded, assembled by another job, or trusted.
+          inner=root.parent/"verified-tool-payload.zip"
+          with zipfile.ZipFile(root.parent/"input.zip") as outer:
+              members=outer.infolist()
+              assert len(members)<=100000 and len({i.filename for i in members})==len(members)
+              assert sum(i.file_size for i in members)<=2147483648
+              item=outer.getinfo("tool-payload.zip")
+              assert not item.is_dir() and item.file_size==112171775
+              assert stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG)
+              with outer.open(item) as source, inner.open("xb") as target:
+                  written=0
+                  while True:
+                      block=source.read(1048576)
+                      if not block: break
+                      written+=len(block); assert written<=112171775
+                      target.write(block)
+              assert written==112171775
+          assert digest_file(inner)=="20658921aa06f6d7ff04d7e2ae3e21450bdbda5bb23f95a16c1c75f8465b18b7"
+          with zipfile.ZipFile(inner) as z:
               files=z.infolist()
               assert len(files)<=100000 and sum(i.file_size for i in files)<=2147483648
               assert len({i.filename for i in files})==len(files)
@@ -85,7 +115,7 @@ jobs:
                   names.add(name)
                   kind=stat.S_IFMT(i.external_attr>>16)
                   assert kind in ((0,stat.S_IFDIR) if i.is_dir() else (0,stat.S_IFREG)), "NONFILE_MEMBER"
-                  assert p.parts[0]=="tools" or name in ("run-manifest.json","provider-proof.json","tool-inventory.json")
+                  assert p.parts[0]=="tools" or name=="tool-inventory.json"
                   assert p.parts[0]=="tools" or not i.is_dir()
               z.extractall(root)
               # Actions' OUTER wrapper may contain 0644 or no Unix permissions.
@@ -93,6 +123,19 @@ jobs:
               # only the independently hash-pinned inventory may restore modes.
               for i in files:
                   if not i.is_dir(): os.chmod(root/i.filename,0o600)
+          manifest_bytes=os.environ["RUN_MANIFEST_JSON"].encode("utf-8")
+          proof_bytes=os.environ["PROVIDER_PROOF_JSON"].encode("utf-8")
+          assert 0<len(manifest_bytes)<=32768 and 0<len(proof_bytes)<=8192
+          proposed=json.loads(manifest_bytes,object_pairs_hook=unique)
+          proof=json.loads(proof_bytes,object_pairs_hook=unique)
+          assert isinstance(proposed,dict) and isinstance(proof,dict)
+          pin=os.environ["XENIOS_FROZEN_MANIFEST_SHA256"]
+          assert re.fullmatch(r"[a-f0-9]{64}",pin)
+          assert hashlib.sha256(manifest_bytes).hexdigest()==pin, "MANIFEST_HASH"
+          assert hashlib.sha256(proof_bytes).hexdigest()==proposed["providerProofSha256"], "PROOF_HASH"
+          for name,contents in (("run-manifest.json",manifest_bytes),("provider-proof.json",proof_bytes)):
+              with (root/name).open("xb") as target: target.write(contents)
+              os.chmod(root/name,0o600)
           manifest_bytes=(root/"run-manifest.json").read_bytes()
           manifest_pin=os.environ["XENIOS_FROZEN_MANIFEST_SHA256"]
           assert re.fullmatch(r"[a-f0-9]{64}",manifest_pin)
@@ -131,7 +174,7 @@ jobs:
           PY
       - name: Verify pinned tool inventory and invoke bounded browser
         env:
-          XENIOS_FROZEN_MANIFEST_SHA256: ${{ vars.XENIOS_FROZEN_MANIFEST_SHA256 }}
+          XENIOS_FROZEN_MANIFEST_SHA256: ${{ inputs.run_manifest_sha256 }}
           CUSTOMER_A_STATE: ${{ secrets.XENIOS_STAGING_CUSTOMER_STORAGE_STATE }}
           CUSTOMER_B_STATE: ${{ secrets.XENIOS_STAGING_SECOND_CUSTOMER_STORAGE_STATE }}
         shell: bash
