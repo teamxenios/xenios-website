@@ -16,6 +16,12 @@ import {
 } from "../assisted-order/storage";
 import { ASSISTED_ORDER_DRAFT_KEY } from "../assisted-order/draft-store";
 
+// This route unit fixture supplies signed-out Research context, as the storefront
+// fixture does. Production useResearch/ResearchProvider and all assertions stay real/unchanged.
+vi.mock("../core", () => ({ useResearch: () => ({
+  member: null, memberToken: null, memberChecking: false, memberSessionStatus: "signed_out", recovery: "none",
+}) }));
+
 /**
  * F6 I: SIGNING OUT FORGETS EVERYTHING THIS BROWSER REMEMBERED.
  *

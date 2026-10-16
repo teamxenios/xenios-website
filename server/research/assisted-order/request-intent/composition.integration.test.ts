@@ -9,7 +9,7 @@ describe("proposed request-intent integration source bindings (not browser execu
     expect(read("client/src/research/early-access/EarlyAccessRoute.tsx")).toContain('import("../assisted-order/OrderRequestEntry")');
     expect(section).toContain('<Route path="/research/early-access/order-request">');
     expect(section).toContain('<L component={EarlyAccessRoute} props={{ requestOnly: true }} />');
-    expect(section).toContain('<Route path="/research/early-access" component={EarlyAccessRoute} />');
+    expect(section).toContain('<Route path="/research/early-access">{() => <L component={EarlyAccessRoute} />}</Route>');
     expect(section).toContain('<Route path="/research/early-access/order-request/confirmation/:publicReference">');
     expect(section).toContain('<Route path="/research/early-access/order-request/:publicReference">');
     expect(section).toContain("component={AssistedOrderConfirmationPage}");

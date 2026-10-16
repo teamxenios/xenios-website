@@ -18,6 +18,8 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
+      - name: Focused guest-entry regression checks
+        run: npx --no-install vitest run client/src/research/early-access/EarlyAccessRoute.logout.test.tsx client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx server/research/assisted-order/request-intent/composition.integration.test.ts server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - run: npx vitest run
   typecheck:
     runs-on: ubuntu-latest
