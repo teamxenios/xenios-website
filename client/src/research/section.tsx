@@ -45,9 +45,6 @@ const AffiliateAccess = lazy(() => import("./b2b/AffiliateAccessPage"));
 // The assisted-order wizard family. Inside the gated Early Access experience:
 // every page's own fetches carry the Early Access session and are refused
 // without it, and the wall admits only the exact API shapes behind them.
-const AssistedOrderPage = lazy(() =>
-  import("./assisted-order/OrderRequestEntry").then((m) => ({ default: m.OrderRequestEntry })),
-);
 const AssistedOrderConfirmationPage = lazy(() =>
   import("./assisted-order/AssistedOrderConfirmationPage").then((m) => ({
     default: m.AssistedOrderConfirmationPage,
@@ -305,11 +302,11 @@ export default function ResearchSection() {
           <Route path="/research/access-hub">{() => <L component={AccessHub} />}</Route>
           <Route path="/research/order">{() => <L component={OrderEntryHub} />}</Route>
           <Route path="/research/supplier-access">{() => <L component={SupplierAccess} />}</Route>
-          <Route path="/research/early-access" component={EarlyAccessRoute} />
+          <Route path="/research/early-access">{() => <L component={EarlyAccessRoute} />}</Route>
           {/* The assisted-order wizard, additive beside the existing Early
               Access flow. Literal paths precede the parameterized status
               path so confirmation can never be read as a public reference. */}
-          <Route path="/research/early-access/order-request">{() => <L component={AssistedOrderPage} />}</Route>
+          <Route path="/research/early-access/order-request">{() => <L component={EarlyAccessRoute} props={{ requestOnly: true }} />}</Route>
           <Route path="/research/early-access/order-request/confirmation/:publicReference">{() => <L component={AssistedOrderConfirmationPage} />}</Route>
           <Route path="/research/early-access/order-request/:publicReference">{() => <L component={AssistedOrderStatusPage} />}</Route>
           <Route path="/research/apply" component={Apply} />

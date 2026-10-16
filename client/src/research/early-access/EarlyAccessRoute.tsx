@@ -105,7 +105,7 @@ export function clearEarlyAccessCustomerStorage(): void {
   bestEffort(clearAssistedOrderStorage);
 }
 
-export default function EarlyAccessRoute() {
+export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ requestOnly?: boolean }> = {}) {
   const entryIntent = orderEntryIntentFromSearch(typeof window === "undefined" ? "" : window.location.search);
   const [state, setState] = useState<GateState>({ kind: "checking" });
   // Whether the SERVER says this customer has agreed. It starts false on every
@@ -412,6 +412,60 @@ export default function EarlyAccessRoute() {
       }
     })();
   }, [resetCustomerContext]);
+
+  if (requestOnly) {
+    // Reuse this route's canonical session bootstrap, expiry/privacy sweep and
+    // durable legal standing. A request-only entry must never select the
+    // legacy checkout door, including when an older attempt survives a reload.
+    let priorRequestBlocked = false;
+    try {
+      const prior = readOrderRequestContinuity(window.sessionStorage);
+      priorRequestBlocked = prior === "legacy" || prior === "blocked";
+    } catch {
+      priorRequestBlocked = true;
+    }
+    return <>
+      <SeoHead title="Quick Order, Xenios Health"
+        description="Select items and send a request for review. No account is required."
+        path="/research/early-access/order-request" robots="noindex, nofollow" />
+      <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
+        <div className="max-w-[1280px] min-w-0" data-testid="quick-order-request-only">
+          <h1 className="display-s max-w-[26ch]">Quick Order</h1>
+          <p className="mt-4 body-m text-ink-2 max-w-[62ch]">
+            Choose items and send a request for review. Submission does not collect payment,
+            approve treatment, create a prescription or confirm shipping. Availability and
+            any required clinical review are confirmed separately.
+          </p>
+          {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
+            : state.kind !== "authenticated" ? <div role="status" className="mt-5">
+              <p>Request intake is not available here yet. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
+              <a href="/support">Contact support</a>
+            </div>
+            : priorRequestBlocked ? <div role="alert" className="mt-5">
+              <p>An earlier request needs support review. Do not create a replacement until staff check for duplicates.</p>
+              <a href="/support">Contact support</a>
+            </div>
+            : requestMode.kind === "checking" ? <p role="status" className="mt-5">Checking the current request path...</p>
+            : requestMode.kind !== "mixed" ? <div role="status" className="mt-5">
+              <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
+              <a href="/support">Contact support</a>
+            </div>
+            : <>
+              <div className="mt-5" data-testid="quick-order-agreement-mount">
+                <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
+              </div>
+              <div className="mt-5">
+                <Suspense fallback={<p role="status">Loading the request form...</p>}>
+                  <FullCanonicalCatalog mode={requestMode} embedded entryIntent={entryIntent}
+                    continuationEnabled={agreed && blocked === null}
+                    onStepChange={setEmbeddedOrderStep} />
+                </Suspense>
+              </div>
+            </>}
+        </div>
+      </section>
+    </>;
+  }
 
   return (
     <>

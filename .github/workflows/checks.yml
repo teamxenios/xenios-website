@@ -11,11 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
       - run: npm ci
+      - name: Focused guest-entry regression checks
+        run: npx --no-install vitest run client/src/research/early-access/EarlyAccessRoute.logout.test.tsx client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx server/research/assisted-order/request-intent/composition.integration.test.ts server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
       - run: npx vitest run
   typecheck:
     runs-on: ubuntu-latest
@@ -45,10 +49,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
       - run: npm ci
-      - run: node scripts/acceptance/verify-core-site-protection.mjs
+      - run: node scripts/acceptance/verify-core-site-protection.mjs "$BASE_REF" HEAD
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
       - run: npm run verify:route-uniqueness
