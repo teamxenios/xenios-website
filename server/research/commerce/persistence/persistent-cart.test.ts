@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createPersistentCartRepository,
   hashCartIdempotencyKey,
@@ -69,6 +69,13 @@ const cart = {
 };
 
 describe("persistent cart repository", () => {
+  beforeEach(() => {
+    vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-07-27T20:00:00Z"));
+  });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("domain-separates and never sends raw anonymous or idempotency secrets", async () => {
     const rpc = vi.fn(async () => ({ data: cart, error: null }));
     const repo = createPersistentCartRepository({ rpc });
