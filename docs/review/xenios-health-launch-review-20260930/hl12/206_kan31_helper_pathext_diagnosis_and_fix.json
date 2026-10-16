@@ -1,0 +1,25 @@
+{
+  "doc": 206,
+  "title": "KAN-31 helper PATHEXT diagnosis and correction: changed bytes and actual evidence",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "2026-10-16T01:12Z-01:11Z",
+  "verdict": "CONFIRMED_NO_GAP_IN_CORRECTION_OR_EVIDENCE; FIXED_869a8639_EQUALS_bd5b273a_PLUS_ONE_30_BYTE_PATHEXT_INSERTION; CONTROLLED_ONE_VARIABLE_DIAGNOSIS_R1_REPRODUCED_R2_CURED; SPECIFIC_MISSING_GATE_CONSUMED_G0_OUTPUTS_AT_FIXED_PATHS; NOT_SETUP_OR_EXECUTION_AUTHORITY",
+  "reviewerCorrectionToDoc198": { "doc198Said": "helper child environment launcher-gate-compatible", "missed": "child environment omits PATHEXT; inside frozen G0 entry the native call & '<pwsh>' ... that captures capacity returns null exit with no output, so G0 refuses before Node, app or staging egress", "hadInFront": "launcher's own safeEnv includes PATHEXT (noted at the time) but reviewer did not check what the G0 entry and capacity hop need", "stillStands": "Doc 198's other semantic findings and Doc 204's parser correction" },
+  "identity": { "coreRange": "37e1c55f..9d5574d2", "tc25CleanWithLongpaths": true, "commits": { "91db710": "R1 literal 5842 B 06c9aa45 + two public markers 84 B each", "0f4a6c3": "R1 actual failure 2825 B", "cd0c451": "R2 literal 5872 B bed0d839", "f3dd566": "R2 actual pass 2796 B", "415401b4": "tree d1e8ae42: fixed helper + static literal 2506 B 954abda4", "9d5574d": "static result 1909 B" }, "rootRecords": "Doc443 failure committed 01:03Z; pre-run admissions committed before each call: Doc444 01:05:21Z (call 01:05:38Z), Doc445 01:06:48Z (call 01:06:58Z), Doc446 01:08:11Z (call 01:08:27Z); resolves the Doc 205 records observation for these calls" },
+  "evidence": {
+    "doc443": "acknowledgment and both masked inputs succeeded; G0 PID 109128 closed exit 1; outer receipt nativeExit null, 0 stdout, 0 stderr, 238 ms, qualificationStarted false; operator receipt 1223 B 79484c99 G0_CHAIN_FAILED; no remote database claim",
+    "r1": "170ba6 inside Doc444 window, tool exit 1, one attempt; literal reproduces helper's explicit cleared environment keys and G0 entry call form (nested pinned pwsh -File marker, 2> to file); both markers null LASTEXITCODE and empty stdout; preserved as failure, not pass",
+    "r2": "698bb2 inside Doc445 window, exit 0; reviewer byte diff R1->R2 only two one-character output-root changes r1->r2 and the 30-byte PATHEXT insertion; both markers matched (exits 0 and 1, expected stdout, 0 stderr, fixture closed and drained); failure disappears with PATHEXT alone",
+    "fix": "reviewer byte diff bd5b273a -> 869a8639 = single insertion of exactly PATHEXT='.COM;.EXE;.BAT;.CMD'; (same value as R2 and launcher safeEnv); no guard, recipient, limit, prompt, user or machine setting changed",
+    "static": "2e102d inside Doc446 window, exit 0, 0.42 s: parse errors 0, exactInsertions 1, allOtherBytesUnchanged true, helperInvocations 0",
+    "limits": ["nested marker processes not independently inventoried", "no global family closure; cooperative budgets; combined outer channel", "full G0, launcher, browser and staging path still untested; later hops may fail in ways not involving PATHEXT"]
+  },
+  "specificMissingGate": { "observed": "directory listing of C:/Users/sboad/.codex/tmp/e33-managed-browser-proposal-20261015/ shows consumed g0-managed-browser-result.json (0 B), g0-managed-browser-stderr.txt (0 B), g0-managed-browser-outer.json (329 B) and consumed coordinator-admission.json (7964 B, size equals Doc442 grant record)", "collision": "frozen G0 entry 3ede090e throws G0_OUTPUT_ALREADY_EXISTS if result or stderr exists, before running anything; overwrites outer file without checking; reads grant only from fixed coordinator-admission.json, which helper also requires", "requiredBeforeNewAttempt": ["archive: record four consumed files' bytes and hashes in records (grant bytes already in Doc442) and copy to archive path", "remove and replace: remove them from fixed paths and write new grant there; mutation of consumed evidence needs its own approval", "fresh scratch: new fresh operatorScratchRoot; e33-private-human-input-once-r1-20261015 is consumed"], "consequenceIfSkipped": "corrected helper's next attempt would fail at G0 entry and last attempt's outer evidence would be lost" },
+  "otherRemainingConditions": ["new decision record with snippetPin = fixed helper path and 869a8639", "Samuel's new concrete approval, readiness, admission, window, new exact command, new grant", "fresh 2048 MiB G0 at run time", "no reuse of Doc442 decision, grant or attempt", "staging scope and deferred populated Doc399 query separately controlled", "reviewer's final-result review afterwards"],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
