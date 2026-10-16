@@ -1,0 +1,32 @@
+{
+  "doc": 209,
+  "title": "KAN-31 hosted executable source: review against Doc 208",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "reviewedAtUtc": "2026-10-16T02:08Z-02:20Z",
+  "packet": "Doc453 at records e4c8f9d",
+  "verdict": "CHANGES_REQUIRED_MINIMAL; EARLIEST_DEFECT_OWNER_B_NO_RECEIPT_CHECK_CAN_PASS_VACUOUSLY (Doc 208 condition 3); REST_CONFORMS_AT_SOURCE_SCOPE; NOT_EXECUTION_CREDIT_QUALIFICATION_OR_AUTHORITY",
+  "identity": { "commit": "870d752fa6adf6f8a852ff4e853ef3b1eeb5370d", "tree": "2eff7dfed51040a3003421636390eeab77e1e04d", "parent": "42fa1d157f3f2b09d2147f7048b7ac5040176d13", "localOnly": true, "files": { "contracts.mjs": "6812 B 35764a31", "hosted-browser.UNAPPLIED.mjs": "18460 B e51b73f9", "verify-tools.UNAPPLIED.mjs": "2262 B 85ee0855", "workflow.UNAPPLIED.yml": "5194 B 7115ad88", "EXECUTION_HANDOFF.md": "7579 B ced14cca" } },
+  "earliestDefect": {
+    "where": "hosted-browser.UNAPPLIED.mjs line 179-180 recover(..., null, 'b-recover') accepts 200 {receipt:null} OR 401/403 with error; lines 231-232 B_CURRENT_ELIGIBILITY proves B only by reading catalog",
+    "whyVacuous": "E33 request-intent routes resolve a viewer with resolveCustomer without refusing anonymous callers (assisted-order/express.ts 94ff); /catalog and /recover reachable without proven B authentication; expired, revoked or invalid B storage state can pass catalog eligibility then return 401/403 or 200 {receipt:null} on recovery, both accepted as bNoReceipt, but nothing shows an authenticated, eligible, distinct B was refused; identityAdmission checks only Root-supplied principalEvidence.authority === 'server-session' label and state hashes, proving bytes not B's runtime session",
+    "smallestCorrection": ["for b-recover accept only 200 with body exactly {receipt: null}; keep 401/403 acceptance for anonymous-recover only", "immediately before and after B's recovery attempts in each case prove at runtime that B's session is authenticated and eligible and not A's principal, via an existing E33 endpoint that refuses anonymous callers and returns the authenticated identity, compared against a value in frozen principalEvidence; record only a hash, never the identity; if no such existing endpoint exists, say so and let reviewer decide before execution; do not add a runtime route", "apply same runtime proof to A at start so the A/B distinction rests on server responses rather than labels"],
+    "changes": "only hosted-browser.UNAPPLIED.mjs and if needed contracts.mjs; workflow and tools verifier unchanged"
+  },
+  "conformsAtSourceScope": {
+    "independentExpectations": "freezeExpected runs inside route handler before route.fetch; checks contact and lines against frozen plan, agreement kind and version against plan; captures browser-generated key and single acceptedAt from actual body, matching in-flight marker; writes *.prepost.json with beforeUpstream:true; expanded lines from pinned catalog snapshot (catalogSha256), never DB",
+    "fingerprint": "E33 sorted-key form uses submitted lines; golden vectors are independent literals plus SHA-256 known answer abc",
+    "requiredChecks": "mandatory before evidence written: A identical replay same receipt; A changed-fact 409 attempt_conflict; A recovery same receipt; anonymous no receipt; B's check is the exception covered by the defect",
+    "requestRules": "B can never submit (line 58); only request-intent submit and recovery endpoints may mutate; off-origin traffic, redirects, request/post/inflight/byte limits all abort",
+    "lostResponseSemantics": "armed case aborts downstream only after route.fetch completes with 200 native receipt; retry and remount require identical body and key and same receipt; ACTUAL_RESPONSE_LOSS required",
+    "accounting": "every request accounted, unresolved marked FAILED_OR_UNRESOLVED; any failure fails run; settled() gates each phase; case receipts must be distinct",
+    "secrets": "storage states only as 0600 temp files deleted in always-run step, never written into evidence; no HAR, trace or raw exception output; artifact only *.json and *.png, 1-day retention; permissions contents: read and actions: read, persist-credentials false, actions SHA-pinned; Node 20.19.0 and npm 10.8.2 checked; tool bundle verified by hash, mode and exact set",
+    "servedIdentityAndClaim": "served identity explicitly provider-only, age-limited proof (<= 5 min) and providerOnlyBasisAccepted; basis still needs explicit acceptance before execution (Doc 208 condition 7); claim string and privatePairProvenance:false recorded; 2048 MiB floor kept"
+  },
+  "reservedPrerequisites": ["Core commits pushed and workflow placed where workflow_dispatch can run it", "tool bundle, artifact ID and versions; principal proof content; approved E33 staging deploy (staging still serves 65c9cc54); explicit acceptance of provider-only identity basis", "DB owner's SQL successor, then staff readback under real scoped permission after pre-staff snapshot", "exact mutation admission and execution window", "production separate"],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
