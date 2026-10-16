@@ -1,0 +1,46 @@
+# UNAPPLIED source proposal; single tool preparation, NOT hosted qualification.
+name: KAN31 pinned Linux tool preparation
+on:
+  workflow_dispatch:
+    inputs:
+      source_commit:
+        description: Exact approved producer source commit
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: kan31-staging-exclusive
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.source_commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Produce exactly one pinned tool payload
+        env:
+          SOURCE_COMMIT: ${{ inputs.source_commit }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          [[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+          test -z "$(git status --porcelain)"
+          python3 docs/health-launch/ql-build-20261012/doc104-baseline-reconciliation-20261013/mixed-catalog-request-intent-source-proposal/hosted-browser-evidence-contract-r1-20261016/tool-bundle-production-r1/produce-tool-bundle.UNAPPLIED.py "$RUNNER_TEMP/kan31-tool-bundle-r1"
+          test -z "$(git status --porcelain)"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: kan31-linux-tools-1.61.1-1228
+          path: |
+            ${{ runner.temp }}/kan31-tool-bundle-r1/tool-payload.zip
+            ${{ runner.temp }}/kan31-tool-bundle-r1/tool-payload.sha256
+            ${{ runner.temp }}/kan31-tool-bundle-r1/toolchain-pins.UNACCEPTED.json
+            ${{ runner.temp }}/kan31-tool-bundle-r1/preparation-receipt.json
+          if-no-files-found: error
+          retention-days: 7
+          include-hidden-files: false
