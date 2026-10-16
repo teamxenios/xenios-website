@@ -302,7 +302,7 @@ export default function ResearchSection() {
           <Route path="/research/access-hub">{() => <L component={AccessHub} />}</Route>
           <Route path="/research/order">{() => <L component={OrderEntryHub} />}</Route>
           <Route path="/research/supplier-access">{() => <L component={SupplierAccess} />}</Route>
-          <Route path="/research/early-access" component={EarlyAccessRoute} />
+          <Route path="/research/early-access">{() => <L component={EarlyAccessRoute} />}</Route>
           {/* The assisted-order wizard, additive beside the existing Early
               Access flow. Literal paths precede the parameterized status
               path so confirmation can never be read as a public reference. */}

@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -45,10 +47,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: npm
       - run: npm ci
-      - run: node scripts/acceptance/verify-core-site-protection.mjs
+      - run: node scripts/acceptance/verify-core-site-protection.mjs "$BASE_REF" HEAD
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
       - run: npm run verify:route-uniqueness
