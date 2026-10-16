@@ -17,6 +17,7 @@ import EarlyAccessRoute from "./EarlyAccessRoute";
 import { resetAssistedOrderConfigCache } from "../assisted-order/api";
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "@shared/research/assisted-order/form";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "../assisted-order/request-intent-attempt";
+import { ASSISTED_ORDER_DRAFT_KEY } from "../assisted-order/draft-store";
 vi.mock("../core", () => ({ useResearch: () => ({
   member: null, memberToken: null, memberChecking: false, memberSessionStatus: "signed_out", recovery: "none",
 }) }));
@@ -171,10 +172,18 @@ function stubFetch(options: {
   mixedMode?: "off" | "on" | "unknown";
   agreement?: AgreementFixture;
   featuredUnits?: readonly unknown[];
+  session?: "existing" | "fresh-open" | "locked";
+  sessionReplies?: readonly Record<string, unknown>[];
 }) {
+  let sessionIssued = false;
+  let sessionReads = 0;
   const stub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input);
     if (init?.method === "POST") {
+      if (path.endsWith("/early-access/unlock")) {
+        sessionIssued = true;
+        return jsonResponse({ ok: true });
+      }
       if (path.endsWith("/early-access/agreements/accept")) {
         const submitted = JSON.parse(String(init.body ?? "{}")) as {
           kind?: unknown;
@@ -189,6 +198,13 @@ function stubFetch(options: {
       return jsonResponse({ ok: true });
     }
     if (path.endsWith("/early-access/session")) {
+      if (options.sessionReplies?.length) {
+        return jsonResponse(options.sessionReplies[Math.min(sessionReads++, options.sessionReplies.length - 1)]);
+      }
+      if (options.session === "locked") return jsonResponse({ authenticated: false, openAccess: false });
+      if (options.session === "fresh-open" && !sessionIssued) {
+        return jsonResponse({ authenticated: false, openAccess: true });
+      }
       return jsonResponse({ authenticated: true, expiresAt: null });
     }
     if (path.endsWith("/research/policies")) return jsonResponse({ policies: POLICIES });
@@ -262,9 +278,9 @@ function stubFetch(options: {
   return stub;
 }
 
-async function renderStorefront() {
+async function renderStorefront(requestOnly = false) {
   await act(async () => {
-    root.render(<EarlyAccessRoute />);
+    root.render(<EarlyAccessRoute requestOnly={requestOnly} />);
   });
   // Let the catalog fetches and the lazy chunk settle.
   for (let tick = 0; tick < 40; tick += 1) {
@@ -286,6 +302,124 @@ beforeEach(() => {
   root = createRoot(container);
   window.sessionStorage.clear();
   window.history.replaceState(null, "", "/research/early-access");
+});
+
+describe("the login-free request-only entry", () => {
+  async function waitForAdd() {
+    let add: HTMLButtonElement | undefined;
+    for (let attempt = 0; attempt < 60 && !add; attempt += 1) {
+      await act(async () => { await new Promise((resolve) => setTimeout(resolve, 25)); });
+      add = [...container.querySelectorAll("button")].find((button) =>
+        button.textContent === "Add Kisspeptin to request");
+    }
+    expect(add).toBeTruthy();
+    return add!;
+  }
+  function continueButton() {
+    return [...container.querySelectorAll("button")].find((button) =>
+      button.textContent === "Continue to contact")!;
+  }
+  it("bootstraps a fresh signed-out browser and loads the mixed catalog without account credentials", async () => {
+    window.history.replaceState(null, "", "/research/early-access/order-request");
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", session: "fresh-open" });
+    await renderStorefront(true);
+    await waitForAdd();
+    expect(container.querySelector("h1")?.textContent).toBe("Quick Order");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
+    expect(container.querySelector('[data-testid="early-access-checkout-mount"]')).toBeNull();
+    expect(container.querySelector('input[type="password"]')).toBeNull();
+    expect(container.querySelector('a[href*="/member/login"]')).toBeNull();
+    expect(container.textContent).toContain("Clinical review required. Not a prescription.");
+    expect(container.textContent).toContain("does not collect payment");
+    const unlocks = fetch.mock.calls.filter(([url, init]) =>
+      String(url).endsWith("/early-access/unlock") && init?.method === "POST");
+    expect(unlocks).toHaveLength(1);
+    expect(unlocks[0][1]?.body).toBe("{}");
+    expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/early-access/session"))).toHaveLength(2);
+    expect(fetch.mock.calls.every(([, init]) => !new Headers(init?.headers).has("Authorization"))).toBe(true);
+    expect(fetch.mock.calls.some(([url]) => String(url).includes("/member/"))).toBe(false);
+  });
+  it("preserves the closed staging gate without presenting a customer password or bypassing it", async () => {
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", session: "locked" });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("Request intake is not available here yet");
+    expect(container.querySelector('input[type="password"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(fetch.mock.calls.some(([url]) => String(url).endsWith("/early-access/unlock"))).toBe(false);
+  });
+  it.each(["off", "unknown"] as const)("never falls back to legacy checkout when mixed mode is %s", async (mixedMode) => {
+    stubFetch({ bridgeEnabled: true, mixedMode });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("The request form is currently unavailable");
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
+    expect(container.querySelector('[data-testid="early-access-checkout-mount"]')).toBeNull();
+  });
+  it("allows browsing but enables contact only after canonical server agreement acceptance", async () => {
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "required" });
+    await renderStorefront(true);
+    const add = await waitForAdd();
+    act(() => add.click());
+    expect(continueButton().disabled).toBe(true);
+    expect(container.querySelector('input[name="name"]')).toBeNull();
+    act(() => container.querySelector<HTMLInputElement>('[data-testid="early-access-agreement-checkbox"]')!.click());
+    await act(async () => {
+      container.querySelector<HTMLButtonElement>('[data-testid="early-access-agreement-submit"]')!.click();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(fetch.mock.calls.filter(([url, init]) => String(url).endsWith("/early-access/agreements/accept")
+      && init?.method === "POST")).toHaveLength(1);
+    expect(continueButton().disabled).toBe(false);
+    act(() => continueButton().click());
+    expect(container.querySelector('input[name="name"]')).toBeTruthy();
+  });
+  it.each(["unverified", "locked"] as const)("keeps continuation closed when server standing is %s", async (agreement) => {
+    stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement });
+    await renderStorefront(true);
+    const add = await waitForAdd();
+    act(() => add.click());
+    expect(continueButton().disabled).toBe(true);
+    expect(container.querySelector('input[name="name"]')).toBeNull();
+  });
+  it("does not switch a malformed retained attempt into a new mixed or legacy request", async () => {
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, "malformed retained attempt");
+    stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe("malformed retained attempt");
+  });
+  it("holds a valid uncertain legacy attempt without mounting legacy checkout or deleting its marker", async () => {
+    const marker = JSON.stringify({ idempotencyKey: "legacy-attempt", selections: [],
+      acceptedAt: new Date().toISOString(), attemptState: "uncertain", step: "review" });
+    window.sessionStorage.setItem(ASSISTED_ORDER_DRAFT_KEY, marker);
+    stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(marker);
+  });
+  it("rechecks expired session authority and hides the form on refusal without a password fallback", async () => {
+    const expires = Date.now() + 60000;
+    stubFetch({ bridgeEnabled: false, mixedMode: "on", sessionReplies: [
+      { authenticated: true, expiresAt: new Date(expires).toISOString() },
+      { authenticated: false, openAccess: false },
+    ] });
+    await renderStorefront(true);
+    await waitForAdd();
+    vi.spyOn(Date, "now").mockReturnValue(expires + 1);
+    await act(async () => {
+      window.dispatchEvent(new Event("focus"));
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.querySelector('input[type="password"]')).toBeNull();
+    expect(container.textContent).toContain("Request intake is not available here yet");
+  });
 });
 
 afterEach(() => {
