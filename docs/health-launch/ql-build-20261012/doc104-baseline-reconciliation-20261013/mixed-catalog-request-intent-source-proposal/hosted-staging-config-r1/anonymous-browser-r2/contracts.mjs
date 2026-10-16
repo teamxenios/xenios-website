@@ -71,9 +71,18 @@ export function freezeExpected(planned,body,items) {
     expected_fingerprint:hash(canonical({kind:'unapproved_selection_request',
       contact:planned.contact,agreements:body.agreements,lines:planned.lines})),acceptedAt};
 }
-export function assertLiveAnonymous(check) {
-  need(check?.status===200 && check.body?.authenticated===true,'LIVE_ANONYMOUS_SESSION_REQUIRED');
-  need(typeof check.body.expiresAt==='string' && Date.parse(check.body.expiresAt)>Date.now(),'ANONYMOUS_SESSION_EXPIRY');
+export function assertLiveAnonymous(check,bounds) {
+  // A cookie timestamp is a safety bound, never a substitute for server authority.
+  need(check?.status===200 && check.body?.authenticated===true
+    && check.body.openAccess===true,'LIVE_ANONYMOUS_SESSION_REQUIRED');
+  need(typeof bounds?.unlockExpiresAt==='string'
+    && Date.parse(bounds.unlockExpiresAt)>Date.now(),'UNLOCK_RESPONSE_EXPIRY');
+  need(Number.isFinite(bounds?.cookieExpiresAtEpochSeconds)
+    && bounds.cookieExpiresAtEpochSeconds>Date.now()/1000,'BROWSER_COOKIE_EXPIRY');
+  if(Object.hasOwn(check.body,'expiresAt')) {
+    need(typeof check.body.expiresAt==='string'
+      && Date.parse(check.body.expiresAt)>Date.now(),'ANONYMOUS_SESSION_EXPIRY');
+  }
 }
 export function assertNoReceipt(response,kind) {
   const body=response?.body;
@@ -96,12 +105,20 @@ export function anonymousRegressionVectors() {
   rejects(()=>assertNoReceipt({status:200,body:{receipt:{requestId:'other'}}},'other-recover'));
   rejects(()=>assertNoReceipt({status:200,body:{receipt:null,extra:true}},'other-recover'));
   rejects(()=>assertNoReceipt({status:200,body:{receipt:null}},'sessionless-recover'));
-  rejects(()=>assertLiveAnonymous({status:401,body:{authenticated:true,expiresAt:'2999-01-01T00:00:00Z'}}));
-  rejects(()=>assertLiveAnonymous({status:200,body:{authenticated:false,expiresAt:'2999-01-01T00:00:00Z'}}));
-  rejects(()=>assertLiveAnonymous({status:200,body:{authenticated:true,expiresAt:'2000-01-01T00:00:00Z'}}));
-  rejects(()=>assertLiveAnonymous({status:200,body:{authenticated:true}}));
-  assertLiveAnonymous({status:200,body:{authenticated:true,expiresAt:new Date(Date.now()+60000).toISOString()}});
-  return {rejectionVectors:denied,positiveVectors:4,authoredControlOnly:true};
+  const future=new Date(Date.now()+60000).toISOString();
+  const bounds={unlockExpiresAt:future,cookieExpiresAtEpochSeconds:Date.now()/1000+60};
+  const live={status:200,body:{authenticated:true,openAccess:true}};
+  rejects(()=>assertLiveAnonymous({...live,status:401},bounds));
+  rejects(()=>assertLiveAnonymous({...live,body:{authenticated:false,openAccess:true}},bounds));
+  rejects(()=>assertLiveAnonymous({...live,body:{authenticated:true,openAccess:false}},bounds));
+  rejects(()=>assertLiveAnonymous({...live,body:{...live.body,expiresAt:'2000-01-01T00:00:00Z'}},bounds));
+  rejects(()=>assertLiveAnonymous({...live,body:{...live.body,expiresAt:null}},bounds));
+  rejects(()=>assertLiveAnonymous(live));
+  rejects(()=>assertLiveAnonymous(live,{...bounds,unlockExpiresAt:'2000-01-01T00:00:00Z'}));
+  rejects(()=>assertLiveAnonymous(live,{...bounds,cookieExpiresAtEpochSeconds:1}));
+  assertLiveAnonymous(live,bounds); // durable server liveness has no expiry field
+  assertLiveAnonymous({...live,body:{...live.body,expiresAt:future}},bounds);
+  return {rejectionVectors:denied,positiveVectors:5,authoredControlOnly:true};
 }
 export function deriveCase(planned,items,config) {
   need(config?.enabled===true && Array.isArray(config.requiredAgreements)

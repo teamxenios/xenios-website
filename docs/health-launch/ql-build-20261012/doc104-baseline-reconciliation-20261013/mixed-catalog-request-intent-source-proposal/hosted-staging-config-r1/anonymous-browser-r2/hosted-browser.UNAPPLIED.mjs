@@ -27,7 +27,7 @@ const tasks=new Set();
 // Anonymous cookie handles stay volatile; no password, member login or state import.
 
 const contextRoles=new WeakMap(), cookieHandles=new Map();
-const unlockPosts=new Map(), agreementPosts=new Map();
+const unlockPosts=new Map(), agreementPosts=new Map(), unlockExpiries=new Map();
 async function write(name,value) {
   need(!outputs.has(name),'OUTPUT_OVERWRITE'); outputs.add(name);
   await fs.writeFile(path.join(outDir,name),JSON.stringify(value,null,2)+'\n',{flag:'wx',mode:0o600});
@@ -215,15 +215,18 @@ async function liveSession(page,role,point) {
     const r=await fetch(url,{credentials:'include',cache:'no-store'});
     return {status:r.status,body:await r.json()};
   },SESSION);
-  assertLiveAnonymous(check);
   const cookies=await page.context().cookies(m.origin);
   const owned=cookies.filter(c=>c.name===COOKIE);
   need(owned.length===1 && owned[0].httpOnly && owned[0].secure
     && owned[0].sameSite==='Strict' && owned[0].path==='/' && owned[0].expires>Date.now()/1000,'SERVER_COOKIE_ATTRIBUTES');
+  assertLiveAnonymous(check,{unlockExpiresAt:unlockExpiries.get(role),
+    cookieExpiresAtEpochSeconds:owned[0].expires});
   if(cookieHandles.has(role)) need(cookieHandles.get(role)===owned[0].value,'ANONYMOUS_HANDLE_CHANGED');
   else cookieHandles.set(role,owned[0].value);
   evidence.sessionChecks.push({role,point,status:check.status,authenticated:true,
-    expiresAt:check.body.expiresAt,httpOnly:true,secure:true,sameSite:'Strict',
+    serverReportedExpiresAt:check.body.expiresAt??null,
+    unlockResponseExpiresAt:unlockExpiries.get(role),cookieExpiresAtEpochSeconds:owned[0].expires,
+    expiryBoundsAuthorize:false,httpOnly:true,secure:true,sameSite:'Strict',
     checkedAt:new Date().toISOString(),identityCompared:false});
   return check;
 }
@@ -236,6 +239,10 @@ async function prepareContext(context,role) {
     page.goto(m.origin+WIZARD),
   ]);
   need(unlocked.status()===200,'AUTOMATIC_PUBLIC_UNLOCK_REQUIRED');
+  const issued=await unlocked.json();
+  need(issued.ok===true && typeof issued.expiresAt==='string'
+    && Date.parse(issued.expiresAt)>Date.now(),'ACTUAL_UNLOCK_EXPIRY_REQUIRED');
+  unlockExpiries.set(role,issued.expiresAt);
   await page.getByTestId('quick-order-agreement-mount').waitFor();
   await settled();
   const ready=await liveSession(page,role,'after-public-bootstrap');
@@ -406,7 +413,7 @@ try {
   evidence.status='FAILED';evidence.failure=failure;process.exitCode=1;
 } finally {
   clearTimeout(timer);
-  cookieHandles.clear();
+  cookieHandles.clear();unlockExpiries.clear();
   const closures=await Promise.allSettled(contexts.map(c=>c.close()));
   evidence.cleanup.contextsClosed=closures.every(x=>x.status==='fulfilled');
   try {await browser?.close();evidence.cleanup.browserCloseResolved=true;}
