@@ -1,0 +1,19 @@
+{
+  "doc": 205,
+  "title": "KAN-31 private-acknowledgment diagnostic labels: changed bytes and actual static evidence",
+  "reviewer": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-opus-5-5 (same session)",
+  "executed": false,
+  "agentsUsed": 0,
+  "comparedAtUtc": "2026-10-15T23:59Z-2026-10-16T00:00Z",
+  "verdict": "CONFIRMED_NO_GAP_IN_DELTA; ONLY_SIX_SIPHASE_LABELS_1_RENAMED_5_INSERTED; NO_GUARD_PROMPT_RECIPIENT_LIMIT_OR_LAUNCH_CHANGE; STATIC_PARSE_0_BEFORE_0_AFTER; NOT_HELPER_EXECUTION_OR_SETUP_AUTHORITY; DOC437_NOT_REUSABLE",
+  "delta": { "sourceCommit": "e3ced91bb1ff9279bef2149fa37705c6e0c83a85", "sourceTree": "127eabd08750e267d5ab11dc0ee688f611aeb76a", "parent": "ba237e11b347283e599dfaa9b5e3395849cf4693", "evidenceCommit": "37e1c55fe44773f1dbbface9b05acd01ac77b3b5", "evidenceTree": "360b8bdb4368c5b1aec8ac7362c14b6b416b21be", "addedFiles": 4, "tc25CleanWithLongpaths": true, "before": "15033 B 6a86664d", "after": "15211 B bd5b273a5ceb83c3945f27d785eb5cbd7002a0235f2081006d2fcca657afe6d5", "identityRecord": "EXACT_DIAGNOSTIC_DELTA_IDENTITY.json 3107 B, six onlyAllowedRules",
+    "reviewerDiff": "exactly one changed line and five inserted lines, all inside acknowledgment block: (1) PRIVATE_OPERATOR_ACK -> PUBLIC_ACK_CONSOLE_OUTPUT before the two disclosure WriteLine lines; (2) PUBLIC_ACK_READ_HOST before acknowledgment Read-Host; (3) PUBLIC_ACK_COMPARE before exact-phrase check; (4) PUBLIC_ACK_WINDOW before SI-Window; (5) PUBLIC_ACK_SCRATCH_CREATE before directory creation and record set-up; (6) PUBLIC_ACK_MARKER_WRITE before SI-WriteOnce of operator-attempt.json; matches the six onlyAllowedRules",
+    "labelReporting": "catch already records failurePhase=$siPhase without exception text; record always printed to console after finally, so labels reach Samuel even when failure comes before operator-result.json has a path (any stage before scratch creation)",
+    "whatLabelsDistinguish": "the six statements the old label covered can now be told apart; Samuel saw no prompt in last attempt, consistent with either disclosure-output or Read-Host failure, which the labels separate; historical cause remains unknown; public-only PROMPT_OK does not prove helper behavior" },
+  "staticEvidence": { "literal": "STATIC_PHASE_DELTA_AND_PARSE_LITERAL_PROPOSED.ps1.txt 3740 B 1a543f88, matches", "run": "native 2d62da requested 23:57:22.539Z returned 23:57:23.083Z, inside stated window 23:56:59Z-00:00:59Z (deadline 00:01:59Z); Core preflight 23:57:17.850Z; wall 0.33 s, exit 0, one attempt, no stops; output one JSON line: before 0 errors, after 0 errors, exactPhaseRules 6, allOtherBytesUnchanged true, helperInvocations 0, passed true", "limits": "static parse plus literal equality only; cooperative budget; no process census; outer channel combined", "recordsObservationNotMaterial": "unlike Doc433, no separate Root admission file committed before the call; window and authority appear in Core evidence and Doc439 written 23:58Z after the call; static parse only with complete evidence, so result unchanged; future admitted calls should keep the pre-run admission record" },
+  "remainingConditions": ["any new human attempt needs new decision record with snippetPin = diagnostic helper path and bd5b273a, Samuel's new concrete approval, readiness, admission and fresh window, and new exact command", "Doc437 decision, grant and attempt consumed, not reusable or retried", "fresh 2048 MiB G0 at run time", "staging scope and deferred populated Doc399 query separately controlled", "reviewer's final-result review afterwards"],
+  "jiraCommentDraft": { "issue": "KAN-31", "relayBy": "Root", "postedByReviewer": false },
+  "liveStatus": "NOT_LIVE",
+  "executionConsent": false
+}
