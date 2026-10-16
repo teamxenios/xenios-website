@@ -1,0 +1,169 @@
+# UNAPPLIED: not a canonical workflow; no dispatch/publication authority.
+name: KAN31 hosted browser proposal
+on:
+  workflow_dispatch:
+    inputs:
+      source_commit:
+        description: Exact approved Core executable-proposal commit
+        required: true
+      qualification_artifact_id:
+        description: Approved same-repository nonsecret input/tools archive artifact ID
+        required: true
+      qualification_zip_sha256:
+        description: Approved SHA-256 of downloaded artifact ZIP
+        required: true
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: kan31-staging-exclusive
+  cancel-in-progress: false
+jobs:
+  browser:
+    environment: staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.source_commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20.19.0
+      - name: Validate approved input bundle and extract safely
+        env:
+          ARTIFACT_ID: ${{ inputs.qualification_artifact_id }}
+          ZIP_SHA: ${{ inputs.qualification_zip_sha256 }}
+          SOURCE_COMMIT: ${{ inputs.source_commit }}
+          XENIOS_FROZEN_MANIFEST_SHA256: ${{ vars.XENIOS_FROZEN_MANIFEST_SHA256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$ARTIFACT_ID" =~ ^[0-9]+$ ]]
+          [[ "$ZIP_SHA" =~ ^[0-9a-f]{64}$ ]]
+          test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+          test "$(node --version)" = v20.19.0
+          test "$(npm --version)" = 10.8.2
+          test -z "$(git status --porcelain)"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > "$RUNNER_TEMP/input.zip"
+          printf '%s  %s\n' "$ZIP_SHA" "$RUNNER_TEMP/input.zip" | sha256sum --check -
+          python3 -I - <<'PY'
+          import hashlib, json, os, pathlib, re, stat, zipfile
+          def unique(pairs):
+              result={}
+              for k,v in pairs:
+                  assert k not in result, "DUPLICATE_JSON_KEY"
+                  result[k]=v
+              return result
+          def safe_name(name):
+              assert isinstance(name,str) and 0<len(name)<=1024 and "\\" not in name
+              p=pathlib.PurePosixPath(name)
+              assert not p.is_absolute() and ".." not in p.parts and p.as_posix()==name
+              assert name!="."
+              return p
+          def digest_file(p):
+              h=hashlib.sha256()
+              with p.open("rb") as f:
+                  for block in iter(lambda:f.read(1048576),b""): h.update(block)
+              return h.hexdigest()
+          root=pathlib.Path(os.environ["RUNNER_TEMP"])/"qualification"
+          root.mkdir(mode=0o700)
+          with zipfile.ZipFile(root.parent/"input.zip") as z:
+              files=z.infolist()
+              assert len(files)<=100000 and sum(i.file_size for i in files)<=2147483648
+              assert len({i.filename for i in files})==len(files)
+              names=set()
+              for i in files:
+                  name=i.filename[:-1] if i.is_dir() else i.filename
+                  p=safe_name(name)
+                  assert name not in names, "ALIASED_ARCHIVE_PATH"
+                  names.add(name)
+                  kind=stat.S_IFMT(i.external_attr>>16)
+                  assert kind in ((0,stat.S_IFDIR) if i.is_dir() else (0,stat.S_IFREG)), "NONFILE_MEMBER"
+                  assert p.parts[0]=="tools" or name in ("run-manifest.json","provider-proof.json","tool-inventory.json")
+                  assert p.parts[0]=="tools" or not i.is_dir()
+              z.extractall(root)
+              # Actions' OUTER wrapper may contain 0644 or no Unix permissions.
+              # Never trust it to carry executable bits. Start files at 0600;
+              # only the independently hash-pinned inventory may restore modes.
+              for i in files:
+                  if not i.is_dir(): os.chmod(root/i.filename,0o600)
+          manifest_bytes=(root/"run-manifest.json").read_bytes()
+          manifest_pin=os.environ["XENIOS_FROZEN_MANIFEST_SHA256"]
+          assert re.fullmatch(r"[a-f0-9]{64}",manifest_pin)
+          assert hashlib.sha256(manifest_bytes).hexdigest()==manifest_pin, "MANIFEST_HASH"
+          manifest=json.loads(manifest_bytes,object_pairs_hook=unique)
+          inventory_bytes=(root/"tool-inventory.json").read_bytes()
+          inventory_pin=manifest["toolchain"]["inventorySha256"]
+          assert re.fullmatch(r"[a-f0-9]{64}",inventory_pin)
+          assert hashlib.sha256(inventory_bytes).hexdigest()==inventory_pin, "INVENTORY_HASH"
+          inventory=json.loads(inventory_bytes,object_pairs_hook=unique)
+          assert isinstance(inventory,list) and 0<len(inventory)<=100000
+          expected={}
+          for item in inventory:
+              assert isinstance(item,dict) and set(item)=={"path","bytes","mode","sha256"}
+              relative=safe_name(item["path"])
+              assert item["path"] not in expected, "DUPLICATE_INVENTORY_PATH"
+              assert type(item["mode"]) is int and item["mode"] in (0o644,0o755), "INVALID_TOOL_MODE"
+              assert type(item["bytes"]) is int and 0<=item["bytes"]<=2147483648
+              assert isinstance(item["sha256"],str) and re.fullmatch(r"[a-f0-9]{64}",item["sha256"])
+              target=root/"tools"/pathlib.Path(*relative.parts)
+              info=target.lstat()
+              assert stat.S_ISREG(info.st_mode) and not target.is_symlink(), "NONFILE_TOOL"
+              assert info.st_size==item["bytes"] and digest_file(target)==item["sha256"], "TOOL_BYTES"
+              expected[item["path"]]=(target,item["mode"])
+          actual=set()
+          assert (root/"tools").is_dir() and not (root/"tools").is_symlink()
+          for target in (root/"tools").rglob("*"):
+              assert not target.is_symlink(), "SYMLINK_TOOL"
+              if target.is_dir(): continue
+              assert target.is_file(), "SPECIAL_TOOL"
+              actual.add(target.relative_to(root/"tools").as_posix())
+          assert actual==set(expected), "EXACT_TOOL_SET"
+          # No execute permissions are restored until EVERY path and byte passes.
+          for target,mode in expected.values(): os.chmod(target,mode)
+          # The unchanged verify-tools step must still independently enforce modes.
+          PY
+      - name: Verify pinned tool inventory and invoke bounded browser
+        env:
+          XENIOS_FROZEN_MANIFEST_SHA256: ${{ vars.XENIOS_FROZEN_MANIFEST_SHA256 }}
+          CUSTOMER_A_STATE: ${{ secrets.XENIOS_STAGING_CUSTOMER_STORAGE_STATE }}
+          CUSTOMER_B_STATE: ${{ secrets.XENIOS_STAGING_SECOND_CUSTOMER_STORAGE_STATE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          export QROOT="$RUNNER_TEMP/qualification"
+          export PROPOSAL="docs/health-launch/ql-build-20261012/doc104-baseline-reconciliation-20261013/mixed-catalog-request-intent-source-proposal/hosted-browser-evidence-contract-r1-20261016/executable-r1"
+          export XENIOS_STAGING_CUSTOMER_STORAGE_STATE_FILE="$RUNNER_TEMP/a-state.json"
+          export XENIOS_STAGING_SECOND_CUSTOMER_STORAGE_STATE_FILE="$RUNNER_TEMP/b-state.json"
+          printf '%s' "$CUSTOMER_A_STATE" > "$XENIOS_STAGING_CUSTOMER_STORAGE_STATE_FILE"
+          printf '%s' "$CUSTOMER_B_STATE" > "$XENIOS_STAGING_SECOND_CUSTOMER_STORAGE_STATE_FILE"
+          unset CUSTOMER_A_STATE CUSTOMER_B_STATE
+          node "$PROPOSAL/verify-tools.UNAPPLIED.mjs" "$QROOT"
+          export XENIOS_VERIFIED_TOOL_INVENTORY="$(sha256sum "$QROOT/tool-inventory.json" | cut -d' ' -f1)"
+          export XENIOS_VERIFIED_NPM_VERSION="$(npm --version)"
+          node "$PROPOSAL/hosted-browser.UNAPPLIED.mjs" "$QROOT/run-manifest.json" "$QROOT/provider-proof.json" "$RUNNER_TEMP/kan31-evidence" "$QROOT/tools"
+      - name: Credential cleanup
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f -- "$RUNNER_TEMP/a-state.json" "$RUNNER_TEMP/b-state.json"
+          # File cleanup is not proof of independent process closure.
+      - name: Retain only bounded synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: kan31-browser-observations-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/kan31-evidence/*.json
+            ${{ runner.temp }}/kan31-evidence/*.png
+          if-no-files-found: warn
+          retention-days: 1
+          include-hidden-files: false
