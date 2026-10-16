@@ -13,7 +13,7 @@ frozen G0 entry's fixed output paths, so a new attempt would refuse `G0_OUTPUT_A
 Reviewer: original reviewer `6abf1edf-2b16-476e-8305-23b9a0014e06`, Opus 5.5, same session. Read-only: Git objects,
 hashes, my own byte diffs, and a directory listing of the public scratch folder; no execution; no agents. Accepted
 application source and earlier reviews are preserved.
-- **Timing.** Compared at 2026-10-16T01:12–01:11Z.
+- **Timing.** Compared at 2026-10-16T01:10–01:11Z.
 - **Jira.** Root relays.
 
 Archive: `hl12/206_kan31_helper_pathext_diagnosis_and_fix.json`.

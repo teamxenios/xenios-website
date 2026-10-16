@@ -5,7 +5,7 @@
   "model": "claude-opus-5-5 (same session)",
   "executed": false,
   "agentsUsed": 0,
-  "comparedAtUtc": "2026-10-16T01:12Z-01:11Z",
+  "comparedAtUtc": "2026-10-16T01:10Z-01:11Z",
   "verdict": "CONFIRMED_NO_GAP_IN_CORRECTION_OR_EVIDENCE; FIXED_869a8639_EQUALS_bd5b273a_PLUS_ONE_30_BYTE_PATHEXT_INSERTION; CONTROLLED_ONE_VARIABLE_DIAGNOSIS_R1_REPRODUCED_R2_CURED; SPECIFIC_MISSING_GATE_CONSUMED_G0_OUTPUTS_AT_FIXED_PATHS; NOT_SETUP_OR_EXECUTION_AUTHORITY",
   "reviewerCorrectionToDoc198": { "doc198Said": "helper child environment launcher-gate-compatible", "missed": "child environment omits PATHEXT; inside frozen G0 entry the native call & '<pwsh>' ... that captures capacity returns null exit with no output, so G0 refuses before Node, app or staging egress", "hadInFront": "launcher's own safeEnv includes PATHEXT (noted at the time) but reviewer did not check what the G0 entry and capacity hop need", "stillStands": "Doc 198's other semantic findings and Doc 204's parser correction" },
   "identity": { "coreRange": "37e1c55f..9d5574d2", "tc25CleanWithLongpaths": true, "commits": { "91db710": "R1 literal 5842 B 06c9aa45 + two public markers 84 B each", "0f4a6c3": "R1 actual failure 2825 B", "cd0c451": "R2 literal 5872 B bed0d839", "f3dd566": "R2 actual pass 2796 B", "415401b4": "tree d1e8ae42: fixed helper + static literal 2506 B 954abda4", "9d5574d": "static result 1909 B" }, "rootRecords": "Doc443 failure committed 01:03Z; pre-run admissions committed before each call: Doc444 01:05:21Z (call 01:05:38Z), Doc445 01:06:48Z (call 01:06:58Z), Doc446 01:08:11Z (call 01:08:27Z); resolves the Doc 205 records observation for these calls" },
