@@ -85,3 +85,24 @@ Reviewer: original reviewer `6abf1edf-2b16-476e-8305-23b9a0014e06`, Opus 5.5, sa
 
 **Alternatively**, finish the local G0 path after the Doc 206 gate. Production stays a separate, explicit approval. NOT
 LIVE.
+
+## Correction (2026-10-16T02:05Z)
+
+Two statements above are wrong:
+
+- the claim that the `supabase-xenios-prod` entry "carries a hard-coded Authorization header in the file";
+- the advice to "treat the embedded credential as exposed".
+
+The header value is the environment-variable reference `Bearer ${SUPABASE_ACCESS_TOKEN}`, not a stored token.
+`claude mcp list` reports the variable as missing, which is why the entry fails. No credential is stored in
+`.mcp.json`, so no revocation follows from this file.
+
+The remaining recommendation stands: remove or replace this entry. It still targets **production** with database
+tools and no `read_only`.
+
+**Update after Samuel's connector changes.** These were observed and read-only:
+
+- **Atlassian:** the connector is connected, Jira site `xeniostechnology` is reachable, and KAN-31 is readable.
+- **Render:** a claude.ai connector was added alongside the user-config one.
+- **Supabase:** the staging-scoped, read-only Supabase server is not yet visible in this session. The account-wide
+  Supabase connector and the production `.mcp.json` entry are still present.
