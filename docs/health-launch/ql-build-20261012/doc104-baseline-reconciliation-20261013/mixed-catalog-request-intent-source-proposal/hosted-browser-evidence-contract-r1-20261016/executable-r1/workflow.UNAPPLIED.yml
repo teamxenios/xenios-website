@@ -1,0 +1,112 @@
+# UNAPPLIED: not a canonical workflow; no dispatch/publication authority.
+name: KAN31 hosted browser proposal
+on:
+  workflow_dispatch:
+    inputs:
+      source_commit:
+        description: Exact approved Core executable-proposal commit
+        required: true
+      qualification_artifact_id:
+        description: Approved same-repository nonsecret input/tools archive artifact ID
+        required: true
+      qualification_zip_sha256:
+        description: Approved SHA-256 of downloaded artifact ZIP
+        required: true
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: kan31-staging-exclusive
+  cancel-in-progress: false
+jobs:
+  browser:
+    environment: staging
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.source_commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20.19.0
+      - name: Validate approved input bundle and extract safely
+        env:
+          ARTIFACT_ID: ${{ inputs.qualification_artifact_id }}
+          ZIP_SHA: ${{ inputs.qualification_zip_sha256 }}
+          SOURCE_COMMIT: ${{ inputs.source_commit }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$ARTIFACT_ID" =~ ^[0-9]+$ ]]
+          [[ "$ZIP_SHA" =~ ^[0-9a-f]{64}$ ]]
+          test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+          test "$(node --version)" = v20.19.0
+          test "$(npm --version)" = 10.8.2
+          test -z "$(git status --porcelain)"
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > "$RUNNER_TEMP/input.zip"
+          printf '%s  %s\n' "$ZIP_SHA" "$RUNNER_TEMP/input.zip" | sha256sum --check -
+          python3 - <<'PY'
+          import os, pathlib, stat, zipfile
+          root=pathlib.Path(os.environ["RUNNER_TEMP"])/"qualification"
+          root.mkdir(mode=0o700)
+          with zipfile.ZipFile(root.parent/"input.zip") as z:
+              files=z.infolist()
+              assert len(files)<=100000 and sum(i.file_size for i in files)<=2147483648
+              assert len({i.filename for i in files})==len(files)
+              for i in files:
+                  p=pathlib.PurePosixPath(i.filename)
+                  assert not p.is_absolute() and ".." not in p.parts and "\\" not in i.filename
+                  assert not stat.S_ISLNK(i.external_attr>>16)
+                  mode=(i.external_attr>>16)&0o7777
+                  assert not mode&0o7022
+              z.extractall(root)
+              for i in files:
+                  if not i.is_dir():
+                      mode=(i.external_attr>>16)&0o777
+                      assert mode&0o400
+                      os.chmod(root/i.filename,mode)
+          PY
+      - name: Verify pinned tool inventory and invoke bounded browser
+        env:
+          XENIOS_FROZEN_MANIFEST_SHA256: ${{ vars.XENIOS_FROZEN_MANIFEST_SHA256 }}
+          CUSTOMER_A_STATE: ${{ secrets.XENIOS_STAGING_CUSTOMER_STORAGE_STATE }}
+          CUSTOMER_B_STATE: ${{ secrets.XENIOS_STAGING_SECOND_CUSTOMER_STORAGE_STATE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          export QROOT="$RUNNER_TEMP/qualification"
+          export PROPOSAL="docs/health-launch/ql-build-20261012/doc104-baseline-reconciliation-20261013/mixed-catalog-request-intent-source-proposal/hosted-browser-evidence-contract-r1-20261016/executable-r1"
+          export XENIOS_STAGING_CUSTOMER_STORAGE_STATE_FILE="$RUNNER_TEMP/a-state.json"
+          export XENIOS_STAGING_SECOND_CUSTOMER_STORAGE_STATE_FILE="$RUNNER_TEMP/b-state.json"
+          printf '%s' "$CUSTOMER_A_STATE" > "$XENIOS_STAGING_CUSTOMER_STORAGE_STATE_FILE"
+          printf '%s' "$CUSTOMER_B_STATE" > "$XENIOS_STAGING_SECOND_CUSTOMER_STORAGE_STATE_FILE"
+          unset CUSTOMER_A_STATE CUSTOMER_B_STATE
+          node "$PROPOSAL/verify-tools.UNAPPLIED.mjs" "$QROOT"
+          export XENIOS_VERIFIED_TOOL_INVENTORY="$(sha256sum "$QROOT/tool-inventory.json" | cut -d' ' -f1)"
+          export XENIOS_VERIFIED_NPM_VERSION="$(npm --version)"
+          node "$PROPOSAL/hosted-browser.UNAPPLIED.mjs" "$QROOT/run-manifest.json" "$QROOT/provider-proof.json" "$RUNNER_TEMP/kan31-evidence" "$QROOT/tools"
+      - name: Credential cleanup
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f -- "$RUNNER_TEMP/a-state.json" "$RUNNER_TEMP/b-state.json"
+          # File cleanup is not proof of independent process closure.
+      - name: Retain only bounded synthetic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: kan31-browser-observations-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/kan31-evidence/*.json
+            ${{ runner.temp }}/kan31-evidence/*.png
+          if-no-files-found: warn
+          retention-days: 1
+          include-hidden-files: false
