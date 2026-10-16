@@ -1,0 +1,74 @@
+# UNAPPLIED. Requires independent source review, publication and one-run approval.
+name: KAN31 accepted tool compatibility only
+on:
+  workflow_dispatch:
+    inputs:
+      source_commit:
+        description: Exact separately approved published compatibility source SHA
+        required: true
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: kan31-staging-exclusive
+  cancel-in-progress: false
+jobs:
+  compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.source_commit }}
+          path: compatibility-source
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ebc37ce92ee6f5b11217cee4d150a1dc004bf667
+          path: accepted-source
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20.19.0
+      - name: Retrieve only the immutable accepted tool artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_PROMPT_DISABLED: '1'
+          SOURCE_COMMIT: ${{ inputs.source_commit }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          [[ "$SOURCE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          test "$GITHUB_REPOSITORY" = teamxenios/xenios-website
+          test "$(git -C compatibility-source rev-parse HEAD)" = "$SOURCE_COMMIT"
+          test "$(git -C accepted-source rev-parse HEAD)" = ebc37ce92ee6f5b11217cee4d150a1dc004bf667
+          test -z "$(git -C compatibility-source status --porcelain)"
+          test -z "$(git -C accepted-source status --porcelain)"
+          test "$(node --version)" = v20.19.0
+          test "$(npm --version)" = 10.8.2
+          test ! -e "$RUNNER_TEMP/kan31-compatibility-input.zip"
+          timeout --signal=TERM --kill-after=5s 60s gh api repos/teamxenios/xenios-website/actions/artifacts/12033375179/zip > "$RUNNER_TEMP/kan31-compatibility-input.zip"
+          printf '%s  %s\n' 73e53b02184fa27a2a863869c6daf17e38a1c452b6d5eefbbbb246fd4c109874 "$RUNNER_TEMP/kan31-compatibility-input.zip" | sha256sum --check -
+      - name: Run compatibility checks only, never browser entry point
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          python3 -I "$GITHUB_WORKSPACE/compatibility-source/docs/health-launch/ql-build-20261012/doc104-baseline-reconciliation-20261013/mixed-catalog-request-intent-source-proposal/hosted-browser-evidence-contract-r1-20261016/compatibility-only-r1/compatibility-only.UNAPPLIED.py" "$RUNNER_TEMP/kan31-compatibility-input.zip" "$GITHUB_WORKSPACE/accepted-source" "$(command -v node)"
+          test -z "$(git -C compatibility-source status --porcelain)"
+          test -z "$(git -C accepted-source status --porcelain)"
+      - name: Retain bounded nonsecret compatibility evidence only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: kan31-compatibility-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/kan31-compatibility-r1/evidence/*.json
+            ${{ runner.temp }}/kan31-compatibility-r1/evidence/*.stdout.txt
+            ${{ runner.temp }}/kan31-compatibility-r1/evidence/*.stderr.txt
+          retention-days: 1
+          if-no-files-found: warn
+          include-hidden-files: false
