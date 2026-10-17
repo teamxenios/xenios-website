@@ -1,4 +1,6 @@
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
+import { referralsEnabled } from "./referrals";
+import { FRAUD_ACTIONS } from "@shared/research/referral-types";
 import type { FraudAction, FraudFlagReason } from "@shared/research/referral-types";
 
 // ---------------------------------------------------------------------------
@@ -11,9 +13,62 @@ import type { FraudAction, FraudFlagReason } from "@shared/research/referral-typ
 //   disposable email addresses, both recorded with a reason.
 // - Every reviewer action requires an audit reason, and every decision writes
 //   an append-only referral_events row.
-// - Everything here is behind RESEARCH_REFERRALS_ENABLED via its callers; a
-//   failure in a fraud check never breaks the application or activation path.
+// - Everything here that touches referral state is gated on
+//   RESEARCH_REFERRALS_ENABLED IN THIS MODULE, using the same
+//   referralsEnabled() helper the rest of the subsystem uses (exact string
+//   "true", so a typo, "1", "TRUE", whitespace, empty, or unset all fail
+//   closed). The gate lives here rather than only in the callers so that a
+//   route, a cron, or a future sibling cannot reach the credit ledger or the
+//   reward table while the program is off. A failure in a fraud check never
+//   breaks the application or activation path.
 // ---------------------------------------------------------------------------
+
+// The refusal a disabled capability returns. Mirrors the "referrals_disabled"
+// reason qualifyReferralForMembershipActivation returns in referrals.ts, and
+// the { ok: false, code: "<capability>_disabled" } shape used elsewhere on the
+// research admin surface.
+//
+// The message is exported so fraud-admin.ts builds its 503 body from this one
+// definition rather than repeating the sentence, which would let the service
+// refusal and the HTTP refusal drift apart.
+export type FraudRefusalCode = "referrals_disabled";
+export const REFERRALS_DISABLED_MESSAGE =
+  "The referral program is disabled, so no referral reward or member credit action can be taken.";
+
+// --- refusal-log input validation -------------------------------------------
+//
+// The refusal line below names the attempted action and the flag it targeted.
+// Both of those values arrive from an untrusted caller: fraud-admin.ts takes
+// the flag id straight out of the URL path, and Express percent-decodes a path
+// parameter before handing it over, so an encoded newline, a carriage return,
+// an ANSI escape sequence, or an email address would otherwise land in the log
+// verbatim. A forged newline splits one refusal into two log lines; an escape
+// sequence rewrites how the line renders in a terminal; an address turns the
+// line into a PII sink.
+//
+// So neither value is ever interpolated as given. The action is printed only
+// when it is an exact member of FRAUD_ACTIONS, and the flag id only when it
+// matches the canonical UUID form. Anything else is replaced by a fixed
+// placeholder, and an invalid id is omitted outright rather than truncated or
+// stripped, because a "sanitised" echo is still an echo.
+//
+// That makes the guarantee structural rather than aspirational: every fragment
+// of the emitted string is either a literal in this file, a member of
+// FRAUD_ACTIONS (all of which are lowercase words and hyphens), or a string of
+// hex digits and hyphens. None of those alphabets contains a newline, a
+// carriage return, an escape character, or an "@", so the line is single line
+// and PII-free by construction.
+const CANONICAL_UUID =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const KNOWN_FRAUD_ACTIONS: ReadonlySet<string> = new Set<string>(FRAUD_ACTIONS);
+
+function logSafeAction(action: FraudAction): string {
+  return KNOWN_FRAUD_ACTIONS.has(action) ? action : "<unknown>";
+}
+
+function logSafeFlagId(flagId: string): string {
+  return typeof flagId === "string" && CANONICAL_UUID.test(flagId) ? flagId : "<omitted>";
+}
 
 const EVENTS = "referral_events";
 const FLAGS = "referral_fraud_flags";
@@ -24,6 +79,10 @@ const IDENTITIES = "referral_identities";
 // Canonical email identity: lowercase, plus-tag stripped, gmail dot variants
 // collapsed. Used for self-referral and multi-account comparison ONLY; the
 // stored address is always the one the person typed.
+//
+// Not capability gated: it is a pure string function that reads no store and
+// writes nothing, so it has no refusal value to return. Every caller that acts
+// on its answer is gated.
 export function canonicalizeEmail(email: string): string {
   const trimmed = email.trim().toLowerCase();
   const at = trimmed.lastIndexOf("@");
@@ -49,6 +108,9 @@ const DISPOSABLE_DOMAINS = new Set([
   "spam4.me", "grr.la", "tempr.email", "discard.email",
 ]);
 
+// Not capability gated, for the same reason as canonicalizeEmail: pure, no
+// store access, no mutation, nothing to refuse with, and every caller that
+// acts on its answer is gated.
 export function isDisposableEmail(email: string): boolean {
   const at = email.trim().toLowerCase().lastIndexOf("@");
   if (at < 0) return false;
@@ -61,6 +123,11 @@ export function isDisposableEmail(email: string): boolean {
 
 // Append-only audit trail. Failures log and never propagate: audit must not
 // break the money path, and the money path never depends on audit succeeding.
+//
+// Capability gated: with referrals off there is no referral decision to
+// record, so this writes nothing and returns void, matching how
+// linkApplicationToAttribution and markAttributionApproved return when
+// referralsEnabled() is false.
 export async function recordReferralEvent(event: {
   eventType: string;
   attributionId?: string | null;
@@ -73,6 +140,7 @@ export async function recordReferralEvent(event: {
   detail?: Record<string, unknown> | null;
 }): Promise<void> {
   try {
+    if (!referralsEnabled()) return;
     if (!supabaseConfigured()) return;
     const { error } = await getSupabaseAdmin().from(EVENTS).insert({
       event_type: event.eventType,
@@ -93,6 +161,10 @@ export async function recordReferralEvent(event: {
 
 // Open a review-queue flag (deduplicated: one OPEN flag per reason per
 // attribution). Returns the flag id when one was created.
+//
+// Capability gated: with referrals off no flag row is written, and null is
+// returned, the same "nothing was created" value this function already returns
+// when storage is unconfigured.
 export async function openFraudFlag(flag: {
   reason: FraudFlagReason;
   attributionId?: string | null;
@@ -101,6 +173,7 @@ export async function openFraudFlag(flag: {
   detail?: string | null;
 }): Promise<string | null> {
   try {
+    if (!referralsEnabled()) return null;
     if (!supabaseConfigured()) return null;
     if (flag.attributionId) {
       const { data: existing } = await getSupabaseAdmin()
@@ -157,12 +230,18 @@ async function rewardsForAttribution(attributionId: string): Promise<any[]> {
 // cancelled (they never reached the ledger); available/redeemed rewards are
 // reversed with a compensating negative ledger entry so the ledger stays
 // append-only and the balance is corrected, never rewritten.
+//
+// Capability gated: this is the path that writes a negative amount_cents into
+// member_credit_ledger, so with referrals off it touches neither the ledger nor
+// referral_rewards and reports that it did nothing, the same way
+// promoteHeldRewards returns 0 promotions when the capability is off.
 export async function reverseRewardsForAttribution(input: {
   attributionId: string;
   reason: string;
   actorType: "system" | "admin";
   actorId?: string | null;
 }): Promise<{ cancelled: number; reversed: number }> {
+  if (!referralsEnabled()) return { cancelled: 0, reversed: 0 };
   const nowIso = new Date().toISOString();
   let cancelled = 0;
   let reversed = 0;
@@ -214,14 +293,51 @@ export async function reverseRewardsForAttribution(input: {
   return { cancelled, reversed };
 }
 
-// Apply one reviewer action to one flag. Exported for tests; the route below
-// is a thin shell around it.
+// Apply one reviewer action to one flag. Exported for tests; the route in
+// fraud-admin.ts is a thin shell around it.
+//
+// Capability gated FIRST, before the flag is even read. Every action here
+// steers money: clear and hold flip referral_rewards between held and pending,
+// which is exactly what the promoteHeldRewards cron later mints as positive
+// credit, and disqualify and reverse-reward write negative entries into
+// member_credit_ledger. An admin principal is not enough while the program is
+// off, so the refusal happens here and not only at the route.
+//
+// The gate deliberately covers all seven actions, including the three that do
+// not move money (escalate, request-information, suspend-referrer). They stay
+// gated because they still mutate referral_identities, referral_fraud_flags
+// and referral_events in a subsystem that is meant to be off, and because
+// carving a per-action exception would recreate exactly the ungated sibling
+// path this gate exists to close. That is not free: with the program disabled
+// an admin cannot pause a fraudulent referrer or move a case forward from this
+// surface. It is accepted because no new rewards accrue while the program is
+// off and promoteHeldRewards is gated too, so nothing mints while a case
+// waits.
+//
+// A refusal is logged, never recorded as a row. Writing an audit row here
+// would itself be a referral-subsystem write while the subsystem is off, which
+// is the property this gate exists to hold, so repeated attempts are made
+// observable through the log instead.
 export async function applyFraudAction(input: {
   flagId: string;
   action: FraudAction;
   reason: string;
   adminId?: string | null;
-}): Promise<{ ok: true; status: string } | { ok: false; message: string }> {
+}): Promise<{ ok: true; status: string } | { ok: false; message: string; code?: FraudRefusalCode }> {
+  if (!referralsEnabled()) {
+    // Action name and flag id only. No email, no member id, no reviewer reason
+    // text, no ledger amount: a refusal line must not become a PII sink. Both
+    // fields go through the validators above, so a caller-supplied string is
+    // never interpolated: an action outside FRAUD_ACTIONS prints as
+    // "<unknown>", and a flag id that is not a canonical UUID is omitted.
+    console.warn(
+      `[referral fraud] refused reviewer action:` +
+        ` action=${logSafeAction(input.action)}` +
+        ` flag=${logSafeFlagId(input.flagId)}.` +
+        " The referral program is disabled, so nothing was written.",
+    );
+    return { ok: false, code: "referrals_disabled", message: REFERRALS_DISABLED_MESSAGE };
+  }
   const { data: flag } = await getSupabaseAdmin().from(FLAGS).select("*").eq("id", input.flagId).maybeSingle();
   if (!flag) return { ok: false, message: "Flag not found." };
   if ((flag as any).status === "resolved") return { ok: false, message: "This flag is already resolved." };
