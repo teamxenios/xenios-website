@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { pathToFileURL } from 'node:url';
-import { guardedRoute,trackedRoute,sanitizedOrigin,failureCode } from './route-boundary.mjs';
+import { guardedRoute,trackedRoute,sanitizedOrigin,failureCode,createForwardingQueue } from './route-boundary.mjs';
 import { hash,need,exact,canonical,receipt,expand,freezeExpected,identityAdmission,
   goldenVectors,assertLiveAnonymous,assertNoReceipt,deriveCase,anonymousRegressionVectors,
   CLAIM,LABELS,APP_SHA,APP_TREE } from './contracts.mjs';
@@ -15,7 +15,7 @@ const COOKIE='__Host-XeniosPrivateEarlyAccess';
 const WIZARD='/research/early-access/order-request';
 const MARKER='xenios.assisted-order.intent-attempt.v1';
 const [manifestPath,proofPath,outDir,toolsDir]=process.argv.slice(2);
-let browser, contexts=[], timer, failure=null;
+let browser, contexts=[], timer, failure=null,forwardingQueue;
 const evidence={claim:CLAIM,status:'NOT_STARTED',cases:[],accounting:[],
   sessionChecks:[],publicLoginFreeBootstrapProved:false,infrastructureGateUsed:false,
   memberLoginUsed:false,storageStateExportUsed:false,underlyingCustomerIdentityProved:false,
@@ -42,6 +42,7 @@ function recordFailure(code,info={}) {
   failure=code;
   evidence.firstFailure={code,phase,recordedAt:new Date().toISOString(),
     ...(typeof info.url==='string'?{origin:sanitizedOrigin(info.url)}:{})};
+  forwardingQueue?.cancel(code);
 }
 function track(p) {return trackedRoute(p,tasks,recordFailure);}
 async function settled() {
@@ -70,10 +71,14 @@ async function attachNetwork(context,role) {
     guard(); count++;
     const row={index:count,role,phase,method:null,path:u.pathname,status:null,outcome:'PENDING'};
     evidence.accounting.push(row);
-    active++;
+    const requestDeadlineAt=Math.min(Date.now()+m.limits.requestTimeoutMs,deadline,Date.parse(m.expiresAt));
+    let release,admitted=false;
     try {
+      need(count<=m.limits.maxRequests,'REQUEST_LIMIT');
+      release=await forwardingQueue.acquire({requestDeadlineAt});
+      guard();active++;admitted=true;
+      row.inflightAtForward=active;
       row.method=req.method();
-      need(count<=m.limits.maxRequests && active<=m.limits.maxInflight,'REQUEST_LIMIT');
       need(await req.headerValue('authorization')===null,'NO_MEMBER_BEARER');
       const mutation=!['GET','HEAD'].includes(req.method());
       if(mutation) {
@@ -120,7 +125,10 @@ async function attachNetwork(context,role) {
         }
       }
       // Observe every HTTP outcome; no retry by Playwright on network errors.
-      const response=await route.fetch({maxRedirects:0,maxRetries:0,timeout:m.limits.requestTimeoutMs});
+      const remaining=requestDeadlineAt-Date.now();
+      need(remaining>0,'REQUEST_TIMEOUT');
+      guard();
+      const response=await route.fetch({maxRedirects:0,maxRetries:0,timeout:remaining});
       row.status=response.status();
       need(row.status<300 || row.status>=400,'REDIRECT_REFUSED');
       const bytes=await response.body(); totalBytes+=bytes.length;
@@ -143,7 +151,7 @@ async function attachNetwork(context,role) {
     } catch(e) {
       row.outcome='FAILED_OR_UNRESOLVED'; recordFailure(failureCode(e));
       await route.abort().catch(()=>{});
-    } finally {active--;}
+    } finally {if(admitted)active--;release?.();}
     }
   })));
 }
@@ -294,6 +302,8 @@ try {
     && m.limits.maxRequests<=400 && m.limits.maxInflight<=8
     && m.limits.maxResponseBytes<=4194304 && m.limits.maxTotalResponseBytes<=134217728
     && m.limits.requestTimeoutMs<=10000,'BOUNDED_LIMITS');
+  forwardingQueue=createForwardingQueue({capacity:m.limits.maxInflight,maxPending:m.limits.maxRequests,
+    timeoutMs:m.limits.requestTimeoutMs,deadlineAt:Math.min(deadline,Date.parse(m.expiresAt))});
   const proofRaw=await fs.readFile(proofPath,'utf8');
   need(hash(proofRaw)===m.providerProofSha256,'PROOF_HASH');
   identityAdmission(m,JSON.parse(proofRaw),Date.now());
@@ -426,6 +436,7 @@ try {
   evidence.status='FAILED';evidence.failure=failure;process.exitCode=1;
 } finally {
   clearTimeout(timer);
+  forwardingQueue?.cancel(failure??'RUN_FINISHED');
   cookieHandles.clear();unlockExpiries.clear();
   const closures=await Promise.allSettled(contexts.map(c=>c.close()));
   evidence.cleanup.contextsClosed=closures.every(x=>x.status==='fulfilled');
@@ -436,6 +447,8 @@ try {
   // Browser API closure is not an independent OS process census.
   evidence.cleanup.independentProcessClosureProved=false;
   evidence.cleanup.activeRequests=active;evidence.cleanup.handlers=tasks.size;
+  evidence.forwarding=forwardingQueue?.stats()??null;
+  evidence.cleanup.pendingRequests=evidence.forwarding?.pending??0;
   if(failure) {evidence.status='FAILED';evidence.failure=failure;}
   if(active || tasks.size || failure || !evidence.cleanup.contextsClosed) process.exitCode=1;
   if(m && outDir && outputs.has('preflight.json')) {

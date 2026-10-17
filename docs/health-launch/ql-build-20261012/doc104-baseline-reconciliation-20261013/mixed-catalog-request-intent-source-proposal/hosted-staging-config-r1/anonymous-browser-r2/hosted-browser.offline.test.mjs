@@ -13,8 +13,11 @@ const sha=x=>createHash('sha256').update(x).digest('hex');
 const driver=fileURLToPath(new URL('./hosted-browser.UNAPPLIED.mjs',import.meta.url));
 const fake=`
 import fs from 'node:fs/promises';
-const calls=[];let contexts=0;
-function request(url){return {url:()=>url,method:()=>{if(process.env.KAN31_OFFLINE_CASE==='method-throws')throw Error('METHOD_FAILED');return 'GET';},headerValue:async()=>null};}
+const calls=[],started=[];let contexts=0,forwarding=0,peakForwarding=0;
+function request(url){return {url:()=>url,method:()=>{
+  if(process.env.KAN31_OFFLINE_CASE==='method-throws')throw Error('METHOD_FAILED');
+  return process.env.KAN31_OFFLINE_CASE==='post-limit'?'POST':'GET';
+},headerValue:async()=>process.env.KAN31_OFFLINE_CASE==='queued-failure'?'Bearer synthetic-offline':null};}
 export const chromium={launch:async()=>({
   version:()=> '149.0.7827.55',
   newContext:async()=>{contexts++;let handler;
@@ -24,23 +27,34 @@ export const chromium={launch:async()=>({
         waitForResponse:async()=>({status:()=>200,json:async()=>({ok:true,expiresAt:new Date(Date.now()+60000).toISOString()})}),
         goto:async()=> {
           const mode=process.env.KAN31_OFFLINE_CASE;
-          const urls=mode==='off-origin'?['https://user:password@outside.example/private?token=secret#fragment','https://xenios-research-staging.onrender.com/later']:
+          const burst=mode.startsWith('asset-burst')?Number(mode.split('-').at(-1)):
+            mode==='queued-failure'||mode==='queue-timeout'?24:mode==='total-limit'?401:mode==='post-limit'?41:0;
+          const urls=burst?Array.from({length:burst},(_,i)=>'https://xenios-research-staging.onrender.com/'+
+            (mode==='post-limit'?'api/research/early-access/request-intents/recover?i=':'asset-')+i+'.js'):
+            mode==='off-origin'?['https://user:password@outside.example/private?token=secret#fragment','https://xenios-research-staging.onrender.com/later']:
             ['https://xenios-research-staging.onrender.com/one','https://xenios-research-staging.onrender.com/two'];
-          for(const url of urls) {
+          const handle=async(url)=>{
             const r={request:()=>request(url),abort:async()=>{calls.push('abort');},continue:async()=>{calls.push('continue');},
-              fetch:async()=>{calls.push('fetch');return {status:()=>200,body:async()=>Buffer.from('{}')};},
+              fetch:async()=>{
+                calls.push('fetch');started.push(urls.indexOf(url));forwarding++;peakForwarding=Math.max(peakForwarding,forwarding);
+                try {if(burst)await new Promise(r=>setTimeout(r,mode==='queue-timeout'?100:10));
+                  return {status:()=>200,body:async()=>Buffer.from('{}')};
+                } finally {forwarding--;}
+              },
               fulfill:async()=>{calls.push('fulfill');}};
             await handler(r);
-          }
+          };
+          if(burst)await Promise.all(urls.map(handle));else for(const url of urls)await handle(url);
           throw Error('OFFLINE_NAVIGATION_STOP');
         }
       })
     };
   },
-  close:async()=>{calls.push('browser-close');await fs.writeFile(process.env.KAN31_OFFLINE_TRACE,JSON.stringify({calls,contexts}));}
+  close:async()=>{calls.push('browser-close');await fs.writeFile(process.env.KAN31_OFFLINE_TRACE,JSON.stringify({calls,contexts,started,forwarding,peakForwarding}));}
 })};
 `;
-for(const scenario of ['off-origin','request-limit','method-throws','low-memory']) test('real driver offline failure evidence: '+scenario,async()=>{
+for(const scenario of ['off-origin','request-limit','method-throws','low-memory','asset-burst-24','asset-burst-40',
+  'queued-failure','queue-timeout','total-limit','post-limit']) test('real driver offline failure evidence: '+scenario,async()=>{
   assert.equal(process.version,'v20.19.0','Run offline integration under pinned Node20.19.0');
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'kan31-offline-'));
   try {
@@ -66,7 +80,7 @@ for(const scenario of ['off-origin','request-limit','method-throws','low-memory'
       databaseSuccessorReview:'OFFLINE_ONLY',preStaffSnapshotRequired:true,
       toolchain:{acceptanceReference:'OFFLINE_ONLY',playwrightEntry:'fake.mjs',browserPath:'fake-browser',browserVersion:'149.0.7827.55',
         playwrightEntrySha256:sha(fake),browserSha256:sha('NOT_AN_EXECUTABLE'),inventorySha256:'offline-synthetic-inventory'},
-      limits:{maxRunMs:600000,maxRequests:scenario==='request-limit'?1:400,maxPosts:40,maxInflight:8,maxResponseBytes:4194304,maxTotalResponseBytes:134217728,requestTimeoutMs:10000},
+      limits:{maxRunMs:600000,maxRequests:scenario==='request-limit'?1:400,maxPosts:40,maxInflight:8,maxResponseBytes:4194304,maxTotalResponseBytes:134217728,requestTimeoutMs:scenario==='queue-timeout'?25:10000},
       cases:LABELS.map((label,i)=>({label,ownerRole:i===2?'b':'a',contact:{fullLegalName:'Synthetic Mixed Qualification',
         email:['normal@example.invalid','retry@example.invalid','reload@example.invalid'][i],mobilePhone:'+12025550123',
         ageConfirmed:true,shippingAddress:address,billingSameAsShipping:true,billingAddress:address}}))};
@@ -86,12 +100,18 @@ for(const scenario of ['off-origin','request-limit','method-throws','low-memory'
     }
     const evidence=JSON.parse(await fs.readFile(path.join(out,'browser-evidence.json'),'utf8'));
     assert.equal(evidence.status,'FAILED');
-    assert.equal(evidence.firstFailure.code,scenario==='off-origin'?'OFF_ORIGIN_TRAFFIC':scenario==='method-throws'?'METHOD_FAILED':'REQUEST_LIMIT');
+    const expected=scenario.startsWith('asset-burst')?'OFFLINE_NAVIGATION_STOP':
+      scenario==='off-origin'?'OFF_ORIGIN_TRAFFIC':scenario==='method-throws'?'METHOD_FAILED':
+      scenario==='queued-failure'?'NO_MEMBER_BEARER':scenario==='queue-timeout'?'INFLIGHT_WAIT_TIMEOUT':
+      scenario==='post-limit'?'POST_LIMIT':'REQUEST_LIMIT';
+    assert.equal(evidence.firstFailure.code,expected);
     assert.equal(evidence.failure,evidence.firstFailure.code);
     assert.equal(evidence.cleanup.activeRequests,0);assert.equal(evidence.cleanup.handlers,0);
     assert.equal(evidence.cleanup.contextsClosed,true);assert.equal(evidence.cleanup.browserCloseResolved,true);
     assert.equal(evidence.cleanup.independentProcessClosureProved,false);
-    assert.equal(evidence.accounting.length,2);
+    assert.equal(evidence.cleanup.pendingRequests,0);
+    assert.equal(evidence.forwarding.active,0);assert.equal(evidence.forwarding.pending,0);
+    assert.ok(evidence.forwarding.peakActive<=8);
     const t=JSON.parse(await fs.readFile(trace,'utf8'));
     assert.equal(t.contexts,3);assert.equal(t.calls.filter(x=>x==='context-close').length,3);
     if(scenario==='off-origin') {
@@ -99,7 +119,18 @@ for(const scenario of ['off-origin','request-limit','method-throws','low-memory'
       assert.equal(t.calls.includes('fetch'),false);
       assert.ok(!JSON.stringify(evidence).includes('token=secret'));
       assert.ok(!JSON.stringify(evidence).includes('password'));
-    } else assert.equal(t.calls.filter(x=>x==='fetch').length,scenario==='method-throws'?0:1);
+    } else if(scenario.startsWith('asset-burst')) {
+      const n=Number(scenario.split('-').at(-1));
+      assert.equal(evidence.accounting.length,n);assert.equal(t.calls.filter(x=>x==='fetch').length,n);
+      assert.deepEqual(t.started,Array.from({length:n},(_,i)=>i));
+      assert.equal(t.peakForwarding,8);assert.ok(evidence.forwarding.peakPending>=n-8);
+      assert.ok(evidence.accounting.every(r=>r.status===200&&r.outcome==='DELIVERED'));
+    } else if(scenario==='queued-failure') assert.equal(t.calls.includes('fetch'),false);
+    else if(scenario==='post-limit') assert.ok(t.calls.filter(x=>x==='fetch').length<=40);
+    else if(scenario==='total-limit') assert.ok(t.calls.filter(x=>x==='fetch').length<=400);
+    else if(scenario==='queue-timeout') assert.ok(t.calls.filter(x=>x==='fetch').length<=8);
+    else assert.equal(t.calls.filter(x=>x==='fetch').length,scenario==='method-throws'?0:1);
+    assert.ok(t.peakForwarding<=8);
     assert.ok(result.stdout.includes('"status":"FAILED"'));
   } finally {await fs.rm(root,{recursive:true,force:true});}
 });

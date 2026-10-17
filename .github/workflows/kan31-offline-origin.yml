@@ -1,12 +1,12 @@
-name: KAN31 offline origin diagnostic
+name: KAN31 real driver FIFO offline rehearsal
 on:
   push:
-    branches: [codex/kan31-offline-origin-20261016]
+    branches: [codex/kan31-bounded-network-fifo-20261017]
 permissions:
   contents: read
   actions: read
 concurrency:
-  group: kan31-offline-origin-diagnostic
+  group: kan31-offline-fifo-rehearsal
   cancel-in-progress: false
 jobs:
   diagnostic:
@@ -162,7 +162,13 @@ jobs:
 
           export PROPOSAL="docs/health-launch/ql-build-20261012/doc104-baseline-reconciliation-20261013/mixed-catalog-request-intent-source-proposal/hosted-staging-config-r1/anonymous-browser-r2"
           node "$PROPOSAL/verify-tools.UNAPPLIED.mjs" "$RUNNER_TEMP/qualification"
-      - name: Observe local client origins without any remote API forwarding
+      - name: Full driver concurrent burst and negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PROPOSAL="docs/health-launch/ql-build-20261012/doc104-baseline-reconciliation-20261013/mixed-catalog-request-intent-source-proposal/hosted-staging-config-r1/anonymous-browser-r2"
+          node --test "$PROPOSAL/route-boundary.test.mjs" "$PROPOSAL/hosted-browser.offline.test.mjs"
+      - name: Real driver and exact client bundle with loopback synthetic APIs
         shell: bash
         run: |
           set -euo pipefail
@@ -174,7 +180,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: kan31-offline-origin-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/kan31-local-evidence/origin.json
+          path: ${{ runner.temp }}/kan31-local-evidence/*.json
           retention-days: 1
           if-no-files-found: warn
           include-hidden-files: false
