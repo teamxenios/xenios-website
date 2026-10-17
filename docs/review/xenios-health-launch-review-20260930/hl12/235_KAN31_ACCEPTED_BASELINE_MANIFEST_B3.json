@@ -1,0 +1,135 @@
+{
+  "appSha": "8efa9a9ef4e94773c446e7fa2a17cf00c6592d85",
+  "appTree": "0c92fdc66b122c5128d3904936c85ba9c912a5cc",
+  "workflowSourceCommit": "fa4292e48d747d28ebbf80f6bde44d58a0ecfd09",
+  "origin": "https://xenios-research-staging.onrender.com",
+  "supabaseProject": "tetynodzrtmdbuzgboro",
+  "renderService": "srv-d9h4f4m7r5hc73ctjng0",
+  "deployId": "dep-db9d2qu7bikc73fjc780",
+  "servedIdentityBasis": "provider-only",
+  "providerEvidenceMaxAgeMs": 300000,
+  "providerProofSha256": "271fda861bf01097a0a959b25676fa8f4a956f7c0905c9a2a1052043e300a49e",
+  "executionAuthorization": "PENDING: Samuel must explicitly approve ONE hosted run of this exact manifest SHA-256 after original Claude acceptance; no dispatch authority yet",
+  "executableAcceptance": {
+    "R2": "26dafe03a53c46a2c4d8939c7d46a94768b4ffe9",
+    "expiryCorrection": "964a00446f279508f4228cfe1832b144c3493728",
+    "routeBoundaryCorrection": "b39d31454bffcd5f7dd6784464e9c76c4cb45334",
+    "fifoCorrection": "be2a7671e6622bbeee5189e9008a150effe0f48e"
+  },
+  "expiresAt": "2026-10-17T02:37:47.299671Z",
+  "fixtureRecipe": "first-requestable-research-2-clinical-3-v1",
+  "publicBootstrapRequired": true,
+  "publicModeWindow": {
+    "mode": "time-limited-staging-open-access",
+    "startsAt": "2026-10-17T01:37:47.299671Z",
+    "endsAt": "2026-10-17T05:37:47.299671Z",
+    "maxUnlockPosts": 2,
+    "maxAgreementPosts": 2,
+    "requiredLegalPairs": [
+      {
+        "kind": "early_access_terms",
+        "version": "v1"
+      }
+    ]
+  },
+  "databaseSuccessorReview": "e262a6a0ba4c285c0cc3246e75d42f97e31fc992",
+  "preStaffSnapshotRequired": true,
+  "toolchain": {
+    "acceptanceReference": "58f660d66f8244c774e80b7d07ef5423f0f3fc7d",
+    "playwrightVersion": "1.61.1",
+    "browserVersion": "149.0.7827.55",
+    "browserRevision": "1228",
+    "playwrightEntry": "node_modules/playwright/index.mjs",
+    "playwrightEntrySha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f",
+    "playwrightPackageJson": "node_modules/playwright/package.json",
+    "browserPath": "browsers/chromium_headless_shell-1228/chrome-headless-shell-linux64/chrome-headless-shell",
+    "browserSha256": "670ba079b75107746ba41abad131180a31a7c7219aa1bd4061fb471f4535d541",
+    "inventorySha256": "7d7a507d0f2280e5efbca9c40f76b733b8c5a5bf8ba32c7b799e28bc1e52be54"
+  },
+  "limits": {
+    "maxRunMs": 600000,
+    "maxRequests": 400,
+    "maxPosts": 40,
+    "maxInflight": 8,
+    "maxResponseBytes": 4194304,
+    "maxTotalResponseBytes": 134217728,
+    "requestTimeoutMs": 10000
+  },
+  "cases": [
+    {
+      "label": "normal_doubleclick",
+      "ownerRole": "a",
+      "contact": {
+        "fullLegalName": "Synthetic Mixed Qualification",
+        "email": "normal@example.invalid",
+        "mobilePhone": "+12025550123",
+        "ageConfirmed": true,
+        "shippingAddress": {
+          "line1": "1 Synthetic Way",
+          "city": "Test City",
+          "region": "CA",
+          "postalCode": "90001",
+          "countryCode": "US"
+        },
+        "billingSameAsShipping": true,
+        "billingAddress": {
+          "line1": "1 Synthetic Way",
+          "city": "Test City",
+          "region": "CA",
+          "postalCode": "90001",
+          "countryCode": "US"
+        }
+      }
+    },
+    {
+      "label": "lost_response_retry",
+      "ownerRole": "a",
+      "contact": {
+        "fullLegalName": "Synthetic Mixed Qualification",
+        "email": "retry@example.invalid",
+        "mobilePhone": "+12025550123",
+        "ageConfirmed": true,
+        "shippingAddress": {
+          "line1": "1 Synthetic Way",
+          "city": "Test City",
+          "region": "CA",
+          "postalCode": "90001",
+          "countryCode": "US"
+        },
+        "billingSameAsShipping": true,
+        "billingAddress": {
+          "line1": "1 Synthetic Way",
+          "city": "Test City",
+          "region": "CA",
+          "postalCode": "90001",
+          "countryCode": "US"
+        }
+      }
+    },
+    {
+      "label": "reload_recovery",
+      "ownerRole": "b",
+      "contact": {
+        "fullLegalName": "Synthetic Mixed Qualification",
+        "email": "reload@example.invalid",
+        "mobilePhone": "+12025550123",
+        "ageConfirmed": true,
+        "shippingAddress": {
+          "line1": "1 Synthetic Way",
+          "city": "Test City",
+          "region": "CA",
+          "postalCode": "90001",
+          "countryCode": "US"
+        },
+        "billingSameAsShipping": true,
+        "billingAddress": {
+          "line1": "1 Synthetic Way",
+          "city": "Test City",
+          "region": "CA",
+          "postalCode": "90001",
+          "countryCode": "US"
+        }
+      }
+    }
+  ]
+}
