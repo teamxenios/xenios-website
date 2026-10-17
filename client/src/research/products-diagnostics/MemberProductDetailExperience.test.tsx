@@ -292,4 +292,50 @@ describe("member product detail experience", () => {
     expect(html).not.toMatch(/min-width:\s*[4-9]\d\dpx|width:\s*[4-9]\d\dpx/);
     expect(html).not.toContain("overflow-x:scroll");
   });
+
+  it("falls back on image failure and recovers when the same mediaId gets a refreshed href", () => {
+    // Signed media hrefs expire five minutes after they are minted, so a
+    // stale tab's image request can be rejected. The failure state is the
+    // same panel shown when no approved image exists, never the browser's
+    // broken-image icon.
+    host = document.createElement("div");
+    document.body.append(host);
+    root = createRoot(host);
+    const signedProduct: MemberProductDetail = {
+      ...product,
+      media: {
+        ...product.media!,
+        href: "https://media.xeniostechnology.com/media-a?token=expired",
+        policy: "xenios_signed_storage_v1",
+        expiresAt: "2026-07-26T22:05:00.000Z",
+      },
+    };
+    act(() =>
+      root!.render(<MemberProductDetailExperience product={signedProduct} />),
+    );
+    const image = host.querySelector<HTMLImageElement>("img")!;
+    expect(image).not.toBeNull();
+
+    act(() => {
+      image.dispatchEvent(new Event("error"));
+    });
+    expect(host.querySelector("img")).toBeNull();
+    expect(host.textContent).toContain(
+      "An approved product image is not available.",
+    );
+
+    const refreshed: MemberProductDetail = {
+      ...signedProduct,
+      media: {
+        ...signedProduct.media!,
+        href: "https://media.xeniostechnology.com/media-a?token=refreshed",
+      },
+    };
+    act(() =>
+      root!.render(<MemberProductDetailExperience product={refreshed} />),
+    );
+    const refreshedImage = host.querySelector<HTMLImageElement>("img")!;
+    expect(refreshedImage).not.toBeNull();
+    expect(refreshedImage.getAttribute("src")).toContain("token=refreshed");
+  });
 });
