@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-28T23:35:00Z",
+  "repository": "teamxenios/xenios-website",
+  "originMainSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+  "liveOrigin": "https://xeniostechnology.com",
+  "terminalState": "LIVE_COMMIT_AND_POST_DEPLOY_CHECKS_VERIFIED",
+  "currentState": "INVENTORY_COMPLETE_IMPLEMENTATION_AUTHORIZATION_HELD",
+  "productionClaim": {
+    "claimedDeployedSha": null,
+    "reason": "This run has not independently verified the exact live commit and post-deployment checks."
+  },
+  "protectedApprovalGates": [
+    {
+      "id": "PRODUCTION_DATABASE_MIGRATIONS",
+      "state": "EXPLICIT_APPROVAL_REQUIRED",
+      "authorizedByThisRun": false
+    },
+    {
+      "id": "REAL_CUSTOMER_OR_PRODUCTION_DATA",
+      "state": "EXPLICIT_APPROVAL_REQUIRED",
+      "authorizedByThisRun": false
+    },
+    {
+      "id": "FINANCIAL_FULFILLMENT_AND_COMMUNICATION_ACTIONS",
+      "scope": "payments, refunds, payouts, shipping labels, and customer communications",
+      "state": "EXPLICIT_APPROVAL_REQUIRED",
+      "authorizedByThisRun": false
+    },
+    {
+      "id": "LEGAL_PUBLICATION",
+      "state": "EXPLICIT_APPROVAL_REQUIRED",
+      "authorizedByThisRun": false
+    },
+    {
+      "id": "CARE_OR_CLINICAL_FUNCTIONALITY",
+      "state": "PROHIBITED_NOT_ACTIVATED",
+      "authorizedByThisRun": false
+    }
+  ],
+  "existingDesktopSessions": [
+    {
+      "sessionId": "019f94ed-d661-7942-9837-ad428a3374c0",
+      "actualScope": "Phase 2 execution-package hardening and credential-incident fail-closed controls",
+      "repositoryPath": "C:/Users/sboad/projects/xenios-phase2-package-hardening-20260728",
+      "branch": "main",
+      "headSha": "64b841d7fc3fe2750f5c5125f59b9af92a14d702",
+      "upstream": null,
+      "dirty": false,
+      "untrackedFiles": [],
+      "openPullRequest": null,
+      "latestMeaningfulCommit": "64b841d7fc3fe2750f5c5125f59b9af92a14d702 security: harden Phase 2 execution package",
+      "classification": "EVIDENCE_ONLY",
+      "disposition": "Keep frozen. Resume only for package/control-plane corrections or credential-incident closure evidence."
+    },
+    {
+      "sessionId": "019f9b2b-347a-7301-a777-1155a32f6022",
+      "actualScope": "Website 3 PR 105 source ownership plus read-only reconciliation against current main",
+      "repositoryPath": "C:/Users/sboad/projects/wt-website-3-v3-products",
+      "branch": "feature/website-3-v3-products-catalog",
+      "headSha": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d",
+      "upstream": "origin/feature/website-3-v3-products-catalog",
+      "dirty": false,
+      "untrackedFiles": [],
+      "openPullRequest": 105,
+      "latestMeaningfulCommit": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d feat(catalog): complete V3 product discovery surfaces",
+      "classification": "CURRENT_SOURCE",
+      "disposition": "Resume now as the sole PR 105 correction writer. After replacement exact-SHA acceptance, transfer accepted blobs through the release-manager lane."
+    },
+    {
+      "sessionId": "019f9b2c-565a-7510-9aeb-0914815ebb42",
+      "actualScope": "Website 5 persistent-cart persistence kernel",
+      "repositoryPath": "C:/Users/sboad/projects/wt-website-5-wave3-persistent-cart",
+      "branch": "feature/website-5-wave3-persistent-cart",
+      "headSha": "97ee1895763ea9c243de7365f224660d83773966",
+      "upstream": "origin/feature/website-5-wave3-persistent-cart",
+      "dirty": false,
+      "untrackedFiles": [],
+      "openPullRequest": 103,
+      "latestMeaningfulCommit": "97ee1895763ea9c243de7365f224660d83773966 fix(cart): allow authoritative selection invalidation",
+      "classification": "CURRENT_SOURCE",
+      "disposition": "Resume only for exact-SHA QA findings. Transfer accepted blobs through the release-manager lane; do not independently merge or apply its migration."
+    },
+    {
+      "sessionId": "019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f",
+      "actualScope": "Independent exact-SHA QA of PR 105 and post-deploy QA of PR 107",
+      "repositoryPath": "C:/Users/sboad/projects/wt-website-3-v3-products",
+      "branch": "feature/website-3-v3-products-catalog",
+      "headSha": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d",
+      "upstream": "origin/feature/website-3-v3-products-catalog",
+      "dirty": false,
+      "untrackedFiles": [],
+      "openPullRequest": 105,
+      "latestMeaningfulCommit": "5188f774fade0ba8ac8217cf6cb9d92f20bea80d feat(catalog): complete V3 product discovery surfaces",
+      "classification": "EVIDENCE_ONLY",
+      "disposition": "Resume for read-only QA after a replacement PR 105 head; never grant domain write ownership."
+    },
+    {
+      "sessionId": "019f9b2a-d746-7b93-b4fc-1bcf32709046",
+      "actualScope": "Website 2 release sequencing for PR 105 byte-preserving transfer",
+      "repositoryPath": "C:/Users/sboad/projects/xenios-phase2/xenios-phase2-20260728T225654Z-release-manager",
+      "branch": "phase2/xenios-phase2-20260728T225654Z/release-manager",
+      "headSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+      "upstream": null,
+      "dirty": false,
+      "untrackedFiles": [],
+      "openPullRequest": null,
+      "latestMeaningfulCommit": "2891dcb9ded41e6007f636bf053cd090dcd16111 Merge PR #107: authorize exact takeover coordination check-ins",
+      "classification": "EVIDENCE_ONLY",
+      "disposition": "Transfer its release-sequencing decision into the Phase 2 release-manager lane; keep the desktop history frozen."
+    },
+    {
+      "sessionId": "019f9b2b-997c-7681-8a45-456ce7204967",
+      "actualScope": "Website 4 nonclinical fulfillment, supplier, affiliate, and commercial operations",
+      "repositoryPath": "C:/Users/sboad/projects/wt-website-4-nonclinical-ops-takeover",
+      "branch": "feature/website-4-takeover-operations-fulfillment-affiliates",
+      "headSha": "a5c2b21e779117e1f785850188b38bad2e1ba2d8",
+      "upstream": "origin/feature/website-4-takeover-operations-fulfillment-affiliates",
+      "dirty": false,
+      "untrackedFiles": [],
+      "openPullRequest": 106,
+      "latestMeaningfulCommit": "a5c2b21e779117e1f785850188b38bad2e1ba2d8 feat(operations): add affiliate and commercial command systems",
+      "classification": "CURRENT_SOURCE",
+      "disposition": "Resume for exact-SHA QA findings. Do not apply either migration, send communications, create labels, or execute payouts."
+    },
+    {
+      "sessionId": "019f94e5-22a3-7760-a855-652f9eb3f1ca",
+      "actualScope": "Read-only PR 104 Supabase and Render production preflight",
+      "repositoryPath": "C:/Users/sboad/projects/wt-nonclinical-takeover-pr104-readonly",
+      "branch": null,
+      "headSha": "51a67326ed69f6795433026b2933e7d22acd2d9e",
+      "upstream": null,
+      "dirty": true,
+      "untrackedFiles": [
+        {
+          "path": "docs/coordination/session-checkins/release-coordinator.md",
+          "sha256": "8C16F720F3FF19A4763F0D71B9F667EA346CC7428228C0CD412CFC4BDF139E97"
+        },
+        {
+          "path": "docs/coordination/session-checkins/supabase-and-render.md",
+          "sha256": "C9CF7559525152BF24B75486ACE2F560B310B73C0074C04D6289899F5C38A357"
+        }
+      ],
+      "openPullRequest": 104,
+      "latestMeaningfulCommit": "51a67326ed69f6795433026b2933e7d22acd2d9e fix(authority): serialize initial preference writes",
+      "classification": "EVIDENCE_ONLY",
+      "disposition": "Keep frozen and preserve both untracked evidence files in place. Do not clean this detached worktree without explicit approval."
+    }
+  ],
+  "phase2Worktrees": [
+    {
+      "lane": "accessibility-observability",
+      "path": "C:/Users/sboad/projects/xenios-phase2/xenios-phase2-20260728T225654Z-accessibility-observability",
+      "branch": "phase2/xenios-phase2-20260728T225654Z/accessibility-observability",
+      "headSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+      "dirty": false,
+      "authorization": "HELD_PENDING_OWNERSHIP_GRAPH"
+    },
+    {
+      "lane": "authority",
+      "path": "C:/Users/sboad/projects/xenios-phase2/xenios-phase2-20260728T225654Z-authority",
+      "branch": "phase2/xenios-phase2-20260728T225654Z/authority",
+      "headSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+      "dirty": false,
+      "authorization": "HELD_PENDING_OWNERSHIP_GRAPH"
+    },
+    {
+      "lane": "catalog",
+      "path": "C:/Users/sboad/projects/xenios-phase2/xenios-phase2-20260728T225654Z-catalog",
+      "branch": "phase2/xenios-phase2-20260728T225654Z/catalog",
+      "headSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+      "dirty": false,
+      "authorization": "MAY_RECEIVE_PR105_CORRECTIONS_AFTER_EXACT_PATH_TRANSFER"
+    },
+    {
+      "lane": "independent-qa",
+      "path": "C:/Users/sboad/projects/xenios-phase2/xenios-phase2-20260728T225654Z-independent-qa",
+      "branch": "phase2/xenios-phase2-20260728T225654Z/independent-qa",
+      "headSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+      "dirty": false,
+      "authorization": "READ_ONLY_QA"
+    },
+    {
+      "lane": "release-manager",
+      "path": "C:/Users/sboad/projects/xenios-phase2/xenios-phase2-20260728T225654Z-release-manager",
+      "branch": "phase2/xenios-phase2-20260728T225654Z/release-manager",
+      "headSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+      "dirty": false,
+      "authorization": "CONTROL_PLANE_ONLY_UNTIL_CANDIDATES_ACCEPTED"
+    },
+    {
+      "lane": "security-truth",
+      "path": "C:/Users/sboad/projects/xenios-phase2/xenios-phase2-20260728T225654Z-security-truth",
+      "branch": "phase2/xenios-phase2-20260728T225654Z/security-truth",
+      "headSha": "2891dcb9ded41e6007f636bf053cd090dcd16111",
+      "dirty": false,
+      "authorization": "REVIEW_AND_SECURITY_CORRECTIONS_ONLY_AFTER_EXACT_PATH_LEASE"
+    }
+  ],
+  "authorizationDecision": {
+    "newImplementationWritersAuthorized": false,
+    "reason": "PR 105 has three HIGH findings, PR 106 awaits renewed independent QA, PR 104 is not production-ready, and exact file transfers into Phase 2 lanes are not yet frozen.",
+    "nonOverlappingAllowedWork": [
+      "read-only QA",
+      "control-plane ledger maintenance",
+      "exact-path collision analysis",
+      "focused corrections by the existing PR 105 and PR 106 source owners"
+    ]
+  }
+}

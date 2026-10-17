@@ -1,0 +1,18 @@
+record_type,owner,lane_or_session,path_or_pattern,mode,state,head_sha,overlap_disposition
+PHASE2_LANE,Phase2,release-manager,docs/coordination/**,write,ACTIVE,2891dcb9ded41e6007f636bf053cd090dcd16111,sole control-plane writer
+PHASE2_LANE,Phase2,independent-qa,repository-wide,read,ACTIVE,2891dcb9ded41e6007f636bf053cd090dcd16111,no domain writes
+PHASE2_LANE,Phase2,catalog,PR105 exact 16-path manifest,held,TRANSFER_PENDING,2891dcb9ded41e6007f636bf053cd090dcd16111,existing PR105 source retains corrections until replacement acceptance
+PHASE2_LANE,Phase2,authority,authority and account-continuity files,held,NOT_AUTHORIZED,2891dcb9ded41e6007f636bf053cd090dcd16111,await exact path graph
+PHASE2_LANE,Phase2,security-truth,security truth and fail-closed corrections,held,NOT_AUTHORIZED,2891dcb9ded41e6007f636bf053cd090dcd16111,await exact path graph
+PHASE2_LANE,Phase2,accessibility-observability,accessibility tests and observability files,held,NOT_AUTHORIZED,2891dcb9ded41e6007f636bf053cd090dcd16111,await exact path graph
+EXISTING_SESSION,Website3,019f9b2b-347a-7301-a777-1155a32f6022,PR105 exact 16-path manifest,write,CURRENT_SOURCE,5188f774fade0ba8ac8217cf6cb9d92f20bea80d,sole correction writer until replacement acceptance
+EXISTING_SESSION,Website3,019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f,PR105 exact-SHA QA,read,EVIDENCE_ONLY,5188f774fade0ba8ac8217cf6cb9d92f20bea80d,resume after replacement head
+EXISTING_SESSION,Website3,019f9b2b-347a-7301-a777-1155a32f6022,client/src/research/products-diagnostics/**,write,CURRENT_SOURCE,5188f774fade0ba8ac8217cf6cb9d92f20bea80d,only this session may correct before transfer
+EXISTING_SESSION,Website3,019f9b2b-347a-7301-a777-1155a32f6022,server/research/catalog/v3-*.ts,write,CURRENT_SOURCE,5188f774fade0ba8ac8217cf6cb9d92f20bea80d,only this session may correct before transfer
+EXISTING_SESSION,Website5,019f9b2c-565a-7510-9aeb-0914815ebb42,supabase/migrations/20260727200000_research_persistent_cart.sql,write,CURRENT_SOURCE,97ee1895763ea9c243de7365f224660d83773966,no migration application authorization
+EXISTING_SESSION,Website5,019f9b2c-565a-7510-9aeb-0914815ebb42,server/research/commerce/persistence/persistent-cart*,write,CURRENT_SOURCE,97ee1895763ea9c243de7365f224660d83773966,no Phase2 writer until exact-SHA QA
+EXISTING_SESSION,Website4,019f9b2b-997c-7681-8a45-456ce7204967,PR106 exact 30-path manifest,write,CURRENT_SOURCE,a5c2b21e779117e1f785850188b38bad2e1ba2d8,no Phase2 writer until exact-SHA QA
+EXISTING_SESSION,Website2,019f9b2a-d746-7b93-b4fc-1bcf32709046,PR105 source-transfer sequence,read,EVIDENCE_ONLY,2891dcb9ded41e6007f636bf053cd090dcd16111,decision transferred to Phase2 release-manager
+EXISTING_SESSION,Website2,019f94e5-22a3-7760-a855-652f9eb3f1ca,docs/coordination/session-checkins/release-coordinator.md,local-only,PRESERVED,51a67326ed69f6795433026b2933e7d22acd2d9e,do not clean or overwrite
+EXISTING_SESSION,Website2,019f94e5-22a3-7760-a855-652f9eb3f1ca,docs/coordination/session-checkins/supabase-and-render.md,local-only,PRESERVED,51a67326ed69f6795433026b2933e7d22acd2d9e,do not clean or overwrite
+EXISTING_SESSION,Control,019f94ed-d661-7942-9837-ad428a3374c0,C:/Users/sboad/projects/xenios-phase2-package-hardening-20260728,write,EVIDENCE_ONLY,64b841d7fc3fe2750f5c5125f59b9af92a14d702,separate package repository; no website file ownership

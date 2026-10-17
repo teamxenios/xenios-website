@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-07-29T00:05:00Z",
+  "gates": [
+    {
+      "id": "INVENTORY_AND_OWNERSHIP_CONTROL",
+      "state": "PASS",
+      "evidenceCommit": "aa6d62a",
+      "evidencePullRequest": 108
+    },
+    {
+      "id": "PR105_CORRECTION",
+      "state": "OPEN",
+      "ownerSessionId": "019f9b2b-347a-7301-a777-1155a32f6022",
+      "requiredEvidence": "Replacement exact SHA, clean worktree, focused/full/type/build/bundle-leak/route-indexability checks"
+    },
+    {
+      "id": "PR105_INDEPENDENT_QA",
+      "state": "BLOCKED",
+      "ownerSessionId": "019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f"
+    },
+    {
+      "id": "PR103_INDEPENDENT_QA",
+      "state": "OPEN",
+      "ownerSessionId": "019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f",
+      "candidateSha": "97ee1895763ea9c243de7365f224660d83773966"
+    },
+    {
+      "id": "PR106_INDEPENDENT_QA",
+      "state": "QUEUED",
+      "ownerSessionId": "019f9b2c-ec9b-7cb3-a763-f8ac8eb7396f",
+      "candidateSha": "a5c2b21e779117e1f785850188b38bad2e1ba2d8"
+    },
+    {
+      "id": "PRODUCTION_DATABASE_MIGRATIONS",
+      "state": "EXPLICIT_APPROVAL_REQUIRED",
+      "approvalReceived": false
+    },
+    {
+      "id": "REAL_CUSTOMER_OR_PRODUCTION_DATA",
+      "state": "EXPLICIT_APPROVAL_REQUIRED",
+      "approvalReceived": false
+    },
+    {
+      "id": "FINANCIAL_FULFILLMENT_AND_COMMUNICATION_ACTIONS",
+      "scope": "payments, refunds, payouts, shipping labels, and customer communications",
+      "state": "EXPLICIT_APPROVAL_REQUIRED",
+      "approvalReceived": false
+    },
+    {
+      "id": "LEGAL_PUBLICATION",
+      "state": "EXPLICIT_APPROVAL_REQUIRED",
+      "approvalReceived": false
+    },
+    {
+      "id": "CARE_OR_CLINICAL_FUNCTIONALITY",
+      "state": "PROHIBITED",
+      "approvalReceived": false,
+      "inReleaseGraph": false
+    },
+    {
+      "id": "LIVE_DEPLOYMENT_IDENTITY",
+      "state": "NOT_YET_APPLICABLE",
+      "requiredEvidence": "Exact main SHA, Render deployment ID and Live state, public origin, health, affected routes/personas, persistence, authorization, logs, rollback identity"
+    }
+  ]
+}
