@@ -262,7 +262,8 @@ test('Doc236 exact 8efa real-browser synthetic form rehearsal stops before submi
           let body={ok:true};
           if(u.pathname.endsWith('/early-access/session'))body={authenticated:true,openAccess:true};
           else if(u.pathname.endsWith('/early-access/agreements'))body={ok:true,accepted:true,required:[pair],agreement:pair};
-          else if(u.pathname.endsWith('/policies'))body={policies:{'research-use':{title:'Synthetic offline policy',agreement:pair,sections:[]}}};
+          else if(u.pathname.endsWith('/policies'))body={policies:{'research-use':{title:'Synthetic offline policy',agreement:pair,
+            sections:[{heading:'Offline only',paragraphs:['Synthetic policy fixture. No legal acceptance is recorded.']}]}}};
           else if(u.pathname.endsWith('/request-intents/config'))body=config;
           else if(u.pathname.endsWith('/request-intents/catalog')) {
             const search=u.searchParams.get('search')||'',page=Number(u.searchParams.get('page')||1),pageSize=Number(u.searchParams.get('pageSize')||24);
