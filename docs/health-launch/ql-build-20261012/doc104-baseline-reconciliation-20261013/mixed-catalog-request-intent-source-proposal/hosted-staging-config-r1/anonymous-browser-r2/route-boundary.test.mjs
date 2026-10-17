@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {guardedRoute,trackedRoute,sanitizedOrigin} from './route-boundary.mjs';
+import {guardedRoute,trackedRoute,sanitizedOrigin,createForwardingQueue} from './route-boundary.mjs';
 const origin='https://xenios-research-staging.onrender.com';
 function setup() {
   let first=null,allowed=0,denied=0;const tasks=new Set();
@@ -60,4 +60,52 @@ test('data continuation rejection fails closed',async()=>{
   const h=setup(),r=route('data:text/plain,private');r.continue=async()=>{throw Error('private');};
   await assert.doesNotReject(h.run(r));assert.equal(h.first().code,'NETWORK_CHECK_FAILED');
   assert.deepEqual(r.calls,['abort']);
+});
+test('24 delayed parallel requests are FIFO and never exceed eight forwarding permits',async()=>{
+  const q=createForwardingQueue({capacity:8,maxPending:400,timeoutMs:1000});
+  const starts=[],ends=[];let active=0,peak=0;
+  await Promise.all(Array.from({length:24},(_,i)=>(async()=>{
+    const release=await q.acquire();
+    try {starts.push(i);active++;peak=Math.max(peak,active);
+      await new Promise(r=>setTimeout(r,10));ends.push(i);
+    } finally {active--;release();}
+  })()));
+  assert.deepEqual(starts,Array.from({length:24},(_,i)=>i));
+  assert.equal(ends.length,24);assert.equal(peak,8);
+  assert.equal(q.stats().active,0);assert.equal(q.stats().pending,0);
+});
+test('queue wait timeout cancels remaining waiters with the exact first code',async()=>{
+  const q=createForwardingQueue({capacity:1,maxPending:4,timeoutMs:15});
+  const release=await q.acquire();
+  await Promise.all([assert.rejects(q.acquire(),{message:'INFLIGHT_WAIT_TIMEOUT'}),
+    assert.rejects(q.acquire(),{message:'INFLIGHT_WAIT_TIMEOUT'})]);
+  release();assert.equal(q.stats().pending,0);assert.equal(q.stats().active,0);
+  await assert.rejects(q.acquire(),{message:'INFLIGHT_WAIT_TIMEOUT'});
+});
+test('cancel aborts queued work before forwarding and keeps the first reason',async()=>{
+  const q=createForwardingQueue({capacity:1,maxPending:4,timeoutMs:1000});
+  const release=await q.acquire();
+  const denied=assert.rejects(q.acquire(),{message:'ORIGINAL_FAILURE'});
+  q.cancel('ORIGINAL_FAILURE');q.cancel('LATER_FAILURE');await denied;
+  release();release();assert.equal(q.stats().active,0);assert.equal(q.stats().closed,'ORIGINAL_FAILURE');
+});
+test('queue size is bounded and never raises the eight-permit cap',async()=>{
+  assert.throws(()=>createForwardingQueue({capacity:9,maxPending:400,timeoutMs:10}),/INFLIGHT_QUEUE_LIMITS/);
+  const q=createForwardingQueue({capacity:1,maxPending:1,timeoutMs:1000});
+  const release=await q.acquire();
+  const denied=assert.rejects(q.acquire(),{message:'INFLIGHT_QUEUE_LIMIT'});
+  await assert.rejects(q.acquire(),{message:'INFLIGHT_QUEUE_LIMIT'});await denied;
+  release();assert.equal(q.stats().pending,0);assert.equal(q.stats().active,0);
+});
+test('expired absolute request deadline refuses a permit without forwarding',async()=>{
+  const q=createForwardingQueue({capacity:8,maxPending:400,timeoutMs:1000});
+  await assert.rejects(q.acquire({requestDeadlineAt:Date.now()-1}),{message:'INFLIGHT_WAIT_TIMEOUT'});
+  assert.equal(q.stats().active,0);
+});
+test('permit is released on exception and next FIFO waiter proceeds',async()=>{
+  const q=createForwardingQueue({capacity:1,maxPending:4,timeoutMs:1000});
+  const first=(async()=>{const release=await q.acquire();try {throw Error('FETCH_ABORT');} finally {release();}})();
+  const checked=assert.rejects(first,/FETCH_ABORT/);
+  const next=await q.acquire();next();await checked;
+  assert.equal(q.stats().active,0);assert.equal(q.stats().pending,0);
 });

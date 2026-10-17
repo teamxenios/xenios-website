@@ -1,0 +1,186 @@
+name: KAN31 real driver FIFO offline rehearsal
+on:
+  push:
+    branches: [codex/kan31-bounded-network-fifo-20261017]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: kan31-offline-fifo-rehearsal
+  cancel-in-progress: false
+jobs:
+  diagnostic:
+    if: github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 8efa9a9ef4e94773c446e7fa2a17cf00c6592d85
+          path: application
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20.19.0
+      - name: Build exact approved client only
+        working-directory: application
+        env:
+          NODE_ENV: production
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 8efa9a9ef4e94773c446e7fa2a17cf00c6592d85
+          test "$(node --version)" = v20.19.0
+          test "$(npm --version)" = 10.8.2
+          npm ci --no-audit --no-fund --include=dev
+          node --max-old-space-size=1536 node_modules/vite/bin/vite.js build
+          test -z "$(git status --porcelain)"
+      - name: Restore accepted tools with unchanged safe extraction
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_MANIFEST_JSON: '{"providerProofSha256":"44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a","toolchain":{"inventorySha256":"7d7a507d0f2280e5efbca9c40f76b733b8c5a5bf8ba32c7b799e28bc1e52be54","playwrightPackageJson":"node_modules/playwright/package.json","playwrightVersion":"1.61.1"}}'
+          PROVIDER_PROOF_JSON: '{}'
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12033375179/zip" > "$RUNNER_TEMP/input.zip"
+          printf '%s  %s\n' 73e53b02184fa27a2a863869c6daf17e38a1c452b6d5eefbbbb246fd4c109874 "$RUNNER_TEMP/input.zip" | sha256sum --check -
+          export XENIOS_FROZEN_MANIFEST_SHA256="$(printf '%s' "$RUN_MANIFEST_JSON" | sha256sum | cut -d' ' -f1)"
+          python3 -I - <<'PY'
+          import hashlib, json, os, pathlib, re, stat, zipfile
+          def unique(pairs):
+              result={}
+              for k,v in pairs:
+                  assert k not in result, "DUPLICATE_JSON_KEY"
+                  result[k]=v
+              return result
+          def safe_name(name):
+              assert isinstance(name,str) and 0<len(name)<=1024 and "\\" not in name
+              p=pathlib.PurePosixPath(name)
+              assert not p.is_absolute() and ".." not in p.parts and p.as_posix()==name
+              assert name!="."
+              return p
+          def digest_file(p):
+              h=hashlib.sha256()
+              with p.open("rb") as f:
+                  for block in iter(lambda:f.read(1048576),b""): h.update(block)
+              return h.hexdigest()
+          root=pathlib.Path(os.environ["RUNNER_TEMP"])/"qualification"
+          root.mkdir(mode=0o700)
+          # Existing producer artifact wraps an immutable tools-only ZIP.
+          # No input archive is uploaded, assembled by another job, or trusted.
+          inner=root.parent/"verified-tool-payload.zip"
+          with zipfile.ZipFile(root.parent/"input.zip") as outer:
+              members=outer.infolist()
+              assert len(members)<=100000 and len({i.filename for i in members})==len(members)
+              assert sum(i.file_size for i in members)<=2147483648
+              item=outer.getinfo("tool-payload.zip")
+              assert not item.is_dir() and item.file_size==112171775
+              assert stat.S_IFMT(item.external_attr>>16) in (0,stat.S_IFREG)
+              with outer.open(item) as source, inner.open("xb") as target:
+                  written=0
+                  while True:
+                      block=source.read(1048576)
+                      if not block: break
+                      written+=len(block); assert written<=112171775
+                      target.write(block)
+              assert written==112171775
+          assert digest_file(inner)=="20658921aa06f6d7ff04d7e2ae3e21450bdbda5bb23f95a16c1c75f8465b18b7"
+          with zipfile.ZipFile(inner) as z:
+              files=z.infolist()
+              assert len(files)<=100000 and sum(i.file_size for i in files)<=2147483648
+              assert len({i.filename for i in files})==len(files)
+              names=set()
+              for i in files:
+                  name=i.filename[:-1] if i.is_dir() else i.filename
+                  p=safe_name(name)
+                  assert name not in names, "ALIASED_ARCHIVE_PATH"
+                  names.add(name)
+                  kind=stat.S_IFMT(i.external_attr>>16)
+                  assert kind in ((0,stat.S_IFDIR) if i.is_dir() else (0,stat.S_IFREG)), "NONFILE_MEMBER"
+                  assert p.parts[0]=="tools" or name=="tool-inventory.json"
+                  assert p.parts[0]=="tools" or not i.is_dir()
+              z.extractall(root)
+              # Actions' OUTER wrapper may contain 0644 or no Unix permissions.
+              # Never trust it to carry executable bits. Start files at 0600;
+              # only the independently hash-pinned inventory may restore modes.
+              for i in files:
+                  if not i.is_dir(): os.chmod(root/i.filename,0o600)
+          manifest_bytes=os.environ["RUN_MANIFEST_JSON"].encode("utf-8")
+          proof_bytes=os.environ["PROVIDER_PROOF_JSON"].encode("utf-8")
+          assert 0<len(manifest_bytes)<=32768 and 0<len(proof_bytes)<=8192
+          proposed=json.loads(manifest_bytes,object_pairs_hook=unique)
+          proof=json.loads(proof_bytes,object_pairs_hook=unique)
+          assert isinstance(proposed,dict) and isinstance(proof,dict)
+          pin=os.environ["XENIOS_FROZEN_MANIFEST_SHA256"]
+          assert re.fullmatch(r"[a-f0-9]{64}",pin)
+          assert hashlib.sha256(manifest_bytes).hexdigest()==pin, "MANIFEST_HASH"
+          assert hashlib.sha256(proof_bytes).hexdigest()==proposed["providerProofSha256"], "PROOF_HASH"
+          for name,contents in (("run-manifest.json",manifest_bytes),("provider-proof.json",proof_bytes)):
+              with (root/name).open("xb") as target: target.write(contents)
+              os.chmod(root/name,0o600)
+          manifest_bytes=(root/"run-manifest.json").read_bytes()
+          manifest_pin=os.environ["XENIOS_FROZEN_MANIFEST_SHA256"]
+          assert re.fullmatch(r"[a-f0-9]{64}",manifest_pin)
+          assert hashlib.sha256(manifest_bytes).hexdigest()==manifest_pin, "MANIFEST_HASH"
+          manifest=json.loads(manifest_bytes,object_pairs_hook=unique)
+          inventory_bytes=(root/"tool-inventory.json").read_bytes()
+          inventory_pin=manifest["toolchain"]["inventorySha256"]
+          assert re.fullmatch(r"[a-f0-9]{64}",inventory_pin)
+          assert hashlib.sha256(inventory_bytes).hexdigest()==inventory_pin, "INVENTORY_HASH"
+          inventory=json.loads(inventory_bytes,object_pairs_hook=unique)
+          assert isinstance(inventory,list) and 0<len(inventory)<=100000
+          expected={}
+          for item in inventory:
+              assert isinstance(item,dict) and set(item)=={"path","bytes","mode","sha256"}
+              relative=safe_name(item["path"])
+              assert item["path"] not in expected, "DUPLICATE_INVENTORY_PATH"
+              assert type(item["mode"]) is int and item["mode"] in (0o644,0o755), "INVALID_TOOL_MODE"
+              assert type(item["bytes"]) is int and 0<=item["bytes"]<=2147483648
+              assert isinstance(item["sha256"],str) and re.fullmatch(r"[a-f0-9]{64}",item["sha256"])
+              target=root/"tools"/pathlib.Path(*relative.parts)
+              info=target.lstat()
+              assert stat.S_ISREG(info.st_mode) and not target.is_symlink(), "NONFILE_TOOL"
+              assert info.st_size==item["bytes"] and digest_file(target)==item["sha256"], "TOOL_BYTES"
+              expected[item["path"]]=(target,item["mode"])
+          actual=set()
+          assert (root/"tools").is_dir() and not (root/"tools").is_symlink()
+          for target in (root/"tools").rglob("*"):
+              assert not target.is_symlink(), "SYMLINK_TOOL"
+              if target.is_dir(): continue
+              assert target.is_file(), "SPECIAL_TOOL"
+              actual.add(target.relative_to(root/"tools").as_posix())
+          assert actual==set(expected), "EXACT_TOOL_SET"
+          # No execute permissions are restored until EVERY path and byte passes.
+          for target,mode in expected.values(): os.chmod(target,mode)
+          # The unchanged verify-tools step must still independently enforce modes.
+          PY
+
+          export PROPOSAL="docs/health-launch/ql-build-20261012/doc104-baseline-reconciliation-20261013/mixed-catalog-request-intent-source-proposal/hosted-staging-config-r1/anonymous-browser-r2"
+          node "$PROPOSAL/verify-tools.UNAPPLIED.mjs" "$RUNNER_TEMP/qualification"
+      - name: Full driver concurrent burst and negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PROPOSAL="docs/health-launch/ql-build-20261012/doc104-baseline-reconciliation-20261013/mixed-catalog-request-intent-source-proposal/hosted-staging-config-r1/anonymous-browser-r2"
+          node --test "$PROPOSAL/route-boundary.test.mjs" "$PROPOSAL/hosted-browser.offline.test.mjs"
+      - name: Real driver and exact client bundle with loopback synthetic APIs
+        shell: bash
+        run: |
+          set -euo pipefail
+          unset GH_TOKEN GITHUB_TOKEN
+          mkdir "$RUNNER_TEMP/kan31-local-evidence"
+          node scripts/agentic/kan31-local-origin-diagnostic.mjs "$GITHUB_WORKSPACE/application" "$RUNNER_TEMP/qualification/tools" "$RUNNER_TEMP/kan31-local-evidence/origin.json"
+      - name: Keep bounded synthetic diagnostic even on failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: kan31-offline-origin-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/kan31-local-evidence/*.json
+          retention-days: 1
+          if-no-files-found: warn
+          include-hidden-files: false
