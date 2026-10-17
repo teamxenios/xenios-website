@@ -188,20 +188,67 @@ async function catalog(page) {
   need(items.length===total && new Set(items.map(x=>canonical([x.productId,x.variantId]))).size===total,'CATALOG_UNIQUE');
   return items;
 }
-async function populate(page,plan,items) {
+export function matchesCatalogSearch(response,origin,search) {
+  const u=new URL(response.url());
+  return u.origin===origin && u.pathname===API+'/catalog' && response.request().method()==='GET'
+    && u.searchParams.get('search')===search && u.searchParams.get('page')==='1'
+    && u.searchParams.get('pageSize')==='24' && !u.searchParams.get('family');
+}
+export async function selectCatalogVariant(page,item,quantity,{origin,expect,timeoutMs,onDiagnostic=()=>{}}) {
+  const stopAt=Date.now()+Math.min(5000,timeoutMs);
+  const remaining=()=>{const ms=stopAt-Date.now();need(ms>0,'EXACT_UI_VARIANT');return ms;};
+  const specification=(item.specification || 'Form not stated').trim();
+  const headingCards=page.locator('article.xenios-order-card').filter({
+    has:page.getByRole('heading',{name:item.productName,exact:true,level:2})});
+  const card=headingCards.filter({has:page.locator('p').and(page.getByText(specification,{exact:true}))});
+  try {
+    const pending=page.waitForResponse(r=>matchesCatalogSearch(r,origin,item.productName),{timeout:remaining()});
+    // Attach rejection handling before fill, without hiding the response failure.
+    pending.catch(()=>{});
+    await page.getByLabel('Search catalog',{exact:true}).fill(item.productName,{timeout:remaining()});
+    const response=await pending;
+    need(response.status()===200,'EXACT_UI_VARIANT');
+    const result=await response.json();
+    const found=result.items?.filter(x=>x.productId===item.productId && x.variantId===item.variantId);
+    need(result.page===1 && result.pageSize===24 && found?.length===1
+      && found[0].productName===item.productName
+      && (found[0].specification || 'Form not stated').trim()===specification,'EXACT_UI_VARIANT');
+    await expect(card).toHaveCount(1,{timeout:remaining()});
+    await card.getByRole('button',{name:'Add '+item.productName+' to request',exact:true}).click({timeout:remaining()});
+    await card.getByLabel('Requested quantity for '+item.productName,{exact:true}).fill(String(quantity),{timeout:remaining()});
+  } catch {
+    let observedCount=null,cards=[];
+    try {
+      observedCount=await card.count();
+      cards=await headingCards.evaluateAll(nodes=>nodes.slice(0,5).map(node=>({
+        heading:(node.querySelector('h2')?.textContent || '').trim().replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,160),
+        specification:(node.querySelector('p')?.textContent || '').trim().replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,240),
+      })));
+    } catch { /* Diagnostic collection must not replace the first failure. */ }
+    onDiagnostic({searchTerm:item.productName.replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,160),
+      uiVariantObservedCount:observedCount,cards});
+    throw Error('EXACT_UI_VARIANT');
+  }
+}
+async function approvedExpect() {
+  const testEntry=path.join(path.dirname(path.resolve(toolsDir,m.toolchain.playwrightEntry)),'test.mjs');
+  // Already in the accepted 455-file tool inventory; no new package or pin.
+  need(hash(await fs.readFile(testEntry))==='1deb265617d0e87b6d05bf8b3d5bf73cd4b788665c249c609a01b94ceff2eea1','ASSERTION_TOOL_HASH');
+  return (await import(pathToFileURL(testEntry).href)).expect;
+}
+export async function populate(page,plan,items,options) {
   await page.getByRole('heading',{name:'Request products for review',exact:true}).waitFor();
   for(const line of plan.lines) {
     const item=items.find(x=>x.productId===line.productId && x.variantId===line.variantId);
     need(item,'PLANNED_CATALOG_ITEM');
-    const response=page.waitForResponse(r=>r.url().startsWith(m.origin+API+'/catalog?'));
-    await page.getByLabel('Search catalog',{exact:true}).fill(item.productName);
-    await response;
-    const card=page.locator('article.xenios-order-card').filter({
-      has:page.getByRole('heading',{name:item.productName,exact:true})})
-      .filter({hasText:item.specification || 'Form not stated'});
-    need(await card.count()===1,'EXACT_UI_VARIANT');
-    await card.getByRole('button',{name:'Add '+item.productName+' to request',exact:true}).click();
-    await card.getByLabel('Requested quantity for '+item.productName,{exact:true}).fill(String(line.quantity));
+    await selectCatalogVariant(page,item,line.quantity,options ?? {
+      origin:m.origin,expect:await approvedExpect(),
+      timeoutMs:Math.min(m.limits.requestTimeoutMs,deadline-Date.now(),Date.parse(m.expiresAt)-Date.now()),
+      onDiagnostic:diagnostic=>{
+        evidence.uiVariantDiagnostics??=[];
+        if(evidence.uiVariantDiagnostics.length<6)evidence.uiVariantDiagnostics.push({phase,...diagnostic});
+      },
+    });
   }
   await page.getByRole('button',{name:'Continue to contact',exact:true}).click();
   const postsBeforeValidation=posts;
@@ -287,6 +334,9 @@ async function prepareContext(context,role) {
   await page.close();
 }
 
+// Importing UI helpers for offline controls does not admit a hosted run.
+// Direct CLI invocation retains the complete unchanged admission below.
+if(process.argv[1] && import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href) {
 try {
   need(process.version==='v20.19.0','PINNED_NODE');
   const raw=await fs.readFile(manifestPath,'utf8');
@@ -457,4 +507,5 @@ try {
   // Never print raw exception, body, state or credentials.
   console.log(JSON.stringify({status:evidence.status,exitCode:process.exitCode??0,
     browserQualificationPassed:false,claim:CLAIM}));
+}
 }
