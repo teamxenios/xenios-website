@@ -24,9 +24,18 @@ and retains the proposed patch for one day. It never applies model text or
 executes proposed commands. Root inspects and publishes an accepted proposal
 through the existing source custody/Git workflow, then waits for real CI.
 
-Claude's separate official pinned Action reviews the changed candidate with
+Claude's separate official pinned Action reviews only the bounded candidate
+diff in `agent-task-data.json`. The job never checks out the candidate tree;
+the trusted controller fetches Git objects only, disables external/textconv
+diff drivers, and refuses an unexpected `candidate/` directory. Author-owned
+`CLAUDE.md` files therefore cannot auto-load as subdirectory memory. PR text
+and diff content remain untrusted data, never trusted instructions.
+The Action uses
 Read/Glob/Grep only, no shell/edit/cloud/delegation tools and six turns maximum.
 Raw output/report and the secondary inline-comment classifier are disabled.
+Provider keys are passed only to their respective Actions, never to the
+Node prompt controller. Missing configured authentication remains fail-closed
+in the provider Action; it does not authorize an alternate login mechanism.
 Only validated exact-head verdict/finding codes enter the PR receipt. This
 does not claim the original interactive Claude session executed the Action.
 
