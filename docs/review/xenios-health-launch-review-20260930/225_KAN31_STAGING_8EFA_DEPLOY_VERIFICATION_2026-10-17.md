@@ -41,4 +41,19 @@ configuration change, deploy, POST, test or SQL by the reviewer.
 - **Window timing.** The 4-hour window starts only when `OPEN_ACCESS=true` takes effect, with closure verified inside
   that time.
 
+## Addendum: staging schema presence (read-only metadata)
+
+The Supabase `list_tables` result for the `request_intent_private` schema on `tetynodzrtmdbuzgboro` was:
+
+- `requests`: RLS enabled, 1 row;
+- `access_events`: RLS enabled, 1 row.
+
+No data was read.
+
+- **The schema is present.** The one existing row is consistent with the retained Q1 backend fixture, reference
+  `XRI-7C805AC4...`.
+- **No effect on the Doc455 check.** That check binds rows by request UUID, so the pre-existing row does not affect it.
+- **Not checked.** RPC function presence (`public.request_intent_create_or_replay` and `find_attempt`) is not
+  visible through table metadata and remains for Core or the database owner.
+
 NOT LIVE.
