@@ -13,6 +13,7 @@ export const ACCESS_ROUTES = {
   privacy: "/research/privacy",
   terms: "/research/terms",
   activate: "/research/activate",
+  earlyAccess: "/research/early-access",
 } as const;
 
 export const MEMBER_ROUTES = {

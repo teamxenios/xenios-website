@@ -255,10 +255,26 @@ describe("private early access raw Cookie-header verification", () => {
       ok: false,
       code: "COOKIE_HEADER_INVALID",
     });
-    expect(verify(`malformed; ${PRIVATE_ACCESS_COOKIE_NAME}=${issuedValue()}`)).toEqual({
+    // CHANGED DELIBERATELY. This previously asserted that any malformed
+    // neighbouring segment invalidated the whole header. That is a denial of
+    // service against our own members: one `consent="yes"` or `_ga=` from a
+    // sibling subdomain or an analytics script (both RFC-legal) would lock a
+    // paying customer out of Private Early Access with no way to repair it.
+    // A neighbour we do not own is now skipped; our own segment keeps every
+    // strict rule, and the header-wide control-character and size limits below
+    // are unchanged.
+    expect(verify(`malformed; ${PRIVATE_ACCESS_COOKIE_NAME}=${issuedValue()}`).ok).toBe(true);
+    // The same private cookie beside RFC-legal neighbours a real browser sends.
+    expect(verify(`consent="yes"; ${PRIVATE_ACCESS_COOKIE_NAME}=${issuedValue()}`).ok).toBe(true);
+    expect(verify(`_ga=; ${PRIVATE_ACCESS_COOKIE_NAME}=${issuedValue()}`).ok).toBe(true);
+    // Our own segment keeps every strict rule.
+    expect(verify(`ok=1; ${PRIVATE_ACCESS_COOKIE_NAME}=`)).toEqual({
       ok: false,
       code: "COOKIE_HEADER_INVALID",
     });
+    expect(
+      verify(`${PRIVATE_ACCESS_COOKIE_NAME}=${issuedValue()}; ${PRIVATE_ACCESS_COOKIE_NAME}=${issuedValue()}`),
+    ).toEqual({ ok: false, code: "COOKIE_DUPLICATE" });
     expect(verify(`padding=${"x".repeat(PRIVATE_ACCESS_COOKIE_MAX_HEADER_BYTES)}; ${PRIVATE_ACCESS_COOKIE_NAME}=${issuedValue()}`))
       .toEqual({ ok: false, code: "COOKIE_HEADER_INVALID" });
   });

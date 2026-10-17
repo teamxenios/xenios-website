@@ -25,6 +25,7 @@ import { ResearchLoadingState } from "./ui/kit";
 const Support = lazy(() => import("./pages/Support"));
 const LegalPage = lazy(() => import("./pages/LegalPage"));
 const ActivationPage = lazy(() => import("./pages/ActivationPage"));
+const EarlyAccessRoute = lazy(() => import("./early-access/EarlyAccessRoute"));
 // The dynamic import itself sits behind the DEV flag, not just the route: a
 // top-level lazy() emits the gallery chunk even when the route is compiled
 // out, so the fixture code would still ship. With import.meta.env.DEV a
@@ -225,6 +226,7 @@ export default function ResearchSection() {
           <Route path="/research" component={Gateway} />
 
           {/* Access family */}
+          <Route path="/research/early-access" component={EarlyAccessRoute} />
           <Route path="/research/apply" component={Apply} />
           <Route path="/research/apply/review" component={Apply} />
           <Route path="/research/apply/success" component={Apply} />

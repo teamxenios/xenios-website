@@ -12,6 +12,7 @@ import {
 import { products } from "./products-data";
 import { policies } from "./policies-data";
 import { requireActiveMember } from "./member-auth";
+import { EARLY_ACCESS_ORDER_NUMBER } from "./early-access/routes/order-number";
 
 // ---------------------------------------------------------------------------
 // xenios research: Express gate + APIs.
@@ -272,6 +273,42 @@ export function registerResearchApi(app: Express) {
     "/member/forgot-password",
     "/member/claim",
   ]);
+  // Private Early Access owns a STRONGER gate than this wall: a scrypt password
+  // with lockout on unlock, and a signed HttpOnly session cookie on every other
+  // route. It must be reachable by someone who is NOT a research member, because
+  // that is the entire point of the portal, so this earlier gateway cannot be the
+  // thing that answers. Without this the password prompt is unreachable in
+  // production and the feature looks broken rather than closed.
+  //
+  // Method-exact and path-exact. Each handler still refuses on its own terms, and
+  // while RESEARCH_EARLY_ACCESS_ENABLED is false every one of them refuses.
+  const EARLY_ACCESS_OPEN_READ_PATHS = new Set([
+    "/early-access/session",
+    "/early-access/catalog",
+  ]);
+  const EARLY_ACCESS_OPEN_WRITE_PATHS = new Set([
+    "/early-access/unlock",
+    "/early-access/logout",
+    "/early-access/orders",
+  ]);
+  // The order routes carry an order number, so they cannot be a Set entry. They
+  // are ANCHORED against the exact generated shape instead of a bare prefix:
+  // /early-access/orders/<XEA-...> and its two leaf paths, and nothing else.
+  // A lookalike segment, an extra segment, and a wrong method all fail the match
+  // and stay walled, so a future route under this namespace is walled by default
+  // until it is listed here on purpose.
+  //
+  // Each handler still owns its own, STRONGER gate: the durable Early Access
+  // session, then the resolved customer, then ownership of that exact order.
+  // Getting through this wall reaches a refusal, never an order.
+  const ORDER_NUMBER_SEGMENT = EARLY_ACCESS_ORDER_NUMBER.source.replace(/^\^|\$$/g, "");
+  const EARLY_ACCESS_ORDER_READ = new RegExp(
+    `^/early-access/orders/(?:${ORDER_NUMBER_SEGMENT})(?:/invoice)?$`,
+  );
+  const EARLY_ACCESS_ORDER_WRITE = new RegExp(
+    `^/early-access/orders/(?:${ORDER_NUMBER_SEGMENT})/payment-proof$`,
+  );
+
   // These exact read routes own their stronger downstream member guard and
   // private-response headers. Let them reach that canonical handler even when
   // the shared review cookie is absent; otherwise this earlier gateway would
@@ -461,6 +498,15 @@ export function registerResearchApi(app: Express) {
       (req.method === "POST" &&
         (OPEN_PUBLIC_WRITE_PATHS.has(req.path) ||
           OPEN_ACCOUNT_WRITE_PATHS.has(req.path)))
+    ) {
+      return next();
+    }
+    if (
+      ((req.method === "GET" || req.method === "HEAD") &&
+        (EARLY_ACCESS_OPEN_READ_PATHS.has(req.path) ||
+          EARLY_ACCESS_ORDER_READ.test(req.path))) ||
+      (req.method === "POST" &&
+        (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) || EARLY_ACCESS_ORDER_WRITE.test(req.path)))
     ) {
       return next();
     }

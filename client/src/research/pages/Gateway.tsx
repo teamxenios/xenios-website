@@ -82,7 +82,22 @@ export default function Gateway() {
               <Link href="/research/sign-in" className="btn btn-secondary" style={buttonStyle} data-testid="link-gateway-signin">
                 Member Login
               </Link>
+              <Link
+                href="/research/early-access"
+                className="btn btn-secondary"
+                style={buttonStyle}
+                data-testid="link-gateway-early-access"
+              >
+                Private Early Access
+              </Link>
             </div>
+            <p
+              className="body-s text-ink-2 mt-5 max-w-[46ch]"
+              style={{ marginLeft: "auto", marginRight: "auto" }}
+              data-testid="text-gateway-early-access-support"
+            >
+              Already approved through the Xenios network? Enter the private ordering experience.
+            </p>
           </div>
         </main>
         <footer style={{ padding: "0 24px 8px" }}>
