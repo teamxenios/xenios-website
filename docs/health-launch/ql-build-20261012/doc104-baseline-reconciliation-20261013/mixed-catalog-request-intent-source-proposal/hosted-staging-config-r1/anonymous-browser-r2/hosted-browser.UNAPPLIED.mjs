@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { pathToFileURL } from 'node:url';
+import { guardedRoute,trackedRoute,sanitizedOrigin,failureCode } from './route-boundary.mjs';
 import { hash,need,exact,canonical,receipt,expand,freezeExpected,identityAdmission,
   goldenVectors,assertLiveAnonymous,assertNoReceipt,deriveCase,anonymousRegressionVectors,
   CLAIM,LABELS,APP_SHA,APP_TREE } from './contracts.mjs';
@@ -36,10 +37,13 @@ function guard() {
   need(!failure,'PRIOR_FAILURE');
   need(Date.now()<deadline && Date.now()<Date.parse(m.expiresAt),'WINDOW_EXPIRED');
 }
-function track(p) {
-  tasks.add(p); p.catch(()=>{failure??='NETWORK_HANDLER_FAILED';}).finally(()=>tasks.delete(p));
-  return p;
+function recordFailure(code,info={}) {
+  if(failure!==null) return;
+  failure=code;
+  evidence.firstFailure={code,phase,recordedAt:new Date().toISOString(),
+    ...(typeof info.url==='string'?{origin:sanitizedOrigin(info.url)}:{})};
 }
+function track(p) {return trackedRoute(p,tasks,recordFailure);}
 async function settled() {
   for(let i=0;i<4;i++) {
     await Promise.allSettled([...tasks]); await new Promise(r=>setTimeout(r,250));
@@ -53,14 +57,22 @@ async function readJsonResponse(r) {
   return JSON.parse(body.toString('utf8'));
 }
 async function attachNetwork(context,role) {
-  await context.route('**/*',route=>track((async()=>{
-    const req=route.request(), u=new URL(req.url());
-    if(u.protocol==='data:') {await route.continue();return;}
-    if(u.origin!==m.origin) {failure='OFF_ORIGIN_TRAFFIC'; await route.abort();return;}
-    guard(); count++; active++;
-    const row={index:count,role,phase,method:req.method(),path:u.pathname,status:null,outcome:'PENDING'};
+  await context.route('**/*',route=>track(guardedRoute(route,{
+    targetOrigin:m.origin,isFailed:()=>failure!==null,onFailure:recordFailure,
+    onDenied:route=>{
+      count++;
+      if(evidence.accounting.length<m.limits.maxRequests) {
+        evidence.accounting.push({index:count,role,phase,
+          origin:sanitizedOrigin(route.request().url()),status:null,outcome:'ABORTED_BY_BOUNDARY'});
+      } else evidence.accountingTruncated=true;
+    },
+    onAllowed:async(route,req,u)=>{
+    guard(); count++;
+    const row={index:count,role,phase,method:null,path:u.pathname,status:null,outcome:'PENDING'};
     evidence.accounting.push(row);
+    active++;
     try {
+      row.method=req.method();
       need(count<=m.limits.maxRequests && active<=m.limits.maxInflight,'REQUEST_LIMIT');
       need(await req.headerValue('authorization')===null,'NO_MEMBER_BEARER');
       const mutation=!['GET','HEAD'].includes(req.method());
@@ -128,11 +140,12 @@ async function attachNetwork(context,role) {
       }
       await route.fulfill({response,body:bytes});
       row.outcome='DELIVERED';
-    } catch {
-      row.outcome='FAILED_OR_UNRESOLVED'; failure??='NETWORK_CHECK_FAILED';
+    } catch(e) {
+      row.outcome='FAILED_OR_UNRESOLVED'; recordFailure(failureCode(e));
       await route.abort().catch(()=>{});
     } finally {active--;}
-  })()));
+    }
+  })));
 }
 async function browserPost(page,url,body) {
   guard();
@@ -305,7 +318,7 @@ try {
   const {chromium}=await import(pathToFileURL(entry).href);
   browser=await chromium.launch({headless:true,executablePath:browserPath});
   need(browser.version()===m.toolchain.browserVersion,'BROWSER_VERSION');
-  timer=setTimeout(()=>{failure??='RUN_DEADLINE';void browser.close();},m.limits.maxRunMs);
+  timer=setTimeout(()=>{recordFailure('RUN_DEADLINE');void browser.close().catch(()=>{});},m.limits.maxRunMs);
   const a=await browser.newContext({serviceWorkers:'block'});
   const b=await browser.newContext({serviceWorkers:'block'});
   const anon=await browser.newContext({serviceWorkers:'block'});
@@ -409,18 +422,21 @@ try {
   evidence.status='PUBLIC_ANONYMOUS_STAGING_OBSERVATIONS_COMPLETE_DB_POST_IDENTITY_STAFF_PENDING';
   evidence.endedAt=new Date().toISOString();
 } catch(e) {
-  failure??=/^[A-Z0-9_]+$/.test(e.message)?e.message:'EXECUTION_FAILED_SANITIZED';
+  recordFailure(failureCode(e));
   evidence.status='FAILED';evidence.failure=failure;process.exitCode=1;
 } finally {
   clearTimeout(timer);
   cookieHandles.clear();unlockExpiries.clear();
   const closures=await Promise.allSettled(contexts.map(c=>c.close()));
   evidence.cleanup.contextsClosed=closures.every(x=>x.status==='fulfilled');
+  if(!evidence.cleanup.contextsClosed) recordFailure('CONTEXT_CLOSE_FAILED');
   try {await browser?.close();evidence.cleanup.browserCloseResolved=true;}
-  catch {evidence.cleanup.browserCloseResolved=false;process.exitCode=1;}
+  catch {evidence.cleanup.browserCloseResolved=false;recordFailure('BROWSER_CLOSE_FAILED');process.exitCode=1;}
+  await Promise.allSettled([...tasks]);
   // Browser API closure is not an independent OS process census.
   evidence.cleanup.independentProcessClosureProved=false;
   evidence.cleanup.activeRequests=active;evidence.cleanup.handlers=tasks.size;
+  if(failure) {evidence.status='FAILED';evidence.failure=failure;}
   if(active || tasks.size || failure || !evidence.cleanup.contextsClosed) process.exitCode=1;
   if(m && outDir && outputs.has('preflight.json')) {
     try {await write('browser-evidence.json',evidence);} catch {process.exitCode=1;}
