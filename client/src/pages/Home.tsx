@@ -167,7 +167,7 @@ export default function Home() {
           <h2 className="display-m text-paper mb-6 max-w-[22ch]">Help shape the workspace before broad release.</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/waitlist" className="btn btn-primary btn-on-dark">Apply for Early Access</Link>
-            <Link href="/how-it-works" className="btn btn-ghost-on-dark">See How It Works</Link>
+            <Link href="/how-it-works" className="btn btn-ghost btn-on-dark">See How It Works</Link>
           </div>
         </div>
       </Reveal>

@@ -124,7 +124,7 @@ export default function ForCoaches() {
           <h2 className="display-m text-paper mb-6 max-w-[24ch]">Join the founding coach cohort.</h2>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/waitlist" className="btn btn-primary btn-on-dark">Apply for Early Access</Link>
-            <Link href="/careers/founding-coach-cohort" className="btn btn-ghost-on-dark">Founding Coach Cohort</Link>
+            <Link href="/careers/founding-coach-cohort" className="btn btn-ghost btn-on-dark">Founding Coach Cohort</Link>
           </div>
         </div>
       </section>
