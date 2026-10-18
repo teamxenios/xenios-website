@@ -78,6 +78,7 @@ export function RequestIntentForm({
     return () => { current = false; };
   }, [api, hintKey]);
   const selections = [...selected.values()];
+  const selectedUnits = selections.reduce((total, selection) => total + selection.quantity, 0);
   const requirements = config ? requiredAcknowledgmentEntries(config, selections.some(({ item }) => item.researchUseOnly)) : [];
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   useEffect(() => { heading.current?.focus(); }, [step, receipt]);
@@ -188,7 +189,7 @@ export function RequestIntentForm({
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/support">Contact support before a replacement</a></section>;
 
-  return <section className={embedded ? "xenios-order-embedded" : "xenios-order-page"}>
+  return <section className={embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page"}>
     <header className="xenios-order-hero"><h1 ref={heading} tabIndex={-1}>Request products for review</h1>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
@@ -213,7 +214,7 @@ export function RequestIntentForm({
         </select></label>
       </div>
       <p role="status">{catalog ? catalog.total + " visible catalog entries. " + selected.size + " selected." : "Loading catalog..."}</p>
-      <div className="xenios-order-cards">{catalog?.items.map((item) => {
+      <div className="xenios-order-catalog-layout"><div><div className="xenios-order-cards">{catalog?.items.map((item) => {
         const key = catalogItemKey(item), selection = selected.get(key);
         return <article className="xenios-order-card" key={key}><h2>{item.productName}</h2>
           <p>{item.specification || "Form not stated"}</p>
@@ -221,10 +222,23 @@ export function RequestIntentForm({
           {item.sourceRefusal && <p>Current restriction: {item.sourceRefusal.replaceAll("_", " ")}. Adding a request does not remove this restriction.</p>}
           <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>
           {!item.selectableForReview ? <p>{item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"}</p> : selection
-            ? <><label>Requested quantity for {item.productName}<input type="number" min={item.minimumQuantity}
+            ? <div className="xenios-order-quantity">
+              <button type="button" aria-label={"Decrease requested quantity for " + item.productName}
+                disabled={clampQuantity(item, selection.quantity - item.quantityIncrement) === selection.quantity}
+                onClick={() => setSelected((prior) => {
+                  const current = prior.get(key); if (!current) return prior;
+                  return new Map(prior).set(key, { item, quantity: clampQuantity(item, current.quantity - item.quantityIncrement) });
+                })}>−</button>
+              <label>Requested quantity for {item.productName}<input type="number" min={item.minimumQuantity}
                 max={item.maximumQuantity ?? undefined} step={item.quantityIncrement} value={selection.quantity}
                 onChange={(event) => setSelected((prior) => new Map(prior).set(key, { item, quantity: clampQuantity(item, Number(event.target.value)) }))} /></label>
-              <button type="button" onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></>
+              <button type="button" aria-label={"Increase requested quantity for " + item.productName}
+                disabled={clampQuantity(item, selection.quantity + item.quantityIncrement) === selection.quantity}
+                onClick={() => setSelected((prior) => {
+                  const current = prior.get(key); if (!current) return prior;
+                  return new Map(prior).set(key, { item, quantity: clampQuantity(item, current.quantity + item.quantityIncrement) });
+                })}>+</button>
+              <button type="button" className="xenios-order-link" onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
             : <button type="button" className="xenios-order-button" disabled={selected.size >= 200}
                 onClick={() => setSelected((prior) => new Map(prior).set(key, { item, quantity: item.minimumQuantity }))}>Add {item.productName} to request</button>}
         </article>;
@@ -234,7 +248,20 @@ export function RequestIntentForm({
         <button disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => setPage((value) => value + 1)}>Next</button>
       </nav>
       <p>Up to 200 exact variants per request. Unavailable and coming-soon entries remain visible with their restrictions.</p>
-      <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>Continue to contact</button>
+      </div><aside className="xenios-order-summary" aria-label="Selected request items">
+        <h2>Your request</h2>
+        <p role="status">{selections.length} exact variants | {selectedUnits} requested units</p>
+        {!selections.length ? <p>No products selected yet. Add an eligible item from the catalog.</p> : <ul>
+          {selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
+            <strong>{item.productName}</strong><span>{item.specification || item.variantId}</span>
+            <span>Requested quantity: {quantity}</span>
+            <button type="button" className="xenios-order-link" aria-label={"Remove selected " + item.productName + " " + (item.specification || item.variantId)}
+              onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(catalogItemKey(item)); return next; })}>Remove</button>
+          </li>)}
+        </ul>}
+        <p className="xenios-order-small">A request is not an approved order. Final quantities, prices and availability require review.</p>
+        <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>Continue to contact</button>
+      </aside></div>
     </>}
     {step === "contact" && <form onSubmit={captureContact}>
       <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} /></label>

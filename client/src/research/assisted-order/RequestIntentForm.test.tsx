@@ -230,6 +230,66 @@ describe("mixed request mounted-entry contracts", () => {
   });
 });
 
+describe("request selection layout and controls (component fixtures, not viewport proof)", () => {
+  it("uses the canonical base and embedded wrapper together", async () => {
+    const api = makeApi();
+    await act(async () => root.render(<RequestIntentForm embedded api={api} storage={sessionStorage} />));
+    expect(host.firstElementChild?.classList.contains("xenios-order-page")).toBe(true);
+    expect(host.firstElementChild?.classList.contains("xenios-order-page--embedded")).toBe(true);
+    expect(host.querySelector('.xenios-order-summary[aria-label="Selected request items"]')).not.toBeNull();
+  });
+  it("steps by the canonical increment and stops at the minimum and last allowed maximum", async () => {
+    const api = makeApi();
+    const bounded = { ...item("bounded", false), minimumQuantity: 3, quantityIncrement: 4, maximumQuantity: 12 };
+    api.catalog.mockResolvedValue({ items: [bounded], total: 1, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
+    await render(api); await click("Add Synthetic bounded to request");
+    const number = host.querySelector<HTMLInputElement>('input[type="number"]')!;
+    const decrease = host.querySelector<HTMLButtonElement>('[aria-label="Decrease requested quantity for Synthetic bounded"]')!;
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic bounded"]')!;
+    expect([number.min, number.step, number.max, number.value]).toEqual(["3", "4", "12", "3"]);
+    expect(decrease.disabled).toBe(true);
+    await act(async () => increase.click()); expect(number.value).toBe("7");
+    await act(async () => increase.click()); expect(number.value).toBe("11"); expect(increase.disabled).toBe(true);
+    await act(async () => decrease.click()); expect(number.value).toBe("7");
+    await type(number, "-1"); expect(number.value).toBe("3"); expect(decrease.disabled).toBe(true);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("applies multiple queued increment clicks to the latest selection", async () => {
+    const api = makeApi(); await render(api); await click("Add Synthetic research to request");
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!;
+    await act(async () => { increase.click(); increase.click(); });
+    expect(host.querySelector<HTMLInputElement>('input[type="number"]')?.value).toBe("3");
+  });
+  it("counts exact variants and units and removes a selected line independently", async () => {
+    const api = makeApi(); await render(api);
+    await click("Add Synthetic clinical to request"); await click("Add Synthetic research to request");
+    const summary = host.querySelector<HTMLElement>('[aria-label="Selected request items"]')!;
+    expect(summary.textContent).toContain("2 exact variants | 2 requested units");
+    await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical"]')!.click());
+    expect(summary.textContent).toContain("2 exact variants | 3 requested units");
+    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Remove selected Synthetic clinical Synthetic variant"]')!.click());
+    expect(summary.textContent).toContain("1 exact variants | 1 requested units");
+    expect(summary.textContent).not.toContain("Synthetic clinical");
+    expect(summary.textContent).toContain("Synthetic research");
+    expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("keeps selected summary lines when search hides the corresponding catalog card", async () => {
+    const api = makeApi(); await render(api); await click("Add Synthetic research to request");
+    api.catalog.mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
+    const search = [...host.querySelectorAll<HTMLInputElement>("input")].find((input) => input.closest("label")?.textContent === "Search catalog")!;
+    await type(search, "no-match");
+    expect(host.querySelector(".xenios-order-cards")?.textContent).not.toContain("Synthetic research");
+    expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("Synthetic research");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("retains existing review-to-selection editing without persisting contact or bypassing submission", async () => {
+    const api = makeApi(); await prepare(api); await click("Edit selection");
+    expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("2 exact variants | 3 requested units");
+    expect(sessionStorage.length).toBe(0);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+});
+
 describe("Doc163 known first refusal versus prior uncertainty", () => {
   it("shows not-saved guidance, clears the marker and lets a first refusal start a fresh explicit attempt", async () => {
     const api = makeApi();

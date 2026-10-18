@@ -68,6 +68,7 @@
 .xenios-order-quantity button:not(.xenios-order-link) { width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; background: white; font-size: 1.2rem; }
 .xenios-order-quantity button:disabled { opacity: .45; cursor: default; }
 .xenios-order-quantity output { min-width: 36px; text-align: center; font-weight: 800; }
+.xenios-order-quantity label { flex: 1; min-width: 100px; }
 .xenios-order-link { min-height: 44px; border: 0; background: transparent; color: #7b2c28; text-decoration: underline; margin-left: auto; padding: 8px 4px; }
 .xenios-order-summary { position: sticky; top: 24px; border: 1px solid var(--line); background: var(--soft); border-radius: 20px; padding: 22px; }
 .xenios-order-summary h2 { margin: 0 0 18px; }
