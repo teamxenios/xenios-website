@@ -29,6 +29,33 @@ function lotCoaLabel(state: MemberCatalogVariant["lotCoaState"]): string {
   return "Exact-lot documentation required";
 }
 
+// The one media renderer for the detail view. Signed hrefs expire five
+// minutes after the fetch that minted them, so a load can fail on a stale
+// tab; the failure state is the same truthful pending panel the page shows
+// when no approved image exists, never the browser's broken-image icon. The
+// parent key includes the href so a refreshed signed URL remounts this state
+// even when its mediaId is unchanged.
+function ProductMedia({ media }: { media: NonNullable<MemberProductDetail["media"]> }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <ResearchPendingPanel
+        kind="supplier_pending"
+        body="An approved product image is not available."
+      />
+    );
+  }
+  return (
+    <img
+      src={media.href}
+      alt={media.altText}
+      onError={() => setFailed(true)}
+      className="w-full"
+      style={{ aspectRatio: "4 / 3", objectFit: "contain" }}
+    />
+  );
+}
+
 function FactSection({
   title,
   value,
@@ -119,11 +146,9 @@ export function MemberProductDetailExperience({
             <section className="card grid gap-6 md:grid-cols-2">
               <div style={{ minWidth: 0 }}>
                 {product.media ? (
-                  <img
-                    src={product.media.href}
-                    alt={product.media.altText}
-                    className="w-full"
-                    style={{ aspectRatio: "4 / 3", objectFit: "contain" }}
+                  <ProductMedia
+                    key={`${product.media.mediaId}:${product.media.href}`}
+                    media={product.media}
                   />
                 ) : (
                   <ResearchPendingPanel
