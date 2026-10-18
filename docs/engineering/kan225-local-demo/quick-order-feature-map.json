@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "feature": "Quick Order request for review",
+  "route": "/research/early-access/order-request",
+  "source": {
+    "commit": "8efa9a9ef4e94773c446e7fa2a17cf00c6592d85",
+    "repository": "xenios-website",
+    "provenance": "Exact pinned Git blobs read as raw bytes with git show COMMIT:PATH through an explicit --source-repository CLI argument; no checkout conversion or newline normalization. Repository is a logical repo-relative marker, not a machine path. A minimal object store can verify these four paths without full history.",
+    "verificationCommand": "node verify-feature-map.mjs --source-repository <path-to-source-git-repository>",
+    "files": [
+      {
+        "path": "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "sha256": "e206debf0322638db51392b3fe46517bc368610f31b55ffac1f671ca24bd8cc2"
+      },
+      {
+        "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "sha256": "01bb23fa9bcc7072353643f68845d0ed7c1ce7cba671446776d5592805135304"
+      },
+      {
+        "path": "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "sha256": "e9a83d37a402cb3104ef1d459a776d2df9f5cd02889fe77b46690ee629f32457"
+      },
+      {
+        "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "sha256": "ff220a26e3426584f89e4c0804417867e2b5b4c25bd2d244f7de07e3f8fb85aa"
+      }
+    ]
+  },
+  "evidence": {
+    "source": "inspected",
+    "synthetic_ui": "not_run",
+    "isolated_persistence": "not_run",
+    "shared_staging": "not_run",
+    "production": "not_run"
+  },
+  "limitations": [
+    "Developer verification map and static source checks only; no application runtime or persistence exercised.",
+    "Imported adapters, helpers, server handlers and route registration are outside the four pinned source files. Historical 16/16 export checks did not verify canonical Git blob hashes.",
+    "Independent acceptance belongs to original Claude reviewer through Root; this candidate is not self-approved."
+  ],
+  "states": [
+    {
+      "id": "guest_entry",
+      "evidenceTier": "source",
+      "summary": "Quick Order advertises no account required; server session bootstrap precedes rendering. Checking, unavailable, blocked prior attempts and non-mixed mode suppress the form. Route registration and wrapper wiring are outside this snapshot.",
+      "references": [
+        {
+          "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "anchor": "if (requestOnly)"
+        }
+      ]
+    },
+    {
+      "id": "catalog",
+      "evidenceTier": "source",
+      "summary": "Search, family filter and pagination show audience catalog entries. Exact variants can be added, quantity clamped and removed; up to 200 selections. Restrictions remain visible; links require one catalog-confirmed match.",
+      "references": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "anchor": "Search catalog"
+        }
+      ]
+    },
+    {
+      "id": "contact",
+      "evidenceTier": "source",
+      "summary": "Required legal name, email, phone, delivery address and adult confirmation; separate billing address when needed. Address validation precedes review; contact is held in component memory.",
+      "references": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "anchor": "function captureContact"
+        }
+      ]
+    },
+    {
+      "id": "agreements",
+      "evidenceTier": "source",
+      "summary": "Request-only shell mounts existing agreement section and gates continuation on accepted, unblocked standing. Form additionally requires current versioned acknowledgments, including selection-dependent requirements.",
+      "references": [
+        {
+          "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "anchor": "continuationEnabled={agreed && blocked === null}"
+        }
+      ]
+    },
+    {
+      "id": "review",
+      "evidenceTier": "source",
+      "summary": "Lists selected products, quantities and pending review type with contact summary. Edit selection resets acknowledgments. No guaranteed delivery date or final price is established.",
+      "references": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "anchor": "Review your request"
+        }
+      ]
+    },
+    {
+      "id": "submission",
+      "evidenceTier": "source",
+      "summary": "Submission freezes validated input with an idempotency key, preserves an attempt marker before API submission and locks concurrent actions. Receipt displays saved reference pending review; no payment, prescription, treatment approval or shipping confirmation.",
+      "references": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "anchor": "const input = validateRequestIntentInput"
+        }
+      ]
+    },
+    {
+      "id": "retry",
+      "evidenceTier": "source",
+      "summary": "Uncertain reply retains frozen input and offers same-request retry. Only a known first prewrite refusal with a safely cleared marker resets the frozen attempt and acknowledgments; a later refusal cannot erase an earlier lost reply.",
+      "references": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "anchor": "Retry same request"
+        }
+      ]
+    },
+    {
+      "id": "recovery",
+      "evidenceTier": "source",
+      "summary": "Restored marker replaces the form with a check action using its key. Unknown result retains attempt and advises support before replacement. Receipt appears only after confirmed recovery and safe marker clearing.",
+      "references": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "anchor": "Check your earlier request"
+        }
+      ]
+    },
+    {
+      "id": "isolation",
+      "evidenceTier": "source",
+      "summary": "Checking/recovery renders no form; confirmed opaque owner keys remount on account switch, not token refresh. Form says only attempt marker is retained, not selections/contact. Shell clears customer state on definitive unauthentication/expiry; transient errors preserve recoverable work. Backend isolation is unverified.",
+      "references": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentEntry.tsx",
+          "anchor": "key={owner}"
+        }
+      ]
+    },
+    {
+      "id": "staff",
+      "evidenceTier": "source",
+      "summary": "Separate private readback component requests paginated queue and reference lookup; validates XRI reference and discards stale responses. Comment requires private staff shell and server Care authorization. Neither mount nor server enforcement is verified; no approve/pay/fulfill controls are represented.",
+      "references": [
+        {
+          "path": "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+          "anchor": "export function RequestIntentStaffReadback"
+        }
+      ]
+    }
+  ]
+}

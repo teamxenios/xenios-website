@@ -1,0 +1,36 @@
+name: KAN225 feature-map static verification
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/kan225-feature-map.yml
+      - docs/engineering/kan225-local-demo/quick-order-feature-map.json
+      - docs/engineering/kan225-local-demo/verify-feature-map.mjs
+
+permissions:
+  contents: read
+
+jobs:
+  verify-feature-map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out candidate without retained credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Use existing Node convention
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Verify exact source and run static checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          pinned=8efa9a9ef4e94773c446e7fa2a17cf00c6592d85
+          if ! git cat-file -e "$pinned^{commit}" 2>/dev/null; then
+            git fetch --no-tags --depth=1 origin "$pinned"
+          fi
+          test "$(git rev-parse --verify "$pinned^{commit}")" = "$pinned"
+          node docs/engineering/kan225-local-demo/verify-feature-map.mjs --source-repository .
