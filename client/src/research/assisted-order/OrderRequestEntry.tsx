@@ -64,8 +64,12 @@ export function OrderRequestEntry(props: Props) {
     && memberSessionStatus !== "checking" && recovery === "none" && memberSessionStatus !== "verification_failed"
     && owner !== null, owner ?? "unconfirmed-member");
   if (memberChecking || memberSessionStatus === "checking") return <p role="status">Checking your existing session...</p>;
-  if (recovery !== "none" || memberSessionStatus === "verification_failed") return <section role="alert">
+  if (recovery !== "none") return <section role="alert">
     <p>Complete secure account recovery or contact support before continuing this request.</p><a href="/support">Contact support</a></section>;
+  if (memberSessionStatus === "verification_failed") return <section role="alert">
+    <p>Your existing account session could not be verified. This does not mean password recovery is required. Contact support before continuing.</p>
+    <p>If you already submitted a request or its outcome is uncertain, do not create a replacement until staff check for duplicates.</p>
+    <a href="/support">Contact support</a></section>;
   if (owner === null) return <section role="alert">
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/support">Contact support</a></section>;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode} />;
