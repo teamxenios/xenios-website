@@ -4,24 +4,25 @@
   "route": "/research/early-access/order-request",
   "source": {
     "commit": "8efa9a9ef4e94773c446e7fa2a17cf00c6592d85",
-    "repository": "/mnt/c/Users/sboad/.codex/worktrees/3221/xenios-website",
-    "provenance": "Existing Core reports Windows git archive export of exact commit; local snapshot bytes inspected, Git commit membership not independently attested.",
+    "repository": "xenios-website",
+    "provenance": "Exact pinned Git blobs read as raw bytes with git show COMMIT:PATH through an explicit --source-repository CLI argument; no checkout conversion or newline normalization. Repository is a logical repo-relative marker, not a machine path. A minimal object store can verify these four paths without full history.",
+    "verificationCommand": "node verify-feature-map.mjs --source-repository <path-to-source-git-repository>",
     "files": [
       {
         "path": "client/src/research/assisted-order/RequestIntentEntry.tsx",
-        "sha256": "a9ce588646a498d94697273213cdba2ff0de4e9aad6d254d17e590202488be72"
+        "sha256": "e206debf0322638db51392b3fe46517bc368610f31b55ffac1f671ca24bd8cc2"
       },
       {
         "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
-        "sha256": "ed0130e50c9c05d6271019ff84927f6d0a932693bde8dd45c5f0692d1b3d2039"
+        "sha256": "01bb23fa9bcc7072353643f68845d0ed7c1ce7cba671446776d5592805135304"
       },
       {
         "path": "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
-        "sha256": "bbd763387abcafc20900ff6f78018e77bd1e8ce25ed989a970275c536c7a786d"
+        "sha256": "e9a83d37a402cb3104ef1d459a776d2df9f5cd02889fe77b46690ee629f32457"
       },
       {
         "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
-        "sha256": "a2d961f71279c3a45db8c9babf2d9cef35e939ba4a75961cbf5672e676f47e76"
+        "sha256": "ff220a26e3426584f89e4c0804417867e2b5b4c25bd2d244f7de07e3f8fb85aa"
       }
     ]
   },
@@ -34,7 +35,7 @@
   },
   "limitations": [
     "Developer verification map and static source checks only; no application runtime or persistence exercised.",
-    "Imported adapters, helpers, server handlers and route registration are outside the four-file snapshot.",
+    "Imported adapters, helpers, server handlers and route registration are outside the four pinned source files. Historical 16/16 export checks did not verify canonical Git blob hashes.",
     "Independent acceptance belongs to original Claude reviewer through Root; this candidate is not self-approved."
   ],
   "states": [

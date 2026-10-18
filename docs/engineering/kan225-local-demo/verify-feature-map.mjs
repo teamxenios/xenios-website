@@ -1,13 +1,19 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { resolve, join, dirname } from 'node:path';
 import { createHash } from 'node:crypto';
 import assert from 'node:assert/strict';
 
 // Static artifact contract; this never mounts UI, sends requests or opens storage.
 const base = new URL('./', import.meta.url);
-const sourceRoot = new URL('../canonical-source-8efa9a9e/', base);
+const args = process.argv.slice(2);
+assert.ok(args.length === 2 && args[0] === '--source-repository' && args[1],
+  'Usage: node verify-feature-map.mjs --source-repository <path-to-source-git-repository>');
+const sourceRepository = resolve(args[1]);
 const expectedCommit = '8efa9a9ef4e94773c446e7fa2a17cf00c6592d85';
 const expectedRoute = '/research/early-access/order-request';
-const expectedRepository = '/mnt/c/Users/sboad/.codex/worktrees/3221/xenios-website';
+const expectedRepository = 'xenios-website';
 const expectedStates = ['guest_entry', 'catalog', 'contact', 'agreements', 'review', 'submission', 'retry', 'recovery', 'isolation', 'staff'];
 const expectedPaths = ['assisted-order/RequestIntentEntry', 'assisted-order/RequestIntentForm', 'assisted-order/RequestIntentStaffReadback', 'early-access/EarlyAccessRoute'].map(p => `client/src/research/${p}.tsx`);
 const expectedEvidence = { source: 'inspected', synthetic_ui: 'not_run', isolated_persistence: 'not_run', shared_staging: 'not_run', production: 'not_run' };
@@ -16,7 +22,13 @@ function sameMembers(actual, expected, code) {
   assert.ok(Array.isArray(actual), code);
   assert.deepEqual([...actual].sort(), [...expected].sort(), code);
 }
-export function verify(map) {
+function git(repository, ...args) {
+  return execFileSync('git', ['--no-replace-objects', '-C', repository, ...args], { stdio: ['ignore', 'pipe', 'pipe'] });
+}
+function blob(repository, path) {
+  return git(repository, 'show', `${expectedCommit}:${path}`);
+}
+export function verify(map, repository = sourceRepository) {
   assert.equal(map.schemaVersion, 1, 'schema');
   assert.equal(map.feature, 'Quick Order request for review', 'feature');
   assert.equal(map.route, expectedRoute, 'route');
@@ -26,9 +38,10 @@ export function verify(map) {
   assert.deepEqual(map.evidence, expectedEvidence, 'evidence boundary');
   assert.ok(Array.isArray(map.limitations) && map.limitations.length >= 3 && map.limitations.every(nonempty), 'limitations');
   sameMembers(map.source.files.map(f => f.path), expectedPaths, 'source files');
+  assert.equal(git(repository, 'rev-parse', '--verify', `${expectedCommit}^{commit}`).toString().trim(), expectedCommit, 'pinned commit');
   const texts = new Map();
   for (const file of map.source.files) {
-    const bytes = readFileSync(new URL(file.path, sourceRoot));
+    const bytes = blob(repository, file.path);
     assert.equal(file.sha256, createHash('sha256').update(bytes).digest('hex'), 'source digest');
     texts.set(file.path, bytes.toString('utf8'));
   }
@@ -44,8 +57,9 @@ export function verify(map) {
   }
 }
 const map = JSON.parse(readFileSync(new URL('quick-order-feature-map.json', base), 'utf8'));
-let passed = 0;
+let passed = 0, total = 0;
 function test(name, action) {
+  total++;
   try { action(); passed++; console.log(`PASS ${name}`); }
   catch (error) { console.error(`FAIL ${name}: ${error.message}`); process.exitCode = 1; }
 }
@@ -56,7 +70,7 @@ function rejects(name, mutation, message) {
     assert.throws(() => verify(changed), error => error.message.includes(message));
   });
 }
-test('canonical map and snapshot hashes/anchors', () => verify(map));
+test('canonical map and pinned Git blob hashes/anchors', () => verify(map));
 rejects('missing state', m => m.states.pop(), 'state inventory');
 rejects('duplicate state with unchanged count', m => m.states[1] = structuredClone(m.states[0]), 'state inventory');
 rejects('wrong source commit', m => m.source.commit = '0'.repeat(40), 'source commit');
@@ -71,4 +85,45 @@ rejects('state runtime overclaim', m => m.states[0].evidenceTier = 'production',
 rejects('missing source anchor', m => m.states[0].references[0].anchor = 'NONEXISTENT_SOURCE_ANCHOR', 'reference anchor');
 rejects('unknown reference path', m => m.states[0].references[0].path = '../other', 'reference path');
 rejects('empty state description', m => m.states[0].summary = '', 'state summary');
-console.log(`${passed}/16 checks passed; static map contract only; no runtime evidence.`);
+// Synthetic checkout fixtures point at the supplied object database. Their file
+// bytes deliberately differ; verification must read objects, never checkout files.
+const fixtures = mkdtempSync(join(tmpdir(), 'quick-order-map-'));
+try {
+  const gitDir = git(sourceRepository, 'rev-parse', '--absolute-git-dir').toString().trim();
+  for (const ending of ['LF', 'CRLF']) {
+    test(`${ending} checkout portability ignores checkout conversion`, () => {
+      const checkout = join(fixtures, ending);
+      mkdirSync(checkout);
+      writeFileSync(join(checkout, '.git'), `gitdir: ${gitDir}\n`);
+      for (const file of map.source.files) {
+        const raw = blob(sourceRepository, file.path);
+        const bytes = ending === 'CRLF' ? Buffer.from(raw.toString('utf8').replaceAll('\n', '\r\n')) : raw;
+        const target = join(checkout, file.path);
+        mkdirSync(dirname(target), { recursive: true });
+        writeFileSync(target, bytes);
+        if (ending === 'CRLF') assert.notEqual(createHash('sha256').update(readFileSync(target)).digest('hex'), file.sha256);
+      }
+      verify(map, checkout);
+    });
+  }
+  test('reject CRLF checkout hashes as pinned blob evidence', () => {
+    const changed = structuredClone(map);
+    for (const file of changed.source.files) {
+      file.sha256 = createHash('sha256').update(readFileSync(join(fixtures, 'CRLF', file.path))).digest('hex');
+    }
+    assert.throws(() => verify(changed), /source digest/);
+  });
+  test('reject repository containing only a different commit', () => {
+    const other = join(fixtures, 'other');
+    mkdirSync(other);
+    git(other, 'init', '--quiet');
+    git(other, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid',
+      '-c', 'core.hooksPath=/dev/null', 'commit', '--quiet', '--allow-empty', '-m', 'different commit');
+    const actual = git(other, 'rev-parse', 'HEAD').toString().trim();
+    assert.notEqual(actual, expectedCommit);
+    assert.throws(() => verify(map, other), error => error.stderr?.toString().includes('Needed a single revision'));
+  });
+} finally {
+  rmSync(fixtures, { recursive: true, force: true });
+}
+console.log(`${passed}/${total} checks passed; static map contract only; no runtime evidence.`);
