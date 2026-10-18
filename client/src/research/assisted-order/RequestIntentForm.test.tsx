@@ -288,6 +288,35 @@ describe("request selection layout and controls (component fixtures, not viewpor
     expect(sessionStorage.length).toBe(0);
     expect(api.submit).not.toHaveBeenCalled();
   });
+  it("counts two variants of one product as one product and two exact variants", async () => {
+    const api = makeApi();
+    const first = { ...item("same", false), variantId: "first", specification: "First synthetic variant" };
+    const second = { ...first, variantId: "second", specification: "Second synthetic variant" };
+    api.catalog.mockResolvedValue({ items: [first, second], total: 2, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
+    await render(api); await click("Add Synthetic same to request"); await click("Add Synthetic same to request");
+    const summary = host.querySelector('[aria-label="Selected request items"]')!;
+    expect(summary.textContent).toContain("1 products | 2 exact variants | 2 requested units");
+    expect(summary.querySelectorAll("li")).toHaveLength(2);
+    expect(summary.textContent).toContain("First synthetic variant");
+    expect(summary.textContent).toContain("Second synthetic variant");
+  });
+  it("edits an off-page selected quantity with canonical bounds while preserving other selections", async () => {
+    const api = makeApi(); await render(api);
+    await click("Add Synthetic clinical to request"); await click("Add Synthetic research to request");
+    api.catalog.mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
+    const search = [...host.querySelectorAll<HTMLInputElement>("input")].find((input) => input.closest("label")?.textContent === "Search catalog")!;
+    await type(search, "no-match");
+    const summary = host.querySelector<HTMLElement>('[aria-label="Selected request items"]')!;
+    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Edit selected quantity for Synthetic research Synthetic variant"]')!.click());
+    const editor = summary.querySelector<HTMLInputElement>('input[type="number"]')!;
+    expect([editor.min, editor.max, editor.step]).toEqual(["1", "100", "1"]);
+    await type(editor, "200"); expect(editor.value).toBe("100");
+    await type(editor, "4");
+    expect(summary.textContent).toContain("2 products | 2 exact variants | 5 requested units");
+    expect(summary.querySelectorAll("li")[0].textContent).toContain("Requested quantity: 1");
+    await click("Done editing quantity"); expect(summary.querySelector('input[type="number"]')).toBeNull();
+    expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
+  });
 });
 
 describe("Doc163 known first refusal versus prior uncertainty", () => {

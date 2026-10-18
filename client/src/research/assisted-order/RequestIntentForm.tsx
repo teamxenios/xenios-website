@@ -28,6 +28,7 @@ export function RequestIntentForm({
   const [family, setFamily] = useState("");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ReadonlyMap<string, Selection>>(new Map());
+  const [editingSelection, setEditingSelection] = useState<string | null>(null);
   const [contact, setContact] = useState<AssistedOrderContactInput | null>(null);
   const [billingSame, setBillingSame] = useState(true);
   const [acknowledged, setAcknowledged] = useState<ReadonlySet<string>>(new Set());
@@ -79,6 +80,7 @@ export function RequestIntentForm({
   }, [api, hintKey]);
   const selections = [...selected.values()];
   const selectedUnits = selections.reduce((total, selection) => total + selection.quantity, 0);
+  const selectedProducts = new Set(selections.map(({ item }) => item.productId)).size;
   const requirements = config ? requiredAcknowledgmentEntries(config, selections.some(({ item }) => item.researchUseOnly)) : [];
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   useEffect(() => { heading.current?.focus(); }, [step, receipt]);
@@ -250,11 +252,22 @@ export function RequestIntentForm({
       <p>Up to 200 exact variants per request. Unavailable and coming-soon entries remain visible with their restrictions.</p>
       </div><aside className="xenios-order-summary" aria-label="Selected request items">
         <h2>Your request</h2>
-        <p role="status">{selections.length} exact variants | {selectedUnits} requested units</p>
+        <p role="status">{selectedProducts} products | {selections.length} exact variants | {selectedUnits} requested units</p>
         {!selections.length ? <p>No products selected yet. Add an eligible item from the catalog.</p> : <ul>
           {selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
             <strong>{item.productName}</strong><span>{item.specification || item.variantId}</span>
             <span>Requested quantity: {quantity}</span>
+            {editingSelection === catalogItemKey(item) ? <>
+              <label>Requested quantity for selected {item.productName} {item.specification || item.variantId}
+                <input type="number" min={item.minimumQuantity} max={item.maximumQuantity ?? undefined}
+                  step={item.quantityIncrement} value={quantity} autoFocus
+                  onChange={(event) => setSelected((prior) => new Map(prior).set(catalogItemKey(item),
+                    { item, quantity: clampQuantity(item, Number(event.target.value)) }))} />
+              </label>
+              <button type="button" className="xenios-order-link" onClick={() => setEditingSelection(null)}>Done editing quantity</button>
+            </> : <button type="button" className="xenios-order-link"
+              aria-label={"Edit selected quantity for " + item.productName + " " + (item.specification || item.variantId)}
+              onClick={() => setEditingSelection(catalogItemKey(item))}>Edit quantity</button>}
             <button type="button" className="xenios-order-link" aria-label={"Remove selected " + item.productName + " " + (item.specification || item.variantId)}
               onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(catalogItemKey(item)); return next; })}>Remove</button>
           </li>)}
