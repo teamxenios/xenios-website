@@ -3,6 +3,7 @@ import SeoHead from "@/components/SeoHead";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
 import { useAssistedOrderBridgeState } from "../assisted-order/AssistedOrderCta";
 import { OrderRequestCta } from "../assisted-order/OrderRequestEntry";
+import type { RequestSelectionContext } from "../assisted-order/request-intent-selection-store";
 import { readOrderRequestContinuity, useOrderRequestMode } from "../assisted-order/order-request-mode";
 import { Suspense, lazy } from "react";
 
@@ -58,7 +59,14 @@ type GateState =
   | { kind: "checking" }
   | { kind: "unavailable" }
   | { kind: "locked"; error: string | null; busy: boolean }
-  | { kind: "authenticated"; expiresAt: string | null };
+  | { kind: "authenticated"; expiresAt: string | null; selectionScope: string | null };
+
+/** A partition from the live server response, never a client identity or grant. */
+export function requestSelectionContext(body: Record<string, unknown> | null): RequestSelectionContext | null {
+  return body?.authenticated === true && typeof body.selectionScope === "string"
+    && /^[0-9a-f]{64}$/.test(body.selectionScope)
+    ? { kind: "early_access_session", selectionScope: body.selectionScope } : null;
+}
 
 type EmbeddedOrderStep = "products" | "contact" | "review";
 
@@ -208,7 +216,8 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
             return;
           }
           lastExpiredSessionRef.current = null;
-          setState({ kind: "authenticated", expiresAt: expiration.expiresAt });
+          setState({ kind: "authenticated", expiresAt: expiration.expiresAt,
+            selectionScope: requestSelectionContext(body)?.selectionScope ?? null });
           return;
         }
         // These are the only answers that definitively say the browser is no
@@ -264,6 +273,21 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   useEffect(() => {
     void readSession();
   }, [readSession]);
+
+  // A non-mutating fresh check for retained selections. Unlike readSession it
+  // never unlocks, resets context or unmounts volatile contact on network error.
+  const confirmSelectionContext = useCallback(async () => {
+    try {
+      const response = await fetch(SESSION_PATH, { credentials: "same-origin", cache: "no-store",
+        headers: { Accept: "application/json" } });
+      const body = await readJson(response);
+      const expiry = sessionExpiration(body?.expiresAt);
+      return response.ok && (expiry.timestamp === null || expiry.timestamp > Date.now())
+        ? requestSelectionContext(body) : null;
+    } catch { return null; }
+  }, []);
+  const selectionContext = state.kind === "authenticated" && state.selectionScope
+    ? { kind: "early_access_session" as const, selectionScope: state.selectionScope } : null;
 
   const recheckSession = useCallback(
     (knownExpiresAt: string | null) => {
@@ -457,6 +481,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
               <div className="mt-5">
                 <Suspense fallback={<p role="status">Loading the request form...</p>}>
                   <FullCanonicalCatalog mode={requestMode} embedded entryIntent={entryIntent}
+                    selectionContext={selectionContext} confirmSelectionContext={confirmSelectionContext}
                     continuationEnabled={agreed && blocked === null}
                     onStepChange={setEmbeddedOrderStep} />
                 </Suspense>
@@ -633,6 +658,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                     >
                       <FullCanonicalCatalog
                         mode={requestMode}
+                        selectionContext={selectionContext} confirmSelectionContext={confirmSelectionContext}
                         embedded
                         entryIntent={entryIntent}
                         continuationEnabled={agreed && blocked === null}

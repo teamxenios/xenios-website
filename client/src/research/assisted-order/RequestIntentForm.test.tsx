@@ -6,6 +6,8 @@ import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../.
 import type { RequestIntentCatalogItem, RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
+import { REQUEST_SELECTION_KEY } from "./request-intent-selection-store";
+import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
 import { RequestIntentForm } from "./RequestIntentForm";
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
 import { RequestIntentService, type CreateIntent, type StoredIntent } from "../../../../server/research/assisted-order/request-intent/service";
@@ -96,8 +98,8 @@ async function type(input: HTMLInputElement, value: string) {
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
-async function prepare(api: RequestIntentApi) {
-  await render(api);
+async function prepare(api: RequestIntentApi, scoped = false) {
+  if (scoped) await scopedRender(api); else await render(api);
   await click("Add Synthetic clinical to request");
   await click("Add Synthetic research to request");
   const quantity = [...host.querySelectorAll("input[type=number]")][0] as HTMLInputElement;
@@ -111,6 +113,226 @@ async function prepare(api: RequestIntentApi) {
   await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
   await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
 }
+
+const retainedContext = { kind: "early_access_session" as const, selectionScope: "a".repeat(64) };
+function retain(ids = ["research"]) {
+  const raw = JSON.stringify({ version: 1, context: retainedContext,
+    lines: ids.map((id) => ({ productId: id, variantId: id + "-variant", quantity: 2 })) });
+  sessionStorage.setItem(REQUEST_SELECTION_KEY, raw);
+  return raw;
+}
+function pagedApi(items = [item("clinical", true), item("research", false)]) {
+  return { ...makeApi(), catalog: vi.fn(async (query: AssistedOrderCatalogQuery) => ({
+    items: items.slice(((query.page ?? 1) - 1) * (query.pageSize ?? 24), (query.page ?? 1) * (query.pageSize ?? 24)),
+    total: items.length, page: query.page ?? 1, pageSize: query.pageSize ?? 24,
+    families: ["clinical_formulations_503a", "research_peptides_materials"], channels: [], workflowModes: [],
+  })) };
+}
+async function scopedRender(api: RequestIntentApi, confirm = async () => retainedContext as typeof retainedContext | null) {
+  await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+    selectionContext={retainedContext} confirmSelectionContext={confirm} />));
+  for (let i = 0; i < 4; i++) await act(async () => { await Promise.resolve(); });
+}
+
+describe("actual form selection retention and progression (synthetic DOM, not browser release proof)", () => {
+  it("stores no contact fields and clears selections only after the real receipt and owned marker clearance", async () => {
+    const api = pagedApi();
+    await prepare(api, true);
+    const raw = sessionStorage.getItem(REQUEST_SELECTION_KEY)!;
+    expect(JSON.parse(raw).lines).toHaveLength(2);
+    for (const value of ["synthetic@example.invalid", "Synthetic Customer", "Street", "phone", "contact", "acceptedAt"])
+      expect(raw).not.toContain(value);
+    const originalRemove = Storage.prototype.removeItem;
+    const clearOrder: boolean[] = [];
+    const removal = vi.spyOn(Storage.prototype, "removeItem").mockImplementation(function (this: Storage, key: string) {
+      if (key === REQUEST_SELECTION_KEY) clearOrder.push(this.getItem(REQUEST_INTENT_ATTEMPT_KEY) === null);
+      originalRemove.call(this, key);
+    });
+    try {
+      api.submit.mockImplementation(async () => {
+        expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).not.toBeNull();
+        expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+        return receipt;
+      });
+      await click("Submit for review");
+      expect(host.textContent).toContain(reference);
+      expect(clearOrder).toEqual([true]);
+      expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBeNull();
+      expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    } finally { removal.mockRestore(); }
+  });
+  it("retains the attempt and cache after a lost submission reply", async () => {
+    const api = pagedApi(); await prepare(api, true);
+    const raw = sessionStorage.getItem(REQUEST_SELECTION_KEY);
+    api.submit.mockRejectedValue(new Error("Lost response"));
+    await click("Submit for review");
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).not.toBeNull();
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+    expect(host.textContent).toContain("Retry same request");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+  });
+  it("holds a same-mount scope replacement without copying prior selections to the new scope", async () => {
+    const api = pagedApi(); await scopedRender(api);
+    await click("Add Synthetic research to request");
+    const raw = sessionStorage.getItem(REQUEST_SELECTION_KEY);
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      selectionContext={{ ...retainedContext, selectionScope: "b".repeat(64) }} confirmSelectionContext={async () => retainedContext} />));
+    expect(host.textContent).toContain("could not be safely confirmed");
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+  });
+  it("keeps canonical quantity and eligibility validation after a complete scan", async () => {
+    const raw = retain();
+    const api = pagedApi([{ ...item("research", false), maximumQuantity: 1 }]);
+    await scopedRender(api);
+    expect(host.textContent).toContain("could not be safely confirmed");
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("restores only from the complete unfiltered current catalog after a fresh matching scope check", async () => {
+    retain(["p100"]);
+    const api = pagedApi(Array.from({ length: 101 }, (_, i) => item("p" + i, false)));
+    const confirm = vi.fn(async () => retainedContext);
+    await scopedRender(api, confirm);
+    const summary = host.querySelector('[aria-label="Selected request items"]')!;
+    expect(summary.textContent).toContain("Synthetic p100");
+    expect(summary.textContent).toContain("Requested quantity: 2");
+    expect(api.catalog.mock.calls.filter(([query]) => query.pageSize === 100).map(([query]) => query))
+      .toEqual([{ page: 1, pageSize: 100 }, { page: 2, pageSize: 100 }]);
+    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("does not scan the whole catalog when there are no retained selections", async () => {
+    const api = pagedApi(), confirm = vi.fn(async () => retainedContext);
+    await scopedRender(api, confirm);
+    expect(api.catalog.mock.calls.some(([query]) => query.pageSize === 100)).toBe(false);
+    expect(confirm).not.toHaveBeenCalled();
+  });
+  it("checks an empty retained candidate's session without scanning an unused full catalog", async () => {
+    retain([]); const api = pagedApi(), confirm = vi.fn(async () => retainedContext);
+    await scopedRender(api, confirm);
+    expect(api.catalog.mock.calls.some(([query]) => query.pageSize === 100)).toBe(false);
+    expect(confirm).toHaveBeenCalledTimes(1);
+    expect(host.textContent).toContain("No products selected");
+  });
+  it("never overwrites a retained candidate with initial empty state during a pending scan", async () => {
+    const raw = retain();
+    const api = pagedApi();
+    const normal = api.catalog.getMockImplementation()!;
+    let release!: (value: Awaited<ReturnType<typeof normal>>) => void;
+    api.catalog.mockImplementation((query) => query.pageSize === 100
+      ? new Promise((resolve) => { release = resolve; }) : normal(query));
+    await scopedRender(api);
+    expect(host.textContent).toContain("Checking retained selections");
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+    await act(async () => release(await normal({ page: 1, pageSize: 100 })));
+    expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("Synthetic research");
+  });
+  it.each(["page", "size", "total", "short", "duplicate", "excess"])("refuses inconsistent complete catalog: %s", async (failure) => {
+    const raw = retain();
+    const api = pagedApi();
+    const normal = api.catalog.getMockImplementation()!;
+    api.catalog.mockImplementation(async (query) => {
+      const result = await normal(query);
+      if (query.pageSize !== 100) return result;
+      if (failure === "page") result.page = 2;
+      if (failure === "size") result.pageSize = 24;
+      if (failure === "total") result.total = -1;
+      if (failure === "short") result.items = [];
+      if (failure === "duplicate") result.items = [item("research", false), item("research", false)];
+      if (failure === "excess") result.total = 50_001;
+      return result;
+    });
+    await scopedRender(api);
+    expect(host.textContent).toContain("could not be safely confirmed");
+    expect(host.querySelector("form")).toBeNull();
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("refuses a changed total between full pages", async () => {
+    retain(); const api = pagedApi(Array.from({ length: 101 }, (_, i) => item(i ? "p" + i : "research", false)));
+    const normal = api.catalog.getMockImplementation()!;
+    api.catalog.mockImplementation(async (query) => ({ ...await normal(query),
+      ...(query.pageSize === 100 && query.page === 2 ? { total: 102 } : {}) }));
+    await scopedRender(api);
+    expect(host.textContent).toContain("could not be safely confirmed");
+  });
+  it.each(["scope", "marker", "unknown"])("refuses a late %s boundary change before hydration", async (change) => {
+    const raw = retain(); const api = pagedApi();
+    await scopedRender(api, async () => {
+      if (change === "marker") sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, "corrupt-but-present");
+      return change === "unknown" ? null : { ...retainedContext, selectionScope: change === "scope" ? "b".repeat(64) : retainedContext.selectionScope };
+    });
+    expect(host.textContent).toContain("could not be safely confirmed");
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+    if (change === "marker") expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe("corrupt-but-present");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+  it("does not expose a retained selection without context or fresh-check capability", async () => {
+    const raw = retain(); const api = pagedApi();
+    await render(api);
+    expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("No products selected");
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+    expect(api.catalog.mock.calls.some(([query]) => query.pageSize === 100)).toBe(false);
+  });
+  it("preserves an uncertain marker and enters recovery instead of catalog restoration", async () => {
+    const raw = retain();
+    const marker = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001", acceptedAt: "2026-10-19T00:00:00Z", state: "uncertain" });
+    sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, marker);
+    const api = pagedApi(); await scopedRender(api);
+    expect(host.textContent).toContain("Check your earlier request");
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+    expect(api.catalog.mock.calls.some(([query]) => query.pageSize === 100)).toBe(false);
+  });
+  it("does not consume or request another page after unmount during a scan", async () => {
+    const raw = retain(); const api = pagedApi(Array.from({ length: 101 }, (_, i) => item("p" + i, false)));
+    const normal = api.catalog.getMockImplementation()!;
+    let release!: (value: Awaited<ReturnType<typeof normal>>) => void;
+    api.catalog.mockImplementation((query) => query.pageSize === 100
+      ? new Promise((resolve) => { release = resolve; }) : normal(query));
+    await scopedRender(api);
+    await act(async () => root.render(<p>Outside request route</p>));
+    await act(async () => release(await normal({ page: 1, pageSize: 100 })));
+    expect(api.catalog.mock.calls.filter(([query]) => query.pageSize === 100)).toHaveLength(1);
+    expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
+  });
+  it("keeps next action by the basket heading with an adjacent disabled explanation", async () => {
+    await render(pagedApi());
+    const action = host.querySelector('.xenios-order-next-action button') as HTMLButtonElement;
+    expect(action.disabled).toBe(true);
+    expect(document.getElementById(action.getAttribute("aria-describedby")!)?.textContent).toContain("Select at least one");
+    await click("Add Synthetic research to request");
+    expect(action.disabled).toBe(false);
+    expect(host.querySelector('.xenios-order-next-action')?.textContent).toContain("then review and submit");
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Submit for review")).toBe(false);
+  });
+  it("returns to the same catalog filters/page/selections and focuses its heading", async () => {
+    const api = pagedApi(Array.from({ length: 26 }, (_, i) => item(i ? "p" + i : "research", false)));
+    await render(api); await click("Add Synthetic research to request");
+    const search = host.querySelector('input:not([type])') as HTMLInputElement;
+    await type(search, "synthetic");
+    await click("Next");
+    await click("Continue to contact");
+    await click("Back to catalog / Continue browsing");
+    expect((host.querySelector('input:not([type])') as HTMLInputElement).value).toBe("synthetic");
+    expect(host.textContent).toContain("Page 2");
+    expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("Synthetic research");
+    expect(document.activeElement?.textContent).toBe("Browse the catalog");
+  });
+  it("does not intercept Backspace or browser history events, or lose mounted contact on focus", async () => {
+    const api = pagedApi(); await render(api);
+    await click("Add Synthetic research to request"); await click("Continue to contact");
+    const name = host.querySelector('input[name="name"]') as HTMLInputElement;
+    await type(name, "Synthetic"); name.focus();
+    const backspace = new KeyboardEvent("keydown", { key: "Backspace", bubbles: true, cancelable: true });
+    act(() => { name.dispatchEvent(backspace); window.dispatchEvent(new PopStateEvent("popstate")); window.dispatchEvent(new Event("focus")); });
+    expect(backspace.defaultPrevented).toBe(false);
+    expect(host.querySelector('input[name="name"]')).toBe(name);
+    expect(name.value).toBe("Synthetic");
+    // JSDOM cannot prove actual browser Back/Forward, scroll or text editing.
+    // Outside-route exact view-state restoration remains NOT IMPLEMENTED.
+  });
+});
 describe("mixed private request customer form source", () => {
   it("round-trips the form through the real intent service to one memory repository and authorized staff readback", async () => {
     const { api, rows } = makeRoundTrip();

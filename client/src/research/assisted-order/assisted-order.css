@@ -72,6 +72,10 @@
 .xenios-order-link { min-height: 44px; border: 0; background: transparent; color: #7b2c28; text-decoration: underline; margin-left: auto; padding: 8px 4px; }
 .xenios-order-summary { position: sticky; top: 24px; border: 1px solid var(--line); background: var(--soft); border-radius: 20px; padding: 22px; }
 .xenios-order-summary h2 { margin: 0 0 18px; }
+.xenios-order-next-action { display: grid; gap: 8px; margin-bottom: 18px; position: sticky; top: 12px; background: var(--soft); padding-block: 8px; z-index: 1; }
+.xenios-order-next-action .xenios-order-button { width: 100%; min-height: 44px; }
+.xenios-order-next-action p { margin: 0; }
+.xenios-order-catalog-heading { grid-column: 1 / -1; }
 .xenios-order-summary ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 13px; }
 .xenios-order-summary li { display: grid; gap: 5px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
 .xenios-order-summary li div { display: grid; }

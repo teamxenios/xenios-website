@@ -12,9 +12,13 @@ const auth = vi.hoisted(() => ({ member: null as MemberInfo | null, memberToken:
 vi.mock("../core", () => ({ useResearch: () => auth }));
 vi.mock("./AssistedOrderPage", () => ({ AssistedOrderPage: (props: { embedded?: boolean }) =>
   <div data-testid="legacy-form">{props.embedded ? "embedded" : "standalone"}</div> }));
-vi.mock("./RequestIntentEntry", () => ({ RequestIntentEntry: (props: { embedded?: boolean; entryIntent?: { action: string } }) =>
-  <div data-testid="mixed-form">{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}</div> }));
-vi.mock("./RequestIntentForm", () => ({ RequestIntentForm: () => <div data-testid="private-form">Volatile form boundary</div> }));
+vi.mock("./RequestIntentEntry", () => ({ RequestIntentEntry: (props: { embedded?: boolean; entryIntent?: { action: string };
+  selectionContext?: { selectionScope: string }; confirmSelectionContext?: unknown }) =>
+  <div data-testid="mixed-form" data-selection-scope={props.selectionContext?.selectionScope}
+    data-confirmer={typeof props.confirmSelectionContext}>{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}</div> }));
+vi.mock("./RequestIntentForm", () => ({ RequestIntentForm: (props: { selectionContext?: { selectionScope: string }; confirmSelectionContext?: unknown }) =>
+  <div data-testid="private-form" data-selection-scope={props.selectionContext?.selectionScope}
+    data-confirmer={typeof props.confirmSelectionContext}>Volatile form boundary</div> }));
 vi.mock("../early-access/OrderEntryIntentNotice", () => ({ OrderEntryIntentNotice: () => <p>Legacy hint resolver</p> }));
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let container: HTMLDivElement, root: Root;
@@ -98,6 +102,23 @@ describe("actual front-door selection and preservation (child form boundary stub
 for (const entry of ["door", "private-entry"] as const) {
   describe(`${entry} canonical member namespace (form boundary stubs, not live identity proof)`, () => {
     const selector = entry === "door" ? '[data-testid="mixed-form"]' : '[data-testid="private-form"]';
+    it("passes the real guest scope and fresh-check callback, remounts a renewed scope, and strips it for members", async () => {
+      const ActualEntry = entry === "door" ? OrderRequestEntry
+        : (await vi.importActual<typeof import("./RequestIntentEntry")>("./RequestIntentEntry")).RequestIntentEntry;
+      const confirm = vi.fn(async () => ({ kind: "early_access_session" as const, selectionScope: "a".repeat(64) }));
+      const scoped = async (scope: string) => render(<ActualEntry embedded
+        selectionContext={{ kind: "early_access_session", selectionScope: scope }} confirmSelectionContext={confirm}
+        {...(entry === "door" ? { mode: { kind: "mixed" as const } } : {})} />);
+      await scoped("a".repeat(64));
+      const first = container.querySelector(selector)!;
+      expect(first.getAttribute("data-selection-scope")).toBe("a".repeat(64));
+      expect(first.getAttribute("data-confirmer")).toBe("function");
+      await scoped("a".repeat(64)); expect(container.querySelector(selector)).toBe(first);
+      await scoped("b".repeat(64)); expect(container.querySelector(selector)).not.toBe(first);
+      await scoped("literal-not-a-scope"); expect(container.querySelector(selector)?.hasAttribute("data-selection-scope")).toBe(false);
+      auth.memberSessionStatus = "authenticated"; auth.member = member("c".repeat(64));
+      await scoped("a".repeat(64)); expect(container.querySelector(selector)?.hasAttribute("data-selection-scope")).toBe(false);
+    });
     async function mount() {
       if (entry === "door") await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
       else {

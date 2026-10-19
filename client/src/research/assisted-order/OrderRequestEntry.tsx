@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo, useRef, useState } from "react";
 import { useResearch } from "../core";
 import { isResearchCartScope } from "../cart-session";
+import type { RequestSelectionContext } from "./request-intent-selection-store";
 import type { StorefrontIntent } from "../storefront/entry-intent";
 import { OrderEntryIntentNotice } from "../early-access/OrderEntryIntentNotice";
 import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "../early-access/orderEntryIntent";
@@ -10,6 +11,8 @@ import { readOrderRequestContinuity, selectOrderRequestDoor, useOrderRequestMode
 const LegacyEntry = lazy(() => import("./AssistedOrderPage").then((m) => ({ default: m.AssistedOrderPage })));
 const MixedEntry = lazy(() => import("./RequestIntentEntry").then((m) => ({ default: m.RequestIntentEntry })));
 type Props = Readonly<{ embedded?: boolean; continuationEnabled?: boolean;
+  selectionContext?: RequestSelectionContext | null;
+  confirmSelectionContext?: () => Promise<RequestSelectionContext | null>;
   onStepChange?: (step: "products" | "contact" | "review") => void;
   entryIntent?: StorefrontIntent | null; mode?: OrderRequestMode }>;
 
@@ -46,6 +49,7 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode }) {
     {prior === "mixed" && props.mode.kind !== "mixed" ? <p role="status">An earlier private request may exist. Keep this attempt and contact support if its result cannot be confirmed. This page will not start a different request.</p> : null}
     <Suspense fallback={<p role="status">Loading the request form...</p>}>
       {kind === "mixed" ? <MixedEntry embedded={props.embedded} continuationEnabled={props.continuationEnabled}
+        selectionContext={props.selectionContext} confirmSelectionContext={props.confirmSelectionContext}
         onStepChange={props.onStepChange} entryIntent={hint} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled
             onResolved={setResolution} showAssistedAction /> : null}
@@ -68,5 +72,8 @@ export function OrderRequestEntry(props: Props) {
     <p>Complete secure account recovery or contact support before continuing this request.</p><a href="/support">Contact support</a></section>;
   if (owner === null) return <section role="alert">
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/support">Contact support</a></section>;
-  return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode} />;
+  const scope = !member && props.selectionContext?.kind === "early_access_session"
+    && /^[0-9a-f]{64}$/.test(props.selectionContext.selectionScope) ? props.selectionContext.selectionScope : null;
+  return <OwnedOrderRequestEntry key={owner + ":" + (scope ?? "no-selection-scope")}
+    {...props} selectionContext={scope ? props.selectionContext : null} mode={props.mode ?? standaloneMode} />;
 }

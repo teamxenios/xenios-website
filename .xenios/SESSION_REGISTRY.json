@@ -536,6 +536,16 @@
       "startedAt": "2026-10-19T16:45:22.305Z",
       "heartbeatAt": "2026-10-19T16:48:01.653Z",
       "note": "Selection-only store implemented; 124 focused checks PASS/e73409; initial unsupported minWorkers CLI failure578255 before tests preserved; no UI or live effects. Freezing candidate for independent review."
+    },
+    {
+      "id": "codex-core-kan23-basket-20261019",
+      "tool": "codex",
+      "lane": "kan23-basket-navigation",
+      "branch": "codex/kan23-basket-navigation-20261019",
+      "state": "active",
+      "startedAt": "2026-10-19T17:09:31.208Z",
+      "heartbeatAt": "2026-10-19T17:17:34.295Z",
+      "note": "Exact8 UI slice implemented; final9affectedfiles237PASS0FAIL0SKIP29.55s/b82c45; JSDOM scrollTo limitations preserved; outside-route view state not implemented; freezing for independent source review."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
