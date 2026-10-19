@@ -2089,9 +2089,21 @@
         "server/research/early-access/private-access-routes.ts",
         "server/research/early-access/private-access-routes.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-19T15:18:37.666Z",
       "heartbeatAt": "2026-10-19T15:21:29.459Z"
+    },
+    {
+      "id": "a8374b48-6842-4a00-b9a7-21d0e8e58473",
+      "task": "KAN24-SELECTION-STORE-20261019",
+      "session": "codex-core-kan24-store-20261019",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-selection-store.ts",
+        "client/src/research/assisted-order/request-intent-selection-store.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-19T16:45:22.441Z",
+      "heartbeatAt": "2026-10-19T16:48:01.653Z"
     }
   ],
   "rules": [

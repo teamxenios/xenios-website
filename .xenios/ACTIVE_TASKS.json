@@ -3,10 +3,25 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "KAN24-SELECTION-STORE-20261019",
+      "title": "Bounded selection-only cache under verified access-session scope",
+      "priority": "P1",
+      "state": "claimed",
+      "jira": "KAN-24",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-selection-store.ts",
+        "client/src/research/assisted-order/request-intent-selection-store.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Root dispatched KAN-24-3-5cc9f7a885ef817d core/token3; packet5cc9f7a885ef817df4987ddfb6c8c7eaf4e93be51a332911c4ac782e13d50c55; Jira10436/10257; ACK955e93. Exactly two new source/test files; own continuity only; no UI wiring or live effects.",
+      "owner": "codex-core-kan24-store-20261019",
+      "claimedAt": "2026-10-19T16:45:22.435Z"
+    },
+    {
       "id": "KAN24-SESSION-SELECTION-SCOPE-20261019",
       "title": "Project a non-authorizing scope only for a verified live Early Access session",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-24",
       "paths": [
         "server/research/early-access/private-access-routes.ts",
@@ -15,7 +30,11 @@
       "dependsOn": [],
       "scopeNote": "Actual Root assisted handoff KAN-24-2-62867034029513e2 core/token2; canonical packet62867034029513e28ee88477251c66e45c9f1556e75e36998670563ff2a7d237; Jira history10435/comment10249; accepted ce682413 base. Add only domain-separated selectionScope projection after existing live resolver and verified cookie reader; no resolver/auth, endpoint, cookie, secret, DB, client storage or member changes. Focused synthetic tests; Root publishes and same dedicated reviewer independently reviews. No merge/live effects.",
       "owner": "codex-core-kan24-scope-20261019",
-      "claimedAt": "2026-10-19T15:18:37.663Z"
+      "claimedAt": "2026-10-19T15:18:37.663Z",
+      "handoff": {
+        "sha": "9b462e0d382cd60b9cfde97c0071eddad45c023a",
+        "scope": "Pushed PR323; source accepted; exact-head CI39278689388 all required PASS; Root closed token2. Reconciled only in isolated successor."
+      }
     },
     {
       "id": "KAN31-GUEST-REFUSAL-COPY-20261019",
