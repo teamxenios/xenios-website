@@ -1,7 +1,7 @@
 name: KAN23 exact candidate synthetic UI proof
 on:
   push:
-    branches: [codex/kan23-ci-proof-one-attempt-20261018]
+    branches: [codex/kan23-ci-proof-one-attempt-r2-20261018]
 permissions:
   contents: read
   actions: read
