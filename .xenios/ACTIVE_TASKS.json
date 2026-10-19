@@ -2101,6 +2101,21 @@
       "acceptedSha": "e79324a0b0fb54010533716c45c8d5c46cfaa5de",
       "acceptedBy": "codex-seth-revenue-launch-20260905",
       "acceptedAt": "2026-09-06T03:50:13.667Z"
+    },
+    {
+      "id": "KAN24-SELECTION-RESTORE-VALIDATION-20261019",
+      "title": "Validate retained request selections against current canonical catalog without substitution",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-core-kan24-validation-20261019",
+      "jira": "KAN-24",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-selection-restore.ts",
+        "client/src/research/assisted-order/request-intent-selection-restore.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Root exact two-new-file lease on 2f4ff3e lineage. Pure validation using existing quantity and catalog eligibility authorities only. No storage, authentication, form/CSS, attempts or submission wiring; not persistent basket completion. Branch-local task creation authorized by Root; preserve legacy ownership.",
+      "claimedAt": "2026-10-19T13:24:26.731Z"
     }
   ]
 }

@@ -496,6 +496,16 @@
       "startedAt": "2026-09-24T03:31:31.622Z",
       "heartbeatAt": "2026-09-24T04:47:22.614Z",
       "note": "Gates green; preparing exact candidate commit"
+    },
+    {
+      "id": "codex-core-kan24-validation-20261019",
+      "tool": "codex",
+      "lane": "kan24-selection-validation",
+      "branch": "codex/kan24-selection-validation-20261019",
+      "state": "active",
+      "startedAt": "2026-10-19T13:23:02.434Z",
+      "heartbeatAt": "2026-10-19T13:26:07.910Z",
+      "note": "KAN24 two-path helper implemented; 45 focused Vitest PASS; preparing exact source/continuity checkpoint for Root"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
