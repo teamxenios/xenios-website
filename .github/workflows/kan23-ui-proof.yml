@@ -34,7 +34,7 @@ jobs:
           test "$(npm --version)" = 10.8.2
           test "$(git -C application rev-parse HEAD)" = 2f4ff3ebb69c3b3239fbf8e6f55f9eac66801097
           test "$(git -C application rev-parse HEAD^{tree})" = f0c655d4154fc56c78b2482399a6b47d86aa3496
-          printf '%s  %s\n' d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8 application/package-lock.json | sha256sum --check -
+          printf '%s  %s\n' d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74 application/package-lock.json | sha256sum --check -
           cd application
           timeout --kill-after=10s 180s env -i PATH="$PATH" HOME="$RUNNER_TEMP/npm-home" CI=true npm ci --no-audit --no-fund --include=dev
           git diff --exit-code HEAD

@@ -30,7 +30,7 @@ function immutable() {
   assert.equal(process.env.NODE_OPTIONS, '--max-old-space-size=1536');
   assert.equal(execFileSync(git, ['-c', 'core.longpaths=true', 'rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), expected);
   assert.equal(execFileSync(git, ['-c', 'core.longpaths=true', 'rev-parse', 'HEAD^{tree}'], { cwd: root, encoding: 'utf8' }).trim(), expectedTree);
-  assert.equal(sha256(fs.readFileSync(path.join(root, 'package-lock.json'))), 'd3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8');
+  assert.equal(sha256(fs.readFileSync(path.join(root, 'package-lock.json'))), 'd25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74');
   execFileSync(git, ['-c', 'core.longpaths=true', 'diff', '--exit-code', 'HEAD', '--', ...tracked], { cwd: root, stdio: 'pipe' });
 }
 function capacity() { return { availableMiB: Number(/^MemAvailable:\s+(\d+)/m.exec(fs.readFileSync('/proc/meminfo', 'utf8'))?.[1] ?? 0) / 1024, time: new Date().toISOString() }; }

@@ -12,7 +12,7 @@ function immutable() {
   assert.equal(process.version, 'v20.19.0');
   assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], {cwd:root,encoding:'utf8'}).trim(),source);
   assert.equal(execFileSync('git', ['rev-parse', 'HEAD^{tree}'], {cwd:root,encoding:'utf8'}).trim(),tree);
-  assert.equal(hash(fs.readFileSync(path.join(root,'package-lock.json'))),'d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8');
+  assert.equal(hash(fs.readFileSync(path.join(root,'package-lock.json'))),'d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74');
   execFileSync('git',['diff','--exit-code','HEAD'],{cwd:root,stdio:'pipe'});
 }
 function inventory(dir, prefix='') {
