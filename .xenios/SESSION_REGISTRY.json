@@ -526,6 +526,16 @@
       "startedAt": "2026-10-19T15:18:37.563Z",
       "heartbeatAt": "2026-10-19T15:21:29.459Z",
       "note": "Non-authorizing session projection implemented; five focused synthetic suites 139 PASS/a87124; no client storage/auth/DB changes; freezing exact source"
+    },
+    {
+      "id": "codex-core-kan24-store-20261019",
+      "tool": "codex",
+      "lane": "kan24-selection-store",
+      "branch": "codex/kan24-selection-store-20261019",
+      "state": "active",
+      "startedAt": "2026-10-19T16:45:22.305Z",
+      "heartbeatAt": "2026-10-19T16:48:01.653Z",
+      "note": "Selection-only store implemented; 124 focused checks PASS/e73409; initial unsupported minWorkers CLI failure578255 before tests preserved; no UI or live effects. Freezing candidate for independent review."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
