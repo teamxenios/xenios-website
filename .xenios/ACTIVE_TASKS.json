@@ -3,10 +3,25 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "KAN24-SESSION-SELECTION-SCOPE-20261019",
+      "title": "Project a non-authorizing scope only for a verified live Early Access session",
+      "priority": "P1",
+      "state": "claimed",
+      "jira": "KAN-24",
+      "paths": [
+        "server/research/early-access/private-access-routes.ts",
+        "server/research/early-access/private-access-routes.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Actual Root assisted handoff KAN-24-2-62867034029513e2 core/token2; canonical packet62867034029513e28ee88477251c66e45c9f1556e75e36998670563ff2a7d237; Jira history10435/comment10249; accepted ce682413 base. Add only domain-separated selectionScope projection after existing live resolver and verified cookie reader; no resolver/auth, endpoint, cookie, secret, DB, client storage or member changes. Focused synthetic tests; Root publishes and same dedicated reviewer independently reviews. No merge/live effects.",
+      "owner": "codex-core-kan24-scope-20261019",
+      "claimedAt": "2026-10-19T15:18:37.663Z"
+    },
+    {
       "id": "KAN31-GUEST-REFUSAL-COPY-20261019",
       "title": "Neutral access guidance for verified Quick Order 401 refusal",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-31",
       "paths": [
         "client/src/research/assisted-order/request-intent-api.ts",
@@ -15,7 +30,13 @@
       "dependsOn": [],
       "scopeNote": "Actual assisted intake KAN-31-1-dcc2ae2ae7bb6fe6 core/token1; packet dcc2ae2ae7bb6fe6d722cf029990065320c27a27dcd690d76f79d4bdd7d99031; Jira history10434/comment10248; base84555028. Change only verified 401 copy and focused regression checks. Preserve all auth, first-POST/owned-marker proof, transport, recovery, storage and backend behavior. Root publishes/reviewer independently accepts; no merge or live effects.",
       "owner": "codex-core-kan31-refusal-20261019",
-      "claimedAt": "2026-10-19T14:56:21.910Z"
+      "claimedAt": "2026-10-19T14:56:21.910Z",
+      "handoff": {
+        "session": "codex-core-kan31-refusal-20261019",
+        "sha": "ce682413ea99ebfb5c3e14a58500a901510158e6",
+        "file": ".xenios/handoffs/2026-10-19-KAN31-REFUSAL-SOURCE-HANDOFF.md",
+        "scope": "Source accepted; pushed draft PR322 and exact-head CI39275046882 passed. Unmerged and not deployed."
+      }
     },
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",

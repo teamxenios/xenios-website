@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import type { EarlyAccessConfig } from "./private-access-config";
 import { hashPrivateAccessPassword } from "./private-access-password";
@@ -592,6 +593,12 @@ describe("unlock: infrastructure faults are not an oracle", () => {
 // ---------------------------------------------------------------------------
 
 describe("session read", () => {
+  function expectedSelectionScope(token: string): string {
+    return createHash("sha256")
+      .update("xenios:request-intent:selection-scope:v1\0", "utf8")
+      .update(hashPrivateAccessSessionToken(token), "utf8")
+      .digest("hex");
+  }
   async function unlock(harness: Harness): Promise<string> {
     const route = createUnlockRoute(harness.deps);
     const { port, recorded } = makeResponse();
@@ -599,7 +606,7 @@ describe("session read", () => {
     return cookieHeaderFrom(recorded.headers["Set-Cookie"]);
   }
 
-  it("reports a live session with its expiry and nothing else", async () => {
+  it("reports only live-session facts and a non-authorizing selection partition", async () => {
     const harness = makeHarness();
     const cookieHeader = await unlock(harness);
     const { port, recorded } = makeResponse();
@@ -614,13 +621,95 @@ describe("session read", () => {
       "authenticated",
       "expiresAt",
       "openAccess",
+      "selectionScope",
     ]);
     expect((recorded.body as { authenticated: boolean }).authenticated).toBe(true);
+    expect((recorded.body as { selectionScope: string }).selectionScope).toBe(expectedSelectionScope(tokenFor(1)));
     // No handle, hash, owner, role, or reason reaches the client.
     const serialized = JSON.stringify(recorded.body);
     expect(serialized).not.toContain(tokenFor(1));
     expect(serialized).not.toContain(hashPrivateAccessSessionToken(tokenFor(1)));
     expect(serialized).not.toContain(PRIVATE_ACCESS_DEFAULT_OWNER_ID);
+  });
+
+  it("keeps the same selection scope for the same live session without extra database operations", async () => {
+    const harness = makeHarness();
+    const cookieHeader = await unlock(harness);
+    const resolve = vi.spyOn(harness.repository, "resolve");
+    const touch = vi.spyOn(harness.repository, "touch");
+    const create = vi.spyOn(harness.repository, "create");
+    const revoke = vi.spyOn(harness.repository, "revoke");
+    const route = createSessionRoute(harness.deps);
+    const first = makeResponse(), second = makeResponse();
+    await route({ cookieHeader }, first.port);
+    await route({ cookieHeader }, second.port);
+    expect(second.recorded.body).toEqual(first.recorded.body);
+    expect((first.recorded.body as { selectionScope: string }).selectionScope).toMatch(/^[a-f0-9]{64}$/);
+    expect(resolve).toHaveBeenCalledTimes(2);
+    expect(touch).toHaveBeenCalledTimes(2);
+    expect(create).not.toHaveBeenCalled();
+    expect(revoke).not.toHaveBeenCalled();
+  });
+
+  it("separates independent sessions in the same store and does not accept a scope as a credential", async () => {
+    const harness = makeHarness();
+    const cookieA = await unlock(harness), cookieB = await unlock(harness);
+    const route = createSessionRoute(harness.deps);
+    const first = makeResponse(), second = makeResponse();
+    await route({ cookieHeader: cookieA }, first.port);
+    await route({ cookieHeader: cookieB }, second.port);
+    const scopeA = (first.recorded.body as { selectionScope: string }).selectionScope;
+    const scopeB = (second.recorded.body as { selectionScope: string }).selectionScope;
+    expect(scopeA).toBe(expectedSelectionScope(tokenFor(1)));
+    expect(scopeB).toBe(expectedSelectionScope(tokenFor(2)));
+    expect(scopeB).not.toBe(scopeA);
+    const forged = makeResponse();
+    await route({ cookieHeader: cookieA.split("=")[0] + "=" + scopeA }, forged.port);
+    expect(forged.recorded.body).toEqual({ authenticated: false, openAccess: false });
+  });
+
+  it("rotates the partition when the same browser re-unlocks into a new access session", async () => {
+    const harness = makeHarness();
+    const firstCookie = await unlock(harness);
+    const renewed = makeResponse();
+    await createUnlockRoute(harness.deps)({ body: { password: PASSWORD }, clientKey: "k", cookieHeader: firstCookie }, renewed.port);
+    const renewedCookie = cookieHeaderFrom(renewed.recorded.headers["Set-Cookie"]);
+    const route = createSessionRoute(harness.deps);
+    const first = makeResponse(), second = makeResponse();
+    await route({ cookieHeader: firstCookie }, first.port);
+    await route({ cookieHeader: renewedCookie }, second.port);
+    expect((first.recorded.body as { selectionScope: string }).selectionScope).toBe(expectedSelectionScope(tokenFor(1)));
+    expect((second.recorded.body as { selectionScope: string }).selectionScope).toBe(expectedSelectionScope(tokenFor(2)));
+  });
+
+  it("omits the scope without changing the prior auth verdict when the second cookie verification fails", async () => {
+    const cookies = requestHonouringCookiePort();
+    let reads = 0;
+    const harness = makeHarness({ cookies: { ...cookies, read(input) {
+      reads += 1;
+      return reads === 1 ? cookies.read(input) : { ok: false };
+    } } });
+    const cookieHeader = await unlock(harness);
+    const result = makeResponse();
+    await createSessionRoute(harness.deps)({ cookieHeader }, result.port);
+    expect(result.recorded.body).toEqual({ authenticated: true, openAccess: false,
+      expiresAt: new Date(START + BASE_CONFIG.sessionTtlMinutes * 60_000).toISOString() });
+    expect(reads).toBe(2);
+  });
+
+  it("publishes no scope on unknown database liveness or an unavailable clock", async () => {
+    const harness = makeHarness();
+    const cookieHeader = await unlock(harness);
+    const repository = withRepositoryOverrides(harness.repository, {
+      resolve: async () => ({ ok: false, code: "BACKEND_UNAVAILABLE" }),
+    });
+    const unavailable = makeResponse();
+    await createSessionRoute({ ...harness.deps, repository })({ cookieHeader }, unavailable.port);
+    expect(unavailable.recorded.body).toEqual({ authenticated: false, openAccess: false });
+    harness.clock.value = Number.NaN;
+    const badClock = makeResponse();
+    await createSessionRoute(harness.deps)({ cookieHeader }, badClock.port);
+    expect(badClock.recorded.body).toEqual({ authenticated: false, openAccess: false });
   });
 
   it("reports no session for a missing, malformed, or foreign cookie", async () => {
@@ -689,7 +778,8 @@ describe("session read", () => {
     });
     const { port, recorded } = makeResponse();
     await createSessionRoute({ ...harness.deps, repository })({ cookieHeader }, port);
-    expect(recorded.body).toEqual({ authenticated: true, openAccess: false });
+    expect(recorded.body).toEqual({ authenticated: true, openAccess: false,
+      selectionScope: expectedSelectionScope(tokenFor(1)) });
   });
 
   it("is unaffected by a touch that fails or throws, and touch never extends the session", async () => {

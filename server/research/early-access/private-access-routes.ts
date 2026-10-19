@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import {
   clearPrivateAccessCookie,
   decodePrivateAccessCookie,
@@ -805,6 +806,7 @@ export function createEarlyAccessSessionIdReader(
 
 export function createSessionRoute(deps: PrivateAccessRouteDependencies): PrivateAccessSessionRoute {
   const resolve = createEarlyAccessSessionResolver(deps);
+  const readSessionId = createEarlyAccessSessionIdReader(deps);
 
   return async (request, response): Promise<void> => {
     try {
@@ -823,13 +825,25 @@ export function createSessionRoute(deps: PrivateAccessRouteDependencies): Privat
         return;
       }
 
+      // Partition selection-only browser memory, never authorize a request.
+      // Resolve liveness FIRST; the existing cookie reader alone cannot see
+      // revocation. Publish neither its session hash nor a bearer credential.
+      // A changed/expired cookie during the read yields no partition, not a
+      // fallback shared by unrelated browsers. The auth verdict stays intact.
+      const sessionId = readSessionId(request?.cookieHeader);
+      const selectionPartition = sessionId === null ? {} : {
+        selectionScope: createHash("sha256")
+          .update("xenios:request-intent:selection-scope:v1\0", "utf8")
+          .update(sessionId, "utf8")
+          .digest("hex"),
+      };
       const expiresAtEpochMs = check.expiresAtEpochMs;
       send(
         response,
         200,
         expiresAtEpochMs === null
-          ? { authenticated: true, openAccess }
-          : { authenticated: true, openAccess, expiresAt: new Date(expiresAtEpochMs).toISOString() },
+          ? { authenticated: true, openAccess, ...selectionPartition }
+          : { authenticated: true, openAccess, expiresAt: new Date(expiresAtEpochMs).toISOString(), ...selectionPartition },
       );
     } catch {
       try {

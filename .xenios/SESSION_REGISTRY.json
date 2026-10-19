@@ -516,6 +516,16 @@
       "startedAt": "2026-10-19T14:56:21.839Z",
       "heartbeatAt": "2026-10-19T14:58:54.110Z",
       "note": "Exact neutral401 line and nine regression cases complete; 32 focused API/Form checks PASS17aa72; original dependency-resolution failures and cache preserved"
+    },
+    {
+      "id": "codex-core-kan24-scope-20261019",
+      "tool": "codex",
+      "lane": "kan24-session-selection-scope",
+      "branch": "codex/kan24-session-selection-scope-20261019",
+      "state": "active",
+      "startedAt": "2026-10-19T15:18:37.563Z",
+      "heartbeatAt": "2026-10-19T15:21:29.459Z",
+      "note": "Non-authorizing session projection implemented; five focused synthetic suites 139 PASS/a87124; no client storage/auth/DB changes; freezing exact source"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

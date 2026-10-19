@@ -1,0 +1,10 @@
+{
+  "id": "codex-core-kan24-scope-20261019",
+  "tool": "codex",
+  "lane": "kan24-session-selection-scope",
+  "branch": "codex/kan24-session-selection-scope-20261019",
+  "state": "active",
+  "startedAt": "2026-10-19T15:18:37.563Z",
+  "heartbeatAt": "2026-10-19T15:21:29.459Z",
+  "note": "Non-authorizing session projection implemented; five focused synthetic suites 139 PASS/a87124; no client storage/auth/DB changes; freezing exact source"
+}
