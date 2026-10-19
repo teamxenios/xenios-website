@@ -2065,9 +2065,21 @@
         "client/src/research/assisted-order/request-intent-selection-restore.ts",
         "client/src/research/assisted-order/request-intent-selection-restore.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-19T13:24:26.733Z",
       "heartbeatAt": "2026-10-19T13:26:07.910Z"
+    },
+    {
+      "id": "7f2009d4-adf3-4ac5-bb1c-614a81f9b6ec",
+      "task": "KAN31-GUEST-REFUSAL-COPY-20261019",
+      "session": "codex-core-kan31-refusal-20261019",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-19T14:56:21.913Z",
+      "heartbeatAt": "2026-10-19T14:58:54.110Z"
     }
   ],
   "rules": [
