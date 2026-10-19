@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "KAN23 isolated tab zoom proof",
+  "version": "1.0.0",
+  "host_permissions": [
+    "http://127.0.0.1:5239/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
+
