@@ -14,7 +14,7 @@ export function isKnownIntentPrewriteRefusal(error: unknown): error is RequestIn
 }
 /** This copy is used ONLY after first-POST and owned-marker clearance proof. */
 export function intentRefusalGuidance(error: RequestIntentHttpError): string {
-  if (error.status === 401) return "This request was not saved. Sign in through the existing account or access flow before starting a new attempt.";
+  if (error.status === 401) return "This request was not saved. Access is no longer available. Return to the request page to check access, or contact support.";
   if (error.status === 429) return "This request was not saved. Wait before submitting a new attempt; you can edit the details meanwhile.";
   if (error.status === 403 && error.code === "agreement_standing_required") {
     return "This request was not saved. Complete the existing access and agreement requirements before starting a new attempt.";

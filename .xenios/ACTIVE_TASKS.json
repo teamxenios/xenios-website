@@ -3,6 +3,21 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "KAN31-GUEST-REFUSAL-COPY-20261019",
+      "title": "Neutral access guidance for verified Quick Order 401 refusal",
+      "priority": "P1",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Actual assisted intake KAN-31-1-dcc2ae2ae7bb6fe6 core/token1; packet dcc2ae2ae7bb6fe6d722cf029990065320c27a27dcd690d76f79d4bdd7d99031; Jira history10434/comment10248; base84555028. Change only verified 401 copy and focused regression checks. Preserve all auth, first-POST/owned-marker proof, transport, recovery, storage and backend behavior. Root publishes/reviewer independently accepts; no merge or live effects.",
+      "owner": "codex-core-kan31-refusal-20261019",
+      "claimedAt": "2026-10-19T14:56:21.910Z"
+    },
+    {
       "id": "XENIOS-ORDERING-READINESS-20260923",
       "title": "Complete customer-ready manual, assisted, and Care-gated ordering while native commerce remains dark",
       "priority": "P0",
@@ -2106,7 +2121,7 @@
       "id": "KAN24-SELECTION-RESTORE-VALIDATION-20261019",
       "title": "Validate retained request selections against current canonical catalog without substitution",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-core-kan24-validation-20261019",
       "jira": "KAN-24",
       "paths": [
@@ -2115,7 +2130,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Root exact two-new-file lease on 2f4ff3e lineage. Pure validation using existing quantity and catalog eligibility authorities only. No storage, authentication, form/CSS, attempts or submission wiring; not persistent basket completion. Branch-local task creation authorized by Root; preserve legacy ownership.",
-      "claimedAt": "2026-10-19T13:24:26.731Z"
+      "claimedAt": "2026-10-19T13:24:26.731Z",
+      "handoff": {
+        "session": "codex-core-kan24-validation-20261019",
+        "sha": "84555028b3aecd68f3bcddd9292240e03b7e5dd4",
+        "file": ".xenios/handoffs/2026-10-19-KAN24-SOURCE-HANDOFF.md",
+        "scope": "Source component accepted; PR321 draft and exact-head CI39261444677 passed; not complete persistent basket or deployed."
+      }
     }
   ]
 }
