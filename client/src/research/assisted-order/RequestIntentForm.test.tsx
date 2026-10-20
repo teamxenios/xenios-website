@@ -178,6 +178,7 @@ describe("actual form selection retention and progression (synthetic DOM, not br
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       selectionContext={{ ...retainedContext, selectionScope: "b".repeat(64) }} confirmSelectionContext={async () => retainedContext} />));
     expect(host.textContent).toContain("could not be safely confirmed");
+    expect(host.querySelector("a")?.getAttribute("href")).toBe("/research/support");
     expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
   });
   it("keeps canonical quantity and eligibility validation after a complete scan", async () => {
@@ -223,6 +224,7 @@ describe("actual form selection retention and progression (synthetic DOM, not br
       ? new Promise((resolve) => { release = resolve; }) : normal(query));
     await scopedRender(api);
     expect(host.textContent).toContain("Checking retained selections");
+    expect(host.querySelector("a")?.getAttribute("href")).toBe("/research/support");
     expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
     await act(async () => release(await normal({ page: 1, pageSize: 100 })));
     expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("Synthetic research");
@@ -280,6 +282,7 @@ describe("actual form selection retention and progression (synthetic DOM, not br
     sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, marker);
     const api = pagedApi(); await scopedRender(api);
     expect(host.textContent).toContain("Check your earlier request");
+    expect(host.querySelector("a")?.getAttribute("href")).toBe("/research/support");
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
     expect(sessionStorage.getItem(REQUEST_SELECTION_KEY)).toBe(raw);
     expect(api.catalog.mock.calls.some(([query]) => query.pageSize === 100)).toBe(false);
@@ -339,6 +342,7 @@ describe("mixed private request customer form source", () => {
     await prepare(api); await click("Submit for review");
     expect(rows.size).toBe(1);
     expect(host.textContent).toContain(reference);
+    expect(host.querySelector("a")?.getAttribute("href")).toBe("/research/support");
     const detail = await api.staff(receipt.requestId);
     expect(detail.lines.map((line) => [line.productId, line.quantity, line.reviewState]))
       .toEqual([["clinical", 2, "pending"], ["research", 1, "pending"]]);
@@ -347,6 +351,8 @@ describe("mixed private request customer form source", () => {
   it("submits both exact identities and quantities only after review, with explicit acknowledgment facts", async () => {
     const api = makeApi();
     await prepare(api);
+    expect(host.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(host.querySelector('a[href="/support"]')).toBeNull();
     expect(api.submit).not.toHaveBeenCalled();
     await click("Submit for review");
     expect(api.submit).toHaveBeenCalledTimes(1);

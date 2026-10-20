@@ -289,19 +289,19 @@ export function RequestIntentForm({
     <p role="status">Your saved request reference is <strong>{receipt.publicReference}</strong>.</p>
     <p>{REQUEST_INTENT_NOTICE}</p><p>Each item is pending review. Final availability, quantities, pricing and delivery must be confirmed separately.</p>
     {selectionNotice && <p role="status">{selectionNotice}</p>}
-    <a href="/support">Contact support</a></section>;
+    <a href="/research/support">Contact support</a></section>;
 
   if (restored) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Check your earlier request</h1>
     <p>An attempt marker was retained. Any selection cache is withheld during recovery; contact information was not saved in this browser.</p>
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
-    <a href="/support">Contact support before a replacement</a></section>;
+    <a href="/research/support">Contact support before a replacement</a></section>;
 
   if (retention === "checking" || retention === "held") return <section className="xenios-order-page" role="status">
     <h1>Check your selections</h1><p>{retention === "checking"
       ? "Checking retained selections against your current access and the complete current catalog..."
       : "Selections or an earlier attempt could not be safely confirmed. No new request was sent. Reload the request page or contact support before continuing; do not create a replacement for an uncertain request."}</p>
-    <a href="/support">Contact support</a></section>;
+    <a href="/research/support">Contact support</a></section>;
   return <section className={embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page"}>
     <header className="xenios-order-hero"><h1 ref={heading} tabIndex={-1}>Request products for review</h1>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
@@ -417,7 +417,7 @@ export function RequestIntentForm({
         <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); backToCatalog(); }}>Edit selection</button>
         <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
           onClick={() => void submit()}>{frozen.current ? "Retry same request" : "Submit for review"}</button>
-      </div><a href="/support">Contact support</a>
+      </div><a href="/research/support">Contact support</a>
     </section>}
   </section>;
 }

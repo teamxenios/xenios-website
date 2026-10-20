@@ -2119,9 +2119,27 @@
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/assisted-order/assisted-order.css"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-19T17:09:31.301Z",
       "heartbeatAt": "2026-10-19T17:17:34.295Z"
+    },
+    {
+      "id": "357c61f5-8189-448a-8633-f1a279e452f7",
+      "task": "KAN23-SUPPORT-LINKS-20261020",
+      "session": "codex-core-kan23-support-20261020",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/b2b/protected-composition.behavior.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-20T15:19:21.538Z",
+      "heartbeatAt": "2026-10-20T15:23:15.729Z"
     }
   ],
   "rules": [
