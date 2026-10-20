@@ -552,10 +552,10 @@
       "tool": "codex",
       "lane": "kan23-support-links",
       "branch": "codex/kan23-support-links-20261020",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-20T15:19:21.447Z",
-      "heartbeatAt": "2026-10-20T15:23:15.729Z",
-      "note": "12 literal support href corrections and focused regressions written; local application tests NOT RUN under Root capacity hold; freezing candidate for Root publication and remote CI"
+      "heartbeatAt": "2026-10-20T15:40:44.956Z",
+      "note": "Pushed81d6b934 source accepted; PR325 CI39449281887 all4required jobsPASS, Root collectiond6ea24. Own lease handed off; browserqualification pending; no81d6 production claim. Root released checkout pin for continuity-only successor."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

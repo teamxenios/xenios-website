@@ -2137,7 +2137,7 @@
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "client/src/research/b2b/protected-composition.behavior.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-20T15:19:21.538Z",
       "heartbeatAt": "2026-10-20T15:23:15.729Z"
     }
