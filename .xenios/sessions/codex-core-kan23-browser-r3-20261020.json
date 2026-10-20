@@ -1,0 +1,10 @@
+{
+  "id": "codex-core-kan23-browser-r3-20261020",
+  "tool": "codex",
+  "lane": "kan23-browser-r3",
+  "branch": "codex/kan23-browser-successor-20261020",
+  "state": "active",
+  "startedAt": "2026-10-20T15:45:59.816Z",
+  "heartbeatAt": "2026-10-20T15:56:15.611Z",
+  "note": "Token6 harness frozen0937563/tree d873ff5 exact5paths; final29/29 source-unitPASS3b1538, source-only no browser/build/publication; packetf71e35a7 ready for same reviewer, original28receipt preserved"
+}

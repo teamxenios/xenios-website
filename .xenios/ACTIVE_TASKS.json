@@ -3,6 +3,24 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "KAN23-BROWSER-SUCCESSOR-20261020",
+      "title": "Adapt accepted synthetic browser proof to basket and public support",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-core-kan23-browser-r3-20261020",
+      "jira": "KAN-23",
+      "paths": [
+        ".github/workflows/kan23-ui-proof.yml",
+        "docs/kan23-ci-proof/build-client.mjs",
+        "docs/kan23-ci-proof/static-browser-proof.mjs",
+        "docs/kan23-ci-proof/static-proof-server.mjs",
+        "docs/kan23-ci-proof/proposal.test.mjs"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Same Core physical session01a0e098; Root actual dispatcha4f316 core/token6 taskKAN-23-6-7a8c983228516a1e packet7a8c983228516a1ee2116af647de62f970a84448bbc5bd6a0e9ecf1bc07ed555 Jira10439/10270. Harness worktree C:/xenios-wt/kan23-browser-successor-20261020 base672f733; binds application81d6. Exactly5harness paths; own continuity kept separately on this branch per explicitRootGO. Source_edit/unit_test only. No publication/trigger/build/browser/provisioning/provider/SQL/customer or new spending; same reviewer; consumed recipe not reused.",
+      "claimedAt": "2026-10-20T15:45:59.913Z"
+    },
+    {
       "id": "KAN23-SUPPORT-LINKS-20261020",
       "title": "Repair all Quick Order support continuations",
       "priority": "P0",

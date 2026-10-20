@@ -556,6 +556,16 @@
       "startedAt": "2026-10-20T15:19:21.447Z",
       "heartbeatAt": "2026-10-20T15:40:44.956Z",
       "note": "Pushed81d6b934 source accepted; PR325 CI39449281887 all4required jobsPASS, Root collectiond6ea24. Own lease handed off; browserqualification pending; no81d6 production claim. Root released checkout pin for continuity-only successor."
+    },
+    {
+      "id": "codex-core-kan23-browser-r3-20261020",
+      "tool": "codex",
+      "lane": "kan23-browser-r3",
+      "branch": "codex/kan23-browser-successor-20261020",
+      "state": "active",
+      "startedAt": "2026-10-20T15:45:59.816Z",
+      "heartbeatAt": "2026-10-20T15:56:15.611Z",
+      "note": "Token6 harness frozen0937563/tree d873ff5 exact5paths; final29/29 source-unitPASS3b1538, source-only no browser/build/publication; packetf71e35a7 ready for same reviewer, original28receipt preserved"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
