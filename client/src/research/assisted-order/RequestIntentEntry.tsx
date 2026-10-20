@@ -6,6 +6,7 @@ import { orderEntryIntentFromSearch } from "../early-access/orderEntryIntent";
 import { createRequestIntentApi } from "./request-intent-api";
 import { RequestIntentForm } from "./RequestIntentForm";
 import { loadEarlyAccessAgreementState } from "../adapters/earlyAccessAgreement";
+import type { RequestSelectionContext } from "./request-intent-selection-store";
 
 type Step = "products" | "contact" | "review";
 const configurationApi = createRequestIntentApi();
@@ -30,9 +31,12 @@ export function RequestIntentCta() {
       : <p role="status">Request intake is currently unavailable. No request has been submitted.</p>}
   </section>;
 }
-export function RequestIntentEntry({ embedded = false, continuationEnabled = true, onStepChange, entryIntent }: Readonly<{
+export function RequestIntentEntry({ embedded = false, continuationEnabled = true, onStepChange, entryIntent,
+  selectionContext, confirmSelectionContext }: Readonly<{
   embedded?: boolean; continuationEnabled?: boolean; onStepChange?: (step: Step) => void;
   entryIntent?: StorefrontIntent | null;
+  selectionContext?: RequestSelectionContext | null;
+  confirmSelectionContext?: () => Promise<RequestSelectionContext | null>;
 }>) {
   const { member, memberToken, memberChecking, recovery, memberSessionStatus } = useResearch();
   const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
@@ -55,13 +59,16 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
   if (memberChecking || memberSessionStatus === "checking") return <p role="status">Checking your existing session...</p>;
   if (recovery !== "none" || memberSessionStatus === "verification_failed") {
     return <section role="alert"><p>Complete secure account recovery or contact support before submitting a request.</p>
-      <a href="/support">Contact support</a></section>;
+      <a href="/research/support">Contact support</a></section>;
   }
   if (owner === null) return <section role="alert">
-    <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/support">Contact support</a></section>;
+    <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
   // Key by the confirmed opaque owner, never token. Token-only rerenders keep
   // the form; account switches remount it. Checking/recovery renders no form.
-  return <RequestIntentForm key={owner} api={api}
+  const scope = !member && selectionContext?.kind === "early_access_session"
+    && /^[0-9a-f]{64}$/.test(selectionContext.selectionScope) ? selectionContext.selectionScope : null;
+  return <RequestIntentForm key={owner + ":" + (scope ?? "no-selection-scope")} api={api}
+    selectionContext={scope ? selectionContext : null} confirmSelectionContext={confirmSelectionContext}
     embedded={embedded} continuationEnabled={embedded ? continuationEnabled : standing}
     onStepChange={onStepChange} entryIntent={hint} />;
 }

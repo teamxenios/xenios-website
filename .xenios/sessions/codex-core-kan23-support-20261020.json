@@ -1,0 +1,10 @@
+{
+  "id": "codex-core-kan23-support-20261020",
+  "tool": "codex",
+  "lane": "kan23-support-links",
+  "branch": "codex/kan23-support-links-20261020",
+  "state": "active",
+  "startedAt": "2026-10-20T15:19:21.447Z",
+  "heartbeatAt": "2026-10-20T15:23:15.729Z",
+  "note": "12 literal support href corrections and focused regressions written; local application tests NOT RUN under Root capacity hold; freezing candidate for Root publication and remote CI"
+}

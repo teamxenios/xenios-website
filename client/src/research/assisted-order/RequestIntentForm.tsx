@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { validateAddress, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
   REQUEST_INTENT_NOTICE, REQUEST_INTENT_RECOVERY_NOTICE, validateRequestIntentInput,
@@ -7,6 +7,9 @@ import {
 import { catalogItemKey, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, money, type AssistedOrderWizardConfig } from "./wizard-state";
 import { createRequestIntentApi, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
+import { readRequestSelectionCandidate, writeRequestSelectionCandidate, clearRequestSelectionCandidate,
+  type RequestSelectionContext } from "./request-intent-selection-store";
+import { validateRetainedRequestSelections } from "./request-intent-selection-restore";
 import type { StorefrontIntent } from "../storefront/entry-intent";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import "./assisted-order.css";
@@ -18,9 +21,11 @@ function browserStorage(): Storage | null { try { return window.sessionStorage; 
 /** Reusable inside the existing customer shell. No new global Auth, cart, catalog or legal authority. */
 export function RequestIntentForm({
   api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent,
+  selectionContext, confirmSelectionContext,
 }: Readonly<{ api?: RequestIntentApi; storage?: Storage | null; embedded?: boolean;
   continuationEnabled?: boolean; onStepChange?: (step: "products" | "contact" | "review") => void;
-  entryIntent?: StorefrontIntent | null }>) {
+  entryIntent?: StorefrontIntent | null; selectionContext?: RequestSelectionContext | null;
+  confirmSelectionContext?: () => Promise<RequestSelectionContext | null> }>) {
   const [step, setStep] = useState<"products" | "contact" | "review">("products");
   const [config, setConfig] = useState<AssistedOrderWizardConfig | null>(null);
   const [catalog, setCatalog] = useState<RequestIntentCatalogPage | null>(null);
@@ -40,6 +45,18 @@ export function RequestIntentForm({
   const locked = useRef(false);
   const mounted = useRef(true);
   const heading = useRef<HTMLHeadingElement>(null);
+  const catalogHeading = useRef<HTMLHeadingElement>(null);
+  const actionReasonId = useId();
+  const returningToCatalog = useRef(false);
+  const scope = selectionContext?.kind === "early_access_session" && /^[0-9a-f]{64}$/.test(selectionContext.selectionScope)
+    ? selectionContext.selectionScope : null;
+  const currentScope = useRef(scope);
+  const mountScope = useRef(scope);
+  currentScope.current = scope;
+  const retentionPhase = useRef<"pending" | "ready" | "off">("pending");
+  const [retention, setRetention] = useState<"checking" | "ready" | "held" | "off">(
+    scope && confirmSelectionContext ? "checking" : "off");
+  const [selectionNotice, setSelectionNotice] = useState("");
   const [hintItem, setHintItem] = useState<RequestIntentCatalogItem | null>(null);
   const [hintChecked, setHintChecked] = useState(false);
   const hintKey = entryIntent ? JSON.stringify(entryIntent) : "";
@@ -83,7 +100,87 @@ export function RequestIntentForm({
   const selectedProducts = new Set(selections.map(({ item }) => item.productId)).size;
   const requirements = config ? requiredAcknowledgmentEntries(config, selections.some(({ item }) => item.researchUseOnly)) : [];
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  useEffect(() => { heading.current?.focus(); }, [step, receipt]);
+  useEffect(() => {
+    if (step === "products" && returningToCatalog.current) {
+      returningToCatalog.current = false;
+      catalogHeading.current?.focus();
+      catalogHeading.current?.scrollIntoView?.({ block: "nearest" });
+    } else heading.current?.focus();
+  }, [step, receipt]);
+  useEffect(() => {
+    let active = true;
+    const context = scope ? { kind: "early_access_session" as const, selectionScope: scope } : null;
+    const current = () => active && mounted.current && currentScope.current === scope && mountScope.current === scope;
+    retentionPhase.current = "pending";
+    if (scope !== mountScope.current) { setRetention("held"); return () => { active = false; }; }
+    if (!context || !confirmSelectionContext) {
+      retentionPhase.current = "off"; setRetention("off");
+      return () => { active = false; };
+    }
+    setRetention("checking");
+    if (!storage || restored) { setRetention("held"); return () => { active = false; }; }
+    const candidate = readRequestSelectionCandidate(storage, context, current);
+    if (candidate.kind === "none" || candidate.kind === "scope_mismatch") {
+      retentionPhase.current = "ready"; setRetention("ready");
+      if (candidate.kind === "scope_mismatch") setSelectionNotice("Earlier selections belonged to another access session and were not restored.");
+      return () => { active = false; };
+    }
+    if (candidate.kind !== "candidate") {
+      setRetention("held"); return () => { active = false; };
+    }
+    void (async () => {
+      const items: RequestIntentCatalogItem[] = [];
+      const seen = new Set<string>();
+      let total: number | null = null, complete = candidate.lines.length === 0;
+      // Only retained candidates require this unfiltered scan. The existing
+      // API has no AbortSignal: cancellation prevents consumption/next pages,
+      // not completion of the in-flight HTTP request. This is not atomic.
+      for (let page = 1; !complete && page <= 500; page += 1) {
+        if (!current()) return;
+        const result = await api.catalog({ page, pageSize: 100 });
+        if (!current()) return;
+        if (result.page !== page || result.pageSize !== 100 || !Number.isSafeInteger(result.total)
+          || result.total < 0 || result.total > 50_000 || (total !== null && total !== result.total)
+          || !Array.isArray(result.items)
+          || result.items.length !== Math.min(100, Math.max(0, result.total - (page - 1) * 100))) throw new Error("Incomplete catalog");
+        total = result.total;
+        for (const item of result.items) {
+          const key = catalogItemKey(item);
+          if (seen.has(key)) throw new Error("Ambiguous catalog");
+          seen.add(key); items.push(item);
+        }
+        if (items.length === total) { complete = true; break; }
+      }
+      if (!complete || !current()) throw new Error("Incomplete catalog");
+      const confirmed = await confirmSelectionContext();
+      if (!current()) return;
+      if (confirmed?.kind !== "early_access_session" || confirmed.selectionScope !== scope) throw new Error("Context changed");
+      const latest = readRequestSelectionCandidate(storage, context, current);
+      if (latest.kind !== "candidate" || JSON.stringify(latest.lines) !== JSON.stringify(candidate.lines)) throw new Error("Attempt or selections changed");
+      const validated = validateRetainedRequestSelections(candidate.lines, items);
+      if (validated.kind !== "valid" || !current()) throw new Error("Selection unavailable");
+      setSelected(new Map(validated.selections.map((selection) => [catalogItemKey(selection.item), selection])));
+      retentionPhase.current = "ready"; setRetention("ready");
+      setSelectionNotice("Your selections were checked against the current catalog. Contact details were not stored.");
+    })().catch(() => { if (current()) setRetention("held"); });
+    return () => { active = false; };
+  }, [api, storage, scope, confirmSelectionContext, restored]);
+  useEffect(() => {
+    if (retention !== "ready" || retentionPhase.current !== "ready" || !scope || scope !== mountScope.current || !storage || restored || receipt || frozen.current) return;
+    const context = { kind: "early_access_session" as const, selectionScope: scope };
+    const current = () => mounted.current && currentScope.current === scope && retentionPhase.current === "ready";
+    if (!writeRequestSelectionCandidate(storage, context,
+      [...selected.values()].map(({ item, quantity }) => ({ productId: item.productId, variantId: item.variantId, quantity })), current)) {
+      retentionPhase.current = "pending"; setRetention("held");
+    }
+  }, [selected, retention, scope, storage, restored, receipt]);
+  function clearSavedSelections() {
+    if (!scope || !storage) return;
+    const cleared = clearRequestSelectionCandidate(storage, { kind: "early_access_session", selectionScope: scope },
+      () => mounted.current && currentScope.current === scope);
+    if (!cleared) setSelectionNotice("The request was saved, but browser selections could not be cleared. Do not submit a replacement; contact support if needed.");
+  }
+  function backToCatalog() { returningToCatalog.current = true; setStep("products"); }
   useEffect(() => {
     let current = true;
     void api.config().then((value) => { if (current) setConfig(value); })
@@ -107,6 +204,7 @@ export function RequestIntentForm({
       if (!mounted.current) return;
       if (!saved) { setError("The saved result is not yet confirmed. Keep this attempt and check again, or contact support before any replacement."); return; }
       if (!clearConfirmedIntentAttempt(storage, restored)) throw new Error("Session changed.");
+      clearSavedSelections();
       setReceipt(saved); setError("");
     } catch { if (mounted.current) setError(REQUEST_INTENT_RECOVERY_NOTICE); }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
@@ -129,7 +227,7 @@ export function RequestIntentForm({
     } catch { setError("Complete the required contact and address fields."); }
   }
   async function submit() {
-    if (locked.current || !storage || !config || !contact || !continuationEnabled) return;
+    if (locked.current || !storage || !config || !contact || !continuationEnabled || retention === "checking" || retention === "held") return;
     locked.current = true; setBusy(true);
     let firstPost = false;
     let sentSnapshot: typeof frozen.current = null;
@@ -156,7 +254,9 @@ export function RequestIntentForm({
         snapshot.postsStarted += 1;
         return api.submit(snapshot.input);
       }, () => mounted.current);
-      if (mounted.current) { setReceipt(saved); setError(""); }
+      // postIntentAttempt already proved the receipt and cleared this mount's
+      // owned attempt marker. Only then may selection-cache cleanup occur.
+      if (mounted.current) { clearSavedSelections(); setReceipt(saved); setError(""); }
     } catch (error) {
       if (sentSnapshot && frozen.current === sentSnapshot && isKnownIntentPrewriteRefusal(error)
         && clearFirstRefusedIntentAttempt(storage, sentSnapshot.attempt,
@@ -170,6 +270,11 @@ export function RequestIntentForm({
     }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
+  const nextReason = !selected.size ? "Select at least one available item to continue."
+    : !config ? "Current request requirements are still unavailable."
+    : !storage ? "Browser session storage is unavailable; safe request recovery is required."
+    : !continuationEnabled ? "Complete the displayed access and agreement requirements to continue."
+    : "Next: enter contact details, then review and submit your request.";
   const addressFields = (prefix: string, label: string) => <fieldset className="xenios-order-grid">
     <legend>{label}</legend>
     {[["Line1", "Street address"], ["Line2", "Apartment or suite (optional)"], ["City", "City"], ["Region", "State or region"],
@@ -183,14 +288,20 @@ export function RequestIntentForm({
   if (receipt) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Request saved for review</h1>
     <p role="status">Your saved request reference is <strong>{receipt.publicReference}</strong>.</p>
     <p>{REQUEST_INTENT_NOTICE}</p><p>Each item is pending review. Final availability, quantities, pricing and delivery must be confirmed separately.</p>
-    <a href="/support">Contact support</a></section>;
+    {selectionNotice && <p role="status">{selectionNotice}</p>}
+    <a href="/research/support">Contact support</a></section>;
 
   if (restored) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Check your earlier request</h1>
-    <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
+    <p>An attempt marker was retained. Any selection cache is withheld during recovery; contact information was not saved in this browser.</p>
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
-    <a href="/support">Contact support before a replacement</a></section>;
+    <a href="/research/support">Contact support before a replacement</a></section>;
 
+  if (retention === "checking" || retention === "held") return <section className="xenios-order-page" role="status">
+    <h1>Check your selections</h1><p>{retention === "checking"
+      ? "Checking retained selections against your current access and the complete current catalog..."
+      : "Selections or an earlier attempt could not be safely confirmed. No new request was sent. Reload the request page or contact support before continuing; do not create a replacement for an uncertain request."}</p>
+    <a href="/research/support">Contact support</a></section>;
   return <section className={embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page"}>
     <header className="xenios-order-hero"><h1 ref={heading} tabIndex={-1}>Request products for review</h1>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
@@ -210,6 +321,8 @@ export function RequestIntentForm({
         <p>A link never approves a clinical item or places an order.</p>
       </section>}
       <div className="xenios-order-grid">
+        <h2 className="xenios-order-catalog-heading" ref={catalogHeading} tabIndex={-1}>Browse the catalog</h2>
+        {selectionNotice && <p role="status">{selectionNotice}</p>}
         <label>Search catalog<input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></label>
         <label>Product family<select value={family} onChange={(event) => { setFamily(event.target.value); setPage(1); }}>
           <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}
@@ -252,6 +365,12 @@ export function RequestIntentForm({
       <p>Up to 200 exact variants per request. Unavailable and coming-soon entries remain visible with their restrictions.</p>
       </div><aside className="xenios-order-summary" aria-label="Selected request items">
         <h2>Your request</h2>
+        <div className="xenios-order-next-action">
+          <button className="xenios-order-button" aria-describedby={actionReasonId}
+            disabled={!selected.size || !config || !storage || !continuationEnabled}
+            onClick={() => { setStep("contact"); setError(""); }}>Continue to contact</button>
+          <p id={actionReasonId} className="xenios-order-small">{nextReason}</p>
+        </div>
         <p role="status">{selectedProducts} products | {selections.length} exact variants | {selectedUnits} requested units</p>
         {!selections.length ? <p>No products selected yet. Add an eligible item from the catalog.</p> : <ul>
           {selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
@@ -273,7 +392,6 @@ export function RequestIntentForm({
           </li>)}
         </ul>}
         <p className="xenios-order-small">A request is not an approved order. Final quantities, prices and availability require review.</p>
-        <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>Continue to contact</button>
       </aside></div>
     </>}
     {step === "contact" && <form onSubmit={captureContact}>
@@ -284,7 +402,7 @@ export function RequestIntentForm({
       <label className="xenios-order-check"><input type="checkbox" checked={billingSame} onChange={(event) => setBillingSame(event.target.checked)} />Billing address is the same</label>
       {!billingSame && addressFields("billing", "Billing address")}
       <label className="xenios-order-check"><input name="age" type="checkbox" required />I confirm I am at least 18 years old.</label>
-      <div className="xenios-order-actions"><button type="button" onClick={() => setStep("products")}>Back to products</button><button className="xenios-order-button" type="submit">Review request</button></div>
+      <div className="xenios-order-actions"><button type="button" onClick={backToCatalog}>Back to catalog / Continue browsing</button><button className="xenios-order-button" type="submit">Review request</button></div>
     </form>}
     {step === "review" && <section className="xenios-order-panel"><h2>Review your request</h2>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
@@ -296,10 +414,10 @@ export function RequestIntentForm({
           })} />{entry.label}</label>; })}</fieldset>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Delivery dates are not guaranteed by this request. The team must confirm any proposed arrival date after review.</p>
       <div className="xenios-order-actions">
-        <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); setStep("products"); }}>Edit selection</button>
+        <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); backToCatalog(); }}>Edit selection</button>
         <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
           onClick={() => void submit()}>{frozen.current ? "Retry same request" : "Submit for review"}</button>
-      </div><a href="/support">Contact support</a>
+      </div><a href="/research/support">Contact support</a>
     </section>}
   </section>;
 }

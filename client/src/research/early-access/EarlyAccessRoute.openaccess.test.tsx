@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import EarlyAccessRoute from "./EarlyAccessRoute";
+import EarlyAccessRoute, { requestSelectionContext } from "./EarlyAccessRoute";
 
 /**
  * NO CUSTOMER-FACING PASSWORD (founder decision, 2026-08-20).
@@ -94,6 +94,15 @@ afterEach(() => {
 });
 
 describe("the Early Access route with no password", () => {
+  it("projects a non-authorizing selection scope only from an authenticated session response", () => {
+    expect(requestSelectionContext({ authenticated: true, selectionScope: "a".repeat(64) }))
+      .toEqual({ kind: "early_access_session", selectionScope: "a".repeat(64) });
+    for (const body of [null, {}, { authenticated: false, selectionScope: "a".repeat(64) },
+      { authenticated: true }, { authenticated: true, selectionScope: "A".repeat(64) },
+      { authenticated: true, selectionScope: "early-access-session" }]) {
+      expect(requestSelectionContext(body)).toBeNull();
+    }
+  });
   it("never renders a password prompt", async () => {
     stubOpenAccess();
     await act(async () => {

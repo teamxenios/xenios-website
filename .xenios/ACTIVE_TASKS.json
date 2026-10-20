@@ -3,10 +3,56 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "KAN23-SUPPORT-LINKS-20261020",
+      "title": "Repair all Quick Order support continuations",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-core-kan23-support-20261020",
+      "jira": "KAN-23",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/b2b/protected-composition.behavior.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Root actual dispatch408e1a: KAN-23-5-2e53ecab9b6a4720 core/token5 packet2e53ecab9b6a4720c4fda1fc10fa7b7796a0d339be347eb5f9b6f916209109b7 Jira10438/10268. Exactly12 href changes acrossfourcomponents plus meaningful existingtest assertions; sameCore/currentClaude; owncontinuity only. Preserve3daff/237priorchecks. No backend/SQL/roles/customer/provider/liveeffects. Build/browser held below recorded resource floors.",
+      "claimedAt": "2026-10-20T15:19:21.535Z"
+    },
+    {
+      "id": "KAN23-BASKET-NAVIGATION-20261019",
+      "title": "Restore safe selections and make Quick Order progression discoverable",
+      "priority": "P1",
+      "state": "qa",
+      "jira": "KAN-23",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.openaccess.test.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/assisted-order.css"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Root actual dispatched KAN-23-4-767fd38b4c4c0201 core/token4 packet767fd38b4c4c020149bae9a12d597d11e7005245c33e109281df01a9835d22f5 Jira10437/10260 ACK5abe3d. Exact8 existing app paths; own continuity only; no backend/email/live effects. Outside-route exactviewstate remains explicitgap.",
+      "handoff": {
+        "sha": "3daff792c11a407ecb3c45827471d6eb3434b72c",
+        "scope": "Preserved local candidate; supplementary fullcontextacceptedseq160; Root reviewed recoverycollect5e5a2a and postcheck7374cf taskACCEPTED/lease4CLOSED. Historical timeout/refusal and237focusedPASS preserved. Not published or deployed by this record."
+      },
+      "owner": "codex-core-kan23-basket-20261019",
+      "claimedAt": "2026-10-19T17:09:31.299Z"
+    },
+    {
       "id": "KAN24-SELECTION-STORE-20261019",
       "title": "Bounded selection-only cache under verified access-session scope",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-24",
       "paths": [
         "client/src/research/assisted-order/request-intent-selection-store.ts",
@@ -15,7 +61,11 @@
       "dependsOn": [],
       "scopeNote": "Root dispatched KAN-24-3-5cc9f7a885ef817d core/token3; packet5cc9f7a885ef817df4987ddfb6c8c7eaf4e93be51a332911c4ac782e13d50c55; Jira10436/10257; ACK955e93. Exactly two new source/test files; own continuity only; no UI wiring or live effects.",
       "owner": "codex-core-kan24-store-20261019",
-      "claimedAt": "2026-10-19T16:45:22.435Z"
+      "claimedAt": "2026-10-19T16:45:22.435Z",
+      "handoff": {
+        "sha": "bdbad1479ed548b74d43739fc5e05575c1fa791e",
+        "scope": "Pushed PR324 source accepted; CI39289970258 all4required passed; Root token3 closed. Reconciled only successor."
+      }
     },
     {
       "id": "KAN24-SESSION-SELECTION-SCOPE-20261019",
