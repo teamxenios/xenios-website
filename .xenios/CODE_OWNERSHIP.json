@@ -3305,9 +3305,9 @@
         ".xenios/sessions/codex-xenios-product-imagery-20260930.json",
         ".xenios/handoffs/*IMAGERY-CONTENT-SOURCE-PREP-20261021*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-21T22:46:13.020Z",
-      "heartbeatAt": "2026-10-21T22:51:40.573Z"
+      "heartbeatAt": "2026-10-21T22:52:41.714Z"
     }
   ],
   "rules": [

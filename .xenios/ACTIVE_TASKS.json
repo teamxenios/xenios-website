@@ -6,7 +6,7 @@
       "id": "IMAGERY-CONTENT-SOURCE-PREP-20261021",
       "title": "Prepare provisional product descriptions and exact manufacturer image-source evidence",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-product-imagery-20260930",
       "baseSha": "4155b8bd2367e3ef468279f68aad9b7a2d3dfe01",
       "paths": [
@@ -19,9 +19,9 @@
       "claimedAt": "2026-10-21T22:46:13.010Z",
       "handoff": {
         "session": "codex-xenios-product-imagery-20260930",
-        "sha": "97ec5dceeacc0949b3a0f2d73694c61cea2ec09e",
-        "file": ".xenios/handoffs/2026-10-21T18-14-05-113Z-IMAGERY-CONTENT-SOURCE-PREP-20261021-codex-xenios-product-imagery-20260930.md",
-        "at": "2026-10-21T18:14:05.242Z"
+        "sha": "24fd3cef0bb6819b95c622106bf065b67b7de544",
+        "file": ".xenios/handoffs/2026-10-21T22-52-41-821Z-IMAGERY-CONTENT-SOURCE-PREP-20261021-codex-xenios-product-imagery-20260930.md",
+        "at": "2026-10-21T22:52:41.825Z"
       }
     },
     {

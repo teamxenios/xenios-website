@@ -575,10 +575,10 @@
       "tool": "codex",
       "lane": "product-imagery-source",
       "branch": "codex/xenios-product-imagery-20260930",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-09-30T19:49:48.411Z",
-      "heartbeatAt": "2026-10-21T22:51:40.573Z",
-      "note": "Slice-02 drafts written for exact R149C, R190, R222 supplier anchors; validating source facts, all unapproved rights and live identity gates, prior-packet preservation and own-only continuity before handoff"
+      "heartbeatAt": "2026-10-21T22:52:41.714Z",
+      "note": "Pushed slice-02 source 24fd3cef0bb6819b95c622106bf065b67b7de544: three additional provisional supplier-SKU drafts; 11 checks PASS; six local drafts total, no live coverage claim or photo rights; docs-only handoff"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
