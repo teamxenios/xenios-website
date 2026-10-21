@@ -53,10 +53,14 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
   const hint = useMemo(() => entryIntent ?? orderEntryIntentFromSearch(
     typeof window === "undefined" ? "" : window.location.search), [entryIntent]);
   if (memberChecking || memberSessionStatus === "checking") return <p role="status">Checking your existing session...</p>;
-  if (recovery !== "none" || memberSessionStatus === "verification_failed") {
+  if (recovery !== "none") {
     return <section role="alert"><p>Complete secure account recovery or contact support before submitting a request.</p>
       <a href="/support">Contact support</a></section>;
   }
+  if (memberSessionStatus === "verification_failed") return <section role="alert">
+    <p>Your existing account session could not be verified. This does not mean password recovery is required. Contact support before continuing.</p>
+    <p>If you already submitted a request or its outcome is uncertain, do not create a replacement until staff check for duplicates.</p>
+    <a href="/support">Contact support</a></section>;
   if (owner === null) return <section role="alert">
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/support">Contact support</a></section>;
   // Key by the confirmed opaque owner, never token. Token-only rerenders keep
