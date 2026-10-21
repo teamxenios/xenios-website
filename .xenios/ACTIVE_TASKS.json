@@ -3,10 +3,34 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "KAN75-RENDERER-COMPATIBILITY-20261021",
+      "title": "Backward-compatible minimal request-intent notification renderer",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-core-kan23-browser-r3-20261020",
+      "jira": "KAN-75",
+      "paths": [
+        "server/research/assisted-order/request-intent/notification-communications.ts",
+        "server/research/assisted-order/request-intent/notification-communications.test.ts",
+        "server/research/outbox-request-intent.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Same physical Core01a0e098. Root actual supported dispatch21752c KAN-75-7-1920b22f6b419780 core/token7 packet1920b22f6b419780f10b35c48a64ee5fbd5da6de1d067abd8c7a80137622e3d0 Jira10440/10279. Base95f957/treecb501732 isolated checkout C:/xenios-wt/kan75-renderer-compatibility-20261021. Exactly3paths; own continuity stays separate. Legacy reference-only preserved; strict optional complete status/time; default no staff link absent explicit verified readiness. No SQL source/contract changes or execution, roles/customer reads/provider/email/production/browser/build. Token6 previous task recovered and closed independently verifiede47b68. Same dedicated reviewer.",
+      "claimedAt": "2026-10-21T12:43:47.173Z",
+      "sourceCheckpoint": {
+        "sha": "b095c9f14b50cdd0bd81c539a96a756e672de085",
+        "tree": "2dfd8250c0989f57b6a4e27fe65e0c015dab2247",
+        "state": "LOCAL_FROZEN_AWAITING_ROOT_REVIEW_NOT_PUSHED",
+        "pathsChanged": 3,
+        "qualification": "Static diff/paths/lock checks PASS. Unit/typecheck/protection NOT_RUN_RESOURCE_HOLD; no old91PASS transfer. Root owns supported review and existing draftPR/CI path. No SQL or delivery activity.",
+        "reviewPacketSha256": "2be78355eb2496152ac2ade0b8300354a4086ca1e0b826330bdd541485e012b5"
+      }
+    },
+    {
       "id": "KAN23-BROWSER-SUCCESSOR-20261020",
       "title": "Adapt accepted synthetic browser proof to basket and public support",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-core-kan23-browser-r3-20261020",
       "jira": "KAN-23",
       "paths": [
@@ -18,7 +42,8 @@
       ],
       "dependsOn": [],
       "scopeNote": "Same Core physical session01a0e098; Root actual dispatcha4f316 core/token6 taskKAN-23-6-7a8c983228516a1e packet7a8c983228516a1ee2116af647de62f970a84448bbc5bd6a0e9ecf1bc07ed555 Jira10439/10270. Harness worktree C:/xenios-wt/kan23-browser-successor-20261020 base672f733; binds application81d6. Exactly5harness paths; own continuity kept separately on this branch per explicitRootGO. Source_edit/unit_test only. No publication/trigger/build/browser/provisioning/provider/SQL/customer or new spending; same reviewer; consumed recipe not reused.",
-      "claimedAt": "2026-10-20T15:45:59.913Z"
+      "claimedAt": "2026-10-20T15:45:59.913Z",
+      "closureNote": "Root supported token6 recovery731b11; Core independently verifiede47b68: task ACCEPTED0937563, lease6CLOSED, token6COMPLETED with token4preserved. Harness source remains frozen/unpublished; no browser/runtime or deployment acceptance implied."
     },
     {
       "id": "KAN23-SUPPORT-LINKS-20261020",
