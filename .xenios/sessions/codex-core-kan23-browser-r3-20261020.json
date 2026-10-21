@@ -1,10 +1,10 @@
 {
   "id": "codex-core-kan23-browser-r3-20261020",
   "tool": "codex",
-  "lane": "kan75-renderer-compatibility-r1",
-  "branch": "codex/kan75-renderer-compatibility-20261021",
+  "lane": "kan59-published-content-boundary-r1",
+  "branch": "codex/kan59-published-content-live-base-20261021",
   "state": "active",
   "startedAt": "2026-10-20T15:45:59.816Z",
-  "heartbeatAt": "2026-10-21T12:54:18.305Z",
-  "note": "KAN75 token7 source frozenb095c9f tree2dfd825 exact3paths; packet2be78355 full1500 context; unit/typecheck/protection NOT_RUN_RESOURCE_HOLD; no push/delivery"
+  "heartbeatAt": "2026-10-21T18:58:30.285Z",
+  "note": "KAN59 token8 localfrozen68253fa/tree5ea2716 exact4TS; full2796context packet03bd1139; negativecontrol/unit/typecheck NOT_RUN_RESOURCE_HOLD; no push or reviewer timer"
 }

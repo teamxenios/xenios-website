@@ -153,7 +153,7 @@
         "server/research/catalog-display/**",
         "server/research/pricing/catalog-price-projection.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-08-20T17:51:40.949Z",
       "heartbeatAt": "2026-08-21T16:11:42.803Z"
     },
@@ -2165,9 +2165,23 @@
         "server/research/assisted-order/request-intent/notification-communications.test.ts",
         "server/research/outbox-request-intent.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-21T12:43:47.264Z",
       "heartbeatAt": "2026-10-21T12:54:18.305Z"
+    },
+    {
+      "id": "ac903c49-8945-43f9-8f4f-675af8a2e55e",
+      "task": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
+      "session": "codex-core-kan23-browser-r3-20261020",
+      "paths": [
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/products-diagnostics/product-admin-production.test.ts",
+        "server/research/catalog/product-control-reader.ts",
+        "server/research/catalog/product-control-reader.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-21T18:53:12.111Z",
+      "heartbeatAt": "2026-10-21T18:58:30.285Z"
     }
   ],
   "rules": [
