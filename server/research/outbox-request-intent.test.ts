@@ -40,7 +40,7 @@ vi.mock("../supabase",()=>{
  return {supabaseConfigured:()=>true,getSupabaseAdmin:()=>({from:query,rpc:async()=>({data:null,error:"disabled"})})};
 });
 import { runOutboxTick, requestIntentNotificationHeldMetrics } from "./outbox";
-import { REQUEST_INTENT_NOTIFICATION_TEMPLATE as template } from "./assisted-order/request-intent/notification-communications";
+import { REQUEST_INTENT_NOTIFICATION_TEMPLATE as template, REQUEST_INTENT_NOTIFICATION_STAFF_LINK_READY as ready } from "./assisted-order/request-intent/notification-communications";
 const now=new Date("2026-10-18T12:00:00Z");
 function job(id:string,key=template,status="pending") {
  return {id,event_key:"synthetic:"+id,template_key:key,recipient:"staff@example.invalid",payload:{publicReference:"XRI-"+"A".repeat(32)},status,attempt_count:0,
@@ -51,6 +51,8 @@ beforeEach(()=>{
  vi.stubEnv("RESEARCH_REQUEST_INTENT_NOTIFICATIONS_SEND_ENABLED","");
  vi.stubEnv("RESEARCH_REQUEST_INTENT_NOTIFICATIONS_ENQUEUE_ENABLED","");
  vi.stubEnv("RESEARCH_REQUEST_INTENT_NOTIFICATION_RECIPIENTS","staff@example.invalid");
+ vi.stubEnv(ready,"");
+ vi.stubEnv("RESEARCH_REQUEST_INTENT_STAFF_READ_ENABLED","");
  vi.stubEnv("SITE_URL","https://example.invalid");
 });
 describe("canonical outbox request-intent hold",()=>{
@@ -72,7 +74,48 @@ describe("canonical outbox request-intent hold",()=>{
    expect((await runOutboxTick(now)).sent).toBe(1);
    expect(sent).toHaveBeenCalledOnce();
    expect(sent.mock.calls[0]).toEqual([expect.objectContaining({to:"staff@example.invalid",subject:"Quick Order request pending review"}),{idempotencyKey:"synthetic:enabled"}]);
+   expect(sent.mock.calls[0][0].text).toContain(state.rows[0].payload.publicReference);
+   expect(sent.mock.calls[0][0].text).not.toMatch(/https:\/\/|Submitted at|Status:/);
    expect(state.rows[0].status).toBe("sent");
+ });
+ it("passes a complete validated metadata payload through the existing sender with the same logical event key",async()=>{
+   vi.stubEnv("RESEARCH_REQUEST_INTENT_NOTIFICATIONS_SEND_ENABLED","true");
+   const item=job("metadata");
+   item.payload={...item.payload,status:"pending_review",submittedAt:"2026-10-18T12:00:00.000Z"} as any;
+   state.rows.push(item);
+   expect(await runOutboxTick(now)).toEqual({sent:1,retried:0,failed:0});
+   expect(sent).toHaveBeenCalledOnce();
+   expect(sent.mock.calls[0][0].text).toContain("Status: pending review\nSubmitted at (UTC): 2026-10-18T12:00:00.000Z");
+   expect(sent.mock.calls[0][0].text).not.toContain("https://");
+   expect(sent.mock.calls[0][1]).toEqual({idempotencyKey:"synthetic:metadata"});
+   expect(item.event_key).toBe("synthetic:metadata");
+   expect(await runOutboxTick(now)).toEqual({sent:0,retried:0,failed:0});
+   expect(sent).toHaveBeenCalledOnce();
+ });
+ it("includes only the fixed private queue link when both operator readiness and staff-read enablement are explicit",async()=>{
+   vi.stubEnv("RESEARCH_REQUEST_INTENT_NOTIFICATIONS_SEND_ENABLED","true");
+   vi.stubEnv(ready,"true");vi.stubEnv("RESEARCH_REQUEST_INTENT_STAFF_READ_ENABLED","true");
+   state.rows.push(job("ready"));
+   expect((await runOutboxTick(now)).sent).toBe(1);
+   expect(sent.mock.calls[0][0].text).toContain("https://example.invalid/care/request-intents");
+   expect(sent.mock.calls[0][0].text).not.toMatch(/\?|token=/);
+   expect(sent.mock.calls[0][1]).toEqual({idempotencyKey:"synthetic:ready"});
+ });
+ it("does not send malformed metadata through the provider or manufacture a successful notification",async()=>{
+   vi.stubEnv("RESEARCH_REQUEST_INTENT_NOTIFICATIONS_SEND_ENABLED","true");
+   const item=job("invalid-metadata");item.payload={...item.payload,status:"paid"} as any;state.rows.push(item);
+   const result=await runOutboxTick(now);
+   expect(result.sent).toBe(0);expect(sent).not.toHaveBeenCalled();
+   expect(item.status).not.toBe("sent");
+ });
+ it("does not infer retrospective delivery for prior sent or uncertain processing jobs",async()=>{
+   vi.stubEnv("RESEARCH_REQUEST_INTENT_NOTIFICATIONS_SEND_ENABLED","true");
+   const recent=now.toISOString();
+   state.rows.push({...job("already-sent",template,"sent"),updated_at:recent},
+     {...job("uncertain",template,"processing"),updated_at:recent});
+   expect(await runOutboxTick(now)).toEqual({sent:0,retried:0,failed:0});
+   expect(sent).not.toHaveBeenCalled();expect(state.attempts).toEqual([]);
+   expect(state.rows.map(row=>row.status)).toEqual(["sent","processing"]);
  });
  it("restores a mid-claim gate closure without a send, attempt increment or false success",async()=>{
    vi.stubEnv("RESEARCH_REQUEST_INTENT_NOTIFICATIONS_SEND_ENABLED","true");state.flipOnClaim=true;state.rows.push(job("race"));
