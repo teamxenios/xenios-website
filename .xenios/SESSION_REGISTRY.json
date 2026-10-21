@@ -575,10 +575,10 @@
       "tool": "codex",
       "lane": "product-imagery-source",
       "branch": "codex/xenios-product-imagery-20260930",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-09-30T19:49:48.411Z",
-      "heartbeatAt": "2026-10-21T18:05:36.555Z",
-      "note": "Root-confirmed exact docs-only content-source-prep/2026-10-21 lease; product-specific drafts and rights evidence, no application or publication changes"
+      "heartbeatAt": "2026-10-21T18:14:04.996Z",
+      "note": "Pushed 97ec5dc/tree ff1f083 docs-only: 3 provisional product drafts, 3 exact manufacturer gallery candidates, no cleared photo rights or live mappings; no app/public/generated/production changes"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

@@ -6,7 +6,7 @@
       "id": "IMAGERY-CONTENT-SOURCE-PREP-20261021",
       "title": "Prepare provisional product descriptions and exact manufacturer image-source evidence",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-product-imagery-20260930",
       "baseSha": "4155b8bd2367e3ef468279f68aad9b7a2d3dfe01",
       "paths": [
@@ -16,7 +16,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Same imagery executor. Samuel's verified Core user message 01a15e93-0691-7a93-8e30-a0ca187f4d94 authorizes immediate source collection and provisional drafting. Root confirmed this exact documentation subtree outside factory/application file sets on 2026-10-21. Own continuity entries only; no shared ownership overwrite, application/public/SQL edits, generated imagery, image download/publication, hosted writes, or production changes. Canonical live identities and image rights remain unverified until exact evidence clears them.",
-      "claimedAt": "2026-10-21T18:05:36.478Z"
+      "claimedAt": "2026-10-21T18:05:36.478Z",
+      "handoff": {
+        "session": "codex-xenios-product-imagery-20260930",
+        "sha": "97ec5dceeacc0949b3a0f2d73694c61cea2ec09e",
+        "file": ".xenios/handoffs/2026-10-21T18-14-05-113Z-IMAGERY-CONTENT-SOURCE-PREP-20261021-codex-xenios-product-imagery-20260930.md",
+        "at": "2026-10-21T18:14:05.242Z"
+      }
     },
     {
       "id": "HEALTH-HL12-QUOTE-GATEWAY-20260930",
