@@ -575,10 +575,10 @@
       "tool": "codex",
       "lane": "product-imagery-source",
       "branch": "codex/xenios-product-imagery-20260930",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-09-30T19:49:48.411Z",
-      "heartbeatAt": "2026-10-05T13:35:26.902Z",
-      "note": "Pushed cf4c23a/tree b24b44e private calibration handoff: 54 tests PASS;04 numericPASS pending review;03/05 fail; no Batch1/preview/Core/public/production changes"
+      "heartbeatAt": "2026-10-21T18:05:36.555Z",
+      "note": "Root-confirmed exact docs-only content-source-prep/2026-10-21 lease; product-specific drafts and rights evidence, no application or publication changes"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

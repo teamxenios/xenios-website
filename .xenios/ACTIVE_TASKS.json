@@ -3,6 +3,22 @@
   "updatedAt": "2026-09-30T19:51:00.000Z",
   "tasks": [
     {
+      "id": "IMAGERY-CONTENT-SOURCE-PREP-20261021",
+      "title": "Prepare provisional product descriptions and exact manufacturer image-source evidence",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-product-imagery-20260930",
+      "baseSha": "4155b8bd2367e3ef468279f68aad9b7a2d3dfe01",
+      "paths": [
+        "docs/product-imagery/content-source-prep/2026-10-21/**",
+        ".xenios/sessions/codex-xenios-product-imagery-20260930.json",
+        ".xenios/handoffs/*IMAGERY-CONTENT-SOURCE-PREP-20261021*"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Same imagery executor. Samuel's verified Core user message 01a15e93-0691-7a93-8e30-a0ca187f4d94 authorizes immediate source collection and provisional drafting. Root confirmed this exact documentation subtree outside factory/application file sets on 2026-10-21. Own continuity entries only; no shared ownership overwrite, application/public/SQL edits, generated imagery, image download/publication, hosted writes, or production changes. Canonical live identities and image rights remain unverified until exact evidence clears them.",
+      "claimedAt": "2026-10-21T18:05:36.478Z"
+    },
+    {
       "id": "HEALTH-HL12-QUOTE-GATEWAY-20260930",
       "title": "Admit exact owner-guarded quote routes through the Research gateway",
       "priority": "P1",

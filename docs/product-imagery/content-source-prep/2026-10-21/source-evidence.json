@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "kind": "private_editorial_source_packet_not_import_payload",
+  "preparedOn": "2026-10-21",
+  "session": "codex-xenios-product-imagery-20260930",
+  "task": "IMAGERY-CONTENT-SOURCE-PREP-20261021",
+  "leaseId": "2ee5a97b-d7c1-41c0-92f2-16bb5675d918",
+  "baseSha": "4155b8bd2367e3ef468279f68aad9b7a2d3dfe01",
+  "copyFile": "PRODUCT_DRAFTS.md",
+  "authority": {
+    "founderUserMessageId": "01a15e93-0691-7a93-8e30-a0ca187f4d94",
+    "founderThreadId": "01a0e098-3b23-7233-9b07-877ace092650",
+    "coordinatorThreadId": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "documentationScopeConfirmed": true,
+    "newSessionCreated": false,
+    "newAgentsCreated": false,
+    "copyApproved": false,
+    "imagePublicationAuthorized": false,
+    "generatedImagesAuthorized": false,
+    "applicationEditsAuthorized": false,
+    "hostedWritesAuthorized": false,
+    "productionMutationAuthorized": false
+  },
+  "repositoryEvidence": {
+    "catalogSeed": {
+      "path": "shared/research/catalog/supplement-catalog.ts",
+      "sha256": "91bbf6d8f19be7b8d1f3f33170082e823b68ce780eb67f4cd2b9c9813bc6085b",
+      "hashBasis": "git_blob_at_baseSha",
+      "lineRanges": ["443-447", "457-461", "490-494"],
+      "basis": "Existing founder-workbook-derived legacy decision/name/supplier-code anchors, not current live identity proof. No workbook was reopened in this slice."
+    },
+    "existingContentContract": {
+      "path": "shared/research/product-admin.ts",
+      "sha256": "9bfdff2235ec2bf22db5ac77359dae0b2841af8214424deec066cd3c084c72fa",
+      "hashBasis": "git_blob_at_baseSha",
+      "interface": "AdminProductContent"
+    },
+    "existingContentAdapter": {
+      "path": "server/research/products-diagnostics/product-admin-production.ts",
+      "sha256": "a2f97079fc6feffad6d1bcd8100930b79ec1ab2c9a412b94acb1a67a70039e15",
+      "hashBasis": "git_blob_at_baseSha",
+      "table": "research_product_content",
+      "binding": "product_id, section, body, metadata",
+      "writePerformed": false
+    },
+    "rightsSearch": {
+      "scope": "docs, shared and config text files at baseSha; case-insensitive NutriDyn with rights/permission/license/reseller/authorization terms",
+      "result": "No exact Xenios photo reuse grant located in this bounded search. This is not proof that no agreement exists elsewhere.",
+      "relevantRecord": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md#EXT-BRAND-RESELLER-DATA"
+    }
+  },
+  "commonRights": {
+    "status": "not_cleared",
+    "grantDocumentId": null,
+    "rightsHolderConfirmed": false,
+    "termsUrl": "https://nutridyn.com/terms-and-conditions",
+    "policyUrl": "https://nutridyn.com/policies",
+    "observedOn": "2026-10-21",
+    "basis": "Public website availability is not an asset grant. Site terms limit their default license to temporary personal noncommercial viewing. Customer trademark/logo conditions do not prove Xenios customer eligibility or permission for these exact images.",
+    "requiredEvidence": "Written grant covering exact assets and Xenios channels, packaging/version match, any transformation and attribution requirements, or documented Xenios ownership of replacement photographs.",
+    "contactSent": false
+  },
+  "coverage": {
+    "provisionalDraftCount": 3,
+    "manufacturerPageSkuMatchCount": 3,
+    "mainGalleryCandidateCount": 3,
+    "visuallyQualifiedPhotoCount": 0,
+    "rightsClearedPhotoCount": 0,
+    "imageFilesDownloaded": 0,
+    "newGeneratedImages": 0,
+    "descriptionsPublishedByThisSlice": 0,
+    "photosPublishedByThisSlice": 0,
+    "currentLiveDescriptionCount": null,
+    "currentLivePhotoCount": null,
+    "currentDisplayedVariantCount": null,
+    "completeCatalogExportAvailable": false,
+    "allCatalogCoverageClaimed": false
+  },
+  "products": [
+    {
+      "legacyDecisionId": "NUT-002",
+      "repositoryName": "Magtein (Magnesium L-Threonate)",
+      "repositorySlug": "magtein-magnesium-l-threonate",
+      "supplierSku": "R227",
+      "brand": "NutriDyn",
+      "legalManufacturer": null,
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "liveIdentityStatus": "unresolved",
+      "copyStatus": "provisional_not_approved",
+      "source": {
+        "url": "https://nutridyn.com/magteinr",
+        "httpStatus": 200,
+        "observedAt": "2026-10-21T18:05:50.6851746Z",
+        "htmlUtf8Sha256": "338392b6183602eda97731e79d99b2897102e7e7e882c52e3a0be05c4eb5a71e",
+        "htmlRetained": false,
+        "matchBasis": "Same supplier code and magnesium L-threonate identity; source page lists 90 capsules. Current Xenios pack/variant remains unconfirmed.",
+        "linkedSheetUrl": "https://nutridyn.com/media/productsattachment/Magtein_SS_ND174_NEW1.pdf",
+        "linkedSheetInspected": true,
+        "linkedSheetReviewScope": "Extracted text of both pages; panel on page 2. Screenshot calls exposed no inspectable pixels, so visual layout is unverified.",
+        "linkedSheetRevision": "11/25 ND174",
+        "linkedSheetFinding": "Label amounts and additional ingredients agree with HTML; no storage instruction found. Research claims were not adopted."
+      },
+      "imageCandidate": {
+        "url": "https://nutridyn.com/media/catalog/product/cache/dd4850ad4231b6306bceadf38a0bbeed/r/2/r227-Base-39731_1.png",
+        "discovery": "Exact main-gallery full URL in source HTML",
+        "galleryCaption": "Magtein®",
+        "galleryIsMain": true,
+        "suggestedAltAfterVisualConfirmation": "NutriDyn Magtein magnesium L-threonate, 90-capsule package",
+        "assetSha256": null,
+        "pixelDimensions": null,
+        "visualInspection": "web_image_open_failed_tool_inaccessible",
+        "actualPhotographVerified": false,
+        "labelReadabilityVerified": false,
+        "currentSuppliedPackagingVerified": false,
+        "rightsCleared": false,
+        "publicationAuthorized": false,
+        "downloadedToWorkspace": false
+      }
+    },
+    {
+      "legacyDecisionId": "NUT-003",
+      "repositoryName": "Mito Recharge",
+      "repositorySlug": "mito-recharge",
+      "supplierSku": "R167",
+      "brand": "NutriDyn",
+      "legalManufacturer": null,
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "liveIdentityStatus": "unresolved",
+      "copyStatus": "provisional_not_approved",
+      "source": {
+        "url": "https://nutridyn.com/mito-recharge-r167",
+        "httpStatus": 200,
+        "observedAt": "2026-10-21T18:05:51.2711907Z",
+        "htmlUtf8Sha256": "aaf4d56cbdf023d2acf49411ede8253db6199e44b7e87de26489f5d368940173",
+        "htmlRetained": false,
+        "matchBasis": "Same supplier code and product name; source page lists 90 capsules. Current Xenios pack/variant remains unconfirmed.",
+        "linkedSheetUrl": "https://nutridyn.com/media/productsattachment/Mito_Recharge_SS_ND812_NEW.pdf",
+        "linkedSheetInspected": true,
+        "linkedSheetReviewScope": "Extracted text of both pages; panel on page 2. Screenshot calls exposed no inspectable pixels, so visual layout is unverified.",
+        "linkedSheetRevision": "2/25 ND812",
+        "linkedSheetFinding": "Constituent list and additional ingredients agree with HTML; complete chemical forms/amounts remain outside this abbreviated draft. No storage instruction found."
+      },
+      "imageCandidate": {
+        "url": "https://nutridyn.com/media/catalog/product/cache/dd4850ad4231b6306bceadf38a0bbeed/r/1/r167-Base-61632_1.png",
+        "discovery": "Exact main-gallery full URL in source HTML",
+        "galleryCaption": "Mito Recharge",
+        "galleryIsMain": true,
+        "suggestedAltAfterVisualConfirmation": "NutriDyn Mito Recharge, 90-capsule package",
+        "assetSha256": null,
+        "pixelDimensions": null,
+        "visualInspection": "web_image_open_failed_tool_inaccessible",
+        "actualPhotographVerified": false,
+        "labelReadabilityVerified": false,
+        "currentSuppliedPackagingVerified": false,
+        "rightsCleared": false,
+        "publicationAuthorized": false,
+        "downloadedToWorkspace": false
+      }
+    },
+    {
+      "legacyDecisionId": "NUT-005",
+      "repositoryName": "Omega Pure EPA-DHA 2400",
+      "repositorySlug": "omega-pure-epa-dha-2400",
+      "supplierSku": "R817E",
+      "brand": "NutriDyn",
+      "legalManufacturer": null,
+      "canonicalProductId": null,
+      "canonicalVariantId": null,
+      "liveIdentityStatus": "unresolved",
+      "copyStatus": "provisional_not_approved",
+      "source": {
+        "url": "https://nutridyn.com/omega-pure-epa-dha-2400",
+        "httpStatus": 200,
+        "observedAt": "2026-10-21T18:05:51.8232728Z",
+        "htmlUtf8Sha256": "7a113f4196dd3afeaf5390cab78b297c9958b6c334971e026732c387861e7d60",
+        "htmlRetained": false,
+        "matchBasis": "Same supplier code and product name; source page lists 150 mL liquid. Current Xenios pack/variant remains unconfirmed.",
+        "linkedSheetUrl": "https://nutridyn.com/media/productsattachment/Omega_Pure_EPA-DHA_2400_SS_ND417_NEW.pdf",
+        "linkedSheetInspected": true,
+        "linkedSheetReviewScope": "Extracted text of both pages; panel on page 2. Screenshot calls exposed no inspectable pixels, so visual layout is unverified.",
+        "linkedSheetRevision": "2/25 ND417",
+        "linkedSheetFinding": "Panel agrees with HTML. PDF caution also covers other nutritional supplements; HTML caution is shorter. That difference is retained in copy-review notes. No storage instruction found."
+      },
+      "imageCandidate": {
+        "url": "https://nutridyn.com/media/catalog/product/cache/dd4850ad4231b6306bceadf38a0bbeed/r/8/r817e-Base-89028_1.png",
+        "discovery": "Exact main-gallery full URL in source HTML; related OmegaQuant tiles excluded",
+        "galleryCaption": "Omega Pure EPA-DHA 2400",
+        "galleryIsMain": true,
+        "suggestedAltAfterVisualConfirmation": "NutriDyn Omega Pure EPA-DHA 2400 liquid, 150 mL package",
+        "assetSha256": null,
+        "pixelDimensions": null,
+        "visualInspection": "web_image_open_failed_tool_inaccessible",
+        "actualPhotographVerified": false,
+        "labelReadabilityVerified": false,
+        "currentSuppliedPackagingVerified": false,
+        "rightsCleared": false,
+        "publicationAuthorized": false,
+        "downloadedToWorkspace": false
+      },
+      "explicitExclusions": [
+        "Omega Pure EPA-DHA 720 / OP720 softgels are a different formulation and package",
+        "OmegaQuant test images in related-product tiles are not this product"
+      ]
+    }
+  ]
+}
