@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import express from "express";
 import request from "supertest";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 // ---------------------------------------------------------------------------
 // Durable outbox worker tests (Mega 1 section 11): idempotent enqueue,
@@ -14,6 +14,7 @@ const state = vi.hoisted(() => ({
   attempts: [] as any[],
   applications: [] as any[],
   sendMode: "ok" as "ok" | "throw" | "false",
+  fromEmail: "xenios Health <team@xeniostechnology.com>",
 }));
 
 const emails = vi.hoisted(() => ({
@@ -122,10 +123,23 @@ vi.mock("./membership-emails", () => emails);
 vi.mock("../services/email", () => ({
   getResendClient: async () => ({
     client: { emails: { send: resend.send } },
+    fromEmail: state.fromEmail,
   }),
 }));
 
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
+
+const catalogEnvironmentKeys = [
+  "FROM_EMAIL",
+  "CATALOG_AUTHORITY_REVISION",
+  "CATALOG_AUTHORITY_URL",
+  "CATALOG_AUTHORITY_APPROVED_AT",
+  "CATALOG_AUTHORITY_EXPIRES_AT",
+  "CATALOG_AUTHORITY_REVOKED_AT",
+] as const;
+const originalCatalogEnvironment = new Map(
+  catalogEnvironmentKeys.map((key) => [key, process.env[key]]),
+);
 
 import { enqueueNotification, registerOutboxAdmin, runOutboxTick } from "./outbox";
 import { enqueueProductDiagnosticEmail } from "./products-diagnostics/outbox-adapter";
@@ -155,6 +169,166 @@ beforeEach(() => {
   state.applications.length = 0;
   state.sendMode = "ok";
   vi.clearAllMocks();
+  resend.send.mockResolvedValue({ data: { id: "resend-product-id" }, error: null });
+  state.fromEmail = "xenios Health <team@xeniostechnology.com>";
+  process.env.CATALOG_AUTHORITY_REVISION = "catalog-2026-10-22";
+  process.env.CATALOG_AUTHORITY_URL = "https://xeniostechnology.com/catalog/current.pdf";
+  process.env.CATALOG_AUTHORITY_APPROVED_AT = "2026-10-20T00:00:00.000Z";
+  process.env.CATALOG_AUTHORITY_EXPIRES_AT = "2026-11-20T00:00:00.000Z";
+  delete process.env.CATALOG_AUTHORITY_REVOKED_AT;
+});
+
+afterAll(() => {
+  for (const key of catalogEnvironmentKeys) {
+    const value = originalCatalogEnvironment.get(key);
+    if (value === undefined) delete process.env[key];
+    else process.env[key] = value;
+  }
+});
+
+const CATALOG_NOW = new Date("2026-10-22T12:00:00.000Z");
+
+function catalogPayload(overrides: Record<string, unknown> = {}) {
+  return {
+    schemaVersion: 1,
+    receipt: "XHC-ABCDEF123456",
+    email: "person@example.com",
+    catalog: {
+      revision: "catalog-2026-10-22",
+      url: "https://xeniostechnology.com/catalog/current.pdf",
+      approvedAt: "2026-10-20T00:00:00+00:00",
+      expiresAt: "2026-11-20T00:00:00+00:00",
+      revokedAt: null,
+      state: "approved",
+    },
+    ...overrides,
+  };
+}
+
+function catalogJob(kind: "customer" | "team", overrides: Record<string, unknown> = {}) {
+  const eventType = kind === "customer" ? "catalog_interest_customer" : "catalog_interest_team";
+  return job({
+    eventKey: `catalog-interest:11111111-1111-4111-8111-111111111111:${kind}`,
+    eventType,
+    templateKey: eventType,
+    recipient: kind === "customer" ? "person@example.com" : "team@example.com",
+    applicationId: null,
+    payload: kind === "customer"
+      ? catalogPayload()
+      : catalogPayload({ marketingConsent: false }),
+    ...overrides,
+  });
+}
+
+describe("catalog interest canonical delivery", () => {
+  it("delivers the customer job with its event key and stores the provider ID", async () => {
+    await enqueueNotification(catalogJob("customer"));
+
+    const result = await runOutboxTick(CATALOG_NOW);
+
+    expect(result).toEqual({ sent: 1, retried: 0, failed: 0 });
+    expect(resend.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        from: "xenios Health <team@xeniostechnology.com>",
+        to: "person@example.com",
+        subject: "Your xenios catalog request XHC-ABCDEF123456",
+      }),
+      { idempotencyKey: "catalog-interest:11111111-1111-4111-8111-111111111111:customer" },
+    );
+    expect(state.outbox[0]).toMatchObject({
+      status: "sent",
+      provider_message_id: "resend-product-id",
+    });
+  });
+
+  it("uses the shared resolver's connector sender when raw FROM_EMAIL is absent", async () => {
+    delete process.env.FROM_EMAIL;
+    state.fromEmail = "Connector Sender <team@xeniostechnology.com>";
+    await enqueueNotification(catalogJob("customer"));
+
+    const result = await runOutboxTick(CATALOG_NOW);
+
+    expect(result.sent).toBe(1);
+    expect(resend.send).toHaveBeenCalledWith(
+      expect.objectContaining({ from: "Connector Sender <team@xeniostechnology.com>" }),
+      expect.any(Object),
+    );
+  });
+
+  it("delivers the separate team snapshot without requiring customer authority", async () => {
+    delete process.env.CATALOG_AUTHORITY_REVISION;
+    await enqueueNotification(catalogJob("team"));
+
+    const result = await runOutboxTick(CATALOG_NOW);
+
+    expect(result.sent).toBe(1);
+    expect(resend.send).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "team@example.com",
+        text: expect.stringContaining("Optional marketing opt-in: no"),
+      }),
+      expect.objectContaining({ idempotencyKey: expect.stringMatching(/:team$/) }),
+    );
+  });
+
+  it.each([
+    ["missing provider ID", { data: {}, error: null }],
+    ["provider error with an ID", { data: { id: "ambiguous-id" }, error: { name: "rate_limited" } }],
+  ])("keeps %s retryable and never records sent", async (_label, providerResult) => {
+    resend.send.mockResolvedValueOnce(providerResult as any);
+    await enqueueNotification(catalogJob("customer"));
+
+    const result = await runOutboxTick(CATALOG_NOW);
+
+    expect(result).toEqual({ sent: 0, retried: 1, failed: 0 });
+    expect(state.outbox[0].status).toBe("failed_retryable");
+    expect(state.outbox[0].provider_message_id ?? null).toBeNull();
+  });
+
+  it("rechecks authority after a retry and refuses a newly revoked catalog", async () => {
+    resend.send.mockResolvedValueOnce({ data: null, error: { name: "provider_unavailable" } });
+    await enqueueNotification(catalogJob("customer"));
+    await runOutboxTick(CATALOG_NOW);
+    expect(state.outbox[0].status).toBe("failed_retryable");
+
+    process.env.CATALOG_AUTHORITY_REVOKED_AT = "2026-10-22T12:30:00.000Z";
+    const second = await runOutboxTick(new Date("2026-10-22T13:00:00.000Z"));
+
+    expect(second).toEqual({ sent: 0, retried: 0, failed: 1 });
+    expect(state.outbox[0].status).toBe("failed_permanent");
+    expect(state.outbox[0].provider_message_id ?? null).toBeNull();
+    expect(state.outbox[0].last_error_summary).toContain("manual_review_required");
+    expect(resend.send).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails a mismatched event and template permanently without touching the provider", async () => {
+    await enqueueNotification(catalogJob("customer", {
+      eventType: "catalog_interest_team",
+      payload: catalogPayload({ marketingConsent: false }),
+    }));
+
+    const result = await runOutboxTick(CATALOG_NOW);
+
+    expect(result.failed).toBe(1);
+    expect(state.outbox[0].status).toBe("failed_permanent");
+    expect(state.outbox[0].last_error_summary).toContain("invalid_job");
+    expect(resend.send).not.toHaveBeenCalled();
+  });
+
+  it("rejects a catalog event paired with another recognized template", async () => {
+    await enqueueNotification(catalogJob("customer", {
+      templateKey: "applicant_received",
+      payload: { firstName: "Wrong path" },
+    }));
+
+    const result = await runOutboxTick(CATALOG_NOW);
+
+    expect(result.failed).toBe(1);
+    expect(state.outbox[0].status).toBe("failed_permanent");
+    expect(state.outbox[0].last_error_summary).toContain("invalid_job");
+    expect(emails.sendApplicationReceived).not.toHaveBeenCalled();
+    expect(resend.send).not.toHaveBeenCalled();
+  });
 });
 
 describe("approved customer notification authority", () => {
