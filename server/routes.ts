@@ -40,6 +40,8 @@ import {
   sanitizeMarketingAttributionPath,
   sanitizeMarketingAttributionValue,
 } from "@shared/marketing-attribution";
+import { registerCatalogInterestApi } from "./catalog-interest/api";
+import { createCatalogInterestDependencies } from "./catalog-interest/production";
 
 const WAITLIST_STATUSES = ["New", "Contacted", "Qualified", "Not a fit", "Converted", "Archived"];
 const LOI_STATUSES = ["New", "Reviewing", "Followed up", "Signed", "Not moving forward"];
@@ -210,6 +212,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
   await storage.ensureCounterSeeded(550).catch((e) => console.error("[seed] counter seed failed:", e));
 
   app.get("/api/health", healthHandler);
+  registerCatalogInterestApi(app, createCatalogInterestDependencies());
 
   const handleCount = async (_req: Request, res: Response) => {
     try {

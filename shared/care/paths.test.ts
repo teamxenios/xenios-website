@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { isCarePath, isHealthGatewayPath, normalizeCarePath } from "./paths";
+import {
+  isCarePath,
+  isHealthCatalogPath,
+  isHealthGatewayPath,
+  isHealthPrivacyPath,
+  normalizeCarePath,
+} from "./paths";
 
 describe("Care path normalization", () => {
   it.each([
@@ -50,5 +56,28 @@ describe("Care path normalization", () => {
     "https://example.com/health",
   ])("does not broaden the Health gateway boundary: %s", (value) => {
     expect(isHealthGatewayPath(value)).toBe(false);
+  });
+
+  it.each([
+    "/health/catalog",
+    "/HEALTH/CATALOG/",
+    "/%68ealth/catalog?source=discarded#ignored",
+  ])("recognizes only the reviewed catalog privacy path: %s", (value) => {
+    expect(isHealthCatalogPath(value)).toBe(true);
+    expect(isHealthPrivacyPath(value)).toBe(true);
+  });
+
+  it.each([
+    "/health/catalog/extra",
+    "/health/catalogue",
+    "/health%2Fcatalog",
+    "/health//catalog",
+  ])("does not broaden the catalog privacy boundary: %s", (value) => {
+    expect(isHealthCatalogPath(value)).toBe(false);
+  });
+
+  it("keeps the exact gateway inside the same privacy zone", () => {
+    expect(isHealthPrivacyPath("/health")).toBe(true);
+    expect(isHealthPrivacyPath("/health/care")).toBe(false);
   });
 });

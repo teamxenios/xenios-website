@@ -64,3 +64,16 @@ describe("the canonical /health Care + Research gateway", () => {
     });
   });
 });
+
+describe("the public catalog request page", () => {
+  it("lazy-loads the page and mounts it before the exact Health gateway", () => {
+    expect(appSource).toContain(
+      'const CatalogInterestPage = lazy(() => import("@/pages/CatalogInterestPage"));',
+    );
+    expect(appSource).toContain(
+      '<Route path="/health/catalog" component={CatalogInterestRoutes} />',
+    );
+    expect(appSource.indexOf('<Route path="/health/catalog"'))
+      .toBeLessThan(appSource.indexOf('<Route path="/health"'));
+  });
+});

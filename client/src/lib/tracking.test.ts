@@ -85,7 +85,14 @@ describe("initTracking is a no-op on the private Research surface", () => {
   });
 
   it("no-op on the exact Health gateway, including normalized variants", async () => {
-    for (const path of ["/health", "/HEALTH/", "/%68ealth?from=nav"]) {
+    for (const path of [
+      "/health",
+      "/HEALTH/",
+      "/%68ealth?from=nav",
+      "/health/catalog",
+      "/HEALTH/CATALOG/",
+      "/%68ealth/catalog?from=private",
+    ]) {
       setLocation(path);
       const t = await freshTracking();
       await t.initTracking();
@@ -169,6 +176,9 @@ describe("positive control and event hygiene", () => {
     setLocation("/health");
     t.track("ViewContent", { pathway: "health" });
     expect(fbq).not.toHaveBeenCalled();
+    setLocation("/health/catalog");
+    t.track("Lead", { pathway: "catalog" });
+    expect(fbq).not.toHaveBeenCalled();
     setLocation("/concepts");
     t.track("Lead");
     expect(fbq).toHaveBeenCalledTimes(1);
@@ -198,6 +208,10 @@ describe("positive control and event hygiene", () => {
     expect(assign).toHaveBeenCalledWith("https://xeniostechnology.com/health");
     expect(originalPush).not.toHaveBeenCalled();
 
+    fakeWindow.history.pushState({}, "", "/health/catalog");
+    expect(assign).toHaveBeenCalledWith("https://xeniostechnology.com/health/catalog");
+    expect(originalPush).not.toHaveBeenCalled();
+
     // Recovery hashes on any path get the same new-document isolation.
     fakeWindow.history.replaceState({}, "", "/#access_token=abc&refresh_token=def&type=recovery");
     expect(replace).toHaveBeenCalledWith("https://xeniostechnology.com/#access_token=abc&refresh_token=def&type=recovery");
@@ -225,6 +239,12 @@ describe("positive control and event hygiene", () => {
       t.requiresFullDocumentNavigation(
         "https://xeniostechnology.com/health",
         "https://xeniostechnology.com/health?from=footer",
+      ),
+    ).toBe(false);
+    expect(
+      t.requiresFullDocumentNavigation(
+        "https://xeniostechnology.com/health",
+        "https://xeniostechnology.com/health/catalog",
       ),
     ).toBe(false);
   });
