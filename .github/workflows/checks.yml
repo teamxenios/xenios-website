@@ -4,7 +4,7 @@ name: checks
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, release/early-access-code-session-checkout]
 
 jobs:
   test:
@@ -61,3 +61,29 @@ jobs:
         env:
           BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
       - run: npm run verify:route-uniqueness
+  # Required jobs must finish successfully; a skipped job is not acceptance.
+  # This checks job conclusions only, not skipped test cases or release readiness.
+  required-checks:
+    name: Required CI completion
+    if: ${{ always() }}
+    needs: [test, typecheck, build, protection]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Refuse unsuccessful or missing required jobs
+        shell: bash
+        env:
+          TEST_RESULT: ${{ needs.test.result }}
+          TYPECHECK_RESULT: ${{ needs.typecheck.result }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          PROTECTION_RESULT: ${{ needs.protection.result }}
+        run: |
+          set -euo pipefail
+          for result in "$TEST_RESULT" "$TYPECHECK_RESULT" "$BUILD_RESULT" "$PROTECTION_RESULT"; do
+            if [[ "$result" != "success" ]]; then
+              echo "A required CI job did not succeed: $result"
+              exit 1
+            fi
+          done
+          echo "All four required CI jobs succeeded."
