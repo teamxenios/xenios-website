@@ -34,6 +34,7 @@ process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 import { registerMemberPlatformApi } from "./member-platform";
 import { registerAdminCapabilityApi } from "./capabilities";
 import { registerOverviewApi } from "./overview";
+import { registerMemberAccountApi } from "./member-account";
 import { registerAgreementsApi } from "./agreements";
 import { registerProfileApi } from "./profile";
 import { registerAssessmentApi } from "./assessment";
@@ -74,6 +75,7 @@ function registeredRoutes(): Set<string> {
 const LANE_MODULES: Array<[string, (app: any, deps?: any) => void]> = [
   ["capabilities", (app, deps) => registerAdminCapabilityApi(app, () => deps.clock.now())],
   ["overview", registerOverviewApi],
+  ["member-account", registerMemberAccountApi],
   ["agreements", registerAgreementsApi],
   ["profile", registerProfileApi],
   ["assessment", registerAssessmentApi],
@@ -94,6 +96,15 @@ describe("registerMemberPlatformApi", () => {
     // capabilities + overview
     "GET /api/admin/research/capabilities",
     "GET /api/research/member/overview",
+    // member account surface (the seven adapter paths PR #209 listed as the
+    // remaining member-surface gap; two are served, five refuse truthfully)
+    "GET /api/research/member/membership",
+    "POST /api/research/member/cancel",
+    "GET /api/research/member/security/sessions",
+    "GET /api/research/member/privacy/summary",
+    "POST /api/research/member/privacy/export",
+    "POST /api/research/member/privacy/correction",
+    "POST /api/research/member/privacy/deletion",
     // wave 1
     "GET /api/research/agreements",
     "POST /api/research/agreements",

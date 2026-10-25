@@ -7,6 +7,7 @@
 // change: these are the exact calls the pages previously made inline.
 
 import { apiGet, apiPost, type ApiResult } from "../lib/api";
+import { MEMBER_ACCOUNT_API } from "@shared/research/member-paths";
 import {
   PROFILE_SECTION_KEYS,
   PLAN_DOCUMENT_TYPES,
@@ -37,19 +38,26 @@ export function getMemberOverview<T>(token?: string | null): Promise<ApiResult<T
 }
 
 // --- Membership ------------------------------------------------------------
+//
+// The account-surface paths below come from @shared/research/member-paths,
+// which the server route module imports too. They used to be built here from
+// the BASE prefix, which is how the prefix trap bit: a path assembled on the
+// client and a path registered on the server are two copies of one string, and
+// when they drifted the request fell through to the SPA catch-all and returned
+// the app shell with a 200. There is now one copy.
 
 export function getMembership<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/membership`, token);
+  return apiGet<T>(MEMBER_ACCOUNT_API.membership, token);
 }
 
 export function cancelMembership(token?: string | null): Promise<ApiResult<{ ok: boolean; message?: string }>> {
-  return apiPost<{ ok: boolean; message?: string }>(`${BASE}/cancel`, { confirm: true }, token);
+  return apiPost<{ ok: boolean; message?: string }>(MEMBER_ACCOUNT_API.cancel, { confirm: true }, token);
 }
 
 // --- Security --------------------------------------------------------------
 
 export function getSecuritySessions<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/security/sessions`, token);
+  return apiGet<T>(MEMBER_ACCOUNT_API.securitySessions, token);
 }
 
 // --- Privacy controls ------------------------------------------------------
@@ -57,22 +65,22 @@ export function getSecuritySessions<T>(token?: string | null): Promise<ApiResult
 export type PrivacyRequestResult = { ok: boolean; message?: string };
 
 export function getPrivacySummary<T>(token?: string | null): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/privacy/summary`, token);
+  return apiGet<T>(MEMBER_ACCOUNT_API.privacySummary, token);
 }
 
 export function requestPrivacyExport(token?: string | null): Promise<ApiResult<PrivacyRequestResult>> {
-  return apiPost<PrivacyRequestResult>(`${BASE}/privacy/export`, {}, token);
+  return apiPost<PrivacyRequestResult>(MEMBER_ACCOUNT_API.privacyExport, {}, token);
 }
 
 export function requestPrivacyCorrection(
   detail: string,
   token?: string | null,
 ): Promise<ApiResult<PrivacyRequestResult>> {
-  return apiPost<PrivacyRequestResult>(`${BASE}/privacy/correction`, { detail }, token);
+  return apiPost<PrivacyRequestResult>(MEMBER_ACCOUNT_API.privacyCorrection, { detail }, token);
 }
 
 export function requestPrivacyDeletion(token?: string | null): Promise<ApiResult<PrivacyRequestResult>> {
-  return apiPost<PrivacyRequestResult>(`${BASE}/privacy/deletion`, {}, token);
+  return apiPost<PrivacyRequestResult>(MEMBER_ACCOUNT_API.privacyDeletion, {}, token);
 }
 
 // --- Profile ---------------------------------------------------------------

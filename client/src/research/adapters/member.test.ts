@@ -7,6 +7,7 @@
 // error (500), and unauthorized (401).
 
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { MEMBER_ACCOUNT_API } from "@shared/research/member-paths";
 import type { ApiResult } from "../lib/api";
 import {
   acknowledgeDocument,
@@ -239,6 +240,60 @@ describe("adapter endpoint contracts", () => {
     await getMemberOverview(null);
     expect(calls[0].auth).toBeUndefined();
   });
+});
+
+// ---------------------------------------------------------------------------
+// The prefix trap.
+//
+// Five member pages once fell through the SPA catch-all because the client
+// asked for /api/research/member/<name> and the server had registered
+// /api/research/<name>, or nothing at all. Nothing failed loudly: an
+// unpublished path returns the app shell with a 200, so the pages rendered
+// their pending states forever and every test on both sides stayed green.
+//
+// The account-surface paths now come from ONE shared constant that the server
+// route module imports too, so the two sides cannot drift. That only helps if
+// the constant itself is pinned, which is what this block does: it holds the
+// literal URLs, so editing the shared constant fails here rather than silently
+// unpublishing a page. The ADAPTERS table above independently proves each
+// adapter reaches the literal it is supposed to.
+// ---------------------------------------------------------------------------
+describe("member account paths", () => {
+  it("pins the shared constant to its exact literal URLs", () => {
+    expect(MEMBER_ACCOUNT_API).toEqual({
+      membership: "/api/research/member/membership",
+      cancel: "/api/research/member/cancel",
+      securitySessions: "/api/research/member/security/sessions",
+      privacySummary: "/api/research/member/privacy/summary",
+      privacyExport: "/api/research/member/privacy/export",
+      privacyCorrection: "/api/research/member/privacy/correction",
+      privacyDeletion: "/api/research/member/privacy/deletion",
+    });
+  });
+
+  it("keeps every account path under the /api/research/member prefix", () => {
+    for (const path of Object.values(MEMBER_ACCOUNT_API)) {
+      expect(path.startsWith("/api/research/member/")).toBe(true);
+    }
+  });
+
+  it.each(Object.entries(MEMBER_ACCOUNT_API))(
+    "the %s adapter requests exactly the shared path",
+    async (key, path) => {
+      const invoke: Record<string, (t: string) => Promise<ApiResult<unknown>>> = {
+        membership: (t) => getMembership(t),
+        cancel: (t) => cancelMembership(t),
+        securitySessions: (t) => getSecuritySessions(t),
+        privacySummary: (t) => getPrivacySummary(t),
+        privacyExport: (t) => requestPrivacyExport(t),
+        privacyCorrection: (t) => requestPrivacyCorrection("detail", t),
+        privacyDeletion: (t) => requestPrivacyDeletion(t),
+      };
+      const { calls } = stubFetch(200, { ok: true });
+      await invoke[key](TOKEN);
+      expect(calls[0].path).toBe(path);
+    },
+  );
 });
 
 describe("adapter state matrix", () => {
