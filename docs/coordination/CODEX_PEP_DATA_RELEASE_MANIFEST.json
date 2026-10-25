@@ -1,0 +1,54 @@
+{
+  "baseSha": "824631ae64f627a3ddc6f150145ffbcaec92d6f1",
+  "branch": "codex/pep-data-product-control-20260802",
+  "changedFiles": [
+    "docs/coordination/CODEX_PEP_DATA_HANDOFF.md",
+    "docs/coordination/CODEX_PEP_DATA_RELEASE_MANIFEST.json",
+    "docs/coordination/peptide-data/peptide-reconciliation.csv",
+    "docs/coordination/peptide-data/peptide-reconciliation.json",
+    "docs/coordination/peptide-data/product-control-import-candidate.json",
+    "docs/coordination/peptide-data/rejected-rows.json",
+    "docs/coordination/peptide-data/state-counts.json",
+    "scripts/peptide_product_control.py",
+    "scripts/peptide_product_control_test.py"
+  ],
+  "configurationQueueRow": null,
+  "dataset": {
+    "checkoutEligibleRows": 0,
+    "datasetSha256": "61ce0fdaa1a2417b5478aed879202a80c1c5c41e4c2d4cc2cc5e5d5ac9bd5944",
+    "plannedPriceRows": 76,
+    "priceMissingRows": 10,
+    "productCount": 61,
+    "rejectedRowCount": 0,
+    "truthStateCounts": {
+      "care_only": 2,
+      "held": 1,
+      "pending_documentation": 15,
+      "request_access": 52,
+      "unavailable": 16
+    },
+    "variantCount": 86
+  },
+  "generatedArtifactSha256": {
+    "docs/coordination/peptide-data/peptide-reconciliation.csv": "1e1acafb32f724fea7e4e41f6934bb6c96bfecab1c077175f22c03020f9aca33",
+    "docs/coordination/peptide-data/peptide-reconciliation.json": "0878a6dffcebf2bbaf7eae8a64d32c67d24126d880c7b81607bddbe9217143c8",
+    "docs/coordination/peptide-data/product-control-import-candidate.json": "9b50e598f4a27c125d01319065f7b9fe078460ccc1c1748618029619df781099",
+    "docs/coordination/peptide-data/rejected-rows.json": "09f32a6f0e0b31bc5a5292cf16805abf406865992055a6a1443c8e064b655ca3",
+    "docs/coordination/peptide-data/state-counts.json": "decd2022a1c8e403ff423cc218aa43831dd7805464dcb32d2f55490e894ce8be"
+  },
+  "lease": {
+    "exactPathCount": 9,
+    "openPrCountAudited": 30,
+    "protectedSeamEdits": 0,
+    "zeroExactPathCollisions": true
+  },
+  "mode": "review_only_local_artifacts",
+  "productionMutationAllowed": false,
+  "schemaVersion": "xenios.codex-pep-data.release-manifest.v1",
+  "sessionId": "CODEX-PEP-DATA",
+  "source": {
+    "sheet": "04 Peptides & Research",
+    "sprintPackSha256": "6b9426ebd0681f4e3d80ac2d58067df7a8e4d4ce41b23fc647f83abf8446ae50",
+    "workbookSha256": "df317a28374c9e194f3379a2b276c8533016dc84aa906af9d48b49db46bf53d5"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "metadata": {
+    "datasetSha256": "61ce0fdaa1a2417b5478aed879202a80c1c5c41e4c2d4cc2cc5e5d5ac9bd5944",
+    "rowCount": 86,
+    "schemaVersion": "xenios.peptide-product-control-candidate.v1",
+    "sourceSheet": "04 Peptides & Research",
+    "sourceWorkbookSha256": "df317a28374c9e194f3379a2b276c8533016dc84aa906af9d48b49db46bf53d5"
+  },
+  "rejectedRowCount": 0,
+  "rows": []
+}
