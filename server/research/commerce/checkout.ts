@@ -34,6 +34,7 @@ import type { PaymentProvider } from "../providers/payment";
 import type { ShippingProvider } from "../providers/shipping";
 import type { InventoryLotRepository } from "./persistence/inventory-store";
 import type { ReservationRepository } from "./persistence/reservations-store";
+import { assertNoZeroOrNegativeCharge } from "./price-authority";
 
 /**
  * A configured package weight so a quote can be requested at all. It is a shipping
@@ -278,6 +279,24 @@ export function createCheckoutService(deps: CheckoutDeps): CheckoutService {
     // and fall back to the conservative one rather than assuming a price of zero.
     for (const line of cart.lines) {
       if (line.lineTotalCents === null || line.unitPriceCents === null) {
+        denials.add(line.blockedReason ?? "unconfirmed_supplier_facts");
+      }
+    }
+
+    // THE MONEY INVARIANT, asserted here and not delegated. The loop above
+    // trusts the cart to have reported null for a line it could not price;
+    // this one trusts nothing and re-checks the arithmetic itself, so a cart
+    // implementation that ever hands back a zero or negative amount is refused
+    // at the last gate before an authorization is created rather than charged.
+    //
+    // It is deliberately outside the price-authority flag: a non-positive
+    // charge is never the intended behavior of either price runtime, and a
+    // floor that only stands when a flag is on is not a floor.
+    for (const line of cart.lines) {
+      if (
+        !assertNoZeroOrNegativeCharge(line.unitPriceCents) ||
+        !assertNoZeroOrNegativeCharge(line.lineTotalCents)
+      ) {
         denials.add(line.blockedReason ?? "unconfirmed_supplier_facts");
       }
     }

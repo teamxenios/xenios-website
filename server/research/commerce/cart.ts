@@ -8,9 +8,15 @@
 // Two rules drive the shape of this module:
 //
 //   1. Nothing a browser sends is trusted except a SKU, a quantity, and a purchase
-//      mode. Prices come from the catalog on every single read.
+//      mode. Prices are resolved fresh on every single read, never stored and never
+//      supplied by the client.
 //   2. Blocking reasons accumulate. A line reports the one code the member acts on,
 //      while the cart reports the complete set an operator needs.
+//
+// WHERE THE PRICE COMES FROM depends on one injected dependency. With no
+// `priceAuthority` (the default) it is the supplier fact `facts.priceCents`, as it
+// has always been. With one, Product Control is the authority and a SKU it refuses
+// is not purchasable. See `price-authority.ts` for the seam and the reason it exists.
 
 import {
   evaluatePurchaseEligibility,
@@ -40,6 +46,12 @@ import {
   type InventoryLot,
   type OrderLine,
 } from "../inventory/lots";
+import {
+  assertNoZeroOrNegativeCharge,
+  denialForRefusal,
+  type AuthoritativePriceMap,
+  type MoneyPriceAuthority,
+} from "./price-authority";
 
 // ---------------------------------------------------------------------------
 // Storage
@@ -69,13 +81,26 @@ export interface CartRepository {
 
 export interface CartServiceDeps {
   repository: CartRepository;
-  /** Keyed by SKU. The only authority on price and fulfillment owner. */
+  /**
+   * Keyed by SKU. The authority on display name, eligibility, and fulfillment
+   * owner, and, when no `priceAuthority` is supplied, on price too.
+   */
   catalog: Map<string, CatalogProduct>;
   lots: InventoryLot[];
   storeCredit: StoreCreditEntry[];
   commerceEnabled: boolean;
   quantumCommerceEnabled: boolean;
   requiredAgreementKeys: string[];
+  /**
+   * THE PRICE JOIN. Absent (the default, and what the flag-off wiring passes)
+   * means every number in this file comes from `CatalogProduct.facts.priceCents`
+   * exactly as it always has. Present means Product Control decides the money,
+   * and a refusal from it blocks the line rather than falling back to the fact.
+   *
+   * See server/research/commerce/price-authority.ts for why the two runtimes
+   * exist and what the seam guarantees.
+   */
+  priceAuthority?: MoneyPriceAuthority;
 }
 
 export type CartDenial = { ok: false; code: CommerceDenialCode; message: string };
@@ -157,10 +182,70 @@ interface EvaluatedLine {
   reasons: CommerceDenialCode[];
 }
 
+/**
+ * The one place a cart line becomes a number.
+ *
+ * `authoritative` is null on the legacy path and IS the decision on the joined
+ * path. Both branches end at the same invariant: a price is either a positive
+ * integer number of cents or it is null. Zero is never a price here.
+ */
+function resolveLinePrice(
+  stored: StoredCartLine,
+  product: CatalogProduct,
+  authoritative: AuthoritativePriceMap | null,
+  reasons: CommerceDenialCode[],
+): number | null {
+  if (authoritative !== null) {
+    // JOINED. Product Control is the authority for money. A SKU it will not
+    // price is not purchasable, whatever the supplier fact says, which is the
+    // exact defect the composition suite drove: a SKU the authority answers
+    // sku_unknown for must never settle an order.
+    const decided = authoritative.get(stored.sku);
+    if (decided === undefined || decided.state === "refused") {
+      const code =
+        decided === undefined
+          ? "unconfirmed_supplier_facts"
+          : denialForRefusal(decided.reason);
+      if (!reasons.includes(code)) reasons.push(code);
+      return null;
+    }
+    // The seam already refuses a non-positive amount; re-asserting it here
+    // means no future change on either side of the seam can put a zero on a
+    // member surface.
+    return assertNoZeroOrNegativeCharge(decided.unitPriceCents)
+      ? decided.unitPriceCents
+      : null;
+  }
+
+  // LEGACY. The price is read fresh from the catalog and only when its
+  // provenance permits. An unconfirmed price serializes as null and blocks
+  // checkout; it never becomes 0.
+  const priceFact = product.facts.priceCents;
+  const priceDisplayable = isMemberDisplayable(priceFact);
+  if (!priceDisplayable && !reasons.includes("unconfirmed_supplier_facts")) {
+    reasons.push("unconfirmed_supplier_facts");
+  }
+  const unitPriceCents = priceDisplayable ? priceFact.value : null;
+
+  // THE ZERO FLOOR, unconditional. `isMemberDisplayable` proves provenance,
+  // never arithmetic: a confirmed fact carrying 0 or a negative number would
+  // otherwise be shown and charged as a real price. A number that is not a
+  // positive integer of cents is not a price, so it reads as the honest "no
+  // price" state and blocks the line, the same as an unconfirmed one.
+  if (!assertNoZeroOrNegativeCharge(unitPriceCents)) {
+    if (!reasons.includes("unconfirmed_supplier_facts")) {
+      reasons.push("unconfirmed_supplier_facts");
+    }
+    return null;
+  }
+  return unitPriceCents;
+}
+
 function evaluateLine(
   stored: StoredCartLine,
   deps: CartServiceDeps,
   asOf: Date,
+  authoritative: AuthoritativePriceMap | null,
 ): EvaluatedLine {
   const reasons: CommerceDenialCode[] = [];
   const product = deps.catalog.get(stored.sku);
@@ -209,15 +294,7 @@ function evaluateLine(
     if (!reasons.includes(code)) reasons.push(code);
   }
 
-  // The price is read fresh from the catalog and only when its provenance permits.
-  // An unconfirmed price serializes as null and blocks checkout; it never becomes 0.
-  const priceFact = product.facts.priceCents;
-  const priceDisplayable = isMemberDisplayable(priceFact);
-  if (!priceDisplayable && !reasons.includes("unconfirmed_supplier_facts")) {
-    reasons.push("unconfirmed_supplier_facts");
-  }
-
-  const unitPriceCents = priceDisplayable ? priceFact.value : null;
+  const unitPriceCents = resolveLinePrice(stored, product, authoritative, reasons);
   const lineTotalCents =
     unitPriceCents !== null && isValidQuantity(stored.quantity)
       ? unitPriceCents * stored.quantity
@@ -257,8 +334,41 @@ function evaluateLine(
 // Cart assembly
 // ---------------------------------------------------------------------------
 
-function buildCart(memberId: string, stored: StoredCart, deps: CartServiceDeps, asOf: Date): CartDto {
-  const evaluated = stored.lines.map((line) => evaluateLine(line, deps, asOf));
+/**
+ * Ask the price authority about every line at ONE instant, before the cart is
+ * assembled, so a cart is never priced against two different moments. Returns
+ * null on the legacy path, which is what every code path below branches on.
+ *
+ * An authority that throws is a refusal, not a fallback: an empty map means no
+ * line has a decision, and a line with no decision is blocked. Nothing here
+ * can reach `facts.priceCents` once an authority is configured.
+ */
+async function authoritativePrices(
+  stored: StoredCart,
+  deps: CartServiceDeps,
+  asOf: Date,
+): Promise<AuthoritativePriceMap | null> {
+  if (!deps.priceAuthority) return null;
+  try {
+    return await deps.priceAuthority.priceLines(
+      stored.lines.map((line) => ({ sku: line.sku, quantity: line.quantity })),
+      asOf,
+    );
+  } catch {
+    return new Map();
+  }
+}
+
+function buildCart(
+  memberId: string,
+  stored: StoredCart,
+  deps: CartServiceDeps,
+  asOf: Date,
+  authoritative: AuthoritativePriceMap | null,
+): CartDto {
+  const evaluated = stored.lines.map((line) =>
+    evaluateLine(line, deps, asOf, authoritative),
+  );
 
   const blockingReasons: CommerceDenialCode[] = [];
   const addBlocking = (code: CommerceDenialCode): void => {
@@ -324,8 +434,17 @@ async function loadCart(memberId: string, deps: CartServiceDeps): Promise<Stored
 // ---------------------------------------------------------------------------
 
 export function createCartService(deps: CartServiceDeps): CartService {
+  /**
+   * The one assembly path. The price authority (when configured) is consulted
+   * BEFORE the cart is built, so both the read and every mutation return a cart
+   * priced at the same instant by the same authority.
+   */
+  async function assemble(memberId: string, stored: StoredCart, asOf: Date): Promise<CartDto> {
+    return buildCart(memberId, stored, deps, asOf, await authoritativePrices(stored, deps, asOf));
+  }
+
   async function read(memberId: string, asOf: Date): Promise<CartDto> {
-    return buildCart(memberId, await loadCart(memberId, deps), deps, asOf);
+    return assemble(memberId, await loadCart(memberId, deps), asOf);
   }
 
   return {
@@ -405,7 +524,7 @@ export function createCartService(deps: CartServiceDeps): CartService {
         : [...cart.lines, next];
 
       await deps.repository.save(memberId, cart);
-      return { ok: true, cart: buildCart(memberId, cart, deps, asOf) };
+      return { ok: true, cart: await assemble(memberId, cart, asOf) };
     },
 
     async updateLine(memberId, sku, quantity, asOf) {
@@ -424,14 +543,14 @@ export function createCartService(deps: CartServiceDeps): CartService {
 
       cart.lines = cart.lines.map((line) => (line.sku === sku ? { ...line, quantity } : line));
       await deps.repository.save(memberId, cart);
-      return { ok: true, cart: buildCart(memberId, cart, deps, asOf) };
+      return { ok: true, cart: await assemble(memberId, cart, asOf) };
     },
 
     async removeLine(memberId, sku, asOf) {
       const cart = await loadCart(memberId, deps);
       cart.lines = cart.lines.filter((line) => line.sku !== sku);
       await deps.repository.save(memberId, cart);
-      return buildCart(memberId, cart, deps, asOf);
+      return assemble(memberId, cart, asOf);
     },
 
     revalidate(memberId, asOf) {
