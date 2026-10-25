@@ -12,6 +12,7 @@ import { registerTrackerApi } from "./tracker";
 import { registerMediaApi } from "./media";
 import { registerQuestionsApi } from "./questions";
 import { registerAdminQueuesApi } from "./admin-queues";
+import { registerAdminOperationsApi } from "./admin-operations";
 import { registerSlaAdminApi } from "./sla";
 import { registerProductRequestApi } from "./product-requests";
 
@@ -42,6 +43,10 @@ export function registerMemberPlatformApi(app: Express, deps: MemberPlatformDeps
   registerMediaApi(app, deps);
   registerQuestionsApi(app, deps);
   registerAdminQueuesApi(app, deps);
+  // The operations console read surfaces (members, orders, questions, audit,
+  // fulfillment, inventory). Registered here because index.ts stays a pinned
+  // one-line seam; this module owns no table and every route is a GET.
+  registerAdminOperationsApi(app);
   registerSlaAdminApi(app, deps);
   registerProductRequestApi(app);
 }
