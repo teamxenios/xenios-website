@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "status": "coordination_template",
+  "authoritativeManifest": "SHA-pinned schema-valid JSON posted on the draft PR after the final head is frozen",
+  "releaseId": "codex-6-route-free-partner-supplier-reporting",
+  "domain": "sanitized partner and supplier reporting",
+  "lane": "partners-supplier-reporting",
+  "owner": "Codex 6",
+  "createdAt": "2026-08-02T18:10:00Z",
+  "baseSha": "6fb322b4f89b7a68b6879e76eef9f91b50158209",
+  "headSha": "RESOLVE_FROM_FINAL_GIT_HEAD",
+  "currentProductionSha": "6fb322b4f89b7a68b6879e76eef9f91b50158209",
+  "files": [
+    "docs/coordination/CODEX_6_REPORTING_HANDOFF.md",
+    "docs/coordination/CODEX_6_REPORTING_RELEASE_MANIFEST.json",
+    "server/research/reporting/google-sheets.test.ts",
+    "server/research/reporting/google-sheets.ts",
+    "server/research/reporting/port.ts",
+    "server/research/reporting/worker.test.ts",
+    "server/research/reporting/worker.ts",
+    "shared/research/reporting/contracts.test.ts",
+    "shared/research/reporting/contracts.ts"
+  ],
+  "routes": [],
+  "migrations": [],
+  "tables": [],
+  "functions": [],
+  "rls": [],
+  "privileges": [],
+  "environmentNames": [],
+  "sharedWiring": [],
+  "productionMutation": false,
+  "providerCalls": false,
+  "tests": {
+    "focused": "npm test -- --run shared/research/reporting/contracts.test.ts server/research/reporting/google-sheets.test.ts server/research/reporting/worker.test.ts",
+    "fullSuite": "npm test -- --run",
+    "typecheck": "npm run check",
+    "build": "npm run build",
+    "diffCheck": "git diff --check"
+  },
+  "rollback": "Revert the source commit; the unit is unmounted and has no durable or external effects."
+}
