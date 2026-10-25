@@ -3,9 +3,15 @@ import { Link, useLocation } from "wouter";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import type { CareCapabilityStatus } from "@shared/care/contracts";
+import {
+  CARE_PATIENT_RECORD_PATH,
+  carePatientSurfaceByPath,
+} from "@shared/care/patient-surfaces";
 import CareClinicianReviewQueuePage, {
   CARE_CLINICIAN_REVIEW_PATH,
 } from "./CareClinicianReviewQueuePage";
+import CarePatientRecordPage from "./CarePatientRecordPage";
+import CarePatientSurfacePendingPage from "./CarePatientSurfacePendingPage";
 
 const preparation = [
   ["Eligibility", "Location, state coverage, identity, consent"],
@@ -31,6 +37,16 @@ export default function CareSection() {
   const [location] = useLocation();
   if (location === CARE_CLINICIAN_REVIEW_PATH) {
     return <CareClinicianReviewQueuePage />;
+  }
+  if (location === CARE_PATIENT_RECORD_PATH) {
+    return <CarePatientRecordPage />;
+  }
+  // A named patient surface that has no server contract answers for itself,
+  // saying which part of Care is missing and which endpoint does not exist,
+  // instead of falling through to the generic shell and dead-ending there.
+  const surface = carePatientSurfaceByPath(location);
+  if (surface && surface.state === "no_patient_contract") {
+    return <CarePatientSurfacePendingPage surface={surface} />;
   }
   return <CarePendingShell />;
 }
