@@ -595,7 +595,7 @@ describe("PostgreSQL 16 executable strength-gate qualification", () => {
             container,
             "sh",
             "-c",
-            "until pg_isready -U postgres >/dev/null 2>&1; do sleep 1; done",
+            "until pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; do sleep 1; done",
           ],
           {
             encoding: "utf8",
