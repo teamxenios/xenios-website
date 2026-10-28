@@ -345,6 +345,8 @@ describe("the login-free request-only entry", () => {
     const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", session: "locked" });
     await renderStorefront(true);
     expect(container.textContent).toContain("Request intake is not available here yet");
+    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(container.querySelector('a[href="/support"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(fetch.mock.calls.some(([url]) => String(url).endsWith("/early-access/unlock"))).toBe(false);
@@ -353,6 +355,8 @@ describe("the login-free request-only entry", () => {
     stubFetch({ bridgeEnabled: true, mixedMode });
     await renderStorefront(true);
     expect(container.textContent).toContain("The request form is currently unavailable");
+    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(container.querySelector('a[href="/support"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
     expect(container.querySelector('[data-testid="early-access-checkout-mount"]')).toBeNull();
@@ -388,6 +392,7 @@ describe("the login-free request-only entry", () => {
     stubFetch({ bridgeEnabled: true, mixedMode: "on" });
     await renderStorefront(true);
     expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
+    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe("malformed retained attempt");
@@ -402,6 +407,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(marker);
+    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
   });
   it("rechecks expired session authority and hides the form on refusal without a password fallback", async () => {
     const expires = Date.now() + 60000;
@@ -419,6 +425,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(container.textContent).toContain("Request intake is not available here yet");
+    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
   });
 });
 

@@ -61,6 +61,17 @@ afterEach(() => {
 });
 
 describe("routed B2B protected composition", () => {
+  it("resolves Quick Order support publicly while signed out and the shared gate is locked", async () => {
+    const view = await renderAt("/research/support");
+    expect(view.querySelector("h1")?.textContent).toBe("How to reach us");
+    expect(view.querySelector('a[href="mailto:research@xeniostechnology.com"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
+    expect(view.querySelector('input[type="password"]')).toBeNull();
+    expect(view.textContent).not.toContain("That page is not part of the research section.");
+    expect(view.textContent).not.toContain("Member sign in");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  }, 15_000);
+
   it("renders the exact public partner root without firing referral capture", async () => {
     const view = await renderAt("/research/partners?ref=signed.code");
     expect(view.textContent).toContain("The right relationship starts with the right boundary.");
