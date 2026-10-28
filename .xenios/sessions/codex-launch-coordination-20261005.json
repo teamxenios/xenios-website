@@ -5,6 +5,6 @@
   "branch": "codex/kan23-support-links-20261020",
   "state": "active",
   "startedAt": "2026-10-28T02:03:29.691Z",
-  "heartbeatAt": "2026-10-28T02:03:29.700Z",
-  "note": "Same existing Root chat01a103a8-5684-7272-89e5-3c42eefcd593. Checkout-local registration for Samuel's approved eight-path support transfer, KAN225/10320, patch4533b9dabb462e6b98576d1350e1680c7f492d39ec9f742d8b4200befcfb2a42. Original coordinator registration remains at C:\\Users\\sboad\\.codex\\worktrees\\3221\\xenios-website\\.xenios\\sessions\\codex-launch-coordination-20261005.json, startedAt 10/05/2026 17:19:29, SHA256 e8f41b00a7d6eee590fd2f33c6eba700cff32aadc8ff46d7deff6a1953ea24f6. Fresh local timestamps; no new worker/alias; Core STOP and Token8 remain."
+  "heartbeatAt": "2026-10-28T02:22:35.287Z",
+  "note": "Same existing Root chat01a103a8-5684-7272-89e5-3c42eefcd593; original coordinator registration .xenios/sessions/codex-launch-coordination-20261005.json startedAt2026-10-05T17:19:29.457Z remains unchanged. Approved support custody lease5383ac8b; source candidate0b26406094073d6c3ab74ea397335b33a3a3e89a is frozen/pushed on codex/support-links-release-20261027, PR330. CI40619133348 failed-job retry running; first failure retained. This checkout is on preserved custody branch solely for supported own-continuity heartbeat/handoff. Core STOP/Token8 remain."
 }
