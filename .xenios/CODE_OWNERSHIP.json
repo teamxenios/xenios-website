@@ -2182,6 +2182,24 @@
       "state": "active",
       "claimedAt": "2026-10-21T18:53:12.111Z",
       "heartbeatAt": "2026-10-21T18:58:30.285Z"
+    },
+    {
+      "id": "5383ac8b-468d-4ae4-b45d-8c9117f4fa6b",
+      "task": "KAN23-SUPPORT-LINKS-20261020",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/b2b/protected-composition.behavior.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-28T02:03:29.877Z",
+      "heartbeatAt": "2026-10-28T02:03:29.877Z"
     }
   ],
   "rules": [

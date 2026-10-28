@@ -77,8 +77,8 @@
       "id": "KAN23-SUPPORT-LINKS-20261020",
       "title": "Repair all Quick Order support continuations",
       "priority": "P0",
-      "state": "qa",
-      "owner": "codex-core-kan23-support-20261020",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-23",
       "paths": [
         "client/src/research/early-access/EarlyAccessRoute.tsx",
@@ -92,7 +92,7 @@
       ],
       "dependsOn": [],
       "scopeNote": "Root actual dispatch408e1a: KAN-23-5-2e53ecab9b6a4720 core/token5 packet2e53ecab9b6a4720c4fda1fc10fa7b7796a0d339be347eb5f9b6f916209109b7 Jira10438/10268. Exactly12 href changes acrossfourcomponents plus meaningful existingtest assertions; sameCore/currentClaude; owncontinuity only. Preserve3daff/237priorchecks. No backend/SQL/roles/customer/provider/liveeffects. Build/browser held below recorded resource floors.",
-      "claimedAt": "2026-10-20T15:19:21.535Z",
+      "claimedAt": "2026-10-28T02:03:29.874Z",
       "handoff": {
         "session": "codex-core-kan23-support-20261020",
         "sha": "81d6b93480ca8eaccbbf05a8c4793bf996da34d7",
