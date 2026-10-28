@@ -574,8 +574,8 @@
       "branch": "codex/kan23-support-links-20261020",
       "state": "active",
       "startedAt": "2026-10-28T02:03:29.691Z",
-      "heartbeatAt": "2026-10-28T02:22:35.287Z",
-      "note": "Same existing Root chat01a103a8-5684-7272-89e5-3c42eefcd593; original coordinator registration .xenios/sessions/codex-launch-coordination-20261005.json startedAt2026-10-05T17:19:29.457Z remains unchanged. Approved support custody lease5383ac8b; source candidate0b26406094073d6c3ab74ea397335b33a3a3e89a is frozen/pushed on codex/support-links-release-20261027, PR330. CI40619133348 failed-job retry running; first failure retained. This checkout is on preserved custody branch solely for supported own-continuity heartbeat/handoff. Core STOP/Token8 remain."
+      "heartbeatAt": "2026-10-28T23:48:39.333Z",
+      "note": "KAN225-PG-READINESS-20261028: exact two-file TCP correction a14a392cef6bdf5691f780fe75eaafe92c732962 pushed separately atop accepted0b264060; eight support blobs unchanged. Hosted40788835432 attempt1 all5 required jobs PASS/full18198PASS83SKIP with both named PG fixtures executed; finite protocol attempt2 in progress, testjob123171378029. No local heavy phase, SQL, services, Core/Token8 or production mutation. Original commerce custody reconciliation5a0c100 complete."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
