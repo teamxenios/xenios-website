@@ -382,7 +382,7 @@ describe("durable guest request and independently authorized operator readback",
           family: "clinical_formulations_503a", workflowMode: "provider_request",
           quantity: 2, researchUseOnly: false, clinicalReviewRequired: true,
           sourceDisplayState: "care_pathway", sourceVariantDisplayState: "care_pathway",
-          sourceRefusal: "provider_pathway", catalogVersion: "synthetic-durable-v1", reviewState: "pending",
+          sourceRefusal: "provider_pathway_family", catalogVersion: "synthetic-durable-v1", reviewState: "pending",
         },
         {
           productId: "product-var-2", variantId: "pc-var-2", sourceVariantId: "var-2",
