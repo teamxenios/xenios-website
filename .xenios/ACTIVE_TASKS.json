@@ -213,7 +213,7 @@
       "id": "KAN31-QUICK-ORDER-HUMAN-HELP-20261029",
       "title": "Add user-activated human help across Quick Order request states",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "4634cb438908b583d50d6bcbdd5569a5ff9324cf",
@@ -226,16 +226,16 @@
       "claimedAt": "2026-10-29T20:12:05.128Z",
       "handoff": {
         "session": "codex-launch-coordination-20261005",
-        "sha": "4520a697ad100ed025ed714985ce670bf67ece65",
-        "file": ".xenios/handoffs/2026-10-29T19-41-03-724Z-KAN31-QUICK-ORDER-HUMAN-HELP-20261029-codex-launch-coordination-20261005.md",
-        "at": "2026-10-29T19:41:03.732Z"
+        "sha": "c4d176f12ccd2250d3ef8e1dec582cd220cf4cc0",
+        "file": ".xenios/handoffs/2026-10-29T20-26-44-220Z-KAN31-QUICK-ORDER-HUMAN-HELP-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T20:26:44.223Z"
       }
     },
     {
       "id": "KAN31-PUBLIC-SUPPORT-CATALOG-HELP-20261029",
       "title": "Add catalog and ordering human help to public Support",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "abcfad70dd6e68f76730557170d38d8a63bccc2b",
@@ -248,9 +248,9 @@
       "claimedAt": "2026-10-29T20:12:07.725Z",
       "handoff": {
         "session": "codex-launch-coordination-20261005",
-        "sha": "b9b6478c78fedb89b7d388b449b4e6d966f3d780",
-        "file": ".xenios/handoffs/2026-10-29T20-01-00-254Z-KAN31-PUBLIC-SUPPORT-CATALOG-HELP-20261029-codex-launch-coordination-20261005.md",
-        "at": "2026-10-29T20:01:00.264Z"
+        "sha": "e7c668c4817a17c875d7670fe7480bbb2c58e97f",
+        "file": ".xenios/handoffs/2026-10-29T20-26-44-287Z-KAN31-PUBLIC-SUPPORT-CATALOG-HELP-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T20:26:44.290Z"
       }
     },
     {

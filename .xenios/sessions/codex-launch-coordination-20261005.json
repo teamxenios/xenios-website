@@ -5,6 +5,6 @@
   "branch": "codex/kan23-support-links-20261020",
   "state": "active",
   "startedAt": "2026-10-28T02:03:29.691Z",
-  "heartbeatAt": "2026-10-29T20:00:59.700Z",
-  "note": "C4 composed source515b8ad and public Support sourceb9b6478 pushed; hosted40943615642 and40944087794 all5 trusted jobs SUCCESS. C4 30affected/108focused/18221full0FAIL; Support3new/108focused/18213full0FAIL. Provider trees independently verified. SAME confirmations pending; PR333/336 draft; no self-acceptance or production GO for336. Preparing two supported QA handoffs."
+  "heartbeatAt": "2026-10-29T20:26:44.142Z",
+  "note": "PR335 composed head c4d176f pushed/tree85c59c1 exact; run40947126244 all5 trusted SUCCESS, affected28/focused108/full18233 0FAIL, SAME current composition6507465224 allPASS no production GO. PR336 composed head e7c668c pushed/treebe86763 exact; run40947219957 all5 SUCCESS, 3new/focused108/full18224 0FAIL; SAME request10353 pending, no self-acceptance or production GO. Closing both exact-SHA QA handoffs only."
 }
