@@ -2269,9 +2269,9 @@
         "client/src/research/assisted-order/OrderRequestEntry.tsx",
         "client/src/research/assisted-order/OrderRequestEntry.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-29T19:25:02.377Z",
-      "heartbeatAt": "2026-10-29T19:25:02.377Z"
+      "heartbeatAt": "2026-10-29T19:41:03.481Z"
     }
   ],
   "rules": [

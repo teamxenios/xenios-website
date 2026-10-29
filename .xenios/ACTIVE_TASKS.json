@@ -213,7 +213,7 @@
       "id": "KAN31-QUICK-ORDER-HUMAN-HELP-20261029",
       "title": "Add user-activated human help across Quick Order request states",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "4634cb438908b583d50d6bcbdd5569a5ff9324cf",
@@ -223,7 +223,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Founder-approved Quick Order human-help implementation from Samuel's direct 'run this' instruction, based exactly on 4634cb438908b583d50d6bcbdd5569a5ff9324cf and intended for source branch codex/quick-order-human-help-20261029. Add catalog and ordering help at 737-418-6381 through an explicit user-activated text link and canonical Support across ready, checking, recovery, and held request-door states. Preserve Auth, agreements, selection, attempt, form identity, and all existing order/request authority. Only the two listed OrderRequestEntry paths are writable. No automatic SMS, provider or customer operation, app-external side effect, source outside these paths, runtime, CI, protected source, configuration, SQL, merge, deployment, or production mutation is authorized by this records-only custody operation.",
-      "claimedAt": "2026-10-29T19:25:02.355Z"
+      "claimedAt": "2026-10-29T19:25:02.355Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "4520a697ad100ed025ed714985ce670bf67ece65",
+        "file": ".xenios/handoffs/2026-10-29T19-41-03-724Z-KAN31-QUICK-ORDER-HUMAN-HELP-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T19:41:03.732Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
