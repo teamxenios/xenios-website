@@ -566,7 +566,8 @@ describe("the login-free request-only entry", () => {
     });
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
-    expect(container.textContent).toContain("Request intake is not available here yet");
+    expect(container.textContent).toContain("not available in this environment");
+    expect([...container.querySelectorAll("button")].some((button) => button.textContent === "Try again")).toBe(false);
     expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
   });
 });
