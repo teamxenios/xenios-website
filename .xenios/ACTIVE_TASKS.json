@@ -280,7 +280,7 @@
       "id": "KAN31-DURABLE-GUEST-OPERATOR-QUALIFICATION-20261029",
       "title": "Qualify durable guest recovery and authorized operator readback",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "8fcce2b43c8f5e6af65ed715fab537f50829ced9",
@@ -290,7 +290,13 @@
       "dependsOn": [],
       "scopeNote": "Founder-prioritized KAN31/10359 CI-only qualification task, based exactly on final-batch candidate 8fcce2b43c8f5e6af65ed715fab537f50829ced9/tree 4c43950a94685f4cfe20f7d9138f64002ab9128b and intended for branch codex/quick-order-durable-journey-20261029. Add only the new durable-journey PostgreSQL test that uses disposable PostgreSQL 16 and unchanged candidate SQL/RPC/service/HTTP surfaces to prove positive guest saved-request creation, commit-loss same-key recovery/replay, authorized operator readback, and negative authorization. This is test-only CI qualification, not managed-database admission or live-journey proof. Only the single listed new test path is writable. No product runtime, SQL, provider, managed database, Auth, UI, configuration, GitHub, browser, customer, release, deployment, or production mutation is authorized by this records-only custody operation.",
       "createdAt": "2026-10-29T22:38:25.000Z",
-      "claimedAt": "2026-10-29T22:38:25.319Z"
+      "claimedAt": "2026-10-29T22:38:25.319Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "b0e5b225d081e195173b14df18c02e7908522199",
+        "file": ".xenios/handoffs/2026-10-29T23-05-50-156Z-KAN31-DURABLE-GUEST-OPERATOR-QUALIFICATION-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T23:05:50.171Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",

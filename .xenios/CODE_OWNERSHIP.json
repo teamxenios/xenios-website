@@ -2364,9 +2364,9 @@
       "paths": [
         "server/research/assisted-order/request-intent/durable-journey.pg.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-29T22:38:25.324Z",
-      "heartbeatAt": "2026-10-29T22:43:14.532Z"
+      "heartbeatAt": "2026-10-29T23:05:50.063Z"
     }
   ],
   "rules": [
