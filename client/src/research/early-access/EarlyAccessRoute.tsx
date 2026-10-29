@@ -56,8 +56,14 @@ export const EARLY_ACCESS_STEPS = EARLY_ACCESS_CUSTOMER_STEP_LABELS;
 
 type GateState =
   | { kind: "checking" }
-  | { kind: "unavailable" }
-  | { kind: "locked"; error: string | null; busy: boolean }
+  | { kind: "unavailable"; reason: "deployment" | "unlock_refused" | "repeated_open_access" }
+  | {
+      kind: "locked";
+      reason: "gate_closed" | "expired" | "exception" | "session_unconfirmed"
+        | "password_required" | "unlock_refused" | "signed_out";
+      error: string | null;
+      busy: boolean;
+    }
   | { kind: "authenticated"; expiresAt: string | null };
 
 type EmbeddedOrderStep = "products" | "contact" | "review";
@@ -181,7 +187,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
         // incompletely configured. That is a truthful unavailable state, not
         // an error the customer can act on.
         if (response.status === 503 || response.status === 404) {
-          setState({ kind: "unavailable" });
+          setState({ kind: "unavailable", reason: "deployment" });
           return;
         }
         const body = await readJson(response);
@@ -204,7 +210,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
             }
             // The retry repeated an already-expired authenticated answer.
             // Fail closed rather than rendering a stale shared-machine view.
-            setState({ kind: "locked", error: null, busy: false });
+            setState({ kind: "locked", reason: "expired", error: null, busy: false });
             return;
           }
           lastExpiredSessionRef.current = null;
@@ -229,7 +235,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
         // of trusting the unlock response body.
         if (response.ok && body?.openAccess === true) {
           if (attemptedOpenAccess) {
-            setState({ kind: "unavailable" });
+            setState({ kind: "unavailable", reason: "repeated_open_access" });
             return;
           }
           attemptedOpenAccess = true;
@@ -248,16 +254,21 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
           if (opened.ok) {
             continue;
           }
-          // Could not obtain one. That is an unavailable deployment, not
-          // something a customer can fix by typing, so do not ask them to.
-          setState({ kind: "unavailable" });
+          // Access is unconfirmed after a refused anonymous unlock. An
+          // explicit retry may recover without asking for a password.
+          setState({ kind: "unavailable", reason: "unlock_refused" });
           return;
         }
-        setState({ kind: "locked", error: null, busy: false });
+        setState({
+          kind: "locked",
+          reason: definitivelyUnauthenticated ? "gate_closed" : "session_unconfirmed",
+          error: null,
+          busy: false,
+        });
         return;
       }
     } catch {
-      setState({ kind: "locked", error: null, busy: false });
+      setState({ kind: "locked", reason: "exception", error: null, busy: false });
     }
   }, [resetCustomerContext]);
 
@@ -289,6 +300,24 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     },
     [readSession, resetCustomerContext],
   );
+
+  const canRetrySession =
+    (state.kind === "unavailable" && state.reason !== "deployment") ||
+    (state.kind === "locked" && (
+      state.reason === "expired" || state.reason === "exception" ||
+      state.reason === "session_unconfirmed"
+    ));
+
+  const retrySession = useCallback(() => {
+    if (!canRetrySession || sessionRecheckInFlightRef.current) {
+      return;
+    }
+    sessionRecheckInFlightRef.current = true;
+    setState({ kind: "checking" });
+    void readSession().finally(() => {
+      sessionRecheckInFlightRef.current = false;
+    });
+  }, [canRetrySession, readSession]);
 
   useEffect(() => {
     if (state.kind !== "authenticated" || state.expiresAt === null) {
@@ -352,7 +381,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
 
   const submitPassword = useCallback(
     (password: string) => {
-      setState({ kind: "locked", error: null, busy: true });
+      setState({ kind: "locked", reason: "password_required", error: null, busy: true });
       void (async () => {
         try {
           const response = await fetch(UNLOCK_PATH, {
@@ -376,12 +405,14 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
           // and neither does this copy.
           setState({
             kind: "locked",
+            reason: "unlock_refused",
             busy: false,
             error: "That password was not accepted. Check the password you were given and try again.",
           });
         } catch {
           setState({
             kind: "locked",
+            reason: "exception",
             busy: false,
             error: "We could not reach the access service. Please try again.",
           });
@@ -396,7 +427,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     // slow or hung logout request must not leave bearer tokens, receipts, or a
     // previous customer's basket behind after the person clicked Sign out.
     resetCustomerContext();
-    setState({ kind: "locked", error: null, busy: false });
+    setState({ kind: "locked", reason: "signed_out", error: null, busy: false });
 
     void (async () => {
       try {
@@ -438,8 +469,20 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
           </p>
           {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
             : state.kind !== "authenticated" ? <div role="status" className="mt-5">
-              <p>Request intake is not available here yet. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
-              <a href="/research/support">Contact support</a>
+              <p>
+                {canRetrySession
+                  ? "Request intake could not be confirmed right now."
+                  : "Request intake is not available in this environment."}{" "}
+                This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center gap-4">
+                {canRetrySession && (
+                  <button type="button" className="btn btn-secondary" onClick={retrySession}>
+                    Try again
+                  </button>
+                )}
+                <a href="/research/support">Contact support</a>
+              </div>
             </div>
             : priorRequestBlocked ? <div role="alert" className="mt-5">
               <p>An earlier request needs support review. Do not create a replacement until staff check for duplicates.</p>
