@@ -4,6 +4,7 @@ import {
   REQUEST_INTENT_NOTICE, REQUEST_INTENT_RECOVERY_NOTICE, validateRequestIntentInput,
   type RequestIntentCatalogItem, type RequestIntentCatalogPage, type RequestIntentInput, type RequestIntentReceipt,
 } from "../../../../shared/research/assisted-order/request-intent";
+import type { DirectPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
 import { catalogItemKey, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, money, type AssistedOrderWizardConfig } from "./wizard-state";
 import { createRequestIntentApi, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
@@ -14,6 +15,22 @@ import "./assisted-order.css";
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
 function browserStorage(): Storage | null { try { return window.sessionStorage; } catch { return null; } }
+
+// Presentation of the server's reason only. Request eligibility remains the
+// server's selectableForReview/intentExclusion decision, separate from purchase.
+const RESTRICTION_COPY: Readonly<Record<DirectPurchaseRefusal, string>> = {
+  provider_pathway_family: "Provider review is required before any purchase.",
+  care_pathway_display_state: "Provider review is required before any purchase.",
+  family_outside_launch_scope: "This item is not offered for direct purchase.",
+  classification_pending: "Product classification must be confirmed before purchase.",
+  formulation_hold: "This formulation is on hold pending review.",
+  non_merchandise_family: "This shipping or service entry is not a product request.",
+};
+function restrictionCopy(code: string): string {
+  return Object.prototype.hasOwnProperty.call(RESTRICTION_COPY, code)
+    ? RESTRICTION_COPY[code as DirectPurchaseRefusal]
+    : "A purchase restriction applies. Its details need to be confirmed.";
+}
 
 /** Reusable inside the existing customer shell. No new global Auth, cart, catalog or legal authority. */
 export function RequestIntentForm({
@@ -221,7 +238,7 @@ export function RequestIntentForm({
         return <article className="xenios-order-card" key={key}><h2>{item.productName}</h2>
           <p>{item.specification || "Form not stated"}</p>
           <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
-          {item.sourceRefusal && <p>Current restriction: {item.sourceRefusal.replaceAll("_", " ")}. Adding a request does not remove this restriction.</p>}
+          {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
           <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>
           {!item.selectableForReview ? <p>{item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"}</p> : selection
             ? <div className="xenios-order-quantity">
