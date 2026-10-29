@@ -2355,7 +2355,18 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-29T22:20:38.175Z",
-      "heartbeatAt": "2026-10-29T22:31:45.943Z"
+      "heartbeatAt": "2026-10-29T22:38:25.383Z"
+    },
+    {
+      "id": "745388be-c66c-4220-97a9-2c8b2134c429",
+      "task": "KAN31-DURABLE-GUEST-OPERATOR-QUALIFICATION-20261029",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/assisted-order/request-intent/durable-journey.pg.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-29T22:38:25.324Z",
+      "heartbeatAt": "2026-10-29T22:38:25.383Z"
     }
   ],
   "rules": [

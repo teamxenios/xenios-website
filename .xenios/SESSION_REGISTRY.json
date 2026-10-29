@@ -574,8 +574,8 @@
       "branch": "codex/kan23-support-links-20261020",
       "state": "active",
       "startedAt": "2026-10-28T02:03:29.691Z",
-      "heartbeatAt": "2026-10-29T22:31:45.943Z",
-      "note": "PR335 Human Help composed head 788b169 pushed/tree6c83043 exact on live PR336 base a5f0dc5; run40965479845 all5 trusted SUCCESS, affected28/focused108/full18236 0FAIL, provider exact tree. SAME bounded composition request10349 pending; not self-accepted or merged. Closing Human Help exact-SHA QA handoff only; Outer Help lease f8c530c1 remains active."
+      "heartbeatAt": "2026-10-29T22:38:25.383Z",
+      "note": "Claimed KAN31/10359 durable guest/operator CI-only qualification on exact candidate 8fcce2b/tree4c43950 and one new durable-journey.pg.test.ts path. Disposable PostgreSQL16 test only; unchanged SQL/RPC/service/HTTP inputs; no managed DB admission, product runtime, provider, Auth, UI, configuration, release, or production action. Outer Help composition lease remains active."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
