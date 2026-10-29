@@ -145,6 +145,22 @@
       }
     },
     {
+      "id": "KAN31-QUICK-ORDER-SESSION-503-F1-20261029",
+      "title": "Classify transient session 503 responses for Quick Order recovery",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-31",
+      "baseSha": "4634cb438908b583d50d6bcbdd5569a5ff9324cf",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Authorized next same-owner F-1 implementation from KAN-225/10340 after PR331 merge, based exactly on 4634cb438908b583d50d6bcbdd5569a5ff9324cf and intended for source branch codex/quick-order-session-503-f1-20261029. Classify HTTP 503 as transient/retryable and reserve deployment-off behavior for HTTP 404, with specific 503 recovery, 404, and closed-gate regressions. Only the two listed client paths are writable. Preserve the completed D1A/D3 QA task and handoff lease. No source, runtime, CI, protected-scope, service, SQL, credential, provider, customer, deployment, or production mutation is authorized by this records-only custody operation.",
+      "claimedAt": "2026-10-29T18:16:50.198Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
