@@ -191,7 +191,7 @@
       "id": "KAN31-QUICK-ORDER-C4-RESTRICTION-COPY-20261029",
       "title": "Present truthful customer copy for Quick Order restriction codes",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "4634cb438908b583d50d6bcbdd5569a5ff9324cf",
@@ -204,9 +204,9 @@
       "claimedAt": "2026-10-29T19:47:56.573Z",
       "handoff": {
         "session": "codex-launch-coordination-20261005",
-        "sha": "288774089cae857c65325fc46d5c456978db2383",
-        "file": ".xenios/handoffs/2026-10-29T18-36-07-169Z-KAN31-QUICK-ORDER-C4-RESTRICTION-COPY-20261029-codex-launch-coordination-20261005.md",
-        "at": "2026-10-29T18:36:07.175Z"
+        "sha": "515b8ad0f1d8811dc3d45e9d76e8dc526cb4b924",
+        "file": ".xenios/handoffs/2026-10-29T20-00-59-953Z-KAN31-QUICK-ORDER-C4-RESTRICTION-COPY-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T20:00:59.961Z"
       }
     },
     {
@@ -235,7 +235,7 @@
       "id": "KAN31-PUBLIC-SUPPORT-CATALOG-HELP-20261029",
       "title": "Add catalog and ordering human help to public Support",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "abcfad70dd6e68f76730557170d38d8a63bccc2b",
@@ -245,7 +245,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Presentation-only public Support follow-through from SAME KAN-31/10350 and Samuel's adopted run-this goal, based exactly on abcfad70dd6e68f76730557170d38d8a63bccc2b and intended for source branch codex/quick-order-support-help-20261029. Add the approved 737-418-6381 catalog and ordering human-help manual SMS link and truthful copy while preserving existing email, account, Care, security, and payment uses. Only the two listed Support paths are writable. No automatic SMS, provider or customer operation, configuration, Auth, SQL, protected-source, runtime, CI, GitHub base update, merge, deployment, or production mutation is authorized by this records-only custody operation.",
-      "claimedAt": "2026-10-29T19:47:56.796Z"
+      "claimedAt": "2026-10-29T19:47:56.796Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "b9b6478c78fedb89b7d388b449b4e6d966f3d780",
+        "file": ".xenios/handoffs/2026-10-29T20-01-00-254Z-KAN31-PUBLIC-SUPPORT-CATALOG-HELP-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T20:01:00.264Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
