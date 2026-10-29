@@ -398,8 +398,62 @@ describe("the login-free request-only entry", () => {
     expect(unlockPosts(fetch)).toHaveLength(0);
     expectPublicSupport();
   });
-  it.each([404, 503])("keeps a deployment %s closed without an unlock or retry loop", async (status) => {
-    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", sessionStatus: status });
+  it("recovers from a 503 session answer through an explicit retry without reloading", async () => {
+    window.history.replaceState(null, "", "/research/early-access/order-request");
+    const options = { bridgeEnabled: true, mixedMode: "on" as const, session: "fresh-open" as const,
+      sessionStatus: 503 as number | undefined };
+    const fetch = stubFetch(options);
+    await renderStorefront(true);
+    expect(container.textContent).toContain("could not be confirmed right now");
+    expect(container.textContent).not.toContain("not available in this environment");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+    expectPublicSupport();
+    options.sessionStatus = undefined;
+    await act(async () => { retryButton().click(); });
+    await renderStorefront(true);
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeTruthy();
+    expect(container.querySelector('input[type="password"]')).toBeNull();
+    expect(sessionReads(fetch)).toHaveLength(3);
+    expect(unlockPosts(fetch)).toHaveLength(1);
+    expect(window.location.pathname).toBe("/research/early-access/order-request");
+  });
+  it("preserves attempt and draft through 503 recovery and retains duplicate-review protection", async () => {
+    const acceptedAt = new Date().toISOString();
+    const attempt = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+      acceptedAt, state: "in_flight" });
+    const draft = JSON.stringify({ idempotencyKey: "retained-legacy-attempt", selections: [],
+      acceptedAt, attemptState: "uncertain", step: "review" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, attempt);
+    window.sessionStorage.setItem(ASSISTED_ORDER_DRAFT_KEY, draft);
+    const options = { bridgeEnabled: true, mixedMode: "on" as const, session: "existing" as const,
+      sessionStatus: 503 as number | undefined };
+    const fetch = stubFetch(options);
+    await renderStorefront(true);
+    expect(container.textContent).toContain("could not be confirmed right now");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(attempt);
+    expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(draft);
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+    expectPublicSupport();
+    options.sessionStatus = undefined;
+    await act(async () => { retryButton().click(); });
+    await renderStorefront(true);
+    expect(container.textContent).not.toContain("could not be confirmed right now");
+    expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(attempt);
+    expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(draft);
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect([...container.querySelectorAll("button")].some((button) => button.textContent === "Try again")).toBe(false);
+    expect(sessionReads(fetch)).toHaveLength(2);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+    expectPublicSupport();
+  });
+  it("keeps a deployment 404 closed without an unlock or retry loop", async () => {
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", sessionStatus: 404 });
     await renderStorefront(true);
     expect(container.textContent).toContain("not available in this environment");
     expect(container.textContent).not.toContain("could not be confirmed right now");
@@ -492,6 +546,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(fetch.mock.calls.some(([url]) => String(url).endsWith("/early-access/unlock"))).toBe(false);
+    expect(sessionReads(fetch)).toHaveLength(1);
   });
   it.each(["off", "unknown"] as const)("never falls back to legacy checkout when mixed mode is %s", async (mixedMode) => {
     stubFetch({ bridgeEnabled: true, mixedMode });

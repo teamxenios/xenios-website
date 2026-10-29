@@ -183,10 +183,10 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
           credentials: "same-origin",
           headers: { Accept: "application/json" },
         });
-        // The gate answers 503 when the deployment has it switched off or
-        // incompletely configured. That is a truthful unavailable state, not
-        // an error the customer can act on.
-        if (response.status === 503 || response.status === 404) {
+        // A missing session endpoint means this deployment is unavailable.
+        // A 503 can be transient: let it reach the unconfirmed-session path
+        // below without clearing recoverable customer context.
+        if (response.status === 404) {
           setState({ kind: "unavailable", reason: "deployment" });
           return;
         }
