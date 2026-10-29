@@ -59,6 +59,27 @@ export default function Support() {
           </p>
         </section>
 
+        {/* Catalog and ordering help */}
+        <section aria-labelledby="ra-support-ordering" className="card mt-6">
+          <h2 id="ra-support-ordering" className="body-m font-700">
+            Catalog and ordering help
+          </h2>
+          <p className="body-s text-ink-2 mt-2 max-w-[56ch]">
+            Text Research Support for help navigating the catalog and ordering steps.
+          </p>
+          <div className="mt-4 public-editorial-actions">
+            <a href="sms:+17374186381" className="btn btn-secondary public-editorial-action">
+              Text 737-418-6381
+            </a>
+          </div>
+          <p className="body-s text-ink-2 mt-4 max-w-[56ch]">
+            Texting does not submit a request or place an order. Do not send medical or payment details by text.
+          </p>
+          <p className="body-s text-ink-mute mt-4 max-w-[56ch]">
+            Texting does not confirm product availability or order approval. No response time is promised.
+          </p>
+        </section>
+
         {/* Application status */}
         <section aria-labelledby="ra-support-application" className="card mt-6">
           <h2 id="ra-support-application" className="body-m font-700">
