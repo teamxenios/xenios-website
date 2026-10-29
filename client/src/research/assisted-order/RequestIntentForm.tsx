@@ -183,13 +183,13 @@ export function RequestIntentForm({
   if (receipt) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Request saved for review</h1>
     <p role="status">Your saved request reference is <strong>{receipt.publicReference}</strong>.</p>
     <p>{REQUEST_INTENT_NOTICE}</p><p>Each item is pending review. Final availability, quantities, pricing and delivery must be confirmed separately.</p>
-    <a href="/support">Contact support</a></section>;
+    <a href="/research/support">Contact support</a></section>;
 
   if (restored) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Check your earlier request</h1>
     <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
-    <a href="/support">Contact support before a replacement</a></section>;
+    <a href="/research/support">Contact support before a replacement</a></section>;
 
   return <section className={embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page"}>
     <header className="xenios-order-hero"><h1 ref={heading} tabIndex={-1}>Request products for review</h1>
@@ -299,7 +299,7 @@ export function RequestIntentForm({
         <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); setStep("products"); }}>Edit selection</button>
         <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
           onClick={() => void submit()}>{frozen.current ? "Retry same request" : "Submit for review"}</button>
-      </div><a href="/support">Contact support</a>
+      </div><a href="/research/support">Contact support</a>
     </section>}
   </section>;
 }

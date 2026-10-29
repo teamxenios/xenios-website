@@ -40,7 +40,7 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode }) {
     <p>{kind === "blocked"
       ? "An earlier request needs support review. Do not create a replacement until staff check for duplicates."
       : "The current request path could not be confirmed. No new request was sent by this page. Contact support before a replacement."}</p>
-    <a href="/support">Contact support</a></section>;
+    <a href="/research/support">Contact support</a></section>;
   return <div data-testid={"request-door-" + kind}>
     {prior === "legacy" ? <p role="status">Continue your existing order-request attempt. Its key and recovery rules are unchanged; do not submit a replacement.</p> : null}
     {prior === "mixed" && props.mode.kind !== "mixed" ? <p role="status">An earlier private request may exist. Keep this attempt and contact support if its result cannot be confirmed. This page will not start a different request.</p> : null}
@@ -65,8 +65,8 @@ export function OrderRequestEntry(props: Props) {
     && owner !== null, owner ?? "unconfirmed-member");
   if (memberChecking || memberSessionStatus === "checking") return <p role="status">Checking your existing session...</p>;
   if (recovery !== "none" || memberSessionStatus === "verification_failed") return <section role="alert">
-    <p>Complete secure account recovery or contact support before continuing this request.</p><a href="/support">Contact support</a></section>;
+    <p>Complete secure account recovery or contact support before continuing this request.</p><a href="/research/support">Contact support</a></section>;
   if (owner === null) return <section role="alert">
-    <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/support">Contact support</a></section>;
+    <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode} />;
 }

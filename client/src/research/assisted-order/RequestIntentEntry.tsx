@@ -55,10 +55,10 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
   if (memberChecking || memberSessionStatus === "checking") return <p role="status">Checking your existing session...</p>;
   if (recovery !== "none" || memberSessionStatus === "verification_failed") {
     return <section role="alert"><p>Complete secure account recovery or contact support before submitting a request.</p>
-      <a href="/support">Contact support</a></section>;
+      <a href="/research/support">Contact support</a></section>;
   }
   if (owner === null) return <section role="alert">
-    <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/support">Contact support</a></section>;
+    <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
   // Key by the confirmed opaque owner, never token. Token-only rerenders keep
   // the form; account switches remount it. Checking/recovery renders no form.
   return <RequestIntentForm key={owner} api={api}

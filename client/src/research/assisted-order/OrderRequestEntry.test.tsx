@@ -48,6 +48,7 @@ describe("actual front-door selection and preservation (child form boundary stub
       json: async () => ({ enabled: false, error: "request_intent_unavailable" }) })));
     await render(<OrderRequestEntry />);
     expect(container.querySelector('[data-testid="request-door-held"]')).toBeTruthy();
+    expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/support");
     expect(container.querySelector('[data-testid="legacy-form"]')).toBeNull();
   });
   it("routes the enabled embedded door and clinical hint to mixed, not the old Care redirect", async () => {
@@ -92,6 +93,7 @@ describe("actual front-door selection and preservation (child form boundary stub
     await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
     expect(container.querySelector('[data-testid="mixed-form"]')).toBeNull();
     expect(container.textContent).toContain("Complete secure account recovery");
+    expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/support");
   });
 });
 
@@ -105,6 +107,14 @@ for (const entry of ["door", "private-entry"] as const) {
         await render(<RequestIntentEntry embedded />);
       }
     }
+    it("keeps the canonical public support continuation during account recovery", async () => {
+      auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
+      auth.recovery = "pending";
+      await mount();
+      expect(container.textContent).toContain("Complete secure account recovery");
+      expect(container.querySelector(selector)).toBeNull();
+      expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/support");
+    });
     it("retains a confirmed owner across token-only refresh and remounts for another canonical scope", async () => {
       auth.memberSessionStatus = "authenticated";
       auth.member = member("a".repeat(64)); auth.memberToken = "synthetic-first";
@@ -127,6 +137,7 @@ for (const entry of ["door", "private-entry"] as const) {
         expect(container.querySelector(selector)).toBeNull();
         expect(container.querySelector('[data-testid="legacy-form"]')).toBeNull();
         expect(container.textContent).toContain("Your account could not be confirmed");
+        expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/support");
       }
     });
     it("remounts when leaving the confirmed member for the signed-out early-access boundary", async () => {

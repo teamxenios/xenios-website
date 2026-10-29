@@ -439,16 +439,16 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
           {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
             : state.kind !== "authenticated" ? <div role="status" className="mt-5">
               <p>Request intake is not available here yet. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
-              <a href="/support">Contact support</a>
+              <a href="/research/support">Contact support</a>
             </div>
             : priorRequestBlocked ? <div role="alert" className="mt-5">
               <p>An earlier request needs support review. Do not create a replacement until staff check for duplicates.</p>
-              <a href="/support">Contact support</a>
+              <a href="/research/support">Contact support</a>
             </div>
             : requestMode.kind === "checking" ? <p role="status" className="mt-5">Checking the current request path...</p>
             : requestMode.kind !== "mixed" ? <div role="status" className="mt-5">
               <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
-              <a href="/support">Contact support</a>
+              <a href="/research/support">Contact support</a>
             </div>
             : <>
               <div className="mt-5" data-testid="quick-order-agreement-mount">

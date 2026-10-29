@@ -117,6 +117,7 @@ describe("mixed private request customer form source", () => {
     await prepare(api); await click("Submit for review");
     expect(rows.size).toBe(1);
     expect(host.textContent).toContain(reference);
+    expect(host.querySelector("a")?.getAttribute("href")).toBe("/research/support");
     const detail = await api.staff(receipt.requestId);
     expect(detail.lines.map((line) => [line.productId, line.quantity, line.reviewState]))
       .toEqual([["clinical", 2, "pending"], ["research", 1, "pending"]]);
@@ -125,6 +126,8 @@ describe("mixed private request customer form source", () => {
   it("submits both exact identities and quantities only after review, with explicit acknowledgment facts", async () => {
     const api = makeApi();
     await prepare(api);
+    expect(host.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(host.querySelector('a[href="/support"]')).toBeNull();
     expect(api.submit).not.toHaveBeenCalled();
     await click("Submit for review");
     expect(api.submit).toHaveBeenCalledTimes(1);
@@ -169,6 +172,8 @@ describe("mixed private request customer form source", () => {
     root = createRoot(host);
     await render(api);
     expect(host.textContent).toContain("Check your earlier request");
+    expect(host.querySelector("a")?.getAttribute("href")).toBe("/research/support");
+    expect(host.querySelector('a[href="/support"]')).toBeNull();
     await click("Check saved request");
     expect(api.recover).toHaveBeenCalledWith(JSON.parse(marker).key);
     expect(api.submit).toHaveBeenCalledTimes(1);
