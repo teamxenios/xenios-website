@@ -505,6 +505,16 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                 </Suspense>
               </div>
             </>}
+          {(state.kind !== "authenticated" || priorRequestBlocked || requestMode.kind !== "mixed") && (
+            <section className="card mt-6" aria-label="Catalog and ordering help" data-testid="quick-order-outer-help">
+              <h2>Need help with the catalog or ordering?</h2>
+              <a className="btn btn-secondary mt-4" href="sms:+17374186381">Text 737-418-6381</a>
+              <p className="mt-4 body-s text-ink-2">
+                Sending a text does not submit this request, place an order, confirm availability or approve treatment.
+                Do not include medical information or payment details.
+              </p>
+            </section>
+          )}
         </div>
       </section>
     </>;
