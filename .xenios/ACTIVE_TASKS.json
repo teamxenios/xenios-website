@@ -104,7 +104,7 @@
       "id": "KAN225-PG-READINESS-20261028",
       "title": "Make PostgreSQL fixture readiness deterministic in CI",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-225",
       "paths": [
@@ -113,7 +113,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Root-owned bounded CI fixture repair: replace the two PostgreSQL container log-only readiness waits with deterministic TCP readiness without changing SQL, assertions, application source, workflows, baselines, services, or external state. No test execution, source edit, merge, deploy, provider activity, database mutation, or production action is authorized by this records-only custody operation.",
-      "claimedAt": "2026-10-28T23:36:33.748Z"
+      "claimedAt": "2026-10-28T23:36:33.748Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "a14a392cef6bdf5691f780fe75eaafe92c732962",
+        "file": ".xenios/handoffs/2026-10-29T00-05-03-681Z-KAN225-PG-READINESS-20261028-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T00:05:03.685Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",

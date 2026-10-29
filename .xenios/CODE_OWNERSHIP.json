@@ -2209,9 +2209,9 @@
         "server/release-control-plane.test.ts",
         "server/research/products-diagnostics/variant-strength-write-gate-sql.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-28T23:36:33.759Z",
-      "heartbeatAt": "2026-10-28T23:48:39.333Z"
+      "heartbeatAt": "2026-10-29T00:05:03.612Z"
     }
   ],
   "rules": [

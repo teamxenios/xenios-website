@@ -5,6 +5,6 @@
   "branch": "codex/kan23-support-links-20261020",
   "state": "active",
   "startedAt": "2026-10-28T02:03:29.691Z",
-  "heartbeatAt": "2026-10-28T23:48:39.333Z",
-  "note": "KAN225-PG-READINESS-20261028: exact two-file TCP correction a14a392cef6bdf5691f780fe75eaafe92c732962 pushed separately atop accepted0b264060; eight support blobs unchanged. Hosted40788835432 attempt1 all5 required jobs PASS/full18198PASS83SKIP with both named PG fixtures executed; finite protocol attempt2 in progress, testjob123171378029. No local heavy phase, SQL, services, Core/Token8 or production mutation. Original commerce custody reconciliation5a0c100 complete."
+  "heartbeatAt": "2026-10-29T00:05:03.612Z",
+  "note": "KAN225-PG-READINESS-20261028 sourcea14a392 pushed; finite hosted40788835432 attempts1/2/3 ALL5requiredPASS each, full18198PASS0FAIL83SKIP each. Named PG verifier6PASS/strength3PASS; accepted8supportblobs unchanged. Same-Claude changed-harness/final-composition review pending; no localheavyjob/CIremaining/SQL/prodchange. Custody5a0/ownbeat9e5/ownerprovenanced30d preserved. Preparing supported QA handoff."
 }
