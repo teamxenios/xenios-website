@@ -2296,6 +2296,30 @@
       "state": "handoff",
       "claimedAt": "2026-10-29T19:47:56.801Z",
       "heartbeatAt": "2026-10-29T20:00:59.700Z"
+    },
+    {
+      "id": "282682a9-8007-4c10-8560-0f39480d2fcf",
+      "task": "KAN31-QUICK-ORDER-HUMAN-HELP-20261029",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-29T20:12:05.143Z",
+      "heartbeatAt": "2026-10-29T20:12:05.143Z"
+    },
+    {
+      "id": "5e90b363-5a0e-4bce-b6e3-cc26f04f4d30",
+      "task": "KAN31-PUBLIC-SUPPORT-CATALOG-HELP-20261029",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/Support.tsx",
+        "client/src/research/pages/Support.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-29T20:12:07.728Z",
+      "heartbeatAt": "2026-10-29T20:12:07.728Z"
     }
   ],
   "rules": [
