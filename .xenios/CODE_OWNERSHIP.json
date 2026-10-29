@@ -2272,6 +2272,30 @@
       "state": "handoff",
       "claimedAt": "2026-10-29T19:25:02.377Z",
       "heartbeatAt": "2026-10-29T19:41:03.481Z"
+    },
+    {
+      "id": "dc7c3d6e-d8c9-496a-8505-073e3dd7dc88",
+      "task": "KAN31-QUICK-ORDER-C4-RESTRICTION-COPY-20261029",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-29T19:47:56.588Z",
+      "heartbeatAt": "2026-10-29T19:47:56.589Z"
+    },
+    {
+      "id": "f9da951f-5688-490c-86f3-edd688af9fcb",
+      "task": "KAN31-PUBLIC-SUPPORT-CATALOG-HELP-20261029",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/Support.tsx",
+        "client/src/research/pages/Support.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-29T19:47:56.801Z",
+      "heartbeatAt": "2026-10-29T19:47:56.801Z"
     }
   ],
   "rules": [
