@@ -23,7 +23,7 @@ beforeEach(() => {
   window.sessionStorage.clear(); window.history.replaceState(null, "", "/research/early-access/order-request");
   container = document.createElement("div"); document.body.appendChild(container); root = createRoot(container);
 });
-afterEach(() => { act(() => root.unmount()); container.remove(); vi.unstubAllGlobals(); });
+afterEach(() => { act(() => root.unmount()); container.remove(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 async function render(element: React.ReactNode) {
   await act(async () => { root.render(element); });
   for (let i = 0; i < 5; i++) await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
@@ -95,6 +95,63 @@ describe("actual front-door selection and preservation (child form boundary stub
     expect(container.textContent).toContain("Complete secure account recovery");
     expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/support");
   });
+});
+
+describe.each([false, true])("catalog and ordering help (embedded=%s)", (embedded) => {
+  function expectHelp() {
+    const help = container.querySelector<HTMLElement>('section[aria-label="Catalog and ordering help"]');
+    expect(container.querySelectorAll('section[aria-label="Catalog and ordering help"]')).toHaveLength(1);
+    expect(help?.querySelector("h2")?.textContent).toBe("Need help with the catalog or ordering?");
+    expect(help?.textContent).toContain("Sending a text does not submit this request.");
+    const link = help?.querySelector("a");
+    expect(link?.getAttribute("href")).toBe("sms:+17374186381");
+    expect(link?.textContent).toBe("737-418-6381");
+    expect(help?.querySelectorAll("a")).toHaveLength(2);
+    expect(help?.querySelector('a[href="/research/support"]')?.textContent).toBe("contact Support");
+    return help!;
+  }
+  it("offers manual text help after the ready guest form without sending or storing anything", async () => {
+    const fetch = vi.fn();
+    vi.stubGlobal("fetch", fetch);
+    const open = vi.spyOn(window, "open").mockImplementation(() => null);
+    const write = vi.spyOn(Storage.prototype, "setItem");
+    const remove = vi.spyOn(Storage.prototype, "removeItem");
+    await render(<OrderRequestEntry embedded={embedded} mode={{ kind: "mixed" }} />);
+    const form = container.querySelector('[data-testid="mixed-form"]');
+    expect(form?.textContent?.trim()).toBe(embedded ? "embedded" : "standalone");
+    expect(container.querySelector('[data-testid="legacy-form"]')).toBeNull();
+    const help = expectHelp();
+    expect(form!.compareDocumentPosition(help) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(open).not.toHaveBeenCalled();
+    expect(write).not.toHaveBeenCalled();
+    expect(remove).not.toHaveBeenCalled();
+    expect(window.location.pathname).toBe("/research/early-access/order-request");
+  });
+  it.each(["session-checking", "mode-checking", "recovery", "unavailable", "retained-attempt"] as const)(
+    "keeps help visible during %s without bypassing the request boundary", async (state) => {
+      const retained = "retained attempt requiring support review";
+      if (state === "session-checking") auth.memberChecking = true;
+      if (state === "recovery") auth.recovery = "pending";
+      if (state === "retained-attempt") window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, retained);
+      await render(<OrderRequestEntry embedded={embedded} mode={{ kind: state === "mode-checking"
+        ? "checking" : state === "unavailable" ? "unavailable" : "mixed" }} />);
+      expectHelp();
+      expect(container.querySelector('[data-testid="mixed-form"]')).toBeNull();
+      expect(container.querySelector('[data-testid="legacy-form"]')).toBeNull();
+      if (state === "session-checking" || state === "mode-checking") {
+        expect(container.querySelector('[role="status"]')?.textContent).toContain("Checking");
+      } else {
+        expect(container.querySelector('[role="alert"]')).toBeTruthy();
+        expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/support");
+        expect(container.querySelector("a")?.textContent).toBe("Contact support");
+      }
+      if (state === "retained-attempt") {
+        expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(retained);
+        expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
+      }
+    },
+  );
 });
 
 for (const entry of ["door", "private-entry"] as const) {
