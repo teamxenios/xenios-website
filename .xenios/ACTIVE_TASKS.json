@@ -122,6 +122,21 @@
       }
     },
     {
+      "id": "KAN225-LIVE1-PUBLIC-FORM-REGRESSIONS-20261029",
+      "title": "Add LIVE-1 public-form security regressions",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-225",
+      "baseSha": "4634cb438908b583d50d6bcbdd5569a5ff9324cf",
+      "paths": [
+        "server/public-forms.security.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Permitted LIVE-1 test-only unit from KAN-225/10340, based exactly on 4634cb438908b583d50d6bcbdd5569a5ff9324cf and intended for source branch codex/live1-public-form-regressions-20261029. Add and execute meaningful synthetic regressions against current routes and verifiers, with expected RED evidence for known fail-open, proxy, and auto-reply obligations until a separately lawful protected-source repair exists. Only server/public-forms.security.test.ts is writable. Tests must mock storage, email, and fetch/provider boundaries and make no real database, provider, or customer calls. No product source, server/routes.ts, server/turnstile.ts, protected manifest/gate, configuration, key, Core-owner, runtime, CI, deployment, or production mutation is authorized by this records-only custody operation.",
+      "claimedAt": "2026-10-29T18:52:47.857Z"
+    },
+    {
       "id": "KAN31-QUICK-ORDER-RETRY-D1A-D3-20261029",
       "title": "Implement Quick Order retry and recovery actions D1A/D3",
       "priority": "P0",
