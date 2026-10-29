@@ -2257,9 +2257,9 @@
       "paths": [
         "server/public-forms.security.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-29T18:52:47.878Z",
-      "heartbeatAt": "2026-10-29T18:52:47.878Z"
+      "heartbeatAt": "2026-10-29T19:07:17.337Z"
     }
   ],
   "rules": [
