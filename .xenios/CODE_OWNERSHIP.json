@@ -2234,9 +2234,9 @@
         "client/src/research/early-access/EarlyAccessRoute.tsx",
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-29T18:16:50.215Z",
-      "heartbeatAt": "2026-10-29T18:16:50.215Z"
+      "heartbeatAt": "2026-10-29T18:36:06.952Z"
     },
     {
       "id": "af82fe69-bd0a-4b83-a6ee-a77f9fd945cf",
@@ -2246,9 +2246,9 @@
         "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-29T18:21:57.214Z",
-      "heartbeatAt": "2026-10-29T18:21:57.214Z"
+      "heartbeatAt": "2026-10-29T18:36:06.952Z"
     }
   ],
   "rules": [

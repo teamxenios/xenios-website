@@ -148,7 +148,7 @@
       "id": "KAN31-QUICK-ORDER-SESSION-503-F1-20261029",
       "title": "Classify transient session 503 responses for Quick Order recovery",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "4634cb438908b583d50d6bcbdd5569a5ff9324cf",
@@ -158,13 +158,19 @@
       ],
       "dependsOn": [],
       "scopeNote": "Authorized next same-owner F-1 implementation from KAN-225/10340 after PR331 merge, based exactly on 4634cb438908b583d50d6bcbdd5569a5ff9324cf and intended for source branch codex/quick-order-session-503-f1-20261029. Classify HTTP 503 as transient/retryable and reserve deployment-off behavior for HTTP 404, with specific 503 recovery, 404, and closed-gate regressions. Only the two listed client paths are writable. Preserve the completed D1A/D3 QA task and handoff lease. No source, runtime, CI, protected-scope, service, SQL, credential, provider, customer, deployment, or production mutation is authorized by this records-only custody operation.",
-      "claimedAt": "2026-10-29T18:16:50.198Z"
+      "claimedAt": "2026-10-29T18:16:50.198Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "6bdc72b066d1c9457b7912d66d38e69f7fbee50a",
+        "file": ".xenios/handoffs/2026-10-29T18-36-07-067Z-KAN31-QUICK-ORDER-SESSION-503-F1-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T18:36:07.071Z"
+      }
     },
     {
       "id": "KAN31-QUICK-ORDER-C4-RESTRICTION-COPY-20261029",
       "title": "Present truthful customer copy for Quick Order restriction codes",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "4634cb438908b583d50d6bcbdd5569a5ff9324cf",
@@ -174,7 +180,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Disjoint C4 presentation-only implementation from actual KAN-225/10340, based exactly on 4634cb438908b583d50d6bcbdd5569a5ff9324cf and intended for source branch codex/quick-order-restriction-copy-c4-20261029. Map the six existing DirectPurchaseRefusal codes to truthful customer-facing copy while preserving internal raw codes, selectableForReview, intentExclusion, prices, restrictions, eligibility, purchase authorization, and known-versus-unknown distinctions. Only the two listed RequestIntentForm paths are writable. Preserve the completed D1A/D3 QA handoff and the active disjoint F-1 lease. No source, runtime, CI, protected-scope, security, configuration, service, SQL, credential, provider, customer, deployment, or production mutation is authorized by this records-only custody operation.",
-      "claimedAt": "2026-10-29T18:21:57.196Z"
+      "claimedAt": "2026-10-29T18:21:57.196Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "288774089cae857c65325fc46d5c456978db2383",
+        "file": ".xenios/handoffs/2026-10-29T18-36-07-169Z-KAN31-QUICK-ORDER-C4-RESTRICTION-COPY-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T18:36:07.175Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",

@@ -5,6 +5,6 @@
   "branch": "codex/kan23-support-links-20261020",
   "state": "active",
   "startedAt": "2026-10-28T02:03:29.691Z",
-  "heartbeatAt": "2026-10-29T17:43:44.575Z",
-  "note": "KAN31 D1A/D3 exact source 87926adc823dad5de607807c4f4466dd527cb995 pushed; hosted run40922985493 all5 required jobs SUCCESS; focused107PASS, full18209PASS0FAIL83SKIP. Prior failed runs preserved. SAME Claude KAN31/10337 acceptance requested but not observed; PR331 remains draft; no merge or production authority. Preparing supported QA handoff."
+  "heartbeatAt": "2026-10-29T18:36:06.952Z",
+  "note": "F1 source6bdc72b and C4 source2887740 pushed; hosted runs40929761024 and40931188389 all5 required jobs SUCCESS. F1 108focused/18210full0FAIL; C4 107focused/18220full0FAIL. SAME verdicts pending10337/10342; PR332/333 draft; no production GO. Preparing two supported QA handoffs."
 }
