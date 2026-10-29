@@ -174,6 +174,10 @@ function stubFetch(options: {
   featuredUnits?: readonly unknown[];
   session?: "existing" | "fresh-open" | "locked";
   sessionReplies?: readonly Record<string, unknown>[];
+  sessionStatus?: number;
+  throwSessionReadsFirst?: number;
+  malformedSessionReadsFirst?: number;
+  unlock?: "ok" | "refused";
 }) {
   let sessionIssued = false;
   let sessionReads = 0;
@@ -181,6 +185,7 @@ function stubFetch(options: {
     const path = String(input);
     if (init?.method === "POST") {
       if (path.endsWith("/early-access/unlock")) {
+        if (options.unlock === "refused") return jsonResponse({ ok: false }, 503);
         sessionIssued = true;
         return jsonResponse({ ok: true });
       }
@@ -198,8 +203,12 @@ function stubFetch(options: {
       return jsonResponse({ ok: true });
     }
     if (path.endsWith("/early-access/session")) {
+      const readIndex = sessionReads++;
+      if (readIndex < (options.throwSessionReadsFirst ?? 0)) throw new TypeError("network");
+      if (readIndex < (options.malformedSessionReadsFirst ?? 0)) return new Response("not JSON", { status: 200 });
+      if (options.sessionStatus) return jsonResponse({ ok: false }, options.sessionStatus);
       if (options.sessionReplies?.length) {
-        return jsonResponse(options.sessionReplies[Math.min(sessionReads++, options.sessionReplies.length - 1)]);
+        return jsonResponse(options.sessionReplies[Math.min(readIndex, options.sessionReplies.length - 1)]);
       }
       if (options.session === "locked") return jsonResponse({ authenticated: false, openAccess: false });
       if (options.session === "fresh-open" && !sessionIssued) {
@@ -319,6 +328,138 @@ describe("the login-free request-only entry", () => {
     return [...container.querySelectorAll("button")].find((button) =>
       button.textContent === "Continue to contact")!;
   }
+  function retryButton() {
+    const button = [...container.querySelectorAll("button")].find((candidate) => candidate.textContent === "Try again");
+    expect(button).toBeTruthy();
+    return button!;
+  }
+  function expectPublicSupport() {
+    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(container.querySelector('a[href="/support"]')).toBeNull();
+    expect(container.querySelector('input[type="password"]')).toBeNull();
+  }
+  function sessionReads(fetch: ReturnType<typeof stubFetch>) {
+    return fetch.mock.calls.filter(([url]) => String(url).endsWith("/early-access/session"));
+  }
+  function unlockPosts(fetch: ReturnType<typeof stubFetch>) {
+    return fetch.mock.calls.filter(([url, init]) => String(url).endsWith("/early-access/unlock") && init?.method === "POST");
+  }
+  it("shows a truthful retry after a refused anonymous unlock and recovers without reloading", async () => {
+    window.history.replaceState(null, "", "/research/early-access/order-request");
+    const options = { bridgeEnabled: true, mixedMode: "on" as const, session: "fresh-open" as const,
+      unlock: "refused" as "ok" | "refused" };
+    const fetch = stubFetch(options);
+    await renderStorefront(true);
+    expect(container.textContent).toContain("could not be confirmed right now");
+    expect(container.textContent).not.toContain("is not available here yet");
+    expectPublicSupport();
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(unlockPosts(fetch)).toHaveLength(1);
+    options.unlock = "ok";
+    await act(async () => { retryButton().click(); });
+    await renderStorefront(true);
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeTruthy();
+    expect(sessionReads(fetch)).toHaveLength(3);
+    expect(unlockPosts(fetch)).toHaveLength(2);
+    expect(window.location.pathname).toBe("/research/early-access/order-request");
+  });
+  it.each(["network", "malformed"] as const)("recovers from a %s session answer through one explicit retry", async (fault) => {
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", session: "fresh-open",
+      throwSessionReadsFirst: fault === "network" ? 1 : 0,
+      malformedSessionReadsFirst: fault === "malformed" ? 1 : 0 });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("could not be confirmed right now");
+    expectPublicSupport();
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+    await act(async () => { retryButton().click(); });
+    await renderStorefront(true);
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(sessionReads(fetch)).toHaveLength(3);
+    expect(unlockPosts(fetch)).toHaveLength(1);
+  });
+  it.each(["network", "malformed", "server"] as const)("keeps attempt and draft context after a %s fault", async (fault) => {
+    const attempt = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+      acceptedAt: "2026-10-14T12:00:00Z", state: "in_flight" });
+    const draft = JSON.stringify({ idempotencyKey: "retained-legacy-attempt", selections: [],
+      acceptedAt: "2026-10-14T12:00:00Z", attemptState: "uncertain", step: "review" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, attempt);
+    window.sessionStorage.setItem(ASSISTED_ORDER_DRAFT_KEY, draft);
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on",
+      throwSessionReadsFirst: fault === "network" ? 1 : 0,
+      malformedSessionReadsFirst: fault === "malformed" ? 1 : 0,
+      sessionStatus: fault === "server" ? 500 : undefined });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("could not be confirmed right now");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(attempt);
+    expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(draft);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+    expectPublicSupport();
+  });
+  it.each([404, 503])("keeps a deployment %s closed without an unlock or retry loop", async (status) => {
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", sessionStatus: status });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("not available in this environment");
+    expect(container.textContent).not.toContain("could not be confirmed right now");
+    expect([...container.querySelectorAll("button")].some((button) => button.textContent === "Try again")).toBe(false);
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+    expectPublicSupport();
+  });
+  it("bounds repeated open-access answers rather than retrying automatically", async () => {
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on",
+      sessionReplies: [{ authenticated: false, openAccess: true }] });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("could not be confirmed right now");
+    expect(sessionReads(fetch)).toHaveLength(2);
+    expect(unlockPosts(fetch)).toHaveLength(1);
+    expectPublicSupport();
+  });
+  it("offers a bounded retry after repeated expired answers and reopens only on fresh authority", async () => {
+    const options = { bridgeEnabled: true, mixedMode: "on" as const,
+      sessionReplies: [{ authenticated: true, expiresAt: new Date(Date.now() - 60_000).toISOString() }] as Record<string, unknown>[] };
+    const fetch = stubFetch(options);
+    await renderStorefront(true);
+    expect(container.textContent).toContain("could not be confirmed right now");
+    expect(sessionReads(fetch)).toHaveLength(2);
+    expectPublicSupport();
+    options.sessionReplies = [{ authenticated: true, expiresAt: null }];
+    await act(async () => { retryButton().click(); });
+    await renderStorefront(true);
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(sessionReads(fetch)).toHaveLength(3);
+    expect(unlockPosts(fetch)).toHaveLength(0);
+  });
+  it("ignores a second retry click while the first authoritative read is in flight", async () => {
+    const options = { bridgeEnabled: true, mixedMode: "on" as const, session: "fresh-open" as const,
+      unlock: "refused" as "ok" | "refused" };
+    const fetch = stubFetch(options);
+    await renderStorefront(true);
+    const retry = retryButton();
+    const original = fetch.getMockImplementation()!;
+    let resume!: (response: Response) => void;
+    let holdNextRead = true;
+    const pending = new Promise<Response>((resolve) => { resume = resolve; });
+    fetch.mockImplementation((input, init) => {
+      if (String(input).endsWith("/early-access/session") && holdNextRead) {
+        holdNextRead = false;
+        return pending;
+      }
+      return original(input, init);
+    });
+    act(() => { retry.click(); retry.click(); });
+    expect(sessionReads(fetch)).toHaveLength(2);
+    expect(unlockPosts(fetch)).toHaveLength(1);
+    expect(container.textContent).toContain("Preparing the request form");
+    options.unlock = "ok";
+    await act(async () => { resume(jsonResponse({ authenticated: false, openAccess: true })); });
+    await renderStorefront(true);
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(sessionReads(fetch)).toHaveLength(3);
+    expect(unlockPosts(fetch)).toHaveLength(2);
+  });
   it("bootstraps a fresh signed-out browser and loads the mixed catalog without account credentials", async () => {
     window.history.replaceState(null, "", "/research/early-access/order-request");
     const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", session: "fresh-open" });
@@ -344,7 +485,8 @@ describe("the login-free request-only entry", () => {
   it("preserves the closed staging gate without presenting a customer password or bypassing it", async () => {
     const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", session: "locked" });
     await renderStorefront(true);
-    expect(container.textContent).toContain("Request intake is not available here yet");
+    expect(container.textContent).toContain("not available in this environment");
+    expect([...container.querySelectorAll("button")].some((button) => button.textContent === "Try again")).toBe(false);
     expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
     expect(container.querySelector('a[href="/support"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
@@ -474,7 +616,8 @@ describe("the unified Early Access storefront", () => {
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.textContent).toContain("Estradiol");
     expect(container.textContent).toContain("Clinical review required. Not a prescription.");
-    expect(container.textContent).toContain("Open request and recovery");
+    expect(container.textContent).toContain("Open request form");
+    expect(container.querySelector('a[href="/research/early-access/order-request"]')?.textContent).toBe("Open request form");
     // A separate form config read retrieves its own current legal requirements.
     // CTA and storefront together use ONE readiness probe, not two.
     expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(2);
