@@ -213,7 +213,7 @@
       "id": "KAN31-QUICK-ORDER-HUMAN-HELP-20261029",
       "title": "Add user-activated human help across Quick Order request states",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "4634cb438908b583d50d6bcbdd5569a5ff9324cf",
@@ -226,9 +226,9 @@
       "claimedAt": "2026-10-29T22:20:38.099Z",
       "handoff": {
         "session": "codex-launch-coordination-20261005",
-        "sha": "c4d176f12ccd2250d3ef8e1dec582cd220cf4cc0",
-        "file": ".xenios/handoffs/2026-10-29T20-26-44-220Z-KAN31-QUICK-ORDER-HUMAN-HELP-20261029-codex-launch-coordination-20261005.md",
-        "at": "2026-10-29T20:26:44.223Z"
+        "sha": "788b169ef619e0b4f2b0f71621e75fa3cfc6cf31",
+        "file": ".xenios/handoffs/2026-10-29T22-31-46-015Z-KAN31-QUICK-ORDER-HUMAN-HELP-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T22:31:46.018Z"
       }
     },
     {

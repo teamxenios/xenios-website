@@ -2341,9 +2341,9 @@
         "client/src/research/assisted-order/OrderRequestEntry.tsx",
         "client/src/research/assisted-order/OrderRequestEntry.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-29T22:20:38.101Z",
-      "heartbeatAt": "2026-10-29T22:20:38.239Z"
+      "heartbeatAt": "2026-10-29T22:31:45.943Z"
     },
     {
       "id": "f8c530c1-1eac-4b5c-a2bf-a7b4015de525",
@@ -2355,7 +2355,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-29T22:20:38.175Z",
-      "heartbeatAt": "2026-10-29T22:20:38.239Z"
+      "heartbeatAt": "2026-10-29T22:31:45.943Z"
     }
   ],
   "rules": [
