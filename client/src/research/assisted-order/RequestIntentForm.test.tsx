@@ -191,6 +191,7 @@ describe("mixed private request customer form source", () => {
     api.staff.mockResolvedValue({ ...receipt, contact: { fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid", mobilePhone: "+15555550123" },
       agreements: [], lines: [item("clinical", true), item("research", false)].map((row) => ({
         ...row, quantity: 2, reviewState: "pending", sourceVariantId: row.sourceSelection!.variantId,
+        sourceRefusal: row.clinicalReviewRequired ? "provider_pathway_family" : "classification_pending",
       })) });
     await act(async () => root.render(<RequestIntentStaffReadback api={api} />));
     await type(host.querySelector("input")!, reference);
@@ -200,7 +201,95 @@ describe("mixed private request customer form source", () => {
     expect(host.textContent).toContain("Synthetic research");
     expect(host.textContent).toContain("Pending clinical review");
     expect(host.textContent).toContain("Pending internal review");
+    expect(host.textContent).toContain("Source restriction: provider_pathway_family");
+    expect(host.textContent).toContain("Source restriction: classification_pending");
     expect([...host.querySelectorAll("button")].some((button) => /approve|paid|fulfill/i.test(button.textContent ?? ""))).toBe(false);
+  });
+});
+
+describe("customer restriction copy", () => {
+  it.each([
+    ["provider_pathway_family", "Provider review is required before any purchase."],
+    ["care_pathway_display_state", "Provider review is required before any purchase."],
+    ["family_outside_launch_scope", "This item is not offered for direct purchase."],
+    ["classification_pending", "Product classification must be confirmed before purchase."],
+    ["formulation_hold", "This formulation is on hold pending review."],
+    ["non_merchandise_family", "This shipping or service entry is not a product request."],
+  ])("explains %s without changing the server's review permission", async (code, copy) => {
+    const api = makeApi();
+    const clinical = code === "provider_pathway_family" || code === "care_pathway_display_state";
+    const nonMerchandise = code === "non_merchandise_family";
+    const entry = Object.freeze({
+      ...item("restricted", clinical), sourceRefusal: code,
+      selectableForReview: !nonMerchandise,
+      intentExclusion: nonMerchandise ? "non_merchandise" as const : null,
+      unitPriceCents: clinical || nonMerchandise ? null : 12345,
+      priceVersion: clinical || nonMerchandise ? null : "synthetic-price",
+    });
+    const before = JSON.stringify(entry);
+    api.catalog.mockResolvedValue({ items: [entry], total: 1, page: 1, pageSize: 24,
+      families: [], channels: [], workflowModes: [] });
+    await render(api);
+    const card = host.querySelector("article")!;
+    expect(card.textContent).toContain("Current restriction: " + copy);
+    expect(card.textContent).toContain("Adding a request does not remove this restriction.");
+    expect(card.textContent).not.toContain(code);
+    expect(card.textContent).not.toContain(code.replaceAll("_", " "));
+    if (clinical) {
+      expect(card.textContent).toContain("Clinical review required. Not a prescription.");
+      expect(card.textContent).toContain("Final price follows applicable review.");
+    } else if (!nonMerchandise) {
+      expect(card.textContent).toContain("$123.45 (catalog display, not a final quote)");
+    }
+    if (nonMerchandise) {
+      expect(card.querySelector("button")).toBeNull();
+      expect(card.textContent).toContain("Shipping or service entry, not a product request");
+    } else {
+      expect(card.querySelector("button")?.disabled).toBe(false);
+      await click("Add Synthetic restricted to request");
+      expect(host.querySelector('[aria-label="Selected request items"]')?.textContent)
+        .toContain("1 exact variants | 1 requested units");
+    }
+    expect(JSON.stringify(entry)).toBe(before);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
+  it.each(["future_reason", "constructor", "__proto__"])(
+    "keeps unknown reason %s distinct from an unavailable item", async (code) => {
+      const api = makeApi();
+      const entry = Object.freeze({ ...item("unknown", false), sourceRefusal: code });
+      api.catalog.mockResolvedValue({ items: [entry], total: 1, page: 1, pageSize: 24,
+        families: [], channels: [], workflowModes: [] });
+      await render(api);
+      const card = host.querySelector("article")!;
+      expect(card.textContent).toContain("A purchase restriction applies. Its details need to be confirmed.");
+      expect(card.textContent).not.toContain(code);
+      expect(card.textContent).not.toMatch(/unavailable|out of stock|coming soon/i);
+      expect(card.querySelector("button")?.disabled).toBe(false);
+      expect(entry.sourceRefusal).toBe(code);
+      expect(entry.selectableForReview).toBe(true);
+      expect(api.submit).not.toHaveBeenCalled();
+    },
+  );
+
+  it("keeps a coming-soon exclusion closed even when its reason is unknown", async () => {
+    const api = makeApi();
+    const entry = { ...item("future", false), sourceRefusal: "future_reason",
+      selectableForReview: false, intentExclusion: "coming_soon" as const,
+      sourceDisplayState: "coming_soon", sourceVariantDisplayState: "coming_soon" };
+    api.catalog.mockResolvedValue({ items: [entry], total: 1, page: 1, pageSize: 24,
+      families: [], channels: [], workflowModes: [] });
+    await render(api);
+    const card = host.querySelector("article")!;
+    expect(card.textContent).toContain("Coming soon");
+    expect(card.textContent).not.toContain("future_reason");
+    expect(card.querySelector("button")).toBeNull();
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
+  it("does not invent a restriction when the server returns none", async () => {
+    await render(makeApi());
+    expect(host.querySelector(".xenios-order-cards")?.textContent).not.toContain("Current restriction:");
   });
 });
 
