@@ -254,6 +254,23 @@
       }
     },
     {
+      "id": "KAN31-QUICK-ORDER-OUTER-HELP-20261029",
+      "title": "Add passive human help to outer Quick Order blocked states",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-31",
+      "baseSha": "eb0fb59f4afc5e3d4b9ff016b4d3e3f811453e31",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Founder-adopted Outcome Delivery R2 task KAN31/10356, based exactly on eb0fb59f4afc5e3d4b9ff016b4d3e3f811453e31 and intended for source branch codex/quick-order-outer-help-20261029. Add approved passive text help before the child request form mounts on outer unconfirmed, unavailable, and prior-request blocked states. Preserve F1/D3 retry behavior, authority, agreements, continuity, singleflight, and legacy rules. Only the two listed EarlyAccessRoute paths are writable. Preserve all completed F1/D1 tasks, leases, and handoffs. No runtime, CI, GitHub, browser, SQL, provider, configuration, deployment, customer, or production mutation is authorized by this records-only custody operation.",
+      "createdAt": "2026-10-29T20:30:00.000Z",
+      "claimedAt": "2026-10-29T21:39:47.108Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
