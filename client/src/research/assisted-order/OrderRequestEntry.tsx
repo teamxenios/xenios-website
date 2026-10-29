@@ -54,7 +54,7 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode }) {
     </Suspense>
   </div>;
 }
-export function OrderRequestEntry(props: Props) {
+function OrderRequestEntryBody(props: Props) {
   const { member, memberChecking, memberSessionStatus, recovery } = useResearch();
   // The verified member projection exposes an opaque scope, not an id. This
   // React key isolates volatile UI; it does not authorize any server operation.
@@ -69,4 +69,15 @@ export function OrderRequestEntry(props: Props) {
   if (owner === null) return <section role="alert">
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode} />;
+}
+
+export function OrderRequestEntry(props: Props) {
+  return <>
+    <OrderRequestEntryBody {...props} />
+    <section className="card mt-6" aria-label="Catalog and ordering help">
+      <h2>Need help with the catalog or ordering?</h2>
+      <p>Text <a href="sms:+17374186381">737-418-6381</a> or <a href="/research/support">contact Support</a>.</p>
+      <p>Sending a text does not submit this request. Do not include medical information or payment details.</p>
+    </section>
+  </>;
 }
