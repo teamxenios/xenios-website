@@ -333,7 +333,20 @@ describe("the login-free request-only entry", () => {
     expect(button).toBeTruthy();
     return button!;
   }
+  function expectOuterHelp() {
+    const help = container.querySelector('[data-testid="quick-order-outer-help"]');
+    expect(help?.getAttribute("aria-label")).toBe("Catalog and ordering help");
+    const link = help?.querySelector("a");
+    expect(link?.getAttribute("href")).toBe("sms:+17374186381");
+    expect(link?.textContent).toBe("Text 737-418-6381");
+    expect(container.querySelectorAll('a[href="sms:+17374186381"]')).toHaveLength(1);
+    expect(help?.textContent).toContain("Sending a text does not submit this request, place an order, confirm availability or approve treatment.");
+    expect(help?.textContent).toContain("Do not include medical information or payment details.");
+    const support = container.querySelector('a[href="/research/support"]');
+    if (support) expect(support.compareDocumentPosition(help!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  }
   function expectPublicSupport() {
+    expectOuterHelp();
     expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
     expect(container.querySelector('a[href="/support"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
@@ -344,6 +357,49 @@ describe("the login-free request-only entry", () => {
   function unlockPosts(fetch: ReturnType<typeof stubFetch>) {
     return fetch.mock.calls.filter(([url, init]) => String(url).endsWith("/early-access/unlock") && init?.method === "POST");
   }
+  it.each(["session", "request-path"] as const)("shows passive outer help while %s is pending and removes it when the eligible form mounts", async (phase) => {
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    const original = fetch.getMockImplementation()!;
+    const path = phase === "session" ? "/api/research/early-access/session" : "/api/research/early-access/request-intents/config";
+    let resume!: (response: Response) => void;
+    let held = false;
+    const pending = new Promise<Response>((resolve) => { resume = resolve; });
+    fetch.mockImplementation((input, init) => {
+      if (!held && String(input) === path) {
+        held = true;
+        return pending;
+      }
+      return original(input, init);
+    });
+    await renderStorefront(true);
+    expect(container.textContent).toContain(phase === "session" ? "Preparing the request form" : "Checking the current request path");
+    expectOuterHelp();
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeNull();
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+    const link = container.querySelector<HTMLAnchorElement>('a[href="sms:+17374186381"]')!;
+    const beforeFetches = fetch.mock.calls.length;
+    const beforeLocation = window.location.href;
+    const storageWrite = vi.spyOn(Storage.prototype, "setItem");
+    const open = vi.spyOn(window, "open");
+    try {
+      link.addEventListener("click", (event) => event.preventDefault(), { once: true });
+      await act(async () => { link.click(); });
+      expect(fetch).toHaveBeenCalledTimes(beforeFetches);
+      expect(storageWrite).not.toHaveBeenCalled();
+      expect(open).not.toHaveBeenCalled();
+      expect(window.location.href).toBe(beforeLocation);
+    } finally {
+      storageWrite.mockRestore();
+      open.mockRestore();
+    }
+    await act(async () => { resume(await original(path)); });
+    await renderStorefront(true);
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="quick-order-outer-help"]')).toBeNull();
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+  });
   it("shows a truthful retry after a refused anonymous unlock and recovers without reloading", async () => {
     window.history.replaceState(null, "", "/research/early-access/order-request");
     const options = { bridgeEnabled: true, mixedMode: "on" as const, session: "fresh-open" as const,
@@ -419,6 +475,7 @@ describe("the login-free request-only entry", () => {
     expect(sessionReads(fetch)).toHaveLength(3);
     expect(unlockPosts(fetch)).toHaveLength(1);
     expect(window.location.pathname).toBe("/research/early-access/order-request");
+    expect(container.querySelector('[data-testid="quick-order-outer-help"]')).toBeNull();
   });
   it("preserves attempt and draft through 503 recovery and retains duplicate-review protection", async () => {
     const acceptedAt = new Date().toISOString();
@@ -507,6 +564,7 @@ describe("the login-free request-only entry", () => {
     expect(sessionReads(fetch)).toHaveLength(2);
     expect(unlockPosts(fetch)).toHaveLength(1);
     expect(container.textContent).toContain("Preparing the request form");
+    expectOuterHelp();
     options.unlock = "ok";
     await act(async () => { resume(jsonResponse({ authenticated: false, openAccess: true })); });
     await renderStorefront(true);
@@ -552,6 +610,7 @@ describe("the login-free request-only entry", () => {
     stubFetch({ bridgeEnabled: true, mixedMode });
     await renderStorefront(true);
     expect(container.textContent).toContain("The request form is currently unavailable");
+    expectOuterHelp();
     expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
     expect(container.querySelector('a[href="/support"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
@@ -593,6 +652,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe("malformed retained attempt");
+    expectOuterHelp();
   });
   it("holds a valid uncertain legacy attempt without mounting legacy checkout or deleting its marker", async () => {
     const marker = JSON.stringify({ idempotencyKey: "legacy-attempt", selections: [],
@@ -605,6 +665,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(marker);
     expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expectOuterHelp();
   });
   it("rechecks expired session authority and hides the form on refusal without a password fallback", async () => {
     const expires = Date.now() + 60000;
