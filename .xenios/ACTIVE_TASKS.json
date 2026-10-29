@@ -125,7 +125,7 @@
       "id": "KAN31-QUICK-ORDER-RETRY-D1A-D3-20261029",
       "title": "Implement Quick Order retry and recovery actions D1A/D3",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "3140cc3c5902ee094d32cd95c11750ed2355714c",
@@ -136,7 +136,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Dependency-ready D1A/10333 and D3/10328 Research unit for KAN-31 and customer journey KAN-22, based exactly on merged release 3140cc3c5902ee094d32cd95c11750ed2355714c and intended for source branch codex/quick-order-retry-d1a-d3-20261029. Only the three listed client paths are writable. Preserve the completed PR330 support and PostgreSQL-readiness handoffs. No Auth, notification, catalog, service, protected-control, SQL, credential, policy, CI, deployment, provider, customer, or production mutation is authorized by this records-only custody operation.",
-      "claimedAt": "2026-10-29T17:21:34.103Z"
+      "claimedAt": "2026-10-29T17:21:34.103Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "87926adc823dad5de607807c4f4466dd527cb995",
+        "file": ".xenios/handoffs/2026-10-29T17-43-44-642Z-KAN31-QUICK-ORDER-RETRY-D1A-D3-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T17:43:44.682Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
