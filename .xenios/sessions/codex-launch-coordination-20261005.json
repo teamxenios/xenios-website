@@ -5,6 +5,6 @@
   "branch": "codex/kan23-support-links-20261020",
   "state": "active",
   "startedAt": "2026-10-28T02:03:29.691Z",
-  "heartbeatAt": "2026-10-29T23:05:50.063Z",
-  "note": "PR338 durable guest/operator TEST-ONLY qualification head b0e5b22 pushed/tree3f27bb1 exact on protected merge81b9cbe; run40969839608 all5 trusted SUCCESS, one new PostgreSQL test and full18239 0FAIL, provider exact tree. Initial strict failure preserved and corrected only canonical test literal. Independent SAME acceptance pending; not managed DB admission, live-browser/provider proof, production GO, or full-site completion. Closing exact-SHA QA handoff only."
+  "heartbeatAt": "2026-10-29T23:12:02.477Z",
+  "note": "Claimed KAN31 mounted durable journey test-only unit on exact accepted base b0e5b22/tree3f27bb1 and exactly fixture.ts, existing server durable test, and new mounted RequestIntentForm durable test. Preserve all old server assertions and prior745 QA/HANDOFF. Hosted CI only; no product runtime/UI implementation, SQL, dependencies, workflow, Auth, browser, provider, customer, configuration, release, or production action."
 }

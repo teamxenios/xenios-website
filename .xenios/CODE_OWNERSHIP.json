@@ -2367,6 +2367,19 @@
       "state": "handoff",
       "claimedAt": "2026-10-29T22:38:25.324Z",
       "heartbeatAt": "2026-10-29T23:05:50.063Z"
+    },
+    {
+      "id": "4fb8b4e4-761c-436b-912a-c9555dfdcdd0",
+      "task": "KAN31-MOUNTED-DURABLE-JOURNEY-20261029",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+        "server/research/assisted-order/request-intent/durable-journey.pg.test.ts",
+        "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-29T23:12:02.366Z",
+      "heartbeatAt": "2026-10-29T23:12:02.477Z"
     }
   ],
   "rules": [
