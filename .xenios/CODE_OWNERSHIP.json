@@ -2329,9 +2329,9 @@
         "client/src/research/early-access/EarlyAccessRoute.tsx",
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-29T21:39:47.118Z",
-      "heartbeatAt": "2026-10-29T21:39:47.182Z"
+      "heartbeatAt": "2026-10-29T21:51:11.349Z"
     }
   ],
   "rules": [

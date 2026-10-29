@@ -1,0 +1,10 @@
+# Exact-SHA QA handoff — KAN31-QUICK-ORDER-OUTER-HELP-20261029
+Session codex-launch-coordination-20261005; leasec88dd10a-87ff-4d4b-9513-a3ec3a07707b.
+PUSHED head ab45a1c2dd88bf4426a6dc3ebed55d167223297f; tree 3738d71bff55c0ca926d8c7cae52c1510e54358e; base eb0fb59f4afc5e3d4b9ff016b4d3e3f811453e31.
+Draft https://github.com/teamxenios/xenios-website/pull/337.
+ONLY client/src/research/early-access/EarlyAccessRoute.tsx and EarlyAccessRoute.storefront.test.tsx, +71/-0.
+Approved passive manual help visible on outer pending/unconfirmed/unavailable/duplicate-review views before child form mounts; removed when eligible child mounts. Existing F1/D3retry/authority/agreements/continuity/singleflight/legacy rules preserved. No server/Auth/config/SQL/catalog change.
+Actual run40960253901 attempt1 all5trusted15368jobs SUCCESS. Affected36/focused110/full18223PASS0FAIL83SKIP,978PASS6SKIPfiles. Scopes overlap, not additive. Providercheckout842d029cb3b12560f6c7170d34e10057141d4b8a has exacttree3738d71bff55c0ca926d8c7cae52c1510e54358e. Rawlog SHA65f6f53ed38931c810fbcfa2345c9e570954ea92f48253947378f5a97f88c1d8. Frozenqualification SHA34769cea5ef9b390053a64b3c7e4ba7962c20f1405557446f3172e641c446f53.
+Root read/applied existing helper inline source/tests and added passive-click assertions; neither author is independent acceptance. Synthetic core/fetch/CSS fixtures; no real CSS/mobile/nativeSMS/persistence/fulljourney proof. Initial local ANSI-count parser repaired against same saved rawlog, no CI/source failure or rerun.
+ONE SAMEc16 applied-source/finalcomposition request KAN31/10356; verdict not yet observed. Draft/unmerged/no337GO. Earlier335/336 conditional release question remains separate/pending; no authority inferred from R2. FullQuickOrder/M0-M5 incomplete.
+No localNode/runtime/admission retry, browser/anonymoussession/customer/SMS/agreement/provider/payment/SQL/configuration/protected-source or production mutation. Preserve all original records/history/registrations/foreign custody and oldQA/handoffs.
