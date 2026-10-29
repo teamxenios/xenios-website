@@ -2332,6 +2332,30 @@
       "state": "handoff",
       "claimedAt": "2026-10-29T21:39:47.118Z",
       "heartbeatAt": "2026-10-29T21:51:11.349Z"
+    },
+    {
+      "id": "c541577e-acce-449d-99ab-d6b5ca6385a6",
+      "task": "KAN31-QUICK-ORDER-HUMAN-HELP-20261029",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-29T22:20:38.101Z",
+      "heartbeatAt": "2026-10-29T22:20:38.239Z"
+    },
+    {
+      "id": "f8c530c1-1eac-4b5c-a2bf-a7b4015de525",
+      "task": "KAN31-QUICK-ORDER-OUTER-HELP-20261029",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-29T22:20:38.175Z",
+      "heartbeatAt": "2026-10-29T22:20:38.239Z"
     }
   ],
   "rules": [
