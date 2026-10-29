@@ -257,7 +257,7 @@
       "id": "KAN31-QUICK-ORDER-OUTER-HELP-20261029",
       "title": "Add passive human help to outer Quick Order blocked states",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "eb0fb59f4afc5e3d4b9ff016b4d3e3f811453e31",
@@ -271,9 +271,9 @@
       "claimedAt": "2026-10-29T22:20:38.172Z",
       "handoff": {
         "session": "codex-launch-coordination-20261005",
-        "sha": "ab45a1c2dd88bf4426a6dc3ebed55d167223297f",
-        "file": ".xenios/handoffs/2026-10-29T21-51-11-454Z-KAN31-QUICK-ORDER-OUTER-HELP-20261029-codex-launch-coordination-20261005.md",
-        "at": "2026-10-29T21:51:11.458Z"
+        "sha": "8fcce2b43c8f5e6af65ed715fab537f50829ced9",
+        "file": ".xenios/handoffs/2026-10-29T22-43-14-601Z-KAN31-QUICK-ORDER-OUTER-HELP-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-29T22:43:14.604Z"
       }
     },
     {

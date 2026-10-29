@@ -2353,9 +2353,9 @@
         "client/src/research/early-access/EarlyAccessRoute.tsx",
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-29T22:20:38.175Z",
-      "heartbeatAt": "2026-10-29T22:38:25.383Z"
+      "heartbeatAt": "2026-10-29T22:43:14.532Z"
     },
     {
       "id": "745388be-c66c-4220-97a9-2c8b2134c429",
@@ -2366,7 +2366,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-29T22:38:25.324Z",
-      "heartbeatAt": "2026-10-29T22:38:25.383Z"
+      "heartbeatAt": "2026-10-29T22:43:14.532Z"
     }
   ],
   "rules": [
