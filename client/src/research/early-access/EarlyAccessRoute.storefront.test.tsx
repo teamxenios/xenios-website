@@ -18,9 +18,11 @@ import { resetAssistedOrderConfigCache } from "../assisted-order/api";
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "@shared/research/assisted-order/form";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "../assisted-order/request-intent-attempt";
 import { ASSISTED_ORDER_DRAFT_KEY } from "../assisted-order/draft-store";
-vi.mock("../core", () => ({ useResearch: () => ({
-  member: null, memberToken: null, memberChecking: false, memberSessionStatus: "signed_out", recovery: "none",
-}) }));
+const researchSession = vi.hoisted(() => ({
+  member: null, memberToken: null, memberChecking: false,
+  memberSessionStatus: "signed_out" as const, recovery: "none" as const,
+}));
+vi.mock("../core", () => ({ useResearch: () => researchSession }));
 vi.mock("../assisted-order/assisted-order.css", () => ({ default: {} }));
 
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
@@ -317,6 +319,7 @@ beforeEach(() => {
   // own fetch, so the cache has to start cold or a later test reuses an
   // earlier test's answer and never calls its own stub.
   resetAssistedOrderConfigCache();
+  researchSession.memberChecking = false;
   container = document.createElement("div");
   document.body.appendChild(container);
   root = createRoot(container);
@@ -673,6 +676,100 @@ describe("the login-free request-only entry", () => {
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expectRecoveryOnly(fetch);
     expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(1);
+  });
+  it("restores the required agreement after confirmed recovery and an inner remount while intake is open", async () => {
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "required" });
+    await renderStorefront(true);
+    const shell = container.querySelector('[data-testid="quick-order-request-only"]');
+    expect(shell).toBeTruthy();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeNull();
+    expect(recoveryPosts(fetch)).toHaveLength(0);
+
+    await act(async () => { recoverButton().click(); });
+    expect(recoveryPosts(fetch)).toHaveLength(1);
+    expect(JSON.parse(String(recoveryPosts(fetch)[0][1]?.body))).toEqual({ idempotencyKey: JSON.parse(mixedMarker).key });
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+
+    // Remount the real inner entry without replacing the outer route or owner.
+    researchSession.memberChecking = true;
+    await renderStorefront(true);
+    expect(container.textContent).toContain("Checking your existing session");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    researchSession.memberChecking = false;
+    await renderStorefront(true);
+    const add = await waitForAdd();
+    expect(container.querySelector('[data-testid="quick-order-request-only"]')).toBe(shell);
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+
+    const checkbox = container.querySelector<HTMLInputElement>('[data-testid="early-access-agreement-checkbox"]');
+    expect(checkbox).toBeTruthy();
+    expect(checkbox!.checked).toBe(false);
+    act(() => add.click());
+    expect(continueButton().matches(":disabled")).toBe(true);
+    expect(container.querySelector('input[name="name"]')).toBeNull();
+    act(() => checkbox!.click());
+    await act(async () => {
+      container.querySelector<HTMLButtonElement>('[data-testid="early-access-agreement-submit"]')!.click();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    const posts = fetch.mock.calls.filter(([, init]) => init?.method === "POST");
+    const acceptances = posts.filter(([url]) => String(url).endsWith("/early-access/agreements/accept"));
+    expect(acceptances).toHaveLength(1);
+    expect(JSON.parse(String(acceptances[0][1]?.body))).toMatchObject({ kind: "early_access_terms", version: "v1" });
+    expect(posts).toHaveLength(2); // One recovery and one explicit legal acceptance.
+    expect(recoveryPosts(fetch)).toHaveLength(1);
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(continueButton().matches(":disabled")).toBe(false);
+    act(() => continueButton().click());
+    expect(container.querySelector('input[name="name"]')).toBeTruthy();
+  });
+  it("does not reclassify a fresh mounted journey when a later marker appears before a parent rerender", async () => {
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "accepted" });
+    await renderStorefront(true);
+    const add = await waitForAdd();
+    const agreement = container.querySelector('[data-testid="quick-order-agreement-mount"]');
+    expect(agreement).toBeTruthy();
+    act(() => add.click());
+    expect(continueButton().matches(":disabled")).toBe(false);
+
+    // Isolate late-marker lifecycle timing; this fixture does not submit.
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    await renderStorefront(true);
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBe(agreement);
+    expect(container.textContent).toContain("1 selected.");
+    expect(continueButton().matches(":disabled")).toBe(false);
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(mixedMarker);
+    expect(recoveryPosts(fetch)).toHaveLength(0);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+    expect(sessionReads(fetch)).toHaveLength(1);
+  });
+  it("resets a confirmed closed-intake recovery door when the owning session expires", async () => {
+    const expires = Date.now() + 60000;
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "off", agreement: "required", sessionReplies: [
+      { authenticated: true, expiresAt: new Date(expires).toISOString() },
+      { authenticated: true, expiresAt: null },
+    ] });
+    await renderStorefront(true);
+    await act(async () => { recoverButton().click(); });
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expectRecoveryOnly(fetch);
+    vi.spyOn(Date, "now").mockReturnValue(expires + 1);
+    await act(async () => { window.dispatchEvent(new Event("focus")); });
+    await renderStorefront(true);
+    expect(sessionReads(fetch)).toHaveLength(2);
+    expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+    expect(container.textContent).toContain("The request form is currently unavailable");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeNull();
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(recoveryPosts(fetch)).toHaveLength(1);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+    expectOuterHelp();
   });
   it("reaches recovery while readiness is pending and retains the receipt after readiness closes", async () => {
     window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
