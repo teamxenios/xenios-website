@@ -302,7 +302,7 @@
       "id": "KAN31-MOUNTED-DURABLE-JOURNEY-20261029",
       "title": "Qualify mounted guest form through durable save and operator readback",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "b0e5b225d081e195173b14df18c02e7908522199",
@@ -314,7 +314,13 @@
       "dependsOn": [],
       "scopeNote": "Founder-prioritized next KAN-31 test-only unit after accepted disposable PostgreSQL qualification, pinned exactly to b0e5b225d081e195173b14df18c02e7908522199/tree 3f27bb19df3f7802df83ff187d8a91e2ba03e1cc and intended for isolated branch codex/quick-order-mounted-durable-journey-20261029. Extract a reusable owned disposable PostgreSQL 16 fixture while preserving every existing server assertion, then qualify the real mounted React RequestIntentForm with canonical createRequestIntentApi and real local 127.0.0.1 HTTP registration/service/RPC/canonical SQL. Cover selection and quantity editing, synthetic form/contact/agreements, post-COMMIT reply-loss uncertainty, same-storage unmount/remount recovery, exactly one durable row/reference, authorized operator same-record readback, and retained server negatives. Synthetic guest/catalog/standing/Care authority only; hosted CI only. Only the three listed test paths are writable. No Map persistence, mocked-away API/save, product runtime or UI implementation, SQL, dependency, workflow, Auth, browser, provider, customer, configuration, release, deployment, or production mutation is authorized by this records-only custody operation.",
       "createdAt": "2026-10-29T23:11:51.480Z",
-      "claimedAt": "2026-10-29T23:12:02.363Z"
+      "claimedAt": "2026-10-29T23:12:02.363Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "efe6e5157138df00f51734d2acf2a8fb2fe68a76",
+        "file": ".xenios/handoffs/2026-10-30T02-19-02-759Z-KAN31-MOUNTED-DURABLE-JOURNEY-20261029-codex-launch-coordination-20261005.md",
+        "at": "2026-10-30T02:19:02.762Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
