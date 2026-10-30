@@ -178,12 +178,21 @@ function stubFetch(options: {
   throwSessionReadsFirst?: number;
   malformedSessionReadsFirst?: number;
   unlock?: "ok" | "refused";
+  recovery?: "saved" | "missing" | "malformed" | "error";
 }) {
   let sessionIssued = false;
   let sessionReads = 0;
   const stub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input);
     if (init?.method === "POST") {
+      if (path.endsWith("/request-intents/recover")) {
+        if (options.recovery === "error") return jsonResponse({ error: "request_intent_unavailable" }, 503);
+        return jsonResponse({ receipt: options.recovery === "missing" ? null : options.recovery === "malformed"
+          ? { publicReference: "invented-reference" }
+          : { kind: "unapproved_selection_request", requestId: "30000000-0000-4000-8000-000000000001",
+              publicReference: "XRI-30000000000040008000000000000001", status: "pending_review",
+              createdAt: "2026-10-14T12:00:00.000Z" } });
+      }
       if (path.endsWith("/early-access/unlock")) {
         if (options.unlock === "refused") return jsonResponse({ ok: false }, 503);
         sessionIssued = true;
@@ -242,6 +251,8 @@ function stubFetch(options: {
         })) });
     }
     if (path.includes("/request-intents/catalog")) {
+      // Production closes catalog together with intake; recovery must not need it.
+      if (options.mixedMode !== "on") return jsonResponse({ error: "request_intent_disabled" }, 503);
       const query = new URL(path, "https://synthetic.invalid").searchParams;
       const rows = CANONICAL_ITEMS.filter((row) => !query.get("family") || row.family === query.get("family")).map((row) => ({
         ...row, unitPriceCents: row.workflowMode === "provider_request" ? null : row.unitPriceCents,
@@ -616,6 +627,94 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
     expect(container.querySelector('[data-testid="early-access-checkout-mount"]')).toBeNull();
+  });
+  const mixedMarker = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+    acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" });
+  function recoverButton() {
+    const button = [...container.querySelectorAll("button")].find((candidate) => candidate.textContent === "Check saved request");
+    expect(button).toBeTruthy();
+    return button!;
+  }
+  function recoveryPosts(fetch: ReturnType<typeof stubFetch>) {
+    return fetch.mock.calls.filter(([url, init]) => String(url).endsWith("/request-intents/recover") && init?.method === "POST");
+  }
+  function expectRecoveryOnly(fetch: ReturnType<typeof stubFetch>) {
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(container.querySelector('input[name="name"]')).toBeNull();
+    expect(container.querySelector('input[type="password"]')).toBeNull();
+    expect(container.querySelector('input[type="checkbox"]')).toBeNull();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeNull();
+    expect(container.querySelectorAll('section[aria-label="Catalog and ordering help"]')).toHaveLength(1);
+    expect(container.querySelector('[data-testid="quick-order-outer-help"]')).toBeNull();
+    expect(fetch.mock.calls.filter(([url]) => String(url).includes("/request-intents/catalog"))).toHaveLength(0);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toEqual(recoveryPosts(fetch));
+    expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/early-access/agreements"))).toHaveLength(0);
+  }
+  it.each([
+    { mixedMode: "off" as const, bridgeEnabled: false }, { mixedMode: "off" as const, bridgeEnabled: true },
+    { mixedMode: "unknown" as const, bridgeEnabled: false }, { mixedMode: "unknown" as const, bridgeEnabled: true },
+  ])("recovers the retained mixed attempt with $mixedMode intake and bridge $bridgeEnabled", async (options) => {
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ ...options, agreement: "required" });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("Check your earlier request");
+    expect(container.textContent).not.toContain("The request form is currently unavailable");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expectRecoveryOnly(fetch);
+    expect(recoveryPosts(fetch)).toHaveLength(0);
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(mixedMarker);
+    await act(async () => { recoverButton().click(); });
+    expect(recoveryPosts(fetch)).toHaveLength(1);
+    expect(JSON.parse(String(recoveryPosts(fetch)[0][1]?.body))).toEqual({ idempotencyKey: JSON.parse(mixedMarker).key });
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    // Parent rerenders must not replace the confirmed receipt with a closed or legacy door.
+    await renderStorefront(true);
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expectRecoveryOnly(fetch);
+    expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(1);
+  });
+  it("reaches recovery while readiness is pending and retains the receipt after readiness closes", async () => {
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "off" });
+    const original = fetch.getMockImplementation()!;
+    let release!: (response: Response) => void;
+    const pending = new Promise<Response>((resolve) => { release = resolve; });
+    fetch.mockImplementation((input, init) => String(input).endsWith("/request-intents/config") ? pending : original(input, init));
+    await renderStorefront(true);
+    await act(async () => { recoverButton().click(); });
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    await act(async () => { release(jsonResponse({ enabled: false, error: "request_intent_disabled" }, 503)); });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expectRecoveryOnly(fetch);
+    expect(recoveryPosts(fetch)).toHaveLength(1);
+  });
+  it.each(["missing", "malformed", "error"] as const)("keeps a %s recovery unconfirmed with the same marker and no replacement", async (recovery) => {
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const options = { bridgeEnabled: false, mixedMode: "off" as const, recovery: recovery as "saved" | typeof recovery };
+    const fetch = stubFetch(options);
+    await renderStorefront(true);
+    await act(async () => { recoverButton().click(); });
+    expect(container.querySelector('[role="alert"]')).toBeTruthy();
+    expect(container.textContent).not.toContain("Your saved request reference");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(mixedMarker);
+    expectRecoveryOnly(fetch);
+    options.recovery = "saved";
+    await act(async () => { recoverButton().click(); });
+    expect(recoveryPosts(fetch)).toHaveLength(2);
+    for (const [, init] of recoveryPosts(fetch)) expect(JSON.parse(String(init?.body))).toEqual({ idempotencyKey: JSON.parse(mixedMarker).key });
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expectRecoveryOnly(fetch);
+  });
+  it.each(["off", "unknown"] as const)("does not grant recovery through a closed session with %s intake", async (mixedMode) => {
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode, session: "locked" });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("not available in this environment");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(recoveryPosts(fetch)).toHaveLength(0);
+    expectPublicSupport();
   });
   it("allows browsing but enables contact only after canonical server agreement acceptance", async () => {
     const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "required" });
