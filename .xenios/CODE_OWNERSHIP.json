@@ -2417,6 +2417,21 @@
       "state": "handoff",
       "claimedAt": "2026-10-30T17:29:11.768Z",
       "heartbeatAt": "2026-10-30T18:52:51.829Z"
+    },
+    {
+      "id": "b845d44b-fe54-4f5c-bd61-e5ebc7923cc5",
+      "task": "KAN31-CLOSED-RECOVERY-ENTRY-20261030",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "server/research/assisted-order/request-intent/composition.integration.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-30T19:02:59.331Z",
+      "heartbeatAt": "2026-10-30T19:02:59.404Z"
     }
   ],
   "rules": [
