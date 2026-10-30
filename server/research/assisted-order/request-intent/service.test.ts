@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { sha256AssistedOrderHasher } from "../defaults";
 import type { AssistedOrderViewer } from "../ports";
 import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
-import type { RequestIntentCatalogItem, RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
+import { validateRequestIntentInput, type RequestIntentCatalogItem, type RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentService, type CreateIntent, type RequestIntentDependencies, type StoredIntent } from "./service";
 import { requestIntentRepository } from "./rpc-repository";
 
@@ -220,7 +220,9 @@ describe("private unapproved mixed request intent", () => {
     const result = await service.submit(viewer, refreshed);
     expect(records.size).toBe(1); expect(deps.repository.createOrReplay).toHaveBeenCalledTimes(1);
     const saved = [...records.values()][0].detail;
-    expect(saved.contact).toEqual(refreshed.contact); expect(saved.agreements).toEqual(refreshed.agreements);
+    expect(saved.contact).toEqual(validateRequestIntentInput(refreshed).contact);
+    expect(saved.contact.billingAddress).toEqual(saved.contact.shippingAddress);
+    expect(saved.agreements).toEqual(refreshed.agreements);
     expect(result.publicReference).toBe(saved.publicReference);
     await expect(service.recover(viewer, refreshed.idempotencyKey)).resolves.toEqual(result);
   });
