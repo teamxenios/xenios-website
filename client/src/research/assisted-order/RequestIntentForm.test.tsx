@@ -294,6 +294,52 @@ describe("customer restriction copy", () => {
 });
 
 describe("mixed request mounted-entry contracts", () => {
+  it("preserves the surrounding agreement focus on mount and focuses only a later step transition", async () => {
+    const agreement = document.createElement("input");
+    agreement.type = "checkbox";
+    agreement.setAttribute("aria-label", "Surrounding agreement");
+    document.body.insertBefore(agreement, host);
+    try {
+      agreement.focus();
+      const api = makeApi();
+      await render(api);
+      expect(document.activeElement).toBe(agreement);
+      await render(api);
+      expect(document.activeElement).toBe(agreement);
+      await click("Add Synthetic clinical to request");
+      expect(document.activeElement).toBe(agreement);
+      await click("Continue to contact");
+      expect(document.activeElement).toBe(host.querySelector("h1"));
+      expect(host.querySelector('input[name="name"]')).toBeTruthy();
+    } finally { agreement.remove(); }
+  });
+  it.each([false, true])("restored recovery skips requirements, catalog and linked-selection reads (hint %s)", async (withHint) => {
+    const api = makeApi();
+    api.config.mockRejectedValue(new Error("intake closed"));
+    api.catalog.mockRejectedValue(new Error("catalog closed"));
+    const marker = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+      acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" });
+    sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, marker);
+    let release!: (value: typeof receipt) => void;
+    api.recover.mockImplementation(() => new Promise((resolve) => { release = resolve; }));
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} continuationEnabled={false}
+      entryIntent={withHint ? { family: "clinical_formulations_503a", slug: "clinical",
+        variantId: "clinical-source", quantity: 2, action: "CARE" } : null} />));
+    expect(host.textContent).toContain("Check your earlier request");
+    expect(host.querySelector('[role="alert"]')).toBeNull();
+    expect(api.config).not.toHaveBeenCalled();
+    expect(api.catalog).not.toHaveBeenCalled();
+    expect(api.submit).not.toHaveBeenCalled();
+    await click("Check saved request");
+    await click("Check saved request");
+    expect(api.recover).toHaveBeenCalledTimes(1);
+    expect(api.recover).toHaveBeenCalledWith(JSON.parse(marker).key);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    await act(async () => { release(receipt); });
+    expect(host.textContent).toContain(reference);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(api.submit).not.toHaveBeenCalled();
+  });
   it("does not continue when the existing access/standing shell is closed", async () => {
     const api = makeApi();
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} continuationEnabled={false} />));
