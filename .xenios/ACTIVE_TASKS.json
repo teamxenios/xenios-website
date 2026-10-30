@@ -323,6 +323,23 @@
       }
     },
     {
+      "id": "KAN31-QUICK-ORDER-REQUIREMENTS-REFRESH-20261030",
+      "title": "Refresh stale Quick Order requirements without losing customer progress",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-31",
+      "baseSha": "81b9cbe05c6ef500a5e02f6216ee89c5b0ae039a",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Founder-adopted full Quick Order completion repair, rooted exactly at production/release 81b9cbe05c6ef500a5e02f6216ee89c5b0ae039a/tree 4c43950a94685f4cfe20f7d9138f64002ab9128b and intended for isolated branch codex/quick-order-requirements-refresh-20261030. After a proven first prewrite current_acknowledgments_required refusal, invalidate stale one-time config and provide bounded explicit refresh through existing api.config while preserving volatile selections and contact; require fresh acknowledgments and explicit resubmission. Refresh failure remains closed and retryable. A prior lost or uncertain attempt must retain the exact idempotency key, payload, and edit lock and must never be replaced or refreshed. Only the two listed RequestIntentForm runtime/test paths are writable. Preserve existing Auth, catalog, SQL, Core, attempt-storage authority, security configuration, and all historical QA/handoffs. No SQL, configuration, CI, browser, provider, customer, release, deployment, or production mutation is authorized by this records-only custody operation.",
+      "createdAt": "2026-10-30T15:44:46.503Z",
+      "claimedAt": "2026-10-30T15:44:57.952Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
