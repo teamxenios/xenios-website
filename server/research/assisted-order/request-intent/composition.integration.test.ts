@@ -19,11 +19,14 @@ describe("proposed request-intent integration source bindings (not browser execu
     const source = read("client/src/research/early-access/EarlyAccessRoute.tsx");
     const requestOnly = source.slice(source.indexOf("  if (requestOnly) {"), source.indexOf("  return (", source.indexOf("  if (requestOnly) {")));
     expect(requestOnly).toContain('state.kind !== "authenticated"');
-    expect(requestOnly).toContain('requestMode.kind !== "mixed"');
+    expect(requestOnly).toContain('const requestDoorOpen = requestMode.kind === "mixed" || requestRecoveryDoor.current');
+    expect(requestOnly).toContain('state.kind === "authenticated" && prior === "mixed"');
+    expect(requestOnly).toContain('const requestEntryMode = requestMode.kind === "legacy" ? { kind: "unavailable" as const } : requestMode');
+    expect(source).toContain("requestRecoveryDoor.current = false;");
     expect(requestOnly).toContain('prior === "legacy" || prior === "blocked"');
     expect(requestOnly).toContain("<EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked}");
     expect(requestOnly).toContain("continuationEnabled={agreed && blocked === null}");
-    expect(requestOnly).toContain("<FullCanonicalCatalog mode={requestMode} embedded");
+    expect(requestOnly).toContain("<FullCanonicalCatalog mode={requestEntryMode} embedded");
     for (const component of ["EarlyAccessUnlockForm", "EarlyAccessCartMount", "EarlyAccessCheckoutJourney", "EarlyAccessCatalogSection"]) {
       expect(requestOnly).not.toContain("<" + component);
     }

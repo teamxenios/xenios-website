@@ -4,18 +4,25 @@ import { describe, expect, it, vi } from "vitest";
 import type { AssistedOrderProductionWiring } from "../production-deps";
 import type { AssistedOrderViewer } from "../ports";
 import type { CareAccessDependencies } from "../../../care/access";
+import { sha256AssistedOrderHasher } from "../defaults";
 import { registerRequestIntentApi, requestIntentOrigin } from "./production";
 
 const root = "/api/research/early-access/request-intents";
 const actor = "10000000-0000-4000-8000-000000000001";
 function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "denied" | "failure";
   principal?: "clinical_admin" | "research_admin" | "absent"; bearerRejected?: boolean;
-  staffFlag?: string; staffDbDenied?: boolean } = {}) {
-  const rpc = vi.fn(async (name: string, _args?: Readonly<Record<string, unknown>>) => {
+  staffFlag?: string; staffDbDenied?: boolean; customer?: AssistedOrderViewer;
+  savedAttempt?: Readonly<{ ownerHash: string; attemptHash: string; record: unknown }> } = {}) {
+  const rpc = vi.fn(async (name: string, _args?: Readonly<Record<string, unknown>>):
+    Promise<{ data: unknown; error: { code?: string; message?: string } | null }> => {
     if (name === "research_rate_limit_hit") return options.rate === "failure"
       ? { data: null, error: { message: "private diagnostic never returned" } }
       : { data: options.rate !== "denied", error: null };
-    if (name === "request_intent_find_attempt") return { data: null, error: null };
+    if (name === "request_intent_find_attempt") {
+      const saved = options.savedAttempt;
+      return { data: saved && _args?.p_owner_hash === saved.ownerHash && _args?.p_attempt_hash === saved.attemptHash
+        ? saved.record : null, error: null };
+    }
     if (name === "request_intent_staff_list") return options.staffDbDenied
       ? { data: null, error: { code: "42501", message: "private approval or current role absent" } }
       : { data: { items: [], total: 0, page: 1, pageSize: 25 }, error: null };
@@ -30,7 +37,7 @@ function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "d
     masterOfferingServiceFor: () => null, bindingFor: () => null, offeringVariantFor: () => null,
     catalogVersion: "synthetic", supabaseRpc: { rpc }, supabaseStorage: null, log: () => undefined,
   };
-  const viewer: AssistedOrderViewer = { actorType: options.bearerRejected ? "early_access_session" : "member",
+  const viewer: AssistedOrderViewer = options.customer ?? { actorType: options.bearerRejected ? "early_access_session" : "member",
     memberId: options.bearerRejected ? null : "synthetic-member", authUserId: options.bearerRejected ? null : actor,
     earlyAccessCustomerRef: "synthetic-customer", earlyAccessSessionHash: "synthetic-hash", normalizedEmail: null,
     capabilities: new Set(["assisted_orders:submit"]) };
@@ -45,6 +52,24 @@ function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "d
   registerRequestIntentApi(app, wiring, { customer: async () => viewer }, care);
   return { app, rpc, care };
 }
+const recoveryKey = "20000000-0000-4000-8000-000000000002";
+const recoveryReceipt = {
+  kind: "unapproved_selection_request" as const, requestId: "30000000-0000-4000-8000-000000000003",
+  publicReference: "XRI-30000000000040008000000000000003", status: "pending_review" as const,
+  createdAt: "2026-10-30T12:00:00.000Z",
+};
+const recoveryGuest: AssistedOrderViewer = {
+  actorType: "early_access_session", memberId: null, authUserId: null,
+  earlyAccessCustomerRef: "synthetic-customer", earlyAccessSessionHash: "synthetic-session-a",
+  normalizedEmail: "shared@example.invalid", capabilities: new Set(["assisted_orders:submit"]),
+};
+const recoverableAttempt = {
+  ownerHash: sha256AssistedOrderHasher.stableHash(["request-intent-owner", "session",
+    recoveryGuest.earlyAccessCustomerRef, recoveryGuest.earlyAccessSessionHash]),
+  attemptHash: sha256AssistedOrderHasher.hash(recoveryKey),
+  record: { fingerprint: "a".repeat(64), receipt: { ...recoveryReceipt, privateDiagnostic: "must not reach the customer" } },
+};
+
 describe("proposed mixed-request production composition", () => {
   it("requires an explicit canonical origin and rejects credentials, paths and nonlocal HTTP", () => {
     expect(requestIntentOrigin(undefined)).toBeNull();
@@ -98,8 +123,8 @@ describe("proposed mixed-request production composition", () => {
     expect(response.status).toBe(503); expect(JSON.stringify(response.body)).not.toContain("private diagnostic");
     expect((await request(denied.app).get(root + "/config")).status).toBe(429);
   });
-  it("does not let a rejected bearer fall back to an Early Access cookie owner", async () => {
-    const f = fixture({ bearerRejected: true });
+  it.each([true, false])("does not let a rejected bearer fall back to a cookie owner (intake enabled: %s)", async (enabled) => {
+    const f = fixture({ enabled, bearerRejected: true });
     const response = await request(f.app).post(root + "/recover").set("Origin", "https://fixture.example.invalid")
       .set("Authorization", "Bearer synthetic-invalid").send({ idempotencyKey: actor });
     expect(response.status).toBe(401);
@@ -127,7 +152,7 @@ describe("proposed mixed-request production composition", () => {
       expect(f.care.recordAccessDecision).not.toHaveBeenCalled();
     }
   });
-  it("allows only the separately gated pending read when public intake is closed", async () => {
+  it("allows the separately gated staff pending read when public intake is closed", async () => {
     const f = fixture({ enabled: false, legal: false, principal: "clinical_admin", staffFlag: "true" });
     expect((await request(f.app).get(root + "/staff")).status).toBe(200);
     expect((await request(f.app).get(root + "/staff/" + actor)).status).toBe(404);
@@ -136,6 +161,101 @@ describe("proposed mixed-request production composition", () => {
     expect((await request(f.app).get(root + "/config")).status).toBe(503);
     expect((await request(f.app).get(root + "/catalog")).status).toBe(503);
     expect(f.care.loadCapabilityStatus).not.toHaveBeenCalled();
+  });
+  it.each(["/recover", "/recover/", "/RECOVER"])("recovers only the saved customer receipt at %s after intake closes", async (path) => {
+    const f = fixture({ enabled: false, legal: false, customer: recoveryGuest,
+      savedAttempt: recoverableAttempt, principal: "absent" });
+    const response = await request(f.app).post(root + path)
+      .set("Origin", "https://fixture.example.invalid").set("Sec-Fetch-Site", "same-origin")
+      .send({ idempotencyKey: recoveryKey });
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ receipt: recoveryReceipt });
+    expect(response.headers["cache-control"]).toContain("no-store");
+    expect(response.headers["pragma"]).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit", "request_intent_find_attempt"]);
+    expect(f.rpc).toHaveBeenCalledWith("request_intent_find_attempt", {
+      p_owner_hash: recoverableAttempt.ownerHash, p_attempt_hash: recoverableAttempt.attemptHash,
+    });
+    expect(f.rpc).toHaveBeenCalledWith("research_rate_limit_hit", {
+      p_key: expect.stringMatching(/^request-intent:write:[a-f0-9]{64}$/), p_window_seconds: 600, p_max_hits: 20,
+    });
+    expect(f.care.recordAccessDecision).not.toHaveBeenCalled();
+    expect(f.care.loadCapabilityStatus).not.toHaveBeenCalled();
+    const rpcCount = f.rpc.mock.calls.length;
+    expect((await request(f.app).post(root).set("Origin", "https://fixture.example.invalid")
+      .send({ idempotencyKey: recoveryKey })).status).toBe(503);
+    expect((await request(f.app).get(root + "/config")).status).toBe(503);
+    expect((await request(f.app).get(root + "/catalog")).status).toBe(503);
+    expect(f.rpc).toHaveBeenCalledTimes(rpcCount);
+  });
+  it("returns unconfirmed for another session or attempt despite matching customer and email", async () => {
+    for (const [customer, key] of [
+      [recoveryGuest, "40000000-0000-4000-8000-000000000004"],
+      [{ ...recoveryGuest, earlyAccessSessionHash: "synthetic-session-b" }, recoveryKey],
+    ] as const) {
+      const f = fixture({ enabled: false, legal: false, customer, savedAttempt: recoverableAttempt });
+      const response = await request(f.app).post(root + "/recover").set("Origin", "https://fixture.example.invalid")
+        .send({ idempotencyKey: key });
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({ receipt: null });
+      expect(JSON.stringify(response.body)).not.toContain(recoveryReceipt.publicReference);
+      expect(f.rpc).toHaveBeenCalledWith("request_intent_find_attempt", {
+        p_owner_hash: sha256AssistedOrderHasher.stableHash(["request-intent-owner", "session",
+          customer.earlyAccessCustomerRef, customer.earlyAccessSessionHash]),
+        p_attempt_hash: sha256AssistedOrderHasher.hash(key),
+      });
+      expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit", "request_intent_find_attempt"]);
+    }
+  });
+  it("retains origin, Fetch Metadata and JSON guards for intake-closed recovery", async () => {
+    const f = fixture({ enabled: false, customer: recoveryGuest, savedAttempt: recoverableAttempt });
+    expect((await request(f.app).post(root + "/recover").send({ idempotencyKey: recoveryKey })).status).toBe(403);
+    expect((await request(f.app).post(root + "/recover").set("Origin", "https://attacker.example.invalid")
+      .send({ idempotencyKey: recoveryKey })).status).toBe(403);
+    expect((await request(f.app).post(root + "/recover").set("Origin", "https://fixture.example.invalid")
+      .set("Sec-Fetch-Site", "cross-site").send({ idempotencyKey: recoveryKey })).status).toBe(403);
+    expect((await request(f.app).post(root + "/recover").set("Origin", "https://fixture.example.invalid")
+      .type("form").send("idempotencyKey=" + recoveryKey)).status).toBe(403);
+    expect(f.rpc).not.toHaveBeenCalled();
+  });
+  it("retains exact recovery validation and never accepts caller-supplied ownership", async () => {
+    for (const body of [{}, { idempotencyKey: 42 }, { idempotencyKey: "not-an-attempt" },
+      { idempotencyKey: recoveryKey, email: "shared@example.invalid" },
+      { idempotencyKey: recoveryKey, ownerHash: recoverableAttempt.ownerHash }]) {
+      const f = fixture({ enabled: false, customer: recoveryGuest, savedAttempt: recoverableAttempt });
+      const response = await request(f.app).post(root + "/recover").set("Origin", "https://fixture.example.invalid").send(body);
+      expect(response.status).toBe(400);
+      expect(response.body).not.toHaveProperty("receipt");
+      expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit"]);
+    }
+  });
+  it.each([["denied", 429], ["failure", 503]] as const)("keeps recovery closed when its durable limiter is %s", async (rate, status) => {
+    const f = fixture({ enabled: false, customer: recoveryGuest, savedAttempt: recoverableAttempt, rate });
+    const response = await request(f.app).post(root + "/recover").set("Origin", "https://fixture.example.invalid")
+      .send({ idempotencyKey: recoveryKey });
+    expect(response.status).toBe(status);
+    expect(response.body).not.toHaveProperty("receipt");
+    expect(JSON.stringify(response.body)).not.toContain("private diagnostic");
+    expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit"]);
+  });
+  it("does not broaden the intake-off recovery exception to other methods or similar paths", async () => {
+    const f = fixture({ enabled: false, customer: recoveryGuest, savedAttempt: recoverableAttempt });
+    for (const [method, path] of [["get", "/recover"], ["head", "/recover"], ["patch", "/recover"],
+      ["post", "/recover-other"], ["post", "/recover/extra"]] as const) {
+      const probe = request(f.app)[method](root + path).set("Origin", "https://fixture.example.invalid");
+      const response = await (method === "get" || method === "head" ? probe : probe.send({ idempotencyKey: recoveryKey }));
+      expect(response.status).toBe(503);
+    }
+    expect(f.rpc).not.toHaveBeenCalled();
+  });
+  it("still requires a capable verified customer for intake-closed recovery", async () => {
+    const f = fixture({ enabled: false, customer: { ...recoveryGuest, capabilities: new Set() }, savedAttempt: recoverableAttempt });
+    const response = await request(f.app).post(root + "/recover").set("Origin", "https://fixture.example.invalid")
+      .send({ idempotencyKey: recoveryKey });
+    expect(response.status).toBe(401);
+    expect(response.body).not.toHaveProperty("receipt");
+    expect(f.rpc.mock.calls.map(([name]) => name)).toEqual(["research_rate_limit_hit"]);
   });
   it("does not broaden the intake-off exception to other staff paths or mutation methods", async () => {
     const f = fixture({ enabled: false, principal: "clinical_admin", staffFlag: "true" });

@@ -157,8 +157,10 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   const nextStepsRef = useRef<HTMLDivElement | null>(null);
   const lastExpiredSessionRef = useRef<string | null>(null);
   const sessionRecheckInFlightRef = useRef(false);
+  const requestRecoveryDoor = useRef(false);
 
   const resetCustomerContext = useCallback(() => {
+    requestRecoveryDoor.current = false;
     clearEarlyAccessCustomerStorage();
     setRememberedOrder(null);
     setAgreed(false);
@@ -452,9 +454,16 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     try {
       const prior = readOrderRequestContinuity(window.sessionStorage);
       priorRequestBlocked = prior === "legacy" || prior === "blocked";
+      if (state.kind === "authenticated" && prior === "mixed") requestRecoveryDoor.current = true;
     } catch {
       priorRequestBlocked = true;
     }
+    // Keep an already mounted recovery/receipt through marker clearance and
+    // readiness rerenders. Session reset still removes the customer context.
+    const requestDoorOpen = requestMode.kind === "mixed" || requestRecoveryDoor.current;
+    // The retained marker selects mixed recovery. If it disappears before the
+    // lazy entry mounts, a closed mixed intake must never select legacy checkout.
+    const requestEntryMode = requestMode.kind === "legacy" ? { kind: "unavailable" as const } : requestMode;
     return <>
       <SeoHead title="Quick Order, Xenios Health"
         description="Select items and send a request for review. No account is required."
@@ -488,24 +497,24 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
               <p>An earlier request needs support review. Do not create a replacement until staff check for duplicates.</p>
               <a href="/research/support">Contact support</a>
             </div>
-            : requestMode.kind === "checking" ? <p role="status" className="mt-5">Checking the current request path...</p>
-            : requestMode.kind !== "mixed" ? <div role="status" className="mt-5">
+            : !requestDoorOpen && requestMode.kind === "checking" ? <p role="status" className="mt-5">Checking the current request path...</p>
+            : !requestDoorOpen ? <div role="status" className="mt-5">
               <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
               <a href="/research/support">Contact support</a>
             </div>
             : <>
-              <div className="mt-5" data-testid="quick-order-agreement-mount">
+              {!requestRecoveryDoor.current && <div className="mt-5" data-testid="quick-order-agreement-mount">
                 <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
-              </div>
+              </div>}
               <div className="mt-5">
                 <Suspense fallback={<p role="status">Loading the request form...</p>}>
-                  <FullCanonicalCatalog mode={requestMode} embedded entryIntent={entryIntent}
+                  <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent}
                     continuationEnabled={agreed && blocked === null}
                     onStepChange={setEmbeddedOrderStep} />
                 </Suspense>
               </div>
             </>}
-          {(state.kind !== "authenticated" || priorRequestBlocked || requestMode.kind !== "mixed") && (
+          {(state.kind !== "authenticated" || priorRequestBlocked || !requestDoorOpen) && (
             <section className="card mt-6" aria-label="Catalog and ordering help" data-testid="quick-order-outer-help">
               <h2>Need help with the catalog or ordering?</h2>
               <a className="btn btn-secondary mt-4" href="sms:+17374186381">Text 737-418-6381</a>
