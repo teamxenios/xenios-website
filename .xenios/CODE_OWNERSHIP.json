@@ -2450,9 +2450,9 @@
         "server/research/assisted-order/request-intent/durable-journey.pg.test.ts",
         "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-30T19:46:09.122Z",
-      "heartbeatAt": "2026-10-30T19:51:26.005Z"
+      "heartbeatAt": "2026-10-30T19:59:14.838Z"
     }
   ],
   "rules": [
