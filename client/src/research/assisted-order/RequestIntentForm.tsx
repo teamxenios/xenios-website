@@ -40,6 +40,7 @@ export function RequestIntentForm({
   entryIntent?: StorefrontIntent | null }>) {
   const [step, setStep] = useState<"products" | "contact" | "review">("products");
   const [config, setConfig] = useState<AssistedOrderWizardConfig | null>(null);
+  const [requirementsNeedRefresh, setRequirementsNeedRefresh] = useState(false);
   const [catalog, setCatalog] = useState<RequestIntentCatalogPage | null>(null);
   const [search, setSearch] = useState("");
   const [family, setFamily] = useState("");
@@ -116,6 +117,18 @@ export function RequestIntentForm({
     return () => { current = false; };
   }, [api, search, family, page]);
 
+  async function refreshRequirements() {
+    if (locked.current || !requirementsNeedRefresh || frozen.current) return;
+    locked.current = true; setBusy(true);
+    try {
+      const value = await api.config();
+      if (!mounted.current) return;
+      setConfig(value); setAcknowledged(new Set()); setRequirementsNeedRefresh(false); setError("");
+    } catch {
+      if (mounted.current) setError("The current requirements could not be refreshed. Your selections and contact details are still here. Try again or contact support.");
+    } finally { locked.current = false; if (mounted.current) setBusy(false); }
+  }
+
   async function recover() {
     if (!restored || !storage || locked.current) return;
     locked.current = true; setBusy(true);
@@ -180,7 +193,12 @@ export function RequestIntentForm({
           { firstPost, stillCurrent: mounted.current, error })) {
         frozen.current = null;
         setAcknowledged(new Set());
-        setError(intentRefusalGuidance(error));
+        if (error.status === 400 && error.code === "current_acknowledgments_required") {
+          // Only a proven first prewrite refusal may replace the requirements.
+          // An earlier uncertain POST retains its original payload and key.
+          setConfig(null); setRequirementsNeedRefresh(true);
+          setError("This request was not saved. Refresh the current requirements, then review and confirm them before submitting a new attempt.");
+        } else setError(intentRefusalGuidance(error));
       } else if (mounted.current) {
         setError(REQUEST_INTENT_RECOVERY_NOTICE);
       }
@@ -215,6 +233,10 @@ export function RequestIntentForm({
     {!embedded && <p><a href="/research/early-access">Review access and agreement requirements</a></p>}
     {!storage && <p role="alert">This browser cannot preserve a safe retry marker. Submission is unavailable. Contact support.</p>}
     {error && <p className="xenios-order-error" role="alert">{error}</p>}
+    {requirementsNeedRefresh && <section className="xenios-order-panel" aria-label="Refresh request requirements">
+      <p role="status">{busy ? "Refreshing current requirements..." : "Refresh the current requirements to continue with your existing selections and contact details."}</p>
+      <button type="button" className="xenios-order-button" disabled={busy} onClick={() => void refreshRequirements()}>Refresh requirements</button>
+    </section>}
     {step === "products" && <>
       {entryIntent && <section aria-label="Selection from your link" className="xenios-order-panel">
         <h2>Selection from your link</h2>
