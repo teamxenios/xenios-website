@@ -243,8 +243,8 @@ describe("proposed mixed-request production composition", () => {
     const f = fixture({ enabled: false, customer: recoveryGuest, savedAttempt: recoverableAttempt });
     for (const [method, path] of [["get", "/recover"], ["head", "/recover"], ["patch", "/recover"],
       ["post", "/recover-other"], ["post", "/recover/extra"]] as const) {
-      const response = await request(f.app)[method](root + path).set("Origin", "https://fixture.example.invalid")
-        .send({ idempotencyKey: recoveryKey });
+      const probe = request(f.app)[method](root + path).set("Origin", "https://fixture.example.invalid");
+      const response = await (method === "get" || method === "head" ? probe : probe.send({ idempotencyKey: recoveryKey }));
       expect(response.status).toBe(503);
     }
     expect(f.rpc).not.toHaveBeenCalled();

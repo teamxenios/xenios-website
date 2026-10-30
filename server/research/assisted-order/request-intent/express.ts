@@ -34,10 +34,11 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("Pragma", "no-cache");
     // Closing public intake must not strand already-saved private requests.
-    // Only these exact read routes may reach the separate fail-closed staff gate.
+    // Exact recovery and staff reads still pass their own identity and abuse guards.
     const staffRead = (req.method === "GET" || req.method === "HEAD")
       && /^\/staff(?:\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?\/?$/i.test(req.path);
-    if (!staffRead && !deps.enabled()) {
+    const customerRecovery = req.method === "POST" && /^\/recover\/?$/i.test(req.path);
+    if (!staffRead && !customerRecovery && !deps.enabled()) {
       res.status(503).json({ error: "request_intent_unavailable" });
       return;
     }
