@@ -5,6 +5,6 @@
   "branch": "codex/kan23-support-links-20261020",
   "state": "active",
   "startedAt": "2026-10-28T02:03:29.691Z",
-  "heartbeatAt": "2026-10-30T16:09:27.235Z",
-  "note": "PR340 requirements refresh head a6da053 pushed/treee526d39 exact on release81b; run41085561938 all5 trusted SUCCESS, all32 form cases and full18240 0FAIL, provider exact tree. Initial expected-red evidence preserved; SAME KAN31/10364 independent verdict pending. JSDOM/synthetic API qualification only, not native browser/managed DB/provider or production proof. Closing exact-SHA QA handoff only."
+  "heartbeatAt": "2026-10-30T16:44:04.572Z",
+  "note": "Claimed KAN31 closed-intake recovery on exact release81b/tree4c43950 and exactly request-intent express.ts plus production.test.ts. Permit only existing POST /recover route behavior through intake gate while preserving mutation guard, limiter, canonical viewer, closed-body validation, owner scope, origin/RPC failures; all submit/config/catalog/unrelated routes remain closed. No Auth/SQL/staff/config/flag/role/commercial or production action."
 }

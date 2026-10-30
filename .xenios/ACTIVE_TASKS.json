@@ -346,6 +346,23 @@
       }
     },
     {
+      "id": "KAN31-CLOSED-INTAKE-RECOVERY-20261030",
+      "title": "Allow owner recovery of saved requests while intake is closed",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-31",
+      "baseSha": "81b9cbe05c6ef500a5e02f6216ee89c5b0ae039a",
+      "paths": [
+        "server/research/assisted-order/request-intent/express.ts",
+        "server/research/assisted-order/request-intent/production.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "New actionable KAN-31 recovery repair from accepted PR339 review, rooted exactly at release 81b9cbe05c6ef500a5e02f6216ee89c5b0ae039a/tree 4c43950a94685f4cfe20f7d9138f64002ab9128b and intended for isolated branch codex/quick-order-closed-intake-recovery-20261030. Permit only the exact POST /recover route, including its existing optional trailing-slash and case behavior, to pass the intake-enabled gate. Preserve mutationGuard, existing writeRateLimit, canonical viewer resolution, closed-body validation, owner-scoped service recovery, missing-RPC and missing-origin failures, and the current limiter policy. Submit, config, catalog, unrelated routes, and unrelated methods remain closed when intake is off. Add meaningful success, foreign-owner, authentication, origin, limiter, invalid-body, and exact-route regressions through real production registration with synthetic RPCs. Only the two listed server runtime/test paths are writable. PG6, live-schema identity, Auth, SQL, staff privilege, roles, flags, commercial activation, and security configuration remain separate and unchanged. Hosted CI only. No SQL, configuration, credential, provider, customer, release, deployment, or production mutation is authorized by this records-only custody operation.",
+      "createdAt": "2026-10-30T16:43:54.237Z",
+      "claimedAt": "2026-10-30T16:44:04.475Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
