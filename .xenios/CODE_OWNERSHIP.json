@@ -2401,9 +2401,9 @@
         "server/research/assisted-order/request-intent/express.ts",
         "server/research/assisted-order/request-intent/production.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-30T16:44:04.491Z",
-      "heartbeatAt": "2026-10-30T16:44:04.572Z"
+      "heartbeatAt": "2026-10-30T17:04:38.896Z"
     }
   ],
   "rules": [
