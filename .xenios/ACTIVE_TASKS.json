@@ -369,6 +369,24 @@
       }
     },
     {
+      "id": "KAN31-QUICK-ORDER-REVIEW-CORRECTIONS-20261030",
+      "title": "Correct Quick Order review editing and refresh boundaries",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-31",
+      "baseSha": "a6da0536d35b485083b59476afdafb63518febec",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "server/research/assisted-order/request-intent/service.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "New actionable KAN-31 corrections from independent acceptance of exact a6da0536d35b485083b59476afdafb63518febec/tree e526d394b0629e7ed6060dbd16eb67c537b83904, intended for isolated branch codex/quick-order-review-corrections-20261030. Prefill contact and address inputs from existing in-memory contact when editing selection while preserving separate billing and fresh agreement consent. Render the requirements-refresh panel only when no frozen attempt exists, and make submit return while requirementsNeedRefresh. Preserve uncertainty's exact payload, idempotency key, and edit lock. Strengthen regressions for stale-config removal after refusal and failed refresh, refreshed panel/error disappearance, other first-refusal guidance and new-key resubmission, full agreement-set mocks, and canonical service stale-agreement 400 behavior. Runtime changes are limited to RequestIntentForm; service runtime remains untouched. Only the three listed client/test paths are writable. No storage, Auth, catalog authority, SQL, configuration, flags, staff roles, limiter policy, dependency, workflow, provider, customer, release, deployment, or production mutation is authorized by this records-only custody operation. Hosted CI only.",
+      "createdAt": "2026-10-30T17:29:01.226Z",
+      "claimedAt": "2026-10-30T17:29:11.755Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
