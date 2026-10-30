@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { sha256AssistedOrderHasher } from "../defaults";
 import type { AssistedOrderViewer } from "../ports";
 import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
-import type { RequestIntentCatalogItem, RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
+import { validateRequestIntentInput, type RequestIntentCatalogItem, type RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentService, type CreateIntent, type RequestIntentDependencies, type StoredIntent } from "./service";
 import { requestIntentRepository } from "./rpc-repository";
 
@@ -207,6 +207,24 @@ describe("private unapproved mixed request intent", () => {
     const third = setup();
     await expect(third.service.submit(viewer, { ...input(), lines: [{ productId: "research", variantId: "research-variant", quantity: 101 }] }))
       .rejects.toMatchObject({ code: "selection_requires_refresh" });
+  });
+
+  it.each([true, false])("rejects stale legal versions before persistence and accepts refreshed exact requirements; RUO=%s", async (includesResearchUseOnly) => {
+    const { service, deps, records } = setup();
+    vi.mocked(deps.legal.requiredAgreements).mockResolvedValue([{ kind: "fixture-terms", version: "fixture-v2" }]);
+    const stale = input(includesResearchUseOnly);
+    await expect(service.submit(viewer, stale)).rejects.toMatchObject({ status: 400, code: "current_acknowledgments_required" });
+    expect(records.size).toBe(0); expect(deps.repository.createOrReplay).not.toHaveBeenCalled();
+    const refreshed: RequestIntentInput = { ...stale, idempotencyKey: "10000000-0000-4000-8000-000000000002",
+      agreements: stale.agreements.map((agreement) => agreement.kind === "fixture-terms" ? { ...agreement, version: "fixture-v2" } : agreement) };
+    const result = await service.submit(viewer, refreshed);
+    expect(records.size).toBe(1); expect(deps.repository.createOrReplay).toHaveBeenCalledTimes(1);
+    const saved = [...records.values()][0].detail;
+    expect(saved.contact).toEqual(validateRequestIntentInput(refreshed).contact);
+    expect(saved.contact.billingAddress).toEqual(saved.contact.shippingAddress);
+    expect(saved.agreements).toEqual(refreshed.agreements);
+    expect(result.publicReference).toBe(saved.publicReference);
+    await expect(service.recover(viewer, refreshed.idempotencyKey)).resolves.toEqual(result);
   });
 
   it("a persistence failure never manufactures a confirmation", async () => {
