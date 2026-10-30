@@ -414,21 +414,145 @@ describe("request selection layout and controls (component fixtures, not viewpor
 });
 
 describe("Doc163 known first refusal versus prior uncertainty", () => {
-  it("shows not-saved guidance, clears the marker and lets a first refusal start a fresh explicit attempt", async () => {
+  function updatedRequirements() {
+    return {
+      legal: [{ kind: "fixture-terms", version: "fixture-v2", label: "Version 2 synthetic legal requirement" }],
+      form: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((ack) => ({
+        id: ack.id, scope: ack.scope, copy: ack.copy, ...assistedOrderFormPair(ack),
+      })),
+    };
+  }
+  function versionCheckedApi() {
     const api = makeApi();
-    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(400, "current_acknowledgments_required"));
+    api.submit.mockImplementation(async (input) => {
+      const legal = input.agreements.filter((entry) => entry.kind === "fixture-terms");
+      if (legal.length !== 1 || legal[0].version !== "fixture-v2") {
+        throw new RequestIntentHttpError(400, "current_acknowledgments_required");
+      }
+      return receipt;
+    });
+    return api;
+  }
+  function buttonNamed(text: string): HTMLButtonElement {
+    const button = [...host.querySelectorAll("button")].find((entry) => entry.textContent === text);
+    expect(button).toBeTruthy();
+    return button!;
+  }
+  async function confirmFreshRequirements() {
+    const checks = [...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")];
+    expect(checks.length).toBeGreaterThan(0);
+    expect(checks.every((entry) => !entry.checked && !entry.disabled)).toBe(true);
+    await act(async () => checks.forEach((entry) => entry.click()));
+  }
+  it("refreshes obsolete requirements explicitly before a fresh version-valid submission", async () => {
+    const api = versionCheckedApi();
     await prepare(api); await click("Submit for review");
     const first = api.submit.mock.calls[0][0];
+    expect(first.agreements.find((entry) => entry.kind === "fixture-terms")?.version).toBe("fixture-v1");
+    expect(api.config).toHaveBeenCalledTimes(1);
+    expect(api.submit).toHaveBeenCalledTimes(1);
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(sessionStorage.length).toBe(0);
     expect(host.textContent).toContain("This request was not saved.");
-    expect(host.textContent).toContain("Reload the current requirements");
     expect(host.textContent).not.toContain("Retry same request");
-    const edit = [...host.querySelectorAll("button")].find((entry) => entry.textContent === "Edit selection");
-    expect(edit?.disabled).toBe(false);
-    await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+    expect(buttonNamed("Edit selection").disabled).toBe(false);
+    expect(buttonNamed("Refresh requirements").disabled).toBe(false);
+    expect(buttonNamed("Submit for review").disabled).toBe(true);
     await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+
+    api.config.mockResolvedValueOnce(updatedRequirements());
+    await click("Refresh requirements");
+    expect(api.config).toHaveBeenCalledTimes(2);
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(host.textContent).toContain("Version 2 synthetic legal requirement");
+    expect(host.textContent).not.toContain("Synthetic legal requirement");
+    expect(host.textContent).toContain("Synthetic Customer");
+    expect(host.textContent).toContain("synthetic@example.invalid");
+    expect(host.textContent).toContain("Synthetic clinical");
+    expect(host.textContent).toContain("Synthetic research");
+    expect(sessionStorage.length).toBe(0);
+    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    await confirmFreshRequirements();
+    expect(buttonNamed("Submit for review").disabled).toBe(false);
+    await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
+    expect(second.contact).toEqual(first.contact);
+    expect(second.lines).toEqual(first.lines);
+    expect(second.agreements.filter((entry) => entry.kind === "fixture-terms")).toEqual([
+      expect.objectContaining({ kind: "fixture-terms", version: "fixture-v2", accepted: true }),
+    ]);
+    expect(second.agreements.filter((entry) => entry.kind !== "fixture-terms")
+      .map(({ kind, version, accepted }) => ({ kind, version, accepted })))
+      .toEqual(first.agreements.filter((entry) => entry.kind !== "fixture-terms")
+        .map(({ kind, version, accepted }) => ({ kind, version, accepted })));
+    expect(host.textContent).toContain(receipt.publicReference);
+    expect(sessionStorage.length).toBe(0);
+  });
+  it("keeps submission closed after refresh failure and permits an explicit successful refresh retry", async () => {
+    const api = versionCheckedApi();
+    await prepare(api); await click("Submit for review");
+    const first = api.submit.mock.calls[0][0];
+    api.config.mockRejectedValueOnce(new Error("Synthetic configuration failure"))
+      .mockResolvedValueOnce(updatedRequirements());
+    await click("Refresh requirements");
+    expect(api.config).toHaveBeenCalledTimes(2);
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(host.textContent).toContain("could not be refreshed");
+    expect(host.textContent).not.toContain(receipt.publicReference);
+    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Refresh requirements").disabled).toBe(false);
+    expect(sessionStorage.length).toBe(0);
+    await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+
+    await click("Refresh requirements");
+    expect(api.config).toHaveBeenCalledTimes(3);
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(host.textContent).toContain("Version 2 synthetic legal requirement");
+    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(sessionStorage.length).toBe(0);
+    await confirmFreshRequirements(); await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(2);
+    const second = api.submit.mock.calls[1][0];
+    expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
+    expect(second.contact).toEqual(first.contact);
+    expect(second.lines).toEqual(first.lines);
+    expect(second.agreements.find((entry) => entry.kind === "fixture-terms")?.version).toBe("fixture-v2");
+    expect(host.textContent).toContain(receipt.publicReference);
+    expect(sessionStorage.length).toBe(0);
+  });
+  it("deduplicates refresh clicks while configuration is pending without posting a request", async () => {
+    const api = versionCheckedApi();
+    await prepare(api); await click("Submit for review");
+    type Config = Awaited<ReturnType<typeof api.config>>;
+    let resolveRefresh!: (value: Config) => void;
+    const pending = new Promise<Config>((resolve) => { resolveRefresh = resolve; });
+    api.config.mockImplementationOnce(() => pending);
+    const refresh = buttonNamed("Refresh requirements");
+    // Both clicks precede React's disabled-button rerender.
+    await act(async () => { refresh.click(); refresh.click(); });
+    expect(api.config).toHaveBeenCalledTimes(2);
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(buttonNamed("Refresh requirements").disabled).toBe(true);
+    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(sessionStorage.length).toBe(0);
+    await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    await act(async () => { resolveRefresh(updatedRequirements()); await pending; });
+    expect(api.config).toHaveBeenCalledTimes(2);
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(host.textContent).toContain("Version 2 synthetic legal requirement");
+    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(sessionStorage.length).toBe(0);
+    await confirmFreshRequirements();
+    expect(buttonNamed("Submit for review").disabled).toBe(false);
+    await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(2);
     expect(host.textContent).toContain(receipt.publicReference);
   });
   it("retains the exact key, acceptedAt and edit lock when a lost reply is followed by a known retry refusal", async () => {
@@ -438,12 +562,15 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     await prepare(api); await click("Submit for review");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     await click("Retry same request");
+    expect(api.submit).toHaveBeenCalledTimes(2);
     expect(api.submit.mock.calls[1][0]).toEqual(api.submit.mock.calls[0][0]);
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
     expect(host.textContent).not.toContain("This request was not saved.");
     expect(host.textContent).toContain("Retry same request");
     const edit = [...host.querySelectorAll("button")].find((entry) => entry.textContent === "Edit selection");
     expect(edit?.disabled).toBe(true);
+    expect(api.config).toHaveBeenCalledTimes(1);
+    expect([...host.querySelectorAll("button")].some((entry) => /Refresh requirements/.test(entry.textContent ?? ""))).toBe(false);
   });
   it("keeps a first conflict or server failure uncertain and recoverable", async () => {
     const api = makeApi();
@@ -455,5 +582,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     await click("Retry same request");
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
     expect(host.textContent).not.toContain("This request was not saved.");
+    expect(api.config).toHaveBeenCalledTimes(1);
+    expect([...host.querySelectorAll("button")].some((entry) => /Refresh requirements/.test(entry.textContent ?? ""))).toBe(false);
   });
 });
