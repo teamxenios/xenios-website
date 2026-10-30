@@ -2,7 +2,7 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "../../../../shared/research/assisted-order/form";
+import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
 import type { RequestIntentCatalogItem, RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
@@ -96,7 +96,7 @@ async function type(input: HTMLInputElement, value: string) {
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
-async function prepare(api: RequestIntentApi) {
+async function prepare(api: RequestIntentApi, separateBilling = false) {
   await render(api);
   await click("Add Synthetic clinical to request");
   await click("Add Synthetic research to request");
@@ -107,9 +107,46 @@ async function prepare(api: RequestIntentApi) {
     name: "Synthetic Customer", email: "synthetic@example.invalid", phone: "+15555550123",
     shippingLine1: "1 Synthetic Street", shippingCity: "Test", shippingRegion: "TX", shippingPostalCode: "00000", shippingCountryCode: "US",
   })) await type(host.querySelector('input[name="' + name + '"]')!, value);
+  if (separateBilling) {
+    await type(host.querySelector<HTMLInputElement>('input[name="shippingLine2"]')!, "Suite 2");
+    const billingSame = [...host.querySelectorAll("label")]
+      .find((label) => label.textContent?.includes("Billing address is the same"))?.querySelector<HTMLInputElement>('input[type="checkbox"]');
+    expect(billingSame).toBeTruthy();
+    await act(async () => billingSame!.click());
+    for (const [name, value] of Object.entries({
+      billingLine1: "2 Synthetic Billing Street", billingLine2: "Unit 4", billingCity: "Billing Test",
+      billingRegion: "CA", billingPostalCode: "00001", billingCountryCode: "US",
+    })) await type(host.querySelector<HTMLInputElement>('input[name="' + name + '"]')!, value);
+  }
   await act(async () => (host.querySelector('input[name="age"]') as HTMLInputElement).click());
   await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
   await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+}
+function expectContactInputs(contact: RequestIntentInput["contact"]) {
+  const values: Record<string, string> = {
+    name: contact.fullLegalName, email: contact.email, phone: contact.mobilePhone,
+    shippingLine1: contact.shippingAddress.line1, shippingLine2: contact.shippingAddress.line2 ?? "",
+    shippingCity: contact.shippingAddress.city, shippingRegion: contact.shippingAddress.region,
+    shippingPostalCode: contact.shippingAddress.postalCode, shippingCountryCode: contact.shippingAddress.countryCode,
+  };
+  const billingSame = [...host.querySelectorAll("label")]
+    .find((label) => label.textContent?.includes("Billing address is the same"))?.querySelector<HTMLInputElement>('input[type="checkbox"]');
+  expect(billingSame).toBeTruthy();
+  expect(billingSame!.checked).toBe(contact.billingSameAsShipping);
+  if (contact.billingSameAsShipping) expect(host.querySelector('input[name="billingLine1"]')).toBeNull();
+  else {
+    if (!contact.billingAddress) throw new Error("The separate-billing fixture must contain its address.");
+    Object.assign(values, {
+      billingLine1: contact.billingAddress.line1, billingLine2: contact.billingAddress.line2 ?? "",
+      billingCity: contact.billingAddress.city, billingRegion: contact.billingAddress.region,
+      billingPostalCode: contact.billingAddress.postalCode, billingCountryCode: contact.billingAddress.countryCode,
+    });
+  }
+  for (const [name, value] of Object.entries(values)) {
+    const input = host.querySelector<HTMLInputElement>('input[name="' + name + '"]');
+    expect(input).toBeTruthy(); expect(input!.value).toBe(value);
+  }
+  expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
   it("round-trips the form through the real intent service to one memory repository and authorized staff readback", async () => {
@@ -381,6 +418,16 @@ describe("request selection layout and controls (component fixtures, not viewpor
     expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("2 exact variants | 3 requested units");
     expect(sessionStorage.length).toBe(0);
     expect(api.submit).not.toHaveBeenCalled();
+    await click("Continue to contact");
+    expectContactInputs({ fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid", mobilePhone: "+15555550123",
+      ageConfirmed: true, shippingAddress: { line1: "1 Synthetic Street", city: "Test", region: "TX", postalCode: "00000", countryCode: "US" },
+      billingSameAsShipping: true });
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
+    expect(checks.length).toBeGreaterThan(0);
+    expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+    expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
   });
   it("counts two variants of one product as one product and two exact variants", async () => {
     const api = makeApi();
@@ -424,9 +471,20 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   }
   function versionCheckedApi() {
     const api = makeApi();
+    const catalogItems = [item("clinical", true), item("research", false)];
     api.submit.mockImplementation(async (input) => {
-      const legal = input.agreements.filter((entry) => entry.kind === "fixture-terms");
-      if (legal.length !== 1 || legal[0].version !== "fixture-v2") {
+      const resolved = input.lines.map((line) => catalogItems.find((candidate) =>
+        candidate.productId === line.productId && candidate.variantId === line.variantId));
+      if (resolved.some((candidate) => candidate === undefined)) throw new RequestIntentHttpError(400, "selection_requires_refresh");
+      const expected = [
+        ...updatedRequirements().legal.map(({ kind, version }) => ({ kind, version })),
+        ...requiredAssistedOrderFormAcknowledgments({ includesResearchUseOnly: resolved.some((candidate) => candidate?.researchUseOnly === true) })
+          .map(assistedOrderFormPair),
+      ];
+      const pair = (agreement: { kind: string; version: string }) => JSON.stringify([agreement.kind, agreement.version]);
+      const expectedPairs = new Set(expected.map(pair)), actualPairs = new Set(input.agreements.map(pair));
+      if (input.agreements.some((agreement) => agreement.accepted !== true) || actualPairs.size !== input.agreements.length
+        || actualPairs.size !== expectedPairs.size || [...expectedPairs].some((entry) => !actualPairs.has(entry))) {
         throw new RequestIntentHttpError(400, "current_acknowledgments_required");
       }
       return receipt;
@@ -444,6 +502,47 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(checks.every((entry) => !entry.checked && !entry.disabled)).toBe(true);
     await act(async () => checks.forEach((entry) => entry.click()));
   }
+  it("preserves separate billing and contact through selection editing and an explicit requirements refresh", async () => {
+    const api = versionCheckedApi();
+    await prepare(api, true); await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    const first = api.submit.mock.calls[0][0];
+    expect(first.contact.billingSameAsShipping).toBe(false);
+    expect(sessionStorage.length).toBe(0);
+    expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
+    await click("Edit selection");
+    expect(buttonNamed("Continue to contact").disabled).toBe(true);
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
+    await click("Remove Synthetic research");
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical"]');
+    expect(increase).toBeTruthy(); await act(async () => increase!.click());
+    api.config.mockResolvedValueOnce(updatedRequirements());
+    await click("Refresh requirements");
+    expect(api.config).toHaveBeenCalledTimes(2); expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(sessionStorage.length).toBe(0);
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
+    expect(host.querySelector('.xenios-order-error[role="alert"]')).toBeNull();
+    await click("Continue to contact"); expectContactInputs(first.contact);
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    const clinicalRequirements = requiredAssistedOrderFormAcknowledgments({ includesResearchUseOnly: false });
+    const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
+    expect(checks).toHaveLength(clinicalRequirements.length + updatedRequirements().legal.length);
+    expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
+    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(api.submit).toHaveBeenCalledTimes(1); expect(sessionStorage.length).toBe(0);
+    await confirmFreshRequirements(); await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(2);
+    const second = api.submit.mock.calls[1][0];
+    expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
+    expect(second.contact).toEqual(first.contact);
+    expect(second.lines).toEqual([{ productId: "clinical", variantId: "clinical-variant", quantity: 3 }]);
+    const expectedPairs = [
+      ...updatedRequirements().legal.map(({ kind, version }) => JSON.stringify([kind, version])),
+      ...clinicalRequirements.map((ack) => { const { kind, version } = assistedOrderFormPair(ack); return JSON.stringify([kind, version]); }),
+    ];
+    expect(new Set(second.agreements.map(({ kind, version }) => JSON.stringify([kind, version])))).toEqual(new Set(expectedPairs));
+    expect(host.textContent).toContain(receipt.publicReference); expect(sessionStorage.length).toBe(0);
+  });
   it("refreshes obsolete requirements explicitly before a fresh version-valid submission", async () => {
     const api = versionCheckedApi();
     await prepare(api); await click("Submit for review");
@@ -454,6 +553,9 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
     expect(sessionStorage.length).toBe(0);
     expect(host.textContent).toContain("This request was not saved.");
+    expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
+    expect(host.textContent).not.toContain("Synthetic legal requirement");
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(host.textContent).not.toContain("Retry same request");
     expect(buttonNamed("Edit selection").disabled).toBe(false);
     expect(buttonNamed("Refresh requirements").disabled).toBe(false);
@@ -467,6 +569,8 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(host.textContent).toContain("Version 2 synthetic legal requirement");
     expect(host.textContent).not.toContain("Synthetic legal requirement");
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
+    expect(host.querySelector('.xenios-order-error[role="alert"]')).toBeNull();
     expect(host.textContent).toContain("Synthetic Customer");
     expect(host.textContent).toContain("synthetic@example.invalid");
     expect(host.textContent).toContain("Synthetic clinical");
@@ -503,6 +607,9 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.config).toHaveBeenCalledTimes(2);
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(host.textContent).toContain("could not be refreshed");
+    expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
+    expect(host.textContent).not.toContain("Synthetic legal requirement");
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(host.textContent).not.toContain(receipt.publicReference);
     expect(buttonNamed("Submit for review").disabled).toBe(true);
     expect(buttonNamed("Refresh requirements").disabled).toBe(false);
@@ -514,6 +621,8 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.config).toHaveBeenCalledTimes(3);
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(host.textContent).toContain("Version 2 synthetic legal requirement");
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
+    expect(host.querySelector('.xenios-order-error[role="alert"]')).toBeNull();
     expect(buttonNamed("Submit for review").disabled).toBe(true);
     expect(sessionStorage.length).toBe(0);
     await confirmFreshRequirements(); await click("Submit for review");
@@ -540,6 +649,8 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(buttonNamed("Refresh requirements").disabled).toBe(true);
     expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(sessionStorage.length).toBe(0);
     await click("Submit for review");
     expect(api.submit).toHaveBeenCalledTimes(1);
@@ -555,6 +666,39 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.submit).toHaveBeenCalledTimes(2);
     expect(host.textContent).toContain(receipt.publicReference);
   });
+  it.each([
+    [400, "selection_requires_refresh", "Reload the current catalog"],
+    [429, "rate_limited", "Wait before submitting a new attempt"],
+  ] as const)("preserves first-refusal guidance for %s %s and uses fresh consent and a new key without config refresh", async (status, code, guidance) => {
+    const api = makeApi(); let submissionAdmitted = false;
+    api.submit.mockImplementation(async () => {
+      if (!submissionAdmitted) throw new RequestIntentHttpError(status, code);
+      return receipt;
+    });
+    await prepare(api); await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    const first = api.submit.mock.calls[0][0];
+    expect(host.textContent).toContain("This request was not saved."); expect(host.textContent).toContain(guidance);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull(); expect(sessionStorage.length).toBe(0);
+    expect(api.config).toHaveBeenCalledTimes(1);
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Refresh requirements")).toBe(false);
+    expect(buttonNamed("Edit selection").disabled).toBe(false); expect(buttonNamed("Submit for review").disabled).toBe(true);
+    const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
+    expect(checks.length).toBeGreaterThan(0); expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
+    expect(checks.every((checkbox) => !checkbox.matches(":disabled"))).toBe(true);
+    await click("Submit for review"); expect(api.submit).toHaveBeenCalledTimes(1);
+    submissionAdmitted = true;
+    await confirmFreshRequirements(); await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(2);
+    const second = api.submit.mock.calls[1][0];
+    expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
+    expect(second.contact).toEqual(first.contact); expect(second.lines).toEqual(first.lines);
+    expect(second.agreements.map(({ kind, version }) => ({ kind, version })))
+      .toEqual(first.agreements.map(({ kind, version }) => ({ kind, version })));
+    expect(api.config).toHaveBeenCalledTimes(1); expect(host.textContent).toContain(receipt.publicReference);
+    expect(sessionStorage.length).toBe(0);
+  });
   it("retains the exact key, acceptedAt and edit lock when a lost reply is followed by a known retry refusal", async () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
@@ -565,6 +709,10 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.submit).toHaveBeenCalledTimes(2);
     expect(api.submit.mock.calls[1][0]).toEqual(api.submit.mock.calls[0][0]);
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
+    const frozenChecks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
+    expect(frozenChecks.length).toBeGreaterThan(0);
+    expect(frozenChecks.every((checkbox) => checkbox.matches(":disabled"))).toBe(true);
     expect(host.textContent).not.toContain("This request was not saved.");
     expect(host.textContent).toContain("Retry same request");
     const edit = [...host.querySelectorAll("button")].find((entry) => entry.textContent === "Edit selection");

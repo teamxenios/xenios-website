@@ -209,6 +209,22 @@ describe("private unapproved mixed request intent", () => {
       .rejects.toMatchObject({ code: "selection_requires_refresh" });
   });
 
+  it.each([true, false])("rejects stale legal versions before persistence and accepts refreshed exact requirements; RUO=%s", async (includesResearchUseOnly) => {
+    const { service, deps, records } = setup();
+    vi.mocked(deps.legal.requiredAgreements).mockResolvedValue([{ kind: "fixture-terms", version: "fixture-v2" }]);
+    const stale = input(includesResearchUseOnly);
+    await expect(service.submit(viewer, stale)).rejects.toMatchObject({ status: 400, code: "current_acknowledgments_required" });
+    expect(records.size).toBe(0); expect(deps.repository.createOrReplay).not.toHaveBeenCalled();
+    const refreshed: RequestIntentInput = { ...stale, idempotencyKey: "10000000-0000-4000-8000-000000000002",
+      agreements: stale.agreements.map((agreement) => agreement.kind === "fixture-terms" ? { ...agreement, version: "fixture-v2" } : agreement) };
+    const result = await service.submit(viewer, refreshed);
+    expect(records.size).toBe(1); expect(deps.repository.createOrReplay).toHaveBeenCalledTimes(1);
+    const saved = [...records.values()][0].detail;
+    expect(saved.contact).toEqual(refreshed.contact); expect(saved.agreements).toEqual(refreshed.agreements);
+    expect(result.publicReference).toBe(saved.publicReference);
+    await expect(service.recover(viewer, refreshed.idempotencyKey)).resolves.toEqual(result);
+  });
+
   it("a persistence failure never manufactures a confirmation", async () => {
     const { service, deps, records } = setup();
     vi.mocked(deps.repository.createOrReplay).mockRejectedValue(new Error("synthetic unavailable"));
