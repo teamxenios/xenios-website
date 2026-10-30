@@ -57,6 +57,7 @@ export function RequestIntentForm({
   const locked = useRef(false);
   const mounted = useRef(true);
   const heading = useRef<HTMLHeadingElement>(null);
+  const previousFocusState = useRef({ step, receipt });
   const [hintItem, setHintItem] = useState<RequestIntentCatalogItem | null>(null);
   const [hintChecked, setHintChecked] = useState(false);
   const hintKey = entryIntent ? JSON.stringify(entryIntent) : "";
@@ -64,7 +65,7 @@ export function RequestIntentForm({
   useEffect(() => {
     let current = true;
     setHintItem(null); setHintChecked(false);
-    if (!entryIntent) return;
+    if (!entryIntent || restored) return;
     // Navigation is only a hint. Re-resolve the full family from the neutral
     // audience-scoped catalog; CARE never takes the old Research redirect.
     void (async () => {
@@ -94,27 +95,35 @@ export function RequestIntentForm({
       throw new Error("Incomplete hint.");
     })().catch(() => { if (current) setHintChecked(true); });
     return () => { current = false; };
-  }, [api, hintKey]);
+  }, [api, hintKey, restored]);
   const selections = [...selected.values()];
   const selectedUnits = selections.reduce((total, selection) => total + selection.quantity, 0);
   const selectedProducts = new Set(selections.map(({ item }) => item.productId)).size;
   const requirements = config ? requiredAcknowledgmentEntries(config, selections.some(({ item }) => item.researchUseOnly)) : [];
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  useEffect(() => { heading.current?.focus(); }, [step, receipt]);
   useEffect(() => {
+    const changed = previousFocusState.current.step !== step || previousFocusState.current.receipt !== receipt;
+    previousFocusState.current = { step, receipt };
+    // Initial focus belongs to the surrounding access/agreement shell. Move it
+    // only after a customer changes step or confirms an existing saved request.
+    if (changed) heading.current?.focus();
+  }, [step, receipt]);
+  useEffect(() => {
+    if (restored) return;
     let current = true;
     void api.config().then((value) => { if (current) setConfig(value); })
       .catch(() => { if (current) setError("Current request requirements are unavailable. Submission remains closed."); });
     return () => { current = false; };
-  }, [api]);
+  }, [api, restored]);
   useEffect(() => {
+    if (restored) return;
     let current = true;
     setCatalog(null);
     void api.catalog({ search, family: family || undefined, page, pageSize: 24 })
       .then((value) => { if (current) setCatalog(value); })
       .catch(() => { if (current) setError("The current catalog could not be confirmed. Please retry later."); });
     return () => { current = false; };
-  }, [api, search, family, page]);
+  }, [api, search, family, page, restored]);
 
   async function recover() {
     if (!restored || !storage || locked.current) return;

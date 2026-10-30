@@ -294,6 +294,25 @@ describe("customer restriction copy", () => {
 });
 
 describe("mixed request mounted-entry contracts", () => {
+  it("preserves the surrounding agreement focus on mount and focuses only a later step transition", async () => {
+    const agreement = document.createElement("input");
+    agreement.type = "checkbox";
+    agreement.setAttribute("aria-label", "Surrounding agreement");
+    document.body.insertBefore(agreement, host);
+    try {
+      agreement.focus();
+      const api = makeApi();
+      await render(api);
+      expect(document.activeElement).toBe(agreement);
+      await render(api);
+      expect(document.activeElement).toBe(agreement);
+      await click("Add Synthetic clinical to request");
+      expect(document.activeElement).toBe(agreement);
+      await click("Continue to contact");
+      expect(document.activeElement).toBe(host.querySelector("h1"));
+      expect(host.querySelector('input[name="name"]')).toBeTruthy();
+    } finally { agreement.remove(); }
+  });
   it.each([false, true])("restored recovery skips requirements, catalog and linked-selection reads (hint %s)", async (withHint) => {
     const api = makeApi();
     api.config.mockRejectedValue(new Error("intake closed"));

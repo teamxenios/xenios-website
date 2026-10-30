@@ -716,6 +716,22 @@ describe("the login-free request-only entry", () => {
     expect(recoveryPosts(fetch)).toHaveLength(0);
     expectPublicSupport();
   });
+  it.each(["off", "unknown"] as const)("keeps conflicting retained door markers blocked with %s intake", async (mixedMode) => {
+    const legacyMarker = JSON.stringify({ idempotencyKey: "legacy-attempt", selections: [],
+      acceptedAt: "2026-10-14T12:00:00Z", attemptState: "uncertain", step: "review" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    window.sessionStorage.setItem(ASSISTED_ORDER_DRAFT_KEY, legacyMarker);
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode });
+    await renderStorefront(true);
+    expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(recoveryPosts(fetch)).toHaveLength(0);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(mixedMarker);
+    expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(legacyMarker);
+    expectOuterHelp();
+  });
   it("allows browsing but enables contact only after canonical server agreement acceptance", async () => {
     const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "required" });
     await renderStorefront(true);
@@ -742,9 +758,9 @@ describe("the login-free request-only entry", () => {
     expect(continueButton().disabled).toBe(true);
     expect(container.querySelector('input[name="name"]')).toBeNull();
   });
-  it("does not switch a malformed retained attempt into a new mixed or legacy request", async () => {
+  it.each(["on", "off", "unknown"] as const)("does not switch a malformed retained attempt into a new request with %s intake", async (mixedMode) => {
     window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, "malformed retained attempt");
-    stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    stubFetch({ bridgeEnabled: true, mixedMode });
     await renderStorefront(true);
     expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
     expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
@@ -753,11 +769,11 @@ describe("the login-free request-only entry", () => {
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe("malformed retained attempt");
     expectOuterHelp();
   });
-  it("holds a valid uncertain legacy attempt without mounting legacy checkout or deleting its marker", async () => {
+  it.each(["on", "off", "unknown"] as const)("holds a valid uncertain legacy attempt with %s intake without mounting checkout or deleting its marker", async (mixedMode) => {
     const marker = JSON.stringify({ idempotencyKey: "legacy-attempt", selections: [],
       acceptedAt: new Date().toISOString(), attemptState: "uncertain", step: "review" });
     window.sessionStorage.setItem(ASSISTED_ORDER_DRAFT_KEY, marker);
-    stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    stubFetch({ bridgeEnabled: true, mixedMode });
     await renderStorefront(true);
     expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
