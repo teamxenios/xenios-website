@@ -2432,6 +2432,27 @@
       "state": "handoff",
       "claimedAt": "2026-10-30T19:02:59.331Z",
       "heartbeatAt": "2026-10-30T19:22:52.341Z"
+    },
+    {
+      "id": "2a7fb203-a051-425c-993e-43b522f6b451",
+      "task": "KAN31-QUICK-ORDER-INTEGRATION-20261030",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "server/research/assisted-order/request-intent/composition.integration.test.ts",
+        "server/research/assisted-order/request-intent/service.test.ts",
+        "server/research/assisted-order/request-intent/express.ts",
+        "server/research/assisted-order/request-intent/production.test.ts",
+        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+        "server/research/assisted-order/request-intent/durable-journey.pg.test.ts",
+        "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-30T19:46:09.122Z",
+      "heartbeatAt": "2026-10-30T19:46:09.186Z"
     }
   ],
   "rules": [

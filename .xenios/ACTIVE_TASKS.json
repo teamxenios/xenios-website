@@ -419,6 +419,32 @@
       }
     },
     {
+      "id": "KAN31-QUICK-ORDER-INTEGRATION-20261030",
+      "title": "Integrate delivered Quick Order candidates for qualification",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-31",
+      "baseSha": "81b9cbe05c6ef500a5e02f6216ee89c5b0ae039a",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "server/research/assisted-order/request-intent/composition.integration.test.ts",
+        "server/research/assisted-order/request-intent/service.test.ts",
+        "server/research/assisted-order/request-intent/express.ts",
+        "server/research/assisted-order/request-intent/production.test.ts",
+        "server/research/assisted-order/request-intent/durable-journey.pg.fixture.ts",
+        "server/research/assisted-order/request-intent/durable-journey.pg.test.ts",
+        "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Records-only custody for the actual Quick Order integration delivery on production base 81b9cbe05c6ef500a5e02f6216ee89c5b0ae039a/tree 4c43950a94685f4cfe20f7d9138f64002ab9128b, planned for isolated branch codex/quick-order-integration-20261030. Exact base preimages are RequestIntentForm.tsx 280acdec74fbd5ac39873c668fa883ced17b67c8, RequestIntentForm.test.tsx efd80286cc50e634c8fe38a85a1d98786e769524, EarlyAccessRoute.tsx dd7a321e63af581b0c3ff69bbe2cb92c0189b9bd, EarlyAccessRoute.storefront.test.tsx 97fd74feea88895dbf287fd7d044adfd875e0414, composition.integration.test.ts 6a7daa1fdf9fcbcd9a20e074641f95a373b50222, service.test.ts 54baf68ce76a01716aa61d5a27b894efe1722424, express.ts ce19e604afbe123342dbad8f3ead7fa142208418, and production.test.ts 16b17f7846c0671ae4ced5b9460085142bbd6f98; the server durable fixture/test and client durable test are absent at the base. Inputs are the frozen pushed candidates 0e340d1ce5987c218a6d731161182331f248b964/tree 6097fc4b5e8a68bf934d8656cf8744967ba3d619, dfa20b2e4e29b9dd7f9e446f29c6dc06da65e985/tree 85808ebba81d01f829ef6a8193781e83e1455c9a, and efe6e5157138df00f51734d2acf2a8fb2fe68a76/tree 5decb22de369b8f62014fc8800b58988fd70b0b4, including their accepted lineages. Their complete unique diff union against the base is exactly these eleven paths. Preserve all original input heads and lineage. Resolve the overlapping form and form test by preserving every delivered feature and assertion; all other input paths remain byte-exact. The result is an unmerged combined candidate requiring its own hosted CI and SAME final composition acceptance; no prior candidate verdict is inherited or invented. The completed production metadata interface check is read-only compatibility evidence, not body, persistence, customer, or production proof. No SQL, schema, grants, configuration, Auth, roles, credentials, providers, customers, installation, release, deployment, production mutation, or new feature work is authorized by this custody operation.",
+      "createdAt": "2026-10-30T19:45:36.393Z",
+      "claimedAt": "2026-10-30T19:46:09.108Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
