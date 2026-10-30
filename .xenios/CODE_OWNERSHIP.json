@@ -2429,9 +2429,9 @@
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "server/research/assisted-order/request-intent/composition.integration.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-30T19:02:59.331Z",
-      "heartbeatAt": "2026-10-30T19:02:59.404Z"
+      "heartbeatAt": "2026-10-30T19:22:52.341Z"
     }
   ],
   "rules": [

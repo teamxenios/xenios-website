@@ -396,7 +396,7 @@
       "id": "KAN31-CLOSED-RECOVERY-ENTRY-20261030",
       "title": "Mount closed-intake Quick Order recovery for valid mixed markers",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "4f0a6b05566826de9c59e9e282d5bff6480abf66",
@@ -410,7 +410,13 @@
       "dependsOn": [],
       "scopeNote": "New actionable KAN-31 customer recovery entry unit based on accepted source 4f0a6b05566826de9c59e9e282d5bff6480abf66/tree d18066d7aeeed7a0e3dadd97bf3f824c1a18a52f, planned for isolated branch codex/quick-order-closed-recovery-entry-20261030. Exact accepted-base preimages are EarlyAccessRoute.tsx dd7a321e63af581b0c3ff69bbe2cb92c0189b9bd, EarlyAccessRoute.storefront.test.tsx 97fd74feea88895dbf287fd7d044adfd875e0414, RequestIntentForm.tsx 280acdec74fbd5ac39873c668fa883ced17b67c8, RequestIntentForm.test.tsx efd80286cc50e634c8fe38a85a1d98786e769524, and composition.integration.test.ts 6a7daa1fdf9fcbcd9a20e074641f95a373b50222. A confirmed existing public-unlock session plus a valid mixed prior-request marker may open the existing mixed recovery door when intake is off or unknown; fresh sessions, no marker, legacy-only markers, and both malformed markers remain held, with no legacy checkout fallback or replacement POST. In the restored view, show Check saved request and permit one POST/recover using the exact stored key only into a genuinely parsed receipt followed by marker removal, with one appropriate help region. Skip form configuration, catalog, and hint effects while restored; this is recovery of an existing request, not new intake. Update the existing composition assertion and add real route/component regressions proving the door semantics. Preserve terms, privacy, session expiry, Auth, recovery rules, unknown-write key and payload lock, storage format, global Auth, Core, catalog, SQL, flags, limiter, providers, payments, prices, and release guards. The accepted 4f server source stays frozen, and the pushed dfa review-correction source remains preserved rather than overwritten. Hosted CI only; no actual browser, API, customer load, managed database, live Auth, production, release, deployment, or global review-wall/Core-protected edit is authorized by this records-only custody operation.",
       "createdAt": "2026-10-30T19:02:45.716Z",
-      "claimedAt": "2026-10-30T19:02:59.328Z"
+      "claimedAt": "2026-10-30T19:02:59.328Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "0e340d1ce5987c218a6d731161182331f248b964",
+        "file": ".xenios/handoffs/2026-10-30T19-22-52-439Z-KAN31-CLOSED-RECOVERY-ENTRY-20261030-codex-launch-coordination-20261005.md",
+        "at": "2026-10-30T19:22:52.443Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
