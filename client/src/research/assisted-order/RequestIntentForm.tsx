@@ -40,6 +40,7 @@ export function RequestIntentForm({
   entryIntent?: StorefrontIntent | null }>) {
   const [step, setStep] = useState<"products" | "contact" | "review">("products");
   const [config, setConfig] = useState<AssistedOrderWizardConfig | null>(null);
+  const [requirementsNeedRefresh, setRequirementsNeedRefresh] = useState(false);
   const [catalog, setCatalog] = useState<RequestIntentCatalogPage | null>(null);
   const [search, setSearch] = useState("");
   const [family, setFamily] = useState("");
@@ -125,6 +126,18 @@ export function RequestIntentForm({
     return () => { current = false; };
   }, [api, search, family, page, restored]);
 
+  async function refreshRequirements() {
+    if (locked.current || !requirementsNeedRefresh || frozen.current) return;
+    locked.current = true; setBusy(true);
+    try {
+      const value = await api.config();
+      if (!mounted.current) return;
+      setConfig(value); setAcknowledged(new Set()); setRequirementsNeedRefresh(false); setError("");
+    } catch {
+      if (mounted.current) setError("The current requirements could not be refreshed. Your selections and contact details are still here. Try again or contact support.");
+    } finally { locked.current = false; if (mounted.current) setBusy(false); }
+  }
+
   async function recover() {
     if (!restored || !storage || locked.current) return;
     locked.current = true; setBusy(true);
@@ -155,7 +168,7 @@ export function RequestIntentForm({
     } catch { setError("Complete the required contact and address fields."); }
   }
   async function submit() {
-    if (locked.current || !storage || !config || !contact || !continuationEnabled) return;
+    if (locked.current || !storage || !config || !contact || !continuationEnabled || requirementsNeedRefresh) return;
     locked.current = true; setBusy(true);
     let firstPost = false;
     let sentSnapshot: typeof frozen.current = null;
@@ -189,22 +202,30 @@ export function RequestIntentForm({
           { firstPost, stillCurrent: mounted.current, error })) {
         frozen.current = null;
         setAcknowledged(new Set());
-        setError(intentRefusalGuidance(error));
+        if (error.status === 400 && error.code === "current_acknowledgments_required") {
+          // Only a proven first prewrite refusal may replace the requirements.
+          // An earlier uncertain POST retains its original payload and key.
+          setConfig(null); setRequirementsNeedRefresh(true);
+          setError("This request was not saved. Refresh the current requirements, then review and confirm them before submitting a new attempt.");
+        } else setError(intentRefusalGuidance(error));
       } else if (mounted.current) {
         setError(REQUEST_INTENT_RECOVERY_NOTICE);
       }
     }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
-  const addressFields = (prefix: string, label: string) => <fieldset className="xenios-order-grid">
+  const addressFields = (prefix: "shipping" | "billing", label: string) => {
+    const address = prefix === "shipping" ? contact?.shippingAddress : contact?.billingAddress;
+    return <fieldset className="xenios-order-grid">
     <legend>{label}</legend>
-    {[["Line1", "Street address"], ["Line2", "Apartment or suite (optional)"], ["City", "City"], ["Region", "State or region"],
-      ["PostalCode", "Postal code"], ["CountryCode", "Country code"]].map(([suffix, text]) =>
+    {([["Line1", "line1", "Street address"], ["Line2", "line2", "Apartment or suite (optional)"], ["City", "city", "City"],
+      ["Region", "region", "State or region"], ["PostalCode", "postalCode", "Postal code"], ["CountryCode", "countryCode", "Country code"]] as const).map(([suffix, key, text]) =>
       <label key={suffix}>{text}<input name={prefix + suffix} required={suffix !== "Line2"}
-        maxLength={suffix === "CountryCode" ? 2 : 200} defaultValue={suffix === "CountryCode" ? "US" : ""}
+        maxLength={suffix === "CountryCode" ? 2 : 200} defaultValue={address?.[key] ?? (suffix === "CountryCode" ? "US" : "")}
         autoComplete={prefix + " " + ({ Line1: "address-line1", Line2: "address-line2", City: "address-level2",
           Region: "address-level1", PostalCode: "postal-code", CountryCode: "country" } as Record<string, string>)[suffix]} /></label>)}
-  </fieldset>;
+    </fieldset>;
+  };
 
   if (receipt) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Request saved for review</h1>
     <p role="status">Your saved request reference is <strong>{receipt.publicReference}</strong>.</p>
@@ -224,6 +245,10 @@ export function RequestIntentForm({
     {!embedded && <p><a href="/research/early-access">Review access and agreement requirements</a></p>}
     {!storage && <p role="alert">This browser cannot preserve a safe retry marker. Submission is unavailable. Contact support.</p>}
     {error && <p className="xenios-order-error" role="alert">{error}</p>}
+    {requirementsNeedRefresh && !frozen.current && <section className="xenios-order-panel" aria-label="Refresh request requirements">
+      <p role="status">{busy ? "Refreshing current requirements..." : "Refresh the current requirements to continue with your existing selections and contact details."}</p>
+      <button type="button" className="xenios-order-button" disabled={busy} onClick={() => void refreshRequirements()}>Refresh requirements</button>
+    </section>}
     {step === "products" && <>
       {entryIntent && <section aria-label="Selection from your link" className="xenios-order-panel">
         <h2>Selection from your link</h2>
@@ -303,13 +328,13 @@ export function RequestIntentForm({
       </aside></div>
     </>}
     {step === "contact" && <form onSubmit={captureContact}>
-      <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} /></label>
-        <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} /></label>
-        <label>Phone<input name="phone" type="tel" required autoComplete="tel" maxLength={50} /></label></div>
+      <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} defaultValue={contact?.fullLegalName ?? ""} /></label>
+        <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} defaultValue={contact?.email ?? ""} /></label>
+        <label>Phone<input name="phone" type="tel" required autoComplete="tel" maxLength={50} defaultValue={contact?.mobilePhone ?? ""} /></label></div>
       {addressFields("shipping", "Delivery address")}
       <label className="xenios-order-check"><input type="checkbox" checked={billingSame} onChange={(event) => setBillingSame(event.target.checked)} />Billing address is the same</label>
       {!billingSame && addressFields("billing", "Billing address")}
-      <label className="xenios-order-check"><input name="age" type="checkbox" required />I confirm I am at least 18 years old.</label>
+      <label className="xenios-order-check"><input name="age" type="checkbox" required defaultChecked={contact?.ageConfirmed ?? false} />I confirm I am at least 18 years old.</label>
       <div className="xenios-order-actions"><button type="button" onClick={() => setStep("products")}>Back to products</button><button className="xenios-order-button" type="submit">Review request</button></div>
     </form>}
     {step === "review" && <section className="xenios-order-panel"><h2>Review your request</h2>
