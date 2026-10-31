@@ -3,21 +3,37 @@ import type { RequestIntentDetail, RequestIntentQueuePage } from "../../../../sh
 import type { RequestIntentApi } from "./request-intent-api";
 import "./assisted-order.css";
 
+type QueueLoad = Readonly<{ api: RequestIntentApi; page: number; attempt: number }> & (
+  | Readonly<{ status: "loading" }>
+  | Readonly<{ status: "ready"; data: RequestIntentQueuePage }>
+  | Readonly<{ status: "error" }>
+);
+
 /** Mount only inside the existing private staff shell. The server still enforces Care authorization. */
 export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestIntentApi }>) {
   const [reference, setReference] = useState("");
   const [detail, setDetail] = useState<RequestIntentDetail | null>(null);
   const [message, setMessage] = useState("");
-  const [queue, setQueue] = useState<RequestIntentQueuePage | null>(null);
   const [page, setPage] = useState(1);
+  const [queueAttempt, setQueueAttempt] = useState(0);
+  const [queueLoad, setQueueLoad] = useState<QueueLoad | null>(null);
   const sequence = useRef(0);
   useEffect(() => () => { sequence.current += 1; }, []);
   useEffect(() => {
     let current = true;
-    void api.staffQueue(page).then((result) => { if (current) setQueue(result); })
-      .catch(() => { if (current) setMessage("Private queue access could not be confirmed."); });
+    const scope = { api, page, attempt: queueAttempt };
+    setQueueLoad({ ...scope, status: "loading" });
+    void api.staffQueue(page).then((result) => {
+      if (current) setQueueLoad({ ...scope, status: "ready", data: result });
+    }).catch(() => { if (current) setQueueLoad({ ...scope, status: "error" }); });
     return () => { current = false; };
-  }, [api, page]);
+  }, [api, page, queueAttempt]);
+  // A page/retry change hides old rows in the same render, before its effect.
+  // The existing epoch-keyed staff shell still owns session isolation.
+  const currentQueue = queueLoad?.api === api && queueLoad.page === page
+    && queueLoad.attempt === queueAttempt ? queueLoad : null;
+  const queue = currentQueue?.status === "ready" ? currentQueue.data : null;
+  const queueLoading = !currentQueue || currentQueue.status === "loading";
   async function read(event: FormEvent) {
     event.preventDefault(); const run = ++sequence.current; setDetail(null); setMessage("");
     const match = /^XRI-([0-9A-F]{32})$/i.exec(reference.trim());
@@ -31,13 +47,21 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
   }
   return <section className="xenios-order-page"><h1>Private request readback</h1>
     <p>All items below are unapproved requests. This view cannot approve treatment, issue payment instructions, mark paid or release fulfillment.</p>
-    {queue && <section aria-label="Pending private requests"><h2>Pending requests ({queue.total})</h2>
-      <ul>{queue.items.map((entry) => <li key={entry.requestId}><button type="button" onClick={() => {
+    <section aria-label="Pending private requests"><h2>Pending requests{queue && ` (${queue.total})`}</h2>
+      {queueLoading && <p role="status">Loading pending requests...</p>}
+      {currentQueue?.status === "error" && <>
+        <p role="alert">Private queue access could not be confirmed.</p>
+        <button type="button" onClick={() => setQueueAttempt((value) => value + 1)}>Retry this page</button>
+      </>}
+      {queue && queue.items.length === 0 && <p>No pending requests were returned for this page.</p>}
+      {queue && <ul>{queue.items.map((entry) => <li key={entry.requestId}><button type="button" onClick={() => {
         sequence.current += 1; setDetail(null); setReference(entry.publicReference);
-      }}>{entry.publicReference}</button> | {entry.lineCount} requested lines | {entry.createdAt}</li>)}</ul>
-      <nav aria-label="Private request pages"><button disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous requests</button>
-        <button disabled={page * queue.pageSize >= queue.total} onClick={() => setPage((value) => value + 1)}>Next requests</button></nav>
-    </section>}
+      }}>{entry.publicReference}</button> | {entry.lineCount} requested lines | {entry.createdAt}</li>)}</ul>}
+      <nav aria-label="Private request pages"><button disabled={queueLoading || page <= 1}
+        onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous requests</button>
+        <button disabled={queueLoading || !queue || page * queue.pageSize >= queue.total}
+          onClick={() => setPage((value) => value + 1)}>Next requests</button></nav>
+    </section>
     <form onSubmit={(event) => void read(event)}><label>Saved request reference<input value={reference} required onChange={(event) => {
       sequence.current += 1; setDetail(null); setReference(event.target.value);
     }} /></label><button className="xenios-order-button" type="submit">Retrieve private request</button></form>
