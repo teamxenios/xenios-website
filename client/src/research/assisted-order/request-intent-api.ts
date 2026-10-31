@@ -82,14 +82,23 @@ export function createRequestIntentApi(
       return config;
     },
     async catalog(query) {
+      const requestedPage = query.page === undefined ? 1 : query.page;
+      const requestedSize = query.pageSize === undefined ? 24 : query.pageSize;
+      // Match the catalog reader; its internal scan limit is not a public page cap.
+      if (!Number.isSafeInteger(requestedPage) || requestedPage < 1
+        || !Number.isSafeInteger(requestedSize) || requestedSize < 1 || requestedSize > 100) {
+        throw new Error("The current catalog could not be confirmed.");
+      }
       const params = new URLSearchParams();
       if (query.search) params.set("search", query.search);
       if (query.family) params.set("family", query.family);
-      params.set("page", String(query.page ?? 1)); params.set("pageSize", String(query.pageSize ?? 24));
+      params.set("page", String(requestedPage)); params.set("pageSize", String(requestedSize));
       const raw = await request("/catalog?" + params);
       const page = raw as RequestIntentCatalogPage;
       if (!page || !Array.isArray(page.items) || !Number.isSafeInteger(page.total) || page.total < 0
         || !Number.isSafeInteger(page.page) || !Number.isSafeInteger(page.pageSize)
+        || page.page !== requestedPage || page.pageSize !== requestedSize
+        || page.items.length > requestedSize || page.items.length > page.total
         || !Array.isArray(page.families)
         || page.items.some((item) => typeof item.productId !== "string" || typeof item.variantId !== "string"
           || typeof item.selectableForReview !== "boolean" || typeof item.clinicalReviewRequired !== "boolean")) {
