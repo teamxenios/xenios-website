@@ -33,6 +33,9 @@ describe("marketing attribution privacy boundary", () => {
     "/health?interest=private",
     "/HEALTH/?token=secret",
     "/%68ealth?visit=private",
+    "/health/catalog?email=private%40example.test&utm_source=private",
+    "/HEALTH/CATALOG/?token=secret",
+    "/%68ealth/catalog?visit=private",
     "/#access_token=secret&type=recovery",
   ])("stores and returns no attribution on %s", (path) => {
     sessionStorage.setItem("xen_landing_page", "/about?legacy=secret");
