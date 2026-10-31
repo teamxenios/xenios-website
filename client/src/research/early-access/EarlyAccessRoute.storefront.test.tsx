@@ -880,26 +880,34 @@ describe("the login-free request-only entry", () => {
     expect(recoveryPosts(fetch)).toHaveLength(0);
     expect(render).toHaveBeenCalledTimes(1);
   });
-  it("keeps deliberate help-link focus when the same member receipt returns", async () => {
-    const render = vi.spyOn(root, "render");
-    const { member, fetch } = await recoveredMember();
-    const help = container.querySelector<HTMLAnchorElement>('[data-testid="quick-order-outer-help"] a')!;
-    expect(help).toBeTruthy();
-    help.focus();
-    expect(document.activeElement).toBe(help);
-    await act(async () => researchStore.publish(checkingMember()));
-    expect(help.isConnected).toBe(true);
-    expect(document.activeElement).toBe(help);
-    expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
-    await act(async () => researchStore.publish({ member, memberToken: "synthetic-refreshed",
-      memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
-    await settleStorefront();
-    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
-    expect(document.activeElement).toBe(help);
-    expect(container.textContent).not.toContain("Request products for review");
-    expect(recoveryPosts(fetch)).toHaveLength(1);
-    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
-    expect(render).toHaveBeenCalledTimes(1);
+  it("keeps deliberate surrounding-navigation focus when the same member receipt returns", async () => {
+    // The route fixture omits the surrounding app navigation. Model its
+    // persistent control outside this React root, without inventing an intake link.
+    const navigation = document.createElement("a");
+    navigation.href = "/research/support";
+    navigation.textContent = "Surrounding navigation fixture";
+    document.body.append(navigation);
+    try {
+      const render = vi.spyOn(root, "render");
+      const { member, fetch } = await recoveredMember();
+      navigation.focus();
+      expect(document.activeElement).toBe(navigation);
+      await act(async () => researchStore.publish(checkingMember()));
+      expect(navigation.isConnected).toBe(true);
+      expect(document.activeElement).toBe(navigation);
+      expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+      await act(async () => researchStore.publish({ member, memberToken: "synthetic-refreshed",
+        memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
+      await settleStorefront();
+      expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+      expect(document.activeElement).toBe(navigation);
+      expect(container.textContent).not.toContain("Request products for review");
+      expect(recoveryPosts(fetch)).toHaveLength(1);
+      expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+      expect(render).toHaveBeenCalledTimes(1);
+    } finally {
+      navigation.remove();
+    }
   });
   it.each(["on", "off", "unknown"] as const)(
     "restores only the confirmed member receipt after context re-verification with %s intake", async (mode) => {
