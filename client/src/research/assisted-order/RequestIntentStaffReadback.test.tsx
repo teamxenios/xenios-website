@@ -48,6 +48,7 @@ function submit() { host.querySelector("form")!.dispatchEvent(new Event("submit"
 function retrieve() { return [...host.querySelectorAll("button")].find((button) => button.textContent === "Retrieve private request")!; }
 function pending() { return [...host.querySelectorAll('[role="status"]')].find((entry) => entry.textContent === "Retrieving private request..."); }
 function noUnrelatedCalls(api: ReturnType<typeof fixture>) {
+  expect(api.config).not.toHaveBeenCalled(); expect(api.catalog).not.toHaveBeenCalled();
   expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
   expect(api.staffQueue).toHaveBeenCalledTimes(1); expect(api.staffQueue).toHaveBeenCalledWith(1);
 }
@@ -108,6 +109,7 @@ describe("private request detail pending feedback", () => {
   it("ignores the old detail result after the staff view unmounts at its session boundary", async () => {
     const api = fixture(), result = deferred(), replacement = fixture(); api.staff.mockReturnValueOnce(result.promise);
     await mount(api); await reference(A.publicReference); act(() => submit());
+    expect(api.staff).toHaveBeenCalledTimes(1); expect(api.staff).toHaveBeenCalledWith(A.requestId);
     await act(async () => root.render(<p>Session boundary fixture</p>)); await mount(replacement);
     await act(async () => result.resolve(A));
     expect(host.textContent).not.toContain(A.contact.fullLegalName);
