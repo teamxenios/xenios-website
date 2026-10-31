@@ -454,7 +454,7 @@
       "id": "KAN31-RECOVERY-AGREEMENT-REMOUNT-20261030",
       "title": "Restore agreement reachability after confirmed recovery remount",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "e0f349c04c10a820c847e4ed59490a7a90ea9449",
@@ -469,9 +469,9 @@
       "claimedAt": "2026-10-31T05:46:27.883Z",
       "handoff": {
         "session": "codex-launch-coordination-20261005",
-        "sha": "7f694427d292c33e6e701913bd41f140de5a6b97",
-        "file": ".xenios/handoffs/2026-10-31T00-10-01-208Z-KAN31-RECOVERY-AGREEMENT-REMOUNT-20261030-codex-launch-coordination-20261005.md",
-        "at": "2026-10-31T00:10:01.212Z"
+        "sha": "12998196cce32a181073351a99deb130e799069b",
+        "file": ".xenios/handoffs/2026-10-31T06-00-45-457Z-KAN31-RECOVERY-AGREEMENT-REMOUNT-20261030-codex-launch-coordination-20261005.md",
+        "at": "2026-10-31T06:00:45.462Z"
       }
     },
     {

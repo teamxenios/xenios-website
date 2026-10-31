@@ -2476,9 +2476,9 @@
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
         "server/research/assisted-order/request-intent/composition.integration.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-31T05:46:27.912Z",
-      "heartbeatAt": "2026-10-31T05:46:28.076Z"
+      "heartbeatAt": "2026-10-31T06:00:45.345Z"
     }
   ],
   "rules": [
