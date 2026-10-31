@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-31T20:43:19.041Z",
+  "updatedAt": "2026-10-31T20:59:06.239Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -2930,6 +2930,23 @@
         "file": ".xenios/handoffs/2026-10-31T20-43-19-000Z-KAN31-351-PENDING-INTEGRATION-20261031-codex-launch-coordination-20261005.md",
         "at": "2026-10-31T20:43:19.041Z"
       }
+    },
+    {
+      "id": "KAN31-354-IDENTITY-INTEGRATION-20261031",
+      "title": "Integrate accepted operator detail response identity contract",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "baseSha": "50d7e4bde01132301218dce455e5d8313f563a43",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Pure integration of independently accepted PR354 source 98cd532f1636d759485b6d77eb4edbbd57ba9bd5/tree 0ad175c17210819b185b3d0081c489db572e814a onto exact current live release 50d7e4bde01132301218dce455e5d8313f563a43/tree 6b00706e16b72bff09ff7ed09848d9fbacc7a866. Exact live preimages are request-intent-api.ts 509248c66f0fbea61c9fb8c11be9e809a573b7c4 and request-intent-api.test.ts b83a24659865b90c4858885ded66b4b32b8f03df. Preserve accepted blobs request-intent-api.ts c8d05c857d7a22de2f2b20f26114fee15dc1b314 and request-intent-api.test.ts 327c46a0af71089cbfbf0ee9d589fbfd9633438e exactly through a no-fast-forward merge, then run fresh resulting-tree qualification. Preserve the accepted nonblocking UUID-hyphen spelling limitation without additional edits. Source acceptance is not production authorization. Do not modify other application paths, Auth, Care, Core, server, SQL, configuration, roles, capabilities, flags, providers, payments, activation, deployment, or production state as part of this custody claim.",
+      "createdAt": "2026-10-31T20:59:06.239Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-10-31T20:59:20.222Z"
     }
   ]
 }
