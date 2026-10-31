@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal } from "./request-intent-api";
+import type { RequestIntentDetail } from "../../../../shared/research/assisted-order/request-intent";
 describe("mixed-request canonical transport", () => {
   it("uses the current member token for each call and the exact method-admitted submit path", async () => {
     let token: string | null = "synthetic-first";
@@ -159,5 +160,64 @@ describe("customer catalog response page identity and bounds", () => {
     await expect(api.catalog({ page, pageSize: 100 })).resolves.toEqual(body);
     expect(transport.mock.calls[0][0]).toBe("/api/research/early-access/request-intents/catalog?page=" + page + "&pageSize=100");
     expect(transport).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("private detail requested identity", () => {
+  const id = "a0000000-bbbb-4ccc-8ddd-000000000001";
+  const otherId = "b0000000-bbbb-4ccc-8ddd-000000000002";
+  const otherReference = "XRI-B0000000BBBB4CCC8DDD000000000002";
+  const detail: RequestIntentDetail = {
+    kind: "unapproved_selection_request", requestId: id,
+    publicReference: "XRI-A0000000BBBB4CCC8DDD000000000001",
+    status: "pending_review", createdAt: "2026-10-14T12:00:00.000Z",
+    contact: {
+      fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid",
+      mobilePhone: "+15555550123", ageConfirmed: true,
+      shippingAddress: { line1: "1 Synthetic Street", city: "Test", region: "TX",
+        postalCode: "00000", countryCode: "US" },
+      billingSameAsShipping: true,
+    },
+    agreements: [{ kind: "synthetic-review-terms", version: "synthetic-v1",
+      accepted: true, acceptedAt: "2026-10-14T11:59:00.000Z" }],
+    lines: [{ productId: "synthetic-product", variantId: "synthetic-variant",
+      sourceVariantId: "synthetic-source-variant", productName: "Synthetic research item",
+      specification: "Synthetic specification", family: "research_peptides_materials",
+      workflowMode: "direct_order_request", quantity: 1, researchUseOnly: true,
+      clinicalReviewRequired: false, sourceDisplayState: "request_access",
+      sourceVariantDisplayState: "request_access", sourceRefusal: null,
+      catalogVersion: "synthetic-v1", reviewState: "pending" }],
+  };
+  function fixture(body: RequestIntentDetail) {
+    const transport = vi.fn(async (_path: string, _init: RequestInit) => new Response(JSON.stringify(body), { status: 200 }));
+    return { api: createRequestIntentApi(() => "synthetic-staff", transport), transport };
+  }
+  it.each([
+    { label: "exact spelling", requested: id, body: detail },
+    { label: "uppercase request", requested: id.toUpperCase(), body: detail },
+    { label: "uppercase response", requested: id, body: { ...detail, requestId: id.toUpperCase() } },
+  ])("preserves matching detail with $label", async ({ requested, body }) => {
+    const { api, transport } = fixture(body);
+    await expect(api.staff(requested)).resolves.toEqual(body);
+    expect(transport).toHaveBeenCalledTimes(1);
+    expect(transport).toHaveBeenCalledWith("/api/research/early-access/request-intents/staff/" + requested,
+      expect.objectContaining({ method: "GET", credentials: "include", cache: "no-store",
+        headers: { accept: "application/json", Authorization: "Bearer synthetic-staff" } }));
+  });
+  it("refuses another request's complete detail even when its receipt is internally consistent", async () => {
+    const { api, transport } = fixture({ ...detail, requestId: otherId, publicReference: otherReference });
+    await expect(api.staff(id)).rejects.toThrow("Request detail is unavailable.");
+    expect(transport).toHaveBeenCalledTimes(1);
+    expect(transport.mock.calls[0][0]).toBe("/api/research/early-access/request-intents/staff/" + id);
+  });
+  it("retains receipt refusal when the returned ID and public reference disagree", async () => {
+    const { api, transport } = fixture({ ...detail, publicReference: otherReference });
+    await expect(api.staff(id)).rejects.toThrow("Request outcome is unconfirmed.");
+    expect(transport).toHaveBeenCalledTimes(1);
+  });
+  it("retains invalid requested identity refusal before transport", async () => {
+    const { api, transport } = fixture(detail);
+    await expect(api.staff("not-a-request-id")).rejects.toThrow("Invalid request identity.");
+    expect(transport).not.toHaveBeenCalled();
   });
 });
