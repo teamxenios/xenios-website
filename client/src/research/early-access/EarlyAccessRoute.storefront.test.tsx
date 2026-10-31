@@ -919,6 +919,18 @@ describe("the login-free request-only entry", () => {
       expect(recoveryPosts(fetch)).toHaveLength(1);
       expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
     });
+  it("permanently discards A's receipt on a direct authenticated A to B to A switch", async () => {
+    const { member, fetch } = await recoveredMember();
+    await act(async () => researchStore.publish({ member: { ...member, cartScope: "b".repeat(64) },
+      memberToken: "synthetic-B", memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
+    expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+    await act(async () => researchStore.publish({ member, memberToken: "synthetic-A-again",
+      memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
+    await settleStorefront();
+    expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+  });
   it("does not promote a recovery result that arrives after the member form unmounts", async () => {
     const member = { firstName: "Pending fixture", status: "active" as const,
       applicationStatus: null, cartScope: "a".repeat(64) };

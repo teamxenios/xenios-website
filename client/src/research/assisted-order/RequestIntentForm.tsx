@@ -9,6 +9,7 @@ import { catalogItemKey, clampQuantity, requiredAcknowledgmentEntries, agreement
 import { createRequestIntentApi, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
 import type { StorefrontIntent } from "../storefront/entry-intent";
+import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import "./assisted-order.css";
 
@@ -34,10 +35,10 @@ function restrictionCopy(code: string): string {
 
 /** Reusable inside the existing customer shell. No new global Auth, cart, catalog or legal authority. */
 export function RequestIntentForm({
-  api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent,
+  api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt,
 }: Readonly<{ api?: RequestIntentApi; storage?: Storage | null; embedded?: boolean;
   continuationEnabled?: boolean; onStepChange?: (step: "products" | "contact" | "review") => void;
-  entryIntent?: StorefrontIntent | null }>) {
+  entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void }>) {
   const [step, setStep] = useState<"products" | "contact" | "review">("products");
   const [config, setConfig] = useState<AssistedOrderWizardConfig | null>(null);
   const [requirementsNeedRefresh, setRequirementsNeedRefresh] = useState(false);
@@ -147,6 +148,7 @@ export function RequestIntentForm({
       if (!saved) { setError("The saved result is not yet confirmed. Keep this attempt and check again, or contact support before any replacement."); return; }
       if (!clearConfirmedIntentAttempt(storage, restored)) throw new Error("Session changed.");
       setReceipt(saved); setError("");
+      onConfirmedReceipt?.(saved);
     } catch { if (mounted.current) setError(REQUEST_INTENT_RECOVERY_NOTICE); }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
@@ -195,7 +197,7 @@ export function RequestIntentForm({
         snapshot.postsStarted += 1;
         return api.submit(snapshot.input);
       }, () => mounted.current);
-      if (mounted.current) { setReceipt(saved); setError(""); }
+      if (mounted.current) { setReceipt(saved); setError(""); onConfirmedReceipt?.(saved); }
     } catch (error) {
       if (sentSnapshot && frozen.current === sentSnapshot && isKnownIntentPrewriteRefusal(error)
         && clearFirstRefusedIntentAttempt(storage, sentSnapshot.attempt,
@@ -227,10 +229,7 @@ export function RequestIntentForm({
     </fieldset>;
   };
 
-  if (receipt) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Request saved for review</h1>
-    <p role="status">Your saved request reference is <strong>{receipt.publicReference}</strong>.</p>
-    <p>{REQUEST_INTENT_NOTICE}</p><p>Each item is pending review. Final availability, quantities, pricing and delivery must be confirmed separately.</p>
-    <a href="/research/support">Contact support</a></section>;
+  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} />;
 
   if (restored) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Check your earlier request</h1>
     <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
