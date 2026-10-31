@@ -157,10 +157,20 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   const nextStepsRef = useRef<HTMLDivElement | null>(null);
   const lastExpiredSessionRef = useRef<string | null>(null);
   const sessionRecheckInFlightRef = useRef(false);
-  const requestRecoveryDoor = useRef(false);
+  const [requestRecoveryDoor, setRequestRecoveryDoor] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (!requestOnly || state.kind !== "authenticated" || requestRecoveryDoor !== null) return;
+    // Decide before the child mounts: a new submit's later marker must not
+    // reclassify this journey as restored recovery during a parent render.
+    let initialRecovery = false;
+    try { initialRecovery = readOrderRequestContinuity(window.sessionStorage) === "mixed"; }
+    catch { /* The current-marker guard below blocks unreadable storage. */ }
+    setRequestRecoveryDoor(initialRecovery);
+  }, [requestOnly, state.kind, requestRecoveryDoor]);
 
   const resetCustomerContext = useCallback(() => {
-    requestRecoveryDoor.current = false;
+    setRequestRecoveryDoor(null);
     clearEarlyAccessCustomerStorage();
     setRememberedOrder(null);
     setAgreed(false);
@@ -451,16 +461,21 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     // durable legal standing. A request-only entry must never select the
     // legacy checkout door, including when an older attempt survives a reload.
     let priorRequestBlocked = false;
+    let prior: ReturnType<typeof readOrderRequestContinuity> = "blocked";
     try {
-      const prior = readOrderRequestContinuity(window.sessionStorage);
+      prior = readOrderRequestContinuity(window.sessionStorage);
       priorRequestBlocked = prior === "legacy" || prior === "blocked";
-      if (state.kind === "authenticated" && prior === "mixed") requestRecoveryDoor.current = true;
     } catch {
       priorRequestBlocked = true;
     }
     // Keep an already mounted recovery/receipt through marker clearance and
     // readiness rerenders. Session reset still removes the customer context.
-    const requestDoorOpen = requestMode.kind === "mixed" || requestRecoveryDoor.current;
+    const requestDoorOpen = requestMode.kind === "mixed" || requestRecoveryDoor === true;
+    // Keep the canonical agreement available whenever intake is open, even
+    // above a restored view. Its reachability must not depend on this route
+    // rendering after an inner recovery clears storage or changes owner.
+    // Closed-intake recovery/receipts still get no fresh intake agreement.
+    const hideFreshAgreement = requestRecoveryDoor === true && requestMode.kind !== "mixed";
     // The retained marker selects mixed recovery. If it disappears before the
     // lazy entry mounts, a closed mixed intake must never select legacy checkout.
     const requestEntryMode = requestMode.kind === "legacy" ? { kind: "unavailable" as const } : requestMode;
@@ -497,13 +512,14 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
               <p>An earlier request needs support review. Do not create a replacement until staff check for duplicates.</p>
               <a href="/research/support">Contact support</a>
             </div>
+            : requestRecoveryDoor === null ? <p role="status" className="mt-5">Preparing the request form...</p>
             : !requestDoorOpen && requestMode.kind === "checking" ? <p role="status" className="mt-5">Checking the current request path...</p>
             : !requestDoorOpen ? <div role="status" className="mt-5">
               <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
               <a href="/research/support">Contact support</a>
             </div>
             : <>
-              {!requestRecoveryDoor.current && <div className="mt-5" data-testid="quick-order-agreement-mount">
+              {!hideFreshAgreement && <div className="mt-5" data-testid="quick-order-agreement-mount">
                 <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
               </div>}
               <div className="mt-5">
@@ -514,7 +530,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                 </Suspense>
               </div>
             </>}
-          {(state.kind !== "authenticated" || priorRequestBlocked || !requestDoorOpen) && (
+          {(state.kind !== "authenticated" || priorRequestBlocked || requestRecoveryDoor === null || !requestDoorOpen) && (
             <section className="card mt-6" aria-label="Catalog and ordering help" data-testid="quick-order-outer-help">
               <h2>Need help with the catalog or ordering?</h2>
               <a className="btn btn-secondary mt-4" href="sms:+17374186381">Text 737-418-6381</a>

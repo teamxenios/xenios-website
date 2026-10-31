@@ -3,7 +3,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
-import type { RequestIntentCatalogItem, RequestIntentInput } from "../../../../shared/research/assisted-order/request-intent";
+import type { RequestIntentCatalogItem, RequestIntentInput, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { RequestIntentForm } from "./RequestIntentForm";
@@ -37,7 +37,7 @@ function makeApi() {
     submit: vi.fn(async (_input: RequestIntentInput): Promise<unknown> => receipt),
     recover: vi.fn(async (_key: string) => receipt),
     staff: vi.fn(),
-    staffQueue: vi.fn(async () => ({ items: [], total: 0, page: 1, pageSize: 25 })),
+    staffQueue: vi.fn(async (_page: number): Promise<RequestIntentQueuePage> => ({ items: [], total: 0, page: 1, pageSize: 25 })),
   } satisfies RequestIntentApi;
 }
 
@@ -778,5 +778,125 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).not.toContain("This request was not saved.");
     expect(api.config).toHaveBeenCalledTimes(1);
     expect([...host.querySelectorAll("button")].some((entry) => /Refresh requirements/.test(entry.textContent ?? ""))).toBe(false);
+  });
+});
+
+describe("private request queue pagination", () => {
+  function page(number: number): RequestIntentQueuePage {
+    return { page: number, pageSize: 25, total: 51,
+      items: Array.from({ length: number === 3 ? 1 : 25 }, (_, index) => {
+        const requestId = "41000000-0000-4000-8000-" + String((number - 1) * 25 + index + 1).padStart(12, "0");
+        return { ...receipt, requestId, publicReference: "XRI-" + requestId.replaceAll("-", "").toUpperCase(), lineCount: 2 };
+      }) };
+  }
+  function deferredPage() {
+    let resolve!: (value: RequestIntentQueuePage) => void;
+    let reject!: (error: Error) => void;
+    const promise = new Promise<RequestIntentQueuePage>((yes, no) => { resolve = yes; reject = no; });
+    return { promise, resolve, reject };
+  }
+  function navigation(text: string) {
+    return [...host.querySelectorAll<HTMLButtonElement>('nav[aria-label="Private request pages"] button')]
+      .find((button) => button.textContent === text)!;
+  }
+  async function mountStaff(api: RequestIntentApi) {
+    await act(async () => root.render(<RequestIntentStaffReadback api={api} />));
+  }
+  it("distinguishes a pending first page from a confirmed empty private queue", async () => {
+    const api = makeApi(), pending = deferredPage();
+    api.staffQueue.mockReturnValueOnce(pending.promise);
+    await mountStaff(api);
+    expect(host.textContent).toContain("Loading pending requests...");
+    expect(host.textContent).not.toContain("Pending requests (0)");
+    expect(navigation("Previous requests").disabled).toBe(true);
+    expect(navigation("Next requests").disabled).toBe(true);
+    expect(host.querySelector('input')).toBeTruthy();
+    await act(async () => pending.resolve({ items: [], total: 0, page: 1, pageSize: 25 }));
+    expect(host.textContent).not.toContain("Loading pending requests...");
+    expect(host.textContent).toContain("No pending requests were returned for this page.");
+    expect(navigation("Next requests").disabled).toBe(true);
+    expect(api.staffQueue.mock.calls.map(([requested]) => requested)).toEqual([1]);
+  });
+  it("removes old rows and prevents skipped pages while the next private page is pending", async () => {
+    const api = makeApi(), pending = deferredPage();
+    api.staffQueue.mockResolvedValueOnce(page(1)).mockReturnValueOnce(pending.promise)
+      .mockResolvedValueOnce(page(3));
+    await mountStaff(api);
+    expect(host.textContent).toContain(page(1).items[0].publicReference);
+    await click("Next requests");
+    expect(host.textContent).not.toContain(page(1).items[0].publicReference);
+    expect(host.textContent).toContain("Loading pending requests...");
+    expect(navigation("Previous requests").disabled).toBe(true);
+    expect(navigation("Next requests").disabled).toBe(true);
+    await click("Next requests");
+    expect(api.staffQueue.mock.calls.map(([requested]) => requested)).toEqual([1, 2]);
+    await act(async () => pending.resolve(page(2)));
+    expect(host.textContent).toContain(page(2).items[0].publicReference);
+    expect(host.textContent).not.toContain(page(1).items[0].publicReference);
+    expect(navigation("Previous requests").disabled).toBe(false);
+    expect(navigation("Next requests").disabled).toBe(false);
+    await click("Next requests");
+    expect(host.textContent).toContain(page(3).items[0].publicReference);
+    expect(navigation("Next requests").disabled).toBe(true);
+    expect(api.staffQueue.mock.calls.map(([requested]) => requested)).toEqual([1, 2, 3]);
+  });
+  it("retries only the failed page without retaining old rows or advancing it", async () => {
+    const api = makeApi(), retry = deferredPage();
+    api.staffQueue.mockResolvedValueOnce(page(1)).mockRejectedValueOnce(new Error("synthetic unavailable"))
+      .mockReturnValueOnce(retry.promise);
+    await mountStaff(api);
+    await click("Next requests");
+    expect(host.textContent).not.toContain(page(1).items[0].publicReference);
+    expect(host.textContent).toContain("Private queue access could not be confirmed.");
+    expect(navigation("Previous requests").disabled).toBe(false);
+    expect(navigation("Next requests").disabled).toBe(true);
+    await click("Retry this page");
+    expect(host.textContent).toContain("Loading pending requests...");
+    expect(host.textContent).not.toContain("Private queue access could not be confirmed.");
+    expect(api.staffQueue.mock.calls.map(([requested]) => requested)).toEqual([1, 2, 2]);
+    expect(navigation("Previous requests").disabled).toBe(true);
+    await act(async () => retry.resolve(page(2)));
+    expect(host.textContent).toContain(page(2).items[0].publicReference);
+    expect(host.textContent).not.toContain(page(1).items[0].publicReference);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+  });
+  it("keeps queue failure separate from saved-reference validation and detail retrieval", async () => {
+    const api = makeApi();
+    api.staffQueue.mockRejectedValueOnce(new Error("synthetic denied")).mockResolvedValueOnce(page(1));
+    api.staff.mockResolvedValue({ ...receipt, contact: { fullLegalName: "Synthetic private readback",
+      email: "fixture@example.invalid", mobilePhone: "+15555550123" }, lines: [], agreements: [] });
+    await mountStaff(api);
+    await type(host.querySelector("input")!, "invalid");
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    expect(host.textContent).toContain("Enter the saved request reference.");
+    expect(host.textContent).toContain("Private queue access could not be confirmed.");
+    await type(host.querySelector("input")!, reference);
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    expect(host.textContent).toContain("Synthetic private readback");
+    expect(host.textContent).toContain("Private queue access could not be confirmed.");
+    expect(api.staff).toHaveBeenCalledTimes(1);
+    expect(api.staff).toHaveBeenCalledWith(receipt.requestId);
+    await click("Retry this page");
+    expect(host.textContent).not.toContain("Private queue access could not be confirmed.");
+    expect(host.textContent).toContain("Synthetic private readback");
+    expect(api.staff).toHaveBeenCalledTimes(1);
+    // Choosing a queue row fills the reference; detail access still needs Retrieve.
+    await click(page(1).items[0].publicReference);
+    expect(host.querySelector<HTMLInputElement>("input")!.value).toBe(page(1).items[0].publicReference);
+    expect(host.textContent).not.toContain("Synthetic private readback");
+    expect(api.staff).toHaveBeenCalledTimes(1);
+  });
+  it("ignores an obsolete queue response after the existing staff view is unmounted", async () => {
+    const api = makeApi(), old = deferredPage(), replacement = makeApi();
+    api.staffQueue.mockReturnValueOnce(old.promise);
+    await mountStaff(api);
+    await act(async () => root.render(<p>Session boundary fixture</p>));
+    await mountStaff(replacement);
+    await act(async () => old.resolve(page(1)));
+    expect(host.textContent).not.toContain(page(1).items[0].publicReference);
+    expect(replacement.staffQueue).toHaveBeenCalledTimes(1);
+    expect(replacement.staffQueue).toHaveBeenCalledWith(1);
+    expect(api.staff).not.toHaveBeenCalled();
   });
 });
