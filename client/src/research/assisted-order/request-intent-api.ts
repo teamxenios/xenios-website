@@ -127,7 +127,8 @@ export function createRequestIntentApi(
       const raw = await request("/staff/" + requestId);
       const result = raw as RequestIntentDetail;
       const publicPart = parseIntentReceipt(raw);
-      if (!result.contact || !Array.isArray(result.lines) || !Array.isArray(result.agreements)
+      if (publicPart.requestId.toLowerCase() !== requestId.toLowerCase()
+        || !result.contact || !Array.isArray(result.lines) || !Array.isArray(result.agreements)
         || result.lines.some((line) => line.reviewState !== "pending")) throw new Error("Request detail is unavailable.");
       return { ...publicPart, contact: result.contact, agreements: result.agreements, lines: result.lines };
     },
