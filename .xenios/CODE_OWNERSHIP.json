@@ -2600,9 +2600,9 @@
         "client/src/research/assisted-order/request-intent-api.ts",
         "client/src/research/assisted-order/request-intent-api.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-31T20:12:14.131Z",
-      "heartbeatAt": "2026-10-31T20:12:14.208Z"
+      "heartbeatAt": "2026-10-31T20:29:59.772Z"
     }
   ],
   "rules": [
