@@ -94,3 +94,70 @@ describe("private queue response page identity and bounds", () => {
     expect(transport.mock.calls[0][0]).toBe("/api/research/early-access/request-intents/staff?page=10000");
   });
 });
+
+describe("customer catalog response page identity and bounds", () => {
+  const item = { productId: "synthetic-product", variantId: "synthetic-variant",
+    selectableForReview: true, clinicalReviewRequired: false };
+  const valid = { items: [item], total: 51, page: 1, pageSize: 24,
+    families: [], channels: [], workflowModes: [] };
+  function fixture(body: unknown) {
+    const transport = vi.fn(async (_path: string, _init: RequestInit) => new Response(JSON.stringify(body), { status: 200 }));
+    return { api: createRequestIntentApi(() => "synthetic-customer", transport), transport };
+  }
+  it.each([
+    { label: "zero page", query: { page: 0 } },
+    { label: "fractional page", query: { page: 1.5 } },
+    { label: "unsafe page", query: { page: Number.MAX_SAFE_INTEGER + 1 } },
+    { label: "NaN page", query: { page: Number.NaN } },
+    { label: "infinite page", query: { page: Number.POSITIVE_INFINITY } },
+    { label: "zero page size", query: { pageSize: 0 } },
+    { label: "fractional page size", query: { pageSize: 1.5 } },
+    { label: "page size above the server bound", query: { pageSize: 101 } },
+    { label: "unsafe page size", query: { pageSize: Number.MAX_SAFE_INTEGER + 1 } },
+  ])("refuses requested $label before transport", async ({ query }) => {
+    const { api, transport } = fixture(valid);
+    await expect(api.catalog(query)).rejects.toThrow("The current catalog could not be confirmed.");
+    expect(transport).not.toHaveBeenCalled();
+  });
+  it.each([
+    ["wrong returned page", { ...valid, page: 2 }],
+    ["zero returned page", { ...valid, page: 0 }],
+    ["negative returned page", { ...valid, page: -1 }],
+    ["zero returned page size", { ...valid, pageSize: 0 }],
+    ["negative returned page size", { ...valid, pageSize: -1 }],
+    ["wrong returned page size", { ...valid, pageSize: 100 }],
+    ["more rows than requested page size", { ...valid, items: Array.from({ length: 25 }, (_, i) =>
+      ({ ...item, productId: "synthetic-" + i, variantId: "synthetic-variant-" + i })) }],
+    ["more rows than total", { ...valid, total: 0 }],
+  ])("refuses a successful catalog envelope with %s", async (_reason, body) => {
+    const { api, transport } = fixture(body);
+    await expect(api.catalog({ page: 1, pageSize: 24 })).rejects.toThrow("The current catalog could not be confirmed.");
+    expect(transport).toHaveBeenCalledTimes(1);
+  });
+  it("preserves the existing default page 1 and page size 24", async () => {
+    const { api, transport } = fixture(valid);
+    await expect(api.catalog({})).resolves.toEqual(valid);
+    expect(transport).toHaveBeenCalledWith("/api/research/early-access/request-intents/catalog?page=1&pageSize=24",
+      expect.objectContaining({ method: "GET", credentials: "include", cache: "no-store" }));
+  });
+  it("accepts the server's maximum requested page size without clamping", async () => {
+    const body = { ...valid, total: 1, pageSize: 100 };
+    const { api, transport } = fixture(body);
+    await expect(api.catalog({ pageSize: 100 })).resolves.toEqual(body);
+    expect(transport.mock.calls[0][0]).toBe("/api/research/early-access/request-intents/catalog?page=1&pageSize=100");
+  });
+  it("keeps the reader's valid nine-row partial page 5 of 105 items", async () => {
+    const body = { ...valid, page: 5, total: 105, items: Array.from({ length: 9 }, (_, i) =>
+      ({ ...item, productId: "synthetic-" + i, variantId: "synthetic-variant-" + i })) };
+    const { api, transport } = fixture(body);
+    await expect(api.catalog({ page: 5 })).resolves.toEqual(body);
+    expect(transport).toHaveBeenCalledTimes(1);
+  });
+  it.each([10001, Number.MAX_SAFE_INTEGER])("keeps an empty later catalog page %s without an invented ceiling", async (page) => {
+    const body = { ...valid, items: [], total: 0, page, pageSize: 100 };
+    const { api, transport } = fixture(body);
+    await expect(api.catalog({ page, pageSize: 100 })).resolves.toEqual(body);
+    expect(transport.mock.calls[0][0]).toBe("/api/research/early-access/request-intents/catalog?page=" + page + "&pageSize=100");
+    expect(transport).toHaveBeenCalledTimes(1);
+  });
+});

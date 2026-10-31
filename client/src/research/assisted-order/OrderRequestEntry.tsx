@@ -5,6 +5,8 @@ import type { StorefrontIntent } from "../storefront/entry-intent";
 import { OrderEntryIntentNotice } from "../early-access/OrderEntryIntentNotice";
 import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "../early-access/orderEntryIntent";
 import { AssistedOrderCta } from "./AssistedOrderCta";
+import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
+import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { readOrderRequestContinuity, selectOrderRequestDoor, useOrderRequestMode, type OrderRequestMode } from "./order-request-mode";
 
 const LegacyEntry = lazy(() => import("./AssistedOrderPage").then((m) => ({ default: m.AssistedOrderPage })));
@@ -20,7 +22,8 @@ export function OrderRequestCta({ mode }: { mode: OrderRequestMode }) {
     <p>Choose clinical and nonclinical items in one private request. Submission does not approve treatment, place an order or collect payment.</p>
     <a className="btn btn-primary mt-4" href="/research/early-access/order-request">Open request form</a></section>;
 }
-function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode }) {
+function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
+  onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void }) {
   const [prior] = useState(() => {
     try { return readOrderRequestContinuity(window.sessionStorage); } catch { return "blocked" as const; }
   });
@@ -46,7 +49,7 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode }) {
     {prior === "mixed" && props.mode.kind !== "mixed" ? <p role="status">An earlier private request may exist. Keep this attempt and contact support if its result cannot be confirmed. This page will not start a different request.</p> : null}
     <Suspense fallback={<p role="status">Loading the request form...</p>}>
       {kind === "mixed" ? <MixedEntry embedded={props.embedded} continuationEnabled={props.continuationEnabled}
-        onStepChange={props.onStepChange} entryIntent={hint} />
+        onStepChange={props.onStepChange} entryIntent={hint} onConfirmedReceipt={props.onConfirmedReceipt} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled
             onResolved={setResolution} showAssistedAction /> : null}
           <LegacyEntry embedded={props.embedded} continuationEnabled={props.continuationEnabled}
@@ -60,6 +63,17 @@ function OrderRequestEntryBody(props: Props) {
   // React key isolates volatile UI; it does not authorize any server operation.
   const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
     : memberSessionStatus === "signed_out" ? "early-access-session" : null;
+  const checking = memberChecking || memberSessionStatus === "checking";
+  const verifiedScope = !checking && recovery === "none" && memberSessionStatus === "authenticated"
+    && member && isResearchCartScope(member.cartScope) ? member.cartScope : null;
+  const [confirmed, setConfirmed] = useState<{ scope: string; receipt: RequestIntentReceipt } | null>(null);
+  // Keep only confirmed display data through verification. A real owner or
+  // recovery boundary discards it permanently, including a later return to A.
+  // The anonymous literal is not a verified session identity. Route reset
+  // unmounts this body and clears its memory along with the customer shell.
+  if (confirmed && (recovery !== "none" || memberSessionStatus === "verification_failed"
+    || memberSessionStatus === "signed_out" || (member && !isResearchCartScope(member.cartScope))
+    || (!checking && verifiedScope !== confirmed.scope))) setConfirmed(null);
   const standaloneMode = useOrderRequestMode(props.mode === undefined && !memberChecking
     && memberSessionStatus !== "checking" && recovery === "none" && memberSessionStatus !== "verification_failed"
     && owner !== null, owner ?? "unconfirmed-member");
@@ -68,7 +82,9 @@ function OrderRequestEntryBody(props: Props) {
     <p>Complete secure account recovery or contact support before continuing this request.</p><a href="/research/support">Contact support</a></section>;
   if (owner === null) return <section role="alert">
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
-  return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode} />;
+  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} focusOnMount />;
+  return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode}
+    onConfirmedReceipt={verifiedScope ? (receipt) => setConfirmed({ scope: verifiedScope, receipt }) : undefined} />;
 }
 
 export function OrderRequestEntry(props: Props) {
