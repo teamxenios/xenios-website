@@ -2831,6 +2831,29 @@
         "file": ".xenios/handoffs/2026-10-19-KAN24-SOURCE-HANDOFF.md",
         "scope": "Source component accepted; PR321 draft and exact-head CI39261444677 passed; not complete persistent basket or deployed."
       }
+    },
+    {
+      "id": "KAN31-RECEIPT-CATALOG-INTEGRATION-20261031",
+      "title": "Integrate accepted confirmed receipts and customer catalog contract",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "baseSha": "8a35dc708dcc1bb4007038e0dc35d90864cfcc94",
+      "paths": [
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Pure conflict-free composition of independently accepted PR 349 source 3671656df1f33ebad27d370f330d6693d9aec4dd/tree b8d5a7a62e70a596026cc13063c1d587d81b78d1 and PR 350 source 2a682165d0b8ae1d2ebccb70596effc0681fc93a/tree 138cdd6734dd3fc8d822eeb8fe4ed50bbd44e360 onto exact live release base 8a35dc708dcc1bb4007038e0dc35d90864cfcc94/tree 8653333e1fa1a0aa0954122208c203d64719508b. Exact base preimages are OrderRequestEntry.tsx ad462b627bd3e8f32a00c2416cff006fdbccee9a, RequestIntentEntry.tsx f775b29e64a55cb75dc26ed629e26d1ac18e7837, RequestIntentForm.tsx 022055da58dc920c80615262ce7d1b891aa95646, RequestIntentReceipt.tsx absent, RequestIntentForm.test.tsx 205f84d6fbff5e4c3c03f66e78cf438f71c005fb, EarlyAccessRoute.storefront.test.tsx 6cadf32c94ea79b5017d1794a0fd1baa02f0ad71, request-intent-api.ts d327fb2d41b5016f488660790bf870b7f78cbf08, and request-intent-api.test.ts 7c13379f33981f28df8cd2b3728ce5be8c846c01. Preserve accepted blobs exactly and run real combined CI after two no-fast-forward merges. Exclude unaccepted PR 351 source a613440ad98e29cb466146952f4cf3e3ae225023 and all other runtime, test, CI, dependency, Auth, Care, Core, server, SQL, configuration, role, capability, flag, notification, provider, payment, activation, deployment, and production changes.",
+      "createdAt": "2026-10-31T16:24:30.777Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-10-31T16:24:40.441Z"
     }
   ]
 }

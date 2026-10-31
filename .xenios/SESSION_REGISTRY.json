@@ -574,8 +574,8 @@
       "branch": "codex/kan23-support-links-20261020",
       "state": "active",
       "startedAt": "2026-10-28T02:03:29.691Z",
-      "heartbeatAt": "2026-10-31T16:08:47.903Z",
-      "note": "Closing KAN29 private detail pending qualification to exact pushed SHA a613440ad98e29cb466146952f4cf3e3ae225023; preserving all prior QA/handoff records and foreign leases unchanged."
+      "heartbeatAt": "2026-10-31T16:24:40.519Z",
+      "note": "Claimed pure accepted PR349 plus PR350 eight-path integration on exact live release base 8a35dc708dcc1bb4007038e0dc35d90864cfcc94; source composition and real combined CI remain for Root after custody verification. Excludes unaccepted PR351 a613440ad98e29cb466146952f4cf3e3ae225023 and all production operations."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
