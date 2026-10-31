@@ -549,6 +549,27 @@
       }
     },
     {
+      "id": "KAN31-CONFIRMED-RECEIPT-RETENTION-20261031",
+      "title": "Retain confirmed request reference across same-member re-verification",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-31",
+      "baseSha": "8a35dc708dcc1bb4007038e0dc35d90864cfcc94",
+      "paths": [
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Bounded confirmed-receipt retention unit on merged release base 8a35dc708dcc1bb4007038e0dc35d90864cfcc94/tree 8653333e1fa1a0aa0954122208c203d64719508b, planned for isolated branch codex/quick-order-confirmed-receipt-retention-20261031. Exact base preimages are OrderRequestEntry.tsx ad462b627bd3e8f32a00c2416cff006fdbccee9a, RequestIntentEntry.tsx f775b29e64a55cb75dc26ed629e26d1ac18e7837, RequestIntentForm.tsx 022055da58dc920c80615262ce7d1b891aa95646, EarlyAccessRoute.storefront.test.tsx 6cadf32c94ea79b5017d1794a0fd1baa02f0ad71, and RequestIntentForm.test.tsx 205f84d6fbff5e4c3c03f66e78cf438f71c005fb; RequestIntentReceipt.tsx is absent at the base and is the sole new path. Normalize the confirmed-receipt callback only after existing validation, mounted-current checks, and owned-marker clearance. Retain the confirmed receipt in volatile member scope above the checking return, hide it while checking, and restore it before any new-door selection only after the same valid member is authenticated. Permanently discard it on scope change, sign-out, verification failure, recovery, invalid scope, or genuine early-access reset, with no anonymous retention under a shared namespace. Reuse existing receipt presentation. Add real React subscription red-to-green cases for exact same-owner refresh and privacy-negative boundaries; explicitly replace the old receipt-loss expectation with the stronger contract without weakening unrelated guards. Do not modify Core, Auth, session authority, server, SQL, storage, flags, configuration, providers, payments, dependencies, workflows, or production authority. No real Auth/session/browser/customer proof, native PG, release, installation, deployment, or production operation is authorized by this custody record.",
+      "createdAt": "2026-10-31T14:46:23.407Z",
+      "claimedAt": "2026-10-31T14:46:37.592Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
