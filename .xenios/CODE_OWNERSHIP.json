@@ -2503,6 +2503,23 @@
       "state": "handoff",
       "claimedAt": "2026-10-31T06:55:38.307Z",
       "heartbeatAt": "2026-10-31T07:14:46.975Z"
+    },
+    {
+      "id": "6e5f5be8-410a-4811-964c-779a95fd1d96",
+      "task": "KAN31-QUICK-ORDER-QUEUE-INTEGRATION-20261031",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "server/research/assisted-order/request-intent/composition.integration.test.ts",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-31T14:32:35.200Z",
+      "heartbeatAt": "2026-10-31T14:32:35.377Z"
     }
   ],
   "rules": [
