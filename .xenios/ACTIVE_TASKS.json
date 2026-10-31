@@ -593,6 +593,23 @@
       "claimedAt": "2026-10-31T15:25:43.403Z"
     },
     {
+      "id": "KAN29-PRIVATE-DETAIL-PENDING-20261031",
+      "title": "Announce and deduplicate explicit private request retrieval",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-29",
+      "baseSha": "8a35dc708dcc1bb4007038e0dc35d90864cfcc94",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Disjoint finite operator-detail pending-state unit on live release base 8a35dc708dcc1bb4007038e0dc35d90864cfcc94/tree 8653333e1fa1a0aa0954122208c203d64719508b, planned for isolated branch codex/quick-order-staff-detail-pending-20261031 and excluding pending PRs 349 and 350. Exact base preimage is RequestIntentStaffReadback.tsx a46960cada352ea6cba0305c2db7c6472dd501f3; RequestIntentStaffReadback.test.tsx is absent at the base and is the sole new path. Add detail-specific pending status, disabled Retrieve behavior, and a synchronous same-request guard before sequence advancement so repeated submission cannot start duplicate staff reads. Keep input editing and queue selection available; they must invalidate the old response and release old pending state so a new reference can be explicitly retrieved, while an old finally block cannot unlock the newer pending request. Preserve invalid-reference, queue-error, loading, pagination, sequence, unmount, session-epoch shell, and explicit-retrieval guards. Add deferred synthetic React controls for pending deduplication, failure retry, invalid references, input-edit and queue-selection races with old success or error during a new pending request, and unmount replacement. Do not add queue calls, customer submit/recover, automatic reads, or modify API, Auth, Core, Care, server, SQL, roles, capabilities, flags, configuration, notifications, providers, payments, dependencies, workflows, activation, or production authority. No real staff/customer contents, network, browser, SQL, native PG, release, installation, deployment, or production operation is authorized.",
+      "createdAt": "2026-10-31T15:34:17.324Z",
+      "claimedAt": "2026-10-31T15:34:30.079Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
