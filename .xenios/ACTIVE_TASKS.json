@@ -576,6 +576,23 @@
       }
     },
     {
+      "id": "KAN31-CATALOG-PAGE-CONTRACT-20261031",
+      "title": "Validate exact requested customer catalog page and size",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-launch-coordination-20261005",
+      "jira": "KAN-31",
+      "baseSha": "8a35dc708dcc1bb4007038e0dc35d90864cfcc94",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Bounded customer catalog pagination-contract unit on live release base 8a35dc708dcc1bb4007038e0dc35d90864cfcc94/tree 8653333e1fa1a0aa0954122208c203d64719508b, planned for isolated branch codex/quick-order-catalog-page-contract-20261031 and excluding pending PR 349. Exact base preimages are request-intent-api.ts d327fb2d41b5016f488660790bf870b7f78cbf08 and request-intent-api.test.ts 7c13379f33981f28df8cd2b3728ce5be8c846c01. Validate requested numeric page and pageSize before transport using the authoritative customer contract: page is a positive safe integer with no invented upper page cap, pageSize is 1 through 100, and omitted values resolve to 1 and 24. Require returned page and pageSize to exactly match the resolved request and enforce coherent item count and total metadata. Preserve valid partial pages and empty late pages up to Number.MAX_SAFE_INTEGER. Do not normalize, coerce, clamp, derive a maximum page from total, apply the staff 10000 bound, or reuse the internal visible-catalog scan size. Do not modify catalog authority, pricing, item schema, families, search, hint scanning, server, SQL, API transport, Auth, Care, Core, storage, flags, configuration, roles, capabilities, notifications, providers, payments, dependencies, workflows, or production authority. Tests are synthetic transport only with no application GET, real Auth/session, native browser, managed database, customer, release, deployment, or production proof.",
+      "createdAt": "2026-10-31T15:25:25.311Z",
+      "claimedAt": "2026-10-31T15:25:43.403Z"
+    },
+    {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
       "title": "Restore safe selections and make Quick Order progression discoverable",
       "priority": "P1",
