@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useResearch } from "../core";
 import { isResearchCartScope } from "../cart-session";
 import type { StorefrontIntent } from "../storefront/entry-intent";
+import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
 import { orderEntryIntentFromSearch } from "../early-access/orderEntryIntent";
 import { createRequestIntentApi } from "./request-intent-api";
 import { RequestIntentForm } from "./RequestIntentForm";
@@ -30,9 +31,10 @@ export function RequestIntentCta() {
       : <p role="status">Request intake is currently unavailable. No request has been submitted.</p>}
   </section>;
 }
-export function RequestIntentEntry({ embedded = false, continuationEnabled = true, onStepChange, entryIntent }: Readonly<{
+export function RequestIntentEntry({ embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt }: Readonly<{
   embedded?: boolean; continuationEnabled?: boolean; onStepChange?: (step: Step) => void;
   entryIntent?: StorefrontIntent | null;
+  onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void;
 }>) {
   const { member, memberToken, memberChecking, recovery, memberSessionStatus } = useResearch();
   const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
@@ -63,5 +65,5 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
   // the form; account switches remount it. Checking/recovery renders no form.
   return <RequestIntentForm key={owner} api={api}
     embedded={embedded} continuationEnabled={embedded ? continuationEnabled : standing}
-    onStepChange={onStepChange} entryIntent={hint} />;
+    onStepChange={onStepChange} entryIntent={hint} onConfirmedReceipt={onConfirmedReceipt} />;
 }

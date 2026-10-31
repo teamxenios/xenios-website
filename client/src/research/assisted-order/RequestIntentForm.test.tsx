@@ -149,6 +149,39 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
   expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
+  it.each(["submission", "recovery"] as const)("publishes a confirmed %s receipt only after clearing its owned marker", async (path) => {
+    const api = makeApi();
+    const markerAtConfirmation: Array<string | null> = [];
+    const confirmed = vi.fn(() => { markerAtConfirmation.push(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)); });
+    if (path === "submission") await prepare(api);
+    else sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, JSON.stringify({
+      key: "10000000-0000-4000-8000-000000000001", acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" }));
+    const props = { api, storage: sessionStorage, onConfirmedReceipt: confirmed };
+    await act(async () => root.render(<RequestIntentForm {...props} />));
+    await click(path === "submission" ? "Submit for review" : "Check saved request");
+    expect(host.textContent).toContain(reference);
+    expect(confirmed).toHaveBeenCalledTimes(1);
+    expect(confirmed).toHaveBeenCalledWith(receipt);
+    expect(markerAtConfirmation).toEqual([null]);
+  });
+  it("does not publish confirmation when recovery loses ownership of its marker", async () => {
+    const api = makeApi(), confirmed = vi.fn();
+    let resolve!: (value: typeof receipt) => void;
+    api.recover.mockImplementation(() => new Promise((done) => { resolve = done; }));
+    sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, JSON.stringify({
+      key: "10000000-0000-4000-8000-000000000001", acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" }));
+    const props = { api, storage: sessionStorage, onConfirmedReceipt: confirmed };
+    await act(async () => root.render(<RequestIntentForm {...props} />));
+    act(() => [...host.querySelectorAll("button")].find((button) => button.textContent === "Check saved request")!.click());
+    const replacement = JSON.stringify({ key: "10000000-0000-4000-8000-000000000002",
+      acceptedAt: "2026-10-14T12:00:01Z", state: "uncertain" });
+    sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, replacement);
+    await act(async () => resolve(receipt));
+    expect(confirmed).not.toHaveBeenCalled();
+    expect(host.textContent).not.toContain(reference);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(replacement);
+    expect(host.querySelector('[role="alert"]')).toBeTruthy();
+  });
   it("round-trips the form through the real intent service to one memory repository and authorized staff readback", async () => {
     const { api, rows } = makeRoundTrip();
     await prepare(api); await click("Submit for review");
