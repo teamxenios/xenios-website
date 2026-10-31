@@ -2491,6 +2491,18 @@
       "state": "handoff",
       "claimedAt": "2026-10-31T06:17:17.212Z",
       "heartbeatAt": "2026-10-31T06:35:29.464Z"
+    },
+    {
+      "id": "cc72136d-29d5-431b-9647-dd9e7940d71d",
+      "task": "KAN29-PRIVATE-QUEUE-CONTRACT-20261031",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-31T06:55:38.307Z",
+      "heartbeatAt": "2026-10-31T06:55:38.378Z"
     }
   ],
   "rules": [
