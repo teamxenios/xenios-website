@@ -471,10 +471,11 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     // Keep an already mounted recovery/receipt through marker clearance and
     // readiness rerenders. Session reset still removes the customer context.
     const requestDoorOpen = requestMode.kind === "mixed" || requestRecoveryDoor === true;
-    // A cleared recovery marker with open intake can lead to a fresh form
-    // after an inner remount. Its agreement must be reachable again; keep
-    // closed-intake recovery/receipts free of a fresh intake agreement.
-    const hideFreshAgreement = requestRecoveryDoor === true && (prior === "mixed" || requestMode.kind !== "mixed");
+    // Keep the canonical agreement available whenever intake is open, even
+    // above a restored view. Its reachability must not depend on this route
+    // rendering after an inner recovery clears storage or changes owner.
+    // Closed-intake recovery/receipts still get no fresh intake agreement.
+    const hideFreshAgreement = requestRecoveryDoor === true && requestMode.kind !== "mixed";
     // The retained marker selects mixed recovery. If it disappears before the
     // lazy entry mounts, a closed mixed intake must never select legacy checkout.
     const requestEntryMode = requestMode.kind === "legacy" ? { kind: "unavailable" as const } : requestMode;

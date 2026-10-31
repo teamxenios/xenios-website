@@ -25,7 +25,7 @@ describe("proposed request-intent integration source bindings (not browser execu
     expect(source).toContain('initialRecovery = readOrderRequestContinuity(window.sessionStorage) === "mixed"');
     expect(source).toContain('setRequestRecoveryDoor(initialRecovery)');
     expect(requestOnly).toContain('requestRecoveryDoor === null ? <p role="status"');
-    expect(requestOnly).toContain('const hideFreshAgreement = requestRecoveryDoor === true && (prior === "mixed" || requestMode.kind !== "mixed")');
+    expect(requestOnly).toContain('const hideFreshAgreement = requestRecoveryDoor === true && requestMode.kind !== "mixed"');
     expect(requestOnly).toContain('!hideFreshAgreement && <div');
     expect(source).not.toContain('requestRecoveryDoor.current');
     expect(requestOnly).toContain('const requestEntryMode = requestMode.kind === "legacy" ? { kind: "unavailable" as const } : requestMode');
