@@ -149,6 +149,19 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
   expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
+  it.each(["submission", "recovery"] as const)("publishes a confirmed %s receipt only after clearing its owned marker", async (path) => {
+    const api = makeApi();
+    const confirmed = vi.fn(() => { expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull(); });
+    if (path === "submission") await prepare(api);
+    else sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, JSON.stringify({
+      key: "10000000-0000-4000-8000-000000000001", acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" }));
+    const props = { api, storage: sessionStorage, onConfirmedReceipt: confirmed };
+    await act(async () => root.render(<RequestIntentForm {...props} />));
+    await click(path === "submission" ? "Submit for review" : "Check saved request");
+    expect(host.textContent).toContain(reference);
+    expect(confirmed).toHaveBeenCalledTimes(1);
+    expect(confirmed).toHaveBeenCalledWith(receipt);
+  });
   it("round-trips the form through the real intent service to one memory repository and authorized staff readback", async () => {
     const { api, rows } = makeRoundTrip();
     await prepare(api); await click("Submit for review");

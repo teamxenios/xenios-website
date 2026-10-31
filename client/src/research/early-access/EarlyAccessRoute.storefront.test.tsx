@@ -200,12 +200,17 @@ function stubFetch(options: {
   malformedSessionReadsFirst?: number;
   unlock?: "ok" | "refused";
   recovery?: "saved" | "missing" | "malformed" | "error";
+  submit?: "saved";
 }) {
   let sessionIssued = false;
   let sessionReads = 0;
   const stub = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input);
     if (init?.method === "POST") {
+      if (path.endsWith("/request-intents") && options.submit === "saved") return jsonResponse({
+        kind: "unapproved_selection_request", requestId: "30000000-0000-4000-8000-000000000001",
+        publicReference: "XRI-30000000000040008000000000000001", status: "pending_review",
+        createdAt: "2026-10-14T12:00:00.000Z" });
       if (path.endsWith("/request-intents/recover")) {
         if (options.recovery === "error") return jsonResponse({ error: "request_intent_unavailable" }, 503);
         return jsonResponse({ receipt: options.recovery === "missing" ? null : options.recovery === "malformed"
@@ -750,7 +755,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('input[name="name"]')).toBeTruthy();
   });
   it.each(["same-member verification", "owner-key change"] as const)(
-    "reaches the required agreement after recovery and %s without rendering the outer route again", async (transition) => {
+    "retains the same-member receipt or reaches the agreement after an owner change: %s", async (transition) => {
       const member = { firstName: "Fixture", status: "active" as const,
         applicationStatus: null, cartScope: "a".repeat(64) };
       researchStore.publish({ member, memberToken: "synthetic-before", memberChecking: false,
@@ -781,6 +786,14 @@ describe("the login-free request-only entry", () => {
       }
       // Only actual subscribers update. There is no root.render between flips.
       await settleStorefront();
+      if (transition === "same-member verification") {
+        expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+        expect(container.textContent).not.toContain("Request products for review");
+        expect(container.querySelector('input[name="name"]')).toBeNull();
+        expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+        expect(render).toHaveBeenCalledTimes(1);
+        return;
+      }
       const add = await waitForAdd();
       expect(render).toHaveBeenCalledTimes(1);
       expect(container.querySelector('[data-testid="quick-order-request-only"]')).toBe(shell);
@@ -809,6 +822,129 @@ describe("the login-free request-only entry", () => {
       expect(container.querySelector('input[name="name"]')).toBeTruthy();
       expect(render).toHaveBeenCalledTimes(1);
     });
+  async function recoveredMember(mode: "on" | "off" | "unknown" = "on") {
+    const member = { firstName: "Receipt fixture", status: "active" as const,
+      applicationStatus: null, cartScope: "a".repeat(64) };
+    researchStore.publish({ member, memberToken: "synthetic-before", memberChecking: false,
+      memberSessionStatus: "authenticated", recovery: "none" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: mode, agreement: "accepted" });
+    await act(async () => root.render(<EarlyAccessRoute requestOnly />));
+    await settleStorefront();
+    await act(async () => recoverButton().click());
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    return { member, fetch };
+  }
+  function checkingMember(): ResearchSnapshot {
+    return { member: null, memberToken: null, memberChecking: true,
+      memberSessionStatus: "checking", recovery: "none" };
+  }
+  it("retains a submitted member receipt after context re-verification without sending another request", async () => {
+    const member = { firstName: "Submitted fixture", status: "active" as const,
+      applicationStatus: null, cartScope: "a".repeat(64) };
+    researchStore.publish({ member, memberToken: "synthetic-before", memberChecking: false,
+      memberSessionStatus: "authenticated", recovery: "none" });
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "accepted", submit: "saved" });
+    const render = vi.spyOn(root, "render");
+    await act(async () => root.render(<EarlyAccessRoute requestOnly />));
+    await settleStorefront();
+    const add = await waitForAdd();
+    act(() => add.click());
+    act(() => continueButton().click());
+    for (const [name, value] of Object.entries({ name: "Synthetic Customer", email: "synthetic@example.invalid",
+      phone: "+15555550123", shippingLine1: "1 Synthetic Street", shippingCity: "Test",
+      shippingRegion: "TX", shippingPostalCode: "00000", shippingCountryCode: "US" })) {
+      await act(async () => {
+        const input = container.querySelector<HTMLInputElement>('input[name="' + name + '"]')!;
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, value);
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+    }
+    act(() => container.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async () => container.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    act(() => container.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!;
+    await act(async () => submit.click());
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    await act(async () => researchStore.publish(checkingMember()));
+    expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+    await act(async () => researchStore.publish({ member, memberToken: "synthetic-refreshed",
+      memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
+    await settleStorefront();
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    expect(container.querySelector('input[name="name"]')).toBeNull();
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+    expect(recoveryPosts(fetch)).toHaveLength(0);
+    expect(render).toHaveBeenCalledTimes(1);
+  });
+  it.each(["on", "off", "unknown"] as const)(
+    "restores only the confirmed member receipt after context re-verification with %s intake", async (mode) => {
+      const render = vi.spyOn(root, "render");
+      const { member, fetch } = await recoveredMember(mode);
+      await act(async () => researchStore.publish(checkingMember()));
+      expect(container.textContent).toContain("Checking your existing session");
+      expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+      await act(async () => researchStore.publish({ member, memberToken: "synthetic-refreshed",
+        memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
+      await settleStorefront();
+      expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+      expect(container.textContent).not.toContain("Request products for review");
+      expect(container.textContent).not.toContain("The current request path could not be confirmed");
+      expect(container.querySelector('input[name="name"]')).toBeNull();
+      expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+      expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+      expect(recoveryPosts(fetch)).toHaveLength(1);
+      expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+      expect(render).toHaveBeenCalledTimes(1);
+    });
+  it.each(["different member", "sign-out", "verification failure", "recovery", "invalid scope"] as const)(
+    "permanently discards the confirmed reference on %s, including return to the former member", async (boundary) => {
+      const { member, fetch } = await recoveredMember();
+      await act(async () => researchStore.publish(checkingMember()));
+      const changed: ResearchSnapshot = boundary === "sign-out"
+        ? { member: null, memberToken: null, memberChecking: false, memberSessionStatus: "signed_out", recovery: "none" }
+        : boundary === "verification failure"
+          ? { member: null, memberToken: null, memberChecking: false, memberSessionStatus: "verification_failed", recovery: "none" }
+          : { member: { ...member, cartScope: boundary === "different member" ? "b".repeat(64)
+              : boundary === "invalid scope" ? "invalid" : member.cartScope }, memberToken: "synthetic-changed",
+            memberChecking: false, memberSessionStatus: "authenticated", recovery: boundary === "recovery" ? "pending" : "none" };
+      await act(async () => researchStore.publish(changed));
+      expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+      await act(async () => researchStore.publish({ member, memberToken: "synthetic-return",
+        memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
+      await settleStorefront();
+      expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+      expect(recoveryPosts(fetch)).toHaveLength(1);
+      expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    });
+  it("does not promote a recovery result that arrives after the member form unmounts", async () => {
+    const member = { firstName: "Pending fixture", status: "active" as const,
+      applicationStatus: null, cartScope: "a".repeat(64) };
+    researchStore.publish({ member, memberToken: "synthetic-before", memberChecking: false,
+      memberSessionStatus: "authenticated", recovery: "none" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "accepted" });
+    const ordinary = fetch.getMockImplementation()!;
+    let resolve!: (value: Response) => void;
+    fetch.mockImplementation((input, init) => String(input).endsWith("/request-intents/recover")
+      ? new Promise<Response>((done) => { resolve = done; }) : ordinary(input, init));
+    await act(async () => root.render(<EarlyAccessRoute requestOnly />));
+    await settleStorefront();
+    act(() => recoverButton().click());
+    await act(async () => researchStore.publish(checkingMember()));
+    await act(async () => resolve(jsonResponse({ receipt: { kind: "unapproved_selection_request",
+      requestId: "30000000-0000-4000-8000-000000000001", publicReference: "XRI-30000000000040008000000000000001",
+      status: "pending_review", createdAt: "2026-10-14T12:00:00.000Z" } })));
+    await act(async () => researchStore.publish({ member, memberToken: "synthetic-refreshed",
+      memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
+    await settleStorefront();
+    expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+    expect(container.textContent).toContain("Check your earlier request");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(mixedMarker);
+    expect(recoveryPosts(fetch)).toHaveLength(1);
+  });
   it("does not reclassify a fresh mounted journey when a later marker appears before a parent rerender", async () => {
     const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "accepted" });
     await renderStorefront(true);
@@ -853,6 +989,33 @@ describe("the login-free request-only entry", () => {
     expect(recoveryPosts(fetch)).toHaveLength(1);
     expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
     expectOuterHelp();
+  });
+  it("clears a member receipt on an actual Early Access expiry even when the member scope repeats", async () => {
+    const member = { firstName: "Expiry fixture", status: "active" as const,
+      applicationStatus: null, cartScope: "a".repeat(64) };
+    researchStore.publish({ member, memberToken: "synthetic-before", memberChecking: false,
+      memberSessionStatus: "authenticated", recovery: "none" });
+    const expires = Date.now() + 60000;
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "off", agreement: "required", sessionReplies: [
+      { authenticated: true, expiresAt: new Date(expires).toISOString() },
+      { authenticated: true, expiresAt: null },
+    ] });
+    const render = vi.spyOn(root, "render");
+    await act(async () => root.render(<EarlyAccessRoute requestOnly />));
+    await settleStorefront();
+    await act(async () => recoverButton().click());
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    vi.spyOn(Date, "now").mockReturnValue(expires + 1);
+    await act(async () => window.dispatchEvent(new Event("focus")));
+    await settleStorefront();
+    expect(sessionReads(fetch)).toHaveLength(2);
+    expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+    expect(container.textContent).toContain("The request form is currently unavailable");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(recoveryPosts(fetch)).toHaveLength(1);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+    expect(render).toHaveBeenCalledTimes(1);
   });
   it("reaches recovery while readiness is pending and retains the receipt after readiness closes", async () => {
     window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
