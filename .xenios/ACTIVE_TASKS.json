@@ -2860,6 +2860,24 @@
         "file": ".xenios/handoffs/2026-10-31T16-35-01-735Z-KAN31-RECEIPT-CATALOG-INTEGRATION-20261031-codex-launch-coordination-20261005.md",
         "at": "2026-10-31T16:35:01.740Z"
       }
+    },
+    {
+      "id": "KAN31-CONFIRMED-RECEIPT-FOCUS-20261031",
+      "title": "Preserve deliberate focus on confirmed receipt remount and strengthen reset proof",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "baseSha": "a704fb939da02171cf5d64f6b8946f378368b121",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Bounded nonblocking reviewer follow-up on exact released base a704fb939da02171cf5d64f6b8946f378368b121/tree 6785bd40d57271e1aad4186ed0078024b6799d98 after accepted PR349 plus PR350 composition. Exact base preimages are RequestIntentReceipt.tsx 66ad54df9159df1ca918455d6cd683f4a4acdcfc, EarlyAccessRoute.storefront.test.tsx 6c17d083808e8470349a4f5e90a7510e6cb739cd, and RequestIntentReceipt.test.tsx absent. Make shared receipt focus-on-mount focus only when the heading exists and ownerDocument.activeElement is null or body, using preventScroll true, while preserving deliberate focus on an outside control through silent checking and member refresh. Add JSDOM unit coverage for default no-focus/body focus with preventScroll and external-focus preservation; add storefront subscriber-only help focus retention, stronger fresh-form absence in the existing fresh-submit case, retain the closed-intake expiry control, and add open-intake accepted expiry with wait-for-add before receipt absence. Preserve receipt ownership, storage, attempt, submit, payload, Auth, Care, Core, API, server, catalog, configuration, flags, roles, payments, providers, activation, and production boundaries. JSDOM does not prove native scroll behavior. Accepted PR349 source remains unchanged; no source implementation, CI, or production operation is part of this custody claim.",
+      "createdAt": "2026-10-31T16:37:07.855Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-10-31T16:37:16.968Z"
     }
   ]
 }
