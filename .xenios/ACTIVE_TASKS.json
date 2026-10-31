@@ -454,7 +454,7 @@
       "id": "KAN31-RECOVERY-AGREEMENT-REMOUNT-20261030",
       "title": "Restore agreement reachability after confirmed recovery remount",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "jira": "KAN-31",
       "baseSha": "e0f349c04c10a820c847e4ed59490a7a90ea9449",
@@ -466,7 +466,13 @@
       "dependsOn": [],
       "scopeNote": "Human-directed RRE-1/RRE-3 customer correction on merged release base e0f349c04c10a820c847e4ed59490a7a90ea9449/tree 2350be4be63987caccd17ef3b218bf0be4032721, using the existing isolated branch codex/quick-order-recovery-agreement-remount-20261030. Exact base preimages are EarlyAccessRoute.tsx 38b8b58f545de7b0811a464e6b920e8c73369b7e, EarlyAccessRoute.storefront.test.tsx 7247e1bf8c07b2f5ac1303ddecce42e113a97c6e, and composition.integration.test.ts 936a0a9f36016867fc51123b1482967227240b82. After confirmed recovery, an inner entry remount while intake is open must restore reachable required agreement. Replace the render-written recovery-ref latch with a first-authenticated-read state decision and reset it at existing customer-context boundaries, while preserving closed-intake receipts, exact same-key behavior, owner/session boundaries, and legacy-negative gates. Add meaningful regression coverage and proportionate static-pin updates. Do not modify RequestIntentForm, Auth, Core, SQL, configuration, flags, dependencies, or workflows. The accepted integration head 6721587925ac2d08547b36dcf4e41faf371e9255 and merged release head remain frozen. No CI, deployment, production, schema, grant, provider, customer, browser, security-boundary, credential, installation, or release action is authorized by this records-only custody operation.",
       "createdAt": "2026-10-30T23:49:49.617Z",
-      "claimedAt": "2026-10-30T23:50:00.465Z"
+      "claimedAt": "2026-10-30T23:50:00.465Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "7f694427d292c33e6e701913bd41f140de5a6b97",
+        "file": ".xenios/handoffs/2026-10-31T00-10-01-208Z-KAN31-RECOVERY-AGREEMENT-REMOUNT-20261030-codex-launch-coordination-20261005.md",
+        "at": "2026-10-31T00:10:01.212Z"
+      }
     },
     {
       "id": "KAN23-BASKET-NAVIGATION-20261019",
