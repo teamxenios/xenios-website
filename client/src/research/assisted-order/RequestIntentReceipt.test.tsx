@@ -35,12 +35,21 @@ describe("confirmed receipt focus", () => {
     expect(document.activeElement).toBe(document.body);
     expect(focus).not.toHaveBeenCalled();
   });
-  it("focuses the confirmation without requesting scroll when focus is on the body", async () => {
+  it("focuses the confirmation with default scrolling when focus is on the body", async () => {
     const focus = vi.spyOn(HTMLElement.prototype, "focus");
     expect(document.activeElement).toBe(document.body);
     await act(async () => root.render(<RequestIntentReceipt receipt={receipt} focusOnMount />));
     expect(document.activeElement).toBe(container.querySelector("h1"));
-    expect(focus).toHaveBeenCalledExactlyOnceWith({ preventScroll: true });
+    expect(focus).toHaveBeenCalledExactlyOnceWith();
+  });
+  it("moves ancestor-container focus to the confirmation", async () => {
+    container.tabIndex = -1;
+    container.focus();
+    expect(document.activeElement).toBe(container);
+    const focus = vi.spyOn(HTMLElement.prototype, "focus");
+    await act(async () => root.render(<RequestIntentReceipt receipt={receipt} focusOnMount />));
+    expect(document.activeElement).toBe(container.querySelector("h1"));
+    expect(focus).toHaveBeenCalledExactlyOnceWith();
   });
   it("preserves deliberate focus outside the receipt", async () => {
     outside = document.createElement("button");
