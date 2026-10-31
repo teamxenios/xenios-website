@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-31T21:09:42.897Z",
+  "updatedAt": "2026-10-31T22:36:42.636Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -2953,6 +2953,28 @@
         "file": ".xenios/handoffs/2026-10-31T21-09-42-877Z-KAN31-354-IDENTITY-INTEGRATION-20261031-codex-launch-coordination-20261005.md",
         "at": "2026-10-31T21:09:42.897Z"
       }
+    },
+    {
+      "id": "KAN31-RECEIPT-FOCUS-REVIEW-CORRECTION-20261031",
+      "title": "Correct confirmed receipt focus review regressions",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "baseSha": "6c63aa923c457c1bdaec5a94c3bbe9b8d4664f7f",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Bounded correction for the concrete PR353 changes-required verdict on exact candidate 59b828b32a7ee5d71d5e58f64cd887b2c1a94e2c/tree 05ac2cf24fb5b717f32cfb9140260254ac99adbb, rebased by no-fast-forward baseline composition onto current authoritative live release 6c63aa923c457c1bdaec5a94c3bbe9b8d4664f7f/tree 75b7c3eef86340e17e47e0b033dbc8b6fab927ca. Reviewer-required receipt correction: preserve deliberate outside focus, permit a focused ancestor container, and call node.focus() with default options so first member confirmation scroll is not suppressed. Update the component focus-options case and add a focused-ancestor case; retain the storefront test blob unchanged. The four API/readback paths are baseline-composition-only: preserve live blobs request-intent-api.ts c8d05c857d7a22de2f2b20f26114fee15dc1b314, request-intent-api.test.ts 327c46a0af71089cbfbf0ee9d589fbfd9633438e, RequestIntentStaffReadback.tsx 1d848bc163996456163379845ea93443a728564a, and RequestIntentStaffReadback.test.tsx 9901e0303378214284b8bd6d17908b46afc2155a exactly, with no API or readback edits. Final candidate diff against live remains the three receipt paths. Do not add props, caller paths, native-browser claims, Auth, Care, Core, server, SQL, configuration, role, capability, provider, payment, activation, deployment, or production changes.",
+      "createdAt": "2026-10-31T22:36:42.636Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-10-31T22:36:53.693Z"
     }
   ]
 }

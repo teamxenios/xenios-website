@@ -2627,6 +2627,23 @@
       "state": "handoff",
       "claimedAt": "2026-10-31T20:59:20.249Z",
       "heartbeatAt": "2026-10-31T21:09:42.462Z"
+    },
+    {
+      "id": "5035f775-87fe-4743-ae92-02e679537010",
+      "task": "KAN31-RECEIPT-FOCUS-REVIEW-CORRECTION-20261031",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
+        "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-31T22:36:53.708Z",
+      "heartbeatAt": "2026-10-31T22:36:53.784Z"
     }
   ],
   "rules": [
