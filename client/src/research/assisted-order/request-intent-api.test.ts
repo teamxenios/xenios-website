@@ -46,3 +46,51 @@ describe("Doc163 structured refusal classification", () => {
     }
   });
 });
+
+describe("private queue response page identity and bounds", () => {
+  const first = { kind: "unapproved_selection_request", status: "pending_review",
+    requestId: "30000000-0000-4000-8000-000000000001",
+    publicReference: "XRI-30000000000040008000000000000001",
+    createdAt: "2026-10-14T12:00:00.000Z", lineCount: 2 };
+  const second = { ...first, requestId: "30000000-0000-4000-8000-000000000002",
+    publicReference: "XRI-30000000000040008000000000000002" };
+  const valid = { items: [first], total: 51, page: 1, pageSize: 25 };
+  function fixture(body: unknown) {
+    const transport = vi.fn(async (_path: string, _init: RequestInit) => new Response(JSON.stringify(body), { status: 200 }));
+    return { api: createRequestIntentApi(() => "synthetic-staff", transport), transport };
+  }
+  it.each([0, 1.5, 10001])("refuses invalid requested page %s before transport", async (page) => {
+    const { api, transport } = fixture(valid);
+    await expect(api.staffQueue(page)).rejects.toThrow("Queue unavailable.");
+    expect(transport).not.toHaveBeenCalled();
+  });
+  it.each([
+    ["missing returned page", { ...valid, page: undefined }],
+    ["wrong returned page", { ...valid, page: 2 }],
+    ["missing page size", { ...valid, pageSize: undefined }],
+    ["zero page size", { ...valid, pageSize: 0 }],
+    ["fractional page size", { ...valid, pageSize: 25.5 }],
+    ["unsafe page size", { ...valid, pageSize: Number.MAX_SAFE_INTEGER + 1 }],
+    ["more rows than page size", { ...valid, items: [first, second], pageSize: 1 }],
+    ["more rows than total", { ...valid, total: 0 }],
+  ])("refuses a successful envelope with %s", async (_reason, body) => {
+    const { api, transport } = fixture(body);
+    await expect(api.staffQueue(1)).rejects.toThrow("Queue unavailable.");
+    expect(transport).toHaveBeenCalledTimes(1);
+  });
+  it("keeps a valid partial page and its supplied positive page size", async () => {
+    const partial = { ...valid, pageSize: 7 };
+    const { api, transport } = fixture(partial);
+    await expect(api.staffQueue(1)).resolves.toEqual(partial);
+    expect(transport).toHaveBeenCalledTimes(1);
+    expect(transport).toHaveBeenCalledWith("/api/research/early-access/request-intents/staff?page=1",
+      expect.objectContaining({ method: "GET", credentials: "include", cache: "no-store" }));
+  });
+  it("accepts an empty later page at the existing bound without deriving a maximum from total", async () => {
+    const empty = { items: [], total: 0, page: 10000, pageSize: 25 };
+    const { api, transport } = fixture(empty);
+    await expect(api.staffQueue(10000)).resolves.toEqual(empty);
+    expect(transport).toHaveBeenCalledTimes(1);
+    expect(transport.mock.calls[0][0]).toBe("/api/research/early-access/request-intents/staff?page=10000");
+  });
+});
