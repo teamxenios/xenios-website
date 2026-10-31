@@ -104,8 +104,12 @@ export function createRequestIntentApi(
       return result.receipt === null ? null : parseIntentReceipt(result.receipt);
     },
     async staffQueue(page) {
+      // Match the existing staffList request bound; server authorization remains authoritative.
+      if (!Number.isSafeInteger(page) || page < 1 || page > 10000) throw new Error("Queue unavailable.");
       const raw = await request("/staff?page=" + page) as RequestIntentQueuePage;
-      if (!raw || !Array.isArray(raw.items) || !Number.isSafeInteger(raw.total) || raw.total < 0) throw new Error("Queue unavailable.");
+      if (!raw || !Array.isArray(raw.items) || !Number.isSafeInteger(raw.total) || raw.total < 0
+        || raw.page !== page || !Number.isSafeInteger(raw.pageSize) || raw.pageSize < 1
+        || raw.items.length > raw.pageSize || raw.items.length > raw.total) throw new Error("Queue unavailable.");
       return { items: raw.items.map((item) => ({ ...parseIntentReceipt(item), lineCount: item.lineCount })),
         total: raw.total, page: raw.page, pageSize: raw.pageSize };
     },
