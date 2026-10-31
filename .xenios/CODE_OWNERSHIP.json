@@ -2588,9 +2588,9 @@
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
         "client/src/research/assisted-order/RequestIntentReceipt.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-31T16:37:16.980Z",
-      "heartbeatAt": "2026-10-31T16:37:17.075Z"
+      "heartbeatAt": "2026-10-31T17:00:21.646Z"
     }
   ],
   "rules": [

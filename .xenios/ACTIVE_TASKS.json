@@ -2865,7 +2865,7 @@
       "id": "KAN31-CONFIRMED-RECEIPT-FOCUS-20261031",
       "title": "Preserve deliberate focus on confirmed receipt remount and strengthen reset proof",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-31",
       "baseSha": "a704fb939da02171cf5d64f6b8946f378368b121",
       "paths": [
@@ -2877,7 +2877,13 @@
       "scopeNote": "Bounded nonblocking reviewer follow-up on exact released base a704fb939da02171cf5d64f6b8946f378368b121/tree 6785bd40d57271e1aad4186ed0078024b6799d98 after accepted PR349 plus PR350 composition. Exact base preimages are RequestIntentReceipt.tsx 66ad54df9159df1ca918455d6cd683f4a4acdcfc, EarlyAccessRoute.storefront.test.tsx 6c17d083808e8470349a4f5e90a7510e6cb739cd, and RequestIntentReceipt.test.tsx absent. Make shared receipt focus-on-mount focus only when the heading exists and ownerDocument.activeElement is null or body, using preventScroll true, while preserving deliberate focus on an outside control through silent checking and member refresh. Add JSDOM unit coverage for default no-focus/body focus with preventScroll and external-focus preservation; add storefront subscriber-only help focus retention, stronger fresh-form absence in the existing fresh-submit case, retain the closed-intake expiry control, and add open-intake accepted expiry with wait-for-add before receipt absence. Preserve receipt ownership, storage, attempt, submit, payload, Auth, Care, Core, API, server, catalog, configuration, flags, roles, payments, providers, activation, and production boundaries. JSDOM does not prove native scroll behavior. Accepted PR349 source remains unchanged; no source implementation, CI, or production operation is part of this custody claim.",
       "createdAt": "2026-10-31T16:37:07.855Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-10-31T16:37:16.968Z"
+      "claimedAt": "2026-10-31T16:37:16.968Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "59b828b32a7ee5d71d5e58f64cd887b2c1a94e2c",
+        "file": ".xenios/handoffs/2026-10-31T17-00-21-717Z-KAN31-CONFIRMED-RECEIPT-FOCUS-20261031-codex-launch-coordination-20261005.md",
+        "at": "2026-10-31T17:00:21.721Z"
+      }
     }
   ]
 }
