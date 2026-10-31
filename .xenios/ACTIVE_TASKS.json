@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-31T20:33:41.352Z",
+  "updatedAt": "2026-10-31T20:43:19.041Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -2912,7 +2912,7 @@
       "id": "KAN31-351-PENDING-INTEGRATION-20261031",
       "title": "Integrate accepted staff detail pending-state source",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-31",
       "baseSha": "a704fb939da02171cf5d64f6b8946f378368b121",
       "paths": [
@@ -2923,7 +2923,13 @@
       "scopeNote": "Pure integration of independently accepted PR351 source a613440ad98e29cb466146952f4cf3e3ae225023/tree b41975198306758f50e1f85140f2c7a63a965a1f onto exact current production a704fb939da02171cf5d64f6b8946f378368b121/tree 6785bd40d57271e1aad4186ed0078024b6799d98. Exact production preimages are RequestIntentStaffReadback.tsx a46960cada352ea6cba0305c2db7c6472dd501f3 and RequestIntentStaffReadback.test.tsx absent. Preserve accepted blobs RequestIntentStaffReadback.tsx 1d848bc163996456163379845ea93443a728564a and RequestIntentStaffReadback.test.tsx 9901e0303378214284b8bd6d17908b46afc2155a exactly through a no-fast-forward merge, then run fresh integration CI. The source acceptance is not production authorization. Do not modify other application paths, Auth, Care, Core, API contracts, server, SQL, configuration, roles, capabilities, flags, providers, payments, activation, deployment, or production state as part of this custody claim.",
       "createdAt": "2026-10-31T20:33:41.352Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-10-31T20:33:49.942Z"
+      "claimedAt": "2026-10-31T20:33:49.942Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "23cd475222e6e1f4c3eed6bb3d67deea499889c7",
+        "file": ".xenios/handoffs/2026-10-31T20-43-19-000Z-KAN31-351-PENDING-INTEGRATION-20261031-codex-launch-coordination-20261005.md",
+        "at": "2026-10-31T20:43:19.041Z"
+      }
     }
   ]
 }
