@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-21T16:38:05.000Z",
+  "updatedAt": "2026-10-31T20:12:00.980Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -2884,6 +2884,23 @@
         "file": ".xenios/handoffs/2026-10-31T17-00-21-717Z-KAN31-CONFIRMED-RECEIPT-FOCUS-20261031-codex-launch-coordination-20261005.md",
         "at": "2026-10-31T17:00:21.721Z"
       }
+    },
+    {
+      "id": "KAN29-PRIVATE-DETAIL-IDENTITY-20261031",
+      "title": "Bind operator detail responses to the requested private reference",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-29",
+      "baseSha": "a704fb939da02171cf5d64f6b8946f378368b121",
+      "paths": [
+        "client/src/research/assisted-order/request-intent-api.ts",
+        "client/src/research/assisted-order/request-intent-api.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Bounded operator detail response-identity contract on exact production source a704fb939da02171cf5d64f6b8946f378368b121/tree 6785bd40d57271e1aad4186ed0078024b6799d98. Exact base preimages are request-intent-api.ts 509248c66f0fbea61c9fb8c11be9e809a573b7c4 and request-intent-api.test.ts b83a24659865b90c4858885ded66b4b32b8f03df. Counterexample: a staff request for reference A may accept a complete HTTP 200 pending detail whose internally valid publicReference is B because the server preserves the requested selector while the client does not bind the parsed response identity to that selector. Add case-insensitive equality between the requested and returned public references after the existing receipt parser. Do not change Auth, server, SQL, configuration, flags, roles, capabilities, activation, transport, receipt schema, or other field validation. This is a source-level counterexample only: no actual private data or observed production misdelivery, and no full KAN-29 or KAN-42 closure.",
+      "createdAt": "2026-10-31T20:12:00.980Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-10-31T20:12:14.118Z"
     }
   ]
 }
