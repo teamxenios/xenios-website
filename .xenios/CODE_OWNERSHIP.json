@@ -2545,9 +2545,9 @@
         "client/src/research/assisted-order/request-intent-api.ts",
         "client/src/research/assisted-order/request-intent-api.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-31T15:25:43.445Z",
-      "heartbeatAt": "2026-10-31T15:34:30.152Z"
+      "heartbeatAt": "2026-10-31T15:47:37.230Z"
     },
     {
       "id": "b5df6cf2-9998-4017-9455-5e890521d07f",
@@ -2559,7 +2559,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-31T15:34:30.095Z",
-      "heartbeatAt": "2026-10-31T15:34:30.152Z"
+      "heartbeatAt": "2026-10-31T15:47:37.230Z"
     }
   ],
   "rules": [
