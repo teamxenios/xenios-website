@@ -1,0 +1,98 @@
+{
+  "state": "COMPOSITION_RELEASE_LIVE_AND_SCOPED_STATIC_VERIFIED",
+  "observedAt": "2026-11-01T22:35:32.582824+00:00",
+  "PR": 359,
+  "source": "e4047a57989acbebea2aa6b1aec19a5592980634",
+  "release": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
+  "tree": "aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c",
+  "deploy": "dep-dbjrrv95efls73ecgre0",
+  "deployFinishedAt": "2026-11-01T22:33:46.58375Z",
+  "sourceAcceptances": [
+    "KAN31/10435 PR6564167752",
+    "KAN31/10436 PR6564186772"
+  ],
+  "actualCompositionRun": 41353618839,
+  "actualReleaseRun": 41357234132,
+  "full": {
+    "passed": 18364,
+    "failed": 0,
+    "skipped": 83,
+    "filesPassed": 983,
+    "filesSkipped": 6
+  },
+  "focused145": "PASS overlapping full suite",
+  "all5Trusted15368SUCCESS": true,
+  "all4ActualReleaseCheckoutTreesExact": true,
+  "acceptedFourBlobsUnchanged": true,
+  "noNewAppSourceAuthored": true,
+  "noUnchangedSourceQualificationRerun": true,
+  "originalPR357And358": "GitHub MERGED indirectly; source heads06/9d preserved",
+  "customerFacingScope": [
+    "Quick Order keeps unfinished contact/address/age/separate billing in the same mounted form while returning to product quantity edits; a successful review clears the raw draft",
+    "Partner browser-save exceptions show truthful uncertainty, permit explicit fresh authorized retry and clean up temporary save resources"
+  ],
+  "publicStatic": {
+    "actualScripts": 192,
+    "browserSaveRecoveryProven": false,
+    "entry": [
+      "/assets/index-CvK--rZW.js"
+    ],
+    "entryStable": true,
+    "fullLiveJourneyProven": false,
+    "health": "Xenios API is running",
+    "identityProofLimit": "Static text/code and separately bound deployment identity provide served-build evidence only, not native draft retention, browser save recovery, principal isolation, scroll/focus, private identity binding or the full live journey.",
+    "independentAcceptance": false,
+    "javascriptExecuted": false,
+    "nativeDraftRetentionProven": false,
+    "nativeScrollFocusJourneyProven": false,
+    "partnerSaveUncertaintyAssets": [
+      {
+        "asset": "Resources-tDdtvZ83.js",
+        "occurrences": 1,
+        "sha256": "c0c44ac65edbb5f436b8d7588b50130c229e9cd84da3491341f619feed1844ac",
+        "url": "https://xeniostechnology.com/assets/Resources-tDdtvZ83.js"
+      }
+    ],
+    "partnerSaveUncertaintyMarker": "We couldn't confirm that the download started. Try again.",
+    "partnerSaveUncertaintyOccurrences": 1,
+    "pr357NewUniqueTextMarker": null,
+    "principalIsolationRuntimeProven": false,
+    "priorEntry": "/assets/index-BtkbSN16.js",
+    "privateDetailIdentityBindingRuntimeProven": false,
+    "publicStaticExpectations": "matched",
+    "releaseIdentityRequiresSeparateRootBinding": true,
+    "resourceHubActivationPerformed": false,
+    "sourceComposition": "e4047a57989acbebea2aa6b1aec19a5592980634",
+    "sourceCompositionTree": "aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c",
+    "sourcePRs": [
+      357,
+      358
+    ],
+    "staffPendingMarker": "Retrieving private request...",
+    "staffPendingMarkerFiles": [
+      "section-CBh-nYLe.js"
+    ],
+    "staffPendingMarkerRole": "retained baseline label, not PR357/PR358 runtime proof"
+  },
+  "rollback": {
+    "sha": "97b26c1f7460ec31ffa99e0e93e928ea01248dcf",
+    "deploy": "dep-dbja8cfb9u1s73bhgd90",
+    "appOnlyCompatible": true
+  },
+  "serviceReturnedConfigurationUnchanged": true,
+  "noConfigFlagRoleAuthSQLSchemaCustomerProviderNotificationOperation": true,
+  "nativeBrowserAuthManagedDBJourney": "NOT RUN; fixture/source/served-code/provider identity proof only",
+  "C2": "SOURCE accepted/closed10434, staging still held10003/privatebindings/10241",
+  "ResourceHubActivation": "HELD unchanged",
+  "nextClaudeUnit": "KAN8/10437; actualACK/existingregisteredwriteridentity/custody must be consumed before any authoritative admin edits; Root independent acceptor only without material authorship",
+  "nativeGoal": null,
+  "artifactSHA256": {
+    "MERGE_RECEIPT.json": "51a5fad61de847b9f995f242c28700d11c484454d267cda287e3478826e6fc4c",
+    "COMPOSITION_CI_QUALIFICATION.json": "295b253018e03aac764d3f7de92762f21035c89fa8f960a6d64eb4248b6cd07e",
+    "RELEASE_CI_QUALIFICATION.json": "3882575029345cf87c3ff7db0c5670bb7c4d6d75b17fb1c0924a250d3617d28c",
+    "COMPOSITION_QA_VERIFIED.json": "d97200ba1a8fa81d3abd1bd3ca2c6717719bcf4b2636537120197ab14c12ce26",
+    "PUBLIC_STATIC_VERIFIED.json": "84325f91f8d4b5ab3497a3868b80c1994acae8f706066365257b0f1fbd139ad4",
+    "POSTCHECK_EXECUTION_BINDING.json": "5d4cd64e258a3690b1dcd8e36dcbdf387ff94d867f1a57dd396f0562b1b0ae43",
+    "RENDER_LIVE.json": "7258fe4209048e844db4ebd6672ddf2e7d56f4cd928182accc29050ca8785fd0"
+  }
+}
