@@ -1,26 +1,34 @@
 # KAN-29: current-source binding and bounded qualification input
 
-Status: corrected procedure prepared; independent successor review pending;
+Status: corrected successor prepared; independent exact-source review pending;
 **execution HELD**. Existing Root owns this one-document correction under
-`KAN29-OPERATOR-PACKET-CORRECTION-20261101`. It applies SAME Claude's finalized
-KAN-31/10424 R1-R8 and P1-P3. It supplies no activation or execution permission.
+`KAN29-OPERATOR-PACKET-10427-CORRECTION-20261101`. It applies SAME Claude's
+current, edited KAN-31/10427 N2-N5 and M1-M8; all eleven 10424 findings remain
+resolved. Interim N1 was withdrawn and is not applied. This document supplies no
+activation or execution permission.
 KAN-29, KAN-109 and the full Quick Order journey remain incomplete.
 
 ## Revision and existing evidence
 
 This is the corrected successor of the SAME document at
-`833f426bf07799f953cf9ee966fae11f72b6743a`, blob
+`93114c2cb93235478d1e65289101ccdc15ab7b91`, tree
+`5d9aa7da493dbe149420b32df7d8fcbe809c7aac`, blob
+`bbacda2d602267e2621e3e763a41f6ea48d7eeed`, 28,674 LF bytes, SHA-256
+`cb4209c1d4688f9a4749c424e8f25f50cbf437aa3d659b55c3757005b828f04b`.
+That exact reviewed version and its qualification are preserved as the parent.
+The earlier original `833f426bf07799f953cf9ee966fae11f72b6743a`, blob
 `1b39a1083ccdd61206db9dcbe168467b295523dc`, 15,313 LF bytes, SHA-256
 `781304920958dc0878dde0709fdaa54e47b25527c4bfbc45d33cbfed9319c4fb`.
 That original commit, branch history and qualification remain preserved. Its
 procedure is superseded here; no competing master plan or unposted reviewer draft
 is adopted. KAN-29/10239 remains the existing owner route.
 
-The private `STAFF_ACTIVATION_DECISION.md` remains unchanged at SHA-256
+The private `STAFF_ACTIVATION_DECISION.md` has the preserved recorded SHA-256
 `aa5850c20ddfe2b5fcdb21dc83b5c4e9db62b116e7cdc1f386eb81204a4ef340`.
 KAN-29/10241 is the distinct `samuel/work-claude` reviewer's acceptance of that
 older decision's **source scope**, not activation authority or acceptance of this
-successor. Private identifiers and the private decision are not copied here.
+successor. Private identifiers and the private decision are not copied here. Root
+has not read, written or re-evaluated that private packet in this correction.
 
 Recorded live application: `97b26c1f7460ec31ffa99e0e93e928ea01248dcf`, tree
 `89ac4efb4bef1a0f5450247feb8fde607dad3bd6`, deploy
@@ -98,23 +106,69 @@ execution packet. All remain pending; this publication does not fill them.
 2. **Origin and readiness settings.** Before the first browser load/submit, the
    owner verifies privately that the approved HTTPS origin is exactly staging's
    configured `SITE_URL` origin, not an apex/www/platform near-match. The submit
-   and recover guard requires that exact `Origin`, JSON, and any supplied
-   `Sec-Fetch-Site` to be `same-origin`; the source permits an absent Fetch-Metadata
-   header, while this browser procedure sends `same-origin`. Bind existing
-   `RESEARCH_REQUEST_INTENT_ENABLED="true"`,
-   `RESEARCH_EARLY_ACCESS_OPEN_ACCESS`,
-   `RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED`,
-   `RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS` matching the published policy, and
-   configured Supabase including `SUPABASE_ANON_KEY`. Names are not values or a
-   request to change them. Without that key the Care production adapter resolves
-   no principal and its access-audit writer is a no-op; status codes then cannot
-   prove the intended audit path.
+   and recover guard requires that exact `Origin`,
+   `Content-Type: application/json`, and any supplied `Sec-Fetch-Site` to be
+   `same-origin`; the source permits an absent Fetch-Metadata header, while this
+   browser procedure sends `same-origin`. Bind the following existing settings
+   privately, recording actual values only in the private packet:
+   - `RESEARCH_REQUEST_INTENT_ENABLED` must be the literal `"true"`.
+   - `RESEARCH_EARLY_ACCESS_ENABLED` must be the literal `"true"` and
+     `RESEARCH_EARLY_ACCESS_SESSION_SECRET` must satisfy the existing gate's
+     validation. Any retained password-hash configuration must also be valid;
+     this profile neither supplies a password nor changes that configuration.
+   - `RESEARCH_EARLY_ACCESS_OPEN_ACCESS` and
+     `RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED` must each be the literal
+     `"true"` for automatic unlock and the anonymous customer reference.
+   - `RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS` must contain exactly one pair
+     equal to the published Research Use Policy pair. Any other list fails this
+     binding and stops the run before step 1; a larger allowance cannot fix it.
+   - The production-like process must mount the durable session store: configured
+     `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, plus a valid UUID
+     `RESEARCH_EARLY_ACCESS_OWNER_ID`. Bind `NODE_ENV` and the actual start
+     mode; the repository's `start` script sets production mode. These are
+     existing adapter input names, not permission to acquire or replace keys.
+   - For this run, effective `RESEARCH_EARLY_ACCESS_SESSION_TTL_MINUTES` must
+     be at most 240 after the source's 15-480 minute clamp (default 240).
+     The run ceiling is a precondition, not the implemented clamp. The durable
+     row has a 240-minute lifetime; a longer cookie lifetime makes unlock write
+     and then revoke the session row before refusing. Reject that configuration before any load.
+   - The research wall must be configured through existing
+     `RESEARCH_ACCESS_PASSWORD` or `RESEARCH_PUBLIC="true"`, with
+     `RESEARCH_SESSION_SECRET` in production. Every `/api/research/*` endpoint
+     used by this procedure sits behind this configuration check, not every
+     possible research endpoint. Bind `RESEARCH_PUBLIC` also for exact-path
+     handling in step 3 and cleanup.
+   - Configured Supabase must include `SUPABASE_ANON_KEY`. Without that key the
+     Care production adapter resolves no principal and its access-audit writer
+     is a no-op; status codes then cannot prove the intended audit path.
+
+   Setting names and source-required conditions above disclose no live/private
+   values and request no changes. A closed EA gate is first visible at the counted
+   guest load: bridge/session and at most one refused unlock occur, but the
+   request-intake probe waits for authentication and never reaches its limiter.
+   That guest load still ends the run under the stop rule. The executor records
+   the automatic unlock time privately to establish step 2's lifetime; the
+   production durable `/session` response supplies no expiry.
 3. **Legitimate identities and preimages.** Bind one already provisioned normal
    `clinical_admin` principal, one unprivileged principal, and the guest context;
    complete active eligible-role inventory; exact purpose-capability row and
    saved/effective dedicated-flag preimages; whole-Care gates; approver/apply and
-   effective rollback authority. No account creation/reset/invite, recovery-purpose
-   token or clinical role grant. If legitimate identities are unavailable, stop.
+   effective rollback authority. Before admission, an authorized owner records
+   privately, by an expressly allowed owner read rather than a trial sign-in,
+   whether each staff Auth principal has an active research customer record.
+   Care authority is separate from research membership. Bind each sign-in's
+   actual landing: an active server-verified member follows `returnTo` to
+   `/care/request-intents`; pending activation lands on `/research/activate`,
+   and absent/other membership lands on `/research/access-state`. For either
+   non-Care landing, pre-bind exactly one typed same-tab navigation to
+   `/care/request-intents` as one extra page load with all startup traffic in
+   the finite manifest, or stop before step 1. This navigation uses the legitimate
+   normal Supabase session and canonical Care transport; it grants no authority.
+   A trial active-member sign-in with this `returnTo` can itself dispatch an
+   unbudgeted, audited staff GET and is not a preflight. No account/customer-row
+   creation, membership activation, reset/invite, recovery-purpose token or
+   clinical role grant. If legitimate identities or the landing binding are
+   unavailable, stop before step 1.
 4. **One selectable synthetic fixture and follow-up owner.** Bind exact approved
    offerings/variant/sell-unit identifiers, quantities, clinical flags, current
    agreement pair/version and synthetic contact values. It must be selectable
@@ -135,8 +189,8 @@ execution packet. All remain pending; this publication does not fill them.
    HARs, cookies, bearer headers, storage or page-memory dumps. No interception,
    request modification, lost-reply injection or fault injection is proposed.
    No new allowance for browser/SQL/native runtime is granted here. Actual
-   serialization and existing admission rules still apply: browser floor2048MiB;
-   any separate local test/build needs fresh2304MiB admission. No Root process/RAM
+   serialization and existing admission rules still apply: browser floor 2048 MiB;
+   any separate local test/build needs fresh 2304 MiB admission. No Root process/RAM
    census, admission retry, local Node, install or acquisition to prepare the doc.
 
 `request_intent_pending_read` is global to qualifying `clinical_admin` principals,
@@ -158,12 +212,12 @@ disclosure and narrow-role alternative remain intact.
 
 ### Admission and synthetic-only preflight
 
-No production request, including the potentially genuine October17 request, is a
-fixture. Before step1, the authorized database owner uses the separately approved
+No production request, including the potentially genuine October 17 request, is a
+fixture. Before step 1, the authorized database owner uses the separately approved
 bounded evidence collection to count **all stored requests**, without reading
 contact/line contents or opening the queue/API. Require **zero**. Any row stops
 the run before submission. Reserve the staging fixture space against other writers
-through the run; if that isolation cannot be attested, stop. Step6 confirms the
+through the run; if that isolation cannot be attested, stop. Step 6 confirms the
 post-count is exactly one and identifies it as this fixture. The candidate list
 function has no status filter and audits every returned row; checking through the
 queue would itself expose/audit the rows this preflight protects.
@@ -197,15 +251,18 @@ and shell traffic. The following is not a total-network budget. No manual refres
 pagination, search, PWA update, requirements refresh, retry, replacement request,
 HEAD, alternate Auth route or copied bearer is included.
 
-| Guest startup operation, with SW blocked | Proposed count per one stable load |
+| Startup operation, with SW blocked | Proposed count / admission binding |
 | --- | --- |
-| `GET .../request-intents/config` (mode probe and form) | Exactly2, with no spare for reload/refresh |
-| `GET .../request-intents/catalog`, page1/pageSize24 | One initial; at most one additional for the bound family selection |
+| `GET .../request-intents/config` (mode probe and form) | Exactly 2, with no spare for reload/refresh |
+| `GET .../request-intents/catalog`, page 1/pageSize 24 | One initial; at most one additional for the bound family selection |
 | `GET .../assisted-orders/config` | One legacy bridge probe |
 | `POST /api/research/early-access/unlock` | At most one automatic unlock in guest context; creates a durable EA session |
 | `GET /api/research/early-access/session` | Expected automatic session checks; the old QA observed two per load, not a universally proven maximum |
 | `GET /api/research/policies` and `GET /api/research/early-access/agreements` | One of each for the mounted agreement section in this profile |
-| `/api/config`, `/api/research/me`, normal Auth/configuration reads in the other two contexts | Expected paths; the owners must bind finite counts and any per-context unlock/session traffic before admission |
+| Guest `GET /api/config` and `GET /api/research/me` | Exactly one of each per one stable fresh guest load |
+| Each staff normal sign-in: `GET /api/research/member/me` | Required application traffic, separate from Auth; owner binds its finite count and result before admission |
+| Active staff member: bearer `GET /api/research/catalog` | At most one member catalog load on verification; include it in that staff context's finite manifest |
+| Other staff Auth/configuration/shell/session reads and any binding-3 typed Care navigation | Owners bind every endpoint/count, expected landing and extra page-load startup traffic before admission; no unlimited allowance |
 
 Unbound counts are a missing execution input, not an unlimited allowance. Capture
 actual dispatch order privately. The SW source registers on load, claims clients
@@ -218,28 +275,33 @@ that lifecycle nor real-browser visibility/refresh behavior.
 
 | Step | Operation | Bound and required result |
 | --- | --- | --- |
-| 1 | Guest UI `/research/early-access/order-request`: select the approved fixture, read current policies/standing and accept the bound current agreement, then submit once with the observer already armed | The two legal GETs above; ONE `POST /api/research/early-access/agreements/accept` with the supported pair, then ONE `POST /api/research/early-access/request-intents`. Observe durable acceptance before submit and one `pending_review` receipt with exact lines/XRI reference. Save the original request-body `idempotencyKey` plus response `requestId` privately. Extra required agreement pairs need a separately bound allowance. |
-| 2 | Unchanged guest tab: one in-page same-origin `fetch()` to `/api/research/early-access/request-intents/recover` | ONE POST, JSON body exactly `{ "idempotencyKey": <same captured key> }`, no Authorization header or trailing slash. Retain the normal EA cookie in that tab, within its bound lifetime (source default240minutes; actual staging expiry must be bound). HTTP200 `{ receipt }` must identify the SAME request/reference, with no replacement. No curl/cookie export or storage/memory inspection. |
-| 3 | Same guest context: page1 staff list and saved synthetic detail via same-origin browser fetch | ONE list GET + ONE detail GET, no Authorization header:401 each while dedicated gate is enabled. |
-| 4 | Fresh unprivileged context: supported normal sign-in and `/care/request-intents`, automatic queue, then explicit fixture lookup | ONE automatic page1 queue GET + ONE explicit detail GET through canonical transport:403 each; no fixture contents exposed. Count Auth-triggered dispatches, not just clicks. |
-| 5 | Fresh authorized context: `/research/sign-in?returnTo=%2Fcare%2Frequest-intents`, automatic queue, then explicit saved-fixture lookup | ONE automatic page1 queue GET + ONE explicit detail GET through canonical transport:200 for list and exact synthetic detail with submitted contact/acknowledgments/variants/quantities/clinical flags. No status/assignment/payment/prescribing/fulfillment controls are invented. |
-| 6 | Authorized database/evidence owners finish the bound collection | Pre-count0/post-count1; one durable fixture and matching same-owner replay, intended audit/events/limiter effects, run-window logging/notification evidence, and cleanup postimages. These are separately approved bounded reads, not blanket SQL or permission supplied by this table. |
+| 1 | Guest UI `/research/early-access/order-request`: select the approved fixture, read current policies/standing and accept the bound current agreement, then submit once with the observer already armed | The two legal GETs above; ONE `POST /api/research/early-access/agreements/accept` with the supported pair, then ONE `POST /api/research/early-access/request-intents`. Observe durable acceptance before submit and one `pending_review` receipt with exact lines/XRI reference. Save the original request-body `idempotencyKey` plus response `requestId` privately. Exactly one required pair, equal to the published Research Use Policy pair, is supported; any other list fails binding 2 and stops the run before step 1. |
+| 2 | Unchanged guest tab: one in-page same-origin `fetch()` to `/api/research/early-access/request-intents/recover` | ONE POST with request header `Content-Type: application/json`, body exactly `{ "idempotencyKey": <same captured key> }`, no Authorization header or trailing slash. Retain the normal EA cookie in that tab, within its bound lifetime (source default 240 minutes; actual staging expiry must be bound). HTTP 200 `{ receipt }` must identify the SAME request/reference, with no replacement. No curl/cookie export or storage/memory inspection. |
+| 3 | Same guest context: page 1 staff list and saved synthetic detail via same-origin browser fetch, reusing the captured `requestId` exactly as returned | ONE list GET + ONE detail GET, no Authorization header: 401 each with exact JSON body `{"error":"authentication_required"}` while the dedicated gate is enabled. A research-wall 401 with another body does not qualify. |
+| 4 | Fresh unprivileged context: supported `/research/sign-in?returnTo=%2Fcare%2Frequest-intents`; follow the privately pre-bound landing in binding 3, then the automatic queue and explicit fixture lookup | Active research members arrive at Care; otherwise use only the one separately pre-bound typed same-tab Care navigation/page load, or stop before step 1 if that route was not admitted. ONE automatic page 1 queue GET + ONE explicit detail GET through canonical transport: 403 each; no fixture contents exposed. Count Auth-triggered dispatches, not just clicks. |
+| 5 | Fresh authorized context: `/research/sign-in?returnTo=%2Fcare%2Frequest-intents`; follow binding 3's privately pre-bound landing, then the automatic queue and explicit saved-fixture lookup | Active research members arrive at Care; otherwise only the one separately pre-bound typed same-tab Care navigation/page load is included. ONE automatic page 1 queue GET + ONE explicit detail GET through canonical transport: 200 for list and synthetic detail. Compare the displayed reference, legal name, normalized email (lowercase), normalized phone (digits only), and displayed line product/specification/variant/quantity/clinical/research-use/source-refusal fields. Acknowledgments, addresses, organization, age confirmation and billing choice are owner evidence in step 6, not UI claims. No status/assignment/payment/prescribing/fulfillment controls are invented. |
+| 6 | Authorized database/evidence owners finish the bound collection after cleanup | Pre-count 0/post-count 1; one durable fixture and matching same-owner replay; approved private comparison of the stored contact, acknowledgments and other fields absent from the UI; intended audit/events/limiter effects; run-window logging/notification evidence; cleanup postimages. This collection and its run window close only after cleanup, covering the flag change, any restart/redeploy and any cleanup GETs. These are separately approved bounded reads, not blanket SQL or permission supplied by this table. |
 
 The qualification staff API pair is exactly:
 
 ```text
 GET /api/research/early-access/request-intents/staff?page=1
-GET /api/research/early-access/request-intents/staff/<saved-synthetic-request-id>
+GET /api/research/early-access/request-intents/staff/<captured-requestId-exactly-as-returned>
 ```
 
+For step 3 and cleanup, reuse the captured `requestId` exactly as returned;
+the detail wall exemption requires a lowercase UUID when `RESEARCH_PUBLIC` is
+not `"true"`. Never uppercase it, substitute the XRI reference, or add another
+shape. An outer-wall refusal has neither the intended limiter nor audit effect.
 Execute the pair once per identity: **six dispatched staff GETs**. The conditions
 above reduce remount triggers; they do not turn an inferred startup duplicate into
 an observed browser result. Do not allow an uncounted seventh GET or assume it
 left no rows if it occurs. Stop and preserve the bounded-run failure. A different
 finite contingency budget would require a separately frozen owner allowance.
 
-The client generates a UUID and writes a marker before submit, then deletes that
-marker on a valid receipt (`request-intent-attempt.ts:76-94`). The receipt contains
+The client generates the attempt UUID at `RequestIntentForm.tsx:183`, passes it
+to `request-intent-attempt.ts:76-94`, writes a marker before submit, then deletes
+that marker on a valid receipt. The receipt contains
 no attempt key and the server stores only its hash. A volatile form-memory copy
 may survive until navigation; it is not a supported capture method. After normal
 success there is no recovery UI action. Missing pre-armed capture means **stop**,
@@ -252,18 +314,25 @@ lost-reply, in-flight reload and remount UI recovery remain CI evidence, NOT RUN
 Name all effects in the allowance, not just two POSTs or two audit stores:
 
 - `/unlock` creates a durable EA session; agreement acceptance records durable
-  standing including server-derived `requestIp` (`req.ip`) and request-id metadata
-  (`register.ts:975-991`). The executor's IP and all synthetic contact/acceptance
-  values remain private. A preexisting acceptance must not be invented as a fresh
+  standing including server-derived `requestIp` (`req.ip`). Its `requestId`
+  metadata is the caller-provided `x-request-id` request header, or null when
+  absent (`register.ts:975-991`); it is not server-observed or the server's
+  `X-Request-Id` response header and grants no authority. The executor's IP and
+  all synthetic contact/acceptance values remain private. A preexisting acceptance must not be invented as a fresh
   acceptance proof; the owner binds standing pre/postimages for these fresh contexts.
-- The submit writes the synthetic request; replay is the same owner/attempt, not
-  a second request. Do not infer absence or permission for a replacement.
+- The submit writes the synthetic request and one private `access_events` row
+  of type `submitted`, with NULL actor and database time (candidate SQL: 194-195).
+  Same-owner/same-attempt replay adds neither another request nor another
+  `submitted` event. Do not infer absence or permission for a replacement.
 - With a working configured audit adapter and dedicated gate enabled, staff guard
   decisions append `care_access_audit`. An application `allowed` decision may still
   precede SQL refusal; it is not successful SQL read proof. Successful list reads
   append `queue_list` for **each** returned row; successful detail appends
   `staff_read`. With only the fixture and exactly one successful list/detail, expect
-  one of each; refused identities must produce neither private row event.
+  one of each. Step 6 therefore expects three private `access_events` rows for
+  this fixture: one `submitted`, one `queue_list`, one `staff_read`.
+  Refused identities must produce neither read event; no extra event is
+  attributed to replay.
 - `care_access_audit` stores actor, permission, outcome and application-clock
   `occurred_at`, without a request/run ID. Bind guest rows by NULL actor,
   `unauthenticated`, `care:administer` and a privately recorded bounded window;
@@ -286,7 +355,7 @@ and NOT PASSED overall**. No notification writer is composed in the request-inte
 production path, and the readback has no per-record URL selector. That criterion
 remains with existing KAN-75/new-request-email ownership and the Core notification
 hold; no new notification implementation or message is authorized here. Record
-the existing owner's requester follow-up channel/time/ownership input from binding4.
+the existing owner's requester follow-up channel/time/ownership input from binding 4.
 Do not imply an operational staff email/dashboard or fabricate assignment/status
 mutation controls over the immutable pending-review record.
 
@@ -294,6 +363,8 @@ The authorized evidence owner must attest that the designated staging logs in th
 run window contain none of the approved synthetic contact values, and that **no
 email was sent**. Bind the exact logging/notification evidence route before the
 run; source absence of this writer alone is not a global runtime assertion.
+Its collection and bounded window remain open through cleanup, including the
+effective flag change, any approved restart/redeploy and the cleanup GETs.
 Collect safe counts/booleans/references privately without unrelated customer logs
 or provider/credential access. Keep raw bodies, attempt keys, identities, IPs,
 sessions, contact/agreements and audit rows in the approved private location.
@@ -315,14 +386,15 @@ advance. A saved configuration edit alone is not an effective rollback.
 
 **Rollback proof is the running deployment identity plus the effective dedicated
 flag postimage matching its saved preimage**, attested privately by the authorized
-owner. A503 `private_review_unavailable` alone is insufficient: identity, role or
+owner. A 503 `private_review_unavailable` alone is insufficient: identity, role or
 audit failures can produce the same body. After that postimage proof, the allowance
 may separately include at most TWO list/detail cleanup GETs **from the unchanged
 guest context without Authorization**, solely when restoring a flag this run
-opened to its prior disabled state. Expected503 supports the postimage evidence;
-it does not replace it. If still enabled, the guest should get401 plus an audit
-row, not private data. Count any limiter/audit effects of those calls. If the run
-did not open the flag, omit the flag change and those cleanup GETs. Any failure
+opened to its prior disabled state. Reuse the captured `requestId` exactly as
+returned for the detail path. Expected 503 supports the postimage evidence; it
+does not replace it. If still enabled, the guest should get 401 with exact body
+`{"error":"authentication_required"}` plus an audit row, not private data.
+Count any limiter/audit effects of those calls. If the run did not open the flag, omit the flag change and those cleanup GETs. Any failure
 ends the run without another retry; existing guest-session expiry is not bypassed.
 
 Restore a capability only if this run changed it, using its exact preimage and
@@ -338,45 +410,62 @@ part of the bound cleanup, not a sign-out or revocation API call.
 
 All code citations here refer to `97b26c1f` unless explicitly historical. Root
 rechecked the attempt/guard/standing/acceptance/audit/limiter/list source and the
-app/PWA call sites. The lockfile pins auth-js2.108.2; Claude10424 inspected its
+app/PWA call sites. The lockfile pins auth-js 2.108.2; Claude 10424 inspected its
 installed source for visibility/refresh/broadcast events. That installed package
 was not present at Root's scoped paths, so Root does not claim a second independent
 verification of exact library timing. The app increments its epoch for Auth events
-and keys the readback by it; remount effects can dispatch another page1 call.
+and keys the readback by it; remount effects can dispatch another page 1 call.
 
 | Final delta | Corrected sections / source anchors |
 | --- | --- |
-| R1 | Binding5, steps1-2, capture/replay limits; `request-intent-attempt.ts:76-94`, `RequestIntentForm.tsx:185`, private-access session TTL default240minutes |
-| R2 | Traffic table, step1, durable effects; `earlyAccessAgreement.ts:107-110,209-214,273-290`; EA `register.ts:975-991`; request-intent `service.ts:87` |
+| R1 | Binding 5, steps 1-2, capture/replay limits; `RequestIntentForm.tsx:183,185`, `request-intent-attempt.ts:76-94`, private-access session TTL default 240 minutes |
+| R2 | Traffic table, step 1, durable effects; `earlyAccessAgreement.ts:107-110,209-214,273-290`; EA `register.ts:975-991`; request-intent `service.ts:87` |
 | R3 | Foreground isolated staff contexts, six dispatched calls, explicit stop on remount; `CareRequestIntentPage.tsx:24-30,46`, `RequestIntentStaffReadback.tsx:24-32` |
 | R4 | Approved SW-blocked profile and endpoint-specific startup budget; `pwa/register.ts:18-20,43-48`, `public/sw.js:31-41`, `order-request-mode.ts:21`, form config/catalog/filter call sites |
-| R5 | Private origin/settings binding2; request-intent `production.ts:29-37,66-74`, private-access config, session-scoped identity, Care `production-deps.ts:93-99` |
-| R6 | Owner count0 before step1 and isolated fixture/post-count1, never through queue; candidate SQL `:282-288` |
+| R5 | Private origin/settings binding 2; request-intent `production.ts:29-37,66-74`, private-access config, session-scoped identity, Care `production-deps.ts:93-99` |
+| R6 | Owner count 0 before step 1 and isolated fixture/post-count 1, never through queue; candidate SQL `:282-288` |
 | R7 | 10200 notification NOT APPLICABLE/NOT PASSED, follow-up owner input and private logs/no-email evidence; request-intent `production.ts:135`, readback `:14` |
-| R8 | Updated97b release evidence; modern replacement secret row; installed identity/apply-state/body-digest method remains held under10386/10400/10241 |
-| P1-P3 | NULL-actor/window/different-clock correlation; limiter upsert plus deletion; effective running flag postimage and guest-only cleanup, with no503-only rollback claim |
+| R8 | Updated 97b release evidence; modern replacement secret row; installed identity/apply-state/body-digest method remains held under 10386/10400/10241 |
+| P1-P3 | NULL-actor/window/different-clock correlation; limiter upsert plus deletion; effective running flag postimage and guest-only cleanup, with no 503-only rollback claim |
+| N2 | Explicit recovery `Content-Type: application/json` in binding 2 and step 2; request-intent `production.ts:29-37`, `production.test.ts:211-220` |
+| N3 | Private membership/landing pre-binding, steps 4-5 and finite staff `member/me`/member-catalog traffic; `pages/SignIn.tsx:78-100`, `lib/member-routing.ts:28-40`, `member-auth.ts:204-205`, `core.tsx:263-273,476-519`; Care authority remains separate |
+| N4 | Exactly one published-policy agreement pair, no extra-pair allowance; `adapters/earlyAccessAgreement.ts:62-65`, EA persistence `production-deps.ts:212-222` |
+| N5 | Existing EA gate/durable-store/TTL/research-wall inputs in binding 2; `private-access-config.ts:110-166`, persistence `production-deps.ts:121-147`, `private-access-routes.ts:629-646`, `server/research/index.ts:43-52,246-249`, `package.json:17` |
+| M1-M7 | Submit's `submitted` event; evidence window through cleanup; UI fields vs owner evidence; exact captured detail ID and guest 401 body; separate guest startup counts; UUID generation anchor; caller-provided acceptance request-id metadata |
+| M8 | Restore spaces around counts/source labels; the 145 focused checks below are an overlapping subset of the full application suite |
 
 Source and release runs `41258051541` and `41264977981` each executed the accepted
-89ac tree:18,357 passed,0 failed,83 skipped;983 passed/6 skipped files, all five
-trusted checks successful. Focused145 overlaps, not additive. Reuse this application
-evidence; no unchanged suite/PR/deployment is manufactured for this doc-only change.
-The disposable journey fixture uses PostgreSQL16 and synthetic identity/Care-audit
-adapters. It does not establish managed Auth, installed schema, nativePG17, staging
+89ac tree: 18,357 passed, 0 failed, 83 skipped; 983 passed/6 skipped files, all five
+trusted checks successful. The 145 focused checks are an overlapping subset of
+the full suite, not additive. Reuse this application evidence; no unchanged suite/PR/deployment is manufactured for this doc-only change.
+The disposable journey fixture uses PostgreSQL 16 and synthetic identity/Care-audit
+adapters. It does not establish managed Auth, installed schema, native PG17, staging
 parity or human follow-up. Native PG17 stays NOT RUN/host-and-resource-held.
 
 Any eventual permitted result is **STAGING-QUALIFIED at its bound target and SHA**,
 not PRODUCTION-OBSERVED. A normal confirmed submit does not reach "Check saved
 request" after its marker clears. Lost-reply/remount UI recovery stays CI-PROVEN;
 no native focus/scroll, startup reload or actual browser Auth-event result is claimed.
-Follow-up of the potentially genuine October17 request stays BLOCKED and excluded.
-The independent source delta's context/refuter limitations remain in10424;
-implementation assistance is not independent acceptance of this successor.
+Follow-up of the potentially genuine October 17 request stays BLOCKED and excluded.
+The independent source delta's context/refuter/proposal limitations remain in
+10424 and the current edited 10427. The latter discloses draft exposure and its
+transcript check, plus the post-publication N5 corrections. Root's finite source
+trace assistance is implementation support, not independent acceptance.
+
+Interim N1 is withdrawn: the durable store returns null expiry and the production
+`/session` omits `expiresAt` (`private-access-session-repository.ts:511-521`,
+`private-access-routes.ts:826-833`), so the page's known-expiry timer and
+focus/visibility recheck do not arm (`EarlyAccessRoute.tsx:334-392`). No automatic
+guest expiry/re-unlock deadline through cleanup is added. The existing step-2
+cookie lifetime and private unlock-time binding still apply.
 
 Next: SAME Claude reviews this corrected successor at its exact pushed SHA. Actual
-execution still needs the linked10003 closure, exact private bindings and explicit
-executor/effects/evidence/cleanup allowance under10241. Recover existing receipts
+execution still needs the linked 10003 closure, exact private bindings and explicit
+executor/effects/evidence/cleanup allowance under 10241. Recover existing receipts
 and reuse the nominated operator. No broad epic rewrite, notification/catalog
 correction, new reviewer or new runtime unit is created by this procedure.
 
 Records: KAN-29/10003,10200,10238,10239,10241; KAN-85; KAN-147; KAN-75; KAN-109;
-KAN-31/10386,10400,10420-10424. Existing ledger history remains authoritative.
+KAN-31/10386,10400,10420-10427. The exact 93114c2 disposition is the current
+edited 10427, not its earlier interim draft. Existing ledger history remains
+authoritative.
