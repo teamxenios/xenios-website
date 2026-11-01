@@ -403,7 +403,7 @@
     "deployId": "dep-dbjrrv95efls73ecgre0",
     "liveSince": "2026-11-01T22:33:46.58375Z",
     "observedAt": "2026-11-01T22:35:32.582824Z",
-    "autoDeploy": "off",
+    "autoDeploy": "yes",
     "scope": "Qualified ordinary website release for in-memory Quick Order contact-draft retention and truthful Partner browser-save recovery; Resource Hub activation and all sensitive operations remain held",
     "receipt": ".xenios/handoffs/2026-11-01T22-35-32-582824Z-RELEASE-COMPLETE-0ca2272-codex-launch-coordination-20261005.json",
     "note": "Protected release 0ca2272 deployed live as dep-dbjrrv95efls73ecgre0. Source and release CI each passed 18,364 tests with zero failures and 83 skips; all five trusted checks succeeded and all four actual checkout trees matched aa2da5b. Public GET/static verification passed with stable entry /assets/index-CvK--rZW.js, 192 assets, no HTML fallback, health 200 and the Partner uncertainty marker present once. Native browser, Auth, managed database and full live journeys were not run. Service configuration returned unchanged; no Resource Hub activation, SQL, provider, role, flag, customer or notification operation occurred."
