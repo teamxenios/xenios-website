@@ -10,8 +10,9 @@ export function RequestIntentReceipt({ receipt, headingRef, focusOnMount = false
     const node = heading.current;
     if (!focusOnMount || !node) return;
     const doc = node.ownerDocument;
-    if (doc.activeElement !== null && doc.activeElement !== doc.body) return;
-    node.focus({ preventScroll: true });
+    const active = doc.activeElement;
+    if (active !== null && active !== doc.body && !active.contains(node)) return;
+    node.focus();
   }, [focusOnMount]);
   return <section className="xenios-order-page"><h1 ref={headingRef ?? heading} tabIndex={-1}>Request saved for review</h1>
     <p role="status">Your saved request reference is <strong>{receipt.publicReference}</strong>.</p>
