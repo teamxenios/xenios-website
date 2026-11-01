@@ -2641,9 +2641,9 @@
         "client/src/research/assisted-order/RequestIntentStaffReadback.tsx",
         "client/src/research/assisted-order/RequestIntentStaffReadback.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-31T22:36:53.708Z",
-      "heartbeatAt": "2026-10-31T22:36:53.784Z"
+      "heartbeatAt": "2026-11-01T00:51:49.142Z"
     }
   ],
   "rules": [
