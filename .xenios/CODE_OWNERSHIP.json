@@ -2746,7 +2746,7 @@
         "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-01T22:55:34.521Z",
       "heartbeatAt": "2026-11-01T22:55:34.587Z"
     }
