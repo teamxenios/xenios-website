@@ -2709,7 +2709,7 @@
         "client/src/research/pages/partners/Resources.tsx",
         "client/src/research/pages/partners/Resources.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-01T19:53:23.236Z",
       "heartbeatAt": "2026-11-01T20:07:25.473Z"
     },
