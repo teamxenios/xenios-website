@@ -2,6 +2,7 @@ import crypto from "crypto";
 import express from "express";
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { getSupabaseAdmin } from "../supabase";
 
 // ---------------------------------------------------------------------------
 // Privacy and authorization tests for the research membership application API.
@@ -47,6 +48,7 @@ vi.mock("../supabase", () => {
     let insertPayload: any = null;
     let updatePayload: any = null;
     const filters: Array<[string, any]> = [];
+    const neqFilters: Array<[string, any]> = [];
     const lteFilters: Array<[string, any]> = [];
     const ltFilters: Array<[string, any]> = [];
     let notNullCol: string | null = null;
@@ -56,6 +58,7 @@ vi.mock("../supabase", () => {
       rows.filter(
         (r) =>
           filters.every(([c, v]) => r[c] === v) &&
+          neqFilters.every(([c, v]) => r[c] != null && v != null && r[c] !== v) &&
           lteFilters.every(([c, v]) => r[c] <= v) &&
           ltFilters.every(([c, v]) => r[c] != null && r[c] < v),
       );
@@ -97,6 +100,7 @@ vi.mock("../supabase", () => {
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
+      neq: (c: string, v: any) => { neqFilters.push([c, v]); return api; },
       in: (c: string, vs: any[]) => { filters.push([c, vs[0]]); return api; },
       lte: (c: string, v: any) => { lteFilters.push([c, v]); return api; },
       lt: (c: string, v: any) => { ltFilters.push([c, v]); return api; },
@@ -185,6 +189,24 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+describe("outbox fixture neq SQL semantics (in-memory, not a database check)", () => {
+  it("excludes held, null and absent templates while retaining a different template", async () => {
+    state.outbox.push(
+      { id: "held", template_key: "request_intent_pending_staff_v1" },
+      { id: "ordinary", template_key: "applicant_status_link" },
+      { id: "null", template_key: null }, { id: "absent" },
+    );
+    const { data } = await getSupabaseAdmin().from("research_notification_outbox").select("*")
+      .neq("template_key", "request_intent_pending_staff_v1");
+    expect(data?.map((row: any) => row.id)).toEqual(["ordinary"]);
+  });
+  it("does not treat SQL not-equal NULL as is-not-null", async () => {
+    state.outbox.push({ id: "ordinary", template_key: "applicant_status_link" });
+    const { data } = await getSupabaseAdmin().from("research_notification_outbox").select("*").neq("template_key", null);
+    expect(data).toEqual([]);
+  });
+});
+
 describe("duplicate email privacy", () => {
   it("returns the identical generic response for new and duplicate submissions, with no token or status", async () => {
     const app = makeApp();
@@ -208,6 +230,11 @@ describe("duplicate email privacy", () => {
   });
 
   it("sends the secure link only to the address already on file", async () => {
+    const held = ["pending", "processing"].map((status) => ({
+      id: `synthetic-held-${status}`, template_key: "request_intent_pending_staff_v1", status,
+      updated_at: new Date(0).toISOString(), next_attempt_at: new Date(0).toISOString(), attempt_count: 0,
+    }));
+    state.outbox.push(...held.map((row) => ({ ...row })));
     seedApplication({ email: VALID.email, first_name: "OnFile" });
     const app = makeApp();
     const res = await request(app)
@@ -220,6 +247,7 @@ describe("duplicate email privacy", () => {
     expect(emails.sendStatusLink.mock.calls[0][0].email).toBe(VALID.email);
     // The freshly minted token goes into the email, never the HTTP response.
     expect(emails.sendStatusLink.mock.calls[0][0].token).toBeTruthy();
+    expect(state.outbox.filter((row) => row.id.startsWith("synthetic-held-"))).toEqual(held);
   });
 });
 
