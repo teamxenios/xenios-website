@@ -3030,7 +3030,7 @@
       "id": "KAN29-OPERATOR-PACKET-10427-CORRECTION-20261101",
       "title": "Apply finalized KAN31-10427 operator packet corrections",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-29",
       "baseSha": "93114c2cb93235478d1e65289101ccdc15ab7b91",
       "paths": [
@@ -3040,7 +3040,13 @@
       "scopeNote": "Create one documentation successor to exact source 93114c2cb93235478d1e65289101ccdc15ab7b91/tree 5d9aa7da493dbe149420b32df7d8fcbe809c7aac implementing the finalized current KAN31/10427 changes-required disposition: all eleven prior items remain resolved, N1 is withdrawn, and N2-N5 plus M1-M8 must be applied together. Preserve the completed predecessor task, its QA/HANDOFF history, the private W1D packet identity, and all prior evidence identities. Staging execution remains held; this custody claim authorizes no private packet, application, Auth, configuration, schema, SQL, role, capability, flag, customer, provider, notification, browser/runtime, native PG, activation, deployment, or production change, and no test, CI, review, or PR manufacture.",
       "createdAt": "2026-11-01T16:17:57.763Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-01T16:18:08.659Z"
+      "claimedAt": "2026-11-01T16:18:08.659Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "b4ed1facd41958cef123438e8df6688fe7d1f345",
+        "file": ".xenios/handoffs/2026-11-01T16-33-31-457Z-KAN29-OPERATOR-PACKET-10427-CORRECTION-20261101-codex-launch-coordination-20261005.md",
+        "at": "2026-11-01T16:33:31.462Z"
+      }
     }
   ]
 }
