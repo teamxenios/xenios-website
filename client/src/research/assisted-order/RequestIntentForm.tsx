@@ -49,6 +49,8 @@ export function RequestIntentForm({
   const [selected, setSelected] = useState<ReadonlyMap<string, Selection>>(new Map());
   const [editingSelection, setEditingSelection] = useState<string | null>(null);
   const [contact, setContact] = useState<AssistedOrderContactInput | null>(null);
+  // Unreviewed values belong only to this mounted form, never retry storage.
+  const [contactDraft, setContactDraft] = useState<FormData | null>(null);
   const [billingSame, setBillingSame] = useState(true);
   const [acknowledged, setAcknowledged] = useState<ReadonlySet<string>>(new Set());
   const [receipt, setReceipt] = useState<RequestIntentReceipt | null>(null);
@@ -166,6 +168,7 @@ export function RequestIntentForm({
       setContact({ fullLegalName: text("name"), email: text("email"), mobilePhone: text("phone"),
         ageConfirmed: true, shippingAddress, billingSameAsShipping: billingSame,
         billingAddress: billingSame ? shippingAddress : address("billing") });
+      setContactDraft(null);
       setStep("review"); setError("");
     } catch { setError("Complete the required contact and address fields."); }
   }
@@ -216,6 +219,7 @@ export function RequestIntentForm({
     }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
+  const contactValue = (name: string, fallback: string) => String(contactDraft?.get(name) ?? fallback);
   const addressFields = (prefix: "shipping" | "billing", label: string) => {
     const address = prefix === "shipping" ? contact?.shippingAddress : contact?.billingAddress;
     return <fieldset className="xenios-order-grid">
@@ -223,7 +227,7 @@ export function RequestIntentForm({
     {([["Line1", "line1", "Street address"], ["Line2", "line2", "Apartment or suite (optional)"], ["City", "city", "City"],
       ["Region", "region", "State or region"], ["PostalCode", "postalCode", "Postal code"], ["CountryCode", "countryCode", "Country code"]] as const).map(([suffix, key, text]) =>
       <label key={suffix}>{text}<input name={prefix + suffix} required={suffix !== "Line2"}
-        maxLength={suffix === "CountryCode" ? 2 : 200} defaultValue={address?.[key] ?? (suffix === "CountryCode" ? "US" : "")}
+        maxLength={suffix === "CountryCode" ? 2 : 200} defaultValue={contactValue(prefix + suffix, address?.[key] ?? (suffix === "CountryCode" ? "US" : ""))}
         autoComplete={prefix + " " + ({ Line1: "address-line1", Line2: "address-line2", City: "address-level2",
           Region: "address-level1", PostalCode: "postal-code", CountryCode: "country" } as Record<string, string>)[suffix]} /></label>)}
     </fieldset>;
@@ -327,14 +331,18 @@ export function RequestIntentForm({
       </aside></div>
     </>}
     {step === "contact" && <form onSubmit={captureContact}>
-      <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} defaultValue={contact?.fullLegalName ?? ""} /></label>
-        <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} defaultValue={contact?.email ?? ""} /></label>
-        <label>Phone<input name="phone" type="tel" required autoComplete="tel" maxLength={50} defaultValue={contact?.mobilePhone ?? ""} /></label></div>
+      <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} defaultValue={contactValue("name", contact?.fullLegalName ?? "")} /></label>
+        <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} defaultValue={contactValue("email", contact?.email ?? "")} /></label>
+        <label>Phone<input name="phone" type="tel" required autoComplete="tel" maxLength={50} defaultValue={contactValue("phone", contact?.mobilePhone ?? "")} /></label></div>
       {addressFields("shipping", "Delivery address")}
       <label className="xenios-order-check"><input type="checkbox" checked={billingSame} onChange={(event) => setBillingSame(event.target.checked)} />Billing address is the same</label>
       {!billingSame && addressFields("billing", "Billing address")}
-      <label className="xenios-order-check"><input name="age" type="checkbox" required defaultChecked={contact?.ageConfirmed ?? false} />I confirm I am at least 18 years old.</label>
-      <div className="xenios-order-actions"><button type="button" onClick={() => setStep("products")}>Back to products</button><button className="xenios-order-button" type="submit">Review request</button></div>
+      <label className="xenios-order-check"><input name="age" type="checkbox" required defaultChecked={contactDraft ? contactDraft.get("age") === "on" : contact?.ageConfirmed ?? false} />I confirm I am at least 18 years old.</label>
+      <div className="xenios-order-actions"><button type="button" onClick={(event) => {
+        const form = event.currentTarget.form;
+        if (!form) return;
+        setContactDraft(new FormData(form)); setStep("products");
+      }}>Back to products</button><button className="xenios-order-button" type="submit">Review request</button></div>
     </form>}
     {step === "review" && <section className="xenios-order-panel"><h2>Review your request</h2>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
