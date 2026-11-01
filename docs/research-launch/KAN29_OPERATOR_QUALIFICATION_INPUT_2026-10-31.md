@@ -2,13 +2,16 @@
 
 Status: corrected successor prepared; independent exact-source review pending;
 **execution HELD**. Existing Root owns this one-document correction under
-`KAN29-OPERATOR-PACKET-10427-CORRECTION-20261101`. It applies SAME Claude's
+`KAN29-OPERATOR-PHONE-WORDING-20261101`. It applies SAME Claude's
 current, edited KAN-31/10427 N2-N5 and M1-M8; all eleven 10424 findings remain
 resolved. Interim N1 was withdrawn and is not applied. This document supplies no
 activation or execution permission.
 KAN-29, KAN-109 and the full Quick Order journey remain incomplete.
 
 ## Revision and existing evidence
+
+Phone-wording and startup-scope correction of `b4ed1facd41958cef123438e8df6688fe7d1f345`;
+that version and its qualification remain preserved.
 
 This is the corrected successor of the SAME document at
 `93114c2cb93235478d1e65289101ccdc15ab7b91`, tree
@@ -251,6 +254,10 @@ and shell traffic. The following is not a total-network budget. No manual refres
 pagination, search, PWA update, requirements refresh, retry, replacement request,
 HEAD, alternate Auth route or copied bearer is included.
 
+The first seven startup rows apply only to the guest context. Staff contexts use
+the staff-specific rows and their complete privately bound startup manifest,
+including any separately approved Care navigation/page load.
+
 | Startup operation, with SW blocked | Proposed count / admission binding |
 | --- | --- |
 | `GET .../request-intents/config` (mode probe and form) | Exactly 2, with no spare for reload/refresh |
@@ -279,7 +286,7 @@ that lifecycle nor real-browser visibility/refresh behavior.
 | 2 | Unchanged guest tab: one in-page same-origin `fetch()` to `/api/research/early-access/request-intents/recover` | ONE POST with request header `Content-Type: application/json`, body exactly `{ "idempotencyKey": <same captured key> }`, no Authorization header or trailing slash. Retain the normal EA cookie in that tab, within its bound lifetime (source default 240 minutes; actual staging expiry must be bound). HTTP 200 `{ receipt }` must identify the SAME request/reference, with no replacement. No curl/cookie export or storage/memory inspection. |
 | 3 | Same guest context: page 1 staff list and saved synthetic detail via same-origin browser fetch, reusing the captured `requestId` exactly as returned | ONE list GET + ONE detail GET, no Authorization header: 401 each with exact JSON body `{"error":"authentication_required"}` while the dedicated gate is enabled. A research-wall 401 with another body does not qualify. |
 | 4 | Fresh unprivileged context: supported `/research/sign-in?returnTo=%2Fcare%2Frequest-intents`; follow the privately pre-bound landing in binding 3, then the automatic queue and explicit fixture lookup | Active research members arrive at Care; otherwise use only the one separately pre-bound typed same-tab Care navigation/page load, or stop before step 1 if that route was not admitted. ONE automatic page 1 queue GET + ONE explicit detail GET through canonical transport: 403 each; no fixture contents exposed. Count Auth-triggered dispatches, not just clicks. |
-| 5 | Fresh authorized context: `/research/sign-in?returnTo=%2Fcare%2Frequest-intents`; follow binding 3's privately pre-bound landing, then the automatic queue and explicit saved-fixture lookup | Active research members arrive at Care; otherwise only the one separately pre-bound typed same-tab Care navigation/page load is included. ONE automatic page 1 queue GET + ONE explicit detail GET through canonical transport: 200 for list and synthetic detail. Compare the displayed reference, legal name, normalized email (lowercase), normalized phone (digits only), and displayed line product/specification/variant/quantity/clinical/research-use/source-refusal fields. Acknowledgments, addresses, organization, age confirmation and billing choice are owner evidence in step 6, not UI claims. No status/assignment/payment/prescribing/fulfillment controls are invented. |
+| 5 | Fresh authorized context: `/research/sign-in?returnTo=%2Fcare%2Frequest-intents`; follow binding 3's privately pre-bound landing, then the automatic queue and explicit saved-fixture lookup | Active research members arrive at Care; otherwise only the one separately pre-bound typed same-tab Care navigation/page load is included. ONE automatic page 1 queue GET + ONE explicit detail GET through canonical transport: 200 for list and synthetic detail. Compare the displayed reference, legal name, normalized email (lowercase), phone normalized by the shared contract (digits and `+` characters retained), and displayed line product/specification/variant/quantity/clinical/research-use/source-refusal fields. Acknowledgments, addresses, organization, age confirmation and billing choice are owner evidence in step 6, not UI claims. No status/assignment/payment/prescribing/fulfillment controls are invented. |
 | 6 | Authorized database/evidence owners finish the bound collection after cleanup | Pre-count 0/post-count 1; one durable fixture and matching same-owner replay; approved private comparison of the stored contact, acknowledgments and other fields absent from the UI; intended audit/events/limiter effects; run-window logging/notification evidence; cleanup postimages. This collection and its run window close only after cleanup, covering the flag change, any restart/redeploy and any cleanup GETs. These are separately approved bounded reads, not blanket SQL or permission supplied by this table. |
 
 The qualification staff API pair is exactly:
