@@ -508,6 +508,84 @@ describe("request selection layout and controls (component fixtures, not viewpor
     expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
     expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
   });
+  it.each([false, true])("retains an unfinished contact draft across a quantity edit (previous review %s)", async (previouslyReviewed) => {
+    const api = makeApi(), storageWrites = vi.spyOn(Storage.prototype, "setItem");
+    try {
+      if (previouslyReviewed) {
+        await prepare(api, true);
+        await click("Edit selection");
+      } else {
+        await render(api);
+        await click("Add Synthetic research to request");
+      }
+      await click("Continue to contact");
+      const billingSame = () => [...host.querySelectorAll("label")]
+        .find((label) => label.textContent?.includes("Billing address is the same"))!.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+      if (!previouslyReviewed) await act(async () => billingSame().click());
+      expect(billingSame().checked).toBe(false);
+      // Both fixtures are deliberately incomplete, and the second replaces an
+      // older valid review snapshot without reviewing these newer edits.
+      const draft = {
+        name: "  Synthetic unfinished draft  ", email: "draft@example.invalid", phone: "+15555550199",
+        shippingLine1: "3 Synthetic Draft Street", shippingLine2: "Suite 7", shippingCity: "",
+        shippingRegion: "NY", shippingPostalCode: "00003", shippingCountryCode: "US",
+        billingLine1: "4 Synthetic Draft Street", billingLine2: "Unit 8", billingCity: "Draft Billing",
+        billingRegion: "WA", billingPostalCode: "", billingCountryCode: "US",
+      };
+      for (const [name, value] of Object.entries(draft)) {
+        await type(host.querySelector<HTMLInputElement>('input[name="' + name + '"]')!, value);
+      }
+      // Fresh input explicitly checks age; a previously reviewed customer
+      // explicitly unchecks it. Neither choice may revert during navigation.
+      await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+      const expectDraft = () => {
+        for (const [name, value] of Object.entries(draft)) {
+          expect(host.querySelector<HTMLInputElement>('input[name="' + name + '"]')!.value).toBe(value);
+        }
+        expect(billingSame().checked).toBe(false);
+        expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(!previouslyReviewed);
+      };
+      expectDraft();
+      expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
+      expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
+
+      await click("Back to products");
+      await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!.click());
+      expect(host.querySelector('[aria-label="Selected request items"]')?.textContent)
+        .toContain(previouslyReviewed ? "2 exact variants | 4 requested units" : "1 exact variants | 2 requested units");
+      await click("Continue to contact");
+      expectDraft();
+      expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
+      expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
+
+      // Direct submit dispatch exercises component validation, not native
+      // browser constraint validation. Retention must not turn incomplete
+      // addresses or an unchecked age into a review.
+      await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+      expect(host.querySelector('input[name="name"]')).not.toBeNull();
+      expect(host.textContent).toContain("Complete the required contact and address fields.");
+      expect(host.textContent).not.toContain("Review your request");
+      await type(host.querySelector<HTMLInputElement>('input[name="shippingCity"]')!, "Draft Delivery");
+      await type(host.querySelector<HTMLInputElement>('input[name="billingPostalCode"]')!, "00004");
+      if (previouslyReviewed) {
+        await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+        expect(host.querySelector('input[name="age"]')).not.toBeNull();
+        expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(false);
+        expect(host.textContent).not.toContain("Review your request");
+        await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+      }
+      await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+      expect(host.textContent).toContain("Review your request");
+      expect(host.textContent).toContain("Synthetic unfinished draft");
+      expect(host.textContent).toContain("draft@example.invalid");
+      const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
+      expect(checks.length).toBeGreaterThan(0);
+      expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
+      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+      expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
+      expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
+    } finally { storageWrites.mockRestore(); }
+  });
   it("counts two variants of one product as one product and two exact variants", async () => {
     const api = makeApi();
     const first = { ...item("same", false), variantId: "first", specification: "First synthetic variant" };
