@@ -2,13 +2,16 @@
 
 Status: corrected successor prepared; independent exact-source review pending;
 **execution HELD**. Existing Root owns this one-document correction under
-`KAN29-OPERATOR-PHONE-WORDING-20261101`. It applies SAME Claude's
+`KAN29-OPERATOR-SESSION-PREFLIGHT-WORDING-20261101`. It applies SAME Claude's
 current, edited KAN-31/10427 N2-N5 and M1-M8; all eleven 10424 findings remain
 resolved. Interim N1 was withdrawn and is not applied. This document supplies no
 activation or execution permission.
 KAN-29, KAN-109 and the full Quick Order journey remain incomplete.
 
 ## Revision and existing evidence
+
+C2 installed-session binding correction of `0379107fe79e691d55498b92865b4195b47214ab`;
+that version and its qualification remain preserved.
 
 Phone-wording and startup-scope correction of `b4ed1facd41958cef123438e8df6688fe7d1f345`;
 that version and its qualification remain preserved.
@@ -126,14 +129,18 @@ execution packet. All remain pending; this publication does not fill them.
      equal to the published Research Use Policy pair. Any other list fails this
      binding and stops the run before step 1; a larger allowance cannot fix it.
    - The production-like process must mount the durable session store: configured
-     `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, plus a valid UUID
+     `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`, plus a lowercase canonical UUID
      `RESEARCH_EARLY_ACCESS_OWNER_ID`. Bind `NODE_ENV` and the actual start
      mode; the repository's `start` script sets production mode. These are
      existing adapter input names, not permission to acquire or replace keys.
    - For this run, effective `RESEARCH_EARLY_ACCESS_SESSION_TTL_MINUTES` must
      be at most 240 after the source's 15-480 minute clamp (default 240).
-     The run ceiling is a precondition, not the implemented clamp. The durable
-     row has a 240-minute lifetime; a longer cookie lifetime makes unlock write
+     The run ceiling is a precondition, not the implemented clamp. The installed row lifetime must be 240 minutes: the existing read-only
+     `supabase/preflight-private-early-access-sessions.sql` must report CASE C
+     with exchange-function `session_lifetime` 240 minutes, recorded privately
+     under the separately approved owner evidence read. The older
+     `supabase/verification/research-private-early-access-sessions.verify.sql`
+     still expects 15 minutes and does not qualify; a longer cookie lifetime makes unlock write
      and then revoke the session row before refusing. Reject that configuration before any load.
    - The research wall must be configured through existing
      `RESEARCH_ACCESS_PASSWORD` or `RESEARCH_PUBLIC="true"`, with
