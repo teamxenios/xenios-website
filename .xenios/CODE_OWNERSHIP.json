@@ -2699,7 +2699,19 @@
       ],
       "state": "active",
       "claimedAt": "2026-11-01T19:31:43.694Z",
-      "heartbeatAt": "2026-11-01T19:31:43.780Z"
+      "heartbeatAt": "2026-11-01T19:53:23.321Z"
+    },
+    {
+      "id": "4c028bd8-1b37-4cb4-8b15-e45ce49900b5",
+      "task": "KAN8-PARTNER-DOWNLOAD-RECOVERY-20261101",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/partners/Resources.tsx",
+        "client/src/research/pages/partners/Resources.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-01T19:53:23.236Z",
+      "heartbeatAt": "2026-11-01T19:53:23.321Z"
     }
   ],
   "rules": [

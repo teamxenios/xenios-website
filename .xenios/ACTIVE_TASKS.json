@@ -3086,6 +3086,23 @@
       "createdAt": "2026-11-01T19:31:35.692Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-01T19:31:43.691Z"
+    },
+    {
+      "id": "KAN8-PARTNER-DOWNLOAD-RECOVERY-20261101",
+      "title": "Recover safely from partner resource-save browser exceptions",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-8",
+      "baseSha": "97b26c1f7460ec31ffa99e0e93e928ea01248dcf",
+      "paths": [
+        "client/src/research/pages/partners/Resources.tsx",
+        "client/src/research/pages/partners/Resources.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Implement one bounded KAN-8/10429 M3 partner-portal recovery unit on exact application base 97b26c1f7460ec31ffa99e0e93e928ea01248dcf: when browser resource-save throws, present safe uncertainty and a usable explicit retry while cleaning the temporary anchor and object URL. Preserve principal, permissions, adapter, policy, and gate behavior; do not activate resources or widen Auth, backend, source ownership, configuration, schema, SQL, roles, capabilities, flags, customer data, providers, notifications, private bindings, deployment, or production behavior. The exact base blobs are Resources.tsx 336cb6f8506ecfc1353b8915a65eb41fac1ed0dc and Resources.test.tsx 11802347777a004d25e0782414b7f8ffaa0f22b1. The existing delegated ci_contract_ready builder may implement after independent custody verification. Require a discriminating test-only red candidate before the minimal fix, hosted checks on the actual candidate, and independent exact-SHA review before protected integration or release; helper or author self-acceptance is forbidden. This claim itself authorizes no implementation, test, CI, PR, browser, SQL, private evaluation, environment, Jira, deployment, or production action. Preserve the disjoint active KAN225 contact-draft task and lease unchanged.",
+      "createdAt": "2026-11-01T19:53:15.433Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-01T19:53:23.233Z"
     }
   ]
 }
