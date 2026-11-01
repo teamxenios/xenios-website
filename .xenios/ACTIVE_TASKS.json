@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-01T05:26:56.779Z",
+  "updatedAt": "2026-11-01T05:40:11.416Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -3008,7 +3008,7 @@
       "id": "KAN29-OPERATOR-PACKET-CORRECTION-20261101",
       "title": "Correct existing operator qualification procedure after finalized10424",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-29",
       "baseSha": "833f426bf07799f953cf9ee966fae11f72b6743a",
       "paths": [
@@ -3018,7 +3018,13 @@
       "scopeNote": "Create one documentation successor to source 833f426bf07799f953cf9ee966fae11f72b6743a/tree febbfd31a469db98bdf00def8dff1a2564e3ec34 that applies the finalized KAN31-10424 R1-R8 and P1-P3 operator delta and updates the recorded live source to 97b26c1f7460ec31ffa99e0e93e928ea01248dcf/tree 89ac4efb4bef1a0f5450247feb8fde607dad3bd6. Preserve the original private W1D packet identity aa5850c20ddfe2b5fcdb21dc83b5c4e9db62b116e7cdc1f386eb81204a4ef340 and source 833 evidence identities. Staging execution remains held pending KAN29/10003 security closure plus private target, parity, identity, role-inventory, capability-flag preimage, approver, resource, named-executor effects, evidence, cleanup, and allowance bindings under KAN29/10241; reuse the nominated operator without requesting another principal. Do not change application code, Auth, configuration, schema, SQL, roles, capabilities, flags, customer data, providers, notifications, browser/runtime behavior, native PG, activation, deployment, or production state. Do not run CI, tests, staging qualification, grants, or production operations as part of this custody claim.",
       "createdAt": "2026-11-01T05:26:56.779Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-01T05:27:07.299Z"
+      "claimedAt": "2026-11-01T05:27:07.299Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "93114c2cb93235478d1e65289101ccdc15ab7b91",
+        "file": ".xenios/handoffs/2026-11-01T05-40-11-413Z-KAN29-OPERATOR-PACKET-CORRECTION-20261101-codex-launch-coordination-20261005.md",
+        "at": "2026-11-01T05:40:11.416Z"
+      }
     }
   ]
 }
