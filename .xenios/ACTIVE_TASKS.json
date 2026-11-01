@@ -3162,6 +3162,23 @@
         "file": ".xenios/handoffs/2026-11-01T22-25-58-856Z-KAN13-CONTACT-PARTNER-COMPOSITION-20261101-codex-launch-coordination-20261005.md",
         "at": "2026-11-01T22:25:58.860Z"
       }
+    },
+    {
+      "id": "KAN25-QO-BILLING-DRAFT-RETENTION-20261101",
+      "title": "Retain separate-billing draft values across same-mount toggles",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-25",
+      "baseSha": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "M0 customer-data-loss unit on exact production source 0ca22721bc4cd5e46f50ffbc842f185e7e3d3360/tree aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c, using runtime blob 22a2b75d811630ae7d02b2ef7cc69599a38b75ef and test blob 75b1ca704bbb13a8c9909f1b625a499d1b61fbd2. Preserve all raw separate-billing values, including deliberate blanks, through same-mounted-form toggles to shipping-same and back and through Back/product-return, covering fresh and newer-than-reviewed edits. Retain existing validation, selected-same shipping semantics, consent and acknowledgement resets, frozen attempt payload, keys and recovery, owner-remount privacy, and component-memory disposal. Use in-memory component state only; do not add browser storage or change Auth, server, Core, Care, catalog, SQL, schema, configuration, flags, roles, notifications, providers, customer records, runtime activation, dependencies or workflows. Root and the existing helper may materially author; independent acceptance remains with SAME Claude c16 through the existing KAN31 route and requires a separate actual acknowledgement and disposition. Qualification is synthetic and hosted only. The intended source branch is codex/quick-order-billing-draft-20261101, to be created separately after custody readback. This claim itself authorizes no source edit, branch creation, local Node, script installation, test, build, CI, admission, census, browser, SQL, private or managed evaluation, Jira mutation, deployment or production operation.",
+      "createdAt": "2026-11-01T22:55:25.290Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-01T22:55:34.516Z"
     }
   ]
 }
