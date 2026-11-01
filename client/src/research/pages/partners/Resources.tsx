@@ -70,18 +70,25 @@ function fallbackFilename(card: ResourceCardDto): string {
   return `${stem} v${card.versionNumber}.pdf`;
 }
 
-// Save server-streamed bytes through a short-lived object URL. The URL is
-// local to this browser and revoked after the save starts.
+// Save server-streamed bytes through a short-lived object URL. Clean up the
+// temporary anchor and URL even when the browser handoff throws.
 function saveBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.rel = "noopener";
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  let anchor: HTMLAnchorElement | null = null;
+  try {
+    anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.rel = "noopener";
+    document.body.appendChild(anchor);
+    anchor.click();
+  } finally {
+    try {
+      anchor?.remove();
+    } finally {
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+  }
 }
 
 type DownloadState = { kind: "idle" } | { kind: "working" } | { kind: "error"; message: string };
@@ -133,8 +140,15 @@ function ResourceCard({ card, token }: { card: ResourceCardDto; token: string | 
     if (result.kind === "ok") {
       // Re-checked immediately before the only side effect.
       if (!op.isCurrent()) return;
-      saveBlob(result.blob, result.filename ?? fallbackFilename(card));
-      setDownload({ kind: "idle" });
+      try {
+        saveBlob(result.blob, result.filename ?? fallbackFilename(card));
+      } catch {
+        if (op.isCurrent()) {
+          setDownload({ kind: "error", message: "We couldn't confirm that the download started. Try again." });
+        }
+        return;
+      }
+      if (op.isCurrent()) setDownload({ kind: "idle" });
       return;
     }
     setDownload({
