@@ -586,6 +586,89 @@ describe("request selection layout and controls (component fixtures, not viewpor
       expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
     } finally { storageWrites.mockRestore(); }
   });
+  it.each([
+    ["fresh separate address", false, false],
+    ["newer edits to a reviewed address", true, false],
+    ["hidden address across product navigation", false, true],
+  ] as const)("retains raw billing input when toggled off and on: %s", async (_scenario, previouslyReviewed, visitProducts) => {
+    const api = makeApi(), storageWrites = vi.spyOn(Storage.prototype, "setItem");
+    try {
+      const shippingAddress = { line1: "1 Synthetic Street", line2: "Suite 2", city: "Test",
+        region: "TX", postalCode: "00000", countryCode: "US" };
+      const billingAddress = { line1: "  6 Synthetic Billing Lane  ", line2: "", city: "",
+        region: "WA", postalCode: "00006", countryCode: "US" };
+      const contact: RequestIntentInput["contact"] = { fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid", mobilePhone: "+15555550123",
+        ageConfirmed: true, shippingAddress, billingSameAsShipping: false, billingAddress };
+      const billingSame = () => [...host.querySelectorAll("label")]
+        .find((label) => label.textContent?.includes("Billing address is the same"))!.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
+      if (previouslyReviewed) {
+        await prepare(api, true); await click("Edit selection"); await click("Continue to contact");
+      } else {
+        await render(api); await click("Add Synthetic research to request"); await click("Continue to contact");
+        for (const [name, value] of Object.entries({
+          name: contact.fullLegalName, email: contact.email, phone: contact.mobilePhone,
+          shippingLine1: shippingAddress.line1, shippingLine2: shippingAddress.line2, shippingCity: shippingAddress.city,
+          shippingRegion: shippingAddress.region, shippingPostalCode: shippingAddress.postalCode, shippingCountryCode: shippingAddress.countryCode,
+        })) await type(host.querySelector<HTMLInputElement>('input[name="' + name + '"]')!, value);
+        await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+        await act(async () => billingSame().click());
+      }
+      expect(billingSame().checked).toBe(false);
+      // Explicit blanks must replace the old reviewed Unit 4 / Billing Test,
+      // while whitespace remains raw until a successful contact review.
+      for (const [name, value] of Object.entries({
+        billingLine1: billingAddress.line1, billingLine2: billingAddress.line2, billingCity: billingAddress.city,
+        billingRegion: billingAddress.region, billingPostalCode: billingAddress.postalCode, billingCountryCode: billingAddress.countryCode,
+      })) await type(host.querySelector<HTMLInputElement>('input[name="' + name + '"]')!, value);
+      expectContactInputs(contact);
+
+      await act(async () => billingSame().click());
+      expect(billingSame().checked).toBe(true);
+      expect(host.querySelector('input[name="billingLine1"]')).toBeNull();
+      if (visitProducts) {
+        await click("Back to products");
+        await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!.click());
+        expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("1 exact variants | 2 requested units");
+        await click("Continue to contact");
+        expect(billingSame().checked).toBe(true);
+        expect(host.querySelector('input[name="billingLine1"]')).toBeNull();
+      }
+      await act(async () => billingSame().click());
+      expectContactInputs(contact);
+      expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
+      expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
+
+      // Direct dispatch checks component validation, not native browser validity.
+      await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+      expect(host.textContent).toContain("Complete the required contact and address fields.");
+      expect(host.textContent).not.toContain("Review your request");
+      expectContactInputs(contact);
+      // Choosing shipping explicitly must ignore the incomplete inactive draft.
+      await act(async () => billingSame().click());
+      await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+      expect(host.textContent).toContain("Review your request");
+      const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
+      expect(checks.length).toBeGreaterThan(0); expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
+      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+      expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
+      expect(storageWrites).not.toHaveBeenCalled();
+      await act(async () => checks.forEach((checkbox) => checkbox.click()));
+      await click("Submit for review");
+      expect(api.submit).toHaveBeenCalledTimes(1);
+      const submitted = api.submit.mock.calls[0][0].contact;
+      expect(submitted.billingSameAsShipping).toBe(true);
+      expect(submitted.shippingAddress).toEqual(shippingAddress);
+      expect(submitted.billingAddress).toEqual(shippingAddress);
+      expect(api.recover).not.toHaveBeenCalled(); expect(host.textContent).toContain(reference);
+      // Submission may persist only its existing non-contact retry marker.
+      expect(storageWrites.mock.calls.length).toBeGreaterThan(0);
+      for (const [key, value] of storageWrites.mock.calls) {
+        expect(key).toBe(REQUEST_INTENT_ATTEMPT_KEY);
+        expect(Object.keys(JSON.parse(value)).sort()).toEqual(["acceptedAt", "key", "state"]);
+      }
+      expect(sessionStorage.length).toBe(0);
+    } finally { storageWrites.mockRestore(); }
+  });
   it("counts two variants of one product as one product and two exact variants", async () => {
     const api = makeApi();
     const first = { ...item("same", false), variantId: "first", specification: "First synthetic variant" };
