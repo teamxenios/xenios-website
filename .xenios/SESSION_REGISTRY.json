@@ -574,8 +574,8 @@
       "branch": "codex/kan23-support-links-20261020",
       "state": "active",
       "startedAt": "2026-10-28T02:03:29.691Z",
-      "heartbeatAt": "2026-11-01T05:40:11.344Z",
-      "note": "Closing one-path finalized KAN31-10424 operator packet successor to exact pushed SHA 93114c2cb93235478d1e65289101ccdc15ab7b91; staging execution remains held on security closure, private bindings, allowance, named executor, effects, evidence, and cleanup."
+      "heartbeatAt": "2026-11-01T16:18:08.734Z",
+      "note": "Claimed one-path finalized KAN31-10427 operator packet successor for N2-N5 and M1-M8 with N1 withdrawn; predecessor QA/HANDOFF remains immutable and staging execution remains held."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
