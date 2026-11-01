@@ -76,7 +76,7 @@ let revokeObjectURL: ReturnType<typeof vi.fn>;
 let anchorClick: ReturnType<typeof vi.spyOn>;
 let savedAs: string[];
 
-const flush = () => act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+const flush = () => act(async () => { await vi.advanceTimersByTimeAsync(0); });
 async function render() {
   await act(async () => { root.render(<Resources />); });
   await flush();
@@ -86,6 +86,7 @@ const click = (button: HTMLElement | null) => act(async () => { button?.click();
 const articles = () => host.querySelectorAll("article.card");
 
 beforeEach(() => {
+  vi.useFakeTimers();
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
   host = document.createElement("div");
   document.body.append(host);
@@ -110,6 +111,8 @@ afterEach(async () => {
   host.remove();
   delete (URL as unknown as Record<string, unknown>).createObjectURL;
   delete (URL as unknown as Record<string, unknown>).revokeObjectURL;
+  vi.clearAllTimers();
+  vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
@@ -188,6 +191,91 @@ describe("partner resources library", () => {
     expect(savedAs).toEqual(["affiliate-intro-v2.pdf|blob:synthetic-object-url"]);
     expect(host.querySelector('[role="alert"]')).toBeNull();
     expect(downloadButton()?.disabled).toBe(false);
+  });
+
+  it.each(["object-url", "anchor-click"] as const)("recovers from a browser %s failure only after an explicit fresh download", async (failure) => {
+    const privateDetail = "PRIVATE-BROWSER-SAVE-DETAIL";
+    if (failure === "object-url") {
+      createObjectURL.mockImplementationOnce(() => { throw new Error(privateDetail); })
+        .mockReturnValueOnce("blob:manual-retry");
+    } else {
+      createObjectURL.mockReturnValueOnce("blob:failed-attempt").mockReturnValueOnce("blob:manual-retry");
+      anchorClick.mockImplementationOnce(() => { throw new Error(privateDetail); });
+    }
+    await render();
+    await click(downloadButton());
+    await flush();
+
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(downloadButton()?.disabled).toBe(false);
+    expect(host.querySelector('[role="alert"]')?.textContent)
+      .toBe("We couldn't confirm that the download started. Try again.");
+    expect(host.textContent).not.toContain(privateDetail);
+    expect(host.textContent).not.toMatch(/download (?:complete|saved)|file saved/i);
+    expect(savedAs).toEqual([]);
+    expect(document.body.querySelector("a[download]")).toBeNull();
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    expect(fetcher).toHaveBeenCalledTimes(1); // No automatic retry after failure.
+    expect(revokeObjectURL.mock.calls.map(([url]) => url))
+      .toEqual(failure === "anchor-click" ? ["blob:failed-attempt"] : []);
+
+    await click(downloadButton());
+    await flush();
+
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    for (const [path, options] of fetcher.mock.calls) {
+      expect(path).toBe("/api/research/partner/resources/" + RESOURCE_ID + "/download");
+      expect(options).toEqual(expect.objectContaining({
+        method: "GET",
+        cache: "no-store",
+        credentials: "same-origin",
+        headers: { Authorization: "Bearer synthetic-member-one" },
+      }));
+    }
+    expect(savedAs).toEqual(["affiliate-intro-v2.pdf|blob:manual-retry"]);
+    expect(anchorClick).toHaveBeenCalledTimes(failure === "anchor-click" ? 2 : 1);
+    expect(host.querySelector('[role="alert"]')).toBeNull();
+    expect(downloadButton()?.disabled).toBe(false);
+    expect(document.body.querySelector("a[download]")).toBeNull();
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    expect(revokeObjectURL.mock.calls.map(([url]) => url))
+      .toEqual(failure === "anchor-click" ? ["blob:failed-attempt", "blob:manual-retry"] : ["blob:manual-retry"]);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(["logout", "account-switch", "unmount"] as const)("discards the old download before browser handoff after %s", async (transition) => {
+    let resolveDownload!: (value: ReturnType<typeof pdfResponse>) => void;
+    const pending = new Promise<ReturnType<typeof pdfResponse>>((resolve) => { resolveDownload = resolve; });
+    fetcher.mockReturnValueOnce(pending);
+    createObjectURL.mockImplementation(() => { throw new Error("PRIVATE-STALE-SAVE-DETAIL"); });
+    await render();
+    await click(downloadButton());
+    await flush();
+    expect(downloadButton()?.disabled).toBe(true);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+
+    if (transition === "unmount") {
+      await act(async () => root.unmount());
+      root = createRoot(host);
+    } else {
+      session.token = transition === "logout" ? null : "synthetic-member-two";
+      mocks.library.mockResolvedValue({ kind: "ok", data: library([]) });
+      await render();
+    }
+    await act(async () => resolveDownload(pdfResponse()));
+    await flush();
+
+    expect(createObjectURL).not.toHaveBeenCalled();
+    expect(anchorClick).not.toHaveBeenCalled();
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+    expect(savedAs).toEqual([]);
+    expect(document.body.querySelector("a[download]")).toBeNull();
+    expect(host.textContent).not.toContain("PRIVATE-STALE-SAVE-DETAIL");
+    expect(host.textContent).not.toContain("We couldn't confirm that the download started");
+    expect(fetcher).toHaveBeenCalledTimes(1);
   });
 
   it.each([
