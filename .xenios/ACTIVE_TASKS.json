@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-01T01:17:11.462Z",
+  "updatedAt": "2026-11-01T01:27:03.620Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -2986,7 +2986,7 @@
       "id": "KAN29-OPERATOR-QUALIFICATION-INPUT-20261031",
       "title": "Bind existing staff activation decision and bounded operator qualification input",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-29",
       "baseSha": "6c63aa923c457c1bdaec5a94c3bbe9b8d4664f7f",
       "paths": [
@@ -2996,7 +2996,13 @@
       "scopeNote": "Create one secret-free source-binding and held-execution addendum for the already-existing private W1D STAFF_ACTIVATION_DECISION.md packet (SHA-256 aa5850c20ddfe2b5fcdb21dc83b5c4e9db62b116e7cdc1f386eb81204a4ef340; accepted source KAN29/10241) without duplicating or overwriting that private packet. Bind current authoritative release 6c63aa923c457c1bdaec5a94c3bbe9b8d4664f7f/tree 75b7c3eef86340e17e47e0b033dbc8b6fab927ca, record reused proof and source pins, identify the precise security-owner closure evidence still missing from KAN85/147, reference the already nominated operator from KAN29/10238 for private verification without requesting another account, and define a bounded staging-only synthetic allow/deny plus audit qualification with evidence and cleanup requirements. Record exact remaining authority, identity, preimage, and allowance inputs. Do not place secrets, private principal UUIDs, customer data, credential identifiers, or credential values in Git. Do not grant roles or capabilities; change flags, configuration, schema, SQL, runtime, Auth, Core, Care, catalog, notifications, providers, payments, activation, deployment, or production state; or execute browser, customer, operator, or managed-service qualification. Preserve all KAN29/10003, KAN29/10241, browser, SQL, native PG, resource, and activation holds, with full QO/R2/M0-M5/AE remaining incomplete.",
       "createdAt": "2026-11-01T01:17:11.462Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-01T01:17:21.208Z"
+      "claimedAt": "2026-11-01T01:17:21.208Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "833f426bf07799f953cf9ee966fae11f72b6743a",
+        "file": ".xenios/handoffs/2026-11-01T01-27-03-616Z-KAN29-OPERATOR-QUALIFICATION-INPUT-20261031-codex-launch-coordination-20261005.md",
+        "at": "2026-11-01T01:27:03.620Z"
+      }
     }
   ]
 }

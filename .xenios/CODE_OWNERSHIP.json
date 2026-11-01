@@ -2652,9 +2652,9 @@
       "paths": [
         "docs/research-launch/KAN29_OPERATOR_QUALIFICATION_INPUT_2026-10-31.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-01T01:17:21.224Z",
-      "heartbeatAt": "2026-11-01T01:17:21.325Z"
+      "heartbeatAt": "2026-11-01T01:27:03.516Z"
     }
   ],
   "rules": [
