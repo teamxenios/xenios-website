@@ -574,8 +574,8 @@
       "branch": "codex/kan23-support-links-20261020",
       "state": "active",
       "startedAt": "2026-10-28T02:03:29.691Z",
-      "heartbeatAt": "2026-11-01T16:33:34.949Z",
-      "note": "KAN29 10427 corrected operator packet b4ed1fac QA/HANDOFF; raw frozen handoff preserved; staging and execution held; custodian IDLE"
+      "heartbeatAt": "2026-11-01T19:28:09.527Z",
+      "note": "Claimed one-path documentation-only KAN29 phone-normalization wording and guest-startup scope correction at b4ed1fac; no functional source assignment; all execution holds persist."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

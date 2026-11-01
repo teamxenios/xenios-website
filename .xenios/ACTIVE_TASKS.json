@@ -3047,6 +3047,22 @@
         "file": ".xenios/handoffs/2026-11-01T16-33-31-457Z-KAN29-OPERATOR-PACKET-10427-CORRECTION-20261101-codex-launch-coordination-20261005.md",
         "at": "2026-11-01T16:33:31.462Z"
       }
+    },
+    {
+      "id": "KAN29-OPERATOR-PHONE-WORDING-20261101",
+      "title": "Correct operator phone-normalization wording and guest-startup scope",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-29",
+      "baseSha": "b4ed1facd41958cef123438e8df6688fe7d1f345",
+      "paths": [
+        "docs/research-launch/KAN29_OPERATOR_QUALIFICATION_INPUT_2026-10-31.md"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Create one documentation-only successor to exact source b4ed1facd41958cef123438e8df6688fe7d1f345/tree 82466565fe36a73cbbfe981cd1a3ac4b123d58f4 applying the Samuel-authorized minimal phone-normalization wording correction and the guest-startup scope note in the same edit. The source normalizer at shared/research/assisted-order/contract.ts:447-448 retains only [0-9+] characters; do not claim leading-plus-only or E.164 normalization. This custody claim assigns no functional source unit and authorizes no application, Auth, configuration, schema, SQL, role, capability, flag, customer, provider, notification, browser/runtime, native PG, activation, deployment, production, test, build, CI, review, or Jira change. Preserve all completed predecessor QA/HANDOFF records and all permanent staging, security, private-binding, KAN29/10241, resource, and production holds.",
+      "createdAt": "2026-11-01T19:27:58.864Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-01T19:28:09.428Z"
     }
   ]
 }
