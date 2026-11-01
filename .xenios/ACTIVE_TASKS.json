@@ -3074,7 +3074,7 @@
       "id": "KAN225-QO-CONTACT-DRAFT-20261101",
       "title": "Retain Quick Order contact draft across in-form product navigation",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-225",
       "baseSha": "97b26c1f7460ec31ffa99e0e93e928ea01248dcf",
       "paths": [
@@ -3085,7 +3085,13 @@
       "scopeNote": "Implement one bounded Quick Order functional unit on exact application base 97b26c1f7460ec31ffa99e0e93e928ea01248dcf/tree 89ac4efb4bef1a0f5450247feb8fde607dad3bd6: unfinished contact, address, age, and billing input must survive Back to products then Continue to contact within the same mounted RequestIntentForm, including edits newer than the prior review. Add discriminating partial/unreviewed and newer-edit regressions while preserving in-memory-only retention and all existing validation, consent, frozen-payload, principal-change, and unmount boundaries. Do not add browser storage or alter implicit consent, request/recover, Auth, configuration, schema, SQL, roles, capabilities, flags, customer data, providers, notifications, private bindings, deployment, or production behavior. Implementation may use the existing delegated quick_order_selection_unit helper after independent custody verification. Relevant checks must run against the actual candidate through the hosted path; local Node, browser, and SQL execution are excluded. Candidate source requires CI and independent exact-SHA review before integration. This claim itself authorizes no implementation, test, CI, PR, browser, private evaluation, Jira mutation, deployment, or production action.",
       "createdAt": "2026-11-01T19:31:35.692Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-01T19:31:43.691Z"
+      "claimedAt": "2026-11-01T19:31:43.691Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "06cca6ac38c49ef484a0bbe4ae3b6a7bcf1b9766",
+        "file": ".xenios/handoffs/2026-11-01T20-04-54-938Z-KAN225-QO-CONTACT-DRAFT-20261101-codex-launch-coordination-20261005.md",
+        "at": "2026-11-01T20:04:54.943Z"
+      }
     },
     {
       "id": "KAN8-PARTNER-DOWNLOAD-RECOVERY-20261101",
