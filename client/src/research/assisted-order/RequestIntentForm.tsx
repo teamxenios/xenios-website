@@ -154,6 +154,15 @@ export function RequestIntentForm({
     } catch { if (mounted.current) setError(REQUEST_INTENT_RECOVERY_NOTICE); }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
+  function rememberContactDraft(form: HTMLFormElement) {
+    const data = new FormData(form);
+    // Hidden billing fields are absent; explicit empty values are still current.
+    for (const suffix of ["Line1", "Line2", "City", "Region", "PostalCode", "CountryCode"]) {
+      const name = "billing" + suffix, retained = contactDraft?.get(name) ?? null;
+      if (!data.has(name) && retained !== null) data.set(name, retained);
+    }
+    setContactDraft(data);
+  }
   function captureContact(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -335,13 +344,17 @@ export function RequestIntentForm({
         <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} defaultValue={contactValue("email", contact?.email ?? "")} /></label>
         <label>Phone<input name="phone" type="tel" required autoComplete="tel" maxLength={50} defaultValue={contactValue("phone", contact?.mobilePhone ?? "")} /></label></div>
       {addressFields("shipping", "Delivery address")}
-      <label className="xenios-order-check"><input type="checkbox" checked={billingSame} onChange={(event) => setBillingSame(event.target.checked)} />Billing address is the same</label>
+      <label className="xenios-order-check"><input type="checkbox" checked={billingSame} onChange={(event) => {
+        const form = event.currentTarget.form;
+        if (event.currentTarget.checked && form) rememberContactDraft(form);
+        setBillingSame(event.currentTarget.checked);
+      }} />Billing address is the same</label>
       {!billingSame && addressFields("billing", "Billing address")}
       <label className="xenios-order-check"><input name="age" type="checkbox" required defaultChecked={contactDraft ? contactDraft.get("age") === "on" : contact?.ageConfirmed ?? false} />I confirm I am at least 18 years old.</label>
       <div className="xenios-order-actions"><button type="button" onClick={(event) => {
         const form = event.currentTarget.form;
         if (!form) return;
-        setContactDraft(new FormData(form)); setStep("products");
+        rememberContactDraft(form); setStep("products");
       }}>Back to products</button><button className="xenios-order-button" type="submit">Review request</button></div>
     </form>}
     {step === "review" && <section className="xenios-order-panel"><h2>Review your request</h2>
