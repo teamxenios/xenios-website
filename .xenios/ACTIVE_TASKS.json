@@ -3142,7 +3142,7 @@
       "id": "KAN13-CONTACT-PARTNER-COMPOSITION-20261101",
       "title": "Compose accepted Contact and Partner recovery candidates",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "06cca6ac38c49ef484a0bbe4ae3b6a7bcf1b9766",
       "paths": [
@@ -3155,7 +3155,13 @@
       "scopeNote": "Compose only the independently accepted, disjoint Contact candidate 06cca6ac38c49ef484a0bbe4ae3b6a7bcf1b9766 and Partner Resource candidate 9d34c5cfd9fbca873750f8543b7c85d375865f79 over release base 97b26c1f7460ec31ffa99e0e93e928ea01248dcf. Preserve the accepted blobs RequestIntentForm.tsx 22a2b75d811630ae7d02b2ef7cc69599a38b75ef, RequestIntentForm.test.tsx 75b1ca704bbb13a8c9909f1b625a499d1b61fbd2, Resources.tsx 54c5068496b7d01d1d3768530dc40dd7a4d921aa, and Resources.test.tsx c0dce8c026e20b67ef253a91a50e6b00fbeb38e4. Qualify the actual composed tree through the required hosted checks, then perform protected release separately under Samuel's current authority and the repository production contract. No new source acceptance is required for unchanged accepted blobs, but composition and release evidence remain required. The custodian authors no application source. This claim itself authorizes no merge, source edit, test, build, CI, browser, SQL, private evaluation, provider, configuration, role, flag, customer, PR, Jira, deployment, or production operation. All operational, resource, staging-security, private-binding, KAN29/10241, native PG17, and production safeguards remain in force.",
       "createdAt": "2026-11-01T21:43:09.403Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-01T21:43:17.788Z"
+      "claimedAt": "2026-11-01T21:43:17.788Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "e4047a57989acbebea2aa6b1aec19a5592980634",
+        "file": ".xenios/handoffs/2026-11-01T22-25-58-856Z-KAN13-CONTACT-PARTNER-COMPOSITION-20261101-codex-launch-coordination-20261005.md",
+        "at": "2026-11-01T22:25:58.860Z"
+      }
     }
   ]
 }

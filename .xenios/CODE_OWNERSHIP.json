@@ -2734,7 +2734,7 @@
         "client/src/research/pages/partners/Resources.tsx",
         "client/src/research/pages/partners/Resources.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-01T21:43:17.793Z",
       "heartbeatAt": "2026-11-01T21:43:17.900Z"
     }
