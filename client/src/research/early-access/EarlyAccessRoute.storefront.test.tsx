@@ -875,9 +875,39 @@ describe("the login-free request-only entry", () => {
     await settleStorefront();
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expect(container.querySelector('input[name="name"]')).toBeNull();
+    expect(container.textContent).not.toContain("Request products for review");
     expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
     expect(recoveryPosts(fetch)).toHaveLength(0);
     expect(render).toHaveBeenCalledTimes(1);
+  });
+  it("keeps deliberate surrounding-navigation focus when the same member receipt returns", async () => {
+    // The route fixture omits the surrounding app navigation. Model its
+    // persistent control outside this React root, without inventing an intake link.
+    const navigation = document.createElement("a");
+    navigation.href = "/research/support";
+    navigation.textContent = "Surrounding navigation fixture";
+    document.body.append(navigation);
+    try {
+      const render = vi.spyOn(root, "render");
+      const { member, fetch } = await recoveredMember();
+      navigation.focus();
+      expect(document.activeElement).toBe(navigation);
+      await act(async () => researchStore.publish(checkingMember()));
+      expect(navigation.isConnected).toBe(true);
+      expect(document.activeElement).toBe(navigation);
+      expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
+      await act(async () => researchStore.publish({ member, memberToken: "synthetic-refreshed",
+        memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
+      await settleStorefront();
+      expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+      expect(document.activeElement).toBe(navigation);
+      expect(container.textContent).not.toContain("Request products for review");
+      expect(recoveryPosts(fetch)).toHaveLength(1);
+      expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+      expect(render).toHaveBeenCalledTimes(1);
+    } finally {
+      navigation.remove();
+    }
   });
   it.each(["on", "off", "unknown"] as const)(
     "restores only the confirmed member receipt after context re-verification with %s intake", async (mode) => {
@@ -1024,6 +1054,33 @@ describe("the login-free request-only entry", () => {
     expect(sessionReads(fetch)).toHaveLength(2);
     expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
     expect(container.textContent).toContain("The request form is currently unavailable");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(recoveryPosts(fetch)).toHaveLength(1);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
+    expect(render).toHaveBeenCalledTimes(1);
+  });
+  it("does not resurrect a member receipt when an expired Early Access session remounts an open door", async () => {
+    const member = { firstName: "Open expiry fixture", status: "active" as const,
+      applicationStatus: null, cartScope: "a".repeat(64) };
+    researchStore.publish({ member, memberToken: "synthetic-before", memberChecking: false,
+      memberSessionStatus: "authenticated", recovery: "none" });
+    const expires = Date.now() + 60000;
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "accepted", sessionReplies: [
+      { authenticated: true, expiresAt: new Date(expires).toISOString() },
+      { authenticated: true, expiresAt: null },
+    ] });
+    const render = vi.spyOn(root, "render");
+    await act(async () => root.render(<EarlyAccessRoute requestOnly />));
+    await settleStorefront();
+    await act(async () => recoverButton().click());
+    expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
+    vi.spyOn(Date, "now").mockReturnValue(expires + 1);
+    await act(async () => window.dispatchEvent(new Event("focus")));
+    await waitForAdd();
+    expect(sessionReads(fetch)).toHaveLength(2);
+    expect(container.textContent).toContain("Request products for review");
+    expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
     expect(recoveryPosts(fetch)).toHaveLength(1);
     expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
