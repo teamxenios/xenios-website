@@ -574,8 +574,8 @@
       "branch": "codex/kan23-support-links-20261020",
       "state": "active",
       "startedAt": "2026-10-28T02:03:29.691Z",
-      "heartbeatAt": "2026-11-01T20:04:55.021Z",
-      "note": "KAN225 Contact draft candidate 06cca6a QA/HANDOFF with exact frozen qualification; independent source acceptance pending; Resources lane remains active; all integration and production holds persist."
+      "heartbeatAt": "2026-11-01T20:05:17.943Z",
+      "note": "Claimed one-path KAN29 installed-session 240-minute preflight and lowercase owner UUID wording correction at doc 0379107; Resources lane remains active; Contact is QA/HANDOFF; all execution holds persist."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

@@ -3109,6 +3109,22 @@
       "createdAt": "2026-11-01T19:53:15.433Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-01T19:53:23.233Z"
+    },
+    {
+      "id": "KAN29-OPERATOR-SESSION-PREFLIGHT-WORDING-20261101",
+      "title": "Correct operator installed-session preflight wording",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-29",
+      "baseSha": "0379107fe79e691d55498b92865b4195b47214ab",
+      "paths": [
+        "docs/research-launch/KAN29_OPERATOR_QUALIFICATION_INPUT_2026-10-31.md"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Create one documentation-only successor to exact source 0379107fe79e691d55498b92865b4195b47214ab/tree 9e9501178c548e66e6655d49df17eefc6c65d3c3 applying the published KAN31/10430 C2 required correction: state the installed external-access session 240-minute preflight pass criterion and require the lowercase canonical owner UUID. Do not prescribe a SQL-script repair. Preserve the resolved phone C1 and guest-startup scope wording, all previously applied KAN31/10427 corrections, completed predecessor QA/HANDOFF records, and all evidence identities. This custody claim authorizes no application source, Auth, configuration, schema, SQL, role, capability, flag, customer, provider, notification, browser/runtime, native PG, activation, test, CI, PR, private evaluation, Jira, deployment, or production action. All source, operational, resource, staging security, private-binding, KAN29/10241, native PG17, and production holds remain in force.",
+      "createdAt": "2026-11-01T20:05:08.872Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-01T20:05:17.863Z"
     }
   ]
 }
