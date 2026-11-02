@@ -2773,7 +2773,7 @@
         "client/src/research/account-portal/views/SupportView.pending.test.tsx",
         "client/src/research/account-portal/views/support-documents.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-02T04:41:52.127Z",
       "heartbeatAt": "2026-11-02T04:41:52.127Z"
     }
