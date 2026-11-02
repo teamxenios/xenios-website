@@ -2793,6 +2793,18 @@
       "state": "handoff",
       "claimedAt": "2026-11-02T05:22:15.824Z",
       "heartbeatAt": "2026-11-02T05:22:15.824Z"
+    },
+    {
+      "id": "dbc33c6a-d480-4a79-bc66-47f15514a968",
+      "task": "KAN31-QUICK-ORDER-CATALOG-RECOVERY-20261102",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/request-intent-catalog-retry.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-02T06:50:12.455Z",
+      "heartbeatAt": "2026-11-02T06:50:12.455Z"
     }
   ],
   "rules": [
