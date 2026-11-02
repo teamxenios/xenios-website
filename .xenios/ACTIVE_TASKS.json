@@ -3185,6 +3185,23 @@
         "file": ".xenios/handoffs/2026-11-01T23-15-45-964Z-KAN25-QO-BILLING-DRAFT-RETENTION-20261101-codex-launch-coordination-20261005.md",
         "at": "2026-11-01T23:15:45.967Z"
       }
+    },
+    {
+      "id": "KAN8-ADMIN-RESOURCE-SAVE-RECOVERY-20261102",
+      "title": "Apply Claude admin Resource Hub save-recovery proposal",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-8",
+      "baseSha": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
+      "paths": [
+        "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+        "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Under Samuel's current instruction, Root may apply Claude c16's existing KAN8/10437/10440 isolated v2 proposal unchanged through valid Root custody in an approved existing checkout and branch. Claude remains the material implementation and test author; delivery is still pending, and no patch hash or execution result may be invented. Start with the delivered test-only regression and preserve the actual hosted RED, then apply the unchanged runtime patch and obtain actual hosted GREEN. All tests remain NOT RUN until actual execution. The bounded outcome is truthful browser-save uncertainty, explicit manual retry, and temporary-resource cleanup; busy already clears before save, so make no stuck-button claim. Preserve authority, principal, current-operation and obsolete guards, API, adapter, gates, publication, storage, token, URL semantics, and privacy. Applying unchanged delivered bytes is not authorship under actual KAN8/10440 and Samuel's current instruction. Root remains eligible as independent acceptor only while not materially authoring code or tests; material changes require a different eligible existing route. Exact qualified release base is 0ca22721bc4cd5e46f50ffbc842f185e7e3d3360 with ResourceHubAdmin.tsx blob e32708c5463b9ba590cf87981979924c32277c0c and ResourceHubAdmin.test.tsx blob 79e4452e6b88c8d4e0c8c1e22ec92a16e8478e7f, identical at pinned Claude base 9d34c5cfd9fbca873750f8543b7c85d375865f79 and frozen source 0e7e27e0f9f946900bdc54676741ba0a9f79b5aa. The intended source branch is codex/admin-resource-save-recovery-20261102, to be created separately after custody readback and actual patch delivery. Do not create a Claude registration, session or worktree. This claim itself authorizes no source edit, branch creation, test, build, CI, PR, Jira, production, browser, SQL, private evaluation, provider, configuration, role, flag, notification, customer, acquisition, census or local Node action. All Core, Token8, Auth-dirty, security, staging, activation and resource holds remain preserved.",
+      "createdAt": "2026-11-02T01:08:15.463Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-02T01:08:25.985Z"
     }
   ]
 }
