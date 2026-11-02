@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-01T22:35:32.582824Z",
+  "updatedAt": "2026-11-02T05:45:30.583391+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -394,19 +394,24 @@
   },
   "currentRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
-    "tree": "aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c",
+    "sha": "b70fbc179fc63dd2a096dd380e1d45e60e655f1f",
+    "tree": "99980889f8e6251bd88cb725b701dbc80fe67902",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployedFromBranch": "codex/quick-order-partner-recovery-composition-20261101",
-    "rollback": "97b26c1f7460ec31ffa99e0e93e928ea01248dcf",
-    "deployId": "dep-dbjrrv95efls73ecgre0",
-    "liveSince": "2026-11-01T22:33:46.58375Z",
-    "observedAt": "2026-11-01T22:35:32.582824Z",
+    "deployedFromBranch": "codex/billing-support-composition-20261102",
+    "sourceSha": "25d00047f2d08118a5aa7ffb5117d274426d75e1",
+    "rollback": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
+    "rollbackTree": "aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c",
+    "rollbackDeployId": "dep-dbjrrv95efls73ecgre0",
+    "rollbackExecuted": false,
+    "deployId": "dep-dbk25mrncjis73e55obg",
+    "liveSince": "2026-11-02T05:43:58.084839Z",
+    "observedAt": "2026-11-02T05:45:30.583391+00:00",
     "autoDeploy": "yes",
-    "scope": "Qualified ordinary website release for in-memory Quick Order contact-draft retention and truthful Partner browser-save recovery; Resource Hub activation and all sensitive operations remain held",
-    "receipt": ".xenios/handoffs/2026-11-01T22-35-32-582824Z-RELEASE-COMPLETE-0ca2272-codex-launch-coordination-20261005.json",
-    "note": "Protected release 0ca2272 deployed live as dep-dbjrrv95efls73ecgre0. Source and release CI each passed 18,364 tests with zero failures and 83 skips; all five trusted checks succeeded and all four actual checkout trees matched aa2da5b. Public GET/static verification passed with stable entry /assets/index-CvK--rZW.js, 192 assets, no HTML fallback, health 200 and the Partner uncertainty marker present once. Native browser, Auth, managed database and full live journeys were not run. Service configuration returned unchanged; no Resource Hub activation, SQL, provider, role, flag, customer or notification operation occurred."
+    "autoDeployTrigger": "checksPass",
+    "scope": "Qualified ordinary website release for Quick Order billing-draft retention and Support draft/history recovery; Resource Hub activation and all sensitive operations remain held",
+    "receipt": ".xenios/handoffs/2026-11-02T05-45-30-583391Z-RELEASE-COMPLETE-b70fbc1-codex-launch-coordination-20261005.json",
+    "note": "Protected PR 362 merged normally without bypass or force, producing release b70fbc1 from exact source 25d0004/tree 9998088. Composition CI 41393860427 and release-push CI 41394927200 each passed 18,384 tests with zero failures and 83 skips; all five trusted app15368 checks succeeded and all four actual release checkout trees matched 9998088. Render deploy dep-dbk25mrncjis73e55obg reached live with autoDeploy=yes/checksPass and service settings unchanged. One bounded GET/static verification passed with stable entry /assets/index-C4qNlNHx.js, 192 JavaScript assets, health 200 and both new Support markers present. Static evidence did not execute JavaScript or prove native billing/support behavior, browser save recovery, Auth, principal isolation, managed database or a full live journey. Compatible rollback 0ca2272/dep-dbjrrv95efls73ecgre0 was not executed. No configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred. Samuel's current authority covered this qualified ordinary website release only; all sensitive holds remain unchanged."
   },
   "catalog": {
     "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
@@ -969,6 +974,27 @@
       "observedAt": "2026-11-01T22:35:32.582824Z",
       "scope": "Rollback evidence for the qualified ordinary website release only",
       "note": "Recorded as the immediately prior rollback target supplied and verified for release 0ca2272. This entry does not assert an uninterrupted or complete production release history between the archived c545 record and 97b26c1."
+    },
+    {
+      "classification": "HISTORICAL_ARCHIVED_CURRENT_RELEASE_PREIMAGE",
+      "archivedAt": "2026-11-02T05:45:30.583391+00:00",
+      "supersededBy": "b70fbc179fc63dd2a096dd380e1d45e60e655f1f",
+      "record": {
+        "classification": "CURRENT_LIVE_PRODUCTION",
+        "sha": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
+        "tree": "aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c",
+        "status": "live",
+        "branch": "release/early-access-code-session-checkout",
+        "deployedFromBranch": "codex/quick-order-partner-recovery-composition-20261101",
+        "rollback": "97b26c1f7460ec31ffa99e0e93e928ea01248dcf",
+        "deployId": "dep-dbjrrv95efls73ecgre0",
+        "liveSince": "2026-11-01T22:33:46.58375Z",
+        "observedAt": "2026-11-01T22:35:32.582824Z",
+        "autoDeploy": "yes",
+        "scope": "Qualified ordinary website release for in-memory Quick Order contact-draft retention and truthful Partner browser-save recovery; Resource Hub activation and all sensitive operations remain held",
+        "receipt": ".xenios/handoffs/2026-11-01T22-35-32-582824Z-RELEASE-COMPLETE-0ca2272-codex-launch-coordination-20261005.json",
+        "note": "Protected release 0ca2272 deployed live as dep-dbjrrv95efls73ecgre0. Source and release CI each passed 18,364 tests with zero failures and 83 skips; all five trusted checks succeeded and all four actual checkout trees matched aa2da5b. Public GET/static verification passed with stable entry /assets/index-CvK--rZW.js, 192 assets, no HTML fallback, health 200 and the Partner uncertainty marker present once. Native browser, Auth, managed database and full live journeys were not run. Service configuration returned unchanged; no Resource Hub activation, SQL, provider, role, flag, customer or notification operation occurred."
+      }
     }
   ],
   "resourceHubQualification": {

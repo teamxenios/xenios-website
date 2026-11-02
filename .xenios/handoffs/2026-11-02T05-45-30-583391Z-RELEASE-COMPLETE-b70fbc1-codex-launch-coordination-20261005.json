@@ -1,0 +1,163 @@
+{
+  "state": "COMPOSITION_RELEASE_LIVE_AND_SCOPED_STATIC_VERIFIED",
+  "observedAt": "2026-11-02T05:45:30.583391+00:00",
+  "PR": 362,
+  "source": "25d00047f2d08118a5aa7ffb5117d274426d75e1",
+  "release": "b70fbc179fc63dd2a096dd380e1d45e60e655f1f",
+  "tree": "99980889f8e6251bd88cb725b701dbc80fe67902",
+  "deploy": "dep-dbk25mrncjis73e55obg",
+  "deployFinishedAt": "2026-11-02T05:43:58.084839Z",
+  "sourceAcceptances": [
+    "KAN31/10450 PR360comment6569437901 exact0e7e27e",
+    "existingci_contract_ready exact0166 PR361comment6569442387"
+  ],
+  "actualCompositionRun": 41393860427,
+  "actualReleaseRun": 41394927200,
+  "full": {
+    "passed": 18384,
+    "failed": 0,
+    "skipped": 83,
+    "filesPassed": 985,
+    "filesSkipped": 6
+  },
+  "focused145": "PASS overlapping full suite",
+  "supplied180": "exact-tree focused evidence, overlaps full suite",
+  "all5Trusted15368SUCCESS": true,
+  "all4ActualReleaseCheckoutTreesExact": true,
+  "acceptedSevenBlobsUnchanged": true,
+  "acceptedPaths": {
+    "client/src/research/assisted-order/RequestIntentForm.test.tsx": "ec75a11d52bb9b823ba11f4afc8a62f56ce3b193",
+    "client/src/research/assisted-order/RequestIntentForm.tsx": "966bd8ce9856ff49ba09c0a43d047f0f9c834940",
+    "client/src/research/account-portal/views/SupportView.pending.test.tsx": "5405ef37376c91a766b842cc88b065639d3f618c",
+    "client/src/research/account-portal/views/SupportView.tsx": "a4e12ae3df2d7fece446233864f878aae44fbc42",
+    "client/src/research/account-portal/views/support-documents.test.tsx": "b4ec613ed6ca70e0ee7917e8ef261d4095142fee",
+    "client/src/research/account/AccountSupport.refresh.test.tsx": "df9199c6da4e55dbd1acc44f0f95ed4e605cf689",
+    "client/src/research/account/AccountSupport.tsx": "f1431a82b4fd234aa711d9595a1fca84c76daca9"
+  },
+  "noNewAppSourceAuthored": true,
+  "noUnchangedSourceQualificationRerun": true,
+  "originalPR360And361": {
+    "360": {
+      "merged": true,
+      "head": "0e7e27e0f9f946900bdc54676741ba0a9f79b5aa",
+      "mergedAt": "2026-11-02T05:35:35Z"
+    },
+    "361": {
+      "merged": true,
+      "head": "0166b35d91ef2958e62a78eec165a2519a3fe038",
+      "mergedAt": "2026-11-02T05:35:35Z"
+    }
+  },
+  "customerFacingScope": [
+    "Quick Order preserves newer separate billing edits, including blanks, through same-as-shipping toggles and product navigation in component memory",
+    "Support preserves newer subject/description/category edits when an earlier submission completes; explicit member-bound Refresh cases reconciles uncertain submissions while preserving drafts and account boundaries"
+  ],
+  "publicStatic": {
+    "actualScripts": 192,
+    "billingDraftRetentionRuntimeProven": false,
+    "browserSaveRecoveryProven": false,
+    "entry": [
+      "/assets/index-C4qNlNHx.js"
+    ],
+    "entryStable": true,
+    "fullLiveJourneyProven": false,
+    "health": "Xenios API is running",
+    "identityBindingsVerifiedByThisScript": false,
+    "identityProofLimit": "Static text/code and separately verified Root identity bindings provide served-build evidence only, not native billing/draft preservation, support history refresh/submission behavior, browser save recovery, principal isolation, scroll/focus, private identity binding, live Auth or a full journey.",
+    "independentAcceptance": false,
+    "javascriptExecuted": false,
+    "nativeDraftRetentionProven": false,
+    "nativeScrollFocusJourneyProven": false,
+    "partnerSaveUncertaintyAssets": [
+      {
+        "asset": "Resources-Be-8Rg5F.js",
+        "occurrences": 1,
+        "sha256": "bdf8099ac8b9a248a1df721c291d4548ff54628799b9b657db30efda85015b52",
+        "url": "https://xeniostechnology.com/assets/Resources-Be-8Rg5F.js"
+      }
+    ],
+    "partnerSaveUncertaintyMarker": "We couldn't confirm that the download started. Try again.",
+    "partnerSaveUncertaintyOccurrences": 1,
+    "pr360NewUniqueBillingTextMarker": null,
+    "principalIsolationRuntimeProven": false,
+    "priorEntry": "/assets/index-CvK--rZW.js",
+    "priorRecordedLIVE": {
+      "commit": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
+      "deploy": "dep-dbjrrv95efls73ecgre0",
+      "tree": "aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c"
+    },
+    "privateDetailIdentityBindingRuntimeProven": false,
+    "publicStaticExpectations": "matched",
+    "releaseIdentityRequiresSeparateRootBinding": true,
+    "resourceHubActivationPerformed": false,
+    "rootSuppliedLIVEDeploy": "dep-dbk25mrncjis73e55obg",
+    "rootSuppliedReleaseCommit": "b70fbc179fc63dd2a096dd380e1d45e60e655f1f",
+    "rootSuppliedReleaseTree": "99980889f8e6251bd88cb725b701dbc80fe67902",
+    "sourceComposition": "25d00047f2d08118a5aa7ffb5117d274426d75e1",
+    "sourceCompositionTree": "99980889f8e6251bd88cb725b701dbc80fe67902",
+    "sourcePRs": [
+      360,
+      361
+    ],
+    "staffPendingMarker": "Retrieving private request...",
+    "staffPendingMarkerFiles": [
+      "section-CbUQDnT1.js"
+    ],
+    "staffPendingMarkerRole": "retained baseline label, not PR360/PR361 runtime proof",
+    "supportDraftPreservationRuntimeProven": false,
+    "supportHistoryRefreshRuntimeProven": false,
+    "supportServedMarkers": {
+      "supportEarlierRecorded": {
+        "assets": [
+          {
+            "asset": "AccountSupport-BD4ectcy.js",
+            "occurrences": 1,
+            "sha256": "366b633e6a94da4dd768fcb4234d0766a887ee2ad2accc9bcb763a88ed918cbd",
+            "url": "https://xeniostechnology.com/assets/AccountSupport-BD4ectcy.js"
+          }
+        ],
+        "marker": "Your earlier support request was recorded. Your newer edits have not been submitted.",
+        "occurrences": 1
+      },
+      "supportHistoryRefreshed": {
+        "assets": [
+          {
+            "asset": "AccountSupport-BD4ectcy.js",
+            "occurrences": 1,
+            "sha256": "366b633e6a94da4dd768fcb4234d0766a887ee2ad2accc9bcb763a88ed918cbd",
+            "url": "https://xeniostechnology.com/assets/AccountSupport-BD4ectcy.js"
+          }
+        ],
+        "marker": "Case history refreshed. Check it before submitting again.",
+        "occurrences": 1
+      }
+    }
+  },
+  "rollback": {
+    "sha": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
+    "tree": "aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c",
+    "deploy": "dep-dbjrrv95efls73ecgre0",
+    "appOnlyCompatible": true,
+    "executed": false
+  },
+  "serviceReturnedConfigurationUnchanged": true,
+  "autoDeploy": "yes",
+  "autoDeployTrigger": "checksPass",
+  "noConfigFlagRoleAuthSQLSchemaCustomerProviderNotificationOperation": true,
+  "nativeBrowserAuthManagedDBJourney": "NOT RUN; component fixtures/source/provider identity/served-code evidence only",
+  "securityStagingActivation": "HELD unchanged: C2sourceclosed10434;10003/security/privatebindings/10241 and resources/serialization remain separate",
+  "admin": "KAN8/10446 v2 delivered, locally hash verification/application/RED/GREEN NOT RUN; existing Root lease87067847 ACTIVE unchanged; conditional independent admin acceptor only without material code/test authorship",
+  "selector": "PROPOSED/UNINTEGRATED; native caller/current corpus binding not established; separate",
+  "profile": "deferred by actual human; no reachable ordinary production defect established",
+  "nativeGoal": null,
+  "artifactSHA256": {
+    "MERGE_RECEIPT.json": "de0210ff9937fbf6b40db87c13d4be6da093a0105e752357feabd0f88a111808",
+    "COMPOSITION_CI_QUALIFICATION.json": "69d6ecda4268cf3a8330d241e6557962d3cc8791407b27fedeb79e796282b42f",
+    "RELEASE_CI_QUALIFICATION.json": "3da1865c0c30248b0a8d5914215858e6be8538a9bc686eb33791cb8bcc997bd0",
+    "COMPOSITION_QA_VERIFIED.json": "e2afb57d5fc96ff379137f13160b4ce8d8db741847c0ed4a2c57704301fb5b45",
+    "PUBLIC_STATIC_VERIFIED.json": "01fd12058ae6965d35294e00ed43d679e7796febbae82ef0d326b9188ade198f",
+    "POSTCHECK_EXECUTION_BINDING.json": "1c4601c894c3307a060ed89bc6605bbaa7a27159398c6cca7110bbde1a44813e",
+    "RENDER_LIVE.json": "5e17b63583e3f430afc66d3b375658df13a5091f237976bba459c48b018a1b98",
+    "RENDER_FINAL_SERVICE.json": "f1c0e1341d00046c1df312eb521bf94a4210e5d3ac9452e3a247c206983c6d8a"
+  }
+}
