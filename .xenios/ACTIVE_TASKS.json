@@ -3261,7 +3261,7 @@
       "id": "KAN31-QUICK-ORDER-CATALOG-RECOVERY-20261102",
       "title": "Adopt truthful Quick Order catalog recovery",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-31",
       "baseSha": "b70fbc179fc63dd2a096dd380e1d45e60e655f1f",
       "paths": [
@@ -3272,7 +3272,13 @@
       "scopeNote": "Adopt the unchanged Work accelerator proposal from KAN31/10456 only after byte verification against the private user artifact, preserving the author proposal and Root input 10457 unedited. Root's normalized allocation echo is KAN31/10458. Apply on exact current release b70fbc179fc63dd2a096dd380e1d45e60e655f1f/tree 99980889f8e6251bd88cb725b701dbc80fe67902, where RequestIntentForm.tsx is mode 100644/blob 966bd8ce9856ff49ba09c0a43d047f0f9c834940 and request-intent-catalog-retry.test.tsx is absent. The bounded outcome is a truthful catalog-failed state with explicit Retry catalog and existing manual-help actions while retaining query, family, page, exact variant selections and quantity. Add no Auth, API, catalog, price, eligibility or other authority; add no configuration, link hint, attempt storage, submit implementation or recover implementation. Root may apply the unchanged proposal and run actual resulting-tree hosted checks only after independent claim verification. Independent acceptance must be by the same eligible Claude c16 after hosted CI; no pickup is inferred. Source acceptance is not production GO. The intended future branch is codex/quick-order-catalog-recovery-20261102 from exact b70fbc179fc63dd2a096dd380e1d45e60e655f1f and must be created separately by Root after exact claim readback. Preserve all prior assisted-order, billing, composition and broad-prefix HANDOFF leases and their history; they are neither expired, released nor reclaimed by this narrow allocation. Preserve the active KAN8 admin task and exact lease 87067847-af3a-45b0-b3ff-5fd45ee394d3 unchanged. This claim authorizes the custodian to make no application source or test change and authorizes no branch creation, local Node application run, test, build, CI, PR, Jira, production, provider, HTTP, browser, Auth, SQL, database, staging, private evaluation, configuration, role, flag, dependency, workflow, notification, customer, acquisition, admission, process or census operation. All Core, Token8, Auth-dirty, security, private, SQL, resource, native PG17, browser and activation holds remain preserved.",
       "createdAt": "2026-11-02T06:49:56.8801699Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-02T06:50:12.444Z"
+      "claimedAt": "2026-11-02T06:50:12.444Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "0464df90c1bccf4828332786d9f4fe2ad1004e7b",
+        "file": ".xenios/handoffs/2026-11-02T07-00-27-805Z-KAN31-QUICK-ORDER-CATALOG-RECOVERY-20261102-codex-launch-coordination-20261005.md",
+        "at": "2026-11-02T07:00:27.810Z"
+      }
     }
   ]
 }

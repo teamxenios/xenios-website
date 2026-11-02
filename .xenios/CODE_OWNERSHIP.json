@@ -2802,7 +2802,7 @@
         "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/request-intent-catalog-retry.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-02T06:50:12.455Z",
       "heartbeatAt": "2026-11-02T06:50:12.455Z"
     }
