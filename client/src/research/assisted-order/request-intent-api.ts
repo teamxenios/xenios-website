@@ -10,7 +10,9 @@ export class RequestIntentHttpError extends Error {
   }
 }
 export function isKnownIntentPrewriteRefusal(error: unknown): error is RequestIntentHttpError {
-  return error instanceof RequestIntentHttpError && [400, 401, 403, 429].includes(error.status);
+  return error instanceof RequestIntentHttpError && ([400, 401, 403, 429].includes(error.status)
+    // The server sends this one 5xx code only before the submit handler runs (intake closed or its guards unavailable).
+    || (error.status === 503 && error.code === "request_intent_unavailable"));
 }
 /** This copy is used ONLY after first-POST and owned-marker clearance proof. */
 export function intentRefusalGuidance(error: RequestIntentHttpError): string {
@@ -22,6 +24,9 @@ export function intentRefusalGuidance(error: RequestIntentHttpError): string {
   if (error.status === 403) return "This request was not saved. Access was refused. Review your access or contact support before starting a new attempt.";
   if (error.code === "selection_requires_refresh") return "This request was not saved. Reload the current catalog, review the exact products and quantities, and submit a new attempt.";
   if (error.code === "current_acknowledgments_required") return "This request was not saved. Reload the current requirements, review and confirm them, and submit a new attempt.";
+  if (error.status === 503 && error.code === "request_intent_unavailable") {
+    return "This request was not saved. Request intake is unavailable right now. Your selections and contact details are still on this page, but they are not stored and will be cleared if you leave or reload it. To try again, confirm the acknowledgments and submit a new attempt, or contact support.";
+  }
   return "This request was not saved. Check the required details, products, quantities and acknowledgments before submitting a new attempt.";
 }
 
