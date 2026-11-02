@@ -8,13 +8,14 @@ import { SUPPORT_CASE_CATEGORIES } from "@shared/research/customer-account/contr
 import { ResearchSecureNotice, ResearchStatusBadge } from "../../ui/kit";
 import { formatAccountDate, sentenceCase, statusTone } from "../format";
 import type { SupportRequestInput, SupportRequestResult } from "../types";
+import { AccountResourceBoundary } from "../resource";
 
 type SupportFieldErrors = Readonly<{
   subject?: string;
   description?: string;
 }>;
 
-type SupportSubmissionOutcome = "idle" | "ok" | "denied" | "rate_limited" | "error";
+type SupportSubmissionOutcome = "idle" | "ok" | "recorded_with_draft" | "denied" | "rate_limited" | "error";
 
 function validateSupportRequest(subject: string, description: string): SupportFieldErrors {
   const errors: { subject?: string; description?: string } = {};
@@ -35,9 +36,11 @@ function validateSupportRequest(subject: string, description: string): SupportFi
 export function AccountSupportView({
   cases,
   onSubmit,
+  onRefresh,
 }: {
   cases: readonly SupportCaseSummaryDto[];
   onSubmit: (input: SupportRequestInput) => Promise<CustomerAccountResult<SupportRequestResult>>;
+  onRefresh?: () => Promise<CustomerAccountResult<readonly SupportCaseSummaryDto[]>>;
 }) {
   const [category, setCategory] = useState<SupportCaseCategory>("account");
   const [subject, setSubject] = useState("");
@@ -47,20 +50,33 @@ export function AccountSupportView({
   const [validationAttempt, setValidationAttempt] = useState(0);
   const [outcome, setOutcome] = useState<SupportSubmissionOutcome>("idle");
   const [createdCases, setCreatedCases] = useState<readonly SupportCaseSummaryDto[]>([]);
+  const [refreshedCases, setRefreshedCases] = useState<readonly SupportCaseSummaryDto[] | null>(null);
+  const [refreshState, setRefreshState] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [refreshDenied, setRefreshDenied] = useState(false);
   const validationSummaryRef = useRef<HTMLDivElement>(null);
+  const draftRevision = useRef(0);
+  const mounted = useRef(true);
+  const operation = useRef(false);
+  const refreshing = refreshState === "loading";
   const createdCaseIds = new Set(createdCases.map((item) => item.id));
   const visibleCases = [
     ...createdCases,
-    ...cases.filter((item) => !createdCaseIds.has(item.id)),
+    ...(refreshedCases ?? cases).filter((item) => !createdCaseIds.has(item.id)),
   ];
   const visibleOpenCases = visibleCases.filter((item) => item.state !== "resolved");
   const hasFieldErrors = Boolean(fieldErrors.subject || fieldErrors.description);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   useEffect(() => {
     if (hasFieldErrors) validationSummaryRef.current?.focus();
   }, [hasFieldErrors, validationAttempt]);
 
   function updateSubject(value: string) {
+    draftRevision.current += 1;
     setSubject(value);
     setOutcome("idle");
     if (fieldErrors.subject) {
@@ -75,6 +91,7 @@ export function AccountSupportView({
   }
 
   function updateDescription(value: string) {
+    draftRevision.current += 1;
     setDescription(value);
     setOutcome("idle");
     if (fieldErrors.description) {
@@ -90,7 +107,7 @@ export function AccountSupportView({
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (busy) return;
+    if (operation.current) return;
 
     const errors = validateSupportRequest(subject, description);
     if (Object.keys(errors).length > 0) {
@@ -100,26 +117,63 @@ export function AccountSupportView({
       return;
     }
 
+    operation.current = true;
+    const submittedRevision = draftRevision.current;
     setFieldErrors({});
     setBusy(true);
     setOutcome("idle");
     try {
       const result = await onSubmit({ category, subject: subject.trim(), description: description.trim() });
+      if (!mounted.current) return;
       if (result.kind === "ok") {
         setCreatedCases((current) => [result.data, ...current.filter((item) => item.id !== result.data.id)]);
-        setSubject("");
-        setDescription("");
-        setOutcome("ok");
+        if (draftRevision.current === submittedRevision) {
+          setSubject("");
+          setDescription("");
+          setOutcome("ok");
+        } else {
+          setOutcome("recorded_with_draft");
+        }
       } else if (result.kind === "denied") {
         setOutcome(result.reason === "rate_limited" ? "rate_limited" : "denied");
       } else {
         setOutcome("error");
       }
     } catch {
-      setOutcome("error");
+      if (mounted.current) setOutcome("error");
     } finally {
-      setBusy(false);
+      operation.current = false;
+      if (mounted.current) setBusy(false);
     }
+  }
+
+  async function refreshCases() {
+    if (!onRefresh || operation.current) return;
+    operation.current = true;
+    setRefreshState("loading");
+    try {
+      const result = await onRefresh();
+      if (!mounted.current) return;
+      if (result.kind === "ok") {
+        setRefreshedCases(result.data);
+        setCreatedCases([]);
+        setRefreshState("ready");
+      } else if (result.kind === "denied") {
+        setRefreshedCases([]);
+        setCreatedCases([]);
+        setRefreshDenied(true);
+      } else {
+        setRefreshState("error");
+      }
+    } catch {
+      if (mounted.current) setRefreshState("error");
+    } finally {
+      operation.current = false;
+    }
+  }
+
+  if (refreshDenied) {
+    return <AccountResourceBoundary snapshot={{ state: "denied", reason: "account_access_denied" }}>{() => null}</AccountResourceBoundary>;
   }
 
   return (
@@ -150,6 +204,7 @@ export function AccountSupportView({
               className="input-field"
               value={category}
               onChange={(event) => {
+                draftRevision.current += 1;
                 setCategory(event.target.value as SupportCaseCategory);
                 setOutcome("idle");
               }}
@@ -187,12 +242,13 @@ export function AccountSupportView({
             />
             {fieldErrors.description ? <p id="support-description-error" className="body-s mt-2">{fieldErrors.description}</p> : null}
           </div>
-          <button className="btn btn-primary" type="submit" disabled={busy}>{busy ? "Submitting request" : "Submit support request"}</button>
+          <button className="btn btn-primary" type="submit" disabled={busy || refreshing}>{busy ? "Submitting request" : "Submit support request"}</button>
           <div className="body-s">
             {outcome === "ok" ? <p role="status">Your support request was recorded.</p> : null}
+            {outcome === "recorded_with_draft" ? <p role="status">Your earlier support request was recorded. Your newer edits have not been submitted.</p> : null}
             {outcome === "rate_limited" ? <p role="alert">Too many support requests were submitted recently. Please wait before trying again. Your request was not recorded.</p> : null}
             {outcome === "denied" ? <p role="alert">This sign-in cannot open a support request. Your request was not recorded.</p> : null}
-            {outcome === "error" ? <p role="alert">The request could not be recorded. Your account was not changed.</p> : null}
+            {outcome === "error" ? <p role="alert">We couldn't confirm whether your support request was recorded. {onRefresh ? "Refresh cases" : "Refresh this page to check your cases"} before trying again.</p> : null}
           </div>
         </form>
       </section>
@@ -206,11 +262,17 @@ export function AccountSupportView({
         </section>
       </aside>
 
-      <section className="account-surface" aria-labelledby="support-history-heading" style={{ gridColumn: "1 / -1" }}>
+      <section className="account-surface" aria-labelledby="support-history-heading" aria-busy={refreshing} style={{ gridColumn: "1 / -1" }}>
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div><p className="account-section-label">Support history</p><h2 id="support-history-heading" className="account-section-title">Your cases</h2></div>
-          <ResearchStatusBadge label={visibleOpenCases.length ? `${visibleOpenCases.length} visible open` : "Status unavailable"} tone="neutral" />
+          <div className="flex flex-wrap items-center gap-3">
+            <ResearchStatusBadge label={visibleOpenCases.length ? `${visibleOpenCases.length} visible open` : "Status unavailable"} tone="neutral" />
+            {onRefresh ? <button className="btn btn-secondary" type="button" disabled={busy || refreshing} onClick={() => { void refreshCases(); }}>{refreshing ? "Refreshing cases" : "Refresh cases"}</button> : null}
+          </div>
         </div>
+        {refreshState === "loading" ? <p className="body-s mt-3" role="status">Refreshing support cases.</p> : null}
+        {refreshState === "ready" ? <p className="body-s mt-3" role="status">Case history refreshed. Check it before submitting again.</p> : null}
+        {refreshState === "error" ? <p className="body-s mt-3" role="alert">Cases could not be refreshed. Previously loaded history is still shown and may be out of date.</p> : null}
         {visibleCases.length ? (
           <div className="account-card-list mt-6">
             {visibleCases.map((item) => (

@@ -111,7 +111,7 @@ describe("account support truth and validation", () => {
 
     expect(subject.value).toBe("Account question");
     expect(description.value).toBe("I need help with my account record.");
-    expect(container.textContent).toContain("The request could not be recorded");
+    expect(container.textContent).toContain("We couldn't confirm whether your support request was recorded");
     expect(container.textContent).not.toContain("Your support request was recorded");
   });
 
