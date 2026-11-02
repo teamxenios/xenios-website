@@ -929,6 +929,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   it.each([
     [400, "selection_requires_refresh", "Reload the current catalog"],
     [429, "rate_limited", "Wait before submitting a new attempt"],
+    [503, "request_intent_unavailable", "Request intake is unavailable right now. Your selections and contact details are still on this page, but they are not stored and will be cleared if you leave or reload it."],
   ] as const)("preserves first-refusal guidance for %s %s and uses fresh consent and a new key without config refresh", async (status, code, guidance) => {
     const api = makeApi(); let submissionAdmitted = false;
     api.submit.mockImplementation(async () => {
@@ -949,13 +950,17 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(checks.every((checkbox) => !checkbox.matches(":disabled"))).toBe(true);
     await click("Submit for review"); expect(api.submit).toHaveBeenCalledTimes(1);
     submissionAdmitted = true;
-    await confirmFreshRequirements(); await click("Submit for review");
+    // A controlled clock proves the new attempt records its own confirmation time.
+    const fresh = new Date(Date.parse(first.agreements[0].acceptedAt) + 60_000);
+    vi.useFakeTimers({ toFake: ["Date"] }); vi.setSystemTime(fresh);
+    try { await confirmFreshRequirements(); await click("Submit for review"); } finally { vi.useRealTimers(); }
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
     expect(second.contact).toEqual(first.contact); expect(second.lines).toEqual(first.lines);
     expect(second.agreements.map(({ kind, version }) => ({ kind, version })))
       .toEqual(first.agreements.map(({ kind, version }) => ({ kind, version })));
+    expect(second.agreements.every((entry) => entry.acceptedAt === fresh.toISOString())).toBe(true);
     expect(api.config).toHaveBeenCalledTimes(1); expect(host.textContent).toContain(receipt.publicReference);
     expectOnlyReferenceRecord();
   });
@@ -992,6 +997,61 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).not.toContain("This request was not saved.");
     expect(api.config).toHaveBeenCalledTimes(1);
     expect([...host.querySelectorAll("button")].some((entry) => /Refresh requirements/.test(entry.textContent ?? ""))).toBe(false);
+  });
+  it("keeps a lost reply uncertain when its retry meets closed intake", async () => {
+    const api = makeApi();
+    api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_intent_unavailable"));
+    await prepare(api); await click("Submit for review");
+    const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
+    expect(marker).not.toBeNull();
+    const notice = host.querySelector(".xenios-order-error")?.textContent;
+    expect(notice).toBeTruthy();
+    await click("Retry same request");
+    expect(api.submit).toHaveBeenCalledTimes(2);
+    expect(api.submit.mock.calls[1][0]).toEqual(api.submit.mock.calls[0][0]);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(host.querySelector(".xenios-order-error")?.textContent).toBe(notice);
+    expect(host.textContent).not.toContain("This request was not saved.");
+    expect(host.textContent).not.toContain("Request intake is unavailable right now");
+    expect(host.textContent).toContain("Retry same request");
+    expect(buttonNamed("Edit selection").disabled).toBe(true);
+    const frozenChecks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
+    expect(frozenChecks.length).toBeGreaterThan(0);
+    expect(frozenChecks.every((checkbox) => checkbox.matches(":disabled"))).toBe(true);
+    expect(api.config).toHaveBeenCalledTimes(1);
+  });
+  it("keeps an earlier attempt on its recovery path after a reload, even when its check meets closed intake", async () => {
+    const api = makeApi();
+    api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
+    api.recover.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_intent_unavailable"));
+    await prepare(api); await click("Submit for review");
+    const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
+    expect(marker).not.toBeNull();
+    await act(async () => root.unmount());
+    root = createRoot(host);
+    await render(api);
+    expect(host.textContent).toContain("Check your earlier request");
+    // The restored view offers only the saved-request check; no new attempt can start from it.
+    expect([...host.querySelectorAll("button")].map((button) => button.textContent)).toEqual(["Check saved request"]);
+    await click("Check saved request");
+    expect(api.recover).toHaveBeenCalledWith(JSON.parse(marker!).key);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(host.textContent).not.toContain("This request was not saved.");
+    expect(host.textContent).not.toContain("Request intake is unavailable right now");
+    expect([...host.querySelectorAll("button")].map((button) => button.textContent)).toEqual(["Check saved request"]);
+    expect(api.submit).toHaveBeenCalledTimes(1); expect(api.config).toHaveBeenCalledTimes(1);
+  });
+  it.each(["config", "catalog"] as const)("keeps closed intake on the %s read out of submission cleanup", async (read) => {
+    // GET /config and GET /catalog can answer the same 503 code; only a first submit may call it "not saved".
+    const api = makeApi();
+    (read === "config" ? api.config : api.catalog).mockRejectedValue(new RequestIntentHttpError(503, "request_intent_unavailable"));
+    await render(api);
+    expect(host.textContent).toContain(read === "config"
+      ? "Current request requirements are unavailable. Submission remains closed." : "The current catalog could not be confirmed.");
+    expect(host.textContent).not.toContain("This request was not saved.");
+    expect(host.textContent).not.toContain("Request intake is unavailable right now");
+    expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
   });
 });
 

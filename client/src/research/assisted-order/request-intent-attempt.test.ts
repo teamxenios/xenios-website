@@ -112,4 +112,21 @@ describe("Doc163 first-refusal marker clearance", () => {
     target.removeItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(clearFirstRefusedIntentAttempt(target, attempt, { firstPost: true, stillCurrent: true, error })).toBe(false);
   });
+  it("clears after a first POST meets closed intake, never after a retry, a stale mount or for another attempt", () => {
+    const error = new RequestIntentHttpError(503, "request_intent_unavailable");
+    const first = storage(); markIntentInFlight(first, attempt);
+    expect(clearFirstRefusedIntentAttempt(first, attempt, { firstPost: true, stillCurrent: true, error })).toBe(true);
+    expect(first.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    for (const evidence of [{ firstPost: false, stillCurrent: true }, { firstPost: true, stillCurrent: false }]) {
+      const target = storage(); markIntentInFlight(target, attempt);
+      expect(clearFirstRefusedIntentAttempt(target, attempt, { ...evidence, error })).toBe(false);
+      expect(readIntentAttempt(target)?.key).toBe(attempt.key);
+    }
+    // A later attempt cannot start beside an earlier uncertain marker, and its refusal cannot clear that marker.
+    const earlier = storage(); markIntentInFlight(earlier, attempt);
+    const later = { ...attempt, key: "10000000-0000-4000-8000-000000000002", acceptedAt: "2026-10-14T12:01:00.000Z" };
+    expect(() => markIntentInFlight(earlier, later)).toThrow("An earlier attempt needs recovery before another submission.");
+    expect(clearFirstRefusedIntentAttempt(earlier, later, { firstPost: true, stillCurrent: true, error })).toBe(false);
+    expect(readIntentAttempt(earlier)).toEqual({ ...attempt, state: "uncertain" });
+  });
 });
