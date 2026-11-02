@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useResearch } from "../core";
 import { isResearchCartScope } from "../cart-session";
 import type { StorefrontIntent } from "../storefront/entry-intent";
@@ -8,6 +8,9 @@ import { AssistedOrderCta } from "./AssistedOrderCta";
 import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { readOrderRequestContinuity, selectOrderRequestDoor, useOrderRequestMode, type OrderRequestMode } from "./order-request-mode";
+import { forgetConfirmedReceipt } from "./request-intent-continuation";
+
+function browserStorage(): Storage | null { try { return window.sessionStorage; } catch { return null; } }
 
 const LegacyEntry = lazy(() => import("./AssistedOrderPage").then((m) => ({ default: m.AssistedOrderPage })));
 const MixedEntry = lazy(() => import("./RequestIntentEntry").then((m) => ({ default: m.RequestIntentEntry })));
@@ -77,12 +80,19 @@ function OrderRequestEntryBody(props: Props) {
   const standaloneMode = useOrderRequestMode(props.mode === undefined && !memberChecking
     && memberSessionStatus !== "checking" && recovery === "none" && memberSessionStatus !== "verification_failed"
     && owner !== null, owner ?? "unconfirmed-member");
+  // The same boundaries also discard the tab's stored confirmed reference, so
+  // it cannot reopen for the former member after a reload. (A different owner's
+  // record is discarded by that owner's own mount.)
+  const boundary = recovery !== "none" || memberSessionStatus === "verification_failed"
+    || (member !== null && !isResearchCartScope(member.cartScope));
+  useEffect(() => { if (boundary) { const storage = browserStorage(); if (storage) forgetConfirmedReceipt(storage); } }, [boundary]);
   if (memberChecking || memberSessionStatus === "checking") return <p role="status">Checking your existing session...</p>;
   if (recovery !== "none" || memberSessionStatus === "verification_failed") return <section role="alert">
     <p>Complete secure account recovery or contact support before continuing this request.</p><a href="/research/support">Contact support</a></section>;
   if (owner === null) return <section role="alert">
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
-  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} focusOnMount />;
+  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} focusOnMount
+    onStartAnother={() => { const storage = browserStorage(); if (storage) forgetConfirmedReceipt(storage); setConfirmed(null); }} />;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode}
     onConfirmedReceipt={verifiedScope ? (receipt) => setConfirmed({ scope: verifiedScope, receipt }) : undefined} />;
 }

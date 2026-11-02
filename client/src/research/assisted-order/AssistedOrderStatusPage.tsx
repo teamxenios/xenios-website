@@ -6,6 +6,8 @@ import { money } from "./wizard-state";
 import { readAssistedOrderToken } from "./storage";
 import { SecureDocumentUpload } from "./SecureDocumentUpload";
 import { assistedOrderStatusErrorCopy } from "./customer-safe-errors";
+import { REQUEST_INTENT_PUBLIC_REFERENCE } from "./request-intent-continuation";
+import { RequestIntentReferenceNotice } from "./RequestIntentReferenceNotice";
 import { EarlyAccessStepper } from "../early-access/EarlyAccessStepper";
 import { EARLY_ACCESS_CUSTOMER_STEP_LABELS } from "../early-access/customerSteps";
 import { useResearch } from "../core";
@@ -26,6 +28,12 @@ export function AssistedOrderStatusPage() {
   const [location] = useLocation();
   const { memberToken, memberChecking } = useResearch();
   const reference = useMemo(() => referenceFromPath(location), [location]);
+  // A review request (XRI) has no online status and no credential; never call
+  // its reference invalid or expired, and never start the legacy read for it.
+  const reviewReference = reference.toUpperCase();
+  if (REQUEST_INTENT_PUBLIC_REFERENCE.test(reviewReference)) {
+    return <RequestIntentReferenceNotice reference={reviewReference} variant="status" />;
+  }
   // Synchronously discard the previous principal/reference's rendered data.
   return <VerifiedRequestStatus key={`${reference}:${memberToken ?? "guest"}:${memberChecking}`}
     reference={reference} memberToken={memberToken} memberChecking={memberChecking} />;

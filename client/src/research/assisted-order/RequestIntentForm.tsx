@@ -8,6 +8,7 @@ import type { DirectPurchaseRefusal } from "../../../../shared/research/master-o
 import { catalogItemKey, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, money, type AssistedOrderWizardConfig } from "./wizard-state";
 import { createRequestIntentApi, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
+import { forgetConfirmedReceipt, readConfirmedReceiptRecord, rememberConfirmedReceipt } from "./request-intent-continuation";
 import type { StorefrontIntent } from "../storefront/entry-intent";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
@@ -33,13 +34,31 @@ function restrictionCopy(code: string): string {
     : "A purchase restriction applies. Its details need to be confirmed.";
 }
 
-/** Reusable inside the existing customer shell. No new global Auth, cart, catalog or legal authority. */
-export function RequestIntentForm({
-  api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt,
-}: Readonly<{ api?: RequestIntentApi; storage?: Storage | null; embedded?: boolean;
+type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Storage | null; embedded?: boolean;
   continuationEnabled?: boolean; onStepChange?: (step: "products" | "contact" | "review") => void;
-  entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void }>) {
-  const [step, setStep] = useState<"products" | "contact" | "review">("products");
+  entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void;
+  /** The opaque owner this mount is keyed by. A reference confirmed earlier in this tab reopens only for the same owner. */
+  ownerKey?: string }>;
+
+/** Reusable inside the existing customer shell. No new global Auth, cart, catalog or legal authority. */
+export function RequestIntentForm(props: RequestIntentFormProps) {
+  // "Start another request" remounts the session, so every selection, contact
+  // draft, acknowledgment and frozen attempt of the confirmed request is gone.
+  const [generation, setGeneration] = useState(0);
+  return <RequestIntentFormSession key={generation} {...props} focusHeadingOnMount={generation > 0}
+    onStartAnother={() => setGeneration((value) => value + 1)} />;
+}
+
+function RequestIntentFormSession({
+  api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt,
+  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false,
+}: RequestIntentFormProps & Readonly<{ onStartAnother: () => void; focusHeadingOnMount?: boolean }>) {
+  const [restored] = useState(() => storage ? readIntentAttempt(storage) : null);
+  // A reference confirmed in an earlier page load of this tab is shown again. An
+  // uncertain attempt still takes precedence, because it may need recovery.
+  const [reopened] = useState(() => storage && !restored ? readConfirmedReceiptRecord(storage, ownerKey) : null);
+  // A reopened receipt reports the final step, as a live confirmation does, so a surrounding shell matches it.
+  const [step, setStep] = useState<"products" | "contact" | "review">(reopened ? "review" : "products");
   const [config, setConfig] = useState<AssistedOrderWizardConfig | null>(null);
   const [requirementsNeedRefresh, setRequirementsNeedRefresh] = useState(false);
   const [catalog, setCatalog] = useState<RequestIntentCatalogPage | null>(null);
@@ -55,10 +74,9 @@ export function RequestIntentForm({
   const [contactDraft, setContactDraft] = useState<FormData | null>(null);
   const [billingSame, setBillingSame] = useState(true);
   const [acknowledged, setAcknowledged] = useState<ReadonlySet<string>>(new Set());
-  const [receipt, setReceipt] = useState<RequestIntentReceipt | null>(null);
+  const [receipt, setReceipt] = useState<RequestIntentReceipt | null>(reopened);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [restored] = useState(() => storage ? readIntentAttempt(storage) : null);
   const frozen = useRef<{ readonly attempt: IntentAttempt; readonly input: RequestIntentInput; postsStarted: number } | null>(null);
   const locked = useRef(false);
   const mounted = useRef(true);
@@ -71,7 +89,7 @@ export function RequestIntentForm({
   useEffect(() => {
     let current = true;
     setHintItem(null); setHintChecked(false);
-    if (!entryIntent || restored) return;
+    if (!entryIntent || restored || reopened) return;
     // Navigation is only a hint. Re-resolve the full family from the neutral
     // audience-scoped catalog; CARE never takes the old Research redirect.
     void (async () => {
@@ -101,7 +119,7 @@ export function RequestIntentForm({
       throw new Error("Incomplete hint.");
     })().catch(() => { if (current) setHintChecked(true); });
     return () => { current = false; };
-  }, [api, hintKey, restored]);
+  }, [api, hintKey, restored, reopened]);
   const selections = [...selected.values()];
   const selectedUnits = selections.reduce((total, selection) => total + selection.quantity, 0);
   const selectedProducts = new Set(selections.map(({ item }) => item.productId)).size;
@@ -114,15 +132,17 @@ export function RequestIntentForm({
     // only after a customer changes step or confirms an existing saved request.
     if (changed) heading.current?.focus();
   }, [step, receipt]);
+  // A session started by the customer's own "Start another request" receives focus like any step change.
+  useEffect(() => { if (focusHeadingOnMount) heading.current?.focus(); }, [focusHeadingOnMount]);
   useEffect(() => {
-    if (restored) return;
+    if (restored || reopened) return;
     let current = true;
     void api.config().then((value) => { if (current) setConfig(value); })
       .catch(() => { if (current) setError("Current request requirements are unavailable. Submission remains closed."); });
     return () => { current = false; };
-  }, [api, restored]);
+  }, [api, restored, reopened]);
   useEffect(() => {
-    if (restored) return;
+    if (restored || reopened) return;
     let current = true;
     setCatalog(null);
     setCatalogFailed(false);
@@ -130,7 +150,7 @@ export function RequestIntentForm({
       .then((value) => { if (current) setCatalog(value); })
       .catch(() => { if (current) setCatalogFailed(true); });
     return () => { current = false; };
-  }, [api, search, family, page, restored, catalogRetry]);
+  }, [api, search, family, page, restored, reopened, catalogRetry]);
 
   async function refreshRequirements() {
     if (locked.current || !requirementsNeedRefresh || frozen.current) return;
@@ -153,6 +173,7 @@ export function RequestIntentForm({
       if (!saved) { setError("The saved result is not yet confirmed. Keep this attempt and check again, or contact support before any replacement."); return; }
       if (!clearConfirmedIntentAttempt(storage, restored)) throw new Error("Session changed.");
       setReceipt(saved); setError("");
+      rememberConfirmedReceipt(storage, ownerKey, saved);
       onConfirmedReceipt?.(saved);
     } catch { if (mounted.current) setError(REQUEST_INTENT_RECOVERY_NOTICE); }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
@@ -212,7 +233,12 @@ export function RequestIntentForm({
         snapshot.postsStarted += 1;
         return api.submit(snapshot.input);
       }, () => mounted.current);
-      if (mounted.current) { setReceipt(saved); setError(""); onConfirmedReceipt?.(saved); }
+      if (mounted.current) {
+        setReceipt(saved); setError("");
+        // Display continuity only; the marker above is already cleared and the server holds the request.
+        rememberConfirmedReceipt(storage, ownerKey, saved);
+        onConfirmedReceipt?.(saved);
+      }
     } catch (error) {
       if (sentSnapshot && frozen.current === sentSnapshot && isKnownIntentPrewriteRefusal(error)
         && clearFirstRefusedIntentAttempt(storage, sentSnapshot.attempt,
@@ -245,7 +271,8 @@ export function RequestIntentForm({
     </fieldset>;
   };
 
-  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} />;
+  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} reopened={receipt === reopened}
+    onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
 
   if (restored) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Check your earlier request</h1>
     <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
