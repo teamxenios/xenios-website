@@ -3202,6 +3202,26 @@
       "createdAt": "2026-11-02T01:08:15.463Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-02T01:08:25.985Z"
+    },
+    {
+      "id": "KAN76-SUPPORT-DRAFT-REFRESH-20261102",
+      "title": "Adopt support draft preservation and explicit case refresh",
+      "priority": "P1",
+      "state": "claimed",
+      "jira": "KAN-76",
+      "baseSha": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
+      "paths": [
+        "client/src/research/account/AccountSupport.tsx",
+        "client/src/research/account/AccountSupport.refresh.test.tsx",
+        "client/src/research/account-portal/views/SupportView.tsx",
+        "client/src/research/account-portal/views/SupportView.pending.test.tsx",
+        "client/src/research/account-portal/views/support-documents.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Adopt the actual Work accelerator delivery's unchanged support-combined.patch with SHA-256 4bf92c49b3a85a9d74fdb6c0bfb0f729f4dccab6bcad3d3bbc69fe69fd8ae772 on exact application base 0ca22721bc4cd5e46f50ffbc842f185e7e3d3360/tree aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c, preserving original author attribution in the source record. The bounded customer outcome is to preserve newer unsent support edits after an earlier POST and provide an explicit existing member-bound GET refresh after an uncertain submit. Do not add automatic POST retry, browser storage, or new authority. Root performs no material implementation or test changes; independent acceptance requires an eligible nonauthor against the exact committed source and actual required resulting-tree hosted checks. Existing focused author RED/GREEN evidence may be reused without rerunning unchanged evidence; no local Node, test, build, runtime, browser, Auth, SQL, database, private or managed evaluation is authorized. The intended branch is codex/support-draft-refresh-20261102 and must be created separately by Root after exact claim readback. Historical prefix leases f27dc330-48dd-46ef-adef-29a794d31587 and d582ed2b-6bdb-4c36-8efe-0b0146f0b625 remain HANDOFF with their task and handoff history preserved; this narrow allocation neither releases nor takes over Auth or broader account ownership. Preserve the active KAN8 admin task and lease 87067847-af3a-45b0-b3ff-5fd45ee394d3 unchanged. This claim itself authorizes no source edit, branch creation, test, build, CI, PR, Jira, production, activation, browser, SQL, private evaluation, provider, configuration, role, flag, dependency, workflow, notification, customer, acquisition or census operation. All Core, Token8, Auth-dirty 5279612b, security, staging, private, resource, native PG17, notification, catalog and production holds remain preserved.",
+      "createdAt": "2026-11-02T04:41:34.515Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-02T04:41:52.117Z"
     }
   ]
 }

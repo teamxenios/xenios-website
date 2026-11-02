@@ -2761,6 +2761,21 @@
       "state": "active",
       "claimedAt": "2026-11-02T01:08:25.989Z",
       "heartbeatAt": "2026-11-02T01:08:26.050Z"
+    },
+    {
+      "id": "2c587f20-9ad7-4acf-974f-130fbdbfea5f",
+      "task": "KAN76-SUPPORT-DRAFT-REFRESH-20261102",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/account/AccountSupport.tsx",
+        "client/src/research/account/AccountSupport.refresh.test.tsx",
+        "client/src/research/account-portal/views/SupportView.tsx",
+        "client/src/research/account-portal/views/SupportView.pending.test.tsx",
+        "client/src/research/account-portal/views/support-documents.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-02T04:41:52.127Z",
+      "heartbeatAt": "2026-11-02T04:41:52.127Z"
     }
   ],
   "rules": [
