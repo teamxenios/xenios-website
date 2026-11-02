@@ -14,7 +14,7 @@ export default function AccountSupport() {
       lead="Open and review account, order, Care-operation, or pharmacy-operation support without placing sensitive clinical detail in the portal."
     >
       <AccountResourceBoundary snapshot={snapshot}>
-        {(cases) => <AccountSupportView cases={cases} onSubmit={(input) => createAccountSupportCase(memberToken, input)} />}
+        {(cases) => <AccountSupportView cases={cases} onSubmit={(input) => createAccountSupportCase(memberToken, input)} onRefresh={() => loadAccountSupport(memberToken)} />}
       </AccountResourceBoundary>
     </AccountPortalShell>
   );
