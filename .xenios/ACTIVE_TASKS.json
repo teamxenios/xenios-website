@@ -3233,7 +3233,7 @@
       "id": "KAN13-BILLING-SUPPORT-COMPOSITION-20261102",
       "title": "Compose accepted billing draft and support recovery increments",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "0ca22721bc4cd5e46f50ffbc842f185e7e3d3360",
       "paths": [
@@ -3249,7 +3249,13 @@
       "scopeNote": "Compose only the accepted billing increment 0e7e27e0f9f946900bdc54676741ba0a9f79b5aa and support increment 0166b35d91ef2958e62a78eec165a2519a3fe038 on exact application base 0ca22721bc4cd5e46f50ffbc842f185e7e3d3360/tree aa2da5b293ebca0a7a0c5f1bbf1879f2e272531c. Preserve all seven accepted Git modes and blobs exactly: RequestIntentForm.tsx 966bd8ce9856ff49ba09c0a43d047f0f9c834940, RequestIntentForm.test.tsx ec75a11d52bb9b823ba11f4afc8a62f56ce3b193, AccountSupport.tsx f1431a82b4fd234aa711d9595a1fca84c76daca9, AccountSupport.refresh.test.tsx df9199c6da4e55dbd1acc44f0f95ed4e605cf689, SupportView.tsx a4e12ae3df2d7fece446233864f878aae44fbc42, SupportView.pending.test.tsx 5405ef37376c91a766b842cc88b065639d3f618c, and support-documents.test.tsx b4ec613ed6ca70e0ee7917e8ef261d4095142fee. Expected composed tree is 99980889f8e6251bd88cb725b701dbc80fe67902. Design or author no new code or tests. Actual resulting-tree hosted checks are required; the unchanged billing and support source acceptances may be reused but are not production GO. Any later protected release under current human and KAN-13 authority separately requires current-base and branch-protection verification, trusted checks and threads, provider-compatible immediately preceding LIVE rollback, deployment and postcheck evidence. The intended source branch is codex/billing-support-composition-20261102 and must be created separately by Root after exact claim readback. Historical broad prefix leases, including f27dc330-48dd-46ef-adef-29a794d31587 and d582ed2b-6bdb-4c36-8efe-0b0146f0b625, remain HANDOFF and are neither released nor expired; this allocation does not take over Auth. Preserve the active KAN8 admin task and lease 87067847-af3a-45b0-b3ff-5fd45ee394d3 byte-exact. This claim itself authorizes no source edit, branch creation, local Node, test, build, CI, PR, Jira, production, Render, browser, Auth, SQL, database, private or staging evaluation, provider, configuration, flag, role, notification or customer change. All permanent scoped holds remain in force.",
       "createdAt": "2026-11-02T05:21:57.371Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-02T05:22:15.819Z"
+      "claimedAt": "2026-11-02T05:22:15.819Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "25d00047f2d08118a5aa7ffb5117d274426d75e1",
+        "file": ".xenios/handoffs/2026-11-02T05-33-21-594Z-KAN13-BILLING-SUPPORT-COMPOSITION-20261102-codex-launch-coordination-20261005.md",
+        "at": "2026-11-02T05:33:21.600Z"
+      }
     }
   ]
 }
