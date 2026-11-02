@@ -6,15 +6,21 @@ import { OrderRequestEntry } from "./OrderRequestEntry";
 import type { MemberInfo, MemberSessionStatus, RecoveryState } from "../core";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { ASSISTED_ORDER_DRAFT_KEY } from "./draft-store";
+import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
 
 const auth = vi.hoisted(() => ({ member: null as MemberInfo | null, memberToken: null as string | null, memberChecking: false,
   memberSessionStatus: "signed_out" as MemberSessionStatus, recovery: "none" as RecoveryState }));
 vi.mock("../core", () => ({ useResearch: () => auth }));
 vi.mock("./AssistedOrderPage", () => ({ AssistedOrderPage: (props: { embedded?: boolean }) =>
   <div data-testid="legacy-form">{props.embedded ? "embedded" : "standalone"}</div> }));
-vi.mock("./RequestIntentEntry", () => ({ RequestIntentEntry: (props: { embedded?: boolean; entryIntent?: { action: string } }) =>
-  <div data-testid="mixed-form">{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}</div> }));
-vi.mock("./RequestIntentForm", () => ({ RequestIntentForm: () => <div data-testid="private-form">Volatile form boundary</div> }));
+vi.mock("./RequestIntentEntry", () => ({ RequestIntentEntry: (props: { embedded?: boolean; entryIntent?: { action: string };
+  onConfirmedReceipt?: (receipt: unknown) => void }) =>
+  <div data-testid="mixed-form">{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}
+    <button type="button" aria-label="confirm synthetic receipt" onClick={() => props.onConfirmedReceipt?.({
+      kind: "unapproved_selection_request", requestId: "30000000-0000-4000-8000-000000000001",
+      publicReference: "XRI-30000000000040008000000000000001", status: "pending_review", createdAt: "2026-10-14T12:00:00.000Z" })} /></div> }));
+vi.mock("./RequestIntentForm", () => ({ RequestIntentForm: (props: { ownerKey?: string }) =>
+  <div data-testid="private-form" data-owner={props.ownerKey ?? ""}>Volatile form boundary</div> }));
 vi.mock("../early-access/OrderEntryIntentNotice", () => ({ OrderEntryIntentNotice: () => <p>Legacy hint resolver</p> }));
 (globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
 let container: HTMLDivElement, root: Root;
@@ -201,10 +207,55 @@ for (const entry of ["door", "private-entry"] as const) {
       auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
       await mount(); const original = container.querySelector(selector);
       expect(original).not.toBeNull();
+      // The private entry hands its owner key to the form; the door's stub has no such attribute.
+      expect(original?.getAttribute("data-owner")).toBe(entry === "private-entry" ? "a".repeat(64) : null);
       auth.member = null; auth.memberToken = null; auth.memberSessionStatus = "signed_out";
       await mount();
       expect(container.querySelector(selector)).not.toBeNull();
       expect(container.querySelector(selector)).not.toBe(original);
+      expect(container.querySelector(selector)?.getAttribute("data-owner")).toBe(entry === "private-entry" ? "early-access-session" : null);
     });
   });
 }
+
+describe("stored confirmed reference across recovery and owner boundaries", () => {
+  const record = () => window.sessionStorage.getItem(REQUEST_INTENT_RECEIPT_RECORD_KEY);
+  function storeRecord(owner: string) {
+    window.sessionStorage.setItem(REQUEST_INTENT_RECEIPT_RECORD_KEY, JSON.stringify({
+      owner, publicReference: "XRI-30000000000040008000000000000001", createdAt: "2026-10-14T12:00:00.000Z", pageLoad: "earlier" }));
+  }
+  it.each(["recovery", "verification failure", "invalid scope"] as const)(
+    "forgets the tab's confirmed reference on %s so it cannot reopen for the former member", async (boundary) => {
+      storeRecord("a".repeat(64));
+      auth.memberSessionStatus = boundary === "verification failure" ? "verification_failed" : "authenticated";
+      auth.member = boundary === "verification failure" ? null : member(boundary === "invalid scope" ? "invalid" : "a".repeat(64));
+      auth.recovery = boundary === "recovery" ? "pending" : "none";
+      await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
+      expect(container.querySelector('[data-testid="mixed-form"]')).toBeNull();
+      expect(record()).toBeNull();
+    });
+  it("offers Start another request on the member's confirmed receipt, then remounts a clean door that forgets the record", async () => {
+    auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
+    await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
+    await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="confirm synthetic receipt"]')!.click());
+    expect(container.textContent).toContain("Request saved for review");
+    expect(container.querySelector('[data-testid="mixed-form"]')).toBeNull();
+    storeRecord("a".repeat(64));
+    const start = [...container.querySelectorAll("button")].find((button) => button.textContent === "Start another request");
+    expect(start).toBeTruthy();
+    await act(async () => start!.click());
+    expect(container.querySelector('[data-testid="mixed-form"]')).not.toBeNull();
+    expect(container.textContent).not.toContain("Request saved for review");
+    expect(record()).toBeNull();
+  });
+  it("keeps the record through an ordinary confirmed member mount and while the session is being checked", async () => {
+    storeRecord("a".repeat(64));
+    auth.memberSessionStatus = "checking"; auth.memberChecking = true;
+    await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
+    expect(record()).not.toBeNull();
+    auth.memberSessionStatus = "authenticated"; auth.memberChecking = false; auth.member = member("a".repeat(64));
+    await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
+    expect(container.querySelector('[data-testid="mixed-form"]')).not.toBeNull();
+    expect(record()).not.toBeNull();
+  });
+});

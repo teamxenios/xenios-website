@@ -6,6 +6,7 @@ import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair, requiredAss
 import type { RequestIntentCatalogItem, RequestIntentInput, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-api";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
+import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
 import { RequestIntentForm } from "./RequestIntentForm";
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
 import { RequestIntentService, type CreateIntent, type StoredIntent } from "../../../../server/research/assisted-order/request-intent/service";
@@ -85,6 +86,19 @@ let host: HTMLDivElement, root: Root;
 beforeEach(() => { sessionStorage.clear(); host = document.createElement("div"); document.body.append(host); root = createRoot(host); });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); sessionStorage.clear(); });
 async function render(api: RequestIntentApi) { await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} />)); }
+function storedKeys() { return Array.from({ length: sessionStorage.length }, (_, index) => sessionStorage.key(index)); }
+/** After a confirmed receipt the marker is gone and only the non-secret reference record remains. */
+function expectOnlyReferenceRecord(owner = "unscoped") {
+  expect(storedKeys()).toEqual([REQUEST_INTENT_RECEIPT_RECORD_KEY]);
+  expect(JSON.parse(sessionStorage.getItem(REQUEST_INTENT_RECEIPT_RECORD_KEY)!))
+    .toEqual({ owner, publicReference: reference, createdAt: receipt.createdAt, pageLoad: expect.any(String) });
+}
+/** A reload evaluates the module again; the record then carries an earlier page-load id. */
+function simulateReload() {
+  const raw = sessionStorage.getItem(REQUEST_INTENT_RECEIPT_RECORD_KEY);
+  expect(raw).not.toBeNull();
+  sessionStorage.setItem(REQUEST_INTENT_RECEIPT_RECORD_KEY, JSON.stringify({ ...JSON.parse(raw!), pageLoad: "an-earlier-page-load" }));
+}
 async function click(text: string) {
   const button = [...host.querySelectorAll("button")].find((entry) => entry.textContent === text);
   expect(button).toBeTruthy();
@@ -178,6 +192,7 @@ describe("mixed private request customer form source", () => {
     sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, replacement);
     await act(async () => resolve(receipt));
     expect(confirmed).not.toHaveBeenCalled();
+    expect(sessionStorage.getItem(REQUEST_INTENT_RECEIPT_RECORD_KEY)).toBeNull();
     expect(host.textContent).not.toContain(reference);
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(replacement);
     expect(host.querySelector('[role="alert"]')).toBeTruthy();
@@ -187,7 +202,9 @@ describe("mixed private request customer form source", () => {
     await prepare(api); await click("Submit for review");
     expect(rows.size).toBe(1);
     expect(host.textContent).toContain(reference);
-    expect(host.querySelector("a")?.getAttribute("href")).toBe("/research/support");
+    const hrefs = [...host.querySelectorAll("a")].map((anchor) => anchor.getAttribute("href"));
+    expect(hrefs).toContain("/research/support");
+    expect(hrefs).toContain("/research/early-access/order-request/confirmation/" + reference);
     const detail = await api.staff(receipt.requestId);
     expect(detail.lines.map((line) => [line.productId, line.quantity, line.reviewState]))
       .toEqual([["clinical", 2, "pending"], ["research", 1, "pending"]]);
@@ -660,13 +677,16 @@ describe("request selection layout and controls (component fixtures, not viewpor
       expect(submitted.shippingAddress).toEqual(shippingAddress);
       expect(submitted.billingAddress).toEqual(shippingAddress);
       expect(api.recover).not.toHaveBeenCalled(); expect(host.textContent).toContain(reference);
-      // Submission may persist only its existing non-contact retry marker.
+      // Submission may persist only its existing non-contact retry marker and,
+      // once confirmed, the non-secret reference record. Never any contact data.
       expect(storageWrites.mock.calls.length).toBeGreaterThan(0);
       for (const [key, value] of storageWrites.mock.calls) {
-        expect(key).toBe(REQUEST_INTENT_ATTEMPT_KEY);
-        expect(Object.keys(JSON.parse(value)).sort()).toEqual(["acceptedAt", "key", "state"]);
+        const fields = Object.keys(JSON.parse(value)).sort();
+        if (key === REQUEST_INTENT_RECEIPT_RECORD_KEY) expect(fields).toEqual(["createdAt", "owner", "pageLoad", "publicReference"]);
+        else { expect(key).toBe(REQUEST_INTENT_ATTEMPT_KEY); expect(fields).toEqual(["acceptedAt", "key", "state"]); }
+        expect(value).not.toMatch(/Synthetic|Billing|Street|@example|Unit 4/);
       }
-      expect(sessionStorage.length).toBe(0);
+      expectOnlyReferenceRecord();
     } finally { storageWrites.mockRestore(); }
   });
   it("counts two variants of one product as one product and two exact variants", async () => {
@@ -781,7 +801,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
       ...clinicalRequirements.map((ack) => { const { kind, version } = assistedOrderFormPair(ack); return JSON.stringify([kind, version]); }),
     ];
     expect(new Set(second.agreements.map(({ kind, version }) => JSON.stringify([kind, version])))).toEqual(new Set(expectedPairs));
-    expect(host.textContent).toContain(receipt.publicReference); expect(sessionStorage.length).toBe(0);
+    expect(host.textContent).toContain(receipt.publicReference); expectOnlyReferenceRecord();
   });
   it("refreshes obsolete requirements explicitly before a fresh version-valid submission", async () => {
     const api = versionCheckedApi();
@@ -835,7 +855,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
       .toEqual(first.agreements.filter((entry) => entry.kind !== "fixture-terms")
         .map(({ kind, version, accepted }) => ({ kind, version, accepted })));
     expect(host.textContent).toContain(receipt.publicReference);
-    expect(sessionStorage.length).toBe(0);
+    expectOnlyReferenceRecord();
   });
   it("keeps submission closed after refresh failure and permits an explicit successful refresh retry", async () => {
     const api = versionCheckedApi();
@@ -873,7 +893,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(second.lines).toEqual(first.lines);
     expect(second.agreements.find((entry) => entry.kind === "fixture-terms")?.version).toBe("fixture-v2");
     expect(host.textContent).toContain(receipt.publicReference);
-    expect(sessionStorage.length).toBe(0);
+    expectOnlyReferenceRecord();
   });
   it("deduplicates refresh clicks while configuration is pending without posting a request", async () => {
     const api = versionCheckedApi();
@@ -937,7 +957,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(second.agreements.map(({ kind, version }) => ({ kind, version })))
       .toEqual(first.agreements.map(({ kind, version }) => ({ kind, version })));
     expect(api.config).toHaveBeenCalledTimes(1); expect(host.textContent).toContain(receipt.publicReference);
-    expect(sessionStorage.length).toBe(0);
+    expectOnlyReferenceRecord();
   });
   it("retains the exact key, acceptedAt and edit lock when a lost reply is followed by a known retry refusal", async () => {
     const api = makeApi();
@@ -1092,5 +1112,121 @@ describe("private request queue pagination", () => {
     expect(replacement.staffQueue).toHaveBeenCalledTimes(1);
     expect(replacement.staffQueue).toHaveBeenCalledWith(1);
     expect(api.staff).not.toHaveBeenCalled();
+  });
+});
+
+describe("confirmed reference continuation", () => {
+  const uncertainMarker = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001", acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" });
+  async function remount(element: Parameters<Root["render"]>[0]) {
+    await act(async () => root.unmount()); host.remove();
+    host = document.createElement("div"); document.body.append(host); root = createRoot(host);
+    await act(async () => root.render(element));
+  }
+  it("keeps only the non-secret reference record, under the mount's owner, after a confirmed submission and after a recovered one", async () => {
+    const api = makeApi();
+    await prepare(api);
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} ownerKey="owner-a" />));
+    await click("Submit for review");
+    expect(host.textContent).toContain(reference); expectOnlyReferenceRecord("owner-a");
+    expect(host.textContent).not.toContain("confirmed earlier in this browser tab");
+    sessionStorage.clear(); sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, uncertainMarker);
+    await remount(<RequestIntentForm api={makeApi()} storage={sessionStorage} ownerKey="owner-b" />);
+    await click("Check saved request");
+    expect(host.textContent).toContain(reference); expectOnlyReferenceRecord("owner-b");
+    expect(host.textContent).not.toContain("confirmed earlier in this browser tab");
+  });
+  it("shows a fresh form on an in-page remount of the same page load and keeps the record for a later load", async () => {
+    const api = makeApi();
+    await prepare(api); await click("Submit for review");
+    const replacement = makeApi();
+    await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
+    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).not.toContain(reference);
+    expect(replacement.catalog).toHaveBeenCalledTimes(1);
+    expectOnlyReferenceRecord();
+  });
+  it("reopens the confirmed reference for the same owner after a reload without reading or publishing again", async () => {
+    const api = makeApi();
+    await prepare(api); await click("Submit for review");
+    simulateReload();
+    const replacement = makeApi(), confirmed = vi.fn(), steps = vi.fn();
+    await remount(<RequestIntentForm api={replacement} storage={sessionStorage} onConfirmedReceipt={confirmed} onStepChange={steps}
+      entryIntent={{ family: "research_peptides_materials", slug: "research", variantId: "research-source", quantity: 1, action: "REQUEST_QUOTE" }} />);
+    expect(host.textContent).toContain("Request saved for review");
+    expect(steps).toHaveBeenLastCalledWith("review");
+    expect(host.textContent).toContain(reference);
+    expect(host.textContent).toContain("This reference was confirmed earlier in this browser tab. Nothing was sent again.");
+    expect(replacement.config).not.toHaveBeenCalled(); expect(replacement.catalog).not.toHaveBeenCalled();
+    expect(replacement.recover).not.toHaveBeenCalled(); expect(replacement.submit).not.toHaveBeenCalled();
+    expect(confirmed).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(document.body);
+    expectOnlyReferenceRecord();
+  });
+  it("discards another owner's record and renders a fresh form", async () => {
+    const api = makeApi();
+    await prepare(api); await click("Submit for review");
+    simulateReload();
+    const replacement = makeApi();
+    await remount(<RequestIntentForm api={replacement} storage={sessionStorage} ownerKey="owner-b" />);
+    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).not.toContain(reference);
+    expect(replacement.catalog).toHaveBeenCalledTimes(1);
+    expect(sessionStorage.length).toBe(0);
+  });
+  it("lets an uncertain attempt take precedence over a reopened reference", async () => {
+    const api = makeApi();
+    await prepare(api); await click("Submit for review");
+    simulateReload(); sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, uncertainMarker);
+    const replacement = makeApi();
+    await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
+    expect(host.textContent).toContain("Check your earlier request");
+    expect(host.textContent).not.toContain("confirmed earlier in this browser tab");
+    expect(replacement.catalog).not.toHaveBeenCalled(); expect(replacement.recover).not.toHaveBeenCalled();
+    expect(sessionStorage.getItem(REQUEST_INTENT_RECEIPT_RECORD_KEY)).not.toBeNull();
+  });
+  it("starts another request from a clean session with a new attempt key", async () => {
+    const api = makeApi();
+    await prepare(api); await click("Submit for review");
+    const first = api.submit.mock.calls[0][0];
+    await click("Start another request");
+    expect(host.textContent).toContain("Request products for review");
+    expect(document.activeElement).toBe(host.querySelector("h1"));
+    expect(host.textContent).toContain("0 products | 0 exact variants | 0 requested units");
+    expect(host.textContent).not.toContain(reference);
+    expect(sessionStorage.length).toBe(0);
+    expect(api.catalog).toHaveBeenCalledTimes(2); expect(api.config).toHaveBeenCalledTimes(2);
+    await prepare(api); await click("Submit for review");
+    expect(api.submit).toHaveBeenCalledTimes(2);
+    expect(api.submit.mock.calls[1][0].idempotencyKey).not.toBe(first.idempotencyKey);
+    expect(host.textContent).toContain(reference); expectOnlyReferenceRecord();
+  });
+  it("starts another request from a reopened receipt too, forgetting the record and focusing the fresh form", async () => {
+    const api = makeApi();
+    await prepare(api); await click("Submit for review");
+    simulateReload();
+    const replacement = makeApi();
+    await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
+    expect(host.textContent).toContain("confirmed earlier in this browser tab");
+    await click("Start another request");
+    expect(host.textContent).toContain("Request products for review");
+    expect(document.activeElement).toBe(host.querySelector("h1"));
+    expect(sessionStorage.length).toBe(0);
+    expect(replacement.catalog).toHaveBeenCalledTimes(1); expect(replacement.config).toHaveBeenCalledTimes(1);
+  });
+  it("shows the confirmation even when the reference record cannot be stored", async () => {
+    const api = makeApi(), confirmed = vi.fn();
+    const original = Storage.prototype.setItem;
+    const setItem = vi.spyOn(Storage.prototype, "setItem").mockImplementation(function (this: Storage, key: string, value: string) {
+      if (key === REQUEST_INTENT_RECEIPT_RECORD_KEY) throw new DOMException("quota", "QuotaExceededError");
+      return original.call(this, key, value);
+    });
+    try {
+      await prepare(api);
+      await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} onConfirmedReceipt={confirmed} />));
+      await click("Submit for review");
+      expect(host.textContent).toContain(reference);
+      expect(confirmed).toHaveBeenCalledWith(receipt);
+      expect(sessionStorage.length).toBe(0);
+    } finally { setItem.mockRestore(); }
   });
 });
