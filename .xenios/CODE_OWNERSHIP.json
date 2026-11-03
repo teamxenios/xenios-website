@@ -2838,7 +2838,7 @@
         "client/public/research/product-media/unknown.svg",
         "client/src/research/master-offerings/product-media.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-03T21:30:21.051Z",
       "heartbeatAt": "2026-11-03T21:30:21.051Z"
     }
