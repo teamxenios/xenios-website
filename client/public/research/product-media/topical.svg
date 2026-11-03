@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none"><defs>
+    <linearGradient id="pf-chrome" x1=".12" y1="0" x2=".88" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#faf8ff" /><stop offset=".18" stop-color="#bbc2e2" /><stop offset=".35" stop-color="#fff" /><stop offset=".58" stop-color="#687699" /><stop offset=".8" stop-color="#e2e3ff" /><stop offset="1" stop-color="#8694bc" />
+    </linearGradient>
+    <linearGradient id="pf-purple" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#e7d6ff" /><stop offset=".25" stop-color="#ad88ee" /><stop offset=".57" stop-color="#7354bf" /><stop offset=".8" stop-color="#403466" /><stop offset="1" stop-color="#a6a7ec" />
+    </linearGradient>
+    <linearGradient id="pf-blue" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#eaf6ff" /><stop offset=".24" stop-color="#a3c4f9" /><stop offset=".55" stop-color="#6587d7" /><stop offset=".82" stop-color="#3e497d" /><stop offset="1" stop-color="#b2bbf6" />
+    </linearGradient>
+    <radialGradient id="pf-pearl" cx=".34" cy=".22" r=".86">
+      <stop stop-color="#fff" /><stop offset=".42" stop-color="#e9e5f8" /><stop offset=".72" stop-color="#aca6d0" /><stop offset="1" stop-color="#666b97" />
+    </radialGradient>
+    <radialGradient id="pf-shadow">
+      <stop stop-color="#39305f" stop-opacity=".24" /><stop offset="1" stop-color="#39305f" stop-opacity="0" />
+    </radialGradient>
+    <g id="pf-ground"><ellipse cx="64" cy="112" rx="39" ry="8" fill="url(#pf-shadow)" /></g>
+  </defs>
+  <use href="#pf-ground" />
+    <path d="M20 82c6-18 28-10 41-28 8-11 4-20 17-26-2 15 13 20 23 36 14 22 0 36-26 38-23 2-49-3-55-12-2-3-2-5 0-8Z" fill="url(#pf-pearl)" stroke="#8880a8" stroke-width="1.5" />
+    <path d="M24 88c12 6 27 8 42 5 19-4 28-15 24-28 12 16 6 29-15 33-19 4-42 0-51-10Z" fill="url(#pf-blue)" opacity=".5" />
+    <path d="M32 79c12-7 24-4 36-17 6-6 8-12 9-19" stroke="#fff" stroke-opacity=".9" stroke-width="5" stroke-linecap="round" />
+    <path d="M36 89c13 1 30-2 41-12 7-6 9-12 8-18" stroke="#8e83b6" stroke-opacity=".5" stroke-width="2" stroke-linecap="round" />
+    <path d="M43 96c10 1 20-1 27-4" stroke="#fff" stroke-opacity=".65" stroke-width="2" stroke-linecap="round" />
+  </svg>

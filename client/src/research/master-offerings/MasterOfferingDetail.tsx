@@ -8,6 +8,7 @@ import { CatalogEvidenceNotice } from "../catalog-evidence/CatalogEvidenceNotice
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import { isContradictoryPurchase } from "./catalog-access-path";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
+import { ProductMedia } from "../product-media/ProductMedia";
 import {
   purchaseQuantityControl,
   type AcceptedExactVariantQuantityCapability,
@@ -266,6 +267,8 @@ export function MasterOfferingDetail({
           </p>
         )}
       </header>
+
+      <ProductMedia productName={product.displayName} variantIds={selected ? [selected.id] : []} detail />
 
       {variants.length > 0 && selected && (
         <section aria-labelledby="mo-detail-variants" className="grid min-w-0 gap-4">
