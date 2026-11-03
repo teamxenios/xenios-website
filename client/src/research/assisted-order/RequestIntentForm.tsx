@@ -43,6 +43,8 @@ export function RequestIntentForm({
   const [config, setConfig] = useState<AssistedOrderWizardConfig | null>(null);
   const [requirementsNeedRefresh, setRequirementsNeedRefresh] = useState(false);
   const [catalog, setCatalog] = useState<RequestIntentCatalogPage | null>(null);
+  const [catalogFailed, setCatalogFailed] = useState(false);
+  const [catalogRetry, setCatalogRetry] = useState(0);
   const [search, setSearch] = useState("");
   const [family, setFamily] = useState("");
   const [page, setPage] = useState(1);
@@ -123,11 +125,12 @@ export function RequestIntentForm({
     if (restored) return;
     let current = true;
     setCatalog(null);
+    setCatalogFailed(false);
     void api.catalog({ search, family: family || undefined, page, pageSize: 24 })
       .then((value) => { if (current) setCatalog(value); })
-      .catch(() => { if (current) setError("The current catalog could not be confirmed. Please retry later."); });
+      .catch(() => { if (current) setCatalogFailed(true); });
     return () => { current = false; };
-  }, [api, search, family, page, restored]);
+  }, [api, search, family, page, restored, catalogRetry]);
 
   async function refreshRequirements() {
     if (locked.current || !requirementsNeedRefresh || frozen.current) return;
@@ -278,7 +281,11 @@ export function RequestIntentForm({
           <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}
         </select></label>
       </div>
-      <p role="status">{catalog ? catalog.total + " visible catalog entries. " + selected.size + " selected." : "Loading catalog..."}</p>
+      {catalogFailed ? <section className="xenios-order-panel" aria-label="Catalog unavailable">
+        <p role="alert">The current catalog could not be confirmed. Retry to continue with your existing selections.</p>
+        <button type="button" className="xenios-order-button" onClick={() => setCatalogRetry((value) => value + 1)}>Retry catalog</button>
+        <p>For manual catalog and ordering help, call <a href="tel:7374186381">737-418-6381</a>.</p>
+      </section> : <p role="status">{catalog ? catalog.total + " visible catalog entries. " + selected.size + " selected." : "Loading catalog..."}</p>}
       <div className="xenios-order-catalog-layout"><div><div className="xenios-order-cards">{catalog?.items.map((item) => {
         const key = catalogItemKey(item), selection = selected.get(key);
         return <article className="xenios-order-card" key={key}><h2>{item.productName}</h2>
