@@ -618,6 +618,8 @@ describe("the login-free request-only entry", () => {
     await renderStorefront(true);
     await waitForAdd();
     expect(container.querySelector("h1")?.textContent).toBe("Quick Order");
+    // The embedded form sits below the page heading, so the page keeps one h1.
+    expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
