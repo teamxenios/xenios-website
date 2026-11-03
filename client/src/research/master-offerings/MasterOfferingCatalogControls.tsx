@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
   DEFAULT_MASTER_OFFERING_SORT,
   MASTER_OFFERING_DISPLAY_LABELS,
@@ -21,7 +21,7 @@ import {
   fetchMasterOfferingPriceList,
   saveMasterOfferingPriceList,
 } from "./catalogApi";
-import { MASTER_OFFERING_FILTER_STATES } from "./integration-packet";
+import { MASTER_OFFERING_FILTER_STATES, masterOfferingPriceListUrl } from "./integration-packet";
 
 const ALL = "all";
 const SEARCH_DEBOUNCE_MS = 250;
@@ -314,32 +314,58 @@ export function MasterOfferingCatalogControls({
  * server: nothing here assembles catalog data, and a response that is not the
  * format that was asked for is refused rather than saved.
  */
-export function MasterOfferingPriceListDownload({
-  query,
-  memberToken = null,
-  fetchPriceList = fetchMasterOfferingPriceList,
-  savePriceList = saveMasterOfferingPriceList,
-}: {
+type PriceListDownloadProps = {
   query: MasterOfferingCatalogQuery;
   memberToken?: string | null;
   fetchPriceList?: typeof fetchMasterOfferingPriceList;
   savePriceList?: typeof saveMasterOfferingPriceList;
-}) {
+};
+
+export function MasterOfferingPriceListDownload(props: PriceListDownloadProps) {
+  // Match the export's own filter semantics: paging and sorting are not
+  // price-list inputs. A new token or export URL gets a fresh private scope.
+  const scope = JSON.stringify([props.memberToken ?? null, masterOfferingPriceListUrl(props.query, "csv")]);
+  return <PriceListDownloadBody key={scope} {...props} />;
+}
+
+function PriceListDownloadBody({
+  query,
+  memberToken = null,
+  fetchPriceList = fetchMasterOfferingPriceList,
+  savePriceList = saveMasterOfferingPriceList,
+}: PriceListDownloadProps) {
   const [busy, setBusy] = useState<MasterOfferingPriceListFormat | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
+  const alive = useRef(false);
+  const inFlight = useRef(false);
+  useLayoutEffect(() => {
+    alive.current = true;
+    return () => { alive.current = false; };
+  }, []);
+
   async function download(format: MasterOfferingPriceListFormat) {
-    if (busy !== null) return;
+    if (!alive.current || inFlight.current) return;
+    inFlight.current = true;
     setBusy(format);
     setMessage(null);
-    const result = await fetchPriceList(memberToken, query, format);
-    setBusy(null);
-    if (!result.ok) {
-      setMessage(MASTER_OFFERING_PRICE_LIST_FAILURE_COPY[result.failure]);
-      return;
+    try {
+      const result = await fetchPriceList(memberToken, query, format);
+      // Never hand an old context's private bytes to the browser. Keyed
+      // ownership also prevents an A -> B -> A return reviving the old job.
+      if (!alive.current) return;
+      if (!result.ok) {
+        setMessage(MASTER_OFFERING_PRICE_LIST_FAILURE_COPY[result.failure]);
+        return;
+      }
+      savePriceList(result.blob, result.filename);
+      setMessage("Your price list download has started.");
+    } catch {
+      if (alive.current) setMessage("We couldn't confirm that the download started. Try again.");
+    } finally {
+      inFlight.current = false;
+      if (alive.current) setBusy(null);
     }
-    savePriceList(result.blob, result.filename);
-    setMessage("Your price list download has started.");
   }
 
   return (
