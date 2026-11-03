@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { RequestIntentDetail, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import type { RequestIntentApi } from "./request-intent-api";
+import type { AssistedOrderAddressInput } from "../../../../shared/research/assisted-order/contract";
 import "./assisted-order.css";
 
 type QueueLoad = Readonly<{ api: RequestIntentApi; page: number; attempt: number }> & (
@@ -79,6 +80,15 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
     {message && <p role="alert">{message}</p>}
     {detail && <section><h2>{detail.publicReference}</h2>
       <p>{detail.contact.fullLegalName} | {detail.contact.email} | {detail.contact.mobilePhone}</p>
+      {detail.contact.organizationName && <p>Organization: {detail.contact.organizationName}</p>}
+      <section aria-label="Requested delivery address"><h3>Requested delivery address</h3>
+        <RequestedAddress address={detail.contact.shippingAddress} />
+      </section>
+      <section aria-label="Requested billing address"><h3>Requested billing address</h3>
+        {detail.contact.billingSameAsShipping ? <p>Same as requested delivery address.</p>
+          : detail.contact.billingAddress ? <RequestedAddress address={detail.contact.billingAddress} />
+          : <p>Separate billing address not provided.</p>}
+      </section>
       <ul>{detail.lines.map((line) => <li key={JSON.stringify([line.productId, line.variantId])}>
         <strong>{line.productName}</strong> | {line.specification || "Form not stated"} | {line.variantId} | Requested quantity: {line.quantity} |
         Pending {line.clinicalReviewRequired ? "clinical" : "internal"} review
@@ -86,4 +96,16 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
         {line.sourceRefusal && " | Source restriction: " + line.sourceRefusal}
       </li>)}</ul></section>}
   </section>;
+}
+
+function RequestedAddress({ address }: Readonly<{ address: AssistedOrderAddressInput | null | undefined }>) {
+  // Partial readbacks can reach this component: the adapter checks contact
+  // presence, not every address field. Missing data is never an address.
+  if (!address) return <p>Address not provided.</p>;
+  return <address>
+    <div>{address.line1}</div>
+    {address.line2 && <div>{address.line2}</div>}
+    <div>{address.city}</div><div>{address.region}</div>
+    <div>{address.postalCode}</div><div>{address.countryCode}</div>
+  </address>;
 }

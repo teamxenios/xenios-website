@@ -31,12 +31,22 @@ export function getMasterOfferingCatalog(
   return apiGet(masterOfferingCatalogUrl(query), token);
 }
 
-export function getMasterOfferingDetail(
+export async function getMasterOfferingDetail(
   token: string | null,
   family: MasterOfferingFamily,
   slug: string,
 ): Promise<ApiResult<MasterOfferingCatalogDetailResponse>> {
-  return apiGet(masterOfferingDetailUrl(family, slug), token);
+  const result = await apiGet<MasterOfferingCatalogDetailResponse>(
+    masterOfferingDetailUrl(family, slug), token,
+  );
+  if (result.kind !== "ok") return result;
+  const product = result.data?.ok === true ? result.data.product : null;
+  // Both segments identify the requested resource. A successful response for
+  // another product must not put that product's facts or actions on this URL.
+  if (!product || product.family !== family || product.slug !== slug) {
+    return { kind: "error", message: "The requested product could not be confirmed." };
+  }
+  return result;
 }
 
 /**
