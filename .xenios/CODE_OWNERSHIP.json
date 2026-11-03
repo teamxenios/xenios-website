@@ -2819,6 +2819,27 @@
       "state": "handoff",
       "claimedAt": "2026-11-03T15:40:50.041Z",
       "heartbeatAt": "2026-11-03T15:40:50.041Z"
+    },
+    {
+      "id": "ad0d11cc-2ea7-41a0-980d-2d8884dd838f",
+      "task": "KAN59-CATALOG-PRODUCT-VISUALS-20261103",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/src/research/product-media/product-media.test.tsx",
+        "client/src/research/product-media/product-media-format.generated.json",
+        "client/public/research/product-media/vial.svg",
+        "client/public/research/product-media/capsule.svg",
+        "client/public/research/product-media/tablet.svg",
+        "client/public/research/product-media/topical.svg",
+        "client/public/research/product-media/liquid.svg",
+        "client/public/research/product-media/unknown.svg"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-03T21:30:21.051Z",
+      "heartbeatAt": "2026-11-03T21:30:21.051Z"
     }
   ],
   "rules": [

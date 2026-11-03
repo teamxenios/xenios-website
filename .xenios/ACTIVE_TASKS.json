@@ -3304,6 +3304,32 @@
         "file": ".xenios/handoffs/2026-11-03T15-59-19-590Z-KAN10-CATALOG-VARIANT-PRICE-PRESENTATION-20261103-codex-launch-coordination-20261005.md",
         "at": "2026-11-03T15:59:19.607Z"
       }
+    },
+    {
+      "id": "KAN59-CATALOG-PRODUCT-VISUALS-20261103",
+      "title": "Add restrained product-format visuals to member catalog",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "865d846c6e8bcceb6f12e97d91b91c5b9211a3e1",
+      "paths": [
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/src/research/product-media/product-media.test.tsx",
+        "client/src/research/product-media/product-media-format.generated.json",
+        "client/public/research/product-media/vial.svg",
+        "client/public/research/product-media/capsule.svg",
+        "client/public/research/product-media/tablet.svg",
+        "client/public/research/product-media/topical.svg",
+        "client/public/research/product-media/liquid.svg",
+        "client/public/research/product-media/unknown.svg"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Implement only Samuel's KAN-59 catalog product-visuals allocation recorded and echo-verified at KAN-59 comment 10539 on the independently accepted frozen PR367 source 865d846c6e8bcceb6f12e97d91b91c5b9211a3e1/tree d45ff0144c96e16cbc990b5d7e8e96a43d5fd53a. Preserve the exact starting blobs MasterOfferingCard.tsx 976b1fd1248ab321f10cfd3e123fad8091b83ea6 and MasterOfferingDetail.tsx ea6731b5eb89579c9749ec30aa5ac666189aea10; all nine product-media component, test, manifest and SVG asset paths are new. The bounded outcome is mounted illustrative media in existing member cards and detail, one reusable exact-ID component, a sparse format manifest, restrained assets and affected tests. Add no guest-path behavior, pricing authority, eligibility, holds, public visibility, catalog authority, Auth, API, configuration, role, flag, customer, notification, release or production behavior. The intended separate stacked branch is codex/catalog-product-visuals-20261103 and must be created separately by Root after exact claim readback. Preserve PR367, both Claude R2/R3 refs, the prior catalog-price task and HANDOFF lease, the active KAN8 admin task and lease 87067847-af3a-45b0-b3ff-5fd45ee394d3, and every other task, lease, handoff, release record, session and ownership rule. This metadata claim authorizes the custodian to make no application source or test edit and no branch, test, build, CI, browser, provider, database, SQL, staging, private or production action.",
+      "createdAt": "2026-11-03T21:29:46.2915420Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-03T21:30:21.031Z"
     }
   ]
 }
