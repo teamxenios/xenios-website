@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="troche-chrome" x1=".12" y1="0" x2=".88" y2="1">
+      <stop stop-color="#faf8ff"/><stop offset=".18" stop-color="#bbc2e2"/><stop offset=".35" stop-color="#fff"/><stop offset=".58" stop-color="#687699"/><stop offset=".8" stop-color="#e2e3ff"/><stop offset="1" stop-color="#8694bc"/>
+    </linearGradient>
+    <linearGradient id="troche-purple" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#e7d6ff"/><stop offset=".25" stop-color="#ad88ee"/><stop offset=".57" stop-color="#7354bf"/><stop offset=".8" stop-color="#403466"/><stop offset="1" stop-color="#a6a7ec"/>
+    </linearGradient>
+    <radialGradient id="troche-pearl" cx=".34" cy=".22" r=".86">
+      <stop stop-color="#fff"/><stop offset=".42" stop-color="#e9e5f8"/><stop offset=".72" stop-color="#aca6d0"/><stop offset="1" stop-color="#666b97"/>
+    </radialGradient>
+    <radialGradient id="troche-shadow">
+      <stop stop-color="#39305f" stop-opacity=".24"/><stop offset="1" stop-color="#39305f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="112" rx="39" ry="8" fill="url(#troche-shadow)"/>
+  <g transform="rotate(-12 64 64)">
+    <path d="M28 47h72v38c0 12-8 20-20 20H48c-12 0-20-8-20-20Z" fill="url(#troche-purple)" stroke="#655d88" stroke-width="1.5"/>
+    <rect x="28" y="28" width="72" height="64" rx="20" fill="url(#troche-chrome)" stroke="#777397" stroke-width="1.5"/>
+    <rect x="33" y="33" width="62" height="54" rx="16" fill="url(#troche-pearl)" stroke="#fff" stroke-opacity=".55"/>
+    <path d="M38 77c5 5 10 6 18 6h23c6 0 10-3 12-8-3 8-7 10-14 10H53c-7 0-12-3-15-8Z" fill="#b7c9fc" opacity=".65"/>
+    <path d="M38 48c0-6 4-10 10-10h17" stroke="#fff" stroke-opacity=".85" stroke-width="4" stroke-linecap="round"/>
+    <path d="M35 92c4 5 9 7 16 7h13" stroke="#d5ceff" stroke-opacity=".65" stroke-width="2" stroke-linecap="round"/>
+    <path d="M81 99c6-1 10-4 12-9" stroke="#c5d9ff" stroke-opacity=".65" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

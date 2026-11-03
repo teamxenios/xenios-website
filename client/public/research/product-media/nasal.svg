@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="nasal-chrome" x1=".12" y1="0" x2=".88" y2="1">
+      <stop stop-color="#faf8ff"/><stop offset=".18" stop-color="#bbc2e2"/><stop offset=".35" stop-color="#fff"/><stop offset=".58" stop-color="#687699"/><stop offset=".8" stop-color="#e2e3ff"/><stop offset="1" stop-color="#8694bc"/>
+    </linearGradient>
+    <linearGradient id="nasal-purple" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#e7d6ff"/><stop offset=".25" stop-color="#ad88ee"/><stop offset=".57" stop-color="#7354bf"/><stop offset=".8" stop-color="#403466"/><stop offset="1" stop-color="#a6a7ec"/>
+    </linearGradient>
+    <linearGradient id="nasal-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#eaf6ff"/><stop offset=".24" stop-color="#a3c4f9"/><stop offset=".55" stop-color="#6587d7"/><stop offset=".82" stop-color="#3e497d"/><stop offset="1" stop-color="#b2bbf6"/>
+    </linearGradient>
+    <radialGradient id="nasal-shadow">
+      <stop stop-color="#39305f" stop-opacity=".24"/><stop offset="1" stop-color="#39305f" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="64" cy="112" rx="39" ry="8" fill="url(#nasal-shadow)"/>
+  <path d="M36 98c-3-17-2-34 6-49 2-4 7-3 7 1-1 5-5 13-7 20-3 10-4 20-6 28Z" fill="url(#nasal-purple)"/>
+  <path d="M38 99c5-18 18-37 33-49 4-3 9-1 8 3-2 4-9 8-14 13-11 10-20 21-27 33Z" fill="url(#nasal-blue)"/>
+  <path d="M40 100c14-13 34-21 54-23 5 0 8 4 4 7-3 2-13 2-20 4-14 2-26 7-38 12Z" fill="url(#nasal-chrome)"/>
+  <path d="M42 65c1-5 3-9 4-12m8 22c6-8 12-14 19-19m1 28 19-4" stroke="#fff" stroke-opacity=".7" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="44" cy="36" r="7" fill="url(#nasal-purple)" stroke="#8475a8"/>
+  <circle cx="56" cy="20" r="4" fill="url(#nasal-chrome)"/>
+  <circle cx="77" cy="34" r="7" fill="url(#nasal-blue)" stroke="#7788b2"/>
+  <circle cx="94" cy="23" r="3.5" fill="url(#nasal-purple)"/>
+  <circle cx="96" cy="58" r="7" fill="url(#nasal-chrome)" stroke="#8284a6"/>
+  <circle cx="111" cy="44" r="3" fill="url(#nasal-blue)"/>
+  <circle cx="112" cy="81" r="4.5" fill="url(#nasal-purple)"/>
+  <circle cx="25" cy="58" r="3" fill="url(#nasal-blue)"/>
+  <path d="M41 34c0-1 1-2 2-2m31 0c0-1 1-2 2-2m17 26c0-1 1-2 2-2" stroke="#fff" stroke-opacity=".85" stroke-width="2" stroke-linecap="round"/>
+</svg>
