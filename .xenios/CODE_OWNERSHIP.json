@@ -2849,7 +2849,7 @@
       "paths": [
         "client/public/research/product-media/vial.svg"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-03T22:36:28.517Z",
       "heartbeatAt": "2026-11-03T22:36:28.517Z"
     }

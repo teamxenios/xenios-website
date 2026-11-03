@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "task": "KAN59-CATALOG-PRODUCT-VISUALS-VIAL-CORRECTION-20261103",
+  "lease": "dccb2bac-9352-417d-9102-108f8f0f073f",
+  "custody": "0887e6bb42c2305ff281ccbbb7d0dc88d54c00fd",
+  "head": "e1036bd4e3d94dd20241a1ceb45b0d17c1d6a01c",
+  "tree": "bf001739ad20548551b5230778c5c78a5fe0894e",
+  "parent": "e1d9d45021b4c2a9a1b2e74809f06acbd58716c1",
+  "pr": 368,
+  "release": "d0fd93bf0402c72bb173f147e884256b04c927ed",
+  "changedPath": "client/public/research/product-media/vial.svg",
+  "diff": "Delete liquid fill and ellipse only. Empty representative vial for 105 lyophilized variants. No other source or test change.",
+  "hostedRun": 41732573268,
+  "attempt": 1,
+  "providerMerge": "985ee166131b102fe4dc245bdb43758b0453cc70",
+  "pass": 18422,
+  "fail": 0,
+  "skip": 83,
+  "checks": [
+    126253422422,
+    126253422403,
+    126253422311,
+    126253421982,
+    126258618893
+  ],
+  "trustedApp": 15368,
+  "sourceQAAtCapture": "pending",
+  "independentVerdict": "pending on this head; original e1d9d45 CHANGES REQUIRED at 6616845137/KAN31/10540",
+  "narrowReReview": "KAN59/10539",
+  "guestHandoff": "KAN225/10544",
+  "nativeViewport": "not run",
+  "publication": "none"
+}
