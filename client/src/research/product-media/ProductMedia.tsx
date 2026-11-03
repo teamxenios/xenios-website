@@ -7,6 +7,8 @@ const formatLabels = {
   tablet: "tablet",
   topical: "topical formulation",
   liquid: "liquid formulation",
+  nasal: "nasal formulation",
+  troche: "troche",
   unknown: "format unconfirmed",
 } as const;
 
