@@ -156,7 +156,7 @@ export function MasterOfferingVariantRow({
       <div className="flex min-w-0 flex-wrap items-baseline justify-between gap-2">
         {/* A long variant label wraps inside the card. It never widens the row,
             because a row wider than the phone is a page that scrolls sideways. */}
-        <span className="font-700 min-w-0 break-words">{variant.label}</span>
+        <span className="font-700 min-w-0 break-words" data-testid="mo-variant-label">{variant.label}</span>
         <span className="text-ink-mute min-w-0 break-words">
           {variant.displayLabel}
         </span>

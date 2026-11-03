@@ -57,7 +57,7 @@ describe("exact variant identity", () => {
     });
     const { host, unmount } = render(<ul><MasterOfferingCard product={product} /></ul>);
     expect(host.querySelectorAll('[data-testid="mo-variant-row"]').length).toBe(3);
-    const labels = Array.from(host.querySelectorAll('[data-testid="mo-variant-row"] .font-700')).map((el) => el.textContent);
+    const labels = Array.from(host.querySelectorAll('[data-testid="mo-variant-row"] [data-testid="mo-variant-label"]')).map((el) => el.textContent);
     expect(labels).toEqual(["Oxytocin (10mg)", "OXYTOCIN 10 mg", "Oxytocin 10 mg"]);
     unmount();
   });
@@ -72,7 +72,7 @@ describe("exact variant identity", () => {
       variantCount: strengths.length,
     });
     const { host, unmount } = render(<ul><MasterOfferingCard product={product} /></ul>);
-    const labels = Array.from(host.querySelectorAll('[data-testid="mo-variant-row"] .font-700')).map((el) => el.textContent);
+    const labels = Array.from(host.querySelectorAll('[data-testid="mo-variant-row"] [data-testid="mo-variant-label"]')).map((el) => el.textContent);
     expect(labels).toEqual(strengths.map((s) => `RETATRUTIDE ${s}`));
     expect(host.textContent).not.toContain("60 mg");
     expect(host.textContent).toContain("7 variants");
