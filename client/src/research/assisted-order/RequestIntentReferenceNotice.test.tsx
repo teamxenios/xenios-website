@@ -39,6 +39,16 @@ function expectNoSecretOrStatusClaim() {
 }
 
 describe("review-request reference pages", () => {
+  it("states what a review request covers on each variant, without asking the customer to submit again", async () => {
+    for (const [variant, confirmedHere] of [["confirmation", true], ["confirmation", false], ["status", false]] as const) {
+      sessionStorage.clear();
+      if (confirmedHere) rememberConfirmedReceipt(sessionStorage, "owner", receipt);
+      await act(async () => root.render(<RequestIntentReferenceNotice key={variant + String(confirmedHere)}
+        reference={receipt.publicReference} variant={variant} />));
+      expect(host.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
+      expect(host.textContent).not.toContain("Submit for review");
+    }
+  });
   it("confirmation route: states a tab-confirmed reference as saved, with reference-carrying support links", async () => {
     rememberConfirmedReceipt(sessionStorage, "owner", receipt);
     window.history.replaceState({}, "", "/research/early-access/order-request/confirmation/" + receipt.publicReference);

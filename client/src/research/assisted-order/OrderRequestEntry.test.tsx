@@ -248,6 +248,13 @@ describe("stored confirmed reference across recovery and owner boundaries", () =
     expect(container.textContent).not.toContain("Request saved for review");
     expect(record()).toBeNull();
   });
+  it.each([false, true])("puts the member's confirmed receipt heading at the page's level (embedded=%s)", async (embedded) => {
+    auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
+    await render(<OrderRequestEntry embedded={embedded} mode={{ kind: "mixed" }} />);
+    await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="confirm synthetic receipt"]')!.click());
+    expect(container.querySelector(embedded ? "h2" : "h1")?.textContent).toBe("Request saved for review");
+    expect(container.querySelectorAll("h1")).toHaveLength(embedded ? 0 : 1);
+  });
   it("keeps the record through an ordinary confirmed member mount and while the session is being checked", async () => {
     storeRecord("a".repeat(64));
     auth.memberSessionStatus = "checking"; auth.memberChecking = true;

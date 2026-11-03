@@ -14,7 +14,7 @@ import {
   assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments,
 } from "../../../../shared/research/assisted-order/form";
 import {
-  REQUEST_INTENT_NOTICE, REQUEST_INTENT_RECOVERY_NOTICE,
+  REQUEST_INTENT_RECOVERY_NOTICE,
   type RequestIntentInput, type RequestIntentReceipt,
 } from "../../../../shared/research/assisted-order/request-intent";
 import { sha256AssistedOrderHasher } from "../../../../server/research/assisted-order/defaults";
@@ -303,7 +303,8 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(receipt.publicReference).toBe(saved.public_reference);
       expect(Date.parse(receipt.createdAt)).toBe(saved.created_at.getTime());
       expect(host.querySelector('[role="status"]')?.textContent).toBe("Your saved request reference is " + saved.public_reference + ".");
-      expect(host.textContent).toContain(REQUEST_INTENT_NOTICE);
+      expect(host.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
+      expect(host.textContent).not.toContain("Submit for review");
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
       expect(submitExchanges()).toHaveLength(3); // Recovery never silently resubmits.
       for (let replay = 0; replay < 2; replay += 1) expect(await guestApi.submit(input)).toEqual(receipt);

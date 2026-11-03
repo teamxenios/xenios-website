@@ -63,6 +63,20 @@ describe("confirmed receipt focus", () => {
   });
 });
 
+describe("confirmed receipt wording and heading level", () => {
+  it("states what a review request covers without asking the customer to submit again", async () => {
+    await act(async () => root.render(<RequestIntentReceipt receipt={receipt} />));
+    expect(container.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
+    expect(container.textContent).not.toContain("Submit for review");
+  });
+  it("renders its heading at the level the surrounding page needs, and focuses it the same way", async () => {
+    await act(async () => root.render(<RequestIntentReceipt receipt={receipt} headingLevel={2} focusOnMount />));
+    expect(container.querySelector("h1")).toBeNull();
+    expect(container.querySelector("h2")?.textContent).toBe("Request saved for review");
+    expect(document.activeElement).toBe(container.querySelector("h2"));
+  });
+});
+
 describe("confirmed receipt continuation", () => {
   function hrefs() { return [...container.querySelectorAll("a")].map((anchor) => anchor.getAttribute("href") ?? ""); }
   it("links the confirmation page and support with the reference only, and confirms review rather than an order", async () => {

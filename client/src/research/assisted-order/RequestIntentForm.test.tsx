@@ -85,7 +85,9 @@ function makeRoundTrip() {
 let host: HTMLDivElement, root: Root;
 beforeEach(() => { sessionStorage.clear(); host = document.createElement("div"); document.body.append(host); root = createRoot(host); });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); sessionStorage.clear(); });
-async function render(api: RequestIntentApi) { await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} />)); }
+async function render(api: RequestIntentApi, embedded = false) {
+  await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded={embedded} />));
+}
 function storedKeys() { return Array.from({ length: sessionStorage.length }, (_, index) => sessionStorage.key(index)); }
 /** After a confirmed receipt the marker is gone and only the non-secret reference record remains. */
 function expectOnlyReferenceRecord(owner = "unscoped") {
@@ -110,8 +112,8 @@ async function type(input: HTMLInputElement, value: string) {
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
-async function prepare(api: RequestIntentApi, separateBilling = false) {
-  await render(api);
+async function prepare(api: RequestIntentApi, separateBilling = false, embedded = false) {
+  await render(api, embedded);
   await click("Add Synthetic clinical to request");
   await click("Add Synthetic research to request");
   const quantity = [...host.querySelectorAll("input[type=number]")][0] as HTMLInputElement;
@@ -454,6 +456,35 @@ describe("mixed request mounted-entry contracts", () => {
     const quantity = host.querySelector<HTMLInputElement>("input[type=number]");
     expect(quantity?.value).toBe("2");
     expect(api.submit).not.toHaveBeenCalled();
+  });
+});
+
+describe("an embedded form inside a page with its own h1", () => {
+  const headings = () => [...host.querySelectorAll("h1, h2, h3, h4")].map((node) => node.tagName + " " + node.textContent);
+  it("puts its top heading one level below the page heading at every step and on the receipt, and still moves focus to it", async () => {
+    const api = makeApi();
+    await render(api, true);
+    expect(headings()).toEqual(["H2 Request products for review", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
+    await prepare(api, false, true);
+    expect(headings()).toEqual(["H2 Request products for review", "H2 Review your request"]);
+    expect(document.activeElement).toBe(host.querySelector("h2"));
+    await click("Submit for review");
+    expect(headings()).toEqual(["H2 Request saved for review"]);
+    expect(document.activeElement).toBe(host.querySelector("h2"));
+  });
+  it("puts the earlier-request check below the page heading too", async () => {
+    const api = makeApi();
+    api.submit.mockRejectedValueOnce(new Error("synthetic lost response"));
+    await prepare(api, false, true); await click("Submit for review");
+    await act(async () => root.unmount());
+    root = createRoot(host);
+    await render(api, true);
+    expect(headings()).toEqual(["H2 Check your earlier request"]);
+  });
+  it("keeps its h1 when the form is the page", async () => {
+    const api = makeApi();
+    await render(api);
+    expect(headings()).toEqual(["H1 Request products for review", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
   });
 });
 
