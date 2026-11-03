@@ -15,6 +15,7 @@ import {
 } from "./catalog-access-path";
 import { fullCatalogProductHref } from "./integration-packet";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
+import { ProductMedia } from "../product-media/ProductMedia";
 
 /**
  * State tone is a second signal, never the only one. Every card also carries
@@ -220,6 +221,8 @@ export function MasterOfferingCard({
             tone={STATE_TONE[product.displayState]}
           />
         </div>
+
+        <ProductMedia productName={product.displayName} variantIds={product.variants.map((variant) => variant.id)} />
 
         <p className="body-s text-ink-2 min-w-0 break-words">
           {product.stateExplanation}
