@@ -3337,6 +3337,24 @@
         "file": ".xenios/handoffs/2026-11-03T21-59-42-603Z-KAN59-CATALOG-PRODUCT-VISUALS-20261103-codex-launch-coordination-20261005.md",
         "at": "2026-11-03T21:59:42.679Z"
       }
+    },
+    {
+      "id": "KAN59-CATALOG-PRODUCT-VISUALS-VIAL-CORRECTION-20261103",
+      "title": "Correct lyophilized vial illustration",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "e1d9d45021b4c2a9a1b2e74809f06acbd58716c1",
+      "paths": [
+        "client/public/research/product-media/vial.svg"
+      ],
+      "dependsOn": [
+        "KAN59-CATALOG-PRODUCT-VISUALS-20261103"
+      ],
+      "scopeNote": "Apply only Samuel's newest KAN-59 correction to the independently reviewed PR368 source e1d9d45021b4c2a9a1b2e74809f06acbd58716c1/tree 3731a6a05ab1bdbc86651b17a1fe521425969d0a: remove the two SVG elements depicting liquid from the lyophilized-vial illustration in client/public/research/product-media/vial.svg. Change no other source path, boundary guard, runtime behavior, media mapping, component, test, pricing, eligibility, guest path, hold, configuration, role, flag, customer, notification, release or production authority. Preserve the original KAN59-CATALOG-PRODUCT-VISUALS-20261103 task in QA, its 12-path HANDOFF lease ad0d11cc-2ea7-41a0-980d-2d8884dd838f, and its raw handoff artifact byte-exact. The live review is https://github.com/teamxenios/xenios-website/pull/368#issuecomment-6616845137. This distinct one-path rework allocation authorizes Root source correction only after canonical claim readback; it is not source acceptance or production GO. The custodian performs no application edit, test, build, CI, browser, provider, database, SQL, merge, deployment or production action.",
+      "createdAt": "2026-11-03T22:36:00.8622306Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-03T22:36:28.503Z"
     }
   ]
 }
