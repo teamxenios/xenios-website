@@ -27,7 +27,7 @@ const care: CareAccessDependencies = {
 type Limiter = "allows" | "error" | "malformed" | "throws" | "no_rpc";
 function limiterRpc(limiter: Limiter) {
   return vi.fn(async (_name: string, _args?: Readonly<Record<string, unknown>>):
-    Promise<{ data: unknown; error: { code?: string; message?: string } | null }> => {
+    Promise<{ data: unknown; error: { code?: string; message: string } | null }> => {
     if (limiter === "throws") throw new Error("synthetic limiter outage");
     if (limiter === "error") return { data: null, error: { message: "synthetic limiter failure" } };
     return { data: limiter === "malformed" ? "yes" : true, error: null };
