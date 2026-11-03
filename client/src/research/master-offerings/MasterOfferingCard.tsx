@@ -2,7 +2,6 @@ import type {
   MasterOfferingCardView,
   MasterOfferingVariantSummary,
 } from "@shared/research/master-offerings/contract";
-import { MASTER_OFFERING_PRICE_ON_REQUEST_LABEL } from "@shared/research/master-offerings/pricing-contract";
 import {
   CUSTOMER_ACTION_LABELS,
   customerActionFromMasterOfferingAction,
@@ -15,6 +14,8 @@ import {
   isContradictoryPurchase,
 } from "./catalog-access-path";
 import { fullCatalogProductHref } from "./integration-packet";
+import { MasterOfferingPrice } from "./MasterOfferingPrice";
+import { ProductMedia } from "../product-media/ProductMedia";
 
 /**
  * State tone is a second signal, never the only one. Every card also carries
@@ -145,10 +146,6 @@ export function MasterOfferingVariantRow({
   product: MasterOfferingCardView;
   variant: MasterOfferingVariantSummary;
 }) {
-  const price =
-    variant.price.state === "priced"
-      ? variant.price.display
-      : MASTER_OFFERING_PRICE_ON_REQUEST_LABEL;
   return (
     <li
       className="grid min-w-0 gap-2 border-t pt-2 body-s"
@@ -160,13 +157,11 @@ export function MasterOfferingVariantRow({
       <div className="flex min-w-0 flex-wrap items-baseline justify-between gap-2">
         {/* A long variant label wraps inside the card. It never widens the row,
             because a row wider than the phone is a page that scrolls sideways. */}
-        <span className="font-700 min-w-0 break-words">{variant.label}</span>
+        <span className="font-700 min-w-0 break-words" data-testid="mo-variant-label">{variant.label}</span>
         <span className="text-ink-mute min-w-0 break-words">
           {variant.displayLabel}
         </span>
-        <span className="tabular min-w-0 break-words" data-testid="mo-variant-price">
-          {price}
-        </span>
+        <MasterOfferingPrice price={variant.price} testId="mo-variant-price" />
       </div>
       {/* The action sits on its own wrapping line so a 44px touch target never
           fights the price for width on a phone. */}
@@ -226,6 +221,8 @@ export function MasterOfferingCard({
             tone={STATE_TONE[product.displayState]}
           />
         </div>
+
+        <ProductMedia productName={product.displayName} variantIds={product.variants.map((variant) => variant.id)} />
 
         <p className="body-s text-ink-2 min-w-0 break-words">
           {product.stateExplanation}

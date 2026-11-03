@@ -39,7 +39,10 @@ describe("exact variant identity", () => {
     ]);
     expect(rows.map((row) => row.getAttribute("data-access-path"))).toEqual(["CARE", "ASSISTED_ORDER"]);
     expect(rows[0]?.querySelector('[data-testid="mo-variant-price"]')?.textContent).toBe("Price on request");
-    expect(rows[1]?.querySelector('[data-testid="mo-variant-price"]')?.textContent).toBe("$99.00");
+    expect(rows[0]?.querySelector('[data-testid="mo-variant-price-basis"]')).toBeNull();
+    expect(rows[1]?.querySelector('[data-testid="mo-variant-price"]')?.textContent).toBe("$99.00 USD");
+    expect(rows[1]?.querySelector('[data-testid="mo-variant-price-basis"]')?.textContent)
+      .toBe("Price covers the exact listed unit.");
     expect(host.textContent).toContain("2 variants");
     unmount();
   });
@@ -54,7 +57,7 @@ describe("exact variant identity", () => {
     });
     const { host, unmount } = render(<ul><MasterOfferingCard product={product} /></ul>);
     expect(host.querySelectorAll('[data-testid="mo-variant-row"]').length).toBe(3);
-    const labels = Array.from(host.querySelectorAll('[data-testid="mo-variant-row"] .font-700')).map((el) => el.textContent);
+    const labels = Array.from(host.querySelectorAll('[data-testid="mo-variant-row"] [data-testid="mo-variant-label"]')).map((el) => el.textContent);
     expect(labels).toEqual(["Oxytocin (10mg)", "OXYTOCIN 10 mg", "Oxytocin 10 mg"]);
     unmount();
   });
@@ -69,7 +72,7 @@ describe("exact variant identity", () => {
       variantCount: strengths.length,
     });
     const { host, unmount } = render(<ul><MasterOfferingCard product={product} /></ul>);
-    const labels = Array.from(host.querySelectorAll('[data-testid="mo-variant-row"] .font-700')).map((el) => el.textContent);
+    const labels = Array.from(host.querySelectorAll('[data-testid="mo-variant-row"] [data-testid="mo-variant-label"]')).map((el) => el.textContent);
     expect(labels).toEqual(strengths.map((s) => `RETATRUTIDE ${s}`));
     expect(host.textContent).not.toContain("60 mg");
     expect(host.textContent).toContain("7 variants");
@@ -90,11 +93,14 @@ describe("exact variant identity", () => {
     const radios = Array.from(host.querySelectorAll<HTMLInputElement>('input[type="radio"]'));
     expect(radios.map((r) => r.value)).toEqual(["mov_live", "mov_care"]);
     expect(radios.map((r) => r.id)).toEqual(["mo-variant-mov_live", "mo-variant-mov_care"]);
-    expect(host.querySelector('[data-testid="mo-selected-price"]')?.textContent).toBe("$99.00");
+    expect(host.querySelector('[data-testid="mo-selected-price"]')?.textContent).toBe("$99.00 USD");
+    expect(host.querySelector('[data-testid="mo-selected-price-basis"]')?.textContent)
+      .toBe("Price covers the exact listed unit.");
     expect(host.querySelector<HTMLButtonElement>('button[data-testid="mo-cta"]')?.disabled).toBe(false);
 
     click(radios[1]);
     expect(host.querySelector('[data-testid="mo-selected-price"]')?.textContent).toBe("Price on request");
+    expect(host.querySelector('[data-testid="mo-selected-price-basis"]')).toBeNull();
     const cta = host.querySelector<HTMLAnchorElement>('a[data-testid="mo-cta"]');
     expect(cta?.textContent).toBe("Explore Care");
     expect(host.querySelector("button[data-testid='mo-cta']")).toBeNull();
