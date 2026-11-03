@@ -165,6 +165,37 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
   expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
+  it("uses only the source variant for guest catalog artwork", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    const productControlVariantId = "mov_9262033fe69a14a50f1c";
+    const sourceVariantId = "mov_82974ab2f9c652c2cb12";
+    api.catalog.mockResolvedValue({
+      ...catalog,
+      items: [
+        { ...item("mapped", false), variantId: productControlVariantId, unitPriceCents: 1250,
+          sourceSelection: { family: "synthetic", slug: "mapped", variantId: sourceVariantId } },
+        { ...item("missing-source", false), variantId: productControlVariantId, sourceSelection: undefined },
+      ],
+    });
+
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    const [mapped, missingSource] = host.querySelectorAll(".xenios-order-card");
+    const mappedImage = mapped.querySelector("img");
+    expect(mappedImage?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
+    expect(mappedImage?.getAttribute("alt")).toBe("Synthetic mapped illustration, capsule");
+    expect(missingSource.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
+    expect(missingSource.textContent).toContain("format unconfirmed");
+    expect(mapped.textContent).toContain("$12.50");
+    await click("Add Synthetic mapped to request");
+    expect(mapped.querySelector('input[type="number"]')).not.toBeNull();
+    expect(host.querySelector('aside img')).toBeNull();
+
+    await render(api, true);
+    expect(host.querySelector(".xenios-order-card img")).toBeNull();
+  });
+
   it.each(["submission", "recovery"] as const)("publishes a confirmed %s receipt only after clearing its owned marker", async (path) => {
     const api = makeApi();
     const markerAtConfirmation: Array<string | null> = [];
