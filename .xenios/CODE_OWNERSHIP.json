@@ -2816,7 +2816,7 @@
         "client/src/research/master-offerings/MasterOfferingPrice.tsx",
         "client/src/research/master-offerings/exact-variant-identity.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-03T15:40:50.041Z",
       "heartbeatAt": "2026-11-03T15:40:50.041Z"
     }

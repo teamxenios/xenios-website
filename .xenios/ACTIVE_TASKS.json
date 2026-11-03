@@ -3284,7 +3284,7 @@
       "id": "KAN10-CATALOG-VARIANT-PRICE-PRESENTATION-20261103",
       "title": "Present authoritative exact-variant pricing in member catalog",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-10",
       "baseSha": "d0fd93bf0402c72bb173f147e884256b04c927ed",
       "paths": [
@@ -3297,7 +3297,13 @@
       "scopeNote": "Implement only the Samuel-directed KAN-10 presentation slice recorded and echo-verified at KAN-10 comment 10530 on exact release base d0fd93bf0402c72bb173f147e884256b04c927ed/tree 7c0b0dcb7e28e3310477e277f92c239f43435d78. Preserve the three existing release/PR365/PR366 blobs exactly as the starting point: MasterOfferingCard.tsx 0d2353f33a58d74d8026e2937d21b11bf0fe0140, MasterOfferingDetail.tsx 4222c0cce6f5ad47d8fb01bc41cc1ddc16af0006, and exact-variant-identity.test.tsx 74147c3d54e3214e32008581975d926a148a76a4; MasterOfferingPrice.tsx is new. The bounded outcome is to display the existing authoritative variant amount, currency and exact-unit basis in existing member cards and detail using restrained brand styling, with focused regression coverage. Add no price authority, public visibility, eligibility, guest form behavior, catalog authority, Auth, API, configuration, role, flag, storage, customer, notification or production behavior. The intended source branch is codex/catalog-variant-price-presentation-20261103 and must be created separately by Root after exact claim readback. The separate EarlyAccessRoute.tsx assignment remains untouched and outside this task. Preserve the active KAN8 admin task and exact lease 87067847-af3a-45b0-b3ff-5fd45ee394d3 unchanged, together with every prior task, lease, handoff, release record, session and ownership rule. This metadata claim authorizes the custodian to make no application source or test edit and no branch, test, build, CI, browser, provider, database, SQL, staging, private or production action.",
       "createdAt": "2026-11-03T15:40:29.0678885Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-03T15:40:50.024Z"
+      "claimedAt": "2026-11-03T15:40:50.024Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "865d846c6e8bcceb6f12e97d91b91c5b9211a3e1",
+        "file": ".xenios/handoffs/2026-11-03T15-59-19-590Z-KAN10-CATALOG-VARIANT-PRICE-PRESENTATION-20261103-codex-launch-coordination-20261005.md",
+        "at": "2026-11-03T15:59:19.607Z"
+      }
     }
   ]
 }
