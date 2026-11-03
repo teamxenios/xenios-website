@@ -2805,6 +2805,20 @@
       "state": "handoff",
       "claimedAt": "2026-11-02T06:50:12.455Z",
       "heartbeatAt": "2026-11-02T06:50:12.455Z"
+    },
+    {
+      "id": "77d85131-b8b5-4cfb-ac78-6c3cf57f8b4d",
+      "task": "KAN10-CATALOG-VARIANT-PRICE-PRESENTATION-20261103",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+        "client/src/research/master-offerings/MasterOfferingPrice.tsx",
+        "client/src/research/master-offerings/exact-variant-identity.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-03T15:40:50.041Z",
+      "heartbeatAt": "2026-11-03T15:40:50.041Z"
     }
   ],
   "rules": [
