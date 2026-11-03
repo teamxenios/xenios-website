@@ -271,17 +271,19 @@ function RequestIntentFormSession({
     </fieldset>;
   };
 
-  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} reopened={receipt === reopened}
+  // Inside a page that already has its own h1, the form's top heading sits one level below it.
+  const Heading = embedded ? "h2" : "h1";
+  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1} reopened={receipt === reopened}
     onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
 
-  if (restored) return <section className="xenios-order-page"><h1 ref={heading} tabIndex={-1}>Check your earlier request</h1>
+  if (restored) return <section className="xenios-order-page"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
     <p>Only the attempt marker was retained. Product selections and contact information were not saved in this browser.</p>
     <p>{REQUEST_INTENT_RECOVERY_NOTICE}</p>{error && <p role="alert">{error}</p>}
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
 
   return <section className={embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page"}>
-    <header className="xenios-order-hero"><h1 ref={heading} tabIndex={-1}>Request products for review</h1>
+    <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Request products for review</Heading>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
     {!embedded && <p><a href="/research/early-access">Review access and agreement requirements</a></p>}
