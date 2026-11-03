@@ -3366,7 +3366,7 @@
       "id": "KAN59-GUEST-QUICK-ORDER-PRODUCT-IMAGES-20261103",
       "title": "Add restrained product images to guest quick order",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "6ca2e074ffd4dfe0569f7d67891a6ebf8a56b7ae",
       "paths": [
@@ -3380,13 +3380,19 @@
       "scopeNote": "Implement only Samuel's KAN-59 direction to add actual product images to the guest quick-order experience as a separate candidate. This exact two-path transfer from Claude's KAN-225 comment 10547 assigns client/src/research/assisted-order/RequestIntentForm.tsx and RequestIntentForm.test.tsx to the existing Root session codex-launch-coordination-20261005. Freeze the Claude R3 base at 6ca2e074ffd4dfe0569f7d67891a6ebf8a56b7ae/tree eb64c74095466d11082378366a2c268dad8008b5, which contains R2 0c66217f7ab16090795ad143122ea77e0cae91f5; preserve the R3 starting blobs c1366a8e1568c3024d35d9593ab1643e02a5444c and 5dc6df0b9f632b9901b42855357c5a79840b7bcb. Root will separately compose that frozen candidate with the accepted KAN-59 product-visual source e1036bd4e3d94dd20241a1ceb45b0d17c1d6a01c/tree bf001739ad20548551b5230778c5c78a5fe0894e, which includes 865d846c6e8bcceb6f12e97d91b91c5b9211a3e1, and then apply the existing bounded guest-image patch. The accepted-source blobs are a25c83beb2ac408167830a94782664d2ad1c1368 and ec75a11d52bb9b823ba11f4afc8a62f56ce3b193. Limit work to restrained product-image presentation in the existing guest RequestIntentForm and focused regression coverage. Add no route, CSS, price, eligibility, public-visibility, catalog, checkout, payment, Auth, API, configuration, role, flag, storage, customer, notification, release or production authority. Preserve the frozen R2/R3 refs, both completed KAN-59 visual tasks and HANDOFF leases, the active KAN8 admin task and exact lease 87067847-af3a-45b0-b3ff-5fd45ee394d3, and every other task, lease, handoff, release record, session and ownership rule. This metadata claim authorizes the custodian to make no application source or test edit and no branch composition, patch application, test, build, CI, browser, provider, database, SQL, staging, merge, deployment or production action.",
       "createdAt": "2026-11-03T23:23:35.3255823Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-03T23:24:07.107Z"
+      "claimedAt": "2026-11-03T23:24:07.107Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "ac219f875bae1539d918399ff4e42323af6c334e",
+        "file": ".xenios/handoffs/2026-11-03T23-39-44-332Z-KAN59-GUEST-QUICK-ORDER-PRODUCT-IMAGES-20261103-codex-launch-coordination-20261005.json",
+        "at": "2026-11-03T23:39:44.332Z"
+      }
     },
     {
       "id": "KAN59-MEMBER-MEDIA-NASAL-TROCHE-20261103",
       "title": "Add nasal and troche media for member catalog variants",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "e1036bd4e3d94dd20241a1ceb45b0d17c1d6a01c",
       "paths": [
@@ -3402,7 +3408,13 @@
       "scopeNote": "Implement only Samuel's expressly adopted KAN-59 follow-up adding nasal and troche media for the prepared set of 11 member variants. Use the accepted immutable PR368 source e1036bd4e3d94dd20241a1ceb45b0d17c1d6a01c/tree bf001739ad20548551b5230778c5c78a5fe0894e documented at PR368 comment 6617688560. Root will separately create codex/member-media-nasal-troche-20261103 stacked on that exact source and apply the private MEMBER_MEDIA_NASAL_TROCHE.patch whose supplied SHA-256 is 407d7c88111b981c5db4cd30f731b83b39aa2b7e73b7baedfcaad2a3acaae811 and whose apply check already passed at that base. Limit work exactly to the two new SVG assets and the existing ProductMedia component and generated format manifest named in paths. Preserve the prior KAN-59 product-visual and vial-correction tasks and HANDOFF leases, the active guest task and exact two-path lease ef3fd90c-291c-46ff-9bd1-a2b01f5bbbac, the historical admin lease, PR369 guest candidate ac219f875bae1539d918399ff4e42323af6c334e/tree c23a0635854e2e1641cad5be7fbc4d519989162d, and every unrelated task, lease, handoff, release record, session and ref. Add no guest behavior or guest source change, pricing, eligibility, public visibility, catalog authority, checkout, payment, Auth, API, configuration, role, flag, storage, customer, notification, release or production authority. Historical exact-path overlap with the completed product-visual HANDOFF lease is preserved and creates no active ownership conflict. This metadata claim authorizes the custodian to make no application edit, patch application, branch creation, test, build, Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
       "createdAt": "2026-11-03T23:28:29.3714017Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-03T23:28:29.3714017Z"
+      "claimedAt": "2026-11-03T23:28:29.3714017Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "cb8b5bff594c57e7a1fed0f1b3042d2d838afdee",
+        "file": ".xenios/handoffs/2026-11-03T23-39-44-349Z-KAN59-MEMBER-MEDIA-NASAL-TROCHE-20261103-codex-launch-coordination-20261005.json",
+        "at": "2026-11-03T23:39:44.349Z"
+      }
     }
   ]
 }

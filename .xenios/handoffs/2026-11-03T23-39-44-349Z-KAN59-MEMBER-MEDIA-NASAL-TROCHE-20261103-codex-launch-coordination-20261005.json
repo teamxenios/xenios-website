@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "task": "KAN59-MEMBER-MEDIA-NASAL-TROCHE-20261103",
+  "lease": "9593d1a5-36cb-437f-b470-ba0a6d1e75a9",
+  "claim": "12f55cc7654bb2116930faba4d298bb8d54a440e",
+  "pr": 370,
+  "head": "cb8b5bff594c57e7a1fed0f1b3042d2d838afdee",
+  "tree": "e331adb7fb512a062ba74ace2aada80829fc85bd",
+  "base": "e1036bd4e3d94dd20241a1ceb45b0d17c1d6a01c",
+  "patchSha": "407d7c88111b981c5db4cd30f731b83b39aa2b7e73b7baedfcaad2a3acaae811",
+  "run": 41739797650,
+  "attempt": 1,
+  "providerMerge": "5a3b6ec5a07f81ee4e7c249743554e5378190618",
+  "fiveChecks": [
+    126278139290,
+    126278139442,
+    126278139457,
+    126278139742,
+    126280119371
+  ],
+  "passed": 18422,
+  "skipped": 83,
+  "failed": 0,
+  "mediaPassed": 3,
+  "nasal": 5,
+  "troche": 6,
+  "compiledMapped": 364,
+  "compiledNeutral": 56,
+  "review": "Exact source scope accepted by existing nonauthor ci_contract_ready, recorded in PR370 body.",
+  "qaAtCapture": "pending",
+  "nativeCaptures": "not run",
+  "release": "draft only"
+}

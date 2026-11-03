@@ -2861,7 +2861,7 @@
         "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-03T23:24:07.124Z",
       "heartbeatAt": "2026-11-03T23:24:07.124Z"
     },
@@ -2875,7 +2875,7 @@
         "client/src/research/product-media/ProductMedia.tsx",
         "client/src/research/product-media/product-media-format.generated.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-03T23:28:29.3714017Z",
       "heartbeatAt": "2026-11-03T23:28:29.3714017Z"
     }

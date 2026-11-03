@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "task": "KAN59-GUEST-QUICK-ORDER-PRODUCT-IMAGES-20261103",
+  "lease": "ef3fd90c-291c-46ff-9bd1-a2b01f5bbbac",
+  "claim": "8f54905811d944447e4c51959bb85d56597f8b5e",
+  "pr": 369,
+  "head": "ac219f875bae1539d918399ff4e42323af6c334e",
+  "tree": "c23a0635854e2e1641cad5be7fbc4d519989162d",
+  "composition": "e62e1ae5a2ae3ff4fb439e93fdc512b00b9dc908",
+  "compositionTree": "ad61e61dbd2783359a10c76fbbd767f5e4e2bf88",
+  "r3": "6ca2e074ffd4dfe0569f7d67891a6ebf8a56b7ae",
+  "member": "e1036bd4e3d94dd20241a1ceb45b0d17c1d6a01c",
+  "currentRelease": "d0fd93bf0402c72bb173f147e884256b04c927ed",
+  "patchSha": "bdf89cec72e0441ffe1a2405b2d7c50e3d1fe96ef450b95e34e77f5d0b10b220",
+  "paths": [
+    "client/src/research/assisted-order/RequestIntentForm.tsx",
+    "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+  ],
+  "run": 41739182008,
+  "attempt": 1,
+  "providerMerge": "bbba615a47fa45c68fd3c17228505bbb23cb59c0",
+  "fiveChecks": [
+    126276073138,
+    126276073431,
+    126276073531,
+    126276073684,
+    126278936518
+  ],
+  "passed": 18494,
+  "skipped": 83,
+  "failed": 0,
+  "formPassed": 68,
+  "mediaPassed": 3,
+  "boundaryPassed": 12,
+  "review": "Guest delta pending with c16 via KAN225/10544. R2 required changes and isolated R3 accepted with notes KAN31/10549.",
+  "qaAtCapture": "pending",
+  "nativeCaptures": "not run",
+  "release": "held"
+}
