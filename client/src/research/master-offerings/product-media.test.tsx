@@ -3,9 +3,9 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { act } from "react";
 import { describe, expect, it } from "vitest";
-import { MasterOfferingCard } from "../master-offerings/MasterOfferingCard";
-import { MasterOfferingDetail } from "../master-offerings/MasterOfferingDetail";
-import { card, click, detail, render, variant } from "../master-offerings/catalog-test-fixtures";
+import { MasterOfferingCard } from "./MasterOfferingCard";
+import { MasterOfferingDetail } from "./MasterOfferingDetail";
+import { card, click, detail, render, variant } from "./catalog-test-fixtures";
 
 const vial = variant({ id: "mov_9262033fe69a14a50f1c", label: "Listed vial" });
 const capsule = variant({ id: "mov_82974ab2f9c652c2cb12", label: "Listed capsule" });
