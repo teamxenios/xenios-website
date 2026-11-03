@@ -3381,6 +3381,28 @@
       "createdAt": "2026-11-03T23:23:35.3255823Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-03T23:24:07.107Z"
+    },
+    {
+      "id": "KAN59-MEMBER-MEDIA-NASAL-TROCHE-20261103",
+      "title": "Add nasal and troche media for member catalog variants",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "e1036bd4e3d94dd20241a1ceb45b0d17c1d6a01c",
+      "paths": [
+        "client/public/research/product-media/nasal.svg",
+        "client/public/research/product-media/troche.svg",
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/src/research/product-media/product-media-format.generated.json"
+      ],
+      "dependsOn": [
+        "KAN59-CATALOG-PRODUCT-VISUALS-20261103",
+        "KAN59-CATALOG-PRODUCT-VISUALS-VIAL-CORRECTION-20261103"
+      ],
+      "scopeNote": "Implement only Samuel's expressly adopted KAN-59 follow-up adding nasal and troche media for the prepared set of 11 member variants. Use the accepted immutable PR368 source e1036bd4e3d94dd20241a1ceb45b0d17c1d6a01c/tree bf001739ad20548551b5230778c5c78a5fe0894e documented at PR368 comment 6617688560. Root will separately create codex/member-media-nasal-troche-20261103 stacked on that exact source and apply the private MEMBER_MEDIA_NASAL_TROCHE.patch whose supplied SHA-256 is 407d7c88111b981c5db4cd30f731b83b39aa2b7e73b7baedfcaad2a3acaae811 and whose apply check already passed at that base. Limit work exactly to the two new SVG assets and the existing ProductMedia component and generated format manifest named in paths. Preserve the prior KAN-59 product-visual and vial-correction tasks and HANDOFF leases, the active guest task and exact two-path lease ef3fd90c-291c-46ff-9bd1-a2b01f5bbbac, the historical admin lease, PR369 guest candidate ac219f875bae1539d918399ff4e42323af6c334e/tree c23a0635854e2e1641cad5be7fbc4d519989162d, and every unrelated task, lease, handoff, release record, session and ref. Add no guest behavior or guest source change, pricing, eligibility, public visibility, catalog authority, checkout, payment, Auth, API, configuration, role, flag, storage, customer, notification, release or production authority. Historical exact-path overlap with the completed product-visual HANDOFF lease is preserved and creates no active ownership conflict. This metadata claim authorizes the custodian to make no application edit, patch application, branch creation, test, build, Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
+      "createdAt": "2026-11-03T23:28:29.3714017Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-03T23:28:29.3714017Z"
     }
   ]
 }
