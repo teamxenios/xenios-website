@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { REQUEST_INTENT_NOTICE } from "../../../../shared/research/assisted-order/request-intent";
+import { REQUEST_INTENT_SCOPE_NOTICE } from "../../../../shared/research/assisted-order/request-intent";
 import { referenceConfirmedInThisTab, requestIntentSupportMailto } from "./request-intent-continuation";
 import "./assisted-order.css";
 
@@ -22,7 +22,7 @@ export function RequestIntentReferenceNotice({ reference, variant }: Readonly<{ 
       {confirmed
         ? <p>This reference was confirmed in this browser tab on {new Date(confirmedAt).toLocaleString()}. Nothing was sent again.</p>
         : <p>This page alone does not confirm that a request was saved. If this reference came from your saved-request screen, keep it for support.</p>}
-      <p>{REQUEST_INTENT_NOTICE}</p>
+      <p>{REQUEST_INTENT_SCOPE_NOTICE}</p>
       <p>A reference identifies a review request only. It is not an order, approval or payment, and no delivery date is implied.</p>
       <div className="xenios-order-actions">
         <a className="xenios-order-return-link" href="/research/early-access/order-request">Return to Quick Order</a>

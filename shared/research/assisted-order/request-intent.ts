@@ -9,6 +9,9 @@ import {
 export const REQUEST_INTENT_KIND = "unapproved_selection_request" as const;
 export const REQUEST_INTENT_NOTICE =
   "Submit for review. This saves your requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.";
+/** The same limits for pages shown after a save, which ask the customer for nothing more. */
+export const REQUEST_INTENT_SCOPE_NOTICE =
+  "A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.";
 export const REQUEST_INTENT_RECOVERY_NOTICE =
   "We could not confirm the result. Keep this tab and retry the same attempt. After signing out, session expiry or closing the tab, contact support before sending a replacement request.";
 

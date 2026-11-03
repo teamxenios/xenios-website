@@ -92,6 +92,7 @@ function OrderRequestEntryBody(props: Props) {
   if (owner === null) return <section role="alert">
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
   if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} focusOnMount
+    headingLevel={props.embedded ? 2 : 1}
     onStartAnother={() => { const storage = browserStorage(); if (storage) forgetConfirmedReceipt(storage); setConfirmed(null); }} />;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode}
     onConfirmedReceipt={verifiedScope ? (receipt) => setConfirmed({ scope: verifiedScope, receipt }) : undefined} />;
