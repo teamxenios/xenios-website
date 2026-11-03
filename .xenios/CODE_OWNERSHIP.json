@@ -2835,7 +2835,8 @@
         "client/public/research/product-media/tablet.svg",
         "client/public/research/product-media/topical.svg",
         "client/public/research/product-media/liquid.svg",
-        "client/public/research/product-media/unknown.svg"
+        "client/public/research/product-media/unknown.svg",
+        "client/src/research/master-offerings/product-media.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-03T21:30:21.051Z",
