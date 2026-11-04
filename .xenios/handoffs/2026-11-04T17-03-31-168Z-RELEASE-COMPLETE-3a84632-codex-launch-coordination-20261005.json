@@ -1,0 +1,59 @@
+{
+  "pr": 379,
+  "source": "fa552b824917b74f58ae1bfa53e05adad090d2bd",
+  "release": "3a84632980b815a8a34dc17f29ae1bdb1e678677",
+  "tree": "2cbcd34ec38757fece5082c4d38f21aa98164e76",
+  "parents": [
+    "d151b978277add1088dc964049006c30d0a3d9da",
+    "fa552b824917b74f58ae1bfa53e05adad090d2bd"
+  ],
+  "merge": "normal match-head protected; no deletion, override or force",
+  "mergeTime": "2026-11-04T16:53:12Z",
+  "authority": [
+    "KAN-225/10574",
+    "KAN-225/10584",
+    "KAN-13/10575"
+  ],
+  "releaseCI": {
+    "run": 41872003401,
+    "attempt": 1,
+    "passed": 18438,
+    "failed": 0,
+    "skipped": 83,
+    "privacyPassed": 8,
+    "filesPassed": 991,
+    "filesSkipped": 6,
+    "app": 15368,
+    "allFourCheckoutsExact": true,
+    "test": 126721309445,
+    "typecheck": 126721309866,
+    "build": 126721309027,
+    "protection": 126721310497,
+    "completion": 126724559093
+  },
+  "render": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deploy": "dep-dblm8jeq1p3s73dst8b0",
+    "status": "live",
+    "finishedAt": "2026-11-04T17:00:11.887441Z",
+    "autoDeployChecksPass": true
+  },
+  "rollback": {
+    "release": "d151b978277add1088dc964049006c30d0a3d9da",
+    "tree": "b80ed6ca1da0718fb40eab169b603a812c3c98a2",
+    "deploy": "dep-dblkef8473hc73bbm3u0",
+    "performed": false
+  },
+  "static": {
+    "result": "PASS_PUBLIC_STATIC_ONLY",
+    "entry": "/assets/index-CCx6ZiRq.js",
+    "scripts": 192,
+    "htmlFallbacks": 0,
+    "markerAsset": "PrivacyControls-xS53KbNj.js",
+    "markerSHA256": "17878f04db3bf5300ba8aceada687aeaf8684c3cee38d5eb4d3044ed6fc0a82a",
+    "scriptSHA256": "387578637c337beafceacb315bb5965c333e534c13d7325d6db93bf208b42209",
+    "authenticatedPrivacyProven": false,
+    "managedOperation": false
+  }
+}

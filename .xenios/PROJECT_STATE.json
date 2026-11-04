@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-04T14:56:06.639373Z",
+  "updatedAt": "2026-11-04T17:00:11.887441Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -394,24 +394,24 @@
   },
   "currentRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "d151b978277add1088dc964049006c30d0a3d9da",
-    "tree": "b80ed6ca1da0718fb40eab169b603a812c3c98a2",
+    "sha": "3a84632980b815a8a34dc17f29ae1bdb1e678677",
+    "tree": "2cbcd34ec38757fece5082c4d38f21aa98164e76",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployedFromBranch": "codex/admin-resource-save-composition-20261104",
-    "sourceSha": "37328d8560192a7d25b3d44d986148fc0d06f92a",
-    "rollback": "1d7ac35708e1101c7f08dfb128b29afc0f979dab",
-    "rollbackTree": "613b566f53c062247488b31493953b806b9ebf8b",
-    "rollbackDeployId": "dep-dbljubtckfvc73flu06g",
+    "deployedFromBranch": "codex/privacy-correction-receipt-20261104",
+    "sourceSha": "fa552b824917b74f58ae1bfa53e05adad090d2bd",
+    "rollback": "d151b978277add1088dc964049006c30d0a3d9da",
+    "rollbackTree": "b80ed6ca1da0718fb40eab169b603a812c3c98a2",
+    "rollbackDeployId": "dep-dblkef8473hc73bbm3u0",
     "rollbackExecuted": false,
-    "deployId": "dep-dblkef8473hc73bbm3u0",
-    "liveSince": "2026-11-04T14:56:06.639373Z",
-    "observedAt": "2026-11-04T14:56:06.639373Z",
+    "deployId": "dep-dblm8jeq1p3s73dst8b0",
+    "liveSince": "2026-11-04T17:00:11.887441Z",
+    "observedAt": "2026-11-04T17:00:11.887441Z",
     "autoDeploy": "yes",
     "autoDeployTrigger": "checksPass",
-    "scope": "Qualified ordinary website release for Resource Hub admin save recovery; Resource Hub activation and all sensitive operations remain held",
-    "receipt": ".xenios/handoffs/2026-11-04T15-01-23-534Z-RELEASE-COMPLETE-d151b97-codex-launch-coordination-20261005.json",
-    "note": "Protected PR 378 merged normally at 2026-11-04T14:49:35Z, producing release d151b97 from exact source 37328d8/tree b80ed6c and preserving accepted PR374 blobs. Composition CI 41849962935 and release-push CI 41851444828 each passed 18,430 tests with zero failures and 83 skips; all five trusted app15368 checks succeeded and all four release checkouts were exact. Render deploy dep-dblkef8473hc73bbm3u0 reached live. Bounded public static verification passed with entry /assets/index-V55FVKzO.js, 192 JavaScript assets, zero HTML fallbacks and the ResourceHubAdmin asset present. Native download and the admin route were not exercised; Resource Hub activation remained false. Compatible rollback 1d7ac35/dep-dbljubtckfvc73flu06g was not executed. No browser/admin session, managed-service, configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred."
+    "scope": "Qualified ordinary website release for member privacy correction receipt provenance; all sensitive operations remain held",
+    "receipt": ".xenios/handoffs/2026-11-04T17-03-31-168Z-RELEASE-COMPLETE-3a84632-codex-launch-coordination-20261005.json",
+    "note": "Protected PR 379 merged normally without deletion, override or force at 2026-11-04T16:53:12Z, producing release 3a84632 from exact source fa552b8/tree 2cbcd34. Release-push CI 41872003401 passed 18,438 tests with zero failures and 83 skips, including eight privacy cases; all five trusted app15368 checks succeeded and all four release checkouts were exact. Render deploy dep-dblm8jeq1p3s73dst8b0 reached live. Bounded public static verification passed with entry /assets/index-CCx6ZiRq.js, 192 JavaScript assets, zero HTML fallbacks and the PrivacyControls marker asset present. Static evidence did not authenticate or prove live member privacy behavior; no managed operation occurred. Compatible rollback d151b97/dep-dblkef8473hc73bbm3u0 was retained and not executed. No browser, managed data, configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred."
   },
   "catalog": {
     "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
@@ -1046,6 +1046,32 @@
         "scope": "Qualified ordinary website release for owner-keyed Document Center history read recovery; Resource Hub activation and all sensitive operations remain held",
         "receipt": ".xenios/handoffs/2026-11-04T14-33-04-486Z-RELEASE-COMPLETE-1d7ac35-codex-launch-coordination-20261005.json",
         "note": "Protected PR 376 merged normally without deletion, override or force, producing release 1d7ac35 from exact source 6ac16ce/tree 613b566. Release-push CI 41845436725 passed 18,426 tests with zero failures and 83 skips; all five trusted app15368 checks succeeded and all four exact release checkouts matched. Render deploy dep-dbljubtckfvc73flu06g reached live from the new commit. Bounded public static verification passed with entry /assets/index-C5U1RSeI.js, 192 JavaScript assets, zero HTML fallbacks and the DocumentCenter marker asset present. Static evidence did not authenticate or execute the recovered member runtime. Compatible rollback d0fd93b/dep-dbkv38s9v7es73d4tumg was not executed. No configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred; all sensitive holds remain unchanged."
+      }
+    },
+    {
+      "classification": "HISTORICAL_ARCHIVED_CURRENT_RELEASE_PREIMAGE",
+      "archivedAt": "2026-11-04T17:00:11.887441Z",
+      "supersededBy": "3a84632980b815a8a34dc17f29ae1bdb1e678677",
+      "record": {
+        "classification": "CURRENT_LIVE_PRODUCTION",
+        "sha": "d151b978277add1088dc964049006c30d0a3d9da",
+        "tree": "b80ed6ca1da0718fb40eab169b603a812c3c98a2",
+        "status": "live",
+        "branch": "release/early-access-code-session-checkout",
+        "deployedFromBranch": "codex/admin-resource-save-composition-20261104",
+        "sourceSha": "37328d8560192a7d25b3d44d986148fc0d06f92a",
+        "rollback": "1d7ac35708e1101c7f08dfb128b29afc0f979dab",
+        "rollbackTree": "613b566f53c062247488b31493953b806b9ebf8b",
+        "rollbackDeployId": "dep-dbljubtckfvc73flu06g",
+        "rollbackExecuted": false,
+        "deployId": "dep-dblkef8473hc73bbm3u0",
+        "liveSince": "2026-11-04T14:56:06.639373Z",
+        "observedAt": "2026-11-04T14:56:06.639373Z",
+        "autoDeploy": "yes",
+        "autoDeployTrigger": "checksPass",
+        "scope": "Qualified ordinary website release for Resource Hub admin save recovery; Resource Hub activation and all sensitive operations remain held",
+        "receipt": ".xenios/handoffs/2026-11-04T15-01-23-534Z-RELEASE-COMPLETE-d151b97-codex-launch-coordination-20261005.json",
+        "note": "Protected PR 378 merged normally at 2026-11-04T14:49:35Z, producing release d151b97 from exact source 37328d8/tree b80ed6c and preserving accepted PR374 blobs. Composition CI 41849962935 and release-push CI 41851444828 each passed 18,430 tests with zero failures and 83 skips; all five trusted app15368 checks succeeded and all four release checkouts were exact. Render deploy dep-dblkef8473hc73bbm3u0 reached live. Bounded public static verification passed with entry /assets/index-V55FVKzO.js, 192 JavaScript assets, zero HTML fallbacks and the ResourceHubAdmin asset present. Native download and the admin route were not exercised; Resource Hub activation remained false. Compatible rollback 1d7ac35/dep-dbljubtckfvc73flu06g was not executed. No browser/admin session, managed-service, configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred."
       }
     }
   ],
