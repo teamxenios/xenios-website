@@ -229,6 +229,14 @@ describe("mixed private request customer form source", () => {
     await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
     await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
     expect(document.querySelector('[role="dialog"]')).toBeNull();
+
+    await act(async () => trigger.click());
+    const back = [...document.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')]
+      .find((button) => button.textContent?.trim() === "Back to catalog");
+    expect(back).toBeTruthy();
+    await act(async () => back!.click());
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
     expect(quantity.value).toBe("3");
     expect(window.location.href).toBe(url);
     expect(api.catalog).toHaveBeenCalledTimes(reads);

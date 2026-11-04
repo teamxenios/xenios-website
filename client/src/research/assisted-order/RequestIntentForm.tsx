@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
   REQUEST_INTENT_NOTICE, REQUEST_INTENT_RECOVERY_NOTICE, validateRequestIntentInput,
@@ -47,13 +47,18 @@ function GuestCatalogDetails({ item, variantIds }: {
         View details
       </button>
     </DialogTrigger>
-    <DialogContent className="max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl text-foreground">
+    <DialogContent className="max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink">
       <DialogTitle className="break-words pr-8">{item.productName}</DialogTitle>
-      <DialogDescription>
+      <DialogDescription className="text-ink-mute">
         {item.selectableForReview
           ? "Return to the catalog to add this selection for review. Final quantities, prices and availability are confirmed during review."
           : "Return to the catalog for this listing’s current availability and request options."}
       </DialogDescription>
+      <DialogClose asChild>
+        <button type="button" className="min-h-11 justify-self-start rounded-md px-2 text-sm font-semibold text-ink underline">
+          Back to catalog
+        </button>
+      </DialogClose>
       <ProductMedia productName={item.productName} variantIds={variantIds} detail />
       {(item.specification || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
         {item.specification && <div><dt className="font-semibold">Specification</dt><dd>{item.specification}</dd></div>}
