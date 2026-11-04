@@ -15,6 +15,10 @@ CATALOG = "server/research/master-offerings/data/member-safe-master-offerings.ge
 BINDINGS = "server/research/master-offerings/data/master-offering-bindings.generated.json"
 CAPTION = "Packaging design shown. Current packaging may differ."
 ROLES = {"primary": "website_primary", "label_detail": "front_preview_web"}
+CATALOG_FORMS = {
+    "research_peptides_materials": "Lyophilized Vial",
+    "research_capsules": "Capsule / Bottle",
+}
 
 
 def require(condition, message):
@@ -90,9 +94,11 @@ def verify(candidate, release, batch):
         require((binding["productControlSku"], binding["productId"], binding["variantId"])
                 == (sku, record["quickOrderProductId"], record["quickOrderVariantId"]),
                 f"{sku}: exact Quick Order binding differs")
+        family = record.get("catalogFamily", "research_peptides_materials")
+        require(family in CATALOG_FORMS, f"{sku}: unsupported research artwork family")
         require((product["displayName"], variant["label"], product["family"], product["subcategory"],
                  variant["displayState"]) == (record["canonicalName"], record["catalogVariantLabel"],
-                 "research_peptides_materials", "Lyophilized Vial", "request_access"),
+                 family, CATALOG_FORMS[family], "request_access"),
                 f"{sku}: exact catalog identity, form or pathway differs")
         for artifact in website_candidates(record, batch):
             path, digest = artifact["relativeAssetPath"], artifact["sha256"]
