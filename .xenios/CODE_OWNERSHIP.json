@@ -3034,7 +3034,7 @@
         "client/src/research/early-access/EarlyAccessRoute.tsx",
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T17:59:41.3069876Z",
       "heartbeatAt": "2026-11-04T17:59:41.3069876Z"
     }

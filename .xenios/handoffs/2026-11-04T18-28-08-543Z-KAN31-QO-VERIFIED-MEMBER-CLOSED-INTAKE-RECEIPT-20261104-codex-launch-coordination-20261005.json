@@ -1,0 +1,49 @@
+{
+  "pr": 380,
+  "head": "61d898ead1517f7f63b0f6838c0c23e6dff88302",
+  "tree": "df084949de408d84b3bf132dc9c71d48c9b80a31",
+  "parents": [
+    "947adf3e327fc72484b39079b2142d7c1aae6ab1",
+    "3a84632980b815a8a34dc17f29ae1bdb1e678677"
+  ],
+  "receiptCommit": "947adf3e327fc72484b39079b2142d7c1aae6ab1",
+  "receiptTree": "11442117248a5a680be7e31969a9623725fe6b27",
+  "receiptBase": "d0e50b578b58f455b034667421e2d8e8b196628f",
+  "ownershipTransfer": "701214cce455be6febe23b9640bbd0322e17b33c",
+  "claim": "273ece7f03de99b4c352288c4e86faf02a1945d5",
+  "lease": "660e7e0e-17d3-44fe-a0c8-f15426b15243",
+  "reviewedPatch": "94c28324c67c4a9a62f1f9207440d146dd359e6567350a101830f8275b352629",
+  "acceptedPostimages": {
+    "entry": "98bbf29c4bb808f34bf17d0532dfe7fc476f586f",
+    "route": "5a227194b853467fcedd91a0f264a8b797ed3090",
+    "test": "7c9e86c4739b11d2a3168b8e23a2cbd3e667e85c"
+  },
+  "independentComposition": "Existing ci_contract_ready accepted exact head and tree; 39 Quick Order paths plus six disjoint live paths, all exact",
+  "hosted": {
+    "run": 41883373053,
+    "attempt": 1,
+    "providerMerge": "0e34f38b0f08d0b8d3ae60ae90492b0869fb5c2b",
+    "providerTree": "df084949de408d84b3bf132dc9c71d48c9b80a31",
+    "app": 15368,
+    "test": 126761299477,
+    "typecheck": 126761298879,
+    "build": 126761299625,
+    "protection": 126761299559,
+    "completion": 126765333308,
+    "allFourCheckoutTreesExact": true,
+    "passed": 18524,
+    "failed": 0,
+    "skipped": 83,
+    "filesPassed": 995,
+    "filesSkipped": 6,
+    "storefront": 76,
+    "receipt": 9,
+    "reference": 11,
+    "continuation": 21,
+    "form": 68,
+    "entry": 35,
+    "media": 6,
+    "focusedGuestOverlapsFull": 150
+  },
+  "scope": "Verified matching member closed-intake receipt and actual composed hosted fixture qualification. No new visual capture, private live browser, auth, managed, or native behavior asserted."
+}

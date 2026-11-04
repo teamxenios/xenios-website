@@ -1,0 +1,64 @@
+{
+  "pr": 380,
+  "source": "61d898ead1517f7f63b0f6838c0c23e6dff88302",
+  "receiptCommit": "947adf3e327fc72484b39079b2142d7c1aae6ab1",
+  "release": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "tree": "df084949de408d84b3bf132dc9c71d48c9b80a31",
+  "parents": [
+    "3a84632980b815a8a34dc17f29ae1bdb1e678677",
+    "61d898ead1517f7f63b0f6838c0c23e6dff88302"
+  ],
+  "merge": "normal protected match-head; no deletion, override or force",
+  "mergeTime": "2026-11-04T18:14:21Z",
+  "authority": [
+    "KAN-225/10574",
+    "KAN-225/10587",
+    "KAN-225/10588",
+    "KAN-13/10575"
+  ],
+  "custody": {
+    "ownerTransfer": "701214cce455be6febe23b9640bbd0322e17b33c",
+    "claim": "273ece7f03de99b4c352288c4e86faf02a1945d5",
+    "lease": "660e7e0e-17d3-44fe-a0c8-f15426b15243"
+  },
+  "releaseCI": {
+    "run": 41885144797,
+    "attempt": 1,
+    "app": 15368,
+    "allFourCheckoutsExact": true,
+    "passed": 18524,
+    "failed": 0,
+    "skipped": 83,
+    "storefront": 76,
+    "test": 126767489401,
+    "typecheck": 126767489909,
+    "build": 126767489900,
+    "protection": 126767490025,
+    "completion": 126771648822
+  },
+  "render": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deploy": "dep-dblnfbnlk1mc73ci59pg",
+    "status": "live",
+    "finishedAt": "2026-11-04T18:22:58.4907Z",
+    "autoDeployChecksPass": true
+  },
+  "rollback": {
+    "release": "3a84632980b815a8a34dc17f29ae1bdb1e678677",
+    "tree": "2cbcd34ec38757fece5082c4d38f21aa98164e76",
+    "deploy": "dep-dblm8jeq1p3s73dst8b0",
+    "performed": false
+  },
+  "static": {
+    "result": "PASS_PUBLIC_STATIC_ONLY",
+    "entry": "/assets/index-DMJbPOYv.js",
+    "scripts": 194,
+    "htmlFallbacks": 0,
+    "packshotBytes": 26570,
+    "packshotSHA256": "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1",
+    "scriptSHA256": "42a1bb08b17a60ce94b853710534aa12ff2a9371a3b86af2cbce0c7823bf04f6",
+    "authenticatedReceiptProven": false,
+    "managedOperation": false
+  }
+}
