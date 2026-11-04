@@ -2758,7 +2758,7 @@
         "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
         "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-02T01:08:25.989Z",
       "heartbeatAt": "2026-11-02T01:08:26.050Z"
     },

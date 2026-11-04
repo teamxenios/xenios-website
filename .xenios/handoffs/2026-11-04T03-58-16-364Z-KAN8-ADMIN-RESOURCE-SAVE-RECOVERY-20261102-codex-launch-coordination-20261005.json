@@ -1,0 +1,63 @@
+{
+  "task": "KAN8-ADMIN-RESOURCE-SAVE-RECOVERY-20261102",
+  "lease": "87067847-af3a-45b0-b3ff-5fd45ee394d3",
+  "branch": "codex/admin-resource-save-recovery-20261102",
+  "pr": 374,
+  "head": "eabc3345b7bbd5bffd4b6aadb84b3b43813d067a",
+  "tree": "7a89f5f90dd5796e04c6ee1a8edf9a161eb7d9b1",
+  "testOnlyParent": "976a4be5c60d489022c5bc45da0069439f2b5708",
+  "releaseBase": "d0fd93bf0402c72bb173f147e884256b04c927ed",
+  "RED": {
+    "pr": 374,
+    "run": 41768459258,
+    "head": "976a4be5c60d489022c5bc45da0069439f2b5708",
+    "checkout": "58bc1c6efbba43b4dd71dd2f598abce2d450a34f",
+    "checkoutTree": "fd693bef28c32189393658312afea7b66be3795b",
+    "checkoutParents": [
+      "d0fd93bf0402c72bb173f147e884256b04c927ed",
+      "976a4be5c60d489022c5bc45da0069439f2b5708"
+    ],
+    "result": {
+      "passed": 18420,
+      "failed": 3,
+      "skipped": 83,
+      "unhandledRejections": 3
+    },
+    "firstFailures": [
+      "Missing uncertainty feedback after createObjectURL failure",
+      "Missing uncertainty feedback after append failure",
+      "Anchor left mounted after click failure"
+    ],
+    "testLogSha256": "8ba0c0dda3104e6182772ff900520bad92662bfa4d55f4536e4ea7db30ff1c33",
+    "testBlob": "2c98e16e3bea26e6ec429b17286b82ff4c00d56b",
+    "runtimeBlob": "e32708c5463b9ba590cf87981979924c32277c0c"
+  },
+  "GREEN": {
+    "run": 41769380666,
+    "attempt": 1,
+    "passes": 18423,
+    "skipped": 83,
+    "failures": 0,
+    "adminTest": "2026-11-04T03:50:44.3135050Z  \u2713 client/src/research/pages/adminx/ResourceHubAdmin.test.tsx (25 tests) 2078ms",
+    "providerMerge": "d36c38e14ddec453ed520a521fb86da75d8d980b",
+    "providerTree": "5caf742f73d9f5d6915861b69302b79e2f15f138",
+    "actualJobCheckouts": {
+      "build": "d36c38e14ddec453ed520a521fb86da75d8d980b",
+      "test": "d36c38e14ddec453ed520a521fb86da75d8d980b",
+      "protection": "eabc3345b7bbd5bffd4b6aadb84b3b43813d067a",
+      "typecheck": "d36c38e14ddec453ed520a521fb86da75d8d980b"
+    },
+    "checks": {
+      "Required CI completion": 126377368989,
+      "build": 126375233846,
+      "test": 126375233770,
+      "typecheck": 126375233707,
+      "protection": 126375233515
+    },
+    "combinedLogSha256": "27a64b88a0f256f15c1c9a4f1c018b00e29111593291df922fa47bcc454cd1a0"
+  },
+  "testBlob": "2c98e16e3bea26e6ec429b17286b82ff4c00d56b",
+  "runtimeBlob": "2cd6e332594bc1a9b5853039e7f198c663b3aafa",
+  "sourceAcceptance": "Root independently accepted scoped source after exact unchanged Claude proposal adoption. No material Root source or test authorship.",
+  "scope": "Fixture evidence for browser handoff exceptions, truthful uncertainty, explicit fresh retry and cleanup. Native download, production admin activation and deployment not performed."
+}
