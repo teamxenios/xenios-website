@@ -1,5 +1,6 @@
-import { useMemo } from "react";
 import { REQUEST_INTENT_NOTICE } from "../../../../shared/research/assisted-order/request-intent";
+import { isResearchCartScope } from "../cart-session";
+import { useResearch } from "../core";
 import { referenceConfirmedInThisTab, requestIntentSupportMailto } from "./request-intent-continuation";
 import "./assisted-order.css";
 
@@ -8,10 +9,13 @@ function browserStorage(): Storage | null { try { return window.sessionStorage; 
 /**
  * The confirmation and status routes for a review request (XRI reference).
  * No fetch, no credential and no status claim: the only fact this page may add
- * is that this browser tab confirmed the same reference earlier.
+ * is that this tab confirmed the same reference for the verified member.
  */
 export function RequestIntentReferenceNotice({ reference, variant }: Readonly<{ reference: string; variant: "confirmation" | "status" }>) {
-  const confirmedAt = useMemo(() => referenceConfirmedInThisTab(browserStorage(), reference), [reference]);
+  const { member, memberChecking, memberSessionStatus, recovery } = useResearch();
+  const verifiedScope = !memberChecking && memberSessionStatus === "authenticated"
+    && recovery === "none" && member && isResearchCartScope(member.cartScope) ? member.cartScope : null;
+  const confirmedAt = verifiedScope === null ? null : referenceConfirmedInThisTab(browserStorage(), reference, verifiedScope);
   const confirmed = confirmedAt !== null;
   return <section className="xenios-order-page" data-testid={"request-intent-reference-" + variant}>
     <section className="xenios-order-panel">
