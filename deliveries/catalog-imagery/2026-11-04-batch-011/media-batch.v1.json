@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-011",
+  "createdAt": "2026-11-04T23:07:25.774Z",
+  "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "gitBlobOid": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+    "rawSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+    "bytePolicy": "raw committed Git blob",
+    "offeringCount": 420,
+    "sourceVariantCount": 420
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "gitBlobOid": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+    "rawSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+    "bytePolicy": "raw committed Git blob"
+  },
+  "authority": {
+    "founderWebsiteUseAuthorized": true,
+    "references": ["KAN-59/10615", "KAN-225/10616"],
+    "separateImageUseAgreementRequired": false,
+    "releasePublicationApproved": false
+  },
+  "publicationState": "static_candidate_pending_independent_image_review",
+  "sourceBytesPreserved": true,
+  "runtimeLinked": false,
+  "supplierSendPerformed": false,
+  "records": [
+    {
+      "offeringId": "mo_a4cfc5396d714f879944",
+      "sourceVariantId": "mov_d6a8b2cd129bda39d8fa",
+      "canonicalName": "Hydrate",
+      "quickOrderSku": "GEN-GRP-0372",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R982",
+      "expectedPackage": "US Blue Raspberry, 30 serving canister, 180 g (6.35 oz)",
+      "officialProductPage": "https://nutridyn.com/dynamic-hydrate",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/r/9/r982-Small-76816.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-011/assets/official-nutridyn/r982-hydrate-blue-raspberry.png",
+        "format": "png",
+        "width": 420,
+        "height": 420,
+        "bytes": 79554,
+        "sha256": "2b5cd2cc0017b3241d75c01395218f5f34ad80e904519c98206b0814cd96ef34",
+        "altTextCandidate": "NutriDyn Hydrate Blue Raspberry powder canister, 30 servings, 180 g"
+      },
+      "officialGallery": {
+        "sizeOptionId": "813",
+        "flavorOptionId": "919",
+        "productId": "2039",
+        "fullImageUrl": "https://nutridyn.com/media/catalog/product/cache/dd4850ad4231b6306bceadf38a0bbeed/r/9/r982-Small-76816.png",
+        "fullImageBytes": 76432,
+        "fullImageSha256": "75a73ec97988b877926fd031cad67e8c11e8473548b0572d30736495eebe8870",
+        "decodedRgbaSha256": "56b65e6942ba2ca05cbe6a5459346771ea5142552d8fca59700ffddc222a04ef"
+      },
+      "officialLabelSheet": {
+        "url": "https://nutridyn.com/media/productsattachment/Hydrate_SS_ND432_NEW.pdf",
+        "documentId": "ND432",
+        "documentRevision": "9/24",
+        "sha256": "b714ad3f3a25c680f80092ae42381e60a3d63705c33ac19a18ea50078e24209b",
+        "matchingFrontArtworkPage": 1,
+        "blueRaspberryFactsPage": 2,
+        "physicalLabelRevisionId": null
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "official_us_variant_gallery_and_revision_sheet_match_selected_front",
+      "reviewStatus": "pending_independent_exact_byte_image_review",
+      "copyReview": {
+        "status": "separate_review_pending_at_staging",
+        "candidateReference": "KAN-6/10702",
+        "reviewReference": "KAN-31/10705"
+      },
+      "publicationAuthorized": false
+    }
+  ]
+}
