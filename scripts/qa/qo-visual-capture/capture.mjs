@@ -199,9 +199,10 @@ async function imageEvidence(page, scope, expectedPath, headingTag) {
   }, headingTag);
 }
 
-function checkImage(entry, label, image, path, aboveHeading = false) {
+function checkImage(entry, label, image, path, aboveHeading = false, expectedAlt) {
   report(entry, label + " exact decoded source and descriptive alt",
-    image.imageLoaded && image.path === path && /\bBPC-157\b/i.test(image.alt));
+    image.imageLoaded && image.path === path && (expectedAlt === undefined ? /\bBPC-157\b/i.test(image.alt) : image.alt === expectedAlt),
+    { imageLoaded: image.imageLoaded, path: image.path, alt: image.alt, expectedAlt });
   report(entry, label + " whole aspect, viewport width, no horizontal overflow and settled fonts",
     image.fullAspect && image.width === entry.viewport.width && !image.horizontalOverflow && image.fontsLoaded);
   report(entry, label + " image lies inside the actual clipping media box and its padding",
@@ -499,7 +500,8 @@ async function captureReviewedCatalog(page, entry, rows, member) {
       report(entry, product.id + " card has exact summary and visible package size",
         cardText.includes(reviewedContent.summary) && (!packageSize || cardText.includes(packageSize)));
     }
-    if (reviewedMedia) checkImage(entry, product.id + " card", await imageEvidence(page, card, reviewedMedia.primary.href, null), reviewedMedia.primary.href);
+    if (reviewedMedia) checkImage(entry, product.id + " card", await imageEvidence(page, card, reviewedMedia.primary.href, null),
+      reviewedMedia.primary.href, false, reviewedMedia.primary.altText);
     if (row.alternate) report(entry, product.id + " alternate uses only generic vial art",
       await card.locator('img[src="/research/product-media/vial.svg"]').count() === 1);
 
@@ -523,7 +525,8 @@ async function captureReviewedCatalog(page, entry, rows, member) {
         text.includes(reviewedContent.overview) && (!reviewedContent.storage || text.includes(reviewedContent.storage)) &&
         (await region.locator("a").count()) === (reviewedContent.documentation?.length ?? 0));
     }
-    if (reviewedMedia) checkImage(entry, product.id + " detail", await imageEvidence(page, scope, reviewedMedia.primary.href, null), reviewedMedia.primary.href);
+    if (reviewedMedia) checkImage(entry, product.id + " detail", await imageEvidence(page, scope, reviewedMedia.primary.href, null),
+      reviewedMedia.primary.href, false, reviewedMedia.primary.altText);
     if (row === bpc) {
       const label = scope.getByRole("link", { name: "View front label artwork" });
       report(entry, "BPC keeps explicit packaging design disclosure and the approved label link",
