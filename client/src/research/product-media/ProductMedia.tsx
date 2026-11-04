@@ -14,9 +14,6 @@ const formatLabels = {
 type MediaFormat = keyof typeof formatLabels;
 const formats: Readonly<Partial<Record<string, string>>> =
   media.formatByVariantId;
-const bpc157PackshotVariantId = "mov_ca3e45ae9712aee91430";
-const bpc157Packshot = "/research/product-media/bpc-157-packshot.webp";
-
 function sharedFormat(variantIds: readonly string[]): MediaFormat {
   const first = formats[variantIds[0]];
   if (!first || !Object.prototype.hasOwnProperty.call(formatLabels, first)) return "unknown";
@@ -39,10 +36,7 @@ export function ProductMedia({
   const [failedFormat, setFailedFormat] = useState<MediaFormat | null>(null);
   const format = mapped === failedFormat ? "unknown" : mapped;
   const [failedPackshot, setFailedPackshot] = useState<string | null>(null);
-  const legacyPackshot = variantIds.length === 1 && variantIds[0] === bpc157PackshotVariantId
-    ? { href: bpc157Packshot, width: 768, height: 768, altText: productName + " 10 mg lyophilized vial packaging design" }
-    : undefined;
-  const candidate = reviewedMedia?.primary ?? legacyPackshot;
+  const candidate = reviewedMedia?.primary;
   const packshot = candidate?.href === failedPackshot ? undefined : candidate;
   const labelPreview = packshot && reviewedMedia?.labelPreview;
 
@@ -65,7 +59,7 @@ export function ProductMedia({
             : format === "unknown" ? undefined : () => setFailedFormat(format)}
         />
       </div>
-      {packshot && (reviewedMedia?.packagingDesign ?? detail) && (
+      {packshot && reviewedMedia?.packagingDesign && (
         <figcaption className="body-s min-w-0 break-words text-ink-mute">
           Packaging design shown. Current packaging may differ.
         </figcaption>

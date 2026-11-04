@@ -27,6 +27,17 @@ async function requestItem(offering: NormalizedMasterOffering) {
   return request.items[0];
 }
 
+function readChangedOffering(offeringId: string, variantLabel: string) {
+  const changed = structuredClone(dataset);
+  const raw = changed.products.find((row) => row.id === offeringId)!;
+  raw.variants[0].label = variantLabel;
+  const reader = new GeneratedMasterOfferingCatalogReader("synthetic-override", {
+    statMtimeMs: () => 1,
+    readText: () => JSON.stringify(changed),
+  });
+  return reader.load().products.find((row) => row.id === offeringId)!;
+}
+
 describe("reviewed exact-variant catalog content", () => {
   it("binds every reviewed record to its canonical source pair", () => {
     const reader = new GeneratedMasterOfferingCatalogReader(committed);
@@ -55,6 +66,12 @@ describe("reviewed exact-variant catalog content", () => {
     expect((await requestItem(bpc)).reviewedMedia).toEqual(media);
     expect(getReviewedProductMedia({ ...bpc }, variant)).toBeUndefined();
     expect(getReviewedProductMedia(bpc, { ...variant })).toBeUndefined();
+
+    const changed = readChangedOffering(bpc.id, "Synthetic changed BPC variant with the same IDs");
+    expect(changed.variants[0].id).toBe(variant.id);
+    expect(projectMasterOfferingCard(changed).variants[0].reviewedMedia).toBeUndefined();
+    expect(projectMasterOfferingDetail(changed).variants[0].reviewedMedia).toBeUndefined();
+    expect((await requestItem(changed)).reviewedMedia).toBeUndefined();
   });
 
   it("projects reviewed content on both catalog surfaces only for the trusted dataset", async () => {
@@ -75,22 +92,16 @@ describe("reviewed exact-variant catalog content", () => {
     });
     expect(approvedRequest.variantId).not.toBe(first.sourceVariantId);
 
-    const changed = structuredClone(dataset);
-    const raw = changed.products.find((row) => row.id === first.offeringId)!;
-    raw.variants[0].label = "Synthetic changed listing with the same exact IDs";
-    const overrideReader = new GeneratedMasterOfferingCatalogReader("synthetic-override", {
-      statMtimeMs: () => 1,
-      readText: () => JSON.stringify(changed),
-    });
-    const override = overrideReader.load().products.find((row) => row.id === first.offeringId)!;
+    const changedLabel = "Synthetic changed listing with the same exact IDs";
+    const override = readChangedOffering(first.offeringId, changedLabel);
     expect(override.variants[0].id).toBe(first.sourceVariantId);
     const overrideCard = projectMasterOfferingCard(override);
-    expect(overrideCard.variants[0]).toMatchObject({ label: raw.variants[0].label,
+    expect(overrideCard.variants[0]).toMatchObject({ label: changedLabel,
       action: approvedCard.variants[0].action, price: approvedCard.variants[0].price });
     expect(overrideCard.variants[0].reviewedContent).toBeUndefined();
     expect(projectMasterOfferingDetail(override).variants[0].reviewedContent).toBeUndefined();
     const overrideRequest = await requestItem(override);
-    expect(overrideRequest).toMatchObject({ variantId: approvedRequest.variantId, specification: raw.variants[0].label,
+    expect(overrideRequest).toMatchObject({ variantId: approvedRequest.variantId, specification: changedLabel,
       actionLabel: approvedRequest.actionLabel, selectableForReview: approvedRequest.selectableForReview,
       unitPriceCents: approvedRequest.unitPriceCents });
     expect(overrideRequest.reviewedContent).toBeUndefined();

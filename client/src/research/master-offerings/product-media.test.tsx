@@ -9,7 +9,19 @@ import { card, click, detail, render, variant } from "./catalog-test-fixtures";
 
 const vial = variant({ id: "mov_9262033fe69a14a50f1c", label: "Listed vial" });
 const capsule = variant({ id: "mov_82974ab2f9c652c2cb12", label: "Listed capsule" });
-const bpc157 = variant({ id: "mov_ca3e45ae9712aee91430", label: "BPC-157 10 mg" });
+const bpc157 = variant({
+  id: "mov_ca3e45ae9712aee91430",
+  label: "BPC-157 10 mg",
+  reviewedMedia: {
+    primary: {
+      href: "/research/product-media/bpc-157-xenios-10mg-render.webp",
+      altText: "Xenios BPC-157 10 mg lyophilized vial packaging render",
+      width: 1024,
+      height: 1024,
+    },
+    packagingDesign: true,
+  },
+});
 
 function mediaImage(host: HTMLElement) {
   const image = host.querySelector<HTMLImageElement>('[data-testid="product-media-image"]');
@@ -60,15 +72,15 @@ describe("product visuals on catalog routes", () => {
     );
     try {
       const image = mediaImage(host);
-      expect(image.getAttribute("src")).toBe("/research/product-media/bpc-157-packshot.webp");
-      expect(image.getAttribute("alt")).toBe("BPC-157 10 mg lyophilized vial packaging design");
-      expect(image.getAttribute("width")).toBe("768");
-      expect(image.getAttribute("height")).toBe("768");
+      expect(image.getAttribute("src")).toBe("/research/product-media/bpc-157-xenios-10mg-render.webp");
+      expect(image.getAttribute("alt")).toBe("Xenios BPC-157 10 mg lyophilized vial packaging render");
+      expect(image.getAttribute("width")).toBe("1024");
+      expect(image.getAttribute("height")).toBe("1024");
       expectMediaFrame(image);
       expect(Array.from(image.classList)).toEqual(expect.arrayContaining([
         "absolute", "inset-0", "h-full", "w-full", "object-contain",
       ]));
-      expect(host.querySelector("figcaption")).toBeNull();
+      expect(host.querySelector("figcaption")?.textContent).toContain("Current packaging may differ.");
       act(() => { image.dispatchEvent(new Event("error")); });
       const fallback = expectAsset(host, "vial");
       expect(host.querySelector("figcaption")).toBeNull();
@@ -103,12 +115,25 @@ describe("product visuals on catalog routes", () => {
     }
   });
 
-  it("places the packaging status on the exact variant detail only", () => {
+  it("uses a generic illustration for the same BPC ID without reviewed media", () => {
+    const unchangedId = variant({ id: bpc157.id, label: "Synthetic changed BPC listing" });
+    const { host, unmount } = render(
+      <MasterOfferingDetail product={detail({ displayName: "Synthetic changed listing", variants: [unchangedId] })} />,
+    );
+    try {
+      expect(expectAsset(host, "vial").alt).toBe("Synthetic changed listing illustration, vial");
+      expect(host.querySelector("figcaption")).toBeNull();
+    } finally {
+      unmount();
+    }
+  });
+
+  it("keeps packaging status specific to the reviewed variant on detail", () => {
     const { host, unmount } = render(
       <MasterOfferingDetail product={detail({ displayName: "BPC-157", variants: [bpc157, vial] })} />,
     );
     try {
-      expect(mediaImage(host).getAttribute("src")).toBe("/research/product-media/bpc-157-packshot.webp");
+      expect(mediaImage(host).getAttribute("src")).toBe("/research/product-media/bpc-157-xenios-10mg-render.webp");
       expect(host.querySelector("figcaption")?.textContent).toContain("Current packaging may differ.");
       click(host.querySelectorAll('input[type="radio"]')[1]);
       expectAsset(host, "vial");
