@@ -22,11 +22,11 @@ jobs:
       CANDIDATE_TREE: da2b16a6ff2991fe2322c931c95999262dbc709b
       # Dormant until the existing Root binds a new approval and run reconciliation.
       CAPTURE_ALLOWANCE_ID: KAN-31/10633
-      CAPTURE_ALLOWANCE_ATTEMPT: "1"
+      CAPTURE_ALLOWANCE_ATTEMPT: "2"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
-      CAPTURE_PRIOR_RUN_IDS: "[]"
-      CAPTURE_RECONCILED_AT: 2026-11-04T20:24:22Z
-      CAPTURE_DIAGNOSIS: ""
+      CAPTURE_PRIOR_RUN_IDS: '["41906360107"]'
+      CAPTURE_RECONCILED_AT: 2026-11-04T20:28:07Z
+      CAPTURE_DIAGNOSIS: "Use exact per-asset reviewed alt instead of the BPC-only regex; preserve all other assertions"
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash
