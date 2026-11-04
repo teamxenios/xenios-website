@@ -12,6 +12,8 @@ import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntent
 import { forgetConfirmedReceipt, readConfirmedReceiptRecord, rememberConfirmedReceipt } from "./request-intent-continuation";
 import type { StorefrontIntent } from "../storefront/entry-intent";
 import { ProductMedia } from "../product-media/ProductMedia";
+import { ReviewedProductContent } from "../master-offerings/ReviewedProductContent";
+import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import "./assisted-order.css";
@@ -59,7 +61,8 @@ function GuestCatalogDetails({ item, variantIds }: {
           Back to catalog
         </button>
       </DialogClose>
-      <ProductMedia productName={item.productName} variantIds={variantIds} detail />
+      <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} detail />
+      {item.reviewedContent && <ReviewedProductContent content={item.reviewedContent} inDialog />}
       {(item.specification || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
         {item.specification && <div><dt className="font-semibold">Specification</dt><dd>{item.specification}</dd></div>}
         {item.format && <div><dt className="font-semibold">Format</dt><dd>{item.format}</dd></div>}
@@ -354,12 +357,17 @@ function RequestIntentFormSession({
         const key = catalogItemKey(item), selection = selected.get(key);
         const sourceVariantId = item.sourceSelection?.variantId;
         const variantIds = sourceVariantId ? [sourceVariantId] : [];
+        const packageLabel = reviewedPackage(item.reviewedContent);
         return <article className="xenios-order-card" key={key}>
           {ownerKey === "early-access-session" && (
-            <ProductMedia productName={item.productName} variantIds={variantIds} />
+            <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} />
           )}
           <h2>{item.productName}</h2>
           <p>{item.specification || "Form not stated"}</p>
+          {item.reviewedContent && <p>
+            {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
+          </p>}
+          {packageLabel && <p><strong>Package</strong> · {packageLabel}</p>}
           <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
           {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
           <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>

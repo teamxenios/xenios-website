@@ -204,6 +204,7 @@ describe("mixed private request customer form source", () => {
     const catalog = await api.catalog();
     const row = { ...item("mapped", false), variantId: "mov_9262033fe69a14a50f1c",
       specification: "Synthetic 10 mg", format: "Synthetic capsule", packBasis: "Synthetic single pack",
+      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic card summary", overview: "Synthetic variant overview" },
       sourceSelection: { family: "synthetic", slug: "mapped", variantId: "mov_82974ab2f9c652c2cb12" } };
     api.catalog.mockResolvedValue({ ...catalog, items: [row], total: 1 });
 
@@ -212,6 +213,8 @@ describe("mixed private request customer form source", () => {
     await click("Add Synthetic mapped to request");
     const quantity = host.querySelector<HTMLInputElement>(".xenios-order-card input[type=number]")!;
     await type(quantity, "3");
+    expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.summary);
+    expect(host.querySelector(".xenios-order-card")?.textContent).not.toContain(row.reviewedContent.overview);
     const trigger = host.querySelector<HTMLButtonElement>('button[aria-label="View details for Synthetic mapped, Synthetic 10 mg"]')!;
     const reads = api.catalog.mock.calls.length;
     const url = window.location.href;
@@ -220,6 +223,7 @@ describe("mixed private request customer form source", () => {
     await act(async () => trigger.click());
     const dialog = document.querySelector('[role="dialog"]');
     expect(dialog?.querySelector("h2")?.textContent).toBe(row.productName);
+    expect(dialog?.textContent).toContain(row.reviewedContent.overview);
     for (const fact of [row.specification, row.format, row.packBasis]) {
       expect(dialog?.textContent).toContain(fact);
     }

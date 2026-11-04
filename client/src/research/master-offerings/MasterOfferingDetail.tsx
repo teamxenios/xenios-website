@@ -9,6 +9,7 @@ import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import { isContradictoryPurchase } from "./catalog-access-path";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
+import { ReviewedProductContent } from "./ReviewedProductContent";
 import {
   purchaseQuantityControl,
   type AcceptedExactVariantQuantityCapability,
@@ -261,14 +262,15 @@ export function MasterOfferingDetail({
             {product.stateExplanation}
           </p>
         </div>
-        {product.overview && (
+        {product.overview && !selected?.reviewedContent && (
           <p className="body-s text-ink-2 max-w-[70ch] min-w-0 break-words">
             {product.overview}
           </p>
         )}
       </header>
 
-      <ProductMedia productName={product.displayName} variantIds={selected ? [selected.id] : []} detail />
+      <ProductMedia productName={product.displayName} variantIds={selected ? [selected.id] : []}
+        reviewedMedia={selected?.reviewedMedia} detail />
 
       {variants.length > 0 && selected && (
         <section aria-labelledby="mo-detail-variants" className="grid min-w-0 gap-4">
@@ -340,7 +342,12 @@ export function MasterOfferingDetail({
         </section>
       )}
 
-      <CatalogEvidenceNotice />
+      {selected?.reviewedContent && <ReviewedProductContent content={selected.reviewedContent} />}
+
+      <CatalogEvidenceNotice
+        hasReviewedDocuments={Boolean(selected?.reviewedContent?.documentation?.length)}
+        hasReviewedStorage={Boolean(selected?.reviewedContent?.storage)}
+      />
 
       <section aria-labelledby="mo-detail-disclosures" className="grid min-w-0 gap-2">
         <h2 id="mo-detail-disclosures" className="body-l font-700">

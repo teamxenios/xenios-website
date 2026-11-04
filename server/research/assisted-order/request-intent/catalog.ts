@@ -7,6 +7,7 @@ import { MASTER_OFFERING_FAMILIES, isMasterOfferingFamily } from "../../../../sh
 import { directPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
 import { authorityFor, type AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
+import { getReviewedProductContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
 
 export type RequestIntentCatalog = Readonly<{
   list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery): Promise<RequestIntentCatalogPage>;
@@ -51,8 +52,12 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         const comingSoon = [offering.displayState, variant.displayState]
           .some((state) => state === "coming_soon" || state === "planned");
         const nonMerchandise = refusal === "non_merchandise_family";
+        const reviewedContent = getReviewedProductContent(offering, variant);
+        const reviewedMedia = getReviewedProductMedia(offering, variant);
         items.push({
           ...item,
+          ...(reviewedContent ? { reviewedContent } : {}),
+          ...(reviewedMedia ? { reviewedMedia } : {}),
           // A clinical request is not a quote. Never present its price as permission to buy.
           unitPriceCents: authority.providerWorkflowRequired ? null : item.unitPriceCents,
           priceVersion: authority.providerWorkflowRequired ? null : item.priceVersion,
