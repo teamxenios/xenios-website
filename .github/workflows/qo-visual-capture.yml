@@ -22,11 +22,11 @@ jobs:
       CANDIDATE_SHA: 329c18e0ad7c01a0a784fa9bc3df9ebda100bbf6
       CANDIDATE_TREE: 06c964210492f3814edf42aec2da80b6a11f71cd
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: UNBOUND
+      CAPTURE_ALLOWANCE_ID: KAN-31/10728
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
       CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: UNBOUND
+      CAPTURE_RECONCILED_AT: 2026-11-04T23:10:43Z
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
@@ -52,7 +52,7 @@ jobs:
           const attempt = Number(e.CAPTURE_ALLOWANCE_ATTEMPT);
           const maximumAttempts = Number(e.CAPTURE_ALLOWANCE_MAX_ATTEMPTS);
           const priorRunIds = JSON.parse(e.CAPTURE_PRIOR_RUN_IDS);
-          if (!/^KAN-31\/\d+$/.test(id) || ["KAN-31/10563", "KAN-31/10573", "KAN-31/10645", "KAN-31/10684"].includes(id)) throw new Error("A new, explicit Jira allowance is required");
+          if (id !== "KAN-31/10728") throw new Error("A new, explicit Jira allowance is required");
           if (maximumAttempts !== 1 || attempt !== 1 || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
           if (!Array.isArray(priorRunIds) || priorRunIds.length !== attempt - 1 ||
               priorRunIds.some((v) => typeof v !== "string" || !/^\d+$/.test(v)) ||
