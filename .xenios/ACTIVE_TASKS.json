@@ -3558,6 +3558,25 @@
         "file": ".xenios/handoffs/2026-11-04T03-50-43-338Z-KAN59-QO-PR372-CORRECTED-CAPTURE-20261104-codex-launch-coordination-20261005.json",
         "at": "2026-11-04T03:50:43.338Z"
       }
+    },
+    {
+      "id": "KAN59-PR372-SVG-MEDIA-CONTAINMENT-20261104",
+      "title": "Contain PR372 SVG product media within card presentation",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1",
+      "paths": [
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/src/research/master-offerings/product-media.test.tsx"
+      ],
+      "dependsOn": [
+        "KAN59-WHITE-LABEL-PACKAGING-CARD-20261104"
+      ],
+      "scopeNote": "Implement only the fresh material PR372 required R1 recorded at KAN-31 comment 10567 and PR comment 6622677174: correct SVG product-media containment in the existing card presentation. Use frozen PR372 source 8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1/tree dba463a8a39a7a41a92235086f73f53c19f42fed and create the separate branch codex/qo-svg-media-containment-20261104. Limit work exactly to ProductMedia.tsx and the existing member product-media test named in paths. The exact/prefix/wildcard audit found no active CODE_OWNERSHIP conflict, and docs/coordination/FILE_OWNERSHIP.json contains no match; all seven overlaps are completed HANDOFF records and remain preserved. Preserve PR372, PR373, every frozen and accepted review ref, the recorded EarlyAccessRoute.tsx owner route and message, all capture and source-QA handoffs, foreign ownership, production and release state, and every unrelated task, lease, session, rule and history. Add no held-route change, guest behavior, catalog authority, pricing, eligibility, checkout, payment, Auth, API, configuration, role, flag, customer, notification, native review takeover, release or production behavior. This metadata claim authorizes the custodian to make no application edit, branch creation, test, build, Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
+      "createdAt": "2026-11-04T12:16:57.8685793Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T12:16:57.8685793Z"
     }
   ]
 }
