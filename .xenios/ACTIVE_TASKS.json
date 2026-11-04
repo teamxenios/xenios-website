@@ -3791,12 +3791,23 @@
         "server/research/master-offerings/data/reviewed-public-media.json",
         "client/public/research/product-media/bpc-157-xenios-10mg-render.webp",
         "client/public/research/product-media/bpc-157-xenios-10mg-front-label.webp",
-        "client/src/research/master-offerings/product-media.test.tsx"
+        "client/src/research/master-offerings/product-media.test.tsx",
+        "client/public/research/product-media/nutridyn-r271l-annatto-pro-125.png",
+        "client/public/research/product-media/nutridyn-r152-brain-restore.png",
+        "client/public/research/product-media/nutridyn-r190-collagen-renew.png",
+        "client/public/research/product-media/nutridyn-r191-gi-defend.png",
+        "client/public/research/product-media/nutridyn-r167-mito-recharge.png",
+        "client/public/research/product-media/nutridyn-r817e-omega-pure-epa-dha-2400.png",
+        "client/public/research/product-media/nutridyn-r848-prm-resolve.png",
+        "client/public/research/product-media/nutridyn-r199-perimenopause-support.png",
+        "client/public/research/product-media/nutridyn-r123l-stress-essentials-balance.png",
+        ".github/workflows/qo-visual-capture.yml",
+        "scripts/qa/qo-visual-capture/capture.mjs"
       ],
       "dependsOn": [
         "KAN31-QO-GUEST-CATALOG-DETAIL-20261104"
       ],
-      "scopeNote": "Implement only the independently required findings at KAN-31 comments 10626 and 10629, the exact BPC asset file-level verdict at KAN-31 comment 10627, the founder requirements at KAN-59 comment 10615 and KAN-225 comment 10616, and Samuel's updated Root allocation at KAN-6 comment 10621 on exact current release 07011af2e6eb49adf26e6e80f734491a158eb406/tree eb293bdca45d6b35cdf2c455ccef52c2a201c5e5. Limit work exactly to the twenty-two paths listed in this task, including the reviewed public-content and public-media data sources, qualifying BPC artwork, the existing member media fixture, shared contracts, server projection/catalog seams and existing member and guest catalog presentation. Integrate only reviewed catalog content and qualifying artwork through existing safe authorities. Add no unreviewed content, mockup adoption, pricing authority, eligibility authority, availability authority, request or receipt semantic change, Auth, configuration, role, flag, storage, customer, provider, notification, database, SQL, activation, release or production behavior. Create intended branch codex/qo-reviewed-catalog-content-20261104 separately. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/wildcard audits found no active conflict for any path. Preserve all previous Quick Order QA and release records, every unrelated task, lease, ownership rule and history. This metadata custody commit performs no application or workflow edit, branch creation, test, build, local Node, CI, browser, provider, managed action, review, merge, deployment, registration or production action.",
+      "scopeNote": "Implement only the independently required findings at KAN-31 comments 10626, 10629 and 10631, the exact BPC asset file-level verdict at KAN-31 comment 10627, the founder requirements at KAN-59 comment 10615, Samuel's scoped source and ordinary-verification authority at KAN-225 comments 10616 and 10574, and Samuel's updated Root allocation at KAN-6 comment 10621 on exact current release 07011af2e6eb49adf26e6e80f734491a158eb406/tree eb293bdca45d6b35cdf2c455ccef52c2a201c5e5. Limit work exactly to the thirty-three paths listed in this task, including the reviewed public-content and public-media data sources, qualifying BPC artwork, the nine approved byte-identical official images, the bounded capture harness, the existing member media fixture, shared contracts, server projection/catalog seams and existing member and guest catalog presentation. Integrate only reviewed catalog content and qualifying artwork through existing safe authorities. Add no unreviewed content, mockup adoption, pricing authority, eligibility authority, availability authority, request or receipt semantic change, Auth, configuration, role, flag, storage, customer, provider, notification, database, SQL, activation, release or production behavior. Create intended branch codex/qo-reviewed-catalog-content-20261104 separately. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/wildcard audits found no active conflict for any path; prior capture-harness matches are handoff records only. Preserve all previous Quick Order QA and release records, every unrelated task, lease, ownership rule and history. This metadata custody commit performs no application or workflow edit, branch creation, test, build, local Node, CI, browser, provider, managed action, review, merge, deployment, registration or production action.",
       "createdAt": "2026-11-04T19:51:51.9333570Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-04T19:51:51.9333570Z"
