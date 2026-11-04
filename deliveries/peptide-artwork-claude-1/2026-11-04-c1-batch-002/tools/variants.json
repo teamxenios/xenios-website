@@ -1,0 +1,254 @@
+[
+ {
+  "slug": "mots-c-10mg",
+  "name": "MOTS-c",
+  "code": "MOTSC",
+  "mg": 10,
+  "sku": "GEN-GRP-0313",
+  "offeringId": "mo_33b6b3e982b2dc5113bb",
+  "sourceVariantId": "mov_72b54c1f1e71b4229c2a",
+  "labelFactsRef": "KAN-59/10654",
+  "labelFactsFile": "research-batch-01.label-facts.json",
+  "labelFactsSha256": "2a7b93e1c71234811fc1adc8651be54a7e5d28b8115bdb2633533387b2cb163c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "MOTS-c",
+   "amount": "10 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0313"
+  },
+  "extraDoNotPrintTerms": [],
+  "nameVariance": {
+   "catalogDisplayName": "MOTS-C",
+   "printedName": "MOTS-c",
+   "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+  }
+ },
+ {
+  "slug": "ghk-cu-50mg",
+  "name": "GHK-Cu",
+  "code": "GHKCU",
+  "mg": 50,
+  "sku": "GEN-GRP-0288",
+  "offeringId": "mo_fb02f804912e868b0a10",
+  "sourceVariantId": "mov_4522e672752616ff992d",
+  "labelFactsRef": "KAN-59/10654",
+  "labelFactsFile": "research-batch-01.label-facts.json",
+  "labelFactsSha256": "2a7b93e1c71234811fc1adc8651be54a7e5d28b8115bdb2633533387b2cb163c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "GHK-Cu",
+   "amount": "50 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0288"
+  },
+  "extraDoNotPrintTerms": [],
+  "nameVariance": null
+ },
+ {
+  "slug": "ghk-cu-100mg",
+  "name": "GHK-Cu",
+  "code": "GHKCU",
+  "mg": 100,
+  "sku": "GEN-GRP-0287",
+  "offeringId": "mo_b06b77a95d5dd5bf8cd7",
+  "sourceVariantId": "mov_35b19a790d7a247210c9",
+  "labelFactsRef": "KAN-59/10654",
+  "labelFactsFile": "research-batch-01.label-facts.json",
+  "labelFactsSha256": "2a7b93e1c71234811fc1adc8651be54a7e5d28b8115bdb2633533387b2cb163c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "GHK-Cu",
+   "amount": "100 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0287"
+  },
+  "extraDoNotPrintTerms": [],
+  "nameVariance": null
+ },
+ {
+  "slug": "tesamorelin-10mg",
+  "name": "Tesamorelin",
+  "code": "TESAMORELIN",
+  "mg": 10,
+  "sku": "GEN-GRP-0347",
+  "offeringId": "mo_5da1ee7942bcff333ef6",
+  "sourceVariantId": "mov_b1fbc841c7fb09265cad",
+  "labelFactsRef": "KAN-59/10681",
+  "labelFactsFile": "research-batch-03.label-facts.json",
+  "labelFactsSha256": "9507165e8986dc80592f0de01f7995e4fe09c6b2eaebd44bd907c04801888331",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Tesamorelin",
+   "amount": "10 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0347"
+  },
+  "extraDoNotPrintTerms": [
+   "Egrifta",
+   "HIV",
+   "lipodystrophy"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "sermorelin-5mg",
+  "name": "Sermorelin",
+  "code": "SERMORELIN",
+  "mg": 5,
+  "sku": "GEN-GRP-0341",
+  "offeringId": "mo_9c7083a0cfc2bfd2d525",
+  "sourceVariantId": "mov_e737e2f494af1ea61435",
+  "labelFactsRef": "KAN-59/10681",
+  "labelFactsFile": "research-batch-03.label-facts.json",
+  "labelFactsSha256": "9507165e8986dc80592f0de01f7995e4fe09c6b2eaebd44bd907c04801888331",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Sermorelin",
+   "amount": "5 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0341"
+  },
+  "extraDoNotPrintTerms": [
+   "Geref"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "hexarelin-10mg",
+  "name": "Hexarelin",
+  "code": "HEXARELIN",
+  "mg": 10,
+  "sku": "GEN-GRP-0300",
+  "offeringId": "mo_5720466fd9388d2044ed",
+  "sourceVariantId": "mov_e562b76120d36c6ebf2d",
+  "labelFactsRef": "KAN-59/10681",
+  "labelFactsFile": "research-batch-03.label-facts.json",
+  "labelFactsSha256": "9507165e8986dc80592f0de01f7995e4fe09c6b2eaebd44bd907c04801888331",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Hexarelin",
+   "amount": "10 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0300"
+  },
+  "extraDoNotPrintTerms": [],
+  "nameVariance": null
+ },
+ {
+  "slug": "dsip-10mg",
+  "name": "DSIP",
+  "code": "DSIP",
+  "mg": 10,
+  "sku": "GEN-GRP-0278",
+  "offeringId": "mo_1c93e6c7c97d1e38167e",
+  "sourceVariantId": "mov_0efd31ea72138e78d999",
+  "labelFactsRef": "KAN-59/10687",
+  "labelFactsFile": "research-batch-04.label-facts.json",
+  "labelFactsSha256": "4c791c801a059daef3504cb4d19af3d1503913a8ed2d5aded395940ca98bd843",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "DSIP",
+   "amount": "10 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0278"
+  },
+  "extraDoNotPrintTerms": [
+   "sleep",
+   "EEG"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "semax-10mg",
+  "name": "Semax",
+  "code": "SEMAX",
+  "mg": 10,
+  "sku": "GEN-GRP-0338",
+  "offeringId": "mo_42060e3ba6b7fa26b5a9",
+  "sourceVariantId": "mov_bd3ee913aa6fedf2c743",
+  "labelFactsRef": "KAN-59/10687",
+  "labelFactsFile": "research-batch-04.label-facts.json",
+  "labelFactsSha256": "4c791c801a059daef3504cb4d19af3d1503913a8ed2d5aded395940ca98bd843",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Semax",
+   "amount": "10 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0338"
+  },
+  "extraDoNotPrintTerms": [
+   "nootropic",
+   "cognitive",
+   "neuroprotective",
+   "stroke"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "kisspeptin-10mg",
+  "name": "Kisspeptin",
+  "code": "KISSPEPTIN",
+  "mg": 10,
+  "sku": "GEN-GRP-0308",
+  "offeringId": "mo_61e8c1f887725c9938ae",
+  "sourceVariantId": "mov_823a1410e1831e6d845f",
+  "labelFactsRef": "KAN-59/10687",
+  "labelFactsFile": "research-batch-04.label-facts.json",
+  "labelFactsSha256": "4c791c801a059daef3504cb4d19af3d1503913a8ed2d5aded395940ca98bd843",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Kisspeptin",
+   "amount": "10 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0308"
+  },
+  "extraDoNotPrintTerms": [
+   "Kisspeptin-10",
+   "Kisspeptin-54",
+   "fertility",
+   "puberty",
+   "reproductive"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "oxytocin-5mg",
+  "name": "Oxytocin",
+  "code": "OXYTOCIN",
+  "mg": 5,
+  "sku": "GEN-GRP-0320",
+  "offeringId": "mo_3ac83d28defd63915a71",
+  "sourceVariantId": "mov_12b96a21ca34f80cdb6a",
+  "labelFactsRef": "KAN-59/10687",
+  "labelFactsFile": "research-batch-04.label-facts.json",
+  "labelFactsSha256": "4c791c801a059daef3504cb4d19af3d1503913a8ed2d5aded395940ca98bd843",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Oxytocin",
+   "amount": "5 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0320"
+  },
+  "extraDoNotPrintTerms": [
+   "IU",
+   "USP",
+   "Pitocin",
+   "labor",
+   "lactation",
+   "bonding",
+   "social"
+  ],
+  "nameVariance": null
+ }
+]
