@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: ad76ce76ddb106183202aff62991cfffc9aabcfd
-      CANDIDATE_TREE: 0e3480097f7e1cef40c7b6f2104c6e995e7b0d80
+      CANDIDATE_SHA: 8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1
+      CANDIDATE_TREE: dba463a8a39a7a41a92235086f73f53c19f42fed
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash
@@ -49,9 +49,9 @@ jobs:
           cd candidate
           env -i PATH="$PATH" HOME="$HOME" CI=true \
             node scripts/evidence/build-candidate-preview.mjs --sha "$CANDIDATE_SHA"
-      - name: Capture both synthetic viewports inside a loopback-only namespace
+      - name: Capture the sequential synthetic viewport matrix inside a loopback-only namespace
         shell: bash
-        timeout-minutes: 4
+        timeout-minutes: 6
         run: |
           set -euo pipefail
           mkdir -p "$EVIDENCE_DIR"
@@ -61,10 +61,10 @@ jobs:
               PLAYWRIGHT_BROWSERS_PATH="$4" \
               "$5" --import "$6/node_modules/tsx/dist/loader.mjs" \
               "$7/scripts/qa/qo-visual-capture/capture.mjs" "$6" "$8" "$9" \
-              "${10}" "${11}"
+              "${10}" "${11}" "${12}" "${13}"
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
-            "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA"
+            "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT"
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -79,10 +79,42 @@ jobs:
         with:
           name: qo-bpc157-synthetic-visual-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/phone-viewport.png
-            ${{ env.EVIDENCE_DIR }}/phone-card.png
-            ${{ env.EVIDENCE_DIR }}/desktop-viewport.png
-            ${{ env.EVIDENCE_DIR }}/desktop-card.png
+            ${{ env.EVIDENCE_DIR }}/guest-320-viewport.png
+            ${{ env.EVIDENCE_DIR }}/guest-320-card.png
+            ${{ env.EVIDENCE_DIR }}/guest-320-review.png
+            ${{ env.EVIDENCE_DIR }}/guest-320-failure.png
+            ${{ env.EVIDENCE_DIR }}/member-320-card.png
+            ${{ env.EVIDENCE_DIR }}/member-320-detail-10.png
+            ${{ env.EVIDENCE_DIR }}/member-320-detail-5.png
+            ${{ env.EVIDENCE_DIR }}/member-320-detail-back-10.png
+            ${{ env.EVIDENCE_DIR }}/member-320-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-375-viewport.png
+            ${{ env.EVIDENCE_DIR }}/guest-375-card.png
+            ${{ env.EVIDENCE_DIR }}/guest-375-review.png
+            ${{ env.EVIDENCE_DIR }}/guest-375-failure.png
+            ${{ env.EVIDENCE_DIR }}/member-375-card.png
+            ${{ env.EVIDENCE_DIR }}/member-375-detail-10.png
+            ${{ env.EVIDENCE_DIR }}/member-375-detail-5.png
+            ${{ env.EVIDENCE_DIR }}/member-375-detail-back-10.png
+            ${{ env.EVIDENCE_DIR }}/member-375-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-768-viewport.png
+            ${{ env.EVIDENCE_DIR }}/guest-768-card.png
+            ${{ env.EVIDENCE_DIR }}/guest-768-review.png
+            ${{ env.EVIDENCE_DIR }}/guest-768-failure.png
+            ${{ env.EVIDENCE_DIR }}/member-768-card.png
+            ${{ env.EVIDENCE_DIR }}/member-768-detail-10.png
+            ${{ env.EVIDENCE_DIR }}/member-768-detail-5.png
+            ${{ env.EVIDENCE_DIR }}/member-768-detail-back-10.png
+            ${{ env.EVIDENCE_DIR }}/member-768-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-1280-viewport.png
+            ${{ env.EVIDENCE_DIR }}/guest-1280-card.png
+            ${{ env.EVIDENCE_DIR }}/guest-1280-review.png
+            ${{ env.EVIDENCE_DIR }}/guest-1280-failure.png
+            ${{ env.EVIDENCE_DIR }}/member-1280-card.png
+            ${{ env.EVIDENCE_DIR }}/member-1280-detail-10.png
+            ${{ env.EVIDENCE_DIR }}/member-1280-detail-5.png
+            ${{ env.EVIDENCE_DIR }}/member-1280-detail-back-10.png
+            ${{ env.EVIDENCE_DIR }}/member-1280-failure.png
             ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7

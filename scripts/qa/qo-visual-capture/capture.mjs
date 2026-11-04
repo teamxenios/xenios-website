@@ -4,24 +4,44 @@ import { access, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { chromium } from "playwright";
-import { artwork, fixtureCurrency, fixturePrice, fixtureResponses, fixtureUnit, sourceVariant } from "./fixture.mjs";
+import {
+  agreementAccept, agreementStatus, alternateArtwork, alternateSourceVariant, artwork, fixtureAgreement, fixtureContact,
+  fixtureCurrency, fixturePrice, fixtureResponses, fixtureUnit, guestRoute, memberBearer,
+  memberDetailRoute, memberOffering, memberRoute, memberSession, orderVariant, sourceVariant,
+} from "./fixture.mjs";
 
-const [candidate, output, candidateSha, candidateTree, harnessRevision] = process.argv.slice(2);
+const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt] = process.argv.slice(2);
 const origin = "http://127.0.0.1:5199";
-const route = "/research/early-access/order-request";
-const artworkHash = "d4518341767b9de04d3fa6fb6bf1cbcaa3456884005e68621042839aed01cf42";
+const artworkHash = "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1";
+const viewports = [
+  { width: 320, height: 800, mobile: true },
+  { width: 375, height: 844, mobile: true },
+  { width: 768, height: 1024, mobile: false },
+  { width: 1280, height: 900, mobile: false },
+];
 const result = {
-  scope: "non-production synthetic; price and quantity are fixture values",
-  candidateSha, candidateTree, harnessRevision,
+  scope: "NON-PRODUCTION SYNTHETIC BROWSER EVIDENCE",
+  limits: [
+    "Fixture prices are synthetic. No approved price, live identity, product authorization or persistence is tested.",
+    "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
+    "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
+    "No submission, recovery, staff readback, production release or operator activation is covered.",
+  ],
+  candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt),
+  artifacts: `https://github.com/teamxenios/xenios-website/actions/runs/${runId}#artifacts`,
   upstreamHarness: "scripts/evidence/build-candidate-preview.mjs + scripts/preview-research.mjs",
-  fixture: { sourceVariant, orderVariant: "qa-bpc-157-order-variant", fixturePrice, fixtureCurrency, fixtureUnit },
-  artwork: { file: artwork, sha256: artworkHash },
+  fixture: {
+    sourceVariant, alternateSourceVariant, orderVariant, memberOffering, fixturePrice, fixtureCurrency, fixtureUnit,
+    policy: { slug: "research-use", agreement: fixtureAgreement, acceptance: "one exact in-memory intercept per guest context" },
+  },
+  assets: { packshot: { file: artwork, sha256: artworkHash }, fallback: { file: alternateArtwork } },
   network: { loopbackOnly: false, serviceWorkers: "blocked", externalRequests: "blocked" },
   captures: [],
 };
 const report = (entry, name, pass, detail) => {
   entry.assertions.push({ name, pass: Boolean(pass), ...(detail === undefined ? {} : { detail }) });
 };
+const briefError = (error) => String(error.message).split("\n")[0];
 
 async function waitForPreview(process) {
   for (let attempt = 0; attempt < 80; attempt += 1) {
@@ -35,106 +55,269 @@ async function waitForPreview(process) {
   throw new Error("Existing loopback preview did not become ready");
 }
 
-async function capture(browser, fixtures, name, viewport, mobile) {
-  const entry = { name, viewport, mobile, assertions: [], screenshots: [], externalBlocked: 0,
-    webSocketsBlocked: 0, localApiBlocked: 0, writeRequestsBlocked: 0 };
-  result.captures.push(entry);
+async function captureContext(browser, fixtures, viewport, mobile, member, entry) {
   const context = await browser.newContext({
     viewport, screen: viewport, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: 1,
     locale: "en-US", serviceWorkers: "block", acceptDownloads: false,
   });
+  if (member) {
+    await context.addInitScript(({ origin, session }) => {
+      if (window.location.origin === origin) localStorage.setItem("sb-127-auth-token", JSON.stringify(session));
+    }, { origin, session: memberSession });
+  }
+  const traffic = { accepted: 0, verifiedMember: 0, fallbackAssetAborted: 0, deniedExternal: 0,
+    deniedLocalReads: 0, deniedWrites: 0, deniedRecovery: 0, deniedWebSockets: 0 };
+  entry.network = traffic;
   await context.routeWebSocket("**/*", (socket) => {
-    entry.webSocketsBlocked += 1;
+    traffic.deniedWebSockets += 1;
     return socket.close();
   });
   await context.route("**/*", async (intercept) => {
     const request = intercept.request();
     const url = new URL(request.url());
     if (url.origin !== origin) {
-      entry.externalBlocked += 1;
+      traffic.deniedExternal += 1;
+      if (request.method() !== "GET") traffic.deniedWrites += 1;
+      return intercept.abort("blockedbyclient");
+    }
+    if (request.method() === "POST" && !member && url.pathname === agreementAccept && !url.search && traffic.accepted === 0) {
+      let body;
+      try { body = request.postDataJSON(); } catch {}
+      if (body && Object.keys(body).length === 2 && body.kind === fixtureAgreement.kind && body.version === fixtureAgreement.version) {
+        traffic.accepted += 1;
+        return intercept.fulfill({ json: { ok: true, ...fixtureAgreement, alreadyAccepted: false } });
+      }
+    }
+    if (/\/(recover|recovery)(?:\/|$)/.test(url.pathname) && url.pathname.startsWith("/api/")) {
+      traffic.deniedRecovery += 1;
       return intercept.abort("blockedbyclient");
     }
     if (request.method() !== "GET") {
-      entry.writeRequestsBlocked += 1;
+      traffic.deniedWrites += 1;
       return intercept.abort("blockedbyclient");
     }
-    if (fixtures.has(url.pathname)) {
-      return intercept.fulfill({ json: fixtures.get(url.pathname), headers: { "cache-control": "no-store" } });
+    if (entry.breakPackshot && url.pathname === artwork) {
+      traffic.fallbackAssetAborted += 1;
+      return intercept.abort("failed");
     }
-    if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/preview-auth")) {
-      entry.localApiBlocked += 1;
+    if (fixtures.has(url.pathname)) {
+      const memberApi = url.pathname === "/api/research/member/me" || url.pathname === "/api/research/catalog"
+        || url.pathname.startsWith("/api/research/catalog-display/v2/");
+      if (memberApi && (!member || request.headers().authorization !== memberBearer)) {
+        traffic.deniedLocalReads += 1;
+        return intercept.abort("blockedbyclient");
+      }
+      if (url.pathname === "/api/research/member/me") traffic.verifiedMember += 1;
+      const json = fixtures.get(url.pathname);
+      return intercept.fulfill({
+        json: url.pathname === agreementStatus ? { ...json, accepted: traffic.accepted === 1 } : json,
+        headers: { "cache-control": "no-store" },
+      });
+    }
+    if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/preview-auth")
+      || url.pathname.startsWith("/auth/v1/") || ["fetch", "xhr"].includes(request.resourceType())) {
+      traffic.deniedLocalReads += 1;
       return intercept.abort("blockedbyclient");
     }
     return intercept.continue();
   });
   const page = await context.newPage();
-  page.setDefaultTimeout(8000);
+  page.setDefaultTimeout(6500);
+  return { context, page };
+}
+
+async function screenshot(entry, suffix, locator) {
+  const file = entry.name + "-" + suffix + ".png";
+  try {
+    await locator.screenshot({ path: join(output, file), timeout: 4500, animations: "disabled" });
+    entry.screenshots.push(file);
+  } catch (error) {
+    report(entry, suffix + " screenshot", false, briefError(error));
+  }
+}
+
+async function imageEvidence(page, scope, expectedPath, headingTag) {
+  const image = scope.locator(`img[data-testid="product-media-image"][src="${expectedPath}"]`);
+  await image.scrollIntoViewIfNeeded();
+  await image.evaluate(async (node) => {
+    await Promise.race([node.decode(), new Promise((_, reject) => setTimeout(() => reject(new Error("image timeout")), 4500))]);
+  });
+  await page.evaluate(async () => {
+    await Promise.race([document.fonts.ready, new Promise((_, reject) => setTimeout(() => reject(new Error("font timeout")), 4500))]);
+  });
+  return image.evaluate((node, headingTag) => {
+    const frame = node.closest("figure");
+    const card = node.closest("article") ?? frame?.parentElement;
+    const box = node.getBoundingClientRect();
+    const bounds = card?.getBoundingClientRect();
+    const heading = headingTag ? card?.querySelector(headingTag)?.getBoundingClientRect() : null;
+    const naturalRatio = node.naturalWidth / node.naturalHeight;
+    const fit = getComputedStyle(node).objectFit;
+    const hasRoom = Boolean(bounds && box.width > 0 && box.height > 0 && box.left >= bounds.left - 1 &&
+      box.right <= bounds.right + 1 && box.top >= bounds.top - 1 && box.bottom <= bounds.bottom + 1);
+    return {
+      path: new URL(node.currentSrc).pathname,
+      alt: node.alt,
+      imageLoaded: node.complete && node.naturalWidth > 0 && node.naturalHeight > 0,
+      imageBox: { width: box.width, height: box.height },
+      naturalImage: { width: node.naturalWidth, height: node.naturalHeight },
+      objectFit: fit,
+      fullAspect: hasRoom && (fit === "contain" || fit === "scale-down" ||
+        (fit === "fill" && Math.abs(box.width - box.height * naturalRatio) <= 1)),
+      aboveHeading: heading ? box.bottom <= heading.top + 1 : null,
+      width: window.innerWidth,
+      horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1 ||
+        !bounds || bounds.left < -1 || bounds.right > window.innerWidth + 1 ||
+        (card?.scrollWidth ?? 0) > (card?.clientWidth ?? 0) + 1,
+      fontsLoaded: document.fonts.status === "loaded",
+    };
+  }, headingTag);
+}
+
+function checkImage(entry, label, image, path, aboveHeading = false) {
+  report(entry, label + " exact decoded source and descriptive alt",
+    image.imageLoaded && image.path === path && /\bBPC-157\b/i.test(image.alt));
+  report(entry, label + " whole aspect, viewport width, no horizontal overflow and settled fonts",
+    image.fullAspect && image.width === entry.viewport.width && !image.horizontalOverflow && image.fontsLoaded);
+  if (aboveHeading) report(entry, label + " image above heading", image.aboveHeading);
+}
+function captionsRetired(content) {
+  return !/conceptual packaging|representative illustration/i.test(content);
+}
+
+async function captureGuest(page, entry) {
+  await page.goto(origin + guestRoute, { waitUntil: "domcontentloaded" });
   const card = page.locator('[data-testid="request-door-mixed"] article.xenios-order-card')
     .filter({ has: page.getByRole("heading", { name: "BPC-157", exact: true }) });
+  await card.waitFor();
+  const agreement = page.getByTestId("early-access-agreement");
+  await page.getByTestId("early-access-agreement-checkbox").waitFor();
+  const action = page.getByRole("button", { name: "Continue to contact", exact: true });
+  await card.getByRole("button", { name: "Add BPC-157 to request", exact: true }).click();
+  await card.getByRole("button", { name: "Increase requested quantity for BPC-157" }).click();
+  report(entry, "correct fixture policy is offered and an unaccepted policy blocks continuation with selected item",
+    (await agreement.getAttribute("data-state")) === "ready" &&
+    (await agreement.innerText()).includes(fixtureAgreement.version) && await action.isDisabled());
+  const accept = page.getByTestId("early-access-agreement-submit");
+  report(entry, "policy accept disabled before explicit checkbox", await accept.isDisabled());
+  await page.getByTestId("early-access-agreement-checkbox").check();
+  await accept.click();
+  await page.getByTestId("early-access-agreement-accepted").waitFor();
+
+  entry.image = await imageEvidence(page, card, artwork, "h2");
+  checkImage(entry, "guest card", entry.image, artwork, true);
+  const content = await card.innerText();
+  report(entry, "guest card shows exact fixture strength, price, research copy and no retired captions",
+    ["BPC-157", fixtureUnit, "synthetic USD fixture", "$12.50", "catalog display, not a final quote",
+      "Research Use Only. Nonclinical use only."].every((value) => content.includes(value)) && captionsRetired(content));
+  report(entry, "guest quantity control updates exact selected units", await card.getByRole("spinbutton").inputValue() === "2");
+  await card.evaluate((node) => window.scrollTo(0, window.scrollY + node.getBoundingClientRect().top - 45));
+  await screenshot(entry, "viewport", page);
+  await screenshot(entry, "card", card);
+
+  const precedingButton = page.getByRole("button", { name: /^Remove selected BPC-157 / });
+  await precedingButton.focus();
+  await page.keyboard.press("Tab");
+  const reachable = await action.evaluate((button) => {
+    const bounds = button.getBoundingClientRect();
+    const inViewport = bounds.width > 0 && bounds.height > 0 && bounds.left >= -1 && bounds.right <= window.innerWidth + 1
+      && bounds.top >= -1 && bounds.bottom <= window.innerHeight + 1;
+    const hit = inViewport && document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    return { focused: document.activeElement === button, inViewport, hit: Boolean(hit && button.contains(hit)), enabled: !button.disabled };
+  });
+  entry.continuation = reachable;
+  report(entry, "matched synthetic acceptance enables CTA reachable by keyboard and scroll",
+    entry.network.accepted === 1 && Object.values(reachable).every(Boolean));
+  if (!reachable.focused || !reachable.enabled) throw new Error("Continue to contact was not safely keyboard reachable");
+  await page.keyboard.press("Enter");
+
+  const review = page.getByRole("button", { name: "Review request", exact: true });
+  await review.waitFor();
+  report(entry, "Continue reaches local contact form", await review.isVisible());
+  for (const [field, value] of Object.entries(fixtureContact)) {
+    await page.locator(`input[name="${field}"]`).fill(value);
+  }
+  await page.getByRole("checkbox", { name: "I confirm I am at least 18 years old." }).check();
+  await review.click();
+  const reviewHeading = page.getByRole("heading", { name: "Review your request", exact: true });
+  await reviewHeading.waitFor();
+  const reviewSection = page.locator("section.xenios-order-panel").filter({ has: reviewHeading });
+  const reviewText = await reviewSection.innerText();
+  report(entry, "synthetic review preserves requested product and units, submission remains untouched",
+    reviewText.includes("BPC-157") && reviewText.includes(fixtureUnit) && reviewText.includes("Requested quantity: 2")
+    && await reviewSection.getByRole("button", { name: "Submit for review", exact: true }).isDisabled());
+  await reviewHeading.scrollIntoViewIfNeeded();
+  await screenshot(entry, "review", page);
+}
+
+async function captureMember(page, entry) {
+  await page.goto(origin + memberRoute, { waitUntil: "domcontentloaded" });
+  const card = page.locator(`[data-testid="mo-card"][data-offering-id="${memberOffering}"]`);
+  await card.waitFor();
+  entry.image = await imageEvidence(page, card, artwork, "h3");
+  checkImage(entry, "member card", entry.image, artwork, true);
+  const content = await card.innerText();
+  report(entry, "member card binds exact 10 mg variant and preserves fixture price and facts",
+    await card.locator(`[data-variant-id="${sourceVariant}"]`).count() === 1 &&
+    ["BPC-157", "10 mg", "$12.50", "Synthetic USD fixture"].every((value) => content.includes(value)) && captionsRetired(content));
+  await screenshot(entry, "card", card);
+
+  const link = card.getByTestId("mo-card-link");
+  report(entry, "member card links to exact family and offering slug", await link.getAttribute("href") === memberDetailRoute);
+  await link.click();
+  report(entry, "member detail uses the exact listing route", new URL(page.url()).pathname === memberDetailRoute);
+  const heading = page.getByRole("heading", { name: "BPC-157", exact: true });
+  const media = page.locator('figure:has(img[data-testid="product-media-image"])');
+  const selected = page.getByTestId("mo-selected-variant");
+  const selector = page.getByTestId("mo-variant-selector");
+  await selector.waitFor();
+  const states = [
+    { suffix: "detail-10", id: sourceVariant, strength: "10 mg", asset: artwork },
+    { suffix: "detail-5", id: alternateSourceVariant, strength: "5 mg", asset: alternateArtwork },
+    { suffix: "detail-back-10", id: sourceVariant, strength: "10 mg", asset: artwork },
+  ];
+  entry.detail = [];
+  for (const [index, state] of states.entries()) {
+    const radio = selector.locator(`input[value="${state.id}"]`);
+    if (index !== 0) await radio.check();
+    const image = await imageEvidence(page, media, state.asset, null);
+    const selection = await selected.innerText();
+    entry.detail.push({ ...state, image });
+    checkImage(entry, state.suffix, image, state.asset);
+    report(entry, state.suffix + " checked identity and visible product facts",
+      await heading.isVisible() && await radio.isChecked() && selection.includes(state.strength)
+      && selection.includes("$12.50") && captionsRetired(await media.innerText())
+      && (state.asset === artwork || !/10 mg/.test(image.alt)));
+    await screenshot(entry, state.suffix, page);
+  }
+
+  if (entry.viewport.width === 320) {
+    entry.breakPackshot = true;
+    await page.reload({ waitUntil: "domcontentloaded" });
+    const fallback = await imageEvidence(page, media, alternateArtwork, null);
+    entry.brokenImageFallback = fallback;
+    report(entry, "blocked exact WebP falls back to decoded usable media without changing 10 mg selection",
+      entry.network.fallbackAssetAborted > 0 && fallback.imageLoaded && fallback.path === alternateArtwork &&
+      fallback.fullAspect && !fallback.horizontalOverflow &&
+      (await selected.innerText()).includes("10 mg"));
+  }
+}
+
+async function capture(browser, fixtures, kind, size) {
+  const { mobile, ...viewport } = size;
+  const entry = { name: kind + "-" + viewport.width, viewport, mobile, assertions: [], screenshots: [] };
+  result.captures.push(entry);
+  const { context, page } = await captureContext(browser, fixtures, viewport, mobile, kind === "member", entry);
   try {
-    await page.goto(origin + route, { waitUntil: "domcontentloaded" });
-    await card.waitFor();
-    const image = card.getByTestId("product-media-image");
-    await image.scrollIntoViewIfNeeded();
-    await image.evaluate(async (node) => {
-      await Promise.race([node.decode(), new Promise((_, reject) => setTimeout(() => reject(new Error("image timeout")), 5000))]);
-    });
-    await page.evaluate(async () => {
-      await Promise.race([document.fonts.ready, new Promise((_, reject) => setTimeout(() => reject(new Error("font timeout")), 5000))]);
-    });
-    const add = card.getByRole("button", { name: "Add BPC-157 to request", exact: true });
-    report(entry, "add action available", await add.isEnabled());
-    await add.click();
-    const increase = card.getByRole("button", { name: "Increase requested quantity for BPC-157" });
-    await increase.click();
-    const quantity = card.getByRole("spinbutton");
-    const action = page.getByRole("button", { name: "Continue to contact", exact: true });
-    await card.scrollIntoViewIfNeeded();
-    await card.evaluate((node) => window.scrollTo(0, window.scrollY + node.getBoundingClientRect().top - 45));
-    const display = await card.evaluate((node) => {
-      const img = node.querySelector("img");
-      const bounds = node.getBoundingClientRect();
-      const qty = node.querySelector("input[type=number]");
-      const target = [...document.querySelectorAll("button")].find((b) => b.textContent.trim() === "Continue to contact");
-      const actionBounds = target?.getBoundingClientRect();
-      const qtyBounds = qty?.getBoundingClientRect();
-      return {
-        width: window.innerWidth,
-        horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1 || node.scrollWidth > node.clientWidth + 1,
-        cardClippedHorizontally: bounds.left < -1 || bounds.right > window.innerWidth + 1,
-        imageLoaded: img?.complete && img.naturalWidth > 0,
-        imagePath: img ? new URL(img.currentSrc).pathname : null,
-        displayedImageWidth: img ? Math.round(img.getBoundingClientRect().width) : 0,
-        fontStatus: document.fonts.status,
-        quantityInViewport: Boolean(qtyBounds && qtyBounds.top >= 0 && qtyBounds.bottom <= window.innerHeight),
-        actionInViewport: Boolean(actionBounds && actionBounds.top >= 0 && actionBounds.bottom <= window.innerHeight),
-        actionScrollDistance: actionBounds ? Math.max(0, Math.ceil(actionBounds.bottom - window.innerHeight)) : null,
-      };
-    });
-    entry.display = display;
-    const content = await card.innerText();
-    report(entry, "viewport and horizontal layout", display.width === viewport.width && !display.horizontalOverflow && !display.cardClippedHorizontally);
-    report(entry, "exact raster decoded", display.imageLoaded && display.imagePath === artwork);
-    report(entry, "fonts settled", display.fontStatus === "loaded");
-    report(entry, "name, conceptual disclosure, fixture unit and USD price", ["BPC-157", "Conceptual packaging", fixtureUnit, "synthetic USD fixture", "$12.50"].every((value) => content.includes(value)));
-    report(entry, "quantity responds to control", await quantity.inputValue() === "2");
-    report(entry, "request action enabled and reachable within one viewport", await action.isEnabled() && display.actionScrollDistance !== null && display.actionScrollDistance <= viewport.height);
+    if (kind === "member") await captureMember(page, entry);
+    else await captureGuest(page, entry);
   } catch (error) {
-    report(entry, "mount and exercise actual card", false, String(error.message).split("\n")[0]);
+    report(entry, "mount and exercise " + kind + " route", false, briefError(error));
+    await screenshot(entry, "failure", page);
   } finally {
-    for (const [suffix, write] of [
-      ["viewport", (path) => page.screenshot({ path, timeout: 5000 })],
-      ["card", (path) => card.screenshot({ path, timeout: 5000 })],
-    ]) {
-      const file = name + "-" + suffix + ".png";
-      try {
-        await write(join(output, file));
-        entry.screenshots.push(file);
-      } catch (error) {
-        report(entry, suffix + " screenshot", false, String(error.message).split("\n")[0]);
-      }
-    }
-    report(entry, "no write or recovery requests", entry.writeRequestsBlocked === 0);
+    report(entry, "no unmocked writes or recovery attempted",
+      entry.network.deniedWrites === 0 && entry.network.deniedRecovery === 0);
+    if (kind === "member") report(entry, "real member route verified only through synthetic local member GET", entry.network.verifiedMember > 0);
     await context.close();
   }
 }
@@ -146,12 +329,23 @@ try {
   const interfaces = JSON.parse(execFileSync("ip", ["-json", "link", "show"], { encoding: "utf8" }));
   result.network.loopbackOnly = interfaces.length === 1 && interfaces[0].ifname === "lo" && interfaces[0].flags.includes("UP");
   if (!result.network.loopbackOnly) throw new Error("Capture requires a loopback-only network namespace");
-  const fixture = await fixtureResponses(candidate);
-  const servedAsset = join(candidate, "dist", "public", artwork.slice(1));
-  await access(servedAsset);
-  if (createHash("sha256").update(await readFile(servedAsset)).digest("hex") !== artworkHash) {
-    throw new Error("Candidate build does not contain the pinned WebP");
+  const guestFixtures = await fixtureResponses(candidate, origin, false);
+  const memberFixtures = await fixtureResponses(candidate, origin, true);
+  const fixtureRows = [...guestFixtures.values()].find((value) => Array.isArray(value.items))?.items;
+  if (fixtureRows?.length !== 1 || fixtureRows[0].sourceSelection?.variantId !== sourceVariant ||
+    fixtureRows[0].variantId !== orderVariant || sourceVariant === orderVariant) {
+    throw new Error("Guest fixture must preserve separate exact media and order identities");
   }
+  result.fixture.identitiesDistinct = true;
+  for (const asset of Object.values(result.assets)) {
+    const servedAsset = join(candidate, "dist", "public", asset.file.slice(1));
+    await access(servedAsset);
+    const sha256 = createHash("sha256").update(await readFile(servedAsset)).digest("hex");
+    if (asset.sha256 && asset.sha256 !== sha256) throw new Error("Candidate build does not contain the pinned WebP");
+    asset.sha256 = sha256;
+  }
+  result.tooling = { node: process.version, npm: "10.8.2",
+    playwright: JSON.parse(await readFile(new URL("./node_modules/playwright/package.json", import.meta.url), "utf8")).version };
   preview = spawn(process.execPath, ["scripts/preview-research.mjs"], {
     cwd: candidate, env: { HOME: process.env.HOME, PATH: process.env.PATH, PORT: "5199" },
     stdio: ["ignore", "pipe", "pipe"],
@@ -165,19 +359,21 @@ try {
   }
   browser = await chromium.launch({ headless: true, timeout: 12000 });
   result.browser = { name: "Chromium", version: browser.version() };
-  await capture(browser, fixture, "phone", { width: 390, height: 844 }, true);
-  await capture(browser, fixture, "desktop", { width: 1280, height: 900 }, false);
+  for (const size of viewports) {
+    await capture(browser, guestFixtures, "guest", size);
+    await capture(browser, memberFixtures, "member", size);
+  }
 } catch (error) {
-  result.captureError = String(error.message).split("\n")[0];
+  result.captureError = briefError(error);
   console.error(result.captureError, previewLog);
 } finally {
   try {
     await browser?.close();
   } finally {
     preview?.kill();
-    result.status = !result.captureError && result.captures.length === 2 &&
-      result.captures.every((entry) => entry.screenshots.length === 2 && entry.assertions.every((item) => item.pass))
-      ? "passed" : "failed";
+    result.status = !result.captureError && result.captures.length === viewports.length * 2 &&
+      result.captures.every((entry) => entry.screenshots.length === (entry.name.startsWith("guest-") ? 3 : 4)
+        && entry.assertions.every((item) => item.pass)) ? "passed" : "failed";
     await writeFile(join(output, "result.json"), JSON.stringify(result, null, 2) + "\n");
     if (result.status !== "passed") process.exitCode = 1;
   }
