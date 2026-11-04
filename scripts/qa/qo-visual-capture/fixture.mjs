@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -151,4 +152,99 @@ export async function svgCardFixtureResponses(candidate, origin, member) {
     });
   }
   return fixtures;
+}
+
+export const guestCatalogPath = intent + "/catalog";
+export const guestMobilePageMarkers = ["BPC-157", "Synthetic page 2 marker", "Synthetic page 3 marker"];
+export const guestMobileOtherFamily = "shipping_and_fulfillment";
+const guestMobileMitoOffering = "mo_5050cf525ec249ebf0bf";
+const guestMobileMitoVariant = "mov_199a0126b086cc43cb1b";
+
+export async function guestMobileCatalogFixtures(candidate, seed) {
+  const load = async (file) => JSON.parse(await readFile(join(candidate, "server/research/master-offerings/data", file), "utf8"));
+  const [catalog, copy, media] = await Promise.all([
+    load("member-safe-master-offerings.generated.json"),
+    load("reviewed-public-content.json"),
+    load("reviewed-public-media.json"),
+  ]);
+  const get = (records, offeringId, variantId) =>
+    records.find((record) => record.offeringId === offeringId && record.sourceVariantId === variantId);
+  const project = (offeringId, variantId) => {
+    const product = catalog.products.find((item) => item.id === offeringId);
+    const variant = product?.variants.find((item) => item.id === variantId);
+    const reviewed = get(media.records, offeringId, variantId);
+    if (!variant || !reviewed?.media?.primary || !/^[0-9a-f]{64}$/.test(reviewed.primarySha256)) {
+      throw new Error("Guest mobile fixture did not resolve the exact offering, variant and artwork");
+    }
+    return {
+      ...seed.items[0],
+      productName: product.displayName,
+      family: product.family,
+      sourceSelection: { family: product.family, slug: product.slug, variantId },
+      specification: variant.label,
+      reviewedMedia: reviewed.media,
+    };
+  };
+  const bpc = project(memberOffering, sourceVariant);
+  const bpcMedia = get(media.records, memberOffering, sourceVariant);
+  const mito = {
+    ...project(guestMobileMitoOffering, guestMobileMitoVariant),
+    productId: "qa-mobile-mito-product",
+    variantId: "qa-mobile-mito-variant",
+    format: null,
+    packBasis: null,
+    unitPriceCents: null,
+    researchUseOnly: false,
+    reviewedContent: get(copy.records, guestMobileMitoOffering, guestMobileMitoVariant)?.content,
+  };
+  const mitoMedia = get(media.records, guestMobileMitoOffering, guestMobileMitoVariant);
+  if (bpc.productName !== guestMobilePageMarkers[0] || bpc.family !== family ||
+      bpc.sourceSelection.variantId === bpc.variantId || !bpcMedia.media.packagingDesign ||
+      !bpcMedia.media.labelPreview || !/^[0-9a-f]{64}$/.test(bpcMedia.labelPreviewSha256) ||
+      mito.productName !== "Mito Recharge" || mito.family !== "supplements" ||
+      !mito.reviewedContent?.summary || !mito.reviewedContent?.overview || mitoMedia.media.labelPreview) {
+    throw new Error("Guest mobile fixture requires exact BPC-157 artwork/label and independent Mito Recharge content");
+  }
+  return {
+    bpc, mito,
+    assets: {
+      [sourceVariant]: { file: bpcMedia.media.primary.href, sha256: bpcMedia.primarySha256 },
+      [sourceVariant + "-label"]: { file: bpcMedia.media.labelPreview.href, sha256: bpcMedia.labelPreviewSha256 },
+      [guestMobileMitoVariant]: { file: mitoMedia.media.primary.href, sha256: mitoMedia.primarySha256 },
+    },
+  };
+}
+
+export function guestMobileCatalogResponse(seed, { bpc, mito }, params) {
+  const page = Number(params.get("page"));
+  if (!Number.isSafeInteger(page) || page < 1 || params.get("pageSize") !== "24") {
+    throw new Error("Unexpected guest mobile catalog paging query");
+  }
+  const requestedFamily = params.get("family");
+  const search = (params.get("search") || "").trim().toLowerCase();
+  const families = [family, mito.family, guestMobileOtherFamily];
+  if (requestedFamily && !families.includes(requestedFamily)) throw new Error("Unexpected fixture family");
+  const first = seed.items[0];
+  const rows = Array.from({ length: 49 }, (_, index) => {
+    if (index === 0) return bpc;
+    if (index === 25) return mito;
+    const otherFamily = index >= 47;
+    return {
+      ...first,
+      productId: "qa-mobile-product-" + index,
+      variantId: "qa-mobile-variant-" + index,
+      productName: index === 24 ? guestMobilePageMarkers[1] : index === 48 ? guestMobilePageMarkers[2]
+        : "Synthetic mobile catalog row " + index,
+      family: otherFamily ? guestMobileOtherFamily : family,
+      sourceSelection: undefined,
+      specification: "Synthetic exact specification " + index,
+      selectableForReview: !otherFamily,
+      intentExclusion: otherFamily ? "non_merchandise" : null,
+      researchUseOnly: !otherFamily,
+    };
+  });
+  const matched = rows.filter((item) =>
+    (!requestedFamily || item.family === requestedFamily) &&
+    (!search || (item.productName + " " + item.specification).toLowerCase().includes(search)));
+  return { ...seed, items: matched.slice((page - 1) * 24, page * 24), total: matched.length, page, families };
 }

@@ -7,13 +7,15 @@ import { chromium } from "playwright";
 import {
   agreementAccept, agreementStatus, alternateArtwork, alternateMemberOffering, alternateOrderVariant, alternateSourceVariant, artwork, fixtureAgreement, fixtureContact,
   fixtureCurrency, fixturePrice, fixtureResponses, svgCardFixtureResponses, fixtureUnit, guestRoute, memberBearer,
+  guestCatalogPath, guestMobileCatalogFixtures, guestMobileCatalogResponse, guestMobileOtherFamily, guestMobilePageMarkers,
   memberDetailRoute, memberOffering, memberRoute, memberSession, orderVariant, sourceVariant,
 } from "./fixture.mjs";
 
 const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
-if (!["legacy", "guest-catalog-details", "reviewed-catalog"].includes(profile)) throw new Error("Unknown capture profile");
+if (!["legacy", "guest-catalog-details", "reviewed-catalog", "guest-mobile-catalog"].includes(profile)) throw new Error("Unknown capture profile");
 const guestDetailsOnly = profile === "guest-catalog-details";
 const reviewedCatalog = profile === "reviewed-catalog";
+const guestMobileCatalog = profile === "guest-mobile-catalog";
 const reviewedVialCaptures = new Map([
   ["mov_09db3e866424b64994d3", "bpc-5mg"],
   ["mov_257330ea83ecbfc45fae", "bpc-15mg"],
@@ -33,7 +35,13 @@ if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinct
 }
 const origin = "http://127.0.0.1:5199";
 const artworkHash = "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1";
-const viewports = [
+const viewports = guestMobileCatalog ? [
+  { width: 320, height: 800, mobile: true },
+  { width: 375, height: 812, mobile: true },
+  { width: 390, height: 844, mobile: true },
+  { width: 430, height: 932, mobile: true },
+  { width: 1280, height: 900, mobile: false },
+] : [
   { width: 320, height: 800, mobile: true },
   { width: guestDetailsOnly || reviewedCatalog ? 390 : 375, height: 844, mobile: true },
   { width: 768, height: 1024, mobile: false },
@@ -46,6 +54,7 @@ const result = {
     "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
     "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
     "No submission, recovery, staff readback, production release or operator activation is covered.",
+    ...(guestMobileCatalog ? ["Chromium viewport geometry and DOM focus only. Native iPhone Safari keyboard, browser chrome, zoom and safe-area behavior are not measured."] : []),
   ],
   candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt), allowance, profile,
   artifacts: `https://github.com/teamxenios/xenios-website/actions/runs/${runId}#artifacts`,
@@ -128,7 +137,16 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
         return intercept.abort("blockedbyclient");
       }
       if (url.pathname === "/api/research/member/me") traffic.verifiedMember += 1;
-      const json = fixtures.get(url.pathname);
+      const fixture = fixtures.get(url.pathname);
+      let json = fixture;
+      if (guestMobileCatalog && !member && url.pathname === guestCatalogPath) {
+        try {
+          json = fixture(url.searchParams);
+        } catch {
+          traffic.deniedLocalReads += 1;
+          return intercept.abort("blockedbyclient");
+        }
+      }
       return intercept.fulfill({
         json: url.pathname === agreementStatus ? { ...json, accepted: traffic.accepted === 1 } : json,
         headers: { "cache-control": "no-store" },
@@ -571,6 +589,190 @@ async function captureReviewedCatalog(page, entry, rows, member) {
   }
 }
 
+
+async function captureGuestMobile(page, entry, { bpc, mito }) {
+  await page.goto(origin + guestRoute, { waitUntil: "domcontentloaded" });
+  const surface = page.getByTestId("request-door-mixed").locator(".xenios-order-page--guest-catalog");
+  const toolbar = surface.locator(".xenios-order-catalog-toolbar");
+  const search = toolbar.getByRole("textbox", { name: "Search catalog", exact: true });
+  const family = toolbar.getByRole("combobox", { name: "Product family", exact: true });
+  const mobilePager = surface.locator(".xenios-order-mobile-pagination").getByRole("navigation", { name: "Catalog pages", exact: true });
+  const bottomPager = surface.locator(".xenios-order-bottom-pagination").getByRole("navigation", { name: "Catalog pages", exact: true });
+  const pager = entry.mobile ? mobilePager : bottomPager;
+  const hiddenPager = entry.mobile ? bottomPager : mobilePager;
+  const previous = pager.getByRole("button", { name: "Previous", exact: true });
+  const next = pager.getByRole("button", { name: "Next", exact: true });
+  const summary = surface.getByRole("complementary", { name: "Selected request items", exact: true });
+  const toggle = summary.getByRole("button", { name: "Review request (1)", exact: true });
+  const summaryContent = summary.locator(".xenios-order-summary-content");
+  const card = (name) => surface.locator("article.xenios-order-card")
+    .filter({ has: page.getByRole("heading", { name, exact: true }) });
+  const settledPage = async (number, total, count, marker) => {
+    await pager.getByText("Page " + number + " of " + total, { exact: true }).waitFor();
+    if (marker) await card(marker).waitFor();
+    report(entry, "page " + number + " of " + total + " has exactly " + count + " rows",
+      await surface.locator("article.xenios-order-card").count() === count);
+  };
+  const startInView = () => surface.locator(".xenios-order-catalog-start").evaluate(async (anchor) => {
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const bounds = anchor.getBoundingClientRect();
+    const maxScroll = document.scrollingElement.scrollHeight - innerHeight;
+    return Math.abs(bounds.top) <= 3 ||
+      (bounds.top >= -3 && bounds.top < innerHeight && Math.abs(scrollY - maxScroll) <= 3);
+  });
+  const expectRetained = async (label) => report(entry, label,
+    await summaryContent.getByText("BPC-157", { exact: true }).isVisible() &&
+    await summaryContent.getByText("Requested quantity: 2", { exact: true }).isVisible());
+
+  await settledPage(1, 3, 24, guestMobilePageMarkers[0]);
+  report(entry, "only the expected pager is shown and Previous is disabled on the first page",
+    await pager.isVisible() && !await hiddenPager.isVisible() && await previous.isDisabled() && await next.isEnabled());
+  const first = card(bpc.productName);
+  await first.getByRole("button", { name: "Add to request: " + bpc.productName + ", " + bpc.specification, exact: true }).click();
+  await first.getByRole("button", { name: "Increase requested quantity for BPC-157", exact: true }).click();
+  report(entry, "first-page selection uses the exact requested quantity", await first.getByRole("spinbutton").inputValue() === "2");
+  const agreement = page.getByTestId("early-access-agreement-submit");
+  await page.getByTestId("early-access-agreement-checkbox").check();
+  await agreement.click();
+  await page.getByTestId("early-access-agreement-accepted").waitFor();
+  if (entry.mobile) {
+    report(entry, "summary starts collapsed behind the labelled count",
+      await toggle.getAttribute("aria-expanded") === "false" && !await summaryContent.isVisible());
+    await toggle.click();
+    report(entry, "summary toggle exposes the existing selection", await toggle.getAttribute("aria-expanded") === "true");
+    await toggle.click();
+    await toolbar.evaluate((node) => {
+      const anchorTop = node.previousElementSibling.getBoundingClientRect().top;
+      window.scrollTo({ top: scrollY + anchorTop + 420, behavior: "instant" });
+    });
+    const geometry = await toolbar.evaluate((node) => {
+      const box = node.getBoundingClientRect();
+      const anchor = node.previousElementSibling.getBoundingClientRect();
+      const controls = Array.from(node.querySelectorAll("input, select, button"));
+      return {
+        sticky: getComputedStyle(node).position === "sticky" && Math.abs(box.top) <= 2 && anchor.top < -250,
+        within: box.left >= -1 && box.right <= innerWidth + 1 && box.bottom < innerHeight &&
+          document.documentElement.scrollWidth <= innerWidth + 1,
+        controls: controls.length === 4 && controls.every((control) => {
+          const rect = control.getBoundingClientRect();
+          const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+          return rect.height >= 44 && control.contains(hit) &&
+            (!control.matches("input, select") || Number.parseFloat(getComputedStyle(control).fontSize) >= 16);
+        }),
+      };
+    });
+    report(entry, "sticky toolbar remains reachable after scrolling through full rows", Object.values(geometry).every(Boolean), geometry);
+    await surface.locator(".xenios-order-catalog-start").evaluate((anchor) =>
+      anchor.scrollIntoView({ block: "start", behavior: "instant" }));
+    if (entry.viewport.width === 390) {
+      entry.catalogStartVisibility = await toolbar.evaluate((node) => {
+        const top = Math.max(0, node.getBoundingClientRect().bottom);
+        const cards = [...node.parentElement.querySelectorAll("article.xenios-order-card")].map((card) => card.getBoundingClientRect());
+        const fullyVisible = cards.filter((box) => box.top >= top && box.bottom <= innerHeight).length;
+        const intersecting = cards.filter((box) => box.bottom > top && box.top < innerHeight).length;
+        return { fullyVisible, partlyVisible: intersecting - fullyVisible, toolbarBottom: top, viewportHeight: innerHeight };
+      });
+    }
+  } else {
+    report(entry, "desktop retains static catalog controls and an expanded request summary",
+      await toolbar.evaluate((node) => getComputedStyle(node).position === "static") && await summaryContent.isVisible());
+    await toolbar.scrollIntoViewIfNeeded();
+  }
+  await screenshot(entry, "catalog", page);
+  const inspectDetails = async (item, pageNumber, captureImage) => {
+    const product = card(item.productName).filter({ has: page.getByText(item.specification, { exact: true }) });
+    const trigger = product.getByRole("button", { name: "View details for " + item.productName + ", " + item.specification, exact: true });
+    const route = page.url();
+    await trigger.click();
+    const dialog = page.getByRole("dialog", { name: item.productName, exact: true });
+    await dialog.waitFor();
+    const media = item.reviewedMedia;
+    const image = await imageEvidence(page, dialog, media.primary.href, null);
+    checkImage(entry, item.productName + " details", image, media.primary.href, false, media.primary.altText);
+    const label = dialog.getByRole("link", { name: "View front label artwork", exact: true });
+    const copy = await dialog.innerText();
+    report(entry, item.productName + " detail retains the exact specification and approved detail fields",
+      await dialog.getByText(item.specification, { exact: true }).isVisible() &&
+      (media.labelPreview ? await label.getAttribute("href") === media.labelPreview.href &&
+        copy.includes("Packaging design shown. Current packaging may differ.") :
+        await label.count() === 0 && copy.includes(item.reviewedContent.overview) &&
+        item.reviewedContent.specifications.some(({ label, value }) => label === "Package" && copy.includes(value))));
+    const back = dialog.getByRole("button", { name: "Back to catalog", exact: true });
+    await back.scrollIntoViewIfNeeded();
+    report(entry, item.productName + " dialog is within the viewport and its return action sits above the toolbar",
+      await back.evaluate((button) => {
+        const rect = button.getBoundingClientRect();
+        const box = button.closest('[role="dialog"]').getBoundingClientRect();
+        return box.left >= -1 && box.right <= innerWidth + 1 && box.top >= -1 && box.bottom <= innerHeight + 1 &&
+          rect.height >= 44 && button.contains(document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2));
+      }));
+    if (captureImage) await screenshot(entry, "details", page);
+    await back.click();
+    await dialog.waitFor({ state: "hidden" });
+    await page.waitForFunction(() => document.activeElement?.getAttribute("aria-label")?.startsWith("View details for "));
+    report(entry, item.productName + " detail close restores trigger focus and preserves the catalog URL and page",
+      await trigger.evaluate((node) => node === document.activeElement) && page.url() === route &&
+      await pager.getByText("Page " + pageNumber + " of 3", { exact: true }).isVisible());
+  };
+  await inspectDetails(bpc, 1, false);
+  report(entry, "BPC detail retains the original selected quantity", await first.getByRole("spinbutton").inputValue() === "2");
+
+  await next.click();
+  await settledPage(2, 3, 24, guestMobilePageMarkers[1]);
+  if (entry.mobile) {
+    report(entry, "next page returns to the catalog controls after rows load", await startInView());
+    await toggle.click();
+  }
+  await expectRetained("page 2 retains the exact first-page selection");
+
+  const detail = card(mito.productName).filter({ has: page.getByText(mito.specification, { exact: true }) });
+  report(entry, "Mito Recharge card includes the reviewed short summary",
+    (await detail.innerText()).includes(mito.reviewedContent.summary));
+  if (entry.mobile) {
+    const layout = await detail.evaluate((node) => {
+      const media = node.querySelector(".xenios-order-card-media").getBoundingClientRect();
+      const identity = node.querySelector(".xenios-order-card-identity").getBoundingClientRect();
+      const description = getComputedStyle(node.querySelector(".xenios-order-card-description"));
+      return {
+        compactMedia: Math.abs(media.width - 88) <= 1 && media.right <= identity.left && Math.abs(media.top - identity.top) <= 1,
+        shortSummary: description.webkitLineClamp === "2",
+        noHorizontalOverflow: node.scrollWidth <= node.clientWidth + 1,
+      };
+    });
+    report(entry, "mobile card uses compact artwork beside readable identity and clamps only the short summary",
+      Object.values(layout).every(Boolean), layout);
+  }
+  await inspectDetails(mito, 2, true);
+  await expectRetained("return from details retains selection");
+
+  await next.click();
+  await settledPage(3, 3, 1, guestMobilePageMarkers[2]);
+  report(entry, "last page only allows Previous", await next.isDisabled() && await previous.isEnabled());
+  await previous.click();
+  await settledPage(2, 3, 24, guestMobilePageMarkers[1]);
+
+  await search.fill("No matching synthetic catalog entry");
+  await settledPage(1, 1, 0);
+  report(entry, "search resets to page one and keeps DOM focus through an empty result",
+    await search.evaluate((node) => node === document.activeElement) &&
+    await surface.getByText("0 visible catalog entries. 1 selected.", { exact: true }).isVisible() &&
+    await previous.isDisabled() && await next.isDisabled());
+  await expectRetained("empty search retains selection");
+  await search.fill("");
+  await settledPage(1, 3, 24, guestMobilePageMarkers[0]);
+  await family.selectOption(guestMobileOtherFamily);
+  await settledPage(1, 1, 2, guestMobilePageMarkers[2]);
+  report(entry, "family filtering resets paging and retains the selected family",
+    await family.inputValue() === guestMobileOtherFamily && await previous.isDisabled() && await next.isDisabled());
+  await expectRetained("family filter retains selection");
+
+  await summary.getByRole("button", { name: "Continue to contact", exact: true }).click();
+  await surface.getByRole("button", { name: "Review request", exact: true }).waitFor();
+  report(entry, "catalog-only controls are absent after continuing to contact",
+    await toolbar.count() === 0 && await summary.count() === 0 && entry.network.accepted === 1 &&
+    entry.network.deniedLocalReads === 0);
+}
+
 async function capture(browser, fixtures, kind, size, rows) {
   const { mobile, ...viewport } = size;
   const entry = { name: kind + "-" + viewport.width, viewport, mobile, assertions: [], screenshots: [] };
@@ -578,13 +780,14 @@ async function capture(browser, fixtures, kind, size, rows) {
   const member = kind === "member" || kind === "member-reviewed-catalog";
   const { context, page } = await captureContext(browser, fixtures, viewport, mobile, member, entry);
   try {
-    if (rows) await captureReviewedCatalog(page, entry, rows, member);
+    if (kind === "guest-mobile") await captureGuestMobile(page, entry, rows);
+    else if (rows) await captureReviewedCatalog(page, entry, rows, member);
     else if (kind === "member") await captureMember(page, entry);
     else if (kind === "guest-details") await captureGuestDetails(page, entry);
     else await captureGuest(page, entry);
   } catch (error) {
     report(entry, "mount and exercise " + kind + " route", false, briefError(error));
-    await screenshot(entry, "failure", page);
+    if (kind !== "guest-mobile") await screenshot(entry, "failure", page);
   } finally {
     report(entry, "no unmocked writes or recovery attempted",
       entry.network.deniedWrites === 0 && entry.network.deniedRecovery === 0);
@@ -641,19 +844,27 @@ try {
   result.network.loopbackOnly = interfaces.length === 1 && interfaces[0].ifname === "lo" && interfaces[0].flags.includes("UP");
   if (!result.network.loopbackOnly) throw new Error("Capture requires a loopback-only network namespace");
   const guestFixtures = await fixtureResponses(candidate, origin, false);
-  const memberFixtures = await fixtureResponses(candidate, origin, true);
+  const memberFixtures = guestMobileCatalog ? null : await fixtureResponses(candidate, origin, true);
   const fixtureRows = [...guestFixtures.values()].find((value) => Array.isArray(value.items))?.items;
   if (fixtureRows?.length !== 1 || fixtureRows[0].sourceSelection?.variantId !== sourceVariant ||
     fixtureRows[0].variantId !== orderVariant || sourceVariant === orderVariant) {
     throw new Error("Guest fixture must preserve separate exact media and order identities");
   }
   result.fixture.identitiesDistinct = true;
-  const guestSvgFixtures = await svgCardFixtureResponses(candidate, origin, false);
-  const memberSvgFixtures = await svgCardFixtureResponses(candidate, origin, true);
-  const svgRows = [...guestSvgFixtures.values()].find((value) => Array.isArray(value.items))?.items;
-  if (svgRows?.length !== 1 || svgRows[0].sourceSelection?.variantId !== alternateSourceVariant ||
-      svgRows[0].variantId !== alternateOrderVariant || alternateSourceVariant === alternateOrderVariant) {
-    throw new Error("SVG guest fixture must preserve distinct exact media and order identities");
+  let guestSvgFixtures, memberSvgFixtures, mobileFixtures;
+  if (guestMobileCatalog) {
+    const seed = guestFixtures.get(guestCatalogPath);
+    mobileFixtures = await guestMobileCatalogFixtures(candidate, seed);
+    guestFixtures.set(guestCatalogPath, (params) => guestMobileCatalogResponse(seed, mobileFixtures, params));
+    result.assets = mobileFixtures.assets;
+  } else if (!reviewedCatalog && !guestDetailsOnly) {
+    guestSvgFixtures = await svgCardFixtureResponses(candidate, origin, false);
+    memberSvgFixtures = await svgCardFixtureResponses(candidate, origin, true);
+    const svgRows = [...guestSvgFixtures.values()].find((value) => Array.isArray(value.items))?.items;
+    if (svgRows?.length !== 1 || svgRows[0].sourceSelection?.variantId !== alternateSourceVariant ||
+        svgRows[0].variantId !== alternateOrderVariant || alternateSourceVariant === alternateOrderVariant) {
+      throw new Error("SVG guest fixture must preserve distinct exact media and order identities");
+    }
   }
   if (reviewedCatalog) {
     const manifest = JSON.parse(await readFile(join(candidate, "server/research/master-offerings/data/reviewed-public-media.json"), "utf8"));
@@ -687,7 +898,9 @@ try {
   }
   browser = await chromium.launch({ headless: true, timeout: 12000 });
   result.browser = { name: "Chromium", version: browser.version() };
-  if (reviewedCatalog) {
+  if (guestMobileCatalog) {
+    for (const size of viewports) await capture(browser, guestFixtures, "guest-mobile", size, mobileFixtures);
+  } else if (reviewedCatalog) {
     const guest = await reviewedCatalogFixtures(candidate, false);
     const member = await reviewedCatalogFixtures(candidate, true);
     for (const size of viewports) {
@@ -712,9 +925,9 @@ try {
     await browser?.close();
   } finally {
     preview?.kill();
-    const expectedContexts = reviewedCatalog ? viewports.length * 2 : guestDetailsOnly ? viewports.length : viewports.length * 2 + 2;
+    const expectedContexts = reviewedCatalog ? viewports.length * 2 : guestDetailsOnly || guestMobileCatalog ? viewports.length : viewports.length * 2 + 2;
     result.status = !result.captureError && result.captures.length === expectedContexts &&
-      result.captures.every((entry) => entry.screenshots.length === (guestDetailsOnly || reviewedCatalog ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
+      result.captures.every((entry) => entry.screenshots.length === (guestDetailsOnly || reviewedCatalog || guestMobileCatalog ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
         && entry.assertions.every((item) => item.pass)) ? "passed" : "failed";
     await writeFile(join(output, "result.json"), JSON.stringify(result, null, 2) + "\n");
     if (result.status !== "passed") process.exitCode = 1;

@@ -18,15 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: f0e247585c1cd466022530a4f40c99fd03af1957
-      CANDIDATE_TREE: f5cab0de3370d6ea0c9a89ba167fe11f4b8516be
+      CANDIDATE_SHA: a454cf1ae8a3037e5fd92a6babcb9eef7f2a88fb
+      CANDIDATE_TREE: 078e109bd4161bb5e3f78b8a84ba5e29ab3216a6
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: UNBOUND
-      CAPTURE_ALLOWANCE_ATTEMPT: "2"
+      CAPTURE_ALLOWANCE_ID: KAN-31/10684
+      CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
-      CAPTURE_PRIOR_RUN_IDS: '["41912809107"]'
-      CAPTURE_RECONCILED_AT: 2026-11-04T21:09:50Z
-      CAPTURE_DIAGNOSIS: "Independent 10650 evidence classification correction; assert four capsule notices and the exact Chondro label"
+      CAPTURE_PRIOR_RUN_IDS: '[]'
+      CAPTURE_RECONCILED_AT: 2026-11-04T21:47:54Z
+      CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash
@@ -45,6 +45,9 @@ jobs:
           import { join } from "node:path";
           const e = process.env;
           const id = e.CAPTURE_ALLOWANCE_ID;
+          if (!/^[0-9a-f]{40}$/.test(e.CANDIDATE_SHA) || !/^[0-9a-f]{40}$/.test(e.CANDIDATE_TREE)) {
+            throw new Error("Exact candidate commit and tree must be bound before capture");
+          }
           const attempt = Number(e.CAPTURE_ALLOWANCE_ATTEMPT);
           const maximumAttempts = Number(e.CAPTURE_ALLOWANCE_MAX_ATTEMPTS);
           const priorRunIds = JSON.parse(e.CAPTURE_PRIOR_RUN_IDS);
@@ -111,7 +114,7 @@ jobs:
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json" reviewed-catalog
+            "$EVIDENCE_DIR/allowance.json" guest-mobile-catalog
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -132,35 +135,60 @@ jobs:
           writeFileSync(join(e.EVIDENCE_DIR, "result.json"), JSON.stringify(result, null, 2) + "\n");
           NODE
           fi
+      - name: Require the exact mobile capture manifest and PNGs
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { readdirSync, readFileSync } from "node:fs";
+          import { join } from "node:path";
+          const e = process.env;
+          const widths = [320, 375, 390, 430, 1280];
+          const pngs = (width) => ["catalog", "details"].map((name) => "guest-mobile-" + width + "-" + name + ".png");
+          const expected = widths.flatMap(pngs).sort();
+          const result = JSON.parse(readFileSync(join(e.EVIDENCE_DIR, "result.json"), "utf8"));
+          const files = readdirSync(e.EVIDENCE_DIR).filter((name) => name.endsWith(".png")).sort();
+          if (result.status !== "passed" || result.profile !== "guest-mobile-catalog" ||
+              result.candidateSha !== e.CANDIDATE_SHA || result.candidateTree !== e.CANDIDATE_TREE ||
+              result.harnessRevision !== e.GITHUB_SHA || result.runId !== e.GITHUB_RUN_ID ||
+              result.runAttempt !== 1 || !result.network?.loopbackOnly || result.captures?.length !== widths.length ||
+              JSON.stringify(files) !== JSON.stringify(expected)) throw new Error("Capture identity or PNG inventory failed");
+          for (const width of widths) {
+            const entry = result.captures.find((item) => item.name === "guest-mobile-" + width);
+            if (entry?.viewport.width !== width || entry.mobile !== (width < 700) || !entry.assertions?.length ||
+                entry.assertions.some((item) => item.pass !== true) ||
+                JSON.stringify(entry.screenshots) !== JSON.stringify(pngs(width))) {
+              throw new Error("Incomplete capture context at " + width);
+            }
+            for (const name of pngs(width)) {
+              const data = readFileSync(join(e.EVIDENCE_DIR, name));
+              if (data.length < 33 || data.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") {
+                throw new Error("Missing or invalid PNG " + name);
+              }
+            }
+          }
+          NODE
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        if: always()
         with:
-          name: qo-reviewed-catalog-synthetic-visual-proof
+          name: qo-guest-mobile-catalog-synthetic-visual-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-bpc-5mg.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-bpc-15mg.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-bpc-5mg.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-bpc-15mg.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-bpc-5mg.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-bpc-15mg.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-bpc-5mg.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-bpc-15mg.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-bpc-5mg.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-bpc-15mg.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-bpc-5mg.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-bpc-15mg.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-bpc-5mg.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-bpc-15mg.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-bpc-5mg.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-bpc-15mg.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-320-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-320-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-375-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-375-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-430-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-430-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-1280-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-1280-details.png
             ${{ env.EVIDENCE_DIR }}/result.json
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: failure()
+        with:
+          name: qo-guest-mobile-catalog-failure-manifest
+          path: ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7
