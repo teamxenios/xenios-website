@@ -2878,6 +2878,19 @@
       "state": "handoff",
       "claimedAt": "2026-11-03T23:28:29.3714017Z",
       "heartbeatAt": "2026-11-03T23:28:29.3714017Z"
+    },
+    {
+      "id": "ab81723f-b021-42f6-bf38-d9acf639024a",
+      "task": "KAN59-BPC157-PACKSHOT-PROOF-20261103",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/public/research/product-media/bpc-157-packshot.webp",
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/src/research/master-offerings/product-media.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-04T00:28:23.3084580Z",
+      "heartbeatAt": "2026-11-04T00:28:23.3084580Z"
     }
   ],
   "rules": [

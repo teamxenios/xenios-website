@@ -3415,6 +3415,27 @@
         "file": ".xenios/handoffs/2026-11-03T23-39-44-349Z-KAN59-MEMBER-MEDIA-NASAL-TROCHE-20261103-codex-launch-coordination-20261005.json",
         "at": "2026-11-03T23:39:44.349Z"
       }
+    },
+    {
+      "id": "KAN59-BPC157-PACKSHOT-PROOF-20261103",
+      "title": "Prepare exact-ID BPC-157 packshot draft proof",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "ac219f875bae1539d918399ff4e42323af6c334e",
+      "paths": [
+        "client/public/research/product-media/bpc-157-packshot.webp",
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/src/research/master-offerings/product-media.test.tsx"
+      ],
+      "dependsOn": [
+        "KAN59-GUEST-QUICK-ORDER-PRODUCT-IMAGES-20261103",
+        "KAN59-MEMBER-MEDIA-NASAL-TROCHE-20261103"
+      ],
+      "scopeNote": "Implement only Samuel's request for a photoreal BPC-157 master derivative and an actual existing-card exact-ID draft proof, with no publication. Use the immutable guest draft PR369 base ac219f875bae1539d918399ff4e42323af6c334e/tree c23a0635854e2e1641cad5be7fbc4d519989162d. Root will separately create a stacked draft branch and may change only the new bpc-157-packshot.webp asset, the existing ProductMedia component and existing member product-media test named in paths. The proof must remain bounded to one exact BPC-157 identity and demonstrate use on the current card; it adds no general mapping, catalog authority or publication. Preserve PR369, PR370, frozen Claude R2/R3 refs, accepted media heads, the completed guest and nasal/troche QA tasks and HANDOFF leases, the active admin lease 87067847-af3a-45b0-b3ff-5fd45ee394d3, and every unrelated task, lease, handoff, release record, session, asset and ref. The historical HANDOFF overlaps on ProductMedia.tsx and product-media.test.tsx create no active ownership conflict; docs/coordination/FILE_OWNERSHIP.json contains no matching path. Add no guest behavior, pricing, eligibility, public visibility, checkout, payment, Auth, API, configuration, role, flag, storage, customer, notification, release, browser activation or production authority. This metadata claim authorizes the custodian to make no application edit, asset generation or copy, branch creation, test, build, Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
+      "createdAt": "2026-11-04T00:28:23.3084580Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T00:28:23.3084580Z"
     }
   ]
 }
