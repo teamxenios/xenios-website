@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-013",
+  "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "bytes": 332053,
+    "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5"
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "bytes": 108239,
+    "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+  },
+  "publicationState": "review_only_not_runtime",
+  "supplierSendPerformed": false,
+  "authority": [
+    "KAN-59/10615",
+    "KAN-225/10616"
+  ],
+  "labelFactSources": [
+    {
+      "reference": "KAN-31/10641",
+      "scope": "research capsule form and listed strength; current pack quantity and strength basis held"
+    },
+    {
+      "reference": "KAN-31/10750",
+      "scope": "overview-only partial acceptance preserves static facts"
+    }
+  ],
+  "requiredMountedViewportsAfterReview": [
+    320,
+    390,
+    768,
+    1280
+  ],
+  "renderSource": {
+    "method": "built-in imagegen reference edit",
+    "receipt": "exec-b38367bc-9a3a-4062-a5af-c1f778ee81fc",
+    "sha256": "d98bacfce07d8f3722730313330f3a85423afb4052eb9ad2dceb6e83b62d75aa",
+    "acceptedDesignReference": "KAN-31/10756",
+    "referenceSourceSha256": "b9640a425471f3c1e6ec528df4b1f286dff0f92a88ea9ea5ddff8e60e4d7873f"
+  },
+  "records": [
+    {
+      "offeringId": "mo_7ba89975fb62ceb33b7b",
+      "sourceVariantId": "mov_753d3f94385adf791d1e",
+      "quickOrderSku": "GEN-GRP-0245",
+      "quickOrderProductId": "d5a5fbdd-9f9c-47f1-90ad-53cb7daa7ce1",
+      "quickOrderVariantId": "dec4c121-9d4a-46f5-938c-297885f803a5",
+      "canonicalName": "BPC-157",
+      "canonicalVariant": "BPC-157 500 mcg research capsules",
+      "catalogVariantLabel": "BPC-157 500 mcg",
+      "catalogFamily": "research_capsules",
+      "catalogBrand": null,
+      "designBrand": "Xenios",
+      "listedStrength": "500 mcg",
+      "form": "Research capsules",
+      "classification": "For laboratory research use only.",
+      "artworkVersion": "GEN-GRP-0245-WEB-SUPPLIER-v1",
+      "mediaKind": "original_xenios_website_render",
+      "physicalPackagingState": "design",
+      "websiteArtworkState": "pending_independent_file_level_review",
+      "runtimeLinked": false,
+      "publicationAuthorized": false,
+      "artifacts": {
+        "website_primary": {
+          "role": "website_primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-013/assets/bpc-157-500mcg-website-render-v1-1024.webp",
+          "format": "webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 51620,
+          "sha256": "9c24975b33baf439307129c645f61ea1e1812dd4dba9cb290903a57bd9ccbe80"
+        },
+        "front_preview_web": {
+          "role": "front_preview_web",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-013/assets/bpc-157-500mcg-front-artwork-v1.webp",
+          "format": "webp",
+          "width": 1000,
+          "height": 850,
+          "bytes": 35562,
+          "sha256": "f4ed18c0146a6ebc87b7453100ff4305f8376f5060a845fc400b8f1aa1a9e210"
+        },
+        "wrap_editable_master": {
+          "role": "wrap_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-013/labels/bpc-157-500mcg-wrap-proof-v1.svg",
+          "format": "svg",
+          "width": 2400,
+          "height": 1200,
+          "bytes": 5171,
+          "sha256": "52c95a95515f3f815f0a0427f1114fd2f82e7d87fa6ccac1aaa1bd048e4b5bd3"
+        }
+      },
+      "websiteReviewCandidates": [
+        {
+          "role": "primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-013/assets/bpc-157-500mcg-website-render-v1-1024.webp",
+          "sha256": "9c24975b33baf439307129c645f61ea1e1812dd4dba9cb290903a57bd9ccbe80",
+          "altText": "Xenios packaging design for BPC-157 research capsules, listed strength 500 mcg",
+          "caption": "Packaging design shown. Current packaging may differ."
+        },
+        {
+          "role": "label_detail",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-013/assets/bpc-157-500mcg-front-artwork-v1.webp",
+          "sha256": "f4ed18c0146a6ebc87b7453100ff4305f8376f5060a845fc400b8f1aa1a9e210",
+          "altText": "BPC-157 research capsule front label design, listed strength 500 mcg",
+          "caption": "Packaging design shown. Current packaging may differ."
+        }
+      ]
+    }
+  ]
+}
