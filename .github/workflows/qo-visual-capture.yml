@@ -18,14 +18,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: 335dcddff6e737450044eee662aa4af456a68d27
-      CANDIDATE_TREE: eb293bdca45d6b35cdf2c455ccef52c2a201c5e5
+      CANDIDATE_SHA: d7c2a1da83e1b3dbe1a8e30a22c98ae673993be8
+      CANDIDATE_TREE: 065aaa38683b8aeb967134b25b14ba1c8cd7befe
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: KAN-31/10600
+      CAPTURE_ALLOWANCE_ID: ""
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
       CAPTURE_PRIOR_RUN_IDS: "[]"
-      CAPTURE_RECONCILED_AT: 2026-11-04T19:19:17Z
+      CAPTURE_RECONCILED_AT: ""
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
@@ -111,7 +111,7 @@ jobs:
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json" guest-catalog-details
+            "$EVIDENCE_DIR/allowance.json" reviewed-catalog
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -135,20 +135,32 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
-          name: qo-guest-details-synthetic-visual-proof
+          name: qo-reviewed-catalog-synthetic-visual-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/guest-details-320-viewport.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-320-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-390-viewport.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-390-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-768-viewport.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-768-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-1280-viewport.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-1280-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-details-1280-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-bpc.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-supplement.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-bpc.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-supplement.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-bpc.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-supplement.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-bpc.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-supplement.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-failure.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-bpc.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-supplement.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-failure.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-bpc.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-supplement.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-failure.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-bpc.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-supplement.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-failure.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-bpc.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-supplement.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-failure.png
             ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7

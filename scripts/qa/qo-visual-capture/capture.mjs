@@ -11,8 +11,9 @@ import {
 } from "./fixture.mjs";
 
 const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
-if (!["legacy", "guest-catalog-details"].includes(profile)) throw new Error("Unknown capture profile");
+if (!["legacy", "guest-catalog-details", "reviewed-catalog"].includes(profile)) throw new Error("Unknown capture profile");
 const guestDetailsOnly = profile === "guest-catalog-details";
+const reviewedCatalog = profile === "reviewed-catalog";
 const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
 if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
     allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
@@ -22,7 +23,7 @@ const origin = "http://127.0.0.1:5199";
 const artworkHash = "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1";
 const viewports = [
   { width: 320, height: 800, mobile: true },
-  { width: guestDetailsOnly ? 390 : 375, height: 844, mobile: true },
+  { width: guestDetailsOnly || reviewedCatalog ? 390 : 375, height: 844, mobile: true },
   { width: 768, height: 1024, mobile: false },
   { width: 1280, height: 900, mobile: false },
 ];
@@ -413,13 +414,138 @@ async function captureMember(page, entry) {
   }
 }
 
-async function capture(browser, fixtures, kind, size) {
+async function reviewedCatalogFixtures(candidate, member) {
+  const base = await fixtureResponses(candidate, origin, member);
+  const load = async (file) => JSON.parse(await readFile(join(candidate, "server/research/master-offerings/data", file), "utf8"));
+  const [dataset, content, media] = await Promise.all([
+    load("member-safe-master-offerings.generated.json"),
+    load("reviewed-public-content.json"),
+    load("reviewed-public-media.json"),
+  ]);
+  const rows = new Map();
+  for (const record of [...content.records, ...media.records]) {
+    const product = dataset.products.find((entry) => entry.id === record.offeringId);
+    const variant = product?.variants.find((entry) => entry.id === record.sourceVariantId);
+    if (!variant || product.variants.length !== 1) throw new Error("Reviewed fixture did not resolve one exact source variant");
+    const row = rows.get(variant.id) ?? { product, variant };
+    if (record.content) row.reviewedContent = record.content;
+    if (record.media) row.reviewedMedia = record.media;
+    rows.set(variant.id, row);
+  }
+  const bpc = rows.get(sourceVariant);
+  const alternate = dataset.products.find((entry) => entry.id === alternateMemberOffering);
+  const alternateVariant = alternate?.variants.find((entry) => entry.id === alternateSourceVariant);
+  if (!bpc?.reviewedMedia || !alternateVariant) throw new Error("Expected distinct BPC fixture variants");
+  rows.set(alternateVariant.id, { product: alternate, variant: alternateVariant, alternate: true });
+  const guestKey = "/api/research/early-access/request-intents/catalog";
+  const guest = base.get(guestKey);
+  const items = [];
+  const cards = [];
+  const memberKey = "/api/research/catalog-display/v2";
+  const seed = base.get(memberKey + "/catalog");
+  for (const [id, row] of rows) {
+    const { product, variant, reviewedContent, reviewedMedia } = row;
+    const service = product.family === "shipping_and_fulfillment";
+    items.push({
+      ...guest.items[0], productId: "qa-product-" + product.id, variantId: "qa-order-" + id,
+      productName: product.displayName, family: product.family,
+      sourceSelection: { family: product.family, slug: product.slug, variantId: id },
+      specification: variant.label, format: null, packBasis: null, unitPriceCents: null,
+      selectableForReview: !service, intentExclusion: service ? "non_merchandise" : null,
+      researchUseOnly: product.family === "research_peptides_materials",
+      reviewedContent, reviewedMedia,
+    });
+    if (!member) continue;
+    const card = seed.catalog.products[0];
+    const entry = {
+      ...card, id: product.id, slug: product.slug, family: product.family,
+      familyLabel: product.family.replaceAll("_", " "), displayName: product.displayName,
+      canonicalName: product.canonicalName, category: product.category,
+      stateExplanation: "Synthetic customer presentation fixture.",
+      variants: [{ ...card.variants[0], id, label: variant.label, reviewedContent, reviewedMedia }],
+    };
+    cards.push(entry);
+    row.detailRoute = memberRoute + "/" + product.family + "/" + product.slug;
+    base.set(memberKey + "/products/" + product.family + "/" + product.slug, {
+      ok: true, audience: seed.audience, launchScope: seed.launchScope,
+      product: { ...entry, overview: null, disclosures: ["Synthetic catalog presentation."] },
+    });
+  }
+  base.set(guestKey, { ...guest, items, total: items.length, families: [...new Set(items.map((row) => row.family))] });
+  if (member) base.set(memberKey + "/catalog", { ...seed, catalog: { ...seed.catalog, products: cards, total: cards.length } });
+  return { base, rows };
+}
+
+async function captureReviewedCatalog(page, entry, rows, member) {
+  const bpc = rows.get(sourceVariant);
+  const supplement = [...rows.values()].filter((row) => row.reviewedMedia && row.reviewedContent)
+    .sort((a, b) => b.reviewedContent.overview.length - a.reviewedContent.overview.length)[0];
+  if (!supplement) throw new Error("No matched official image and description to paint");
+  const checkRows = entry.viewport.width === 390 ? [...rows.values()] : [bpc, supplement];
+  entry.offeringIds = checkRows.map(({ product }) => product.id);
+  const entryUrl = origin + (member ? memberRoute : guestRoute);
+  await page.goto(entryUrl, { waitUntil: "domcontentloaded" });
+  for (const row of checkRows) {
+    const { product, variant, reviewedContent, reviewedMedia } = row;
+    const card = member
+      ? page.locator('[data-testid="mo-card"][data-offering-id="' + product.id + '"]')
+      : page.locator('[data-testid="request-door-mixed"] article.xenios-order-card')
+        .filter({ has: page.getByRole("heading", { name: product.displayName, exact: true }) })
+        .filter({ hasText: variant.label });
+    await card.waitFor();
+    if (reviewedContent) report(entry, product.id + " card has exact summary",
+      (await card.textContent()).includes(reviewedContent.summary));
+    if (reviewedMedia) checkImage(entry, product.id + " card", await imageEvidence(page, card, reviewedMedia.primary.href, null), reviewedMedia.primary.href);
+    if (row.alternate) report(entry, product.id + " alternate uses only generic vial art",
+      await card.locator('img[src="/research/product-media/vial.svg"]').count() === 1);
+
+    let scope;
+    if (member) {
+      await card.getByRole("link", { name: product.displayName, exact: true }).click();
+      await page.waitForURL(origin + row.detailRoute);
+      await page.getByRole("heading", { level: 1, name: product.displayName, exact: true }).waitFor();
+      scope = page;
+    } else {
+      const trigger = card.getByRole("button", { name: /^View details for / });
+      await trigger.click();
+      scope = page.getByRole("dialog", { name: product.displayName, exact: true });
+      await scope.waitFor();
+    }
+
+    if (reviewedContent) {
+      const region = scope.getByRole("region", { name: "Product information" });
+      const text = await region.textContent();
+      report(entry, product.id + " detail has exact overview, available storage and documentation",
+        text.includes(reviewedContent.overview) && (!reviewedContent.storage || text.includes(reviewedContent.storage)) &&
+        (await region.locator("a").count()) === (reviewedContent.documentation?.length ?? 0));
+    }
+    if (reviewedMedia) checkImage(entry, product.id + " detail", await imageEvidence(page, scope, reviewedMedia.primary.href, null), reviewedMedia.primary.href);
+    if (row === bpc) {
+      const label = scope.getByRole("link", { name: "View front label artwork" });
+      report(entry, "BPC keeps explicit packaging design disclosure and the approved label link",
+        await scope.getByText("Packaging design shown. Current packaging may differ.", { exact: true }).isVisible() &&
+        await label.getAttribute("href") === reviewedMedia.labelPreview.href);
+    }
+    if (row === bpc || row === supplement) await screenshot(entry, row === bpc ? "bpc" : "supplement", page);
+    if (member) {
+      await page.goto(entryUrl, { waitUntil: "domcontentloaded" });
+    } else {
+      await scope.getByRole("button", { name: "Back to catalog", exact: true }).click();
+      await scope.waitFor({ state: "hidden" });
+      report(entry, product.id + " returns to the same guest catalog", page.url() === entryUrl);
+    }
+  }
+}
+
+async function capture(browser, fixtures, kind, size, rows) {
   const { mobile, ...viewport } = size;
   const entry = { name: kind + "-" + viewport.width, viewport, mobile, assertions: [], screenshots: [] };
   result.captures.push(entry);
-  const { context, page } = await captureContext(browser, fixtures, viewport, mobile, kind === "member", entry);
+  const member = kind === "member" || kind === "member-reviewed-catalog";
+  const { context, page } = await captureContext(browser, fixtures, viewport, mobile, member, entry);
   try {
-    if (kind === "member") await captureMember(page, entry);
+    if (rows) await captureReviewedCatalog(page, entry, rows, member);
+    else if (kind === "member") await captureMember(page, entry);
     else if (kind === "guest-details") await captureGuestDetails(page, entry);
     else await captureGuest(page, entry);
   } catch (error) {
@@ -428,7 +554,7 @@ async function capture(browser, fixtures, kind, size) {
   } finally {
     report(entry, "no unmocked writes or recovery attempted",
       entry.network.deniedWrites === 0 && entry.network.deniedRecovery === 0);
-    if (kind === "member") report(entry, "real member route verified only through synthetic local member GET", entry.network.verifiedMember > 0);
+    if (member) report(entry, "member route verified only through synthetic local member GET", entry.network.verifiedMember > 0);
     await context.close();
   }
 }
@@ -495,6 +621,16 @@ try {
       svgRows[0].variantId !== alternateOrderVariant || alternateSourceVariant === alternateOrderVariant) {
     throw new Error("SVG guest fixture must preserve distinct exact media and order identities");
   }
+  if (reviewedCatalog) {
+    const manifest = JSON.parse(await readFile(join(candidate, "server/research/master-offerings/data/reviewed-public-media.json"), "utf8"));
+    result.assets = {};
+    for (const record of manifest.records) {
+      result.assets[record.sourceVariantId] = { file: record.media.primary.href, sha256: record.primarySha256 };
+      if (record.media.labelPreview) result.assets[record.sourceVariantId + "-label"] = {
+        file: record.media.labelPreview.href, sha256: record.labelPreviewSha256,
+      };
+    }
+  }
   for (const asset of Object.values(result.assets)) {
     const servedAsset = join(candidate, "dist", "public", asset.file.slice(1));
     await access(servedAsset);
@@ -517,7 +653,14 @@ try {
   }
   browser = await chromium.launch({ headless: true, timeout: 12000 });
   result.browser = { name: "Chromium", version: browser.version() };
-  if (guestDetailsOnly) {
+  if (reviewedCatalog) {
+    const guest = await reviewedCatalogFixtures(candidate, false);
+    const member = await reviewedCatalogFixtures(candidate, true);
+    for (const size of viewports) {
+      await capture(browser, guest.base, "guest-reviewed-catalog", size, guest.rows);
+      await capture(browser, member.base, "member-reviewed-catalog", size, member.rows);
+    }
+  } else if (guestDetailsOnly) {
     for (const size of viewports) await capture(browser, guestFixtures, "guest-details", size);
   } else {
     for (const size of viewports) {
@@ -535,9 +678,9 @@ try {
     await browser?.close();
   } finally {
     preview?.kill();
-    const expectedContexts = guestDetailsOnly ? viewports.length : viewports.length * 2 + 2;
+    const expectedContexts = reviewedCatalog ? viewports.length * 2 : guestDetailsOnly ? viewports.length : viewports.length * 2 + 2;
     result.status = !result.captureError && result.captures.length === expectedContexts &&
-      result.captures.every((entry) => entry.screenshots.length === (guestDetailsOnly ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
+      result.captures.every((entry) => entry.screenshots.length === (guestDetailsOnly || reviewedCatalog ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
         && entry.assertions.every((item) => item.pass)) ? "passed" : "failed";
     await writeFile(join(output, "result.json"), JSON.stringify(result, null, 2) + "\n");
     if (result.status !== "passed") process.exitCode = 1;
