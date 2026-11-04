@@ -46,6 +46,23 @@ describe("Doc163 structured refusal classification", () => {
       }
     }
   });
+  it("knows only the server's pre-handler 503 intake refusal among 5xx answers", async () => {
+    // request_intent_unavailable is answered before the submit handler runs; request_outcome_unconfirmed after.
+    for (const [status, code, known] of [
+      [503, "request_intent_unavailable", true], [503, "request_outcome_unconfirmed", false], [503, "rate_limited", false],
+      [500, "request_intent_unavailable", false], [502, "request_intent_unavailable", false], [504, "request_intent_unavailable", false],
+    ] as const) {
+      const api = createRequestIntentApi(() => null, async () => new Response(JSON.stringify({ error: code }), { status }));
+      const error = await api.submit({} as Parameters<typeof api.submit>[0]).catch((value: unknown) => value);
+      expect(error).toMatchObject({ status, code });
+      expect(isKnownIntentPrewriteRefusal(error)).toBe(known);
+    }
+    for (const body of ["<html>", "null", "{}", '{"error":"Request_Intent_Unavailable"}', '{"message":"request_intent_unavailable"}']) {
+      const api = createRequestIntentApi(() => null, async () => new Response(body, { status: 503 }));
+      const error = await api.submit({} as Parameters<typeof api.submit>[0]).catch((value: unknown) => value);
+      expect(isKnownIntentPrewriteRefusal(error)).toBe(false);
+    }
+  });
 });
 
 describe("private queue response page identity and bounds", () => {

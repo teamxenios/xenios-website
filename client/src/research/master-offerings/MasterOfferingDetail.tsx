@@ -4,13 +4,11 @@ import type {
   MasterOfferingDetailView,
   MasterOfferingVariantView,
 } from "@shared/research/master-offerings/contract";
-import {
-  MASTER_OFFERING_PRICE_BASIS_LABEL,
-  MASTER_OFFERING_PRICE_ON_REQUEST_LABEL,
-} from "@shared/research/master-offerings/pricing-contract";
 import { CatalogEvidenceNotice } from "../catalog-evidence/CatalogEvidenceNotice";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import { isContradictoryPurchase } from "./catalog-access-path";
+import { MasterOfferingPrice } from "./MasterOfferingPrice";
+import { ProductMedia } from "../product-media/ProductMedia";
 import {
   purchaseQuantityControl,
   type AcceptedExactVariantQuantityCapability,
@@ -33,12 +31,6 @@ import {
  * quantity exists, and the band comes from the injected capability rather than
  * from any constant here.
  */
-
-export function priceLabel(variant: MasterOfferingVariantView): string {
-  return variant.price.state === "priced"
-    ? variant.price.display
-    : MASTER_OFFERING_PRICE_ON_REQUEST_LABEL;
-}
 
 /** The accessible name every control carries, so a CTA is never a bare verb. */
 function actionName(productName: string, variantLabel: string, label: string) {
@@ -276,6 +268,8 @@ export function MasterOfferingDetail({
         )}
       </header>
 
+      <ProductMedia productName={product.displayName} variantIds={selected ? [selected.id] : []} detail />
+
       {variants.length > 0 && selected && (
         <section aria-labelledby="mo-detail-variants" className="grid min-w-0 gap-4">
           <h2 id="mo-detail-variants" className="body-l font-700">
@@ -321,12 +315,7 @@ export function MasterOfferingDetail({
                   <span className="text-ink-mute min-w-0 break-words">
                     {variant.displayLabel}
                   </span>
-                  <span
-                    className="tabular min-w-0 break-words"
-                    data-testid="mo-detail-variant-price"
-                  >
-                    {priceLabel(variant)}
-                  </span>
+                  <MasterOfferingPrice price={variant.price} testId="mo-detail-variant-price" />
                 </label>
               );
             })}
@@ -337,18 +326,8 @@ export function MasterOfferingDetail({
               <p className="body-l font-700 min-w-0 break-words">
                 {selected.label}
               </p>
-              <p className="tabular min-w-0 break-words" data-testid="mo-selected-price">
-                {priceLabel(selected)}
-              </p>
+              <MasterOfferingPrice price={selected.price} testId="mo-selected-price" />
             </div>
-            {selected.price.state === "priced" && (
-              <p
-                className="body-s text-ink-2 min-w-0 break-words"
-                data-testid="mo-selected-price-basis"
-              >
-                {MASTER_OFFERING_PRICE_BASIS_LABEL}
-              </p>
-            )}
             <MasterOfferingVariantAction
               productName={product.displayName}
               variant={selected}

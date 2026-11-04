@@ -173,7 +173,7 @@ describe("what the customer is shown", () => {
     expect(
       host.querySelector('[data-testid="early-access-agreement-provenance"]')
         ?.textContent,
-    ).toBe("Agreement: early_access_terms · Version: v1");
+    ).toBe("Policy version: v1");
   });
 
   it("shows the research-use policy and NOT the draft Terms or draft Privacy documents", async () => {
@@ -393,7 +393,7 @@ describe("acceptance survives a refresh, because the server remembers it", () =>
     expect(
       host.querySelector('[data-testid="early-access-agreement-provenance"]')
         ?.textContent,
-    ).toBe("Agreement: early_access_terms · Version: v1");
+    ).toBe("Policy version: v1");
   });
 
   it("writes nothing to browser storage", async () => {

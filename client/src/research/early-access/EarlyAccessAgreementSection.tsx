@@ -406,12 +406,13 @@ export function EarlyAccessAgreementSection({
         </>
       )}
 
+      {/* The heading names the policy. Its kind is an internal identifier, so only the version is shown. */}
       {agreement !== null && (
         <p
           className="body-s text-ink-mute mt-3"
           data-testid={`${testId}-provenance`}
         >
-          Agreement: {agreement.kind} · Version: {agreement.version}
+          Policy version: {agreement.version}
         </p>
       )}
 

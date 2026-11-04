@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { Link } from "wouter";
 import { money } from "./wizard-state";
 import { readStoredAssistedOrderReceipt } from "./storage";
+import { REQUEST_INTENT_PUBLIC_REFERENCE } from "./request-intent-continuation";
+import { RequestIntentReferenceNotice } from "./RequestIntentReferenceNotice";
 import { EarlyAccessStepper } from "../early-access/EarlyAccessStepper";
 import { EARLY_ACCESS_CUSTOMER_STEP_LABELS } from "../early-access/customerSteps";
 import "./assisted-order.css";
@@ -30,6 +32,13 @@ export function AssistedOrderConfirmationPage() {
     [reference],
   );
   const statusHref = `/research/early-access/order-request/${encodeURIComponent(reference)}`;
+
+  // A review request (XRI) has no stored legacy receipt and no status read; its
+  // page states only what this tab knows. A retyped lower-case reference is the same reference.
+  const reviewReference = reference.toUpperCase();
+  if (REQUEST_INTENT_PUBLIC_REFERENCE.test(reviewReference)) {
+    return <RequestIntentReferenceNotice reference={reviewReference} variant="confirmation" />;
+  }
 
   if (receipt === null) {
     return (

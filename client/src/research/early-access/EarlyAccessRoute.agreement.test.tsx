@@ -198,7 +198,7 @@ describe("the checkout continuation is gated on the server's answer", () => {
     expect(
       host.querySelector('[data-testid="early-access-agreement-provenance"]')
         ?.textContent,
-    ).toBe("Agreement: early_access_terms · Version: v1");
+    ).toBe("Policy version: v1");
     expect(
       host.querySelector('[data-testid="early-access-stepper-step-0"]')
         ?.getAttribute("aria-current"),
@@ -297,7 +297,7 @@ describe("the checkout continuation is gated on the server's answer", () => {
     expect(
       host.querySelector('[data-testid="early-access-agreement-provenance"]')
         ?.textContent,
-    ).toBe("Agreement: early_access_terms · Version: v1");
+    ).toBe("Policy version: v1");
 
     selectFirstUnit(host);
     expect(reviewButton(host).disabled).toBe(false);

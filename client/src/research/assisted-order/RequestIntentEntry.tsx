@@ -63,7 +63,7 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
   // Key by the confirmed opaque owner, never token. Token-only rerenders keep
   // the form; account switches remount it. Checking/recovery renders no form.
-  return <RequestIntentForm key={owner} api={api}
+  return <RequestIntentForm key={owner} api={api} ownerKey={owner}
     embedded={embedded} continuationEnabled={embedded ? continuationEnabled : standing}
     onStepChange={onStepChange} entryIntent={hint} onConfirmedReceipt={onConfirmedReceipt} />;
 }

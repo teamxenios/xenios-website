@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
 import { useAssistedOrderBridgeState } from "../assisted-order/AssistedOrderCta";
-import { OrderRequestCta } from "../assisted-order/OrderRequestEntry";
+import { ClosedIntakeRequestReceipt, OrderRequestCta } from "../assisted-order/OrderRequestEntry";
 import { readOrderRequestContinuity, useOrderRequestMode } from "../assisted-order/order-request-mode";
 import { Suspense, lazy } from "react";
 
@@ -514,10 +514,12 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
             </div>
             : requestRecoveryDoor === null ? <p role="status" className="mt-5">Preparing the request form...</p>
             : !requestDoorOpen && requestMode.kind === "checking" ? <p role="status" className="mt-5">Checking the current request path...</p>
-            : !requestDoorOpen ? <div role="status" className="mt-5">
-              <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
-              <a href="/research/support">Contact support</a>
-            </div>
+            : !requestDoorOpen ? <ClosedIntakeRequestReceipt fallback={
+              <div role="status" className="mt-5">
+                <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
+                <a href="/research/support">Contact support</a>
+              </div>
+            } />
             : <>
               {!hideFreshAgreement && <div className="mt-5" data-testid="quick-order-agreement-mount">
                 <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
