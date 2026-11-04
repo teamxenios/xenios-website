@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-014",
+  "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "bytes": 332053,
+    "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5"
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "bytes": 108239,
+    "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+  },
+  "publicationState": "review_only_not_runtime",
+  "supplierSendPerformed": false,
+  "authority": [
+    "KAN-59/10615",
+    "KAN-225/10616"
+  ],
+  "labelFactSources": [
+    {
+      "reference": "KAN-31/10641",
+      "scope": "accepted research capsule form and listed strength; current pack quantity and strength basis held"
+    },
+    {
+      "reference": "KAN-31/10750",
+      "scope": "partial overview acceptance preserves static facts"
+    }
+  ],
+  "requiredMountedViewportsAfterReview": [
+    320,
+    390,
+    768,
+    1280
+  ],
+  "renderSource": {
+    "method": "built-in imagegen reference edit",
+    "receipt": "exec-7880b4a1-1245-4683-8343-b4bda45744cf",
+    "sha256": "f8045dba84738520a57316feaa0af9fd80558f1d6e76f35b42ee67685a4b8b61",
+    "acceptedDesignReference": "KAN-31/10756",
+    "referenceSourceSha256": "b9640a425471f3c1e6ec528df4b1f286dff0f92a88ea9ea5ddff8e60e4d7873f"
+  },
+  "records": [
+    {
+      "offeringId": "mo_b2ebb969d48a20f9e680",
+      "sourceVariantId": "mov_fe292b5f03527ec13e5e",
+      "quickOrderSku": "GEN-GRP-0249",
+      "quickOrderProductId": "7d9516fe-ef49-4b14-bfd9-99cba352b3fe",
+      "quickOrderVariantId": "6c030960-937e-45c2-9392-10d3631629bb",
+      "canonicalName": "KPV",
+      "canonicalVariant": "KPV 500 mcg research capsules",
+      "catalogVariantLabel": "KPV 500 mcg",
+      "catalogFamily": "research_capsules",
+      "catalogBrand": null,
+      "designBrand": "Xenios",
+      "listedStrength": "500 mcg",
+      "form": "Research capsules",
+      "classification": "For laboratory research use only.",
+      "artworkVersion": "GEN-GRP-0249-WEB-SUPPLIER-v1",
+      "mediaKind": "original_xenios_website_render",
+      "physicalPackagingState": "design",
+      "websiteArtworkState": "pending_independent_file_level_review",
+      "runtimeLinked": false,
+      "publicationAuthorized": false,
+      "artifacts": {
+        "website_primary": {
+          "role": "website_primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-014/assets/kpv-500mcg-website-render-v1-1024.webp",
+          "format": "webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 50202,
+          "sha256": "2c8dcdff792f6ff125368914bec6f7ac1986f920abc6d12793b97b94d12cc3df"
+        },
+        "front_preview_web": {
+          "role": "front_preview_web",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-014/assets/kpv-500mcg-front-artwork-v1.webp",
+          "format": "webp",
+          "width": 1000,
+          "height": 850,
+          "bytes": 33410,
+          "sha256": "c8459d95b7c476be68770e99eb11361ca58346572f2da4d323102f49d47993ff"
+        },
+        "wrap_editable_master": {
+          "role": "wrap_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-014/labels/kpv-500mcg-wrap-proof-v1.svg",
+          "format": "svg",
+          "width": 2400,
+          "height": 1200,
+          "bytes": 5159,
+          "sha256": "b5a9031687d6969f9da25c8df4a569936fcf93fdbe0473f885be3c1ff63e526c"
+        }
+      },
+      "websiteReviewCandidates": [
+        {
+          "role": "primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-014/assets/kpv-500mcg-website-render-v1-1024.webp",
+          "sha256": "2c8dcdff792f6ff125368914bec6f7ac1986f920abc6d12793b97b94d12cc3df",
+          "altText": "Xenios packaging design for KPV research capsules, listed strength 500 mcg",
+          "caption": "Packaging design shown. Current packaging may differ."
+        },
+        {
+          "role": "label_detail",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-014/assets/kpv-500mcg-front-artwork-v1.webp",
+          "sha256": "c8459d95b7c476be68770e99eb11361ca58346572f2da4d323102f49d47993ff",
+          "altText": "KPV research capsule front label design, listed strength 500 mcg",
+          "caption": "Packaging design shown. Current packaging may differ."
+        }
+      ]
+    }
+  ]
+}
