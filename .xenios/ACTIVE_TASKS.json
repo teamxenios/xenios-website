@@ -3475,7 +3475,7 @@
       "id": "KAN59-WHITE-LABEL-PACKAGING-CARD-20261104",
       "title": "Integrate white-label packaging with image-first product cards",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "ad76ce76ddb106183202aff62991cfffc9aabcfd",
       "paths": [
@@ -3493,7 +3493,13 @@
       "scopeNote": "Implement only Samuel's explicit white-label packaging and image-first integration brief recorded at KAN-59 comment 10556 and KAN-225 comment 10557. Use frozen PR371 source ad76ce76ddb106183202aff62991cfffc9aabcfd/tree 0e3480097f7e1cef40c7b6f2104c6e995e7b0d80 and create the separate branch codex/white-label-packaging-card-20261104. Limit work exactly to the two guest RequestIntentForm paths, member MasterOfferingCard and product-media test, ProductMedia component and BPC-157 packshot asset named in paths. Root's private asset-generation lane and read-only evidence lanes may operate only outside the physical checkout and do not receive repository ownership. The exact/prefix/wildcard CODE_OWNERSHIP audit found no active conflict, and docs/coordination/FILE_OWNERSHIP.json contains no matching path; all overlaps are historical HANDOFF or released records and remain preserved. Preserve PR371, PR370, PR369, the synthetic-capture failed-assertion handoff, frozen R2/R3 and accepted media heads, the active admin lease 87067847-af3a-45b0-b3ff-5fd45ee394d3, every foreign lease, the recorded release and R2 hold, and every unrelated task, lease, session, rule, history, handoff and ref. Add no catalog authority, pricing, eligibility, checkout, payment, Auth, API, configuration, role, flag, customer, notification, review acceptance, release, browser activation or production authority. This metadata claim authorizes the custodian to make no application or asset edit, branch creation, test, build, Node, CI, browser, fixture rerun, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
       "createdAt": "2026-11-04T02:47:09.9713854Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T02:47:09.9713854Z"
+      "claimedAt": "2026-11-04T02:47:09.9713854Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1",
+        "file": ".xenios/handoffs/2026-11-04T03-04-57-776Z-KAN59-WHITE-LABEL-PACKAGING-CARD-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T03:04:57.776Z"
+      }
     }
   ]
 }

@@ -1,0 +1,50 @@
+{
+  "task": "KAN59-WHITE-LABEL-PACKAGING-CARD-20261104",
+  "lease": "0fae7de8-08f3-489d-8dca-eff562688be1",
+  "branch": "codex/white-label-packaging-card-20261104",
+  "pr": 372,
+  "head": "8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1",
+  "tree": "dba463a8a39a7a41a92235086f73f53c19f42fed",
+  "parent": "ad76ce76ddb106183202aff62991cfffc9aabcfd",
+  "CI": {
+    "run": 41763584465,
+    "attempt": 1,
+    "passes": 18497,
+    "skipped": 83,
+    "failures": 0,
+    "actualCheckoutTree": "dba463a8a39a7a41a92235086f73f53c19f42fed",
+    "checkouts": {
+      "test": "39843366aaf0bc6a9d4c3500547bb95d2afefb92",
+      "typecheck": "39843366aaf0bc6a9d4c3500547bb95d2afefb92",
+      "protection": "8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1",
+      "build": "39843366aaf0bc6a9d4c3500547bb95d2afefb92"
+    },
+    "checks": {
+      "Required CI completion": 126358794207,
+      "protection": 126356650322,
+      "typecheck": 126356650299,
+      "build": 126356650288,
+      "test": 126356650177
+    },
+    "combinedLogSha256": "4f2f5b8fe5fb1a1da468886b1b606e43c3d85a1bdaea2f3213041f620886e3b7"
+  },
+  "independentSource": "Existing ci_contract_ready accepted exact 8885fd5; no required changes and no material source authorship.",
+  "assets": {
+    "bpc-157-10mg-r01-768.webp": "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1",
+    "bpc-157-10mg-r01.png": "fc4e30e5f43a00e7aa2e04101d31ac068626d9a5847109ad71f921d6001f82c6",
+    "bpc-157-10mg-research.svg": "230b5ed2a61d949c3a99c4f9a98e92fe3aac863717e3b6823b239c707f487eec",
+    "bpc-157-15mg-r01.png": "fb4f4c4dbacaba678f5f95e53b705c1bc1633e151114f2993b33618eebdb6607",
+    "bpc-157-15mg-research.svg": "ba33020c203efcb5fca79598bb94e34fa42afad638a43cc8b783f163c8c44a6f",
+    "bpc-157-3mg-ml-5ml-clinical.svg": "52c69fc4eac2df9d769eecc29e0a05533ee4a026160e9f1f18a38f5c1b8415a5",
+    "bpc-157-5mg-r01.png": "d1113744fc6ae95502e45c1e5cc6f658bde08709ccbcc0cba21a24c6eba5337f",
+    "bpc-157-5mg-research.svg": "acfdda9e5130bce4509740e4e34034772a1e282d1db5130c21d71cd6899a739a",
+    "non-rx-private-label-template.svg": "7ddf319f1d9cbe9bc1d87407209aa84bc1e6c60d04c7072464530786cefcee03",
+    "QO-VISUAL-CAPTURE-R01-PROPOSED.patch": "ea0d7876d062080b911854d61538e0ec5778f8be68b969c44144caa7dfff62e4",
+    "SUPPLIER-HANDOFF.md": "ee5fec9babb258d145a249c87bf40399f50763481f43fdee5d24bffdd202225a",
+    "Xenios-R01-editable-labels.zip": "d7e136c4e7d05b139d601ae10bd491322410240c05c893d81a7d5c30830f17ad",
+    "xenios-seal-finish.svg": "af356a7faf56d52ed077459d596e52b8a9265d34a379d0c6cce18494e2a9311c"
+  },
+  "print": "Editable R01 supplier-proof artwork; actual printer parameters and approved supplier/pharmacy text pending. Non-Rx layout unassigned to an exact private-label SKU.",
+  "browser": "Private exact-bound QA patch apply-checked on f9e0ab2; not applied, pushed or run. Previous allowance consumed.",
+  "production": "Draft and unmerged. No supplier approval or deployment. Inherited R2 release findings remain separate."
+}
