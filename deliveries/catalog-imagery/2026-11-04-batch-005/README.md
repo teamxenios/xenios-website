@@ -7,16 +7,16 @@ Founder website-use authority is recorded under `KAN-59/10615` and `KAN-225/1061
 ## Disposition
 
 - Ten official PNG exports downloaded with no transformation.
-- Nine visible product/package matches await independent exact-byte and visual review.
+- Nine official product/package images passed file-level exact-byte and visual review under `KAN-31/10631`.
 - Magtein `R227` remains held because the same supplier code and UPC have conflicting label versions.
 - Zero assets are runtime-linked or publication-authorized.
 - No supplier send occurred.
 
-The assets remain under `assets/official-nutridyn/`. `contact-sheet-v1.png` shows all ten complete packages with exact IDs and the R227 hold. The contact sheet is review evidence and must not replace the original supplier bytes.
+The assets remain under `assets/official-nutridyn/`. `contact-sheet-v1.png` is the submission-state sheet reviewed at source `8eda87dba4098d656c45651294138f62d8972673`; it shows all ten complete packages with exact IDs and the R227 hold. The contact sheet is review evidence and must not replace the original supplier bytes.
 
 ## Review boundary
 
-This batch confirms source acquisition and package-identity presentation only. It makes no clinical interpretation. Independent review must confirm the nine eligible exact exports before any runtime integration handoff is prepared. R227 requires current selected front/back label evidence or manufacturer confirmation.
+This batch confirms source acquisition and package-identity presentation only. It makes no clinical interpretation. The nine accepted exports are eligible for exact-ID integration with the approved content, while mounted, published and live verification remain separate. R227 requires current selected front/back label evidence or manufacturer confirmation.
 
 ## Verify
 
@@ -25,4 +25,4 @@ node deliveries/catalog-imagery/2026-11-04-batch-005/verify-batch.mjs --write-re
 node deliveries/catalog-imagery/2026-11-04-batch-005/verify-batch.mjs
 ```
 
-The verifier pins the committed 420-pair catalog and binding bytes, checks all ten exact pairs and Quick Order SKUs, verifies every original PNG hash/byte count/dimension, validates the official NutriDyn URLs and status split, preserves the R227 conflict, and rejects runtime/publication or supplier-send overclaims.
+The verifier pins the committed 420-pair catalog and binding bytes, checks all ten exact pairs and Quick Order SKUs, verifies every original PNG hash/byte count/dimension, binds the nine-pass/one-hold review receipt, validates the official NutriDyn URLs and status split, preserves the R227 conflict, and rejects runtime/publication or supplier-send overclaims.

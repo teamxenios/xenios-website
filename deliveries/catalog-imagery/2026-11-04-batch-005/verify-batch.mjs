@@ -62,7 +62,7 @@ check(evidence.schemaVersion === 1, "evidence schemaVersion must be 1");
 check(batch.batchId === evidence.batchId, "batch IDs differ");
 check(batch.createdAt === evidence.createdAt, "creation timestamps differ");
 check(batch.releaseBaseline === evidence.releaseBaseline, "release baselines differ");
-check(batch.publicationState === "quarantined_downloads_pending_independent_review", "batch must remain quarantined");
+check(batch.publicationState === "file_level_reviewed_not_runtime", "batch must remain file-level reviewed and not runtime-linked");
 check(batch.sourceBytesPreserved === true, "source-byte preservation is not asserted");
 check(batch.runtimeLinked === false, "batch cannot be runtime-linked");
 check(batch.supplierSendPerformed === false, "supplier send must remain false");
@@ -71,6 +71,14 @@ check(batch.authority.references.includes("KAN-59/10615"), "KAN-59/10615 authori
 check(batch.authority.references.includes("KAN-225/10616"), "KAN-225/10616 authority is missing");
 check(batch.authority.separateImageUseAgreementRequired === false, "stale image-use-agreement prerequisite returned");
 check(batch.authority.releasePublicationApproved === false, "release publication cannot be pre-approved");
+check(batch.reviewReceipt.reference === "KAN-31/10631", "file-level review reference is missing");
+check(
+  batch.reviewReceipt.reviewedSourceSha === "8eda87dba4098d656c45651294138f62d8972673",
+  "reviewed Batch 005 source SHA changed",
+);
+check(batch.reviewReceipt.fileLevelPasses === 9, "review receipt must retain nine file-level passes");
+check(batch.reviewReceipt.factualVersionHolds === 1, "review receipt must retain one factual hold");
+check(batch.reviewReceipt.mountedPublishedOrLiveVerified === 0, "review receipt cannot imply mounted or published assets");
 check(evidence.authorityReconciliation.separateImageUseAgreementRequired === false, "evidence retained stale rights hold");
 
 check(dataset.canonicalProductCount === 420, "dataset product count is not 420");
@@ -85,7 +93,7 @@ const seenCodes = new Set();
 const seenPairs = new Set();
 const seenPaths = new Set();
 const seenHashes = new Set();
-let pendingReviewCount = 0;
+let fileLevelAcceptedCount = 0;
 let versionHoldCount = 0;
 for (const record of batch.records) {
   const expected = expectedByCode.get(record.supplierItemCode);
@@ -134,13 +142,13 @@ for (const record of batch.records) {
   );
   check(binding?.productControlSku === record.quickOrderSku, `${record.supplierItemCode}: binding SKU differs`);
 
-  if (record.reviewStatus === "official_export_downloaded_pending_independent_review") pendingReviewCount += 1;
+  if (record.reviewStatus === "file_level_review_accepted_pending_runtime_integration") fileLevelAcceptedCount += 1;
   if (record.reviewStatus === "held_current_label_version_conflict") versionHoldCount += 1;
 }
 
 check(seenCodes.size === 10, "ten unique supplier codes were not verified");
 check(seenPairs.size === 10, "ten unique exact pairs were not verified");
-check(pendingReviewCount === 9, "expected nine pending-review package matches");
+check(fileLevelAcceptedCount === 9, "expected nine file-level accepted package matches");
 check(versionHoldCount === 1, "expected one factual version hold");
 const r227 = batch.records.find((record) => record.supplierItemCode === "R227");
 check(r227?.reviewStatus === "held_current_label_version_conflict", "R227 version hold is missing");
@@ -167,6 +175,7 @@ for (const expected of expectedByCode.values()) check(contactSourceText.includes
 check(evidence.acquisition.downloadedAssets === 10, "evidence download count is not ten");
 check(evidence.acquisition.transformedAssets === 0, "evidence cannot claim transformed assets");
 check(evidence.review.candidatePackageMatches === 9, "evidence candidate count is not nine");
+check(evidence.review.fileLevelAcceptedAssets === 9, "evidence file-level accepted count is not nine");
 check(evidence.review.factualVersionHolds === 1, "evidence hold count is not one");
 check(evidence.review.publicationAuthorizedAssets === 0, "evidence cannot claim publication-authorized assets");
 check(evidence.review.runtimeLinkedAssets === 0, "evidence cannot claim runtime-linked assets");
@@ -180,7 +189,7 @@ const result = {
   canonicalPairs: 420,
   exactSupplierRecords: batch.records.length,
   checkedOriginalPngs: seenPaths.size,
-  candidatePackageMatchesPendingReview: pendingReviewCount,
+  fileLevelAcceptedAssets: fileLevelAcceptedCount,
   factualVersionHolds: versionHoldCount,
   contactSheetChecked: true,
   sourceBytesTransformed: false,

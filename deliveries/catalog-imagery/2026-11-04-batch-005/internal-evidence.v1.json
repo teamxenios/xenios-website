@@ -37,10 +37,13 @@
     "wellnessBoundary": "Inspection confirms package identity presentation only and makes no clinical interpretation."
   },
   "review": {
-    "status": "pending_independent_review",
-    "requestedReviewer": "KAN-31",
+    "status": "nine_file_level_passes_one_version_hold",
+    "reviewer": "KAN-31/10631",
+    "reviewedSourceSha": "8eda87dba4098d656c45651294138f62d8972673",
+    "reviewedTreeSha": "e2a3fb497b316ce24570e14ef7e3022e6d1140e2",
     "downloadedOfficialExports": 10,
     "candidatePackageMatches": 9,
+    "fileLevelAcceptedAssets": 9,
     "factualVersionHolds": 1,
     "publicationAuthorizedAssets": 0,
     "runtimeLinkedAssets": 0,
@@ -53,8 +56,8 @@
     "reason": "The same US supplier code and UPC have conflicting label versions. A current selected front and back label or manufacturer confirmation remains required."
   },
   "releaseBoundary": [
-    "The ten PNGs are quarantined delivery-path review inputs, not runtime media.",
-    "Nine visible package matches still require independent exact-byte and visual review before an integration handoff can be prepared.",
+    "The ten PNGs remain in the delivery path; nine file-level accepted assets are eligible for exact-ID integration but are not runtime media yet.",
+    "Native aspect ratio and the complete package must be preserved when Root prepares the integration handoff.",
     "R227 remains ineligible while its current selected label version is unresolved.",
     "No public manifest, runtime binding, customer publication, supplier outbound or physical packaging claim is included."
   ]

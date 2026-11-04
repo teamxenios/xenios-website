@@ -26,10 +26,18 @@
     "separateImageUseAgreementRequired": false,
     "releasePublicationApproved": false
   },
-  "publicationState": "quarantined_downloads_pending_independent_review",
+  "publicationState": "file_level_reviewed_not_runtime",
   "sourceBytesPreserved": true,
   "runtimeLinked": false,
   "supplierSendPerformed": false,
+  "reviewReceipt": {
+    "reference": "KAN-31/10631",
+    "reviewedSourceSha": "8eda87dba4098d656c45651294138f62d8972673",
+    "reviewedTreeSha": "e2a3fb497b316ce24570e14ef7e3022e6d1140e2",
+    "fileLevelPasses": 9,
+    "factualVersionHolds": 1,
+    "mountedPublishedOrLiveVerified": 0
+  },
   "contactSheet": {
     "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/contact-sheet-v1.png",
     "width": 1800,
@@ -64,7 +72,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_60_softgels",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     },
     {
@@ -88,7 +96,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_210_capsules",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     },
     {
@@ -112,7 +120,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_525_g_unflavored_powder",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     },
     {
@@ -136,7 +144,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_75_g_unflavored_powder",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     },
     {
@@ -188,7 +196,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_90_capsules",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     },
     {
@@ -212,7 +220,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_150_ml_liquid",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     },
     {
@@ -236,7 +244,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_60_softgels",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     },
     {
@@ -260,7 +268,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_30_tablets",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     },
     {
@@ -284,7 +292,7 @@
       },
       "sourceBytesTransformed": false,
       "visualPackageDisposition": "front_export_matches_expected_180_capsules",
-      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "reviewStatus": "file_level_review_accepted_pending_runtime_integration",
       "publicationAuthorized": false
     }
   ]
