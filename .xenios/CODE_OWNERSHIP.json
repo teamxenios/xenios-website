@@ -2958,7 +2958,7 @@
         "client/src/research/product-media/ProductMedia.tsx",
         "client/src/research/master-offerings/product-media.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T12:16:57.8685793Z",
       "heartbeatAt": "2026-11-04T12:16:57.8685793Z"
     },
@@ -2970,7 +2970,7 @@
         "client/src/research/pages/member/DocumentCenter.tsx",
         "client/src/research/pages/member/document-center-recovery.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T12:22:13.8166718Z",
       "heartbeatAt": "2026-11-04T12:22:13.8166718Z"
     }

@@ -1,0 +1,31 @@
+{
+  "task": "KAN59-PR372-SVG-MEDIA-CONTAINMENT-20261104",
+  "lease": "1b706681-6c14-4497-81aa-137e404783d8",
+  "branch": "codex/qo-svg-media-containment-20261104",
+  "pr": 375,
+  "head": "f6c6935ef4e0972a02bbf0edc1666170f0ddabff",
+  "tree": "8f5a32cb1d597a7155c45417826534d807c41885",
+  "parent": "8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1",
+  "run": 41828457053,
+  "attempt": 1,
+  "passes": 18497,
+  "skipped": 83,
+  "failures": 0,
+  "productMedia": 6,
+  "checkoutTree": "8f5a32cb1d597a7155c45417826534d807c41885",
+  "checkouts": {
+    "test": "2349920aa35f54c25ea1de3f20c17fd7fe39fea8",
+    "build": "2349920aa35f54c25ea1de3f20c17fd7fe39fea8",
+    "protection": "f6c6935ef4e0972a02bbf0edc1666170f0ddabff",
+    "typecheck": "2349920aa35f54c25ea1de3f20c17fd7fe39fea8"
+  },
+  "checks": {
+    "Required CI completion": 126572620593,
+    "test": 126569150006,
+    "build": 126569149723,
+    "protection": 126569149711,
+    "typecheck": 126569149125
+  },
+  "rawLogSha256": "cb3a3a919f92dd030289c5168aed13782a3f6c4bd61bed02de727f4bb15262fc",
+  "scope": "Required PR372 narrow SVG correction. Existing raster, assets, identifiers, prices and request behavior unchanged. Hosted fixture checks green; 320px browser verification and c16 exact-delta review pending. No new browser allowance consumed or deployment."
+}

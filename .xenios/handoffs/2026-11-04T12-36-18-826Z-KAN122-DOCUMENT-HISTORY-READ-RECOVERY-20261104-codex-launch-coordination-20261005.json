@@ -1,0 +1,40 @@
+{
+  "pr": 376,
+  "head": "6ac16ce181f9d88255ea39a6cfe68d84dad64096",
+  "parent": "d0fd93bf0402c72bb173f147e884256b04c927ed",
+  "tree": "613b566f53c062247488b31493953b806b9ebf8b",
+  "runtimeBlob": "79ec8ff45d84fc5ad0629c9e9579e5ece5b0f480",
+  "testBlob": "560c5270ec214a5c95f4316a854f0feb2234aee6",
+  "independentSourceReview": "Accepted by existing ci_contract_ready, previous owner-switch finding resolved",
+  "run": 41829450008,
+  "attempt": 1,
+  "providerMerge": "283bc4573534b7ff3f9c7089df174f581af43f0d",
+  "providerMergeTree": "613b566f53c062247488b31493953b806b9ebf8b",
+  "checks": {
+    "test": 126572533628,
+    "typecheck": 126572533024,
+    "build": 126572533426,
+    "protection": 126572533825,
+    "completion": 126574848740,
+    "appId": 15368,
+    "conclusion": "success"
+  },
+  "checkedSource": "protection",
+  "checkedProviderMerge": [
+    "test",
+    "typecheck",
+    "build"
+  ],
+  "tests": {
+    "passed": 18426,
+    "failed": 0,
+    "skipped": 83,
+    "filesPassed": 990,
+    "filesSkipped": 6,
+    "newDocumentCenterPassed": 7,
+    "existingDocumentCenterPassed": 4
+  },
+  "focusedGuestChecks": 145,
+  "status": "draft, unmerged, undeployed",
+  "limits": "Hosted synthetic tests, typecheck, build and source protection. No live customer, provider, database or browser verification."
+}

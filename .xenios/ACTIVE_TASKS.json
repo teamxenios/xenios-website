@@ -3563,7 +3563,7 @@
       "id": "KAN59-PR372-SVG-MEDIA-CONTAINMENT-20261104",
       "title": "Contain PR372 SVG product media within card presentation",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1",
       "paths": [
@@ -3576,13 +3576,19 @@
       "scopeNote": "Implement only the fresh material PR372 required R1 recorded at KAN-31 comment 10567 and PR comment 6622677174: correct SVG product-media containment in the existing card presentation. Use frozen PR372 source 8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1/tree dba463a8a39a7a41a92235086f73f53c19f42fed and create the separate branch codex/qo-svg-media-containment-20261104. Limit work exactly to ProductMedia.tsx and the existing member product-media test named in paths. The exact/prefix/wildcard audit found no active CODE_OWNERSHIP conflict, and docs/coordination/FILE_OWNERSHIP.json contains no match; all seven overlaps are completed HANDOFF records and remain preserved. Preserve PR372, PR373, every frozen and accepted review ref, the recorded EarlyAccessRoute.tsx owner route and message, all capture and source-QA handoffs, foreign ownership, production and release state, and every unrelated task, lease, session, rule and history. Add no held-route change, guest behavior, catalog authority, pricing, eligibility, checkout, payment, Auth, API, configuration, role, flag, customer, notification, native review takeover, release or production behavior. This metadata claim authorizes the custodian to make no application edit, branch creation, test, build, Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
       "createdAt": "2026-11-04T12:16:57.8685793Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T12:16:57.8685793Z"
+      "claimedAt": "2026-11-04T12:16:57.8685793Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "f6c6935ef4e0972a02bbf0edc1666170f0ddabff",
+        "file": ".xenios/handoffs/2026-11-04T12-36-18-798Z-KAN59-PR372-SVG-MEDIA-CONTAINMENT-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T12:36:18.798Z"
+      }
     },
     {
       "id": "KAN122-DOCUMENT-HISTORY-READ-RECOVERY-20261104",
       "title": "Recover owner-keyed document history display",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-122",
       "baseSha": "d0fd93bf0402c72bb173f147e884256b04c927ed",
       "paths": [
@@ -3593,7 +3599,13 @@
       "scopeNote": "Implement only the independently reviewable KAN-122 document-history read recovery supported by direct KAN-122 comment 10477 attachment 10008. Use qualified release base d0fd93bf0402c72bb173f147e884256b04c927ed with existing DocumentCenter.tsx runtime blob ecf2a86f6e63def8fa67c1cd298bbec75b562eb2; the focused recovery test is new at that base. Create the separate branch codex/document-history-read-recovery-20261104. Limit work exactly to owner-keyed DocumentCenter display and account-change regression coverage in the two paths named above. Preserve the canonical Auth and session contract unchanged; add no identity, authorization, server, route, API, storage, upload, mutation, role, flag, customer, notification, catalog, checkout, release or production authority. The exact/prefix/wildcard CODE_OWNERSHIP audit and docs/coordination/FILE_OWNERSHIP.json audit found no matching owner for either path. Preserve the active KAN59-PR372-SVG-MEDIA-CONTAINMENT-20261104 lease, the recorded EarlyAccessRoute.tsx owner message and route, every foreign lease, frozen review ref, prior task, handoff, rule, release pointer and history. This metadata claim authorizes the custodian to make no application edit, branch creation, test, build, local Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, registry, owner transfer, settings or production action.",
       "createdAt": "2026-11-04T12:22:13.8166718Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T12:22:13.8166718Z"
+      "claimedAt": "2026-11-04T12:22:13.8166718Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "6ac16ce181f9d88255ea39a6cfe68d84dad64096",
+        "file": ".xenios/handoffs/2026-11-04T12-36-18-826Z-KAN122-DOCUMENT-HISTORY-READ-RECOVERY-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T12:36:18.826Z"
+      }
     }
   ]
 }
