@@ -21,7 +21,7 @@ jobs:
       CANDIDATE_SHA: f0e247585c1cd466022530a4f40c99fd03af1957
       CANDIDATE_TREE: f5cab0de3370d6ea0c9a89ba167fe11f4b8516be
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: KAN-31/10645
+      CAPTURE_ALLOWANCE_ID: UNBOUND
       CAPTURE_ALLOWANCE_ATTEMPT: "2"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
       CAPTURE_PRIOR_RUN_IDS: '["41912809107"]'
@@ -137,29 +137,29 @@ jobs:
         with:
           name: qo-reviewed-catalog-synthetic-visual-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-supplement.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-bpc-5mg.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-bpc-15mg.png
             ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-supplement.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-bpc-5mg.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-bpc-15mg.png
             ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-supplement.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-bpc-5mg.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-bpc-15mg.png
             ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-supplement.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-bpc-5mg.png
+            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-bpc-15mg.png
             ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-supplement.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-bpc-5mg.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-bpc-15mg.png
             ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-supplement.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-bpc-5mg.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-bpc-15mg.png
             ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-supplement.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-bpc-5mg.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-bpc-15mg.png
             ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-supplement.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-bpc-5mg.png
+            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-bpc-15mg.png
             ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-failure.png
             ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
