@@ -1,0 +1,37 @@
+{
+  "task": "KAN31-QUICK-ORDER-R2-REFERENCE-OWNER-20261104",
+  "lease": "8bf70bf1-f581-42bf-b6b2-bea7fa012575",
+  "head": "c7ae0e351c2bf08d4f28ea8ffb130de253da6588",
+  "tree": "169f5b6b867f4fb1fbdcf5606e3cf86d46b2342a",
+  "parent": "0c66217f7ab16090795ad143122ea77e0cae91f5",
+  "branch": "codex/quick-order-r2-reference-owner-20261104",
+  "pr": 373,
+  "CI": {
+    "run": 41766501981,
+    "attempt": 1,
+    "passes": 18485,
+    "skipped": 83,
+    "failures": 0,
+    "actualCheckoutTree": "169f5b6b867f4fb1fbdcf5606e3cf86d46b2342a",
+    "checkouts": {
+      "build": "1933891d9374f706fcd4358bb889c4e19168a511",
+      "protection": "c7ae0e351c2bf08d4f28ea8ffb130de253da6588",
+      "test": "1933891d9374f706fcd4358bb889c4e19168a511",
+      "typecheck": "1933891d9374f706fcd4358bb889c4e19168a511"
+    },
+    "checks": {
+      "Required CI completion": 126368154929,
+      "build": 126365986753,
+      "typecheck": 126365986694,
+      "protection": 126365986661,
+      "test": 126365986505
+    },
+    "combinedLogSha256": "c3e75229739c1012903f983b4b7e480126cc1b2c35e18571bf2ee2541308f729",
+    "affectedTests": [
+      "2026-11-04T03:24:31.8911961Z  \u2713 client/src/research/assisted-order/RequestIntentReferenceNotice.test.tsx (10 tests) 201ms",
+      "2026-11-04T03:24:43.0482037Z  \u2713 client/src/research/assisted-order/request-intent-continuation.test.ts (21 tests) 24ms"
+    ]
+  },
+  "independentSource": "Existing nonauthor ci_contract_ready accepted exact c7ae0e3 for finding 2 only. No required corrections.",
+  "remainingR2": "Finding 1 remains unapplied and separately held by existing owner of EarlyAccessRoute.tsx. Actual Samuel selected recorded owner; routed to claude-fable-desktop on KAN-225/10562. Native pickup not confirmed. No R3/media composition, browser run, release or deployment."
+}
