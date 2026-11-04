@@ -355,12 +355,13 @@ beforeEach(() => {
 });
 
 describe("the login-free request-only entry", () => {
-  async function waitForAdd() {
+  async function waitForAdd(surface: "guest" | "member" = "guest") {
     let add: HTMLButtonElement | undefined;
     for (let attempt = 0; attempt < 60 && !add; attempt += 1) {
       await act(async () => { await new Promise((resolve) => setTimeout(resolve, 25)); });
-      add = [...container.querySelectorAll("button")].find((button) =>
-        button.getAttribute("aria-label") === "Add to request: Kisspeptin, KISSPEPTIN 10 mg");
+      add = [...container.querySelectorAll("button")].find((button) => surface === "guest"
+        ? button.getAttribute("aria-label") === "Add to request: Kisspeptin, KISSPEPTIN 10 mg"
+        : button.textContent === "Add Kisspeptin to request");
     }
     expect(add).toBeTruthy();
     return add!;
@@ -918,7 +919,7 @@ describe("the login-free request-only entry", () => {
     const render = vi.spyOn(root, "render");
     await act(async () => root.render(<EarlyAccessRoute requestOnly />));
     await settleStorefront();
-    const add = await waitForAdd();
+    const add = await waitForAdd("member");
     act(() => add.click());
     act(() => continueButton().click());
     for (const [name, value] of Object.entries({ name: "Synthetic Customer", email: "synthetic@example.invalid",
@@ -1146,7 +1147,7 @@ describe("the login-free request-only entry", () => {
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     vi.spyOn(Date, "now").mockReturnValue(expires + 1);
     await act(async () => window.dispatchEvent(new Event("focus")));
-    await waitForAdd();
+    await waitForAdd("member");
     expect(sessionReads(fetch)).toHaveLength(2);
     expect(container.textContent).toContain("Request products for review");
     expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
