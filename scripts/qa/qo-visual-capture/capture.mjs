@@ -493,8 +493,12 @@ async function captureReviewedCatalog(page, entry, rows, member) {
         .filter({ has: page.getByRole("heading", { name: product.displayName, exact: true }) })
         .filter({ hasText: variant.label });
     await card.waitFor();
-    if (reviewedContent) report(entry, product.id + " card has exact summary",
-      (await card.textContent()).includes(reviewedContent.summary));
+    if (reviewedContent) {
+      const cardText = await card.innerText();
+      const packageSize = reviewedContent.specifications?.find(({ label }) => label === "Package")?.value;
+      report(entry, product.id + " card has exact summary and visible package size",
+        cardText.includes(reviewedContent.summary) && (!packageSize || cardText.includes(packageSize)));
+    }
     if (reviewedMedia) checkImage(entry, product.id + " card", await imageEvidence(page, card, reviewedMedia.primary.href, null), reviewedMedia.primary.href);
     if (row.alternate) report(entry, product.id + " alternate uses only generic vial art",
       await card.locator('img[src="/research/product-media/vial.svg"]').count() === 1);

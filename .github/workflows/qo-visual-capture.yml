@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: d7c2a1da83e1b3dbe1a8e30a22c98ae673993be8
-      CANDIDATE_TREE: 065aaa38683b8aeb967134b25b14ba1c8cd7befe
+      CANDIDATE_SHA: cf02e04b2d8e08e79789daf34bd89059e0312558
+      CANDIDATE_TREE: da2b16a6ff2991fe2322c931c95999262dbc709b
       # Dormant until the existing Root binds a new approval and run reconciliation.
       CAPTURE_ALLOWANCE_ID: ""
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
