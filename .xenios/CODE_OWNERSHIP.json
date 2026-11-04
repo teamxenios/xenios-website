@@ -3009,9 +3009,21 @@
         "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
         "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T14:33:04.4843271Z",
       "heartbeatAt": "2026-11-04T14:33:04.4843271Z"
+    },
+    {
+      "id": "62c6cf4b-d39a-44f4-915f-4922f2c96c14",
+      "task": "KAN149-PRIVACY-CORRECTION-RECEIPT-20261104",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/member/PrivacyControls.tsx",
+        "client/src/research/pages/member/privacy-correction-receipt.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-04T15:01:23.5333924Z",
+      "heartbeatAt": "2026-11-04T15:01:23.5333924Z"
     }
   ],
   "rules": [

@@ -1,0 +1,27 @@
+{
+  "pr": 378,
+  "head": "37328d8560192a7d25b3d44d986148fc0d06f92a",
+  "tree": "b80ed6ca1da0718fb40eab169b603a812c3c98a2",
+  "parents": [
+    "1d7ac35708e1101c7f08dfb128b29afc0f979dab",
+    "eabc3345b7bbd5bffd4b6aadb84b3b43813d067a"
+  ],
+  "acceptedBlobs": {
+    "runtime": "2cd6e332594bc1a9b5853039e7f198c663b3aafa",
+    "test": "2c98e16e3bea26e6ec429b17286b82ff4c00d56b"
+  },
+  "run": 41849962935,
+  "providerMerge": "40fdb491fbed6a7600c88b1eef061a8ba6a5dd4d",
+  "providerTree": "b80ed6ca1da0718fb40eab169b603a812c3c98a2",
+  "test": 126643308455,
+  "typecheck": 126643308613,
+  "build": 126643308876,
+  "protection": 126643307928,
+  "completion": 126647228558,
+  "app": 15368,
+  "passed": 18430,
+  "failed": 0,
+  "skipped": 83,
+  "adminPassed": 25,
+  "scope": "Byte-preserved independent PR374 source acceptance carried forward. Hosted exact tree qualified. Authenticated download and Resource Hub activation outside scope."
+}

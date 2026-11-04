@@ -3665,7 +3665,7 @@
       "id": "KAN8-ADMIN-RESOURCE-SAVE-RELEASE-COMPOSITION-20261104",
       "title": "Compose accepted Resource Hub admin save recovery on current release",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-8",
       "baseSha": "1d7ac35708e1101c7f08dfb128b29afc0f979dab",
       "paths": [
@@ -3678,7 +3678,30 @@
       "scopeNote": "Compose only the unchanged independently accepted PR374 increment eabc3345b7bbd5bffd4b6aadb84b3b43813d067a onto exact current live release 1d7ac35708e1101c7f08dfb128b29afc0f979dab/tree 613b566f53c062247488b31493953b806b9ebf8b. Limit work exactly to ResourceHubAdmin.tsx and ResourceHubAdmin.test.tsx. The current-release preimages are runtime blob e32708c5463b9ba590cf87981979924c32277c0c and test blob 79e4452e6b88c8d4e0c8c1e22ec92a16e8478e7f; the accepted source blobs are runtime 2cd6e332594bc1a9b5853039e7f198c663b3aafa and test 2c98e16e3bea26e6ec429b17286b82ff4c00d56b. Create the intended branch codex/admin-resource-save-composition-20261104 separately and qualify the exact resulting tree. Preserve former task KAN8-ADMIN-RESOURCE-SAVE-RECOVERY-20261102 and lease 87067847-af3a-45b0-b3ff-5fd45ee394d3 in QA/HANDOFF byte-exact. Resource Hub activation, content publication, managed storage, real-user qualification and every sensitive operation remain outside scope. The fresh exact/prefix/wildcard audit found no active CODE_OWNERSHIP conflict for either path. This metadata claim authorizes no application edit, branch creation, test, build, local Node, CI, browser, provider, database, SQL, staging, merge, deployment, configuration, role, flag, notification, customer, activation or production action.",
       "createdAt": "2026-11-04T14:33:04.4843271Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T14:33:04.4843271Z"
+      "claimedAt": "2026-11-04T14:33:04.4843271Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "37328d8560192a7d25b3d44d986148fc0d06f92a",
+        "file": ".xenios/handoffs/2026-11-04T15-01-23-533Z-KAN8-ADMIN-RESOURCE-SAVE-RELEASE-COMPOSITION-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T15:01:23.5333924Z"
+      }
+    },
+    {
+      "id": "KAN149-PRIVACY-CORRECTION-RECEIPT-20261104",
+      "title": "Preserve member privacy correction receipt provenance",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-149",
+      "baseSha": "d151b978277add1088dc964049006c30d0a3d9da",
+      "paths": [
+        "client/src/research/pages/member/PrivacyControls.tsx",
+        "client/src/research/pages/member/privacy-correction-receipt.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Implement only the bounded KAN-149 privacy-correction receipt proposal from KAN-149 comment 10454 attachment 10002, as authorized by Samuel at KAN-225 comments 10574 and 10581, on exact current live base d151b978277add1088dc964049006c30d0a3d9da/tree b80ed6ca1da0718fb40eab169b603a812c3c98a2. Limit work exactly to existing PrivacyControls.tsx with preimage blob a2f78af835ed4c4f67fc50501fd6932578599310 and new privacy-correction-receipt.test.tsx, absent at the base. Preserve the original proposal's bounded member-visible correction receipt while adding the existing token-keyed boundary and exact same-turn lock so prior member text and receipt provenance cannot be overwritten by an obsolete or cross-token completion. Create intended branch codex/privacy-correction-receipt-20261104 separately. Add no new data-rights API, Auth authority, privacy authority, storage, server route, role, flag, configuration, notification, customer, SQL, provider, managed-service, activation, release or production behavior. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/wildcard audits found no active conflict for either path. This metadata claim authorizes no application edit, branch creation, test, build, local Node, CI, browser, live Auth/privacy action, provider, database, SQL, staging, merge, deployment, acquisition or production action.",
+      "createdAt": "2026-11-04T15:01:23.5333924Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T15:01:23.5333924Z"
     }
   ]
 }

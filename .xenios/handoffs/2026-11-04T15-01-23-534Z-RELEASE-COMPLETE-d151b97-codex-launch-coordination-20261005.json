@@ -1,0 +1,69 @@
+{
+  "pr": 378,
+  "originalPR": 374,
+  "source": "37328d8560192a7d25b3d44d986148fc0d06f92a",
+  "sourceTree": "b80ed6ca1da0718fb40eab169b603a812c3c98a2",
+  "originalAccepted": "eabc3345b7bbd5bffd4b6aadb84b3b43813d067a",
+  "acceptedBlobs": {
+    "runtime": "2cd6e332594bc1a9b5853039e7f198c663b3aafa",
+    "test": "2c98e16e3bea26e6ec429b17286b82ff4c00d56b"
+  },
+  "compositionCI": {
+    "run": 41849962935,
+    "attempt": 1,
+    "providerMerge": "40fdb491fbed6a7600c88b1eef061a8ba6a5dd4d",
+    "pass": 18430,
+    "skip": 83,
+    "fail": 0,
+    "admin": 25,
+    "app": 15368,
+    "allFive": true
+  },
+  "release": "d151b978277add1088dc964049006c30d0a3d9da",
+  "parents": [
+    "1d7ac35708e1101c7f08dfb128b29afc0f979dab",
+    "37328d8560192a7d25b3d44d986148fc0d06f92a"
+  ],
+  "mergeTime": "2026-11-04T14:49:35Z",
+  "releaseCI": {
+    "run": 41851444828,
+    "attempt": 1,
+    "pass": 18430,
+    "skip": 83,
+    "fail": 0,
+    "admin": 25,
+    "app": 15368,
+    "allFive": true,
+    "allFourCheckoutsExact": true,
+    "test": 126648523416,
+    "typecheck": 126648523355,
+    "build": 126648522909,
+    "protection": 126648523259,
+    "completion": 126651489723
+  },
+  "render": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "live": "dep-dblkef8473hc73bbm3u0",
+    "finishedAt": "2026-11-04T14:56:06.639373Z",
+    "autoDeployChecksPass": true
+  },
+  "rollback": {
+    "release": "1d7ac35708e1101c7f08dfb128b29afc0f979dab",
+    "tree": "613b566f53c062247488b31493953b806b9ebf8b",
+    "deploy": "dep-dbljubtckfvc73flu06g",
+    "performed": false
+  },
+  "static": {
+    "status": "PASS_PUBLIC_STATIC_ONLY",
+    "entry": "/assets/index-V55FVKzO.js",
+    "scripts": 192,
+    "htmlFallbacks": 0,
+    "asset": "ResourceHubAdmin-CARj5HDo.js",
+    "sha": "435ee88751d0ba34de0fe98f2e566b48a05cb3fbe1bcd22c0702531a743760de",
+    "scriptSHA": "afa2ca066502738627ce714ef552b72ce94366c3080f9f4277e0f78ddb3416bd",
+    "nativeDownload": false,
+    "adminRouteFetched": false,
+    "activation": false
+  }
+}
