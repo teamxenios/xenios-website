@@ -2936,6 +2936,19 @@
       "state": "handoff",
       "claimedAt": "2026-11-04T03:16:48.1890403Z",
       "heartbeatAt": "2026-11-04T03:16:48.1890403Z"
+    },
+    {
+      "id": "b4be210d-91e0-4b1e-b693-edb766268081",
+      "task": "KAN59-QO-PR372-CORRECTED-CAPTURE-20261104",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        ".github/workflows/qo-visual-capture.yml",
+        "scripts/qa/qo-visual-capture/capture.mjs",
+        "scripts/qa/qo-visual-capture/fixture.mjs"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-04T03:33:43.9708658Z",
+      "heartbeatAt": "2026-11-04T03:33:43.9708658Z"
     }
   ],
   "rules": [
