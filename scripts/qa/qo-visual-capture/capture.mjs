@@ -19,6 +19,13 @@ const reviewedVialCaptures = new Map([
   ["mov_257330ea83ecbfc45fae", "bpc-15mg"],
 ]);
 const capsuleControl = "mov_753d3f94385adf791d1e";
+const capsuleEvidenceVariants = new Set([
+  "mov_2183aa9edb06f34ef3af",
+  capsuleControl,
+  "mov_a2d32f69681dca2b17fb",
+  "mov_fe292b5f03527ec13e5e",
+]);
+const chondroVariant = "mov_2de19f71e09e8bc3febb";
 const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
 if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
     allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
@@ -539,6 +546,19 @@ async function captureReviewedCatalog(page, entry, rows, member) {
     if (variant.id === capsuleControl) report(entry, product.id + " capsule detail excludes reviewed vial artwork",
       await scope.locator('img[src^="/research/product-media/bpc-157-xenios-"]').count() === 0 &&
       await scope.getByRole("link", { name: "View front label artwork" }).count() === 0);
+    if (member && capsuleEvidenceVariants.has(variant.id)) {
+      const notice = await scope.getByTestId("catalog-evidence-notice").textContent();
+      report(entry, product.id + " does not claim product-specific documentation for compound-level research",
+        notice.includes("This catalog view does not publish product-specific documents.") &&
+        !notice.includes("The product documents shown above apply to the selected variant."));
+    }
+    if (member && variant.id === chondroVariant) {
+      const notice = await scope.getByTestId("catalog-evidence-notice").textContent();
+      const label = scope.getByRole("link", { name: "NutriDyn product label and Supplement Facts", exact: true });
+      report(entry, product.id + " retains the selected product label and evidence notice",
+        notice.includes("The product documents shown above apply to the selected variant.") &&
+        await label.getAttribute("href") === "https://nutridyn.com/sports-nutrition/chondro-jointaide");
+    }
     const screenshotName = reviewedVialCaptures.get(variant.id);
     if (screenshotName) await screenshot(entry, screenshotName, page);
     if (member) {

@@ -18,15 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: 344294457a9b9dd11740b5bd274fde04804fcc31
-      CANDIDATE_TREE: 0f6c1860cbf4743c6366289a0835047b18bc140d
+      CANDIDATE_SHA: f0e247585c1cd466022530a4f40c99fd03af1957
+      CANDIDATE_TREE: f5cab0de3370d6ea0c9a89ba167fe11f4b8516be
       # Dormant until the existing Root binds a new approval and run reconciliation.
       CAPTURE_ALLOWANCE_ID: KAN-31/10645
-      CAPTURE_ALLOWANCE_ATTEMPT: "1"
+      CAPTURE_ALLOWANCE_ATTEMPT: "2"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
-      CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: 2026-11-04T21:01:38Z
-      CAPTURE_DIAGNOSIS: ""
+      CAPTURE_PRIOR_RUN_IDS: '["41912809107"]'
+      CAPTURE_RECONCILED_AT: 2026-11-04T21:09:50Z
+      CAPTURE_DIAGNOSIS: "Independent 10650 evidence classification correction; assert four capsule notices and the exact Chondro label"
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash
