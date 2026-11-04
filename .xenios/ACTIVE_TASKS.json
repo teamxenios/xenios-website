@@ -3577,6 +3577,23 @@
       "createdAt": "2026-11-04T12:16:57.8685793Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-04T12:16:57.8685793Z"
+    },
+    {
+      "id": "KAN122-DOCUMENT-HISTORY-READ-RECOVERY-20261104",
+      "title": "Recover owner-keyed document history display",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-122",
+      "baseSha": "d0fd93bf0402c72bb173f147e884256b04c927ed",
+      "paths": [
+        "client/src/research/pages/member/DocumentCenter.tsx",
+        "client/src/research/pages/member/document-center-recovery.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Implement only the independently reviewable KAN-122 document-history read recovery supported by direct KAN-122 comment 10477 attachment 10008. Use qualified release base d0fd93bf0402c72bb173f147e884256b04c927ed with existing DocumentCenter.tsx runtime blob ecf2a86f6e63def8fa67c1cd298bbec75b562eb2; the focused recovery test is new at that base. Create the separate branch codex/document-history-read-recovery-20261104. Limit work exactly to owner-keyed DocumentCenter display and account-change regression coverage in the two paths named above. Preserve the canonical Auth and session contract unchanged; add no identity, authorization, server, route, API, storage, upload, mutation, role, flag, customer, notification, catalog, checkout, release or production authority. The exact/prefix/wildcard CODE_OWNERSHIP audit and docs/coordination/FILE_OWNERSHIP.json audit found no matching owner for either path. Preserve the active KAN59-PR372-SVG-MEDIA-CONTAINMENT-20261104 lease, the recorded EarlyAccessRoute.tsx owner message and route, every foreign lease, frozen review ref, prior task, handoff, rule, release pointer and history. This metadata claim authorizes the custodian to make no application edit, branch creation, test, build, local Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, registry, owner transfer, settings or production action.",
+      "createdAt": "2026-11-04T12:22:13.8166718Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T12:22:13.8166718Z"
     }
   ]
 }

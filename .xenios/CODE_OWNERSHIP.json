@@ -2961,6 +2961,18 @@
       "state": "active",
       "claimedAt": "2026-11-04T12:16:57.8685793Z",
       "heartbeatAt": "2026-11-04T12:16:57.8685793Z"
+    },
+    {
+      "id": "1f1ff255-e538-4e02-ab0d-76fe5f3042b7",
+      "task": "KAN122-DOCUMENT-HISTORY-READ-RECOVERY-20261104",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/member/DocumentCenter.tsx",
+        "client/src/research/pages/member/document-center-recovery.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-04T12:22:13.8166718Z",
+      "heartbeatAt": "2026-11-04T12:22:13.8166718Z"
     }
   ],
   "rules": [
