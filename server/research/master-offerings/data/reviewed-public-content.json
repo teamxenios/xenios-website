@@ -1,0 +1,382 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "offeringId": "mo_003b0c272099eeb1f114",
+      "sourceVariantId": "mov_9b65ad5bb184691e19e0",
+      "content": {
+        "brand": "FedEx",
+        "summary": "Next-business-day delivery for eligible shipments. FedEx Standard Overnight typically delivers by 5 p.m. to businesses and by 8 p.m. to residences at eligible U.S. addresses.",
+        "overview": "FedEx Standard Overnight is the afternoon option in FedEx’s overnight service. The carrier’s transit window begins after the package is accepted by the applicable cutoff. Processing time depends on the provider and pharmacy. If a pharmacy shipment is arranged through the provider pathway, ask the care team whether this service is available for your address and what shipping charge applies.",
+        "purpose": "Expedited delivery for an eligible shipment with a destination-specific transit commitment.",
+        "specifications": [
+          {
+            "label": "Service",
+            "value": "FedEx Standard Overnight"
+          },
+          {
+            "label": "Service unit",
+            "value": "Shipment"
+          },
+          {
+            "label": "Typical delivery window",
+            "value": "Next business day by 5 p.m. to eligible U.S. businesses or 8 p.m. to eligible U.S. residences"
+          },
+          {
+            "label": "Availability",
+            "value": "Depends on origin, destination and tender cutoff"
+          }
+        ],
+        "cautions": "Check the exact transit commitment for your destination. Saturday service varies by location.",
+        "documentation": [
+          {
+            "label": "FedEx overnight service and delivery terms",
+            "href": "https://www.fedex.com/en-us/shipping/overnight.html"
+          }
+        ]
+      }
+    },
+    {
+      "offeringId": "mo_b126ee9235f0a810dc95",
+      "sourceVariantId": "mov_9813dabbc127f6b382fb",
+      "content": {
+        "summary": "Annatto Pro 125 delivers 125 mg of DeltaGold® tocotrienols from annatto seed in one softgel. This package contains 60 softgels.",
+        "overview": "Each softgel provides a defined mixture of delta- and gamma-tocotrienols, compounds in the vitamin E family. The tocotrienol mixture contains 90% delta and 10% gamma tocotrienols. The label lists gelatin, glycerin and water in addition to the active ingredient. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "60 softgels",
+            "label": "Package"
+          },
+          {
+            "value": "1 softgel",
+            "label": "Serving size"
+          },
+          {
+            "value": "60",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions annatto-derived tocotrienols as a source of dietary antioxidant support.",
+        "ingredients": "Per softgel: DeltaGold® tocotrienols 125 mg from annatto seed (Bixa orellana), standardized to 90% delta-tocotrienols and 10% gamma-tocotrienols. Other ingredients: gelatin, glycerin and water.",
+        "label": "NutriDyn suggests one softgel daily unless your healthcare practitioner directs otherwise. DeltaGold® is a registered trademark of American River Nutrition, LLC. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "If you are pregnant, nursing or taking medication, check with your healthcare practitioner before using this product. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/annatto-e"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/Annatto_Pro_125_SS_ND1273_NEW.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place."
+      }
+    },
+    {
+      "offeringId": "mo_81f2af5cc04167a47413",
+      "sourceVariantId": "mov_845dc69ae9dd6cd6ba34",
+      "content": {
+        "summary": "NutriDyn Brain Restore combines four B vitamins with acetyl-L-carnitine, alpha-GPC, uridine and phosphatidylserine. The bottle contains 210 capsules, with seven capsules per serving.",
+        "overview": "This capsule formula supplies niacinamide, vitamin B6, methylfolate and methylcobalamin alongside four other ingredients. A serving contains 750 mg acetyl-L-carnitine HCl and 600 mg alpha-GPC. The manufacturer’s Supplement Facts panel identifies methylfolate as the folate source. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "210 capsules",
+            "label": "Package"
+          },
+          {
+            "value": "7 capsules",
+            "label": "Serving size"
+          },
+          {
+            "value": "30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions the formula as nutritional support for normal cognitive function. Its product sheet describes research on individual nutrients.",
+        "ingredients": "Per serving: niacin (niacinamide) 100 mg NE, vitamin B6 (pyridoxine HCl) 25 mg, folate (calcium L-5-methyltetrahydrofolate, BioFolate®) 1.7 mg DFE, vitamin B12 (methylcobalamin) 2 mg, acetyl-L-carnitine HCl 750 mg, alpha-GPC 600 mg, uridine 5-monophosphate 500 mg and phosphatidylserine 150 mg. Other ingredients: hypromellose, sodium copper chlorophyllin, microcrystalline cellulose, tricalcium phosphate, vegetable magnesium stearate and silica.",
+        "label": "NutriDyn’s label directs taking seven capsules daily or following a healthcare practitioner’s directions. BioFolate® is a registered trademark of MTC Industries, Inc. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "If you are pregnant, nursing or taking medication, check with your healthcare practitioner before using this product. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/brain-restore"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/Brain_Restore_SS_ND268_NEW.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place."
+      }
+    },
+    {
+      "offeringId": "mo_db61126250f5fa3a3324",
+      "sourceVariantId": "mov_7c6e65b041ae3bfe5262",
+      "content": {
+        "summary": "Collagen Renew is an unflavored powder with four bovine collagen peptide preparations. Each scoop contains 17.5 g of collagen peptides, and a 525 g canister contains about 30 servings.",
+        "overview": "Collagen Renew blends FORTIGEL®, FORTIBONE®, TENDOFORTE® and VERISOL®. The blend supplies 15 g of protein per scoop. The Supplement Facts panel lists the quantity of each preparation separately, and the product sheet includes the typical amino acid profile. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "525 g (18.52 oz) unflavored powder",
+            "label": "Package"
+          },
+          {
+            "value": "About 1 scoop (17.5 g)",
+            "label": "Serving size"
+          },
+          {
+            "value": "About 30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions the formula as a concentrated source of dietary collagen for skin, nail, joint and bone wellness. Its product sheet discusses studies on specific collagen preparations.",
+        "ingredients": "Per scoop: 60 calories, protein 15 g, sodium 35 mg and bovine collagen peptides 17.5 g, including FORTIGEL® 5 g, FORTIBONE® 5 g, TENDOFORTE® 5 g and VERISOL® 2.5 g. The product sheet lists bovine collagen peptides as the only ingredient.",
+        "label": "NutriDyn directs shaking the canister before scooping. Mix a scoop into 8 fl oz of water or another beverage, or add it to a recipe. Follow your healthcare practitioner’s directions if they differ. FORTIGEL®, FORTIBONE®, TENDOFORTE® and VERISOL® are registered trademarks of GELITA AG. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "If you are pregnant, nursing or taking medication, check with your healthcare practitioner before using this product. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/dynamic-multi-collagen-renew"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/Collagen_Renew_SS_ND569_NEW1.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place."
+      }
+    },
+    {
+      "offeringId": "mo_474aba04fff9d244c37b",
+      "sourceVariantId": "mov_6f2d07f881d861bf3991",
+      "content": {
+        "summary": "GI Defend is an unflavored, single-ingredient bovine protein isolate powder. Each 75 g container provides about 30 scoops, with 2.5 g of ImmunoLin® isolate per scoop.",
+        "overview": "GI Defend comes as a powder you can mix into water or another beverage. Its sole ingredient is ImmunoLin®, an immunoglobulin protein isolate derived from bovine serum. The label lists 2 g of protein and 10 calories in an approximately 2.5 g scoop. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "75 g (2.65 oz) unflavored powder",
+            "label": "Package"
+          },
+          {
+            "value": "About 1 scoop (2.5 g)",
+            "label": "Serving size"
+          },
+          {
+            "value": "About 30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn markets the powder for nutritional support of normal digestive and gut barrier function. Its product sheet describes ingredient research.",
+        "ingredients": "Per serving: bovine immunoglobulin protein isolate (ImmunoLin®) 2.5 g, protein 2 g and 10 calories. The manufacturer lists no additional ingredients.",
+        "label": "The manufacturer directs mixing one scoop into 8 fl oz of water or another beverage, unless a healthcare practitioner directs otherwise. ImmunoLin® is a registered trademark of Entera Health, LLC. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "Contains less than 0.05% fractionated bovine blood. If you are pregnant, nursing or taking medication, check with your healthcare practitioner before using this product. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/dynamic-gi-defend-r191"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/GI_Defend_SS_ND850_NEW.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place."
+      }
+    },
+    {
+      "offeringId": "mo_5050cf525ec249ebf0bf",
+      "sourceVariantId": "mov_199a0126b086cc43cb1b",
+      "content": {
+        "summary": "Mito Recharge pairs vitamins and minerals with CoQ10, taurine, acetyl-L-carnitine and botanical compounds. The bottle contains 90 capsules, with three capsules per serving.",
+        "overview": "This vegetarian capsule formula includes vitamin C, vitamin E, vitamin K1 and several B vitamins. It also supplies 100 mg each of CoQ10, N-acetyl-L-cysteine, trans-resveratrol, EGCG and quercetin in a three-capsule serving. The label lists alpha-lipoic acid and R-alpha-lipoic acid separately. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "90 capsules",
+            "label": "Package"
+          },
+          {
+            "value": "3 capsules",
+            "label": "Serving size"
+          },
+          {
+            "value": "30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn developed the formula for nutritional support of normal energy production in cells. Its product sheet cites research on individual components.",
+        "ingredients": "Per serving: vitamin C (magnesium ascorbate) 150 mg, vitamin E (d-alpha tocopheryl succinate) 25 mg, vitamin K1 (phytonadione) 250 mcg, thiamin (thiamin HCl) 25 mg, riboflavin 12 mg, niacin (niacinamide) 12 mg NE, vitamin B6 (pyridoxal-5-phosphate) 7.5 mg, magnesium (magnesium malate and magnesium ascorbate) 75 mg, selenium (L-selenomethionine) 25 mcg, taurine 300 mg, acetyl-L-carnitine HCl 200 mg, trans-resveratrol (Japanese knotweed root extract) 100 mg, CoQ10 100 mg, N-acetyl-L-cysteine 100 mg, EGCG (green tea leaf extract) 100 mg, quercetin 100 mg (as quercetin dihydrate), alpha-lipoic acid 75 mg, R-alpha-lipoic acid 45 mg, sulforaphane glucosinolate (BroccoRaphanin™ broccoli seed concentrate) 15 mg, hydroxytyrosol (olive leaf extract) 10 mg, PQQ (pyrroloquinoline quinone disodium salt) 7 mg and natural mixed tocopherols 0.5 mg. Other ingredients: hypromellose, vegetable magnesium stearate and silica.",
+        "label": "The manufacturer suggests three capsules per day unless your healthcare practitioner directs otherwise. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "Check with your healthcare practitioner before use if you are pregnant, nursing or taking medication. This formula contains vitamin K1. Discuss vitamin K intake with your clinician if you take warfarin. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/mito-recharge-r167"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/Mito_Recharge_SS_ND812_NEW.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place."
+      }
+    },
+    {
+      "offeringId": "mo_381d77419fba80336299",
+      "sourceVariantId": "mov_b90f51978a7223e9fc58",
+      "content": {
+        "summary": "Omega Pure EPA-DHA 2400 is a lemon-flavored liquid fish oil. Each teaspoon provides 1,410 mg EPA and 990 mg DHA. The 150 mL bottle contains approximately 30 servings.",
+        "overview": "NutriDyn uses triglyceride-form omega-3s from anchovy, sardine and mackerel in this liquid supplement. The number in the product name refers to the combined EPA and DHA per 5 mL serving. Including other omega-3s, each serving provides 2.8 g of total omega-3 fatty acids. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "150 mL liquid",
+            "label": "Package"
+          },
+          {
+            "value": "1 teaspoon (5 mL)",
+            "label": "Serving size"
+          },
+          {
+            "value": "About 30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "The measured serving provides dietary EPA and DHA. NutriDyn positions the product as nutritional support for normal cardiovascular function.",
+        "ingredients": "Per serving: 40 calories, total fat 4.5 g, cholesterol 20 mg, total omega-3 fatty acids 2.8 g, including EPA 1,410 mg, DHA 990 mg and other omega-3s 400 mg. The oil comes from anchovy, sardine and mackerel. Other ingredients include natural lemon flavor and an antioxidant blend of natural tocopherols, rosemary extract and ascorbyl palmitate.",
+        "label": "The manufacturer suggests one 5 mL teaspoon daily unless your healthcare practitioner directs otherwise. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "Contains fish (anchovy, sardine and mackerel). Check with your healthcare practitioner before use if you are pregnant, nursing or taking medication or other supplements. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/omega-pure-epa-dha-2400"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/Omega_Pure_EPA-DHA_2400_SS_ND417_NEW.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place before opening. Refrigerate after opening."
+      }
+    },
+    {
+      "offeringId": "mo_453f612e1a8a3021d41c",
+      "sourceVariantId": "mov_ce2fc5bcfb622d8de591",
+      "content": {
+        "summary": "PRM Resolve supplies a marine oil concentrate in lemon-flavored softgels. A two-softgel serving provides 1,200 mg total omega-3 fatty acids and 400 mcg total pro-resolving lipid mediators (PRMs).",
+        "overview": "Each 60-softgel bottle provides 30 servings. A serving includes 580 mg EPA, 420 mg DHA and 200 mg additional omega-3s. The Supplement Facts panel lists 400 mcg of total PRMs per serving, including 18-HEPE, 17-HDHA and 14-HDHA. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "60 softgels",
+            "label": "Package"
+          },
+          {
+            "value": "2 softgels",
+            "label": "Serving size"
+          },
+          {
+            "value": "30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions the formula as nutritional support for normal immune response. Its product sheet discusses research on lipid mediators.",
+        "ingredients": "Per serving: 25 calories, total fat 2 g, cholesterol 10 mg, protein less than 1 g and marine lipid concentrate 2.1 g. Total omega-3s are 1,200 mg (EPA 580 mg, DHA 420 mg and other omega-3s 200 mg). Total PRMs are 400 mcg, including 18-HEPE, 17-HDHA and 14-HDHA. Other ingredients: concentrated marine oil from anchovy, sardine, squid and mackerel, a gelatin shell made with glycerin and purified water, natural lemon flavor and natural mixed tocopherols.",
+        "label": "NutriDyn suggests two softgels daily unless your healthcare practitioner directs otherwise. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "Contains fish (anchovy, sardine and mackerel) and squid. Check with your healthcare practitioner before use if you are pregnant, nursing or taking medication or other supplements. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/prm-resolve"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/PRM_Resolve_SS_ND447_NEW.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place."
+      }
+    },
+    {
+      "offeringId": "mo_c875679cdaafb9cf7336",
+      "sourceVariantId": "mov_80916d9782f415a13ad3",
+      "content": {
+        "summary": "PeriMenopause Support is a 30-tablet botanical supplement. Each tablet combines the Estro G-100® root extract blend with ashwagandha root and milk thistle seed powders.",
+        "overview": "This tablet formula supplies 500 mg of Estro G-100®, a blend of extracts from three roots, alongside 500 mg of ashwagandha root powder and 100 mg of milk thistle seed powder. The label gives the total for the root extract blend. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "30 tablets",
+            "label": "Package"
+          },
+          {
+            "value": "1 tablet",
+            "label": "Serving size"
+          },
+          {
+            "value": "30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions this botanical blend as wellness support during the transition to menopause, including support for normal hormonal balance.",
+        "ingredients": "Per tablet: Estro G-100® blend 500 mg (Angelica gigas nakai, Cynanchum wilfordii and Phlomis umbrosa root extracts), ashwagandha root powder 500 mg and milk thistle seed powder 100 mg. Other ingredients: microcrystalline cellulose, vegetable stearic acid, dicalcium phosphate, croscarmellose sodium, vegetable magnesium stearate, silicon dioxide and resin.",
+        "label": "The manufacturer suggests one tablet with food at a consistent time each day unless your healthcare practitioner directs otherwise. Estro G-100® is a registered trademark of Helios Corp. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "Do not use if pregnant or nursing. NutriDyn advises against use with known or suspected estrogen-dependent cancer. If you take medication, consult your healthcare practitioner before use. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/perimenopause-support"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/PeriMenopause_Support_SS_ND565_NEW_.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place."
+      }
+    },
+    {
+      "offeringId": "mo_62754736300e3e130eb5",
+      "sourceVariantId": "mov_8af22768144442c60424",
+      "content": {
+        "summary": "Stress Essentials Balance is a 180-capsule blend of cordyceps, ashwagandha, Asian ginseng and rhodiola. Each three-capsule serving contains five separately listed ingredients.",
+        "overview": "The formula combines cordyceps fruiting body extract with Sensoril® ashwagandha leaf and root extract. It uses two forms of Asian ginseng, a standardized extract and a root powder, plus a standardized rhodiola root extract. Each bottle contains 60 labeled servings. Use Quick Order to request this package. The team reviews the request and confirms availability before an order can proceed.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "180 capsules",
+            "label": "Package"
+          },
+          {
+            "value": "3 capsules",
+            "label": "Serving size"
+          },
+          {
+            "value": "60",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions this dietary supplement for nutritional support of a normal response to everyday stress.",
+        "ingredients": "Per serving: cordyceps fruiting body extract (Cordyceps militaris) 800 mg, Sensoril® ashwagandha leaf and root extract (Withania somnifera) 400 mg, Asian ginseng leaf and root extract (Panax ginseng, 14% ginsenosides) 107 mg, rhodiola root extract (Rhodiola rosea, standardized to 1 mg salidroside and 3 mg rosavins) 100 mg and Asian ginseng root powder (Panax ginseng) 58 mg. Other ingredients: hypromellose, microcrystalline cellulose, vegetable magnesium stearate and silica.",
+        "label": "The manufacturer suggests three capsules twice daily unless your healthcare practitioner directs otherwise. Sensoril® is a registered trademark of Natreon, Inc. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "Do not use if pregnant or nursing. Speak with your healthcare practitioner before use, especially if you take heart medication or have a chronic health condition. Keep away from children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/stress-essentials-balance-seb"
+          },
+          {
+            "label": "NutriDyn Supplement Facts and product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/Stress_Essentials_Balance_SS_ND422_NEW.pdf"
+          }
+        ],
+        "storage": "Store in a cool, dry place."
+      }
+    }
+  ]
+}

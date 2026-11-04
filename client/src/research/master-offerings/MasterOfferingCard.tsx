@@ -185,6 +185,7 @@ export function MasterOfferingCard({
   product: MasterOfferingCardView;
 }) {
   const summary = product.priceSummary;
+  const reviewedContent = product.variants.length === 1 ? product.variants[0].reviewedContent : undefined;
   const headingId = `mo-card-${product.id}`;
   return (
     <li className="min-w-0">
@@ -224,6 +225,11 @@ export function MasterOfferingCard({
           />
         </div>
 
+        {reviewedContent && (
+          <p className="body-s text-ink-2 min-w-0 break-words">
+            {reviewedContent.brand && <strong>{reviewedContent.brand} · </strong>}{reviewedContent.summary}
+          </p>
+        )}
         <p className="body-s text-ink-2 min-w-0 break-words">
           {product.stateExplanation}
         </p>

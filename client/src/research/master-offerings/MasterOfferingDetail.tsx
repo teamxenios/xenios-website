@@ -9,6 +9,7 @@ import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import { isContradictoryPurchase } from "./catalog-access-path";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
+import { ReviewedProductContent } from "./ReviewedProductContent";
 import {
   purchaseQuantityControl,
   type AcceptedExactVariantQuantityCapability,
@@ -261,7 +262,7 @@ export function MasterOfferingDetail({
             {product.stateExplanation}
           </p>
         </div>
-        {product.overview && (
+        {product.overview && !selected?.reviewedContent && (
           <p className="body-s text-ink-2 max-w-[70ch] min-w-0 break-words">
             {product.overview}
           </p>
@@ -339,6 +340,8 @@ export function MasterOfferingDetail({
           </div>
         </section>
       )}
+
+      {selected?.reviewedContent && <ReviewedProductContent content={selected.reviewedContent} />}
 
       <CatalogEvidenceNotice />
 
