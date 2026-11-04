@@ -61,6 +61,8 @@ def artifact(role, path, dims):
         require(all(not re.search(r"BPC-157|mg/ml|lot\s*:|exp\s*:|purity|assay|batch tested|cold chain|sample-only",
                                   word, re.I) for word in words), f"Unverified text: {path}")
         if role == "wrap_editable_master":
+            require(words.count("PRODUCT CODE") == 1 and "QUICK ORDER SKU" not in words,
+                    "Wrap must use the exact PRODUCT CODE heading")
             require(SKU in words and "SUPPLIER PROOF - NOT PRESS READY" in words, "Wrap code or proof label missing")
         else:
             require(not any("GEN-GRP-" in word for word in words), "Catalog code entered front artwork")

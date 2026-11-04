@@ -74,7 +74,7 @@
     <text x="0" y="437" class="value">Research Use Only</text>
     <text x="0" y="473" class="note">Nonclinical use only</text>
     <text x="0" y="510" class="note">For laboratory research use only.</text>
-    <text x="0" y="545" class="label">QUICK ORDER SKU</text>
+    <text x="0" y="545" class="label">PRODUCT CODE</text>
     <text x="0" y="582" class="value">GEN-GRP-0280</text>
     <text x="0" y="660" class="note">Catalog identifier only.</text>
     <text x="0" y="694" class="note">Not lot or manufacturing traceability.</text>

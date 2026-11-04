@@ -18,13 +18,15 @@ function substitute(artwork, expected, replacement) {
 }
 
 await Promise.all([mkdir(labels, { recursive: true }), mkdir(assets, { recursive: true })]);
-for (const kind of ['front-artwork', 'wrap-proof']) {
+const kinds = process.argv.includes('--wrap-only') ? ['wrap-proof'] : ['front-artwork', 'wrap-proof'];
+for (const kind of kinds) {
   const template = await readFile(join(templates, 'bpc-157-5mg-' + kind + '-v1.svg'), 'utf8');
   let artwork = substitute(template.replaceAll('\r\n', '\n'), 'BPC-157', 'Dihexa');
   artwork = substitute(artwork, '5 mg', '10 mg');
   if (kind === 'wrap-proof') {
     artwork = substitute(artwork, 'BPC157-5-WRAP-v1', 'DIHEXA-10-WRAP-v1');
     artwork = substitute(artwork, 'GEN-GRP-0264', 'GEN-GRP-0280');
+    artwork = substitute(artwork, 'QUICK ORDER SKU', 'PRODUCT CODE');
   }
 
   const stem = 'dihexa-10mg-' + kind + '-v1';

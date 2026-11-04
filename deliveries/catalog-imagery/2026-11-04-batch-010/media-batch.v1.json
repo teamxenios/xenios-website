@@ -44,8 +44,8 @@
     "format": "png",
     "width": 1600,
     "height": 1460,
-    "bytes": 514939,
-    "sha256": "8a278637be8fafa6712085758e8ada3f1c868a212e17c2169dfabf3ee095f481"
+    "bytes": 514455,
+    "sha256": "184eb58f527b9355cdf7673e7b2a6104373fb0d6ece61436140a2190ba70397f"
   },
   "records": [
     {
@@ -118,8 +118,8 @@
           "format": "svg",
           "width": 2400,
           "height": 1200,
-          "bytes": 6972,
-          "sha256": "99a660b91e0b4224eedd4d72c29a0adb33cfb0f55638f4aa518c364e33cb770b"
+          "bytes": 6969,
+          "sha256": "d20131d856c8714eb891f134acf1a30881d176838a708b8ff1670f37f3e384d8"
         },
         "wrap_preview": {
           "role": "wrap_preview",
@@ -127,8 +127,8 @@
           "format": "png",
           "width": 2400,
           "height": 1200,
-          "bytes": 243941,
-          "sha256": "5513158b743be006c63a18d95de23cbf599606214886fa4ac6c422b0fd1c5650"
+          "bytes": 243466,
+          "sha256": "0f98fdd4add9f17029381f7f6e41802a6b99a12454ed2a3d2edaa8b9a8c1ddd9"
         }
       },
       "websiteReviewCandidates": [
