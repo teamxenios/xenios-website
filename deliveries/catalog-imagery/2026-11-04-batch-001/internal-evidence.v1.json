@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-001",
+  "createdAt": "2026-11-04T19:17:08.075Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "records": [
+    {
+      "offeringId": "mo_af289f611c02b3fcef01",
+      "sourceVariantId": "mov_ca3e45ae9712aee91430",
+      "field": "media",
+      "canonicalName": "BPC-157",
+      "canonicalVariant": "BPC-157 10 mg",
+      "catalogSku": "R360-BPC157-10MG-VIAL",
+      "assetType": "concept",
+      "packagingState": "design",
+      "artworkVersion": "BPC157-10-CPT-v1",
+      "sourceAndReuseBasis": "Original Xenios concept render generated for this exact offering/source-variant pair. The existing release packshot and the deterministic label panel were used only as concept references. No supplier photograph was copied into the output.",
+      "rights": {
+        "state": "ORIGINAL_XENIOS_RENDER",
+        "evidenceReference": "built-in image generation receipt exec-dbb2757b-5b61-4c81-9923-99042225c53b; editable label master in this batch",
+        "rightsClearedForInternalReview": true,
+        "publicationAuthorized": false
+      },
+      "sources": [
+        {
+          "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+          "sha256": "cb938e446b1eab03b9e5721437890fd580c67245e9598408cc4356048a8ab59f",
+          "supports": [
+            "offeringId",
+            "sourceVariantId",
+            "BPC-157",
+            "10 mg",
+            "Lyophilized Vial",
+            "research-use request-access classification"
+          ]
+        },
+        {
+          "path": "config/research/production-completion/catalog-live-identity-closure-20260922.json",
+          "sha256": "5af4db6cd8c8a5eec0f6ec50eded0b9243a0aac6df659ccbe381ee39d1b4d367",
+          "supports": [
+            "exact canonical ID link",
+            "single vial, 10 mg",
+            "catalog SKU R360-BPC157-10MG-VIAL"
+          ],
+          "limitation": "The catalog SKU is a commerce identity, not a manufacturing lot or traceability code. Availability and commerce fields are outside this media batch."
+        },
+        {
+          "path": "client/public/research/product-media/bpc-157-packshot.webp",
+          "sha256": "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1",
+          "width": 768,
+          "height": 768,
+          "bytes": 26570,
+          "supports": [
+            "prior Xenios concept visual direction"
+          ],
+          "limitation": "Existing release asset is explicitly a packaging design concept and does not prove current delivered packaging."
+        }
+      ],
+      "review": {
+        "status": "pending_independent_review",
+        "reviewer": null,
+        "publicationDisposition": "quarantined_in_delivery_path"
+      },
+      "preciseGaps": [
+        "Supplier proof approval is not present.",
+        "Printed/in-use packaging evidence is not present.",
+        "Actual vial, cap, label dimensions, dieline, bleed, material and finish are not present.",
+        "Supplier/manufacturer attribution and supplier-approved storage text are not present.",
+        "No matching lot, expiry/BUD, purity, certification, COA or documentation QR is authorized."
+      ]
+    },
+    {
+      "offeringId": "mo_b126ee9235f0a810dc95",
+      "sourceVariantId": "mov_9813dabbc127f6b382fb",
+      "field": "media_source_candidate",
+      "canonicalName": "Annatto Pro 125",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R271L",
+      "expectedPackage": "60 softgels",
+      "officialProductPage": "https://nutridyn.com/annatto-e",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/v/e/ved-Base-21410.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Confirm the R271L-to-current-package crosswalk and visually verify the 60-softgel front label; the official image filename uses VED rather than R271L."]
+    },
+    {
+      "offeringId": "mo_81f2af5cc04167a47413",
+      "sourceVariantId": "mov_845dc69ae9dd6cd6ba34",
+      "field": "media_source_candidate",
+      "canonicalName": "Brain Restore",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R152",
+      "expectedPackage": "210 capsules",
+      "officialProductPage": "https://nutridyn.com/brain-restore",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r152-Base-43423.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Independent visual verification of the exact 210-capsule package is pending."]
+    },
+    {
+      "offeringId": "mo_db61126250f5fa3a3324",
+      "sourceVariantId": "mov_7c6e65b041ae3bfe5262",
+      "field": "media_source_candidate",
+      "canonicalName": "Collagen Renew (Dynamic Multi)",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R190",
+      "expectedPackage": "525 g (18.52 oz) unflavored powder",
+      "officialProductPage": "https://nutridyn.com/dynamic-multi-collagen-renew",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r190-Base-48618_1.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Independent visual verification of the exact 525 g package is pending."]
+    },
+    {
+      "offeringId": "mo_474aba04fff9d244c37b",
+      "sourceVariantId": "mov_6f2d07f881d861bf3991",
+      "field": "media_source_candidate",
+      "canonicalName": "GI Defend",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R191",
+      "expectedPackage": "75 g (2.6 oz) unflavored powder",
+      "officialProductPage": "https://nutridyn.com/dynamic-gi-defend-r191",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r191-Base-57126_1.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Independent visual verification of the exact 75 g package is pending."]
+    },
+    {
+      "offeringId": "mo_d82610b6fe7ebf3b4d63",
+      "sourceVariantId": "mov_f5d63d95caa3d6d0a7a0",
+      "field": "media_source_candidate",
+      "canonicalName": "Magtein (Magnesium L-Threonate)",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R227",
+      "expectedPackage": "90 capsules",
+      "officialProductPage": "https://nutridyn.com/magteinr",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/2/r227-Base-39731_1.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Independent visual verification of the exact 90-capsule package is pending."]
+    },
+    {
+      "offeringId": "mo_5050cf525ec249ebf0bf",
+      "sourceVariantId": "mov_199a0126b086cc43cb1b",
+      "field": "media_source_candidate",
+      "canonicalName": "Mito Recharge",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R167",
+      "expectedPackage": "90 capsules",
+      "officialProductPage": "https://nutridyn.com/mito-recharge-r167",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r167-Base-61632_1.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Independent visual verification of the exact 90-capsule package is pending."]
+    },
+    {
+      "offeringId": "mo_381d77419fba80336299",
+      "sourceVariantId": "mov_b90f51978a7223e9fc58",
+      "field": "media_source_candidate",
+      "canonicalName": "Omega Pure EPA-DHA 2400",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R817E",
+      "expectedPackage": "150 mL liquid",
+      "officialProductPage": "https://nutridyn.com/omega-pure-epa-dha-2400",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/8/r817e-Base-89028_1.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Independent visual verification of the exact 150 mL package is pending."]
+    },
+    {
+      "offeringId": "mo_453f612e1a8a3021d41c",
+      "sourceVariantId": "mov_ce2fc5bcfb622d8de591",
+      "field": "media_source_candidate",
+      "canonicalName": "PRM Resolve",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R848",
+      "expectedPackage": "60 softgels",
+      "officialProductPage": "https://nutridyn.com/prm-resolve",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/p/r/prm-Base-31703_1.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Confirm the R848-to-current-package crosswalk and visually verify the 60-softgel front label; the official image filename uses PRM rather than R848."]
+    },
+    {
+      "offeringId": "mo_c875679cdaafb9cf7336",
+      "sourceVariantId": "mov_80916d9782f415a13ad3",
+      "field": "media_source_candidate",
+      "canonicalName": "PeriMenopause Support",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R199",
+      "expectedPackage": "30 tablets",
+      "officialProductPage": "https://nutridyn.com/perimenopause-support",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r199-Base-50775_1.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Independent visual verification of the exact 30-tablet package is pending."]
+    },
+    {
+      "offeringId": "mo_62754736300e3e130eb5",
+      "sourceVariantId": "mov_8af22768144442c60424",
+      "field": "media_source_candidate",
+      "canonicalName": "Stress Essentials Balance",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R123L",
+      "expectedPackage": "180 capsules",
+      "officialProductPage": "https://nutridyn.com/stress-essentials-balance-seb",
+      "officialImageCandidate": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/s/e/seb-Base-78405.png",
+      "rightsState": "OFFICIAL_SOURCE_RIGHTS_PENDING",
+      "assetDownloaded": false,
+      "publicationAuthorized": false,
+      "reviewStatus": "candidate_pending_independent_review",
+      "preciseGaps": ["Written reseller/media permission is not on file.", "Confirm the R123L-to-current-package crosswalk and visually verify the 180-capsule front label; the official image filename uses SEB rather than R123L."]
+    }
+  ],
+  "nonAssetDispositions": [
+    {
+      "offeringId": "mo_003b0c272099eeb1f114",
+      "sourceVariantId": "mov_9b65ad5bb184691e19e0",
+      "canonicalName": "FedEx Standard Overnight",
+      "disposition": "service_not_physical_product",
+      "requiredMediaKind": "service",
+      "packagingState": "not_applicable",
+      "status": "pending_original_service_presentation_and_trademark_review"
+    },
+    {
+      "offeringId": "mo_a7a7e307d58f24affb42",
+      "sourceVariantId": "mov_512ed6b875c04eee4753",
+      "canonicalName": "Syringes & Alcohol Swabs",
+      "disposition": "physical_supply_requires_exact_product_image",
+      "status": "blocked_exact_physical_sku",
+      "preciseGaps": [
+        "Manufacturer and model are absent.",
+        "Syringe gauge, volume, count and swab count are absent.",
+        "Exact package basis, official photo and media rights are absent."
+      ]
+    }
+  ],
+  "externalEvidenceInputs": [
+    {
+      "path": "C:/Users/sboad/Downloads/XENIOS_CATALOG_CONTENT_2026-11-04/supplements/supplements-candidate.json",
+      "sha256": "e31cc955440f8213eef4d63ce59ffb0bcf522bca7cd53c417c8d6a378fcc1f7e",
+      "purpose": "Exact-ID content lane package and brand candidates; not imported into this repository."
+    },
+    {
+      "path": "C:/Users/sboad/Downloads/XENIOS_CATALOG_CONTENT_2026-11-04/supplements/supplements-evidence.internal.json",
+      "sha256": "5dbfd85a248c49c4eb30279789d3f060d4364eede86cea48664cd328809d390f",
+      "purpose": "Exact supplier item codes and source evidence; not a media-rights grant."
+    }
+  ],
+  "unresolvedSupplier": {
+    "submittedName": "Melentes",
+    "status": "unresolved",
+    "needed": "Exact legal or trading name tied to a Xenios invoice, supplier agreement, approved catalog, label or official domain. Do not substitute another company."
+  }
+}

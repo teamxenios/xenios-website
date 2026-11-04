@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-001",
+  "createdAt": "2026-11-04T19:17:08.075Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "sha256": "cb938e446b1eab03b9e5721437890fd580c67245e9598408cc4356048a8ab59f",
+    "offeringCount": 420,
+    "sourceVariantCount": 420
+  },
+  "contactSheet": {
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-001/contact-sheet.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 555457,
+    "sha256": "f377f7c228742916d53b57bf620a4fe7d3a8ffa87bd5916cdf23604e85c39c87"
+  },
+  "publicationState": "review_only_not_runtime",
+  "records": [
+    {
+      "offeringId": "mo_af289f611c02b3fcef01",
+      "sourceVariantId": "mov_ca3e45ae9712aee91430",
+      "media": {
+        "kind": "concept",
+        "packagingState": "design",
+        "artworkVersion": "BPC157-10-CPT-v1",
+        "images": [
+          {
+            "role": "primary",
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-001/assets/bpc-157-10mg-vial-concept-v1-1024.webp",
+            "altText": "Complete Xenios BPC-157 10 mg lyophilized vial packaging concept, clearly marked not for production",
+            "width": 1024,
+            "height": 1024,
+            "bytes": 63592,
+            "sha256": "32aa4a616cb6b3954bd632c346456b1a732a3925c506efa4853b5a1f60b10baa"
+          },
+          {
+            "role": "label",
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-001/assets/bpc-157-10mg-label-panel-concept-v1-r3.webp",
+            "altText": "Editable Xenios BPC-157 10 mg concept label panel showing verified identity and clearly marked pending fields",
+            "width": 1600,
+            "height": 900,
+            "bytes": 129390,
+            "sha256": "9db888803a9b26427e977f3161332fe7a73007a210a70698b675cee793d69b24"
+          }
+        ],
+        "sourceMasters": [
+          {
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-001/assets/bpc-157-10mg-vial-concept-v1.png",
+            "format": "png",
+            "width": 1254,
+            "height": 1254,
+            "bytes": 1739239,
+            "sha256": "349f11c3e60a2daa3c39d68d34d6520bb71036066077751b526a77485c84cdc8"
+          },
+          {
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-001/labels/bpc-157-10mg-concept-v1.svg",
+            "format": "svg",
+            "width": 1600,
+            "height": 900,
+            "bytes": 6133,
+            "sha256": "30c873c5cc06a593503aa8373c2e4c884af39aadbdde3a2cf5b7866db584cf2c"
+          },
+          {
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-001/assets/bpc-157-10mg-label-panel-concept-v1-r3.png",
+            "format": "png",
+            "width": 1600,
+            "height": 900,
+            "bytes": 434125,
+            "sha256": "15545f406451d2817c789d9f7d34f7f38706a20e9e3d8963004c17b17a09a5e5"
+          }
+        ],
+        "exactDepictedFacts": {
+          "productName": "BPC-157",
+          "strength": "10 mg",
+          "form": "Lyophilized vial",
+          "totalContent": "10 mg",
+          "classification": [
+            "Research Use Only",
+            "Nonclinical use only"
+          ],
+          "catalogSku": "R360-BPC157-10MG-VIAL"
+        },
+        "notEstablishedByArtwork": [
+          "actual physical container specification",
+          "supplier-approved label proof",
+          "printed or in-use packaging",
+          "supplier or manufacturer identity",
+          "storage instructions",
+          "lot, expiry or beyond-use data",
+          "purity, assay, certification or COA",
+          "label dimensions, dieline, bleed, material or finish"
+        ]
+      }
+    }
+  ]
+}

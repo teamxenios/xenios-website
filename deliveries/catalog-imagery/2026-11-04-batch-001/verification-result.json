@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "verifiedAt": "2026-11-04T19:17:08.075Z",
+  "batchId": "catalog-imagery-2026-11-04-batch-001",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "canonicalPairs": 420,
+  "mediaRecords": 1,
+  "checkedAssets": 5,
+  "contactSheetChecked": true,
+  "supplierSourceCandidates": 10,
+  "nonAssetDispositions": 2,
+  "independentlyReviewedExactAssets": 0,
+  "publicationAuthorizedAssets": 0,
+  "errors": []
+}
