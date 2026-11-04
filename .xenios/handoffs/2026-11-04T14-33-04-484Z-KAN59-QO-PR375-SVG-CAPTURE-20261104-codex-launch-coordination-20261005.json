@@ -1,0 +1,52 @@
+{
+  "approval": "KAN-31/10573",
+  "handoff": "KAN-31/10576",
+  "candidate": "f6c6935ef4e0972a02bbf0edc1666170f0ddabff",
+  "candidateTree": "8f5a32cb1d597a7155c45417826534d807c41885",
+  "prep": "c77ef1238db8f99ad375c94f3a56a19d6ea81367",
+  "launch": "3193ca8017639d574188ce0d6d69567285797110",
+  "launchTree": "248f9a165656984a3b05acfc7eda9f860ade9b52",
+  "run": 41845724634,
+  "job": 126628582832,
+  "artifact": 13332075357,
+  "artifactDigest": "4389596c31629296f406a7a9a243b5afaf91df17d3f691110ae9d305707b4a56",
+  "manifestSHA256": "58721dedf68d0f569661d51c0405082ae35d0df80b72ea75596c06244a3e8f72",
+  "status": "passed",
+  "assertionsPassed": 165,
+  "assertionsFailed": 0,
+  "contexts": 10,
+  "screenshots": 30,
+  "chromium": "156.0.8078.4",
+  "guest": {
+    "img": [
+      202,
+      145.5
+    ],
+    "frame": [
+      226,
+      169.5
+    ],
+    "padding": 12
+  },
+  "member": {
+    "img": [
+      206,
+      148.5
+    ],
+    "frame": [
+      230,
+      172.5
+    ],
+    "padding": 12
+  },
+  "accounting": {
+    "used": 1,
+    "remaining": 1,
+    "rerunUsed": false,
+    "priorAllowanceRuns": [
+      41768768110,
+      41769259738
+    ]
+  },
+  "scope": "Non-production loopback synthetic, exact fixture and visible images independently checked by Root. c16 rendered disposition pending. Member list marker persists as separate pre-existing optional finding."
+}

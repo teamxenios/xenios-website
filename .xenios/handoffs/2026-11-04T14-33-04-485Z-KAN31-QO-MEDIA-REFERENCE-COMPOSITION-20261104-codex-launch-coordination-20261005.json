@@ -1,0 +1,39 @@
+{
+  "pr": 377,
+  "head": "d0e50b578b58f455b034667421e2d8e8b196628f",
+  "tree": "d978c4d53d902f51c9ffee93852b9e00dab50d47",
+  "parents": [
+    "f6c6935ef4e0972a02bbf0edc1666170f0ddabff",
+    "c7ae0e351c2bf08d4f28ea8ffb130de253da6588"
+  ],
+  "providerMerge": "80c0b95118854340c869ed99a14bb24ab841af29",
+  "providerTree": "d978c4d53d902f51c9ffee93852b9e00dab50d47",
+  "sourceAcceptance": "ci_contract_ready independently accepted exact composed scope",
+  "run": 41845843247,
+  "attempt": 1,
+  "checks": {
+    "app": 15368,
+    "test": 126628979987,
+    "typecheck": 126628980486,
+    "build": 126628980719,
+    "protection": 126628981095,
+    "completion": 126632923924
+  },
+  "tests": {
+    "pass": 18500,
+    "skip": 83,
+    "fail": 0,
+    "filesPass": 993,
+    "filesSkip": 6,
+    "focusedOverlapsFull": 145,
+    "referenceNotice": 11,
+    "continuation": 21,
+    "orderEntry": 35,
+    "receipt": 9,
+    "form": 68,
+    "storefront": 71,
+    "media": 6,
+    "serverComposition": 4
+  },
+  "scope": "Provisional draft. Closed-intake receipt open, separate PR375 browser run does not cover this tree. Final composition and release not performed."
+}

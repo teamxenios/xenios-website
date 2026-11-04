@@ -1,0 +1,57 @@
+{
+  "pr": 376,
+  "source": "6ac16ce181f9d88255ea39a6cfe68d84dad64096",
+  "release": "1d7ac35708e1101c7f08dfb128b29afc0f979dab",
+  "tree": "613b566f53c062247488b31493953b806b9ebf8b",
+  "parents": [
+    "d0fd93bf0402c72bb173f147e884256b04c927ed",
+    "6ac16ce181f9d88255ea39a6cfe68d84dad64096"
+  ],
+  "merge": "normal match-head protected, no deletion, override or force",
+  "mergeTime": "2026-11-04T14:13:33Z",
+  "authorization": [
+    "KAN-225/10574",
+    "KAN-13/10575"
+  ],
+  "releaseCI": {
+    "run": 41845436725,
+    "attempt": 1,
+    "passed": 18426,
+    "failed": 0,
+    "skipped": 83,
+    "filesPassed": 990,
+    "filesSkipped": 6,
+    "app": 15368,
+    "exactFourCheckouts": true,
+    "test": 126627589339,
+    "typecheck": 126627589192,
+    "build": 126627589426,
+    "protection": 126627589046,
+    "completion": 126631436308
+  },
+  "render": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "status": "live",
+    "deploy": "dep-dbljubtckfvc73flu06g",
+    "finishedAt": "2026-11-04T14:21:48.629015Z",
+    "trigger": "new_commit",
+    "checksPass": true
+  },
+  "rollback": {
+    "sha": "d0fd93bf0402c72bb173f147e884256b04c927ed",
+    "tree": "7c0b0dcb7e28e3310477e277f92c239f43435d78",
+    "deploy": "dep-dbkv38s9v7es73d4tumg",
+    "performed": false
+  },
+  "static": {
+    "result": "PASS_PUBLIC_STATIC_ONLY",
+    "entry": "/assets/index-C5U1RSeI.js",
+    "scripts": 192,
+    "htmlFallbacks": 0,
+    "markerAsset": "DocumentCenter-BCWMcX7z.js",
+    "markerSHA256": "8a73fb75f2d1b3a2f543d0d095ad9bbb82ba299f06c081d6e0305b5806781bf9",
+    "scriptSHA256": "1b10c301f376df352ba53a76df602b0d2433d2fc72d53b4a85d78cc8d0d47337",
+    "authenticatedRuntimeProven": false
+  }
+}

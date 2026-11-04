@@ -3611,7 +3611,7 @@
       "id": "KAN59-QO-PR375-SVG-CAPTURE-20261104",
       "title": "Capture bounded PR375 SVG containment evidence",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "000f60154fb7baf88bfbd66d317344f0eef5960e",
       "paths": [
@@ -3625,13 +3625,19 @@
       "scopeNote": "Implement only the bounded PR375 SVG-containment capture explicitly approved by Samuel at KAN-31 comment 10573, using the proposal at KAN-31 comment 10572 attachment 10018. Use the existing QA route codex/qo-visual-capture-20261103 at exact base 000f60154fb7baf88bfbd66d317344f0eef5960e; no new branch is required. Limit work exactly to the workflow, capture script and fixture script named in paths. Root may apply the three-file proposal, prepare a dormant [skip ci] harness revision, bind approved candidate f6c6935ef4e0972a02bbf0edc1666170f0ddabff/tree 8f5a32cb1d597a7155c45417826534d807c41885 and launch only within the exact KAN-31/10573 maximum of two attempts. Preserve the original capture tasks, HANDOFF leases, receipts, runs and refs without reopening them. The exact/prefix/wildcard audit found no active CODE_OWNERSHIP conflict, and docs/coordination/FILE_OWNERSHIP.json contains no match. Add no application source, broader workflow, pinned tool, real credential, private data, payment, managed environment, release or production behavior. This metadata claim authorizes the custodian to make no source or workflow edit, branch change, capture dispatch, local Node, test, browser, provider, database, SQL, staging, review reroute, merge, deployment, identity, worktree, settings or production action.",
       "createdAt": "2026-11-04T14:09:52.4362686Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T14:09:52.4362686Z"
+      "claimedAt": "2026-11-04T14:09:52.4362686Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "3193ca8017639d574188ce0d6d69567285797110",
+        "file": ".xenios/handoffs/2026-11-04T14-33-04-484Z-KAN59-QO-PR375-SVG-CAPTURE-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T14:33:04.4843271Z"
+      }
     },
     {
       "id": "KAN31-QO-MEDIA-REFERENCE-COMPOSITION-20261104",
       "title": "Compose PR375 media containment with accepted reference-owner correction",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-31",
       "baseSha": "f6c6935ef4e0972a02bbf0edc1666170f0ddabff",
       "paths": [
@@ -3647,7 +3653,32 @@
       "scopeNote": "Implement only the provisional media/reference composition authorized by Samuel at KAN-225 comments 10571 and 10574. Use exact PR375 base f6c6935ef4e0972a02bbf0edc1666170f0ddabff/tree 8f5a32cb1d597a7155c45417826534d807c41885 and compose exact independently accepted reference-owner source c7ae0e351c2bf08d4f28ea8ffb130de253da6588/tree 169f5b6b867f4fb1fbdcf5606e3cf86d46b2342a through the private verified four-path merge resolution. Create the separate branch codex/qo-media-reference-composition-20261104. Limit work exactly to the reference notice source/test and continuation source/test named in paths. The closed-intake receipt, EarlyAccessRoute.tsx and its existing FILE_OWNERSHIP owner are explicitly outside this claim; preserve the recorded owner request and make no owner transfer. Preserve PR372, PR375 and PR373 as frozen exact refs, all private work and every prior task, lease, handoff, receipt, rule, history, release pointer and foreign ownership record. The exact/prefix/wildcard audit found no active CODE_OWNERSHIP conflict, and docs/coordination/FILE_OWNERSHIP.json contains no match for these paths. Add no guest credential, Auth server, route, catalog, pricing, checkout, payment, API, configuration, role, flag, customer, notification, release or production behavior. This metadata claim authorizes the custodian to make no application edit, branch creation, test, build, local Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, identity, worktree, settings or production action.",
       "createdAt": "2026-11-04T14:09:52.5278448Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T14:09:52.5278448Z"
+      "claimedAt": "2026-11-04T14:09:52.5278448Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "d0e50b578b58f455b034667421e2d8e8b196628f",
+        "file": ".xenios/handoffs/2026-11-04T14-33-04-485Z-KAN31-QO-MEDIA-REFERENCE-COMPOSITION-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T14:33:04.4853271Z"
+      }
+    },
+    {
+      "id": "KAN8-ADMIN-RESOURCE-SAVE-RELEASE-COMPOSITION-20261104",
+      "title": "Compose accepted Resource Hub admin save recovery on current release",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-8",
+      "baseSha": "1d7ac35708e1101c7f08dfb128b29afc0f979dab",
+      "paths": [
+        "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+        "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx"
+      ],
+      "dependsOn": [
+        "KAN8-ADMIN-RESOURCE-SAVE-RECOVERY-20261102"
+      ],
+      "scopeNote": "Compose only the unchanged independently accepted PR374 increment eabc3345b7bbd5bffd4b6aadb84b3b43813d067a onto exact current live release 1d7ac35708e1101c7f08dfb128b29afc0f979dab/tree 613b566f53c062247488b31493953b806b9ebf8b. Limit work exactly to ResourceHubAdmin.tsx and ResourceHubAdmin.test.tsx. The current-release preimages are runtime blob e32708c5463b9ba590cf87981979924c32277c0c and test blob 79e4452e6b88c8d4e0c8c1e22ec92a16e8478e7f; the accepted source blobs are runtime 2cd6e332594bc1a9b5853039e7f198c663b3aafa and test 2c98e16e3bea26e6ec429b17286b82ff4c00d56b. Create the intended branch codex/admin-resource-save-composition-20261104 separately and qualify the exact resulting tree. Preserve former task KAN8-ADMIN-RESOURCE-SAVE-RECOVERY-20261102 and lease 87067847-af3a-45b0-b3ff-5fd45ee394d3 in QA/HANDOFF byte-exact. Resource Hub activation, content publication, managed storage, real-user qualification and every sensitive operation remain outside scope. The fresh exact/prefix/wildcard audit found no active CODE_OWNERSHIP conflict for either path. This metadata claim authorizes no application edit, branch creation, test, build, local Node, CI, browser, provider, database, SQL, staging, merge, deployment, configuration, role, flag, notification, customer, activation or production action.",
+      "createdAt": "2026-11-04T14:33:04.4843271Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T14:33:04.4843271Z"
     }
   ]
 }

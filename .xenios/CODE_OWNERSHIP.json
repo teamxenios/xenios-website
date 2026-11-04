@@ -2983,7 +2983,7 @@
         "scripts/qa/qo-visual-capture/capture.mjs",
         "scripts/qa/qo-visual-capture/fixture.mjs"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T14:09:52.4362686Z",
       "heartbeatAt": "2026-11-04T14:09:52.4362686Z"
     },
@@ -2997,9 +2997,21 @@
         "client/src/research/assisted-order/request-intent-continuation.ts",
         "client/src/research/assisted-order/request-intent-continuation.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T14:09:52.5278448Z",
       "heartbeatAt": "2026-11-04T14:09:52.5278448Z"
+    },
+    {
+      "id": "49c4c7de-d2bd-48ae-a3cc-f09246918d87",
+      "task": "KAN8-ADMIN-RESOURCE-SAVE-RELEASE-COMPOSITION-20261104",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/adminx/ResourceHubAdmin.tsx",
+        "client/src/research/pages/adminx/ResourceHubAdmin.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-04T14:33:04.4843271Z",
+      "heartbeatAt": "2026-11-04T14:33:04.4843271Z"
     }
   ],
   "rules": [
