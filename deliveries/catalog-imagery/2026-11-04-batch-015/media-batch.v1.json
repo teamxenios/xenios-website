@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-015",
+  "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "bytes": 332053,
+    "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5"
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "bytes": 108239,
+    "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+  },
+  "publicationState": "review_only_not_runtime",
+  "supplierSendPerformed": false,
+  "authority": [
+    "KAN-59/10615",
+    "KAN-225/10616"
+  ],
+  "labelFactSources": [
+    {
+      "reference": "KAN-31/10641",
+      "scope": "accepted research capsule form and listed strength; current pack quantity and strength basis held"
+    },
+    {
+      "reference": "KAN-31/10750",
+      "scope": "overview-only correction remains separate from prior static acceptance"
+    }
+  ],
+  "requiredMountedViewportsAfterReview": [
+    320,
+    390,
+    768,
+    1280
+  ],
+  "renderSource": {
+    "method": "built-in imagegen reference edit",
+    "receipt": "exec-12bc3bf7-1092-4673-ad15-9bf2147b7e92",
+    "sha256": "f3d0f1818f9c7faa6a6d3d4a00ec60d0ac0bea18386f3942e1da7296717e0fd9",
+    "acceptedDesignReference": "KAN-31/10756",
+    "referenceSourceSha256": "b9640a425471f3c1e6ec528df4b1f286dff0f92a88ea9ea5ddff8e60e4d7873f"
+  },
+  "records": [
+    {
+      "offeringId": "mo_4668304296fb55b51280",
+      "sourceVariantId": "mov_a2d32f69681dca2b17fb",
+      "quickOrderSku": "GEN-GRP-0248",
+      "quickOrderProductId": "807dcbf1-f95f-47b1-b6f6-4633fbf2b24a",
+      "quickOrderVariantId": "9134e120-4f23-4741-be0a-a1d3bab272ab",
+      "canonicalName": "GHK-Cu",
+      "canonicalVariant": "GHK-Cu 2 mg research capsules",
+      "catalogVariantLabel": "GHK-Cu 2 mg",
+      "catalogFamily": "research_capsules",
+      "catalogBrand": null,
+      "designBrand": "Xenios",
+      "listedStrength": "2 mg",
+      "form": "Research capsules",
+      "classification": "For laboratory research use only.",
+      "artworkVersion": "GEN-GRP-0248-WEB-SUPPLIER-v1",
+      "mediaKind": "original_xenios_website_render",
+      "physicalPackagingState": "design",
+      "websiteArtworkState": "pending_independent_file_level_review",
+      "runtimeLinked": false,
+      "publicationAuthorized": false,
+      "artifacts": {
+        "website_primary": {
+          "role": "website_primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-015/assets/ghk-cu-2mg-website-render-v1-1024.webp",
+          "format": "webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 50432,
+          "sha256": "f23e18c14d58a821795301763b629e142144ff26ac635da733457b715fc5b1d3"
+        },
+        "front_preview_web": {
+          "role": "front_preview_web",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-015/assets/ghk-cu-2mg-front-artwork-v1.webp",
+          "format": "webp",
+          "width": 1000,
+          "height": 850,
+          "bytes": 31062,
+          "sha256": "3b50bfdbddcee4559f4b559919e7cf869763fbb71f57ee883d1fc73b122b072d"
+        },
+        "wrap_editable_master": {
+          "role": "wrap_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-015/labels/ghk-cu-2mg-wrap-proof-v1.svg",
+          "format": "svg",
+          "width": 2400,
+          "height": 1200,
+          "bytes": 5156,
+          "sha256": "ae7f3696af5b855157d1820fa157b85c4b7404018748bcc0bff776b064c7c6af"
+        }
+      },
+      "websiteReviewCandidates": [
+        {
+          "role": "primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-015/assets/ghk-cu-2mg-website-render-v1-1024.webp",
+          "sha256": "f23e18c14d58a821795301763b629e142144ff26ac635da733457b715fc5b1d3",
+          "altText": "Xenios packaging design for GHK-Cu research capsules, listed strength 2 mg",
+          "caption": "Packaging design shown. Current packaging may differ."
+        },
+        {
+          "role": "label_detail",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-015/assets/ghk-cu-2mg-front-artwork-v1.webp",
+          "sha256": "3b50bfdbddcee4559f4b559919e7cf869763fbb71f57ee883d1fc73b122b072d",
+          "altText": "GHK-Cu research capsule front label design, listed strength 2 mg",
+          "caption": "Packaging design shown. Current packaging may differ."
+        }
+      ]
+    }
+  ]
+}
