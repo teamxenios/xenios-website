@@ -269,7 +269,8 @@ export function MasterOfferingDetail({
         )}
       </header>
 
-      <ProductMedia productName={product.displayName} variantIds={selected ? [selected.id] : []} detail />
+      <ProductMedia productName={product.displayName} variantIds={selected ? [selected.id] : []}
+        reviewedMedia={selected?.reviewedMedia} detail />
 
       {variants.length > 0 && selected && (
         <section aria-labelledby="mo-detail-variants" className="grid min-w-0 gap-4">

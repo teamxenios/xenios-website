@@ -1,3 +1,5 @@
+import type { CatalogDiscoveryImage } from "./presentation-contract";
+
 /** Reviewed customer copy for one exact source variant. Commerce authority is separate. */
 export interface ReviewedProductContent {
   readonly summary: string;
@@ -10,6 +12,12 @@ export interface ReviewedProductContent {
   readonly cautions?: string;
   readonly storage?: string;
   readonly documentation?: readonly { readonly label: string; readonly href: string }[];
+}
+
+export interface ReviewedProductMedia {
+  readonly primary: CatalogDiscoveryImage;
+  readonly labelPreview?: CatalogDiscoveryImage;
+  readonly packagingDesign: boolean;
 }
 
 export interface ReviewedProductContentRecord {

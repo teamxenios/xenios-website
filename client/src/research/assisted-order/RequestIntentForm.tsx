@@ -60,7 +60,7 @@ function GuestCatalogDetails({ item, variantIds }: {
           Back to catalog
         </button>
       </DialogClose>
-      <ProductMedia productName={item.productName} variantIds={variantIds} detail />
+      <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} detail />
       {item.reviewedContent && <ReviewedProductContent content={item.reviewedContent} inDialog />}
       {(item.specification || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
         {item.specification && <div><dt className="font-semibold">Specification</dt><dd>{item.specification}</dd></div>}
@@ -358,7 +358,7 @@ function RequestIntentFormSession({
         const variantIds = sourceVariantId ? [sourceVariantId] : [];
         return <article className="xenios-order-card" key={key}>
           {ownerKey === "early-access-session" && (
-            <ProductMedia productName={item.productName} variantIds={variantIds} />
+            <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} />
           )}
           <h2>{item.productName}</h2>
           <p>{item.specification || "Form not stated"}</p>

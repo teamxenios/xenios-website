@@ -1,4 +1,4 @@
-import type { ReviewedProductContent } from "./approved-content";
+import type { ReviewedProductContent, ReviewedProductMedia } from "./approved-content";
 /**
  * Xenios Research full master offerings browser contract.
  *
@@ -258,6 +258,7 @@ export type MasterOfferingAction =
  */
 export interface MasterOfferingVariantSummary {
   reviewedContent?: ReviewedProductContent;
+  reviewedMedia?: ReviewedProductMedia;
   id: string;
   label: string;
   displayState: MasterOfferingDisplayState;

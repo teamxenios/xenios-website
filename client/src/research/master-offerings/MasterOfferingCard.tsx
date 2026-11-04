@@ -185,7 +185,8 @@ export function MasterOfferingCard({
   product: MasterOfferingCardView;
 }) {
   const summary = product.priceSummary;
-  const reviewedContent = product.variants.length === 1 ? product.variants[0].reviewedContent : undefined;
+  const onlyVariant = product.variants.length === 1 ? product.variants[0] : undefined;
+  const reviewedContent = onlyVariant?.reviewedContent;
   const headingId = `mo-card-${product.id}`;
   return (
     <li className="min-w-0">
@@ -197,7 +198,8 @@ export function MasterOfferingCard({
         data-display-state={product.displayState}
         data-access-paths={accessPathsOfCard(product).join(" ")}
       >
-        <ProductMedia productName={product.displayName} variantIds={product.variants.map((variant) => variant.id)} />
+        <ProductMedia productName={product.displayName} variantIds={product.variants.map((variant) => variant.id)}
+          reviewedMedia={onlyVariant?.reviewedMedia} />
 
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">

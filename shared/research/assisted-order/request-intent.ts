@@ -1,4 +1,4 @@
-import type { ReviewedProductContent } from "../master-offerings/approved-content";
+import type { ReviewedProductContent, ReviewedProductMedia } from "../master-offerings/approved-content";
 import {
   AssistedOrderValidationError,
   validateSubmitInput,
@@ -30,6 +30,7 @@ export type RequestIntentInput = Readonly<{
 
 export type RequestIntentCatalogItem = AssistedOrderCatalogItem & Readonly<{
   reviewedContent?: ReviewedProductContent;
+  reviewedMedia?: ReviewedProductMedia;
   selectableForReview: boolean;
   intentExclusion: "non_merchandise" | "coming_soon" | null;
   clinicalReviewRequired: boolean;

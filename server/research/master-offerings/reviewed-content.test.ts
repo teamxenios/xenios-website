@@ -7,7 +7,7 @@ import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
 import dataset from "./data/member-safe-master-offerings.generated.json";
 import batch from "./data/reviewed-public-content.json";
 import type { NormalizedMasterOffering } from "./model";
-import { getReviewedProductContent } from "./reviewed-content";
+import { getReviewedProductContent, getReviewedProductMedia } from "./reviewed-content";
 
 const committed = resolve(MASTER_OFFERINGS_COMMITTED_DATASET_PATH);
 
@@ -41,6 +41,20 @@ describe("reviewed exact-variant catalog content", () => {
       identities.add(identity);
       expect(getReviewedProductContent(offering, variant)).toEqual(content);
     }
+  });
+
+  it("binds the new render to the exact reviewed BPC variant on both projections", async () => {
+    const reader = new GeneratedMasterOfferingCatalogReader(committed);
+    const offerings = reader.load().products;
+    const bpc = offerings.find((row) => row.id === "mo_af289f611c02b3fcef01")!;
+    const variant = bpc.variants.find((row) => row.id === "mov_ca3e45ae9712aee91430")!;
+    const media = getReviewedProductMedia(bpc, variant);
+    expect(media?.primary.href).toBe("/research/product-media/bpc-157-xenios-10mg-render.webp");
+    expect(media?.packagingDesign).toBe(true);
+    expect(projectMasterOfferingCard(bpc).variants[0].reviewedMedia).toEqual(media);
+    expect((await requestItem(bpc)).reviewedMedia).toEqual(media);
+    expect(getReviewedProductMedia({ ...bpc }, variant)).toBeUndefined();
+    expect(getReviewedProductMedia(bpc, { ...variant })).toBeUndefined();
   });
 
   it("projects reviewed content on both catalog surfaces only for the trusted dataset", async () => {

@@ -27,7 +27,7 @@ import type {
   NormalizedMasterOfferingVariant,
 } from "./model";
 
-import { getReviewedProductContent } from "./reviewed-content";
+import { getReviewedProductContent, getReviewedProductMedia } from "./reviewed-content";
 
 export const MASTER_OFFERING_CATALOG_DISCLOSURE =
   "Catalog visibility does not establish availability, clinical suitability, or purchase eligibility. Product Control remains the purchase authority.";
@@ -49,8 +49,10 @@ export function projectMasterOfferingVariant(
   capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingVariantView {
   const reviewedContent = getReviewedProductContent(offering, variant);
+  const reviewedMedia = getReviewedProductMedia(offering, variant);
   return {
     ...(reviewedContent ? { reviewedContent } : {}),
+    ...(reviewedMedia ? { reviewedMedia } : {}),
     id: variant.id,
     label: variant.label,
     displayState: variant.displayState,
