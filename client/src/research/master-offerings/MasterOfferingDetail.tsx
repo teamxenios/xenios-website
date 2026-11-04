@@ -343,7 +343,10 @@ export function MasterOfferingDetail({
 
       {selected?.reviewedContent && <ReviewedProductContent content={selected.reviewedContent} />}
 
-      <CatalogEvidenceNotice />
+      <CatalogEvidenceNotice
+        hasReviewedDocuments={Boolean(selected?.reviewedContent?.documentation?.length)}
+        hasReviewedStorage={Boolean(selected?.reviewedContent?.storage)}
+      />
 
       <section aria-labelledby="mo-detail-disclosures" className="grid min-w-0 gap-2">
         <h2 id="mo-detail-disclosures" className="body-l font-700">

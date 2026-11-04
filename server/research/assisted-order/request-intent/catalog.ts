@@ -52,7 +52,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         const comingSoon = [offering.displayState, variant.displayState]
           .some((state) => state === "coming_soon" || state === "planned");
         const nonMerchandise = refusal === "non_merchandise_family";
-        const reviewedContent = getReviewedProductContent(offering.id, variant.id);
+        const reviewedContent = getReviewedProductContent(offering, variant);
         items.push({
           ...item,
           ...(reviewedContent ? { reviewedContent } : {}),

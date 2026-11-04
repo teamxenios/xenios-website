@@ -48,7 +48,7 @@ export function projectMasterOfferingVariant(
   price: MasterOfferingPriceView = MASTER_OFFERING_PRICE_ON_REQUEST,
   capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingVariantView {
-  const reviewedContent = getReviewedProductContent(offering.id, variant.id);
+  const reviewedContent = getReviewedProductContent(offering, variant);
   return {
     ...(reviewedContent ? { reviewedContent } : {}),
     id: variant.id,

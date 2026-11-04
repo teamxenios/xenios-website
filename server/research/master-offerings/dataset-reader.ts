@@ -29,6 +29,7 @@ import {
   type MasterOfferingCopyState,
 } from "@shared/research/master-offerings/contract";
 import { warmMasterOfferingSearch } from "./search";
+import { registerReviewedProductDataset } from "./reviewed-content";
 import {
   MASTER_OFFERINGS_DATASET_ENV_VAR,
   resolveMasterOfferingDatasetLocation,
@@ -450,13 +451,16 @@ export class GeneratedMasterOfferingCatalogReader
     if (this.cached !== null && this.cached.mtimeMs === mtimeMs) {
       return this.cached.loaded;
     }
+    let datasetText: string;
     let parsed: unknown;
     try {
-      parsed = JSON.parse(this.files.readText(this.filePath));
+      datasetText = this.files.readText(this.filePath);
+      parsed = JSON.parse(datasetText);
     } catch {
       throw new MasterOfferingDatasetUnavailable("dataset is not valid JSON");
     }
     const loaded = loadMasterOfferingDataset(parsed);
+    registerReviewedProductDataset(datasetText, loaded.products);
     // Pay the search normalization cost here, once per dataset, rather than on
     // whichever member happens to type the first query.
     warmMasterOfferingSearch(loaded.products);
