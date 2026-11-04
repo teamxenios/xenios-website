@@ -1,0 +1,218 @@
+{
+  "task": "KAN59-QO-SYNTHETIC-VISUAL-CAPTURE-20261104",
+  "branch": "codex/qo-visual-capture-20261103",
+  "head": "f9e0ab2cba8fa55c519b92e705ecabef83df1a8b",
+  "tree": "02bfa947bf8df67eb8cf5617985b435355aaecfb",
+  "outcome": "Synthetic screenshots delivered. Browser assertions failed on Continue to contact.",
+  "diagnosis": "Initial setup: Playwright 1.56.1 lacks ubuntu26.04-x64 support. Corrected pin 1.64.1 built and captured. Fixture policies is empty, so EarlyAccessAgreementSection cannot match a served Research Use Policy to the accepted agreement and leaves continuation disabled. The phone viewport misses the request summary; its extra-scroll metric is not reliable for this run.",
+  "visualReview": "Both widths render the exact 80 px wide integrated WebP and fixture name, price, unit and quantity without horizontal overflow. The packaging caption breaks mid-word at both widths. Desktop shows the disabled continuation. The button was not clicked.",
+  "authorizedRunsConsumed": 2,
+  "runs": [
+    {
+      "run": 41751028447,
+      "url": "https://github.com/teamxenios/xenios-website/actions/runs/41751028447",
+      "result": {
+        "scope": "non-production synthetic",
+        "candidateSha": "ad76ce76ddb106183202aff62991cfffc9aabcfd",
+        "candidateTree": "0e3480097f7e1cef40c7b6f2104c6e995e7b0d80",
+        "harnessRevision": "cd15d40d95bf07f583fb0f936bf25b2c2ff91315",
+        "status": "setup failed before capture",
+        "captures": []
+      },
+      "files": {
+        "result.json": {
+          "size": 268,
+          "sha256": "7b9c56faf9c815adbfbf4b51d9b9c6b3f45129d20f6c0f2cff6161d77170d65c"
+        }
+      }
+    },
+    {
+      "run": 41751213607,
+      "url": "https://github.com/teamxenios/xenios-website/actions/runs/41751213607",
+      "result": {
+        "scope": "non-production synthetic; price and quantity are fixture values",
+        "candidateSha": "ad76ce76ddb106183202aff62991cfffc9aabcfd",
+        "candidateTree": "0e3480097f7e1cef40c7b6f2104c6e995e7b0d80",
+        "harnessRevision": "f9e0ab2cba8fa55c519b92e705ecabef83df1a8b",
+        "upstreamHarness": "scripts/evidence/build-candidate-preview.mjs + scripts/preview-research.mjs",
+        "fixture": {
+          "sourceVariant": "mov_ca3e45ae9712aee91430",
+          "orderVariant": "qa-bpc-157-order-variant",
+          "fixturePrice": 1250,
+          "fixtureCurrency": "USD",
+          "fixtureUnit": "10 mg per vial"
+        },
+        "artwork": {
+          "file": "/research/product-media/bpc-157-packshot.webp",
+          "sha256": "d4518341767b9de04d3fa6fb6bf1cbcaa3456884005e68621042839aed01cf42"
+        },
+        "network": {
+          "loopbackOnly": true,
+          "serviceWorkers": "blocked",
+          "externalRequests": "blocked"
+        },
+        "captures": [
+          {
+            "name": "phone",
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "mobile": true,
+            "assertions": [
+              {
+                "name": "add action available",
+                "pass": true
+              },
+              {
+                "name": "viewport and horizontal layout",
+                "pass": true
+              },
+              {
+                "name": "exact raster decoded",
+                "pass": true
+              },
+              {
+                "name": "fonts settled",
+                "pass": true
+              },
+              {
+                "name": "name, conceptual disclosure, fixture unit and USD price",
+                "pass": true
+              },
+              {
+                "name": "quantity responds to control",
+                "pass": true
+              },
+              {
+                "name": "request action enabled and reachable within one viewport",
+                "pass": false
+              },
+              {
+                "name": "no write or recovery requests",
+                "pass": true
+              }
+            ],
+            "screenshots": [
+              "phone-viewport.png",
+              "phone-card.png"
+            ],
+            "externalBlocked": 0,
+            "webSocketsBlocked": 0,
+            "localApiBlocked": 0,
+            "writeRequestsBlocked": 0,
+            "display": {
+              "width": 390,
+              "horizontalOverflow": false,
+              "cardClippedHorizontally": false,
+              "imageLoaded": true,
+              "imagePath": "/research/product-media/bpc-157-packshot.webp",
+              "displayedImageWidth": 80,
+              "fontStatus": "loaded",
+              "quantityInViewport": true,
+              "actionInViewport": false,
+              "actionScrollDistance": 0
+            }
+          },
+          {
+            "name": "desktop",
+            "viewport": {
+              "width": 1280,
+              "height": 900
+            },
+            "mobile": false,
+            "assertions": [
+              {
+                "name": "add action available",
+                "pass": true
+              },
+              {
+                "name": "viewport and horizontal layout",
+                "pass": true
+              },
+              {
+                "name": "exact raster decoded",
+                "pass": true
+              },
+              {
+                "name": "fonts settled",
+                "pass": true
+              },
+              {
+                "name": "name, conceptual disclosure, fixture unit and USD price",
+                "pass": true
+              },
+              {
+                "name": "quantity responds to control",
+                "pass": true
+              },
+              {
+                "name": "request action enabled and reachable within one viewport",
+                "pass": false
+              },
+              {
+                "name": "no write or recovery requests",
+                "pass": true
+              }
+            ],
+            "screenshots": [
+              "desktop-viewport.png",
+              "desktop-card.png"
+            ],
+            "externalBlocked": 0,
+            "webSocketsBlocked": 0,
+            "localApiBlocked": 0,
+            "writeRequestsBlocked": 0,
+            "display": {
+              "width": 1280,
+              "horizontalOverflow": false,
+              "cardClippedHorizontally": false,
+              "imageLoaded": true,
+              "imagePath": "/research/product-media/bpc-157-packshot.webp",
+              "displayedImageWidth": 80,
+              "fontStatus": "loaded",
+              "quantityInViewport": true,
+              "actionInViewport": true,
+              "actionScrollDistance": 0
+            }
+          }
+        ],
+        "browser": {
+          "name": "Chromium",
+          "version": "156.0.8078.4"
+        },
+        "status": "failed"
+      },
+      "files": {
+        "desktop-card.png": {
+          "size": 34389,
+          "sha256": "f116a27cd2ae8d7609d3a2f409bfa1b141c6fcdd79ca79d772c8b50a05932e69",
+          "width": 363,
+          "height": 490
+        },
+        "desktop-viewport.png": {
+          "size": 95402,
+          "sha256": "21b0c3574c805989205eb5b9675472c86831e4fda9278e2b9ba863630ae2354d",
+          "width": 1280,
+          "height": 900
+        },
+        "phone-card.png": {
+          "size": 34823,
+          "sha256": "f9d6112d169b28d76a6f7efb050d062664b425dfc81ba8bca1b032c0ea374b1e",
+          "width": 322,
+          "height": 548
+        },
+        "phone-viewport.png": {
+          "size": 48748,
+          "sha256": "ce5d9cf810c38ff00a37284adbe6123ed85ec27651fb2203dbcb2636347fccd0",
+          "width": 390,
+          "height": 844
+        },
+        "result.json": {
+          "size": 4071,
+          "sha256": "eddcbaad229439b05a5504425aff64dbb726530b388118544fc3b36e6dffc086"
+        }
+      }
+    }
+  ]
+}

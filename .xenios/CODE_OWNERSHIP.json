@@ -2903,7 +2903,7 @@
         "scripts/qa/qo-visual-capture/package.json",
         "scripts/qa/qo-visual-capture/package-lock.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T00:51:18.7393954Z",
       "heartbeatAt": "2026-11-04T00:51:18.7393954Z"
     }

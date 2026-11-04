@@ -3447,7 +3447,7 @@
       "id": "KAN59-QO-SYNTHETIC-VISUAL-CAPTURE-20261104",
       "title": "Run bounded hosted synthetic quick-order visual capture",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "ad76ce76ddb106183202aff62991cfffc9aabcfd",
       "paths": [
@@ -3463,7 +3463,13 @@
       "scopeNote": "Implement only Samuel's explicitly authorized separate non-production GitHub-hosted synthetic Chromium capture for the quick-order visual proof. Use exact PR371 draft source ad76ce76ddb106183202aff62991cfffc9aabcfd/tree 0e3480097f7e1cef40c7b6f2104c6e995e7b0d80 and create a separate QA-only branch. Work is limited exactly to the new workflow, capture script, fixture script, package manifest and package lock named in paths. Authorization permits one initial hosted run and, only if diagnosed as setup failure, one setup correction and rerun. It does not authorize X1, production, application source changes, broader workflow edits, configuration or branch-protection changes, release activation, publication, customer data, private data, real credentials, real payment, managed environment access or additional tasks. The exact/prefix/wildcard CODE_OWNERSHIP audit and docs/coordination/FILE_OWNERSHIP.json audit found no owner conflict; all five paths are new at the candidate. Preserve PR371, PR370, PR369, all frozen and accepted review refs, completed source-QA handoffs, the active admin lease 87067847-af3a-45b0-b3ff-5fd45ee394d3, and every unrelated task, lease, handoff, release record, session and ref. This metadata claim authorizes the custodian to make no application or workflow edit, branch creation, hosted run, test, build, Node, browser, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
       "createdAt": "2026-11-04T00:51:18.7393954Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T00:51:18.7393954Z"
+      "claimedAt": "2026-11-04T00:51:18.7393954Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "f9e0ab2cba8fa55c519b92e705ecabef83df1a8b",
+        "file": ".xenios/handoffs/2026-11-04T01-06-12-245Z-KAN59-QO-SYNTHETIC-VISUAL-CAPTURE-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T01:06:12.245Z"
+      }
     }
   ]
 }
