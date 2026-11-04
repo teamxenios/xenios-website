@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-009",
+  "checkedOn": "2026-11-04",
+  "catalogBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "predecessor": {
+    "sourceCommit": "6bb6e16ddc144ec100f5cf8062d52c7f4a5e3357",
+    "path": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads.v1.json"
+  },
+  "queue": {
+    "reference": "KAN-6/10636",
+    "url": "https://xeniostechnology.atlassian.net/browse/KAN-6?focusedCommentId=10636",
+    "scope": "Eight catalog identities. Chondro copy acceptance is tracked separately from package-image eligibility."
+  },
+  "delivery": {
+    "disposition": "hold_evidence_only",
+    "eligibleImageAssets": 0,
+    "committedImageFiles": 0,
+    "publishableAltTextCount": 0,
+    "privatePhotosIncluded": 0,
+    "runtimeLinkedAssets": 0,
+    "publicationAuthorizedAssets": 0,
+    "supplierSendPerformed": false
+  },
+  "records": [
+    {
+      "offeringId": "mo_7bc91b37c8c041f166dd",
+      "sourceVariantId": "mov_2de19f71e09e8bc3febb",
+      "quickOrderSku": "GEN-GRP-0368",
+      "name": "Chondro Jointaide",
+      "manufacturerItemCode": "R149C",
+      "selectedPackage": {
+        "revision": "9/24",
+        "package": "60 packets",
+        "thirdPacketFormula": "Inflam-Eze Plus",
+        "reviewReference": "KAN-31/10641",
+        "reviewUrl": "https://xeniostechnology.atlassian.net/browse/KAN-31?focusedCommentId=10641",
+        "copyCandidateSha256": "56876a62df4ab62e3dacf67b33031fa207284baca100badda3b65a3c86ac485e",
+        "privatePhotoCount": 3,
+        "scope": "Selected package and full copy confirmed. The approval covers the selected formulation and content."
+      },
+      "officialProductPage": "https://nutridyn.com/sports-nutrition/chondro-jointaide",
+      "officialImageCandidates": [
+        {
+          "role": "uncached_manufacturer_media",
+          "url": "https://nutridyn.com/media/catalog/product/r/1/r149c-Base-33816_1.png",
+          "httpStatus": 200,
+          "format": "png",
+          "width": 335,
+          "height": 420,
+          "bytes": 100546,
+          "sha256": "b1ccc8949f737af3f7a889b1aa40565eddd06aa72af0575d430e0247ca8907ec"
+        },
+        {
+          "role": "published_gallery_full_cache",
+          "url": "https://nutridyn.com/media/catalog/product/cache/dd4850ad4231b6306bceadf38a0bbeed/r/1/r149c-Base-33816_1.png",
+          "httpStatus": 200,
+          "format": "png",
+          "width": 335,
+          "height": 420,
+          "bytes": 98924,
+          "sha256": "13e386f8d25853dc8d229a8837514e997b38270a8036681531e93b64766f805c"
+        },
+        {
+          "role": "previously_retained_gallery_thumbnail_cache",
+          "url": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r149c-Base-33816_1.png",
+          "httpStatus": 200,
+          "format": "png",
+          "width": 211,
+          "height": 265,
+          "bytes": 186420,
+          "sha256": "7da59970af71609cfd248722e2bfdae4d44e4475d28b8fe4da60be178b661e71"
+        }
+      ],
+      "visibleFront": "NutriDyn Chondro Jointaide, 60 packets. The page exposes one gallery image stem with alternate sizes and no revision-bearing panel.",
+      "draftAltText": "NutriDyn Chondro Jointaide bottle, 60 packets.",
+      "publicImageRevision": null,
+      "status": "held_public_image_revision_unverified",
+      "finding": "The current official listing agrees with the approved selected formula and package count. The original and gallery PNGs show the front only, with no revision or formula evidence tying these exact image bytes to the selected 9/24 label. The historic ND181 description names a different third component, so a shared name and count are insufficient for the image version join.",
+      "preciseMissingInput": "An official revision-linked R149C 9/24 packshot, a manufacturer media record tying r149c-Base-33816_1.png to rev. 9/24, or an official gallery including a matching revision-bearing panel."
+    },
+    {
+      "offeringId": "mo_79376f449760149d1030",
+      "sourceVariantId": "mov_cdfb19499637f274f271",
+      "quickOrderSku": "GEN-GRP-0370",
+      "name": "Fruits & Greens",
+      "manufacturerItemCode": "R305-GFSK",
+      "officialProductPage": "https://productportal.nutridyn.com/nutridyn-fruits-greens",
+      "officialImageCandidates": [
+        {
+          "role": "uncached_manufacturer_media",
+          "url": "https://productportal.nutridyn.com/media/catalog/product/r/3/r305-gfsk-Small-33770_1.png",
+          "httpStatus": 200,
+          "format": "png",
+          "width": 271,
+          "height": 420,
+          "bytes": 113168,
+          "sha256": "9f9e218cf7cb6db6dd58ab3e5200b6c9af534580533f4e09720590976b5f5390"
+        }
+      ],
+      "visibleFront": "NutriDyn Fruits & Greens Strawberry Kiwi, 30 servings, net wt. 10.67 oz (302.7 g).",
+      "draftAltText": "NutriDyn Fruits & Greens Strawberry Kiwi powder, 30 servings, in a 302.7 g canister.",
+      "publicImageRevision": null,
+      "status": "held_selected_label_formula_conflict",
+      "comparisonSources": [
+        "https://nutridyn.com/fruits-greens",
+        "https://nutridyn.com/media/productsattachment/Fruits_and_Greens_Strawberry_Kiwi_SS_ND1301_NEW.pdf"
+      ],
+      "finding": "NutriDyn now yields an exact-code flavor front. For a 10.09 g serving the main page lists 38 kcal, 1 g fiber, 162 mg vitamin C and 2.92 g SuperFruitox. The manufacturer's ND1301 sheet and product portal list 35 kcal, under 1 g fiber, 99 mg vitamin C and 2.86 g SuperFruitox. The exact-code front does not distinguish the panels.",
+      "preciseMissingInput": "The Xenios-selected Strawberry Kiwi jar panel and revision, with net weight reconciled to the exact-code front."
+    },
+    {
+      "offeringId": "mo_a4cfc5396d714f879944",
+      "sourceVariantId": "mov_d6a8b2cd129bda39d8fa",
+      "quickOrderSku": "GEN-GRP-0372",
+      "name": "Hydrate",
+      "manufacturerItemCode": "R982",
+      "officialProductPage": "https://nutridyn.com/dynamic-hydrate",
+      "officialImageCandidates": [
+        {
+          "role": "uncached_manufacturer_media",
+          "url": "https://nutridyn.com/media/catalog/product/r/9/r982-Small-76816.png",
+          "httpStatus": 200,
+          "format": "png",
+          "width": 420,
+          "height": 420,
+          "bytes": 79554,
+          "sha256": "2b5cd2cc0017b3241d75c01395218f5f34ad80e904519c98206b0814cd96ef34"
+        }
+      ],
+      "visibleFront": "NutriDyn Hydrate Blue Raspberry, 30 servings, net wt. 6.35 oz (180 g).",
+      "draftAltText": "NutriDyn Hydrate Blue Raspberry powder, 30 servings, in a 180 g canister.",
+      "publicImageRevision": null,
+      "status": "held_selected_label_formula_conflict",
+      "finding": "The manufacturer provides an exact-code R982 front. Existing selected-label evidence still conflicts on magnesium oxide versus bisglycinate-only composition.",
+      "preciseMissingInput": "The selected US R982 package panel confirming magnesium forms, storage and label instructions, linked to the published front."
+    }
+  ],
+  "carriedForward": [
+    {
+      "name": "Longevity Essentials NAD+",
+      "offeringId": "mo_edefaf4799bd53853d01",
+      "sourceVariantId": "mov_e74adec4c45f9c9db404",
+      "preciseMissingInput": "Selected supplier crosswalk to R288.",
+      "status": "batch_006_hold_retained"
+    },
+    {
+      "name": "Rejuvenate+",
+      "offeringId": "mo_b48e883b4ada1469f824",
+      "sourceVariantId": "mov_904af0a54faddfe2f21f",
+      "preciseMissingInput": "Selected R289 crosswalk and name, flavor, label and weight.",
+      "status": "batch_006_hold_retained"
+    },
+    {
+      "name": "Stress Essentials Calm",
+      "offeringId": "mo_5b122372a6ecdea51c52",
+      "sourceVariantId": "mov_ffe0eef7766200ac8c53",
+      "preciseMissingInput": "Selected R123C to R405 crosswalk and GABA strength.",
+      "status": "batch_006_hold_retained"
+    },
+    {
+      "name": "UltraBiotic Akkermansia Plus",
+      "offeringId": "mo_2d42f72361aac15b6d5d",
+      "sourceVariantId": "mov_dbb59b83827a556051da",
+      "preciseMissingInput": "Selected R196 panel resolving 100 million CFU versus 500 million TFU.",
+      "status": "batch_006_hold_retained"
+    },
+    {
+      "name": "Uplift+",
+      "offeringId": "mo_85898714d8df5a3d2f10",
+      "sourceVariantId": "mov_4a105b161858064229f3",
+      "preciseMissingInput": "Selected R290 crosswalk, flavor, package label and net weight.",
+      "status": "batch_006_hold_retained"
+    }
+  ]
+}
