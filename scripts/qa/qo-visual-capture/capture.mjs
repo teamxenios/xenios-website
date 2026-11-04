@@ -250,6 +250,27 @@ async function captureGuest(page, entry) {
   await screenshot(entry, "review", page);
 }
 
+async function frameMemberImage(entry, label, scope, path) {
+  const image = scope.locator(`img[data-testid="product-media-image"][src="${path}"]`);
+  const framing = await image.evaluate((node) => {
+    const header = [...document.querySelectorAll("header")].find((element) => {
+      const style = getComputedStyle(element);
+      return (style.position === "sticky" || style.position === "fixed") && style.top === "0px";
+    });
+    const inset = header?.getBoundingClientRect().height ?? 0;
+    const before = node.getBoundingClientRect();
+    window.scrollTo({ top: Math.max(0, window.scrollY + before.top - inset - 16), behavior: "instant" });
+    const box = node.getBoundingClientRect();
+    const headerBottom = header?.getBoundingClientRect().bottom ?? 0;
+    const contained = box.top >= headerBottom && box.bottom <= window.innerHeight &&
+      box.left >= 0 && box.right <= window.innerWidth;
+    const unobstructed = contained && [0.1, 0.5, 0.9].every((fraction) =>
+      document.elementFromPoint(box.left + box.width / 2, box.top + box.height * fraction) === node);
+    return { top: box.top, bottom: box.bottom, headerBottom, unobstructed };
+  });
+  report(entry, label + " fully visible below the sticky member header", framing.unobstructed, framing);
+}
+
 async function captureMember(page, entry) {
   await page.goto(origin + memberRoute, { waitUntil: "domcontentloaded" });
   const card = page.locator(`[data-testid="mo-card"][data-offering-id="${memberOffering}"]`);
@@ -260,7 +281,8 @@ async function captureMember(page, entry) {
   report(entry, "member card binds exact 10 mg variant and preserves fixture price and facts",
     await card.locator(`[data-variant-id="${sourceVariant}"]`).count() === 1 &&
     ["BPC-157", "10 mg", "$12.50", "Synthetic USD fixture"].every((value) => content.includes(value)) && captionsRetired(content));
-  await screenshot(entry, "card", card);
+  await frameMemberImage(entry, "member card", card, artwork);
+  await screenshot(entry, "card", page);
 
   const link = card.getByTestId("mo-card-link");
   report(entry, "member card links to exact family and offering slug", await link.getAttribute("href") === memberDetailRoute);
@@ -288,6 +310,7 @@ async function captureMember(page, entry) {
       await heading.isVisible() && await radio.isChecked() && selection.includes(state.strength)
       && selection.includes("$12.50") && captionsRetired(await media.innerText())
       && (state.asset === artwork || !/10 mg/.test(image.alt)));
+    await frameMemberImage(entry, state.suffix, media, state.asset);
     await screenshot(entry, state.suffix, page);
   }
 
