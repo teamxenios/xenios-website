@@ -21,11 +21,11 @@ jobs:
       CANDIDATE_SHA: 335dcddff6e737450044eee662aa4af456a68d27
       CANDIDATE_TREE: eb293bdca45d6b35cdf2c455ccef52c2a201c5e5
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: ""
+      CAPTURE_ALLOWANCE_ID: KAN-31/10600
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
       CAPTURE_PRIOR_RUN_IDS: "[]"
-      CAPTURE_RECONCILED_AT: ""
+      CAPTURE_RECONCILED_AT: 2026-11-04T19:19:17Z
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
