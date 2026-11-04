@@ -3500,6 +3500,25 @@
         "file": ".xenios/handoffs/2026-11-04T03-04-57-776Z-KAN59-WHITE-LABEL-PACKAGING-CARD-20261104-codex-launch-coordination-20261005.json",
         "at": "2026-11-04T03:04:57.776Z"
       }
+    },
+    {
+      "id": "KAN31-QUICK-ORDER-R2-REFERENCE-OWNER-20261104",
+      "title": "Correct quick-order R2 reference owner continuation boundary",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "baseSha": "0c66217f7ab16090795ad143122ea77e0cae91f5",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentReferenceNotice.tsx",
+        "client/src/research/assisted-order/RequestIntentReferenceNotice.test.tsx",
+        "client/src/research/assisted-order/request-intent-continuation.ts",
+        "client/src/research/assisted-order/request-intent-continuation.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Implement only independently executable R2 finding 2 prioritized by Samuel at KAN-225 comment 10558 and KAN-31 comment 10559: correct the member-scope reference owner and continuation boundary using the prepared private proposal. Use frozen R2 source 0c66217f7ab16090795ad143122ea77e0cae91f5/tree 883d1f0acddcdbbc6bfdb27b21c580b05f9215ef and create the separate successor branch codex/quick-order-r2-reference-owner-20261104. Limit work exactly to the new reference notice source/test and continuation source/test named in paths. R2 finding 1 remains private and pending transfer from the recorded FILE_OWNERSHIP owner; do not edit or claim EarlyAccessRoute.tsx, its storefront test or OrderRequestEntry.tsx. Reuse member scope only and add no Auth server, route, guest credential, catalog, pricing, checkout, payment, API, configuration, role, flag, customer, notification, release or production behavior. The exact/prefix/wildcard audit found no active CODE_OWNERSHIP conflict, and docs/coordination/FILE_OWNERSHIP.json contains no match for these four paths; historical assisted-order wildcard handoffs/releases remain preserved. Preserve frozen R2/R3, PR372 and all accepted review refs, the active admin lease 87067847-af3a-45b0-b3ff-5fd45ee394d3, every foreign lease, and every unrelated task, lease, session, rule, history, handoff, release and ref. This metadata claim authorizes the custodian to make no application edit, branch creation, test, build, Node, CI, browser, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
+      "createdAt": "2026-11-04T03:16:48.1890403Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T03:16:48.1890403Z"
     }
   ]
 }
