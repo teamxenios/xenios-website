@@ -1,0 +1,126 @@
+[
+ {
+  "slug": "ipamorelin-5mg",
+  "name": "Ipamorelin",
+  "code": "IPAMORELIN",
+  "mg": 5,
+  "sku": "GEN-GRP-0303",
+  "offeringId": "mo_b2300ccf4ffd64e20ca2",
+  "sourceVariantId": "mov_cd50ffa15bc031572636",
+  "labelFactsRef": "KAN-59/10667",
+  "labelFactsFile": "research-batch-02.label-facts.json",
+  "labelFactsSha256": "186a9673b12ac3931ca5f455f7c722ad7c56b574ff618f35936c198663cccccf",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Ipamorelin",
+   "amount": "5 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0303"
+  },
+  "extraDoNotPrintTerms": [],
+  "nameVariance": null
+ },
+ {
+  "slug": "thymosin-alpha-1-5mg",
+  "name": "Thymosin Alpha-1",
+  "code": "THYMOSINALPHA1",
+  "mg": 5,
+  "sku": "GEN-GRP-0351",
+  "offeringId": "mo_8fd0e604ab7719eded45",
+  "sourceVariantId": "mov_cacbbed2b1431c073e72",
+  "labelFactsRef": "KAN-59/10667",
+  "labelFactsFile": "research-batch-02.label-facts.json",
+  "labelFactsSha256": "186a9673b12ac3931ca5f455f7c722ad7c56b574ff618f35936c198663cccccf",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Thymosin Alpha-1",
+   "amount": "5 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0351"
+  },
+  "extraDoNotPrintTerms": [],
+  "nameVariance": null
+ },
+ {
+  "slug": "tesamorelin-5mg",
+  "name": "Tesamorelin",
+  "code": "TESAMORELIN",
+  "mg": 5,
+  "sku": "GEN-GRP-0348",
+  "offeringId": "mo_941e1192f6c03d88cb43",
+  "sourceVariantId": "mov_52fd0b8a213ee19e40e8",
+  "labelFactsRef": "KAN-59/10681",
+  "labelFactsFile": "research-batch-03.label-facts.json",
+  "labelFactsSha256": "9507165e8986dc80592f0de01f7995e4fe09c6b2eaebd44bd907c04801888331",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Tesamorelin",
+   "amount": "5 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0348"
+  },
+  "extraDoNotPrintTerms": [
+   "Egrifta",
+   "HIV",
+   "lipodystrophy"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "sermorelin-10mg",
+  "name": "Sermorelin",
+  "code": "SERMORELIN",
+  "mg": 10,
+  "sku": "GEN-GRP-0340",
+  "offeringId": "mo_005347c6204a94d3f7e2",
+  "sourceVariantId": "mov_6a43249c424441bf28bb",
+  "labelFactsRef": "KAN-59/10681",
+  "labelFactsFile": "research-batch-03.label-facts.json",
+  "labelFactsSha256": "9507165e8986dc80592f0de01f7995e4fe09c6b2eaebd44bd907c04801888331",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Sermorelin",
+   "amount": "10 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0340"
+  },
+  "extraDoNotPrintTerms": [
+   "Geref"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "oxytocin-2mg",
+  "name": "Oxytocin",
+  "code": "OXYTOCIN",
+  "mg": 2,
+  "sku": "GEN-GRP-0319",
+  "offeringId": "mo_b785d68e84643da31a20",
+  "sourceVariantId": "mov_cf7635f44beb5898b8fe",
+  "labelFactsRef": "KAN-59/10687",
+  "labelFactsFile": "research-batch-04.label-facts.json",
+  "labelFactsSha256": "4c791c801a059daef3504cb4d19af3d1503913a8ed2d5aded395940ca98bd843",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Oxytocin",
+   "amount": "2 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0319"
+  },
+  "extraDoNotPrintTerms": [
+   "IU",
+   "USP",
+   "Pitocin",
+   "labor",
+   "lactation",
+   "bonding",
+   "social"
+  ],
+  "nameVariance": null
+ }
+]
