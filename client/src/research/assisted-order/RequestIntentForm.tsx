@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
@@ -91,6 +91,13 @@ function RequestIntentFormSession({
   api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt,
   ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false,
 }: RequestIntentFormProps & Readonly<{ onStartAnother: () => void; focusHeadingOnMount?: boolean }>) {
+  // Only the public guest mount has non-sticky chrome. Member shells retain their
+  // current layout and own sticky-header behavior.
+  const compactGuestCatalog = embedded && ownerKey === "early-access-session";
+  const catalogStartRef = useRef<HTMLDivElement>(null);
+  const pendingCatalogScroll = useRef(false);
+  const requestSummaryId = useId();
+  const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
   const [restored] = useState(() => storage ? readIntentAttempt(storage) : null);
   // A reference confirmed in an earlier page load of this tab is shown again. An
   // uncertain attempt still takes precedence, because it may need recovery.
@@ -309,8 +316,30 @@ function RequestIntentFormSession({
     </fieldset>;
   };
 
+  // Wait for the next page to mount: the existing fetch clears the old cards,
+  // which can temporarily shorten the document and clamp an earlier scroll.
+  useEffect(() => {
+    if (!catalog || !pendingCatalogScroll.current) return;
+    pendingCatalogScroll.current = false;
+    if (compactGuestCatalog && window.matchMedia?.("(max-width: 700px)")?.matches) {
+      catalogStartRef.current?.scrollIntoView?.({ block: "start", behavior: "auto" });
+    }
+  }, [catalog, compactGuestCatalog]);
+
   // Inside a page that already has its own h1, the form's top heading sits one level below it.
   const Heading = embedded ? "h2" : "h1";
+  const catalogPages = catalog ? Math.max(1, Math.ceil(catalog.total / catalog.pageSize)) : null;
+  const catalogPagination = <nav className="xenios-order-pagination" aria-label="Catalog pages">
+    <button type="button" disabled={page <= 1 || !catalog} onClick={() => {
+      pendingCatalogScroll.current = compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
+      setPage((value) => value - 1);
+    }}>Previous</button>
+    <span aria-live="polite" aria-atomic="true">{catalogPages ? "Page " + page + " of " + catalogPages : "Page " + page}</span>
+    <button type="button" disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => {
+      pendingCatalogScroll.current = compactGuestCatalog && Boolean(window.matchMedia?.("(max-width: 700px)")?.matches);
+      setPage((value) => value + 1);
+    }}>Next</button>
+  </nav>;
   if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1} reopened={receipt === reopened}
     onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
 
@@ -320,7 +349,8 @@ function RequestIntentFormSession({
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
 
-  return <section className={embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page"}>
+  return <section className={(embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page")
+    + (compactGuestCatalog ? " xenios-order-page--guest-catalog" : "")}>
     <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Request products for review</Heading>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
@@ -342,11 +372,15 @@ function RequestIntentFormSession({
             { item: hintItem, quantity: entryIntent.quantity }))}>Add linked selection for review</button>}
         <p>A link never approves a clinical item or places an order.</p>
       </section>}
-      <div className="xenios-order-grid">
-        <label>Search catalog<input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></label>
-        <label>Product family<select value={family} onChange={(event) => { setFamily(event.target.value); setPage(1); }}>
-          <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}
-        </select></label>
+      {compactGuestCatalog && <div ref={catalogStartRef} className="xenios-order-catalog-start" />}
+      <div className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
+        <div className="xenios-order-grid">
+          <label>Search catalog<input value={search} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>
+          <label>Product family<select value={family} onChange={(event) => { pendingCatalogScroll.current = false; setFamily(event.target.value); setPage(1); }}>
+            <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}
+          </select></label>
+        </div>
+        {compactGuestCatalog && <div className="xenios-order-mobile-pagination">{catalogPagination}</div>}
       </div>
       {catalogFailed ? <section className="xenios-order-panel" aria-label="Catalog unavailable">
         <p role="alert">The current catalog could not be confirmed. Retry to continue with your existing selections.</p>
@@ -359,18 +393,25 @@ function RequestIntentFormSession({
         const variantIds = sourceVariantId ? [sourceVariantId] : [];
         const packageLabel = reviewedPackage(item.reviewedContent);
         return <article className="xenios-order-card" key={key}>
-          {ownerKey === "early-access-session" && (
-            <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} />
-          )}
-          <h2>{item.productName}</h2>
-          <p>{item.specification || "Form not stated"}</p>
-          {item.reviewedContent && <p>
-            {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
-          </p>}
-          {packageLabel && <p><strong>Package</strong> · {packageLabel}</p>}
-          <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
-          {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
-          <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>
+          <div className="xenios-order-card-intro">
+            {ownerKey === "early-access-session" && <div className="xenios-order-card-media">
+              <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} />
+            </div>}
+            <div className="xenios-order-card-identity">
+              <h2>{item.productName}</h2>
+              <p>{item.specification || "Form not stated"}</p>
+              {item.reviewedContent && <p className="xenios-order-card-description">
+                {item.reviewedContent.brand && <strong>{item.reviewedContent.brand} · </strong>}{item.reviewedContent.summary}
+              </p>}
+              {packageLabel && <p><strong>Package</strong> · {packageLabel}</p>}
+            </div>
+          </div>
+          <div className="xenios-order-card-meta">
+            <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
+            {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
+            <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>
+          </div>
+          <div className="xenios-order-card-actions">
           {ownerKey === "early-access-session" && <GuestCatalogDetails item={item} variantIds={variantIds} />}
           {!item.selectableForReview ? <p>{item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"}</p> : selection
             ? <div className="xenios-order-quantity">
@@ -391,15 +432,21 @@ function RequestIntentFormSession({
                 })}>+</button>
               <button type="button" className="xenios-order-link" onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
             : <button type="button" className="xenios-order-button" disabled={selected.size >= 200}
-                onClick={() => setSelected((prior) => new Map(prior).set(key, { item, quantity: item.minimumQuantity }))}>Add {item.productName} to request</button>}
+                aria-label={compactGuestCatalog ? "Add to request: " + item.productName + (item.specification ? ", " + item.specification : "") : undefined}
+                onClick={() => setSelected((prior) => new Map(prior).set(key, { item, quantity: item.minimumQuantity }))}>{compactGuestCatalog ? "Add to request" : "Add " + item.productName + " to request"}</button>}
+          </div>
         </article>;
       })}</div>
-      <nav className="xenios-order-pagination" aria-label="Catalog pages">
-        <button disabled={page <= 1 || !catalog} onClick={() => setPage((value) => value - 1)}>Previous</button><span>Page {page}</span>
-        <button disabled={!catalog || page * catalog.pageSize >= catalog.total} onClick={() => setPage((value) => value + 1)}>Next</button>
-      </nav>
+      <div className="xenios-order-bottom-pagination">{catalogPagination}</div>
       <p>Up to 200 exact variants per request. Unavailable and coming-soon entries remain visible with their restrictions.</p>
       </div><aside className="xenios-order-summary" aria-label="Selected request items">
+        {compactGuestCatalog && <button type="button" className="xenios-order-summary-toggle"
+          aria-expanded={mobileSummaryOpen} aria-controls={requestSummaryId}
+          onClick={() => setMobileSummaryOpen((value) => !value)}>
+          <span>Review request ({selections.length})</span>
+          <span aria-hidden="true">{mobileSummaryOpen ? "−" : "+"}</span>
+        </button>}
+        <div id={requestSummaryId} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
         <h2>Your request</h2>
         <p role="status">{selectedProducts} products | {selections.length} exact variants | {selectedUnits} requested units</p>
         {!selections.length ? <p>No products selected yet. Add an eligible item from the catalog.</p> : <ul>
@@ -423,6 +470,7 @@ function RequestIntentFormSession({
         </ul>}
         <p className="xenios-order-small">A request is not an approved order. Final quantities, prices and availability require review.</p>
         <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>Continue to contact</button>
+        </div>
       </aside></div>
     </>}
     {step === "contact" && <form onSubmit={captureContact}>
