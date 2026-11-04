@@ -2946,7 +2946,7 @@
         "scripts/qa/qo-visual-capture/capture.mjs",
         "scripts/qa/qo-visual-capture/fixture.mjs"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T03:33:43.9708658Z",
       "heartbeatAt": "2026-11-04T03:33:43.9708658Z"
     }

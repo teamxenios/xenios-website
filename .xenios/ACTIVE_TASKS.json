@@ -3530,7 +3530,7 @@
       "id": "KAN59-QO-PR372-CORRECTED-CAPTURE-20261104",
       "title": "Capture corrected synthetic quick-order proof for PR372",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "f9e0ab2cba8fa55c519b92e705ecabef83df1a8b",
       "paths": [
@@ -3545,7 +3545,13 @@
       "scopeNote": "Implement only the fresh corrected synthetic capture for exact PR372 source 8885fd5fe72b9d4dc1be513bd48f166b3fdd3ee1/tree dba463a8a39a7a41a92235086f73f53c19f42fed explicitly approved by Samuel at KAN-31 comment 10563 and KAN-225 comment 10564. Use the existing QA branch codex/qo-visual-capture-20261103 at f9e0ab2cba8fa55c519b92e705ecabef83df1a8b as the harness base. Limit work exactly to the workflow, capture script and fixture script named in paths; the existing pinned package.json and package-lock.json tool files must remain untouched. The prior KAN59-QO-SYNTHETIC-VISUAL-CAPTURE-20261104 task and lease 19823810-59d3-4395-b1e7-7c00c503c0a2 remain QA/HANDOFF and must not be reopened. The exact/prefix/wildcard audit found no active CODE_OWNERSHIP conflict, and docs/coordination/FILE_OWNERSHIP.json contains no match for the three paths. Preserve all prior records, frozen branches and review refs, the R2 owner choice, the active admin lease 87067847-af3a-45b0-b3ff-5fd45ee394d3, every foreign lease, production and release state. Add no application source, broader workflow, pinned tool, configuration, branch-protection, real credential, private data, payment, managed environment or production behavior. This metadata claim authorizes the custodian to make no source or workflow edit, branch change, capture dispatch, test, build, Node, browser, provider, database, SQL, staging, review reroute, merge, deployment, settings or production action.",
       "createdAt": "2026-11-04T03:33:43.9708658Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T03:33:43.9708658Z"
+      "claimedAt": "2026-11-04T03:33:43.9708658Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "000f60154fb7baf88bfbd66d317344f0eef5960e",
+        "file": ".xenios/handoffs/2026-11-04T03-50-43-338Z-KAN59-QO-PR372-CORRECTED-CAPTURE-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T03:50:43.338Z"
+      }
     }
   ]
 }
