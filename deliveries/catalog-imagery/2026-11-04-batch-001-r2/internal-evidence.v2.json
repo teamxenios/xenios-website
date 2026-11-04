@@ -72,9 +72,12 @@
         }
       ],
       "review": {
-        "status": "accepted_private_concept_only_successor_pending_review",
-        "reviewer": "KAN-31/10607",
-        "reviewedSourceSha": "dd375a91129e7c753a8938279417168577f62933",
+        "status": "successor_accepted_private_design_and_source_lead_evidence_only",
+        "predecessorReviewer": "KAN-31/10607",
+        "reviewer": "KAN-31/10612",
+        "reviewedSourceSha": "e8705e0a34b0ab5bd357ccb24562dc89049aca1f",
+        "reviewedReferencedBytes": 6,
+        "approvedExactProductionImages": 0,
         "publicationDisposition": "quarantined_in_delivery_path"
       },
       "preciseGaps": [
@@ -83,7 +86,7 @@
         "Actual vial, cap, label dimensions, dieline, bleed, material and finish are not present.",
         "Supplier/manufacturer attribution and supplier-approved storage text are not present.",
         "No matching lot, expiry/BUD, purity, certification, COA or documentation QR is authorized.",
-        "The v2 code and panel-boundary corrections require independent successor review."
+        "KAN-31/10612 accepts the v2 correction only for private design and source-lead evidence; supplier and release approval remain required for production or publication."
       ]
     },
     {

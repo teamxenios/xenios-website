@@ -88,6 +88,23 @@ function imageDimensions(path, bytes) {
 
 check(batch.schemaVersion === 1, "media batch schemaVersion must be 1");
 check(evidence.schemaVersion === 1, "evidence schemaVersion must be 1");
+const reviewedConcept = evidence.records.find(
+  (record) => record.offeringId === "mo_af289f611c02b3fcef01" && record.sourceVariantId === "mov_ca3e45ae9712aee91430",
+);
+check(
+  reviewedConcept?.review?.status === "successor_accepted_private_design_and_source_lead_evidence_only",
+  "successor private-review disposition is missing",
+);
+check(reviewedConcept?.review?.reviewer === "KAN-31/10612", "successor review receipt is not KAN-31/10612");
+check(
+  reviewedConcept?.review?.reviewedSourceSha === "e8705e0a34b0ab5bd357ccb24562dc89049aca1f",
+  "successor review source SHA changed",
+);
+check(reviewedConcept?.review?.reviewedReferencedBytes === 6, "successor reviewed-byte count is not six");
+check(
+  reviewedConcept?.review?.approvedExactProductionImages === 0,
+  "successor review cannot imply approved exact production imagery",
+);
 check(batch.batchId === evidence.batchId, "batch IDs differ");
 check(batch.releaseBaseline === evidence.releaseBaseline, "release baselines differ");
 check(batch.publicationState === "review_only_not_runtime", "batch must remain review-only");
@@ -229,7 +246,9 @@ const result = {
   supplierSourceCandidates: sourceCandidates.length,
   nonAssetDispositions: evidence.nonAssetDispositions.length,
   privateConceptsAcceptedOnPredecessor: 1,
-  independentlyReviewedExactAssets: 0,
+  privateSuccessorReviewsAccepted: 1,
+  independentlyReviewedReferencedBytes: 6,
+  independentlyApprovedExactProductionImages: 0,
   publicationAuthorizedAssets: 0,
   errors,
 };

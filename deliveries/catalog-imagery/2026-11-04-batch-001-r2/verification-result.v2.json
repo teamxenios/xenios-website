@@ -9,7 +9,9 @@
   "supplierSourceCandidates": 10,
   "nonAssetDispositions": 2,
   "privateConceptsAcceptedOnPredecessor": 1,
-  "independentlyReviewedExactAssets": 0,
+  "privateSuccessorReviewsAccepted": 1,
+  "independentlyReviewedReferencedBytes": 6,
+  "independentlyApprovedExactProductionImages": 0,
   "publicationAuthorizedAssets": 0,
   "errors": []
 }

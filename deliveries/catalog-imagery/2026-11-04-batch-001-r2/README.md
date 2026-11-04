@@ -11,8 +11,8 @@ The successor remains isolated from runtime and public media paths. It does not 
 - Media kind: `concept`
 - Packaging state: `design`
 - Private concept review: accepted on predecessor by KAN-31/10607
-- Successor review: pending
-- Independently approved exact product assets: 0
+- Successor review: six referenced bytes accepted for private design and source-lead evidence by KAN-31/10612 at `e8705e0a34b0ab5bd357ccb24562dc89049aca1f`
+- Independently approved exact production images: 0
 - Publication-authorized assets: 0
 
 ## Corrections made
@@ -63,7 +63,7 @@ The verifier checks:
 - the Magtein current-label hold;
 - all ten supplier images remain rights-pending, not downloaded and not publication-authorized.
 
-The committed receipt is `verification-result.v2.json` and reports zero errors.
+The committed receipt is `verification-result.v2.json` and reports zero errors. It separately records six independently reviewed referenced bytes and zero independently approved exact production images.
 
 ## Remaining release blockers
 
@@ -72,5 +72,5 @@ The committed receipt is `verification-result.v2.json` and reports zero errors.
 - Approved supplier/manufacturer attribution and storage text.
 - Real variable-data ownership for lot and expiry/BUD.
 - Printed/in-use evidence after supplier proof approval.
-- Independent review of this exact successor.
+- Supplier and release approval for any production/public use; KAN-31/10612 accepts the successor only for private design and source-lead evidence.
 - Written current reseller/media rights and Product Control approval before any NutriDyn image is downloaded, transformed, uploaded, linked or published.
