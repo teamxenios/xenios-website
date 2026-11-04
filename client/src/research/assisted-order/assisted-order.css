@@ -208,7 +208,10 @@
   .xenios-order-page--guest-catalog .xenios-order-card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
   .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-link { margin: 0; padding-inline: 6px; }
   .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-button { flex: 1; min-width: 0; margin: 0; padding: 10px 12px; }
-  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-quantity { width: 100%; margin: 0; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-quantity { width: 100%; margin: 0; gap: 8px; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity label { flex: 0 1 4.25rem; min-width: 3.5rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-quantity-label { display: none; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity input { padding-inline: 6px; font-size: 16px; }
   .xenios-order-page--guest-catalog .xenios-order-summary { padding: 0; border-radius: 12px; }
   .xenios-order-page--guest-catalog .xenios-order-summary-toggle {
     display: flex;

@@ -101,8 +101,9 @@ function simulateReload() {
   expect(raw).not.toBeNull();
   sessionStorage.setItem(REQUEST_INTENT_RECEIPT_RECORD_KEY, JSON.stringify({ ...JSON.parse(raw!), pageLoad: "an-earlier-page-load" }));
 }
-async function click(text: string) {
-  const button = [...host.querySelectorAll("button")].find((entry) => entry.textContent === text);
+async function click(text: string, accessibleName?: string) {
+  const button = [...host.querySelectorAll("button")].find((entry) =>
+    entry.textContent === text && (accessibleName === undefined || entry.getAttribute("aria-label") === accessibleName));
   expect(button).toBeTruthy();
   await act(async () => button!.click());
 }
@@ -185,13 +186,14 @@ describe("mixed private request customer form source", () => {
     const mappedImage = mapped.querySelector("img");
     expect(mappedImage?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
     expect(mappedImage?.getAttribute("alt")).toBe("Synthetic mapped illustration, capsule");
-    expect(mapped.firstElementChild).toBe(mappedImage?.closest("figure"));
+    expect(mapped.querySelector(".xenios-order-card-intro > .xenios-order-card-media > figure"))
+      .toBe(mappedImage?.closest("figure"));
     const fallbackImage = missingSource.querySelector("img");
     expect(fallbackImage?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
     expect(fallbackImage?.getAttribute("alt")).toBe("Synthetic missing-source illustration, format unconfirmed");
     expect(missingSource.querySelector("figcaption")).toBeNull();
     expect(mapped.textContent).toContain("$12.50");
-    await click("Add Synthetic mapped to request");
+    await click("Add to request", "Add to request: Synthetic mapped, Synthetic variant");
     expect(mapped.querySelector('input[type="number"]')).not.toBeNull();
     expect(host.querySelector('aside img')).toBeNull();
 
@@ -210,7 +212,7 @@ describe("mixed private request customer form source", () => {
 
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       embedded ownerKey="early-access-session" />));
-    await click("Add Synthetic mapped to request");
+    await click("Add to request", "Add to request: Synthetic mapped, Synthetic 10 mg");
     const quantity = host.querySelector<HTMLInputElement>(".xenios-order-card input[type=number]")!;
     await type(quantity, "3");
     expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.summary);

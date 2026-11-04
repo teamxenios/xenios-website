@@ -360,7 +360,7 @@ describe("the login-free request-only entry", () => {
     for (let attempt = 0; attempt < 60 && !add; attempt += 1) {
       await act(async () => { await new Promise((resolve) => setTimeout(resolve, 25)); });
       add = [...container.querySelectorAll("button")].find((button) =>
-        button.textContent === "Add Kisspeptin to request");
+        button.getAttribute("aria-label") === "Add to request: Kisspeptin, KISSPEPTIN 10 mg");
     }
     expect(add).toBeTruthy();
     return add!;

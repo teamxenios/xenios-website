@@ -421,8 +421,9 @@ function RequestIntentFormSession({
                   const current = prior.get(key); if (!current) return prior;
                   return new Map(prior).set(key, { item, quantity: clampQuantity(item, current.quantity - item.quantityIncrement) });
                 })}>−</button>
-              <label>Requested quantity for {item.productName}<input type="number" min={item.minimumQuantity}
-                max={item.maximumQuantity ?? undefined} step={item.quantityIncrement} value={selection.quantity}
+              <label><span className="xenios-order-card-quantity-label">Requested quantity for {item.productName}</span>
+                <input type="number" aria-label={compactGuestCatalog ? "Requested quantity for " + item.productName : undefined}
+                  min={item.minimumQuantity} max={item.maximumQuantity ?? undefined} step={item.quantityIncrement} value={selection.quantity}
                 onChange={(event) => setSelected((prior) => new Map(prior).set(key, { item, quantity: clampQuantity(item, Number(event.target.value)) }))} /></label>
               <button type="button" aria-label={"Increase requested quantity for " + item.productName}
                 disabled={clampQuantity(item, selection.quantity + item.quantityIncrement) === selection.quantity}
