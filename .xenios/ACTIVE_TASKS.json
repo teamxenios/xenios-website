@@ -3739,7 +3739,7 @@
       "id": "KAN31-QO-GUEST-CATALOG-DETAIL-20261104",
       "title": "Add in-place guest catalog product detail to Quick Order",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-31",
       "baseSha": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
       "paths": [
@@ -3754,7 +3754,13 @@
       "scopeNote": "Implement only Samuel's catalog-completion allocation at KAN-225 comments 10590 and 10591 on exact current release 5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b/tree df084949de408d84b3bf132dc9c71d48c9b80a31. Limit work exactly to RequestIntentForm.tsx blob 057b3f671b31340a40890689fcafc584beb0fe9b and RequestIntentForm.test.tsx blob cd6fd24d054967b5385aa5334abf5589ce6dd44d. Add a bounded in-place guest product detail view using only current safe catalog fields and focused regression coverage. Do not adopt a historical mockup or add Auth, pricing authority, eligibility authority, request semantics, receipt semantics, catalog authority, API, configuration, role, flag, storage, customer, provider, notification, database, SQL, activation, release or production behavior. Create intended branch codex/qo-guest-catalog-detail-20261104 separately. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/wildcard audits found no active conflict for either path. Preserve all previous Quick Order QA and release records, every unrelated task, lease, ownership rule and history. This metadata claim authorizes no application edit, branch creation, test, build, local Node, CI, browser, provider, managed action, review, merge, deployment, timing or disk operation.",
       "createdAt": "2026-11-04T19:00:16.3871011Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T19:00:16.3871011Z"
+      "claimedAt": "2026-11-04T19:00:16.3871011Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "335dcddff6e737450044eee662aa4af456a68d27",
+        "file": ".xenios/handoffs/2026-11-04T19-34-56-718Z-KAN31-QO-GUEST-CATALOG-DETAIL-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T19:34:56.7184435Z"
+      }
     }
   ]
 }

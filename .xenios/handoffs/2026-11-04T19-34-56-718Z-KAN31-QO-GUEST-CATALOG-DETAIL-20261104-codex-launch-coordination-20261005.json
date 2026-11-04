@@ -1,0 +1,58 @@
+{
+  "unit": "KAN31-QO-GUEST-CATALOG-DETAIL-20261104",
+  "lease": "8f29409d-4506-443a-b0fb-18199d83119d",
+  "canonical": "55c65425d61bcdaf6e42bfa28181cebc9b5b9991",
+  "pullRequest": 381,
+  "sourceBranch": "codex/quick-order-guest-catalog-detail-20261104",
+  "base": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "head": "335dcddff6e737450044eee662aa4af456a68d27",
+  "tree": "eb293bdca45d6b35cdf2c455ccef52c2a201c5e5",
+  "initial": "cddfd0996e47b7ec5e14c96d371bb393d53ae02b",
+  "appPaths": [
+    "client/src/research/assisted-order/RequestIntentForm.tsx",
+    "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+  ],
+  "changes": "In-place guest detail with exact source-variant media and existing facts. Portal uses global site colors. Escape and visible Back to catalog keep selection and quantity.",
+  "independentSource": "KAN-31/10599",
+  "appRun": {
+    "id": "41894713346",
+    "trustedApp": 15368,
+    "successful": [
+      "test",
+      "typecheck",
+      "build",
+      "protection",
+      "Required CI completion"
+    ],
+    "formCases": 69
+  },
+  "browser": {
+    "candidate": "335dcddff6e737450044eee662aa4af456a68d27",
+    "allowance": "KAN-31/10600",
+    "attempt": 1,
+    "maximum": 2,
+    "harnessBranch": "codex/qo-visual-capture-20261103",
+    "harness": "62cd2575f6a407591deb5a5fedf08394a9042036",
+    "tree": "ed8d6d25a255e1ec275a4765e92d81367d859b70",
+    "run": "41895847959",
+    "job": "126805010932",
+    "artifact": "13354709424",
+    "artifactSHA256": "90564dfd43206ed2cf22867b05853cf70575301fcd7f5ff44d20a4f3b121030d",
+    "manifestSHA256": "5b5ae9d545e77db90f7d3fc8009adf8d17d02ae883e08e23e91c596a095b836c",
+    "widths": [
+      320,
+      390,
+      768,
+      1280
+    ],
+    "assertionsPassed": 36,
+    "imagesReviewed": 8,
+    "independentPaint": "KAN-31/10603",
+    "scope": "synthetic loopback only, no real customer data or writes"
+  },
+  "limits": [
+    "Browser history Back remains normal navigation.",
+    "Production protected catalog ID set not established.",
+    "No new image, copy, price, eligibility or receipt data was imported."
+  ]
+}

@@ -3048,7 +3048,7 @@
         ".github/workflows/qo-visual-capture.yml",
         "scripts/qa/qo-visual-capture/capture.mjs"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T19:00:16.3871011Z",
       "heartbeatAt": "2026-11-04T19:00:16.3871011Z"
     }

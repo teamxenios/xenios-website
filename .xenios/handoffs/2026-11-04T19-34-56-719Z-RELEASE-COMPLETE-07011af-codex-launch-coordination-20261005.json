@@ -1,0 +1,65 @@
+{
+  "unit": "KAN31-QO-GUEST-CATALOG-DETAIL-20261104",
+  "pullRequest": 381,
+  "jira": "KAN-13/10613",
+  "release": "07011af2e6eb49adf26e6e80f734491a158eb406",
+  "tree": "eb293bdca45d6b35cdf2c455ccef52c2a201c5e5",
+  "parents": [
+    "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+    "335dcddff6e737450044eee662aa4af456a68d27"
+  ],
+  "mergedAt": "2026-11-04T19:23:12Z",
+  "releaseChecks": {
+    "run": "41896437597",
+    "attempt": 1,
+    "trustedApp": 15368,
+    "pass": 18525,
+    "fail": 0,
+    "skip": 83,
+    "formCases": 69,
+    "focusedOverlapping": 150,
+    "jobs": {
+      "test": "126807089102",
+      "typecheck": "126807088995",
+      "build": "126807089042",
+      "protection": "126807089050",
+      "completion": "126810870944"
+    },
+    "fourCheckoutCommits": "07011af2e6eb49adf26e6e80f734491a158eb406"
+  },
+  "render": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deploy": "dep-dblofh8473hc73bq4um0",
+    "status": "live",
+    "finishedAt": "2026-11-04T19:31:45.641033Z",
+    "autoDeploy": "yes",
+    "trigger": "checksPass"
+  },
+  "rollback": {
+    "deploy": "dep-dblnfbnlk1mc73ci59pg",
+    "entry": "/assets/index-DMJbPOYv.js",
+    "release": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+    "tree": "df084949de408d84b3bf132dc9c71d48c9b80a31"
+  },
+  "publicStatic": {
+    "status": "PASS_PUBLIC_STATIC_ONLY",
+    "finishedAt": "2026-11-04T19:32:52.742394+00:00",
+    "entry": "/assets/index-CbuI9bLY.js",
+    "guestDialogAssets": {
+      "/assets/RequestIntentEntry-BXVb2tMl.js": "906accc1d083daf452d0ab4a2aa29d779133c689c619ee319b08fa51d9c88c09"
+    },
+    "scripts": 194,
+    "htmlFallbacks": 0,
+    "packshotSHA256": "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1",
+    "syntheticFixtureMarkerInPublicJS": false,
+    "scriptSHA256": "b0b67081063b94da5c08f43c18ac6f2d4fe612e1965ad716a9d5deacfdcdd4c0"
+  },
+  "sourceReview": "KAN-31/10599",
+  "syntheticReview": "KAN-31/10603",
+  "limits": [
+    "Protected production catalog IDs and member interactions were not exercised.",
+    "Ten source-approved copy records remain staged. No new product image or copy was published.",
+    "Browser history Back remains ordinary navigation."
+  ]
+}
