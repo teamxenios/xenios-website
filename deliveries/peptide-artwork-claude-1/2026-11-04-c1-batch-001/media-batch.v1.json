@@ -1,0 +1,786 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-04-batch-c1-001",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644"
+ ],
+ "labelFactSources": [
+  "KAN-6/10624 (Session 3 static artwork facts)",
+  "KAN-59/10654 (CLAUDE-2 label facts, research-batch-01.label-facts.json sha256 2a7b93e1c71234811fc1adc8651be54a7e5d28b8115bdb2633533387b2cb163c)"
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90); long names fit to the rule width; a name below 70% size stacks on two lines with the amount scaled by the same factor.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 417842,
+  "sha256": "ea1a2445b56db295648c38081a414bd04a97ce9dd34660b2e8c57f2dc1bd0e04",
+  "width": 1800,
+  "height": 1180
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/build-report.json",
+   "bytes": 37160,
+   "sha256": "60e381abea05e845e999b7b0dd354f793981d537e4f2a63c535aed1b9e2bdaa1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/build_c1.py",
+   "bytes": 13390,
+   "sha256": "92eecf4587615ed12129f797198ebb08768b73bbcf3aaeb312a0199ba0a701d4"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/kern-table.segoe-ui.json",
+   "bytes": 29004,
+   "sha256": "8d54b107ac59c00ee1e8533a7b8a2bcaed38e2d23805fbd8e128208db3e70746"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/svg_label_render.py",
+   "bytes": 13685,
+   "sha256": "b6657016238fd65ada788c785a4c525ca0b8f9a82e8a8b8a7d65d565f2a43699"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/verify_c1.py",
+   "bytes": 8299,
+   "sha256": "ddc633762c6a44a668d03c4145acfaa3ec0a67d04531aaee92924ea69415b3d4"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/wpf_kern.ps1",
+   "bytes": 2014,
+   "sha256": "bb9c8c7f43f05318a02f38c317c8ce96e602a72da9c330d6fa9df572ae4dc46c"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/write_manifest.py",
+   "bytes": 12992,
+   "sha256": "bd096538e25cfdd3882451dcbdf9aa6569a5d19515c95ffa16f28415bb3ea710"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/xr_compose.py",
+   "bytes": 8554,
+   "sha256": "03d8377ec158e5f670b70192015cfc0f91c1d1b37e992894b805f64c7c881718"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_e9e1c849f7549246cb89",
+   "sourceVariantId": "mov_80aaef9ddc11edab6c89",
+   "quickOrderSku": "GEN-GRP-0302",
+   "quickOrderProductId": "48375080-7a09-4c8c-8215-0a79598f19a5",
+   "quickOrderVariantId": "9c4bc2dc-4525-44bc-8338-ac61038d228a",
+   "canonicalName": "Ipamorelin",
+   "canonicalVariant": "Ipamorelin 10 mg",
+   "catalogVariantLabel": "IPAMORELIN 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "IPAMORELIN-10-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Ipamorelin",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0302"
+   },
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Ipamorelin",
+      "fontSizePx": 73.8,
+      "baselineRow": 650,
+      "inkBox": [
+       458,
+       595,
+       800,
+       666
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 993.8
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 844.5
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Ipamorelin 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/ipamorelin-10mg-website-render-v1-1024.webp",
+     "sha256": "120f1b7bed270ec9c3f31c668820942ea5cc061a812669a86174e6f98377b3bf"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Ipamorelin 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/ipamorelin-10mg-front-artwork-v1.webp",
+     "sha256": "4c6464a6e0a41a18dbfa5157049617a7e824ea5abfc000cb47bf369772a0566a"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/ipamorelin-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45512,
+     "sha256": "120f1b7bed270ec9c3f31c668820942ea5cc061a812669a86174e6f98377b3bf",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/ipamorelin-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 984652,
+     "sha256": "e7a9f552e03fdcb0efebcb12a208afc2706f3a987466e22ab50239402309394c",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/labels/ipamorelin-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3008,
+     "sha256": "a23b1784d58c7621da22f86f997148a5c504b62a20a29b28d224f5ff24663ff5",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/ipamorelin-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 108302,
+     "sha256": "aa72680f9b6c18bfb4bd3e4b08693b61c53b22c420edf86fe08de816b9e5f4f5",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/ipamorelin-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 42954,
+     "sha256": "4c6464a6e0a41a18dbfa5157049617a7e824ea5abfc000cb47bf369772a0566a",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/labels/ipamorelin-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6989,
+     "sha256": "08327498621068c70f47adec4e3089660c34839b16fdc4940e8c53eb1f793e85",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/ipamorelin-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 374349,
+     "sha256": "4618b5e3c76417a549440d8d4060a959514a3684d6236cff460b430866f4de2a",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/ipamorelin-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 158508,
+     "sha256": "ab09ca3e90ca00040d4175cdf8010d1df887dc341331f51285c7fdc2797f9ee6",
+     "width": 2400,
+     "height": 1200
+    }
+   }
+  },
+  {
+   "offeringId": "mo_bb39fc388cb58003b1f8",
+   "sourceVariantId": "mov_15eddad2da8035493bd6",
+   "quickOrderSku": "GEN-GRP-0306",
+   "quickOrderProductId": "cd6ded4d-a94c-4d56-8092-9262a83d6a8d",
+   "quickOrderVariantId": "8daded5c-f9f7-43ed-a55d-c460f8b2d0a5",
+   "canonicalName": "KPV",
+   "canonicalVariant": "KPV 10 mg",
+   "catalogVariantLabel": "KPV 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "KPV-10-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "KPV",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0306"
+   },
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "KPV",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       593,
+       620,
+       656
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 477.8
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 417.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios KPV 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/kpv-10mg-website-render-v1-1024.webp",
+     "sha256": "022141d3d86e1a0668cc81f495aea636616bdc66afa15b0bfd780f21f9d5d92e"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios KPV 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/kpv-10mg-front-artwork-v1.webp",
+     "sha256": "6f4cfb114c00be963dee36e1805bc8f492bec0c7c52a266db1723bcc34bc6d18"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/kpv-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 44274,
+     "sha256": "022141d3d86e1a0668cc81f495aea636616bdc66afa15b0bfd780f21f9d5d92e",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/kpv-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 981710,
+     "sha256": "d59d5cbefa2e107c20e3a44ed4a43468c9cb54ffcf27aafb7d237505824f8e5f",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/labels/kpv-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2987,
+     "sha256": "51c9793b752cd92a13b0cfe8d23d32f94aafcf06e3917af6ff1cfdd7de133514",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/kpv-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 96626,
+     "sha256": "0a11c29aff68bb47c645d3e9612c71f590bfe7ab9ce3596da72340fde5b70b5f",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/kpv-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 39228,
+     "sha256": "6f4cfb114c00be963dee36e1805bc8f492bec0c7c52a266db1723bcc34bc6d18",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/labels/kpv-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6954,
+     "sha256": "48961e11b7c5112e833723f81962673df22f5c99770b29110ee0c0be54a016f4",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/kpv-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 363313,
+     "sha256": "a1049c768c6c32c2c4fb7ce8e5985f498dd8c8efbe699fbd6b9a26203ef080d2",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/kpv-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 153760,
+     "sha256": "531b19e29093ed2ea045eb5eefbd8dbc3fcde3d1906b4826bee19d479e0a2594",
+     "width": 2400,
+     "height": 1200
+    }
+   }
+  },
+  {
+   "offeringId": "mo_d045624d6f5d00d2cda2",
+   "sourceVariantId": "mov_99e4c4e045d188c3026f",
+   "quickOrderSku": "GEN-GRP-0331",
+   "quickOrderProductId": "a21aebe9-9c38-4bd3-ad63-016086ece085",
+   "quickOrderVariantId": "8e205121-0057-4c09-8e8e-3e97716c9a81",
+   "canonicalName": "Selank",
+   "canonicalVariant": "Selank 10 mg",
+   "catalogVariantLabel": "SELANK 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "SELANK-10-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Selank",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0331"
+   },
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Selank",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       589,
+       720,
+       657
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 663.8
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 570.8
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Selank 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/selank-10mg-website-render-v1-1024.webp",
+     "sha256": "2aed3370a97eec30492c830bdd999a405a0c312eda4b459633e4eba9cbf9ea6b"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Selank 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/selank-10mg-front-artwork-v1.webp",
+     "sha256": "7e6ce19b1e7e21292c243966cbde59a98c0d8d39776fab0402bd4554e2a0fc86"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/selank-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45166,
+     "sha256": "2aed3370a97eec30492c830bdd999a405a0c312eda4b459633e4eba9cbf9ea6b",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/selank-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 984192,
+     "sha256": "0c212e6cc22904ad21632b505bea26491c8cca2d73d3f6751a0457df875de3ab",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/labels/selank-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2996,
+     "sha256": "6303ca6b8949cc26648a5c13683acdcc5c7449ad769899c0e6113514b3efe224",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/selank-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 103665,
+     "sha256": "cf566bb5733442e39347cd9f3ac3f129a81276a54a28abf590dd353852cd53a7",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/selank-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 41042,
+     "sha256": "7e6ce19b1e7e21292c243966cbde59a98c0d8d39776fab0402bd4554e2a0fc86",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/labels/selank-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6969,
+     "sha256": "682cf9ede08ea99d5f3c1b54c2945002882b3996515a7ad76cfa6da601f28b0d",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/selank-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 368694,
+     "sha256": "054705c1fd18def07fe5709ac78dce303c83e1160457f9f6aa6fbed2588c71bc",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/selank-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 155944,
+     "sha256": "1c94531d9573b85fc02b9c4cd9bb6584c02c936dcc64611033b756ee9b675799",
+     "width": 2400,
+     "height": 1200
+    }
+   }
+  },
+  {
+   "offeringId": "mo_f23a8023a45df853f6e1",
+   "sourceVariantId": "mov_ba80c9a61870131db0cf",
+   "quickOrderSku": "GEN-GRP-0350",
+   "quickOrderProductId": "eecc1569-3529-4ce4-87a1-17837ab3195b",
+   "quickOrderVariantId": "9dad8f2a-c610-41e8-a384-b39f1a467398",
+   "canonicalName": "Thymosin Alpha-1",
+   "canonicalVariant": "Thymosin Alpha-1 10 mg",
+   "catalogVariantLabel": "Thymosin Alpha-1 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "THYMOSINALPHA1-10-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Thymosin Alpha-1",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0350"
+   },
+   "renderLayout": {
+    "mode": "stack",
+    "runs": [
+     {
+      "text": "Thymosin",
+      "fontSizePx": 57.71,
+      "baselineRow": 622,
+      "inkBox": [
+       458,
+       579,
+       704,
+       635
+      ]
+     },
+     {
+      "text": "Alpha-1",
+      "fontSizePx": 57.71,
+      "baselineRow": 684,
+      "inkBox": [
+       458,
+       641,
+       651,
+       696
+      ]
+     },
+     {
+      "text": "10 mg",
+      "fontSizePx": 39.82,
+      "baselineRow": 731,
+      "inkBox": [
+       460,
+       703,
+       567,
+       739
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 160.5,
+     "letterSpacing": -5.47,
+     "baseline": 464.6,
+     "inkRightEstimate": 1445.2
+    },
+    "wrapFrontPanel": {
+     "fontSize": 101.0,
+     "letterSpacing": -3.46,
+     "baseline": 504.2,
+     "inkRightEstimate": 959.9
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Thymosin Alpha-1 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/thymosin-alpha-1-10mg-website-render-v1-1024.webp",
+     "sha256": "2c418059306d1968588fd7c018148d2633b37bc096923195191e79faaae48680"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Thymosin Alpha-1 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/thymosin-alpha-1-10mg-front-artwork-v1.webp",
+     "sha256": "580656a6537d87929940dd7c166a9d4bd47cf20d11df1baaed639628d30cfe77"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/thymosin-alpha-1-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46440,
+     "sha256": "2c418059306d1968588fd7c018148d2633b37bc096923195191e79faaae48680",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/thymosin-alpha-1-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 984387,
+     "sha256": "26e4d0d463153be6826d89aa1bb6fdfd293e0d2cf99af574b46db6257be280f7",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/labels/thymosin-alpha-1-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3033,
+     "sha256": "4569c2efcab32311b50e9814dff7a189cbc291c96e848bd71b9374755b41a8ac",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/thymosin-alpha-1-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 119664,
+     "sha256": "4c3673ac706e05165b049e586a1055bd8a83732a909125c613f97dfaffbec820",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/thymosin-alpha-1-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 46006,
+     "sha256": "580656a6537d87929940dd7c166a9d4bd47cf20d11df1baaed639628d30cfe77",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/labels/thymosin-alpha-1-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7022,
+     "sha256": "3214b1935b83eec2783adb10ac1422eec596b0e7cb748ceecb8474f5c0b1010d",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/thymosin-alpha-1-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 382192,
+     "sha256": "e50287cdacf37b2fec5a19b83fc579738fba22ad97de6e7f5673271376792baa",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/assets/thymosin-alpha-1-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 160822,
+     "sha256": "7953e5c5982d4f976730f99e1969ada1d9a1a6c890092a48b7715f83ba17b4e0",
+     "width": 2400,
+     "height": 1200
+    }
+   }
+  }
+ ]
+}

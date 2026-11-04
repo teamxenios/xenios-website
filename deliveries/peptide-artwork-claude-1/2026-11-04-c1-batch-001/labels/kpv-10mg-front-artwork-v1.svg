@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Xenios KPV 10 mg front label artwork version 1</title>
+  <desc id="desc">Editable Xenios KPV 10 mg per vial packaging design. Lyophilized vial for laboratory research use only. Physical dimensions are pending the supplier dieline.</desc>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#f7f5fb"/>
+      <stop offset="1" stop-color="#ece8f4"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3b1a72"/>
+      <stop offset="0.2" stop-color="#7343d4"/>
+      <stop offset="0.42" stop-color="#496ee7"/>
+      <stop offset="0.65" stop-color="#21a8d0"/>
+      <stop offset="0.82" stop-color="#7261dc"/>
+      <stop offset="1" stop-color="#2a144f"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6935ca"/>
+      <stop offset="1" stop-color="#1b9dca"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="28" flood-color="#180b35" flood-opacity="0.16"/>
+    </filter>
+    <style>
+      .sans { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="#e8e5ee"/>
+  <rect x="80" y="70" width="1440" height="860" rx="42" fill="url(#paper)" filter="url(#shadow)"/>
+  <rect x="80" y="70" width="1440" height="22" rx="11" fill="url(#metal)"/>
+  <rect x="80" y="908" width="1440" height="22" rx="11" fill="url(#metal)"/>
+  <g class="sans">
+    <text x="150" y="205" font-size="78" font-weight="800" letter-spacing="15" fill="#171026">XENIOS</text>
+    <rect x="150" y="246" width="1300" height="8" rx="4" fill="url(#rule)"/>
+    <text x="150" y="470" font-size="176" font-weight="790" letter-spacing="-6" fill="#171023">KPV</text>
+    <text x="158" y="595" font-size="98" font-weight="780" fill="#6436c9">10 mg</text>
+    <text x="158" y="675" font-size="38" font-weight="750" letter-spacing="6" fill="#40354e">LYOPHILIZED VIAL</text>
+    <g transform="translate(145 730)">
+      <rect width="1310" height="120" rx="24" fill="#20143a"/>
+      <rect width="17" height="120" rx="8" fill="url(#metal)"/>
+      <text x="58" y="52" font-size="35" font-weight="800" letter-spacing="3" fill="#ffffff">RESEARCH USE ONLY</text>
+      <text x="58" y="94" font-size="27" font-weight="650" letter-spacing="2.2" fill="#dcd4ed">NONCLINICAL USE ONLY</text>
+      <text x="1250" y="50" font-size="25" font-weight="730" text-anchor="end" letter-spacing="2" fill="#a8d2ff">NOMINAL CONTENT</text>
+      <text x="1250" y="93" font-size="38" font-weight="820" text-anchor="end" fill="#ffffff">10 mg per vial</text>
+    </g>
+  </g>
+</svg>
