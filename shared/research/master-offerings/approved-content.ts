@@ -25,3 +25,7 @@ export interface ReviewedProductContentRecord {
   readonly sourceVariantId: string;
   readonly content: ReviewedProductContent;
 }
+
+export function reviewedPackage(content: ReviewedProductContent | undefined): string | undefined {
+  return content?.specifications?.find(({ label }) => label === "Package")?.value;
+}

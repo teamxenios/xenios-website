@@ -16,6 +16,7 @@ import {
 import { fullCatalogProductHref } from "./integration-packet";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
+import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
 
 /**
  * State tone is a second signal, never the only one. Every card also carries
@@ -187,6 +188,7 @@ export function MasterOfferingCard({
   const summary = product.priceSummary;
   const onlyVariant = product.variants.length === 1 ? product.variants[0] : undefined;
   const reviewedContent = onlyVariant?.reviewedContent;
+  const packageLabel = reviewedPackage(reviewedContent);
   const headingId = `mo-card-${product.id}`;
   return (
     <li className="min-w-0">
@@ -232,6 +234,7 @@ export function MasterOfferingCard({
             {reviewedContent.brand && <strong>{reviewedContent.brand} · </strong>}{reviewedContent.summary}
           </p>
         )}
+        {packageLabel && <p className="body-s text-ink-2 min-w-0 break-words"><strong>Package</strong> · {packageLabel}</p>}
         <p className="body-s text-ink-2 min-w-0 break-words">
           {product.stateExplanation}
         </p>
