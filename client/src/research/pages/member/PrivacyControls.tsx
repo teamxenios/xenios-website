@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useResearch } from "../../core";
 import { ResearchMemberShell } from "../../ui/shells";
 import {
@@ -80,6 +80,20 @@ function RequestStatusMessage({ state, doneMessage }: { state: RequestState; don
 
 export default function PrivacyControls() {
   const { member, memberChecking, memberToken } = useResearch();
+  return (
+    <ResearchMemberShell
+      eyebrow="Member"
+      title="Privacy"
+      lead="What we hold about you, who can see it, and your rights over it."
+    >
+      {memberChecking || !member || !memberToken
+        ? <ResearchRouteBoundary state={memberChecking ? "loading" : "unauthorized"}>{null}</ResearchRouteBoundary>
+        : <OwnedPrivacyControls key={memberToken} memberToken={memberToken} />}
+    </ResearchMemberShell>
+  );
+}
+
+function OwnedPrivacyControls({ memberToken }: { memberToken: string }) {
   const [capabilities, setCapabilities] = useState<Map<ResearchCapability, CapabilityStatus> | null>(null);
   const [summary, setSummary] = useState<PrivacySummary | null>(null);
   const [summaryLoaded, setSummaryLoaded] = useState(false);
@@ -88,6 +102,8 @@ export default function PrivacyControls() {
   const [exportState, setExportState] = useState<RequestState>({ phase: "idle" });
   const [correctionState, setCorrectionState] = useState<RequestState>({ phase: "idle" });
   const [correctionDetail, setCorrectionDetail] = useState("");
+  const [submittedCorrectionDetail, setSubmittedCorrectionDetail] = useState<string | null>(null);
+  const correctionInFlight = useRef(false);
   const [correctionMissing, setCorrectionMissing] = useState(false);
   const [deletionState, setDeletionState] = useState<RequestState>({ phase: "idle" });
   const [deletionConfirming, setDeletionConfirming] = useState(false);
@@ -107,7 +123,6 @@ export default function PrivacyControls() {
   }, [memberToken]);
 
   useEffect(() => {
-    if (!member || !memberToken) return;
     let alive = true;
     (async () => {
       const res = await getPrivacySummary<PrivacySummary>(memberToken);
@@ -132,10 +147,9 @@ export default function PrivacyControls() {
     return () => {
       alive = false;
     };
-  }, [member, memberToken]);
+  }, [memberToken]);
 
   const loadHealthConsent = useCallback(async () => {
-    if (!memberToken) return;
     setHealthConsentLoad("loading");
     const res = await getResearchAgreements(memberToken);
     if (res.kind === "ok") {
@@ -150,12 +164,11 @@ export default function PrivacyControls() {
   }, [memberToken]);
 
   useEffect(() => {
-    if (!member || !memberToken) return;
     void loadHealthConsent();
-  }, [loadHealthConsent, member, memberToken]);
+  }, [loadHealthConsent]);
 
   async function withdrawHealthConsent(): Promise<void> {
-    if (!memberToken || !healthConsent) return;
+    if (!healthConsent) return;
     setWithdrawConfirming(false);
     setWithdrawState({ phase: "busy" });
     const res = await withdrawResearchAgreement("XR-MEM-012", memberToken);
@@ -184,7 +197,6 @@ export default function PrivacyControls() {
     send: (token: string) => Promise<ApiResult<PrivacyRequestResult>>,
     setState: (s: RequestState) => void,
   ): Promise<void> {
-    if (!memberToken) return;
     setState({ phase: "busy" });
     const res = await send(memberToken);
     if (res.kind === "ok") {
@@ -202,34 +214,30 @@ export default function PrivacyControls() {
     }
   }
 
-  function submitCorrection() {
+  async function submitCorrection() {
+    if (correctionInFlight.current) return;
     const detail = correctionDetail.trim();
     if (!detail) {
       setCorrectionMissing(true);
       return;
     }
+    correctionInFlight.current = true;
     setCorrectionMissing(false);
-    void runRequest((token) => requestPrivacyCorrection(detail, token), setCorrectionState);
+    setSubmittedCorrectionDetail(detail);
+    try {
+      await runRequest((token) => requestPrivacyCorrection(detail, token), setCorrectionState);
+    } finally {
+      correctionInFlight.current = false;
+    }
   }
 
   const mediaStatus = capabilityStatusOrPending(capabilities, "private_media");
   const consents = summary?.consents ?? null;
   const media = summary?.media ?? null;
 
-  const state: "loading" | "ok" | "unauthorized" = memberChecking
-    ? "loading"
-    : !member || sessionEnded
-      ? "unauthorized"
-      : !summaryLoaded
-        ? "loading"
-        : "ok";
+  const state = sessionEnded ? "unauthorized" : !summaryLoaded ? "loading" : "ok";
 
   return (
-    <ResearchMemberShell
-      eyebrow="Member"
-      title="Privacy"
-      lead="What we hold about you, who can see it, and your rights over it."
-    >
       <ResearchRouteBoundary state={state}>
         <ResearchSecureNotice>
           Your answers, records, and media are visible only to you and the Xenios Research review team. Referral
@@ -291,7 +299,7 @@ export default function PrivacyControls() {
                 <button
                   type="button"
                   className="btn btn-secondary"
-                  onClick={submitCorrection}
+                  onClick={() => void submitCorrection()}
                   disabled={correctionState.phase === "busy"}
                 >
                   {correctionState.phase === "busy" ? "Submitting..." : "Submit correction"}
@@ -299,7 +307,9 @@ export default function PrivacyControls() {
               </div>
               <RequestStatusMessage
                 state={correctionState}
-                doneMessage="Your correction request was received. A person will review it and follow up by email."
+                doneMessage={submittedCorrectionDetail !== correctionDetail.trim()
+                  ? "Your earlier correction request was received. Your newer edits have not been submitted."
+                  : "Your correction request was received. A person will review it and follow up by email."}
               />
             </div>
 
@@ -482,6 +492,5 @@ export default function PrivacyControls() {
           </div>
         </section>
       </ResearchRouteBoundary>
-    </ResearchMemberShell>
   );
 }
