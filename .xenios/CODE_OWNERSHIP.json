@@ -3044,7 +3044,9 @@
       "session": "codex-launch-coordination-20261005",
       "paths": [
         "client/src/research/assisted-order/RequestIntentForm.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        ".github/workflows/qo-visual-capture.yml",
+        "scripts/qa/qo-visual-capture/capture.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-04T19:00:16.3871011Z",

@@ -3744,7 +3744,9 @@
       "baseSha": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
       "paths": [
         "client/src/research/assisted-order/RequestIntentForm.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        ".github/workflows/qo-visual-capture.yml",
+        "scripts/qa/qo-visual-capture/capture.mjs"
       ],
       "dependsOn": [
         "KAN31-QO-VERIFIED-MEMBER-CLOSED-INTAKE-RECEIPT-20261104"
