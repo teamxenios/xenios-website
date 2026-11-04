@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">FedEx Standard Overnight service presentation</title>
+  <desc id="desc">Original Xenios-authored, logo-free presentation artwork for the FedEx Standard Overnight catalog service. This is a non-merchandise shipping and fulfillment service record, not physical product packaging.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071326"/>
+      <stop offset="0.55" stop-color="#10233d"/>
+      <stop offset="1" stop-color="#173147"/>
+    </linearGradient>
+    <linearGradient id="route" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7fe4d2"/>
+      <stop offset="1" stop-color="#b8a9ff"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#8cdddb" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#8cdddb" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="26" flood-color="#020815" flood-opacity="0.38"/>
+    </filter>
+    <style>
+      .sans { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      .eyebrow { font-size: 24px; font-weight: 700; letter-spacing: 5px; }
+      .title { font-size: 106px; font-weight: 720; letter-spacing: -4px; }
+      .subtitle { font-size: 30px; font-weight: 500; }
+      .meta { font-size: 22px; font-weight: 600; letter-spacing: 1px; }
+      .small { font-size: 19px; font-weight: 500; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <circle cx="1315" cy="270" r="390" fill="url(#glow)"/>
+  <g opacity="0.11" stroke="#d4f8f3" fill="none">
+    <circle cx="1328" cy="250" r="268"/>
+    <circle cx="1328" cy="250" r="222"/>
+    <path d="M-40 214 H1640 M-40 786 H1640"/>
+  </g>
+
+  <g class="sans" fill="#eefaf8">
+    <text x="110" y="116" class="eyebrow" fill="#8fe3d6">XENIOS · SHIPPING &amp; FULFILLMENT</text>
+    <g transform="translate(1208 76)">
+      <rect width="282" height="60" rx="30" fill="#e9fffb" fill-opacity="0.10" stroke="#98e9dc" stroke-opacity="0.75"/>
+      <text x="141" y="39" text-anchor="middle" class="meta" fill="#bff5ec">SERVICE PRESENTATION</text>
+    </g>
+
+    <text x="110" y="320" class="title">FedEx Standard</text>
+    <text x="110" y="430" class="title" fill="#a9efe4">Overnight</text>
+    <text x="115" y="500" class="subtitle" fill="#c5d8e3">Shipping &amp; Fulfillment service · operational catalog identity</text>
+  </g>
+
+  <g transform="translate(955 255)" filter="url(#shadow)">
+    <rect width="515" height="370" rx="46" fill="#0c1a2e" fill-opacity="0.92" stroke="#aec9d9" stroke-opacity="0.24"/>
+    <g transform="translate(64 82)" fill="none" stroke-linecap="round">
+      <path d="M26 184 C120 30 252 35 382 142" stroke="#29485c" stroke-width="22" opacity="0.55"/>
+      <path d="M26 184 C120 30 252 35 382 142" stroke="url(#route)" stroke-width="7" stroke-dasharray="17 20"/>
+      <circle cx="26" cy="184" r="23" fill="#0c1a2e" stroke="#7fe4d2" stroke-width="7"/>
+      <circle cx="205" cy="61" r="19" fill="#0c1a2e" stroke="#93d9e5" stroke-width="7"/>
+      <circle cx="382" cy="142" r="27" fill="#0c1a2e" stroke="#b8a9ff" stroke-width="7"/>
+      <path d="M370 130 l24 24 M394 130 l-24 24" stroke="#d7d0ff" stroke-width="5" opacity="0.65"/>
+    </g>
+    <g class="sans" fill="#d9ebf2">
+      <text x="60" y="326" class="small">Catalog record</text>
+      <text x="327" y="326" class="small">Fulfillment service</text>
+    </g>
+  </g>
+
+  <g transform="translate(110 624)" class="sans">
+    <rect width="760" height="176" rx="30" fill="#eefaf8" fill-opacity="0.075" stroke="#d1e8e5" stroke-opacity="0.22"/>
+    <text x="38" y="48" class="meta" fill="#8fe3d6">CATALOG CLASSIFICATION</text>
+    <text x="38" y="93" class="subtitle" fill="#eefaf8">SHIPPING &amp; FULFILLMENT SERVICE</text>
+    <text x="38" y="132" class="small" fill="#c6d8e2">Non-merchandise catalog row.</text>
+    <text x="38" y="160" class="small" fill="#c6d8e2">Internal presentation only.</text>
+  </g>
+
+  <g transform="translate(0 850)" class="sans">
+    <rect width="1600" height="150" fill="#050d19" fill-opacity="0.88"/>
+    <text x="110" y="50" class="eyebrow" fill="#f0f8f7">NOT PHYSICAL PRODUCT PACKAGING</text>
+    <text x="110" y="91" class="small" fill="#bfd0da">Original Xenios artwork · No carrier logo, trade dress, or third-party imagery</text>
+    <text x="110" y="122" class="small" fill="#849dab">INTERNAL REVIEW — TRADEMARK REVIEW PENDING</text>
+  </g>
+</svg>

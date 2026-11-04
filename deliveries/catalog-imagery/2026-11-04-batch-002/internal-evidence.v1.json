@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-002",
+  "createdAt": "2026-11-04T19:40:00.000Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "records": [
+    {
+      "offeringId": "mo_003b0c272099eeb1f114",
+      "sourceVariantId": "mov_9b65ad5bb184691e19e0",
+      "field": "media",
+      "canonicalName": "FedEx Standard Overnight",
+      "canonicalVariant": "FedEx Standard Overnight",
+      "family": "shipping_and_fulfillment",
+      "category": "Shipping & Fulfillment",
+      "subcategory": "Shipping Service",
+      "assetType": "service",
+      "packagingState": "not_applicable",
+      "artworkVersion": "FEDEX-STANDARD-OVERNIGHT-SVC-v1",
+      "sourceAndReuseBasis": "Original Xenios-authored vector artwork created for this exact offering/source-variant pair. No carrier logo, trade dress, supplier photograph, parcel, product package, tracking element or barcode was copied into the artwork.",
+      "rights": {
+        "state": "ORIGINAL_XENIOS_ARTWORK_NOMINATIVE_SERVICE_NAME",
+        "evidenceReference": "editable SVG and exact raster derivatives in this isolated batch",
+        "rightsClearedForInternalReview": true,
+        "publicationAuthorized": false,
+        "trademarkReview": "pending"
+      },
+      "sources": [
+        {
+          "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+          "gitBlobOid": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+          "rawSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+          "supports": [
+            "exact offeringId and sourceVariantId",
+            "canonical service name",
+            "shipping_and_fulfillment family",
+            "Shipping & Fulfillment category",
+            "Shipping Service subcategory"
+          ],
+          "limitation": "The generated row carries a care_pathway display state, but the governing pathway authority classifies shipping_and_fulfillment as non-merchandise first and requires no provider pathway. The artwork therefore omits provider, care, pharmacy and intake language."
+        },
+        {
+          "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+          "gitBlobOid": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+          "rawSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+          "supports": [
+            "exact pair is intentionally unbound",
+            "shipping service is modeled as a fulfillment fee rather than a purchasable product"
+          ]
+        },
+        {
+          "path": "shared/research/master-offerings/pathway-authority.ts",
+          "gitBlobOid": "abeebe1b40df96a1e55f67a1697b24014a8619ff",
+          "rawSha256": "d702cf9b67c0dec0d90a231b93cace52479e6bebc1c985615c10e891a0db0f29",
+          "supports": [
+            "shipping_and_fulfillment is a NON_MERCHANDISE_FAMILY",
+            "direct purchase is refused as non_merchandise_family",
+            "requiresProviderPathway is false for the shipping family"
+          ]
+        }
+      ],
+      "authorityResolution": {
+        "directPurchaseRefusal": "non_merchandise_family",
+        "requiresProviderPathway": false,
+        "artworkRule": "neutral service identity only; no provider, care, pharmacy, intake or customer action"
+      },
+      "review": {
+        "status": "candidate_pending_independent_review",
+        "reviewedSourceSha": null,
+        "publicationDisposition": "quarantined_in_delivery_path"
+      },
+      "preciseGaps": [
+        "Independent exact-byte and visual review is not yet recorded.",
+        "Trademark review of the nominative service name is not yet recorded.",
+        "Product Control and release approval for publication are not present.",
+        "No runtime or public linkage is authorized by this batch."
+      ]
+    }
+  ],
+  "externalAssets": [],
+  "reviewAccounting": {
+    "independentlyReviewedAssets": 0,
+    "publicationAuthorizedAssets": 0,
+    "runtimeLinkedAssets": 0
+  }
+}

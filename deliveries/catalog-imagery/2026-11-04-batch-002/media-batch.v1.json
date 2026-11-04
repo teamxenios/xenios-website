@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-002",
+  "createdAt": "2026-11-04T19:40:00.000Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "gitBlobOid": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+    "rawSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+    "committedBytes": 332053,
+    "bytePolicy": "committed LF bytes; verifier normalizes a CRLF checkout before hashing",
+    "offeringCount": 420,
+    "sourceVariantCount": 420
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "gitBlobOid": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+    "rawSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+    "committedBytes": 108239,
+    "bytePolicy": "committed LF bytes; verifier normalizes a CRLF checkout before hashing"
+  },
+  "pathwayAuthority": {
+    "path": "shared/research/master-offerings/pathway-authority.ts",
+    "gitBlobOid": "abeebe1b40df96a1e55f67a1697b24014a8619ff",
+    "rawSha256": "d702cf9b67c0dec0d90a231b93cace52479e6bebc1c985615c10e891a0db0f29",
+    "committedBytes": 9165,
+    "directPurchaseRefusal": "non_merchandise_family",
+    "requiresProviderPathway": false
+  },
+  "contactSheet": {
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-002/contact-sheet-v1.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 352672,
+    "sha256": "da22b7f0a9216225fc8b841f9e8d601965f9492c4b1552450140dcfbf25fd38b",
+    "sourceRelativePath": "deliveries/catalog-imagery/2026-11-04-batch-002/contact-sheet-v1.html",
+    "sourceBytes": 3949,
+    "sourceSha256": "af82d8eb2a1fdf6c7d1ef64d7d7f84231b76d0560be9cc1007d28f237454fcb6"
+  },
+  "publicationState": "review_only_not_runtime",
+  "records": [
+    {
+      "offeringId": "mo_003b0c272099eeb1f114",
+      "sourceVariantId": "mov_9b65ad5bb184691e19e0",
+      "media": {
+        "kind": "service",
+        "packagingState": "not_applicable",
+        "artworkVersion": "FEDEX-STANDARD-OVERNIGHT-SVC-v1",
+        "images": [
+          {
+            "role": "primary",
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-002/assets/fedex-standard-overnight-service-v1.webp",
+            "altText": "Logo-free Xenios service presentation for FedEx Standard Overnight, explicitly marked as not physical product packaging",
+            "width": 1600,
+            "height": 1000,
+            "bytes": 76390,
+            "sha256": "75c5e7dd8b58afc03c4120b394f322ebc3a46c260e0263da2d6fccea2f1e06e1"
+          }
+        ],
+        "sourceMasters": [
+          {
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-002/assets/fedex-standard-overnight-service-v1.svg",
+            "format": "svg",
+            "width": 1600,
+            "height": 1000,
+            "bytes": 4677,
+            "sha256": "b5477edc3a7557f0f5b444406cac1b68ab6f16fe689931215bee49b848174f6e"
+          },
+          {
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-002/assets/fedex-standard-overnight-service-v1.png",
+            "format": "png",
+            "width": 1600,
+            "height": 1000,
+            "bytes": 602126,
+            "sha256": "6b99a7a03231bd2d5089489e7f8c7b5b7f602dad72841e4d12365d23493c5927"
+          }
+        ],
+        "exactDepictedFacts": {
+          "serviceName": "FedEx Standard Overnight",
+          "family": "shipping_and_fulfillment",
+          "category": "Shipping & Fulfillment",
+          "subcategory": "Shipping Service"
+        },
+        "bindingDisposition": {
+          "state": "intentionally_unbound",
+          "reason": "shipping service row: modeled as a fulfillment fee, not a purchasable product, so no Product Control unit exists"
+        },
+        "presentationBoundaries": {
+          "authorship": "original Xenios-authored vector artwork",
+          "serviceNameUse": "nominative exact catalog identity",
+          "carrierLogoUsed": false,
+          "carrierTradeDressUsed": false,
+          "supplierPhotoUsed": false,
+          "physicalProductDepicted": false,
+          "providerOrCareActionRepresented": false,
+          "publicationAuthorized": false,
+          "trademarkReview": "pending"
+        },
+        "notEstablishedByArtwork": [
+          "carrier endorsement or sponsorship",
+          "rate or price",
+          "carrier or pharmacy cutoff",
+          "delivery timing guarantee",
+          "destination eligibility",
+          "order availability",
+          "physical product packaging"
+        ]
+      }
+    }
+  ]
+}
