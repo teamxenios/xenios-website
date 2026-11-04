@@ -199,6 +199,52 @@ describe("mixed private request customer form source", () => {
     expect(host.querySelector(".xenios-order-card img")).toBeNull();
   });
 
+  it("opens exact guest catalog details without changing the request or leaving the catalog", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    const row = { ...item("mapped", false), variantId: "mov_9262033fe69a14a50f1c",
+      specification: "Synthetic 10 mg", format: "Synthetic capsule", packBasis: "Synthetic single pack",
+      sourceSelection: { family: "synthetic", slug: "mapped", variantId: "mov_82974ab2f9c652c2cb12" } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [row], total: 1 });
+
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    await click("Add Synthetic mapped to request");
+    const quantity = host.querySelector<HTMLInputElement>(".xenios-order-card input[type=number]")!;
+    await type(quantity, "3");
+    const trigger = host.querySelector<HTMLButtonElement>('button[aria-label="View details for Synthetic mapped, Synthetic 10 mg"]')!;
+    const reads = api.catalog.mock.calls.length;
+    const url = window.location.href;
+
+    trigger.focus();
+    await act(async () => trigger.click());
+    const dialog = document.querySelector('[role="dialog"]');
+    expect(dialog?.querySelector("h2")?.textContent).toBe(row.productName);
+    for (const fact of [row.specification, row.format, row.packBasis]) {
+      expect(dialog?.textContent).toContain(fact);
+    }
+    expect(dialog?.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
+    expect(dialog?.contains(document.activeElement)).toBe(true);
+
+    await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+
+    await act(async () => trigger.click());
+    const back = [...document.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')]
+      .find((button) => button.textContent?.trim() === "Back to catalog");
+    expect(back).toBeTruthy();
+    await act(async () => back!.click());
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(quantity.value).toBe("3");
+    expect(window.location.href).toBe(url);
+    expect(api.catalog).toHaveBeenCalledTimes(reads);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+    expect(storedKeys()).toEqual([]);
+  });
+
   it.each(["submission", "recovery"] as const)("publishes a confirmed %s receipt only after clearing its owned marker", async (path) => {
     const api = makeApi();
     const markerAtConfirmation: Array<string | null> = [];

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
   REQUEST_INTENT_NOTICE, REQUEST_INTENT_RECOVERY_NOTICE, validateRequestIntentInput,
@@ -33,6 +34,39 @@ function restrictionCopy(code: string): string {
   return Object.prototype.hasOwnProperty.call(RESTRICTION_COPY, code)
     ? RESTRICTION_COPY[code as DirectPurchaseRefusal]
     : "A purchase restriction applies. Its details need to be confirmed.";
+}
+
+function GuestCatalogDetails({ item, variantIds }: {
+  item: RequestIntentCatalogItem;
+  variantIds: readonly string[];
+}) {
+  return <Dialog>
+    <DialogTrigger asChild>
+      <button type="button" className="xenios-order-link"
+        aria-label={"View details for " + item.productName + (item.specification ? ", " + item.specification : "")}>
+        View details
+      </button>
+    </DialogTrigger>
+    <DialogContent className="max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink">
+      <DialogTitle className="break-words pr-8">{item.productName}</DialogTitle>
+      <DialogDescription className="text-ink-mute">
+        {item.selectableForReview
+          ? "Return to the catalog to add this selection for review. Final quantities, prices and availability are confirmed during review."
+          : "Return to the catalog for this listing’s current availability and request options."}
+      </DialogDescription>
+      <DialogClose asChild>
+        <button type="button" className="min-h-11 justify-self-start rounded-md px-2 text-sm font-semibold text-ink underline">
+          Back to catalog
+        </button>
+      </DialogClose>
+      <ProductMedia productName={item.productName} variantIds={variantIds} detail />
+      {(item.specification || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
+        {item.specification && <div><dt className="font-semibold">Specification</dt><dd>{item.specification}</dd></div>}
+        {item.format && <div><dt className="font-semibold">Format</dt><dd>{item.format}</dd></div>}
+        {item.packBasis && <div><dt className="font-semibold">Pack basis</dt><dd>{item.packBasis}</dd></div>}
+      </dl>}
+    </DialogContent>
+  </Dialog>;
 }
 
 type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Storage | null; embedded?: boolean;
@@ -319,15 +353,17 @@ function RequestIntentFormSession({
       <div className="xenios-order-catalog-layout"><div><div className="xenios-order-cards">{catalog?.items.map((item) => {
         const key = catalogItemKey(item), selection = selected.get(key);
         const sourceVariantId = item.sourceSelection?.variantId;
+        const variantIds = sourceVariantId ? [sourceVariantId] : [];
         return <article className="xenios-order-card" key={key}>
           {ownerKey === "early-access-session" && (
-            <ProductMedia productName={item.productName} variantIds={sourceVariantId ? [sourceVariantId] : []} />
+            <ProductMedia productName={item.productName} variantIds={variantIds} />
           )}
           <h2>{item.productName}</h2>
           <p>{item.specification || "Form not stated"}</p>
           <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
           {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
           <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>
+          {ownerKey === "early-access-session" && <GuestCatalogDetails item={item} variantIds={variantIds} />}
           {!item.selectableForReview ? <p>{item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"}</p> : selection
             ? <div className="xenios-order-quantity">
               <button type="button" aria-label={"Decrease requested quantity for " + item.productName}
