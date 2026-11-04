@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-04T19:32:52.742394+00:00",
+  "updatedAt": "2026-11-04T20:44:00.384923+00:00",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -394,24 +394,24 @@
   },
   "currentRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "07011af2e6eb49adf26e6e80f734491a158eb406",
-    "tree": "eb293bdca45d6b35cdf2c455ccef52c2a201c5e5",
+    "sha": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+    "tree": "da2b16a6ff2991fe2322c931c95999262dbc709b",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployedFromBranch": "codex/quick-order-guest-catalog-detail-20261104",
-    "sourceSha": "335dcddff6e737450044eee662aa4af456a68d27",
-    "rollback": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
-    "rollbackTree": "df084949de408d84b3bf132dc9c71d48c9b80a31",
-    "rollbackDeployId": "dep-dblnfbnlk1mc73ci59pg",
+    "deployedFromBranch": "codex/quick-order-reviewed-catalog-content-20261104",
+    "sourceSha": "cf02e04b2d8e08e79789daf34bd89059e0312558",
+    "rollback": "07011af2e6eb49adf26e6e80f734491a158eb406",
+    "rollbackTree": "eb293bdca45d6b35cdf2c455ccef52c2a201c5e5",
+    "rollbackDeployId": "dep-dblofh8473hc73bq4um0",
     "rollbackExecuted": false,
-    "deployId": "dep-dblofh8473hc73bq4um0",
-    "liveSince": "2026-11-04T19:31:45.641033Z",
-    "observedAt": "2026-11-04T19:32:52.742394+00:00",
+    "deployId": "dep-dblpgrnb9u1s73dlsg00",
+    "liveSince": "2026-11-04T20:42:36.249613Z",
+    "observedAt": "2026-11-04T20:44:00.384923+00:00",
     "autoDeploy": "yes",
     "autoDeployTrigger": "checksPass",
-    "scope": "Qualified ordinary website release for in-place guest Quick Order catalog product detail; all sensitive operations remain held",
-    "receipt": ".xenios/handoffs/2026-11-04T19-34-56-719Z-RELEASE-COMPLETE-07011af-codex-launch-coordination-20261005.json",
-    "note": "Protected PR 381 merged normally, producing release 07011af from exact source 335dcdd/tree eb293bd. Release checks 41896437597 passed 18,525 tests with zero failures and 83 skips, including 69 form cases; all five trusted app15368 checks succeeded and all four checkout commits were exact. Render deploy dep-dblofh8473hc73bq4um0 reached live at 2026-11-04T19:31:45.641033Z. Public static verification passed with entry /assets/index-CbuI9bLY.js, 194 scripts, zero HTML fallbacks, the exact guest dialog asset and unchanged packshot. Independent source acceptance KAN-31/10599, synthetic painted review KAN-31/10603, live served review KAN-31/10611 and release receipt KAN-13/10613 are recorded. Protected production catalog IDs and member interactions were not exercised; no staged copy or image was published. Compatible rollback 5926c2f/dep-dblnfbnlk1mc73ci59pg was retained and not executed. No browser production action, managed data, configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred."
+    "scope": "Qualified ordinary website release for reviewed Quick Order catalog content and official product imagery; all sensitive operations remain held",
+    "receipt": ".xenios/handoffs/2026-11-04T20-44-00Z-RELEASE-COMPLETE-19d10e0-codex-launch-coordination-20261005.json",
+    "note": "Protected PR 382 merged normally without deletion, override or force, producing release 19d10e0 from exact source cf02e04/tree da2b16a. App CI 41906026996 and release CI 41908170052 each passed 18,531 tests with zero failures and 83 skips; all five trusted app15368 checks succeeded on the exact tree. Independent source KAN-31/10635 and synthetic visual KAN-31/10637 are recorded; corrected run 41906958396 passed 284 checks across eight contexts and 16 PNGs, with both authorized attempts used. Render deploy dep-dblpgrnb9u1s73dlsg00 reached live at 2026-11-04T20:42:36.249613Z from unchanged=yes/checksPass. GET-only public static verification passed with entry /assets/index-CP2mFj2b.js, 196 JavaScript assets, zero HTML fallbacks and eleven exact reviewed images. Release receipt KAN-13/10640 is recorded. Protected live dataset binding and authenticated customer use remain unverified. Compatible rollback 07011af/dep-dblofh8473hc73bq4um0 was retained and not executed. No managed data, configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred."
   },
   "catalog": {
     "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
@@ -1124,6 +1124,32 @@
         "scope": "Qualified ordinary website release for verified-member Quick Order closed-intake prior receipt access; all sensitive operations remain held",
         "receipt": ".xenios/handoffs/2026-11-04T18-28-08-544Z-RELEASE-COMPLETE-5926c2f-codex-launch-coordination-20261005.json",
         "note": "Protected PR 380 merged normally without deletion, override or force, producing release 5926c2f from exact source 61d898e/tree df08494. Release-push CI 41885144797 passed 18,524 tests with zero failures and 83 skips; all five trusted app15368 checks succeeded and all four release checkouts were exact. Render deploy dep-dblnfbnlk1mc73ci59pg reached live at 2026-11-04T18:22:58.4907Z. Bounded public static verification passed at 18:23:40Z with entry /assets/index-DMJbPOYv.js, 194 script assets, zero HTML fallbacks, Quick Order and health 200, and the exact WebP packshot. Authenticated production receipt flow and final browser behavior were not exercised; no managed operation occurred. Compatible rollback 3a84632/dep-dblm8jeq1p3s73dst8b0 was retained and not executed. No browser, managed data, configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred."
+      }
+    },
+    {
+      "classification": "HISTORICAL_ARCHIVED_CURRENT_RELEASE_PREIMAGE",
+      "archivedAt": "2026-11-04T20:44:00.384923+00:00",
+      "supersededBy": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+      "record": {
+        "classification": "CURRENT_LIVE_PRODUCTION",
+        "sha": "07011af2e6eb49adf26e6e80f734491a158eb406",
+        "tree": "eb293bdca45d6b35cdf2c455ccef52c2a201c5e5",
+        "status": "live",
+        "branch": "release/early-access-code-session-checkout",
+        "deployedFromBranch": "codex/quick-order-guest-catalog-detail-20261104",
+        "sourceSha": "335dcddff6e737450044eee662aa4af456a68d27",
+        "rollback": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+        "rollbackTree": "df084949de408d84b3bf132dc9c71d48c9b80a31",
+        "rollbackDeployId": "dep-dblnfbnlk1mc73ci59pg",
+        "rollbackExecuted": false,
+        "deployId": "dep-dblofh8473hc73bq4um0",
+        "liveSince": "2026-11-04T19:31:45.641033Z",
+        "observedAt": "2026-11-04T19:32:52.742394+00:00",
+        "autoDeploy": "yes",
+        "autoDeployTrigger": "checksPass",
+        "scope": "Qualified ordinary website release for in-place guest Quick Order catalog product detail; all sensitive operations remain held",
+        "receipt": ".xenios/handoffs/2026-11-04T19-34-56-719Z-RELEASE-COMPLETE-07011af-codex-launch-coordination-20261005.json",
+        "note": "Protected PR 381 merged normally, producing release 07011af from exact source 335dcdd/tree eb293bd. Release checks 41896437597 passed 18,525 tests with zero failures and 83 skips, including 69 form cases; all five trusted app15368 checks succeeded and all four checkout commits were exact. Render deploy dep-dblofh8473hc73bq4um0 reached live at 2026-11-04T19:31:45.641033Z. Public static verification passed with entry /assets/index-CbuI9bLY.js, 194 scripts, zero HTML fallbacks, the exact guest dialog asset and unchanged packshot. Independent source acceptance KAN-31/10599, synthetic painted review KAN-31/10603, live served review KAN-31/10611 and release receipt KAN-13/10613 are recorded. Protected production catalog IDs and member interactions were not exercised; no staged copy or image was published. Compatible rollback 5926c2f/dep-dblnfbnlk1mc73ci59pg was retained and not executed. No browser production action, managed data, configuration, schema, SQL, role, flag, customer, provider, notification or activation operation occurred."
       }
     }
   ],

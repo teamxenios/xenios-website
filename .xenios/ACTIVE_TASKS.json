@@ -3766,7 +3766,7 @@
       "id": "KAN6-QO-REVIEWED-CATALOG-CONTENT-20261104",
       "title": "Integrate reviewed catalog content into Quick Order",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-6",
       "baseSha": "07011af2e6eb49adf26e6e80f734491a158eb406",
       "paths": [
@@ -3810,7 +3810,13 @@
       "scopeNote": "Implement only the independently required findings at KAN-31 comments 10626, 10629 and 10631, the exact BPC asset file-level verdict at KAN-31 comment 10627, the founder requirements at KAN-59 comment 10615, Samuel's scoped source and ordinary-verification authority at KAN-225 comments 10616 and 10574, and Samuel's updated Root allocation at KAN-6 comment 10621 on exact current release 07011af2e6eb49adf26e6e80f734491a158eb406/tree eb293bdca45d6b35cdf2c455ccef52c2a201c5e5. Limit work exactly to the thirty-three paths listed in this task, including the reviewed public-content and public-media data sources, qualifying BPC artwork, the nine approved byte-identical official images, the bounded capture harness, the existing member media fixture, shared contracts, server projection/catalog seams and existing member and guest catalog presentation. Integrate only reviewed catalog content and qualifying artwork through existing safe authorities. Add no unreviewed content, mockup adoption, pricing authority, eligibility authority, availability authority, request or receipt semantic change, Auth, configuration, role, flag, storage, customer, provider, notification, database, SQL, activation, release or production behavior. Create intended branch codex/qo-reviewed-catalog-content-20261104 separately. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/wildcard audits found no active conflict for any path; prior capture-harness matches are handoff records only. Preserve all previous Quick Order QA and release records, every unrelated task, lease, ownership rule and history. This metadata custody commit performs no application or workflow edit, branch creation, test, build, local Node, CI, browser, provider, managed action, review, merge, deployment, registration or production action.",
       "createdAt": "2026-11-04T19:51:51.9333570Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T19:51:51.9333570Z"
+      "claimedAt": "2026-11-04T19:51:51.9333570Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "cf02e04b2d8e08e79789daf34bd89059e0312558",
+        "file": ".xenios/handoffs/2026-11-04T20-36-09Z-KAN6-QO-REVIEWED-CATALOG-CONTENT-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T20:36:09Z"
+      }
     }
   ]
 }

@@ -1,0 +1,228 @@
+{
+  "unit": "KAN6-QO-REVIEWED-CATALOG-CONTENT-20261104",
+  "lease": "fd186c4d-8a73-4c98-9f66-70262bdf191f",
+  "pullRequest": 382,
+  "jira": "KAN-13/10640",
+  "mergeAuthority": [
+    "KAN-225/10574",
+    "KAN-13/10575",
+    "KAN-225/10616"
+  ],
+  "release": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+  "tree": "da2b16a6ff2991fe2322c931c95999262dbc709b",
+  "parents": [
+    "07011af2e6eb49adf26e6e80f734491a158eb406",
+    "cf02e04b2d8e08e79789daf34bd89059e0312558"
+  ],
+  "mergedAt": "2026-11-04T20:36:09Z",
+  "sourceReview": "KAN-31/10635",
+  "syntheticReview": "KAN-31/10637",
+  "sourceReceiptSHA256": "36fe1793fc3186737ee5532b0216d53914f2c462119d3cb577d5fb72601849f4",
+  "checks": {
+    "run": 41908170052,
+    "attempt": 1,
+    "trustedApp": 15368,
+    "pass": 18531,
+    "fail": 0,
+    "skip": 83,
+    "passedFiles": 997,
+    "skippedFiles": 6,
+    "formCases": 69,
+    "fourCheckoutCommits": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+    "jobs": {
+      "test": 126848299728,
+      "protection": 126848300072,
+      "typecheck": 126848300173,
+      "build": 126848300326,
+      "completion": 126850974351
+    }
+  },
+  "render": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deploy": "dep-dblpgrnb9u1s73dlsg00",
+    "status": "live",
+    "finishedAt": "2026-11-04T20:42:36.249613Z",
+    "autoDeploy": "yes",
+    "trigger": "checksPass"
+  },
+  "rollback": {
+    "deploy": "dep-dblofh8473hc73bq4um0",
+    "entry": "/assets/index-CbuI9bLY.js",
+    "release": "07011af2e6eb49adf26e6e80f734491a158eb406",
+    "tree": "eb293bdca45d6b35cdf2c455ccef52c2a201c5e5"
+  },
+  "publicStatic": {
+    "after": {
+      "bytes": 1459,
+      "contentType": "text/html",
+      "sha256": "a638c564b86dc44fafffaf93ecc71ccf32ec5a9c94133fe7bbd2e04bb897e044",
+      "status": 200,
+      "url": "https://xeniostechnology.com/research/early-access/order-request"
+    },
+    "before": {
+      "bytes": 1459,
+      "contentType": "text/html",
+      "sha256": "a638c564b86dc44fafffaf93ecc71ccf32ec5a9c94133fe7bbd2e04bb897e044",
+      "status": 200,
+      "url": "https://xeniostechnology.com/research/early-access/order-request"
+    },
+    "downloadedBodiesRetained": false,
+    "entry": [
+      "/assets/index-CP2mFj2b.js"
+    ],
+    "entryStable": true,
+    "finishedAt": "2026-11-04T20:44:00.384923+00:00",
+    "guestDialogAssets": {
+      "/assets/RequestIntentEntry-zGt1T-qW.js": "15c119138ad5bfac677422daff2ca0628a8ce1a0b353ad5300c50700e52e878e"
+    },
+    "health": {
+      "bytes": 255,
+      "contentType": "application/json",
+      "reportedStatus": "Xenios API is running",
+      "sha256": "be458de29da40ea4d43d87385cf4d3a8748e827086e833df8a638fac9b3c0b29",
+      "status": 200,
+      "url": "https://xeniostechnology.com/api/health"
+    },
+    "htmlFallbacks": 0,
+    "javascriptExecuted": false,
+    "limits": {
+      "assetCap": 512,
+      "connectSeconds": 10,
+      "parallel": 8,
+      "requestSeconds": 30,
+      "responseBytes": 33554432
+    },
+    "liveDeploy": "dep-dblpgrnb9u1s73dlsg00",
+    "memberOrAdminRouteFetched": false,
+    "nativeReceiptBehaviorProven": false,
+    "packshot": {
+      "bytes": 26570,
+      "contentType": "image/webp",
+      "expectedAssetSource": "f6c6935ef4e0972a02bbf0edc1666170f0ddabff",
+      "expectedSHA256": "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1",
+      "sha256": "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1",
+      "status": 200,
+      "url": "https://xeniostechnology.com/research/product-media/bpc-157-packshot.webp"
+    },
+    "priorRollback": {
+      "deploy": "dep-dblofh8473hc73bq4um0",
+      "entry": "/assets/index-CbuI9bLY.js",
+      "release": "07011af2e6eb49adf26e6e80f734491a158eb406",
+      "tree": "eb293bdca45d6b35cdf2c455ccef52c2a201c5e5"
+    },
+    "providerIdentityCheckedByThisScript": false,
+    "release": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+    "releaseTree": "da2b16a6ff2991fe2322c931c95999262dbc709b",
+    "renderedPlacementProven": false,
+    "requests": "GET-only; exact canonical HTTPS origin; no redirects, credentials or proxy",
+    "reviewedArtworkUiAssets": {
+      "/assets/ProductMedia-DZjGg0Q5.js": "7599578050d3e60235c26f675d45a0d9db185b14019b262fc53787cf643c91bb"
+    },
+    "reviewedMedia": {
+      "/research/product-media/bpc-157-xenios-10mg-front-label.webp": {
+        "bytes": 33996,
+        "contentType": "image/webp",
+        "sha256": "ee0b3ebc5f216b38d8c2a2136bb9717f763e1c79ae08d334d1f33f673f33f318",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/bpc-157-xenios-10mg-front-label.webp"
+      },
+      "/research/product-media/bpc-157-xenios-10mg-render.webp": {
+        "bytes": 41098,
+        "contentType": "image/webp",
+        "sha256": "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/bpc-157-xenios-10mg-render.webp"
+      },
+      "/research/product-media/nutridyn-r123l-stress-essentials-balance.png": {
+        "bytes": 64039,
+        "contentType": "image/png",
+        "sha256": "dd245630a36dd41da7563a1270d30bce49c7800e916a0efbf013a1b57c327668",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r123l-stress-essentials-balance.png"
+      },
+      "/research/product-media/nutridyn-r152-brain-restore.png": {
+        "bytes": 102322,
+        "contentType": "image/png",
+        "sha256": "884cfd91fb88f73af7db9c15f2b0672bdacf21d2f94423290bbe7077fe46b06f",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r152-brain-restore.png"
+      },
+      "/research/product-media/nutridyn-r167-mito-recharge.png": {
+        "bytes": 121672,
+        "contentType": "image/png",
+        "sha256": "2be03e010ef7991b239011280afe41f5855ff1491f352d64a6b96b07be48e766",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r167-mito-recharge.png"
+      },
+      "/research/product-media/nutridyn-r190-collagen-renew.png": {
+        "bytes": 215163,
+        "contentType": "image/png",
+        "sha256": "696d56cdddeeddd2ceb9f9bec9cdde4b89788c75d39960bd66bbd0e90fcb527d",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r190-collagen-renew.png"
+      },
+      "/research/product-media/nutridyn-r191-gi-defend.png": {
+        "bytes": 109999,
+        "contentType": "image/png",
+        "sha256": "388b64fa4ceaa04bd4dd847875f6a8252df513cd7258a439016584cebee8bbcf",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r191-gi-defend.png"
+      },
+      "/research/product-media/nutridyn-r199-perimenopause-support.png": {
+        "bytes": 106015,
+        "contentType": "image/png",
+        "sha256": "a2e42f03590d433a64f4a6553f7df5f269041e8d94bc2059674448c99dc148be",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r199-perimenopause-support.png"
+      },
+      "/research/product-media/nutridyn-r271l-annatto-pro-125.png": {
+        "bytes": 62587,
+        "contentType": "image/png",
+        "sha256": "e8e72f0278bd3b9f35ab98c53cb5f80c47600d008dfcbf917cb557262e0f9c8c",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r271l-annatto-pro-125.png"
+      },
+      "/research/product-media/nutridyn-r817e-omega-pure-epa-dha-2400.png": {
+        "bytes": 107104,
+        "contentType": "image/png",
+        "sha256": "7c5d16b355f00be93f7f00f3255444efec01b3f684be3b41aa9140d44fff0ba3",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r817e-omega-pure-epa-dha-2400.png"
+      },
+      "/research/product-media/nutridyn-r848-prm-resolve.png": {
+        "bytes": 53202,
+        "contentType": "image/png",
+        "sha256": "6f9db7081848008b8baabfbfe932da68f7ad0eddf4d3769423df6af319a6c6ea",
+        "status": 200,
+        "url": "https://xeniostechnology.com/research/product-media/nutridyn-r848-prm-resolve.png"
+      }
+    },
+    "scriptSHA256": "7026308a5a89ae88d051580892d1addc2ab328037beeac902d4440fb8212faf0",
+    "scripts": 196,
+    "source": "cf02e04b2d8e08e79789daf34bd89059e0312558",
+    "sourceTree": "da2b16a6ff2991fe2322c931c95999262dbc709b",
+    "startedAt": "2026-11-04T20:43:51.367392+00:00",
+    "status": "PASS_PUBLIC_STATIC_ONLY",
+    "syntheticFixtureMarkerInPublicJS": false,
+    "receiptSHA256": "0af081d4e2977705fce58052ce3c171b57ae92bdbd3ace73fa95752aa556fec9",
+    "firstAttempt": {
+      "status": "FAIL_BEFORE_FIRST_REVIEWED_MEDIA_REQUEST",
+      "reason": "Local allowlist excluded reviewed media paths",
+      "scriptSHA256": "11f0cfe2ed8015d0f440a082886b4490db696d8c4348d34c19cb36cce2025723",
+      "evidence": "live-postcheck-19d10e0/RESULT.json",
+      "correction": "Exact membership of the eleven frozen REVIEWED_MEDIA paths added to the guard. Nothing else changed."
+    }
+  },
+  "published": {
+    "descriptionRecords": 10,
+    "pairedReviewRecords": 9,
+    "productImages": 10,
+    "frontLabelImage": 1
+  },
+  "limits": [
+    "Protected current dataset bindings and authenticated production customer views remain unverified. Fully verified live readiness is 0 of 420 at this gate.",
+    "Magtein R227 is held for exact package revision. Full BPC description is held for exact formulation and customer selling unit.",
+    "No price, eligibility, or submission authority changed. FedEx is service copy only. BPC preview is design artwork."
+  ]
+}

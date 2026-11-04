@@ -1,0 +1,103 @@
+{
+  "unit": "KAN6-QO-REVIEWED-CATALOG-CONTENT-20261104",
+  "lease": "fd186c4d-8a73-4c98-9f66-70262bdf191f",
+  "canonical": "eecaa084a6f7f47bde26e42e14ac113984dbd3a9",
+  "pullRequest": 382,
+  "sourceBranch": "codex/quick-order-reviewed-catalog-content-20261104",
+  "base": "07011af2e6eb49adf26e6e80f734491a158eb406",
+  "head": "cf02e04b2d8e08e79789daf34bd89059e0312558",
+  "tree": "da2b16a6ff2991fe2322c931c95999262dbc709b",
+  "scope": {
+    "appPaths": 31,
+    "separateHarnessPaths": 2,
+    "descriptions": 10,
+    "officialSupplementImages": 9,
+    "bpcPrimaryRender": 1,
+    "bpcFrontLabel": 1,
+    "pairedRecords": 9,
+    "rawPublicDatasetSHA256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+    "mediaManifestSHA256": "1e4ec2b74b70d627baf53d6d2a23ba4f6ee0cde34736bc348bce41a50e6108d1",
+    "bpcExactPair": [
+      "mo_af289f611c02b3fcef01",
+      "mov_ca3e45ae9712aee91430"
+    ]
+  },
+  "independentSource": [
+    "KAN-31/10604",
+    "KAN-31/10627",
+    "KAN-31/10630",
+    "KAN-31/10631",
+    "KAN-31/10634",
+    "KAN-31/10635"
+  ],
+  "appRun": {
+    "id": 41906026996,
+    "attempt": 1,
+    "trustedApp": 15368,
+    "checkouts": {
+      "build": "905877df315d886a667160afe3260ac381769b62",
+      "typecheck": "905877df315d886a667160afe3260ac381769b62",
+      "test": "905877df315d886a667160afe3260ac381769b62",
+      "protection": "cf02e04b2d8e08e79789daf34bd89059e0312558"
+    },
+    "successful": {
+      "build": 126840790791,
+      "protection": 126840791117,
+      "typecheck": 126840791374,
+      "test": 126840791548,
+      "Required CI completion": 126843879958
+    },
+    "passed": 18531,
+    "failed": 0,
+    "skipped": 83,
+    "passedFiles": 997,
+    "skippedFiles": 6
+  },
+  "browser": {
+    "authorization": "KAN-31/10633",
+    "independentPaint": "KAN-31/10637",
+    "maximum": 2,
+    "used": 2,
+    "first": {
+      "run": 41906360107,
+      "artifact": 13361350392,
+      "passed": 236,
+      "failed": 48,
+      "failure": "Harness used BPC-only alt pattern on official supplement assets. Candidate and all 16 PNGs unchanged."
+    },
+    "corrected": {
+      "harness": "a0e93de2d1dee340d28a11fd0dd630d155911ba4",
+      "harnessTree": "e8a7086fee2f6fe1e36b7df63f13d739238bbb92",
+      "run": 41906958396,
+      "job": 126844080544,
+      "artifact": 13360128811,
+      "artifactSHA256": "7ff2ca99e3c2acef538bc259b03684e7ece5efbd5dcebed5f7700d2dd5977606",
+      "manifestSHA256": "7995013f725732252ebfe7527bc3d2098462b2e25776b6a97d4c65ce4114fc5e",
+      "widths": [
+        320,
+        390,
+        768,
+        1280
+      ],
+      "contexts": 8,
+      "passed": 284,
+      "failed": 0,
+      "images": 16,
+      "assets": 11,
+      "chromium": "156.0.8078.4"
+    }
+  },
+  "supplierProof": {
+    "filename": "Xenios-BPC-157-10mg-supplier-proof.zip",
+    "bytes": 1995344,
+    "sha256": "f3161483d76586443a8ec6c312735fe3a7cfb582a231f3f9c29f9836d498de36",
+    "files": 7,
+    "source": "f72de21651e4bc921c148e7290de79f1a4ea2ea4",
+    "disposition": "Local supplier handoff package prepared; no external send or physical print approval."
+  },
+  "limits": [
+    "Protected current dataset bindings and authenticated production customer views remain unverified. Fully verified live readiness is 0 of 420 at this gate.",
+    "Magtein R227 is held for exact package revision. Full BPC description is held for exact formulation and customer selling unit.",
+    "No price, eligibility, or submission authority changed. FedEx is service copy only. BPC preview is design artwork."
+  ]
+}
