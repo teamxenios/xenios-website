@@ -3708,6 +3708,26 @@
         "file": ".xenios/handoffs/2026-11-04T15-24-55-727Z-KAN149-PRIVACY-CORRECTION-RECEIPT-20261104-codex-launch-coordination-20261005.json",
         "at": "2026-11-04T15:24:55.7279012Z"
       }
+    },
+    {
+      "id": "KAN31-QO-VERIFIED-MEMBER-CLOSED-INTAKE-RECEIPT-20261104",
+      "title": "Open verified member prior receipt when quick-order intake is closed",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "baseSha": "d0e50b578b58f455b034667421e2d8e8b196628f",
+      "paths": [
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+      ],
+      "dependsOn": [
+        "KAN31-QO-MEDIA-REFERENCE-COMPOSITION-20261104"
+      ],
+      "scopeNote": "Implement only KAN-31 comment 10549 finding 1 under Samuel's KAN-225 comments 10574 and 10587 on exact provisional PR377 base d0e50b578b58f455b034667421e2d8e8b196628f/tree d978c4d53d902f51c9ffee93852b9e00dab50d47. Limit work exactly to OrderRequestEntry.tsx blob 1febf871fb0c0dd454998b8f53ae3dbd5e0dfaeb, EarlyAccessRoute.tsx blob 22d24c24ccc412c6426cfc6500dad13b39ff3e4a and EarlyAccessRoute.storefront.test.tsx blob b6b63b524e61fecacb391ec612562d64bb9e56e8. Apply only the existing corrected reviewed patch SHA-256 94c28324c67c4a9a62f1f9207440d146dd359e6567350a101830f8275b352629: a verified member may open the existing prior confirmed receipt when intake is closed or unavailable, while a valid pending attempt takes precedence. Add no automatic submission, new intake mount, guest reopen without verified binding, managed state, API, Auth authority, configuration, role, flag, customer, provider, database, SQL, activation, release or production behavior. Create intended branch codex/qo-verified-member-closed-intake-receipt-20261104 separately. Fresh CODE_OWNERSHIP exact/prefix/wildcard audit found no active overlap. FILE_OWNERSHIP assigns only EarlyAccessRoute.tsx to this existing Root identity through OWNER-KAN225-EARLY-ACCESS-CLOSED-INTAKE-20261104 and has no conflicting match. This metadata claim authorizes no source edit, branch creation, test, build, local Node, CI, browser, managed action, review, merge, deployment, timing or disk operation.",
+      "createdAt": "2026-11-04T17:59:41.3069876Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T17:59:41.3069876Z"
     }
   ]
 }
