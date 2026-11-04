@@ -18,14 +18,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: f6c6935ef4e0972a02bbf0edc1666170f0ddabff
-      CANDIDATE_TREE: 8f5a32cb1d597a7155c45417826534d807c41885
+      CANDIDATE_SHA: 335dcddff6e737450044eee662aa4af456a68d27
+      CANDIDATE_TREE: eb293bdca45d6b35cdf2c455ccef52c2a201c5e5
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: KAN-31/10573
+      CAPTURE_ALLOWANCE_ID: ""
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
       CAPTURE_PRIOR_RUN_IDS: "[]"
-      CAPTURE_RECONCILED_AT: 2026-11-04T14:15:15Z
+      CAPTURE_RECONCILED_AT: ""
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
@@ -107,11 +107,11 @@ jobs:
               PLAYWRIGHT_BROWSERS_PATH="$4" \
               "$5" --import "$6/node_modules/tsx/dist/loader.mjs" \
               "$7/scripts/qa/qo-visual-capture/capture.mjs" "$6" "$8" "$9" \
-              "${10}" "${11}" "${12}" "${13}" "${14}"
+              "${10}" "${11}" "${12}" "${13}" "${14}" "${15}"
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json"
+            "$EVIDENCE_DIR/allowance.json" guest-catalog-details
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -135,48 +135,20 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: always()
         with:
-          name: qo-bpc157-synthetic-visual-proof
+          name: qo-guest-details-synthetic-visual-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/guest-320-viewport.png
-            ${{ env.EVIDENCE_DIR }}/guest-320-card.png
-            ${{ env.EVIDENCE_DIR }}/guest-320-review.png
-            ${{ env.EVIDENCE_DIR }}/guest-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-320-card.png
-            ${{ env.EVIDENCE_DIR }}/member-320-detail-10.png
-            ${{ env.EVIDENCE_DIR }}/member-320-detail-5.png
-            ${{ env.EVIDENCE_DIR }}/member-320-detail-back-10.png
-            ${{ env.EVIDENCE_DIR }}/member-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-375-viewport.png
-            ${{ env.EVIDENCE_DIR }}/guest-375-card.png
-            ${{ env.EVIDENCE_DIR }}/guest-375-review.png
-            ${{ env.EVIDENCE_DIR }}/guest-375-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-375-card.png
-            ${{ env.EVIDENCE_DIR }}/member-375-detail-10.png
-            ${{ env.EVIDENCE_DIR }}/member-375-detail-5.png
-            ${{ env.EVIDENCE_DIR }}/member-375-detail-back-10.png
-            ${{ env.EVIDENCE_DIR }}/member-375-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-768-viewport.png
-            ${{ env.EVIDENCE_DIR }}/guest-768-card.png
-            ${{ env.EVIDENCE_DIR }}/guest-768-review.png
-            ${{ env.EVIDENCE_DIR }}/guest-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-768-card.png
-            ${{ env.EVIDENCE_DIR }}/member-768-detail-10.png
-            ${{ env.EVIDENCE_DIR }}/member-768-detail-5.png
-            ${{ env.EVIDENCE_DIR }}/member-768-detail-back-10.png
-            ${{ env.EVIDENCE_DIR }}/member-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-1280-viewport.png
-            ${{ env.EVIDENCE_DIR }}/guest-1280-card.png
-            ${{ env.EVIDENCE_DIR }}/guest-1280-review.png
-            ${{ env.EVIDENCE_DIR }}/guest-1280-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-1280-card.png
-            ${{ env.EVIDENCE_DIR }}/member-1280-detail-10.png
-            ${{ env.EVIDENCE_DIR }}/member-1280-detail-5.png
-            ${{ env.EVIDENCE_DIR }}/member-1280-detail-back-10.png
-            ${{ env.EVIDENCE_DIR }}/member-1280-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-svg-320-card.png
-            ${{ env.EVIDENCE_DIR }}/guest-svg-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-svg-320-card.png
-            ${{ env.EVIDENCE_DIR }}/member-svg-320-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-320-viewport.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-320-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-320-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-390-viewport.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-390-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-390-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-768-viewport.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-768-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-768-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-1280-viewport.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-1280-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-details-1280-failure.png
             ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7

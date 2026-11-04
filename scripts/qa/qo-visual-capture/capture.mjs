@@ -10,7 +10,9 @@ import {
   memberDetailRoute, memberOffering, memberRoute, memberSession, orderVariant, sourceVariant,
 } from "./fixture.mjs";
 
-const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile] = process.argv.slice(2);
+const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
+if (!["legacy", "guest-catalog-details"].includes(profile)) throw new Error("Unknown capture profile");
+const guestDetailsOnly = profile === "guest-catalog-details";
 const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
 if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
     allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
@@ -20,7 +22,7 @@ const origin = "http://127.0.0.1:5199";
 const artworkHash = "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1";
 const viewports = [
   { width: 320, height: 800, mobile: true },
-  { width: 375, height: 844, mobile: true },
+  { width: guestDetailsOnly ? 390 : 375, height: 844, mobile: true },
   { width: 768, height: 1024, mobile: false },
   { width: 1280, height: 900, mobile: false },
 ];
@@ -32,7 +34,7 @@ const result = {
     "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
     "No submission, recovery, staff readback, production release or operator activation is covered.",
   ],
-  candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt), allowance,
+  candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt), allowance, profile,
   artifacts: `https://github.com/teamxenios/xenios-website/actions/runs/${runId}#artifacts`,
   upstreamHarness: "scripts/evidence/build-candidate-preview.mjs + scripts/preview-research.mjs",
   fixture: {
@@ -210,6 +212,66 @@ function captionsRetired(content) {
   return !/conceptual packaging|representative illustration/i.test(content);
 }
 
+async function captureGuestDetails(page, entry) {
+  await page.goto(origin + guestRoute, { waitUntil: "domcontentloaded" });
+  const card = page.locator('[data-testid="request-door-mixed"] article.xenios-order-card')
+    .filter({ has: page.getByRole("heading", { name: "BPC-157", exact: true }) });
+  await card.getByRole("button", { name: "Add BPC-157 to request", exact: true }).click();
+  await card.getByRole("button", { name: "Increase requested quantity for BPC-157" }).click();
+  const quantity = card.getByRole("spinbutton");
+  const trigger = card.getByRole("button", { name: /^View details for BPC-157/ });
+  const dialog = page.getByRole("dialog", { name: "BPC-157", exact: true });
+  const url = page.url();
+
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  await dialog.waitFor();
+  await page.waitForFunction(() => Boolean(document.activeElement?.closest('[role="dialog"]')));
+  const image = await imageEvidence(page, dialog, artwork, null);
+  checkImage(entry, "guest detail", image, artwork);
+  report(entry, "guest detail shows exact fixture specification and the packaging design disclosure",
+    (await dialog.innerText()).includes(fixtureUnit) &&
+    (await dialog.innerText()).includes("Packaging design shown. Current packaging may differ."));
+  const back = dialog.getByRole("button", { name: "Back to catalog", exact: true });
+  const paint = await dialog.evaluate((node) => {
+    const style = getComputedStyle(node);
+    const description = document.getElementById(node.getAttribute("aria-describedby") ?? "");
+    const box = node.getBoundingClientRect();
+    const returnButton = [...node.querySelectorAll("button")].find((button) => button.textContent.trim() === "Back to catalog");
+    const target = returnButton?.getBoundingClientRect();
+    const hit = target && document.elementFromPoint(target.x + target.width / 2, target.y + target.height / 2);
+    return {
+      background: style.backgroundColor, text: style.color,
+      description: description && getComputedStyle(description).color,
+      contained: box.left >= 0 && box.right <= innerWidth && box.top >= 0 && box.bottom <= innerHeight &&
+        node.scrollWidth <= node.clientWidth + 1 && document.documentElement.scrollWidth <= innerWidth + 1,
+      returnReachable: Boolean(target && target.height >= 44 && hit && returnButton.contains(hit)),
+    };
+  });
+  report(entry, "dialog paints opaque paper and contrasting ink inside the viewport",
+    paint.background === "rgb(255, 255, 255)" && paint.text === "rgb(14, 14, 14)" &&
+    paint.description === "rgb(107, 107, 107)" && paint.contained && paint.returnReachable, paint);
+  await page.keyboard.press("Tab");
+  report(entry, "Tab keeps focus within the modal", await dialog.evaluate((node) => node.contains(document.activeElement)));
+  await screenshot(entry, "viewport", page);
+  await screenshot(entry, "details", dialog);
+
+  const restored = () => page.waitForFunction(() =>
+    document.activeElement?.getAttribute("aria-label")?.startsWith("View details for BPC-157"));
+  await page.keyboard.press("Escape");
+  await dialog.waitFor({ state: "hidden" });
+  await restored();
+  report(entry, "Escape returns focus and preserves requested quantity",
+    await trigger.evaluate((node) => node === document.activeElement) && await quantity.inputValue() === "2");
+  await trigger.click();
+  await back.click();
+  await dialog.waitFor({ state: "hidden" });
+  await restored();
+  report(entry, "Back to catalog keeps focus, selection and route",
+    await trigger.evaluate((node) => node === document.activeElement) &&
+    await quantity.inputValue() === "2" && page.url() === url);
+}
+
 async function captureGuest(page, entry) {
   await page.goto(origin + guestRoute, { waitUntil: "domcontentloaded" });
   const card = page.locator('[data-testid="request-door-mixed"] article.xenios-order-card')
@@ -358,6 +420,7 @@ async function capture(browser, fixtures, kind, size) {
   const { context, page } = await captureContext(browser, fixtures, viewport, mobile, kind === "member", entry);
   try {
     if (kind === "member") await captureMember(page, entry);
+    else if (kind === "guest-details") await captureGuestDetails(page, entry);
     else await captureGuest(page, entry);
   } catch (error) {
     report(entry, "mount and exercise " + kind + " route", false, briefError(error));
@@ -454,12 +517,16 @@ try {
   }
   browser = await chromium.launch({ headless: true, timeout: 12000 });
   result.browser = { name: "Chromium", version: browser.version() };
-  for (const size of viewports) {
-    await capture(browser, guestFixtures, "guest", size);
-    await capture(browser, memberFixtures, "member", size);
+  if (guestDetailsOnly) {
+    for (const size of viewports) await capture(browser, guestFixtures, "guest-details", size);
+  } else {
+    for (const size of viewports) {
+      await capture(browser, guestFixtures, "guest", size);
+      await capture(browser, memberFixtures, "member", size);
+    }
+    await captureSvgCard(browser, guestSvgFixtures, false);
+    await captureSvgCard(browser, memberSvgFixtures, true);
   }
-  await captureSvgCard(browser, guestSvgFixtures, false);
-  await captureSvgCard(browser, memberSvgFixtures, true);
 } catch (error) {
   result.captureError = briefError(error);
   console.error(result.captureError, previewLog);
@@ -468,8 +535,9 @@ try {
     await browser?.close();
   } finally {
     preview?.kill();
-    result.status = !result.captureError && result.captures.length === viewports.length * 2 + 2 &&
-      result.captures.every((entry) => entry.screenshots.length === (entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
+    const expectedContexts = guestDetailsOnly ? viewports.length : viewports.length * 2 + 2;
+    result.status = !result.captureError && result.captures.length === expectedContexts &&
+      result.captures.every((entry) => entry.screenshots.length === (guestDetailsOnly ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
         && entry.assertions.every((item) => item.pass)) ? "passed" : "failed";
     await writeFile(join(output, "result.json"), JSON.stringify(result, null, 2) + "\n");
     if (result.status !== "passed") process.exitCode = 1;
