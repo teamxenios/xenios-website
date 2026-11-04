@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "ledgerId": "catalog-imagery-coverage-2026-11-04-v1",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "ledgerBytes": 600165,
+  "ledgerSha256": "47ff857c47db345f5b487a050f619c3510749529ddb93d36a803306e7787a2f9",
+  "canonicalPairs": 420,
+  "ledgerPairs": 420,
+  "physicalProductPairs": 419,
+  "finalReviewedExactProductAssets": 0,
+  "publicationAuthorizedAssets": 0,
+  "recordsWithPreciseExternalGaps": 420,
+  "statusCounts": {
+    "official_source_candidate_rights_pending": 10,
+    "physical_supply_exact_sku_blocked": 1,
+    "private_design_concept_reviewed": 1,
+    "product_specific_source_unresolved": 407,
+    "service_presentation_prepared_review_pending": 1
+  },
+  "errors": []
+}
