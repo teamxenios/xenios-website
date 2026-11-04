@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-004",
+  "createdAt": "2026-11-04T23:30:00.000Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "successorContext": {
+    "predecessorSourceSha": "dd71617ec04ec231646296a3ae0eafcf62cffee5",
+    "predecessorPrivateReview": "KAN-31/10612",
+    "disposition": "replaces the concept-banner website view with original Xenios finished artwork while retaining the prior exact-ID and code reconciliation"
+  },
+  "records": [
+    {
+      "offeringId": "mo_af289f611c02b3fcef01",
+      "sourceVariantId": "mov_ca3e45ae9712aee91430",
+      "field": "media",
+      "canonicalName": "BPC-157",
+      "canonicalVariant": "BPC-157 10 mg",
+      "quickOrderSku": "GEN-GRP-0262",
+      "historicalCommerceVariantCode": "R360-BPC157-10MG-VIAL",
+      "artworkVersion": "BPC157-10-WEB-SUPPLIER-v3",
+      "sourceAndReuseBasis": "Original Xenios website render and deterministic editable label masters created for this exact offering/source-variant pair. No supplier photograph or third-party package artwork is copied into the output.",
+      "generationEvidence": {
+        "websiteRenderReceipt": "image generation output exec-1c33dacc-3c18-4758-9625-0752593d2244",
+        "editableMasters": "deterministic SVG source in this batch",
+        "proofGenerator": "create-proofs.py in this batch"
+      },
+      "rightsAndAuthority": {
+        "state": "ORIGINAL_XENIOS_ARTWORK_FOUNDER_WEBSITE_USE_AUTHORIZED",
+        "founderWebsiteUseAuthorized": true,
+        "authorityReferences": [
+          "KAN-59/10615",
+          "KAN-225/10616"
+        ],
+        "separateImageUseAgreementRequired": false,
+        "releasePublicationApproved": false,
+        "physicalProductionApproved": false
+      },
+      "stateSeparation": {
+        "websiteArtworkState": "finished_candidate_pending_independent_review",
+        "physicalPackagingState": "design",
+        "printedOrInUsePackagingEstablished": false,
+        "supplierProofApprovalEstablished": false,
+        "supplierSendPerformed": false
+      },
+      "sources": [
+        {
+          "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+          "gitBlobOid": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+          "rawSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+          "supports": [
+            "offeringId",
+            "sourceVariantId",
+            "BPC-157",
+            "10 mg",
+            "Lyophilized Vial",
+            "research-use request-access classification"
+          ]
+        },
+        {
+          "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+          "gitBlobOid": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+          "rawSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+          "supports": [
+            "exact offering/source-variant link",
+            "current committed Quick Order SKU GEN-GRP-0262"
+          ]
+        },
+        {
+          "path": "config/research/production-completion/catalog-live-identity-closure-20260922.json",
+          "sha256": "5af4db6cd8c8a5eec0f6ec50eded0b9243a0aac6df659ccbe381ee39d1b4d367",
+          "supports": [
+            "historical commerce variant code R360-BPC157-10MG-VIAL"
+          ],
+          "limitation": "R360-BPC157-10MG-VIAL is retained only as historical reconciliation evidence. It is not printed on the artwork and is not a lot or manufacturing traceability identifier."
+        }
+      ],
+      "verifiedStaticArtworkFacts": [
+        "Xenios brand direction",
+        "BPC-157",
+        "10 mg total content",
+        "Lyophilized vial",
+        "Research Use Only",
+        "Nonclinical use only",
+        "Quick Order SKU GEN-GRP-0262"
+      ],
+      "explicitlyUnissuedValues": [
+        "lot number",
+        "expiry date",
+        "beyond-use date",
+        "purity or assay",
+        "sterility or certification",
+        "CAS identifier",
+        "COA or documentation URL",
+        "QR payload"
+      ],
+      "review": {
+        "status": "pending_independent_review",
+        "requestedReviewer": "KAN-31",
+        "approvedExactProductionImages": 0,
+        "publicationAuthorizedAssets": 0,
+        "publicationDisposition": "quarantined_in_delivery_path"
+      },
+      "preciseGaps": [
+        "Independent website visual QA and release publication approval remain pending.",
+        "Actual vial and closure specification, label dimensions, printable area, seam, bleed, safe area, substrate, adhesive, finish, print process, color profile and winding remain supplier inputs.",
+        "Supplier-approved storage language and manufacturer/distributor legal attribution remain unconfirmed.",
+        "No lot, expiry/BUD, purity, assay, sterility, certification, CAS, COA/documentation link or QR payload is issued.",
+        "No supplier proof acceptance, physical production approval, supplier send or printed/in-use package is represented."
+      ]
+    }
+  ],
+  "approvalGate": {
+    "outboundDrafted": false,
+    "outboundQueued": false,
+    "outboundSent": false,
+    "note": "No supplier or external-party send was requested or performed."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "batchId": "catalog-imagery-2026-11-04-batch-004",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "canonicalPairs": 420,
+  "exactPair": "mo_af289f611c02b3fcef01/mov_ca3e45ae9712aee91430",
+  "quickOrderSku": "GEN-GRP-0262",
+  "checkedArtifacts": 14,
+  "checkedPdfPages": 4,
+  "contactSheetChecked": true,
+  "websiteArtworkState": "finished_candidate_pending_independent_review",
+  "physicalPackagingState": "design",
+  "founderWebsiteUseAuthorized": true,
+  "independentReviewPending": true,
+  "supplierSendPerformed": false,
+  "runtimeLinkedAssets": 0,
+  "publicationAuthorizedAssets": 0,
+  "errors": []
+}

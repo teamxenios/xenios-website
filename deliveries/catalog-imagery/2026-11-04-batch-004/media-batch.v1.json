@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-004",
+  "createdAt": "2026-11-04T23:30:00.000Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "gitBlobOid": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+    "rawSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+    "bytePolicy": "committed LF bytes; verifier normalizes a CRLF checkout before hashing",
+    "offeringCount": 420,
+    "sourceVariantCount": 420
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "gitBlobOid": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+    "rawSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+    "bytePolicy": "committed LF bytes; verifier normalizes a CRLF checkout before hashing"
+  },
+  "publicationState": "review_only_candidate_not_runtime",
+  "supplierSendPerformed": false,
+  "authority": {
+    "founderWebsiteUseAuthorized": true,
+    "references": [
+      "KAN-59/10615",
+      "KAN-225/10616"
+    ],
+    "releasePublicationApproved": false,
+    "physicalProductionApproved": false
+  },
+  "contactSheet": {
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/contact-sheet-v1.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 517817,
+    "sha256": "7ecafb4fdd76f526c200c29b6803197ecb1ee345f2d906ed7cfb9227d0026560"
+  },
+  "records": [
+    {
+      "offeringId": "mo_af289f611c02b3fcef01",
+      "sourceVariantId": "mov_ca3e45ae9712aee91430",
+      "canonicalName": "BPC-157",
+      "canonicalVariant": "BPC-157 10 mg",
+      "quickOrderSku": "GEN-GRP-0262",
+      "artworkVersion": "BPC157-10-WEB-SUPPLIER-v3",
+      "mediaKind": "original_xenios_website_render",
+      "websiteArtworkState": "finished_candidate_pending_independent_review",
+      "physicalPackagingState": "design",
+      "publicationAuthorized": false,
+      "runtimeLinked": false,
+      "exactDepictedFacts": {
+        "brandDirection": "Xenios",
+        "productName": "BPC-157",
+        "strength": "10 mg",
+        "totalContent": "10 mg",
+        "form": "Lyophilized vial",
+        "classification": [
+          "Research Use Only",
+          "Nonclinical use only"
+        ],
+        "quickOrderSku": "GEN-GRP-0262"
+      },
+      "websiteImages": [
+        "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3-1024.webp",
+        "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png"
+      ],
+      "editableLabelMasters": [
+        "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+        "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg"
+      ],
+      "labelPreviews": [
+        "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-front-artwork-v3.png",
+        "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-front-artwork-v3.webp",
+        "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-wrap-proof-v3.png",
+        "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-wrap-proof-v3.webp"
+      ],
+      "supplierProofs": [
+        "deliveries/catalog-imagery/2026-11-04-batch-004/output/pdf/xenios-bpc-157-10mg-supplier-proof-v3.pdf",
+        "deliveries/catalog-imagery/2026-11-04-batch-004/output/pdf/xenios-bpc-157-10mg-print-spec-exceptions-v1.pdf"
+      ],
+      "printSpecExceptionSheet": "deliveries/catalog-imagery/2026-11-04-batch-004/print-spec-exceptions.v1.json",
+      "notEstablishedByArtwork": [
+        "supplier proof approval",
+        "physical dimensions or press-ready dieline",
+        "printed or in-use packaging",
+        "supplier or manufacturer legal attribution",
+        "supplier-approved storage instructions",
+        "lot, expiry or beyond-use values",
+        "purity, assay, sterility, certification or CAS identifier",
+        "matched COA, documentation link or QR destination"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "role": "website_primary",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3-1024.webp",
+      "format": "webp",
+      "width": 1024,
+      "height": 1024,
+      "bytes": 41098,
+      "sha256": "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71"
+    },
+    {
+      "role": "website_source_master",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+      "format": "png",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1308098,
+      "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+    },
+    {
+      "role": "front_editable_master",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+      "format": "svg",
+      "width": 1600,
+      "height": 1000,
+      "bytes": 3012,
+      "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+    },
+    {
+      "role": "front_preview",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-front-artwork-v3.png",
+      "format": "png",
+      "width": 1600,
+      "height": 1000,
+      "bytes": 333819,
+      "sha256": "389e1a6767962ec5e5a9055b915643a87fa8af554277003711c8fca75517a056"
+    },
+    {
+      "role": "front_preview_web",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-front-artwork-v3.webp",
+      "format": "webp",
+      "width": 1600,
+      "height": 1000,
+      "bytes": 33996,
+      "sha256": "ee0b3ebc5f216b38d8c2a2136bb9717f763e1c79ae08d334d1f33f673f33f318"
+    },
+    {
+      "role": "wrap_editable_master",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+      "format": "svg",
+      "width": 2400,
+      "height": 1200,
+      "bytes": 7216,
+      "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+    },
+    {
+      "role": "wrap_preview",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-wrap-proof-v3.png",
+      "format": "png",
+      "width": 2400,
+      "height": 1200,
+      "bytes": 569980,
+      "sha256": "755956c905a3b91b8c8d99865eb3722cb5a07fc3ef6857c27d88f265920df35c"
+    },
+    {
+      "role": "wrap_preview_web",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-wrap-proof-v3.webp",
+      "format": "webp",
+      "width": 2400,
+      "height": 1200,
+      "bytes": 155052,
+      "sha256": "5b79f00fa2b18b36dd4afb3aa8a8df195dea534eb491de378cd5891802ec9168"
+    },
+    {
+      "role": "supplier_design_proof",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/output/pdf/xenios-bpc-157-10mg-supplier-proof-v3.pdf",
+      "format": "pdf",
+      "pages": 3,
+      "bytes": 2363480,
+      "sha256": "8fedc42bbdf9894aa8021a90a7379ec15d9c5e327830e893119e4a10dfa1a5e6"
+    },
+    {
+      "role": "print_spec_exception_pdf",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/output/pdf/xenios-bpc-157-10mg-print-spec-exceptions-v1.pdf",
+      "format": "pdf",
+      "pages": 1,
+      "bytes": 3818,
+      "sha256": "f4cf24ce97a5cf5a04073bf2d112575cc2b4268fed922b578ec2b44ff2a83e8f"
+    },
+    {
+      "role": "print_spec_exception_data",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/print-spec-exceptions.v1.json",
+      "format": "json",
+      "bytes": 1803,
+      "sha256": "63c2f76964658d5e3979df49902607cf3c80eab055040395d5d6528842adda5d"
+    },
+    {
+      "role": "contact_sheet",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/contact-sheet-v1.png",
+      "format": "png",
+      "width": 1800,
+      "height": 1200,
+      "bytes": 517817,
+      "sha256": "7ecafb4fdd76f526c200c29b6803197ecb1ee345f2d906ed7cfb9227d0026560"
+    },
+    {
+      "role": "contact_sheet_source",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/contact-sheet-v1.html",
+      "format": "html",
+      "bytes": 6002,
+      "sha256": "964545b57238f848415c39916e9f41c0d9ea4fa634452d25fa7552f110604044"
+    },
+    {
+      "role": "proof_generator_source",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/create-proofs.py",
+      "format": "python",
+      "bytes": 9249,
+      "sha256": "e6afd011ee30126b1cbb86addbe7c182851008b6bae98a5866acb1e884029513"
+    }
+  ]
+}
