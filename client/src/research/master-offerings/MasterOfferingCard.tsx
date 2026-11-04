@@ -196,6 +196,8 @@ export function MasterOfferingCard({
         data-display-state={product.displayState}
         data-access-paths={accessPathsOfCard(product).join(" ")}
       >
+        <ProductMedia productName={product.displayName} variantIds={product.variants.map((variant) => variant.id)} />
+
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="mono-label text-ink-mute min-w-0 break-words">
@@ -221,8 +223,6 @@ export function MasterOfferingCard({
             tone={STATE_TONE[product.displayState]}
           />
         </div>
-
-        <ProductMedia productName={product.displayName} variantIds={product.variants.map((variant) => variant.id)} />
 
         <p className="body-s text-ink-2 min-w-0 break-words">
           {product.stateExplanation}

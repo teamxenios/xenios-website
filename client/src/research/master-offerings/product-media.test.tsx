@@ -37,7 +37,8 @@ describe("product visuals on catalog routes", () => {
       const image = expectAsset(host, "vial");
       expect(image.getAttribute("alt")).toBe("Fixture product illustration, vial");
       expect(image.getAttribute("loading")).toBe("lazy");
-      expect(host.textContent).toContain("Representative illustration");
+      expect(host.querySelector('[data-testid="mo-card"]')?.firstElementChild).toBe(image.closest("figure"));
+      expect(host.querySelector("figcaption")).toBeNull();
     } finally {
       unmount();
     }
@@ -50,12 +51,14 @@ describe("product visuals on catalog routes", () => {
     try {
       const image = mediaImage(host);
       expect(image.getAttribute("src")).toBe("/research/product-media/bpc-157-packshot.webp");
-      expect(image.getAttribute("width")).toBe("128");
-      expect(image.getAttribute("height")).toBe("128");
-      expect(host.textContent).toContain("Representative illustration · Conceptual packaging");
+      expect(image.getAttribute("alt")).toBe("BPC-157 10 mg lyophilized vial packaging design");
+      expect(image.getAttribute("width")).toBe("768");
+      expect(image.getAttribute("height")).toBe("768");
+      expect(image.classList.contains("object-contain")).toBe(true);
+      expect(host.querySelector("figcaption")).toBeNull();
       act(() => { image.dispatchEvent(new Event("error")); });
       const fallback = expectAsset(host, "vial");
-      expect(host.textContent).not.toContain("Conceptual packaging");
+      expect(host.querySelector("figcaption")).toBeNull();
       act(() => { fallback.dispatchEvent(new Event("error")); });
       expectAsset(host, "unknown");
     } finally {
@@ -79,8 +82,24 @@ describe("product visuals on catalog routes", () => {
       <ul><MasterOfferingCard product={card({ variants: [vial, capsule] })} /></ul>,
     );
     try {
-      expectAsset(host, "unknown");
-      expect(host.textContent).toContain("format unconfirmed");
+      const image = expectAsset(host, "unknown");
+      expect(image.getAttribute("alt")).toContain("format unconfirmed");
+      expect(host.querySelector("figcaption")).toBeNull();
+    } finally {
+      unmount();
+    }
+  });
+
+  it("places the packaging status on the exact variant detail only", () => {
+    const { host, unmount } = render(
+      <MasterOfferingDetail product={detail({ displayName: "BPC-157", variants: [bpc157, vial] })} />,
+    );
+    try {
+      expect(mediaImage(host).getAttribute("src")).toBe("/research/product-media/bpc-157-packshot.webp");
+      expect(host.querySelector("figcaption")?.textContent).toContain("Current packaging may differ.");
+      click(host.querySelectorAll('input[type="radio"]')[1]);
+      expectAsset(host, "vial");
+      expect(host.querySelector("figcaption")).toBeNull();
     } finally {
       unmount();
     }

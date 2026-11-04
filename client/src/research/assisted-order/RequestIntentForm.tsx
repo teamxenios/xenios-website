@@ -319,17 +319,12 @@ function RequestIntentFormSession({
       <div className="xenios-order-catalog-layout"><div><div className="xenios-order-cards">{catalog?.items.map((item) => {
         const key = catalogItemKey(item), selection = selected.get(key);
         const sourceVariantId = item.sourceSelection?.variantId;
-        const identity = <><h2>{item.productName}</h2>
-          <p>{item.specification || "Form not stated"}</p></>;
         return <article className="xenios-order-card" key={key}>
-          {ownerKey === "early-access-session" ? (
-            <div className="flex flex-wrap items-start gap-3">
-              <div className="min-w-0 grow basis-32 break-words">{identity}</div>
-              <div className="w-20 max-w-full shrink-0">
-                <ProductMedia productName={item.productName} variantIds={sourceVariantId ? [sourceVariantId] : []} />
-              </div>
-            </div>
-          ) : identity}
+          {ownerKey === "early-access-session" && (
+            <ProductMedia productName={item.productName} variantIds={sourceVariantId ? [sourceVariantId] : []} />
+          )}
+          <h2>{item.productName}</h2>
+          <p>{item.specification || "Form not stated"}</p>
           <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
           {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
           <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>

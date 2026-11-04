@@ -40,25 +40,28 @@ export function ProductMedia({
 
   return (
     <figure className={"m-0 grid w-full min-w-0 gap-1" + (detail ? " max-w-[26rem]" : "")}>
-      <div className={"grid aspect-[4/3] min-w-0 place-items-center overflow-hidden rounded-xl" + (showPackshot ? " bg-[#f1f1f4]" : " bg-[#141329] p-3")}>
+      <div className={"relative grid aspect-[4/3] min-w-0 place-items-center overflow-hidden rounded-xl" + (showPackshot ? " bg-[#f1f1f4]" : " bg-[#141329] p-3")}>
         <img
           key={showPackshot ? bpc157Packshot : undefined}
           src={showPackshot ? bpc157Packshot : "/research/product-media/" + format + ".svg"}
-          alt={productName + " illustration, " + formatLabels[format]}
-          width={128}
-          height={128}
+          alt={showPackshot ? productName + " 10 mg lyophilized vial packaging design" : productName + " illustration, " + formatLabels[format]}
+          width={showPackshot ? 768 : 128}
+          height={showPackshot ? 768 : 128}
           loading={detail ? "eager" : "lazy"}
           decoding="async"
-          className="block h-full max-h-52 w-full max-w-52 object-contain"
+          className={showPackshot
+            ? "absolute inset-0 block h-full w-full object-contain"
+            : "block h-full max-h-52 w-full max-w-52 object-contain"}
           data-testid="product-media-image"
           onError={showPackshot ? () => setFailedPackshot(true)
             : format === "unknown" ? undefined : () => setFailedFormat(format)}
         />
       </div>
-      <figcaption className="body-s min-w-0 break-words text-ink-mute">
-        {format === "unknown" ? "Illustration · format unconfirmed" : "Representative illustration"}
-        {showPackshot && " · Conceptual packaging"}
-      </figcaption>
+      {detail && showPackshot && (
+        <figcaption className="body-s min-w-0 break-words text-ink-mute">
+          Packaging design shown. Current packaging may differ.
+        </figcaption>
+      )}
     </figure>
   );
 }

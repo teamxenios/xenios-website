@@ -185,8 +185,11 @@ describe("mixed private request customer form source", () => {
     const mappedImage = mapped.querySelector("img");
     expect(mappedImage?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
     expect(mappedImage?.getAttribute("alt")).toBe("Synthetic mapped illustration, capsule");
-    expect(missingSource.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
-    expect(missingSource.textContent).toContain("format unconfirmed");
+    expect(mapped.firstElementChild).toBe(mappedImage?.closest("figure"));
+    const fallbackImage = missingSource.querySelector("img");
+    expect(fallbackImage?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
+    expect(fallbackImage?.getAttribute("alt")).toBe("Synthetic missing-source illustration, format unconfirmed");
+    expect(missingSource.querySelector("figcaption")).toBeNull();
     expect(mapped.textContent).toContain("$12.50");
     await click("Add Synthetic mapped to request");
     expect(mapped.querySelector('input[type="number"]')).not.toBeNull();
