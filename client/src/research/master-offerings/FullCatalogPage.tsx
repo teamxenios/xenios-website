@@ -141,11 +141,17 @@ export function FullCatalogPage({
   // The page the member asked for with a pager, tied to that exact request.
   // A search or filter change also resets the page, but focus must stay in the
   // control the member is using, so only the pager's own page moves focus to
-  // the results (KAN-31/10703).
+  // the results (KAN-31/10703, 10726).
   const pendingPageFocus = useRef<{
     page: number;
-    /** The asked-for query, in its URL form, so a later query cannot match. */
+    /** The asked-for query in its URL form, to recognise it when it arrives. */
     request: string;
+    /**
+     * The query object the pager's request arrived as. The caller starts one
+     * catalog request per query object, so a later object, even with the same
+     * URL after Back and Forward, is a different request.
+     */
+    query: MasterOfferingCatalogQuery | null;
     /** Where focus was when the member asked. */
     origin: Element | null;
   } | null>(null);
@@ -156,6 +162,21 @@ export function FullCatalogPage({
   const [accessPath, setAccessPath] = useState<CatalogAccessPath | null>(null);
 
   useEffect(() => {
+    // Declared before the page effect, so in a commit that brings both a new
+    // query and a new page, the query is recognised first.
+    const pending = pendingPageFocus.current;
+    if (!pending) return;
+    if (pending.query === null) {
+      // The first query after the click is the pager's own request.
+      if (catalogQueryToSearch(query) === pending.request) pending.query = query;
+      else pendingPageFocus.current = null;
+    } else if (pending.query !== query) {
+      // Any later query, from a control or from Back and Forward, takes over.
+      pendingPageFocus.current = null;
+    }
+  }, [query]);
+
+  useEffect(() => {
     // Move focus to the results heading after an explicit page change, so a
     // keyboard or screen-reader user is not left at the bottom of the old page.
     if (firstRender.current) {
@@ -164,11 +185,10 @@ export function FullCatalogPage({
     }
     const pending = pendingPageFocus.current;
     pendingPageFocus.current = null;
-    // `query` is this render's, the one that brought the new page: the
-    // current request. A page number alone also matches a search or a back
-    // navigation that happens to land on the same page.
-    if (!pending || pending.page !== currentPage) return;
-    if (pending.request !== catalogQueryToSearch(query)) return;
+    // `query` is this render's, the one that brought the new page. A page
+    // number or a URL alone also matches a search or a history traversal that
+    // happens to land on the same page.
+    if (!pending || pending.page !== currentPage || pending.query !== query) return;
     // If the member has moved focus while the page loaded, into Search on a
     // phone for instance, leave it there; moving it would close the keyboard.
     const active = document.activeElement;
@@ -181,6 +201,7 @@ export function FullCatalogPage({
     pendingPageFocus.current = {
       page: next,
       request: catalogQueryToSearch(nextQuery),
+      query: null,
       origin: document.activeElement,
     };
     onQueryChange(nextQuery);
