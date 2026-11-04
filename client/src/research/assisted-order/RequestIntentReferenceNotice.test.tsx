@@ -2,8 +2,16 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { MemberInfo, MemberSessionStatus, RecoveryState } from "../core";
 
-vi.mock("../core", () => ({ useResearch: () => ({ memberToken: null, memberChecking: false }) }));
+const auth = vi.hoisted(() => ({
+  member: null as MemberInfo | null,
+  memberToken: null,
+  memberChecking: false,
+  memberSessionStatus: "signed_out" as MemberSessionStatus,
+  recovery: "none" as RecoveryState,
+}));
+vi.mock("../core", () => ({ useResearch: () => auth }));
 vi.mock("./api", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./api")>();
   return { ...actual, loadAssistedOrderStatus: vi.fn() };
@@ -14,15 +22,20 @@ import { loadAssistedOrderStatus } from "./api";
 import { AssistedOrderConfirmationPage } from "./AssistedOrderConfirmationPage";
 import { AssistedOrderStatusPage } from "./AssistedOrderStatusPage";
 import { RequestIntentReferenceNotice } from "./RequestIntentReferenceNotice";
-import { rememberConfirmedReceipt } from "./request-intent-continuation";
+import { rememberConfirmedReceipt, REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const receipt = {
   kind: "unapproved_selection_request" as const, requestId: "30000000-0000-4000-8000-000000000001",
   publicReference: "XRI-30000000000040008000000000000001", status: "pending_review" as const, createdAt: "2026-10-14T12:00:00.000Z",
 };
+const scopeA = "a".repeat(64);
+const scopeB = "b".repeat(64);
+const memberA: MemberInfo = { firstName: "Synthetic", status: "active", applicationStatus: "active", cartScope: scopeA };
+const verifiedA = { member: memberA, memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" } as const;
 let host: HTMLDivElement, root: Root;
 beforeEach(() => {
+  Object.assign(auth, verifiedA);
   sessionStorage.clear(); vi.mocked(loadAssistedOrderStatus).mockReset();
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
 });
@@ -42,7 +55,7 @@ describe("review-request reference pages", () => {
   it("states what a review request covers on each variant, without asking the customer to submit again", async () => {
     for (const [variant, confirmedHere] of [["confirmation", true], ["confirmation", false], ["status", false]] as const) {
       sessionStorage.clear();
-      if (confirmedHere) rememberConfirmedReceipt(sessionStorage, "owner", receipt);
+      if (confirmedHere) rememberConfirmedReceipt(sessionStorage, scopeA, receipt);
       await act(async () => root.render(<RequestIntentReferenceNotice key={variant + String(confirmedHere)}
         reference={receipt.publicReference} variant={variant} />));
       expect(host.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
@@ -50,7 +63,7 @@ describe("review-request reference pages", () => {
     }
   });
   it("confirmation route: states a tab-confirmed reference as saved, with reference-carrying support links", async () => {
-    rememberConfirmedReceipt(sessionStorage, "owner", receipt);
+    rememberConfirmedReceipt(sessionStorage, scopeA, receipt);
     window.history.replaceState({}, "", "/research/early-access/order-request/confirmation/" + receipt.publicReference);
     await act(async () => root.render(<AssistedOrderConfirmationPage />));
     expect(host.querySelector('[data-testid="request-intent-reference-confirmation"]')).not.toBeNull();
@@ -78,7 +91,7 @@ describe("review-request reference pages", () => {
     expectNoSecretOrStatusClaim();
   });
   it("confirmation route: a different tab-confirmed reference is not borrowed", async () => {
-    rememberConfirmedReceipt(sessionStorage, "owner", receipt);
+    rememberConfirmedReceipt(sessionStorage, scopeA, receipt);
     const other = "XRI-30000000000040008000000000000002";
     window.history.replaceState({}, "", "/research/early-access/order-request/confirmation/" + other);
     await act(async () => root.render(<AssistedOrderConfirmationPage />));
@@ -103,10 +116,53 @@ describe("review-request reference pages", () => {
     expectNoSecretOrStatusClaim();
   });
   it("status route: a tab-confirmed reference is reported as confirmed here too", async () => {
-    rememberConfirmedReceipt(sessionStorage, "owner", receipt);
+    rememberConfirmedReceipt(sessionStorage, scopeA, receipt);
     window.history.replaceState({}, "", "/research/early-access/order-request/" + receipt.publicReference);
     await act(async () => root.render(<AssistedOrderStatusPage />));
     expect(host.textContent).toContain("confirmed in this browser tab");
+    expect(loadAssistedOrderStatus).not.toHaveBeenCalled();
+  });
+  it.each([
+    { variant: "confirmation", segment: "confirmation/", Page: AssistedOrderConfirmationPage },
+    { variant: "status", segment: "", Page: AssistedOrderStatusPage },
+  ])("$variant route removes stored confirmation when the verified principal changes on the same URL", async ({ segment, Page }) => {
+    rememberConfirmedReceipt(sessionStorage, scopeA, receipt);
+    const read = vi.spyOn(Storage.prototype, "getItem");
+    const displayedTime = new Date(receipt.createdAt).toLocaleString();
+    window.history.replaceState({}, "", "/research/early-access/order-request/" + segment + receipt.publicReference);
+    const render = () => act(async () => root.render(<Page />));
+    await render();
+    expect(host.textContent).toContain(displayedTime);
+
+    const unverifiedStates: Partial<typeof auth>[] = [
+      { memberChecking: true },
+      { memberSessionStatus: "checking" },
+      { memberSessionStatus: "verification_failed" },
+      { memberSessionStatus: "signed_out", member: null },
+      { recovery: "pending" },
+      { member: { ...memberA, cartScope: "early-access-session" } },
+      { member: null },
+    ];
+    const expectUrlOnly = () => {
+      expect(host.textContent).toContain(receipt.publicReference);
+      expect(host.textContent).toContain("does not confirm that a request was saved");
+      expect(host.textContent).not.toContain("Request saved for review");
+      expect(host.textContent).not.toContain(displayedTime);
+    };
+    for (const state of unverifiedStates) {
+      Object.assign(auth, verifiedA, state);
+      read.mockClear();
+      await render();
+      expectUrlOnly();
+      expect(read).not.toHaveBeenCalledWith(REQUEST_INTENT_RECEIPT_RECORD_KEY);
+    }
+
+    Object.assign(auth, verifiedA);
+    await render();
+    expect(host.textContent).toContain(displayedTime);
+    Object.assign(auth, { member: { ...memberA, cartScope: scopeB } });
+    await render();
+    expectUrlOnly();
     expect(loadAssistedOrderStatus).not.toHaveBeenCalled();
   });
   it("renders the notice without storage access", async () => {
@@ -117,7 +173,7 @@ describe("review-request reference pages", () => {
     expect(host.textContent).toContain("does not confirm that a request was saved");
   });
   it("treats a retyped lower-case review reference as the same reference on both routes", async () => {
-    rememberConfirmedReceipt(sessionStorage, "owner", receipt);
+    rememberConfirmedReceipt(sessionStorage, scopeA, receipt);
     window.history.replaceState({}, "", "/research/early-access/order-request/confirmation/" + receipt.publicReference.toLowerCase());
     await act(async () => root.render(<AssistedOrderConfirmationPage />));
     expect(host.textContent).toContain(receipt.publicReference);
