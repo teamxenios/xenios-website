@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-006",
+  "createdAt": "2026-11-04T20:16:22.898Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "gitBlobOid": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+    "rawSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+    "offeringCount": 420,
+    "sourceVariantCount": 420
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "gitBlobOid": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+    "rawSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+  },
+  "disposition": "internal_source_leads_only_not_exact_assets",
+  "sourceBytesPreserved": true,
+  "runtimeLinked": false,
+  "publicationAuthorized": false,
+  "supplierSendPerformed": false,
+  "contactSheet": {
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/contact-sheet-v1.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 755039,
+    "sha256": "86a96dbfa3434abdaef16fd322ff84e4e914b0fcb5b3dfd1573f139f630eb556"
+  },
+  "contactSheetSource": {
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/contact-sheet-v1.html",
+    "bytes": 8017,
+    "sha256": "acdb086599a365bbdc7a0d95ccdf400d7330a5a5aafe36e62667444ba7c01091"
+  },
+  "records": [
+    {
+      "offeringId": "mo_7bc91b37c8c041f166dd",
+      "sourceVariantId": "mov_2de19f71e09e8bc3febb",
+      "canonicalName": "Chondro Jointaide",
+      "quickOrderSku": "GEN-GRP-0368",
+      "workbookSourceItemCode": "R149C",
+      "officialMediaStem": "R149C",
+      "officialProductPage": "https://nutridyn.com/sports-nutrition/chondro-jointaide",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r149c-Base-33816_1.png",
+      "visibleLeadFacts": "NutriDyn Chondro Jointaide, 60 packets",
+      "preciseMissingInput": "Obtain the exact current Xenios-supplied R149C package label confirming whether the third packet formula is Inflam-Eze Plus or Herbal Eze, plus the complete panel and warnings.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/r149c-chondro-jointaide-lead.png",
+        "width": 211,
+        "height": 265,
+        "bytes": 186420,
+        "sha256": "7da59970af71609cfd248722e2bfdae4d44e4475d28b8fe4da60be178b661e71"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_79376f449760149d1030",
+      "sourceVariantId": "mov_cdfb19499637f274f271",
+      "canonicalName": "Fruits & Greens",
+      "quickOrderSku": "GEN-GRP-0370",
+      "workbookSourceItemCode": "R305-GFSK",
+      "officialMediaStem": "8WFG",
+      "officialProductPage": "https://nutridyn.com/fruits-greens",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/8/w/8wfg-Base-69770.png",
+      "visibleLeadFacts": "NutriDyn Fruits & Greens Strawberry & Kiwi canister",
+      "preciseMissingInput": "Obtain the selected Strawberry Kiwi jar label revision and net weight; the live page and manufacturer sheet conflict on calories, vitamin C, fiber and SuperFruitox per scoop.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/8wfg-fruits-greens-lead.png",
+        "width": 165,
+        "height": 265,
+        "bytes": 169105,
+        "sha256": "f633be7d1b7c4e1250d84cd73feac567d889353e11ed33d58e1798a12b7f896a"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_a4cfc5396d714f879944",
+      "sourceVariantId": "mov_d6a8b2cd129bda39d8fa",
+      "canonicalName": "Hydrate",
+      "quickOrderSku": "GEN-GRP-0372",
+      "workbookSourceItemCode": "R982",
+      "officialMediaStem": "DHYD",
+      "officialProductPage": "https://nutridyn.com/dynamic-hydrate",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/d/h/dhyd-Base-13048.png",
+      "visibleLeadFacts": "NutriDyn Hydrate Blue Raspberry canister",
+      "preciseMissingInput": "Obtain the current US R982 package panel confirming magnesium forms, exact label instructions and storage; current sources conflict on magnesium oxide versus bisglycinate-only composition.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/dhyd-hydrate-lead.png",
+        "width": 265,
+        "height": 265,
+        "bytes": 136752,
+        "sha256": "50399172e07267e4256e58a6fd456865de43ba21da2e755f342d4700a73dee7c"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_eca326cdaae5d36cfae6",
+      "sourceVariantId": "mov_0f3fa003c76aadef763c",
+      "canonicalName": "Inflam-Eze (30-serving)",
+      "quickOrderSku": "GEN-GRP-0373",
+      "workbookSourceItemCode": "R266L",
+      "officialMediaStem": "DIN",
+      "officialProductPage": "https://nutridyn.com/dynamic-inflam-eze",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/d/i/din-Base-91863_1.png",
+      "visibleLeadFacts": "NutriDyn Inflam-Eze Chocolate Orange canister",
+      "preciseMissingInput": "Obtain the exact current R266L Chocolate Orange 30-serving label, net weight and complete cautions; the official product-sheet link is for a different Tropical Punch formula.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/din-inflam-eze-lead.png",
+        "width": 192,
+        "height": 265,
+        "bytes": 213928,
+        "sha256": "3b973fa1d79ec490b99fca2369500500df8abf4bf32d4bcf442fe5753c4b1271"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_edefaf4799bd53853d01",
+      "sourceVariantId": "mov_e74adec4c45f9c9db404",
+      "canonicalName": "Longevity Essentials NAD+",
+      "quickOrderSku": "GEN-GRP-0374",
+      "workbookSourceItemCode": null,
+      "officialMediaStem": "R288",
+      "officialProductPage": "https://nutridyn.com/longevity-essentials-nad-plus-r288",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/2/r288-Base-45244.png",
+      "visibleLeadFacts": "NutriDyn Longevity Essentials NAD+ R288, 90 capsules",
+      "preciseMissingInput": "Obtain a Xenios supplier invoice, approved crosswalk or selected package record tying this exact catalog pair to R288; the founder workbook has no source item code.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/r288-longevity-nad-plus-lead.png",
+        "width": 160,
+        "height": 265,
+        "bytes": 127842,
+        "sha256": "a3d952560f7d5ae17629d75d186147034fd934f1993781f0dcaa5ef640a394ee"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_b48e883b4ada1469f824",
+      "sourceVariantId": "mov_904af0a54faddfe2f21f",
+      "canonicalName": "Rejuvenate+",
+      "quickOrderSku": "GEN-GRP-0380",
+      "workbookSourceItemCode": null,
+      "officialMediaStem": "R289",
+      "officialProductPage": "https://nutridyn.com/r289-beauty-essentials-rejuvenate-plus",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/2/r289-Base-61524.png",
+      "visibleLeadFacts": "NutriDyn Beauty Essentials Rejuvenate+ R289, Hibiscus Berry canister",
+      "preciseMissingInput": "Obtain a Xenios supplier invoice or approved crosswalk confirming R289, the selected name, flavor, exact package label and net weight; the founder workbook has no item code and the names differ.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/r289-rejuvenate-plus-lead.png",
+        "width": 161,
+        "height": 265,
+        "bytes": 190020,
+        "sha256": "4c2d7182a952a421b25a02eaf3287e0d418a488bde2580e6653755b8422fe12e"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_5b122372a6ecdea51c52",
+      "sourceVariantId": "mov_ffe0eef7766200ac8c53",
+      "canonicalName": "Stress Essentials Calm",
+      "quickOrderSku": "GEN-GRP-0382",
+      "workbookSourceItemCode": "R123C",
+      "officialMediaStem": "R405",
+      "officialProductPage": "https://nutridyn.com/calm-eze-r405",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/4/r405-Base-20274_1.png",
+      "visibleLeadFacts": "NutriDyn Stress Essentials Calm R405, 60 capsules",
+      "preciseMissingInput": "Obtain an approved R123C-to-R405 crosswalk and the selected package panel confirming GABA strength, count and cautions; do not substitute R405 for the workbook code without evidence.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/r405-stress-essentials-calm-lead.png",
+        "width": 163,
+        "height": 265,
+        "bytes": 108332,
+        "sha256": "0f6e06b87eccb03849f674a7f3efe71ee39bd7f545d9c20013cf29ebb81e6a53"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_2d42f72361aac15b6d5d",
+      "sourceVariantId": "mov_dbb59b83827a556051da",
+      "canonicalName": "UltraBiotic Akkermansia Plus",
+      "quickOrderSku": "GEN-GRP-0383",
+      "workbookSourceItemCode": "R196",
+      "officialMediaStem": "UBA",
+      "officialProductPage": "https://nutridyn.com/ultrabiotic-akkermansia-plus",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/u/b/uba-Base-96807.png",
+      "visibleLeadFacts": "NutriDyn UltraBiotic Akkermansia Plus, 30 capsules",
+      "preciseMissingInput": "Obtain supplier confirmation and the selected R196 label resolving the 100 million CFU package transcription against the current 500 million TFU formula.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/uba-akkermansia-plus-lead.png",
+        "width": 265,
+        "height": 265,
+        "bytes": 116100,
+        "sha256": "2b7491867ceae8aaf788eec30b21aa1f7373ce4cdf288d1eb84e2164d449ae04"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_ad9795d751913350bdea",
+      "sourceVariantId": "mov_d91d7248ed06d7280a2d",
+      "canonicalName": "UltraBiotic Prebiotic",
+      "quickOrderSku": "GEN-GRP-0384",
+      "workbookSourceItemCode": "R222",
+      "officialMediaStem": "R222",
+      "officialProductPage": "https://nutridyn.com/ultrabiotic-prebiotic",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/2/r222-base-42503_1_.png",
+      "visibleLeadFacts": "NutriDyn UltraBiotic Prebiotic Cranberry Lemonade, 30 servings, 205 g",
+      "preciseMissingInput": "Obtain the current selected R222 package label or supplier confirmation resolving the bamboo-extract versus silica other-ingredient revision.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/r222-ultrabiotic-prebiotic-lead.png",
+        "width": 197,
+        "height": 265,
+        "bytes": 142021,
+        "sha256": "73d283b284beea4c7996121075e9c14fda6753b203c4e100e6a030ce2d83b700"
+      },
+      "status": "held_not_exact_asset"
+    },
+    {
+      "offeringId": "mo_85898714d8df5a3d2f10",
+      "sourceVariantId": "mov_4a105b161858064229f3",
+      "canonicalName": "Uplift+",
+      "quickOrderSku": "GEN-GRP-0385",
+      "workbookSourceItemCode": null,
+      "officialMediaStem": "R290",
+      "officialProductPage": "https://nutridyn.com/r290-uplift-plus",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/2/r290-Base-32001.png",
+      "visibleLeadFacts": "NutriDyn Uplift+ R290, Berry Lemonade canister",
+      "preciseMissingInput": "Obtain a Xenios supplier invoice or approved crosswalk tying this exact catalog pair to R290, flavor, selected package label and net weight; the founder workbook has no item code.",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-006/source-leads/official-nutridyn/r290-uplift-plus-lead.png",
+        "width": 168,
+        "height": 265,
+        "bytes": 192902,
+        "sha256": "0b0f380271fdbde829ca62d44d119726294d09d1cef5a74a3b204171adb65808"
+      },
+      "status": "held_not_exact_asset"
+    }
+  ]
+}

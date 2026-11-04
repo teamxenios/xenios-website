@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-006",
+  "createdAt": "2026-11-04T20:16:22.898Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "inputEvidence": {
+    "path": "C:/Users/sboad/Downloads/XENIOS_CATALOG_CONTENT_2026-11-04/supplements/supplements-evidence.v2.internal.json",
+    "sha256": "56548d516a20b6c4b7394c579dccb247cc522c029d5188bf6a78b744c45cc5fb",
+    "imported": false,
+    "purpose": "Exact-ID conflict statements and selected-source gaps from the supplement content lane."
+  },
+  "recovery": {
+    "officialProductPagesChecked": 10,
+    "officialPageStatus200": 10,
+    "officialFrontExportsDownloaded": 10,
+    "sourceBytesTransformed": 0,
+    "retrievedAt": "2026-11-04T20:16:22.898Z"
+  },
+  "disposition": {
+    "heldSourceLeads": 10,
+    "exactProductAssets": 0,
+    "publicationAuthorizedAssets": 0,
+    "runtimeLinkedAssets": 0,
+    "supplierSendPerformed": false,
+    "reason": "Every official export still has a product-code, package, flavor, formula, ingredient or revision conflict against the selected Xenios catalog record."
+  },
+  "review": {
+    "status": "internal_source_gap_evidence_complete",
+    "independentExactAssetReviewRequested": false,
+    "note": "No exact asset approval is requested until the record-specific missing inputs in source-leads.v1.json are supplied."
+  },
+  "authority": {
+    "websiteAcquisitionReferences": [
+      "KAN-59/10615",
+      "KAN-225/10616"
+    ],
+    "boundary": "Founder website acquisition authority does not resolve factual SKU or formulation conflicts and does not convert a source lead into an exact asset."
+  }
+}
