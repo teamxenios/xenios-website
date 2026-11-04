@@ -438,13 +438,7 @@
           }
         ],
         "purpose": "Laboratory study of nicotinamide N-methyltransferase activity.",
-        "cautions": "For nonclinical laboratory research only.",
-        "documentation": [
-          {
-            "label": "Cell study of 5-Amino-1MQ and NNMT activity",
-            "href": "https://pubmed.ncbi.nlm.nih.gov/29155147/"
-          }
-        ]
+        "cautions": "For nonclinical laboratory research only."
       }
     },
     {
@@ -468,13 +462,7 @@
           }
         ],
         "purpose": "Laboratory study of receptor expression in rat tendon cells.",
-        "cautions": "For nonclinical laboratory research only.",
-        "documentation": [
-          {
-            "label": "Rat tendon cell study of BPC-157",
-            "href": "https://www.mdpi.com/1420-3049/19/11/19066"
-          }
-        ]
+        "cautions": "For nonclinical laboratory research only."
       }
     },
     {
@@ -498,13 +486,7 @@
           }
         ],
         "purpose": "Laboratory study of collagen synthesis in cultured fibroblasts.",
-        "cautions": "For nonclinical laboratory research only.",
-        "documentation": [
-          {
-            "label": "Fibroblast culture study of the GHK-copper complex",
-            "href": "https://pubmed.ncbi.nlm.nih.gov/3169264/"
-          }
-        ]
+        "cautions": "For nonclinical laboratory research only."
       }
     },
     {
@@ -528,13 +510,7 @@
           }
         ],
         "purpose": "Laboratory study of peptide transport and cell signaling.",
-        "cautions": "For nonclinical laboratory research only.",
-        "documentation": [
-          {
-            "label": "Cell study of KPV transport by PepT1",
-            "href": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2431115/"
-          }
-        ]
+        "cautions": "For nonclinical laboratory research only."
       }
     }
   ]

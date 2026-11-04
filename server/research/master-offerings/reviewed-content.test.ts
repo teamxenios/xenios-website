@@ -81,6 +81,19 @@ describe("reviewed exact-variant catalog content", () => {
     expect((await requestItem(changed)).reviewedMedia).toBeUndefined();
   });
 
+  it("keeps compound studies out of product documentation and preserves the reviewed supplement label", () => {
+    const reader = new GeneratedMasterOfferingCatalogReader(committed);
+    const offerings = reader.load().products;
+    const capsule = offerings.find((row) => row.id === "mo_7ba89975fb62ceb33b7b")!;
+    const chondro = offerings.find((row) => row.id === "mo_7bc91b37c8c041f166dd")!;
+    const capsuleContent = projectMasterOfferingDetail(capsule).variants[0].reviewedContent;
+    expect(capsuleContent?.specifications).toContainEqual({ label: "Listed package", value: "Bottle of 60 capsules" });
+    expect(capsuleContent?.documentation).toBeUndefined();
+    expect(projectMasterOfferingDetail(chondro).variants[0].reviewedContent?.documentation).toEqual([
+      { label: "NutriDyn product label and Supplement Facts", href: "https://nutridyn.com/sports-nutrition/chondro-jointaide" },
+    ]);
+  });
+
   it("projects reviewed content on both catalog surfaces only for the trusted dataset", async () => {
     const first = batch.records[0];
     const reader = new GeneratedMasterOfferingCatalogReader(committed);
