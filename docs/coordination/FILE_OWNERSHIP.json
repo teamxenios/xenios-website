@@ -890,6 +890,16 @@
       ]
     },
     {
+      "id": "OWNER-KAN225-EARLY-ACCESS-MOBILE-CSS-20261104",
+      "owner": "codex-launch-coordination-20261005",
+      "lane": "launch-coordination",
+      "mode": "write",
+      "state": "active",
+      "patterns": [
+        "client/src/research/assisted-order/assisted-order.css"
+      ]
+    },
+    {
       "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
       "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
       "lane": "release-manager",
@@ -949,7 +959,6 @@
         "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
         "client/src/research/assisted-order/SecureDocumentUpload.tsx",
         "client/src/research/assisted-order/api.ts",
-        "client/src/research/assisted-order/assisted-order.css",
         "client/src/research/assisted-order/index.ts",
         "client/src/research/assisted-order/storage.ts",
         "client/src/research/assisted-order/wizard-state.test.ts",
