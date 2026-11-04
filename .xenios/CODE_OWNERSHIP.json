@@ -3021,7 +3021,7 @@
         "client/src/research/pages/member/PrivacyControls.tsx",
         "client/src/research/pages/member/privacy-correction-receipt.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T15:01:23.5333924Z",
       "heartbeatAt": "2026-11-04T15:01:23.5333924Z"
     }

@@ -3690,7 +3690,7 @@
       "id": "KAN149-PRIVACY-CORRECTION-RECEIPT-20261104",
       "title": "Preserve member privacy correction receipt provenance",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-149",
       "baseSha": "d151b978277add1088dc964049006c30d0a3d9da",
       "paths": [
@@ -3701,7 +3701,13 @@
       "scopeNote": "Implement only the bounded KAN-149 privacy-correction receipt proposal from KAN-149 comment 10454 attachment 10002, as authorized by Samuel at KAN-225 comments 10574 and 10581, on exact current live base d151b978277add1088dc964049006c30d0a3d9da/tree b80ed6ca1da0718fb40eab169b603a812c3c98a2. Limit work exactly to existing PrivacyControls.tsx with preimage blob a2f78af835ed4c4f67fc50501fd6932578599310 and new privacy-correction-receipt.test.tsx, absent at the base. Preserve the original proposal's bounded member-visible correction receipt while adding the existing token-keyed boundary and exact same-turn lock so prior member text and receipt provenance cannot be overwritten by an obsolete or cross-token completion. Create intended branch codex/privacy-correction-receipt-20261104 separately. Add no new data-rights API, Auth authority, privacy authority, storage, server route, role, flag, configuration, notification, customer, SQL, provider, managed-service, activation, release or production behavior. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/wildcard audits found no active conflict for either path. This metadata claim authorizes no application edit, branch creation, test, build, local Node, CI, browser, live Auth/privacy action, provider, database, SQL, staging, merge, deployment, acquisition or production action.",
       "createdAt": "2026-11-04T15:01:23.5333924Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T15:01:23.5333924Z"
+      "claimedAt": "2026-11-04T15:01:23.5333924Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "fa552b824917b74f58ae1bfa53e05adad090d2bd",
+        "file": ".xenios/handoffs/2026-11-04T15-24-55-727Z-KAN149-PRIVACY-CORRECTION-RECEIPT-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T15:24:55.7279012Z"
+      }
     }
   ]
 }

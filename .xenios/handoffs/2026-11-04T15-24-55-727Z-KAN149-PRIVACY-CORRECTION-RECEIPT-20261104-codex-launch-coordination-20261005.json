@@ -1,0 +1,30 @@
+{
+  "pr": 379,
+  "head": "fa552b824917b74f58ae1bfa53e05adad090d2bd",
+  "tree": "2cbcd34ec38757fece5082c4d38f21aa98164e76",
+  "parent": "d151b978277add1088dc964049006c30d0a3d9da",
+  "providerMerge": "5d988ddb52270b4cbea3c1aa2e4527efab5c3e44",
+  "providerTree": "2cbcd34ec38757fece5082c4d38f21aa98164e76",
+  "reviewedPatch": "4d1d71ab4d0aced3d22dacf3c44a5510ca7645f8bd74051293aaa56daabe5efd",
+  "runtimeBlob": "6bab77aab2838ef461d9e587deb59555063bdbd9",
+  "testBlob": "bc0c952a6d9d9fd9fd9315beb0acdb54bf68f4c0",
+  "acceptance": "Existing ci_contract_ready independently accepted corrected exact proposal, matched commit blobs",
+  "hosted": {
+    "run": 41854282853,
+    "attempt": 1,
+    "app": 15368,
+    "test": 126658553367,
+    "typecheck": 126658552243,
+    "build": 126658552532,
+    "protection": 126658552590,
+    "completion": 126662721829,
+    "passed": 18438,
+    "failed": 0,
+    "skipped": 83,
+    "filesPassed": 991,
+    "filesSkipped": 6,
+    "focusedPrivacy": 8,
+    "overlappingFocusedGuest": 145
+  },
+  "scope": "Draft exact source and hosted fixture qualification. No merge, deployment, live member privacy action or database operation."
+}
