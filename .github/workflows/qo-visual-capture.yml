@@ -1,0 +1,88 @@
+name: Quick Order visual capture
+on:
+  push:
+    branches: [codex/qo-visual-capture-20261103]
+    paths:
+      - .github/workflows/qo-visual-capture.yml
+      - scripts/qa/qo-visual-capture/**
+permissions:
+  contents: read
+jobs:
+  capture:
+    if: github.repository == 'teamxenios/xenios-website' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CANDIDATE_SHA: ad76ce76ddb106183202aff62991cfffc9aabcfd
+      CANDIDATE_TREE: 0e3480097f7e1cef40c7b6f2104c6e995e7b0d80
+    steps:
+      - name: Set disposable tool and evidence directories
+        shell: bash
+        run: |
+          printf 'PLAYWRIGHT_BROWSERS_PATH=%s/qo-chromium\nEVIDENCE_DIR=%s/qo-visual-evidence\n' \
+            "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
+          path: candidate
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20.19.0
+      - name: Install locked tools and build the exact candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(node --version)" = v20.19.0
+          test "$(npm --version)" = 10.8.2
+          test "$(git -C candidate rev-parse HEAD)" = "$CANDIDATE_SHA"
+          test "$(git -C candidate rev-parse 'HEAD^{tree}')" = "$CANDIDATE_TREE"
+          (
+            cd harness/scripts/qa/qo-visual-capture
+            npm ci --no-audit --no-fund
+            ./node_modules/.bin/playwright install --with-deps chromium
+          )
+          cd candidate
+          env -i PATH="$PATH" HOME="$HOME" CI=true \
+            node scripts/evidence/build-candidate-preview.mjs --sha "$CANDIDATE_SHA"
+      - name: Capture both synthetic viewports inside a loopback-only namespace
+        shell: bash
+        timeout-minutes: 4
+        run: |
+          set -euo pipefail
+          mkdir -p "$EVIDENCE_DIR"
+          sudo unshare --net bash -euc '
+            ip link set lo up
+            exec runuser -u "$1" -- env -i HOME="$2" PATH="$3" \
+              PLAYWRIGHT_BROWSERS_PATH="$4" \
+              "$5" --import "$6/node_modules/tsx/dist/loader.mjs" \
+              "$7/scripts/qa/qo-visual-capture/capture.mjs" "$6" "$8" "$9" \
+              "${10}" "${11}"
+          ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
+            "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
+            "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA"
+      - name: Preserve a result if setup stopped before capture
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p "$EVIDENCE_DIR"
+          if [ ! -s "$EVIDENCE_DIR/result.json" ]; then
+            printf '{"scope":"non-production synthetic","candidateSha":"%s","candidateTree":"%s","harnessRevision":"%s","status":"setup failed before capture","captures":[]}\n' \
+              "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" > "$EVIDENCE_DIR/result.json"
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: qo-bpc157-synthetic-visual-proof
+          path: |
+            ${{ env.EVIDENCE_DIR }}/phone-viewport.png
+            ${{ env.EVIDENCE_DIR }}/phone-card.png
+            ${{ env.EVIDENCE_DIR }}/desktop-viewport.png
+            ${{ env.EVIDENCE_DIR }}/desktop-card.png
+            ${{ env.EVIDENCE_DIR }}/result.json
+          if-no-files-found: error
+          retention-days: 7
