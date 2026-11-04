@@ -18,15 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: a454cf1ae8a3037e5fd92a6babcb9eef7f2a88fb
-      CANDIDATE_TREE: 078e109bd4161bb5e3f78b8a84ba5e29ab3216a6
+      CANDIDATE_SHA: ac53752d3486d2604d23cd6766e8c66f1cc2f78c
+      CANDIDATE_TREE: bf00d078844192037fe0731d0889f9a35a707a5e
       # Dormant until the existing Root binds a new approval and run reconciliation.
       CAPTURE_ALLOWANCE_ID: KAN-31/10684
-      CAPTURE_ALLOWANCE_ATTEMPT: "1"
+      CAPTURE_ALLOWANCE_ATTEMPT: "2"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
-      CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: 2026-11-04T21:47:54Z
-      CAPTURE_DIAGNOSIS: ""
+      CAPTURE_PRIOR_RUN_IDS: '["41919542052"]'
+      CAPTURE_RECONCILED_AT: 2026-11-04T22:18:41Z
+      CAPTURE_DIAGNOSIS: "Measure ordinary and selected phone density after the exact selected quantity reflow; retain contact gutters"
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash

@@ -620,6 +620,17 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
     return Math.abs(bounds.top) <= 3 ||
       (bounds.top >= -3 && bounds.top < innerHeight && Math.abs(scrollY - maxScroll) <= 3);
   });
+  const alignCatalogStart = () => surface.locator(".xenios-order-catalog-start").evaluate(async (anchor) => {
+    anchor.scrollIntoView({ block: "start", behavior: "instant" });
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+  const visibleCards = () => toolbar.evaluate((node) => {
+    const top = Math.max(0, node.getBoundingClientRect().bottom);
+    const cards = [...node.parentElement.querySelectorAll("article.xenios-order-card")].map((card) => card.getBoundingClientRect());
+    const fullyVisible = cards.filter((box) => box.top >= top && box.bottom <= innerHeight).length;
+    const intersecting = cards.filter((box) => box.bottom > top && box.top < innerHeight).length;
+    return { fullyVisible, partlyVisible: intersecting - fullyVisible, toolbarBottom: top, viewportHeight: innerHeight };
+  });
   const expectRetained = async (label) => report(entry, label,
     await summaryContent.getByText("BPC-157", { exact: true }).isVisible() &&
     await summaryContent.getByText("Requested quantity: 2", { exact: true }).isVisible());
@@ -627,14 +638,23 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
   await settledPage(1, 3, 24, guestMobilePageMarkers[0]);
   report(entry, "only the expected pager is shown and Previous is disabled on the first page",
     await pager.isVisible() && !await hiddenPager.isVisible() && await previous.isDisabled() && await next.isEnabled());
-  const first = card(bpc.productName);
-  await first.getByRole("button", { name: "Add to request: " + bpc.productName + ", " + bpc.specification, exact: true }).click();
-  await first.getByRole("button", { name: "Increase requested quantity for BPC-157", exact: true }).click();
-  report(entry, "first-page selection uses the exact requested quantity", await first.getByRole("spinbutton").inputValue() === "2");
   const agreement = page.getByTestId("early-access-agreement-submit");
   await page.getByTestId("early-access-agreement-checkbox").check();
   await agreement.click();
   await page.getByTestId("early-access-agreement-accepted").waitFor();
+  if (entry.viewport.width === 390) {
+    await alignCatalogStart();
+    entry.unselectedCatalogStartVisibility = await visibleCards();
+    await screenshot(entry, "catalog", page);
+  }
+  const first = card(bpc.productName);
+  await first.getByRole("button", { name: "Add to request: " + bpc.productName + ", " + bpc.specification, exact: true }).click();
+  await first.getByRole("button", { name: "Increase requested quantity for BPC-157", exact: true }).click();
+  const quantity = first.getByRole("spinbutton", { name: "Requested quantity for BPC-157", exact: true });
+  report(entry, "first-page selection keeps the accessible quantity control and exact requested quantity",
+    await quantity.inputValue() === "2" &&
+    (!entry.mobile || await quantity.evaluate((node) => node.getBoundingClientRect().height >= 44 &&
+      Number.parseFloat(getComputedStyle(node).fontSize) >= 16)));
   if (entry.mobile) {
     report(entry, "summary starts collapsed behind the labelled count",
       await toggle.getAttribute("aria-expanded") === "false" && !await summaryContent.isVisible());
@@ -662,23 +682,14 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
       };
     });
     report(entry, "sticky toolbar remains reachable after scrolling through full rows", Object.values(geometry).every(Boolean), geometry);
-    await surface.locator(".xenios-order-catalog-start").evaluate((anchor) =>
-      anchor.scrollIntoView({ block: "start", behavior: "instant" }));
-    if (entry.viewport.width === 390) {
-      entry.catalogStartVisibility = await toolbar.evaluate((node) => {
-        const top = Math.max(0, node.getBoundingClientRect().bottom);
-        const cards = [...node.parentElement.querySelectorAll("article.xenios-order-card")].map((card) => card.getBoundingClientRect());
-        const fullyVisible = cards.filter((box) => box.top >= top && box.bottom <= innerHeight).length;
-        const intersecting = cards.filter((box) => box.bottom > top && box.top < innerHeight).length;
-        return { fullyVisible, partlyVisible: intersecting - fullyVisible, toolbarBottom: top, viewportHeight: innerHeight };
-      });
-    }
+    await alignCatalogStart();
+    if (entry.viewport.width === 390) entry.catalogStartVisibility = await visibleCards();
   } else {
     report(entry, "desktop retains static catalog controls and an expanded request summary",
       await toolbar.evaluate((node) => getComputedStyle(node).position === "static") && await summaryContent.isVisible());
     await toolbar.scrollIntoViewIfNeeded();
   }
-  await screenshot(entry, "catalog", page);
+  if (entry.viewport.width !== 390) await screenshot(entry, "catalog", page);
   const inspectDetails = async (item, pageNumber, captureImage) => {
     const product = card(item.productName).filter({ has: page.getByText(item.specification, { exact: true }) });
     const trigger = product.getByRole("button", { name: "View details for " + item.productName + ", " + item.specification, exact: true });
@@ -771,6 +782,12 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
   report(entry, "catalog-only controls are absent after continuing to contact",
     await toolbar.count() === 0 && await summary.count() === 0 && entry.network.accepted === 1 &&
     entry.network.deniedLocalReads === 0);
+  if (entry.mobile) report(entry, "mobile contact input stays within the page gutters",
+    await surface.locator('input[name="name"]').evaluate((node) => {
+      const rect = node.getBoundingClientRect();
+      return rect.left >= 12 && rect.right <= innerWidth - 12 &&
+        document.documentElement.scrollWidth <= innerWidth + 1;
+    }));
 }
 
 async function capture(browser, fixtures, kind, size, rows) {
