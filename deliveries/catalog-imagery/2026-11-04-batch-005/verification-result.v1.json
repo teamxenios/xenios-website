@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "batchId": "catalog-imagery-2026-11-04-batch-005",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "canonicalPairs": 420,
+  "exactSupplierRecords": 10,
+  "checkedOriginalPngs": 10,
+  "candidatePackageMatchesPendingReview": 9,
+  "factualVersionHolds": 1,
+  "contactSheetChecked": true,
+  "sourceBytesTransformed": false,
+  "runtimeLinkedAssets": 0,
+  "publicationAuthorizedAssets": 0,
+  "supplierSendPerformed": false,
+  "errors": []
+}

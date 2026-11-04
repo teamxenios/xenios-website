@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-005",
+  "createdAt": "2026-11-04T20:07:22.472Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "successorTo": {
+    "sourceSha": "e8705e0a34b0ab5bd357ccb24562dc89049aca1f",
+    "review": "KAN-31/10612",
+    "scope": "ten exact official NutriDyn image leads"
+  },
+  "authorityReconciliation": {
+    "founderDirection": [
+      "KAN-59/10615",
+      "KAN-225/10616"
+    ],
+    "websiteAcquisitionAuthorized": true,
+    "separateImageUseAgreementRequired": false,
+    "supersededPrerequisite": "The predecessor's blanket written-media-permission hold does not apply to this founder-authorized website acquisition.",
+    "notRepresented": [
+      "supplier countersignature",
+      "supplier proof approval",
+      "runtime publication approval"
+    ]
+  },
+  "acquisition": {
+    "source": "official NutriDyn product-media URLs preserved from the exact predecessor evidence",
+    "retrievedAt": "2026-11-04T20:07:22.472Z",
+    "downloadedAssets": 10,
+    "transformedAssets": 0,
+    "brandPreserved": "NutriDyn",
+    "supplierSendPerformed": false
+  },
+  "manualVisualInspection": {
+    "performed": true,
+    "scope": "all ten original PNG downloads and the complete 10-up contact sheet",
+    "result": "nine front exports visibly match the named product and expected count, weight or liquid volume; R227 visibly matches the named 90-capsule Magtein package but remains held for the known current-label-version conflict",
+    "wellnessBoundary": "Inspection confirms package identity presentation only and makes no clinical interpretation."
+  },
+  "review": {
+    "status": "pending_independent_review",
+    "requestedReviewer": "KAN-31",
+    "downloadedOfficialExports": 10,
+    "candidatePackageMatches": 9,
+    "factualVersionHolds": 1,
+    "publicationAuthorizedAssets": 0,
+    "runtimeLinkedAssets": 0,
+    "fullyReadyCatalogPairs": 0
+  },
+  "preservedHold": {
+    "supplierItemCode": "R227",
+    "offeringId": "mo_d82610b6fe7ebf3b4d63",
+    "sourceVariantId": "mov_f5d63d95caa3d6d0a7a0",
+    "reason": "The same US supplier code and UPC have conflicting label versions. A current selected front and back label or manufacturer confirmation remains required."
+  },
+  "releaseBoundary": [
+    "The ten PNGs are quarantined delivery-path review inputs, not runtime media.",
+    "Nine visible package matches still require independent exact-byte and visual review before an integration handoff can be prepared.",
+    "R227 remains ineligible while its current selected label version is unresolved.",
+    "No public manifest, runtime binding, customer publication, supplier outbound or physical packaging claim is included."
+  ]
+}

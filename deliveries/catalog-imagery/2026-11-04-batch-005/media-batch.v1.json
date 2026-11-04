@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-005",
+  "createdAt": "2026-11-04T20:07:22.472Z",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "gitBlobOid": "95fa8d928b3137e42f89cd168c30428c9078af6b",
+    "rawSha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+    "bytePolicy": "committed LF bytes; verifier normalizes a CRLF checkout before hashing",
+    "offeringCount": 420,
+    "sourceVariantCount": 420
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "gitBlobOid": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+    "rawSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+    "bytePolicy": "committed LF bytes; verifier normalizes a CRLF checkout before hashing"
+  },
+  "authority": {
+    "founderWebsiteUseAuthorized": true,
+    "references": [
+      "KAN-59/10615",
+      "KAN-225/10616"
+    ],
+    "separateImageUseAgreementRequired": false,
+    "releasePublicationApproved": false
+  },
+  "publicationState": "quarantined_downloads_pending_independent_review",
+  "sourceBytesPreserved": true,
+  "runtimeLinked": false,
+  "supplierSendPerformed": false,
+  "contactSheet": {
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/contact-sheet-v1.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 560451,
+    "sha256": "ca3124b965fe0f47d7078047372fe703d2f721058370296270591d3337117883"
+  },
+  "contactSheetSource": {
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/contact-sheet-v1.html",
+    "bytes": 7263,
+    "sha256": "a49a58e1fc468d1c4870ee996e93966692e8c7f69230b95b402d6f20d92ed84d"
+  },
+  "records": [
+    {
+      "offeringId": "mo_b126ee9235f0a810dc95",
+      "sourceVariantId": "mov_9813dabbc127f6b382fb",
+      "canonicalName": "Annatto Pro 125",
+      "quickOrderSku": "GEN-GRP-0366",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R271L",
+      "expectedPackage": "60 softgels",
+      "officialProductPage": "https://nutridyn.com/annatto-e",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/dd4850ad4231b6306bceadf38a0bbeed/r/2/r271l-Small-98707.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r271l-annatto-pro-125.png",
+        "format": "png",
+        "width": 258,
+        "height": 420,
+        "bytes": 62587,
+        "sha256": "e8e72f0278bd3b9f35ab98c53cb5f80c47600d008dfcbf917cb557262e0f9c8c",
+        "altTextCandidate": "Official NutriDyn Annatto Pro 125 bottle, 60 softgels"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_60_softgels",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    },
+    {
+      "offeringId": "mo_81f2af5cc04167a47413",
+      "sourceVariantId": "mov_845dc69ae9dd6cd6ba34",
+      "canonicalName": "Brain Restore",
+      "quickOrderSku": "GEN-GRP-0367",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R152",
+      "expectedPackage": "210 capsules",
+      "officialProductPage": "https://nutridyn.com/brain-restore",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r152-Base-43423.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r152-brain-restore.png",
+        "format": "png",
+        "width": 158,
+        "height": 265,
+        "bytes": 102322,
+        "sha256": "884cfd91fb88f73af7db9c15f2b0672bdacf21d2f94423290bbe7077fe46b06f",
+        "altTextCandidate": "Official NutriDyn Brain Restore bottle, 210 capsules"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_210_capsules",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    },
+    {
+      "offeringId": "mo_db61126250f5fa3a3324",
+      "sourceVariantId": "mov_7c6e65b041ae3bfe5262",
+      "canonicalName": "Collagen Renew (Dynamic Multi)",
+      "quickOrderSku": "GEN-GRP-0369",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R190",
+      "expectedPackage": "525 g (18.52 oz) unflavored powder",
+      "officialProductPage": "https://nutridyn.com/dynamic-multi-collagen-renew",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r190-Base-48618_1.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r190-collagen-renew.png",
+        "format": "png",
+        "width": 181,
+        "height": 265,
+        "bytes": 215163,
+        "sha256": "696d56cdddeeddd2ceb9f9bec9cdde4b89788c75d39960bd66bbd0e90fcb527d",
+        "altTextCandidate": "Official NutriDyn Collagen Renew tub, 525 grams unflavored powder"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_525_g_unflavored_powder",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    },
+    {
+      "offeringId": "mo_474aba04fff9d244c37b",
+      "sourceVariantId": "mov_6f2d07f881d861bf3991",
+      "canonicalName": "GI Defend",
+      "quickOrderSku": "GEN-GRP-0371",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R191",
+      "expectedPackage": "75 g (2.65 oz) unflavored powder",
+      "officialProductPage": "https://nutridyn.com/dynamic-gi-defend-r191",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r191-Base-57126_1.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r191-gi-defend.png",
+        "format": "png",
+        "width": 265,
+        "height": 265,
+        "bytes": 109999,
+        "sha256": "388b64fa4ceaa04bd4dd847875f6a8252df513cd7258a439016584cebee8bbcf",
+        "altTextCandidate": "Official NutriDyn GI Defend tub, 75 grams unflavored powder"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_75_g_unflavored_powder",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    },
+    {
+      "offeringId": "mo_d82610b6fe7ebf3b4d63",
+      "sourceVariantId": "mov_f5d63d95caa3d6d0a7a0",
+      "canonicalName": "Magtein (Magnesium L-Threonate)",
+      "quickOrderSku": "GEN-GRP-0375",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R227",
+      "expectedPackage": "90 capsules",
+      "officialProductPage": "https://nutridyn.com/magteinr",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/2/r227-Base-39731_1.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r227-magtein.png",
+        "format": "png",
+        "width": 160,
+        "height": 265,
+        "bytes": 108029,
+        "sha256": "9fc76eecdb1d12011d94e4aa48e79534de9c64c817e19168f0fcb8e45b34e9fb",
+        "altTextCandidate": "Official NutriDyn Magtein bottle, 90 capsules, held for label-version reconciliation"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_shows_90_capsules_but_selected_label_revision_unresolved",
+      "reviewStatus": "held_current_label_version_conflict",
+      "publicationAuthorized": false,
+      "preciseGaps": [
+        "The same US supplier code and UPC have conflicting label versions.",
+        "A current selected R227 front and back label or manufacturer confirmation is required before this export can qualify."
+      ]
+    },
+    {
+      "offeringId": "mo_5050cf525ec249ebf0bf",
+      "sourceVariantId": "mov_199a0126b086cc43cb1b",
+      "canonicalName": "Mito Recharge",
+      "quickOrderSku": "GEN-GRP-0376",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R167",
+      "expectedPackage": "90 capsules",
+      "officialProductPage": "https://nutridyn.com/mito-recharge-r167",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r167-Base-61632_1.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r167-mito-recharge.png",
+        "format": "png",
+        "width": 160,
+        "height": 265,
+        "bytes": 121672,
+        "sha256": "2be03e010ef7991b239011280afe41f5855ff1491f352d64a6b96b07be48e766",
+        "altTextCandidate": "Official NutriDyn Mito Recharge bottle, 90 capsules"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_90_capsules",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    },
+    {
+      "offeringId": "mo_381d77419fba80336299",
+      "sourceVariantId": "mov_b90f51978a7223e9fc58",
+      "canonicalName": "Omega Pure EPA-DHA 2400",
+      "quickOrderSku": "GEN-GRP-0377",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R817E",
+      "expectedPackage": "150 mL liquid",
+      "officialProductPage": "https://nutridyn.com/omega-pure-epa-dha-2400",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/8/r817e-Base-89028_1.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r817e-omega-pure-epa-dha-2400.png",
+        "format": "png",
+        "width": 114,
+        "height": 265,
+        "bytes": 107104,
+        "sha256": "7c5d16b355f00be93f7f00f3255444efec01b3f684be3b41aa9140d44fff0ba3",
+        "altTextCandidate": "Official NutriDyn Omega Pure EPA-DHA 2400 bottle, 150 milliliters"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_150_ml_liquid",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    },
+    {
+      "offeringId": "mo_453f612e1a8a3021d41c",
+      "sourceVariantId": "mov_ce2fc5bcfb622d8de591",
+      "canonicalName": "PRM Resolve",
+      "quickOrderSku": "GEN-GRP-0378",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R848",
+      "expectedPackage": "60 softgels",
+      "officialProductPage": "https://nutridyn.com/prm-resolve",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/dd4850ad4231b6306bceadf38a0bbeed/r/8/r848-Small-12877_1.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r848-prm-resolve.png",
+        "format": "png",
+        "width": 254,
+        "height": 420,
+        "bytes": 53202,
+        "sha256": "6f9db7081848008b8baabfbfe932da68f7ad0eddf4d3769423df6af319a6c6ea",
+        "altTextCandidate": "Official NutriDyn PRM Resolve bottle, 60 softgels"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_60_softgels",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    },
+    {
+      "offeringId": "mo_c875679cdaafb9cf7336",
+      "sourceVariantId": "mov_80916d9782f415a13ad3",
+      "canonicalName": "PeriMenopause Support",
+      "quickOrderSku": "GEN-GRP-0379",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R199",
+      "expectedPackage": "30 tablets",
+      "officialProductPage": "https://nutridyn.com/perimenopause-support",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/7800bb778a954cb4c97ef3c76a1a4610/r/1/r199-Base-50775_1.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r199-perimenopause-support.png",
+        "format": "png",
+        "width": 166,
+        "height": 265,
+        "bytes": 106015,
+        "sha256": "a2e42f03590d433a64f4a6553f7df5f269041e8d94bc2059674448c99dc148be",
+        "altTextCandidate": "Official NutriDyn PeriMenopause Support bottle, 30 tablets"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_30_tablets",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    },
+    {
+      "offeringId": "mo_62754736300e3e130eb5",
+      "sourceVariantId": "mov_8af22768144442c60424",
+      "canonicalName": "Stress Essentials Balance",
+      "quickOrderSku": "GEN-GRP-0381",
+      "brand": "NutriDyn",
+      "supplierItemCode": "R123L",
+      "expectedPackage": "180 capsules",
+      "officialProductPage": "https://nutridyn.com/stress-essentials-balance-seb",
+      "officialImageUrl": "https://nutridyn.com/media/catalog/product/cache/dd4850ad4231b6306bceadf38a0bbeed/r/1/r123l-Small-10201.png",
+      "asset": {
+        "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-005/assets/official-nutridyn/r123l-stress-essentials-balance.png",
+        "format": "png",
+        "width": 244,
+        "height": 420,
+        "bytes": 64039,
+        "sha256": "dd245630a36dd41da7563a1270d30bce49c7800e916a0efbf013a1b57c327668",
+        "altTextCandidate": "Official NutriDyn Stress Essentials Balance bottle, 180 capsules"
+      },
+      "sourceBytesTransformed": false,
+      "visualPackageDisposition": "front_export_matches_expected_180_capsules",
+      "reviewStatus": "official_export_downloaded_pending_independent_review",
+      "publicationAuthorized": false
+    }
+  ]
+}
