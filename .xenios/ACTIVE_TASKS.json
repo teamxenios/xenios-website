@@ -3822,7 +3822,7 @@
       "id": "KAN6-QO-REVIEWED-CATALOG-BATCH-02-20261104",
       "title": "Integrate reviewed catalog batch 02 into Quick Order",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-6",
       "baseSha": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
       "paths": [
@@ -3842,7 +3842,13 @@
       "scopeNote": "Implement only Samuel's existing ordinary-verification and scoped-source authority at KAN-225 comments 10574 and 10616, the actual owner allocation at KAN-6 comment 10643, the independent copy scope at KAN-31 comment 10641, and the four exact public packaging-design WebPs approved at KAN-31 comment 10642 on exact current release 19d10e0495aed917b3d1fcf2844109e5e1cc6915/tree da2b16a6ff2991fe2322c931c95999262dbc709b. Limit application work exactly to the seven listed app/data/test/image paths on planned branch codex/quick-order-reviewed-catalog-batch-02-20261104 from the exact live release. Limit the existing bounded capture harness work exactly to the two listed QA paths on its existing branch at a0e93de2d1dee340d28a11fd0dd630d155911ba4; KAN-31/10633 is closed. No other authority is granted. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/wildcard audits found no active conflict; all matching prior claims are handoff records only. Preserve all previous Quick Order QA and release records, every unrelated task, lease, ownership rule and history. This metadata claim performs no application or workflow edit, branch creation, test, build, CI, browser, provider, managed action, registration, release or production action.",
       "createdAt": "2026-11-04T20:55:57.2437672Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T20:55:57.2437672Z"
+      "claimedAt": "2026-11-04T20:55:57.2437672Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "f0e247585c1cd466022530a4f40c99fd03af1957",
+        "file": ".xenios/handoffs/2026-11-04T21-16-19Z-KAN6-QO-REVIEWED-CATALOG-BATCH-02-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-04T21:16:19Z"
+      }
     }
   ]
 }

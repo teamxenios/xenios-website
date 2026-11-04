@@ -1,0 +1,98 @@
+{
+  "unit": "KAN6-QO-REVIEWED-CATALOG-BATCH-02-20261104",
+  "lease": "5dc55860-9b84-43af-aeff-73c1a124b119",
+  "canonical": "4afe676d7fc1e6d489212773ab58f5275508b8a2",
+  "allocation": "KAN-6/10643",
+  "pullRequest": 383,
+  "state": "SOURCE_ACCEPTED_AUTOMATED_MOUNT_PASS_PAINTED_RELEASE_QA_OPEN",
+  "base": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+  "initial": "344294457a9b9dd11740b5bd274fde04804fcc31",
+  "head": "f0e247585c1cd466022530a4f40c99fd03af1957",
+  "tree": "f5cab0de3370d6ea0c9a89ba167fe11f4b8516be",
+  "paths": [
+    "server/research/master-offerings/data/reviewed-public-content.json",
+    "server/research/master-offerings/data/reviewed-public-media.json",
+    "server/research/master-offerings/reviewed-content.test.ts",
+    "client/public/research/product-media/bpc-157-xenios-5mg-render.webp",
+    "client/public/research/product-media/bpc-157-xenios-5mg-front-label.webp",
+    "client/public/research/product-media/bpc-157-xenios-15mg-render.webp",
+    "client/public/research/product-media/bpc-157-xenios-15mg-front-label.webp",
+    ".github/workflows/qo-visual-capture.yml",
+    "scripts/qa/qo-visual-capture/capture.mjs"
+  ],
+  "sourceReviews": [
+    "KAN-31/10641",
+    "KAN-31/10642",
+    "KAN-31/10650",
+    "KAN-31/10656"
+  ],
+  "content": {
+    "full": 11,
+    "partial": 4,
+    "copyManifest": "fcfb0868f6ca1b07c5517133a6ca98531163a36829f2dd5373add73094925b9a",
+    "mediaManifest": "b1291f69ecca65a1a63fc168db25f071b3f6e96cf570f869b38c7c1d907af1a1",
+    "primaryImages": 12,
+    "frontLabelImages": 3,
+    "publicImages": 15,
+    "correction": "Omitted four compound-study links that triggered an inherited exact-product documentation assertion. Original private evidence, all other fields, Chondro manufacturer link and all art preserved."
+  },
+  "appCI": {
+    "run": 41913366283,
+    "attempt": 1,
+    "trustedApp": 15368,
+    "required": {
+      "test": 126866464813,
+      "protection": 126866464723,
+      "typecheck": 126866465020,
+      "build": 126866465008,
+      "completion": 126870438077
+    },
+    "passed": 18534,
+    "failed": 0,
+    "skipped": 83,
+    "filesPassed": 997,
+    "filesSkipped": 6
+  },
+  "browser": {
+    "allowance": "KAN-31/10645",
+    "attemptsUsed": 2,
+    "attemptsMaximum": 2,
+    "initial": {
+      "run": 41912809107,
+      "status": "success",
+      "artifact": 13364136303,
+      "artifactSHA256": "8aee41cf76668076449f2aa69a86039c5f70f8b3e123924c9cd3dd165736995b",
+      "retainedScreenshots": 0
+    },
+    "corrected": {
+      "run": 41913670758,
+      "job": 126867553685,
+      "harness": "da423c9685b3420fb4b646a2fbed743b906d5ff6",
+      "harnessTree": "43ecabee5063c8af34e021392d649f4c6dc113b4",
+      "artifact": 13364381354,
+      "artifactSHA256": "9ea0c56dd6e5453c3ac49f6d3d5be0695c6a70e3ee93b3aa97083c986be3840e",
+      "manifestSHA256": "afa47d2130ee90fcb2d5589f72e653f89918c463e6aad19f05da49016ebb801e",
+      "contexts": 8,
+      "assertionsPassed": 339,
+      "assertionsFailed": 0,
+      "assetCount": 15,
+      "declaredScreenshots": 16,
+      "retainedScreenshots": 0,
+      "independentDisposition": "KAN-31/10659"
+    },
+    "retentionDefect": "Workflow allowlist retained only previous -bpc and -supplement basenames. New screenshot names were not uploaded. The artifacts contain result.json only.",
+    "dormantSuccessor": "2b02607dbcb6e0e3154552c03a704e54369955f1",
+    "dormantSuccessorTree": "649218aad8fef8eae57fc68d4e9ba66a1be34882",
+    "dormantState": "Exact 16 new names validated statically, capture binding UNBOUND, [skip ci]. No further launch."
+  },
+  "supplierProof": {
+    "files": 10,
+    "filename": "Xenios-BPC-157-5mg-15mg-supplier-proof.zip",
+    "sha256": "6cda462b77e437450bb3f567db50a027d4111574ac9346a0c55c6ed3efedd938"
+  },
+  "limits": [
+    "PR383 draft and unmerged. Actual independent painted release gate open. No merge, deploy or protected production operations for PR383.",
+    "PR382 remains live at 19d10e0495aed917b3d1fcf2844109e5e1cc6915 dep-dblpgrnb9u1s73dlsg00.",
+    "Only a new authorized scope can launch again. Do not spend another 10645 attempt."
+  ]
+}
