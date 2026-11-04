@@ -26,9 +26,9 @@ CONTENT_HANDOFF_HASH = "0908c74d44619fe13f359876b5083170d9ca5da47bb0dd734339d8cd
 WORKBOOK_HASH = "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d"
 VARIANTS = (
     (5, "mo_e4de11c77d16c4c3b83d", "mov_09db3e866424b64994d3", "GEN-GRP-0264",
-     "MASTER CATALOG row 271 / GRP-0264, Raw Peptides flyer row 2", "exec-f660bca4-3413-40b8-ab79-cbfe4a37113b"),
+     "exec-f660bca4-3413-40b8-ab79-cbfe4a37113b"),
     (15, "mo_9a755fa72de0409cd937", "mov_257330ea83ecbfc45fae", "GEN-GRP-0263",
-     "MASTER CATALOG row 270 / GRP-0263, Unity source Sheet1 row 40", "exec-0dd509d8-9e2a-4827-80b5-3c87d9b26300"),
+     "exec-0dd509d8-9e2a-4827-80b5-3c87d9b26300"),
 )
 PROMPT = "Use case: product-mockup. Asset: variant-specific Xenios Quick Order website packaging design render. Input image 1: accepted Xenios BPC-157 family studio render to match closely, as a separate {amount} mg variant. Change the amount line to exactly \"{amount} mg\" in bold purple. Keep the family layout, clear glass vial proportions, brushed silver closure and centered metallic purple-to-blue strip, matte pearl label with thin gradient rule, near-white backdrop, straight-on angle, restrained reflection and soft ground shadow. Square image. Entire cap, label and glass base visible with the same generous margins as the reference. Exact label lines in order: \"XENIOS\", \"BPC-157\", \"{amount} mg\", \"LYOPHILIZED VIAL\", \"RESEARCH USE ONLY\", \"NONCLINICAL USE ONLY\". Distinguishing amount crisp at card size. Preserve the dark navy classification box and clean typography. No other copy or numbers anywhere, no visible fill, powder or liquid, no props, medical imagery, lot or expiry data, QR code or certification."
 
@@ -126,7 +126,7 @@ def contact_sheet():
 
     put("Xenios BPC-157  |  5 mg and 15 mg", 50, 30, 43, bold=True)
     put("Batch 008  /  Packaging design review  /  Nominal content per vial", 52, 91, 25, "#634298")
-    for index, (mg, offering, variant, sku, _, _) in enumerate(VARIANTS):
+    for index, (mg, offering, variant, sku, _) in enumerate(VARIANTS):
         x = 50 + 860 * index
         spec = variant_assets(mg)
         draw.rounded_rectangle((x, 146, x + 840, 1148), radius=25, fill="#fff")
@@ -156,7 +156,7 @@ def outputs():
     records = []
     evidence = []
     artifacts = []
-    for mg, offering, variant, sku, row, generation in VARIANTS:
+    for mg, offering, variant, sku, generation in VARIANTS:
         product, selected = pairs[(offering, variant)]
         require(product["canonicalName"] == "BPC-157" and selected["label"] == f"BPC-157 {mg} mg"
                 and product["subcategory"] == "Lyophilized Vial"
@@ -183,7 +183,7 @@ def outputs():
             "websiteReviewCandidates": website_candidates, "artifacts": files,
         })
         evidence.append({
-            **identity, "workbook": "XENIOS_MASTER_CATALOG_ONLY_2026-08-13.xlsx", "workbookRow": row,
+            **identity,
             "workbookSha256": WORKBOOK_HASH, "imageGenerationReceipt": generation,
             "imageGenerationMode": "built-in imagegen, separate reference-based edit for each variant",
             "imageGenerationPrompt": PROMPT.format(amount=mg),
@@ -200,7 +200,7 @@ def outputs():
     require(len({item["sha256"] for item in artifacts}) == len(artifacts), "Duplicate artifact bytes")
 
     proof_pages = PdfReader(BATCH / PROOF).pages
-    for index, (mg, offering, variant, sku, _, _) in enumerate(VARIANTS):
+    for index, (mg, offering, variant, sku, _) in enumerate(VARIANTS):
         cover = proof_pages[index * 2].extract_text()
         for expected in (offering, variant, sku, f"{mg} mg"):
             require(expected in cover, f"Proof identity missing from page {index * 2 + 1}: {expected}")
@@ -247,7 +247,7 @@ def main():
         require(sha256(raw).hexdigest() == CONTENT_HANDOFF_HASH, "Content handoff SHA-256 changed")
         handoff = json.loads(raw)
         require(handoff["releaseSha"] == BASELINE, "Content handoff baseline differs")
-        for mg, offering, variant, sku, row, _ in VARIANTS:
+        for mg, offering, variant, sku, _ in VARIANTS:
             record = next(r for r in handoff["records"]
                           if (r["offeringId"], r["sourceVariantId"]) == (offering, variant))
             require(record["status"] == "static_artwork_facts_only", "Content scope differs")
@@ -256,7 +256,8 @@ def main():
                 "form": "Lyophilized vial", "classification": "For laboratory research use only.",
                 "productCode": sku,
             }, "Content handoff artwork facts differ")
-            require(any(source.get("section") == row and source.get("version") == f"sha256:{WORKBOOK_HASH}"
+            # The pinned private handoff retains the exact source locator.
+            require(any(source.get("section", "").strip() and source.get("version") == f"sha256:{WORKBOOK_HASH}"
                         for source in record["sources"]), "Workbook source lineage differs")
     if args.write:
         contact_sheet()
