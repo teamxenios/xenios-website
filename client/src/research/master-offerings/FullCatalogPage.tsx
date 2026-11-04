@@ -19,6 +19,7 @@ import {
   MasterOfferingCatalogControls,
   MasterOfferingPriceListDownload,
 } from "./MasterOfferingCatalogControls";
+import { catalogQueryToSearch } from "./integration-packet";
 import { usePublishedHeight } from "../lib/usePublishedHeight";
 import "./catalog-toolbar.css";
 
@@ -137,10 +138,17 @@ export function FullCatalogPage({
   const toolbar = useRef<HTMLDivElement>(null);
   const currentPage = page.page;
   const firstRender = useRef(true);
-  // The page the member explicitly asked for with a pager. A search or filter
-  // change also resets the page, but focus must stay in the control the member
-  // is using, so only an asked-for page moves focus to the results.
-  const requestedPage = useRef<number | null>(null);
+  // The page the member asked for with a pager, tied to that exact request.
+  // A search or filter change also resets the page, but focus must stay in the
+  // control the member is using, so only the pager's own page moves focus to
+  // the results (KAN-31/10703).
+  const pendingPageFocus = useRef<{
+    page: number;
+    /** The asked-for query, in its URL form, so a later query cannot match. */
+    request: string;
+    /** Where focus was when the member asked. */
+    origin: Element | null;
+  } | null>(null);
   usePublishedHeight(toolbar, surface, "--research-catalog-toolbar-height");
   // Page-local, deliberately not in the URL: the shared query contract has no
   // access-path member, so a link cannot carry it and the server cannot count
@@ -154,15 +162,46 @@ export function FullCatalogPage({
       firstRender.current = false;
       return;
     }
-    const asked = requestedPage.current === currentPage;
-    requestedPage.current = null;
-    if (asked) resultsHeading.current?.focus();
+    const pending = pendingPageFocus.current;
+    pendingPageFocus.current = null;
+    // `query` is this render's, the one that brought the new page: the
+    // current request. A page number alone also matches a search or a back
+    // navigation that happens to land on the same page.
+    if (!pending || pending.page !== currentPage) return;
+    if (pending.request !== catalogQueryToSearch(query)) return;
+    // If the member has moved focus while the page loaded, into Search on a
+    // phone for instance, leave it there; moving it would close the keyboard.
+    const active = document.activeElement;
+    if (active && active !== document.body && active !== pending.origin) return;
+    resultsHeading.current?.focus();
   }, [currentPage]);
 
   function goToPage(next: number) {
-    requestedPage.current = next;
-    onQueryChange({ ...query, page: next });
+    const nextQuery = { ...query, page: next };
+    pendingPageFocus.current = {
+      page: next,
+      request: catalogQueryToSearch(nextQuery),
+      origin: document.activeElement,
+    };
+    onQueryChange(nextQuery);
   }
+
+  // Any other way of changing the query takes over from a pending page.
+  // Search cancels on the first keystroke, not after its debounce, so a
+  // page that lands while the member is still typing cannot take focus.
+  function cancelPageFocus() {
+    pendingPageFocus.current = null;
+  }
+  function changeQuery(next: MasterOfferingCatalogQuery) {
+    cancelPageFocus();
+    onQueryChange(next);
+  }
+  const changeSearch = onSearchChange
+    ? (next: MasterOfferingCatalogQuery) => {
+        cancelPageFocus();
+        onSearchChange(next);
+      }
+    : undefined;
 
   const showing = page.products.length;
   const refined = refineCardsByAccessPath(page.products, accessPath);
@@ -193,8 +232,9 @@ export function FullCatalogPage({
           query={query}
           facets={page.facets}
           loading={loading}
-          onChange={onQueryChange}
-          onSearchChange={onSearchChange}
+          onChange={changeQuery}
+          onSearchChange={changeSearch}
+          onSearchInput={cancelPageFocus}
           pager={
             page.totalPages > 1 ? (
               <MasterOfferingToolbarPager
@@ -209,7 +249,7 @@ export function FullCatalogPage({
       <CatalogActiveFilters
         query={query}
         facets={page.facets}
-        onChange={onQueryChange}
+        onChange={changeQuery}
       />
       <MasterOfferingPriceListDownload query={query} memberToken={memberToken} />
 
@@ -263,7 +303,7 @@ export function FullCatalogPage({
                     className="btn btn-secondary min-h-[44px]"
                     data-testid="mo-no-results-clear"
                     onClick={() =>
-                      onQueryChange(query.pageSize ? { pageSize: query.pageSize } : {})
+                      changeQuery(query.pageSize ? { pageSize: query.pageSize } : {})
                     }
                   >
                     Clear filters

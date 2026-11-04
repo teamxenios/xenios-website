@@ -42,6 +42,7 @@ export function MasterOfferingCatalogControls({
   loading = false,
   onChange,
   onSearchChange,
+  onSearchInput,
   pager = null,
 }: {
   query: MasterOfferingCatalogQuery;
@@ -50,6 +51,8 @@ export function MasterOfferingCatalogControls({
   onChange: (next: MasterOfferingCatalogQuery) => void;
   /** Search replaces its URL entry after a short pause; discrete filters push. */
   onSearchChange?: (next: MasterOfferingCatalogQuery) => void;
+  /** Called on every keystroke, before the debounce, so the page can stand down. */
+  onSearchInput?: () => void;
   /** A compact pager the page places beside Search on phones. */
   pager?: ReactNode;
 }) {
@@ -114,6 +117,7 @@ export function MasterOfferingCatalogControls({
   }
 
   function scheduleSearch(value: string) {
+    onSearchInput?.();
     const bounded = value.slice(0, 160);
     setSearchDraft(bounded);
     cancelPendingSearch();
