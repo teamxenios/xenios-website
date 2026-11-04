@@ -54,14 +54,21 @@ describe("reviewed exact-variant catalog content", () => {
     }
   });
 
-  it("binds the new render to the exact reviewed BPC variant on both projections", async () => {
+  it.each([
+    ["10mg", "mo_af289f611c02b3fcef01", "mov_ca3e45ae9712aee91430"],
+    ["5mg", "mo_e4de11c77d16c4c3b83d", "mov_09db3e866424b64994d3"],
+    ["15mg", "mo_9a755fa72de0409cd937", "mov_257330ea83ecbfc45fae"],
+  ])("binds the %s artwork to the exact BPC variant on both projections", async (strength, offeringId, variantId) => {
     const reader = new GeneratedMasterOfferingCatalogReader(committed);
     const offerings = reader.load().products;
-    const bpc = offerings.find((row) => row.id === "mo_af289f611c02b3fcef01")!;
-    const variant = bpc.variants.find((row) => row.id === "mov_ca3e45ae9712aee91430")!;
+    const bpc = offerings.find((row) => row.id === offeringId)!;
+    const variant = bpc.variants.find((row) => row.id === variantId)!;
     const media = getReviewedProductMedia(bpc, variant);
-    expect(media?.primary.href).toBe("/research/product-media/bpc-157-xenios-10mg-render.webp");
-    expect(media?.packagingDesign).toBe(true);
+    expect(media).toMatchObject({
+      primary: { href: "/research/product-media/bpc-157-xenios-" + strength + "-render.webp" },
+      labelPreview: { href: "/research/product-media/bpc-157-xenios-" + strength + "-front-label.webp" },
+      packagingDesign: true,
+    });
     expect(projectMasterOfferingCard(bpc).variants[0].reviewedMedia).toEqual(media);
     expect((await requestItem(bpc)).reviewedMedia).toEqual(media);
     expect(getReviewedProductMedia({ ...bpc }, variant)).toBeUndefined();
@@ -72,6 +79,19 @@ describe("reviewed exact-variant catalog content", () => {
     expect(projectMasterOfferingCard(changed).variants[0].reviewedMedia).toBeUndefined();
     expect(projectMasterOfferingDetail(changed).variants[0].reviewedMedia).toBeUndefined();
     expect((await requestItem(changed)).reviewedMedia).toBeUndefined();
+  });
+
+  it("keeps compound studies out of product documentation and preserves the reviewed supplement label", () => {
+    const reader = new GeneratedMasterOfferingCatalogReader(committed);
+    const offerings = reader.load().products;
+    const capsule = offerings.find((row) => row.id === "mo_7ba89975fb62ceb33b7b")!;
+    const chondro = offerings.find((row) => row.id === "mo_7bc91b37c8c041f166dd")!;
+    const capsuleContent = projectMasterOfferingDetail(capsule).variants[0].reviewedContent;
+    expect(capsuleContent?.specifications).toContainEqual({ label: "Listed package", value: "Bottle of 60 capsules" });
+    expect(capsuleContent?.documentation).toBeUndefined();
+    expect(projectMasterOfferingDetail(chondro).variants[0].reviewedContent?.documentation).toEqual([
+      { label: "NutriDyn product label and Supplement Facts", href: "https://nutridyn.com/sports-nutrition/chondro-jointaide" },
+    ]);
   });
 
   it("projects reviewed content on both catalog surfaces only for the trusted dataset", async () => {
