@@ -7,6 +7,8 @@ export const fixturePrice = 1250;
 export const fixtureCurrency = "USD";
 export const fixtureUnit = "10 mg per vial";
 export const alternateSourceVariant = "mov_09db3e866424b64994d3";
+export const alternateMemberOffering = "mo_e4de11c77d16c4c3b83d";
+export const alternateOrderVariant = "qa-bpc-157-5mg-order-variant";
 export const orderVariant = "qa-bpc-157-order-variant";
 export const alternateArtwork = "/research/product-media/vial.svg";
 export const guestRoute = "/research/early-access/order-request";
@@ -120,4 +122,33 @@ export async function fixtureResponses(candidate, origin, member) {
       } }],
     ] : []),
   ]);
+}
+
+/** Separate 320px SVG-card fixtures; the reviewed four-width fixture stays unchanged. */
+export async function svgCardFixtureResponses(candidate, origin, member) {
+  const fixtures = await fixtureResponses(candidate, origin, member);
+  const fiveMgSlug = "research-peptides-materials-bpc-157-bpc-157-5-mg";
+  const guestCatalog = fixtures.get(intent + "/catalog");
+  fixtures.set(intent + "/catalog", {
+    ...guestCatalog,
+    items: [{
+      ...guestCatalog.items[0],
+      variantId: alternateOrderVariant,
+      sourceSelection: { family, slug: fiveMgSlug, variantId: alternateSourceVariant },
+      specification: "5 mg per vial · synthetic USD fixture",
+    }],
+  });
+  if (member) {
+    const envelope = fixtures.get(catalogApi + "/catalog");
+    const fiveMg = fixtures.get(memberDetailApi).product.variants.find((entry) => entry.id === alternateSourceVariant);
+    if (!fiveMg) throw new Error("The reviewed fixture must supply the exact 5 mg variant");
+    const card = envelope.catalog.products[0];
+    fixtures.set(catalogApi + "/catalog", {
+      ...envelope,
+      catalog: { ...envelope.catalog, products: [{
+        ...card, id: alternateMemberOffering, slug: fiveMgSlug, variants: [fiveMg],
+      }] },
+    });
+  }
+  return fixtures;
 }

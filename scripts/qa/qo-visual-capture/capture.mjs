@@ -5,12 +5,17 @@ import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { chromium } from "playwright";
 import {
-  agreementAccept, agreementStatus, alternateArtwork, alternateSourceVariant, artwork, fixtureAgreement, fixtureContact,
-  fixtureCurrency, fixturePrice, fixtureResponses, fixtureUnit, guestRoute, memberBearer,
+  agreementAccept, agreementStatus, alternateArtwork, alternateMemberOffering, alternateOrderVariant, alternateSourceVariant, artwork, fixtureAgreement, fixtureContact,
+  fixtureCurrency, fixturePrice, fixtureResponses, svgCardFixtureResponses, fixtureUnit, guestRoute, memberBearer,
   memberDetailRoute, memberOffering, memberRoute, memberSession, orderVariant, sourceVariant,
 } from "./fixture.mjs";
 
-const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt] = process.argv.slice(2);
+const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile] = process.argv.slice(2);
+const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
+if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
+    allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
+  throw new Error("Capture allowance does not match this dispatch");
+}
 const origin = "http://127.0.0.1:5199";
 const artworkHash = "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1";
 const viewports = [
@@ -27,11 +32,11 @@ const result = {
     "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
     "No submission, recovery, staff readback, production release or operator activation is covered.",
   ],
-  candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt),
+  candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt), allowance,
   artifacts: `https://github.com/teamxenios/xenios-website/actions/runs/${runId}#artifacts`,
   upstreamHarness: "scripts/evidence/build-candidate-preview.mjs + scripts/preview-research.mjs",
   fixture: {
-    sourceVariant, alternateSourceVariant, orderVariant, memberOffering, fixturePrice, fixtureCurrency, fixtureUnit,
+    sourceVariant, alternateSourceVariant, orderVariant, alternateOrderVariant, memberOffering, alternateMemberOffering, fixturePrice, fixtureCurrency, fixtureUnit,
     policy: { slug: "research-use", agreement: fixtureAgreement, acceptance: "one exact in-memory intercept per guest context" },
   },
   assets: { packshot: { file: artwork, sha256: artworkHash }, fallback: { file: alternateArtwork } },
@@ -147,9 +152,25 @@ async function imageEvidence(page, scope, expectedPath, headingTag) {
   });
   return image.evaluate((node, headingTag) => {
     const frame = node.closest("figure");
+    const media = node.parentElement;
+    const mediaRect = media?.getBoundingClientRect();
+    const mediaStyle = media ? getComputedStyle(media) : null;
     const card = node.closest("article") ?? frame?.parentElement;
     const box = node.getBoundingClientRect();
     const bounds = card?.getBoundingClientRect();
+    const rect = (value) => value && Object.fromEntries(["left", "top", "right", "bottom", "width", "height"].map((key) => [key, value[key]]));
+    const padding = Object.fromEntries(["Left", "Top", "Right", "Bottom"].map((side) =>
+      [side.toLowerCase(), Number.parseFloat(mediaStyle?.["padding" + side] ?? "0")]));
+    const border = Object.fromEntries(["Left", "Top", "Right", "Bottom"].map((side) =>
+      [side.toLowerCase(), Number.parseFloat(mediaStyle?.["border" + side + "Width"] ?? "0")]));
+    const withinMediaBox = Boolean(media?.parentElement === frame && mediaRect &&
+      box.left >= mediaRect.left - 1 && box.right <= mediaRect.right + 1 &&
+      box.top >= mediaRect.top - 1 && box.bottom <= mediaRect.bottom + 1);
+    const withinPaddedMediaBox = withinMediaBox &&
+      box.left >= mediaRect.left + border.left + padding.left - 1 &&
+      box.right <= mediaRect.right - border.right - padding.right + 1 &&
+      box.top >= mediaRect.top + border.top + padding.top - 1 &&
+      box.bottom <= mediaRect.bottom - border.bottom - padding.bottom + 1;
     const heading = headingTag ? card?.querySelector(headingTag)?.getBoundingClientRect() : null;
     const naturalRatio = node.naturalWidth / node.naturalHeight;
     const fit = getComputedStyle(node).objectFit;
@@ -159,10 +180,11 @@ async function imageEvidence(page, scope, expectedPath, headingTag) {
       path: new URL(node.currentSrc).pathname,
       alt: node.alt,
       imageLoaded: node.complete && node.naturalWidth > 0 && node.naturalHeight > 0,
-      imageBox: { width: box.width, height: box.height },
+      imageBox: rect(box), mediaBox: rect(mediaRect), mediaPadding: padding,
+      mediaOverflow: mediaStyle?.overflow, withinMediaBox, withinPaddedMediaBox,
       naturalImage: { width: node.naturalWidth, height: node.naturalHeight },
       objectFit: fit,
-      fullAspect: hasRoom && (fit === "contain" || fit === "scale-down" ||
+      fullAspect: hasRoom && withinPaddedMediaBox && (fit === "contain" || fit === "scale-down" ||
         (fit === "fill" && Math.abs(box.width - box.height * naturalRatio) <= 1)),
       aboveHeading: heading ? box.bottom <= heading.top + 1 : null,
       width: window.innerWidth,
@@ -179,6 +201,9 @@ function checkImage(entry, label, image, path, aboveHeading = false) {
     image.imageLoaded && image.path === path && /\bBPC-157\b/i.test(image.alt));
   report(entry, label + " whole aspect, viewport width, no horizontal overflow and settled fonts",
     image.fullAspect && image.width === entry.viewport.width && !image.horizontalOverflow && image.fontsLoaded);
+  report(entry, label + " image lies inside the actual clipping media box and its padding",
+    image.withinMediaBox && image.withinPaddedMediaBox,
+    { image: image.imageBox, media: image.mediaBox, padding: image.mediaPadding });
   if (aboveHeading) report(entry, label + " image above heading", image.aboveHeading);
 }
 function captionsRetired(content) {
@@ -268,7 +293,7 @@ async function frameMemberImage(entry, label, scope, path) {
       document.elementFromPoint(box.left + box.width / 2, box.top + box.height * fraction) === node);
     return { top: box.top, bottom: box.bottom, headerBottom, unobstructed };
   });
-  report(entry, label + " fully visible below the sticky member header", framing.unobstructed, framing);
+  report(entry, label + " fully visible below the sticky header", framing.unobstructed, framing);
 }
 
 async function captureMember(page, entry) {
@@ -345,6 +370,46 @@ async function capture(browser, fixtures, kind, size) {
   }
 }
 
+
+async function captureSvgCard(browser, fixtures, member) {
+  const viewport = { width: 320, height: 800 };
+  const entry = {
+    name: (member ? "member" : "guest") + "-svg-320", viewport, mobile: true,
+    kind: "svg-card", sourceVariant: alternateSourceVariant,
+    ...(member ? { memberOffering: alternateMemberOffering } : { orderVariant: alternateOrderVariant }),
+    assertions: [], screenshots: [],
+  };
+  result.captures.push(entry);
+  const { context, page } = await captureContext(browser, fixtures, viewport, true, member, entry);
+  try {
+    await page.goto(origin + (member ? memberRoute : guestRoute), { waitUntil: "domcontentloaded" });
+    const card = member
+      ? page.locator(`[data-testid="mo-card"][data-offering-id="${alternateMemberOffering}"]`)
+      : page.locator('[data-testid="request-door-mixed"] article.xenios-order-card')
+        .filter({ has: page.getByRole("heading", { name: "BPC-157", exact: true }) });
+    await card.waitFor();
+    entry.image = await imageEvidence(page, card, alternateArtwork, member ? "h3" : "h2");
+    checkImage(entry, "320px SVG card", entry.image, alternateArtwork, true);
+    const text = await card.innerText();
+    report(entry, "5 mg SVG is mounted with 12px inset in its clipping frame",
+      text.includes("BPC-157") && text.includes("5 mg") &&
+      !/10 mg/.test(entry.image.alt) && entry.image.mediaOverflow === "hidden" &&
+      Object.values(entry.image.mediaPadding).every((value) => Math.abs(value - 12) < 0.1));
+    if (member) report(entry, "member SVG card binds the exact 5 mg variant",
+      await card.locator(`[data-variant-id="${alternateSourceVariant}"]`).count() === 1);
+    await frameMemberImage(entry, "320px SVG card", card, alternateArtwork);
+    await screenshot(entry, "card", page);
+  } catch (error) {
+    report(entry, "mount and measure 320px SVG card", false, briefError(error));
+    await screenshot(entry, "failure", page);
+  } finally {
+    report(entry, "no unmocked writes or recovery attempted",
+      entry.network.deniedWrites === 0 && entry.network.deniedRecovery === 0);
+    if (member) report(entry, "member route verified only through synthetic local member GET", entry.network.verifiedMember > 0);
+    await context.close();
+  }
+}
+
 let preview;
 let browser;
 let previewLog = "";
@@ -360,6 +425,13 @@ try {
     throw new Error("Guest fixture must preserve separate exact media and order identities");
   }
   result.fixture.identitiesDistinct = true;
+  const guestSvgFixtures = await svgCardFixtureResponses(candidate, origin, false);
+  const memberSvgFixtures = await svgCardFixtureResponses(candidate, origin, true);
+  const svgRows = [...guestSvgFixtures.values()].find((value) => Array.isArray(value.items))?.items;
+  if (svgRows?.length !== 1 || svgRows[0].sourceSelection?.variantId !== alternateSourceVariant ||
+      svgRows[0].variantId !== alternateOrderVariant || alternateSourceVariant === alternateOrderVariant) {
+    throw new Error("SVG guest fixture must preserve distinct exact media and order identities");
+  }
   for (const asset of Object.values(result.assets)) {
     const servedAsset = join(candidate, "dist", "public", asset.file.slice(1));
     await access(servedAsset);
@@ -386,6 +458,8 @@ try {
     await capture(browser, guestFixtures, "guest", size);
     await capture(browser, memberFixtures, "member", size);
   }
+  await captureSvgCard(browser, guestSvgFixtures, false);
+  await captureSvgCard(browser, memberSvgFixtures, true);
 } catch (error) {
   result.captureError = briefError(error);
   console.error(result.captureError, previewLog);
@@ -394,8 +468,8 @@ try {
     await browser?.close();
   } finally {
     preview?.kill();
-    result.status = !result.captureError && result.captures.length === viewports.length * 2 &&
-      result.captures.every((entry) => entry.screenshots.length === (entry.name.startsWith("guest-") ? 3 : 4)
+    result.status = !result.captureError && result.captures.length === viewports.length * 2 + 2 &&
+      result.captures.every((entry) => entry.screenshots.length === (entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
         && entry.assertions.every((item) => item.pass)) ? "passed" : "failed";
     await writeFile(join(output, "result.json"), JSON.stringify(result, null, 2) + "\n");
     if (result.status !== "passed") process.exitCode = 1;
