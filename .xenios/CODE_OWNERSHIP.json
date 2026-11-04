@@ -2888,7 +2888,7 @@
         "client/src/research/product-media/ProductMedia.tsx",
         "client/src/research/master-offerings/product-media.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-04T00:28:23.3084580Z",
       "heartbeatAt": "2026-11-04T00:28:23.3084580Z"
     }

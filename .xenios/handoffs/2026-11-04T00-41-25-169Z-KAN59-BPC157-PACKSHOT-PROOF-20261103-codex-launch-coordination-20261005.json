@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "task": "KAN59-BPC157-PACKSHOT-PROOF-20261103",
+  "lease": "ab81723f-b021-42f6-bf38-d9acf639024a",
+  "claim": "b8e1ad3a304ef7d9cb8fdf11221a903fb603b1cf",
+  "head": "ad76ce76ddb106183202aff62991cfffc9aabcfd",
+  "tree": "0e3480097f7e1cef40c7b6f2104c6e995e7b0d80",
+  "base": "ac219f875bae1539d918399ff4e42323af6c334e",
+  "pr": 371,
+  "variant": "mov_ca3e45ae9712aee91430",
+  "masterSha": "e190dceaea890c3012d83781af37a88f2036297955b6d4c88ff449482e6cbdb8",
+  "webpSha": "d4518341767b9de04d3fa6fb6bf1cbcaa3456884005e68621042839aed01cf42",
+  "masterNativeDimensions": [
+    1254,
+    1254
+  ],
+  "generatedMode": "built-in imagegen plus deterministic label composite",
+  "providerMerge": "640a46fb2ca05b50fab35972afae79579d047857",
+  "run": 41747507855,
+  "attempt": 1,
+  "pass": 18496,
+  "fail": 0,
+  "skip": 83,
+  "mediaPass": 5,
+  "guestFormPass": 68,
+  "checks": [
+    126304104837,
+    126304105058,
+    126304105122,
+    126304105444,
+    126306981108
+  ],
+  "qaAtCapture": "pending",
+  "independentSource": "PASS, bounded_postcheck_binding, visual master only plus source, no viewport proof",
+  "nativeCapture": "pending authorized fixture runner; zero exact deploys and CI artifacts",
+  "release": "draft only, no deployment"
+}
