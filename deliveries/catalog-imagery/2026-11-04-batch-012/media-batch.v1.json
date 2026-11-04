@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-012",
+  "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "bytes": 332053,
+    "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5"
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "bytes": 108239,
+    "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+  },
+  "publicationState": "review_only_not_runtime",
+  "supplierSendPerformed": false,
+  "authority": [
+    "KAN-59/10615",
+    "KAN-225/10616"
+  ],
+  "labelFactSources": [
+    {
+      "reference": "KAN-31/10641",
+      "scope": "research capsule form and listed strength; current pack quantity and strength basis held"
+    },
+    {
+      "reference": "KAN-31/10656",
+      "scope": "exact reviewed copy successor preserves static scope"
+    }
+  ],
+  "requiredMountedViewportsAfterReview": [
+    320,
+    390,
+    768,
+    1280
+  ],
+  "renderSource": {
+    "method": "built-in imagegen with accepted vial as visual style reference only",
+    "receipt": "exec-2b19004f-2649-4ef7-80ec-943f349c4fc8",
+    "sha256": "b9640a425471f3c1e6ec528df4b1f286dff0f92a88ea9ea5ddff8e60e4d7873f",
+    "styleReference": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+    "styleReferenceSha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+  },
+  "records": [
+    {
+      "offeringId": "mo_c600e7eb1c9f5fd03c80",
+      "sourceVariantId": "mov_2183aa9edb06f34ef3af",
+      "quickOrderSku": "GEN-GRP-0243",
+      "quickOrderProductId": "dcc384b5-a03f-4561-a2bc-3832d7ff2753",
+      "quickOrderVariantId": "050d029a-1b54-41bd-bfcb-282687852189",
+      "canonicalName": "5-Amino-1MQ",
+      "canonicalVariant": "5-Amino-1MQ 50 mg research capsules",
+      "catalogVariantLabel": "5-AMINO-1MQ 50 mg",
+      "catalogFamily": "research_capsules",
+      "catalogBrand": null,
+      "designBrand": "Xenios",
+      "listedStrength": "50 mg",
+      "form": "Research capsules",
+      "classification": "For laboratory research use only.",
+      "artworkVersion": "GEN-GRP-0243-WEB-SUPPLIER-v1",
+      "mediaKind": "original_xenios_website_render",
+      "physicalPackagingState": "design",
+      "websiteArtworkState": "pending_independent_file_level_review",
+      "runtimeLinked": false,
+      "publicationAuthorized": false,
+      "artifacts": {
+        "website_primary": {
+          "role": "website_primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-012/assets/5-amino-1mq-50mg-website-render-v1-1024.webp",
+          "format": "webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 54738,
+          "sha256": "fc4477d3e2ecc5ad92032690033058c08df5b77cde885aef04fe6a5183c05ca2"
+        },
+        "front_preview_web": {
+          "role": "front_preview_web",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-012/assets/5-amino-1mq-50mg-front-artwork-v1.webp",
+          "format": "webp",
+          "width": 1000,
+          "height": 850,
+          "bytes": 36108,
+          "sha256": "f83c7ab9ca10f8bf39165b6861e545abb9457175055c231538107ceb85d3c62a"
+        },
+        "wrap_editable_master": {
+          "role": "wrap_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-012/labels/5-amino-1mq-50mg-wrap-proof-v1.svg",
+          "format": "svg",
+          "width": 2400,
+          "height": 1200,
+          "bytes": 5175,
+          "sha256": "4f6820ad145ea1ef89bb59edb4da7398dd4dc46b23bbeae939eb8f2818d1893d"
+        }
+      },
+      "websiteReviewCandidates": [
+        {
+          "role": "primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-012/assets/5-amino-1mq-50mg-website-render-v1-1024.webp",
+          "sha256": "fc4477d3e2ecc5ad92032690033058c08df5b77cde885aef04fe6a5183c05ca2",
+          "altText": "Xenios packaging design for 5-Amino-1MQ research capsules, listed strength 50 mg",
+          "caption": "Packaging design shown. Current packaging may differ."
+        },
+        {
+          "role": "label_detail",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-012/assets/5-amino-1mq-50mg-front-artwork-v1.webp",
+          "sha256": "f83c7ab9ca10f8bf39165b6861e545abb9457175055c231538107ceb85d3c62a",
+          "altText": "5-Amino-1MQ research capsule front label design, listed strength 50 mg",
+          "caption": "Packaging design shown. Current packaging may differ."
+        }
+      ]
+    }
+  ]
+}
