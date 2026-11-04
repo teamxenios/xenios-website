@@ -40,7 +40,7 @@ export function ProductMedia({
 
   return (
     <figure className={"m-0 grid w-full min-w-0 gap-1" + (detail ? " max-w-[26rem]" : "")}>
-      <div className={"relative grid aspect-[4/3] min-w-0 place-items-center overflow-hidden rounded-xl" + (showPackshot ? " bg-[#f1f1f4]" : " bg-[#141329] p-3")}>
+      <div className={"relative grid aspect-[4/3] min-w-0 grid-cols-[minmax(0,1fr)] grid-rows-[minmax(0,1fr)] place-items-center overflow-hidden rounded-xl" + (showPackshot ? " bg-[#f1f1f4]" : " bg-[#141329] p-3")}>
         <img
           key={showPackshot ? bpc157Packshot : undefined}
           src={showPackshot ? bpc157Packshot : "/research/product-media/" + format + ".svg"}
@@ -51,7 +51,7 @@ export function ProductMedia({
           decoding="async"
           className={showPackshot
             ? "absolute inset-0 block h-full w-full object-contain"
-            : "block h-full max-h-52 w-full max-w-52 object-contain"}
+            : "block h-full min-h-0 max-h-52 w-full min-w-0 max-w-52 object-contain"}
           data-testid="product-media-image"
           onError={showPackshot ? () => setFailedPackshot(true)
             : format === "unknown" ? undefined : () => setFailedFormat(format)}

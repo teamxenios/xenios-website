@@ -17,6 +17,12 @@ function mediaImage(host: HTMLElement) {
   return image;
 }
 
+function expectMediaFrame(image: HTMLImageElement) {
+  expect(Array.from(image.parentElement?.classList ?? [])).toEqual(expect.arrayContaining([
+    "relative", "grid", "aspect-[4/3]", "grid-cols-[minmax(0,1fr)]", "grid-rows-[minmax(0,1fr)]", "overflow-hidden",
+  ]));
+}
+
 function expectAsset(host: HTMLElement, format: string) {
   const image = mediaImage(host);
   const src = image.getAttribute("src");
@@ -25,6 +31,10 @@ function expectAsset(host: HTMLElement, format: string) {
     .toContain('viewBox="0 0 128 128"');
   expect(image.getAttribute("width")).toBe("128");
   expect(image.getAttribute("height")).toBe("128");
+  expectMediaFrame(image);
+  expect(Array.from(image.classList)).toEqual(expect.arrayContaining([
+    "h-full", "min-h-0", "max-h-52", "w-full", "min-w-0", "max-w-52", "object-contain",
+  ]));
   return image;
 }
 
@@ -54,7 +64,10 @@ describe("product visuals on catalog routes", () => {
       expect(image.getAttribute("alt")).toBe("BPC-157 10 mg lyophilized vial packaging design");
       expect(image.getAttribute("width")).toBe("768");
       expect(image.getAttribute("height")).toBe("768");
-      expect(image.classList.contains("object-contain")).toBe(true);
+      expectMediaFrame(image);
+      expect(Array.from(image.classList)).toEqual(expect.arrayContaining([
+        "absolute", "inset-0", "h-full", "w-full", "object-contain",
+      ]));
       expect(host.querySelector("figcaption")).toBeNull();
       act(() => { image.dispatchEvent(new Event("error")); });
       const fallback = expectAsset(host, "vial");
