@@ -83,9 +83,6 @@ describe("the Early Access journey renders without the shared review password", 
 describe("what stays behind the shared review password", () => {
   it.each([
     ["/research/catalog"],
-    ["/research/member"],
-    ["/research/member/documents"],
-    ["/research/orders"],
   ])("%s still shows the password page", (path) => {
     // Opening one journey must not have opened the section around it. If this
     // ever passes for a member or catalog path, the allowlist has become a
@@ -93,6 +90,20 @@ describe("what stays behind the shared review password", () => {
     const view = renderAt(path);
     expect(view.querySelector('[data-testid="journey"]')).toBeNull();
     expect(view.textContent).toMatch(/access password/i);
+  });
+
+  it.each([
+    ["/research/member"],
+    ["/research/member/documents"],
+    ["/research/orders"],
+  ])("%s stays closed and offers member sign in instead", (path) => {
+    // Same boundary as above: the member page never renders to an anonymous
+    // caller. Only the explanation changes, because the reviewer password
+    // cannot open a member page; the visitor's own member sign-in can.
+    const view = renderAt(path);
+    expect(view.querySelector('[data-testid="journey"]')).toBeNull();
+    expect(view.querySelector('input[type="password"]')).toBeNull();
+    expect(view.querySelector('[data-testid="member-sign-in-required"]')).not.toBeNull();
   });
 
   it("does not admit an unlisted path that merely starts like the journey", () => {
