@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { isAccountOrderDetailPath } from "./account-portal/routes";
 import Wordmark from "@/components/Wordmark";
@@ -11,6 +11,7 @@ import {
 } from "@shared/research/paths";
 import { useResearch } from "./core";
 import { ACCOUNT_PORTAL_ROUTES } from "./lib/routes";
+import { usePublishedHeight } from "./lib/usePublishedHeight";
 import { isPublicLotRoutePath } from "./quality/routes";
 import { safeReferralDestination } from "@shared/research/referral-v1";
 import {
@@ -150,16 +151,21 @@ function MinimalChrome({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col" style={{ minHeight: "100dvh" }}>
       <header className="rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
-        <div className="container-x flex items-center justify-between research-minimal-header-row" style={{ minHeight: 60 }}>
+        <div className="container-x flex items-center justify-between gap-3 research-minimal-header-row">
           <Link href="/research" className="wordmark research-chrome-target research-chrome-wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
             <span className="wordmark-mark" aria-hidden="true"></span>
             <span className="wordmark-text">xenios</span>
             <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
           </Link>
-          <Link href="/research" className="body-s text-ink-mute hover:text-pulse transition-colors research-chrome-target">Back to gateway</Link>
+          <div className="flex items-center gap-3 research-minimal-header-actions">
+            <Link href="/research" className="body-s text-ink-mute hover:text-pulse transition-colors research-chrome-target research-minimal-back">Back to gateway</Link>
+            {/* The phone menu lives in the brand row (KAN-225/10657). Below
+                640px Back to gateway moves into it as the first item. */}
+            <PublicEditorialNav current={normalizedLocation} part="menu" gateway={{ href: "/research", label: "Back to gateway" }} />
+          </div>
         </div>
-        <div className="container-x" style={{ paddingBottom: 12 }}>
-          <PublicEditorialNav current={normalizedLocation} />
+        <div className="container-x research-public-links-row">
+          <PublicEditorialNav current={normalizedLocation} part="links" />
         </div>
       </header>
       <main className="flex-1">{children}</main>
@@ -190,12 +196,18 @@ function RecoveryChrome({ children }: { children: ReactNode }) {
 function MemberChrome({ children }: { children: ReactNode }) {
   const { member, signOutMember } = useResearch();
   const [location, navigate] = useLocation();
+  // The header is sticky and its height varies, so it publishes that height
+  // for page toolbars to stick below it (KAN-225/10657) instead of stacking a
+  // second top:0 bar underneath.
+  const chromeRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  usePublishedHeight(headerRef, chromeRef, "--research-sticky-chrome-height");
 
   return (
-    <div>
-      <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
+    <div ref={chromeRef} data-testid="research-member-chrome">
+      <header ref={headerRef} className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
         <div className="container-x">
-          <div className="flex items-center justify-between gap-4 research-member-header-row" style={{ minHeight: 60 }}>
+          <div className="flex items-center justify-between gap-4 research-member-header-row">
             <Link href="/research/member" className="wordmark research-chrome-target research-chrome-wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
               <span className="wordmark-mark" aria-hidden="true"></span>
               <span className="wordmark-text">xenios</span>

@@ -19,6 +19,8 @@ import {
   MasterOfferingCatalogControls,
   MasterOfferingPriceListDownload,
 } from "./MasterOfferingCatalogControls";
+import { usePublishedHeight } from "../lib/usePublishedHeight";
+import "./catalog-toolbar.css";
 
 export function MasterOfferingPagination({
   page,
@@ -59,6 +61,52 @@ export function MasterOfferingPagination({
 }
 
 /**
+ * The compact pager that rides in the catalog toolbar on phones, so a member
+ * can change page without scrolling to the end of the list (KAN-225/10657).
+ * It is a labelled group, not a second "Catalog pages" landmark: the full
+ * pager after the last card stays the page's one pagination navigation.
+ */
+export function MasterOfferingToolbarPager({
+  page,
+  totalPages,
+  onPage,
+}: {
+  page: number;
+  totalPages: number;
+  onPage: (next: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+  return (
+    <div
+      role="group"
+      aria-label="Catalog pages, quick controls"
+      className="flex min-w-0 items-center justify-between gap-2"
+      data-testid="mo-toolbar-pager"
+    >
+      <button
+        type="button"
+        className="btn btn-secondary min-h-[44px] min-w-[44px]"
+        disabled={page <= 1}
+        onClick={() => onPage(page - 1)}
+      >
+        Previous
+      </button>
+      <p className="body-s text-ink-mute text-center min-w-0" data-testid="mo-toolbar-page-position">
+        Page {page} of {totalPages}
+      </p>
+      <button
+        type="button"
+        className="btn btn-secondary min-h-[44px] min-w-[44px]"
+        disabled={page >= totalPages}
+        onClick={() => onPage(page + 1)}
+      >
+        Next
+      </button>
+    </div>
+  );
+}
+
+/**
  * The full member-safe catalog surface.
  *
  * It is deliberately presentational: the page it renders, the query it echoes,
@@ -85,8 +133,15 @@ export function FullCatalogPage({
   memberToken?: string | null;
 }) {
   const resultsHeading = useRef<HTMLHeadingElement>(null);
+  const surface = useRef<HTMLDivElement>(null);
+  const toolbar = useRef<HTMLDivElement>(null);
   const currentPage = page.page;
   const firstRender = useRef(true);
+  // The page the member explicitly asked for with a pager. A search or filter
+  // change also resets the page, but focus must stay in the control the member
+  // is using, so only an asked-for page moves focus to the results.
+  const requestedPage = useRef<number | null>(null);
+  usePublishedHeight(toolbar, surface, "--research-catalog-toolbar-height");
   // Page-local, deliberately not in the URL: the shared query contract has no
   // access-path member, so a link cannot carry it and the server cannot count
   // it. See CatalogAccessPathRefine for why it is still worth having.
@@ -99,8 +154,15 @@ export function FullCatalogPage({
       firstRender.current = false;
       return;
     }
-    resultsHeading.current?.focus();
+    const asked = requestedPage.current === currentPage;
+    requestedPage.current = null;
+    if (asked) resultsHeading.current?.focus();
   }, [currentPage]);
+
+  function goToPage(next: number) {
+    requestedPage.current = next;
+    onQueryChange({ ...query, page: next });
+  }
 
   const showing = page.products.length;
   const refined = refineCardsByAccessPath(page.products, accessPath);
@@ -109,7 +171,7 @@ export function FullCatalogPage({
   );
 
   return (
-    <div className="grid min-w-0 gap-6">
+    <div className="grid min-w-0 gap-6" ref={surface}>
       <header className="grid min-w-0 gap-2">
         <p className="mono-label text-ink-mute">Xenios Research</p>
         <h1 className="display-s">Full catalog</h1>
@@ -124,13 +186,26 @@ export function FullCatalogPage({
         </ResearchSecureNotice>
       </header>
 
-      <MasterOfferingCatalogControls
-        query={query}
-        facets={page.facets}
-        loading={loading}
-        onChange={onQueryChange}
-        onSearchChange={onSearchChange}
-      />
+      {/* On phones this toolbar sticks below the member header, whose height
+          the member chrome publishes as --research-sticky-chrome-height. */}
+      <div ref={toolbar} className="research-catalog-toolbar min-w-0" data-testid="mo-catalog-toolbar">
+        <MasterOfferingCatalogControls
+          query={query}
+          facets={page.facets}
+          loading={loading}
+          onChange={onQueryChange}
+          onSearchChange={onSearchChange}
+          pager={
+            page.totalPages > 1 ? (
+              <MasterOfferingToolbarPager
+                page={page.page}
+                totalPages={page.totalPages}
+                onPage={goToPage}
+              />
+            ) : null
+          }
+        />
+      </div>
       <CatalogActiveFilters
         query={query}
         facets={page.facets}
@@ -142,7 +217,7 @@ export function FullCatalogPage({
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
           <h2
             id="mo-catalog-results"
-            className="body-l font-700"
+            className="body-l font-700 research-catalog-results-heading"
             tabIndex={-1}
             ref={resultsHeading}
           >
@@ -239,7 +314,7 @@ export function FullCatalogPage({
         <MasterOfferingPagination
           page={page.page}
           totalPages={page.totalPages}
-          onPage={(next) => onQueryChange({ ...query, page: next })}
+          onPage={goToPage}
         />
       </section>
     </div>
