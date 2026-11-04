@@ -512,6 +512,126 @@
         "purpose": "Laboratory study of peptide transport and cell signaling.",
         "cautions": "For nonclinical laboratory research only."
       }
+    },
+    {
+      "offeringId": "mo_fb02f804912e868b0a10",
+      "sourceVariantId": "mov_4522e672752616ff992d",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Copper complex of the tripeptide GHK, studied in fibroblast collagen-synthesis models. Listed as a 50 mg lyophilized vial for laboratory research.",
+        "overview": "GHK (glycyl-L-histidyl-L-lysine) is a tripeptide with high affinity for copper(II) ions, and GHK-Cu is its copper complex. The tripeptide later identified as GHK was first reported in human serum in 1973 as a factor that prolonged the survival of normal liver cells. In fibroblast cultures, the copper complex GHK-Cu stimulated collagen synthesis beginning at picomolar concentrations and peaking near 1 nanomolar, independently of any change in cell number. Those authors noted that a GHK sequence occurs within the alpha 2 chain of type I collagen and proposed that proteases could release it at a wound site. These cell-culture findings do not establish effects of this research material in people. The catalog lists this item as a lyophilized vial at 50 mg of GHK-Cu, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "50 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0288"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on extracellular-matrix and wound-repair biology, including collagen synthesis in fibroblast culture.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_b06b77a95d5dd5bf8cd7",
+      "sourceVariantId": "mov_35b19a790d7a247210c9",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Copper complex of the tripeptide GHK, studied in fibroblast collagen-synthesis models. Listed as a 100 mg lyophilized vial for laboratory research.",
+        "overview": "GHK (glycyl-L-histidyl-L-lysine) is a tripeptide with high affinity for copper(II) ions, and GHK-Cu is its copper complex. The tripeptide later identified as GHK was first reported in human serum in 1973 as a factor that prolonged the survival of normal liver cells. In fibroblast cultures, the copper complex GHK-Cu stimulated collagen synthesis beginning at picomolar concentrations and peaking near 1 nanomolar, independently of any change in cell number. Those authors noted that a GHK sequence occurs within the alpha 2 chain of type I collagen and proposed that proteases could release it at a wound site. These cell-culture findings do not establish effects of this research material in people. The catalog lists this item as a lyophilized vial at 100 mg of GHK-Cu, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "100 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0287"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on extracellular-matrix and wound-repair biology, including collagen synthesis in fibroblast culture.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_bb39fc388cb58003b1f8",
+      "sourceVariantId": "mov_15eddad2da8035493bd6",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Tripeptide Lys-Pro-Val from alpha-MSH, studied in cell and mouse models of intestinal inflammation. Listed as a 10 mg lyophilized vial for laboratory research.",
+        "overview": "KPV is the tripeptide lysine-proline-valine, corresponding to residues 11 to 13 of alpha-melanocyte-stimulating hormone (alpha-MSH), a melanocortin peptide with described anti-inflammatory effects. In the Caco2-BBE human intestinal epithelial cell line, nanomolar KPV reduced NF-kappaB and MAP kinase inflammatory signaling and lowered secretion of the cytokine IL-8; in Jurkat T cells it reduced inflammatory signaling and IL-8 mRNA. Its uptake depended on PepT1, a di- and tripeptide transporter normally expressed in the small intestine and induced in the colon during inflammatory bowel disease. In mice, KPV given in drinking water reduced colitis induced by dextran sodium sulfate (DSS) or TNBS. A separate mouse study reported earlier recovery, regain of body weight and fewer inflammatory infiltrates in DSS and T-cell transfer colitis. In mice with a nonfunctional melanocortin-1 receptor, that study reported that all KPV-treated animals survived DSS colitis, and the authors concluded that the effects were at least partly independent of that receptor. These are cell and mouse findings and do not establish effects in people. The catalog lists this item as a lyophilized vial at 10 mg of KPV, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "10 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0306"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on peptide transport and inflammatory signaling in intestinal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_33b6b3e982b2dc5113bb",
+      "sourceVariantId": "mov_72b54c1f1e71b4229c2a",
+      "content": {
+        "brand": "Xenios",
+        "summary": "16-amino-acid peptide encoded in mitochondrial DNA, studied in cell and mouse metabolism models. Listed as a 10 mg lyophilized vial for laboratory research.",
+        "overview": "MOTS-c (mitochondrial open reading frame of the 12S rRNA-c) is a 16-amino-acid peptide, MRWQEMGYIFYPRKLR, encoded by a short open reading frame within the mitochondrial 12S rRNA gene. It was identified after the discovery of humanin suggested that mitochondrial DNA might encode further signaling peptides. In cell experiments in the 2015 study that named it, MOTS-c inhibited the folate cycle and the linked de novo purine synthesis and activated AMPK, and the authors described skeletal muscle as its likely primary target organ. In middle-aged mice that had already developed reduced insulin sensitivity, seven days of MOTS-c restored insulin-stimulated glucose uptake in soleus muscle to levels seen in young mice; in a separate experiment, it prevented obesity and hyperinsulinemia in mice fed a high-fat diet. A 2021 study reported improved physical performance in young, middle-aged and old mice and greater physical capacity when MOTS-c was given intermittently starting late in life. The same study found that exercise raised the body's own MOTS-c in human skeletal muscle and circulation, a finding about the endogenous peptide rather than an administered one. These mouse findings do not establish the effects of administered MOTS-c in people. The catalog lists this item as a lyophilized vial at 10 mg of MOTS-c, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "10 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0313"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on mitochondrial-derived peptides, skeletal-muscle metabolism and insulin sensitivity in animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }
