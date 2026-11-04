@@ -1,4 +1,4 @@
-"""Check a CLAUDE peptide artwork handoff using exact Git blobs."""
+"""Check a peptide artwork handoff using exact Git blobs."""
 
 import argparse
 from hashlib import sha256
@@ -120,13 +120,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate", required=True, help="Full artwork commit SHA")
     parser.add_argument("--release", required=True, help="Full trusted release commit SHA")
-    parser.add_argument("--batch", required=True, help="Repository-relative CLAUDE artwork delivery directory")
+    parser.add_argument("--batch", required=True, help="Repository-relative peptide artwork delivery directory")
     args = parser.parse_args()
     try:
         for commit in (args.candidate, args.release):
             require(re.fullmatch(r"[a-f0-9]{40}", commit), "Use full lowercase commit SHAs")
-        require(re.fullmatch(r"deliveries/peptide-artwork-claude-1/[a-z0-9-]+", args.batch),
-                "Use the exact CLAUDE-1 delivery path")
+        require(re.fullmatch(r"deliveries/(?:peptide-artwork-claude-1|catalog-imagery)/[a-z0-9-]+",
+                             args.batch), "Use the exact delivery path")
         print(json.dumps(verify(args.candidate, args.release, args.batch), indent=2))
     except (ValueError, KeyError, TypeError, OSError, subprocess.CalledProcessError) as error:
         print(f"FAIL: {error}", file=sys.stderr)

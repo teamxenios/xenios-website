@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-010",
+  "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "bytes": 332053,
+    "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5"
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "bytes": 108239,
+    "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+  },
+  "publicationState": "review_only_not_runtime",
+  "supplierSendPerformed": false,
+  "authority": [
+    "KAN-59/10615",
+    "KAN-225/10616"
+  ],
+  "labelFactSources": [
+    {
+      "reference": "KAN-59/10654",
+      "labelFactsSha256": "2a7b93e1c71234811fc1adc8651be54a7e5d28b8115bdb2633533387b2cb163c"
+    },
+    {
+      "reference": "KAN-59/10681",
+      "scope": "verified static facts; scientific copy held"
+    },
+    {
+      "reference": "KAN-31/10668",
+      "scope": "static facts only"
+    }
+  ],
+  "requiredMountedViewportsAfterReview": [
+    320,
+    390,
+    768,
+    1280
+  ],
+  "contactSheet": {
+    "role": "contact_sheet",
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/contact-sheet-v1.png",
+    "format": "png",
+    "width": 1600,
+    "height": 1460,
+    "bytes": 514939,
+    "sha256": "8a278637be8fafa6712085758e8ada3f1c868a212e17c2169dfabf3ee095f481"
+  },
+  "records": [
+    {
+      "offeringId": "mo_8a3829642d06ad3ca7c4",
+      "sourceVariantId": "mov_3f59629a005b238f4faa",
+      "quickOrderSku": "GEN-GRP-0280",
+      "quickOrderProductId": "0d628ff0-a4d1-4f7f-bd5c-49c74ba30155",
+      "quickOrderVariantId": "d540b4da-25cb-4143-8d5a-cdc065dc454f",
+      "canonicalName": "Dihexa",
+      "canonicalVariant": "Dihexa 10 mg",
+      "catalogVariantLabel": "DIHEXA 10 mg",
+      "nominalAmountPerVialMg": 10,
+      "form": "Lyophilized vial",
+      "classification": "For laboratory research use only.",
+      "artworkVersion": "DIHEXA-10-WEB-SUPPLIER-v1",
+      "mediaKind": "original_xenios_website_render",
+      "physicalPackagingState": "design",
+      "websiteArtworkState": "pending_independent_file_level_review",
+      "runtimeLinked": false,
+      "publicationAuthorized": false,
+      "artifacts": {
+        "website_primary": {
+          "role": "website_primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/assets/dihexa-10mg-website-render-v1-1024.webp",
+          "format": "webp",
+          "width": 1024,
+          "height": 1024,
+          "bytes": 44902,
+          "sha256": "1cad1ce8ee4731e9d8f4d2897cf946d8bddea9ddd0a7686b2f49a6e154188fa0"
+        },
+        "website_source_master": {
+          "role": "website_source_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/assets/dihexa-10mg-website-render-v1.png",
+          "format": "png",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 1670324,
+          "sha256": "83d8dd715f29899d7344df119bedeb8640039be6f44f826e58e15c14082e148e"
+        },
+        "front_editable_master": {
+          "role": "front_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/labels/dihexa-10mg-front-artwork-v1.svg",
+          "format": "svg",
+          "width": 1600,
+          "height": 1000,
+          "bytes": 2996,
+          "sha256": "d694fd86ddcbbaed72998d82f27acae519742e8f0d596e096efc9a28e6936406"
+        },
+        "front_preview": {
+          "role": "front_preview",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/assets/dihexa-10mg-front-artwork-v1.png",
+          "format": "png",
+          "width": 1600,
+          "height": 1000,
+          "bytes": 85079,
+          "sha256": "1c95122a538febf0fcdc9fc68a04ebb81053baf646760043606caff166ac914c"
+        },
+        "front_preview_web": {
+          "role": "front_preview_web",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/assets/dihexa-10mg-front-artwork-v1.webp",
+          "format": "webp",
+          "width": 1600,
+          "height": 1000,
+          "bytes": 40912,
+          "sha256": "0046f8588b046da407955d05f71e15d7d26fcf5d976e60997f3bd1c5f5a67bcf"
+        },
+        "wrap_editable_master": {
+          "role": "wrap_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/labels/dihexa-10mg-wrap-proof-v1.svg",
+          "format": "svg",
+          "width": 2400,
+          "height": 1200,
+          "bytes": 6972,
+          "sha256": "99a660b91e0b4224eedd4d72c29a0adb33cfb0f55638f4aa518c364e33cb770b"
+        },
+        "wrap_preview": {
+          "role": "wrap_preview",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/assets/dihexa-10mg-wrap-proof-v1.png",
+          "format": "png",
+          "width": 2400,
+          "height": 1200,
+          "bytes": 243941,
+          "sha256": "5513158b743be006c63a18d95de23cbf599606214886fa4ac6c422b0fd1c5650"
+        }
+      },
+      "websiteReviewCandidates": [
+        {
+          "role": "primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/assets/dihexa-10mg-website-render-v1-1024.webp",
+          "sha256": "1cad1ce8ee4731e9d8f4d2897cf946d8bddea9ddd0a7686b2f49a6e154188fa0",
+          "altText": "Xenios Dihexa 10 mg lyophilized vial packaging design",
+          "caption": "Packaging design shown. Current packaging may differ."
+        },
+        {
+          "role": "label_detail",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-010/assets/dihexa-10mg-front-artwork-v1.webp",
+          "sha256": "0046f8588b046da407955d05f71e15d7d26fcf5d976e60997f3bd1c5f5a67bcf",
+          "altText": "Xenios Dihexa 10 mg per vial front label design for research use",
+          "caption": "Packaging design shown. Current packaging may differ."
+        }
+      ]
+    }
+  ]
+}

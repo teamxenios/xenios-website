@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "batchId": "catalog-imagery-2026-11-04-batch-010",
+  "canonicalPairs": 420,
+  "exactArtworkPairs": 1,
+  "checkedArtifacts": 8,
+  "checkedWebsiteWebps": 2,
+  "independentlyAcceptedWebsiteAssets": 0,
+  "runtimeLinkedAssets": 0,
+  "publicationAuthorizedAssets": 0,
+  "supplierApprovedProofs": 0,
+  "supplierSendPerformed": false
+}
