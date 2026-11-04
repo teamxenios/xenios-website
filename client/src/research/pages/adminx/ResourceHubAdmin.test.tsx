@@ -195,6 +195,125 @@ afterEach(async () => {
   vi.restoreAllMocks();
 });
 
+// These cases run before the page suite: its real-timer preview test leaves a
+// one-second revoke timer pending, which must not fire into these mocks.
+describe("Resource Hub admin preview handoff", () => {
+  let createObjectURL: ReturnType<typeof vi.fn>;
+  let revokeObjectURL: ReturnType<typeof vi.fn>;
+  let anchorClick: ReturnType<typeof vi.spyOn>;
+  let savedAs: string[];
+
+  // renderPage() and flush() wait on a real timer; these cases run on the fake clock.
+  const settle = () => act(async () => { await vi.advanceTimersByTimeAsync(0); });
+  async function renderOnFakeClock() {
+    await act(async () => {
+      root = createRoot(host);
+      root.render(<ResourceHubAdminBody token={TOKEN} />);
+    });
+    await settle();
+  }
+  const previewButton = () => byTestId<HTMLButtonElement>("preview-v-published");
+  const rowAlert = () => byTestId("version-v-published")?.querySelector('[role="alert"]') ?? null;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    createObjectURL = vi.fn(() => "blob:synthetic-object-url");
+    revokeObjectURL = vi.fn();
+    Object.defineProperty(URL, "createObjectURL", { configurable: true, value: createObjectURL });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: revokeObjectURL });
+    savedAs = [];
+    anchorClick = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (this: HTMLAnchorElement) {
+      savedAs.push(`${this.getAttribute("download")}|${this.getAttribute("href")}`);
+    });
+    mocks.download.mockResolvedValue({
+      kind: "ok",
+      blob: new Blob(["%PDF-1.4 synthetic"], { type: "application/pdf" }),
+      filename: "partner-onboarding-v2.pdf",
+    });
+  });
+
+  afterEach(() => {
+    // An anchor that a failed handoff left attached must not reach the next case.
+    document.body.querySelectorAll("a[download]").forEach((anchor) => anchor.remove());
+    delete (URL as unknown as Record<string, unknown>).createObjectURL;
+    delete (URL as unknown as Record<string, unknown>).revokeObjectURL;
+    vi.clearAllTimers();
+    vi.useRealTimers();
+  });
+
+  it("saves a successful preview, removes the temporary anchor at once, and revokes its URL a second later", async () => {
+    await renderOnFakeClock();
+    await click(previewButton());
+    await settle();
+
+    expect(mocks.download).toHaveBeenCalledTimes(1);
+    expect(mocks.download).toHaveBeenCalledWith(TOKEN, RESOURCE_A, "v-published", { signal: expect.any(AbortSignal) });
+    expect(savedAs).toEqual(["partner-onboarding-v2.pdf|blob:synthetic-object-url"]);
+    expect(document.body.querySelector("a[download]")).toBeNull();
+    expect(rowAlert()).toBeNull();
+    expect(previewButton()?.disabled).toBe(false);
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(999); });
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+    await act(async () => { await vi.advanceTimersByTimeAsync(1); });
+    expect(revokeObjectURL.mock.calls.map(([url]) => url)).toEqual(["blob:synthetic-object-url"]);
+    expect(mocks.download).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["object-url", "append", "anchor-click"] as const)("recovers from a browser %s failure only after an explicit fresh preview", async (failure) => {
+    const privateDetail = "PRIVATE-ADMIN-SAVE-DETAIL";
+    await renderOnFakeClock();
+    if (failure === "object-url") {
+      createObjectURL.mockImplementationOnce(() => { throw new Error(privateDetail); })
+        .mockReturnValueOnce("blob:manual-retry");
+    } else {
+      createObjectURL.mockReturnValueOnce("blob:failed-attempt").mockReturnValueOnce("blob:manual-retry");
+    }
+    if (failure === "append") {
+      vi.spyOn(document.body, "appendChild").mockImplementationOnce(() => { throw new Error(privateDetail); });
+    }
+    if (failure === "anchor-click") {
+      anchorClick.mockImplementationOnce(() => { throw new Error(privateDetail); });
+    }
+    await click(previewButton());
+    await settle();
+
+    expect(mocks.download).toHaveBeenCalledTimes(1);
+    expect(document.body.querySelector("a[download]")).toBeNull();
+    expect(rowAlert()?.textContent).toBe("We couldn't confirm that the preview download started. Try again.");
+    expect(document.body.textContent).not.toContain(privateDetail);
+    expect(document.body.textContent).not.toMatch(/(?:download|preview) (?:complete|saved)|file saved/iu);
+    expect(savedAs).toEqual([]);
+    expect(previewButton()?.disabled).toBe(false);
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    expect(mocks.download).toHaveBeenCalledTimes(1); // No automatic retry after failure.
+    expect(revokeObjectURL.mock.calls.map(([url]) => url)).toEqual(failure === "object-url" ? [] : ["blob:failed-attempt"]);
+
+    await click(previewButton());
+    await settle();
+
+    expect(mocks.download).toHaveBeenCalledTimes(2);
+    for (const call of mocks.download.mock.calls) {
+      expect(call).toEqual([TOKEN, RESOURCE_A, "v-published", { signal: expect.any(AbortSignal) }]);
+    }
+    // The retry is a new principal-bound operation, not a replay of the failed one.
+    expect(mocks.download.mock.calls[1][3].signal).not.toBe(mocks.download.mock.calls[0][3].signal);
+    expect(savedAs).toEqual(["partner-onboarding-v2.pdf|blob:manual-retry"]);
+    expect(anchorClick).toHaveBeenCalledTimes(failure === "anchor-click" ? 2 : 1);
+    expect(rowAlert()).toBeNull();
+    expect(previewButton()?.disabled).toBe(false);
+    expect(document.body.querySelector("a[download]")).toBeNull();
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+    expect(revokeObjectURL.mock.calls.map(([url]) => url))
+      .toEqual(failure === "object-url" ? ["blob:manual-retry"] : ["blob:failed-attempt", "blob:manual-retry"]);
+    expect(mocks.download).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe("Resource Hub admin page", () => {
   it("renders every resource with its version states, validation reasons, and the standing no-notification note", async () => {
     await renderPage();

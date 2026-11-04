@@ -98,17 +98,25 @@ function newIdempotencyKey(): string {
   return `rh-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 14)}`;
 }
 
-// Save server-streamed bytes through a short-lived object URL.
+// Save server-streamed bytes through a short-lived object URL. Clean up the
+// temporary anchor and URL even when the browser handoff throws.
 function saveBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.rel = "noopener";
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  let anchor: HTMLAnchorElement | null = null;
+  try {
+    anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.rel = "noopener";
+    document.body.appendChild(anchor);
+    anchor.click();
+  } finally {
+    try {
+      anchor?.remove();
+    } finally {
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+  }
 }
 
 type FieldErrors = Record<string, string[]>;
@@ -645,7 +653,13 @@ function VersionRow({
     setBusy(null);
     if (result.kind === "ok") {
       if (!op.isCurrent()) return;
-      saveBlob(result.blob, result.filename ?? version.originalFilename);
+      try {
+        saveBlob(result.blob, result.filename ?? version.originalFilename);
+      } catch {
+        // The handoff can throw after the browser accepted the click, so this
+        // claims neither a started download nor a failed one.
+        if (op.isCurrent()) setError("We couldn't confirm that the preview download started. Try again.");
+      }
       return;
     }
     setError(
