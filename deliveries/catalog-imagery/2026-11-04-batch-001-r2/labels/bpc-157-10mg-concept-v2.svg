@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Xenios BPC-157 10 mg concept label master version 2</title>
+  <desc id="desc">Editable concept artwork for a BPC-157 10 mg lyophilized vial. The artwork is visibly marked not for production, identifies the current committed Quick Order catalog SKU, and leaves unverified supplier, storage, lot, expiry, documentation, dimensions, and dieline information pending.</desc>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fcfbff"/>
+      <stop offset="0.55" stop-color="#f4f1fb"/>
+      <stop offset="1" stop-color="#e9e5f5"/>
+    </linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2b1658"/>
+      <stop offset="0.2" stop-color="#6d3fd4"/>
+      <stop offset="0.42" stop-color="#82a9ff"/>
+      <stop offset="0.58" stop-color="#6ed8ff"/>
+      <stop offset="0.78" stop-color="#7449db"/>
+      <stop offset="1" stop-color="#2a144f"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5b32bc"/>
+      <stop offset="1" stop-color="#1c92cc"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#190d36" flood-opacity="0.18"/>
+    </filter>
+    <style>
+      .sans { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      .micro { font-size: 20px; letter-spacing: 2.2px; }
+      .small { font-size: 24px; }
+      .label { font-size: 21px; font-weight: 700; letter-spacing: 1.6px; fill: #5634a8; }
+      .value { font-size: 25px; font-weight: 600; fill: #171125; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#e7e3ef"/>
+  <rect x="50" y="50" width="1500" height="800" rx="34" fill="url(#paper)" filter="url(#softShadow)"/>
+  <rect x="50" y="50" width="1500" height="18" rx="9" fill="url(#chrome)"/>
+  <rect x="50" y="832" width="1500" height="18" rx="9" fill="url(#chrome)"/>
+
+  <g class="sans">
+    <text x="100" y="118" class="micro" font-weight="800" fill="#b02e55">CONCEPT — NOT FOR PRODUCTION</text>
+    <text x="1500" y="118" class="micro" font-weight="700" text-anchor="end" fill="#5f5570">ARTWORK BPC157-10-CPT-v2</text>
+
+    <g id="front-panel">
+      <text x="105" y="226" font-size="58" font-weight="800" letter-spacing="10" fill="#1b1230">XENIOS</text>
+      <rect x="105" y="255" width="765" height="6" rx="3" fill="url(#rule)"/>
+      <text x="105" y="390" font-size="112" font-weight="780" letter-spacing="-3" fill="#181022">BPC-157</text>
+      <text x="110" y="478" font-size="66" font-weight="750" fill="#6437c6">10 mg</text>
+      <text x="110" y="535" font-size="27" font-weight="700" letter-spacing="3.4" fill="#3f3550">LYOPHILIZED VIAL</text>
+
+      <g transform="translate(105 596)">
+        <rect width="765" height="112" rx="18" fill="#21143a"/>
+        <rect width="13" height="112" rx="6" fill="url(#chrome)"/>
+        <text x="42" y="48" font-size="28" font-weight="800" letter-spacing="2.2" fill="#ffffff">RESEARCH USE ONLY</text>
+        <text x="42" y="83" font-size="21" font-weight="650" letter-spacing="1.6" fill="#d9d1ea">NONCLINICAL USE ONLY</text>
+        <text x="725" y="48" font-size="24" font-weight="750" text-anchor="end" fill="#a9ceff">TOTAL CONTENT</text>
+        <text x="725" y="84" font-size="30" font-weight="800" text-anchor="end" fill="#ffffff">10 mg</text>
+      </g>
+      <text x="105" y="744" class="small" font-weight="650" fill="#3f3550">Verified static identity only.</text>
+      <text x="105" y="774" class="small" font-weight="650" fill="#3f3550">Physical container and production label</text>
+      <text x="105" y="804" class="small" font-weight="650" fill="#3f3550">specifications remain unconfirmed.</text>
+    </g>
+
+    <line x1="925" y1="165" x2="925" y2="790" stroke="#bcb3cc" stroke-width="2"/>
+
+    <g id="detail-panel" transform="translate(985 188)">
+      <text x="0" y="0" font-size="28" font-weight="800" letter-spacing="2" fill="#24153f">CONCEPT DETAIL PANEL</text>
+      <rect x="0" y="24" width="485" height="4" rx="2" fill="url(#rule)"/>
+
+      <text x="0" y="72" class="label">FORM</text>
+      <text x="0" y="104" class="value">Lyophilized vial</text>
+      <text x="270" y="72" class="label">TOTAL CONTENT</text>
+      <text x="270" y="104" class="value">10 mg</text>
+
+      <text x="0" y="152" class="label">CLASSIFICATION</text>
+      <text x="0" y="184" class="value">Research Use Only</text>
+      <text x="0" y="214" class="small" font-weight="600" fill="#3b314b">Nonclinical use only</text>
+
+      <text x="0" y="260" class="label">SUPPLIER / MANUFACTURER</text>
+      <text x="0" y="292" class="value" fill="#8f3652">PENDING CONFIRMATION</text>
+
+      <text x="0" y="338" class="label">STORAGE</text>
+      <text x="0" y="370" class="value" fill="#8f3652">PENDING SUPPLIER LABEL</text>
+
+      <text x="0" y="416" class="label">QUICK ORDER SKU</text>
+      <text x="0" y="448" font-size="21" font-weight="750" fill="#171125">GEN-GRP-0262</text>
+      <text x="300" y="416" class="label">DOCUMENTATION</text>
+      <text x="300" y="448" class="value" fill="#8f3652">NOT LINKED</text>
+
+      <text x="0" y="494" class="label">PRINT SPECIFICATION</text>
+      <text x="0" y="526" class="value" fill="#8f3652">DIMENSIONS / DIELINE PENDING</text>
+      <text x="0" y="554" class="small" font-weight="600" fill="#6f627d">Bleed, material and finish also pending supplier.</text>
+
+      <g transform="translate(0 568)">
+        <rect width="485" height="64" rx="14" fill="#f3e6ed" stroke="#c95078" stroke-width="2"/>
+        <text x="18" y="27" font-size="18" font-weight="800" letter-spacing="1.2" fill="#9c3155">MOCKUP TRACEABILITY — NOT REAL DATA</text>
+        <text x="18" y="51" font-size="21" font-weight="750" fill="#6f263f">LOT: DEMO-LOT   EXP/BUD: SAMPLE-ONLY</text>
+      </g>
+    </g>
+  </g>
+
+  <rect x="72" y="72" width="1456" height="756" rx="24" fill="none" stroke="#8e819d" stroke-width="2" stroke-dasharray="12 10" opacity="0.45"/>
+</svg>
