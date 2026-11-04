@@ -18,15 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: cf02e04b2d8e08e79789daf34bd89059e0312558
-      CANDIDATE_TREE: da2b16a6ff2991fe2322c931c95999262dbc709b
+      CANDIDATE_SHA: 344294457a9b9dd11740b5bd274fde04804fcc31
+      CANDIDATE_TREE: 0f6c1860cbf4743c6366289a0835047b18bc140d
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: KAN-31/10633
-      CAPTURE_ALLOWANCE_ATTEMPT: "2"
+      CAPTURE_ALLOWANCE_ID: KAN-31/10645
+      CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
-      CAPTURE_PRIOR_RUN_IDS: '["41906360107"]'
-      CAPTURE_RECONCILED_AT: 2026-11-04T20:28:07Z
-      CAPTURE_DIAGNOSIS: "Use exact per-asset reviewed alt instead of the BPC-only regex; preserve all other assertions"
+      CAPTURE_PRIOR_RUN_IDS: '[]'
+      CAPTURE_RECONCILED_AT: 2026-11-04T21:01:38Z
+      CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash

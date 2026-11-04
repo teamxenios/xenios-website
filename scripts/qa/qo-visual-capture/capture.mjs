@@ -14,6 +14,11 @@ const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, r
 if (!["legacy", "guest-catalog-details", "reviewed-catalog"].includes(profile)) throw new Error("Unknown capture profile");
 const guestDetailsOnly = profile === "guest-catalog-details";
 const reviewedCatalog = profile === "reviewed-catalog";
+const reviewedVialCaptures = new Map([
+  ["mov_09db3e866424b64994d3", "bpc-5mg"],
+  ["mov_257330ea83ecbfc45fae", "bpc-15mg"],
+]);
+const capsuleControl = "mov_753d3f94385adf791d1e";
 const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
 if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
     allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
@@ -433,11 +438,12 @@ async function reviewedCatalogFixtures(candidate, member) {
     if (record.media) row.reviewedMedia = record.media;
     rows.set(variant.id, row);
   }
-  const bpc = rows.get(sourceVariant);
-  const alternate = dataset.products.find((entry) => entry.id === alternateMemberOffering);
-  const alternateVariant = alternate?.variants.find((entry) => entry.id === alternateSourceVariant);
-  if (!bpc?.reviewedMedia || !alternateVariant) throw new Error("Expected distinct BPC fixture variants");
-  rows.set(alternateVariant.id, { product: alternate, variant: alternateVariant, alternate: true });
+  for (const id of reviewedVialCaptures.keys()) {
+    const media = rows.get(id)?.reviewedMedia;
+    if (!media?.packagingDesign || !media.labelPreview) throw new Error("Missing reviewed vial artwork for " + id);
+  }
+  const capsule = rows.get(capsuleControl);
+  if (!capsule?.reviewedContent || capsule.reviewedMedia) throw new Error("Expected copy-only BPC capsule control");
   const guestKey = "/api/research/early-access/request-intents/catalog";
   const guest = base.get(guestKey);
   const items = [];
@@ -478,11 +484,8 @@ async function reviewedCatalogFixtures(candidate, member) {
 }
 
 async function captureReviewedCatalog(page, entry, rows, member) {
-  const bpc = rows.get(sourceVariant);
-  const supplement = [...rows.values()].filter((row) => row.reviewedMedia && row.reviewedContent)
-    .sort((a, b) => b.reviewedContent.overview.length - a.reviewedContent.overview.length)[0];
-  if (!supplement) throw new Error("No matched official image and description to paint");
-  const checkRows = entry.viewport.width === 390 ? [...rows.values()] : [bpc, supplement];
+  const vials = [...reviewedVialCaptures.keys()].map((id) => rows.get(id));
+  const checkRows = entry.viewport.width === 390 ? [...rows.values()] : vials;
   entry.offeringIds = checkRows.map(({ product }) => product.id);
   const entryUrl = origin + (member ? memberRoute : guestRoute);
   await page.goto(entryUrl, { waitUntil: "domcontentloaded" });
@@ -492,7 +495,7 @@ async function captureReviewedCatalog(page, entry, rows, member) {
       ? page.locator('[data-testid="mo-card"][data-offering-id="' + product.id + '"]')
       : page.locator('[data-testid="request-door-mixed"] article.xenios-order-card')
         .filter({ has: page.getByRole("heading", { name: product.displayName, exact: true }) })
-        .filter({ hasText: variant.label });
+        .filter({ has: page.getByText(variant.label, { exact: true }) });
     await card.waitFor();
     if (reviewedContent) {
       const cardText = await card.innerText();
@@ -502,8 +505,8 @@ async function captureReviewedCatalog(page, entry, rows, member) {
     }
     if (reviewedMedia) checkImage(entry, product.id + " card", await imageEvidence(page, card, reviewedMedia.primary.href, null),
       reviewedMedia.primary.href, false, reviewedMedia.primary.altText);
-    if (row.alternate) report(entry, product.id + " alternate uses only generic vial art",
-      await card.locator('img[src="/research/product-media/vial.svg"]').count() === 1);
+    if (variant.id === capsuleControl) report(entry, product.id + " capsule card excludes reviewed vial artwork",
+      await card.locator('img[src^="/research/product-media/bpc-157-xenios-"]').count() === 0);
 
     let scope;
     if (member) {
@@ -527,13 +530,17 @@ async function captureReviewedCatalog(page, entry, rows, member) {
     }
     if (reviewedMedia) checkImage(entry, product.id + " detail", await imageEvidence(page, scope, reviewedMedia.primary.href, null),
       reviewedMedia.primary.href, false, reviewedMedia.primary.altText);
-    if (row === bpc) {
+    if (reviewedMedia?.packagingDesign && reviewedMedia.labelPreview) {
       const label = scope.getByRole("link", { name: "View front label artwork" });
-      report(entry, "BPC keeps explicit packaging design disclosure and the approved label link",
+      report(entry, product.id + " keeps packaging design disclosure and the exact label link",
         await scope.getByText("Packaging design shown. Current packaging may differ.", { exact: true }).isVisible() &&
         await label.getAttribute("href") === reviewedMedia.labelPreview.href);
     }
-    if (row === bpc || row === supplement) await screenshot(entry, row === bpc ? "bpc" : "supplement", page);
+    if (variant.id === capsuleControl) report(entry, product.id + " capsule detail excludes reviewed vial artwork",
+      await scope.locator('img[src^="/research/product-media/bpc-157-xenios-"]').count() === 0 &&
+      await scope.getByRole("link", { name: "View front label artwork" }).count() === 0);
+    const screenshotName = reviewedVialCaptures.get(variant.id);
+    if (screenshotName) await screenshot(entry, screenshotName, page);
     if (member) {
       await page.goto(entryUrl, { waitUntil: "domcontentloaded" });
     } else {
