@@ -69,9 +69,11 @@
       "visualPackageDisposition": "official_us_variant_gallery_and_revision_sheet_match_selected_front",
       "reviewStatus": "pending_independent_exact_byte_image_review",
       "copyReview": {
-        "status": "separate_review_pending_at_staging",
-        "candidateReference": "KAN-6/10702",
-        "reviewReference": "KAN-31/10705"
+        "status": "separate_revision_2_review_pending",
+        "labelEvidenceReference": "KAN-6/10702",
+        "candidateReference": "KAN-6/10729",
+        "candidateSha256": "1fff5d64e88ac9d82a42de4102a09d10c672cbfaa61a646f3e0bfa143c84cbc7",
+        "reviewReference": "KAN-31/10730"
       },
       "publicationAuthorized": false
     }
