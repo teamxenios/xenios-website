@@ -89,7 +89,13 @@ check(evidence.schemaVersion === 1, "evidence schemaVersion must be 1");
 check(exceptions.schemaVersion === 1, "exception schemaVersion must be 1");
 check(batch.batchId === evidence.batchId && batch.batchId === exceptions.batchId, "batch IDs differ");
 check(batch.releaseBaseline === evidence.releaseBaseline, "release baselines differ");
-check(batch.publicationState === "review_only_candidate_not_runtime", "batch must remain review-only");
+check(batch.createdAt === "2026-11-04T20:03:04.000Z", "batch createdAt is not the verified source event");
+check(evidence.createdAt === batch.createdAt, "evidence createdAt differs from the verified source event");
+check(
+  evidence.successorContext.predecessorSourceSha === "e8705e0a34b0ab5bd357ccb24562dc89049aca1f",
+  "BPC r2 predecessor source SHA changed",
+);
+check(batch.publicationState === "file_level_accepted_not_runtime", "batch must remain file-level accepted and not runtime-linked");
 check(batch.supplierSendPerformed === false, "supplier send must remain false");
 check(batch.authority.founderWebsiteUseAuthorized === true, "founder website-use authority is missing");
 check(batch.authority.references.includes("KAN-59/10615"), "KAN-59/10615 authority is missing");
@@ -129,12 +135,39 @@ check(record.quickOrderSku === binding?.productControlSku, "record Quick Order S
 check(record.exactDepictedFacts.quickOrderSku === binding?.productControlSku, "depicted SKU differs from binding");
 
 check(
-  record.websiteArtworkState === "finished_candidate_pending_independent_review",
-  "website artwork state is not the pending-review candidate state",
+  record.websiteArtworkState === "file_level_review_accepted_pending_runtime_integration",
+  "website artwork state is not the file-level accepted integration-pending state",
 );
 check(record.physicalPackagingState === "design", "physical packaging state must remain design");
 check(record.publicationAuthorized === false, "record cannot be publication-authorized");
 check(record.runtimeLinked === false, "record cannot be runtime-linked");
+check(record.integrationHandoff.state === "supplied_for_root_integration_not_applied", "Root integration handoff state is missing");
+check(record.integrationHandoff.bindingTarget.offeringId === exactOfferingId, "integration offering ID changed");
+check(record.integrationHandoff.bindingTarget.sourceVariantId === exactSourceVariantId, "integration variant ID changed");
+check(record.integrationHandoff.eligibleAssets.length === 2, "integration handoff must contain two eligible assets");
+check(
+  record.integrationHandoff.eligibleAssets[0].sha256 === "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71",
+  "integration primary hash changed",
+);
+check(
+  record.integrationHandoff.eligibleAssets[1].sha256 === "ee0b3ebc5f216b38d8c2a2136bb9717f763e1c79ae08d334d1f33f673f33f318",
+  "integration front-preview hash changed",
+);
+for (const eligible of record.integrationHandoff.eligibleAssets) {
+  check(eligible.altText.length >= 24, `${eligible.role}: customer alt text is too short`);
+  check(
+    eligible.caption === "Packaging design shown. Current packaging may differ.",
+    `${eligible.role}: existing packaging-design disclosure changed`,
+  );
+}
+check(
+  JSON.stringify(record.integrationHandoff.requiredMountedViewports) === JSON.stringify([320, 390, 768, 1280]),
+  "required mounted viewports changed",
+);
+check(
+  record.integrationHandoff.excludedFromRuntime.every((path) => !record.integrationHandoff.eligibleAssets.some((asset) => asset.relativeAssetPath === path)),
+  "proof or exception artifact is marked runtime-eligible",
+);
 check(
   evidenceRecord.stateSeparation.websiteArtworkState === record.websiteArtworkState,
   "evidence website state differs from media record",
@@ -146,7 +179,17 @@ check(
 check(evidenceRecord.stateSeparation.printedOrInUsePackagingEstablished === false, "printed packaging cannot be established");
 check(evidenceRecord.stateSeparation.supplierProofApprovalEstablished === false, "supplier proof approval cannot be established");
 check(evidenceRecord.stateSeparation.supplierSendPerformed === false, "evidence cannot imply supplier send");
-check(evidenceRecord.review.status === "pending_independent_review", "independent review must remain pending");
+check(
+  evidenceRecord.review.status === "file_level_facts_and_visual_review_accepted_pending_runtime_integration_and_paint",
+  "file-level review receipt is missing",
+);
+check(evidenceRecord.review.reviewer === "KAN-31/10627", "file-level reviewer is not KAN-31/10627");
+check(
+  evidenceRecord.review.reviewedSourceSha === "f72de21651e4bc921c148e7290de79f1a4ea2ea4",
+  "reviewed source SHA changed",
+);
+check(evidenceRecord.review.exactWebsiteRendersFileLevelAccepted === 1, "one exact website render must be file-level accepted");
+check(evidenceRecord.review.fullyReadyCatalogPairs === 0, "no catalog pair is fully ready yet");
 check(evidenceRecord.review.approvedExactProductionImages === 0, "no exact production image is approved yet");
 check(evidenceRecord.review.publicationAuthorizedAssets === 0, "no asset is publication-authorized yet");
 check(exceptions.websiteArtworkState === record.websiteArtworkState, "exception website state differs");
@@ -233,7 +276,8 @@ const result = {
   websiteArtworkState: record.websiteArtworkState,
   physicalPackagingState: record.physicalPackagingState,
   founderWebsiteUseAuthorized: batch.authority.founderWebsiteUseAuthorized,
-  independentReviewPending: evidenceRecord.review.status === "pending_independent_review",
+  fileLevelReviewAccepted: evidenceRecord.review.reviewer === "KAN-31/10627",
+  independentReviewPending: false,
   supplierSendPerformed: batch.supplierSendPerformed,
   runtimeLinkedAssets: 0,
   publicationAuthorizedAssets: 0,

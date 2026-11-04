@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "batchId": "catalog-imagery-2026-11-04-batch-004",
-  "createdAt": "2026-11-04T23:30:00.000Z",
+  "createdAt": "2026-11-04T20:03:04.000Z",
   "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
   "catalogDataset": {
     "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
@@ -17,7 +17,7 @@
     "rawSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
     "bytePolicy": "committed LF bytes; verifier normalizes a CRLF checkout before hashing"
   },
-  "publicationState": "review_only_candidate_not_runtime",
+  "publicationState": "file_level_accepted_not_runtime",
   "supplierSendPerformed": false,
   "authority": {
     "founderWebsiteUseAuthorized": true,
@@ -44,7 +44,7 @@
       "quickOrderSku": "GEN-GRP-0262",
       "artworkVersion": "BPC157-10-WEB-SUPPLIER-v3",
       "mediaKind": "original_xenios_website_render",
-      "websiteArtworkState": "finished_candidate_pending_independent_review",
+      "websiteArtworkState": "file_level_review_accepted_pending_runtime_integration",
       "physicalPackagingState": "design",
       "publicationAuthorized": false,
       "runtimeLinked": false,
@@ -79,6 +79,43 @@
         "deliveries/catalog-imagery/2026-11-04-batch-004/output/pdf/xenios-bpc-157-10mg-print-spec-exceptions-v1.pdf"
       ],
       "printSpecExceptionSheet": "deliveries/catalog-imagery/2026-11-04-batch-004/print-spec-exceptions.v1.json",
+      "integrationHandoff": {
+        "state": "supplied_for_root_integration_not_applied",
+        "bindingTarget": {
+          "offeringId": "mo_af289f611c02b3fcef01",
+          "sourceVariantId": "mov_ca3e45ae9712aee91430"
+        },
+        "eligibleAssets": [
+          {
+            "role": "primary",
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3-1024.webp",
+            "sha256": "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71",
+            "altText": "Xenios BPC-157 10 mg lyophilized vial packaging design",
+            "caption": "Packaging design shown. Current packaging may differ."
+          },
+          {
+            "role": "label_detail",
+            "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-front-artwork-v3.webp",
+            "sha256": "ee0b3ebc5f216b38d8c2a2136bb9717f763e1c79ae08d334d1f33f673f33f318",
+            "altText": "Xenios BPC-157 10 mg front label artwork with research-use classification",
+            "caption": "Packaging design shown. Current packaging may differ."
+          }
+        ],
+        "excludedFromRuntime": [
+          "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+          "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-wrap-proof-v3.png",
+          "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-wrap-proof-v3.webp",
+          "deliveries/catalog-imagery/2026-11-04-batch-004/output/pdf/xenios-bpc-157-10mg-supplier-proof-v3.pdf",
+          "deliveries/catalog-imagery/2026-11-04-batch-004/output/pdf/xenios-bpc-157-10mg-print-spec-exceptions-v1.pdf",
+          "deliveries/catalog-imagery/2026-11-04-batch-004/print-spec-exceptions.v1.json"
+        ],
+        "requiredMountedViewports": [
+          320,
+          390,
+          768,
+          1280
+        ]
+      },
       "notEstablishedByArtwork": [
         "supplier proof approval",
         "physical dimensions or press-ready dieline",
@@ -184,8 +221,8 @@
       "role": "print_spec_exception_data",
       "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-004/print-spec-exceptions.v1.json",
       "format": "json",
-      "bytes": 1803,
-      "sha256": "63c2f76964658d5e3979df49902607cf3c80eab055040395d5d6528842adda5d"
+      "bytes": 1812,
+      "sha256": "83c3843a865972db2bb551f82a9d41e6c2dc9987be258d9fb239fb4f3f615687"
     },
     {
       "role": "contact_sheet",

@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "batchId": "catalog-imagery-2026-11-04-batch-004",
-  "createdAt": "2026-11-04T23:30:00.000Z",
+  "createdAt": "2026-11-04T20:03:04.000Z",
   "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
   "successorContext": {
-    "predecessorSourceSha": "dd71617ec04ec231646296a3ae0eafcf62cffee5",
+    "predecessorSourceSha": "e8705e0a34b0ab5bd357ccb24562dc89049aca1f",
     "predecessorPrivateReview": "KAN-31/10612",
     "disposition": "replaces the concept-banner website view with original Xenios finished artwork while retaining the prior exact-ID and code reconciliation"
   },
@@ -36,7 +36,7 @@
         "physicalProductionApproved": false
       },
       "stateSeparation": {
-        "websiteArtworkState": "finished_candidate_pending_independent_review",
+        "websiteArtworkState": "file_level_review_accepted_pending_runtime_integration",
         "physicalPackagingState": "design",
         "printedOrInUsePackagingEstablished": false,
         "supplierProofApprovalEstablished": false,
@@ -94,18 +94,26 @@
         "QR payload"
       ],
       "review": {
-        "status": "pending_independent_review",
-        "requestedReviewer": "KAN-31",
+        "status": "file_level_facts_and_visual_review_accepted_pending_runtime_integration_and_paint",
+        "reviewer": "KAN-31/10627",
+        "reviewedSourceSha": "f72de21651e4bc921c148e7290de79f1a4ea2ea4",
+        "reviewedTreeSha": "3dfc6ca68773fd27d14638efc6d1c6aa9200f931",
+        "reviewedPrimaryWebpSha256": "b7ce66ec403a78e29df86758d93f2acdbb3a30fe7b968db97c0c59ffb0d7df71",
+        "reviewedFrontWebpSha256": "ee0b3ebc5f216b38d8c2a2136bb9717f763e1c79ae08d334d1f33f673f33f318",
+        "reviewedArtifactCount": 14,
+        "exactWebsiteRendersFileLevelAccepted": 1,
+        "fullyReadyCatalogPairs": 0,
         "approvedExactProductionImages": 0,
         "publicationAuthorizedAssets": 0,
-        "publicationDisposition": "quarantined_in_delivery_path"
+        "publicationDisposition": "integration_eligible_not_customer_release"
       },
       "preciseGaps": [
-        "Independent website visual QA and release publication approval remain pending.",
+        "Exact runtime media binding, customer alt text, the existing packaging-design disclosure, mounted paint at 320/390/768/1280 and release publication approval remain pending.",
         "Actual vial and closure specification, label dimensions, printable area, seam, bleed, safe area, substrate, adhesive, finish, print process, color profile and winding remain supplier inputs.",
         "Supplier-approved storage language and manufacturer/distributor legal attribution remain unconfirmed.",
         "No lot, expiry/BUD, purity, assay, sterility, certification, CAS, COA/documentation link or QR payload is issued.",
-        "No supplier proof acceptance, physical production approval, supplier send or printed/in-use package is represented."
+        "No supplier proof acceptance, physical production approval, supplier send or printed/in-use package is represented.",
+        "Proof and exception artifacts are not eligible for runtime import."
       ]
     }
   ],
