@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-008",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "contentHandoff": {
+    "reference": "KAN-6/10624",
+    "file": "SOURCE-FOLLOWUP-session-3-20261104.internal.json",
+    "sha256": "0908c74d44619fe13f359876b5083170d9ca5da47bb0dd734339d8cd495be685",
+    "scope": "static artwork facts only"
+  },
+  "acceptedVisualReference": {
+    "reference": "KAN-31/10627",
+    "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+    "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b",
+    "reviewedSourceSha": "f72de21651e4bc921c148e7290de79f1a4ea2ea4"
+  },
+  "supplierGaps": [
+    "selected vial and closure specification",
+    "approved dieline, seam, bleed and safe area",
+    "substrate, adhesive, finish, printing process, ink/color profile and winding",
+    "storage, attribution, lot and expiry/BUD supplied by manufacturer",
+    "chemical form, excipients, and any matching documentation and QR destination"
+  ],
+  "records": [
+    {
+      "offeringId": "mo_e4de11c77d16c4c3b83d",
+      "sourceVariantId": "mov_09db3e866424b64994d3",
+      "quickOrderSku": "GEN-GRP-0264",
+      "workbook": "XENIOS_MASTER_CATALOG_ONLY_2026-08-13.xlsx",
+      "workbookRow": "MASTER CATALOG row 271 / GRP-0264, Raw Peptides flyer row 2",
+      "workbookSha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
+      "imageGenerationReceipt": "exec-f660bca4-3413-40b8-ab79-cbfe4a37113b",
+      "imageGenerationMode": "built-in imagegen, separate reference-based edit for each variant",
+      "imageGenerationPrompt": "Use case: product-mockup. Asset: variant-specific Xenios Quick Order website packaging design render. Input image 1: accepted Xenios BPC-157 family studio render to match closely, as a separate 5 mg variant. Change the amount line to exactly \"5 mg\" in bold purple. Keep the family layout, clear glass vial proportions, brushed silver closure and centered metallic purple-to-blue strip, matte pearl label with thin gradient rule, near-white backdrop, straight-on angle, restrained reflection and soft ground shadow. Square image. Entire cap, label and glass base visible with the same generous margins as the reference. Exact label lines in order: \"XENIOS\", \"BPC-157\", \"5 mg\", \"LYOPHILIZED VIAL\", \"RESEARCH USE ONLY\", \"NONCLINICAL USE ONLY\". Distinguishing amount crisp at card size. Preserve the dark navy classification box and clean typography. No other copy or numbers anywhere, no visible fill, powder or liquid, no props, medical imagery, lot or expiry data, QR code or certification.",
+      "visualInspection": "Full closure, label and base. Variant amount, form and research classification read on render.",
+      "openSourceFacts": [
+        "selected chemical form",
+        "excipients",
+        "approved storage",
+        "customer selling unit",
+        "legal manufacturer or distributor attribution"
+      ],
+      "historicalProcurementNote": "Box of ten is historical procurement only. Customer selling unit is open."
+    },
+    {
+      "offeringId": "mo_9a755fa72de0409cd937",
+      "sourceVariantId": "mov_257330ea83ecbfc45fae",
+      "quickOrderSku": "GEN-GRP-0263",
+      "workbook": "XENIOS_MASTER_CATALOG_ONLY_2026-08-13.xlsx",
+      "workbookRow": "MASTER CATALOG row 270 / GRP-0263, Unity source Sheet1 row 40",
+      "workbookSha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
+      "imageGenerationReceipt": "exec-0dd509d8-9e2a-4827-80b5-3c87d9b26300",
+      "imageGenerationMode": "built-in imagegen, separate reference-based edit for each variant",
+      "imageGenerationPrompt": "Use case: product-mockup. Asset: variant-specific Xenios Quick Order website packaging design render. Input image 1: accepted Xenios BPC-157 family studio render to match closely, as a separate 15 mg variant. Change the amount line to exactly \"15 mg\" in bold purple. Keep the family layout, clear glass vial proportions, brushed silver closure and centered metallic purple-to-blue strip, matte pearl label with thin gradient rule, near-white backdrop, straight-on angle, restrained reflection and soft ground shadow. Square image. Entire cap, label and glass base visible with the same generous margins as the reference. Exact label lines in order: \"XENIOS\", \"BPC-157\", \"15 mg\", \"LYOPHILIZED VIAL\", \"RESEARCH USE ONLY\", \"NONCLINICAL USE ONLY\". Distinguishing amount crisp at card size. Preserve the dark navy classification box and clean typography. No other copy or numbers anywhere, no visible fill, powder or liquid, no props, medical imagery, lot or expiry data, QR code or certification.",
+      "visualInspection": "Full closure, label and base. Variant amount, form and research classification read on render.",
+      "openSourceFacts": [
+        "selected chemical form",
+        "excipients",
+        "approved storage",
+        "customer selling unit",
+        "legal manufacturer or distributor attribution"
+      ]
+    }
+  ]
+}

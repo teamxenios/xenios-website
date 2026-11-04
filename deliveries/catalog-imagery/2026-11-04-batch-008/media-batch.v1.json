@@ -1,0 +1,248 @@
+{
+  "schemaVersion": 1,
+  "batchId": "catalog-imagery-2026-11-04-batch-008",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "catalogDataset": {
+    "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+    "bytes": 332053
+  },
+  "bindingDataset": {
+    "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+    "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+    "bytes": 108239
+  },
+  "authority": [
+    "KAN-59/10615",
+    "KAN-225/10616"
+  ],
+  "publicationState": "review_only_not_runtime",
+  "supplierSendPerformed": false,
+  "requiredMountedViewportsAfterReview": [
+    320,
+    390,
+    768,
+    1280
+  ],
+  "supplierDocuments": [
+    {
+      "role": "supplier_design_proof",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/output/pdf/xenios-bpc-157-5mg-15mg-supplier-design-proofs-v1.pdf",
+      "format": "pdf",
+      "bytes": 4605182,
+      "sha256": "c6997bbf30a910da7963748d5e7adf9be46013aaea90ee30e01c52ac3c20627e",
+      "pages": 4
+    },
+    {
+      "role": "print_spec_exceptions",
+      "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/output/pdf/xenios-bpc-157-5mg-15mg-print-spec-exceptions-v1.pdf",
+      "format": "pdf",
+      "bytes": 3528,
+      "sha256": "735d7e8d155c467dd0f3d75940c5a3e33c586fd8f217eb81ef9f6dee7de260a2",
+      "pages": 1
+    }
+  ],
+  "contactSheet": {
+    "role": "contact_sheet",
+    "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/contact-sheet-v1.png",
+    "format": "png",
+    "bytes": 357888,
+    "sha256": "2b75c175a8391dcae0e6224e12c9c5de1a3d8100c4fce90b29d4cc240e27fafd",
+    "width": 1800,
+    "height": 1210
+  },
+  "records": [
+    {
+      "offeringId": "mo_e4de11c77d16c4c3b83d",
+      "sourceVariantId": "mov_09db3e866424b64994d3",
+      "quickOrderSku": "GEN-GRP-0264",
+      "canonicalVariant": "BPC-157 5 mg",
+      "nominalAmountPerVialMg": 5,
+      "form": "Lyophilized vial",
+      "classification": "For laboratory research use only.",
+      "artworkVersion": "BPC157-5-WEB-SUPPLIER-v1",
+      "mediaKind": "original_xenios_website_render",
+      "websiteArtworkState": "pending_independent_file_level_review",
+      "physicalPackagingState": "design",
+      "runtimeLinked": false,
+      "publicationAuthorized": false,
+      "websiteReviewCandidates": [
+        {
+          "role": "primary",
+          "altText": "Xenios BPC-157 5 mg lyophilized vial packaging design",
+          "caption": "Packaging design shown. Current packaging may differ.",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-5mg-website-render-v1-1024.webp",
+          "sha256": "ffddb32bbf26d5ae8cc6a5a3cd43dcf7e6c50c3f7dd40162aaad6fdd4f7dc424"
+        },
+        {
+          "role": "label_detail",
+          "altText": "Xenios BPC-157 5 mg per vial front label design for research use",
+          "caption": "Packaging design shown. Current packaging may differ.",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-5mg-front-artwork-v1.webp",
+          "sha256": "4c2f3e01ccf963d17ab3ec938bc38ee302dbd730827a02fb560a9737653630a5"
+        }
+      ],
+      "artifacts": {
+        "website_primary": {
+          "role": "website_primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-5mg-website-render-v1-1024.webp",
+          "format": "webp",
+          "bytes": 45944,
+          "sha256": "ffddb32bbf26d5ae8cc6a5a3cd43dcf7e6c50c3f7dd40162aaad6fdd4f7dc424",
+          "width": 1024,
+          "height": 1024
+        },
+        "website_source_master": {
+          "role": "website_source_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-5mg-website-render-v1.png",
+          "format": "png",
+          "bytes": 1660413,
+          "sha256": "8323a9033e54dbfcbfb4b6f8bcd454990873f2bc5f89b9a2303c082e43f1a656",
+          "width": 1254,
+          "height": 1254
+        },
+        "front_editable_master": {
+          "role": "front_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/labels/bpc-157-5mg-front-artwork-v1.svg",
+          "format": "svg",
+          "bytes": 2995,
+          "sha256": "d28c44eadaeba1faa24db13a822f33fb58ce29a3316c8005f8f1397ab70cb778",
+          "width": 1600,
+          "height": 1000
+        },
+        "front_preview": {
+          "role": "front_preview",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-5mg-front-artwork-v1.png",
+          "format": "png",
+          "bytes": 83998,
+          "sha256": "6a06d9e3510be838b41bc9d503c33cd8179a8c6cf31b2c108857fe45357d76f0",
+          "width": 1600,
+          "height": 1000
+        },
+        "front_preview_web": {
+          "role": "front_preview_web",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-5mg-front-artwork-v1.webp",
+          "format": "webp",
+          "bytes": 40154,
+          "sha256": "4c2f3e01ccf963d17ab3ec938bc38ee302dbd730827a02fb560a9737653630a5",
+          "width": 1600,
+          "height": 1000
+        },
+        "wrap_editable_master": {
+          "role": "wrap_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/labels/bpc-157-5mg-wrap-proof-v1.svg",
+          "format": "svg",
+          "bytes": 6970,
+          "sha256": "f0dbe7a3f1445768fdffe29d9917ae837be362a3b383d454108fa021d75e17c7",
+          "width": 2400,
+          "height": 1200
+        },
+        "wrap_preview": {
+          "role": "wrap_preview",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-5mg-wrap-proof-v1.png",
+          "format": "png",
+          "bytes": 242686,
+          "sha256": "855d563f196d10bc7c8e0d3ccd7ac3b85174913e19d01a10ec85caf07bdd2927",
+          "width": 2400,
+          "height": 1200
+        }
+      }
+    },
+    {
+      "offeringId": "mo_9a755fa72de0409cd937",
+      "sourceVariantId": "mov_257330ea83ecbfc45fae",
+      "quickOrderSku": "GEN-GRP-0263",
+      "canonicalVariant": "BPC-157 15 mg",
+      "nominalAmountPerVialMg": 15,
+      "form": "Lyophilized vial",
+      "classification": "For laboratory research use only.",
+      "artworkVersion": "BPC157-15-WEB-SUPPLIER-v1",
+      "mediaKind": "original_xenios_website_render",
+      "websiteArtworkState": "pending_independent_file_level_review",
+      "physicalPackagingState": "design",
+      "runtimeLinked": false,
+      "publicationAuthorized": false,
+      "websiteReviewCandidates": [
+        {
+          "role": "primary",
+          "altText": "Xenios BPC-157 15 mg lyophilized vial packaging design",
+          "caption": "Packaging design shown. Current packaging may differ.",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-15mg-website-render-v1-1024.webp",
+          "sha256": "99c33810b01811e4e6d42f039315ef2655956379d9be1efa7f6b021b29d6d2ac"
+        },
+        {
+          "role": "label_detail",
+          "altText": "Xenios BPC-157 15 mg per vial front label design for research use",
+          "caption": "Packaging design shown. Current packaging may differ.",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-15mg-front-artwork-v1.webp",
+          "sha256": "abdc61d2e7b4a13acb4727f3fab4f0ca9482ff1d70b3e7d60ae84a23224b9194"
+        }
+      ],
+      "artifacts": {
+        "website_primary": {
+          "role": "website_primary",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-15mg-website-render-v1-1024.webp",
+          "format": "webp",
+          "bytes": 43730,
+          "sha256": "99c33810b01811e4e6d42f039315ef2655956379d9be1efa7f6b021b29d6d2ac",
+          "width": 1024,
+          "height": 1024
+        },
+        "website_source_master": {
+          "role": "website_source_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-15mg-website-render-v1.png",
+          "format": "png",
+          "bytes": 1629686,
+          "sha256": "1a8118163db1685da758684f0f68f7ca43ab4940c047e7a661c6aa4b6b32b836",
+          "width": 1254,
+          "height": 1254
+        },
+        "front_editable_master": {
+          "role": "front_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/labels/bpc-157-15mg-front-artwork-v1.svg",
+          "format": "svg",
+          "bytes": 2999,
+          "sha256": "edbec6221a70f7acd5ed215aad5e5be19871ed33477c8c9c6b2a3f06e4bc977d",
+          "width": 1600,
+          "height": 1000
+        },
+        "front_preview": {
+          "role": "front_preview",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-15mg-front-artwork-v1.png",
+          "format": "png",
+          "bytes": 84473,
+          "sha256": "a4475a1486e80b7b412d21af39bbf11f1e3bac7e6e662df7e30bd9ed548e91b6",
+          "width": 1600,
+          "height": 1000
+        },
+        "front_preview_web": {
+          "role": "front_preview_web",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-15mg-front-artwork-v1.webp",
+          "format": "webp",
+          "bytes": 40698,
+          "sha256": "abdc61d2e7b4a13acb4727f3fab4f0ca9482ff1d70b3e7d60ae84a23224b9194",
+          "width": 1600,
+          "height": 1000
+        },
+        "wrap_editable_master": {
+          "role": "wrap_editable_master",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/labels/bpc-157-15mg-wrap-proof-v1.svg",
+          "format": "svg",
+          "bytes": 6976,
+          "sha256": "5ec3b2a76646adafa46e4fabd6c72800946eabe6a1dfde78cff7d2aa929b0b03",
+          "width": 2400,
+          "height": 1200
+        },
+        "wrap_preview": {
+          "role": "wrap_preview",
+          "relativeAssetPath": "deliveries/catalog-imagery/2026-11-04-batch-008/assets/bpc-157-15mg-wrap-proof-v1.png",
+          "format": "png",
+          "bytes": 243387,
+          "sha256": "e7fb7042485b97d850a87ed2f7c84d940832125973c5f289bd9b0f9f1aefc573",
+          "width": 2400,
+          "height": 1200
+        }
+      }
+    }
+  ]
+}

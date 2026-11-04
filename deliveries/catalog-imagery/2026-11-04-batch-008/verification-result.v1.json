@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "batchId": "catalog-imagery-2026-11-04-batch-008",
+  "releaseBaseline": "5926c2faf1e3ed2a7dbc82822fd6c3a8c93b694b",
+  "canonicalPairs": 420,
+  "exactArtworkPairs": 2,
+  "checkedArtifacts": 17,
+  "checkedPdfPages": 5,
+  "contactSheetChecked": true,
+  "independentlyAcceptedWebsiteAssets": 0,
+  "supplierApprovedProofs": 0,
+  "supplierSendPerformed": false,
+  "runtimeLinkedAssets": 0,
+  "publicationAuthorizedAssets": 0,
+  "errors": []
+}
