@@ -3761,6 +3761,36 @@
         "file": ".xenios/handoffs/2026-11-04T19-34-56-718Z-KAN31-QO-GUEST-CATALOG-DETAIL-20261104-codex-launch-coordination-20261005.json",
         "at": "2026-11-04T19:34:56.7184435Z"
       }
+    },
+    {
+      "id": "KAN6-QO-REVIEWED-CATALOG-CONTENT-20261104",
+      "title": "Integrate reviewed catalog content into Quick Order",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-6",
+      "baseSha": "07011af2e6eb49adf26e6e80f734491a158eb406",
+      "paths": [
+        "shared/research/master-offerings/approved-content.ts",
+        "shared/research/master-offerings/contract.ts",
+        "shared/research/assisted-order/request-intent.ts",
+        "server/research/master-offerings/reviewed-content.ts",
+        "server/research/master-offerings/reviewed-content.test.ts",
+        "server/research/master-offerings/data/reviewed-public-content.json",
+        "server/research/master-offerings/customer-projection.ts",
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "client/src/research/master-offerings/ReviewedProductContent.tsx",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+      ],
+      "dependsOn": [
+        "KAN31-QO-GUEST-CATALOG-DETAIL-20261104"
+      ],
+      "scopeNote": "Implement only Samuel's reviewed-catalog content allocation at KAN-225 comment 10616 and verified KAN-6 comment 10621 on exact current release 07011af2e6eb49adf26e6e80f734491a158eb406/tree eb293bdca45d6b35cdf2c455ccef52c2a201c5e5. Limit work exactly to the thirteen paths listed in this task, including the reviewed public-content data source, shared contracts, server projection/catalog seams and existing member and guest catalog presentation. Integrate only reviewed catalog content through existing safe authorities. Add no unreviewed content, mockup adoption, pricing authority, eligibility authority, availability authority, request or receipt semantic change, Auth, configuration, role, flag, storage, customer, provider, notification, database, SQL, activation, release or production behavior. Create intended branch codex/qo-reviewed-catalog-content-20261104 separately. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/wildcard audits found no active conflict for any path. Preserve all previous Quick Order QA and release records, every unrelated task, lease, ownership rule and history. This metadata custody commit performs no application or workflow edit, branch creation, test, build, local Node, CI, browser, provider, managed action, review, merge, deployment, registration or production action.",
+      "createdAt": "2026-11-04T19:51:51.9333570Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T19:51:51.9333570Z"
     }
   ]
 }
