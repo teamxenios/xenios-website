@@ -28,27 +28,47 @@ import { card, click, page, render, type } from "./catalog-test-fixtures";
 function memoryHistory(initial: string): CatalogHistory & {
   entries: string[];
   go(search: string): void;
+  back(): void;
+  forward(): void;
 } {
   const entries = [initial];
+  let index = 0;
   const listeners = new Set<() => void>();
+  // Back and forward change the address bar, and React hears it from
+  // popstate, not from any control on the page.
+  const popstate = () =>
+    act(() => {
+      for (const listener of listeners) listener();
+    });
   return {
     entries,
-    search: () => entries[entries.length - 1] ?? "",
-    push: (search) => entries.push(search),
+    search: () => entries[index] ?? "",
+    push: (search) => {
+      entries.splice(index + 1);
+      entries.push(search);
+      index = entries.length - 1;
+    },
     replace: (search) => {
-      entries[entries.length - 1] = search;
+      entries[index] = search;
     },
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    // Back or forward: the address bar changes and React hears it from
-    // popstate, not from any control on the page.
+    /** Arrive, by traversal, at an entry whose address is `search`. */
     go: (search) => {
+      entries.splice(index + 1);
       entries.push(search);
-      act(() => {
-        for (const listener of listeners) listener();
-      });
+      index = entries.length - 1;
+      popstate();
+    },
+    back: () => {
+      index -= 1;
+      popstate();
+    },
+    forward: () => {
+      index += 1;
+      popstate();
     },
   };
 }
@@ -189,6 +209,33 @@ describe("pager focus follows the pager's own request", () => {
     expect(view.calls[2].query).toEqual({ sort: "name_asc" });
     await view.calls[2].release(page({ page: 1, totalPages: 3, total: 60, sort: "name_asc" }));
     expect(document.activeElement).toBe(document.body);
+  });
+
+  it("does not treat Back then Forward to the same address as the pager's page (10726)", async () => {
+    const view = await mountOnPageTwo();
+    const previous = view.previous();
+    act(() => previous.focus());
+    click(previous);
+    expect(view.calls[1].query).toEqual({ page: 1 });
+    expect(view.history.entries).toEqual(["?page=2", ""]);
+
+    // Before Previous answers, Back to page 2, then Forward to the very
+    // address Previous wrote. Each traversal is a new request; the Forward
+    // one asks for the same URL but is not the pager's request.
+    view.history.back();
+    expect(view.calls[2].query).toEqual({ page: 2 });
+    view.history.forward();
+    expect(view.calls[3].query).toEqual({});
+
+    await view.calls[3].release(unfiltered(1));
+    expect(view.count()).toBe("Showing 1 of 60 offerings");
+    expect([previous, document.body]).toContain(document.activeElement);
+
+    // The superseded responses arrive last and change nothing.
+    await view.calls[1].release(unfiltered(1));
+    await view.calls[2].release(unfiltered(2));
+    expect(view.count()).toBe("Showing 1 of 60 offerings");
+    expect([previous, document.body]).toContain(document.activeElement);
   });
 
   it("still moves focus to Results when the asked-for page arrives", async () => {
