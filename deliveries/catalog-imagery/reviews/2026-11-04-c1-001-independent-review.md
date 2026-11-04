@@ -33,3 +33,15 @@ The four primary WebPs, four front-detail WebPs and four design wraps pass indep
 2. Make verification reproducible from a standard Windows checkout. With `core.autocrlf=true`, the same commit produced eight SVG byte/hash failures, two Python tool hash failures and skipped the catalog/binding check. With an LF export all of those checks pass. Pin delivery text to LF or define canonical LF bytes for text pins, and compare the shared catalog/binding files as canonical committed bytes. Preserve exact binary byte checks. Document any remaining optional private check separately from required inputs.
 
 Resume on an exact successor with the two corrections, a clean Windows verification run and the same eight website WebP hashes. A metadata-only successor can reuse this visual review after byte comparison. Root owns mounted checks and the release decision. Supplier confirmation and press specifications remain separate.
+
+## Reusable website mapping check
+
+Run [verify-peptide-website-candidates.py](verify-peptide-website-candidates.py) from the repository root with Python and Pillow. Fetch the named artwork and trusted release commit objects if they are absent locally. The command reads committed bytes directly from Git and works with either Windows checkout line-ending setting.
+
+    python deliveries/catalog-imagery/reviews/verify-peptide-website-candidates.py --candidate a7f43426ec3270c3f25270b4a37bf1633a2bbeb1 --release 19d10e0495aed917b3d1fcf2844109e5e1cc6915 --batch deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001
+
+For the next CLAUDE-1 batch, substitute its exact candidate commit, independently known release baseline and delivery path. Record the resulting manifest SHA-256, variant count and WebP count in the existing review.
+
+The C1-001 run checked 4 variant pairs and 8 website WebPs against 420 canonical release pairs. A negative control replaced Ipamorelin's website primary pointer and digest with KPV's valid values while leaving both artifact lists and binaries intact. The author verifier passed that input. The new check rejected it at GEN-GRP-0302.
+
+The check covers the catalog and Quick Order joins, the primary and detail roles, exact WebP bytes, decode, dimensions, alt-text presence and packaging disclosure. Human review establishes what each image depicts, checks alt-text accuracy and wrap/proof lineage, and records whether previously reviewed artwork hashes changed. Mounted and live results require separate evidence.
