@@ -54,28 +54,46 @@ type LoadState = "loading" | "ok" | "unauthorized";
 
 export default function DocumentCenter() {
   const { member, memberChecking, memberToken } = useResearch();
+  return (
+    <ResearchMemberShell
+      title="Documents"
+      lead="Everything you have signed, and anything still waiting for your signature, in one place."
+    >
+      {memberChecking || !member || !memberToken
+        ? <ResearchRouteBoundary state={memberChecking ? "loading" : "unauthorized"}>{null}</ResearchRouteBoundary>
+        : <OwnedDocumentCenter key={memberToken} token={memberToken} />}
+    </ResearchMemberShell>
+  );
+}
+
+function OwnedDocumentCenter({ token }: { token: string }) {
   const [signed, setSigned] = useState<SignedAgreementDto[]>([]);
   const [requests, setRequests] = useState<MemberEsignRequest[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [sessionEnded, setSessionEnded] = useState(false);
+  const [readFailed, setReadFailed] = useState(false);
+  const [readAttempt, setReadAttempt] = useState(0);
 
   useEffect(() => {
-    if (!member || !memberToken) return;
     let alive = true;
+    setLoaded(false);
+    setReadFailed(false);
+    setSigned([]);
+    setRequests([]);
     (async () => {
       const [signedRes, esignRes] = await Promise.all([
-        listSignedAgreements(memberToken),
-        getEsignDocuments(memberToken),
+        listSignedAgreements(token),
+        getEsignDocuments(token),
       ]);
       if (!alive) return;
+      setReadFailed(signedRes.kind === "error" || esignRes.kind === "error");
 
       if (signedRes.kind === "ok") {
         setSigned(signedRes.data.signed ?? []);
       } else if (signedRes.kind === "unauthorized") {
         setSessionEnded(true);
       }
-      // Any other outcome (denied, disabled, unavailable, error) stays calm:
-      // the list simply remains empty, never an error banner.
+      // Disabled/unpublished endpoints retain their existing calm presentation.
 
       if (esignRes.kind === "ok") {
         setRequests(esignRes.data.documents ?? []);
@@ -88,37 +106,30 @@ export default function DocumentCenter() {
     return () => {
       alive = false;
     };
-  }, [member, memberToken]);
+  }, [token, readAttempt]);
 
-  const state: LoadState = memberChecking
-    ? "loading"
-    : !member || sessionEnded
-      ? "unauthorized"
-      : !loaded
-        ? "loading"
-        : "ok";
+  const state: LoadState = sessionEnded ? "unauthorized" : !loaded ? "loading" : "ok";
 
   const hasNothing = signed.length === 0 && requests.length === 0;
 
   return (
-    <ResearchMemberShell
-      title="Documents"
-      lead="Everything you have signed, and anything still waiting for your signature, in one place."
-    >
-      <ResearchRouteBoundary state={state}>
-        {hasNothing ? (
-          <ResearchEmptyState
-            title="No signed documents yet."
-            body="When you sign an agreement it appears here, along with anything still waiting for your signature. Nothing is wrong with your account."
-          />
-        ) : (
-          <div className="grid gap-10">
-            <EsignSection requests={requests} token={memberToken} />
-            <SignedAgreementsSection signed={signed} />
-          </div>
-        )}
-      </ResearchRouteBoundary>
-    </ResearchMemberShell>
+    <ResearchRouteBoundary state={state}>
+      {readFailed && <section role="status" aria-label="Document history read failure">
+        <p>Some document history could not be loaded. This does not mean your documents are missing.</p>
+        <button type="button" className="btn btn-secondary" onClick={() => setReadAttempt(value => value + 1)}>Retry document history</button>
+      </section>}
+      {hasNothing && !readFailed ? (
+        <ResearchEmptyState
+          title="No signed documents yet."
+          body="When you sign an agreement it appears here, along with anything still waiting for your signature. Nothing is wrong with your account."
+        />
+      ) : (
+        <div className="grid gap-10">
+          <EsignSection requests={requests} token={token} />
+          <SignedAgreementsSection signed={signed} />
+        </div>
+      )}
+    </ResearchRouteBoundary>
   );
 }
 
