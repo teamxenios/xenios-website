@@ -3849,6 +3849,28 @@
         "file": ".xenios/handoffs/2026-11-04T21-16-19Z-KAN6-QO-REVIEWED-CATALOG-BATCH-02-20261104-codex-launch-coordination-20261005.json",
         "at": "2026-11-04T21:16:19Z"
       }
+    },
+    {
+      "id": "KAN225-EARLY-ACCESS-MOBILE-GUEST-20261104",
+      "title": "Adopt the approved guest mobile Early Access source",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-225",
+      "baseSha": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/assisted-order.css",
+        ".github/workflows/qo-visual-capture.yml",
+        "scripts/qa/qo-visual-capture/capture.mjs",
+        "scripts/qa/qo-visual-capture/fixture.mjs"
+      ],
+      "dependsOn": [
+        "KAN6-QO-REVIEWED-CATALOG-BATCH-02-20261104"
+      ],
+      "scopeNote": "Implement only Samuel's directly supplied and priority-directed guest mobile work at KAN-225 comments 10657 and 10664 under standing ordinary-verification authority at KAN-225 comment 10574 and updated Root allocation at KAN-225 comment 10674 on exact current release 19d10e0495aed917b3d1fcf2844109e5e1cc6915/tree da2b16a6ff2991fe2322c931c95999262dbc709b. Limit application source work exactly to RequestIntentForm.tsx and assisted-order.css on planned branch codex/early-access-mobile-guest-20261104 from the exact live release. Limit QA work exactly to the three distinct listed harness paths on the existing harness branch at dormant successor 2b02607dbcb6e0e3154552c03a704e54369955f1. No unrelated route, header, member, policy or source authority is granted. Fresh CODE_OWNERSHIP and FILE_OWNERSHIP exact/prefix/glob audits found no active foreign conflict; the sole active CSS ownership match is the existing Root rule OWNER-KAN225-EARLY-ACCESS-MOBILE-CSS-20261104 and all matching prior code claims are handoff records only. Preserve all previous task, lease, ownership, registration, handoff and release records. This metadata claim performs no physical checkout, application, workflow, branch, test, browser, provider, factory, release or production action.",
+      "createdAt": "2026-11-04T21:44:53.704811Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T21:44:53.704811Z"
     }
   ]
 }
