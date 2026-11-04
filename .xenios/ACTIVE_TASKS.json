@@ -3863,7 +3863,8 @@
         ".github/workflows/qo-visual-capture.yml",
         "scripts/qa/qo-visual-capture/capture.mjs",
         "scripts/qa/qo-visual-capture/fixture.mjs",
-        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
       ],
       "dependsOn": [
         "KAN6-QO-REVIEWED-CATALOG-BATCH-02-20261104"
