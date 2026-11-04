@@ -2906,6 +2906,22 @@
       "state": "handoff",
       "claimedAt": "2026-11-04T00:51:18.7393954Z",
       "heartbeatAt": "2026-11-04T00:51:18.7393954Z"
+    },
+    {
+      "id": "0fae7de8-08f3-489d-8dca-eff562688be1",
+      "task": "KAN59-WHITE-LABEL-PACKAGING-CARD-20261104",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/product-media.test.tsx",
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/public/research/product-media/bpc-157-packshot.webp"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-04T02:47:09.9713854Z",
+      "heartbeatAt": "2026-11-04T02:47:09.9713854Z"
     }
   ],
   "rules": [
