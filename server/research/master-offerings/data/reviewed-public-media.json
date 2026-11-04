@@ -157,6 +157,50 @@
       },
       "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
       "primarySha256": "dd245630a36dd41da7563a1270d30bce49c7800e916a0efbf013a1b57c327668"
+    },
+    {
+      "offeringId": "mo_e4de11c77d16c4c3b83d",
+      "sourceVariantId": "mov_09db3e866424b64994d3",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-xenios-5mg-render.webp",
+          "altText": "Xenios BPC-157 5 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-xenios-5mg-front-label.webp",
+          "altText": "Xenios BPC-157 5 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "87d241fb30eaabae6df41971597024d8add1cd33",
+      "primarySha256": "ffddb32bbf26d5ae8cc6a5a3cd43dcf7e6c50c3f7dd40162aaad6fdd4f7dc424",
+      "labelPreviewSha256": "4c2f3e01ccf963d17ab3ec938bc38ee302dbd730827a02fb560a9737653630a5"
+    },
+    {
+      "offeringId": "mo_9a755fa72de0409cd937",
+      "sourceVariantId": "mov_257330ea83ecbfc45fae",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-xenios-15mg-render.webp",
+          "altText": "Xenios BPC-157 15 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-xenios-15mg-front-label.webp",
+          "altText": "Xenios BPC-157 15 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "87d241fb30eaabae6df41971597024d8add1cd33",
+      "primarySha256": "99c33810b01811e4e6d42f039315ef2655956379d9be1efa7f6b021b29d6d2ac",
+      "labelPreviewSha256": "abdc61d2e7b4a13acb4727f3fab4f0ca9482ff1d70b3e7d60ae84a23224b9194"
     }
   ]
 }
