@@ -1,7 +1,7 @@
-name: Quick Order visual capture
+name: PR385 synthetic WebKit guest capture
 on:
   push:
-    branches: [codex/qo-visual-capture-20261103]
+    branches: [codex/qo-pr385-webkit-20261104]
     paths:
       - .github/workflows/qo-visual-capture.yml
       - scripts/qa/qo-visual-capture/**
@@ -13,25 +13,26 @@ jobs:
     # Root must reconcile actual runs and bind Samuel's new Jira allowance first.
     if: >-
       github.repository == 'teamxenios/xenios-website' &&
+      github.ref == 'refs/heads/codex/qo-pr385-webkit-20261104' &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: ac53752d3486d2604d23cd6766e8c66f1cc2f78c
-      CANDIDATE_TREE: bf00d078844192037fe0731d0889f9a35a707a5e
+      CANDIDATE_SHA: 329c18e0ad7c01a0a784fa9bc3df9ebda100bbf6
+      CANDIDATE_TREE: 06c964210492f3814edf42aec2da80b6a11f71cd
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: KAN-31/10684
-      CAPTURE_ALLOWANCE_ATTEMPT: "2"
-      CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
-      CAPTURE_PRIOR_RUN_IDS: '["41919542052"]'
-      CAPTURE_RECONCILED_AT: 2026-11-04T22:18:41Z
-      CAPTURE_DIAGNOSIS: "Measure ordinary and selected phone density after the exact selected quantity reflow; retain contact gutters"
+      CAPTURE_ALLOWANCE_ID: UNBOUND
+      CAPTURE_ALLOWANCE_ATTEMPT: "1"
+      CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
+      CAPTURE_PRIOR_RUN_IDS: '[]'
+      CAPTURE_RECONCILED_AT: UNBOUND
+      CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash
         run: |
-          printf 'PLAYWRIGHT_BROWSERS_PATH=%s/qo-chromium\nEVIDENCE_DIR=%s/qo-visual-evidence\n' \
+          printf 'PLAYWRIGHT_BROWSERS_PATH=%s/qo-webkit\nEVIDENCE_DIR=%s/qo-visual-evidence\n' \
             "$RUNNER_TEMP" "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - name: Require an explicitly bound allowance and deliberate dispatch
         shell: bash
@@ -51,13 +52,12 @@ jobs:
           const attempt = Number(e.CAPTURE_ALLOWANCE_ATTEMPT);
           const maximumAttempts = Number(e.CAPTURE_ALLOWANCE_MAX_ATTEMPTS);
           const priorRunIds = JSON.parse(e.CAPTURE_PRIOR_RUN_IDS);
-          if (!/^KAN-31\/\d+$/.test(id) || id === "KAN-31/10563") throw new Error("A new, explicit Jira allowance is required");
-          if (maximumAttempts !== 2 || ![1, 2].includes(attempt) || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
+          if (!/^KAN-31\/\d+$/.test(id) || ["KAN-31/10563", "KAN-31/10573", "KAN-31/10645", "KAN-31/10684"].includes(id)) throw new Error("A new, explicit Jira allowance is required");
+          if (maximumAttempts !== 1 || attempt !== 1 || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
           if (!Array.isArray(priorRunIds) || priorRunIds.length !== attempt - 1 ||
               priorRunIds.some((v) => typeof v !== "string" || !/^\d+$/.test(v)) ||
               new Set(priorRunIds).size !== priorRunIds.length || priorRunIds.includes(e.GITHUB_RUN_ID)) throw new Error("Reconciled distinct run IDs are required");
           if (!/^\d{4}-\d{2}-\d{2}T.*Z$/.test(e.CAPTURE_RECONCILED_AT) || !Number.isFinite(Date.parse(e.CAPTURE_RECONCILED_AT))) throw new Error("Root must record pre-dispatch reconciliation");
-          if (attempt === 2 && !e.CAPTURE_DIAGNOSIS.trim()) throw new Error("Second attempt requires a diagnosed correction");
           if (e.DISPATCH_MESSAGE.trim() !== "QO capture " + id + " attempt " + attempt) throw new Error("Push is not the exact deliberate capture dispatch");
           const allowance = {
             id, attempt, maximumAttempts, consumedIncludingThisRun: attempt,
@@ -93,14 +93,14 @@ jobs:
           (
             cd harness/scripts/qa/qo-visual-capture
             npm ci --no-audit --no-fund
-            ./node_modules/.bin/playwright install --with-deps chromium
+            ./node_modules/.bin/playwright install --with-deps webkit
           )
           cd candidate
           env -i PATH="$PATH" HOME="$HOME" CI=true \
             node scripts/evidence/build-candidate-preview.mjs --sha "$CANDIDATE_SHA"
       - name: Capture the sequential synthetic viewport matrix inside a loopback-only namespace
         shell: bash
-        timeout-minutes: 6
+        timeout-minutes: 8
         run: |
           set -euo pipefail
           mkdir -p "$EVIDENCE_DIR"
@@ -114,7 +114,7 @@ jobs:
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json" guest-mobile-catalog
+            "$EVIDENCE_DIR/allowance.json" guest-mobile-webkit
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -143,19 +143,24 @@ jobs:
           import { readdirSync, readFileSync } from "node:fs";
           import { join } from "node:path";
           const e = process.env;
-          const widths = [320, 375, 390, 430, 1280];
+          const devices = new Map([[375, "iPhone SE"], [390, "iPhone 13"], [430, "iPhone 13 large viewport"]]);
+          const widths = [...devices.keys()];
           const pngs = (width) => ["catalog", "details"].map((name) => "guest-mobile-" + width + "-" + name + ".png");
           const expected = widths.flatMap(pngs).sort();
           const result = JSON.parse(readFileSync(join(e.EVIDENCE_DIR, "result.json"), "utf8"));
           const files = readdirSync(e.EVIDENCE_DIR).filter((name) => name.endsWith(".png")).sort();
-          if (result.status !== "passed" || result.profile !== "guest-mobile-catalog" ||
+          if (result.status !== "passed" || result.profile !== "guest-mobile-webkit" || result.browser?.name !== "WebKit" ||
+              result.tooling?.playwright !== "1.64.1" || result.allowance?.id !== e.CAPTURE_ALLOWANCE_ID ||
+              result.allowance?.maximumAttempts !== 1 || result.allowance?.remainingAfterThisRun !== 0 ||
               result.candidateSha !== e.CANDIDATE_SHA || result.candidateTree !== e.CANDIDATE_TREE ||
               result.harnessRevision !== e.GITHUB_SHA || result.runId !== e.GITHUB_RUN_ID ||
               result.runAttempt !== 1 || !result.network?.loopbackOnly || result.captures?.length !== widths.length ||
               JSON.stringify(files) !== JSON.stringify(expected)) throw new Error("Capture identity or PNG inventory failed");
           for (const width of widths) {
             const entry = result.captures.find((item) => item.name === "guest-mobile-" + width);
-            if (entry?.viewport.width !== width || entry.mobile !== (width < 700) || !entry.assertions?.length ||
+            if (entry?.viewport.width !== width || entry.deviceName !== devices.get(width) || !entry.mobile ||
+                entry.network?.accepted !== 1 || entry.network.syntheticIntentPosts !== (width === 390 ? 2 : 0) ||
+                entry.network.deniedWrites !== 0 || entry.network.deniedRecovery !== 0 || !entry.assertions?.length ||
                 entry.assertions.some((item) => item.pass !== true) ||
                 JSON.stringify(entry.screenshots) !== JSON.stringify(pngs(width))) {
               throw new Error("Incomplete capture context at " + width);
@@ -170,25 +175,21 @@ jobs:
           NODE
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: qo-guest-mobile-catalog-synthetic-visual-proof
+          name: qo-pr385-webkit-guest-synthetic-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-320-catalog.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-320-details.png
             ${{ env.EVIDENCE_DIR }}/guest-mobile-375-catalog.png
             ${{ env.EVIDENCE_DIR }}/guest-mobile-375-details.png
             ${{ env.EVIDENCE_DIR }}/guest-mobile-390-catalog.png
             ${{ env.EVIDENCE_DIR }}/guest-mobile-390-details.png
             ${{ env.EVIDENCE_DIR }}/guest-mobile-430-catalog.png
             ${{ env.EVIDENCE_DIR }}/guest-mobile-430-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-1280-catalog.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-1280-details.png
             ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
-          name: qo-guest-mobile-catalog-failure-manifest
+          name: qo-pr385-webkit-guest-failure-manifest
           path: ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7

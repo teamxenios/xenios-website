@@ -3,7 +3,8 @@ import { createHash } from "node:crypto";
 import { access, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
-import { chromium } from "playwright";
+import { isDeepStrictEqual } from "node:util";
+import { chromium, devices, webkit } from "playwright";
 import {
   agreementAccept, agreementStatus, alternateArtwork, alternateMemberOffering, alternateOrderVariant, alternateSourceVariant, artwork, fixtureAgreement, fixtureContact,
   fixtureCurrency, fixturePrice, fixtureResponses, svgCardFixtureResponses, fixtureUnit, guestRoute, memberBearer,
@@ -12,10 +13,20 @@ import {
 } from "./fixture.mjs";
 
 const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
-if (!["legacy", "guest-catalog-details", "reviewed-catalog", "guest-mobile-catalog"].includes(profile)) throw new Error("Unknown capture profile");
+if (!["legacy", "guest-catalog-details", "reviewed-catalog", "guest-mobile-catalog", "guest-mobile-webkit"].includes(profile)) throw new Error("Unknown capture profile");
 const guestDetailsOnly = profile === "guest-catalog-details";
 const reviewedCatalog = profile === "reviewed-catalog";
-const guestMobileCatalog = profile === "guest-mobile-catalog";
+const guestMobileWebKit = profile === "guest-mobile-webkit";
+const guestMobileCatalog = profile === "guest-mobile-catalog" || guestMobileWebKit;
+const syntheticIntentPath = guestCatalogPath.slice(0, -"/catalog".length);
+const syntheticAttemptMarker = "xenios.assisted-order.intent-attempt.v1";
+const syntheticReceipt = {
+  kind: "unapproved_selection_request",
+  requestId: "30000000-0000-4000-8000-000000000001",
+  publicReference: "XRI-30000000000040008000000000000001",
+  status: "pending_review",
+  createdAt: "2026-10-14T12:00:00.000Z",
+};
 const reviewedVialCaptures = new Map([
   ["mov_09db3e866424b64994d3", "bpc-5mg"],
   ["mov_257330ea83ecbfc45fae", "bpc-15mg"],
@@ -29,13 +40,25 @@ const capsuleEvidenceVariants = new Set([
 ]);
 const chondroVariant = "mov_2de19f71e09e8bc3febb";
 const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
+const maximumAttempts = guestMobileWebKit ? 1 : 2;
 if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
-    allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
+    allowance.maximumAttempts !== maximumAttempts || allowance.remainingAfterThisRun !== maximumAttempts - allowance.attempt) {
   throw new Error("Capture allowance does not match this dispatch");
 }
 const origin = "http://127.0.0.1:5199";
 const artworkHash = "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1";
-const viewports = guestMobileCatalog ? [
+const largeWebKitViewport = "iPhone 13 large viewport";
+const viewports = guestMobileWebKit ? [
+  { width: 375, height: 812, deviceName: "iPhone SE" },
+  { width: 390, height: 844, deviceName: "iPhone 13" },
+  { width: 430, height: 932, deviceName: largeWebKitViewport },
+].map(({ width, height, deviceName }) => {
+  const descriptor = devices[deviceName === largeWebKitViewport ? "iPhone 13" : deviceName];
+  if (!descriptor?.hasTouch || !descriptor.isMobile || descriptor.defaultBrowserType !== "webkit") {
+    throw new Error("Missing pinned WebKit mobile device preset: " + deviceName);
+  }
+  return { width, height, mobile: true, deviceName };
+}) : guestMobileCatalog ? [
   { width: 320, height: 800, mobile: true },
   { width: 375, height: 812, mobile: true },
   { width: 390, height: 844, mobile: true },
@@ -53,8 +76,11 @@ const result = {
     "Fixture prices are synthetic. No approved price, live identity, product authorization or persistence is tested.",
     "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
     "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
-    "No submission, recovery, staff readback, production release or operator activation is covered.",
-    ...(guestMobileCatalog ? ["Chromium viewport geometry and DOM focus only. Native iPhone Safari keyboard, browser chrome, zoom and safe-area behavior are not measured."] : []),
+    guestMobileWebKit ?
+      "Submission exercises two intercepted synthetic POSTs in one context, with a fabricated pending-review reference. No backend save, recovery, staff readback, production release or activation is covered." :
+      "No submission, recovery, staff readback, production release or operator activation is covered.",
+    ...(guestMobileWebKit ? ["Linux Playwright WebKit with iPhone input profiles and explicit synthetic viewport sizes. Physical Safari keyboard, browser chrome, zoom and safe-area behavior are not measured."] :
+      guestMobileCatalog ? ["Chromium viewport geometry and DOM focus only. Native iPhone Safari keyboard, browser chrome, zoom and safe-area behavior are not measured."] : []),
   ],
   candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt), allowance, profile,
   artifacts: `https://github.com/teamxenios/xenios-website/actions/runs/${runId}#artifacts`,
@@ -84,9 +110,34 @@ async function waitForPreview(process) {
   throw new Error("Existing loopback preview did not become ready");
 }
 
+function isExactSyntheticIntent(body, fixtures) {
+  const config = fixtures.get(syntheticIntentPath + "/config");
+  const acceptedAt = body?.agreements?.[0]?.acceptedAt;
+  if (typeof acceptedAt !== "string" || !Number.isFinite(Date.parse(acceptedAt)) ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body?.idempotencyKey ?? "")) return false;
+  const shippingAddress = {
+    line1: fixtureContact.shippingLine1, city: fixtureContact.shippingCity, region: fixtureContact.shippingRegion,
+    postalCode: fixtureContact.shippingPostalCode, countryCode: fixtureContact.shippingCountryCode,
+  };
+  const acknowledgmentPairs = [...config.requiredAgreements, ...config.formAcknowledgments.filter(({ scope }) =>
+    scope === "always" || scope === "research_use_only")];
+  return isDeepStrictEqual(body, {
+    idempotencyKey: body.idempotencyKey,
+    contact: {
+      fullLegalName: fixtureContact.name, email: fixtureContact.email, mobilePhone: fixtureContact.phone,
+      ageConfirmed: true, shippingAddress, billingSameAsShipping: true, billingAddress: shippingAddress,
+    },
+    lines: [{ productId: "qa-bpc-157-product", variantId: orderVariant, quantity: 2 }],
+    agreements: acknowledgmentPairs.map(({ kind, version }) => ({ kind, version, accepted: true, acceptedAt })),
+  });
+}
+
 async function captureContext(browser, fixtures, viewport, mobile, member, entry) {
+  const deviceName = entry.deviceName === largeWebKitViewport ? "iPhone 13" : entry.deviceName;
+  const device = deviceName ? devices[deviceName] : null;
   const context = await browser.newContext({
-    viewport, screen: viewport, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: 1,
+    viewport, screen: viewport, isMobile: mobile, hasTouch: mobile,
+    deviceScaleFactor: device?.deviceScaleFactor ?? 1, ...(device ? { userAgent: device.userAgent } : {}),
     locale: "en-US", serviceWorkers: "block", acceptDownloads: false,
   });
   if (member) {
@@ -97,6 +148,9 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
   const traffic = { accepted: 0, verifiedMember: 0, fallbackAssetAborted: 0, deniedExternal: 0,
     deniedLocalReads: 0, deniedWrites: 0, deniedRecovery: 0, deniedWebSockets: 0 };
   entry.network = traffic;
+  const syntheticProof = guestMobileWebKit && entry.deviceName === "iPhone 13";
+  let firstIntentBody;
+  if (guestMobileWebKit) traffic.syntheticIntentPosts = 0;
   await context.routeWebSocket("**/*", (socket) => {
     traffic.deniedWebSockets += 1;
     return socket.close();
@@ -115,6 +169,23 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
       if (body && Object.keys(body).length === 2 && body.kind === fixtureAgreement.kind && body.version === fixtureAgreement.version) {
         traffic.accepted += 1;
         return intercept.fulfill({ json: { ok: true, ...fixtureAgreement, alreadyAccepted: false } });
+      }
+    }
+    if (syntheticProof && !member && request.method() === "POST" && url.pathname === syntheticIntentPath &&
+        !url.search && traffic.accepted === 1 && traffic.syntheticIntentPosts < 2) {
+      let body;
+      try { body = request.postDataJSON(); } catch {}
+      if (!request.headers().authorization && request.headers()["content-type"] === "application/json" &&
+          isExactSyntheticIntent(body, fixtures)) {
+        if (traffic.syntheticIntentPosts === 0) {
+          firstIntentBody = request.postData();
+          traffic.syntheticIntentPosts += 1;
+          return intercept.abort("failed");
+        }
+        if (request.postData() === firstIntentBody) {
+          traffic.syntheticIntentPosts += 1;
+          return intercept.fulfill({ status: 201, json: syntheticReceipt, headers: { "cache-control": "no-store" } });
+        }
       }
     }
     if (/\/(recover|recovery)(?:\/|$)/.test(url.pathname) && url.pathname.startsWith("/api/")) {
@@ -167,7 +238,8 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
 async function screenshot(entry, suffix, locator) {
   const file = entry.name + "-" + suffix + ".png";
   try {
-    await locator.screenshot({ path: join(output, file), timeout: 4500, animations: "disabled" });
+    await locator.screenshot({ path: join(output, file), timeout: 4500, animations: "disabled",
+      ...(guestMobileWebKit ? { scale: "css" } : {}) });
     entry.screenshots.push(file);
   } catch (error) {
     report(entry, suffix + " screenshot", false, briefError(error));
@@ -790,15 +862,70 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
     }));
 }
 
+async function exerciseSyntheticIntent(page, entry, scope) {
+  const review = scope.getByRole("button", { name: "Review request", exact: true });
+  for (const [field, value] of Object.entries(fixtureContact)) {
+    await scope.locator('input[name="' + field + '"]').fill(value);
+  }
+  await scope.getByRole("checkbox", { name: "I confirm I am at least 18 years old.", exact: true }).check();
+  const email = scope.locator('input[name="email"]');
+  await email.fill("invalid");
+  await review.tap();
+  report(entry, "invalid contact stays on contact with zero submission calls",
+    await email.evaluate((input) => input.validity.typeMismatch) && await review.isVisible() &&
+    entry.network.syntheticIntentPosts === 0);
+  await email.fill(fixtureContact.email);
+  await review.tap();
+  const heading = scope.getByRole("heading", { name: "Review your request", exact: true });
+  await heading.waitFor();
+  const submit = scope.getByRole("button", { name: "Submit for review", exact: true });
+  report(entry, "selected exact quantity reaches review and submission is disabled before acknowledgments",
+    await scope.getByText(/Requested quantity: 2/).isVisible() && await submit.isDisabled() &&
+    entry.network.syntheticIntentPosts === 0);
+  const acknowledgments = scope.getByRole("group", { name: "Confirm the current requirements", exact: true }).getByRole("checkbox");
+  const count = await acknowledgments.count();
+  if (!count) throw new Error("Missing synthetic request acknowledgments");
+  for (const box of await acknowledgments.all()) await box.check();
+  await submit.tap();
+  const alert = scope.getByRole("alert").filter({ hasText: "We could not confirm the result." });
+  await alert.waitFor();
+  const retry = scope.getByRole("button", { name: "Retry same request", exact: true });
+  report(entry, "lost reply retains the existing marker and offers a manual retry without confirmation",
+    entry.network.syntheticIntentPosts === 1 && await retry.isEnabled() &&
+    await page.evaluate((key) => {
+      const marker = JSON.parse(sessionStorage.getItem(key) ?? "null");
+      return marker?.state === "in_flight" && Object.keys(marker).sort().join(",") === "acceptedAt,key,state";
+    }, syntheticAttemptMarker) &&
+    await page.getByRole("heading", { name: "Request saved for review", exact: true }).count() === 0);
+  await retry.tap();
+  const saved = page.getByRole("heading", { name: "Request saved for review", exact: true });
+  await saved.waitFor();
+  report(entry, "byte-identical explicit retry renders only the synthetic pending-review confirmation",
+    entry.network.syntheticIntentPosts === 2 &&
+    await page.getByText(syntheticReceipt.publicReference, { exact: true }).isVisible() &&
+    await page.evaluate((key) => sessionStorage.getItem(key) === null, syntheticAttemptMarker) &&
+    await scope.locator(".xenios-order-catalog-toolbar").count() === 0);
+}
+
 async function capture(browser, fixtures, kind, size, rows) {
-  const { mobile, ...viewport } = size;
-  const entry = { name: kind + "-" + viewport.width, viewport, mobile, assertions: [], screenshots: [] };
+  const { mobile, deviceName, ...viewport } = size;
+  const entry = { name: kind + "-" + viewport.width, viewport, mobile, ...(deviceName ? { deviceName } : {}),
+    assertions: [], screenshots: [] };
   result.captures.push(entry);
   const member = kind === "member" || kind === "member-reviewed-catalog";
   const { context, page } = await captureContext(browser, fixtures, viewport, mobile, member, entry);
   try {
-    if (kind === "guest-mobile") await captureGuestMobile(page, entry, rows);
-    else if (rows) await captureReviewedCatalog(page, entry, rows, member);
+    if (kind === "guest-mobile") {
+      await captureGuestMobile(page, entry, rows);
+      if (guestMobileWebKit && entry.deviceName === "iPhone 13") {
+        try {
+          await exerciseSyntheticIntent(page, entry,
+            page.getByTestId("request-door-mixed").locator(".xenios-order-page--guest-catalog"));
+        } catch {
+          throw new Error("Synthetic guest request checks did not finish");
+        }
+      }
+    } else if (rows) await captureReviewedCatalog(page, entry, rows, member);
     else if (kind === "member") await captureMember(page, entry);
     else if (kind === "guest-details") await captureGuestDetails(page, entry);
     else await captureGuest(page, entry);
@@ -913,8 +1040,8 @@ try {
   if (provenance.candidateSha !== candidateSha || provenance.sourceTree !== candidateTree) {
     throw new Error("Loopback preview provenance does not match the pinned candidate");
   }
-  browser = await chromium.launch({ headless: true, timeout: 12000 });
-  result.browser = { name: "Chromium", version: browser.version() };
+  browser = await (guestMobileWebKit ? webkit : chromium).launch({ headless: true, timeout: 12000 });
+  result.browser = { name: guestMobileWebKit ? "WebKit" : "Chromium", version: browser.version() };
   if (guestMobileCatalog) {
     for (const size of viewports) await capture(browser, guestFixtures, "guest-mobile", size, mobileFixtures);
   } else if (reviewedCatalog) {
