@@ -3123,7 +3123,8 @@
         "client/src/research/assisted-order/assisted-order.css",
         ".github/workflows/qo-visual-capture.yml",
         "scripts/qa/qo-visual-capture/capture.mjs",
-        "scripts/qa/qo-visual-capture/fixture.mjs"
+        "scripts/qa/qo-visual-capture/fixture.mjs",
+        "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-04T21:44:53.704811Z",
