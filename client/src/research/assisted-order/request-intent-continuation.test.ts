@@ -9,6 +9,9 @@ const receipt = {
   kind: "unapproved_selection_request" as const, requestId: "30000000-0000-4000-8000-000000000001",
   publicReference: "XRI-30000000000040008000000000000001", status: "pending_review" as const, createdAt: "2026-10-14T12:00:00.000Z",
 };
+const scopeA = "a".repeat(64);
+const scopeB = "b".repeat(64);
+
 class FakeStorage {
   readonly map = new Map<string, string>();
   get length() { return this.map.size; }
@@ -27,25 +30,37 @@ function fromAnEarlierPageLoad(storage: FakeStorage) {
 describe("confirmed reference record", () => {
   it("round-trips only the owner, reference, time and page-load id, and rebuilds the same receipt after a reload", () => {
     const storage = new FakeStorage();
-    expect(rememberConfirmedReceipt(storage, "owner-a", receipt)).toBe(true);
+    expect(rememberConfirmedReceipt(storage, scopeA, receipt)).toBe(true);
     expect([...storage.map.keys()]).toEqual([REQUEST_INTENT_RECEIPT_RECORD_KEY]);
     expect(JSON.parse(storage.map.get(REQUEST_INTENT_RECEIPT_RECORD_KEY)!)).toEqual({
-      owner: "owner-a", publicReference: receipt.publicReference, createdAt: receipt.createdAt, pageLoad: expect.any(String),
+      owner: scopeA, publicReference: receipt.publicReference, createdAt: receipt.createdAt, pageLoad: expect.any(String),
     });
     // Same page load: not reopened, but kept for a later load.
-    expect(readConfirmedReceiptRecord(storage, "owner-a")).toBeNull();
+    expect(readConfirmedReceiptRecord(storage, scopeA)).toBeNull();
     expect(storage.map.size).toBe(1);
     fromAnEarlierPageLoad(storage);
-    expect(readConfirmedReceiptRecord(storage, "owner-a")).toEqual(receipt);
+    expect(readConfirmedReceiptRecord(storage, scopeA)).toEqual(receipt);
     expect(storage.map.size).toBe(1);
-    expect(referenceConfirmedInThisTab(storage, receipt.publicReference)).toBe(receipt.createdAt);
-    expect(referenceConfirmedInThisTab(storage, "XRI-30000000000040008000000000000002")).toBeNull();
-    expect(referenceConfirmedInThisTab(null, receipt.publicReference)).toBeNull();
+    expect(referenceConfirmedInThisTab(storage, receipt.publicReference, scopeA)).toBe(receipt.createdAt);
+    expect(referenceConfirmedInThisTab(storage, "XRI-30000000000040008000000000000002", scopeA)).toBeNull();
+    expect(referenceConfirmedInThisTab(null, receipt.publicReference, scopeA)).toBeNull();
   });
   it("reports the reference as confirmed in this tab during the same page load too", () => {
     const storage = new FakeStorage();
-    rememberConfirmedReceipt(storage, "owner-a", receipt);
-    expect(referenceConfirmedInThisTab(storage, receipt.publicReference)).toBe(receipt.createdAt);
+    rememberConfirmedReceipt(storage, scopeA, receipt);
+    expect(referenceConfirmedInThisTab(storage, receipt.publicReference, scopeA)).toBe(receipt.createdAt);
+  });
+  it("only exposes the confirmation time to the stored verified scope", () => {
+    const storage = new FakeStorage();
+    rememberConfirmedReceipt(storage, scopeA, receipt);
+    const original = storage.map.get(REQUEST_INTENT_RECEIPT_RECORD_KEY);
+    const getItem = vi.fn((key: string) => storage.getItem(key));
+    expect(referenceConfirmedInThisTab({ getItem }, receipt.publicReference, null)).toBeNull();
+    expect(referenceConfirmedInThisTab({ getItem }, receipt.publicReference, "early-access-session")).toBeNull();
+    expect(getItem).not.toHaveBeenCalled();
+    expect(referenceConfirmedInThisTab(storage, receipt.publicReference, scopeB)).toBeNull();
+    expect(storage.map.get(REQUEST_INTENT_RECEIPT_RECORD_KEY)).toBe(original);
+    expect(referenceConfirmedInThisTab(storage, receipt.publicReference, scopeA)).toBe(receipt.createdAt);
   });
   it("is reopened by a fresh evaluation of the module, which is what a reload is", async () => {
     const storage = new FakeStorage();
@@ -93,7 +108,7 @@ describe("confirmed reference record", () => {
     const storage = new FakeStorage();
     storage.setItem(REQUEST_INTENT_RECEIPT_RECORD_KEY, raw);
     expect(readConfirmedReceiptRecord(storage, "o")).toBeNull();
-    expect(referenceConfirmedInThisTab(storage, receipt.publicReference)).toBeNull();
+    expect(referenceConfirmedInThisTab(storage, receipt.publicReference, scopeA)).toBeNull();
   });
   it("refuses to remember a receipt whose reference is not a review-request reference", () => {
     const storage = new FakeStorage();
@@ -109,7 +124,7 @@ describe("confirmed reference record", () => {
     const denied = new FakeStorage();
     denied.getItem = () => { throw new DOMException("denied", "SecurityError"); };
     expect(readConfirmedReceiptRecord(denied, "o")).toBeNull();
-    expect(referenceConfirmedInThisTab(denied, receipt.publicReference)).toBeNull();
+    expect(referenceConfirmedInThisTab(denied, receipt.publicReference, scopeA)).toBeNull();
     expect(() => forgetConfirmedReceipt({ removeItem: () => { throw new Error("denied"); } })).not.toThrow();
   });
   it("forgets the record on request", () => {
