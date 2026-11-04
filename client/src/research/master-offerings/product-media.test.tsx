@@ -9,6 +9,7 @@ import { card, click, detail, render, variant } from "./catalog-test-fixtures";
 
 const vial = variant({ id: "mov_9262033fe69a14a50f1c", label: "Listed vial" });
 const capsule = variant({ id: "mov_82974ab2f9c652c2cb12", label: "Listed capsule" });
+const bpc157 = variant({ id: "mov_ca3e45ae9712aee91430", label: "BPC-157 10 mg" });
 
 function mediaImage(host: HTMLElement) {
   const image = host.querySelector<HTMLImageElement>('[data-testid="product-media-image"]');
@@ -37,6 +38,37 @@ describe("product visuals on catalog routes", () => {
       expect(image.getAttribute("alt")).toBe("Fixture product illustration, vial");
       expect(image.getAttribute("loading")).toBe("lazy");
       expect(host.textContent).toContain("Representative illustration");
+    } finally {
+      unmount();
+    }
+  });
+
+  it("uses the exact BPC-157 packshot and falls back through the vial illustration", () => {
+    const { host, unmount } = render(
+      <ul><MasterOfferingCard product={card({ displayName: "BPC-157", variants: [bpc157] })} /></ul>,
+    );
+    try {
+      const image = mediaImage(host);
+      expect(image.getAttribute("src")).toBe("/research/product-media/bpc-157-packshot.webp");
+      expect(image.getAttribute("width")).toBe("128");
+      expect(image.getAttribute("height")).toBe("128");
+      expect(host.textContent).toContain("Representative illustration · Conceptual packaging");
+      act(() => { image.dispatchEvent(new Event("error")); });
+      const fallback = expectAsset(host, "vial");
+      expect(host.textContent).not.toContain("Conceptual packaging");
+      act(() => { fallback.dispatchEvent(new Event("error")); });
+      expectAsset(host, "unknown");
+    } finally {
+      unmount();
+    }
+  });
+
+  it("keeps the format illustration on a multi-variant card containing the packshot variant", () => {
+    const { host, unmount } = render(
+      <ul><MasterOfferingCard product={card({ variants: [bpc157, vial] })} /></ul>,
+    );
+    try {
+      expectAsset(host, "vial");
     } finally {
       unmount();
     }
