@@ -3130,6 +3130,17 @@
       "state": "active",
       "claimedAt": "2026-11-04T21:44:53.704811Z",
       "heartbeatAt": "2026-11-04T21:44:53.704811Z"
+    },
+    {
+      "id": "e9c783b4-9eeb-4891-9f97-e093796425ba",
+      "task": "KAN6-QO-REVIEWED-RESEARCH-PARTIAL-01-20261104",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-04T22:48:56.713900Z",
+      "heartbeatAt": "2026-11-04T22:48:56.713900Z"
     }
   ],
   "rules": [

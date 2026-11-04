@@ -3873,6 +3873,24 @@
       "createdAt": "2026-11-04T21:44:53.704811Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-04T21:44:53.704811Z"
+    },
+    {
+      "id": "KAN6-QO-REVIEWED-RESEARCH-PARTIAL-01-20261104",
+      "title": "Adopt reviewed research partial 01 source for Quick Order",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-6",
+      "baseSha": "f0e247585c1cd466022530a4f40c99fd03af1957",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "dependsOn": [
+        "KAN6-QO-REVIEWED-CATALOG-BATCH-02-20261104"
+      ],
+      "scopeNote": "Claim only Samuel's current website execution directive and the actual Root source allocation at KAN-6 comment 10719. Limit source work exactly to server/research/master-offerings/data/reviewed-public-content.json on planned branch codex/early-access-reviewed-research-partial-20261104 from frozen PR 383 head f0e247585c1cd466022530a4f40c99fd03af1957/tree f5cab0de3370d6ea0c9a89ba167fe11f4b8516be. Fresh CODE_OWNERSHIP exact/prefix/wildcard and FILE_OWNERSHIP audits found no active lease or file rule conflict. The only broad task-path match is the preserved August CATALOG-ACTION-UNIFICATION record; its matching lease 77a0406e-4874-4719-9cc0-6dd3126e3679 is released and its last heartbeat was 2026-08-21. Preserve PR 383 head, all earlier HANDOFF records, active guest mobile lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba, every foreign record, historical rule and current release. Root source tools remain idle during this custody operation. This metadata claim performs no source checkout edit, worktree, branch creation, registration, new identity, test, browser, provider, managed action, release or production operation.",
+      "createdAt": "2026-11-04T22:48:56.713900Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-04T22:48:56.713900Z"
     }
   ]
 }
