@@ -88,7 +88,7 @@
           "displayedCode": "GEN-GRP-0262",
           "authority": "current committed Quick Order binding",
           "historicalCommerceVariantCode": "R360-BPC157-10MG-VIAL",
-          "historicalCodeDisposition": "not displayed; retained as historical evidence only",
+          "historicalCodeDisposition": "not displayed on the v2 label; retained in internal evidence and the internal contact-sheet note only",
           "manufacturingTraceability": "not established"
         },
         "notEstablishedByArtwork": [

@@ -147,6 +147,11 @@ for (const record of batch.records) {
     record.media.catalogCodeReconciliation.historicalCommerceVariantCode !== binding?.productControlSku,
     `${pair}: historical code was not kept separate`,
   );
+  check(
+    record.media.catalogCodeReconciliation.historicalCodeDisposition ===
+      "not displayed on the v2 label; retained in internal evidence and the internal contact-sheet note only",
+    `${pair}: historical-code display disposition is ambiguous`,
+  );
 
   const assets = [
     ...record.media.images.map((asset) => ({ ...asset, imageRole: asset.role })),

@@ -57,7 +57,7 @@
             "single vial, 10 mg",
             "historical commerce variant code R360-BPC157-10MG-VIAL"
           ],
-          "limitation": "This historical code is not displayed in v2. The current committed Quick Order binding is GEN-GRP-0262. Neither code is a manufacturing lot or traceability code. Availability and commerce fields are outside this media batch."
+          "limitation": "This historical code is not displayed on the v2 label; it appears only in internal evidence and the internal contact-sheet note. The current committed Quick Order binding is GEN-GRP-0262. Neither code is a manufacturing lot or traceability code. Availability and commerce fields are outside this media batch."
         },
         {
           "path": "client/public/research/product-media/bpc-157-packshot.webp",

@@ -19,7 +19,7 @@ The successor remains isolated from runtime and public media paths. It does not 
 
 | Review request | Successor correction |
 | --- | --- |
-| Reconcile historical `R360-BPC157-10MG-VIAL` with the current Quick Order binding. | The label now displays `GEN-GRP-0262`, taken from the exact committed binding. `R360-BPC157-10MG-VIAL` remains internal evidence only as a historical commerce variant code. Neither code is represented as manufacturing traceability. |
+| Reconcile historical `R360-BPC157-10MG-VIAL` with the current Quick Order binding. | The label now displays `GEN-GRP-0262`, taken from the exact committed binding. `R360-BPC157-10MG-VIAL` is not displayed on the v2 label and remains only in internal evidence and the internal contact-sheet note as a historical commerce variant code. Neither code is represented as manufacturing traceability. |
 | Pin portable catalog bytes. | The manifest and verifier pin committed blob `95fa8d928b3137e42f89cd168c30428c9078af6b` and raw SHA-256 `76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5`. A CRLF checkout is normalized before validation. |
 | Keep the bottom-left note within its column. | The note is split into three bounded lines inside the left panel. |
 | Keep the mockup traceability box inside the safe boundary. | The box was moved upward; its bottom edge is inside the dashed boundary. |
