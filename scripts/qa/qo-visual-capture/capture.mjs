@@ -11,9 +11,10 @@ import {
 } from "./fixture.mjs";
 
 const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
-if (!["legacy", "guest-catalog-details", "reviewed-catalog", "c1-catalog"].includes(profile)) throw new Error("Unknown capture profile");
+if (!["legacy", "guest-catalog-details", "reviewed-catalog", "c1-catalog", "pr393-catalog"].includes(profile)) throw new Error("Unknown capture profile");
 const guestDetailsOnly = profile === "guest-catalog-details";
-const c1Catalog = profile === "c1-catalog";
+const pr393Catalog = profile === "pr393-catalog";
+const c1Catalog = profile === "c1-catalog" || pr393Catalog;
 const reviewedCatalog = profile === "reviewed-catalog";
 const c1ManifestSha = "d134d7000e8cddb1d89b5346bc8275e6eb6a7d60736897f734bcf0494147eb1c";
 const c1DatasetSha = "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5";
@@ -43,7 +44,7 @@ if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinct
 }
 const origin = "http://127.0.0.1:5199";
 const artworkHash = "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1";
-const viewports = [
+const viewports = pr393Catalog ? [{ width: 390, height: 844, mobile: true }] : [
   { width: 320, height: 800, mobile: true },
   { width: guestDetailsOnly || reviewedCatalog || c1Catalog ? 390 : 375, height: 844, mobile: true },
   { width: 768, height: 1024, mobile: false },
@@ -56,6 +57,7 @@ const result = {
     c1Catalog ? "This exact-pair fixture mounts application routes with intercepted catalog projections and synthetic member identity. The guest has a fixture-recorded agreement; Add and Remove change only local selection." :
       "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
     "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
+    ...(pr393Catalog ? ["Checks preserve existing copy and capsule documentation notices. No production identity or ordering is tested."] : []),
     "No submission, recovery, staff readback, production release or operator activation is covered.",
   ],
   candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt), allowance, profile,
@@ -685,6 +687,79 @@ async function c1ActionHref(link) {
   return link.getAttribute("href");
 }
 
+
+async function loadPr393Fixture() {
+  const bytes = await readFile(join(output, "pr393-fixture.json"));
+  const sha256 = createHash("sha256").update(bytes).digest("hex");
+  const fixture = JSON.parse(bytes);
+  if (sha256 !== "2422a3fc89049d8686470b5e1f330c98771b3dd56150ccc76498cb37c7f7f651" || fixture.tree !== candidateTree || fixture.guestRoute !== guestRoute ||
+      fixture.identities.length !== 9 || Object.keys(fixture.responses).length !== 11) {
+    throw new Error("PR393 fixture does not match the exact candidate tree");
+  }
+  result.fixture = { sha256, policy: { agreement: fixtureAgreement, acceptance: "synthetic GET only" } };
+  return fixture;
+}
+
+async function pr393Fixtures(fixture, member) {
+  const base = await fixtureResponses(candidate, origin, member);
+  const guestApi = "/api/research/early-access/request-intents/catalog";
+  const memberApi = "/api/research/catalog-display/v2/catalog";
+  const guest = fixture.responses[guestApi];
+  if (member) base.set(memberApi, fixture.responses[memberApi]);
+  else base.set(guestApi, guest);
+  const rows = new Map();
+  for (const identity of fixture.identities) {
+    const detail = fixture.responses[identity.memberDetailApi];
+    const product = detail.product;
+    const variant = product.variants.find((entry) => entry.id === identity.sourceVariantId);
+    const item = guest.items.find((entry) => entry.sourceSelection?.variantId === identity.sourceVariantId);
+    if (!variant || product.id !== identity.offeringId || !item ||
+        item.sourceSelection.family !== product.family || item.sourceSelection.slug !== product.slug ||
+        item.productName !== product.displayName || item.specification !== variant.label || rows.has(variant.id)) {
+      throw new Error("Projected PR393 identity does not match the exact fixture");
+    }
+    if (member) base.set(identity.memberDetailApi, detail);
+    rows.set(variant.id, { product, variant, identity, reviewedMedia: variant.reviewedMedia,
+      reviewedContent: variant.reviewedContent, detailRoute: identity.memberRoute,
+      primarySha256: identity.assetHashes?.primary, labelSha256: identity.assetHashes?.labelPreview });
+  }
+  return { base, rows };
+}
+
+async function readPr393ProductInformation(scope, copy) {
+  const region = scope.getByRole("region", { name: "Product information", exact: true });
+  if (!copy) {
+    const regionPresent = await region.count() !== 0;
+    return { regionPresent, exactRegion: !regionPresent, documentHrefs: [] };
+  }
+  await region.waitFor();
+  const actual = await region.evaluate((node) => ({
+    brand: node.querySelector(":scope > p")?.textContent ?? null,
+    sections: [...node.querySelectorAll(":scope > div")].map((section) => {
+      const title = section.querySelector(":scope > h2, :scope > h3")?.textContent ?? null;
+      if (title === "Specifications") return { title, rows: [...section.querySelectorAll("dl > div")].map((row) => ({
+        label: row.querySelector("dt")?.textContent ?? null, value: row.querySelector("dd")?.textContent ?? null,
+      })) };
+      if (title === "Documentation") return { title, rows: [...section.querySelectorAll("ul > li > a")].map((link) => ({
+        label: link.textContent, href: link.getAttribute("href"),
+      })) };
+      return { title, text: section.querySelector(":scope > p")?.textContent ?? null };
+    }),
+  }));
+  const sections = [{ title: "Overview", text: copy.overview }];
+  if (copy.specifications?.length) sections.push({ title: "Specifications",
+    rows: copy.specifications.map(({ label, value }) => ({ label, value })) });
+  for (const [title, text] of [["Purpose", copy.purpose], ["Ingredients", copy.ingredients], ["Label information", copy.label],
+    ["Cautions", copy.cautions], ["Storage", copy.storage]]) {
+    if (text) sections.push({ title, text });
+  }
+  if (copy.documentation?.length) sections.push({ title: "Documentation",
+    rows: copy.documentation.map(({ label, href }) => ({ label, href })) });
+  return { regionPresent: true, exactRegion: JSON.stringify(actual) === JSON.stringify({ brand: copy.brand || null, sections }),
+    documentHrefs: actual.sections.find((section) => section.title === "Documentation")?.rows.map((row) => row.href) ?? [] };
+}
+
+
 async function captureC1Catalog(page, entry, rows, member) {
   const entryUrl = origin + (member ? memberRoute : guestRoute);
   const admittedPrimaries = new Set([...rows.values()].filter((row) => row.reviewedMedia)
@@ -713,9 +788,10 @@ async function captureC1Catalog(page, entry, rows, member) {
       await scope.getByRole("link", { name: "View front label artwork", exact: true }).count() === 0 &&
       await scope.getByText(c1Disclosure, { exact: true }).count() === 0;
   };
-  for (const { product, variant, reviewedMedia, primarySha256, labelSha256, detailRoute } of rows.values()) {
+  for (const { product, variant, identity, reviewedMedia, reviewedContent, primarySha256, labelSha256, detailRoute } of rows.values()) {
     const pair = { offeringId: product.id, variantId: variant.id, entryRoute: new URL(entryUrl).pathname,
       detailRoute: member ? detailRoute : guestRoute, requestAccess: false, wrongStrength: !reviewedMedia };
+    if (identity) Object.assign(pair, { sku: identity.sku, art: identity.art });
     entry.pairs.push(pair);
     const card = member
       ? page.locator('[data-testid="mo-card"][data-offering-id="' + product.id + '"]')
@@ -726,7 +802,7 @@ async function captureC1Catalog(page, entry, rows, member) {
     const exactVariant = card.locator('[data-testid="mo-variant-row"][data-variant-id="' + variant.id + '"]');
     pair.requestAccess = member ?
       (await exactVariant.getByTestId("mo-variant-label").textContent()) === variant.label &&
-        await exactVariant.getByText("Request access", { exact: true }).first().isVisible() &&
+        await exactVariant.getByText(identity ? variant.displayLabel : "Request access", { exact: true }).first().isVisible() &&
         await exactVariant.getByTestId("mo-card-buy-now").count() === 0 :
       await card.getByText(variant.label, { exact: true }).isVisible() &&
         await card.getByRole("button", { name: "Add " + product.displayName + " to request", exact: true }).isEnabled();
@@ -744,6 +820,16 @@ async function captureC1Catalog(page, entry, rows, member) {
         proof.initialEmpty && proof.selectedProduct === product.displayName && proof.selectedVariant === variant.label &&
         proof.selectedQuantity && proof.singleSelection && proof.continueEnabled && proof.reset);
     }
+    if (identity && !member) {
+      const summary = reviewedContent && card.locator(":scope > p").filter({ hasText: reviewedContent.summary });
+      pair.copySummary = !summary || await summary.count() === 1 &&
+        await summary.textContent() === ((reviewedContent.brand ? reviewedContent.brand + " · " : "") + reviewedContent.summary);
+      report(entry, variant.id + " guest card preserves the exact approved summary", pair.copySummary);
+      if (capsuleEvidenceVariants.has(variant.id)) {
+        pair.capsuleNotice = await card.getByText("Research Use Only. Nonclinical use only.", { exact: true }).isVisible();
+        report(entry, variant.id + " guest capsule retains research-use notice", pair.capsuleNotice);
+      }
+    }
     if (reviewedMedia) {
       const cardImage = await imageEvidence(page, card, reviewedMedia.primary.href, null);
       checkImage(entry, variant.id + " card", cardImage, reviewedMedia.primary.href, false, reviewedMedia.primary.altText);
@@ -756,7 +842,7 @@ async function captureC1Catalog(page, entry, rows, member) {
         pair.cardDisclosure && await card.getByRole("link", { name: "View front label artwork", exact: true }).count() === 0);
     } else {
       pair.cardGeneric = await genericOnly(card);
-      report(entry, variant.id + " card never borrows a different KPV strength", pair.cardGeneric);
+      report(entry, variant.id + " card never borrows reviewed artwork from another variant", pair.cardGeneric);
     }
 
     let scope;
@@ -782,6 +868,17 @@ async function captureC1Catalog(page, entry, rows, member) {
         pair.detailRequestHref === c1RequestAccessHref(product.displayName));
     }
 
+    if (identity) {
+      pair.copyRegion = await readPr393ProductInformation(scope, reviewedContent);
+      report(entry, variant.id + " detail has exact approved copy or its deliberate omission",
+        pair.copyRegion.regionPresent === identity.reviewedCopy && pair.copyRegion.exactRegion);
+      if (member && capsuleEvidenceVariants.has(variant.id)) {
+        const notice = await scope.getByTestId("catalog-evidence-notice").textContent();
+        pair.capsuleNotice = notice.includes("This catalog view does not publish product-specific documents.") &&
+          !notice.includes("The product documents shown above apply to the selected variant.");
+        report(entry, variant.id + " capsule does not claim product-specific documents", pair.capsuleNotice);
+      }
+    }
     if (reviewedMedia) {
       const detailImage = await imageEvidence(page, scope, reviewedMedia.primary.href, null);
       checkImage(entry, variant.id + " detail", detailImage, reviewedMedia.primary.href, false, reviewedMedia.primary.altText);
@@ -809,7 +906,9 @@ async function captureC1Catalog(page, entry, rows, member) {
     } else {
       await scope.getByRole("button", { name: "Back to catalog", exact: true }).click();
       await scope.waitFor({ state: "hidden" });
-      report(entry, variant.id + " returns to the same guest catalog", page.url() === entryUrl);
+      const backToCatalog = page.url() === entryUrl;
+      if (identity) pair.backToCatalog = backToCatalog;
+      report(entry, variant.id + " returns to the same guest catalog", backToCatalog);
     }
   }
 }
@@ -885,6 +984,7 @@ try {
   const interfaces = JSON.parse(execFileSync("ip", ["-json", "link", "show"], { encoding: "utf8" }));
   result.network.loopbackOnly = interfaces.length === 1 && interfaces[0].ifname === "lo" && interfaces[0].flags.includes("UP");
   if (!result.network.loopbackOnly) throw new Error("Capture requires a loopback-only network namespace");
+  const pr393 = pr393Catalog ? await loadPr393Fixture() : null;
   const guestFixtures = await fixtureResponses(candidate, origin, false);
   const memberFixtures = await fixtureResponses(candidate, origin, true);
   const fixtureRows = [...guestFixtures.values()].find((value) => Array.isArray(value.items))?.items;
@@ -910,11 +1010,22 @@ try {
       const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
       const dataset = await readFile(join(candidate, "server/research/master-offerings/data/member-safe-master-offerings.generated.json"));
       result.inputHashes = { manifest: hash(manifestBytes), dataset: hash(dataset) };
-      if (result.inputHashes.manifest !== c1ManifestSha || result.inputHashes.dataset !== c1DatasetSha ||
+      if (pr393) {
+        const copy = await readFile(join(candidate, "server/research/master-offerings/data/reviewed-public-content.json"));
+        result.inputHashes.copy = hash(copy);
+        if (result.inputHashes.manifest !== pr393.mediaSha256 || result.inputHashes.dataset !== pr393.datasetSha256 ||
+            result.inputHashes.copy !== pr393.copySha256 || manifest.records.length !== 35) {
+          throw new Error("PR393 manifest, dataset or copy bytes differ");
+        }
+      } else if (result.inputHashes.manifest !== c1ManifestSha || result.inputHashes.dataset !== c1DatasetSha ||
           manifest.records.length !== 29) throw new Error("C1 inputs do not match exact source");
     }
     result.assets = {};
-    for (const record of c1Catalog ? manifest.records.slice(10) : manifest.records) {
+    const records = pr393 ? manifest.records.filter((record) => pr393.identities.some((identity) =>
+      identity.sourceVariantId === record.sourceVariantId && identity.offeringId === record.offeringId)) :
+      c1Catalog ? manifest.records.slice(10) : manifest.records;
+    if (pr393 && records.length !== 7) throw new Error("PR393 fixture must have exactly seven authored/retained media pairs");
+    for (const record of records) {
       result.assets[record.sourceVariantId] = { file: record.media.primary.href, sha256: record.primarySha256 };
       if (record.media.labelPreview) result.assets[record.sourceVariantId + "-label"] = {
         file: record.media.labelPreview.href, sha256: record.labelPreviewSha256,
@@ -944,8 +1055,8 @@ try {
   browser = await chromium.launch({ headless: true, timeout: 12000 });
   result.browser = { name: "Chromium", version: browser.version() };
   if (reviewedCatalog || c1Catalog) {
-    const guest = await reviewedCatalogFixtures(candidate, false);
-    const member = await reviewedCatalogFixtures(candidate, true);
+    const guest = pr393 ? await pr393Fixtures(pr393, false) : await reviewedCatalogFixtures(candidate, false);
+    const member = pr393 ? await pr393Fixtures(pr393, true) : await reviewedCatalogFixtures(candidate, true);
     for (const size of viewports) {
       await capture(browser, guest.base, c1Catalog ? "guest-c1-catalog" : "guest-reviewed-catalog", size, guest.rows);
       await capture(browser, member.base, c1Catalog ? "member-c1-catalog" : "member-reviewed-catalog", size, member.rows);

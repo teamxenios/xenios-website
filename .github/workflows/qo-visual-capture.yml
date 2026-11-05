@@ -1,7 +1,7 @@
-name: PR390 C1 synthetic routed visual proof
+name: PR393 synthetic routed artwork and copy proof
 on:
   push:
-    branches: [codex/qo-pr390-c1-visual-20261104]
+    branches: [codex/qo-pr393-routed-visual-20261104]
     paths:
       - .github/workflows/qo-visual-capture.yml
       - scripts/qa/qo-visual-capture/**
@@ -13,22 +13,22 @@ jobs:
     # Root must reconcile actual runs and bind Samuel's new Jira allowance first.
     if: >-
       github.repository == 'teamxenios/xenios-website' &&
-      github.ref == 'refs/heads/codex/qo-pr390-c1-visual-20261104' &&
-      github.event.before == '506eb3d1ac372735587079b7831ea28850706ae5' &&
+      github.ref == 'refs/heads/codex/qo-pr393-routed-visual-20261104' &&
+      github.event.before == 'UNBOUND_PREDECESSOR' &&
       !github.event.created && !github.event.deleted && !github.event.forced &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: d9a8b254dc2b6c30496af47e36d7e7abf88507c8
-      CANDIDATE_TREE: eee29fddfb747a54f90332e6badbf171cf1ea3b9
+      CANDIDATE_SHA: e0d72257966b42a42af95851bc9b133f09853b2f
+      CANDIDATE_TREE: 2a20520395acdbe1de1ca3ab7444e0c035f38cc3
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: KAN-31/10969
+      CAPTURE_ALLOWANCE_ID: UNBOUND
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
       CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: 2026-11-05T02:38:20Z
+      CAPTURE_RECONCILED_AT: UNBOUND
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
@@ -51,7 +51,9 @@ jobs:
           const attempt = Number(e.CAPTURE_ALLOWANCE_ATTEMPT);
           const maximumAttempts = Number(e.CAPTURE_ALLOWANCE_MAX_ATTEMPTS);
           const priorRunIds = JSON.parse(e.CAPTURE_PRIOR_RUN_IDS);
-          if (id !== "KAN-31/10969") throw new Error("Only the exact PR390 allowance is admitted");
+          if (!/^KAN-31\/\d+$/.test(id) || id === "KAN-31/10969" || id !== "UNBOUND_PR393_ALLOWANCE") {
+            throw new Error("Only the exact separately granted PR393 allowance is admitted");
+          }
           if (maximumAttempts !== 1 || attempt !== 1 || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
           if (!Array.isArray(priorRunIds) || priorRunIds.length !== attempt - 1 ||
               priorRunIds.some((v) => typeof v !== "string" || !/^\d+$/.test(v)) ||
@@ -77,6 +79,7 @@ jobs:
         with:
           ref: ${{ env.CANDIDATE_SHA }}
           path: candidate
+          fetch-depth: 2
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
@@ -105,6 +108,10 @@ jobs:
           mkdir -p "$EVIDENCE_DIR"
           sudo unshare --net bash -euc '
             ip link set lo up
+            generator="$7/scripts/qa/qo-visual-capture/build-pr393-prospective-fixture.cjs"
+            echo "c0aae1504d81519e109f652d67d444cf84f349ecca8e7f0948a4568393b5155b  $generator" | sha256sum --check --status
+            (cd "$6"; runuser -u "$1" -- env -i HOME="$2" PATH="$3" NODE_PATH="$6/node_modules" "$5" "$generator" "$8/pr393-fixture.json")
+            echo "2422a3fc89049d8686470b5e1f330c98771b3dd56150ccc76498cb37c7f7f651  $8/pr393-fixture.json" | sha256sum --check --status
             exec runuser -u "$1" -- env -i HOME="$2" PATH="$3" \
               PLAYWRIGHT_BROWSERS_PATH="$4" \
               "$5" --import "$6/node_modules/tsx/dist/loader.mjs" \
@@ -113,7 +120,7 @@ jobs:
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json" c1-catalog
+            "$EVIDENCE_DIR/allowance.json" pr393-catalog
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -134,7 +141,7 @@ jobs:
           writeFileSync(join(e.EVIDENCE_DIR, "result.json"), JSON.stringify(result, null, 2) + "\n");
           NODE
           fi
-      - name: Require the exact C1 manifest and eight PNGs
+      - name: Require the exact PR393 routed manifest and two PNGs
         shell: bash
         run: |
           set -euo pipefail
@@ -142,24 +149,40 @@ jobs:
           import { createHash } from "node:crypto";
           import { readdirSync, readFileSync } from "node:fs";
           import { join } from "node:path";
+          import { validateManualReviewPng } from "./harness/scripts/evidence/lib/evidence-artifact-scan-policy.mjs";
           const e = process.env;
           const data = readFileSync("candidate/server/research/master-offerings/data/reviewed-public-media.json");
           const dataset = readFileSync("candidate/server/research/master-offerings/data/member-safe-master-offerings.generated.json");
-          const manifestSha = "d134d7000e8cddb1d89b5346bc8275e6eb6a7d60736897f734bcf0494147eb1c";
+          const manifestSha = "852fef644b7ae73da242354fe7392d69d78e0016e026de0584f5d661e6ad3af1";
+          const copy = readFileSync("candidate/server/research/master-offerings/data/reviewed-public-content.json");
+          const copySha = "990a2558bc07827d93f06759421caf83af4298aee402ff5bd00c462f4782e9d8";
+          const fixtureBytes = readFileSync(join(e.EVIDENCE_DIR, "pr393-fixture.json"));
+          const fixtureSha = "2422a3fc89049d8686470b5e1f330c98771b3dd56150ccc76498cb37c7f7f651";
+          const fixture = JSON.parse(fixtureBytes);
           const datasetSha = "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5";
           const result = JSON.parse(readFileSync(join(e.EVIDENCE_DIR, "result.json"), "utf8"));
           const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
-          if (hash(data) !== manifestSha || hash(dataset) !== datasetSha ||
+          if (hash(data) !== manifestSha || hash(dataset) !== datasetSha || hash(copy) !== copySha ||
+              hash(fixtureBytes) !== fixtureSha || fixture.tree !== e.CANDIDATE_TREE ||
+              result.fixture?.sha256 !== fixtureSha || result.inputHashes?.copy !== copySha ||
               result.inputHashes?.manifest !== manifestSha || result.inputHashes?.dataset !== datasetSha ||
-              result.status !== "passed" || result.profile !== "c1-catalog" ||
+              result.status !== "passed" || result.profile !== "pr393-catalog" ||
               result.candidateSha !== e.CANDIDATE_SHA || result.candidateTree !== e.CANDIDATE_TREE ||
               result.harnessRevision !== e.GITHUB_SHA || result.runId !== e.GITHUB_RUN_ID || result.runAttempt !== 1 ||
-              !result.network?.loopbackOnly || result.captures?.length !== 8 || Object.keys(result.assets ?? {}).length !== 38 ||
+              !result.network?.loopbackOnly || result.captures?.length !== 2 || Object.keys(result.assets ?? {}).length !== 14 ||
               result.allowance?.id !== e.CAPTURE_ALLOWANCE_ID || result.allowance?.currentRunId !== e.GITHUB_RUN_ID ||
               result.allowance?.attempt !== 1 || result.allowance?.maximumAttempts !== 1 ||
-              result.allowance?.remainingAfterThisRun !== 0) throw new Error("Incomplete C1 identity, coverage or allowance");
-          const records = JSON.parse(data).records.slice(10);
-          const control = { offeringId: "mo_ffeecca340b02f400868", sourceVariantId: "mov_a4b4118c4d23b1546c8b" };
+              result.allowance?.remainingAfterThisRun !== 0) throw new Error("Incomplete PR393 identity, coverage or allowance");
+          const allMedia = JSON.parse(data).records;
+          const media = new Map(allMedia.map((record) => [record.sourceVariantId, record]));
+          const copyRows = new Map(JSON.parse(copy).records.map((record) => [record.sourceVariantId, record]));
+          const capsuleSkus = new Set(["GEN-GRP-0243", "GEN-GRP-0245", "GEN-GRP-0248", "GEN-GRP-0249"]);
+          if (allMedia.length !== 35 || fixture.identities.length !== 9 ||
+              fixture.identities.filter((record) => record.art === "new").length !== 6 ||
+              fixture.identities.filter((record) => record.art === "generic").length !== 2 ||
+              fixture.identities.filter((record) => record.art === "retained").length !== 1) {
+            throw new Error("Wrong PR393 fixture partition");
+          }
           const products = new Map(JSON.parse(dataset).products.map((product) => [product.id, product]));
           const exactWebp = (proof, asset, digest) => proof?.status === 200 && proof.mime === "image/webp" &&
             proof.sha256 === digest && proof.naturalWidth === asset.width && proof.naturalHeight === asset.height;
@@ -183,67 +206,73 @@ jobs:
           };
           const expected = [];
           for (const role of ["guest", "member"]) {
-            for (const width of [320, 390, 768, 1280]) {
+            for (const width of [390]) {
               const name = role + "-c1-catalog-" + width;
               const png = name + "-detail.png";
               expected.push(png);
               const entry = result.captures.find((value) => value.name === name);
-              if (entry?.viewport.width !== width || entry.mobile !== (width <= 390) ||
+              if (entry?.viewport.width !== width || entry.viewport.height !== 844 || entry.mobile !== true ||
+                  (role === "member" && (!Number.isSafeInteger(entry.network.verifiedMember) || entry.network.verifiedMember <= 0)) ||
                   !entry.assertions?.length || entry.assertions.some((value) => value.pass !== true) ||
                   entry.network.accepted !== 0 || entry.network.deniedWrites !== 0 || entry.network.deniedRecovery !== 0 ||
+                  entry.network.deniedWebSockets !== 0 ||
                   entry.screenshots?.length !== 1 || entry.screenshots[0] !== png ||
-                  entry.representativeVariant !== records[0].sourceVariantId || entry.pairs?.length !== 20) {
-                throw new Error("C1 context is incomplete: " + name);
+                  entry.representativeVariant !== fixture.identities[0].sourceVariantId || entry.pairs?.length !== 9) {
+                throw new Error("PR393 context is incomplete: " + name);
               }
               const pairs = new Map(entry.pairs.map((pair) => [pair.variantId, pair]));
-              for (const record of records) {
-                const pair = pairs.get(record.sourceVariantId);
-                if (!exactJourney(pair, record, role) || pair.wrongStrength !== false ||
+              for (const identity of fixture.identities) {
+                const pair = pairs.get(identity.sourceVariantId);
+                const record = media.get(identity.sourceVariantId);
+                const copy = copyRows.get(identity.sourceVariantId);
+                const links = (copy?.content.documentation ?? []).map((doc) => doc.href);
+                if (!exactJourney(pair, identity, role) || pair.sku !== identity.sku || pair.art !== identity.art ||
+                    pair.copyRegion?.regionPresent !== identity.reviewedCopy || pair.copyRegion?.exactRegion !== true ||
+                    JSON.stringify(pair.copyRegion?.documentHrefs) !== JSON.stringify(links) ||
+                    (role === "guest" && (pair.copySummary !== true || pair.backToCatalog !== true)) ||
+                    (capsuleSkus.has(identity.sku) && pair.capsuleNotice !== true) ||
+                    (role === "member" && pair.detailRoute !== identity.memberRoute)) {
+                  throw new Error("Missing exact PR393 copy, identity or notice: " + name + " " + identity.sku);
+                }
+                if (identity.art === "generic") {
+                  if (record || pair.wrongStrength !== true || pair.cardGeneric !== true || pair.detailGeneric !== true ||
+                      pair.cardPrimary || pair.detailPrimary || pair.label) throw new Error("Invalid PR393 generic control");
+                  continue;
+                }
+                if (!record || record.offeringId !== identity.offeringId || pair.wrongStrength !== false ||
                     pair.cardSource !== record.media.primary.href || pair.detailSource !== record.media.primary.href ||
                     pair.cardDisclosure !== true || pair.detailDisclosure !== true ||
                     !exactWebp(pair.cardPrimary, record.media.primary, record.primarySha256) ||
                     !exactWebp(pair.detailPrimary, record.media.primary, record.primarySha256) ||
                     pair.labelPath !== record.media.labelPreview.href ||
                     !exactWebp(pair.label, record.media.labelPreview, record.labelPreviewSha256)) {
-                  throw new Error("Missing exact C1 pair result in " + name);
+                  throw new Error("Missing exact PR393 artwork: " + name + " " + identity.sku);
                 }
-              }
-              const negative = pairs.get(control.sourceVariantId);
-              if (!exactJourney(negative, control, role) || negative.wrongStrength !== true ||
-                  negative.cardGeneric !== true || negative.detailGeneric !== true ||
-                  negative.cardPrimary || negative.detailPrimary || negative.label) {
-                throw new Error("Missing wrong-strength control in " + name);
               }
             }
           }
           const pngs = readdirSync(e.EVIDENCE_DIR).filter((name) => name.endsWith(".png")).sort();
-          if (JSON.stringify(pngs) !== JSON.stringify(expected.sort())) throw new Error("Exact eight C1 PNGs required");
+          if (JSON.stringify(pngs) !== JSON.stringify(expected.sort())) throw new Error("Exact two PR393 PNGs required");
           for (const png of expected) {
             const bytes = readFileSync(join(e.EVIDENCE_DIR, png));
-            if (bytes.length < 33 || bytes.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") {
-              throw new Error("Missing or invalid C1 PNG " + png);
-            }
+            const validation = validateManualReviewPng(bytes);
+            if (!validation.valid) throw new Error("Invalid PR393 PNG: " + png + " (" + validation.reason + ")");
+            if (bytes.readUInt32BE(16) !== 390 || bytes.readUInt32BE(20) !== 844) throw new Error("Invalid PR393 PNG dimensions");
           }
           NODE
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: qo-pr390-c1-routed-synthetic-proof
+          name: qo-pr393-routed-synthetic-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/guest-c1-catalog-320-detail.png
             ${{ env.EVIDENCE_DIR }}/guest-c1-catalog-390-detail.png
-            ${{ env.EVIDENCE_DIR }}/guest-c1-catalog-768-detail.png
-            ${{ env.EVIDENCE_DIR }}/guest-c1-catalog-1280-detail.png
-            ${{ env.EVIDENCE_DIR }}/member-c1-catalog-320-detail.png
             ${{ env.EVIDENCE_DIR }}/member-c1-catalog-390-detail.png
-            ${{ env.EVIDENCE_DIR }}/member-c1-catalog-768-detail.png
-            ${{ env.EVIDENCE_DIR }}/member-c1-catalog-1280-detail.png
             ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
-          name: qo-pr390-c1-failure-manifest
+          name: qo-pr393-routed-failure
           path: ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7
