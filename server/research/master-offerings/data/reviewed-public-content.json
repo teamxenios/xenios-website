@@ -1932,6 +1932,174 @@
         "label": "The manufacturer suggests mixing one scoop with 10 to 12 fluid ounces of water daily, unless your healthcare practitioner directs otherwise.",
         "cautions": "Ask your healthcare practitioner before using if you are pregnant, nursing or taking medication. Keep the powder away from children."
       }
+    },
+    {
+      "offeringId": "mo_bb24c4cae6b18541db17",
+      "sourceVariantId": "mov_65a56f5a4d64e1b6642d",
+      "content": {
+        "summary": "Tadalafil 20 mg troche, a lozenge dosage form of the PDE5 inhibitor tadalafil. It is available only through the provider pathway with a prescription.",
+        "overview": "Each troche is listed at 20 mg of tadalafil, a phosphodiesterase 5 (PDE5) inhibitor. A troche is a lozenge dosage form, different from the tablets covered by the CIALIS prescribing information cited here. According to the CIALIS prescribing information, erection during sexual stimulation comes from increased penile blood flow: nitric oxide released from nerve terminals and endothelial cells stimulates cGMP synthesis in smooth muscle cells, and cGMP relaxes that muscle so more blood flows into the corpus cavernosum. Inhibiting PDE5 enhances erectile function by increasing the amount of cGMP, and because sexual stimulation is needed to start the local release of nitric oxide, this erectile effect requires sexual stimulation. The CIALIS prescribing information describes CIALIS tablets in 5, 10 and 20 mg strengths and indicates CIALIS for erectile dysfunction, for the signs and symptoms of benign prostatic hyperplasia, and for both together. Those indications describe CIALIS tablets; they do not establish how this troche is absorbed or how it performs. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Troche"
+          },
+          {
+            "label": "Listed strength",
+            "value": "20 mg tadalafil per troche"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Tadalafil"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Clinician-directed tadalafil therapy in troche form. The labeled indications in the CIALIS prescribing information (erectile dysfunction, the signs and symptoms of benign prostatic hyperplasia, or both) apply to CIALIS tablets, not to this troche.",
+        "cautions": "The CIALIS prescribing information contraindicates CIALIS with any form of organic nitrate, taken regularly or intermittently, with guanylate cyclase stimulators such as riociguat, and in people with a known serious hypersensitivity to tadalafil. It advises emergency medical attention for an erection lasting more than 4 hours, and stopping all PDE5 inhibitors and seeking medical attention after a sudden loss of vision in one or both eyes. It also warns about sudden hearing loss, additive blood-pressure lowering with alpha-blockers or other blood-pressure medicines, orthostatic symptoms with substantial alcohol (for example, 5 units or more), and interactions with potent CYP3A4 inhibitors. Share your full medication list with the prescribing clinician."
+      }
+    },
+    {
+      "offeringId": "mo_c93c18f3a636a88d2bdd",
+      "sourceVariantId": "mov_0753f47d752e1c799a66",
+      "content": {
+        "summary": "Sildenafil 50 mg oral tablets, a PDE5 inhibitor, listed for clinician-directed care through the provider pathway. A prescription is required.",
+        "overview": "The catalog lists each tablet as sildenafil 50 mg. Sildenafil is a selective inhibitor of cGMP-specific phosphodiesterase type 5 (PDE5). According to the VIAGRA prescribing information, erection involves the release of nitric oxide in the corpus cavernosum during sexual stimulation; nitric oxide activates the enzyme guanylate cyclase, which raises cyclic GMP (cGMP), relaxing smooth muscle and allowing blood to flow in. The VIAGRA label states that sildenafil enhances the effect of nitric oxide by inhibiting PDE5, the enzyme responsible for breaking down cGMP in the corpus cavernosum, and that sildenafil at the doses it recommends for VIAGRA tablets has no effect in the absence of sexual stimulation. The labeling notes that sildenafil is only about 10-fold as potent for PDE5 as for PDE6, an enzyme in the retina, and that this lower selectivity is thought to be the basis for abnormalities related to color vision. The VIAGRA prescribing information indicates VIAGRA for the treatment of erectile dysfunction and describes its tablets as containing sildenafil citrate equivalent to 25 mg, 50 mg, or 100 mg of sildenafil. This listing does not state the tablet's manufacturer, whether it is a brand or generic product, or whether its strength is expressed as sildenafil or as the citrate salt; the dispensed product's own label governs. A prescription is required. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Oral tablet"
+          },
+          {
+            "label": "Listed strength",
+            "value": "50 mg"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Sildenafil"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Labeled indication (VIAGRA prescribing information): treatment of erectile dysfunction. Whether it applies to a given patient is decided in clinician-directed review.",
+        "cautions": "The VIAGRA prescribing information contraindicates VIAGRA with nitric oxide donors such as organic nitrates or nitrites in any form, taken regularly or intermittently, with guanylate cyclase stimulators such as riociguat, and in people with a known hypersensitivity to sildenafil or any component of the VIAGRA tablet. It notes a potential cardiac risk of sexual activity in people with preexisting cardiovascular disease, and advises stopping all PDE5 inhibitors and seeking prompt medical attention after a sudden loss of vision in one or both eyes or a sudden decrease or loss of hearing. It reports prolonged erections lasting more than 4 hours and priapism, and states that a patient with an erection that persists longer than 4 hours should seek immediate medical assistance, because priapism that is not treated immediately could result in penile tissue damage and permanent loss of potency. It also advises caution with alpha-blockers and other blood-pressure medicines, and notes that ritonavir substantially increases sildenafil levels. The VIAGRA label states that the safety and efficacy of combinations of VIAGRA with other PDE5 inhibitors, including REVATIO or other pulmonary arterial hypertension treatments containing sildenafil, or with other treatments for erectile dysfunction have not been studied. The VIAGRA label states that such combinations may further lower blood pressure and that their use is not recommended. The VIAGRA label also notes postmarketing reports of bleeding events in patients who have taken VIAGRA, and states that a causal relationship between VIAGRA and these events has not been established. It also states that VIAGRA offers no protection against sexually transmitted diseases. Share your full medication list with the prescribing clinician."
+      }
+    },
+    {
+      "offeringId": "mo_79a4ee26cea6c7ff0dcf",
+      "sourceVariantId": "mov_25ad4a66f23a5721d7bb",
+      "content": {
+        "summary": "Sildenafil 100 mg oral tablets, a PDE5 inhibitor, listed for clinician-directed care through the provider pathway. A prescription is required.",
+        "overview": "The catalog lists each tablet as sildenafil 100 mg. Sildenafil is a selective inhibitor of cGMP-specific phosphodiesterase type 5 (PDE5). According to the VIAGRA prescribing information, erection involves the release of nitric oxide in the corpus cavernosum during sexual stimulation; nitric oxide activates the enzyme guanylate cyclase, which raises cyclic GMP (cGMP), relaxing smooth muscle and allowing blood to flow in. The VIAGRA label states that sildenafil enhances the effect of nitric oxide by inhibiting PDE5, the enzyme responsible for breaking down cGMP in the corpus cavernosum, and that sildenafil at the doses it recommends for VIAGRA tablets has no effect in the absence of sexual stimulation. The labeling notes that sildenafil is only about 10-fold as potent for PDE5 as for PDE6, an enzyme in the retina, and that this lower selectivity is thought to be the basis for abnormalities related to color vision. The VIAGRA prescribing information indicates VIAGRA for the treatment of erectile dysfunction and describes its tablets as containing sildenafil citrate equivalent to 25 mg, 50 mg, or 100 mg of sildenafil. This listing does not state the tablet's manufacturer, whether it is a brand or generic product, or whether its strength is expressed as sildenafil or as the citrate salt; the dispensed product's own label governs. A prescription is required. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Oral tablet"
+          },
+          {
+            "label": "Listed strength",
+            "value": "100 mg"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Sildenafil"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Labeled indication (VIAGRA prescribing information): treatment of erectile dysfunction. Whether it applies to a given patient is decided in clinician-directed review.",
+        "cautions": "The VIAGRA prescribing information contraindicates VIAGRA with nitric oxide donors such as organic nitrates or nitrites in any form, taken regularly or intermittently, with guanylate cyclase stimulators such as riociguat, and in people with a known hypersensitivity to sildenafil or any component of the VIAGRA tablet. It notes a potential cardiac risk of sexual activity in people with preexisting cardiovascular disease, and advises stopping all PDE5 inhibitors and seeking prompt medical attention after a sudden loss of vision in one or both eyes or a sudden decrease or loss of hearing. It reports prolonged erections lasting more than 4 hours and priapism, and states that a patient with an erection that persists longer than 4 hours should seek immediate medical assistance, because priapism that is not treated immediately could result in penile tissue damage and permanent loss of potency. It also advises caution with alpha-blockers and other blood-pressure medicines, and notes that ritonavir substantially increases sildenafil levels. The VIAGRA label states that the safety and efficacy of combinations of VIAGRA with other PDE5 inhibitors, including REVATIO or other pulmonary arterial hypertension treatments containing sildenafil, or with other treatments for erectile dysfunction have not been studied. The VIAGRA label states that such combinations may further lower blood pressure and that their use is not recommended. The VIAGRA label also notes postmarketing reports of bleeding events in patients who have taken VIAGRA, and states that a causal relationship between VIAGRA and these events has not been established. It also states that VIAGRA offers no protection against sexually transmitted diseases. Share your full medication list with the prescribing clinician."
+      }
+    },
+    {
+      "offeringId": "mo_01aa8c629f0c4c030103",
+      "sourceVariantId": "mov_8916bc3cdec720be82c2",
+      "content": {
+        "summary": "Tadalafil 5 mg oral tablets, a PDE5 inhibitor, listed for clinician-directed care through the provider pathway. A prescription is required.",
+        "overview": "Each tablet is listed at 5 mg of tadalafil, a phosphodiesterase 5 (PDE5) inhibitor. According to the CIALIS prescribing information, erection during sexual stimulation comes from increased penile blood flow: nitric oxide released from nerve terminals and endothelial cells stimulates cGMP synthesis in smooth muscle cells, and cGMP relaxes that muscle so more blood flows into the corpus cavernosum. Inhibiting PDE5 enhances erectile function by increasing the amount of cGMP, and because sexual stimulation is needed to start the local release of nitric oxide, this erectile effect requires sexual stimulation. The CIALIS prescribing information describes CIALIS tablets in 5, 10 and 20 mg strengths and indicates CIALIS for erectile dysfunction (ED), for the signs and symptoms of benign prostatic hyperplasia (BPH), and for both together. Which use applies to a given patient, if any, is a clinical decision that this listing does not make. This listing does not state the tablet's manufacturer or whether it is a brand or generic product; the dispensed product's own label governs. A prescription is required. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Oral tablet"
+          },
+          {
+            "label": "Listed strength",
+            "value": "5 mg tadalafil per tablet"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Tadalafil"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Labeled indications (CIALIS prescribing information): erectile dysfunction (ED), the signs and symptoms of benign prostatic hyperplasia (BPH), and ED with the signs and symptoms of BPH. Whether a labeled use applies to a given patient is decided in clinician-directed review.",
+        "cautions": "The CIALIS prescribing information contraindicates CIALIS with any form of organic nitrate, taken regularly or intermittently, with guanylate cyclase stimulators such as riociguat, and in people with a known serious hypersensitivity to tadalafil. It advises emergency medical attention for an erection lasting more than 4 hours, and stopping all PDE5 inhibitors and seeking medical attention after a sudden loss of vision in one or both eyes. It also warns about sudden hearing loss, additive blood-pressure lowering with alpha-blockers or other blood-pressure medicines, orthostatic symptoms with substantial alcohol (for example, 5 units or more), and interactions with potent CYP3A4 inhibitors. Share your full medication list with the prescribing clinician."
+      }
+    },
+    {
+      "offeringId": "mo_6ea962af58dadfcd943e",
+      "sourceVariantId": "mov_6fa1343c6cfe7cacc9e8",
+      "content": {
+        "summary": "Tadalafil 10 mg oral tablets, a PDE5 inhibitor, listed for clinician-directed care through the provider pathway. A prescription is required.",
+        "overview": "Each tablet is listed at 10 mg of tadalafil, a phosphodiesterase 5 (PDE5) inhibitor. According to the CIALIS prescribing information, erection during sexual stimulation comes from increased penile blood flow: nitric oxide released from nerve terminals and endothelial cells stimulates cGMP synthesis in smooth muscle cells, and cGMP relaxes that muscle so more blood flows into the corpus cavernosum. Inhibiting PDE5 enhances erectile function by increasing the amount of cGMP, and because sexual stimulation is needed to start the local release of nitric oxide, this erectile effect requires sexual stimulation. The CIALIS prescribing information describes CIALIS tablets in 5, 10 and 20 mg strengths and indicates CIALIS for erectile dysfunction (ED), for the signs and symptoms of benign prostatic hyperplasia (BPH), and for both together. Which use applies to a given patient, if any, is a clinical decision that this listing does not make. This listing does not state the tablet's manufacturer or whether it is a brand or generic product; the dispensed product's own label governs. A prescription is required. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Oral tablet"
+          },
+          {
+            "label": "Listed strength",
+            "value": "10 mg tadalafil per tablet"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Tadalafil"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Labeled indications (CIALIS prescribing information): erectile dysfunction (ED), the signs and symptoms of benign prostatic hyperplasia (BPH), and ED with the signs and symptoms of BPH. Whether a labeled use applies to a given patient is decided in clinician-directed review.",
+        "cautions": "The CIALIS prescribing information contraindicates CIALIS with any form of organic nitrate, taken regularly or intermittently, with guanylate cyclase stimulators such as riociguat, and in people with a known serious hypersensitivity to tadalafil. It advises emergency medical attention for an erection lasting more than 4 hours, and stopping all PDE5 inhibitors and seeking medical attention after a sudden loss of vision in one or both eyes. It also warns about sudden hearing loss, additive blood-pressure lowering with alpha-blockers or other blood-pressure medicines, orthostatic symptoms with substantial alcohol (for example, 5 units or more), and interactions with potent CYP3A4 inhibitors. Share your full medication list with the prescribing clinician."
+      }
+    },
+    {
+      "offeringId": "mo_71e2492004c64bf53988",
+      "sourceVariantId": "mov_6965dfbce32ee305eb45",
+      "content": {
+        "summary": "Tadalafil 20 mg oral tablets, a PDE5 inhibitor, listed for clinician-directed care through the provider pathway. A prescription is required.",
+        "overview": "Each tablet is listed at 20 mg of tadalafil, a phosphodiesterase 5 (PDE5) inhibitor. According to the CIALIS prescribing information, erection during sexual stimulation comes from increased penile blood flow: nitric oxide released from nerve terminals and endothelial cells stimulates cGMP synthesis in smooth muscle cells, and cGMP relaxes that muscle so more blood flows into the corpus cavernosum. Inhibiting PDE5 enhances erectile function by increasing the amount of cGMP, and because sexual stimulation is needed to start the local release of nitric oxide, this erectile effect requires sexual stimulation. The CIALIS prescribing information describes CIALIS tablets in 5, 10 and 20 mg strengths and indicates CIALIS for erectile dysfunction (ED), for the signs and symptoms of benign prostatic hyperplasia (BPH), and for both together. Which use applies to a given patient, if any, is a clinical decision that this listing does not make. This listing does not state the tablet's manufacturer or whether it is a brand or generic product; the dispensed product's own label governs. A prescription is required. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Oral tablet"
+          },
+          {
+            "label": "Listed strength",
+            "value": "20 mg tadalafil per tablet"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Tadalafil"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Labeled indications (CIALIS prescribing information): erectile dysfunction (ED), the signs and symptoms of benign prostatic hyperplasia (BPH), and ED with the signs and symptoms of BPH. Whether a labeled use applies to a given patient is decided in clinician-directed review.",
+        "cautions": "The CIALIS prescribing information contraindicates CIALIS with any form of organic nitrate, taken regularly or intermittently, with guanylate cyclase stimulators such as riociguat, and in people with a known serious hypersensitivity to tadalafil. It advises emergency medical attention for an erection lasting more than 4 hours, and stopping all PDE5 inhibitors and seeking medical attention after a sudden loss of vision in one or both eyes. It also warns about sudden hearing loss, additive blood-pressure lowering with alpha-blockers or other blood-pressure medicines, orthostatic symptoms with substantial alcohol (for example, 5 units or more), and interactions with potent CYP3A4 inhibitors. Share your full medication list with the prescribing clinician."
+      }
     }
   ]
 }
