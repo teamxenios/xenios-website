@@ -16,6 +16,7 @@ const LegacyEntry = lazy(() => import("./AssistedOrderPage").then((m) => ({ defa
 const MixedEntry = lazy(() => import("./RequestIntentEntry").then((m) => ({ default: m.RequestIntentEntry })));
 type Props = Readonly<{ embedded?: boolean; continuationEnabled?: boolean;
   onStepChange?: (step: "products" | "contact" | "review") => void;
+  onAgreementStandingRequired?: () => void;
   entryIntent?: StorefrontIntent | null; mode?: OrderRequestMode }>;
 
 export function OrderRequestCta({ mode }: { mode: OrderRequestMode }) {
@@ -52,7 +53,8 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
     {prior === "mixed" && props.mode.kind !== "mixed" ? <p role="status">An earlier private request may exist. Keep this attempt and contact support if its result cannot be confirmed. This page will not start a different request.</p> : null}
     <Suspense fallback={<p role="status">Loading the request form...</p>}>
       {kind === "mixed" ? <MixedEntry embedded={props.embedded} continuationEnabled={props.continuationEnabled}
-        onStepChange={props.onStepChange} entryIntent={hint} onConfirmedReceipt={props.onConfirmedReceipt} />
+        onStepChange={props.onStepChange} entryIntent={hint} onConfirmedReceipt={props.onConfirmedReceipt}
+        onAgreementStandingRequired={props.onAgreementStandingRequired} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled
             onResolved={setResolution} showAssistedAction /> : null}
           <LegacyEntry embedded={props.embedded} continuationEnabled={props.continuationEnabled}

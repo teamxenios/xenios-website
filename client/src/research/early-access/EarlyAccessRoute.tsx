@@ -22,6 +22,7 @@ import {
   EarlyAccessOrderRecoveryCard,
 } from "./EarlyAccessCheckoutJourney";
 import { EarlyAccessAgreementSection } from "./EarlyAccessAgreementSection";
+import { createAgreementRefreshFence } from "./agreement-refresh-fence";
 import {
   clearLastOrderNumber,
   clearPendingAttempt,
@@ -121,6 +122,22 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   // Why ordering is closed, when it is not simply "has not agreed yet". The
   // journey must describe the SAME situation the agreement step is describing.
   const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
+  // This is a callback-generation fence, not a new agreement authority. Only
+  // the server-backed agreement component may confirm acceptance.
+  const [agreementFence] = useState(createAgreementRefreshFence);
+  const [agreementRevision, setAgreementRevision] = useState(0);
+  const refreshAgreementStanding = useCallback(() => {
+    const revision = agreementFence.invalidate();
+    setAgreed(false);
+    setBlocked(null);
+    setAgreementRevision(revision);
+  }, [agreementFence]);
+  const acceptCurrentAgreement = useCallback((accepted: boolean) => {
+    if (agreementFence.isCurrent(agreementRevision)) setAgreed(accepted);
+  }, [agreementFence, agreementRevision]);
+  const blockCurrentAgreement = useCallback((reason: "unverified" | "locked" | null) => {
+    if (agreementFence.isCurrent(agreementRevision)) setBlocked(reason);
+  }, [agreementFence, agreementRevision]);
   const [selection, setSelection] = useState<EarlyAccessCatalogSelection | null>(null);
   const [orderRequest, setOrderRequest] = useState<EarlyAccessCatalogSelection | null>(null);
   const [checkoutPhase, setCheckoutPhase] = useState<
@@ -173,14 +190,13 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     setRequestRecoveryDoor(null);
     clearEarlyAccessCustomerStorage();
     setRememberedOrder(null);
-    setAgreed(false);
-    setBlocked(null);
+    refreshAgreementStanding();
     setSelection(null);
     setOrderRequest(null);
     setPriceChanged(false);
     setCheckoutPhase("details");
     setEmbeddedOrderStep("products");
-  }, []);
+  }, [refreshAgreementStanding]);
 
   const readSession = useCallback(async () => {
     let retriedExpiredSession = false;
@@ -522,12 +538,14 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
             } />
             : <>
               {!hideFreshAgreement && <div className="mt-5" data-testid="quick-order-agreement-mount">
-                <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
+                <EarlyAccessAgreementSection key={agreementRevision}
+                  onAccepted={acceptCurrentAgreement} onBlocked={blockCurrentAgreement} />
               </div>}
               <div className="mt-5">
                 <Suspense fallback={<p role="status">Loading the request form...</p>}>
                   <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent}
                     continuationEnabled={agreed && blocked === null}
+                    onAgreementStandingRequired={refreshAgreementStanding}
                     onStepChange={setEmbeddedOrderStep} />
                 </Suspense>
               </div>
@@ -638,7 +656,8 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
               refuses with AGREEMENT_REQUIRED until this is on file.
             */}
             <div className="mt-5" data-testid="early-access-agreement-mount">
-              <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
+              <EarlyAccessAgreementSection key={agreementRevision}
+                  onAccepted={acceptCurrentAgreement} onBlocked={blockCurrentAgreement} />
             </div>
 
             {!agreed ? (
@@ -716,6 +735,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                         embedded
                         entryIntent={entryIntent}
                         continuationEnabled={agreed && blocked === null}
+                        onAgreementStandingRequired={refreshAgreementStanding}
                         onStepChange={setEmbeddedOrderStep}
                       />
                     </Suspense>
