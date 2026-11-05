@@ -64,6 +64,15 @@
    "author": "CLAUDE-2"
   }
  ],
+ "corrections": [
+  {
+   "date": "2026-11-04",
+   "requestedBy": "KAN-31/10737",
+   "previousCommit": "e3e61ba2b6169fd7a20dc5152019232badee143a",
+   "previousManifestSha256": "721e64d97c943225e63258fff70910561047fc6939dc8ea01f3069aab5a72546",
+   "change": "verify_c1.py, build_c1.py and write_manifest.py hash text files as committed, with LF line ends, so a Windows checkout with core.autocrlf (CRLF) verifies, including the release dataset joins. The tool files that had been committed with CRLF line ends (build_c1.py, xr_compose.py, wpf_kern.ps1 and kern-table.segoe-ui.json) are now LF like every other text file; only their line ends changed. artworkVersion is the exact product code for every record (for example GEN-GRP-0308-WEB-SUPPLIER-v1), because code-amount printed KISSPEPTIN-10, a fragment name the Kisspeptin label facts forbid; verify_c1.py checks it. No image or label master changed."
+  }
+ ],
  "publicationState": "review_only_not_runtime",
  "supplierSendPerformed": false,
  "requiredMountedViewportsAfterReview": [
@@ -88,7 +97,7 @@
   "Amounts other than 10 mg (5, 50 and 100 mg here) re-set the amount line at the base size and position.",
   "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
   "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
-  "The wrap proof id is the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1), because KISSPEPTIN-10 is a forbidden fragment name; verify_c1.py checks it. C1-001 has no such collision and is unchanged.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
   "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
  ],
  "contactSheet": {
@@ -108,8 +117,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-002/tools/build_c1.py",
-   "bytes": 13836,
-   "sha256": "0f9b16185373afac36725356446b3058b36268862e55b94b3e95252c10871514"
+   "bytes": 13988,
+   "sha256": "d579a76704132069f359c557528bc4eabd3602abdd016665e84fdf1e7064e6af"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-002/tools/c1_variants.py",
@@ -118,8 +127,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-002/tools/kern-table.segoe-ui.json",
-   "bytes": 29378,
-   "sha256": "c30fe26478ae393a4c79191878e34902cabb1210b82cff2fb4be116a2a2260e5"
+   "bytes": 28665,
+   "sha256": "a4b21e0588cf1d0231417882a1047b6f759b81093d60cf4f717a260c80c115e3"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-002/tools/svg_label_render.py",
@@ -133,23 +142,23 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-002/tools/verify_c1.py",
-   "bytes": 13743,
-   "sha256": "d20cbcb8dd505f60ce0c59aa130d9100e15c8fa1715fdea320b88cc648471382"
+   "bytes": 14932,
+   "sha256": "0959263a9d87818997886ee7c834d051401e4a20595f2a1f67e01a4b70d8dbe7"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-002/tools/wpf_kern.ps1",
-   "bytes": 2014,
-   "sha256": "bb9c8c7f43f05318a02f38c317c8ce96e602a72da9c330d6fa9df572ae4dc46c"
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-002/tools/write_manifest.py",
-   "bytes": 15262,
-   "sha256": "d0deb22f122cf3558bc3540682ba7ebc941e4ceae0d9753152559ac9a4e97e35"
+   "bytes": 16643,
+   "sha256": "73aa9d424abed4e0a7354d8fec9f32abfff0796347a2fc619241f7658cb36b28"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-002/tools/xr_compose.py",
-   "bytes": 9136,
-   "sha256": "ffe8479add6dbcd587ea0e6132977e7233e5a58e29febc13b324b8636a333640"
+   "bytes": 8931,
+   "sha256": "28c537e1dc3c13e40be34bd462a0a9267cd3b2732cff77e192527827ad967e1d"
   }
  ],
  "records": [
@@ -166,7 +175,7 @@
    "nominalAmountPerVialMg": 10,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "MOTSC-10-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0313-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -350,7 +359,7 @@
    "nominalAmountPerVialMg": 50,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "GHKCU-50-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0288-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -540,7 +549,7 @@
    "nominalAmountPerVialMg": 100,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "GHKCU-100-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0287-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -730,7 +739,7 @@
    "nominalAmountPerVialMg": 10,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "TESAMORELIN-10-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0347-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -913,7 +922,7 @@
    "nominalAmountPerVialMg": 5,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "SERMORELIN-5-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0341-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -1105,7 +1114,7 @@
    "nominalAmountPerVialMg": 10,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "HEXARELIN-10-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0300-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -1284,7 +1293,7 @@
    "nominalAmountPerVialMg": 10,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "DSIP-10-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0278-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -1466,7 +1475,7 @@
    "nominalAmountPerVialMg": 10,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "SEMAX-10-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0338-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -1650,7 +1659,7 @@
    "nominalAmountPerVialMg": 10,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "KISSPEPTIN-10-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0308-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -1835,7 +1844,7 @@
    "nominalAmountPerVialMg": 5,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "OXYTOCIN-5-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0320-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",

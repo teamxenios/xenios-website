@@ -78,7 +78,7 @@ A reduced name is centred on the original name's cap band. The C1-001 rule that 
 
 The masters are the Batch 004 v3 front and wrap templates, transformed as Batch 008's `build-labels.mjs` does it, with the amount replaced throughout ("5 mg", "50 mg", "100 mg"). Every name fits at the template size (front 176 px, wrap front panel 146 px). The side-panel field label reads PRODUCT CODE, as in C1-001.
 
-There is one change from C1-001. The wrap proof id is the exact product code, for example `GEN-GRP-0308-WRAP-v1`. Earlier batches used the template's code-and-amount form (`BPC157-10-WRAP-v3`, `IPAMORELIN-10-WRAP-v1`). For Kisspeptin 10 mg that form would print `KISSPEPTIN-10`, which is a fragment name its verified label facts forbid. The product code is the variant's exact identity and cannot spell a compound name.
+There is one change from C1-001. The wrap proof id is the exact product code, for example `GEN-GRP-0308-WRAP-v1`. Earlier batches used the template's code-and-amount form (`BPC157-10-WRAP-v3`, `IPAMORELIN-10-WRAP-v1`). For Kisspeptin 10 mg that form would print `KISSPEPTIN-10`, which is a fragment name its verified label facts forbid. The product code is the variant's exact identity and cannot spell a compound name. The manifest's `artworkVersion` uses it too (`GEN-GRP-0308-WEB-SUPPLIER-v1`), as corrected in KAN-31/10737.
 
 ### Previews
 
@@ -139,12 +139,14 @@ The verifier checks:
 - every declared file's bytes, hash and dimensions, plus the tool hashes;
 - that every verified label fact is printed exactly as verified, with the product code on the wrap only;
 - the exact text set of each front SVG, plus titles, descriptions and alt text;
-- that the wrap proof id is the record's product code;
+- that the wrap proof id and `artworkVersion` are the record's product code;
 - the generic and per-compound do-not-print terms;
 - that each render differs from the accepted Batch 004 render only inside its declared rows and columns, and that the amount rows changed when the amount is not 10 mg;
 - the ids, names and bindings against the pinned datasets.
 
 With `--recompute`, it also rebuilds every render and every label preview from the pinned tools and requires them to be pixel-identical. That proves each image shows exactly the name and amount its record declares. It needs Windows with Segoe UI and the accepted Batch 004 render, which a checkout of this branch contains.
+
+Every text file is committed with LF line ends. A Windows checkout with `core.autocrlf` rewrites them to CRLF, so the verifier folds CRLF back to LF before hashing them, release datasets included, and prints a NOTE naming them. PNG and WebP files are hashed as they are.
 
 A check it cannot run is reported as `SKIPPED`; it never counts as a pass. The supplier-name check needs `--extra-forbidden <file>`, a local list with one term per line. That list is never committed to this public repository.
 
@@ -159,3 +161,11 @@ python -I -B -X utf8 tools/write_manifest.py <this dir> <catalog json> <bindings
 ## Review
 
 Independent file-level review is requested on KAN-31, from a reviewer other than CLAUDE-1. The producer cannot be the reviewer. Rendered checks at 320, 390, 768 and 1280 px follow only after acceptance and runtime integration by Root.
+
+## Correction, 2026-11-04
+
+Codex imagery passed the visual review of commit `e3e61ba2` (KAN-31/10737) and asked for two fixes, which this commit makes:
+- **Windows checkouts.** A checkout with `core.autocrlf` failed 20 SVG and five tool hashes and skipped the release dataset joins, because the verifier hashed raw bytes. `tools/verify_c1.py`, `tools/build_c1.py` and `tools/write_manifest.py` now hash text files as committed, with LF line ends. Four tool files had been committed with CRLF line ends (`build_c1.py`, `xr_compose.py`, `wpf_kern.ps1` and `kern-table.segoe-ui.json`). A Windows checkout leaves those untouched and converts the LF ones, which is why five tool hashes failed. They are now LF like every other text file; only their line ends changed.
+- **artworkVersion.** It is now the exact product code for every record, for example `GEN-GRP-0308-WEB-SUPPLIER-v1`. The code-amount form spelled `KISSPEPTIN-10`. The verifier checks it.
+
+Every image, label master and the contact sheet is byte-identical to `e3e61ba2`, including the 20 website WebPs. The manifest records the change in `corrections`.
