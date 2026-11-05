@@ -839,6 +839,72 @@
       "sourceCommit": "ba455f74ae9e16093b934b772008616248b6bbc2",
       "primarySha256": "a9bf1f1de9fa751095b4b8b8ee42b3a284988b64faa6bdba2834130c00f81f6d",
       "labelPreviewSha256": "28648b998a35fd2fa06b61f0b9ba010f3da67d2d8855627b3a8bf6411ff0c60b"
+    },
+    {
+      "offeringId": "mo_f7fecc82508964efe3aa",
+      "sourceVariantId": "mov_0c4a5438cc87ab9d85b6",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 10 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-10mg-front-artwork-v1.webp",
+          "altText": "Xenios Retatrutide 10 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7a488755a186f4db4a91117a5b271a24899d9059",
+      "primarySha256": "f26ef5d167af2bd2ef91742ebf52c16404e17dabc9c5b8afcec6bffd799e7f35",
+      "labelPreviewSha256": "d33557b5f27a3bf0311b21bac3a1b899c99e74722d9bdf1523e4416f3fd0d48c"
+    },
+    {
+      "offeringId": "mo_e230262ae1c41d2d7e18",
+      "sourceVariantId": "mov_8f14c1dd839544567d53",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-15mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 15 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-15mg-front-artwork-v1.webp",
+          "altText": "Xenios Retatrutide 15 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7a488755a186f4db4a91117a5b271a24899d9059",
+      "primarySha256": "83a201f95172707533200de1ee04c07d40b7ee55ef22ebb1ea4863d8e71e74df",
+      "labelPreviewSha256": "074ce3c34d6c923eab290701f2fa80295bc53ab13c2e092c191515c6b30d01de"
+    },
+    {
+      "offeringId": "mo_f293ba683340fcd926d9",
+      "sourceVariantId": "mov_7bd700ce0704d66e614e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-30mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 30 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-30mg-front-artwork-v1.webp",
+          "altText": "Xenios Retatrutide 30 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7a488755a186f4db4a91117a5b271a24899d9059",
+      "primarySha256": "0d3a276efa04a1d35a0135d4276a7f53aef7b85139fd047e9c53bf0cbb99311c",
+      "labelPreviewSha256": "f7e8fd4064b32fcc22c302cb31087c98c83b04d8bae2cf2b944cd082e0c5caf5"
     }
   ]
 }
