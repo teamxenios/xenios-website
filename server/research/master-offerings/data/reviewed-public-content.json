@@ -1292,6 +1292,646 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_e85284c651d65690a90d",
+      "sourceVariantId": "mov_cda363a46b53964275df",
+      "content": {
+        "summary": "Low-dose naltrexone capsules listed at 1.5 mg, far below the 50 mg naltrexone hydrochloride tablet. It is available only through the provider pathway with a prescription.",
+        "overview": "Naltrexone is a pure opioid antagonist with no opioid agonist properties; it blocks the effects of opioids by competitive binding at opioid receptors. The FDA-approved product, naltrexone hydrochloride 50 mg tablets, is indicated for alcohol dependence and for blocking the effects of administered opioids. This capsule is listed at 1.5 mg, far below that tablet strength. A 2025 scoping review describes low-dose naltrexone (LDN) as typically 1 mg to 6 mg and states that its clinical use remains off-label, with no standardized, regulatory-approved treatment protocols. The same review identifies a need for larger clinical trials and proper dosing studies, so effectiveness for any particular condition remains under study. The indications and directions in the 50 mg tablet labeling do not transfer to this low-dose capsule. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Oral capsule"
+          },
+          {
+            "label": "Listed strength",
+            "value": "1.5 mg"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Naltrexone"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Clinician-directed low-dose naltrexone. The 2025 scoping review cited here describes clinical use of low-dose naltrexone as off-label; the labeled indications (alcohol dependence and blockade of the effects of exogenously administered opioids) belong to the 50 mg naltrexone hydrochloride tablet labeling.",
+        "cautions": "The FDA-approved naltrexone tablet labeling contraindicates naltrexone in people receiving opioid pain medicines, people currently dependent on opioids (including those maintained on methadone or buprenorphine), people in acute opioid withdrawal, and people with a history of sensitivity to naltrexone. That labeling also warns about precipitated opioid withdrawal, vulnerability to opioid overdose after stopping treatment, liver injury, and depression or suicidal thinking in alcohol- and opioid-dependent patients. Tell the prescribing clinician about any current or recent opioid use."
+      }
+    },
+    {
+      "offeringId": "mo_ee73386cbf5463478334",
+      "sourceVariantId": "mov_14a952b1a5b4951dc063",
+      "content": {
+        "summary": "Finasteride 1 mg oral tablets, listed for clinician-directed hair-loss care through the provider pathway. Finasteride is a 5α-reductase inhibitor.",
+        "overview": "Each tablet is listed at 1 mg of finasteride. Finasteride is a competitive and specific inhibitor of Type II 5α-reductase, the intracellular enzyme that converts testosterone into dihydrotestosterone (DHT). According to the PROPECIA prescribing information, blocking that conversion significantly decreases serum and tissue DHT. In men with male pattern hair loss, the balding scalp contains miniaturized hair follicles and more DHT than hairy scalp, and finasteride decreases scalp and serum DHT in these men. The FDA-approved 1 mg tablet (PROPECIA) is indicated for male pattern hair loss (androgenetic alopecia) in men only; it is not indicated for use in women or in pediatric patients. Finasteride also lowers prostate-specific antigen (PSA): in PROPECIA studies of men aged 18 to 41, mean serum PSA fell from 0.7 ng/mL to 0.5 ng/mL at 12 months. A prescription is required. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Oral tablet"
+          },
+          {
+            "label": "Listed strength",
+            "value": "1 mg finasteride per tablet"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Finasteride"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Male pattern hair loss in men, the use described in FDA-approved finasteride 1 mg labeling, at the prescribing clinician's discretion.",
+        "cautions": "Finasteride is contraindicated in women who are or may become pregnant, and the PROPECIA labeling advises that they should not handle crushed or broken tablets because absorption could harm a male fetus. It is also contraindicated with hypersensitivity to any component. The labeling notes that finasteride lowers prostate-specific antigen (PSA) levels, that 5α-reductase inhibitors may increase the risk of high-grade prostate cancer, and that it is not indicated for pediatric patients. Reported adverse reactions include decreased libido, erectile dysfunction and ejaculation disorder, sexual dysfunction that continued after stopping treatment, and depression, suicidal ideation and behavior."
+      }
+    },
+    {
+      "offeringId": "mo_ccf410e1df6931045e1f",
+      "sourceVariantId": "mov_a66e2af49da46a4c4ab1",
+      "content": {
+        "summary": "Finasteride 5 mg oral tablets, a 5α-reductase inhibitor, listed for clinician-directed care through the provider pathway. A prescription is required.",
+        "overview": "Each tablet is listed at 5 mg of finasteride, a synthetic 4-azasteroid compound. According to the PROSCAR prescribing information, the development and enlargement of the prostate gland depends on the potent androgen dihydrotestosterone (DHT), which Type II 5α-reductase produces from testosterone in the prostate gland, liver and skin. Finasteride is a competitive and specific inhibitor of Type II 5α-reductase; it slowly forms a stable complex with the enzyme that turns over extremely slowly, and it has no affinity for the androgen receptor. The FDA-approved 5 mg tablet (PROSCAR) is indicated for symptomatic benign prostatic hyperplasia (BPH) in men with an enlarged prostate, to improve symptoms and to reduce the risk of acute urinary retention and of surgery such as transurethral resection of the prostate (TURP) or prostatectomy. Combined with the alpha-blocker doxazosin, it is also indicated to reduce the risk of symptomatic progression of BPH; it is not approved for the prevention of prostate cancer, and it is not indicated for use in females or pediatric patients. In clinical studies, PROSCAR reduced serum prostate-specific antigen (PSA) by approximately 50% within six months, which affects how PSA results are used in prostate cancer detection. This listing does not state the tablet's manufacturer or whether it is a brand or generic product; the dispensed product's own label governs. A prescription is required. Requests go through the provider pathway, where a licensed clinician decides whether it is appropriate. Fulfillment depends on state availability and pharmacy requirements, and it is not available for direct purchase.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Oral tablet"
+          },
+          {
+            "label": "Listed strength",
+            "value": "5 mg finasteride per tablet"
+          },
+          {
+            "label": "Active ingredient",
+            "value": "Finasteride"
+          },
+          {
+            "label": "Prescription",
+            "value": "Required"
+          }
+        ],
+        "purpose": "Symptomatic benign prostatic hyperplasia in men with an enlarged prostate, the use described in FDA-approved finasteride 5 mg labeling, at the prescribing clinician's discretion.",
+        "cautions": "Finasteride is contraindicated in females who are or may potentially be pregnant, because it may cause abnormalities of the external genitalia of a male fetus, and in anyone with hypersensitivity to any component. The PROSCAR labeling states that it is not indicated for females or pediatric patients. It also states that females who are pregnant or may potentially be pregnant should not handle crushed or broken PROSCAR tablets because of possible exposure of a male fetus, that the coated tablets prevent contact with the active ingredient during normal handling if they have not been broken or crushed, and that if a pregnant female comes in contact with crushed or broken tablets, the contact area should be washed immediately with soap and water. It reports that men aged 55 and over taking finasteride 5 mg a day in a 7-year prostate cancer prevention trial had an increased risk of high-grade (Gleason score 8 to 10) prostate cancer, that finasteride lowers PSA, and that other urological conditions that may cause similar symptoms should be considered before treatment starts."
+      }
+    },
+    {
+      "offeringId": "mo_aace3aded470921f6af2",
+      "sourceVariantId": "mov_120b19d12e869b0070ff",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The thymosin alpha-1 research capsule listing shows a 500 mcg strength. Thymosin alpha-1 is a naturally occurring thymic peptide studied in cell models of immune signalling.",
+        "overview": "Thymosin alpha-1, also called thymalfasin, is a naturally occurring thymic peptide. A 2006 study reported that it primes dendritic cells for antifungal T-helper type 1 responses through Toll-like receptor 9 signalling, and that it also activates the tryptophan-catabolism pathway via indoleamine 2,3-dioxygenase, which the authors described as establishing a regulatory environment balancing inflammation and tolerance. A 2015 study examined what it called a dual effect of the peptide on human monocyte-derived dendritic cells in vitro, when those cells were stimulated with viral and bacterial Toll-like receptor agonists. A 2026 in vitro study of human CD8-positive T cells examined its influence on their proliferation, activation, cytokine secretion and exhaustion status. This listing is a laboratory research material and not a medicine. The cell findings above do not establish the safety or effects of this research material in people. The catalog lists this item as research capsules at a listed strength of 500 mcg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "500 mcg"
+          }
+        ],
+        "purpose": "Nonclinical research on dendritic-cell and T-cell signalling in cell models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_005347c6204a94d3f7e2",
+      "sourceVariantId": "mov_6a43249c424441bf28bb",
+      "content": {
+        "brand": "Xenios",
+        "summary": "29-amino-acid active fragment of human GHRH studied in pituitary cell and rat models. Listed at 10 mg for laboratory research.",
+        "overview": "Sermorelin is a synthetic 29-amino-acid peptide amide, GRF(1-29)NH2, corresponding to residues 1 to 29 of human growth hormone-releasing hormone (GHRH). A 1999 review describes it as the shortest synthetic peptide with the full biological activity of GHRH, acting specifically on the anterior pituitary to stimulate growth hormone secretion. In rat anterior pituitary cells in culture, the 1-29 amide fragment of human GHRH retained about half the potency of the full-length peptide. In the same study, shorter amidated fragments down to residues 1-21 still released growth hormone with full intrinsic activity at much lower potency, and activity disappeared only at residues 1-19. In rats, the growth hormone response to GRF(1-29) was markedly reduced in hypothyroid animals, which the authors interpreted as altered responsiveness of the pituitary somatotroph cells. This listing is a laboratory research material and not a medicine; separately, sermorelin has been studied clinically, including as a diagnostic test of pituitary growth hormone secretion. These cell and animal findings do not establish effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0340"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GHRH receptor signaling, structure-activity relationships of GHRH fragments and pituitary growth hormone release in cell and rodent models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_adf1037eceb9904e7d07",
+      "sourceVariantId": "mov_e218a4fead30388a55ff",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Two-subunit glycoprotein hormone, described in the published record as an alpha and beta dimer and studied as recombinant subunits in cell assays. Listed at 10,000 IU for laboratory research.",
+        "overview": "Human chorionic gonadotropin, written hCG, is a glycoprotein hormone made of two different subunits rather than a single chain. A 2020 study describes hCG as a dimer of two highly glycosylated subunits, an alpha subunit and a beta subunit, and notes that the beta protein is encoded by the CGB3, CGB5, CGB7 and CGB8 genes, that CGB3, CGB5 and CGB8 encode an identical protein, and that CGB7 differs from it in three amino acids. That study produced and isolated recombinant alpha, CGB7 and CGB3/5/8 proteins and compared their glycosylation, finding the N- and O-glycosylation patterns of the two beta variants quite similar. Testing activation of the ERK1/2 pathway, it reported the two beta variants to be functionally redundant isoforms, with a slight difference in the kinetics of that activation, and recorded biological activity for CGB7 for the first time. Reference records give the alpha subunit as a 116-residue precursor with a signal region at 1 to 24 and the mature chain at 25 to 116, and the choriogonadotropin beta subunit as a 165-residue precursor with a signal region at 1 to 20 and the mature chain at 21 to 165; those records name the alpha subunit as the chain shared with the other glycoprotein hormones, so the beta subunit is what distinguishes this hormone from them. The catalog states this listing in international units, which express activity rather than mass, and no source read here states a mass equivalence for this material, so the amount is reproduced as the catalog gives it and no milligram figure is implied. This listing is a laboratory research material and not a medicine. The findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10,000 IU, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10,000 IU"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0298"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on glycoprotein hormone subunit chemistry, glycosylation and receptor pathway activation in cell assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_4223bdd3e6880240fc4a",
+      "sourceVariantId": "mov_b5c50d1bb9d8ad998062",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Two-subunit glycoprotein hormone, described in the published record as an alpha and beta dimer and studied as recombinant subunits in cell assays. Listed at 5000 IU for laboratory research.",
+        "overview": "Human chorionic gonadotropin, written hCG, is a glycoprotein hormone made of two different subunits rather than a single chain. A 2020 study describes hCG as a dimer of two highly glycosylated subunits, an alpha subunit and a beta subunit, and notes that the beta protein is encoded by the CGB3, CGB5, CGB7 and CGB8 genes, that CGB3, CGB5 and CGB8 encode an identical protein, and that CGB7 differs from it in three amino acids. That study produced and isolated recombinant alpha, CGB7 and CGB3/5/8 proteins and compared their glycosylation, finding the N- and O-glycosylation patterns of the two beta variants quite similar. Testing activation of the ERK1/2 pathway, it reported the two beta variants to be functionally redundant isoforms, with a slight difference in the kinetics of that activation, and recorded biological activity for CGB7 for the first time. Reference records give the alpha subunit as a 116-residue precursor with a signal region at 1 to 24 and the mature chain at 25 to 116, and the choriogonadotropin beta subunit as a 165-residue precursor with a signal region at 1 to 20 and the mature chain at 21 to 165; those records name the alpha subunit as the chain shared with the other glycoprotein hormones, so the beta subunit is what distinguishes this hormone from them. The catalog states this listing in international units, which express activity rather than mass, and no source read here states a mass equivalence for this material, so the amount is reproduced as the catalog gives it and no milligram figure is implied. This listing is a laboratory research material and not a medicine. The findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5000 IU, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5000 IU"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0299"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on glycoprotein hormone subunit chemistry, glycosylation and receptor pathway activation in cell assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_839d9f0cb2ab74e094ee",
+      "sourceVariantId": "mov_95104bb0edee8e97a3a6",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Thirty-seven-residue cathelicidin peptide studied in membrane-biophysics and macrophage models. Listed at 5 mg for laboratory research.",
+        "overview": "LL-37 is a 37-amino-acid peptide released from the C-terminal end of the human cathelicidin antimicrobial peptide precursor, a 170-residue protein in which LL-37 occupies residues 134 to 170. The catalog name for this listing pairs the peptide with CAP-18, the precursor it derives from; the two are related but are not the same molecule, and the same precursor also yields the shorter peptides FALL-39, LL-29, LL-23, FF-33, RK-31, KS-30 and KR-20. A 1999 study describes LL-37 as a member of the cathelicidin family and as the first amphipathic alpha-helical peptide isolated from human, and examined its structure and organization in phospholipid membranes in relation to the molecular basis of its non-cell-selective activity. A 2011 study reported that the peptide binds membranes in an alpha-helical form and forms transmembrane pores. A 2014 study reported that it inhibits the lipopolysaccharide- and ATP-induced pyroptosis of macrophages by a dual mechanism. A 2012 review describes it as an important effector molecule of innate immunity in the skin. This listing is a laboratory research material and not a medicine. The in vitro and cell findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0312"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on antimicrobial-peptide membrane interactions and innate-immune cell signalling in biophysical and cell models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_3c6f0d26e9df4bcb80c5",
+      "sourceVariantId": "mov_395e7047e013e2074f6a",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The SLU-PP-332 research capsule listing shows a 250 mcg strength. SLU-PP-332 is a synthetic agonist of the estrogen-related receptors, used in published work as a chemical probe for their activation.",
+        "overview": "SLU-PP-332 is a synthetic small molecule, 4-hydroxy-N'-(naphthalen-2-ylmethylene)benzohydrazide. Published work describes it as a pan-agonist of the estrogen-related receptors ERR-alpha, ERR-beta and ERR-gamma, orphan nuclear receptors that genetic evidence links to skeletal-muscle exercise capacity, with its highest potency at ERR-alpha. A 2023 study reported that the compound induces an ERR-alpha-dependent acute aerobic exercise response and enhances exercise capacity in mice. A 2023 study of the aging kidney gave the compound to 21-month-old mice for eight weeks and reported that it reversed mitochondrial dysfunction and inflammation in that model. A 2026 structure-activity study describes the compound as a widely used chemical probe for ERR activation and examines the structural features governing its potency, efficacy and selectivity. A separate 2026 study characterised its metabolism in vitro and developed analytical methods for it. This listing is a laboratory research material and not a medicine. The animal and in vitro findings above do not establish the safety or effects of this research material in people. The catalog lists this item as research capsules at a listed strength of 250 mcg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "250 mcg"
+          }
+        ],
+        "purpose": "Nonclinical research on estrogen-related receptor activation and mitochondrial metabolism in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_34fa0d12f1effd156e61",
+      "sourceVariantId": "mov_c58b682a44514760a74f",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The SLU-PP-332 research capsule listing shows a 500 mcg strength. SLU-PP-332 is a synthetic agonist of the estrogen-related receptors, used in published work as a chemical probe for their activation.",
+        "overview": "SLU-PP-332 is a synthetic small molecule, 4-hydroxy-N'-(naphthalen-2-ylmethylene)benzohydrazide. Published work describes it as a pan-agonist of the estrogen-related receptors ERR-alpha, ERR-beta and ERR-gamma, orphan nuclear receptors that genetic evidence links to skeletal-muscle exercise capacity, with its highest potency at ERR-alpha. A 2023 study reported that the compound induces an ERR-alpha-dependent acute aerobic exercise response and enhances exercise capacity in mice. A 2023 study of the aging kidney gave the compound to 21-month-old mice for eight weeks and reported that it reversed mitochondrial dysfunction and inflammation in that model. A 2026 structure-activity study describes the compound as a widely used chemical probe for ERR activation and examines the structural features governing its potency, efficacy and selectivity. A separate 2026 study characterised its metabolism in vitro and developed analytical methods for it. This listing is a laboratory research material and not a medicine. The animal and in vitro findings above do not establish the safety or effects of this research material in people. The catalog lists this item as research capsules at a listed strength of 500 mcg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "500 mcg"
+          }
+        ],
+        "purpose": "Nonclinical research on estrogen-related receptor activation and mitochondrial metabolism in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_a6f7f071ed946577ce56",
+      "sourceVariantId": "mov_9e34d0c1acde46249621",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The tesofensine research capsule listing shows a 500 mcg strength. Tesofensine is described in the literature as a triple monoamine reuptake inhibitor, studied in receptor assays and in rodent neurophysiology.",
+        "overview": "Tesofensine is a small molecule described in the published literature as a triple monoamine reuptake inhibitor. A 2009 review of the compound's development reports that in vitro it potently blocked dopamine, norepinephrine and serotonin reuptake. In a rat model of diet-induced obesity, researchers characterising the mechanism behind its appetite-suppressive effect attributed that effect to indirect stimulation of alpha-1 adrenoceptor and dopamine D1 receptor pathways. A 2024 study in mice and rats combined behavioural tasks, videotaped movement analysis, electrophysiological ensemble recordings, optogenetic activation and chemogenetic methods, and reported that the compound silences GABAergic hypothalamic neurons. This listing is a laboratory research material and not a medicine. The animal and in vitro findings above do not establish the safety or effects of this research material in people. The catalog lists this item as research capsules at a listed strength of 500 mcg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "500 mcg"
+          }
+        ],
+        "purpose": "Nonclinical research on monoamine transporter pharmacology and hypothalamic neuronal signalling in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_d5072d9cc26b1f898b6d",
+      "sourceVariantId": "mov_30d35dcbc0bc8d59ff5b",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Dilute acetic acid preparation listed as a laboratory reagent. Listed at 5 mL for laboratory research.",
+        "overview": "Acetic acid is the two-carbon carboxylic acid of formula CH3COOH, also called ethanoic acid. By the Hazardous Substances Data Bank record for the pure compound, it is miscible with water, has an acid dissociation constant pKa of 4.76 at 25 degrees Celsius, melts at about 16.6 degrees Celsius and boils at about 117.9 degrees Celsius, with a density of 1.0446 grams per cubic centimetre at 25 degrees Celsius; the same record gives the pH of aqueous solutions as 2.4 at 1.0 molar, 2.9 at 0.1 molar and 3.4 at 0.01 molar. The catalog lists this item as a 0.6 per cent preparation, but the selected source does not state whether that figure is by mass or by volume, nor what the remainder of the preparation is, so neither is asserted here. This listing is a laboratory research material and not a medicine. The physical constants above describe the pure compound and do not establish the properties, the sterility or the suitability of this listed preparation for any particular purpose. The catalog lists this item with a listed amount of 5 mL, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mL"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0362"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical laboratory use as a dilute acid reagent.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_b49627a2296975935e26",
+      "sourceVariantId": "mov_88fd1531d586cdebb896",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Laboratory reconstitution solution listed at 4 mL. Composition and sterility require confirmation.",
+        "overview": "This laboratory liquid is listed as Reconstitution Solution with a volume of 4 mL. Reconstitution means dissolving dried material to make a solution for research. The exact item label or specification is needed to confirm the solvent, additives, concentration and sterility. The container, selling unit and storage conditions also require confirmation. Choose Request Access so the team can check the listed item and confirm availability.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "4 mL"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0363"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical laboratory use as a liquid for reconstituting a dried material, as the catalog states it.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_8fd0e604ab7719eded45",
+      "sourceVariantId": "mov_cacbbed2b1431c073e72",
+      "content": {
+        "brand": "Xenios",
+        "summary": "28-amino-acid thymic peptide studied in dendritic-cell and mouse immune models. Listed at 5 mg for laboratory research.",
+        "overview": "Thymosin alpha-1 is a heat-stable, highly acidic peptide of 28 amino acids, first isolated from calf thymus and sequenced in 1977. It corresponds to the N-terminal region of the larger precursor protein prothymosin alpha. It was one of several polypeptides in the thymic extract thymosin fraction 5 proposed to take part in the differentiation and function of T cells. In dendritic cells exposed to the fungus Aspergillus fumigatus, thymosin alpha-1 induced functional maturation and interleukin-12 production through MyD88-dependent Toll-like receptor signaling involving p38 MAP kinase and NF-kappaB. In highly susceptible mice that had received hematopoietic transplants, the synthetic peptide activated T-helper 1 antifungal immunity, accelerated myeloid cell recovery and protected against aspergillosis. This listing is a laboratory research material, not a medicinal product. A separate literature review discusses clinical studies of thymosin alpha-1. The dendritic-cell and transplant findings above come from cell and mouse studies and do not establish effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0351"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on thymic peptides, dendritic-cell activation and Toll-like receptor signaling in cell and mouse models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_143d09ffd9b13780f2d7",
+      "sourceVariantId": "mov_8e11e063f79d56a3a946",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The sermorelin research capsule listing shows a 500 mcg strength. Sermorelin is the synthetic 29-amino-acid N-terminal fragment of growth hormone-releasing hormone.",
+        "overview": "Reference sermorelin is an amidated synthetic peptide based on the first 29 residues of human growth hormone-releasing hormone. A 2003 paper on related peptide chemistry describes the reference peptide as retaining activity in laboratory assays. A 2016 validation study used antibodies to extract growth hormone-releasing hormone analogues and their metabolites from plasma samples. The investigators used high-resolution mass spectrometry to identify the extracted targets. A 2021 study evaluated a separate method for detecting synthetic analogues in fortified urine samples, including sermorelin and a shortened metabolite. The catalog lists capsules and a strength of 500 mcg. This listing is for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "500 mcg"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone-releasing hormone fragment chemistry and the analytical identification of this peptide class.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_b2300ccf4ffd64e20ca2",
+      "sourceVariantId": "mov_cd50ffa15bc031572636",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic five-amino-acid growth hormone secretagogue studied in rat and swine models. Listed at 5 mg for laboratory research.",
+        "overview": "Ipamorelin is a synthetic pentapeptide (Aib-His-D-2-Nal-D-Phe-Lys-NH2) developed as a growth hormone secretagogue. It came from a series of compounds that lack the central Ala-Trp dipeptide of growth hormone-releasing peptide 1 (GHRP-1). In primary rat pituitary cells, anaesthetised rats and conscious swine it released growth hormone with potency and efficacy comparable to GHRP-6, and antagonist studies indicated that, like GHRP-6, it acts through a GHRP-type receptor. In swine, none of the tested secretagogues changed FSH, LH, prolactin or TSH; GHRP-6 and GHRP-2 increased ACTH and cortisol, whereas the levels after ipamorelin did not differ significantly from those after GHRH, even at more than 200 times the amount needed for half-maximal growth hormone release. In adult female rats given ipamorelin for 15 days, longitudinal bone growth and body-weight gain increased with the amount given, while total IGF-I and serum markers of bone turnover did not change. A randomized, placebo-controlled phase 2 study enrolled 117 adults undergoing bowel resection and included 114 in both its safety and modified efficacy analysis populations. The researchers described ipamorelin as a ghrelin-receptor agonist and found no statistically significant differences from placebo in the primary or secondary efficacy analyses. These cell, animal and early clinical findings do not establish that this research material is safe or effective in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0303"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone secretagogue receptor pharmacology and pituitary growth hormone release in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_941e1192f6c03d88cb43",
+      "sourceVariantId": "mov_52fd0b8a213ee19e40e8",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Stabilized analogue of human growth hormone-releasing factor studied in pig, rat and dog models. Listed at 5 mg for laboratory research.",
+        "overview": "Tesamorelin, developed under the code TH9507, is an analogue of the 44-amino-acid human growth hormone-releasing factor, hGRF(1-44)NH2, modified only by a trans-3-hexenoyl group added to the N-terminal tyrosine. In laboratory tests, the modification helped the reference analogue resist inactivation by dipeptidyl aminopeptidase IV and slowed its breakdown in rat, dog and human plasma. In vivo, the investigators reported longer plasma persistence for immunoreactive TH9507 than for the natural peptide. In dogs, the apparent elimination half-life of that immunoreactive signal was 21 to 45 minutes. After repeated administration, circulating growth hormone and insulin-like growth factor 1 (IGF-1) rose in pigs, rats and dogs. In subchronic studies of up to four months, rats and dogs gained more body weight, and dogs showed reversible liver, kidney and blood findings that the authors attributed to sustained supraphysiological growth hormone and IGF-1 exposure. This listing is for nonclinical laboratory research. Separately, the U.S. Food and Drug Administration approved Egrifta, a prescription product containing tesamorelin, in November 2010 for an HIV-related indication. The animal findings above, and the approval of that separate medicine, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0348"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone-releasing factor receptor pharmacology, peptide stability and the growth hormone/IGF-1 axis in animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_2923115827ca8fe37d2c",
+      "sourceVariantId": "mov_257fd9d66f6284e3570e",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The TB-500 research capsule listing shows a 500 mcg strength. Published analytical work identified an acetylated seven-residue thymosin beta-4 fragment in a preparation sold as TB-500.",
+        "overview": "TB-500 is a product name rather than a chemical name. A 2012 analytical study identified the peptide in TB-500 as Ac-LKKTETQ, the N-terminally acetylated 17 to 23 fragment of human thymosin beta-4, using high-performance liquid chromatography with high-resolution mass spectrometry, and prepared Ac-LKKTETQ separately by solid-phase peptide synthesis for comparison. That study examined a product sold under the name, so it establishes what the name has been shown to denote and not the composition of this listing. The seven-residue peptide is not thymosin beta-4 itself: reference records give the mature thymosin beta-4 chain as 43 residues, against the seven of this acetylated fragment, so findings reported for the 43-residue protein do not carry over to this listing. A 2015 evaluation of in vitro models for the metabolism of small peptide hormones included TB-500 among the peptides examined in human liver microsome and S9 fraction preparations. This listing is a laboratory research material and not a medicine. The analytical findings above do not establish the safety or effects of this research material in people. The catalog lists this item as research capsules at a listed strength of 500 mcg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "500 mcg"
+          }
+        ],
+        "purpose": "Nonclinical research on thymosin beta-4 fragment chemistry and peptide metabolism in in vitro preparations.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_79376f449760149d1030",
+      "sourceVariantId": "mov_cdfb19499637f274f271",
+      "content": {
+        "brand": "NutriDyn",
+        "summary": "NutriDyn Fruits & Greens Strawberry Kiwi is a drink powder with fruit and vegetable ingredients, a fiber blend, digestive enzymes and probiotic cultures.",
+        "overview": "This Strawberry Kiwi powder includes strawberry and kiwi powders and raspberry extract. Its vegetable blend includes carrot root, beet root and kale leaf powders. The fiber blend includes oat bran, apple, aloe and prune. The formula also includes digestive enzymes, probiotic cultures and fructooligosaccharides. A serving is approximately one 10.09 g scoop, and the canister contains about 30 servings. Each scoop provides 2.4 g of the digestive enzyme and probiotic blend, 2.03 g of the vegetable blend and 1.73 g of the fiber blend.",
+        "specifications": [
+          {
+            "label": "Flavor",
+            "value": "Strawberry Kiwi"
+          },
+          {
+            "label": "Form",
+            "value": "Drink powder"
+          },
+          {
+            "label": "Serving size",
+            "value": "About 1 scoop (10.09 g)"
+          },
+          {
+            "label": "Servings per container",
+            "value": "About 30"
+          }
+        ],
+        "purpose": "NutriDyn positions Fruits & Greens as a source of plant nutrients and for nutritional support of normal digestion. This statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "label": "NutriDyn suggests mixing one scoop into 8 fl oz of chilled water daily unless your healthcare practitioner directs otherwise.",
+        "cautions": "Check with your healthcare practitioner before use if you are pregnant, nursing or taking medication.",
+        "storage": "Refrigerate after opening for maximum freshness."
+      }
+    },
+    {
+      "offeringId": "mo_a4cfc5396d714f879944",
+      "sourceVariantId": "mov_d6a8b2cd129bda39d8fa",
+      "content": {
+        "brand": "NutriDyn",
+        "summary": "NutriDyn Hydrate Blue Raspberry is a powdered drink mix with sodium, potassium and magnesium. The 180 g canister contains about 30 servings.",
+        "overview": "The Blue Raspberry formula pairs electrolytes with B vitamins, vitamins C and E, taurine, malic acid and L-carnosine. Each serving supplies 96 mg sodium, 176 mg potassium and 200 mg magnesium. Magnesium comes from bisglycinate chelate. A serving is about one 6 g scoop, and the canister contains about 30 servings. The label lists 500 mg each of taurine and malic acid per serving. The label directs customers to mix a scoop into 8 fluid ounces of water unless their healthcare practitioner directs otherwise.",
+        "specifications": [
+          {
+            "label": "Package",
+            "value": "180 g (6.35 oz) canister"
+          },
+          {
+            "label": "Flavor",
+            "value": "Blue Raspberry"
+          },
+          {
+            "label": "Serving size",
+            "value": "About 1 scoop (6 g)"
+          },
+          {
+            "label": "Servings per package",
+            "value": "About 30"
+          }
+        ],
+        "purpose": "NutriDyn positions Hydrate as a source of electrolytes for nutritional support of normal fluid balance during activity. This statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "ingredients": "Each serving supplies 15 calories, carbohydrate 3 g, vitamin C (ascorbic acid) 120 mg, vitamin E (d-alpha tocopheryl acetate) 18.76 mg, thiamin (thiamin hydrochloride) 2 mg, riboflavin 5 mg, niacin 10 mg NE, vitamin B6 (pyridoxine HCl) 5 mg, folate (calcium L-5-methyltetrahydrofolate, BioFolate®) 20 mcg DFE, vitamin B12 (methylcobalamin) 6 mcg, pantothenic acid (calcium D-pantothenate) 28 mg, calcium (dicalcium phosphate and calcium D-glucarate) 103 mg, phosphorus (dicalcium phosphate) 69 mg, magnesium (TRAACS™ magnesium bisglycinate chelate) 200 mg, zinc (zinc oxide) 0.005 mg, chromium (chromium picolinate) 83 mcg, chloride (potassium chloride and sodium chloride) 162 mg, sodium (trisodium citrate and sodium chloride) 96 mg, potassium (potassium chloride and potassium aspartate) 176 mg, taurine 500 mg, malic acid 500 mg and L-carnosine 20 mg. Other ingredients are citric acid, inulin, silica, natural flavor and stevia leaf extract.",
+        "label": "NutriDyn suggests mixing one scoop into 8 fl oz of water unless your healthcare practitioner directs otherwise. BioFolate® is a registered trademark of MTC Industries, Inc. TRAACS™ is a trademark of Balchem Corp. or Albion Labs.",
+        "cautions": "Check with your healthcare practitioner before use if you are pregnant, nursing or taking medication. Keep away from children.",
+        "storage": "Store in a cool, dry place.",
+        "documentation": [
+          {
+            "label": "NutriDyn Hydrate product information",
+            "href": "https://nutridyn.com/dynamic-hydrate"
+          },
+          {
+            "label": "NutriDyn Blue Raspberry product sheet",
+            "href": "https://nutridyn.com/media/productsattachment/Hydrate_SS_ND432_NEW.pdf"
+          }
+        ]
+      }
+    },
+    {
+      "offeringId": "mo_eca326cdaae5d36cfae6",
+      "sourceVariantId": "mov_0f3fa003c76aadef763c",
+      "content": {
+        "brand": "NutriDyn",
+        "summary": "Inflam-Eze Chocolate Orange is a plant-based protein and nutrient powder in an approximately 30-serving canister.",
+        "overview": "Inflam-Eze Chocolate Orange is a dietary supplement powder made with organic brown rice protein and cocoa. Each canister contains about 30 servings, with about one scoop per serving. Each serving provides 15 g of protein and 2.5 g of L-glutamine. A serving also provides 500 mg of quercetin and 400 mg of turmeric root extract. The formula contains 200 mg each of ginger root extract and N-acetyl-L-cysteine per serving. The vitamin and mineral blend includes vitamins C and D3, magnesium and zinc.",
+        "specifications": [
+          {
+            "label": "Flavor",
+            "value": "Chocolate Orange"
+          },
+          {
+            "label": "Form",
+            "value": "Dietary supplement powder"
+          },
+          {
+            "label": "Serving size",
+            "value": "About 1 scoop"
+          },
+          {
+            "label": "Servings per container",
+            "value": "About 30"
+          }
+        ],
+        "purpose": "NutriDyn positions Inflam-Eze for nutritional support of healthy gastrointestinal function. This statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "label": "NutriDyn suggests shaking the canister before scooping and mixing one scoop in 8 fluid ounces of water twice daily, or as directed by your healthcare practitioner. Drink within 10 minutes of mixing. If using a blender, blend for up to 15 seconds.",
+        "cautions": "NutriDyn directs use under the supervision of a healthcare practitioner. Consult your practitioner before use if you are pregnant, nursing, or taking medication, including anticoagulants or antiplatelet medications. Keep out of reach of children."
+      }
+    },
+    {
+      "offeringId": "mo_d82610b6fe7ebf3b4d63",
+      "sourceVariantId": "mov_f5d63d95caa3d6d0a7a0",
+      "content": {
+        "brand": "NutriDyn",
+        "summary": "Magtein provides magnesium as magnesium L-threonate in a 90-capsule bottle.",
+        "overview": "NutriDyn Magtein is a dietary supplement in capsule form. A bottle contains 90 capsules, or 30 servings of three capsules each. Each serving provides 2 g of magnesium L-threonate. That compound supplies 144 mg of elemental magnesium per serving. The Supplement Facts panel lists this amount as 34% of the Daily Value for magnesium. NutriDyn's suggested schedule divides the daily serving between morning and evening.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Capsules"
+          },
+          {
+            "label": "Package count",
+            "value": "90 capsules"
+          },
+          {
+            "label": "Serving size",
+            "value": "3 capsules"
+          },
+          {
+            "label": "Servings per container",
+            "value": "30"
+          }
+        ],
+        "purpose": "NutriDyn positions this magnesium supplement for nutritional support of cognitive health. This statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "label": "NutriDyn suggests taking three capsules daily, with one in the morning and two taken two hours before bedtime, unless your healthcare practitioner directs otherwise.",
+        "cautions": "Consult your healthcare practitioner before use if you are pregnant, nursing, or taking medication. Keep out of reach of children."
+      }
+    },
+    {
+      "offeringId": "mo_2d42f72361aac15b6d5d",
+      "sourceVariantId": "mov_dbb59b83827a556051da",
+      "content": {
+        "brand": "NutriDyn",
+        "summary": "UltraBiotic Akkermansia Plus is a probiotic supplement with five named bacterial strains in a digestive-resistant capsule. This package contains 30 capsules.",
+        "overview": "The formula combines two strains of Bifidobacterium animalis with Lactobacillus rhamnosus GG. It also includes Akkermansia muciniphila AH39 and Clostridium butyricum 10. The capsule shell uses hypromellose and gellan gum. One capsule is a serving, and this bottle contains 30 servings. The label also lists 2 billion CFU of Lactobacillus rhamnosus GG per capsule at manufacture. At manufacture, the label lists 10 billion CFU each for the HN019 and B420 strains of Bifidobacterium animalis per capsule.",
+        "specifications": [
+          {
+            "label": "Package",
+            "value": "30 capsules"
+          },
+          {
+            "label": "Serving size",
+            "value": "1 capsule"
+          },
+          {
+            "label": "Servings per package",
+            "value": "30"
+          }
+        ],
+        "purpose": "NutriDyn positions this probiotic supplement for nutritional support of digestive health and a balanced gut microbiome. This statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "ingredients": "Per capsule at manufacture, Bifidobacterium animalis HN019 and B420 each supply 10 billion CFU, Lactobacillus rhamnosus GG supplies 2 billion CFU and Clostridium butyricum 10 supplies 30 million CFU. The formula also includes Akkermansia muciniphila AH39. Other ingredients are a digestive-resistant capsule (hypromellose and gellan gum), microcrystalline cellulose, vegetable magnesium stearate and silica.",
+        "label": "NutriDyn suggests one capsule daily unless your healthcare practitioner directs otherwise.",
+        "cautions": "Check with your healthcare practitioner before use if you are pregnant, nursing or taking medication. Keep away from children."
+      }
+    },
+    {
+      "offeringId": "mo_ad9795d751913350bdea",
+      "sourceVariantId": "mov_d91d7248ed06d7280a2d",
+      "content": {
+        "brand": "NutriDyn",
+        "summary": "UltraBiotic Prebiotic Cranberry Lemonade is a drink powder with prebiotic fiber, gold kiwi powder and fruit extracts.",
+        "overview": "UltraBiotic Prebiotic is a Cranberry Lemonade dietary supplement that mixes with water. One serving provides 1.4 g of xylooligosaccharides, a type of prebiotic fiber, and 1.2 g of organic gold kiwi powder. The formula also contains 500 mg of pomegranate extract and 375 mg of cranberry extract per serving. Red wine fruit extract supplies another 375 mg of polyphenols per serving. A serving is about one 6.84 g scoop, and the container provides approximately 30 servings. The panel lists 6 g of carbohydrate and less than 1 g of total sugars per serving.",
+        "specifications": [
+          {
+            "label": "Flavor",
+            "value": "Cranberry Lemonade"
+          },
+          {
+            "label": "Form",
+            "value": "Drink powder"
+          },
+          {
+            "label": "Serving size",
+            "value": "About 1 scoop (6.84 g)"
+          },
+          {
+            "label": "Servings per container",
+            "value": "About 30"
+          }
+        ],
+        "purpose": "NutriDyn positions this prebiotic blend for nutritional support of the gut microbiome. This statement has not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "label": "The manufacturer suggests mixing one scoop with 10 to 12 fluid ounces of water daily, unless your healthcare practitioner directs otherwise.",
+        "cautions": "Ask your healthcare practitioner before using if you are pregnant, nursing or taking medication. Keep the powder away from children."
+      }
     }
   ]
 }
