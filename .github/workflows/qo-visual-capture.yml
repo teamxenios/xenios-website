@@ -14,7 +14,7 @@ jobs:
     if: >-
       github.repository == 'teamxenios/xenios-website' &&
       github.ref == 'refs/heads/codex/qo-pr391-copy-visual-20261104' &&
-      github.event.before == 'UNBOUND_PREDECESSOR' &&
+      github.event.before == '5d834e0cba2e36dbaea33fb3202dc9aa283fe56c' &&
       !github.event.created && !github.event.deleted && !github.event.forced &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
@@ -24,12 +24,12 @@ jobs:
       CANDIDATE_SHA: cd7ee9fe1120b3ef002e1936ce66ca2439179554
       CANDIDATE_TREE: 0b5d6b07d43f6a25fee8643f20c2ba245c8d3043
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: UNBOUND
-      PR391_FIXTURE_SHA256: UNBOUND_PR391_FIXTURE_SHA256
+      CAPTURE_ALLOWANCE_ID: KAN-31/11028
+      PR391_FIXTURE_SHA256: c69a45df36349e91a2d373f1ec45d8e1031bbc825928138a31ba20fce47e044c
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
       CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: UNBOUND
+      CAPTURE_RECONCILED_AT: 2026-11-05T03:36:29Z
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
