@@ -4099,7 +4099,7 @@
       "id": "KAN59-C3-SIX-CAPSULE-ARTWORK-20261105",
       "title": "Adopt six reviewed capsule artwork mappings",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "fbc04ab3f3699ae8ba175d67fea399d0cc1963a7",
       "paths": [
@@ -4121,7 +4121,13 @@
       "scopeNote": "Claim only the six reviewed capsule artwork mappings allocated to existing Root at KAN-59/11247 from exact live release fbc04ab3f3699ae8ba175d67fea399d0cc1963a7/tree 2a20520395acdbe1de1ca3ab7444e0c035f38cc3 on planned branch codex/early-access-six-capsule-artwork-20261105. Limit source work to the exact listed media manifest and 12 WebPs for variants 0252, 0255, 0251, 0250, 0253 and 0246. Independent KAN-59/11073, 11246 and 11247 evidence binds the 717,795-byte private patch SHA-256 5496156a451697caefe9b357964fb60273ec1eaab255cc793ba789246ea18b8c, prospective tree 524343caf7500aa95690c828e330f5b6e42e4333 and manifest blob 5769757a6eb951b9209a5add2f3d88549e930243, preserving all 35 live mappings and adding six. The exact live manifest preimage is blob 755f13b02e722d4381e0e92c809406a4e50c3bf1 and all 12 destination WebPs are absent from the release. Dihexa, disputed C1 cases, physical supply, printing, price, supplier activation and any QA-capture implementation authority are excluded. Fresh active/reserved exact/ancestor/prefix/wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict. Preserve all prior tasks, leases, rules, sessions, release records, PR397/398, QA policy branches, source refs and history. This custody operation performs no source, workflow, browser, provider, release, worktree or heavy local mutation.",
       "createdAt": "2026-11-05T12:48:56.731414Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T12:48:56.731414Z"
+      "claimedAt": "2026-11-05T12:48:56.731414Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "5279a47ccffb220f5627d99c95705c912d7cf1d5",
+        "file": ".xenios/handoffs/2026-11-05T13-34-42Z-KAN59-C3-SIX-CAPSULE-ARTWORK-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T13:34:42Z"
+      }
     },
     {
       "id": "KAN6-EA-TWO-NEUTRAL-DESCRIPTIONS-20261105",
@@ -4140,6 +4146,30 @@
       "createdAt": "2026-11-05T13:31:52.3529784Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-05T13:31:52.3529784Z"
+    },
+    {
+      "id": "KAN59-C1-004-THREE-RETATRUTIDE-ARTWORK-20261105",
+      "title": "Adopt three Retatrutide artwork mappings",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "5f5dd296d84605fddd30cd476e5ad4773c366ba2",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-media.json",
+        "client/public/research/product-media/retatrutide-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/retatrutide-15mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-15mg-front-artwork-v1.webp",
+        "client/public/research/product-media/retatrutide-30mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-30mg-front-artwork-v1.webp"
+      ],
+      "dependsOn": [
+        "KAN59-C3-SIX-CAPSULE-ARTWORK-20261105"
+      ],
+      "scopeNote": "Founder-directed next exact media task allocated to existing Root at KAN-59 comment 11313. Limit source work to the seven exact listed media-manifest and Retatrutide WebP paths on branch codex/early-access-retatrutide-artwork-20261105 from exact live release 5f5dd296d84605fddd30cd476e5ad4773c366ba2/tree a2904deb600e5b1fd0790ce6e802bd62938e3ab9. Adopt only reviewed artwork mappings 0323, 0324 and 0326 under KAN-59 comment 11299 and the packaging basis at KAN-225 comment 11259. The exact import ZIP is 315743 bytes with SHA-256 b1116c3d61c1d6219f3cfbf0904f8472eb0addaeae3da9f8507ed30f6635b1ef, expected prospective tree c409cd118716755b7a3993db585ff2216cde263b and expected reviewed-media manifest blob 143f62a0b9f56df882bf3929821b1951c316235e. Fresh post-C3-handoff active/reserved exact, ancestor, prefix and wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict. Preserve C3 and all older histories, active two-copy lease 4dc24268-a0c1-40bd-b20f-87aef59f7d28, clinical shared lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba, all B/C leases, PR402 dd8f93d, PR403 1aa3b82, PR401 eec1c70, every foreign record, configuration and ref. Physical supply, printing, pricing, supplier activation and any unlisted source or QA path are excluded. This custody transaction performs no source checkout, test, browser, provider, deployment, worktree, supplier activation or new-session action.",
+      "createdAt": "2026-11-05T13:43:05.8585800Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T13:43:05.8585800Z"
     }
   ]
 }

@@ -1,0 +1,42 @@
+{
+  "schema": "xenios.source-qa-handoff.v1",
+  "task": "KAN59-C3-SIX-CAPSULE-ARTWORK-20261105",
+  "lease": "f4395d47-e5ee-41bb-a7d6-4ac559e8cdb9",
+  "owner": "codex-launch-coordination-20261005",
+  "pr": 399,
+  "source": "5279a47ccffb220f5627d99c95705c912d7cf1d5",
+  "tree": "a2904deb600e5b1fd0790ce6e802bd62938e3ab9",
+  "base": "6b7e89c45e89686f0311036ac15e13d24f331d18",
+  "priorSource": "f46109876da394464107252d4227aadf0c086611",
+  "manifest": "5769757a6eb951b9209a5add2f3d88549e930243",
+  "rows": [
+    "0252",
+    "0255",
+    "0251",
+    "0250",
+    "0253",
+    "0246"
+  ],
+  "sourceEvidence": [
+    "KAN-59/10998",
+    "KAN-59/11073",
+    "KAN-59/11247"
+  ],
+  "hosted": {
+    "run": 42034220013,
+    "attempt": 1,
+    "trustedChecks": 5,
+    "passed": 18536,
+    "skipped": 83,
+    "sha256": "f581b019e049039309b1261abb72923bdaa0cdbe4ffa4e8df74e3c1ccad070b1"
+  },
+  "mounted": {
+    "jira": "KAN-59/11297",
+    "receiptBytes": 73371,
+    "sha256": "521e49662cc8de8446ce67ea8f72e14dc89b2069bbfbbcd5e65e928ab47fcb79",
+    "guestAndStandalone": 27,
+    "embedded": 22,
+    "errors": 0
+  },
+  "scope": "Exact 13 media paths. 35 previous mappings plus six additions, live 30-copy and signed-in behavior conserved. Synthetic Chromium mounted components only, no production router, real sign-in, or physical Safari. Separate release receipt required."
+}

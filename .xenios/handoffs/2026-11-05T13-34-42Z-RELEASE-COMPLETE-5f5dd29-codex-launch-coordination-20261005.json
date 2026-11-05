@@ -1,0 +1,70 @@
+{
+  "schema": "xenios.release-complete.v1",
+  "pr": 399,
+  "source": "5279a47ccffb220f5627d99c95705c912d7cf1d5",
+  "release": "5f5dd296d84605fddd30cd476e5ad4773c366ba2",
+  "tree": "a2904deb600e5b1fd0790ce6e802bd62938e3ab9",
+  "productionBranch": "release/early-access-code-session-checkout",
+  "mergedAt": "2026-11-05T13:27:47Z",
+  "parents": [
+    "6b7e89c45e89686f0311036ac15e13d24f331d18",
+    "5279a47ccffb220f5627d99c95705c912d7cf1d5"
+  ],
+  "compositionCI": {
+    "run": 42034220013,
+    "requiredSuccess": 5,
+    "sha256": "f581b019e049039309b1261abb72923bdaa0cdbe4ffa4e8df74e3c1ccad070b1"
+  },
+  "releaseCI": {
+    "run": 42035974587,
+    "attempt": 1,
+    "requiredSuccess": 5,
+    "passed": 18536,
+    "failed": 0,
+    "skipped": 83,
+    "sha256": "faf590c3ac556ba71d93fca509d47a4ab92847f075cd9ad8c67697e8480d5655"
+  },
+  "provider": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deploy": "dep-dbm8bam7bikc73en400g",
+    "status": "live",
+    "finishedAt": "2026-11-05T13:34:42.72853Z",
+    "autoDeploy": "yes",
+    "autoDeployTrigger": "checksPass"
+  },
+  "rollback": {
+    "release": "6b7e89c45e89686f0311036ac15e13d24f331d18",
+    "tree": "d06f198d753ae4be802ec133599a586ed65c0198",
+    "deploy": "dep-dbm81v7b9u1s738ilh5g",
+    "used": false
+  },
+  "publicStatic": {
+    "status": "PASS_PUBLIC_STATIC_ONLY",
+    "successfulGets": 17,
+    "exactNewWebPs": 12,
+    "sha256": "dc704bff257a5a6ed1f09fe6a0211312c2ae3acaa03706740368c19adc3c0d63",
+    "entry": "/assets/index-DFc0eYfs.js",
+    "route": "/research/early-access/order-request"
+  },
+  "mounted": {
+    "jira": "KAN-59/11297",
+    "guestStandaloneCases": 27,
+    "embeddedCases": 22,
+    "receiptSHA256": "521e49662cc8de8446ce67ea8f72e14dc89b2069bbfbbcd5e65e928ab47fcb79",
+    "scope": "Chromium synthetic guest/member component fixtures only. No live authenticated route, order or physical Safari."
+  },
+  "jira": "KAN-13/11315",
+  "coverage": {
+    "artworkMappings": 41,
+    "reviewedCopyEntries": 30,
+    "addedIds": [
+      "0252",
+      "0255",
+      "0251",
+      "0250",
+      "0253",
+      "0246"
+    ]
+  }
+}

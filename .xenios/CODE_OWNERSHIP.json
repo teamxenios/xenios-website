@@ -3305,7 +3305,7 @@
         "client/public/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-front-artwork-v1.webp",
         "client/public/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-website-render-v1-1024.webp"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-05T12:48:56.731414Z",
       "heartbeatAt": "2026-11-05T12:48:56.731414Z"
     },
@@ -3319,6 +3319,23 @@
       "state": "active",
       "claimedAt": "2026-11-05T13:31:52.3529784Z",
       "heartbeatAt": "2026-11-05T13:31:52.3529784Z"
+    },
+    {
+      "id": "9b2fd732-3684-4f16-85f1-68c0c2128067",
+      "task": "KAN59-C1-004-THREE-RETATRUTIDE-ARTWORK-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-media.json",
+        "client/public/research/product-media/retatrutide-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/retatrutide-15mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-15mg-front-artwork-v1.webp",
+        "client/public/research/product-media/retatrutide-30mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-30mg-front-artwork-v1.webp"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T13:43:05.8585800Z",
+      "heartbeatAt": "2026-11-05T13:43:05.8585800Z"
     }
   ],
   "rules": [
