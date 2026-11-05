@@ -1,0 +1,70 @@
+{
+  "capture": {
+    "allowance": "KAN-31/11028",
+    "artifact": 13386096769,
+    "assertions": 114,
+    "attemptsRemaining": 0,
+    "attemptsUsed": 1,
+    "contexts": 2,
+    "omission": 2,
+    "positive": 34,
+    "run": 41962766251,
+    "screenshots": 2
+  },
+  "checks": {
+    "failed": 0,
+    "passed": 18531,
+    "releaseFocusedPassed": 150,
+    "releaseProofSHA256": "8e0c12592297705d5c19d6857673c1c8fea8764213efdb5df35c7a6bb9ca7d91",
+    "releaseRun": 41963940459,
+    "skipped": 83,
+    "sourceRun": 41960434022
+  },
+  "jira": "https://xeniostechnology.atlassian.net/browse/KAN-13?focusedCommentId=11041",
+  "lease": "e9c783b4-9eeb-4891-9f97-e093796425ba",
+  "limits": "Copy-only ordinary website release. Synthetic mounted guest/member proof on the same tree and GET-only public health/shell/assets. No authenticated production catalog copy, physical Safari, request submission, product mutation, price publication, supplier production, Auth/config/SQL/provider changes.",
+  "mergeAuthority": "KAN-13/10791 standing qualified website release, normal protected match-head merge",
+  "mergedAt": "2026-11-05T03:49:05Z",
+  "parents": [
+    "4dce1ed3ad210eb41eb3e118931e3df7604d8920",
+    "cd7ee9fe1120b3ef002e1936ce66ca2439179554"
+  ],
+  "publicStatic": {
+    "entry": "/assets/index-CP2mFj2b.js",
+    "finishedAt": "2026-11-05T03:56:32.186494Z",
+    "health": "Xenios API is running",
+    "legacyPage": "/research/early-access/order-request",
+    "receiptSHA256": "36eaadcc62c097ed223f646f361ffe0ae865a3d44598d1fb9d88305ad15ac080",
+    "result": "PASS_PUBLIC_STATIC_ONLY",
+    "retainedArtwork": "/research/product-media/kpv-10mg-website-render-v1-1024.webp",
+    "successfulGets": 5
+  },
+  "published": {
+    "retainedPriorDescriptions": 10,
+    "reviewedDescriptions": 17
+  },
+  "pullRequest": "https://github.com/teamxenios/xenios-website/pull/391",
+  "release": "9b2fc9b33e1873d77c264e5a57df61a96fa970d9",
+  "render": {
+    "autoDeploy": "yes",
+    "deploy": "dep-dblvs0qjnfac73cpriqg",
+    "liveSince": "2026-11-05T03:55:58.952317Z",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "status": "live",
+    "trigger": "checksPass",
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0"
+  },
+  "rollback": {
+    "deploy": "dep-dblv62h7lnhs738fvg00",
+    "executed": false,
+    "release": "4dce1ed3ad210eb41eb3e118931e3df7604d8920",
+    "tree": "eee29fddfb747a54f90332e6badbf171cf1ea3b9"
+  },
+  "sourceBranch": "codex/early-access-nonclinical-copy-20261105",
+  "sourceCanonicalQA": "f81fcd146d5e9d764d6d20cd3e3120e7b9ddef8e",
+  "sourceReceiptSHA256": "f706be2bf6ec59d732cc14ff6a3abbea1a5b6c01365c1f345e7dd9285573007b",
+  "sourceReview": "KAN-31/10950 and KAN-6/10948, unchanged exact content blob",
+  "syntheticReview": "Independent exact artifact PASS with existing nonauthor bounded_postcheck_binding, KAN-31/11028",
+  "tree": "0b5d6b07d43f6a25fee8643f20c2ba245c8d3043",
+  "unit": "KAN6-QO-REVIEWED-RESEARCH-PARTIAL-01-20261104"
+}
