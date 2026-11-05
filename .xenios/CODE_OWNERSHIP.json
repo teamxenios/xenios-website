@@ -3522,7 +3522,7 @@
         "shared/research/paths.test.ts",
         "shared/research/paths.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-05T21:41:37.0094940Z",
       "heartbeatAt": "2026-11-05T21:41:37.0094940Z"
     }

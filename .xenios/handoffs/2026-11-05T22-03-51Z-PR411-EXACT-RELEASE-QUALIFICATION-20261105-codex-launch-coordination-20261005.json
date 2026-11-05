@@ -1,0 +1,67 @@
+{
+  "kind": "exact-live-outreach-release",
+  "release": {
+    "pr": 411,
+    "source": "e1affb90f456c45011569a591c020db9935f00af",
+    "tree": "2700bde4a4537c2d95e8cd8ae09725ecbbae57b6",
+    "protected": "12491588cba0410ab65102d5f05492b365181394",
+    "branch": "release/early-access-code-session-checkout",
+    "mergedAt": "2026-11-05T21:55:28Z",
+    "candidateRun": 42115968200,
+    "releaseRun": 42116990054,
+    "requiredTrustedChecks": 5,
+    "testsPassed": 18602,
+    "testsSkipped": 83,
+    "aliasMountedTestsPassed": 5,
+    "deploy": "dep-dbmfpttckfvc73booul0",
+    "autoTrigger": "checksPass",
+    "liveAt": "2026-11-05T22:03:51.723Z",
+    "priorCompatibleRollback": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
+    "priorDeploy": "dep-dbmevamq1p3s73ed6akg"
+  },
+  "custody": {
+    "session": "codex-launch-coordination-20261005",
+    "task": "KAN13-EA-OUTREACH-ROUTE-20261105",
+    "lease": "f9413d25-9cad-4543-9226-a23c2a824c5c",
+    "claim": "3a9ac409e3256882124a1e8f940643bed9227acc",
+    "founderAssignmentReceipt": "ad859de469f032188ff104e280e25ec7db0e95389c12afa9501831ae47071bef",
+    "paths": 15,
+    "exactSourceAcceptance": "KAN-13/11631"
+  },
+  "live": {
+    "url": "https://xeniostechnology.com/earlyaccess",
+    "freshAndRepeatGet": 200,
+    "legacyEntry": 200,
+    "lookalike": 404,
+    "health": 200,
+    "requestConfigEnabled": true,
+    "cacheControl": "no-store",
+    "pragma": "no-cache",
+    "referrerPolicy": "no-referrer",
+    "robots": "noindex,nofollow,noarchive",
+    "entry": "/assets/index-CwFHLHJ4.js",
+    "requestOnlyModule": "/assets/section-fbYlmQUN.js",
+    "nameAndStandingModule": "/assets/EarlyAccessRoute-BKOdcBXB.js",
+    "requestRuntime": "/assets/RequestIntentEntry-DAXVbp3H.js",
+    "rootHttpReceiptSha256": "291baef194ec4fc9db2bd2a1f5be58359a25e1e2dc1d8499d02e9bd20266042d",
+    "independentHttpReceiptSha256": "373d6b3e4a5391c6ef870e3f3b963bfc1b95523880d7e5ffd169b8630681767c",
+    "independentRecord": "KAN-13/11639",
+    "scope": "Live HTTP, privacy headers, exact served request-only code, plus signed-out mounted synthetic behavior on the exact hosted build. Existing live in-app browser attempt is held by its memory floor at this snapshot. Physical iPhone/mobile is not a release gate per Samuel."
+  },
+  "retainedCatalog": {
+    "reviewedDescriptions": 69,
+    "mediaMappings": 57,
+    "guestVariantCount": 420,
+    "descriptionRegistry": "2f877b95ce876881109dcfb37d703496a10255fb",
+    "mediaRegistry": "40069f80ec8e517f3173e94d416f9ca723367254"
+  },
+  "next": {
+    "pr": 410,
+    "lease": "5e05cacb-1755-4a63-b419-e2344a50c67b",
+    "frozenSource": "792c4e69398aa61a856404e1fdaeae9a79139089",
+    "oldHostedRun": 42113494723,
+    "currentBaseRebindExpectedTree": "86b0ba1768266e3f7db255abf11ca763ce6567bf",
+    "prospectiveReceiptSha256": "8c84770b812da03e001eb9344234153c104fb9c744bf271983f072004dd0337c",
+    "scope": "61 exact artwork paths conserved plus all 15 protected alias paths; source-only expected tree until actual hosted qualification"
+  }
+}
