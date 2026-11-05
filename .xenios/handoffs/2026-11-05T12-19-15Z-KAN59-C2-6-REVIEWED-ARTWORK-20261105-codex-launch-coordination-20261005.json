@@ -1,0 +1,56 @@
+{
+  "schema": "xenios.source-qa-handoff.v1",
+  "scope": "PR393 six reviewed Early Access artwork pairs",
+  "task": "KAN59-C2-6-REVIEWED-ARTWORK-20261105",
+  "lease": "31bc2260-8d56-4e58-829e-687e624c801e",
+  "session": "codex-launch-coordination-20261005",
+  "pr": 393,
+  "head": "e0d72257966b42a42af95851bc9b133f09853b2f",
+  "tree": "2a20520395acdbe1de1ca3ab7444e0c035f38cc3",
+  "base": "9b2fc9b33e1873d77c264e5a57df61a96fa970d9",
+  "original": "b53e3da72556a89d52bba5aa0067d03a968974c7",
+  "changedPaths": 13,
+  "sourceReview": [
+    "KAN-59/11056",
+    "KAN-59/11086",
+    "KAN-225/11208"
+  ],
+  "applicationCI": {
+    "id": 41965254348,
+    "attempt": 1,
+    "trustedSuccess": 5,
+    "passed": 18531,
+    "failed": 0,
+    "skipped": 83
+  },
+  "browser": {
+    "approval": "KAN-31/11224",
+    "status": "success and independently verified",
+    "run": 42024500899,
+    "job": 127235198354,
+    "launch": "153a483fdef4b5a73feaf7cab278a5b2d8ef4a15",
+    "tree": "0c09e55356f5ea5f6d4009f2f11a8e7dc8723124",
+    "fixtureSHA256": "2422a3fc89049d8686470b5e1f330c98771b3dd56150ccc76498cb37c7f7f651",
+    "candidateRoleCases": 18,
+    "guestAssertions": 134,
+    "memberAssertions": 127,
+    "assetProofs": 42,
+    "pinnedWebPs": 14,
+    "externalApplicationTraffic": 0,
+    "writes": 0,
+    "recovery": 0,
+    "artifact": 13413241791,
+    "artifactSHA256": "c489f5d918fe363c34339a3e95048fc3adf8c8b8c41cb0eeca04880a656f03c3",
+    "resultSHA256": "3cdd211cc90f5f93974edfb5228052b7a48a1109a5935460e96ef0c6d48f5b3c",
+    "allowed": 1,
+    "used": 1,
+    "remaining": 0,
+    "screenshotsInspectedByRootAndIndependentReviewer": 2
+  },
+  "limitations": [
+    "Synthetic Chromium only, no physical Safari",
+    "Public packaging design artwork with visible disclosure, no supplier activation",
+    "Preserved inherited descriptions and prior 29 mappings",
+    "QA handoff only, release and live postcheck require separate exact evidence"
+  ]
+}
