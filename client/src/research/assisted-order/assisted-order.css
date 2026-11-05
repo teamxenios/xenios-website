@@ -142,3 +142,95 @@
   .xenios-order-admin-row { grid-template-columns: 1fr 1fr; }
   .xenios-order-admin-row--head { display: none; }
 }
+
+/* The request-intent wrappers preserve the existing desktop/member card flow. */
+.xenios-order-card-intro,
+.xenios-order-card-media,
+.xenios-order-card-identity,
+.xenios-order-card-meta,
+.xenios-order-card-actions { display: contents; }
+.xenios-order-card-actions > .xenios-order-button { margin-top: auto; align-self: flex-start; }
+.xenios-order-summary-toggle { display: none; }
+.xenios-order-mobile-pagination { display: none; }
+
+@media (max-width: 700px) {
+  .xenios-order-page--guest-catalog { width: 100%; }
+  /* The guest chrome scrolls normally; member shells keep their sticky header. */
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding-top: calc(8px + env(safe-area-inset-top, 0px));
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-mobile-pagination { display: block; }
+  .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: none; }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar label { min-width: 0; gap: 4px; font-size: .75rem; }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar input,
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select { min-width: 0; height: 44px; padding: 8px 10px; font-size: 16px; }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-pagination {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 8px;
+    margin: 8px 0 0;
+    font-size: .875rem;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-pagination button { min-height: 44px; padding: 8px 12px; }
+  .xenios-order-page--guest-catalog .xenios-order-pagination span { text-align: center; }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-layout { gap: 12px; }
+  .xenios-order-page--guest-catalog .xenios-order-cards { gap: 10px; }
+  .xenios-order-page--guest-catalog .xenios-order-card {
+    min-width: 0;
+    min-height: 0;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 14px;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card h2 { margin: 0; font-size: 1rem; line-height: 1.3; overflow-wrap: anywhere; }
+  .xenios-order-page--guest-catalog .xenios-order-card p { margin: 0; font-size: .8125rem; line-height: 1.4; overflow-wrap: anywhere; }
+  .xenios-order-page--guest-catalog .xenios-order-card-intro { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 12px; align-items: start; }
+  .xenios-order-page--guest-catalog .xenios-order-card-media { display: block; min-width: 0; }
+  .xenios-order-page--guest-catalog .xenios-order-card-media figcaption { font-size: .75rem; line-height: 1.35; }
+  .xenios-order-page--guest-catalog .xenios-order-card-identity,
+  .xenios-order-page--guest-catalog .xenios-order-card-meta { display: grid; min-width: 0; gap: 5px; }
+  .xenios-order-page--guest-catalog .xenios-order-card-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-link { margin: 0; padding-inline: 6px; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-button { flex: 1; min-width: 0; margin: 0; padding: 10px 12px; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-quantity { width: 100%; margin: 0; gap: 8px; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity label { flex: 0 1 4.25rem; min-width: 3.5rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-quantity-label { display: none; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity input { padding-inline: 6px; font-size: 16px; }
+  .xenios-order-page--guest-catalog .xenios-order-summary { padding: 0; border-radius: 12px; }
+  .xenios-order-page--guest-catalog .xenios-order-summary-toggle {
+    display: flex;
+    width: 100%;
+    min-height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: .875rem;
+    font-weight: 700;
+    text-align: left;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-summary-content { display: none; }
+  .xenios-order-page--guest-catalog .xenios-order-summary-content.is-open { display: block; padding: 0 12px 12px; }
+  .xenios-order-page--guest-catalog .xenios-order-summary-content h2 { display: none; }
+}
