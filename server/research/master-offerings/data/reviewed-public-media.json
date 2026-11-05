@@ -575,6 +575,336 @@
       "sourceCommit": "c5b93b3aef0a89410760f3aee2239163909a77ce",
       "primarySha256": "05c561f93f0e9e4289febcaf74ab17e98911b401313d958a2af186833d2508ba",
       "labelPreviewSha256": "161b1aec953d2ac921cf98385f30d48c7890e8d2f88fe9294fee7ee41b5a744a"
+    },
+    {
+      "offeringId": "mo_c600e7eb1c9f5fd03c80",
+      "sourceVariantId": "mov_2183aa9edb06f34ef3af",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/5-amino-1mq-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for 5-Amino-1MQ research capsules, listed strength 50 mg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/5-amino-1mq-50mg-front-artwork-v1.webp",
+          "altText": "5-Amino-1MQ research capsule front label design, listed strength 50 mg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "0ab9ebc1c4cc0272325f3250aeaeabd8c8a9f8a5",
+      "primarySha256": "fc4477d3e2ecc5ad92032690033058c08df5b77cde885aef04fe6a5183c05ca2",
+      "labelPreviewSha256": "f83c7ab9ca10f8bf39165b6861e545abb9457175055c231538107ceb85d3c62a"
+    },
+    {
+      "offeringId": "mo_7ba89975fb62ceb33b7b",
+      "sourceVariantId": "mov_753d3f94385adf791d1e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-500mcg-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for BPC-157 research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-500mcg-front-artwork-v1.webp",
+          "altText": "BPC-157 research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "e83e6eb1075ce0574e8a01f7b71e7c6e1a1fa8b8",
+      "primarySha256": "9c24975b33baf439307129c645f61ea1e1812dd4dba9cb290903a57bd9ccbe80",
+      "labelPreviewSha256": "f4ed18c0146a6ebc87b7453100ff4305f8376f5060a845fc400b8f1aa1a9e210"
+    },
+    {
+      "offeringId": "mo_b2ebb969d48a20f9e680",
+      "sourceVariantId": "mov_fe292b5f03527ec13e5e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/kpv-500mcg-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for KPV research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/kpv-500mcg-front-artwork-v1.webp",
+          "altText": "KPV research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "178f1775819835d4c17250edb0b675dfa7ee4189",
+      "primarySha256": "2c8dcdff792f6ff125368914bec6f7ac1986f920abc6d12793b97b94d12cc3df",
+      "labelPreviewSha256": "c8459d95b7c476be68770e99eb11361ca58346572f2da4d323102f49d47993ff"
+    },
+    {
+      "offeringId": "mo_4668304296fb55b51280",
+      "sourceVariantId": "mov_a2d32f69681dca2b17fb",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ghk-cu-2mg-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for GHK-Cu research capsules, listed strength 2 mg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghk-cu-2mg-front-artwork-v1.webp",
+          "altText": "GHK-Cu research capsule front label design, listed strength 2 mg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "7d587a2dbd81812aeac75632397e6ccfedfeb8ad",
+      "primarySha256": "f23e18c14d58a821795301763b629e142144ff26ac635da733457b715fc5b1d3",
+      "labelPreviewSha256": "3b50bfdbddcee4559f4b559919e7cf869763fbb71f57ee883d1fc73b122b072d"
+    },
+    {
+      "offeringId": "mo_e4de11c77d16c4c3b83d",
+      "sourceVariantId": "mov_09db3e866424b64994d3",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-xenios-5mg-render.webp",
+          "altText": "Xenios BPC-157 5 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-xenios-5mg-front-label.webp",
+          "altText": "Xenios BPC-157 5 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "87d241fb30eaabae6df41971597024d8add1cd33",
+      "primarySha256": "ffddb32bbf26d5ae8cc6a5a3cd43dcf7e6c50c3f7dd40162aaad6fdd4f7dc424",
+      "labelPreviewSha256": "4c2f3e01ccf963d17ab3ec938bc38ee302dbd730827a02fb560a9737653630a5"
+    },
+    {
+      "offeringId": "mo_9a755fa72de0409cd937",
+      "sourceVariantId": "mov_257330ea83ecbfc45fae",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-xenios-15mg-render.webp",
+          "altText": "Xenios BPC-157 15 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-xenios-15mg-front-label.webp",
+          "altText": "Xenios BPC-157 15 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "87d241fb30eaabae6df41971597024d8add1cd33",
+      "primarySha256": "99c33810b01811e4e6d42f039315ef2655956379d9be1efa7f6b021b29d6d2ac",
+      "labelPreviewSha256": "abdc61d2e7b4a13acb4727f3fab4f0ca9482ff1d70b3e7d60ae84a23224b9194"
+    },
+    {
+      "offeringId": "mo_143d09ffd9b13780f2d7",
+      "sourceVariantId": "mov_8e11e063f79d56a3a946",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/sermorelin-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Sermorelin research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/sermorelin-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "Sermorelin research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "ca04de90b42dd66f1099fb0118437d7fe5ee96ac",
+      "primarySha256": "e404c5f224b4704c46096b750cbc7308e1ff0b53c61b04a14afb602a623ee591",
+      "labelPreviewSha256": "e9f963942ee01ef3d0abfcb8829c0402ac33a6726f51677560d6791e927af9e1"
+    },
+    {
+      "offeringId": "mo_aace3aded470921f6af2",
+      "sourceVariantId": "mov_120b19d12e869b0070ff",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/thymosin-alpha-1-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Thymosin Alpha-1 research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymosin-alpha-1-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "Thymosin Alpha-1 research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "2baf5b6519cd8f67f6892ecdcb75bd7c2d93893c",
+      "primarySha256": "9b4ef86da53bc2da845c726e318a8a413bb58fd4895a18d865e50b49e1a6444b",
+      "labelPreviewSha256": "b89dd9ab0b654c47438236c9505b65271a0874be0b344b0026b1aa3d866a086a"
+    },
+    {
+      "offeringId": "mo_34fa0d12f1effd156e61",
+      "sourceVariantId": "mov_c58b682a44514760a74f",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/slu-pp-332-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for SLU-PP-332 research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/slu-pp-332-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "SLU-PP-332 research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "75d1f5b2c1159603c48f476ad27a276b2cad2496",
+      "primarySha256": "1c7de1eda463c5ba9b24e7f0ed8e9c036f7384a1658c340370741a65ad896754",
+      "labelPreviewSha256": "c6502987b826c372119dca77bdd32d07f18d32e57eff118ebc17b3ffdc0dc93c"
+    },
+    {
+      "offeringId": "mo_2923115827ca8fe37d2c",
+      "sourceVariantId": "mov_257fd9d66f6284e3570e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tb-500-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for TB-500 research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tb-500-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "TB-500 research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "487ab7b35f40ce8e0f59c8f4cc653d69f9772ef4",
+      "primarySha256": "2e420b7f36024b883a47561bd75e533cdf2aec0e17b8c78ce07a9b5c3783a1aa",
+      "labelPreviewSha256": "20571d2c66f7da8051b49bdda9b567dd51f258e11e65a13c33d7d4f3bcf15580"
+    },
+    {
+      "offeringId": "mo_3c6f0d26e9df4bcb80c5",
+      "sourceVariantId": "mov_395e7047e013e2074f6a",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/slu-pp-332-250mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for SLU-PP-332 research capsules, listed strength 250 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/slu-pp-332-250mcg-capsule-front-artwork-v1.webp",
+          "altText": "SLU-PP-332 research capsule front label design, listed strength 250 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "c64feb36f3633672844a70463f4a322bc6c1e582",
+      "primarySha256": "c0765a0871f2e85ecd5d8091194dadd12d4bfb1f834a24b6aa277c38fc1813c4",
+      "labelPreviewSha256": "3097356bfd5a5db9e8c6ad72dc85fe24f706af722a1767de0018feb3be282e60"
+    },
+    {
+      "offeringId": "mo_75bc8d1ad93b04865e6c",
+      "sourceVariantId": "mov_8293d0baa21eb4d561f8",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Blend BPC-157 + TB-500 research capsules, listed strength 500/500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "Blend BPC-157 + TB-500 research capsule front label design, listed strength 500/500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "ba455f74ae9e16093b934b772008616248b6bbc2",
+      "primarySha256": "a9bf1f1de9fa751095b4b8b8ee42b3a284988b64faa6bdba2834130c00f81f6d",
+      "labelPreviewSha256": "28648b998a35fd2fa06b61f0b9ba010f3da67d2d8855627b3a8bf6411ff0c60b"
+    },
+    {
+      "offeringId": "mo_f7fecc82508964efe3aa",
+      "sourceVariantId": "mov_0c4a5438cc87ab9d85b6",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 10 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-10mg-front-artwork-v1.webp",
+          "altText": "Xenios Retatrutide 10 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7a488755a186f4db4a91117a5b271a24899d9059",
+      "primarySha256": "f26ef5d167af2bd2ef91742ebf52c16404e17dabc9c5b8afcec6bffd799e7f35",
+      "labelPreviewSha256": "d33557b5f27a3bf0311b21bac3a1b899c99e74722d9bdf1523e4416f3fd0d48c"
+    },
+    {
+      "offeringId": "mo_e230262ae1c41d2d7e18",
+      "sourceVariantId": "mov_8f14c1dd839544567d53",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-15mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 15 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-15mg-front-artwork-v1.webp",
+          "altText": "Xenios Retatrutide 15 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7a488755a186f4db4a91117a5b271a24899d9059",
+      "primarySha256": "83a201f95172707533200de1ee04c07d40b7ee55ef22ebb1ea4863d8e71e74df",
+      "labelPreviewSha256": "074ce3c34d6c923eab290701f2fa80295bc53ab13c2e092c191515c6b30d01de"
+    },
+    {
+      "offeringId": "mo_f293ba683340fcd926d9",
+      "sourceVariantId": "mov_7bd700ce0704d66e614e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-30mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 30 mg lyophilized vial packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-30mg-front-artwork-v1.webp",
+          "altText": "Xenios Retatrutide 30 mg per vial front label design for research use",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7a488755a186f4db4a91117a5b271a24899d9059",
+      "primarySha256": "0d3a276efa04a1d35a0135d4276a7f53aef7b85139fd047e9c53bf0cbb99311c",
+      "labelPreviewSha256": "f7e8fd4064b32fcc22c302cb31087c98c83b04d8bae2cf2b944cd082e0c5caf5"
     }
   ]
 }
