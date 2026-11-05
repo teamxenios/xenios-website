@@ -2245,8 +2245,12 @@ describe("route uniqueness validator", () => {
       "POST /api/research/early-access/request-intents",
       "POST /api/research/early-access/request-intents/recover",
     ]);
-    expect(result.callSites).toBe(445);
-    expect(result.routes).toHaveLength(454);
+    expect(result.routes.filter((route) => route.path === "/api/catalog-interest")
+      .map((route) => route.method + " " + route.path)).toEqual([
+      "POST /api/catalog-interest",
+    ]);
+    expect(result.callSites).toBe(446);
+    expect(result.routes).toHaveLength(455);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

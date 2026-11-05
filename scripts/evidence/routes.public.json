@@ -63,6 +63,28 @@
       }
     },
     {
+      "path": "/health/catalog",
+      "surface": "health-catalog-interest",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "health-catalog-interest",
+      "metadataContract": {
+        "title": "Request the xenios catalog",
+        "description": "Request the current xenios catalog without creating an account or placing an order."
+      },
+      "structuredDataTypes": [],
+      "semanticContract": {
+        "requiredSelectors": [
+          "main h1"
+        ],
+        "requiredText": [
+          "Request the xenios catalog.",
+          "Quick Order stays separate."
+        ]
+      }
+    },
+    {
       "path": "/research",
       "surface": "warm-silver-homepage-reconciliation",
       "state": "default",

@@ -51,3 +51,16 @@ export function isCarePath(value: string): boolean {
 export function isHealthGatewayPath(value: string): boolean {
   return normalizeCarePath(value) === "/health";
 }
+
+/** The reviewed public catalog-request page inside the Health privacy zone. */
+export function isHealthCatalogPath(value: string): boolean {
+  return normalizeCarePath(value) === "/health/catalog";
+}
+
+/**
+ * Pages that must clear attribution and block third-party marketing tracking.
+ * Keep this finite rather than treating arbitrary /health/* values as valid.
+ */
+export function isHealthPrivacyPath(value: string): boolean {
+  return isHealthGatewayPath(value) || isHealthCatalogPath(value);
+}

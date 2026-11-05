@@ -277,6 +277,20 @@ describe("raw HTTP route authority", () => {
     });
   });
 
+  it("admits /health/catalog as the canonical public catalog request page", () => {
+    expect(defaultResolver.resolve("/health/catalog")).toMatchObject({
+      status: 200,
+      routeKind: "public",
+      indexable: true,
+      canonicalPath: "/health/catalog",
+      canonicalUrl: "https://xeniostechnology.com/health/catalog",
+    });
+    expect(rawHttpDocumentMetadataForPath("/health/catalog")).toEqual({
+      title: "Request the xenios catalog",
+      description: "Request the current xenios catalog without creating an account or placing an order.",
+    });
+  });
+
   it("makes Quality, Testing, and Documents explicit public roots", () => {
     const qualityMatrix = [
       PUBLIC_QUALITY_ROUTES.quality,

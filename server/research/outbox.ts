@@ -31,6 +31,17 @@ import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/commu
 import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
 import { renderAssistedOrderOutboxEmail } from "./assisted-order/communications";
 import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications";
+import {
+  CATALOG_INTEREST_CUSTOMER_EVENT,
+  CATALOG_INTEREST_TEAM_EVENT,
+} from "@shared/catalog-interest";
+import { catalogAuthorityFromEnvironment } from "../catalog-interest/authority";
+import {
+  createResendCatalogMailProvider,
+  sendCatalogInterestMail,
+  type CatalogMailProvider,
+  type CatalogMailSender,
+} from "../catalog-interest/mail";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -239,7 +250,27 @@ export async function sendFoundingEmail(input: {
 // Template dispatch at SEND time. Fresh tokens are minted here, never stored.
 // The token PURPOSE is decided at enqueue time (payload.tokenPurpose) so a
 // pre-approval status link can never carry an account-claim credential.
-async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
+function catalogMailAttempt(): { provider: CatalogMailProvider; sender: CatalogMailSender } {
+  let resolvedClient: ReturnType<typeof getResendClient> | null = null;
+  const resolveClient = () => {
+    resolvedClient ??= getResendClient();
+    return resolvedClient;
+  };
+  return {
+    provider: {
+      async send(input) {
+        const { client } = await resolveClient();
+        return createResendCatalogMailProvider(client).send(input);
+      },
+    },
+    // Resolve credentials and the configured sender only after the strict
+    // adapter accepts the durable job and current catalog authority. This
+    // preserves the canonical env/connector seam without inventing a fallback.
+    sender: async () => (await resolveClient()).fromEmail ?? null,
+  };
+}
+
+async function dispatch(job: any, now: Date): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
   const payload = job.payload ?? {};
   const firstName = String(payload.firstName ?? "there");
   // Rows enqueued before purposes existed have no payload.tokenPurpose; for
@@ -256,8 +287,40 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
       || /^fm_membership_/.test(job.template_key) || /^fm_renewal_/.test(job.template_key)) {
       return { ok: false, providerId: null, error: "paid membership notification retired; customer access requires the approved-account workflow", nonRetryable: true };
     }
+    const templateIsCatalog = job.template_key === CATALOG_INTEREST_CUSTOMER_EVENT ||
+      job.template_key === CATALOG_INTEREST_TEAM_EVENT;
+    const eventIsCatalog = job.event_type === CATALOG_INTEREST_CUSTOMER_EVENT ||
+      job.event_type === CATALOG_INTEREST_TEAM_EVENT;
+    if ((templateIsCatalog || eventIsCatalog) && job.template_key !== job.event_type) {
+      return {
+        ok: false,
+        providerId: null,
+        error: "catalog interest delivery failed: invalid_job",
+        nonRetryable: true,
+      };
+    }
     let result: unknown;
     switch (job.template_key) {
+      case CATALOG_INTEREST_CUSTOMER_EVENT:
+      case CATALOG_INTEREST_TEAM_EVENT: {
+        const mailAttempt = catalogMailAttempt();
+        const delivery = await sendCatalogInterestMail({
+          eventKey: String(job.event_key ?? ""),
+          eventType: String(job.event_type ?? ""),
+          recipient: String(job.recipient ?? ""),
+          payload,
+        }, mailAttempt.provider, mailAttempt.sender,
+        catalogAuthorityFromEnvironment(process.env, now));
+        if (delivery.outcome === "sent") {
+          return { ok: true, providerId: delivery.providerMessageId };
+        }
+        return {
+          ok: false,
+          providerId: null,
+          error: `catalog interest delivery failed: ${delivery.code}`,
+          nonRetryable: !delivery.retryable,
+        };
+      }
       case "approved_customer_claim": {
         // Recheck the approval before minting/sending its ownership credential.
         // A stale or revoked job is a visible failure, never recorded as sent.
@@ -558,7 +621,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     if (!claimed) continue;
 
     const attempt = (job.attempt_count ?? 0) + 1;
-    const outcome = await dispatch(job);
+    const outcome = await dispatch(job, now);
 
     await getSupabaseAdmin().from(ATTEMPTS).insert({
       outbox_id: job.id,

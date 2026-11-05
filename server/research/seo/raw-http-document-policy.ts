@@ -45,6 +45,7 @@ export const RAW_HTTP_GLOBAL_PUBLIC_PATHS = Object.freeze([
   "/product",
   "/how-it-works",
   "/health",
+  "/health/catalog",
   "/for-coaches",
   "/waitlist",
   "/about",
@@ -240,6 +241,10 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
     "/health": metadata(
       "Xenios | Care + Research",
       "Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work.",
+    ),
+    "/health/catalog": metadata(
+      "Request the xenios catalog",
+      "Request the current xenios catalog without creating an account or placing an order.",
     ),
     "/research": metadata(
       "Xenios Research | Clear, evidence-aware research access",

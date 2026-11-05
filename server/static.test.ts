@@ -148,6 +148,21 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.text).not.toContain("application/ld+json");
   });
 
+  it("serves /health/catalog as an indexable canonical document deep link", async () => {
+    const res = await request(app).get("/health/catalog");
+    expect(res.status).toBe(200);
+    expect(res.headers["x-robots-tag"]).toMatch(/^index,follow/u);
+    expect(res.headers.link).toBe(
+      '<https://xeniostechnology.com/health/catalog>; rel="canonical"',
+    );
+    expect(canonical(res.text)).toBe("https://xeniostechnology.com/health/catalog");
+    expect(res.text).toContain("Request the xenios catalog");
+    expect(res.text).toContain(
+      "Request the current xenios catalog without creating an account or placing an order.",
+    );
+    expect(res.text).not.toContain("application/ld+json");
+  });
+
   it("keeps a private member document at 200 but noindex, with no canonical or Open Graph authority", async () => {
     const res = await request(app).get("/research/member/orders");
     expect(res.status).toBe(200);
