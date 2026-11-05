@@ -199,6 +199,69 @@ describe("full catalog page", () => {
     unmount();
   });
 
+  it("uses neutral clinical labels while retaining exact facets and Care action", () => {
+    const family = "clinical_formulations_503a";
+    const category = "503a-clinical-formulations";
+    const rawLabel = "503A Clinical Formulations";
+    const careHref = "/research/member/metabolic-care";
+    const onQueryChange = vi.fn();
+    const { host, unmount } = render(
+      <FullCatalogPage
+        query={{ families: [family], categories: [category], page: 2 }}
+        page={page({
+          products: [card({
+            family,
+            familyLabel: rawLabel,
+            category: rawLabel,
+            subcategory: "Compounded Vial / Liquid",
+            displayState: "care_pathway",
+            displayLabel: "Care Pathway",
+            variantCount: 1,
+            variants: [{
+              id: "mov_synthetic_clinical",
+              label: "Synthetic variant",
+              displayState: "care_pathway",
+              displayLabel: "Care Pathway",
+              price: MASTER_OFFERING_PRICE_ON_REQUEST,
+              action: { kind: "explore_care", label: "Explore Care", href: careHref },
+            }],
+          })],
+          facets: {
+            families: [{ value: family, label: rawLabel, count: 9 }],
+            categories: [{ value: category, label: rawLabel, count: 7 }],
+            states: [],
+          },
+        })}
+        onQueryChange={onQueryChange}
+      />,
+    );
+
+    expect(host.textContent).not.toMatch(/503a|compounded vial/i);
+    expect(host.querySelector('#mo-catalog-family option[value="clinical_formulations_503a"]')?.textContent)
+      .toBe("Clinical formulations (9)");
+    expect(host.querySelector('#mo-catalog-category option[value="503a-clinical-formulations"]')?.textContent)
+      .toBe("Clinical formulations (7)");
+    expect(host.querySelector('[data-testid="mo-card"] p.mono-label')?.textContent)
+      .toBe("Clinical formulations");
+    expect(host.querySelector('[data-testid="mo-card"] dd')?.textContent)
+      .toBe("Clinical formulations");
+
+    const careAction = host.querySelector('[data-testid="mo-card-action"]');
+    expect(careAction?.textContent).toBe("Explore Care");
+    expect(careAction?.getAttribute("href")).toBe(careHref);
+    expect(host.querySelector('[data-testid="mo-card-buy-now"]')).toBeNull();
+
+    const familyChip = host.querySelector<HTMLButtonElement>('[aria-label="Remove Family: Clinical formulations"]');
+    const categoryChip = host.querySelector<HTMLButtonElement>('[aria-label="Remove Category: Clinical formulations"]');
+    expect(familyChip).not.toBeNull();
+    expect(categoryChip).not.toBeNull();
+    act(() => familyChip?.click());
+    expect(onQueryChange).toHaveBeenCalledWith({ categories: [category] });
+    act(() => categoryChip?.click());
+    expect(onQueryChange).toHaveBeenLastCalledWith({ families: [family] });
+    unmount();
+  });
+
   it("clears filters and a non-default sort in one explicit action", () => {
     const onQueryChange = vi.fn();
     const { host, unmount } = render(

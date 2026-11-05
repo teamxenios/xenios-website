@@ -22,6 +22,7 @@ import {
   saveMasterOfferingPriceList,
 } from "./catalogApi";
 import { MASTER_OFFERING_FILTER_STATES, masterOfferingPriceListUrl } from "./integration-packet";
+import { catalogPresentationLabel } from "./catalog-presentation-labels";
 
 const ALL = "all";
 const SEARCH_DEBOUNCE_MS = 250;
@@ -182,7 +183,7 @@ export function MasterOfferingCatalogControls({
             {MASTER_OFFERING_FAMILIES.map((value) => (
               <option key={value} value={value}>
                 {withCount(
-                  MASTER_OFFERING_FAMILY_LABELS[value],
+                  catalogPresentationLabel(value, MASTER_OFFERING_FAMILY_LABELS[value]),
                   familyCounts.get(value),
                 )}
               </option>
@@ -218,7 +219,7 @@ export function MasterOfferingCatalogControls({
             </option>
             {facets.categories.map((bucket) => (
               <option key={bucket.value} value={bucket.value}>
-                {withCount(bucket.label, bucket.count)}
+                {withCount(catalogPresentationLabel(bucket.value, bucket.label), bucket.count)}
               </option>
             ))}
           </select>
