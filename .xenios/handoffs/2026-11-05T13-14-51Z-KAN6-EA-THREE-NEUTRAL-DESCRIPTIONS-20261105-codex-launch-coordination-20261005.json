@@ -1,0 +1,43 @@
+{
+  "schema": "xenios.source-qa-handoff.v1",
+  "task": "KAN6-EA-THREE-NEUTRAL-DESCRIPTIONS-20261105",
+  "lease": "94612cf0-7d1b-4610-b093-5f1c5bf50ede",
+  "owner": "codex-launch-coordination-20261005",
+  "pr": 397,
+  "source": "a64e8e3ead189d458b6cdd18071fa7c755dc2812",
+  "tree": "31ad1619bdae5cc5a96343d7728e404ad9f2a962",
+  "base": "fbc04ab3f3699ae8ba175d67fea399d0cc1963a7",
+  "manifest": "40508370456bc21e495f585fbeb96978dfb3f021",
+  "rows": [
+    "0400",
+    "0409",
+    "0398"
+  ],
+  "sourceEvidence": [
+    "KAN-6/11123",
+    "KAN-31/11017",
+    "KAN-31/11097"
+  ],
+  "sourceCI": {
+    "id": 42029258055,
+    "pass": 18531,
+    "skip": 83,
+    "sha256": "8ebfa61898c6bcbcf190a62fcd6d7244533748fea1bbd6c6f7f39977cb7dabea"
+  },
+  "componentBrowser": {
+    "jira": "KAN-31/11271",
+    "cases": 9,
+    "failures": 0,
+    "sha256": "21233e763228a5e02b3c914ec859596cf9bc083dfc0b2c64b3e422805f3eb843"
+  },
+  "composition": {
+    "pr": 400,
+    "source": "e278a3fd3bb1ad21f0b41703c93ab7237783841f",
+    "tree": "d06f198d753ae4be802ec133599a586ed65c0198",
+    "hostedRun": 42031913658,
+    "independentBrowserCases": 4,
+    "browserSHA256": "95776fc77b1deaff68121beb8c3103daa6acafead667571472643ac17c76e0a9",
+    "merge": "6b7e89c45e89686f0311036ac15e13d24f331d18"
+  },
+  "scope": "Source QA only. Browser fixtures used exact React components and synthetic transport. Production live verification has its own receipt. No scope for 0413, clinical, or new artwork."
+}

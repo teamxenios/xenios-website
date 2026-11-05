@@ -4077,7 +4077,7 @@
       "id": "KAN6-EA-THREE-NEUTRAL-DESCRIPTIONS-20261105",
       "title": "Adopt three neutral Early Access descriptions",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-6",
       "baseSha": "fbc04ab3f3699ae8ba175d67fea399d0cc1963a7",
       "paths": [
@@ -4087,7 +4087,13 @@
       "scopeNote": "Immediate founder-directed Early Access description delivery recorded at KAN-225 comment 11233 and assigned to existing Root owner at KAN-6 comment 11236. Limit source work exactly to server/research/master-offerings/data/reviewed-public-content.json on branch codex/early-access-three-neutral-descriptions-20261105 from protected release fbc04ab3f3699ae8ba175d67fea399d0cc1963a7/tree 2a20520395acdbe1de1ca3ab7444e0c035f38cc3, with exact base blob 84d4104806803a60b3e376a7c5206b432716775e. Adopt only the approved three-row neutral composition for GEN-GRP-0400, GEN-GRP-0409 and GEN-GRP-0398, with prospective Git blob 40508370456bc21e495f585fbeb96978dfb3f021 and raw SHA-256 d1d08cd61c93d2541eb458edea91dade21cdff5bc3ad7a9a832f609825507465, verified at KAN-6/11123 and KAN-31/11017 plus KAN-31/11097. The 39 clinical rows and nine presentation-held research rows are explicitly excluded and no authority over them is inferred. Release CI for fbc04ab3 is pending separately and this claim does not qualify or mutate release state. Fresh active/reserved exact/ancestor/prefix/wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict. Preserve every historical task, lease, foreign owner, rule, session, release record, QA policy branch, source ref and prior history. This custody transaction performs no source edit, worktree, heavy local job, browser, policy-guard, provider, release or production mutation.",
       "createdAt": "2026-11-05T12:32:42.379387Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T12:32:42.379387Z"
+      "claimedAt": "2026-11-05T12:32:42.379387Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "a64e8e3ead189d458b6cdd18071fa7c755dc2812",
+        "file": ".xenios/handoffs/2026-11-05T13-14-51Z-KAN6-EA-THREE-NEUTRAL-DESCRIPTIONS-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T13:14:51Z"
+      }
     },
     {
       "id": "KAN59-C3-SIX-CAPSULE-ARTWORK-20261105",

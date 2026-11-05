@@ -1,0 +1,80 @@
+{
+  "schema": "xenios.release-complete.v1",
+  "pr": 400,
+  "source": "e278a3fd3bb1ad21f0b41703c93ab7237783841f",
+  "release": "6b7e89c45e89686f0311036ac15e13d24f331d18",
+  "tree": "d06f198d753ae4be802ec133599a586ed65c0198",
+  "productionBranch": "release/early-access-code-session-checkout",
+  "mergeAt": "2026-11-05T13:08:12Z",
+  "parents": [
+    "fbc04ab3f3699ae8ba175d67fea399d0cc1963a7",
+    "e278a3fd3bb1ad21f0b41703c93ab7237783841f"
+  ],
+  "contained": [
+    {
+      "pr": 397,
+      "head": "a64e8e3ead189d458b6cdd18071fa7c755dc2812"
+    },
+    {
+      "pr": 398,
+      "head": "1576298266d21ee77f5f5b7334ea391a132b1caa"
+    }
+  ],
+  "compositionCI": {
+    "id": 42031913658,
+    "sha256": "e534c262a40a82dcd2ff1f86b2842c7e4240e3a74c3b031579299bd946f0d4f7",
+    "trustedSuccess": 5
+  },
+  "releaseCI": {
+    "id": 42033090051,
+    "attempt": 1,
+    "trustedSuccess": 5,
+    "passed": 18536,
+    "failed": 0,
+    "skipped": 83,
+    "sha256": "1887293989dda7fb6b4b9477df973b3038b35ebbd967f8e19db63bf647784121"
+  },
+  "provider": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deploy": "dep-dbm81v7b9u1s738ilh5g",
+    "status": "live",
+    "finishedAt": "2026-11-05T13:14:51.899974Z",
+    "autoDeploy": "yes",
+    "autoDeployTrigger": "checksPass"
+  },
+  "rollback": {
+    "release": "fbc04ab3f3699ae8ba175d67fea399d0cc1963a7",
+    "tree": "2a20520395acdbe1de1ca3ab7444e0c035f38cc3",
+    "deploy": "dep-dbm7e8ss728c73ffhki0",
+    "used": false
+  },
+  "static": {
+    "status": "PASS_PUBLIC_STATIC_ONLY",
+    "successfulGets": 5,
+    "sha256": "068c660313208d3f34ef167a5726ce0bc884a3de6a9d48ab156d3e0ee0807700",
+    "entry": "/assets/index-DFc0eYfs.js",
+    "canonicalRoute": "/research/early-access/order-request"
+  },
+  "qa": {
+    "exactCopyChromium": {
+      "cases": 9,
+      "sha256": "21233e763228a5e02b3c914ec859596cf9bc083dfc0b2c64b3e422805f3eb843"
+    },
+    "exactCombinedChromium": {
+      "cases": 4,
+      "sha256": "95776fc77b1deaff68121beb8c3103daa6acafead667571472643ac17c76e0a9"
+    },
+    "scope": "Synthetic mounted components, no live auth, real customer, or physical Safari."
+  },
+  "jira": "KAN-13/11276",
+  "coverage": {
+    "artworkMappings": 35,
+    "reviewedCopyEntries": 30,
+    "addedCopyIds": [
+      "0400",
+      "0409",
+      "0398"
+    ]
+  }
+}
