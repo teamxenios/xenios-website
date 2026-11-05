@@ -1,0 +1,84 @@
+[
+ {
+  "slug": "hcg-10000iu",
+  "name": "HCG",
+  "code": "HCG",
+  "mg": null,
+  "amount": "10,000 IU",
+  "sku": "GEN-GRP-0298",
+  "offeringId": "mo_adf1037eceb9904e7d07",
+  "sourceVariantId": "mov_e218a4fead30388a55ff",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "LABEL_FACTS_ADOPTED_11393_2026-11-05.json",
+  "labelFactsSha256": "8d08fd00b073f143146aff2573cac78df084adbd2b7db32d48b138073eebd6b0",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "HCG",
+   "amount": "10,000 IU",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0298"
+  },
+  "extraDoNotPrintTerms": [
+   "recombinant",
+   "urinary",
+   "urine",
+   "clinical",
+   "pregnancy",
+   "pregnant",
+   "fertility",
+   "ovulation"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Selected-source form, container and amount basis remain open. Design form follows the existing KAN-225/11259 packaging declaration and independent artwork review."
+ },
+ {
+  "slug": "hcg-5000iu",
+  "name": "HCG",
+  "code": "HCG",
+  "mg": null,
+  "amount": "5000 IU",
+  "sku": "GEN-GRP-0299",
+  "offeringId": "mo_4223bdd3e6880240fc4a",
+  "sourceVariantId": "mov_b5c50d1bb9d8ad998062",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "LABEL_FACTS_ADOPTED_11393_2026-11-05.json",
+  "labelFactsSha256": "8d08fd00b073f143146aff2573cac78df084adbd2b7db32d48b138073eebd6b0",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "HCG",
+   "amount": "5000 IU",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0299"
+  },
+  "extraDoNotPrintTerms": [
+   "recombinant",
+   "urinary",
+   "urine",
+   "clinical",
+   "pregnancy",
+   "pregnant",
+   "fertility",
+   "ovulation"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Selected-source form, container and amount basis remain open. Design form follows the existing KAN-225/11259 packaging declaration and independent artwork review."
+ }
+]

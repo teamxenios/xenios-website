@@ -1,0 +1,581 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-05-batch-c1-008",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644",
+  "KAN-225/10683",
+  "KAN-59/11618",
+  "KAN-225/11259"
+ ],
+ "labelFactSources": [
+  {
+   "reference": "KAN-6/10624",
+   "note": "Session 3 static artwork facts: product code wording"
+  },
+  {
+   "reference": "KAN-59/11584",
+   "file": "LABEL_FACTS_ADOPTED_11393_2026-11-05.json",
+   "sha256": "8d08fd00b073f143146aff2573cac78df084adbd2b7db32d48b138073eebd6b0",
+   "author": "CLAUDE-2"
+  }
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor, but only when stacking sets the name larger than one line does; otherwise it stays on one line.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes.",
+  "The wrap proof id is the exact product code (for example GEN-GRP-0298-WRAP-v1), not code-amount, because code-amount can spell a fragment name that label facts forbid (KISSPEPTIN-10 in C1-002)."
+ ],
+ "changesFromC1001": [
+  "The build reads its variants (names, amounts, codes, verified label text) from tools/variants.json instead of a constant.",
+  "Amounts other than 10 mg (5000 IU and 10,000 IU here) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
+  "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
+  "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
+  "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 208335,
+  "sha256": "0ed48705082d1ffa6eadac29d3cf240790e9a35c1dc54ddda088662f35a46d35",
+  "width": 1800,
+  "height": 984
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/build-report.json",
+   "bytes": 17749,
+   "sha256": "f7511353dfde20279067db259faa6f1edd94e2d3dfc1cf32316a1ef996109606"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/build_c1.py",
+   "bytes": 23453,
+   "sha256": "51bbf4c5272cc982e252f67f4d27cb0b8c487bac4377f7a97986279a08e39390"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/c1_variants.py",
+   "bytes": 11022,
+   "sha256": "d4ac85b667a0ed96844724bd253d5a7b6b19374e7ff6c5ce062cb400add48027"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/kern-table.segoe-ui.json",
+   "bytes": 27333,
+   "sha256": "869546687c49ca5cf7a3edcef31a1bb46c675e4ec605e64206d32915925fba9c"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/svg_label_render.py",
+   "bytes": 13893,
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/variants.json",
+   "bytes": 2489,
+   "sha256": "80a829fcc88afb88391e56d7bc488d3ab8b199edef6163af5663236e17024255"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/verify_c1.py",
+   "bytes": 25942,
+   "sha256": "a9950fbfceb3e0bb930f3e38d7be18fd8e353a862f87d110fe08f74830752b35"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/wpf_kern.ps1",
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/write_manifest.py",
+   "bytes": 37535,
+   "sha256": "82079a9289766674f969c2c74ada76be4e9a233092ffe8835755887128269019"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/tools/xr_compose.py",
+   "bytes": 12783,
+   "sha256": "0de7813989f21c7add2da2d65f231940b0c691a459069a783e02bfcea4473c16"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_adf1037eceb9904e7d07",
+   "sourceVariantId": "mov_e218a4fead30388a55ff",
+   "quickOrderSku": "GEN-GRP-0298",
+   "quickOrderProductId": "4dfa7bae-31df-4ceb-b65e-47445ba11afc",
+   "quickOrderVariantId": "8fd2573c-4a6b-40dc-b11e-a9a5518b3ab9",
+   "canonicalName": "HCG",
+   "catalogDisplayName": "HCG",
+   "canonicalVariant": "HCG 10,000 IU",
+   "catalogVariantLabel": "HCG 10,000 IU",
+   "nominalAmountPerVialMg": null,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0298-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "LABEL_FACTS_ADOPTED_11393_2026-11-05.json",
+    "sha256": "8d08fd00b073f143146aff2573cac78df084adbd2b7db32d48b138073eebd6b0",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "HCG",
+     "amount": "10,000 IU",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0298"
+    },
+    "formNeutral": true,
+    "hold": "Selected-source form, container and amount basis remain open. Design form follows the existing KAN-225/11259 packaging declaration and independent artwork review."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "HCG",
+    "amountOnRender": "10,000 IU",
+    "amountOnLabel": "10,000 IU per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0298"
+   },
+   "extraDoNotPrintTerms": [
+    "recombinant",
+    "urinary",
+    "urine",
+    "clinical",
+    "pregnancy",
+    "pregnant",
+    "fertility",
+    "ovulation"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "HCG",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       592,
+       628,
+       657
+      ]
+     },
+     {
+      "text": "10,000 IU",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       721,
+       727
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 502.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 437.2
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios HCG 10,000 IU packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-10000iu-website-render-v1-1024.webp",
+     "sha256": "1573b491517867ff52d8a04a1eb83878f19822f80ea2a1c2f5f6ed0e8fc08edf"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios HCG 10,000 IU",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-10000iu-front-artwork-v1.webp",
+     "sha256": "aae4759071b0123a32c93c3bb653af6a67d899b33763bc8398cfe3c456164c5f"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-10000iu-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46400,
+     "sha256": "1573b491517867ff52d8a04a1eb83878f19822f80ea2a1c2f5f6ed0e8fc08edf",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-10000iu-website-render-v1.png",
+     "format": "png",
+     "bytes": 979532,
+     "sha256": "602ce0be25fcc0b63c2ba82cc00dd19ff94464ab3aa16965dbf98ed28f60620c",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/labels/hcg-10000iu-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3003,
+     "sha256": "230c0fddc924c2f9a8dd03654e39de63181a722738195e1961a61f31ff24df95",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-10000iu-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 100576,
+     "sha256": "410fb43796d93a1f4366e7a2083dbff79bf2ee4019128c5482c39ff835152569",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-10000iu-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 41638,
+     "sha256": "aae4759071b0123a32c93c3bb653af6a67d899b33763bc8398cfe3c456164c5f",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/labels/hcg-10000iu-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6980,
+     "sha256": "37b9092e0974591d7d2399eead7c4f2593d97a412528590903dc6c10a64758b4",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-10000iu-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 369925,
+     "sha256": "fe3043d2fced54d01862b47498cd72c9ff49790b81544cedee7161398bb7cf31",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-10000iu-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 157082,
+     "sha256": "25f79e91b405c37285f8f15fbbeca1d01c323c08564a21a9a6138b599e0b9a90",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_4223bdd3e6880240fc4a",
+   "sourceVariantId": "mov_b5c50d1bb9d8ad998062",
+   "quickOrderSku": "GEN-GRP-0299",
+   "quickOrderProductId": "4dfa7bae-31df-4ceb-b65e-47445ba11afc",
+   "quickOrderVariantId": "17b4ce9e-cb1d-4a13-8a77-e2ecb8e0066c",
+   "canonicalName": "HCG",
+   "catalogDisplayName": "HCG",
+   "canonicalVariant": "HCG 5000 IU",
+   "catalogVariantLabel": "HCG 5000 IU",
+   "nominalAmountPerVialMg": null,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0299-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "LABEL_FACTS_ADOPTED_11393_2026-11-05.json",
+    "sha256": "8d08fd00b073f143146aff2573cac78df084adbd2b7db32d48b138073eebd6b0",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "HCG",
+     "amount": "5000 IU",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0299"
+    },
+    "formNeutral": true,
+    "hold": "Selected-source form, container and amount basis remain open. Design form follows the existing KAN-225/11259 packaging declaration and independent artwork review."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "HCG",
+    "amountOnRender": "5000 IU",
+    "amountOnLabel": "5000 IU per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0299"
+   },
+   "extraDoNotPrintTerms": [
+    "recombinant",
+    "urinary",
+    "urine",
+    "clinical",
+    "pregnancy",
+    "pregnant",
+    "fertility",
+    "ovulation"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "HCG",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       592,
+       628,
+       657
+      ]
+     },
+     {
+      "text": "5000 IU",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       672,
+       720
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 502.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 437.2
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios HCG 5000 IU packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-5000iu-website-render-v1-1024.webp",
+     "sha256": "070056d11aa0a79bfe627318a4681b2b8a753207e9f4ca6e0a831b53ffec7175"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios HCG 5000 IU",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-5000iu-front-artwork-v1.webp",
+     "sha256": "3db8ab83945ae5555cbbb6ba4f320d134e4473847ecd6e03b59876da6c187bcc"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-5000iu-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 44792,
+     "sha256": "070056d11aa0a79bfe627318a4681b2b8a753207e9f4ca6e0a831b53ffec7175",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-5000iu-website-render-v1.png",
+     "format": "png",
+     "bytes": 979123,
+     "sha256": "1a5e77b5d6aa5d4fa8ff80f4f7aae89bcbad9013433ae9764f331a2e1dee9f12",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/labels/hcg-5000iu-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2995,
+     "sha256": "c92838adf394ec0eaa41b6155ce0f333c2794fbef4a497c91986ea200db6b027",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-5000iu-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 100287,
+     "sha256": "d153f088ad7ec4cdaf44ca605af5d8d25d65800e707930770bce8c75ffdab6d5",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-5000iu-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 39004,
+     "sha256": "3db8ab83945ae5555cbbb6ba4f320d134e4473847ecd6e03b59876da6c187bcc",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/labels/hcg-5000iu-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6970,
+     "sha256": "2070da15baf8bd590f8f4d8bb39b2eb12d4fe73ba47d453c3e820945d55656dd",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-5000iu-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 365901,
+     "sha256": "cfec5f678314a5ce17854d8adcd3884f8157bb334abbee8bbbb43e65275e179f",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-008/assets/hcg-5000iu-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 156268,
+     "sha256": "185a42eff4871402b64931217839d2aea97f84e9daf189d4dc3562bb9dffe252",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  }
+ ],
+ "changesFromC1007": [
+  "Alt text follows KAN-59/11405 as accepted for the live registry in 11511: \"Xenios {name} {amount} packaging design\" and \"Front label artwork for Xenios {name} {amount}\", with no form or container wording. write_manifest.py writes it and verify_c1.py binds each website role to it and refuses form wording (KAN-31/11570). verify_c1.py also counts ng, pg, nanogram and picogram as mass units that an IU record must not print.",
+  "build_c1.py and xr_compose.py carry Root's Option B layout for blend names (KAN-59/11404). This batch has no blend, and with these copies every label master, name fit and layout of C1-001 to C1-007 is unchanged (753 of 753 compared), and C1-006 and C1-007 rebuild byte for byte. svg_label_render.py and wpf_kern.ps1 are byte-identical to C1-007's copies.",
+  "This is the first batch whose amounts are in IU; each prints as the label facts give it, with no mass unit anywhere. c1_variants.py adds the reference of the adopted label facts (KAN-59/11584) and HCG's per-compound do-not-print terms. write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch.",
+  "2 of 2 records have form-neutral label facts: they state the name, the amount with its unit, the product code and the classification, and no form. For those records the printed vial and the per-vial amount basis rest on the packaging declaration alone; labelFacts keeps the hold note and formBasis cites the declaration."
+ ],
+ "packagingDeclaration": {
+  "amountBasis": "per vial",
+  "form": "Lyophilized vial",
+  "kind": "xenios_packaging_declaration",
+  "reference": "KAN-225/11259",
+  "signedDate": "2026-11-05",
+  "signer": "Samuel Boadu, founder",
+  "status": "RECORDED"
+ }
+}
