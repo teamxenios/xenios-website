@@ -15,7 +15,11 @@ All three have the same catalog facts:
 - subcategory `Lyophilized Vial`;
 - state `request_access`.
 
-The printed text comes from CLAUDE-2's verified label facts for research batch 05. Each record in `media-batch.v1.json` carries its source (Jira reference, file name and sha256) and the verified static text. `tools/variants.json` is the build input made from them. The vial and the per-vial amount basis rest on the founder's packaging declaration (KAN-225/11259, 2026-11-05): on research peptide artwork the vial is Xenios's white-label packaging choice, not a statement about the selected source. Independent review is requested on KAN-31; acceptance of this artwork follows that review.
+The printed text comes from CLAUDE-2's verified label facts for research batch 05. Each record in `media-batch.v1.json` carries its source (Jira reference, file name and sha256) and the verified static text. `tools/variants.json` is the build input made from them. The vial and the per-vial amount basis rest on the founder's packaging declaration (KAN-225/11259, 2026-11-05): on research peptide artwork the vial is Xenios's white-label packaging choice, not a statement about the selected source. Each record's `formBasis` and the manifest's `packagingDeclaration` cite it; `labelFacts` stays the source of each product's name, amount, product code and classification.
+
+## Correction, 2026-11-05 (KAN-59/11283)
+
+Independent file review of the first commit (`42308151`, manifest sha256 `e53c7c27…`) found that the manifest did not record the packaging declaration, although this README and the commit message cited it, so its records attributed the vial and per-vial fields to KAN-59/10855 alone. This successor is metadata only. It adds `formBasis` to each record and `packagingDeclaration` to the manifest, lists KAN-225/11259 under `authority`, and records the change under `corrections`. `tools/variants.json` now carries the declaration per record, and `c1_variants.py`, `write_manifest.py` and `verify_c1.py` carry and check a declaration on form-bearing facts as well as form-neutral ones. No render, label master, preview or contact sheet changed; every image file has the same bytes and hash as before.
 
 Label-fact batch 05 covers eight vials. Five were held for source confirmation of form and amount basis (KAN-31/10870) and are not in this batch: Retatrutide 5, 20, 40 and 50 mg, and SS-31 50 mg. Under the declaration, Retatrutide 20, 40 and 50 mg and SS-31 50 mg can follow in a later batch; Retatrutide 5 mg stays held on its compound crosswalk.
 
@@ -42,7 +46,7 @@ Website caption for every image: **"Packaging design shown. Current packaging ma
 
 ## How the artwork was made
 
-No generative image model was used, and all lettering is set from installed fonts. The method and tools are the same as in batch C1-003. `build_c1.py`, `xr_compose.py`, `svg_label_render.py`, `verify_c1.py` and `wpf_kern.ps1` are byte-identical to C1-003's copies (commit `c5b93b3a`). `c1_variants.py` adds the batch 05 label-fact reference and the per-compound do-not-print terms for both batch 05 compounds. `write_manifest.py` takes the date in the batch path and id from the batch folder name.
+No generative image model was used, and all lettering is set from installed fonts. The method and tools are the same as in batch C1-003. `build_c1.py`, `xr_compose.py`, `svg_label_render.py` and `wpf_kern.ps1` are byte-identical to C1-003's copies (commit `c5b93b3a`). `c1_variants.py` adds the batch 05 label-fact reference and the per-compound do-not-print terms for both batch 05 compounds. `write_manifest.py` takes the date in the batch path and id from the batch folder name. Since the correction above, `c1_variants.py`, `write_manifest.py` and `verify_c1.py` also carry and check the packaging declaration, and `c1_variants.py` holds the references and terms of the later label-fact batches; none of these changes touches how an image is made.
 
 ### Vial renders
 
@@ -78,13 +82,16 @@ As in C1-002 and C1-003, the wrap proof id and the manifest's `artworkVersion` a
 
 ## Label facts
 
-The artwork prints only these facts, each verified:
+The artwork prints only these. From the verified label facts:
 - the brand Xenios;
 - the compound name;
-- the amount and "N mg per vial";
-- "Lyophilized vial";
+- the amount;
 - the research-use classification: "Research Use Only", "Nonclinical use only" and "For laboratory research use only.";
 - the product code, on the wrap only.
+
+Under the packaging declaration (KAN-225/11259):
+- "Lyophilized vial";
+- the per-vial amount basis, "N mg per vial".
 
 It prints nothing on the do-not-print list:
 - purity or assay;
@@ -146,4 +153,4 @@ python -I -B -X utf8 tools/write_manifest.py <this dir> <catalog json> <bindings
 
 ## Review
 
-Independent file-level review is requested on KAN-31, from a reviewer other than CLAUDE-1. The producer cannot be the reviewer. Rendered checks at 320, 390, 768 and 1280 px follow only after acceptance and runtime integration by Root.
+Independent file-level review of the first commit is recorded in KAN-59/11283, which asked for the manifest correction above; a bounded recheck of this successor goes to the same reviewer, not CLAUDE-1. The producer cannot be the reviewer. Rendered checks at 320, 390, 768 and 1280 px follow only after acceptance and runtime integration by Root.

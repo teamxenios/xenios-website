@@ -28,7 +28,17 @@
    "liver",
    "trial"
   ],
-  "nameVariance": null
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED",
+   "supersedesFactsForm": true
+  }
  },
  {
   "slug": "retatrutide-15mg",
@@ -59,7 +69,17 @@
    "liver",
    "trial"
   ],
-  "nameVariance": null
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED",
+   "supersedesFactsForm": true
+  }
  },
  {
   "slug": "retatrutide-30mg",
@@ -90,6 +110,16 @@
    "liver",
    "trial"
   ],
-  "nameVariance": null
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED",
+   "supersedesFactsForm": true
+  }
  }
 ]

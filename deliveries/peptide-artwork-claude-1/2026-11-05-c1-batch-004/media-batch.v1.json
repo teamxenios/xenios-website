@@ -38,7 +38,8 @@
   "KAN-225/10638",
   "KAN-225/10644",
   "KAN-225/10683",
-  "KAN-59/10869"
+  "KAN-59/10869",
+  "KAN-225/11259"
  ],
  "labelFactSources": [
   {
@@ -101,8 +102,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/c1_variants.py",
-   "bytes": 3248,
-   "sha256": "a0dc360133b030527b3801a46f325b0efe35a0e1f89d66834fb1e09f09a64156"
+   "bytes": 7420,
+   "sha256": "e4aec92e962e0269a84c16566c205cf798c3554cea2bc3b341cce3ee3676b263"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/kern-table.segoe-ui.json",
@@ -116,13 +117,13 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/variants.json",
-   "bytes": 2453,
-   "sha256": "471414acd6c12deadb4fb94c9de583cf8431f379e1e20b66844c32eda6e10a16"
+   "bytes": 3338,
+   "sha256": "fac34f02ee4b506cfdb4a19e8e36696530c822ce69503ddc3b6fc74b90410629"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/verify_c1.py",
-   "bytes": 14932,
-   "sha256": "0959263a9d87818997886ee7c834d051401e4a20595f2a1f67e01a4b70d8dbe7"
+   "bytes": 17902,
+   "sha256": "9ff86213080eb8485c17646ee02d38b1a3bd70344dd593514578fa23efd58718"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/wpf_kern.ps1",
@@ -131,8 +132,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/write_manifest.py",
-   "bytes": 18653,
-   "sha256": "10e15bd759dba2930cc73b45d1e31939259643f8172c8e710bfb9b440c62b955"
+   "bytes": 23401,
+   "sha256": "2071eed6cbdb201bb1d9ebd6d30e265ccf7dc2d35f5eb82f3d538379bab4744a"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/xr_compose.py",
@@ -327,6 +328,17 @@
      "width": 2400,
      "height": 1200
     }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "supersedesFactsForm": true,
+    "note": "The verified label facts state the form Lyophilized vial and a per-vial amount; that form came from the catalog's generated subcategory, which KAN-31/10870 found is not a source statement. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source. The product name, amount, product code and classification keep the label-fact source in labelFacts."
    }
   },
   {
@@ -526,6 +538,17 @@
      "width": 2400,
      "height": 1200
     }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "supersedesFactsForm": true,
+    "note": "The verified label facts state the form Lyophilized vial and a per-vial amount; that form came from the catalog's generated subcategory, which KAN-31/10870 found is not a source statement. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source. The product name, amount, product code and classification keep the label-fact source in labelFacts."
    }
   },
   {
@@ -725,10 +748,39 @@
      "width": 2400,
      "height": 1200
     }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "supersedesFactsForm": true,
+    "note": "The verified label facts state the form Lyophilized vial and a per-vial amount; that form came from the catalog's generated subcategory, which KAN-31/10870 found is not a source statement. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source. The product name, amount, product code and classification keep the label-fact source in labelFacts."
    }
   }
  ],
  "changesFromC1003": [
-  "None in the build, render, label or verification method: build_c1.py, xr_compose.py, svg_label_render.py, verify_c1.py and wpf_kern.ps1 are byte-identical to C1-003 (commit c5b93b3a). c1_variants.py adds the reference for label-fact batch 05 and per-compound do-not-print terms for SS-31 and Retatrutide. write_manifest.py takes the date in the batch path and id from the batch folder name, and keeps contact-sheet cells at the five-column size when a batch has fewer than five variants. The kern table covers the strings in this batch."
+  "None in the build, render or label method: build_c1.py, xr_compose.py, svg_label_render.py and wpf_kern.ps1 are byte-identical to C1-003 (commit c5b93b3a). c1_variants.py adds the reference for label-fact batch 05 and per-compound do-not-print terms for SS-31 and Retatrutide. write_manifest.py takes the date in the batch path and id from the batch folder name, and keeps contact-sheet cells at the five-column size when a batch has fewer than five variants. The kern table covers the strings in this batch. Since the 2026-11-05 correction (see corrections), c1_variants.py, write_manifest.py and verify_c1.py also carry and check the packaging declaration, and c1_variants.py holds the references and terms of the later label-fact batches."
+ ],
+ "packagingDeclaration": {
+  "amountBasis": "per vial",
+  "form": "Lyophilized vial",
+  "kind": "xenios_packaging_declaration",
+  "reference": "KAN-225/11259",
+  "signedDate": "2026-11-05",
+  "signer": "Samuel Boadu, founder",
+  "status": "RECORDED"
+ },
+ "corrections": [
+  {
+   "date": "2026-11-05",
+   "requestedBy": "KAN-59/11283",
+   "previousCommit": "423081518440d189fc789df7d02942d59bad92f8",
+   "previousManifestSha256": "e53c7c273816c20be53e9ecd89531e6d0de1dc6130c5dbca5d984705949f2f49",
+   "change": "Metadata only. Each record now carries formBasis, citing Xenios's packaging declaration KAN-225/11259 as the authority for the printed vial and the per-vial amount basis; the manifest carries packagingDeclaration and lists KAN-225/11259 under authority. labelFacts still cites KAN-59/10855 as the source of each product's name, amount, product code and classification. tools/variants.json carries the declaration per record; c1_variants.py, write_manifest.py and verify_c1.py carry and check a declaration on form-bearing facts as well as form-neutral ones. No render, label master, preview or contact sheet changed."
+  }
  ]
 }

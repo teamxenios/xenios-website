@@ -29,8 +29,21 @@ CORRECTIONS = {'c1-003': [dict(
     date='2026-11-04', requestedBy='KAN-31/10775',
     previousCommit='b189bc92a33cdfc9b7c3082ce8ddbcd56b1ca65e',
     previousManifestSha256='1d861c18a65c3a65ed2bcf0c961718c606cb2a40ee5b3307a78883f1d02aef96',
-    change='verify_c1.py, build_c1.py and write_manifest.py hash text files as committed, with LF line ends, so a Windows checkout with core.autocrlf (CRLF) verifies, including the release dataset joins. The tool files that had been committed with CRLF line ends (build_c1.py, xr_compose.py, wpf_kern.ps1 and kern-table.segoe-ui.json) are now LF like every other text file; only their line ends changed. artworkVersion is the exact product code for every record, as corrected for C1-002 in KAN-31/10737; verify_c1.py checks it. No image or label master changed.')]}
-CLAIM_REF = {'c1-002': 'KAN-59/10695', 'c1-003': 'KAN-59/10722', 'c1-004': 'KAN-59/10869'}[LABEL]     # the post that claimed this batch; a new batch must be added here
+    change='verify_c1.py, build_c1.py and write_manifest.py hash text files as committed, with LF line ends, so a Windows checkout with core.autocrlf (CRLF) verifies, including the release dataset joins. The tool files that had been committed with CRLF line ends (build_c1.py, xr_compose.py, wpf_kern.ps1 and kern-table.segoe-ui.json) are now LF like every other text file; only their line ends changed. artworkVersion is the exact product code for every record, as corrected for C1-002 in KAN-31/10737; verify_c1.py checks it. No image or label master changed.')],
+    'c1-004': [dict(
+        date='2026-11-05', requestedBy='KAN-59/11283',
+        previousCommit='423081518440d189fc789df7d02942d59bad92f8',
+        previousManifestSha256='e53c7c273816c20be53e9ecd89531e6d0de1dc6130c5dbca5d984705949f2f49',
+        change='Metadata only. Each record now carries formBasis, citing Xenios\'s packaging declaration KAN-225/11259 as the authority '
+               'for the printed vial and the per-vial amount basis; the manifest carries packagingDeclaration and lists KAN-225/11259 under '
+               'authority. labelFacts still cites KAN-59/10855 as the source of each product\'s name, amount, product code and classification. '
+               'tools/variants.json carries the declaration per record; c1_variants.py, write_manifest.py and verify_c1.py carry and check '
+               'a declaration on form-bearing facts as well as form-neutral ones. No render, label master, preview or contact sheet changed.')]}
+DRY_RUN = os.environ.get('C1_DRY_RUN') == '1'      # local rehearsal only: placeholders allowed and the output is marked never-publish
+CLAIM_REFS = {'c1-002': 'KAN-59/10695', 'c1-003': 'KAN-59/10722', 'c1-004': 'KAN-59/10869'}     # the post that claimed each batch
+if LABEL not in CLAIM_REFS and not DRY_RUN:
+    raise SystemExit('no claim reference recorded for %s; add it to CLAIM_REFS' % LABEL)
+CLAIM_REF = CLAIM_REFS.get(LABEL, 'DRY-RUN-UNCLAIMED')
 
 
 def amounts_text():
@@ -121,8 +134,32 @@ def main():
         if var['label'].lower() != ('%s %d mg' % (name, mg)).lower():
             raise SystemExit('variant label mismatch for ' + v['slug'])
         vst = v['verifiedStaticText']
-        if (vst['productName'] != name or vst['amount'] != '%d mg per vial' % mg or vst['productCode'] != 'Product code ' + v['sku']
-                or vst['form'] != 'Lyophilized vial' or vst['classification'] != 'For laboratory research use only.' or vst['brand'] != 'Xenios'):
+        decl = v.get('packagingDeclaration')
+        form_neutral = 'form' not in vst
+        if decl:
+            # The printed vial and per-vial basis come from Xenios's packaging declaration, not the facts.
+            if (decl.get('kind') != 'xenios_packaging_declaration' or decl.get('form') != 'Lyophilized vial'
+                    or decl.get('amountBasis') != 'per vial'
+                    or not (DRY_RUN or re.fullmatch(r'KAN-\d+/\d+', decl.get('reference', '')))):
+                raise SystemExit('packaging declaration unusable for ' + v['slug'])
+            if form_neutral:
+                if vst['amount'] != '%d mg' % mg:
+                    raise SystemExit('form-neutral facts unusable for ' + v['slug'])
+                form_ok, amount_ok = True, True
+            else:
+                # Form-bearing facts (KAN-59/11283): the declaration supersedes their form line as the basis; the printed
+                # text must still equal the facts.
+                if not decl.get('supersedesFactsForm'):
+                    raise SystemExit('declaration on form-bearing facts must mark supersedesFactsForm: ' + v['slug'])
+                form_ok = vst.get('form') == 'Lyophilized vial'
+                amount_ok = vst['amount'] == '%d mg per vial' % mg
+        else:
+            if form_neutral:
+                raise SystemExit('form-neutral facts need a packaging declaration: ' + v['slug'])
+            form_ok = vst.get('form') == 'Lyophilized vial'
+            amount_ok = vst['amount'] == '%d mg per vial' % mg
+        if (vst['productName'] != name or not amount_ok or vst['productCode'] != 'Product code ' + v['sku']
+                or not form_ok or vst['classification'] != 'For laboratory research use only.' or vst['brand'] != 'Xenios'):
             raise SystemExit('label facts disagree with variant for ' + v['slug'])
         sources[v['labelFactsRef']] = dict(reference=v['labelFactsRef'], file=v['labelFactsFile'], sha256=v['labelFactsSha256'], author='CLAUDE-2')
         s = v['slug']
@@ -146,7 +183,8 @@ def main():
             artworkVersion='%s-WEB-SUPPLIER-v1' % v['sku'],
             mediaKind='original_xenios_website_render', websiteArtworkState='pending_independent_file_level_review',
             physicalPackagingState='design', runtimeLinked=False, publicationAuthorized=False,
-            labelFacts=dict(reference=v['labelFactsRef'], file=v['labelFactsFile'], sha256=v['labelFactsSha256'], verifiedStaticText=vst),
+            labelFacts=dict(reference=v['labelFactsRef'], file=v['labelFactsFile'], sha256=v['labelFactsSha256'], verifiedStaticText=vst,
+                            **({'formNeutral': True, 'hold': v.get('labelFactsHold')} if form_neutral else {})),
             exactDepictedFacts=dict(brand='Xenios', productName=name, amountOnRender='%d mg' % mg,
                                     amountOnLabel='%d mg per vial' % mg, form='Lyophilized vial',
                                     classificationOnArtwork=['Research Use Only', 'Nonclinical use only', 'For laboratory research use only.'],
@@ -165,6 +203,17 @@ def main():
             artifacts=arts)
         if v.get('nameVariance'):
             rec['nameVariance'] = v['nameVariance']
+        if decl:
+            rec['formBasis'] = dict(decl)
+            if form_neutral:
+                rec['formBasis']['note'] = ('The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork '
+                                           'are Xenios\'s own packaging decision under the referenced declaration, not a statement about the selected source.')
+            else:
+                rec['formBasis']['note'] = ('The verified label facts state the form Lyophilized vial and a per-vial amount; that form came from the '
+                                           'catalog\'s generated subcategory, which KAN-31/10870 found is not a source statement. The vial and the '
+                                           'per-vial amount basis printed on this artwork are Xenios\'s own packaging decision under the referenced '
+                                           'declaration, not a statement about the selected source. The product name, amount, product code and '
+                                           'classification keep the label-fact source in labelFacts.')
         records.append(rec)
     tools = []
     for f in sorted(os.listdir(os.path.join(BATCH, 'tools'))):
@@ -182,7 +231,7 @@ def main():
                         dict(path='deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg', sha256='529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6')],
         authority=['KAN-59/10615', 'KAN-225/10616', 'KAN-225/10638', 'KAN-225/10644', 'KAN-225/10683', CLAIM_REF],
         labelFactSources=[dict(reference='KAN-6/10624', note='Session 3 static artwork facts: product code wording')] + [sources[k] for k in sorted(sources)],
-        publicationState='review_only_not_runtime', supplierSendPerformed=False,
+        publicationState=('dry_run_never_publish' if DRY_RUN else 'review_only_not_runtime'), supplierSendPerformed=False,
         requiredMountedViewportsAfterReview=[320, 390, 768, 1280],
         method=dict(
             render='Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor.',
@@ -206,13 +255,22 @@ def main():
             'None in the build, render, label or verification method: build_c1.py, xr_compose.py, svg_label_render.py, verify_c1.py, '
             'c1_variants.py and wpf_kern.ps1 are byte-identical to C1-002 as corrected for KAN-31/10737. write_manifest.py now derives '
             'the batch-specific text (claim reference, example code, amounts) from the variants. The kern table covers this batch\'s strings.']
-    if LABEL not in ('c1-002', 'c1-003'):
+    if LABEL == 'c1-004':
         manifest['changesFromC1003'] = [
-            'None in the build, render, label or verification method: build_c1.py, xr_compose.py, svg_label_render.py, verify_c1.py '
-            'and wpf_kern.ps1 are byte-identical to C1-003 (commit c5b93b3a). c1_variants.py adds the reference for label-fact batch 05 '
-            'and per-compound do-not-print terms for SS-31 and Retatrutide. write_manifest.py takes the date in the batch path and id from '
-            'the batch folder name, and keeps contact-sheet cells at the five-column size when a batch has fewer than five variants. '
-            'The kern table covers the strings in this batch.']
+            'None in the build, render or label method: build_c1.py, xr_compose.py, svg_label_render.py and wpf_kern.ps1 are '
+            'byte-identical to C1-003 (commit c5b93b3a). c1_variants.py adds the reference for label-fact batch 05 and per-compound '
+            'do-not-print terms for SS-31 and Retatrutide. write_manifest.py takes the date in the batch path and id from the batch folder '
+            'name, and keeps contact-sheet cells at the five-column size when a batch has fewer than five variants. The kern table covers '
+            'the strings in this batch. Since the 2026-11-05 correction (see corrections), c1_variants.py, write_manifest.py and verify_c1.py '
+            'also carry and check the packaging declaration, and c1_variants.py holds the references and terms of the later label-fact batches.']
+    decls = {json.dumps({k: x for k, x in v['packagingDeclaration'].items() if k != 'supersedesFactsForm'}, sort_keys=True)
+             for v in VARIANTS if v.get('packagingDeclaration')}
+    if decls:
+        if len(decls) != 1:
+            raise SystemExit('records cite different packaging declarations')
+        manifest['packagingDeclaration'] = json.loads(decls.pop())
+        if manifest['packagingDeclaration']['reference'] not in manifest['authority']:
+            manifest['authority'].append(manifest['packagingDeclaration']['reference'])
     if LABEL in CORRECTIONS:
         manifest['corrections'] = CORRECTIONS[LABEL]
     json.dump(manifest, open(os.path.join(BATCH, 'media-batch.v1.json'), 'w', encoding='utf-8', newline='\n'), indent=1, ensure_ascii=False)

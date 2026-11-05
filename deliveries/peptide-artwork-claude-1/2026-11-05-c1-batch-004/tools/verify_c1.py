@@ -38,6 +38,7 @@ def check(cond, msg):
 
 TEXT_EXT = ('.svg', '.json', '.py', '.ps1', '.md', '.txt')
 CRLF_FILES = set()
+DECLARED = []          # (product code, declaration reference, facts kind) for records whose vial form rests on a packaging declaration
 
 
 def canon(path):
@@ -80,6 +81,8 @@ def main():
     ap.add_argument('--catalog'); ap.add_argument('--bindings')
     ap.add_argument('--extra-forbidden', help='local file, one term per line (for example supplier names); never committed')
     ap.add_argument('--recompute', action='store_true', help='rebuild every render and preview from the pinned tools and compare pixels')
+    ap.add_argument('--allow-draft-declaration', action='store_true',
+                    help='local dry runs only: accept a packaging-declaration reference that is not a KAN comment id')
     a = ap.parse_args()
     extra = [t.strip() for t in open(a.extra_forbidden, encoding='utf-8')] if a.extra_forbidden else []
     extra = [t for t in extra if t]
@@ -124,8 +127,32 @@ def main():
         # every verified static fact is printed, exactly as verified
         check(vst['brand'] == 'Xenios' and 'XENIOS' in fb and 'XENIOS' in wb, 'facts: brand ' + name)
         check(vst['productName'] == name, 'facts: product name %r printed as %r' % (vst['productName'], name))
-        check(vst['amount'] == '%d mg per vial' % mg and vst['amount'] in fb and vst['amount'] in wb, 'facts: amount ' + name)
-        check(vst['form'] == 'Lyophilized vial' and vst['form'].upper() in fb and vst['form'] in wb, 'facts: form ' + name)
+        basis = r.get('formBasis')
+        if basis:
+            # The vial and the per-vial basis come from Xenios's packaging declaration, cited by reference. Form-neutral facts
+            # state no form; form-bearing facts state one that the declaration supersedes as the basis (KAN-59/11283), and
+            # their printed text must still equal the facts.
+            neutral = 'form' not in vst
+            check(basis.get('kind') == 'xenios_packaging_declaration' and basis.get('form') == 'Lyophilized vial'
+                  and basis.get('amountBasis') == 'per vial'
+                  and ((neutral and r['labelFacts'].get('formNeutral') is True and not basis.get('supersedesFactsForm'))
+                       or (not neutral and 'formNeutral' not in r['labelFacts'] and basis.get('supersedesFactsForm') is True)),
+                  'form basis: declaration shape ' + name)
+            check(bool(re.fullmatch(r'KAN-\d+/\d+', basis.get('reference', ''))) or a.allow_draft_declaration,
+                  'form basis: declaration reference %r %s' % (basis.get('reference'), name))
+            check((m.get('packagingDeclaration') or {}).get('reference') == basis.get('reference'), 'form basis: manifest declaration ' + name)
+            check(basis.get('reference') in (m.get('authority') or []), 'form basis: declaration listed under authority ' + name)
+            if neutral:
+                check(vst['amount'] == '%d mg' % mg and '%d mg per vial' % mg in fb and '%d mg per vial' % mg in wb,
+                      'facts: amount, per-vial basis declared ' + name)
+            else:
+                check(vst['amount'] == '%d mg per vial' % mg and vst['amount'] in fb and vst['amount'] in wb, 'facts: amount ' + name)
+                check(vst['form'] == 'Lyophilized vial' and vst['form'].upper() in fb and vst['form'] in wb, 'facts: form ' + name)
+            check('LYOPHILIZED VIAL' in fb and 'Lyophilized vial' in wb, 'declared form printed ' + name)
+            DECLARED.append((r['quickOrderSku'], basis.get('reference'), 'form-neutral facts' if neutral else 'facts form superseded'))
+        else:
+            check(vst['amount'] == '%d mg per vial' % mg and vst['amount'] in fb and vst['amount'] in wb, 'facts: amount ' + name)
+            check(vst['form'] == 'Lyophilized vial' and vst['form'].upper() in fb and vst['form'] in wb, 'facts: form ' + name)
         check(vst['classification'] in wb, 'facts: classification ' + name)
         check(vst['productCode'] == 'Product code ' + sku and sku in wb and sku not in fb, 'facts: product code on the wrap only ' + name)
         terms = r.get('extraDoNotPrintTerms') or []
@@ -215,6 +242,12 @@ def main():
     if CRLF_FILES:
         print('NOTE %d text files have CRLF line ends, as a Windows checkout writes them; hashed with LF as committed: %s'
               % (len(CRLF_FILES), ', '.join(sorted(CRLF_FILES))))
+    check(bool(DECLARED) == bool(m.get('packagingDeclaration')), 'manifest packaging declaration present exactly when a record uses one')
+    if DECLARED:
+        print('NOTE %d records print the vial form under Xenios packaging declaration %s: %s'
+              % (len(DECLARED), sorted({d[1] for d in DECLARED}), ', '.join('%s (%s)' % (d[0], d[2]) for d in DECLARED)))
+        if m.get('publicationState') == 'dry_run_never_publish':
+            print('NOTE this manifest is a dry run and must never be published')
     for f_ in failed:
         print('FAIL', f_)
     for s in skipped:
