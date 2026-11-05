@@ -32,7 +32,10 @@ vi.mock("@/lib/supabaseBrowser", () => ({
   isRecoveryAccessToken: (token: string) => token.includes("recovery"),
 }));
 
+import { isPublicResearchDocumentPath } from "@shared/research/paths";
 import { ResearchContext, type MemberInfo, type ResearchContextValue } from "../core";
+import { ACCESS_ROUTES } from "../lib/routes";
+import { isPublicResearchIndexRoute } from "../seo/route-policy";
 import SignIn from "./SignIn";
 
 let root: Root | null = null;
@@ -417,8 +420,24 @@ describe("SEN-0025: sign in is not a dead end", () => {
     const privacy = container!.querySelector('[data-testid="link-signin-privacy"]') as HTMLAnchorElement;
     const terms = container!.querySelector('[data-testid="link-signin-terms"]') as HTMLAnchorElement;
     const support = container!.querySelector('[data-testid="link-signin-support"]') as HTMLAnchorElement;
-    expect(privacy?.getAttribute("href")).toBe("/research/policies/privacy");
-    expect(terms?.getAttribute("href")).toBe("/research/policies/terms");
+    // The canonical Privacy and Terms routes. The two slugs this page used,
+    // /research/policies/privacy and /research/policies/terms, are not
+    // registered documents (the four published policy slugs are): a direct
+    // load, refresh or shared link answers a raw HTTP 404 with the app shell,
+    // and in the app they reach the policy record only through the generic
+    // policy page under a non-canonical URL. This test used to pin exactly
+    // those two paths.
+    expect(privacy?.getAttribute("href")).toBe(ACCESS_ROUTES.privacy);
+    expect(terms?.getAttribute("href")).toBe(ACCESS_ROUTES.terms);
+    expect(privacy?.getAttribute("href")).toBe("/research/privacy");
+    expect(terms?.getAttribute("href")).toBe("/research/terms");
+    // Two independent statements of the rule: the public route registry the
+    // raw HTTP document resolver reads, and the shared header-gate classifier,
+    // both treat the destinations as public Research documents.
+    expect(isPublicResearchIndexRoute(privacy.getAttribute("href") ?? "")).toBe(true);
+    expect(isPublicResearchIndexRoute(terms.getAttribute("href") ?? "")).toBe(true);
+    expect(isPublicResearchDocumentPath(privacy.getAttribute("href") ?? "")).toBe(true);
+    expect(isPublicResearchDocumentPath(terms.getAttribute("href") ?? "")).toBe(true);
     expect(support?.getAttribute("href")).toBe("mailto:team@xeniostechnology.com");
   });
 
