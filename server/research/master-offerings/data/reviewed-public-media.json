@@ -707,6 +707,138 @@
       "sourceCommit": "87d241fb30eaabae6df41971597024d8add1cd33",
       "primarySha256": "99c33810b01811e4e6d42f039315ef2655956379d9be1efa7f6b021b29d6d2ac",
       "labelPreviewSha256": "abdc61d2e7b4a13acb4727f3fab4f0ca9482ff1d70b3e7d60ae84a23224b9194"
+    },
+    {
+      "offeringId": "mo_143d09ffd9b13780f2d7",
+      "sourceVariantId": "mov_8e11e063f79d56a3a946",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/sermorelin-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Sermorelin research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/sermorelin-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "Sermorelin research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "ca04de90b42dd66f1099fb0118437d7fe5ee96ac",
+      "primarySha256": "e404c5f224b4704c46096b750cbc7308e1ff0b53c61b04a14afb602a623ee591",
+      "labelPreviewSha256": "e9f963942ee01ef3d0abfcb8829c0402ac33a6726f51677560d6791e927af9e1"
+    },
+    {
+      "offeringId": "mo_aace3aded470921f6af2",
+      "sourceVariantId": "mov_120b19d12e869b0070ff",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/thymosin-alpha-1-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Thymosin Alpha-1 research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymosin-alpha-1-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "Thymosin Alpha-1 research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "2baf5b6519cd8f67f6892ecdcb75bd7c2d93893c",
+      "primarySha256": "9b4ef86da53bc2da845c726e318a8a413bb58fd4895a18d865e50b49e1a6444b",
+      "labelPreviewSha256": "b89dd9ab0b654c47438236c9505b65271a0874be0b344b0026b1aa3d866a086a"
+    },
+    {
+      "offeringId": "mo_34fa0d12f1effd156e61",
+      "sourceVariantId": "mov_c58b682a44514760a74f",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/slu-pp-332-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for SLU-PP-332 research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/slu-pp-332-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "SLU-PP-332 research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "75d1f5b2c1159603c48f476ad27a276b2cad2496",
+      "primarySha256": "1c7de1eda463c5ba9b24e7f0ed8e9c036f7384a1658c340370741a65ad896754",
+      "labelPreviewSha256": "c6502987b826c372119dca77bdd32d07f18d32e57eff118ebc17b3ffdc0dc93c"
+    },
+    {
+      "offeringId": "mo_2923115827ca8fe37d2c",
+      "sourceVariantId": "mov_257fd9d66f6284e3570e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tb-500-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for TB-500 research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tb-500-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "TB-500 research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "487ab7b35f40ce8e0f59c8f4cc653d69f9772ef4",
+      "primarySha256": "2e420b7f36024b883a47561bd75e533cdf2aec0e17b8c78ce07a9b5c3783a1aa",
+      "labelPreviewSha256": "20571d2c66f7da8051b49bdda9b567dd51f258e11e65a13c33d7d4f3bcf15580"
+    },
+    {
+      "offeringId": "mo_3c6f0d26e9df4bcb80c5",
+      "sourceVariantId": "mov_395e7047e013e2074f6a",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/slu-pp-332-250mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for SLU-PP-332 research capsules, listed strength 250 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/slu-pp-332-250mcg-capsule-front-artwork-v1.webp",
+          "altText": "SLU-PP-332 research capsule front label design, listed strength 250 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "c64feb36f3633672844a70463f4a322bc6c1e582",
+      "primarySha256": "c0765a0871f2e85ecd5d8091194dadd12d4bfb1f834a24b6aa277c38fc1813c4",
+      "labelPreviewSha256": "3097356bfd5a5db9e8c6ad72dc85fe24f706af722a1767de0018feb3be282e60"
+    },
+    {
+      "offeringId": "mo_75bc8d1ad93b04865e6c",
+      "sourceVariantId": "mov_8293d0baa21eb4d561f8",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Blend BPC-157 + TB-500 research capsules, listed strength 500/500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "Blend BPC-157 + TB-500 research capsule front label design, listed strength 500/500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "ba455f74ae9e16093b934b772008616248b6bbc2",
+      "primarySha256": "a9bf1f1de9fa751095b4b8b8ee42b3a284988b64faa6bdba2834130c00f81f6d",
+      "labelPreviewSha256": "28648b998a35fd2fa06b61f0b9ba010f3da67d2d8855627b3a8bf6411ff0c60b"
     }
   ]
 }
