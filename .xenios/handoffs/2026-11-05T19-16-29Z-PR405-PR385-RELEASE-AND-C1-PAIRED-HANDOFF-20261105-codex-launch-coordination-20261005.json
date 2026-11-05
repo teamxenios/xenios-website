@@ -1,0 +1,196 @@
+{
+  "scope": "Production release receipts and the next exact reviewed artwork-and-copy source allocation",
+  "session": "codex-launch-coordination-20261005",
+  "repo": "teamxenios/xenios-website",
+  "canonicalPreimage": "859fbd49ceed9c789c4aa68d1f6f370c19dc4caf",
+  "physicalCheckout": "C:/xenios-wt/kan23-support-links-20261020",
+  "authority": {
+    "ordinaryQualifiedRelease": "KAN-225/11225",
+    "current": "Samuel directed immediate production and waived waiting for iPhone/mobile verification in the active Root chat",
+    "receipt": "KAN-13/11457"
+  },
+  "earlierMediaTask": {
+    "task": "KAN59-C1-004-THREE-RETATRUTIDE-ARTWORK-20261105",
+    "lease": "9b2fd732-3684-4f16-85f1-68c0c2128067",
+    "pr": 404,
+    "head": "7fb313163fb5db51e1b4c3401f6c9369697fb889",
+    "release": "8bfb038deb0268b146731ba5ab7c4cbc999983af",
+    "tree": "ef7b18959fd9ccd2e8df98f4ca7f2480c80ae3e7",
+    "run": 42046785126,
+    "deploy": "dep-dbm9c467bikc73eor1ng",
+    "servedEvidence": "KAN-59/11370",
+    "assetReadback": "KAN-59/11377"
+  },
+  "descriptions": {
+    "task": "KAN13-EA-TWELVE-FORM-NEUTRAL-COPY-20261105",
+    "lease": "be10be2e-370f-47db-92fb-b6aeead0f107",
+    "pr": 405,
+    "head": "9b53b440ce46f5f246be8af6660493f3a3ebd18e",
+    "release": "693981dbfe0b7701fe4c40b0e1e8c4accda66fab",
+    "tree": "1dcbc0f8cbd63e698eb44b82c0c53136f45de15a",
+    "sourceRun": 42086209687,
+    "run": 42087930704,
+    "passed": 18539,
+    "skipped": 83,
+    "deploy": "dep-dbmd1pqvcj2c73e38f8g",
+    "liveAt": "2026-11-05T18:55:45.671458Z",
+    "scope": "Twelve corrected descriptions",
+    "exactSource": "KAN-31/11499",
+    "provider": "KAN-31/11504",
+    "served": "KAN-13/11505",
+    "servedMatched": 12,
+    "servedMismatches": 0,
+    "servedReceiptSHA256": "9c71022e796f08df7304c18184de0786b3e17a5ea39a45cb8400c06b98bb4ccd"
+  },
+  "compactCatalog": {
+    "task": "KAN225-EARLY-ACCESS-MOBILE-GUEST-20261104",
+    "existingLease": "50ca8e4f-a56e-4d63-a7f8-b161911678ba",
+    "pr": 385,
+    "acceptedHead": "67997ad18852da851f36aa14bc8d4a004f49e210",
+    "head": "cde35edbc823f3d5cfc4cbb39601ea490a6d4dca",
+    "release": "90fd0747f156a103591f2cd2b72060955f958ce9",
+    "tree": "5a79b9f3756c241853476bd14a83b043f1cd7de4",
+    "sourceRun": 42089605458,
+    "run": 42091053772,
+    "passed": 18539,
+    "skipped": 83,
+    "deploy": "dep-dbmdb5l9el5s73a2nh60",
+    "liveAt": "2026-11-05T19:15:50.611822Z",
+    "rollback": {
+      "release": "693981dbfe0b7701fe4c40b0e1e8c4accda66fab",
+      "tree": "1dcbc0f8cbd63e698eb44b82c0c53136f45de15a",
+      "deploy": "dep-dbmd1pqvcj2c73e38f8g"
+    },
+    "sourceAcceptance": "KAN-13/11426",
+    "served": {
+      "utc": "2026-11-05T19:16:29.068799+00:00",
+      "routes": [
+        {
+          "path": "/research/early-access/order-request",
+          "status": 200,
+          "type": "text/html; charset=utf-8",
+          "bytes": 1459
+        },
+        {
+          "path": "/earlyaccess",
+          "status": 404,
+          "type": "text/html; charset=utf-8",
+          "bytes": 1400
+        },
+        {
+          "path": "/api/research/early-access/request-intents/config",
+          "status": 200,
+          "type": "application/json; charset=utf-8",
+          "bytes": 1161
+        },
+        {
+          "path": "/api/health",
+          "status": 200,
+          "type": "application/json; charset=utf-8",
+          "bytes": 255
+        },
+        {
+          "path": "/api/research/early-access/request-intents/catalog?page=1&pageSize=1",
+          "status": 401,
+          "type": "application/json; charset=utf-8",
+          "bytes": 153
+        }
+      ],
+      "entry": "/assets/index-DNwVaPiT.js",
+      "styles": {
+        "/assets/assisted-order-3i2_tQBL.css": {
+          "path": "/assets/assisted-order-3i2_tQBL.css",
+          "status": 200,
+          "type": "text/css; charset=utf-8",
+          "bytes": 15717,
+          "sha256": "2a1d8f7c597103c6c867d7de2ad5e5e324daa0381f5c14d5ae8a732c819bec7e",
+          "markers": [
+            "xenios-order-mobile-pagination",
+            "xenios-order-summary-toggle"
+          ]
+        }
+      },
+      "verifiedRouteChunk": [
+        {
+          "path": "/assets/RequestIntentEntry-BRyCBC6K.js",
+          "status": 200,
+          "sha256": "9ceadb3968dc3a0cf21bb5ab2620dfe6d0707d18ed97431a7cc007299917777e",
+          "markers": [
+            "Review request (",
+            "xenios-order-mobile-pagination",
+            "xenios-order-summary-toggle"
+          ]
+        }
+      ],
+      "intakeEnabled": true,
+      "scope": "Direct HTTPS GET and exact compiled code/style markers"
+    },
+    "deviceVerification": "Deferred by current direct user direction"
+  },
+  "nextArtwork": {
+    "task": "KAN59-C1-005-C1-006-PAIRED-ART-AND-COPY-20261105",
+    "branch": "codex/early-access-thirteen-art-copy-20261105",
+    "base": "90fd0747f156a103591f2cd2b72060955f958ce9",
+    "baseTree": "5a79b9f3756c241853476bd14a83b043f1cd7de4",
+    "tree": "bee8bffee43beed374bcaf4b129407054a1d9093",
+    "paths": [
+      "client/public/research/product-media/5-amino-1mq-10mg-front-artwork-v1.webp",
+      "client/public/research/product-media/5-amino-1mq-10mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/cagrilintide-5mg-front-artwork-v1.webp",
+      "client/public/research/product-media/cagrilintide-5mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/dsip-5mg-front-artwork-v1.webp",
+      "client/public/research/product-media/dsip-5mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/ghrp-2-10mg-front-artwork-v1.webp",
+      "client/public/research/product-media/ghrp-2-10mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/ghrp-2-5mg-front-artwork-v1.webp",
+      "client/public/research/product-media/ghrp-2-5mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/ghrp-6-10mg-front-artwork-v1.webp",
+      "client/public/research/product-media/ghrp-6-10mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/gonadorelin-5mg-front-artwork-v1.webp",
+      "client/public/research/product-media/gonadorelin-5mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/kisspeptin-5mg-front-artwork-v1.webp",
+      "client/public/research/product-media/kisspeptin-5mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/kpv-5mg-front-artwork-v1.webp",
+      "client/public/research/product-media/kpv-5mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/liraglutide-10mg-front-artwork-v1.webp",
+      "client/public/research/product-media/liraglutide-10mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/liraglutide-20mg-front-artwork-v1.webp",
+      "client/public/research/product-media/liraglutide-20mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/melanotan-i-10mg-front-artwork-v1.webp",
+      "client/public/research/product-media/melanotan-i-10mg-website-render-v1-1024.webp",
+      "client/public/research/product-media/selank-5mg-front-artwork-v1.webp",
+      "client/public/research/product-media/selank-5mg-website-render-v1-1024.webp",
+      "client/src/research/master-offerings/MasterOfferingCard.tsx",
+      "client/src/research/product-media/ProductMedia.tsx",
+      "client/src/research/product-media/reviewed-form-holds.ts",
+      "client/src/research/storefront/StorefrontCard.tsx",
+      "server/research/master-offerings/data/reviewed-public-content.json",
+      "server/research/master-offerings/data/reviewed-public-media.json"
+    ],
+    "exactArtSHA256": "aa64fd4c99f342b76597c67d68b8196b05a040303d159d2484ab6e6ce2bc2b2e",
+    "exactAltSHA256": "a70f2d2ad2cf249c0275ce39ca138b76ec29a340cb21539e7aa4dad42ae95439",
+    "beforeAltTree": "7cda34d4346a0f222987e166bc6d2cba8cbabfa6",
+    "copyBlob": "828a0d9b1cfae27dee854611e703de0e6a48556c",
+    "mediaBlob": "40069f80ec8e517f3173e94d416f9ca723367254",
+    "addedPairs": 13,
+    "projectedCopyTotal": 45,
+    "projectedMediaTotal": 57,
+    "altValues": 76,
+    "conservedLiveCopy": 32,
+    "conservedCorrectedCopy": 12,
+    "proof": "Private exact Git-index composition. Both reviewed patches apply byte-for-byte in order. Runtime and asset paths match the reviewed 13. Only the expected media registry changes in the second patch.",
+    "sourceReviews": [
+      "KAN-13/11458",
+      "KAN-59/11511"
+    ],
+    "remaining": "Canonical 32-path lease readback, actual source adoption, hosted checks and current release verification"
+  },
+  "separateShortRoute": {
+    "observedStatus": 404,
+    "existingHandoff": "KAN-13/11353",
+    "patchSHA256": "03b3de87b92d6994d67f372a013d2147363b8614b8c9be1d86512e6b941f32ae",
+    "currentBaseProspectiveTree": "78651851670f3055279d2f108a7a2fd2a00da1aa",
+    "unchangedExactPaths": 14,
+    "blocker": "Website 2 control-plane named writer and exact source allocation required"
+  }
+}

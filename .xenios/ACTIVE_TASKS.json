@@ -3870,7 +3870,6 @@
         "scripts/qa/qo-visual-capture/capture-dispatch.mjs",
         "scripts/qa/qo-visual-capture/capture-dispatch.test.mjs",
         "client/src/research/master-offerings/catalog-presentation-labels.ts",
-        "client/src/research/master-offerings/MasterOfferingCard.tsx",
         "client/src/research/master-offerings/MasterOfferingDetail.tsx",
         "client/src/research/master-offerings/MasterOfferingCatalogControls.tsx",
         "client/src/research/master-offerings/CatalogActiveFilters.tsx",
@@ -4157,7 +4156,7 @@
       "id": "KAN59-C1-004-THREE-RETATRUTIDE-ARTWORK-20261105",
       "title": "Adopt three Retatrutide artwork mappings",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "5f5dd296d84605fddd30cd476e5ad4773c366ba2",
       "paths": [
@@ -4175,13 +4174,19 @@
       "scopeNote": "Founder-directed next exact media task allocated to existing Root at KAN-59 comment 11313. Limit source work to the seven exact listed media-manifest and Retatrutide WebP paths on branch codex/early-access-retatrutide-artwork-20261105 from exact live release 5f5dd296d84605fddd30cd476e5ad4773c366ba2/tree a2904deb600e5b1fd0790ce6e802bd62938e3ab9. Adopt only reviewed artwork mappings 0323, 0324 and 0326 under KAN-59 comment 11299 and the packaging basis at KAN-225 comment 11259. The exact import ZIP is 315743 bytes with SHA-256 b1116c3d61c1d6219f3cfbf0904f8472eb0addaeae3da9f8507ed30f6635b1ef, expected prospective tree c409cd118716755b7a3993db585ff2216cde263b and expected reviewed-media manifest blob 143f62a0b9f56df882bf3929821b1951c316235e. Fresh post-C3-handoff active/reserved exact, ancestor, prefix and wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict. Preserve C3 and all older histories, active two-copy lease 4dc24268-a0c1-40bd-b20f-87aef59f7d28, clinical shared lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba, all B/C leases, PR402 dd8f93d, PR403 1aa3b82, PR401 eec1c70, every foreign record, configuration and ref. Physical supply, printing, pricing, supplier activation and any unlisted source or QA path are excluded. This custody transaction performs no source checkout, test, browser, provider, deployment, worktree, supplier activation or new-session action.",
       "createdAt": "2026-11-05T13:43:05.8585800Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T13:43:05.8585800Z"
+      "claimedAt": "2026-11-05T13:43:05.8585800Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "7fb313163fb5db51e1b4c3401f6c9369697fb889",
+        "file": ".xenios/handoffs/2026-11-05T19-16-29Z-PR405-PR385-RELEASE-AND-C1-PAIRED-HANDOFF-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T19:16:29.068799Z"
+      }
     },
     {
       "id": "KAN13-EA-TWELVE-FORM-NEUTRAL-COPY-20261105",
       "title": "Apply twelve form-neutral Early Access copy replacements",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "b600f9d89bbfdfad9f0dae02d7188dfd04a4f24a",
       "paths": [
@@ -4193,7 +4198,63 @@
       "scopeNote": "Use the established registered Root session under the exact Root handoff at KAN-13 comment 11457. Limit source work exactly to twelve independently reviewed form-neutral replacements in server/research/master-offerings/data/reviewed-public-content.json from protected release b600f9d89bbfdfad9f0dae02d7188dfd04a4f24a/tree 7ff832681cfd7c34408a2c81d8b0ace369f2c915 and unchanged base copy blob 66ba8268352499009ef1db063a07146b8ea6882f, on intended branch codex/early-access-form-neutral-copy-correction-20261105. Root verified the one-file private patch replay as prospective tree 0cd6e466fbd346e08ec52832f9159492ce78cead, prospective manifest blob dbe7c9aec4330afded89420139baff3ae8e1b598 and patch SHA-256 74abeb20105276cd5490eb1702847aebc5cd014b454d47f945568cd235070eed; all twelve replacements match the independently reviewed digests. Preserve all unrelated records and authority. The alias and its Website 2 paths remain under their own handoff and are excluded. Fresh post-PR402-handoff active/reserved exact, ancestor, prefix and wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict. Root retains source application, verification and release. This custody transaction performs no source edit or checkout, test, deployment, provider write, settings, supplier operation, new session or worktree action.",
       "createdAt": "2026-11-05T18:24:43.0405694Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T18:24:43.0405694Z"
+      "claimedAt": "2026-11-05T18:24:43.0405694Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "9b53b440ce46f5f246be8af6660493f3a3ebd18e",
+        "file": ".xenios/handoffs/2026-11-05T19-16-29Z-PR405-PR385-RELEASE-AND-C1-PAIRED-HANDOFF-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T19:16:29.068799Z"
+      }
+    },
+    {
+      "id": "KAN59-C1-005-C1-006-PAIRED-ART-AND-COPY-20261105",
+      "title": "Adopt thirteen reviewed paired artwork and copy records",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "90fd0747f156a103591f2cd2b72060955f958ce9",
+      "paths": [
+        "client/public/research/product-media/5-amino-1mq-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/5-amino-1mq-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/cagrilintide-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/cagrilintide-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/dsip-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/dsip-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ghrp-2-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ghrp-2-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ghrp-2-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ghrp-2-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ghrp-6-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ghrp-6-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/gonadorelin-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/gonadorelin-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/kisspeptin-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/kisspeptin-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/kpv-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/kpv-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/liraglutide-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/liraglutide-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/liraglutide-20mg-front-artwork-v1.webp",
+        "client/public/research/product-media/liraglutide-20mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/melanotan-i-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/melanotan-i-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/selank-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/selank-5mg-website-render-v1-1024.webp",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/src/research/product-media/reviewed-form-holds.ts",
+        "client/src/research/storefront/StorefrontCard.tsx",
+        "server/research/master-offerings/data/reviewed-public-content.json",
+        "server/research/master-offerings/data/reviewed-public-media.json"
+      ],
+      "dependsOn": [
+        "KAN59-C1-004-THREE-RETATRUTIDE-ARTWORK-20261105",
+        "KAN13-EA-TWELVE-FORM-NEUTRAL-COPY-20261105"
+      ],
+      "scopeNote": "Claim only the exact next reviewed paired artwork-and-copy batch elected in the existing KAN-13 comment 11457 owner record, with source reviews KAN-13 comment 11458 and KAN-59 comment 11511. Limit future source work to the 32 exact listed paths on branch codex/early-access-thirteen-art-copy-20261105 from exact protected base 90fd0747f156a103591f2cd2b72060955f958ce9/tree 5a79b9f3756c241853476bd14a83b043f1cd7de4. The unchanged reviewed artwork and alt-value patches apply byte-for-byte in order and reproduce prospective tree bee8bffee43beed374bcaf4b129407054a1d9093, exact art SHA-256 aa64fd4c99f342b76597c67d68b8196b05a040303d159d2484ab6e6ce2bc2b2, exact alt SHA-256 a70f2d2ad2cf249c0275ce39ca138b76ec29a340cb21539e7aa4dad42ae95439, prospective copy blob 828a0d9b1cfae27dee854611e703de0e6a48556c and prospective media blob 40069f80ec8e517f3173e94d416f9ca723367254. Scope is exactly 13 new reviewed artwork/description pairs plus 76 independently accepted alt values. Preserve the 32 live descriptions, 12 corrected descriptions and all existing media outside this increment. The completed PR404 and PR405 leases transition to HANDOFF in this transaction; only MasterOfferingCard.tsx transfers from the existing multi-scope Root task/lease, whose other exact paths, original scope history and heartbeat remain active and unchanged. Fresh post-closure/post-transfer active/reserved exact, ancestor, prefix, wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict. Keep the separate Website 2 route/manifest reservation intact. Root alone will apply, qualify and release. This custody transaction performs no source switch or edit, CI/browser job, release/provider action, configuration change, supplier activation, session creation, checkout creation or new authority.",
+      "createdAt": "2026-11-05T19:16:29.068799Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T19:16:29.068799Z"
     }
   ]
 }

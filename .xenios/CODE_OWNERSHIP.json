@@ -3131,7 +3131,6 @@
         "scripts/qa/qo-visual-capture/capture-dispatch.mjs",
         "scripts/qa/qo-visual-capture/capture-dispatch.test.mjs",
         "client/src/research/master-offerings/catalog-presentation-labels.ts",
-        "client/src/research/master-offerings/MasterOfferingCard.tsx",
         "client/src/research/master-offerings/MasterOfferingDetail.tsx",
         "client/src/research/master-offerings/MasterOfferingCatalogControls.tsx",
         "client/src/research/master-offerings/CatalogActiveFilters.tsx",
@@ -3333,7 +3332,7 @@
         "client/public/research/product-media/retatrutide-30mg-website-render-v1-1024.webp",
         "client/public/research/product-media/retatrutide-30mg-front-artwork-v1.webp"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-05T13:43:05.8585800Z",
       "heartbeatAt": "2026-11-05T13:43:05.8585800Z"
     },
@@ -3344,9 +3343,51 @@
       "paths": [
         "server/research/master-offerings/data/reviewed-public-content.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-05T18:24:43.0405694Z",
       "heartbeatAt": "2026-11-05T18:24:43.0405694Z"
+    },
+    {
+      "id": "032e769c-39d4-4cc6-a9d5-66601ce820ff",
+      "task": "KAN59-C1-005-C1-006-PAIRED-ART-AND-COPY-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/public/research/product-media/5-amino-1mq-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/5-amino-1mq-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/cagrilintide-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/cagrilintide-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/dsip-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/dsip-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ghrp-2-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ghrp-2-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ghrp-2-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ghrp-2-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ghrp-6-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ghrp-6-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/gonadorelin-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/gonadorelin-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/kisspeptin-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/kisspeptin-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/kpv-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/kpv-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/liraglutide-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/liraglutide-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/liraglutide-20mg-front-artwork-v1.webp",
+        "client/public/research/product-media/liraglutide-20mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/melanotan-i-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/melanotan-i-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/selank-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/selank-5mg-website-render-v1-1024.webp",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/product-media/ProductMedia.tsx",
+        "client/src/research/product-media/reviewed-form-holds.ts",
+        "client/src/research/storefront/StorefrontCard.tsx",
+        "server/research/master-offerings/data/reviewed-public-content.json",
+        "server/research/master-offerings/data/reviewed-public-media.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T19:16:29.068799Z",
+      "heartbeatAt": "2026-11-05T19:16:29.068799Z"
     }
   ],
   "rules": [
