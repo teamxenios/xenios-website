@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-05T22:48:41.1866066Z",
+  "updatedAt": "2026-11-05T23:02:09.8529232Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4453,6 +4453,22 @@
         "file": ".xenios/handoffs/2026-11-05T22-03-51Z-PR411-EXACT-RELEASE-QUALIFICATION-20261105-codex-launch-coordination-20261005.json",
         "at": "2026-11-05T22:03:51.723Z"
       }
+    },
+    {
+      "id": "KAN6-EA-SIX-CLINICAL-DESCRIPTIONS-20261105",
+      "title": "Adopt six independently allocated clinical descriptions",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-6",
+      "baseSha": "e93de40a58eab2a454fcb3fc11783ffc5504ca3d",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the exact one-path COPY6 allocation authorized at KAN-13/11683 (https://xeniostechnology.atlassian.net/browse/KAN-13?focusedCommentId=11683). Limit future source work to server/research/master-offerings/data/reviewed-public-content.json on planned branch codex/early-access-six-clinical-descriptions-20261105 from exact live protected release e93de40a58eab2a454fcb3fc11783ffc5504ca3d/tree 86b0ba1768266e3f7db255abf11ca763ce6567bf. The required base content blob is exactly 2f877b95ce876881109dcfb37d703496a10255fb. Fresh exact, prefix and wildcard CODE_OWNERSHIP plus FILE_OWNERSHIP audits found no active or reserved conflict; every previous Root lease matching this path is handoff history and the older broad matching lease is released. Preserve all 69 existing reviewed descriptions, every price and pricing authority byte, all ART29 media, the outreach alias and every foreign task, lease, rule, registry, identity, release and handoff. Source contents, exact six-row postimage, tests, independent review, protected integration and release remain separate Root gates. This custody transaction performs no checkout or branch switch, application source edit, test, browser, workflow, provider, deployment, production, supplier activation, price publication, new session or policy-v2 allocation.",
+      "createdAt": "2026-11-05T23:02:09.8529232Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T23:02:09.8529232Z"
     }
   ]
 }

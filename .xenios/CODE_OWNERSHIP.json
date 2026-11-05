@@ -3525,6 +3525,17 @@
       "state": "handoff",
       "claimedAt": "2026-11-05T21:41:37.0094940Z",
       "heartbeatAt": "2026-11-05T21:41:37.0094940Z"
+    },
+    {
+      "id": "b2940f6f-577a-4a89-adb8-d51d96e1a90e",
+      "task": "KAN6-EA-SIX-CLINICAL-DESCRIPTIONS-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T23:02:09.8529232Z",
+      "heartbeatAt": "2026-11-05T23:02:09.8529232Z"
     }
   ],
   "rules": [
