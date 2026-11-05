@@ -1,0 +1,51 @@
+{
+  "task": "KAN59-C1-19-REVIEWED-ARTWORK-20261104",
+  "lease": "f533f8ba-6905-42fc-8a63-1dfd7cbfed88",
+  "source": {
+    "pr": 390,
+    "sha": "d9a8b254dc2b6c30496af47e36d7e7abf88507c8",
+    "tree": "eee29fddfb747a54f90332e6badbf171cf1ea3b9",
+    "parent": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+    "pathCount": 39,
+    "mediaMappings": 19,
+    "publicWebps": 38,
+    "manifestBlob": "465f5f310d698aa66f7a433a2583ff50284473fb",
+    "manifestSha256": "d134d7000e8cddb1d89b5346bc8275e6eb6a7d60736897f734bcf0494147eb1c"
+  },
+  "hosted": {
+    "run": 41951206928,
+    "requiredChecks": 5,
+    "trustedApp": 15368,
+    "passed": 18531,
+    "skipped": 83,
+    "providerMerge": "1fcf8f4cfeac7052e98f04b32f4ea7236782c584"
+  },
+  "acceptance": {
+    "source": "KAN-31/10907",
+    "routed": "KAN-31/10982",
+    "run": 41956570164,
+    "job": 127012782319,
+    "allowance": "KAN-31/10969",
+    "attempt": 1,
+    "remaining": 0,
+    "harness": "57fbd769fdfe4aad3c308bddbcab81c960204314",
+    "artifact": 13383362644,
+    "zipSha256": "bf92967c3c65b5fdf8d9359cab33b05bb9658674bab2b3d9d40f92611f777118",
+    "resultSha256": "ea3c9815c7226d29d245248a379fef732060598b64632371f7a723a2de0b1a41",
+    "images": 8,
+    "contexts": 8,
+    "positiveCases": 152,
+    "negativeCases": 8,
+    "assertions": 2200,
+    "scope": "Synthetic loopback guest/member routes, WebP delivery and exact actions. Production, physical Safari, persisted requests and physical packaging separate. Existing 320px member navigation issue retained in separate mobile integration."
+  },
+  "priorLive": {
+    "sha": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+    "tree": "da2b16a6ff2991fe2322c931c95999262dbc709b",
+    "deploy": "dep-dblpgrnb9u1s73dlsg00",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "trigger": "checksPass"
+  },
+  "stage": "SOURCE_AND_SYNTHETIC_QA_PASS_BEFORE_RELEASE"
+}

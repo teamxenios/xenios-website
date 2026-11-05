@@ -3915,7 +3915,7 @@
       "id": "KAN59-C1-19-REVIEWED-ARTWORK-20261104",
       "title": "Adopt independently accepted C1 19-mapping reviewed artwork",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
       "paths": [
@@ -3963,7 +3963,13 @@
       "scopeNote": "Claim only the independently accepted 19-mapping C1 artwork increment allocated to Root at KAN-59 comment 10896. Limit source work to reviewed-public-media.json and the 38 exact listed product-media asset files, with no wildcard or directory scope, on planned branch codex/early-access-c1-reviewed-artwork-20261104 from exact release 19d10e0495aed917b3d1fcf2844109e5e1cc6915/tree da2b16a6ff2991fe2322c931c95999262dbc709b. Preserve immutable artwork receipts 10879, 10881 and 10884, independent QA 10887, separate matching readback 10893, embedded manifest SHA-256 d134d7000e8cddb1d89b5346bc8275e6eb6a7d60736897f734bcf0494147eb1c, Git blob 465f5f310d698aa66f7a433a2583ff50284473fb and prospective tree eee29fddfb747a54f90332e6badbf171cf1ea3b9 from inventory C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/C1_19_MEDIA_VERIFIED_INPUT_10887.json. Fresh active/reserved CODE_OWNERSHIP exact/prefix/glob and FILE_OWNERSHIP audits found no active lease, code-rule or file-rule conflict. Preserve the old broad CATALOG-ACTION-UNIFICATION task with its released lease and both matching KAN-6 QA tasks with their handoff leases as exact history. Preserve all prior leases, tasks, history, registry, release, refs and current checkout. Root source-writing tools remain idle during this custody operation and hosted PR 389 remains read-only. This metadata claim performs no source checkout change, test, application branch creation, source edit, browser, merge, release or production action.",
       "createdAt": "2026-11-05T01:41:52.983026Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T01:41:52.983026Z"
+      "claimedAt": "2026-11-05T01:41:52.983026Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "d9a8b254dc2b6c30496af47e36d7e7abf88507c8",
+        "file": ".xenios/handoffs/2026-11-05T02-48-28Z-KAN59-C1-19-REVIEWED-ARTWORK-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T02:48:28Z"
+      }
     }
   ]
 }

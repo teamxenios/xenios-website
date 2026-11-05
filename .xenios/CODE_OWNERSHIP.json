@@ -3201,7 +3201,7 @@
         "client/public/research/product-media/oxytocin-2mg-website-render-v1-1024.webp",
         "client/public/research/product-media/oxytocin-2mg-front-artwork-v1.webp"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-05T01:41:52.983026Z",
       "heartbeatAt": "2026-11-05T01:41:52.983026Z"
     }
