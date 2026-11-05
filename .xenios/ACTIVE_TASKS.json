@@ -3970,6 +3970,23 @@
         "file": ".xenios/handoffs/2026-11-05T02-48-28Z-KAN59-C1-19-REVIEWED-ARTWORK-20261104-codex-launch-coordination-20261005.json",
         "at": "2026-11-05T02:48:28Z"
       }
+    },
+    {
+      "id": "KAN13-MEMBER-RESEARCH-NOTICE-20261105",
+      "title": "Member detail research notice for all six research families",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "4dce1ed3ad210eb41eb3e118931e3df7604d8920",
+      "paths": [
+        "server/research/master-offerings/customer-projection.ts",
+        "server/research/master-offerings/customer-projection.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the CLAUDE-4 member research notice adoption allocated at KAN-13 comment 10834 and delivered by the author at KAN-13 comment 11003. Limit source work exactly to customer-projection.ts and customer-projection.test.ts on intended separate Root branch codex/member-research-notice-20261105 from exact live release 4dce1ed3ad210eb41eb3e118931e3df7604d8920/tree eee29fddfb747a54f90332e6badbf171cf1ea3b9. Exact live and original CLAUDE-4 preimages are runtime blob 715861334ba3ff9909cdd9953bd7337415a37e87 and test blob 89826bda0e87002f575f9bede331a1ea8c7e0b66, identical to base 19d10e0495aed917b3d1fcf2844109e5e1cc6915. Preserve the tests-first format patch followed by runtime from delivery 11003, reusing the accepted packet and independent runtime evidence. Taxonomy, policy versions, Quick Order workflow, protected Website2 router, prices and the extra 10886 dataset test are excluded. Fresh exact/prefix/wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no active/reserved lease or rule conflict. Preserve the broad August task with its released lease and the prior KAN-6 overlap with its handoff lease as historical records, plus every active path, task, lease, registry, release state, handoff and ref. This metadata claim performs no source edit, identity or worktree creation, branch creation or switch, test, deployment, provider or application operation.",
+      "createdAt": "2026-11-05T03:17:54.554511Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T03:17:54.554511Z"
     }
   ]
 }
