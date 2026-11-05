@@ -3533,7 +3533,7 @@
       "paths": [
         "server/research/master-offerings/data/reviewed-public-content.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-05T23:02:09.8529232Z",
       "heartbeatAt": "2026-11-05T23:02:09.8529232Z"
     },

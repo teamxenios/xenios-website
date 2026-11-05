@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "kind": "verified-production-release-complete",
+  "writer": "codex-launch-coordination-20261005",
+  "recordedAt": "2026-11-05T23:46:46.257Z",
+  "pr": 412,
+  "source": "4e271cef13448de814f202dd5a70928fc170baf5",
+  "protected": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+  "tree": "1f5df7e4ded1024dc44511863886adcaa8b6453e",
+  "parents": [
+    "e93de40a58eab2a454fcb3fc11783ffc5504ca3d",
+    "4e271cef13448de814f202dd5a70928fc170baf5"
+  ],
+  "mergedAt": "2026-11-05T23:29:12Z",
+  "task": "KAN6-EA-SIX-CLINICAL-DESCRIPTIONS-20261105",
+  "lease": "b2940f6f-577a-4a89-adb8-d51d96e1a90e",
+  "originalClaim": "55b141edb8b0a5fd74fdcff150ea60007ce1c708",
+  "onlyAppPath": "server/research/master-offerings/data/reviewed-public-content.json",
+  "sourceReview": "KAN-13/11690",
+  "postimage": "92e38d1e40c4bf0d017d5af76434d0c5e533e27c",
+  "authorPacketSha256": "51939fa7d746de9f1b2213e37cade3ee06c1bd5b2f9057d8b918144eafe19e21",
+  "candidateCi": {
+    "run": 42127252453,
+    "head": "4e271cef13448de814f202dd5a70928fc170baf5",
+    "tree": "1f5df7e4ded1024dc44511863886adcaa8b6453e",
+    "event": "pull_request",
+    "trusted": {
+      "Required CI completion": 127597534278,
+      "protection": 127594470389,
+      "test": 127594470569,
+      "build": 127594470584,
+      "typecheck": 127594470825
+    },
+    "jobs": {
+      "protection": {
+        "id": 127594470389,
+        "checkout": "4e271cef13448de814f202dd5a70928fc170baf5",
+        "logSha256": "f2ee5f3b95ccdfc727ad11499ad185f47a19a80819a6810f11f90425e5484212"
+      },
+      "test": {
+        "id": 127594470569,
+        "checkout": "2964eebd25836482c5281d1cdb6756f2ed5c1df2",
+        "logSha256": "a152db711a1c067dd285aa1be9933637aabb89e3d18d2ece1de53cd45ff7448e"
+      },
+      "build": {
+        "id": 127594470584,
+        "checkout": "2964eebd25836482c5281d1cdb6756f2ed5c1df2",
+        "logSha256": "571d616f1bf9a5a8354665cc3e503b54e2362eb21a07518ff45245537f46c82c"
+      },
+      "typecheck": {
+        "id": 127594470825,
+        "checkout": "2964eebd25836482c5281d1cdb6756f2ed5c1df2",
+        "logSha256": "8647b5de04b43a1583a6f90c1c228eb7145c14446281bce368524ec742f4e778"
+      }
+    },
+    "checkoutTrees": {
+      "4e271cef13448de814f202dd5a70928fc170baf5": "1f5df7e4ded1024dc44511863886adcaa8b6453e",
+      "2964eebd25836482c5281d1cdb6756f2ed5c1df2": "1f5df7e4ded1024dc44511863886adcaa8b6453e"
+    },
+    "fullCounts": [
+      "18602",
+      "83"
+    ],
+    "fileCounts": [
+      "1001",
+      "6"
+    ],
+    "evidence": [
+      "2026-11-05T23:11:12.1233263Z  ✓ client/src/research/master-offerings/detail-surface.test.tsx (13 tests) 271ms"
+    ],
+    "pullRequest": {
+      "headRefOid": "4e271cef13448de814f202dd5a70928fc170baf5",
+      "baseRefOid": "e93de40a58eab2a454fcb3fc11783ffc5504ca3d",
+      "isDraft": true,
+      "state": "OPEN",
+      "mergeable": "MERGEABLE",
+      "reviewDecision": null,
+      "reviewThreads": {
+        "pageInfo": {
+          "hasNextPage": false
+        },
+        "nodes": []
+      }
+    },
+    "protectedStrictTrustedChecks": true
+  },
+  "protectedCi": {
+    "run": 42129696409,
+    "head": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+    "tree": "1f5df7e4ded1024dc44511863886adcaa8b6453e",
+    "event": "push",
+    "trusted": {
+      "test": 127602882609,
+      "protection": 127602882811,
+      "Required CI completion": 127606169644,
+      "typecheck": 127602883008,
+      "build": 127602883166
+    },
+    "jobs": {
+      "test": {
+        "id": 127602882609,
+        "checkout": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+        "logSha256": "40746527543a32994e9e7a8a06f0efcfb1fa8fcd395bdc864bba3955a67ef186"
+      },
+      "protection": {
+        "id": 127602882811,
+        "checkout": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+        "logSha256": "d2999a0cfd5d740aaa8e50e44f2e00b3d31bc6d7adf26774f4b60103c93cedd0"
+      },
+      "typecheck": {
+        "id": 127602883008,
+        "checkout": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+        "logSha256": "ef52889664d576ee2590354de69f35a198d53bcaa72636b45efd3c4e81a43d23"
+      },
+      "build": {
+        "id": 127602883166,
+        "checkout": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+        "logSha256": "84330ffea34eeeb15b0d884df97ffb725f1aa08c0048a424ef9091b89d91a68c"
+      }
+    },
+    "checkoutTrees": {
+      "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d": "1f5df7e4ded1024dc44511863886adcaa8b6453e"
+    },
+    "fullCounts": [
+      "18602",
+      "83"
+    ],
+    "fileCounts": [
+      "1001",
+      "6"
+    ],
+    "evidence": [
+      "2026-11-05T23:32:31.3990441Z  ✓ client/src/research/master-offerings/detail-surface.test.tsx (13 tests) 395ms"
+    ]
+  },
+  "deploy": {
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "id": "dep-dbmh617f3r2c73fqcjv0",
+    "status": "LIVE",
+    "trigger": "existing checksPass autodeploy",
+    "finishedAt": "2026-11-05T23:37:46.091080Z"
+  },
+  "rollback": {
+    "commit": "e93de40a58eab2a454fcb3fc11783ffc5504ca3d",
+    "tree": "86b0ba1768266e3f7db255abf11ca763ce6567bf",
+    "deploy": "dep-dbmg8e0473hc73963chg",
+    "used": false
+  },
+  "route": {
+    "expectedRelease": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+    "providerDeploy": "dep-dbmh617f3r2c73fqcjv0",
+    "readAt": "2026-11-05T23:38:59.3506289+00:00",
+    "publicRoutes": [
+      {
+        "path": "/earlyaccess",
+        "status": 200,
+        "cacheControl": "no-store",
+        "pragma": "no-cache",
+        "referrerPolicy": "no-referrer",
+        "robots": "noindex,nofollow,noarchive",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ],
+        "bodySha256": "417e3bfed6d648be20a2882e37ecbf313ea361d02223a01ac2e6c1651ff1227d"
+      },
+      {
+        "path": "/earlyaccess",
+        "status": 200,
+        "cacheControl": "no-store",
+        "pragma": "no-cache",
+        "referrerPolicy": "no-referrer",
+        "robots": "noindex,nofollow,noarchive",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ],
+        "bodySha256": "417e3bfed6d648be20a2882e37ecbf313ea361d02223a01ac2e6c1651ff1227d"
+      },
+      {
+        "path": "/research/early-access/order-request",
+        "status": 200,
+        "cacheControl": "no-store",
+        "pragma": "no-cache",
+        "referrerPolicy": "no-referrer",
+        "robots": "noindex,nofollow,noarchive",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ],
+        "bodySha256": "417e3bfed6d648be20a2882e37ecbf313ea361d02223a01ac2e6c1651ff1227d"
+      },
+      {
+        "path": "/api/health",
+        "status": 200,
+        "cacheControl": "",
+        "pragma": "",
+        "referrerPolicy": "no-referrer",
+        "robots": "",
+        "entry": [],
+        "bodySha256": "15c2e29cf854ef1fa60b508dc3e0678d52f3487677ca9c03750d37d8e0e370c2"
+      }
+    ]
+  },
+  "liveGuest": {
+    "record": "KAN-13/11701",
+    "pages": 5,
+    "variants": 420,
+    "descriptions": 75,
+    "unchangedReviewedDescriptions": 69,
+    "artworkMappings": 86,
+    "addedCarePathwayIds": [
+      "GEN-GRP-0172",
+      "GEN-GRP-0174",
+      "GEN-GRP-0195",
+      "GEN-GRP-0197",
+      "GEN-GRP-0199",
+      "GEN-GRP-0204"
+    ],
+    "exactProviderReviewAndOmittedPrice": true,
+    "apiReceiptSha256": "d7049152f6e97a23cd5cffe609560a6fb89d9b7a358f5b0e57e1ce72a72d6549",
+    "mountedSamples": [
+      "GEN-GRP-0172 Sildenafil 100 mg tablet",
+      "GEN-GRP-0204 Tadalafil Troche 20 mg"
+    ],
+    "viewport": [
+      1280,
+      720
+    ],
+    "mountedReceiptSha256": "487c9b4f9a58750e9ba99656cbd08f8c271d0a9ecfc3e8b3085a5d109571bf0d",
+    "scope": "Anonymous catalog and two mounted details. No numeric guest price for the reviewed care-pathway rows. No consent or submission. Runtime readback by packet preparer; separately independent exact published-source review."
+  }
+}
