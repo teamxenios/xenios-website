@@ -14,6 +14,7 @@ import {
   isContradictoryPurchase,
 } from "./catalog-access-path";
 import { fullCatalogProductHref } from "./integration-packet";
+import { catalogPresentationLabel } from "./catalog-presentation-labels";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
 import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
@@ -206,7 +207,7 @@ export function MasterOfferingCard({
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="mono-label text-ink-mute min-w-0 break-words">
-              {product.familyLabel}
+              {catalogPresentationLabel(product.family, product.familyLabel)}
             </p>
             <h3 id={headingId} className="body-l font-700 mt-1 min-w-0 break-words">
               {/* The v2 detail page, family segment and all. The v1 product
@@ -243,9 +244,12 @@ export function MasterOfferingCard({
           <div className="min-w-0">
             <dt className="mono-label text-ink-mute">Category</dt>
             <dd className="mt-1 min-w-0 break-words">
-              {product.subcategory
-                ? `${product.category}, ${product.subcategory}`
-                : product.category}
+              {catalogPresentationLabel(
+                product.family,
+                product.subcategory
+                  ? `${product.category}, ${product.subcategory}`
+                  : product.category,
+              )}
             </dd>
           </div>
           <div className="min-w-0">

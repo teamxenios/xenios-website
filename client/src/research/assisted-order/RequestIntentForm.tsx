@@ -16,6 +16,7 @@ import { ReviewedProductContent } from "../master-offerings/ReviewedProductConte
 import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
+import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import "./assisted-order.css";
 
 const defaultApi = createRequestIntentApi();
@@ -345,7 +346,7 @@ function RequestIntentFormSession({
       <div className="xenios-order-grid">
         <label>Search catalog<input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} /></label>
         <label>Product family<select value={family} onChange={(event) => { setFamily(event.target.value); setPage(1); }}>
-          <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{value.replaceAll("_", " ")}</option>)}
+          <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, value.replaceAll("_", " "))}</option>)}
         </select></label>
       </div>
       {catalogFailed ? <section className="xenios-order-panel" aria-label="Catalog unavailable">

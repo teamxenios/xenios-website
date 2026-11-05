@@ -380,6 +380,31 @@ describe("mixed private request customer form source", () => {
   });
 });
 
+describe("mixed catalog family labels", () => {
+  it("shows a neutral clinical option and queries with the original family key", async () => {
+    const api = makeApi();
+    await render(api, true);
+    const family = "clinical_formulations_503a";
+    const filter = host.querySelector<HTMLSelectElement>("select");
+    expect(filter).not.toBeNull();
+    expect(filter?.querySelector('option[value="clinical_formulations_503a"]')?.textContent)
+      .toBe("Clinical formulations");
+    expect(filter?.querySelector('option[value="research_peptides_materials"]')?.textContent)
+      .toBe("research peptides materials");
+    expect(host.textContent).not.toMatch(/503a/i);
+
+    await act(async () => {
+      filter!.value = family;
+      filter!.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    expect(api.catalog).toHaveBeenLastCalledWith({ search: "", family, page: 1, pageSize: 24 });
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Add Synthetic clinical to request"))
+      .toBe(true);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+  });
+});
+
 describe("customer restriction copy", () => {
   it.each([
     ["provider_pathway_family", "Provider review is required before any purchase."],
