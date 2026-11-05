@@ -307,6 +307,8 @@ export default function ResearchSection() {
               Access flow. Literal paths precede the parameterized status
               path so confirmation can never be read as a public reference. */}
           <Route path="/research/early-access/order-request">{() => <L component={EarlyAccessRoute} props={{ requestOnly: true }} />}</Route>
+          {/* The founder's login-free entry: the same request-only route. */}
+          <Route path="/earlyaccess">{() => <L component={EarlyAccessRoute} props={{ requestOnly: true }} />}</Route>
           <Route path="/research/early-access/order-request/confirmation/:publicReference">{() => <L component={AssistedOrderConfirmationPage} />}</Route>
           <Route path="/research/early-access/order-request/:publicReference">{() => <L component={AssistedOrderStatusPage} />}</Route>
           <Route path="/research/apply" component={Apply} />

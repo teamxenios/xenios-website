@@ -40,6 +40,11 @@
         "kind": "page"
       },
       {
+        "path": "/earlyaccess",
+        "component": "research/section",
+        "kind": "page"
+      },
+      {
         "path": "/r/:code",
         "component": "research/recommendation/Recipient",
         "kind": "page"
@@ -481,7 +486,7 @@
       {
         "path": "client/src/App.tsx",
         "seam": "route registration only",
-        "allowed": "add or remove a <Route> for a /health, /research or /care path, and its lazy import plus Suspense wrapper; the 2026-09-04 founder-requested /r/:code recommendation entry is additionally allowed with its isolated lazy recipient only",
+        "allowed": "add or remove a <Route> for a /health, /research or /care path, and its lazy import plus Suspense wrapper; the 2026-09-04 founder-requested /r/:code recommendation entry is additionally allowed with its isolated lazy recipient only; the founder-requested exact /earlyaccess entry is allowed only to mount ResearchRoutes for the existing request-only journey",
         "forbidden": "changing any protected route, its component, its order relative to protected routes, the ScrollToTop behavior, or the provider tree in App()"
       },
       {
@@ -1224,7 +1229,7 @@
       "2026-09-10, founder-requested native payment integration, task XENIOS-NATIVE-FINISH-20260910, exclusive lease 4f6f5a15-3d86-4230-8ece-5df25ee4d5fe: independent reviewer /root/native_finish_review accepted server/index.ts at application 2578d9c31b1521d43d7fb96ef261e0d05b39716d against preserved A parent 27f84b2c0bb8f1e6fdc53424429a630d5f771ede. Exactly three added lines and no removals: import, one registerDurableCheckoutSurface call in the existing commerce block with canonical active-member/admin guards, and whitespace. All existing protected registration, middleware, CSP, session, static-serving and error-handling bytes/order are unchanged. No startup mutation or provider activation. This separate evidence-only re-pin preserves the original full-suite failure and unchanged isolated pgcrypto pass; no test or protected zone is weakened. old sha256:38548a591dffb501031db01874257de6799b61cb3632d9c5d58529287978cce5, new sha256:19be62a6ee9ccc2857230ed86633b14f618dd882e598f1f50d28df3599a35583. Local implementation authority only; not production approval."
     ],
     "files": {
-      "client/src/App.tsx": "sha256:0a9e1c970b721f0aacbc3f375988d67ea5c4cc8a81186e97b70d56283bc9b912",
+      "client/src/App.tsx": "sha256:f7503462c9e3f7b424b92343df6d6b35f7af41d61063ee71ad04a781017cabe4",
       "server/index.ts": "sha256:1a3fb0b77ba14c5007582c4a891fcfa113ff07556b38cb95854706a8e130e813",
       "server/research/index.ts": "sha256:000da4dafc8bd8eab95db7a378772ef7936473d586c043ca7b661d21178e1c29",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
