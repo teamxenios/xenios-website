@@ -872,6 +872,84 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_2fb4e0f567f434b55b20",
+      "sourceVariantId": "mov_9a217007a7fb93111200",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic gonadotropin-releasing hormone decapeptide studied in pituitary and ovulation models. Listed at 10 mg for laboratory research.",
+        "overview": "Gonadorelin is the synthetic form of gonadotropin-releasing hormone (GnRH), the hypothalamic decapeptide pGlu-His-Trp-Ser-Tyr-Gly-Leu-Arg-Pro-Gly-NH2 that causes the anterior pituitary to release luteinizing hormone (LH) and follicle-stimulating hormone (FSH). Its structure was established in 1971 and 1972 from porcine and ovine hypothalami; the ovine sequence was determined by enzymatic hydrolysis, Edman sequencing and mass spectrometry, a synthetic decapeptide with that sequence had the same biological activities as the native factor, and the ovine and porcine sequences were identical. In 1971, the synthetic porcine decapeptide stimulated LH release and induced ovulation in hamsters whose spontaneous ovulation had been blocked with phenobarbital, and in 1972 two analogues altered at the histidine in position 2 were tested in cultured rat anterior pituitary cells: the analogue with glycine in place of histidine was a partial agonist, releasing less than half of the maximal LH response to the native factor, the analogue lacking that histidine had no significant agonist activity, and at molar ratios of a thousand to ten thousand times the native factor both reduced the LH secreted in response to it. This listing is a laboratory research material and not a medicine; separately, gonadorelin is the active ingredient of veterinary products approved in the United States for cattle, for ovarian follicular cysts and, within certain approved regimens that also include another veterinary medicine, for synchronizing estrous cycles to allow fixed-time artificial insemination. The animal findings above, and the approval of those separate veterinary products, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0400"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on hypothalamic-pituitary gonadotropin signaling in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_f4298f80cc7aa9f1046a",
+      "sourceVariantId": "mov_dc6c3bf9bc23dd55adc1",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Cyclic α-MSH analogue (bremelanotide) studied as a melanocortin receptor agonist in receptor assays and a rat behavioral model. Listed at 5 mg for laboratory research.",
+        "overview": "PT-141, the development code of bremelanotide, is a synthetic cyclic heptapeptide analogue of α-melanocyte-stimulating hormone (α-MSH), Ac-Nle-cyclo(Asp-His-D-Phe-Arg-Trp-Lys)-OH, with an acetylated N-terminus, a lactam bridge between the aspartate and lysine side chains and a free carboxyl group at the C-terminus. It is an agonist at melanocortin receptors with high affinity for the melanocortin type 4 receptor, and by the PubChem records it differs from the related research compound Melanotan II only in having a carboxylic acid rather than an amide at the C-terminal lysine. In a 2004 study in female rats, PT-141 selectively stimulated solicitational behaviors without affecting lordosis, pacing or other sexual behaviors, did not cause generalized motor activation and did not alter the perception of sexual reward, which the authors took as evidence that central melanocortin systems regulate appetitive sexual behavior. This listing is a laboratory research material and not a medicine; separately, bremelanotide is the active ingredient of a prescription medicine approved by the U.S. Food and Drug Administration in 2019 for premenopausal women with acquired, generalized hypoactive sexual desire disorder. The animal findings above, and the approval of that separate medicine, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0409"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on melanocortin receptor signaling and melanocortin-regulated behavior in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_d1a6493665b6ba628c2a",
+      "sourceVariantId": "mov_361af70608afc9c98ec0",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Copper complex of the tripeptide GHK, studied in fibroblast collagen-synthesis models. Listed at 75 mg for laboratory research.",
+        "overview": "GHK (glycyl-L-histidyl-L-lysine) is a tripeptide with high affinity for copper(II) ions, and GHK-Cu is its copper complex. The tripeptide later identified as GHK was first reported in human serum in 1973 as a factor that prolonged the survival of normal liver cells. In fibroblast cultures, the copper complex GHK-Cu stimulated collagen synthesis beginning at picomolar concentrations and peaking near 1 nanomolar, independently of any change in cell number. Those authors noted that a GHK sequence occurs within the alpha 2 chain of type I collagen and proposed that proteases could release it at a wound site. These cell-culture findings do not establish effects of this research material in people. The catalog lists this item with a listed amount of 75 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "75 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0398"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on extracellular-matrix and wound-repair biology, including collagen synthesis in fibroblast culture.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }

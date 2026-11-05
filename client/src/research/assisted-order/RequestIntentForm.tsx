@@ -11,6 +11,7 @@ import { createRequestIntentApi, isKnownIntentPrewriteRefusal, intentRefusalGuid
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
 import { forgetConfirmedReceipt, readConfirmedReceiptRecord, rememberConfirmedReceipt } from "./request-intent-continuation";
 import type { StorefrontIntent } from "../storefront/entry-intent";
+import { isResearchCartScope } from "../cart-session";
 import { ProductMedia } from "../product-media/ProductMedia";
 import { ReviewedProductContent } from "../master-offerings/ReviewedProductContent";
 import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
@@ -39,9 +40,10 @@ function restrictionCopy(code: string): string {
     : "A purchase restriction applies. Its details need to be confirmed.";
 }
 
-function GuestCatalogDetails({ item, variantIds }: {
+function CatalogDetails({ item, variantIds, showMedia }: {
   item: RequestIntentCatalogItem;
   variantIds: readonly string[];
+  showMedia: boolean;
 }) {
   return <Dialog>
     <DialogTrigger asChild>
@@ -62,7 +64,7 @@ function GuestCatalogDetails({ item, variantIds }: {
           Back to catalog
         </button>
       </DialogClose>
-      <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} detail />
+      {showMedia && <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} detail />}
       {item.reviewedContent && <ReviewedProductContent content={item.reviewedContent} inDialog />}
       {(item.specification || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
         {item.specification && <div><dt className="font-semibold">Specification</dt><dd>{item.specification}</dd></div>}
@@ -359,8 +361,13 @@ function RequestIntentFormSession({
         const sourceVariantId = item.sourceSelection?.variantId;
         const variantIds = sourceVariantId ? [sourceVariantId] : [];
         const packageLabel = reviewedPackage(item.reviewedContent);
+        const guestCatalog = ownerKey === "early-access-session";
+        const reviewedMemberListing = isResearchCartScope(ownerKey) && Boolean(sourceVariantId) &&
+          !item.clinicalReviewRequired;
+        const showMedia = guestCatalog || (reviewedMemberListing && Boolean(item.reviewedMedia));
+        const showDetails = showMedia || (reviewedMemberListing && Boolean(item.reviewedContent));
         return <article className="xenios-order-card" key={key}>
-          {ownerKey === "early-access-session" && (
+          {showMedia && (
             <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} />
           )}
           <h2>{item.productName}</h2>
@@ -372,7 +379,7 @@ function RequestIntentFormSession({
           <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
           {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
           <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>
-          {ownerKey === "early-access-session" && <GuestCatalogDetails item={item} variantIds={variantIds} />}
+          {showDetails && <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />}
           {!item.selectableForReview ? <p>{item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"}</p> : selection
             ? <div className="xenios-order-quantity">
               <button type="button" aria-label={"Decrease requested quantity for " + item.productName}

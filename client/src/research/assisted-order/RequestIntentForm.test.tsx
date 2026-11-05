@@ -29,6 +29,14 @@ function item(id: string, clinical: boolean): RequestIntentCatalogItem {
     sourceDisplayState: clinical ? "care_pathway" : "request_access", sourceVariantDisplayState: clinical ? "care_pathway" : "request_access", sourceRefusal: null,
   };
 }
+const reviewedArtwork = {
+  primary: { href: "/research/product-media/synthetic-reviewed.webp", altText: "Synthetic reviewed design", width: 1024, height: 1024 },
+  labelPreview: { href: "/research/product-media/synthetic-label.webp", altText: "Synthetic front label", width: 1000, height: 850 },
+  packagingDesign: true,
+};
+const reviewedCopy = { summary: "Synthetic reviewed summary", overview: "Synthetic complete overview",
+  specifications: [{ label: "Product code", value: "QA-EXACT" }] };
+
 function makeApi() {
   return {
     config: vi.fn(async () => ({ legal: [{ kind: "fixture-terms", version: "fixture-v1", label: "Synthetic legal requirement" }],
@@ -247,6 +255,102 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
     expect(api.recover).not.toHaveBeenCalled();
     expect(storedKeys()).toEqual([]);
+  });
+
+  it("shows approved art and complete details for a confirmed member without changing the request", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, items: [
+      { ...item("reviewed", false), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy,
+        sourceSelection: { family: "research_peptides_materials", slug: "reviewed", variantId: "mov_82974ab2f9c652c2cb12" } },
+      { ...item("clinical", true), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy },
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={"a".repeat(64)} />));
+    const [card, clinical] = host.querySelectorAll(".xenios-order-card");
+    expect(card.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(card.textContent).toContain(reviewedCopy.summary);
+    expect(card.textContent).not.toContain(reviewedCopy.overview);
+    expect(clinical.querySelector("img")).toBeNull();
+    expect(clinical.querySelector('button[aria-label^="View details"]')).toBeNull();
+    expect(clinical.textContent).toContain("Clinical review required. Not a prescription.");
+    expect(clinical.textContent).toContain("Final price follows applicable review.");
+
+    await click("Add Synthetic reviewed to request");
+    const quantity = card.querySelector<HTMLInputElement>('input[type="number"]')!;
+    await type(quantity, "3");
+    const trigger = card.querySelector<HTMLButtonElement>('button[aria-label^="View details"]')!;
+    const reads = api.catalog.mock.calls.length;
+    const url = window.location.href;
+    trigger.focus();
+    await act(async () => trigger.click());
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.textContent).toContain(reviewedCopy.overview);
+    expect(dialog.textContent).toContain("QA-EXACT");
+    expect(dialog.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(dialog.querySelector("a")?.getAttribute("href")).toBe(reviewedArtwork.labelPreview.href);
+    expect(dialog.querySelector('button[aria-label^="Add "]')).toBeNull();
+    await act(async () => dialog.querySelector("img")!.dispatchEvent(new Event("error")));
+    expect(dialog.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
+    expect(dialog.querySelector("a")).toBeNull();
+    expect(dialog.textContent).toContain(reviewedCopy.overview);
+    await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(quantity.value).toBe("3");
+    expect(host.querySelector('aside[aria-label="Selected request items"]')?.textContent).toContain("Requested quantity: 3");
+    expect(window.location.href).toBe(url);
+    expect(api.catalog).toHaveBeenCalledTimes(reads);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+    expect(storedKeys()).toEqual([]);
+  });
+
+  it("keeps member copy-only and art-only details honest and excludes rows without an exact source", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, total: 4, items: [
+      { ...item("copy-only", false), reviewedContent: reviewedCopy },
+      { ...item("art-only", false), reviewedMedia: reviewedArtwork, selectableForReview: false, intentExclusion: "coming_soon" },
+      { ...item("unreviewed", false) },
+      { ...item("unbound", false), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy, sourceSelection: undefined },
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={"a".repeat(64)} />));
+    const [copy, art, unreviewed, unbound] = host.querySelectorAll(".xenios-order-card");
+    expect(copy.querySelector("img")).toBeNull();
+    expect(art.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(art.textContent).toContain("Coming soon");
+    expect(art.querySelector('button[aria-label^="Add "]')).toBeNull();
+    for (const card of [unreviewed, unbound]) {
+      expect(card.querySelector("img")).toBeNull();
+      expect(card.querySelector('button[aria-label^="View details"]')).toBeNull();
+    }
+
+    await act(async () => copy.querySelector<HTMLButtonElement>('button[aria-label^="View details"]')!.click());
+    let dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.textContent).toContain(reviewedCopy.overview);
+    expect(dialog.querySelector("img")).toBeNull();
+    await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+    await vi.waitFor(() => expect(document.querySelector('[role="dialog"]')).toBeNull());
+
+    await act(async () => art.querySelector<HTMLButtonElement>('button[aria-label^="View details"]')!.click());
+    dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(dialog.querySelector('section[aria-label="Product information"]')).toBeNull();
+    expect(dialog.textContent).toContain("Return to the catalog for this listing’s current availability and request options.");
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+  });
+
+  it.each([undefined, "unscoped", "owner-a"])("keeps exact details closed for an unconfirmed owner (%s)", async (ownerKey) => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, total: 1, items: [
+      { ...item("reviewed", false), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy },
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={ownerKey} />));
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.querySelector("img")).toBeNull();
+    expect(card.querySelector('button[aria-label^="View details"]')).toBeNull();
+    expect(card.textContent).not.toContain(reviewedCopy.overview);
   });
 
   it.each(["submission", "recovery"] as const)("publishes a confirmed %s receipt only after clearing its owned marker", async (path) => {
