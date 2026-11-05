@@ -449,8 +449,7 @@
       "mode": "write",
       "state": "reserved",
       "patterns": [
-        "client/src/research/pages/LegalPage.tsx",
-        "client/src/research/pages/PolicyPage.tsx"
+        "client/src/research/pages/LegalPage.tsx"
       ]
     },
     {
@@ -872,8 +871,7 @@
         "client/src/research/pages/Gateway.tsx",
         "client/src/research/pages/Apply.tsx",
         "client/src/research/pages/ApplyStatus.tsx",
-        "client/src/research/pages/Support.tsx",
-        "client/src/research/pages/public-access-flow.test.tsx"
+        "client/src/research/pages/Support.tsx"
       ]
     },
     {
@@ -952,7 +950,6 @@
         "client/src/research/assisted-order/AdminAssistedOrderQueue.tsx",
         "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
         "client/src/research/assisted-order/AssistedOrderCta.tsx",
-        "client/src/research/assisted-order/AssistedOrderPage.tsx",
         "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
         "client/src/research/assisted-order/SecureDocumentUpload.tsx",
         "client/src/research/assisted-order/api.ts",
@@ -969,7 +966,6 @@
         "server/research/assisted-order/express.ts",
         "server/research/assisted-order/google-mirror.ts",
         "server/research/assisted-order/http-e2e.test.ts",
-        "server/research/assisted-order/http.ts",
         "server/research/assisted-order/index.ts",
         "server/research/assisted-order/memory-repository.ts",
         "server/research/assisted-order/mount.ts",
@@ -1012,6 +1008,19 @@
         "client/src/research/layout.tsx",
         "client/src/research/section.tsx",
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+      ]
+    },
+    {
+      "id": "OWNER-KAN13-EA-POLICY-V2-CUTOVER-20261105",
+      "owner": "codex-launch-coordination-20261005",
+      "lane": "launch-coordination",
+      "mode": "write",
+      "state": "reserved",
+      "patterns": [
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "server/research/assisted-order/http.ts",
+        "client/src/research/pages/PolicyPage.tsx",
+        "client/src/research/pages/public-access-flow.test.tsx"
       ]
     }
   ],
