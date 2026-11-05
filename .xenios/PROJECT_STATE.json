@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-05T22:11:07.3351840Z",
+  "updatedAt": "2026-11-05T22:48:41.1866066Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -394,24 +394,24 @@
   },
   "currentRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "12491588cba0410ab65102d5f05492b365181394",
-    "tree": "2700bde4a4537c2d95e8cd8ae09725ecbbae57b6",
+    "sha": "e93de40a58eab2a454fcb3fc11783ffc5504ca3d",
+    "tree": "86b0ba1768266e3f7db255abf11ca763ce6567bf",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployedFromBranch": "codex/early-access-outreach-route-20261105",
-    "sourceSha": "e1affb90f456c45011569a591c020db9935f00af",
-    "rollback": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
-    "rollbackTree": "beaf0b893eda583bb360109181b967ef87ace1de",
-    "rollbackDeployId": "dep-dbmevamq1p3s73ed6akg",
+    "deployedFromBranch": "codex/early-access-twenty-nine-artwork-20261105",
+    "sourceSha": "353a2ee6f894dfa75eb2771441260567763befeb",
+    "rollback": "12491588cba0410ab65102d5f05492b365181394",
+    "rollbackTree": "2700bde4a4537c2d95e8cd8ae09725ecbbae57b6",
+    "rollbackDeployId": "dep-dbmfpttckfvc73booul0",
     "rollbackExecuted": false,
-    "deployId": "dep-dbmfpttckfvc73booul0",
-    "liveSince": "2026-11-05T22:03:51.723Z",
-    "observedAt": "2026-11-05T22:03:51.723Z",
+    "deployId": "dep-dbmg8e0473hc73963chg",
+    "liveSince": "2026-11-05T22:34:53.468Z",
+    "observedAt": "2026-11-05T22:47:37.245Z",
     "autoDeploy": "yes",
     "autoDeployTrigger": "checksPass",
-    "scope": "Qualified ordinary website release for the /earlyaccess outreach alias, request-only behavior, privacy headers and retained catalog/standing refresh; all sensitive operations remain held",
-    "receipt": ".xenios/handoffs/2026-11-05T22-03-51Z-PR411-EXACT-RELEASE-QUALIFICATION-20261105-codex-launch-coordination-20261005.json",
-    "note": "Protected PR 411 released exact source e1affb90f456c45011569a591c020db9935f00af/tree 2700bde4a4537c2d95e8cd8ae09725ecbbae57b6 as 12491588cba0410ab65102d5f05492b365181394. Candidate CI 42115968200 and release CI 42116990054 passed all five trusted checks; the release suite passed 18,602 tests with zero failures and 83 skips, and five mounted alias tests passed. Render deploy dep-dbmfpttckfvc73booul0 reached live at 2026-11-05T22:03:51.723Z from autoDeploy=yes/checksPass. Fresh and repeat /earlyaccess GETs, the legacy entry and health returned 200; the lookalike returned 404; request configuration remained enabled; no-store, no-cache, no-referrer and noindex/nofollow/noarchive protections were served. Exact entry, section, EarlyAccess and request-runtime assets were observed, with independent evidence at KAN-13/11639. Retained catalog state remained 69 reviewed descriptions, 57 media matches and 420 guest variants. Compatible rollback 485885e3d4d4ca8b1353c923847e03e4ec1b67ae/dep-dbmevamq1p3s73ed6akg was retained and not executed. Live HTTP, asset, header and request-only served-code proof is exact; hosted mounted signed-out behavior is qualified. The frozen receipt accurately records that live in-app mounted proof was then held by a memory floor; that hold was subsequently superseded by KAN-31/11641, which verified signed-out IAB at 1280x720 on exact live 12491588 with direct /earlyaccess and reload, H1 and browser title, password-free 420-variant browse/search/paging/details/reversible selection, unchanged agreement gate and legacy Quick Order. No physical-device/mobile claim is made, and Samuel removed the mobile wait. Policy v2 remains separate. No authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
+    "scope": "Qualified ordinary website release for twenty-nine independently reviewed artwork mappings while preserving the live outreach alias, request-only behavior and reviewed descriptions; all sensitive operations remain held",
+    "receipt": ".xenios/handoffs/2026-11-05T22-47-37Z-PR410-EXACT-RELEASE-COMPLETE-20261105-codex-launch-coordination-20261005.json",
+    "note": "Protected PR 410 released exact source 353a2ee6f894dfa75eb2771441260567763befeb/tree 86b0ba1768266e3f7db255abf11ca763ce6567bf as e93de40a58eab2a454fcb3fc11783ffc5504ca3d with parents 12491588cba0410ab65102d5f05492b365181394 and 353a2ee6f894dfa75eb2771441260567763befeb. Candidate CI 42120654914 and protected CI 42121531411 passed all five trusted checks; the protected suite passed 18,602 tests with zero failures and 83 skips, including nine media cases and five alias cases. All 58 new WebP files matched the independently reviewed bytes. Render deploy dep-dbmg8e0473hc73963chg reached live at 2026-11-05T22:34:53.468Z from the existing checksPass autodeploy. Read-only served verification at KAN-59/11667 and KAN-13/11668 established 420 exact guest variants, 86 reviewed live artwork mappings, 69 reviewed descriptions, five catalog pages, exact route and health 200 responses, no-store/no-cache/no-referrer/noindex protections, and continuity of the outreach alias and legacy route. Signed-out mounted desktop evidence at 1280x720 covered Pinealon 10 mg: the exact primary image and matching front-label asset loaded, packaging disclosure and neutral request wording were visible, consent remained unchecked and Continue remained disabled. Compatible rollback 12491588cba0410ab65102d5f05492b365181394/dep-dbmfpttckfvc73booul0 was retained and not executed. Mounted evidence covers one representative artwork pair; live verification remained read-only and did not submit a request or give consent. No physical-device/mobile claim, authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
   },
   "catalog": {
     "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
@@ -1384,6 +1384,32 @@
         "scope": "Qualified ordinary website release sequence for caution paragraphs, twenty-four reviewed descriptions and same-tab agreement-standing refresh; all sensitive operations remain held",
         "receipt": ".xenios/handoffs/2026-11-05T21-09-37Z-PR407-PR408-PR409-VERIFIED-RELEASE-SEQUENCE-20261105-codex-launch-coordination-20261005.json",
         "note": "Three serial protected releases completed and were independently verified. PR407 released renderer source ae7dbc9 as 2b38fc9/tree 4ea5b50 after release CI 42103275821 passed 18,541 tests with 83 skips; deploy dep-dbmefa95efls73bp67ag reached live at 2026-11-05T20:32:48.277Z and public verification was renderer-only. PR408 released exact 24-copy source eb932d4 as 5264c12/tree 33f471b after candidate CI 42104778293 and release CI 42106097757; deploy dep-dbmeo8rm8hqs73e27sc0 reached live at 2026-11-05T20:52:04.529Z. Guest evidence at KAN-13/11577 and KAN-13/11579 observed 420 distinct variants, 69 reviewed descriptions including 24 additions, 57 media matches and the six explicit exclusions; the three newly described clinical variants still require provider review and suppress guest price and price version. PR409 released exact standing-refresh source 20b3d8a as 485885e/tree beaf0b8 after candidate CI 42106768447 and release CI 42108042283 passed 18,562 tests with 83 skips, including 21 supplied regressions and 150 focused passes; deploy dep-dbmevamq1p3s73ed6akg reached live at 2026-11-05T21:07:09.733Z. At 2026-11-05T21:09:37Z GET-only checks passed the existing order-request route, health and enabled intake configuration, and served code contained the exact standing-refresh bindings; /earlyaccess remained 404. Confirmed-refusal and uncertain-retry behavior was proven in hosted synthetic tests, not a real customer submission. Compatible rollback 5264c12/dep-dbmeo8rm8hqs73e27sc0 was retained and not executed. Policy v2 and capture cutover remain separate and staged. No physical-device or real-customer submission, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded automatic releases occurred."
+      }
+    },
+    {
+      "classification": "HISTORICAL_ARCHIVED_CURRENT_RELEASE_PREIMAGE",
+      "archivedAt": "2026-11-05T22:47:37.245Z",
+      "supersededBy": "e93de40a58eab2a454fcb3fc11783ffc5504ca3d",
+      "record": {
+        "classification": "CURRENT_LIVE_PRODUCTION",
+        "sha": "12491588cba0410ab65102d5f05492b365181394",
+        "tree": "2700bde4a4537c2d95e8cd8ae09725ecbbae57b6",
+        "status": "live",
+        "branch": "release/early-access-code-session-checkout",
+        "deployedFromBranch": "codex/early-access-outreach-route-20261105",
+        "sourceSha": "e1affb90f456c45011569a591c020db9935f00af",
+        "rollback": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
+        "rollbackTree": "beaf0b893eda583bb360109181b967ef87ace1de",
+        "rollbackDeployId": "dep-dbmevamq1p3s73ed6akg",
+        "rollbackExecuted": false,
+        "deployId": "dep-dbmfpttckfvc73booul0",
+        "liveSince": "2026-11-05T22:03:51.723Z",
+        "observedAt": "2026-11-05T22:03:51.723Z",
+        "autoDeploy": "yes",
+        "autoDeployTrigger": "checksPass",
+        "scope": "Qualified ordinary website release for the /earlyaccess outreach alias, request-only behavior, privacy headers and retained catalog/standing refresh; all sensitive operations remain held",
+        "receipt": ".xenios/handoffs/2026-11-05T22-03-51Z-PR411-EXACT-RELEASE-QUALIFICATION-20261105-codex-launch-coordination-20261005.json",
+        "note": "Protected PR 411 released exact source e1affb90f456c45011569a591c020db9935f00af/tree 2700bde4a4537c2d95e8cd8ae09725ecbbae57b6 as 12491588cba0410ab65102d5f05492b365181394. Candidate CI 42115968200 and release CI 42116990054 passed all five trusted checks; the release suite passed 18,602 tests with zero failures and 83 skips, and five mounted alias tests passed. Render deploy dep-dbmfpttckfvc73booul0 reached live at 2026-11-05T22:03:51.723Z from autoDeploy=yes/checksPass. Fresh and repeat /earlyaccess GETs, the legacy entry and health returned 200; the lookalike returned 404; request configuration remained enabled; no-store, no-cache, no-referrer and noindex/nofollow/noarchive protections were served. Exact entry, section, EarlyAccess and request-runtime assets were observed, with independent evidence at KAN-13/11639. Retained catalog state remained 69 reviewed descriptions, 57 media matches and 420 guest variants. Compatible rollback 485885e3d4d4ca8b1353c923847e03e4ec1b67ae/dep-dbmevamq1p3s73ed6akg was retained and not executed. Live HTTP, asset, header and request-only served-code proof is exact; hosted mounted signed-out behavior is qualified. The frozen receipt accurately records that live in-app mounted proof was then held by a memory floor; that hold was subsequently superseded by KAN-31/11641, which verified signed-out IAB at 1280x720 on exact live 12491588 with direct /earlyaccess and reload, H1 and browser title, password-free 420-variant browse/search/paging/details/reversible selection, unchanged agreement gate and legacy Quick Order. No physical-device/mobile claim is made, and Samuel removed the mobile wait. Policy v2 remains separate. No authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
       }
     }
   ],

@@ -3497,7 +3497,7 @@
         "server/research/master-offerings/data/reviewed-public-media.json",
         "client/src/research/master-offerings/product-media.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-05T21:13:40.9327313Z",
       "heartbeatAt": "2026-11-05T21:13:40.9327313Z"
     },

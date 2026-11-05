@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "kind": "verified-production-release-complete",
+  "recordedAt": "2026-11-05T22:47:37.245Z",
+  "writer": "codex-launch-coordination-20261005",
+  "release": {
+    "pr": 410,
+    "branch": "release/early-access-code-session-checkout",
+    "source": "353a2ee6f894dfa75eb2771441260567763befeb",
+    "protected": "e93de40a58eab2a454fcb3fc11783ffc5504ca3d",
+    "tree": "86b0ba1768266e3f7db255abf11ca763ce6567bf",
+    "releaseParents": [
+      "12491588cba0410ab65102d5f05492b365181394",
+      "353a2ee6f894dfa75eb2771441260567763befeb"
+    ],
+    "mergedAt": "2026-11-05T22:26:36Z",
+    "independentlyAcceptedSource": "KAN-59/11653",
+    "hostedCandidateRecord": "KAN-59/11661",
+    "candidateCi": {
+      "run": 42120654914,
+      "requiredTrustedChecks": 5,
+      "result": "SUCCESS"
+    },
+    "protectedCi": {
+      "run": 42121531411,
+      "requiredTrustedChecks": 5,
+      "result": "SUCCESS",
+      "testsPassed": 18602,
+      "testsFailed": 0,
+      "testsSkipped": 83,
+      "mediaCases": 9,
+      "aliasCases": 5
+    },
+    "deploy": {
+      "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+      "service": "srv-d8s9vej7uimc7384dfcg",
+      "id": "dep-dbmg8e0473hc73963chg",
+      "trigger": "existing checksPass autodeploy",
+      "status": "LIVE",
+      "finishedAt": "2026-11-05T22:34:53.468Z"
+    },
+    "rollback": {
+      "protected": "12491588cba0410ab65102d5f05492b365181394",
+      "tree": "2700bde4a4537c2d95e8cd8ae09725ecbbae57b6",
+      "deploy": "dep-dbmfpttckfvc73booul0",
+      "exercise": "not used"
+    }
+  },
+  "custody": {
+    "preClosureCanonical": "d4a92ce3048aa7791ef275fef2e524615f4d77c8",
+    "task": "KAN59-EA-TWENTY-NINE-ARTWORK-20261105",
+    "lease": "5e05cacb-1755-4a63-b419-e2344a50c67b",
+    "artExactPaths": 61,
+    "conservedAliasExactPaths": 15,
+    "reviewedMediaRegistryBlob": "6f73972c30df3011beff3ae12696c46465f8cfa3",
+    "reviewedFormHoldsBlob": "2d67827bcc3084afaa42441c1b05a9f1ac7a271d",
+    "mediaFixtureBlob": "a7bf8aaf0fa231a1bef2155a5a7329844a199fa8"
+  },
+  "served": {
+    "earlyAccess": "https://xeniostechnology.com/earlyaccess",
+    "legacy": "/research/early-access/order-request",
+    "routeAndHealthStatus": 200,
+    "cacheControl": "no-store",
+    "pragma": "no-cache",
+    "referrerPolicy": "no-referrer",
+    "robots": "noindex,nofollow,noarchive",
+    "servedEntry": "/assets/index-D9bwURak.js",
+    "rootRouteContinuitySha256": "f3ffee73f70190b571b485ba74904d90b5a8f8f9ad637a1565153289d43a70df",
+    "independentAllAssetsRecord": "KAN-59/11667",
+    "independentAllAssetsSha256": "891c4093c9eedacad0a8233b1cba46e3416b81ae4091b8fd3ebb726dedf1aa40",
+    "anonymousGuestReadbackRecord": "KAN-13/11668",
+    "anonymousGuestReadbackSha256": "eba8bfeb94e29574865e5fc74c0630fdcaeda99397c26d2f341612f4f3100950",
+    "exactWebPsServed": 58,
+    "reviewedNewPairs": 29,
+    "reviewedPriorPairs": 57,
+    "reviewedLiveMediaMappings": 86,
+    "reviewedLiveDescriptions": 69,
+    "distinctGuestVariants": 420,
+    "guestCatalogPages": 5,
+    "mountedGuest": {
+      "viewport": [
+        1280,
+        720
+      ],
+      "record": "KAN-13/11668",
+      "case": "Pinealon 10 mg",
+      "result": "The exact primary image loaded and the front-label link pointed to the matching asset. Packaging disclosure and neutral request wording were visible. Consent stayed unchecked and Continue stayed disabled."
+    },
+    "limits": "All new files and exact guest catalog bindings verified. Mounted evidence covers one representative artwork pair. Live verification stayed read-only and did not submit a request or give consent."
+  },
+  "continuity": {
+    "rootAwarenessRecord": "KAN-225/11673",
+    "qaAwarenessRecord": "KAN-31/11675",
+    "fullCatalogCompletion": "in progress"
+  }
+}

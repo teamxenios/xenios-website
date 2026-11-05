@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-05T22:11:07.3351840Z",
+  "updatedAt": "2026-11-05T22:48:41.1866066Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4340,7 +4340,7 @@
       "id": "KAN59-EA-TWENTY-NINE-ARTWORK-20261105",
       "title": "Adopt twenty-nine independently reviewed artwork mappings",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-59",
       "baseSha": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
       "paths": [
@@ -4410,7 +4410,13 @@
       "scopeNote": "Claim only the exact independently reviewed 29-artwork increment authorized for separate shipment without waiting on missing descriptions or pricing and handed off at KAN-59 comment 11571. Limit future source work to the exact 60 scopePaths in C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/art29-on-pr409/ART29_EXACT_PREPARATION.json, SHA-256 df7e6d11372356b50ad60ea27308306e0aaa13f8d22e34b00091421be6806e67, on intended branch codex/early-access-twenty-nine-artwork-20261105 from exact protected release 485885e3d4d4ca8b1353c923847e03e4ec1b67ae/tree beaf0b893eda583bb360109181b967ef87ace1de in the same approved physical checkout. Scope is exactly 58 new reviewed WebP assets from the three exact reviewed source commits plus server/research/master-offerings/data/reviewed-public-media.json and client/src/research/product-media/reviewed-form-holds.ts. The registry preimage is 40069f80ec8e517f3173e94d416f9ca723367254 with proposed postimage 6f73972c30df3011beff3ae12696c46465f8cfa3; the form-holds preimage is 909e16f01c7688772458f025f0b6b8fbd022b900 with proposed postimage 2d67827bcc3084afaa42441c1b05a9f1ac7a271d. Preserve exact 69-copy blob 2f877b95ce876881109dcfb37d703496a10255fb and every description, price and pricing authority byte. All 58 target asset paths are absent on the base. Fresh active/reserved lease and CODE_OWNERSHIP/FILE_OWNERSHIP exact, prefix and glob audits found zero conflicts across all 60 paths. Independent exact source acceptance, integrated tests and release qualification remain Root gates. Do not elect COPY38 or grant any additional path. Preserve all unrelated tasks, leases, handoffs, release history, writer/configuration/identity and held policy-v2 scope. This custody transaction performs no checkout or branch change, source edit, test, browser, workflow, provider, deployment, supplier activation, price publication, new session or resource admission. Test-fixture scope correction: append only client/src/research/master-offerings/product-media.test.tsx from C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/art29-on-pr409/ART29_EXISTING_TEST_FIXTURE_PROPOSED.json, SHA-256 1c72d9548b7bc846c39cf0827ce41a768649d8c0c45e5c5fcf2ad821c77fcda9. Exact protected-base preimage is 06f8f5e1b016d3e1893eb8d2b3c548c900f90e89 and prospective postimage is a7bf8aaf0fa231a1bef2155a5a7329844a199fa8 with SHA-256 82984eda64310b3e741990954c4d14a1ba2219dd8f2bed042edf18887dbf001c. Replace only the existing positive fixture ID mov_017febfdb0edf96366f4, which becomes an ART29 hold, with already-live still-unheld BPC-157 5 mg mov_09db3e866424b64994d3. Preserve every assertion, runtime byte and all 60 authored ART29 postimages. ART29 remains unpublished behind the priority alias; this amendment grants no alias progress, additional path, worktree, release pointer or foreign-task mutation. Prospective next-base authorization: ordinary non-force rebind of accepted PR410 artwork source 792c4e69398aa61a856404e1fdaeae9a79139089 to exact live alias release 12491588cba0410ab65102d5f05492b365181394 is permitted under C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/art29-on-pr409/PR410_PROSPECTIVE_AFTER_PR411.json, SHA-256 8c84770b812da03e001eb9344234153c104fb9c744bf271983f072004dd0337c. The prospective composition tree is 86b0ba1768266e3f7db255abf11ca763ce6567bf and conserves all 61 ART29 task paths plus all 15 alias paths. Current composed hosted qualification remains required before protected integration or release. This note changes no ART29 task state, baseSha, paths, timestamps, lease, heartbeat or release authority.",
       "createdAt": "2026-11-05T21:13:40.9327313Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T21:13:40.9327313Z"
+      "claimedAt": "2026-11-05T21:13:40.9327313Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "353a2ee6f894dfa75eb2771441260567763befeb",
+        "file": ".xenios/handoffs/2026-11-05T22-47-37Z-PR410-EXACT-RELEASE-COMPLETE-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T22:47:37.245Z"
+      }
     },
     {
       "id": "KAN13-EA-OUTREACH-ROUTE-20261105",
