@@ -53,9 +53,22 @@ export function isPublicResearchDocumentPath(pathname: string): boolean {
   return PUBLIC_RESEARCH_DOCUMENT_PATHS.has(normalizeResearchPath(pathname));
 }
 
+/**
+ * The founder's login-free, request-only Early Access entry. It renders the
+ * same request-only route as /research/early-access/order-request, so it is
+ * part of the private Research surface for every consumer of isResearchPath
+ * (tracking, attribution, PWA install, the document boundary, the page gate
+ * and the raw HTML policy). Exact path only: it has no descendants.
+ */
+export const EARLY_ACCESS_ENTRY_PATH = "/earlyaccess";
+
+export function isEarlyAccessEntryPath(pathname: string): boolean {
+  return normalizeResearchPath(pathname) === EARLY_ACCESS_ENTRY_PATH;
+}
+
 export function isResearchPath(pathname: string): boolean {
   const p = normalizeResearchPath(pathname);
-  return p === "/research" || p.startsWith("/research/");
+  return p === "/research" || p.startsWith("/research/") || p === EARLY_ACCESS_ENTRY_PATH;
 }
 
 export function isResearchAdminPath(pathname: string): boolean {

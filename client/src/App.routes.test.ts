@@ -64,3 +64,20 @@ describe("the canonical /health Care + Research gateway", () => {
     });
   });
 });
+
+describe("the login-free /earlyaccess entry", () => {
+  const aliasRoute = '<Route path="/earlyaccess" component={ResearchRoutes} />';
+
+  it("mounts the lazy Research section once, ahead of the Not Found fallback", () => {
+    expect(appSource.split(aliasRoute)).toHaveLength(2);
+    expect(appSource.indexOf(aliasRoute)).toBeGreaterThan(-1);
+    expect(appSource.indexOf(aliasRoute)).toBeLessThan(
+      appSource.indexOf("<Route component={NotFound} />"),
+    );
+  });
+
+  it("is an alias the customer stays on, not a redirect to the legacy path", () => {
+    expect(appSource).not.toMatch(/path="\/earlyaccess"[^>]*>\s*<Redirect/u);
+    expect(appSource).not.toMatch(/path="\/earlyaccess\/\*"/u);
+  });
+});

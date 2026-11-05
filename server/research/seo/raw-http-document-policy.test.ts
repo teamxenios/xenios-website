@@ -409,6 +409,55 @@ describe("raw HTTP route authority", () => {
     }
   });
 
+  it("registers the request-only /earlyaccess alias as one exact private document", () => {
+    // The alias is composed in both layers that render it, so the raw HTTP
+    // registry is not admitting a path the SPA would answer with Not Found.
+    expect(appSource).toContain('<Route path="/earlyaccess" component={ResearchRoutes} />');
+    expect(researchSectionSource).toContain(
+      '<Route path="/earlyaccess">{() => <L component={EarlyAccessRoute} props={{ requestOnly: true }} />}</Route>',
+    );
+
+    for (const target of [
+      "/earlyaccess",
+      "/earlyaccess/",
+      "/EarlyAccess",
+      "/%65arlyaccess",
+      "/earlyaccess?family=research_vials&slug=synthetic",
+      "/earlyaccess#request",
+    ]) {
+      expect(defaultResolver.resolve(target), target).toMatchObject({
+        status: 200,
+        routeKind: "private",
+        reason: "registered_private_document",
+        normalizedPath: "/earlyaccess",
+        indexable: false,
+        robots: RAW_HTTP_NOINDEX_ROBOTS,
+        canonicalPath: null,
+        canonicalUrl: null,
+        schema: { singletonTypes: [], jobPostingTitles: [] },
+      });
+    }
+
+    for (const target of [
+      "/earlyaccessx",
+      "/earlyaccess/extra",
+      "/earlyaccess/order-request",
+      "/early-access",
+    ]) {
+      expect(defaultResolver.resolve(target), target).toMatchObject({
+        status: 404,
+        routeKind: "not_found",
+        reason: "unknown_document",
+        indexable: false,
+        robots: RAW_HTTP_NOINDEX_ROBOTS,
+      });
+    }
+    expect(defaultResolver.resolve("/earlyaccess//")).toMatchObject({
+      status: 404,
+      reason: "invalid_request_target",
+    });
+  });
+
   it("allows only injected exact lot identities and keeps Lot Verification noindex", () => {
     const resolver = createRawHttpDocumentPolicyResolver({
       approvedPublicLotCodes: ["LOT-ALPHA-01", "bad/lot", "A"],
@@ -614,6 +663,9 @@ describe("raw HTTP HTML and schema policy", () => {
       ["/care/request-intents", 200],
       ["/care/request-intents?from=sign-in", 200],
       ["/care/request-intents/private-export", 404],
+      ["/earlyaccess", 200],
+      ["/earlyaccess?family=research_vials&slug=synthetic", 200],
+      ["/earlyaccessx", 404],
       ["/review/seo", 404],
       ["/careers/missing", 404],
       ["/research/documents/private.pdf", 404],

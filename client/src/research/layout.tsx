@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { isAccountOrderDetailPath } from "./account-portal/routes";
 import Wordmark from "@/components/Wordmark";
 import {
+  isEarlyAccessEntryPath,
   isResearchAccessStatePath,
   isResearchActivatePath,
   isResearchApplicationStatusPath,
@@ -309,11 +310,13 @@ export function isPublicResearchPath(path: string): boolean {
   //
   // Path-exact for the surfaces themselves, plus the anchored order-request
   // family, so this stays an allowlist rather than a prefix exemption over
-  // everything under /research/early-access.
+  // everything under /research/early-access. The founder's login-free
+  // /earlyaccess entry is the same request-only route, exact path only.
   if (
     normalized === "/research/early-access"
     || normalized === "/research/early-access/order-request"
     || normalized.startsWith("/research/early-access/order-request/")
+    || isEarlyAccessEntryPath(path)
   ) {
     return true;
   }

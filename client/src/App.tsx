@@ -187,6 +187,7 @@ function Router() {
       <Route path="/r/:code">{({ code }) => <Suspense fallback={<div className="container-x" aria-busy="true" style={{ paddingTop: 96 }} />}><RecommendationRecipient code={code} /></Suspense>}</Route>
       {/* xenios research (password-gated section, own chunk). The bare path and
           the multi-segment wildcard both mount the section's own router. */}
+      <Route path="/earlyaccess" component={ResearchRoutes} />
       <Route path="/research" component={ResearchRoutes} />
       <Route path="/research/*" component={ResearchRoutes} />
       <Route path="/care/eligibility" component={CareEligibilityRoutes} />

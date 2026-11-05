@@ -68,6 +68,52 @@ describe("initTracking is a no-op on the private Research surface", () => {
     }
   });
 
+  it("no-op on the request-only /earlyaccess alias, including router variants", async () => {
+    for (const path of [
+      "/earlyaccess",
+      "/earlyaccess/",
+      "/EarlyAccess",
+      "/%65arlyaccess",
+      "/earlyaccess?family=research_vials&slug=synthetic",
+    ]) {
+      setLocation(path);
+      const t = await freshTracking();
+      await t.initTracking();
+      expect(pixelScripts(), path).toHaveLength(0);
+      expect(window.fbq, path).toBeUndefined();
+      // Entering the alias from the marketing site starts a new document, the
+      // same Research boundary the legacy entry already gets.
+      expect(
+        t.requiresFullDocumentNavigation("https://xenios.invalid/about", `https://xenios.invalid${path}`),
+        path,
+      ).toBe(true);
+    }
+
+    const t = await freshTracking();
+    // The alias, the legacy entry, its confirmation and the policy pages share
+    // one Research document, so a submission keeps the customer's state.
+    for (const target of [
+      "/research/early-access/order-request",
+      "/research/early-access/order-request/confirmation/XR-SYNTHETIC-0001",
+      "/research/policies/research-use",
+    ]) {
+      expect(
+        t.requiresFullDocumentNavigation("https://xenios.invalid/earlyaccess", `https://xenios.invalid${target}`),
+        target,
+      ).toBe(false);
+    }
+    expect(
+      t.requiresFullDocumentNavigation("https://xenios.invalid/earlyaccess", "https://xenios.invalid/care"),
+    ).toBe(true);
+    // Neighbouring paths are not the alias and stay on the public site.
+    for (const path of ["/earlyaccessx", "/earlyaccess/extra", "/early-interest"]) {
+      expect(
+        t.requiresFullDocumentNavigation("https://xenios.invalid/about", `https://xenios.invalid${path}`),
+        path,
+      ).toBe(false);
+    }
+  });
+
   it("no-op on canonical Care paths, including normalized variants", async () => {
     for (const path of [
       "/care",
