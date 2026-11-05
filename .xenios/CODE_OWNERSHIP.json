@@ -3278,6 +3278,29 @@
       "state": "active",
       "claimedAt": "2026-11-05T12:32:42.379387Z",
       "heartbeatAt": "2026-11-05T12:32:42.379387Z"
+    },
+    {
+      "id": "f4395d47-e5ee-41bb-a7d6-4ac559e8cdb9",
+      "task": "KAN59-C3-SIX-CAPSULE-ARTWORK-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-media.json",
+        "client/public/research/product-media/sermorelin-500mcg-capsule-front-artwork-v1.webp",
+        "client/public/research/product-media/sermorelin-500mcg-capsule-website-render-v1-1024.webp",
+        "client/public/research/product-media/thymosin-alpha-1-500mcg-capsule-front-artwork-v1.webp",
+        "client/public/research/product-media/thymosin-alpha-1-500mcg-capsule-website-render-v1-1024.webp",
+        "client/public/research/product-media/slu-pp-332-500mcg-capsule-front-artwork-v1.webp",
+        "client/public/research/product-media/slu-pp-332-500mcg-capsule-website-render-v1-1024.webp",
+        "client/public/research/product-media/slu-pp-332-250mcg-capsule-front-artwork-v1.webp",
+        "client/public/research/product-media/slu-pp-332-250mcg-capsule-website-render-v1-1024.webp",
+        "client/public/research/product-media/tb-500-500mcg-capsule-front-artwork-v1.webp",
+        "client/public/research/product-media/tb-500-500mcg-capsule-website-render-v1-1024.webp",
+        "client/public/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-front-artwork-v1.webp",
+        "client/public/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-website-render-v1-1024.webp"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T12:48:56.731414Z",
+      "heartbeatAt": "2026-11-05T12:48:56.731414Z"
     }
   ],
   "rules": [

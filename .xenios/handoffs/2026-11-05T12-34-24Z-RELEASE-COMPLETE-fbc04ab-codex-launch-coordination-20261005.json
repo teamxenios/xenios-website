@@ -1,0 +1,71 @@
+{
+  "schema": "xenios.release-complete.v1",
+  "pr": 393,
+  "source": "e0d72257966b42a42af95851bc9b133f09853b2f",
+  "release": "fbc04ab3f3699ae8ba175d67fea399d0cc1963a7",
+  "tree": "2a20520395acdbe1de1ca3ab7444e0c035f38cc3",
+  "productionBranch": "release/early-access-code-session-checkout",
+  "mergeAt": "2026-11-05T12:26:24Z",
+  "parents": [
+    "9b2fc9b33e1873d77c264e5a57df61a96fa970d9",
+    "e0d72257966b42a42af95851bc9b133f09853b2f"
+  ],
+  "releaseCI": {
+    "id": 42027138716,
+    "attempt": 1,
+    "trustedSuccess": 5,
+    "passed": 18531,
+    "failed": 0,
+    "skipped": 83,
+    "sha256": "9e0518db73d32c75cd1bd8bce9c975369773fe4b58517d456e80b7c06dfa61e3"
+  },
+  "provider": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deploy": "dep-dbm7e8ss728c73ffhki0",
+    "status": "live",
+    "finishedAt": "2026-11-05T12:32:46.306954Z",
+    "autoDeploy": "yes",
+    "autoDeployTrigger": "checksPass"
+  },
+  "rollback": {
+    "release": "9b2fc9b33e1873d77c264e5a57df61a96fa970d9",
+    "tree": "0b5d6b07d43f6a25fee8643f20c2ba245c8d3043",
+    "deploy": "dep-dblvs0qjnfac73cpriqg",
+    "used": false
+  },
+  "static": {
+    "status": "PASS_PUBLIC_STATIC_ONLY",
+    "successfulGets": 17,
+    "exactNewWebPs": 12,
+    "sha256": "ae3f985340112ad4e584a7c37628b1a970891cd703bb3b720d21ef3ad914e391",
+    "entry": "/assets/index-CP2mFj2b.js",
+    "canonicalRoute": "/research/early-access/order-request"
+  },
+  "qa": {
+    "sourceHandoffCommit": "38bc8235e31cecfe84fc414d51a3df9423319c8e",
+    "sourceEvidence": [
+      "KAN-59/11056",
+      "KAN-59/11086"
+    ],
+    "sourceEvidenceCorrection": "KAN-225/11208 concerns PR392, not PR393. Retained immutable source handoff includes an incidental transposed citation; PR393 source proof is KAN-59/11056 and 11086.",
+    "browser": 42024500899,
+    "artifact": 13413241791,
+    "cases": 18,
+    "assertions": 261,
+    "remaining": 0
+  },
+  "jira": "KAN-13/11249",
+  "coverage": {
+    "artworkMappings": 35,
+    "reviewedDescriptions": 27,
+    "addedIds": [
+      "0243",
+      "0245",
+      "0248",
+      "0249",
+      "0263",
+      "0264"
+    ]
+  }
+}
