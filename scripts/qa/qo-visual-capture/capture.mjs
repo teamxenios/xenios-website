@@ -30,7 +30,8 @@ const capsuleEvidenceVariants = new Set([
 const chondroVariant = "mov_2de19f71e09e8bc3febb";
 const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
 if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
-    allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
+    ![1, 2].includes(allowance.maximumAttempts) || allowance.attempt < 1 ||
+    allowance.attempt > allowance.maximumAttempts || allowance.remainingAfterThisRun !== allowance.maximumAttempts - allowance.attempt) {
   throw new Error("Capture allowance does not match this dispatch");
 }
 const origin = "http://127.0.0.1:5199";
