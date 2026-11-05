@@ -1,0 +1,73 @@
+{
+  "capture": {
+    "allowance": "KAN-31/10969",
+    "artifact": 13383362644,
+    "assertions": 2200,
+    "attemptsRemaining": 0,
+    "attemptsUsed": 1,
+    "contexts": 8,
+    "controls": 8,
+    "positive": 152,
+    "run": 41956570164,
+    "screenshots": 8
+  },
+  "checks": {
+    "failed": 0,
+    "passed": 18531,
+    "releaseFocusedPassed": 150,
+    "releaseProofSHA256": "4fadf4ac74bfbf5f193735a84f6087c4fc4c29c14451c54df3580d4f3e2dad14",
+    "releaseRun": 41959097130,
+    "skipped": 83,
+    "sourceRun": 41951206928
+  },
+  "jira": "https://xeniostechnology.atlassian.net/browse/KAN-13?focusedCommentId=10987",
+  "lease": "f533f8ba-6905-42fc-8a63-1dfd7cbfed88",
+  "limits": "Media-only ordinary website release. Approved browser evidence uses synthetic guest/member contexts. Public live proof is GET-only static media, health and shell. No physical packaging, device Safari, production transaction, price publication, Auth, configuration, or data mutation.",
+  "mergeAuthority": "KAN-13/10791 standing qualified website release, normal protected match-head merge",
+  "mergedAt": "2026-11-05T03:02:56Z",
+  "parents": [
+    "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+    "d9a8b254dc2b6c30496af47e36d7e7abf88507c8"
+  ],
+  "publicStatic": {
+    "entry": "/assets/index-CP2mFj2b.js",
+    "exactWebPs": 38,
+    "finishedAt": "2026-11-05T03:10:06.163127Z",
+    "health": "Xenios API is running",
+    "htmlFallbacks": 0,
+    "jsAssets": 196,
+    "legacyPage": "/research/early-access/order-request",
+    "receiptSHA256": "afab166910862691c22527273898246196a470ee5f0bac380bc72cd42d7ee576",
+    "result": "PASS_PUBLIC_STATIC_ONLY",
+    "successfulGets": 238
+  },
+  "published": {
+    "exactPublicWebPs": 38,
+    "retainedPriorMappings": 10,
+    "reviewedVariantMappings": 19
+  },
+  "pullRequest": "https://github.com/teamxenios/xenios-website/pull/390",
+  "release": "4dce1ed3ad210eb41eb3e118931e3df7604d8920",
+  "render": {
+    "autoDeploy": "yes",
+    "deploy": "dep-dblv62h7lnhs738fvg00",
+    "liveSince": "2026-11-05T03:09:17.405573Z",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "status": "live",
+    "trigger": "checksPass",
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0"
+  },
+  "rollback": {
+    "deploy": "dep-dblpgrnb9u1s73dlsg00",
+    "executed": false,
+    "release": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+    "tree": "da2b16a6ff2991fe2322c931c95999262dbc709b"
+  },
+  "sourceBranch": "codex/early-access-c1-reviewed-artwork-20261104",
+  "sourceCanonicalQA": "3a3464c0ca0b8c8682ff2108922cb2e1bf90a884",
+  "sourceReceiptSHA256": "cca7bf016d2060bebb263d0c663d9ed1fb9f5c93482b00d3f53b961c43c554df",
+  "sourceReview": "KAN-31/10907",
+  "syntheticReview": "KAN-31/10982",
+  "tree": "eee29fddfb747a54f90332e6badbf171cf1ea3b9",
+  "unit": "KAN59-C1-19-REVIEWED-ARTWORK-20261104"
+}
