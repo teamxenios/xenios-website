@@ -28,7 +28,14 @@ export function ReviewedProductContent({ content, inDialog = false }: { content:
         </div>
       )}
       {sections.map(([label, value]) => value && (
-        <div key={label}><Heading className="font-semibold">{label}</Heading><p>{value}</p></div>
+        <div key={label}>
+          <Heading className="font-semibold">{label}</Heading>
+          {label === "Cautions" && /\r?\n\r?\n/.test(value) ? (
+            <div className="space-y-3">
+              {value.split(/\r?\n\r?\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+            </div>
+          ) : <p>{value}</p>}
+        </div>
       ))}
       {Boolean(content.documentation?.length) && (
         <div>
