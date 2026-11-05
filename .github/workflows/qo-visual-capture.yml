@@ -14,7 +14,7 @@ jobs:
     if: >-
       github.repository == 'teamxenios/xenios-website' &&
       github.ref == 'refs/heads/codex/qo-pr390-c1-visual-20261104' &&
-      github.event.before == 'UNBOUND_PREDECESSOR' &&
+      github.event.before == '506eb3d1ac372735587079b7831ea28850706ae5' &&
       !github.event.created && !github.event.deleted && !github.event.forced &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
@@ -24,11 +24,11 @@ jobs:
       CANDIDATE_SHA: d9a8b254dc2b6c30496af47e36d7e7abf88507c8
       CANDIDATE_TREE: eee29fddfb747a54f90332e6badbf171cf1ea3b9
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: UNBOUND
+      CAPTURE_ALLOWANCE_ID: KAN-31/10969
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
       CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: UNBOUND
+      CAPTURE_RECONCILED_AT: 2026-11-05T02:38:20Z
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
@@ -51,7 +51,7 @@ jobs:
           const attempt = Number(e.CAPTURE_ALLOWANCE_ATTEMPT);
           const maximumAttempts = Number(e.CAPTURE_ALLOWANCE_MAX_ATTEMPTS);
           const priorRunIds = JSON.parse(e.CAPTURE_PRIOR_RUN_IDS);
-          if (!/^KAN-31\/\d+$/.test(id) || ["KAN-31/10563", "KAN-31/10645", "KAN-31/10684"].includes(id)) throw new Error("A new, explicit Jira allowance is required");
+          if (id !== "KAN-31/10969") throw new Error("Only the exact PR390 allowance is admitted");
           if (maximumAttempts !== 1 || attempt !== 1 || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
           if (!Array.isArray(priorRunIds) || priorRunIds.length !== attempt - 1 ||
               priorRunIds.some((v) => typeof v !== "string" || !/^\d+$/.test(v)) ||
