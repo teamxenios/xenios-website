@@ -1,0 +1,85 @@
+{
+  "kind": "website-verified-release-sequence",
+  "session": "codex-launch-coordination-20261005",
+  "releaseBranch": "release/early-access-code-session-checkout",
+  "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+  "service": "srv-d8s9vej7uimc7384dfcg",
+  "sequence": [
+    {
+      "pr": 407,
+      "task": "KAN13-EA-CAUTIONS-PARAGRAPHS-20261105",
+      "lease": "81b7984e-cacb-4fd7-b660-adecc5b59bfb",
+      "source": "ae7dbc947f6d3be77b0237578149f1717287b804",
+      "sourceVerdict": "KAN-13/11555",
+      "release": "2b38fc93573a7c8b99f1a44fce7edc0cc28ea2ce",
+      "tree": "4ea5b505844d8a1cde48a1c28a6768434f907ab4",
+      "releaseCI": 42103275821,
+      "tests": {
+        "pass": 18541,
+        "skip": 83
+      },
+      "deploy": "dep-dbmefa95efls73bp67ag",
+      "liveAt": "2026-11-05T20:32:48.277Z",
+      "public": "Existing order entry, health and exact compiled paragraph renderer verified. Renderer only.",
+      "receiptSha256": "e07d5cf157eb638c2b98cdb4c1714110af8d68655245520fa0eb5b85e30a3659"
+    },
+    {
+      "pr": 408,
+      "task": "KAN13-EA-FROZEN113-CLEARED-SUBSET-20261105",
+      "lease": "3054e5a0-b7e7-4971-8f2d-145033e8a528",
+      "source": "eb932d4e19186ea04a41c9bcfdab4be416fe2173",
+      "sourceVerdict": "KAN-13/11565",
+      "release": "5264c1218f85c2d7c9ad13eefb77244e422a58d4",
+      "tree": "33f471b6fd6d6a1d7a2aba310e30c52a73c8755a",
+      "candidateCI": 42104778293,
+      "releaseCI": 42106097757,
+      "tests": {
+        "pass": 18541,
+        "skip": 83
+      },
+      "deploy": "dep-dbmeo8rm8hqs73e27sc0",
+      "liveAt": "2026-11-05T20:52:04.529Z",
+      "public": "420 distinct served guest variants, 69 reviewed descriptions matched including 24 additions, 57 media matches, six excluded; all three newly described clinical variants still require provider review and suppress guest price and price version.",
+      "receiptSha256": "914e52953b1e76876b6e4aa1cc98cc7e5b632fba4a9c4ea13ca3908dd863e056",
+      "catalogVerdicts": [
+        "KAN-13/11577",
+        "KAN-13/11579"
+      ]
+    },
+    {
+      "pr": 409,
+      "task": "KAN13-EA-SAME-TAB-STANDING-REFRESH-20261105",
+      "lease": "c91f3ef1-6a32-4143-91cb-a7a9382a702d",
+      "initialFailedCandidateCI": 42104809677,
+      "source": "20b3d8a8cf7b39422353fd12bf90ce1f7e279162",
+      "sourceVerdict": "KAN-13/11574",
+      "release": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
+      "tree": "beaf0b893eda583bb360109181b967ef87ace1de",
+      "candidateCI": 42106768447,
+      "releaseCI": 42108042283,
+      "tests": {
+        "pass": 18562,
+        "skip": 83,
+        "newSuppliedRegressions": 21,
+        "focusedPass": 150
+      },
+      "deploy": "dep-dbmevamq1p3s73ed6akg",
+      "liveAt": "2026-11-05T21:07:09.733Z",
+      "public": "At 21:09:37Z existing order-request 200, health 200, intake config 200 enabled, served EarlyAccessRoute and RequestIntentEntry chunks contain exact standing refresh bindings. Short /earlyaccess 404. Live probes are GET-only; confirmed-refusal and uncertain-retry paths were tested with synthetic hosted fixtures.",
+      "receiptSha256": "855a86fa353615928b94971c69a5e50a3d3c40f19e2f671e81dfc09f7a351804"
+    }
+  ],
+  "current": {
+    "release": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
+    "tree": "beaf0b893eda583bb360109181b967ef87ace1de",
+    "deploy": "dep-dbmevamq1p3s73ed6akg",
+    "rollback": {
+      "release": "5264c1218f85c2d7c9ad13eefb77244e422a58d4",
+      "tree": "33f471b6fd6d6a1d7a2aba310e30c52a73c8755a",
+      "deploy": "dep-dbmeo8rm8hqs73e27sc0"
+    },
+    "providerMode": "existing automatic checksPass",
+    "customerBrowser": "No physical-device or real customer submission in this sequence",
+    "policyV2": "Separate coupled configuration and capture cutover remains staged"
+  }
+}

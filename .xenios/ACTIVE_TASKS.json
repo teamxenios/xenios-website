@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-05T20:40:23.3313501Z",
+  "updatedAt": "2026-11-05T21:13:40.9327313Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4265,7 +4265,7 @@
       "id": "KAN13-EA-CAUTIONS-PARAGRAPHS-20261105",
       "title": "Render accepted caution wording as readable paragraphs",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "90fd0747f156a103591f2cd2b72060955f958ce9",
       "paths": [
@@ -4275,13 +4275,19 @@
       "scopeNote": "Claim only the ready renderer increment authorized at KAN-13 comment 11464 and reinforced by the current KAN-225 comment 11520 and KAN-13 comment 11524 execution handoffs. Limit source work exactly to client/src/research/master-offerings/ReviewedProductContent.tsx on intended branch codex/early-access-cautions-paragraphs-20261105 from protected release 90fd0747f156a103591f2cd2b72060955f958ce9. The exact renderer preimage is Git blob ce6faee4af1391e5430ee34dfc0f55a282794e7a, the reviewed successor is da054f4d6adc3ac4ed442f6476f75936ccd31a99 and the transport SHA-256 is f7e89260e08bc90a788b28ed3e927e5f2995a00b205cda30d11e71338d9315c1. Scope is only renderer paragraph presentation while preserving every accepted caution word. No content manifest ownership is included. The same unchanged patch may be applied on the exact subsequent qualified PR406 release only when that candidate remains a descendant of 90fd0747f156a103591f2cd2b72060955f958ce9 and this renderer preimage remains exactly ce6faee4af1391e5430ee34dfc0f55a282794e7a; both conditions were verified on current PR406 head aeb4e0918f417c857f9ab435b414cdd478889cdf/tree bee8bffee43beed374bcaf4b129407054a1d9093. Fresh active/reserved exact, ancestor, prefix and wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict. Preserve PR406 lease 032e769c-39d4-4cc6-a9d5-66601ce820ff exactly, every foreign task, lease, static rule, registration, release record, history and source ref. This custody transaction performs no application source edit, hosted check, browser, release, provider, configuration, supplier, session or checkout action.",
       "createdAt": "2026-11-05T19:41:35.1348855Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T19:41:35.1348855Z"
+      "claimedAt": "2026-11-05T19:41:35.1348855Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "ae7dbc947f6d3be77b0237578149f1717287b804",
+        "file": ".xenios/handoffs/2026-11-05T21-09-37Z-PR407-PR408-PR409-VERIFIED-RELEASE-SEQUENCE-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T21:09:37Z"
+      }
     },
     {
       "id": "KAN13-EA-SAME-TAB-STANDING-REFRESH-20261105",
       "title": "Refresh Early Access agreement state within the same browser tab",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "cef961ea1bd5bc97cd381238d22529bbbf1a9107",
       "paths": [
@@ -4300,13 +4306,19 @@
       "scopeNote": "Claim only the exact prepared same-tab standing-refresh increment from the frozen PR406 release receipt. Limit future source work to the nine exact listed paths on intended branch codex/early-access-standing-refresh-20261105 from exact protected base cef961ea1bd5bc97cd381238d22529bbbf1a9107/tree bb893298c5334a313ad738bd1984454ae2662e18. Existing preimages are EarlyAccessRoute.tsx 5a227194b853467fcedd91a0f264a8b797ed3090, OrderRequestEntry.tsx 98bbf29c4bb808f34bf17d0532dfe7fc476f586f, RequestIntentEntry.tsx 887ecf46496199c63bd5d0c755811f530dc2731e, RequestIntentForm.tsx d09bda47299b3a76c8667d551f4ca640d20790f5 and RequestIntentForm.test.tsx c146050e63e672da11247d475a8a12128418f5e6; the other four listed paths must remain absent before application. The unchanged prepared patch SHA-256 is 417bc9ed62a784298f730a7d57958a162f8a43b39e98519fd8777e0c2d879b5e and must reproduce exact tree 40e7fe6398cf742a858a1633397478f2b1343c7c on that base. It may alternatively follow exact renderer PR407 head ae7dbc947f6d3be77b0237578149f1717287b804/tree 4ea5b505844d8a1cde48a1c28a6768434f907ab4 only if that successor is independently qualified, remains a descendant of cef961ea1bd5bc97cd381238d22529bbbf1a9107, preserves all five exact preimages and four absences, and the patch reproduces exact optional successor tree f3933c13d4640e8f32e428afd3ed96c0480fd54a. Tests and independent source review remain required. Transfer only RequestIntentForm.tsx and RequestIntentForm.test.tsx from shared Root task and lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba; preserve its other paths, scope, state and heartbeat. EarlyAccessRoute.tsx remains covered by same-owner static rule OWNER-KAN225-EARLY-ACCESS-CLOSED-INTAKE-20261104. Exclude scripts/evidence/capture-synthetic-journeys.mjs and the separate policy-v2 capture patch. The broader frozen 113-row input remains unclaimed; a separate one-path task in this transaction binds only the independently cleared 30-row subset and excludes all 38 long-caution rows. This records transaction performs no application source edit, branch creation or switch, test, browser, workflow, provider, configuration, release, deployment, customer or production action. PR409 hosted binding-test correction under run 42104809677: preserve the original nine accelerator source/test bytes and add only server/research/assisted-order/request-intent/composition.integration.test.ts to source scope. Its exact preimage blob is 02973d4391af996bf113db8f50cd77243f4046a5. Limit the correction to updating the existing composition binding test for agreementRevision, acceptCurrentAgreement and blockCurrentAgreement callbacks, and refreshAgreementStanding while retaining all request-only, legal-standing, recovery and legacy-route protections. Exact PR409 head is 030a8951022500fcaf1acaa6243fcd46500d3584/tree f3933c13d4640e8f32e428afd3ed96c0480fd54a; hosted focused results were 149 passes and one stale binding failure before this correction. On protected renderer 2b38fc93573a7c8b99f1a44fce7edc0cc28ea2ce/tree 4ea5b505844d8a1cde48a1c28a6768434f907ab4 or its exact qualified disjoint PR408 copy-only successor, this test preimage and all nine accelerator preconditions must remain exact. A disjoint protected advance changes no authority here and must not be recorded as Live by this metadata operation. Preserve the existing heartbeat, all shared leases and every foreign record. No application source or test edit, workflow, provider, deploy, release metadata change or new identity is authorized by this correction.",
       "createdAt": "2026-11-05T20:19:20.6287069Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T20:19:20.6287069Z"
+      "claimedAt": "2026-11-05T20:19:20.6287069Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "20b3d8a8cf7b39422353fd12bf90ce1f7e279162",
+        "file": ".xenios/handoffs/2026-11-05T21-09-37Z-PR407-PR408-PR409-VERIFIED-RELEASE-SEQUENCE-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T21:09:37Z"
+      }
     },
     {
       "id": "KAN13-EA-FROZEN113-CLEARED-SUBSET-20261105",
       "title": "Adopt twenty-four independently cleared renderer-neutral content records",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "cef961ea1bd5bc97cd381238d22529bbbf1a9107",
       "paths": [
@@ -4316,7 +4328,88 @@
       "scopeNote": "Claim only the exact existing elected 30-row subset identified at KAN-31 comment 11535 and independently reverified at KAN-6 comment 11549. Limit future source work to server/research/master-offerings/data/reviewed-public-content.json on intended branch codex/early-access-frozen-copy-cleared-20261105 from exact protected base cef961ea1bd5bc97cd381238d22529bbbf1a9107/tree bb893298c5334a313ad738bd1984454ae2662e18. Preserve all 45 existing records byte-for-byte and append only the 30 exact independently cleared renderer-neutral additions from the 75-record registry. The source artifact SHA-256 is e69c1a13b1528af9368cd6346b6935f244bc25cb2fffc3f8a7d2f6b278506442, exact preimage blob is 828a0d9b1cfae27dee854611e703de0e6a48556c, exact postimage blob is 06b59cf2bfc72fe800f8e6a132f63153bea6883d, and expected tree on cef961e is 9a2a18faf24fcc2ffae9a865fb2b0bad844341f9. It may alternatively follow exact renderer PR407 only after independent qualification and only if the content preimage remains 828a0d9b1cfae27dee854611e703de0e6a48556c; the resulting exact tree must be a62088329a240f1909d90a5623877928b5cd8148. Exclude the 38 long-caution rows and every other row from the broader frozen 113-row proposal. Integrated checks, independent final source review and release remain separate. The predecessor PR406 lease transitions to handoff before this claim. This records transaction performs no source edit, branch creation or switch, test, browser, workflow, provider, release, deployment, customer or production action. Superseding current-scope correction under KAN-31 comment 11557: the earlier 30-row election remains recorded above as history but is no longer eligible for application. Narrow current source authority to the exact 24 unchanged independent rows in author transport C:/Users/sboad/Downloads/XENIOS_CATALOG_CONTENT_2026-11-04/copy-24-after-clinical09-hold-20261105/COPY24_ON_PR406.PROPOSED.patch, SHA-256 3c628ae5e097d571d0852731d2abba2d5d0f22497af032fab8e5e119060067df. Preserve all 45 live record bytes and append only those 24 rows, yielding exact 69-record postimage blob 2f877b95ce876881109dcfb37d703496a10255fb with SHA-256 3ce7d98bec220bcf6ad0d40ebe024ba345bbf02e1b382aa158b504a6a9c95804 from unchanged preimage 828a0d9b1cfae27dee854611e703de0e6a48556c. Exclude exact unpublished rows GEN-GRP-0172, GEN-GRP-0174, GEN-GRP-0195, GEN-GRP-0197, GEN-GRP-0199 and GEN-GRP-0204 because they require reference-label correction; continue to exclude all 38 long-caution rows. Expected tree is 9f2f7481b23954ffb2ff7f6765174bdbab84dc05 on cef961ea1bd5bc97cd381238d22529bbbf1a9107, or 33f471b6fd6d6a1d7a2aba310e30c52a73c8755a on exact qualified renderer tree 4ea5b505844d8a1cde48a1c28a6768434f907ab4. Protected renderer merge 2b38fc93573a7c8b99f1a44fce7edc0cc28ea2ce has that tree but release CI remains pending; do not treat it as Live or change release metadata. Keep the exact same one-file path, branch, task, lease, owner, session and timestamps. No new task, lease, source edit, test, provider or release operation is authorized by this correction.",
       "createdAt": "2026-11-05T20:19:20.6287069Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T20:19:20.6287069Z"
+      "claimedAt": "2026-11-05T20:19:20.6287069Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "eb932d4e19186ea04a41c9bcfdab4be416fe2173",
+        "file": ".xenios/handoffs/2026-11-05T21-09-37Z-PR407-PR408-PR409-VERIFIED-RELEASE-SEQUENCE-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T21:09:37Z"
+      }
+    },
+    {
+      "id": "KAN59-EA-TWENTY-NINE-ARTWORK-20261105",
+      "title": "Adopt twenty-nine independently reviewed artwork mappings",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
+      "paths": [
+        "client/public/research/product-media/aod-9604-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/aod-9604-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/aod-9604-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/aod-9604-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ara-290-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ara-290-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ara-290-15mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ara-290-15mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ara-290-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ara-290-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/cagrilintide-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/cagrilintide-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/epithalon-20mg-front-artwork-v1.webp",
+        "client/public/research/product-media/epithalon-20mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/epithalon-30mg-front-artwork-v1.webp",
+        "client/public/research/product-media/epithalon-30mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/epithalon-35mg-front-artwork-v1.webp",
+        "client/public/research/product-media/epithalon-35mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/glutathione-1500mg-front-artwork-v1.webp",
+        "client/public/research/product-media/glutathione-1500mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/glutathione-500mg-front-artwork-v1.webp",
+        "client/public/research/product-media/glutathione-500mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/melanotan-ii-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/melanotan-ii-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/nad-1000mg-front-artwork-v1.webp",
+        "client/public/research/product-media/nad-1000mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/nad-500mg-front-artwork-v1.webp",
+        "client/public/research/product-media/nad-500mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/pinealon-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/pinealon-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/pt-141-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/pt-141-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-20mg-front-artwork-v1.webp",
+        "client/public/research/product-media/retatrutide-20mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-40mg-front-artwork-v1.webp",
+        "client/public/research/product-media/retatrutide-40mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/retatrutide-50mg-front-artwork-v1.webp",
+        "client/public/research/product-media/retatrutide-50mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/semaglutide-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/semaglutide-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/semaglutide-15mg-front-artwork-v1.webp",
+        "client/public/research/product-media/semaglutide-15mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/semaglutide-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/semaglutide-5mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/ss-31-50mg-front-artwork-v1.webp",
+        "client/public/research/product-media/ss-31-50mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/tirzepatide-10mg-front-artwork-v1.webp",
+        "client/public/research/product-media/tirzepatide-10mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/tirzepatide-15mg-front-artwork-v1.webp",
+        "client/public/research/product-media/tirzepatide-15mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/tirzepatide-20mg-front-artwork-v1.webp",
+        "client/public/research/product-media/tirzepatide-20mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/tirzepatide-30mg-front-artwork-v1.webp",
+        "client/public/research/product-media/tirzepatide-30mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/tirzepatide-40mg-front-artwork-v1.webp",
+        "client/public/research/product-media/tirzepatide-40mg-website-render-v1-1024.webp",
+        "client/public/research/product-media/tirzepatide-5mg-front-artwork-v1.webp",
+        "client/public/research/product-media/tirzepatide-5mg-website-render-v1-1024.webp",
+        "client/src/research/product-media/reviewed-form-holds.ts",
+        "server/research/master-offerings/data/reviewed-public-media.json"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the exact independently reviewed 29-artwork increment authorized for separate shipment without waiting on missing descriptions or pricing and handed off at KAN-59 comment 11571. Limit future source work to the exact 60 scopePaths in C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/art29-on-pr409/ART29_EXACT_PREPARATION.json, SHA-256 df7e6d11372356b50ad60ea27308306e0aaa13f8d22e34b00091421be6806e67, on intended branch codex/early-access-twenty-nine-artwork-20261105 from exact protected release 485885e3d4d4ca8b1353c923847e03e4ec1b67ae/tree beaf0b893eda583bb360109181b967ef87ace1de in the same approved physical checkout. Scope is exactly 58 new reviewed WebP assets from the three exact reviewed source commits plus server/research/master-offerings/data/reviewed-public-media.json and client/src/research/product-media/reviewed-form-holds.ts. The registry preimage is 40069f80ec8e517f3173e94d416f9ca723367254 with proposed postimage 6f73972c30df3011beff3ae12696c46465f8cfa3; the form-holds preimage is 909e16f01c7688772458f025f0b6b8fbd022b900 with proposed postimage 2d67827bcc3084afaa42441c1b05a9f1ac7a271d. Preserve exact 69-copy blob 2f877b95ce876881109dcfb37d703496a10255fb and every description, price and pricing authority byte. All 58 target asset paths are absent on the base. Fresh active/reserved lease and CODE_OWNERSHIP/FILE_OWNERSHIP exact, prefix and glob audits found zero conflicts across all 60 paths. Independent exact source acceptance, integrated tests and release qualification remain Root gates. Do not elect COPY38 or grant any additional path. Preserve all unrelated tasks, leases, handoffs, release history, writer/configuration/identity and held policy-v2 scope. This custody transaction performs no checkout or branch change, source edit, test, browser, workflow, provider, deployment, supplier activation, price publication, new session or resource admission.",
+      "createdAt": "2026-11-05T21:13:40.9327313Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T21:13:40.9327313Z"
     }
   ]
 }
