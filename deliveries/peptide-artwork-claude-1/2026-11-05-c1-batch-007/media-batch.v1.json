@@ -1,0 +1,369 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-05-batch-c1-007",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644",
+  "KAN-225/10683",
+  "KAN-59/11401",
+  "KAN-225/11259"
+ ],
+ "labelFactSources": [
+  {
+   "reference": "KAN-6/10624",
+   "note": "Session 3 static artwork facts: product code wording"
+  },
+  {
+   "reference": "KAN-59/11391",
+   "file": "research-batch-13.label-facts.json",
+   "sha256": "8401a26e8de4ba5f7d92ba56359e887f9e491f313673b7b1ed3302c9d7910ef1",
+   "author": "CLAUDE-2"
+  }
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor, but only when stacking sets the name larger than one line does; otherwise it stays on one line.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes.",
+  "The wrap proof id is the exact product code (for example GEN-GRP-0322-WRAP-v1), not code-amount, because code-amount can spell a fragment name that label facts forbid (KISSPEPTIN-10 in C1-002)."
+ ],
+ "changesFromC1001": [
+  "The build reads its variants (names, amounts, codes, verified label text) from tools/variants.json instead of a constant.",
+  "Amounts other than 10 mg (none in this batch) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
+  "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
+  "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
+  "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 144312,
+  "sha256": "9949f2e4b4610f2474492852576c61b99c8e300b7848e7ef170f524db8e4fe8f",
+  "width": 1800,
+  "height": 984
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/build-report.json",
+   "bytes": 8698,
+   "sha256": "7d5cd0bbc0f4ec6fa0923753d3b52c6ad5af4d7a4b6a27ea1a4679ca38325a49"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/build_c1.py",
+   "bytes": 14674,
+   "sha256": "2876141e7b9c6d5b70a38f8bd26ab73c62aaf2ea4955ffeae1c6457214eed109"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/c1_variants.py",
+   "bytes": 9015,
+   "sha256": "1677c4d52dad7e585df6e1363e218ef8e5b36268e0ee5eb2f60f21c2c708f271"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/kern-table.segoe-ui.json",
+   "bytes": 26846,
+   "sha256": "02943bfff5fadf6ad0eda9075392ab35762c9fd0d2832671fed53152f36d33b7"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/svg_label_render.py",
+   "bytes": 13893,
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/variants.json",
+   "bytes": 1401,
+   "sha256": "f491a9577f1ad7665c6ea24b708843fd9e60e4f492254c007a355eb7edd2e947"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/verify_c1.py",
+   "bytes": 20506,
+   "sha256": "cc408223d9aa3b62cc19608c6ecb32453d4bcad4fc5123e95ac57cbcee46f226"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/wpf_kern.ps1",
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/write_manifest.py",
+   "bytes": 30809,
+   "sha256": "e57bdf89ab24d2a544af2709d0c2d0122c56774eafb58441e5625d8d08183531"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/tools/xr_compose.py",
+   "bytes": 9271,
+   "sha256": "573c4ceb08c57e769d9634ee6eb1436e512129043619a63a2f174786293c6ac9"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_0784f8ad4fc471f8053e",
+   "sourceVariantId": "mov_2d03422d39648068a0e4",
+   "quickOrderSku": "GEN-GRP-0322",
+   "quickOrderProductId": "cfb6a348-b6be-412a-bc80-e7d19e9d3e9f",
+   "quickOrderVariantId": "24c7d953-f940-4a44-b87f-a43286e0b3bf",
+   "canonicalName": "Pinealon",
+   "catalogDisplayName": "Pinealon",
+   "canonicalVariant": "Pinealon 10 mg",
+   "catalogVariantLabel": "PINEALON 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0322-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11391",
+    "file": "research-batch-13.label-facts.json",
+    "sha256": "8401a26e8de4ba5f7d92ba56359e887f9e491f313673b7b1ed3302c9d7910ef1",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Pinealon",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0322"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Pinealon",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0322"
+   },
+   "extraDoNotPrintTerms": [
+    "Cortexin",
+    "Epithalamin",
+    "Thymalin",
+    "pineal",
+    "extract",
+    "preparation",
+    "neuroprotection",
+    "neuroprotective",
+    "memory",
+    "cognition",
+    "cognitive",
+    "anti-ageing",
+    "anti-aging",
+    "geroprotective",
+    "geroprotector",
+    "Alzheimer",
+    "Huntington",
+    "disease"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Pinealon",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       589,
+       797,
+       657
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 826.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 706.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Pinealon 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/assets/pinealon-10mg-website-render-v1-1024.webp",
+     "sha256": "990bb2f1abe1dbdc747e4df19f2a4775d602acd56e49f8ac35614938f091272b"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Pinealon 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/assets/pinealon-10mg-front-artwork-v1.webp",
+     "sha256": "3b7d8b454d00660741e6d9fa3c6ed44c24b675432db6be567cff18b1a1da968f"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/assets/pinealon-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45508,
+     "sha256": "990bb2f1abe1dbdc747e4df19f2a4775d602acd56e49f8ac35614938f091272b",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/assets/pinealon-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 983565,
+     "sha256": "6a1eb3ae76c86bc37981f1da5043b56de4f8d490bfc429145b3175f1adb5240f",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/labels/pinealon-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3002,
+     "sha256": "b201f590e0d0dd7f1cb2b2683060f6006d1beec4a2e5398c8252887598d66ea2",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/assets/pinealon-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 104852,
+     "sha256": "e3d38c347175c3f06f4c53f6e4eb38a700b864c08e75fed450bcb73824a2ea93",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/assets/pinealon-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 41836,
+     "sha256": "3b7d8b454d00660741e6d9fa3c6ed44c24b675432db6be567cff18b1a1da968f",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/labels/pinealon-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6980,
+     "sha256": "d140ce7634ea88ba9ece8dfcae26bc7be15c39b10334b81aa0a45f6987c33978",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/assets/pinealon-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 372155,
+     "sha256": "901aa06ba05d5210bbdbadaac6d69bea78f5de6f7be00b353a1b419ae32b5b93",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-007/assets/pinealon-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 157172,
+     "sha256": "9d2fcf80ac8fc1c451480ec306055992c62f0ac3ec2a3ebe0dd4e1d0ba6779ff",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  }
+ ],
+ "changesFromC1006": [
+  "One change in the build, label, manifest and verification method: an amount is the verified label-fact text with its unit, not an integer in mg. tools/variants.json carries it as amount. build_c1.py prints it on the render and on both label masters; write_manifest.py derives the variant name, the alt text and exactDepictedFacts from it; verify_c1.py checks it against the label facts. An amount is a number, with the digit grouping the facts give, then mg or IU (\"10 mg\", \"10,000 IU\"). A record in IU carries nominalAmountPerVialMg null, because its facts state no mass and forbid printing one. Amounts in mg come out as before: built from C1-006's variants, these tools reproduce every label master, preview and render of C1-006 byte for byte.",
+  "c1_variants.py adds the reference of label-fact batch 13 (KAN-59/11391) and Pinealon's per-compound do-not-print terms. xr_compose.py, svg_label_render.py and wpf_kern.ps1 are byte-identical to C1-006's copies. The kern table covers the strings in this batch.",
+  "1 of 1 records have form-neutral label facts: they state the name, the amount with its unit, the product code and the classification, and no form. For those records the printed vial and the per-vial amount basis rest on the packaging declaration alone; labelFacts keeps CLAUDE-2's hold note and formBasis cites the declaration."
+ ],
+ "packagingDeclaration": {
+  "amountBasis": "per vial",
+  "form": "Lyophilized vial",
+  "kind": "xenios_packaging_declaration",
+  "reference": "KAN-225/11259",
+  "signedDate": "2026-11-05",
+  "signer": "Samuel Boadu, founder",
+  "status": "RECORDED"
+ }
+}

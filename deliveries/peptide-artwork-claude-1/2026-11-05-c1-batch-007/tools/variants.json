@@ -1,0 +1,53 @@
+[
+ {
+  "slug": "pinealon-10mg",
+  "name": "Pinealon",
+  "code": "PINEALON",
+  "mg": 10,
+  "amount": "10 mg",
+  "sku": "GEN-GRP-0322",
+  "offeringId": "mo_0784f8ad4fc471f8053e",
+  "sourceVariantId": "mov_2d03422d39648068a0e4",
+  "labelFactsRef": "KAN-59/11391",
+  "labelFactsFile": "research-batch-13.label-facts.json",
+  "labelFactsSha256": "8401a26e8de4ba5f7d92ba56359e887f9e491f313673b7b1ed3302c9d7910ef1",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Pinealon",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0322"
+  },
+  "extraDoNotPrintTerms": [
+   "Cortexin",
+   "Epithalamin",
+   "Thymalin",
+   "pineal",
+   "extract",
+   "preparation",
+   "neuroprotection",
+   "neuroprotective",
+   "memory",
+   "cognition",
+   "cognitive",
+   "anti-ageing",
+   "anti-aging",
+   "geroprotective",
+   "geroprotector",
+   "Alzheimer",
+   "Huntington",
+   "disease"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form."
+ }
+]
