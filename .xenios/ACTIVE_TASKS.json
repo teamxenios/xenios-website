@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-05T23:02:09.8529232Z",
+  "updatedAt": "2026-11-05T23:19:15.6581749Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4469,6 +4469,27 @@
       "createdAt": "2026-11-05T23:02:09.8529232Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-05T23:02:09.8529232Z"
+    },
+    {
+      "id": "KAN1-EA-PERSISTENT-REQUEST-BAR-20261105",
+      "title": "Adopt the verified persistent request action bar",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-1",
+      "baseSha": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx",
+        "client/src/research/assisted-order/persistent-request-bar-model.ts",
+        "client/src/research/assisted-order/persistent-request-bar.css"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the exact six-path persistent request bar increment handed off at KAN-13/11682 and directly supplied in Samuel's current paste C:/Users/sboad/.codex/attachments/a3794f06-9880-43c3-926c-0e99ab154c0e/Pasted text.txt, SHA-256 87065e47f441400ab211fbee248ef3ec570d13b0cd78a38c2d8edc36ee38d60c. Limit future source work to the six ordered paths in this task on intended branch codex/early-access-persistent-request-bar-20261105 from exact protected base b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d/tree 1f5df7e4ded1024dc44511863886adcaa8b6453e. PR412 changed only server/research/master-offerings/data/reviewed-public-content.json outside this six-path scope; RequestIntentForm.tsx retains exact blob 5299a404804b5d1c557e62775f90c47e13021b7d and the other five paths remain absent on the actual protected base. The verified private receipt SHA-256 is 192ced8aa614c40347396702410ec24e5f10c884017c6385ee6e00411374d142 and its apply-check passed. Fresh exact, prefix and wildcard CODE_OWNERSHIP plus FILE_OWNERSHIP audits found zero active or reserved conflicts across all six paths. Preserve every foreign task, lease, rule, registry, identity, release, handoff and the separate policy-v2 custody boundary. Source application, exact postimages, tests, independent review, protected integration and release remain separate Root gates. This custody transaction performs no checkout or branch switch, application source edit, test, browser, workflow, provider, deployment, production, configuration, new session or policy allocation.",
+      "createdAt": "2026-11-05T23:19:15.6581749Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T23:19:15.6581749Z"
     }
   ]
 }

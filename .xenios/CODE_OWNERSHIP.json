@@ -3536,6 +3536,22 @@
       "state": "active",
       "claimedAt": "2026-11-05T23:02:09.8529232Z",
       "heartbeatAt": "2026-11-05T23:02:09.8529232Z"
+    },
+    {
+      "id": "427bb26e-5d85-4db5-b0ec-1e88334b33f1",
+      "task": "KAN1-EA-PERSISTENT-REQUEST-BAR-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.tsx",
+        "client/src/research/assisted-order/PersistentRequestBar.test.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.action-bar.test.tsx",
+        "client/src/research/assisted-order/persistent-request-bar-model.ts",
+        "client/src/research/assisted-order/persistent-request-bar.css"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T23:19:15.6581749Z",
+      "heartbeatAt": "2026-11-05T23:19:15.6581749Z"
     }
   ],
   "rules": [
