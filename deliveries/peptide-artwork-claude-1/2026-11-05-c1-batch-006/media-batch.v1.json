@@ -48,6 +48,12 @@
   },
   {
    "reference": "KAN-59/10906",
+   "file": "research-batch-05r2.label-facts.json",
+   "sha256": "4ef1eed93a29da425e11235c8e60dd23fb727b8fe13301115bbb1dbc7ab9560b",
+   "author": "CLAUDE-2"
+  },
+  {
+   "reference": "KAN-59/10906",
    "file": "research-batch-06.label-facts.json",
    "sha256": "af47cfa0798c1e6db8d7f64770194c906b471153d393975bfb4cce96818e2532",
    "author": "CLAUDE-2"
@@ -128,8 +134,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-006/tools/verify_c1.py",
-   "bytes": 17902,
-   "sha256": "9ff86213080eb8485c17646ee02d38b1a3bd70344dd593514578fa23efd58718"
+   "bytes": 19036,
+   "sha256": "37777e8043510d030061a11fe96ada6967351044bf67e4dd86342cf2e2b32e66"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-006/tools/wpf_kern.ps1",
@@ -138,8 +144,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-006/tools/write_manifest.py",
-   "bytes": 25949,
-   "sha256": "d6b6af120d88037b471450846528c38af3e891cf64fe4aa70d09fac3db6d7884"
+   "bytes": 27932,
+   "sha256": "1fafa4e02f8aa7224ac7c118f4242d790809f19f6ee7b81315c6a739d10317f7"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-006/tools/xr_compose.py",
@@ -3728,7 +3734,7 @@
   }
  ],
  "changesFromC1005": [
-  "None: build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1, verify_c1.py, c1_variants.py and write_manifest.py are byte-identical to C1-005's copies. The kern table covers the strings in this batch.",
+  "None in the build, render or label method: build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1 and c1_variants.py are byte-identical to C1-005's copies. Since the 2026-11-05 correction (see corrections), write_manifest.py keys the label-fact index by reference, file and SHA-256 and stops unless the index equals the records' label-fact pins, and verify_c1.py checks the same. The kern table covers the strings in this batch.",
   "17 of 17 records have form-neutral label facts: they state the name, the amount in mg, the product code and the classification, and no form. For those records the printed vial and the per-vial amount basis rest on the packaging declaration alone; labelFacts keeps CLAUDE-2's hold note and formBasis cites the declaration."
  ],
  "packagingDeclaration": {
@@ -3739,5 +3745,14 @@
   "signedDate": "2026-11-05",
   "signer": "Samuel Boadu, founder",
   "status": "RECORDED"
- }
+ },
+ "corrections": [
+  {
+   "date": "2026-11-05",
+   "requestedBy": "KAN-31/11384",
+   "previousCommit": "5f1bbaba5f91dce02b8644a63e5408d182f7f87f",
+   "previousManifestSha256": "437798e090f6f10c0de90e10ba6756c37da353d6131ccce768b6f28a34fa6d8d",
+   "change": "Metadata only. labelFactSources now lists research-batch-05r2.label-facts.json, SHA-256 4ef1eed93a29da425e11235c8e60dd23fb727b8fe13301115bbb1dbc7ab9560b, which records GEN-GRP-0325, 0327, 0328 and 0344 cite. write_manifest.py keyed that index by Jira reference alone; batches 05r2 and 06 share KAN-59/10906, so the batch 06 entry replaced the batch 05r2 entry. The index is now keyed by reference, file and SHA-256, and write_manifest.py stops unless it equals the distinct label-fact pins of the records. verify_c1.py checks that the index has no duplicate entry, equals the distinct record pins and gives one digest per file. Every record, image, label master and the contact sheet are unchanged."
+  }
+ ]
 }

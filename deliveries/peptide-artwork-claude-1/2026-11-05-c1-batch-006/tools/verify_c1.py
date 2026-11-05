@@ -163,6 +163,19 @@ def main():
             check(not any('BPC' in (s or '') for s in strings), 'no BPC-157 text left %s %s' % (label, name))
         for c in r.get('websiteReviewCandidates', []):
             check(not any(term_hit(t, c['altText']) for t in terms) and not FORBIDDEN.search(c['altText']), 'alt text clean ' + name)
+    # 3b. the top-level label-fact index lists exactly the records' distinct label-fact pins, keyed by reference, file and
+    # digest: two facts files can share one Jira reference (batches 05r2 and 06, KAN-59/10906; KAN-31/11384)
+    row_pins = {(r['labelFacts']['reference'], r['labelFacts']['file'], r['labelFacts']['sha256']) for r in m['records']}
+    top_pins = [(s.get('reference'), s.get('file'), s.get('sha256')) for s in m.get('labelFactSources', [])
+                if isinstance(s, dict) and 'file' in s]
+    check(len(top_pins) == len(set(top_pins)), 'label-fact index has no duplicate entry')
+    check(set(top_pins) == row_pins, 'label-fact index equals the distinct record pins%s' % (
+        '' if set(top_pins) == row_pins else ' (missing %s; extra %s)' % (sorted(p[1] for p in row_pins - set(top_pins)),
+                                                                         sorted(p[1] for p in set(top_pins) - row_pins))))
+    digests = {}
+    for _, f, d in top_pins:
+        digests.setdefault(f, set()).add(d)
+    check(all(len(ds) == 1 for ds in digests.values()), 'label-fact index: one digest per file')
     # 4. render pixels outside the erased area are byte-identical to the accepted base; runs spell the variant
     base = os.path.join(a.repo_root, m['acceptedVisualReference']['path'].replace('/', os.sep))
     base_ok = os.path.exists(base) and sha(base) == m['acceptedVisualReference']['sha256']

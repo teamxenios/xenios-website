@@ -22,7 +22,7 @@ This batch delivers Xenios website artwork and editable label masters for 17 exa
 | Semaglutide 10 mg | `mo_a1d452a070c24e5f0033` | `mov_0f9bee8bdfc89ec9c2d3` | `GEN-GRP-0333` | KAN-59/10959 |
 | Semaglutide 15 mg | `mo_4e47d44fd3982b0b5e61` | `mov_7b331364b57f9fdd335a` | `GEN-GRP-0334` | KAN-59/10959 |
 
-The ids, Quick Order bindings and catalog facts are read from the release datasets. Those are `member-safe-master-offerings.generated.json` (sha256 `76b9bf6f…`) and `master-offering-bindings.generated.json` (`587595e6…`). Both are unchanged from release `19d10e04` through the live release `8bfb038d`.
+The ids, Quick Order bindings and catalog facts are read from the release datasets. Those are `member-safe-master-offerings.generated.json` (sha256 `76b9bf6f…`) and `master-offering-bindings.generated.json` (`587595e6…`). Both are unchanged from release `19d10e04` through the live release `b600f9d8`.
 
 All 17 have the same catalog facts:
 - family `research_peptides_materials`;
@@ -38,6 +38,18 @@ One printed name follows the verified label facts where the catalog display name
 Drawn before: Retatrutide at 10, 15 and 30 mg in C1-004. Here it keeps that name setting (Retatrutide at 70.2 px on row 648), and only the amount line differs.
 
 Not in this batch: the other rows claimed alongside these in KAN-59/11292 were delivered as batch C1-005. Retatrutide 5 mg stays held on its compound crosswalk, and Pinealon 10 mg waits for its label facts to be posted.
+
+## Correction, 2026-11-05 (KAN-31/11384)
+
+Independent file review of the first commit (`5f1bbaba`, manifest sha256 `437798e0…`) passed every file, asset and catalog join. It found one defect: the manifest's top-level `labelFactSources` omitted `research-batch-05r2.label-facts.json` (sha256 `4ef1eed9…`), which the records for Retatrutide 20, 40 and 50 mg and SS-31 50 mg cite. `write_manifest.py` keyed that index by Jira reference alone. Batches 05r2 and 06 were both posted in KAN-59/10906, so the batch 06 entry replaced the batch 05r2 entry.
+
+This successor is metadata only:
+- the index is keyed by reference, file and sha256, and lists all three label-facts files;
+- `write_manifest.py` stops unless the index equals the distinct label-fact pins of the records;
+- `verify_c1.py` checks that the index has no duplicate entry, equals the distinct record pins, and gives one digest per file;
+- the manifest records the change under `corrections`.
+
+Every record, render, label master, preview and the contact sheet has the same bytes as in `5f1bbaba`.
 
 ## What is in the files
 
@@ -60,7 +72,7 @@ Website caption for every image: **"Packaging design shown. Current packaging ma
 
 ## How the artwork was made
 
-No generative image model was used, and all lettering is set from installed fonts. The method and tools are the same as in batch C1-005 (commit `7e494aa5`). `build_c1.py`, `xr_compose.py`, `svg_label_render.py`, `wpf_kern.ps1`, `verify_c1.py`, `c1_variants.py` and `write_manifest.py` are byte-identical to C1-005's copies, including the do-not-print terms for this batch's compounds that `c1_variants.py` gained there. `variants.json`, the kern table and the build report are this batch's own.
+No generative image model was used, and all lettering is set from installed fonts. The method is the same as in batch C1-005 (commit `7e494aa5`). `build_c1.py`, `xr_compose.py`, `svg_label_render.py`, `wpf_kern.ps1` and `c1_variants.py` are byte-identical to C1-005's copies, including the do-not-print terms for this batch's compounds that `c1_variants.py` gained there. `write_manifest.py` and `verify_c1.py` differ from C1-005's copies only by the label-fact index correction above. `variants.json`, the kern table and the build report are this batch's own.
 
 ### Vial renders
 
@@ -159,6 +171,7 @@ python -I -B -X utf8 deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-006
 The verifier checks:
 - every declared file's bytes, hash and dimensions, plus the tool hashes;
 - that every verified label fact is printed exactly as verified, with the product code on the wrap only;
+- that the top-level label-fact index lists exactly the records' label-fact files, by reference, file and sha256;
 - that the declared vial and per-vial basis are printed, and that each record's form basis cites the manifest's packaging declaration, which is listed under `authority`;
 - the exact text set of each front SVG, plus titles, descriptions and alt text;
 - that the wrap proof id and `artworkVersion` are the record's product code;

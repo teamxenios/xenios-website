@@ -38,7 +38,17 @@ CORRECTIONS = {'c1-003': [dict(
                'for the printed vial and the per-vial amount basis; the manifest carries packagingDeclaration and lists KAN-225/11259 under '
                'authority. labelFacts still cites KAN-59/10855 as the source of each product\'s name, amount, product code and classification. '
                'tools/variants.json carries the declaration per record; c1_variants.py, write_manifest.py and verify_c1.py carry and check '
-               'a declaration on form-bearing facts as well as form-neutral ones. No render, label master, preview or contact sheet changed.')]}
+               'a declaration on form-bearing facts as well as form-neutral ones. No render, label master, preview or contact sheet changed.')],
+    'c1-006': [dict(
+        date='2026-11-05', requestedBy='KAN-31/11384',
+        previousCommit='5f1bbaba5f91dce02b8644a63e5408d182f7f87f',
+        previousManifestSha256='437798e090f6f10c0de90e10ba6756c37da353d6131ccce768b6f28a34fa6d8d',
+        change='Metadata only. labelFactSources now lists research-batch-05r2.label-facts.json, SHA-256 '
+               '4ef1eed93a29da425e11235c8e60dd23fb727b8fe13301115bbb1dbc7ab9560b, which records GEN-GRP-0325, 0327, 0328 and 0344 cite. '
+               'write_manifest.py keyed that index by Jira reference alone; batches 05r2 and 06 share KAN-59/10906, so the batch 06 entry '
+               'replaced the batch 05r2 entry. The index is now keyed by reference, file and SHA-256, and write_manifest.py stops unless it '
+               'equals the distinct label-fact pins of the records. verify_c1.py checks that the index has no duplicate entry, equals the '
+               'distinct record pins and gives one digest per file. Every record, image, label master and the contact sheet are unchanged.')]}
 DRY_RUN = os.environ.get('C1_DRY_RUN') == '1'      # local rehearsal only: placeholders allowed and the output is marked never-publish
 CLAIM_REFS = {'c1-002': 'KAN-59/10695', 'c1-003': 'KAN-59/10722', 'c1-004': 'KAN-59/10869', 'c1-005': 'KAN-59/11292', 'c1-006': 'KAN-59/11292'}     # the post that claimed each batch
 if LABEL not in CLAIM_REFS and not DRY_RUN:
@@ -161,7 +171,10 @@ def main():
         if (vst['productName'] != name or not amount_ok or vst['productCode'] != 'Product code ' + v['sku']
                 or not form_ok or vst['classification'] != 'For laboratory research use only.' or vst['brand'] != 'Xenios'):
             raise SystemExit('label facts disagree with variant for ' + v['slug'])
-        sources[v['labelFactsRef']] = dict(reference=v['labelFactsRef'], file=v['labelFactsFile'], sha256=v['labelFactsSha256'], author='CLAUDE-2')
+        # Keyed by reference, file and digest: two facts files can share one Jira reference (batches 05r2 and 06 are both
+        # KAN-59/10906), and a reference-only key let the later file replace the earlier one (KAN-31/11384).
+        sources[(v['labelFactsRef'], v['labelFactsFile'], v['labelFactsSha256'])] = dict(
+            reference=v['labelFactsRef'], file=v['labelFactsFile'], sha256=v['labelFactsSha256'], author='CLAUDE-2')
         s = v['slug']
         arts = dict(
             website_primary=art('website_primary', 'assets/%s-website-render-v1-1024.webp' % s, 'webp'),
@@ -215,6 +228,12 @@ def main():
                                            'declaration, not a statement about the selected source. The product name, amount, product code and '
                                            'classification keep the label-fact source in labelFacts.')
         records.append(rec)
+    row_pins = {(r['labelFacts']['reference'], r['labelFacts']['file'], r['labelFacts']['sha256']) for r in records}
+    digests = {}
+    for _, f, d in sources:
+        digests.setdefault(f, set()).add(d)
+    if set(sources) != row_pins or any(len(ds) != 1 for ds in digests.values()):
+        raise SystemExit('label-fact index differs from the records\' label-fact pins')
     tools = []
     for f in sorted(os.listdir(os.path.join(BATCH, 'tools'))):
         p = os.path.join(BATCH, 'tools', f)
@@ -284,8 +303,10 @@ def main():
                 form_note]
         else:
             manifest['changesFromC1005'] = [
-                'None: build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1, verify_c1.py, c1_variants.py and write_manifest.py '
-                'are byte-identical to C1-005\'s copies. The kern table covers the strings in this batch.',
+                'None in the build, render or label method: build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1 and '
+                'c1_variants.py are byte-identical to C1-005\'s copies. Since the 2026-11-05 correction (see corrections), '
+                'write_manifest.py keys the label-fact index by reference, file and SHA-256 and stops unless the index equals the '
+                'records\' label-fact pins, and verify_c1.py checks the same. The kern table covers the strings in this batch.',
                 form_note]
     decls = {json.dumps({k: x for k, x in v['packagingDeclaration'].items() if k != 'supersedesFactsForm'}, sort_keys=True)
              for v in VARIANTS if v.get('packagingDeclaration')}
