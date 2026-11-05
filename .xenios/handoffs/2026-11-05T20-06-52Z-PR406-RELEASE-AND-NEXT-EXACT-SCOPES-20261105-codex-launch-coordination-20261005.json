@@ -1,0 +1,390 @@
+{
+  "scope": "PR406 completed release and exact post-release source scopes",
+  "actor": "codex-launch-coordination-20261005",
+  "canonicalPreimage": "7c299151521ffa46021991f9050a7d70228b5633",
+  "release": {
+    "pr": 406,
+    "task": "KAN59-C1-005-C1-006-PAIRED-ART-AND-COPY-20261105",
+    "lease": "032e769c-39d4-4cc6-a9d5-66601ce820ff",
+    "head": "34f81090807dece1250a5eac8674f91dcc02cf60",
+    "commit": "cef961ea1bd5bc97cd381238d22529bbbf1a9107",
+    "tree": "bb893298c5334a313ad738bd1984454ae2662e18",
+    "sourceRun": 42097377765,
+    "run": 42098815467,
+    "passed": 18541,
+    "skipped": 83,
+    "exactReview": "KAN-59/11540",
+    "deploy": "dep-dbme2nqvcj2c739om5eg",
+    "liveAt": "2026-11-05T20:05:57.957938Z",
+    "rollback": {
+      "commit": "90fd0747f156a103591f2cd2b72060955f958ce9",
+      "tree": "5a79b9f3756c241853476bd14a83b043f1cd7de4",
+      "deploy": "dep-dbmdb5l9el5s73a2nh60"
+    },
+    "served": {
+      "start": "2026-11-05T20:06:49.680147+00:00",
+      "finish": "2026-11-05T20:06:52.264135+00:00",
+      "release": "cef961ea1bd5bc97cd381238d22529bbbf1a9107",
+      "pairsAdded": 13,
+      "descriptionRegistry": 45,
+      "mediaRegistry": 57,
+      "assetsExpected": 26,
+      "assetsVerified": 26,
+      "routes": {
+        "/research/early-access/order-request": {
+          "status": 200,
+          "contentType": "text/html; charset=utf-8"
+        },
+        "/earlyaccess": {
+          "status": 404,
+          "contentType": "text/html; charset=utf-8"
+        },
+        "/api/health": {
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "health": "Xenios API is running"
+        },
+        "/api/research/early-access/request-intents/config": {
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "enabled": true
+        }
+      },
+      "assetResults": [
+        {
+          "path": "/research/product-media/liraglutide-20mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45898,
+          "sha256": "9b93ddad8615937cc34e696f7a4f8046b3191242efb2e5b0ac2feabc91f3af2e",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/liraglutide-20mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 42384,
+          "sha256": "7120d168041b2977d98dc6c0dfaf312c112248060a76d8e32525ea4d80bdd9a1",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/cagrilintide-5mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45424,
+          "sha256": "98506815c5584508613d6579c9af7dd3274aa3fa12cb324ddd6a84652c3d8651",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/cagrilintide-5mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 44006,
+          "sha256": "a9b9ea206a51c0cf78ace6bbd2e3f4f4a74beee6946298b3132cfbe73c44e4b6",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/selank-5mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 44796,
+          "sha256": "2112daf0248c066594a6e6d0c99ed69fafe9460c651a67f0a7c2c5216ff972e0",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/selank-5mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 40316,
+          "sha256": "3c0e430b6c7c4bee6c791b96fba82f4ae28efe1e157b031a6893e6a442a4e9ec",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/gonadorelin-5mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45358,
+          "sha256": "b1f48db21af9a0af34a80c05d75776b0677d93af1c228289f2f5bb9f685dbd46",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/gonadorelin-5mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 44346,
+          "sha256": "b7842e6e32cc434132a157bb7284be962ec0ea9509a3c8739aa93f459cbb9a7b",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/ghrp-2-10mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45158,
+          "sha256": "f60426ed96bb01de843b4acc3183e0e9a865ed19db78bbb9ea8d13bf744d2745",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/ghrp-2-10mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 40652,
+          "sha256": "a800ada0fde2e24e4443d8e9cd35700d15f1866589f9843b5aa6d826946264be",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/kisspeptin-5mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45700,
+          "sha256": "7e84f9506940556480c1efa3cecf710778d4928fad0981fd9f18f022fa08777a",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/kisspeptin-5mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 43410,
+          "sha256": "a44ca8b56de14e663b863be1230f020099c9be03c4df6a1cb994619ce33c1139",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/ghrp-6-10mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45314,
+          "sha256": "d15da7353c7d7439ba3cfabed2c9c5d29262009d6a369ad104584482317eecdd",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/ghrp-6-10mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 41106,
+          "sha256": "e6ee35fd3018036b5a51e6ec717d18c22c05a169f1df728b2628c3fd64a833d0",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/dsip-5mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 43756,
+          "sha256": "fa06b8619d811a77f15ed29d9a380a4927044f46e091fe155922feeb03836e47",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/dsip-5mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 38260,
+          "sha256": "07805020b69425f1e944e65f46879dbef667722114b68bbacac403806c51529b",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/liraglutide-10mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45814,
+          "sha256": "bc19a96b9a13cedbef3dc3446d636a15d4475dc0733f8d61fd029860959d3712",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/liraglutide-10mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 43192,
+          "sha256": "10556edb742395e337d277630d60324a8a10a862367ea820b3cbdf40a158e505",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/5-amino-1mq-10mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45510,
+          "sha256": "cf8e5589d031862ab54b94a73321313e771c3897dacdcad7ebc55157d036988e",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/5-amino-1mq-10mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45360,
+          "sha256": "3e962c5833e688e82c68337fcc552ea2dc51ad80083d7e4d11ed034efc05c767",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/melanotan-i-10mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 45576,
+          "sha256": "11e0181cfef594266ba69c3869104254de624b286d4b5a2a1ec93c6a1c050f97",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/melanotan-i-10mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 43910,
+          "sha256": "79d2ee6688d318a530d44dbbe40eeef405e5361088aad434f1085bc108c37ecf",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/ghrp-2-5mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 44726,
+          "sha256": "aff6dcfd33a9680034c671534b9eb50d9999003dfd523855aa077a667387e7f1",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/ghrp-2-5mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 40046,
+          "sha256": "2e41a1e5ff1dfff6985f996468ab60884704d06d371707d41e062af95cc2a0ee",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/kpv-5mg-website-render-v1-1024.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 43734,
+          "sha256": "94c650508498a950035813798626f74bc99e84503b489ae4865729e31b1326bc",
+          "verified": true
+        },
+        {
+          "path": "/research/product-media/kpv-5mg-front-artwork-v1.webp",
+          "status": 200,
+          "mime": "image/webp",
+          "bytes": 38456,
+          "sha256": "208bccd7653bfa80f761a219eb28727457083362bcfcd8fe2834833492e2bef8",
+          "verified": true
+        }
+      ],
+      "scope": "Direct HTTPS public asset bytes and route/configuration GETs."
+    },
+    "guestPayload": {
+      "record": "KAN-13/11546",
+      "variants": 420,
+      "descriptionMatches": 45,
+      "mediaMatches": 57,
+      "newPairs": 13,
+      "sha256": "02a619cd24a73c79d786439b72406ac9b0277c605840e9bde0481955c657af45"
+    }
+  },
+  "renderer": {
+    "pr": 407,
+    "head": "ae7dbc947f6d3be77b0237578149f1717287b804",
+    "tree": "4ea5b505844d8a1cde48a1c28a6768434f907ab4",
+    "lease": "81b7984e-cacb-4fd7-b660-adecc5b59bfb",
+    "run": 42100555581,
+    "state": "Owned source and hosted checks, awaiting qualification"
+  },
+  "accelerator": {
+    "archive": "C:/Users/sboad/Downloads/XENIOS_EARLY_ACCESS_CODE_ACCELERATOR_2026-11-05.zip",
+    "sha256": "3d6cd78fc66cdcbb271a31dbf0e3f758aa2ed255e0061810435ada110d996257",
+    "entries": 21,
+    "verifiedManifestEntries": 20,
+    "standing": {
+      "status": "PREPARED_FOR_REVIEW",
+      "output": "C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/early-access-accelerator-intake-20261105/standing-refresh-review",
+      "head": "34f81090807dece1250a5eac8674f91dcc02cf60",
+      "files": [
+        {
+          "path": "client/src/research/early-access/EarlyAccessRoute.tsx",
+          "beforeGitBlob": "5a227194b853467fcedd91a0f264a8b797ed3090",
+          "afterGitBlob": "495d7d3451f9f3d77f7db4ddf14b3d9efbdf4dd9",
+          "afterSha256": "0afa6a1ca77a2ca68fd460a346ddebe7c8ff0dbadf57dc9f1ea3e3315c5bb949"
+        },
+        {
+          "path": "client/src/research/assisted-order/OrderRequestEntry.tsx",
+          "beforeGitBlob": "98bbf29c4bb808f34bf17d0532dfe7fc476f586f",
+          "afterGitBlob": "5a58cf5f29eaea9ec0abcd72cc8d23c40db8cb57",
+          "afterSha256": "7b9e1a7348609fb37bf7a513efcc86a38f0f0c99fecc269d89182bbcf02b7a39"
+        },
+        {
+          "path": "client/src/research/assisted-order/RequestIntentEntry.tsx",
+          "beforeGitBlob": "887ecf46496199c63bd5d0c755811f530dc2731e",
+          "afterGitBlob": "c9036db4dc6dff924d8484c5b043712046c6f35a",
+          "afterSha256": "696ebf22424faf8427f022637150373bab5ccd3f8eb180ce97bbc13ebbb65e52"
+        },
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.tsx",
+          "beforeGitBlob": "d09bda47299b3a76c8667d551f4ca640d20790f5",
+          "afterGitBlob": "5299a404804b5d1c557e62775f90c47e13021b7d",
+          "afterSha256": "7d6c9682de510e4167c6ba459c2a8d6322a86aa0ba3d47edd484520bea9c8dc6"
+        },
+        {
+          "path": "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+          "beforeGitBlob": "c146050e63e672da11247d475a8a12128418f5e6",
+          "afterGitBlob": "88ad48a2f23aeddd8f8eada2de51a24560deea38",
+          "afterSha256": "10bea5203a13acd6f71349930673f7f3f438256893124813ea64f5925c8a17d2"
+        },
+        {
+          "path": "client/src/research/assisted-order/RequestIntentEntry.agreement-refresh.test.tsx",
+          "beforeGitBlob": null,
+          "afterGitBlob": "0b78b88f53ed694eed04bf6cffc3cebddff02417",
+          "afterSha256": "5ae6ae798baca75d906f4632e681215884d831b1c68af04edb3474c3a5c9b528"
+        },
+        {
+          "path": "client/src/research/early-access/agreement-refresh-fence.test.ts",
+          "beforeGitBlob": null,
+          "afterGitBlob": "760ad42a8af0048408fab5f48e382d671b0f4776",
+          "afterSha256": "e8343cd585d07579fc2d86b3932ce09cc8d7c3ed61f50d01a27ea5e5ce40d0c4"
+        },
+        {
+          "path": "client/src/research/early-access/agreement-refresh-fence.ts",
+          "beforeGitBlob": null,
+          "afterGitBlob": "0ee1c2042d20c069e4142dd672f70b9b7e7646aa",
+          "afterSha256": "af665ba2f66dd1781749df5357c996251dd00c1878cb783be2d956b51e0e96c0"
+        },
+        {
+          "path": "client/src/research/early-access/EarlyAccessRoute.agreement-refresh.test.tsx",
+          "beforeGitBlob": null,
+          "afterGitBlob": "962ac834375232be5119f29cdcb51e4cf097805b",
+          "afterSha256": "2e281e5b063ad987bbc2149df4960c28af03779656907a95896cb35f9732ae27"
+        }
+      ],
+      "patchSha256": "417bc9ed62a784298f730a7d57958a162f8a43b39e98519fd8777e0c2d879b5e",
+      "receiptSha256": "369c6230d017817b8c09f2a623663852861221e0cd8e180dff0b41b8b18cedb7",
+      "task": "KAN13-EA-SAME-TAB-STANDING-REFRESH-20261105",
+      "branch": "codex/early-access-standing-refresh-20261105",
+      "allowedBase": "cef961ea1bd5bc97cd381238d22529bbbf1a9107",
+      "treeOnAllowedBase": "40e7fe6398cf742a858a1633397478f2b1343c7c",
+      "optionalRendererSuccessorTree": "f3933c13d4640e8f32e428afd3ed96c0480fd54a",
+      "scope": "Unchanged prepared patch only. Tests and independent source review still required."
+    },
+    "capture": {
+      "status": "PREPARED_FOR_REVIEW",
+      "output": "C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/early-access-accelerator-intake-20261105/capture-v2-review",
+      "head": "34f81090807dece1250a5eac8674f91dcc02cf60",
+      "files": [
+        {
+          "path": "scripts/evidence/capture-synthetic-journeys.mjs",
+          "beforeGitBlob": "2799c408b443f05179894eb5c123a02b44a5b0d1",
+          "afterGitBlob": "ee66656265efedf696a0c8e56e2b7ef07d5136df",
+          "afterSha256": "0e3f8addf7e2e64f4bf851c1c3f69eb6e1956d361a7a69c1ad63f33a76065d01"
+        }
+      ],
+      "patchSha256": "0efbd056af9ae8e620a1ea154b5d950cd8ec817d2fe736ca38308d7f8d3b8c28",
+      "receiptSha256": "d3344bcb4e533fc9181e8202780a8aa22c4d7564105670b4738a816a0f12f200",
+      "scope": "Separate one-path input for qualified policy-v2/configuration cutover. No standalone adoption, no capture job."
+    }
+  },
+  "frozen113": {
+    "path": "C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/REVIEWED_PUBLIC_CONTENT_113_REBASED_PR406.PROPOSED.json",
+    "bytes": 819766,
+    "sha256": "de94b7d5bba1987086fbbc9f8331ff9419b7aa95c29be5f4efe7306a16b7fab8",
+    "gitBlob": "97cb7817b20131e1372fb98a82c86365cbcb04c3",
+    "copiesPreserved": 45,
+    "previousCorrectionsConserved": 12,
+    "newPairs": 68,
+    "newWithLongCautions": 38,
+    "newWithMedia": 9,
+    "scope": "Prospective source input. No per-row publication or production claim.",
+    "task": "KAN13-EA-FROZEN113-CLEARED-SUBSET-20261105",
+    "branch": "codex/early-access-frozen-copy-cleared-20261105",
+    "pathScope": "server/research/master-offerings/data/reviewed-public-content.json",
+    "exactFrozenSource": "KAN-6/11437",
+    "gate": "Only exact new rows with independently evidenced publication clearance; wait for renderer if they use long Cautions. Preserve all 45 prior records and twelve corrections byte for byte."
+  }
+}

@@ -3119,13 +3119,11 @@
       "task": "KAN225-EARLY-ACCESS-MOBILE-GUEST-20261104",
       "session": "codex-launch-coordination-20261005",
       "paths": [
-        "client/src/research/assisted-order/RequestIntentForm.tsx",
         "client/src/research/assisted-order/assisted-order.css",
         ".github/workflows/qo-visual-capture.yml",
         "scripts/qa/qo-visual-capture/capture.mjs",
         "scripts/qa/qo-visual-capture/fixture.mjs",
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
-        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
         "scripts/qa/qo-visual-capture/build-pr391-routed-copy-fixture.cjs",
         "scripts/qa/qo-visual-capture/build-pr393-prospective-fixture.cjs",
         "scripts/qa/qo-visual-capture/capture-dispatch.mjs",
@@ -3386,7 +3384,7 @@
         "server/research/master-offerings/data/reviewed-public-media.json",
         "client/src/research/master-offerings/product-media.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-05T19:16:29.068799Z",
       "heartbeatAt": "2026-11-05T19:16:29.068799Z"
     },
@@ -3400,6 +3398,36 @@
       "state": "active",
       "claimedAt": "2026-11-05T19:41:35.1348855Z",
       "heartbeatAt": "2026-11-05T19:41:35.1348855Z"
+    },
+    {
+      "id": "c91f3ef1-6a32-4143-91cb-a7a9382a702d",
+      "task": "KAN13-EA-SAME-TAB-STANDING-REFRESH-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentEntry.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+        "client/src/research/assisted-order/RequestIntentEntry.agreement-refresh.test.tsx",
+        "client/src/research/early-access/agreement-refresh-fence.test.ts",
+        "client/src/research/early-access/agreement-refresh-fence.ts",
+        "client/src/research/early-access/EarlyAccessRoute.agreement-refresh.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T20:19:20.6287069Z",
+      "heartbeatAt": "2026-11-05T20:19:20.6287069Z"
+    },
+    {
+      "id": "3054e5a0-b7e7-4971-8f2d-145033e8a528",
+      "task": "KAN13-EA-FROZEN113-CLEARED-SUBSET-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T20:19:20.6287069Z",
+      "heartbeatAt": "2026-11-05T20:19:20.6287069Z"
     }
   ],
   "rules": [
