@@ -49,8 +49,8 @@ function GuestCatalogDetails({ item, variantIds }: {
         View details
       </button>
     </DialogTrigger>
-    <DialogContent className="max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 grid-cols-1 overflow-y-auto rounded-xl bg-paper text-ink max-sm:px-[16px]">
-      <DialogTitle className="break-words pr-8 max-sm:pr-[40px]">{item.productName}</DialogTitle>
+    <DialogContent className="max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink max-[701px]:grid-cols-[minmax(0,1fr)] max-[701px]:px-[16px]">
+      <DialogTitle className="break-words pr-8 max-[701px]:pr-[max(40px,calc(2rem_+_8px))]">{item.productName}</DialogTitle>
       <DialogDescription className="text-ink-mute">
         {item.selectableForReview
           ? "Return to the catalog to add this selection for review. Final quantities, prices and availability are confirmed during review."
