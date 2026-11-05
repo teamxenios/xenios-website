@@ -1,0 +1,38 @@
+{
+  "schema": "xenios.source-qa-handoff.v1",
+  "task": "KAN6-EA-TWO-NEUTRAL-DESCRIPTIONS-20261105",
+  "lease": "4dc24268-a0c1-40bd-b20f-87aef59f7d28",
+  "owner": "codex-launch-coordination-20261005",
+  "pr": 402,
+  "source": "dd8f93d5dbce80384752e5634c6b8606ff2bd771",
+  "tree": "2709429fd1596e665afd414b081f81e33bfda980",
+  "base": "5f5dd296d84605fddd30cd476e5ad4773c366ba2",
+  "manifest": "66ba8268352499009ef1db063a07146b8ea6882f",
+  "manifestSHA256": "d708ac7c42b5bb249b23fc0c0705bc4227251abce779cbb24a243fd1d394bad2",
+  "rows": [
+    "0413",
+    "0401"
+  ],
+  "sourceEvidence": [
+    "KAN-6/11300",
+    "KAN-31/11296"
+  ],
+  "hosted": {
+    "run": 42037305686,
+    "attempt": 1,
+    "trustedChecks": 5,
+    "passed": 18536,
+    "failed": 0,
+    "skipped": 83,
+    "sha256": "a84d0bd542f3888e6087e4fb00ad40dc97d6cdaee85ee1bb5728e167043d4368"
+  },
+  "mounted": {
+    "jira": "KAN-31/11323",
+    "receiptBytes": 8449,
+    "sha256": "7c3642d4293318ae09cd1566cc3074730a32410e519fd0e463cdc52169fb07ed",
+    "guestAndStandalone": 6,
+    "embedded": 6,
+    "errors": 0
+  },
+  "scope": "One exact reviewed copy manifest path. Thirty prior descriptions and 41 existing artwork mappings conserved. Two form-neutral description additions. Mounted qualification uses isolated synthetic Chromium fixtures."
+}

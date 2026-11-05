@@ -4133,7 +4133,7 @@
       "id": "KAN6-EA-TWO-NEUTRAL-DESCRIPTIONS-20261105",
       "title": "Adopt two neutral Early Access descriptions",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-6",
       "baseSha": "5f5dd296d84605fddd30cd476e5ad4773c366ba2",
       "paths": [
@@ -4145,7 +4145,13 @@
       "scopeNote": "Founder-directed next exact copy task allocated to existing Root at amended and verified KAN-6 comment 11300 for the exact protected PR399 release source. Limit source work exactly to server/research/master-offerings/data/reviewed-public-content.json on branch codex/early-access-two-neutral-descriptions-20261105 from protected release 5f5dd296d84605fddd30cd476e5ad4773c366ba2/tree a2904deb600e5b1fd0790ce6e802bd62938e3ab9, with unchanged exact base copy blob 40508370456bc21e495f585fbeb96978dfb3f021. Adopt only the approved neutral rows GEN-GRP-0413 and GEN-GRP-0401 in KAN-31 comment 11296, from the exact 81100-byte raw candidate with SHA-256 d708ac7c42b5bb249b23fc0c0705bc4227251abce779cbb24a243fd1d394bad2 and prospective Git blob 66ba8268352499009ef1db063a07146b8ea6882f. Preserve all previous 30 records, approval actions and unknown-form controls. Previous PR397 copy lease 94612cf0-7d1b-4610-b093-5f1c5bf50ede remains immutable in HANDOFF with its original heartbeat. PR399 release checks remain pending independently; this claim does not qualify or mutate release state. Fresh active/reserved exact, ancestor, prefix and wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict; all prior exact-path leases are HANDOFF history. Preserve every historical record, prior heartbeat, foreign state, session, current C3 and clinical lease and branch, release file and ref. This custody transaction performs no source checkout, release action, provider, browser, Node, test, new session or worktree action.",
       "createdAt": "2026-11-05T13:31:52.3529784Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-05T13:31:52.3529784Z"
+      "claimedAt": "2026-11-05T13:31:52.3529784Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "dd8f93d5dbce80384752e5634c6b8606ff2bd771",
+        "file": ".xenios/handoffs/2026-11-05T14-05-33Z-KAN6-EA-TWO-NEUTRAL-DESCRIPTIONS-20261105-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T14:05:33Z"
+      }
     },
     {
       "id": "KAN59-C1-004-THREE-RETATRUTIDE-ARTWORK-20261105",
@@ -4170,6 +4176,24 @@
       "createdAt": "2026-11-05T13:43:05.8585800Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-05T13:43:05.8585800Z"
+    },
+    {
+      "id": "KAN13-EA-TWELVE-FORM-NEUTRAL-COPY-20261105",
+      "title": "Apply twelve form-neutral Early Access copy replacements",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "b600f9d89bbfdfad9f0dae02d7188dfd04a4f24a",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "dependsOn": [
+        "KAN6-EA-TWO-NEUTRAL-DESCRIPTIONS-20261105"
+      ],
+      "scopeNote": "Use the established registered Root session under the exact Root handoff at KAN-13 comment 11457. Limit source work exactly to twelve independently reviewed form-neutral replacements in server/research/master-offerings/data/reviewed-public-content.json from protected release b600f9d89bbfdfad9f0dae02d7188dfd04a4f24a/tree 7ff832681cfd7c34408a2c81d8b0ace369f2c915 and unchanged base copy blob 66ba8268352499009ef1db063a07146b8ea6882f, on intended branch codex/early-access-form-neutral-copy-correction-20261105. Root verified the one-file private patch replay as prospective tree 0cd6e466fbd346e08ec52832f9159492ce78cead, prospective manifest blob dbe7c9aec4330afded89420139baff3ae8e1b598 and patch SHA-256 74abeb20105276cd5490eb1702847aebc5cd014b454d47f945568cd235070eed; all twelve replacements match the independently reviewed digests. Preserve all unrelated records and authority. The alias and its Website 2 paths remain under their own handoff and are excluded. Fresh post-PR402-handoff active/reserved exact, ancestor, prefix and wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no conflict. Root retains source application, verification and release. This custody transaction performs no source edit or checkout, test, deployment, provider write, settings, supplier operation, new session or worktree action.",
+      "createdAt": "2026-11-05T18:24:43.0405694Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T18:24:43.0405694Z"
     }
   ]
 }
