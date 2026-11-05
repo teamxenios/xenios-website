@@ -950,6 +950,58 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_f35e748aed26af26e9e4",
+      "sourceVariantId": "mov_8bec8068d30d6f928040",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Seven-amino-acid analogue of the ACTH(4-10) fragment studied in rat brain models. Listed at 30 mg for laboratory research.",
+        "overview": "Semax is a synthetic seven-amino-acid peptide, Met-Glu-His-Phe-Pro-Gly-Pro, described in the literature as an analogue of the N-terminal fragment 4-10 of adrenocorticotropic hormone (ACTH). In membranes from the rat basal forebrain, tritium-labelled Semax bound to specific, reversible, calcium-dependent binding sites, and giving the peptide to rats raised brain-derived neurotrophic factor (BDNF) protein in the basal forebrain 3 hours later but not in the cerebellum. In the rat hippocampus, a single administration increased BDNF protein, tyrosine phosphorylation of its receptor trkB, and BDNF (exon III) and trkB mRNA levels, and rats that received it made more conditioned avoidance responses. In rodents, Semax raised striatal levels of the serotonin metabolite 5-HIAA without changing dopamine or its metabolites on its own, but it enhanced the dopamine release and locomotor activity produced by D-amphetamine. In a rat model of permanent middle cerebral artery occlusion, a genome-wide analysis of the cortex found that Semax mainly altered the expression of immune-system genes, notably those encoding immunoglobulins and chemokines, as well as genes related to the vascular system. These rodent findings do not establish effects of this research material in people. The catalog lists this item with a listed amount of 30 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "30 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0413"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on ACTH-derived peptides, BDNF/trkB signaling, monoamine neurochemistry and focal brain ischemia in rodent models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_2c3aec78638c9e2ff2a8",
+      "sourceVariantId": "mov_13073979f2da65f4e160",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Two-subunit glycoprotein hormone, described in the published record as an alpha and beta dimer and studied as recombinant subunits in cell assays. Listed at 120000 IU for laboratory research.",
+        "overview": "Human chorionic gonadotropin, written hCG, is a glycoprotein hormone made of two different subunits rather than a single chain. A 2020 study describes hCG as a dimer of two highly glycosylated subunits, an alpha subunit and a beta subunit, and notes that the beta protein is encoded by the CGB3, CGB5, CGB7 and CGB8 genes, that CGB3, CGB5 and CGB8 encode an identical protein, and that CGB7 differs from it in three amino acids. That study produced and isolated recombinant alpha, CGB7 and CGB3/5/8 proteins and compared their glycosylation, finding the N- and O-glycosylation patterns of the two beta variants quite similar. Testing activation of the ERK1/2 pathway, it reported the two beta variants to be functionally redundant isoforms, with a slight difference in the kinetics of that activation, and recorded biological activity for CGB7 for the first time. Reference records give the alpha subunit as a 116-residue precursor with a signal region at 1 to 24 and the mature chain at 25 to 116, and the choriogonadotropin beta subunit as a 165-residue precursor with a signal region at 1 to 20 and the mature chain at 21 to 165; those records name the alpha subunit as the chain shared with the other glycoprotein hormones, so the beta subunit is what distinguishes this hormone from them. The catalog states this listing in international units, which express activity rather than mass, and no source read here states a mass equivalence for this material, so the amount is reproduced as the catalog gives it and no milligram figure is implied. This listing is a laboratory research material and not a medicine. The findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 120000 IU, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "120000 IU"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0401"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on glycoprotein hormone subunit chemistry, glycosylation and receptor pathway activation in cell assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }
