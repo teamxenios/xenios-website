@@ -44,7 +44,7 @@ export function orderTone(status: string): BadgeTone {
 export default function OrdersAdmin() {
   return (
     <AdminScreen title="Orders" lead="Native commerce orders, by status. Open a row for items, payment state, and fulfillment.">
-      {(token) => <OrdersBody token={token} />}
+      {(token) => <OrdersBody key={token} token={token} />}
     </AdminScreen>
   );
 }
