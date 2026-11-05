@@ -5,6 +5,7 @@ import { getSupabaseBrowser, isRecoveryAccessToken } from "@/lib/supabaseBrowser
 import { PageIntro } from "../components";
 import { useResearch } from "../core";
 import { denialDestination, memberDestination, safeResearchReturnTo } from "../lib/member-routing";
+import { ACCESS_ROUTES } from "../lib/routes";
 import { researchAuthPath } from "@shared/research/auth-return-to";
 
 // Ordinary Supabase sign-in; canonical customer access is verified by the
@@ -164,9 +165,9 @@ export default function SignIn() {
             Need customer access? <Link href="/research/apply" className="underline ra-documentation-link" data-testid="link-signin-apply">View application information</Link>
           </p>
           <p className="body-s text-ink-mute">
-            <Link href="/research/policies/privacy" className="underline ra-documentation-link" data-testid="link-signin-privacy">Privacy</Link>
+            <Link href={ACCESS_ROUTES.privacy} className="underline ra-documentation-link" data-testid="link-signin-privacy">Privacy</Link>
             {" · "}
-            <Link href="/research/policies/terms" className="underline ra-documentation-link" data-testid="link-signin-terms">Terms</Link>
+            <Link href={ACCESS_ROUTES.terms} className="underline ra-documentation-link" data-testid="link-signin-terms">Terms</Link>
             {" · "}
             <a href="mailto:team@xeniostechnology.com" className="underline ra-documentation-link" data-testid="link-signin-support">Support</a>
           </p>
