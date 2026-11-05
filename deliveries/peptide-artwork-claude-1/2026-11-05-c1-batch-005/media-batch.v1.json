@@ -1,0 +1,5177 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-05-batch-c1-005",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644",
+  "KAN-225/10683",
+  "KAN-59/11292",
+  "KAN-225/11259"
+ ],
+ "labelFactSources": [
+  {
+   "reference": "KAN-6/10624",
+   "note": "Session 3 static artwork facts: product code wording"
+  },
+  {
+   "reference": "KAN-59/10906",
+   "file": "research-batch-06.label-facts.json",
+   "sha256": "af47cfa0798c1e6db8d7f64770194c906b471153d393975bfb4cce96818e2532",
+   "author": "CLAUDE-2"
+  },
+  {
+   "reference": "KAN-59/10937",
+   "file": "research-batch-07.label-facts.json",
+   "sha256": "e8c583bfc8e51c59e42446986406c807c51672b595db214652506b9612f03366",
+   "author": "CLAUDE-2"
+  },
+  {
+   "reference": "KAN-59/10980",
+   "file": "research-batch-09.label-facts.json",
+   "sha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+   "author": "CLAUDE-2"
+  },
+  {
+   "reference": "KAN-59/11039",
+   "file": "research-batch-10.label-facts.json",
+   "sha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+   "author": "CLAUDE-2"
+  },
+  {
+   "reference": "KAN-59/11051",
+   "file": "research-batch-11.label-facts.json",
+   "sha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+   "author": "CLAUDE-2"
+  },
+  {
+   "reference": "KAN-59/11064",
+   "file": "research-batch-12.label-facts.json",
+   "sha256": "6adc2ed52d587f3bdb27ed4c960d472e5ccb4d1e483c99f6e4ff9efbf6fee201",
+   "author": "CLAUDE-2"
+  },
+  {
+   "reference": "KAN-59/11091",
+   "file": "research-batch-14.label-facts.json",
+   "sha256": "d41207c0a3d85789d48d4668a6ecd8c5e8557022fe2ea45bd37e0f271cfe1fe5",
+   "author": "CLAUDE-2"
+  },
+  {
+   "reference": "KAN-59/11136",
+   "file": "research-batch-15.label-facts.json",
+   "sha256": "62e4715f2734b8589de1d322fb33535b6838bc25830889d6d04a8a5475d6207e",
+   "author": "CLAUDE-2"
+  }
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor, but only when stacking sets the name larger than one line does; otherwise it stays on one line.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes.",
+  "The wrap proof id is the exact product code (for example GEN-GRP-0256-WRAP-v1), not code-amount, because code-amount can spell a fragment name that label facts forbid (KISSPEPTIN-10 in C1-002)."
+ ],
+ "changesFromC1001": [
+  "The build reads its variants (names, amounts, codes, verified label text) from tools/variants.json instead of a constant.",
+  "Amounts other than 10 mg (5, 15, 20, 30, 35, 500, 1000 and 1500 mg here) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
+  "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
+  "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
+  "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 1556383,
+  "sha256": "871621c69e516b3ddd646e676da0344aafa63f54d7d9b9e93d8dfa481a6c8e25",
+  "width": 1800,
+  "height": 4260
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/build-report.json",
+   "bytes": 211610,
+   "sha256": "92a474b5f084310ae548b25659a65cab1662cdcd51e2819f5daee07c18a9c4f8"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/build_c1.py",
+   "bytes": 13988,
+   "sha256": "d579a76704132069f359c557528bc4eabd3602abdd016665e84fdf1e7064e6af"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/c1_variants.py",
+   "bytes": 7565,
+   "sha256": "e2f13f9b66747b10505e16da042832358f39e25f8b5c7b3c186feb52457b7404"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/kern-table.segoe-ui.json",
+   "bytes": 30293,
+   "sha256": "bd47c330d834a24baa5b1bc236d47f1f1e73e38956264e69f8b5c560f6018364"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/svg_label_render.py",
+   "bytes": 13893,
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/variants.json",
+   "bytes": 32172,
+   "sha256": "dadcd630a7298481f1b5cc21c2f2d9211b914e5c159943edd131e61e13a0544c"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/verify_c1.py",
+   "bytes": 17902,
+   "sha256": "9ff86213080eb8485c17646ee02d38b1a3bd70344dd593514578fa23efd58718"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/wpf_kern.ps1",
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/write_manifest.py",
+   "bytes": 25949,
+   "sha256": "d6b6af120d88037b471450846528c38af3e891cf64fe4aa70d09fac3db6d7884"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/tools/xr_compose.py",
+   "bytes": 9271,
+   "sha256": "573c4ceb08c57e769d9634ee6eb1436e512129043619a63a2f174786293c6ac9"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_afb0add32da0de7426f5",
+   "sourceVariantId": "mov_9262033fe69a14a50f1c",
+   "quickOrderSku": "GEN-GRP-0256",
+   "quickOrderProductId": "2e6e3e47-87dc-4b20-b9ee-a1f2a3eddbdd",
+   "quickOrderVariantId": "ed46f285-53da-444f-a585-5b388cf8da85",
+   "canonicalName": "5-Amino-1Mq",
+   "catalogDisplayName": "5-Amino-1Mq",
+   "canonicalVariant": "5-Amino-1MQ 10 mg",
+   "catalogVariantLabel": "5-AMINO-1MQ 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0256-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10906",
+    "file": "research-batch-06.label-facts.json",
+    "sha256": "af47cfa0798c1e6db8d7f64770194c906b471153d393975bfb4cce96818e2532",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "5-Amino-1MQ",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0256"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "5-Amino-1MQ",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0256"
+   },
+   "extraDoNotPrintTerms": [
+    "NNMT",
+    "metabolism",
+    "fat",
+    "weight",
+    "NAD+ benefit"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "5-Amino-1MQ",
+      "fontSizePx": 53.6,
+      "baselineRow": 643,
+      "inkBox": [
+       458,
+       603,
+       800,
+       647
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 53.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1286.0
+    },
+    "wrapFrontPanel": {
+     "fontSize": 126.0,
+     "letterSpacing": -4.32,
+     "baseline": 513.0,
+     "inkRightEstimate": 957.8
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios 5-Amino-1MQ 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/5-amino-1mq-10mg-website-render-v1-1024.webp",
+     "sha256": "cf8e5589d031862ab54b94a73321313e771c3897dacdcad7ebc55157d036988e"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios 5-Amino-1MQ 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/5-amino-1mq-10mg-front-artwork-v1.webp",
+     "sha256": "3e962c5833e688e82c68337fcc552ea2dc51ad80083d7e4d11ed034efc05c767"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/5-amino-1mq-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45510,
+     "sha256": "cf8e5589d031862ab54b94a73321313e771c3897dacdcad7ebc55157d036988e",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/5-amino-1mq-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986163,
+     "sha256": "334773ec82b31df20a0fd744f81ce0fa989878be07cd9e14b4de11a61cdc94e2",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/5-amino-1mq-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3011,
+     "sha256": "1d24e7a8ab245f0beb344c53f7e111c62c01f10788498a1e9cb1ede63fbad0c1",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/5-amino-1mq-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 118414,
+     "sha256": "857bb26ce1ec7cab7d13911120d78ea3ce813141da665254ba569b8e53690d7b",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/5-amino-1mq-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 45360,
+     "sha256": "3e962c5833e688e82c68337fcc552ea2dc51ad80083d7e4d11ed034efc05c767",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/5-amino-1mq-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6995,
+     "sha256": "c6f9403cbd5978db38eb414260a0ef83e7fad8200d38d55da751961638dad7bf",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/5-amino-1mq-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 382519,
+     "sha256": "6b7ef30d273cd4566ec81ef3af10c9439dd577cbcdebeb1bdcfb47a029544abb",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/5-amino-1mq-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 160014,
+     "sha256": "1f91902480fe5526963ef290b90979a35108dd5b8b5b757c3162f220ec7ec5cb",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "nameVariance": {
+    "catalogDisplayName": "5-Amino-1Mq",
+    "printedName": "5-Amino-1MQ",
+    "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_8cca713c2b203a712494",
+   "sourceVariantId": "mov_718e52d07396abd5b2dc",
+   "quickOrderSku": "GEN-GRP-0281",
+   "quickOrderProductId": "efb533c4-c73d-481a-98e5-7a1533c785af",
+   "quickOrderVariantId": "7eb18c07-d883-4ea9-a2a0-c6cb7e218ebd",
+   "canonicalName": "Dsip",
+   "catalogDisplayName": "Dsip",
+   "canonicalVariant": "DSIP 5 mg",
+   "catalogVariantLabel": "DSIP 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0281-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10937",
+    "file": "research-batch-07.label-facts.json",
+    "sha256": "e8c583bfc8e51c59e42446986406c807c51672b595db214652506b9612f03366",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "DSIP",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0281"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-225/10819 class, KAN-31/10870, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "DSIP",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0281"
+   },
+   "extraDoNotPrintTerms": [
+    "sleep",
+    "EEG"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "DSIP",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       592,
+       643,
+       657
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 524.2
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 455.5
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios DSIP 5 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/dsip-5mg-website-render-v1-1024.webp",
+     "sha256": "fa06b8619d811a77f15ed29d9a380a4927044f46e091fe155922feeb03836e47"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios DSIP 5 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/dsip-5mg-front-artwork-v1.webp",
+     "sha256": "07805020b69425f1e944e65f46879dbef667722114b68bbacac403806c51529b"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/dsip-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 43756,
+     "sha256": "fa06b8619d811a77f15ed29d9a380a4927044f46e091fe155922feeb03836e47",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/dsip-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 978214,
+     "sha256": "31dcab214ab813ded29ad08429d54922defca9a06fda239aad7c1056cada9571",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/dsip-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2986,
+     "sha256": "0a90d31bd70313991f2e296a64f34592aad126a2e7068a1e62b0acabf966a21c",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/dsip-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 94936,
+     "sha256": "21a1734c0c98fcf31ccd69c2ea64d614f17083bda9a21cadbcabe3e685088e22",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/dsip-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 38260,
+     "sha256": "07805020b69425f1e944e65f46879dbef667722114b68bbacac403806c51529b",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/dsip-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6959,
+     "sha256": "4186846d045cf45966bc07817e8689f453a3d8320c78bae17f9d0d9dacf7fbc2",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/dsip-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 362488,
+     "sha256": "8c0c757484041d96b38f10380b25efd506eb4c3b75341cd79218b989e1f86f8b",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/dsip-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 153468,
+     "sha256": "7be2f16ca925d4921d9d4efb466871e27ee51c9dc3916689976f7686e6a545d3",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "nameVariance": {
+    "catalogDisplayName": "Dsip",
+    "printedName": "DSIP",
+    "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_6d5f244f45892249b132",
+   "sourceVariantId": "mov_4d4f3fc085df5aaf9ae8",
+   "quickOrderSku": "GEN-GRP-0309",
+   "quickOrderProductId": "d591dc7d-a587-429f-aadb-5abb02267553",
+   "quickOrderVariantId": "d08bb43f-7e10-4fde-9dbf-8d04a64637a6",
+   "canonicalName": "Kisspeptin",
+   "catalogDisplayName": "Kisspeptin",
+   "canonicalVariant": "Kisspeptin 5 mg",
+   "catalogVariantLabel": "KISSPEPTIN 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0309-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10937",
+    "file": "research-batch-07.label-facts.json",
+    "sha256": "e8c583bfc8e51c59e42446986406c807c51672b595db214652506b9612f03366",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Kisspeptin",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0309"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-225/10819 class, KAN-31/10870, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Kisspeptin",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0309"
+   },
+   "extraDoNotPrintTerms": [
+    "Kisspeptin-10",
+    "Kisspeptin-54",
+    "fertility",
+    "puberty",
+    "reproductive"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Kisspeptin",
+      "fontSizePx": 77.6,
+      "baselineRow": 650,
+      "inkBox": [
+       458,
+       593,
+       800,
+       667
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 77.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 954.0
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 811.2
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Kisspeptin 5 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kisspeptin-5mg-website-render-v1-1024.webp",
+     "sha256": "7e84f9506940556480c1efa3cecf710778d4928fad0981fd9f18f022fa08777a"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Kisspeptin 5 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kisspeptin-5mg-front-artwork-v1.webp",
+     "sha256": "a44ca8b56de14e663b863be1230f020099c9be03c4df6a1cb994619ce33c1139"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kisspeptin-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45700,
+     "sha256": "7e84f9506940556480c1efa3cecf710778d4928fad0981fd9f18f022fa08777a",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kisspeptin-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 982269,
+     "sha256": "81f9e24776b6650bae695d214bab9abe7862f939e2f06006e45fd00d6de7ac69",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/kisspeptin-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3004,
+     "sha256": "6e9932bb3c37d5218ee81b261b9519ca871ba48c154b87d35a62057c2c719d6e",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kisspeptin-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 111471,
+     "sha256": "d42731e2366e5b393d76c9a9fc260450b7d368f11485d8c551d12d39c189107b",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kisspeptin-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 43410,
+     "sha256": "a44ca8b56de14e663b863be1230f020099c9be03c4df6a1cb994619ce33c1139",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/kisspeptin-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6983,
+     "sha256": "2144166cb119998625c3d36b094238380dbfc725e86c94135a48939854cf169a",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kisspeptin-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 378810,
+     "sha256": "052ae1e2e106e3616ab57b7c3bda0c37b841998492e98658d9857989f76b028e",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kisspeptin-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 159192,
+     "sha256": "9aadc2dd400f3cdc89d6a95686cdf621bac36d49c2718e0ce8c30c1e26526ff1",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_4df776b9fb9b2d4b7302",
+   "sourceVariantId": "mov_538e701ea3907d766c38",
+   "quickOrderSku": "GEN-GRP-0332",
+   "quickOrderProductId": "a21aebe9-9c38-4bd3-ad63-016086ece085",
+   "quickOrderVariantId": "4b164966-9172-4063-b230-f8c468dd5212",
+   "canonicalName": "Selank",
+   "catalogDisplayName": "Selank",
+   "canonicalVariant": "Selank 5 mg",
+   "catalogVariantLabel": "SELANK 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0332-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10937",
+    "file": "research-batch-07.label-facts.json",
+    "sha256": "e8c583bfc8e51c59e42446986406c807c51672b595db214652506b9612f03366",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Selank",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0332"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-225/10819 class, KAN-31/10870, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Selank",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0332"
+   },
+   "extraDoNotPrintTerms": [],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Selank",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       589,
+       720,
+       657
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 663.8
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 570.8
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Selank 5 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/selank-5mg-website-render-v1-1024.webp",
+     "sha256": "2112daf0248c066594a6e6d0c99ed69fafe9460c651a67f0a7c2c5216ff972e0"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Selank 5 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/selank-5mg-front-artwork-v1.webp",
+     "sha256": "3c0e430b6c7c4bee6c791b96fba82f4ae28efe1e157b031a6893e6a442a4e9ec"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/selank-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 44796,
+     "sha256": "2112daf0248c066594a6e6d0c99ed69fafe9460c651a67f0a7c2c5216ff972e0",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/selank-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 980448,
+     "sha256": "3f23945d2f6b4438d48c81712b71bbe472fe3770c563396786120cb732177126",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/selank-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2992,
+     "sha256": "0748d49fa7550247e7270476f78daea5f5dcfa2d8cb79d920bab4a96dc269368",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/selank-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 101629,
+     "sha256": "245770d9cb22f62af85936c73cda8b4b191d90bbb350868082cdf9152e66f632",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/selank-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 40316,
+     "sha256": "3c0e430b6c7c4bee6c791b96fba82f4ae28efe1e157b031a6893e6a442a4e9ec",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/selank-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6967,
+     "sha256": "9d64f549e0589030349c6ec3c3617c909c04c599eeed43eb160a1308b4f14512",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/selank-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 368451,
+     "sha256": "3a39786a430a111606d60c87ccee3ed772b3910f3c04d116f3355802698c411d",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/selank-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 155706,
+     "sha256": "1003a3e4503dd9901f11b91efc19d3698e396fa9f50800e29d4bf09fba5b34df",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_5e145fbee8e39536b580",
+   "sourceVariantId": "mov_b36b64d987325dca8df4",
+   "quickOrderSku": "GEN-GRP-0297",
+   "quickOrderProductId": "e5efd144-4e33-44d5-b495-b9ed31bf7c49",
+   "quickOrderVariantId": "3f3cac85-d0e4-4918-8619-e53484afed35",
+   "canonicalName": "Gonadorelin",
+   "catalogDisplayName": "Gonadorelin",
+   "canonicalVariant": "Gonadorelin 5 mg",
+   "catalogVariantLabel": "GONADORELIN 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0297-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10980",
+    "file": "research-batch-09.label-facts.json",
+    "sha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Gonadorelin",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0297"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Gonadorelin",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0297"
+   },
+   "extraDoNotPrintTerms": [
+    "fertility",
+    "hormone",
+    "ovulation",
+    "veterinary",
+    "Factrel",
+    "GONAbreed",
+    "Fertagyl"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Gonadorelin",
+      "fontSizePx": 63.8,
+      "baselineRow": 646,
+      "inkBox": [
+       458,
+       599,
+       799,
+       646
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 63.8,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1111.6
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 942.2
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Gonadorelin 5 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/gonadorelin-5mg-website-render-v1-1024.webp",
+     "sha256": "b1f48db21af9a0af34a80c05d75776b0677d93af1c228289f2f5bb9f685dbd46"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Gonadorelin 5 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/gonadorelin-5mg-front-artwork-v1.webp",
+     "sha256": "b7842e6e32cc434132a157bb7284be962ec0ea9509a3c8739aa93f459cbb9a7b"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/gonadorelin-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45358,
+     "sha256": "b1f48db21af9a0af34a80c05d75776b0677d93af1c228289f2f5bb9f685dbd46",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/gonadorelin-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 982419,
+     "sha256": "69da6bd7ad85c17cd4e1cdd48ea518dbcaeaf447d437e1f891d4d16ca6e3d1b9",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/gonadorelin-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3007,
+     "sha256": "03ca3fcb4b0a44292af92a6263b13327b86f24d1f44bfc17bfb07205ea897e64",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/gonadorelin-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 113908,
+     "sha256": "8bc0f0a3fbc0e4de446bbf3e810b99d6393c9fda3d0efbcf4efd4625ab5a421f",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/gonadorelin-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 44346,
+     "sha256": "b7842e6e32cc434132a157bb7284be962ec0ea9509a3c8739aa93f459cbb9a7b",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/gonadorelin-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6987,
+     "sha256": "55547588e9afd58c65b22b090745bbe3054ad6fbdf36859b2c050b25a3c4dd24",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/gonadorelin-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 380831,
+     "sha256": "74a8c7d3a50abfc7fb96d03f4fef81a4bf758a03268c68540492799687b5e482",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/gonadorelin-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 159836,
+     "sha256": "4a675e76e66161b813ba9b6cfb4b39cd33c4a81c1d60924c807c64dd5c9b3fb1",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_b1b15717ae2e89a19981",
+   "sourceVariantId": "mov_fb757d24b8c1ae0e5efe",
+   "quickOrderSku": "GEN-GRP-0314",
+   "quickOrderProductId": "5235884c-a0b2-40d2-8b71-a903e55915f6",
+   "quickOrderVariantId": "88b9efe3-73a7-412d-b57c-f2982566da6d",
+   "canonicalName": "Melanotan I",
+   "catalogDisplayName": "Melanotan I",
+   "canonicalVariant": "Melanotan I 10 mg",
+   "catalogVariantLabel": "Melanotan I 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0314-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10980",
+    "file": "research-batch-09.label-facts.json",
+    "sha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Melanotan I",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0314"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Melanotan I",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0314"
+   },
+   "extraDoNotPrintTerms": [
+    "afamelanotide",
+    "Scenesse",
+    "tanning",
+    "pigment",
+    "photoprotect",
+    "clinical"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Melanotan I",
+      "fontSizePx": 66.2,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       599,
+       799,
+       648
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 66.2,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1086.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 921.2
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Melanotan I 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-i-10mg-website-render-v1-1024.webp",
+     "sha256": "11e0181cfef594266ba69c3869104254de624b286d4b5a2a1ec93c6a1c050f97"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Melanotan I 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-i-10mg-front-artwork-v1.webp",
+     "sha256": "79d2ee6688d318a530d44dbbe40eeef405e5361088aad434f1085bc108c37ecf"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-i-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45576,
+     "sha256": "11e0181cfef594266ba69c3869104254de624b286d4b5a2a1ec93c6a1c050f97",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-i-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 984792,
+     "sha256": "4817857aea78aeae2ec667e724dc2c43335df4bb4ecdf33ff0fab00b94a5fc76",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/melanotan-i-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3011,
+     "sha256": "c5762258ece6229c190a25ecf22faf2acf01c250146895f9ff3db3d520cf1e53",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-i-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 111891,
+     "sha256": "dec6c9667db07d65e899f90fddda1e636a71c8bb5300a980976714b8a1bf1c8d",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-i-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 43910,
+     "sha256": "79d2ee6688d318a530d44dbbe40eeef405e5361088aad434f1085bc108c37ecf",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/melanotan-i-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6992,
+     "sha256": "dd9a7a309c844499d6aa6b05fa7782f5f9f6576fcbf9f3e96ec63f4ab7207ec7",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-i-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 378124,
+     "sha256": "01ef2a0254736e354c649a80aa5379dda1006d6bda61ce1cd095da4c9054fd51",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-i-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 159260,
+     "sha256": "ad628f358e494f4108387a16296480b9f9572cdc39fc4c2673b138f15a967c71",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_595ec28612674477e5aa",
+   "sourceVariantId": "mov_71e448565b155e87b979",
+   "quickOrderSku": "GEN-GRP-0315",
+   "quickOrderProductId": "32d8914d-6462-478a-86ea-f65b618561cf",
+   "quickOrderVariantId": "b5e22c3f-53fd-4baa-9345-30f21fb7516e",
+   "canonicalName": "Melanotan II",
+   "catalogDisplayName": "Melanotan II",
+   "canonicalVariant": "Melanotan II 10 mg",
+   "catalogVariantLabel": "Melanotan II 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0315-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10980",
+    "file": "research-batch-09.label-facts.json",
+    "sha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Melanotan II",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0315"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Melanotan II",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0315"
+   },
+   "extraDoNotPrintTerms": [
+    "tanning",
+    "pigment",
+    "erectile",
+    "appetite",
+    "metabolic"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Melanotan II",
+      "fontSizePx": 63.0,
+      "baselineRow": 646,
+      "inkBox": [
+       458,
+       599,
+       800,
+       646
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 63.0,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1136.2
+    },
+    "wrapFrontPanel": {
+     "fontSize": 145.5,
+     "letterSpacing": -4.98,
+     "baseline": 519.9,
+     "inkRightEstimate": 959.7
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Melanotan II 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-ii-10mg-website-render-v1-1024.webp",
+     "sha256": "37f2a1d05542661103e736f147ac27d7d89f7be5707c12f7fb659f1582f5e9e9"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Melanotan II 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-ii-10mg-front-artwork-v1.webp",
+     "sha256": "a6e4b58f1fb4ac1fb5f9dc3b8d7537c1422a2bf265a6ad1ef2b1f93d2a16849e"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-ii-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45436,
+     "sha256": "37f2a1d05542661103e736f147ac27d7d89f7be5707c12f7fb659f1582f5e9e9",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-ii-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 984899,
+     "sha256": "8455345ed302a542ac0f10f0766041055492f8bd631e7bc037be2e7aeff78cb0",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/melanotan-ii-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3014,
+     "sha256": "0162accc9d24bbcc09c32052fac1fa8fa3db5275cc13a8bb432bb1967f30bc1f",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-ii-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 112029,
+     "sha256": "7396c00d0ba66d9e0612fc06018935006e07e80034a88403de3357590d35bef7",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-ii-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 44020,
+     "sha256": "a6e4b58f1fb4ac1fb5f9dc3b8d7537c1422a2bf265a6ad1ef2b1f93d2a16849e",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/melanotan-ii-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7003,
+     "sha256": "4abf449a88a1e89726d5aa26f4cd7bd61b0bf9d8ac492b08228797eff39849bb",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-ii-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 375878,
+     "sha256": "3aefe83c45d1efd558cebd49b08a077353d229e29021b40eb0f08e8ddaf0cfa9",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/melanotan-ii-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 159476,
+     "sha256": "ed4434ff35fac45a0d65bf8ccc20db1410eeb21acd293dc64b7677d19e34f608",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_f66623171e193fc81edb",
+   "sourceVariantId": "mov_9cc6d7d3967d7507480b",
+   "quickOrderSku": "GEN-GRP-0321",
+   "quickOrderProductId": "69137dca-9a9f-4596-b992-e2d7ff209a16",
+   "quickOrderVariantId": "57df93f4-cd4b-49b4-b3d8-6a4a78abb107",
+   "canonicalName": "PT-141",
+   "catalogDisplayName": "PT-141",
+   "canonicalVariant": "PT-141 10 mg",
+   "catalogVariantLabel": "PT-141 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0321-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10980",
+    "file": "research-batch-09.label-facts.json",
+    "sha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "PT-141",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0321"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "PT-141",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0321"
+   },
+   "extraDoNotPrintTerms": [
+    "bremelanotide",
+    "Vyleesi",
+    "sexual",
+    "desire",
+    "arousal",
+    "HSDD",
+    "clinical"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "PT-141",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       591,
+       724,
+       656
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 706.2
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 606.2
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios PT-141 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/pt-141-10mg-website-render-v1-1024.webp",
+     "sha256": "765783978818f6e640473a360959528fce66995a82e40027a1023ca0ca19da76"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios PT-141 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/pt-141-10mg-front-artwork-v1.webp",
+     "sha256": "4fc3f64d564700294c6e523450141b487a92ef092a3b2b0b25eab7c7ce569902"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/pt-141-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 44078,
+     "sha256": "765783978818f6e640473a360959528fce66995a82e40027a1023ca0ca19da76",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/pt-141-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 980297,
+     "sha256": "2784384251dd709864e0cb9270dace9bdec2a85815054e40cf6f8e4ebe542991",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/pt-141-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2996,
+     "sha256": "9b850d60eabda9ab3406f71113069cd284341ab8a6a35c6f8d8fff0196f64513",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/pt-141-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 91875,
+     "sha256": "0dd3cf8c540b99c19e7868a3d2abe4330567d097f9cf65d70b8d32e203bdc6a8",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/pt-141-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 38334,
+     "sha256": "4fc3f64d564700294c6e523450141b487a92ef092a3b2b0b25eab7c7ce569902",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/pt-141-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6972,
+     "sha256": "96ccc5b52888acc76193e53d8fcc208b0a07fd4e81890be0004037d53ca87e1f",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/pt-141-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 359857,
+     "sha256": "a6ce402f01f83ad2bff898c7cba57c89b88dcfdce5824266581bd74929274b51",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/pt-141-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 153778,
+     "sha256": "1a062fd710b62c3878809b7470cca0c0d034e940b7f60426aef928153c935264",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_463212f23e8e3e39c57b",
+   "sourceVariantId": "mov_523c894b29954645c00a",
+   "quickOrderSku": "GEN-GRP-0259",
+   "quickOrderProductId": "6bd417ab-14e5-4792-b679-be779afd53a2",
+   "quickOrderVariantId": "697708b2-299c-4749-b53c-2683ef4ea1b5",
+   "canonicalName": "ARA-290",
+   "catalogDisplayName": "ARA-290",
+   "canonicalVariant": "ARA-290 5 mg",
+   "catalogVariantLabel": "ARA-290 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0259-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11039",
+    "file": "research-batch-10.label-facts.json",
+    "sha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "ARA-290",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0259"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "ARA-290",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0259"
+   },
+   "extraDoNotPrintTerms": [
+    "cibinetide",
+    "pain",
+    "neuropath",
+    "wound",
+    "kidney",
+    "renal",
+    "retinal",
+    "cognition"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "ARA-290",
+      "fontSizePx": 87.0,
+      "baselineRow": 654,
+      "inkBox": [
+       458,
+       592,
+       800,
+       654
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 87.0,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 851.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 726.8
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios ARA-290 5 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-5mg-website-render-v1-1024.webp",
+     "sha256": "530c4774837b7df71523f6432fb69efaa81934b4e024b6517c4d03344d0ba632"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios ARA-290 5 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-5mg-front-artwork-v1.webp",
+     "sha256": "581327e59aeb590482787fa6a4978cb040707c2d464ad10f264b81db0a4e2929"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45796,
+     "sha256": "530c4774837b7df71523f6432fb69efaa81934b4e024b6517c4d03344d0ba632",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 981914,
+     "sha256": "89d7641ee4ff380f54cab22357a50f4bcb83836fed9c2be6dc22aebd796bfcee",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ara-290-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2995,
+     "sha256": "415c6feea945a9113dbdf02726538fdc05952adc73a455e4f44b3ae56df27272",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 111648,
+     "sha256": "c76a7a1d1e6032cc9716d08b4dd13af04378d4d6cce67763dfacedb4efac1f92",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 43136,
+     "sha256": "581327e59aeb590482787fa6a4978cb040707c2d464ad10f264b81db0a4e2929",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ara-290-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6971,
+     "sha256": "aef2813ec1c73bfcc85c9fdc7959c9e3bb4f85db66beec2694e248ba5dee0f27",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 376141,
+     "sha256": "ad7a14cd7da24cfead15610156f84c0f97d9c683b2a0c94e4703d3ee4ab64ae4",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 158546,
+     "sha256": "7a0a1d69927ca44ae43fe826a6203f348778476c83a82811c5f0151f1070411b",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_0907a4d651019afed8ed",
+   "sourceVariantId": "mov_04f750af7277d98b7ad9",
+   "quickOrderSku": "GEN-GRP-0257",
+   "quickOrderProductId": "6bd417ab-14e5-4792-b679-be779afd53a2",
+   "quickOrderVariantId": "fc0b0cfc-c023-48c8-b3df-e6ce98021dd3",
+   "canonicalName": "ARA-290",
+   "catalogDisplayName": "ARA-290",
+   "canonicalVariant": "ARA-290 10 mg",
+   "catalogVariantLabel": "ARA-290 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0257-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11039",
+    "file": "research-batch-10.label-facts.json",
+    "sha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "ARA-290",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0257"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "ARA-290",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0257"
+   },
+   "extraDoNotPrintTerms": [
+    "cibinetide",
+    "pain",
+    "neuropath",
+    "wound",
+    "kidney",
+    "renal",
+    "retinal",
+    "cognition"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "ARA-290",
+      "fontSizePx": 87.0,
+      "baselineRow": 654,
+      "inkBox": [
+       458,
+       592,
+       800,
+       654
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 87.0,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 851.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 726.8
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios ARA-290 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-10mg-website-render-v1-1024.webp",
+     "sha256": "b8fddfbf174cadcbe928b546d609dbf753cd83fccf8405b8a596de5e150bc359"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios ARA-290 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-10mg-front-artwork-v1.webp",
+     "sha256": "23f171a7ed6e56a55a9f1c0b55a1d2866d2ded9752b30163ef28d0cd666f5c33"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46240,
+     "sha256": "b8fddfbf174cadcbe928b546d609dbf753cd83fccf8405b8a596de5e150bc359",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 985497,
+     "sha256": "0c81c7546d404e9f91b095c92f64bd4f89462a116e3cccccc8545e34c56173f7",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ara-290-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2999,
+     "sha256": "c26ce9af01b1fe736c7ec7883affb761fdd3c29f33ef691397de49e54b014a56",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 113692,
+     "sha256": "e93d48a77b94171dd3ffa64de302bd1178db4a81ae0f6c0d5d15820bd4c4434c",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 43886,
+     "sha256": "23f171a7ed6e56a55a9f1c0b55a1d2866d2ded9752b30163ef28d0cd666f5c33",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ara-290-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6976,
+     "sha256": "3f98f0fea364a0aef079d9f5cc33eac951076ccd6802f41d48d446191eff7ed1",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 377936,
+     "sha256": "9cc14395f0bbaa3c38b6077d8253cd29137aeaae517131849d52191e4877815f",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 159242,
+     "sha256": "60331494ff83abd74d63ee64b2d5a255955906ea9cd18536309c4699469f3a8d",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_ca085a7994a6db594748",
+   "sourceVariantId": "mov_6509a8f595cfc3fc36bc",
+   "quickOrderSku": "GEN-GRP-0258",
+   "quickOrderProductId": "6bd417ab-14e5-4792-b679-be779afd53a2",
+   "quickOrderVariantId": "ea5e40a2-360c-479d-98d9-21ba4c997c9a",
+   "canonicalName": "ARA-290",
+   "catalogDisplayName": "ARA-290",
+   "canonicalVariant": "ARA-290 15 mg",
+   "catalogVariantLabel": "ARA-290 15 mg",
+   "nominalAmountPerVialMg": 15,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0258-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11039",
+    "file": "research-batch-10.label-facts.json",
+    "sha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "ARA-290",
+     "amount": "15 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0258"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "ARA-290",
+    "amountOnRender": "15 mg",
+    "amountOnLabel": "15 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0258"
+   },
+   "extraDoNotPrintTerms": [
+    "cibinetide",
+    "pain",
+    "neuropath",
+    "wound",
+    "kidney",
+    "renal",
+    "retinal",
+    "cognition"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "ARA-290",
+      "fontSizePx": 87.0,
+      "baselineRow": 654,
+      "inkBox": [
+       458,
+       592,
+       800,
+       654
+      ]
+     },
+     {
+      "text": "15 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       632,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 87.0,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 851.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 726.8
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios ARA-290 15 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-15mg-website-render-v1-1024.webp",
+     "sha256": "ade709b0f38e874ef5856f539c1de2bfd27ce8dd559b62589b8ad887c8cdaa77"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios ARA-290 15 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-15mg-front-artwork-v1.webp",
+     "sha256": "5fbaf9cefaa0a84bd257815e43189e7419464e66487cb03879b3f089890e9388"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-15mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46016,
+     "sha256": "ade709b0f38e874ef5856f539c1de2bfd27ce8dd559b62589b8ad887c8cdaa77",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-15mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 981960,
+     "sha256": "3610cb4a5c173bdba31cc2579820d49909b5b644d65d5da96ae0d9f1ad906032",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ara-290-15mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2999,
+     "sha256": "a6f1aa4a20ca40fa351e7b9cdcf49e128f5dac26f03ad79af1f95403a956de64",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-15mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 112661,
+     "sha256": "f858d2c208402dd046ae9ead675ee277ef7c9b4b444c9b4cd57698c4b38fb6ab",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-15mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 43698,
+     "sha256": "5fbaf9cefaa0a84bd257815e43189e7419464e66487cb03879b3f089890e9388",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ara-290-15mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6976,
+     "sha256": "3e05c3d499d1924c07c322657185972b0529c6ef8c1b34844f0799d0efbccc0b",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-15mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 377678,
+     "sha256": "c1cd26a840c0b6fff3369c35c746b1eac59187b119e73d468a940b2819b7c96a",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ara-290-15mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 159140,
+     "sha256": "98c973a51bd5dbd5a3ec10ac2bc12730df3e0efa9352151e319672b74e2e6fa4",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_f9bf2c4e55dbbb5e7a03",
+   "sourceVariantId": "mov_e0ce4fde8a3393202bdc",
+   "quickOrderSku": "GEN-GRP-0261",
+   "quickOrderProductId": "c5b471c3-fadd-476d-94c6-b3213141ea63",
+   "quickOrderVariantId": "f51fe137-1784-4a3d-b093-39a9c42204c6",
+   "canonicalName": "AOD-9604",
+   "catalogDisplayName": "AOD-9604",
+   "canonicalVariant": "AOD-9604 5 mg",
+   "catalogVariantLabel": "AOD-9604 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0261-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11039",
+    "file": "research-batch-10.label-facts.json",
+    "sha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "AOD-9604",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0261"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "AOD-9604",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0261"
+   },
+   "extraDoNotPrintTerms": [
+    "somatostatin",
+    "weight",
+    "fat",
+    "metabolic",
+    "obesity"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "AOD-9604",
+      "fontSizePx": 74.0,
+      "baselineRow": 650,
+      "inkBox": [
+       458,
+       597,
+       799,
+       650
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 74.0,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 968.6
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 824.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios AOD-9604 5 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-5mg-website-render-v1-1024.webp",
+     "sha256": "c8b30fdbad618f2541d059b67f09b1841aaa0505cf6cd898acbabba46fa801a7"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios AOD-9604 5 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-5mg-front-artwork-v1.webp",
+     "sha256": "c0489a3135494dd1fd01513797cb9c909c7527d097aa766dfa0cdfcc227377cc"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45852,
+     "sha256": "c8b30fdbad618f2541d059b67f09b1841aaa0505cf6cd898acbabba46fa801a7",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 983341,
+     "sha256": "20bc3a1cba3529994c8b95962ab5ede29583552dda3a49cb1fac2ee483879677",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/aod-9604-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2998,
+     "sha256": "d6bd071539c0ccb0df52580fce51098c7ac2aa101829f0588d8cfc992bdaf710",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 116977,
+     "sha256": "0709664300404ea8baa4cc4d7a9ed46435851fc16a0a14147838a43bcb0d0bac",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 44714,
+     "sha256": "c0489a3135494dd1fd01513797cb9c909c7527d097aa766dfa0cdfcc227377cc",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/aod-9604-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6975,
+     "sha256": "b359dd419b0e396f6d6364218c311c74bef42d30dc34048bbbc38e1c8fad4db6",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 383358,
+     "sha256": "d3c8216e0d9200203ffbb9964ab066d85444d3593bde795c410792f45e0c6191",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 160076,
+     "sha256": "771372ad153aec078a81316cc9a00796629850c9de40864f7659adce8dfd4d3b",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_216b3a5f02fb7724cd51",
+   "sourceVariantId": "mov_d25066629d9cbdbad552",
+   "quickOrderSku": "GEN-GRP-0260",
+   "quickOrderProductId": "c5b471c3-fadd-476d-94c6-b3213141ea63",
+   "quickOrderVariantId": "60661393-b16d-4860-af28-b0ab5023f756",
+   "canonicalName": "Aod-9604",
+   "catalogDisplayName": "Aod-9604",
+   "canonicalVariant": "AOD-9604 10 mg",
+   "catalogVariantLabel": "AOD-9604 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0260-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11039",
+    "file": "research-batch-10.label-facts.json",
+    "sha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "AOD-9604",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0260"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "AOD-9604",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0260"
+   },
+   "extraDoNotPrintTerms": [
+    "somatostatin",
+    "weight",
+    "fat",
+    "metabolic",
+    "obesity"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "AOD-9604",
+      "fontSizePx": 74.0,
+      "baselineRow": 650,
+      "inkBox": [
+       458,
+       597,
+       799,
+       650
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 74.0,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 968.6
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 824.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios AOD-9604 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-10mg-website-render-v1-1024.webp",
+     "sha256": "a648d040880646b5cc26e9fbe18ba19a1c8be9fa762ed770131ca584861066ba"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios AOD-9604 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-10mg-front-artwork-v1.webp",
+     "sha256": "f5908c130ac2dee608f82936a208512a9b4f6ac1ac36d27a856a7e88f14a6573"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46212,
+     "sha256": "a648d040880646b5cc26e9fbe18ba19a1c8be9fa762ed770131ca584861066ba",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986863,
+     "sha256": "5ea40d0654d0f281be746fab1aebebeeae6e1980cf741927ff9e7e0e2890931b",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/aod-9604-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3002,
+     "sha256": "11385ab29a36233876d07086d7324da9bf4ec765ae1042652d888ebb6d700f4f",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 119004,
+     "sha256": "2a2f95ff99cd206239fbb186fec29292d43e897fe38fb703dcf1497863bb8e91",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 45458,
+     "sha256": "f5908c130ac2dee608f82936a208512a9b4f6ac1ac36d27a856a7e88f14a6573",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/aod-9604-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6980,
+     "sha256": "81d51ab02a8f9f26b73cfdbe54cee3a7c4b20a5b54b05a03ea48502e964ab7a3",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 385727,
+     "sha256": "3de14e83362c9f35db3ba3412119fa3fc5e460aba21a44de968f90aa44cd2fee",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/aod-9604-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 160996,
+     "sha256": "46d233df5b0b968f6e20cbd9c891a5cdcab9ffb07f4c5bd7d241aad707e1413a",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "nameVariance": {
+    "catalogDisplayName": "Aod-9604",
+    "printedName": "AOD-9604",
+    "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_849cdbb1463f8382f1f6",
+   "sourceVariantId": "mov_e21bffb0a8ad83a8137f",
+   "quickOrderSku": "GEN-GRP-0292",
+   "quickOrderProductId": "05d759c3-e219-4b7f-9137-0248e3b5ce9f",
+   "quickOrderVariantId": "e787729f-b708-4994-88a7-960cccdb476a",
+   "canonicalName": "GHRP-6",
+   "catalogDisplayName": "GHRP-6",
+   "canonicalVariant": "GHRP-6 10 mg",
+   "catalogVariantLabel": "GHRP-6 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0292-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11039",
+    "file": "research-batch-10.label-facts.json",
+    "sha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "GHRP-6",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0292"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "GHRP-6",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0292"
+   },
+   "extraDoNotPrintTerms": [
+    "GHRP-2",
+    "pralmorelin",
+    "growth",
+    "appetite",
+    "body composition",
+    "body-composition",
+    "hormone release",
+    "hormone-release"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "GHRP-6",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       592,
+       776,
+       657
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 775.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 663.5
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios GHRP-6 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-6-10mg-website-render-v1-1024.webp",
+     "sha256": "d15da7353c7d7439ba3cfabed2c9c5d29262009d6a369ad104584482317eecdd"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios GHRP-6 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-6-10mg-front-artwork-v1.webp",
+     "sha256": "e6ee35fd3018036b5a51e6ec717d18c22c05a169f1df728b2628c3fd64a833d0"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-6-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45314,
+     "sha256": "d15da7353c7d7439ba3cfabed2c9c5d29262009d6a369ad104584482317eecdd",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-6-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 982838,
+     "sha256": "40cd78fa883f3a66be76c8781459703df3b2cd67d855685a9d288f485a09a85c",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ghrp-6-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2996,
+     "sha256": "bd5c62363aebac878187fabdc07e8ad96224b031309c2de1c89cc28ea72a8514",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-6-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 103258,
+     "sha256": "d7d93f355799ee70017ad3db0003cdc129d9c24c6dbfb039a01e5ada3fb5b45b",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-6-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 41106,
+     "sha256": "e6ee35fd3018036b5a51e6ec717d18c22c05a169f1df728b2628c3fd64a833d0",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ghrp-6-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6972,
+     "sha256": "de5d01433a0832958c256966cd007a2a5286edc96b0a5bf7d73690f2eb1975f6",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-6-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 370916,
+     "sha256": "7048479f53359a66311d41e2ba841ee2b20c0f22568638da9767283127e647f0",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-6-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 156524,
+     "sha256": "b4f910b0194027b66879d30b067ee9e1cf6192d2aaded1b1012bf831b76dbe48",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_65340dd542e68a0af5ab",
+   "sourceVariantId": "mov_9774e642bf4c6b799a8c",
+   "quickOrderSku": "GEN-GRP-0290",
+   "quickOrderProductId": "cb19e04c-6d29-4e2c-829a-8aa689ac2ce3",
+   "quickOrderVariantId": "6f9e838a-843d-4cbc-90c6-2e6dd1ec6730",
+   "canonicalName": "GHRP-2",
+   "catalogDisplayName": "GHRP-2",
+   "canonicalVariant": "GHRP-2 10 mg",
+   "catalogVariantLabel": "GHRP-2 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0290-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11051",
+    "file": "research-batch-11.label-facts.json",
+    "sha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "GHRP-2",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0290"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "GHRP-2",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0290"
+   },
+   "extraDoNotPrintTerms": [
+    "GHRP-6",
+    "pralmorelin",
+    "KP-102",
+    "growth",
+    "muscle",
+    "appetite",
+    "pain",
+    "stress",
+    "hormone",
+    "body composition",
+    "body-composition"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "GHRP-2",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       592,
+       773,
+       657
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 775.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 663.5
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios GHRP-2 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-10mg-website-render-v1-1024.webp",
+     "sha256": "f60426ed96bb01de843b4acc3183e0e9a865ed19db78bbb9ea8d13bf744d2745"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios GHRP-2 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-10mg-front-artwork-v1.webp",
+     "sha256": "a800ada0fde2e24e4443d8e9cd35700d15f1866589f9843b5aa6d826946264be"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45158,
+     "sha256": "f60426ed96bb01de843b4acc3183e0e9a865ed19db78bbb9ea8d13bf744d2745",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 982072,
+     "sha256": "aa4f3fb65f1127253410c52f321576cc7e74d60a1afd55b56cc3c381258ef5b1",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ghrp-2-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2996,
+     "sha256": "82b4d84174715c01c832cb3602009f94b9f3a7eb501963a017eed85771481864",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 101144,
+     "sha256": "ce36d12d044f7cba6281180cad6c0b48b21134275dab58ec8255a39507200176",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 40652,
+     "sha256": "a800ada0fde2e24e4443d8e9cd35700d15f1866589f9843b5aa6d826946264be",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ghrp-2-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6972,
+     "sha256": "e8f91f8890ee76d9c7e8950ce99f6b00414686fd2a0425e0881f2b2e8d654b22",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 369422,
+     "sha256": "caf99b023f7d0aa3dadf83693c68d7fa116886de98bb4eb4bb9f26037f4cdb52",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 156272,
+     "sha256": "30794f7f89e3cb71bbfda1341ead27779a841be5e0e233a6c132c2e1bbafb8d8",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_fa2070d7fd794ad0c245",
+   "sourceVariantId": "mov_77a80adce9e9cb1b93a0",
+   "quickOrderSku": "GEN-GRP-0296",
+   "quickOrderProductId": "3d8285f3-6f49-49d1-bf20-01fe75954f93",
+   "quickOrderVariantId": "90b86683-b583-44d7-9e54-b37117f52d1c",
+   "canonicalName": "Glutathione",
+   "catalogDisplayName": "Glutathione",
+   "canonicalVariant": "Glutathione 500 mg",
+   "catalogVariantLabel": "GLUTATHIONE 500 mg",
+   "nominalAmountPerVialMg": 500,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0296-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11051",
+    "file": "research-batch-11.label-facts.json",
+    "sha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Glutathione",
+     "amount": "500 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0296"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Glutathione",
+    "amountOnRender": "500 mg",
+    "amountOnLabel": "500 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0296"
+   },
+   "extraDoNotPrintTerms": [
+    "reduced",
+    "oxidized",
+    "oxidised",
+    "GSH",
+    "GSSG",
+    "Isethion",
+    "Glutinal",
+    "Tathion",
+    "Copren",
+    "antioxidant",
+    "detox",
+    "skin",
+    "liver",
+    "wellness",
+    "supplement"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Glutathione",
+      "fontSizePx": 66.2,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       599,
+       799,
+       648
+      ]
+     },
+     {
+      "text": "500 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       669,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 66.2,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1068.8
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 906.5
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Glutathione 500 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-500mg-website-render-v1-1024.webp",
+     "sha256": "6c645aa067c6fd5565d4d6f7126f48761870922dc57ddd4f9c67d77dfe3a91f1"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Glutathione 500 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-500mg-front-artwork-v1.webp",
+     "sha256": "9b808be25328fa1b6c67cfb8fd52d635eccdaa43ea97a98a1610e50b482ca690"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-500mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46566,
+     "sha256": "6c645aa067c6fd5565d4d6f7126f48761870922dc57ddd4f9c67d77dfe3a91f1",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-500mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 983421,
+     "sha256": "2982a43b071e78408d57222cd9a5214dd16c3ba2f03754b8f79852779e4737bd",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/glutathione-500mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3015,
+     "sha256": "6eaac3ff2fc047df08862bf5c6859edb09600d1574991bf286326a77e80dccf8",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-500mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 117825,
+     "sha256": "f4dd1e5b9391701efb003ba08dd402a781ddb714813304954f9bb977501b3555",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-500mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 45612,
+     "sha256": "9b808be25328fa1b6c67cfb8fd52d635eccdaa43ea97a98a1610e50b482ca690",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/glutathione-500mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6997,
+     "sha256": "2b96871b5c4d0e277c5a92048fe47a028a98579db3257ba425f19cca7f34fe54",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-500mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 385735,
+     "sha256": "56654753c85bab5facb5e39fc577a6ea801bb323f59f49c3a94a50df75686db8",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-500mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 161988,
+     "sha256": "f9766c2570320bb34edff3cbecd6b5dc830952ee5f698a0433b4a7acac9c5293",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_7f4fc3961bd7c1e6b6bf",
+   "sourceVariantId": "mov_77837ac2575c8df8ac73",
+   "quickOrderSku": "GEN-GRP-0295",
+   "quickOrderProductId": "3d8285f3-6f49-49d1-bf20-01fe75954f93",
+   "quickOrderVariantId": "c7075a28-7835-4ab9-898e-9ded9c067e4f",
+   "canonicalName": "Glutathione",
+   "catalogDisplayName": "Glutathione",
+   "canonicalVariant": "Glutathione 1500 mg",
+   "catalogVariantLabel": "GLUTATHIONE 1500 mg",
+   "nominalAmountPerVialMg": 1500,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0295-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11051",
+    "file": "research-batch-11.label-facts.json",
+    "sha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Glutathione",
+     "amount": "1500 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0295"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Glutathione",
+    "amountOnRender": "1500 mg",
+    "amountOnLabel": "1500 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0295"
+   },
+   "extraDoNotPrintTerms": [
+    "reduced",
+    "oxidized",
+    "oxidised",
+    "GSH",
+    "GSSG",
+    "Isethion",
+    "Glutinal",
+    "Tathion",
+    "Copren",
+    "antioxidant",
+    "detox",
+    "skin",
+    "liver",
+    "wellness",
+    "supplement"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Glutathione",
+      "fontSizePx": 66.2,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       599,
+       799,
+       648
+      ]
+     },
+     {
+      "text": "1500 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       702,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 66.2,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1068.8
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 906.5
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Glutathione 1500 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-1500mg-website-render-v1-1024.webp",
+     "sha256": "0a417d84729c3a602f221d02537c3507734876ec298f382cfbd7a4538a3b3531"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Glutathione 1500 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-1500mg-front-artwork-v1.webp",
+     "sha256": "42d22332a4bce0cf5a6fe2236b52d2b04fcceb3a40f85bfbe3c4a6fec357c4d6"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-1500mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46670,
+     "sha256": "0a417d84729c3a602f221d02537c3507734876ec298f382cfbd7a4538a3b3531",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-1500mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 983296,
+     "sha256": "61a422935f89bdc7d5c819b336f75ac3a21e4bcdcb446d5734523d06191320d8",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/glutathione-1500mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3019,
+     "sha256": "70d06b71a9f47166ab84d275c1876c0616c087b9c1fd1c0143a1abf0cae89c6b",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-1500mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 118677,
+     "sha256": "b2475f5d52bf00b15f6bf9e978e6052f6e97176179cd4a1bcaf4fe925d61dea6",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-1500mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 46560,
+     "sha256": "42d22332a4bce0cf5a6fe2236b52d2b04fcceb3a40f85bfbe3c4a6fec357c4d6",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/glutathione-1500mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7002,
+     "sha256": "d8a54529c377b2c09b075cd396ea2b92a19504e31d486ce7e6c4d8c1fbb1b48e",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-1500mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 386637,
+     "sha256": "b171da068c0021b658f583a61572d55e77a6b1f25d79f3119b751defd7ebe3e3",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/glutathione-1500mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 162454,
+     "sha256": "1c78ae2cfbcd94c518220c6a9aa39945f8a41925c18dd681aff966177d97f1f7",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_4bf44c0afe1ae392ddf0",
+   "sourceVariantId": "mov_60e645f13e186042b62b",
+   "quickOrderSku": "GEN-GRP-0318",
+   "quickOrderProductId": "f3406695-b225-4242-ac02-3fc4cac8c1aa",
+   "quickOrderVariantId": "70588a66-1be4-4532-bfec-5b761360d2f1",
+   "canonicalName": "NAD+",
+   "catalogDisplayName": "NAD+",
+   "canonicalVariant": "NAD+ 500 mg",
+   "catalogVariantLabel": "NAD+ 500 mg",
+   "nominalAmountPerVialMg": 500,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0318-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11051",
+    "file": "research-batch-11.label-facts.json",
+    "sha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "NAD+",
+     "amount": "500 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0318"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "NAD+",
+    "amountOnRender": "500 mg",
+    "amountOnLabel": "500 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0318"
+   },
+   "extraDoNotPrintTerms": [
+    "nadide",
+    "NADH",
+    "reduced",
+    "anti-ageing",
+    "anti-aging",
+    "energy",
+    "longevity",
+    "metabolic",
+    "wellness",
+    "supplement"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "NAD+",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       593,
+       699,
+       656
+      ]
+     },
+     {
+      "text": "500 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       669,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 649.0
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 559.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios NAD+ 500 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-500mg-website-render-v1-1024.webp",
+     "sha256": "9a85a68bf6473faba9dbb980e17468d076ab592f0f93fbbf00fcf9fa33226397"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios NAD+ 500 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-500mg-front-artwork-v1.webp",
+     "sha256": "bd23777f78dd3bd07624ada67d0108f8241a9dcc5186baf67ee5d8477cbdb99e"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-500mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45118,
+     "sha256": "9a85a68bf6473faba9dbb980e17468d076ab592f0f93fbbf00fcf9fa33226397",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-500mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 979515,
+     "sha256": "a9c590c31b527508fc9346b54067d728ff1b8fb817d3594fcc788b3117b5a35b",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/nad-500mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2994,
+     "sha256": "667c5a8c44b891680cb4248dda848e7b8235df28262ac0cbeadf8c8a5f829782",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-500mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 103346,
+     "sha256": "90e4a03aec67288642708f8bd43765cbd5a7a197909f411573df3b0ef60592a8",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-500mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 39934,
+     "sha256": "bd23777f78dd3bd07624ada67d0108f8241a9dcc5186baf67ee5d8477cbdb99e",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/nad-500mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6969,
+     "sha256": "d94d09b6b298c0e5b3a5e1ecf33f145aaf9ff1c1b6066b09355012fd66cb6a3b",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-500mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 371405,
+     "sha256": "f9282f60b57f1846967359708a31397d3c8bb481e42194d3a0a0f9b3ce016cc9",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-500mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 156586,
+     "sha256": "733b773c408ab6aff450fb97a7e588d5b90398efb1145016d84dff5023ccd89d",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_25463089835b0939dc4b",
+   "sourceVariantId": "mov_26ba2e0fb6498f8e96ac",
+   "quickOrderSku": "GEN-GRP-0317",
+   "quickOrderProductId": "f3406695-b225-4242-ac02-3fc4cac8c1aa",
+   "quickOrderVariantId": "f9ae8c72-9ed9-4356-8d02-3784487ce3a4",
+   "canonicalName": "NAD+",
+   "catalogDisplayName": "NAD+",
+   "canonicalVariant": "NAD+ 1000 mg",
+   "catalogVariantLabel": "NAD+ 1000 mg",
+   "nominalAmountPerVialMg": 1000,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0317-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11051",
+    "file": "research-batch-11.label-facts.json",
+    "sha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "NAD+",
+     "amount": "1000 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0317"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "NAD+",
+    "amountOnRender": "1000 mg",
+    "amountOnLabel": "1000 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0317"
+   },
+   "extraDoNotPrintTerms": [
+    "nadide",
+    "NADH",
+    "reduced",
+    "anti-ageing",
+    "anti-aging",
+    "energy",
+    "longevity",
+    "metabolic",
+    "wellness",
+    "supplement"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "NAD+",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       593,
+       699,
+       656
+      ]
+     },
+     {
+      "text": "1000 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       702,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 649.0
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 559.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios NAD+ 1000 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-1000mg-website-render-v1-1024.webp",
+     "sha256": "6946c718a3f5ef3e739874b68c087c19886ff849e55c7d8d2a4fc8337610946f"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios NAD+ 1000 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-1000mg-front-artwork-v1.webp",
+     "sha256": "edcde434b965b774b0445be779f605444a0658e6b59f0fdbe0c858628afdfb33"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-1000mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45402,
+     "sha256": "6946c718a3f5ef3e739874b68c087c19886ff849e55c7d8d2a4fc8337610946f",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-1000mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 979551,
+     "sha256": "9290e334481d7fbf1af0bed34bce30de6173fbbc1925f2bbe471ff2505aafa72",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/nad-1000mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2998,
+     "sha256": "d47510c31f8d787efb4b01056147df61bc5b19ccd14cd71ed798917e9a224551",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-1000mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 104927,
+     "sha256": "94c92a2988a1e5ebeb3c56394c7440bf0fec6836cd3509049b7422cd0e817514",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-1000mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 42042,
+     "sha256": "edcde434b965b774b0445be779f605444a0658e6b59f0fdbe0c858628afdfb33",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/nad-1000mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6974,
+     "sha256": "1832cf7d7557d63fffdef83c685b1ec13f3f770a1267eb91b636096fe96627bb",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-1000mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 370409,
+     "sha256": "8b04fc465713b2118278634e38cf354ee8bdc32fe0ea038f517f069bb904c3e7",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/nad-1000mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 157258,
+     "sha256": "d41f7b78c305d56907b52ba4698256ccde3538b01624b774f885da3749626cd3",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_9bd279e3ef84393cf793",
+   "sourceVariantId": "mov_017febfdb0edf96366f4",
+   "quickOrderSku": "GEN-GRP-0283",
+   "quickOrderProductId": "7090c616-9566-4540-83d6-016648fdf641",
+   "quickOrderVariantId": "613fa42f-9569-49bb-a723-c267fd3c53e5",
+   "canonicalName": "Epithalon",
+   "catalogDisplayName": "Epithalon",
+   "canonicalVariant": "Epithalon 20 mg",
+   "catalogVariantLabel": "EPITHALON 20 mg",
+   "nominalAmountPerVialMg": 20,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0283-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11064",
+    "file": "research-batch-12.label-facts.json",
+    "sha256": "6adc2ed52d587f3bdb27ed4c960d472e5ccb4d1e483c99f6e4ff9efbf6fee201",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Epithalon",
+     "amount": "20 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0283"
+    },
+    "formNeutral": true,
+    "hold": "Artwork and container wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no container. Exact name, stated amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Epithalon",
+    "amountOnRender": "20 mg",
+    "amountOnLabel": "20 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0283"
+   },
+   "extraDoNotPrintTerms": [
+    "Epithalamin",
+    "Epithalamine",
+    "Epitalamin",
+    "extract",
+    "pineal",
+    "longevity",
+    "anti-ageing",
+    "anti-aging",
+    "telomer",
+    "sleep",
+    "geroprotect",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Epithalon",
+      "fontSizePx": 84.8,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       585,
+       800,
+       667
+      ]
+     },
+     {
+      "text": "20 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       635,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 84.8,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 888.2
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 757.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Epithalon 20 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-20mg-website-render-v1-1024.webp",
+     "sha256": "5bce84d01f83b8f6c7b0a2a4245485bf1e24ffe2071f94b74c3e0cdc599a8ec7"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Epithalon 20 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-20mg-front-artwork-v1.webp",
+     "sha256": "d593fa4485c95e867af952705814a822e6f49ca12b25333ec209bc31a26feade"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-20mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45708,
+     "sha256": "5bce84d01f83b8f6c7b0a2a4245485bf1e24ffe2071f94b74c3e0cdc599a8ec7",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-20mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 980196,
+     "sha256": "9dd9a48d635a28b6911e9100a074ee06baf24fa8dcd37a995d9b0df11bf27a82",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/epithalon-20mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3005,
+     "sha256": "9988a664c223b22e989a79ff92defb99bdebd64c407c47b885727b10e5cd046e",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-20mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 106786,
+     "sha256": "13b8811c4853f3e0bde5fb7b8f50bf079010218dfcc90d00271b3866984334e4",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-20mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 40956,
+     "sha256": "d593fa4485c95e867af952705814a822e6f49ca12b25333ec209bc31a26feade",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/epithalon-20mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6984,
+     "sha256": "8f6e209b52ede92e613f8a78e236a1fb5c67e6b73e507021078462faff9206f0",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-20mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 375183,
+     "sha256": "35b1822901fc9fcc75df4c4b8f3d062f3ae3de9faf48d058b3159a7a8c13aed8",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-20mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 158440,
+     "sha256": "a28b547e91dd6e5020b23918f66c84feff28f040782c11ab903e88a55a8acb5c",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_321599837d987cc36181",
+   "sourceVariantId": "mov_29d962312f3386b5dd3f",
+   "quickOrderSku": "GEN-GRP-0284",
+   "quickOrderProductId": "7090c616-9566-4540-83d6-016648fdf641",
+   "quickOrderVariantId": "72a60d03-efc8-4743-92f8-74c56198fdd1",
+   "canonicalName": "Epithalon",
+   "catalogDisplayName": "Epithalon",
+   "canonicalVariant": "Epithalon 30 mg",
+   "catalogVariantLabel": "EPITHALON 30 mg",
+   "nominalAmountPerVialMg": 30,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0284-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11064",
+    "file": "research-batch-12.label-facts.json",
+    "sha256": "6adc2ed52d587f3bdb27ed4c960d472e5ccb4d1e483c99f6e4ff9efbf6fee201",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Epithalon",
+     "amount": "30 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0284"
+    },
+    "formNeutral": true,
+    "hold": "Artwork and container wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no container. Exact name, stated amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Epithalon",
+    "amountOnRender": "30 mg",
+    "amountOnLabel": "30 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0284"
+   },
+   "extraDoNotPrintTerms": [
+    "Epithalamin",
+    "Epithalamine",
+    "Epitalamin",
+    "extract",
+    "pineal",
+    "longevity",
+    "anti-ageing",
+    "anti-aging",
+    "telomer",
+    "sleep",
+    "geroprotect",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Epithalon",
+      "fontSizePx": 84.8,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       585,
+       800,
+       667
+      ]
+     },
+     {
+      "text": "30 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       634,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 84.8,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 888.2
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 757.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Epithalon 30 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-30mg-website-render-v1-1024.webp",
+     "sha256": "20a5d8e6fafb4a9e5846e24b278c9840bd7f9c6ed9d6ee74b3ab99e1e9cef977"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Epithalon 30 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-30mg-front-artwork-v1.webp",
+     "sha256": "3b22b23737e3e9cf037db206b9651dee1c23181d652828967b18624157afa7fe"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-30mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46950,
+     "sha256": "20a5d8e6fafb4a9e5846e24b278c9840bd7f9c6ed9d6ee74b3ab99e1e9cef977",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-30mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 980592,
+     "sha256": "ca48f9c1cc16310c378bbc943e39235341e73cc83947e1edcb2cf3cca5840d24",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/epithalon-30mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3005,
+     "sha256": "43a6436aad2bd41c87b83d4da2f6bf8cdb9cdeaacbb255fe9bd7054e27c3eb75",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-30mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 107249,
+     "sha256": "9b16331ec0b3b94d170010b355007b11527fb64130ee40dae03d6e7615a009f3",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-30mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 42624,
+     "sha256": "3b22b23737e3e9cf037db206b9651dee1c23181d652828967b18624157afa7fe",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/epithalon-30mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6984,
+     "sha256": "44b1e8a5c7862082362b773b8f6cf222a74cd81a3734727c97ea5fa63c4e8f6d",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-30mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 375569,
+     "sha256": "238ce9b710bf4f9bb02202daf5d8515755a6ea81e2249957f78b00c13bb813fc",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-30mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 158386,
+     "sha256": "39c8aaec7915ce63d58bef6982b102b5eee2f3e37cbe5543422c059136e18a7e",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_bf5e52e34a71bce9974e",
+   "sourceVariantId": "mov_7808f3ed26c4fa0f19f6",
+   "quickOrderSku": "GEN-GRP-0285",
+   "quickOrderProductId": "7090c616-9566-4540-83d6-016648fdf641",
+   "quickOrderVariantId": "4c9ad9ae-f503-4168-8e64-95e01ac84ae2",
+   "canonicalName": "Epithalon",
+   "catalogDisplayName": "Epithalon",
+   "canonicalVariant": "Epithalon 35 mg",
+   "catalogVariantLabel": "EPITHALON 35 mg",
+   "nominalAmountPerVialMg": 35,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0285-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11064",
+    "file": "research-batch-12.label-facts.json",
+    "sha256": "6adc2ed52d587f3bdb27ed4c960d472e5ccb4d1e483c99f6e4ff9efbf6fee201",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Epithalon",
+     "amount": "35 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0285"
+    },
+    "formNeutral": true,
+    "hold": "Artwork and container wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no container. Exact name, stated amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Epithalon",
+    "amountOnRender": "35 mg",
+    "amountOnLabel": "35 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0285"
+   },
+   "extraDoNotPrintTerms": [
+    "Epithalamin",
+    "Epithalamine",
+    "Epitalamin",
+    "extract",
+    "pineal",
+    "longevity",
+    "anti-ageing",
+    "anti-aging",
+    "telomer",
+    "sleep",
+    "geroprotect",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Epithalon",
+      "fontSizePx": 84.8,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       585,
+       800,
+       667
+      ]
+     },
+     {
+      "text": "35 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       634,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 84.8,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 888.2
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 757.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Epithalon 35 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-35mg-website-render-v1-1024.webp",
+     "sha256": "eaaa4ef3fd979361eae5c8b2b7be72ae4f6b247f5e16d1e5fd880629ca08554a"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Epithalon 35 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-35mg-front-artwork-v1.webp",
+     "sha256": "605ce88448a049fd84680a8025284f4a80f1932768a1bad5fde645cb625832f4"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-35mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46844,
+     "sha256": "eaaa4ef3fd979361eae5c8b2b7be72ae4f6b247f5e16d1e5fd880629ca08554a",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-35mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 980360,
+     "sha256": "37d5271453c71f49cb102bb66d1c678c0bb1e04920e8da4ee19a96efba943316",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/epithalon-35mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3005,
+     "sha256": "cbce87d458bd0b5a37286de1f61c303014cf7ce87720718264005c5b844e3ff9",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-35mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 106048,
+     "sha256": "f70913a8b831af75ae307a5a18b197b0e069136151251461d7d9bb06b701dee6",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-35mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 42466,
+     "sha256": "605ce88448a049fd84680a8025284f4a80f1932768a1bad5fde645cb625832f4",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/epithalon-35mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6984,
+     "sha256": "d8eb98c3f4c8455c24b29f4602efcba0b10ec1c845bfeaddb2b2c173e60ffb36",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-35mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 374810,
+     "sha256": "3cdf5209498fa9a086e44a4d2b1a2e90373f7ec8b0e7e7b524012653d2a0eddc",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/epithalon-35mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 158190,
+     "sha256": "c6bb08a151381fcbbbf82bd2b043ebbd34eb2400ce38430c2a7ed6debc46207b",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_ffeecca340b02f400868",
+   "sourceVariantId": "mov_a4b4118c4d23b1546c8b",
+   "quickOrderSku": "GEN-GRP-0307",
+   "quickOrderProductId": "cd6ded4d-a94c-4d56-8092-9262a83d6a8d",
+   "quickOrderVariantId": "4d20bfac-fce8-4723-814c-02ecafda3c0d",
+   "canonicalName": "KPV",
+   "catalogDisplayName": "KPV",
+   "canonicalVariant": "KPV 5 mg",
+   "catalogVariantLabel": "KPV 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0307-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11091",
+    "file": "research-batch-14.label-facts.json",
+    "sha256": "d41207c0a3d85789d48d4668a6ecd8c5e8557022fe2ea45bd37e0f271cfe1fe5",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "KPV",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0307"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819): the tiered price list states no dosage form. Note for artwork reuse: the accepted sibling strengths of this same compound were cleared with vial wording before that ruling, so their artwork must not be copied onto this row."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "KPV",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0307"
+   },
+   "extraDoNotPrintTerms": [],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "KPV",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       593,
+       620,
+       656
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 477.8
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 417.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios KPV 5 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kpv-5mg-website-render-v1-1024.webp",
+     "sha256": "94c650508498a950035813798626f74bc99e84503b489ae4865729e31b1326bc"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios KPV 5 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kpv-5mg-front-artwork-v1.webp",
+     "sha256": "208bccd7653bfa80f761a219eb28727457083362bcfcd8fe2834833492e2bef8"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kpv-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 43734,
+     "sha256": "94c650508498a950035813798626f74bc99e84503b489ae4865729e31b1326bc",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kpv-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 978032,
+     "sha256": "05762861da8b80d15d424c2f9284dcff530242c1ac428b2e88b997af183fe953",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/kpv-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2983,
+     "sha256": "517601939b4456bd87c735ff306805efe8888b521119eeab05a4cab641305359",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kpv-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 94479,
+     "sha256": "9dfbb5b461af27284b84178afb4a216cb0a03f8921d065c008ac4f7e363fa4e2",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kpv-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 38456,
+     "sha256": "208bccd7653bfa80f761a219eb28727457083362bcfcd8fe2834833492e2bef8",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/kpv-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6955,
+     "sha256": "cb457b6b20e65a99d6a406a7618eb8e7437ad30c9f258ea10f6fb6512695976d",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kpv-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 362301,
+     "sha256": "bd804e9d42acf2095deb8ab1e91fad5ef6d914da3c9b110716e7ae819142f3fd",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/kpv-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 153630,
+     "sha256": "d39bb40c9800ec1569493837663100db6bf6672aa03ae5f8d990c2900dee240e",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_e948b9ac0d531ef744ae",
+   "sourceVariantId": "mov_a29c1130a8c45aff1f26",
+   "quickOrderSku": "GEN-GRP-0291",
+   "quickOrderProductId": "cb19e04c-6d29-4e2c-829a-8aa689ac2ce3",
+   "quickOrderVariantId": "02ddb0be-d521-48e0-a53f-caaad945f812",
+   "canonicalName": "GHRP-2",
+   "catalogDisplayName": "GHRP-2",
+   "canonicalVariant": "GHRP-2 5 mg",
+   "catalogVariantLabel": "GHRP-2 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0291-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11136",
+    "file": "research-batch-15.label-facts.json",
+    "sha256": "62e4715f2734b8589de1d322fb33535b6838bc25830889d6d04a8a5475d6207e",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "GHRP-2",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0291"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819): the tiered price list states no dosage form. Note for artwork reuse: the accepted sibling strength of this same compound (GEN-GRP-0290) was cleared form-neutral, so its label facts may be reused for this row."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "GHRP-2",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0291"
+   },
+   "extraDoNotPrintTerms": [
+    "GHRP-6",
+    "pralmorelin",
+    "KP-102",
+    "growth",
+    "muscle",
+    "appetite",
+    "pain",
+    "stress",
+    "hormone",
+    "body composition",
+    "body-composition"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "GHRP-2",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       592,
+       773,
+       657
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 775.5
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 663.5
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios GHRP-2 5 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-5mg-website-render-v1-1024.webp",
+     "sha256": "aff6dcfd33a9680034c671534b9eb50d9999003dfd523855aa077a667387e7f1"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios GHRP-2 5 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-5mg-front-artwork-v1.webp",
+     "sha256": "2e41a1e5ff1dfff6985f996468ab60884704d06d371707d41e062af95cc2a0ee"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 44726,
+     "sha256": "aff6dcfd33a9680034c671534b9eb50d9999003dfd523855aa077a667387e7f1",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 978392,
+     "sha256": "0eac7d0c95e57ad533164f68d76fc05692d7b0565605dd8077b3cff851110c4c",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ghrp-2-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2992,
+     "sha256": "ad48fedde265c0631ddb74a54ca313f938b9701fc6978286d71b7ab79e22f3ce",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 99056,
+     "sha256": "8dfbc5e494bbfdb92c9b27d3d195d3a855cbe66dcbf7a79e06272d8561ecb3a5",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 40046,
+     "sha256": "2e41a1e5ff1dfff6985f996468ab60884704d06d371707d41e062af95cc2a0ee",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/labels/ghrp-2-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6967,
+     "sha256": "4a53c429f3458415cf74bc9a84c4e9d662742d0cccefad4704a8b74051edf984",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 366961,
+     "sha256": "5871617cbfaaaed627b7bf733398a966cfe594452bd2edd67e589f6067b8acaf",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-005/assets/ghrp-2-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 155286,
+     "sha256": "1f6ce41e1d0825a8e6d15813d1b9912cc7d9c76a60d9e87578c3574aca306cef",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  }
+ ],
+ "changesFromC1004": [
+  "One change in the render method: xr_compose.py stacks a name that falls below 70% size only when stacking sets it larger than one line does. Melanotan II is the first name where it would not (one line 63.0 px; stacked, 62.29 px with the amount at 42.98 px), so it stays on one line. No earlier record changes: under C1-004's copy and this one, every record of C1-001 to C1-004 and the other 23 records of this batch get the same layout, and Thymosin Alpha-1 (C1-001, C1-003) still stacks.",
+  "None in the build, label or verification method: build_c1.py, svg_label_render.py, wpf_kern.ps1 and verify_c1.py are byte-identical to C1-004 as corrected (commit 7a488755). c1_variants.py adds per-compound do-not-print terms that the label facts list and the C1-004 copy lacked: for this batch, arousal for PT-141, and Epithalamine, regulatory and indication for Epithalon; for batch C1-006, the developer codes of Liraglutide and Semaglutide, semaglutide and its combination product for Cagrilintide, and the approved medicine's brand name and syndrome wording for SS-31. write_manifest.py records the claim references of C1-005 and C1-006 and the change notes of both. The kern table covers the strings in this batch.",
+  "24 of 24 records have form-neutral label facts: they state the name, the amount in mg, the product code and the classification, and no form. For those records the printed vial and the per-vial amount basis rest on the packaging declaration alone; labelFacts keeps CLAUDE-2's hold note and formBasis cites the declaration."
+ ],
+ "packagingDeclaration": {
+  "amountBasis": "per vial",
+  "form": "Lyophilized vial",
+  "kind": "xenios_packaging_declaration",
+  "reference": "KAN-225/11259",
+  "signedDate": "2026-11-05",
+  "signer": "Samuel Boadu, founder",
+  "status": "RECORDED"
+ }
+}

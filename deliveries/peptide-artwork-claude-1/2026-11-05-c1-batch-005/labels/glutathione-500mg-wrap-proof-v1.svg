@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1200" viewBox="0 0 2400 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Xenios Glutathione 500 mg supplier wrap proof version 1</title>
+  <desc id="desc">Editable Xenios Glutathione 500 mg per vial packaging design. Lyophilized vial for laboratory research use only. Physical dimensions are pending the supplier dieline.</desc>
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.58" stop-color="#f7f5fb"/>
+      <stop offset="1" stop-color="#ece8f4"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#3b1a72"/>
+      <stop offset="0.2" stop-color="#7343d4"/>
+      <stop offset="0.45" stop-color="#496ee7"/>
+      <stop offset="0.68" stop-color="#21a8d0"/>
+      <stop offset="0.84" stop-color="#7261dc"/>
+      <stop offset="1" stop-color="#2a144f"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6935ca"/>
+      <stop offset="1" stop-color="#1b9dca"/>
+    </linearGradient>
+    <style>
+      .sans { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      .eyebrow { font-size: 22px; font-weight: 800; letter-spacing: 3px; fill: #6d3bc3; }
+      .label { font-size: 21px; font-weight: 780; letter-spacing: 2px; fill: #5d35ab; }
+      .value { font-size: 28px; font-weight: 680; fill: #171024; }
+      .note { font-size: 20px; font-weight: 600; fill: #665d73; }
+    </style>
+  </defs>
+
+  <rect width="2400" height="1200" fill="#dedbe5"/>
+  <g class="sans">
+    <text x="90" y="74" font-size="26" font-weight="850" letter-spacing="3" fill="#a02d57">SUPPLIER PROOF - NOT PRESS READY</text>
+    <text x="2310" y="74" font-size="23" font-weight="720" text-anchor="end" fill="#4f465c">GEN-GRP-0296-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE</text>
+  </g>
+
+  <rect x="70" y="110" width="2260" height="940" rx="34" fill="url(#paper)"/>
+  <rect x="70" y="110" width="2260" height="20" rx="10" fill="url(#metal)"/>
+  <rect x="70" y="1030" width="2260" height="20" rx="10" fill="url(#metal)"/>
+
+  <g id="non-print-guides" fill="none" stroke="#8b7b9b" stroke-width="2" stroke-dasharray="12 9" opacity="0.65">
+    <rect x="100" y="150" width="2200" height="840" rx="20"/>
+    <line x1="1020" y1="150" x2="1020" y2="990"/>
+    <line x1="1590" y1="150" x2="1590" y2="990"/>
+  </g>
+
+  <g class="sans" id="front-panel">
+    <text x="150" y="280" font-size="72" font-weight="820" letter-spacing="14" fill="#171026">XENIOS</text>
+    <rect x="150" y="320" width="810" height="8" rx="4" fill="url(#rule)"/>
+    <text x="145" y="520" font-size="146" font-weight="790" letter-spacing="-5" fill="#171023">Glutathione</text>
+    <text x="153" y="628" font-size="88" font-weight="790" fill="#6436c9">500 mg</text>
+    <text x="153" y="704" font-size="34" font-weight="760" letter-spacing="5" fill="#40354e">LYOPHILIZED VIAL</text>
+    <g transform="translate(140 770)">
+      <rect width="835" height="140" rx="24" fill="#20143a"/>
+      <rect width="17" height="140" rx="8" fill="url(#metal)"/>
+      <text x="50" y="57" font-size="31" font-weight="820" letter-spacing="2.5" fill="#ffffff">RESEARCH USE ONLY</text>
+      <text x="50" y="101" font-size="24" font-weight="650" letter-spacing="1.8" fill="#ddd5ee">NONCLINICAL USE ONLY</text>
+      <text x="790" y="58" font-size="21" font-weight="740" text-anchor="end" fill="#a8d2ff">NOMINAL CONTENT</text>
+      <text x="790" y="104" font-size="34" font-weight="840" text-anchor="end" fill="#ffffff">500 mg per vial</text>
+    </g>
+  </g>
+
+  <g class="sans" id="side-panel" transform="translate(1080 220)">
+    <text x="0" y="0" class="eyebrow">FIXED IDENTITY</text>
+    <rect x="0" y="25" width="450" height="5" rx="2" fill="url(#rule)"/>
+    <text x="0" y="85" class="label">PRODUCT</text>
+    <text x="0" y="122" class="value">Glutathione</text>
+    <text x="0" y="190" class="label">NOMINAL CONTENT</text>
+    <text x="0" y="227" class="value">500 mg per vial</text>
+    <text x="0" y="295" class="label">FORM</text>
+    <text x="0" y="332" class="value">Lyophilized vial</text>
+    <text x="0" y="400" class="label">CLASSIFICATION</text>
+    <text x="0" y="437" class="value">Research Use Only</text>
+    <text x="0" y="473" class="note">Nonclinical use only</text>
+    <text x="0" y="510" class="note">For laboratory research use only.</text>
+    <text x="0" y="545" class="label">PRODUCT CODE</text>
+    <text x="0" y="582" class="value">GEN-GRP-0296</text>
+    <text x="0" y="660" class="note">Catalog identifier only.</text>
+    <text x="0" y="694" class="note">Not lot or manufacturing traceability.</text>
+  </g>
+
+  <g class="sans" id="back-panel-proof-only" transform="translate(1650 205)">
+    <text x="0" y="0" class="eyebrow">SUPPLIER PROOF NOTES</text>
+    <rect x="0" y="25" width="595" height="5" rx="2" fill="url(#rule)"/>
+
+    <g transform="translate(0 70)">
+      <rect width="595" height="150" rx="16" fill="#f2edf8" stroke="#9c8cad" stroke-width="2"/>
+      <text x="22" y="38" class="label">TRACEABILITY AREA</text>
+      <text x="22" y="81" class="value">Reserved for supplier-issued data</text>
+      <text x="22" y="118" class="note">Blank on the proof artwork.</text>
+    </g>
+
+    <g transform="translate(0 245)">
+      <rect width="595" height="130" rx="16" fill="#fff8e9" stroke="#d6aa50" stroke-width="2"/>
+      <text x="22" y="38" class="label">STORAGE COPY</text>
+      <text x="22" y="78" class="value">Supplier-approved copy required</text>
+      <text x="22" y="110" class="note">Reserved area pending confirmation.</text>
+    </g>
+
+    <g transform="translate(0 405)">
+      <rect width="595" height="130" rx="16" fill="#fff8e9" stroke="#d6aa50" stroke-width="2"/>
+      <text x="22" y="38" class="label">LEGAL ATTRIBUTION</text>
+      <text x="22" y="78" class="value">Supplier legal identity required</text>
+      <text x="22" y="110" class="note">Reserved area pending confirmation.</text>
+    </g>
+
+    <g transform="translate(0 565)">
+      <rect width="595" height="140" rx="16" fill="#edf6fa" stroke="#5c9bb4" stroke-width="2"/>
+      <text x="22" y="38" class="label">MATCHED DOCUMENTATION</text>
+      <text x="22" y="78" class="value">Product-specific document pending</text>
+      <text x="22" y="111" class="note">Any destination requires a verified match.</text>
+    </g>
+  </g>
+
+  <g class="sans" fill="#554b60">
+    <text x="100" y="1110" font-size="22" font-weight="700">NON-PRINT GUIDES:</text>
+    <text x="330" y="1110" font-size="22" font-weight="600">Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.</text>
+    <text x="100" y="1150" font-size="22" font-weight="600">Packaging design proof. Supplier confirmation and physical production approval are pending.</text>
+  </g>
+</svg>

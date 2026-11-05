@@ -1,0 +1,982 @@
+[
+ {
+  "slug": "5-amino-1mq-10mg",
+  "name": "5-Amino-1MQ",
+  "code": "5AMINO1MQ",
+  "mg": 10,
+  "sku": "GEN-GRP-0256",
+  "offeringId": "mo_afb0add32da0de7426f5",
+  "sourceVariantId": "mov_9262033fe69a14a50f1c",
+  "labelFactsRef": "KAN-59/10906",
+  "labelFactsFile": "research-batch-06.label-facts.json",
+  "labelFactsSha256": "af47cfa0798c1e6db8d7f64770194c906b471153d393975bfb4cce96818e2532",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "5-Amino-1MQ",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0256"
+  },
+  "extraDoNotPrintTerms": [
+   "NNMT",
+   "metabolism",
+   "fat",
+   "weight",
+   "NAD+ benefit"
+  ],
+  "nameVariance": {
+   "catalogDisplayName": "5-Amino-1Mq",
+   "printedName": "5-Amino-1MQ",
+   "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+  },
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "dsip-5mg",
+  "name": "DSIP",
+  "code": "DSIP",
+  "mg": 5,
+  "sku": "GEN-GRP-0281",
+  "offeringId": "mo_8cca713c2b203a712494",
+  "sourceVariantId": "mov_718e52d07396abd5b2dc",
+  "labelFactsRef": "KAN-59/10937",
+  "labelFactsFile": "research-batch-07.label-facts.json",
+  "labelFactsSha256": "e8c583bfc8e51c59e42446986406c807c51672b595db214652506b9612f03366",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "DSIP",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0281"
+  },
+  "extraDoNotPrintTerms": [
+   "sleep",
+   "EEG"
+  ],
+  "nameVariance": {
+   "catalogDisplayName": "Dsip",
+   "printedName": "DSIP",
+   "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+  },
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-225/10819 class, KAN-31/10870, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "kisspeptin-5mg",
+  "name": "Kisspeptin",
+  "code": "KISSPEPTIN",
+  "mg": 5,
+  "sku": "GEN-GRP-0309",
+  "offeringId": "mo_6d5f244f45892249b132",
+  "sourceVariantId": "mov_4d4f3fc085df5aaf9ae8",
+  "labelFactsRef": "KAN-59/10937",
+  "labelFactsFile": "research-batch-07.label-facts.json",
+  "labelFactsSha256": "e8c583bfc8e51c59e42446986406c807c51672b595db214652506b9612f03366",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Kisspeptin",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0309"
+  },
+  "extraDoNotPrintTerms": [
+   "Kisspeptin-10",
+   "Kisspeptin-54",
+   "fertility",
+   "puberty",
+   "reproductive"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-225/10819 class, KAN-31/10870, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "selank-5mg",
+  "name": "Selank",
+  "code": "SELANK",
+  "mg": 5,
+  "sku": "GEN-GRP-0332",
+  "offeringId": "mo_4df776b9fb9b2d4b7302",
+  "sourceVariantId": "mov_538e701ea3907d766c38",
+  "labelFactsRef": "KAN-59/10937",
+  "labelFactsFile": "research-batch-07.label-facts.json",
+  "labelFactsSha256": "e8c583bfc8e51c59e42446986406c807c51672b595db214652506b9612f03366",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Selank",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0332"
+  },
+  "extraDoNotPrintTerms": [],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-225/10819 class, KAN-31/10870, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "gonadorelin-5mg",
+  "name": "Gonadorelin",
+  "code": "GONADORELIN",
+  "mg": 5,
+  "sku": "GEN-GRP-0297",
+  "offeringId": "mo_5e145fbee8e39536b580",
+  "sourceVariantId": "mov_b36b64d987325dca8df4",
+  "labelFactsRef": "KAN-59/10980",
+  "labelFactsFile": "research-batch-09.label-facts.json",
+  "labelFactsSha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Gonadorelin",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0297"
+  },
+  "extraDoNotPrintTerms": [
+   "fertility",
+   "hormone",
+   "ovulation",
+   "veterinary",
+   "Factrel",
+   "GONAbreed",
+   "Fertagyl"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "melanotan-i-10mg",
+  "name": "Melanotan I",
+  "code": "MELANOTANI",
+  "mg": 10,
+  "sku": "GEN-GRP-0314",
+  "offeringId": "mo_b1b15717ae2e89a19981",
+  "sourceVariantId": "mov_fb757d24b8c1ae0e5efe",
+  "labelFactsRef": "KAN-59/10980",
+  "labelFactsFile": "research-batch-09.label-facts.json",
+  "labelFactsSha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Melanotan I",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0314"
+  },
+  "extraDoNotPrintTerms": [
+   "afamelanotide",
+   "Scenesse",
+   "tanning",
+   "pigment",
+   "photoprotect",
+   "clinical"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "melanotan-ii-10mg",
+  "name": "Melanotan II",
+  "code": "MELANOTANII",
+  "mg": 10,
+  "sku": "GEN-GRP-0315",
+  "offeringId": "mo_595ec28612674477e5aa",
+  "sourceVariantId": "mov_71e448565b155e87b979",
+  "labelFactsRef": "KAN-59/10980",
+  "labelFactsFile": "research-batch-09.label-facts.json",
+  "labelFactsSha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Melanotan II",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0315"
+  },
+  "extraDoNotPrintTerms": [
+   "tanning",
+   "pigment",
+   "erectile",
+   "appetite",
+   "metabolic"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "pt-141-10mg",
+  "name": "PT-141",
+  "code": "PT141",
+  "mg": 10,
+  "sku": "GEN-GRP-0321",
+  "offeringId": "mo_f66623171e193fc81edb",
+  "sourceVariantId": "mov_9cc6d7d3967d7507480b",
+  "labelFactsRef": "KAN-59/10980",
+  "labelFactsFile": "research-batch-09.label-facts.json",
+  "labelFactsSha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "PT-141",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0321"
+  },
+  "extraDoNotPrintTerms": [
+   "bremelanotide",
+   "Vyleesi",
+   "sexual",
+   "desire",
+   "arousal",
+   "HSDD",
+   "clinical"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "ara-290-5mg",
+  "name": "ARA-290",
+  "code": "ARA290",
+  "mg": 5,
+  "sku": "GEN-GRP-0259",
+  "offeringId": "mo_463212f23e8e3e39c57b",
+  "sourceVariantId": "mov_523c894b29954645c00a",
+  "labelFactsRef": "KAN-59/11039",
+  "labelFactsFile": "research-batch-10.label-facts.json",
+  "labelFactsSha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "ARA-290",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0259"
+  },
+  "extraDoNotPrintTerms": [
+   "cibinetide",
+   "pain",
+   "neuropath",
+   "wound",
+   "kidney",
+   "renal",
+   "retinal",
+   "cognition"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "ara-290-10mg",
+  "name": "ARA-290",
+  "code": "ARA290",
+  "mg": 10,
+  "sku": "GEN-GRP-0257",
+  "offeringId": "mo_0907a4d651019afed8ed",
+  "sourceVariantId": "mov_04f750af7277d98b7ad9",
+  "labelFactsRef": "KAN-59/11039",
+  "labelFactsFile": "research-batch-10.label-facts.json",
+  "labelFactsSha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "ARA-290",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0257"
+  },
+  "extraDoNotPrintTerms": [
+   "cibinetide",
+   "pain",
+   "neuropath",
+   "wound",
+   "kidney",
+   "renal",
+   "retinal",
+   "cognition"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "ara-290-15mg",
+  "name": "ARA-290",
+  "code": "ARA290",
+  "mg": 15,
+  "sku": "GEN-GRP-0258",
+  "offeringId": "mo_ca085a7994a6db594748",
+  "sourceVariantId": "mov_6509a8f595cfc3fc36bc",
+  "labelFactsRef": "KAN-59/11039",
+  "labelFactsFile": "research-batch-10.label-facts.json",
+  "labelFactsSha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "ARA-290",
+   "amount": "15 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0258"
+  },
+  "extraDoNotPrintTerms": [
+   "cibinetide",
+   "pain",
+   "neuropath",
+   "wound",
+   "kidney",
+   "renal",
+   "retinal",
+   "cognition"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "aod-9604-5mg",
+  "name": "AOD-9604",
+  "code": "AOD9604",
+  "mg": 5,
+  "sku": "GEN-GRP-0261",
+  "offeringId": "mo_f9bf2c4e55dbbb5e7a03",
+  "sourceVariantId": "mov_e0ce4fde8a3393202bdc",
+  "labelFactsRef": "KAN-59/11039",
+  "labelFactsFile": "research-batch-10.label-facts.json",
+  "labelFactsSha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "AOD-9604",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0261"
+  },
+  "extraDoNotPrintTerms": [
+   "somatostatin",
+   "weight",
+   "fat",
+   "metabolic",
+   "obesity"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "aod-9604-10mg",
+  "name": "AOD-9604",
+  "code": "AOD9604",
+  "mg": 10,
+  "sku": "GEN-GRP-0260",
+  "offeringId": "mo_216b3a5f02fb7724cd51",
+  "sourceVariantId": "mov_d25066629d9cbdbad552",
+  "labelFactsRef": "KAN-59/11039",
+  "labelFactsFile": "research-batch-10.label-facts.json",
+  "labelFactsSha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "AOD-9604",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0260"
+  },
+  "extraDoNotPrintTerms": [
+   "somatostatin",
+   "weight",
+   "fat",
+   "metabolic",
+   "obesity"
+  ],
+  "nameVariance": {
+   "catalogDisplayName": "Aod-9604",
+   "printedName": "AOD-9604",
+   "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+  },
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "ghrp-6-10mg",
+  "name": "GHRP-6",
+  "code": "GHRP6",
+  "mg": 10,
+  "sku": "GEN-GRP-0292",
+  "offeringId": "mo_849cdbb1463f8382f1f6",
+  "sourceVariantId": "mov_e21bffb0a8ad83a8137f",
+  "labelFactsRef": "KAN-59/11039",
+  "labelFactsFile": "research-batch-10.label-facts.json",
+  "labelFactsSha256": "a8624f2289b9acd8b0aa25abb01477a8d85dd4609c2c1eac78ee8125283ebf26",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "GHRP-6",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0292"
+  },
+  "extraDoNotPrintTerms": [
+   "GHRP-2",
+   "pralmorelin",
+   "growth",
+   "appetite",
+   "body composition",
+   "body-composition",
+   "hormone release",
+   "hormone-release"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "ghrp-2-10mg",
+  "name": "GHRP-2",
+  "code": "GHRP2",
+  "mg": 10,
+  "sku": "GEN-GRP-0290",
+  "offeringId": "mo_65340dd542e68a0af5ab",
+  "sourceVariantId": "mov_9774e642bf4c6b799a8c",
+  "labelFactsRef": "KAN-59/11051",
+  "labelFactsFile": "research-batch-11.label-facts.json",
+  "labelFactsSha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "GHRP-2",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0290"
+  },
+  "extraDoNotPrintTerms": [
+   "GHRP-6",
+   "pralmorelin",
+   "KP-102",
+   "growth",
+   "muscle",
+   "appetite",
+   "pain",
+   "stress",
+   "hormone",
+   "body composition",
+   "body-composition"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "glutathione-500mg",
+  "name": "Glutathione",
+  "code": "GLUTATHIONE",
+  "mg": 500,
+  "sku": "GEN-GRP-0296",
+  "offeringId": "mo_fa2070d7fd794ad0c245",
+  "sourceVariantId": "mov_77a80adce9e9cb1b93a0",
+  "labelFactsRef": "KAN-59/11051",
+  "labelFactsFile": "research-batch-11.label-facts.json",
+  "labelFactsSha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Glutathione",
+   "amount": "500 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0296"
+  },
+  "extraDoNotPrintTerms": [
+   "reduced",
+   "oxidized",
+   "oxidised",
+   "GSH",
+   "GSSG",
+   "Isethion",
+   "Glutinal",
+   "Tathion",
+   "Copren",
+   "antioxidant",
+   "detox",
+   "skin",
+   "liver",
+   "wellness",
+   "supplement"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "glutathione-1500mg",
+  "name": "Glutathione",
+  "code": "GLUTATHIONE",
+  "mg": 1500,
+  "sku": "GEN-GRP-0295",
+  "offeringId": "mo_7f4fc3961bd7c1e6b6bf",
+  "sourceVariantId": "mov_77837ac2575c8df8ac73",
+  "labelFactsRef": "KAN-59/11051",
+  "labelFactsFile": "research-batch-11.label-facts.json",
+  "labelFactsSha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Glutathione",
+   "amount": "1500 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0295"
+  },
+  "extraDoNotPrintTerms": [
+   "reduced",
+   "oxidized",
+   "oxidised",
+   "GSH",
+   "GSSG",
+   "Isethion",
+   "Glutinal",
+   "Tathion",
+   "Copren",
+   "antioxidant",
+   "detox",
+   "skin",
+   "liver",
+   "wellness",
+   "supplement"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "nad-500mg",
+  "name": "NAD+",
+  "code": "NAD",
+  "mg": 500,
+  "sku": "GEN-GRP-0318",
+  "offeringId": "mo_4bf44c0afe1ae392ddf0",
+  "sourceVariantId": "mov_60e645f13e186042b62b",
+  "labelFactsRef": "KAN-59/11051",
+  "labelFactsFile": "research-batch-11.label-facts.json",
+  "labelFactsSha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "NAD+",
+   "amount": "500 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0318"
+  },
+  "extraDoNotPrintTerms": [
+   "nadide",
+   "NADH",
+   "reduced",
+   "anti-ageing",
+   "anti-aging",
+   "energy",
+   "longevity",
+   "metabolic",
+   "wellness",
+   "supplement"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "nad-1000mg",
+  "name": "NAD+",
+  "code": "NAD",
+  "mg": 1000,
+  "sku": "GEN-GRP-0317",
+  "offeringId": "mo_25463089835b0939dc4b",
+  "sourceVariantId": "mov_26ba2e0fb6498f8e96ac",
+  "labelFactsRef": "KAN-59/11051",
+  "labelFactsFile": "research-batch-11.label-facts.json",
+  "labelFactsSha256": "2852bdc15a8d77abb44b8e19d0131740faf585d3eb9503e3a2927ab24652ba02",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "NAD+",
+   "amount": "1000 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0317"
+  },
+  "extraDoNotPrintTerms": [
+   "nadide",
+   "NADH",
+   "reduced",
+   "anti-ageing",
+   "anti-aging",
+   "energy",
+   "longevity",
+   "metabolic",
+   "wellness",
+   "supplement"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "epithalon-20mg",
+  "name": "Epithalon",
+  "code": "EPITHALON",
+  "mg": 20,
+  "sku": "GEN-GRP-0283",
+  "offeringId": "mo_9bd279e3ef84393cf793",
+  "sourceVariantId": "mov_017febfdb0edf96366f4",
+  "labelFactsRef": "KAN-59/11064",
+  "labelFactsFile": "research-batch-12.label-facts.json",
+  "labelFactsSha256": "6adc2ed52d587f3bdb27ed4c960d472e5ccb4d1e483c99f6e4ff9efbf6fee201",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Epithalon",
+   "amount": "20 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0283"
+  },
+  "extraDoNotPrintTerms": [
+   "Epithalamin",
+   "Epithalamine",
+   "Epitalamin",
+   "extract",
+   "pineal",
+   "longevity",
+   "anti-ageing",
+   "anti-aging",
+   "telomer",
+   "sleep",
+   "geroprotect",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Artwork and container wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no container. Exact name, stated amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "epithalon-30mg",
+  "name": "Epithalon",
+  "code": "EPITHALON",
+  "mg": 30,
+  "sku": "GEN-GRP-0284",
+  "offeringId": "mo_321599837d987cc36181",
+  "sourceVariantId": "mov_29d962312f3386b5dd3f",
+  "labelFactsRef": "KAN-59/11064",
+  "labelFactsFile": "research-batch-12.label-facts.json",
+  "labelFactsSha256": "6adc2ed52d587f3bdb27ed4c960d472e5ccb4d1e483c99f6e4ff9efbf6fee201",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Epithalon",
+   "amount": "30 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0284"
+  },
+  "extraDoNotPrintTerms": [
+   "Epithalamin",
+   "Epithalamine",
+   "Epitalamin",
+   "extract",
+   "pineal",
+   "longevity",
+   "anti-ageing",
+   "anti-aging",
+   "telomer",
+   "sleep",
+   "geroprotect",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Artwork and container wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no container. Exact name, stated amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "epithalon-35mg",
+  "name": "Epithalon",
+  "code": "EPITHALON",
+  "mg": 35,
+  "sku": "GEN-GRP-0285",
+  "offeringId": "mo_bf5e52e34a71bce9974e",
+  "sourceVariantId": "mov_7808f3ed26c4fa0f19f6",
+  "labelFactsRef": "KAN-59/11064",
+  "labelFactsFile": "research-batch-12.label-facts.json",
+  "labelFactsSha256": "6adc2ed52d587f3bdb27ed4c960d472e5ccb4d1e483c99f6e4ff9efbf6fee201",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Epithalon",
+   "amount": "35 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0285"
+  },
+  "extraDoNotPrintTerms": [
+   "Epithalamin",
+   "Epithalamine",
+   "Epitalamin",
+   "extract",
+   "pineal",
+   "longevity",
+   "anti-ageing",
+   "anti-aging",
+   "telomer",
+   "sleep",
+   "geroprotect",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Artwork and container wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no container. Exact name, stated amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "kpv-5mg",
+  "name": "KPV",
+  "code": "KPV",
+  "mg": 5,
+  "sku": "GEN-GRP-0307",
+  "offeringId": "mo_ffeecca340b02f400868",
+  "sourceVariantId": "mov_a4b4118c4d23b1546c8b",
+  "labelFactsRef": "KAN-59/11091",
+  "labelFactsFile": "research-batch-14.label-facts.json",
+  "labelFactsSha256": "d41207c0a3d85789d48d4668a6ecd8c5e8557022fe2ea45bd37e0f271cfe1fe5",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "KPV",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0307"
+  },
+  "extraDoNotPrintTerms": [],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819): the tiered price list states no dosage form. Note for artwork reuse: the accepted sibling strengths of this same compound were cleared with vial wording before that ruling, so their artwork must not be copied onto this row."
+ },
+ {
+  "slug": "ghrp-2-5mg",
+  "name": "GHRP-2",
+  "code": "GHRP2",
+  "mg": 5,
+  "sku": "GEN-GRP-0291",
+  "offeringId": "mo_e948b9ac0d531ef744ae",
+  "sourceVariantId": "mov_a29c1130a8c45aff1f26",
+  "labelFactsRef": "KAN-59/11136",
+  "labelFactsFile": "research-batch-15.label-facts.json",
+  "labelFactsSha256": "62e4715f2734b8589de1d322fb33535b6838bc25830889d6d04a8a5475d6207e",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "GHRP-2",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0291"
+  },
+  "extraDoNotPrintTerms": [
+   "GHRP-6",
+   "pralmorelin",
+   "KP-102",
+   "growth",
+   "muscle",
+   "appetite",
+   "pain",
+   "stress",
+   "hormone",
+   "body composition",
+   "body-composition"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819): the tiered price list states no dosage form. Note for artwork reuse: the accepted sibling strength of this same compound (GEN-GRP-0290) was cleared form-neutral, so its label facts may be reused for this row."
+ }
+]
