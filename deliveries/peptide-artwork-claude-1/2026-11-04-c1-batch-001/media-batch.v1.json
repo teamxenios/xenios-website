@@ -40,7 +40,17 @@
  ],
  "labelFactSources": [
   "KAN-6/10624 (Session 3 static artwork facts)",
-  "KAN-59/10654 (CLAUDE-2 label facts, research-batch-01.label-facts.json sha256 2a7b93e1c71234811fc1adc8651be54a7e5d28b8115bdb2633533387b2cb163c)"
+  "KAN-59/10654 (CLAUDE-2 label facts, research-batch-01.label-facts.json sha256 2a7b93e1c71234811fc1adc8651be54a7e5d28b8115bdb2633533387b2cb163c)",
+  "KAN-59/10667 (CLAUDE-2 label facts, research-batch-02.label-facts.json sha256 186a9673b12ac3931ca5f455f7c722ad7c56b574ff618f35936c198663cccccf)"
+ ],
+ "corrections": [
+  {
+   "date": "2026-11-04",
+   "requestedBy": "KAN-31/10732",
+   "previousCommit": "a7f43426ec3270c3f25270b4a37bf1633a2bbeb1",
+   "previousManifestSha256": "3adfb80ce82762f4b74a634b727a495f1a7764794ceadb6e004d69258e7835f8",
+   "change": "The previous manifest cited only label-fact batch 01, which covers KPV. It now also cites batch 02 (KAN-59/10667), the source for Ipamorelin, Selank and Thymosin Alpha-1, and each record names its label-fact source in labelFacts. As found for C1-002 in KAN-31/10737, verify_c1.py, build_c1.py and write_manifest.py now hash text files as committed, with LF line ends, so a Windows checkout with core.autocrlf (CRLF) verifies. The tool files that had been committed with CRLF line ends (build_c1.py, xr_compose.py, wpf_kern.ps1, kern-table.segoe-ui.json and build-report.json) are now LF like every other text file; only their line ends changed. No image or label master changed."
+  }
  ],
  "publicationState": "review_only_not_runtime",
  "supplierSendPerformed": false,
@@ -72,18 +82,18 @@
  "tools": [
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/build-report.json",
-   "bytes": 37160,
-   "sha256": "60e381abea05e845e999b7b0dd354f793981d537e4f2a63c535aed1b9e2bdaa1"
+   "bytes": 35184,
+   "sha256": "ad234f85f98961a205d65e8df1c816f0660a04cfdafec6d9578dc0825db94a03"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/build_c1.py",
-   "bytes": 13390,
-   "sha256": "92eecf4587615ed12129f797198ebb08768b73bbcf3aaeb312a0199ba0a701d4"
+   "bytes": 13548,
+   "sha256": "42b4dd00db6b13097b69104d20f4fa8152ddbafb2e4aba8f900adf64dc38cf92"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/kern-table.segoe-ui.json",
-   "bytes": 29004,
-   "sha256": "8d54b107ac59c00ee1e8533a7b8a2bcaed38e2d23805fbd8e128208db3e70746"
+   "bytes": 28300,
+   "sha256": "bc340a059c6cd4cc9411562a60674a4c411fb2c83ddf8ceb4945af493b2d0c83"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/svg_label_render.py",
@@ -92,23 +102,23 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/verify_c1.py",
-   "bytes": 8299,
-   "sha256": "ddc633762c6a44a668d03c4145acfaa3ec0a67d04531aaee92924ea69415b3d4"
+   "bytes": 9067,
+   "sha256": "12ababf9f843e24f4b0ced0408fcd6fdbc817592c3e4bd08cefbfc079c7fac3c"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/wpf_kern.ps1",
-   "bytes": 2014,
-   "sha256": "bb9c8c7f43f05318a02f38c317c8ce96e602a72da9c330d6fa9df572ae4dc46c"
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/write_manifest.py",
-   "bytes": 12992,
-   "sha256": "bd096538e25cfdd3882451dcbdf9aa6569a5d19515c95ffa16f28415bb3ea710"
+   "bytes": 15578,
+   "sha256": "1eb65b74ae72073a9b905c888984f2688165edbc32f9da2ec2aae46f75eb880d"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-001/tools/xr_compose.py",
-   "bytes": 8554,
-   "sha256": "03d8377ec158e5f670b70192015cfc0f91c1d1b37e992894b805f64c7c881718"
+   "bytes": 8357,
+   "sha256": "dc82bbfa795b551a5f629bf05e1ce653d3b937bb86504e5e2cdabc69075cd674"
   }
  ],
  "records": [
@@ -130,6 +140,11 @@
    "physicalPackagingState": "design",
    "runtimeLinked": false,
    "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10667",
+    "file": "research-batch-02.label-facts.json",
+    "sha256": "186a9673b12ac3931ca5f455f7c722ad7c56b574ff618f35936c198663cccccf"
+   },
    "exactDepictedFacts": {
     "brand": "Xenios",
     "productName": "Ipamorelin",
@@ -292,6 +307,11 @@
    "physicalPackagingState": "design",
    "runtimeLinked": false,
    "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10654",
+    "file": "research-batch-01.label-facts.json",
+    "sha256": "2a7b93e1c71234811fc1adc8651be54a7e5d28b8115bdb2633533387b2cb163c"
+   },
    "exactDepictedFacts": {
     "brand": "Xenios",
     "productName": "KPV",
@@ -454,6 +474,11 @@
    "physicalPackagingState": "design",
    "runtimeLinked": false,
    "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10667",
+    "file": "research-batch-02.label-facts.json",
+    "sha256": "186a9673b12ac3931ca5f455f7c722ad7c56b574ff618f35936c198663cccccf"
+   },
    "exactDepictedFacts": {
     "brand": "Xenios",
     "productName": "Selank",
@@ -616,6 +641,11 @@
    "physicalPackagingState": "design",
    "runtimeLinked": false,
    "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10667",
+    "file": "research-batch-02.label-facts.json",
+    "sha256": "186a9673b12ac3931ca5f455f7c722ad7c56b574ff618f35936c198663cccccf"
+   },
    "exactDepictedFacts": {
     "brand": "Xenios",
     "productName": "Thymosin Alpha-1",

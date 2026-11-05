@@ -29,7 +29,7 @@ For each variant, the batch contains six deliverables:
 
 Batch-level files:
 - `contact-sheet-v1.png` shows all four variants, including 72 px and 120 px phone-thumbnail views.
-- `media-batch.v1.json` holds the mapping, depicted facts, review candidates (alt text and caption), and every file's bytes, sha256 and dimensions.
+- `media-batch.v1.json` holds the mapping, depicted facts, label-fact sources, review candidates (alt text and caption), and every file's bytes, sha256 and dimensions.
 - Internal source evidence (workbook rows and selected-source references) is not in this repository, because the repository is public. It is summarized in the private KAN-59 handoff.
 - `tools/` holds the build, render, kerning and verification sources, plus the measured kern table.
 
@@ -63,7 +63,7 @@ The masters are the Batch 004 v3 front and wrap templates, transformed exactly a
 
 On top of that transformation:
 - **Compound name.** On the front label master, Thymosin Alpha-1 is fitted to the rule at 160.5 px (template 176). On the wrap's front panel it is 101 px (template 146), centred on the template's cap band.
-- **Field label PRODUCT CODE.** It replaces QUICK ORDER SKU, so the label uses the "Product code GEN-GRP-xxxx" wording from the Session 3 facts (`KAN-6/10624`) and CLAUDE-2's label facts (`KAN-59/10654`).
+- **Field label PRODUCT CODE.** It replaces QUICK ORDER SKU, so the label uses the "Product code GEN-GRP-xxxx" wording from the Session 3 facts (`KAN-6/10624`) and CLAUDE-2's label facts (`KAN-59/10654` and `KAN-59/10667`).
 
 ### Previews
 
@@ -76,6 +76,13 @@ Against the accepted Batch 004 previews, the mean absolute difference is 0.80 (f
 Batch 008's previews resolve weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold. These previews follow the accepted Batch 004 previews, which use Segoe UI Black.
 
 ## Label facts
+
+The printed text comes from CLAUDE-2's verified label facts, and each record in `media-batch.v1.json` names its source in `labelFacts`:
+
+| Variants | Label facts | File | sha256 |
+|---|---|---|---|
+| KPV 10 mg | KAN-59/10654 (batch 01) | `research-batch-01.label-facts.json` | `2a7b93e1…` |
+| Ipamorelin, Selank and Thymosin Alpha-1 10 mg | KAN-59/10667 (batch 02) | `research-batch-02.label-facts.json` | `186a9673…` |
 
 The artwork prints only these facts, each verified:
 - the brand Xenios;
@@ -125,6 +132,8 @@ The verifier checks:
 - that each render differs from the accepted Batch 004 render only inside its declared rows and columns;
 - the ids and bindings against the pinned datasets.
 
+Every text file is committed with LF line ends. A Windows checkout with `core.autocrlf` rewrites them to CRLF, so the verifier folds CRLF back to LF before hashing them, release datasets included, and prints a NOTE naming them. PNG and WebP files are hashed as they are.
+
 A check it cannot run is reported as `SKIPPED`; it never counts as a pass.
 
 The supplier-name check needs `--extra-forbidden <file>`, a local list with one term per line. That list is never committed to this public repository.
@@ -140,3 +149,16 @@ python -I -X utf8 tools/write_manifest.py <this dir> <catalog json> <bindings js
 ## Review
 
 Independent file-level review is requested on KAN-31. The producer cannot be the reviewer. Rendered checks at 320, 390, 768 and 1280 px follow only after acceptance and runtime integration by Root.
+
+## Correction, 2026-11-04
+
+Independent QA passed the file-level artwork at commit `a7f43426` (KAN-31/10732) and asked for one provenance fix. That commit's manifest cited only label-fact batch 01 (`KAN-59/10654`), which covers KPV. The facts for Ipamorelin, Selank and Thymosin Alpha-1 come from batch 02 (`KAN-59/10667`, sha256 `186a9673…`).
+
+This commit:
+- adds the batch 02 citation at the manifest level;
+- names the label-fact source on every record, in `labelFacts`;
+- records the change in the manifest's `corrections`.
+
+The same commit applies a finding from the C1-002 review (KAN-31/10737). `tools/verify_c1.py`, `tools/build_c1.py` and `tools/write_manifest.py` now hash text files as committed, with LF line ends, so a Windows checkout with `core.autocrlf` verifies. Five tool files that had been committed with CRLF line ends (`build_c1.py`, `xr_compose.py`, `wpf_kern.ps1`, `kern-table.segoe-ui.json` and `build-report.json`) are now LF like every other text file; only their line ends changed.
+
+Every image, label master and the contact sheet is byte-identical to `a7f43426`, including the eight proposed public WebPs.
