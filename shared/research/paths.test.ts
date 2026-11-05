@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  EARLY_ACCESS_ENTRY_PATH,
+  isEarlyAccessEntryPath,
   isResearchAccessStatePath,
   isResearchActivatePath,
   isResearchAdminPath,
@@ -47,6 +49,55 @@ describe("isResearchPath", () => {
     expect(() => isResearchPath("/%ZZ")).not.toThrow();
     expect(isResearchPath("/%ZZ")).toBe(false);
   });
+
+  // The founder's login-free entry renders the request-only Research route at
+  // a top-level path, so every Research privacy consumer must cover it in the
+  // same router-normalized forms that wouter renders.
+  it.each([
+    "/earlyaccess",
+    "/earlyaccess/",
+    "/EarlyAccess",
+    "/EARLYACCESS",
+    "/%65arlyaccess", // %65 = e
+    "/earlyaccess?family=research_vials&slug=synthetic",
+    "/earlyaccess#request",
+  ])("covers the request-only Early Access alias %s", (path) => {
+    expect(isResearchPath(path)).toBe(true);
+  });
+
+  it.each([
+    "/earlyaccessx",
+    "/earlyaccess/extra",
+    "/earlyaccess//",
+    "/early-access",
+    "/early-interest",
+    "/xearlyaccess",
+  ])("does not widen the alias to the neighbouring path %s", (path) => {
+    expect(isResearchPath(path)).toBe(false);
+  });
+});
+
+describe("isEarlyAccessEntryPath", () => {
+  it("names the one founder-approved alias", () => {
+    expect(EARLY_ACCESS_ENTRY_PATH).toBe("/earlyaccess");
+  });
+
+  it("matches only the exact alias in router-normalized forms", () => {
+    for (const path of ["/earlyaccess", "/earlyaccess/", "/EarlyAccess", "/%65arlyaccess", "/earlyaccess?qty=2"]) {
+      expect(isEarlyAccessEntryPath(path), path).toBe(true);
+    }
+    for (const path of [
+      "/",
+      "/earlyaccess//",
+      "/earlyaccess/extra",
+      "/earlyaccessx",
+      "/research/early-access",
+      "/research/early-access/order-request",
+      "/%ZZ",
+    ]) {
+      expect(isEarlyAccessEntryPath(path), path).toBe(false);
+    }
+  });
 });
 
 describe("canonical Research path normalization", () => {
@@ -85,6 +136,7 @@ describe("isPublicResearchDocumentPath", () => {
     "/research/apply",
     "/research/sign-in",
     "/research/early-access",
+    "/earlyaccess",
     "/research/partners/apply",
     "/research/partners/dashboard",
     "/research/organizations/private",

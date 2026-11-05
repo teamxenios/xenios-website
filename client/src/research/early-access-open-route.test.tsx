@@ -72,6 +72,12 @@ describe("the Early Access journey renders without the shared review password", 
     ["/research/early-access/order-request"],
     ["/research/early-access/order-request/confirmation/XRR-20260820-A1B2C3D4E5"],
     ["/research/early-access/order-request/XRR-20260820-A1B2C3D4E5"],
+    // The founder's login-free, request-only entry (top-level alias of the
+    // order-request route) in every form the router renders it.
+    ["/earlyaccess"],
+    ["/earlyaccess/"],
+    ["/EarlyAccess"],
+    ["/%65arlyaccess"],
   ])("%s shows the journey, not the password page", (path) => {
     const view = renderAt(path);
     expect(view.querySelector('[data-testid="journey"]')).not.toBeNull();
@@ -97,6 +103,16 @@ describe("what stays behind the shared review password", () => {
 
   it("does not admit an unlisted path that merely starts like the journey", () => {
     const view = renderAt("/research/early-access-admin");
+    expect(view.querySelector('[data-testid="journey"]')).toBeNull();
+    expect(view.textContent).toMatch(/access password/i);
+  });
+
+  it.each([
+    ["/earlyaccessx"],
+    ["/earlyaccess/extra"],
+    ["/earlyaccess//"],
+  ])("does not admit %s, which only resembles the alias", (path) => {
+    const view = renderAt(path);
     expect(view.querySelector('[data-testid="journey"]')).toBeNull();
     expect(view.textContent).toMatch(/access password/i);
   });
