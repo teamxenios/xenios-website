@@ -7,7 +7,7 @@ import { MasterOfferingCard } from "./MasterOfferingCard";
 import { MasterOfferingDetail } from "./MasterOfferingDetail";
 import { card, click, detail, render, variant } from "./catalog-test-fixtures";
 
-const vial = variant({ id: "mov_017febfdb0edf96366f4", label: "Listed vial" });
+const vial = variant({ id: "mov_09db3e866424b64994d3", label: "Listed vial" });
 const capsule = variant({ id: "mov_82974ab2f9c652c2cb12", label: "Listed capsule" });
 const heldPackshot = "/research/product-media/5-amino-1mq-10mg-website-render-v1-1024.webp";
 const heldVial = variant({

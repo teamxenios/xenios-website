@@ -1191,6 +1191,644 @@
     "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
     "primarySha256": "9b93ddad8615937cc34e696f7a4f8046b3191242efb2e5b0ac2feabc91f3af2e",
     "labelPreviewSha256": "7120d168041b2977d98dc6c0dfaf312c112248060a76d8e32525ea4d80bdd9a1"
-  }
+  },
+    {
+      "offeringId": "mo_595ec28612674477e5aa",
+      "sourceVariantId": "mov_71e448565b155e87b979",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/melanotan-ii-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Melanotan II 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/melanotan-ii-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Melanotan II 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "37f2a1d05542661103e736f147ac27d7d89f7be5707c12f7fb659f1582f5e9e9",
+      "labelPreviewSha256": "a6e4b58f1fb4ac1fb5f9dc3b8d7537c1422a2bf265a6ad1ef2b1f93d2a16849e"
+    },
+    {
+      "offeringId": "mo_f66623171e193fc81edb",
+      "sourceVariantId": "mov_9cc6d7d3967d7507480b",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/pt-141-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios PT-141 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/pt-141-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios PT-141 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "765783978818f6e640473a360959528fce66995a82e40027a1023ca0ca19da76",
+      "labelPreviewSha256": "4fc3f64d564700294c6e523450141b487a92ef092a3b2b0b25eab7c7ce569902"
+    },
+    {
+      "offeringId": "mo_463212f23e8e3e39c57b",
+      "sourceVariantId": "mov_523c894b29954645c00a",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ara-290-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios ARA-290 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ara-290-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios ARA-290 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "530c4774837b7df71523f6432fb69efaa81934b4e024b6517c4d03344d0ba632",
+      "labelPreviewSha256": "581327e59aeb590482787fa6a4978cb040707c2d464ad10f264b81db0a4e2929"
+    },
+    {
+      "offeringId": "mo_0907a4d651019afed8ed",
+      "sourceVariantId": "mov_04f750af7277d98b7ad9",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ara-290-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios ARA-290 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ara-290-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios ARA-290 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "b8fddfbf174cadcbe928b546d609dbf753cd83fccf8405b8a596de5e150bc359",
+      "labelPreviewSha256": "23f171a7ed6e56a55a9f1c0b55a1d2866d2ded9752b30163ef28d0cd666f5c33"
+    },
+    {
+      "offeringId": "mo_ca085a7994a6db594748",
+      "sourceVariantId": "mov_6509a8f595cfc3fc36bc",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ara-290-15mg-website-render-v1-1024.webp",
+          "altText": "Xenios ARA-290 15 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ara-290-15mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios ARA-290 15 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "ade709b0f38e874ef5856f539c1de2bfd27ce8dd559b62589b8ad887c8cdaa77",
+      "labelPreviewSha256": "5fbaf9cefaa0a84bd257815e43189e7419464e66487cb03879b3f089890e9388"
+    },
+    {
+      "offeringId": "mo_f9bf2c4e55dbbb5e7a03",
+      "sourceVariantId": "mov_e0ce4fde8a3393202bdc",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/aod-9604-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios AOD-9604 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/aod-9604-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios AOD-9604 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "c8b30fdbad618f2541d059b67f09b1841aaa0505cf6cd898acbabba46fa801a7",
+      "labelPreviewSha256": "c0489a3135494dd1fd01513797cb9c909c7527d097aa766dfa0cdfcc227377cc"
+    },
+    {
+      "offeringId": "mo_216b3a5f02fb7724cd51",
+      "sourceVariantId": "mov_d25066629d9cbdbad552",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/aod-9604-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios AOD-9604 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/aod-9604-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios AOD-9604 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "a648d040880646b5cc26e9fbe18ba19a1c8be9fa762ed770131ca584861066ba",
+      "labelPreviewSha256": "f5908c130ac2dee608f82936a208512a9b4f6ac1ac36d27a856a7e88f14a6573"
+    },
+    {
+      "offeringId": "mo_fa2070d7fd794ad0c245",
+      "sourceVariantId": "mov_77a80adce9e9cb1b93a0",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/glutathione-500mg-website-render-v1-1024.webp",
+          "altText": "Xenios Glutathione 500 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/glutathione-500mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Glutathione 500 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "6c645aa067c6fd5565d4d6f7126f48761870922dc57ddd4f9c67d77dfe3a91f1",
+      "labelPreviewSha256": "9b808be25328fa1b6c67cfb8fd52d635eccdaa43ea97a98a1610e50b482ca690"
+    },
+    {
+      "offeringId": "mo_7f4fc3961bd7c1e6b6bf",
+      "sourceVariantId": "mov_77837ac2575c8df8ac73",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/glutathione-1500mg-website-render-v1-1024.webp",
+          "altText": "Xenios Glutathione 1500 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/glutathione-1500mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Glutathione 1500 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "0a417d84729c3a602f221d02537c3507734876ec298f382cfbd7a4538a3b3531",
+      "labelPreviewSha256": "42d22332a4bce0cf5a6fe2236b52d2b04fcceb3a40f85bfbe3c4a6fec357c4d6"
+    },
+    {
+      "offeringId": "mo_4bf44c0afe1ae392ddf0",
+      "sourceVariantId": "mov_60e645f13e186042b62b",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/nad-500mg-website-render-v1-1024.webp",
+          "altText": "Xenios NAD+ 500 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/nad-500mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios NAD+ 500 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "9a85a68bf6473faba9dbb980e17468d076ab592f0f93fbbf00fcf9fa33226397",
+      "labelPreviewSha256": "bd23777f78dd3bd07624ada67d0108f8241a9dcc5186baf67ee5d8477cbdb99e"
+    },
+    {
+      "offeringId": "mo_25463089835b0939dc4b",
+      "sourceVariantId": "mov_26ba2e0fb6498f8e96ac",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/nad-1000mg-website-render-v1-1024.webp",
+          "altText": "Xenios NAD+ 1000 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/nad-1000mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios NAD+ 1000 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "6946c718a3f5ef3e739874b68c087c19886ff849e55c7d8d2a4fc8337610946f",
+      "labelPreviewSha256": "edcde434b965b774b0445be779f605444a0658e6b59f0fdbe0c858628afdfb33"
+    },
+    {
+      "offeringId": "mo_9bd279e3ef84393cf793",
+      "sourceVariantId": "mov_017febfdb0edf96366f4",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/epithalon-20mg-website-render-v1-1024.webp",
+          "altText": "Xenios Epithalon 20 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/epithalon-20mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Epithalon 20 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "5bce84d01f83b8f6c7b0a2a4245485bf1e24ffe2071f94b74c3e0cdc599a8ec7",
+      "labelPreviewSha256": "d593fa4485c95e867af952705814a822e6f49ca12b25333ec209bc31a26feade"
+    },
+    {
+      "offeringId": "mo_321599837d987cc36181",
+      "sourceVariantId": "mov_29d962312f3386b5dd3f",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/epithalon-30mg-website-render-v1-1024.webp",
+          "altText": "Xenios Epithalon 30 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/epithalon-30mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Epithalon 30 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "20a5d8e6fafb4a9e5846e24b278c9840bd7f9c6ed9d6ee74b3ab99e1e9cef977",
+      "labelPreviewSha256": "3b22b23737e3e9cf037db206b9651dee1c23181d652828967b18624157afa7fe"
+    },
+    {
+      "offeringId": "mo_bf5e52e34a71bce9974e",
+      "sourceVariantId": "mov_7808f3ed26c4fa0f19f6",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/epithalon-35mg-website-render-v1-1024.webp",
+          "altText": "Xenios Epithalon 35 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/epithalon-35mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Epithalon 35 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "7e494aa5b1f756d2dd3dd7800e45a04d854acdc1",
+      "primarySha256": "eaaa4ef3fd979361eae5c8b2b7be72ae4f6b247f5e16d1e5fd880629ca08554a",
+      "labelPreviewSha256": "605ce88448a049fd84680a8025284f4a80f1932768a1bad5fde645cb625832f4"
+    },
+    {
+      "offeringId": "mo_90d6189c4ecf3875647e",
+      "sourceVariantId": "mov_e86aa92d94c61d407578",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-20mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 20 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-20mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Retatrutide 20 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "8e33da8917038be42435c188d8d74c1f083490d62fed899957f9a05845870d58",
+      "labelPreviewSha256": "d80396f7022339965365d802125404eca54c23b63099318bd812eacf454f1106"
+    },
+    {
+      "offeringId": "mo_f9cf15e9c10861844ce4",
+      "sourceVariantId": "mov_0881f51f4947326bf1e0",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-40mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 40 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-40mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Retatrutide 40 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "39e156d82ebee77355a1acc5ff64a31d2f65a5294d7f504eb87f781ae3eb6017",
+      "labelPreviewSha256": "e73a44b33ee4eab69e2d007fdd5ca7338a1a6270d7f043d3932efb0e9a44267a"
+    },
+    {
+      "offeringId": "mo_cf224f8d2efb906334c0",
+      "sourceVariantId": "mov_469cd274fcf41edf3d8e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 50 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-50mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Retatrutide 50 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "8fbfa4f095db9f1e75d66bf92b5d89f16de327de7d70abd2752bd780a8bebbd8",
+      "labelPreviewSha256": "743d24d0da7219a5eedbd1d888d4c9fc7f65f4d1d9e5686a101616d657c123be"
+    },
+    {
+      "offeringId": "mo_f729b05046ef91543822",
+      "sourceVariantId": "mov_0d82ac64c7e39678212c",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ss-31-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios SS-31 50 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ss-31-50mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios SS-31 50 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "293b4facc736d6c61c0eb2aa22d38807a4de3661b7a61e771f6cb4ed622152fe",
+      "labelPreviewSha256": "204abb031fbbeba93bd0bb6269e6ee569595c97fac4391293e9d91b286d8bfaf"
+    },
+    {
+      "offeringId": "mo_226c15232adfd35b3288",
+      "sourceVariantId": "mov_8615d2aea357b8241ba3",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "c4b4294168090f2126a2e447947a8cee4805ddfe50c2c18cf3842432f77a35de",
+      "labelPreviewSha256": "6eadc9b7ef4c805d2a0763ff5ab396d4c89c83f43ca796c9f2bfa02a7ca48a1f"
+    },
+    {
+      "offeringId": "mo_17fe8edfd59d6a97260b",
+      "sourceVariantId": "mov_bb52e1ff1819c70d9db1",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "64ef16abf28a2c7e552903c1bfdec3019a6fd97d0ffb9b390dc91b6e641f893d",
+      "labelPreviewSha256": "30eb9b6280fcc15ed69c9f14d692ed8d3d527be8813bf29dc41e7d80002adbd1"
+    },
+    {
+      "offeringId": "mo_c79fda8d9b5122d37137",
+      "sourceVariantId": "mov_c46129d04e61dd2a9722",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-15mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 15 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-15mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 15 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "512c77fe888c403f687c32c5a6d1c05ee1c98d9119e84a31c054487ef099ec33",
+      "labelPreviewSha256": "dcb7e89990089244c446bbac262c2c2096e95a421b94ec7f33e9fbe8aa05c711"
+    },
+    {
+      "offeringId": "mo_e28684442b78867c14ae",
+      "sourceVariantId": "mov_02ca369a8834ebeb0b3b",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-20mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 20 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-20mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 20 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "d68e715adb466800bb8b592b5128d64ac5fe7ca11fad094506ed2992a5510283",
+      "labelPreviewSha256": "8627977efc311a3386e58bc7ff6da41f1c5290975759eba9b7e5abbe968416ad"
+    },
+    {
+      "offeringId": "mo_330de196b6297a7096d2",
+      "sourceVariantId": "mov_c6f57f9b117d418065ff",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-30mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 30 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-30mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 30 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "9e38d99bdc51dd1f3f4d58e65d071defe040e0cfb4bd076075b9381cf1088b0a",
+      "labelPreviewSha256": "7246c12261ce5ec41352beb6897950c05e996233845ba402b7dfe3e0aca41d33"
+    },
+    {
+      "offeringId": "mo_8f14a0f8f4f86e07fda8",
+      "sourceVariantId": "mov_20d811a3df0894211cbc",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-40mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 40 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-40mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 40 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "ebd0308bf51c0668a6f61f530132bf5e560b978dc312f265ac9e8bca34f8b8cc",
+      "labelPreviewSha256": "df6f1f7ea8f5190a67214669f7a667dfe395ad6da4ef9a2d889babb7e8f05d64"
+    },
+    {
+      "offeringId": "mo_918fe6760c731934168d",
+      "sourceVariantId": "mov_bc725d0ad2a12e1ee57c",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cagrilintide-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Cagrilintide 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cagrilintide-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Cagrilintide 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "30105abe0364700e46f624a9f111db223b7a2b31b94dee6f77d50b7632885667",
+      "labelPreviewSha256": "cc027c3c4526238acdd1bbf8e60807858df854657cb1239c5d82d72eeec9747c"
+    },
+    {
+      "offeringId": "mo_36fbcc90a698a8e7ada6",
+      "sourceVariantId": "mov_3ff3d97173e8a1f7645b",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/semaglutide-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Semaglutide 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semaglutide-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Semaglutide 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "117360fe32b0db2615f9f4ccc6ee771dd3c93534e7715df0fbd5ba38c429f80b",
+      "labelPreviewSha256": "ed2c5fc646d414e3e42e50188cbcadcf7aabebc8e8d27ac9e2b87a232f79e326"
+    },
+    {
+      "offeringId": "mo_a1d452a070c24e5f0033",
+      "sourceVariantId": "mov_0f9bee8bdfc89ec9c2d3",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/semaglutide-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Semaglutide 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semaglutide-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Semaglutide 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "82c6994713160a5c7b315f9ecffbee6be68ddbdff8059677a79ee086f2087c23",
+      "labelPreviewSha256": "378e2ce61a2ad023e1d012b2adbed91984d19211aa46b23f670d054d8e6c4bd2"
+    },
+    {
+      "offeringId": "mo_4e47d44fd3982b0b5e61",
+      "sourceVariantId": "mov_7b331364b57f9fdd335a",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/semaglutide-15mg-website-render-v1-1024.webp",
+          "altText": "Xenios Semaglutide 15 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semaglutide-15mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Semaglutide 15 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "30244b53fc9954b9d0abbb61897f7015fba32de18b5caf2b4c7e8ed50b8ecb3f",
+      "labelPreviewSha256": "bb9f24b78ab05f805e29c238ad19121e55162876a441a6139aeaafeb7a61e971"
+    },
+    {
+      "offeringId": "mo_0784f8ad4fc471f8053e",
+      "sourceVariantId": "mov_2d03422d39648068a0e4",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/pinealon-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Pinealon 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/pinealon-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Pinealon 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "219634598bbda5f90e5714c26623b0e69b1b1c67",
+      "primarySha256": "990bb2f1abe1dbdc747e4df19f2a4775d602acd56e49f8ac35614938f091272b",
+      "labelPreviewSha256": "3b7d8b454d00660741e6d9fa3c6ed44c24b675432db6be567cff18b1a1da968f"
+    }
   ]
 }
