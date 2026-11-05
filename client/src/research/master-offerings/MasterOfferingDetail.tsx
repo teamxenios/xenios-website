@@ -7,6 +7,7 @@ import type {
 import { CatalogEvidenceNotice } from "../catalog-evidence/CatalogEvidenceNotice";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import { isContradictoryPurchase } from "./catalog-access-path";
+import { catalogPresentationLabel } from "./catalog-presentation-labels";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
 import { ReviewedProductContent } from "./ReviewedProductContent";
@@ -254,7 +255,9 @@ export function MasterOfferingDetail({
   return (
     <div className="grid min-w-0 gap-6">
       <header className="grid min-w-0 gap-2">
-        <p className="mono-label text-ink-mute">{product.familyLabel}</p>
+        <p className="mono-label text-ink-mute">
+          {catalogPresentationLabel(product.family, product.familyLabel)}
+        </p>
         <h1 className="display-s min-w-0 break-words">{product.displayName}</h1>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
           <ResearchStatusBadge label={product.displayLabel} />

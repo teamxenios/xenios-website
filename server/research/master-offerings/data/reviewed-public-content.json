@@ -378,6 +378,630 @@
         ],
         "storage": "Store in a cool, dry place."
       }
+    },
+    {
+      "offeringId": "mo_7bc91b37c8c041f166dd",
+      "sourceVariantId": "mov_2de19f71e09e8bc3febb",
+      "content": {
+        "brand": "NutriDyn",
+        "summary": "Chondro Jointaide combines three capsule formulas in individual packets for joint and soft tissue nutrition. Each container holds 60 packets, with two packets per serving.",
+        "overview": "Each packet contains one Chondro-Relief® capsule, two Chondro-Relief® Intensive Care capsules and two Inflam-Eze Plus capsules. The two-packet serving includes glucosamine, chondroitin, MSM, green-lipped mussel and several botanical extracts. The team confirms the package and availability when it reviews a request.",
+        "specifications": [
+          {
+            "label": "Package",
+            "value": "60 individual packets"
+          },
+          {
+            "label": "Serving size",
+            "value": "2 packets"
+          },
+          {
+            "label": "Servings per package",
+            "value": "30"
+          },
+          {
+            "label": "Capsules per packet",
+            "value": "5 capsules across 3 formulas"
+          }
+        ],
+        "purpose": "NutriDyn positions this dietary supplement to support normal joint and soft tissue function, including cartilage, tendons and ligaments.",
+        "ingredients": "Each two-packet serving supplies vitamin C (as manganese ascorbate) 155 mg, manganese (as manganese ascorbate) 29 mg, D-glucosamine HCl 1,250 mg, ginger root powder 1,066.67 mg, green-lipped mussel powder (ETArol™) 1,000 mg, MSM (methylsulfonylmethane) 1,000 mg, chondroitin sulfate sodium 1,000 mg, CurQfen® blend 333.33 mg (turmeric rhizome extract standardized to 35% curcuminoids with fenugreek seed galactomannan extract), Boswellia serrata gum extract (65% boswellic acid) 333.33 mg, white willow bark extract (25% salicin) 266.67 mg, hops flower extract (2% xanthohumol) 200 mg, hyaluronic acid (as sodium hyaluronate) 100 mg and devil’s claw root extract (1.2% harpagosides) 80 mg. Chondro-Relief® and Chondro-Relief® Intensive Care also contain gelatin, vegetable magnesium stearate and silica. Inflam-Eze Plus also contains hypromellose, microcrystalline cellulose, vegetable magnesium stearate and silica.",
+        "label": "NutriDyn suggests taking two packets daily unless your healthcare practitioner directs otherwise. ETArol™ is a trademark of Clinical Study Applications. CurQfen® is a registered trademark of Akay Flavours & Aromatics Pvt. Ltd. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "Contains crustacean shellfish (crab and shrimp). Do not use if you have a shellfish allergy. If you are pregnant, nursing or taking medication, check with your healthcare practitioner before use. Keep away from children.",
+        "storage": "Store in a cool, dry place.",
+        "documentation": [
+          {
+            "label": "NutriDyn product label and Supplement Facts",
+            "href": "https://nutridyn.com/sports-nutrition/chondro-jointaide"
+          }
+        ]
+      }
+    },
+    {
+      "offeringId": "mo_c600e7eb1c9f5fd03c80",
+      "sourceVariantId": "mov_2183aa9edb06f34ef3af",
+      "content": {
+        "summary": "The 5-Amino-1MQ research capsule listing shows a 50 mg strength and a 60-capsule bottle. Published cell research uses the compound to study nicotinamide metabolism.",
+        "overview": "5-Amino-1MQ is short for 5-amino-1-methylquinolinium, a small molecule from a series of methylquinolinium compounds that researchers developed to inhibit the cytosolic enzyme nicotinamide N-methyltransferase (NNMT). In one laboratory study, the team measured 1-methylnicotinamide (1-MNA), a product of the NNMT reaction, in cultured mouse 3T3-L1 fat cells exposed to the compound and found concentration-dependent reductions; in differentiating cells, the compound also reduced lipid accumulation in a concentration-dependent way. In the same study, the overall effect on intracellular S-adenosylmethionine (SAM) was significant, with a significant increase at one of the concentrations tested; intracellular NAD+ trended upward, but the overall comparison for NAD+ was inconclusive. In enzyme assays at the concentrations tested, it showed little or no inhibition of the related methyltransferases DNMT1, PRMT3 and COMT or of the NAD+ salvage enzymes NAMPT and SIRT1, which the authors interpreted as selectivity for NNMT. In diet-induced obese mice fed a high-fat diet, 5-amino-1MQ reduced body weight and white adipose tissue mass, decreased fat-cell size and lowered plasma total cholesterol without changing total food intake. A 2021 study from the same research group reported that, in obese mice switched to a lean diet, adding the compound produced greater body-weight and fat loss and less liver fat than the diet switch alone. These cell and mouse studies did not test a capsule formulation and do not establish effects of this research material in people. The listed presentation is a 60-count bottle of research capsules with a listed strength of 50 mg.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "50 mg"
+          },
+          {
+            "label": "Listed package",
+            "value": "Bottle of 60 capsules"
+          }
+        ],
+        "purpose": "Laboratory study of nicotinamide N-methyltransferase activity.",
+        "cautions": "For nonclinical laboratory research only."
+      }
+    },
+    {
+      "offeringId": "mo_7ba89975fb62ceb33b7b",
+      "sourceVariantId": "mov_753d3f94385adf791d1e",
+      "content": {
+        "summary": "BPC-157 is a 15-amino-acid peptide. This research capsule listing shows a strength of 500 mcg and a package of 60 capsules.",
+        "overview": "BPC-157 is a synthetic 15-amino-acid peptide (Gly-Glu-Pro-Pro-Pro-Gly-Lys-Pro-Ala-Asp-Asp-Ala-Gly-Leu-Val) whose sequence is a partial sequence of body protection compound, a protein first isolated from human gastric juice. In cultured rat Achilles tendon explants, it accelerated the outgrowth of tendon fibroblasts. In isolated rat tendon fibroblasts, it did not directly change proliferation but improved cell survival under hydrogen peroxide stress, and it increased cell migration and spreading in a concentration-dependent way, with increased phosphorylation of the focal adhesion proteins FAK and paxillin. A published laboratory study then examined growth hormone receptor expression in fibroblasts isolated from rat Achilles tendons, finding that BPC-157 increased that expression and that adding growth hormone then increased proliferation and activated Janus kinase 2 signaling. A 2025 systematic review of BPC-157 in orthopaedic sports medicine included 35 preclinical studies and one retrospective clinical report, and reported that it found no clinical safety data in the literature it reviewed. The cell studies above used the peptide itself, not a capsule formulation, and human use falls outside this listing's research scope. This BPC-157 configuration is listed as research capsules in a 60-count bottle, with a listed strength of 500 mcg.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "500 mcg"
+          },
+          {
+            "label": "Listed package",
+            "value": "Bottle of 60 capsules"
+          }
+        ],
+        "purpose": "Laboratory study of receptor expression in rat tendon cells.",
+        "cautions": "For nonclinical laboratory research only."
+      }
+    },
+    {
+      "offeringId": "mo_4668304296fb55b51280",
+      "sourceVariantId": "mov_a2d32f69681dca2b17fb",
+      "content": {
+        "summary": "This GHK-Cu research capsule listing specifies a 2 mg strength and a 60-capsule bottle. GHK-Cu is a copper complex studied in cell culture.",
+        "overview": "GHK-Cu is formed by the three-amino-acid peptide glycyl-L-histidyl-L-lysine (GHK) and copper; the tripeptide has a high affinity for copper(II) ions. The tripeptide later identified as GHK was first reported in human serum in 1973 as a factor that prolonged the survival of normal liver cells. In a published fibroblast culture study, researchers measured collagen synthesis after exposing the cells to the complex and found stimulation beginning at picomolar concentrations and peaking near 1 nanomolar, independently of any change in cell number. Those authors noted that a GHK sequence occurs within the alpha 2 chain of type I collagen and proposed that proteases could release it at a wound site. In a rat experimental wound-chamber model, the copper complex increased wound tissue production, type I collagen and glycosaminoglycans, and it raised expression of the proteoglycan decorin in the wound tissue and in cultured rat dermal fibroblasts. These findings on the compound do not establish effects of the listed research capsules in people. This catalog configuration lists the material in capsule form for nonclinical research, in a 60-count bottle with a listed strength of 2 mg.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "2 mg"
+          },
+          {
+            "label": "Listed package",
+            "value": "Bottle of 60 capsules"
+          }
+        ],
+        "purpose": "Laboratory study of collagen synthesis in cultured fibroblasts.",
+        "cautions": "For nonclinical laboratory research only."
+      }
+    },
+    {
+      "offeringId": "mo_b2ebb969d48a20f9e680",
+      "sourceVariantId": "mov_fe292b5f03527ec13e5e",
+      "content": {
+        "summary": "The KPV research capsule listing shows a 500 mcg strength and a bottle of 60 capsules. KPV is a three-amino-acid peptide studied in cell transport experiments.",
+        "overview": "KPV stands for lysine–proline–valine, the tripeptide corresponding to residues 11 to 13 of alpha-melanocyte-stimulating hormone (alpha-MSH), a melanocortin peptide with described anti-inflammatory effects. One published study used intestinal and immune cell models: in the Caco2-BBE human intestinal epithelial cell line, nanomolar KPV reduced NF-kappaB and MAP kinase inflammatory signaling and lowered secretion of the cytokine IL-8, and in Jurkat T cells it reduced inflammatory signaling and IL-8 mRNA. That study examined uptake of KPV by the peptide transporter PepT1, a di- and tripeptide transporter normally expressed in the small intestine and induced in the colon during inflammatory bowel disease, and found that uptake depended on it. In mice, KPV given in drinking water reduced colitis induced by dextran sodium sulfate (DSS) or TNBS. A separate mouse study reported earlier recovery, regain of body weight and fewer inflammatory infiltrates in DSS and T-cell transfer colitis. In mice with a nonfunctional melanocortin-1 receptor, that study reported that all KPV-treated animals survived DSS colitis, and the authors concluded that the effects were at least partly independent of that receptor. These cell and mouse studies did not test a capsule formulation and do not establish effects in people. This configuration lists KPV in a 60-count bottle of research capsules, with a listed strength of 500 mcg.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "500 mcg"
+          },
+          {
+            "label": "Listed package",
+            "value": "Bottle of 60 capsules"
+          }
+        ],
+        "purpose": "Laboratory study of peptide transport and cell signaling.",
+        "cautions": "For nonclinical laboratory research only."
+      }
+    },
+    {
+      "offeringId": "mo_fb02f804912e868b0a10",
+      "sourceVariantId": "mov_4522e672752616ff992d",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Copper complex of the tripeptide GHK, studied in fibroblast collagen-synthesis models. Listed as a 50 mg lyophilized vial for laboratory research.",
+        "overview": "GHK (glycyl-L-histidyl-L-lysine) is a tripeptide with high affinity for copper(II) ions, and GHK-Cu is its copper complex. The tripeptide later identified as GHK was first reported in human serum in 1973 as a factor that prolonged the survival of normal liver cells. In fibroblast cultures, the copper complex GHK-Cu stimulated collagen synthesis beginning at picomolar concentrations and peaking near 1 nanomolar, independently of any change in cell number. Those authors noted that a GHK sequence occurs within the alpha 2 chain of type I collagen and proposed that proteases could release it at a wound site. These cell-culture findings do not establish effects of this research material in people. The catalog lists this item as a lyophilized vial at 50 mg of GHK-Cu, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "50 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0288"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on extracellular-matrix and wound-repair biology, including collagen synthesis in fibroblast culture.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_b06b77a95d5dd5bf8cd7",
+      "sourceVariantId": "mov_35b19a790d7a247210c9",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Copper complex of the tripeptide GHK, studied in fibroblast collagen-synthesis models. Listed as a 100 mg lyophilized vial for laboratory research.",
+        "overview": "GHK (glycyl-L-histidyl-L-lysine) is a tripeptide with high affinity for copper(II) ions, and GHK-Cu is its copper complex. The tripeptide later identified as GHK was first reported in human serum in 1973 as a factor that prolonged the survival of normal liver cells. In fibroblast cultures, the copper complex GHK-Cu stimulated collagen synthesis beginning at picomolar concentrations and peaking near 1 nanomolar, independently of any change in cell number. Those authors noted that a GHK sequence occurs within the alpha 2 chain of type I collagen and proposed that proteases could release it at a wound site. These cell-culture findings do not establish effects of this research material in people. The catalog lists this item as a lyophilized vial at 100 mg of GHK-Cu, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "100 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0287"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on extracellular-matrix and wound-repair biology, including collagen synthesis in fibroblast culture.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_bb39fc388cb58003b1f8",
+      "sourceVariantId": "mov_15eddad2da8035493bd6",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Tripeptide Lys-Pro-Val from alpha-MSH, studied in cell and mouse models of intestinal inflammation. Listed as a 10 mg lyophilized vial for laboratory research.",
+        "overview": "KPV is the tripeptide lysine-proline-valine, corresponding to residues 11 to 13 of alpha-melanocyte-stimulating hormone (alpha-MSH), a melanocortin peptide with described anti-inflammatory effects. In the Caco2-BBE human intestinal epithelial cell line, nanomolar KPV reduced NF-kappaB and MAP kinase inflammatory signaling and lowered secretion of the cytokine IL-8; in Jurkat T cells it reduced inflammatory signaling and IL-8 mRNA. Its uptake depended on PepT1, a di- and tripeptide transporter normally expressed in the small intestine and induced in the colon during inflammatory bowel disease. In mice, KPV given in drinking water reduced colitis induced by dextran sodium sulfate (DSS) or TNBS. A separate mouse study reported earlier recovery, regain of body weight and fewer inflammatory infiltrates in DSS and T-cell transfer colitis. In mice with a nonfunctional melanocortin-1 receptor, that study reported that all KPV-treated animals survived DSS colitis, and the authors concluded that the effects were at least partly independent of that receptor. These are cell and mouse findings and do not establish effects in people. The catalog lists this item as a lyophilized vial at 10 mg of KPV, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "10 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0306"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on peptide transport and inflammatory signaling in intestinal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_33b6b3e982b2dc5113bb",
+      "sourceVariantId": "mov_72b54c1f1e71b4229c2a",
+      "content": {
+        "brand": "Xenios",
+        "summary": "16-amino-acid peptide encoded in mitochondrial DNA, studied in cell and mouse metabolism models. Listed as a 10 mg lyophilized vial for laboratory research.",
+        "overview": "MOTS-c (mitochondrial open reading frame of the 12S rRNA-c) is a 16-amino-acid peptide, MRWQEMGYIFYPRKLR, encoded by a short open reading frame within the mitochondrial 12S rRNA gene. It was identified after the discovery of humanin suggested that mitochondrial DNA might encode further signaling peptides. In cell experiments in the 2015 study that named it, MOTS-c inhibited the folate cycle and the linked de novo purine synthesis and activated AMPK, and the authors described skeletal muscle as its likely primary target organ. In middle-aged mice that had already developed reduced insulin sensitivity, seven days of MOTS-c restored insulin-stimulated glucose uptake in soleus muscle to levels seen in young mice; in a separate experiment, it prevented obesity and hyperinsulinemia in mice fed a high-fat diet. A 2021 study reported improved physical performance in young, middle-aged and old mice and greater physical capacity when MOTS-c was given intermittently starting late in life. The same study found that exercise raised the body's own MOTS-c in human skeletal muscle and circulation, a finding about the endogenous peptide rather than an administered one. These mouse findings do not establish the effects of administered MOTS-c in people. The catalog lists this item as a lyophilized vial at 10 mg of MOTS-c, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "10 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0313"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on mitochondrial-derived peptides, skeletal-muscle metabolism and insulin sensitivity in animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_af289f611c02b3fcef01",
+      "sourceVariantId": "mov_ca3e45ae9712aee91430",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic 15-amino-acid peptide studied in rat tendon and other injury models. Listed as a 10 mg lyophilized vial for laboratory research.",
+        "overview": "BPC-157 is a synthetic pentadecapeptide (Gly-Glu-Pro-Pro-Pro-Gly-Lys-Pro-Ala-Asp-Asp-Ala-Gly-Leu-Val) whose sequence is a partial sequence of body protection compound, a protein first isolated from human gastric juice. In cultured rat Achilles tendon explants, it accelerated the outgrowth of tendon fibroblasts. In isolated rat tendon fibroblasts, it did not directly change proliferation but improved cell survival under hydrogen peroxide stress, and it increased cell migration and spreading in a concentration-dependent way, with increased phosphorylation of the focal adhesion proteins FAK and paxillin. A follow-up study in these fibroblasts found that BPC-157 increased growth hormone receptor expression, and that adding growth hormone then increased proliferation and activated Janus kinase 2 signaling. A pharmacokinetic study measured a plasma elimination half-life of under 30 minutes for the intact peptide in rats and beagle dogs; in that study's separate experiment with tritium-labeled BPC-157 in rats, the excreted radioactivity was found mainly in urine and bile, and the authors reported that the peptide was broken down within minutes into small peptide fragments and, ultimately, single amino acids. A 2025 systematic review of BPC-157 in orthopaedic sports medicine included 35 preclinical studies and one retrospective clinical report, and reported that it found no clinical safety data in the literature it reviewed. These laboratory and animal results do not establish safety or benefit in people. The catalog lists this item as a lyophilized vial at 10 mg of BPC-157, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "10 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0262"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research into tissue-repair signaling, including tendon fibroblast culture and rodent musculoskeletal injury models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use. BPC-157 is not approved by the U.S. Food and Drug Administration."
+      }
+    },
+    {
+      "offeringId": "mo_e4de11c77d16c4c3b83d",
+      "sourceVariantId": "mov_09db3e866424b64994d3",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic 15-amino-acid peptide studied in rat tendon and other injury models. Listed as a 5 mg lyophilized vial for laboratory research.",
+        "overview": "BPC-157 is a synthetic pentadecapeptide (Gly-Glu-Pro-Pro-Pro-Gly-Lys-Pro-Ala-Asp-Asp-Ala-Gly-Leu-Val) whose sequence is a partial sequence of body protection compound, a protein first isolated from human gastric juice. In cultured rat Achilles tendon explants, it accelerated the outgrowth of tendon fibroblasts. In isolated rat tendon fibroblasts, it did not directly change proliferation but improved cell survival under hydrogen peroxide stress, and it increased cell migration and spreading in a concentration-dependent way, with increased phosphorylation of the focal adhesion proteins FAK and paxillin. A follow-up study in these fibroblasts found that BPC-157 increased growth hormone receptor expression, and that adding growth hormone then increased proliferation and activated Janus kinase 2 signaling. A pharmacokinetic study measured a plasma elimination half-life of under 30 minutes for the intact peptide in rats and beagle dogs; in that study's separate experiment with tritium-labeled BPC-157 in rats, the excreted radioactivity was found mainly in urine and bile, and the authors reported that the peptide was broken down within minutes into small peptide fragments and, ultimately, single amino acids. A 2025 systematic review of BPC-157 in orthopaedic sports medicine included 35 preclinical studies and one retrospective clinical report, and reported that it found no clinical safety data in the literature it reviewed. These laboratory and animal results do not establish safety or benefit in people. The catalog lists this item as a lyophilized vial at 5 mg of BPC-157, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "5 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0264"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research into tissue-repair signaling, including tendon fibroblast culture and rodent musculoskeletal injury models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use. BPC-157 is not approved by the U.S. Food and Drug Administration."
+      }
+    },
+    {
+      "offeringId": "mo_9a755fa72de0409cd937",
+      "sourceVariantId": "mov_257330ea83ecbfc45fae",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic 15-amino-acid peptide studied in rat tendon and other injury models. Listed as a 15 mg lyophilized vial for laboratory research.",
+        "overview": "BPC-157 is a synthetic pentadecapeptide (Gly-Glu-Pro-Pro-Pro-Gly-Lys-Pro-Ala-Asp-Asp-Ala-Gly-Leu-Val) whose sequence is a partial sequence of body protection compound, a protein first isolated from human gastric juice. In cultured rat Achilles tendon explants, it accelerated the outgrowth of tendon fibroblasts. In isolated rat tendon fibroblasts, it did not directly change proliferation but improved cell survival under hydrogen peroxide stress, and it increased cell migration and spreading in a concentration-dependent way, with increased phosphorylation of the focal adhesion proteins FAK and paxillin. A follow-up study in these fibroblasts found that BPC-157 increased growth hormone receptor expression, and that adding growth hormone then increased proliferation and activated Janus kinase 2 signaling. A pharmacokinetic study measured a plasma elimination half-life of under 30 minutes for the intact peptide in rats and beagle dogs; in that study's separate experiment with tritium-labeled BPC-157 in rats, the excreted radioactivity was found mainly in urine and bile, and the authors reported that the peptide was broken down within minutes into small peptide fragments and, ultimately, single amino acids. A 2025 systematic review of BPC-157 in orthopaedic sports medicine included 35 preclinical studies and one retrospective clinical report, and reported that it found no clinical safety data in the literature it reviewed. These laboratory and animal results do not establish safety or benefit in people. The catalog lists this item as a lyophilized vial at 15 mg of BPC-157, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "15 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0263"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research into tissue-repair signaling, including tendon fibroblast culture and rodent musculoskeletal injury models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use. BPC-157 is not approved by the U.S. Food and Drug Administration."
+      }
+    },
+    {
+      "offeringId": "mo_42060e3ba6b7fa26b5a9",
+      "sourceVariantId": "mov_bd3ee913aa6fedf2c743",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Seven-amino-acid analogue of the ACTH(4-10) fragment studied in rat brain models. Listed as a 10 mg lyophilized vial for laboratory research.",
+        "overview": "Semax is a synthetic seven-amino-acid peptide, Met-Glu-His-Phe-Pro-Gly-Pro, described in the literature as an analogue of the N-terminal fragment 4-10 of adrenocorticotropic hormone (ACTH). In membranes from the rat basal forebrain, tritium-labelled Semax bound to specific, reversible, calcium-dependent binding sites, and giving the peptide to rats raised brain-derived neurotrophic factor (BDNF) protein in the basal forebrain 3 hours later but not in the cerebellum. In the rat hippocampus, a single administration increased BDNF protein, tyrosine phosphorylation of its receptor trkB, and BDNF (exon III) and trkB mRNA levels, and rats that received it made more conditioned avoidance responses. In rodents, Semax raised striatal levels of the serotonin metabolite 5-HIAA without changing dopamine or its metabolites on its own, but it enhanced the dopamine release and locomotor activity produced by D-amphetamine. In a rat model of permanent middle cerebral artery occlusion, a genome-wide analysis of the cortex found that Semax mainly altered the expression of immune-system genes, notably those encoding immunoglobulins and chemokines, as well as genes related to the vascular system. These rodent findings do not establish effects of this research material in people. The catalog lists this item as a lyophilized vial at 10 mg of Semax, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "10 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0338"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on ACTH-derived peptides, BDNF/trkB signaling, monoamine neurochemistry and focal brain ischemia in rodent models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_61e8c1f887725c9938ae",
+      "sourceVariantId": "mov_823a1410e1831e6d845f",
+      "content": {
+        "brand": "Xenios",
+        "summary": "KISS1-derived peptide studied as the ligand of the GPR54 receptor in cell and animal models. Listed as a 10 mg lyophilized vial for laboratory research.",
+        "overview": "Kisspeptins are peptides derived from the protein product of the KISS1 gene, first identified as a metastasis suppressor gene for melanoma cells, and they share a common Arg-Phe-amide (RF-amide) C-terminus. The catalog listing names this item only as kisspeptin and does not state which form it is, for example the 54-amino-acid kisspeptin-54 or the 10-amino-acid C-terminal fragment kisspeptin-10. In 2001, kisspeptins were isolated from human placenta as natural ligands of the orphan G protein-coupled receptor GPR54; in hamster ovary cells expressing rat or human GPR54 they bound with low nanomolar affinity, mobilized calcium, activated ERK1/2 and p38 MAP kinases and inhibited cell proliferation. Loss-of-function mutations in GPR54 were later found to cause isolated hypogonadotropic hypogonadism, in which pubertal maturation and reproductive function are impaired, in affected human families and in Gpr54-deficient mice. In mice, kisspeptin-54 and kisspeptin-10 delivered into a lateral brain ventricle both stimulated luteinizing hormone (LH) secretion, the kisspeptin-54 effect was blocked by a gonadotropin-releasing hormone (GnRH) antagonist, and KISS1 mRNA was mapped to hypothalamic areas that regulate gonadotropin secretion. In a separate study, kisspeptin that stimulated LH and follicle-stimulating hormone release in normal mice had no effect in mice lacking GPR54, and in sheep it released GnRH into the cerebrospinal fluid, which the authors interpret as a direct action at the level of GnRH release. These cell and animal findings, and the human genetic studies of its receptor, do not establish effects of this research material in people. The catalog lists this item as a lyophilized vial at 10 mg of kisspeptin, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "10 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0308"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on KISS1/GPR54 signaling and the hypothalamic control of gonadotropin secretion in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_3ac83d28defd63915a71",
+      "sourceVariantId": "mov_12b96a21ca34f80cdb6a",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Nine-amino-acid hypothalamic peptide hormone studied in receptor, lactation and social-memory research. Listed as a 5 mg lyophilized vial for laboratory research.",
+        "overview": "Oxytocin is a nine-amino-acid peptide hormone, Cys-Tyr-Ile-Gln-Asn-Cys-Pro-Leu-Gly-NH2, with a disulfide bridge between its two cysteines; its gene is expressed mainly in magnocellular neurons of the hypothalamic paraventricular and supraoptic nuclei, and the peptide is released from the posterior pituitary. Its receptor is a class I G protein-coupled receptor that signals mainly through Gq proteins and phospholipase C-beta, and its classical actions are contraction of uterine smooth muscle during labor and milk ejection during lactation. Oxytocin is also made in peripheral tissues such as the uterus, placenta, corpus luteum, testis and heart, and its receptors have been found in the kidney, heart, thymus, pancreas and fat cells. Mice engineered to lack the oxytocin gene were viable and fertile and gave birth without obvious deficits, but all their pups died shortly after birth because the mothers could not nurse, and giving the mothers oxytocin after delivery restored milk ejection and rescued the pups. Male mice lacking the oxytocin gene failed to develop social memory of other mice although their detection of non-social odors and their spatial memory appeared intact, and oxytocin, but not vasopressin, restored their social memory. Synthetic oxytocin is also the active ingredient of prescription medicines used in labor and delivery; this listing is a laboratory research material, not those medicines. These animal findings, and the medical use of those separate products, do not establish the safety or effects of this research material in people. The catalog lists this item as a lyophilized vial at 5 mg of oxytocin, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "5 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0320"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on oxytocin receptor signaling, lactation and reproductive physiology, and social behavior in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_b785d68e84643da31a20",
+      "sourceVariantId": "mov_cf7635f44beb5898b8fe",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Nine-amino-acid hypothalamic peptide hormone studied in receptor, lactation and social-memory research. Listed as a 2 mg lyophilized vial for laboratory research.",
+        "overview": "Oxytocin is a nine-amino-acid peptide hormone, Cys-Tyr-Ile-Gln-Asn-Cys-Pro-Leu-Gly-NH2, with a disulfide bridge between its two cysteines; its gene is expressed mainly in magnocellular neurons of the hypothalamic paraventricular and supraoptic nuclei, and the peptide is released from the posterior pituitary. Its receptor is a class I G protein-coupled receptor that signals mainly through Gq proteins and phospholipase C-beta, and its classical actions are contraction of uterine smooth muscle during labor and milk ejection during lactation. Oxytocin is also made in peripheral tissues such as the uterus, placenta, corpus luteum, testis and heart, and its receptors have been found in the kidney, heart, thymus, pancreas and fat cells. Mice engineered to lack the oxytocin gene were viable and fertile and gave birth without obvious deficits, but all their pups died shortly after birth because the mothers could not nurse, and giving the mothers oxytocin after delivery restored milk ejection and rescued the pups. Male mice lacking the oxytocin gene failed to develop social memory of other mice although their detection of non-social odors and their spatial memory appeared intact, and oxytocin, but not vasopressin, restored their social memory. Synthetic oxytocin is also the active ingredient of prescription medicines used in labor and delivery; this listing is a laboratory research material, not those medicines. These animal findings, and the medical use of those separate products, do not establish the safety or effects of this research material in people. The catalog lists this item as a lyophilized vial at 2 mg of oxytocin, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "2 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0319"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on oxytocin receptor signaling, lactation and reproductive physiology, and social behavior in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_1c93e6c7c97d1e38167e",
+      "sourceVariantId": "mov_0efd31ea72138e78d999",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Nine-amino-acid peptide first isolated from rabbits and studied in EEG and sleep research. Listed as a 10 mg lyophilized vial for laboratory research.",
+        "overview": "Delta sleep-inducing peptide (DSIP) is a nine-amino-acid peptide, Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu, isolated in 1977 from the cerebral venous blood of rabbits by a research group in Basel and named for its effect on the electroencephalogram (EEG). In the original double-blind study in rabbits, synthetic DSIP infused into the brain ventricles significantly increased delta-wave and spindle EEG activity compared with controls. Of the other eight peptides tested, rabbits given one of the three shortest (two fragments and a related tripeptide) showed less significant differences from controls, and rabbits given one of the remaining five, three longer fragments and two analogues with two amino acids exchanged, did not differ significantly from controls. A 2006 review noted that this link to sleep had never been further characterized, partly because no gene, precursor protein or receptor for DSIP had been isolated by then, and that its natural occurrence and biological activity remained unclear. The same review describes the structure of DSIP as unlike any other known peptide family, and notes that DSIP-like immunoreactivity has a highly specific distribution in neurosecretory nuclei of the hypothalamus in several vertebrate species, regions not particularly relevant to sleep regulation. The review's authors also report that certain synthetic DSIP analogues, but not DSIP itself, promoted slow-wave sleep in their own rabbit and rat studies, and they propose that a related, still unidentified peptide may account, at least in part, for the activity attributed to DSIP. These animal findings do not establish effects of this research material in people. The catalog lists this item as a lyophilized vial at 10 mg of DSIP, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Lyophilized vial"
+          },
+          {
+            "label": "Listed amount",
+            "value": "10 mg per vial"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0278"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on DSIP and DSIP-like peptides, EEG and sleep physiology, and hypothalamic neuropeptide distribution in animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_2fb4e0f567f434b55b20",
+      "sourceVariantId": "mov_9a217007a7fb93111200",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic gonadotropin-releasing hormone decapeptide studied in pituitary and ovulation models. Listed at 10 mg for laboratory research.",
+        "overview": "Gonadorelin is the synthetic form of gonadotropin-releasing hormone (GnRH), the hypothalamic decapeptide pGlu-His-Trp-Ser-Tyr-Gly-Leu-Arg-Pro-Gly-NH2 that causes the anterior pituitary to release luteinizing hormone (LH) and follicle-stimulating hormone (FSH). Its structure was established in 1971 and 1972 from porcine and ovine hypothalami; the ovine sequence was determined by enzymatic hydrolysis, Edman sequencing and mass spectrometry, a synthetic decapeptide with that sequence had the same biological activities as the native factor, and the ovine and porcine sequences were identical. In 1971, the synthetic porcine decapeptide stimulated LH release and induced ovulation in hamsters whose spontaneous ovulation had been blocked with phenobarbital, and in 1972 two analogues altered at the histidine in position 2 were tested in cultured rat anterior pituitary cells: the analogue with glycine in place of histidine was a partial agonist, releasing less than half of the maximal LH response to the native factor, the analogue lacking that histidine had no significant agonist activity, and at molar ratios of a thousand to ten thousand times the native factor both reduced the LH secreted in response to it. This listing is a laboratory research material and not a medicine; separately, gonadorelin is the active ingredient of veterinary products approved in the United States for cattle, for ovarian follicular cysts and, within certain approved regimens that also include another veterinary medicine, for synchronizing estrous cycles to allow fixed-time artificial insemination. The animal findings above, and the approval of those separate veterinary products, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0400"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on hypothalamic-pituitary gonadotropin signaling in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_f4298f80cc7aa9f1046a",
+      "sourceVariantId": "mov_dc6c3bf9bc23dd55adc1",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Cyclic α-MSH analogue (bremelanotide) studied as a melanocortin receptor agonist in receptor assays and a rat behavioral model. Listed at 5 mg for laboratory research.",
+        "overview": "PT-141, the development code of bremelanotide, is a synthetic cyclic heptapeptide analogue of α-melanocyte-stimulating hormone (α-MSH), Ac-Nle-cyclo(Asp-His-D-Phe-Arg-Trp-Lys)-OH, with an acetylated N-terminus, a lactam bridge between the aspartate and lysine side chains and a free carboxyl group at the C-terminus. It is an agonist at melanocortin receptors with high affinity for the melanocortin type 4 receptor, and by the PubChem records it differs from the related research compound Melanotan II only in having a carboxylic acid rather than an amide at the C-terminal lysine. In a 2004 study in female rats, PT-141 selectively stimulated solicitational behaviors without affecting lordosis, pacing or other sexual behaviors, did not cause generalized motor activation and did not alter the perception of sexual reward, which the authors took as evidence that central melanocortin systems regulate appetitive sexual behavior. This listing is a laboratory research material and not a medicine; separately, bremelanotide is the active ingredient of a prescription medicine approved by the U.S. Food and Drug Administration in 2019 for premenopausal women with acquired, generalized hypoactive sexual desire disorder. The animal findings above, and the approval of that separate medicine, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0409"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on melanocortin receptor signaling and melanocortin-regulated behavior in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_d1a6493665b6ba628c2a",
+      "sourceVariantId": "mov_361af70608afc9c98ec0",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Copper complex of the tripeptide GHK, studied in fibroblast collagen-synthesis models. Listed at 75 mg for laboratory research.",
+        "overview": "GHK (glycyl-L-histidyl-L-lysine) is a tripeptide with high affinity for copper(II) ions, and GHK-Cu is its copper complex. The tripeptide later identified as GHK was first reported in human serum in 1973 as a factor that prolonged the survival of normal liver cells. In fibroblast cultures, the copper complex GHK-Cu stimulated collagen synthesis beginning at picomolar concentrations and peaking near 1 nanomolar, independently of any change in cell number. Those authors noted that a GHK sequence occurs within the alpha 2 chain of type I collagen and proposed that proteases could release it at a wound site. These cell-culture findings do not establish effects of this research material in people. The catalog lists this item with a listed amount of 75 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "75 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0398"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on extracellular-matrix and wound-repair biology, including collagen synthesis in fibroblast culture.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_f35e748aed26af26e9e4",
+      "sourceVariantId": "mov_8bec8068d30d6f928040",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Seven-amino-acid analogue of the ACTH(4-10) fragment studied in rat brain models. Listed at 30 mg for laboratory research.",
+        "overview": "Semax is a synthetic seven-amino-acid peptide, Met-Glu-His-Phe-Pro-Gly-Pro, described in the literature as an analogue of the N-terminal fragment 4-10 of adrenocorticotropic hormone (ACTH). In membranes from the rat basal forebrain, tritium-labelled Semax bound to specific, reversible, calcium-dependent binding sites, and giving the peptide to rats raised brain-derived neurotrophic factor (BDNF) protein in the basal forebrain 3 hours later but not in the cerebellum. In the rat hippocampus, a single administration increased BDNF protein, tyrosine phosphorylation of its receptor trkB, and BDNF (exon III) and trkB mRNA levels, and rats that received it made more conditioned avoidance responses. In rodents, Semax raised striatal levels of the serotonin metabolite 5-HIAA without changing dopamine or its metabolites on its own, but it enhanced the dopamine release and locomotor activity produced by D-amphetamine. In a rat model of permanent middle cerebral artery occlusion, a genome-wide analysis of the cortex found that Semax mainly altered the expression of immune-system genes, notably those encoding immunoglobulins and chemokines, as well as genes related to the vascular system. These rodent findings do not establish effects of this research material in people. The catalog lists this item with a listed amount of 30 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "30 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0413"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on ACTH-derived peptides, BDNF/trkB signaling, monoamine neurochemistry and focal brain ischemia in rodent models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_2c3aec78638c9e2ff2a8",
+      "sourceVariantId": "mov_13073979f2da65f4e160",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Two-subunit glycoprotein hormone, described in the published record as an alpha and beta dimer and studied as recombinant subunits in cell assays. Listed at 120000 IU for laboratory research.",
+        "overview": "Human chorionic gonadotropin, written hCG, is a glycoprotein hormone made of two different subunits rather than a single chain. A 2020 study describes hCG as a dimer of two highly glycosylated subunits, an alpha subunit and a beta subunit, and notes that the beta protein is encoded by the CGB3, CGB5, CGB7 and CGB8 genes, that CGB3, CGB5 and CGB8 encode an identical protein, and that CGB7 differs from it in three amino acids. That study produced and isolated recombinant alpha, CGB7 and CGB3/5/8 proteins and compared their glycosylation, finding the N- and O-glycosylation patterns of the two beta variants quite similar. Testing activation of the ERK1/2 pathway, it reported the two beta variants to be functionally redundant isoforms, with a slight difference in the kinetics of that activation, and recorded biological activity for CGB7 for the first time. Reference records give the alpha subunit as a 116-residue precursor with a signal region at 1 to 24 and the mature chain at 25 to 116, and the choriogonadotropin beta subunit as a 165-residue precursor with a signal region at 1 to 20 and the mature chain at 21 to 165; those records name the alpha subunit as the chain shared with the other glycoprotein hormones, so the beta subunit is what distinguishes this hormone from them. The catalog states this listing in international units, which express activity rather than mass, and no source read here states a mass equivalence for this material, so the amount is reproduced as the catalog gives it and no milligram figure is implied. This listing is a laboratory research material and not a medicine. The findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 120000 IU, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "120000 IU"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0401"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on glycoprotein hormone subunit chemistry, glycosylation and receptor pathway activation in cell assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }

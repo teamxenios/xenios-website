@@ -161,6 +161,52 @@ describe("detail surface", () => {
     unmount();
   });
 
+  it("shows a neutral clinical family on the exact detail with its Care action", async () => {
+    const family = "clinical_formulations_503a";
+    const slug = "synthetic-clinical-listing";
+    const careHref = "/research/member/metabolic-care";
+    const response = detailResponse({ kind: "explore_care", label: "Explore Care", href: careHref });
+    if (response.kind !== "ok") throw new Error("Expected a successful detail fixture");
+    const fetchDetail = vi.fn(async () => ({
+      ...response,
+      data: {
+        ...response.data,
+        product: {
+          ...response.data.product,
+          family,
+          slug,
+          familyLabel: "503A Clinical Formulations",
+          category: "503A Clinical Formulations",
+          subcategory: "Compounded Vial / Liquid",
+          displayState: "care_pathway",
+          displayLabel: "Care Pathway",
+          variants: response.data.product.variants.map((variant) => ({
+            ...variant,
+            label: "Synthetic variant",
+            displayState: "care_pathway",
+            displayLabel: "Care Pathway",
+          })),
+        },
+      },
+    }));
+    const { host, unmount } = render(
+      <MasterOfferingDetailSurface
+        memberToken="token"
+        family={family}
+        slug={slug}
+        fetchDetail={fetchDetail as never}
+      />,
+    );
+    await settle();
+
+    expect(host.querySelector("header p.mono-label")?.textContent).toBe("Clinical formulations");
+    expect(host.textContent).not.toMatch(/503a|compounded vial|add to cart|buy now/i);
+    const careAction = host.querySelector('[data-testid="mo-cta"]');
+    expect(careAction?.textContent).toBe("Explore Care");
+    expect(careAction?.getAttribute("href")).toBe(careHref);
+    unmount();
+  });
+
   it("opens cold from a deep link with only a family and a slug", async () => {
     const fetchDetail = vi.fn(async () => detailResponse());
     const { unmount } = render(
