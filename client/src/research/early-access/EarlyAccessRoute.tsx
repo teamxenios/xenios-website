@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
+import { EARLY_ACCESS_ENTRY_PATH, isEarlyAccessEntryPath } from "@shared/research/paths";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
 import { useAssistedOrderBridgeState } from "../assisted-order/AssistedOrderCta";
 import { ClosedIntakeRequestReceipt, OrderRequestCta } from "../assisted-order/OrderRequestEntry";
@@ -495,13 +496,17 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     // The retained marker selects mixed recovery. If it disappears before the
     // lazy entry mounts, a closed mixed intake must never select legacy checkout.
     const requestEntryMode = requestMode.kind === "legacy" ? { kind: "unavailable" as const } : requestMode;
+    // The founder's short address is named Early Access; the legacy address
+    // keeps Quick Order. Only the visible name and browser title differ.
+    const earlyAccessEntry = typeof window !== "undefined" && isEarlyAccessEntryPath(window.location.pathname);
+    const requestOnlyName = earlyAccessEntry ? "Early Access" : "Quick Order";
     return <>
-      <SeoHead title="Quick Order, Xenios Health"
+      <SeoHead title={`${requestOnlyName}, Xenios Health`}
         description="Select items and send a request for review. No account is required."
-        path="/research/early-access/order-request" robots="noindex, nofollow" />
+        path={earlyAccessEntry ? EARLY_ACCESS_ENTRY_PATH : "/research/early-access/order-request"} robots="noindex, nofollow" />
       <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
         <div className="max-w-[1280px] min-w-0" data-testid="quick-order-request-only">
-          <h1 className="display-s max-w-[26ch]">Quick Order</h1>
+          <h1 className="display-s max-w-[26ch]">{requestOnlyName}</h1>
           <p className="mt-4 body-m text-ink-2 max-w-[62ch]">
             Choose items and send a request for review. Submission does not collect payment,
             approve treatment, create a prescription or confirm shipping. Availability and

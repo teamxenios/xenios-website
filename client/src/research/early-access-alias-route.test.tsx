@@ -77,17 +77,20 @@ afterEach(() => {
 });
 
 describe("the login-free /earlyaccess entry", () => {
+  // The founder named the short address "Early Access"; the legacy address
+  // keeps its Quick Order name. Only the visible name and browser title differ.
   it.each([
-    ["/research/early-access/order-request"],
-    ["/earlyaccess"],
-    ["/earlyaccess/"],
-    ["/EarlyAccess"],
-    ["/earlyaccess?family=research_vials&slug=synthetic"],
-  ])("%s mounts the request-only page while the review gate is locked", async (path) => {
+    ["/research/early-access/order-request", "Quick Order"],
+    ["/earlyaccess", "Early Access"],
+    ["/earlyaccess/", "Early Access"],
+    ["/EarlyAccess", "Early Access"],
+    ["/earlyaccess?family=research_vials&slug=synthetic", "Early Access"],
+  ])("%s mounts the request-only page while the review gate is locked", async (path, name) => {
     const view = await renderAt(path);
 
     expect(view.querySelector('[data-testid="quick-order-request-only"]'), path).not.toBeNull();
-    expect(view.querySelector("h1")?.textContent, path).toBe("Quick Order");
+    expect(view.querySelector("h1")?.textContent, path).toBe(name);
+    expect(document.title, path).toBe(`${name}, Xenios Health`);
     expect(view.querySelector('[data-testid="form-research-access"]'), path).toBeNull();
     expect(view.querySelector('input[type="password"]'), path).toBeNull();
     expect(view.textContent, path).not.toContain("That page is not part of the research section.");
