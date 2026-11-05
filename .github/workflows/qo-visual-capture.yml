@@ -14,7 +14,7 @@ jobs:
     if: >-
       github.repository == 'teamxenios/xenios-website' &&
       github.ref == 'refs/heads/codex/qo-pr393-routed-visual-20261104' &&
-      github.event.before == 'UNBOUND_PREDECESSOR' &&
+      github.event.before == 'e5df747c71df6049eec986fe1c6e1a1df0bb544f' &&
       !github.event.created && !github.event.deleted && !github.event.forced &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
@@ -24,11 +24,11 @@ jobs:
       CANDIDATE_SHA: e0d72257966b42a42af95851bc9b133f09853b2f
       CANDIDATE_TREE: 2a20520395acdbe1de1ca3ab7444e0c035f38cc3
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: UNBOUND
+      CAPTURE_ALLOWANCE_ID: KAN-31/11224
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
       CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: UNBOUND
+      CAPTURE_RECONCILED_AT: 2026-11-05T12:06:57Z
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
@@ -51,7 +51,7 @@ jobs:
           const attempt = Number(e.CAPTURE_ALLOWANCE_ATTEMPT);
           const maximumAttempts = Number(e.CAPTURE_ALLOWANCE_MAX_ATTEMPTS);
           const priorRunIds = JSON.parse(e.CAPTURE_PRIOR_RUN_IDS);
-          if (!/^KAN-31\/\d+$/.test(id) || id === "KAN-31/10969" || id !== "UNBOUND_PR393_ALLOWANCE") {
+          if (!/^KAN-31\/\d+$/.test(id) || id === "KAN-31/10969" || id !== "KAN-31/11224") {
             throw new Error("Only the exact separately granted PR393 allowance is admitted");
           }
           if (maximumAttempts !== 1 || attempt !== 1 || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
