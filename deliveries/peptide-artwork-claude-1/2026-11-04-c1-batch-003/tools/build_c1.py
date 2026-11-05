@@ -66,8 +66,18 @@ PENDING_PANEL = """  <g class="sans" id="back-panel-proof-only" transform="trans
 """
 
 
+TEXT_EXT = ('.svg', '.json', '.py', '.ps1', '.md', '.txt')
+
+
+def canon(path):
+    """The committed bytes: text files (TEXT_EXT) with CRLF folded back to LF, because they are committed with LF and a
+    Windows checkout with core.autocrlf rewrites them; PNG and WebP files as they are."""
+    data = open(path, 'rb').read()
+    return data.replace(b'\r\n', b'\n') if path.lower().endswith(TEXT_EXT) else data
+
+
 def sha(path):
-    return hashlib.sha256(open(path, 'rb').read()).hexdigest()
+    return hashlib.sha256(canon(path)).hexdigest()
 
 
 def need(text, search, repl, count=1):

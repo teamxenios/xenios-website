@@ -6,9 +6,12 @@ usage (from the repository root):
       [--extra-forbidden <local list>] [--recompute]
 
 Checks:
- 1. every declared artifact (bytes, sha256, dimensions) and every tool hash;
+ 1. every declared artifact (bytes, sha256, dimensions) and every tool hash. Text files are committed with LF line
+    ends; a Windows checkout with core.autocrlf rewrites them to CRLF, so CRLF is folded back to LF before hashing,
+    release datasets included, and a NOTE names those files. PNG and WebP files are hashed as they are;
  2. each record's verified label facts appear as printed text (front and wrap), the front text set is exact,
-    titles and descriptions name the right variant, and the wrap proof id is the record's product code;
+    titles and descriptions name the right variant, and the wrap proof id and artworkVersion are the record's
+    product code;
  3. the do-not-print terms: the generic list, the record's per-compound terms, and an optional local list;
  4. each render differs from the accepted Batch 004 base only inside its declared rows and columns; the declared
     render runs spell the name and amount; when the amount is not 10 mg the amount rows changed too;
@@ -33,8 +36,23 @@ def check(cond, msg):
     (ok if cond else failed).append(msg)
 
 
+TEXT_EXT = ('.svg', '.json', '.py', '.ps1', '.md', '.txt')
+CRLF_FILES = set()
+
+
+def canon(path):
+    """The committed bytes. Every text file in a CLAUDE-1 batch is committed with LF line ends, and a Windows checkout
+    with core.autocrlf rewrites them to CRLF, so text files (TEXT_EXT) are read with CRLF folded back to LF; PNG and
+    WebP files are read as they are."""
+    data = open(path, 'rb').read()
+    if path.lower().endswith(TEXT_EXT) and b'\r\n' in data:
+        CRLF_FILES.add(os.path.basename(path))
+        data = data.replace(b'\r\n', b'\n')
+    return data
+
+
 def sha(path):
-    return hashlib.sha256(open(path, 'rb').read()).hexdigest()
+    return hashlib.sha256(canon(path)).hexdigest()
 
 
 def local(rel_asset_path, rel_prefix):
@@ -73,7 +91,7 @@ def main():
         p = local(x['relativeAssetPath'], rel)
         if not os.path.exists(p):
             failed.append('missing ' + x['relativeAssetPath']); continue
-        check(os.path.getsize(p) == x['bytes'] and sha(p) == x['sha256'], 'bytes+sha256 ' + os.path.basename(p))
+        check(len(canon(p)) == x['bytes'] and sha(p) == x['sha256'], 'bytes+sha256 ' + os.path.basename(p))
         if x['format'] in ('png', 'webp'):
             check(Image.open(p).size == (x['width'], x['height']), 'dimensions ' + os.path.basename(p))
     for t in m['tools']:
@@ -101,6 +119,7 @@ def main():
         check(wb.count(name) == 2 and wb.count(sku) == 1, 'wrap name x2, code x1 ' + name)
         pid = [s for s in wb if 'WRAP-V' in (s or '').upper()]
         check(pid == ['%s-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE' % sku], 'wrap proof id is the product code %s %s' % (name, pid))
+        check(r['artworkVersion'] == '%s-WEB-SUPPLIER-v1' % sku, 'artworkVersion is the product code %s %r' % (name, r['artworkVersion']))
         check(wm[0] == 'Xenios %s %d mg supplier wrap proof version 1' % (name, mg), 'wrap title ' + name)
         # every verified static fact is printed, exactly as verified
         check(vst['brand'] == 'Xenios' and 'XENIOS' in fb and 'XENIOS' in wb, 'facts: brand ' + name)
@@ -193,6 +212,9 @@ def main():
                     check(same_pixels(img, got), 'recompute %s pixel-identical %s' % (png_role, r['canonicalVariant']))
     if not extra:
         skipped.append('supplier-name check: no --extra-forbidden list supplied (kept off this public repository)')
+    if CRLF_FILES:
+        print('NOTE %d text files have CRLF line ends, as a Windows checkout writes them; hashed with LF as committed: %s'
+              % (len(CRLF_FILES), ', '.join(sorted(CRLF_FILES))))
     for f_ in failed:
         print('FAIL', f_)
     for s in skipped:

@@ -88,7 +88,7 @@
   "Amounts other than 10 mg (2 and 5 mg here) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
   "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
   "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
-  "The wrap proof id is the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1), because KISSPEPTIN-10 is a forbidden fragment name; verify_c1.py checks it. C1-001 has no such collision and is unchanged.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
   "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
  ],
  "contactSheet": {
@@ -108,8 +108,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-003/tools/build_c1.py",
-   "bytes": 13836,
-   "sha256": "0f9b16185373afac36725356446b3058b36268862e55b94b3e95252c10871514"
+   "bytes": 13988,
+   "sha256": "d579a76704132069f359c557528bc4eabd3602abdd016665e84fdf1e7064e6af"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-003/tools/c1_variants.py",
@@ -118,8 +118,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-003/tools/kern-table.segoe-ui.json",
-   "bytes": 28729,
-   "sha256": "bd2ace2b0adcbbdfddfd0cbeaf68c4a33f4a28adce783c607180d7628a14632f"
+   "bytes": 28032,
+   "sha256": "07fcc91ce2d98017c0c099c0ad108fdc27bdf862edb11ab5f7d9569ca1e4a5aa"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-003/tools/svg_label_render.py",
@@ -133,23 +133,23 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-003/tools/verify_c1.py",
-   "bytes": 13743,
-   "sha256": "d20cbcb8dd505f60ce0c59aa130d9100e15c8fa1715fdea320b88cc648471382"
+   "bytes": 14932,
+   "sha256": "0959263a9d87818997886ee7c834d051401e4a20595f2a1f67e01a4b70d8dbe7"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-003/tools/wpf_kern.ps1",
-   "bytes": 2014,
-   "sha256": "bb9c8c7f43f05318a02f38c317c8ce96e602a72da9c330d6fa9df572ae4dc46c"
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-003/tools/write_manifest.py",
-   "bytes": 16245,
-   "sha256": "a379a05f696979cc920d481e6735e87f441872bef6b0cda7e97671dc9d37b385"
+   "bytes": 17615,
+   "sha256": "670404478927c93276d0114785dac33415cf0a9cba53a237beb40fc11204b901"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-04-c1-batch-003/tools/xr_compose.py",
-   "bytes": 9136,
-   "sha256": "ffe8479add6dbcd587ea0e6132977e7233e5a58e29febc13b324b8636a333640"
+   "bytes": 8931,
+   "sha256": "28c537e1dc3c13e40be34bd462a0a9267cd3b2732cff77e192527827ad967e1d"
   }
  ],
  "records": [
@@ -166,7 +166,7 @@
    "nominalAmountPerVialMg": 5,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "IPAMORELIN-5-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0303-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -356,7 +356,7 @@
    "nominalAmountPerVialMg": 5,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "THYMOSINALPHA1-5-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0351-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -557,7 +557,7 @@
    "nominalAmountPerVialMg": 5,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "TESAMORELIN-5-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0348-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -751,7 +751,7 @@
    "nominalAmountPerVialMg": 10,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "SERMORELIN-10-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0340-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -932,7 +932,7 @@
    "nominalAmountPerVialMg": 2,
    "form": "Lyophilized vial",
    "classification": "For laboratory research use only.",
-   "artworkVersion": "OXYTOCIN-2-WEB-SUPPLIER-v1",
+   "artworkVersion": "GEN-GRP-0319-WEB-SUPPLIER-v1",
    "mediaKind": "original_xenios_website_render",
    "websiteArtworkState": "pending_independent_file_level_review",
    "physicalPackagingState": "design",
@@ -1119,6 +1119,15 @@
   }
  ],
  "changesFromC1002": [
-  "None in the build, render, label or verification method: build_c1.py, xr_compose.py, svg_label_render.py, verify_c1.py, c1_variants.py and wpf_kern.ps1 are byte-identical to C1-002. write_manifest.py now derives the batch-specific text (claim reference, example code, amounts) from the variants. The kern table covers this batch's strings."
+  "None in the build, render, label or verification method: build_c1.py, xr_compose.py, svg_label_render.py, verify_c1.py, c1_variants.py and wpf_kern.ps1 are byte-identical to C1-002 as corrected for KAN-31/10737. write_manifest.py now derives the batch-specific text (claim reference, example code, amounts) from the variants. The kern table covers this batch's strings."
+ ],
+ "corrections": [
+  {
+   "date": "2026-11-04",
+   "requestedBy": "KAN-31/10775",
+   "previousCommit": "b189bc92a33cdfc9b7c3082ce8ddbcd56b1ca65e",
+   "previousManifestSha256": "1d861c18a65c3a65ed2bcf0c961718c606cb2a40ee5b3307a78883f1d02aef96",
+   "change": "verify_c1.py, build_c1.py and write_manifest.py hash text files as committed, with LF line ends, so a Windows checkout with core.autocrlf (CRLF) verifies, including the release dataset joins. The tool files that had been committed with CRLF line ends (build_c1.py, xr_compose.py, wpf_kern.ps1 and kern-table.segoe-ui.json) are now LF like every other text file; only their line ends changed. artworkVersion is the exact product code for every record, as corrected for C1-002 in KAN-31/10737; verify_c1.py checks it. No image or label master changed."
+  }
  ]
 }

@@ -46,7 +46,7 @@ Website caption for every image: **"Packaging design shown. Current packaging ma
 
 ## How the artwork was made
 
-No generative image model was used, and all lettering is set from installed fonts. The method and tools are the same as in batch C1-002. Every tool except `write_manifest.py` is byte-identical to C1-002's copy.
+No generative image model was used, and all lettering is set from installed fonts. The method and tools are the same as in batch C1-002. Every tool except `write_manifest.py` is byte-identical to C1-002's copy as corrected in KAN-31/10737.
 
 ### Vial renders
 
@@ -74,7 +74,7 @@ Each name's render run, front size and wrap size are identical to its sibling's 
 
 The masters are the Batch 004 v3 front and wrap templates, transformed as Batch 008's `build-labels.mjs` does it, with the amount replaced throughout ("2 mg", "5 mg"). Four names fit at the template size (front 176 px, wrap front panel 146 px). Thymosin Alpha-1 is fitted to 160.5 px on the front and 101 px on the wrap front panel, as on its C1-001 sibling. The side-panel field label reads PRODUCT CODE.
 
-As in C1-002, the wrap proof id is the exact product code, for example `GEN-GRP-0303-WRAP-v1`. The template's code-and-amount form can spell a fragment name that label facts forbid (`KISSPEPTIN-10` in C1-002).
+As in C1-002, the wrap proof id and the manifest's `artworkVersion` are the exact product code, for example `GEN-GRP-0303-WRAP-v1` and `GEN-GRP-0303-WEB-SUPPLIER-v1`. The template's code-and-amount form can spell a fragment name that label facts forbid (`KISSPEPTIN-10` in C1-002).
 
 ### Previews
 
@@ -133,12 +133,14 @@ The verifier checks:
 - every declared file's bytes, hash and dimensions, plus the tool hashes;
 - that every verified label fact is printed exactly as verified, with the product code on the wrap only;
 - the exact text set of each front SVG, plus titles, descriptions and alt text;
-- that the wrap proof id is the record's product code;
+- that the wrap proof id and `artworkVersion` are the record's product code;
 - the generic and per-compound do-not-print terms;
 - that each render differs from the accepted Batch 004 render only inside its declared rows and columns, and that the amount rows changed when the amount is not 10 mg;
 - the ids, names and bindings against the pinned datasets.
 
 With `--recompute`, it also rebuilds every render and every label preview from the pinned tools and requires them to be pixel-identical. That proves each image shows exactly the name and amount its record declares. It needs Windows with Segoe UI and the accepted Batch 004 render, which a checkout of this branch contains.
+
+Every text file is committed with LF line ends. A Windows checkout with `core.autocrlf` rewrites them to CRLF, so the verifier folds CRLF back to LF before hashing them, release datasets included, and prints a NOTE naming them. PNG and WebP files are hashed as they are.
 
 A check it cannot run is reported as `SKIPPED`; it never counts as a pass. The supplier-name check needs `--extra-forbidden <file>`, a local list with one term per line. That list is never committed to this public repository.
 
@@ -153,3 +155,11 @@ python -I -B -X utf8 tools/write_manifest.py <this dir> <catalog json> <bindings
 ## Review
 
 Independent file-level review is requested on KAN-31, from a reviewer other than CLAUDE-1. The producer cannot be the reviewer. Rendered checks at 320, 390, 768 and 1280 px follow only after acceptance and runtime integration by Root.
+
+## Correction, 2026-11-04
+
+Codex imagery passed the visual review of commit `b189bc92` (KAN-31/10775) and asked for the Windows checkout fix made for C1-002. This commit makes it:
+- `tools/verify_c1.py`, `tools/build_c1.py` and `tools/write_manifest.py` now hash text files as committed, with LF line ends, so a checkout with `core.autocrlf` verifies, release dataset joins included. Four tool files had been committed with CRLF line ends (`build_c1.py`, `xr_compose.py`, `wpf_kern.ps1` and `kern-table.segoe-ui.json`). A Windows checkout leaves those untouched and converts the LF ones, which is why five tool hashes failed. They are now LF like every other text file; only their line ends changed.
+- As in C1-002, `artworkVersion` is now the exact product code for every record, and the verifier checks it.
+
+Every image, label master and the contact sheet is byte-identical to `b189bc92`, including the ten website WebPs and the five wraps. The manifest records the change in `corrections`.

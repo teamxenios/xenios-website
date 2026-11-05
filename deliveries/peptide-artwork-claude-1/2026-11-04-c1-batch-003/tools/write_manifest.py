@@ -21,6 +21,11 @@ BINDINGS_SHA = '587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24
 CAPTION = 'Packaging design shown. Current packaging may differ.'
 VARIANTS = json.load(open(VARIANTS_JSON, encoding='utf-8'))
 BOLD, REG = 'C:/Windows/Fonts/segoeuib.ttf', 'C:/Windows/Fonts/segoeui.ttf'
+CORRECTIONS = {'c1-003': [dict(
+    date='2026-11-04', requestedBy='KAN-31/10775',
+    previousCommit='b189bc92a33cdfc9b7c3082ce8ddbcd56b1ca65e',
+    previousManifestSha256='1d861c18a65c3a65ed2bcf0c961718c606cb2a40ee5b3307a78883f1d02aef96',
+    change='verify_c1.py, build_c1.py and write_manifest.py hash text files as committed, with LF line ends, so a Windows checkout with core.autocrlf (CRLF) verifies, including the release dataset joins. The tool files that had been committed with CRLF line ends (build_c1.py, xr_compose.py, wpf_kern.ps1 and kern-table.segoe-ui.json) are now LF like every other text file; only their line ends changed. artworkVersion is the exact product code for every record, as corrected for C1-002 in KAN-31/10737; verify_c1.py checks it. No image or label master changed.')]}
 CLAIM_REF = {'c1-002': 'KAN-59/10695', 'c1-003': 'KAN-59/10722'}[LABEL]     # the post that claimed this batch; a new batch must be added here
 
 
@@ -32,13 +37,23 @@ def amounts_text():
     return (', '.join(nums[:-1]) + ' and ' + nums[-1] if len(nums) > 1 else nums[0]) + ' mg here'
 
 
+TEXT_EXT = ('.svg', '.json', '.py', '.ps1', '.md', '.txt')
+
+
+def canon(path):
+    """The committed bytes: text files (TEXT_EXT) with CRLF folded back to LF, because they are committed with LF and a
+    Windows checkout with core.autocrlf rewrites them; PNG and WebP files as they are."""
+    data = open(path, 'rb').read()
+    return data.replace(b'\r\n', b'\n') if path.lower().endswith(TEXT_EXT) else data
+
+
 def sha(path):
-    return hashlib.sha256(open(path, 'rb').read()).hexdigest()
+    return hashlib.sha256(canon(path)).hexdigest()
 
 
 def art(role, rel, fmt):
     p = os.path.join(BATCH, rel)
-    a = dict(role=role, relativeAssetPath=REL + '/' + rel.replace(os.sep, '/'), format=fmt, bytes=os.path.getsize(p), sha256=sha(p))
+    a = dict(role=role, relativeAssetPath=REL + '/' + rel.replace(os.sep, '/'), format=fmt, bytes=len(canon(p)), sha256=sha(p))
     if fmt in ('png', 'webp'):
         w, h = Image.open(p).size
         a.update(width=w, height=h)
@@ -124,7 +139,7 @@ def main():
             canonicalName=prod['canonicalName'], catalogDisplayName=prod['displayName'],
             canonicalVariant='%s %d mg' % (name, mg), catalogVariantLabel=var['label'],
             nominalAmountPerVialMg=mg, form='Lyophilized vial', classification='For laboratory research use only.',
-            artworkVersion='%s-%d-WEB-SUPPLIER-v1' % (v['code'], mg),
+            artworkVersion='%s-WEB-SUPPLIER-v1' % v['sku'],
             mediaKind='original_xenios_website_render', websiteArtworkState='pending_independent_file_level_review',
             physicalPackagingState='design', runtimeLinked=False, publicationAuthorized=False,
             labelFacts=dict(reference=v['labelFactsRef'], file=v['labelFactsFile'], sha256=v['labelFactsSha256'], verifiedStaticText=vst),
@@ -150,13 +165,13 @@ def main():
     tools = []
     for f in sorted(os.listdir(os.path.join(BATCH, 'tools'))):
         p = os.path.join(BATCH, 'tools', f)
-        tools.append(dict(path=REL + '/tools/' + f, bytes=os.path.getsize(p), sha256=sha(p)))
+        tools.append(dict(path=REL + '/tools/' + f, bytes=len(canon(p)), sha256=sha(p)))
     cs = art('contact_sheet', 'contact-sheet-v1.png', 'png')
     manifest = dict(
         schemaVersion=1, batchId=BATCH_ID, producer='CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)',
         releaseBaseline=RELEASE, imageryBase=IMAGERY_BASE,
-        catalogDataset=dict(path='server/research/master-offerings/data/member-safe-master-offerings.generated.json', sha256=CATALOG_SHA, bytes=os.path.getsize(CATALOG)),
-        bindingDataset=dict(path='server/research/master-offerings/data/master-offering-bindings.generated.json', sha256=BINDINGS_SHA, bytes=os.path.getsize(BINDINGS)),
+        catalogDataset=dict(path='server/research/master-offerings/data/member-safe-master-offerings.generated.json', sha256=CATALOG_SHA, bytes=len(canon(CATALOG))),
+        bindingDataset=dict(path='server/research/master-offerings/data/master-offering-bindings.generated.json', sha256=BINDINGS_SHA, bytes=len(canon(BINDINGS))),
         acceptedVisualReference=dict(reference='KAN-31/10627', path='deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png',
                                      sha256='674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b'),
         labelTemplates=[dict(path='deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg', sha256='716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a'),
@@ -179,14 +194,16 @@ def main():
             'Amounts other than 10 mg (%s) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.' % amounts_text(),
             'A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).',
             'Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.',
-            'The wrap proof id is the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1), because KISSPEPTIN-10 is a forbidden fragment name; verify_c1.py checks it. C1-001 has no such collision and is unchanged.',
+            'The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.',
             'The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them.'],
         contactSheet=cs, tools=tools, records=records)
     if LABEL != 'c1-002':
         manifest['changesFromC1002'] = [
             'None in the build, render, label or verification method: build_c1.py, xr_compose.py, svg_label_render.py, verify_c1.py, '
-            'c1_variants.py and wpf_kern.ps1 are byte-identical to C1-002. write_manifest.py now derives the batch-specific text '
-            '(claim reference, example code, amounts) from the variants. The kern table covers this batch\'s strings.']
+            'c1_variants.py and wpf_kern.ps1 are byte-identical to C1-002 as corrected for KAN-31/10737. write_manifest.py now derives '
+            'the batch-specific text (claim reference, example code, amounts) from the variants. The kern table covers this batch\'s strings.']
+    if LABEL in CORRECTIONS:
+        manifest['corrections'] = CORRECTIONS[LABEL]
     json.dump(manifest, open(os.path.join(BATCH, 'media-batch.v1.json'), 'w', encoding='utf-8', newline='\n'), indent=1, ensure_ascii=False)
     print('records', len(records), 'contact sheet', cs['sha256'][:16], cs['width'], cs['height'])
 
