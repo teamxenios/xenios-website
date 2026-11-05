@@ -3126,7 +3126,8 @@
         "scripts/qa/qo-visual-capture/fixture.mjs",
         "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
         "client/src/research/assisted-order/RequestIntentForm.test.tsx",
-        "scripts/qa/qo-visual-capture/build-pr391-routed-copy-fixture.cjs"
+        "scripts/qa/qo-visual-capture/build-pr391-routed-copy-fixture.cjs",
+        "scripts/qa/qo-visual-capture/build-pr393-prospective-fixture.cjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-04T21:44:53.704811Z",
