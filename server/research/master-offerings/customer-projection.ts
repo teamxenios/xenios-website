@@ -3,6 +3,7 @@ import {
   MASTER_OFFERING_FAMILY_LABELS,
   type MasterOfferingCardView,
   type MasterOfferingDetailView,
+  type MasterOfferingFamily,
   type MasterOfferingVariantView,
 } from "@shared/research/master-offerings/contract";
 import {
@@ -34,6 +35,21 @@ export const MASTER_OFFERING_CATALOG_DISCLOSURE =
 
 export const MASTER_OFFERING_RESEARCH_DISCLOSURE =
   "Research listings are presented for nonclinical catalog navigation. They are not treatment recommendations or instructions for human use.";
+
+/**
+ * The research families of the shared catalog taxonomy, each of which carries
+ * the research notice on member detail: the three legacy families and the
+ * three master-catalog workbook families that use the same notice.
+ */
+const RESEARCH_DISCLOSURE_FAMILIES: ReadonlySet<MasterOfferingFamily> =
+  new Set<MasterOfferingFamily>([
+    "research_vials",
+    "blends",
+    "laboratory_supplies",
+    "research_capsules",
+    "research_peptides_materials",
+    "research_supplies",
+  ]);
 
 function noCommerce(): ReturnType<MasterOfferingCommerceResolver> {
   return { binding: null, selection: null };
@@ -118,11 +134,7 @@ export function projectMasterOfferingDetail(
   capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingDetailView {
   const disclosures = [MASTER_OFFERING_CATALOG_DISCLOSURE];
-  if (
-    offering.family === "research_vials" ||
-    offering.family === "blends" ||
-    offering.family === "laboratory_supplies"
-  ) {
+  if (RESEARCH_DISCLOSURE_FAMILIES.has(offering.family)) {
     disclosures.unshift(MASTER_OFFERING_RESEARCH_DISCLOSURE);
   }
   return {
