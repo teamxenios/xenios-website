@@ -15,6 +15,7 @@ import {
   isCatalogAccessPath,
   type CatalogAccessPath,
 } from "./catalog-access-path";
+import { catalogPresentationLabel } from "./catalog-presentation-labels";
 
 /**
  * One removable chip per active discovery filter.
@@ -27,9 +28,9 @@ import {
  * like the select it mirrors. Paging is dropped on every removal because the
  * page a member was on no longer exists once the filter set changes.
  *
- * The category label comes from the server facet when the facet carries it;
- * a category the facet no longer lists is shown by its slug rather than
- * invented, so the chip never says something the server did not.
+ * The category label comes from the server facet when the facet carries it.
+ * A category the facet no longer lists falls back to its slug. The same
+ * presentation labels as the filter controls apply in either case.
  */
 export interface ActiveCatalogFilter {
   key: "q" | "family" | "category" | "state" | "sort";
@@ -58,7 +59,7 @@ export function activeCatalogFilters(
   if (family) {
     filters.push({
       key: "family",
-      label: `Family: ${MASTER_OFFERING_FAMILY_LABELS[family]}`,
+      label: `Family: ${catalogPresentationLabel(family, MASTER_OFFERING_FAMILY_LABELS[family])}`,
       remove: () => {
         const { families: _families, ...next } = rest;
         return next;
@@ -70,7 +71,7 @@ export function activeCatalogFilters(
     const bucket = facets.categories.find((entry) => entry.value === category);
     filters.push({
       key: "category",
-      label: `Category: ${bucket?.label ?? category}`,
+      label: `Category: ${catalogPresentationLabel(category, bucket?.label ?? category)}`,
       remove: () => {
         const { categories: _categories, ...next } = rest;
         return next;
