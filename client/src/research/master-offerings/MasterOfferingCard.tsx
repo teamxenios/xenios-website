@@ -17,6 +17,7 @@ import { fullCatalogProductHref } from "./integration-packet";
 import { catalogPresentationLabel } from "./catalog-presentation-labels";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
+import { researchListingSubcategory } from "../product-media/reviewed-form-holds";
 import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
 
 /**
@@ -187,6 +188,7 @@ export function MasterOfferingCard({
   product: MasterOfferingCardView;
 }) {
   const summary = product.priceSummary;
+  const subcategory = researchListingSubcategory(product);
   const onlyVariant = product.variants.length === 1 ? product.variants[0] : undefined;
   const reviewedContent = onlyVariant?.reviewedContent;
   const packageLabel = reviewedPackage(reviewedContent);
@@ -246,8 +248,8 @@ export function MasterOfferingCard({
             <dd className="mt-1 min-w-0 break-words">
               {catalogPresentationLabel(
                 product.family,
-                product.subcategory
-                  ? `${product.category}, ${product.subcategory}`
+                subcategory
+                  ? `${product.category}, ${subcategory}`
                   : product.category,
               )}
             </dd>

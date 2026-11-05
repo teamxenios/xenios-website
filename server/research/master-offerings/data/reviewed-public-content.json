@@ -954,6 +954,344 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_65340dd542e68a0af5ab",
+      "sourceVariantId": "mov_9774e642bf4c6b799a8c",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic hexapeptide agonist of the growth hormone secretagogue receptor, studied in pituitary cell and rodent models. Listed at 10 mg for laboratory research.",
+        "overview": "GHRP-2, also called pralmorelin, is a synthetic hexapeptide, D-Ala-D-2-Nal-Ala-Trp-D-Phe-Lys-NH2, and by the PubChem records it is a different compound from the hexapeptide GHRP-6, whose sequence is His-D-Trp-Ala-Trp-D-Phe-Lys-NH2. A 2004 profile of the compound describes it as a synthetic growth hormone-releasing peptide from a series of small, highly active peptides, and as mimicking the actions of ghrelin, the 28-amino-acid peptide, octanoylated at its third residue, that regulates the release of growth hormone. In primary cultured rat pituitary cells, antisense knockdown of the secretagogue receptor transcript reduced but did not abolish GHRP-2-induced growth hormone secretion and left the response to growth hormone-releasing hormone unaltered; knockdown of that hormone's own receptor transcript abolished its response while leaving GHRP-2's unaffected; and knocking down both inhibited both responses. In conscious rats, GHRP-2 raised plasma adrenocorticotropic hormone but did not stimulate its release from rat primary pituitary cells; a corticotropin-releasing factor antagonist markedly inhibited that rise while a vasopressin antagonist and an anti-vasopressin antiserum did not, from which the authors concluded that the peptide acts through the hypothalamus mainly by releasing corticotropin-releasing factor. In rats with thermal injury, GHRP-2 lessened the injury-induced rise in the messenger RNA of interleukin-6 and of the E3 ubiquitin ligases MuRF-1 and MAFbx in skeletal muscle and reduced total and myofibrillar protein breakdown; in mice, it produced a concentration- and time-related antinociceptive effect in a tail-immersion test that an antagonist of the secretagogue receptor fully reversed and that δ- and κ-opioid receptor antagonists markedly attenuated. This listing is a laboratory research material and not a medicine. The cell and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0290"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone secretagogue receptor signaling in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_849cdbb1463f8382f1f6",
+      "sourceVariantId": "mov_e21bffb0a8ad83a8137f",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic hexapeptide growth hormone secretagogue studied in pituitary and animal models of growth hormone release. Listed at 10 mg for laboratory research.",
+        "overview": "GHRP-6 is a synthetic hexapeptide, His-D-Trp-Ala-Trp-D-Phe-Lys-NH2, whose structure is that of the analogue described in 1984 as [His1,Lys6] growth hormone-releasing peptide. In that 1984 report the hexapeptide released growth hormone in pituitary incubates at 1 to 10 nanograms per millilitre and in rats, monkeys, lambs, calves and, under special experimental conditions, chicks, without a concomitant release of luteinizing hormone, follicle-stimulating hormone, thyroid-stimulating hormone or prolactin, and in limited work insulin or glucagon; its growth hormone response lasted longer than that of the larger growth hormone-releasing factors of 44 and 40 residues, and both the 14- and 28-residue forms of somatotropin release-inhibiting factor suppressed it, the longer form being about four times as active in pituitary incubates and about seven and a half times as active in animals. In the same report, body weight gain in immature rats given the peptide for 9 or 25 days rose above that of controls, and the pituitary remained fully responsive to the peptide at the end of those studies. A 1998 review by the author of that 1984 report described growth hormone-releasing peptides as a class of synthetic growth hormone secretagogues that act on both the hypothalamus and the pituitary, and argued that, although the peptides themselves are of unnatural origin, their action reflects that of a natural hypothalamic hormone not yet isolated at the time. The receptor through which such secretagogues act was cloned from the pituitary and hypothalamus of swine and humans in 1996, and in 1999 an endogenous ligand for it was purified from rat stomach and named ghrelin, a 28-amino-acid peptide whose serine 3 is octanoylated, an acylation the authors found essential for its activity. This listing is a laboratory research material and not a medicine. The animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0292"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone secretagogue receptor signaling and growth hormone release in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_5e145fbee8e39536b580",
+      "sourceVariantId": "mov_b36b64d987325dca8df4",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic gonadotropin-releasing hormone decapeptide studied in pituitary and ovulation models. Listed at 5 mg for laboratory research.",
+        "overview": "Gonadorelin is the synthetic form of gonadotropin-releasing hormone (GnRH), the hypothalamic decapeptide pGlu-His-Trp-Ser-Tyr-Gly-Leu-Arg-Pro-Gly-NH2 that causes the anterior pituitary to release luteinizing hormone (LH) and follicle-stimulating hormone (FSH). Its structure was established in 1971 and 1972 from porcine and ovine hypothalami; the ovine sequence was determined by enzymatic hydrolysis, Edman sequencing and mass spectrometry, a synthetic decapeptide with that sequence had the same biological activities as the native factor, and the ovine and porcine sequences were identical. In 1971, the synthetic porcine decapeptide stimulated LH release and induced ovulation in hamsters whose spontaneous ovulation had been blocked with phenobarbital, and in 1972 two analogues altered at the histidine in position 2 were tested in cultured rat anterior pituitary cells: the analogue with glycine in place of histidine was a partial agonist, releasing less than half of the maximal LH response to the native factor, the analogue lacking that histidine had no significant agonist activity, and at molar ratios of a thousand to ten thousand times the native factor both reduced the LH secreted in response to it. This listing is a laboratory research material and not a medicine; separately, gonadorelin is the active ingredient of veterinary products approved in the United States for cattle, for ovarian follicular cysts and, within certain approved regimens that also include another veterinary medicine, for synchronizing estrous cycles to allow fixed-time artificial insemination. The animal findings above, and the approval of those separate veterinary products, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0297"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on hypothalamic-pituitary gonadotropin signaling in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_b1b15717ae2e89a19981",
+      "sourceVariantId": "mov_fb757d24b8c1ae0e5efe",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic α-MSH analogue (afamelanotide) studied as a melanocortin 1 receptor agonist in pigment-cell and tissue assays. Listed at 10 mg for laboratory research.",
+        "overview": "Melanotan I is the research name of afamelanotide, [Nle4, D-Phe7]-α-MSH, a synthetic 13-amino-acid analogue of α-melanocyte-stimulating hormone in which norleucine replaces methionine at position 4 and D-phenylalanine replaces L-phenylalanine at position 7. In the 1980 report that first described it, the analogue was resistant to degradation by serum enzymes, darkened frog skin with prolonged activity, and was about 26 times as potent as α-MSH at activating adenylate cyclase in mouse melanoma cells. It is an agonist at the melanocortin 1 receptor on melanocytes and stimulates eumelanin synthesis independently of ultraviolet exposure. This listing is a laboratory research material and not a medicine; separately, afamelanotide is the active ingredient of a prescription medicine authorized in the European Union in 2014 for the prevention of phototoxicity in adults with erythropoietic protoporphyria, and approved by the U.S. Food and Drug Administration to increase pain-free light exposure in adults with a history of phototoxic reactions from erythropoietic protoporphyria. The laboratory findings above, and the approval of that separate medicine, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0314"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on melanocortin 1 receptor signaling and melanogenesis in cell and tissue models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_ffeecca340b02f400868",
+      "sourceVariantId": "mov_a4b4118c4d23b1546c8b",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Tripeptide Lys-Pro-Val from alpha-MSH, studied in cell and mouse models of intestinal inflammation. Listed at 5 mg for laboratory research.",
+        "overview": "KPV is the tripeptide lysine-proline-valine, corresponding to residues 11 to 13 of alpha-melanocyte-stimulating hormone (alpha-MSH), a melanocortin peptide with described anti-inflammatory effects. In the Caco2-BBE human intestinal epithelial cell line, nanomolar KPV reduced NF-kappaB and MAP kinase inflammatory signaling and lowered secretion of the cytokine IL-8; in Jurkat T cells it reduced inflammatory signaling and IL-8 mRNA. Its uptake depended on PepT1, a di- and tripeptide transporter normally expressed in the small intestine and induced in the colon during inflammatory bowel disease. In mice, KPV given in drinking water reduced colitis induced by dextran sodium sulfate (DSS) or TNBS. A separate mouse study reported earlier recovery, regain of body weight and fewer inflammatory infiltrates in DSS and T-cell transfer colitis. In mice with a nonfunctional melanocortin-1 receptor, that study reported that all KPV-treated animals survived DSS colitis, and the authors concluded that the effects were at least partly independent of that receptor. These are cell and mouse findings and do not establish effects in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0307"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on peptide transport and inflammatory signaling in intestinal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_e948b9ac0d531ef744ae",
+      "sourceVariantId": "mov_a29c1130a8c45aff1f26",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic hexapeptide agonist of the growth hormone secretagogue receptor, studied in pituitary cell and rodent models. Listed at 5 mg for laboratory research.",
+        "overview": "GHRP-2, also called pralmorelin, is a synthetic hexapeptide, D-Ala-D-2-Nal-Ala-Trp-D-Phe-Lys-NH2, and by the PubChem records it is a different compound from the hexapeptide GHRP-6, whose sequence is His-D-Trp-Ala-Trp-D-Phe-Lys-NH2. A 2004 profile of the compound describes it as a synthetic growth hormone-releasing peptide from a series of small, highly active peptides, and as mimicking the actions of ghrelin, the 28-amino-acid peptide, octanoylated at its third residue, that regulates the release of growth hormone. In primary cultured rat pituitary cells, antisense knockdown of the secretagogue receptor transcript reduced but did not abolish GHRP-2-induced growth hormone secretion and left the response to growth hormone-releasing hormone unaltered; knockdown of that hormone's own receptor transcript abolished its response while leaving GHRP-2's unaffected; and knocking down both inhibited both responses. In conscious rats, GHRP-2 raised plasma adrenocorticotropic hormone but did not stimulate its release from rat primary pituitary cells; a corticotropin-releasing factor antagonist markedly inhibited that rise while a vasopressin antagonist and an anti-vasopressin antiserum did not, from which the authors concluded that the peptide acts through the hypothalamus mainly by releasing corticotropin-releasing factor. In rats with thermal injury, GHRP-2 lessened the injury-induced rise in the messenger RNA of interleukin-6 and of the E3 ubiquitin ligases MuRF-1 and MAFbx in skeletal muscle and reduced total and myofibrillar protein breakdown; in mice, it produced a concentration- and time-related antinociceptive effect in a tail-immersion test that an antagonist of the secretagogue receptor fully reversed and that δ- and κ-opioid receptor antagonists markedly attenuated. This listing is a laboratory research material and not a medicine. The cell and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0291"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone secretagogue receptor signaling in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_afb0add32da0de7426f5",
+      "sourceVariantId": "mov_9262033fe69a14a50f1c",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Small-molecule inhibitor of nicotinamide N-methyltransferase (NNMT) studied in cultured fat cells and obese-mouse models. Listed at 10 mg for laboratory research.",
+        "overview": "5-Amino-1MQ is short for 5-amino-1-methylquinolinium, a small molecule from a series of methylquinolinium compounds that researchers developed to inhibit the cytosolic enzyme nicotinamide N-methyltransferase (NNMT). In one laboratory study, the team measured 1-methylnicotinamide (1-MNA), a product of the NNMT reaction, in cultured mouse 3T3-L1 fat cells exposed to the compound and found concentration-dependent reductions; in differentiating cells, the compound also reduced lipid accumulation in a concentration-dependent way. In the same study, the overall effect on intracellular S-adenosylmethionine (SAM) was significant, with a significant increase at one of the concentrations tested; intracellular NAD+ trended upward, but the overall comparison for NAD+ was inconclusive. In enzyme assays at the concentrations tested, it showed little or no inhibition of the related methyltransferases DNMT1, PRMT3 and COMT or of the NAD+ salvage enzymes NAMPT and SIRT1, which the authors interpreted as selectivity for NNMT. In diet-induced obese mice fed a high-fat diet, 5-amino-1MQ reduced body weight and white adipose tissue mass, decreased fat-cell size and lowered plasma total cholesterol without changing total food intake. A 2021 study from the same research group reported that, in obese mice switched to a lean diet, adding the compound produced greater body-weight and fat loss and less liver fat than the diet switch alone. These cell and mouse findings do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0256"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Laboratory study of nicotinamide N-methyltransferase activity in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_8cca713c2b203a712494",
+      "sourceVariantId": "mov_718e52d07396abd5b2dc",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Nine-amino-acid peptide first isolated from rabbits and studied in EEG and sleep research. Listed at 5 mg for laboratory research.",
+        "overview": "Delta sleep-inducing peptide (DSIP) is a nine-amino-acid peptide, Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu, isolated in 1977 from the cerebral venous blood of rabbits by a research group in Basel and named for its effect on the electroencephalogram (EEG). In the original double-blind study in rabbits, synthetic DSIP infused into the brain ventricles significantly increased delta-wave and spindle EEG activity compared with controls. Of the other eight peptides tested, rabbits given one of the three shortest (two fragments and a related tripeptide) showed less significant differences from controls, and rabbits given one of the remaining five, three longer fragments and two analogues with two amino acids exchanged, did not differ significantly from controls. A 2006 review noted that this link to sleep had never been further characterized, partly because no gene, precursor protein or receptor for DSIP had been isolated by then, and that its natural occurrence and biological activity remained unclear. The same review describes the structure of DSIP as unlike any other known peptide family, and notes that DSIP-like immunoreactivity has a highly specific distribution in neurosecretory nuclei of the hypothalamus in several vertebrate species, regions not particularly relevant to sleep regulation. The review's authors also report that certain synthetic DSIP analogues, but not DSIP itself, promoted slow-wave sleep in their own rabbit and rat studies, and they propose that a related, still unidentified peptide may account, at least in part, for the activity attributed to DSIP. These animal findings do not establish effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0281"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on DSIP and DSIP-like peptides, EEG and sleep physiology, and hypothalamic neuropeptide distribution in animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_6d5f244f45892249b132",
+      "sourceVariantId": "mov_4d4f3fc085df5aaf9ae8",
+      "content": {
+        "brand": "Xenios",
+        "summary": "KISS1-derived peptide studied as the ligand of the GPR54 receptor in cell and animal models. Listed at 5 mg for laboratory research.",
+        "overview": "Kisspeptins are peptides derived from the protein product of the KISS1 gene, first identified as a metastasis suppressor gene for melanoma cells, and they share a common Arg-Phe-amide (RF-amide) C-terminus. The catalog listing names this item only as kisspeptin and does not state which form it is, for example the 54-amino-acid kisspeptin-54 or the 10-amino-acid C-terminal fragment kisspeptin-10. In 2001, kisspeptins were isolated from human placenta as natural ligands of the orphan G protein-coupled receptor GPR54; in hamster ovary cells expressing rat or human GPR54 they bound with low nanomolar affinity, mobilized calcium, activated ERK1/2 and p38 MAP kinases and inhibited cell proliferation. Loss-of-function mutations in GPR54 were later found to cause isolated hypogonadotropic hypogonadism, in which pubertal maturation and reproductive function are impaired, in affected human families and in Gpr54-deficient mice. In mice, kisspeptin-54 and kisspeptin-10 delivered into a lateral brain ventricle both stimulated luteinizing hormone (LH) secretion, the kisspeptin-54 effect was blocked by a gonadotropin-releasing hormone (GnRH) antagonist, and KISS1 mRNA was mapped to hypothalamic areas that regulate gonadotropin secretion. In a separate study, kisspeptin that stimulated LH and follicle-stimulating hormone release in normal mice had no effect in mice lacking GPR54, and in sheep it released GnRH into the cerebrospinal fluid, which the authors interpret as a direct action at the level of GnRH release. These cell and animal findings, and the human genetic studies of its receptor, do not establish effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0309"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on KISS1/GPR54 signaling and the hypothalamic control of gonadotropin secretion in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_4df776b9fb9b2d4b7302",
+      "sourceVariantId": "mov_538e701ea3907d766c38",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic seven-amino-acid tuftsin analogue studied in rodent models of GABAergic signaling. Listed at 5 mg for laboratory research.",
+        "overview": "Selank is a synthetic heptapeptide (Thr-Lys-Pro-Arg-Pro-Gly-Pro) designed as an analogue of the endogenous peptide tuftsin. The selected studies examine GABA-related signaling, gene expression and behavior in rodent and tissue models. In brain membrane binding assays, Selank changed [3H]GABA binding in a way consistent with positive allosteric modulation of GABA receptors, and it blocked the modulatory effect of diazepam and olanzapine on that binding. In the rat frontal cortex, Selank altered the expression of many of 84 neurotransmission-related genes at one and three hours; the one-hour changes correlated positively with those produced by GABA, and the three-hour changes correlated negatively. In mouse spleen, Selank and its C-terminal Gly-Pro fragment changed the expression of immune-related genes such as complement C3 within 30 to 90 minutes, with similar profiles for both peptides. In rats given ethanol as their only fluid for 30 weeks, Selank prevented memory and attention deficits during withdrawal and prevented the ethanol-related rise in BDNF in the hippocampus and frontal cortex. These findings come from rodent and tissue studies and do not establish effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0332"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GABAergic signaling, neurotransmission-related gene expression and stress-related behavior in rodent models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+  {
+      "offeringId": "mo_4a4dd3014ea4cd85cb6e",
+      "sourceVariantId": "mov_19de1d73a1a3844c0190",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Lipidated amylin analogue studied as a dual amylin and calcitonin receptor agonist in receptor structures and rodent models. Listed at 5 mg for laboratory research.",
+        "overview": "Cagrilintide is a lipidated analogue of amylin, a pancreatic hormone whose native form readily forms amyloid fibrils; its developer reported it in 2021 as a stable, long-acting amylin analogue selected for clinical development. The PubChem record describes it as a 37-amino-acid peptide amide with one disulfide bridge and a C20 fatty diacid attached through a γ-glutamyl spacer to its N-terminal lysine. A 2026 structural study reported cryo-electron-microscopy structures of cagrilintide bound to the amylin-1 receptor and to the calcitonin receptor, each with a Gs protein, and described it as a dual agonist that activates Gs signaling through both receptors with a similar binding mode at each; the authors noted a salt bridge between residues 14 and 17 that stabilizes its helix and a phenylalanine at position 23 that anchors the peptide at the receptor's transmembrane bundle. In a 2025 report from its developer, cagrilintide and a closely related tool compound reduced food intake in normal-weight rats after acute administration, had small and transient effects on food intake and body weight in diet-induced obese mice, and in diet-induced obese rats markedly reduced food intake and body weight, mainly through loss of fat mass, while adding to the effects of semaglutide. As of its developer's 2025 report and a 2026 systematic review of trials published to March 2026, cagrilintide was in clinical development alone and in a combination with semaglutide; this listing is a laboratory research material, not a medicine. The laboratory and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0275"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on amylin and calcitonin receptor signaling and feeding behavior in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+  {
+      "offeringId": "mo_987ced2746afaa80e326",
+      "sourceVariantId": "mov_3e5e9840aea10ca2137e",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Albumin-binding analogue of GLP-1 studied in receptor assays and rodent models of body-weight regulation. Listed at 10 mg for laboratory research.",
+        "overview": "Liraglutide is an analogue of human glucagon-like peptide-1 (GLP-1) in which arginine replaces lysine at position 34 and a C16 fatty acid, palmitic acid, is attached through a glutamic acid spacer to the lysine at position 26; the fatty acid binds albumin reversibly, which prolongs the peptide's presence in circulation. In the developer's 2000 report, GLP-1 derivatives carrying fatty acids of 12 or more carbons were markedly protracted compared with GLP-1, many of them with similar or higher potency at the cloned human GLP-1 receptor, derivatives with two fatty acids lost potency, and palmitate with a γ-glutamate linker was later judged the best combination of protraction and receptor potency, leading to the selection of liraglutide. Although its N-terminus is unchanged from GLP-1, liraglutide is partly protected from rapid degradation by dipeptidyl peptidase IV, which its developers attribute to reversible albumin binding or steric hindrance. In a 2014 study, liraglutide-dependent body-weight reduction in rats did not depend on GLP-1 receptors in the vagus nerve, area postrema or paraventricular nucleus; in mice, fluorescently labeled liraglutide given peripherally produced a receptor-dependent signal in circumventricular organs and in selected hypothalamic regions including the arcuate and paraventricular nuclei, with no signal in mice lacking the GLP-1 receptor; in rat hypothalamic sections, labeled liraglutide accumulated inside CART-positive arcuate cells, and in mouse brain slices GLP-1 itself depolarized pro-opiomelanocortin neurons, from which the authors propose that GLP-1 receptors on these arcuate neurons mediate liraglutide's effect on body weight. This listing is a laboratory research material and not a medicine; separately, liraglutide is the active ingredient of prescription medicines approved in the European Union in 2009 and in the United States as an adjunct to diet and exercise to improve glycemic control in type 2 diabetes mellitus and, in adults with type 2 diabetes and established cardiovascular disease, to reduce the risk of major adverse cardiovascular events; later approvals cover other indications for specific medicines. The cell and animal findings above, and the approval of those separate medicines, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0310"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GLP-1 receptor signaling, albumin-binding peptide design and the hypothalamic control of body weight in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+  {
+      "offeringId": "mo_2fd34c733360f34e7a63",
+      "sourceVariantId": "mov_a75d9a7c5bfa0dec5ece",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Albumin-binding analogue of GLP-1 studied in receptor assays and rodent models of body-weight regulation. Listed at 20 mg for laboratory research.",
+        "overview": "Liraglutide is an analogue of human glucagon-like peptide-1 (GLP-1) in which arginine replaces lysine at position 34 and a C16 fatty acid, palmitic acid, is attached through a glutamic acid spacer to the lysine at position 26; the fatty acid binds albumin reversibly, which prolongs the peptide's presence in circulation. In the developer's 2000 report, GLP-1 derivatives carrying fatty acids of 12 or more carbons were markedly protracted compared with GLP-1, many of them with similar or higher potency at the cloned human GLP-1 receptor, derivatives with two fatty acids lost potency, and palmitate with a γ-glutamate linker was later judged the best combination of protraction and receptor potency, leading to the selection of liraglutide. Although its N-terminus is unchanged from GLP-1, liraglutide is partly protected from rapid degradation by dipeptidyl peptidase IV, which its developers attribute to reversible albumin binding or steric hindrance. In a 2014 study, liraglutide-dependent body-weight reduction in rats did not depend on GLP-1 receptors in the vagus nerve, area postrema or paraventricular nucleus; in mice, fluorescently labeled liraglutide given peripherally produced a receptor-dependent signal in circumventricular organs and in selected hypothalamic regions including the arcuate and paraventricular nuclei, with no signal in mice lacking the GLP-1 receptor; in rat hypothalamic sections, labeled liraglutide accumulated inside CART-positive arcuate cells, and in mouse brain slices GLP-1 itself depolarized pro-opiomelanocortin neurons, from which the authors propose that GLP-1 receptors on these arcuate neurons mediate liraglutide's effect on body weight. This listing is a laboratory research material and not a medicine; separately, liraglutide is the active ingredient of prescription medicines approved in the European Union in 2009 and in the United States as an adjunct to diet and exercise to improve glycemic control in type 2 diabetes mellitus and, in adults with type 2 diabetes and established cardiovascular disease, to reduce the risk of major adverse cardiovascular events; later approvals cover other indications for specific medicines. The cell and animal findings above, and the approval of those separate medicines, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 20 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "20 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0311"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GLP-1 receptor signaling, albumin-binding peptide design and the hypothalamic control of body weight in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }

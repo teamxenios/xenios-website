@@ -7,6 +7,7 @@ import {
   type PublicStorefrontVariant,
 } from "@shared/research/storefront/contract";
 import { ResearchStatusBadge, type BadgeTone } from "../ui/kit";
+import { researchListingSubcategory } from "../product-media/reviewed-form-holds";
 
 /**
  * One public catalog card.
@@ -46,6 +47,7 @@ export function publicPriceLabel(variant: PublicStorefrontVariant): string {
 }
 
 export function StorefrontCard({ product }: { product: CardView }) {
+  const subcategory = researchListingSubcategory(product);
   const headingId = `sf-card-${product.family}-${product.slug}`;
   const href = storefrontProductHref(product.family, product.slug);
   const actionable = isActionablePublicAction(product.action);
@@ -88,8 +90,8 @@ export function StorefrontCard({ product }: { product: CardView }) {
           <div className="min-w-0">
             <dt className="mono-label text-ink-mute">Category</dt>
             <dd className="mt-1 min-w-0 break-words">
-              {product.subcategory
-                ? `${product.category}, ${product.subcategory}`
+              {subcategory
+                ? `${product.category}, ${subcategory}`
                 : product.category}
             </dd>
           </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
 import media from "./product-media-format.generated.json";
+import { isResearchFormUnconfirmed } from "./reviewed-form-holds";
 
 const formatLabels = {
   vial: "vial",
@@ -32,7 +33,9 @@ export function ProductMedia({
   detail?: boolean;
   reviewedMedia?: ReviewedProductMedia;
 }) {
-  const mapped = sharedFormat(variantIds);
+  const mapped = variantIds.some((id) => isResearchFormUnconfirmed(id))
+    ? "unknown"
+    : sharedFormat(variantIds);
   const [failedFormat, setFailedFormat] = useState<MediaFormat | null>(null);
   const format = mapped === failedFormat ? "unknown" : mapped;
   const [failedPackshot, setFailedPackshot] = useState<string | null>(null);
