@@ -15,6 +15,7 @@ export interface PersistentRequestBarProps {
   readonly lines: readonly RequestBarLine[];
   readonly contactFormId: string;
   readonly onContinue: () => void;
+  readonly focusContactHeading: () => void;
   readonly onSubmit: () => void;
 }
 
@@ -22,9 +23,12 @@ export interface PersistentRequestBarProps {
  * Never persists a draft, computes a quote, accepts consent, or submits on mount.
  * It is mounted only for an active request wizard, not receipt/recovery screens.
  */
-export function PersistentRequestBar({ state, lines, contactFormId, onContinue, onSubmit }: PersistentRequestBarProps) {
+export function PersistentRequestBar({
+  state, lines, contactFormId, onContinue, focusContactHeading, onSubmit,
+}: PersistentRequestBarProps) {
   const hintId = useId();
   const dock = useRef<HTMLDivElement>(null);
+  const continuedFromSummary = useRef(false);
   const [body, setBody] = useState<HTMLElement | null>(null);
   const [height, setHeight] = useState(144);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
@@ -87,32 +91,46 @@ export function PersistentRequestBar({ state, lines, contactFormId, onContinue, 
     else if (state.step === "review") onSubmit();
     // Contact uses native form= association + HTML constraint validation.
   }
-  return <>
-    <div aria-hidden="true" data-testid="request-action-bar-spacer"
-      className="xenios-request-dock-spacer" style={{ height: height + 16 }} />
-    {body && <Dialog open={reviewOpen} onOpenChange={setReviewOpen}>
+  if (!body) return null;
+  return (
+    <Dialog open={reviewOpen} onOpenChange={setReviewOpen}>
       {createPortal(
-        <div ref={dock} className="xenios-request-dock" data-testid="request-action-bar"
-          style={{ bottom: keyboardOffset }} role="region" aria-label="Request actions">
-          <div className="xenios-request-dock__inner">
-            <div className="xenios-request-dock__status" aria-live="polite" aria-atomic="true">
-              <strong>Your request</strong>
-              <span>{lines.length} {lines.length === 1 ? "variant" : "variants"} · {units} requested {units === 1 ? "unit" : "units"}</span>
+        <>
+          <div ref={dock} className="xenios-request-dock" data-testid="request-action-bar"
+            style={{ bottom: keyboardOffset }} role="region" aria-label="Request actions">
+            <div className="xenios-request-dock__inner">
+              <div className="xenios-request-dock__status" aria-live="polite" aria-atomic="true">
+                <strong>Your request</strong>
+                <span>{lines.length} {lines.length === 1 ? "variant" : "variants"} · {units} requested {units === 1 ? "unit" : "units"}</span>
+              </div>
+              <div className="xenios-request-dock__buttons">
+                <DialogTrigger asChild>
+                  <button type="button" className="xenios-request-dock__summary"
+                    data-testid="request-action-bar-summary">View request ({lines.length})</button>
+                </DialogTrigger>
+                <button type={action.type} form={action.type === "submit" ? contactFormId : undefined}
+                  className="xenios-request-dock__primary" data-testid="request-action-bar-primary"
+                  disabled={action.disabled} aria-describedby={hintId}
+                  onClick={action.type === "button" ? activate : undefined}>{action.label}</button>
+              </div>
+              <p id={hintId} className="xenios-request-dock__hint">{action.hint}</p>
             </div>
-            <div className="xenios-request-dock__buttons">
-              <DialogTrigger asChild>
-                <button type="button" className="xenios-request-dock__summary"
-                  data-testid="request-action-bar-summary">View request ({lines.length})</button>
-              </DialogTrigger>
-              <button type={action.type} form={action.type === "submit" ? contactFormId : undefined}
-                className="xenios-request-dock__primary" data-testid="request-action-bar-primary"
-                disabled={action.disabled} aria-describedby={hintId}
-                onClick={action.type === "button" ? activate : undefined}>{action.label}</button>
-            </div>
-            <p id={hintId} className="xenios-request-dock__hint">{action.hint}</p>
           </div>
-        </div>, body)}
-      <DialogContent className="xenios-request-dock-dialog max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink">
+          {/* The public route adds help and footer content after the request form. */}
+          <div aria-hidden="true" data-testid="request-action-bar-spacer"
+            className="xenios-request-dock-spacer" style={{ height: height + 16 }} />
+        </>,
+        body,
+      )}
+      <DialogContent
+        className="xenios-request-dock-dialog max-h-[calc(100dvh_-_2rem)] w-[calc(100vw_-_2rem)] min-w-0 overflow-y-auto rounded-xl bg-paper text-ink"
+        onCloseAutoFocus={(event) => {
+          if (!continuedFromSummary.current) return;
+          continuedFromSummary.current = false;
+          event.preventDefault();
+          focusContactHeading();
+        }}
+      >
         <DialogTitle className="break-words pr-8">Your selected request items</DialogTitle>
         <DialogDescription>
           Review your selections without leaving the form. This is not an approved order or a final quote.
@@ -125,8 +143,24 @@ export function PersistentRequestBar({ state, lines, contactFormId, onContinue, 
           </li>)}
         </ul> : <p>No items selected yet. Return to the catalog and add an eligible item.</p>}
         <p>Final quantities, prices, availability and any required clinical review are confirmed separately.</p>
-        <DialogClose asChild><button type="button" className="xenios-request-dock__summary">Return to request</button></DialogClose>
+        <div className="flex flex-wrap gap-2">
+          <DialogClose asChild>
+            <button type="button" className="xenios-request-dock__summary">Return to request</button>
+          </DialogClose>
+          {state.step === "products" && (
+            <DialogClose asChild>
+              <button type="button" className="xenios-request-dock__primary" disabled={action.disabled}
+                onClick={() => {
+                  continuedFromSummary.current = true;
+                  activate();
+                }}
+              >
+                {action.label}
+              </button>
+            </DialogClose>
+          )}
+        </div>
       </DialogContent>
-    </Dialog>}
-  </>;
+    </Dialog>
+  );
 }

@@ -61,6 +61,23 @@ describe("actual request form persistent action wiring", () => {
     expect(document.querySelector('[data-testid="request-action-bar-summary"]')?.textContent).toContain("(1)");
     await click(primary());expect(host.querySelector('input[name="email"]')).not.toBeNull();expect(primary().form).toBe(host.querySelector("form"));
   });
+  it("continues from the open selection summary and focuses contact details", async () => {
+    const api = makeApi();
+    await mount(api);
+    await add();
+    const trigger = document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-summary"]')!;
+    await click(trigger);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const next = [...dialog.querySelectorAll("button")].find(button => button.textContent === "Continue to contact")!;
+    expect(next.disabled).toBe(false);
+    await click(next);
+    const heading = host.querySelector("form h2");
+    expect(heading?.textContent).toBe("Contact details");
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    await vi.waitFor(() => expect(document.activeElement).toBe(heading));
+    expect(primary().form).toBe(host.querySelector("form"));
+    expect(api.submit).not.toHaveBeenCalled();
+  });
   it("does not bypass the policy gate after a selection", async () => {
     const api=makeApi();await mount(api,false);await add();expect(primary().disabled).toBe(true);expect(api.submit).not.toHaveBeenCalled();
   });

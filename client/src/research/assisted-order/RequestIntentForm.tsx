@@ -133,6 +133,7 @@ function RequestIntentFormSession({
   const locked = useRef(false);
   const mounted = useRef(true);
   const heading = useRef<HTMLHeadingElement>(null);
+  const contactHeading = useRef<HTMLHeadingElement>(null);
   const previousFocusState = useRef({ step, receipt });
   const [hintItem, setHintItem] = useState<RequestIntentCatalogItem | null>(null);
   const [hintChecked, setHintChecked] = useState(false);
@@ -497,6 +498,7 @@ function RequestIntentFormSession({
       </aside></div>
     </>}
     {step === "contact" && <form id={contactFormId} onSubmit={captureContact}>
+      <h2 ref={contactHeading} tabIndex={-1}>Contact details</h2>
       <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} defaultValue={contactValue("name", contact?.fullLegalName ?? "")} /></label>
         <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} defaultValue={contactValue("email", contact?.email ?? "")} /></label>
         <label>Phone<input name="phone" type="tel" required autoComplete="tel" maxLength={50} defaultValue={contactValue("phone", contact?.mobilePhone ?? "")} /></label></div>
@@ -538,6 +540,7 @@ function RequestIntentFormSession({
       lines={selections.map(({ item, quantity }) => ({ key: catalogItemKey(item),
         name: item.productName, specification: item.specification || item.variantId, quantity }))}
       contactFormId={contactFormId}
+      focusContactHeading={() => contactHeading.current?.focus()}
       onContinue={() => {
         if (!selected.size || !config || !storage || !continuationEnabled || busy || requirementsNeedRefresh) return;
         setStep("contact"); setError("");

@@ -17,13 +17,24 @@ const primary = () => document.querySelector<HTMLButtonElement>('[data-testid="r
 async function mount(overrides: Partial<RequestBarState> = {}) {
   const onContinue = vi.fn(), onSubmit = vi.fn();
   await act(async () => root.render(<PersistentRequestBar state={{ ...state, ...overrides }}
-    lines={lines} contactFormId="test-contact-form" onContinue={onContinue} onSubmit={onSubmit} />));
+    lines={lines} contactFormId="test-contact-form" onContinue={onContinue}
+    focusContactHeading={() => {}} onSubmit={onSubmit} />));
   return { onContinue, onSubmit };
 }
 describe("persistent request bar (real React and shared Dialog)", () => {
-  it("portals outside transformed ancestors and reserves space", async () => {
-    await mount(); expect(document.querySelector('[data-testid="request-action-bar"]')?.parentElement).toBe(document.body);
-    expect(host.querySelector('[data-testid="request-action-bar-spacer"]')).not.toBeNull();
+  it("reserves dock clearance after content that follows the form", async () => {
+    const footer = document.createElement("footer");
+    document.body.append(footer);
+    try {
+      await mount();
+      const dock = document.querySelector('[data-testid="request-action-bar"]');
+      const spacer = document.querySelector('[data-testid="request-action-bar-spacer"]')!;
+      expect(dock?.parentElement).toBe(document.body);
+      expect(spacer.parentElement).toBe(document.body);
+      expect(footer.compareDocumentPosition(spacer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    } finally {
+      footer.remove();
+    }
   });
   it("does not execute a transaction on mount", async () => {
     const callbacks = await mount(); expect(callbacks.onSubmit).not.toHaveBeenCalled(); expect(callbacks.onContinue).not.toHaveBeenCalled();
@@ -32,9 +43,18 @@ describe("persistent request bar (real React and shared Dialog)", () => {
     const callbacks = await mount(); await act(async () => primary().click());
     expect(callbacks.onContinue).toHaveBeenCalledTimes(1); expect(callbacks.onSubmit).not.toHaveBeenCalled();
   });
-  it("keeps the primary visible but disabled before policy acceptance", async () => {
-    const c = await mount({ continuationEnabled: false }); expect(primary().disabled).toBe(true);
-    await act(async () => primary().click()); expect(c.onContinue).not.toHaveBeenCalled();
+  it("keeps both continuation actions disabled before policy acceptance", async () => {
+    const callbacks = await mount({ continuationEnabled: false });
+    expect(primary().disabled).toBe(true);
+    await act(async () => primary().click());
+    const trigger = document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-summary"]')!;
+    await act(async () => trigger.click());
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const next = [...dialog.querySelectorAll("button")].find(button => button.textContent === "Continue to contact")!;
+    expect(next.disabled).toBe(true);
+    await act(async () => next.click());
+    expect(document.querySelector('[role="dialog"]')).toBe(dialog);
+    expect(callbacks.onContinue).not.toHaveBeenCalled();
   });
   it("uses the native contact form association, not the request submit callback", async () => {
     const c = await mount({ step: "contact", contactReady: false });
@@ -64,7 +84,9 @@ describe("persistent request bar (real React and shared Dialog)", () => {
     expect(dialog?.textContent).toContain("not an approved order");
     expect(c.onSubmit).not.toHaveBeenCalled(); expect(c.onContinue).not.toHaveBeenCalled();
     const close = [...dialog!.querySelectorAll("button")].find(b => b.textContent === "Return to request")!;
-    await act(async () => close.click()); expect(document.querySelector('[role="dialog"]')).toBeNull();
+    await act(async () => close.click());
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
   });
   it("does not render a price or a payment promise", async () => {
     await mount(); const dock = document.querySelector('[data-testid="request-action-bar"]')!;
@@ -73,6 +95,6 @@ describe("persistent request bar (real React and shared Dialog)", () => {
   it("removes its portal and spacer when unmounted", async () => {
     await mount(); await act(async () => root.render(null));
     expect(document.querySelector('[data-testid="request-action-bar"]')).toBeNull();
-    expect(host.querySelector('[data-testid="request-action-bar-spacer"]')).toBeNull();
+    expect(document.querySelector('[data-testid="request-action-bar-spacer"]')).toBeNull();
   });
 });
