@@ -3129,7 +3129,14 @@
         "scripts/qa/qo-visual-capture/build-pr391-routed-copy-fixture.cjs",
         "scripts/qa/qo-visual-capture/build-pr393-prospective-fixture.cjs",
         "scripts/qa/qo-visual-capture/capture-dispatch.mjs",
-        "scripts/qa/qo-visual-capture/capture-dispatch.test.mjs"
+        "scripts/qa/qo-visual-capture/capture-dispatch.test.mjs",
+        "client/src/research/master-offerings/catalog-presentation-labels.ts",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+        "client/src/research/master-offerings/MasterOfferingCatalogControls.tsx",
+        "client/src/research/master-offerings/CatalogActiveFilters.tsx",
+        "client/src/research/master-offerings/full-catalog.test.tsx",
+        "client/src/research/master-offerings/detail-surface.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-04T21:44:53.704811Z",
