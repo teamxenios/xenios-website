@@ -1,0 +1,95 @@
+[
+ {
+  "slug": "retatrutide-10mg",
+  "name": "Retatrutide",
+  "code": "RETATRUTIDE",
+  "mg": 10,
+  "sku": "GEN-GRP-0323",
+  "offeringId": "mo_f7fecc82508964efe3aa",
+  "sourceVariantId": "mov_0c4a5438cc87ab9d85b6",
+  "labelFactsRef": "KAN-59/10855",
+  "labelFactsFile": "research-batch-05.label-facts.json",
+  "labelFactsSha256": "970f29b41f685f85992e237cd1395e666615d338ff87470defcd79675e4a2ba3",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Retatrutide",
+   "amount": "10 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0323"
+  },
+  "extraDoNotPrintTerms": [
+   "LY3437943",
+   "Lilly",
+   "weight",
+   "appetite",
+   "glycemic",
+   "metabolic",
+   "liver",
+   "trial"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "retatrutide-15mg",
+  "name": "Retatrutide",
+  "code": "RETATRUTIDE",
+  "mg": 15,
+  "sku": "GEN-GRP-0324",
+  "offeringId": "mo_e230262ae1c41d2d7e18",
+  "sourceVariantId": "mov_8f14c1dd839544567d53",
+  "labelFactsRef": "KAN-59/10855",
+  "labelFactsFile": "research-batch-05.label-facts.json",
+  "labelFactsSha256": "970f29b41f685f85992e237cd1395e666615d338ff87470defcd79675e4a2ba3",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Retatrutide",
+   "amount": "15 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0324"
+  },
+  "extraDoNotPrintTerms": [
+   "LY3437943",
+   "Lilly",
+   "weight",
+   "appetite",
+   "glycemic",
+   "metabolic",
+   "liver",
+   "trial"
+  ],
+  "nameVariance": null
+ },
+ {
+  "slug": "retatrutide-30mg",
+  "name": "Retatrutide",
+  "code": "RETATRUTIDE",
+  "mg": 30,
+  "sku": "GEN-GRP-0326",
+  "offeringId": "mo_f293ba683340fcd926d9",
+  "sourceVariantId": "mov_7bd700ce0704d66e614e",
+  "labelFactsRef": "KAN-59/10855",
+  "labelFactsFile": "research-batch-05.label-facts.json",
+  "labelFactsSha256": "970f29b41f685f85992e237cd1395e666615d338ff87470defcd79675e4a2ba3",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Retatrutide",
+   "amount": "30 mg per vial",
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0326"
+  },
+  "extraDoNotPrintTerms": [
+   "LY3437943",
+   "Lilly",
+   "weight",
+   "appetite",
+   "glycemic",
+   "metabolic",
+   "liver",
+   "trial"
+  ],
+  "nameVariance": null
+ }
+]

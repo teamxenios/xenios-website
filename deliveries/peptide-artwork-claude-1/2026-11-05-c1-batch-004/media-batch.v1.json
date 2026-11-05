@@ -1,0 +1,734 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-05-batch-c1-004",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644",
+  "KAN-225/10683",
+  "KAN-59/10869"
+ ],
+ "labelFactSources": [
+  {
+   "reference": "KAN-6/10624",
+   "note": "Session 3 static artwork facts: product code wording"
+  },
+  {
+   "reference": "KAN-59/10855",
+   "file": "research-batch-05.label-facts.json",
+   "sha256": "970f29b41f685f85992e237cd1395e666615d338ff87470defcd79675e4a2ba3",
+   "author": "CLAUDE-2"
+  }
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes.",
+  "The wrap proof id is the exact product code (for example GEN-GRP-0323-WRAP-v1), not code-amount, because code-amount can spell a fragment name that label facts forbid (KISSPEPTIN-10 in C1-002)."
+ ],
+ "changesFromC1001": [
+  "The build reads its variants (names, amounts, codes, verified label text) from tools/variants.json instead of a constant.",
+  "Amounts other than 10 mg (15 and 30 mg here) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
+  "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
+  "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
+  "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 268492,
+  "sha256": "9511ca57088b8efc0d0b1ba9b6ee4ac961e7d4c95b5b92afa27e008cfd0fee6d",
+  "width": 1800,
+  "height": 984
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/build-report.json",
+   "bytes": 26518,
+   "sha256": "990ded5729428a1412d1f40fc3a55f4796bb197657f3f69493341c06e077d918"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/build_c1.py",
+   "bytes": 13988,
+   "sha256": "d579a76704132069f359c557528bc4eabd3602abdd016665e84fdf1e7064e6af"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/c1_variants.py",
+   "bytes": 3248,
+   "sha256": "a0dc360133b030527b3801a46f325b0efe35a0e1f89d66834fb1e09f09a64156"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/kern-table.segoe-ui.json",
+   "bytes": 26972,
+   "sha256": "e78093ee4ef58978a2a8d267c461f595434542fc6c018f7a0754e4521e37f03f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/svg_label_render.py",
+   "bytes": 13893,
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/variants.json",
+   "bytes": 2453,
+   "sha256": "471414acd6c12deadb4fb94c9de583cf8431f379e1e20b66844c32eda6e10a16"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/verify_c1.py",
+   "bytes": 14932,
+   "sha256": "0959263a9d87818997886ee7c834d051401e4a20595f2a1f67e01a4b70d8dbe7"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/wpf_kern.ps1",
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/write_manifest.py",
+   "bytes": 18653,
+   "sha256": "10e15bd759dba2930cc73b45d1e31939259643f8172c8e710bfb9b440c62b955"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/tools/xr_compose.py",
+   "bytes": 8931,
+   "sha256": "28c537e1dc3c13e40be34bd462a0a9267cd3b2732cff77e192527827ad967e1d"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_f7fecc82508964efe3aa",
+   "sourceVariantId": "mov_0c4a5438cc87ab9d85b6",
+   "quickOrderSku": "GEN-GRP-0323",
+   "quickOrderProductId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "quickOrderVariantId": "1c7b6e41-cdda-4f3f-b108-32993f57dfd6",
+   "canonicalName": "Retatrutide",
+   "catalogDisplayName": "Retatrutide",
+   "canonicalVariant": "Retatrutide 10 mg",
+   "catalogVariantLabel": "RETATRUTIDE 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0323-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10855",
+    "file": "research-batch-05.label-facts.json",
+    "sha256": "970f29b41f685f85992e237cd1395e666615d338ff87470defcd79675e4a2ba3",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Retatrutide",
+     "amount": "10 mg per vial",
+     "form": "Lyophilized vial",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0323"
+    }
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Retatrutide",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0323"
+   },
+   "extraDoNotPrintTerms": [
+    "LY3437943",
+    "Lilly",
+    "weight",
+    "appetite",
+    "glycemic",
+    "metabolic",
+    "liver",
+    "trial"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Retatrutide",
+      "fontSizePx": 70.2,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       596,
+       800,
+       648
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      671
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 70.2,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1027.4
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 872.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Retatrutide 10 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-10mg-website-render-v1-1024.webp",
+     "sha256": "f26ef5d167af2bd2ef91742ebf52c16404e17dabc9c5b8afcec6bffd799e7f35"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Retatrutide 10 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-10mg-front-artwork-v1.webp",
+     "sha256": "d33557b5f27a3bf0311b21bac3a1b899c99e74722d9bdf1523e4416f3fd0d48c"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45940,
+     "sha256": "f26ef5d167af2bd2ef91742ebf52c16404e17dabc9c5b8afcec6bffd799e7f35",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 985290,
+     "sha256": "754c46e3bad213124466cf6b57af605d74ac091eddd66f5cbb8a62f37a2269b3",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/labels/retatrutide-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3011,
+     "sha256": "a0d0c5f009cc51af5f0231615f5e9ee19b76059a9d81816a20055e8b5445f5b6",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 112322,
+     "sha256": "0512f1201cf51ccae319867e1d39872b2a7f9d32c1e6aadfc7744803862b6e2a",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 44250,
+     "sha256": "d33557b5f27a3bf0311b21bac3a1b899c99e74722d9bdf1523e4416f3fd0d48c",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/labels/retatrutide-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6992,
+     "sha256": "220519635351a91859ed7408eb2a769da490d664e2d0d60fb3b3c1d38e96cdc0",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 380452,
+     "sha256": "8ddfa1ebed333f49d15fd3ba021495a005cb49d4248062f7da677e0bc73a684a",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 160004,
+     "sha256": "9c28335cb2e3dffd16cb34f074359a8bec0374589edf3561c9733c788cff691e",
+     "width": 2400,
+     "height": 1200
+    }
+   }
+  },
+  {
+   "offeringId": "mo_e230262ae1c41d2d7e18",
+   "sourceVariantId": "mov_8f14c1dd839544567d53",
+   "quickOrderSku": "GEN-GRP-0324",
+   "quickOrderProductId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "quickOrderVariantId": "064468a2-a4aa-49bb-9295-414a6102e6b5",
+   "canonicalName": "Retatrutide",
+   "catalogDisplayName": "Retatrutide",
+   "canonicalVariant": "Retatrutide 15 mg",
+   "catalogVariantLabel": "RETATRUTIDE 15 mg",
+   "nominalAmountPerVialMg": 15,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0324-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10855",
+    "file": "research-batch-05.label-facts.json",
+    "sha256": "970f29b41f685f85992e237cd1395e666615d338ff87470defcd79675e4a2ba3",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Retatrutide",
+     "amount": "15 mg per vial",
+     "form": "Lyophilized vial",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0324"
+    }
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Retatrutide",
+    "amountOnRender": "15 mg",
+    "amountOnLabel": "15 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0324"
+   },
+   "extraDoNotPrintTerms": [
+    "LY3437943",
+    "Lilly",
+    "weight",
+    "appetite",
+    "glycemic",
+    "metabolic",
+    "liver",
+    "trial"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Retatrutide",
+      "fontSizePx": 70.2,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       596,
+       800,
+       648
+      ]
+     },
+     {
+      "text": "15 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       632,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 70.2,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1027.4
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 872.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Retatrutide 15 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-15mg-website-render-v1-1024.webp",
+     "sha256": "83a201f95172707533200de1ee04c07d40b7ee55ef22ebb1ea4863d8e71e74df"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Retatrutide 15 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-15mg-front-artwork-v1.webp",
+     "sha256": "074ce3c34d6c923eab290701f2fa80295bc53ab13c2e092c191515c6b30d01de"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-15mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45754,
+     "sha256": "83a201f95172707533200de1ee04c07d40b7ee55ef22ebb1ea4863d8e71e74df",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-15mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 981717,
+     "sha256": "eca294c3184a432a92aba2f4d48dba63b04a7ef9607c9612638234410b38d007",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/labels/retatrutide-15mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3011,
+     "sha256": "2770729d2c1507d5a2cb99c01dc990818193356bf6bb82f81b170b620b7892e3",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-15mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 111275,
+     "sha256": "f638517712900cfa0f5e275979cfd6d772235cb0fada2598028bf8764ada5399",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-15mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 44042,
+     "sha256": "074ce3c34d6c923eab290701f2fa80295bc53ab13c2e092c191515c6b30d01de",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/labels/retatrutide-15mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6992,
+     "sha256": "4cfb19ca9fb406ed6152b1d8c09ada7c92bed4f9a6d4deea57fa2e819fb09026",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-15mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 379811,
+     "sha256": "cbb06dd75a2b7c3ddd47463767073f5a06111f6a89f16d23472941b3c3adbff2",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-15mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 159756,
+     "sha256": "7199a64d123a64e3be89efcf028c94d568685f065a750838319e5cec0b31b39e",
+     "width": 2400,
+     "height": 1200
+    }
+   }
+  },
+  {
+   "offeringId": "mo_f293ba683340fcd926d9",
+   "sourceVariantId": "mov_7bd700ce0704d66e614e",
+   "quickOrderSku": "GEN-GRP-0326",
+   "quickOrderProductId": "0e0fda27-ad27-47d3-9340-cc267dc4c297",
+   "quickOrderVariantId": "bf7e58d0-c054-4caf-acf8-45aa18ed3872",
+   "canonicalName": "Retatrutide",
+   "catalogDisplayName": "Retatrutide",
+   "canonicalVariant": "Retatrutide 30 mg",
+   "catalogVariantLabel": "RETATRUTIDE 30 mg",
+   "nominalAmountPerVialMg": 30,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0326-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10855",
+    "file": "research-batch-05.label-facts.json",
+    "sha256": "970f29b41f685f85992e237cd1395e666615d338ff87470defcd79675e4a2ba3",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Retatrutide",
+     "amount": "30 mg per vial",
+     "form": "Lyophilized vial",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0326"
+    }
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Retatrutide",
+    "amountOnRender": "30 mg",
+    "amountOnLabel": "30 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0326"
+   },
+   "extraDoNotPrintTerms": [
+    "LY3437943",
+    "Lilly",
+    "weight",
+    "appetite",
+    "glycemic",
+    "metabolic",
+    "liver",
+    "trial"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "Retatrutide",
+      "fontSizePx": 70.2,
+      "baselineRow": 648,
+      "inkBox": [
+       458,
+       596,
+       800,
+       648
+      ]
+     },
+     {
+      "text": "30 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       675,
+       634,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 70.2,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 1027.4
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 872.0
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Retatrutide 30 mg lyophilized vial packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-30mg-website-render-v1-1024.webp",
+     "sha256": "0d3a276efa04a1d35a0135d4276a7f53aef7b85139fd047e9c53bf0cbb99311c"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Xenios Retatrutide 30 mg per vial front label design for research use",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-30mg-front-artwork-v1.webp",
+     "sha256": "f7e8fd4064b32fcc22c302cb31087c98c83b04d8bae2cf2b944cd082e0c5caf5"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-30mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47412,
+     "sha256": "0d3a276efa04a1d35a0135d4276a7f53aef7b85139fd047e9c53bf0cbb99311c",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-30mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 983162,
+     "sha256": "6341f260beecf814b8ffa4c3fdeba6e861af617aeb7bac18abc6215f4e7a377a",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/labels/retatrutide-30mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3011,
+     "sha256": "7d9a73bfd1911d2aa2a49fc92731265552d4e2df1e5b2354b051186e7723f543",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-30mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 115039,
+     "sha256": "4692b2ec4321dbf6f163fdbe3ef5f216304228de0c399e005d9e8680d09749a3",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-30mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 45164,
+     "sha256": "f7e8fd4064b32fcc22c302cb31087c98c83b04d8bae2cf2b944cd082e0c5caf5",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/labels/retatrutide-30mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6992,
+     "sha256": "7b2588907b30126e61812a46dda91fb8d391ca5e6098e9a43e198797954994cf",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-30mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 383835,
+     "sha256": "f7b806f64e3d3300edb5a0f31e0f1b3ac4de230ca51946d5ea421e84aaf921c4",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-004/assets/retatrutide-30mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 160944,
+     "sha256": "26363119f7deff3fbf9efb92ff3fc22a85c180673e0fd7fcfa033aee888deb89",
+     "width": 2400,
+     "height": 1200
+    }
+   }
+  }
+ ],
+ "changesFromC1003": [
+  "None in the build, render, label or verification method: build_c1.py, xr_compose.py, svg_label_render.py, verify_c1.py and wpf_kern.ps1 are byte-identical to C1-003 (commit c5b93b3a). c1_variants.py adds the reference for label-fact batch 05 and per-compound do-not-print terms for SS-31 and Retatrutide. write_manifest.py takes the date in the batch path and id from the batch folder name, and keeps contact-sheet cells at the five-column size when a batch has fewer than five variants. The kern table covers the strings in this batch."
+ ]
+}
