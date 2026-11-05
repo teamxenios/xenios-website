@@ -136,6 +136,13 @@ function QuestionsBody({ token }: { token: string }) {
         />
         <ResearchPagination page={clamped} pageCount={pageCount} onPage={setPage} />
       </AdminBoundary>
+      {resource.state === "unavailable" && (
+        <div>
+          <button type="button" className="btn btn-secondary" onClick={resource.reload}>
+            Retry inbox
+          </button>
+        </div>
+      )}
 
       <ResearchSecureNotice>
         Question bodies never render in this list. A member's question can contain health context, so it opens only on
