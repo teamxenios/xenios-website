@@ -7,8 +7,22 @@ import { MasterOfferingCard } from "./MasterOfferingCard";
 import { MasterOfferingDetail } from "./MasterOfferingDetail";
 import { card, click, detail, render, variant } from "./catalog-test-fixtures";
 
-const vial = variant({ id: "mov_9262033fe69a14a50f1c", label: "Listed vial" });
+const vial = variant({ id: "mov_017febfdb0edf96366f4", label: "Listed vial" });
 const capsule = variant({ id: "mov_82974ab2f9c652c2cb12", label: "Listed capsule" });
+const heldPackshot = "/research/product-media/5-amino-1mq-10mg-website-render-v1-1024.webp";
+const heldVial = variant({
+  id: "mov_9262033fe69a14a50f1c",
+  label: "5-Amino-1MQ 10 mg",
+  reviewedMedia: {
+    primary: {
+      href: heldPackshot,
+      altText: "Xenios 5-Amino-1MQ 10 mg packaging design",
+      width: 1024,
+      height: 1024,
+    },
+    packagingDesign: true,
+  },
+});
 const bpc157 = variant({
   id: "mov_ca3e45ae9712aee91430",
   label: "BPC-157 10 mg",
@@ -102,9 +116,36 @@ describe("product visuals on catalog routes", () => {
     }
   });
 
-  it("uses neutral artwork for mixed or unverified formats", () => {
+  it("uses a neutral fallback when the packshot fails for an exact form hold", () => {
     const { host, unmount } = render(
-      <ul><MasterOfferingCard product={card({ variants: [vial, capsule] })} /></ul>,
+      <ul>
+        <MasterOfferingCard product={card({
+          id: "mo_afb0add32da0de7426f5",
+          displayName: "5-Amino-1MQ",
+          subcategory: "Lyophilized Vial",
+          variants: [heldVial],
+        })} />
+      </ul>,
+    );
+    try {
+      const image = mediaImage(host);
+      expect(image.getAttribute("src")).toBe(heldPackshot);
+      expect(host.querySelector("figcaption")?.textContent).toContain("Current packaging may differ.");
+      expect(host.textContent).not.toContain("Lyophilized Vial");
+      act(() => { image.dispatchEvent(new Event("error")); });
+      expect(expectAsset(host, "unknown").alt).toBe("5-Amino-1MQ illustration, format unconfirmed");
+      expect(host.querySelector("figcaption")).toBeNull();
+    } finally {
+      unmount();
+    }
+  });
+
+  it.each([
+    { scenario: "mixed formats", variants: [vial, capsule] },
+    { scenario: "a group with an unconfirmed variant", variants: [vial, heldVial] },
+  ])("uses neutral artwork for $scenario", ({ variants }) => {
+    const { host, unmount } = render(
+      <ul><MasterOfferingCard product={card({ variants })} /></ul>,
     );
     try {
       const image = expectAsset(host, "unknown");
