@@ -3412,7 +3412,8 @@
         "client/src/research/assisted-order/RequestIntentEntry.agreement-refresh.test.tsx",
         "client/src/research/early-access/agreement-refresh-fence.test.ts",
         "client/src/research/early-access/agreement-refresh-fence.ts",
-        "client/src/research/early-access/EarlyAccessRoute.agreement-refresh.test.tsx"
+        "client/src/research/early-access/EarlyAccessRoute.agreement-refresh.test.tsx",
+        "server/research/assisted-order/request-intent/composition.integration.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-11-05T20:19:20.6287069Z",
