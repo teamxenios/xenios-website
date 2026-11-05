@@ -3383,11 +3383,23 @@
         "client/src/research/product-media/reviewed-form-holds.ts",
         "client/src/research/storefront/StorefrontCard.tsx",
         "server/research/master-offerings/data/reviewed-public-content.json",
-        "server/research/master-offerings/data/reviewed-public-media.json"
+        "server/research/master-offerings/data/reviewed-public-media.json",
+        "client/src/research/master-offerings/product-media.test.tsx"
       ],
       "state": "active",
       "claimedAt": "2026-11-05T19:16:29.068799Z",
       "heartbeatAt": "2026-11-05T19:16:29.068799Z"
+    },
+    {
+      "id": "81b7984e-cacb-4fd7-b660-adecc5b59bfb",
+      "task": "KAN13-EA-CAUTIONS-PARAGRAPHS-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/master-offerings/ReviewedProductContent.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T19:41:35.1348855Z",
+      "heartbeatAt": "2026-11-05T19:41:35.1348855Z"
     }
   ],
   "rules": [
