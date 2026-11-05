@@ -1536,3 +1536,80 @@ describe("confirmed reference continuation", () => {
     } finally { setItem.mockRestore(); }
   });
 });
+
+
+describe("agreement-standing refresh preserves the current request", () => {
+  it("notifies once after a proven first refusal and keeps the exact draft", async () => {
+    const api = makeApi();
+    await prepare(api, true, true);
+    const refresh = vi.fn();
+    const renderSameForm = async (enabled: boolean) => {
+      await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+        embedded continuationEnabled={enabled} onAgreementStandingRequired={refresh} />));
+    };
+    await renderSameForm(true);
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(403, "agreement_standing_required"));
+    await click("Submit for review");
+    const first = api.submit.mock.calls[0][0];
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(host.textContent).toContain("Your selections and contact details are still on this page");
+    expect(host.textContent).toContain("Synthetic Customer");
+    expect(host.textContent).toContain("Requested quantity: 2");
+    expect([...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")]
+      .every((input) => !input.checked)).toBe(true);
+    await renderSameForm(false);
+    const submit = [...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review");
+    expect(submit?.disabled).toBe(true);
+    await renderSameForm(true);
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    const newConfig = await api.config();
+    api.config.mockResolvedValue({ ...newConfig,
+      legal: [{ kind: "fixture-terms", version: "fixture-v2", label: "Current synthetic legal requirement" }] });
+    await click("Refresh requirements");
+    // Reacceptance alone is insufficient: the request acknowledgments remain unchecked.
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")?.disabled).toBe(true);
+    await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((input) => input.click()));
+    await click("Submit for review");
+    const second = api.submit.mock.calls[1][0];
+    expect(second.contact).toEqual(first.contact);
+    expect(second.lines).toEqual(first.lines);
+    expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
+    expect(second.agreements.find((entry) => entry.kind === "fixture-terms")?.version).toBe("fixture-v2");
+    expect(api.submit).toHaveBeenCalledTimes(2);
+  });
+
+  it("never refreshes or replaces a previously uncertain request", async () => {
+    const api = makeApi();
+    await prepare(api);
+    const refresh = vi.fn();
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      onAgreementStandingRequired={refresh} />));
+    api.submit.mockRejectedValueOnce(new Error("Synthetic lost reply"));
+    await click("Submit for review");
+    const first = api.submit.mock.calls[0][0];
+    const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
+    expect(marker).not.toBeNull();
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(403, "agreement_standing_required"));
+    await click("Retry same request");
+    expect(refresh).not.toHaveBeenCalled();
+    expect(api.submit.mock.calls[1][0]).toBe(first);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(host.textContent).toContain("Retry same request");
+  });
+
+  it.each([
+    [403, "access_denied"], [401, "session_required"], [429, "rate_limited"],
+    [400, "current_acknowledgments_required"], [503, "request_intent_unavailable"],
+  ])("does not treat %s/%s as a policy-refresh signal", async (status, code) => {
+    const api = makeApi();
+    await prepare(api);
+    const refresh = vi.fn();
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      onAgreementStandingRequired={refresh} />));
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(status, code));
+    await click("Submit for review");
+    expect(refresh).not.toHaveBeenCalled();
+    expect(api.submit).toHaveBeenCalledTimes(1);
+  });
+});

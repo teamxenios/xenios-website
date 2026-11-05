@@ -77,6 +77,8 @@ function CatalogDetails({ item, variantIds, showMedia }: {
 
 type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Storage | null; embedded?: boolean;
   continuationEnabled?: boolean; onStepChange?: (step: "products" | "contact" | "review") => void;
+  /** Called only after a proven first prewrite agreement refusal, never an uncertain retry. */
+  onAgreementStandingRequired?: () => void;
   entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void;
   /** The opaque owner this mount is keyed by. A reference confirmed earlier in this tab reopens only for the same owner. */
   ownerKey?: string }>;
@@ -92,7 +94,7 @@ export function RequestIntentForm(props: RequestIntentFormProps) {
 
 function RequestIntentFormSession({
   api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt,
-  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false,
+  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired,
 }: RequestIntentFormProps & Readonly<{ onStartAnother: () => void; focusHeadingOnMount?: boolean }>) {
   // Only the public guest mount has non-sticky chrome. Member shells retain their
   // current layout and own sticky-header behavior.
@@ -298,6 +300,16 @@ function RequestIntentFormSession({
           // An earlier uncertain POST retains its original payload and key.
           setConfig(null); setRequirementsNeedRefresh(true);
           setError("This request was not saved. Refresh the current requirements, then review and confirm them before submitting a new attempt.");
+        } else if (error.status === 403 && error.code === "agreement_standing_required"
+          && onAgreementStandingRequired) {
+          // We are inside the existing first-post + owned-marker clearance
+          // proof. A lost reply or later refusal never reaches this callback.
+          // Keep the request form mounted: selections, contact and billing stay
+          // in memory. Reaccepting the policy must NOT auto-submit this request.
+          setConfig(null);
+          setRequirementsNeedRefresh(true);
+          setError("This request was not saved. Review the current access policy and refresh the request requirements before submitting again. Your selections and contact details are still on this page. Nothing will be submitted automatically.");
+          onAgreementStandingRequired();
         } else setError(intentRefusalGuidance(error));
       } else if (mounted.current) {
         setError(REQUEST_INTENT_RECOVERY_NOTICE);

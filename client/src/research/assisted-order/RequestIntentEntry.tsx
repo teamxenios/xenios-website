@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useResearch } from "../core";
 import { isResearchCartScope } from "../cart-session";
 import type { StorefrontIntent } from "../storefront/entry-intent";
@@ -31,15 +31,21 @@ export function RequestIntentCta() {
       : <p role="status">Request intake is currently unavailable. No request has been submitted.</p>}
   </section>;
 }
-export function RequestIntentEntry({ embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt }: Readonly<{
+export function RequestIntentEntry({ embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt, onAgreementStandingRequired }: Readonly<{
   embedded?: boolean; continuationEnabled?: boolean; onStepChange?: (step: Step) => void;
   entryIntent?: StorefrontIntent | null;
   onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void;
+  onAgreementStandingRequired?: () => void;
 }>) {
   const { member, memberToken, memberChecking, recovery, memberSessionStatus } = useResearch();
   const owner = member ? (isResearchCartScope(member.cartScope) ? member.cartScope : null)
     : memberSessionStatus === "signed_out" ? "early-access-session" : null;
   const [standing, setStanding] = useState(false);
+  const [standingRevision, setStandingRevision] = useState(0);
+  const refreshStandaloneStanding = useCallback(() => {
+    setStanding(false);
+    setStandingRevision((revision) => revision + 1);
+  }, []);
   useEffect(() => {
     if (embedded) return;
     let current = true;
@@ -48,7 +54,7 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
       if (current) setStanding(value.kind === "accepted");
     }).catch(() => { if (current) setStanding(false); });
     return () => { current = false; };
-  }, [embedded, owner, memberSessionStatus]);
+  }, [embedded, owner, memberSessionStatus, standingRevision]);
   const tokenRef = useRef(memberToken);
   tokenRef.current = memberToken;
   const api = useMemo(() => createRequestIntentApi(() => tokenRef.current), []);
@@ -65,5 +71,6 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
   // the form; account switches remount it. Checking/recovery renders no form.
   return <RequestIntentForm key={owner} api={api} ownerKey={owner}
     embedded={embedded} continuationEnabled={embedded ? continuationEnabled : standing}
-    onStepChange={onStepChange} entryIntent={hint} onConfirmedReceipt={onConfirmedReceipt} />;
+    onStepChange={onStepChange} entryIntent={hint} onConfirmedReceipt={onConfirmedReceipt}
+    onAgreementStandingRequired={embedded ? onAgreementStandingRequired : refreshStandaloneStanding} />;
 }
