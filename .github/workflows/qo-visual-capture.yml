@@ -1,7 +1,7 @@
-name: Quick Order visual capture
+name: PR390 C1 synthetic routed visual proof
 on:
   push:
-    branches: [codex/qo-visual-capture-20261103]
+    branches: [codex/qo-pr390-c1-visual-20261104]
     paths:
       - .github/workflows/qo-visual-capture.yml
       - scripts/qa/qo-visual-capture/**
@@ -13,20 +13,23 @@ jobs:
     # Root must reconcile actual runs and bind Samuel's new Jira allowance first.
     if: >-
       github.repository == 'teamxenios/xenios-website' &&
+      github.ref == 'refs/heads/codex/qo-pr390-c1-visual-20261104' &&
+      github.event.before == 'UNBOUND_PREDECESSOR' &&
+      !github.event.created && !github.event.deleted && !github.event.forced &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: f0e247585c1cd466022530a4f40c99fd03af1957
-      CANDIDATE_TREE: f5cab0de3370d6ea0c9a89ba167fe11f4b8516be
+      CANDIDATE_SHA: d9a8b254dc2b6c30496af47e36d7e7abf88507c8
+      CANDIDATE_TREE: eee29fddfb747a54f90332e6badbf171cf1ea3b9
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: KAN-31/10645
-      CAPTURE_ALLOWANCE_ATTEMPT: "2"
-      CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
-      CAPTURE_PRIOR_RUN_IDS: '["41912809107"]'
-      CAPTURE_RECONCILED_AT: 2026-11-04T21:09:50Z
-      CAPTURE_DIAGNOSIS: "Independent 10650 evidence classification correction; assert four capsule notices and the exact Chondro label"
+      CAPTURE_ALLOWANCE_ID: UNBOUND
+      CAPTURE_ALLOWANCE_ATTEMPT: "1"
+      CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
+      CAPTURE_PRIOR_RUN_IDS: '[]'
+      CAPTURE_RECONCILED_AT: UNBOUND
+      CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash
@@ -48,13 +51,12 @@ jobs:
           const attempt = Number(e.CAPTURE_ALLOWANCE_ATTEMPT);
           const maximumAttempts = Number(e.CAPTURE_ALLOWANCE_MAX_ATTEMPTS);
           const priorRunIds = JSON.parse(e.CAPTURE_PRIOR_RUN_IDS);
-          if (!/^KAN-31\/\d+$/.test(id) || id === "KAN-31/10563") throw new Error("A new, explicit Jira allowance is required");
-          if (maximumAttempts !== 2 || ![1, 2].includes(attempt) || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
+          if (!/^KAN-31\/\d+$/.test(id) || ["KAN-31/10563", "KAN-31/10645", "KAN-31/10684"].includes(id)) throw new Error("A new, explicit Jira allowance is required");
+          if (maximumAttempts !== 1 || attempt !== 1 || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
           if (!Array.isArray(priorRunIds) || priorRunIds.length !== attempt - 1 ||
               priorRunIds.some((v) => typeof v !== "string" || !/^\d+$/.test(v)) ||
               new Set(priorRunIds).size !== priorRunIds.length || priorRunIds.includes(e.GITHUB_RUN_ID)) throw new Error("Reconciled distinct run IDs are required");
           if (!/^\d{4}-\d{2}-\d{2}T.*Z$/.test(e.CAPTURE_RECONCILED_AT) || !Number.isFinite(Date.parse(e.CAPTURE_RECONCILED_AT))) throw new Error("Root must record pre-dispatch reconciliation");
-          if (attempt === 2 && !e.CAPTURE_DIAGNOSIS.trim()) throw new Error("Second attempt requires a diagnosed correction");
           if (e.DISPATCH_MESSAGE.trim() !== "QO capture " + id + " attempt " + attempt) throw new Error("Push is not the exact deliberate capture dispatch");
           const allowance = {
             id, attempt, maximumAttempts, consumedIncludingThisRun: attempt,
@@ -97,7 +99,7 @@ jobs:
             node scripts/evidence/build-candidate-preview.mjs --sha "$CANDIDATE_SHA"
       - name: Capture the sequential synthetic viewport matrix inside a loopback-only namespace
         shell: bash
-        timeout-minutes: 6
+        timeout-minutes: 12
         run: |
           set -euo pipefail
           mkdir -p "$EVIDENCE_DIR"
@@ -111,7 +113,7 @@ jobs:
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json" reviewed-catalog
+            "$EVIDENCE_DIR/allowance.json" c1-catalog
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -132,35 +134,116 @@ jobs:
           writeFileSync(join(e.EVIDENCE_DIR, "result.json"), JSON.stringify(result, null, 2) + "\n");
           NODE
           fi
+      - name: Require the exact C1 manifest and eight PNGs
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { createHash } from "node:crypto";
+          import { readdirSync, readFileSync } from "node:fs";
+          import { join } from "node:path";
+          const e = process.env;
+          const data = readFileSync("candidate/server/research/master-offerings/data/reviewed-public-media.json");
+          const dataset = readFileSync("candidate/server/research/master-offerings/data/member-safe-master-offerings.generated.json");
+          const manifestSha = "d134d7000e8cddb1d89b5346bc8275e6eb6a7d60736897f734bcf0494147eb1c";
+          const datasetSha = "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5";
+          const result = JSON.parse(readFileSync(join(e.EVIDENCE_DIR, "result.json"), "utf8"));
+          const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
+          if (hash(data) !== manifestSha || hash(dataset) !== datasetSha ||
+              result.inputHashes?.manifest !== manifestSha || result.inputHashes?.dataset !== datasetSha ||
+              result.status !== "passed" || result.profile !== "c1-catalog" ||
+              result.candidateSha !== e.CANDIDATE_SHA || result.candidateTree !== e.CANDIDATE_TREE ||
+              result.harnessRevision !== e.GITHUB_SHA || result.runId !== e.GITHUB_RUN_ID || result.runAttempt !== 1 ||
+              !result.network?.loopbackOnly || result.captures?.length !== 8 || Object.keys(result.assets ?? {}).length !== 38 ||
+              result.allowance?.id !== e.CAPTURE_ALLOWANCE_ID || result.allowance?.currentRunId !== e.GITHUB_RUN_ID ||
+              result.allowance?.attempt !== 1 || result.allowance?.maximumAttempts !== 1 ||
+              result.allowance?.remainingAfterThisRun !== 0) throw new Error("Incomplete C1 identity, coverage or allowance");
+          const records = JSON.parse(data).records.slice(10);
+          const control = { offeringId: "mo_ffeecca340b02f400868", sourceVariantId: "mov_a4b4118c4d23b1546c8b" };
+          const products = new Map(JSON.parse(dataset).products.map((product) => [product.id, product]));
+          const exactWebp = (proof, asset, digest) => proof?.status === 200 && proof.mime === "image/webp" &&
+            proof.sha256 === digest && proof.naturalWidth === asset.width && proof.naturalHeight === asset.height;
+          const exactJourney = (pair, record, role) => {
+            const product = products.get(record.offeringId);
+            const variant = product?.variants.find((value) => value.id === record.sourceVariantId);
+            if (!product || !variant || pair?.offeringId !== product.id || pair.requestAccess !== true ||
+                pair.detailIdentity !== true) return false;
+            if (role === "member") {
+              const href = "/research/member/product-requests/new?" +
+                new URLSearchParams({ source: "products", product: product.displayName.trim() });
+              return pair.entryRoute === "/research/member/catalog" &&
+                pair.detailRoute === pair.entryRoute + "/" + product.family + "/" + product.slug &&
+                pair.cardRequestHref === href && pair.detailRequestHref === href;
+            }
+            const proof = pair.guestSelection;
+            return pair.entryRoute === "/research/early-access/order-request" && pair.detailRoute === pair.entryRoute &&
+              proof?.initialEmpty === true && proof.selectedProduct === product.displayName &&
+              proof.selectedVariant === variant.label && proof.selectedQuantity === true && proof.singleSelection === true &&
+              proof.continueEnabled === true && proof.reset === true;
+          };
+          const expected = [];
+          for (const role of ["guest", "member"]) {
+            for (const width of [320, 390, 768, 1280]) {
+              const name = role + "-c1-catalog-" + width;
+              const png = name + "-detail.png";
+              expected.push(png);
+              const entry = result.captures.find((value) => value.name === name);
+              if (entry?.viewport.width !== width || entry.mobile !== (width <= 390) ||
+                  !entry.assertions?.length || entry.assertions.some((value) => value.pass !== true) ||
+                  entry.network.accepted !== 0 || entry.network.deniedWrites !== 0 || entry.network.deniedRecovery !== 0 ||
+                  entry.screenshots?.length !== 1 || entry.screenshots[0] !== png ||
+                  entry.representativeVariant !== records[0].sourceVariantId || entry.pairs?.length !== 20) {
+                throw new Error("C1 context is incomplete: " + name);
+              }
+              const pairs = new Map(entry.pairs.map((pair) => [pair.variantId, pair]));
+              for (const record of records) {
+                const pair = pairs.get(record.sourceVariantId);
+                if (!exactJourney(pair, record, role) || pair.wrongStrength !== false ||
+                    pair.cardSource !== record.media.primary.href || pair.detailSource !== record.media.primary.href ||
+                    pair.cardDisclosure !== true || pair.detailDisclosure !== true ||
+                    !exactWebp(pair.cardPrimary, record.media.primary, record.primarySha256) ||
+                    !exactWebp(pair.detailPrimary, record.media.primary, record.primarySha256) ||
+                    pair.labelPath !== record.media.labelPreview.href ||
+                    !exactWebp(pair.label, record.media.labelPreview, record.labelPreviewSha256)) {
+                  throw new Error("Missing exact C1 pair result in " + name);
+                }
+              }
+              const negative = pairs.get(control.sourceVariantId);
+              if (!exactJourney(negative, control, role) || negative.wrongStrength !== true ||
+                  negative.cardGeneric !== true || negative.detailGeneric !== true ||
+                  negative.cardPrimary || negative.detailPrimary || negative.label) {
+                throw new Error("Missing wrong-strength control in " + name);
+              }
+            }
+          }
+          const pngs = readdirSync(e.EVIDENCE_DIR).filter((name) => name.endsWith(".png")).sort();
+          if (JSON.stringify(pngs) !== JSON.stringify(expected.sort())) throw new Error("Exact eight C1 PNGs required");
+          for (const png of expected) {
+            const bytes = readFileSync(join(e.EVIDENCE_DIR, png));
+            if (bytes.length < 33 || bytes.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") {
+              throw new Error("Missing or invalid C1 PNG " + png);
+            }
+          }
+          NODE
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        if: always()
         with:
-          name: qo-reviewed-catalog-synthetic-visual-proof
+          name: qo-pr390-c1-routed-synthetic-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-supplement.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-supplement.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-supplement.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-supplement.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-supplement.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-supplement.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-supplement.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-supplement.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-c1-catalog-320-detail.png
+            ${{ env.EVIDENCE_DIR }}/guest-c1-catalog-390-detail.png
+            ${{ env.EVIDENCE_DIR }}/guest-c1-catalog-768-detail.png
+            ${{ env.EVIDENCE_DIR }}/guest-c1-catalog-1280-detail.png
+            ${{ env.EVIDENCE_DIR }}/member-c1-catalog-320-detail.png
+            ${{ env.EVIDENCE_DIR }}/member-c1-catalog-390-detail.png
+            ${{ env.EVIDENCE_DIR }}/member-c1-catalog-768-detail.png
+            ${{ env.EVIDENCE_DIR }}/member-c1-catalog-1280-detail.png
             ${{ env.EVIDENCE_DIR }}/result.json
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: failure()
+        with:
+          name: qo-pr390-c1-failure-manifest
+          path: ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7

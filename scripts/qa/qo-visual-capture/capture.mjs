@@ -11,9 +11,18 @@ import {
 } from "./fixture.mjs";
 
 const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
-if (!["legacy", "guest-catalog-details", "reviewed-catalog"].includes(profile)) throw new Error("Unknown capture profile");
+if (!["legacy", "guest-catalog-details", "reviewed-catalog", "c1-catalog"].includes(profile)) throw new Error("Unknown capture profile");
 const guestDetailsOnly = profile === "guest-catalog-details";
+const c1Catalog = profile === "c1-catalog";
 const reviewedCatalog = profile === "reviewed-catalog";
+const c1ManifestSha = "d134d7000e8cddb1d89b5346bc8275e6eb6a7d60736897f734bcf0494147eb1c";
+const c1DatasetSha = "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5";
+const c1Negative = { offering: "mo_ffeecca340b02f400868", variant: "mov_a4b4118c4d23b1546c8b" };
+const c1Disclosure = "Packaging design shown. Current packaging may differ.";
+
+function c1RequestAccessHref(productName) {
+  return "/research/member/product-requests/new?" + new URLSearchParams({ source: "products", product: productName.trim() });
+}
 const reviewedVialCaptures = new Map([
   ["mov_09db3e866424b64994d3", "bpc-5mg"],
   ["mov_257330ea83ecbfc45fae", "bpc-15mg"],
@@ -27,15 +36,16 @@ const capsuleEvidenceVariants = new Set([
 ]);
 const chondroVariant = "mov_2de19f71e09e8bc3febb";
 const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
+const maximumAttempts = c1Catalog ? 1 : 2;
 if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
-    allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
+    allowance.maximumAttempts !== maximumAttempts || allowance.remainingAfterThisRun !== maximumAttempts - allowance.attempt) {
   throw new Error("Capture allowance does not match this dispatch");
 }
 const origin = "http://127.0.0.1:5199";
 const artworkHash = "202bee1aceaf841438001afa93b8e56a9643866e16c563ef8ad9a2d412853df1";
 const viewports = [
   { width: 320, height: 800, mobile: true },
-  { width: guestDetailsOnly || reviewedCatalog ? 390 : 375, height: 844, mobile: true },
+  { width: guestDetailsOnly || reviewedCatalog || c1Catalog ? 390 : 375, height: 844, mobile: true },
   { width: 768, height: 1024, mobile: false },
   { width: 1280, height: 900, mobile: false },
 ];
@@ -43,7 +53,8 @@ const result = {
   scope: "NON-PRODUCTION SYNTHETIC BROWSER EVIDENCE",
   limits: [
     "Fixture prices are synthetic. No approved price, live identity, product authorization or persistence is tested.",
-    "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
+    c1Catalog ? "This exact-pair fixture mounts application routes with intercepted catalog projections and synthetic member identity. The guest has a fixture-recorded agreement; Add and Remove change only local selection." :
+      "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
     "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
     "No submission, recovery, staff readback, production release or operator activation is covered.",
   ],
@@ -100,7 +111,7 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
       if (request.method() !== "GET") traffic.deniedWrites += 1;
       return intercept.abort("blockedbyclient");
     }
-    if (request.method() === "POST" && !member && url.pathname === agreementAccept && !url.search && traffic.accepted === 0) {
+    if (!c1Catalog && request.method() === "POST" && !member && url.pathname === agreementAccept && !url.search && traffic.accepted === 0) {
       let body;
       try { body = request.postDataJSON(); } catch {}
       if (body && Object.keys(body).length === 2 && body.kind === fixtureAgreement.kind && body.version === fixtureAgreement.version) {
@@ -130,7 +141,7 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
       if (url.pathname === "/api/research/member/me") traffic.verifiedMember += 1;
       const json = fixtures.get(url.pathname);
       return intercept.fulfill({
-        json: url.pathname === agreementStatus ? { ...json, accepted: traffic.accepted === 1 } : json,
+        json: url.pathname === agreementStatus ? { ...json, accepted: (c1Catalog && !member) || traffic.accepted === 1 } : json,
         headers: { "cache-control": "no-store" },
       });
     }
@@ -436,21 +447,42 @@ async function reviewedCatalogFixtures(candidate, member) {
     load("reviewed-public-media.json"),
   ]);
   const rows = new Map();
-  for (const record of [...content.records, ...media.records]) {
+  const selectedRecords = c1Catalog ? [
+    ...media.records.slice(10), { offeringId: c1Negative.offering, sourceVariantId: c1Negative.variant },
+  ] : [...content.records, ...media.records];
+  for (const record of selectedRecords) {
     const product = dataset.products.find((entry) => entry.id === record.offeringId);
     const variant = product?.variants.find((entry) => entry.id === record.sourceVariantId);
     if (!variant || product.variants.length !== 1) throw new Error("Reviewed fixture did not resolve one exact source variant");
     const row = rows.get(variant.id) ?? { product, variant };
+    if (c1Catalog && (rows.has(variant.id) || product.family !== "research_peptides_materials" ||
+        product.displayState !== "request_access" || variant.displayState !== "request_access")) {
+      throw new Error("Unexpected C1 source pair or access state");
+    }
     if (record.content) row.reviewedContent = record.content;
-    if (record.media) row.reviewedMedia = record.media;
+    if (record.media) {
+      row.reviewedMedia = record.media;
+      if (c1Catalog) {
+        row.primarySha256 = record.primarySha256;
+        row.labelSha256 = record.labelPreviewSha256;
+      }
+    }
     rows.set(variant.id, row);
   }
-  for (const id of reviewedVialCaptures.keys()) {
-    const media = rows.get(id)?.reviewedMedia;
-    if (!media?.packagingDesign || !media.labelPreview) throw new Error("Missing reviewed vial artwork for " + id);
+  if (c1Catalog) {
+    if (media.records.length !== 29 || rows.size !== 20 ||
+        media.records.some(({ sourceVariantId }) => sourceVariantId === c1Negative.variant) ||
+        [...rows.values()].filter((row) => row.reviewedMedia?.packagingDesign && row.reviewedMedia.labelPreview).length !== 19) {
+      throw new Error("C1 requires 19 exact reviewed designs and a separate unillustrated KPV 5 mg control");
+    }
+  } else {
+    for (const id of reviewedVialCaptures.keys()) {
+      const media = rows.get(id)?.reviewedMedia;
+      if (!media?.packagingDesign || !media.labelPreview) throw new Error("Missing reviewed vial artwork for " + id);
+    }
+    const capsule = rows.get(capsuleControl);
+    if (!capsule?.reviewedContent || capsule.reviewedMedia) throw new Error("Expected copy-only BPC capsule control");
   }
-  const capsule = rows.get(capsuleControl);
-  if (!capsule?.reviewedContent || capsule.reviewedMedia) throw new Error("Expected copy-only BPC capsule control");
   const guestKey = "/api/research/early-access/request-intents/catalog";
   const guest = base.get(guestKey);
   const items = [];
@@ -467,6 +499,7 @@ async function reviewedCatalogFixtures(candidate, member) {
       specification: variant.label, format: null, packBasis: null, unitPriceCents: null,
       selectableForReview: !service, intentExclusion: service ? "non_merchandise" : null,
       researchUseOnly: product.family === "research_peptides_materials",
+      ...(c1Catalog ? { sourceDisplayState: product.displayState, sourceVariantDisplayState: variant.displayState, priceVersion: null } : {}),
       reviewedContent, reviewedMedia,
     });
     if (!member) continue;
@@ -476,7 +509,16 @@ async function reviewedCatalogFixtures(candidate, member) {
       familyLabel: product.family.replaceAll("_", " "), displayName: product.displayName,
       canonicalName: product.canonicalName, category: product.category,
       stateExplanation: "Synthetic customer presentation fixture.",
-      variants: [{ ...card.variants[0], id, label: variant.label, reviewedContent, reviewedMedia }],
+      ...(c1Catalog ? { displayState: product.displayState, priceSummary: {
+        state: "none", variantCount: 1, pricedVariantCount: 0, currency: null,
+        fromCents: null, toCents: null, display: "Price on request",
+      } } : {}),
+      variants: [{ ...card.variants[0], id, label: variant.label,
+        ...(c1Catalog ? {
+          displayState: variant.displayState, price: { state: "on_request" },
+          action: { kind: "request_access", label: "Request Access", href: c1RequestAccessHref(product.displayName) },
+        } : {}),
+        reviewedContent, reviewedMedia }],
     };
     cards.push(entry);
     row.detailRoute = memberRoute + "/" + product.family + "/" + product.slug;
@@ -571,23 +613,226 @@ async function captureReviewedCatalog(page, entry, rows, member) {
   }
 }
 
+
+function c1WebpResponse(response) {
+  const mime = (response.headers()["content-type"] ?? "").split(";")[0].trim().toLowerCase();
+  const status = response.status();
+  if (status !== 200 || mime !== "image/webp") return Promise.resolve({ status, mime, sha256: null });
+  return response.body().then(
+    (body) => ({ status, mime, sha256: createHash("sha256").update(body).digest("hex") }),
+    () => ({ status, mime, sha256: null }),
+  );
+}
+
+function c1ExactWebp(proof, asset, digest) {
+  return proof?.status === 200 && proof.mime === "image/webp" && proof.sha256 === digest &&
+    proof.naturalWidth === asset.width && proof.naturalHeight === asset.height;
+}
+
+async function followC1Label(page, label, asset) {
+  const { href } = asset;
+  const url = origin + href;
+  if (await label.getAttribute("href") !== href || await label.getAttribute("target") !== "_blank") return null;
+  let popup;
+  try {
+    const responsePromise = page.context().waitForEvent("response", {
+      predicate: (response) => response.url() === url && response.request().isNavigationRequest(),
+      timeout: 6500,
+    });
+    const popupPromise = page.waitForEvent("popup", { timeout: 6500 }).then((opened) => {
+      popup = opened;
+      return opened;
+    });
+    const [response] = await Promise.all([responsePromise, popupPromise, label.click()]);
+    await popup.waitForURL(url, { waitUntil: "domcontentloaded", timeout: 6500 });
+    const [served, rendered] = await Promise.all([
+      c1WebpResponse(response),
+      popup.locator("img").evaluate(async (node) => {
+        await node.decode();
+        return { currentSrc: node.currentSrc, naturalWidth: node.naturalWidth, naturalHeight: node.naturalHeight };
+      }),
+    ]);
+    if (rendered.currentSrc !== url) return null;
+    return { ...served, naturalWidth: rendered.naturalWidth, naturalHeight: rendered.naturalHeight };
+  } finally {
+    await popup?.close();
+  }
+}
+
+async function exerciseC1GuestSelection(page, card, productName, variantLabel) {
+  const summary = page.getByRole("complementary", { name: "Selected request items", exact: true });
+  const next = summary.getByRole("button", { name: "Continue to contact", exact: true });
+  const add = card.getByRole("button", { name: "Add " + productName + " to request", exact: true });
+  const empty = summary.getByText("No products selected yet. Add an eligible item from the catalog.", { exact: true });
+  const initialEmpty = await empty.isVisible() && await next.isDisabled();
+  await add.click();
+  const row = summary.getByRole("listitem");
+  const remove = row.getByRole("button", { name: "Remove selected " + productName + " " + variantLabel, exact: true });
+  await remove.waitFor();
+  const selectedProduct = await row.locator("strong").textContent();
+  const selectedVariant = await row.locator("span").first().textContent();
+  const selectedQuantity = await row.getByText("Requested quantity: 1", { exact: true }).isVisible();
+  const singleSelection = await summary.getByRole("status").textContent() === "1 products | 1 exact variants | 1 requested units";
+  const continueEnabled = await next.isEnabled();
+  await remove.click();
+  await empty.waitFor();
+  const reset = await row.count() === 0 && await next.isDisabled() && await add.isEnabled();
+  return { initialEmpty, selectedProduct, selectedVariant, selectedQuantity, singleSelection, continueEnabled, reset };
+}
+
+async function c1ActionHref(link) {
+  await link.waitFor();
+  return link.getAttribute("href");
+}
+
+async function captureC1Catalog(page, entry, rows, member) {
+  const entryUrl = origin + (member ? memberRoute : guestRoute);
+  const admittedPrimaries = new Set([...rows.values()].filter((row) => row.reviewedMedia)
+    .map((row) => origin + row.reviewedMedia.primary.href));
+  const primaryResponses = new Map();
+  // Image nodes can share one browser response. Bind its bytes per context,
+  // and measure the natural dimensions separately on every card/detail node.
+  page.on("response", (response) => {
+    const url = response.url();
+    if (admittedPrimaries.has(url) && response.request().method() === "GET" && response.request().resourceType() === "image") {
+      primaryResponses.set(url, c1WebpResponse(response));
+    }
+  });
+  const primaryProof = async (image) => ({
+    ...await primaryResponses.get(origin + image.path),
+    naturalWidth: image.naturalImage.width,
+    naturalHeight: image.naturalImage.height,
+  });
+  await page.goto(entryUrl, { waitUntil: "domcontentloaded" });
+  if (!member) await page.locator('[data-testid="early-access-agreement"][data-state="accepted"]').waitFor();
+  entry.pairs = [];
+  const genericSvg = /^\/research\/product-media\/(?:vial|capsule|tablet|topical|liquid|unknown)\.svg$/;
+  const genericOnly = async (scope) => {
+    const src = await scope.getByTestId("product-media-image").getAttribute("src");
+    return genericSvg.test(src ?? "") &&
+      await scope.getByRole("link", { name: "View front label artwork", exact: true }).count() === 0 &&
+      await scope.getByText(c1Disclosure, { exact: true }).count() === 0;
+  };
+  for (const { product, variant, reviewedMedia, primarySha256, labelSha256, detailRoute } of rows.values()) {
+    const pair = { offeringId: product.id, variantId: variant.id, entryRoute: new URL(entryUrl).pathname,
+      detailRoute: member ? detailRoute : guestRoute, requestAccess: false, wrongStrength: !reviewedMedia };
+    entry.pairs.push(pair);
+    const card = member
+      ? page.locator('[data-testid="mo-card"][data-offering-id="' + product.id + '"]')
+      : page.locator('[data-testid="request-door-mixed"] article.xenios-order-card')
+        .filter({ has: page.getByRole("heading", { name: product.displayName, exact: true }) })
+        .filter({ has: page.getByText(variant.label, { exact: true }) });
+    await card.waitFor();
+    const exactVariant = card.locator('[data-testid="mo-variant-row"][data-variant-id="' + variant.id + '"]');
+    pair.requestAccess = member ?
+      (await exactVariant.getByTestId("mo-variant-label").textContent()) === variant.label &&
+        await exactVariant.getByText("Request access", { exact: true }).first().isVisible() &&
+        await exactVariant.getByTestId("mo-card-buy-now").count() === 0 :
+      await card.getByText(variant.label, { exact: true }).isVisible() &&
+        await card.getByRole("button", { name: "Add " + product.displayName + " to request", exact: true }).isEnabled();
+    report(entry, variant.id + " preserves exact request-access presentation", pair.requestAccess);
+    if (member) {
+      pair.cardRequestHref = await c1ActionHref(exactVariant.getByRole("link", {
+        name: "Request Access, " + product.displayName + ", " + variant.label, exact: true,
+      }));
+      report(entry, variant.id + " card Request Access uses the exact product destination",
+        pair.cardRequestHref === c1RequestAccessHref(product.displayName));
+    } else {
+      pair.guestSelection = await exerciseC1GuestSelection(page, card, product.displayName, variant.label);
+      const proof = pair.guestSelection;
+      report(entry, variant.id + " locally selects the exact variant, enables Continue and resets on removal",
+        proof.initialEmpty && proof.selectedProduct === product.displayName && proof.selectedVariant === variant.label &&
+        proof.selectedQuantity && proof.singleSelection && proof.continueEnabled && proof.reset);
+    }
+    if (reviewedMedia) {
+      const cardImage = await imageEvidence(page, card, reviewedMedia.primary.href, null);
+      checkImage(entry, variant.id + " card", cardImage, reviewedMedia.primary.href, false, reviewedMedia.primary.altText);
+      pair.cardSource = cardImage.path;
+      pair.cardPrimary = await primaryProof(cardImage);
+      report(entry, variant.id + " card uses the actual served WebP and exact natural dimensions",
+        c1ExactWebp(pair.cardPrimary, reviewedMedia.primary, primarySha256));
+      pair.cardDisclosure = await card.getByText(c1Disclosure, { exact: true }).isVisible();
+      report(entry, variant.id + " card retains design disclosure without a label link",
+        pair.cardDisclosure && await card.getByRole("link", { name: "View front label artwork", exact: true }).count() === 0);
+    } else {
+      pair.cardGeneric = await genericOnly(card);
+      report(entry, variant.id + " card never borrows a different KPV strength", pair.cardGeneric);
+    }
+
+    let scope;
+    if (member) {
+      await card.getByTestId("mo-card-link").click();
+      await page.waitForURL(origin + detailRoute);
+      await page.getByRole("heading", { level: 1, name: product.displayName, exact: true }).waitFor();
+      scope = page;
+      pair.detailIdentity = await page.getByTestId("mo-variant-selector")
+        .locator('input[value="' + variant.id + '"]').isChecked();
+    } else {
+      await card.getByRole("button", { name: "View details for " + product.displayName + ", " + variant.label, exact: true }).click();
+      scope = page.getByRole("dialog", { name: product.displayName, exact: true });
+      await scope.waitFor();
+      pair.detailIdentity = await scope.getByText(variant.label, { exact: true }).isVisible();
+    }
+    report(entry, variant.id + " detail preserves the exact selected identity", pair.detailIdentity);
+    if (member) {
+      pair.detailRequestHref = await c1ActionHref(scope.getByTestId("mo-cta").and(scope.getByRole("link", {
+        name: "Request Access, " + product.displayName + ", " + variant.label, exact: true,
+      })));
+      report(entry, variant.id + " detail Request Access uses the exact product destination",
+        pair.detailRequestHref === c1RequestAccessHref(product.displayName));
+    }
+
+    if (reviewedMedia) {
+      const detailImage = await imageEvidence(page, scope, reviewedMedia.primary.href, null);
+      checkImage(entry, variant.id + " detail", detailImage, reviewedMedia.primary.href, false, reviewedMedia.primary.altText);
+      pair.detailSource = detailImage.path;
+      pair.detailPrimary = await primaryProof(detailImage);
+      report(entry, variant.id + " detail uses the actual served WebP and exact natural dimensions",
+        c1ExactWebp(pair.detailPrimary, reviewedMedia.primary, primarySha256));
+      pair.detailDisclosure = await scope.getByText(c1Disclosure, { exact: true }).isVisible();
+      pair.labelPath = reviewedMedia.labelPreview.href;
+      pair.label = await followC1Label(page,
+        scope.getByRole("link", { name: "View front label artwork", exact: true }), reviewedMedia.labelPreview);
+      report(entry, variant.id + " detail keeps disclosure and opens the exact app-served label at its natural dimensions",
+        pair.detailDisclosure && c1ExactWebp(pair.label, reviewedMedia.labelPreview, labelSha256));
+      if (entry.representativeVariant === undefined) {
+        entry.representativeVariant = variant.id;
+        if (member) await frameMemberImage(entry, "representative member detail", scope, reviewedMedia.primary.href);
+        await screenshot(entry, "detail", page);
+      }
+    } else {
+      pair.detailGeneric = await genericOnly(scope);
+      report(entry, variant.id + " detail has no wrong-strength artwork, disclosure or label", pair.detailGeneric);
+    }
+    if (member) {
+      await page.goto(entryUrl, { waitUntil: "domcontentloaded" });
+    } else {
+      await scope.getByRole("button", { name: "Back to catalog", exact: true }).click();
+      await scope.waitFor({ state: "hidden" });
+      report(entry, variant.id + " returns to the same guest catalog", page.url() === entryUrl);
+    }
+  }
+}
+
 async function capture(browser, fixtures, kind, size, rows) {
   const { mobile, ...viewport } = size;
   const entry = { name: kind + "-" + viewport.width, viewport, mobile, assertions: [], screenshots: [] };
   result.captures.push(entry);
-  const member = kind === "member" || kind === "member-reviewed-catalog";
+  const member = kind === "member" || kind === "member-reviewed-catalog" || kind === "member-c1-catalog";
   const { context, page } = await captureContext(browser, fixtures, viewport, mobile, member, entry);
   try {
-    if (rows) await captureReviewedCatalog(page, entry, rows, member);
+    if (c1Catalog) await captureC1Catalog(page, entry, rows, member);
+    else if (rows) await captureReviewedCatalog(page, entry, rows, member);
     else if (kind === "member") await captureMember(page, entry);
     else if (kind === "guest-details") await captureGuestDetails(page, entry);
     else await captureGuest(page, entry);
   } catch (error) {
     report(entry, "mount and exercise " + kind + " route", false, briefError(error));
-    await screenshot(entry, "failure", page);
+    if (!c1Catalog) await screenshot(entry, "failure", page);
   } finally {
     report(entry, "no unmocked writes or recovery attempted",
       entry.network.deniedWrites === 0 && entry.network.deniedRecovery === 0);
+    if (c1Catalog) report(entry, "C1 stays read-only without an agreement POST", entry.network.accepted === 0);
     if (member) report(entry, "member route verified only through synthetic local member GET", entry.network.verifiedMember > 0);
     await context.close();
   }
@@ -648,17 +893,28 @@ try {
     throw new Error("Guest fixture must preserve separate exact media and order identities");
   }
   result.fixture.identitiesDistinct = true;
-  const guestSvgFixtures = await svgCardFixtureResponses(candidate, origin, false);
-  const memberSvgFixtures = await svgCardFixtureResponses(candidate, origin, true);
-  const svgRows = [...guestSvgFixtures.values()].find((value) => Array.isArray(value.items))?.items;
-  if (svgRows?.length !== 1 || svgRows[0].sourceSelection?.variantId !== alternateSourceVariant ||
-      svgRows[0].variantId !== alternateOrderVariant || alternateSourceVariant === alternateOrderVariant) {
-    throw new Error("SVG guest fixture must preserve distinct exact media and order identities");
+  let guestSvgFixtures, memberSvgFixtures;
+  if (!c1Catalog) {
+    guestSvgFixtures = await svgCardFixtureResponses(candidate, origin, false);
+    memberSvgFixtures = await svgCardFixtureResponses(candidate, origin, true);
+    const svgRows = [...guestSvgFixtures.values()].find((value) => Array.isArray(value.items))?.items;
+    if (svgRows?.length !== 1 || svgRows[0].sourceSelection?.variantId !== alternateSourceVariant ||
+        svgRows[0].variantId !== alternateOrderVariant || alternateSourceVariant === alternateOrderVariant) {
+      throw new Error("SVG guest fixture must preserve distinct exact media and order identities");
+    }
   }
-  if (reviewedCatalog) {
-    const manifest = JSON.parse(await readFile(join(candidate, "server/research/master-offerings/data/reviewed-public-media.json"), "utf8"));
+  if (reviewedCatalog || c1Catalog) {
+    const manifestBytes = await readFile(join(candidate, "server/research/master-offerings/data/reviewed-public-media.json"));
+    const manifest = JSON.parse(manifestBytes);
+    if (c1Catalog) {
+      const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
+      const dataset = await readFile(join(candidate, "server/research/master-offerings/data/member-safe-master-offerings.generated.json"));
+      result.inputHashes = { manifest: hash(manifestBytes), dataset: hash(dataset) };
+      if (result.inputHashes.manifest !== c1ManifestSha || result.inputHashes.dataset !== c1DatasetSha ||
+          manifest.records.length !== 29) throw new Error("C1 inputs do not match exact source");
+    }
     result.assets = {};
-    for (const record of manifest.records) {
+    for (const record of c1Catalog ? manifest.records.slice(10) : manifest.records) {
       result.assets[record.sourceVariantId] = { file: record.media.primary.href, sha256: record.primarySha256 };
       if (record.media.labelPreview) result.assets[record.sourceVariantId + "-label"] = {
         file: record.media.labelPreview.href, sha256: record.labelPreviewSha256,
@@ -687,12 +943,12 @@ try {
   }
   browser = await chromium.launch({ headless: true, timeout: 12000 });
   result.browser = { name: "Chromium", version: browser.version() };
-  if (reviewedCatalog) {
+  if (reviewedCatalog || c1Catalog) {
     const guest = await reviewedCatalogFixtures(candidate, false);
     const member = await reviewedCatalogFixtures(candidate, true);
     for (const size of viewports) {
-      await capture(browser, guest.base, "guest-reviewed-catalog", size, guest.rows);
-      await capture(browser, member.base, "member-reviewed-catalog", size, member.rows);
+      await capture(browser, guest.base, c1Catalog ? "guest-c1-catalog" : "guest-reviewed-catalog", size, guest.rows);
+      await capture(browser, member.base, c1Catalog ? "member-c1-catalog" : "member-reviewed-catalog", size, member.rows);
     }
   } else if (guestDetailsOnly) {
     for (const size of viewports) await capture(browser, guestFixtures, "guest-details", size);
@@ -712,9 +968,9 @@ try {
     await browser?.close();
   } finally {
     preview?.kill();
-    const expectedContexts = reviewedCatalog ? viewports.length * 2 : guestDetailsOnly ? viewports.length : viewports.length * 2 + 2;
+    const expectedContexts = reviewedCatalog || c1Catalog ? viewports.length * 2 : guestDetailsOnly ? viewports.length : viewports.length * 2 + 2;
     result.status = !result.captureError && result.captures.length === expectedContexts &&
-      result.captures.every((entry) => entry.screenshots.length === (guestDetailsOnly || reviewedCatalog ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
+      result.captures.every((entry) => entry.screenshots.length === (c1Catalog ? 1 : guestDetailsOnly || reviewedCatalog ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
         && entry.assertions.every((item) => item.pass)) ? "passed" : "failed";
     await writeFile(join(output, "result.json"), JSON.stringify(result, null, 2) + "\n");
     if (result.status !== "passed") process.exitCode = 1;
