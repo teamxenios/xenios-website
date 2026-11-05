@@ -3879,7 +3879,7 @@
       "id": "KAN6-QO-REVIEWED-RESEARCH-PARTIAL-01-20261104",
       "title": "Adopt reviewed research partial 01 source for Quick Order",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-6",
       "baseSha": "f0e247585c1cd466022530a4f40c99fd03af1957",
       "paths": [
@@ -3891,7 +3891,13 @@
       "scopeNote": "Claim only Samuel's current website execution directive and the actual Root source allocation at KAN-6 comment 10719. Limit source work exactly to server/research/master-offerings/data/reviewed-public-content.json on planned branch codex/early-access-reviewed-research-partial-20261104 from frozen PR 383 head f0e247585c1cd466022530a4f40c99fd03af1957/tree f5cab0de3370d6ea0c9a89ba167fe11f4b8516be. Fresh CODE_OWNERSHIP exact/prefix/wildcard and FILE_OWNERSHIP audits found no active lease or file rule conflict. The only broad task-path match is the preserved August CATALOG-ACTION-UNIFICATION record; its matching lease 77a0406e-4874-4719-9cc0-6dd3126e3679 is released and its last heartbeat was 2026-08-21. Preserve PR 383 head, all earlier HANDOFF records, active guest mobile lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba, every foreign record, historical rule and current release. Root source tools remain idle during this custody operation. This metadata claim performs no source checkout edit, worktree, branch creation, registration, new identity, test, browser, provider, managed action, release or production operation. Successor permission under KAN-6 comment 10940: Root may use the separate source branch codex/early-access-nonclinical-copy-20261105 from exact release 19d10e0495aed917b3d1fcf2844109e5e1cc6915, only for server/research/master-offerings/data/reviewed-public-content.json. The private input is C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/REVIEWED_CONTENT_27_NONCLINICAL_RELEASE_PROPOSED_10919.json, exactly 68838 bytes, SHA-256 990a2558bc07827d93f06759421caf83af4298aee402ff5bd00c462f4782e9d8, Git blob 84d4104806803a60b3e376a7c5206b432716775e and prospective tree 067822492c88af0b6be78ba7082227c7d0742712. It preserves the ten exact release records and appends 17 independently accepted nonclinical request-access pairs; the seven clinical additions and unresolved form pairs are absent. Preserve the original task scope and history, exact PR 387 at 068f8880de479e7fed08302397862f97d05ccf08, all other refs, the unchanged active manifest lease and the physical source state. Fresh active/reserved exact, prefix, glob, CODE_OWNERSHIP-rule and FILE_OWNERSHIP audits found no foreign live lease or rule conflict; the old broad wildcard task retains only its released lease and newer overlapping records remain handoff history. This metadata amendment does not authorize application source work, branch creation or switch, tests, browser work, merge, release or production action.",
       "createdAt": "2026-11-04T22:48:56.713900Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-04T22:48:56.713900Z"
+      "claimedAt": "2026-11-04T22:48:56.713900Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "cd7ee9fe1120b3ef002e1936ce66ca2439179554",
+        "file": ".xenios/handoffs/2026-11-05T03-46-53Z-KAN6-QO-REVIEWED-RESEARCH-PARTIAL-01-20261104-codex-launch-coordination-20261005.json",
+        "at": "2026-11-05T03:46:53Z"
+      }
     },
     {
       "id": "KAN132-OPERATOR-QUEUE-RECOVERY-COMPOSITION-20261104",

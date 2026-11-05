@@ -1,0 +1,51 @@
+{
+  "base": "4dce1ed3ad210eb41eb3e118931e3df7604d8920",
+  "capture": {
+    "allowance": "KAN-31/11028",
+    "archiveSHA256": "72f61bb119e297869cc4f2577cbda78e80304a8bdb610dea05b732377bd43eb6",
+    "artifact": 13386096769,
+    "assertions": 114,
+    "attempt": 1,
+    "dormant": "5d834e0cba2e36dbaea33fb3202dc9aa283fe56c",
+    "fixtureSHA256": "c69a45df36349e91a2d373f1ec45d8e1031bbc825928138a31ba20fce47e044c",
+    "harness": "8c4819cf168961bd2d0e42bb37b7b9b2d58c8bc4",
+    "independentArtifactReview": "existing bounded_postcheck_binding, eligible nonauthor, exact identities/routes/content/docs/case outcomes/archive and visual privacy PASS",
+    "job": 127032736493,
+    "manifestSHA256": "2297a1da08a166839acd7b4208e13d22036ad3fc2eb56f8839b325fef19c774e",
+    "maximum": 1,
+    "omission": 2,
+    "positive": 34,
+    "remaining": 0,
+    "run": 41962766251,
+    "screenshots": 2,
+    "viewport": "390x844"
+  },
+  "ci": {
+    "checkouts": [
+      "4d868e6e2175d9f6ff65f6b99c08360d0aeb4a96",
+      "cd7ee9fe1120b3ef002e1936ce66ca2439179554"
+    ],
+    "failed": 0,
+    "passed": 18531,
+    "receiptSHA256": "4001183f420c439bb24d3a481d3998600b2470d63b35d242c88e913694a2426c",
+    "requiredTrusted": 5,
+    "run": 41960434022,
+    "skipped": 83
+  },
+  "exactBlob": "84d4104806803a60b3e376a7c5206b432716775e",
+  "lease": "e9c783b4-9eeb-4891-9f97-e093796425ba",
+  "limits": "Source and exact-tree hosted application plus synthetic routed guest/member copy qualification only. Existing media unchanged by PR391. No physical device, authenticated production catalog read, product data mutation, pricing change, supplier production or current release operation.",
+  "manifestSHA256": "990a2558bc07827d93f06759421caf83af4298aee402ff5bd00c462f4782e9d8",
+  "onlyPath": "server/research/master-offerings/data/reviewed-public-content.json",
+  "ownerRecord": "KAN-6/10940",
+  "pr": 391,
+  "priorReviewedHead": "4009ab97e74178449fdb0bdb4c9076287176accc",
+  "publishedCandidate": {
+    "priorDescriptionsPreserved": 10,
+    "reviewedDescriptions": 17
+  },
+  "source": "cd7ee9fe1120b3ef002e1936ce66ca2439179554",
+  "sourceReview": "KAN-31/10950 and KAN-6/10948; same reviewed bytes",
+  "tree": "0b5d6b07d43f6a25fee8643f20c2ba245c8d3043",
+  "unit": "KAN6-QO-REVIEWED-RESEARCH-PARTIAL-01-20261104"
+}
