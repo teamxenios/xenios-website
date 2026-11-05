@@ -3240,6 +3240,30 @@
       "state": "active",
       "claimedAt": "2026-11-05T03:32:14.125423Z",
       "heartbeatAt": "2026-11-05T03:32:14.125423Z"
+    },
+    {
+      "id": "47cfa1af-daa1-49ed-8f67-96e0e55eb44f",
+      "task": "KAN13-SIGNIN-POLICY-LINKS-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/sign-in.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T04:08:57.327737Z",
+      "heartbeatAt": "2026-11-05T04:08:57.327737Z"
+    },
+    {
+      "id": "77623d2b-0d8d-4d4c-ad13-6274001726e6",
+      "task": "KAN13-MEMBER-CATALOG-DETAIL-NOT-FOUND-20261105",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/master-offerings/catalogApi.ts",
+        "client/src/research/master-offerings/catalogApi.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T04:08:57.327737Z",
+      "heartbeatAt": "2026-11-05T04:08:57.327737Z"
     }
   ],
   "rules": [

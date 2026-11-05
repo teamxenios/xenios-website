@@ -4022,6 +4022,40 @@
       "createdAt": "2026-11-05T03:32:14.125423Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-05T03:32:14.125423Z"
+    },
+    {
+      "id": "KAN13-SIGNIN-POLICY-LINKS-20261105",
+      "title": "Add explicit Privacy and Terms links to Sign In",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "9b2fc9b33e1873d77c264e5a57df61a96fa970d9",
+      "paths": [
+        "client/src/research/pages/SignIn.tsx",
+        "client/src/research/pages/sign-in.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the independently allocated Sign In policy-link source unit from KAN-13 comment 11020, author delivery 11026 and independent packet audit 11029. Limit source work exactly to SignIn.tsx and sign-in.test.tsx on intended branch codex/signin-policy-links-20261105 from exact current live release 9b2fc9b33e1873d77c264e5a57df61a96fa970d9/tree 0b5d6b07d43f6a25fee8643f20c2ba245c8d3043. Exact live preimages are SignIn.tsx blob 0e57e594d4479548a963b91f4d5a78b87e305f31 and sign-in.test.tsx blob 08a8453bf7b222d19c5628e27ae4ff30abe7034f. Root must adopt tests first, observe the expected hosted RED, then adopt the unchanged delivered runtime. Footer, shared router and policy content are excluded. Fresh active/reserved exact/prefix/wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no lease or file-rule conflict. Preserve all four earlier active Root scopes and every prior task, lease, rule, heartbeat, release, project, session, handoff, checkout and app ref. This metadata claim performs no source edit, workflow, deployment, new identity, worktree or application operation.",
+      "createdAt": "2026-11-05T04:08:57.327737Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T04:08:57.327737Z"
+    },
+    {
+      "id": "KAN13-MEMBER-CATALOG-DETAIL-NOT-FOUND-20261105",
+      "title": "Preserve truthful member catalog-detail not-found handling",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "9b2fc9b33e1873d77c264e5a57df61a96fa970d9",
+      "paths": [
+        "client/src/research/master-offerings/catalogApi.ts",
+        "client/src/research/master-offerings/catalogApi.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the independently allocated member catalog-detail not-found source unit from KAN-13 comment 11020, author delivery 11026 and independent packet audit 11029. Limit source work exactly to catalogApi.ts and catalogApi.test.ts on intended branch codex/member-catalog-detail-not-found-20261105 from exact current live release 9b2fc9b33e1873d77c264e5a57df61a96fa970d9/tree 0b5d6b07d43f6a25fee8643f20c2ba245c8d3043. Exact live preimages are catalogApi.ts blob 1da97f76d6f44988e2dcc41ceadd144d3ca54442 and catalogApi.test.ts blob c89a74d07324246f395d166895334cf86e8d5bc9. Root must adopt tests first, observe the expected hosted RED, then adopt the unchanged delivered runtime. Preserve uniform missing, held and wrong-family 404 behavior; exclude the Kris route and every other source path. Fresh active/reserved exact/prefix/wildcard CODE_OWNERSHIP and FILE_OWNERSHIP audits found no lease or file-rule conflict. Preserve all four earlier active Root scopes and every prior task, lease, rule, heartbeat, release, project, session, handoff, checkout and app ref. This metadata claim performs no source edit, workflow, deployment, new identity, worktree or application operation.",
+      "createdAt": "2026-11-05T04:08:57.327737Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T04:08:57.327737Z"
     }
   ]
 }
