@@ -3891,6 +3891,25 @@
       "createdAt": "2026-11-04T22:48:56.713900Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-04T22:48:56.713900Z"
+    },
+    {
+      "id": "KAN132-OPERATOR-QUEUE-RECOVERY-COMPOSITION-20261104",
+      "title": "Compose verified operator-queue recovery patches",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-132",
+      "baseSha": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+      "paths": [
+        "client/src/research/pages/adminx/QuestionsAdmin.tsx",
+        "client/src/research/pages/adminx/QuestionsAdmin.retry.test.tsx",
+        "client/src/research/pages/adminx/OrdersAdmin.tsx",
+        "client/src/research/pages/adminx/OrdersAdmin.ownership.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the two verified operator-queue patches allocated to Root at KAN-132 comment 10807. Limit source work exactly to the four listed QuestionsAdmin and OrdersAdmin implementation/test paths on planned branch codex/operator-queue-recovery-composition-20261104 from exact release 19d10e0495aed917b3d1fcf2844109e5e1cc6915/tree da2b16a6ff2991fe2322c931c95999262dbc709b. Preserve the task evidence and prospectively verified source tree 2bba5915a6c1feffe41afb76d8683c2cfe2a5510. Fresh CODE_OWNERSHIP exact/prefix/glob and FILE_OWNERSHIP audits found no active conflict, no related KAN-132 task or lease, and no overlapping live custodian or source activity. Preserve every existing lease and reservation, the Root registry, all foreign records, release state, worktrees, source refs and the current checkout. Root source-writing tools remain idle during this custody operation. This metadata claim performs no application source edit, test, browser, local heavy job, branch switch or creation, cleanup, security, provider, release or production action.",
+      "createdAt": "2026-11-05T01:15:30.973619Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T01:15:30.973619Z"
     }
   ]
 }

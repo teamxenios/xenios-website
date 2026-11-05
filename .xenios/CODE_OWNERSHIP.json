@@ -3141,6 +3141,20 @@
       "state": "active",
       "claimedAt": "2026-11-04T22:48:56.713900Z",
       "heartbeatAt": "2026-11-04T22:48:56.713900Z"
+    },
+    {
+      "id": "5088e02d-354d-4688-aedf-ace904517f33",
+      "task": "KAN132-OPERATOR-QUEUE-RECOVERY-COMPOSITION-20261104",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/adminx/QuestionsAdmin.tsx",
+        "client/src/research/pages/adminx/QuestionsAdmin.retry.test.tsx",
+        "client/src/research/pages/adminx/OrdersAdmin.tsx",
+        "client/src/research/pages/adminx/OrdersAdmin.ownership.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-05T01:15:30.973619Z",
+      "heartbeatAt": "2026-11-05T01:15:30.973619Z"
     }
   ],
   "rules": [
