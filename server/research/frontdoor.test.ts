@@ -98,6 +98,57 @@ describe("the homepage stays at the root domain", () => {
     expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
   });
 
+  it.each([
+    ["get", "/earlyaccess"],
+    ["head", "/earlyaccess"],
+    ["get", "/earlyaccess/"],
+    ["get", "/EarlyAccess"],
+    ["get", "/%65arlyaccess"],
+    ["get", "/earlyaccess?family=research_vials&slug=synthetic"],
+  ] as const)("keeps the request-only Early Access alias private for %s %s", async (method, path) => {
+    // Even with Research public and indexable, the alias is a transactional
+    // request document, exactly like the legacy order-request route.
+    process.env.RESEARCH_PUBLIC = "true";
+    process.env.RESEARCH_INDEXABLE = "true";
+    const app = express();
+    app.use(researchPageGate);
+    app.use((_req, res) => res.send("spa"));
+
+    const res = await (request(app) as any)[method](path);
+    expect(res.status).toBe(200);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex, nofollow");
+  });
+
+  it("fails the alias closed with the legacy entry when Research is unconfigured", async () => {
+    const app = express();
+    app.use(researchPageGate);
+    app.use((_req, res) => res.send("spa"));
+
+    for (const path of ["/earlyaccess", "/research/early-access/order-request"]) {
+      const res = await request(app).get(path);
+      expect(res.status, path).toBe(503);
+      expect(res.headers["cache-control"], path).toBe("no-store");
+      expect(res.headers["x-robots-tag"], path).toBe("noindex, nofollow");
+    }
+  });
+
+  it("leaves paths that only resemble the alias to the public site", async () => {
+    process.env.RESEARCH_PUBLIC = "true";
+    const app = express();
+    app.use(researchPageGate);
+    app.use((_req, res) => res.send("spa"));
+
+    for (const path of ["/earlyaccessx", "/earlyaccess/extra", "/early-interest"]) {
+      const res = await request(app).get(path);
+      expect(res.status, path).toBe(200);
+      expect(res.headers["cache-control"], path).toBeUndefined();
+      expect(res.headers["x-robots-tag"], path).toBeUndefined();
+    }
+  });
+
   it("does not apply admin document headers to the API namespace", async () => {
     const app = express();
     app.use(researchPageGate);
