@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "kind": "current-human-exact-ownership-delegation",
+  "recordedAt": "2026-11-05T21:41:37.0094940Z",
+  "authority": {
+    "sourceThreadId": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "sourceTurnId": "01a1acf4-58e4-7b53-803a-02f944309557",
+    "question": "Which existing Website 2 owner or handoff record can assign layout.tsx, section.tsx, and CORE_SITE_PROTECTION_MANIFEST.json to Root for /earlyaccess? A name or record link is enough. The existing review chat confirmed it cannot grant custody of these files.",
+    "humanReply": "just find a current session and assign it to them",
+    "selectedExistingSession": "codex-launch-coordination-20261005",
+    "selectionBasis": "Existing registered Root, sole current integrator, same physical checkout, and existing owner of EarlyAccessRoute.tsx; no new identity.",
+    "historic701214ccReusable": false
+  },
+  "assignment": {
+    "task": "KAN13-EA-OUTREACH-ROUTE-20261105",
+    "lease": "f9413d25-9cad-4543-9226-a23c2a824c5c",
+    "branch": "codex/early-access-outreach-route-20261105",
+    "base": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
+    "baseTree": "beaf0b893eda583bb360109181b967ef87ace1de",
+    "prospectiveTree": "2700bde4a4537c2d95e8cd8ae09725ecbbae57b6",
+    "taskPaths": [
+      "client/src/App.routes.test.ts",
+      "client/src/App.tsx",
+      "client/src/lib/tracking.test.ts",
+      "client/src/research/early-access-alias-route.test.tsx",
+      "client/src/research/early-access-open-route.test.tsx",
+      "client/src/research/early-access/EarlyAccessRoute.tsx",
+      "client/src/research/layout.tsx",
+      "client/src/research/section.tsx",
+      "client/src/research/seo/route-policy.test.ts",
+      "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "server/research/frontdoor.test.ts",
+      "server/research/seo/raw-http-document-policy.test.ts",
+      "server/research/seo/raw-http-document-policy.ts",
+      "shared/research/paths.test.ts",
+      "shared/research/paths.ts"
+    ],
+    "exactProtectedCarveOut": [
+      "client/src/research/layout.tsx",
+      "client/src/research/section.tsx",
+      "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+    ],
+    "fileOwnershipRule": "OWNER-KAN13-EA-OUTREACH-ROUTE-20261105",
+    "preservedWebsite2Rules": [
+      "OWNER-W2-RESEARCH-PASSWORD-GATE-LANDMARK",
+      "OWNER-W2-SHARED-INTEGRATION",
+      "OWNER-W2-CONTROL-PLANE"
+    ]
+  },
+  "composition": {
+    "path": "C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/route-first-exact-pr409-composition/ALIAS15_CURRENT_BASE_EXACT_COMPOSITION.json",
+    "sha256": "a9505018b096098e44e396ecbf952924588689132e13665966118a3caf08ef3d",
+    "orderedPatches": [
+      {
+        "name": "0001-Pin-the-earlyaccess-alias-contract-before-it-exists.patch",
+        "sha256": "ea891812f4c99d99d81b0fabc1b3e685b0259c1f41a31b621131dc759a560675"
+      },
+      {
+        "name": "0002-Open-earlyaccess-as-the-login-free-request-only-Earl.patch",
+        "sha256": "e661bb32ca84e897eff4057e0bee1f4f18aaa9c6fe88b8b82255c9ac29465c7a"
+      },
+      {
+        "name": "0003-Name-the-earlyaccess-entry-Early-Access.patch",
+        "sha256": "4858ade01585b7dd0f1d5a3f068c7edd37b7dcfb6d5c015890d7524c00b95f55"
+      }
+    ],
+    "transportSha256": "8375ad8ef1c6e382e56a9f5d8c2e26028f7ca904233a25300e8323bfebabc897",
+    "preservedCopyBlob": "2f877b95ce876881109dcfb37d703496a10255fb",
+    "preservedMediaBlob": "40069f80ec8e517f3173e94d416f9ca723367254",
+    "preservedAgreementRefresh": true,
+    "independentReplay": "KAN-13/11609"
+  },
+  "exclusions": [
+    "No broad Website 2 transfer or rule deletion.",
+    "No release-branch ownership-policy or guard change.",
+    "No source edit, checkout, test, workflow, provider, deployment or production action.",
+    "ART29 and all unrelated tasks, leases, rules, registrations and releases remain unchanged."
+  ]
+}

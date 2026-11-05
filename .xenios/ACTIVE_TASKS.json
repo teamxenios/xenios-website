@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-05T21:25:35.7823101Z",
+  "updatedAt": "2026-11-05T21:41:37.0094940Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4411,6 +4411,36 @@
       "createdAt": "2026-11-05T21:13:40.9327313Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-05T21:13:40.9327313Z"
+    },
+    {
+      "id": "KAN13-EA-OUTREACH-ROUTE-20261105",
+      "title": "Publish the reviewed /earlyaccess outreach route",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "485885e3d4d4ca8b1353c923847e03e4ec1b67ae",
+      "paths": [
+        "client/src/App.routes.test.ts",
+        "client/src/App.tsx",
+        "client/src/lib/tracking.test.ts",
+        "client/src/research/early-access-alias-route.test.tsx",
+        "client/src/research/early-access-open-route.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/layout.tsx",
+        "client/src/research/section.tsx",
+        "client/src/research/seo/route-policy.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/research/frontdoor.test.ts",
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "server/research/seo/raw-http-document-policy.ts",
+        "shared/research/paths.test.ts",
+        "shared/research/paths.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Current direct founder authorization in Root chat 01a103a8-5684-7272-89e5-3c42eefcd593 selected an existing current session for the three protected files after Root asked which Website 2 owner or record could assign client/src/research/layout.tsx, client/src/research/section.tsx and docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json; Samuel answered exactly, \"just find a current session and assign it to them\". Bind that authority narrowly to existing registered Root codex-launch-coordination-20261005, which is the sole current integrator and already owns EarlyAccessRoute.tsx. Limit future source work to the exact 15 ordered paths in C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/route-first-exact-pr409-composition/ALIAS15_CURRENT_BASE_EXACT_COMPOSITION.json, SHA-256 a9505018b096098e44e396ecbf952924588689132e13665966118a3caf08ef3d, on intended branch codex/early-access-outreach-route-20261105 from protected LIVE 485885e3d4d4ca8b1353c923847e03e4ec1b67ae/tree beaf0b893eda583bb360109181b967ef87ace1de. The three original CLAUDE-4 patch bytes apply in exact listed order and reproduce prospective tree 2700bde4a4537c2d95e8cd8ae09725ecbbae57b6; independent author replay KAN-13/11609 matches that tree. Preserve exact App/CORE pins, latest PR409 agreement callbacks, copy blob 2f877b95ce876881109dcfb37d703496a10255fb and media blob 40069f80ec8e517f3173e94d416f9ca723367254. All 14 existing preimages and the one absent new route-test path match the protected base. Fresh active/reserved exact, prefix and glob lease audit found zero conflicts. FILE_OWNERSHIP changes only the three literal founder-named entries: remove layout.tsx from OWNER-W2-RESEARCH-PASSWORD-GATE-LANDMARK, section.tsx from OWNER-W2-SHARED-INTEGRATION and CORE_SITE_PROTECTION_MANIFEST.json from OWNER-W2-CONTROL-PLANE, then assign those exact three paths to bounded same-owner rule OWNER-KAN13-EA-OUTREACH-ROUTE-20261105. Preserve every other Website 2 pattern, rule, lane and authority plus same-owner EarlyAccessRoute rule OWNER-KAN225-EARLY-ACCESS-CLOSED-INTAKE-20261104. Exact immutable authorization evidence is recorded at the task handoff path. Source qualification, hosted tests, protected integration and release remain Root gates. This custody transaction performs no app source edit, checkout or branch switch, test, browser, workflow, policy/configuration, release pointer, provider, deploy, production, identity, role or broad ownership mutation.",
+      "createdAt": "2026-11-05T21:41:37.0094940Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-05T21:41:37.0094940Z"
     }
   ]
 }
