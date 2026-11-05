@@ -11,9 +11,10 @@ import {
 } from "./fixture.mjs";
 
 const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
-if (!["legacy", "guest-catalog-details", "reviewed-catalog"].includes(profile)) throw new Error("Unknown capture profile");
+if (!["legacy", "guest-catalog-details", "reviewed-catalog", "pr391-copy"].includes(profile)) throw new Error("Unknown capture profile");
 const guestDetailsOnly = profile === "guest-catalog-details";
 const reviewedCatalog = profile === "reviewed-catalog";
+const pr391Copy = profile === "pr391-copy";
 const reviewedVialCaptures = new Map([
   ["mov_09db3e866424b64994d3", "bpc-5mg"],
   ["mov_257330ea83ecbfc45fae", "bpc-15mg"],
@@ -27,8 +28,9 @@ const capsuleEvidenceVariants = new Set([
 ]);
 const chondroVariant = "mov_2de19f71e09e8bc3febb";
 const allowance = JSON.parse(await readFile(allowanceFile, "utf8"));
+const maximumAttempts = pr391Copy ? 1 : 2;
 if (allowance.currentRunId !== runId || allowance.attempt !== allowance.distinctRunIds.length ||
-    allowance.maximumAttempts !== 2 || allowance.remainingAfterThisRun !== 2 - allowance.attempt) {
+    allowance.maximumAttempts !== maximumAttempts || allowance.remainingAfterThisRun !== maximumAttempts - allowance.attempt) {
   throw new Error("Capture allowance does not match this dispatch");
 }
 const origin = "http://127.0.0.1:5199";
@@ -43,8 +45,13 @@ const result = {
   scope: "NON-PRODUCTION SYNTHETIC BROWSER EVIDENCE",
   limits: [
     "Fixture prices are synthetic. No approved price, live identity, product authorization or persistence is tested.",
-    "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
-    "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
+    ...(pr391Copy ? [
+      "Exact projected DTOs and synthetic identity establish rendered copy, with one representative screenshot per role.",
+      "Guest agreement is an exact preaccepted GET. Document hrefs are checked without following them.",
+    ] : [
+      "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
+      "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
+    ]),
     "No submission, recovery, staff readback, production release or operator activation is covered.",
   ],
   candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt), allowance, profile,
@@ -100,7 +107,7 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
       if (request.method() !== "GET") traffic.deniedWrites += 1;
       return intercept.abort("blockedbyclient");
     }
-    if (request.method() === "POST" && !member && url.pathname === agreementAccept && !url.search && traffic.accepted === 0) {
+    if (!pr391Copy && request.method() === "POST" && !member && url.pathname === agreementAccept && !url.search && traffic.accepted === 0) {
       let body;
       try { body = request.postDataJSON(); } catch {}
       if (body && Object.keys(body).length === 2 && body.kind === fixtureAgreement.kind && body.version === fixtureAgreement.version) {
@@ -130,7 +137,7 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
       if (url.pathname === "/api/research/member/me") traffic.verifiedMember += 1;
       const json = fixtures.get(url.pathname);
       return intercept.fulfill({
-        json: url.pathname === agreementStatus ? { ...json, accepted: traffic.accepted === 1 } : json,
+        json: url.pathname === agreementStatus ? { ...json, accepted: (pr391Copy && !member) || traffic.accepted === 1 } : json,
         headers: { "cache-control": "no-store" },
       });
     }
@@ -633,6 +640,139 @@ async function captureSvgCard(browser, fixtures, member) {
   }
 }
 
+
+async function loadPr391Fixture() {
+  const bytes = await readFile(join(output, "pr391-copy-fixture.json"));
+  const sha256 = createHash("sha256").update(bytes).digest("hex");
+  const fixture = JSON.parse(bytes);
+  if (!/^[a-f0-9]{64}$/.test(process.env.PR391_FIXTURE_SHA256 ?? "") ||
+      sha256 !== process.env.PR391_FIXTURE_SHA256 || fixture.head !== candidateSha || fixture.tree !== candidateTree ||
+      fixture.manifestSha256 !== "990a2558bc07827d93f06759421caf83af4298aee402ff5bd00c462f4782e9d8" || fixture.guestRoute !== guestRoute ||
+      fixture.identities.length !== 18 || fixture.identities.filter((row) => row.reviewedCopy).length !== 17 ||
+      fixture.identities.at(-1).sku !== "GEN-GRP-0256" || Object.keys(fixture.responses).length !== 20) {
+    throw new Error("PR391 fixture identity or exact route set differs");
+  }
+  result.fixture = { sha256, manifestSha256: fixture.manifestSha256, agreement: fixtureAgreement, acceptance: "synthetic GET only" };
+  result.assets = {};
+  return fixture;
+}
+
+async function readPr391ProductInformation(scope, copy) {
+  const region = scope.getByRole("region", { name: "Product information", exact: true });
+  if (!copy) {
+    const regionPresent = await region.count() !== 0;
+    return { regionPresent, exactRegion: !regionPresent, documentHrefs: [] };
+  }
+  await region.waitFor();
+  const actual = await region.evaluate((node) => ({
+    brand: node.querySelector(":scope > p")?.textContent ?? null,
+    sections: [...node.querySelectorAll(":scope > div")].map((section) => {
+      const title = section.querySelector(":scope > h2, :scope > h3")?.textContent ?? null;
+      if (title === "Specifications") return { title, rows: [...section.querySelectorAll("dl > div")].map((row) => ({
+        label: row.querySelector("dt")?.textContent ?? null, value: row.querySelector("dd")?.textContent ?? null,
+      })) };
+      if (title === "Documentation") return { title, rows: [...section.querySelectorAll("ul > li > a")].map((link) => ({
+        label: link.textContent, href: link.getAttribute("href"),
+      })) };
+      return { title, text: section.querySelector(":scope > p")?.textContent ?? null };
+    }),
+  }));
+  const sections = [{ title: "Overview", text: copy.overview }];
+  if (copy.specifications?.length) sections.push({ title: "Specifications",
+    rows: copy.specifications.map(({ label, value }) => ({ label, value })) });
+  for (const [title, text] of [["Purpose", copy.purpose], ["Ingredients", copy.ingredients], ["Label information", copy.label],
+    ["Cautions", copy.cautions], ["Storage", copy.storage]]) {
+    if (text) sections.push({ title, text });
+  }
+  if (copy.documentation?.length) sections.push({ title: "Documentation",
+    rows: copy.documentation.map(({ label, href }) => ({ label, href })) });
+  return { regionPresent: true, exactRegion: JSON.stringify(actual) === JSON.stringify({ brand: copy.brand || null, sections }),
+    documentHrefs: actual.sections.find((section) => section.title === "Documentation")?.rows.map((row) => row.href) ?? [] };
+}
+
+async function capturePr391Copy(browser, fixture, member) {
+  const role = member ? "member" : "guest";
+  const viewport = { width: 390, height: 844 };
+  const entry = { name: role + "-pr391-copy-390", viewport, mobile: true, assertions: [], screenshots: [], cases: [] };
+  result.captures.push(entry);
+  const fixtures = await fixtureResponses(candidate, origin, member);
+  const guestApi = "/api/research/early-access/request-intents/catalog";
+  const memberApi = "/api/research/catalog-display/v2/catalog";
+  const catalog = fixture.responses[guestApi];
+  if (member) {
+    fixtures.set(memberApi, fixture.responses[memberApi]);
+    for (const identity of fixture.identities) fixtures.set(identity.memberDetailApi, fixture.responses[identity.memberDetailApi]);
+  } else {
+    fixtures.set(guestApi, catalog);
+  }
+  const { context, page } = await captureContext(browser, fixtures, viewport, true, member, entry);
+  try {
+    if (!member) {
+      await page.goto(origin + fixture.guestRoute, { waitUntil: "domcontentloaded" });
+      const accepted = page.locator('[data-testid="early-access-agreement"][data-state="accepted"]');
+      await accepted.waitFor();
+      entry.agreementAccepted = await accepted.isVisible();
+      report(entry, "guest catalog reads the exact accepted agreement fixture", entry.agreementAccepted);
+    }
+    for (const identity of fixture.identities) {
+      const { sku, offeringId, sourceVariantId, productName, specification, memberRoute, reviewedCopy } = identity;
+      const record = { sku, offeringId, sourceVariantId, reviewedCopy };
+      entry.cases.push(record);
+      const content = catalog.items.find((item) => item.sourceSelection.variantId === sourceVariantId).reviewedContent;
+      let scope;
+      if (member) {
+        await page.goto(origin + memberRoute, { waitUntil: "domcontentloaded" });
+        await page.getByRole("heading", { level: 1, name: productName, exact: true }).waitFor();
+        const variant = page.getByTestId("mo-variant-selector").locator('input[value="' + sourceVariantId + '"]');
+        await variant.waitFor({ state: "attached" });
+        record.identityMounted = await variant.isChecked();
+        scope = page;
+      } else {
+        const card = page.locator('[data-testid="request-door-mixed"] article.xenios-order-card')
+          .filter({ has: page.getByRole("heading", { name: productName, exact: true }) })
+          .filter({ has: page.getByText(specification, { exact: true }) });
+        await card.waitFor();
+        if (content) {
+          const summary = card.locator(":scope > p").filter({ hasText: content.summary });
+          record.summaryMatches = await summary.count() === 1 &&
+            (await summary.textContent()) === ((content.brand ? content.brand + " · " : "") + content.summary);
+        } else record.summaryMatches = true;
+        await card.getByRole("button", { name: "View details for " + productName + ", " + specification, exact: true }).click();
+        scope = page.getByRole("dialog", { name: productName, exact: true });
+        await scope.waitFor();
+        record.identityMounted = await scope.getByText(specification, { exact: true }).isVisible();
+      }
+      record.route = new URL(page.url()).pathname;
+      report(entry, sku + " mounts the exact route and variant", record.identityMounted &&
+        page.url() === origin + (member ? memberRoute : fixture.guestRoute));
+      if (!member) report(entry, sku + " guest card summary", record.summaryMatches);
+      Object.assign(record, await readPr391ProductInformation(scope, content));
+      report(entry, sku + " exact rendered product information or deliberate omission",
+        record.regionPresent === reviewedCopy && record.exactRegion);
+      if (sku === "GEN-GRP-0368") {
+        entry.representativeSku = sku;
+        await scope.getByRole("heading", { name: "Overview", exact: true }).scrollIntoViewIfNeeded();
+        await screenshot(entry, "detail", page);
+      }
+      if (!member) {
+        await scope.getByRole("button", { name: "Back to catalog", exact: true }).click();
+        await scope.waitFor({ state: "hidden" });
+        record.backToCatalog = page.url() === origin + fixture.guestRoute;
+        report(entry, sku + " closes details without leaving the guest catalog", record.backToCatalog);
+      }
+    }
+    report(entry, "role has all exact cases without external document navigation", entry.cases.length === 18 && context.pages().length === 1);
+  } catch (error) {
+    report(entry, "mount and exercise the exact PR391 copy routes", false, briefError(error));
+  } finally {
+    report(entry, "no agreement POST, writes, recovery or websocket requests",
+      entry.network.accepted === 0 && entry.network.deniedWrites === 0 && entry.network.deniedRecovery === 0 &&
+      entry.network.deniedWebSockets === 0);
+    if (member) report(entry, "synthetic member identity passed the existing bearer gate", entry.network.verifiedMember > 0);
+    await context.close();
+  }
+}
+
 let preview;
 let browser;
 let previewLog = "";
@@ -640,20 +780,24 @@ try {
   const interfaces = JSON.parse(execFileSync("ip", ["-json", "link", "show"], { encoding: "utf8" }));
   result.network.loopbackOnly = interfaces.length === 1 && interfaces[0].ifname === "lo" && interfaces[0].flags.includes("UP");
   if (!result.network.loopbackOnly) throw new Error("Capture requires a loopback-only network namespace");
-  const guestFixtures = await fixtureResponses(candidate, origin, false);
-  const memberFixtures = await fixtureResponses(candidate, origin, true);
-  const fixtureRows = [...guestFixtures.values()].find((value) => Array.isArray(value.items))?.items;
-  if (fixtureRows?.length !== 1 || fixtureRows[0].sourceSelection?.variantId !== sourceVariant ||
-    fixtureRows[0].variantId !== orderVariant || sourceVariant === orderVariant) {
-    throw new Error("Guest fixture must preserve separate exact media and order identities");
-  }
-  result.fixture.identitiesDistinct = true;
-  const guestSvgFixtures = await svgCardFixtureResponses(candidate, origin, false);
-  const memberSvgFixtures = await svgCardFixtureResponses(candidate, origin, true);
-  const svgRows = [...guestSvgFixtures.values()].find((value) => Array.isArray(value.items))?.items;
-  if (svgRows?.length !== 1 || svgRows[0].sourceSelection?.variantId !== alternateSourceVariant ||
-      svgRows[0].variantId !== alternateOrderVariant || alternateSourceVariant === alternateOrderVariant) {
-    throw new Error("SVG guest fixture must preserve distinct exact media and order identities");
+  const pr391 = pr391Copy ? await loadPr391Fixture() : null;
+  let guestFixtures, memberFixtures, guestSvgFixtures, memberSvgFixtures;
+  if (!pr391Copy) {
+    guestFixtures = await fixtureResponses(candidate, origin, false);
+    memberFixtures = await fixtureResponses(candidate, origin, true);
+    const fixtureRows = [...guestFixtures.values()].find((value) => Array.isArray(value.items))?.items;
+    if (fixtureRows?.length !== 1 || fixtureRows[0].sourceSelection?.variantId !== sourceVariant ||
+      fixtureRows[0].variantId !== orderVariant || sourceVariant === orderVariant) {
+      throw new Error("Guest fixture must preserve separate exact media and order identities");
+    }
+    result.fixture.identitiesDistinct = true;
+    guestSvgFixtures = await svgCardFixtureResponses(candidate, origin, false);
+    memberSvgFixtures = await svgCardFixtureResponses(candidate, origin, true);
+    const svgRows = [...guestSvgFixtures.values()].find((value) => Array.isArray(value.items))?.items;
+    if (svgRows?.length !== 1 || svgRows[0].sourceSelection?.variantId !== alternateSourceVariant ||
+        svgRows[0].variantId !== alternateOrderVariant || alternateSourceVariant === alternateOrderVariant) {
+      throw new Error("SVG guest fixture must preserve distinct exact media and order identities");
+    }
   }
   if (reviewedCatalog) {
     const manifest = JSON.parse(await readFile(join(candidate, "server/research/master-offerings/data/reviewed-public-media.json"), "utf8"));
@@ -687,7 +831,10 @@ try {
   }
   browser = await chromium.launch({ headless: true, timeout: 12000 });
   result.browser = { name: "Chromium", version: browser.version() };
-  if (reviewedCatalog) {
+  if (pr391) {
+    await capturePr391Copy(browser, pr391, false);
+    await capturePr391Copy(browser, pr391, true);
+  } else if (reviewedCatalog) {
     const guest = await reviewedCatalogFixtures(candidate, false);
     const member = await reviewedCatalogFixtures(candidate, true);
     for (const size of viewports) {
@@ -712,9 +859,10 @@ try {
     await browser?.close();
   } finally {
     preview?.kill();
-    const expectedContexts = reviewedCatalog ? viewports.length * 2 : guestDetailsOnly ? viewports.length : viewports.length * 2 + 2;
+    const expectedContexts = pr391Copy ? 2 : reviewedCatalog ? viewports.length * 2 : guestDetailsOnly ? viewports.length : viewports.length * 2 + 2;
     result.status = !result.captureError && result.captures.length === expectedContexts &&
-      result.captures.every((entry) => entry.screenshots.length === (guestDetailsOnly || reviewedCatalog ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
+      result.captures.every((entry) => entry.screenshots.length === (pr391Copy || entry.kind === "svg-card" ? 1 :
+        guestDetailsOnly || reviewedCatalog ? 2 : entry.name.startsWith("guest-") ? 3 : 4)
         && entry.assertions.every((item) => item.pass)) ? "passed" : "failed";
     await writeFile(join(output, "result.json"), JSON.stringify(result, null, 2) + "\n");
     if (result.status !== "passed") process.exitCode = 1;

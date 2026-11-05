@@ -1,7 +1,7 @@
-name: Quick Order visual capture
+name: PR391 synthetic routed copy proof
 on:
   push:
-    branches: [codex/qo-visual-capture-20261103]
+    branches: [codex/qo-pr391-copy-visual-20261104]
     paths:
       - .github/workflows/qo-visual-capture.yml
       - scripts/qa/qo-visual-capture/**
@@ -13,20 +13,24 @@ jobs:
     # Root must reconcile actual runs and bind Samuel's new Jira allowance first.
     if: >-
       github.repository == 'teamxenios/xenios-website' &&
+      github.ref == 'refs/heads/codex/qo-pr391-copy-visual-20261104' &&
+      github.event.before == 'UNBOUND_PREDECESSOR' &&
+      !github.event.created && !github.event.deleted && !github.event.forced &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: f0e247585c1cd466022530a4f40c99fd03af1957
-      CANDIDATE_TREE: f5cab0de3370d6ea0c9a89ba167fe11f4b8516be
+      CANDIDATE_SHA: cd7ee9fe1120b3ef002e1936ce66ca2439179554
+      CANDIDATE_TREE: 0b5d6b07d43f6a25fee8643f20c2ba245c8d3043
       # Dormant until the existing Root binds a new approval and run reconciliation.
-      CAPTURE_ALLOWANCE_ID: KAN-31/10645
-      CAPTURE_ALLOWANCE_ATTEMPT: "2"
-      CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "2"
-      CAPTURE_PRIOR_RUN_IDS: '["41912809107"]'
-      CAPTURE_RECONCILED_AT: 2026-11-04T21:09:50Z
-      CAPTURE_DIAGNOSIS: "Independent 10650 evidence classification correction; assert four capsule notices and the exact Chondro label"
+      CAPTURE_ALLOWANCE_ID: UNBOUND
+      PR391_FIXTURE_SHA256: UNBOUND_PR391_FIXTURE_SHA256
+      CAPTURE_ALLOWANCE_ATTEMPT: "1"
+      CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
+      CAPTURE_PRIOR_RUN_IDS: '[]'
+      CAPTURE_RECONCILED_AT: UNBOUND
+      CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
         shell: bash
@@ -45,16 +49,16 @@ jobs:
           import { join } from "node:path";
           const e = process.env;
           const id = e.CAPTURE_ALLOWANCE_ID;
+          if (!/^[a-f0-9]{64}$/.test(e.PR391_FIXTURE_SHA256 ?? "")) throw new Error("Exact recomposed PR391 fixture digest is unbound");
           const attempt = Number(e.CAPTURE_ALLOWANCE_ATTEMPT);
           const maximumAttempts = Number(e.CAPTURE_ALLOWANCE_MAX_ATTEMPTS);
           const priorRunIds = JSON.parse(e.CAPTURE_PRIOR_RUN_IDS);
-          if (!/^KAN-31\/\d+$/.test(id) || id === "KAN-31/10563") throw new Error("A new, explicit Jira allowance is required");
-          if (maximumAttempts !== 2 || ![1, 2].includes(attempt) || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
+          if (!/^KAN-31\/\d+$/.test(id) || ["KAN-31/10563", "KAN-31/10645", "KAN-31/10684", "KAN-31/10969", "KAN-31/10973"].includes(id)) throw new Error("A new, explicit Jira allowance is required");
+          if (maximumAttempts !== 1 || attempt !== 1 || e.GITHUB_RUN_ATTEMPT !== "1") throw new Error("Invalid allowance ordinal or rerun");
           if (!Array.isArray(priorRunIds) || priorRunIds.length !== attempt - 1 ||
               priorRunIds.some((v) => typeof v !== "string" || !/^\d+$/.test(v)) ||
               new Set(priorRunIds).size !== priorRunIds.length || priorRunIds.includes(e.GITHUB_RUN_ID)) throw new Error("Reconciled distinct run IDs are required");
           if (!/^\d{4}-\d{2}-\d{2}T.*Z$/.test(e.CAPTURE_RECONCILED_AT) || !Number.isFinite(Date.parse(e.CAPTURE_RECONCILED_AT))) throw new Error("Root must record pre-dispatch reconciliation");
-          if (attempt === 2 && !e.CAPTURE_DIAGNOSIS.trim()) throw new Error("Second attempt requires a diagnosed correction");
           if (e.DISPATCH_MESSAGE.trim() !== "QO capture " + id + " attempt " + attempt) throw new Error("Push is not the exact deliberate capture dispatch");
           const allowance = {
             id, attempt, maximumAttempts, consumedIncludingThisRun: attempt,
@@ -75,6 +79,7 @@ jobs:
         with:
           ref: ${{ env.CANDIDATE_SHA }}
           path: candidate
+          fetch-depth: 3
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
@@ -103,15 +108,19 @@ jobs:
           mkdir -p "$EVIDENCE_DIR"
           sudo unshare --net bash -euc '
             ip link set lo up
+            generator="$7/scripts/qa/qo-visual-capture/build-pr391-routed-copy-fixture.cjs"
+            echo "f705c4ab32a6ba338cbb4fe095ced5395a6bd3482988ea6f48ff560d7b4688f7  $generator" | sha256sum --check --status
+            (cd "$6"; runuser -u "$1" -- env -i HOME="$2" PATH="$3" NODE_PATH="$6/node_modules" "$5" "$generator" "$8/pr391-copy-fixture.json")
+            echo "${16}  $8/pr391-copy-fixture.json" | sha256sum --check --status
             exec runuser -u "$1" -- env -i HOME="$2" PATH="$3" \
-              PLAYWRIGHT_BROWSERS_PATH="$4" \
+              PLAYWRIGHT_BROWSERS_PATH="$4" PR391_FIXTURE_SHA256="${16}" \
               "$5" --import "$6/node_modules/tsx/dist/loader.mjs" \
               "$7/scripts/qa/qo-visual-capture/capture.mjs" "$6" "$8" "$9" \
               "${10}" "${11}" "${12}" "${13}" "${14}" "${15}"
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json" reviewed-catalog
+            "$EVIDENCE_DIR/allowance.json" pr391-copy "$PR391_FIXTURE_SHA256"
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -132,35 +141,85 @@ jobs:
           writeFileSync(join(e.EVIDENCE_DIR, "result.json"), JSON.stringify(result, null, 2) + "\n");
           NODE
           fi
+      - name: Require the exact routed result and both viewport PNGs
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { createHash } from "node:crypto";
+          import { readFileSync, readdirSync } from "node:fs";
+          import { join } from "node:path";
+          import { validateManualReviewPng } from "./harness/scripts/evidence/lib/evidence-artifact-scan-policy.mjs";
+          const e = process.env;
+          const read = (name) => readFileSync(join(e.EVIDENCE_DIR, name));
+          const fixtureBytes = read("pr391-copy-fixture.json");
+          const fixture = JSON.parse(fixtureBytes);
+          const result = JSON.parse(read("result.json"));
+          const fixtureSha = e.PR391_FIXTURE_SHA256;
+          if (createHash("sha256").update(fixtureBytes).digest("hex") !== fixtureSha ||
+              result.fixture?.sha256 !== fixtureSha || result.fixture?.manifestSha256 !== fixture.manifestSha256 ||
+              result.status !== "passed" || result.profile !== "pr391-copy" || !result.network?.loopbackOnly ||
+              result.candidateSha !== e.CANDIDATE_SHA || result.candidateTree !== e.CANDIDATE_TREE ||
+              result.harnessRevision !== e.GITHUB_SHA || result.runId !== e.GITHUB_RUN_ID || result.runAttempt !== 1 ||
+              result.allowance?.id !== e.CAPTURE_ALLOWANCE_ID || result.allowance?.currentRunId !== e.GITHUB_RUN_ID ||
+              result.allowance?.attempt !== 1 || result.allowance?.maximumAttempts !== 1 ||
+              result.allowance?.remainingAfterThisRun !== 0 || result.captures?.length !== 2) {
+            throw new Error("Incomplete PR391 candidate, fixture or run binding");
+          }
+          const guest = fixture.responses["/api/research/early-access/request-intents/catalog"];
+          const files = [];
+          for (const role of ["guest", "member"]) {
+            const name = role + "-pr391-copy-390";
+            const png = name + "-detail.png";
+            files.push(png);
+            const entry = result.captures.find((value) => value.name === name);
+            if (entry?.viewport.width !== 390 || entry.viewport.height !== 844 || entry.mobile !== true ||
+                entry.cases?.length !== 18 || entry.representativeSku !== "GEN-GRP-0368" ||
+                entry.screenshots?.length !== 1 || entry.screenshots[0] !== png ||
+                entry.network.accepted !== 0 || entry.network.deniedWrites !== 0 || entry.network.deniedRecovery !== 0 ||
+                entry.network.deniedWebSockets !== 0 || !entry.assertions?.length ||
+                entry.assertions.some((value) => value.pass !== true) ||
+                (role === "guest" ? entry.agreementAccepted !== true :
+                  !Number.isSafeInteger(entry.network.verifiedMember) || entry.network.verifiedMember <= 0)) {
+              throw new Error("Incomplete PR391 role context: " + role);
+            }
+            const cases = new Map(entry.cases.map((value) => [value.sourceVariantId, value]));
+            for (const identity of fixture.identities) {
+              const proof = cases.get(identity.sourceVariantId);
+              const item = guest.items.find((value) => value.sourceSelection.variantId === identity.sourceVariantId);
+              const docs = (item.reviewedContent?.documentation ?? []).map((document) => document.href);
+              if (proof?.sku !== identity.sku || proof.offeringId !== identity.offeringId ||
+                  proof.reviewedCopy !== identity.reviewedCopy || proof.identityMounted !== true ||
+                  proof.route !== (role === "guest" ? fixture.guestRoute : identity.memberRoute) ||
+                  proof.regionPresent !== identity.reviewedCopy || proof.exactRegion !== true ||
+                  JSON.stringify(proof.documentHrefs) !== JSON.stringify(docs) ||
+                  (role === "guest" && (proof.summaryMatches !== true || proof.backToCatalog !== true))) {
+                throw new Error("Missing PR391 role/pair evidence: " + role + " " + identity.sku);
+              }
+            }
+          }
+          if (JSON.stringify(readdirSync(e.EVIDENCE_DIR).filter((name) => name.endsWith(".png")).sort()) !==
+              JSON.stringify(files.sort())) throw new Error("Exact two PR391 PNGs required");
+          for (const file of files) {
+            const png = read(file);
+            const validation = validateManualReviewPng(png);
+            if (!validation.valid) throw new Error("Invalid viewport PNG: " + file + " (" + validation.reason + ")");
+            if (png.readUInt32BE(16) !== 390 || png.readUInt32BE(20) !== 844) throw new Error("Invalid viewport PNG dimensions: " + file);
+          }
+          NODE
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        if: always()
         with:
-          name: qo-reviewed-catalog-synthetic-visual-proof
+          name: qo-pr391-routed-copy-proof
           path: |
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-supplement.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-supplement.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-supplement.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-bpc.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-supplement.png
-            ${{ env.EVIDENCE_DIR }}/guest-reviewed-catalog-1280-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-supplement.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-320-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-supplement.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-390-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-supplement.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-768-failure.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-bpc.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-supplement.png
-            ${{ env.EVIDENCE_DIR }}/member-reviewed-catalog-1280-failure.png
+            ${{ env.EVIDENCE_DIR }}/guest-pr391-copy-390-detail.png
+            ${{ env.EVIDENCE_DIR }}/member-pr391-copy-390-detail.png
             ${{ env.EVIDENCE_DIR }}/result.json
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: failure()
+        with:
+          name: qo-pr391-routed-copy-failure
+          path: ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7
