@@ -19,6 +19,8 @@ import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import "./assisted-order.css";
+import { useInitialRequestConfiguration } from "./useInitialRequestConfiguration";
+import { RequestConfigurationNotice } from "./RequestConfigurationNotice";
 
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
@@ -184,13 +186,9 @@ function RequestIntentFormSession({
   }, [step, receipt]);
   // A session started by the customer's own "Start another request" receives focus like any step change.
   useEffect(() => { if (focusHeadingOnMount) heading.current?.focus(); }, [focusHeadingOnMount]);
-  useEffect(() => {
-    if (restored || reopened) return;
-    let current = true;
-    void api.config().then((value) => { if (current) setConfig(value); })
-      .catch(() => { if (current) setError("Current request requirements are unavailable. Submission remains closed."); });
-    return () => { current = false; };
-  }, [api, restored, reopened]);
+  const initialConfiguration = useInitialRequestConfiguration(
+    api, !restored && !reopened, setConfig,
+  );
   useEffect(() => {
     if (restored || reopened) return;
     let current = true;
@@ -371,6 +369,12 @@ function RequestIntentFormSession({
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
     {!embedded && <p><a href="/research/early-access">Review access and agreement requirements</a></p>}
     {!storage && <p role="alert">This browser cannot preserve a safe retry marker. Submission is unavailable. Contact support.</p>}
+    {!config && !requirementsNeedRefresh && <RequestConfigurationNotice
+      state={initialConfiguration.state} disabled={busy || frozen.current !== null}
+      onRetry={() => {
+        if (locked.current || frozen.current || requirementsNeedRefresh) return;
+        initialConfiguration.retry();
+      }} />}
     {error && <p className="xenios-order-error" role="alert">{error}</p>}
     {requirementsNeedRefresh && !frozen.current && <section className="xenios-order-panel" aria-label="Refresh request requirements">
       <p role="status">{busy ? "Refreshing current requirements..." : "Refresh the current requirements to continue with your existing selections and contact details."}</p>
