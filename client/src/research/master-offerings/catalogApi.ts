@@ -16,12 +16,12 @@ import {
 /**
  * The read adapter for the v2 catalog.
  *
- * These routes are prepared and deliberately unmounted until the composition
- * root owner mounts them. An unmounted path falls through to the SPA catch-all
- * and returns the app shell as HTML with 200, which `apiGet` already normalizes
- * to `unavailable`. So a surface wired to this adapter today renders its
- * designed pending state rather than an error or, worse, an empty catalog that
- * reads as "we sell nothing".
+ * The routes are mounted behind RESEARCH_MASTER_OFFERINGS_ENABLED. A disabled
+ * route answers 503 with a machine code, and an unmounted path falls through
+ * to the SPA catch-all and returns the app shell as HTML with 200; `apiGet`
+ * normalizes both to `unavailable`. So a surface wired to this adapter renders
+ * its designed pending state rather than an error or, worse, an empty catalog
+ * that reads as "we sell nothing".
  */
 
 export function getMasterOfferingCatalog(
@@ -31,13 +31,26 @@ export function getMasterOfferingCatalog(
   return apiGet(masterOfferingCatalogUrl(query), token);
 }
 
+/**
+ * The one 404 the detail path treats as a missing record rather than an
+ * unpublished API. The server answers a missing or wrong-family product with
+ * this code, and only this code; an HTML or foreign-code 404 still reads as
+ * unavailable, so a member is never told a product does not exist on weaker
+ * evidence.
+ */
+const DETAIL_NOT_FOUND_DENIALS: readonly MasterOfferingCatalogErrorCode[] = [
+  "master_offerings_not_found",
+];
+
 export async function getMasterOfferingDetail(
   token: string | null,
   family: MasterOfferingFamily,
   slug: string,
 ): Promise<ApiResult<MasterOfferingCatalogDetailResponse>> {
   const result = await apiGet<MasterOfferingCatalogDetailResponse>(
-    masterOfferingDetailUrl(family, slug), token,
+    masterOfferingDetailUrl(family, slug),
+    token,
+    DETAIL_NOT_FOUND_DENIALS,
   );
   if (result.kind !== "ok") return result;
   const product = result.data?.ok === true ? result.data.product : null;
