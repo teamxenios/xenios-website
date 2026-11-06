@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T04:03:00.447Z",
+  "updatedAt": "2026-11-06T04:32:42.465Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4761,6 +4761,44 @@
       "createdAt": "2026-11-06T04:03:00.447Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T04:03:00.447Z"
+    },
+    {
+      "id": "KAN13-EA-AGREEMENT-STATUS-RECOVERY-20261106",
+      "title": "Recover Early Access agreement network status",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "1475d418283e646554872db3992abc8a392af423",
+      "paths": [
+        "client/src/research/early-access/agreement-network-recovery.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartAgreements.tsx"
+      ],
+      "dependsOn": [
+        "KAN13-EA-POLICY-V2-REVISED-20261106",
+        "KAN1-EA-INITIAL-REQUEST-OPTIONS-RECOVERY-20261106"
+      ],
+      "scopeNote": "Claim only the two paths listed in this task for actual Root election KAN-13/11812 and independently accepted overlay KAN-13/11811. Use a separate stacked QA branch only, from frozen PR418 commit 1475d418283e646554872db3992abc8a392af423/tree 5917bf218fabc308857a20ae9e568841f1e50970; exact projected overlay tree is ff7b9c878525b4886573317140df273f9d995686. Bind the existing paths client/src/research/early-access/EarlyAccessAgreementSection.tsx, client/src/research/early-access/cart/EarlyAccessMultiCartJourney.tsx and client/src/research/early-access/cart/journey-agreements-submit.test.tsx to current same-Root policy lease 927aa99f-4b6f-44f1-881a-577743135cbf, and bind byte-identical client/src/research/lib/latest-operation.ts to current same-Root request-options lease f4464457-9112-4953-b871-28ea842fd0d4. Do not edit, reclaim, extend or change either prior task, lease, path set or heartbeat. Case-insensitive active/reserved exact, prefix and wildcard CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no live collision on the two new paths and exact sole same-Root bindings on all four shared paths. No Gateway, nav.ts, Core, workflow, release or other path is in scope. Preserve all 154 prior tasks, 175 prior leases, 57 sessions, histories, foreign state, current release, source refs and active leases. This custody transaction performs no registration, source checkout change, application edit, test, runner, provider, configuration, deployment, production or secret access.",
+      "createdAt": "2026-11-06T04:32:42.465Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T04:32:42.465Z"
+    },
+    {
+      "id": "KAN143-EA-ACCESS-HUB-ENTRY-20261106",
+      "title": "Add the Early Access hub entry",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-143",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "client/src/research/pages/AccessHub.tsx"
+      ],
+      "dependsOn": [
+        "KAN13-EA-POLICY-V2-REVISED-20261106"
+      ],
+      "scopeNote": "Claim only client/src/research/pages/AccessHub.tsx for actual Root election KAN-143/11813 from exact protected base 07d727a4c9b5516bbd57aef3aa7f89d359849260; exact projected tree is 5bd68113c37a99fd96cbc2e1469adae37117cc16. Bind existing client/src/research/pages/public-brand-pages.test.tsx to current same-Root policy lease 927aa99f-4b6f-44f1-881a-577743135cbf without editing, reclaiming, extending or otherwise changing that lease or frozen PR418. Case-insensitive active/reserved exact, prefix and wildcard CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no live collision on AccessHub.tsx and the exact sole same-Root binding on the shared public-brand test. No Gateway, nav.ts, Core, workflow, release or other path is in scope. Preserve all prior tasks, leases, sessions, histories, foreign state, current release, source refs and active leases. This custody transaction performs no registration, source checkout change, application edit, test, runner, provider, configuration, deployment, production or secret access.",
+      "createdAt": "2026-11-06T04:32:42.465Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T04:32:42.465Z"
     }
   ]
 }

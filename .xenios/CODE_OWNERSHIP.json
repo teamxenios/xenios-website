@@ -3732,6 +3732,29 @@
       "state": "active",
       "claimedAt": "2026-11-06T04:03:00.447Z",
       "heartbeatAt": "2026-11-06T04:03:00.447Z"
+    },
+    {
+      "id": "38c15cde-a74b-4be6-8a04-57368e3fad83",
+      "task": "KAN13-EA-AGREEMENT-STATUS-RECOVERY-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/early-access/agreement-network-recovery.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartAgreements.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T04:32:42.465Z",
+      "heartbeatAt": "2026-11-06T04:32:42.465Z"
+    },
+    {
+      "id": "1adce018-cdd5-4d65-b5d5-3a2e310953a0",
+      "task": "KAN143-EA-ACCESS-HUB-ENTRY-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/pages/AccessHub.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T04:32:42.465Z",
+      "heartbeatAt": "2026-11-06T04:32:42.465Z"
     }
   ],
   "rules": [
