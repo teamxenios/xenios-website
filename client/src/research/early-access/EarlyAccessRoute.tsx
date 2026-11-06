@@ -538,6 +538,8 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
             : !requestDoorOpen ? <ClosedIntakeRequestReceipt fallback={
               <div role="status" className="mt-5">
                 <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
+                {requestMode.retry && <button type="button" className="btn btn-secondary"
+                  data-testid="quick-order-readiness-retry" onClick={requestMode.retry}>Retry request setup</button>}
                 <a href="/research/support">Contact support</a>
               </div>
             } />

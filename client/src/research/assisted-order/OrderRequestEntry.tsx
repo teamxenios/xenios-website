@@ -47,6 +47,8 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
     <p>{kind === "blocked"
       ? "An earlier request needs support review. Do not create a replacement until staff check for duplicates."
       : "The current request path could not be confirmed. No new request was sent by this page. Contact support before a replacement."}</p>
+    {kind === "unavailable" && props.mode.retry && <button type="button" className="btn btn-secondary"
+      data-testid="request-door-retry" onClick={props.mode.retry}>Retry request setup</button>}
     <a href="/research/support">Contact support</a></section>;
   return <div data-testid={"request-door-" + kind}>
     {prior === "legacy" ? <p role="status">Continue your existing order-request attempt. Its key and recovery rules are unchanged; do not submit a replacement.</p> : null}

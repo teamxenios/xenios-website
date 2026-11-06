@@ -442,6 +442,77 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="quick-order-outer-help"]')).toBeNull();
     expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
   });
+  it("retries a stalled Early Access readiness read once and ignores its late answer", async () => {
+    window.history.replaceState(null, "", "/earlyaccess");
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on" });
+    const original = fetch.getMockImplementation()!;
+    const path = "/api/research/early-access/request-intents/config";
+    let release!: (response: Response) => void;
+    const held = new Promise<Response>((resolve) => { release = resolve; });
+    const reads = () => fetch.mock.calls.filter(([url]) => String(url) === path);
+    let first = true;
+    fetch.mockImplementation((input, init) => {
+      if (String(input) !== path) return original(input, init);
+      if (first) {
+        first = false;
+        return held;
+      }
+      return Promise.resolve(jsonResponse({ enabled: false, error: "request_intent_disabled" }, 503));
+    });
+
+    vi.useFakeTimers();
+    try {
+      await act(async () => root.render(<EarlyAccessRoute requestOnly />));
+      expect(container.textContent).toContain("Checking the current request path");
+      expect(reads()).toHaveLength(1);
+      await act(async () => vi.advanceTimersByTimeAsync(12_000));
+      expect(reads()).toHaveLength(1);
+      expect(reads()[0][1]?.signal?.aborted).toBe(true);
+      expectPublicSupport();
+      const retry = container.querySelector<HTMLButtonElement>('[data-testid="quick-order-readiness-retry"]')!;
+      expect(retry).toBeTruthy();
+      await act(async () => { retry.click(); retry.click(); });
+      expect(reads()).toHaveLength(2);
+      expect(container.querySelector('[data-testid="quick-order-readiness-retry"]')).toBeNull();
+
+      await act(async () => { release(await original(path)); });
+      expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+      expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+      expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeNull();
+      expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+      expect(window.location.pathname).toBe("/earlyaccess");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("opens the Early Access form after an explicit retry confirms the request path", async () => {
+    window.history.replaceState(null, "", "/earlyaccess");
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on" });
+    const original = fetch.getMockImplementation()!;
+    const path = "/api/research/early-access/request-intents/config";
+    let initial = true;
+    fetch.mockImplementation((input, init) => {
+      if (String(input) === path && initial) {
+        initial = false;
+        return Promise.reject(new TypeError("network"));
+      }
+      return original(input, init);
+    });
+    await renderStorefront(true);
+    expectPublicSupport();
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    const retry = container.querySelector<HTMLButtonElement>('[data-testid="quick-order-readiness-retry"]')!;
+    expect(retry).toBeTruthy();
+
+    await act(async () => retry.click());
+    await renderStorefront(true);
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="quick-order-readiness-retry"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(sessionReads(fetch)).toHaveLength(1);
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(0);
+  });
   it("shows a truthful retry after a refused anonymous unlock and recovers without reloading", async () => {
     window.history.replaceState(null, "", "/research/early-access/order-request");
     const options = { bridgeEnabled: true, mixedMode: "on" as const, session: "fresh-open" as const,

@@ -3,6 +3,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { beforeEach, afterEach, describe, expect, it, vi } from "vitest";
 import { OrderRequestEntry } from "./OrderRequestEntry";
+import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "@shared/research/assisted-order/form";
 import type { MemberInfo, MemberSessionStatus, RecoveryState } from "../core";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { ASSISTED_ORDER_DRAFT_KEY } from "./draft-store";
@@ -49,13 +50,32 @@ describe("actual front-door selection and preservation (child form boundary stub
     expect(container.querySelector('[data-testid="mixed-form"]')?.textContent?.trim()).toBe("standalone");
     expect(container.querySelector('[data-testid="legacy-form"]')).toBeNull();
   });
-  it("keeps unknown standalone readiness closed instead of substituting legacy", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 503,
-      json: async () => ({ enabled: false, error: "request_intent_unavailable" }) })));
+  it("keeps unknown standalone readiness closed and retries into confirmed mixed intake", async () => {
+    const config = {
+      enabled: true,
+      requiredAgreements: [{ kind: "early_access_terms", version: "v1" }],
+      formAcknowledgments: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((ack) => ({
+        id: ack.id, scope: ack.scope, ...assistedOrderFormPair(ack), copy: ack.copy,
+      })),
+    };
+    const fetch = vi.fn<typeof globalThis.fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ enabled: false, error: "request_intent_unavailable" }), { status: 503 }))
+      .mockResolvedValue(new Response(JSON.stringify(config)));
+    vi.stubGlobal("fetch", fetch);
     await render(<OrderRequestEntry />);
     expect(container.querySelector('[data-testid="request-door-held"]')).toBeTruthy();
     expect(container.querySelector("a")?.getAttribute("href")).toBe("/research/support");
     expect(container.querySelector('[data-testid="legacy-form"]')).toBeNull();
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    const retry = container.querySelector<HTMLButtonElement>('[data-testid="request-door-retry"]')!;
+    expect(retry).toBeTruthy();
+    await act(async () => retry.click());
+    await render(<OrderRequestEntry />);
+    expect(container.querySelector('[data-testid="mixed-form"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="legacy-form"]')).toBeNull();
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch.mock.calls.every(([, init]) => !init?.method || init.method === "GET")).toBe(true);
   });
   it("routes the enabled embedded door and clinical hint to mixed, not the old Care redirect", async () => {
     await render(<OrderRequestEntry embedded mode={{ kind: "mixed" }}
