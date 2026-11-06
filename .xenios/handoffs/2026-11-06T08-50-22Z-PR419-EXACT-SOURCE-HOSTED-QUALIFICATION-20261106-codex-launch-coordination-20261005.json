@@ -1,0 +1,91 @@
+{
+  "state": "SS31_EXACT_SOURCE_AND_HOSTED_QUALIFIED",
+  "scope": "Immutable PR419 source and ordinary hosted application verification only",
+  "writer": "codex-launch-coordination-20261005",
+  "rootThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
+  "path": "server/research/master-offerings/data/reviewed-public-content.json",
+  "ss31": {
+    "pr": 419,
+    "branch": "codex/early-access-ss31-copy-20261106",
+    "head": "6f88a48b710c1e304170da25cb7cbdeaa1713255",
+    "tree": "ba85257d546d0e09828f386ccd38e43b1721073d",
+    "run": 42150370436,
+    "attempt": 1,
+    "passed": 18603,
+    "skipped": 83,
+    "filesPassed": 1001,
+    "filesSkipped": 6,
+    "trustedJobs": {
+      "test": 127671873541,
+      "protection": 127671873908,
+      "build": 127671873933,
+      "typecheck": 127671873941,
+      "Required CI completion": 127674173277
+    },
+    "actualCheckouts": {
+      "test": {
+        "id": 127671873541,
+        "checkout": "884198a361a5519df48e7af44c61b8adef9cc8ad",
+        "logSha256": "56967f48ed5f097ab5e94b2520333f2d16f8710d3eb208536057a1405acfb2ac"
+      },
+      "protection": {
+        "id": 127671873908,
+        "checkout": "6f88a48b710c1e304170da25cb7cbdeaa1713255",
+        "logSha256": "e4bc97eacbf505d84ceaa7fac0a7a35c2231779cb6f300b8bcfd2ef626577bfd"
+      },
+      "build": {
+        "id": 127671873933,
+        "checkout": "884198a361a5519df48e7af44c61b8adef9cc8ad",
+        "logSha256": "d7df2c4daca0620676b0767c764ba23e26d801492d32674e69004b5eb1cf1f4f"
+      },
+      "typecheck": {
+        "id": 127671873941,
+        "checkout": "884198a361a5519df48e7af44c61b8adef9cc8ad",
+        "logSha256": "001411825705b2c2d65655649de2aa943b4cf01457f5be2a19a5de37ea260da5"
+      }
+    },
+    "checkoutTrees": {
+      "6f88a48b710c1e304170da25cb7cbdeaa1713255": "ba85257d546d0e09828f386ccd38e43b1721073d",
+      "884198a361a5519df48e7af44c61b8adef9cc8ad": "ba85257d546d0e09828f386ccd38e43b1721073d"
+    },
+    "parent": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "task": "KAN6-EA-0344-REVIEWED-DESCRIPTION-20261106",
+    "lease": "279d100c-c363-47c7-9577-88ab9d3be6a4",
+    "blob": "7c56cc4dc3906a567f26ee41cf08a3c3c1db2e93",
+    "author": "KAN-6/11760",
+    "election": "KAN-6/11762",
+    "preparedSource": "KAN-6/11764",
+    "publishedSource": "KAN-6/11769",
+    "projectedDescriptions": 87,
+    "projectedArtwork": 86,
+    "bodyWholeReadback": true,
+    "mounted": "Guest and synthetic member details required. No exact admitted candidate URL, workflow, or local fixture. Watch 11459 terminal exit 0."
+  },
+  "sourceVerified": {
+    "directParent": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "onlyChangedPath": "server/research/master-offerings/data/reviewed-public-content.json",
+    "postimageTree": "ba85257d546d0e09828f386ccd38e43b1721073d",
+    "postimageBlob": "7c56cc4dc3906a567f26ee41cf08a3c3c1db2e93"
+  },
+  "frozenDraft": true,
+  "mountedAndRelease": "Pending for this exact source. No runner, merge or deployment is part of the records transaction.",
+  "serialSuccessor": {
+    "task": "KAN6-EA-SERIAL-REVIEWED-COPY-20261106",
+    "lease": "008be571-7517-4327-9b72-385c422fc61d",
+    "branch": "codex/early-access-reviewed-catalog-serial-20261106",
+    "base": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "expectedTree": "0b7a2ad41f40144c72709af7cff21decba366e16",
+    "expectedRegistryBlob": "32535cb1aafb4d8f8336986196ef7acf7cb45f76",
+    "scope": [
+      "server/research/master-offerings/data/reviewed-public-content.json"
+    ],
+    "recordsInOrder": [
+      "GEN-GRP-0344",
+      "GEN-GRP-0295",
+      "GEN-GRP-0260",
+      "GEN-GRP-0395"
+    ],
+    "independentAssembly": "KAN-6/11866",
+    "independentAssemblyReceiptSha256": "028188a3ab1657d11bb82756b31f4aa294a04a4f033ee1ab508a5c62a5f89f91"
+  }
+}

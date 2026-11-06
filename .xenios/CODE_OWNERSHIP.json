@@ -3688,7 +3688,7 @@
       "paths": [
         "server/research/master-offerings/data/reviewed-public-content.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T02:22:28.430Z",
       "heartbeatAt": "2026-11-06T02:22:28.430Z"
     },
@@ -3811,6 +3811,17 @@
       "state": "handoff",
       "claimedAt": "2026-11-06T07:44:50.718Z",
       "heartbeatAt": "2026-11-06T07:44:50.718Z"
+    },
+    {
+      "id": "008be571-7517-4327-9b72-385c422fc61d",
+      "task": "KAN6-EA-SERIAL-REVIEWED-COPY-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T08:50:22.156Z",
+      "heartbeatAt": "2026-11-06T08:50:22.156Z"
     }
   ],
   "rules": [
