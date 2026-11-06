@@ -76,6 +76,33 @@ describe("generated dataset loading", () => {
     expect(loaded.summary.families).toEqual({ research_vials: 1 });
   });
 
+  it("corrects the selected GRP-0337 strength without changing its identities", () => {
+    const offeringId = "mo_ef095e8f7e8fe3a7f85d";
+    const variantId = "mov_50fc8d22f6777f3f0d4d";
+    const malformed = "SEMAGLUTIDE+BPC-157 5 mg/650 mcgmg/mcg";
+    const corrected = "SEMAGLUTIDE 5 mg + BPC-157 650 mcg";
+    const slug = "semaglutide-bpc-157-fixture";
+    const read = (id: string, variant: string, label: string) =>
+      loadMasterOfferingDataset(dataset({
+        products: [generatedOffering({
+          id,
+          slug,
+          variants: [{ id: variant, label, displayState: "request_access" }],
+        })],
+      })).products[0];
+
+    const selected = read(offeringId, variantId, malformed);
+    expect(selected).toMatchObject({
+      id: offeringId,
+      slug,
+      variants: [{ id: variantId, label: corrected, displayState: "request_access" }],
+    });
+    expect(read("mo_other", variantId, malformed).variants[0].label).toBe(malformed);
+    expect(read(offeringId, "mov_other", malformed).variants[0].label).toBe(malformed);
+    expect(read(offeringId, variantId, "Independently sourced label").variants[0].label)
+      .toBe("Independently sourced label");
+  });
+
   it("reports a header that disagrees with the real count instead of trusting it", () => {
     const loaded = loadMasterOfferingDataset(
       dataset({ canonicalProductCount: 999 }),
