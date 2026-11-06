@@ -1,0 +1,133 @@
+{
+  "state": "PR428_SOURCE_AND_ORDINARY_HOSTED_QA_CLOSED_FOR_HANDOFF",
+  "source": {
+    "branch": "codex/early-access-reviewed-catalog-serial-20261106",
+    "head": "2bed5c01465f14201dea889971b5276c99dab297",
+    "tree": "0b7a2ad41f40144c72709af7cff21decba366e16",
+    "releaseBase": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "parent": "6f88a48b710c1e304170da25cb7cbdeaa1713255",
+    "path": "server/research/master-offerings/data/reviewed-public-content.json",
+    "blob": "32535cb1aafb4d8f8336986196ef7acf7cb45f76",
+    "canonical": "01a939dd1eb777ad655ba99be9589f4efebdc283",
+    "lease": "008be571-7517-4327-9b72-385c422fc61d",
+    "projectedDescriptions": 90,
+    "unchangedArtworkMappings": 86,
+    "sharedCheckoutUnchanged": true,
+    "push": "To https://github.com/teamxenios/xenios-website.git\n*\t2bed5c01465f14201dea889971b5276c99dab297:refs/heads/codex/early-access-reviewed-catalog-serial-20261106\t[new branch]\nDone\n",
+    "sourceReview": "KAN-6/11866",
+    "rootElection": "KAN-6/11865"
+  },
+  "sourceReceiptSha256": "28a570dc04dde8d8d247b0e44152448be2d8436603237d9a1c23c4fca3edd23b",
+  "hosted": {
+    "state": "EXACT_SOURCE_HOSTED_QUALIFIED_MOUNTED_PENDING",
+    "pr": 428,
+    "head": "2bed5c01465f14201dea889971b5276c99dab297",
+    "tree": "0b7a2ad41f40144c72709af7cff21decba366e16",
+    "base": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "run": 42191273723,
+    "attempt": 1,
+    "watchSession": 6587,
+    "watchExit": 0,
+    "actualJobLogs": {
+      "test": {
+        "jobId": 127803610987,
+        "rawLogBytes": 1223420,
+        "rawLogSha256": "5fd769a474a09fc07a7d1a25e84c3d01a572954ce923bd1c2b25246e310c6241",
+        "checkout": "da5891f9c91b8400e1ba2b9231eb484452283363",
+        "testTotals": [
+          {
+            "passed": 150,
+            "skipped": 0,
+            "total": 150
+          },
+          {
+            "passed": 18603,
+            "skipped": 83,
+            "total": 18686
+          }
+        ],
+        "fileTotals": [
+          {
+            "passed": 4,
+            "skipped": 0,
+            "total": 4
+          },
+          {
+            "passed": 1001,
+            "skipped": 6,
+            "total": 1007
+          }
+        ],
+        "full": {
+          "passed": 18603,
+          "skipped": 83,
+          "total": 18686
+        },
+        "fullFiles": {
+          "passed": 1001,
+          "skipped": 6,
+          "total": 1007
+        }
+      },
+      "typecheck": {
+        "jobId": 127803611239,
+        "rawLogBytes": 15331,
+        "rawLogSha256": "58262ae434c17cd70cc5fcc6450d6c98fb58ba2e0a305a85c1ae8606406338d5",
+        "checkout": "da5891f9c91b8400e1ba2b9231eb484452283363"
+      },
+      "build": {
+        "jobId": 127803611244,
+        "rawLogBytes": 77888,
+        "rawLogSha256": "8cae53c20ae8dba93ea0367afaba1e375781ffeb1bfba5b8d20c3d7aa24d8598",
+        "checkout": "da5891f9c91b8400e1ba2b9231eb484452283363"
+      },
+      "protection": {
+        "jobId": 127803611332,
+        "rawLogBytes": 113109,
+        "rawLogSha256": "86aa6b946945c3abae112658430bafba0bc2c5d426a15906abc4bf4b6d263e0d",
+        "checkout": "2bed5c01465f14201dea889971b5276c99dab297"
+      }
+    },
+    "checkoutTrees": {
+      "2bed5c01465f14201dea889971b5276c99dab297": {
+        "tree": "0b7a2ad41f40144c72709af7cff21decba366e16",
+        "parents": [
+          "6f88a48b710c1e304170da25cb7cbdeaa1713255"
+        ]
+      },
+      "da5891f9c91b8400e1ba2b9231eb484452283363": {
+        "tree": "0b7a2ad41f40144c72709af7cff21decba366e16",
+        "parents": [
+          "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+          "2bed5c01465f14201dea889971b5276c99dab297"
+        ]
+      }
+    },
+    "trustedChecks": {
+      "test": 127803610987,
+      "typecheck": 127803611239,
+      "build": 127803611244,
+      "protection": 127803611332,
+      "Required CI completion": 127805862664
+    },
+    "trustedAppId": 15368,
+    "independentExactAssembly": "KAN-6/11866",
+    "rootElection": "KAN-6/11865",
+    "lease": "008be571-7517-4327-9b72-385c422fc61d",
+    "projectedDescriptions": 90,
+    "hostedOnly": true,
+    "remaining": "Admitted mounted guest and member verification of four exact detail records, then qualified rollout."
+  },
+  "hostedReceiptSha256": "cdfafb8edc7844e6f708769e298318bcd8bb0ae815b2e2cf8e7c4e82a388dbb8",
+  "independent": {
+    "sourceAssembly": "KAN-6/11866",
+    "custody": "KAN-6/11869",
+    "publishedSourceAndHosted": "KAN-6/11872",
+    "publishedReceiptSha256": "a120dd70d009683f9f21f53c404f48d053ddbafc5e84ebe7094f379eca5af8c0",
+    "catalogProjectionReplay": "KAN-6/11871"
+  },
+  "task": "KAN6-EA-SERIAL-REVIEWED-COPY-20261106",
+  "lease": "008be571-7517-4327-9b72-385c422fc61d",
+  "next": "Admitted guest and member mounted details for each of the four exact records. Maintain the independent policy-first order and the ordinary release gates.",
+  "limits": "Draft source and ordinary hosted evidence only. No browser job or deployment is part of this handoff."
+}

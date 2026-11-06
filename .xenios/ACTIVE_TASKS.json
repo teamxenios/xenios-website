@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T08:50:22.156Z",
+  "updatedAt": "2026-11-06T09:07:55.252Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4905,7 +4905,7 @@
       "id": "KAN6-EA-SERIAL-REVIEWED-COPY-20261106",
       "title": "Serialize four reviewed catalog copy records",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-6",
       "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
       "paths": [
@@ -4917,7 +4917,13 @@
       "scopeNote": "Claim only server/research/master-offerings/data/reviewed-public-content.json for Root election KAN-6/11865 and exact independent assembly acceptance KAN-6/11866 under existing standing ordinary catalog authorization. Use intended branch codex/early-access-reviewed-catalog-serial-20261106 from exact protected release 07d727a4c9b5516bbd57aef3aa7f89d359849260; expected combined tree 0b7a2ad41f40144c72709af7cff21decba366e16 and expected registry blob 32535cb1aafb4d8f8336986196ef7acf7cb45f76. Apply exactly four reviewed copy records in this order: GEN-GRP-0344, GEN-GRP-0295, GEN-GRP-0260, GEN-GRP-0395. This is one source path and four reviewed copy records only. The predecessor SS-31 PR419 source 6f88a48b710c1e304170da25cb7cbdeaa1713255/tree ba85257d546d0e09828f386ccd38e43b1721073d is frozen, independently accepted at KAN-6/11769, and closed to QA/HANDOFF in this same serialized records transaction; do not reuse predecessor lease 279d100c-c363-47c7-9577-88ab9d3be6a4 as a blanket grant. Fresh post-handoff case-insensitive exact, ancestor, prefix and wildcard active/reserved CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no live conflict. Combined hosted and mounted qualification remain separate Root gates. Preserve every other task, lease, heartbeat, rule, assignment, identity, session, history and release record. This custody transaction performs no registration, session mutation, worktree, source, branch, Node, test, build, browser, workflow, provider, merge, deployment, production, policy, Core, configuration or data action.",
       "createdAt": "2026-11-06T08:50:22.156Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-06T08:50:22.156Z"
+      "claimedAt": "2026-11-06T08:50:22.156Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "2bed5c01465f14201dea889971b5276c99dab297",
+        "file": ".xenios/handoffs/2026-11-06T09-07-55Z-PR428-EXACT-SOURCE-AND-HOSTED-QUALIFICATION-20261106-codex-launch-coordination-20261005.json",
+        "at": "2026-11-06T09:07:55.252Z"
+      }
     }
   ]
 }
