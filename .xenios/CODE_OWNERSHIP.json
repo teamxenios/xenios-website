@@ -3707,6 +3707,17 @@
       "state": "active",
       "claimedAt": "2026-11-06T03:36:05.624Z",
       "heartbeatAt": "2026-11-06T03:36:05.624Z"
+    },
+    {
+      "id": "4f09f46e-f032-465b-b367-d302e4235b7e",
+      "task": "KAN1-EA-GUIDANCE-EMBEDDED-HEADING-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T03:49:36.251Z",
+      "heartbeatAt": "2026-11-06T03:49:36.251Z"
     }
   ],
   "rules": [

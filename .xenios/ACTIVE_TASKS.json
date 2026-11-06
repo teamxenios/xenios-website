@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T03:36:05.624Z",
+  "updatedAt": "2026-11-06T03:49:36.251Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4722,6 +4722,24 @@
       "createdAt": "2026-11-06T03:36:05.624Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T03:36:05.624Z"
+    },
+    {
+      "id": "KAN1-EA-GUIDANCE-EMBEDDED-HEADING-20261106",
+      "title": "Correct the embedded guidance heading test coverage",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-1",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.test.tsx"
+      ],
+      "dependsOn": [
+        "KAN1-EA-CATALOG-PATHWAY-GUIDANCE-20261106"
+      ],
+      "scopeNote": "Claim only client/src/research/assisted-order/RequestIntentForm.test.tsx for the required PR421 successor under actual Root election KAN-13/11797 and independent finding KAN-13/11795, on existing branch codex/early-access-catalog-guidance-20261106 from source head 52513090bafd998900b0903295e996af5dbd2f36 and protected release base 07d727a4c9b5516bbd57aef3aa7f89d359849260. Advance exact test preimage 88ad48a2f23aeddd8f8eada2de51a24560deea38 to b23e081879d33935cacc2becc29f1f8ea61003c4. Exact patch SHA-256 is 3a174e2eb9381b7b01c7ddeb8e37b1a437438049b12adfd481ef610ce27de2b3, receipt SHA-256 is 8fbfba26f438ed50b9fef2ec27979f51cd6ec6d5ca56feab53141d2e9d794d32 and projected tree is bb8d367813a34887f1d19c0c549d3c4c7d31a740. Existing guidance model and model-test custody remains byte-exact under lease 16f6a6f2-72ad-44cf-8091-b736c766a6b3, and shared RequestIntentForm.tsx custody remains byte-exact under lease 427bb26e-5d85-4db5-b0ec-1e88334b33f1. Fresh protected FILE_OWNERSHIP plus active/reserved exact, prefix and wildcard CODE_OWNERSHIP audits found no overlap. Preserve all 152 prior tasks, 173 prior leases, 57 sessions, rules, histories and refs. Source application, tests, independent review, protected integration and release remain separate Root gates. This custody transaction performs no application edit, physical checkout change, workflow, test execution, provider, configuration, deployment, production, new session or other task mutation.",
+      "createdAt": "2026-11-06T03:49:36.251Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T03:49:36.251Z"
     }
   ]
 }
