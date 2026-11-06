@@ -29,6 +29,14 @@ function item(id: string, clinical: boolean): RequestIntentCatalogItem {
     sourceDisplayState: clinical ? "care_pathway" : "request_access", sourceVariantDisplayState: clinical ? "care_pathway" : "request_access", sourceRefusal: null,
   };
 }
+const reviewedArtwork = {
+  primary: { href: "/research/product-media/synthetic-reviewed.webp", altText: "Synthetic reviewed design", width: 1024, height: 1024 },
+  labelPreview: { href: "/research/product-media/synthetic-label.webp", altText: "Synthetic front label", width: 1000, height: 850 },
+  packagingDesign: true,
+};
+const reviewedCopy = { summary: "Synthetic reviewed summary", overview: "Synthetic complete overview",
+  specifications: [{ label: "Product code", value: "QA-EXACT" }] };
+
 function makeApi() {
   return {
     config: vi.fn(async () => ({ legal: [{ kind: "fixture-terms", version: "fixture-v1", label: "Synthetic legal requirement" }],
@@ -101,8 +109,9 @@ function simulateReload() {
   expect(raw).not.toBeNull();
   sessionStorage.setItem(REQUEST_INTENT_RECEIPT_RECORD_KEY, JSON.stringify({ ...JSON.parse(raw!), pageLoad: "an-earlier-page-load" }));
 }
-async function click(text: string) {
-  const button = [...host.querySelectorAll("button")].find((entry) => entry.textContent === text);
+async function click(text: string, accessibleName?: string) {
+  const button = [...host.querySelectorAll("button")].find((entry) =>
+    entry.textContent === text && (accessibleName === undefined || entry.getAttribute("aria-label") === accessibleName));
   expect(button).toBeTruthy();
   await act(async () => button!.click());
 }
@@ -185,15 +194,165 @@ describe("mixed private request customer form source", () => {
     const mappedImage = mapped.querySelector("img");
     expect(mappedImage?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
     expect(mappedImage?.getAttribute("alt")).toBe("Synthetic mapped illustration, capsule");
-    expect(missingSource.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
-    expect(missingSource.textContent).toContain("format unconfirmed");
+    expect(mapped.querySelector(".xenios-order-card-intro > .xenios-order-card-media > figure"))
+      .toBe(mappedImage?.closest("figure"));
+    const fallbackImage = missingSource.querySelector("img");
+    expect(fallbackImage?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
+    expect(fallbackImage?.getAttribute("alt")).toBe("Synthetic missing-source illustration, format unconfirmed");
+    expect(missingSource.querySelector("figcaption")).toBeNull();
     expect(mapped.textContent).toContain("$12.50");
-    await click("Add Synthetic mapped to request");
+    await click("Add to request", "Add to request: Synthetic mapped, Synthetic variant");
     expect(mapped.querySelector('input[type="number"]')).not.toBeNull();
     expect(host.querySelector('aside img')).toBeNull();
 
     await render(api, true);
     expect(host.querySelector(".xenios-order-card img")).toBeNull();
+  });
+
+  it("opens exact guest catalog details without changing the request or leaving the catalog", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    const row = { ...item("mapped", false), variantId: "mov_9262033fe69a14a50f1c",
+      specification: "Synthetic 10 mg", format: "Synthetic capsule", packBasis: "Synthetic single pack",
+      reviewedContent: { brand: "Synthetic brand", summary: "Synthetic card summary", overview: "Synthetic variant overview" },
+      sourceSelection: { family: "synthetic", slug: "mapped", variantId: "mov_82974ab2f9c652c2cb12" } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [row], total: 1 });
+
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    await click("Add to request", "Add to request: Synthetic mapped, Synthetic 10 mg");
+    const quantity = host.querySelector<HTMLInputElement>(".xenios-order-card input[type=number]")!;
+    await type(quantity, "3");
+    expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.summary);
+    expect(host.querySelector(".xenios-order-card")?.textContent).not.toContain(row.reviewedContent.overview);
+    const trigger = host.querySelector<HTMLButtonElement>('button[aria-label="View details for Synthetic mapped, Synthetic 10 mg"]')!;
+    const reads = api.catalog.mock.calls.length;
+    const url = window.location.href;
+
+    trigger.focus();
+    await act(async () => trigger.click());
+    const dialog = document.querySelector('[role="dialog"]');
+    expect(dialog?.querySelector("h2")?.textContent).toBe(row.productName);
+    expect(dialog?.textContent).toContain(row.reviewedContent.overview);
+    for (const fact of [row.specification, row.format, row.packBasis]) {
+      expect(dialog?.textContent).toContain(fact);
+    }
+    expect(dialog?.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
+    expect(dialog?.contains(document.activeElement)).toBe(true);
+
+    await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+
+    await act(async () => trigger.click());
+    const back = [...document.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')]
+      .find((button) => button.textContent?.trim() === "Back to catalog");
+    expect(back).toBeTruthy();
+    await act(async () => back!.click());
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(quantity.value).toBe("3");
+    expect(window.location.href).toBe(url);
+    expect(api.catalog).toHaveBeenCalledTimes(reads);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+    expect(storedKeys()).toEqual([]);
+  });
+
+  it("shows approved art and complete details for a confirmed member without changing the request", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, items: [
+      { ...item("reviewed", false), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy,
+        sourceSelection: { family: "research_peptides_materials", slug: "reviewed", variantId: "mov_82974ab2f9c652c2cb12" } },
+      { ...item("clinical", true), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy },
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={"a".repeat(64)} />));
+    const [card, clinical] = host.querySelectorAll(".xenios-order-card");
+    expect(card.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(card.textContent).toContain(reviewedCopy.summary);
+    expect(card.textContent).not.toContain(reviewedCopy.overview);
+    expect(clinical.querySelector("img")).toBeNull();
+    expect(clinical.querySelector('button[aria-label^="View details"]')).toBeNull();
+    expect(clinical.textContent).toContain("Clinical review required. Not a prescription.");
+    expect(clinical.textContent).toContain("Final price follows applicable review.");
+
+    await click("Add Synthetic reviewed to request");
+    const quantity = card.querySelector<HTMLInputElement>('input[type="number"]')!;
+    await type(quantity, "3");
+    const trigger = card.querySelector<HTMLButtonElement>('button[aria-label^="View details"]')!;
+    const reads = api.catalog.mock.calls.length;
+    const url = window.location.href;
+    trigger.focus();
+    await act(async () => trigger.click());
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.textContent).toContain(reviewedCopy.overview);
+    expect(dialog.textContent).toContain("QA-EXACT");
+    expect(dialog.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(dialog.querySelector("a")?.getAttribute("href")).toBe(reviewedArtwork.labelPreview.href);
+    expect(dialog.querySelector('button[aria-label^="Add "]')).toBeNull();
+    await act(async () => dialog.querySelector("img")!.dispatchEvent(new Event("error")));
+    expect(dialog.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
+    expect(dialog.querySelector("a")).toBeNull();
+    expect(dialog.textContent).toContain(reviewedCopy.overview);
+    await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+    await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(quantity.value).toBe("3");
+    expect(host.querySelector('aside[aria-label="Selected request items"]')?.textContent).toContain("Requested quantity: 3");
+    expect(window.location.href).toBe(url);
+    expect(api.catalog).toHaveBeenCalledTimes(reads);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+    expect(storedKeys()).toEqual([]);
+  });
+
+  it("keeps member copy-only and art-only details honest and excludes rows without an exact source", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, total: 4, items: [
+      { ...item("copy-only", false), reviewedContent: reviewedCopy },
+      { ...item("art-only", false), reviewedMedia: reviewedArtwork, selectableForReview: false, intentExclusion: "coming_soon" },
+      { ...item("unreviewed", false) },
+      { ...item("unbound", false), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy, sourceSelection: undefined },
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={"a".repeat(64)} />));
+    const [copy, art, unreviewed, unbound] = host.querySelectorAll(".xenios-order-card");
+    expect(copy.querySelector("img")).toBeNull();
+    expect(art.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(art.textContent).toContain("Coming soon");
+    expect(art.querySelector('button[aria-label^="Add "]')).toBeNull();
+    for (const card of [unreviewed, unbound]) {
+      expect(card.querySelector("img")).toBeNull();
+      expect(card.querySelector('button[aria-label^="View details"]')).toBeNull();
+    }
+
+    await act(async () => copy.querySelector<HTMLButtonElement>('button[aria-label^="View details"]')!.click());
+    let dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.textContent).toContain(reviewedCopy.overview);
+    expect(dialog.querySelector("img")).toBeNull();
+    await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
+    await vi.waitFor(() => expect(document.querySelector('[role="dialog"]')).toBeNull());
+
+    await act(async () => art.querySelector<HTMLButtonElement>('button[aria-label^="View details"]')!.click());
+    dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(dialog.querySelector('section[aria-label="Product information"]')).toBeNull();
+    expect(dialog.textContent).toContain("Return to the catalog for this listing’s current availability and request options.");
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
+  });
+
+  it.each([undefined, "unscoped", "owner-a"])("keeps exact details closed for an unconfirmed owner (%s)", async (ownerKey) => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, total: 1, items: [
+      { ...item("reviewed", false), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy },
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={ownerKey} />));
+    const card = host.querySelector(".xenios-order-card")!;
+    expect(card.querySelector("img")).toBeNull();
+    expect(card.querySelector('button[aria-label^="View details"]')).toBeNull();
+    expect(card.textContent).not.toContain(reviewedCopy.overview);
   });
 
   it.each(["submission", "recovery"] as const)("publishes a confirmed %s receipt only after clearing its owned marker", async (path) => {
@@ -324,6 +483,31 @@ describe("mixed private request customer form source", () => {
     expect(host.textContent).toContain("Source restriction: provider_pathway_family");
     expect(host.textContent).toContain("Source restriction: classification_pending");
     expect([...host.querySelectorAll("button")].some((button) => /approve|paid|fulfill/i.test(button.textContent ?? ""))).toBe(false);
+  });
+});
+
+describe("mixed catalog family labels", () => {
+  it("shows a neutral clinical option and queries with the original family key", async () => {
+    const api = makeApi();
+    await render(api, true);
+    const family = "clinical_formulations_503a";
+    const filter = host.querySelector<HTMLSelectElement>("select");
+    expect(filter).not.toBeNull();
+    expect(filter?.querySelector('option[value="clinical_formulations_503a"]')?.textContent)
+      .toBe("Clinical formulations");
+    expect(filter?.querySelector('option[value="research_peptides_materials"]')?.textContent)
+      .toBe("research peptides materials");
+    expect(host.textContent).not.toMatch(/503a/i);
+
+    await act(async () => {
+      filter!.value = family;
+      filter!.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    expect(api.catalog).toHaveBeenLastCalledWith({ search: "", family, page: 1, pageSize: 24 });
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Add Synthetic clinical to request"))
+      .toBe(true);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
   });
 });
 
@@ -1350,5 +1534,82 @@ describe("confirmed reference continuation", () => {
       expect(confirmed).toHaveBeenCalledWith(receipt);
       expect(sessionStorage.length).toBe(0);
     } finally { setItem.mockRestore(); }
+  });
+});
+
+
+describe("agreement-standing refresh preserves the current request", () => {
+  it("notifies once after a proven first refusal and keeps the exact draft", async () => {
+    const api = makeApi();
+    await prepare(api, true, true);
+    const refresh = vi.fn();
+    const renderSameForm = async (enabled: boolean) => {
+      await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+        embedded continuationEnabled={enabled} onAgreementStandingRequired={refresh} />));
+    };
+    await renderSameForm(true);
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(403, "agreement_standing_required"));
+    await click("Submit for review");
+    const first = api.submit.mock.calls[0][0];
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(host.textContent).toContain("Your selections and contact details are still on this page");
+    expect(host.textContent).toContain("Synthetic Customer");
+    expect(host.textContent).toContain("Requested quantity: 2");
+    expect([...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")]
+      .every((input) => !input.checked)).toBe(true);
+    await renderSameForm(false);
+    const submit = [...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review");
+    expect(submit?.disabled).toBe(true);
+    await renderSameForm(true);
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    const newConfig = await api.config();
+    api.config.mockResolvedValue({ ...newConfig,
+      legal: [{ kind: "fixture-terms", version: "fixture-v2", label: "Current synthetic legal requirement" }] });
+    await click("Refresh requirements");
+    // Reacceptance alone is insufficient: the request acknowledgments remain unchecked.
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")?.disabled).toBe(true);
+    await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((input) => input.click()));
+    await click("Submit for review");
+    const second = api.submit.mock.calls[1][0];
+    expect(second.contact).toEqual(first.contact);
+    expect(second.lines).toEqual(first.lines);
+    expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
+    expect(second.agreements.find((entry) => entry.kind === "fixture-terms")?.version).toBe("fixture-v2");
+    expect(api.submit).toHaveBeenCalledTimes(2);
+  });
+
+  it("never refreshes or replaces a previously uncertain request", async () => {
+    const api = makeApi();
+    await prepare(api);
+    const refresh = vi.fn();
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      onAgreementStandingRequired={refresh} />));
+    api.submit.mockRejectedValueOnce(new Error("Synthetic lost reply"));
+    await click("Submit for review");
+    const first = api.submit.mock.calls[0][0];
+    const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
+    expect(marker).not.toBeNull();
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(403, "agreement_standing_required"));
+    await click("Retry same request");
+    expect(refresh).not.toHaveBeenCalled();
+    expect(api.submit.mock.calls[1][0]).toBe(first);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(marker);
+    expect(host.textContent).toContain("Retry same request");
+  });
+
+  it.each([
+    [403, "access_denied"], [401, "session_required"], [429, "rate_limited"],
+    [400, "current_acknowledgments_required"], [503, "request_intent_unavailable"],
+  ])("does not treat %s/%s as a policy-refresh signal", async (status, code) => {
+    const api = makeApi();
+    await prepare(api);
+    const refresh = vi.fn();
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      onAgreementStandingRequired={refresh} />));
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(status, code));
+    await click("Submit for review");
+    expect(refresh).not.toHaveBeenCalled();
+    expect(api.submit).toHaveBeenCalledTimes(1);
   });
 });

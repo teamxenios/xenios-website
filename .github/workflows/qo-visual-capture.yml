@@ -123,7 +123,7 @@ jobs:
           cd candidate
           env -i PATH="$PATH" HOME="$HOME" CI=true \
             node scripts/evidence/build-candidate-preview.mjs --sha "$CANDIDATE_SHA"
-      - name: Capture the sequential synthetic viewport matrix inside a loopback-only namespace
+      - name: Exercise mounted policy and receipt behavior inside a loopback-only namespace
         shell: bash
         timeout-minutes: 6
         run: |
@@ -134,12 +134,12 @@ jobs:
             exec runuser -u "$1" -- env -i HOME="$2" PATH="$3" \
               PLAYWRIGHT_BROWSERS_PATH="$4" \
               "$5" --import "$6/node_modules/tsx/dist/loader.mjs" \
-              "$7/scripts/qa/qo-visual-capture/capture.mjs" "$6" "$8" "$9" \
-              "${10}" "${11}" "${12}" "${13}" "${14}" "${15}"
+              "$7/scripts/qa/qo-visual-capture/policy-v2-mixed.mjs" "$6" "$8" "$9" \
+              "${10}" "${11}" "${12}" "${13}" "${14}"
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json" guest-mobile-catalog
+            "$EVIDENCE_DIR/allowance.json"
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -155,67 +155,26 @@ jobs:
             candidateSha: e.CANDIDATE_SHA, candidateTree: e.CANDIDATE_TREE, harnessRevision: e.GITHUB_SHA,
             runId: e.GITHUB_RUN_ID, runAttempt: Number(e.GITHUB_RUN_ATTEMPT),
             allowance: existsSync(allowancePath) ? JSON.parse(readFileSync(allowancePath, "utf8")) : null,
-            status: "setup or allowance gate failed before capture", captures: [],
+            profile: "policy-v2-mixed", status: "failed", failedStage: "setup_or_allowance",
           };
           writeFileSync(join(e.EVIDENCE_DIR, "result.json"), JSON.stringify(result, null, 2) + "\n");
           NODE
           fi
-      - name: Require the exact mobile capture manifest and PNGs
+      - name: Require the exact synthetic policy and receipt manifest
         shell: bash
         run: |
           set -euo pipefail
-          node --input-type=module <<'NODE'
-          import { readdirSync, readFileSync } from "node:fs";
-          import { join } from "node:path";
-          const e = process.env;
-          const widths = [320, 375, 390, 430, 1280];
-          const pngs = (width) => ["catalog", "details"].map((name) => "guest-mobile-" + width + "-" + name + ".png");
-          const expected = widths.flatMap(pngs).sort();
-          const result = JSON.parse(readFileSync(join(e.EVIDENCE_DIR, "result.json"), "utf8"));
-          const allowance = JSON.parse(readFileSync(join(e.EVIDENCE_DIR, "allowance.json"), "utf8"));
-          if (JSON.stringify(result.allowance) !== JSON.stringify(allowance)) throw new Error("Capture run scope drift");
-          const files = readdirSync(e.EVIDENCE_DIR).filter((name) => name.endsWith(".png")).sort();
-          if (result.status !== "passed" || result.profile !== "guest-mobile-catalog" ||
-              result.candidateSha !== e.CANDIDATE_SHA || result.candidateTree !== e.CANDIDATE_TREE ||
-              result.harnessRevision !== e.GITHUB_SHA || result.runId !== e.GITHUB_RUN_ID ||
-              result.runAttempt !== 1 || !result.network?.loopbackOnly || result.captures?.length !== widths.length ||
-              JSON.stringify(files) !== JSON.stringify(expected)) throw new Error("Capture identity or PNG inventory failed");
-          for (const width of widths) {
-            const entry = result.captures.find((item) => item.name === "guest-mobile-" + width);
-            if (entry?.viewport.width !== width || entry.mobile !== (width < 700) || !entry.assertions?.length ||
-                entry.assertions.some((item) => item.pass !== true) ||
-                JSON.stringify(entry.screenshots) !== JSON.stringify(pngs(width))) {
-              throw new Error("Incomplete capture context at " + width);
-            }
-            for (const name of pngs(width)) {
-              const data = readFileSync(join(e.EVIDENCE_DIR, name));
-              if (data.length < 33 || data.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") {
-                throw new Error("Missing or invalid PNG " + name);
-              }
-            }
-          }
-          NODE
+          node harness/scripts/qa/qo-visual-capture/policy-v2-mixed.mjs --validate "$EVIDENCE_DIR"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: qo-guest-mobile-catalog-synthetic-visual-proof
-          path: |
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-320-catalog.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-320-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-375-catalog.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-375-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-catalog.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-430-catalog.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-430-details.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-1280-catalog.png
-            ${{ env.EVIDENCE_DIR }}/guest-mobile-1280-details.png
-            ${{ env.EVIDENCE_DIR }}/result.json
+          name: qo-policy-v2-mixed-synthetic-proof
+          path: ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
-          name: qo-guest-mobile-catalog-failure-manifest
+          name: qo-policy-v2-mixed-failure-manifest
           path: ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7

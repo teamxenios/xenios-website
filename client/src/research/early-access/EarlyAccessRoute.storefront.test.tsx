@@ -17,6 +17,7 @@ import EarlyAccessRoute from "./EarlyAccessRoute";
 import { resetAssistedOrderConfigCache } from "../assisted-order/api";
 import { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, assistedOrderFormPair } from "@shared/research/assisted-order/form";
 import { REQUEST_INTENT_ATTEMPT_KEY } from "../assisted-order/request-intent-attempt";
+import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "../assisted-order/request-intent-continuation";
 import { ASSISTED_ORDER_DRAFT_KEY } from "../assisted-order/draft-store";
 import type { ResearchContextValue } from "../core";
 type ResearchSnapshot = Pick<ResearchContextValue,
@@ -354,12 +355,13 @@ beforeEach(() => {
 });
 
 describe("the login-free request-only entry", () => {
-  async function waitForAdd() {
+  async function waitForAdd(surface: "guest" | "member" = "guest") {
     let add: HTMLButtonElement | undefined;
     for (let attempt = 0; attempt < 60 && !add; attempt += 1) {
       await act(async () => { await new Promise((resolve) => setTimeout(resolve, 25)); });
-      add = [...container.querySelectorAll("button")].find((button) =>
-        button.textContent === "Add Kisspeptin to request");
+      add = [...container.querySelectorAll("button")].find((button) => surface === "guest"
+        ? button.getAttribute("aria-label") === "Add to request: Kisspeptin, KISSPEPTIN 10 mg"
+        : button.textContent === "Add Kisspeptin to request");
     }
     expect(add).toBeTruthy();
     return add!;
@@ -659,6 +661,52 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
     expect(container.querySelector('[data-testid="early-access-checkout-mount"]')).toBeNull();
   });
+  const earlierReference = "XRI-30000000000040008000000000000002";
+  const receiptMember = { firstName: "Synthetic", status: "active", applicationStatus: null, cartScope: "a".repeat(64) };
+  function seedEarlierReceipt(owner = receiptMember.cartScope) {
+    window.sessionStorage.setItem(REQUEST_INTENT_RECEIPT_RECORD_KEY, JSON.stringify({
+      owner, publicReference: earlierReference,
+      createdAt: "2026-10-14T12:00:00Z", pageLoad: "earlier-page-load",
+    }));
+  }
+  it.each(["off", "unknown"] as const)("reopens the verified member receipt with %s intake and leaves the form closed", async (mixedMode) => {
+    seedEarlierReceipt();
+    researchStore.publish({ member: receiptMember, memberToken: "synthetic-A", memberChecking: false,
+      memberSessionStatus: "authenticated", recovery: "none" });
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode });
+    await renderStorefront(true);
+    expect(container.textContent).toContain(earlierReference);
+    expect(container.textContent).toContain("This reference was confirmed earlier in this browser tab.");
+    expect(container.querySelectorAll("h1")).toHaveLength(1);
+    expect(container.querySelector("h1")?.textContent).toBe("Quick Order");
+    expect([...container.querySelectorAll("h2")].some((heading) => heading.textContent === "Request saved for review")).toBe(true);
+    expect(container.textContent).not.toContain("The request form is currently unavailable");
+    expect(container.textContent).not.toContain("Start another request");
+    expect(container.textContent).not.toContain("Check saved request");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(container.querySelector('[data-testid="quick-order-agreement-mount"]')).toBeNull();
+    expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(1);
+    expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST"
+      || String(url).includes("/request-intents/catalog") || String(url).endsWith("/early-access/agreements"))).toBe(false);
+  });
+
+  it.each(["guest", "unknown"] as const)("withholds a closed-intake receipt from a %s session", async (session) => {
+    seedEarlierReceipt(session === "guest" ? "early-access-session" : receiptMember.cartScope);
+    if (session === "unknown") {
+      researchStore.publish({ member: receiptMember, memberToken: null, memberChecking: true,
+        memberSessionStatus: "checking", recovery: "none" });
+    }
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "unknown" });
+    await renderStorefront(true);
+    expect(container.textContent).not.toContain(earlierReference);
+    expect(container.textContent).not.toContain("Check saved request");
+    expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
+    expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST"
+      || String(url).includes("/request-intents/catalog"))).toBe(false);
+  });
+
   const mixedMarker = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
     acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" });
   function recoverButton() {
@@ -681,14 +729,34 @@ describe("the login-free request-only entry", () => {
     expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toEqual(recoveryPosts(fetch));
     expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/early-access/agreements"))).toHaveLength(0);
   }
+  it("keeps recovery exclusive when the verified member also has an earlier confirmed receipt", async () => {
+    seedEarlierReceipt();
+    researchStore.publish({ member: receiptMember, memberToken: "synthetic-A", memberChecking: false,
+      memberSessionStatus: "authenticated", recovery: "none" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "off" });
+    await renderStorefront(true);
+
+    expect(container.textContent).toContain("Check your earlier request");
+    expect(recoverButton()).toBeTruthy();
+    expect(container.textContent).not.toContain(earlierReference);
+    expect(container.textContent).not.toContain("Request saved for review");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(mixedMarker);
+    expectRecoveryOnly(fetch);
+    expect(recoveryPosts(fetch)).toHaveLength(0);
+    expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(1);
+  });
+
   it.each([
     { mixedMode: "off" as const, bridgeEnabled: false }, { mixedMode: "off" as const, bridgeEnabled: true },
     { mixedMode: "unknown" as const, bridgeEnabled: false }, { mixedMode: "unknown" as const, bridgeEnabled: true },
   ])("recovers the retained mixed attempt with $mixedMode intake and bridge $bridgeEnabled", async (options) => {
+    seedEarlierReceipt("early-access-session");
     window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
     const fetch = stubFetch({ ...options, agreement: "required" });
     await renderStorefront(true);
     expect(container.textContent).toContain("Check your earlier request");
+    expect(container.textContent).not.toContain(earlierReference);
     expect(container.textContent).not.toContain("The request form is currently unavailable");
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
     expectRecoveryOnly(fetch);
@@ -851,7 +919,7 @@ describe("the login-free request-only entry", () => {
     const render = vi.spyOn(root, "render");
     await act(async () => root.render(<EarlyAccessRoute requestOnly />));
     await settleStorefront();
-    const add = await waitForAdd();
+    const add = await waitForAdd("member");
     act(() => add.click());
     act(() => continueButton().click());
     for (const [name, value] of Object.entries({ name: "Synthetic Customer", email: "synthetic@example.invalid",
@@ -1079,7 +1147,7 @@ describe("the login-free request-only entry", () => {
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     vi.spyOn(Date, "now").mockReturnValue(expires + 1);
     await act(async () => window.dispatchEvent(new Event("focus")));
-    await waitForAdd();
+    await waitForAdd("member");
     expect(sessionReads(fetch)).toHaveLength(2);
     expect(container.textContent).toContain("Request products for review");
     expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");

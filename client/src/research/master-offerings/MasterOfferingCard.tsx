@@ -14,8 +14,11 @@ import {
   isContradictoryPurchase,
 } from "./catalog-access-path";
 import { fullCatalogProductHref } from "./integration-packet";
+import { catalogPresentationLabel } from "./catalog-presentation-labels";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
+import { researchListingSubcategory } from "../product-media/reviewed-form-holds";
+import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
 
 /**
  * State tone is a second signal, never the only one. Every card also carries
@@ -185,6 +188,10 @@ export function MasterOfferingCard({
   product: MasterOfferingCardView;
 }) {
   const summary = product.priceSummary;
+  const subcategory = researchListingSubcategory(product);
+  const onlyVariant = product.variants.length === 1 ? product.variants[0] : undefined;
+  const reviewedContent = onlyVariant?.reviewedContent;
+  const packageLabel = reviewedPackage(reviewedContent);
   const headingId = `mo-card-${product.id}`;
   return (
     <li className="min-w-0">
@@ -196,10 +203,13 @@ export function MasterOfferingCard({
         data-display-state={product.displayState}
         data-access-paths={accessPathsOfCard(product).join(" ")}
       >
+        <ProductMedia productName={product.displayName} variantIds={product.variants.map((variant) => variant.id)}
+          reviewedMedia={onlyVariant?.reviewedMedia} />
+
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="mono-label text-ink-mute min-w-0 break-words">
-              {product.familyLabel}
+              {catalogPresentationLabel(product.family, product.familyLabel)}
             </p>
             <h3 id={headingId} className="body-l font-700 mt-1 min-w-0 break-words">
               {/* The v2 detail page, family segment and all. The v1 product
@@ -222,8 +232,12 @@ export function MasterOfferingCard({
           />
         </div>
 
-        <ProductMedia productName={product.displayName} variantIds={product.variants.map((variant) => variant.id)} />
-
+        {reviewedContent && (
+          <p className="body-s text-ink-2 min-w-0 break-words">
+            {reviewedContent.brand && <strong>{reviewedContent.brand} · </strong>}{reviewedContent.summary}
+          </p>
+        )}
+        {packageLabel && <p className="body-s text-ink-2 min-w-0 break-words"><strong>Package</strong> · {packageLabel}</p>}
         <p className="body-s text-ink-2 min-w-0 break-words">
           {product.stateExplanation}
         </p>
@@ -232,9 +246,12 @@ export function MasterOfferingCard({
           <div className="min-w-0">
             <dt className="mono-label text-ink-mute">Category</dt>
             <dd className="mt-1 min-w-0 break-words">
-              {product.subcategory
-                ? `${product.category}, ${product.subcategory}`
-                : product.category}
+              {catalogPresentationLabel(
+                product.family,
+                subcategory
+                  ? `${product.category}, ${subcategory}`
+                  : product.category,
+              )}
             </dd>
           </div>
           <div className="min-w-0">

@@ -1,13 +1,16 @@
 /**
  * Honest catalog-level evidence framing.
  *
- * The current member-safe catalog DTO has no product-document, lot, COA, or
- * approved storage fields. Absence from that DTO is not evidence that a
- * document does not exist elsewhere, so this component describes only what
- * this catalog view can prove. It never derives readiness or purchase authority
- * from documentation, and it contains no product-specific claims.
+ * Report which reviewed fields are shown for the selected variant.
+ * This notice never derives readiness or purchase authority from documentation.
  */
-export function CatalogEvidenceNotice() {
+export function CatalogEvidenceNotice({
+  hasReviewedDocuments = false,
+  hasReviewedStorage = false,
+}: {
+  hasReviewedDocuments?: boolean;
+  hasReviewedStorage?: boolean;
+}) {
   return (
     <section
       aria-labelledby="catalog-evidence-heading"
@@ -21,7 +24,9 @@ export function CatalogEvidenceNotice() {
         <div className="card grid min-w-0 gap-2">
           <dt className="form-label">Product documentation</dt>
           <dd className="body-s text-ink-2 min-w-0 break-words">
-            This catalog view does not publish product-specific documents.
+            {hasReviewedDocuments
+              ? "The product documents shown above apply to the selected variant."
+              : "This catalog view does not publish product-specific documents."}{" "}
             Listing status, price, and action do not prove documentation is
             complete.
           </dd>
@@ -36,7 +41,9 @@ export function CatalogEvidenceNotice() {
         <div className="card grid min-w-0 gap-2">
           <dt className="form-label">Storage information</dt>
           <dd className="body-s text-ink-2 min-w-0 break-words">
-            This record contains no approved product-specific storage statement.
+            {hasReviewedStorage
+              ? "The storage information shown above applies to the selected variant."
+              : "This record contains no approved product-specific storage statement."}{" "}
             Follow only the handling information supplied with the exact item.
           </dd>
         </div>

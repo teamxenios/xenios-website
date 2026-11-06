@@ -12,10 +12,13 @@ import {
 } from "./fixture.mjs";
 
 const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
-if (!["legacy", "guest-catalog-details", "reviewed-catalog", "guest-mobile-catalog"].includes(profile)) throw new Error("Unknown capture profile");
+if (!["legacy", "guest-catalog-details", "reviewed-catalog", "guest-mobile-catalog", "guest-mobile-request-dock"].includes(profile)) {
+  throw new Error("Unknown capture profile");
+}
 const guestDetailsOnly = profile === "guest-catalog-details";
 const reviewedCatalog = profile === "reviewed-catalog";
-const guestMobileCatalog = profile === "guest-mobile-catalog";
+const guestRequestDock = profile === "guest-mobile-request-dock";
+const guestMobileCatalog = profile === "guest-mobile-catalog" || guestRequestDock;
 const reviewedVialCaptures = new Map([
   ["mov_09db3e866424b64994d3", "bpc-5mg"],
   ["mov_257330ea83ecbfc45fae", "bpc-15mg"],
@@ -591,8 +594,88 @@ async function captureReviewedCatalog(page, entry, rows, member) {
 }
 
 
+async function checkRequestDockFooter(page, entry) {
+  const footerLinks = page.getByRole("navigation", { name: "Research public footer", exact: true }).getByRole("link");
+  await footerLinks.nth(-2).focus();
+  await page.keyboard.press("Tab");
+  const geometry = await footerLinks.last().evaluate(async (link) => {
+    const scrolling = document.scrollingElement;
+    window.scrollTo({ top: scrolling.scrollHeight, behavior: "instant" });
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const dock = document.querySelector('[data-testid="request-action-bar"]').getBoundingClientRect();
+    const bounds = link.getBoundingClientRect();
+    const hit = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+    return {
+      atDocumentEnd: Math.abs(scrollY - (scrolling.scrollHeight - innerHeight)) <= 3,
+      keyboardFocused: document.activeElement === link,
+      aboveDock: bounds.top >= 0 && bounds.bottom <= dock.top + 1,
+      pointerReachable: link.contains(hit),
+    };
+  });
+  report(entry, "last public footer link stays keyboard and pointer reachable at the end of the document",
+    Object.values(geometry).every(Boolean), geometry);
+}
+
+async function openContactFromRequestDock(page, entry, surface) {
+  const trigger = page.getByTestId("request-action-bar-summary");
+  const selection = page.getByRole("dialog", { name: "Your selected request items", exact: true });
+  await trigger.click();
+  await selection.waitFor();
+  await page.keyboard.press("Escape");
+  await selection.waitFor({ state: "hidden" });
+  await page.waitForFunction(() => document.activeElement?.getAttribute("data-testid") === "request-action-bar-summary");
+  report(entry, "closing dock summary restores its trigger focus",
+    await trigger.evaluate((button) => button === document.activeElement));
+  await trigger.click();
+  await selection.waitFor();
+  const continueAction = selection.getByRole("button", { name: "Continue to contact", exact: true });
+  report(entry, "dock summary shows the exact selection, quantity and enabled continuation",
+    await selection.getByText("BPC-157", { exact: true }).isVisible() &&
+    await selection.getByText("Requested quantity: 2", { exact: true }).isVisible() &&
+    await continueAction.isEnabled());
+  await continueAction.click();
+  await selection.waitFor({ state: "hidden" });
+  const contactHeading = surface.getByRole("heading", { name: "Contact details", exact: true });
+  await page.waitForFunction(() => document.activeElement?.matches("h2") &&
+    document.activeElement.textContent?.trim() === "Contact details");
+  report(entry, "continuing from the dock dialog transfers focus to the contact heading",
+    await contactHeading.evaluate((heading) => heading === document.activeElement));
+}
+
+async function checkRequestDockContact(page, entry, surface) {
+  const dockPrimary = page.getByTestId("request-action-bar-primary");
+  const contactHeading = surface.getByRole("heading", { name: "Contact details", exact: true });
+  const form = surface.locator("form").filter({ has: contactHeading });
+  for (const [field, value] of Object.entries(fixtureContact)) {
+    if (field !== "name") await form.locator(`input[name="${field}"]`).fill(value);
+  }
+  await form.getByRole("checkbox", { name: "I confirm I am at least 18 years old." }).check();
+  const name = form.getByRole("textbox", { name: "Full legal name", exact: true });
+  const review = surface.getByRole("heading", { name: "Review your request", exact: true });
+  const invalidBefore = await form.evaluate((node) => Array.from(node.elements)
+    .filter((control) => control.willValidate && !control.validity.valid).map((control) => control.name));
+  report(entry, "fixed contact action is associated with the form and name is the only invalid field",
+    await dockPrimary.getAttribute("form") === await form.getAttribute("id") &&
+    invalidBefore.length === 1 && invalidBefore[0] === "name" &&
+    await dockPrimary.isEnabled());
+  await dockPrimary.click();
+  report(entry, "fixed contact action invokes native required-field validation",
+    await contactHeading.isVisible() && await review.count() === 0 &&
+    await name.evaluate((input) => input === document.activeElement && input.validity.valueMissing));
+
+  await name.fill(fixtureContact.name);
+  await dockPrimary.click();
+  await review.waitFor();
+  const reviewPanel = surface.locator("section.xenios-order-panel").filter({ has: review });
+  report(entry, "fixed contact action reaches review with the original quantity and no allowed submission",
+    (await reviewPanel.innerText()).includes("Requested quantity: 2") &&
+    await dockPrimary.isDisabled() &&
+    await reviewPanel.getByRole("button", { name: "Submit for review", exact: true }).isDisabled());
+}
+
 async function captureGuestMobile(page, entry, { bpc, mito }) {
-  await page.goto(origin + guestRoute, { waitUntil: "domcontentloaded" });
+  const path = guestRequestDock ? "/earlyaccess" : guestRoute;
+  await page.goto(origin + path, { waitUntil: "domcontentloaded" });
   const surface = page.getByTestId("request-door-mixed").locator(".xenios-order-page--guest-catalog");
   const toolbar = surface.locator(".xenios-order-catalog-toolbar");
   const search = toolbar.getByRole("textbox", { name: "Search catalog", exact: true });
@@ -606,6 +689,9 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
   const summary = surface.getByRole("complementary", { name: "Selected request items", exact: true });
   const toggle = summary.getByRole("button", { name: "Review request (1)", exact: true });
   const summaryContent = summary.locator(".xenios-order-summary-content");
+  const inlineContinue = summary.getByRole("button", { name: "Continue to contact", exact: true, includeHidden: true });
+  const dock = page.getByTestId("request-action-bar");
+  const dockPrimary = dock.getByTestId("request-action-bar-primary");
   const card = (name) => surface.locator("article.xenios-order-card")
     .filter({ has: page.getByRole("heading", { name, exact: true }) });
   const settledPage = async (number, total, count, marker) => {
@@ -625,13 +711,16 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
     anchor.scrollIntoView({ block: "start", behavior: "instant" });
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
   });
-  const visibleCards = () => toolbar.evaluate((node) => {
+  const visibleCards = () => toolbar.evaluate((node, countAboveDock) => {
     const top = Math.max(0, node.getBoundingClientRect().bottom);
+    const dock = countAboveDock ? document.querySelector('[data-testid="request-action-bar"]') : null;
+    const bottom = dock ? Math.min(innerHeight, dock.getBoundingClientRect().top) : innerHeight;
     const cards = [...node.parentElement.querySelectorAll("article.xenios-order-card")].map((card) => card.getBoundingClientRect());
-    const fullyVisible = cards.filter((box) => box.top >= top && box.bottom <= innerHeight).length;
-    const intersecting = cards.filter((box) => box.bottom > top && box.top < innerHeight).length;
-    return { fullyVisible, partlyVisible: intersecting - fullyVisible, toolbarBottom: top, viewportHeight: innerHeight };
-  });
+    const fullyVisible = cards.filter((box) => box.top >= top && box.bottom <= bottom).length;
+    const intersecting = cards.filter((box) => box.bottom > top && box.top < bottom).length;
+    const visibility = { fullyVisible, partlyVisible: intersecting - fullyVisible, toolbarBottom: top, viewportHeight: innerHeight };
+    return countAboveDock ? { ...visibility, contentBottom: bottom } : visibility;
+  }, guestRequestDock);
   const expectRetained = async (label) => report(entry, label,
     await summaryContent.getByText("BPC-157", { exact: true }).isVisible() &&
     await summaryContent.getByText("Requested quantity: 2", { exact: true }).isVisible());
@@ -640,13 +729,30 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
   report(entry, "only the expected pager is shown and Previous is disabled on the first page",
     await pager.isVisible() && !await hiddenPager.isVisible() && await previous.isDisabled() && await next.isEnabled());
   const agreement = page.getByTestId("early-access-agreement-submit");
-  await page.getByTestId("early-access-agreement-checkbox").check();
-  await agreement.click();
-  await page.getByTestId("early-access-agreement-accepted").waitFor();
-  if (entry.viewport.width === 390) {
+  const acceptFixtureStanding = async () => {
+    await page.getByTestId("early-access-agreement-checkbox").check();
+    await agreement.click();
+    await page.getByTestId("early-access-agreement-accepted").waitFor();
+  };
+  if (guestRequestDock) {
+    await dock.waitFor();
+    report(entry, "canonical Early Access route mounts the mixed form and fixed actions",
+      new URL(page.url()).pathname === path &&
+      await dock.evaluate((node) => getComputedStyle(node).position === "fixed"));
+  } else {
+    await acceptFixtureStanding();
+  }
+  if (entry.viewport.width === 390 || (guestRequestDock && entry.viewport.width === 320)) {
     await alignCatalogStart();
     entry.unselectedCatalogStartVisibility = await visibleCards();
-    await screenshot(entry, "catalog", page);
+    if (guestRequestDock) {
+      const { fullyVisible, partlyVisible, toolbarBottom, contentBottom, viewportHeight } = entry.unselectedCatalogStartVisibility;
+      report(entry, "visible card area ends above the fixed dock",
+        toolbarBottom < contentBottom && contentBottom < viewportHeight, entry.unselectedCatalogStartVisibility);
+      if (entry.viewport.width === 390) report(entry, "typical phone shows two complete cards and at least part of a third",
+        fullyVisible >= 2 && fullyVisible + partlyVisible >= 3, entry.unselectedCatalogStartVisibility);
+    }
+    if (entry.viewport.width === 390) await screenshot(entry, "catalog", page);
   }
   const first = card(bpc.productName);
   await first.getByRole("button", { name: "Add to request: " + bpc.productName + ", " + bpc.specification, exact: true }).click();
@@ -656,6 +762,14 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
     await quantity.inputValue() === "2" &&
     (!entry.mobile || await quantity.evaluate((node) => node.getBoundingClientRect().height >= 44 &&
       Number.parseFloat(getComputedStyle(node).fontSize) >= 16)));
+  if (guestRequestDock) {
+    report(entry, "selected items cannot continue through either action before standing",
+      entry.network.accepted === 0 && await agreement.isDisabled() &&
+      await inlineContinue.isDisabled() && await dockPrimary.isDisabled());
+    await acceptFixtureStanding();
+    report(entry, "both continuation actions are enabled by the one matched fixture acceptance",
+      entry.network.accepted === 1 && await inlineContinue.isEnabled() && await dockPrimary.isEnabled());
+  }
   if (entry.mobile) {
     report(entry, "summary starts collapsed behind the labelled count",
       await toggle.getAttribute("aria-expanded") === "false" && !await summaryContent.isVisible());
@@ -666,13 +780,15 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
       const anchorTop = node.previousElementSibling.getBoundingClientRect().top;
       window.scrollTo({ top: scrollY + anchorTop + 420, behavior: "instant" });
     });
-    const geometry = await toolbar.evaluate((node) => {
+    const geometry = await toolbar.evaluate((node, checkDock) => {
       const box = node.getBoundingClientRect();
       const anchor = node.previousElementSibling.getBoundingClientRect();
       const controls = Array.from(node.querySelectorAll("input, select, button"));
+      const dock = checkDock ? document.querySelector('[data-testid="request-action-bar"]') : null;
+      const bottom = dock ? dock.getBoundingClientRect().top : innerHeight;
       return {
         sticky: getComputedStyle(node).position === "sticky" && Math.abs(box.top) <= 2 && anchor.top < -250,
-        within: box.left >= -1 && box.right <= innerWidth + 1 && box.bottom < innerHeight &&
+        within: box.left >= -1 && box.right <= innerWidth + 1 && box.bottom < bottom &&
           document.documentElement.scrollWidth <= innerWidth + 1,
         controls: controls.length === 4 && controls.every((control) => {
           const rect = control.getBoundingClientRect();
@@ -681,7 +797,7 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
             (!control.matches("input, select") || Number.parseFloat(getComputedStyle(control).fontSize) >= 16);
         }),
       };
-    });
+    }, guestRequestDock);
     report(entry, "sticky toolbar remains reachable after scrolling through full rows", Object.values(geometry).every(Boolean), geometry);
     await alignCatalogStart();
     if (entry.viewport.width === 390) entry.catalogStartVisibility = await visibleCards();
@@ -778,8 +894,13 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
     await family.inputValue() === guestMobileOtherFamily && await previous.isDisabled() && await next.isDisabled());
   await expectRetained("family filter retains selection");
 
-  await summary.getByRole("button", { name: "Continue to contact", exact: true }).click();
-  await surface.getByRole("button", { name: "Review request", exact: true }).waitFor();
+  if (guestRequestDock) {
+    await checkRequestDockFooter(page, entry);
+    await openContactFromRequestDock(page, entry, surface);
+  } else {
+    await summary.getByRole("button", { name: "Continue to contact", exact: true }).click();
+    await surface.getByRole("button", { name: "Review request", exact: true }).waitFor();
+  }
   report(entry, "catalog-only controls are absent after continuing to contact",
     await toolbar.count() === 0 && await summary.count() === 0 && entry.network.accepted === 1 &&
     entry.network.deniedLocalReads === 0);
@@ -789,6 +910,7 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
       return rect.left >= 12 && rect.right <= innerWidth - 12 &&
         document.documentElement.scrollWidth <= innerWidth + 1;
     }));
+  if (guestRequestDock) await checkRequestDockContact(page, entry, surface);
 }
 
 async function capture(browser, fixtures, kind, size, rows) {

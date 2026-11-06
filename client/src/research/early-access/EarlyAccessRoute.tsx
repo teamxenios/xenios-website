@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
+import { EARLY_ACCESS_ENTRY_PATH, isEarlyAccessEntryPath } from "@shared/research/paths";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
 import { useAssistedOrderBridgeState } from "../assisted-order/AssistedOrderCta";
-import { OrderRequestCta } from "../assisted-order/OrderRequestEntry";
+import { ClosedIntakeRequestReceipt, OrderRequestCta } from "../assisted-order/OrderRequestEntry";
 import { readOrderRequestContinuity, useOrderRequestMode } from "../assisted-order/order-request-mode";
 import { Suspense, lazy } from "react";
 
@@ -22,6 +23,7 @@ import {
   EarlyAccessOrderRecoveryCard,
 } from "./EarlyAccessCheckoutJourney";
 import { EarlyAccessAgreementSection } from "./EarlyAccessAgreementSection";
+import { createAgreementRefreshFence } from "./agreement-refresh-fence";
 import {
   clearLastOrderNumber,
   clearPendingAttempt,
@@ -121,6 +123,22 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   // Why ordering is closed, when it is not simply "has not agreed yet". The
   // journey must describe the SAME situation the agreement step is describing.
   const [blocked, setBlocked] = useState<"unverified" | "locked" | null>(null);
+  // This is a callback-generation fence, not a new agreement authority. Only
+  // the server-backed agreement component may confirm acceptance.
+  const [agreementFence] = useState(createAgreementRefreshFence);
+  const [agreementRevision, setAgreementRevision] = useState(0);
+  const refreshAgreementStanding = useCallback(() => {
+    const revision = agreementFence.invalidate();
+    setAgreed(false);
+    setBlocked(null);
+    setAgreementRevision(revision);
+  }, [agreementFence]);
+  const acceptCurrentAgreement = useCallback((accepted: boolean) => {
+    if (agreementFence.isCurrent(agreementRevision)) setAgreed(accepted);
+  }, [agreementFence, agreementRevision]);
+  const blockCurrentAgreement = useCallback((reason: "unverified" | "locked" | null) => {
+    if (agreementFence.isCurrent(agreementRevision)) setBlocked(reason);
+  }, [agreementFence, agreementRevision]);
   const [selection, setSelection] = useState<EarlyAccessCatalogSelection | null>(null);
   const [orderRequest, setOrderRequest] = useState<EarlyAccessCatalogSelection | null>(null);
   const [checkoutPhase, setCheckoutPhase] = useState<
@@ -173,14 +191,13 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     setRequestRecoveryDoor(null);
     clearEarlyAccessCustomerStorage();
     setRememberedOrder(null);
-    setAgreed(false);
-    setBlocked(null);
+    refreshAgreementStanding();
     setSelection(null);
     setOrderRequest(null);
     setPriceChanged(false);
     setCheckoutPhase("details");
     setEmbeddedOrderStep("products");
-  }, []);
+  }, [refreshAgreementStanding]);
 
   const readSession = useCallback(async () => {
     let retriedExpiredSession = false;
@@ -479,13 +496,17 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     // The retained marker selects mixed recovery. If it disappears before the
     // lazy entry mounts, a closed mixed intake must never select legacy checkout.
     const requestEntryMode = requestMode.kind === "legacy" ? { kind: "unavailable" as const } : requestMode;
+    // The founder's short address is named Early Access; the legacy address
+    // keeps Quick Order. Only the visible name and browser title differ.
+    const earlyAccessEntry = typeof window !== "undefined" && isEarlyAccessEntryPath(window.location.pathname);
+    const requestOnlyName = earlyAccessEntry ? "Early Access" : "Quick Order";
     return <>
-      <SeoHead title="Quick Order, Xenios Health"
+      <SeoHead title={`${requestOnlyName}, Xenios Health`}
         description="Select items and send a request for review. No account is required."
-        path="/research/early-access/order-request" robots="noindex, nofollow" />
+        path={earlyAccessEntry ? EARLY_ACCESS_ENTRY_PATH : "/research/early-access/order-request"} robots="noindex, nofollow" />
       <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
         <div className="max-w-[1280px] min-w-0" data-testid="quick-order-request-only">
-          <h1 className="display-s max-w-[26ch]">Quick Order</h1>
+          <h1 className="display-s max-w-[26ch]">{requestOnlyName}</h1>
           <p className="mt-4 body-m text-ink-2 max-w-[62ch]">
             Choose items and send a request for review. Submission does not collect payment,
             approve treatment, create a prescription or confirm shipping. Availability and
@@ -514,18 +535,22 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
             </div>
             : requestRecoveryDoor === null ? <p role="status" className="mt-5">Preparing the request form...</p>
             : !requestDoorOpen && requestMode.kind === "checking" ? <p role="status" className="mt-5">Checking the current request path...</p>
-            : !requestDoorOpen ? <div role="status" className="mt-5">
-              <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
-              <a href="/research/support">Contact support</a>
-            </div>
+            : !requestDoorOpen ? <ClosedIntakeRequestReceipt fallback={
+              <div role="status" className="mt-5">
+                <p>The request form is currently unavailable. This page has not sent a new request. Keep any earlier attempt and contact support before a replacement.</p>
+                <a href="/research/support">Contact support</a>
+              </div>
+            } />
             : <>
               {!hideFreshAgreement && <div className="mt-5" data-testid="quick-order-agreement-mount">
-                <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
+                <EarlyAccessAgreementSection key={agreementRevision}
+                  onAccepted={acceptCurrentAgreement} onBlocked={blockCurrentAgreement} />
               </div>}
               <div className="mt-5">
                 <Suspense fallback={<p role="status">Loading the request form...</p>}>
                   <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent}
                     continuationEnabled={agreed && blocked === null}
+                    onAgreementStandingRequired={refreshAgreementStanding}
                     onStepChange={setEmbeddedOrderStep} />
                 </Suspense>
               </div>
@@ -636,7 +661,8 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
               refuses with AGREEMENT_REQUIRED until this is on file.
             */}
             <div className="mt-5" data-testid="early-access-agreement-mount">
-              <EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked} />
+              <EarlyAccessAgreementSection key={agreementRevision}
+                  onAccepted={acceptCurrentAgreement} onBlocked={blockCurrentAgreement} />
             </div>
 
             {!agreed ? (
@@ -714,6 +740,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                         embedded
                         entryIntent={entryIntent}
                         continuationEnabled={agreed && blocked === null}
+                        onAgreementStandingRequired={refreshAgreementStanding}
                         onStepChange={setEmbeddedOrderStep}
                       />
                     </Suspense>

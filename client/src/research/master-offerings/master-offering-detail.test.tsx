@@ -150,6 +150,32 @@ describe("master offering detail", () => {
     unmount();
   });
 
+  it("keeps reviewed evidence and its fallback specific to the selected variant", () => {
+    const { host, unmount } = render(
+      <MasterOfferingDetail product={detail({ variants: [
+        variant({ reviewedContent: {
+          summary: "Synthetic summary",
+          overview: "Synthetic product overview",
+          storage: "Synthetic storage statement",
+          documentation: [{ label: "Synthetic manufacturer label", href: "https://example.invalid/label" }],
+        } }),
+        variant({ id: "mov_b", label: "10 mg vial" }),
+      ] })} />,
+    );
+    const evidence = host.querySelector('[data-testid="catalog-evidence-notice"]');
+    expect(host.textContent).toContain("Synthetic storage statement");
+    expect(host.querySelector('a[href="https://example.invalid/label"]')?.textContent).toContain("Synthetic manufacturer label");
+    expect(evidence?.textContent).toContain("documents shown above apply to the selected variant");
+    expect(evidence?.textContent).toContain("storage information shown above applies to the selected variant");
+    expect(evidence?.textContent).toContain("No lot-specific COA is attached");
+    click(host.querySelector('input[value="mov_b"]'));
+    expect(host.textContent).not.toContain("Synthetic storage statement");
+    expect(host.querySelector('a[href="https://example.invalid/label"]')).toBeNull();
+    expect(evidence?.textContent).toContain("does not publish product-specific documents");
+    expect(evidence?.textContent).toContain("no approved product-specific storage statement");
+    unmount();
+  });
+
   it("gives the variant selector and the CTA names that carry product and variant", () => {
     const { host, unmount } = render(
       <MasterOfferingDetail product={detail()} />,

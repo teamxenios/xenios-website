@@ -382,6 +382,8 @@ const KNOWN_NOINDEX_EXACT_PATHS = Object.freeze([
 
   // Registered Research routes not present in the canonical manifest.
   "/research/early-access/order-request",
+  // The founder's login-free Early Access entry, the same request-only route.
+  "/earlyaccess",
   "/research/apply/review",
   "/research/apply/success",
   "/research/apply/status",

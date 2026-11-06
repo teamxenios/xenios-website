@@ -31,7 +31,9 @@ describe("proposed request-intent integration source bindings (not browser execu
     expect(requestOnly).toContain('const requestEntryMode = requestMode.kind === "legacy" ? { kind: "unavailable" as const } : requestMode');
     expect(source).toContain("setRequestRecoveryDoor(null);");
     expect(requestOnly).toContain('prior === "legacy" || prior === "blocked"');
-    expect(requestOnly).toContain("<EarlyAccessAgreementSection onAccepted={setAgreed} onBlocked={setBlocked}");
+    expect(requestOnly).toContain("<EarlyAccessAgreementSection key={agreementRevision}");
+    expect(requestOnly).toContain("onAccepted={acceptCurrentAgreement} onBlocked={blockCurrentAgreement}");
+    expect(requestOnly).toContain("onAgreementStandingRequired={refreshAgreementStanding}");
     expect(requestOnly).toContain("continuationEnabled={agreed && blocked === null}");
     expect(requestOnly).toContain("<FullCanonicalCatalog mode={requestEntryMode} embedded");
     for (const component of ["EarlyAccessUnlockForm", "EarlyAccessCartMount", "EarlyAccessCheckoutJourney", "EarlyAccessCatalogSection"]) {

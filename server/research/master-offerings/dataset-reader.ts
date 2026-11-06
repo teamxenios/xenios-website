@@ -29,6 +29,7 @@ import {
   type MasterOfferingCopyState,
 } from "@shared/research/master-offerings/contract";
 import { warmMasterOfferingSearch } from "./search";
+import { registerReviewedProductDataset } from "./reviewed-content";
 import {
   MASTER_OFFERINGS_DATASET_ENV_VAR,
   resolveMasterOfferingDatasetLocation,
@@ -221,6 +222,15 @@ function readVariant(
     );
   }
   let label = value.label;
+  // GRP-0337 carries a duplicated unit suffix in the selected supplier row.
+  // Correct its display while keeping the source identities and artifact bytes.
+  if (
+    offeringId === "mo_ef095e8f7e8fe3a7f85d" &&
+    value.id === "mov_50fc8d22f6777f3f0d4d" &&
+    label === "SEMAGLUTIDE+BPC-157 5 mg/650 mcgmg/mcg"
+  ) {
+    label = "SEMAGLUTIDE 5 mg + BPC-157 650 mcg";
+  }
   if (isOpaqueVariantLabel(label)) {
     if (variantCount !== 1) {
       // Two variants of the same product both labelled with internal codes
@@ -450,13 +460,16 @@ export class GeneratedMasterOfferingCatalogReader
     if (this.cached !== null && this.cached.mtimeMs === mtimeMs) {
       return this.cached.loaded;
     }
+    let datasetText: string;
     let parsed: unknown;
     try {
-      parsed = JSON.parse(this.files.readText(this.filePath));
+      datasetText = this.files.readText(this.filePath);
+      parsed = JSON.parse(datasetText);
     } catch {
       throw new MasterOfferingDatasetUnavailable("dataset is not valid JSON");
     }
     const loaded = loadMasterOfferingDataset(parsed);
+    registerReviewedProductDataset(datasetText, loaded.products);
     // Pay the search normalization cost here, once per dataset, rather than on
     // whichever member happens to type the first query.
     warmMasterOfferingSearch(loaded.products);

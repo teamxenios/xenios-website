@@ -1,4 +1,5 @@
 import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
+import { isResearchCartScope } from "../cart-session";
 import { ASSISTED_ORDER_STORAGE_PREFIX } from "./storage";
 
 // A confirmed request's NON-SECRET display facts, kept for this browser tab so a
@@ -59,11 +60,14 @@ export function readConfirmedReceiptRecord(
   } catch { return null; }
 }
 
-/** When this tab confirmed exactly this reference, its confirmation time; otherwise null. */
-export function referenceConfirmedInThisTab(storage: Pick<Storage, "getItem"> | null, publicReference: string): string | null {
+/** Read the confirmation time for this verified scope and exact reference. */
+export function referenceConfirmedInThisTab(
+  storage: Pick<Storage, "getItem"> | null, publicReference: string, verifiedScope: string | null,
+): string | null {
+  if (!storage || !isResearchCartScope(verifiedScope)) return null;
   try {
-    const record = storage ? parseRecord(storage.getItem(REQUEST_INTENT_RECEIPT_RECORD_KEY)) : null;
-    return record && record.publicReference === publicReference ? record.createdAt : null;
+    const record = parseRecord(storage.getItem(REQUEST_INTENT_RECEIPT_RECORD_KEY));
+    return record && record.owner === verifiedScope && record.publicReference === publicReference ? record.createdAt : null;
   } catch { return null; }
 }
 
