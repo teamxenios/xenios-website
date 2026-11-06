@@ -3789,6 +3789,28 @@
       "state": "handoff",
       "claimedAt": "2026-11-06T05:41:34.172Z",
       "heartbeatAt": "2026-11-06T05:41:34.172Z"
+    },
+    {
+      "id": "84111c0d-7829-477a-9356-65199dbce8a8",
+      "task": "KAN13-EA-COMBINED-APPLICATION-QUALIFICATION-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/assisted-order/request-dock-cta-parity.test.ts",
+        "client/src/research/assisted-order/request-intent-catalog-retry.test.tsx",
+        "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+        "client/src/research/early-access/request-experience-copy.test.ts",
+        "client/src/research/early-access/request-experience-copy.ts",
+        "client/src/research/early-access/request-experience-guidance.test.tsx",
+        "client/src/research/early-access/request-experience.css",
+        "client/src/research/layout-touch-targets.test.tsx",
+        "client/src/research/layout.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T07:44:50.718Z",
+      "heartbeatAt": "2026-11-06T07:44:50.718Z"
     }
   ],
   "rules": [

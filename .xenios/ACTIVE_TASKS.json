@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T06:27:45.185277Z",
+  "updatedAt": "2026-11-06T07:44:50.718Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4857,6 +4857,37 @@
         "file": ".xenios/handoffs/2026-11-06T06-27-45Z-PR426-SOURCE-AND-HOSTED-QUALIFICATION-FROZEN-20261106-codex-launch-coordination-20261005.json",
         "at": "2026-11-06T06:27:45Z"
       }
+    },
+    {
+      "id": "KAN13-EA-COMBINED-APPLICATION-QUALIFICATION-20261106",
+      "title": "Qualify the combined Early Access application candidate",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+        "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+        "client/src/research/assisted-order/request-dock-cta-parity.test.ts",
+        "client/src/research/assisted-order/request-intent-catalog-retry.test.tsx",
+        "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+        "client/src/research/early-access/request-experience-copy.test.ts",
+        "client/src/research/early-access/request-experience-copy.ts",
+        "client/src/research/early-access/request-experience-guidance.test.tsx",
+        "client/src/research/early-access/request-experience.css",
+        "client/src/research/layout-touch-targets.test.tsx",
+        "client/src/research/layout.tsx"
+      ],
+      "dependsOn": [
+        "KAN13-EA-POLICY-V2-REVISED-20261106",
+        "KAN13-EA-CARE-RESEARCH-CTA-20261106",
+        "KAN1-EA-PERSISTENT-REQUEST-BAR-20261105"
+      ],
+      "scopeNote": "Claim only the twelve currently uncovered paths listed in this task for Samuel's direct nonproduction combined-application qualification instruction, controlled freeze KAN-225/11838 and new combined-source review KAN-31/11848 under existing KAN-13 authority. Root may reproduce and test only exact frozen tree 158ac88b6574fccda8ca253b16c4fc4c4f33abbf on planned separate draft branch codex/early-access-combined-qualification-20261106 from protected base 07d727a4c9b5516bbd57aef3aa7f89d359849260/tree e93209a057d186c7a9d46483592ac2e576b9df5f, using the existing ordinary checks.yml application suite. The exact 69-file delta is the ordered composition of frozen layer SHA-256 values 5741cfd7ab0b5646f293a7a98fc438a0f5c45f19dfafaa5fb51b75281a4960a0, f1170c5da915ce44c96595db7738e315931593dd37e539d323d58bb3c561e776, 32eb82bce5684e0057c3c95c403e2c893d8de4ec11975ae7c8e39e9a6f8f22f2; an isolated index reproduced every intermediate tree and the final projected tree. Preserve and bind the other 57 unique paths exactly to the seven current active same-Root leases 927aa99f-4b6f-44f1-881a-577743135cbf, 50ca8e4f-a56e-4d63-a7f8-b161911678ba, 6d68eed2-04da-45b6-92ae-30bf4156d3a2, f3cb9983-2000-4e84-a396-a2b0e929a3da, b90bf50c-65bb-4591-a238-949e1542a734, 4f09f46e-f032-465b-b367-d302e4235b7e, 427bb26e-5d85-4db5-b0ec-1e88334b33f1 without extending, reopening or changing them. The sole FILE rule on a newly claimed path is the existing same-Root OWNER-KAN13-EA-OUTREACH-ROUTE-20261105 binding for layout.tsx and remains unchanged. Frozen sources remain policy 1475d418283e646554872db3992abc8a392af423, CTA 99f7780fe050f49a27bc9b2af3948686b8cfb0e4 and dock ef25adc612111f27037bfdd5c5dbc5f3b1f4d0ac. Policy PR418 remains independent and first for release. Add no material implementation or test authorship, protected browser admission, Core manifest work, source-owner reassignment, workflow change, provider action, release or production operation; do not treat projected composition as deployed or accepted. Preserve every prior task, lease, heartbeat, session, FILE rule, handoff, release pointer and frozen branch. This custody transaction itself performs no source checkout, branch, application, test, runner, browser, provider, deployment, production or secret mutation.",
+      "createdAt": "2026-11-06T07:44:50.718Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T07:44:50.718Z"
     }
   ]
 }
