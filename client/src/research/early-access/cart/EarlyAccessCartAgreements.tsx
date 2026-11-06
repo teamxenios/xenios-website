@@ -11,12 +11,9 @@ import {
  * section, which reads the customer's standing from the server on every mount
  * and writes nothing to browser storage.
  *
- * THE STANDING SHOWN HERE IS NOT THE SECTION'S OPINION. The section reports
- * when something changed; the journey answers by ASKING THE SERVER AGAIN, and
- * passes the server's answer back down as `standing`. So the sentence a
- * customer reads and the condition the checkout enforces are the same fact from
- * the same source, rather than two components that agreed at some point earlier
- * in the session.
+ * The journey reads standing from the server after normal changes. An explicit
+ * recovery already reads standing in the section and matches it to the served
+ * policy, so the journey can use that observation directly.
  *
  * The continue control is not merely disabled until that answer says satisfied.
  * It is absent. A greyed-out button invites a customer to keep clicking a thing
@@ -31,8 +28,8 @@ export function EarlyAccessCartAgreements({
   busy = false,
 }: Readonly<{
   standing: EarlyAccessAgreementStanding;
-  /** Ask the server for this customer's standing again. */
-  onRecheck(): void;
+  /** Refresh standing, or consume the result of the section's explicit check. */
+  onRecheck(accepted: boolean, recoveryStanding?: EarlyAccessAgreementStanding): void;
   onBack(): void;
   onContinue(): void;
   busy?: boolean;
@@ -58,15 +55,7 @@ export function EarlyAccessCartAgreements({
       </div>
 
       <div data-testid="early-access-cart-agreement-step-mount">
-        {/*
-          Both callbacks do the same thing on purpose: they say "something about
-          this customer's standing may have changed", and the journey re-reads
-          it. Neither is treated as the answer. `onAccepted(true)` in particular
-          is a claim by a component that a write succeeded, and a write
-          succeeding is not the same fact as the server reporting the customer
-          as agreed when asked fresh.
-        */}
-        <EarlyAccessAgreementSection onAccepted={onRecheck} onBlocked={onRecheck} />
+        <EarlyAccessAgreementSection onAccepted={onRecheck} />
       </div>
 
       <div className="flex flex-wrap gap-3">

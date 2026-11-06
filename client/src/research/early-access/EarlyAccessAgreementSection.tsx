@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import {
   acceptEarlyAccessAgreement,
@@ -14,6 +14,7 @@ import {
   type ResearchPolicyLoad,
 } from "../adapters/earlyAccessAgreement";
 import { EarlyAccessVerificationPanel } from "./EarlyAccessVerificationPanel";
+import { createLatestOperation } from "../lib/latest-operation";
 
 /**
  * The Private Early Access agreement screen.
@@ -43,8 +44,14 @@ export interface EarlyAccessAgreementSectionProps {
   loadPolicy?: () => Promise<ResearchPolicyLoad>;
   loadState?: () => Promise<EarlyAccessAgreementState>;
   accept?: (agreement: EarlyAccessAgreementPair) => Promise<EarlyAccessAcceptResult>;
-  /** Told once, whenever the server confirms this customer is agreed. */
-  onAccepted?: (accepted: boolean) => void;
+  /**
+   * Reports whether the exact policy is accepted. A recovery standing comes
+   * from an explicit status read, or is error when the write is unconfirmed.
+   */
+  onAccepted?: (
+    accepted: boolean,
+    recoveryStanding?: EarlyAccessAgreementState["kind"],
+  ) => void;
   /**
    * Told whenever this screen settles, so the surrounding journey can describe
    * the SAME situation. Without it the page can say "accept the policy above"
@@ -83,7 +90,9 @@ const ASSENT =
   "I have read and agree to the Early Access Product Policy, including the conditions that apply to the products I request.";
 
 const AGREEMENT_POLICY_MISMATCH =
-  "The agreement identity does not match the Early Access Product Policy that was served. Nothing has been recorded.";
+  "We could not match your agreement status to the current Early Access Product Policy. Check agreement status before continuing.";
+const AGREEMENT_WRITE_UNCONFIRMED =
+  "We could not confirm whether your agreement was recorded. Check its status before continuing.";
 
 function sameAgreement(
   left: EarlyAccessAgreementPair,
@@ -118,136 +127,149 @@ export function EarlyAccessAgreementSection({
 }: EarlyAccessAgreementSectionProps) {
   const headingId = useId();
   const checkboxId = useId();
+  const [agreementLoadTask] = useState(createLatestOperation);
+  const [agreementWriteTask] = useState(createLatestOperation);
+  const writeTicket = useRef<symbol | null>(null);
   const [policy, setPolicy] = useState<ResearchPolicyLoad | null>(null);
   const [phase, setPhase] = useState<Phase>({ status: "loading" });
   const [agreement, setAgreement] = useState<EarlyAccessAgreementPair | null>(null);
-  // Unchecked, always, on every mount. An agreement screen that arrives already
-  // ticked has collected nothing.
+  // An agreement screen that arrives already ticked has collected nothing.
   const [checked, setChecked] = useState(false);
 
   const [reloadKey, setReloadKey] = useState(0);
   const reload = useCallback(() => {
-    // A successful verification changes what the SERVER will say about this
-    // session, so the answer is re-read rather than assumed.
+    agreementLoadTask.invalidate();
+    agreementWriteTask.invalidate();
+    writeTicket.current = null;
+    setChecked(false);
     setAgreement(null);
     setPhase({ status: "loading" });
     setReloadKey((key) => key + 1);
-  }, []);
+  }, [agreementLoadTask, agreementWriteTask]);
 
   useEffect(() => {
     let live = true;
-    // The policy and the standing are read together, but they answer different
-    // questions and a failure in one must not be reported as the other.
-    void Promise.all([loadPolicy(), loadState()]).then(([policyResult, stateResult]) => {
-      if (!live) return;
-      setPolicy(policyResult);
-      if (stateResult.kind === "locked") {
-        setAgreement(null);
-        setPhase({ status: "locked" });
-        onAccepted(false);
-        onBlocked("locked");
+    setChecked(false);
+    setAgreement(null);
+    setPhase({ status: "loading" });
+
+    const reportStanding = (standing: EarlyAccessAgreementState["kind"]) => {
+      if (reloadKey === 0) {
+        onAccepted(standing === "accepted");
+      } else {
+        onAccepted(standing === "accepted", standing);
+      }
+    };
+    // Attach handlers before either loader can reject or throw.
+    void agreementLoadTask.run(() => Promise.all([
+      Promise.resolve().then(loadPolicy),
+      Promise.resolve().then(loadState),
+    ])).then((outcome) => {
+      if (!live || outcome.kind === "cancelled") return;
+      if (outcome.kind !== "value") {
+        setPolicy(null);
+        setPhase({
+          status: "fault",
+          message: "We could not confirm the current policy and agreement status. Check again before continuing.",
+        });
+        reportStanding("error");
+        onBlocked(null);
         return;
       }
-      if (stateResult.kind === "unverified") {
-        setAgreement(null);
-        setPhase({ status: "unverified" });
-        onAccepted(false);
-        onBlocked("unverified");
+      const [policyResult, stateResult] = outcome.value;
+      setPolicy(policyResult);
+      if (stateResult.kind === "locked" || stateResult.kind === "unverified") {
+        setPhase({ status: stateResult.kind });
+        reportStanding(stateResult.kind);
+        onBlocked(stateResult.kind);
         return;
       }
       if (stateResult.kind === "error") {
-        setAgreement(null);
         setPhase({ status: "fault", message: stateResult.message });
-        onAccepted(false);
+        reportStanding("error");
         return;
       }
       if (policyResult.kind !== "ok") {
-        // A status row cannot identify what the customer saw. Without the
-        // policy's own exact metadata there is no consent to carry forward,
-        // including when the status endpoint says an old row is accepted.
-        setAgreement(null);
+        // A status row cannot identify a policy the customer could not read.
         setPhase({ status: "ready" });
         onBlocked(null);
-        onAccepted(false);
+        reportStanding("error");
         return;
       }
       if (!sameAgreement(policyResult.policy.agreement, stateResult.agreement)) {
-        setAgreement(null);
         setPhase({ status: "fault", message: AGREEMENT_POLICY_MISMATCH });
         onBlocked(null);
-        onAccepted(false);
+        reportStanding("error");
         return;
       }
       setAgreement(policyResult.policy.agreement);
       if (stateResult.kind === "accepted") {
-        // A persisted acceptance is usable only after its exact identity has
-        // also been found on the exact policy object rendered below.
         setPhase({ status: "accepted", alreadyAccepted: true });
-        onBlocked(null);
-        onAccepted(true);
-        return;
+      } else {
+        setPhase({ status: "ready" });
       }
-      setPhase({ status: "ready" });
       onBlocked(null);
-      onAccepted(false);
+      reportStanding(stateResult.kind);
     });
     return () => {
       live = false;
+      writeTicket.current = null;
+      agreementLoadTask.invalidate();
+      agreementWriteTask.invalidate();
     };
-    // The injected callables are the identity of this effect. onAccepted is
-    // deliberately not a dependency: a parent re-creating it must not re-run a
-    // network read.
+    // Parent callbacks are observations, not reasons to start another read.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadPolicy, loadState, reloadKey]);
+  }, [agreementLoadTask, agreementWriteTask, loadPolicy, loadState, reloadKey]);
 
   const submit = useCallback(() => {
-    if (agreement === null) {
-      setPhase({
-        status: "fault",
-        message: "The agreement identity could not be verified. Nothing has been recorded.",
-      });
-      onAccepted(false);
+    if (writeTicket.current !== null || !checked || phase.status !== "ready" || agreement === null) {
       return;
     }
+    const ticket = Symbol();
+    writeTicket.current = ticket;
     setPhase({ status: "submitting" });
-    void accept(agreement).then((result) => {
-      if (result.kind === "accepted" && sameAgreement(result.agreement, agreement)) {
-        // BOTH outcomes are success. A duplicate write means the acceptance is
-        // on file, which is the only thing checkout asks about, so telling the
-        // customer it failed would be false.
+
+    const requireStatusCheck = (message: string) => {
+      setAgreement(null);
+      setChecked(false);
+      setPhase({ status: "fault", message });
+      onAccepted(false, "error");
+      onBlocked(null);
+    };
+
+    void agreementWriteTask.run(() => accept(agreement), 15_000).then((outcome) => {
+      if (writeTicket.current !== ticket || outcome.kind === "cancelled") return;
+      writeTicket.current = null;
+      if (outcome.kind !== "value") {
+        requireStatusCheck(AGREEMENT_WRITE_UNCONFIRMED);
+        return;
+      }
+      const result = outcome.value;
+      if (result.kind === "accepted") {
+        if (!sameAgreement(result.agreement, agreement)) {
+          requireStatusCheck(AGREEMENT_POLICY_MISMATCH);
+          return;
+        }
         setAgreement(result.agreement);
         setPhase({ status: "accepted", alreadyAccepted: result.alreadyAccepted });
         onBlocked(null);
         onAccepted(true);
         return;
       }
-      if (result.kind === "locked") {
+      if (result.kind === "locked" || result.kind === "unverified") {
         setAgreement(null);
-        setPhase({ status: "locked" });
+        setPhase({ status: result.kind });
         onAccepted(false);
-        onBlocked("locked");
+        onBlocked(result.kind);
         return;
       }
-      if (result.kind === "unverified") {
-        setAgreement(null);
-        setPhase({ status: "unverified" });
-        onAccepted(false);
-        onBlocked("unverified");
+      if (result.kind === "refused" && result.code === "NOT_RECORDED") {
+        requireStatusCheck("The agreement service reported that your agreement was not recorded. Check its status before continuing.");
         return;
       }
-      // Fail closed. Nothing is recorded, so nothing is unlocked.
-      setPhase({
-        status: "fault",
-        message:
-          result.kind === "accepted"
-            ? AGREEMENT_POLICY_MISMATCH
-            : result.kind === "refused"
-            ? "Your agreement was not recorded. Nothing has been ordered or charged. Please try again."
-            : result.message,
-      });
-      onAccepted(false);
+      requireStatusCheck(AGREEMENT_WRITE_UNCONFIRMED);
     });
-  }, [accept, agreement, onAccepted, onBlocked]);
+  }, [accept, agreement, agreementWriteTask, checked, onAccepted, onBlocked, phase.status]);
 
   const accepted = phase.status === "accepted";
   const busy = phase.status === "submitting";
@@ -314,6 +336,8 @@ export function EarlyAccessAgreementSection({
         >
           {phase.message}
         </p>
+        <button type="button" className="btn btn-secondary mt-3" onClick={reload}
+          data-testid={`${testId}-read-retry`}>Check agreement status</button>
       </section>
     );
   }
@@ -327,6 +351,8 @@ export function EarlyAccessAgreementSection({
           We could not load the {POLICY_NAME} just now. This is a fault on our side. You
           cannot continue until it loads, and nothing has been ordered or charged.
         </p>
+        <button type="button" className="btn btn-secondary mt-3" onClick={reload}
+          data-testid={`${testId}-policy-retry`}>Reload policy</button>
       </section>
     );
   }

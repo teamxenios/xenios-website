@@ -316,6 +316,68 @@ describe("Required Agreements is a step between shipping and review", () => {
     expect(readEarlyAccessHistoryState(window.history.state)?.step).toBe("review");
   });
 
+  it("checks an unconfirmed agreement only after the customer requests its status", async () => {
+    let accepted = true;
+    const agreement = { kind: "early_access_terms", version: "v2" };
+    const fetch = stubFetch();
+    const ordinaryResponse = fetch.getMockImplementation()!;
+    fetch.mockImplementation(async (input, init) => {
+      const path = String(input);
+      if (path.endsWith("/research/policies")) {
+        return jsonResponse({
+          policies: {
+            "early-access-product-policy": {
+              title: "Early Access Product Policy",
+              agreement,
+              sections: [{ heading: "Synthetic policy", paragraphs: ["Fixture text."] }],
+            },
+          },
+        });
+      }
+      if (path.endsWith("/early-access/agreements")) {
+        return jsonResponse({ ok: true, required: [agreement], accepted });
+      }
+      if (path.endsWith("/agreements/accept")) {
+        accepted = true;
+        throw new Error("The fixture lost the acceptance response");
+      }
+      return ordinaryResponse(input, init);
+    });
+    const standingReads = () => fetch.mock.calls.filter(
+      ([url]) => String(url).endsWith("/early-access/agreements"),
+    ).length;
+    const acceptanceWrites = () => fetch.mock.calls.filter(
+      ([url, init]) => String(url).endsWith("/agreements/accept") && init?.method === "POST",
+    ).length;
+
+    await mountJourney();
+    await click(buttons("Add to cart")[0]!);
+    await click(buttons("View cart (1)")[0]!);
+    await click(buttons("Continue to shipping")[0]!);
+    await fillDetails();
+    accepted = false;
+    await click(buttons("Review cart")[0]!);
+    const before = standingReads();
+    const checkbox = container.querySelector<HTMLInputElement>(
+      '[data-testid="early-access-agreement-checkbox"]',
+    )!;
+    expect(checkbox.checked).toBe(false);
+    await act(async () => checkbox.click());
+    await click(buttons("Accept and continue")[0]!);
+
+    expect(acceptanceWrites()).toBe(1);
+    expect(standingReads()).toBe(before);
+    expect(text()).toContain("could not confirm whether your agreement was recorded");
+    expect(buttons("Continue to review")).toHaveLength(0);
+    expect(posted.filter(({ path }) => path.endsWith("/cart/quote"))).toEqual([]);
+
+    await click(buttons("Check agreement status")[0]!);
+    expect(standingReads()).toBe(before + 1);
+    expect(acceptanceWrites()).toBe(1);
+    expect(buttons("Continue to review")).toHaveLength(1);
+    expect(posted.filter(({ path }) => path.endsWith("/cart/quote"))).toEqual([]);
+  });
+
   it("with the standing unsatisfied there is NO continue control and no quote", async () => {
     // The catalogue gate already refuses this customer, so reach the step by
     // navigation instead and prove the step itself also refuses.
