@@ -3852,6 +3852,17 @@
       "state": "active",
       "claimedAt": "2026-11-06T10:37:48.836Z",
       "heartbeatAt": "2026-11-06T10:37:48.836Z"
+    },
+    {
+      "id": "fdac0603-1aae-42f9-a44a-86ca7339f834",
+      "task": "KAN6-HCG-0401-COVERAGE-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/master-offerings/early-access-catalog-coverage.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T10:49:32.137Z",
+      "heartbeatAt": "2026-11-06T10:49:32.137Z"
     }
   ],
   "rules": [

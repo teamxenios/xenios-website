@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T10:37:48.836Z",
+  "updatedAt": "2026-11-06T10:49:32.137Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4966,6 +4966,24 @@
       "createdAt": "2026-11-06T10:37:48.836Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T10:37:48.836Z"
+    },
+    {
+      "id": "KAN6-HCG-0401-COVERAGE-20261106",
+      "title": "Correct the GEN-GRP-0401 whole-catalog coverage assertion",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-6",
+      "baseSha": "060c82149453632901fa2419123771a859c81a23",
+      "paths": [
+        "server/research/master-offerings/early-access-catalog-coverage.test.ts"
+      ],
+      "dependsOn": [
+        "KAN6-HCG-0401-STRENGTH-HOLD-20261106"
+      ],
+      "scopeNote": "Claim only server/research/master-offerings/early-access-catalog-coverage.test.ts as a supplemental test-only successor for the diagnosed PR429 failure at exact head 060c82149453632901fa2419123771a859c81a23/tree 6a08b8afb117f7afe84151c4e54479ad9a87d067 on protected 07d727a4c9b5516bbd57aef3aa7f89d359849260. Exact test preimage blob is 7237b21b159edda05cdfb3e46961b79fa30f9041. Trusted hosted run 42204568657 attempt 1 failed exactly one whole-catalog assertion after 18,607 passes and 83 skips: GEN-GRP-0401's intended hold changes legacy activation 44 to 43 and availability review 2 to 3, while all other aggregates, including 417 priced and 3 unpriced, remain exact. Update only the identified variant assertion while retaining every existing price and conservation test, then require independent review and ordinary hosted qualification. Preserve all production/source bytes and active HCG source lease b18e9231-19c5-4d3d-a829-aea8bae0cf81, protected-QA/Core lease 68eba6e7-3bf1-4cd7-b021-9ccdc22210b3, all prior records and frozen branches, and policy-first ordering. Fresh case-insensitive exact, ancestor, prefix and wildcard active/reserved CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no live conflict. This custody transaction performs no source edit, checkout, branch, Node, test, build, browser, workflow, runner, provider, merge, release, deployment, production, Core, policy or configuration mutation.",
+      "createdAt": "2026-11-06T10:49:32.137Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T10:49:32.137Z"
     }
   ]
 }
