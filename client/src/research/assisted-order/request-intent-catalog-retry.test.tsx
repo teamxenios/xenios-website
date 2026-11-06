@@ -84,7 +84,7 @@ describe("Quick Order catalog read recovery", () => {
     expect(host.textContent).toContain("1 visible catalog entries");
     expect(host.querySelector('[role="alert"]')).toBeNull();
     await click("Add Synthetic item to request");
-    expect(button("Continue to contact")!.disabled).toBe(false);
+    expect(button("Continue to details")!.disabled).toBe(false);
     noWrites(api);
   });
 
@@ -107,7 +107,7 @@ describe("Quick Order catalog read recovery", () => {
     expect(summary.textContent).toContain("Synthetic exact variant");
     expect(summary.textContent).toContain("Requested quantity: 7");
     expect(host.textContent).toContain("Page 2");
-    await click("Continue to contact");
+    await click("Continue to details");
     expect(host.querySelector('input[name="name"]')).not.toBeNull();
     noWrites(api);
   });
@@ -167,7 +167,7 @@ describe("Quick Order catalog read recovery", () => {
     api.catalog.mockRejectedValueOnce(new Error("catalog unavailable")).mockResolvedValueOnce(page());
     await mount(api); await click("Retry catalog");
     expect(host.textContent).toContain("Current request requirements are unavailable. Submission remains closed.");
-    expect(button("Continue to contact")!.disabled).toBe(true);
+    expect(button("Continue to details")!.disabled).toBe(true);
     expect(api.config).toHaveBeenCalledTimes(1); noWrites(api);
   });
 

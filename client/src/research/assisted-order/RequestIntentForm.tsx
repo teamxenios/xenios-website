@@ -15,10 +15,13 @@ import { isResearchCartScope } from "../cart-session";
 import { ProductMedia } from "../product-media/ProductMedia";
 import { ReviewedProductContent } from "../master-offerings/ReviewedProductContent";
 import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
+import { EARLY_ACCESS_ENTRY_PATH, normalizeResearchPath } from "@shared/research/paths";
+import { EarlyAccessRequestGuide } from "../early-access/EarlyAccessRequestGuide";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import "./assisted-order.css";
+import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
 
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
@@ -79,7 +82,7 @@ type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Stora
   continuationEnabled?: boolean; onStepChange?: (step: "products" | "contact" | "review") => void;
   /** Called only after a proven first prewrite agreement refusal, never an uncertain retry. */
   onAgreementStandingRequired?: () => void;
-  entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void;
+  entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt, recovered?: boolean) => void;
   /** The opaque owner this mount is keyed by. A reference confirmed earlier in this tab reopens only for the same owner. */
   ownerKey?: string }>;
 
@@ -224,7 +227,7 @@ function RequestIntentFormSession({
       if (!clearConfirmedIntentAttempt(storage, restored)) throw new Error("Session changed.");
       setReceipt(saved); setError("");
       rememberConfirmedReceipt(storage, ownerKey, saved);
-      onConfirmedReceipt?.(saved);
+      onConfirmedReceipt?.(saved, true);
     } catch { if (mounted.current) setError(REQUEST_INTENT_RECOVERY_NOTICE); }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
@@ -355,7 +358,9 @@ function RequestIntentFormSession({
       setPage((value) => value + 1);
     }}>Next</button>
   </nav>;
-  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1} reopened={receipt === reopened}
+  const hasFrozenAttempt = frozen.current !== null;
+  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1}
+    reopened={receipt === reopened} recovered={restored !== null}
     onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
 
   if (restored) return <section className="xenios-order-page"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
@@ -364,9 +369,13 @@ function RequestIntentFormSession({
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
 
+  const currentPath = typeof window === "undefined" ? "/" : normalizeResearchPath(window.location.pathname);
+  const showEarlyAccessGuide = embedded && storage !== null && config !== null && !catalogFailed
+    && (currentPath === EARLY_ACCESS_ENTRY_PATH || currentPath === "/research/early-access/order-request");
+
   return <section className={(embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page")
     + (compactGuestCatalog ? " xenios-order-page--guest-catalog" : "")}>
-    <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Request products for review</Heading>
+    <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Build your request</Heading>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
     {!embedded && <p><a href="/research/early-access">Review access and agreement requirements</a></p>}
@@ -387,7 +396,9 @@ function RequestIntentFormSession({
             { item: hintItem, quantity: entryIntent.quantity }))}>Add linked selection for review</button>}
         <p>A link never approves a clinical item or places an order.</p>
       </section>}
-      {compactGuestCatalog && <div ref={catalogStartRef} className="xenios-order-catalog-start" />}
+      {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
+      {(compactGuestCatalog || showEarlyAccessGuide) && <div ref={catalogStartRef} className="xenios-order-catalog-start"
+        id={showEarlyAccessGuide ? "early-access-catalog" : undefined} tabIndex={showEarlyAccessGuide ? -1 : undefined} />}
       <div className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
         <div className="xenios-order-grid">
           <label>Search catalog<input value={search} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>
@@ -464,7 +475,7 @@ function RequestIntentFormSession({
         {compactGuestCatalog && <button type="button" className="xenios-order-summary-toggle"
           aria-expanded={mobileSummaryOpen} aria-controls={requestSummaryId}
           onClick={() => setMobileSummaryOpen((value) => !value)}>
-          <span>Review request ({selections.length})</span>
+          <span>{EARLY_ACCESS_REQUEST_CTA.summary} ({selections.length})</span>
           <span aria-hidden="true">{mobileSummaryOpen ? "−" : "+"}</span>
         </button>}
         <div id={requestSummaryId} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
@@ -490,7 +501,7 @@ function RequestIntentFormSession({
           </li>)}
         </ul>}
         <p className="xenios-order-small">A request is not an approved order. Final quantities, prices and availability require review.</p>
-        <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>Continue to contact</button>
+        <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>{EARLY_ACCESS_REQUEST_CTA.details}</button>
         </div>
       </aside></div>
     </>}
@@ -510,9 +521,12 @@ function RequestIntentFormSession({
         const form = event.currentTarget.form;
         if (!form) return;
         rememberContactDraft(form); setStep("products");
-      }}>Back to products</button><button className="xenios-order-button" type="submit">Review request</button></div>
+      }}>Back to products</button><button className="xenios-order-button" type="submit">{EARLY_ACCESS_REQUEST_CTA.finalReview}</button></div>
     </form>}
-    {step === "review" && <section className="xenios-order-panel"><h2>Review your request</h2>
+    {step === "review" && <section className="xenios-order-panel"><h2>{EARLY_ACCESS_REQUEST_CTA.finalHeading}</h2>
+      <p>{hasFrozenAttempt
+        ? "If the result is unconfirmed, choose Retry same request to send the original details again."
+        : "Check your items and contact details, then choose Submit request. The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>{item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | Pending {item.clinicalReviewRequired ? "clinical" : "internal"} review</li>)}</ul>
       <fieldset disabled={busy || frozen.current !== null} className="xenios-order-acknowledgments"><legend>Confirm the current requirements</legend>
@@ -524,7 +538,7 @@ function RequestIntentFormSession({
       <div className="xenios-order-actions">
         <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); setStep("products"); }}>Edit selection</button>
         <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
-          onClick={() => void submit()}>{frozen.current ? "Retry same request" : "Submit for review"}</button>
+          onClick={() => void submit()}>{finalRequestActionLabel(hasFrozenAttempt, busy && hasFrozenAttempt)}</button>
       </div><a href="/research/support">Contact support</a>
     </section>}
   </section>;

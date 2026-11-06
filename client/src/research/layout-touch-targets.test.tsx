@@ -75,8 +75,20 @@ describe("protected Research chrome pointer targets", () => {
     expect(row).not.toBeNull();
     expect(home?.classList.contains("research-chrome-target")).toBe(true);
     expect(home?.classList.contains("research-chrome-wordmark")).toBe(true);
+    expect(home?.hasAttribute("aria-label")).toBe(false);
+    expect(home?.textContent).not.toContain("care + research");
     expect(back?.classList.contains("research-chrome-target")).toBe(true);
   });
+
+  it.each(["/earlyaccess", "/research/early-access/order-request"])(
+    "brands the Early Access request entry at %s", (pathname) => {
+      const view = renderAt(pathname);
+      const home = view.querySelector('[data-testid="link-research-home"]');
+      expect(home?.getAttribute("href")).toBe("/research");
+      expect(home?.getAttribute("aria-label")).toBe("Xenios Care + Research");
+      expect(home?.textContent).toContain("care + research");
+    },
+  );
 
   it("pins both member navigation families, current-page semantics, and wrap-safe sign-out", () => {
     const view = renderAt("/research/member/products");
