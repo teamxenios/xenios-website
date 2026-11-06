@@ -205,7 +205,7 @@ describe("recovery route chrome isolation", () => {
   });
 
   it.each([1440, 720, 375, 320])(
-    "keeps the routed signed-out member catalog gate to one main and one H1 at %dpx",
+    "keeps the routed signed-out member catalog handoff to one main and one H1 at %dpx",
     (width) => {
       Object.defineProperty(window, "innerWidth", {
         configurable: true,
@@ -213,6 +213,28 @@ describe("recovery route chrome isolation", () => {
       });
 
       const view = renderAt("/research/member/products");
+      const main = view.querySelector("main");
+
+      expect(view.querySelectorAll("main")).toHaveLength(1);
+      expect(view.querySelectorAll("h1")).toHaveLength(1);
+      // The member page stays closed; the reviewer password, which cannot open
+      // a member page, is replaced by the member sign-in handoff.
+      expect(view.querySelector('[data-testid="recovery-content"]')).toBeNull();
+      expect(main?.querySelector('[data-testid="form-research-access"]')).toBeNull();
+      expect(main?.querySelector('[data-testid="member-sign-in-required"]')).toBeTruthy();
+      expect(main?.querySelector("h1")?.textContent).toBe("Sign in to open this member page.");
+    },
+  );
+
+  it.each([1440, 720, 375, 320])(
+    "keeps the routed signed-out review gate to one main and one H1 at %dpx",
+    (width) => {
+      Object.defineProperty(window, "innerWidth", {
+        configurable: true,
+        value: width,
+      });
+
+      const view = renderAt("/research/partners/apply");
       const main = view.querySelector("main");
 
       expect(view.querySelectorAll("main")).toHaveLength(1);

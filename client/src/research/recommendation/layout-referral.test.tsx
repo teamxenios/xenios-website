@@ -38,10 +38,18 @@ describe("referral destinations reach their existing member guard, not the share
     expect(main).toHaveLength(1);
     expect(main[0]?.textContent).toContain("Partner-owned boundary");
   });
-  it.each(["/research/member/cart", "/research/member/products", "/research/member/products/a/extra", "/research/partners/dashboard/extra", "/research/partners/commissions", "/research/partners/links/extra"])("unrelated %s retains the review gate", (path) => {
+  it.each(["/research/member/products/a/extra", "/research/partners/dashboard/extra", "/research/partners/commissions", "/research/partners/links/extra"])("unrelated %s retains the review gate", (path) => {
     const location = memoryLocation({ path });
     render(<Router hook={location.hook}><ResearchLayout><div>Unrelated private content</div></ResearchLayout></Router>);
     expect(document.body.textContent).not.toContain("Unrelated private content");
     expect(document.querySelector('[id="research-password"]')).not.toBeNull();
+  });
+  it.each(["/research/member/cart", "/research/member/products"])("unrelated member page %s stays closed and offers member sign in instead of the reviewer password", (path) => {
+    window.history.replaceState(null, "", path);
+    const location = memoryLocation({ path });
+    render(<Router hook={location.hook}><ResearchLayout><div>Unrelated private content</div></ResearchLayout></Router>);
+    expect(document.body.textContent).not.toContain("Unrelated private content");
+    expect(document.querySelector('[id="research-password"]')).toBeNull();
+    expect(document.querySelector('[data-testid="link-member-entry-sign-in"]')?.getAttribute("href")).toBe(`/research/sign-in?returnTo=${encodeURIComponent(path)}`);
   });
 });

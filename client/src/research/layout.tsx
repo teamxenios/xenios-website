@@ -18,6 +18,8 @@ import {
   PublicEditorialFooter,
   PublicEditorialNav,
 } from "./pages/PublicEditorialNav";
+import MemberSignInRequired from "./pages/MemberSignInRequired";
+import { memberEntryFor } from "./lib/member-entry";
 import "./layout-touch-targets.css";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
@@ -412,7 +414,21 @@ export default function ResearchLayout({ children }: { children: ReactNode }) {
       </div>
     );
   }
-  if (gate === "locked") return <PasswordPage />;
+  if (gate === "locked") {
+    // A member page never opens with the shared review password: section.tsx
+    // mounts every one behind RequireMember. Keep the page closed, but send a
+    // signed-out visitor to their own member sign-in (with the exact returnTo)
+    // and the public options, instead of a password form that cannot help.
+    const memberEntry = memberEntryFor(location, typeof window === "undefined" ? "" : window.location.search);
+    if (memberEntry) {
+      return (
+        <MinimalChrome>
+          <MemberSignInRequired returnTo={memberEntry.returnTo} path={normalizedLocation} />
+        </MinimalChrome>
+      );
+    }
+    return <PasswordPage />;
+  }
 
   if (isMemberAreaPath(location)) return <MemberChrome>{children}</MemberChrome>;
   return <MinimalChrome>{children}</MinimalChrome>;
