@@ -28,7 +28,7 @@ export function OrderRequestCta({ mode }: { mode: OrderRequestMode }) {
     <a className="btn btn-primary mt-4" href="/research/early-access/order-request">{EARLY_ACCESS_REQUEST_CTA.open}</a></section>;
 }
 function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
-  onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void }) {
+  onConfirmedReceipt?: (receipt: RequestIntentReceipt, recovered?: boolean) => void }) {
   const [prior] = useState(() => {
     try { return readOrderRequestContinuity(window.sessionStorage); } catch { return "blocked" as const; }
   });
@@ -72,7 +72,7 @@ function OrderRequestEntryBody(props: Props & { closedIntakeFallback?: ReactNode
   const checking = memberChecking || memberSessionStatus === "checking";
   const verifiedScope = !checking && recovery === "none" && memberSessionStatus === "authenticated"
     && member && isResearchCartScope(member.cartScope) ? member.cartScope : null;
-  const [confirmed, setConfirmed] = useState<{ scope: string; receipt: RequestIntentReceipt } | null>(null);
+  const [confirmed, setConfirmed] = useState<{ scope: string; receipt: RequestIntentReceipt; recovered?: boolean } | null>(null);
   // Keep only confirmed display data through verification. A real owner or
   // recovery boundary discards it permanently, including a later return to A.
   // The anonymous literal is not a verified session identity. Route reset
@@ -102,11 +102,11 @@ function OrderRequestEntryBody(props: Props & { closedIntakeFallback?: ReactNode
       ? readConfirmedReceiptRecord(storage, verifiedScope) : null;
     return receipt ? <ReceiptView receipt={receipt} headingLevel={2} focusOnMount reopened /> : props.closedIntakeFallback;
   }
-  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} focusOnMount
+  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} recovered={confirmed.recovered} focusOnMount
     headingLevel={props.embedded ? 2 : 1}
     onStartAnother={() => { const storage = browserStorage(); if (storage) forgetConfirmedReceipt(storage); setConfirmed(null); }} />;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode}
-    onConfirmedReceipt={verifiedScope ? (receipt) => setConfirmed({ scope: verifiedScope, receipt }) : undefined} />;
+    onConfirmedReceipt={verifiedScope ? (receipt, recovered) => setConfirmed({ scope: verifiedScope, receipt, recovered }) : undefined} />;
 }
 
 export function ClosedIntakeRequestReceipt({ fallback }: Readonly<{ fallback: ReactNode }>) {

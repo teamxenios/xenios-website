@@ -512,12 +512,9 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
           <p className="mt-4 body-m text-ink-2 max-w-[62ch]">
             {EARLY_ACCESS_REQUEST_INTRO}
           </p>
-          {!retainedRequest && requestRecoveryDoor !== true && embeddedOrderStep === "products" && (
-            <EarlyAccessRequestGuide browseTargetId={
-              state.kind === "authenticated" && requestMode.kind === "mixed"
-                && requestRecoveryDoor === false && !priorRequestBlocked
-                ? "early-access-catalog" : undefined
-            } />
+          {state.kind === "authenticated" && requestMode.kind === "mixed" && requestRecoveryDoor === false
+            && !priorRequestBlocked && !retainedRequest && embeddedOrderStep === "products" && (
+              <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />
           )}
           {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
             : state.kind !== "authenticated" ? <div role="status" className="mt-5">

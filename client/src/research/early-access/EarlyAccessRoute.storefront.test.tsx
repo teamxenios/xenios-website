@@ -375,7 +375,11 @@ describe("the login-free request-only entry", () => {
     expect(button).toBeTruthy();
     return button!;
   }
+  function fallbackSupport() {
+    return container.querySelector('[role="alert"] a[href="/research/support"], [role="status"] a[href="/research/support"]');
+  }
   function expectOuterHelp() {
+    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
     const help = container.querySelector('[data-testid="quick-order-outer-help"]');
     expect(help?.getAttribute("aria-label")).toBe("Catalog and ordering help");
     const link = help?.querySelector("a");
@@ -384,12 +388,12 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelectorAll('a[href="sms:+17374186381"]')).toHaveLength(1);
     expect(help?.textContent).toContain("Sending a text does not submit this request, place an order, confirm availability or approve treatment.");
     expect(help?.textContent).toContain("Do not include medical information or payment details.");
-    const support = container.querySelector('a[href="/research/support"]');
+    const support = fallbackSupport();
     if (support) expect(support.compareDocumentPosition(help!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   }
   function expectPublicSupport() {
     expectOuterHelp();
-    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(fallbackSupport()?.textContent).toBe("Contact support");
     expect(container.querySelector('a[href="/support"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
   }
@@ -628,6 +632,9 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="early-access-checkout-mount"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(container.querySelector('a[href*="/member/login"]')).toBeNull();
+    const browse = container.querySelector('[data-testid="early-access-how-it-works"] a[href="#early-access-catalog"]');
+    expect(browse?.textContent).toBe("Browse products");
+    expect(container.querySelector("#early-access-catalog")?.querySelector('[data-testid="request-door-mixed"]')).not.toBeNull();
     expect(container.textContent).toContain("Clinical review required. Not a prescription.");
     expect(container.textContent).toContain("does not collect payment");
     const unlocks = fetch.mock.calls.filter(([url, init]) =>
@@ -643,7 +650,7 @@ describe("the login-free request-only entry", () => {
     await renderStorefront(true);
     expect(container.textContent).toContain("not available in this environment");
     expect([...container.querySelectorAll("button")].some((button) => button.textContent === "Try again")).toBe(false);
-    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(fallbackSupport()?.textContent).toBe("Contact support");
     expect(container.querySelector('a[href="/support"]')).toBeNull();
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
@@ -655,7 +662,7 @@ describe("the login-free request-only entry", () => {
     await renderStorefront(true);
     expect(container.textContent).toContain("The request form is currently unavailable");
     expectOuterHelp();
-    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(fallbackSupport()?.textContent).toBe("Contact support");
     expect(container.querySelector('a[href="/support"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.querySelector('[data-testid="early-access-featured-catalog"]')).toBeNull();
@@ -680,6 +687,8 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector("h1")?.textContent).toBe("Quick Order");
     expect([...container.querySelectorAll("h2")].some((heading) => heading.textContent === "Your submitted request")).toBe(true);
+    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-next-steps"]')).toBeNull();
     expect(container.textContent).not.toContain("The request form is currently unavailable");
     expect(container.textContent).not.toContain("Start another request");
     expect(container.textContent).not.toContain("Check saved request");
@@ -1172,6 +1181,9 @@ describe("the login-free request-only entry", () => {
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expectRecoveryOnly(fetch);
     expect(recoveryPosts(fetch)).toHaveLength(1);
+    expect(container.querySelector("h2[tabindex]")?.textContent).toBe("Your submitted request");
+    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expect(container.querySelector('[data-testid="request-next-steps"]')).toBeNull();
   });
   it.each(["missing", "malformed", "error"] as const)("keeps a %s recovery unconfirmed with the same marker and no replacement", async (recovery) => {
     window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, mixedMarker);
@@ -1180,7 +1192,9 @@ describe("the login-free request-only entry", () => {
     await renderStorefront(true);
     await act(async () => { recoverButton().click(); });
     expect(container.querySelector('[role="alert"]')).toBeTruthy();
-    expect(container.textContent).not.toContain("Your saved request reference");
+    expect(container.textContent).not.toContain("Your request reference is");
+    expect(container.textContent).not.toContain("Your submitted request");
+    expect(container.textContent).not.toContain("Request submitted");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(mixedMarker);
     expectRecoveryOnly(fetch);
     options.recovery = "saved";
@@ -1246,7 +1260,7 @@ describe("the login-free request-only entry", () => {
     stubFetch({ bridgeEnabled: true, mixedMode });
     await renderStorefront(true);
     expect(container.textContent).toContain("Do not create a replacement until staff check for duplicates");
-    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(fallbackSupport()?.textContent).toBe("Contact support");
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe("malformed retained attempt");
@@ -1262,7 +1276,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeNull();
     expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(marker);
-    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(fallbackSupport()?.textContent).toBe("Contact support");
     expectOuterHelp();
   });
   it("rechecks expired session authority and hides the form on refusal without a password fallback", async () => {
@@ -1282,7 +1296,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('input[type="password"]')).toBeNull();
     expect(container.textContent).toContain("not available in this environment");
     expect([...container.querySelectorAll("button")].some((button) => button.textContent === "Try again")).toBe(false);
-    expect(container.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
+    expect(fallbackSupport()?.textContent).toBe("Contact support");
   });
 });
 

@@ -46,7 +46,7 @@ export const EARLY_ACCESS_REQUEST_STEPS: readonly RequestJourneyStep[] = Object.
 
 export const EARLY_ACCESS_RECEIPT_STEPS: readonly RequestJourneyStep[] = Object.freeze([
   Object.freeze({ id: "review", title: "Team review",
-    description: "Your saved request is available to our team. We review the selected products and follow up using the contact details you provided." }),
+    description: "Our team reviews the selected products and uses the contact details you provided if more information is needed." }),
   Object.freeze({ id: "assessment", title: "The right checks for each item",
     description: "For clinical products, a clinician contacts you to assess whether treatment is appropriate. Nonclinical items follow their own requirements and availability checks." }),
   Object.freeze({ id: "decision", title: "A clear decision",
@@ -61,7 +61,7 @@ export function finalRequestActionLabel(frozen: boolean, busy = false): string {
   return frozen ? EARLY_ACCESS_REQUEST_CTA.retry : EARLY_ACCESS_REQUEST_CTA.submit;
 }
 
-/** A reopened confirmation must not imply another request was just sent. */
-export function requestReceiptHeading(reopened: boolean): string {
-  return reopened ? "Your submitted request" : "Request submitted";
+/** A recovered or reopened receipt describes an earlier submission. */
+export function requestReceiptHeading(earlierReceipt: boolean): string {
+  return earlierReceipt ? "Your submitted request" : "Request submitted";
 }

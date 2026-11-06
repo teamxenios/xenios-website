@@ -126,6 +126,9 @@ describe("confirmed receipt continuation", () => {
     const startAnother = vi.fn();
     await act(async () => root.render(<RequestIntentReceipt receipt={receipt} reopened onStartAnother={startAnother} />));
     expect(container.textContent).toContain("This reference was confirmed earlier in this browser tab. Nothing was sent again.");
+    expect(container.querySelector("h1")?.textContent).toBe("Your submitted request");
+    expect(container.textContent).not.toContain("Each item is pending review");
+    expect(container.querySelector('[data-testid="request-next-steps"]')).toBeNull();
     const start = [...container.querySelectorAll("button")].find((button) => button.textContent === "Start another request")!;
     expect(start).toBeTruthy();
     await act(async () => start.click());

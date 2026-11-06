@@ -80,7 +80,7 @@ type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Stora
   continuationEnabled?: boolean; onStepChange?: (step: "products" | "contact" | "review") => void;
   /** Called only after a proven first prewrite agreement refusal, never an uncertain retry. */
   onAgreementStandingRequired?: () => void;
-  entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void;
+  entryIntent?: StorefrontIntent | null; onConfirmedReceipt?: (receipt: RequestIntentReceipt, recovered?: boolean) => void;
   /** The opaque owner this mount is keyed by. A reference confirmed earlier in this tab reopens only for the same owner. */
   ownerKey?: string }>;
 
@@ -225,7 +225,7 @@ function RequestIntentFormSession({
       if (!clearConfirmedIntentAttempt(storage, restored)) throw new Error("Session changed.");
       setReceipt(saved); setError("");
       rememberConfirmedReceipt(storage, ownerKey, saved);
-      onConfirmedReceipt?.(saved);
+      onConfirmedReceipt?.(saved, true);
     } catch { if (mounted.current) setError(REQUEST_INTENT_RECOVERY_NOTICE); }
     finally { locked.current = false; if (mounted.current) setBusy(false); }
   }
@@ -356,7 +356,9 @@ function RequestIntentFormSession({
       setPage((value) => value + 1);
     }}>Next</button>
   </nav>;
-  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1} reopened={receipt === reopened}
+  const hasFrozenAttempt = frozen.current !== null;
+  if (receipt) return <ReceiptView receipt={receipt} headingRef={heading} headingLevel={embedded ? 2 : 1}
+    reopened={receipt === reopened} recovered={restored !== null}
     onStartAnother={() => { if (storage) forgetConfirmedReceipt(storage); onStartAnother(); }} />;
 
   if (restored) return <section className="xenios-order-page"><Heading ref={heading} tabIndex={-1}>Check your earlier request</Heading>
@@ -514,7 +516,9 @@ function RequestIntentFormSession({
       }}>Back to products</button><button className="xenios-order-button" type="submit">{EARLY_ACCESS_REQUEST_CTA.finalReview}</button></div>
     </form>}
     {step === "review" && <section className="xenios-order-panel"><h2>{EARLY_ACCESS_REQUEST_CTA.finalHeading}</h2>
-      <p>Check your items and contact details, then choose Submit request. The team will review your request before any approval or payment.</p>
+      <p>{hasFrozenAttempt
+        ? "If the result is unconfirmed, choose Retry same request to send the original details again."
+        : "Check your items and contact details, then choose Submit request. The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>{item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | Pending {item.clinicalReviewRequired ? "clinical" : "internal"} review</li>)}</ul>
       <fieldset disabled={busy || frozen.current !== null} className="xenios-order-acknowledgments"><legend>Confirm the current requirements</legend>
@@ -526,7 +530,7 @@ function RequestIntentFormSession({
       <div className="xenios-order-actions">
         <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); setStep("products"); }}>Edit selection</button>
         <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
-          onClick={() => void submit()}>{finalRequestActionLabel(frozen.current !== null, busy)}</button>
+          onClick={() => void submit()}>{finalRequestActionLabel(hasFrozenAttempt, busy && hasFrozenAttempt)}</button>
       </div><a href="/research/support">Contact support</a>
     </section>}
   </section>;

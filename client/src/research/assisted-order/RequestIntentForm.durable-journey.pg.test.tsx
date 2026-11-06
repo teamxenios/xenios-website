@@ -290,7 +290,7 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(markerRaw);
       expect(host.querySelector("form")).toBeNull();
       await click("Check saved request");
-      await settles(() => expect(host.querySelector("h1")?.textContent).toBe("Request submitted"));
+      await settles(() => expect(host.querySelector("h1")?.textContent).toBe("Your submitted request"));
       const recovered = exchanges.filter((entry) => entry.path === ROUTE + "/recover" && entry.guest === "a");
       expect(recovered).toHaveLength(1);
       expect(recovered[0].body).toEqual({ idempotencyKey: marker.key });

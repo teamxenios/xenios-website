@@ -367,7 +367,13 @@ describe("mixed private request customer form source", () => {
     await click(path === "submission" ? "Submit request" : "Check saved request");
     expect(host.textContent).toContain(reference);
     expect(confirmed).toHaveBeenCalledTimes(1);
-    expect(confirmed).toHaveBeenCalledWith(receipt);
+    if (path === "submission") {
+      expect(confirmed).toHaveBeenCalledWith(receipt);
+    } else {
+      expect(confirmed).toHaveBeenCalledWith(receipt, true);
+      expect(host.querySelector("h1")?.textContent).toBe("Your submitted request");
+      expect(host.querySelector('[data-testid="request-next-steps"]')).toBeNull();
+    }
     expect(markerAtConfirmation).toEqual([null]);
   });
   it("does not publish confirmation when recovery loses ownership of its marker", async () => {
@@ -417,7 +423,7 @@ describe("mixed private request customer form source", () => {
     ]);
     expect(payload.agreements.every((entry) => entry.accepted === true)).toBe(true);
     expect(host.textContent).toContain(reference);
-    expect(host.textContent).toContain("Each item is pending review");
+    expect(host.textContent).toContain("Final availability, quantities, pricing and delivery are confirmed separately.");
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
     expect(payload).not.toHaveProperty("paymentVerificationId");
     expect(payload).not.toHaveProperty("medicalHistory");
@@ -435,6 +441,7 @@ describe("mixed private request customer form source", () => {
     await click("Submit request");
     expect(host.textContent).not.toContain(reference);
     const first = api.submit.mock.calls[0][0];
+    expect(host.textContent).toContain("choose Retry same request to send the original details again");
     await click("Retry same request");
     expect(api.submit.mock.calls[1][0]).toEqual(first);
     expect(host.textContent).toContain(reference);
@@ -1155,6 +1162,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(buttonNamed("Refresh requirements").disabled).toBe(true);
     expect(buttonNamed("Submit request").disabled).toBe(true);
+    expect(host.textContent).not.toMatch(/Submitting request/);
     expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(sessionStorage.length).toBe(0);
