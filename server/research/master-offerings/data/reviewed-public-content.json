@@ -2100,6 +2100,262 @@
         "purpose": "Labeled indications (CIALIS prescribing information): erectile dysfunction (ED), the signs and symptoms of benign prostatic hyperplasia (BPH), and ED with the signs and symptoms of BPH. Whether a labeled use applies to a given patient is decided in clinician-directed review.",
         "cautions": "The CIALIS prescribing information contraindicates CIALIS with any form of organic nitrate, taken regularly or intermittently, with guanylate cyclase stimulators such as riociguat, and in people with a known serious hypersensitivity to tadalafil. It advises emergency medical attention for an erection lasting more than 4 hours, and stopping all PDE5 inhibitors and seeking medical attention after a sudden loss of vision in one or both eyes. It also warns about sudden hearing loss, additive blood-pressure lowering with alpha-blockers or other blood-pressure medicines, orthostatic symptoms with substantial alcohol (for example, 5 units or more), and interactions with potent CYP3A4 inhibitors. Share your full medication list with the prescribing clinician."
       }
+    },
+    {
+      "offeringId": "mo_75bc8d1ad93b04865e6c",
+      "sourceVariantId": "mov_8293d0baa21eb4d561f8",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Two-component research capsule listing stating 500 mcg of BPC-157 and 500 mcg of TB-500, described per component with no combination claim.",
+        "overview": "This listing states two components at the strengths given in its label: BPC-157 at 500 mcg and TB-500 at 500 mcg. Each is described separately below, and no source cited here studied them together. BPC-157 is a synthetic pentadecapeptide (Gly-Glu-Pro-Pro-Pro-Gly-Lys-Pro-Ala-Asp-Asp-Ala-Gly-Leu-Val) whose sequence is a partial sequence of body protection compound, a protein first isolated from human gastric juice. In cultured rat Achilles tendon explants, it accelerated the outgrowth of tendon fibroblasts. In isolated rat tendon fibroblasts, it did not directly change proliferation but improved cell survival under hydrogen peroxide stress, and it increased cell migration and spreading in a concentration-dependent way, with increased phosphorylation of the focal adhesion proteins FAK and paxillin. A follow-up study in these fibroblasts found that BPC-157 increased growth hormone receptor expression, and that adding growth hormone then increased proliferation and activated Janus kinase 2 signaling. A pharmacokinetic study measured a plasma elimination half-life of under 30 minutes for the intact peptide in rats and beagle dogs; in that study's separate experiment with tritium-labeled BPC-157 in rats, the excreted radioactivity was found mainly in urine and bile, and the authors reported that the peptide was broken down within minutes into small peptide fragments and, ultimately, single amino acids. A 2025 systematic review of BPC-157 in orthopaedic sports medicine included 35 preclinical studies and one retrospective clinical report, and reported that it found no clinical safety data in the literature it reviewed. TB-500 is a product name rather than a chemical name. A 2012 analytical study identified the peptide in TB-500 as Ac-LKKTETQ, the N-terminally acetylated 17 to 23 fragment of human thymosin beta-4, using high-performance liquid chromatography with high-resolution mass spectrometry, and prepared Ac-LKKTETQ separately by solid-phase peptide synthesis for comparison. That study examined a product sold under the name, so it establishes what the name has been shown to denote and not the composition of this listing. The seven-residue peptide is not thymosin beta-4 itself: reference records give the mature thymosin beta-4 chain as 43 residues, against the seven of this acetylated fragment, so findings reported for the 43-residue protein do not carry over to this listing. A 2015 evaluation of in vitro models for the metabolism of small peptide hormones included TB-500 among the peptides examined in human liver microsome and S9 fraction preparations. Nothing about a combination of the two is asserted. Each finding above is reported for one peptide on its own, and the properties of a combination are not established by the separate literature of its parts. This listing is a laboratory research material and not a medicine. The laboratory and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item as research capsules at listed strengths of 500 mcg of BPC-157 and 500 mcg of TB-500, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strengths",
+            "value": "BPC-157 500 mcg; TB-500 500 mcg"
+          }
+        ],
+        "purpose": "Nonclinical research on each listed peptide separately, in the cell and animal models described for it.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_5720466fd9388d2044ed",
+      "sourceVariantId": "mov_e562b76120d36c6ebf2d",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic six-amino-acid growth hormone-releasing peptide studied in rat and heart-tissue models. Listed at 10 mg for laboratory research.",
+        "overview": "Hexarelin is a synthetic hexapeptide of the growth hormone-releasing peptide (GHRP) family, His-D-2-methyl-Trp-Ala-Trp-D-Phe-Lys-NH2, described in the literature as an analogue of GHRP-6. A 1996 rat study found that three to ten days of hexarelin pretreatment increased the later growth hormone response in 10-day-old pups, including pups immunized against GHRH, while five days of pretreatment did not enhance that response in adult males. At the tested doses, hexarelin produced the larger response in sham-operated adults; after mediobasal hypothalamus ablation, GHRH produced the larger response at seven days and the responses were similar at thirty days. Studies in infant, adult and hypothalamus-lesioned rats led its investigators to propose three mechanisms: a minor direct action on the pituitary, release of GHRH in adult animals, and release of a still unidentified hypothalamic factor. Like other GHRPs it acts on the ghrelin receptor, but in rat cardiac membranes it also binds CD36, an 84-kDa glycoprotein expressed in heart muscle cells and microvascular endothelial cells. In perfused hearts, hexarelin raised coronary perfusion pressure, and this effect was absent in hearts from CD36-null mice and from hypertensive rats genetically deficient in CD36. These rat and mouse findings do not establish effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0300"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone secretagogue mechanisms and CD36-mediated cardiovascular signaling in rodent models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_e9e1c849f7549246cb89",
+      "sourceVariantId": "mov_80aaef9ddc11edab6c89",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic five-amino-acid growth hormone secretagogue studied in rat and swine models. Listed at 10 mg for laboratory research.",
+        "overview": "Ipamorelin is a synthetic pentapeptide (Aib-His-D-2-Nal-D-Phe-Lys-NH2) developed as a growth hormone secretagogue. It came from a series of compounds that lack the central Ala-Trp dipeptide of growth hormone-releasing peptide 1 (GHRP-1). In primary rat pituitary cells, anaesthetised rats and conscious swine it released growth hormone with potency and efficacy comparable to GHRP-6, and antagonist studies indicated that, like GHRP-6, it acts through a GHRP-type receptor. In swine, none of the tested secretagogues changed FSH, LH, prolactin or TSH; GHRP-6 and GHRP-2 increased ACTH and cortisol, whereas the levels after ipamorelin did not differ significantly from those after GHRH, even at more than 200 times the amount needed for half-maximal growth hormone release. In adult female rats given ipamorelin for 15 days, longitudinal bone growth and body-weight gain increased with the amount given, while total IGF-I and serum markers of bone turnover did not change. A randomized, placebo-controlled phase 2 study after bowel resection enrolled 117 adults, with 114 in its safety and modified intent-to-treat populations; it described ipamorelin as a ghrelin-receptor agonist and found no statistically significant difference from placebo in its key or secondary efficacy analyses. These cell, animal and early clinical findings do not establish that this research material is safe or effective in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0302"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone secretagogue receptor pharmacology and pituitary growth hormone release in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_f7fecc82508964efe3aa",
+      "sourceVariantId": "mov_0c4a5438cc87ab9d85b6",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Peptide agonist of the glucagon, GIP and GLP-1 receptors, studied in rodent models of obesity and fatty liver disease. Listed at 10 mg for laboratory research.",
+        "overview": "Retatrutide, also designated LY3437943, is a lipidated peptide of 39 amino acids designed to activate three receptors with a single molecule: the receptors for glucagon, glucose-dependent insulinotropic polypeptide (GIP) and glucagon-like peptide-1 (GLP-1). In its developer's 2022 report, it showed balanced glucagon- and GLP-1-receptor activity but more GIP-receptor activity in vitro, and in obese mice it decreased body weight and improved glycemic control; the authors reported that glucagon-receptor-mediated increases in energy expenditure added to the weight loss from reduced calorie intake driven by the GIP and GLP-1 receptors. In a separate 2026 study in diet-induced obese mice used as a model of steatohepatitis, retatrutide reduced body weight, both fat and lean mass, an index of insulin resistance and liver lipid content without significantly changing energy expenditure, and in a hamster model it halved liver triglycerides without reducing liver histology scores. In a 2025 mouse model of steatohepatitis induced by a Western diet with fructose and sucrose in the drinking water, retatrutide significantly lowered body weight, alanine aminotransferase (ALT) levels, liver triglycerides and cholesterol, and hepatic inflammatory markers in female mice compared with vehicle controls. In isolated mouse atria, retatrutide did not increase the force of contraction of the left atrium but raised the beating rate of the right atrium, an effect antagonized by a glucagon-receptor antagonist. As of a review covering evidence through September 2026, retatrutide was an investigational medicine in phase 3 clinical development and was not approved; this listing is a laboratory research material, not a medicine. These laboratory and animal findings do not establish the safety or effects of this research material in people. The catalog lists this item at 10 mg of retatrutide, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0323"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on glucagon, GIP and GLP-1 receptor signaling, energy balance and liver lipid metabolism in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_e230262ae1c41d2d7e18",
+      "sourceVariantId": "mov_8f14c1dd839544567d53",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Peptide agonist of the glucagon, GIP and GLP-1 receptors, studied in rodent models of obesity and fatty liver disease. Listed at 15 mg for laboratory research.",
+        "overview": "Retatrutide, also designated LY3437943, is a lipidated peptide of 39 amino acids designed to activate three receptors with a single molecule: the receptors for glucagon, glucose-dependent insulinotropic polypeptide (GIP) and glucagon-like peptide-1 (GLP-1). In its developer's 2022 report, it showed balanced glucagon- and GLP-1-receptor activity but more GIP-receptor activity in vitro, and in obese mice it decreased body weight and improved glycemic control; the authors reported that glucagon-receptor-mediated increases in energy expenditure added to the weight loss from reduced calorie intake driven by the GIP and GLP-1 receptors. In a separate 2026 study in diet-induced obese mice used as a model of steatohepatitis, retatrutide reduced body weight, both fat and lean mass, an index of insulin resistance and liver lipid content without significantly changing energy expenditure, and in a hamster model it halved liver triglycerides without reducing liver histology scores. In a 2025 mouse model of steatohepatitis induced by a Western diet with fructose and sucrose in the drinking water, retatrutide significantly lowered body weight, alanine aminotransferase (ALT) levels, liver triglycerides and cholesterol, and hepatic inflammatory markers in female mice compared with vehicle controls. In isolated mouse atria, retatrutide did not increase the force of contraction of the left atrium but raised the beating rate of the right atrium, an effect antagonized by a glucagon-receptor antagonist. As of a review covering evidence through September 2026, retatrutide was an investigational medicine in phase 3 clinical development and was not approved; this listing is a laboratory research material, not a medicine. These laboratory and animal findings do not establish the safety or effects of this research material in people. The catalog lists this item at 15 mg of retatrutide, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "15 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0324"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on glucagon, GIP and GLP-1 receptor signaling, energy balance and liver lipid metabolism in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_f293ba683340fcd926d9",
+      "sourceVariantId": "mov_7bd700ce0704d66e614e",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Peptide agonist of the glucagon, GIP and GLP-1 receptors, studied in rodent models of obesity and fatty liver disease. Listed at 30 mg for laboratory research.",
+        "overview": "Retatrutide, also designated LY3437943, is a lipidated peptide of 39 amino acids designed to activate three receptors with a single molecule: the receptors for glucagon, glucose-dependent insulinotropic polypeptide (GIP) and glucagon-like peptide-1 (GLP-1). In its developer's 2022 report, it showed balanced glucagon- and GLP-1-receptor activity but more GIP-receptor activity in vitro, and in obese mice it decreased body weight and improved glycemic control; the authors reported that glucagon-receptor-mediated increases in energy expenditure added to the weight loss from reduced calorie intake driven by the GIP and GLP-1 receptors. In a separate 2026 study in diet-induced obese mice used as a model of steatohepatitis, retatrutide reduced body weight, both fat and lean mass, an index of insulin resistance and liver lipid content without significantly changing energy expenditure, and in a hamster model it halved liver triglycerides without reducing liver histology scores. In a 2025 mouse model of steatohepatitis induced by a Western diet with fructose and sucrose in the drinking water, retatrutide significantly lowered body weight, alanine aminotransferase (ALT) levels, liver triglycerides and cholesterol, and hepatic inflammatory markers in female mice compared with vehicle controls. In isolated mouse atria, retatrutide did not increase the force of contraction of the left atrium but raised the beating rate of the right atrium, an effect antagonized by a glucagon-receptor antagonist. As of a review covering evidence through September 2026, retatrutide was an investigational medicine in phase 3 clinical development and was not approved; this listing is a laboratory research material, not a medicine. These laboratory and animal findings do not establish the safety or effects of this research material in people. The catalog lists this item at 30 mg of retatrutide, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "30 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0326"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on glucagon, GIP and GLP-1 receptor signaling, energy balance and liver lipid metabolism in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_d045624d6f5d00d2cda2",
+      "sourceVariantId": "mov_99e4c4e045d188c3026f",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic seven-amino-acid tuftsin analogue studied in rodent models of GABAergic signaling. Listed at 10 mg for laboratory research.",
+        "overview": "Selank is a synthetic heptapeptide (Thr-Lys-Pro-Arg-Pro-Gly-Pro) designed as an analogue of the endogenous peptide tuftsin. The selected studies examine GABA-related signaling, gene expression and behavior in rodent and tissue models. In brain membrane binding assays, Selank changed [3H]GABA binding in a way consistent with positive allosteric modulation of GABA receptors, and it blocked the modulatory effect of diazepam and olanzapine on that binding. In the rat frontal cortex, Selank altered the expression of many of 84 neurotransmission-related genes at one and three hours; the one-hour changes correlated positively with those produced by GABA, and the three-hour changes correlated negatively. In mouse spleen, Selank and its C-terminal Gly-Pro fragment changed the expression of immune-related genes such as complement C3 within 30 to 90 minutes, with similar profiles for both peptides. In rats given ethanol as their only fluid for 30 weeks, Selank prevented memory and attention deficits during withdrawal and prevented the ethanol-related rise in BDNF in the hippocampus and frontal cortex. These findings come from rodent and tissue studies and do not establish effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0331"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GABAergic signaling, neurotransmission-related gene expression and stress-related behavior in rodent models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_9c7083a0cfc2bfd2d525",
+      "sourceVariantId": "mov_e737e2f494af1ea61435",
+      "content": {
+        "brand": "Xenios",
+        "summary": "29-amino-acid active fragment of human GHRH studied in pituitary cell and rat models. Listed at 5 mg for laboratory research.",
+        "overview": "Sermorelin is a synthetic 29-amino-acid peptide amide, GRF(1-29)NH2, corresponding to residues 1 to 29 of human growth hormone-releasing hormone (GHRH). A 1999 review describes it as the shortest synthetic peptide with the full biological activity of GHRH, acting specifically on the anterior pituitary to stimulate growth hormone secretion. In rat anterior pituitary cells in culture, the 1-29 amide fragment of human GHRH retained about half the potency of the full-length peptide. In the same study, shorter amidated fragments down to residues 1-21 still released growth hormone with full intrinsic activity at much lower potency, and activity disappeared only at residues 1-19. In rats, the growth hormone response to GRF(1-29) was markedly reduced in hypothyroid animals, which the authors interpreted as altered responsiveness of the pituitary somatotroph cells. This listing is a laboratory research material and not a medicine; separately, sermorelin has been studied clinically, including as a diagnostic test of pituitary growth hormone secretion. These cell and animal findings do not establish effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0341"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GHRH receptor signaling, structure-activity relationships of GHRH fragments and pituitary growth hormone release in cell and rodent models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_5da1ee7942bcff333ef6",
+      "sourceVariantId": "mov_b1fbc841c7fb09265cad",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Stabilized analogue of human growth hormone-releasing factor studied in pig, rat and dog models. Listed at 10 mg for laboratory research.",
+        "overview": "Tesamorelin, developed under the code TH9507, is an analogue of the 44-amino-acid human growth hormone-releasing factor, hGRF(1-44)NH2, modified only by a trans-3-hexenoyl group added to the N-terminal tyrosine. That modification made it resistant to inactivation by dipeptidyl aminopeptidase IV and slowed its breakdown in rat, dog and human plasma in vitro. In vivo, the investigators reported longer plasma persistence for immunoreactive TH9507 than for the natural peptide. In dogs, the apparent elimination half-life of that immunoreactive signal was 21 to 45 minutes. In pigs, rats and dogs, repeated administration markedly increased plasma growth hormone and insulin-like growth factor 1 (IGF-1). In subchronic studies of up to four months, rats and dogs gained more body weight, and dogs showed reversible liver, kidney and blood findings that the authors attributed to sustained supraphysiological growth hormone and IGF-1 exposure. This listing is a laboratory research material and not a medicine; separately, tesamorelin is the active ingredient of a prescription medicine approved by the U.S. Food and Drug Administration in November 2010 for an HIV-related indication. The animal findings above, and the approval of that separate medicine, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0347"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone-releasing factor receptor pharmacology, peptide stability and the growth hormone/IGF-1 axis in animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_f23a8023a45df853f6e1",
+      "sourceVariantId": "mov_ba80c9a61870131db0cf",
+      "content": {
+        "brand": "Xenios",
+        "summary": "28-amino-acid thymic peptide studied in dendritic-cell and mouse immune models. Listed at 10 mg for laboratory research.",
+        "overview": "Thymosin alpha-1 is a heat-stable, highly acidic peptide of 28 amino acids, first isolated from calf thymus and sequenced in 1977. It corresponds to the N-terminal region of the larger precursor protein prothymosin alpha. It was one of several polypeptides in the thymic extract thymosin fraction 5 proposed to take part in the differentiation and function of T cells. In dendritic cells exposed to the fungus Aspergillus fumigatus, thymosin alpha-1 induced functional maturation and interleukin-12 production through MyD88-dependent Toll-like receptor signaling involving p38 MAP kinase and NF-kappaB. In highly susceptible mice that had received hematopoietic transplants, the synthetic peptide activated T-helper 1 antifungal immunity, accelerated myeloid cell recovery and protected against aspergillosis. This listing is a laboratory research material, not a medicinal product. A separate literature review discusses clinical studies of thymosin alpha-1. The dendritic-cell and transplant findings above come from cell and mouse studies and do not establish effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0350"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on thymic peptides, dendritic-cell activation and Toll-like receptor signaling in cell and mouse models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }
