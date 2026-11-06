@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T11:11:42.457Z",
+  "updatedAt": "2026-11-06T12:41:51.264Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4670,7 +4670,7 @@
       "id": "KAN31-EA-POLICY-V2-NATIVE-TEST-DISCOVERY-20261106",
       "title": "Relocate the policy v2 fixture tests into native Vitest discovery",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-31",
       "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
       "paths": [
@@ -4682,7 +4682,13 @@
       "scopeNote": "Claim only server/research/early-access/policy-fixture-v2.test.ts for the test-only relocation elected for existing Root at KAN-13/11683 on the same intended branch codex/early-access-policy-v2-revised-20261106 from exact protected live release 07d727a4c9b5516bbd57aef3aa7f89d359849260. The original new .test.mjs path is outside the Vitest include. Existing active Root lease 6d68eed2-04da-45b6-92ae-30bf4156d3a2 retains scripts/evidence/lib/policy-fixture-v2.mjs and scripts/evidence/lib/policy-fixture-v2.test.mjs unchanged so Root may remove the prior candidate test location lawfully; do not extend or rewrite that claim. Exact prepared evidence C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/completion-code-policy-fixture-20261106/native-test-discovery-correction/POLICY_V2_VITEST_DISCOVERY_PREPARATION.json has SHA-256 e857bbfd03963f5d597e879c78e58a498401f76db343c34fb59eb44c3349660e, patch SHA-256 0fb93671f025c0d2acb74e08ebcbb3e75fdac007421c5c9e7ef17a9691acc079 and target tree 5917bf218fabc308857a20ae9e568841f1e50970. Fresh canonical active/reserved exact, prefix and glob CODE_OWNERSHIP plus FILE_OWNERSHIP audits across the old and new test paths found only the expected retained Root lease on the old path and no overlap or owner overlay on the target. Preserve every earlier task, lease, session, rule, handoff, release and source record. Source application, native test execution, independent review, hosted qualification and release remain separate Root gates. This custody transaction performs no application or source edit, checkout or branch switch, test, runner, settings, browser, provider, configuration, deployment, production or new session.",
       "createdAt": "2026-11-06T01:57:02.450Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-06T01:57:02.450Z"
+      "claimedAt": "2026-11-06T01:57:02.450Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "1475d418283e646554872db3992abc8a392af423",
+        "file": ".xenios/handoffs/2026-11-06T12-40-31-554333Z-PR418-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+        "at": "2026-11-06T12:41:51.264Z"
+      }
     },
     {
       "id": "KAN6-EA-0344-REVIEWED-DESCRIPTION-20261106",
@@ -4929,7 +4935,7 @@
       "id": "KAN13-EA-PROTECTED-QA-ADOPTION-20261106",
       "title": "Prepare protected QA workflow adoption",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
       "paths": [
@@ -4941,7 +4947,13 @@
       "scopeNote": "Claim only docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json for records-only preparation and independent review of the standalone protection-owner admission bound by KAN-13/11827 and KAN-13/11844 under standing execution record KAN-225/11225. The exact protected release is 07d727a4c9b5516bbd57aef3aa7f89d359849260 and its manifest blob is db0065dda63841b6d579238f2db1eb47c318ab32. Current authoritative FILE ownership remains OWNER-KAN13-EA-OUTREACH-ROUTE-20261105 in write mode for existing registered Root codex-launch-coordination-20261005. Preserve prior manifest lease f9413d25-9cad-4543-9226-a23c2a824c5c as HANDOFF and preserve active workflow lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba unchanged. This claim does not authorize editing the manifest or .github/workflows/qo-visual-capture.yml, launching the rejected workflow, changing Core protection, altering source/tests/provider/registry/protected refs, deployment, production, configuration or any release operation. Source preparation, independent review and any later admitted owner commit remain separate Root steps. Preserve all frozen refs and every prior task, lease, heartbeat, rule, assignment, identity, session, handoff and release record. This custody transaction performs no source checkout, branch, test, build, browser, runner, provider, credential, merge, deployment or production mutation.",
       "createdAt": "2026-11-06T10:20:29.991Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-06T10:20:29.991Z"
+      "claimedAt": "2026-11-06T10:20:29.991Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "81d92ce1b597ac54b6136201b297b3ffe76ba171",
+        "file": ".xenios/handoffs/2026-11-06T12-40-31-554333Z-PR418-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+        "at": "2026-11-06T12:41:51.264Z"
+      }
     },
     {
       "id": "KAN6-HCG-0401-STRENGTH-HOLD-20261106",
@@ -5001,7 +5013,7 @@
       "id": "KAN13-EA-POLICY-V2-MOUNTED-PROFILE-20261106",
       "title": "Prepare the Policy V2 mounted QA profile",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "1475d418283e646554872db3992abc8a392af423",
       "paths": [
@@ -5014,7 +5026,13 @@
       "scopeNote": "Claim only the two new isolated QA paths listed in this task for the policy-first mounted profile bound by KAN-13/11774, KAN-13/11844 and KAN-13/11886. The exact policy candidate is PR418 1475d418283e646554872db3992abc8a392af423/tree 5917bf218fabc308857a20ae9e568841f1e50970 against protected release 07d727a4c9b5516bbd57aef3aa7f89d359849260. The profile may reuse the exact built /earlyaccess frontend, current eight-step policy protocol, actual candidate Express agreement and request handlers, and synthetic memory ports; it is isolated QA only and grants no application or production authority. Existing workflow/capture custody remains uniquely under active lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba, and manifest custody remains uniquely under active lease 68eba6e7-3bf1-4cd7-b021-9ccdc22210b3; do not extend, overlap, reassign or change either lease, task or heartbeat. Fresh case-insensitive exact, ancestor, prefix and wildcard active/reserved CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no conflict on either new path. No protected route, workflow launch or browser run is approved by this dormant preparation claim. Preserve frozen PR418/426/427/428/429 refs, live release, recent HCG closure and every prior task, lease, heartbeat, rule, identity, session, handoff and release record. This custody transaction performs no branch, source, test, browser, runner, workflow, provider, configuration, deployment or production mutation.",
       "createdAt": "2026-11-06T11:11:42.457Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-06T11:11:42.457Z"
+      "claimedAt": "2026-11-06T11:11:42.457Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "81d92ce1b597ac54b6136201b297b3ffe76ba171",
+        "file": ".xenios/handoffs/2026-11-06T12-40-31-554333Z-PR418-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+        "at": "2026-11-06T12:41:51.264Z"
+      }
     }
   ]
 }

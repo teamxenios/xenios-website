@@ -3677,7 +3677,7 @@
       "paths": [
         "server/research/early-access/policy-fixture-v2.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T01:57:02.450Z",
       "heartbeatAt": "2026-11-06T01:57:02.450Z"
     },
@@ -3830,7 +3830,7 @@
       "paths": [
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T10:20:29.991Z",
       "heartbeatAt": "2026-11-06T10:20:29.991Z"
     },
@@ -3872,7 +3872,7 @@
         "scripts/qa/qo-visual-capture/policy-v2-fixture.mjs",
         "scripts/qa/qo-visual-capture/policy-v2-mixed.mjs"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T11:11:42.457Z",
       "heartbeatAt": "2026-11-06T11:11:42.457Z"
     }

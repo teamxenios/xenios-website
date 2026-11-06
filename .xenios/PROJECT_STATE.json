@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T01:45:11.488Z",
+  "updatedAt": "2026-11-06T12:41:51.264Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -394,24 +394,24 @@
   },
   "currentRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
-    "tree": "e93209a057d186c7a9d46483592ac2e576b9df5f",
+    "sha": "ad52179f31e9339eb50e2b9f3f0a965eef0d80d1",
+    "tree": "5917bf218fabc308857a20ae9e568841f1e50970",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployedFromBranch": "codex/early-access-0337-reviewed-description-20261106",
-    "sourceSha": "d712d42a83b110d839de2278832ad04f80ad9427",
-    "rollback": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
-    "rollbackTree": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309",
-    "rollbackDeployId": "dep-dbmieeo473hc73dg8ok0",
+    "deployedFromBranch": "codex/early-access-policy-v2-revised-20261106",
+    "sourceSha": "1475d418283e646554872db3992abc8a392af423",
+    "rollback": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "rollbackTree": "e93209a057d186c7a9d46483592ac2e576b9df5f",
+    "rollbackDeployId": "dep-dbmiu5o473hc73dgpufg",
     "rollbackExecuted": false,
-    "deployId": "dep-dbmiu5o473hc73dgpufg",
-    "liveSince": "2026-11-06T01:37:34.576724Z",
-    "observedAt": "2026-11-06T01:42:28Z",
+    "deployId": "dep-dbmsksc9v7es73ala6ig",
+    "liveSince": "2026-11-06T12:40:31.554333Z",
+    "observedAt": "2026-11-06T12:41:51.264Z",
     "autoDeploy": "yes",
     "autoDeployTrigger": "checksPass",
-    "scope": "Qualified ordinary website release for the independently reviewed GEN-GRP-0337 description while preserving the corrected strength, all prior reviewed content, artwork mappings, care-pathway boundaries and request-only behavior; all sensitive operations remain held",
-    "receipt": ".xenios/handoffs/2026-11-06T01-42-28Z-PR417-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
-    "note": "Protected PR 417 released exact source d712d42a83b110d839de2278832ad04f80ad9427/tree e93209a057d186c7a9d46483592ac2e576b9df5f as 07d727a4c9b5516bbd57aef3aa7f89d359849260 with parents 0f4527df58c5f4bfecf319498246f4b1d85e67da and d712d42a83b110d839de2278832ad04f80ad9427. Candidate CI 42143291923 and protected CI 42144291495 passed all five trusted checks; the full suite passed 18,603 tests with zero failures and 83 skips. The one application path advanced the reviewed description registry to exact blob 0678dfa8c755f8d1fd63e94f5e1898b88f782836. Render deploy dep-dbmiu5o473hc73dgpufg reached live at 2026-11-06T01:37:34.576724Z from autoDeploy=yes/checksPass. Direct /earlyaccess, the legacy route and health returned 200 with expected public route privacy headers and exact deployed revision. KAN-6/11752 verified all 420 unique guest variants, 86 reviewed descriptions, 86 artwork mappings, 242 provider-review variants withholding price, and mounted GEN-GRP-0337 overview, cautions and corrected strength with zero selection, consent or submission. Compatible rollback 0f4527df58c5f4bfecf319498246f4b1d85e67da/dep-dbmieeo473hc73dg8ok0 was retained and not executed. Live evidence remained anonymous and read-only. No physical-device/mobile claim, authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
+    "scope": "Qualified paired policy release for Early Access Product Policy v2 and its exact one-key production configuration binding while preserving the historical v1 policy, request-only behavior and all prior reviewed catalog content; all other sensitive operations remain held",
+    "receipt": ".xenios/handoffs/2026-11-06T12-40-31-554333Z-PR418-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+    "note": "Protected PR 418 released exact source 1475d418283e646554872db3992abc8a392af423/tree 5917bf218fabc308857a20ae9e568841f1e50970 as ad52179f31e9339eb50e2b9f3f0a965eef0d80d1 with parents 07d727a4c9b5516bbd57aef3aa7f89d359849260 and 1475d418283e646554872db3992abc8a392af423. Release CI 42218394113 passed all five trusted checks; the native suite passed 18,678 tests with zero failures and 83 skips, including 53 native policy cases. Hosted mounted run 42215723669 completed 14 named checks and the eight-step protocol with loopback-only networking, zero unexpected writes and zero blocked external requests. Render deploy dep-dbmsksc9v7es73ala6ig reached live at 2026-11-06T12:40:31.554333Z from autoDeploy=yes/checksPass after exactly one setting changed: RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS now resolves to early_access_terms/v2. Seven anonymous public checks verified request intake enabled, the v2 policy route/body and the retained historical v1 Research Use Policy. Compatible rollback 07d727a4c9b5516bbd57aef3aa7f89d359849260/dep-dbmiu5o473hc73dgpufg with early_access_terms/v1 was retained and not executed. No live customer acceptance, managed database action or other frozen candidate release occurred."
   },
   "catalog": {
     "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
@@ -1514,6 +1514,32 @@
         "scope": "Qualified ordinary website release for the independently reviewed GEN-GRP-0337 effective-label correction while preserving every reviewed description, artwork mapping, care-pathway boundary, outreach alias and request-only behavior; all sensitive operations remain held",
         "receipt": ".xenios/handoffs/2026-11-06T01-11-41Z-PR415-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
         "note": "Protected PR 415 released exact source f666e1c8e5f45dfa2d10116d719e87bdabc76171/tree e1658fd0778fa2e0a6d8e52604a19ae9585c5309 as 0f4527df58c5f4bfecf319498246f4b1d85e67da with parents 6215799d2ea046098f66074b36113bb18273ae75 and f666e1c8e5f45dfa2d10116d719e87bdabc76171. Candidate CI 42139429399 and protected CI 42140354295 passed all five trusted checks; the full suite passed 18,603 tests with zero failures and 83 skips. The two application paths corrected the GEN-GRP-0337 effective label while preserving the catalog authority model. Render deploy dep-dbmieeo473hc73dg8ok0 reached live at 2026-11-06T01:04:14.419863Z from autoDeploy=yes/checksPass. Direct /earlyaccess, the legacy route and health returned 200 with expected public route privacy headers and exact deployed revision. KAN-6/11735 verified all 420 exact guest variants, 85 reviewed descriptions, 86 artwork mappings, and the actual GEN-GRP-0337 card and controls with label SEMAGLUTIDE 5 mg + BPC-157 650 mcg; no selection, consent or submission occurred. Compatible rollback 6215799d2ea046098f66074b36113bb18273ae75/dep-dbmhrgp7lnhs73952qo0 was retained and not executed. Live evidence remained anonymous and read-only. No physical-device/mobile claim, authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
+      }
+    },
+    {
+      "classification": "HISTORICAL_ARCHIVED_CURRENT_RELEASE_PREIMAGE",
+      "archivedAt": "2026-11-06T12:41:51.264Z",
+      "supersededBy": "ad52179f31e9339eb50e2b9f3f0a965eef0d80d1",
+      "record": {
+        "classification": "CURRENT_LIVE_PRODUCTION",
+        "sha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+        "tree": "e93209a057d186c7a9d46483592ac2e576b9df5f",
+        "status": "live",
+        "branch": "release/early-access-code-session-checkout",
+        "deployedFromBranch": "codex/early-access-0337-reviewed-description-20261106",
+        "sourceSha": "d712d42a83b110d839de2278832ad04f80ad9427",
+        "rollback": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+        "rollbackTree": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309",
+        "rollbackDeployId": "dep-dbmieeo473hc73dg8ok0",
+        "rollbackExecuted": false,
+        "deployId": "dep-dbmiu5o473hc73dgpufg",
+        "liveSince": "2026-11-06T01:37:34.576724Z",
+        "observedAt": "2026-11-06T01:42:28Z",
+        "autoDeploy": "yes",
+        "autoDeployTrigger": "checksPass",
+        "scope": "Qualified ordinary website release for the independently reviewed GEN-GRP-0337 description while preserving the corrected strength, all prior reviewed content, artwork mappings, care-pathway boundaries and request-only behavior; all sensitive operations remain held",
+        "receipt": ".xenios/handoffs/2026-11-06T01-42-28Z-PR417-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+        "note": "Protected PR 417 released exact source d712d42a83b110d839de2278832ad04f80ad9427/tree e93209a057d186c7a9d46483592ac2e576b9df5f as 07d727a4c9b5516bbd57aef3aa7f89d359849260 with parents 0f4527df58c5f4bfecf319498246f4b1d85e67da and d712d42a83b110d839de2278832ad04f80ad9427. Candidate CI 42143291923 and protected CI 42144291495 passed all five trusted checks; the full suite passed 18,603 tests with zero failures and 83 skips. The one application path advanced the reviewed description registry to exact blob 0678dfa8c755f8d1fd63e94f5e1898b88f782836. Render deploy dep-dbmiu5o473hc73dgpufg reached live at 2026-11-06T01:37:34.576724Z from autoDeploy=yes/checksPass. Direct /earlyaccess, the legacy route and health returned 200 with expected public route privacy headers and exact deployed revision. KAN-6/11752 verified all 420 unique guest variants, 86 reviewed descriptions, 86 artwork mappings, 242 provider-review variants withholding price, and mounted GEN-GRP-0337 overview, cautions and corrected strength with zero selection, consent or submission. Compatible rollback 0f4527df58c5f4bfecf319498246f4b1d85e67da/dep-dbmieeo473hc73dg8ok0 was retained and not executed. Live evidence remained anonymous and read-only. No physical-device/mobile claim, authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
       }
     }
   ],

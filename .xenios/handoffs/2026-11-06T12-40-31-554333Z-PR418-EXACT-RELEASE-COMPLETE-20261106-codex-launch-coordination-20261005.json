@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-exact-paired-policy-release-complete",
+  "writer": "codex-launch-coordination-20261005",
+  "canonicalPreimage": "06b2964e3375a84141d8037eb3e538883f0ccf63",
+  "handoffPath": ".xenios/handoffs/2026-11-06T12-40-31-554333Z-PR418-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+  "authority": {
+    "founderDirection": "KAN-13/11827",
+    "cutoverProtocol": "KAN-13/11834",
+    "independentSource": "KAN-13/11757",
+    "independentBinding": "KAN-31/11900",
+    "independentMountedResult": "KAN-31/11902",
+    "executionScope": "KAN-31/11898"
+  },
+  "git": {
+    "pr": 418,
+    "release": "ad52179f31e9339eb50e2b9f3f0a965eef0d80d1",
+    "tree": "5917bf218fabc308857a20ae9e568841f1e50970",
+    "source": "1475d418283e646554872db3992abc8a392af423",
+    "parents": [
+      "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "1475d418283e646554872db3992abc8a392af423"
+    ],
+    "mergedAt": "2026-11-06T12:32:00Z",
+    "branch": "release/early-access-code-session-checkout",
+    "renderSkipMarkerHeldAutoDeployForThisCommit": true,
+    "releaseCi": 42218394113,
+    "protectedChecks": {
+      "Required CI completion": {
+        "checkId": 127896012948,
+        "appId": 15368,
+        "jobId": 127896012948,
+        "conclusion": "success"
+      },
+      "test": {
+        "checkId": 127894037829,
+        "appId": 15368,
+        "jobId": 127894037829,
+        "conclusion": "success"
+      },
+      "build": {
+        "checkId": 127894037817,
+        "appId": 15368,
+        "jobId": 127894037817,
+        "conclusion": "success"
+      },
+      "typecheck": {
+        "checkId": 127894037797,
+        "appId": 15368,
+        "jobId": 127894037797,
+        "conclusion": "success"
+      },
+      "protection": {
+        "checkId": 127894037574,
+        "appId": 15368,
+        "jobId": 127894037574,
+        "conclusion": "success"
+      }
+    },
+    "nativeTestResults": {
+      "pass": 18678,
+      "fail": 0,
+      "skip": 83,
+      "filesPass": 1003,
+      "filesSkip": 6,
+      "nativePolicyCases": 53
+    }
+  },
+  "mounted": {
+    "run": 42215723669,
+    "attempt": 1,
+    "job": 127885105020,
+    "artifact": {
+      "id": 13501388421,
+      "name": "qo-policy-v2-mixed-synthetic-proof",
+      "size": 1643,
+      "zipSha256": "29b75ebb89f4941b1bf3e7d4d8200be64145ed01179848333187cf45c1ec72af",
+      "providerDigest": "sha256:29b75ebb89f4941b1bf3e7d4d8200be64145ed01179848333187cf45c1ec72af",
+      "entries": [
+        "result.json"
+      ],
+      "resultSha256": "801e3e0cf12cf0f67bea67f50b44f3c52e6eb57fa91464228250fddeb8683ed8"
+    },
+    "namedChecks": 14,
+    "protocolChecks": 8,
+    "syntheticWrites": {
+      "submissions": 4,
+      "recoveries": 2,
+      "acceptanceCalls": 4,
+      "savedRequests": 2
+    },
+    "network": {
+      "loopbackOnly": true,
+      "serviceWorkers": "blocked",
+      "unexpectedWrites": 0,
+      "blockedExternal": 0,
+      "fixtureForwardFailures": 0
+    },
+    "runBudgetRemaining": 0
+  },
+  "provider": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "deploy": "dep-dbmsksc9v7es73ala6ig",
+    "liveSince": "2026-11-06T12:40:31.554333Z",
+    "configKey": "RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS",
+    "effectiveAgreement": "early_access_terms/v2",
+    "settingSha256": "5f89721b5f0adc5c69eb711f509a5f5e86b9e781d443fccc8563b427cd6aea68",
+    "exactOneKeyChanged": true,
+    "autoDeploy": "yes",
+    "autoDeployTrigger": "checksPass"
+  },
+  "public": {
+    "verifiedAt": "2026-11-06T12:41:51.264Z",
+    "requestIntakeEnabled": true,
+    "checks": 7,
+    "entryAsset": "/assets/index-DzBBfiyn.js",
+    "newPolicy": {
+      "title": "Early Access Product Policy",
+      "route": "/research/policies/early-access-product-policy",
+      "bodySha256": "491d2559f05f6201ee0279bbd0fb711ebc7eeb1fd0a826c8d9141373c146fa06",
+      "effective": "early_access_terms/v2"
+    },
+    "historicalPolicy": {
+      "title": "Research Use Policy",
+      "route": "/research/policies/research-use",
+      "bodySha256": "98918e35e5a0f749790fb31cd406399818ced5d197cbed02679744ccf94ac325",
+      "version": "v1"
+    }
+  },
+  "rollback": {
+    "release": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "tree": "e93209a057d186c7a9d46483592ac2e576b9df5f",
+    "deploy": "dep-dbmiu5o473hc73dgpufg",
+    "effectiveAgreement": "early_access_terms/v1",
+    "executed": false,
+    "receipt": ".xenios/handoffs/2026-11-06T01-42-28Z-PR417-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+    "procedure": "Use the exact retained compatible Render deployment snapshot if a release failure warrants rollback. Reconcile the saved setting and protected code before any subsequent ordinary deploy."
+  },
+  "closeExactTasksAndLeases": [
+    {
+      "task": "KAN31-EA-POLICY-V2-NATIVE-TEST-DISCOVERY-20261106",
+      "lease": "f3cb9983-2000-4e84-a396-a2b0e929a3da",
+      "source": "1475d418283e646554872db3992abc8a392af423",
+      "sourceTree": "5917bf218fabc308857a20ae9e568841f1e50970",
+      "paths": [
+        "server/research/early-access/policy-fixture-v2.test.ts"
+      ]
+    },
+    {
+      "task": "KAN13-EA-PROTECTED-QA-ADOPTION-20261106",
+      "lease": "68eba6e7-3bf1-4cd7-b021-9ccdc22210b3",
+      "source": "81d92ce1b597ac54b6136201b297b3ffe76ba171",
+      "sourceTree": "fa8bfefd83a8cc23bc78201cffc4bba380cd3dc5",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+      ]
+    },
+    {
+      "task": "KAN13-EA-POLICY-V2-MOUNTED-PROFILE-20261106",
+      "lease": "ed77bc1a-a7da-4d58-b304-3ea105fdba2e",
+      "source": "81d92ce1b597ac54b6136201b297b3ffe76ba171",
+      "sourceTree": "fa8bfefd83a8cc23bc78201cffc4bba380cd3dc5",
+      "paths": [
+        "scripts/qa/qo-visual-capture/policy-v2-fixture.mjs",
+        "scripts/qa/qo-visual-capture/policy-v2-mixed.mjs"
+      ]
+    }
+  ],
+  "preserveWorkflowLease": "50ca8e4f-a56e-4d63-a7f8-b161911678ba",
+  "frozenRefs": {
+    "refs/heads/codex/kan23-support-links-20261020": "06b2964e3375a84141d8037eb3e538883f0ccf63",
+    "refs/heads/codex/qo-synthetic-qa-20261105": "81d92ce1b597ac54b6136201b297b3ffe76ba171",
+    "refs/heads/release/early-access-code-session-checkout": "ad52179f31e9339eb50e2b9f3f0a965eef0d80d1",
+    "refs/pull/418/head": "1475d418283e646554872db3992abc8a392af423",
+    "refs/pull/426/head": "99f7780fe050f49a27bc9b2af3948686b8cfb0e4",
+    "refs/pull/427/head": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+    "refs/pull/428/head": "2bed5c01465f14201dea889971b5276c99dab297",
+    "refs/pull/429/head": "8fac3b7a99f10a1ab8caee2e67c8614479bf2fdf"
+  },
+  "proofSha256": {
+    "merge": "fba9e3890d2e86e1bf49aebd213f60a84c2499f1f6f865fde84ea898f2a5583b",
+    "protectedCi": "6ea134622ab5d69a1f283b6d648e9822bf054098850406573ed5db4efbc5d007",
+    "mounted": "cb4507a22a015a8f54005febaf2b7031b0dd3a5fcae31e423ee053183b360e0e",
+    "provider": "7364e2ee6a0ad4584a792e0787276ec92bc37edae18e10540b2d161459de29d7",
+    "public": "13daa13154858d46ddaa6f1cd5494125c5c1f3a6c917e77b3b890eebf1c8626d"
+  },
+  "limits": "Only the paired policy release and one direct setting changed in production. The mounted QA workflow and its protection pin remain on the dedicated QA branch. Synthetic tests and anonymous GETs establish their scoped outcomes. No live customer acceptance, managed database action or other frozen candidate release."
+}
