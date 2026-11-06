@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { EARLY_ACCESS_ENTRY_PATH } from "@shared/research/paths";
 import SeoHead from "@/components/SeoHead";
 import { ResearchPublicShell } from "../ui/shells";
 import { PublicBoundaryNote } from "./PublicEditorialNav";
@@ -50,12 +51,12 @@ const ACCESS_OPTIONS = [
     secondary: { label: "How access works", href: "/research/how-it-works" },
   },
   {
-    id: "private",
-    eyebrow: "Open early-access entry",
-    title: "Private Early Access",
-    body: "Open the separate passwordless Early Access request and ordering experience. Any later action still depends on its own current authorization and evidence.",
-    availability: "Entry does not prove approval, availability, payment, shipment, or a Care decision.",
-    primary: { label: "Enter Private Early Access", href: "/research/early-access" },
+    id: "early-access",
+    eyebrow: "Product requests for review",
+    title: "Early Access",
+    body: "Browse products and submit a request for review without creating an account.",
+    availability: "Availability and any required clinical review are confirmed separately.",
+    primary: { label: "Open Early Access", href: EARLY_ACCESS_ENTRY_PATH },
     secondary: { label: "Get support", href: "/research/support" },
   },
 ] as const;
