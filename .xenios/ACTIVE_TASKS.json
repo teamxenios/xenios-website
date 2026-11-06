@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T01:24:00.392Z",
+  "updatedAt": "2026-11-06T01:45:11.488Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4567,7 +4567,7 @@
       "id": "KAN6-EA-0337-REVIEWED-DESCRIPTION-20261106",
       "title": "Adopt the reviewed GEN-GRP-0337 description",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-6",
       "baseSha": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
       "paths": [
@@ -4577,7 +4577,13 @@
       "scopeNote": "Claim only the exact one-path GEN-GRP-0337 reviewed-description packet elected for existing Root at KAN-13/11683, independently accepted at KAN-6/11726 and bound to the exact live import at KAN-6/11729. Limit future source work to server/research/master-offerings/data/reviewed-public-content.json on intended branch codex/early-access-0337-reviewed-description-20261106 from exact live protected release 0f4527df58c5f4bfecf319498246f4b1d85e67da/tree e1658fd0778fa2e0a6d8e52604a19ae9585c5309. The exact patch SHA-256 is 5d9a6746800e1f061bd7872e62a8631cddc3c2716b9d51d6ca8557c21e16e2b9 and projected current-base tree is e93209a057d186c7a9d46483592ac2e576b9df5f. Fresh post-PR415 exact, prefix, wildcard, CODE_OWNERSHIP-rule and FILE_OWNERSHIP audits found no active or reserved conflict; all prior exact-path leases are handoff or released history. Preserve every prior task, lease, session, rule, handoff and release record, including current HCG and PR413 custody and the four-path policy reservation. Source application, tests, independent final qualification, protected integration and release remain separate Root gates. This custody transaction performs no checkout or branch switch, application source edit, test, browser, workflow, policy, provider, configuration, deployment, production or new session.",
       "createdAt": "2026-11-06T01:16:45.891Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-06T01:16:45.891Z"
+      "claimedAt": "2026-11-06T01:16:45.891Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "d712d42a83b110d839de2278832ad04f80ad9427",
+        "file": ".xenios/handoffs/2026-11-06T01-42-28Z-PR417-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+        "at": "2026-11-06T01:42:28Z"
+      }
     },
     {
       "id": "KAN13-EA-POLICY-V2-REVISED-20261106",

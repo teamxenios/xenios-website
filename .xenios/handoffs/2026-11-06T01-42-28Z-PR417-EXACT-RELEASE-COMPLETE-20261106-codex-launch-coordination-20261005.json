@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "kind": "exact_production_release_complete",
+  "writer": "codex-launch-coordination-20261005",
+  "recordedAt": "2026-11-06 01:42:28 UTC",
+  "pr": 417,
+  "source": "d712d42a83b110d839de2278832ad04f80ad9427",
+  "protected": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+  "tree": "e93209a057d186c7a9d46483592ac2e576b9df5f",
+  "parents": [
+    "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+    "d712d42a83b110d839de2278832ad04f80ad9427"
+  ],
+  "mergedAt": "2026-11-06T01:30:28Z",
+  "task": "KAN6-EA-0337-REVIEWED-DESCRIPTION-20261106",
+  "lease": "abb1b149-b603-41c9-8f34-8858a75e11f3",
+  "originalClaim": "7194ffa0eda4f3d8deafdbaf1f440eeb83ad7824",
+  "onlyAppPath": "server/research/master-offerings/data/reviewed-public-content.json",
+  "postimage": "0678dfa8c755f8d1fd63e94f5e1898b88f782836",
+  "authorPatchSha256": "5d9a6746800e1f061bd7872e62a8631cddc3c2716b9d51d6ca8557c21e16e2b9",
+  "sourceReview": {
+    "content": "KAN-6/11726",
+    "prepared": "KAN-6/11729",
+    "published": "KAN-6/11746"
+  },
+  "candidateCi": {
+    "run": 42143291923,
+    "head": "d712d42a83b110d839de2278832ad04f80ad9427",
+    "tree": "e93209a057d186c7a9d46483592ac2e576b9df5f",
+    "event": "pull_request",
+    "trusted": {
+      "Required CI completion": 127650818038,
+      "test": 127648604105,
+      "protection": 127648604258,
+      "build": 127648604124,
+      "typecheck": 127648603922
+    },
+    "jobs": {
+      "typecheck": {
+        "id": 127648603922,
+        "checkout": "704a0671c2fc8f8ddbe02e81efc29865cbf7301f",
+        "logSha256": "49644609edc3101557b568a60c2fe653b287a3cd069bfbc390f8370f2e911475"
+      },
+      "test": {
+        "id": 127648604105,
+        "checkout": "704a0671c2fc8f8ddbe02e81efc29865cbf7301f",
+        "logSha256": "7da495386328292335eebe1084dcec6117d08fe67e50c4ff17415f92f7ca44b9"
+      },
+      "build": {
+        "id": 127648604124,
+        "checkout": "704a0671c2fc8f8ddbe02e81efc29865cbf7301f",
+        "logSha256": "64e2a9dce5538d75f8f4b4f5e76cd6f3368635ca4883d6b19144a4f7b89a1cf0"
+      },
+      "protection": {
+        "id": 127648604258,
+        "checkout": "d712d42a83b110d839de2278832ad04f80ad9427",
+        "logSha256": "b771936677b43d9ae91f29122a5531e103cab2e3d08e395af11307dc0d6cd2b3"
+      }
+    },
+    "checkoutTrees": {
+      "704a0671c2fc8f8ddbe02e81efc29865cbf7301f": "e93209a057d186c7a9d46483592ac2e576b9df5f",
+      "d712d42a83b110d839de2278832ad04f80ad9427": "e93209a057d186c7a9d46483592ac2e576b9df5f"
+    },
+    "fullCounts": [
+      "18603",
+      "83"
+    ],
+    "fileCounts": [
+      "1001",
+      "6"
+    ],
+    "evidence": [
+      "2026-11-06T01:24:10.6287822Z  ✓ client/src/research/master-offerings/detail-surface.test.tsx (13 tests) 215ms",
+      "2026-11-06T01:24:28.5134983Z  ✓ server/research/master-offerings/dataset-reader.test.ts (21 tests) 27ms",
+      "2026-11-06T01:24:42.8760163Z  ✓ server/research/kris-launch-a/dataset-reader.test.ts (27 tests) 47ms"
+    ],
+    "pullRequest": {
+      "headRefOid": "d712d42a83b110d839de2278832ad04f80ad9427",
+      "baseRefOid": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+      "isDraft": true,
+      "state": "OPEN",
+      "mergeable": "MERGEABLE",
+      "reviewDecision": null,
+      "reviewThreads": {
+        "pageInfo": {
+          "hasNextPage": false
+        },
+        "nodes": []
+      }
+    },
+    "protectedStrictTrustedChecks": true
+  },
+  "protectedCi": {
+    "run": 42144291495,
+    "head": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "tree": "e93209a057d186c7a9d46483592ac2e576b9df5f",
+    "event": "push",
+    "trusted": {
+      "test": 127651915196,
+      "build": 127651915188,
+      "typecheck": 127651915119,
+      "protection": 127651914860,
+      "Required CI completion": 127653990849
+    },
+    "jobs": {
+      "protection": {
+        "id": 127651914860,
+        "checkout": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+        "logSha256": "2ea90182d8492b4882ee682d71017e02e35c0d70da26a34c8254a6a8048c1695"
+      },
+      "typecheck": {
+        "id": 127651915119,
+        "checkout": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+        "logSha256": "1ebbc017ea2e69d871a7261c13101dc6ea5278f28523c2116c8860702f443fd3"
+      },
+      "build": {
+        "id": 127651915188,
+        "checkout": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+        "logSha256": "4ce4f2441bc4fdcbd0a40efdb5d2e474d739ef642bbacd6fcb287576f743b03b"
+      },
+      "test": {
+        "id": 127651915196,
+        "checkout": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+        "logSha256": "fd9391180989cdb645fa18032c9b022b28f0ce5947435d5840ef9e2fa9126463"
+      }
+    },
+    "checkoutTrees": {
+      "07d727a4c9b5516bbd57aef3aa7f89d359849260": "e93209a057d186c7a9d46483592ac2e576b9df5f"
+    },
+    "fullCounts": [
+      "18603",
+      "83"
+    ],
+    "fileCounts": [
+      "1001",
+      "6"
+    ],
+    "evidence": [
+      "2026-11-06T01:33:17.1003646Z  ✓ client/src/research/master-offerings/detail-surface.test.tsx (13 tests) 234ms",
+      "2026-11-06T01:33:35.1052950Z  ✓ server/research/master-offerings/dataset-reader.test.ts (21 tests) 24ms",
+      "2026-11-06T01:33:48.5974558Z  ✓ server/research/kris-launch-a/dataset-reader.test.ts (27 tests) 40ms"
+    ]
+  },
+  "deploy": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "id": "dep-dbmiu5o473hc73dgpufg",
+    "status": "live",
+    "commit": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "finishedAt": "2026-11-06T01:37:34.576724Z",
+    "trigger": "new_commit",
+    "branch": "release/early-access-code-session-checkout",
+    "autoDeploy": "yes",
+    "autoDeployTrigger": "checksPass",
+    "manualDeploy": false
+  },
+  "rollback": {
+    "protected": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+    "tree": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309",
+    "deploy": "dep-dbmieeo473hc73dg8ok0",
+    "used": false
+  },
+  "route": {
+    "release": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "deploy": "dep-dbmiu5o473hc73dgpufg",
+    "checkedAt": "2026-11-06T01:41:13.6082758Z",
+    "routes": [
+      {
+        "path": "/earlyaccess",
+        "status": 200,
+        "type": "text/html; charset=utf-8",
+        "cacheControl": "no-store",
+        "robots": "noindex,nofollow,noarchive",
+        "referrer": "no-referrer",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ]
+      },
+      {
+        "path": "/research/early-access/order-request",
+        "status": 200,
+        "type": "text/html; charset=utf-8",
+        "cacheControl": "no-store",
+        "robots": "noindex,nofollow,noarchive",
+        "referrer": "no-referrer",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ]
+      },
+      {
+        "path": "/api/health",
+        "status": 200,
+        "type": "application/json; charset=utf-8",
+        "cacheControl": "",
+        "robots": "",
+        "referrer": "no-referrer",
+        "entry": []
+      }
+    ],
+    "entry": {
+      "path": "/assets/index-D9bwURak.js",
+      "status": 200
+    }
+  },
+  "liveGuest": {
+    "evidence": "KAN-6/11752",
+    "sameRenderBeforeAfter": true,
+    "uniqueVariants": 420,
+    "priorDescriptions": 85,
+    "descriptions": 86,
+    "artworkMappings": 86,
+    "providerReviewPriceWithheld": 242,
+    "sku": "GEN-GRP-0337",
+    "offering": "mo_ef095e8f7e8fe3a7f85d",
+    "variant": "mov_50fc8d22f6777f3f0d4d",
+    "mountedOverviewCautionsAndCorrectedStrength": true,
+    "zeroSelectionsConsentOrSubmit": true,
+    "separateFormAlt": "KAN-6/11741",
+    "proofs": [
+      {
+        "path": "C:\\Users\\sboad\\Downloads\\XENIOS_CATALOG_CONTENT_2026-11-04\\pr417-production-07d727a\\PR417_GUEST_COPY_RELEASE_READBACK.json",
+        "bytes": 1147,
+        "sha256": "634c2c1e60118c9adf750029673a3e9f2236e4c8076637dae1e2953f270503fd"
+      },
+      {
+        "path": "C:\\Users\\sboad\\Downloads\\XENIOS_CATALOG_CONTENT_2026-11-04\\pr417-production-07d727a\\PR417_MOUNTED_GUEST_0337_RECEIPT.json",
+        "bytes": 1508,
+        "sha256": "b43b78bb0f1c5fc92b3c0959dfc13b9d5938b2cdb07360af2cda6d11d1ba9ee0"
+      }
+    ]
+  }
+}
