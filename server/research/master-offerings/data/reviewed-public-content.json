@@ -2381,6 +2381,32 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_f729b05046ef91543822",
+      "sourceVariantId": "mov_0d82ac64c7e39678212c",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic mitochondria-targeted tetrapeptide studied for cardiolipin binding and in aged-mouse models of muscle and cerebrovascular function. Listed at 50 mg for laboratory research.",
+        "overview": "SS-31, also known as elamipretide and as MTP-131, is a synthetic tetrapeptide, D-arginyl-2′,6′-dimethyl-L-tyrosyl-L-lysyl-L-phenylalaninamide (D-Arg-Dmt-Lys-Phe-NH2). A 2013 study used a fluorescent analog of SS-31 to show that SS-31 binds with high affinity to cardiolipin, a phospholipid of the inner mitochondrial membrane that is required for cristae formation; the SS-31–cardiolipin complex inhibited cytochrome c peroxidase activity, and pretreating rats with SS-31 protected mitochondrial cristae during kidney ischemia. In aged mice, SS-31 rapidly reversed age-related declines in resting and maximal mitochondrial ATP production in skeletal muscle and made the muscle more fatigue resistant. With longer exposure in aged female mice, it also shifted the glutathione redox state toward a more reduced balance, generally reversed the age-associated increases in S-glutathionylation measured on cysteine residues across muscle proteins, and increased fatigue resistance and treadmill endurance. In 24-month-old mice, SS-31 improved neurovascular coupling responses by increasing nitric-oxide-mediated dilation of small brain vessels, and this was associated with better spatial working memory and motor skill learning, while gait measures did not differ significantly between treated and untreated aged mice. This listing is a laboratory research material and not a medicine; separately, a prescription formulation of elamipretide received accelerated approval from the U.S. Food and Drug Administration in September 2025 to improve muscle strength in adult and pediatric patients with Barth syndrome weighing at least 30 kg. The animal findings above, and the approval of that separate medicine, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 50 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "50 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0344"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on mitochondrial cardiolipin interactions, bioenergetics and redox biology in laboratory systems and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }
