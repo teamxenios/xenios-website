@@ -19,6 +19,8 @@ import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import "./assisted-order.css";
+import { ProductPathwayNotice } from "../early-access/guidance/ProductPathwayNotice";
+import { SelectionCategorySummary } from "../early-access/guidance/SelectionCategorySummary";
 
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
@@ -59,6 +61,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
           ? "Return to the catalog to add this selection for review. Final quantities, prices and availability are confirmed during review."
           : "Return to the catalog for this listing’s current availability and request options."}
       </DialogDescription>
+      <ProductPathwayNotice item={item} detailed />
       <DialogClose asChild>
         <button type="button" className="min-h-11 justify-self-start rounded-md px-2 text-sm font-semibold text-ink underline">
           Back to catalog
@@ -427,7 +430,7 @@ function RequestIntentFormSession({
             </div>
           </div>
           <div className="xenios-order-card-meta">
-            <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
+            <ProductPathwayNotice item={item} />
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
             <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>
           </div>
@@ -515,6 +518,7 @@ function RequestIntentFormSession({
     {step === "review" && <section className="xenios-order-panel"><h2>Review your request</h2>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>{item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | Pending {item.clinicalReviewRequired ? "clinical" : "internal"} review</li>)}</ul>
+      <SelectionCategorySummary items={selections.map(({ item }) => item)} />
       <fieldset disabled={busy || frozen.current !== null} className="xenios-order-acknowledgments"><legend>Confirm the current requirements</legend>
         {requirements.map((entry) => { const key = agreementRequirementKey(entry); return <label className="xenios-order-check" key={key}>
           <input type="checkbox" checked={acknowledged.has(key)} onChange={(event) => setAcknowledged((prior) => {
