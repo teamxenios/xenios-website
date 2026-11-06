@@ -3833,6 +3833,25 @@
       "state": "active",
       "claimedAt": "2026-11-06T10:20:29.991Z",
       "heartbeatAt": "2026-11-06T10:20:29.991Z"
+    },
+    {
+      "id": "b18e9231-19c5-4d3d-a829-aea8bae0cf81",
+      "task": "KAN6-HCG-0401-STRENGTH-HOLD-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/master-offerings/FullCatalogProductRoute.tsx",
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "server/research/master-offerings/action.ts",
+        "server/research/master-offerings/data/reviewed-public-content.json",
+        "server/research/master-offerings/dataset-reader.ts",
+        "server/research/master-offerings/hcg-strength-review.test.ts",
+        "server/research/master-offerings/service.ts",
+        "shared/research/assisted-order/request-intent.ts",
+        "shared/research/master-offerings/hcg-strength-review.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T10:37:48.836Z",
+      "heartbeatAt": "2026-11-06T10:37:48.836Z"
     }
   ],
   "rules": [

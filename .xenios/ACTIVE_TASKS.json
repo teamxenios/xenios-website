@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T10:20:29.991Z",
+  "updatedAt": "2026-11-06T10:37:48.836Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4942,6 +4942,30 @@
       "createdAt": "2026-11-06T10:20:29.991Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T10:20:29.991Z"
+    },
+    {
+      "id": "KAN6-HCG-0401-STRENGTH-HOLD-20261106",
+      "title": "Correct the GEN-GRP-0401 strength-neutral hold",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-6",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "client/src/research/master-offerings/FullCatalogProductRoute.tsx",
+        "server/research/assisted-order/request-intent/catalog.ts",
+        "server/research/master-offerings/action.ts",
+        "server/research/master-offerings/data/reviewed-public-content.json",
+        "server/research/master-offerings/dataset-reader.ts",
+        "server/research/master-offerings/hcg-strength-review.test.ts",
+        "server/research/master-offerings/service.ts",
+        "shared/research/assisted-order/request-intent.ts",
+        "shared/research/master-offerings/hcg-strength-review.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the nine paths listed in this task for the bounded GEN-GRP-0401 corrective successor elected at KAN-6/11862 and independently accepted at KAN-6/11883, with linked-selection correction qualified in 21 isolated UI checks at KAN-6/11882. The exact private primary V5 patch SHA-256 is 68a9dee68ab45d5265f7e9120ad0c814d7bbcca526030cae8cb0e24b8addc6c6; it applies to protected 07d727a4c9b5516bbd57aef3aa7f89d359849260 and reproduces tree 6a08b8afb117f7afe84151c4e54479ad9a87d067. Bind the two additional unchanged-scope touched paths client/src/research/assisted-order/RequestIntentForm.tsx and client/src/research/assisted-order/RequestIntentForm.test.tsx exclusively to their existing same-Root active leases 427bb26e-5d85-4db5-b0ec-1e88334b33f1 and 4f09f46e-f032-465b-b367-d302e4235b7e; do not overlap, extend, reassign or change either lease, heartbeat or task. Fresh case-insensitive exact, ancestor, prefix and wildcard active/reserved CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no live conflict on the nine newly claimed paths and the exact expected sole same-Root bindings on both form paths. Preserve active protected-QA preparation lease 68eba6e7-3bf1-4cd7-b021-9ccdc22210b3, frozen PR426/427/428 refs, all prior leases and heartbeats, and the policy-first release sequence. Root retains the separate exact source publication and qualification decision after readback. This custody transaction authorizes no shared source edit, checkout, branch, launch, provider, reviewer, merge, release, deployment, production, policy, Core, configuration or data mutation.",
+      "createdAt": "2026-11-06T10:37:48.836Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T10:37:48.836Z"
     }
   ]
 }
