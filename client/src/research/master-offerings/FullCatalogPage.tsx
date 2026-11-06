@@ -19,6 +19,9 @@ import {
   MasterOfferingCatalogControls,
   MasterOfferingPriceListDownload,
 } from "./MasterOfferingCatalogControls";
+import { catalogQueryToSearch } from "./integration-packet";
+import { usePublishedHeight } from "../lib/usePublishedHeight";
+import "./catalog-toolbar.css";
 
 export function MasterOfferingPagination({
   page,
@@ -59,6 +62,52 @@ export function MasterOfferingPagination({
 }
 
 /**
+ * The compact pager that rides in the catalog toolbar on phones, so a member
+ * can change page without scrolling to the end of the list (KAN-225/10657).
+ * It is a labelled group, not a second "Catalog pages" landmark: the full
+ * pager after the last card stays the page's one pagination navigation.
+ */
+export function MasterOfferingToolbarPager({
+  page,
+  totalPages,
+  onPage,
+}: {
+  page: number;
+  totalPages: number;
+  onPage: (next: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+  return (
+    <div
+      role="group"
+      aria-label="Catalog pages, quick controls"
+      className="flex min-w-0 items-center justify-between gap-2"
+      data-testid="mo-toolbar-pager"
+    >
+      <button
+        type="button"
+        className="btn btn-secondary min-h-[44px] min-w-[44px]"
+        disabled={page <= 1}
+        onClick={() => onPage(page - 1)}
+      >
+        Previous
+      </button>
+      <p className="body-s text-ink-mute text-center min-w-0" data-testid="mo-toolbar-page-position">
+        Page {page} of {totalPages}
+      </p>
+      <button
+        type="button"
+        className="btn btn-secondary min-h-[44px] min-w-[44px]"
+        disabled={page >= totalPages}
+        onClick={() => onPage(page + 1)}
+      >
+        Next
+      </button>
+    </div>
+  );
+}
+
+/**
  * The full member-safe catalog surface.
  *
  * It is deliberately presentational: the page it renders, the query it echoes,
@@ -85,12 +134,47 @@ export function FullCatalogPage({
   memberToken?: string | null;
 }) {
   const resultsHeading = useRef<HTMLHeadingElement>(null);
+  const surface = useRef<HTMLDivElement>(null);
+  const toolbar = useRef<HTMLDivElement>(null);
   const currentPage = page.page;
   const firstRender = useRef(true);
+  // The page the member asked for with a pager, tied to that exact request.
+  // A search or filter change also resets the page, but focus must stay in the
+  // control the member is using, so only the pager's own page moves focus to
+  // the results (KAN-31/10703, 10726).
+  const pendingPageFocus = useRef<{
+    page: number;
+    /** The asked-for query in its URL form, to recognise it when it arrives. */
+    request: string;
+    /**
+     * The query object the pager's request arrived as. The caller starts one
+     * catalog request per query object, so a later object, even with the same
+     * URL after Back and Forward, is a different request.
+     */
+    query: MasterOfferingCatalogQuery | null;
+    /** Where focus was when the member asked. */
+    origin: Element | null;
+  } | null>(null);
+  usePublishedHeight(toolbar, surface, "--research-catalog-toolbar-height");
   // Page-local, deliberately not in the URL: the shared query contract has no
   // access-path member, so a link cannot carry it and the server cannot count
   // it. See CatalogAccessPathRefine for why it is still worth having.
   const [accessPath, setAccessPath] = useState<CatalogAccessPath | null>(null);
+
+  useEffect(() => {
+    // Declared before the page effect, so in a commit that brings both a new
+    // query and a new page, the query is recognised first.
+    const pending = pendingPageFocus.current;
+    if (!pending) return;
+    if (pending.query === null) {
+      // The first query after the click is the pager's own request.
+      if (catalogQueryToSearch(query) === pending.request) pending.query = query;
+      else pendingPageFocus.current = null;
+    } else if (pending.query !== query) {
+      // Any later query, from a control or from Back and Forward, takes over.
+      pendingPageFocus.current = null;
+    }
+  }, [query]);
 
   useEffect(() => {
     // Move focus to the results heading after an explicit page change, so a
@@ -99,8 +183,46 @@ export function FullCatalogPage({
       firstRender.current = false;
       return;
     }
+    const pending = pendingPageFocus.current;
+    pendingPageFocus.current = null;
+    // `query` is this render's, the one that brought the new page. A page
+    // number or a URL alone also matches a search or a history traversal that
+    // happens to land on the same page.
+    if (!pending || pending.page !== currentPage || pending.query !== query) return;
+    // If the member has moved focus while the page loaded, into Search on a
+    // phone for instance, leave it there; moving it would close the keyboard.
+    const active = document.activeElement;
+    if (active && active !== document.body && active !== pending.origin) return;
     resultsHeading.current?.focus();
   }, [currentPage]);
+
+  function goToPage(next: number) {
+    const nextQuery = { ...query, page: next };
+    pendingPageFocus.current = {
+      page: next,
+      request: catalogQueryToSearch(nextQuery),
+      query: null,
+      origin: document.activeElement,
+    };
+    onQueryChange(nextQuery);
+  }
+
+  // Any other way of changing the query takes over from a pending page.
+  // Search cancels on the first keystroke, not after its debounce, so a
+  // page that lands while the member is still typing cannot take focus.
+  function cancelPageFocus() {
+    pendingPageFocus.current = null;
+  }
+  function changeQuery(next: MasterOfferingCatalogQuery) {
+    cancelPageFocus();
+    onQueryChange(next);
+  }
+  const changeSearch = onSearchChange
+    ? (next: MasterOfferingCatalogQuery) => {
+        cancelPageFocus();
+        onSearchChange(next);
+      }
+    : undefined;
 
   const showing = page.products.length;
   const refined = refineCardsByAccessPath(page.products, accessPath);
@@ -109,7 +231,7 @@ export function FullCatalogPage({
   );
 
   return (
-    <div className="grid min-w-0 gap-6">
+    <div className="grid min-w-0 gap-6" ref={surface}>
       <header className="grid min-w-0 gap-2">
         <p className="mono-label text-ink-mute">Xenios Research</p>
         <h1 className="display-s">Full catalog</h1>
@@ -124,17 +246,31 @@ export function FullCatalogPage({
         </ResearchSecureNotice>
       </header>
 
-      <MasterOfferingCatalogControls
-        query={query}
-        facets={page.facets}
-        loading={loading}
-        onChange={onQueryChange}
-        onSearchChange={onSearchChange}
-      />
+      {/* On phones this toolbar sticks below the member header, whose height
+          the member chrome publishes as --research-sticky-chrome-height. */}
+      <div ref={toolbar} className="research-catalog-toolbar min-w-0" data-testid="mo-catalog-toolbar">
+        <MasterOfferingCatalogControls
+          query={query}
+          facets={page.facets}
+          loading={loading}
+          onChange={changeQuery}
+          onSearchChange={changeSearch}
+          onSearchInput={cancelPageFocus}
+          pager={
+            page.totalPages > 1 ? (
+              <MasterOfferingToolbarPager
+                page={page.page}
+                totalPages={page.totalPages}
+                onPage={goToPage}
+              />
+            ) : null
+          }
+        />
+      </div>
       <CatalogActiveFilters
         query={query}
         facets={page.facets}
-        onChange={onQueryChange}
+        onChange={changeQuery}
       />
       <MasterOfferingPriceListDownload query={query} memberToken={memberToken} />
 
@@ -142,7 +278,7 @@ export function FullCatalogPage({
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
           <h2
             id="mo-catalog-results"
-            className="body-l font-700"
+            className="body-l font-700 research-catalog-results-heading"
             tabIndex={-1}
             ref={resultsHeading}
           >
@@ -188,7 +324,7 @@ export function FullCatalogPage({
                     className="btn btn-secondary min-h-[44px]"
                     data-testid="mo-no-results-clear"
                     onClick={() =>
-                      onQueryChange(query.pageSize ? { pageSize: query.pageSize } : {})
+                      changeQuery(query.pageSize ? { pageSize: query.pageSize } : {})
                     }
                   >
                     Clear filters
@@ -239,7 +375,7 @@ export function FullCatalogPage({
         <MasterOfferingPagination
           page={page.page}
           totalPages={page.totalPages}
-          onPage={(next) => onQueryChange({ ...query, page: next })}
+          onPage={goToPage}
         />
       </section>
     </div>

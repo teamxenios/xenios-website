@@ -22,12 +22,29 @@ const PUBLIC_FOOTER_LINKS = [
   { href: "/research/policies/accessibility", label: "Accessibility" },
 ] as const;
 
-function EditorialLinks({ current, mobile = false }: { current?: string; mobile?: boolean }) {
+type EditorialGateway = { href: string; label: string };
+
+function EditorialLinks({
+  current,
+  mobile = false,
+  gateway,
+}: {
+  current?: string;
+  mobile?: boolean;
+  gateway?: EditorialGateway;
+}) {
   return (
     <nav
       aria-label={mobile ? "Research information mobile" : "Research information"}
       className={mobile ? "public-editorial-menu-links" : "public-editorial-nav"}
     >
+      {mobile && gateway ? (
+        // Shown only below 640px, where the header drops its own Back to
+        // gateway link to keep brand and menu on one row.
+        <Link href={gateway.href} className="btn btn-ghost public-editorial-action public-editorial-menu-gateway">
+          {gateway.label}
+        </Link>
+      ) : null}
       {PUBLIC_EDITORIAL_LINKS.map((item) => {
         const active = current === item.href
           || (item.href === "/research/policies" && current?.startsWith("/research/policies/") === true);
@@ -46,14 +63,33 @@ function EditorialLinks({ current, mobile = false }: { current?: string; mobile?
   );
 }
 
-export function PublicEditorialNav({ current }: { current?: string }) {
+/**
+ * The public Research navigation: a full link row above 900px and the
+ * Explore Xenios menu at or below it. `part` lets the chrome place the two in
+ * different rows, so the phone menu can share the brand row; the default
+ * renders both together, as before.
+ */
+export function PublicEditorialNav({
+  current,
+  part = "all",
+  gateway,
+}: {
+  current?: string;
+  part?: "all" | "links" | "menu";
+  gateway?: EditorialGateway;
+}) {
+  const menu = (
+    <details className="public-editorial-menu">
+      <summary>Explore Xenios</summary>
+      <EditorialLinks current={current} mobile gateway={gateway} />
+    </details>
+  );
+  if (part === "links") return <EditorialLinks current={current} />;
+  if (part === "menu") return menu;
   return (
     <div className="public-editorial-navigation">
       <EditorialLinks current={current} />
-      <details className="public-editorial-menu">
-        <summary>Explore Xenios</summary>
-        <EditorialLinks current={current} mobile />
-      </details>
+      {menu}
     </div>
   );
 }

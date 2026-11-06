@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
   DEFAULT_MASTER_OFFERING_SORT,
   MASTER_OFFERING_DISPLAY_LABELS,
@@ -43,6 +43,8 @@ export function MasterOfferingCatalogControls({
   loading = false,
   onChange,
   onSearchChange,
+  onSearchInput,
+  pager = null,
 }: {
   query: MasterOfferingCatalogQuery;
   facets: MasterOfferingCatalogFacets;
@@ -50,6 +52,10 @@ export function MasterOfferingCatalogControls({
   onChange: (next: MasterOfferingCatalogQuery) => void;
   /** Search replaces its URL entry after a short pause; discrete filters push. */
   onSearchChange?: (next: MasterOfferingCatalogQuery) => void;
+  /** Called on every keystroke, before the debounce, so the page can stand down. */
+  onSearchInput?: () => void;
+  /** A compact pager the page places beside Search on phones. */
+  pager?: ReactNode;
 }) {
   const family = query.families?.[0] ?? ALL;
   const state = query.states?.[0] ?? ALL;
@@ -90,6 +96,11 @@ export function MasterOfferingCatalogControls({
     (query.families?.length ?? 0) +
     (query.states?.length ?? 0) +
     (query.categories?.length ?? 0);
+  // Search is always visible, so the toggle counts only what it hides.
+  const hiddenFilterCount =
+    (query.families?.length ?? 0) +
+    (query.states?.length ?? 0) +
+    (query.categories?.length ?? 0);
   const canReset =
     activeFilterCount > 0 || sort !== DEFAULT_MASTER_OFFERING_SORT;
 
@@ -107,6 +118,7 @@ export function MasterOfferingCatalogControls({
   }
 
   function scheduleSearch(value: string) {
+    onSearchInput?.();
     const bounded = value.slice(0, 160);
     setSearchDraft(bounded);
     cancelPendingSearch();
@@ -120,30 +132,11 @@ export function MasterOfferingCatalogControls({
 
   return (
     <div className="card grid min-w-0 gap-4" data-testid="mo-catalog-controls">
-      <button
-        type="button"
-        className="btn btn-secondary min-h-[44px] md:hidden"
-        aria-expanded={filtersOpen}
-        aria-controls="mo-catalog-filter-fields"
-        data-testid="mo-filter-toggle"
-        onClick={() => setFiltersOpen((current) => !current)}
-      >
-        {filtersOpen
-          ? "Hide filters"
-          : activeFilterCount === 0
-            ? "Show filters"
-            : `Show filters (${activeFilterCount} active)`}
-      </button>
-
-      <div
-        id="mo-catalog-filter-fields"
-        className={`${filtersOpen ? "grid" : "hidden"} min-w-0 gap-4 md:grid md:grid-cols-2 xl:grid-cols-6`}
-      >
-        <label
-          className="grid min-w-0 gap-2 xl:col-span-2"
-          htmlFor="mo-catalog-search"
-        >
-          <span className="form-label">Search the catalog</span>
+      {/* Search stays visible at every width (KAN-225/10657); only the
+          discrete filters collapse on phones. */}
+      <div className="flex min-w-0 items-end gap-3">
+        <label className="grid min-w-0 flex-1 gap-2" htmlFor="mo-catalog-search">
+          <span className="form-label research-catalog-search-label">Search the catalog</span>
           <input
             id="mo-catalog-search"
             className="input-field min-h-[44px]"
@@ -158,7 +151,28 @@ export function MasterOfferingCatalogControls({
             Results update after a brief pause.
           </span>
         </label>
+        <button
+          type="button"
+          className="btn btn-secondary min-h-[44px] flex-none md:hidden"
+          aria-expanded={filtersOpen}
+          aria-controls="mo-catalog-filter-fields"
+          data-testid="mo-filter-toggle"
+          onClick={() => setFiltersOpen((current) => !current)}
+        >
+          {filtersOpen
+            ? "Hide filters"
+            : hiddenFilterCount === 0
+              ? "Show filters"
+              : `Show filters (${hiddenFilterCount} active)`}
+        </button>
+      </div>
 
+      {pager ? <div className="min-w-0 md:hidden">{pager}</div> : null}
+
+      <div
+        id="mo-catalog-filter-fields"
+        className={`${filtersOpen ? "grid" : "hidden"} min-w-0 gap-4 md:grid md:grid-cols-2 xl:grid-cols-4`}
+      >
         <label className="grid min-w-0 gap-2" htmlFor="mo-catalog-family">
           <span className="form-label">Family</span>
           <select
@@ -280,7 +294,9 @@ export function MasterOfferingCatalogControls({
         </label>
       </div>
 
-      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+      {/* On phones the summary and reset belong to the open filter panel, so
+          the sticky toolbar stays short while browsing. */}
+      <div className={`${filtersOpen ? "flex" : "hidden"} min-w-0 flex-wrap items-center justify-between gap-3 md:flex`}>
         <p className="body-s text-ink-mute" data-testid="mo-active-filter-count">
           {activeFilterCount === 0
             ? "No filters applied"

@@ -1,0 +1,55 @@
+/* Member catalog toolbar on phones (KAN-225/10657).
+
+   Search, the filter toggle and the compact pager stay in reach while a
+   member scrolls the cards. The member header is itself sticky and its height
+   varies, so the toolbar sticks at the height that header publishes
+   (--research-sticky-chrome-height) rather than adding a second top:0 bar
+   under it. z-index stays below the header's 40. Wider screens keep the
+   toolbar in normal flow. */
+@media (max-width: 767.98px) {
+  .research-catalog-toolbar {
+    position: sticky;
+    top: var(--research-sticky-chrome-height, 0px);
+    z-index: 30;
+  }
+
+  .research-catalog-toolbar > .card {
+    padding: 10px 12px;
+    gap: 8px;
+    background: var(--paper);
+    box-shadow: 0 8px 20px rgba(20, 18, 15, .08);
+  }
+
+  /* An open filter panel scrolls inside the toolbar instead of covering the
+     list or the bottom of the screen. */
+  .research-catalog-toolbar #mo-catalog-filter-fields {
+    max-height: min(50dvh, 420px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* The label stays for assistive technology; the box, its placeholder and
+     the search key carry the purpose visually in the compact toolbar. */
+  .research-catalog-search-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* A focused results heading lands below both sticky layers. */
+  .research-catalog-results-heading {
+    scroll-margin-top: calc(var(--research-sticky-chrome-height, 0px) + var(--research-catalog-toolbar-height, 0px) + 8px);
+  }
+}
+
+@media (forced-colors: active) {
+  .research-catalog-toolbar > .card {
+    border-color: CanvasText;
+  }
+}
