@@ -165,6 +165,7 @@ export function EarlyAccessMultiCartJourney({
   // something. This used to be a plain boolean that started false and, once a
   // server read set it true, simply stayed true for the rest of the session.
   const [standing, setStanding] = useState<EarlyAccessAgreementStanding>("unknown");
+  const standingRead = useRef(0);
   const [lineIssues, setLineIssues] = useState<readonly EarlyAccessCartLineRefusal[]>([]);
   const [problems, setProblems] = useState<readonly string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -196,18 +197,30 @@ export function EarlyAccessMultiCartJourney({
       cartContactProblems(contact).length === 0 && cartShippingProblems(shipTo).length === 0;
   }, [contact, shipTo]);
 
-  /**
-   * Ask the server for this customer's agreement standing.
-   *
-   * Every value of `standing` in this component comes from here. Nothing else
-   * writes it, so there is no path by which a component's belief that a write
-   * succeeded becomes the journey's belief that the customer is agreed.
-   */
+  useEffect(() => () => { standingRead.current += 1; }, []);
+
   const recheckAgreements = useCallback(() => {
-    void loadEarlyAccessAgreementState().then((state) => {
-      setStanding(standingFromAgreementState(state));
+    const revision = ++standingRead.current;
+    void loadEarlyAccessAgreementState().catch(() => null).then((state) => {
+      if (revision === standingRead.current) {
+        setStanding(standingFromAgreementState(state));
+      }
     });
   }, []);
+
+  const handleAgreementStanding = useCallback((
+    _accepted: boolean,
+    recoveryStanding?: EarlyAccessAgreementStanding,
+  ) => {
+    if (recoveryStanding === undefined) {
+      recheckAgreements();
+      return;
+    }
+    // An unconfirmed write closes the gate. The customer's explicit check
+    // supplies its own standing and supersedes any earlier background read.
+    standingRead.current += 1;
+    setStanding(recoveryStanding);
+  }, [recheckAgreements]);
 
   const safeStep = useCallback((requested: EarlyAccessCheckoutStep): EarlyAccessCheckoutStep => {
     // Resolved to a FIXPOINT, not in one hop. Each rule sends an impossible
@@ -553,7 +566,7 @@ export function EarlyAccessMultiCartJourney({
           reading the same server answer; only one is ever mounted at a time.
         */
         <div data-testid="early-access-cart-agreement-mount">
-          <EarlyAccessAgreementSection onAccepted={recheckAgreements} onBlocked={recheckAgreements} />
+          <EarlyAccessAgreementSection onAccepted={handleAgreementStanding} />
         </div>
       ) : null}
 
@@ -609,7 +622,7 @@ export function EarlyAccessMultiCartJourney({
         <EarlyAccessCartAgreements
           standing={standing}
           busy={busy}
-          onRecheck={recheckAgreements}
+          onRecheck={handleAgreementStanding}
           onBack={() => navigate("details")}
           // The quote is taken HERE, at the end of the agreements step, and it
           // is the server's own re-check: it prices the cart only for a
