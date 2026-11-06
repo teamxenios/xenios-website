@@ -28,6 +28,7 @@ import {
   isMasterOfferingFamily,
   type MasterOfferingCopyState,
 } from "@shared/research/master-offerings/contract";
+import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "@shared/research/master-offerings/hcg-strength-review";
 import { warmMasterOfferingSearch } from "./search";
 import { registerReviewedProductDataset } from "./reviewed-content";
 import {
@@ -221,7 +222,9 @@ function readVariant(
       `variant ${value.id} has an unknown display state`,
     );
   }
-  let label = value.label;
+  let label = isHcgStrengthReview(offeringId, value.id)
+    ? HCG_STRENGTH_REVIEW.specification
+    : value.label;
   // GRP-0337 carries a duplicated unit suffix in the selected supplier row.
   // Correct its display while keeping the source identities and artifact bytes.
   if (
@@ -288,12 +291,16 @@ function readOffering(value: unknown): NormalizedMasterOffering {
       `offering ${value.id} has no member-safe variant`,
     );
   }
-  const aliases = Array.isArray(value.aliases)
-    ? value.aliases.filter(nonBlank)
-    : [];
+  const id = value.id;
+  const variants = rawVariants.map((variant) =>
+    readVariant(variant, id, value.displayName as string, rawVariants.length),
+  );
+  const strengthReview = value.family === HCG_STRENGTH_REVIEW.family &&
+    variants.some((variant) => isHcgStrengthReview(id, variant.id));
+  const aliases = Array.isArray(value.aliases) ? value.aliases.filter(nonBlank) : [];
   return {
-    id: value.id,
-    slug: value.slug,
+    id,
+    slug: strengthReview ? HCG_STRENGTH_REVIEW.slug : value.slug,
     // The generated file drops the canonical key on purpose. Nothing in the
     // display path reads it, and reconstructing one here would put a private
     // identity back into a member-safe object.
@@ -306,21 +313,13 @@ function readOffering(value: unknown): NormalizedMasterOffering {
     category: nonBlank(value.category) ? value.category : "Uncategorized",
     subcategory: nonBlank(value.subcategory) ? value.subcategory : null,
     brand: nonBlank(value.brand) ? value.brand : null,
-    aliases,
+    aliases: strengthReview ? ["HCG"] : aliases,
     displayState: value.displayState,
-    stateExplanation: nonBlank(value.stateExplanation)
-      ? value.stateExplanation
-      : "",
+    stateExplanation: strengthReview ? HCG_STRENGTH_REVIEW.notice
+      : nonBlank(value.stateExplanation) ? value.stateExplanation : "",
     copyState: readCopyState(value.copyState),
     visibility: "member",
-    variants: rawVariants.map((variant) =>
-      readVariant(
-        variant,
-        value.id as string,
-        value.displayName as string,
-        rawVariants.length,
-      ),
-    ),
+    variants,
     sourceReferences: [],
   };
 }
@@ -375,13 +374,17 @@ export function loadMasterOfferingDataset(
         `duplicate offering id ${product.id}`,
       );
     }
-    if (slugs.has(product.slug)) {
-      throw new MasterOfferingDatasetUnavailable(
-        `duplicate offering slug ${product.slug}`,
-      );
-    }
     ids.add(product.id);
-    slugs.add(product.slug);
+    const addresses = product.id === HCG_STRENGTH_REVIEW.offeringId &&
+      product.slug === HCG_STRENGTH_REVIEW.slug
+      ? [product.slug, HCG_STRENGTH_REVIEW.legacySlug]
+      : [product.slug];
+    for (const address of addresses) {
+      if (slugs.has(address)) {
+        throw new MasterOfferingDatasetUnavailable("duplicate offering slug " + address);
+      }
+      slugs.add(address);
+    }
   }
 
   const families: Record<string, number> = {};

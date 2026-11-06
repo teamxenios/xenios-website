@@ -8,6 +8,7 @@ import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
 import { RequestIntentForm } from "./RequestIntentForm";
+import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
 import { RequestIntentService, type CreateIntent, type StoredIntent } from "../../../../server/research/assisted-order/request-intent/service";
 import { sha256AssistedOrderHasher } from "../../../../server/research/assisted-order/defaults";
@@ -121,6 +122,12 @@ async function type(input: HTMLInputElement, value: string) {
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
+async function fillBaseContact() {
+  for (const [name, value] of Object.entries({
+    name: "Synthetic Customer", email: "synthetic@example.invalid", phone: "+15555550123",
+    shippingLine1: "1 Synthetic Street", shippingCity: "Test", shippingRegion: "TX", shippingPostalCode: "00000", shippingCountryCode: "US",
+  })) await type(host.querySelector('input[name="' + name + '"]')!, value);
+}
 async function prepare(api: RequestIntentApi, separateBilling = false, embedded = false) {
   await render(api, embedded);
   await click("Add Synthetic clinical to request");
@@ -128,10 +135,7 @@ async function prepare(api: RequestIntentApi, separateBilling = false, embedded 
   const quantity = [...host.querySelectorAll("input[type=number]")][0] as HTMLInputElement;
   await type(quantity, "2");
   await click("Continue to contact");
-  for (const [name, value] of Object.entries({
-    name: "Synthetic Customer", email: "synthetic@example.invalid", phone: "+15555550123",
-    shippingLine1: "1 Synthetic Street", shippingCity: "Test", shippingRegion: "TX", shippingPostalCode: "00000", shippingCountryCode: "US",
-  })) await type(host.querySelector('input[name="' + name + '"]')!, value);
+  await fillBaseContact();
   if (separateBilling) {
     await type(host.querySelector<HTMLInputElement>('input[name="shippingLine2"]')!, "Suite 2");
     const billingSame = [...host.querySelectorAll("label")]
@@ -1613,3 +1617,105 @@ describe("agreement-standing refresh preserves the current request", () => {
     expect(api.submit).toHaveBeenCalledTimes(1);
   });
 });
+
+it("replaces a stale selected HCG row after a catalog hold and retains sibling selections and contact", async () => {
+  const api = makeApi();
+  const hcg: RequestIntentCatalogItem = {
+    ...item("stale-hcg", false), productName: "HCG", specification: "HCG(120000iu)",
+    sourceSelection: {
+      family: HCG_STRENGTH_REVIEW.family, slug: HCG_STRENGTH_REVIEW.legacySlug,
+      variantId: HCG_STRENGTH_REVIEW.variantId,
+    },
+  };
+  const sibling = item("sibling", false);
+  const firstPage = { ...await api.catalog(), items: [hcg, sibling] };
+  api.catalog.mockResolvedValue(firstPage);
+  await render(api);
+  await click("Add HCG to request");
+  await click("Add Synthetic sibling to request");
+  await click("Continue to contact");
+  await fillBaseContact();
+  await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+
+  api.catalog.mockResolvedValue({
+    ...firstPage, items: [{
+      ...hcg, specification: HCG_STRENGTH_REVIEW.specification, selectableForReview: false,
+      intentExclusion: "specification_review", actionLabel: HCG_STRENGTH_REVIEW.actionLabel,
+      sourceSelection: { family: HCG_STRENGTH_REVIEW.family, slug: HCG_STRENGTH_REVIEW.slug,
+        variantId: HCG_STRENGTH_REVIEW.variantId },
+    }, sibling],
+  });
+  await render({ ...api });
+  const contactForm = host.querySelector("form")!;
+  expect(contactForm.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(true);
+  await act(async () => contactForm.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+  expect(host.querySelector("form")).toBe(contactForm);
+  await click("Back to products");
+  const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
+  expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+  expect(summary.textContent).not.toContain("120000");
+  expect(summary.textContent).toContain("Synthetic sibling");
+  expect([...summary.querySelectorAll("button")]
+    .find((button) => button.textContent === "Continue to contact")?.disabled).toBe(true);
+  api.catalog.mockResolvedValue({ ...firstPage, items: [sibling], total: 1 });
+  await render({ ...api });
+  expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+  expect(summary.textContent).toContain("Synthetic sibling");
+  await click("Remove", "Remove selected HCG " + HCG_STRENGTH_REVIEW.specification);
+  await click("Continue to contact");
+  expect(host.querySelector<HTMLInputElement>('input[name="name"]')?.value).toBe("Synthetic Customer");
+  expect(api.submit).not.toHaveBeenCalled();
+});
+
+it.each(["cached", "in-flight"] as const)(
+  "holds a %s HCG link after a confirmed first selection refusal",
+  async (linkTiming) => {
+    const api = makeApi();
+    const basePage = await api.catalog();
+    const sourceSelection = {
+      family: HCG_STRENGTH_REVIEW.family, slug: HCG_STRENGTH_REVIEW.legacySlug,
+      variantId: HCG_STRENGTH_REVIEW.variantId,
+    };
+    const hcg = { ...item("research", false), specification: "HCG(120000iu)", sourceSelection };
+    const firstPage = { ...basePage, items: [item("clinical", true), hcg] };
+    const linkPage = { ...basePage, items: [hcg], total: 1, pageSize: 100 };
+    let resolveLink!: (page: typeof linkPage) => void;
+    const pendingLink = new Promise<typeof linkPage>((resolve) => { resolveLink = resolve; });
+    const linkedApi: RequestIntentApi = {
+      ...api,
+      catalog: async (query) => query.pageSize === 100
+        ? (linkTiming === "in-flight" ? pendingLink : linkPage) : firstPage,
+    };
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(400, "selection_requires_refresh"));
+    await act(async () => root.render(<RequestIntentForm api={linkedApi} storage={sessionStorage}
+      entryIntent={{ ...sourceSelection, quantity: 2, action: "ASSISTED_ORDER" }} />));
+    await click("Add Synthetic clinical to request");
+    await click(linkTiming === "cached" ? "Add linked selection for review" : "Add Synthetic research to request");
+    await click("Continue to contact");
+    await fillBaseContact();
+    await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+    await click("Submit for review");
+
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(host.textContent).not.toContain("120000");
+    await click("Edit selection");
+    expect(host.textContent).not.toContain("120000");
+    expect(host.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+    expect([...host.querySelectorAll("button")].some((button) =>
+      button.textContent === "Add Synthetic research to request")).toBe(false);
+    await click("Remove", "Remove selected Synthetic research " + HCG_STRENGTH_REVIEW.specification);
+    if (linkTiming === "in-flight") await act(async () => resolveLink(linkPage));
+    const link = host.querySelector('section[aria-label="Selection from your link"]')!;
+    expect(link.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+    expect(link.querySelector("button")).toBeNull();
+    const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
+    expect(summary.textContent).not.toContain("Synthetic research");
+    expect(summary.textContent).toContain("Synthetic clinical");
+    await click("Continue to contact");
+    expect(host.querySelector<HTMLInputElement>('input[name="name"]')?.value).toBe("Synthetic Customer");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+  },
+);
