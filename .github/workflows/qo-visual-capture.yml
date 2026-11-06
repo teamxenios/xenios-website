@@ -39,22 +39,22 @@ jobs:
       github.event_name == 'push' &&
       github.repository == 'teamxenios/xenios-website' &&
       github.ref == 'refs/heads/codex/qo-synthetic-qa-20261105' &&
-      github.event.before == 'UNBOUND_PREPARED_PREDECESSOR' &&
+      github.event.before == '244bbe817e0cd78d12b427e79f12f70bced3183d' &&
       !github.event.created && !github.event.deleted && !github.event.forced &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: UNBOUND_CANDIDATE_SHA
-      CANDIDATE_TREE: UNBOUND_CANDIDATE_TREE
+      CANDIDATE_SHA: 1475d418283e646554872db3992abc8a392af423
+      CANDIDATE_TREE: 5917bf218fabc308857a20ae9e568841f1e50970
       # Keep the job-level predecessor guard and this exact checkout pin in sync.
-      CAPTURE_PREPARED_PREDECESSOR: UNBOUND_PREPARED_PREDECESSOR
-      CAPTURE_EXECUTION_SCOPE_ID: UNBOUND_ROOT_EXECUTION_SCOPE
+      CAPTURE_PREPARED_PREDECESSOR: 244bbe817e0cd78d12b427e79f12f70bced3183d
+      CAPTURE_EXECUTION_SCOPE_ID: KAN-31/11898
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
       CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: UNBOUND_RECONCILIATION
+      CAPTURE_RECONCILED_AT: '2026-11-06T11:55:42.046Z'
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
