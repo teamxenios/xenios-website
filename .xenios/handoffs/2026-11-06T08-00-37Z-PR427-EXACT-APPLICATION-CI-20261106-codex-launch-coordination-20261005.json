@@ -1,0 +1,199 @@
+{
+  "state": "FROZEN_COMBINED_SOURCE_AND_HOSTED_APPLICATION_QUALIFIED",
+  "scope": "standard hosted application qualification of the frozen controlled handoff",
+  "release": "draft PR427; mounted verification and production follow separate owner operations",
+  "proof": {
+    "pr": 427,
+    "runId": 42183345491,
+    "attempt": 1,
+    "runUrl": "https://github.com/teamxenios/xenios-website/actions/runs/42183345491",
+    "status": "completed",
+    "conclusion": "success",
+    "source": {
+      "branch": "codex/early-access-combined-qualification-20261106",
+      "head": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+      "tree": "158ac88b6574fccda8ca253b16c4fc4c4f33abbf",
+      "base": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "changedPaths": 69,
+      "sourceProofs": [
+        {
+          "file": "PATCHES/01-policy-v2-pr418.patch",
+          "sha256": "5741cfd7ab0b5646f293a7a98fc438a0f5c45f19dfafaa5fb51b75281a4960a0",
+          "tree": "5917bf218fabc308857a20ae9e568841f1e50970"
+        },
+        {
+          "file": "PATCHES/02-care-research-pr426-on-policy.patch",
+          "sha256": "f1170c5da915ce44c96595db7738e315931593dd37e539d323d58bb3c561e776",
+          "tree": "b49245219aa5b65f5fdaac256bd190532095f36c"
+        },
+        {
+          "file": "PATCHES/03-persistent-dock-on-combined.patch",
+          "sha256": "32eb82bce5684e0057c3c95c403e2c893d8de4ec11975ae7c8e39e9a6f8f22f2",
+          "tree": "158ac88b6574fccda8ca253b16c4fc4c4f33abbf"
+        }
+      ],
+      "physicalHead": "99f7780fe050f49a27bc9b2af3948686b8cfb0e4",
+      "leaseId": "84111c0d-7829-477a-9356-65199dbce8a8"
+    },
+    "jobs": {
+      "test": {
+        "jobId": 127777803848,
+        "rawLogBytes": 1228699,
+        "rawLogSha256": "f82d598fdc917702a3bede38ea2c7304a77587611971ceb4183913fa7eb9acde",
+        "checkout": "43408b7b29846dd9a5d28ad062507f692f6fa267",
+        "node20PinAppears": true,
+        "testTotals": [
+          "153 passed (153)",
+          "18731 passed | 83 skipped (18814)"
+        ],
+        "fileTotals": [
+          "4 passed (4)",
+          "1008 passed | 6 skipped (1014)"
+        ],
+        "requiredSuites": {
+          "PersistentRequestBar.test.tsx": [
+            "PersistentRequestBar.test.tsx (12 tests) 343ms"
+          ],
+          "RequestIntentForm.action-bar.test.tsx": [
+            "RequestIntentForm.action-bar.test.tsx (9 tests) 787ms"
+          ],
+          "request-dock-cta-parity.test.ts": [
+            "request-dock-cta-parity.test.ts (8 tests) 8ms"
+          ]
+        },
+        "storefront": [
+          "EarlyAccessRoute.storefront.test.tsx (79 tests) 8027ms",
+          "EarlyAccessRoute.storefront.test.tsx (79 tests) 8780ms"
+        ]
+      },
+      "typecheck": {
+        "jobId": 127777803568,
+        "rawLogBytes": 15407,
+        "rawLogSha256": "27f9dd08459a9921b02b04aee7a1ea183e273cbd6be8b6ddfa8f947908627c13",
+        "checkout": "43408b7b29846dd9a5d28ad062507f692f6fa267",
+        "node20PinAppears": true
+      },
+      "build": {
+        "jobId": 127777803725,
+        "rawLogBytes": 78272,
+        "rawLogSha256": "85831bfa39f46168782a415099511fe6e80f37f4490933e7b7683994c24e25fe",
+        "checkout": "43408b7b29846dd9a5d28ad062507f692f6fa267",
+        "node20PinAppears": true
+      },
+      "protection": {
+        "jobId": 127777803943,
+        "rawLogBytes": 116503,
+        "rawLogSha256": "fba1f4dc062e7ba2f41a52770e2d54ed17f15f456bdfb8b36b37d7fb25aadeaa",
+        "checkout": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+        "node20PinAppears": true
+      }
+    },
+    "checkoutTrees": {
+      "43408b7b29846dd9a5d28ad062507f692f6fa267": {
+        "tree": "158ac88b6574fccda8ca253b16c4fc4c4f33abbf",
+        "parents": [
+          "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+          "4cd4f6c384b2907990542ed4ab098935abb1b6de"
+        ]
+      },
+      "4cd4f6c384b2907990542ed4ab098935abb1b6de": {
+        "tree": "158ac88b6574fccda8ca253b16c4fc4c4f33abbf",
+        "parents": [
+          "07d727a4c9b5516bbd57aef3aa7f89d359849260"
+        ]
+      }
+    },
+    "trustedChecks": [
+      {
+        "appId": 15368,
+        "conclusion": "success",
+        "head_sha": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+        "id": 127780055513,
+        "name": "Required CI completion",
+        "status": "completed"
+      },
+      {
+        "appId": 15368,
+        "conclusion": "success",
+        "head_sha": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+        "id": 127777803943,
+        "name": "protection",
+        "status": "completed"
+      },
+      {
+        "appId": 15368,
+        "conclusion": "success",
+        "head_sha": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+        "id": 127777803848,
+        "name": "test",
+        "status": "completed"
+      },
+      {
+        "appId": 15368,
+        "conclusion": "success",
+        "head_sha": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+        "id": 127777803725,
+        "name": "build",
+        "status": "completed"
+      },
+      {
+        "appId": 15368,
+        "conclusion": "success",
+        "head_sha": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+        "id": 127777803568,
+        "name": "typecheck",
+        "status": "completed"
+      }
+    ],
+    "allFiveTrustedSuccess": true
+  },
+  "custody": {
+    "canonical": "e67f4642e584cceda6353a76e74a94fe51f7100e",
+    "parent": "635b91690e1c0597551a5845fe1aef6596492557",
+    "tree": "d56669618015cf4a94fc181a0868cab7889c8932",
+    "leaseId": "84111c0d-7829-477a-9356-65199dbce8a8",
+    "claimTask": "KAN13-EA-COMBINED-APPLICATION-QUALIFICATION-20261106",
+    "newPaths": 12,
+    "otherBindings": 57,
+    "base": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "projected": "158ac88b6574fccda8ca253b16c4fc4c4f33abbf",
+    "frozenPhysicalHead": "99f7780fe050f49a27bc9b2af3948686b8cfb0e4",
+    "customHooksConfigured": false,
+    "activeStandardCommitHooks": [],
+    "signCommits": false,
+    "oldCounts": [
+      158,
+      179,
+      57
+    ],
+    "newCounts": [
+      159,
+      180,
+      57
+    ]
+  },
+  "watch": {
+    "session": 13842,
+    "exit": 0
+  },
+  "independentSource": [
+    {
+      "record": "KAN-225/11853",
+      "scope": "combined exact-tree static preservation",
+      "sha256": "cc25ceb50dd309d94f256c3c156fe5ad17a572009f7f59260f7c4748ab239852"
+    },
+    {
+      "record": "KAN-31/11848",
+      "scope": "dock model parity and focused copy",
+      "sha256": "9e1f6c5dedfc11029a6dc20910e487a4a48026d125fcbf41fd788c81b65c3572"
+    }
+  ],
+  "independentCustody": {
+    "record": "KAN-225/11856",
+    "sha256": "05911fc1f0ed7a20fd2d94d405858f1de2c1e258d31c1abe5068c77ecfc473a5"
+  },
+  "remaining": {
+    "policy": "KAN-13/11844 protected browser admission and matching policy rollout first",
+    "combined": "admitted mounted product selection, policy and request/receipt checks and current release integration qualification"
+  }
+}
