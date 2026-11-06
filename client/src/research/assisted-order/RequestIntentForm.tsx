@@ -19,6 +19,7 @@ import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import "./assisted-order.css";
+import { PersistentRequestBar } from "./PersistentRequestBar";
 
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
@@ -102,6 +103,7 @@ function RequestIntentFormSession({
   const catalogStartRef = useRef<HTMLDivElement>(null);
   const pendingCatalogScroll = useRef(false);
   const requestSummaryId = useId();
+  const contactFormId = useId();
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
   const [restored] = useState(() => storage ? readIntentAttempt(storage) : null);
   // A reference confirmed in an earlier page load of this tab is shown again. An
@@ -131,6 +133,7 @@ function RequestIntentFormSession({
   const locked = useRef(false);
   const mounted = useRef(true);
   const heading = useRef<HTMLHeadingElement>(null);
+  const contactHeading = useRef<HTMLHeadingElement>(null);
   const previousFocusState = useRef({ step, receipt });
   const [hintItem, setHintItem] = useState<RequestIntentCatalogItem | null>(null);
   const [hintChecked, setHintChecked] = useState(false);
@@ -494,7 +497,8 @@ function RequestIntentFormSession({
         </div>
       </aside></div>
     </>}
-    {step === "contact" && <form onSubmit={captureContact}>
+    {step === "contact" && <form id={contactFormId} onSubmit={captureContact}>
+      <h2 ref={contactHeading} tabIndex={-1}>Contact details</h2>
       <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} defaultValue={contactValue("name", contact?.fullLegalName ?? "")} /></label>
         <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} defaultValue={contactValue("email", contact?.email ?? "")} /></label>
         <label>Phone<input name="phone" type="tel" required autoComplete="tel" maxLength={50} defaultValue={contactValue("phone", contact?.mobilePhone ?? "")} /></label></div>
@@ -527,5 +531,20 @@ function RequestIntentFormSession({
           onClick={() => void submit()}>{frozen.current ? "Retry same request" : "Submit for review"}</button>
       </div><a href="/research/support">Contact support</a>
     </section>}
+    <PersistentRequestBar
+      state={{ step, selectedCount: selected.size, continuationEnabled,
+        storageReady: Boolean(storage), configReady: Boolean(config), contactReady: Boolean(contact),
+        requirementsNeedRefresh, requirementsCount: requirements.length,
+        allAcknowledged: requirements.every((entry) => acknowledged.has(agreementRequirementKey(entry))),
+        busy, frozen: frozen.current !== null }}
+      lines={selections.map(({ item, quantity }) => ({ key: catalogItemKey(item),
+        name: item.productName, specification: item.specification || item.variantId, quantity }))}
+      contactFormId={contactFormId}
+      focusContactHeading={() => contactHeading.current?.focus()}
+      onContinue={() => {
+        if (!selected.size || !config || !storage || !continuationEnabled || busy || requirementsNeedRefresh) return;
+        setStep("contact"); setError("");
+      }}
+      onSubmit={() => void submit()} />
   </section>;
 }
