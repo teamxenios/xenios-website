@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { policyBodyDigest, assertSyntheticOrigin, verifySyntheticPolicyProtocol,
- makeLoopbackBrowserRequest, POLICY_V2_EXPECTATION } from './policy-fixture-v2.mjs';
+ makeLoopbackBrowserRequest, POLICY_V2_EXPECTATION } from '../../../scripts/evidence/lib/policy-fixture-v2.mjs';
 const ORIGIN='http://127.0.0.1:4321';
 const fresh=(version)=>({title:version==='v2'?'Synthetic Product Policy':'Synthetic Research Policy',updated:'SYNTHETIC TEST',agreement:{kind:'early_access_terms',version},sections:[{heading:'Scope',paragraphs:['Synthetic text only.'],bullets:['No production claim.']}]});
 function fixture(mutator) {
