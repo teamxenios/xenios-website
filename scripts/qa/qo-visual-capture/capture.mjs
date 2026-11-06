@@ -2,6 +2,7 @@ import { execFileSync, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { access, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
 import { chromium } from "playwright";
 import {
@@ -12,12 +13,24 @@ import {
 } from "./fixture.mjs";
 
 const [candidate, output, candidateSha, candidateTree, harnessRevision, runId, runAttempt, allowanceFile, profile = "legacy"] = process.argv.slice(2);
-if (!["legacy", "guest-catalog-details", "reviewed-catalog", "guest-mobile-catalog", "guest-mobile-request-dock"].includes(profile)) {
+if (!["legacy", "guest-catalog-details", "reviewed-catalog", "guest-mobile-catalog", "guest-mobile-request-dock", "guest-mobile-request-dock-v2"].includes(profile)) {
   throw new Error("Unknown capture profile");
 }
 const guestDetailsOnly = profile === "guest-catalog-details";
 const reviewedCatalog = profile === "reviewed-catalog";
-const guestRequestDock = profile === "guest-mobile-request-dock";
+const combinedRequestDock = profile === "guest-mobile-request-dock-v2";
+const guestRequestDock = profile === "guest-mobile-request-dock" || combinedRequestDock;
+const requestPolicy = combinedRequestDock ? { kind: "early_access_terms", version: "v2" } : fixtureAgreement;
+const dockCopy = combinedRequestDock
+  ? { details: "Continue to details", contact: "Continue to submit request", review: "Submit your request",
+      submit: "Submit request", summary: "Your request (1)" }
+  : { details: "Continue to contact", contact: "Review request", review: "Review your request",
+      submit: "Submit for review", summary: "Review request (1)" };
+const intentPath = "/api/research/early-access/request-intents";
+const receiptOriginPath = "/__xenios_qa_dock_origin";
+const attemptStorageKey = "xenios.assisted-order.intent-attempt.v1";
+const recoveryFixtureKey = "00000000-0000-4000-8000-000000000026";
+const combinedPolicyDigest = "491d2559f05f6201ee0279bbd0fb711ebc7eeb1fd0a826c8d9141373c146fa06";
 const guestMobileCatalog = profile === "guest-mobile-catalog" || guestRequestDock;
 const reviewedVialCaptures = new Map([
   ["mov_09db3e866424b64994d3", "bpc-5mg"],
@@ -57,7 +70,10 @@ const result = {
     "Fixture prices are synthetic. No approved price, live identity, product authorization or persistence is tested.",
     "The source catalog has separate 10 mg and 5 mg listings. Detail intentionally groups their exact media IDs only in the fixture.",
     "Layout checks establish decoded media and geometry. Inspect screenshots for label, cap and base readability.",
-    "No submission, recovery, staff readback, production release or operator activation is covered.",
+    combinedRequestDock
+      ? "Two explicit fixture-only submissions and one explicit fixture-only recovery exercise receipt presentation and focus."
+      : "No submission, recovery, staff readback, production release or operator activation is covered.",
+    ...(combinedRequestDock ? ["The enlarged-text check uses a 200% root font size at a fixed Chromium viewport."] : []),
     ...(guestMobileCatalog ? ["Chromium viewport geometry and DOM focus only. Native iPhone Safari keyboard, browser chrome, zoom and safe-area behavior are not measured."] : []),
   ],
   candidateSha, candidateTree, harnessRevision, runId, runAttempt: Number(runAttempt), allowance, profile,
@@ -65,7 +81,8 @@ const result = {
   upstreamHarness: "scripts/evidence/build-candidate-preview.mjs + scripts/preview-research.mjs",
   fixture: {
     sourceVariant, alternateSourceVariant, orderVariant, alternateOrderVariant, memberOffering, alternateMemberOffering, fixturePrice, fixtureCurrency, fixtureUnit,
-    policy: { slug: "research-use", agreement: fixtureAgreement, acceptance: "one exact in-memory intercept per guest context" },
+    policy: { slug: combinedRequestDock ? "early-access-product-policy" : "research-use",
+      agreement: requestPolicy, acceptance: "one exact in-memory intercept per guest context" },
   },
   assets: { packshot: { file: artwork, sha256: artworkHash }, fallback: { file: alternateArtwork } },
   network: { loopbackOnly: false, serviceWorkers: "blocked", externalRequests: "blocked" },
@@ -88,7 +105,54 @@ async function waitForPreview(process) {
   throw new Error("Existing loopback preview did not become ready");
 }
 
-async function captureContext(browser, fixtures, viewport, mobile, member, entry) {
+function holdDockReply(flow, phase) {
+  let notify, release;
+  const started = new Promise((resolve) => { notify = resolve; });
+  const resume = new Promise((resolve) => { release = resolve; });
+  flow.pause = { phase, notify, resume };
+  return {
+    wait: () => Promise.race([started, delay(6500).then(() => { throw new Error("Synthetic reply was not reached: " + phase); })]),
+    release,
+  };
+}
+
+async function waitForDockReply(flow, phase) {
+  const pause = flow.pause;
+  if (pause?.phase !== phase) return;
+  flow.pause = null;
+  pause.notify();
+  await pause.resume;
+}
+
+function syntheticDockReceipt(mode) {
+  const requestId = mode === "recover"
+    ? "00000000-0000-4000-8000-000000000028" : "00000000-0000-4000-8000-000000000027";
+  return { kind: "unapproved_selection_request", requestId,
+    publicReference: "XRI-" + requestId.replaceAll("-", "").toUpperCase(),
+    status: "pending_review", createdAt: "2026-11-06T00:00:00.000Z" };
+}
+
+function combinedReceiptReply(flow, path, member, auth, input) {
+  if (flow.mode === "recover" && path === intentPath + "/recover" &&
+      member && auth === memberBearer && input && Object.keys(input).length === 1 &&
+      input.idempotencyKey === recoveryFixtureKey) {
+    return { receipt: syntheticDockReceipt("recover") };
+  }
+  if (flow.mode !== "submit" || path !== intentPath || member || auth !== null) return null;
+  const request = flow.validate(input);
+  const [line] = request.lines;
+  const standing = request.agreements.filter((item) => item.kind === requestPolicy.kind);
+  if (request.lines.length !== 1 || line.productId !== "qa-bpc-157-product" ||
+      line.variantId !== orderVariant || line.quantity !== 2 ||
+      request.contact.fullLegalName !== fixtureContact.name || request.contact.email !== fixtureContact.email ||
+      request.contact.shippingAddress.line1 !== fixtureContact.shippingLine1 ||
+      standing.length !== 1 || standing[0].version !== requestPolicy.version || standing[0].accepted !== true) {
+    return null;
+  }
+  return syntheticDockReceipt("submit");
+}
+
+async function captureContext(browser, fixtures, viewport, mobile, member, entry, receiptFlow) {
   const context = await browser.newContext({
     viewport, screen: viewport, isMobile: mobile, hasTouch: mobile, deviceScaleFactor: 1,
     locale: "en-US", serviceWorkers: "block", acceptDownloads: false,
@@ -100,6 +164,7 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
   }
   const traffic = { accepted: 0, verifiedMember: 0, fallbackAssetAborted: 0, deniedExternal: 0,
     deniedLocalReads: 0, deniedWrites: 0, deniedRecovery: 0, deniedWebSockets: 0 };
+  if (combinedRequestDock) Object.assign(traffic, { syntheticSubmit: 0, syntheticRecover: 0 });
   entry.network = traffic;
   await context.routeWebSocket("**/*", (socket) => {
     traffic.deniedWebSockets += 1;
@@ -113,12 +178,31 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
       if (request.method() !== "GET") traffic.deniedWrites += 1;
       return intercept.abort("blockedbyclient");
     }
+    if (receiptFlow?.armed && request.method() === "POST" && !url.search &&
+        request.headers()["content-type"]?.split(";")[0] === "application/json") {
+      const body = request.postDataBuffer();
+      let response;
+      try {
+        if (body && body.length <= 32768) {
+          response = combinedReceiptReply(receiptFlow, url.pathname, member,
+            request.headers().authorization ?? null, JSON.parse(body.toString("utf8")));
+        }
+      } catch { /* The normal write block below handles malformed fixture inputs. */ }
+      if (response) {
+        receiptFlow.armed = false;
+        if (receiptFlow.mode === "recover") {
+          traffic.syntheticRecover += 1;
+          await waitForDockReply(receiptFlow, "recover");
+        } else traffic.syntheticSubmit += 1;
+        return intercept.fulfill({ status: 200, json: response, headers: { "cache-control": "no-store" } });
+      }
+    }
     if (request.method() === "POST" && !member && url.pathname === agreementAccept && !url.search && traffic.accepted === 0) {
       let body;
       try { body = request.postDataJSON(); } catch {}
-      if (body && Object.keys(body).length === 2 && body.kind === fixtureAgreement.kind && body.version === fixtureAgreement.version) {
+      if (body && Object.keys(body).length === 2 && body.kind === requestPolicy.kind && body.version === requestPolicy.version) {
         traffic.accepted += 1;
-        return intercept.fulfill({ json: { ok: true, ...fixtureAgreement, alreadyAccepted: false } });
+        return intercept.fulfill({ json: { ok: true, ...requestPolicy, alreadyAccepted: false } });
       }
     }
     if (/\/(recover|recovery)(?:\/|$)/.test(url.pathname) && url.pathname.startsWith("/api/")) {
@@ -128,6 +212,15 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
     if (request.method() !== "GET") {
       traffic.deniedWrites += 1;
       return intercept.abort("blockedbyclient");
+    }
+    if (receiptFlow?.mode === "recover" && !url.search) {
+      if (url.pathname === receiptOriginPath) {
+        return intercept.fulfill({ contentType: "text/html", body: "<!doctype html><title>Synthetic receipt setup</title>" });
+      }
+      if (url.pathname === intentPath + "/config") {
+        await waitForDockReply(receiptFlow, "closed-config");
+        return intercept.fulfill({ status: 503, json: { enabled: false, error: "request_intent_disabled" } });
+      }
     }
     if (entry.breakPackshot && url.pathname === artwork) {
       traffic.fallbackAssetAborted += 1;
@@ -152,7 +245,8 @@ async function captureContext(browser, fixtures, viewport, mobile, member, entry
         }
       }
       return intercept.fulfill({
-        json: url.pathname === agreementStatus ? { ...json, accepted: traffic.accepted === 1 } : json,
+        json: url.pathname === agreementStatus
+          ? { ...json, accepted: traffic.accepted === 1 || (member && receiptFlow?.mode === "member") } : json,
         headers: { "cache-control": "no-store" },
       });
     }
@@ -619,8 +713,20 @@ async function checkRequestDockFooter(page, entry) {
 async function openContactFromRequestDock(page, entry, surface) {
   const trigger = page.getByTestId("request-action-bar-summary");
   const selection = page.getByRole("dialog", { name: "Your selected request items", exact: true });
-  await trigger.click();
+  if (combinedRequestDock) {
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+  } else await trigger.click();
   await selection.waitFor();
+  if (combinedRequestDock) {
+    await page.waitForFunction(() => Boolean(document.activeElement?.closest('[role="dialog"]')));
+    const openFocus = await selection.evaluate((dialog) => dialog.contains(document.activeElement));
+    await page.keyboard.press("Tab");
+    const forwardFocus = await selection.evaluate((dialog) => dialog.contains(document.activeElement));
+    await page.keyboard.press("Shift+Tab");
+    report(entry, "keyboard opens the dock summary and keeps Tab focus in its dialog",
+      openFocus && forwardFocus && await selection.evaluate((dialog) => dialog.contains(document.activeElement)));
+  }
   await page.keyboard.press("Escape");
   await selection.waitFor({ state: "hidden" });
   await page.waitForFunction(() => document.activeElement?.getAttribute("data-testid") === "request-action-bar-summary");
@@ -628,7 +734,7 @@ async function openContactFromRequestDock(page, entry, surface) {
     await trigger.evaluate((button) => button === document.activeElement));
   await trigger.click();
   await selection.waitFor();
-  const continueAction = selection.getByRole("button", { name: "Continue to contact", exact: true });
+  const continueAction = selection.getByRole("button", { name: dockCopy.details, exact: true });
   report(entry, "dock summary shows the exact selection, quantity and enabled continuation",
     await selection.getByText("BPC-157", { exact: true }).isVisible() &&
     await selection.getByText("Requested quantity: 2", { exact: true }).isVisible() &&
@@ -642,7 +748,7 @@ async function openContactFromRequestDock(page, entry, surface) {
     await contactHeading.evaluate((heading) => heading === document.activeElement));
 }
 
-async function checkRequestDockContact(page, entry, surface) {
+async function checkRequestDockContact(page, entry, surface, enlarged = false) {
   const dockPrimary = page.getByTestId("request-action-bar-primary");
   const contactHeading = surface.getByRole("heading", { name: "Contact details", exact: true });
   const form = surface.locator("form").filter({ has: contactHeading });
@@ -651,29 +757,58 @@ async function checkRequestDockContact(page, entry, surface) {
   }
   await form.getByRole("checkbox", { name: "I confirm I am at least 18 years old." }).check();
   const name = form.getByRole("textbox", { name: "Full legal name", exact: true });
-  const review = surface.getByRole("heading", { name: "Review your request", exact: true });
+  const review = surface.getByRole("heading", { name: dockCopy.review, exact: true });
   const invalidBefore = await form.evaluate((node) => Array.from(node.elements)
     .filter((control) => control.willValidate && !control.validity.valid).map((control) => control.name));
   report(entry, "fixed contact action is associated with the form and name is the only invalid field",
     await dockPrimary.getAttribute("form") === await form.getAttribute("id") &&
     invalidBefore.length === 1 && invalidBefore[0] === "name" &&
     await dockPrimary.isEnabled());
-  await dockPrimary.click();
+  if (combinedRequestDock) {
+    report(entry, "contact dock labels the next step as continuing to submission",
+      (await dockPrimary.innerText()).trim() === dockCopy.contact);
+    await dockPrimary.focus();
+    await page.keyboard.press("Enter");
+  } else await dockPrimary.click();
   report(entry, "fixed contact action invokes native required-field validation",
     await contactHeading.isVisible() && await review.count() === 0 &&
     await name.evaluate((input) => input === document.activeElement && input.validity.valueMissing));
+  if (enlarged) {
+    await name.scrollIntoViewIfNeeded();
+    report(entry, "enlarged contact field keeps native focus above the fixed dock",
+      await name.evaluate((input, width) => {
+        const box = input.getBoundingClientRect();
+        const dock = document.querySelector('[data-testid="request-action-bar"]').getBoundingClientRect();
+        return document.activeElement === input && box.top >= 0 && box.bottom <= dock.top + 1 &&
+          box.left >= -1 && box.right <= width + 1 && document.documentElement.scrollWidth <= width + 1;
+      }, entry.viewport.width));
+  }
 
   await name.fill(fixtureContact.name);
   await dockPrimary.click();
   await review.waitFor();
   const reviewPanel = surface.locator("section.xenios-order-panel").filter({ has: review });
+  const submit = reviewPanel.getByRole("button", { name: dockCopy.submit, exact: true });
   report(entry, "fixed contact action reaches review with the original quantity and no allowed submission",
     (await reviewPanel.innerText()).includes("Requested quantity: 2") &&
-    await dockPrimary.isDisabled() &&
-    await reviewPanel.getByRole("button", { name: "Submit for review", exact: true }).isDisabled());
+    await dockPrimary.isDisabled() && await submit.isDisabled());
+  if (enlarged) {
+    await submit.evaluate(async (button) => {
+      button.scrollIntoView({ block: "center", behavior: "instant" });
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
+    report(entry, "enlarged final action fits above the dock and wraps its label",
+      await submit.evaluate((button, width) => {
+        const box = button.getBoundingClientRect();
+        const dock = document.querySelector('[data-testid="request-action-bar"]').getBoundingClientRect();
+        return box.top >= 0 && box.bottom <= dock.top + 1 && box.left >= -1 && box.right <= width + 1 &&
+          button.scrollWidth <= button.clientWidth + 1 && button.scrollHeight <= button.clientHeight + 1 &&
+          document.documentElement.scrollWidth <= width + 1;
+      }, entry.viewport.width));
+  }
 }
 
-async function captureGuestMobile(page, entry, { bpc, mito }) {
+async function captureGuestMobile(page, entry, { bpc, mito }, receiptFlow) {
   const path = guestRequestDock ? "/earlyaccess" : guestRoute;
   await page.goto(origin + path, { waitUntil: "domcontentloaded" });
   const surface = page.getByTestId("request-door-mixed").locator(".xenios-order-page--guest-catalog");
@@ -687,9 +822,9 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
   const previous = pager.getByRole("button", { name: "Previous", exact: true });
   const next = pager.getByRole("button", { name: "Next", exact: true });
   const summary = surface.getByRole("complementary", { name: "Selected request items", exact: true });
-  const toggle = summary.getByRole("button", { name: "Review request (1)", exact: true });
+  const toggle = summary.getByRole("button", { name: dockCopy.summary, exact: true });
   const summaryContent = summary.locator(".xenios-order-summary-content");
-  const inlineContinue = summary.getByRole("button", { name: "Continue to contact", exact: true, includeHidden: true });
+  const inlineContinue = summary.getByRole("button", { name: dockCopy.details, exact: true, includeHidden: true });
   const dock = page.getByTestId("request-action-bar");
   const dockPrimary = dock.getByTestId("request-action-bar-primary");
   const card = (name) => surface.locator("article.xenios-order-card")
@@ -749,26 +884,54 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
       const { fullyVisible, partlyVisible, toolbarBottom, contentBottom, viewportHeight } = entry.unselectedCatalogStartVisibility;
       report(entry, "visible card area ends above the fixed dock",
         toolbarBottom < contentBottom && contentBottom < viewportHeight, entry.unselectedCatalogStartVisibility);
-      if (entry.viewport.width === 390) report(entry, "typical phone shows two complete cards and at least part of a third",
+      if (!combinedRequestDock && entry.viewport.width === 390) report(entry, "typical phone shows two complete cards and at least part of a third",
         fullyVisible >= 2 && fullyVisible + partlyVisible >= 3, entry.unselectedCatalogStartVisibility);
     }
-    if (entry.viewport.width === 390) await screenshot(entry, "catalog", page);
+    if (!combinedRequestDock && entry.viewport.width === 390) await screenshot(entry, "catalog", page);
   }
   const first = card(bpc.productName);
-  await first.getByRole("button", { name: "Add to request: " + bpc.productName + ", " + bpc.specification, exact: true }).click();
-  await first.getByRole("button", { name: "Increase requested quantity for BPC-157", exact: true }).click();
+  const add = first.getByRole("button", { name: "Add to request: " + bpc.productName + ", " + bpc.specification, exact: true });
+  const increase = first.getByRole("button", { name: "Increase requested quantity for BPC-157", exact: true });
+  await add.click();
+  await increase.click();
   const quantity = first.getByRole("spinbutton", { name: "Requested quantity for BPC-157", exact: true });
   report(entry, "first-page selection keeps the accessible quantity control and exact requested quantity",
     await quantity.inputValue() === "2" &&
     (!entry.mobile || await quantity.evaluate((node) => node.getBoundingClientRect().height >= 44 &&
       Number.parseFloat(getComputedStyle(node).fontSize) >= 16)));
   if (guestRequestDock) {
+    let standingReadyAndUnchecked = true;
+    if (combinedRequestDock) {
+      // The guide requires loaded request configuration and available browser storage.
+      await surface.getByTestId("early-access-how-it-works").waitFor();
+      const readyPolicy = page.locator('[data-testid="early-access-agreement"][data-state="ready"]');
+      await readyPolicy.getByTestId("early-access-agreement-provenance")
+        .filter({ hasText: /^Policy version: v2$/ }).waitFor();
+      const checkbox = readyPolicy.getByTestId("early-access-agreement-checkbox");
+      standingReadyAndUnchecked = await checkbox.isEnabled() && !await checkbox.isChecked() &&
+        await quantity.inputValue() === "2";
+    }
     report(entry, "selected items cannot continue through either action before standing",
-      entry.network.accepted === 0 && await agreement.isDisabled() &&
+      standingReadyAndUnchecked && entry.network.accepted === 0 && await agreement.isDisabled() &&
       await inlineContinue.isDisabled() && await dockPrimary.isDisabled());
     await acceptFixtureStanding();
     report(entry, "both continuation actions are enabled by the one matched fixture acceptance",
       entry.network.accepted === 1 && await inlineContinue.isEnabled() && await dockPrimary.isEnabled());
+    if (combinedRequestDock && entry.viewport.width === 390) {
+      const enoughCards = ({ fullyVisible, partlyVisible }) => fullyVisible >= 2 && fullyVisible + partlyVisible >= 3;
+      await alignCatalogStart();
+      entry.selectedAfterStanding = await visibleCards();
+      report(entry, "post-agreement quantity-two view shows two cards and part of a third",
+        enoughCards(entry.selectedAfterStanding) && await quantity.inputValue() === "2", entry.selectedAfterStanding);
+      await first.getByRole("button", { name: "Remove BPC-157", exact: true }).click();
+      await alignCatalogStart();
+      entry.ordinaryAfterStanding = await visibleCards();
+      report(entry, "post-agreement ordinary view shows two cards and part of a third",
+        enoughCards(entry.ordinaryAfterStanding) && await quantity.count() === 0, entry.ordinaryAfterStanding);
+      await screenshot(entry, "catalog", page);
+      await add.click();
+      await increase.click();
+    }
   }
   if (entry.mobile) {
     report(entry, "summary starts collapsed behind the labelled count",
@@ -834,11 +997,12 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
         return box.left >= -1 && box.right <= innerWidth + 1 && box.top >= -1 && box.bottom <= innerHeight + 1 &&
           rect.height >= 44 && button.contains(document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2));
       }));
-    if (captureImage) await screenshot(entry, "details", page);
+    if (captureImage) await screenshot(entry, typeof captureImage === "string" ? captureImage : "details", page);
     await back.click();
     await dialog.waitFor({ state: "hidden" });
     await page.waitForFunction(() => document.activeElement?.getAttribute("aria-label")?.startsWith("View details for "));
-    report(entry, item.productName + " detail close restores trigger focus and preserves the catalog URL and page",
+    const detailLabel = captureImage === "enlarged-details" ? "enlarged " + item.productName : item.productName;
+    report(entry, detailLabel + " detail close restores trigger focus and preserves the catalog URL and page",
       await trigger.evaluate((node) => node === document.activeElement) && page.url() === route &&
       await pager.getByText("Page " + pageNumber + " of 3", { exact: true }).isVisible());
   };
@@ -894,6 +1058,45 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
     await family.inputValue() === guestMobileOtherFamily && await previous.isDisabled() && await next.isDisabled());
   await expectRetained("family filter retains selection");
 
+  let savedRootSize;
+  if (combinedRequestDock && entry.viewport.width === 390) {
+    await family.selectOption("");
+    const longName = "Synthetic mobile catalog row 8";
+    await search.fill(longName);
+    const longHeading = card(longName).getByRole("heading", { name: longName, exact: true });
+    await longHeading.waitFor();
+    savedRootSize = await longHeading.evaluate((heading) => {
+      const root = document.documentElement;
+      const prior = { value: root.style.getPropertyValue("font-size"), priority: root.style.getPropertyPriority("font-size"),
+        heading: Number.parseFloat(getComputedStyle(heading).fontSize) };
+      root.style.setProperty("font-size", Number.parseFloat(getComputedStyle(root).fontSize) * 2 + "px", "important");
+      return prior;
+    });
+    await alignCatalogStart();
+    const geometry = await longHeading.evaluate((heading, expected) => {
+      const style = getComputedStyle(heading);
+      const box = heading.getBoundingClientRect();
+      const product = heading.closest("article");
+      const dock = document.querySelector('[data-testid="request-action-bar"]');
+      const primary = dock.querySelector('[data-testid="request-action-bar-primary"]');
+      return {
+        textDoubled: Number.parseFloat(style.fontSize) >= expected.heading * 1.99,
+        longNameWraps: box.height > Number.parseFloat(style.lineHeight) * 1.5 &&
+          product.scrollWidth <= product.clientWidth + 1,
+        noHorizontalOverflow: document.documentElement.scrollWidth <= expected.width + 1,
+        dockActionWraps: primary.scrollWidth <= primary.clientWidth + 1 &&
+          primary.scrollHeight <= primary.clientHeight + 1 && dock.getBoundingClientRect().bottom <= innerHeight + 1,
+      };
+    }, { heading: savedRootSize.heading, width: entry.viewport.width });
+    report(entry, "doubled text wraps long product and dock labels without horizontal overflow",
+      Object.values(geometry).every(Boolean), geometry);
+    await screenshot(entry, "enlarged-catalog", page);
+    await search.fill("");
+    await card(bpc.productName).waitFor();
+    await inspectDetails(bpc, 1, "enlarged-details");
+    report(entry, "doubled text detail returns without clearing selection", await quantity.inputValue() === "2");
+  }
+
   if (guestRequestDock) {
     await checkRequestDockFooter(page, entry);
     await openContactFromRequestDock(page, entry, surface);
@@ -910,24 +1113,131 @@ async function captureGuestMobile(page, entry, { bpc, mito }) {
       return rect.left >= 12 && rect.right <= innerWidth - 12 &&
         document.documentElement.scrollWidth <= innerWidth + 1;
     }));
-  if (guestRequestDock) await checkRequestDockContact(page, entry, surface);
+  if (guestRequestDock) await checkRequestDockContact(page, entry, surface, Boolean(savedRootSize));
+  if (savedRootSize) await page.evaluate(({ value, priority }) => {
+    if (value) document.documentElement.style.setProperty("font-size", value, priority);
+    else document.documentElement.style.removeProperty("font-size");
+  }, savedRootSize);
+  if (receiptFlow?.mode === "submit") await checkFreshDockReceipt(page, entry, surface, receiptFlow);
 }
 
-async function capture(browser, fixtures, kind, size, rows) {
+async function checkFreshDockReceipt(page, entry, surface, flow) {
+  const acknowledgments = surface.locator("fieldset.xenios-order-acknowledgments input[type=checkbox]");
+  await acknowledgments.first().waitFor();
+  const boxes = await acknowledgments.all();
+  const primary = page.getByTestId("request-action-bar-primary");
+  const heading = page.getByRole("heading", { name: "Request submitted", exact: true });
+  let fresh = boxes.length > 1 && await primary.isDisabled();
+  for (const box of boxes) {
+    if (await box.isChecked()) fresh = false;
+    await box.check();
+  }
+  report(entry, "fresh acknowledgments enable the explicit submit control without sending",
+    fresh && entry.network.syntheticSubmit === 0 && await primary.isEnabled() &&
+      (await primary.innerText()).trim() === dockCopy.submit);
+  flow.armed = true;
+  await primary.focus();
+  await page.keyboard.press("Enter");
+  await heading.waitFor();
+  await page.waitForFunction(() => document.activeElement?.matches("h2") &&
+    document.activeElement.textContent?.trim() === "Request submitted");
+  const panel = heading.locator("..");
+  const fixture = syntheticDockReceipt("submit");
+  const nextSteps = panel.getByTestId("request-next-steps");
+  report(entry, "fresh receipt focuses its heading and shows reference and prospective next steps without a dock",
+    await heading.evaluate((node) => node === document.activeElement) &&
+      await panel.getByText(fixture.publicReference, { exact: true }).isVisible() &&
+      await nextSteps.getByRole("heading", { name: "What happens next", exact: true }).isVisible() &&
+      await nextSteps.getByRole("listitem").count() === 4 &&
+      await page.getByTestId("request-action-bar").count() === 0 &&
+      entry.network.syntheticSubmit === 1 && entry.network.syntheticRecover === 0);
+  const copy = panel.getByRole("button", { name: "Copy reference", exact: true });
+  await page.keyboard.press("Tab");
+  report(entry, "Tab from a fresh receipt heading reaches Copy reference first",
+    await copy.evaluate((node) => node === document.activeElement));
+  if (entry.viewport.width === 390) await screenshot(entry, "fresh-receipt", page);
+}
+
+async function checkMemberDockEntry(page, entry) {
+  await page.goto(origin + "/earlyaccess", { waitUntil: "domcontentloaded" });
+  const surface = page.getByTestId("request-door-mixed").locator(".xenios-order-page");
+  await page.getByTestId("early-access-agreement-accepted").waitFor();
+  await surface.getByRole("button", { name: "Add BPC-157 to request", exact: true }).click();
+  await surface.getByRole("button", { name: "Increase requested quantity for BPC-157", exact: true }).click();
+  report(entry, "verified member mounts the fixed dock on the canonical Early Access request entry",
+    new URL(page.url()).pathname === "/earlyaccess" && entry.network.verifiedMember > 0 &&
+      await page.getByTestId("request-action-bar").evaluate((dock) => getComputedStyle(dock).position === "fixed") &&
+      await page.getByTestId("request-action-bar-primary").isEnabled());
+  await openContactFromRequestDock(page, entry, surface);
+  await checkRequestDockContact(page, entry, surface);
+  await screenshot(entry, "review", page);
+}
+
+async function checkEarlierDockReceipt(page, entry, flow) {
+  await page.goto(origin + receiptOriginPath, { waitUntil: "domcontentloaded" });
+  await page.evaluate(({ key, value }) => sessionStorage.setItem(key, JSON.stringify(value)), {
+    key: attemptStorageKey, value: { key: recoveryFixtureKey, acceptedAt: "2026-11-06T00:00:00.000Z", state: "uncertain" },
+  });
+  await page.goto(origin + "/earlyaccess", { waitUntil: "domcontentloaded" });
+  const navigation = page.getByRole("link", { name: "Back to gateway", exact: true });
+  const recover = page.getByRole("button", { name: "Check saved request", exact: true });
+  const earlier = page.getByRole("heading", { name: "Your submitted request", exact: true });
+  const fixture = syntheticDockReceipt("recover");
+  const focusBeforeReply = async (phase, act) => {
+    const held = holdDockReply(flow, phase);
+    try {
+      await act();
+      await held.wait();
+      await navigation.focus();
+    } finally { held.release(); }
+    await earlier.waitFor();
+    await earlier.evaluate(async () => {
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
+  };
+  await recover.focus();
+  flow.armed = true;
+  await focusBeforeReply("recover", () => page.keyboard.press("Enter"));
+  const panel = earlier.locator("..");
+  const retainedFocus = () => navigation.evaluate((link) => link === document.activeElement);
+  report(entry, "explicit recovery preserves chosen navigation focus and shows the earlier receipt without a dock",
+    await retainedFocus() && await panel.getByText(fixture.publicReference, { exact: true }).isVisible() &&
+      await panel.getByText("We found the saved request from your earlier attempt. Nothing was sent again.", { exact: true }).isVisible() &&
+      await panel.getByTestId("request-next-steps").count() === 0 &&
+      await page.getByTestId("request-action-bar").count() === 0 &&
+      entry.network.syntheticRecover === 1 && entry.network.syntheticSubmit === 0);
+  await screenshot(entry, "recovered-receipt", page);
+  await focusBeforeReply("closed-config", () => page.reload({ waitUntil: "domcontentloaded" }));
+  report(entry, "same-owner reload preserves chosen navigation focus and reopens the receipt without another call",
+    await retainedFocus() && await panel.getByText(fixture.publicReference, { exact: true }).isVisible() &&
+      await panel.getByText("This reference was confirmed earlier in this browser tab. Nothing was sent again.", { exact: true }).isVisible() &&
+      await panel.getByTestId("request-next-steps").count() === 0 &&
+      await page.getByTestId("request-action-bar").count() === 0 &&
+      await page.evaluate((key) => sessionStorage.getItem(key), attemptStorageKey) === null &&
+      entry.network.syntheticRecover === 1 && entry.network.syntheticSubmit === 0 && entry.network.verifiedMember > 0);
+}
+
+async function capture(browser, fixtures, kind, size, rows, validate) {
   const { mobile, ...viewport } = size;
   const entry = { name: kind + "-" + viewport.width, viewport, mobile, assertions: [], screenshots: [] };
   result.captures.push(entry);
-  const member = kind === "member" || kind === "member-reviewed-catalog";
-  const { context, page } = await captureContext(browser, fixtures, viewport, mobile, member, entry);
+  const member = kind === "member" || kind === "member-reviewed-catalog" || kind === "member-request" || kind === "member-receipt";
+  const receiptFlow = kind === "member-receipt" ? { mode: "recover" }
+    : kind === "member-request" ? { mode: "member" }
+    : combinedRequestDock && kind === "guest-mobile" && [390, 1280].includes(viewport.width) ? { mode: "submit", validate }
+    : null;
+  const { context, page } = await captureContext(browser, fixtures, viewport, mobile, member, entry, receiptFlow);
   try {
-    if (kind === "guest-mobile") await captureGuestMobile(page, entry, rows);
+    if (kind === "guest-mobile") await captureGuestMobile(page, entry, rows, receiptFlow);
+    else if (kind === "member-request") await checkMemberDockEntry(page, entry);
+    else if (kind === "member-receipt") await checkEarlierDockReceipt(page, entry, receiptFlow);
     else if (rows) await captureReviewedCatalog(page, entry, rows, member);
     else if (kind === "member") await captureMember(page, entry);
     else if (kind === "guest-details") await captureGuestDetails(page, entry);
     else await captureGuest(page, entry);
   } catch (error) {
     report(entry, "mount and exercise " + kind + " route", false, briefError(error));
-    if (kind !== "guest-mobile") await screenshot(entry, "failure", page);
+    if (!combinedRequestDock && kind !== "guest-mobile") await screenshot(entry, "failure", page);
   } finally {
     report(entry, "no unmocked writes or recovery attempted",
       entry.network.deniedWrites === 0 && entry.network.deniedRecovery === 0);
@@ -979,12 +1289,35 @@ async function captureSvgCard(browser, fixtures, member) {
 let preview;
 let browser;
 let previewLog = "";
+let setupStage = "loopback-namespace";
 try {
   const interfaces = JSON.parse(execFileSync("ip", ["-json", "link", "show"], { encoding: "utf8" }));
   result.network.loopbackOnly = interfaces.length === 1 && interfaces[0].ifname === "lo" && interfaces[0].flags.includes("UP");
   if (!result.network.loopbackOnly) throw new Error("Capture requires a loopback-only network namespace");
+  setupStage = "candidate-fixtures";
   const guestFixtures = await fixtureResponses(candidate, origin, false);
-  const memberFixtures = guestMobileCatalog ? null : await fixtureResponses(candidate, origin, true);
+  const memberFixtures = guestMobileCatalog && !combinedRequestDock ? null : await fixtureResponses(candidate, origin, true);
+  let validate;
+  if (combinedRequestDock) {
+    const source = (path) => import(pathToFileURL(join(candidate, path)).href);
+    const [{ policies, publishedEarlyAccessAgreement }, { policyBodyDigest }, intent] = await Promise.all([
+      source("server/research/policies-data.ts"), source("scripts/evidence/lib/policy-fixture-v2.mjs"),
+      source("shared/research/assisted-order/request-intent.ts"),
+    ]);
+    const agreement = publishedEarlyAccessAgreement();
+    if (agreement?.kind !== requestPolicy.kind || agreement.version !== requestPolicy.version ||
+        policyBodyDigest(policies["early-access-product-policy"]) !== combinedPolicyDigest) {
+      throw new Error("The mounted dock fixture requires the exact reviewed v2 policy");
+    }
+    validate = intent.validateRequestIntentInput;
+    for (const fixtures of [guestFixtures, memberFixtures]) {
+      fixtures.set("/api/research/policies", { policies });
+      fixtures.set(agreementStatus, { ...fixtures.get(agreementStatus), required: [requestPolicy] });
+      const configPath = intentPath + "/config";
+      fixtures.set(configPath, { ...fixtures.get(configPath), requiredAgreements: [requestPolicy] });
+    }
+    result.fixture.policy.bodySha256 = combinedPolicyDigest;
+  }
   const fixtureRows = [...guestFixtures.values()].find((value) => Array.isArray(value.items))?.items;
   if (fixtureRows?.length !== 1 || fixtureRows[0].sourceSelection?.variantId !== sourceVariant ||
     fixtureRows[0].variantId !== orderVariant || sourceVariant === orderVariant) {
@@ -1016,6 +1349,7 @@ try {
       };
     }
   }
+  setupStage = "candidate-assets";
   for (const asset of Object.values(result.assets)) {
     const servedAsset = join(candidate, "dist", "public", asset.file.slice(1));
     await access(servedAsset);
@@ -1025,6 +1359,7 @@ try {
   }
   result.tooling = { node: process.version, npm: "10.8.2",
     playwright: JSON.parse(await readFile(new URL("./node_modules/playwright/package.json", import.meta.url), "utf8")).version };
+  setupStage = "loopback-preview";
   preview = spawn(process.execPath, ["scripts/preview-research.mjs"], {
     cwd: candidate, env: { HOME: process.env.HOME, PATH: process.env.PATH, PORT: "5199" },
     stdio: ["ignore", "pipe", "pipe"],
@@ -1036,10 +1371,16 @@ try {
   if (provenance.candidateSha !== candidateSha || provenance.sourceTree !== candidateTree) {
     throw new Error("Loopback preview provenance does not match the pinned candidate");
   }
+  setupStage = "chromium";
   browser = await chromium.launch({ headless: true, timeout: 12000 });
   result.browser = { name: "Chromium", version: browser.version() };
   if (guestMobileCatalog) {
-    for (const size of viewports) await capture(browser, guestFixtures, "guest-mobile", size, mobileFixtures);
+    for (const size of viewports) await capture(browser, guestFixtures, "guest-mobile", size, mobileFixtures, validate);
+    if (combinedRequestDock) {
+      const mobile = viewports.find((size) => size.width === 390);
+      await capture(browser, memberFixtures, "member-request", mobile);
+      await capture(browser, memberFixtures, "member-receipt", mobile);
+    }
   } else if (reviewedCatalog) {
     const guest = await reviewedCatalogFixtures(candidate, false);
     const member = await reviewedCatalogFixtures(candidate, true);
@@ -1058,17 +1399,25 @@ try {
     await captureSvgCard(browser, memberSvgFixtures, true);
   }
 } catch (error) {
-  result.captureError = briefError(error);
-  console.error(result.captureError, previewLog);
+  result.captureError = combinedRequestDock ? "Combined dock setup failed at " + setupStage : briefError(error);
+  if (combinedRequestDock) console.error(result.captureError);
+  else console.error(result.captureError, previewLog);
 } finally {
   try {
     await browser?.close();
   } finally {
     preview?.kill();
-    const expectedContexts = reviewedCatalog ? viewports.length * 2 : guestDetailsOnly || guestMobileCatalog ? viewports.length : viewports.length * 2 + 2;
+    const expectedContexts = combinedRequestDock ? viewports.length + 2
+      : reviewedCatalog ? viewports.length * 2
+      : guestDetailsOnly || guestMobileCatalog ? viewports.length : viewports.length * 2 + 2;
+    const combinedScreenshots = new Map([["guest-mobile-390", 5], ["member-request-390", 1], ["member-receipt-390", 1]]);
     result.status = !result.captureError && result.captures.length === expectedContexts &&
-      result.captures.every((entry) => entry.screenshots.length === (guestDetailsOnly || reviewedCatalog || guestMobileCatalog ? 2 : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4)
-        && entry.assertions.every((item) => item.pass)) ? "passed" : "failed";
+      result.captures.every((entry) => {
+        const count = combinedRequestDock ? (combinedScreenshots.get(entry.name) ?? 2)
+          : guestDetailsOnly || reviewedCatalog || guestMobileCatalog ? 2
+          : entry.kind === "svg-card" ? 1 : entry.name.startsWith("guest-") ? 3 : 4;
+        return entry.screenshots.length === count && entry.assertions.every((item) => item.pass);
+      }) ? "passed" : "failed";
     await writeFile(join(output, "result.json"), JSON.stringify(result, null, 2) + "\n");
     if (result.status !== "passed") process.exitCode = 1;
   }

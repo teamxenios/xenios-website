@@ -39,22 +39,22 @@ jobs:
       github.event_name == 'push' &&
       github.repository == 'teamxenios/xenios-website' &&
       github.ref == 'refs/heads/codex/qo-synthetic-qa-20261105' &&
-      github.event.before == '244bbe817e0cd78d12b427e79f12f70bced3183d' &&
+      github.event.before == 'UNBOUND_PREPARED_PREDECESSOR' &&
       !github.event.created && !github.event.deleted && !github.event.forced &&
       github.run_attempt == 1 &&
       startsWith(github.event.head_commit.message, 'QO capture ')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      CANDIDATE_SHA: 1475d418283e646554872db3992abc8a392af423
-      CANDIDATE_TREE: 5917bf218fabc308857a20ae9e568841f1e50970
+      CANDIDATE_SHA: UNBOUND_CANDIDATE_SHA
+      CANDIDATE_TREE: UNBOUND_CANDIDATE_TREE
       # Keep the job-level predecessor guard and this exact checkout pin in sync.
-      CAPTURE_PREPARED_PREDECESSOR: 244bbe817e0cd78d12b427e79f12f70bced3183d
-      CAPTURE_EXECUTION_SCOPE_ID: KAN-31/11898
+      CAPTURE_PREPARED_PREDECESSOR: UNBOUND_PREPARED_PREDECESSOR
+      CAPTURE_EXECUTION_SCOPE_ID: UNBOUND_ROOT_EXECUTION_SCOPE
       CAPTURE_ALLOWANCE_ATTEMPT: "1"
       CAPTURE_ALLOWANCE_MAX_ATTEMPTS: "1"
       CAPTURE_PRIOR_RUN_IDS: '[]'
-      CAPTURE_RECONCILED_AT: '2026-11-06T11:55:42.046Z'
+      CAPTURE_RECONCILED_AT: 'UNBOUND_RECONCILIATION'
       CAPTURE_DIAGNOSIS: ""
     steps:
       - name: Set disposable tool and evidence directories
@@ -123,7 +123,7 @@ jobs:
           cd candidate
           env -i PATH="$PATH" HOME="$HOME" CI=true \
             node scripts/evidence/build-candidate-preview.mjs --sha "$CANDIDATE_SHA"
-      - name: Exercise mounted policy and receipt behavior inside a loopback-only namespace
+      - name: Exercise the mounted request dock and receipt focus inside a loopback-only namespace
         shell: bash
         timeout-minutes: 6
         run: |
@@ -134,12 +134,12 @@ jobs:
             exec runuser -u "$1" -- env -i HOME="$2" PATH="$3" \
               PLAYWRIGHT_BROWSERS_PATH="$4" \
               "$5" --import "$6/node_modules/tsx/dist/loader.mjs" \
-              "$7/scripts/qa/qo-visual-capture/policy-v2-mixed.mjs" "$6" "$8" "$9" \
-              "${10}" "${11}" "${12}" "${13}" "${14}"
+              "$7/scripts/qa/qo-visual-capture/capture.mjs" "$6" "$8" "$9" \
+              "${10}" "${11}" "${12}" "${13}" "${14}" "${15}"
           ' bash "$(id -un)" "$HOME" "$PATH" "$PLAYWRIGHT_BROWSERS_PATH" \
             "$(command -v node)" "$PWD/candidate" "$PWD/harness" "$EVIDENCE_DIR" \
             "$CANDIDATE_SHA" "$CANDIDATE_TREE" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" \
-            "$EVIDENCE_DIR/allowance.json"
+            "$EVIDENCE_DIR/allowance.json" guest-mobile-request-dock-v2
       - name: Preserve a result if setup stopped before capture
         if: always()
         shell: bash
@@ -155,26 +155,184 @@ jobs:
             candidateSha: e.CANDIDATE_SHA, candidateTree: e.CANDIDATE_TREE, harnessRevision: e.GITHUB_SHA,
             runId: e.GITHUB_RUN_ID, runAttempt: Number(e.GITHUB_RUN_ATTEMPT),
             allowance: existsSync(allowancePath) ? JSON.parse(readFileSync(allowancePath, "utf8")) : null,
-            profile: "policy-v2-mixed", status: "failed", failedStage: "setup_or_allowance",
+            profile: "guest-mobile-request-dock-v2", status: "failed", failedStage: "setup_or_allowance",
           };
           writeFileSync(join(e.EVIDENCE_DIR, "result.json"), JSON.stringify(result, null, 2) + "\n");
           NODE
           fi
-      - name: Require the exact synthetic policy and receipt manifest
+      - name: Require the exact combined synthetic result and screenshot inventory
         shell: bash
         run: |
           set -euo pipefail
-          node harness/scripts/qa/qo-visual-capture/policy-v2-mixed.mjs --validate "$EVIDENCE_DIR"
+          node --input-type=module <<'NODE'
+          import assert from "node:assert/strict";
+          import { readFileSync, readdirSync } from "node:fs";
+          import { join } from "node:path";
+
+          const e = process.env;
+          const report = JSON.parse(readFileSync(join(e.EVIDENCE_DIR, "result.json"), "utf8"));
+          const allowance = JSON.parse(readFileSync(join(e.EVIDENCE_DIR, "allowance.json"), "utf8"));
+          const profile = "guest-mobile-request-dock-v2";
+          const policyHash = "491d2559f05f6201ee0279bbd0fb711ebc7eeb1fd0a826c8d9141373c146fa06";
+          assert.equal(report.scope, "NON-PRODUCTION SYNTHETIC BROWSER EVIDENCE");
+          assert.equal(report.profile, profile);
+          assert.equal(report.status, "passed");
+          assert.equal(report.candidateSha, e.CANDIDATE_SHA);
+          assert.equal(report.candidateTree, e.CANDIDATE_TREE);
+          assert.equal(report.harnessRevision, e.GITHUB_SHA);
+          assert.equal(report.runId, e.GITHUB_RUN_ID);
+          assert.equal(report.runAttempt, 1);
+          assert.equal(e.GITHUB_RUN_ATTEMPT, "1");
+          assert.deepEqual(report.allowance, allowance);
+          assert.equal(allowance.id, e.CAPTURE_EXECUTION_SCOPE_ID);
+          assert.equal(allowance.standingAuthority, "KAN-225/11225");
+          assert.equal(allowance.qaRecord, "KAN-31/11226");
+          assert.equal(allowance.preparedPredecessor, e.CAPTURE_PREPARED_PREDECESSOR);
+          assert.equal(allowance.candidateSha, report.candidateSha);
+          assert.equal(allowance.candidateTree, report.candidateTree);
+          assert.equal(allowance.harnessSha, report.harnessRevision);
+          assert.equal(allowance.attempt, 1);
+          assert.equal(allowance.maximumAttempts, 1);
+          assert.equal(allowance.remainingAfterThisRun, 0);
+          assert.deepEqual(allowance.priorRunIds, []);
+          assert.deepEqual(allowance.distinctRunIds, [report.runId]);
+          assert.equal(allowance.currentRunId, report.runId);
+          assert.equal(allowance.reconciledAt, e.CAPTURE_RECONCILED_AT);
+          assert.equal(allowance.diagnosis, null);
+          assert.equal(report.tooling.node, "v20.19.0");
+          assert.equal(report.tooling.npm, "10.8.2");
+          assert.equal(report.browser.name, "Chromium");
+          assert.match(report.browser.version, /^\d+\.\d+\.\d+\.\d+$/);
+          assert.deepEqual(report.network, { loopbackOnly: true, serviceWorkers: "blocked", externalRequests: "blocked" });
+          assert.equal(report.fixture.identitiesDistinct, true);
+          assert.equal(report.fixture.policy.slug, "early-access-product-policy");
+          assert.deepEqual(report.fixture.policy.agreement, { kind: "early_access_terms", version: "v2" });
+          assert.equal(report.fixture.policy.bodySha256, policyHash);
+
+          const dock = [
+            "keyboard opens the dock summary and keeps Tab focus in its dialog",
+            "closing dock summary restores its trigger focus",
+            "dock summary shows the exact selection, quantity and enabled continuation",
+            "continuing from the dock dialog transfers focus to the contact heading",
+            "fixed contact action is associated with the form and name is the only invalid field",
+            "contact dock labels the next step as continuing to submission",
+            "fixed contact action invokes native required-field validation",
+            "fixed contact action reaches review with the original quantity and no allowed submission",
+          ];
+          const guestCatalog = [
+            "canonical Early Access route mounts the mixed form and fixed actions",
+            "only the expected pager is shown and Previous is disabled on the first page",
+            "selected items cannot continue through either action before standing",
+            "both continuation actions are enabled by the one matched fixture acceptance",
+            "BPC-157 detail close restores trigger focus and preserves the catalog URL and page",
+            "page 2 retains the exact first-page selection",
+            "Mito Recharge detail close restores trigger focus and preserves the catalog URL and page",
+            "last page only allows Previous",
+            "search resets to page one and keeps DOM focus through an empty result",
+            "family filtering resets paging and retains the selected family",
+            "last public footer link stays keyboard and pointer reachable at the end of the document",
+            "catalog-only controls are absent after continuing to contact",
+          ];
+          const fresh = [
+            "fresh acknowledgments enable the explicit submit control without sending",
+            "fresh receipt focuses its heading and shows reference and prospective next steps without a dock",
+            "Tab from a fresh receipt heading reaches Copy reference first",
+          ];
+          const enlarged = [
+            "post-agreement quantity-two view shows two cards and part of a third",
+            "post-agreement ordinary view shows two cards and part of a third",
+            "doubled text wraps long product and dock labels without horizontal overflow",
+            "doubled text detail returns without clearing selection",
+          "enlarged BPC-157 detail close restores trigger focus and preserves the catalog URL and page",
+            "enlarged contact field keeps native focus above the fixed dock",
+            "enlarged final action fits above the dock and wraps its label",
+          ];
+          const member = "member route verified only through synthetic local member GET";
+          const guest = (width, height) => {
+            const mobile = width !== 1280;
+            const phone = width === 390;
+            const submits = phone || !mobile;
+            return {
+              name: "guest-mobile-" + width, width, height, mobile, accepted: 1, submitted: Number(submits), recovered: 0,
+              screenshots: ["catalog", "details", ...(phone ? ["enlarged-catalog", "enlarged-details", "fresh-receipt"] : [])],
+              assertions: [...guestCatalog, ...dock,
+                ...(mobile ? ["sticky toolbar remains reachable after scrolling through full rows",
+                  "next page returns to the catalog controls after rows load",
+                  "mobile card uses compact artwork beside readable identity and clamps only the short summary"]
+                  : ["desktop retains static catalog controls and an expanded request summary"]),
+                ...(phone ? enlarged : []), ...(submits ? fresh : [])],
+            };
+          };
+          const expected = [
+            guest(320, 800), guest(375, 812), guest(390, 844), guest(430, 932), guest(1280, 900),
+            { name: "member-request-390", width: 390, height: 844, mobile: true, member: true,
+              accepted: 0, submitted: 0, recovered: 0, screenshots: ["review"],
+              assertions: [member, "verified member mounts the fixed dock on the canonical Early Access request entry", ...dock] },
+            { name: "member-receipt-390", width: 390, height: 844, mobile: true, member: true,
+              accepted: 0, submitted: 0, recovered: 1, screenshots: ["recovered-receipt"],
+              assertions: [member, "explicit recovery preserves chosen navigation focus and shows the earlier receipt without a dock",
+                "same-owner reload preserves chosen navigation focus and reopens the receipt without another call"] },
+          ];
+
+          assert.deepEqual(report.captures.map(({ name }) => name), expected.map(({ name }) => name));
+          const files = ["allowance.json", "result.json"];
+          for (const [i, contract] of expected.entries()) {
+            const capture = report.captures[i];
+            const filesForContext = contract.screenshots.map((suffix) => capture.name + "-" + suffix + ".png");
+            assert.deepEqual(capture.viewport, { width: contract.width, height: contract.height });
+            assert.equal(capture.mobile, contract.mobile);
+            assert.equal(capture.network.accepted, contract.accepted);
+            assert.equal(capture.network.syntheticSubmit, contract.submitted);
+            assert.equal(capture.network.syntheticRecover, contract.recovered);
+            assert.equal(capture.network.deniedWrites, 0);
+            assert.equal(capture.network.deniedRecovery, 0);
+            assert.ok(contract.member ? capture.network.verifiedMember > 0 : capture.network.verifiedMember === 0);
+            assert.ok(capture.assertions.every((check) => typeof check.name === "string" && check.pass === true));
+            for (const name of [...contract.assertions, "no unmocked writes or recovery attempted"]) {
+              assert.equal(capture.assertions.filter((check) => check.name === name).length, 1, capture.name + ": " + name);
+            }
+            assert.deepEqual([...capture.screenshots].sort(), [...filesForContext].sort());
+            for (const file of filesForContext) {
+              const png = readFileSync(join(e.EVIDENCE_DIR, file));
+              assert.ok(png.length > 33, file);
+              assert.equal(png.subarray(0, 8).toString("hex"), "89504e470d0a1a0a", file);
+              assert.equal(png.readUInt32BE(8), 13, file);
+              assert.equal(png.readUInt32BE(12), 0x49484452, file);
+              assert.equal(png.readUInt32BE(16), contract.width, file);
+              assert.equal(png.readUInt32BE(20), contract.height, file);
+              files.push(file);
+            }
+          }
+          assert.equal(files.length, 17);
+          assert.deepEqual(readdirSync(e.EVIDENCE_DIR).sort(), files.sort());
+          console.log("Seven exact mounted contexts and fifteen sanitized screenshots verified.");
+          NODE
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: qo-policy-v2-mixed-synthetic-proof
-          path: ${{ env.EVIDENCE_DIR }}/result.json
+          name: qo-combined-request-dock-synthetic-proof
+          path: |
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-320-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-320-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-375-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-375-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-enlarged-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-enlarged-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-390-fresh-receipt.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-430-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-430-details.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-1280-catalog.png
+            ${{ env.EVIDENCE_DIR }}/guest-mobile-1280-details.png
+            ${{ env.EVIDENCE_DIR }}/member-request-390-review.png
+            ${{ env.EVIDENCE_DIR }}/member-receipt-390-recovered-receipt.png
+            ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: failure()
         with:
-          name: qo-policy-v2-mixed-failure-manifest
+          name: qo-combined-request-dock-failure-manifest
           path: ${{ env.EVIDENCE_DIR }}/result.json
           if-no-files-found: error
           retention-days: 7
