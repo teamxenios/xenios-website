@@ -3875,6 +3875,17 @@
       "state": "handoff",
       "claimedAt": "2026-11-06T11:11:42.457Z",
       "heartbeatAt": "2026-11-06T11:11:42.457Z"
+    },
+    {
+      "id": "9e1ab6e9-4484-40d5-b53c-948003d549b2",
+      "task": "KAN13-EA-COMBINED-MOUNTED-QA-PIN-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T13:08:04.314Z",
+      "heartbeatAt": "2026-11-06T13:08:04.314Z"
     }
   ],
   "rules": [

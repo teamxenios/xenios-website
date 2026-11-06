@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T12:41:51.264Z",
+  "updatedAt": "2026-11-06T13:08:04.314Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -5033,6 +5033,24 @@
         "file": ".xenios/handoffs/2026-11-06T12-40-31-554333Z-PR418-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
         "at": "2026-11-06T12:41:51.264Z"
       }
+    },
+    {
+      "id": "KAN13-EA-COMBINED-MOUNTED-QA-PIN-20261106",
+      "title": "Prepare the exact protected combined mounted QA workflow pin",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "ad52179f31e9339eb50e2b9f3f0a965eef0d80d1",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+      ],
+      "dependsOn": [
+        "KAN13-EA-PROTECTED-QA-ADOPTION-20261106"
+      ],
+      "scopeNote": "Claim only docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json for the reviewable exact workflow pin supporting the next existing protected mounted QA operation under KAN-225/11838 and KAN-13/11903. Root current-base source reuse evidence has exact SHA-256 7766fb9b297840e55fa7360f165c2f289024075e0e1ec907b6d1f4ca4e7ddece. Bind review to PR427 exact source 4cd4f6c384b2907990542ed4ab098935abb1b6de/tree 158ac88b6574fccda8ca253b16c4fc4c4f33abbf for mounted mobile, enlarged text, keyboard and receipt checks on existing isolated QA branch 81d92ce1b597ac54b6136201b297b3ffe76ba171 against live protected release ad52179f31e9339eb50e2b9f3f0a965eef0d80d1. Persistent FILE ownership remains active under OWNER-KAN13-EA-OUTREACH-ROUTE-20261105 for registered Root codex-launch-coordination-20261005. Fresh case-insensitive exact, ancestor, prefix and wildcard active/reserved CODE_OWNERSHIP plus persistent FILE_OWNERSHIP audits found no conflicting writer. Preserve prior policy QA lease 68eba6e7-3bf1-4cd7-b021-9ccdc22210b3 in handoff and preserve workflow/capture/fixture lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba exactly active; do not reclaim, extend or alter either. Preserve all prior 164 tasks, 185 leases, 57 identities, release pointers, handoffs, owner records and foreign history. This custody transaction performs no application, QA/source ref, browser, provider, release, workflow launch, checkout, test or session mutation.",
+      "createdAt": "2026-11-06T13:08:04.314Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T13:08:04.314Z"
     }
   ]
 }
