@@ -24,7 +24,7 @@
     "RESEARCH_EARLY_ACCESS_OPEN_ACCESS": "true",
     "RESEARCH_EARLY_ACCESS_OWNER_ID": "00000000-0000-4000-8000-000000000001",
     "RESEARCH_EARLY_ACCESS_PASSWORD_HASH": "placeholder-hash",
-    "RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS": "[{\"kind\": \"early_access_terms\", \"version\": \"v1\"}]",
+    "RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS": "[{\"kind\": \"early_access_terms\", \"version\": \"v2\"}]",
     "RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED": "true",
     "RESEARCH_EARLY_ACCESS_SESSION_SECRET": "placeholder-secret-not-production",
     "RESEARCH_EARLY_ACCESS_SESSION_TTL_MINUTES": "30",

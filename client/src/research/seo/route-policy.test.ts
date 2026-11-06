@@ -12,6 +12,7 @@ describe("Research SEO route policy", () => {
       expect(researchRouteRobots(path), path).toBe("index");
     }
     for (const path of [
+      "/research/policies/early-access-product-policy",
       "/research/policies/research-use",
       "/research/policies/shipping",
       "/research/policies/returns",

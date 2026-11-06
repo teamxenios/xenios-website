@@ -124,6 +124,7 @@ describe("isPublicResearchDocumentPath", () => {
     "/research/quality",
     "/research/testing",
     "/research/documents",
+    "/research/policies/early-access-product-policy",
     "/research/policies/research-use",
     "/research/policies/shipping",
     "/research/policies/returns",

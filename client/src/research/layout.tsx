@@ -2,6 +2,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { isAccountOrderDetailPath } from "./account-portal/routes";
 import Wordmark from "@/components/Wordmark";
+import { EARLY_ACCESS_BRAND } from "./early-access/request-experience-copy";
 import {
   isEarlyAccessEntryPath,
   isResearchAccessStatePath,
@@ -147,15 +148,18 @@ function Unconfigured() {
 function MinimalChrome({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const normalizedLocation = normalizeResearchPath(location) ?? undefined;
+  const earlyAccessBrand = isEarlyAccessEntryPath(location)
+    || normalizedLocation === "/research/early-access/order-request";
 
   return (
     <div className="flex flex-col" style={{ minHeight: "100dvh" }}>
       <header className="rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
         <div className="container-x flex items-center justify-between research-minimal-header-row" style={{ minHeight: 60 }}>
-          <Link href="/research" className="wordmark research-chrome-target research-chrome-wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
+          <Link href="/research" className="wordmark research-chrome-target research-chrome-wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home"
+            aria-label={earlyAccessBrand ? EARLY_ACCESS_BRAND.name : undefined}>
             <span className="wordmark-mark" aria-hidden="true"></span>
             <span className="wordmark-text">xenios</span>
-            <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
+            <span className="text-ink-mute" style={{ fontWeight: 600 }}>{earlyAccessBrand ? EARLY_ACCESS_BRAND.wordmarkSuffix : "research"}</span>
           </Link>
           <Link href="/research" className="body-s text-ink-mute hover:text-pulse transition-colors research-chrome-target">Back to gateway</Link>
         </div>

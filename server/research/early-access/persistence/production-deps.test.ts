@@ -22,6 +22,8 @@ import { SupabaseEarlyAccessCartStore } from "../cart/supabase-store";
 import { SupabaseProofSubmissionStore } from "../proof/supabase-submission-store";
 import { SupabaseEarlyAccessLegalBindingDirectory } from "../legal/supabase-legal-binding-directory";
 import {
+  EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT,
+  EARLY_ACCESS_PRODUCT_POLICY_SLUG,
   policies,
   RESEARCH_USE_POLICY_AGREEMENT,
 } from "../../policies-data";
@@ -37,7 +39,7 @@ const PRODUCTION_DURABLE_ENV = Object.freeze({
 });
 
 function exactAgreementConfig(
-  agreement: Readonly<{ kind: string; version: string }> = RESEARCH_USE_POLICY_AGREEMENT,
+  agreement: Readonly<{ kind: string; version: string }> = EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT,
 ): string {
   return JSON.stringify([agreement]);
 }
@@ -269,7 +271,7 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
         SUPABASE_SERVICE_ROLE_KEY: "sb_secret_test",
         RESEARCH_EARLY_ACCESS_OWNER_ID: OWNER,
         RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: JSON.stringify([
-          { kind: "early_access_terms", version: "v1" },
+          { kind: "early_access_terms", version: "v2" },
         ]),
       } as NodeJS.ProcessEnv,
       async () => null,
@@ -280,12 +282,19 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
   it.each([
     ["missing", undefined],
     ["an older version", JSON.stringify([{ kind: "early_access_terms", version: "v0" }])],
+    // The cutover's own failure mode: v2 code shipped while the deployment still
+    // states the historical v1 pair. Every commerce path stays closed.
+    ["the historical v1 pair", JSON.stringify([RESEARCH_USE_POLICY_AGREEMENT])],
     [
       "multiple pairs",
       JSON.stringify([
-        RESEARCH_USE_POLICY_AGREEMENT,
+        EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT,
         { kind: "early_access_terms", version: "v0" },
       ]),
+    ],
+    [
+      "the current pair beside the historical one",
+      JSON.stringify([EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT, RESEARCH_USE_POLICY_AGREEMENT]),
     ],
   ])(
     "production commerce refuses before constructing authority when required agreements are %s",
@@ -342,7 +351,7 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
   );
 
   it("production refuses when the policy API has no published agreement identity", () => {
-    const policy = policies["research-use"] as unknown as { agreement?: unknown };
+    const policy = policies[EARLY_ACCESS_PRODUCT_POLICY_SLUG] as unknown as { agreement?: unknown };
     const originalAgreement = policy.agreement;
     const query = vi.fn(async () => true);
     Reflect.deleteProperty(policy, "agreement");
@@ -365,7 +374,7 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
   });
 
   it("production refuses when the published policy body changes without a new pinned identity", () => {
-    const policy = policies["research-use"] as unknown as { title: string };
+    const policy = policies[EARLY_ACCESS_PRODUCT_POLICY_SLUG] as unknown as { title: string };
     const originalTitle = policy.title;
     const query = vi.fn(async () => true);
     policy.title = `${originalTitle} changed without versioning`;
@@ -387,7 +396,7 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
   });
 
   it("the shared production gate rechecks published identity at decision time", async () => {
-    const policy = policies["research-use"] as unknown as { agreement?: unknown };
+    const policy = policies[EARLY_ACCESS_PRODUCT_POLICY_SLUG] as unknown as { agreement?: unknown };
     const originalAgreement = policy.agreement;
     const query = vi.fn(async () => true);
     const build = buildEarlyAccessPersistence(
@@ -401,7 +410,7 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
     await expect(build.options.agreements?.accepted(OWNER)).resolves.toBe(true);
     expect(query).toHaveBeenCalledTimes(1);
 
-    policy.agreement = { kind: "early_access_terms", version: "v2" };
+    policy.agreement = { kind: "early_access_terms", version: "v3" };
     try {
       await expect(build.options.agreements?.accepted(OWNER)).resolves.toBe(false);
       // Policy drift is refused before asking whether an old row exists.
@@ -443,7 +452,7 @@ describe("buildEarlyAccessPersistence: what each mode actually mounts", () => {
     ]);
     expect(calls).not.toContain("research_early_access_commit_cart_checkout");
     expect(query.mock.calls[1]?.[0]).toMatchObject({
-      args: { p_required: [RESEARCH_USE_POLICY_AGREEMENT] },
+      args: { p_required: [EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT] },
     });
   });
 

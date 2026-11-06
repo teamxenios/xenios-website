@@ -22,6 +22,18 @@ function isOperationalDraft(policy: Policy): boolean {
 // the public reader must not infer approval from silence.
 const POLICIES_WITHOUT_APPROVAL_METADATA = new Set(["shipping", "returns"]);
 
+// Documents a served policy names in its text. The accepted text is pinned by
+// digest, so these links sit below it rather than inside it, and adding or
+// changing one never changes the words a customer accepted.
+const RELATED_DOCUMENTS: Readonly<Record<string, readonly { label: string; href: string }[]>> = {
+  "early-access-product-policy": [
+    { label: "Shipping Policy", href: "/research/policies/shipping" },
+    { label: "Returns and Replacements", href: "/research/policies/returns" },
+    { label: "Privacy Policy", href: ACCESS_ROUTES.privacy },
+    { label: "Contact support", href: ACCESS_ROUTES.support },
+  ],
+};
+
 export default function PolicyPage() {
   const params = useParams<{ policy: string }>();
   const [policies, setPolicies] = useState<Record<string, Policy> | null>(null);
@@ -93,6 +105,7 @@ export default function PolicyPage() {
   const draft = isOperationalDraft(policy);
   const publicationStatusUnconfirmed = POLICIES_WITHOUT_APPROVAL_METADATA.has(params.policy ?? "");
   const pending = draft || publicationStatusUnconfirmed;
+  const related = RELATED_DOCUMENTS[params.policy ?? ""];
 
   return (
     <>
@@ -144,6 +157,23 @@ export default function PolicyPage() {
             );
           })}
         </article>
+        {related && (
+          <nav
+            aria-labelledby="policy-related-heading"
+            className="mt-10"
+            style={{ maxWidth: "72ch" }}
+            data-testid="policy-related-documents"
+          >
+            <h2 id="policy-related-heading" className="body-m font-700 mb-3">Related documents</h2>
+            <ul className="space-y-2" style={{ paddingLeft: 18, listStyle: "disc" }}>
+              {related.map((document) => (
+                <li key={document.href} className="body-m text-ink-2">
+                  <Link href={document.href} className="underline inline-flex min-h-11 items-center">{document.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </ResearchPublicShell>
     </>
   );

@@ -78,7 +78,7 @@ SHAPE — the facts that make the page slow — are fully measurable locally.
    RESEARCH_EARLY_ACCESS_SESSION_IDENTITY_ENABLED=true \
    RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED=true \
    RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL=launch-admin@localhost.invalid \
-   RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS='[{"kind":"early_access_terms","version":"v1"}]' \
+   RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS='[{"kind":"early_access_terms","version":"v2"}]' \
    node scripts/preview-research.mjs
    ```
 

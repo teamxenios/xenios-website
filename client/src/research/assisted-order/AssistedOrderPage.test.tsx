@@ -657,7 +657,7 @@ describe("AssistedOrderPage", () => {
     await settle(20);
 
     expect(byTestId("order-error")?.textContent).toContain(
-      "Review and accept the current Research Use Policy before submitting.",
+      "Review and accept the current Early Access Product Policy before submitting.",
     );
     expect(document.body.textContent).not.toContain("secret-row-id");
   });

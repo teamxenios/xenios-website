@@ -66,7 +66,7 @@ const PRODUCTION_ENV = {
   SUPABASE_SERVICE_ROLE_KEY: "sb_secret_test_value_not_a_real_key",
   RESEARCH_EARLY_ACCESS_OWNER_ID: "3f2f4bde-6f0f-4a11-9a3e-8c7d5b2a1e90",
   RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS: JSON.stringify([
-    { kind: "early_access_terms", version: "v1" },
+    { kind: "early_access_terms", version: "v2" },
   ]),
 } as NodeJS.ProcessEnv;
 

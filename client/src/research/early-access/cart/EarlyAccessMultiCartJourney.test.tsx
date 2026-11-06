@@ -91,14 +91,18 @@ function stubFetch(accepted = true) {
     if (init?.method === "POST") {
       posted.push({ path, body: init.body === undefined ? null : JSON.parse(String(init.body)) });
       if (path.endsWith("/agreements/accept")) {
-        return jsonResponse({ ok: true, kind: "early_access_terms", version: "v1" });
+        return jsonResponse({ ok: true, kind: "early_access_terms", version: "v2" });
       }
       return jsonResponse({ ok: true });
     }
     if (path.endsWith("/research/policies")) {
       return jsonResponse({
         policies: {
-          "research-use": { title: "Research Use Policy", updated: "July 2026", sections: [] },
+          "early-access-product-policy": {
+            title: "Early Access Product Policy",
+            updated: "November 2026",
+            sections: [],
+          },
           terms: { title: "Terms of Service", updated: "July 2026", sections: [] },
           privacy: { title: "Privacy Policy", updated: "July 2026", sections: [] },
         },
@@ -107,7 +111,7 @@ function stubFetch(accepted = true) {
     if (path.endsWith("/early-access/agreements")) {
       return jsonResponse({
         ok: true,
-        required: [{ kind: "early_access_terms", version: "v1" }],
+        required: [{ kind: "early_access_terms", version: "v2" }],
         accepted,
       });
     }
@@ -324,7 +328,7 @@ describe("the agreement stands between the cart and a quote", () => {
     await click(buttons("Continue to shipping")[0]!);
 
     // Sent back to the step that carries the acceptance, and told so.
-    expect(text()).toContain("Research Use Policy must be accepted");
+    expect(text()).toContain("Early Access Product Policy must be accepted");
     expect(container.querySelector('[data-testid="early-access-cart-agreement-mount"]')).not.toBeNull();
     // Nothing was quoted.
     expect(posted.filter((entry) => entry.path.includes("/cart/quote"))).toEqual([]);

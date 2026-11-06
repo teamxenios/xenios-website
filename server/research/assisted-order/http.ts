@@ -163,7 +163,7 @@ function errorResponse(error: unknown): AssistedOrderHttpResponse {
   if (error instanceof AssistedOrderAgreementRequiredError) {
     return ok(403, {
       error: "agreement_required",
-      message: "Accept the current Research Use Policy before submitting.",
+      message: "Accept the current Early Access Product Policy before submitting.",
     });
   }
   if (error instanceof AssistedOrderNotFoundError) {

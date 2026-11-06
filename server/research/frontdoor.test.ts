@@ -174,6 +174,7 @@ describe("the homepage stays at the root domain", () => {
       "/research/quality",
       "/research/testing",
       "/research/documents",
+      "/research/policies/early-access-product-policy",
       "/research/policies/research-use",
     ]) {
       const response = await request(app).get(path);

@@ -262,7 +262,7 @@ describe("the real production composition root (server/index.ts) under the produ
       expect(body.enabled).toBe(true);
       expect(body.code).toBeNull();
       expect(body.formId).toBe("assisted_order_form_v1");
-      expect(body.requiredAgreements).toEqual([{ kind: "early_access_terms", version: "v1" }]);
+      expect(body.requiredAgreements).toEqual([{ kind: "early_access_terms", version: "v2" }]);
       // catalog and submission need a session: a refusal, never a missing route
       expect([401, 403]).toContain((await boot.get(CATALOG_DOOR)).status);
       expect([400, 401, 403]).toContain((await boot.request("POST", SUBMIT_DOOR)).status);

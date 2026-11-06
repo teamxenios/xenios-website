@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import type { EarlyAccessCatalogProjection, EarlyAccessCatalogRow } from "../catalog/early-access-catalog";
 import { createEarlyAccessAgreementStatusRoute } from "../routes/agreement-routes";
 import {
-  RESEARCH_USE_POLICY_AGREEMENT,
-  publishedResearchUsePolicyAgreement,
+  EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT,
+  publishedEarlyAccessAgreement,
 } from "../../policies-data";
 import { InMemoryEarlyAccessReleaseLedger, earlyAccessReleaseVersion } from "./founder-release";
 import {
@@ -318,7 +318,7 @@ describe("the release history", () => {
 describe("the customer agreement provenance contract", () => {
   it("returns each configured required agreement with its exact kind and version", async () => {
     const { port, state } = res();
-    const required = Object.freeze([RESEARCH_USE_POLICY_AGREEMENT]);
+    const required = Object.freeze([EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT]);
     const route = createEarlyAccessAgreementStatusRoute({
       identity: {
         resolve: async () => ({
@@ -334,9 +334,9 @@ describe("the customer agreement provenance contract", () => {
     expect(state.status).toBe(200);
     expect(state.body).toEqual({
       ok: true,
-      required: [{ kind: "early_access_terms", version: "v1" }],
+      required: [{ kind: "early_access_terms", version: "v2" }],
       accepted: false,
     });
-    expect(publishedResearchUsePolicyAgreement()).toEqual(required[0]);
+    expect(publishedEarlyAccessAgreement()).toEqual(required[0]);
   });
 });

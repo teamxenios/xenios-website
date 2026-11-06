@@ -3,7 +3,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import {
   acceptEarlyAccessAgreement,
   loadEarlyAccessAgreementState,
-  loadResearchUsePolicy,
+  loadEarlyAccessPolicy,
   redeemEarlyAccessVerification,
   requestEarlyAccessVerification,
   type EarlyAccessAcceptResult,
@@ -18,7 +18,7 @@ import { EarlyAccessVerificationPanel } from "./EarlyAccessVerificationPanel";
 /**
  * The Private Early Access agreement screen.
  *
- * A customer reads the Research Use Policy, ticks one box, and the acceptance
+ * A customer reads the Early Access Product Policy, ticks one box, and the acceptance
  * is recorded server-side. Until that write succeeds the order continuation is
  * not offered, because the order route refuses with AGREEMENT_REQUIRED anyway
  * and offering a button that cannot work is a worse experience than not
@@ -67,9 +67,23 @@ type Phase =
   | { status: "unverified" }
   | { status: "fault"; message: string };
 
-const ASSENT = "I have read and agree to the Research Use Policy.";
+/**
+ * The name used before a document has loaded, or when it cannot. Once the
+ * policy is served, its own title is used instead.
+ */
+const POLICY_NAME = "Early Access Product Policy";
+
+/**
+ * The reviewed acknowledgment label for the v2 policy, word for word. It is
+ * fixed text rather than built from the served title: a composed sentence could
+ * read as wording nobody reviewed. The pair match above already ties it to the
+ * one document it belongs to.
+ */
+const ASSENT =
+  "I have read and agree to the Early Access Product Policy, including the conditions that apply to the products I request.";
+
 const AGREEMENT_POLICY_MISMATCH =
-  "The agreement identity does not match the Research Use Policy that was served. Nothing has been recorded.";
+  "The agreement identity does not match the Early Access Product Policy that was served. Nothing has been recorded.";
 
 function sameAgreement(
   left: EarlyAccessAgreementPair,
@@ -85,7 +99,7 @@ function sameAgreement(
  * changed the mount effect's dependencies every time the effect set state: the
  * screen would re-read the policy and the agreement standing forever.
  */
-const loadPolicyFromServer = () => loadResearchUsePolicy();
+const loadPolicyFromServer = () => loadEarlyAccessPolicy();
 const loadStateFromServer = () => loadEarlyAccessAgreementState();
 const acceptOnServer = (agreement: EarlyAccessAgreementPair) =>
   acceptEarlyAccessAgreement(agreement);
@@ -242,7 +256,7 @@ export function EarlyAccessAgreementSection({
     return (
       <section data-testid={testId} data-state="loading">
         <p className="body-s text-ink-mute" role="status" data-testid={`${testId}-loading`}>
-          Loading the Research Use Policy.
+          Loading the {POLICY_NAME}.
         </p>
       </section>
     );
@@ -252,8 +266,8 @@ export function EarlyAccessAgreementSection({
     return (
       <section data-testid={testId} data-state="locked">
         <p className="body-s text-ink-2" data-testid={`${testId}-locked`}>
-          Your private session has ended. Unlock again to review and accept the Research Use
-          Policy. Nothing has been ordered or charged.
+          Your private session has ended. Unlock again to review and accept the {POLICY_NAME}.
+          Nothing has been ordered or charged.
         </p>
       </section>
     );
@@ -268,7 +282,7 @@ export function EarlyAccessAgreementSection({
       <section data-testid={testId} data-state="unverified">
         <p className="body-s text-ink-2 max-w-[62ch]" data-testid={`${testId}-unverified`}>
           Your private access session is active. Complete identity verification before reviewing
-          prices, accepting the Research Use Policy, or placing an order. Nothing has been ordered
+          prices, accepting the {POLICY_NAME}, or placing an order. Nothing has been ordered
           or charged.
         </p>
         {/*
@@ -310,7 +324,7 @@ export function EarlyAccessAgreementSection({
     return (
       <section data-testid={testId} data-state="policy-unavailable">
         <p className="body-s text-ink-2" data-testid={`${testId}-policy-fault`}>
-          We could not load the Research Use Policy just now. This is a fault on our side. You
+          We could not load the {POLICY_NAME} just now. This is a fault on our side. You
           cannot continue until it loads, and nothing has been ordered or charged.
         </p>
       </section>
@@ -423,7 +437,7 @@ export function EarlyAccessAgreementSection({
           className="body-s text-ink-2 mt-3"
           data-testid={`${testId}-accepted`}
         >
-          You have accepted the Research Use Policy. You can continue to the research catalogue.
+          You have accepted the {document.title}. You can continue to the catalogue.
         </p>
       ) : (
         <div className="mt-6 grid gap-4 min-w-0">
