@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T00:01:02.3430928Z",
+  "updatedAt": "2026-11-06T00:32:29.7176667Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4501,7 +4501,7 @@
       "id": "KAN6-EA-TEN-ARTWORK-BACKED-DESCRIPTIONS-20261105",
       "title": "Adopt ten artwork-backed reviewed descriptions",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-6",
       "baseSha": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
       "paths": [
@@ -4511,7 +4511,13 @@
       "scopeNote": "Claim only the exact one-path COPY10 r2 allocation elected by Root at KAN-13/11683 (https://xeniostechnology.atlassian.net/browse/KAN-13?focusedCommentId=11683). Limit future source work to server/research/master-offerings/data/reviewed-public-content.json on intended branch codex/early-access-ten-artwork-backed-descriptions-20261105 from exact live protected release b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d/tree 1f5df7e4ded1024dc44511863886adcaa8b6453e. The required live content-registry base blob is exactly 92e38d1e40c4bf0d017d5af76434d0c5e533e27c. Fresh exact, prefix and wildcard CODE_OWNERSHIP plus FILE_OWNERSHIP audits found no active or reserved conflict; all prior leases matching this path, including COPY6 lease b2940f6f-577a-4a89-adb8-d51d96e1a90e, are handoff history and the older broad matching lease is released. Preserve all 75 live descriptions, every price and pricing authority byte, all 86 artwork mappings, the outreach alias, the exact active persistent-request-bar task and lease, the four-path reserved policy ownership rule, and every foreign task, lease, rule, registry, identity, release and handoff. Source contents, exact ten-row postimage, artwork binding, tests, independent review, protected integration and release remain separate Root gates. This custody transaction performs no checkout or branch switch, application source edit, test, browser, workflow, policy, provider, deployment, production, supplier activation, price publication or new session.",
       "createdAt": "2026-11-06T00:01:02.3430928Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-06T00:01:02.3430928Z"
+      "claimedAt": "2026-11-06T00:01:02.3430928Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "0ccb543ea9b402213d6d51094747ae58665b53f6",
+        "file": ".xenios/handoffs/2026-11-06T00-31-11Z-PR414-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+        "at": "2026-11-06T00:31:11Z"
+      }
     }
   ]
 }

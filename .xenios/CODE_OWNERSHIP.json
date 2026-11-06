@@ -3560,7 +3560,7 @@
       "paths": [
         "server/research/master-offerings/data/reviewed-public-content.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T00:01:02.3430928Z",
       "heartbeatAt": "2026-11-06T00:01:02.3430928Z"
     }

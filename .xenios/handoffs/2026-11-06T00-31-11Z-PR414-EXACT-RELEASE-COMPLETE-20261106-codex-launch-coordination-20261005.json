@@ -1,0 +1,350 @@
+{
+  "schemaVersion": 1,
+  "kind": "exact_production_release_complete",
+  "writer": "codex-launch-coordination-20261005",
+  "recordedAt": "2026-11-06 00:31:11 UTC",
+  "pr": 414,
+  "source": "0ccb543ea9b402213d6d51094747ae58665b53f6",
+  "protected": "6215799d2ea046098f66074b36113bb18273ae75",
+  "tree": "f4da5c97db91dd8d9112af97858f68c8123aef28",
+  "parents": [
+    "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+    "0ccb543ea9b402213d6d51094747ae58665b53f6"
+  ],
+  "mergedAt": "2026-11-06T00:15:09Z",
+  "task": "KAN6-EA-TEN-ARTWORK-BACKED-DESCRIPTIONS-20261105",
+  "lease": "43692c2f-efb3-4c0f-869c-822164bf053a",
+  "originalClaim": "e84b01f12f1a8c35a5587319b95cf326f61d79ee",
+  "onlyAppPath": "server/research/master-offerings/data/reviewed-public-content.json",
+  "sourceReview": {
+    "prepared": "KAN-31/11702",
+    "published": "KAN-13/11714",
+    "composesWithBar": "KAN-13/11711",
+    "noRequiredOrOptionalSourceChanges": true
+  },
+  "postimage": "eaf3dfca16b9d22972d390a27a068bfaf0850488",
+  "authorPacketSha256": "f557a4f94865b44813622484d54760dceef7bd0513d2742a6b9e518c64b90fb5",
+  "candidateCi": {
+    "run": 42134401712,
+    "head": "0ccb543ea9b402213d6d51094747ae58665b53f6",
+    "tree": "f4da5c97db91dd8d9112af97858f68c8123aef28",
+    "event": "pull_request",
+    "trusted": {
+      "protection": 127618751857,
+      "Required CI completion": 127621018631,
+      "build": 127618752184,
+      "typecheck": 127618752035,
+      "test": 127618752221
+    },
+    "jobs": {
+      "protection": {
+        "id": 127618751857,
+        "checkout": "0ccb543ea9b402213d6d51094747ae58665b53f6",
+        "logSha256": "c15c7da677f06d15e5458ae507ea966fac004d2f17555ccaf821bde8c0e17a40"
+      },
+      "typecheck": {
+        "id": 127618752035,
+        "checkout": "6f281f512511ce7d58dc6aec449a5cbf57dae2cd",
+        "logSha256": "4bfeea6ce3b98e286a3c9cebc3f5a3da79701fd04dff8651d13d2d9a7fffd0f6"
+      },
+      "build": {
+        "id": 127618752184,
+        "checkout": "6f281f512511ce7d58dc6aec449a5cbf57dae2cd",
+        "logSha256": "5bbeaed8a4cfc64f5dced0177c31fb4a4e224bc0a4272080c6f7a4cfff30f7a5"
+      },
+      "test": {
+        "id": 127618752221,
+        "checkout": "6f281f512511ce7d58dc6aec449a5cbf57dae2cd",
+        "logSha256": "f8027d0a379e39cecb035a7b5b745c679e921c8372ad93fbfd976634a4297dd9"
+      }
+    },
+    "checkoutTrees": {
+      "0ccb543ea9b402213d6d51094747ae58665b53f6": "f4da5c97db91dd8d9112af97858f68c8123aef28",
+      "6f281f512511ce7d58dc6aec449a5cbf57dae2cd": "f4da5c97db91dd8d9112af97858f68c8123aef28"
+    },
+    "fullCounts": [
+      "18602",
+      "83"
+    ],
+    "fileCounts": [
+      "1001",
+      "6"
+    ],
+    "evidence": [
+      "2026-11-06T00:09:12.9586024Z  ✓ client/src/research/master-offerings/detail-surface.test.tsx (13 tests) 238ms"
+    ],
+    "pullRequest": {
+      "headRefOid": "0ccb543ea9b402213d6d51094747ae58665b53f6",
+      "baseRefOid": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+      "isDraft": true,
+      "state": "OPEN",
+      "mergeable": "MERGEABLE",
+      "reviewDecision": null,
+      "reviewThreads": {
+        "pageInfo": {
+          "hasNextPage": false
+        },
+        "nodes": []
+      }
+    },
+    "protectedStrictTrustedChecks": true
+  },
+  "protectedCi": {
+    "run": 42135458640,
+    "head": "6215799d2ea046098f66074b36113bb18273ae75",
+    "tree": "f4da5c97db91dd8d9112af97858f68c8123aef28",
+    "event": "push",
+    "trusted": {
+      "test": 127622328179,
+      "Required CI completion": 127625250373,
+      "build": 127622328156,
+      "protection": 127622327789,
+      "typecheck": 127622328378
+    },
+    "jobs": {
+      "protection": {
+        "id": 127622327789,
+        "checkout": "6215799d2ea046098f66074b36113bb18273ae75",
+        "logSha256": "498299f6652268e6e22583f62747a0136fdacc75af8bf1e0a5c8e7b12938cc20"
+      },
+      "build": {
+        "id": 127622328156,
+        "checkout": "6215799d2ea046098f66074b36113bb18273ae75",
+        "logSha256": "cc99a2a37e2432853eb98beede364570c01f21aecc75b3663d40ac859db6b965"
+      },
+      "test": {
+        "id": 127622328179,
+        "checkout": "6215799d2ea046098f66074b36113bb18273ae75",
+        "logSha256": "30be680426aff0ed2bab7a7263c22aed29afa6f15a960193aa97b921d29ecfc4"
+      },
+      "typecheck": {
+        "id": 127622328378,
+        "checkout": "6215799d2ea046098f66074b36113bb18273ae75",
+        "logSha256": "7edbba2367fa4a85d182fe1b20292109895bb686cef8170c4c9702073ab0dcf7"
+      }
+    },
+    "checkoutTrees": {
+      "6215799d2ea046098f66074b36113bb18273ae75": "f4da5c97db91dd8d9112af97858f68c8123aef28"
+    },
+    "fullCounts": [
+      "18602",
+      "83"
+    ],
+    "fileCounts": [
+      "1001",
+      "6"
+    ],
+    "evidence": [
+      "2026-11-06T00:18:22.3902501Z  ✓ client/src/research/master-offerings/detail-surface.test.tsx (13 tests) 347ms"
+    ]
+  },
+  "deploy": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "id": "dep-dbmhrgp7lnhs73952qo0",
+    "status": "live",
+    "commit": "6215799d2ea046098f66074b36113bb18273ae75",
+    "finishedAt": "2026-11-06T00:23:50.627682Z",
+    "trigger": "new_commit",
+    "branch": "release/early-access-code-session-checkout",
+    "autoDeploy": "yes",
+    "autoDeployTrigger": "checksPass",
+    "manualDeploy": false
+  },
+  "rollback": {
+    "protected": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+    "tree": "1f5df7e4ded1024dc44511863886adcaa8b6453e",
+    "deploy": "dep-dbmh617f3r2c73fqcjv0",
+    "used": false
+  },
+  "citationIndex": {
+    "checkedAt": "2026-11-06T00:14:11.8076769Z",
+    "source": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=42942810,35985340,41741376,41056349,40464942&retmode=xml",
+    "status": 200,
+    "records": [
+      {
+        "pmid": "42942810",
+        "publicationTypes": [
+          "Journal Article",
+          "Review"
+        ],
+        "relationships": [],
+        "adverseMarkers": []
+      },
+      {
+        "pmid": "35985340",
+        "publicationTypes": [
+          "Journal Article"
+        ],
+        "relationships": [],
+        "adverseMarkers": []
+      },
+      {
+        "pmid": "41741376",
+        "publicationTypes": [
+          "Journal Article"
+        ],
+        "relationships": [],
+        "adverseMarkers": []
+      },
+      {
+        "pmid": "41056349",
+        "publicationTypes": [
+          "Journal Article"
+        ],
+        "relationships": [],
+        "adverseMarkers": []
+      },
+      {
+        "pmid": "40464942",
+        "publicationTypes": [
+          "Journal Article",
+          "Research Support, Non-U.S. Gov't"
+        ],
+        "relationships": [],
+        "adverseMarkers": []
+      }
+    ]
+  },
+  "route": {
+    "expectedRelease": "6215799d2ea046098f66074b36113bb18273ae75",
+    "providerDeploy": "dep-dbmhrgp7lnhs73952qo0",
+    "readAt": "2026-11-06T00:24:41.1430597Z",
+    "publicRoutes": [
+      {
+        "path": "/earlyaccess",
+        "status": 200,
+        "cacheControl": "no-store",
+        "pragma": "no-cache",
+        "referrerPolicy": "no-referrer",
+        "robots": "noindex,nofollow,noarchive",
+        "contentType": "text/html; charset=utf-8",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ],
+        "bodySha256": "417e3bfed6d648be20a2882e37ecbf313ea361d02223a01ac2e6c1651ff1227d"
+      },
+      {
+        "path": "/earlyaccess",
+        "status": 200,
+        "cacheControl": "no-store",
+        "pragma": "no-cache",
+        "referrerPolicy": "no-referrer",
+        "robots": "noindex,nofollow,noarchive",
+        "contentType": "text/html; charset=utf-8",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ],
+        "bodySha256": "417e3bfed6d648be20a2882e37ecbf313ea361d02223a01ac2e6c1651ff1227d"
+      },
+      {
+        "path": "/research/early-access/order-request",
+        "status": 200,
+        "cacheControl": "no-store",
+        "pragma": "no-cache",
+        "referrerPolicy": "no-referrer",
+        "robots": "noindex,nofollow,noarchive",
+        "contentType": "text/html; charset=utf-8",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ],
+        "bodySha256": "417e3bfed6d648be20a2882e37ecbf313ea361d02223a01ac2e6c1651ff1227d"
+      },
+      {
+        "path": "/api/health",
+        "status": 200,
+        "cacheControl": "",
+        "pragma": "",
+        "referrerPolicy": "no-referrer",
+        "robots": "",
+        "contentType": "application/json; charset=utf-8",
+        "entry": [],
+        "bodySha256": "67e16c78aa04c82055e32d8dd66aaf357a6f02bf9d3c83bea309d61ab7958750"
+      }
+    ],
+    "entryRead": {
+      "path": "/assets/index-D9bwURak.js",
+      "status": 200,
+      "contentType": "text/javascript; charset=utf-8"
+    }
+  },
+  "liveGuest": {
+    "evidence": "KAN-13/11720",
+    "providerBeforeAndAfterMatched": true,
+    "uniqueVariants": 420,
+    "exactDescriptions": 85,
+    "priorDescriptionsRetained": 75,
+    "exactArtworkMappings": 86,
+    "clinicalPricesWithheld": 242,
+    "newVariants": [
+      "GEN-GRP-0246",
+      "GEN-GRP-0300",
+      "GEN-GRP-0302",
+      "GEN-GRP-0323",
+      "GEN-GRP-0324",
+      "GEN-GRP-0326",
+      "GEN-GRP-0331",
+      "GEN-GRP-0341",
+      "GEN-GRP-0347",
+      "GEN-GRP-0350"
+    ],
+    "actualViewDetails": [
+      "GEN-GRP-0300",
+      "GEN-GRP-0246"
+    ],
+    "detailChecks": [
+      "Full Overview and Cautions matched exact hashes and visible heights",
+      "Zero selected, agreement unchecked, Continue disabled"
+    ],
+    "boundaries": [
+      "GEN-GRP-0246 retained request_activation",
+      "Other nine retained direct_order_request",
+      "242 provider-review variants withheld price and price version",
+      "No selection, consent, submission, recovery, account or payment"
+    ],
+    "proof": [
+      {
+        "path": "C:\\Users\\sboad\\Downloads\\XENIOS_CATALOG_CONTENT_2026-11-04\\pr414-production-readback-20261106\\PR414_SERVED_GUEST_COPY10_RECEIPT.json",
+        "bytes": 4857,
+        "sha256": "21602f9dbdf9bdfc84811efd0f55d975d729d64f82a3648b6af034044b2fe6fa",
+        "keys": [
+          "startedUtc",
+          "finishedUtc",
+          "release",
+          "deploy",
+          "tree",
+          "publicRoutes",
+          "exactUniqueVariants",
+          "exactReviewedDescriptions",
+          "exactArtworkMappings",
+          "clinicalRowsWithPricesWithheld",
+          "newResearchCopyVariants",
+          "copyRegistrySha256",
+          "scope"
+        ]
+      },
+      {
+        "path": "C:\\Users\\sboad\\Downloads\\XENIOS_CATALOG_CONTENT_2026-11-04\\pr414-production-readback-20261106\\PR414_MOUNTED_GUEST_DETAILS_RECEIPT.json",
+        "bytes": 2992,
+        "sha256": "55ad58219a3a647b9247b7b34791c117a29f927b6b5c824492a7b792e12ff1cb",
+        "keys": [
+          "checkedUtc",
+          "release",
+          "tree",
+          "deploy",
+          "renderLiveAt",
+          "renderMatchedBeforeAndAfter",
+          "url",
+          "browser",
+          "sampledVia",
+          "mounted",
+          "endState",
+          "servedReceipt",
+          "servedReceiptSha256",
+          "citationStatusRefresh",
+          "scope"
+        ]
+      }
+    ]
+  }
+}
