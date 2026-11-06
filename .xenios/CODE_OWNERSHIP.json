@@ -3786,7 +3786,7 @@
         "client/src/research/layout-touch-targets.test.tsx",
         "client/src/research/layout.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T05:41:34.172Z",
       "heartbeatAt": "2026-11-06T05:41:34.172Z"
     }

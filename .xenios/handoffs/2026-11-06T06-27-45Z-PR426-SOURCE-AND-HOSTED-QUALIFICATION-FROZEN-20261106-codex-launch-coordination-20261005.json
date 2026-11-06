@@ -1,0 +1,107 @@
+{
+  "state": "SOURCE_AND_HOSTED_QUALIFIED_FROZEN_AWAITING_BROWSER",
+  "recordedUtc": "2026-11-06T06:27:45.185277+00:00",
+  "root": "codex-launch-coordination-20261005",
+  "task": "KAN13-EA-CARE-RESEARCH-CTA-20261106",
+  "lease": "63d598ac-f6a2-487d-99f7-0e93cec4935e",
+  "allocation": "KAN-13/11836",
+  "controlledCheckpoint": "KAN-225/11838",
+  "source": {
+    "pr": 426,
+    "head": "99f7780fe050f49a27bc9b2af3948686b8cfb0e4",
+    "tree": "727c851efeb74cb51542447d3c06a121ba529090",
+    "base": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "branch": "codex/early-access-care-research-request-copy-20261106",
+    "paths": [
+      "client/src/research/assisted-order/OrderRequestEntry.test.tsx",
+      "client/src/research/assisted-order/OrderRequestEntry.tsx",
+      "client/src/research/assisted-order/RequestIntentForm.durable-journey.pg.test.tsx",
+      "client/src/research/assisted-order/RequestIntentForm.test.tsx",
+      "client/src/research/assisted-order/RequestIntentForm.tsx",
+      "client/src/research/assisted-order/RequestIntentReceipt.test.tsx",
+      "client/src/research/assisted-order/RequestIntentReceipt.tsx",
+      "client/src/research/assisted-order/request-intent-catalog-retry.test.tsx",
+      "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+      "client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx",
+      "client/src/research/early-access/request-experience-copy.test.ts",
+      "client/src/research/early-access/request-experience-copy.ts",
+      "client/src/research/early-access/request-experience-guidance.test.tsx",
+      "client/src/research/early-access/request-experience.css",
+      "client/src/research/layout-touch-targets.test.tsx",
+      "client/src/research/layout.tsx"
+    ],
+    "note": "Guide inside the actual products step. Branding only at the two Early Access request routes. Accurate refresh, retry, submit, recovered and reopened states."
+  },
+  "independentReview": {
+    "nativeThread": "01a1a7eb-88b6-79b2-b82f-abad27922319",
+    "finalTurn": "01a1af7c-824e-7530-b748-c40b1bc64589",
+    "head": "99f7780fe050f49a27bc9b2af3948686b8cfb0e4",
+    "tree": "727c851efeb74cb51542447d3c06a121ba529090",
+    "disposition": "All required source findings closed. Reviewer authored none of the change.",
+    "sourceOnly": true
+  },
+  "hosted": {
+    "run": 42172890587,
+    "checks": {
+      "protection": {
+        "id": 127744589561,
+        "conclusion": "success",
+        "checkout": "99f7780fe050f49a27bc9b2af3948686b8cfb0e4",
+        "logBytes": 113931,
+        "logSha256": "2e4e748f6de72a864978b513dd10333ea397aa255ad06423e0796ecc47215a90"
+      },
+      "test": {
+        "id": 127744589853,
+        "conclusion": "success",
+        "checkout": "36c1ef2ccf6a001b8ef7a9bf0922888fac0ffa1d",
+        "logBytes": 1226803,
+        "logSha256": "d51bdeec476cbefcb567563718aadfd3a500b00f6980e943dcc15385168c8a74"
+      },
+      "build": {
+        "id": 127744589879,
+        "conclusion": "success",
+        "checkout": "36c1ef2ccf6a001b8ef7a9bf0922888fac0ffa1d",
+        "logBytes": 78003,
+        "logSha256": "f0b9c2ccd775ad175e191cf5578b90819491ae30474154532579709976fd4090"
+      },
+      "typecheck": {
+        "id": 127744589949,
+        "conclusion": "success",
+        "checkout": "36c1ef2ccf6a001b8ef7a9bf0922888fac0ffa1d",
+        "logBytes": 15411,
+        "logSha256": "75a0cb6badbf3e32dbcbb759410f0e7cc2b538dbe1af11a4e1ad44259921f6f9"
+      },
+      "Required CI completion": {
+        "id": 127746146976,
+        "conclusion": "success"
+      }
+    },
+    "checkoutTrees": {
+      "36c1ef2ccf6a001b8ef7a9bf0922888fac0ffa1d": "727c851efeb74cb51542447d3c06a121ba529090",
+      "99f7780fe050f49a27bc9b2af3948686b8cfb0e4": "727c851efeb74cb51542447d3c06a121ba529090"
+    },
+    "proofSha256": "eeb0e4cc4b8125e5be1e13fc481e92f5ad7242af952bd931db7f9569d2caef54",
+    "passed": 18627,
+    "failed": 0,
+    "skipped": 83,
+    "focusedPassed": 153,
+    "storefrontPassed": 79,
+    "command": "checks.yml focused guest-entry regressions, npx vitest run, npm run check, npm run build, Core and route gates"
+  },
+  "browserPending": {
+    "owner": "Website 2 with existing Root",
+    "checks": [
+      "narrow and enlarged-text header wrapping",
+      "keyboard use of the disclosure and Browse jump",
+      "earlier receipt focus"
+    ],
+    "route": "KAN-13/11774 and PR396 job 127244962874; Core protection rejected the workflow. Website 2 locally paused."
+  },
+  "release": {
+    "state": "DRAFT_FROZEN",
+    "production": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+    "productionSetting": "early_access_terms/v1 recorded in exact readback",
+    "sourceMerge": false,
+    "deployment": false
+  }
+}

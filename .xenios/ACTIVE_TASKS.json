@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T05:41:34.172Z",
+  "updatedAt": "2026-11-06T06:27:45.185277Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4825,7 +4825,7 @@
       "id": "KAN13-EA-CARE-RESEARCH-CTA-20261106",
       "title": "Adopt Care and Research Early Access CTA copy",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "jira": "KAN-13",
       "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
       "paths": [
@@ -4850,7 +4850,13 @@
       "scopeNote": "Claim only the eleven paths listed in this task for Samuel-authorized CTA package adoption and verified Jira allocation/normalized echo KAN-13/11836, on intended source branch codex/early-access-care-research-request-copy-20261106 from exact protected base 07d727a4c9b5516bbd57aef3aa7f89d359849260/tree e93209a057d186c7a9d46483592ac2e576b9df5f. Exact private candidate tree is cd59391972680043387f3da498030d7a73ecccb4; CTA_PRIVATE_PREPARATION.json SHA-256 75e03c7a1eb443026753583309904e746f44d517c8057461480045e004132793; CARE_RESEARCH_CTA.FOR_REVIEW.patch SHA-256 c5b1cff4264fdee923fe0b6fdc2d690cdecb54defa984a738da2a80ff8439c66. An isolated-index apply reproduced the candidate tree byte-exact. Keep the six current same-Root bindings byte-exact and exclusively under leases b90bf50c-65bb-4591-a238-949e1542a734, 4f09f46e-f032-465b-b367-d302e4235b7e, 427bb26e-5d85-4db5-b0ec-1e88334b33f1, 50ca8e4f-a56e-4d63-a7f8-b161911678ba and 927aa99f-4b6f-44f1-881a-577743135cbf as declared by the package. Keep authoritative FILE rules OWNER-KAN225-EARLY-ACCESS-CLOSED-INTAKE-20261104 and OWNER-KAN13-EA-OUTREACH-ROUTE-20261105 intact; the latter is the expected same-Root binding for newly claimed layout.tsx. Case-insensitive active/reserved exact, prefix and wildcard CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no foreign live conflict. Preserve all 157 prior tasks, 178 prior leases, 57 sessions, histories, rules, foreign state and protected release records. No other path is in scope. This custody transaction performs no source, FILE rule, session metadata, runner, browser, provider, checkout, deployment, production or secret mutation.",
       "createdAt": "2026-11-06T05:41:34.172Z",
       "owner": "codex-launch-coordination-20261005",
-      "claimedAt": "2026-11-06T05:41:34.172Z"
+      "claimedAt": "2026-11-06T05:41:34.172Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "99f7780fe050f49a27bc9b2af3948686b8cfb0e4",
+        "file": ".xenios/handoffs/2026-11-06T06-27-45Z-PR426-SOURCE-AND-HOSTED-QUALIFICATION-FROZEN-20261106-codex-launch-coordination-20261005.json",
+        "at": "2026-11-06T06:27:45Z"
+      }
     }
   ]
 }
