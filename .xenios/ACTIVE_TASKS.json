@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T02:22:28.430Z",
+  "updatedAt": "2026-11-06T03:36:05.624Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4699,6 +4699,29 @@
       "createdAt": "2026-11-06T02:22:28.430Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T02:22:28.430Z"
+    },
+    {
+      "id": "KAN1-EA-CATALOG-PATHWAY-GUIDANCE-20261106",
+      "title": "Add welcoming catalog pathway guidance",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-1",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "client/src/research/early-access/guidance/ProductGuidance.test.tsx",
+        "client/src/research/early-access/guidance/ProductPathwayNotice.tsx",
+        "client/src/research/early-access/guidance/SelectionCategorySummary.tsx",
+        "client/src/research/early-access/guidance/early-access-guidance.css",
+        "client/src/research/early-access/guidance/product-guidance-model.test.ts",
+        "client/src/research/early-access/guidance/product-guidance-model.ts"
+      ],
+      "dependsOn": [
+        "KAN1-EA-PERSISTENT-REQUEST-BAR-20261105"
+      ],
+      "scopeNote": "Claim only the six new client/src/research/early-access/guidance/ paths listed in this task for Samuel's welcoming-policy package and actual Root election KAN-13/11792, on intended branch codex/early-access-catalog-guidance-20261106 from exact protected release 07d727a4c9b5516bbd57aef3aa7f89d359849260/tree e93209a057d186c7a9d46483592ac2e576b9df5f. Exact patch SHA-256 e9e1407fe6fa799c61ee30f6aff2f22666de0997602464f487f360b0f8e2284b projects tree 37e4fa01fd80d8fca5cf62b01732362cbc81ece7. The seventh changed path, client/src/research/assisted-order/RequestIntentForm.tsx, advances exact release blob 5299a404804b5d1c557e62775f90c47e13021b7d to 25c615ae43a0242db594e648037f3ccdd58d548e and remains exclusively covered by same-Root active lease 427bb26e-5d85-4db5-b0ec-1e88334b33f1 under separate Root election. Bind that existing lease without overlap under the single-lease shared-path precedent recorded for PR418 storefront at KAN-13/11759. Do not extend, rewrite or otherwise change the prior persistent-request-bar task, lease, heartbeat or frozen ef25adc head. Fresh exact, prefix and wildcard CODE_OWNERSHIP plus trusted FILE_OWNERSHIP audits across all seven changed paths found only the expected same-Root shared-path lease and no foreign live owner. Preserve all 151 prior tasks, 172 prior leases, 57 sessions, rules, refs, histories, policies and holds. Source application, tests, independent review, protected integration and release remain separate Root gates. This custody transaction performs no physical checkout change, application source edit, workflow, test, runner, browser, provider, configuration, deployment, release or production action.",
+      "createdAt": "2026-11-06T03:36:05.624Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T03:36:05.624Z"
     }
   ]
 }

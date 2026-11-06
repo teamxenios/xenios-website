@@ -3691,6 +3691,22 @@
       "state": "active",
       "claimedAt": "2026-11-06T02:22:28.430Z",
       "heartbeatAt": "2026-11-06T02:22:28.430Z"
+    },
+    {
+      "id": "16f6a6f2-72ad-44cf-8091-b736c766a6b3",
+      "task": "KAN1-EA-CATALOG-PATHWAY-GUIDANCE-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/early-access/guidance/ProductGuidance.test.tsx",
+        "client/src/research/early-access/guidance/ProductPathwayNotice.tsx",
+        "client/src/research/early-access/guidance/SelectionCategorySummary.tsx",
+        "client/src/research/early-access/guidance/early-access-guidance.css",
+        "client/src/research/early-access/guidance/product-guidance-model.test.ts",
+        "client/src/research/early-access/guidance/product-guidance-model.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T03:36:05.624Z",
+      "heartbeatAt": "2026-11-06T03:36:05.624Z"
     }
   ],
   "rules": [
