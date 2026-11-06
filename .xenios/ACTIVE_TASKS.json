@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T00:32:29.7176667Z",
+  "updatedAt": "2026-11-06T00:39:26.7529927Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4518,6 +4518,23 @@
         "file": ".xenios/handoffs/2026-11-06T00-31-11Z-PR414-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
         "at": "2026-11-06T00:31:11Z"
       }
+    },
+    {
+      "id": "KAN6-EA-0337-EFFECTIVE-LABEL-20261106",
+      "title": "Correct the GEN-GRP-0337 effective label",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-6",
+      "baseSha": "6215799d2ea046098f66074b36113bb18273ae75",
+      "paths": [
+        "server/research/master-offerings/dataset-reader.ts",
+        "server/research/master-offerings/dataset-reader.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the exact two-path GEN-GRP-0337 effective-label correction elected in the current KAN-13/11683 owner record and delivered at KAN-6/11698 with independent review at KAN-6/11718. Limit future source work to the two ordered paths in this task on intended branch codex/early-access-0337-effective-label-20261106 from exact live protected release 6215799d2ea046098f66074b36113bb18273ae75/tree f4da5c97db91dd8d9112af97858f68c8123aef28. The exact patch SHA-256 is 8fe128e272e388a7b9310eff40ba691e992c641b4702dabc1747225a31fc4749 and projected current-base tree is e1658fd0778fa2e0a6d8e52604a19ae9585c5309. Exact base blobs are dataset-reader.ts 6d01be4a089cc171975d8e257c01fd10760ba594 and dataset-reader.test.ts fdf40658ce4a77b9f0c23477a7595a9e9d3a65b2. Fresh exact, prefix and wildcard CODE_OWNERSHIP plus FILE_OWNERSHIP audits found zero active or reserved conflicts. Preserve every unrelated task, lease, identity, ownership rule, release pointer, history and handoff, including active PR413 custody and the four-path policy reservation. Source application, tests, independent final qualification, protected integration and release remain separate Root gates. This custody transaction performs no checkout or branch switch, application source edit, test, browser, workflow, policy, provider, configuration, deployment, production or new session.",
+      "createdAt": "2026-11-06T00:39:26.7529927Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T00:39:26.7529927Z"
     }
   ]
 }
