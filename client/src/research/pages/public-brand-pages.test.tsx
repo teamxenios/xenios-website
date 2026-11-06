@@ -103,7 +103,14 @@ describe("public editorial page system", () => {
     expect(links).toContain("/research/support");
     expect(view.textContent).toContain("No public supplier workspace is promised");
     expect(view.textContent).toContain("must fail closed");
-    expect(view.textContent).toContain("Open early-access entry");
+    const earlyAccessCard = Array.from(view.querySelectorAll("article")).find(
+      (card) => card.querySelector("h2")?.textContent === "Early Access",
+    );
+    expect(earlyAccessCard?.textContent).toContain("Product requests for review");
+    const earlyAccessLink = Array.from(earlyAccessCard?.querySelectorAll("a") ?? []).find(
+      (link) => link.textContent === "Open Early Access",
+    );
+    expect(earlyAccessLink?.getAttribute("href")).toBe("/earlyaccess");
     expect(view.textContent).toContain("non-clinical access request");
     expect(view.textContent).toContain("does not establish clinical availability");
     expect(view.textContent).not.toContain("Xenios Care is available nationwide");
