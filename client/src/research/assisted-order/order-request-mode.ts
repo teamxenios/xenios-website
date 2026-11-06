@@ -1,38 +1,56 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { createLatestOperation } from "../lib/latest-operation";
 import { parseAssistedOrderConfig } from "./wizard-state";
 import { ASSISTED_ORDER_DRAFT_KEY, readAssistedOrderDraft } from "./draft-store";
 import { REQUEST_INTENT_ATTEMPT_KEY, readIntentAttempt } from "./request-intent-attempt";
 
-export type OrderRequestMode = Readonly<{ kind: "checking" | "legacy" | "mixed" | "unavailable" }>;
+export type OrderRequestMode = Readonly<{
+  kind: "checking" | "legacy" | "mixed" | "unavailable";
+  retry?: () => void;
+}>;
 export type OrderRequestContinuity = "none" | "legacy" | "mixed" | "blocked";
 
-/** Called once by a door owner and passed to its CTA and embedded entry.
- * No module-global identity cache, automatic retry or refresh-driven mode swap.
- * This public readiness result grants no identity, catalog or submit authority.
- */
+async function readRequestMode(signal: AbortSignal): Promise<OrderRequestMode["kind"]> {
+  const response = await fetch("/api/research/early-access/request-intents/config", {
+    credentials: "same-origin", cache: "no-store", headers: { Accept: "application/json" }, signal,
+  });
+  const body: unknown = await response.json();
+  if (!body || typeof body !== "object" || Array.isArray(body)) return "unavailable";
+  const row = body as Record<string, unknown>;
+  if (response.status === 503 && row.enabled === false && row.error === "request_intent_disabled") {
+    return "legacy";
+  }
+  return response.ok && row.enabled === true && parseAssistedOrderConfig(body) ? "mixed" : "unavailable";
+}
+
+/** One scoped readiness read, with an explicit retry for an unconfirmed response. */
 export function useOrderRequestMode(active = true, scope = "standalone"): OrderRequestMode {
-  const [observed, setObserved] = useState<{ scope: string; state: OrderRequestMode } | null>(null);
+  const [operation] = useState(createLatestOperation);
+  const [probe, setProbe] = useState({ active, scope });
+  const [observed, setObserved] = useState<{ probe: typeof probe; kind: OrderRequestMode["kind"] } | null>(null);
+  const current = probe.active === active && probe.scope === scope;
+  // A fresh probe also covers a return to a previously seen scope.
+  if (!current) setProbe({ active, scope });
+
   useEffect(() => {
-    if (!active) { setObserved(null); return; }
-    let current = true;
-    void (async () => {
-      let kind: OrderRequestMode["kind"] = "unavailable";
-      try {
-        const response = await fetch("/api/research/early-access/request-intents/config", {
-          credentials: "same-origin", cache: "no-store", headers: { Accept: "application/json" },
-        });
-        const body: unknown = await response.json();
-        if (body && typeof body === "object" && !Array.isArray(body)) {
-          const row = body as Record<string, unknown>;
-          if (response.status === 503 && row.enabled === false && row.error === "request_intent_disabled") kind = "legacy";
-          else if (response.ok && row.enabled === true && parseAssistedOrderConfig(body)) kind = "mixed";
-        }
-      } catch { /* Unknown readiness is NOT proof the feature is off. */ }
-      if (current) setObserved({ scope, state: { kind } });
-    })();
-    return () => { current = false; };
-  }, [active, scope]);
-  return active && observed?.scope === scope ? observed.state : { kind: "checking" };
+    if (!probe.active) return;
+    const controller = new AbortController();
+    void operation.run(() => readRequestMode(controller.signal), 12_000).then((result) => {
+      if (controller.signal.aborted || result.kind === "cancelled") return;
+      if (result.kind === "timeout") controller.abort();
+      setObserved({ probe, kind: result.kind === "value" ? result.value : "unavailable" });
+    });
+    return () => {
+      operation.invalidate();
+      controller.abort();
+    };
+  }, [operation, probe]);
+
+  const retry = useCallback(() => {
+    setProbe((pending) => pending === probe ? { ...probe } : pending);
+  }, [probe]);
+  const kind = current && observed?.probe === probe ? observed.kind : "checking";
+  return kind === "unavailable" ? { kind, retry } : { kind };
 }
 
 /** Routing hint only. Never clears, repairs, logs or copies a saved attempt.
