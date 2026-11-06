@@ -433,6 +433,7 @@
       "bundle, mounted by the Express app, or served to a visitor, so a change here",
       "cannot redesign or behaviorally modify the main website. Allowing them is what",
       "lets this protection gate exist in the repo without the gate rejecting itself.",
+      "2026-11-06, KAN-13/11827 and 11844, KAN-225/11225: exact isolated Quick Order QA workflow path only. The executable is pinned in fileHashes. The unbound mounted policy template cannot launch. A launch binding or other executable revision requires a separate exact owner pin and independent review before its existing run controls can be used.",
       "NOTE THE SINGULAR/PLURAL TRAP: 'scripts/' (plural) is tooling and is allowed;",
       "'script/' (singular) is the production BUILD (script/build.mjs, referenced by",
       "package.json's build and render-build) and stays PROTECTED in protectedPaths."
@@ -443,7 +444,9 @@
       ".xenios/",
       "e2e/"
     ],
-    "exactFiles": []
+    "exactFiles": [
+      ".github/workflows/qo-visual-capture.yml"
+    ]
   },
   "reportedZones": {
     "$comment": [
@@ -662,6 +665,7 @@
       "2026-09-07, reviewed B QR/export integration: pinned qrcode-generator2.0.4 runtime and jsqr1.4.0 decoder test dependency with exact lockfile. Rest of dependency authority unchanged."
     ],
     "files": {
+      ".github/workflows/qo-visual-capture.yml": "sha256:3b77da31f836fbacaf38176b614fbf0bb17be24a600cb9eb0b4ca1b088b22ed8",
       "client/index.html": "sha256:b2d696a8b3e6657977932aa86cb20483f103fca121748add91e1959e54fd76ba",
       "client/src/index.css": "sha256:c674bfe3cb6d1af28e49283eac037828d3b82bcfbd13e89ebfb04db70143b3fc",
       "client/src/main.tsx": "sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162",
