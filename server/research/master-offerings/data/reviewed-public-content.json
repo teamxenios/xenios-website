@@ -2407,6 +2407,90 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_7f4fc3961bd7c1e6b6bf",
+      "sourceVariantId": "mov_77837ac2575c8df8ac73",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Glutathione is studied in biochemical and cell assays of thiol redox metabolism and conjugation. The catalog does not identify the redox form. Listed at 1500 mg for laboratory research.",
+        "overview": "Glutathione is the tripeptide γ-L-glutamyl-L-cysteinylglycine, in which the glutamate is joined to cysteine through its side-chain carboxyl group; the reductant and conjugating chemistry below belongs to its reduced form, reduced glutathione, whose free cysteine thiol carries it, and the catalog states only 'Glutathione' without saying which redox form this listing supplies. A 1983 review placed this thiol in virtually every cell, with roles in metabolism, in transport and in cellular protection: it reduces disulfides and other molecules, forms conjugates with compounds arising both outside and inside the cell, and shields cells from reactive oxygen intermediates and free radicals. Later reviews describe it as the most abundant non-protein thiol in mammalian tissues and as the most abundant low-molecular-weight thiol compound synthesized in cells, a determinant of redox signalling, and a participant in the detoxification of xenobiotics and xenobiotic electrophiles and in maintaining redox homeostasis. Its biosynthesis occurs in the cytosol in two enzymatic steps, the first catalysed by glutamate cysteine ligase, the rate-limiting enzyme, which is composed of a catalytic and a modifier subunit, and the second by glutathione synthetase; the key determinants are the availability of the sulfur amino acid precursor cysteine and the activity of that ligase, whose subunit genes are regulated through transcription factors including NF-E2 related factor 2 acting at the antioxidant response element. The same reviews also set out how glutathione status is assessed in cells. This listing is a laboratory research material and not a medicine. The biochemical findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 1500 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "1500 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0295"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on thiol redox chemistry, glutathione metabolism and the measurement of glutathione status in cell and tissue assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_216b3a5f02fb7724cd51",
+      "sourceVariantId": "mov_d25066629d9cbdbad552",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Synthetic peptide of the carboxy-terminal region of human growth hormone, studied in adipose tissue assays and rodent models of obesity. Listed at 10 mg for laboratory research.",
+        "overview": "The reference compound AOD-9604 is a 16-residue synthetic peptide based on residues 177 to 191 of human growth hormone, with an added N-terminal tyrosine and a disulfide bond linking two internal cysteines. The antilipogenic activity of this region of the hormone was reported from 1993: a synthetic peptide of human growth hormone residues 177 to 191 had antilipogenic activity identical to that of the intact hormone, while showing no significant lipolytic effect as measured by glycerol release from the fat pads of rats given the peptide, and in 1994 long-term administration of the same peptide to obese mice reduced cumulative body weight gain, decreased adipose tissue mass and inhibited lipogenesis in adipose tissue. In one 2000 report on AOD9401, an analogue of that domain spanning residues 177 to 191, the peptide stimulated hormone-sensitive lipase and inhibited acetyl-coenzyme A carboxylase in isolated rat adipose tissue, mimicked the intact hormone's effect on diacylglycerol release in adipocytes, and over 20 days in obese Zucker rats reduced body weight gain and lowered mean adipocyte diameter from about 110 to about 80 micrometres, without the insulin resistance or glucose intolerance that followed the intact hormone. In a second AOD-9401 study, obese mice gained weight more slowly from day 16 during a 30-day experiment. Food intake was similar between groups, and resting energy expenditure showed no detectable increase. A separate acute challenge at the end of the experiment increased energy expenditure and the oxidation of both glucose and fat in the mice tested. In isolated adipose tissue assays, AOD-9401 increased lipolytic activity and lowered lipogenic activity in rodent and human samples. In one 14-day AOD-9604 study, obese mice gained weight more slowly and had higher fat oxidation and plasma glycerol. The fragment did not raise plasma glucose or reduce insulin secretion in that comparison, and in separate cell assays it neither competed for growth hormone receptor binding nor stimulated proliferation. A second AOD-9604 study reported lower body weight and body fat in obese mice and higher levels of β3-adrenergic receptor RNA after chronic exposure to AOD-9604 or intact growth hormone. The chronic weight and lipolysis effects were absent in mice lacking that receptor, although a separate acute AOD-9604 challenge still increased energy expenditure and fat oxidation in the knockout mice. This listing is a laboratory research material and not a medicine. The cell, tissue and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0260"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone fragment effects on lipolysis and lipogenesis in cell, tissue and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_1d9d501ac84d6cd9d46d",
+      "sourceVariantId": "mov_0a8df59fa70328b1c1ca",
+      "content": {
+        "summary": "Colostrum capsules. The supplier lists 100 mg and a count of 90 capsules. Classification and product documentation are under review.",
+        "overview": "Colostrum is the first milk available to newborn mammals. Researchers compare the proteins in colostrum and mature milk to study how milk composition changes during lactation. The catalog gives a 90-capsule count and a 100 mg amount. The package label is needed to confirm the amount basis, source species, full ingredients, allergen information and storage instructions. Use Early Access to register interest while the team reviews the classification and product documentation.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Capsules"
+          },
+          {
+            "label": "Listed amount",
+            "value": "100 mg"
+          },
+          {
+            "label": "Listed capsule count",
+            "value": "90"
+          }
+        ],
+        "documentation": [
+          {
+            "label": "Supplier catalog listing",
+            "href": "https://www.peptidesmeds.com/"
+          },
+          {
+            "label": "Colostrum composition study",
+            "href": "https://pubmed.ncbi.nlm.nih.gov/38002115/"
+          }
+        ]
+      }
     }
   ]
 }
