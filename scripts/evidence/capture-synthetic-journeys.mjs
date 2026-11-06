@@ -24,6 +24,7 @@ import {
   inventorySha256,
 } from "./lib/immutable-dist.mjs";
 import { launchChromium } from "./lib/chrome.mjs";
+import { verifySyntheticPolicyV2 } from "./lib/policy-fixture-v2.mjs";
 import {
   CdpConnection,
   MAX_FULL_PAGE_HEIGHT_CSS_PX,
@@ -1579,17 +1580,10 @@ async function main(argv = process.argv.slice(2)) {
     if (!unlock || !unlock.ok) {
       throw new Error("Step 1 preview unlock failed with status " + String(unlock && unlock.status));
     }
-    const agreement = await localJsonPost(
-      page,
-      "/api/research/early-access/agreements/accept",
-      { kind: "early_access_terms", version: "v2" },
-    );
-    if (!agreement || !agreement.ok) {
-      throw new Error(
-        "Step 1 preview agreement acceptance failed with status " +
-          String(agreement && agreement.status),
-      );
-    }
+    // The existing Step 1 harness is synthetic and loopback-only. Verify the
+    // reviewed v2 body, preserved v1, exact stale-v1 refusal and one idempotent
+    // synthetic v2 acceptance before continuing the existing browser journey.
+    const policyTransition = await verifySyntheticPolicyV2(page, step1Origin);
 
     // A valid-shaped, bare reference is denied by the real local service. The
     // expected 404 is predeclared byte-for-byte and then captured as an exact
@@ -1862,6 +1856,7 @@ async function main(argv = process.argv.slice(2)) {
           candidateBinding: "FRESH_PROVENANCED_PRODUCTION_BUNDLE",
         },
       ],
+      policyTransition,
       captures,
       artifactInventory: buildArtifactInventory(captures, sha),
       summary: summariseCaptures(captures),
