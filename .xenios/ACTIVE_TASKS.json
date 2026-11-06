@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T00:39:26.7529927Z",
+  "updatedAt": "2026-11-06T00:41:40.9802351Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4535,6 +4535,27 @@
       "createdAt": "2026-11-06T00:39:26.7529927Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T00:39:26.7529927Z"
+    },
+    {
+      "id": "KAN59-EA-HCG-C1008-20261106",
+      "title": "Adopt the reviewed HCG C1008 artwork mappings",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-59",
+      "baseSha": "6215799d2ea046098f66074b36113bb18273ae75",
+      "paths": [
+        "client/public/research/product-media/hcg-10000iu-front-artwork-v1.webp",
+        "client/public/research/product-media/hcg-10000iu-website-render-v1-1024.webp",
+        "client/public/research/product-media/hcg-5000iu-front-artwork-v1.webp",
+        "client/public/research/product-media/hcg-5000iu-website-render-v1-1024.webp",
+        "client/src/research/product-media/reviewed-form-holds.ts",
+        "server/research/master-offerings/data/reviewed-public-media.json"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the exact six-path HCG C1008 artwork increment elected in the current KAN-13/11683 owner record and delivered at KAN-59/11705 with independent review at KAN-59/11716. Limit future source work to the six ordered paths in this task on intended branch codex/early-access-hcg-artwork-c1008-20261106 from exact live protected release 6215799d2ea046098f66074b36113bb18273ae75/tree f4da5c97db91dd8d9112af97858f68c8123aef28. The exact patch SHA-256 is aa0202d740494658c5c83e7588cb72f36d5ecda2a17759f7f4c66d28609e2b32 and projected current-base tree is 1378a59421eed6a11dccb569a1f81cc65aa9bfe2. All four HCG WebP target paths are absent on the base; exact existing preimages are reviewed-form-holds.ts blob 2d67827bcc3084afaa42441c1b05a9f1ac7a271d and reviewed-public-media.json blob 6f73972c30df3011beff3ae12696c46465f8cfa3. Fresh exact, prefix and wildcard CODE_OWNERSHIP plus FILE_OWNERSHIP audits found zero active or reserved conflicts. Preserve every unrelated task, lease, identity, ownership rule, release pointer, history and handoff, including the active 0337 label claim, active PR413 custody and the four-path policy reservation. Source application, tests, independent final qualification, protected integration and release remain separate Root gates. This custody transaction performs no checkout or branch switch, application source edit, test, browser, workflow, policy, provider, configuration, deployment, production or new session.",
+      "createdAt": "2026-11-06T00:41:40.9802351Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T00:41:40.9802351Z"
     }
   ]
 }

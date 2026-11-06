@@ -3575,6 +3575,22 @@
       "state": "active",
       "claimedAt": "2026-11-06T00:39:26.7529927Z",
       "heartbeatAt": "2026-11-06T00:39:26.7529927Z"
+    },
+    {
+      "id": "51567b9d-4412-4540-9b58-eb11affa85e0",
+      "task": "KAN59-EA-HCG-C1008-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/public/research/product-media/hcg-10000iu-front-artwork-v1.webp",
+        "client/public/research/product-media/hcg-10000iu-website-render-v1-1024.webp",
+        "client/public/research/product-media/hcg-5000iu-front-artwork-v1.webp",
+        "client/public/research/product-media/hcg-5000iu-website-render-v1-1024.webp",
+        "client/src/research/product-media/reviewed-form-holds.ts",
+        "server/research/master-offerings/data/reviewed-public-media.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T00:41:40.9802351Z",
+      "heartbeatAt": "2026-11-06T00:41:40.9802351Z"
     }
   ],
   "rules": [
