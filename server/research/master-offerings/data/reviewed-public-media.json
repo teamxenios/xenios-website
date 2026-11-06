@@ -1829,6 +1829,50 @@
       "sourceCommit": "219634598bbda5f90e5714c26623b0e69b1b1c67",
       "primarySha256": "990bb2f1abe1dbdc747e4df19f2a4775d602acd56e49f8ac35614938f091272b",
       "labelPreviewSha256": "3b7d8b454d00660741e6d9fa3c6ed44c24b675432db6be567cff18b1a1da968f"
+    },
+    {
+      "offeringId": "mo_adf1037eceb9904e7d07",
+      "sourceVariantId": "mov_e218a4fead30388a55ff",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/hcg-10000iu-website-render-v1-1024.webp",
+          "altText": "Xenios HCG 10,000 IU packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/hcg-10000iu-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios HCG 10,000 IU",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "c75332738bfbe9cb9d5f655a90256b3932846355",
+      "primarySha256": "1573b491517867ff52d8a04a1eb83878f19822f80ea2a1c2f5f6ed0e8fc08edf",
+      "labelPreviewSha256": "aae4759071b0123a32c93c3bb653af6a67d899b33763bc8398cfe3c456164c5f"
+    },
+    {
+      "offeringId": "mo_4223bdd3e6880240fc4a",
+      "sourceVariantId": "mov_b5c50d1bb9d8ad998062",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/hcg-5000iu-website-render-v1-1024.webp",
+          "altText": "Xenios HCG 5000 IU packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/hcg-5000iu-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios HCG 5000 IU",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "c75332738bfbe9cb9d5f655a90256b3932846355",
+      "primarySha256": "070056d11aa0a79bfe627318a4681b2b8a753207e9f4ca6e0a831b53ffec7175",
+      "labelPreviewSha256": "3db8ab83945ae5555cbbb6ba4f320d134e4473847ecd6e03b59876da6c187bcc"
     }
   ]
 }
