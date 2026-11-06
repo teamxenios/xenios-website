@@ -308,8 +308,17 @@ describe("Early Access price coverage across the whole catalog", () => {
     expect(MEASURED_PRICED + MEASURED_UNPRICED).toBe(MEASURED_TOTAL_VARIANTS);
   });
 
-  it("matches that measured composition when actually walked", async () => {
+  it("matches the measured composition with the exact HCG hold", async () => {
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
+    const heldHcg = items.find((item) =>
+      item.sourceSelection?.variantId === "mov_13073979f2da65f4e160",
+    );
+    expect(heldHcg).toMatchObject({
+      variantId: "d59ee344-a5b5-43cf-9b35-e99eda40c60d",
+      specification: "HCG strength unverified and formulation pending",
+      workflowMode: "availability_review",
+    });
+
     const count = (predicate: (item: AssistedOrderCatalogItem) => boolean) =>
       items.filter(predicate).length;
     expect({
@@ -326,8 +335,9 @@ describe("Early Access price coverage across the whole catalog", () => {
       unpriced: MEASURED_UNPRICED,
       researchUseOnly: MEASURED_RUO,
       providerRequest: MEASURED_PROVIDER_REQUEST,
-      availabilityReview: MEASURED_AVAILABILITY_REVIEW,
-      requestActivation: MEASURED_REQUEST_ACTIVATION,
+      // GEN-GRP-0401 is the single move between these two measured groups.
+      availabilityReview: MEASURED_AVAILABILITY_REVIEW + 1,
+      requestActivation: MEASURED_REQUEST_ACTIVATION - 1,
       requestPricing: MEASURED_REQUEST_PRICING,
       directOrderRequest: MEASURED_DIRECT_ORDER_REQUEST,
     });
