@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T01:46:27.882Z",
+  "updatedAt": "2026-11-06T01:57:02.450Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4665,6 +4665,24 @@
       "createdAt": "2026-11-06T01:46:27.882Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T01:46:27.882Z"
+    },
+    {
+      "id": "KAN31-EA-POLICY-V2-NATIVE-TEST-DISCOVERY-20261106",
+      "title": "Relocate the policy v2 fixture tests into native Vitest discovery",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "server/research/early-access/policy-fixture-v2.test.ts"
+      ],
+      "dependsOn": [
+        "KAN31-EA-POLICY-V2-PROTOCOL-20261106"
+      ],
+      "scopeNote": "Claim only server/research/early-access/policy-fixture-v2.test.ts for the test-only relocation elected for existing Root at KAN-13/11683 on the same intended branch codex/early-access-policy-v2-revised-20261106 from exact protected live release 07d727a4c9b5516bbd57aef3aa7f89d359849260. The original new .test.mjs path is outside the Vitest include. Existing active Root lease 6d68eed2-04da-45b6-92ae-30bf4156d3a2 retains scripts/evidence/lib/policy-fixture-v2.mjs and scripts/evidence/lib/policy-fixture-v2.test.mjs unchanged so Root may remove the prior candidate test location lawfully; do not extend or rewrite that claim. Exact prepared evidence C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/completion-code-policy-fixture-20261106/native-test-discovery-correction/POLICY_V2_VITEST_DISCOVERY_PREPARATION.json has SHA-256 e857bbfd03963f5d597e879c78e58a498401f76db343c34fb59eb44c3349660e, patch SHA-256 0fb93671f025c0d2acb74e08ebcbb3e75fdac007421c5c9e7ef17a9691acc079 and target tree 5917bf218fabc308857a20ae9e568841f1e50970. Fresh canonical active/reserved exact, prefix and glob CODE_OWNERSHIP plus FILE_OWNERSHIP audits across the old and new test paths found only the expected retained Root lease on the old path and no overlap or owner overlay on the target. Preserve every earlier task, lease, session, rule, handoff, release and source record. Source application, native test execution, independent review, hosted qualification and release remain separate Root gates. This custody transaction performs no application or source edit, checkout or branch switch, test, runner, settings, browser, provider, configuration, deployment, production or new session.",
+      "createdAt": "2026-11-06T01:57:02.450Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T01:57:02.450Z"
     }
   ]
 }

@@ -3669,6 +3669,17 @@
       "state": "active",
       "claimedAt": "2026-11-06T01:46:27.882Z",
       "heartbeatAt": "2026-11-06T01:46:27.882Z"
+    },
+    {
+      "id": "f3cb9983-2000-4e84-a396-a2b0e929a3da",
+      "task": "KAN31-EA-POLICY-V2-NATIVE-TEST-DISCOVERY-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/early-access/policy-fixture-v2.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T01:57:02.450Z",
+      "heartbeatAt": "2026-11-06T01:57:02.450Z"
     }
   ],
   "rules": [
