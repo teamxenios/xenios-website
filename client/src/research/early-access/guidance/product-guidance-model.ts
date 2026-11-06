@@ -6,6 +6,8 @@ export interface ProductGuidanceInput {
   readonly family?: unknown;
   readonly intentExclusion?: unknown;
   readonly sourceRefusal?: unknown;
+  readonly sourceDisplayState?: unknown;
+  readonly sourceVariantDisplayState?: unknown;
 }
 export interface ProductGuidance {
   readonly category: GuidanceCategory;
@@ -20,7 +22,7 @@ const CLINICAL_PATHWAY_LIMIT = "Clinical review required. Not a prescription. A 
 const INTERNAL_REVIEW = "Internal review required.";
 export const REQUEST_LIMIT = "Submitting a request does not collect payment or confirm an order, prescription, availability or shipping.";
 export const CATEGORY_ORDER: readonly GuidanceCategory[] = ["clinical", "supplement", "nonclinical", "research", "service", "unconfirmed"];
-const RESEARCH_FAMILIES = new Set(["research_peptides_materials", "research_capsules"]);
+const RESEARCH_FAMILIES = new Set(["research_peptides_materials", "research_capsules", "research_supplies"]);
 const HELD = new Set(["classification_pending", "formulation_hold"]);
 
 function result(category: GuidanceCategory, label: string, explanation: string, limits: string[]): ProductGuidance {
@@ -45,7 +47,8 @@ export function productGuidance(value: ProductGuidanceInput | null | undefined):
     return unresolved(input, "The product pathway is not fully confirmed in this listing. Contact support for the exact item information.");
   if (clinical && research)
     return unresolved(input, "This listing contains conflicting clinical and research indicators. Contact support before proceeding.");
-  if (HELD.has(String(input.sourceRefusal)))
+  if (input.sourceDisplayState === "approval_required" || input.sourceVariantDisplayState === "approval_required" ||
+      HELD.has(String(input.sourceRefusal)))
     return unresolved(input, "This product has a classification or formulation hold. Its current restriction remains in place.");
   if ((input.family === "clinical_formulations_503a" && !clinical) ||
       (RESEARCH_FAMILIES.has(String(input.family)) && !research))
@@ -55,8 +58,8 @@ export function productGuidance(value: ProductGuidanceInput | null | undefined):
   if (research) return result("research", "Laboratory research material",
     "This item is designated for legitimate laboratory or analytical research, a separate pathway from clinical products and everyday wellness products.", [RESEARCH_LIMIT]);
   if (input.intentExclusion === "non_merchandise" || input.sourceRefusal === "non_merchandise_family")
-    return result("service", "Service information", "This listing describes a service rather than a product to add to this request.",
-      ["Review the listing’s specific scope and current request options."]);
+    return result("service", "Listing information", "This listing describes a service, shipping or an included item and cannot be added to this request.",
+      [INTERNAL_REVIEW, "Review the listing’s specific scope and current request options."]);
   if (input.family === "supplements") return result("supplement", "Dietary supplement",
     "Review the selected manufacturer’s ingredients, serving information and cautions. Supplements follow their labeled use, not the laboratory research pathway.",
     [INTERNAL_REVIEW + " Supplements are not a substitute for prescribed care and are not intended to diagnose, treat, cure or prevent disease."]);
@@ -96,5 +99,5 @@ export function summarizeSelection(items: readonly SelectionGuidanceInput[]): Se
 }
 export const CATEGORY_NAMES: Readonly<Record<GuidanceCategory, string>> = Object.freeze({
   clinical: "Clinical review", research: "Laboratory research", supplement: "Dietary supplements",
-  nonclinical: "Other nonclinical products", service: "Services", unconfirmed: "Details to confirm",
+  nonclinical: "Other nonclinical products", service: "Services and included items", unconfirmed: "Details to confirm",
 });

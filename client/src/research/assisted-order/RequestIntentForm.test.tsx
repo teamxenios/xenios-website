@@ -681,7 +681,7 @@ describe("an embedded form inside a page with its own h1", () => {
     await render(api, true);
     expect(headings()).toEqual(["H2 Request products for review", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
     await prepare(api, false, true);
-    expect(headings()).toEqual(["H2 Request products for review", "H2 Review your request"]);
+    expect(headings()).toEqual(["H2 Request products for review", "H2 Review your request", "H3 What happens with your selections"]);
     expect(document.activeElement).toBe(host.querySelector("h2"));
     await click("Submit for review");
     expect(headings()).toEqual(["H2 Request saved for review"]);
