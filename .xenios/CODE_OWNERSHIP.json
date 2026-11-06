@@ -3680,6 +3680,17 @@
       "state": "active",
       "claimedAt": "2026-11-06T01:57:02.450Z",
       "heartbeatAt": "2026-11-06T01:57:02.450Z"
+    },
+    {
+      "id": "279d100c-c363-47c7-9577-88ab9d3be6a4",
+      "task": "KAN6-EA-0344-REVIEWED-DESCRIPTION-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T02:22:28.430Z",
+      "heartbeatAt": "2026-11-06T02:22:28.430Z"
     }
   ],
   "rules": [

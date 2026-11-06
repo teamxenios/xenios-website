@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T01:57:02.450Z",
+  "updatedAt": "2026-11-06T02:22:28.430Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4683,6 +4683,22 @@
       "createdAt": "2026-11-06T01:57:02.450Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T01:57:02.450Z"
+    },
+    {
+      "id": "KAN6-EA-0344-REVIEWED-DESCRIPTION-20261106",
+      "title": "Adopt the reviewed GEN-GRP-0344 description",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-6",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "server/research/master-offerings/data/reviewed-public-content.json"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claim only the exact one-path GEN-GRP-0344 reviewed-description packet elected for existing Root at KAN-6/11762 from original candidate KAN-6/11760. Limit future source work to server/research/master-offerings/data/reviewed-public-content.json on intended branch codex/early-access-ss31-copy-20261106 from exact protected live release 07d727a4c9b5516bbd57aef3aa7f89d359849260/tree e93209a057d186c7a9d46483592ac2e576b9df5f. The exact preimage registry blob is 0678dfa8c755f8d1fd63e94f5e1898b88f782836; approved one-path patch SHA-256 989928dc0adabf51d9b65a81a090813298126f03bce9ac916ba77cf3abab48b3 projects tree ba85257d546d0e09828f386ccd38e43b1721073d and registry blob 7c56cc4dc3906a567f26ee41cf08a3c3c1db2e93. Existing KAN6-0337 lease abb1b149-b603-41c9-8f34-8858a75e11f3 remains immutable historical handoff. Fresh exact, prefix and wildcard CODE_OWNERSHIP plus trusted FILE_OWNERSHIP audits found no active or reserved conflict. Preserve all 150 prior tasks, 171 prior leases, 57 sessions, identities, refs, rules, releases, histories and foreign records, including HCG and policy active leases. Source application, tests, independent review, protected integration and release remain separate Root gates. This custody transaction performs no session change, source edit, checkout or branch switch, test, runner, browser, workflow, provider, configuration, deployment or production operation.",
+      "createdAt": "2026-11-06T02:22:28.430Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T02:22:28.430Z"
     }
   ]
 }
