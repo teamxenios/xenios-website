@@ -15,6 +15,8 @@ import { isResearchCartScope } from "../cart-session";
 import { ProductMedia } from "../product-media/ProductMedia";
 import { ReviewedProductContent } from "../master-offerings/ReviewedProductContent";
 import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
+import { EARLY_ACCESS_ENTRY_PATH, normalizeResearchPath } from "@shared/research/paths";
+import { EarlyAccessRequestGuide } from "../early-access/EarlyAccessRequestGuide";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
@@ -367,6 +369,10 @@ function RequestIntentFormSession({
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
 
+  const currentPath = typeof window === "undefined" ? "/" : normalizeResearchPath(window.location.pathname);
+  const showEarlyAccessGuide = embedded && storage !== null && config !== null && !catalogFailed
+    && (currentPath === EARLY_ACCESS_ENTRY_PATH || currentPath === "/research/early-access/order-request");
+
   return <section className={(embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page")
     + (compactGuestCatalog ? " xenios-order-page--guest-catalog" : "")}>
     <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Build your request</Heading>
@@ -390,7 +396,9 @@ function RequestIntentFormSession({
             { item: hintItem, quantity: entryIntent.quantity }))}>Add linked selection for review</button>}
         <p>A link never approves a clinical item or places an order.</p>
       </section>}
-      {compactGuestCatalog && <div ref={catalogStartRef} className="xenios-order-catalog-start" />}
+      {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
+      {(compactGuestCatalog || showEarlyAccessGuide) && <div ref={catalogStartRef} className="xenios-order-catalog-start"
+        id={showEarlyAccessGuide ? "early-access-catalog" : undefined} tabIndex={showEarlyAccessGuide ? -1 : undefined} />}
       <div className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
         <div className="xenios-order-grid">
           <label>Search catalog<input value={search} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>

@@ -618,12 +618,21 @@ describe("the login-free request-only entry", () => {
     expect(sessionReads(fetch)).toHaveLength(3);
     expect(unlockPosts(fetch)).toHaveLength(2);
   });
-  it("bootstraps a fresh signed-out browser and loads the mixed catalog without account credentials", async () => {
-    window.history.replaceState(null, "", "/research/early-access/order-request");
+  it.each([
+    ["/research/early-access/order-request", "Quick Order"],
+    ["/earlyaccess", "Early Access"],
+  ] as const)("bootstraps a fresh signed-out browser at %s and loads the mixed catalog", async (pathname, heading) => {
+    window.history.replaceState(null, "", pathname);
     const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on", session: "fresh-open" });
     await renderStorefront(true);
     await waitForAdd();
-    expect(container.querySelector("h1")?.textContent).toBe("Quick Order");
+    expect(container.querySelector("h1")?.textContent).toBe(heading);
+    const guide = container.querySelector('[data-testid="early-access-how-it-works"]');
+    const target = container.querySelector<HTMLElement>("#early-access-catalog");
+    expect(guide?.querySelectorAll("ol > li")).toHaveLength(5);
+    expect(guide?.querySelector('a[href="#early-access-catalog"]')?.textContent).toBe("Browse products");
+    expect(target?.tabIndex).toBe(-1);
+    expect(target?.nextElementSibling?.querySelector('input')).toBeTruthy();
     // The embedded form sits below the page heading, so the page keeps one h1.
     expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
@@ -634,7 +643,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('a[href*="/member/login"]')).toBeNull();
     const browse = container.querySelector('[data-testid="early-access-how-it-works"] a[href="#early-access-catalog"]');
     expect(browse?.textContent).toBe("Browse products");
-    expect(container.querySelector("#early-access-catalog")?.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
+    expect(container.querySelector("#early-access-catalog")?.querySelector('[data-testid="request-door-mixed"]')).not.toBeNull();
     expect(container.textContent).toContain("Clinical review required. Not a prescription.");
     expect(container.textContent).toContain("does not collect payment");
     const unlocks = fetch.mock.calls.filter(([url, init]) =>
@@ -676,31 +685,6 @@ describe("the login-free request-only entry", () => {
       createdAt: "2026-10-14T12:00:00Z", pageLoad: "earlier-page-load",
     }));
   }
-  it("reopens an earlier receipt with open intake without ever mounting the new-request guide", async () => {
-    seedEarlierReceipt("early-access-session");
-    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
-    const guide = '[data-testid="early-access-how-it-works"]';
-    let showedGuide = false;
-    const observer = new MutationObserver((records) => {
-      for (const { addedNodes } of records) {
-        for (const node of addedNodes) {
-          if (node instanceof Element && (node.matches(guide) || node.querySelector(guide))) showedGuide = true;
-        }
-      }
-    });
-    observer.observe(container, { childList: true, subtree: true });
-    try {
-      await renderStorefront(true);
-      expect(container.textContent).toContain(earlierReference);
-      expect(container.querySelector("h2[tabindex]")?.textContent).toBe("Your submitted request");
-      expect(container.querySelector(guide)).toBeNull();
-      expect(showedGuide).toBe(false);
-      expect(recoveryPosts(fetch)).toHaveLength(0);
-      expect(fetch.mock.calls.some(([, init]) => init?.method === "POST")).toBe(false);
-    } finally {
-      observer.disconnect();
-    }
-  });
   it.each(["off", "unknown"] as const)("reopens the verified member receipt with %s intake and leaves the form closed", async (mixedMode) => {
     seedEarlierReceipt();
     researchStore.publish({ member: receiptMember, memberToken: "synthetic-A", memberChecking: false,
@@ -723,6 +707,50 @@ describe("the login-free request-only entry", () => {
     expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(1);
     expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST"
       || String(url).includes("/request-intents/catalog") || String(url).endsWith("/early-access/agreements"))).toBe(false);
+  });
+
+  it("keeps fresh-request instructions out of an open-intake reopened receipt", async () => {
+    window.history.replaceState(null, "", "/earlyaccess");
+    seedEarlierReceipt();
+    researchStore.publish({ member: receiptMember, memberToken: "synthetic-A", memberChecking: false,
+      memberSessionStatus: "authenticated", recovery: "none" });
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    const guideSelector = '[data-testid="early-access-how-it-works"]';
+    let showedGuide = false;
+    const observer = new MutationObserver((records) => {
+      showedGuide ||= records.some(({ addedNodes }) => Array.from(addedNodes).some((node) =>
+        node instanceof Element && (node.matches(guideSelector) || node.querySelector(guideSelector))));
+    });
+    observer.observe(container, { childList: true, subtree: true });
+    try {
+      await renderStorefront(true);
+    } finally {
+      observer.disconnect();
+    }
+
+    expect(showedGuide).toBe(false);
+    expect(container.textContent).toContain(earlierReference);
+    expect(container.textContent).toContain("This reference was confirmed earlier in this browser tab.");
+    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expect(container.querySelector("#early-access-catalog")).toBeNull();
+    expect(container.querySelector('input[type="password"]')).toBeNull();
+    expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST"
+      || String(url).includes("/request-intents/catalog"))).toBe(false);
+  });
+
+  it("keeps the catalog guide out while an open Early Access session is blocked by account verification", async () => {
+    window.history.replaceState(null, "", "/earlyaccess");
+    researchStore.publish({ member: null, memberToken: null, memberChecking: false,
+      memberSessionStatus: "verification_failed", recovery: "none" });
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    await renderStorefront(true);
+
+    expect(container.textContent).toContain("Complete secure account recovery or contact support");
+    expect(fallbackSupport()?.textContent).toBe("Contact support");
+    expect(container.querySelector('[data-testid="early-access-how-it-works"]')).toBeNull();
+    expect(container.querySelector("#early-access-catalog")).toBeNull();
+    expect(fetch.mock.calls.some(([url, init]) => init?.method === "POST"
+      || String(url).includes("/request-intents/catalog"))).toBe(false);
   });
 
   it.each(["guest", "unknown"] as const)("withholds a closed-intake receipt from a %s session", async (session) => {

@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
-import { EarlyAccessRequestGuide } from "./EarlyAccessRequestGuide";
-import { EARLY_ACCESS_REQUEST_INTRO } from "./request-experience-copy";
 import { EARLY_ACCESS_ENTRY_PATH, isEarlyAccessEntryPath } from "@shared/research/paths";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
 import { useAssistedOrderBridgeState } from "../assisted-order/AssistedOrderCta";
@@ -161,8 +159,8 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   // journey advances, the surrounding storefront must stop presenting the
   // separate Featured shelf and direct-checkout progress as if both flows
   // were active at once.
-  const [reportedOrderStep, setEmbeddedOrderStep] = useState<EmbeddedOrderStep | null>(null);
-  const embeddedOrderStep = reportedOrderStep ?? "products";
+  const [embeddedOrderStep, setEmbeddedOrderStep] =
+    useState<EmbeddedOrderStep>("products");
   // One mode probe is shared by CTA and catalog. Existing bridge readiness
   // still governs its fallback; a failure of the new probe never means off.
   const bridgeState = useAssistedOrderBridgeState();
@@ -198,7 +196,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     setOrderRequest(null);
     setPriceChanged(false);
     setCheckoutPhase("details");
-    setEmbeddedOrderStep(null);
+    setEmbeddedOrderStep("products");
   }, [refreshAgreementStanding]);
 
   const readSession = useCallback(async () => {
@@ -510,12 +508,10 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
         <div className="max-w-[1280px] min-w-0" data-testid="quick-order-request-only">
           <h1 className="display-s max-w-[26ch]">{requestOnlyName}</h1>
           <p className="mt-4 body-m text-ink-2 max-w-[62ch]">
-            {EARLY_ACCESS_REQUEST_INTRO}
+            Choose items and send a request for review. Submission does not collect payment,
+            approve treatment, create a prescription or confirm shipping. Availability and
+            any required clinical review are confirmed separately.
           </p>
-          {state.kind === "authenticated" && requestMode.kind === "mixed" && requestRecoveryDoor === false
-            && !priorRequestBlocked && !retainedRequest && reportedOrderStep === "products" && (
-              <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />
-          )}
           {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
             : state.kind !== "authenticated" ? <div role="status" className="mt-5">
               <p>
@@ -550,7 +546,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                 <EarlyAccessAgreementSection key={agreementRevision}
                   onAccepted={acceptCurrentAgreement} onBlocked={blockCurrentAgreement} />
               </div>}
-              <div id="early-access-catalog" tabIndex={-1} className="mt-5">
+              <div className="mt-5">
                 <Suspense fallback={<p role="status">Loading the request form...</p>}>
                   <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent}
                     continuationEnabled={agreed && blocked === null}
