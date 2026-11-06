@@ -60,6 +60,64 @@ describe("catalog read adapter", () => {
     expect(result.kind).toBe("unavailable");
     expect(toMasterOfferingSurfaceState(result)).toBe("unavailable");
   });
+
+  it("reads the server's not-found answer for a product as not found, not as an outage", async () => {
+    // A stale product link, or a mistyped one whose slug is still well
+    // formed, answers 404 with the catalog's own machine code. Every 404 used
+    // to read as unavailable, so the page showed "The full catalog is not
+    // available yet" and a retry button for a product that is simply not
+    // there.
+    globalThis.fetch = respond(404, {
+      ok: false,
+      code: "master_offerings_not_found",
+    }) as unknown as typeof fetch;
+    const result = await getMasterOfferingDetail("token", "research_vials", "renamed-product");
+    expect(result).toEqual({ kind: "denied", code: "master_offerings_not_found" });
+    expect(toMasterOfferingSurfaceState(result)).toBe("not_found");
+    expect(MASTER_OFFERING_STATE_COPY.not_found.title).toBe("That product is not in the catalog.");
+  });
+
+  it("keeps an HTML, foreign-code or sibling-code 404 on the detail path as unavailable", async () => {
+    // Only the catalog's own not-found code is a missing record. An HTML 404
+    // or a code outside the taxonomy still means the API is not there, and
+    // the page must not tell a member a product does not exist on that
+    // evidence.
+    globalThis.fetch = respond(
+      404,
+      "<!doctype html><html></html>",
+      "text/html",
+    ) as unknown as typeof fetch;
+    expect((await getMasterOfferingDetail("token", "research_vials", "bpc-157")).kind).toBe(
+      "unavailable",
+    );
+    globalThis.fetch = respond(404, {
+      ok: false,
+      code: "some_other_code",
+    }) as unknown as typeof fetch;
+    expect((await getMasterOfferingDetail("token", "research_vials", "bpc-157")).kind).toBe(
+      "unavailable",
+    );
+    // A sibling code from the catalog's own taxonomy is not the not-found
+    // denial either: only master_offerings_not_found is a missing record, so
+    // the opt-in must stay a single code rather than the whole taxonomy.
+    globalThis.fetch = respond(404, {
+      ok: false,
+      code: "master_offerings_invalid_request",
+    }) as unknown as typeof fetch;
+    expect((await getMasterOfferingDetail("token", "research_vials", "bpc-157")).kind).toBe(
+      "unavailable",
+    );
+  });
+
+  it("keeps a list 404 as unavailable, never as not found", async () => {
+    globalThis.fetch = respond(404, {
+      ok: false,
+      code: "master_offerings_not_found",
+    }) as unknown as typeof fetch;
+    const result = await getMasterOfferingCatalog("token");
+    expect(result.kind).toBe("unavailable");
+    expect(toMasterOfferingSurfaceState(result)).toBe("unavailable");
+  });
 });
 
 describe("surface state mapping", () => {
