@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T11:01:44.697Z",
+  "updatedAt": "2026-11-06T11:11:42.457Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4996,6 +4996,25 @@
         "file": ".xenios/handoffs/2026-11-06T11-01-44Z-PR429-EXACT-SOURCE-AND-HOSTED-QUALIFICATION-20261106-codex-launch-coordination-20261005.json",
         "at": "2026-11-06T11:01:44.697Z"
       }
+    },
+    {
+      "id": "KAN13-EA-POLICY-V2-MOUNTED-PROFILE-20261106",
+      "title": "Prepare the Policy V2 mounted QA profile",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "1475d418283e646554872db3992abc8a392af423",
+      "paths": [
+        "scripts/qa/qo-visual-capture/policy-v2-fixture.mjs",
+        "scripts/qa/qo-visual-capture/policy-v2-mixed.mjs"
+      ],
+      "dependsOn": [
+        "KAN13-EA-PROTECTED-QA-ADOPTION-20261106"
+      ],
+      "scopeNote": "Claim only the two new isolated QA paths listed in this task for the policy-first mounted profile bound by KAN-13/11774, KAN-13/11844 and KAN-13/11886. The exact policy candidate is PR418 1475d418283e646554872db3992abc8a392af423/tree 5917bf218fabc308857a20ae9e568841f1e50970 against protected release 07d727a4c9b5516bbd57aef3aa7f89d359849260. The profile may reuse the exact built /earlyaccess frontend, current eight-step policy protocol, actual candidate Express agreement and request handlers, and synthetic memory ports; it is isolated QA only and grants no application or production authority. Existing workflow/capture custody remains uniquely under active lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba, and manifest custody remains uniquely under active lease 68eba6e7-3bf1-4cd7-b021-9ccdc22210b3; do not extend, overlap, reassign or change either lease, task or heartbeat. Fresh case-insensitive exact, ancestor, prefix and wildcard active/reserved CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no conflict on either new path. No protected route, workflow launch or browser run is approved by this dormant preparation claim. Preserve frozen PR418/426/427/428/429 refs, live release, recent HCG closure and every prior task, lease, heartbeat, rule, identity, session, handoff and release record. This custody transaction performs no branch, source, test, browser, runner, workflow, provider, configuration, deployment or production mutation.",
+      "createdAt": "2026-11-06T11:11:42.457Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T11:11:42.457Z"
     }
   ]
 }

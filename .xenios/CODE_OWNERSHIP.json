@@ -3863,6 +3863,18 @@
       "state": "handoff",
       "claimedAt": "2026-11-06T10:49:32.137Z",
       "heartbeatAt": "2026-11-06T10:49:32.137Z"
+    },
+    {
+      "id": "ed77bc1a-a7da-4d58-b304-3ea105fdba2e",
+      "task": "KAN13-EA-POLICY-V2-MOUNTED-PROFILE-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "scripts/qa/qo-visual-capture/policy-v2-fixture.mjs",
+        "scripts/qa/qo-visual-capture/policy-v2-mixed.mjs"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T11:11:42.457Z",
+      "heartbeatAt": "2026-11-06T11:11:42.457Z"
     }
   ],
   "rules": [
