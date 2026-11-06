@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T01:16:45.891Z",
+  "updatedAt": "2026-11-06T01:24:00.392Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4578,6 +4578,68 @@
       "createdAt": "2026-11-06T01:16:45.891Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T01:16:45.891Z"
+    },
+    {
+      "id": "KAN13-EA-POLICY-V2-REVISED-20261106",
+      "title": "Integrate the revised Early Access policy v2 source packet",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+      "paths": [
+        ".env.example",
+        "client/src/research/adapters/earlyAccessAgreement.test.ts",
+        "client/src/research/adapters/earlyAccessAgreement.ts",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/early-access/EarlyAccessAgreementSection.test.tsx",
+        "client/src/research/early-access/EarlyAccessAgreementSection.tsx",
+        "client/src/research/early-access/EarlyAccessCheckoutJourney.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.agreement.test.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/cart/EarlyAccessMultiCartJourney.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessMultiCartJourney.tsx",
+        "client/src/research/early-access/cart/agreementGate.ts",
+        "client/src/research/early-access/cart/journey-agreements-submit.test.tsx",
+        "client/src/research/pages/PoliciesIndex.tsx",
+        "client/src/research/pages/PolicyPage.tsx",
+        "client/src/research/pages/public-access-flow.test.tsx",
+        "client/src/research/pages/public-brand-pages.test.tsx",
+        "client/src/research/seo/route-policy.test.ts",
+        "client/src/research/seo/route-policy.ts",
+        "e2e/browser-perf/README.md",
+        "scripts/evidence/capture-synthetic-journeys.mjs",
+        "scripts/evidence/routes-public.test.mjs",
+        "scripts/evidence/routes.public.json",
+        "scripts/preview-research.mjs",
+        "scripts/preview-step1-hotfix.ts",
+        "server/research/assisted-order/http.ts",
+        "server/research/assisted-order/production-boot.test.ts",
+        "server/research/assisted-order/production-env-shape.fixture.json",
+        "server/research/early-access/catalog/early-access-product-descriptor.ts",
+        "server/research/early-access/orders/member-order-history-wiring.test.ts",
+        "server/research/early-access/persistence/hold-rpc-compatibility.test.ts",
+        "server/research/early-access/persistence/production-deps.test.ts",
+        "server/research/early-access/persistence/production-deps.ts",
+        "server/research/early-access/persistence/production-projection-stores.test.ts",
+        "server/research/early-access/release/release-routes.test.ts",
+        "server/research/early-access/routes/agreement-routes.test.ts",
+        "server/research/early-access/routes/agreement-routes.ts",
+        "server/research/early-access/routes/session-code-checkout.test.ts",
+        "server/research/frontdoor.test.ts",
+        "server/research/policies-data.test.ts",
+        "server/research/policies-data.ts",
+        "server/research/seo/raw-http-document-policy.ts",
+        "shared/research/paths.test.ts",
+        "shared/research/paths.ts"
+      ],
+      "dependsOn": [
+        "KAN225-EARLY-ACCESS-MOBILE-GUEST-20261104"
+      ],
+      "scopeNote": "Claim the revised policy-v2 source packet elected by existing Root at KAN-13/11683, with exact rules and coverage at KAN-13/11738 and complete nonretired historical-rule/trusted-base boundary at KAN-13/11742. Limit future source work to the 45 ordered paths recorded in this task on intended branch codex/early-access-policy-v2-revised-20261106 from exact live protected release 0f4527df58c5f4bfecf319498246f4b1d85e67da/tree e1658fd0778fa2e0a6d8e52604a19ae9585c5309. The exact 46-path preparation receipt is C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/policy-v2-revised-preflight-20261106/POLICY_V2_REVISED_46_SOURCE_PREPARATION.json, 7309 bytes, SHA-256 5399fb235d578a0218cdaad46d00d994bb2738274455018110890f516c2bd528; source patch SHA-256 is 9be8de73ec70b937597ec618094efb26fd67edc203bce4c222ca9d2dd6511332 and prospective tree is bc55e6457d0fddefc6e19615a602661b509c7d69. Exclude only client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx from this new lease because existing active exact Root lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba already covers it; retain that dependency and lease byte-for-byte. The four exact policy rules and the EarlyAccessRoute active rule remain Root-owned. Preserve the deployed Website 2 rule OWNER-W2-PR86-SHARED-HOTFIX and all of its patterns and state exactly, including its exact matches for server/research/frontdoor.test.ts, shared/research/paths.ts and shared/research/paths.test.ts. Fresh active/reserved exact, prefix and glob CODE_OWNERSHIP and canonical FILE_OWNERSHIP audits across all 46 paths found no foreign live writer or overlay, retirement or transfer. Historical scripts/acceptance/smoke-kris-launch-a.mjs is unchanged and outside all claim paths. Current exact CODE claim and subsequent full schema-v2 independent trusted-base integration review remain separate. Preserve all existing tasks, leases, sessions, FILE rules, handoffs, HCG, PR413, copy and release records. This custody transaction performs no application edit, checkout or branch switch, test, runner, browser, workflow, provider, configuration, deployment, production or new session.",
+      "createdAt": "2026-11-06T01:24:00.392Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T01:24:00.392Z"
     }
   ]
 }
