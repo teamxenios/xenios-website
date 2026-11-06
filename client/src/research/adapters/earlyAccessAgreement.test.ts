@@ -5,7 +5,8 @@ import {
   EARLY_ACCESS_AGREEMENT_ACCEPT_PATH,
   EARLY_ACCESS_AGREEMENT_STATUS_PATH,
   loadEarlyAccessAgreementState,
-  loadResearchUsePolicy,
+  EARLY_ACCESS_POLICY_SLUG,
+  loadEarlyAccessPolicy,
   RESEARCH_POLICIES_PATH,
 } from "./earlyAccessAgreement";
 import type { ApiResult } from "../lib/api";
@@ -18,17 +19,39 @@ import type { ApiResult } from "../lib/api";
  * exact pair returned by the server and carries the server's answers back.
  */
 
-const AGREEMENT = Object.freeze({ kind: "early_access_terms", version: "v1" });
+const AGREEMENT = Object.freeze({ kind: "early_access_terms", version: "v2" });
+const HISTORICAL_AGREEMENT = Object.freeze({ kind: "early_access_terms", version: "v1" });
 const FUTURE_AGREEMENT = Object.freeze({
   kind: "research_pilot_terms",
   version: "2026.09",
 });
 
 const POLICIES = {
+  "early-access-product-policy": {
+    title: "Early Access Product Policy",
+    updated: "November 2026",
+    agreement: AGREEMENT,
+    sections: [
+      {
+        heading: "About Early Access",
+        paragraphs: [
+          "Early Access brings the products and services listed by Xenios into one place to review and request.",
+        ],
+      },
+      {
+        heading: "Research-only products",
+        paragraphs: [
+          "Products identified as research-only are offered solely for legitimate nonclinical research, laboratory, analytical or product-development purposes. They are not offered for human or veterinary use.",
+        ],
+      },
+    ],
+  },
+  // The historical document is still served beside it, for the acceptances
+  // already on file. The agreement screen must never render it.
   "research-use": {
     title: "Research Use Policy",
     updated: "July 2026",
-    agreement: AGREEMENT,
+    agreement: HISTORICAL_AGREEMENT,
     sections: [
       {
         heading: "Purpose",
@@ -52,37 +75,35 @@ function ok<T>(data: T): ApiResult<T> {
 }
 
 describe("reading the policy", () => {
-  it("asks the public policies endpoint and returns the research-use document", async () => {
+  it("asks the public policies endpoint and returns the Early Access Product Policy", async () => {
     const paths: string[] = [];
-    const result = await loadResearchUsePolicy(async (path) => {
+    const result = await loadEarlyAccessPolicy(async (path) => {
       paths.push(path);
       return ok({ policies: POLICIES }) as never;
     });
 
+    expect(EARLY_ACCESS_POLICY_SLUG).toBe("early-access-product-policy");
     expect(paths).toEqual([RESEARCH_POLICIES_PATH]);
     expect(result.kind).toBe("ok");
     if (result.kind !== "ok") return;
-    expect(result.policy.title).toBe("Research Use Policy");
-    expect(result.policy.updated).toBe("July 2026");
+    expect(result.policy.title).toBe("Early Access Product Policy");
+    expect(result.policy.updated).toBe("November 2026");
     expect(result.policy.agreement).toEqual(AGREEMENT);
     expect(result.policy.sections).toHaveLength(2);
-    expect(result.policy.sections[0].paragraphs[0]).toContain(
+    expect(result.policy.sections[1].paragraphs[0]).toContain(
       "They are not offered for human or veterinary use.",
     );
-    expect(result.policy.sections[1].bullets).toEqual([
-      "No personal use",
-      "No client or patient use",
-    ]);
+    expect(result.policy.sections[1].bullets).toEqual([]);
   });
 
   it("carries the served words across unchanged, and adds none of its own", async () => {
     // The adapter must never author policy text. Everything rendered has to be
     // traceable to the response, or a customer could agree to wording this
     // repository invented.
-    const result = await loadResearchUsePolicy(async () => ok({ policies: POLICIES }) as never);
+    const result = await loadEarlyAccessPolicy(async () => ok({ policies: POLICIES }) as never);
     if (result.kind !== "ok") throw new Error("expected ok");
 
-    const served = POLICIES["research-use"];
+    const served = POLICIES["early-access-product-policy"];
     expect(result.policy.sections.map((section) => section.heading)).toEqual(
       served.sections.map((section) => section.heading),
     );
@@ -93,38 +114,47 @@ describe("reading the policy", () => {
 
   it("is unreadable rather than blank when the document has no content", async () => {
     for (const policies of [
-      { "research-use": { title: "Research Use Policy", agreement: AGREEMENT, sections: [] } },
-      { "research-use": { title: "", agreement: AGREEMENT, sections: [{ heading: "x", paragraphs: ["y"] }] } },
+      { "early-access-product-policy": { title: "Early Access Product Policy", agreement: AGREEMENT, sections: [] } },
+      { "early-access-product-policy": { title: "", agreement: AGREEMENT, sections: [{ heading: "x", paragraphs: ["y"] }] } },
     ]) {
-      const result = await loadResearchUsePolicy(async () => ok({ policies }) as never);
+      const result = await loadEarlyAccessPolicy(async () => ok({ policies }) as never);
       expect(result.kind).toBe("unreadable");
     }
   });
 
-  it("reports a missing research-use policy as missing, not as an empty one", async () => {
-    const result = await loadResearchUsePolicy(async () => ok({ policies: { terms: POLICIES.terms } }) as never);
+  it("reports a missing Early Access Product Policy as missing, not as an empty one", async () => {
+    const result = await loadEarlyAccessPolicy(async () => ok({ policies: { terms: POLICIES.terms } }) as never);
+    expect(result.kind).toBe("missing");
+  });
+
+  it("never falls back to the historical Research Use Policy when the current one is absent", async () => {
+    // A server still on v1 serves only research-use. Rendering it would collect
+    // a v2 acceptance against v1 words, so the screen reads it as missing.
+    const result = await loadEarlyAccessPolicy(async () =>
+      ok({ policies: { "research-use": POLICIES["research-use"], terms: POLICIES.terms } }) as never,
+    );
     expect(result.kind).toBe("missing");
   });
 
   it("fails closed when the served policy has no exact agreement identity", async () => {
     const validDocument = {
-      title: "Research Use Policy",
-      updated: "July 2026",
-      sections: [{ heading: "Purpose", paragraphs: ["Research use only."] }],
+      title: "Early Access Product Policy",
+      updated: "November 2026",
+      sections: [{ heading: "About Early Access", paragraphs: ["Review the exact product."] }],
     };
     for (const agreement of [
       undefined,
       null,
       {},
       { kind: "early_access_terms" },
-      { kind: " early_access_terms", version: "v1" },
+      { kind: " early_access_terms", version: "v2" },
       { ...AGREEMENT, extra: true },
     ]) {
       const policy = agreement === undefined
         ? validDocument
         : { ...validDocument, agreement };
-      const result = await loadResearchUsePolicy(async () =>
-        ok({ policies: { "research-use": policy } }) as never,
+      const result = await loadEarlyAccessPolicy(async () =>
+        ok({ policies: { "early-access-product-policy": policy } }) as never,
       );
       expect(result.kind).toBe("unreadable");
     }
@@ -248,7 +278,7 @@ describe("recording the acceptance", () => {
   it("fails closed when a success response does not confirm the posted pair", async () => {
     for (const response of [
       { ok: true, alreadyAccepted: false },
-      { ok: true, kind: AGREEMENT.kind, version: "v2", alreadyAccepted: false },
+      { ok: true, kind: AGREEMENT.kind, version: "v1", alreadyAccepted: false },
     ]) {
       const result = await acceptEarlyAccessAgreement(AGREEMENT, async () =>
         ok(response) as never,

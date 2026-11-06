@@ -347,4 +347,92 @@ describe("Research public application flow", () => {
     expect(view.querySelector('[data-testid="policy-operational-draft"]')).toBeNull();
     expect(view.textContent).not.toMatch(/approved policy|publication approved/i);
   });
+
+  it("serves the Early Access Product Policy at its own address without inventing publication approval", async () => {
+    window.history.replaceState({}, "", "/research/policies/early-access-product-policy");
+    vi.mocked(fetchPolicies).mockResolvedValue({
+      "early-access-product-policy": {
+        title: "Early Access Product Policy",
+        updated: "November 2026",
+        sections: [{
+          heading: "About Early Access",
+          paragraphs: ["Served Early Access conditions."],
+        }],
+      },
+    });
+    const view = await render(
+      <Route path="/research/policies/:policy">
+        <PolicyPage />
+      </Route>,
+    );
+
+    expect(view.textContent).toContain("Early Access Product Policy");
+    expect(view.textContent).toContain("Served Early Access conditions.");
+    expect(view.querySelector('[data-testid="policy-served-document"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="policy-operational-draft"]')).toBeNull();
+    expect(view.textContent).not.toMatch(/approved policy|publication approved/i);
+  });
+
+  it("links the documents the Early Access Product Policy names, outside its accepted text", async () => {
+    window.history.replaceState({}, "", "/research/policies/early-access-product-policy");
+    vi.mocked(fetchPolicies).mockResolvedValue({
+      "early-access-product-policy": {
+        title: "Early Access Product Policy",
+        updated: "November 2026",
+        sections: [{
+          heading: "Shipping, returns and replacements",
+          paragraphs: ["Consult the Shipping Policy and the Returns and Replacements policy."],
+        }],
+      },
+    });
+    const view = await render(
+      <Route path="/research/policies/:policy">
+        <PolicyPage />
+      </Route>,
+    );
+
+    const related = view.querySelector<HTMLElement>('[data-testid="policy-related-documents"]');
+    expect(related).not.toBeNull();
+    expect(related!.tagName).toBe("NAV");
+    const labelId = related!.getAttribute("aria-labelledby");
+    expect(labelId).toBeTruthy();
+    expect(view.querySelector(`#${labelId}`)?.textContent).toBe("Related documents");
+    expect(
+      Array.from(related!.querySelectorAll<HTMLAnchorElement>("a")).map((anchor) => [
+        anchor.textContent,
+        anchor.getAttribute("href"),
+      ]),
+    ).toEqual([
+      ["Shipping Policy", "/research/policies/shipping"],
+      ["Returns and Replacements", "/research/policies/returns"],
+      ["Privacy Policy", "/research/privacy"],
+      ["Contact support", "/research/support"],
+    ]);
+    // The accepted body is pinned by digest, so the links sit outside it.
+    const body = view.querySelector('[data-testid="policy-served-document"]');
+    expect(body).not.toBeNull();
+    expect(body!.contains(related)).toBe(false);
+    expect(body!.querySelectorAll("a")).toHaveLength(0);
+    assertSinglePageHeading(view);
+    assertKeyboardReachableActions(view);
+  });
+
+  it("adds no related-document links to policies that name no other document", async () => {
+    window.history.replaceState({}, "", "/research/policies/research-use");
+    vi.mocked(fetchPolicies).mockResolvedValue({
+      "research-use": {
+        title: "Research Use Policy",
+        updated: "July 2026",
+        sections: [{ heading: "Purpose", paragraphs: ["Served Research-use boundaries."] }],
+      },
+    });
+    const view = await render(
+      <Route path="/research/policies/:policy">
+        <PolicyPage />
+      </Route>,
+    );
+
+    expect(view.querySelector('[data-testid="policy-served-document"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="policy-related-documents"]')).toBeNull();
+  });
 });

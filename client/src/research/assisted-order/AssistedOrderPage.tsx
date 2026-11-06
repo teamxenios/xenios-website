@@ -1076,7 +1076,7 @@ export function AssistedOrderPage({
         }
         setError(
           code === "agreement_required"
-            ? "Review and accept the current Research Use Policy before submitting."
+            ? "Review and accept the current Early Access Product Policy before submitting."
             : code === "forbidden"
               ? attemptState === "uncertain"
                 ? FORBIDDEN_AFTER_UNCERTAIN_MESSAGE

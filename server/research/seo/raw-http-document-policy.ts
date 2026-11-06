@@ -116,6 +116,7 @@ export const RAW_HTTP_ICP_PATHS = Object.freeze([
 
 /** Exact document identities behind the registered /research/policies/:policy route. */
 export const RAW_HTTP_PUBLIC_POLICY_PATHS = Object.freeze([
+  "/research/policies/early-access-product-policy",
   "/research/policies/research-use",
   "/research/policies/shipping",
   "/research/policies/returns",
@@ -308,6 +309,10 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
     "/research/terms": metadata(
       "Terms of Service, xenios research",
       "The terms of service for the xenios research section.",
+    ),
+    "/research/policies/early-access-product-policy": metadata(
+      "Early Access Product Policy, xenios research",
+      "Early Access Product Policy for the xenios research section.",
     ),
     "/research/policies/research-use": metadata(
       "Research Use Policy, xenios research",

@@ -31,6 +31,7 @@ export const PUBLIC_RESEARCH_EXACT_PATHS = [
 
 const PUBLIC_EXACT = new Set<string>(PUBLIC_RESEARCH_EXACT_PATHS);
 const PUBLIC_POLICY_PATHS = new Set<string>([
+  "/research/policies/early-access-product-policy",
   "/research/policies/research-use",
   "/research/policies/shipping",
   "/research/policies/returns",

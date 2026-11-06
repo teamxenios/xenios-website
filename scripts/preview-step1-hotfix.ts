@@ -58,7 +58,7 @@ export const STEP1_PREVIEW_REQUIRED_AGREEMENT = Object.freeze({
   // preview on that exact pair proves the same acceptance can unlock the
   // outer catalog and the assisted-order submission standing.
   kind: "early_access_terms",
-  version: "v1",
+  version: "v2",
 });
 
 const QA_CATALOG_VERSION = "step1-browser-qa-v1";

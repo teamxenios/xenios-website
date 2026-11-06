@@ -30,7 +30,7 @@
  */
 
 import type { EarlyAccessAgreementGate, EarlyAccessIdentityDirectory } from "./ports";
-import { publishedResearchUsePolicyAgreement } from "../../policies-data";
+import { publishedEarlyAccessAgreement } from "../../policies-data";
 
 /** One (kind, version) pair, exactly as the deployment configured it. */
 export type EarlyAccessRequiredAgreementPair = Readonly<{
@@ -167,7 +167,9 @@ export function createEarlyAccessAgreementAcceptRoute(
     // Exact match against the configured set, before identity is even
     // resolved. An arbitrary pair is refused rather than recorded, so the
     // append-only table can only ever hold pairs this deployment asked for.
-    const published = publishedResearchUsePolicyAgreement();
+    // The pair must also be the one the current policy document publishes, so
+    // a stale tab posting the historical v1 pair records nothing.
+    const published = publishedEarlyAccessAgreement();
     const matches =
       published !== null &&
       published.kind === kind &&

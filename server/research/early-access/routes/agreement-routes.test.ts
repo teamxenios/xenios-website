@@ -9,10 +9,13 @@ import {
 } from "./agreement-routes";
 import { NoEarlyAccessAgreements, type EarlyAccessAgreementGate } from "./ports";
 import {
+  EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT,
+  EARLY_ACCESS_PRODUCT_POLICY_CONTENT_SHA256,
+  EARLY_ACCESS_PRODUCT_POLICY_SLUG,
   RESEARCH_USE_POLICY_AGREEMENT,
   RESEARCH_USE_POLICY_CONTENT_SHA256,
   policies,
-  publishedResearchUsePolicyAgreement,
+  publishedEarlyAccessAgreement,
   researchPolicyContentSha256,
 } from "../../policies-data";
 
@@ -25,7 +28,8 @@ import {
  * against configuration or ignored.
  */
 
-const REQUIRED = [RESEARCH_USE_POLICY_AGREEMENT] as const;
+const REQUIRED = [EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT] as const;
+const CURRENT = EARLY_ACCESS_PRODUCT_POLICY_SLUG;
 const CUSTOMER_REF = "eac_00000000000000000000000000000001";
 const NOW = () => Date.parse("2026-08-05T20:00:00.000Z");
 
@@ -102,41 +106,54 @@ function route(overrides: Partial<Parameters<typeof createEarlyAccessAgreementAc
 
 describe("what it will record", () => {
   it("binds the production pair to the agreement metadata on the published policy", () => {
+    expect(policies[CURRENT]?.title).toBe("Early Access Product Policy");
+    expect(policies[CURRENT]?.agreement).toEqual({
+      kind: "early_access_terms",
+      version: "v2",
+    });
+    expect(publishedEarlyAccessAgreement()).toEqual(REQUIRED[0]);
+    expect(Object.isFrozen(EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT)).toBe(true);
+    expect(researchPolicyContentSha256(policies[CURRENT]!)).toBe(
+      EARLY_ACCESS_PRODUCT_POLICY_CONTENT_SHA256,
+    );
+  });
+
+  it("keeps the historical v1 document unchanged, and never as the pair it records", () => {
     expect(policies["research-use"]?.agreement).toEqual({
       kind: "early_access_terms",
       version: "v1",
     });
-    expect(publishedResearchUsePolicyAgreement()).toEqual(REQUIRED[0]);
     expect(Object.isFrozen(RESEARCH_USE_POLICY_AGREEMENT)).toBe(true);
     expect(researchPolicyContentSha256(policies["research-use"]!)).toBe(
       RESEARCH_USE_POLICY_CONTENT_SHA256,
     );
+    expect(publishedEarlyAccessAgreement()).not.toEqual(RESEARCH_USE_POLICY_AGREEMENT);
   });
 
   it("fails closed when policy text changes without a new agreement version", () => {
-    const original = policies["research-use"]!;
-    policies["research-use"] = { ...original, updated: "August 2026" };
+    const original = policies[CURRENT]!;
+    policies[CURRENT] = { ...original, updated: "December 2026" };
     try {
-      expect(researchPolicyContentSha256(policies["research-use"]!)).not.toBe(
-        RESEARCH_USE_POLICY_CONTENT_SHA256,
+      expect(researchPolicyContentSha256(policies[CURRENT]!)).not.toBe(
+        EARLY_ACCESS_PRODUCT_POLICY_CONTENT_SHA256,
       );
-      expect(publishedResearchUsePolicyAgreement()).toBeNull();
+      expect(publishedEarlyAccessAgreement()).toBeNull();
     } finally {
-      policies["research-use"] = original;
+      policies[CURRENT] = original;
     }
-    expect(publishedResearchUsePolicyAgreement()).toEqual(REQUIRED[0]);
+    expect(publishedEarlyAccessAgreement()).toEqual(REQUIRED[0]);
   });
 
   it("returns unavailable instead of throwing for malformed published policy content", () => {
-    const original = policies["research-use"]!;
-    policies["research-use"] = { ...original, sections: null } as never;
+    const original = policies[CURRENT]!;
+    policies[CURRENT] = { ...original, sections: null } as never;
     try {
-      expect(researchPolicyContentSha256(policies["research-use"])).toBeNull();
-      expect(publishedResearchUsePolicyAgreement()).toBeNull();
+      expect(researchPolicyContentSha256(policies[CURRENT])).toBeNull();
+      expect(publishedEarlyAccessAgreement()).toBeNull();
     } finally {
-      policies["research-use"] = original;
+      policies[CURRENT] = original;
     }
-    expect(publishedResearchUsePolicyAgreement()).toEqual(REQUIRED[0]);
+    expect(publishedEarlyAccessAgreement()).toEqual(REQUIRED[0]);
   });
 
   it("records the configured pair for the session's customer", async () => {
@@ -145,7 +162,7 @@ describe("what it will record", () => {
     const { port, seen } = response();
 
     await accept(
-      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v1" } },
+      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v2" } },
       port,
     );
 
@@ -153,14 +170,14 @@ describe("what it will record", () => {
     expect(seen.body).toEqual({
       ok: true,
       kind: "early_access_terms",
-      version: "v1",
+      version: "v2",
       acceptedAt: "2026-08-05T20:00:00.000Z",
       alreadyAccepted: false,
     });
     expect(store.rows).toHaveLength(1);
     expect(store.rows[0].customerRef).toBe(CUSTOMER_REF);
     expect(store.rows[0].kind).toBe("early_access_terms");
-    expect(store.rows[0].version).toBe("v1");
+    expect(store.rows[0].version).toBe("v2");
     expect(store.rows[0].acceptedAt).toBe("2026-08-05T20:00:00.000Z");
   });
 
@@ -176,7 +193,7 @@ describe("what it will record", () => {
         requestId: "req-abc",
         body: {
           kind: "early_access_terms",
-          version: "v1",
+          version: "v2",
           // Every one of these is a caller trying to write the record itself.
           customerRef: "eac_ffffffffffffffffffffffffffffffff",
           acceptedAt: "1999-01-01T00:00:00.000Z",
@@ -201,7 +218,7 @@ describe("what it will record", () => {
     const accept = route({ recorder: store });
     const first = response();
     const second = response();
-    const body = { kind: "early_access_terms", version: "v1" };
+    const body = { kind: "early_access_terms", version: "v2" };
 
     await accept({ cookieHeader: "ea=x", body }, first.port);
     await accept({ cookieHeader: "ea=x", body }, second.port);
@@ -218,7 +235,7 @@ describe("what it will record", () => {
     // this: the uniqueness is the table's.
     expect(store.rows).toHaveLength(1);
     expect(store.rows[0].kind).toBe("early_access_terms");
-    expect(store.rows[0].version).toBe("v1");
+    expect(store.rows[0].version).toBe("v2");
   });
 });
 
@@ -228,7 +245,7 @@ describe("what it will refuse", () => {
     const accept = route({ recorder: store });
 
     for (const body of [
-      { kind: "early_access_terms", version: "v2" },
+      { kind: "early_access_terms", version: "v1" },
       { kind: "early_access_privacy", version: "v1" },
       { kind: "anything", version: "at_all" },
     ]) {
@@ -240,13 +257,47 @@ describe("what it will refuse", () => {
     expect(store.rows).toHaveLength(0);
   });
 
+  it("never records a stale v1 acceptance, even while the deployment still lists v1", async () => {
+    // A tab opened before the cutover still holds the v1 document and posts v1.
+    // The append-only table must not gain a v1 row after v2 is published, so
+    // the request is refused before identity is even resolved.
+    for (const required of [
+      [RESEARCH_USE_POLICY_AGREEMENT],
+      [RESEARCH_USE_POLICY_AGREEMENT, EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT],
+    ]) {
+      const store = recorder();
+      let identityReads = 0;
+      const accept = route({
+        recorder: store,
+        required,
+        identity: {
+          async resolve() {
+            identityReads += 1;
+            return { customerRef: CUSTOMER_REF } as never;
+          },
+        } as never,
+      });
+      const { port, seen } = response();
+
+      await accept(
+        { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v1" } },
+        port,
+      );
+
+      expect(seen.code).toBe(400);
+      expect(seen.body).toEqual({ ok: false, code: "AGREEMENT_NOT_REQUIRED" });
+      expect(identityReads).toBe(0);
+      expect(store.rows).toHaveLength(0);
+    }
+  });
+
   it("refuses when the deployment requires nothing", async () => {
     const store = recorder();
     const accept = route({ recorder: store, required: [] });
     const { port, seen } = response();
 
     await accept(
-      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v1" } },
+      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v2" } },
       port,
     );
 
@@ -256,7 +307,7 @@ describe("what it will refuse", () => {
 
   it("refuses configured pairs that are not the exact published policy pair", async () => {
     for (const configured of [
-      { kind: "early_access_terms", version: "v2" },
+      { kind: "early_access_terms", version: "v1" },
       { kind: "research_pilot_terms", version: "2026.09" },
     ]) {
       const store = recorder();
@@ -288,7 +339,7 @@ describe("what it will refuse", () => {
     const { port, seen } = response();
 
     await accept(
-      { cookieHeader: undefined, body: { kind: "early_access_terms", version: "v1" } },
+      { cookieHeader: undefined, body: { kind: "early_access_terms", version: "v2" } },
       port,
     );
 
@@ -299,7 +350,7 @@ describe("what it will refuse", () => {
 
   it("refuses a malformed body", async () => {
     const accept = route();
-    for (const body of [null, undefined, "yes", 7, {}, { kind: "early_access_terms" }, { kind: "", version: "v1" }]) {
+    for (const body of [null, undefined, "yes", 7, {}, { kind: "early_access_terms" }, { kind: "", version: "v2" }]) {
       const { port, seen } = response();
       await accept({ cookieHeader: "ea=x", body }, port);
       expect(seen.code).toBe(400);
@@ -312,7 +363,7 @@ describe("what it will refuse", () => {
     const { port, seen } = response();
 
     await accept(
-      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v1" } },
+      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v2" } },
       port,
     );
 
@@ -325,7 +376,7 @@ describe("what it will refuse", () => {
     const { port, seen } = response();
 
     await accept(
-      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v1" } },
+      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v2" } },
       port,
     );
 
@@ -348,7 +399,7 @@ describe("one customer cannot sign for another", () => {
         cookieHeader: "ea=a",
         body: {
           kind: "early_access_terms",
-          version: "v1",
+          version: "v2",
           customerRef: "eac_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         },
       },
@@ -394,7 +445,7 @@ describe("reading this session's own agreement standing", () => {
     expect(seen.code).toBe(200);
     expect(seen.body).toEqual({
       ok: true,
-      required: [{ kind: "early_access_terms", version: "v1" }],
+      required: [{ kind: "early_access_terms", version: "v2" }],
       accepted: false,
     });
   });
@@ -486,7 +537,7 @@ describe("separation from the order path", () => {
     const { port } = response();
 
     await accept(
-      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v1" } },
+      { cookieHeader: "ea=x", body: { kind: "early_access_terms", version: "v2" } },
       port,
     );
 

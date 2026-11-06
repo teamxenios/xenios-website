@@ -2177,6 +2177,26 @@
       }
     },
     {
+      "path": "/research/policies/early-access-product-policy",
+      "surface": "public-research-homepage",
+      "state": "default",
+      "indexable": false,
+      "public": true,
+      "label": "policy-early-access-product-policy",
+      "metadataContract": {
+        "title": "Early Access Product Policy, xenios research",
+        "description": "Early Access Product Policy for the xenios research section."
+      },
+      "semanticContract": {
+        "requiredSelectors": [
+          "[data-testid=\"policy-served-document\"]"
+        ],
+        "requiredText": [
+          "Early Access Product Policy"
+        ]
+      }
+    },
+    {
       "path": "/research/policies/research-use",
       "surface": "public-research-homepage",
       "state": "default",

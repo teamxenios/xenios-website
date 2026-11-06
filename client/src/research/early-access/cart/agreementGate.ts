@@ -16,7 +16,7 @@
  *
  * WHAT THIS IS A SEAM FOR
  *
- * Today the server publishes ONE acceptance: the Research Use Policy. The legal
+ * Today the server publishes ONE acceptance: the Early Access Product Policy. The legal
  * lane is replacing that with a versioned package of several documents whose
  * completion is recomputed server-side from immutable signature records. That
  * change lands as a richer `EarlyAccessAgreementStanding`, and nothing in the

@@ -51,14 +51,13 @@ let container: HTMLDivElement;
 let root: Root;
 
 const POLICIES = {
-  "research-use": {
-    slug: "research-use",
-    title: "Research Use Policy",
-    updated: "July 2026",
-    agreement: { kind: "early_access_terms", version: "v1" },
+  "early-access-product-policy": {
+    title: "Early Access Product Policy",
+    updated: "November 2026",
+    agreement: { kind: "early_access_terms", version: "v2" },
     sections: [{
-      heading: "Purpose",
-      paragraphs: ["Research materials are supplied for laboratory research only."],
+      heading: "Research-only products",
+      paragraphs: ["Products identified as research-only are supplied for laboratory research only."],
       bullets: [],
     }],
   },
@@ -262,7 +261,7 @@ function stubFetch(options: {
       }
       return jsonResponse({
         ok: true,
-        required: [{ kind: "early_access_terms", version: "v1" }],
+        required: [{ kind: "early_access_terms", version: "v2" }],
         accepted: options.agreement !== "required",
       });
     }
@@ -272,7 +271,7 @@ function stubFetch(options: {
     if (path.endsWith("/request-intents/config")) {
       if (options.mixedMode === "unknown") return jsonResponse({ enabled: false, error: "request_intent_unavailable" }, 503);
       if (options.mixedMode !== "on") return jsonResponse({ enabled: false, error: "request_intent_disabled" }, 503);
-      return jsonResponse({ enabled: true, requiredAgreements: [{ kind: "early_access_terms", version: "v1" }],
+      return jsonResponse({ enabled: true, requiredAgreements: [{ kind: "early_access_terms", version: "v2" }],
         formAcknowledgments: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((ack) => ({
           id: ack.id, scope: ack.scope, ...assistedOrderFormPair(ack), copy: ack.copy,
         })) });
@@ -816,7 +815,7 @@ describe("the login-free request-only entry", () => {
     const posts = fetch.mock.calls.filter(([, init]) => init?.method === "POST");
     const acceptances = posts.filter(([url]) => String(url).endsWith("/early-access/agreements/accept"));
     expect(acceptances).toHaveLength(1);
-    expect(JSON.parse(String(acceptances[0][1]?.body))).toMatchObject({ kind: "early_access_terms", version: "v1" });
+    expect(JSON.parse(String(acceptances[0][1]?.body))).toMatchObject({ kind: "early_access_terms", version: "v2" });
     expect(posts).toHaveLength(2); // One recovery and one explicit legal acceptance.
     expect(recoveryPosts(fetch)).toHaveLength(1);
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -884,7 +883,7 @@ describe("the login-free request-only entry", () => {
       const posts = fetch.mock.calls.filter(([, init]) => init?.method === "POST");
       const acceptances = posts.filter(([url]) => String(url).endsWith("/early-access/agreements/accept"));
       expect(acceptances).toHaveLength(1);
-      expect(JSON.parse(String(acceptances[0][1]?.body))).toMatchObject({ kind: "early_access_terms", version: "v1" });
+      expect(JSON.parse(String(acceptances[0][1]?.body))).toMatchObject({ kind: "early_access_terms", version: "v2" });
       expect(posts).toHaveLength(2);
       expect(recoveryPosts(fetch)).toHaveLength(1);
       expect(continueButton().matches(":disabled")).toBe(false);
