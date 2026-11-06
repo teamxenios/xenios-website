@@ -3755,6 +3755,19 @@
       "state": "active",
       "claimedAt": "2026-11-06T04:32:42.465Z",
       "heartbeatAt": "2026-11-06T04:32:42.465Z"
+    },
+    {
+      "id": "b90bf50c-65bb-4591-a238-949e1542a734",
+      "task": "KAN1-EA-REQUEST-PATH-READINESS-RECOVERY-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/order-request-mode.ts",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T04:44:36.757Z",
+      "heartbeatAt": "2026-11-06T04:44:36.757Z"
     }
   ],
   "rules": [

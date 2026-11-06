@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T04:32:42.465Z",
+  "updatedAt": "2026-11-06T04:44:36.757Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4799,6 +4799,27 @@
       "createdAt": "2026-11-06T04:32:42.465Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T04:32:42.465Z"
+    },
+    {
+      "id": "KAN1-EA-REQUEST-PATH-READINESS-RECOVERY-20261106",
+      "title": "Recover Early Access request path readiness",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-1",
+      "baseSha": "a8b9c06ee3b7aa744044f592341c25fd234ec691",
+      "paths": [
+        "client/src/research/assisted-order/order-request-mode.ts",
+        "client/src/research/assisted-order/OrderRequestEntry.tsx",
+        "client/src/research/assisted-order/OrderRequestEntry.test.tsx"
+      ],
+      "dependsOn": [
+        "KAN1-EA-INITIAL-REQUEST-OPTIONS-RECOVERY-20261106",
+        "KAN13-EA-POLICY-V2-REVISED-20261106"
+      ],
+      "scopeNote": "Claim only the three paths listed in this task for actual Root authority KAN-13/11820 and independently accepted implementation KAN-13/11818. Use an ordinary stacked QA branch from frozen PR422 commit a8b9c06ee3b7aa744044f592341c25fd234ec691/tree 9900e2da637300ffc6df93778f13fa6d12460b3a; exact projected tree is 1e7e082c3f7eb0676f1990f542ae6b162a3230f5. Preserve the helper and all original PR422 blobs exactly: order-request-mode.ts 3f4f885966c412fd7a37ea07cd0d3728a2a85ed2, OrderRequestEntry.tsx 5a58cf5f29eaea9ec0abcd72cc8d23c40db8cb57, and OrderRequestEntry.test.tsx 359295aff14c98d0def759a804afd8b50d5f5603. Bind existing client/src/research/early-access/EarlyAccessRoute.tsx only to current same-Root policy lease 927aa99f-4b6f-44f1-881a-577743135cbf, verified against authoritative OWNER-KAN225-EARLY-ACCESS-CLOSED-INTAKE-20261104; bind existing client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx only to current same-Root storefront lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba. Do not edit, reclaim, extend or change either shared lease or any older protected-base owner record. Case-insensitive active/reserved exact, prefix and wildcard CODE_OWNERSHIP plus authoritative FILE_OWNERSHIP audits found no live collision on the three new paths and the exact expected same-Root bindings on both shared paths. Preserve all 156 prior tasks, 177 prior leases, 57 sessions, rules, histories, foreign state, protected release 07d727a4c9b5516bbd57aef3aa7f89d359849260, frozen PR418 1475d418283e646554872db3992abc8a392af423/tree 5917bf218fabc308857a20ae9e568841f1e50970, and PR421/422/423/424 source refs. No Gateway, nav.ts, Core, workflow, release or other path is in scope. This custody transaction performs no registration, source checkout change, application edit, test, runner, provider, configuration, deployment, production or secret access.",
+      "createdAt": "2026-11-06T04:44:36.757Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T04:44:36.757Z"
     }
   ]
 }
