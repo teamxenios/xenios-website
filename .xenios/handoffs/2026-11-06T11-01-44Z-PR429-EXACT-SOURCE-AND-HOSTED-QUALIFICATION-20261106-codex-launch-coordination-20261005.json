@@ -1,0 +1,105 @@
+{
+  "state": "HOSTED_QUALIFIED_DRAFT",
+  "pr": 429,
+  "head": "8fac3b7a99f10a1ab8caee2e67c8614479bf2fdf",
+  "tree": "0009e0074945c4f52832abd083c5eb6b117671d6",
+  "previousHead": "060c82149453632901fa2419123771a859c81a23",
+  "base": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+  "run": 42205879085,
+  "attempt": 1,
+  "watch": {
+    "session": 20387,
+    "exit": 0
+  },
+  "checks": {
+    "tests": {
+      "passed": 18608,
+      "skipped": 83,
+      "failed": 0
+    },
+    "files": {
+      "passed": 1002,
+      "skipped": 6,
+      "failed": 0
+    },
+    "regressionSuites": {
+      "server/research/master-offerings/early-access-catalog-coverage.test.ts": 12,
+      "server/research/master-offerings/hcg-strength-review.test.ts": 2,
+      "client/src/research/assisted-order/RequestIntentForm.test.tsx": 85
+    },
+    "suiteReports": [
+      {
+        "passed": 150,
+        "skipped": 0,
+        "total": 150
+      },
+      {
+        "passed": 18608,
+        "skipped": 83,
+        "total": 18691
+      }
+    ]
+  },
+  "jobs": {
+    "build": {
+      "id": 127852255393,
+      "checkRunId": 127852255393,
+      "appId": 15368,
+      "conclusion": "success",
+      "actualCheckout": "3d027feb490ca695df6b7a2a9334f0a912918d31",
+      "rawLogSha256": "27732eebd3e2f83b52d3433fd82c3c75c7af6054761f26e814b004a888d3ced0",
+      "rawLogBytes": 77879,
+      "checkoutTree": "0009e0074945c4f52832abd083c5eb6b117671d6"
+    },
+    "protection": {
+      "id": 127852255653,
+      "checkRunId": 127852255653,
+      "appId": 15368,
+      "conclusion": "success",
+      "actualCheckout": "8fac3b7a99f10a1ab8caee2e67c8614479bf2fdf",
+      "rawLogSha256": "f7fe19bfdaa341172548dd613647d59ba0fc2a63db6bc102265f645ece7f4ae2",
+      "rawLogBytes": 113802,
+      "checkoutTree": "0009e0074945c4f52832abd083c5eb6b117671d6"
+    },
+    "test": {
+      "id": 127852255804,
+      "checkRunId": 127852255804,
+      "appId": 15368,
+      "conclusion": "success",
+      "actualCheckout": "3d027feb490ca695df6b7a2a9334f0a912918d31",
+      "rawLogSha256": "1977322ea78fd36bd61ea37aa08230532026192ef169b924894957e5f1d09683",
+      "rawLogBytes": 1225136,
+      "checkoutTree": "0009e0074945c4f52832abd083c5eb6b117671d6"
+    },
+    "typecheck": {
+      "id": 127852255816,
+      "checkRunId": 127852255816,
+      "appId": 15368,
+      "conclusion": "success",
+      "actualCheckout": "3d027feb490ca695df6b7a2a9334f0a912918d31",
+      "rawLogSha256": "a18feed7e46998e879f252d9f0c14a78d3a88859deb45ee4bfe8e75594785fc5",
+      "rawLogBytes": 15329,
+      "checkoutTree": "0009e0074945c4f52832abd083c5eb6b117671d6"
+    },
+    "Required CI completion": {
+      "id": 127854825788,
+      "checkRunId": 127854825788,
+      "appId": 15368,
+      "conclusion": "success"
+    }
+  },
+  "testedMergeCommit": "3d027feb490ca695df6b7a2a9334f0a912918d31",
+  "canonical": "10b84f4b7a93c2d4010d61143d2126adb675e5dd",
+  "previousRun": {
+    "run": 42204568657,
+    "testJob": 127847863507,
+    "checkout": "356cc02c5e7822419c6581e1661c736b41deaea4",
+    "tree": "6a08b8afb117f7afe84151c4e54479ad9a87d067",
+    "passed": 18607,
+    "failed": 1,
+    "skipped": 83,
+    "soleFailure": "Whole-catalog aggregate expected availability review 2 / activation 44 before exact HCG hold moved one row."
+  },
+  "scope": "One test-only successor. All application source bytes equal accepted V5; 21 earlier isolated companion checks overlap the product scenarios but are separate evidence.",
+  "remaining": "Policy-first protected mounted and rollout verification. Draft remains unmerged; no runtime or settings change."
+}

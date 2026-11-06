@@ -3849,7 +3849,7 @@
         "shared/research/assisted-order/request-intent.ts",
         "shared/research/master-offerings/hcg-strength-review.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T10:37:48.836Z",
       "heartbeatAt": "2026-11-06T10:37:48.836Z"
     },
@@ -3860,7 +3860,7 @@
       "paths": [
         "server/research/master-offerings/early-access-catalog-coverage.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T10:49:32.137Z",
       "heartbeatAt": "2026-11-06T10:49:32.137Z"
     }
