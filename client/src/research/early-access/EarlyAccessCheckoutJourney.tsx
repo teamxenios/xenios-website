@@ -126,7 +126,7 @@ const REFUSAL_COPY: Record<string, string> = {
   IDENTITY_REQUIRED:
     "Your access session could not be prepared. Sign out, unlock again, and retry. Nothing was ordered or charged.",
   AGREEMENT_REQUIRED:
-    "Accept the Research Use Policy above before placing the order. Nothing was ordered or charged.",
+    "Accept the Early Access Product Policy above before placing the order. Nothing was ordered or charged.",
   PRODUCT_HELD: "This product is currently held and cannot be ordered.",
   RELEASE_REQUIRED: "This product is not released for ordering.",
   RELEASE_STALE:

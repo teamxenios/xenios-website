@@ -1582,7 +1582,7 @@ async function main(argv = process.argv.slice(2)) {
     const agreement = await localJsonPost(
       page,
       "/api/research/early-access/agreements/accept",
-      { kind: "early_access_terms", version: "v1" },
+      { kind: "early_access_terms", version: "v2" },
     );
     if (!agreement || !agreement.ok) {
       throw new Error(

@@ -55,7 +55,7 @@ import {
   SupabaseUnitHoldRegistry,
 } from "./ops-stores";
 import type { EarlyAccessPersistenceCall } from "./executor";
-import { publishedResearchUsePolicyAgreement } from "../../policies-data";
+import { publishedEarlyAccessAgreement } from "../../policies-data";
 import { earlyAccessCartEnabled } from "../cart/feature-flag";
 import type {
   EarlyAccessCartStorePorts,
@@ -212,7 +212,7 @@ function refusingPersistenceBuild(
 function requiredAgreementMatchesPublishedPolicy(
   required: readonly EarlyAccessRequiredAgreement[],
 ): boolean {
-  const published = publishedResearchUsePolicyAgreement();
+  const published = publishedEarlyAccessAgreement();
   return (
     published !== null &&
     required.length === 1 &&
@@ -340,7 +340,7 @@ export function buildEarlyAccessPersistence(
     return refusingPersistenceBuild(
       "Early Access commerce is enabled in a production-like process, but " +
         "RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS does not exactly match the agreement " +
-        "identity published on the Research Use Policy. The session, direct-order, cart-quote, " +
+        "identity published on the Early Access Product Policy. The session, direct-order, cart-quote, " +
         "and persisted-quote checkout paths are forced closed so an old acceptance cannot " +
         "authorize commerce.",
       agreementWarnings,

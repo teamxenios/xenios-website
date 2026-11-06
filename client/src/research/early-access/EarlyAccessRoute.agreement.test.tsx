@@ -20,6 +20,8 @@ let container: HTMLElement | null = null;
 let root: Root | null = null;
 
 const POLICIES = {
+  // The historical v1 document is still served at its own address. It is
+  // never the one a customer is asked to accept.
   "research-use": {
     title: "Research Use Policy",
     updated: "July 2026",
@@ -33,11 +35,24 @@ const POLICIES = {
       },
     ],
   },
+  "early-access-product-policy": {
+    title: "Early Access Product Policy",
+    updated: "November 2026",
+    agreement: { kind: "early_access_terms", version: "v2" },
+    sections: [
+      {
+        heading: "Research-only products",
+        paragraphs: [
+          "Products identified as research-only are offered solely for legitimate nonclinical research, laboratory, analytical or product-development purposes. They are not offered for human or veterinary use.",
+        ],
+      },
+    ],
+  },
   terms: { title: "Terms of Service", updated: "July 2026", sections: [] },
   privacy: { title: "Privacy Policy", updated: "July 2026", sections: [] },
 };
 
-const AGREEMENT = Object.freeze({ kind: "early_access_terms", version: "v1" });
+const AGREEMENT = Object.freeze({ kind: "early_access_terms", version: "v2" });
 
 /** Two live units, so a product can actually be selected in these tests. */
 const UNITS = [
@@ -198,7 +213,7 @@ describe("the checkout continuation is gated on the server's answer", () => {
     expect(
       host.querySelector('[data-testid="early-access-agreement-provenance"]')
         ?.textContent,
-    ).toBe("Policy version: v1");
+    ).toBe("Policy version: v2");
     expect(
       host.querySelector('[data-testid="early-access-stepper-step-0"]')
         ?.getAttribute("aria-current"),
@@ -226,7 +241,7 @@ describe("the checkout continuation is gated on the server's answer", () => {
     await settle();
 
     const acceptCall = posted.find((call) => call.path.endsWith("/agreements/accept"));
-    expect(acceptCall?.body).toEqual({ kind: "early_access_terms", version: "v1" });
+    expect(acceptCall?.body).toEqual({ kind: "early_access_terms", version: "v2" });
     // Accepting a prerequisite while still browsing must not make progress run
     // backward from Contact and delivery to Choose products.
     expect(
@@ -273,9 +288,10 @@ describe("the checkout continuation is gated on the server's answer", () => {
   });
 
   it("does not honor an already-accepted pair for a different served policy", async () => {
+    // A server still listing the historical v1 pair while v2 is served.
     const { posted } = stubFetch({
       accepted: true,
-      agreement: { kind: "early_access_terms", version: "v2" },
+      agreement: { kind: "early_access_terms", version: "v1" },
     });
     const host = await mountRoute();
 
@@ -297,7 +313,7 @@ describe("the checkout continuation is gated on the server's answer", () => {
     expect(
       host.querySelector('[data-testid="early-access-agreement-provenance"]')
         ?.textContent,
-    ).toBe("Policy version: v1");
+    ).toBe("Policy version: v2");
 
     selectFirstUnit(host);
     expect(reviewButton(host).disabled).toBe(false);
@@ -315,12 +331,15 @@ describe("the checkout continuation is gated on the server's answer", () => {
     expect(held?.querySelectorAll("button")).toHaveLength(0);
   });
 
-  it("shows the research-use policy, not a draft document", async () => {
+  it("shows the Early Access Product Policy, not the historical or a draft document", async () => {
     stubFetch({ accepted: false });
     const host = await mountRoute();
 
-    expect(host.textContent).toContain("Research Use Policy");
-    expect(host.textContent).toContain("I have read and agree to the Research Use Policy.");
+    expect(host.textContent).toContain("Early Access Product Policy");
+    expect(host.textContent).toContain(
+      "I have read and agree to the Early Access Product Policy, including the conditions that apply to the products I request.",
+    );
+    expect(host.textContent).not.toContain("Research Use Policy");
     expect(host.textContent).not.toContain("Terms of Service");
     expect(host.textContent).not.toContain("Privacy Policy");
   });

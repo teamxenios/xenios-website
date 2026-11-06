@@ -163,7 +163,7 @@ process.env.RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED = "true";
 process.env.RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL =
   "preview-assisted-orders@example.invalid";
 process.env.RESEARCH_EARLY_ACCESS_REQUIRED_AGREEMENTS =
-  JSON.stringify([{ kind: "early_access_terms", version: "v1" }]);
+  JSON.stringify([{ kind: "early_access_terms", version: "v2" }]);
 process.env.RESEARCH_EARLY_ACCESS_SESSION_SECRET =
   "preview-early-access-secret-not-production";
 process.env.RESEARCH_EARLY_ACCESS_OWNER_ID =

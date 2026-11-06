@@ -5,6 +5,12 @@ import "./public-editorial.css";
 
 const POLICY_ENTRIES = [
   {
+    title: "Early Access Product Policy",
+    href: "/research/policies/early-access-product-policy",
+    status: "Served Early Access document",
+    body: "The policy accepted before an Early Access request: how requests are reviewed, and the conditions for clinical, supplement, research-only and other listed items.",
+  },
+  {
     title: "Research Use Policy",
     href: "/research/policies/research-use",
     status: "Served Research-use document",
@@ -26,7 +32,7 @@ const POLICY_ENTRIES = [
     title: "Shipping Policy",
     href: "/research/policies/shipping",
     status: "Publication status unconfirmed",
-    body: "Readable for review, but the source does not provide authoritative approval metadata and includes starter operating assumptions.",
+    body: "Readable for review, but the source does not provide authoritative approval metadata. This index does not present it as final.",
   },
   {
     title: "Returns and Replacements",

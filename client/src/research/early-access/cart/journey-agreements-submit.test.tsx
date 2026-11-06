@@ -172,7 +172,7 @@ function stubFetch(accepted = true) {
     if (init?.method === "POST") {
       posted.push({ path, body: init.body === undefined ? null : JSON.parse(String(init.body)) });
       if (path.endsWith("/agreements/accept")) {
-        return jsonResponse({ ok: true, kind: "early_access_terms", version: "v1" });
+        return jsonResponse({ ok: true, kind: "early_access_terms", version: "v2" });
       }
       if (path.endsWith("/cart/quote")) return jsonResponse({ ok: true, quote: QUOTE });
       if (path.endsWith("/cart/checkout")) {
@@ -184,14 +184,18 @@ function stubFetch(accepted = true) {
     if (path.endsWith("/research/policies")) {
       return jsonResponse({
         policies: {
-          "research-use": { title: "Research Use Policy", updated: "July 2026", sections: [] },
+          "early-access-product-policy": {
+            title: "Early Access Product Policy",
+            updated: "November 2026",
+            sections: [],
+          },
         },
       });
     }
     if (path.endsWith("/early-access/agreements")) {
       return jsonResponse({
         ok: true,
-        required: [{ kind: "early_access_terms", version: "v1" }],
+        required: [{ kind: "early_access_terms", version: "v2" }],
         accepted,
       });
     }
@@ -322,7 +326,7 @@ describe("Required Agreements is a step between shipping and review", () => {
     await click(buttons("Continue to shipping")[0]!);
 
     // Held at the catalogue, told why, and nothing priced.
-    expect(text()).toContain("Research Use Policy must be accepted");
+    expect(text()).toContain("Early Access Product Policy must be accepted");
     expect(posted.filter((entry) => entry.path.includes("/cart/quote"))).toEqual([]);
     expect(container.querySelector('[data-testid="early-access-agreements-continue"]')).toBeNull();
   });

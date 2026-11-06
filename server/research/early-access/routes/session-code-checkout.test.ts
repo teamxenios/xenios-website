@@ -546,9 +546,9 @@ describe("customer continuity: the session may rotate, the customer may not", ()
 describe("agreement standing is per derived identity, with no verification token anywhere", () => {
   it("records A's acceptance for A alone, while B remains unaccepted", async () => {
     const agreements = new RecordingAgreements();
-    const required = [{ kind: "early_access_terms", version: "v1" }] as const;
+    const required = [{ kind: "early_access_terms", version: "v2" }] as const;
     const { app } = await sessionCodeApp({
-      agreements: agreements.gate("early_access_terms", "v1"),
+      agreements: agreements.gate("early_access_terms", "v2"),
       agreementRecorder: agreements,
       requiredAgreements: required,
     });
@@ -563,7 +563,7 @@ describe("agreement standing is per derived identity, with no verification token
     const accept = await request(app)
       .post(`${AGREEMENTS}/accept`)
       .set("Cookie", cookieA)
-      .send({ kind: "early_access_terms", version: "v1" });
+      .send({ kind: "early_access_terms", version: "v2" });
     expect(accept.status).toBe(200);
     expect(accept.body.ok).toBe(true);
 

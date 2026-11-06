@@ -667,7 +667,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
 
             {!agreed ? (
               <div className="mt-5 body-s text-ink-2 max-w-[62ch]" data-testid="early-access-first-time-guide">
-                You can review this catalogue without a customer password. Before continuing, review the Research Use Policy; then choose an available product, enter a US shipping address, and submit the server-confirmed order step. Creating a checkout and invoice does not charge you or confirm payment.
+                You can review this catalogue without a customer password. Before continuing, review the Early Access Product Policy; then choose an available product, enter a US shipping address, and submit the server-confirmed order step. Creating a checkout and invoice does not charge you or confirm payment.
               </div>
             ) : null}
 

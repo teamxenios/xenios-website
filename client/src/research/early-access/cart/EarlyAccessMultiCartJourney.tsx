@@ -584,7 +584,7 @@ export function EarlyAccessMultiCartJourney({
             // than letting them fill in shipping for a cart that cannot quote.
             if (!canOrder) {
               navigate("catalog");
-              setError("The Research Use Policy must be accepted before this cart can continue. It is at the top of the catalogue.");
+              setError("The Early Access Product Policy must be accepted before this cart can continue. It is at the top of the catalogue.");
               return;
             }
             navigate("details");

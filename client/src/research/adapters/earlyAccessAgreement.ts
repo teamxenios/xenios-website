@@ -64,8 +64,14 @@ function singleRequiredAgreement(value: unknown): EarlyAccessAgreementPair | nul
   return agreementPair(value[0], true);
 }
 
-/** The slug of the policy document rendered on the acceptance screen. */
-export const RESEARCH_USE_POLICY_SLUG = "research-use";
+/**
+ * The slug of the policy document rendered on the acceptance screen.
+ *
+ * Only this document. The historical Research Use Policy is still served for
+ * the acceptances already on file, and it is never a fallback: rendering it
+ * here would collect the current pair against older words.
+ */
+export const EARLY_ACCESS_POLICY_SLUG = "early-access-product-policy";
 
 export type ResearchPolicySection = Readonly<{
   heading: string;
@@ -97,14 +103,14 @@ function readStrings(value: unknown): readonly string[] {
 }
 
 /**
- * Reads the Research Use Policy.
+ * Reads the Early Access Product Policy.
  *
  * A policy missing its title, or with no readable section, is `unreadable`
  * rather than rendered with a gap. A consent screen that shows a heading and
  * nothing beneath it collects an agreement to a blank page, which is worse than
  * one that says it could not load.
  */
-export async function loadResearchUsePolicy(
+export async function loadEarlyAccessPolicy(
   get: <T>(path: string) => Promise<ApiResult<T>> = (path) => apiGet(path),
 ): Promise<ResearchPolicyLoad> {
   const result = await get<{ policies?: unknown }>(RESEARCH_POLICIES_PATH);
@@ -122,7 +128,7 @@ export async function loadResearchUsePolicy(
   if (typeof policies !== "object" || policies === null) {
     return { kind: "unreadable", reason: "The policy response was not in a readable shape." };
   }
-  const raw = (policies as Record<string, unknown>)[RESEARCH_USE_POLICY_SLUG];
+  const raw = (policies as Record<string, unknown>)[EARLY_ACCESS_POLICY_SLUG];
   if (typeof raw !== "object" || raw === null) {
     // The required policy is absent. Not an empty policy: an absent one.
     return { kind: "missing" };
@@ -259,7 +265,7 @@ export type EarlyAccessAcceptResult =
   | { kind: "error"; message: string };
 
 /**
- * Records that this customer accepts the Research Use Policy.
+ * Records that this customer accepts the Early Access Product Policy.
  *
  * The body carries the configured pair and NOTHING else. No customer
  * reference, no timestamp, no evidence: the server derives every one of those

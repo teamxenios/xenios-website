@@ -149,6 +149,7 @@ describe("public editorial page system", () => {
     expect(view.textContent).not.toContain("Approved policy");
     expect(view.querySelector("form")).toBeNull();
     const links = hrefs(view);
+    expect(links).toContain("/research/policies/early-access-product-policy");
     expect(links).toContain("/research/policies/research-use");
     expect(links).toContain("/research/policies/shipping");
     expect(links).toContain("/research/policies/returns");

@@ -71,8 +71,9 @@ const CLASSIFICATION_LABEL: Readonly<Record<string, string>> = Object.freeze({
 /**
  * The Research Use Only position, stated on every unit.
  *
- * It is the one sentence the Research Use Policy already binds every customer
- * to, so repeating it on the product itself cannot overstate anything, and a
+ * It restates the condition the Early Access Product Policy places on every
+ * research-only item (the historical Research Use Policy carried the same
+ * one), so repeating it on the product itself cannot overstate anything, and a
  * catalogue of research materials that never says this on the product is
  * relying entirely on a policy the customer accepted once.
  */

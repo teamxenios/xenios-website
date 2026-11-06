@@ -53,28 +53,33 @@ async function settle(): Promise<void> {
 
 const AGREEMENT: EarlyAccessAgreementPair = Object.freeze({
   kind: "early_access_terms",
-  version: "v1",
+  version: "v2",
 });
+
+const ASSENT =
+  "I have read and agree to the Early Access Product Policy, including the conditions that apply to the products I request.";
 
 const POLICY: ResearchPolicyLoad = {
   kind: "ok",
   policy: {
-    title: "Research Use Policy",
-    updated: "July 2026",
+    title: "Early Access Product Policy",
+    updated: "November 2026",
     agreement: AGREEMENT,
     sections: [
       {
-        heading: "Purpose",
+        heading: "About Early Access",
         paragraphs: [
-          "Research materials listed through xenios are offered solely for legitimate nonclinical research, analytical, laboratory, or product-development purposes. They are not offered for human or veterinary use.",
+          "Early Access brings the products and services listed by Xenios into one place to review and request.",
         ],
         bullets: [],
       },
       {
-        heading: "Prohibited use",
+        heading: "Research-only products",
         paragraphs: [
-          "A purchaser may not ingest, inject, administer, prescribe, dispense, recommend, or distribute research materials for human or veterinary use.",
+          "Products identified as research-only are offered solely for legitimate nonclinical research, laboratory, analytical or product-development purposes. They are not offered for human or veterinary use.",
         ],
+        // The reviewed v2 text has no bullets. These exercise the renderer's
+        // bullet path, which any served document may use.
         bullets: ["No personal use", "No client or patient use", "No dosing or protocol support"],
       },
     ],
@@ -146,16 +151,20 @@ function section(host: HTMLElement): HTMLElement {
 }
 
 describe("what the customer is shown", () => {
-  it("renders the served Research Use Policy in full", async () => {
+  it("renders the served Early Access Product Policy in full", async () => {
     const host = await mount();
 
-    expect(host.textContent).toContain("Research Use Policy");
-    expect(host.textContent).toContain("Updated July 2026");
+    expect(host.textContent).toContain("Early Access Product Policy");
+    expect(host.textContent).not.toContain("Research Use Policy");
+    expect(host.textContent).toContain("Updated November 2026");
     // Every heading, paragraph and bullet the document carries.
     const headings = Array.from(
       host.querySelectorAll('[data-testid="early-access-agreement-heading"]'),
     );
-    expect(headings.map((node) => node.textContent)).toEqual(["Purpose", "Prohibited use"]);
+    expect(headings.map((node) => node.textContent)).toEqual([
+      "About Early Access",
+      "Research-only products",
+    ]);
     const paragraphs = Array.from(
       host.querySelectorAll('[data-testid="early-access-agreement-paragraph"]'),
     );
@@ -168,31 +177,48 @@ describe("what the customer is shown", () => {
       "No client or patient use",
       "No dosing or protocol support",
     ]);
-    // The sentence that makes this a research-use agreement at all.
+    // The research-only condition the policy carries for research items.
     expect(host.textContent).toContain("They are not offered for human or veterinary use.");
     expect(
       host.querySelector('[data-testid="early-access-agreement-provenance"]')
         ?.textContent,
-    ).toBe("Policy version: v1");
+    ).toBe("Policy version: v2");
   });
 
-  it("shows the research-use policy and NOT the draft Terms or draft Privacy documents", async () => {
+  it("shows the Early Access Product Policy and NOT the draft Terms or draft Privacy documents", async () => {
     // The founder decision: a customer is not asked to accept a document that
     // labels itself a draft. This screen renders one policy, and it is not
     // either of those.
     const host = await mount();
 
-    expect(host.textContent).toContain("Research Use Policy");
+    expect(host.textContent).toContain("Early Access Product Policy");
     expect(host.textContent).not.toContain("Terms of Service");
     expect(host.textContent).not.toContain("Privacy Policy");
     expect(host.textContent).not.toContain("Draft status");
+  });
+
+  it("keeps the reviewed acknowledgment label word for word, whatever the served title", async () => {
+    const served = (POLICY as Extract<ResearchPolicyLoad, { kind: "ok" }>).policy;
+    const host = await mount({
+      policy: { kind: "ok", policy: { ...served, title: "Example Product Policy" } },
+    });
+    expect(
+      host.querySelector('[data-testid="early-access-agreement-assent-label"]')?.textContent,
+    ).toBe(ASSENT);
+  });
+
+  it("names the served document when the acceptance is already on file", async () => {
+    const host = await mount({ state: { kind: "accepted", agreement: AGREEMENT } });
+    expect(
+      host.querySelector('[data-testid="early-access-agreement-accepted"]')?.textContent,
+    ).toBe("You have accepted the Early Access Product Policy. You can continue to the catalogue.");
   });
 
   it("uses the exact assent line, and does not combine it with anything else", async () => {
     const host = await mount();
 
     const label = host.querySelector('[data-testid="early-access-agreement-assent-label"]');
-    expect(label?.textContent).toBe("I have read and agree to the Research Use Policy.");
+    expect(label?.textContent).toBe(ASSENT);
     // One box, one meaning. A marketing opt-in sharing this tick would make the
     // tick evidence of neither.
     const checkboxes = host.querySelectorAll<HTMLInputElement>('input[type="checkbox"]');
@@ -252,8 +278,10 @@ describe("what the customer is shown", () => {
     const accept = vi.fn();
     const host = await mount({
       state: {
+        // A tab or server still asking for the historical v1 pair while the
+        // served document is v2. Nothing can be collected against it.
         kind: "required",
-        agreement: { kind: "early_access_terms", version: "v2" },
+        agreement: { kind: "early_access_terms", version: "v1" },
       },
       accept,
       onAccepted: (value) => accepted.push(value),
@@ -393,7 +421,7 @@ describe("acceptance survives a refresh, because the server remembers it", () =>
     expect(
       host.querySelector('[data-testid="early-access-agreement-provenance"]')
         ?.textContent,
-    ).toBe("Policy version: v1");
+    ).toBe("Policy version: v2");
   });
 
   it("writes nothing to browser storage", async () => {
