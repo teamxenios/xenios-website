@@ -368,7 +368,7 @@ describe("the login-free request-only entry", () => {
   }
   function continueButton() {
     return [...container.querySelectorAll("button")].find((button) =>
-      button.textContent === "Continue to contact")!;
+      button.textContent === "Continue to details")!;
   }
   function retryButton() {
     const button = [...container.querySelectorAll("button")].find((candidate) => candidate.textContent === "Try again");
@@ -679,7 +679,7 @@ describe("the login-free request-only entry", () => {
     expect(container.textContent).toContain("This reference was confirmed earlier in this browser tab.");
     expect(container.querySelectorAll("h1")).toHaveLength(1);
     expect(container.querySelector("h1")?.textContent).toBe("Quick Order");
-    expect([...container.querySelectorAll("h2")].some((heading) => heading.textContent === "Request saved for review")).toBe(true);
+    expect([...container.querySelectorAll("h2")].some((heading) => heading.textContent === "Your submitted request")).toBe(true);
     expect(container.textContent).not.toContain("The request form is currently unavailable");
     expect(container.textContent).not.toContain("Start another request");
     expect(container.textContent).not.toContain("Check saved request");
@@ -740,7 +740,8 @@ describe("the login-free request-only entry", () => {
     expect(container.textContent).toContain("Check your earlier request");
     expect(recoverButton()).toBeTruthy();
     expect(container.textContent).not.toContain(earlierReference);
-    expect(container.textContent).not.toContain("Request saved for review");
+    expect(container.textContent).not.toContain("Request submitted");
+    expect(container.textContent).not.toContain("Your submitted request");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(mixedMarker);
     expectRecoveryOnly(fetch);
     expect(recoveryPosts(fetch)).toHaveLength(0);
@@ -858,7 +859,7 @@ describe("the login-free request-only entry", () => {
       await settleStorefront();
       if (transition === "same-member verification") {
         expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
-        expect(container.textContent).not.toContain("Request products for review");
+        expect(container.textContent).not.toContain("Build your request");
         expect(container.querySelector('input[name="name"]')).toBeNull();
         expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
         expect(render).toHaveBeenCalledTimes(1);
@@ -934,7 +935,7 @@ describe("the login-free request-only entry", () => {
     act(() => container.querySelector<HTMLInputElement>('input[name="age"]')!.click());
     await act(async () => container.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
     act(() => container.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
-    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!;
+    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Submit request")!;
     await act(async () => submit.click());
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -945,7 +946,7 @@ describe("the login-free request-only entry", () => {
     await settleStorefront();
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expect(container.querySelector('input[name="name"]')).toBeNull();
-    expect(container.textContent).not.toContain("Request products for review");
+    expect(container.textContent).not.toContain("Build your request");
     expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
     expect(recoveryPosts(fetch)).toHaveLength(0);
     expect(render).toHaveBeenCalledTimes(1);
@@ -971,7 +972,7 @@ describe("the login-free request-only entry", () => {
       await settleStorefront();
       expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
       expect(document.activeElement).toBe(navigation);
-      expect(container.textContent).not.toContain("Request products for review");
+      expect(container.textContent).not.toContain("Build your request");
       expect(recoveryPosts(fetch)).toHaveLength(1);
       expect(fetch.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(1);
       expect(render).toHaveBeenCalledTimes(1);
@@ -990,7 +991,7 @@ describe("the login-free request-only entry", () => {
         memberChecking: false, memberSessionStatus: "authenticated", recovery: "none" }));
       await settleStorefront();
       expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
-      expect(container.textContent).not.toContain("Request products for review");
+      expect(container.textContent).not.toContain("Build your request");
       expect(container.textContent).not.toContain("The current request path could not be confirmed");
       expect(container.querySelector('input[name="name"]')).toBeNull();
       expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
@@ -1149,7 +1150,7 @@ describe("the login-free request-only entry", () => {
     await act(async () => window.dispatchEvent(new Event("focus")));
     await waitForAdd("member");
     expect(sessionReads(fetch)).toHaveLength(2);
-    expect(container.textContent).toContain("Request products for review");
+    expect(container.textContent).toContain("Build your request");
     expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
     expect(recoveryPosts(fetch)).toHaveLength(1);
@@ -1330,8 +1331,8 @@ describe("the unified Early Access storefront", () => {
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
     expect(container.textContent).toContain("Estradiol");
     expect(container.textContent).toContain("Clinical review required. Not a prescription.");
-    expect(container.textContent).toContain("Open request form");
-    expect(container.querySelector('a[href="/research/early-access/order-request"]')?.textContent).toBe("Open request form");
+    expect(container.textContent).toContain("Browse products and submit a request");
+    expect(container.querySelector('a[href="/research/early-access/order-request"]')?.textContent).toBe("Browse products and submit a request");
     // A separate form config read retrieves its own current legal requirements.
     // CTA and storefront together use ONE readiness probe, not two.
     expect(fetch.mock.calls.filter(([url]) => String(url).endsWith("/request-intents/config"))).toHaveLength(2);

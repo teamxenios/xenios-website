@@ -19,6 +19,7 @@ import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { matchesOrderEntryIntent, orderEntryQuantityAllowed } from "../early-access/orderEntryIntent";
 import { catalogPresentationLabel } from "../master-offerings/catalog-presentation-labels";
 import "./assisted-order.css";
+import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
 
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
@@ -366,7 +367,7 @@ function RequestIntentFormSession({
 
   return <section className={(embedded ? "xenios-order-page xenios-order-page--embedded" : "xenios-order-page")
     + (compactGuestCatalog ? " xenios-order-page--guest-catalog" : "")}>
-    <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Request products for review</Heading>
+    <header className="xenios-order-hero"><Heading ref={heading} tabIndex={-1}>Build your request</Heading>
       <p>{REQUEST_INTENT_NOTICE}</p><p>Clinical and nonclinical selections can be reviewed in one request. Do not enter medical history, upload documents or send payment here.</p></header>
     {!continuationEnabled && <p role="status">Complete the existing access and agreement requirements before continuing. No request has been submitted.</p>}
     {!embedded && <p><a href="/research/early-access">Review access and agreement requirements</a></p>}
@@ -464,7 +465,7 @@ function RequestIntentFormSession({
         {compactGuestCatalog && <button type="button" className="xenios-order-summary-toggle"
           aria-expanded={mobileSummaryOpen} aria-controls={requestSummaryId}
           onClick={() => setMobileSummaryOpen((value) => !value)}>
-          <span>Review request ({selections.length})</span>
+          <span>{EARLY_ACCESS_REQUEST_CTA.summary} ({selections.length})</span>
           <span aria-hidden="true">{mobileSummaryOpen ? "−" : "+"}</span>
         </button>}
         <div id={requestSummaryId} className={"xenios-order-summary-content" + (mobileSummaryOpen ? " is-open" : "")}>
@@ -490,7 +491,7 @@ function RequestIntentFormSession({
           </li>)}
         </ul>}
         <p className="xenios-order-small">A request is not an approved order. Final quantities, prices and availability require review.</p>
-        <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>Continue to contact</button>
+        <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>{EARLY_ACCESS_REQUEST_CTA.details}</button>
         </div>
       </aside></div>
     </>}
@@ -510,9 +511,10 @@ function RequestIntentFormSession({
         const form = event.currentTarget.form;
         if (!form) return;
         rememberContactDraft(form); setStep("products");
-      }}>Back to products</button><button className="xenios-order-button" type="submit">Review request</button></div>
+      }}>Back to products</button><button className="xenios-order-button" type="submit">{EARLY_ACCESS_REQUEST_CTA.finalReview}</button></div>
     </form>}
-    {step === "review" && <section className="xenios-order-panel"><h2>Review your request</h2>
+    {step === "review" && <section className="xenios-order-panel"><h2>{EARLY_ACCESS_REQUEST_CTA.finalHeading}</h2>
+      <p>Check your items and contact details, then choose Submit request. The team will review your request before any approval or payment.</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>{item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | Pending {item.clinicalReviewRequired ? "clinical" : "internal"} review</li>)}</ul>
       <fieldset disabled={busy || frozen.current !== null} className="xenios-order-acknowledgments"><legend>Confirm the current requirements</legend>
@@ -524,7 +526,7 @@ function RequestIntentFormSession({
       <div className="xenios-order-actions">
         <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); setStep("products"); }}>Edit selection</button>
         <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
-          onClick={() => void submit()}>{frozen.current ? "Retry same request" : "Submit for review"}</button>
+          onClick={() => void submit()}>{finalRequestActionLabel(frozen.current !== null, busy)}</button>
       </div><a href="/research/support">Contact support</a>
     </section>}
   </section>;

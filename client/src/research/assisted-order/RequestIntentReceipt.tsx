@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type Ref } from "react";
 import { REQUEST_INTENT_SCOPE_NOTICE, type RequestIntentReceipt as SavedReceipt } from "../../../../shared/research/assisted-order/request-intent";
 import { requestIntentConfirmationHref, requestIntentSupportMailto } from "./request-intent-continuation";
+import { EarlyAccessRequestNextSteps } from "../early-access/EarlyAccessRequestGuide";
+import { requestReceiptHeading } from "../early-access/request-experience-copy";
 
 /** Previously confirmed display state only; no recovery or submission occurs here. */
 export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, focusOnMount = false, reopened = false, onStartAnother }: Readonly<{
@@ -27,11 +29,12 @@ export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, fo
     catch { setCopied("unavailable"); }
   }
   const Heading = headingLevel === 2 ? "h2" : "h1";
-  return <section className="xenios-order-page"><Heading ref={headingRef ?? heading} tabIndex={-1}>Request saved for review</Heading>
-    <p role="status">Your saved request reference is <strong>{receipt.publicReference}</strong>.</p>
+  return <section className="xenios-order-page"><Heading ref={headingRef ?? heading} tabIndex={-1}>{requestReceiptHeading(reopened)}</Heading>
+    <p role="status">Your request reference is <strong>{receipt.publicReference}</strong>.</p>
     {reopened && <p>This reference was confirmed earlier in this browser tab. Nothing was sent again.</p>}
     <p>{REQUEST_INTENT_SCOPE_NOTICE}</p><p>Each item is pending review. Final availability, quantities, pricing and delivery must be confirmed separately.</p>
     <p>Keep this reference and quote it if you contact support about this request. Online status is not available for review requests.</p>
+    <EarlyAccessRequestNextSteps headingLevel={headingLevel === 2 ? 3 : 2} />
     {/* A plain list: the shared action row reverses its order on narrow screens. */}
     <ul className="xenios-order-receipt-continuations">
       <li><button type="button" className="xenios-order-link" onClick={() => void copyReference()}>Copy reference</button></li>

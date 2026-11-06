@@ -127,7 +127,7 @@ async function prepare(api: RequestIntentApi, separateBilling = false, embedded 
   await click("Add Synthetic research to request");
   const quantity = [...host.querySelectorAll("input[type=number]")][0] as HTMLInputElement;
   await type(quantity, "2");
-  await click("Continue to contact");
+  await click("Continue to details");
   for (const [name, value] of Object.entries({
     name: "Synthetic Customer", email: "synthetic@example.invalid", phone: "+15555550123",
     shippingLine1: "1 Synthetic Street", shippingCity: "Test", shippingRegion: "TX", shippingPostalCode: "00000", shippingCountryCode: "US",
@@ -364,7 +364,7 @@ describe("mixed private request customer form source", () => {
       key: "10000000-0000-4000-8000-000000000001", acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" }));
     const props = { api, storage: sessionStorage, onConfirmedReceipt: confirmed };
     await act(async () => root.render(<RequestIntentForm {...props} />));
-    await click(path === "submission" ? "Submit for review" : "Check saved request");
+    await click(path === "submission" ? "Submit request" : "Check saved request");
     expect(host.textContent).toContain(reference);
     expect(confirmed).toHaveBeenCalledTimes(1);
     expect(confirmed).toHaveBeenCalledWith(receipt);
@@ -391,7 +391,7 @@ describe("mixed private request customer form source", () => {
   });
   it("round-trips the form through the real intent service to one memory repository and authorized staff readback", async () => {
     const { api, rows } = makeRoundTrip();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     expect(rows.size).toBe(1);
     expect(host.textContent).toContain(reference);
     const hrefs = [...host.querySelectorAll("a")].map((anchor) => anchor.getAttribute("href"));
@@ -408,7 +408,7 @@ describe("mixed private request customer form source", () => {
     expect(host.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
     expect(host.querySelector('a[href="/support"]')).toBeNull();
     expect(api.submit).not.toHaveBeenCalled();
-    await click("Submit for review");
+    await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const payload = api.submit.mock.calls[0][0];
     expect(payload.lines).toEqual([
@@ -432,7 +432,7 @@ describe("mixed private request customer form source", () => {
       throw new Error("synthetic lost response");
     });
     await prepare(api);
-    await click("Submit for review");
+    await click("Submit request");
     expect(host.textContent).not.toContain(reference);
     const first = api.submit.mock.calls[0][0];
     await click("Retry same request");
@@ -442,7 +442,7 @@ describe("mixed private request customer form source", () => {
   it("refresh restores only the same attempt and recovers its real saved reference, without storing clinical selections", async () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost response"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)!;
     expect(marker).not.toContain("clinical");
     expect(marker).not.toContain("synthetic@example");
@@ -460,7 +460,7 @@ describe("mixed private request customer form source", () => {
   });
   it("malformed successful body never becomes a saved confirmation or a replacement key", async () => {
     const api = makeApi(); api.submit.mockResolvedValueOnce("<html>");
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     expect(host.textContent).not.toContain(reference);
     expect(host.textContent).toContain("could not confirm");
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).not.toBeNull();
@@ -612,7 +612,7 @@ describe("mixed request mounted-entry contracts", () => {
       expect(document.activeElement).toBe(agreement);
       await click("Add Synthetic clinical to request");
       expect(document.activeElement).toBe(agreement);
-      await click("Continue to contact");
+      await click("Continue to details");
       expect(document.activeElement).toBe(host.querySelector("h1"));
       expect(host.querySelector('input[name="name"]')).toBeTruthy();
     } finally { agreement.remove(); }
@@ -648,7 +648,7 @@ describe("mixed request mounted-entry contracts", () => {
     const api = makeApi();
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} continuationEnabled={false} />));
     await click("Add Synthetic clinical to request");
-    const next = [...host.querySelectorAll("button")].find((button) => button.textContent === "Continue to contact");
+    const next = [...host.querySelectorAll("button")].find((button) => button.textContent === "Continue to details");
     expect(next?.disabled).toBe(true);
     expect(api.submit).not.toHaveBeenCalled();
   });
@@ -679,18 +679,18 @@ describe("an embedded form inside a page with its own h1", () => {
   it("puts its top heading one level below the page heading at every step and on the receipt, and still moves focus to it", async () => {
     const api = makeApi();
     await render(api, true);
-    expect(headings()).toEqual(["H2 Request products for review", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
+    expect(headings()).toEqual(["H2 Build your request", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
     await prepare(api, false, true);
-    expect(headings()).toEqual(["H2 Request products for review", "H2 Review your request"]);
+    expect(headings()).toEqual(["H2 Build your request", "H2 Submit your request"]);
     expect(document.activeElement).toBe(host.querySelector("h2"));
-    await click("Submit for review");
-    expect(headings()).toEqual(["H2 Request saved for review"]);
+    await click("Submit request");
+    expect(headings()).toEqual(["H2 Request submitted", "H3 What happens next"]);
     expect(document.activeElement).toBe(host.querySelector("h2"));
   });
   it("puts the earlier-request check below the page heading too", async () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost response"));
-    await prepare(api, false, true); await click("Submit for review");
+    await prepare(api, false, true); await click("Submit request");
     await act(async () => root.unmount());
     root = createRoot(host);
     await render(api, true);
@@ -699,7 +699,7 @@ describe("an embedded form inside a page with its own h1", () => {
   it("keeps its h1 when the form is the page", async () => {
     const api = makeApi();
     await render(api);
-    expect(headings()).toEqual(["H1 Request products for review", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
+    expect(headings()).toEqual(["H1 Build your request", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
   });
 });
 
@@ -760,7 +760,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
     expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("2 exact variants | 3 requested units");
     expect(sessionStorage.length).toBe(0);
     expect(api.submit).not.toHaveBeenCalled();
-    await click("Continue to contact");
+    await click("Continue to details");
     expectContactInputs({ fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid", mobilePhone: "+15555550123",
       ageConfirmed: true, shippingAddress: { line1: "1 Synthetic Street", city: "Test", region: "TX", postalCode: "00000", countryCode: "US" },
       billingSameAsShipping: true });
@@ -768,7 +768,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks.length).toBeGreaterThan(0);
     expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit request")!.disabled).toBe(true);
     expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
   });
   it.each([false, true])("retains an unfinished contact draft across a quantity edit (previous review %s)", async (previouslyReviewed) => {
@@ -781,7 +781,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
         await render(api);
         await click("Add Synthetic research to request");
       }
-      await click("Continue to contact");
+      await click("Continue to details");
       const billingSame = () => [...host.querySelectorAll("label")]
         .find((label) => label.textContent?.includes("Billing address is the same"))!.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
       if (!previouslyReviewed) await act(async () => billingSame().click());
@@ -816,7 +816,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
       await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!.click());
       expect(host.querySelector('[aria-label="Selected request items"]')?.textContent)
         .toContain(previouslyReviewed ? "2 exact variants | 4 requested units" : "1 exact variants | 2 requested units");
-      await click("Continue to contact");
+      await click("Continue to details");
       expectDraft();
       expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
       expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
@@ -827,24 +827,24 @@ describe("request selection layout and controls (component fixtures, not viewpor
       await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
       expect(host.querySelector('input[name="name"]')).not.toBeNull();
       expect(host.textContent).toContain("Complete the required contact and address fields.");
-      expect(host.textContent).not.toContain("Review your request");
+      expect(host.textContent).not.toContain("Submit your request");
       await type(host.querySelector<HTMLInputElement>('input[name="shippingCity"]')!, "Draft Delivery");
       await type(host.querySelector<HTMLInputElement>('input[name="billingPostalCode"]')!, "00004");
       if (previouslyReviewed) {
         await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
         expect(host.querySelector('input[name="age"]')).not.toBeNull();
         expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(false);
-        expect(host.textContent).not.toContain("Review your request");
+        expect(host.textContent).not.toContain("Submit your request");
         await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
       }
       await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
-      expect(host.textContent).toContain("Review your request");
+      expect(host.textContent).toContain("Submit your request");
       expect(host.textContent).toContain("Synthetic unfinished draft");
       expect(host.textContent).toContain("draft@example.invalid");
       const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
       expect(checks.length).toBeGreaterThan(0);
       expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit request")!.disabled).toBe(true);
       expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
       expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
     } finally { storageWrites.mockRestore(); }
@@ -865,9 +865,9 @@ describe("request selection layout and controls (component fixtures, not viewpor
       const billingSame = () => [...host.querySelectorAll("label")]
         .find((label) => label.textContent?.includes("Billing address is the same"))!.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
       if (previouslyReviewed) {
-        await prepare(api, true); await click("Edit selection"); await click("Continue to contact");
+        await prepare(api, true); await click("Edit selection"); await click("Continue to details");
       } else {
-        await render(api); await click("Add Synthetic research to request"); await click("Continue to contact");
+        await render(api); await click("Add Synthetic research to request"); await click("Continue to details");
         for (const [name, value] of Object.entries({
           name: contact.fullLegalName, email: contact.email, phone: contact.mobilePhone,
           shippingLine1: shippingAddress.line1, shippingLine2: shippingAddress.line2, shippingCity: shippingAddress.city,
@@ -892,7 +892,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
         await click("Back to products");
         await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!.click());
         expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("1 exact variants | 2 requested units");
-        await click("Continue to contact");
+        await click("Continue to details");
         expect(billingSame().checked).toBe(true);
         expect(host.querySelector('input[name="billingLine1"]')).toBeNull();
       }
@@ -904,19 +904,19 @@ describe("request selection layout and controls (component fixtures, not viewpor
       // Direct dispatch checks component validation, not native browser validity.
       await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
       expect(host.textContent).toContain("Complete the required contact and address fields.");
-      expect(host.textContent).not.toContain("Review your request");
+      expect(host.textContent).not.toContain("Submit your request");
       expectContactInputs(contact);
       // Choosing shipping explicitly must ignore the incomplete inactive draft.
       await act(async () => billingSame().click());
       await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
-      expect(host.textContent).toContain("Review your request");
+      expect(host.textContent).toContain("Submit your request");
       const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
       expect(checks.length).toBeGreaterThan(0); expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit request")!.disabled).toBe(true);
       expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
       expect(storageWrites).not.toHaveBeenCalled();
       await act(async () => checks.forEach((checkbox) => checkbox.click()));
-      await click("Submit for review");
+      await click("Submit request");
       expect(api.submit).toHaveBeenCalledTimes(1);
       const submitted = api.submit.mock.calls[0][0].contact;
       expect(submitted.billingSameAsShipping).toBe(true);
@@ -1010,14 +1010,14 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   }
   it("preserves separate billing and contact through selection editing and an explicit requirements refresh", async () => {
     const api = versionCheckedApi();
-    await prepare(api, true); await click("Submit for review");
+    await prepare(api, true); await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const first = api.submit.mock.calls[0][0];
     expect(first.contact.billingSameAsShipping).toBe(false);
     expect(sessionStorage.length).toBe(0);
     expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
     await click("Edit selection");
-    expect(buttonNamed("Continue to contact").disabled).toBe(true);
+    expect(buttonNamed("Continue to details").disabled).toBe(true);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     await click("Remove Synthetic research");
     const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical"]');
@@ -1028,15 +1028,15 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(sessionStorage.length).toBe(0);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
     expect(host.querySelector('.xenios-order-error[role="alert"]')).toBeNull();
-    await click("Continue to contact"); expectContactInputs(first.contact);
+    await click("Continue to details"); expectContactInputs(first.contact);
     await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
     const clinicalRequirements = requiredAssistedOrderFormAcknowledgments({ includesResearchUseOnly: false });
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks).toHaveLength(clinicalRequirements.length + updatedRequirements().legal.length);
     expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Submit request").disabled).toBe(true);
     expect(api.submit).toHaveBeenCalledTimes(1); expect(sessionStorage.length).toBe(0);
-    await confirmFreshRequirements(); await click("Submit for review");
+    await confirmFreshRequirements(); await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1051,7 +1051,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("refreshes obsolete requirements explicitly before a fresh version-valid submission", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const first = api.submit.mock.calls[0][0];
     expect(first.agreements.find((entry) => entry.kind === "fixture-terms")?.version).toBe("fixture-v1");
     expect(api.config).toHaveBeenCalledTimes(1);
@@ -1065,8 +1065,8 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).not.toContain("Retry same request");
     expect(buttonNamed("Edit selection").disabled).toBe(false);
     expect(buttonNamed("Refresh requirements").disabled).toBe(false);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
-    await click("Submit for review");
+    expect(buttonNamed("Submit request").disabled).toBe(true);
+    await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(1);
 
     api.config.mockResolvedValueOnce(updatedRequirements());
@@ -1082,12 +1082,12 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).toContain("Synthetic clinical");
     expect(host.textContent).toContain("Synthetic research");
     expect(sessionStorage.length).toBe(0);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
-    await click("Submit for review");
+    expect(buttonNamed("Submit request").disabled).toBe(true);
+    await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     await confirmFreshRequirements();
-    expect(buttonNamed("Submit for review").disabled).toBe(false);
-    await click("Submit for review");
+    expect(buttonNamed("Submit request").disabled).toBe(false);
+    await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1105,7 +1105,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("keeps submission closed after refresh failure and permits an explicit successful refresh retry", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const first = api.submit.mock.calls[0][0];
     api.config.mockRejectedValueOnce(new Error("Synthetic configuration failure"))
       .mockResolvedValueOnce(updatedRequirements());
@@ -1117,10 +1117,10 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).not.toContain("Synthetic legal requirement");
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(host.textContent).not.toContain(receipt.publicReference);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Submit request").disabled).toBe(true);
     expect(buttonNamed("Refresh requirements").disabled).toBe(false);
     expect(sessionStorage.length).toBe(0);
-    await click("Submit for review");
+    await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(1);
 
     await click("Refresh requirements");
@@ -1129,9 +1129,9 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).toContain("Version 2 synthetic legal requirement");
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
     expect(host.querySelector('.xenios-order-error[role="alert"]')).toBeNull();
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Submit request").disabled).toBe(true);
     expect(sessionStorage.length).toBe(0);
-    await confirmFreshRequirements(); await click("Submit for review");
+    await confirmFreshRequirements(); await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1143,7 +1143,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("deduplicates refresh clicks while configuration is pending without posting a request", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     type Config = Awaited<ReturnType<typeof api.config>>;
     let resolveRefresh!: (value: Config) => void;
     const pending = new Promise<Config>((resolve) => { resolveRefresh = resolve; });
@@ -1154,21 +1154,21 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.config).toHaveBeenCalledTimes(2);
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(buttonNamed("Refresh requirements").disabled).toBe(true);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Submit request").disabled).toBe(true);
     expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(sessionStorage.length).toBe(0);
-    await click("Submit for review");
+    await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     await act(async () => { resolveRefresh(updatedRequirements()); await pending; });
     expect(api.config).toHaveBeenCalledTimes(2);
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(host.textContent).toContain("Version 2 synthetic legal requirement");
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Submit request").disabled).toBe(true);
     expect(sessionStorage.length).toBe(0);
     await confirmFreshRequirements();
-    expect(buttonNamed("Submit for review").disabled).toBe(false);
-    await click("Submit for review");
+    expect(buttonNamed("Submit request").disabled).toBe(false);
+    await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     expect(host.textContent).toContain(receipt.publicReference);
   });
@@ -1182,7 +1182,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
       if (!submissionAdmitted) throw new RequestIntentHttpError(status, code);
       return receipt;
     });
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const first = api.submit.mock.calls[0][0];
     expect(host.textContent).toContain("This request was not saved."); expect(host.textContent).toContain(guidance);
@@ -1190,16 +1190,16 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.config).toHaveBeenCalledTimes(1);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
     expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Refresh requirements")).toBe(false);
-    expect(buttonNamed("Edit selection").disabled).toBe(false); expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Edit selection").disabled).toBe(false); expect(buttonNamed("Submit request").disabled).toBe(true);
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks.length).toBeGreaterThan(0); expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
     expect(checks.every((checkbox) => !checkbox.matches(":disabled"))).toBe(true);
-    await click("Submit for review"); expect(api.submit).toHaveBeenCalledTimes(1);
+    await click("Submit request"); expect(api.submit).toHaveBeenCalledTimes(1);
     submissionAdmitted = true;
     // A controlled clock proves the new attempt records its own confirmation time.
     const fresh = new Date(Date.parse(first.agreements[0].acceptedAt) + 60_000);
     vi.useFakeTimers({ toFake: ["Date"] }); vi.setSystemTime(fresh);
-    try { await confirmFreshRequirements(); await click("Submit for review"); } finally { vi.useRealTimers(); }
+    try { await confirmFreshRequirements(); await click("Submit request"); } finally { vi.useRealTimers(); }
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1214,7 +1214,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(400, "current_acknowledgments_required"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     await click("Retry same request");
     expect(api.submit).toHaveBeenCalledTimes(2);
@@ -1235,7 +1235,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(409, "attempt_conflict"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_outcome_unconfirmed"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     await click("Retry same request");
@@ -1248,7 +1248,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_intent_unavailable"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     const notice = host.querySelector(".xenios-order-error")?.textContent;
@@ -1271,7 +1271,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.recover.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_intent_unavailable"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     await act(async () => root.unmount());
@@ -1432,7 +1432,7 @@ describe("confirmed reference continuation", () => {
     const api = makeApi();
     await prepare(api);
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} ownerKey="owner-a" />));
-    await click("Submit for review");
+    await click("Submit request");
     expect(host.textContent).toContain(reference); expectOnlyReferenceRecord("owner-a");
     expect(host.textContent).not.toContain("confirmed earlier in this browser tab");
     sessionStorage.clear(); sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, uncertainMarker);
@@ -1443,22 +1443,22 @@ describe("confirmed reference continuation", () => {
   });
   it("shows a fresh form on an in-page remount of the same page load and keeps the record for a later load", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
-    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).toContain("Build your request");
     expect(host.textContent).not.toContain(reference);
     expect(replacement.catalog).toHaveBeenCalledTimes(1);
     expectOnlyReferenceRecord();
   });
   it("reopens the confirmed reference for the same owner after a reload without reading or publishing again", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     simulateReload();
     const replacement = makeApi(), confirmed = vi.fn(), steps = vi.fn();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} onConfirmedReceipt={confirmed} onStepChange={steps}
       entryIntent={{ family: "research_peptides_materials", slug: "research", variantId: "research-source", quantity: 1, action: "REQUEST_QUOTE" }} />);
-    expect(host.textContent).toContain("Request saved for review");
+    expect(host.textContent).toContain("Your submitted request");
     expect(steps).toHaveBeenLastCalledWith("review");
     expect(host.textContent).toContain(reference);
     expect(host.textContent).toContain("This reference was confirmed earlier in this browser tab. Nothing was sent again.");
@@ -1470,18 +1470,18 @@ describe("confirmed reference continuation", () => {
   });
   it("discards another owner's record and renders a fresh form", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     simulateReload();
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} ownerKey="owner-b" />);
-    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).toContain("Build your request");
     expect(host.textContent).not.toContain(reference);
     expect(replacement.catalog).toHaveBeenCalledTimes(1);
     expect(sessionStorage.length).toBe(0);
   });
   it("lets an uncertain attempt take precedence over a reopened reference", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     simulateReload(); sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, uncertainMarker);
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
@@ -1492,29 +1492,29 @@ describe("confirmed reference continuation", () => {
   });
   it("starts another request from a clean session with a new attempt key", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     const first = api.submit.mock.calls[0][0];
     await click("Start another request");
-    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).toContain("Build your request");
     expect(document.activeElement).toBe(host.querySelector("h1"));
     expect(host.textContent).toContain("0 products | 0 exact variants | 0 requested units");
     expect(host.textContent).not.toContain(reference);
     expect(sessionStorage.length).toBe(0);
     expect(api.catalog).toHaveBeenCalledTimes(2); expect(api.config).toHaveBeenCalledTimes(2);
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     expect(api.submit).toHaveBeenCalledTimes(2);
     expect(api.submit.mock.calls[1][0].idempotencyKey).not.toBe(first.idempotencyKey);
     expect(host.textContent).toContain(reference); expectOnlyReferenceRecord();
   });
   it("starts another request from a reopened receipt too, forgetting the record and focusing the fresh form", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Submit request");
     simulateReload();
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
     expect(host.textContent).toContain("confirmed earlier in this browser tab");
     await click("Start another request");
-    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).toContain("Build your request");
     expect(document.activeElement).toBe(host.querySelector("h1"));
     expect(sessionStorage.length).toBe(0);
     expect(replacement.catalog).toHaveBeenCalledTimes(1); expect(replacement.config).toHaveBeenCalledTimes(1);
@@ -1529,7 +1529,7 @@ describe("confirmed reference continuation", () => {
     try {
       await prepare(api);
       await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} onConfirmedReceipt={confirmed} />));
-      await click("Submit for review");
+      await click("Submit request");
       expect(host.textContent).toContain(reference);
       expect(confirmed).toHaveBeenCalledWith(receipt);
       expect(sessionStorage.length).toBe(0);
@@ -1549,7 +1549,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     };
     await renderSameForm(true);
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(403, "agreement_standing_required"));
-    await click("Submit for review");
+    await click("Submit request");
     const first = api.submit.mock.calls[0][0];
     expect(refresh).toHaveBeenCalledTimes(1);
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -1559,7 +1559,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     expect([...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")]
       .every((input) => !input.checked)).toBe(true);
     await renderSameForm(false);
-    const submit = [...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review");
+    const submit = [...host.querySelectorAll("button")].find((button) => button.textContent === "Submit request");
     expect(submit?.disabled).toBe(true);
     await renderSameForm(true);
     expect(api.submit).toHaveBeenCalledTimes(1);
@@ -1568,9 +1568,9 @@ describe("agreement-standing refresh preserves the current request", () => {
       legal: [{ kind: "fixture-terms", version: "fixture-v2", label: "Current synthetic legal requirement" }] });
     await click("Refresh requirements");
     // Reacceptance alone is insufficient: the request acknowledgments remain unchecked.
-    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")?.disabled).toBe(true);
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit request")?.disabled).toBe(true);
     await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((input) => input.click()));
-    await click("Submit for review");
+    await click("Submit request");
     const second = api.submit.mock.calls[1][0];
     expect(second.contact).toEqual(first.contact);
     expect(second.lines).toEqual(first.lines);
@@ -1586,7 +1586,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       onAgreementStandingRequired={refresh} />));
     api.submit.mockRejectedValueOnce(new Error("Synthetic lost reply"));
-    await click("Submit for review");
+    await click("Submit request");
     const first = api.submit.mock.calls[0][0];
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
@@ -1608,7 +1608,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       onAgreementStandingRequired={refresh} />));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(status, code));
-    await click("Submit for review");
+    await click("Submit request");
     expect(refresh).not.toHaveBeenCalled();
     expect(api.submit).toHaveBeenCalledTimes(1);
   });

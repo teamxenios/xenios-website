@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import SeoHead from "@/components/SeoHead";
+import { EarlyAccessRequestGuide } from "./EarlyAccessRequestGuide";
+import { EARLY_ACCESS_REQUEST_INTRO } from "./request-experience-copy";
 import { EARLY_ACCESS_ENTRY_PATH, isEarlyAccessEntryPath } from "@shared/research/paths";
 import { scrollToTopRespectingMotion } from "@/lib/motion";
 import { useAssistedOrderBridgeState } from "../assisted-order/AssistedOrderCta";
@@ -508,10 +510,15 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
         <div className="max-w-[1280px] min-w-0" data-testid="quick-order-request-only">
           <h1 className="display-s max-w-[26ch]">{requestOnlyName}</h1>
           <p className="mt-4 body-m text-ink-2 max-w-[62ch]">
-            Choose items and send a request for review. Submission does not collect payment,
-            approve treatment, create a prescription or confirm shipping. Availability and
-            any required clinical review are confirmed separately.
+            {EARLY_ACCESS_REQUEST_INTRO}
           </p>
+          {!retainedRequest && requestRecoveryDoor !== true && embeddedOrderStep === "products" && (
+            <EarlyAccessRequestGuide browseTargetId={
+              state.kind === "authenticated" && requestMode.kind === "mixed"
+                && requestRecoveryDoor === false && !priorRequestBlocked
+                ? "early-access-catalog" : undefined
+            } />
+          )}
           {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
             : state.kind !== "authenticated" ? <div role="status" className="mt-5">
               <p>
@@ -546,7 +553,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
                 <EarlyAccessAgreementSection key={agreementRevision}
                   onAccepted={acceptCurrentAgreement} onBlocked={blockCurrentAgreement} />
               </div>}
-              <div className="mt-5">
+              <div id="early-access-catalog" tabIndex={-1} className="mt-5">
                 <Suspense fallback={<p role="status">Loading the request form...</p>}>
                   <FullCanonicalCatalog mode={requestEntryMode} embedded entryIntent={entryIntent}
                     continuationEnabled={agreed && blocked === null}

@@ -5,6 +5,7 @@ import type { StorefrontIntent } from "../storefront/entry-intent";
 import { OrderEntryIntentNotice } from "../early-access/OrderEntryIntentNotice";
 import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "../early-access/orderEntryIntent";
 import { AssistedOrderCta } from "./AssistedOrderCta";
+import { EARLY_ACCESS_REQUEST_CTA } from "../early-access/request-experience-copy";
 import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { readOrderRequestContinuity, selectOrderRequestDoor, useOrderRequestMode, type OrderRequestMode } from "./order-request-mode";
@@ -24,7 +25,7 @@ export function OrderRequestCta({ mode }: { mode: OrderRequestMode }) {
   if (mode.kind !== "mixed") return null;
   return <section className="card mt-6"><h2>Request products for review</h2>
     <p>Choose clinical and nonclinical items in one private request. Submission does not approve treatment, place an order or collect payment.</p>
-    <a className="btn btn-primary mt-4" href="/research/early-access/order-request">Open request form</a></section>;
+    <a className="btn btn-primary mt-4" href="/research/early-access/order-request">{EARLY_ACCESS_REQUEST_CTA.open}</a></section>;
 }
 function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
   onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void }) {

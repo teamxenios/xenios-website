@@ -75,6 +75,8 @@ describe("protected Research chrome pointer targets", () => {
     expect(row).not.toBeNull();
     expect(home?.classList.contains("research-chrome-target")).toBe(true);
     expect(home?.classList.contains("research-chrome-wordmark")).toBe(true);
+    expect(home?.getAttribute("aria-label")).toBe("Xenios Care + Research");
+    expect(home?.textContent).toContain("care + research");
     expect(back?.classList.contains("research-chrome-target")).toBe(true);
   });
 
