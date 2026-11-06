@@ -31,6 +31,8 @@ import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/commu
 import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
 import { renderAssistedOrderOutboxEmail } from "./assisted-order/communications";
 import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications";
+import { REQUEST_INTENT_NOTIFICATION_TEMPLATE, notificationSendEnabled, renderRequestIntentNotification } from "./assisted-order/request-intent/notification-communications";
+import { reconcileRequestIntentNotifications } from "./assisted-order/request-intent/notification-reconciler";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -43,6 +45,25 @@ import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications"
 
 const OUTBOX = "research_notification_outbox";
 const ATTEMPTS = "research_notification_attempts";
+
+function excludeHeldRequestIntents<T>(query: T): T {
+  return notificationSendEnabled(process.env) ? query
+    : (query as any).neq("template_key", REQUEST_INTENT_NOTIFICATION_TEMPLATE);
+}
+
+/** Aggregate mail-queue metadata only, under the existing outbox-admin guard. */
+export async function requestIntentNotificationHeldMetrics(): Promise<{ deliveryEnabled: boolean; heldCount: number | null }> {
+  const deliveryEnabled = notificationSendEnabled(process.env);
+  if (deliveryEnabled) return { deliveryEnabled, heldCount: 0 };
+  if (!supabaseConfigured()) return { deliveryEnabled, heldCount: null };
+  try {
+    const { count, error } = await getSupabaseAdmin().from(OUTBOX)
+      .select("id", { count: "exact", head: true })
+      .eq("template_key", REQUEST_INTENT_NOTIFICATION_TEMPLATE)
+      .in("status", ["pending", "failed_retryable", "processing"]);
+    return { deliveryEnabled, heldCount: !error && Number.isSafeInteger(count) && count! >= 0 ? count! : null };
+  } catch { return { deliveryEnabled, heldCount: null }; }
+}
 
 // Backoff schedule (Mega 1 section 4): immediate, 1m, 5m, 20m, 1h, 6h.
 const BACKOFF_SECONDS = [0, 60, 300, 1200, 3600, 21600];
@@ -203,9 +224,12 @@ export async function sendFoundingEmail(input: {
   text: string;
   html?: string;
   idempotencyKey?: string;
-}): Promise<{ ok: boolean; providerId: string | null; error?: string }> {
+  allowSend?: () => boolean;
+}): Promise<{ ok: boolean; providerId: string | null; error?: string; held?: boolean }> {
   try {
     const r = await getResendClient();
+    // Optional feature-specific final gate, after asynchronous client acquisition.
+    if (input.allowSend && !input.allowSend()) return { ok: false, providerId: null, held: true };
     const from = process.env.RESEARCH_EMAIL_FROM?.trim() || RESEARCH_SENDER_DEFAULT;
     const replyTo = process.env.RESEARCH_EMAIL_REPLY_TO?.trim() || RESEARCH_REPLY_TO_DEFAULT;
     const message = {
@@ -239,7 +263,10 @@ export async function sendFoundingEmail(input: {
 // Template dispatch at SEND time. Fresh tokens are minted here, never stored.
 // The token PURPOSE is decided at enqueue time (payload.tokenPurpose) so a
 // pre-approval status link can never carry an account-claim credential.
-async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
+async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean; held?: boolean }> {
+  if (job.template_key === REQUEST_INTENT_NOTIFICATION_TEMPLATE && !notificationSendEnabled(process.env)) {
+    return { ok: false, providerId: null, held: true };
+  }
   const payload = job.payload ?? {};
   const firstName = String(payload.firstName ?? "there");
   // Rows enqueued before purposes existed have no payload.tokenPurpose; for
@@ -258,6 +285,13 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
     }
     let result: unknown;
     switch (job.template_key) {
+      case REQUEST_INTENT_NOTIFICATION_TEMPLATE: {
+        const rendered = renderRequestIntentNotification(job.template_key, job.payload, job.recipient, process.env);
+        if (!rendered) return { ok: false, providerId: null, error: "request_intent_notification_invalid", nonRetryable: true };
+        const outcome = await sendFoundingEmail({ to: job.recipient, ...rendered, idempotencyKey: String(job.event_key),
+          allowSend: () => notificationSendEnabled(process.env) });
+        return outcome.ok || outcome.held ? outcome : { ok: false, providerId: null, error: "request_intent_notification_delivery_failed" };
+      }
       case "approved_customer_claim": {
         // Recheck the approval before minting/sending its ownership credential.
         // A stale or revoked job is a visible failure, never recorded as sent.
@@ -431,6 +465,9 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
     const providerId = ok && typeof result === "object" && result !== null ? ((result as any).id ?? null) : null;
     return { ok, providerId, error: ok ? undefined : "provider send returned failure" };
   } catch (error: any) {
+    if (job.template_key === REQUEST_INTENT_NOTIFICATION_TEMPLATE) {
+      return { ok: false, providerId: null, error: "request_intent_notification_invalid", nonRetryable: true };
+    }
     return { ok: false, providerId: null, error: String(error?.message ?? "send threw").slice(0, 300) };
   }
 }
@@ -448,17 +485,18 @@ const STALE_PROCESSING_MINUTES = 15;
 
 async function reclaimStaleProcessing(now: Date): Promise<void> {
   const cutoff = new Date(now.getTime() - STALE_PROCESSING_MINUTES * 60 * 1000).toISOString();
-  const { data: stale, error } = await getSupabaseAdmin()
+  const { data: stale, error } = await excludeHeldRequestIntents(getSupabaseAdmin()
     .from(OUTBOX)
     .select("*")
     .eq("status", "processing")
-    .lt("updated_at", cutoff)
+    .lt("updated_at", cutoff))
     .limit(20);
   if (error) {
     console.error("[outbox] stale reclaim failed:", error.message);
     return;
   }
   for (const job of (stale as any[]) ?? []) {
+    if (job.template_key === REQUEST_INTENT_NOTIFICATION_TEMPLATE && !notificationSendEnabled(process.env)) continue;
     // The crashed claim COUNTS as an attempt: a dispatch that reliably kills
     // the worker must walk the same backoff ladder to failed_permanent, not
     // reclaim forever.
@@ -536,17 +574,23 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
       error instanceof Error ? error.message : "unknown",
     );
   }
+  // The new projection has its own explicit default-off gate and SQL approval policy.
+  // Never read private requests or enqueue in the submission transaction.
+  const projection = await reconcileRequestIntentNotifications(process.env, () => getSupabaseAdmin());
+  if (projection.state === "blocked") console.error("[outbox] request intent notification projection blocked");
   await reclaimStaleProcessing(now);
 
-  const { data: due, error } = await getSupabaseAdmin()
+  const { data: due, error } = await excludeHeldRequestIntents(getSupabaseAdmin()
     .from(OUTBOX)
     .select("*")
     .in("status", ["pending", "failed_retryable"])
-    .lte("next_attempt_at", now.toISOString())
+    .lte("next_attempt_at", now.toISOString()))
     .limit(20);
   if (error || !due?.length) return result;
 
   for (const job of due as any[]) {
+    if (job.template_key === REQUEST_INTENT_NOTIFICATION_TEMPLATE && !notificationSendEnabled(process.env)) continue;
+    const priorStatus = job.status;
     // Claim: only one runner may move it to processing.
     const { data: claimed } = await getSupabaseAdmin()
       .from(OUTBOX)
@@ -559,6 +603,16 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
 
     const attempt = (job.attempt_count ?? 0) + 1;
     const outcome = await dispatch(job);
+
+    if (outcome.held) {
+      // Gate changed after selection/claim. Restore prior due state, preserving attempts.
+      // If restoration fails, the processing row remains held and visible; never call it sent.
+      const { error: holdError } = await getSupabaseAdmin().from(OUTBOX)
+        .update({ status: priorStatus, updated_at: now.toISOString() })
+        .eq("id", job.id).eq("status", "processing");
+      if (holdError) console.error("[outbox] request intent notification hold restore failed");
+      continue;
+    }
 
     await getSupabaseAdmin().from(ATTEMPTS).insert({
       outbox_id: job.id,
@@ -770,6 +824,7 @@ export function registerOutboxAdmin(app: Express) {
         outbox: counts,
         lastSuccessfulSend: lastSent,
         workerRunning: Boolean(workerTimer),
+        requestIntentNotifications: await requestIntentNotificationHeldMetrics(),
         driveExportsEnabled: process.env.RESEARCH_GOOGLE_WORKSPACE_EXPORTS_ENABLED === "true",
       },
     });

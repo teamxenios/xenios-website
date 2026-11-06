@@ -2,6 +2,7 @@ import crypto from "crypto";
 import express from "express";
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { getSupabaseAdmin } from "../supabase";
 
 // ---------------------------------------------------------------------------
 // Member claiming + auth + the CODEX_UI contract endpoints. The claim
@@ -95,6 +96,7 @@ vi.mock("../supabase", () => {
     let insertPayload: any = null;
     let updatePayload: any = null;
     const filters: Array<[string, any]> = [];
+    const neqFilters: Array<[string, any]> = [];
     const lteFilters: Array<[string, any]> = [];
     const ltFilters: Array<[string, any]> = [];
     let inFilter: [string, any[]] | null = null;
@@ -103,6 +105,7 @@ vi.mock("../supabase", () => {
       rows.filter(
         (r) =>
           filters.every(([c, v]) => r[c] === v) &&
+          neqFilters.every(([c, v]) => r[c] != null && v != null && r[c] !== v) &&
           lteFilters.every(([c, v]) => r[c] <= v) &&
           ltFilters.every(([c, v]) => r[c] != null && r[c] < v) &&
           (!inFilter || inFilter[1].includes(r[inFilter[0]])),
@@ -140,6 +143,7 @@ vi.mock("../supabase", () => {
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
+      neq: (c: string, v: any) => { neqFilters.push([c, v]); return api; },
       in: (c: string, vs: any[]) => { inFilter = [c, vs]; return api; },
       lte: (c: string, v: any) => { lteFilters.push([c, v]); return api; },
       lt: (c: string, v: any) => { ltFilters.push([c, v]); return api; },
@@ -261,6 +265,24 @@ beforeEach(() => {
   delete process.env.RESEARCH_REFERRALS_ENABLED;
 });
 
+describe("outbox fixture neq SQL semantics (in-memory, not a database check)", () => {
+  it("excludes held, null and absent templates while retaining a different template", async () => {
+    state.tables.research_notification_outbox.push(
+      { id: "held", template_key: "request_intent_pending_staff_v1" },
+      { id: "ordinary", template_key: "applicant_status_link" },
+      { id: "null", template_key: null }, { id: "absent" },
+    );
+    const { data } = await getSupabaseAdmin().from("research_notification_outbox").select("*")
+      .neq("template_key", "request_intent_pending_staff_v1");
+    expect(data?.map((row: any) => row.id)).toEqual(["ordinary"]);
+  });
+  it("does not treat SQL not-equal NULL as is-not-null", async () => {
+    state.tables.research_notification_outbox.push({ id: "ordinary", template_key: "applicant_status_link" });
+    const { data } = await getSupabaseAdmin().from("research_notification_outbox").select("*").neq("template_key", null);
+    expect(data).toEqual([]);
+  });
+});
+
 describe("account claiming", () => {
   it("claims approved customer access through the atomic authority, never the historical billing writer", async () => {
     const application = seedApplication({ status: "approved_customer", access_approval_version: 1 });
@@ -332,6 +354,11 @@ describe("account claiming", () => {
   });
 
   it("claims an approved application: confirmed auth user + member row + confirmation email", async () => {
+    const held = ["pending", "processing"].map((status) => ({
+      id: `synthetic-held-${status}`, template_key: "request_intent_pending_staff_v1", status,
+      updated_at: new Date(0).toISOString(), next_attempt_at: new Date(0).toISOString(), attempt_count: 0,
+    }));
+    state.tables.research_notification_outbox.push(...held.map((row) => ({ ...row })));
     const app = seedApplication();
     const res = await request(makeApp())
       .post("/api/research/member/claim")
@@ -345,6 +372,7 @@ describe("account claiming", () => {
     // The claim-success confirmation went through the outbox to the member.
     expect(emails.sendAccountClaimSuccess).toHaveBeenCalledTimes(1);
     expect(emails.sendAccountClaimSuccess.mock.calls[0][0].email).toBe("member@example.com");
+    expect(state.tables.research_notification_outbox.filter((row) => row.id.startsWith("synthetic-held-"))).toEqual(held);
   });
 
   it("rejects a second claim for the same email", async () => {
