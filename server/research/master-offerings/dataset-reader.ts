@@ -222,6 +222,15 @@ function readVariant(
     );
   }
   let label = value.label;
+  // GRP-0337 carries a duplicated unit suffix in the selected supplier row.
+  // Correct its display while keeping the source identities and artifact bytes.
+  if (
+    offeringId === "mo_ef095e8f7e8fe3a7f85d" &&
+    value.id === "mov_50fc8d22f6777f3f0d4d" &&
+    label === "SEMAGLUTIDE+BPC-157 5 mg/650 mcgmg/mcg"
+  ) {
+    label = "SEMAGLUTIDE 5 mg + BPC-157 650 mcg";
+  }
   if (isOpaqueVariantLabel(label)) {
     if (variantCount !== 1) {
       // Two variants of the same product both labelled with internal codes
