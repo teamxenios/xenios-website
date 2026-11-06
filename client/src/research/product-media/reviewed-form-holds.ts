@@ -42,6 +42,8 @@ const unconfirmedOfferingByVariant = new Map<string, string>([
   ["mov_0f9bee8bdfc89ec9c2d3", "mo_a1d452a070c24e5f0033"],
   ["mov_7b331364b57f9fdd335a", "mo_4e47d44fd3982b0b5e61"],
   ["mov_2d03422d39648068a0e4", "mo_0784f8ad4fc471f8053e"],
+  ["mov_e218a4fead30388a55ff", "mo_adf1037eceb9904e7d07"],
+  ["mov_b5c50d1bb9d8ad998062", "mo_4223bdd3e6880240fc4a"],
 ]);
 
 export function isResearchFormUnconfirmed(variantId: string, offeringId?: string): boolean {
