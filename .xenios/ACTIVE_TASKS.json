@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T03:49:36.251Z",
+  "updatedAt": "2026-11-06T04:03:00.447Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4740,6 +4740,27 @@
       "createdAt": "2026-11-06T03:49:36.251Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T03:49:36.251Z"
+    },
+    {
+      "id": "KAN1-EA-INITIAL-REQUEST-OPTIONS-RECOVERY-20261106",
+      "title": "Recover initial request configuration options",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-1",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "client/src/research/assisted-order/RequestConfigurationNotice.tsx",
+        "client/src/research/assisted-order/request-configuration-retry.test.tsx",
+        "client/src/research/assisted-order/useInitialRequestConfiguration.ts",
+        "client/src/research/lib/latest-operation.ts"
+      ],
+      "dependsOn": [
+        "KAN1-EA-PERSISTENT-REQUEST-BAR-20261105"
+      ],
+      "scopeNote": "Claim only the four absent paths listed in this task for Samuel's newest wrap-up package and actual Root election KAN-13/11802, on intended branch codex/early-access-request-options-recovery-20261106 from exact protected release 07d727a4c9b5516bbd57aef3aa7f89d359849260. Exact patch SHA-256 7f9dd8fda3c8b16a05ef95c2ccdeabbce9a03e854699c2191a6c895721101707 and receipt SHA-256 f744b3166d1493998413659edf7b15c15eb1dfb3406615585a1948f4c09874ae project tree 486091694b75a2b351c08a410a5b8e3bb1b9e627. The fifth changed path, client/src/research/assisted-order/RequestIntentForm.tsx, advances exact release blob 5299a404804b5d1c557e62775f90c47e13021b7d to dd639b9cb5f418468dfaa512a3c160e2438111a8 and remains exclusively covered by same-Root active lease 427bb26e-5d85-4db5-b0ec-1e88334b33f1, bound under the prior exact KAN-13/11792 shared-path precedent without a new overlapping lease. Leave every prior task, lease, heartbeat and record byte-exact. Fresh protected FILE_OWNERSHIP plus active/reserved exact, prefix and wildcard CODE_OWNERSHIP audits across all five changed paths found only the expected same-Root shared-form lease and no foreign live owner. Preserve all 153 prior tasks, 174 prior leases, 57 sessions and all rules, histories and refs, specifically frozen #421 e6035c7f1695abf7e781217e3d07c6def2eb9a3e, bar ef25adc612111f27037bfdd5c5dbc5f3b1f4d0ac and policy 1475d418283e646554872db3992abc8a392af423. Source application, tests, independent review, protected integration and release remain separate Root gates. This custody transaction performs no source checkout change, application edit, provider, workflow, execution, configuration, deployment, production or new session.",
+      "createdAt": "2026-11-06T04:03:00.447Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T04:03:00.447Z"
     }
   ]
 }

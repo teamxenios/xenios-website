@@ -3718,6 +3718,20 @@
       "state": "active",
       "claimedAt": "2026-11-06T03:49:36.251Z",
       "heartbeatAt": "2026-11-06T03:49:36.251Z"
+    },
+    {
+      "id": "f4464457-9112-4953-b871-28ea842fd0d4",
+      "task": "KAN1-EA-INITIAL-REQUEST-OPTIONS-RECOVERY-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/RequestConfigurationNotice.tsx",
+        "client/src/research/assisted-order/request-configuration-retry.test.tsx",
+        "client/src/research/assisted-order/useInitialRequestConfiguration.ts",
+        "client/src/research/lib/latest-operation.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T04:03:00.447Z",
+      "heartbeatAt": "2026-11-06T04:03:00.447Z"
     }
   ],
   "rules": [
