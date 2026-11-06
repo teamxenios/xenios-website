@@ -643,7 +643,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('a[href*="/member/login"]')).toBeNull();
     const browse = container.querySelector('[data-testid="early-access-how-it-works"] a[href="#early-access-catalog"]');
     expect(browse?.textContent).toBe("Browse products");
-    expect(container.querySelector("#early-access-catalog")?.querySelector('[data-testid="request-door-mixed"]')).not.toBeNull();
+    expect(target?.closest('[data-testid="request-door-mixed"]')).toBeTruthy();
     expect(container.textContent).toContain("Clinical review required. Not a prescription.");
     expect(container.textContent).toContain("does not collect payment");
     const unlocks = fetch.mock.calls.filter(([url, init]) =>
