@@ -3657,6 +3657,18 @@
       "state": "active",
       "claimedAt": "2026-11-06T01:24:00.392Z",
       "heartbeatAt": "2026-11-06T01:24:00.392Z"
+    },
+    {
+      "id": "6d68eed2-04da-45b6-92ae-30bf4156d3a2",
+      "task": "KAN31-EA-POLICY-V2-PROTOCOL-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "scripts/evidence/lib/policy-fixture-v2.mjs",
+        "scripts/evidence/lib/policy-fixture-v2.test.mjs"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T01:46:27.882Z",
+      "heartbeatAt": "2026-11-06T01:46:27.882Z"
     }
   ],
   "rules": [

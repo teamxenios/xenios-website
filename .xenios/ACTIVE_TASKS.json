@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T01:45:11.488Z",
+  "updatedAt": "2026-11-06T01:46:27.882Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4646,6 +4646,25 @@
       "createdAt": "2026-11-06T01:24:00.392Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T01:24:00.392Z"
+    },
+    {
+      "id": "KAN31-EA-POLICY-V2-PROTOCOL-20261106",
+      "title": "Add the policy v2 completion-code protocol fixture",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-31",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "scripts/evidence/lib/policy-fixture-v2.mjs",
+        "scripts/evidence/lib/policy-fixture-v2.test.mjs"
+      ],
+      "dependsOn": [
+        "KAN13-EA-POLICY-V2-REVISED-20261106"
+      ],
+      "scopeNote": "Claim only scripts/evidence/lib/policy-fixture-v2.mjs and scripts/evidence/lib/policy-fixture-v2.test.mjs for the completion-code protocol packet elected for existing Root at KAN-13/11683. Use the same intended branch codex/early-access-policy-v2-revised-20261106 from exact live protected release 07d727a4c9b5516bbd57aef3aa7f89d359849260/tree e93209a057d186c7a9d46483592ac2e576b9df5f. Private proof C:/Users/sboad/Downloads/XENIOS_OPERATIONAL_DELIVERY_EXECUTION_2026-10-24/inventory/qo_guest_catalog_detail_20261104/completion-code-policy-fixture-20261106/POLICY_V2_COMPLETION_PROTOCOL_PREPARATION.json has SHA-256 e7aba548823e0ed9a7f210396ea21035445ff3707c10758ffa93d392113f7503; proposed delta SHA-256 is 943c441c81d2ddda440c9fdc035209558c0a3781bf3a87fea2609364d8f79a8b and final current 48-path projected tree is 20e8fa82c1b6c5cf4f5336241e146b096091d121. Existing active Root lease 927aa99f-4b6f-44f1-881a-577743135cbf already covers touched scripts/evidence/capture-synthetic-journeys.mjs and remains unchanged, as does storefront lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba. Fresh current active/reserved exact, prefix and glob CODE_OWNERSHIP plus canonical FILE_OWNERSHIP audits across all three touched paths found no foreign writer or override. Preserve all prior records, deployed ownership, existing PR418, PR413 and PR416 custody, original policy claims, release records and handoffs. Source application, full schema-v2 independent trusted-base review, hosted qualification and release remain separate gates. This custody transaction performs no application edit, checkout or branch switch, test, runner, settings, browser, workflow, provider, configuration, deployment, production or new session.",
+      "createdAt": "2026-11-06T01:46:27.882Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T01:46:27.882Z"
     }
   ]
 }
