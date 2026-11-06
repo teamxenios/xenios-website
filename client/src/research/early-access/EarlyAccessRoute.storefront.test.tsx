@@ -634,7 +634,7 @@ describe("the login-free request-only entry", () => {
     expect(container.querySelector('a[href*="/member/login"]')).toBeNull();
     const browse = container.querySelector('[data-testid="early-access-how-it-works"] a[href="#early-access-catalog"]');
     expect(browse?.textContent).toBe("Browse products");
-    expect(container.querySelector("#early-access-catalog")?.querySelector('[data-testid="request-door-mixed"]')).not.toBeNull();
+    expect(container.querySelector("#early-access-catalog")?.querySelector('[data-testid="request-door-mixed"]')).toBeTruthy();
     expect(container.textContent).toContain("Clinical review required. Not a prescription.");
     expect(container.textContent).toContain("does not collect payment");
     const unlocks = fetch.mock.calls.filter(([url, init]) =>
@@ -676,6 +676,31 @@ describe("the login-free request-only entry", () => {
       createdAt: "2026-10-14T12:00:00Z", pageLoad: "earlier-page-load",
     }));
   }
+  it("reopens an earlier receipt with open intake without ever mounting the new-request guide", async () => {
+    seedEarlierReceipt("early-access-session");
+    const fetch = stubFetch({ bridgeEnabled: true, mixedMode: "on" });
+    const guide = '[data-testid="early-access-how-it-works"]';
+    let showedGuide = false;
+    const observer = new MutationObserver((records) => {
+      for (const { addedNodes } of records) {
+        for (const node of addedNodes) {
+          if (node instanceof Element && (node.matches(guide) || node.querySelector(guide))) showedGuide = true;
+        }
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true });
+    try {
+      await renderStorefront(true);
+      expect(container.textContent).toContain(earlierReference);
+      expect(container.querySelector("h2[tabindex]")?.textContent).toBe("Your submitted request");
+      expect(container.querySelector(guide)).toBeNull();
+      expect(showedGuide).toBe(false);
+      expect(recoveryPosts(fetch)).toHaveLength(0);
+      expect(fetch.mock.calls.some(([, init]) => init?.method === "POST")).toBe(false);
+    } finally {
+      observer.disconnect();
+    }
+  });
   it.each(["off", "unknown"] as const)("reopens the verified member receipt with %s intake and leaves the form closed", async (mixedMode) => {
     seedEarlierReceipt();
     researchStore.publish({ member: receiptMember, memberToken: "synthetic-A", memberChecking: false,

@@ -161,8 +161,8 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
   // journey advances, the surrounding storefront must stop presenting the
   // separate Featured shelf and direct-checkout progress as if both flows
   // were active at once.
-  const [embeddedOrderStep, setEmbeddedOrderStep] =
-    useState<EmbeddedOrderStep>("products");
+  const [reportedOrderStep, setEmbeddedOrderStep] = useState<EmbeddedOrderStep | null>(null);
+  const embeddedOrderStep = reportedOrderStep ?? "products";
   // One mode probe is shared by CTA and catalog. Existing bridge readiness
   // still governs its fallback; a failure of the new probe never means off.
   const bridgeState = useAssistedOrderBridgeState();
@@ -198,7 +198,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
     setOrderRequest(null);
     setPriceChanged(false);
     setCheckoutPhase("details");
-    setEmbeddedOrderStep("products");
+    setEmbeddedOrderStep(null);
   }, [refreshAgreementStanding]);
 
   const readSession = useCallback(async () => {
@@ -513,7 +513,7 @@ export default function EarlyAccessRoute({ requestOnly = false }: Readonly<{ req
             {EARLY_ACCESS_REQUEST_INTRO}
           </p>
           {state.kind === "authenticated" && requestMode.kind === "mixed" && requestRecoveryDoor === false
-            && !priorRequestBlocked && !retainedRequest && embeddedOrderStep === "products" && (
+            && !priorRequestBlocked && !retainedRequest && reportedOrderStep === "products" && (
               <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />
           )}
           {state.kind === "checking" ? <p role="status" className="mt-5">Preparing the request form...</p>
