@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T00:32:29.7176667Z",
+  "updatedAt": "2026-11-06T01:15:08.807Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -394,24 +394,24 @@
   },
   "currentRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "6215799d2ea046098f66074b36113bb18273ae75",
-    "tree": "f4da5c97db91dd8d9112af97858f68c8123aef28",
+    "sha": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+    "tree": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployedFromBranch": "codex/early-access-ten-artwork-backed-descriptions-20261105",
-    "sourceSha": "0ccb543ea9b402213d6d51094747ae58665b53f6",
-    "rollback": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
-    "rollbackTree": "1f5df7e4ded1024dc44511863886adcaa8b6453e",
-    "rollbackDeployId": "dep-dbmh617f3r2c73fqcjv0",
+    "deployedFromBranch": "codex/early-access-0337-effective-label-20261106",
+    "sourceSha": "f666e1c8e5f45dfa2d10116d719e87bdabc76171",
+    "rollback": "6215799d2ea046098f66074b36113bb18273ae75",
+    "rollbackTree": "f4da5c97db91dd8d9112af97858f68c8123aef28",
+    "rollbackDeployId": "dep-dbmhrgp7lnhs73952qo0",
     "rollbackExecuted": false,
-    "deployId": "dep-dbmhrgp7lnhs73952qo0",
-    "liveSince": "2026-11-06T00:23:50.627682Z",
-    "observedAt": "2026-11-06T00:31:11Z",
+    "deployId": "dep-dbmieeo473hc73dg8ok0",
+    "liveSince": "2026-11-06T01:04:14.419863Z",
+    "observedAt": "2026-11-06T01:11:41Z",
     "autoDeploy": "yes",
     "autoDeployTrigger": "checksPass",
-    "scope": "Qualified ordinary website release for ten independently reviewed artwork-backed descriptions while preserving care-pathway boundaries, the outreach alias, request-only behavior and all reviewed artwork mappings; all sensitive operations remain held",
-    "receipt": ".xenios/handoffs/2026-11-06T00-31-11Z-PR414-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
-    "note": "Protected PR 414 released exact source 0ccb543ea9b402213d6d51094747ae58665b53f6/tree f4da5c97db91dd8d9112af97858f68c8123aef28 as 6215799d2ea046098f66074b36113bb18273ae75 with parents b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d and 0ccb543ea9b402213d6d51094747ae58665b53f6. Candidate CI 42134401712 and protected CI 42135458640 passed all five trusted checks; the full suite passed 18,602 tests with zero failures and 83 skips. The one application path advanced the reviewed description registry to exact blob eaf3dfca16b9d22972d390a27a068bfaf0850488. Render deploy dep-dbmhrgp7lnhs73952qo0 reached live at 2026-11-06T00:23:50.627682Z from autoDeploy=yes/checksPass. Direct and repeat /earlyaccess, the legacy route and health returned 200 with expected public route privacy headers and exact deployed revision. KAN-13/11720 verified all 420 unique guest variants, 85 reviewed descriptions, 86 artwork mappings, all prior 75 descriptions retained, 242 provider-review variants withholding guest price and price version, and mounted signed-out details for GEN-GRP-0300 and GEN-GRP-0246 with zero selection, agreement unchecked and Continue disabled. Compatible rollback b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d/dep-dbmh617f3r2c73fqcjv0 was retained and not executed. Live evidence remained anonymous and read-only with no consent, submission, recovery, account or payment. No physical-device/mobile claim, authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
+    "scope": "Qualified ordinary website release for the independently reviewed GEN-GRP-0337 effective-label correction while preserving every reviewed description, artwork mapping, care-pathway boundary, outreach alias and request-only behavior; all sensitive operations remain held",
+    "receipt": ".xenios/handoffs/2026-11-06T01-11-41Z-PR415-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+    "note": "Protected PR 415 released exact source f666e1c8e5f45dfa2d10116d719e87bdabc76171/tree e1658fd0778fa2e0a6d8e52604a19ae9585c5309 as 0f4527df58c5f4bfecf319498246f4b1d85e67da with parents 6215799d2ea046098f66074b36113bb18273ae75 and f666e1c8e5f45dfa2d10116d719e87bdabc76171. Candidate CI 42139429399 and protected CI 42140354295 passed all five trusted checks; the full suite passed 18,603 tests with zero failures and 83 skips. The two application paths corrected the GEN-GRP-0337 effective label while preserving the catalog authority model. Render deploy dep-dbmieeo473hc73dg8ok0 reached live at 2026-11-06T01:04:14.419863Z from autoDeploy=yes/checksPass. Direct /earlyaccess, the legacy route and health returned 200 with expected public route privacy headers and exact deployed revision. KAN-6/11735 verified all 420 exact guest variants, 85 reviewed descriptions, 86 artwork mappings, and the actual GEN-GRP-0337 card and controls with label SEMAGLUTIDE 5 mg + BPC-157 650 mcg; no selection, consent or submission occurred. Compatible rollback 6215799d2ea046098f66074b36113bb18273ae75/dep-dbmhrgp7lnhs73952qo0 was retained and not executed. Live evidence remained anonymous and read-only. No physical-device/mobile claim, authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
   },
   "catalog": {
     "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
@@ -1462,6 +1462,32 @@
         "scope": "Qualified ordinary website release for six independently reviewed clinical descriptions and their care-pathway boundaries while preserving the outreach alias, request-only behavior and all reviewed artwork mappings; all sensitive operations remain held",
         "receipt": ".xenios/handoffs/2026-11-05T23-46-46Z-PR412-EXACT-RELEASE-COMPLETE-20261105-codex-launch-coordination-20261005.json",
         "note": "Protected PR 412 released exact source 4e271cef13448de814f202dd5a70928fc170baf5/tree 1f5df7e4ded1024dc44511863886adcaa8b6453e as b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d with parents e93de40a58eab2a454fcb3fc11783ffc5504ca3d and 4e271cef13448de814f202dd5a70928fc170baf5. Candidate CI 42127252453 and protected CI 42129696409 passed all five trusted checks; the full suite passed 18,602 tests with zero failures and 83 skips. The one application path advanced the reviewed description registry to exact blob 92e38d1e40c4bf0d017d5af76434d0c5e533e27c. Render deploy dep-dbmh617f3r2c73fqcjv0 reached live at 2026-11-05T23:37:46.091080Z from the existing checksPass autodeploy. Direct and repeat /earlyaccess, the legacy route and health returned 200 with the expected no-store, no-cache, no-referrer and noindex protections on public routes. KAN-13/11701 verified all 420 exact guest variants, 75 reviewed descriptions, 86 artwork mappings, the six provider-review care-pathway and omitted-price boundaries, five catalog pages, and mounted signed-out details for Sildenafil 100 mg tablet and Tadalafil Troche 20 mg at 1280x720. Compatible rollback e93de40a58eab2a454fcb3fc11783ffc5504ca3d/dep-dbmg8e0473hc73963chg was retained and not executed. Live evidence remained anonymous and read-only with no consent or submission. No physical-device/mobile claim, authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
+      }
+    },
+    {
+      "classification": "HISTORICAL_ARCHIVED_CURRENT_RELEASE_PREIMAGE",
+      "archivedAt": "2026-11-06T01:11:41Z",
+      "supersededBy": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+      "record": {
+        "classification": "CURRENT_LIVE_PRODUCTION",
+        "sha": "6215799d2ea046098f66074b36113bb18273ae75",
+        "tree": "f4da5c97db91dd8d9112af97858f68c8123aef28",
+        "status": "live",
+        "branch": "release/early-access-code-session-checkout",
+        "deployedFromBranch": "codex/early-access-ten-artwork-backed-descriptions-20261105",
+        "sourceSha": "0ccb543ea9b402213d6d51094747ae58665b53f6",
+        "rollback": "b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d",
+        "rollbackTree": "1f5df7e4ded1024dc44511863886adcaa8b6453e",
+        "rollbackDeployId": "dep-dbmh617f3r2c73fqcjv0",
+        "rollbackExecuted": false,
+        "deployId": "dep-dbmhrgp7lnhs73952qo0",
+        "liveSince": "2026-11-06T00:23:50.627682Z",
+        "observedAt": "2026-11-06T00:31:11Z",
+        "autoDeploy": "yes",
+        "autoDeployTrigger": "checksPass",
+        "scope": "Qualified ordinary website release for ten independently reviewed artwork-backed descriptions while preserving care-pathway boundaries, the outreach alias, request-only behavior and all reviewed artwork mappings; all sensitive operations remain held",
+        "receipt": ".xenios/handoffs/2026-11-06T00-31-11Z-PR414-EXACT-RELEASE-COMPLETE-20261106-codex-launch-coordination-20261005.json",
+        "note": "Protected PR 414 released exact source 0ccb543ea9b402213d6d51094747ae58665b53f6/tree f4da5c97db91dd8d9112af97858f68c8123aef28 as 6215799d2ea046098f66074b36113bb18273ae75 with parents b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d and 0ccb543ea9b402213d6d51094747ae58665b53f6. Candidate CI 42134401712 and protected CI 42135458640 passed all five trusted checks; the full suite passed 18,602 tests with zero failures and 83 skips. The one application path advanced the reviewed description registry to exact blob eaf3dfca16b9d22972d390a27a068bfaf0850488. Render deploy dep-dbmhrgp7lnhs73952qo0 reached live at 2026-11-06T00:23:50.627682Z from autoDeploy=yes/checksPass. Direct and repeat /earlyaccess, the legacy route and health returned 200 with expected public route privacy headers and exact deployed revision. KAN-13/11720 verified all 420 unique guest variants, 85 reviewed descriptions, 86 artwork mappings, all prior 75 descriptions retained, 242 provider-review variants withholding guest price and price version, and mounted signed-out details for GEN-GRP-0300 and GEN-GRP-0246 with zero selection, agreement unchecked and Continue disabled. Compatible rollback b9a9d1cacf9b4d5b430849da6c195ce2ec3de14d/dep-dbmh617f3r2c73fqcjv0 was retained and not executed. Live evidence remained anonymous and read-only with no consent, submission, recovery, account or payment. No physical-device/mobile claim, authenticated customer interaction, provider/configuration/schema/SQL mutation, supplier activation, price publication or production mutation beyond the recorded protected release and deploy occurred."
       }
     }
   ],

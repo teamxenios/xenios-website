@@ -3572,7 +3572,7 @@
         "server/research/master-offerings/dataset-reader.ts",
         "server/research/master-offerings/dataset-reader.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-11-06T00:39:26.7529927Z",
       "heartbeatAt": "2026-11-06T00:39:26.7529927Z"
     },

@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 1,
+  "kind": "exact_production_release_complete",
+  "writer": "codex-launch-coordination-20261005",
+  "recordedAt": "2026-11-06 01:11:41 UTC",
+  "pr": 415,
+  "source": "f666e1c8e5f45dfa2d10116d719e87bdabc76171",
+  "protected": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+  "tree": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309",
+  "parents": [
+    "6215799d2ea046098f66074b36113bb18273ae75",
+    "f666e1c8e5f45dfa2d10116d719e87bdabc76171"
+  ],
+  "mergedAt": "2026-11-06T00:55:58Z",
+  "task": "KAN6-EA-0337-EFFECTIVE-LABEL-20261106",
+  "lease": "e1ffbabd-b4c4-4d23-9754-285d3de42917",
+  "originalClaim": "e73ee4a39835eba12946d6ebff451ac3aae4e4e0",
+  "appPaths": [
+    "server/research/master-offerings/dataset-reader.ts",
+    "server/research/master-offerings/dataset-reader.test.ts"
+  ],
+  "patchSha256": "8fe128e272e388a7b9310eff40ba691e992c641b4702dabc1747225a31fc4749",
+  "sourceReview": {
+    "prepared": "KAN-6/11718",
+    "published": "KAN-6/11730"
+  },
+  "candidateCi": {
+    "run": 42139429399,
+    "head": "f666e1c8e5f45dfa2d10116d719e87bdabc76171",
+    "tree": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309",
+    "event": "pull_request",
+    "trusted": {
+      "typecheck": 127635730549,
+      "protection": 127635730270,
+      "build": 127635730007,
+      "Required CI completion": 127637910078,
+      "test": 127635730451
+    },
+    "jobs": {
+      "build": {
+        "id": 127635730007,
+        "checkout": "bab5d2022cea0290c31a331646cd370c51eac46a",
+        "logSha256": "46cebbacdb274360892ca6f79c6dac54c3649284c9e85ca767c593f306d51b6d"
+      },
+      "protection": {
+        "id": 127635730270,
+        "checkout": "f666e1c8e5f45dfa2d10116d719e87bdabc76171",
+        "logSha256": "e0e312b87274cabbcf1f7841e2fed4883a48f43bca879cf25a8a0adf0b2ca982"
+      },
+      "test": {
+        "id": 127635730451,
+        "checkout": "bab5d2022cea0290c31a331646cd370c51eac46a",
+        "logSha256": "99eeeba61946c548bda294366791adf2617a2a862d0b2a71cceed6adcefba112"
+      },
+      "typecheck": {
+        "id": 127635730549,
+        "checkout": "bab5d2022cea0290c31a331646cd370c51eac46a",
+        "logSha256": "2ce51c5bdd0655060025120a296dac8005bd4999a2577cd1ffc09ceb4c1ca3dc"
+      }
+    },
+    "checkoutTrees": {
+      "f666e1c8e5f45dfa2d10116d719e87bdabc76171": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309",
+      "bab5d2022cea0290c31a331646cd370c51eac46a": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309"
+    },
+    "fullCounts": [
+      "18603",
+      "83"
+    ],
+    "fileCounts": [
+      "1001",
+      "6"
+    ],
+    "evidence": [
+      "2026-11-06T00:50:39.8488128Z  ✓ client/src/research/master-offerings/detail-surface.test.tsx (13 tests) 215ms",
+      "2026-11-06T00:50:58.2625038Z  ✓ server/research/master-offerings/dataset-reader.test.ts (21 tests) 24ms",
+      "2026-11-06T00:51:12.2996516Z  ✓ server/research/kris-launch-a/dataset-reader.test.ts (27 tests) 36ms"
+    ],
+    "pullRequest": {
+      "headRefOid": "f666e1c8e5f45dfa2d10116d719e87bdabc76171",
+      "baseRefOid": "6215799d2ea046098f66074b36113bb18273ae75",
+      "isDraft": true,
+      "state": "OPEN",
+      "mergeable": "MERGEABLE",
+      "reviewDecision": null,
+      "reviewThreads": {
+        "pageInfo": {
+          "hasNextPage": false
+        },
+        "nodes": []
+      }
+    },
+    "protectedStrictTrustedChecks": true
+  },
+  "protectedCi": {
+    "run": 42140354295,
+    "head": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+    "tree": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309",
+    "event": "push",
+    "trusted": {
+      "Required CI completion": 127641349995,
+      "test": 127638841135,
+      "protection": 127638841226,
+      "build": 127638840905,
+      "typecheck": 127638841318
+    },
+    "jobs": {
+      "build": {
+        "id": 127638840905,
+        "checkout": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+        "logSha256": "c680b9c0814cfe2025a86a58b61ece7d937dff7ba33d637df981fc2e892f047c"
+      },
+      "test": {
+        "id": 127638841135,
+        "checkout": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+        "logSha256": "aabb97a2d3194a653d0a03b642967e89a6b6a428bd4c1034e77a31371d2efae0"
+      },
+      "protection": {
+        "id": 127638841226,
+        "checkout": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+        "logSha256": "69c82fe53194618663bff72518807efd9e2d02f12dd0ba7e670e090e45c41ba1"
+      },
+      "typecheck": {
+        "id": 127638841318,
+        "checkout": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+        "logSha256": "74794ce56b2a4f11671634dbb69bfc3aa73c70ddefd615e7dc05bd200ebe04f8"
+      }
+    },
+    "checkoutTrees": {
+      "0f4527df58c5f4bfecf319498246f4b1d85e67da": "e1658fd0778fa2e0a6d8e52604a19ae9585c5309"
+    },
+    "fullCounts": [
+      "18603",
+      "83"
+    ],
+    "fileCounts": [
+      "1001",
+      "6"
+    ],
+    "evidence": [
+      "2026-11-06T00:59:00.1590156Z  ✓ client/src/research/master-offerings/detail-surface.test.tsx (13 tests) 371ms",
+      "2026-11-06T00:59:22.9038881Z  ✓ server/research/master-offerings/dataset-reader.test.ts (21 tests) 34ms",
+      "2026-11-06T00:59:40.7248274Z  ✓ server/research/kris-launch-a/dataset-reader.test.ts (27 tests) 45ms"
+    ]
+  },
+  "deploy": {
+    "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "id": "dep-dbmieeo473hc73dg8ok0",
+    "status": "live",
+    "commit": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+    "finishedAt": "2026-11-06T01:04:14.419863Z",
+    "trigger": "new_commit",
+    "branch": "release/early-access-code-session-checkout",
+    "autoDeploy": "yes",
+    "autoDeployTrigger": "checksPass",
+    "manualDeploy": false
+  },
+  "rollback": {
+    "protected": "6215799d2ea046098f66074b36113bb18273ae75",
+    "tree": "f4da5c97db91dd8d9112af97858f68c8123aef28",
+    "deploy": "dep-dbmhrgp7lnhs73952qo0",
+    "used": false
+  },
+  "route": {
+    "release": "0f4527df58c5f4bfecf319498246f4b1d85e67da",
+    "deploy": "dep-dbmieeo473hc73dg8ok0",
+    "checkedAt": "2026-11-06T01:04:54.3749009Z",
+    "routes": [
+      {
+        "path": "/earlyaccess",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "cache": "no-store",
+        "referrer": "no-referrer",
+        "robots": "noindex,nofollow,noarchive",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ]
+      },
+      {
+        "path": "/research/early-access/order-request",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "cache": "no-store",
+        "referrer": "no-referrer",
+        "robots": "noindex,nofollow,noarchive",
+        "entry": [
+          "/assets/index-D9bwURak.js"
+        ]
+      },
+      {
+        "path": "/api/health",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "cache": "",
+        "referrer": "no-referrer",
+        "robots": "",
+        "entry": []
+      }
+    ],
+    "entry": {
+      "path": "/assets/index-D9bwURak.js",
+      "status": 200
+    }
+  },
+  "liveGuest": {
+    "evidence": "KAN-6/11735",
+    "renderBeforeAfterMatched": true,
+    "exactVariants": 420,
+    "exactDescriptions": 85,
+    "exactArtworkMappings": 86,
+    "product": "GEN-GRP-0337",
+    "offering": "mo_ef095e8f7e8fe3a7f85d",
+    "variant": "mov_50fc8d22f6777f3f0d4d",
+    "label": "SEMAGLUTIDE 5 mg + BPC-157 650 mcg",
+    "actualCardAndControls": true,
+    "noSelectionConsentOrSubmission": true,
+    "proof": [
+      {
+        "path": "C:\\Users\\sboad\\Downloads\\XENIOS_CATALOG_CONTENT_2026-11-04\\pr415-pr416-production-label-0f4527d\\CATALOG_GUEST_RELEASE_READBACK.json",
+        "bytes": 796,
+        "sha256": "31bace6a1dc7f567fe1695bc91328e19f02603ee5e8f72f055b300d61414432d"
+      },
+      {
+        "path": "C:\\Users\\sboad\\Downloads\\XENIOS_CATALOG_CONTENT_2026-11-04\\pr415-pr416-production-label-0f4527d\\PR415_MOUNTED_GUEST_STRENGTH_RECEIPT.json",
+        "bytes": 1213,
+        "sha256": "b5420445cae329657ebe46bcbb04a099564172eddff158f1185dc189923cc620"
+      }
+    ],
+    "independentPresentationReturn": "The pre-existing generic image alt says vial while the selected supplier's physical form remains held. Separate exact-pair packet KAN-6/11737 is proposed and requires independent qualification."
+  },
+  "separateCopy": {
+    "prepared": "KAN-6/11727",
+    "independent": "KAN-6/11729",
+    "prerequisite": "The exact reader is Live and the public card is verified."
+  }
+}
