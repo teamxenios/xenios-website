@@ -3822,6 +3822,17 @@
       "state": "handoff",
       "claimedAt": "2026-11-06T08:50:22.156Z",
       "heartbeatAt": "2026-11-06T08:50:22.156Z"
+    },
+    {
+      "id": "68eba6e7-3bf1-4cd7-b021-9ccdc22210b3",
+      "task": "KAN13-EA-PROTECTED-QA-ADOPTION-20261106",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-06T10:20:29.991Z",
+      "heartbeatAt": "2026-11-06T10:20:29.991Z"
     }
   ],
   "rules": [

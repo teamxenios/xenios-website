@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T09:07:55.252Z",
+  "updatedAt": "2026-11-06T10:20:29.991Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -4924,6 +4924,24 @@
         "file": ".xenios/handoffs/2026-11-06T09-07-55Z-PR428-EXACT-SOURCE-AND-HOSTED-QUALIFICATION-20261106-codex-launch-coordination-20261005.json",
         "at": "2026-11-06T09:07:55.252Z"
       }
+    },
+    {
+      "id": "KAN13-EA-PROTECTED-QA-ADOPTION-20261106",
+      "title": "Prepare protected QA workflow adoption",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "07d727a4c9b5516bbd57aef3aa7f89d359849260",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+      ],
+      "dependsOn": [
+        "KAN13-EA-OUTREACH-ROUTE-20261105"
+      ],
+      "scopeNote": "Claim only docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json for records-only preparation and independent review of the standalone protection-owner admission bound by KAN-13/11827 and KAN-13/11844 under standing execution record KAN-225/11225. The exact protected release is 07d727a4c9b5516bbd57aef3aa7f89d359849260 and its manifest blob is db0065dda63841b6d579238f2db1eb47c318ab32. Current authoritative FILE ownership remains OWNER-KAN13-EA-OUTREACH-ROUTE-20261105 in write mode for existing registered Root codex-launch-coordination-20261005. Preserve prior manifest lease f9413d25-9cad-4543-9226-a23c2a824c5c as HANDOFF and preserve active workflow lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba unchanged. This claim does not authorize editing the manifest or .github/workflows/qo-visual-capture.yml, launching the rejected workflow, changing Core protection, altering source/tests/provider/registry/protected refs, deployment, production, configuration or any release operation. Source preparation, independent review and any later admitted owner commit remain separate Root steps. Preserve all frozen refs and every prior task, lease, heartbeat, rule, assignment, identity, session, handoff and release record. This custody transaction performs no source checkout, branch, test, build, browser, runner, provider, credential, merge, deployment or production mutation.",
+      "createdAt": "2026-11-06T10:20:29.991Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-06T10:20:29.991Z"
     }
   ]
 }
