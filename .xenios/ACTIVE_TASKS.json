@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-07T01:15:48.136Z",
+  "updatedAt": "2026-11-07T15:03:05.340Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -5069,6 +5069,25 @@
       "createdAt": "2026-11-07T01:15:48.136Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-07T01:15:48.136Z"
+    },
+    {
+      "id": "KAN13-EA-PR427-ENLARGED-REVIEW-20261107",
+      "title": "Review the PR427 enlarged-text viewport correction",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "3b383c86887e814e765c35cd0c5de3409d99cb98",
+      "paths": [
+        "client/src/research/assisted-order/request-dock-viewport.ts",
+        "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx"
+      ],
+      "dependsOn": [
+        "KAN13-EA-PR427-CLOSEOUT-CSS-20261106"
+      ],
+      "scopeNote": "Claim only the two new exact paths listed in this task for independent review and later Root binding of the PR427 enlarged-text viewport correction allocated at KAN-13/11930. Base application is 3b383c86887e814e765c35cd0c5de3409d99cb98/tree 3ff2f35dae21d30e403241679f6a8489e8e6cbe0. Review the supplied four-path patch with SHA-256 1b0bc415b1d638d8733aa7258a9ef4b08f08b33c772ade13764a88f1e933b4eb and projected tree fec60b56bb6d1ad6a292815aa2c53eda854ffcfc, using Root private preparation evidence SHA-256 ef26a14c5de69171a36137f44da339ed08379ed4b8e426a8b42479710f068a39. Fresh case-insensitive exact, ancestor, prefix and wildcard active/reserved CODE_OWNERSHIP and persistent FILE_OWNERSHIP checks found no match on either absent application path. Preserve active leases 50ca8e4f-a56e-4d63-a7f8-b161911678ba, 427bb26e-5d85-4db5-b0ec-1e88334b33f1, 9a9422eb-388c-4a12-a03a-9fded3153315 and 9e1ab6e9-4484-40d5-b53c-948003d549b2 exactly unchanged, together with older handoffs, registration, release pointers and all foreign records. The reviewer is independent of the supplied implementation. This custody transaction performs no application, harness, dependency, test, browser, workflow, source-ref, deployment or production operation.",
+      "createdAt": "2026-11-07T15:03:05.340Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-07T15:03:05.340Z"
     }
   ]
 }

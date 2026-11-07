@@ -3897,6 +3897,18 @@
       "state": "active",
       "claimedAt": "2026-11-07T01:15:48.136Z",
       "heartbeatAt": "2026-11-07T01:15:48.136Z"
+    },
+    {
+      "id": "6bf670de-f20d-4be1-9e0d-697c8c67eda5",
+      "task": "KAN13-EA-PR427-ENLARGED-REVIEW-20261107",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "client/src/research/assisted-order/request-dock-viewport.ts",
+        "client/src/research/assisted-order/PersistentRequestBar.viewport.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-07T15:03:05.340Z",
+      "heartbeatAt": "2026-11-07T15:03:05.340Z"
     }
   ],
   "rules": [
