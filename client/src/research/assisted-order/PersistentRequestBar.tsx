@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { requestBarAction, requestBarKeyboardOffset, type RequestBarState } from "./persistent-request-bar-model";
+import { observeRequestDockViewport } from "./request-dock-viewport";
 import "./persistent-request-bar.css";
 
 export interface RequestBarLine {
@@ -39,16 +40,7 @@ export function PersistentRequestBar({
 
   useEffect(() => {
     if (!body || !dock.current) return;
-    const element = dock.current;
-    const measure = () => {
-      const next = Math.ceil(element.getBoundingClientRect().height);
-      if (Number.isFinite(next) && next > 0) setHeight(next);
-    };
-    measure();
-    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
-    observer?.observe(element);
-    window.addEventListener("resize", measure);
-    return () => { observer?.disconnect(); window.removeEventListener("resize", measure); };
+    return observeRequestDockViewport(dock.current, setHeight);
   }, [body]);
 
   useEffect(() => {
