@@ -171,7 +171,7 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
         .toContain("2 products | 2 exact variants | 5 requested units");
       expect(submitExchanges()).toHaveLength(0);
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
-      await click("Continue to contact");
+      await click("Continue to details");
       for (const [name, value] of Object.entries({
         name: "Synthetic Customer", email: "synthetic@example.invalid", phone: "+15555550123",
         shippingLine1: "1 Synthetic Street", shippingLine2: "Synthetic Unit", shippingCity: "Test",
@@ -179,18 +179,18 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       })) await type(host.querySelector<HTMLInputElement>('input[name="' + name + '"]')!, value);
       await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
       await submitForm();
-      expect(host.textContent).toContain("Review your request");
+      expect(host.textContent).toContain("Submit your request");
       expect(host.textContent).toContain("Synthetic 1 | Synthetic exact variant 1 | Requested quantity: 2 | Pending clinical review");
       expect(host.textContent).toContain("Synthetic 2 | Synthetic exact variant 2 | Requested quantity: 3 | Pending internal review");
-      expect(button("Submit for review").disabled).toBe(true);
-      await click("Submit for review");
+      expect(button("Submit request").disabled).toBe(true);
+      await click("Submit request");
       const checks = [...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")];
       expect(checks.map((input) => input.closest("label")?.textContent)).toEqual([
         "I have read and accept the fixture-terms policy.", ...acknowledgments.map((ack) => ack.copy),
       ]);
       for (const check of checks.slice(0, -1)) await act(async () => check.click());
-      expect(button("Submit for review").disabled).toBe(true);
-      await click("Submit for review");
+      expect(button("Submit request").disabled).toBe(true);
+      await click("Submit request");
       expect(submitExchanges()).toHaveLength(0);
       expect(await fixture.counts()).toEqual({ requests: 0, submitted: 0, events: 0 });
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -205,8 +205,8 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(await fixture.counts()).toEqual({ requests: 0, submitted: 0, events: 0 });
       expect(rpc.calls.filter((name) => name === "request_intent_create_or_replay")).toEqual([]);
       await act(async () => checks[checks.length - 1].click());
-      expect(button("Submit for review").disabled).toBe(false);
-      await click("Submit for review");
+      expect(button("Submit request").disabled).toBe(false);
+      await click("Submit request");
       await settles(() => expect(host.querySelector('[role="alert"]')?.textContent).toBe(REQUEST_INTENT_RECOVERY_NOTICE));
       expect(submitExchanges()).toHaveLength(3);
       const sent = submitExchanges()[2];
@@ -290,7 +290,7 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(markerRaw);
       expect(host.querySelector("form")).toBeNull();
       await click("Check saved request");
-      await settles(() => expect(host.querySelector("h1")?.textContent).toBe("Request saved for review"));
+      await settles(() => expect(host.querySelector("h1")?.textContent).toBe("Your submitted request"));
       const recovered = exchanges.filter((entry) => entry.path === ROUTE + "/recover" && entry.guest === "a");
       expect(recovered).toHaveLength(1);
       expect(recovered[0].body).toEqual({ idempotencyKey: marker.key });
@@ -302,9 +302,9 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       });
       expect(receipt.publicReference).toBe(saved.public_reference);
       expect(Date.parse(receipt.createdAt)).toBe(saved.created_at.getTime());
-      expect(host.querySelector('[role="status"]')?.textContent).toBe("Your saved request reference is " + saved.public_reference + ".");
+      expect(host.querySelector('[role="status"]')?.textContent).toBe("Your request reference is " + saved.public_reference + ".");
       expect(host.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
-      expect(host.textContent).not.toContain("Submit for review");
+      expect(host.textContent).not.toContain("Submit request");
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
       expect(submitExchanges()).toHaveLength(3); // Recovery never silently resubmits.
       for (let replay = 0; replay < 2; replay += 1) expect(await guestApi.submit(input)).toEqual(receipt);

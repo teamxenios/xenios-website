@@ -238,21 +238,21 @@ describe("stored confirmed reference across recovery and owner boundaries", () =
     auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
     await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
     await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="confirm synthetic receipt"]')!.click());
-    expect(container.textContent).toContain("Request saved for review");
+    expect(container.textContent).toContain("Request submitted");
     expect(container.querySelector('[data-testid="mixed-form"]')).toBeNull();
     storeRecord("a".repeat(64));
     const start = [...container.querySelectorAll("button")].find((button) => button.textContent === "Start another request");
     expect(start).toBeTruthy();
     await act(async () => start!.click());
     expect(container.querySelector('[data-testid="mixed-form"]')).not.toBeNull();
-    expect(container.textContent).not.toContain("Request saved for review");
+    expect(container.textContent).not.toContain("Request submitted");
     expect(record()).toBeNull();
   });
   it.each([false, true])("puts the member's confirmed receipt heading at the page's level (embedded=%s)", async (embedded) => {
     auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
     await render(<OrderRequestEntry embedded={embedded} mode={{ kind: "mixed" }} />);
     await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="confirm synthetic receipt"]')!.click());
-    expect(container.querySelector(embedded ? "h2" : "h1")?.textContent).toBe("Request saved for review");
+    expect(container.querySelector(embedded ? "h2" : "h1")?.textContent).toBe("Request submitted");
     expect(container.querySelectorAll("h1")).toHaveLength(embedded ? 0 : 1);
   });
   it("keeps the record through an ordinary confirmed member mount and while the session is being checked", async () => {
