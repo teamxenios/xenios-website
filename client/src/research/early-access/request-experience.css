@@ -68,6 +68,17 @@
 }
 .xenios-request-guide__actions > a:focus-visible { outline: 2px solid var(--pulse, currentColor); outline-offset: 3px; }
 #early-access-catalog { scroll-margin-top: calc(var(--research-sticky-chrome-height, 0px) + 6rem); }
+
+/* The request-only guest header scrolls away; its catalog toolbar sticks at
+   top: 0 and already includes the safe-area inset in its own padding. Reserving
+   the member header's 6rem here wastes viewport space and makes Next/Previous
+   stop above the toolbar. Keep the original offset for member/desktop shells.
+   Do not fix this by shrinking text, controls, imagery or required notices. */
+@media (max-width: 700px) {
+  .xenios-order-page--guest-catalog #early-access-catalog {
+    scroll-margin-top: 0;
+  }
+}
 .xenios-request-next__steps { padding-left: 1.35rem; margin-block: 14px; display: grid; gap: 12px; }
 .xenios-request-next__steps > li { padding-inline-start: .25rem; min-width: 0; }
 .xenios-request-next p { margin: 5px 0 0; font-size: .9rem; line-height: 1.55; }

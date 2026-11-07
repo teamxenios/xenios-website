@@ -234,3 +234,65 @@
   .xenios-order-page--guest-catalog .xenios-order-summary-content.is-open { display: block; padding: 0 12px 12px; }
   .xenios-order-page--guest-catalog .xenios-order-summary-content h2 { display: none; }
 }
+
+/* PR427 closeout: retain 44px controls and every notice while using the guest
+   catalog's available width. The image remains 88px; its packaging caption
+   spans the card instead of wrapping down a narrow 88px column. Nested grids
+   preserve the figure/caption DOM and place long identities above the caption.
+   The original layout remains the fallback when subgrid is unavailable. */
+@media (max-width: 700px) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar + p[role="status"] {
+    margin-block: 8px;
+  }
+  /* At enlarged text, reserve each action's intrinsic width and let the page
+     counter wrap in the remaining track instead of painting over Previous. */
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-pagination {
+    grid-template-columns: minmax(44px, max-content) minmax(0, 1fr) minmax(44px, max-content);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-pagination button,
+  .xenios-order-page--guest-catalog .xenios-order-pagination span {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-layout { gap: 8px; }
+  .xenios-order-page--guest-catalog .xenios-order-cards { gap: 8px; }
+  .xenios-order-page--guest-catalog .xenios-order-card { padding: 10px; gap: 6px; }
+  .xenios-order-page--guest-catalog .xenios-order-summary-toggle { padding-block: 8px; }
+
+  @supports (grid-template-columns: subgrid) and (grid-template-rows: subgrid) {
+    .xenios-order-page--guest-catalog .xenios-order-card-intro {
+      grid-template-rows: auto auto;
+      gap: 4px 12px;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-media {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-row: 1 / span 2;
+      grid-template-columns: subgrid;
+      grid-template-rows: subgrid;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-media > figure {
+      grid-column: 1 / -1;
+      grid-row: 1 / span 2;
+      grid-template-columns: subgrid;
+      grid-template-rows: subgrid;
+      gap: inherit;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-media > figure > div {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: start;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-media figcaption {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-identity {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: start;
+    }
+  }
+}
