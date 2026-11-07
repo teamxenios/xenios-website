@@ -751,7 +751,9 @@ async function openContactFromRequestDock(page, entry, surface) {
 async function checkRequestDockContact(page, entry, surface, enlarged = false) {
   const dockPrimary = page.getByTestId("request-action-bar-primary");
   const contactHeading = surface.getByRole("heading", { name: "Contact details", exact: true });
-  const form = surface.locator("form").filter({ has: contactHeading });
+  const form = surface.locator("form").filter({
+    has: page.getByRole("heading", { name: "Contact details", exact: true }),
+  });
   for (const [field, value] of Object.entries(fixtureContact)) {
     if (field !== "name") await form.locator(`input[name="${field}"]`).fill(value);
   }
@@ -787,7 +789,9 @@ async function checkRequestDockContact(page, entry, surface, enlarged = false) {
   await name.fill(fixtureContact.name);
   await dockPrimary.click();
   await review.waitFor();
-  const reviewPanel = surface.locator("section.xenios-order-panel").filter({ has: review });
+  const reviewPanel = surface.locator("section.xenios-order-panel").filter({
+    has: page.getByRole("heading", { name: dockCopy.review, exact: true }),
+  });
   const submit = reviewPanel.getByRole("button", { name: dockCopy.submit, exact: true });
   report(entry, "fixed contact action reaches review with the original quantity and no allowed submission",
     (await reviewPanel.innerText()).includes("Requested quantity: 2") &&
@@ -1022,7 +1026,8 @@ async function captureGuestMobile(page, entry, { bpc, mito }, receiptFlow) {
     (await detail.innerText()).includes(mito.reviewedContent.summary));
   if (entry.mobile) {
     const layout = await detail.evaluate((node) => {
-      const media = node.querySelector(".xenios-order-card-media").getBoundingClientRect();
+      // The caption spans the card in the compact subgrid; measure the image frame.
+      const media = node.querySelector(".xenios-order-card-media > figure > div").getBoundingClientRect();
       const identity = node.querySelector(".xenios-order-card-identity").getBoundingClientRect();
       const description = getComputedStyle(node.querySelector(".xenios-order-card-description"));
       return {
