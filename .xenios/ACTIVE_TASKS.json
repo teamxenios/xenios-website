@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-06T13:08:04.314Z",
+  "updatedAt": "2026-11-07T01:15:48.136Z",
   "tasks": [
     {
       "id": "KAN59-PUBLISHED-CONTENT-BOUNDARY-20261021",
@@ -5051,6 +5051,24 @@
       "createdAt": "2026-11-06T13:08:04.314Z",
       "owner": "codex-launch-coordination-20261005",
       "claimedAt": "2026-11-06T13:08:04.314Z"
+    },
+    {
+      "id": "KAN13-EA-PR427-CLOSEOUT-CSS-20261106",
+      "title": "Review the PR427 closeout CSS correction",
+      "priority": "P0",
+      "state": "claimed",
+      "jira": "KAN-13",
+      "baseSha": "4cd4f6c384b2907990542ed4ab098935abb1b6de",
+      "paths": [
+        "client/src/research/early-access/request-experience.css"
+      ],
+      "dependsOn": [
+        "KAN13-EA-COMBINED-MOUNTED-QA-PIN-20261106"
+      ],
+      "scopeNote": "Claim only client/src/research/early-access/request-experience.css for independent review and later Root binding of the exact PR427 closeout correction allocated at KAN-13/11925. Base PR427 is 4cd4f6c384b2907990542ed4ab098935abb1b6de/tree 158ac88b6574fccda8ca253b16c4fc4c4f33abbf; protected policy-v2 release is ad52179f31e9339eb50e2b9f3f0a965eef0d80d1. Review the supplied two-path patch with SHA-256 a1a8fb039edeb5507ad5046f1e77febac0ef12986ab8b435121b205a8f38b8b2 and expected patched tree 3ff2f35dae21d30e403241679f6a8489e8e6cbe0, using private preparation evidence SHA-256 caf1fb3fa9639890e2524cda527829dae059aafde7aba638ae75f47e001c80fb. Fresh case-insensitive exact, ancestor, prefix and wildcard active/reserved CODE_OWNERSHIP and persistent FILE_OWNERSHIP checks found no conflict. Preserve same-Root historical leases 63d598ac-f6a2-487d-99f7-0e93cec4935e and 84111c0d-7829-477a-9356-65199dbce8a8 in HANDOFF. Preserve active workflow lease 50ca8e4f-a56e-4d63-a7f8-b161911678ba and manifest lease 9e1ab6e9-4484-40d5-b53c-948003d549b2 exactly unchanged. The reviewer did not author either supplied CSS fix or harness substitutions. Preserve registration, every prior and foreign record, release pointer, PR427 ref and currently observed isolated QA ref b173e26bf3543b471ece635e7fd1aa10736184c7. This custody transaction performs no app edit, test, browser, runner, source-ref, merge, provider or production action.",
+      "createdAt": "2026-11-07T01:15:48.136Z",
+      "owner": "codex-launch-coordination-20261005",
+      "claimedAt": "2026-11-07T01:15:48.136Z"
     }
   ]
 }
