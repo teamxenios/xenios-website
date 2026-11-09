@@ -1,0 +1,53 @@
+[
+ {
+  "slug": "ll-37-5mg",
+  "name": "LL-37",
+  "code": "LL37",
+  "mg": 5,
+  "amount": "5 mg",
+  "sku": "GEN-GRP-0312",
+  "offeringId": "mo_839d9f0cb2ab74e094ee",
+  "sourceVariantId": "mov_95104bb0edee8e97a3a6",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "LABEL_FACTS_ADOPTED_11393_2026-11-05.json",
+  "labelFactsSha256": "8d08fd00b073f143146aff2573cac78df084adbd2b7db32d48b138073eebd6b0",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "LL-37",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0312"
+  },
+  "extraDoNotPrintTerms": [
+   "CAP-18",
+   "hCAP-18",
+   "hCAP18",
+   "CAP18",
+   "cathelicidin",
+   "precursor",
+   "antimicrobial",
+   "antibacterial",
+   "infection",
+   "wound",
+   "disease"
+  ],
+  "nameVariance": {
+   "catalogDisplayName": "Ll-37 (Cap-18)",
+   "catalogLabelName": "LL-37 CAP-18",
+   "printedName": "LL-37",
+   "kind": "declared",
+   "reference": "KAN-59/11584",
+   "note": "Printed name follows the label facts adopted in KAN-59/11584 (Session 3, KAN-59/11393). The catalog names the listing with CAP-18 (display name Ll-37 (Cap-18), variant label LL-37 CAP-18), pairing the peptide with CAP-18, its precursor; the accepted description says the two are not the same molecule (KAN-59/11582), and the facts bar CAP-18 as a name for it. Dataset wording is Root's decision."
+  },
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Selected-source form, container and amount basis remain open. Design form follows the existing KAN-225/11259 packaging declaration and independent artwork review."
+ }
+]

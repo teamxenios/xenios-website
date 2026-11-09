@@ -1,0 +1,381 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-05-batch-c1-010",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644",
+  "KAN-225/10683",
+  "KAN-59/11618",
+  "KAN-225/11259"
+ ],
+ "labelFactSources": [
+  {
+   "reference": "KAN-6/10624",
+   "note": "Session 3 static artwork facts: product code wording"
+  },
+  {
+   "reference": "KAN-59/11584",
+   "file": "LABEL_FACTS_ADOPTED_11393_2026-11-05.json",
+   "sha256": "8d08fd00b073f143146aff2573cac78df084adbd2b7db32d48b138073eebd6b0",
+   "author": "CLAUDE-2"
+  }
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor, but only when stacking sets the name larger than one line does; otherwise it stays on one line.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes.",
+  "The wrap proof id is the exact product code (for example GEN-GRP-0312-WRAP-v1), not code-amount, because code-amount can spell a fragment name that label facts forbid (KISSPEPTIN-10 in C1-002)."
+ ],
+ "changesFromC1001": [
+  "The build reads its variants (names, amounts, codes, verified label text) from tools/variants.json instead of a constant.",
+  "Amounts other than 10 mg (5 mg here) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
+  "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
+  "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
+  "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 138170,
+  "sha256": "af782a72a9400ddfd434dbb0e9a1747382cecc5375bd95adb0a9c3c90a1bc986",
+  "width": 1800,
+  "height": 984
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/build-report.json",
+   "bytes": 8856,
+   "sha256": "1ab063b999c9432a5c81fcbf027d84171f60686f34695d8b1c45ab0e1230f1eb"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/build_c1.py",
+   "bytes": 23453,
+   "sha256": "51bbf4c5272cc982e252f67f4d27cb0b8c487bac4377f7a97986279a08e39390"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/c1_variants.py",
+   "bytes": 13462,
+   "sha256": "9b3454b429887e8ce28ab26cdb7a63312089e15b2812a2763467ab416b92a461"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/kern-table.segoe-ui.json",
+   "bytes": 26846,
+   "sha256": "97e70dc94b33d3423ff48cd80e6f133917df0c3b22e705572cb356b4f36731c8"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/svg_label_render.py",
+   "bytes": 13893,
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/variants.json",
+   "bytes": 1859,
+   "sha256": "4fa81c8cf15b35bdca2d49c5d176f8e7ddd33d158f6544a94b55a5bc5d594d93"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/verify_c1.py",
+   "bytes": 26440,
+   "sha256": "aeca3a8396a6d1ef3ce6330f21add609e067a0511633e9aa14cd2c0d32beac77"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/wpf_kern.ps1",
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/write_manifest.py",
+   "bytes": 42373,
+   "sha256": "08dce3dc28dbb4e7b7118c8294ec4a43b7b8c989a82f87df04ea19df35508dd5"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/tools/xr_compose.py",
+   "bytes": 14269,
+   "sha256": "fe41582b115d0135a9b39e18756527021d5f4851f1f9ee82b22604f8d6a4a84c"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_839d9f0cb2ab74e094ee",
+   "sourceVariantId": "mov_95104bb0edee8e97a3a6",
+   "quickOrderSku": "GEN-GRP-0312",
+   "quickOrderProductId": "54614196-651d-47ae-9263-2cd131170247",
+   "quickOrderVariantId": "2dc3145e-50c9-4722-9bc9-74ecc6df608e",
+   "canonicalName": "Ll-37 (Cap-18)",
+   "catalogDisplayName": "Ll-37 (Cap-18)",
+   "canonicalVariant": "LL-37 5 mg",
+   "catalogVariantLabel": "LL-37 CAP-18 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0312-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "LABEL_FACTS_ADOPTED_11393_2026-11-05.json",
+    "sha256": "8d08fd00b073f143146aff2573cac78df084adbd2b7db32d48b138073eebd6b0",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "LL-37",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0312"
+    },
+    "formNeutral": true,
+    "hold": "Selected-source form, container and amount basis remain open. Design form follows the existing KAN-225/11259 packaging declaration and independent artwork review."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "LL-37",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0312"
+   },
+   "extraDoNotPrintTerms": [
+    "CAP-18",
+    "hCAP-18",
+    "hCAP18",
+    "CAP18",
+    "cathelicidin",
+    "precursor",
+    "antimicrobial",
+    "antibacterial",
+    "infection",
+    "wound",
+    "disease"
+   ],
+   "renderLayout": {
+    "mode": "one",
+    "runs": [
+     {
+      "text": "LL-37",
+      "fontSizePx": 91.6,
+      "baselineRow": 657,
+      "inkBox": [
+       458,
+       592,
+       670,
+       657
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 63.2,
+      "baselineRow": 720,
+      "inkBox": [
+       460,
+       676,
+       598,
+       734
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 91.6,
+    "stackScale": null
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baseline": 470.0,
+     "inkRightEstimate": 579.8
+    },
+    "wrapFrontPanel": {
+     "fontSize": 146.0,
+     "letterSpacing": -5.0,
+     "baseline": 520.0,
+     "inkRightEstimate": 501.5
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios LL-37 5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/assets/ll-37-5mg-website-render-v1-1024.webp",
+     "sha256": "3d0229df9de0dcb1c52068dc998af97c8c53e3cdd66c0777ef652372abc54dc6"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios LL-37 5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/assets/ll-37-5mg-front-artwork-v1.webp",
+     "sha256": "c3ed46d19fa3fd44df197684b9d052a244dbf52fa6e038396137952939f91012"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/assets/ll-37-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 43560,
+     "sha256": "3d0229df9de0dcb1c52068dc998af97c8c53e3cdd66c0777ef652372abc54dc6",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/assets/ll-37-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 978233,
+     "sha256": "9480d11df8315ece93ae4d2cee3dec87a962dbf2b82ce7ed915241d572c7d755",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/labels/ll-37-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 2989,
+     "sha256": "6acc2bd7c883ba44a22c958f2bfed4553cc57e80baf07919a09f685e7e76370d",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/assets/ll-37-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 91379,
+     "sha256": "836af7bef53892726ce9ccf65963d5bf2503ee06e47d790a7fb7b88949e8ab85",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/assets/ll-37-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 37406,
+     "sha256": "c3ed46d19fa3fd44df197684b9d052a244dbf52fa6e038396137952939f91012",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/labels/ll-37-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 6963,
+     "sha256": "9177da4ecf79712eb1fd6ae8a252522657cd724e599eb871c0dfb17297e3d60a",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/assets/ll-37-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 359148,
+     "sha256": "7943318ff0cd5d43ff88fe279f5ae83912b32fb0e7e4e6e169faf524cd2c7d23",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-010/assets/ll-37-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 152874,
+     "sha256": "8ac201ab9ef61b4c2dd04f257f96f82d2e1c9b8e70427f461241ab40c52c9d77",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "nameVariance": {
+    "catalogDisplayName": "Ll-37 (Cap-18)",
+    "catalogLabelName": "LL-37 CAP-18",
+    "printedName": "LL-37",
+    "kind": "declared",
+    "reference": "KAN-59/11584",
+    "note": "Printed name follows the label facts adopted in KAN-59/11584 (Session 3, KAN-59/11393). The catalog names the listing with CAP-18 (display name Ll-37 (Cap-18), variant label LL-37 CAP-18), pairing the peptide with CAP-18, its precursor; the accepted description says the two are not the same molecule (KAN-59/11582), and the facts bar CAP-18 as a name for it. Dataset wording is Root's decision."
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  }
+ ],
+ "changesFromC1009": [
+  "One change in the joining, manifest and verification method: a printed name may differ from the catalog display name beyond case, but only by a declaration for that exact product code with the exact printed name, catalog display name and variant-label name, and the comment that settled it. The one declaration is GEN-GRP-0312: the label facts adopted in KAN-59/11584 print LL-37, while the catalog names the listing Ll-37 (Cap-18) (display name) and LL-37 CAP-18 5 mg (variant label); KAN-59/11582 records that CAP-18 is the precursor, not the same molecule. c1_facts.py, c1_variants.py, write_manifest.py and verify_c1.py each hold the declaration; the record's nameVariance carries kind \"declared\" and the reference, and verify_c1.py accepts it only as its own table states it. A variance in case only is handled as before.",
+  "build_c1.py, xr_compose.py, svg_label_render.py and wpf_kern.ps1 are byte-identical to C1-009's copies. With the changed verifier, C1-005, C1-007, C1-008 and C1-009 give exactly the results the accepted verifier gives. write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch.",
+  "1 of 1 records have form-neutral label facts; the printed vial and the per-vial amount basis rest on the packaging declaration alone."
+ ],
+ "packagingDeclaration": {
+  "amountBasis": "per vial",
+  "form": "Lyophilized vial",
+  "kind": "xenios_packaging_declaration",
+  "reference": "KAN-225/11259",
+  "signedDate": "2026-11-05",
+  "signer": "Samuel Boadu, founder",
+  "status": "RECORDED"
+ }
+}
