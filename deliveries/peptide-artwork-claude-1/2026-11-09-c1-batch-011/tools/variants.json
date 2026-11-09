@@ -1,0 +1,118 @@
+[
+ {
+  "slug": "cjc-1295-no-dac-ipamorelin-10-10mg",
+  "name": "CJC-1295 (No DAC) + Ipamorelin",
+  "code": "CJC1295NODACIPAMORELIN",
+  "mg": null,
+  "amount": "10/10 mg",
+  "sku": "GEN-GRP-0268",
+  "offeringId": "mo_8023384ab099bc55fa93",
+  "sourceVariantId": "mov_420ac197458ecbcddb9a",
+  "labelFactsRef": "KAN-59/11972",
+  "labelFactsFile": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+  "labelFactsSha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "CJC-1295 (No DAC) + Ipamorelin",
+   "components": [
+    {
+     "name": "CJC-1295 (No DAC)",
+     "amount": "10 mg"
+    },
+    {
+     "name": "IPAMORELIN",
+     "amount": "10 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0268"
+  },
+  "extraDoNotPrintTerms": [
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "CJC-1295 (No DAC)",
+    "amount": "10 mg"
+   },
+   {
+    "name": "IPAMORELIN",
+    "amount": "10 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "cjc-1295-no-dac-ipamorelin-5-5mg",
+  "name": "CJC-1295 (No DAC) + Ipamorelin",
+  "code": "CJC1295NODACIPAMORELIN",
+  "mg": null,
+  "amount": "5/5 mg",
+  "sku": "GEN-GRP-0269",
+  "offeringId": "mo_ec5dad7fec0e0750fdbc",
+  "sourceVariantId": "mov_082a1d9c8a0d21e4a5c9",
+  "labelFactsRef": "KAN-59/11972",
+  "labelFactsFile": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+  "labelFactsSha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "CJC-1295 (No DAC) + Ipamorelin",
+   "components": [
+    {
+     "name": "CJC-1295 (No DAC)",
+     "amount": "5 mg"
+    },
+    {
+     "name": "IPAMORELIN",
+     "amount": "5 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0269"
+  },
+  "extraDoNotPrintTerms": [
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "CJC-1295 (No DAC)",
+    "amount": "5 mg"
+   },
+   {
+    "name": "IPAMORELIN",
+    "amount": "5 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ }
+]

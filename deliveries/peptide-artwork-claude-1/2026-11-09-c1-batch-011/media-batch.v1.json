@@ -1,0 +1,758 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-09-batch-c1-011",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644",
+  "KAN-225/10683",
+  "KAN-59/11975",
+  "KAN-225/11259"
+ ],
+ "labelFactSources": [
+  {
+   "reference": "KAN-6/10624",
+   "note": "Session 3 static artwork facts: product code wording"
+  },
+  {
+   "reference": "KAN-59/11972",
+   "file": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+   "sha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+   "author": "CLAUDE-2"
+  }
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor, but only when stacking sets the name larger than one line does; otherwise it stays on one line. A blend name (one containing \" + \") takes Root's Option B, KAN-59/11404: the exact name, broken only after \" + \", on whichever line set gives the largest scale (a tie keeps fewer lines, then the more even widths), with every name line and the amount scaled together and centred between the rule and the form line. Its amount is the components' amounts in name order, joined by \"/\", with their one unit.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE. On the front and the wrap front panel, a blend name takes the larger of the one-line fit and the exact name broken only after \" + \" at one size, the last line on the template baseline and the first kept as far below the rule as the XENIOS line sits above it. The wrap side panel breaks it only when it is wider than the panel. The build stops if a blend's amount or nominal content would leave its field or come within 24 px of the line beside it.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes.",
+  "The wrap proof id is the exact product code (for example GEN-GRP-0268-WRAP-v1), not code-amount, because code-amount can spell a fragment name that label facts forbid (KISSPEPTIN-10 in C1-002)."
+ ],
+ "changesFromC1001": [
+  "The build reads its variants (names, amounts, codes, verified label text) from tools/variants.json instead of a constant.",
+  "Amounts other than 10 mg (10/10 mg and 5/5 mg here) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
+  "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
+  "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
+  "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 215173,
+  "sha256": "286b6083103bcb3d35c64da0ab424d932d110c9b96f7e21ba7ff566b9898fe6e",
+  "width": 1800,
+  "height": 1010
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/build-report.json",
+   "bytes": 20956,
+   "sha256": "e142126cb11afa8e692ae6d8b8c0ca309409591eb71fdb89729f8b2de14757ae"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/build_c1.py",
+   "bytes": 23453,
+   "sha256": "51bbf4c5272cc982e252f67f4d27cb0b8c487bac4377f7a97986279a08e39390"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/c1_variants.py",
+   "bytes": 12394,
+   "sha256": "2a098464aca1a76aaa8955a372014bc4e15fc5d01cda0d9541c0aec39bbea822"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/kern-table.segoe-ui.json",
+   "bytes": 27733,
+   "sha256": "366f88f1cdffd8aa2fb14cdce123aebefe280d58f0ff8a16cc9312677a2c0eb9"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/svg_label_render.py",
+   "bytes": 13893,
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/variants.json",
+   "bytes": 3366,
+   "sha256": "17adf476475e81cb07b688de6a615cb7a481fe62c1537430924784131374be13"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/verify_c1.py",
+   "bytes": 25942,
+   "sha256": "a9950fbfceb3e0bb930f3e38d7be18fd8e353a862f87d110fe08f74830752b35"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/wpf_kern.ps1",
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/write_manifest.py",
+   "bytes": 41106,
+   "sha256": "8de0161859f5560101ffa5a64d290071343e1b5aa1feeb73aea0d4e1a36bb3c5"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/tools/xr_compose.py",
+   "bytes": 14269,
+   "sha256": "fe41582b115d0135a9b39e18756527021d5f4851f1f9ee82b22604f8d6a4a84c"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_8023384ab099bc55fa93",
+   "sourceVariantId": "mov_420ac197458ecbcddb9a",
+   "quickOrderSku": "GEN-GRP-0268",
+   "quickOrderProductId": "028ac4a9-a370-49fe-bf93-ac86e3a3a16a",
+   "quickOrderVariantId": "fedcdd74-65e6-44d0-b4f7-40c964b365c1",
+   "canonicalName": "CJC-1295 (No DAC) + Ipamorelin",
+   "catalogDisplayName": "CJC-1295 (No DAC) + Ipamorelin",
+   "canonicalVariant": "CJC-1295 (No DAC) + Ipamorelin 10/10 mg",
+   "catalogVariantLabel": "CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "CJC-1295 (No DAC)",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "IPAMORELIN",
+     "amount": "10 mg",
+     "mg": 10
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0268-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11972",
+    "file": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+    "sha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "CJC-1295 (No DAC) + Ipamorelin",
+     "components": [
+      {
+       "name": "CJC-1295 (No DAC)",
+       "amount": "10 mg"
+      },
+      {
+       "name": "IPAMORELIN",
+       "amount": "10 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0268"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "CJC-1295 (No DAC) + Ipamorelin",
+    "amountOnRender": "10/10 mg",
+    "amountOnLabel": "10/10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0268"
+   },
+   "extraDoNotPrintTerms": [
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "CJC-1295 (No DAC) +",
+      "fontSizePx": 36.18,
+      "baselineRow": 637,
+      "inkBox": [
+       458,
+       611,
+       796,
+       642
+      ]
+     },
+     {
+      "text": "Ipamorelin",
+      "fontSizePx": 36.18,
+      "baselineRow": 673,
+      "inkBox": [
+       458,
+       646,
+       626,
+       680
+      ]
+     },
+     {
+      "text": "10/10 mg",
+      "fontSizePx": 24.96,
+      "baselineRow": 702,
+      "inkBox": [
+       460,
+       684,
+       565,
+       707
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": null,
+    "stackScale": 0.395,
+    "blendCandidates": [
+     {
+      "lines": [
+       "CJC-1295 (No DAC) +",
+       "Ipamorelin"
+      ],
+      "k": 0.395,
+      "nameSize": 36.18
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 102.0,
+     "letterSpacing": -3.48,
+     "baselines": [
+      368.0,
+      470.0
+     ],
+     "lines": [
+      "CJC-1295 (No DAC) +",
+      "Ipamorelin"
+     ],
+     "inkRightEstimate": 1119.3,
+     "oneLineFitPx": 89.5,
+     "candidates": [
+      {
+       "lines": [
+        "CJC-1295 (No DAC) + Ipamorelin"
+       ],
+       "fontSize": 89.5
+      },
+      {
+       "lines": [
+        "CJC-1295 (No DAC) +",
+        "Ipamorelin"
+       ],
+       "fontSize": 102.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 85.5,
+     "letterSpacing": -2.93,
+     "baselines": [
+      434.0,
+      520.0
+     ],
+     "lines": [
+      "CJC-1295 (No DAC) +",
+      "Ipamorelin"
+     ],
+     "inkRightEstimate": 955.7,
+     "oneLineFitPx": 56.0,
+     "candidates": [
+      {
+       "lines": [
+        "CJC-1295 (No DAC) + Ipamorelin"
+       ],
+       "fontSize": 56.0
+      },
+      {
+       "lines": [
+        "CJC-1295 (No DAC) +",
+        "Ipamorelin"
+       ],
+       "fontSize": 85.5
+      }
+     ],
+     "sideLines": [
+      "CJC-1295 (No DAC) + Ipamorelin"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios CJC-1295 (No DAC) + Ipamorelin 10/10 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-10-10mg-website-render-v1-1024.webp",
+     "sha256": "f613124cd366a5a54530c91972086d4c57573904619b2f11cde62d7a1c2542a7"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios CJC-1295 (No DAC) + Ipamorelin 10/10 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-10-10mg-front-artwork-v1.webp",
+     "sha256": "8539676f0273ca63e0a6cc937eea06604de5a8e63d69ed509f0401bf5b27466b"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-10-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47450,
+     "sha256": "f613124cd366a5a54530c91972086d4c57573904619b2f11cde62d7a1c2542a7",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-10-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 987969,
+     "sha256": "892fce93c02b8313396507f5e9be56b02cca823a4068d51ad95553b36ddb7e20",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/labels/cjc-1295-no-dac-ipamorelin-10-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3188,
+     "sha256": "425214bf18ca1374ffc7c02d06b98befa1714814499ed34dba55d218df34a5f8",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-10-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 136256,
+     "sha256": "f8556717d0b85aa55dd345980a63e2af009fc9eecdd9d7ad5259d342efb40951",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-10-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 52002,
+     "sha256": "8539676f0273ca63e0a6cc937eea06604de5a8e63d69ed509f0401bf5b27466b",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/labels/cjc-1295-no-dac-ipamorelin-10-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7193,
+     "sha256": "ac2429f0ba0246605621921fc0ae14072d1393e5f41090669c0e89161bcc20f6",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-10-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 409362,
+     "sha256": "aac5fcca1777102fe143a79815651a2002e8bd9555631caa314417090b1f18d7",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-10-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 170494,
+     "sha256": "c4bac310729dfd82bbcc14f5a391006afa9c20581751be009af5f80b7b56b276",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_ec5dad7fec0e0750fdbc",
+   "sourceVariantId": "mov_082a1d9c8a0d21e4a5c9",
+   "quickOrderSku": "GEN-GRP-0269",
+   "quickOrderProductId": "028ac4a9-a370-49fe-bf93-ac86e3a3a16a",
+   "quickOrderVariantId": "10287aac-44e7-4d43-b17d-90bd470f99f8",
+   "canonicalName": "CJC-1295 (No DAC) + Ipamorelin",
+   "catalogDisplayName": "CJC-1295 (No DAC) + Ipamorelin",
+   "canonicalVariant": "CJC-1295 (No DAC) + Ipamorelin 5/5 mg",
+   "catalogVariantLabel": "CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "CJC-1295 (No DAC)",
+     "amount": "5 mg",
+     "mg": 5
+    },
+    {
+     "name": "IPAMORELIN",
+     "amount": "5 mg",
+     "mg": 5
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0269-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11972",
+    "file": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+    "sha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "CJC-1295 (No DAC) + Ipamorelin",
+     "components": [
+      {
+       "name": "CJC-1295 (No DAC)",
+       "amount": "5 mg"
+      },
+      {
+       "name": "IPAMORELIN",
+       "amount": "5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0269"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "CJC-1295 (No DAC) + Ipamorelin",
+    "amountOnRender": "5/5 mg",
+    "amountOnLabel": "5/5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0269"
+   },
+   "extraDoNotPrintTerms": [
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "CJC-1295 (No DAC) +",
+      "fontSizePx": 36.18,
+      "baselineRow": 637,
+      "inkBox": [
+       458,
+       611,
+       796,
+       642
+      ]
+     },
+     {
+      "text": "Ipamorelin",
+      "fontSizePx": 36.18,
+      "baselineRow": 673,
+      "inkBox": [
+       458,
+       646,
+       626,
+       680
+      ]
+     },
+     {
+      "text": "5/5 mg",
+      "fontSizePx": 24.96,
+      "baselineRow": 702,
+      "inkBox": [
+       460,
+       684,
+       538,
+       707
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": null,
+    "stackScale": 0.395,
+    "blendCandidates": [
+     {
+      "lines": [
+       "CJC-1295 (No DAC) +",
+       "Ipamorelin"
+      ],
+      "k": 0.395,
+      "nameSize": 36.18
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 102.0,
+     "letterSpacing": -3.48,
+     "baselines": [
+      368.0,
+      470.0
+     ],
+     "lines": [
+      "CJC-1295 (No DAC) +",
+      "Ipamorelin"
+     ],
+     "inkRightEstimate": 1119.3,
+     "oneLineFitPx": 89.5,
+     "candidates": [
+      {
+       "lines": [
+        "CJC-1295 (No DAC) + Ipamorelin"
+       ],
+       "fontSize": 89.5
+      },
+      {
+       "lines": [
+        "CJC-1295 (No DAC) +",
+        "Ipamorelin"
+       ],
+       "fontSize": 102.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 85.5,
+     "letterSpacing": -2.93,
+     "baselines": [
+      434.0,
+      520.0
+     ],
+     "lines": [
+      "CJC-1295 (No DAC) +",
+      "Ipamorelin"
+     ],
+     "inkRightEstimate": 955.7,
+     "oneLineFitPx": 56.0,
+     "candidates": [
+      {
+       "lines": [
+        "CJC-1295 (No DAC) + Ipamorelin"
+       ],
+       "fontSize": 56.0
+      },
+      {
+       "lines": [
+        "CJC-1295 (No DAC) +",
+        "Ipamorelin"
+       ],
+       "fontSize": 85.5
+      }
+     ],
+     "sideLines": [
+      "CJC-1295 (No DAC) + Ipamorelin"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios CJC-1295 (No DAC) + Ipamorelin 5/5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-5-5mg-website-render-v1-1024.webp",
+     "sha256": "fedc9938e98eefd9b4055e5bb1f87a80c27c39ff8551c32578ad51edd220a0d9"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios CJC-1295 (No DAC) + Ipamorelin 5/5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-5-5mg-front-artwork-v1.webp",
+     "sha256": "e1a710988f470a797c6a0cbe0c6bea1a83c9d1aa8366034b31412537d72f15c5"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-5-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47192,
+     "sha256": "fedc9938e98eefd9b4055e5bb1f87a80c27c39ff8551c32578ad51edd220a0d9",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-5-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 987658,
+     "sha256": "78ea26ca34c4aed7c1e51bad8de635763851b345a3e5488a79a1dc36ca8f68be",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/labels/cjc-1295-no-dac-ipamorelin-5-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3180,
+     "sha256": "6d4d4682d58f769434de54f8d2ac45f77ead9085046f83c0eb89413855b4fee3",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-5-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 133634,
+     "sha256": "e4656d4fc9672ec293c494da65577efa75279f71bf73a8e0a467b47fa1dac35e",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-5-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 51012,
+     "sha256": "e1a710988f470a797c6a0cbe0c6bea1a83c9d1aa8366034b31412537d72f15c5",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/labels/cjc-1295-no-dac-ipamorelin-5-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7183,
+     "sha256": "64850c825c6e7bdc25cde5d8abf7ccbf92debc141b6c7a25cb88c43b75f7e761",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-5-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 407438,
+     "sha256": "73c25a0f6b2bd083819a3506ff901202b337f953c1b0f357581fd38c2887e941",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-09-c1-batch-011/assets/cjc-1295-no-dac-ipamorelin-5-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 168856,
+     "sha256": "6ec6e42000dfdeb852bbc8121915391f9091c7f24d406a93e8326720a70bdbc4",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  }
+ ],
+ "changesFromC1009": [
+  "The two CJC-1295 (No DAC) + Ipamorelin blends, which C1-009 left out until the component name was settled. KAN-59/11972 settled it: a blend's printed component names must reconstruct that row's own variant label exactly, so the component is CJC-1295 (No DAC), as this row's label spells it. The corrected facts file changes only these two records; the 14 records C1-009 uses are byte-identical in it.",
+  "build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1 and verify_c1.py are byte-identical to C1-009's copies. c1_variants.py adds only the reference of the corrected facts (KAN-59/11972). write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch.",
+  "2 of 2 records have form-neutral label facts: they state the name, the components with their amounts, the product code and the classification, and no form. For those records the printed vial and the per-vial amount basis rest on the packaging declaration alone; labelFacts keeps the hold note and formBasis cites the declaration."
+ ],
+ "packagingDeclaration": {
+  "amountBasis": "per vial",
+  "form": "Lyophilized vial",
+  "kind": "xenios_packaging_declaration",
+  "reference": "KAN-225/11259",
+  "signedDate": "2026-11-05",
+  "signer": "Samuel Boadu, founder",
+  "status": "RECORDED"
+ }
+}
