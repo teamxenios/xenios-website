@@ -1,0 +1,8753 @@
+[
+ {
+  "slug": "bpc-157-tb-500-10-10mg",
+  "frontNameFit": {
+   "fontSize": 160.0,
+   "letterSpacing": -5.45,
+   "baselines": [
+    464.4
+   ],
+   "lines": [
+    "BPC-157 + TB-500"
+   ],
+   "inkRightEstimate": 1448.2,
+   "oneLineFitPx": 160.0,
+   "candidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "fontSize": 160.0
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "fontSize": 102.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 100.0,
+   "letterSpacing": -3.42,
+   "baselines": [
+    503.9
+   ],
+   "lines": [
+    "BPC-157 + TB-500"
+   ],
+   "inkRightEstimate": 955.9,
+   "oneLineFitPx": 100.0,
+   "candidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "fontSize": 100.0
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "fontSize": 88.5
+    }
+   ],
+   "sideLines": [
+    "BPC-157 + TB-500"
+   ]
+  },
+  "renderLayout": {
+   "name": "BPC-157 + TB-500",
+   "amount": "10/10 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "BPC-157 +",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 624,
+     "inkBox": [
+      458,
+      579,
+      744,
+      624
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "TB-500",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 687,
+     "inkBox": [
+      458,
+      642,
+      656,
+      687
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "10/10 mg",
+     "size": 43.61,
+     "left": 460,
+     "baseline": 730,
+     "inkBox": [
+      460,
+      699,
+      644,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 42.59,
+   "k": 0.69,
+   "blendCandidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "k": 0.465,
+     "nameSize": 42.59
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "k": 0.69,
+     "nameSize": 63.2
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 150.0,
+    "baseline": 464.4,
+    "size": 160.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1448.2
+   },
+   {
+    "text": "10/10 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 604.0
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "10/10 mg per vial",
+    "x": 1073.5,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0265-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 145.0,
+    "baseline": 503.9,
+    "size": 100.0,
+    "weight": 790,
+    "face": 700,
+    "right": 956.0
+   },
+   {
+    "text": "10/10 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 553.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "10/10 mg per vial",
+    "x": 642.0,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.0
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "10/10 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1312.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0265",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "bpc-157-tb-500-15-15mg",
+  "frontNameFit": {
+   "fontSize": 160.0,
+   "letterSpacing": -5.45,
+   "baselines": [
+    464.4
+   ],
+   "lines": [
+    "BPC-157 + TB-500"
+   ],
+   "inkRightEstimate": 1448.2,
+   "oneLineFitPx": 160.0,
+   "candidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "fontSize": 160.0
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "fontSize": 102.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 100.0,
+   "letterSpacing": -3.42,
+   "baselines": [
+    503.9
+   ],
+   "lines": [
+    "BPC-157 + TB-500"
+   ],
+   "inkRightEstimate": 955.9,
+   "oneLineFitPx": 100.0,
+   "candidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "fontSize": 100.0
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "fontSize": 88.5
+    }
+   ],
+   "sideLines": [
+    "BPC-157 + TB-500"
+   ]
+  },
+  "renderLayout": {
+   "name": "BPC-157 + TB-500",
+   "amount": "15/15 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "BPC-157 +",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 624,
+     "inkBox": [
+      458,
+      579,
+      744,
+      624
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "TB-500",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 687,
+     "inkBox": [
+      458,
+      642,
+      656,
+      687
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "15/15 mg",
+     "size": 43.61,
+     "left": 460,
+     "baseline": 730,
+     "inkBox": [
+      460,
+      699,
+      644,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 42.59,
+   "k": 0.69,
+   "blendCandidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "k": 0.465,
+     "nameSize": 42.59
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "k": 0.69,
+     "nameSize": 63.2
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 150.0,
+    "baseline": 464.4,
+    "size": 160.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1448.2
+   },
+   {
+    "text": "15/15 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 604.0
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "15/15 mg per vial",
+    "x": 1073.5,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0266-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 145.0,
+    "baseline": 503.9,
+    "size": 100.0,
+    "weight": 790,
+    "face": 700,
+    "right": 956.0
+   },
+   {
+    "text": "15/15 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 553.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "15/15 mg per vial",
+    "x": 642.0,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.0
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "15/15 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1312.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0266",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "bpc-157-tb-500-5-5mg",
+  "frontNameFit": {
+   "fontSize": 160.0,
+   "letterSpacing": -5.45,
+   "baselines": [
+    464.4
+   ],
+   "lines": [
+    "BPC-157 + TB-500"
+   ],
+   "inkRightEstimate": 1448.2,
+   "oneLineFitPx": 160.0,
+   "candidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "fontSize": 160.0
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "fontSize": 102.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 100.0,
+   "letterSpacing": -3.42,
+   "baselines": [
+    503.9
+   ],
+   "lines": [
+    "BPC-157 + TB-500"
+   ],
+   "inkRightEstimate": 955.9,
+   "oneLineFitPx": 100.0,
+   "candidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "fontSize": 100.0
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "fontSize": 88.5
+    }
+   ],
+   "sideLines": [
+    "BPC-157 + TB-500"
+   ]
+  },
+  "renderLayout": {
+   "name": "BPC-157 + TB-500",
+   "amount": "5/5 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "BPC-157 +",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 624,
+     "inkBox": [
+      458,
+      579,
+      744,
+      624
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "TB-500",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 687,
+     "inkBox": [
+      458,
+      642,
+      656,
+      687
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "5/5 mg",
+     "size": 43.61,
+     "left": 460,
+     "baseline": 730,
+     "inkBox": [
+      460,
+      699,
+      597,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 42.59,
+   "k": 0.69,
+   "blendCandidates": [
+    {
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "k": 0.465,
+     "nameSize": 42.59
+    },
+    {
+     "lines": [
+      "BPC-157 +",
+      "TB-500"
+     ],
+     "k": 0.69,
+     "nameSize": 63.2
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 150.0,
+    "baseline": 464.4,
+    "size": 160.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1448.2
+   },
+   {
+    "text": "5/5 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 491.5
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "5/5 mg per vial",
+    "x": 1110.0,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0267-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 145.0,
+    "baseline": 503.9,
+    "size": 100.0,
+    "weight": 790,
+    "face": 700,
+    "right": 956.0
+   },
+   {
+    "text": "5/5 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 452.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "5/5 mg per vial",
+    "x": 675.0,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "BPC-157 + TB-500",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.0
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "5/5 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1280.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0267",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "cagrilintide-semaglutide-10-10mg",
+  "frontNameFit": {
+   "fontSize": 110.0,
+   "letterSpacing": -3.75,
+   "baselines": [
+    446.9
+   ],
+   "lines": [
+    "Cagrilintide + Semaglutide"
+   ],
+   "inkRightEstimate": 1444.9,
+   "oneLineFitPx": 110.0,
+   "candidates": [
+    {
+     "lines": [
+      "Cagrilintide + Semaglutide"
+     ],
+     "fontSize": 110.0
+    },
+    {
+     "lines": [
+      "Cagrilintide +",
+      "Semaglutide"
+     ],
+     "fontSize": 96.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 83.5,
+   "letterSpacing": -2.86,
+   "baselines": [
+    430.0,
+    520.0
+   ],
+   "lines": [
+    "Cagrilintide +",
+    "Semaglutide"
+   ],
+   "inkRightEstimate": 647.2,
+   "oneLineFitPx": 69.0,
+   "candidates": [
+    {
+     "lines": [
+      "Cagrilintide + Semaglutide"
+     ],
+     "fontSize": 69.0
+    },
+    {
+     "lines": [
+      "Cagrilintide +",
+      "Semaglutide"
+     ],
+     "fontSize": 83.5
+    }
+   ],
+   "sideLines": [
+    "Cagrilintide + Semaglutide"
+   ]
+  },
+  "renderLayout": {
+   "name": "Cagrilintide + Semaglutide",
+   "amount": "10/10 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "Cagrilintide +",
+     "size": 56.79,
+     "left": 458,
+     "baseline": 622,
+     "inkBox": [
+      458,
+      580,
+      790,
+      634
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "Semaglutide",
+     "size": 56.79,
+     "left": 458,
+     "baseline": 682,
+     "inkBox": [
+      458,
+      640,
+      769,
+      694
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "10/10 mg",
+     "size": 39.18,
+     "left": 460,
+     "baseline": 729,
+     "inkBox": [
+      460,
+      701,
+      626,
+      738
+     ]
+    }
+   ],
+   "oneLineFit": 29.31,
+   "k": 0.62,
+   "blendCandidates": [
+    {
+     "lines": [
+      "Cagrilintide + Semaglutide"
+     ],
+     "k": 0.32,
+     "nameSize": 29.31
+    },
+    {
+     "lines": [
+      "Cagrilintide +",
+      "Semaglutide"
+     ],
+     "k": 0.62,
+     "nameSize": 56.79
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "Cagrilintide + Semaglutide",
+    "x": 150.0,
+    "baseline": 446.9,
+    "size": 110.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1444.9
+   },
+   {
+    "text": "10/10 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 604.0
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "10/10 mg per vial",
+    "x": 1073.5,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0276-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "Cagrilintide +",
+    "x": 145.0,
+    "baseline": 430.0,
+    "size": 83.5,
+    "weight": 790,
+    "face": 700,
+    "right": 647.1
+   },
+   {
+    "text": "Semaglutide",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 83.5,
+    "weight": 790,
+    "face": 700,
+    "right": 609.1
+   },
+   {
+    "text": "10/10 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 553.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "10/10 mg per vial",
+    "x": 642.0,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "Cagrilintide + Semaglutide",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1434.4
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "10/10 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1312.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0276",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "cagrilintide-semaglutide-5-5mg",
+  "frontNameFit": {
+   "fontSize": 110.0,
+   "letterSpacing": -3.75,
+   "baselines": [
+    446.9
+   ],
+   "lines": [
+    "Cagrilintide + Semaglutide"
+   ],
+   "inkRightEstimate": 1444.9,
+   "oneLineFitPx": 110.0,
+   "candidates": [
+    {
+     "lines": [
+      "Cagrilintide + Semaglutide"
+     ],
+     "fontSize": 110.0
+    },
+    {
+     "lines": [
+      "Cagrilintide +",
+      "Semaglutide"
+     ],
+     "fontSize": 96.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 83.5,
+   "letterSpacing": -2.86,
+   "baselines": [
+    430.0,
+    520.0
+   ],
+   "lines": [
+    "Cagrilintide +",
+    "Semaglutide"
+   ],
+   "inkRightEstimate": 647.2,
+   "oneLineFitPx": 69.0,
+   "candidates": [
+    {
+     "lines": [
+      "Cagrilintide + Semaglutide"
+     ],
+     "fontSize": 69.0
+    },
+    {
+     "lines": [
+      "Cagrilintide +",
+      "Semaglutide"
+     ],
+     "fontSize": 83.5
+    }
+   ],
+   "sideLines": [
+    "Cagrilintide + Semaglutide"
+   ]
+  },
+  "renderLayout": {
+   "name": "Cagrilintide + Semaglutide",
+   "amount": "5/5 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "Cagrilintide +",
+     "size": 56.79,
+     "left": 458,
+     "baseline": 622,
+     "inkBox": [
+      458,
+      580,
+      790,
+      634
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "Semaglutide",
+     "size": 56.79,
+     "left": 458,
+     "baseline": 682,
+     "inkBox": [
+      458,
+      640,
+      769,
+      694
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "5/5 mg",
+     "size": 39.18,
+     "left": 460,
+     "baseline": 729,
+     "inkBox": [
+      460,
+      701,
+      583,
+      738
+     ]
+    }
+   ],
+   "oneLineFit": 29.31,
+   "k": 0.62,
+   "blendCandidates": [
+    {
+     "lines": [
+      "Cagrilintide + Semaglutide"
+     ],
+     "k": 0.32,
+     "nameSize": 29.31
+    },
+    {
+     "lines": [
+      "Cagrilintide +",
+      "Semaglutide"
+     ],
+     "k": 0.62,
+     "nameSize": 56.79
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "Cagrilintide + Semaglutide",
+    "x": 150.0,
+    "baseline": 446.9,
+    "size": 110.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1444.9
+   },
+   {
+    "text": "5/5 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 491.5
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "5/5 mg per vial",
+    "x": 1110.0,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0277-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "Cagrilintide +",
+    "x": 145.0,
+    "baseline": 430.0,
+    "size": 83.5,
+    "weight": 790,
+    "face": 700,
+    "right": 647.1
+   },
+   {
+    "text": "Semaglutide",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 83.5,
+    "weight": 790,
+    "face": 700,
+    "right": 609.1
+   },
+   {
+    "text": "5/5 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 452.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "5/5 mg per vial",
+    "x": 675.0,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "Cagrilintide + Semaglutide",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1434.4
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "5/5 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1280.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0277",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "dsip-selank-2-10mg",
+  "frontNameFit": {
+   "fontSize": 176.0,
+   "letterSpacing": -6.0,
+   "baselines": [
+    470.0
+   ],
+   "lines": [
+    "DSIP + Selank"
+   ],
+   "inkRightEstimate": 1235.5,
+   "oneLineFitPx": 176.0,
+   "candidates": [
+    {
+     "lines": [
+      "DSIP + Selank"
+     ],
+     "fontSize": 176.0
+    },
+    {
+     "lines": [
+      "DSIP +",
+      "Selank"
+     ],
+     "fontSize": 102.5
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 132.0,
+   "letterSpacing": -4.52,
+   "baselines": [
+    515.1
+   ],
+   "lines": [
+    "DSIP + Selank"
+   ],
+   "inkRightEstimate": 958.5,
+   "oneLineFitPx": 132.0,
+   "candidates": [
+    {
+     "lines": [
+      "DSIP + Selank"
+     ],
+     "fontSize": 132.0
+    },
+    {
+     "lines": [
+      "DSIP +",
+      "Selank"
+     ],
+     "fontSize": 88.5
+    }
+   ],
+   "sideLines": [
+    "DSIP + Selank"
+   ]
+  },
+  "renderLayout": {
+   "name": "DSIP + Selank",
+   "amount": "2/10 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "DSIP +",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 624,
+     "inkBox": [
+      458,
+      579,
+      637,
+      624
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "Selank",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 687,
+     "inkBox": [
+      458,
+      640,
+      639,
+      687
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "2/10 mg",
+     "size": 43.61,
+     "left": 460,
+     "baseline": 730,
+     "inkBox": [
+      460,
+      699,
+      622,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 56.33,
+   "k": 0.69,
+   "blendCandidates": [
+    {
+     "lines": [
+      "DSIP + Selank"
+     ],
+     "k": 0.615,
+     "nameSize": 56.33
+    },
+    {
+     "lines": [
+      "DSIP +",
+      "Selank"
+     ],
+     "k": 0.69,
+     "nameSize": 63.2
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "DSIP + Selank",
+    "x": 150.0,
+    "baseline": 470.0,
+    "size": 176.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1235.5
+   },
+   {
+    "text": "2/10 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 547.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "2/10 mg per vial",
+    "x": 1091.8,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0279-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "DSIP + Selank",
+    "x": 145.0,
+    "baseline": 515.1,
+    "size": 132.0,
+    "weight": 790,
+    "face": 700,
+    "right": 958.5
+   },
+   {
+    "text": "2/10 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 502.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "2/10 mg per vial",
+    "x": 658.5,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "DSIP + Selank",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1264.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "2/10 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1296.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0279",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "ghk-cu-epithalon-50-10mg",
+  "frontNameFit": {
+   "fontSize": 146.0,
+   "letterSpacing": -4.98,
+   "baselines": [
+    459.5
+   ],
+   "lines": [
+    "GHK-Cu + Epithalon"
+   ],
+   "inkRightEstimate": 1449.6,
+   "oneLineFitPx": 146.0,
+   "candidates": [
+    {
+     "lines": [
+      "GHK-Cu + Epithalon"
+     ],
+     "fontSize": 146.0
+    },
+    {
+     "lines": [
+      "GHK-Cu +",
+      "Epithalon"
+     ],
+     "fontSize": 102.5
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 91.5,
+   "letterSpacing": -3.13,
+   "baselines": [
+    500.9
+   ],
+   "lines": [
+    "GHK-Cu + Epithalon"
+   ],
+   "inkRightEstimate": 959.2,
+   "oneLineFitPx": 91.5,
+   "candidates": [
+    {
+     "lines": [
+      "GHK-Cu + Epithalon"
+     ],
+     "fontSize": 91.5
+    },
+    {
+     "lines": [
+      "GHK-Cu +",
+      "Epithalon"
+     ],
+     "fontSize": 88.5
+    }
+   ],
+   "sideLines": [
+    "GHK-Cu + Epithalon"
+   ]
+  },
+  "renderLayout": {
+   "name": "GHK-Cu + Epithalon",
+   "amount": "50/10 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "GHK-Cu +",
+     "size": 59.54,
+     "left": 458,
+     "baseline": 622,
+     "inkBox": [
+      458,
+      579,
+      716,
+      622
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "Epithalon",
+     "size": 59.54,
+     "left": 458,
+     "baseline": 682,
+     "inkBox": [
+      458,
+      638,
+      699,
+      695
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "50/10 mg",
+     "size": 41.08,
+     "left": 460,
+     "baseline": 731,
+     "inkBox": [
+      460,
+      702,
+      634,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 38.47,
+   "k": 0.65,
+   "blendCandidates": [
+    {
+     "lines": [
+      "GHK-Cu + Epithalon"
+     ],
+     "k": 0.42,
+     "nameSize": 38.47
+    },
+    {
+     "lines": [
+      "GHK-Cu +",
+      "Epithalon"
+     ],
+     "k": 0.65,
+     "nameSize": 59.54
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "GHK-Cu + Epithalon",
+    "x": 150.0,
+    "baseline": 459.5,
+    "size": 146.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1449.6
+   },
+   {
+    "text": "50/10 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 604.0
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "50/10 mg per vial",
+    "x": 1069.0,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0289-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "GHK-Cu + Epithalon",
+    "x": 145.0,
+    "baseline": 500.9,
+    "size": 91.5,
+    "weight": 790,
+    "face": 700,
+    "right": 959.3
+   },
+   {
+    "text": "50/10 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 553.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "50/10 mg per vial",
+    "x": 638.2,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "GHK-Cu + Epithalon",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1345.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "50/10 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1312.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0289",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "glow-bpc-157-tb-500-ghk-cu-10-10-50mg",
+  "frontNameFit": {
+   "fontSize": 102.0,
+   "letterSpacing": -3.48,
+   "baselines": [
+    368.0,
+    470.0
+   ],
+   "lines": [
+    "GLOW (BPC-157 +",
+    "TB-500 + GHK-Cu)"
+   ],
+   "inkRightEstimate": 990.6,
+   "oneLineFitPx": 78.0,
+   "candidates": [
+    {
+     "lines": [
+      "GLOW (BPC-157 + TB-500 + GHK-Cu)"
+     ],
+     "fontSize": 78.0
+    },
+    {
+     "lines": [
+      "GLOW (BPC-157 +",
+      "TB-500 + GHK-Cu)"
+     ],
+     "fontSize": 102.0
+    },
+    {
+     "lines": [
+      "GLOW (BPC-157 + TB-500 +",
+      "GHK-Cu)"
+     ],
+     "fontSize": 102.0
+    },
+    {
+     "lines": [
+      "GLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu)"
+     ],
+     "fontSize": 64.5
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 88.5,
+   "letterSpacing": -3.03,
+   "baselines": [
+    432.0,
+    520.0
+   ],
+   "lines": [
+    "GLOW (BPC-157 +",
+    "TB-500 + GHK-Cu)"
+   ],
+   "inkRightEstimate": 873.8,
+   "oneLineFitPx": 49.0,
+   "candidates": [
+    {
+     "lines": [
+      "GLOW (BPC-157 + TB-500 + GHK-Cu)"
+     ],
+     "fontSize": 49.0
+    },
+    {
+     "lines": [
+      "GLOW (BPC-157 +",
+      "TB-500 + GHK-Cu)"
+     ],
+     "fontSize": 88.5
+    },
+    {
+     "lines": [
+      "GLOW (BPC-157 + TB-500 +",
+      "GHK-Cu)"
+     ],
+     "fontSize": 65.5
+    },
+    {
+     "lines": [
+      "GLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu)"
+     ],
+     "fontSize": 56.0
+    }
+   ],
+   "sideLines": [
+    "GLOW (BPC-157 +",
+    "TB-500 + GHK-Cu)"
+   ]
+  },
+  "renderLayout": {
+   "name": "GLOW (BPC-157 + TB-500 + GHK-Cu)",
+   "amount": "10/10/50 mg",
+   "mode": "blend-3",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "GLOW (BPC-157 +",
+     "size": 43.05,
+     "left": 458,
+     "baseline": 613,
+     "inkBox": [
+      458,
+      582,
+      800,
+      619
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "TB-500 +",
+     "size": 43.05,
+     "left": 458,
+     "baseline": 656,
+     "inkBox": [
+      458,
+      625,
+      628,
+      656
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "GHK-Cu)",
+     "size": 43.05,
+     "left": 458,
+     "baseline": 699,
+     "inkBox": [
+      458,
+      668,
+      622,
+      705
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "10/10/50 mg",
+     "size": 29.7,
+     "left": 460,
+     "baseline": 731,
+     "inkBox": [
+      460,
+      710,
+      631,
+      737
+     ]
+    }
+   ],
+   "oneLineFit": null,
+   "k": 0.47,
+   "blendCandidates": [
+    {
+     "lines": [
+      "GLOW (BPC-157 +",
+      "TB-500 + GHK-Cu)"
+     ],
+     "k": 0.455,
+     "nameSize": 41.68
+    },
+    {
+     "lines": [
+      "GLOW (BPC-157 + TB-500 +",
+      "GHK-Cu)"
+     ],
+     "k": 0.3,
+     "nameSize": 27.48
+    },
+    {
+     "lines": [
+      "GLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu)"
+     ],
+     "k": 0.47,
+     "nameSize": 43.05
+    }
+   ],
+   "unfitLineSets": [
+    [
+     "GLOW (BPC-157 + TB-500 + GHK-Cu)"
+    ]
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "GLOW (BPC-157 +",
+    "x": 150.0,
+    "baseline": 368.0,
+    "size": 102.0,
+    "weight": 790,
+    "face": 700,
+    "right": 979.0
+   },
+   {
+    "text": "TB-500 + GHK-Cu)",
+    "x": 150.0,
+    "baseline": 470.0,
+    "size": 102.0,
+    "weight": 790,
+    "face": 700,
+    "right": 990.5
+   },
+   {
+    "text": "10/10/50 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 760.0
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "10/10/50 mg per vial",
+    "x": 1009.8,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0294-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "GLOW (BPC-157 +",
+    "x": 145.0,
+    "baseline": 432.0,
+    "size": 88.5,
+    "weight": 790,
+    "face": 700,
+    "right": 863.9
+   },
+   {
+    "text": "TB-500 + GHK-Cu)",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 88.5,
+    "weight": 790,
+    "face": 700,
+    "right": 873.8
+   },
+   {
+    "text": "10/10/50 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 693.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "10/10/50 mg per vial",
+    "x": 585.0,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "GLOW (BPC-157 +",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1320.6
+   },
+   {
+    "text": "TB-500 + GHK-Cu)",
+    "x": 1080.0,
+    "baseline": 376.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1324.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "10/10/50 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1357.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0294",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg",
+  "frontNameFit": {
+   "fontSize": 102.0,
+   "letterSpacing": -3.48,
+   "baselines": [
+    368.0,
+    470.0
+   ],
+   "lines": [
+    "KLOW (BPC-157 +",
+    "TB-500 + GHK-Cu + KPV)"
+   ],
+   "inkRightEstimate": 1295.2,
+   "oneLineFitPx": 66.5,
+   "candidates": [
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+     ],
+     "fontSize": 66.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "fontSize": 102.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "fontSize": 102.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "fontSize": 64.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 76.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 64.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 64.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 47.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 72.5,
+   "letterSpacing": -2.48,
+   "baselines": [
+    448.0,
+    520.0
+   ],
+   "lines": [
+    "KLOW (BPC-157 +",
+    "TB-500 + GHK-Cu + KPV)"
+   ],
+   "inkRightEstimate": 957.6,
+   "oneLineFitPx": 41.5,
+   "candidates": [
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+     ],
+     "fontSize": 41.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "fontSize": 72.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "fontSize": 65.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "fontSize": 56.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 47.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 56.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 56.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 40.5
+    }
+   ],
+   "sideLines": [
+    "KLOW (BPC-157 +",
+    "TB-500 + GHK-Cu + KPV)"
+   ]
+  },
+  "renderLayout": {
+   "name": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+   "amount": "5/5/10/5 mg",
+   "mode": "blend-3",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "KLOW (BPC-157 +",
+     "size": 43.51,
+     "left": 458,
+     "baseline": 612,
+     "inkBox": [
+      458,
+      581,
+      800,
+      618
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "TB-500 +",
+     "size": 43.51,
+     "left": 458,
+     "baseline": 656,
+     "inkBox": [
+      458,
+      625,
+      629,
+      656
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "GHK-Cu + KPV)",
+     "size": 43.51,
+     "left": 458,
+     "baseline": 700,
+     "inkBox": [
+      458,
+      669,
+      753,
+      706
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "5/5/10/5 mg",
+     "size": 30.02,
+     "left": 460,
+     "baseline": 732,
+     "inkBox": [
+      460,
+      711,
+      629,
+      738
+     ]
+    }
+   ],
+   "oneLineFit": null,
+   "k": 0.475,
+   "blendCandidates": [
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "k": 0.335,
+     "nameSize": 30.69
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "k": 0.305,
+     "nameSize": 27.94
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "k": 0.475,
+     "nameSize": 43.51
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "k": 0.425,
+     "nameSize": 38.93
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "k": 0.305,
+     "nameSize": 27.94
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "k": 0.385,
+     "nameSize": 35.27
+    }
+   ],
+   "unfitLineSets": [
+    [
+     "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+    ],
+    [
+     "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+     "KPV)"
+    ]
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "KLOW (BPC-157 +",
+    "x": 150.0,
+    "baseline": 368.0,
+    "size": 102.0,
+    "weight": 790,
+    "face": 700,
+    "right": 972.7
+   },
+   {
+    "text": "TB-500 + GHK-Cu + KPV)",
+    "x": 150.0,
+    "baseline": 470.0,
+    "size": 102.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1295.2
+   },
+   {
+    "text": "5/5/10/5 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 747.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "5/5/10/5 mg per vial",
+    "x": 1009.8,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0304-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "KLOW (BPC-157 +",
+    "x": 145.0,
+    "baseline": 448.0,
+    "size": 72.5,
+    "weight": 790,
+    "face": 700,
+    "right": 729.0
+   },
+   {
+    "text": "TB-500 + GHK-Cu + KPV)",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 72.5,
+    "weight": 790,
+    "face": 700,
+    "right": 957.7
+   },
+   {
+    "text": "5/5/10/5 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 681.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "5/5/10/5 mg per vial",
+    "x": 585.0,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "KLOW (BPC-157 +",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1318.8
+   },
+   {
+    "text": "TB-500 + GHK-Cu + KPV)",
+    "x": 1080.0,
+    "baseline": 376.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1414.2
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "5/5/10/5 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1353.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0304",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg",
+  "frontNameFit": {
+   "fontSize": 102.0,
+   "letterSpacing": -3.48,
+   "baselines": [
+    368.0,
+    470.0
+   ],
+   "lines": [
+    "KLOW (BPC-157 +",
+    "TB-500 + GHK-Cu + KPV)"
+   ],
+   "inkRightEstimate": 1295.2,
+   "oneLineFitPx": 66.5,
+   "candidates": [
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+     ],
+     "fontSize": 66.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "fontSize": 102.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "fontSize": 102.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "fontSize": 64.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 76.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 64.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 64.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 47.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 72.5,
+   "letterSpacing": -2.48,
+   "baselines": [
+    448.0,
+    520.0
+   ],
+   "lines": [
+    "KLOW (BPC-157 +",
+    "TB-500 + GHK-Cu + KPV)"
+   ],
+   "inkRightEstimate": 957.6,
+   "oneLineFitPx": 41.5,
+   "candidates": [
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+     ],
+     "fontSize": 41.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "fontSize": 72.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "fontSize": 65.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "fontSize": 56.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 47.5
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 56.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 56.0
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "fontSize": 40.5
+    }
+   ],
+   "sideLines": [
+    "KLOW (BPC-157 +",
+    "TB-500 + GHK-Cu + KPV)"
+   ]
+  },
+  "renderLayout": {
+   "name": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+   "amount": "10/10/50/10 mg",
+   "mode": "blend-3",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "KLOW (BPC-157 +",
+     "size": 43.51,
+     "left": 458,
+     "baseline": 612,
+     "inkBox": [
+      458,
+      581,
+      800,
+      618
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "TB-500 +",
+     "size": 43.51,
+     "left": 458,
+     "baseline": 656,
+     "inkBox": [
+      458,
+      625,
+      629,
+      656
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "GHK-Cu + KPV)",
+     "size": 43.51,
+     "left": 458,
+     "baseline": 700,
+     "inkBox": [
+      458,
+      669,
+      753,
+      706
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "10/10/50/10 mg",
+     "size": 30.02,
+     "left": 460,
+     "baseline": 732,
+     "inkBox": [
+      460,
+      711,
+      678,
+      738
+     ]
+    }
+   ],
+   "oneLineFit": null,
+   "k": 0.475,
+   "blendCandidates": [
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "k": 0.335,
+     "nameSize": 30.69
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "k": 0.305,
+     "nameSize": 27.94
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu + KPV)"
+     ],
+     "k": 0.475,
+     "nameSize": 43.51
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu +",
+      "KPV)"
+     ],
+     "k": 0.425,
+     "nameSize": 38.93
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 + TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "k": 0.305,
+     "nameSize": 27.94
+    },
+    {
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 +",
+      "GHK-Cu +",
+      "KPV)"
+     ],
+     "k": 0.385,
+     "nameSize": 35.27
+    }
+   ],
+   "unfitLineSets": [
+    [
+     "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+    ],
+    [
+     "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+     "KPV)"
+    ]
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "KLOW (BPC-157 +",
+    "x": 150.0,
+    "baseline": 368.0,
+    "size": 102.0,
+    "weight": 790,
+    "face": 700,
+    "right": 972.7
+   },
+   {
+    "text": "TB-500 + GHK-Cu + KPV)",
+    "x": 150.0,
+    "baseline": 470.0,
+    "size": 102.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1295.2
+   },
+   {
+    "text": "10/10/50/10 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 916.0
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "10/10/50/10 mg per vial",
+    "x": 950.5,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0305-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "KLOW (BPC-157 +",
+    "x": 145.0,
+    "baseline": 448.0,
+    "size": 72.5,
+    "weight": 790,
+    "face": 700,
+    "right": 729.0
+   },
+   {
+    "text": "TB-500 + GHK-Cu + KPV)",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 72.5,
+    "weight": 790,
+    "face": 700,
+    "right": 957.7
+   },
+   {
+    "text": "10/10/50/10 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 833.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "10/10/50/10 mg per vial",
+    "x": 531.8,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "KLOW (BPC-157 +",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1318.8
+   },
+   {
+    "text": "TB-500 + GHK-Cu + KPV)",
+    "x": 1080.0,
+    "baseline": 376.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1414.2
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "10/10/50/10 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1401.8
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0305",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "retatrutide-cagrilintide-10-2p5mg",
+  "frontNameFit": {
+   "fontSize": 115.5,
+   "letterSpacing": -3.94,
+   "baselines": [
+    448.8
+   ],
+   "lines": [
+    "Retatrutide + Cagrilintide"
+   ],
+   "inkRightEstimate": 1444.5,
+   "oneLineFitPx": 115.5,
+   "candidates": [
+    {
+     "lines": [
+      "Retatrutide + Cagrilintide"
+     ],
+     "fontSize": 115.5
+    },
+    {
+     "lines": [
+      "Retatrutide +",
+      "Cagrilintide"
+     ],
+     "fontSize": 100.5
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 87.0,
+   "letterSpacing": -2.98,
+   "baselines": [
+    433.0,
+    520.0
+   ],
+   "lines": [
+    "Retatrutide +",
+    "Cagrilintide"
+   ],
+   "inkRightEstimate": 657.3,
+   "oneLineFitPx": 72.5,
+   "candidates": [
+    {
+     "lines": [
+      "Retatrutide + Cagrilintide"
+     ],
+     "fontSize": 72.5
+    },
+    {
+     "lines": [
+      "Retatrutide +",
+      "Cagrilintide"
+     ],
+     "fontSize": 87.0
+    }
+   ],
+   "sideLines": [
+    "Retatrutide + Cagrilintide"
+   ]
+  },
+  "renderLayout": {
+   "name": "Retatrutide + Cagrilintide",
+   "amount": "10/2.5 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "Retatrutide +",
+     "size": 59.08,
+     "left": 458,
+     "baseline": 623,
+     "inkBox": [
+      458,
+      579,
+      794,
+      623
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "Cagrilintide",
+     "size": 59.08,
+     "left": 458,
+     "baseline": 682,
+     "inkBox": [
+      458,
+      638,
+      754,
+      695
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "10/2.5 mg",
+     "size": 40.76,
+     "left": 460,
+     "baseline": 731,
+     "inkBox": [
+      460,
+      702,
+      643,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 30.69,
+   "k": 0.645,
+   "blendCandidates": [
+    {
+     "lines": [
+      "Retatrutide + Cagrilintide"
+     ],
+     "k": 0.335,
+     "nameSize": 30.69
+    },
+    {
+     "lines": [
+      "Retatrutide +",
+      "Cagrilintide"
+     ],
+     "k": 0.645,
+     "nameSize": 59.08
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "Retatrutide + Cagrilintide",
+    "x": 150.0,
+    "baseline": 448.8,
+    "size": 115.5,
+    "weight": 790,
+    "face": 700,
+    "right": 1444.4
+   },
+   {
+    "text": "10/2.5 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 630.5
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "10/2.5 mg per vial",
+    "x": 1056.8,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0330-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "Retatrutide +",
+    "x": 145.0,
+    "baseline": 433.0,
+    "size": 87.0,
+    "weight": 790,
+    "face": 700,
+    "right": 657.3
+   },
+   {
+    "text": "Cagrilintide",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 87.0,
+    "weight": 790,
+    "face": 700,
+    "right": 588.1
+   },
+   {
+    "text": "10/2.5 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 577.0
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "10/2.5 mg per vial",
+    "x": 627.2,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "Retatrutide + Cagrilintide",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1418.5
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "10/2.5 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1320.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0330",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "semax-selank-dsip-10-10-2mg",
+  "frontNameFit": {
+   "fontSize": 126.5,
+   "letterSpacing": -4.31,
+   "baselines": [
+    452.6
+   ],
+   "lines": [
+    "Semax + Selank + DSIP"
+   ],
+   "inkRightEstimate": 1448.8,
+   "oneLineFitPx": 126.5,
+   "candidates": [
+    {
+     "lines": [
+      "Semax + Selank + DSIP"
+     ],
+     "fontSize": 126.5
+    },
+    {
+     "lines": [
+      "Semax +",
+      "Selank + DSIP"
+     ],
+     "fontSize": 102.5
+    },
+    {
+     "lines": [
+      "Semax + Selank +",
+      "DSIP"
+     ],
+     "fontSize": 100.5
+    },
+    {
+     "lines": [
+      "Semax +",
+      "Selank +",
+      "DSIP"
+     ],
+     "fontSize": 64.5
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 88.5,
+   "letterSpacing": -3.03,
+   "baselines": [
+    432.0,
+    520.0
+   ],
+   "lines": [
+    "Semax +",
+    "Selank + DSIP"
+   ],
+   "inkRightEstimate": 690.4,
+   "oneLineFitPx": 79.0,
+   "candidates": [
+    {
+     "lines": [
+      "Semax + Selank + DSIP"
+     ],
+     "fontSize": 79.0
+    },
+    {
+     "lines": [
+      "Semax +",
+      "Selank + DSIP"
+     ],
+     "fontSize": 88.5
+    },
+    {
+     "lines": [
+      "Semax + Selank +",
+      "DSIP"
+     ],
+     "fontSize": 87.0
+    },
+    {
+     "lines": [
+      "Semax +",
+      "Selank +",
+      "DSIP"
+     ],
+     "fontSize": 56.0
+    }
+   ],
+   "sideLines": [
+    "Semax + Selank + DSIP"
+   ]
+  },
+  "renderLayout": {
+   "name": "Semax + Selank + DSIP",
+   "amount": "10/10/2 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "Semax +",
+     "size": 55.88,
+     "left": 458,
+     "baseline": 628,
+     "inkBox": [
+      458,
+      588,
+      667,
+      628
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "Selank + DSIP",
+     "size": 55.88,
+     "left": 458,
+     "baseline": 684,
+     "inkBox": [
+      458,
+      642,
+      800,
+      684
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "10/10/2 mg",
+     "size": 38.55,
+     "left": 460,
+     "baseline": 723,
+     "inkBox": [
+      460,
+      695,
+      661,
+      731
+     ]
+    }
+   ],
+   "oneLineFit": 33.43,
+   "k": 0.61,
+   "blendCandidates": [
+    {
+     "lines": [
+      "Semax + Selank + DSIP"
+     ],
+     "k": 0.365,
+     "nameSize": 33.43
+    },
+    {
+     "lines": [
+      "Semax +",
+      "Selank + DSIP"
+     ],
+     "k": 0.61,
+     "nameSize": 55.88
+    },
+    {
+     "lines": [
+      "Semax + Selank +",
+      "DSIP"
+     ],
+     "k": 0.48,
+     "nameSize": 43.97
+    },
+    {
+     "lines": [
+      "Semax +",
+      "Selank +",
+      "DSIP"
+     ],
+     "k": 0.495,
+     "nameSize": 45.34
+    }
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "Semax + Selank + DSIP",
+    "x": 150.0,
+    "baseline": 452.6,
+    "size": 126.5,
+    "weight": 790,
+    "face": 700,
+    "right": 1448.8
+   },
+   {
+    "text": "10/10/2 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 703.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "10/10/2 mg per vial",
+    "x": 1032.5,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0339-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "Semax +",
+    "x": 145.0,
+    "baseline": 432.0,
+    "size": 88.5,
+    "weight": 790,
+    "face": 700,
+    "right": 488.8
+   },
+   {
+    "text": "Selank + DSIP",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 88.5,
+    "weight": 790,
+    "face": 700,
+    "right": 690.4
+   },
+   {
+    "text": "10/10/2 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 642.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "10/10/2 mg per vial",
+    "x": 605.2,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "Semax + Selank + DSIP",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1387.2
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "10/10/2 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1341.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0339",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "thymosin-alpha-1-kpv-ll-37-10-10-5mg",
+  "frontNameFit": {
+   "fontSize": 97.5,
+   "letterSpacing": -3.32,
+   "baselines": [
+    368.0,
+    470.0
+   ],
+   "lines": [
+    "Thymosin Alpha-1 +",
+    "KPV + LL-37"
+   ],
+   "inkRightEstimate": 1027.0,
+   "oneLineFitPx": 88.5,
+   "candidates": [
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV + LL-37"
+     ],
+     "fontSize": 88.5
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "fontSize": 97.5
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV +",
+      "LL-37"
+     ],
+     "fontSize": 97.5
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV +",
+      "LL-37"
+     ],
+     "fontSize": 63.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 85.0,
+   "letterSpacing": -2.91,
+   "baselines": [
+    431.0,
+    520.0
+   ],
+   "lines": [
+    "Thymosin Alpha-1 +",
+    "KPV + LL-37"
+   ],
+   "inkRightEstimate": 909.3,
+   "oneLineFitPx": 55.5,
+   "candidates": [
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV + LL-37"
+     ],
+     "fontSize": 55.5
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "fontSize": 85.0
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV +",
+      "LL-37"
+     ],
+     "fontSize": 68.0
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV +",
+      "LL-37"
+     ],
+     "fontSize": 54.5
+    }
+   ],
+   "sideLines": [
+    "Thymosin Alpha-1 + KPV + LL-37"
+   ]
+  },
+  "renderLayout": {
+   "name": "Thymosin Alpha-1 + KPV + LL-37",
+   "amount": "10/10/5 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "Thymosin Alpha-1 +",
+     "size": 38.47,
+     "left": 458,
+     "baseline": 638,
+     "inkBox": [
+      458,
+      609,
+      799,
+      646
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "KPV + LL-37",
+     "size": 38.47,
+     "left": 458,
+     "baseline": 678,
+     "inkBox": [
+      458,
+      650,
+      662,
+      678
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "10/10/5 mg",
+     "size": 26.54,
+     "left": 460,
+     "baseline": 705,
+     "inkBox": [
+      460,
+      686,
+      597,
+      710
+     ]
+    }
+   ],
+   "oneLineFit": null,
+   "k": 0.42,
+   "blendCandidates": [
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "k": 0.42,
+     "nameSize": 38.47
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV +",
+      "LL-37"
+     ],
+     "k": 0.315,
+     "nameSize": 28.85
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV +",
+      "LL-37"
+     ],
+     "k": 0.42,
+     "nameSize": 38.47
+    }
+   ],
+   "unfitLineSets": [
+    [
+     "Thymosin Alpha-1 + KPV + LL-37"
+    ]
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "Thymosin Alpha-1 +",
+    "x": 150.0,
+    "baseline": 368.0,
+    "size": 97.5,
+    "weight": 790,
+    "face": 700,
+    "right": 1027.1
+   },
+   {
+    "text": "KPV + LL-37",
+    "x": 150.0,
+    "baseline": 470.0,
+    "size": 97.5,
+    "weight": 790,
+    "face": 700,
+    "right": 679.1
+   },
+   {
+    "text": "10/10/5 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 703.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "10/10/5 mg per vial",
+    "x": 1032.5,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0352-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "Thymosin Alpha-1 +",
+    "x": 145.0,
+    "baseline": 431.0,
+    "size": 85.0,
+    "weight": 790,
+    "face": 700,
+    "right": 909.3
+   },
+   {
+    "text": "KPV + LL-37",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 85.0,
+    "weight": 790,
+    "face": 700,
+    "right": 606.4
+   },
+   {
+    "text": "10/10/5 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 642.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "10/10/5 mg per vial",
+    "x": 605.2,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "Thymosin Alpha-1 + KPV + LL-37",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1516.5
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "10/10/5 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1341.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0352",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "thymosin-alpha-1-kpv-ll-37-5-5-5mg",
+  "frontNameFit": {
+   "fontSize": 97.5,
+   "letterSpacing": -3.32,
+   "baselines": [
+    368.0,
+    470.0
+   ],
+   "lines": [
+    "Thymosin Alpha-1 +",
+    "KPV + LL-37"
+   ],
+   "inkRightEstimate": 1027.0,
+   "oneLineFitPx": 88.5,
+   "candidates": [
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV + LL-37"
+     ],
+     "fontSize": 88.5
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "fontSize": 97.5
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV +",
+      "LL-37"
+     ],
+     "fontSize": 97.5
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV +",
+      "LL-37"
+     ],
+     "fontSize": 63.0
+    }
+   ]
+  },
+  "wrapNameFit": {
+   "fontSize": 85.0,
+   "letterSpacing": -2.91,
+   "baselines": [
+    431.0,
+    520.0
+   ],
+   "lines": [
+    "Thymosin Alpha-1 +",
+    "KPV + LL-37"
+   ],
+   "inkRightEstimate": 909.3,
+   "oneLineFitPx": 55.5,
+   "candidates": [
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV + LL-37"
+     ],
+     "fontSize": 55.5
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "fontSize": 85.0
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV +",
+      "LL-37"
+     ],
+     "fontSize": 68.0
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV +",
+      "LL-37"
+     ],
+     "fontSize": 54.5
+    }
+   ],
+   "sideLines": [
+    "Thymosin Alpha-1 + KPV + LL-37"
+   ]
+  },
+  "renderLayout": {
+   "name": "Thymosin Alpha-1 + KPV + LL-37",
+   "amount": "5/5/5 mg",
+   "mode": "blend-2",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "Thymosin Alpha-1 +",
+     "size": 38.47,
+     "left": 458,
+     "baseline": 638,
+     "inkBox": [
+      458,
+      609,
+      799,
+      646
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "KPV + LL-37",
+     "size": 38.47,
+     "left": 458,
+     "baseline": 678,
+     "inkBox": [
+      458,
+      650,
+      662,
+      678
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "5/5/5 mg",
+     "size": 26.54,
+     "left": 460,
+     "baseline": 705,
+     "inkBox": [
+      460,
+      686,
+      569,
+      710
+     ]
+    }
+   ],
+   "oneLineFit": null,
+   "k": 0.42,
+   "blendCandidates": [
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "k": 0.42,
+     "nameSize": 38.47
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 + KPV +",
+      "LL-37"
+     ],
+     "k": 0.315,
+     "nameSize": 28.85
+    },
+    {
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV +",
+      "LL-37"
+     ],
+     "k": 0.42,
+     "nameSize": 38.47
+    }
+   ],
+   "unfitLineSets": [
+    [
+     "Thymosin Alpha-1 + KPV + LL-37"
+    ]
+   ]
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "Thymosin Alpha-1 +",
+    "x": 150.0,
+    "baseline": 368.0,
+    "size": 97.5,
+    "weight": 790,
+    "face": 700,
+    "right": 1027.1
+   },
+   {
+    "text": "KPV + LL-37",
+    "x": 150.0,
+    "baseline": 470.0,
+    "size": 97.5,
+    "weight": 790,
+    "face": 700,
+    "right": 679.1
+   },
+   {
+    "text": "5/5/5 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 591.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "5/5/5 mg per vial",
+    "x": 1069.0,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0353-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "Thymosin Alpha-1 +",
+    "x": 145.0,
+    "baseline": 431.0,
+    "size": 85.0,
+    "weight": 790,
+    "face": 700,
+    "right": 909.3
+   },
+   {
+    "text": "KPV + LL-37",
+    "x": 145.0,
+    "baseline": 520.0,
+    "size": 85.0,
+    "weight": 790,
+    "face": 700,
+    "right": 606.4
+   },
+   {
+    "text": "5/5/5 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 541.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "5/5/5 mg per vial",
+    "x": 638.2,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "Thymosin Alpha-1 + KPV + LL-37",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1516.5
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "5/5/5 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1309.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0353",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ }
+]

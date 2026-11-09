@@ -1,0 +1,5104 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-05-batch-c1-009",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644",
+  "KAN-225/10683",
+  "KAN-59/11623",
+  "KAN-225/11259"
+ ],
+ "labelFactSources": [
+  {
+   "reference": "KAN-6/10624",
+   "note": "Session 3 static artwork facts: product code wording"
+  },
+  {
+   "reference": "KAN-59/11584",
+   "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+   "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+   "author": "CLAUDE-2"
+  }
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor, but only when stacking sets the name larger than one line does; otherwise it stays on one line. A blend name (one containing \" + \") takes Root's Option B, KAN-59/11404: the exact name, broken only after \" + \", on whichever line set gives the largest scale (a tie keeps fewer lines, then the more even widths), with every name line and the amount scaled together and centred between the rule and the form line. Its amount is the components' amounts in name order, joined by \"/\", with their one unit.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE. On the front and the wrap front panel, a blend name takes the larger of the one-line fit and the exact name broken only after \" + \" at one size, the last line on the template baseline and the first kept as far below the rule as the XENIOS line sits above it. The wrap side panel breaks it only when it is wider than the panel. The build stops if a blend's amount or nominal content would leave its field or come within 24 px of the line beside it.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes.",
+  "The wrap proof id is the exact product code (for example GEN-GRP-0265-WRAP-v1), not code-amount, because code-amount can spell a fragment name that label facts forbid (KISSPEPTIN-10 in C1-002)."
+ ],
+ "changesFromC1001": [
+  "The build reads its variants (names, amounts, codes, verified label text) from tools/variants.json instead of a constant.",
+  "Amounts other than 10 mg (10/10 mg, 15/15 mg, 5/5 mg, 2/10 mg, 50/10 mg, 10/10/50 mg, 5/5/10/5 mg, 10/10/50/10 mg, 10/2.5 mg, 10/10/2 mg, 10/10/5 mg and 5/5/5 mg here) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
+  "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
+  "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
+  "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 1114607,
+  "sha256": "39566a9138f5a21b52c1c2c41fac00f173c4f92da26bd5a16fe941f20121765f",
+  "width": 1800,
+  "height": 2778
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/build-report.json",
+   "bytes": 152167,
+   "sha256": "65525d79ff9eeed5640e06a9cff4ed1b8a8844f3a4e098b9db8a16c09cecdc6c"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/build_c1.py",
+   "bytes": 23453,
+   "sha256": "51bbf4c5272cc982e252f67f4d27cb0b8c487bac4377f7a97986279a08e39390"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/c1_variants.py",
+   "bytes": 12150,
+   "sha256": "9acd9f01952f2c4e7438bcced07fe9dac7a4742ddcd4654adf2baba670fb6b9f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/kern-table.segoe-ui.json",
+   "bytes": 30972,
+   "sha256": "23aae997f977a4b63c31e958fce4df148f8e58437456e0c97270cf9cf0972e8f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/svg_label_render.py",
+   "bytes": 13893,
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/variants.json",
+   "bytes": 25895,
+   "sha256": "71c98c035857b9d6043fc409a424ae992f33d7b487d4f0b0138421dcd4b7afe4"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/verify_c1.py",
+   "bytes": 25942,
+   "sha256": "a9950fbfceb3e0bb930f3e38d7be18fd8e353a862f87d110fe08f74830752b35"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/wpf_kern.ps1",
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/write_manifest.py",
+   "bytes": 39687,
+   "sha256": "658d2b9de3e27c967c5347fa3e4ef7ceddc306e146d6ee7a33dcded3ce113b4a"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/tools/xr_compose.py",
+   "bytes": 14269,
+   "sha256": "fe41582b115d0135a9b39e18756527021d5f4851f1f9ee82b22604f8d6a4a84c"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_13c038b9250a2c8ac901",
+   "sourceVariantId": "mov_548802074a4f9ca45f5d",
+   "quickOrderSku": "GEN-GRP-0265",
+   "quickOrderProductId": "4925f52a-2da8-4940-bc90-f55c71500c2f",
+   "quickOrderVariantId": "245c11d1-76f9-41e5-8bbf-55b262c2e254",
+   "canonicalName": "BPC-157 + TB-500",
+   "catalogDisplayName": "BPC-157 + TB-500",
+   "canonicalVariant": "BPC-157 + TB-500 10/10 mg",
+   "catalogVariantLabel": "BPC-157 10 mg + TB-500 10 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "BPC-157",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "TB-500",
+     "amount": "10 mg",
+     "mg": 10
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0265-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "BPC-157 + TB-500",
+     "components": [
+      {
+       "name": "BPC-157",
+       "amount": "10 mg"
+      },
+      {
+       "name": "TB-500",
+       "amount": "10 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0265"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "BPC-157 + TB-500",
+    "amountOnRender": "10/10 mg",
+    "amountOnLabel": "10/10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0265"
+   },
+   "extraDoNotPrintTerms": [
+    "thymosin",
+    "Tβ4",
+    "beta-4",
+    "beta 4",
+    "fequesetide",
+    "goralatide",
+    "SDKP",
+    "healing",
+    "repair",
+    "recovery",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "BPC-157 +",
+      "fontSizePx": 63.2,
+      "baselineRow": 624,
+      "inkBox": [
+       458,
+       579,
+       744,
+       624
+      ]
+     },
+     {
+      "text": "TB-500",
+      "fontSizePx": 63.2,
+      "baselineRow": 687,
+      "inkBox": [
+       458,
+       642,
+       656,
+       687
+      ]
+     },
+     {
+      "text": "10/10 mg",
+      "fontSizePx": 43.61,
+      "baselineRow": 730,
+      "inkBox": [
+       460,
+       699,
+       644,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 42.59,
+    "stackScale": 0.69,
+    "blendCandidates": [
+     {
+      "lines": [
+       "BPC-157 + TB-500"
+      ],
+      "k": 0.465,
+      "nameSize": 42.59
+     },
+     {
+      "lines": [
+       "BPC-157 +",
+       "TB-500"
+      ],
+      "k": 0.69,
+      "nameSize": 63.2
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 160.0,
+     "letterSpacing": -5.45,
+     "baselines": [
+      464.4
+     ],
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "inkRightEstimate": 1448.2,
+     "oneLineFitPx": 160.0,
+     "candidates": [
+      {
+       "lines": [
+        "BPC-157 + TB-500"
+       ],
+       "fontSize": 160.0
+      },
+      {
+       "lines": [
+        "BPC-157 +",
+        "TB-500"
+       ],
+       "fontSize": 102.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 100.0,
+     "letterSpacing": -3.42,
+     "baselines": [
+      503.9
+     ],
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "inkRightEstimate": 955.9,
+     "oneLineFitPx": 100.0,
+     "candidates": [
+      {
+       "lines": [
+        "BPC-157 + TB-500"
+       ],
+       "fontSize": 100.0
+      },
+      {
+       "lines": [
+        "BPC-157 +",
+        "TB-500"
+       ],
+       "fontSize": 88.5
+      }
+     ],
+     "sideLines": [
+      "BPC-157 + TB-500"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios BPC-157 + TB-500 10/10 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-10-10mg-website-render-v1-1024.webp",
+     "sha256": "1ac368d5940584454d9b719f5ff0b95aa17d3a032a2a06d738ece2060345baa3"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios BPC-157 + TB-500 10/10 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-10-10mg-front-artwork-v1.webp",
+     "sha256": "cd7cd8de706e27dca13ba1df6a42baa2ed4d89706031560d3314d0213bf91dd3"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-10-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46470,
+     "sha256": "1ac368d5940584454d9b719f5ff0b95aa17d3a032a2a06d738ece2060345baa3",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-10-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986701,
+     "sha256": "5e36a2fb24bb4555ba9472818dd8647d208269fe7b66c4c7c338208223270db1",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/bpc-157-tb-500-10-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3043,
+     "sha256": "362c0745848c0cf190773b4bd265bcb4ff6ef0fb32a1435a5712c36370006767",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-10-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 124759,
+     "sha256": "70429dccb9d354bcc3b7fdfe6745a4518d6c5d731b3f33b3730cb71b4f6ec9f1",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-10-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 48112,
+     "sha256": "cd7cd8de706e27dca13ba1df6a42baa2ed4d89706031560d3314d0213bf91dd3",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/bpc-157-tb-500-10-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7032,
+     "sha256": "a1e21efb8fa7a6ee914496fdda9f2653eef6e96c7743df9e5082f9fae3af6f07",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-10-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 386802,
+     "sha256": "731dae82c91006a83edc8cfeb8f0eea7e1baad6edfd363b1088430bce871f7dc",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-10-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 163296,
+     "sha256": "729e1615cb9631bca3284b0c20cebecd99849bb490af9f9f7f5cccda07e7f833",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_53622a0c32300df8ec03",
+   "sourceVariantId": "mov_43ff04d9edfcdb5543a4",
+   "quickOrderSku": "GEN-GRP-0266",
+   "quickOrderProductId": "4925f52a-2da8-4940-bc90-f55c71500c2f",
+   "quickOrderVariantId": "cab69ca6-0fad-4610-ab5d-b7a23a112bc5",
+   "canonicalName": "BPC-157 + TB-500",
+   "catalogDisplayName": "BPC-157 + TB-500",
+   "canonicalVariant": "BPC-157 + TB-500 15/15 mg",
+   "catalogVariantLabel": "BPC-157 15 mg + TB-500 15 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "BPC-157",
+     "amount": "15 mg",
+     "mg": 15
+    },
+    {
+     "name": "TB-500",
+     "amount": "15 mg",
+     "mg": 15
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0266-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "BPC-157 + TB-500",
+     "components": [
+      {
+       "name": "BPC-157",
+       "amount": "15 mg"
+      },
+      {
+       "name": "TB-500",
+       "amount": "15 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0266"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "BPC-157 + TB-500",
+    "amountOnRender": "15/15 mg",
+    "amountOnLabel": "15/15 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0266"
+   },
+   "extraDoNotPrintTerms": [
+    "thymosin",
+    "Tβ4",
+    "beta-4",
+    "beta 4",
+    "fequesetide",
+    "goralatide",
+    "SDKP",
+    "healing",
+    "repair",
+    "recovery",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "BPC-157 +",
+      "fontSizePx": 63.2,
+      "baselineRow": 624,
+      "inkBox": [
+       458,
+       579,
+       744,
+       624
+      ]
+     },
+     {
+      "text": "TB-500",
+      "fontSizePx": 63.2,
+      "baselineRow": 687,
+      "inkBox": [
+       458,
+       642,
+       656,
+       687
+      ]
+     },
+     {
+      "text": "15/15 mg",
+      "fontSizePx": 43.61,
+      "baselineRow": 730,
+      "inkBox": [
+       460,
+       699,
+       644,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 42.59,
+    "stackScale": 0.69,
+    "blendCandidates": [
+     {
+      "lines": [
+       "BPC-157 + TB-500"
+      ],
+      "k": 0.465,
+      "nameSize": 42.59
+     },
+     {
+      "lines": [
+       "BPC-157 +",
+       "TB-500"
+      ],
+      "k": 0.69,
+      "nameSize": 63.2
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 160.0,
+     "letterSpacing": -5.45,
+     "baselines": [
+      464.4
+     ],
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "inkRightEstimate": 1448.2,
+     "oneLineFitPx": 160.0,
+     "candidates": [
+      {
+       "lines": [
+        "BPC-157 + TB-500"
+       ],
+       "fontSize": 160.0
+      },
+      {
+       "lines": [
+        "BPC-157 +",
+        "TB-500"
+       ],
+       "fontSize": 102.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 100.0,
+     "letterSpacing": -3.42,
+     "baselines": [
+      503.9
+     ],
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "inkRightEstimate": 955.9,
+     "oneLineFitPx": 100.0,
+     "candidates": [
+      {
+       "lines": [
+        "BPC-157 + TB-500"
+       ],
+       "fontSize": 100.0
+      },
+      {
+       "lines": [
+        "BPC-157 +",
+        "TB-500"
+       ],
+       "fontSize": 88.5
+      }
+     ],
+     "sideLines": [
+      "BPC-157 + TB-500"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios BPC-157 + TB-500 15/15 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-15-15mg-website-render-v1-1024.webp",
+     "sha256": "5ec8598d6d2d4527f44dd9a01bb4ab9703b0637fb0fef3b1a806b28f9803147d"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios BPC-157 + TB-500 15/15 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-15-15mg-front-artwork-v1.webp",
+     "sha256": "b9986da84d25394c1dc210aa7a87e6063a81878225c2b3c36c53f890892c29b2"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-15-15mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47668,
+     "sha256": "5ec8598d6d2d4527f44dd9a01bb4ab9703b0637fb0fef3b1a806b28f9803147d",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-15-15mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986516,
+     "sha256": "137def68f4576c1bb8b33ff11f8f12ce1af5a139e8ecb338031be1e47afd2109",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/bpc-157-tb-500-15-15mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3043,
+     "sha256": "5b92edaa081293966085f8e2af1cf5b8c2bbbc3fd68f9b5c5a5155aa36feedfa",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-15-15mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 123330,
+     "sha256": "6c591d668f579cdca6b95edbed9eb86e137474bc2d86b68f809f4ea31f5d7b47",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-15-15mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 47706,
+     "sha256": "b9986da84d25394c1dc210aa7a87e6063a81878225c2b3c36c53f890892c29b2",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/bpc-157-tb-500-15-15mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7032,
+     "sha256": "90151c240b8b564e1f32814b992a151f0787c33e61664eb82cf0de5e91726e0b",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-15-15mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 385178,
+     "sha256": "8ac0012f42ca7d96f40e6c4f33f47c1c7d39658118b960024e393045abaffe15",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-15-15mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 162830,
+     "sha256": "17294e8d10b1f7ab852802e3ee3814d319c5efc9bd766879a6bc4932945ed8c0",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_178c8a4230f88f157d5d",
+   "sourceVariantId": "mov_457168650622c3647dc9",
+   "quickOrderSku": "GEN-GRP-0267",
+   "quickOrderProductId": "4925f52a-2da8-4940-bc90-f55c71500c2f",
+   "quickOrderVariantId": "8c5a2f43-bff7-409d-876d-b104b544f8fa",
+   "canonicalName": "BPC-157 + TB-500",
+   "catalogDisplayName": "BPC-157 + TB-500",
+   "canonicalVariant": "BPC-157 + TB-500 5/5 mg",
+   "catalogVariantLabel": "BPC-157 5 mg + TB-500 5 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "BPC-157",
+     "amount": "5 mg",
+     "mg": 5
+    },
+    {
+     "name": "TB-500",
+     "amount": "5 mg",
+     "mg": 5
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0267-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "BPC-157 + TB-500",
+     "components": [
+      {
+       "name": "BPC-157",
+       "amount": "5 mg"
+      },
+      {
+       "name": "TB-500",
+       "amount": "5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0267"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "BPC-157 + TB-500",
+    "amountOnRender": "5/5 mg",
+    "amountOnLabel": "5/5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0267"
+   },
+   "extraDoNotPrintTerms": [
+    "thymosin",
+    "Tβ4",
+    "beta-4",
+    "beta 4",
+    "fequesetide",
+    "goralatide",
+    "SDKP",
+    "healing",
+    "repair",
+    "recovery",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "BPC-157 +",
+      "fontSizePx": 63.2,
+      "baselineRow": 624,
+      "inkBox": [
+       458,
+       579,
+       744,
+       624
+      ]
+     },
+     {
+      "text": "TB-500",
+      "fontSizePx": 63.2,
+      "baselineRow": 687,
+      "inkBox": [
+       458,
+       642,
+       656,
+       687
+      ]
+     },
+     {
+      "text": "5/5 mg",
+      "fontSizePx": 43.61,
+      "baselineRow": 730,
+      "inkBox": [
+       460,
+       699,
+       597,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 42.59,
+    "stackScale": 0.69,
+    "blendCandidates": [
+     {
+      "lines": [
+       "BPC-157 + TB-500"
+      ],
+      "k": 0.465,
+      "nameSize": 42.59
+     },
+     {
+      "lines": [
+       "BPC-157 +",
+       "TB-500"
+      ],
+      "k": 0.69,
+      "nameSize": 63.2
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 160.0,
+     "letterSpacing": -5.45,
+     "baselines": [
+      464.4
+     ],
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "inkRightEstimate": 1448.2,
+     "oneLineFitPx": 160.0,
+     "candidates": [
+      {
+       "lines": [
+        "BPC-157 + TB-500"
+       ],
+       "fontSize": 160.0
+      },
+      {
+       "lines": [
+        "BPC-157 +",
+        "TB-500"
+       ],
+       "fontSize": 102.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 100.0,
+     "letterSpacing": -3.42,
+     "baselines": [
+      503.9
+     ],
+     "lines": [
+      "BPC-157 + TB-500"
+     ],
+     "inkRightEstimate": 955.9,
+     "oneLineFitPx": 100.0,
+     "candidates": [
+      {
+       "lines": [
+        "BPC-157 + TB-500"
+       ],
+       "fontSize": 100.0
+      },
+      {
+       "lines": [
+        "BPC-157 +",
+        "TB-500"
+       ],
+       "fontSize": 88.5
+      }
+     ],
+     "sideLines": [
+      "BPC-157 + TB-500"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios BPC-157 + TB-500 5/5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-5-5mg-website-render-v1-1024.webp",
+     "sha256": "4bd8b9e0a36d018da0540cb9f6d43c564e13c523d07176c78b085b5d9ba77015"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios BPC-157 + TB-500 5/5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-5-5mg-front-artwork-v1.webp",
+     "sha256": "191ada412019dbf0aa5761f9aaf89b6e23586a0b5cd40f612764d210594754ce"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-5-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46036,
+     "sha256": "4bd8b9e0a36d018da0540cb9f6d43c564e13c523d07176c78b085b5d9ba77015",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-5-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986269,
+     "sha256": "03d592cf8c7e1ffb82e61f8f42e3e42ebc521305f7c11153d29a765ee3c84fc9",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/bpc-157-tb-500-5-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3035,
+     "sha256": "d47f9857f3109c6061c7bf26bb273cd6f843f797f25404947baf1e146db87377",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-5-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 122277,
+     "sha256": "8d20d25d9d3d9353116353b8f5c654d5375d406651414d4a429d05da89e48ce1",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-5-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 47064,
+     "sha256": "191ada412019dbf0aa5761f9aaf89b6e23586a0b5cd40f612764d210594754ce",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/bpc-157-tb-500-5-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7022,
+     "sha256": "9216e44981ae02c07782e05026107fb87b72cf30368008d7eb980da2bada1179",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-5-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 384787,
+     "sha256": "e0c76a41633c471fdd01472aeee8489ccc40ca13defbd794d0159a0440e1de7a",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/bpc-157-tb-500-5-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 161474,
+     "sha256": "d9580228e0fee18e3c5f6588374b40af51c3aef7c9290540238f3d5ee2c0a6d5",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_fbf99d262617562b9dbb",
+   "sourceVariantId": "mov_c7c5768303175886f6d1",
+   "quickOrderSku": "GEN-GRP-0276",
+   "quickOrderProductId": "56e4f05a-5a47-4db7-995f-afcb10a8b118",
+   "quickOrderVariantId": "bb8fb951-9f9f-43c9-8253-dc7b57923bae",
+   "canonicalName": "Cagrilintide + Semaglutide",
+   "catalogDisplayName": "Cagrilintide + Semaglutide",
+   "canonicalVariant": "Cagrilintide + Semaglutide 10/10 mg",
+   "catalogVariantLabel": "CAGRILINTIDE 10 mg + SEMAGLUTIDE 10 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "CAGRILINTIDE",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "SEMAGLUTIDE",
+     "amount": "10 mg",
+     "mg": 10
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0276-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Cagrilintide + Semaglutide",
+     "components": [
+      {
+       "name": "CAGRILINTIDE",
+       "amount": "10 mg"
+      },
+      {
+       "name": "SEMAGLUTIDE",
+       "amount": "10 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0276"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Cagrilintide + Semaglutide",
+    "amountOnRender": "10/10 mg",
+    "amountOnLabel": "10/10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0276"
+   },
+   "extraDoNotPrintTerms": [
+    "CagriSema",
+    "combination",
+    "Novo",
+    "weight",
+    "appetite",
+    "obesity",
+    "metabolic",
+    "trial",
+    "NN9535",
+    "Ozempic",
+    "Wegovy",
+    "Rybelsus",
+    "glycemic",
+    "diabetes",
+    "cardiovascular",
+    "liver",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "Cagrilintide +",
+      "fontSizePx": 56.79,
+      "baselineRow": 622,
+      "inkBox": [
+       458,
+       580,
+       790,
+       634
+      ]
+     },
+     {
+      "text": "Semaglutide",
+      "fontSizePx": 56.79,
+      "baselineRow": 682,
+      "inkBox": [
+       458,
+       640,
+       769,
+       694
+      ]
+     },
+     {
+      "text": "10/10 mg",
+      "fontSizePx": 39.18,
+      "baselineRow": 729,
+      "inkBox": [
+       460,
+       701,
+       626,
+       738
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 29.31,
+    "stackScale": 0.62,
+    "blendCandidates": [
+     {
+      "lines": [
+       "Cagrilintide + Semaglutide"
+      ],
+      "k": 0.32,
+      "nameSize": 29.31
+     },
+     {
+      "lines": [
+       "Cagrilintide +",
+       "Semaglutide"
+      ],
+      "k": 0.62,
+      "nameSize": 56.79
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 110.0,
+     "letterSpacing": -3.75,
+     "baselines": [
+      446.9
+     ],
+     "lines": [
+      "Cagrilintide + Semaglutide"
+     ],
+     "inkRightEstimate": 1444.9,
+     "oneLineFitPx": 110.0,
+     "candidates": [
+      {
+       "lines": [
+        "Cagrilintide + Semaglutide"
+       ],
+       "fontSize": 110.0
+      },
+      {
+       "lines": [
+        "Cagrilintide +",
+        "Semaglutide"
+       ],
+       "fontSize": 96.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 83.5,
+     "letterSpacing": -2.86,
+     "baselines": [
+      430.0,
+      520.0
+     ],
+     "lines": [
+      "Cagrilintide +",
+      "Semaglutide"
+     ],
+     "inkRightEstimate": 647.2,
+     "oneLineFitPx": 69.0,
+     "candidates": [
+      {
+       "lines": [
+        "Cagrilintide + Semaglutide"
+       ],
+       "fontSize": 69.0
+      },
+      {
+       "lines": [
+        "Cagrilintide +",
+        "Semaglutide"
+       ],
+       "fontSize": 83.5
+      }
+     ],
+     "sideLines": [
+      "Cagrilintide + Semaglutide"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Cagrilintide + Semaglutide 10/10 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-10-10mg-website-render-v1-1024.webp",
+     "sha256": "0b48a0d312c801675d26d73289d7407e22ab69112a89bee19b32d15325721e30"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios Cagrilintide + Semaglutide 10/10 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-10-10mg-front-artwork-v1.webp",
+     "sha256": "3cb02d3b13e5c9bea100e1ab4d9faa6fdb20ecd2da868114b1cc5b7861fbfdf4"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-10-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 49802,
+     "sha256": "0b48a0d312c801675d26d73289d7407e22ab69112a89bee19b32d15325721e30",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-10-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 990971,
+     "sha256": "3039bc395bda64d16ae5263528b6082119e81441a0a6999d597d099af9b6bf81",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/cagrilintide-semaglutide-10-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3073,
+     "sha256": "2266c6dbd0d711838544671b04ea77dc18755eff325aee56ea12c6bbede225df",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-10-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 130314,
+     "sha256": "f27b4798a08c32096a2643b72e0f8ced8c24407a5442d547a7554169316a2487",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-10-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 49210,
+     "sha256": "3cb02d3b13e5c9bea100e1ab4d9faa6fdb20ecd2da868114b1cc5b7861fbfdf4",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/cagrilintide-semaglutide-10-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7177,
+     "sha256": "ce602861e71c40c379a3af07d4a6df1f6f8265f845673cb4c7270977eed73a55",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-10-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 400155,
+     "sha256": "3c16ca28a070ba1aedfc7945bf8c00ee5f69d07ad30763447dccc566f0434d4a",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-10-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 167906,
+     "sha256": "aa77a3c35ae5a72acc4a3e11f6027aac892efb9af59486fcf6bf24d2100022ef",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_3b716f351a069264bd3d",
+   "sourceVariantId": "mov_30965a433abef7359a7b",
+   "quickOrderSku": "GEN-GRP-0277",
+   "quickOrderProductId": "56e4f05a-5a47-4db7-995f-afcb10a8b118",
+   "quickOrderVariantId": "dfaa62f5-147b-4889-b27b-e5e622244b78",
+   "canonicalName": "Cagrilintide + Semaglutide",
+   "catalogDisplayName": "Cagrilintide + Semaglutide",
+   "canonicalVariant": "Cagrilintide + Semaglutide 5/5 mg",
+   "catalogVariantLabel": "CAGRILINTIDE 5 mg + SEMAGLUTIDE 5 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "CAGRILINTIDE",
+     "amount": "5 mg",
+     "mg": 5
+    },
+    {
+     "name": "SEMAGLUTIDE",
+     "amount": "5 mg",
+     "mg": 5
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0277-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Cagrilintide + Semaglutide",
+     "components": [
+      {
+       "name": "CAGRILINTIDE",
+       "amount": "5 mg"
+      },
+      {
+       "name": "SEMAGLUTIDE",
+       "amount": "5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0277"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Cagrilintide + Semaglutide",
+    "amountOnRender": "5/5 mg",
+    "amountOnLabel": "5/5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0277"
+   },
+   "extraDoNotPrintTerms": [
+    "CagriSema",
+    "combination",
+    "Novo",
+    "weight",
+    "appetite",
+    "obesity",
+    "metabolic",
+    "trial",
+    "NN9535",
+    "Ozempic",
+    "Wegovy",
+    "Rybelsus",
+    "glycemic",
+    "diabetes",
+    "cardiovascular",
+    "liver",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "Cagrilintide +",
+      "fontSizePx": 56.79,
+      "baselineRow": 622,
+      "inkBox": [
+       458,
+       580,
+       790,
+       634
+      ]
+     },
+     {
+      "text": "Semaglutide",
+      "fontSizePx": 56.79,
+      "baselineRow": 682,
+      "inkBox": [
+       458,
+       640,
+       769,
+       694
+      ]
+     },
+     {
+      "text": "5/5 mg",
+      "fontSizePx": 39.18,
+      "baselineRow": 729,
+      "inkBox": [
+       460,
+       701,
+       583,
+       738
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 29.31,
+    "stackScale": 0.62,
+    "blendCandidates": [
+     {
+      "lines": [
+       "Cagrilintide + Semaglutide"
+      ],
+      "k": 0.32,
+      "nameSize": 29.31
+     },
+     {
+      "lines": [
+       "Cagrilintide +",
+       "Semaglutide"
+      ],
+      "k": 0.62,
+      "nameSize": 56.79
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 110.0,
+     "letterSpacing": -3.75,
+     "baselines": [
+      446.9
+     ],
+     "lines": [
+      "Cagrilintide + Semaglutide"
+     ],
+     "inkRightEstimate": 1444.9,
+     "oneLineFitPx": 110.0,
+     "candidates": [
+      {
+       "lines": [
+        "Cagrilintide + Semaglutide"
+       ],
+       "fontSize": 110.0
+      },
+      {
+       "lines": [
+        "Cagrilintide +",
+        "Semaglutide"
+       ],
+       "fontSize": 96.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 83.5,
+     "letterSpacing": -2.86,
+     "baselines": [
+      430.0,
+      520.0
+     ],
+     "lines": [
+      "Cagrilintide +",
+      "Semaglutide"
+     ],
+     "inkRightEstimate": 647.2,
+     "oneLineFitPx": 69.0,
+     "candidates": [
+      {
+       "lines": [
+        "Cagrilintide + Semaglutide"
+       ],
+       "fontSize": 69.0
+      },
+      {
+       "lines": [
+        "Cagrilintide +",
+        "Semaglutide"
+       ],
+       "fontSize": 83.5
+      }
+     ],
+     "sideLines": [
+      "Cagrilintide + Semaglutide"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Cagrilintide + Semaglutide 5/5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-5-5mg-website-render-v1-1024.webp",
+     "sha256": "048e8ab3896f5ff12c2774a1d60e9748bf88446a16b1ebf60081da8370a7960c"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios Cagrilintide + Semaglutide 5/5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-5-5mg-front-artwork-v1.webp",
+     "sha256": "a3d43d72f45ded17f22fee2dd4a1f7f234a550976388fde949a46e7f070b8968"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-5-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 49684,
+     "sha256": "048e8ab3896f5ff12c2774a1d60e9748bf88446a16b1ebf60081da8370a7960c",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-5-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 990534,
+     "sha256": "3e85f5dcaa94dddda5b013fc87174ae50871dc0ccc529da04a8e2cd879d773e7",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/cagrilintide-semaglutide-5-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3065,
+     "sha256": "f1bc4d4116ca1e6e08abc01916e885e7d0254e771590d6f7a30e6a944a09cf2f",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-5-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 127815,
+     "sha256": "c36ccb347e1cef4da3a0581f39243ba0b21cccd791eadaf45f111d150ceadc0e",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-5-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 49676,
+     "sha256": "a3d43d72f45ded17f22fee2dd4a1f7f234a550976388fde949a46e7f070b8968",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/cagrilintide-semaglutide-5-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7167,
+     "sha256": "b3500c58684eaa23125104f7161c23257da1d600503a50ac8215dfb59efaab23",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-5-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 397572,
+     "sha256": "68e8fb96d8eafae9972500237dc4887f73fdd93fb6d01372c8ee8614164f9895",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/cagrilintide-semaglutide-5-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 166158,
+     "sha256": "75db31394052d77bba53f0ae141cc963b857c5d793765d424be856de5893ad76",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_04d91e1cb01f09d3496e",
+   "sourceVariantId": "mov_7502e2415b8757cad0eb",
+   "quickOrderSku": "GEN-GRP-0279",
+   "quickOrderProductId": "c4c15df8-c50d-4349-953a-661c666cbe8b",
+   "quickOrderVariantId": "4cdc6089-6267-4e2e-8642-1728a9b327f0",
+   "canonicalName": "DSIP + Selank",
+   "catalogDisplayName": "DSIP + Selank",
+   "canonicalVariant": "DSIP + Selank 2/10 mg",
+   "catalogVariantLabel": "DSIP 2 mg + SELANK 10 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "DSIP",
+     "amount": "2 mg",
+     "mg": 2
+    },
+    {
+     "name": "SELANK",
+     "amount": "10 mg",
+     "mg": 10
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0279-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "DSIP + Selank",
+     "components": [
+      {
+       "name": "DSIP",
+       "amount": "2 mg"
+      },
+      {
+       "name": "SELANK",
+       "amount": "10 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0279"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "DSIP + Selank",
+    "amountOnRender": "2/10 mg",
+    "amountOnLabel": "2/10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0279"
+   },
+   "extraDoNotPrintTerms": [
+    "sleep",
+    "EEG",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "DSIP +",
+      "fontSizePx": 63.2,
+      "baselineRow": 624,
+      "inkBox": [
+       458,
+       579,
+       637,
+       624
+      ]
+     },
+     {
+      "text": "Selank",
+      "fontSizePx": 63.2,
+      "baselineRow": 687,
+      "inkBox": [
+       458,
+       640,
+       639,
+       687
+      ]
+     },
+     {
+      "text": "2/10 mg",
+      "fontSizePx": 43.61,
+      "baselineRow": 730,
+      "inkBox": [
+       460,
+       699,
+       622,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 56.33,
+    "stackScale": 0.69,
+    "blendCandidates": [
+     {
+      "lines": [
+       "DSIP + Selank"
+      ],
+      "k": 0.615,
+      "nameSize": 56.33
+     },
+     {
+      "lines": [
+       "DSIP +",
+       "Selank"
+      ],
+      "k": 0.69,
+      "nameSize": 63.2
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 176.0,
+     "letterSpacing": -6.0,
+     "baselines": [
+      470.0
+     ],
+     "lines": [
+      "DSIP + Selank"
+     ],
+     "inkRightEstimate": 1235.5,
+     "oneLineFitPx": 176.0,
+     "candidates": [
+      {
+       "lines": [
+        "DSIP + Selank"
+       ],
+       "fontSize": 176.0
+      },
+      {
+       "lines": [
+        "DSIP +",
+        "Selank"
+       ],
+       "fontSize": 102.5
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 132.0,
+     "letterSpacing": -4.52,
+     "baselines": [
+      515.1
+     ],
+     "lines": [
+      "DSIP + Selank"
+     ],
+     "inkRightEstimate": 958.5,
+     "oneLineFitPx": 132.0,
+     "candidates": [
+      {
+       "lines": [
+        "DSIP + Selank"
+       ],
+       "fontSize": 132.0
+      },
+      {
+       "lines": [
+        "DSIP +",
+        "Selank"
+       ],
+       "fontSize": 88.5
+      }
+     ],
+     "sideLines": [
+      "DSIP + Selank"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios DSIP + Selank 2/10 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/dsip-selank-2-10mg-website-render-v1-1024.webp",
+     "sha256": "b8acb8d3cf24511eef3f8859e9d6e3db90faaad033151ba80490aea3e313d8fc"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios DSIP + Selank 2/10 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/dsip-selank-2-10mg-front-artwork-v1.webp",
+     "sha256": "7f10e87186b3da649fb706b83a46191184238c69c4e2e5a7c4348e8a4889bc0d"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/dsip-selank-2-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 45604,
+     "sha256": "b8acb8d3cf24511eef3f8859e9d6e3db90faaad033151ba80490aea3e313d8fc",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/dsip-selank-2-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 985162,
+     "sha256": "2818d212f7e0bb83a6eeaa6b4c30bb74fe14b1c2590454c49771fc0af3470651",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/dsip-selank-2-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3025,
+     "sha256": "ca52e6964ddbfbb36aacc3d14decb3acf57da473f9edefb2d99762407d2ee480",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/dsip-selank-2-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 119670,
+     "sha256": "1e205bc9df79b35e879d3287687797bd8d761fa5e2cbe9135d54273612e25ca5",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/dsip-selank-2-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 46368,
+     "sha256": "7f10e87186b3da649fb706b83a46191184238c69c4e2e5a7c4348e8a4889bc0d",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/dsip-selank-2-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7015,
+     "sha256": "d01d5e4cda36c18df154528e9da9043c76c720bdb6530fa4f75a0cc2b9b92a91",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/dsip-selank-2-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 386990,
+     "sha256": "a3cea897ed1bb79e00c24c3690b6f0d53598479d1fed5ff5ff4e5b772e0300d8",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/dsip-selank-2-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 161890,
+     "sha256": "09a58c4c50efde4677766977412ab74d1563a4e6e6f60a6403d4ccccdf8c46aa",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_b75af573f3209d0710b1",
+   "sourceVariantId": "mov_8df703ff84f1bb8e1662",
+   "quickOrderSku": "GEN-GRP-0289",
+   "quickOrderProductId": "629443b1-6edf-49d2-89b8-b482abd2ac60",
+   "quickOrderVariantId": "bbb32eeb-c202-4962-b73d-a4487062d7a2",
+   "canonicalName": "GHK-Cu + Epithalon",
+   "catalogDisplayName": "GHK-Cu + Epithalon",
+   "canonicalVariant": "GHK-Cu + Epithalon 50/10 mg",
+   "catalogVariantLabel": "GHK-Cu 50 mg + EPITHALON 10 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "GHK-Cu",
+     "amount": "50 mg",
+     "mg": 50
+    },
+    {
+     "name": "EPITHALON",
+     "amount": "10 mg",
+     "mg": 10
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0289-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "GHK-Cu + Epithalon",
+     "components": [
+      {
+       "name": "GHK-Cu",
+       "amount": "50 mg"
+      },
+      {
+       "name": "EPITHALON",
+       "amount": "10 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0289"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "GHK-Cu + Epithalon",
+    "amountOnRender": "50/10 mg",
+    "amountOnLabel": "50/10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0289"
+   },
+   "extraDoNotPrintTerms": [
+    "Epithalamin",
+    "Epithalamine",
+    "Epitalamin",
+    "extract",
+    "pineal",
+    "longevity",
+    "anti-ageing",
+    "anti-aging",
+    "telomer",
+    "sleep",
+    "geroprotect",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "GHK-Cu +",
+      "fontSizePx": 59.54,
+      "baselineRow": 622,
+      "inkBox": [
+       458,
+       579,
+       716,
+       622
+      ]
+     },
+     {
+      "text": "Epithalon",
+      "fontSizePx": 59.54,
+      "baselineRow": 682,
+      "inkBox": [
+       458,
+       638,
+       699,
+       695
+      ]
+     },
+     {
+      "text": "50/10 mg",
+      "fontSizePx": 41.08,
+      "baselineRow": 731,
+      "inkBox": [
+       460,
+       702,
+       634,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 38.47,
+    "stackScale": 0.65,
+    "blendCandidates": [
+     {
+      "lines": [
+       "GHK-Cu + Epithalon"
+      ],
+      "k": 0.42,
+      "nameSize": 38.47
+     },
+     {
+      "lines": [
+       "GHK-Cu +",
+       "Epithalon"
+      ],
+      "k": 0.65,
+      "nameSize": 59.54
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 146.0,
+     "letterSpacing": -4.98,
+     "baselines": [
+      459.5
+     ],
+     "lines": [
+      "GHK-Cu + Epithalon"
+     ],
+     "inkRightEstimate": 1449.6,
+     "oneLineFitPx": 146.0,
+     "candidates": [
+      {
+       "lines": [
+        "GHK-Cu + Epithalon"
+       ],
+       "fontSize": 146.0
+      },
+      {
+       "lines": [
+        "GHK-Cu +",
+        "Epithalon"
+       ],
+       "fontSize": 102.5
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 91.5,
+     "letterSpacing": -3.13,
+     "baselines": [
+      500.9
+     ],
+     "lines": [
+      "GHK-Cu + Epithalon"
+     ],
+     "inkRightEstimate": 959.2,
+     "oneLineFitPx": 91.5,
+     "candidates": [
+      {
+       "lines": [
+        "GHK-Cu + Epithalon"
+       ],
+       "fontSize": 91.5
+      },
+      {
+       "lines": [
+        "GHK-Cu +",
+        "Epithalon"
+       ],
+       "fontSize": 88.5
+      }
+     ],
+     "sideLines": [
+      "GHK-Cu + Epithalon"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios GHK-Cu + Epithalon 50/10 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/ghk-cu-epithalon-50-10mg-website-render-v1-1024.webp",
+     "sha256": "d581ffdc5e0190ccae0f6e96628c3434624a394902fbb9fdffd02a0e88609b9f"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios GHK-Cu + Epithalon 50/10 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/ghk-cu-epithalon-50-10mg-front-artwork-v1.webp",
+     "sha256": "a86fd41c885a494855feda6684684cd106f6f7fa4b5eb5a452e9ab5016ee335a"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/ghk-cu-epithalon-50-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46816,
+     "sha256": "d581ffdc5e0190ccae0f6e96628c3434624a394902fbb9fdffd02a0e88609b9f",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/ghk-cu-epithalon-50-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986027,
+     "sha256": "f77b0670d70fc28cca151a212ba1728aea5967cba8fc15b871964d4fde77d799",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/ghk-cu-epithalon-50-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3049,
+     "sha256": "badba79bc26747dadc2bf15461e421164cb1b540e7f2b7a02e69998d2f7dd20b",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/ghk-cu-epithalon-50-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 123038,
+     "sha256": "1d657281c5d540f1c2c47909d5322c12018ee077ae9b9335d5c280e633860d4c",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/ghk-cu-epithalon-50-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 48864,
+     "sha256": "a86fd41c885a494855feda6684684cd106f6f7fa4b5eb5a452e9ab5016ee335a",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/ghk-cu-epithalon-50-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7041,
+     "sha256": "ebc47533dfc30b57e15622d9aaa8376b6a71a43f34bffc3b6841aca4cff5cc40",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/ghk-cu-epithalon-50-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 388585,
+     "sha256": "e6f7fb80826211386ca24ad08e0e53ed2e4c8b4a06e18176df65815dd706c50a",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/ghk-cu-epithalon-50-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 164004,
+     "sha256": "794f1848be6e155d1829b002daff0ead92a45c9563f2fce1d19146d74cc75335",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_a40fbe6a1890ff7176ed",
+   "sourceVariantId": "mov_4bcfb9614bef8b2c671e",
+   "quickOrderSku": "GEN-GRP-0294",
+   "quickOrderProductId": "f6f848f7-fc25-402f-bded-3cde23e71391",
+   "quickOrderVariantId": "b6052cdc-ab5c-46c2-b767-6e45c6526d3c",
+   "canonicalName": "GLOW (BPC-157 + TB-500 + GHK-Cu)",
+   "catalogDisplayName": "GLOW (BPC-157 + TB-500 + GHK-Cu)",
+   "canonicalVariant": "GLOW (BPC-157 + TB-500 + GHK-Cu) 10/10/50 mg",
+   "catalogVariantLabel": "BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "BPC-157",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "TB-500",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "GHK-Cu",
+     "amount": "50 mg",
+     "mg": 50
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0294-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "GLOW (BPC-157 + TB-500 + GHK-Cu)",
+     "components": [
+      {
+       "name": "BPC-157",
+       "amount": "10 mg"
+      },
+      {
+       "name": "TB-500",
+       "amount": "10 mg"
+      },
+      {
+       "name": "GHK-Cu",
+       "amount": "50 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0294"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "GLOW (BPC-157 + TB-500 + GHK-Cu)",
+    "amountOnRender": "10/10/50 mg",
+    "amountOnLabel": "10/10/50 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0294"
+   },
+   "extraDoNotPrintTerms": [
+    "thymosin",
+    "Tβ4",
+    "beta-4",
+    "beta 4",
+    "fequesetide",
+    "goralatide",
+    "SDKP",
+    "healing",
+    "repair",
+    "recovery",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-3",
+    "runs": [
+     {
+      "text": "GLOW (BPC-157 +",
+      "fontSizePx": 43.05,
+      "baselineRow": 613,
+      "inkBox": [
+       458,
+       582,
+       800,
+       619
+      ]
+     },
+     {
+      "text": "TB-500 +",
+      "fontSizePx": 43.05,
+      "baselineRow": 656,
+      "inkBox": [
+       458,
+       625,
+       628,
+       656
+      ]
+     },
+     {
+      "text": "GHK-Cu)",
+      "fontSizePx": 43.05,
+      "baselineRow": 699,
+      "inkBox": [
+       458,
+       668,
+       622,
+       705
+      ]
+     },
+     {
+      "text": "10/10/50 mg",
+      "fontSizePx": 29.7,
+      "baselineRow": 731,
+      "inkBox": [
+       460,
+       710,
+       631,
+       737
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": null,
+    "stackScale": 0.47,
+    "blendCandidates": [
+     {
+      "lines": [
+       "GLOW (BPC-157 +",
+       "TB-500 + GHK-Cu)"
+      ],
+      "k": 0.455,
+      "nameSize": 41.68
+     },
+     {
+      "lines": [
+       "GLOW (BPC-157 + TB-500 +",
+       "GHK-Cu)"
+      ],
+      "k": 0.3,
+      "nameSize": 27.48
+     },
+     {
+      "lines": [
+       "GLOW (BPC-157 +",
+       "TB-500 +",
+       "GHK-Cu)"
+      ],
+      "k": 0.47,
+      "nameSize": 43.05
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 102.0,
+     "letterSpacing": -3.48,
+     "baselines": [
+      368.0,
+      470.0
+     ],
+     "lines": [
+      "GLOW (BPC-157 +",
+      "TB-500 + GHK-Cu)"
+     ],
+     "inkRightEstimate": 990.6,
+     "oneLineFitPx": 78.0,
+     "candidates": [
+      {
+       "lines": [
+        "GLOW (BPC-157 + TB-500 + GHK-Cu)"
+       ],
+       "fontSize": 78.0
+      },
+      {
+       "lines": [
+        "GLOW (BPC-157 +",
+        "TB-500 + GHK-Cu)"
+       ],
+       "fontSize": 102.0
+      },
+      {
+       "lines": [
+        "GLOW (BPC-157 + TB-500 +",
+        "GHK-Cu)"
+       ],
+       "fontSize": 102.0
+      },
+      {
+       "lines": [
+        "GLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu)"
+       ],
+       "fontSize": 64.5
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 88.5,
+     "letterSpacing": -3.03,
+     "baselines": [
+      432.0,
+      520.0
+     ],
+     "lines": [
+      "GLOW (BPC-157 +",
+      "TB-500 + GHK-Cu)"
+     ],
+     "inkRightEstimate": 873.8,
+     "oneLineFitPx": 49.0,
+     "candidates": [
+      {
+       "lines": [
+        "GLOW (BPC-157 + TB-500 + GHK-Cu)"
+       ],
+       "fontSize": 49.0
+      },
+      {
+       "lines": [
+        "GLOW (BPC-157 +",
+        "TB-500 + GHK-Cu)"
+       ],
+       "fontSize": 88.5
+      },
+      {
+       "lines": [
+        "GLOW (BPC-157 + TB-500 +",
+        "GHK-Cu)"
+       ],
+       "fontSize": 65.5
+      },
+      {
+       "lines": [
+        "GLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu)"
+       ],
+       "fontSize": 56.0
+      }
+     ],
+     "sideLines": [
+      "GLOW (BPC-157 +",
+      "TB-500 + GHK-Cu)"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios GLOW (BPC-157 + TB-500 + GHK-Cu) 10/10/50 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-website-render-v1-1024.webp",
+     "sha256": "ebc8e36f2f86b6d17e710e486af240e8b853ad754a07519f6f5b8862be59027a"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios GLOW (BPC-157 + TB-500 + GHK-Cu) 10/10/50 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-front-artwork-v1.webp",
+     "sha256": "1f62c1f6abc0400bb91315716d4769752a2257c0246c9b01a1b43cb3f2c6f9ff"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 49748,
+     "sha256": "ebc8e36f2f86b6d17e710e486af240e8b853ad754a07519f6f5b8862be59027a",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 993729,
+     "sha256": "20a23c06b2e34c08df12906dd6da625eee71d47df15b7b67407361ad4432faee",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3206,
+     "sha256": "6cb1359bf5127f8e440ae27d4d81a6facb9953635a180a6d905becaca13d1406",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 144976,
+     "sha256": "c9bb2521692dbfc7acf8f458f030e13ff928cba5ffc37b0de7d73c0db1c2bed4",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 56510,
+     "sha256": "1f62c1f6abc0400bb91315716d4769752a2257c0246c9b01a1b43cb3f2c6f9ff",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7261,
+     "sha256": "1a98311d4673ab6bf7fe8ccdfd3a85ba9dec172e0d688112cea8b8085c9288d1",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 421048,
+     "sha256": "272b21fe2233f2c64537c42c244eb49e3301986cfdb36eca20d91b1b9a426318",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 175634,
+     "sha256": "4f5339cbea7ebfd1aa70f021aafda15abc74a486f74e63c26b287f30c16c6a40",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_a8ea579b9329428591bd",
+   "sourceVariantId": "mov_ecd380609ace639d27a6",
+   "quickOrderSku": "GEN-GRP-0304",
+   "quickOrderProductId": "706d9237-230a-4f49-b974-3edf15803b2e",
+   "quickOrderVariantId": "5c02c32d-17f6-4a57-91c7-b01dff2a89fb",
+   "canonicalName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+   "catalogDisplayName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+   "canonicalVariant": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 5/5/10/5 mg",
+   "catalogVariantLabel": "BPC-157 5 mg + TB-500 5 mg + GHK-Cu 10 mg + KPV 5 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "BPC-157",
+     "amount": "5 mg",
+     "mg": 5
+    },
+    {
+     "name": "TB-500",
+     "amount": "5 mg",
+     "mg": 5
+    },
+    {
+     "name": "GHK-Cu",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "KPV",
+     "amount": "5 mg",
+     "mg": 5
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0304-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+     "components": [
+      {
+       "name": "BPC-157",
+       "amount": "5 mg"
+      },
+      {
+       "name": "TB-500",
+       "amount": "5 mg"
+      },
+      {
+       "name": "GHK-Cu",
+       "amount": "10 mg"
+      },
+      {
+       "name": "KPV",
+       "amount": "5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0304"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+    "amountOnRender": "5/5/10/5 mg",
+    "amountOnLabel": "5/5/10/5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0304"
+   },
+   "extraDoNotPrintTerms": [
+    "thymosin",
+    "Tβ4",
+    "beta-4",
+    "beta 4",
+    "fequesetide",
+    "goralatide",
+    "SDKP",
+    "healing",
+    "repair",
+    "recovery",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-3",
+    "runs": [
+     {
+      "text": "KLOW (BPC-157 +",
+      "fontSizePx": 43.51,
+      "baselineRow": 612,
+      "inkBox": [
+       458,
+       581,
+       800,
+       618
+      ]
+     },
+     {
+      "text": "TB-500 +",
+      "fontSizePx": 43.51,
+      "baselineRow": 656,
+      "inkBox": [
+       458,
+       625,
+       629,
+       656
+      ]
+     },
+     {
+      "text": "GHK-Cu + KPV)",
+      "fontSizePx": 43.51,
+      "baselineRow": 700,
+      "inkBox": [
+       458,
+       669,
+       753,
+       706
+      ]
+     },
+     {
+      "text": "5/5/10/5 mg",
+      "fontSizePx": 30.02,
+      "baselineRow": 732,
+      "inkBox": [
+       460,
+       711,
+       629,
+       738
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": null,
+    "stackScale": 0.475,
+    "blendCandidates": [
+     {
+      "lines": [
+       "KLOW (BPC-157 +",
+       "TB-500 + GHK-Cu + KPV)"
+      ],
+      "k": 0.335,
+      "nameSize": 30.69
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 + TB-500 +",
+       "GHK-Cu + KPV)"
+      ],
+      "k": 0.305,
+      "nameSize": 27.94
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 +",
+       "TB-500 +",
+       "GHK-Cu + KPV)"
+      ],
+      "k": 0.475,
+      "nameSize": 43.51
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 +",
+       "TB-500 + GHK-Cu +",
+       "KPV)"
+      ],
+      "k": 0.425,
+      "nameSize": 38.93
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 + TB-500 +",
+       "GHK-Cu +",
+       "KPV)"
+      ],
+      "k": 0.305,
+      "nameSize": 27.94
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 +",
+       "TB-500 +",
+       "GHK-Cu +",
+       "KPV)"
+      ],
+      "k": 0.385,
+      "nameSize": 35.27
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 102.0,
+     "letterSpacing": -3.48,
+     "baselines": [
+      368.0,
+      470.0
+     ],
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "inkRightEstimate": 1295.2,
+     "oneLineFitPx": 66.5,
+     "candidates": [
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+       ],
+       "fontSize": 66.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 + GHK-Cu + KPV)"
+       ],
+       "fontSize": 102.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 +",
+        "GHK-Cu + KPV)"
+       ],
+       "fontSize": 102.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu + KPV)"
+       ],
+       "fontSize": 64.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 76.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 + GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 64.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 +",
+        "GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 64.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 47.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 72.5,
+     "letterSpacing": -2.48,
+     "baselines": [
+      448.0,
+      520.0
+     ],
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "inkRightEstimate": 957.6,
+     "oneLineFitPx": 41.5,
+     "candidates": [
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+       ],
+       "fontSize": 41.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 + GHK-Cu + KPV)"
+       ],
+       "fontSize": 72.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 +",
+        "GHK-Cu + KPV)"
+       ],
+       "fontSize": 65.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu + KPV)"
+       ],
+       "fontSize": 56.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 47.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 + GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 56.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 +",
+        "GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 56.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 40.5
+      }
+     ],
+     "sideLines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 5/5/10/5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-website-render-v1-1024.webp",
+     "sha256": "0d251ec7c07ea9b53548fc86d4a2fa226c5b6092500e3aced1455ebe32f6c39b"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 5/5/10/5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-front-artwork-v1.webp",
+     "sha256": "a37cf39c69507f8d807b3e596a6ca53f9c6852fe05258d143f6d8797b82d1f4f"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 50774,
+     "sha256": "0d251ec7c07ea9b53548fc86d4a2fa226c5b6092500e3aced1455ebe32f6c39b",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 996119,
+     "sha256": "a0dac92dcd591810b108b188774c8b7238a57d831620da4b17a7818f1beb1d2a",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3224,
+     "sha256": "7fdbc7d1c32fbdc7e88a50b8752c6ac0be1b839e1cf908b8e74108602628cc6e",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 153208,
+     "sha256": "9f0c169bab37e8435d50471aad842a4d1353711462ea1446dcaf82ee999725ef",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 59096,
+     "sha256": "a37cf39c69507f8d807b3e596a6ca53f9c6852fe05258d143f6d8797b82d1f4f",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7285,
+     "sha256": "f46b7ae47813ae8953ab186a9dc4c20d6a3890321a2197a3cab18ee499167f61",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 421163,
+     "sha256": "0bab4060b41c9cb51c559a2d6ad6cdb48d5896ae486f73d15f30c6481d044054",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 175618,
+     "sha256": "f8a6aaa3552d29d1a438e050a59bfdfb642cba108a85fac86d8f56e2c86d7fdb",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_d40ce6b09815282e14fa",
+   "sourceVariantId": "mov_644f912141d81a0199b0",
+   "quickOrderSku": "GEN-GRP-0305",
+   "quickOrderProductId": "706d9237-230a-4f49-b974-3edf15803b2e",
+   "quickOrderVariantId": "2fb3e008-d8e9-414a-a14d-6ee92ccc1ce2",
+   "canonicalName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+   "catalogDisplayName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+   "canonicalVariant": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 10/10/50/10 mg",
+   "catalogVariantLabel": "BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg + KPV 10 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "BPC-157",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "TB-500",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "GHK-Cu",
+     "amount": "50 mg",
+     "mg": 50
+    },
+    {
+     "name": "KPV",
+     "amount": "10 mg",
+     "mg": 10
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0305-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+     "components": [
+      {
+       "name": "BPC-157",
+       "amount": "10 mg"
+      },
+      {
+       "name": "TB-500",
+       "amount": "10 mg"
+      },
+      {
+       "name": "GHK-Cu",
+       "amount": "50 mg"
+      },
+      {
+       "name": "KPV",
+       "amount": "10 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0305"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+    "amountOnRender": "10/10/50/10 mg",
+    "amountOnLabel": "10/10/50/10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0305"
+   },
+   "extraDoNotPrintTerms": [
+    "thymosin",
+    "Tβ4",
+    "beta-4",
+    "beta 4",
+    "fequesetide",
+    "goralatide",
+    "SDKP",
+    "healing",
+    "repair",
+    "recovery",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-3",
+    "runs": [
+     {
+      "text": "KLOW (BPC-157 +",
+      "fontSizePx": 43.51,
+      "baselineRow": 612,
+      "inkBox": [
+       458,
+       581,
+       800,
+       618
+      ]
+     },
+     {
+      "text": "TB-500 +",
+      "fontSizePx": 43.51,
+      "baselineRow": 656,
+      "inkBox": [
+       458,
+       625,
+       629,
+       656
+      ]
+     },
+     {
+      "text": "GHK-Cu + KPV)",
+      "fontSizePx": 43.51,
+      "baselineRow": 700,
+      "inkBox": [
+       458,
+       669,
+       753,
+       706
+      ]
+     },
+     {
+      "text": "10/10/50/10 mg",
+      "fontSizePx": 30.02,
+      "baselineRow": 732,
+      "inkBox": [
+       460,
+       711,
+       678,
+       738
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": null,
+    "stackScale": 0.475,
+    "blendCandidates": [
+     {
+      "lines": [
+       "KLOW (BPC-157 +",
+       "TB-500 + GHK-Cu + KPV)"
+      ],
+      "k": 0.335,
+      "nameSize": 30.69
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 + TB-500 +",
+       "GHK-Cu + KPV)"
+      ],
+      "k": 0.305,
+      "nameSize": 27.94
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 +",
+       "TB-500 +",
+       "GHK-Cu + KPV)"
+      ],
+      "k": 0.475,
+      "nameSize": 43.51
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 +",
+       "TB-500 + GHK-Cu +",
+       "KPV)"
+      ],
+      "k": 0.425,
+      "nameSize": 38.93
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 + TB-500 +",
+       "GHK-Cu +",
+       "KPV)"
+      ],
+      "k": 0.305,
+      "nameSize": 27.94
+     },
+     {
+      "lines": [
+       "KLOW (BPC-157 +",
+       "TB-500 +",
+       "GHK-Cu +",
+       "KPV)"
+      ],
+      "k": 0.385,
+      "nameSize": 35.27
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 102.0,
+     "letterSpacing": -3.48,
+     "baselines": [
+      368.0,
+      470.0
+     ],
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "inkRightEstimate": 1295.2,
+     "oneLineFitPx": 66.5,
+     "candidates": [
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+       ],
+       "fontSize": 66.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 + GHK-Cu + KPV)"
+       ],
+       "fontSize": 102.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 +",
+        "GHK-Cu + KPV)"
+       ],
+       "fontSize": 102.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu + KPV)"
+       ],
+       "fontSize": 64.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 76.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 + GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 64.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 +",
+        "GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 64.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 47.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 72.5,
+     "letterSpacing": -2.48,
+     "baselines": [
+      448.0,
+      520.0
+     ],
+     "lines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ],
+     "inkRightEstimate": 957.6,
+     "oneLineFitPx": 41.5,
+     "candidates": [
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)"
+       ],
+       "fontSize": 41.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 + GHK-Cu + KPV)"
+       ],
+       "fontSize": 72.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 +",
+        "GHK-Cu + KPV)"
+       ],
+       "fontSize": 65.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu + KPV)"
+       ],
+       "fontSize": 56.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 + GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 47.5
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 + GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 56.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 + TB-500 +",
+        "GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 56.0
+      },
+      {
+       "lines": [
+        "KLOW (BPC-157 +",
+        "TB-500 +",
+        "GHK-Cu +",
+        "KPV)"
+       ],
+       "fontSize": 40.5
+      }
+     ],
+     "sideLines": [
+      "KLOW (BPC-157 +",
+      "TB-500 + GHK-Cu + KPV)"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 10/10/50/10 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-website-render-v1-1024.webp",
+     "sha256": "0da7f5544819ad8b91d24483830dc787a0ecde2710f175e4e463638a605a06c1"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 10/10/50/10 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-front-artwork-v1.webp",
+     "sha256": "8de51c81ea12647c25bab63a12745acbf79e68623f015ceecb720ffcae945e4a"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 50014,
+     "sha256": "0da7f5544819ad8b91d24483830dc787a0ecde2710f175e4e463638a605a06c1",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 996773,
+     "sha256": "5919f0398431492dcbe57766607c0c41c326fa3876131089baa6c241465f8a5a",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3236,
+     "sha256": "1ba0a27a0cef5da537bd2e9859a520d6afe853702c0fa784ecfc047dd70ecb82",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 152872,
+     "sha256": "51ce7f218cc74eca7b6915cf0085e2154406b9f76085cf0b3ff98fef46165a51",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 60926,
+     "sha256": "8de51c81ea12647c25bab63a12745acbf79e68623f015ceecb720ffcae945e4a",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7300,
+     "sha256": "ce5e00cb9aa755a86683e916c23d0c64041ae425966bb252c3f576a3991476e0",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 422032,
+     "sha256": "6836ea543907aa8c8f41cefb41ad49ed3fc09ccf15bbfa1b4ee59bddce313cfd",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 178708,
+     "sha256": "9d0e1d6b98dbd68f57794bca87b18e2885cdcb5838ccea6acc01317fcc336e0b",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_8cea67b7890cebf8eb52",
+   "sourceVariantId": "mov_d97f1f887a86b0c31947",
+   "quickOrderSku": "GEN-GRP-0330",
+   "quickOrderProductId": "1c3dc1f5-13fb-405a-8ce4-29af8931a1a0",
+   "quickOrderVariantId": "535eefa2-f09b-43a6-8a9c-2b6063539bc8",
+   "canonicalName": "Retatrutide + Cagrilintide",
+   "catalogDisplayName": "Retatrutide + Cagrilintide",
+   "canonicalVariant": "Retatrutide + Cagrilintide 10/2.5 mg",
+   "catalogVariantLabel": "RETATRUTIDE 10 mg + CAGRILINTIDE 2.5 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "RETATRUTIDE",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "CAGRILINTIDE",
+     "amount": "2.5 mg",
+     "mg": 2.5
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0330-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Retatrutide + Cagrilintide",
+     "components": [
+      {
+       "name": "RETATRUTIDE",
+       "amount": "10 mg"
+      },
+      {
+       "name": "CAGRILINTIDE",
+       "amount": "2.5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0330"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Retatrutide + Cagrilintide",
+    "amountOnRender": "10/2.5 mg",
+    "amountOnLabel": "10/2.5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0330"
+   },
+   "extraDoNotPrintTerms": [
+    "LY3437943",
+    "Lilly",
+    "weight",
+    "appetite",
+    "glycemic",
+    "metabolic",
+    "liver",
+    "trial",
+    "CagriSema",
+    "semaglutide",
+    "combination",
+    "Novo",
+    "obesity",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "Retatrutide +",
+      "fontSizePx": 59.08,
+      "baselineRow": 623,
+      "inkBox": [
+       458,
+       579,
+       794,
+       623
+      ]
+     },
+     {
+      "text": "Cagrilintide",
+      "fontSizePx": 59.08,
+      "baselineRow": 682,
+      "inkBox": [
+       458,
+       638,
+       754,
+       695
+      ]
+     },
+     {
+      "text": "10/2.5 mg",
+      "fontSizePx": 40.76,
+      "baselineRow": 731,
+      "inkBox": [
+       460,
+       702,
+       643,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 30.69,
+    "stackScale": 0.645,
+    "blendCandidates": [
+     {
+      "lines": [
+       "Retatrutide + Cagrilintide"
+      ],
+      "k": 0.335,
+      "nameSize": 30.69
+     },
+     {
+      "lines": [
+       "Retatrutide +",
+       "Cagrilintide"
+      ],
+      "k": 0.645,
+      "nameSize": 59.08
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 115.5,
+     "letterSpacing": -3.94,
+     "baselines": [
+      448.8
+     ],
+     "lines": [
+      "Retatrutide + Cagrilintide"
+     ],
+     "inkRightEstimate": 1444.5,
+     "oneLineFitPx": 115.5,
+     "candidates": [
+      {
+       "lines": [
+        "Retatrutide + Cagrilintide"
+       ],
+       "fontSize": 115.5
+      },
+      {
+       "lines": [
+        "Retatrutide +",
+        "Cagrilintide"
+       ],
+       "fontSize": 100.5
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 87.0,
+     "letterSpacing": -2.98,
+     "baselines": [
+      433.0,
+      520.0
+     ],
+     "lines": [
+      "Retatrutide +",
+      "Cagrilintide"
+     ],
+     "inkRightEstimate": 657.3,
+     "oneLineFitPx": 72.5,
+     "candidates": [
+      {
+       "lines": [
+        "Retatrutide + Cagrilintide"
+       ],
+       "fontSize": 72.5
+      },
+      {
+       "lines": [
+        "Retatrutide +",
+        "Cagrilintide"
+       ],
+       "fontSize": 87.0
+      }
+     ],
+     "sideLines": [
+      "Retatrutide + Cagrilintide"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Retatrutide + Cagrilintide 10/2.5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/retatrutide-cagrilintide-10-2p5mg-website-render-v1-1024.webp",
+     "sha256": "2227395ec99dea3a8447a99efa368dd8ecb2197fe26d0ea171080aa8178a08cb"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios Retatrutide + Cagrilintide 10/2.5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/retatrutide-cagrilintide-10-2p5mg-front-artwork-v1.webp",
+     "sha256": "67c407a504414f10ae5ce3cf1a5d1004300096a0b686ea8932b57c2f73f62c0b"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/retatrutide-cagrilintide-10-2p5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 48862,
+     "sha256": "2227395ec99dea3a8447a99efa368dd8ecb2197fe26d0ea171080aa8178a08cb",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/retatrutide-cagrilintide-10-2p5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 990572,
+     "sha256": "ae7f52e5006cce7f068a485f6b8bf54bc67f3b8435b8aaac57f1ff5132de50dc",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/retatrutide-cagrilintide-10-2p5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3079,
+     "sha256": "687fa8de4931a88a884941deb9b9fde2ce17ecf9838d88b03921231d1c578bbf",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/retatrutide-cagrilintide-10-2p5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 131898,
+     "sha256": "34c143b4724372c7677296e7be7ddf90c1828d5c7a2dc8f18e8a10c6fc3c35ca",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/retatrutide-cagrilintide-10-2p5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 52056,
+     "sha256": "67c407a504414f10ae5ce3cf1a5d1004300096a0b686ea8932b57c2f73f62c0b",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/retatrutide-cagrilintide-10-2p5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7178,
+     "sha256": "5db5b759ca8e8a4038b257154d6faeb3d5b513dbc26a4f9d1c5aa6758c245eb3",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/retatrutide-cagrilintide-10-2p5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 403053,
+     "sha256": "71c9b9fb63841726567e47102f92fd632863746ab91efdc7ee7a424f9f8c4a96",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/retatrutide-cagrilintide-10-2p5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 168520,
+     "sha256": "c3df21f5175a3b4098fa705e1c3e672eaecacd4ba71204ec7bd3cec52198a3d8",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_c87f1a7cdcd50253c3e8",
+   "sourceVariantId": "mov_3e4c0914851a77ba8763",
+   "quickOrderSku": "GEN-GRP-0339",
+   "quickOrderProductId": "d25aa6d2-0a5f-4907-b965-27929be28dd8",
+   "quickOrderVariantId": "41443a67-e1e0-4d10-b10f-0d66bd5073f8",
+   "canonicalName": "Semax + Selank + DSIP",
+   "catalogDisplayName": "Semax + Selank + DSIP",
+   "canonicalVariant": "Semax + Selank + DSIP 10/10/2 mg",
+   "catalogVariantLabel": "SEMAX 10 mg + SELANK 10 mg + DSIP 2 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "SEMAX",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "SELANK",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "DSIP",
+     "amount": "2 mg",
+     "mg": 2
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0339-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Semax + Selank + DSIP",
+     "components": [
+      {
+       "name": "SEMAX",
+       "amount": "10 mg"
+      },
+      {
+       "name": "SELANK",
+       "amount": "10 mg"
+      },
+      {
+       "name": "DSIP",
+       "amount": "2 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0339"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Semax + Selank + DSIP",
+    "amountOnRender": "10/10/2 mg",
+    "amountOnLabel": "10/10/2 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0339"
+   },
+   "extraDoNotPrintTerms": [
+    "nootropic",
+    "cognitive",
+    "neuroprotective",
+    "stroke",
+    "sleep",
+    "EEG",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "Semax +",
+      "fontSizePx": 55.88,
+      "baselineRow": 628,
+      "inkBox": [
+       458,
+       588,
+       667,
+       628
+      ]
+     },
+     {
+      "text": "Selank + DSIP",
+      "fontSizePx": 55.88,
+      "baselineRow": 684,
+      "inkBox": [
+       458,
+       642,
+       800,
+       684
+      ]
+     },
+     {
+      "text": "10/10/2 mg",
+      "fontSizePx": 38.55,
+      "baselineRow": 723,
+      "inkBox": [
+       460,
+       695,
+       661,
+       731
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 33.43,
+    "stackScale": 0.61,
+    "blendCandidates": [
+     {
+      "lines": [
+       "Semax + Selank + DSIP"
+      ],
+      "k": 0.365,
+      "nameSize": 33.43
+     },
+     {
+      "lines": [
+       "Semax +",
+       "Selank + DSIP"
+      ],
+      "k": 0.61,
+      "nameSize": 55.88
+     },
+     {
+      "lines": [
+       "Semax + Selank +",
+       "DSIP"
+      ],
+      "k": 0.48,
+      "nameSize": 43.97
+     },
+     {
+      "lines": [
+       "Semax +",
+       "Selank +",
+       "DSIP"
+      ],
+      "k": 0.495,
+      "nameSize": 45.34
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 126.5,
+     "letterSpacing": -4.31,
+     "baselines": [
+      452.6
+     ],
+     "lines": [
+      "Semax + Selank + DSIP"
+     ],
+     "inkRightEstimate": 1448.8,
+     "oneLineFitPx": 126.5,
+     "candidates": [
+      {
+       "lines": [
+        "Semax + Selank + DSIP"
+       ],
+       "fontSize": 126.5
+      },
+      {
+       "lines": [
+        "Semax +",
+        "Selank + DSIP"
+       ],
+       "fontSize": 102.5
+      },
+      {
+       "lines": [
+        "Semax + Selank +",
+        "DSIP"
+       ],
+       "fontSize": 100.5
+      },
+      {
+       "lines": [
+        "Semax +",
+        "Selank +",
+        "DSIP"
+       ],
+       "fontSize": 64.5
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 88.5,
+     "letterSpacing": -3.03,
+     "baselines": [
+      432.0,
+      520.0
+     ],
+     "lines": [
+      "Semax +",
+      "Selank + DSIP"
+     ],
+     "inkRightEstimate": 690.4,
+     "oneLineFitPx": 79.0,
+     "candidates": [
+      {
+       "lines": [
+        "Semax + Selank + DSIP"
+       ],
+       "fontSize": 79.0
+      },
+      {
+       "lines": [
+        "Semax +",
+        "Selank + DSIP"
+       ],
+       "fontSize": 88.5
+      },
+      {
+       "lines": [
+        "Semax + Selank +",
+        "DSIP"
+       ],
+       "fontSize": 87.0
+      },
+      {
+       "lines": [
+        "Semax +",
+        "Selank +",
+        "DSIP"
+       ],
+       "fontSize": 56.0
+      }
+     ],
+     "sideLines": [
+      "Semax + Selank + DSIP"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Semax + Selank + DSIP 10/10/2 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/semax-selank-dsip-10-10-2mg-website-render-v1-1024.webp",
+     "sha256": "f767eb7b81462caabdbf1cdb9dc113a14c26c446caea31a151c715f486d96b6b"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios Semax + Selank + DSIP 10/10/2 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/semax-selank-dsip-10-10-2mg-front-artwork-v1.webp",
+     "sha256": "4c7adc59072b4d14c95b9444510414e311a5be1cd42864ac20db267d466b8198"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/semax-selank-dsip-10-10-2mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47616,
+     "sha256": "f767eb7b81462caabdbf1cdb9dc113a14c26c446caea31a151c715f486d96b6b",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/semax-selank-dsip-10-10-2mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 988678,
+     "sha256": "5ea98d7a6583082a73a54ce8b03972d9bc5e88c38830930e7803b7cc9ce680ca",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/semax-selank-dsip-10-10-2mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3068,
+     "sha256": "f6f76d369634bd1275c7771738168121176c1766d49c7c1a03213af7adfddaf6",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/semax-selank-dsip-10-10-2mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 131258,
+     "sha256": "547e666bf844dd5be9b68919d78f1b1b51f9fa7f73188b35c3b423b5d3d9ed88",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/semax-selank-dsip-10-10-2mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 52068,
+     "sha256": "4c7adc59072b4d14c95b9444510414e311a5be1cd42864ac20db267d466b8198",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/semax-selank-dsip-10-10-2mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7167,
+     "sha256": "4b4a5bec40f5469421938a8f231f57104b434c78a63d080002b70f7496992d46",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/semax-selank-dsip-10-10-2mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 399667,
+     "sha256": "b25166ff3dd6639d22c30c3b7812916bdb43c81583dd80d54f7a1c7990591020",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/semax-selank-dsip-10-10-2mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 167568,
+     "sha256": "db2535b3d1acbd8fc0b24d7252ccb1d755c718666c5f4812fe04edbe20b20217",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_2e8194100fed7f7ca6ee",
+   "sourceVariantId": "mov_11b73649761a6d35f28c",
+   "quickOrderSku": "GEN-GRP-0352",
+   "quickOrderProductId": "09cb653e-a10c-4fc1-bed1-ce928b915163",
+   "quickOrderVariantId": "34f4e88e-e8c5-498c-9549-4223b5d685d5",
+   "canonicalName": "Thymosin Alpha-1 + KPV + LL-37",
+   "catalogDisplayName": "Thymosin Alpha-1 + KPV + LL-37",
+   "canonicalVariant": "Thymosin Alpha-1 + KPV + LL-37 10/10/5 mg",
+   "catalogVariantLabel": "Thymosin Alpha-1 10 mg + KPV 10 mg + LL-37 5 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "Thymosin Alpha-1",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "KPV",
+     "amount": "10 mg",
+     "mg": 10
+    },
+    {
+     "name": "LL-37",
+     "amount": "5 mg",
+     "mg": 5
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0352-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Thymosin Alpha-1 + KPV + LL-37",
+     "components": [
+      {
+       "name": "Thymosin Alpha-1",
+       "amount": "10 mg"
+      },
+      {
+       "name": "KPV",
+       "amount": "10 mg"
+      },
+      {
+       "name": "LL-37",
+       "amount": "5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0352"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Thymosin Alpha-1 + KPV + LL-37",
+    "amountOnRender": "10/10/5 mg",
+    "amountOnLabel": "10/10/5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0352"
+   },
+   "extraDoNotPrintTerms": [
+    "CAP-18",
+    "hCAP-18",
+    "hCAP18",
+    "CAP18",
+    "cathelicidin",
+    "precursor",
+    "antimicrobial",
+    "antibacterial",
+    "infection",
+    "wound",
+    "disease",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "Thymosin Alpha-1 +",
+      "fontSizePx": 38.47,
+      "baselineRow": 638,
+      "inkBox": [
+       458,
+       609,
+       799,
+       646
+      ]
+     },
+     {
+      "text": "KPV + LL-37",
+      "fontSizePx": 38.47,
+      "baselineRow": 678,
+      "inkBox": [
+       458,
+       650,
+       662,
+       678
+      ]
+     },
+     {
+      "text": "10/10/5 mg",
+      "fontSizePx": 26.54,
+      "baselineRow": 705,
+      "inkBox": [
+       460,
+       686,
+       597,
+       710
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": null,
+    "stackScale": 0.42,
+    "blendCandidates": [
+     {
+      "lines": [
+       "Thymosin Alpha-1 +",
+       "KPV + LL-37"
+      ],
+      "k": 0.42,
+      "nameSize": 38.47
+     },
+     {
+      "lines": [
+       "Thymosin Alpha-1 + KPV +",
+       "LL-37"
+      ],
+      "k": 0.315,
+      "nameSize": 28.85
+     },
+     {
+      "lines": [
+       "Thymosin Alpha-1 +",
+       "KPV +",
+       "LL-37"
+      ],
+      "k": 0.42,
+      "nameSize": 38.47
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 97.5,
+     "letterSpacing": -3.32,
+     "baselines": [
+      368.0,
+      470.0
+     ],
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "inkRightEstimate": 1027.0,
+     "oneLineFitPx": 88.5,
+     "candidates": [
+      {
+       "lines": [
+        "Thymosin Alpha-1 + KPV + LL-37"
+       ],
+       "fontSize": 88.5
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 +",
+        "KPV + LL-37"
+       ],
+       "fontSize": 97.5
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 + KPV +",
+        "LL-37"
+       ],
+       "fontSize": 97.5
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 +",
+        "KPV +",
+        "LL-37"
+       ],
+       "fontSize": 63.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 85.0,
+     "letterSpacing": -2.91,
+     "baselines": [
+      431.0,
+      520.0
+     ],
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "inkRightEstimate": 909.3,
+     "oneLineFitPx": 55.5,
+     "candidates": [
+      {
+       "lines": [
+        "Thymosin Alpha-1 + KPV + LL-37"
+       ],
+       "fontSize": 55.5
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 +",
+        "KPV + LL-37"
+       ],
+       "fontSize": 85.0
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 + KPV +",
+        "LL-37"
+       ],
+       "fontSize": 68.0
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 +",
+        "KPV +",
+        "LL-37"
+       ],
+       "fontSize": 54.5
+      }
+     ],
+     "sideLines": [
+      "Thymosin Alpha-1 + KPV + LL-37"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Thymosin Alpha-1 + KPV + LL-37 10/10/5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-10-10-5mg-website-render-v1-1024.webp",
+     "sha256": "28c62ea0e438efb31e4a04344103e8f0e468bc891e3e3b29113059bb8f47f57b"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios Thymosin Alpha-1 + KPV + LL-37 10/10/5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-10-10-5mg-front-artwork-v1.webp",
+     "sha256": "a4af3d0dd718d279377c85856587699436e317f022857d6cde7f8f675b483365"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-10-10-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47484,
+     "sha256": "28c62ea0e438efb31e4a04344103e8f0e468bc891e3e3b29113059bb8f47f57b",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-10-10-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 987296,
+     "sha256": "4480f96c304c63a7bd26e42042718f1d8835a12edeaa2bc505ac7927cb420528",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/thymosin-alpha-1-kpv-ll-37-10-10-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3198,
+     "sha256": "8a5ccb879139dcf90ecf06988ad176d362547bb222449af8e293699f675106a3",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-10-10-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 129400,
+     "sha256": "7f77e926e7987bea02ab0ee944af3cae724c71365e53541fb4a3d6e42cc628f3",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-10-10-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 51670,
+     "sha256": "a4af3d0dd718d279377c85856587699436e317f022857d6cde7f8f675b483365",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/thymosin-alpha-1-kpv-ll-37-10-10-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7199,
+     "sha256": "bfd0790fef9ea48310209c0ed75b155e3be82af468660f73e3e2db64749001d6",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-10-10-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 404831,
+     "sha256": "7bce33022e7eeb0cd6bfa16db25d509ecbcfe7c11143a86dce42b6a327b5d926",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-10-10-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 169756,
+     "sha256": "c5c0cb4d84e52a23ed7d4c39d1f31b613baff8d077136b44ae8048ab5fb31775",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_422f4a4ca7e34ce66416",
+   "sourceVariantId": "mov_971080f20e26e8775e2b",
+   "quickOrderSku": "GEN-GRP-0353",
+   "quickOrderProductId": "09cb653e-a10c-4fc1-bed1-ce928b915163",
+   "quickOrderVariantId": "d7cfeb41-bd3e-46bd-9e14-1a8b04a5e4e9",
+   "canonicalName": "Thymosin Alpha-1 + KPV + LL-37",
+   "catalogDisplayName": "Thymosin Alpha-1 + KPV + LL-37",
+   "canonicalVariant": "Thymosin Alpha-1 + KPV + LL-37 5/5/5 mg",
+   "catalogVariantLabel": "Thymosin Alpha-1 5 mg + KPV 5 mg + LL-37 5 mg",
+   "nominalAmountPerVialMg": null,
+   "componentAmountsPerVial": [
+    {
+     "name": "Thymosin Alpha-1",
+     "amount": "5 mg",
+     "mg": 5
+    },
+    {
+     "name": "KPV",
+     "amount": "5 mg",
+     "mg": 5
+    },
+    {
+     "name": "LL-37",
+     "amount": "5 mg",
+     "mg": 5
+    }
+   ],
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0353-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11584",
+    "file": "BLEND_LABEL_FACTS_2026-11-05.json",
+    "sha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Thymosin Alpha-1 + KPV + LL-37",
+     "components": [
+      {
+       "name": "Thymosin Alpha-1",
+       "amount": "5 mg"
+      },
+      {
+       "name": "KPV",
+       "amount": "5 mg"
+      },
+      {
+       "name": "LL-37",
+       "amount": "5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0353"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Thymosin Alpha-1 + KPV + LL-37",
+    "amountOnRender": "5/5/5 mg",
+    "amountOnLabel": "5/5/5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0353"
+   },
+   "extraDoNotPrintTerms": [
+    "CAP-18",
+    "hCAP-18",
+    "hCAP18",
+    "CAP18",
+    "cathelicidin",
+    "precursor",
+    "antimicrobial",
+    "antibacterial",
+    "infection",
+    "wound",
+    "disease",
+    "combination",
+    "combined",
+    "synergy",
+    "synergistic",
+    "synergism",
+    "ratio"
+   ],
+   "renderLayout": {
+    "mode": "blend-2",
+    "runs": [
+     {
+      "text": "Thymosin Alpha-1 +",
+      "fontSizePx": 38.47,
+      "baselineRow": 638,
+      "inkBox": [
+       458,
+       609,
+       799,
+       646
+      ]
+     },
+     {
+      "text": "KPV + LL-37",
+      "fontSizePx": 38.47,
+      "baselineRow": 678,
+      "inkBox": [
+       458,
+       650,
+       662,
+       678
+      ]
+     },
+     {
+      "text": "5/5/5 mg",
+      "fontSizePx": 26.54,
+      "baselineRow": 705,
+      "inkBox": [
+       460,
+       686,
+       569,
+       710
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": null,
+    "stackScale": 0.42,
+    "blendCandidates": [
+     {
+      "lines": [
+       "Thymosin Alpha-1 +",
+       "KPV + LL-37"
+      ],
+      "k": 0.42,
+      "nameSize": 38.47
+     },
+     {
+      "lines": [
+       "Thymosin Alpha-1 + KPV +",
+       "LL-37"
+      ],
+      "k": 0.315,
+      "nameSize": 28.85
+     },
+     {
+      "lines": [
+       "Thymosin Alpha-1 +",
+       "KPV +",
+       "LL-37"
+      ],
+      "k": 0.42,
+      "nameSize": 38.47
+     }
+    ]
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 97.5,
+     "letterSpacing": -3.32,
+     "baselines": [
+      368.0,
+      470.0
+     ],
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "inkRightEstimate": 1027.0,
+     "oneLineFitPx": 88.5,
+     "candidates": [
+      {
+       "lines": [
+        "Thymosin Alpha-1 + KPV + LL-37"
+       ],
+       "fontSize": 88.5
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 +",
+        "KPV + LL-37"
+       ],
+       "fontSize": 97.5
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 + KPV +",
+        "LL-37"
+       ],
+       "fontSize": 97.5
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 +",
+        "KPV +",
+        "LL-37"
+       ],
+       "fontSize": 63.0
+      }
+     ]
+    },
+    "wrapFrontPanel": {
+     "fontSize": 85.0,
+     "letterSpacing": -2.91,
+     "baselines": [
+      431.0,
+      520.0
+     ],
+     "lines": [
+      "Thymosin Alpha-1 +",
+      "KPV + LL-37"
+     ],
+     "inkRightEstimate": 909.3,
+     "oneLineFitPx": 55.5,
+     "candidates": [
+      {
+       "lines": [
+        "Thymosin Alpha-1 + KPV + LL-37"
+       ],
+       "fontSize": 55.5
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 +",
+        "KPV + LL-37"
+       ],
+       "fontSize": 85.0
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 + KPV +",
+        "LL-37"
+       ],
+       "fontSize": 68.0
+      },
+      {
+       "lines": [
+        "Thymosin Alpha-1 +",
+        "KPV +",
+        "LL-37"
+       ],
+       "fontSize": 54.5
+      }
+     ],
+     "sideLines": [
+      "Thymosin Alpha-1 + KPV + LL-37"
+     ]
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Thymosin Alpha-1 + KPV + LL-37 5/5/5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-5-5-5mg-website-render-v1-1024.webp",
+     "sha256": "2961f130c843f0fb5e9751ab90e246f893c5ebb0a9b0d1801d51bccbeacc5ea5"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios Thymosin Alpha-1 + KPV + LL-37 5/5/5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-5-5-5mg-front-artwork-v1.webp",
+     "sha256": "0c41282654cb0ccd1c2b663182e555fe5106970541e903371656fa531bdb87ce"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-5-5-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47340,
+     "sha256": "2961f130c843f0fb5e9751ab90e246f893c5ebb0a9b0d1801d51bccbeacc5ea5",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-5-5-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986922,
+     "sha256": "76728b2dd8d165c6fd35da54a74d0fa0ff02afc3846de431239d4e8a77ebaa40",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/thymosin-alpha-1-kpv-ll-37-5-5-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3190,
+     "sha256": "8b7f4f5e4efa2bcfa6f85ba171f69eb31a1b3223c6608826a46086a5394658e7",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-5-5-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 126079,
+     "sha256": "557ec4c5b7358f5679b5542e545ca2387ca0e24cd0aed0172dc5eb226e629517",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-5-5-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 50414,
+     "sha256": "0c41282654cb0ccd1c2b663182e555fe5106970541e903371656fa531bdb87ce",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/labels/thymosin-alpha-1-kpv-ll-37-5-5-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7189,
+     "sha256": "39cd37ccfdecee164cb3d49cad9584ee8e8d3ea7aa7e8640c8a9f32392b2e914",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-5-5-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 402209,
+     "sha256": "5773a7f0e406b0fbde8a89f8f6d29944f17ecc25cdfc7a910ba0a38830a17221",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-05-c1-batch-009/assets/thymosin-alpha-1-kpv-ll-37-5-5-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 168484,
+     "sha256": "acc684a7e0975237d9f057b5323ad77cd4d909cac8fc11086b9395755e7653ad",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  }
+ ],
+ "changesFromC1008": [
+  "The first batch of blends. Each is laid out under Root's Option B (KAN-59/11404), with the tools C1-008 already carried: build_c1.py, svg_label_render.py, wpf_kern.ps1 and verify_c1.py are byte-identical to C1-008's copies. xr_compose.py has two fixes to the blend layout, which no earlier batch uses. It stopped at the first line set that could not fit the name band (here the unbroken GLOW and KLOW names) instead of trying the others; it now skips such a set, records it as unfitLineSets, and fails only when no line set fits. And a stack must now keep every pixel it touches, faint anti-aliasing included, inside the erased rows, whose neighbours are the clean rows the erase interpolates from; the descenders of Cagrilintide + Semaglutide had reached one row past them. A blend prints its exact product name, broken only after \" + \", and its components' amounts in name order joined by \"/\" with their one unit; each component must sit in its own name segment, and the variant label must be exactly the components with their amounts.",
+  "c1_variants.py adds the reference of the per-blend label facts (KAN-59/11584), LL-37's per-compound do-not-print terms, and, on every blend, the facts' bar on combination, synergy and ratio wording as checked terms. write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch.",
+  "14 of 14 records have form-neutral label facts: they state the name, the components with their amounts, the product code and the classification, and no form. For those records the printed vial and the per-vial amount basis rest on the packaging declaration alone; labelFacts keeps the hold note and formBasis cites the declaration."
+ ],
+ "packagingDeclaration": {
+  "amountBasis": "per vial",
+  "form": "Lyophilized vial",
+  "kind": "xenios_packaging_declaration",
+  "reference": "KAN-225/11259",
+  "signedDate": "2026-11-05",
+  "signer": "Samuel Boadu, founder",
+  "status": "RECORDED"
+ }
+}

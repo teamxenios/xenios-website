@@ -1,0 +1,1027 @@
+[
+ {
+  "slug": "bpc-157-tb-500-10-10mg",
+  "name": "BPC-157 + TB-500",
+  "code": "BPC157TB500",
+  "mg": null,
+  "amount": "10/10 mg",
+  "sku": "GEN-GRP-0265",
+  "offeringId": "mo_13c038b9250a2c8ac901",
+  "sourceVariantId": "mov_548802074a4f9ca45f5d",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "BPC-157 + TB-500",
+   "components": [
+    {
+     "name": "BPC-157",
+     "amount": "10 mg"
+    },
+    {
+     "name": "TB-500",
+     "amount": "10 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0265"
+  },
+  "extraDoNotPrintTerms": [
+   "thymosin",
+   "Tβ4",
+   "beta-4",
+   "beta 4",
+   "fequesetide",
+   "goralatide",
+   "SDKP",
+   "healing",
+   "repair",
+   "recovery",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "BPC-157",
+    "amount": "10 mg"
+   },
+   {
+    "name": "TB-500",
+    "amount": "10 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "bpc-157-tb-500-15-15mg",
+  "name": "BPC-157 + TB-500",
+  "code": "BPC157TB500",
+  "mg": null,
+  "amount": "15/15 mg",
+  "sku": "GEN-GRP-0266",
+  "offeringId": "mo_53622a0c32300df8ec03",
+  "sourceVariantId": "mov_43ff04d9edfcdb5543a4",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "BPC-157 + TB-500",
+   "components": [
+    {
+     "name": "BPC-157",
+     "amount": "15 mg"
+    },
+    {
+     "name": "TB-500",
+     "amount": "15 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0266"
+  },
+  "extraDoNotPrintTerms": [
+   "thymosin",
+   "Tβ4",
+   "beta-4",
+   "beta 4",
+   "fequesetide",
+   "goralatide",
+   "SDKP",
+   "healing",
+   "repair",
+   "recovery",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "BPC-157",
+    "amount": "15 mg"
+   },
+   {
+    "name": "TB-500",
+    "amount": "15 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "bpc-157-tb-500-5-5mg",
+  "name": "BPC-157 + TB-500",
+  "code": "BPC157TB500",
+  "mg": null,
+  "amount": "5/5 mg",
+  "sku": "GEN-GRP-0267",
+  "offeringId": "mo_178c8a4230f88f157d5d",
+  "sourceVariantId": "mov_457168650622c3647dc9",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "BPC-157 + TB-500",
+   "components": [
+    {
+     "name": "BPC-157",
+     "amount": "5 mg"
+    },
+    {
+     "name": "TB-500",
+     "amount": "5 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0267"
+  },
+  "extraDoNotPrintTerms": [
+   "thymosin",
+   "Tβ4",
+   "beta-4",
+   "beta 4",
+   "fequesetide",
+   "goralatide",
+   "SDKP",
+   "healing",
+   "repair",
+   "recovery",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "BPC-157",
+    "amount": "5 mg"
+   },
+   {
+    "name": "TB-500",
+    "amount": "5 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "cagrilintide-semaglutide-10-10mg",
+  "name": "Cagrilintide + Semaglutide",
+  "code": "CAGRILINTIDESEMAGLUTIDE",
+  "mg": null,
+  "amount": "10/10 mg",
+  "sku": "GEN-GRP-0276",
+  "offeringId": "mo_fbf99d262617562b9dbb",
+  "sourceVariantId": "mov_c7c5768303175886f6d1",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Cagrilintide + Semaglutide",
+   "components": [
+    {
+     "name": "CAGRILINTIDE",
+     "amount": "10 mg"
+    },
+    {
+     "name": "SEMAGLUTIDE",
+     "amount": "10 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0276"
+  },
+  "extraDoNotPrintTerms": [
+   "CagriSema",
+   "combination",
+   "Novo",
+   "weight",
+   "appetite",
+   "obesity",
+   "metabolic",
+   "trial",
+   "NN9535",
+   "Ozempic",
+   "Wegovy",
+   "Rybelsus",
+   "glycemic",
+   "diabetes",
+   "cardiovascular",
+   "liver",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "CAGRILINTIDE",
+    "amount": "10 mg"
+   },
+   {
+    "name": "SEMAGLUTIDE",
+    "amount": "10 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "cagrilintide-semaglutide-5-5mg",
+  "name": "Cagrilintide + Semaglutide",
+  "code": "CAGRILINTIDESEMAGLUTIDE",
+  "mg": null,
+  "amount": "5/5 mg",
+  "sku": "GEN-GRP-0277",
+  "offeringId": "mo_3b716f351a069264bd3d",
+  "sourceVariantId": "mov_30965a433abef7359a7b",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Cagrilintide + Semaglutide",
+   "components": [
+    {
+     "name": "CAGRILINTIDE",
+     "amount": "5 mg"
+    },
+    {
+     "name": "SEMAGLUTIDE",
+     "amount": "5 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0277"
+  },
+  "extraDoNotPrintTerms": [
+   "CagriSema",
+   "combination",
+   "Novo",
+   "weight",
+   "appetite",
+   "obesity",
+   "metabolic",
+   "trial",
+   "NN9535",
+   "Ozempic",
+   "Wegovy",
+   "Rybelsus",
+   "glycemic",
+   "diabetes",
+   "cardiovascular",
+   "liver",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "CAGRILINTIDE",
+    "amount": "5 mg"
+   },
+   {
+    "name": "SEMAGLUTIDE",
+    "amount": "5 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "dsip-selank-2-10mg",
+  "name": "DSIP + Selank",
+  "code": "DSIPSELANK",
+  "mg": null,
+  "amount": "2/10 mg",
+  "sku": "GEN-GRP-0279",
+  "offeringId": "mo_04d91e1cb01f09d3496e",
+  "sourceVariantId": "mov_7502e2415b8757cad0eb",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "DSIP + Selank",
+   "components": [
+    {
+     "name": "DSIP",
+     "amount": "2 mg"
+    },
+    {
+     "name": "SELANK",
+     "amount": "10 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0279"
+  },
+  "extraDoNotPrintTerms": [
+   "sleep",
+   "EEG",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "DSIP",
+    "amount": "2 mg"
+   },
+   {
+    "name": "SELANK",
+    "amount": "10 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "ghk-cu-epithalon-50-10mg",
+  "name": "GHK-Cu + Epithalon",
+  "code": "GHKCUEPITHALON",
+  "mg": null,
+  "amount": "50/10 mg",
+  "sku": "GEN-GRP-0289",
+  "offeringId": "mo_b75af573f3209d0710b1",
+  "sourceVariantId": "mov_8df703ff84f1bb8e1662",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "GHK-Cu + Epithalon",
+   "components": [
+    {
+     "name": "GHK-Cu",
+     "amount": "50 mg"
+    },
+    {
+     "name": "EPITHALON",
+     "amount": "10 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0289"
+  },
+  "extraDoNotPrintTerms": [
+   "Epithalamin",
+   "Epithalamine",
+   "Epitalamin",
+   "extract",
+   "pineal",
+   "longevity",
+   "anti-ageing",
+   "anti-aging",
+   "telomer",
+   "sleep",
+   "geroprotect",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "GHK-Cu",
+    "amount": "50 mg"
+   },
+   {
+    "name": "EPITHALON",
+    "amount": "10 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "glow-bpc-157-tb-500-ghk-cu-10-10-50mg",
+  "name": "GLOW (BPC-157 + TB-500 + GHK-Cu)",
+  "code": "GLOWBPC157TB500GHKCU",
+  "mg": null,
+  "amount": "10/10/50 mg",
+  "sku": "GEN-GRP-0294",
+  "offeringId": "mo_a40fbe6a1890ff7176ed",
+  "sourceVariantId": "mov_4bcfb9614bef8b2c671e",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "GLOW (BPC-157 + TB-500 + GHK-Cu)",
+   "components": [
+    {
+     "name": "BPC-157",
+     "amount": "10 mg"
+    },
+    {
+     "name": "TB-500",
+     "amount": "10 mg"
+    },
+    {
+     "name": "GHK-Cu",
+     "amount": "50 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0294"
+  },
+  "extraDoNotPrintTerms": [
+   "thymosin",
+   "Tβ4",
+   "beta-4",
+   "beta 4",
+   "fequesetide",
+   "goralatide",
+   "SDKP",
+   "healing",
+   "repair",
+   "recovery",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "BPC-157",
+    "amount": "10 mg"
+   },
+   {
+    "name": "TB-500",
+    "amount": "10 mg"
+   },
+   {
+    "name": "GHK-Cu",
+    "amount": "50 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg",
+  "name": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+  "code": "KLOWBPC157TB500GHKCUKPV",
+  "mg": null,
+  "amount": "5/5/10/5 mg",
+  "sku": "GEN-GRP-0304",
+  "offeringId": "mo_a8ea579b9329428591bd",
+  "sourceVariantId": "mov_ecd380609ace639d27a6",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+   "components": [
+    {
+     "name": "BPC-157",
+     "amount": "5 mg"
+    },
+    {
+     "name": "TB-500",
+     "amount": "5 mg"
+    },
+    {
+     "name": "GHK-Cu",
+     "amount": "10 mg"
+    },
+    {
+     "name": "KPV",
+     "amount": "5 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0304"
+  },
+  "extraDoNotPrintTerms": [
+   "thymosin",
+   "Tβ4",
+   "beta-4",
+   "beta 4",
+   "fequesetide",
+   "goralatide",
+   "SDKP",
+   "healing",
+   "repair",
+   "recovery",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "BPC-157",
+    "amount": "5 mg"
+   },
+   {
+    "name": "TB-500",
+    "amount": "5 mg"
+   },
+   {
+    "name": "GHK-Cu",
+    "amount": "10 mg"
+   },
+   {
+    "name": "KPV",
+    "amount": "5 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg",
+  "name": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+  "code": "KLOWBPC157TB500GHKCUKPV",
+  "mg": null,
+  "amount": "10/10/50/10 mg",
+  "sku": "GEN-GRP-0305",
+  "offeringId": "mo_d40ce6b09815282e14fa",
+  "sourceVariantId": "mov_644f912141d81a0199b0",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)",
+   "components": [
+    {
+     "name": "BPC-157",
+     "amount": "10 mg"
+    },
+    {
+     "name": "TB-500",
+     "amount": "10 mg"
+    },
+    {
+     "name": "GHK-Cu",
+     "amount": "50 mg"
+    },
+    {
+     "name": "KPV",
+     "amount": "10 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0305"
+  },
+  "extraDoNotPrintTerms": [
+   "thymosin",
+   "Tβ4",
+   "beta-4",
+   "beta 4",
+   "fequesetide",
+   "goralatide",
+   "SDKP",
+   "healing",
+   "repair",
+   "recovery",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "BPC-157",
+    "amount": "10 mg"
+   },
+   {
+    "name": "TB-500",
+    "amount": "10 mg"
+   },
+   {
+    "name": "GHK-Cu",
+    "amount": "50 mg"
+   },
+   {
+    "name": "KPV",
+    "amount": "10 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "retatrutide-cagrilintide-10-2p5mg",
+  "name": "Retatrutide + Cagrilintide",
+  "code": "RETATRUTIDECAGRILINTIDE",
+  "mg": null,
+  "amount": "10/2.5 mg",
+  "sku": "GEN-GRP-0330",
+  "offeringId": "mo_8cea67b7890cebf8eb52",
+  "sourceVariantId": "mov_d97f1f887a86b0c31947",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Retatrutide + Cagrilintide",
+   "components": [
+    {
+     "name": "RETATRUTIDE",
+     "amount": "10 mg"
+    },
+    {
+     "name": "CAGRILINTIDE",
+     "amount": "2.5 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0330"
+  },
+  "extraDoNotPrintTerms": [
+   "LY3437943",
+   "Lilly",
+   "weight",
+   "appetite",
+   "glycemic",
+   "metabolic",
+   "liver",
+   "trial",
+   "CagriSema",
+   "semaglutide",
+   "combination",
+   "Novo",
+   "obesity",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "RETATRUTIDE",
+    "amount": "10 mg"
+   },
+   {
+    "name": "CAGRILINTIDE",
+    "amount": "2.5 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "semax-selank-dsip-10-10-2mg",
+  "name": "Semax + Selank + DSIP",
+  "code": "SEMAXSELANKDSIP",
+  "mg": null,
+  "amount": "10/10/2 mg",
+  "sku": "GEN-GRP-0339",
+  "offeringId": "mo_c87f1a7cdcd50253c3e8",
+  "sourceVariantId": "mov_3e4c0914851a77ba8763",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Semax + Selank + DSIP",
+   "components": [
+    {
+     "name": "SEMAX",
+     "amount": "10 mg"
+    },
+    {
+     "name": "SELANK",
+     "amount": "10 mg"
+    },
+    {
+     "name": "DSIP",
+     "amount": "2 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0339"
+  },
+  "extraDoNotPrintTerms": [
+   "nootropic",
+   "cognitive",
+   "neuroprotective",
+   "stroke",
+   "sleep",
+   "EEG",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "SEMAX",
+    "amount": "10 mg"
+   },
+   {
+    "name": "SELANK",
+    "amount": "10 mg"
+   },
+   {
+    "name": "DSIP",
+    "amount": "2 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "thymosin-alpha-1-kpv-ll-37-10-10-5mg",
+  "name": "Thymosin Alpha-1 + KPV + LL-37",
+  "code": "THYMOSINALPHA1KPVLL37",
+  "mg": null,
+  "amount": "10/10/5 mg",
+  "sku": "GEN-GRP-0352",
+  "offeringId": "mo_2e8194100fed7f7ca6ee",
+  "sourceVariantId": "mov_11b73649761a6d35f28c",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Thymosin Alpha-1 + KPV + LL-37",
+   "components": [
+    {
+     "name": "Thymosin Alpha-1",
+     "amount": "10 mg"
+    },
+    {
+     "name": "KPV",
+     "amount": "10 mg"
+    },
+    {
+     "name": "LL-37",
+     "amount": "5 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0352"
+  },
+  "extraDoNotPrintTerms": [
+   "CAP-18",
+   "hCAP-18",
+   "hCAP18",
+   "CAP18",
+   "cathelicidin",
+   "precursor",
+   "antimicrobial",
+   "antibacterial",
+   "infection",
+   "wound",
+   "disease",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "Thymosin Alpha-1",
+    "amount": "10 mg"
+   },
+   {
+    "name": "KPV",
+    "amount": "10 mg"
+   },
+   {
+    "name": "LL-37",
+    "amount": "5 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "thymosin-alpha-1-kpv-ll-37-5-5-5mg",
+  "name": "Thymosin Alpha-1 + KPV + LL-37",
+  "code": "THYMOSINALPHA1KPVLL37",
+  "mg": null,
+  "amount": "5/5/5 mg",
+  "sku": "GEN-GRP-0353",
+  "offeringId": "mo_422f4a4ca7e34ce66416",
+  "sourceVariantId": "mov_971080f20e26e8775e2b",
+  "labelFactsRef": "KAN-59/11584",
+  "labelFactsFile": "BLEND_LABEL_FACTS_2026-11-05.json",
+  "labelFactsSha256": "943cfe544e35cb186bc80a88d126ed99a5805597209c4429f47d01e67cb1cb1c",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Thymosin Alpha-1 + KPV + LL-37",
+   "components": [
+    {
+     "name": "Thymosin Alpha-1",
+     "amount": "5 mg"
+    },
+    {
+     "name": "KPV",
+     "amount": "5 mg"
+    },
+    {
+     "name": "LL-37",
+     "amount": "5 mg"
+    }
+   ],
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0353"
+  },
+  "extraDoNotPrintTerms": [
+   "CAP-18",
+   "hCAP-18",
+   "hCAP18",
+   "CAP18",
+   "cathelicidin",
+   "precursor",
+   "antimicrobial",
+   "antibacterial",
+   "infection",
+   "wound",
+   "disease",
+   "combination",
+   "combined",
+   "synergy",
+   "synergistic",
+   "synergism",
+   "ratio"
+  ],
+  "nameVariance": null,
+  "components": [
+   {
+    "name": "Thymosin Alpha-1",
+    "amount": "5 mg"
+   },
+   {
+    "name": "KPV",
+    "amount": "5 mg"
+   },
+   {
+    "name": "LL-37",
+    "amount": "5 mg"
+   }
+  ],
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only."
+ }
+]
