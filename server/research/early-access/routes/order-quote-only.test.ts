@@ -174,6 +174,20 @@ describe("an order placed before the quote-only cutover", () => {
     expect(invoice.body.invoice.payableTotalCents).toBe(47_760);
   });
 
+  it("still takes its payment proof, and the proof is still not a payment", async () => {
+    const { quoteOnly, cookie, orderNumber, store } = await placedBefore();
+
+    const submitted = await request(quoteOnly)
+      .post(`${ORDERS}/${orderNumber}/payment-proof`)
+      .set("Cookie", cookie)
+      .send({ filename: "transfer.png", contentType: "image/png", byteSize: 240_000, sha256: "a".repeat(64), method: "zelle" });
+
+    expect(submitted.status).toBe(202);
+    expect(submitted.body.payment).toEqual({ state: "under_review", paid: false, verified: false });
+    expect(submitted.body.receipt).toBeNull();
+    expect((await store.placementByOrderNumber(orderNumber))?.paymentState).toBe("under_review");
+  });
+
   it("does not let a second, new order through beside it", async () => {
     const { quoteOnly, cookie, store } = await placedBefore();
 
