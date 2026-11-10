@@ -677,15 +677,29 @@ export class AssistedOrderService {
           recipientAddress: input.contact.email,
           templateKey: "research.assisted_order.submitted.customer",
           templateVersion: "v2",
-          payload: Object.freeze({
-            publicReference: receipt.publicReference,
-            lineCount: resolvedLines.length,
-            totalQuantity,
-            estimatedTotalCents,
-            lines: notificationLines,
-            paymentState,
-            nextSteps: receipt.nextSteps,
-          }),
+          payload: this.deps.quoteOnly === true
+            ? Object.freeze({
+              publicReference: receipt.publicReference,
+              lineCount: resolvedLines.length,
+              totalQuantity,
+              pricing: "quote",
+              lines: Object.freeze(notificationLines.map((line) => Object.freeze({
+                ...line,
+                unitPriceCents: null,
+                lineEstimateCents: null,
+              }))),
+              paymentState,
+              nextSteps: receipt.nextSteps,
+            })
+            : Object.freeze({
+              publicReference: receipt.publicReference,
+              lineCount: resolvedLines.length,
+              totalQuantity,
+              estimatedTotalCents,
+              lines: notificationLines,
+              paymentState,
+              nextSteps: receipt.nextSteps,
+            }),
           dedupeKey: `assisted-order:${storedRequestId}:submitted:customer`,
           createdAt: nowIso,
         }),
