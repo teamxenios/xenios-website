@@ -37,6 +37,11 @@ export type EarlyAccessCartQuoteDeps = Readonly<{
   now: () => number;
   quoteId?: () => string;
   quoteTtlMs?: number;
+  /**
+   * Quote-only Early Access. When true, no cart is priced: the customer catalog
+   * carries no price to quote at. Absent or false keeps the priced behaviour.
+   */
+  quoteOnly?: boolean;
 }>;
 
 function exactMoney(value: unknown): value is number {
@@ -82,6 +87,19 @@ export async function quoteEarlyAccessCart(
   }
   if (!(await deps.agreements.accepted(customer.customerRef))) {
     return Object.freeze({ ok: false as const, code: "AGREEMENT_REQUIRED" as const });
+  }
+
+  // QUOTE-ONLY. After the caller and agreement checks, so it tells an unknown
+  // caller nothing; before the catalog and the ledger, so nothing is read,
+  // priced or stored. Each requested line is refused with the code the cart
+  // client already shows as "not released for ordering".
+  if (deps.quoteOnly === true) {
+    return Object.freeze({
+      ok: false as const,
+      code: "LINE_REFUSED" as const,
+      quoteOnly: true as const,
+      lines: Object.freeze(items.map((item) => lineRefusal(item, "RELEASE_REQUIRED"))),
+    });
   }
 
   const nowMs = deps.now();

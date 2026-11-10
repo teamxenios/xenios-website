@@ -50,6 +50,12 @@ export type EarlyAccessCartCheckoutDeps = Readonly<{
    * no mail, which is the default and is why every existing test is unchanged.
    */
   notify?: EarlyAccessCartNotifier;
+  /**
+   * Quote-only Early Access. When true, no NEW cart checkout is created. A
+   * checkout that already exists still replays under its own key. Absent or
+   * false keeps the priced behaviour.
+   */
+  quoteOnly?: boolean;
 }>;
 
 function ownsRef(customer: CartCustomer, ref: string): boolean {
@@ -87,6 +93,14 @@ export async function checkoutEarlyAccessCart(
       return Object.freeze({ ok: false as const, code: "IDEMPOTENCY_CONFLICT" as const });
     }
     return Object.freeze({ ok: true as const, replayed: true, checkout: checkoutView(prior) });
+  }
+
+  // QUOTE-ONLY. After the replay, so what was sold stays sold; before the
+  // stored quote is read, so a quote taken before the cutover cannot become an
+  // order after it. QUOTE_CHANGED is the code the cart client already answers
+  // by quoting again, where each line then reads "not released for ordering".
+  if (deps.quoteOnly === true) {
+    return Object.freeze({ ok: false as const, code: "QUOTE_CHANGED" as const, quoteOnly: true as const });
   }
 
   const quoteRecord = await deps.quotes.get(request.quoteId);

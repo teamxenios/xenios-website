@@ -1079,7 +1079,11 @@ export function registerPrivateEarlyAccessApi(
   // "capability" is a literal segment and the parameter route would swallow it.
   const cartCapability = createEarlyAccessCartCapabilityRoute(cartIdentity);
   app.get(EARLY_ACCESS_CART_CAPABILITY_PATH, (req: Request, res: Response) => {
-    if (!cartEnabled) {
+    // Quote-only answers exactly as a cart that is off, so every client falls
+    // back from the cart to the single-product journey, whose own door is
+    // closed too. The cart flag has been on in production before, so the
+    // refusal does not depend on it staying off.
+    if (!cartEnabled || commerce.quoteOnly === true) {
       res.setHeader("Cache-Control", "no-store, private, max-age=0");
       res.status(404).json({ ok: false, code: "CART_DISABLED" });
       return;
@@ -1168,6 +1172,9 @@ export function registerPrivateEarlyAccessApi(
       agreements: new GateCartAgreements(commerce.agreements),
       quotes: cartStore,
       now,
+      // The same value the single-product door reads, so no cart is priced
+      // while the catalog carries no price.
+      quoteOnly: commerce.quoteOnly === true,
     });
     // ONE notifier for both customer moments, built from the SAME protected
     // configuration and registry the payment route reads, so the amount in the
@@ -1196,6 +1203,8 @@ export function registerPrivateEarlyAccessApi(
       attribution: new ReferralGrantCartAttribution({ referrals: commerce.referrals }),
       now,
       notify: cartNotifier,
+      // No new cart checkout under quote-only; an existing one still replays.
+      quoteOnly: commerce.quoteOnly === true,
     });
     const readCart = createEarlyAccessCartReadRoute({
       identity: cartIdentity,
