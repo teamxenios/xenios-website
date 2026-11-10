@@ -1,0 +1,190 @@
+[
+ {
+  "slug": "epithalon-10mg",
+  "name": "Epithalon",
+  "code": "EPITHALON",
+  "mg": 10,
+  "amount": "10 mg",
+  "sku": "GEN-GRP-0282",
+  "offeringId": "mo_9c3a4dd1b38f6b9ebc54",
+  "sourceVariantId": "mov_9421188f57af62413a4c",
+  "labelFactsRef": "KAN-59/12084",
+  "labelFactsFile": "LABEL_FACTS_ADOPTED_C1012_2026-11-10.json",
+  "labelFactsSha256": "fdaec2a4c584880e7e7b3179c6aeec0ee05fd2b74c1f163e3c4c95d6893669d8",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Epithalon",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0282"
+  },
+  "extraDoNotPrintTerms": [
+   "Epithalamin",
+   "Epithalamine",
+   "Epitalamin",
+   "extract",
+   "pineal",
+   "longevity",
+   "anti-ageing",
+   "anti-aging",
+   "telomer",
+   "sleep",
+   "geroprotect",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "epithalon-50mg",
+  "name": "Epithalon",
+  "code": "EPITHALON",
+  "mg": 50,
+  "amount": "50 mg",
+  "sku": "GEN-GRP-0286",
+  "offeringId": "mo_c0b32b7549d7539af51e",
+  "sourceVariantId": "mov_c4e5006693c890563310",
+  "labelFactsRef": "KAN-59/12084",
+  "labelFactsFile": "LABEL_FACTS_ADOPTED_C1012_2026-11-10.json",
+  "labelFactsSha256": "fdaec2a4c584880e7e7b3179c6aeec0ee05fd2b74c1f163e3c4c95d6893669d8",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "Epithalon",
+   "amount": "50 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0286"
+  },
+  "extraDoNotPrintTerms": [
+   "Epithalamin",
+   "Epithalamine",
+   "Epitalamin",
+   "extract",
+   "pineal",
+   "longevity",
+   "anti-ageing",
+   "anti-aging",
+   "telomer",
+   "sleep",
+   "geroprotect",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "ghrp-6-5mg",
+  "name": "GHRP-6",
+  "code": "GHRP6",
+  "mg": 5,
+  "amount": "5 mg",
+  "sku": "GEN-GRP-0293",
+  "offeringId": "mo_f8e8d69d2068c9bb2de1",
+  "sourceVariantId": "mov_556cf3eb15555573aa54",
+  "labelFactsRef": "KAN-59/12084",
+  "labelFactsFile": "LABEL_FACTS_ADOPTED_C1012_2026-11-10.json",
+  "labelFactsSha256": "fdaec2a4c584880e7e7b3179c6aeec0ee05fd2b74c1f163e3c4c95d6893669d8",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "GHRP-6",
+   "amount": "5 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0293"
+  },
+  "extraDoNotPrintTerms": [
+   "GHRP-2",
+   "pralmorelin",
+   "growth",
+   "appetite",
+   "body composition",
+   "body-composition",
+   "hormone release",
+   "hormone-release"
+  ],
+  "nameVariance": null,
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ },
+ {
+  "slug": "ss-31-10mg",
+  "name": "SS-31",
+  "code": "SS31",
+  "mg": 10,
+  "amount": "10 mg",
+  "sku": "GEN-GRP-0343",
+  "offeringId": "mo_e7bb199ac249b82eb17b",
+  "sourceVariantId": "mov_dd89c37657eb69bce04f",
+  "labelFactsRef": "KAN-59/12084",
+  "labelFactsFile": "LABEL_FACTS_ADOPTED_C1012_2026-11-10.json",
+  "labelFactsSha256": "fdaec2a4c584880e7e7b3179c6aeec0ee05fd2b74c1f163e3c4c95d6893669d8",
+  "verifiedStaticText": {
+   "brand": "Xenios",
+   "productName": "SS-31",
+   "amount": "10 mg",
+   "classification": "For laboratory research use only.",
+   "productCode": "Product code GEN-GRP-0343"
+  },
+  "extraDoNotPrintTerms": [
+   "elamipretide",
+   "Forzinity",
+   "Barth",
+   "syndrome",
+   "FDA",
+   "approved medicine",
+   "muscle",
+   "mitochondrial",
+   "energy",
+   "anti-aging"
+  ],
+  "nameVariance": {
+   "catalogDisplayName": "Ss-31",
+   "printedName": "SS-31",
+   "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+  },
+  "packagingDeclaration": {
+   "kind": "xenios_packaging_declaration",
+   "reference": "KAN-225/11259",
+   "signer": "Samuel Boadu, founder",
+   "signedDate": "2026-11-05",
+   "form": "Lyophilized vial",
+   "amountBasis": "per vial",
+   "status": "RECORDED"
+  },
+  "labelFactsHold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+ }
+]
