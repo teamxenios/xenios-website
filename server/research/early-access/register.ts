@@ -935,6 +935,10 @@ export function registerPrivateEarlyAccessApi(
     // and nothing older. Absent, such a session reads nothing (fails closed).
     readSessionId,
     sessionOrders,
+    // Quote-only first release: the direct-order door creates no new order.
+    // The same constant as the catalog above, so the shelf and the door cannot
+    // disagree, and one rollback turns both back.
+    quoteOnly: options.quoteOnly ?? EARLY_ACCESS_QUOTE_ONLY_RELEASE,
     agreements: options.agreements ?? new NoEarlyAccessAgreements(),
     // The same instance the catalogue was decided against, so the shelf and
     // the order door cannot answer the supplier question differently.
