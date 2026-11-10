@@ -6,7 +6,7 @@ import {
   type RequestIntentCatalogItem, type RequestIntentCatalogPage, type RequestIntentInput, type RequestIntentReceipt,
 } from "../../../../shared/research/assisted-order/request-intent";
 import type { DirectPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
-import { catalogItemKey, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, money, type AssistedOrderWizardConfig } from "./wizard-state";
+import { catalogItemKey, catalogPriceLabel, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, money, type AssistedOrderWizardConfig } from "./wizard-state";
 import { createRequestIntentApi, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
 import { forgetConfirmedReceipt, readConfirmedReceiptRecord, rememberConfirmedReceipt } from "./request-intent-continuation";
@@ -77,6 +77,14 @@ function CatalogDetails({ item, variantIds, showMedia }: {
       </dl>}
     </DialogContent>
   </Dialog>;
+}
+
+/** The price line on a request-intent card. Quote-only items read "Request a quote". */
+export function requestIntentPriceNote(item: Readonly<{ unitPriceCents: number | null; clinicalReviewRequired: boolean }>): string {
+  if (item.clinicalReviewRequired) return "Final price follows applicable review.";
+  return item.unitPriceCents === null
+    ? catalogPriceLabel(null)
+    : money(item.unitPriceCents) + " (catalog display, not a final quote)";
 }
 
 type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Storage | null; embedded?: boolean;
@@ -443,7 +451,7 @@ function RequestIntentFormSession({
           <div className="xenios-order-card-meta">
             <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
-            <p>{item.clinicalReviewRequired ? "Final price follows applicable review." : money(item.unitPriceCents) + " (catalog display, not a final quote)"}</p>
+            <p>{requestIntentPriceNote(item)}</p>
           </div>
           <div className="xenios-order-card-actions">
           {showDetails && <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />}

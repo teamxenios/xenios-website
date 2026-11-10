@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "wouter";
-import { money } from "./wizard-state";
+import { OrderEstimateRow } from "./OrderEstimateRow";
 import { readStoredAssistedOrderReceipt } from "./storage";
 import { REQUEST_INTENT_PUBLIC_REFERENCE } from "./request-intent-continuation";
 import { RequestIntentReferenceNotice } from "./RequestIntentReferenceNotice";
@@ -85,7 +85,7 @@ export function AssistedOrderConfirmationPage() {
         <dl className="xenios-order-facts">
           <div><dt>Status</dt><dd>Submitted</dd></div>
           {receipt ? <div><dt>Lines</dt><dd>{receipt.lines.length}</dd></div> : null}
-          {receipt ? <div><dt>Estimated priced total</dt><dd>{money(receipt.estimatedTotalCents)}</dd></div> : null}
+          {receipt ? <OrderEstimateRow estimate={receipt.estimatedTotalCents} variant="facts" /> : null}
         </dl>
         {receipt && receipt.nextSteps.length > 0 ? (
           <ul className="xenios-order-timeline">

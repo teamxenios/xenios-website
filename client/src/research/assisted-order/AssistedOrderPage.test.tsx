@@ -585,7 +585,9 @@ describe("AssistedOrderPage", () => {
       "No longer available and removed from your request: Alpha Peptide",
     );
     expect(document.body.textContent).toContain("No products selected yet.");
-    expect(byTestId("order-estimate")?.textContent).toBe("Price on request");
+    // With nothing priced selected there is no estimate row at all, rather
+    // than "Estimated priced total: Price on request".
+    expect(byTestId("order-estimate")).toBeNull();
     expect(byTestId(`order-card-add-${directRuoItem.variantId}`)).toBeNull();
   });
 

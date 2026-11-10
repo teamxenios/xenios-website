@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { EarlyAccessCatalogGrid } from "./EarlyAccessCatalogGrid";
 import type { EarlyAccessCardProduct } from "./EarlyAccessProductCard";
+import { EARLY_ACCESS_QUOTE_LABEL } from "@shared/research/early-access/quote-only";
 import type { EarlyAccessQuantity } from "./EarlyAccessQuantitySelector";
 import { EarlyAccessSelectionBar } from "./EarlyAccessSelectionBar";
 import {
@@ -107,9 +108,14 @@ export function EarlyAccessCatalogSection({
     onSelect(product);
   };
   const selectedQuantity = selectedProduct === null ? 0 : (quantities[selectedProduct.variantId] ?? 1);
+  // A quote-only unit always goes to the request flow: there is no price to
+  // check out at, and quote-only browsing never enters the pay-now path.
   const selectedRoute = selectedProduct === null
     ? null
-    : routeEarlyAccessQuantity(selectedQuantity, selectedProduct.quantityLimit);
+    : selectedProduct.quoteOnly === true
+      ? ({ kind: "order_request", quantity: selectedQuantity, directLimit: null } as const)
+      : routeEarlyAccessQuantity(selectedQuantity, selectedProduct.quantityLimit);
+  const anyQuoteOnly = products.some((product) => product.quoteOnly === true);
 
   return (
     <section data-testid={testId} data-state="ok" data-received={result.received}>
@@ -133,7 +139,7 @@ export function EarlyAccessCatalogSection({
       <p className="body-s text-ink-mute mt-1" data-testid={`${testId}-single-product`}>
         Assisted order requests support {EARLY_ACCESS_MIN_QUANTITY}–{EARLY_ACCESS_POLICY_MAX_QUANTITY} units per exact variant.
         Featured checkout routing respects current per-product release limits. Quantity alone does not trigger review.
-        Quantity 3 receives the server-confirmed Research Bundle pricing.
+        {anyQuoteOnly ? null : "Quantity 3 receives the server-confirmed Research Bundle pricing."}
       </p>
       <div className="mt-4">
         {products.length > 0 && visible.length === 0 ? (
@@ -147,7 +153,9 @@ export function EarlyAccessCatalogSection({
       </div>
       <EarlyAccessSelectionBar selectedCount={selectedProduct === null ? 0 : 1}
         unitCount={selectedQuantity}
-        actionLabel={selectedRoute?.kind === "order_request" ? "Request this order" : "Review order"}
+        actionLabel={selectedProduct?.quoteOnly === true
+          ? EARLY_ACCESS_QUOTE_LABEL
+          : selectedRoute?.kind === "order_request" ? "Request this order" : "Review order"}
         reviewEnabled={reviewEnabled}
         onReview={() => {
           if (selectedProduct !== null) {
