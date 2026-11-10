@@ -1,0 +1,269 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-capsule-artwork-2026-11-10-c1-capsule-batch-001",
+ "producer": "CLAUDE-1 imagery lane (Claude Code session c16cbf1c)",
+ "claim": "KAN-59/12156",
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "formBasisKind": "released_reviewed_copy",
+ "catalogDataset": {
+  "file": "member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5"
+ },
+ "bindingDataset": {
+  "file": "master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+ },
+ "acceptedVisualReference": {
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-012/assets/5-amino-1mq-50mg-website-render-v1-1024.webp",
+  "commit": "0ab9ebc1c4cc0272325f3250aeaeabd8c8a9f8a5",
+  "sha256": "fc4477d3e2ecc5ad92032690033058c08df5b77cde885aef04fe6a5183c05ca2",
+  "acceptedIn": "KAN-31/10756"
+ },
+ "labelTemplate": {
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-012/labels/5-amino-1mq-50mg-wrap-proof-v1.svg",
+  "commit": "0ab9ebc1c4cc0272325f3250aeaeabd8c8a9f8a5",
+  "sha256": "4f6820ad145ea1ef89bb59edb4da7398dd4dc46b23bbeae939eb8f2818d1893d"
+ },
+ "packagingDeclaration": null,
+ "method": {
+  "generativeModelUsed": false,
+  "render": "Only the name rows and the listed-strength rows of the accepted capsule render are erased and re-set in Segoe UI Bold; every other pixel equals the decoded base. Primary: WebP quality 89.",
+  "frontLabel": "The front panel of the accepted capsule label with only the name and listed strength replaced; weights below 850 take Segoe UI Bold and 900 takes Black, as the accepted capsule previews resolved them. Preview: WebP quality 92.",
+  "wrapProof": "The accepted capsule wrap proof with only the name, listed strength, product code and proof id replaced. The product code prints on the wrap only."
+ },
+ "tools": [
+  {
+   "path": "tools/cap_build.py",
+   "sha256": "f03acca1460d7a5e11a00dfb29d9db6978ac37f6614534e5f2498fec0e4f192b"
+  },
+  {
+   "path": "tools/cap_compose.py",
+   "sha256": "25f04027252a889d16ae204811ec2b4d0935f5b00f479e456b7e874389a5697c"
+  },
+  {
+   "path": "tools/cap_front.py",
+   "sha256": "e59271fdbabfcec1190380e3c9ccb11a6a8d3069a18fd7f0c5d2968a15f58786"
+  },
+  {
+   "path": "tools/cap_verify.py",
+   "sha256": "44ee84bc8485dd4b0208f0660972bd8877792f863547c8b6d6f69c59de2da8b2"
+  },
+  {
+   "path": "tools/xr_compose.py",
+   "sha256": "fe41582b115d0135a9b39e18756527021d5f4851f1f9ee82b22604f8d6a4a84c"
+  },
+  {
+   "path": "tools/svg_label_render.py",
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "tools/wpf_kern.ps1",
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "tools/kern-table.segoe-ui.json",
+   "sha256": "30eca2aeca8910d5c219d92aa55046037b0d33d6972de542f244ffc2b2e76d1b"
+  },
+  {
+   "path": "tools/kern-request.json",
+   "sha256": "e78246581b3a964decafb40c0e8192bc8f2f7346e63a849e2c768a787c4f37b8"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_a6f7f071ed946577ce56",
+   "sourceVariantId": "mov_9e34d0c1acde46249621",
+   "quickOrderSku": "GEN-GRP-0254",
+   "catalogDisplayName": "Tesofensine",
+   "catalogVariantLabel": "TESOFENSINE 500 mcg",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/12091",
+    "file": "LABEL_FACTS_CAPSULE_0254_2026-11-10r2.json",
+    "sha256": "7f46e8a6e75038392c941e0c2e8eb9e044263ceabac1914b7a23fb2d9f4305ff",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Tesofensine",
+     "strengthCaption": "Listed strength",
+     "amount": "500 mcg",
+     "formLine": "Research capsules",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0254"
+    }
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "Tesofensine",
+    "strengthCaption": "LISTED STRENGTH",
+    "amount": "500 mcg",
+    "formLine": "RESEARCH CAPSULES",
+    "templateLines": [
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY"
+    ],
+    "productCodeOnWrap": "GEN-GRP-0254",
+    "productCodeOnRenderOrFront": false,
+    "capsuleCountPrinted": false
+   },
+   "doNotPrint": {
+    "source": "KAN-59/12091",
+    "file": "LABEL_FACTS_CAPSULE_0254_2026-11-10r2.json",
+    "termCount": 13,
+    "note": "The terms are in the cited label-facts record. tools/cap_verify.py checks their mechanical patterns."
+   },
+   "formBasis": {
+    "kind": "released_reviewed_copy",
+    "release": "ad52179f31e9339eb50e2b9f3f0a965eef0d80d1",
+    "reviewedContent": {
+     "file": "server/research/master-offerings/data/reviewed-public-content.json",
+     "sha256": "55ea268df8480d684d7d6b71a456815521932f3a54682ad89cde002c11862cf1",
+     "form": "Research capsules",
+     "listedStrength": "500 mcg"
+    },
+    "releasedCapsuleDesigns": {
+     "file": "server/research/master-offerings/data/reviewed-public-media.json",
+     "sha256": "8a59548081aad7e06d84dc3a7c7bb4b4cad37cfc3e6143dfdbfed38f2d431030",
+     "researchCapsulePairsWithPackagingDesign": 10
+    },
+    "authorityRecordedByAcceptedCapsuleBatches": [
+     "KAN-59/10615",
+     "KAN-225/10616"
+    ],
+    "packagingDeclaration": null,
+    "note": "The form line repeats the released reviewed copy for this exact variant; it is not a new source statement. No separate packaging declaration for research capsules exists. Whether this basis is enough is for the reviewer."
+   },
+   "renderLayout": {
+    "mode": "capsule-one-line",
+    "runs": [
+     {
+      "text": "Tesofensine",
+      "fontSizePx": 90.3,
+      "baselineRow": 536,
+      "inkBox": [
+       263,
+       468,
+       722,
+       536
+      ]
+     },
+     {
+      "text": "500 mcg",
+      "fontSizePx": 89.0,
+      "baselineRow": 671,
+      "inkBox": [
+       268,
+       608,
+       597,
+       691
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      464,
+      562
+     ],
+     [
+      604,
+      695
+     ]
+    ],
+    "erasedColumns": [
+     255,
+     775
+    ]
+   },
+   "labelNameSetting": {
+    "fontSize": 118.0
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios packaging design for Tesofensine research capsules, listed strength 500 mcg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "assets/tesofensine-500mcg-capsule-website-render-v1-1024.webp",
+     "sha256": "394dcb26dc8368279df26004a1c0a69ceb19f35f32e5b8b2ff4d39d3b17149c6"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Tesofensine research capsule front label design, listed strength 500 mcg",
+     "relativeAssetPath": "assets/tesofensine-500mcg-capsule-front-artwork-v1.webp",
+     "sha256": "a5c78e959f19e1708afb5ff8bc5ef9edc36af06a49938e547d745f88cd04954d"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/tesofensine-500mcg-capsule-website-render-v1-1024.webp",
+     "bytes": 51646,
+     "sha256": "394dcb26dc8368279df26004a1c0a69ceb19f35f32e5b8b2ff4d39d3b17149c6",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/tesofensine-500mcg-capsule-website-render-v1.png",
+     "bytes": 396865,
+     "sha256": "77d40b70c71fdaa1ca8f39560593da65cda55a18b1dedd6bf29cf7270fb81ad8",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "front_label_master": {
+     "role": "front_label_master",
+     "relativeAssetPath": "labels/tesofensine-500mcg-capsule-front-artwork-v1.svg",
+     "bytes": 2242,
+     "sha256": "8789b2d814d264d28954451d2c606e10b4cf89ea28eb80187968b3ab8414e923"
+    },
+    "front_label_preview_png": {
+     "role": "front_label_preview_png",
+     "relativeAssetPath": "assets/tesofensine-500mcg-capsule-front-artwork-v1.png",
+     "bytes": 97888,
+     "sha256": "6a05da1897f2721ceb4b9bc1ea5fa99a580b46056f7c41657932ffe444e376f8",
+     "width": 1000,
+     "height": 850,
+     "format": "png"
+    },
+    "front_label_preview": {
+     "role": "front_label_preview",
+     "relativeAssetPath": "assets/tesofensine-500mcg-capsule-front-artwork-v1.webp",
+     "bytes": 39316,
+     "sha256": "a5c78e959f19e1708afb5ff8bc5ef9edc36af06a49938e547d745f88cd04954d",
+     "width": 1000,
+     "height": 850,
+     "format": "webp"
+    },
+    "wrap_proof_master": {
+     "role": "wrap_proof_master",
+     "relativeAssetPath": "labels/tesofensine-500mcg-capsule-wrap-proof-v1.svg",
+     "bytes": 5183,
+     "sha256": "3a28175757b433e455a18e52b9769d28717e99f3e30186a4fc0ae9490e224556"
+    },
+    "wrap_proof_preview_png": {
+     "role": "wrap_proof_preview_png",
+     "relativeAssetPath": "assets/tesofensine-500mcg-capsule-wrap-proof-v1.png",
+     "bytes": 307914,
+     "sha256": "b8204dc87a5f9d321d231bdea83fa697e7b3d6b7d1d264d181111debb7f87d17",
+     "width": 2400,
+     "height": 1200,
+     "format": "png"
+    },
+    "wrap_proof_preview": {
+     "role": "wrap_proof_preview",
+     "relativeAssetPath": "assets/tesofensine-500mcg-capsule-wrap-proof-v1.webp",
+     "bytes": 122584,
+     "sha256": "ea3414d5463cb5020435a3632481be4258b61c9407210efbc0e2c91cf3cb280a",
+     "width": 2400,
+     "height": 1200,
+     "format": "webp"
+    }
+   }
+  }
+ ]
+}

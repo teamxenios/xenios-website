@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1200" viewBox="0 0 2400 1200" role="img" aria-labelledby="title description">
+  <title id="title">Xenios Tesofensine 500 mcg capsule bottle wrap design</title>
+  <desc id="description">Editable front, side and back panels for a research capsule bottle design with a listed strength of 500 mcg. The proof awaits confirmation of physical dimensions.</desc>
+  <view id="front-detail" viewBox="100 150 1000 850"/>
+  <defs>
+    <linearGradient id="pearl" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.65" stop-color="#f8f6fb"/>
+      <stop offset="1" stop-color="#ebe8f2"/>
+    </linearGradient>
+    <linearGradient id="rule">
+      <stop offset="0" stop-color="#5616d2"/>
+      <stop offset="0.55" stop-color="#364be6"/>
+      <stop offset="1" stop-color="#009ed2"/>
+    </linearGradient>
+    <linearGradient id="foil">
+      <stop offset="0" stop-color="#2f1767"/>
+      <stop offset="0.24" stop-color="#7e38e0"/>
+      <stop offset="0.55" stop-color="#2554e4"/>
+      <stop offset="0.80" stop-color="#17b1da"/>
+      <stop offset="1" stop-color="#243c95"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="2400" height="1200" fill="#e6e2ec"/>
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#171431">
+    <text x="100" y="78" font-size="29" font-weight="700" letter-spacing="3" fill="#962c54">PACKAGING DESIGN PROOF - NOT PRESS READY</text>
+    <text x="2300" y="78" text-anchor="end" font-size="27" font-weight="700">GEN-GRP-0254-WRAP-v1</text>
+
+    <rect x="100" y="150" width="2200" height="850" fill="url(#pearl)"/>
+    <g id="front-panel" transform="translate(100 150)">
+      <rect width="1000" height="850" fill="url(#pearl)"/>
+      <text x="78" y="132" font-size="72" font-weight="900" letter-spacing="15">XENIOS</text>
+      <rect x="78" y="168" width="844" height="10" rx="5" fill="url(#rule)"/>
+      <text x="72" y="336" font-size="118" font-weight="800" letter-spacing="-3">Tesofensine</text>
+      <text x="78" y="426" font-size="37" font-weight="750" letter-spacing="7">LISTED STRENGTH</text>
+      <text x="73" y="565" font-size="120" font-weight="800" fill="#5616d2">500 mcg</text>
+      <text x="78" y="640" font-size="43" font-weight="750" letter-spacing="6">RESEARCH CAPSULES</text>
+      <rect x="72" y="683" width="856" height="126" rx="22" fill="#23163b"/>
+      <rect x="72" y="683" width="20" height="126" rx="10" fill="url(#foil)"/>
+      <text x="500" y="733" text-anchor="middle" font-size="40" font-weight="800" letter-spacing="4" fill="#ffffff">RESEARCH USE ONLY</text>
+      <text x="500" y="780" text-anchor="middle" font-size="33" font-weight="750" letter-spacing="4" fill="#e5dcf8">NONCLINICAL USE ONLY</text>
+    </g>
+
+    <g id="side-panel" transform="translate(1150 230)">
+      <text x="0" y="0" font-size="26" font-weight="750" letter-spacing="4" fill="#5b30af">PRODUCT DETAILS</text>
+      <rect x="0" y="30" width="456" height="6" rx="3" fill="url(#rule)"/>
+      <text x="0" y="120" font-size="40" font-weight="800">Tesofensine</text>
+      <text x="0" y="174" font-size="31" font-weight="650">Research capsules</text>
+      <text x="0" y="222" font-size="31" font-weight="650">Listed strength 500 mcg</text>
+      <text x="0" y="322" font-size="25" font-weight="750" letter-spacing="3" fill="#5b30af">PRODUCT CODE</text>
+      <text x="0" y="377" font-size="40" font-weight="800">GEN-GRP-0254</text>
+      <text x="0" y="490" font-size="27" font-weight="750">For laboratory research use only.</text>
+      <text x="0" y="535" font-size="27" font-weight="650">Nonclinical use only.</text>
+    </g>
+
+    <g id="back-panel-proof-only" transform="translate(1720 230)">
+      <text x="0" y="0" font-size="26" font-weight="750" letter-spacing="4" fill="#5b30af">PROOF NOTES</text>
+      <rect x="0" y="30" width="510" height="6" rx="3" fill="url(#rule)"/>
+      <rect x="0" y="82" width="510" height="156" rx="18" fill="#f3edf9" stroke="#c4b6da" stroke-width="2"/>
+      <text x="24" y="124" font-size="24" font-weight="750" letter-spacing="2" fill="#5b30af">RESERVED PANEL</text>
+      <text x="24" y="174" font-size="26" font-weight="650">Final label copy pending.</text>
+      <text x="24" y="207" font-size="23" fill="#514864">Leave blank on production artwork.</text>
+      <text x="0" y="322" font-size="25" font-weight="750" letter-spacing="3" fill="#5b30af">PHYSICAL SPECIFICATION</text>
+      <text x="0" y="370" font-size="25" font-weight="650">Confirm bottle and closure, dieline,</text>
+      <text x="0" y="406" font-size="25" font-weight="650">seam, bleed, stock and finish.</text>
+      <text x="0" y="488" font-size="25" font-weight="650">Final packaging details pending.</text>
+    </g>
+
+    <g id="non-print-guides" fill="none" stroke="#9989af" stroke-width="2" stroke-dasharray="12 9">
+      <line x1="1101" x2="1101" y1="150" y2="1000"/>
+      <line x1="1668" x2="1668" y1="150" y2="1000"/>
+    </g>
+    <text x="100" y="1100" font-size="25" font-weight="700">Panel divisions and proof notes are non-printing. Artwork uses a provisional design scale.</text>
+  </g>
+</svg>

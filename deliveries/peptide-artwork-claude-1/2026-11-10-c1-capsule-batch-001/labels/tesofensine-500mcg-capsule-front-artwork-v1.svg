@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="850" viewBox="0 0 1000 850" role="img" aria-labelledby="title description">
+  <title id="title">Xenios Tesofensine 500 mcg capsule bottle front label design</title>
+  <desc id="description">Editable front label for a research capsule bottle design with a listed strength of 500 mcg.</desc>
+  <defs>
+    <linearGradient id="pearl" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.65" stop-color="#f8f6fb"/>
+      <stop offset="1" stop-color="#ebe8f2"/>
+    </linearGradient>
+    <linearGradient id="rule">
+      <stop offset="0" stop-color="#5616d2"/>
+      <stop offset="0.55" stop-color="#364be6"/>
+      <stop offset="1" stop-color="#009ed2"/>
+    </linearGradient>
+    <linearGradient id="foil">
+      <stop offset="0" stop-color="#2f1767"/>
+      <stop offset="0.24" stop-color="#7e38e0"/>
+      <stop offset="0.55" stop-color="#2554e4"/>
+      <stop offset="0.80" stop-color="#17b1da"/>
+      <stop offset="1" stop-color="#243c95"/>
+    </linearGradient>
+  </defs>
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#171431">
+    <rect width="1000" height="850" fill="url(#pearl)"/>
+    <text x="78" y="132" font-size="72" font-weight="900" letter-spacing="15">XENIOS</text>
+    <rect x="78" y="168" width="844" height="10" rx="5" fill="url(#rule)"/>
+    <text x="72" y="336" font-size="118" font-weight="800" letter-spacing="-3">Tesofensine</text>
+    <text x="78" y="426" font-size="37" font-weight="750" letter-spacing="7">LISTED STRENGTH</text>
+    <text x="73" y="565" font-size="120" font-weight="800" fill="#5616d2">500 mcg</text>
+    <text x="78" y="640" font-size="43" font-weight="750" letter-spacing="6">RESEARCH CAPSULES</text>
+    <rect x="72" y="683" width="856" height="126" rx="22" fill="#23163b"/>
+    <rect x="72" y="683" width="20" height="126" rx="10" fill="url(#foil)"/>
+    <text x="500" y="733" text-anchor="middle" font-size="40" font-weight="800" letter-spacing="4" fill="#ffffff">RESEARCH USE ONLY</text>
+    <text x="500" y="780" text-anchor="middle" font-size="33" font-weight="750" letter-spacing="4" fill="#e5dcf8">NONCLINICAL USE ONLY</text>
+  </g>
+</svg>
