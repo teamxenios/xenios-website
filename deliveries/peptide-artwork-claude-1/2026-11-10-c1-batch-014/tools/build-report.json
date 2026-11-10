@@ -1,0 +1,2058 @@
+[
+ {
+  "slug": "cjc-1295-no-dac-10mg",
+  "frontNameFit": {
+   "fontSize": 164.0,
+   "letterSpacing": -5.59,
+   "baseline": 465.8,
+   "inkRightEstimate": 1446.3
+  },
+  "wrapNameFit": {
+   "fontSize": 103.0,
+   "letterSpacing": -3.53,
+   "baseline": 504.9,
+   "inkRightEstimate": 959.7
+  },
+  "renderLayout": {
+   "name": "CJC-1295 No DAC",
+   "amount": "10 mg",
+   "mode": "stack",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "CJC-1295",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 624,
+     "inkBox": [
+      458,
+      579,
+      715,
+      624
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "No DAC",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 687,
+     "inkBox": [
+      458,
+      642,
+      674,
+      687
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "10 mg",
+     "size": 43.61,
+     "left": 460,
+     "baseline": 730,
+     "inkBox": [
+      460,
+      699,
+      577,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 43.8,
+   "k": 0.69
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "CJC-1295 No DAC",
+    "x": 150.0,
+    "baseline": 465.8,
+    "size": 164.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1446.3
+   },
+   {
+    "text": "10 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 448.0
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "10 mg per vial",
+    "x": 1132.8,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0270-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "CJC-1295 No DAC",
+    "x": 145.0,
+    "baseline": 504.9,
+    "size": 103.0,
+    "weight": 790,
+    "face": 700,
+    "right": 959.7
+   },
+   {
+    "text": "10 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 413.2
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "10 mg per vial",
+    "x": 695.2,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "CJC-1295 No DAC",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1314.4
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "10 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1268.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0270",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "cjc-1295-no-dac-2mg",
+  "frontNameFit": {
+   "fontSize": 164.0,
+   "letterSpacing": -5.59,
+   "baseline": 465.8,
+   "inkRightEstimate": 1446.3
+  },
+  "wrapNameFit": {
+   "fontSize": 103.0,
+   "letterSpacing": -3.53,
+   "baseline": 504.9,
+   "inkRightEstimate": 959.7
+  },
+  "renderLayout": {
+   "name": "CJC-1295 No DAC",
+   "amount": "2 mg",
+   "mode": "stack",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "CJC-1295",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 624,
+     "inkBox": [
+      458,
+      579,
+      715,
+      624
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "No DAC",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 687,
+     "inkBox": [
+      458,
+      642,
+      674,
+      687
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "2 mg",
+     "size": 43.61,
+     "left": 460,
+     "baseline": 730,
+     "inkBox": [
+      460,
+      699,
+      555,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 43.8,
+   "k": 0.69
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "CJC-1295 No DAC",
+    "x": 150.0,
+    "baseline": 465.8,
+    "size": 164.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1446.3
+   },
+   {
+    "text": "2 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 391.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "2 mg per vial",
+    "x": 1151.0,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0271-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "CJC-1295 No DAC",
+    "x": 145.0,
+    "baseline": 504.9,
+    "size": 103.0,
+    "weight": 790,
+    "face": 700,
+    "right": 959.7
+   },
+   {
+    "text": "2 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 362.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "2 mg per vial",
+    "x": 711.8,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "CJC-1295 No DAC",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1314.4
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "2 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1252.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0271",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "cjc-1295-with-dac-2mg",
+  "frontNameFit": {
+   "fontSize": 149.0,
+   "letterSpacing": -5.08,
+   "baseline": 460.5,
+   "inkRightEstimate": 1449.0
+  },
+  "wrapNameFit": {
+   "fontSize": 93.5,
+   "letterSpacing": -3.2,
+   "baseline": 501.6,
+   "inkRightEstimate": 959.7
+  },
+  "renderLayout": {
+   "name": "CJC-1295 With DAC",
+   "amount": "2 mg",
+   "mode": "stack",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "CJC-1295",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 624,
+     "inkBox": [
+      458,
+      579,
+      715,
+      624
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "With DAC",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 687,
+     "inkBox": [
+      458,
+      640,
+      729,
+      687
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "2 mg",
+     "size": 43.61,
+     "left": 460,
+     "baseline": 730,
+     "inkBox": [
+      460,
+      699,
+      555,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 39.6,
+   "k": 0.69
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "CJC-1295 With DAC",
+    "x": 150.0,
+    "baseline": 460.5,
+    "size": 149.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1449.0
+   },
+   {
+    "text": "2 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 391.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "2 mg per vial",
+    "x": 1151.0,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0272-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "CJC-1295 With DAC",
+    "x": 145.0,
+    "baseline": 501.6,
+    "size": 93.5,
+    "weight": 790,
+    "face": 700,
+    "right": 959.7
+   },
+   {
+    "text": "2 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 362.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "2 mg per vial",
+    "x": 711.8,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "CJC-1295 With DAC",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1339.4
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "2 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1252.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0272",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ },
+ {
+  "slug": "cjc-1295-with-dac-5mg",
+  "frontNameFit": {
+   "fontSize": 149.0,
+   "letterSpacing": -5.08,
+   "baseline": 460.5,
+   "inkRightEstimate": 1449.0
+  },
+  "wrapNameFit": {
+   "fontSize": 93.5,
+   "letterSpacing": -3.2,
+   "baseline": 501.6,
+   "inkRightEstimate": 959.7
+  },
+  "renderLayout": {
+   "name": "CJC-1295 With DAC",
+   "amount": "5 mg",
+   "mode": "stack",
+   "eraseRows": [
+    [
+     567,
+     742
+    ]
+   ],
+   "runs": [
+    {
+     "kind": "name",
+     "text": "CJC-1295",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 624,
+     "inkBox": [
+      458,
+      579,
+      715,
+      624
+     ]
+    },
+    {
+     "kind": "name",
+     "text": "With DAC",
+     "size": 63.2,
+     "left": 458,
+     "baseline": 687,
+     "inkBox": [
+      458,
+      640,
+      729,
+      687
+     ]
+    },
+    {
+     "kind": "amount",
+     "text": "5 mg",
+     "size": 43.61,
+     "left": 460,
+     "baseline": 730,
+     "inkBox": [
+      460,
+      699,
+      554,
+      740
+     ]
+    }
+   ],
+   "oneLineFit": 39.6,
+   "k": 0.69
+  },
+  "frontRuns": [
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 205.0,
+    "size": 78.0,
+    "weight": 800,
+    "face": 900,
+    "right": 517.5
+   },
+   {
+    "text": "CJC-1295 With DAC",
+    "x": 150.0,
+    "baseline": 460.5,
+    "size": 149.0,
+    "weight": 790,
+    "face": 700,
+    "right": 1449.0
+   },
+   {
+    "text": "5 mg",
+    "x": 158.0,
+    "baseline": 595.0,
+    "size": 98.0,
+    "weight": 780,
+    "face": 700,
+    "right": 391.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 158.0,
+    "baseline": 675.0,
+    "size": 38.0,
+    "weight": 750,
+    "face": 700,
+    "right": 576.6
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 203.0,
+    "baseline": 782.0,
+    "size": 35.0,
+    "weight": 800,
+    "face": 900,
+    "right": 615.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 203.0,
+    "baseline": 824.0,
+    "size": 27.0,
+    "weight": 650,
+    "face": 700,
+    "right": 560.1
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1120.8,
+    "baseline": 780.0,
+    "size": 25.0,
+    "weight": 730,
+    "face": 700,
+    "right": 1393.0
+   },
+   {
+    "text": "5 mg per vial",
+    "x": 1151.0,
+    "baseline": 823.0,
+    "size": 38.0,
+    "weight": 820,
+    "face": 900,
+    "right": 1395.0
+   }
+  ],
+  "wrapRuns": [
+   {
+    "text": "SUPPLIER PROOF - NOT PRESS READY",
+    "x": 90.0,
+    "baseline": 74.0,
+    "size": 26.0,
+    "weight": 850,
+    "face": 900,
+    "right": 665.8
+   },
+   {
+    "text": "GEN-GRP-0273-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE",
+    "x": 1633.2,
+    "baseline": 74.0,
+    "size": 23.0,
+    "weight": 720,
+    "face": 700,
+    "right": 2310.0
+   },
+   {
+    "text": "XENIOS",
+    "x": 150.0,
+    "baseline": 280.0,
+    "size": 72.0,
+    "weight": 820,
+    "face": 900,
+    "right": 490.0
+   },
+   {
+    "text": "CJC-1295 With DAC",
+    "x": 145.0,
+    "baseline": 501.6,
+    "size": 93.5,
+    "weight": 790,
+    "face": 700,
+    "right": 959.7
+   },
+   {
+    "text": "5 mg",
+    "x": 153.0,
+    "baseline": 628.0,
+    "size": 88.0,
+    "weight": 790,
+    "face": 700,
+    "right": 362.8
+   },
+   {
+    "text": "LYOPHILIZED VIAL",
+    "x": 153.0,
+    "baseline": 704.0,
+    "size": 34.0,
+    "weight": 760,
+    "face": 700,
+    "right": 523.0
+   },
+   {
+    "text": "RESEARCH USE ONLY",
+    "x": 190.0,
+    "baseline": 827.0,
+    "size": 31.0,
+    "weight": 820,
+    "face": 900,
+    "right": 552.5
+   },
+   {
+    "text": "NONCLINICAL USE ONLY",
+    "x": 190.0,
+    "baseline": 871.0,
+    "size": 24.0,
+    "weight": 650,
+    "face": 700,
+    "right": 504.8
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 725.5,
+    "baseline": 828.0,
+    "size": 21.0,
+    "weight": 740,
+    "face": 700,
+    "right": 930.0
+   },
+   {
+    "text": "5 mg per vial",
+    "x": 711.8,
+    "baseline": 874.0,
+    "size": 34.0,
+    "weight": 840,
+    "face": 900,
+    "right": 930.0
+   },
+   {
+    "text": "FIXED IDENTITY",
+    "x": 1080.0,
+    "baseline": 220.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1293.8
+   },
+   {
+    "text": "PRODUCT",
+    "x": 1080.0,
+    "baseline": 305.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1190.5
+   },
+   {
+    "text": "CJC-1295 With DAC",
+    "x": 1080.0,
+    "baseline": 342.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1339.4
+   },
+   {
+    "text": "NOMINAL CONTENT",
+    "x": 1080.0,
+    "baseline": 410.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1312.5
+   },
+   {
+    "text": "5 mg per vial",
+    "x": 1080.0,
+    "baseline": 447.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1252.2
+   },
+   {
+    "text": "FORM",
+    "x": 1080.0,
+    "baseline": 515.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1146.8
+   },
+   {
+    "text": "Lyophilized vial",
+    "x": 1080.0,
+    "baseline": 552.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1283.0
+   },
+   {
+    "text": "CLASSIFICATION",
+    "x": 1080.0,
+    "baseline": 620.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1270.7
+   },
+   {
+    "text": "Research Use Only",
+    "x": 1080.0,
+    "baseline": 657.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1321.2
+   },
+   {
+    "text": "Nonclinical use only",
+    "x": 1080.0,
+    "baseline": 693.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1262.8
+   },
+   {
+    "text": "For laboratory research use only.",
+    "x": 1080.0,
+    "baseline": 730.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1377.7
+   },
+   {
+    "text": "PRODUCT CODE",
+    "x": 1080.0,
+    "baseline": 765.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1261.8
+   },
+   {
+    "text": "GEN-GRP-0273",
+    "x": 1080.0,
+    "baseline": 802.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 1279.0
+   },
+   {
+    "text": "Catalog identifier only.",
+    "x": 1080.0,
+    "baseline": 880.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1286.6
+   },
+   {
+    "text": "Not lot or manufacturing traceability.",
+    "x": 1080.0,
+    "baseline": 914.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1419.6
+   },
+   {
+    "text": "SUPPLIER PROOF NOTES",
+    "x": 1650.0,
+    "baseline": 205.0,
+    "size": 22.0,
+    "weight": 800,
+    "face": 900,
+    "right": 1972.0
+   },
+   {
+    "text": "TRACEABILITY AREA",
+    "x": 1672.0,
+    "baseline": 313.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1907.4
+   },
+   {
+    "text": "Reserved for supplier-issued data",
+    "x": 1672.0,
+    "baseline": 356.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2112.2
+   },
+   {
+    "text": "Blank on the proof artwork.",
+    "x": 1672.0,
+    "baseline": 393.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1924.0
+   },
+   {
+    "text": "STORAGE COPY",
+    "x": 1672.0,
+    "baseline": 488.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1848.0
+   },
+   {
+    "text": "Supplier-approved copy required",
+    "x": 1672.0,
+    "baseline": 528.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2108.6
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 560.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "LEGAL ATTRIBUTION",
+    "x": 1672.0,
+    "baseline": 648.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 1911.2
+   },
+   {
+    "text": "Supplier legal identity required",
+    "x": 1672.0,
+    "baseline": 688.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2083.3
+   },
+   {
+    "text": "Reserved area pending confirmation.",
+    "x": 1672.0,
+    "baseline": 720.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2008.7
+   },
+   {
+    "text": "MATCHED DOCUMENTATION",
+    "x": 1672.0,
+    "baseline": 808.0,
+    "size": 21.0,
+    "weight": 780,
+    "face": 700,
+    "right": 2001.4
+   },
+   {
+    "text": "Product-specific document pending",
+    "x": 1672.0,
+    "baseline": 848.0,
+    "size": 28.0,
+    "weight": 680,
+    "face": 700,
+    "right": 2144.1
+   },
+   {
+    "text": "Any destination requires a verified match.",
+    "x": 1672.0,
+    "baseline": 881.0,
+    "size": 20.0,
+    "weight": 600,
+    "face": 600,
+    "right": 2051.8
+   },
+   {
+    "text": "NON-PRINT GUIDES:",
+    "x": 100.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 700,
+    "face": 700,
+    "right": 317.0
+   },
+   {
+    "text": "Panel divisions, dashed lines and back-panel notes are proof guides. The supplier will confirm dimensions, bleed, seam and material.",
+    "x": 330.0,
+    "baseline": 1110.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1646.6
+   },
+   {
+    "text": "Packaging design proof. Supplier confirmation and physical production approval are pending.",
+    "x": 100.0,
+    "baseline": 1150.0,
+    "size": 22.0,
+    "weight": 600,
+    "face": 600,
+    "right": 1033.1
+   }
+  ]
+ }
+]

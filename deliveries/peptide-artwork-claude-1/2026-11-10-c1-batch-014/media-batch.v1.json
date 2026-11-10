@@ -1,0 +1,1109 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-peptide-artwork-2026-11-10-batch-c1-014",
+ "producer": "CLAUDE-1 peptide artwork lane (Claude Code session c16cbf1c)",
+ "releaseBaseline": "19d10e0495aed917b3d1fcf2844109e5e1cc6915",
+ "imageryBase": {
+  "branch": "codex/catalog-imagery-20261104",
+  "sha": "e41ce5bbf76e3c65b04cf620a74acab44411f680"
+ },
+ "catalogDataset": {
+  "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5",
+  "bytes": 332053
+ },
+ "bindingDataset": {
+  "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+  "bytes": 108239
+ },
+ "acceptedVisualReference": {
+  "reference": "KAN-31/10627",
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/assets/bpc-157-10mg-website-render-v3.png",
+  "sha256": "674868e8914407fb65c3495bff77b92a9335b9a6dc900264a8b5d84c27d9017b"
+ },
+ "labelTemplates": [
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+   "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a"
+  },
+  {
+   "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-wrap-proof-v3.svg",
+   "sha256": "529370fb98e0984b0d8227963d93cf4fb857bd3e96d997d89055c62c608004b6"
+  }
+ ],
+ "authority": [
+  "KAN-59/10615",
+  "KAN-225/10616",
+  "KAN-225/10638",
+  "KAN-225/10644",
+  "KAN-225/10683",
+  "KAN-59/12107",
+  "KAN-225/11259"
+ ],
+ "labelFactSources": [
+  {
+   "reference": "KAN-6/10624",
+   "note": "Session 3 static artwork facts: product code wording"
+  },
+  {
+   "reference": "KAN-59/12103",
+   "file": "LABEL_FACTS_CJC1295_SINGLE_ROWS_2026-11-10.json",
+   "sha256": "3e392cffa81c366b4b2fe07f9c092044b3eddbfd61a4a0fe53f4809d63c5be06",
+   "author": "CLAUDE-2"
+  }
+ ],
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "requiredMountedViewportsAfterReview": [
+  320,
+  390,
+  768,
+  1280
+ ],
+ "method": {
+  "render": "Accepted Batch 004 render is the base. Rows 567-671 (name) or 567-742 (name and amount) of columns 448-807 are refilled by per-column linear interpolation between clean label rows with matched grain (sigma 0.67); every other pixel is byte-identical to the base. Type: Segoe UI Bold, name 91.6 px with -0.034 em tracking (matched to the base render, IoU 0.86), amount 63.2 px (IoU 0.90). Long names are fitted to the rule width and centred on the original cap band, then raised if needed so a descender stays 9 px above the amount digits. Amounts other than 10 mg are re-set at the base amount size and position. A full-size name with a descender stops the build for a layout review. A name below 70% size that contains a space stacks on two lines with the amount scaled by the same factor, but only when stacking sets the name larger than one line does; otherwise it stays on one line.",
+  "labels": "Front and wrap SVG masters are the Batch 004 v3 templates transformed exactly as Batch 008 build-labels.mjs does (port verified byte-identical on BPC-157 5 mg), plus the compound name, a name size fit for long names, and the side-panel field label PRODUCT CODE.",
+  "previews": "Previews are drawn from the SVG masters by tools/svg_label_render.py with Segoe UI faces (nearest weight, ties to the heavier face) and OpenType pair kerning measured through WPF (tools/wpf_kern.ps1). Against the accepted Batch 004 previews the mean absolute difference is 0.80 (front) and 1.61 (wrap) of 255."
+ },
+ "differencesFromBatch008": [
+  "Wrap side panel field label reads PRODUCT CODE (Batch 008: QUICK ORDER SKU), matching the Session 3 and CLAUDE-2 wording \"Product code GEN-GRP-xxxx\".",
+  "Batch 008 previews resolve font-weight 800 (XENIOS, RESEARCH USE ONLY) to Segoe UI Bold; these previews follow the accepted Batch 004 previews, which resolve it to Segoe UI Black.",
+  "No supplier PDF proofs in this batch; the wrap SVG and its preview carry the same proof notes.",
+  "The wrap proof id is the exact product code (for example GEN-GRP-0270-WRAP-v1), not code-amount, because code-amount can spell a fragment name that label facts forbid (KISSPEPTIN-10 in C1-002)."
+ ],
+ "changesFromC1001": [
+  "The build reads its variants (names, amounts, codes, verified label text) from tools/variants.json instead of a constant.",
+  "Amounts other than 10 mg (2 and 5 mg here) re-set the amount line: at the base size and position under a one-line name, or inside the stack under a stacked name, as in C1-001.",
+  "A full-size name with a descender now stops the build instead of being placed (no name in this batch is one).",
+  "Each record carries its label-fact source (reference, file, sha256, verified static text) and any per-compound do-not-print terms.",
+  "The wrap proof id and the artworkVersion are the exact product code instead of code-amount (C1-001: IPAMORELIN-10-WRAP-v1 and IPAMORELIN-10-WEB-SUPPLIER-v1), because code-amount spelled KISSPEPTIN-10, a forbidden fragment name; verify_c1.py checks both. C1-001 has no such collision and keeps code-amount.",
+  "The batch files were built by the copies in tools/ (tools/build_c1.py build), and verify_c1.py --recompute rebuilds every image from them."
+ ],
+ "contactSheet": {
+  "role": "contact_sheet",
+  "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/contact-sheet-v1.png",
+  "format": "png",
+  "bytes": 281348,
+  "sha256": "f41ca120c56183de969c74af419f41cea28c58e4f668457d84c607206dce66f0",
+  "width": 1800,
+  "height": 984
+ },
+ "tools": [
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/build-report.json",
+   "bytes": 36472,
+   "sha256": "ac24f0f49905eb497e3d2edac44c37e5fe8eb5d986232ab5fb1fa8036e3003b9"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/build_c1.py",
+   "bytes": 23453,
+   "sha256": "51bbf4c5272cc982e252f67f4d27cb0b8c487bac4377f7a97986279a08e39390"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/c1_variants.py",
+   "bytes": 14419,
+   "sha256": "9041e62d8f402a4f083a272ef16bc847f6772dfd543b7451ec0587884bbcbe9f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/kern-table.segoe-ui.json",
+   "bytes": 27326,
+   "sha256": "86b96b599b66f3de2bb8d179cd7deb399880b2808613d010ec06637e78c907c3"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/svg_label_render.py",
+   "bytes": 13893,
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/variants.json",
+   "bytes": 7238,
+   "sha256": "421111c26f95936cf6075adc3c6f90a8812123168aee585fe09edf99d3a17bd4"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/verify_c1.py",
+   "bytes": 25942,
+   "sha256": "a9950fbfceb3e0bb930f3e38d7be18fd8e353a862f87d110fe08f74830752b35"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/wpf_kern.ps1",
+   "bytes": 1978,
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/write_manifest.py",
+   "bytes": 43616,
+   "sha256": "5d6d943bff134cbe5cc5cea658006130e298dee1fe8e0c19d6003239085ed34a"
+  },
+  {
+   "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/xr_compose.py",
+   "bytes": 14269,
+   "sha256": "fe41582b115d0135a9b39e18756527021d5f4851f1f9ee82b22604f8d6a4a84c"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_c464ca523cda95adb8a6",
+   "sourceVariantId": "mov_0d00b80820b69cc39796",
+   "quickOrderSku": "GEN-GRP-0270",
+   "quickOrderProductId": "8dddcdef-0a61-4911-a5b7-ee9776218f88",
+   "quickOrderVariantId": "8ce25920-89c9-4ebe-98af-84fdede6f55a",
+   "canonicalName": "CJC-1295 No Dac",
+   "catalogDisplayName": "CJC-1295 No Dac",
+   "canonicalVariant": "CJC-1295 No DAC 10 mg",
+   "catalogVariantLabel": "CJC-1295 NO DAC 10 mg",
+   "nominalAmountPerVialMg": 10,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0270-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/12103",
+    "file": "LABEL_FACTS_CJC1295_SINGLE_ROWS_2026-11-10.json",
+    "sha256": "3e392cffa81c366b4b2fe07f9c092044b3eddbfd61a4a0fe53f4809d63c5be06",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "CJC-1295 No DAC",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0270"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "CJC-1295 No DAC",
+    "amountOnRender": "10 mg",
+    "amountOnLabel": "10 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0270"
+   },
+   "extraDoNotPrintTerms": [
+    "drug affinity complex",
+    "affinity complex",
+    "persistence",
+    "persistent",
+    "long-acting",
+    "long acting",
+    "half-life",
+    "half life",
+    "hGRF",
+    "hGRF(1-29)",
+    "growth-hormone-releasing",
+    "GHRH",
+    "GRF",
+    "sequence",
+    "growth hormone",
+    "growth",
+    "muscle",
+    "recovery",
+    "performance"
+   ],
+   "renderLayout": {
+    "mode": "stack",
+    "runs": [
+     {
+      "text": "CJC-1295",
+      "fontSizePx": 63.2,
+      "baselineRow": 624,
+      "inkBox": [
+       458,
+       579,
+       715,
+       624
+      ]
+     },
+     {
+      "text": "No DAC",
+      "fontSizePx": 63.2,
+      "baselineRow": 687,
+      "inkBox": [
+       458,
+       642,
+       674,
+       687
+      ]
+     },
+     {
+      "text": "10 mg",
+      "fontSizePx": 43.61,
+      "baselineRow": 730,
+      "inkBox": [
+       460,
+       699,
+       577,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 43.8,
+    "stackScale": 0.69
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 164.0,
+     "letterSpacing": -5.59,
+     "baseline": 465.8,
+     "inkRightEstimate": 1446.3
+    },
+    "wrapFrontPanel": {
+     "fontSize": 103.0,
+     "letterSpacing": -3.53,
+     "baseline": 504.9,
+     "inkRightEstimate": 959.7
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios CJC-1295 No DAC 10 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-10mg-website-render-v1-1024.webp",
+     "sha256": "667c1228420f00c2505e84c2a3318a2b971a62e6b44ddf3b95dc969e4ffd2edf"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios CJC-1295 No DAC 10 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-10mg-front-artwork-v1.webp",
+     "sha256": "089da40ce3413b9d405bfc4a0e6385a2e7ffdc7bbe6465d5bf75e92fc3dcb03e"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-10mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 46196,
+     "sha256": "667c1228420f00c2505e84c2a3318a2b971a62e6b44ddf3b95dc969e4ffd2edf",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-10mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986867,
+     "sha256": "dad1b117b7059630c8df09b5299d28786c6c9cdf244fb70ccdff3fd8efb934ea",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/labels/cjc-1295-no-dac-10mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3028,
+     "sha256": "1fab61a1e44088539e10cbb735e253f40a41d6649ba60adf06e6517af246294a",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-10mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 125336,
+     "sha256": "1f177f64b73b345e7a29234cf2b59c61b9a69258ee5c2b00cddf656ff5e4846a",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-10mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 48156,
+     "sha256": "089da40ce3413b9d405bfc4a0e6385a2e7ffdc7bbe6465d5bf75e92fc3dcb03e",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/labels/cjc-1295-no-dac-10mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7013,
+     "sha256": "bafb43a2c18f8b4cea03becad5308294b9e9e8aafc9b4b6a374b5847a1285319",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-10mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 384387,
+     "sha256": "9e620b22450df1c123fd9108693d5525bbe03e8124df0ecf704bef862bce59cc",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-10mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 161568,
+     "sha256": "adaf19fe15a2e4710b376e27f5b2d1e91c63ef04154c6e5098cd769ffb26058d",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "nameVariance": {
+    "catalogDisplayName": "CJC-1295 No Dac",
+    "printedName": "CJC-1295 No DAC",
+    "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_4bbd59b26b04e4265758",
+   "sourceVariantId": "mov_f7b635c1cc2be94922a0",
+   "quickOrderSku": "GEN-GRP-0271",
+   "quickOrderProductId": "8dddcdef-0a61-4911-a5b7-ee9776218f88",
+   "quickOrderVariantId": "6ff02991-89e3-4697-a517-5ee3c2f8583a",
+   "canonicalName": "CJC-1295 No Dac",
+   "catalogDisplayName": "CJC-1295 No Dac",
+   "canonicalVariant": "CJC-1295 No DAC 2 mg",
+   "catalogVariantLabel": "CJC-1295 NO DAC 2 mg",
+   "nominalAmountPerVialMg": 2,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0271-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/12103",
+    "file": "LABEL_FACTS_CJC1295_SINGLE_ROWS_2026-11-10.json",
+    "sha256": "3e392cffa81c366b4b2fe07f9c092044b3eddbfd61a4a0fe53f4809d63c5be06",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "CJC-1295 No DAC",
+     "amount": "2 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0271"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "CJC-1295 No DAC",
+    "amountOnRender": "2 mg",
+    "amountOnLabel": "2 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0271"
+   },
+   "extraDoNotPrintTerms": [
+    "drug affinity complex",
+    "affinity complex",
+    "persistence",
+    "persistent",
+    "long-acting",
+    "long acting",
+    "half-life",
+    "half life",
+    "hGRF",
+    "hGRF(1-29)",
+    "growth-hormone-releasing",
+    "GHRH",
+    "GRF",
+    "sequence",
+    "growth hormone",
+    "growth",
+    "muscle",
+    "recovery",
+    "performance"
+   ],
+   "renderLayout": {
+    "mode": "stack",
+    "runs": [
+     {
+      "text": "CJC-1295",
+      "fontSizePx": 63.2,
+      "baselineRow": 624,
+      "inkBox": [
+       458,
+       579,
+       715,
+       624
+      ]
+     },
+     {
+      "text": "No DAC",
+      "fontSizePx": 63.2,
+      "baselineRow": 687,
+      "inkBox": [
+       458,
+       642,
+       674,
+       687
+      ]
+     },
+     {
+      "text": "2 mg",
+      "fontSizePx": 43.61,
+      "baselineRow": 730,
+      "inkBox": [
+       460,
+       699,
+       555,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 43.8,
+    "stackScale": 0.69
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 164.0,
+     "letterSpacing": -5.59,
+     "baseline": 465.8,
+     "inkRightEstimate": 1446.3
+    },
+    "wrapFrontPanel": {
+     "fontSize": 103.0,
+     "letterSpacing": -3.53,
+     "baseline": 504.9,
+     "inkRightEstimate": 959.7
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios CJC-1295 No DAC 2 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-2mg-website-render-v1-1024.webp",
+     "sha256": "0e9ba9828be720680ee490301f5513e74961f4f8bc3c03fae91c3e175512fcae"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios CJC-1295 No DAC 2 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-2mg-front-artwork-v1.webp",
+     "sha256": "711090aa78f09905a23875356265c8ff9671a0a6221f30db79610dcbaf178932"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-2mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47294,
+     "sha256": "0e9ba9828be720680ee490301f5513e74961f4f8bc3c03fae91c3e175512fcae",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-2mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 986789,
+     "sha256": "e1708e737f8081f8af5090fee9d51dfed263cd60b8784e97b1c8a3e9cbfcd351",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/labels/cjc-1295-no-dac-2mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3024,
+     "sha256": "4ba3017bf0df9072a68306806c76d672381beac7760223a4af6578b51b59c40a",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-2mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 123589,
+     "sha256": "39c442d7f500f910c842fa00f20cd4eed67b925a9375c721e7edf3906996b824",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-2mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 47146,
+     "sha256": "711090aa78f09905a23875356265c8ff9671a0a6221f30db79610dcbaf178932",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/labels/cjc-1295-no-dac-2mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7008,
+     "sha256": "fc15e1883d5d37f5c788d38ea5e5b42e259187d39d1acaa0ac79f4e54af662bd",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-2mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 382242,
+     "sha256": "2907e7dfff3ae23ddd8b6c6d535abdbfac7a0d9da28fb2392b2452eb12991d6c",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-no-dac-2mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 160894,
+     "sha256": "b5f611543bc7d6e2e15f68edb7a491c772035158122905899c269c8569a229f7",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "nameVariance": {
+    "catalogDisplayName": "CJC-1295 No Dac",
+    "printedName": "CJC-1295 No DAC",
+    "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_023a54a623e28e84ffd5",
+   "sourceVariantId": "mov_9331f42ce573fb3f72e5",
+   "quickOrderSku": "GEN-GRP-0272",
+   "quickOrderProductId": "ea1d6bcc-93b5-4b8d-96dd-896a09a9853a",
+   "quickOrderVariantId": "e82ecce7-a789-49ba-bc4c-71b2d5d41b32",
+   "canonicalName": "CJC-1295 With Dac",
+   "catalogDisplayName": "CJC-1295 With Dac",
+   "canonicalVariant": "CJC-1295 With DAC 2 mg",
+   "catalogVariantLabel": "CJC-1295 WITH DAC 2 mg",
+   "nominalAmountPerVialMg": 2,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0272-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/12103",
+    "file": "LABEL_FACTS_CJC1295_SINGLE_ROWS_2026-11-10.json",
+    "sha256": "3e392cffa81c366b4b2fe07f9c092044b3eddbfd61a4a0fe53f4809d63c5be06",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "CJC-1295 With DAC",
+     "amount": "2 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0272"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "CJC-1295 With DAC",
+    "amountOnRender": "2 mg",
+    "amountOnLabel": "2 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0272"
+   },
+   "extraDoNotPrintTerms": [
+    "drug affinity complex",
+    "affinity complex",
+    "persistence",
+    "persistent",
+    "long-acting",
+    "long acting",
+    "half-life",
+    "half life",
+    "hGRF",
+    "hGRF(1-29)",
+    "growth-hormone-releasing",
+    "GHRH",
+    "GRF",
+    "sequence",
+    "growth hormone",
+    "growth",
+    "muscle",
+    "recovery",
+    "performance",
+    "albumin"
+   ],
+   "renderLayout": {
+    "mode": "stack",
+    "runs": [
+     {
+      "text": "CJC-1295",
+      "fontSizePx": 63.2,
+      "baselineRow": 624,
+      "inkBox": [
+       458,
+       579,
+       715,
+       624
+      ]
+     },
+     {
+      "text": "With DAC",
+      "fontSizePx": 63.2,
+      "baselineRow": 687,
+      "inkBox": [
+       458,
+       640,
+       729,
+       687
+      ]
+     },
+     {
+      "text": "2 mg",
+      "fontSizePx": 43.61,
+      "baselineRow": 730,
+      "inkBox": [
+       460,
+       699,
+       555,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 39.6,
+    "stackScale": 0.69
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 149.0,
+     "letterSpacing": -5.08,
+     "baseline": 460.5,
+     "inkRightEstimate": 1449.0
+    },
+    "wrapFrontPanel": {
+     "fontSize": 93.5,
+     "letterSpacing": -3.2,
+     "baseline": 501.6,
+     "inkRightEstimate": 959.7
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios CJC-1295 With DAC 2 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-2mg-website-render-v1-1024.webp",
+     "sha256": "bb64199abe53bd1f8c938d95b438a4bb2fb4bb67dceb3634bb01727f886a0564"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios CJC-1295 With DAC 2 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-2mg-front-artwork-v1.webp",
+     "sha256": "a7640af503154aa74c84ead8114696df30bf7a21d076679caae3edaaa944ac7c"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-2mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 48024,
+     "sha256": "bb64199abe53bd1f8c938d95b438a4bb2fb4bb67dceb3634bb01727f886a0564",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-2mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 987588,
+     "sha256": "75d28a0d18c9935a3b24afc7200e1444dfd864604e99669968835b31ae795b10",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/labels/cjc-1295-with-dac-2mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3030,
+     "sha256": "fb93b7dd41aff06ba94f93bbb9d60e90f4fbf07c9573ae920aa87cf988202cf5",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-2mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 124586,
+     "sha256": "bfc27d338af4a573c1cacf261d35f84c068b5859fe617e197c1f63e56388f89e",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-2mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 47782,
+     "sha256": "a7640af503154aa74c84ead8114696df30bf7a21d076679caae3edaaa944ac7c",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/labels/cjc-1295-with-dac-2mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7016,
+     "sha256": "a678e0977022a17d90f6fca38a84bbf621bb490086285a3e27a8f36a63cb57b0",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-2mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 385019,
+     "sha256": "04fa246a42f0ce4d02ac0e17f8b07970f2d06c3c1897d1226b9c21c3f7879485",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-2mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 161678,
+     "sha256": "4b26b6be43f2e8b5d5dce9572cad8b7a568f5f1f463d0cea43ed698df1459b2b",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "nameVariance": {
+    "catalogDisplayName": "CJC-1295 With Dac",
+    "printedName": "CJC-1295 With DAC",
+    "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  },
+  {
+   "offeringId": "mo_be72c9fb4d708d8a3eee",
+   "sourceVariantId": "mov_6c559c89db938c58e815",
+   "quickOrderSku": "GEN-GRP-0273",
+   "quickOrderProductId": "ea1d6bcc-93b5-4b8d-96dd-896a09a9853a",
+   "quickOrderVariantId": "31bd3bdf-bd50-439e-8a1d-a43a96f508ac",
+   "canonicalName": "CJC-1295 With Dac",
+   "catalogDisplayName": "CJC-1295 With Dac",
+   "canonicalVariant": "CJC-1295 With DAC 5 mg",
+   "catalogVariantLabel": "CJC-1295 WITH DAC 5 mg",
+   "nominalAmountPerVialMg": 5,
+   "form": "Lyophilized vial",
+   "classification": "For laboratory research use only.",
+   "artworkVersion": "GEN-GRP-0273-WEB-SUPPLIER-v1",
+   "mediaKind": "original_xenios_website_render",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "design",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/12103",
+    "file": "LABEL_FACTS_CJC1295_SINGLE_ROWS_2026-11-10.json",
+    "sha256": "3e392cffa81c366b4b2fe07f9c092044b3eddbfd61a4a0fe53f4809d63c5be06",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "CJC-1295 With DAC",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0273"
+    },
+    "formNeutral": true,
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "brand": "Xenios",
+    "productName": "CJC-1295 With DAC",
+    "amountOnRender": "5 mg",
+    "amountOnLabel": "5 mg per vial",
+    "form": "Lyophilized vial",
+    "classificationOnArtwork": [
+     "Research Use Only",
+     "Nonclinical use only",
+     "For laboratory research use only."
+    ],
+    "productCodeOnWrap": "GEN-GRP-0273"
+   },
+   "extraDoNotPrintTerms": [
+    "drug affinity complex",
+    "affinity complex",
+    "persistence",
+    "persistent",
+    "long-acting",
+    "long acting",
+    "half-life",
+    "half life",
+    "hGRF",
+    "hGRF(1-29)",
+    "growth-hormone-releasing",
+    "GHRH",
+    "GRF",
+    "sequence",
+    "growth hormone",
+    "growth",
+    "muscle",
+    "recovery",
+    "performance",
+    "albumin"
+   ],
+   "renderLayout": {
+    "mode": "stack",
+    "runs": [
+     {
+      "text": "CJC-1295",
+      "fontSizePx": 63.2,
+      "baselineRow": 624,
+      "inkBox": [
+       458,
+       579,
+       715,
+       624
+      ]
+     },
+     {
+      "text": "With DAC",
+      "fontSizePx": 63.2,
+      "baselineRow": 687,
+      "inkBox": [
+       458,
+       640,
+       729,
+       687
+      ]
+     },
+     {
+      "text": "5 mg",
+      "fontSizePx": 43.61,
+      "baselineRow": 730,
+      "inkBox": [
+       460,
+       699,
+       554,
+       740
+      ]
+     }
+    ],
+    "erasedRows": [
+     [
+      567,
+      742
+     ]
+    ],
+    "erasedColumns": [
+     448,
+     807
+    ],
+    "oneLineFitPx": 39.6,
+    "stackScale": 0.69
+   },
+   "labelNameSetting": {
+    "front": {
+     "fontSize": 149.0,
+     "letterSpacing": -5.08,
+     "baseline": 460.5,
+     "inkRightEstimate": 1449.0
+    },
+    "wrapFrontPanel": {
+     "fontSize": 93.5,
+     "letterSpacing": -3.2,
+     "baseline": 501.6,
+     "inkRightEstimate": 959.7
+    }
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios CJC-1295 With DAC 5 mg packaging design",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-5mg-website-render-v1-1024.webp",
+     "sha256": "699b7cde8ae5e516079d904fbfd115b0f938432e24280a93ba7c3da3683c7764"
+    },
+    {
+     "role": "label_detail",
+     "altText": "Front label artwork for Xenios CJC-1295 With DAC 5 mg",
+     "caption": "Packaging design shown. Current packaging may differ.",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-5mg-front-artwork-v1.webp",
+     "sha256": "a60f5a429cfe50fc0071e303ddc2ca829579f50a251e2ac8b1b7de7894d962b3"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-5mg-website-render-v1-1024.webp",
+     "format": "webp",
+     "bytes": 47996,
+     "sha256": "699b7cde8ae5e516079d904fbfd115b0f938432e24280a93ba7c3da3683c7764",
+     "width": 1024,
+     "height": 1024
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-5mg-website-render-v1.png",
+     "format": "png",
+     "bytes": 987532,
+     "sha256": "26c1c4ac19a5cd6f15a465609f9aee6cb77c4c93fe5f282eda3194ef50426a55",
+     "width": 1254,
+     "height": 1254
+    },
+    "front_editable_master": {
+     "role": "front_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/labels/cjc-1295-with-dac-5mg-front-artwork-v1.svg",
+     "format": "svg",
+     "bytes": 3030,
+     "sha256": "57554426e181351d4e6114753e5675fac4213f9d11ea14c65396f36dbf3909f2",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview": {
+     "role": "front_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-5mg-front-artwork-v1.png",
+     "format": "png",
+     "bytes": 124268,
+     "sha256": "429c6673dda08c17c33891e5d16a41e412b1f2c65925f256d6120d1dcbb15507",
+     "width": 1600,
+     "height": 1000
+    },
+    "front_preview_web": {
+     "role": "front_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-5mg-front-artwork-v1.webp",
+     "format": "webp",
+     "bytes": 48040,
+     "sha256": "a60f5a429cfe50fc0071e303ddc2ca829579f50a251e2ac8b1b7de7894d962b3",
+     "width": 1600,
+     "height": 1000
+    },
+    "wrap_editable_master": {
+     "role": "wrap_editable_master",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/labels/cjc-1295-with-dac-5mg-wrap-proof-v1.svg",
+     "format": "svg",
+     "bytes": 7016,
+     "sha256": "5e43665dbed5b15d2a275dcdd6f51e9bd91be144961c7cc28031ba7976ba932b",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview": {
+     "role": "wrap_preview",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-5mg-wrap-proof-v1.png",
+     "format": "png",
+     "bytes": 385472,
+     "sha256": "85c535c8e01469b4de77ff2300309ff67d41f495e022cc645a0e535ed720a398",
+     "width": 2400,
+     "height": 1200
+    },
+    "wrap_preview_web": {
+     "role": "wrap_preview_web",
+     "relativeAssetPath": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/assets/cjc-1295-with-dac-5mg-wrap-proof-v1.webp",
+     "format": "webp",
+     "bytes": 161548,
+     "sha256": "c520d288844b76f74c6c06ebc890bca877451dcb05b2848d4e0cfd41886529e0",
+     "width": 2400,
+     "height": 1200
+    }
+   },
+   "nameVariance": {
+    "catalogDisplayName": "CJC-1295 With Dac",
+    "printedName": "CJC-1295 With DAC",
+    "note": "Printed name follows the verified label facts; the catalog display name differs only in case. Dataset wording is Root's decision."
+   },
+   "formBasis": {
+    "kind": "xenios_packaging_declaration",
+    "reference": "KAN-225/11259",
+    "signer": "Samuel Boadu, founder",
+    "signedDate": "2026-11-05",
+    "form": "Lyophilized vial",
+    "amountBasis": "per vial",
+    "status": "RECORDED",
+    "note": "The verified label facts state no form. The vial and the per-vial amount basis printed on this artwork are Xenios's own packaging decision under the referenced declaration, not a statement about the selected source."
+   }
+  }
+ ],
+ "changesFromC1013": [
+  "The four single-compound CJC-1295 variants, which had no label facts before. CLAUDE-2 issued their records in KAN-59/12103; the printed name carries its qualifier (No DAC or With DAC) in the casing those records give.",
+  "build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1 and verify_c1.py are byte-identical to C1-013's copies. c1_variants.py adds the reference of the label facts and the do-not-print terms of the two printed names. write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch."
+ ],
+ "packagingDeclaration": {
+  "amountBasis": "per vial",
+  "form": "Lyophilized vial",
+  "kind": "xenios_packaging_declaration",
+  "reference": "KAN-225/11259",
+  "signedDate": "2026-11-05",
+  "signer": "Samuel Boadu, founder",
+  "status": "RECORDED"
+ }
+}
