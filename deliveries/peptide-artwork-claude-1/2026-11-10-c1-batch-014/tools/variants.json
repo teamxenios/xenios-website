@@ -37,7 +37,13 @@
    "growth",
    "muscle",
    "recovery",
-   "performance"
+   "performance",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
   ],
   "nameVariance": {
    "catalogDisplayName": "CJC-1295 No Dac",
@@ -93,7 +99,13 @@
    "growth",
    "muscle",
    "recovery",
-   "performance"
+   "performance",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
   ],
   "nameVariance": {
    "catalogDisplayName": "CJC-1295 No Dac",
@@ -150,7 +162,13 @@
    "muscle",
    "recovery",
    "performance",
-   "albumin"
+   "albumin",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
   ],
   "nameVariance": {
    "catalogDisplayName": "CJC-1295 With Dac",
@@ -207,7 +225,13 @@
    "muscle",
    "recovery",
    "performance",
-   "albumin"
+   "albumin",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
   ],
   "nameVariance": {
    "catalogDisplayName": "CJC-1295 With Dac",

@@ -50,7 +50,7 @@ Website caption for every image: **"Packaging design shown. Current packaging ma
 
 No generative image model was used, and all lettering is set from installed fonts. The method is the same as in batch C1-013 (commit `33516bfa`, in review in KAN-31/12109). Every name here is a single compound, so the single-name rules set it, not the blend rule (Option B, KAN-59/11404).
 
-`build_c1.py`, `xr_compose.py`, `svg_label_render.py`, `wpf_kern.ps1` and `verify_c1.py` are byte-identical to C1-013's copies, which are C1-009's. The verifier is the one accepted in KAN-31/11570. `c1_variants.py` gains the reference of the label facts (KAN-59/12103) and the do-not-print terms of the two printed names, CJC-1295 No DAC and CJC-1295 With DAC. `write_manifest.py` gains this batch's claim reference (KAN-59/12107) and `changesFromC1013`. `variants.json`, the kern table and the build report are this batch's own.
+`build_c1.py`, `xr_compose.py`, `svg_label_render.py`, `wpf_kern.ps1` and `verify_c1.py` are byte-identical to C1-013's corrected copies. The verifier is the one accepted in KAN-31/11570 plus the check C1-013's correction added: a multi-word name is never printed shortened, which here means CJC-1295 never prints without No DAC or With DAC. This batch's correction of 2026-11-10 (KAN-59/12115) also added the regulatory do-not-print terms. No image changed. `c1_variants.py` gains the reference of the label facts (KAN-59/12103) and the do-not-print terms of the two printed names, CJC-1295 No DAC and CJC-1295 With DAC. `write_manifest.py` gains this batch's claim reference (KAN-59/12107) and `changesFromC1013`. `variants.json`, the kern table and the build report are this batch's own.
 
 ### Vial renders
 
@@ -146,6 +146,7 @@ The verifier checks:
 - the exact text set of each front SVG, plus titles, descriptions and alt text;
 - that the wrap proof id and `artworkVersion` are the record's product code;
 - the generic and per-compound do-not-print terms;
+- that a multi-word single-compound name is never printed shortened: wherever its leading words appear, the whole name follows;
 - that each render differs from the accepted Batch 004 render only inside its declared rows and columns, and that the amount rows changed when the amount is not 10 mg;
 - the ids, names and bindings against the pinned datasets.
 

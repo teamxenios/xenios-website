@@ -102,8 +102,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/c1_variants.py",
-   "bytes": 14419,
-   "sha256": "9041e62d8f402a4f083a272ef16bc847f6772dfd543b7451ec0587884bbcbe9f"
+   "bytes": 14946,
+   "sha256": "93e5b2ef19ba678c70f5dddcf3109b013b8a02af0061951fa4f2fd371ee91caf"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/kern-table.segoe-ui.json",
@@ -117,13 +117,13 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/variants.json",
-   "bytes": 7238,
-   "sha256": "421111c26f95936cf6075adc3c6f90a8812123168aee585fe09edf99d3a17bd4"
+   "bytes": 7650,
+   "sha256": "7a700d0b2df13ad8fb7e3330ca3bdd852b18104ef1bd2e046fac4146cd20330a"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/verify_c1.py",
-   "bytes": 25942,
-   "sha256": "a9950fbfceb3e0bb930f3e38d7be18fd8e353a862f87d110fe08f74830752b35"
+   "bytes": 26951,
+   "sha256": "f2c7afdef513e1eb881c7d5cedf8a8586e1191bb59819f6d107edf03a6b50de6"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/wpf_kern.ps1",
@@ -132,8 +132,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/write_manifest.py",
-   "bytes": 43616,
-   "sha256": "5d6d943bff134cbe5cc5cea658006130e298dee1fe8e0c19d6003239085ed34a"
+   "bytes": 45494,
+   "sha256": "b8a35c011f26a5a9fc65f5e86e360b78fe25a8fa4c86b6d7cc6687058592ecb2"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-014/tools/xr_compose.py",
@@ -207,7 +207,13 @@
     "growth",
     "muscle",
     "recovery",
-    "performance"
+    "performance",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
    ],
    "renderLayout": {
     "mode": "stack",
@@ -444,7 +450,13 @@
     "growth",
     "muscle",
     "recovery",
-    "performance"
+    "performance",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
    ],
    "renderLayout": {
     "mode": "stack",
@@ -682,7 +694,13 @@
     "muscle",
     "recovery",
     "performance",
-    "albumin"
+    "albumin",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
    ],
    "renderLayout": {
     "mode": "stack",
@@ -920,7 +938,13 @@
     "muscle",
     "recovery",
     "performance",
-    "albumin"
+    "albumin",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
    ],
    "renderLayout": {
     "mode": "stack",
@@ -1095,7 +1119,7 @@
  ],
  "changesFromC1013": [
   "The four single-compound CJC-1295 variants, which had no label facts before. CLAUDE-2 issued their records in KAN-59/12103; the printed name carries its qualifier (No DAC or With DAC) in the casing those records give.",
-  "build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1 and verify_c1.py are byte-identical to C1-013's copies. c1_variants.py adds the reference of the label facts and the do-not-print terms of the two printed names. write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch."
+  "build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1 and verify_c1.py are byte-identical to C1-013's corrected copies (see corrections). c1_variants.py adds the reference of the label facts and the do-not-print terms of the two printed names. write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch."
  ],
  "packagingDeclaration": {
   "amountBasis": "per vial",
@@ -1105,5 +1129,14 @@
   "signedDate": "2026-11-05",
   "signer": "Samuel Boadu, founder",
   "status": "RECORDED"
- }
+ },
+ "corrections": [
+  {
+   "date": "2026-11-10",
+   "requestedBy": "KAN-59/12115",
+   "previousCommit": "2adc15580c5793879428274a11e1388745684148",
+   "previousManifestSha256": "7166a4e4de4b1b298f852783b0012e9655632b12d69938d93e76f3e72b8bfe62",
+   "change": "Checks only. CLAUDE-2, who wrote the label facts, found one bar not enforced and one that rested on a check the wrap did not have. c1_variants.py now carries FDA, approved medicine, compounded, compounding, regulatory and indication for both printed names. verify_c1.py is C1-013's corrected copy: its new check requires the whole name wherever the leading words of a multi-word name appear, so CJC-1295 cannot print without No DAC or With DAC on the front, the wrap, a title, a description or alt text. No render, label master, preview or contact sheet changed."
+  }
+ ]
 }
