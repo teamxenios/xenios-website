@@ -188,6 +188,7 @@ import {
   InMemoryPendingVerificationQueue,
   registerEarlyAccessOpsRoutes,
 } from "./routes/ops-routes";
+import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../shared/research/early-access/quote-only";
 
 // Registration seam for the Private Early Access gate.
 //
@@ -432,6 +433,12 @@ function declaredLength(request: Request): number | undefined {
 
 export interface EarlyAccessRegistrationOptions {
   readonly config?: EarlyAccessConfig;
+  /**
+   * Whether the customer catalog is the quote-only projection. Defaults to the
+   * release constant, so production is quote-only. Suites that prove the
+   * priced engine the cart and staff still use pass false explicitly.
+   */
+  readonly quoteOnly?: boolean;
   readonly repository?: PrivateAccessSessionRepository;
   readonly now?: () => number;
   /**
@@ -886,6 +893,8 @@ export function registerPrivateEarlyAccessApi(
     catalog,
     ledger: releases,
     now,
+    // Quote-only first release: the customer catalog carries no amount.
+    quoteOnly: options.quoteOnly ?? EARLY_ACCESS_QUOTE_ONLY_RELEASE,
   };
   const catalogRoute = createEarlyAccessCatalogRoute(routeDependencies);
   const resolveMember = options.resolveMember ?? (async () => null);

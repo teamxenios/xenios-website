@@ -10,6 +10,7 @@ import { createRequestIntentCatalog } from "./catalog";
 import { createRequestIntentRouter } from "./express";
 import { REQUEST_INTENT_STAFF_READ_ENABLED_ENV } from "./staff-read-authority";
 import { RequestIntentError, RequestIntentService } from "./service";
+import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/early-access/quote-only";
 import { requestIntentRepository, requestIntentStaffReader, type RequestIntentRpcClient } from "./rpc-repository";
 
 export const REQUEST_INTENT_ENABLED_ENV = "RESEARCH_REQUEST_INTENT_ENABLED";
@@ -100,6 +101,8 @@ export function registerRequestIntentApi(
     return;
   }
   const service = new RequestIntentService({
+    // Quote-only first release: the customer list carries no amount.
+    quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE,
     catalog: createRequestIntentCatalog({
       serviceFor: wiring.masterOfferingServiceFor, bindingFor: wiring.bindingFor,
       offeringVariantFor: wiring.offeringVariantFor, catalogVersion: wiring.catalogVersion,

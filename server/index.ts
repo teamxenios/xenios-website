@@ -148,6 +148,7 @@ import {
   type ExpressAssistedOrderRequest,
 } from "./research/assisted-order/express";
 import { createAssistedOrderRouteTable } from "./research/assisted-order/http";
+import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../shared/research/early-access/quote-only";
 import type { SupabaseRpcClient as AssistedOrderRpcClient } from "./research/assisted-order/supabase-repository";
 import type { SupabaseStorageClient as AssistedOrderStorageClient } from "./research/assisted-order/supabase-document-store";
 import { requireSupabaseAdmin } from "./routes";
@@ -975,6 +976,9 @@ async function composeAssistedOrderBridge(): Promise<
     // attribution. Referral V1 is now the one authority: the cookie names a
     // touch, and the partner behind it is re-read durably on each submit.
     createReferralV1AttributionResolver(buildReferralV1Dependencies()),
+    // Quote-only first release: customer catalog, receipt and status carry no
+    // catalog amount. Admin routes keep staff pricing.
+    { quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE },
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",

@@ -1,4 +1,5 @@
 import { AssistedOrderService } from "./service";
+import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../shared/research/early-access/quote-only";
 import {
   consoleAssistedOrderLogger,
   sha256AssistedOrderHasher,
@@ -118,6 +119,8 @@ export function createAssistedOrderProductionComposition(
       hasher: sha256AssistedOrderHasher,
       logger: inputs.logger ?? consoleAssistedOrderLogger,
       adminNotificationEmail: inputs.adminNotificationEmail!.trim(),
+      // Quote-only first release: the customer confirmation email carries no amount.
+      quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE,
       documentBucketName:
         inputs.documentBucketName?.trim() ||
         "research-assisted-order-documents",

@@ -11,6 +11,14 @@
 
 export const EARLY_ACCESS_QUOTE_LABEL = "Request a quote";
 
+/**
+ * The first Early Access release is quote-only. Every customer composition
+ * point reads this one constant, so the cutover and its rollback are one
+ * revertible commit, not an environment flag. Staff pricing, issued quotes,
+ * invoices and paid records are never affected by it.
+ */
+export const EARLY_ACCESS_QUOTE_ONLY_RELEASE = true;
+
 /** The marker a quote-only storefront unit carries, so a client never infers it from a missing price. */
 export const EARLY_ACCESS_QUOTE_PRICING = "quote" as const;
 
