@@ -20,6 +20,10 @@ import type {
   AssistedOrderRouteViewerResolver,
   AssistedOrderViewer,
 } from "./ports";
+import {
+  quoteOnlyCatalogPage,
+  quoteOnlyRequestView,
+} from "../../../shared/research/early-access/quote-only";
 
 export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
   "x-xenios-order-status-token";
@@ -202,7 +206,16 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
   // submission records no affiliate attribution, never that a body value is
   // trusted instead.
   attribution?: AssistedOrderAttributionResolver | null,
+  /**
+   * Quote-only Early Access. When true, the customer catalog, the new-request
+   * receipt and the request status carry no catalog price or estimate. The
+   * service still prices on the server, so eligibility, staff records and
+   * issued quotes are unchanged, and admin routes are not affected. Absent or
+   * false keeps today's priced responses.
+   */
+  options?: Readonly<{ quoteOnly?: boolean }>,
 ): readonly AssistedOrderRouteDescriptor[] {
+  const quoteOnly = options?.quoteOnly === true;
   const viewer = (request: AssistedOrderHttpRequest): Promise<AssistedOrderViewer> =>
     viewerResolver.resolve(request as Request);
 
@@ -228,7 +241,7 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
       handler: (request) =>
         handle(async () => {
           const page = await service.catalog(await viewer(request), catalogQuery(request));
-          return ok(200, page);
+          return ok(200, quoteOnly ? quoteOnlyCatalogPage(page) : page);
         }),
     },
     {
@@ -256,7 +269,7 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
             request.body as AssistedOrderSubmitInput,
             affiliateAttributionRef,
           );
-          return ok(201, receipt);
+          return ok(201, quoteOnly ? quoteOnlyRequestView(receipt) : receipt);
         }),
     },
     {
@@ -271,7 +284,7 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
             request.params.publicReference ?? "",
             statusToken,
           );
-          return ok(200, status);
+          return ok(200, quoteOnly ? quoteOnlyRequestView(status) : status);
         }),
     },
     {

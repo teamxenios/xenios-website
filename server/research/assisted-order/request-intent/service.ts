@@ -12,6 +12,7 @@ import type {
   AssistedOrderIdGenerator, AssistedOrderSubmissionStanding, AssistedOrderLegalPort,
 } from "../ports";
 import type { RequestIntentCatalog } from "./catalog";
+import { quoteOnlyCatalogPage } from "../../../../shared/research/early-access/quote-only";
 
 export class RequestIntentError extends Error {
   constructor(public readonly code: string, public readonly status: 400 | 401 | 403 | 409 | 503) {
@@ -35,6 +36,12 @@ export type RequestIntentDependencies = Readonly<{
   catalog: RequestIntentCatalog;
   repository: RequestIntentRepository;
   standing: AssistedOrderSubmissionStanding;
+  /**
+   * Quote-only Early Access. When true, the catalog list carries no catalog
+   * price. Submission still resolves every line on the server. Absent keeps
+   * today's priced list.
+   */
+  quoteOnly?: boolean;
   legal: AssistedOrderLegalPort;
   hasher: AssistedOrderHasher;
   ids: AssistedOrderIdGenerator;
@@ -62,7 +69,8 @@ export class RequestIntentService {
 
   async list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery) {
     this.owner(viewer);
-    return this.deps.catalog.list(viewer, query);
+    const page = await this.deps.catalog.list(viewer, query);
+    return this.deps.quoteOnly === true ? quoteOnlyCatalogPage(page) : page;
   }
 
   /** Same-session recovery returns only an actual committed reference, never a success guess. */
