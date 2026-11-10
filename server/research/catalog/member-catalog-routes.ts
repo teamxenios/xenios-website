@@ -1,6 +1,10 @@
 import type { Express, NextFunction, Request, Response } from "express";
 import type { ProductLane } from "@shared/research/catalog";
 import { MEMBER_CATALOG_SORTS, type MemberCatalogQuery } from "@shared/research/member-catalog";
+import {
+  quoteOnlyMemberCatalog,
+  quoteOnlyMemberProductDetail,
+} from "@shared/research/member-catalog-quote-only";
 import type { MemberRow } from "../member-auth";
 import type { MemberCatalogService } from "./member-catalog-service";
 
@@ -54,7 +58,14 @@ export function registerMemberCatalogApi(
   app: Express,
   service: MemberCatalogService,
   requireActiveMember: MemberGuard,
+  /**
+   * Quote-only release. When true, both routes answer with no member price
+   * and no cart selection. The service still prices on the server; only the
+   * answer changes. Absent or false keeps the priced answers.
+   */
+  options?: Readonly<{ quoteOnly?: boolean }>,
 ): void {
+  const quoteOnly = options?.quoteOnly === true;
   app.get(
     "/api/research/member/products",
     privateHeaders,
@@ -70,7 +81,10 @@ export function registerMemberCatalogApi(
           member,
           query: queryFrom(req),
         });
-        res.json({ ok: true, catalog });
+        res.json({
+          ok: true,
+          catalog: quoteOnly ? quoteOnlyMemberCatalog(catalog) : catalog,
+        });
       } catch {
         unavailable(res);
       }
@@ -96,7 +110,10 @@ export function registerMemberCatalogApi(
           res.status(404).json({ ok: false, code: "product_not_found" });
           return;
         }
-        res.json({ ok: true, product });
+        res.json({
+          ok: true,
+          product: quoteOnly ? quoteOnlyMemberProductDetail(product) : product,
+        });
       } catch {
         unavailable(res);
       }

@@ -579,6 +579,9 @@ registerMemberCatalogApi(
   app,
   buildMemberCatalogProductionService(),
   requireActiveMember,
+  // Quote-only first release: an ordinary member is a customer, so the
+  // member catalog carries no member price. Admin routes keep staff pricing.
+  { quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE },
 );
 
 // Launch A is a private, read-only partner catalog. The route table contributes
