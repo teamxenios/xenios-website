@@ -102,8 +102,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-013/tools/c1_variants.py",
-   "bytes": 13537,
-   "sha256": "90493603de8ab84c8a49e9daf109fed4b2fef2d94d66f5b282fe713d4fabd46d"
+   "bytes": 13894,
+   "sha256": "8939c516743cac1c901f96974db4671654babc99caf7c8f52d308a9de2ed699f"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-013/tools/kern-table.segoe-ui.json",
@@ -117,13 +117,13 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-013/tools/variants.json",
-   "bytes": 7489,
-   "sha256": "4cf238192fe7da2899b5e9c6de745c7fe21ddcfa809c857885a1199bd81fca41"
+   "bytes": 8027,
+   "sha256": "d8d253b36fd2bc28a70c44e7912016c6da1c60d962b39f4374d6d2e062f748c3"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-013/tools/verify_c1.py",
-   "bytes": 25942,
-   "sha256": "a9950fbfceb3e0bb930f3e38d7be18fd8e353a862f87d110fe08f74830752b35"
+   "bytes": 26951,
+   "sha256": "f2c7afdef513e1eb881c7d5cedf8a8586e1191bb59819f6d107edf03a6b50de6"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-013/tools/wpf_kern.ps1",
@@ -132,8 +132,8 @@
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-013/tools/write_manifest.py",
-   "bytes": 42957,
-   "sha256": "cc0ea716d4a11d9e024060e820eb4238e7caf6a58372f266ab27d7f8f108de7c"
+   "bytes": 44004,
+   "sha256": "ed89bf259c9a6a1fd6b4b370608baea0b688fac2d0a8d6e50d038f3c39c569ce"
   },
   {
    "path": "deliveries/peptide-artwork-claude-1/2026-11-10-c1-batch-013/tools/xr_compose.py",
@@ -199,7 +199,15 @@
     "growth",
     "muscle",
     "anabolic",
-    "performance"
+    "performance",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication",
+    "IGF-I",
+    "IGF1"
    ],
    "renderLayout": {
     "mode": "one",
@@ -419,7 +427,13 @@
     "skin",
     "anti-ageing",
     "anti-aging",
-    "aesthetic"
+    "aesthetic",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
    ],
    "renderLayout": {
     "mode": "one",
@@ -631,7 +645,13 @@
     "LKKTETQ",
     "sequence",
     "fragment",
-    "performance"
+    "performance",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
    ],
    "renderLayout": {
     "mode": "one",
@@ -838,7 +858,13 @@
     "LKKTETQ",
     "sequence",
     "fragment",
-    "performance"
+    "performance",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
    ],
    "renderLayout": {
     "mode": "one",
@@ -1053,7 +1079,13 @@
     "immunomodulatory",
     "longevity",
     "geroprotective",
-    "geroprotector"
+    "geroprotector",
+    "FDA",
+    "approved medicine",
+    "compounded",
+    "compounding",
+    "regulatory",
+    "indication"
    ],
    "renderLayout": {
     "mode": "one",
@@ -1201,7 +1233,7 @@
  ],
  "changesFromC1012": [
   "Single-compound variants that had no label facts before. CLAUDE-1 proposed their facts in KAN-59/12102, taking each product name from CLAUDE-2's own description of that exact variant and each amount from the pinned variant label; CLAUDE-2 adopted them in KAN-59/12103 and supplied the compound-specific do-not-print terms.",
-  "build_c1.py, xr_compose.py, svg_label_render.py, wpf_kern.ps1 and verify_c1.py are byte-identical to C1-012's copies. c1_variants.py adds the reference of the adopted facts, the do-not-print terms of IGF-1 LR3, SNAP-8 and Thymalin, and six more terms for TB-500. write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch."
+  "build_c1.py, xr_compose.py, svg_label_render.py and wpf_kern.ps1 are byte-identical to C1-012's copies. verify_c1.py is C1-012's plus one check, that a multi-word name is never printed shortened (see corrections). c1_variants.py adds the reference of the adopted facts, the do-not-print terms of IGF-1 LR3, SNAP-8 and Thymalin, and six more terms for TB-500. write_manifest.py records this batch's claim reference and this note. The kern table covers the strings in this batch."
  ],
  "packagingDeclaration": {
   "amountBasis": "per vial",
@@ -1211,5 +1243,14 @@
   "signedDate": "2026-11-05",
   "signer": "Samuel Boadu, founder",
   "status": "RECORDED"
- }
+ },
+ "corrections": [
+  {
+   "date": "2026-11-10",
+   "requestedBy": "KAN-59/12111",
+   "previousCommit": "33516bfaeabf6c56aca72b585bbc3307fbe15d3a",
+   "previousManifestSha256": "64f916e271c7afc5b06b28544508437cb7f9bf7ed151c95b8248da0f22a9e8ac",
+   "change": "Checks only. CLAUDE-2, who wrote the label facts, compared the do-not-print terms with the record and found two bars not enforced. c1_variants.py now carries FDA, approved medicine, compounded, compounding, regulatory and indication for IGF-1 LR3, SNAP-8, Thymalin and TB-500, and IGF-I and IGF1 for IGF-1 LR3. The bare word approved is not a term, because the wrap template's proof notes print \"Supplier-approved copy required\". verify_c1.py gains one check: wherever the leading words of a multi-word single-compound name appear in a printed string, title, description or alt text, the whole name must follow, so a name cannot be printed shortened. No render, label master, preview or contact sheet changed."
+  }
+ ]
 }

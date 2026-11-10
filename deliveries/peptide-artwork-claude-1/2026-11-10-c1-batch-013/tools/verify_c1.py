@@ -191,6 +191,17 @@ def main():
                      'For laboratory research use only.', 'PRODUCT CODE', sku):
             check(need in wb, 'wrap has %r (%s)' % (need, name))
         check(wb.count(name) == 2 and wb.count(sku) == 1, 'wrap name x2, code x1 ' + name)
+        # A printed name is never shortened (KAN-59/12111, 12115). Wherever the leading words of a multi-word single-compound
+        # name appear in a printed string, title, description or alt text, the whole name follows. Name lines set on several
+        # lines are already joined in fb and wb. "IGF-1" without "LR3" and "CJC-1295" without its qualifier fail here.
+        if not blend and ' ' in name:
+            words = name.split(' ')
+            heads = [' '.join(words[:k]) for k in range(1, len(words))]
+            printed = fb + fm + wb + wm + [c.get('altText') or '' for c in r.get('websiteReviewCandidates') or []]
+            short = sorted({s for s in printed for h in heads
+                            for mt in re.finditer(r'(?<![A-Za-z0-9])' + re.escape(h) + r'(?![A-Za-z0-9])', s or '', re.I)
+                            if (s or '')[mt.start():mt.start() + len(name)].lower() != name.lower()})
+            check(not short, 'name never shortened %s %s' % (name, short if short else ''))
         pid = [s for s in wb if 'WRAP-V' in (s or '').upper()]
         check(pid == ['%s-WRAP-v1 | SCALE PENDING SUPPLIER DIELINE' % sku], 'wrap proof id is the product code %s %s' % (name, pid))
         check(r['artworkVersion'] == '%s-WEB-SUPPLIER-v1' % sku, 'artworkVersion is the product code %s %r' % (name, r['artworkVersion']))

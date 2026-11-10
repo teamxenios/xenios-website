@@ -52,7 +52,7 @@ Website caption for every image: **"Packaging design shown. Current packaging ma
 
 No generative image model was used, and all lettering is set from installed fonts. The method is the same as in batch C1-012 (commit `e6353348`, in review in KAN-31/12088). Every name here is a single compound, so the single-name rules set it, not the blend rule (Option B, KAN-59/11404).
 
-`build_c1.py`, `xr_compose.py`, `svg_label_render.py`, `wpf_kern.ps1` and `verify_c1.py` are byte-identical to C1-012's copies, which are C1-009's. The verifier is the one accepted in KAN-31/11570. `c1_variants.py` gains the reference of the adopted label facts (KAN-59/12103), the do-not-print terms of the three compounds new to this lane (IGF-1 LR3, SNAP-8, Thymalin), and six more terms for TB-500 from the same record. `write_manifest.py` gains this batch's claim reference (KAN-59/12107) and `changesFromC1012`. `variants.json`, the kern table and the build report are this batch's own.
+`build_c1.py`, `xr_compose.py`, `svg_label_render.py` and `wpf_kern.ps1` are byte-identical to C1-012's copies, which are C1-009's. `verify_c1.py` is the verifier accepted in KAN-31/11570 plus one check added in this batch's correction of 2026-11-10 (KAN-59/12111): a multi-word name is never printed shortened. The same correction added the regulatory do-not-print terms. No image changed. `c1_variants.py` gains the reference of the adopted label facts (KAN-59/12103), the do-not-print terms of the three compounds new to this lane (IGF-1 LR3, SNAP-8, Thymalin), and six more terms for TB-500 from the same record. `write_manifest.py` gains this batch's claim reference (KAN-59/12107) and `changesFromC1012`. `variants.json`, the kern table and the build report are this batch's own.
 
 ### Vial renders
 
@@ -149,6 +149,7 @@ The verifier checks:
 - the exact text set of each front SVG, plus titles, descriptions and alt text;
 - that the wrap proof id and `artworkVersion` are the record's product code;
 - the generic and per-compound do-not-print terms;
+- that a multi-word single-compound name is never printed shortened: wherever its leading words appear, the whole name follows;
 - that each render differs from the accepted Batch 004 render only inside its declared rows and columns, and that the amount rows changed when the amount is not 10 mg;
 - the ids, names and bindings against the pinned datasets.
 

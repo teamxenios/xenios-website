@@ -53,7 +53,7 @@ EXTRA_TERMS = {
     'Glutathione': ['reduced', 'oxidized', 'oxidised', 'GSH', 'GSSG', 'Isethion', 'Glutinal', 'Tathion', 'Copren', 'antioxidant', 'detox', 'skin', 'liver', 'wellness', 'supplement'],
     'NAD+': ['nadide', 'NADH', 'reduced', 'anti-ageing', 'anti-aging', 'energy', 'longevity', 'metabolic', 'wellness', 'supplement'],
     # KAN-225/11152 (CLAUDE-2 identity finding, no facts yet): TB-500 is the acetylated heptapeptide, not thymosin beta-4; never let either name reach the other's label
-    'TB-500': ['thymosin', 'Tβ4', 'beta-4', 'beta 4', 'fequesetide', 'goralatide', 'SDKP', 'healing', 'repair', 'recovery', 'TB4', 'Ac-LKKTETQ', 'LKKTETQ', 'sequence', 'fragment', 'performance'],
+    'TB-500': ['thymosin', 'Tβ4', 'beta-4', 'beta 4', 'fequesetide', 'goralatide', 'SDKP', 'healing', 'repair', 'recovery', 'TB4', 'Ac-LKKTETQ', 'LKKTETQ', 'sequence', 'fragment', 'performance', 'FDA', 'approved medicine', 'compounded', 'compounding', 'regulatory', 'indication'],
     'Thymosin Beta-4': ['TB-500', 'TB500', 'fequesetide', 'goralatide', 'SDKP', 'healing', 'repair', 'recovery'],
     # batch 12 (KAN-59/11064): the extract's name is a PubChem synonym artefact on the peptide record; no benefit, regulatory or compounding wording
     'Epithalon': ['Epithalamin', 'Epithalamine', 'Epitalamin', 'extract', 'pineal', 'longevity', 'anti-ageing', 'anti-aging', 'telomer', 'sleep', 'geroprotect', 'FDA', 'approved medicine', 'compounded', 'compounding', 'regulatory', 'indication'],
@@ -85,11 +85,11 @@ EXTRA_TERMS = {
     'LL-37': ['CAP-18', 'hCAP-18', 'hCAP18', 'CAP18', 'cathelicidin', 'precursor', 'antimicrobial', 'antibacterial',
               'infection', 'wound', 'disease'],
     # c1-013 (KAN-59/12103)
-    'IGF-1 LR3': ['insulin', 'insulin-like', 'Long R3', 'LongR3', 'Arg3', 'recombinant', 'sequence', 'growth', 'muscle', 'anabolic', 'performance'],
+    'IGF-1 LR3': ['insulin', 'insulin-like', 'Long R3', 'LongR3', 'Arg3', 'recombinant', 'sequence', 'growth', 'muscle', 'anabolic', 'performance', 'FDA', 'approved medicine', 'compounded', 'compounding', 'regulatory', 'indication', 'IGF-I', 'IGF1'],
     # c1-013 (KAN-59/12103)
-    'SNAP-8': ['octapeptide', 'octapeptide-3', 'hexapeptide', 'hexapeptide-8', 'acetyl', 'sequence', 'wrinkle', 'wrinkles', 'collagen', 'skin', 'anti-ageing', 'anti-aging', 'aesthetic'],
+    'SNAP-8': ['octapeptide', 'octapeptide-3', 'hexapeptide', 'hexapeptide-8', 'acetyl', 'sequence', 'wrinkle', 'wrinkles', 'collagen', 'skin', 'anti-ageing', 'anti-aging', 'aesthetic', 'FDA', 'approved medicine', 'compounded', 'compounding', 'regulatory', 'indication'],
     # c1-013 (KAN-59/12103)
-    'Thymalin': ['thymulin', 'thymosin', 'thymus', 'thymic', 'KE', 'EW', 'composition', 'potency', 'immune', 'immunomodulatory', 'longevity', 'geroprotective', 'geroprotector'],
+    'Thymalin': ['thymulin', 'thymosin', 'thymus', 'thymic', 'KE', 'EW', 'composition', 'potency', 'immune', 'immunomodulatory', 'longevity', 'geroprotective', 'geroprotector', 'FDA', 'approved medicine', 'compounded', 'compounding', 'regulatory', 'indication'],
 }
 
 def blend_terms(name, comps):

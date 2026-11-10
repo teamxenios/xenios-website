@@ -29,7 +29,15 @@
    "growth",
    "muscle",
    "anabolic",
-   "performance"
+   "performance",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication",
+   "IGF-I",
+   "IGF1"
   ],
   "nameVariance": {
    "catalogDisplayName": "IGF-1 Lr3",
@@ -79,7 +87,13 @@
    "skin",
    "anti-ageing",
    "anti-aging",
-   "aesthetic"
+   "aesthetic",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
   ],
   "nameVariance": {
    "catalogDisplayName": "Snap-8",
@@ -132,7 +146,13 @@
    "LKKTETQ",
    "sequence",
    "fragment",
-   "performance"
+   "performance",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
   ],
   "nameVariance": null,
   "packagingDeclaration": {
@@ -181,7 +201,13 @@
    "LKKTETQ",
    "sequence",
    "fragment",
-   "performance"
+   "performance",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
   ],
   "nameVariance": null,
   "packagingDeclaration": {
@@ -227,7 +253,13 @@
    "immunomodulatory",
    "longevity",
    "geroprotective",
-   "geroprotector"
+   "geroprotector",
+   "FDA",
+   "approved medicine",
+   "compounded",
+   "compounding",
+   "regulatory",
+   "indication"
   ],
   "nameVariance": null,
   "packagingDeclaration": {
