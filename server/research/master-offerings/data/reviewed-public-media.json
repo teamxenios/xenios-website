@@ -585,7 +585,7 @@
           "href": "/research/product-media/5-amino-1mq-50mg-label-card-v1-1024.webp",
           "altText": "Xenios 5-Amino-1MQ 50 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/5-amino-1mq-50mg-label-design-v1.webp",
@@ -594,8 +594,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "4d6be08bc347b5a8e1a0ed7694ece436a23d533124159336e5488274f7e0e2ce",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "73c7016ace7b823e2f981e7feb1dc305671399dddf8c794ec04b74fd74c6260d",
       "labelPreviewSha256": "05439e2c61c2bdb9250aea704bab49a19fb53f20c0992c42aeb8d7f39e06a55d"
     },
     {
@@ -607,7 +607,7 @@
           "href": "/research/product-media/bpc-157-500mcg-label-card-v1-1024.webp",
           "altText": "Xenios BPC-157 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/bpc-157-500mcg-label-design-v1.webp",
@@ -616,8 +616,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "52d90ff1d721a5d724b2190e4526e9c9767f246515d0018091649ca74f6d77ce",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "316f16d75a469212cff0c4ebe5f233d7a5e62cdacf92c9c423b4ac14213aee49",
       "labelPreviewSha256": "0faf32a1b9c73c85f720791223bf9b1630e326cbe1f0a99335a533283ea0bd53"
     },
     {
@@ -629,7 +629,7 @@
           "href": "/research/product-media/kpv-500mcg-label-card-v1-1024.webp",
           "altText": "Xenios KPV 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/kpv-500mcg-label-design-v1.webp",
@@ -638,8 +638,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "3f72b52298cbc5d7fd576f25a4177fa026a4817bf835844927367de7d2320ca8",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "417bb0dbafa33c05043cf1471ccaa2f817f29dbe7bf414266e801c56b6e06250",
       "labelPreviewSha256": "eec9e77e3c52200b5ad6111d62d86a176d63b95b46438c681f2b9d7eb944bc77"
     },
     {
@@ -651,7 +651,7 @@
           "href": "/research/product-media/ghk-cu-2mg-label-card-v1-1024.webp",
           "altText": "Xenios GHK-Cu 2 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/ghk-cu-2mg-label-design-v1.webp",
@@ -660,8 +660,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "4da2be0384bd2100c41d5bb3a4d0d6b2f12466c5c5fc6f0e48a24a7d5c6f9ef8",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "d7632eeca839d17e4c9108adbde9015a68dcb5ebd2fe295213ee09380ce35788",
       "labelPreviewSha256": "e4146cd302719f92307c14d2a35d07f1eb1f221e5b96de572f24a3bea0905f56"
     },
     {
@@ -717,7 +717,7 @@
           "href": "/research/product-media/sermorelin-500mcg-label-card-v1-1024.webp",
           "altText": "Xenios Sermorelin 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/sermorelin-500mcg-label-design-v1.webp",
@@ -726,8 +726,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "e6180addd211690863141e9a032ef98eb823b8d88d7009a4ec24369114874033",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "a34928ab9ba7dc6b0e7d7714066e8c7fcfe1810e825ddc57d2f8dc66d2131490",
       "labelPreviewSha256": "6b64a5907212d45f7ae60e7003ab34853ab239a23fdfb5ca519aaa5d932320ad"
     },
     {
@@ -739,7 +739,7 @@
           "href": "/research/product-media/thymosin-alpha-1-500mcg-label-card-v1-1024.webp",
           "altText": "Xenios Thymosin Alpha-1 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/thymosin-alpha-1-500mcg-label-design-v1.webp",
@@ -748,8 +748,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "2a136a678e3f00a7e21edc628346da9cab22aefc05f14a8807670f49648ec251",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "eb056a2af18b737a24ce7aaea6de0c2dedf35a1498988a249fbd99b83467d55b",
       "labelPreviewSha256": "7d1687675d997bbcb09e9811208c3e4861385876bb170d3c90bb5b9671bf48c0"
     },
     {
@@ -761,7 +761,7 @@
           "href": "/research/product-media/slu-pp-332-500mcg-label-card-v1-1024.webp",
           "altText": "Xenios SLU-PP-332 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/slu-pp-332-500mcg-label-design-v1.webp",
@@ -770,8 +770,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "84d0134995b3933723964f7d7aeedfeb4e3c02a6dd8d16b273a1a547ef869117",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "ff30f55a387652f5c4a182bd281d1225b640c61018ce541a316487e3c58ab387",
       "labelPreviewSha256": "1f58350c81261c52f7368e67f5fa251e91d4974f28e86bbacdb391a35814a7e1"
     },
     {
@@ -783,7 +783,7 @@
           "href": "/research/product-media/tb-500-500mcg-label-card-v1-1024.webp",
           "altText": "Xenios TB-500 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/tb-500-500mcg-label-design-v1.webp",
@@ -792,8 +792,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "d54a3b63e7055fde419f471c5924c688958982056f7925fda0263414a41ccfc7",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "548db9aaff2bec93cb742e7071dacad21137ee94a0c4791acfd9ec6619562ece",
       "labelPreviewSha256": "8fa60dc7f4ee0a03c8bf73b91b9d23ac115781a0c437acce8a444bca53438c12"
     },
     {
@@ -827,7 +827,7 @@
           "href": "/research/product-media/blend-bpc-157-tb-500-500-500mcg-label-card-v1-1024.webp",
           "altText": "Xenios Blend BPC-157 + TB-500 500/500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/blend-bpc-157-tb-500-500-500mcg-label-design-v1.webp",
@@ -836,8 +836,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "390436e72193dfeee535393fabb71777678ac29568d4369f394462147d9c2a95",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "b93a701d12bb5a6747636c31e8ddc4663aafe578fb922402bde5802de04978e4",
       "labelPreviewSha256": "4b31bc6d018e90eed6b84bbb159624f54e1fd67fa9de4c746e5e16cda03da66c"
     },
     {
@@ -2543,7 +2543,7 @@
           "href": "/research/product-media/tesofensine-500mcg-label-card-v1-1024.webp",
           "altText": "Xenios Tesofensine 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/tesofensine-500mcg-label-design-v1.webp",
@@ -2552,8 +2552,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "895dc0d6d4e32e41cc28d5111e2beff27583266d",
-      "primarySha256": "3799dfd114082adb487317ca831148f7db1e6d49369690539a564e17ca426a0f",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "1b3b4a8e3c71d59f68080fc15d8ef4b6caf1bc9c896fd11bf1b0cb8c462643b4",
       "labelPreviewSha256": "0c0d34e6de887cca1937d9d0e4dcaf6eecd98f027b000dd6e7903ac9c3f25b43"
     },
     {
@@ -2565,7 +2565,7 @@
           "href": "/research/product-media/gonadorelin-10mg-label-card-v1-1024.webp",
           "altText": "Xenios Gonadorelin 10 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/gonadorelin-10mg-label-design-v1.webp",
@@ -2574,8 +2574,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
-      "primarySha256": "36bf118e6c91cee9d0bb8719410ec5a6ca3d2470a927b48d4070f77041a5b745",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "a7289cc0d56b42724fb77c18b3db039d497427fd9a986c4cc6c81962310be19f",
       "labelPreviewSha256": "62b44088b385bea75b82e84b702580ff3e252a216ac443b0a0ec49279335fb4f"
     },
     {
@@ -2587,7 +2587,7 @@
           "href": "/research/product-media/pt-141-5mg-label-card-v1-1024.webp",
           "altText": "Xenios PT-141 5 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/pt-141-5mg-label-design-v1.webp",
@@ -2596,8 +2596,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
-      "primarySha256": "ac8f48ca81267adb9b5540900d2ba8e6bca73666f973d613d32f85fe0a15eb78",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "79a76d2af65a9632154c009ce7dd9acada4605730fe2a25cfd5528dae1b058ec",
       "labelPreviewSha256": "a8b2083ea236b5c955bfd821d3916c9533e453e43129db935eeca296e54013ef"
     },
     {
@@ -2609,7 +2609,7 @@
           "href": "/research/product-media/ghk-cu-75mg-label-card-v1-1024.webp",
           "altText": "Xenios GHK-Cu 75 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/ghk-cu-75mg-label-design-v1.webp",
@@ -2618,8 +2618,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
-      "primarySha256": "acc7c55553997392a80077c13a955c3d26fb1301cfcbf11e871568bbf61244f8",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "cfc9a4c8e423a40b6803e0f8fe2ba76652386264780a20ca24f141e2d5d5de93",
       "labelPreviewSha256": "77e6220578f8b6cfbf65852648e2932476640cd7d5406dec588382b5925f53b7"
     },
     {
@@ -2631,7 +2631,7 @@
           "href": "/research/product-media/bpc-157-20mg-label-card-v1-1024.webp",
           "altText": "Xenios BPC-157 20 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/bpc-157-20mg-label-design-v1.webp",
@@ -2640,8 +2640,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
-      "primarySha256": "13b828cf77abd322d5da7ab2d74dc192f96a859a848544e111bb86b895efe49b",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "35001a4b7aa9cdd7e7923fcb3649e5cfbb0dbafbe3ba7eb6dfe60aa0227ade7b",
       "labelPreviewSha256": "82a65d630b3edc9ae230d2167f07112a8aa74a733a878698655fd441c408a330"
     },
     {
@@ -2653,7 +2653,7 @@
           "href": "/research/product-media/semax-30mg-label-card-v1-1024.webp",
           "altText": "Xenios Semax 30 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/semax-30mg-label-design-v1.webp",
@@ -2662,8 +2662,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
-      "primarySha256": "83c94e0423fa7eeaffdd01113422b3c80ff0ebc9cd2ff00830f9557c04904586",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "aa8d8398db080e1a7a531534d776024719dd17293631b320ddf987147693a67a",
       "labelPreviewSha256": "60dbecdfb88885abdc21e71748017a40df34c04255188f9445d0a62040de2d5b"
     },
     {
@@ -2675,7 +2675,7 @@
           "href": "/research/product-media/oxytocin-10mg-label-card-v1-1024.webp",
           "altText": "Xenios Oxytocin 10 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/oxytocin-10mg-label-design-v1.webp",
@@ -2684,8 +2684,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
-      "primarySha256": "6d7e649765e950109554f74759e11869507f55c932b21d3744da5401afb5ad8a",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "6c78dc6a7f4346d66e6d93bda897902462a82c0ec8aef965abc0bdb2b903f1eb",
       "labelPreviewSha256": "288f141dda49e34269f9720387349d209db42505b497171a371e4733b3fd107e"
     },
     {
@@ -2697,7 +2697,7 @@
           "href": "/research/product-media/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-card-v1-1024.webp",
           "altText": "Xenios GLOW (GHK-Cu + BPC-157 + TB-500), 27/5/10 mg, label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-design-v1.webp",
@@ -2706,8 +2706,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
-      "primarySha256": "92428c2cc9729325fc0a8936a673c162aa2fd4d661b8bad5bdea143bbf9280dd",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "c5b6c24f6eae68ef34a5682783e855089c0f49ec8dd7359fc893d6aafdd1dcbf",
       "labelPreviewSha256": "c059aa2a08765b73f0f1f65a0418b5c16a245f7b2e6cd519684ee9ac270a18bf"
     },
     {
@@ -2719,7 +2719,7 @@
           "href": "/research/product-media/tesamorelin-ipamorelin-10-5mg-label-card-v1-1024.webp",
           "altText": "Xenios Tesamorelin + Ipamorelin, 10/5 mg, label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/tesamorelin-ipamorelin-10-5mg-label-design-v1.webp",
@@ -2728,8 +2728,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
-      "primarySha256": "96cf8e6caeaf2e49368437086537af30cab09e8a4c998aae9ab498e7daca6461",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "3c946c981b9cea2f61a6ae501a0b8729e808b9d7ed8d3ed9dd68175b2e82c0c2",
       "labelPreviewSha256": "6f8250c630e29a71294d6c8ca0317ed5533aed160df1c7a0293e22d765880fee"
     },
     {
@@ -2741,7 +2741,7 @@
           "href": "/research/product-media/tesamorelin-ipamorelin-5-5mg-label-card-v1-1024.webp",
           "altText": "Xenios Tesamorelin + Ipamorelin 5/5 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/tesamorelin-ipamorelin-5-5mg-label-design-v1.webp",
@@ -2750,8 +2750,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
-      "primarySha256": "66f6a467200c881d750ed4498fa0003c6cd5a2653b0028a63966f2061b8a18dd",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "897f03fc06519ce0883aa0ddcdd92d9b92c801f769d868854521839a3c0db6a0",
       "labelPreviewSha256": "448b8b285f61193e4becf03f6aa422e918a11534c75198d08d06cf72a8b78905"
     },
     {
@@ -2763,7 +2763,7 @@
           "href": "/research/product-media/thymosin-alpha-1-thymulin-10-6-4mg-label-card-v1-1024.webp",
           "altText": "Xenios Thymosin Alpha-1 + Thymulin, 10/6.4 mg, label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/thymosin-alpha-1-thymulin-10-6-4mg-label-design-v1.webp",
@@ -2772,8 +2772,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
-      "primarySha256": "76a00862a69f93e0ee51faa214a19993780b2c9768982bd277d8f1c9267011b5",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "74e5b62be0e79c0aacdfd2103fb60805de09b261e620c1214c4892f3bdc93af6",
       "labelPreviewSha256": "ddc0c46dfb5cd626ef652935fcafd5d3e21538d67576ca2fd93faba0499ecf90"
     },
     {
@@ -2785,7 +2785,7 @@
           "href": "/research/product-media/bdnf-10mg-label-card-v1-1024.webp",
           "altText": "Xenios BDNF 10 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/bdnf-10mg-label-design-v1.webp",
@@ -2794,8 +2794,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
-      "primarySha256": "143cdb238c946115895e38d353b7de41025d4d708d94560894eecd4209e8a57c",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "0c98372456956e7c9effe7de6cc8becd299eefa47aff60d951292ce425455ea0",
       "labelPreviewSha256": "f92a8d41bd0fa92e8c2604fdd9e1698a440793071e4b4d1c742c0cfa05d77504"
     },
     {
@@ -2807,7 +2807,7 @@
           "href": "/research/product-media/cjc-1295-with-dac-10mg-label-card-v1-1024.webp",
           "altText": "Xenios CJC-1295 With DAC 10 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/cjc-1295-with-dac-10mg-label-design-v1.webp",
@@ -2816,8 +2816,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
-      "primarySha256": "2bc33adbb792e3041155f699fa585344da6451d9013f159d33f3027ff9f7ee16",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "5c1fda33cdfc771b3a1cd95fadf761d8e9ad393cbe1e8e27f2594f11f3be4768",
       "labelPreviewSha256": "ea3a08a97d49f8f743da033c10eccb5fda1634801a1d691f28a0de2549f34b2f"
     },
     {
@@ -2829,7 +2829,7 @@
           "href": "/research/product-media/follistatin-344-1mg-label-card-v1-1024.webp",
           "altText": "Xenios Follistatin 344 1 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/follistatin-344-1mg-label-design-v1.webp",
@@ -2838,8 +2838,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
-      "primarySha256": "febf3f73c8eeec0f6177f4e55f2b646ce90a50afa08c270bb9de79b843355d64",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "6176185b4303e2900579ffe8da67b476b7575b5f8cafcc6f1b890cdfe0aab42f",
       "labelPreviewSha256": "7dffce7d19ae099f48cabeaaf07177e1f139250b2a420b2816886870d61ca691"
     },
     {
@@ -2851,7 +2851,7 @@
           "href": "/research/product-media/hexarelin-5mg-label-card-v1-1024.webp",
           "altText": "Xenios Hexarelin 5 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/hexarelin-5mg-label-design-v1.webp",
@@ -2860,8 +2860,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
-      "primarySha256": "0dda2f429d435446758f8931ea32dfa819bd29e0de50ef99c82c0f0e9207419f",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "0476ddf3eed3fc02a0f55d10886dc2489dea4884e8cbc8b96c84eb22d68c08d0",
       "labelPreviewSha256": "c772035a142d4888f2e8523469a7980899c94b7e91c9381b522eb46428b34dfb"
     },
     {
@@ -2873,7 +2873,7 @@
           "href": "/research/product-media/igf-1-des-1mg-label-card-v1-1024.webp",
           "altText": "Xenios IGF-1 DES 1 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/igf-1-des-1mg-label-design-v1.webp",
@@ -2882,8 +2882,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
-      "primarySha256": "cc25dd7b0ab974145606585bbeb642f3a64a29af6c0c0ced55824f925d1cdb8b",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "2fe205afb25dfff571f9e2380afd239f1e729727858ead16d77f0a6908c792bf",
       "labelPreviewSha256": "42f52ed79b770b5607df6a81d09371d514d020960a5ba9fd6eafcc8fda067334"
     },
     {
@@ -2895,7 +2895,7 @@
           "href": "/research/product-media/pe-22-28-10mg-label-card-v1-1024.webp",
           "altText": "Xenios PE-22-28 10 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/pe-22-28-10mg-label-design-v1.webp",
@@ -2904,8 +2904,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
-      "primarySha256": "1c7409d89e4dd0b39db9029dcab24e7a654a24a231c66a8f9119b70a07e63ee0",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "73b29b34abde53c5f30f7954d4365c8f160155b7e03b20e9d0c1742c9a9f87fd",
       "labelPreviewSha256": "49ab577b432cdf5557cc80080e284ee6b62e5d57d008742210688f74ba7dc722"
     },
     {
@@ -2917,7 +2917,7 @@
           "href": "/research/product-media/ss-31-15mg-label-card-v1-1024.webp",
           "altText": "Xenios SS-31 15 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/ss-31-15mg-label-design-v1.webp",
@@ -2926,8 +2926,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
-      "primarySha256": "76e20ff37162a511e1a0590d083eea069fc24dfa848fe2f2be99ab5f8a0c99f4",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "a819fb5824f1b9ba0944e4d21f0b3b4dd693eebf62ad183e858c19715729e331",
       "labelPreviewSha256": "7ce4a88c9ce80617fc545721662c0e71b27032045959f380a68dd7d85498038d"
     },
     {
@@ -2939,7 +2939,7 @@
           "href": "/research/product-media/survodutide-6mg-label-card-v1-1024.webp",
           "altText": "Xenios Survodutide 6 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/survodutide-6mg-label-design-v1.webp",
@@ -2948,8 +2948,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
-      "primarySha256": "4c74af15f47bca00924dfb35eddc5411024074c2a4978e2bdf5e8e4e9e3b2ff0",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "142350835999e8e4ec50d4264b41618cba65ed44ed4f8823048acd44f26ab694",
       "labelPreviewSha256": "89f0e920146f6afe9253085273660ed5ed5d44004eb34f014590d877f5011c11"
     },
     {
@@ -2983,7 +2983,7 @@
           "href": "/research/product-media/acetic-acid-0-6-5ml-label-card-v1-1024.webp",
           "altText": "Xenios Acetic Acid 0.6% 5 mL label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/acetic-acid-0-6-5ml-label-design-v1.webp",
@@ -2992,8 +2992,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "4e95326e42be7dba8c48632cb5d130abfd3d4281",
-      "primarySha256": "133bf19bd09871cb89c1e10f679c3c852f065e0439c6cca8b4a4e872e0e33aa7",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "4d8e24ec0d2b4a41b2384165d14940a2cda1b6cff2f6241a1d11ba1439dfa743",
       "labelPreviewSha256": "af88abf8d190621ae74439861e9e3bae5a6259d705b865131fe051d71083af80"
     },
     {
@@ -3005,7 +3005,7 @@
           "href": "/research/product-media/reconstitution-solution-4ml-label-card-v1-1024.webp",
           "altText": "Xenios Reconstitution Solution 4 mL label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/reconstitution-solution-4ml-label-design-v1.webp",
@@ -3014,8 +3014,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "4e95326e42be7dba8c48632cb5d130abfd3d4281",
-      "primarySha256": "58422f76f1c385984a5a085ca5fbf147bb685b6a0aa4a197d5f6cca6d9f05a1e",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "7cb2c190ea17e1bdba97f89ad4be155d50f9e3652e26c484295269aea3d67a8d",
       "labelPreviewSha256": "8ec6d37a1b194b863f8600612a9cc4250eb042dbb92618990baafa7a74220125"
     },
     {
@@ -3027,7 +3027,7 @@
           "href": "/research/product-media/ll-37-complex-5mg-label-card-v1-1024.webp",
           "altText": "Xenios LL-37 Complex 5 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/ll-37-complex-5mg-label-design-v1.webp",
@@ -3036,8 +3036,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "6a6b3ed4a88d2402802bf4762e60e18b6c103431",
-      "primarySha256": "3f4b1aab5493c4ff2dabc7b35ef1e6ca48468449ac9de721210b5bbbe9c23069",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "41229e5bbf6a293fdf6020103d22a4766863db56f1723f2ee16d64d7dabd1ba6",
       "labelPreviewSha256": "67bed253f06b960f52810c530273f268078c30748abd325f4133c905559cc2a1"
     },
     {
@@ -3049,7 +3049,7 @@
           "href": "/research/product-media/mgf-5mg-label-card-v1-1024.webp",
           "altText": "Xenios MGF 5 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/mgf-5mg-label-design-v1.webp",
@@ -3058,8 +3058,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "6a6b3ed4a88d2402802bf4762e60e18b6c103431",
-      "primarySha256": "c8284bfbb0f59bf746c6cb07653b6f10142685abc1f81e2bce987da0bc6e6bd6",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "c334ad23a9fc6f5c3e490c798c77f725d6eee08bcfc9f252847ef8c8c4651beb",
       "labelPreviewSha256": "77cb491a954ea5d129eff29ab940bb140906463bc430a111110ec3224a11330f"
     },
     {
@@ -3071,7 +3071,7 @@
           "href": "/research/product-media/tesamorelin-8mg-label-card-v1-1024.webp",
           "altText": "Xenios Tesamorelin 8 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/tesamorelin-8mg-label-design-v1.webp",
@@ -3080,8 +3080,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "6a6b3ed4a88d2402802bf4762e60e18b6c103431",
-      "primarySha256": "6c4ad5d3bd1385d46ca947d180fd35441752b28e7ccee9d3132bea768a916d69",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "5e7a9840078972fea37616e77bed93cec05e6b447c0388cb744e01a99562fa2c",
       "labelPreviewSha256": "b6ee77baac68545e525f030c4d57daa07449cb7116e3f0a45cd8898e2bdf7069"
     },
     {
@@ -3138,7 +3138,7 @@
           "href": "/research/product-media/tesofensine-500mcg-0418-label-card-v1-1024.webp",
           "altText": "Xenios Tesofensine 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/tesofensine-500mcg-0418-label-design-v1.webp",
@@ -3147,8 +3147,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "9be3f551c5cae7a9196a4afcf321084e9f0007d0",
-      "primarySha256": "72077db06253e2b272c4edb965d912222e35de825700607c213ba84f4bb28d69",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "5ad0ae052648513b60c42976b9f9e7d1e825fec3c1d4da18b7b5e4220a29d914",
       "labelPreviewSha256": "baa2f16940b8f4a1d9c45e5fa0b28cc9f4538f5945a0b07815601fc287ceb9d7"
     },
     {
@@ -3160,7 +3160,7 @@
           "href": "/research/product-media/tesofensine-500mcg-0419-label-card-v1-1024.webp",
           "altText": "Xenios Tesofensine 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/tesofensine-500mcg-0419-label-design-v1.webp",
@@ -3169,8 +3169,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "9be3f551c5cae7a9196a4afcf321084e9f0007d0",
-      "primarySha256": "72077db06253e2b272c4edb965d912222e35de825700607c213ba84f4bb28d69",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "5ad0ae052648513b60c42976b9f9e7d1e825fec3c1d4da18b7b5e4220a29d914",
       "labelPreviewSha256": "baa2f16940b8f4a1d9c45e5fa0b28cc9f4538f5945a0b07815601fc287ceb9d7"
     },
     {
@@ -3182,7 +3182,7 @@
           "href": "/research/product-media/colostrum-100mg-0395-label-card-v1-1024.webp",
           "altText": "Xenios Colostrum 100 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/colostrum-100mg-0395-label-design-v1.webp",
@@ -3191,8 +3191,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "56cc9fd25bf2b58776c7b0a3228a16a4a8127448",
-      "primarySha256": "bec5d8d3b736c35176eb2dc7451c88362bb3a49c6de81fcabb122be515688d60",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "a09ad9df05bbb1d59105b69f60a4810a58bc84ac42de2c3fa098de0cfd1dd74f",
       "labelPreviewSha256": "32d2e7a154ac8781c72c89044e85a264f092a43c292e95a8b037cac82cb97c74"
     },
     {
@@ -3204,7 +3204,7 @@
           "href": "/research/product-media/semaglutide-bpc-157-5mg-650mcg-label-card-v1-1024.webp",
           "altText": "Xenios Semaglutide + BPC-157, 5 mg/650 mcg, label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/semaglutide-bpc-157-5mg-650mcg-label-design-v1.webp",
@@ -3213,8 +3213,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "937706f6a19982d9902d02c8799212f3c09c5f54",
-      "primarySha256": "9d26a92110ba658900b677afcd5f593a05d0821253ca7c4e4428fad5781945ee",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "bc0e70d84eeb2df0f8ced1a5fd93723bb5d8626af15bb8bff65e64ccc03c7fb2",
       "labelPreviewSha256": "805e5fce2c2925e3c274b805c562798ea0169b0f7d62a1b34246995b07227863"
     },
     {
@@ -3226,7 +3226,7 @@
           "href": "/research/product-media/mgf-2mg-label-card-v1-1024.webp",
           "altText": "Xenios MGF 2 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/mgf-2mg-label-design-v1.webp",
@@ -3235,8 +3235,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "43b94f8729e5ab3ec3d7af91dcd76b9407a5353e",
-      "primarySha256": "99423374d806de49a7ab97ccd5fce7b0aef39552af952036b8f8f0965964e6a0",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "9e52d0700f52a8715619be117c5da4ab07437bd6320203b5510ff274757d26ad",
       "labelPreviewSha256": "c2961131d4a4d73d2e5a30b0115a4bf25bccd610159316194b40161e23e0fa69"
     },
     {
@@ -3248,7 +3248,7 @@
           "href": "/research/product-media/tesamorelin-mgf-ipamorelin-5mg-500mcg-2-5mg-label-card-v1-1024.webp",
           "altText": "Xenios Tesamorelin + MGF + Ipamorelin, 5 mg / 500 mcg / 2.5 mg, label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/tesamorelin-mgf-ipamorelin-5mg-500mcg-2-5mg-label-design-v1.webp",
@@ -3257,8 +3257,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "d5ce19601429ee19ca5f34596202f1ca3ada2f2a",
-      "primarySha256": "d196e120fc804bba48b6f8911335b6c60635ee7e67843e02b2200fe8b56a65c4",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "7a254f607ca4709ab12e4a500922e86f7eda02bd257b4c2b5a87df00951b807d",
       "labelPreviewSha256": "aec8490a4639e0f328477d676b972545a4cc53ef203e61f2e443705aa04ffd79"
     },
     {
@@ -3270,7 +3270,7 @@
           "href": "/research/product-media/ghrp-2-tesamorelin-mgf-ipamorelin-5mg-5mg-500mcg-2-5mg-label-card-v1-1024.webp",
           "altText": "Xenios GHRP-2 + Tesamorelin + MGF + Ipamorelin, 5 mg / 5 mg / 500 mcg / 2.5 mg, label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
           "href": "/research/product-media/ghrp-2-tesamorelin-mgf-ipamorelin-5mg-5mg-500mcg-2-5mg-label-design-v1.webp",
@@ -3279,8 +3279,8 @@
           "height": 1000
         }
       },
-      "sourceCommit": "d5ce19601429ee19ca5f34596202f1ca3ada2f2a",
-      "primarySha256": "91f9efb217f0a7569ecdcea209af91d080f2ab93093d18b0d4ea2b6b99b34bc4",
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "eea150fc8bc1e4a598ace785c720ab0c5fee51810c3890d3c3d3d2fb3fb6b9c8",
       "labelPreviewSha256": "dbd8f45e4e8e48c48b32228f0226ae7f6ee45948d420d453252e64027f8ce5e6"
     }
   ]
