@@ -65,11 +65,16 @@ describe("optional goal and referral code, before and after the optional-context
     const answers = { goal: "check_availability", referralCode: "SYNTH-2026" } as const;
     try {
       await fixture.start();
-      const client = fixture.adapter().client;
+      const database = fixture.adapter();
+      const client = database.client;
       const repository = requestIntentRepository(client);
 
       // Before: a request with optional answers has nowhere to go, and nothing is saved.
-      await expect(repository.createOrReplay(intent("before-with", answers))).rejects.toBeDefined();
+      // The reason is pinned: the call reaches the database and the function does not exist.
+      await expect(repository.createOrReplay(intent("before-with", answers))).rejects.toMatchObject({
+        code: "request_intent_persistence_uncertain",
+      });
+      expect(database.errors).toEqual([{ name: "request_intent_create_with_context", code: "42883" }]);
       expect(await counts()).toEqual({ requests: 0, submitted: 0, events: 0 });
       // A request without them is stored exactly as before.
       const plain = await repository.createOrReplay(intent("plain"));
@@ -108,16 +113,21 @@ describe("optional goal and referral code, before and after the optional-context
       expect(await counts()).toEqual({ requests: 4, submitted: 4, events: 4 });
 
       // Refused whole, with no request row left behind. Each case changes one thing.
-      for (const [name, bad] of [
-        ["a goal outside the list", { goal: "weight_loss" }],
-        ["a code with a space", { referralCode: "NOT VALID" }],
-        ["a one-character code", { referralCode: "A" }],
-        ["a code of 25 characters", { referralCode: "A".repeat(25) }],
-        ["an extra key", { goal: "compare_options", note: "free text" }],
-        ["an empty object", {}],
-        ["a goal that is not text", { goal: 5 }],
+      // The reason is pinned for each: the table's own check (23514) or the function's argument check (22023).
+      for (const [name, bad, sqlState] of [
+        ["a goal outside the list", { goal: "weight_loss" }, "23514"],
+        ["a code with a space", { referralCode: "NOT VALID" }, "23514"],
+        ["a one-character code", { referralCode: "A" }, "23514"],
+        ["a code of 25 characters", { referralCode: "A".repeat(25) }, "23514"],
+        ["an extra key", { goal: "compare_options", note: "free text" }, "22023"],
+        ["an empty object", {}, "22023"],
+        ["a goal that is not text", { goal: 5 }, "22023"],
       ] as const) {
-        await expect(repository.createOrReplay(intent("bad-" + name, bad)), name).rejects.toBeDefined();
+        const before = database.errors.length;
+        await expect(repository.createOrReplay(intent("bad-" + name, bad)), name).rejects.toMatchObject({
+          code: "request_intent_persistence_uncertain",
+        });
+        expect(database.errors.slice(before), name).toEqual([{ name: "request_intent_create_with_context", code: sqlState }]);
       }
       expect(await counts()).toEqual({ requests: 4, submitted: 4, events: 4 });
       expect(await contextRows()).toHaveLength(3);
@@ -158,7 +168,7 @@ describe("optional goal and referral code, before and after the optional-context
         "public.request_intent_staff_get_with_context(uuid,uuid)",
       ]) {
         const may = async (role: string) =>
-          (await sql("select has_function_privilege($1, $2, 'execute') as ok", [role, signature])).rows[0].ok;
+          (await sql("select has_function_privilege($1::name, $2::text, 'execute') as ok", [role, signature])).rows[0].ok;
         expect(await may("anon"), signature).toBe(false);
         expect(await may("authenticated"), signature).toBe(false);
         expect(await may("service_role"), signature).toBe(true);
@@ -166,7 +176,7 @@ describe("optional goal and referral code, before and after the optional-context
       // And no role holds any privilege on the table.
       for (const role of ["anon", "authenticated", "service_role"]) {
         for (const privilege of ["select", "insert", "update", "delete"]) {
-          expect((await sql("select has_table_privilege($1, 'request_intent_private.optional_context', $2) as ok",
+          expect((await sql("select has_table_privilege($1::name, 'request_intent_private.optional_context'::text, $2::text) as ok",
             [role, privilege])).rows[0].ok, role + " " + privilege).toBe(false);
         }
       }

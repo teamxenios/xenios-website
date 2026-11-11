@@ -169,6 +169,17 @@ export function createDurableJourneyFixture() {
             text = "select public.request_intent_staff_get($1::uuid,$2::uuid) as value";
             values = [args.p_request_id, args.p_actor_user_id];
             break;
+          // The optional-context candidate's two functions. They exist only after
+          // that candidate is applied; before it, the call fails in the database.
+          case "request_intent_create_with_context":
+            text = "select public.request_intent_create_with_context($1::text,$2::text,$3::text,$4::jsonb,$5::jsonb) as value";
+            values = [args.p_owner_hash, args.p_attempt_hash, args.p_fingerprint,
+              JSON.stringify(args.p_detail), JSON.stringify(args.p_context)];
+            break;
+          case "request_intent_staff_get_with_context":
+            text = "select public.request_intent_staff_get_with_context($1::uuid,$2::uuid) as value";
+            values = [args.p_request_id, args.p_actor_user_id];
+            break;
           case "request_intent_staff_list":
             text = "select public.request_intent_staff_list($1::uuid,$2::integer) as value";
             values = [args.p_actor_user_id, args.p_page];
