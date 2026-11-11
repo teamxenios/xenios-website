@@ -3172,6 +3172,28 @@
       "sourceCommit": "9be3f551c5cae7a9196a4afcf321084e9f0007d0",
       "primarySha256": "72077db06253e2b272c4edb965d912222e35de825700607c213ba84f4bb28d69",
       "labelPreviewSha256": "baa2f16940b8f4a1d9c45e5fa0b28cc9f4538f5945a0b07815601fc287ceb9d7"
+    },
+    {
+      "offeringId": "mo_1d9d501ac84d6cd9d46d",
+      "sourceVariantId": "mov_0a8df59fa70328b1c1ca",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/colostrum-100mg-0395-label-card-v1-1024.webp",
+          "altText": "Xenios Colostrum 100 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/colostrum-100mg-0395-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Colostrum 100 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "56cc9fd25bf2b58776c7b0a3228a16a4a8127448",
+      "primarySha256": "bec5d8d3b736c35176eb2dc7451c88362bb3a49c6de81fcabb122be515688d60",
+      "labelPreviewSha256": "32d2e7a154ac8781c72c89044e85a264f092a43c292e95a8b037cac82cb97c74"
     }
   ]
 }
