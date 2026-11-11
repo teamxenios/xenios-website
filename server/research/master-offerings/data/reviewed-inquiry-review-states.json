@@ -509,14 +509,14 @@
       "offeringId": "mo_13aa6db9214d74eae20a",
       "sourceVariantId": "mov_5745f9c60e751c5beb5a",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "offering_decision",
       "neutralSpecification": null
     },
     {
       "offeringId": "mo_a812c45672f8b41e9016",
       "sourceVariantId": "mov_eebe141c6db26ce760ae",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "offering_decision",
       "neutralSpecification": null
     },
     {
