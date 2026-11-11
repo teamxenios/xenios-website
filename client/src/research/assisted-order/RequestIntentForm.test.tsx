@@ -1771,7 +1771,8 @@ it("shows the reviewed sentence on a row that cannot be added yet", async () => 
   await render(api);
   const card = host.querySelector("article")!;
   expect(card.textContent).toContain("Coming soon");
-  expect(card.textContent).toContain("A synthetic reviewed sentence for a listing that is coming soon.");
+  // The status and the sentence read as two sentences, not one run-on.
+  expect(card.textContent).toContain("Coming soon. A synthetic reviewed sentence for a listing that is coming soon.");
   // It still cannot be added.
   expect([...card.querySelectorAll("button")].some((button) => button.textContent?.startsWith("Add "))).toBe(false);
 });

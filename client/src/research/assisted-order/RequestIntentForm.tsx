@@ -554,7 +554,7 @@ function RequestIntentFormSession({
           {!item.selectableForReview ? <p>{
             item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
               : item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"
-          }{item.reviewMessage ? " " + item.reviewMessage : ""}</p> : selection
+          }{item.reviewMessage ? ". " + item.reviewMessage : ""}</p> : selection
             ? <div className="xenios-order-quantity">
               <button type="button" aria-label={"Decrease requested quantity for " + item.productName}
                 disabled={clampQuantity(item, selection.quantity - item.quantityIncrement) === selection.quantity}
