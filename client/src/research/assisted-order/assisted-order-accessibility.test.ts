@@ -48,4 +48,18 @@ describe("assisted-order pointer target source contracts", () => {
     // 38em is 608px at the default text size: below a 390 x 664 phone viewport, so the toolbar still sticks there.
     expect(38 * 16).toBeLessThan(664);
   });
+
+  it("is a well-formed stylesheet: every block that opens also closes, in both request stylesheets", () => {
+    // The type check and the component suites never parse CSS; only the build does.
+    for (const name of ["assisted-order.css", "persistent-request-bar.css"]) {
+      const text = readFileSync(resolve(assistedOrderRoot, name), "utf8");
+      let depth = 0;
+      for (const character of text) {
+        if (character === "{") depth += 1;
+        if (character === "}") depth -= 1;
+        expect(depth, name).toBeGreaterThanOrEqual(0);
+      }
+      expect(depth, name).toBe(0);
+    }
+  });
 });

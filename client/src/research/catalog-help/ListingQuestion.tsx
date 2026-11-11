@@ -17,7 +17,7 @@ export function ListingQuestion({ variantReference }: { variantReference?: strin
           {Object.entries(LISTING_QUESTION_TOPICS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
         </select>
       </label>
-      <p>Write your question in your email app. Please leave out health, prescription and payment details; take care questions to your provider.</p>
+      <p>Write your question in your email app. Please leave out health, prescription and payment details. For questions about your own care, ask your healthcare provider.</p>
       <a className="min-h-11 w-fit max-w-full content-center font-semibold underline" href={href}>Open email draft</a>
       <p className="min-w-0 break-words">If your email app does not open, write to <span>{RESEARCH_SUPPORT_EMAIL}</span>.
         {reference && <> Include catalog reference <code className="break-all">{reference}</code>.</>}
