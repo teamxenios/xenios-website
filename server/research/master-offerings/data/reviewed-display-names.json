@@ -208,6 +208,54 @@
     {
       "offeringId": "mo_510176c449623185709c",
       "displayName": "GHK-Cu"
+    },
+    {
+      "offeringId": "mo_afb0add32da0de7426f5",
+      "displayName": "5-Amino-1MQ"
+    },
+    {
+      "offeringId": "mo_216b3a5f02fb7724cd51",
+      "displayName": "AOD-9604"
+    },
+    {
+      "offeringId": "mo_c464ca523cda95adb8a6",
+      "displayName": "CJC-1295 No DAC"
+    },
+    {
+      "offeringId": "mo_4bbd59b26b04e4265758",
+      "displayName": "CJC-1295 No DAC"
+    },
+    {
+      "offeringId": "mo_023a54a623e28e84ffd5",
+      "displayName": "CJC-1295 With DAC"
+    },
+    {
+      "offeringId": "mo_be72c9fb4d708d8a3eee",
+      "displayName": "CJC-1295 With DAC"
+    },
+    {
+      "offeringId": "mo_8cca713c2b203a712494",
+      "displayName": "DSIP"
+    },
+    {
+      "offeringId": "mo_d3a60ea0a358aef218f8",
+      "displayName": "IGF-1 LR3"
+    },
+    {
+      "offeringId": "mo_839d9f0cb2ab74e094ee",
+      "displayName": "LL-37 (CAP-18)"
+    },
+    {
+      "offeringId": "mo_dbed3adeeecd92ac1d41",
+      "displayName": "MGF"
+    },
+    {
+      "offeringId": "mo_e7bb199ac249b82eb17b",
+      "displayName": "SS-31"
+    },
+    {
+      "offeringId": "mo_f729b05046ef91543822",
+      "displayName": "SS-31"
     }
   ]
 }
