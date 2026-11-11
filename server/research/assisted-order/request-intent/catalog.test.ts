@@ -112,13 +112,31 @@ describe("sorting the whole request catalog by name", () => {
     expect(page.items.map((item) => item.productName)).toEqual(
       ["Synthetic 1", ...Array.from({ length: 10 }, (_, index) => "Synthetic " + (10 + index))]);
   });
-  it("gives rows with the same name a fixed order, so paging cannot repeat or skip one", async () => {
-    const twins = [offering(3), offering(1), offering(2)].map((row) => ({ ...row, displayName: "Same name", canonicalName: "Same name" }));
-    const catalog = createRequestIntentCatalog(wiring(twins));
-    const once = (await catalog.list(viewer, { sort: "name_asc" })).items.map((item) => item.variantId);
-    const again = (await catalog.list(viewer, { sort: "name_asc" })).items.map((item) => item.variantId);
-    expect(once).toEqual(again);
-    expect(new Set(once).size).toBe(3);
+  it("orders rows equal in name and specification the same way whatever order the catalog gives them in", async () => {
+    // Same name and the same specification, so only the last keys can tell them apart.
+    const twin = (id: number) => ({ ...offering(id), displayName: "Same name", canonicalName: "Same name" });
+    const sorted = async (ids: readonly number[], sort: "name_asc" | "name_desc") => {
+      const page = await createRequestIntentCatalog(wiring(ids.map(twin))).list(viewer, { sort });
+      expect(new Set(page.items.map((item) => item.specification)).size).toBe(1);
+      return page.items.map((item) => item.variantId);
+    };
+    const expected = ["pc-var-1", "pc-var-2", "pc-var-3"];
+    for (const order of [[3, 1, 2], [2, 3, 1], [1, 2, 3], [3, 2, 1]]) {
+      expect(await sorted(order, "name_asc")).toEqual(expected);
+      // Z to A reverses names only; equal names keep the same inner order.
+      expect(await sorted(order, "name_desc")).toEqual(expected);
+    }
+  });
+  it("tells apart two rows that share a variant id but not a product id", async () => {
+    const twin = (id: number) => ({ ...offering(id), displayName: "Same name", canonicalName: "Same name" });
+    const sharedVariant = (ids: readonly number[]) => ({
+      ...wiring(ids.map(twin)),
+      bindingFor: (variantId: string) => ({ productId: "product-" + variantId, variantId: "pc-shared" }),
+    });
+    const products = async (ids: readonly number[]) =>
+      (await createRequestIntentCatalog(sharedVariant(ids)).list(viewer, { sort: "name_asc" })).items.map((item) => item.productId);
+    expect(await products([2, 1])).toEqual(["product-var-1", "product-var-2"]);
+    expect(await products([1, 2])).toEqual(["product-var-1", "product-var-2"]);
   });
   it("refuses a sort it does not know", async () => {
     const catalog = createRequestIntentCatalog(wiring(rows));

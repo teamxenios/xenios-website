@@ -122,13 +122,20 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         && (query.actionGroup !== undefined || !query.workflowMode || item.workflowMode === query.workflowMode)
         && (!search || [item.productName, item.specification, item.variantId].join(" ").toLowerCase().includes(search)));
       // Sorting is over the whole filtered catalog, before paging, so page 2 follows
-      // page 1 in the chosen order. Ties keep a fixed order so paging never repeats
-      // or skips a row. Absent sort keeps the catalog's own order.
+      // page 1 in the chosen order. Absent sort keeps the catalog's own order.
+      //
+      // Z to A reverses the names only: inside one name the specifications still
+      // run in ascending order, as written, in both directions.
+      //
+      // The order is total. The last two keys are the row's variant id and product
+      // id, and the catalog refuses two rows with the same pair, so no two rows
+      // compare equal and the result does not depend on the catalog's own order.
       const direction = query.sort === "name_desc" ? -1 : 1;
       const byName = (left: RequestIntentCatalogItem, right: RequestIntentCatalogItem) =>
         direction * left.productName.localeCompare(right.productName, "en", { sensitivity: "base", numeric: true })
         || (left.specification ?? "").localeCompare(right.specification ?? "", "en", { sensitivity: "base", numeric: true })
-        || left.variantId.localeCompare(right.variantId);
+        || left.variantId.localeCompare(right.variantId)
+        || left.productId.localeCompare(right.productId);
       const items = query.sort === undefined ? filtered : [...filtered].sort(byName);
       return {
         items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length, page, pageSize,
