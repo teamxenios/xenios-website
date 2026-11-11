@@ -64,7 +64,7 @@ describe("routed B2B protected composition", () => {
   it("resolves Quick Order support publicly while signed out and the shared gate is locked", async () => {
     const view = await renderAt("/research/support");
     expect(view.querySelector("h1")?.textContent).toBe("How to reach us");
-    expect(view.querySelector('a[href="mailto:research@xeniostechnology.com"]')).not.toBeNull();
+    expect(view.querySelector('a[href="mailto:team@xeniostechnology.com"]')).not.toBeNull();
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
     expect(view.querySelector('input[type="password"]')).toBeNull();
     expect(view.textContent).not.toContain("That page is not part of the research section.");

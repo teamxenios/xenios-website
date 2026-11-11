@@ -236,10 +236,24 @@ export async function sendFoundingEmail(input: {
   }
 }
 
+/** A single owner registers this handler only after composing verified private quote
+ * authorities. All queue acquisition, retries, admin history and provider receipt storage
+ * continue through this module. No separate quote job runner is started. */
+type QuoteDeliveryWorkerReply = { ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean };
+let privateQuoteDispatch: ((job: unknown) => Promise<QuoteDeliveryWorkerReply>) | null = null;
+export function registerPrivateQuoteDispatch(handler: (job: unknown) => Promise<QuoteDeliveryWorkerReply>): void {
+  if (privateQuoteDispatch !== null && handler !== privateQuoteDispatch) throw new Error("Private quote mail handler already registered.");
+  privateQuoteDispatch = handler;
+}
+
 // Template dispatch at SEND time. Fresh tokens are minted here, never stored.
 // The token PURPOSE is decided at enqueue time (payload.tokenPurpose) so a
 // pre-approval status link can never carry an account-claim credential.
 async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
+  if (job?.template_key === "ea_private_quote_notice_v1") {
+    if (!privateQuoteDispatch) return { ok: false, providerId: null, error: "Private quote channel unavailable." };
+    return privateQuoteDispatch(job);
+  }
   const payload = job.payload ?? {};
   const firstName = String(payload.firstName ?? "there");
   // Rows enqueued before purposes existed have no payload.tokenPurpose; for

@@ -3297,6 +3297,51 @@
       },
       "sourceCommit": "1a314f4cf7f6c983857a2ec919328ab8f02ae93c",
       "primarySha256": "2b5cd2cc0017b3241d75c01395218f5f34ad80e904519c98206b0814cd96ef34"
+    },
+    {
+      "offeringId": "mo_79376f449760149d1030",
+      "sourceVariantId": "mov_cdfb19499637f274f271",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r305-gfsk-fruits-and-greens-strawberry-kiwi.png",
+          "altText": "Official NutriDyn Fruits & Greens canister, Strawberry Kiwi",
+          "width": 271,
+          "height": 420
+        }
+      },
+      "sourceCommit": "53226181947d2695b686c59b3e179221f5267521",
+      "primarySha256": "318a13680455d454268f08938e9d2876785d60e3ad6f2c078892378602810b25"
+    },
+    {
+      "offeringId": "mo_d82610b6fe7ebf3b4d63",
+      "sourceVariantId": "mov_f5d63d95caa3d6d0a7a0",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r227-magtein-90-capsules.png",
+          "altText": "Official NutriDyn Magtein (Magnesium L-Threonate) bottle",
+          "width": 254,
+          "height": 420
+        }
+      },
+      "sourceCommit": "53226181947d2695b686c59b3e179221f5267521",
+      "primarySha256": "f5b880fc7210d8083482c1e99c333100983df29700dcac5cc988ff6d7cacd4d3"
+    },
+    {
+      "offeringId": "mo_ad9795d751913350bdea",
+      "sourceVariantId": "mov_d91d7248ed06d7280a2d",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r222-ultrabiotic-prebiotic-cranberry-lemonade.png",
+          "altText": "Official NutriDyn UltraBiotic Prebiotic canister, Cranberry Lemonade",
+          "width": 313,
+          "height": 420
+        }
+      },
+      "sourceCommit": "53226181947d2695b686c59b3e179221f5267521",
+      "primarySha256": "7669bab5d6e010811c506ee27b12f80611851dcedc3a31104f246f79dfea0a4f"
     }
   ]
 }

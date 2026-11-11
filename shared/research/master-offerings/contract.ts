@@ -272,8 +272,8 @@ export interface MasterOfferingVariantSummary {
   reviewedMedia?: ReviewedProductMedia;
   /**
    * The reviewed sentence for a listing that has no reviewed description, or
-   * whose label states an unconfirmed fact. A listing carries a reviewed
-   * description or this sentence, never both. Shown wherever the variant is.
+   * whose label states an unconfirmed fact. An exact approved educational exception may accompany this
+   * notice. The underlying restriction and neutral label remain in force.
    */
   reviewMessage?: string;
   id: string;

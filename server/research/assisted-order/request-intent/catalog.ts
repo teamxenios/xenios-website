@@ -11,8 +11,10 @@ import { requestStoreWidening } from "../../../../shared/research/master-offerin
 import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { authorityFor, type AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
-import { getReviewedProductContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
+import { getInquiryDisplayContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
 import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
+
+import { candidateRankOrders, readCatalogRankingSource, type RankingSource } from "./ranking-source";
 
 export type RequestIntentCatalog = Readonly<{
   list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery): Promise<RequestIntentCatalogPage>;
@@ -20,7 +22,8 @@ export type RequestIntentCatalog = Readonly<{
 }>;
 
 /** Same viewer-scoped master reader, binding artifact, price and pathway authorities. No copied catalog. */
-export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput): RequestIntentCatalog {
+export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput,
+  rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now): RequestIntentCatalog {
   async function visible(viewer: AssistedOrderViewer): Promise<RequestIntentCatalogItem[]> {
     const service = input.serviceFor(viewer);
     if (!service) throw new Error("request_intent_catalog_unavailable");
@@ -65,7 +68,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         // A reviewed state for a listing with no reviewed description, or whose
         // label states an unconfirmed fact. Only its customer fields are used here.
         const reviewState = inquiryReviewStateFor(offering.id, variant.id);
-        const reviewedContent = getReviewedProductContent(offering, variant);
+        const reviewedContent = getInquiryDisplayContent(offering, variant, reviewState);
         const reviewedMedia = getReviewedProductMedia(offering, variant);
         items.push({
           ...item,
@@ -140,8 +143,17 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         || (left.specification ?? "").localeCompare(right.specification ?? "", "en", { sensitivity: "base", numeric: true })
         || left.variantId.localeCompare(right.variantId)
         || left.productId.localeCompare(right.productId);
-      const items = query.sort === undefined ? filtered : [...filtered].sort(byName);
+      // An expired or unreadable aggregate never blocks the ordinary catalog. No ranking source is
+      // read until visibility has been established; no hidden identities or counts go in the DTO.
+      let aggregate: unknown = null;
+      if (filtered.length > 1) try { aggregate = await rankingSource(); } catch { /* optional source unavailable */ }
+      const rankOrders = candidateRankOrders(aggregate, filtered, clock(), byName);
+      const ranked = query.sort === "best_sellers" || query.sort === "most_requested_research_peptides" ? query.sort : null;
+      const items = ranked ? (rankOrders.get(ranked) ?? filtered)
+        : query.sort === undefined ? filtered : [...filtered].sort(byName);
       return {
+        ...(rankOrders.size ? { availableRankSorts: [...rankOrders.keys()] } : {}),
+        ...(ranked && !rankOrders.has(ranked) ? { rankUnavailable: true as const } : {}),
         items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length, page, pageSize,
         families: MASTER_OFFERING_FAMILIES,
         channels: [...new Set(items.map((item) => item.channel))],

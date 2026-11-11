@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import type { NormalizedMasterOffering, NormalizedMasterOfferingVariant } from "./model";
 import type { ReviewedProductContent, ReviewedProductContentRecord, ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
+import { createHeldEducationLookup } from "./held-education";
+import { heldEducationRegistrations } from "./held-education-registrations";
+import type { InquiryReviewState } from "./inquiry-review-states";
 import batch from "./data/reviewed-public-content.json";
 import mediaBatch from "./data/reviewed-public-media.json";
 
@@ -35,6 +38,19 @@ export function getReviewedProductContent(
 ): ReviewedProductContent | undefined {
   const key = reviewedProductKey(offering, variant);
   return key === undefined ? undefined : contentByIdentity.get(key);
+}
+
+const heldEducation = createHeldEducationLookup(heldEducationRegistrations);
+
+/** Only use on the two inquiry displays that also expose the independent customer hold notice.
+ * A held SKU may not fall back to an ordinary content record, even if one is added accidentally.
+ */
+export function getInquiryDisplayContent(offering: NormalizedMasterOffering, variant: NormalizedMasterOfferingVariant,
+  hold: InquiryReviewState | null): ReviewedProductContent | undefined {
+  if (!hold) return getReviewedProductContent(offering, variant);
+  if (reviewedProductKey(offering, variant) === undefined) return undefined;
+  return heldEducation({ datasetSha256: batch.datasetSha256, family: offering.family,
+    offeringId: offering.id, sourceVariantId: variant.id }, hold);
 }
 
 export function getReviewedProductMedia(

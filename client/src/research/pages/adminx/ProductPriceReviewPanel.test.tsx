@@ -14,6 +14,8 @@ vi.mock("wouter", async (importOriginal) => ({
   useParams: () => ({ id: "product-alpha" }),
 }));
 
+import { webcrypto } from "node:crypto";
+import { ProductPriceBatchPanel } from "./ProductPriceBatchPanel";
 import ProductAdminDetail, { PricePanel } from "./ProductAdminDetail";
 
 const timestamp = "2026-09-05T00:00:00.000Z";
@@ -319,5 +321,41 @@ describe("exact draft validators", () => {
   });
   it.each(["", "2026-02-30", "2026-13-01", "2026-9-05", "2026-09-05T00:00:00Z", "not-a-date"])("rejects invalid date %j without throwing", (value) => {
     expect(readDraftEffectiveAt(value)).toBeNull();
+  });
+});
+
+describe("private staff pasted price drafts", () => {
+  it("previews without a write, then creates only a draft on the exact private endpoint", async () => {
+    vi.stubGlobal("crypto", webcrypto);
+    const onSaved = vi.fn(), product = productFixture();
+    const draft = { ...product.prices[0], id: "synthetic-new", amountCents: 495, currency: "USD",
+      status: "draft", effectiveAt: "2026-12-15T00:00:00.000Z", expiresAt: null, quantityTiers: [],
+      audience: "retail", variantId: "variant-alpha" };
+    fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: true, product: { ...product, prices: [...product.prices, draft] } })));
+    await render(<ProductPriceBatchPanel product={product} token="synthetic-staff" onSaved={onSaved} />);
+    const sheet = host.querySelector("textarea")!;
+    const button = (name: string) => Array.from(host.querySelectorAll("button")).find(b => b.textContent === name);
+    const edit = async (sku: string) => act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(sheet,
+        "sku\taudience\tusd\teffective_date\n" + sku + "\tretail\t4.95\t2026-12-15");
+      sheet.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await edit("another-product-sku"); await click(button("Preview drafts")!);
+    expect(host.querySelector('[role="alert"]')?.textContent).toContain("SKU");
+    expect(button("Save reviewed drafts")).toBeUndefined();
+    await edit("QA-ALPHA-5MG"); await click(button("Preview drafts")!);
+    expect(host.textContent).toContain("1 new drafts"); expect(host.textContent).toContain("USD 4.95");
+    expect(fetchMock).not.toHaveBeenCalled();
+    await click(button("Save reviewed drafts")!);
+    await vi.waitFor(() => expect(onSaved).toHaveBeenCalledOnce());
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("/api/admin/research/products/product-alpha/prices");
+    expect(init.method).toBe("POST");
+    expect(init.headers["Idempotency-Key"]).toMatch(/^sheet-price:[0-9a-f]{64}$/);
+    expect(JSON.parse(init.body)).toEqual({variantId:"variant-alpha",audience:"retail",currency:"USD",amountCents:495,effectiveAt:draft.effectiveAt});
+    expect(host.textContent).toContain("Row 2: saved");
+    await render(<ProductPriceBatchPanel product={product} token="different-synthetic-staff" onSaved={onSaved} />);
+    expect(sheet.value).toBe(""); expect(host.textContent).not.toContain("USD 4.95");
   });
 });

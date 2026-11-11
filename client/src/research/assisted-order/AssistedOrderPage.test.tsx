@@ -1930,6 +1930,9 @@ describe("AssistedOrderConfirmationPage landmarks", () => {
         ?.getAttribute("aria-current"),
     ).toBe("step");
     expect(progress?.textContent).toContain("Confirmation and tracking");
+    // The receipt fixture still carries a pre-cutover $50 estimate in this tab.
+    expect(host.textContent).not.toMatch(/estimated priced total|\$50\.00/i);
+    expect(host.querySelector('a[href="mailto:team@xeniostechnology.com"]')).not.toBeNull();
   });
 
   it("does not report a server-accepted request as failed when the sessionStorage getter is denied", async () => {
@@ -2054,14 +2057,19 @@ describe("AssistedOrderStatusPage verified identity", () => {
     act(() => root!.render(<AssistedOrderStatusPage />));
   }
 
-  it("reads owner-linked requests with the current bearer and renders nullable estimates and opaque tracking", async () => {
+  it("reads owner-linked requests with the current bearer, preserves tracking and hides stale price values", async () => {
     statusSession.memberToken = "synthetic-member-a";
     storeAssistedOrderReceipt(receipt);
-    api.loadAssistedOrderStatus.mockResolvedValue({ ...statusView, estimatedTotalCents: null, trackingReference: "OPAQUE-TRACKING-REF" });
+    api.loadAssistedOrderStatus.mockResolvedValue({ ...statusView, estimatedTotalCents: 9850,
+      lines: [{ lineId: "one", productId: "sample", variantId: "variant", productName: "Synthetic item",
+        specification: "Synthetic form", workflowMode: "request_pricing", quantity: 1, unitPriceCents: 9421, lineEstimateCents: 9421 } as AssistedOrderStatusView["lines"][number]],
+      trackingReference: "OPAQUE-TRACKING-REF" });
     window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
     renderStatus(); await settle(20);
     expect(api.loadAssistedOrderStatus).toHaveBeenCalledWith(receipt.publicReference, undefined, "synthetic-member-a");
-    expect(byTestId("assisted-request-status-estimate")?.textContent).toBe("Estimate: Price on request");
+    expect(byTestId("assisted-request-status-estimate")?.textContent).toBe("Request a quote");
+    expect(host!.textContent).toContain("Synthetic item");
+    expect(host!.textContent).not.toMatch(/\$98\.50|\$94\.21|9850|9421/);
     expect(byTestId("assisted-request-status-tracking")?.textContent).toContain("OPAQUE-TRACKING-REF");
     expect(host!.querySelector('a[href*="OPAQUE-TRACKING"]')).toBeNull();
     expect(host!.textContent).not.toContain("$0.00");

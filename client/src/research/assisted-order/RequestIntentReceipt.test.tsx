@@ -84,8 +84,8 @@ describe("confirmed receipt continuation", () => {
     const links = hrefs();
     expect(links).toContain("/research/early-access/order-request/confirmation/" + receipt.publicReference);
     expect(links).toContain("/research/support");
-    const mailto = links.find((href) => href.startsWith("mailto:research@xeniostechnology.com"))!;
-    expect(decodeURIComponent(mailto)).toContain("Quick Order request " + receipt.publicReference);
+    const mailto = links.find((href) => href.startsWith("mailto:team@xeniostechnology.com"))!;
+    expect(decodeURIComponent(mailto)).toContain("Early Access request " + receipt.publicReference);
     expect(decodeURIComponent(mailto)).toContain("do not include medical information or payment details");
     for (const href of links) expect(href).not.toMatch(/token|key=|requestId/i);
     expect(container.textContent).toContain("Online status is not available for review requests.");

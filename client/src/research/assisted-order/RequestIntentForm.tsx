@@ -128,6 +128,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
       </DialogClose>
       {showMedia && <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} detail />}
       <ListingQuestion variantReference={item.sourceSelection?.variantId} />
+      {item.reviewedContent && item.reviewMessage && <p><strong>{DETAILS_UNDER_REVIEW}.</strong> {item.reviewMessage}</p>}
       {item.reviewedContent && <ReviewedProductContent content={item.reviewedContent} inDialog />}
       {(item.specification || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
         {item.specification && <div><dt className="font-semibold">Specification</dt><dd>{item.specification}</dd></div>}
@@ -197,6 +198,7 @@ function RequestIntentFormSession({
   const [catalogRetry, setCatalogRetry] = useState(0);
   const [search, setSearch] = useState("");
   const [family, setFamily] = useState("");
+  const [rankingNotice, setRankingNotice] = useState(false);
   const [sort, setSort] = useState<"" | AssistedOrderCatalogSort>("");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ReadonlyMap<string, Selection>>(new Map());
@@ -318,6 +320,9 @@ function RequestIntentFormSession({
     void api.catalog({ search, family: family || undefined, sort: sort || undefined, page, pageSize: 24 })
       .then((value) => {
         if (!current) return;
+        if (value.rankUnavailable && (sort === "best_sellers" || sort === "most_requested_research_peptides")) {
+          setRankingNotice(true); setSort(""); setPage(1);
+        }
         if (value.items.some(isHeldHcg)) confirmHcgHold();
         const items = hcgHoldConfirmed.current ? value.items.map(presentHeldHcg) : value.items;
         setCatalog(items === value.items ? value : { ...value, items });
@@ -574,13 +579,18 @@ function RequestIntentFormSession({
             <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, value.replaceAll("_", " "))}</option>)}
           </select></label>
           <label>Sort<select value={sort} onChange={(event) => {
-            pendingCatalogScroll.current = false; setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
+            pendingCatalogScroll.current = false; setRankingNotice(false); setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
           }}>
             <option value="">Catalog order</option>
             <option value="name_asc">Name A to Z</option>
             <option value="name_desc">Name Z to A</option>
+            {catalog?.availableRankSorts?.includes("best_sellers") && <option value="best_sellers">Best sellers (nonclinical)</option>}
+            {catalog?.availableRankSorts?.includes("most_requested_research_peptides") && <option value="most_requested_research_peptides">Most requested research peptides</option>}
           </select></label>
         </div>
+        {rankingNotice && <p role="status">This ranking is no longer available for these results. Showing catalog order.</p>}
+        {sort === "best_sellers" && <p>Based on completed nonclinical sales in a reviewed 30-day period.</p>}
+        {sort === "most_requested_research_peptides" && <p>Based on requests for research peptides in a reviewed 30-day period. Requests are not sales or recommendations.</p>}
         {compactGuestCatalog && <div className="xenios-order-mobile-pagination">{catalogPagination}</div>}
       </div>
       {compactGuestCatalog && <button type="button" className="xenios-order-find-tools"
@@ -604,7 +614,8 @@ function RequestIntentFormSession({
         const reviewedMemberListing = isResearchCartScope(ownerKey) && Boolean(sourceVariantId) &&
           !item.clinicalReviewRequired;
         const showMedia = guestCatalog || (reviewedMemberListing && Boolean(item.reviewedMedia));
-        const showDetails = showMedia || (reviewedMemberListing && Boolean(item.reviewedContent));
+        const heldEducation = Boolean(item.reviewMessage && item.reviewedContent);
+        const showDetails = showMedia || (reviewedMemberListing && Boolean(item.reviewedContent)) || heldEducation;
         // A reviewed card summary can already end with the clinical-review sentence.
         // The notice line then adds only what the summary does not say.
         const summaryStatesClinicalReview = Boolean(item.reviewedContent?.summary?.trimEnd().endsWith(CLINICAL_REVIEW_SENTENCE));
@@ -626,7 +637,7 @@ function RequestIntentFormSession({
             <p>{item.clinicalReviewRequired ? (summaryStatesClinicalReview ? "Not a prescription." : CLINICAL_REVIEW_SENTENCE + " Not a prescription.") : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
             <p>{requestIntentPriceNote(item)}</p>
-            {item.intentExclusion === "specification_review" && item.selectableForReview && <p>
+            {(item.intentExclusion === "specification_review" || heldEducation) && item.selectableForReview && <p>
               <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.reviewMessage ?? item.accessNotice ?? "You can still add it to your quote cart."}</p>}
           </div>
           <div className="xenios-order-card-actions">

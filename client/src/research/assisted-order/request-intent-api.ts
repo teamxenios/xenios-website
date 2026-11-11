@@ -108,6 +108,10 @@ export function createRequestIntentApi(
         || !Number.isSafeInteger(page.page) || !Number.isSafeInteger(page.pageSize)
         || page.page !== requestedPage || page.pageSize !== requestedSize
         || page.items.length > requestedSize || page.items.length > page.total
+        || (page.availableRankSorts !== undefined && (!Array.isArray(page.availableRankSorts) || page.availableRankSorts.length > 2
+          || new Set(page.availableRankSorts).size !== page.availableRankSorts.length
+          || page.availableRankSorts.some(value => value !== "best_sellers" && value !== "most_requested_research_peptides")))
+        || (page.rankUnavailable !== undefined && page.rankUnavailable !== true)
         || !Array.isArray(page.families)
         || page.items.some((item) => typeof item.productId !== "string" || typeof item.variantId !== "string"
           || typeof item.selectableForReview !== "boolean" || typeof item.clinicalReviewRequired !== "boolean")) {

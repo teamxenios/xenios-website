@@ -4,7 +4,7 @@ import {
   validateSubmitInput,
   type AssistedOrderContactInput,
   type AssistedOrderCatalogItem,
-  type AssistedOrderCatalogPage,
+  type AssistedOrderCatalogPage, type InquiryRankSort,
 } from "./contract";
 
 import { normalizeOptionalIntake, type OptionalRequestIntake } from "./optional-intake";
@@ -48,7 +48,10 @@ export type RequestIntentCatalogItem = AssistedOrderCatalogItem & Readonly<{
   sourceRefusal: string | null;
 }>;
 export type RequestIntentCatalogPage = Omit<AssistedOrderCatalogPage, "items"> &
-  Readonly<{ items: readonly RequestIntentCatalogItem[] }>;
+  Readonly<{ items: readonly RequestIntentCatalogItem[];
+    /** Names only, computed after access and filtering. No individual or aggregate counts. */
+    availableRankSorts?: readonly InquiryRankSort[]; rankUnavailable?: true;
+  }>;
 
 export type RequestIntentLine = Readonly<{
   productId: string;

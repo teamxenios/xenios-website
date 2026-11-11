@@ -67,7 +67,7 @@ describe("the isolated Hollywood Hino static microsite", () => {
     expect(sources.some((source) => /getty|495406087|5db391/i.test(source))).toBe(false);
   });
 
-  it("keeps every internal Hino link under /hino and leaves the canonical Research catalog external", () => {
+  it("keeps every internal Hino link under /hino and sends reference-page visitors to the Early Access quote entrance", () => {
     for (const [route, file] of canonicalRoutes) {
       const html = read(file);
       const rootRelativeLinks = [...html.matchAll(/href="(\/[^"#]+)"/gi)].map((match) => match[1]);
@@ -80,8 +80,15 @@ describe("the isolated Hollywood Hino static microsite", () => {
     }
 
     expect(read("research/index.html")).toContain(
-      'href="https://xeniostechnology.com/research/catalog"',
+      'href="https://xeniostechnology.com/earlyaccess"',
     );
+  });
+
+  it("describes an inquiry rather than instructing reference-page visitors to check out", () => {
+    const html = read("research/index.html");
+    expect(html).not.toMatch(/complete canonical checkout|checkout and payment|processing, tracking, and order records/i);
+    expect(html).toContain("Submitting a request does not place an order.");
+    expect(html).toContain("Submit your request and keep its reference");
   });
 
   it("includes the complete dated 127-entry reference list, and states no price", () => {

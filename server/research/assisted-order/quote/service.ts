@@ -218,21 +218,11 @@ export class AssistedOrderQuoteService {
       });
     });
 
-    // Supersede any still-issued predecessor so exactly one quote is open.
+    // Complete all deterministic refusal and money checks before superseding a valid quote.
     const existing = await this.deps.repository.byRequest(input.requestId);
     let version = 1;
     for (const previous of existing) {
       version = Math.max(version, previous.version + 1);
-      if (previous.state === "issued") {
-        await this.deps.repository.update({ ...previous, state: "superseded" });
-        await this.deps.audit.record({
-          type: "assisted_order_quote_superseded",
-          quoteId: previous.quoteId,
-          requestId: previous.requestId,
-          byActor: viewer.actorLabel ?? viewer.normalizedEmail ?? "admin",
-          at: now.toISOString(),
-        });
-      }
       if (previous.state === "accepted") {
         throw new AssistedOrderQuoteConflictError(
           "quote_already_accepted",
@@ -259,6 +249,18 @@ export class AssistedOrderQuoteService {
       acceptanceId: null,
       declinedAt: null,
     });
+    for (const previous of existing) {
+      if (previous.state === "issued") {
+        await this.deps.repository.update({ ...previous, state: "superseded" });
+        await this.deps.audit.record({
+          type: "assisted_order_quote_superseded",
+          quoteId: previous.quoteId,
+          requestId: previous.requestId,
+          byActor: viewer.actorLabel ?? viewer.normalizedEmail ?? "admin",
+          at: now.toISOString(),
+        });
+      }
+    }
     await this.deps.repository.create(record);
     await this.deps.audit.record({
       type: "assisted_order_quote_issued",

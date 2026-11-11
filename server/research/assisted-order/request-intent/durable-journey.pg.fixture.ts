@@ -7,6 +7,7 @@
  * Identity, catalog facts and Care access-audit delivery are synthetic inputs.
  * The production registration, service, repository and candidate SQL are real.
  */
+import { ownedPg16 } from "./disposable-pg16.fixture";
 import { execFileSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -103,6 +104,7 @@ export function createDurableJourneyFixture() {
   const container = "xenios-request-intent-" + randomUUID();
   const database = "request_intent_disposable";
   const password = randomUUID(); // Ephemeral fixture credential; never a host secret.
+  let native: Awaited<ReturnType<typeof ownedPg16>> | undefined;
   let created = false;
   let port = 0;
   const docker = (...args: string[]) => execFileSync("docker", args, {
@@ -280,6 +282,10 @@ export function createDurableJourneyFixture() {
   ].join("\n"))).rows[0];
 
   async function start() {
+    if (!process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
+      native=await ownedPg16(process.env.XENIOS_TEST_LOCAL_PG16_BIN,password);
+      created=true;port=native.port;
+    } else {
     docker("create", "--rm", "--name", container,
       "--publish", "127.0.0.1::5432",
       "--env", "POSTGRES_PASSWORD=" + password,
@@ -295,6 +301,7 @@ export function createDurableJourneyFixture() {
       "if pg_isready -h 127.0.0.1 -p 5432 -U postgres -d request_intent_disposable >/dev/null 2>&1; " +
       "then exit 0; fi; i=$((i+1)); sleep 1; done; exit 1",
     ], { timeout: 35_000, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
+    }
     const version = Number((await sql("show server_version_num")).rows[0].server_version_num);
     expect(version).toBeGreaterThanOrEqual(160000);
     expect(version).toBeLessThan(170000);
@@ -339,6 +346,7 @@ export function createDurableJourneyFixture() {
 
   async function close() {
     // Cleanup failures fail CI; never convert them into a skip/PASS.
+    if(native){native.close();native=undefined;created=false;return;}
     if (created) {
       docker("rm", "--force", container);
       created = false;

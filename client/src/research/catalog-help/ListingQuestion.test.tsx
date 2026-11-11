@@ -28,10 +28,30 @@ describe("Operational question for an exact listing", () => {
       await act(async () => { menu.value = "package"; menu.dispatchEvent(new Event("change", { bubbles: true })); });
       const draft = new URL(host.querySelector("a")!.href);
       expect(draft.protocol).toBe("mailto:");
-      expect(draft.pathname).toBe("research@xeniostechnology.com");
+      expect(draft.pathname).toBe("team@xeniostechnology.com");
       expect(draft.searchParams.get("body")).toContain(first);
       expect(draft.searchParams.get("body")).toContain("Package or availability");
       expect(host.querySelector("code")!.textContent).toBe(first);
+      const writeText = vi.fn().mockResolvedValue(undefined);
+      const oldClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+      try {
+        Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+        const copy = host.querySelector<HTMLButtonElement>("details button")!;
+        await act(async () => { copy.click(); });
+        const text = writeText.mock.calls[0][0] as string;
+        expect(text).toContain("To: team@xeniostechnology.com");
+        expect(text).toContain(first);
+        expect(text).toContain("Package or availability");
+        expect(host.querySelector('[role="status"]')!.textContent).toContain("Email details copied");
+        await act(async () => { menu.value = "quote"; menu.dispatchEvent(new Event("change", { bubbles: true })); });
+        expect(host.querySelector('[role="status"]')!.textContent).toBe("");
+        writeText.mockRejectedValueOnce(new Error("Clipboard unavailable"));
+        await act(async () => { copy.click(); });
+        expect(host.querySelector('[role="status"]')!.textContent).toContain("Copying is unavailable");
+      } finally {
+        if (oldClipboard) Object.defineProperty(navigator, "clipboard", oldClipboard);
+        else Reflect.deleteProperty(navigator, "clipboard");
+      }
       await draw(next);
       expect(host.querySelector("details")!.open).toBe(false);
       expect(host.querySelector("select")!.value).toBe("listing");
@@ -40,7 +60,7 @@ describe("Operational question for an exact listing", () => {
       await draw("unverified");
       expect(host.querySelector("code")).toBeNull();
       expect(host.querySelector("a")!.href).not.toContain("unverified");
-      expect(host.textContent).toContain("research@xeniostechnology.com");
+      expect(host.textContent).toContain("team@xeniostechnology.com");
       // The topic menu stays inside its box at any text size and is set in 16px text,
       // so a phone does not zoom the page when it is tapped.
       const topicMenu = host.querySelector("select")!;

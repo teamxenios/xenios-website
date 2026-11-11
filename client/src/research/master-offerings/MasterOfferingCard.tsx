@@ -166,6 +166,9 @@ export function MasterOfferingVariantRow({
         </span>
         <MasterOfferingPrice price={variant.price} testId="mo-variant-price" />
       </div>
+      {product.variants.length > 1 && variant.reviewMessage && variant.reviewedContent && (
+        <p className="body-s text-ink-2 min-w-0 break-words">{variant.reviewedContent.summary}</p>
+      )}
       {variant.reviewMessage && (
         <p className="text-ink-mute min-w-0 break-words" data-testid="mo-variant-review-message">
           {variant.reviewMessage}

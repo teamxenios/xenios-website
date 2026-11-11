@@ -312,7 +312,9 @@ export type AssistedOrderCatalogPage = Readonly<{
 }>;
 
 /** Orders the whole filtered catalog by product name. Absent keeps catalog order. */
-export const ASSISTED_ORDER_CATALOG_SORTS = ["name_asc", "name_desc"] as const;
+export const INQUIRY_RANK_SORTS = ["best_sellers", "most_requested_research_peptides"] as const;
+export type InquiryRankSort = typeof INQUIRY_RANK_SORTS[number];
+export const ASSISTED_ORDER_CATALOG_SORTS = ["name_asc", "name_desc", ...INQUIRY_RANK_SORTS] as const;
 export type AssistedOrderCatalogSort = typeof ASSISTED_ORDER_CATALOG_SORTS[number];
 
 export type AssistedOrderCatalogQuery = Readonly<{

@@ -1,3 +1,4 @@
+import { EARLY_ACCESS_TEAM_EMAIL } from "../../../shared/research/early-access/quote-contact";
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { isAccountOrderDetailPath } from "./account-portal/routes";
@@ -266,7 +267,7 @@ function MemberChrome({ children }: { children: ReactNode }) {
                 {slug.replace(/-/g, " ")}
               </Link>
             ))}
-            <a href="mailto:research@xeniostechnology.com" className="body-s text-ink-2 hover:text-pulse transition-colors research-member-footer-target">Support</a>
+            <a href={"mailto:" + EARLY_ACCESS_TEAM_EMAIL} className="body-s text-ink-2 hover:text-pulse transition-colors research-member-footer-target">Support</a>
           </div>
         </div>
         <div className="container-x" style={{ paddingBottom: 32 }}>

@@ -35,12 +35,12 @@ describe("the catalog route's sort", () => {
     expect((await request(app).get(root + "/catalog")).status).toBe(200);
     expect(list).toHaveBeenCalledWith(viewer, { search: undefined, family: undefined, sort: undefined, page: 1, pageSize: 24 });
   });
-  it.each(["name_asc", "name_desc"])("passes %s to the service", async (sort) => {
+  it.each(["name_asc", "name_desc", "best_sellers", "most_requested_research_peptides"])("passes %s to the service", async (sort) => {
     const { app, list } = fixture();
     expect((await request(app).get(root + "/catalog").query({ sort, page: 2 })).status).toBe(200);
     expect(list.mock.calls[0][1]).toMatchObject({ sort, page: 2 });
   });
-  it.each(["best_sellers", "popular", "price_asc", "", "NAME_ASC"])("refuses the sort %j before asking the service", async (sort) => {
+  it.each(["invented_sort", "popular", "price_asc", "", "NAME_ASC"])("refuses the sort %j before asking the service", async (sort) => {
     const { app, list } = fixture();
     expect((await request(app).get(root + "/catalog").query({ sort })).status).toBe(400);
     expect(list).not.toHaveBeenCalled();

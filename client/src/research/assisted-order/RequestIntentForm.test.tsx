@@ -374,7 +374,7 @@ describe("mixed private request customer form source", () => {
       expect(all).toHaveLength(1);
       expect(all[0].querySelector("summary")?.textContent?.trim()).toBe("Ask about this item");
       const url = new URL(all[0].querySelector<HTMLAnchorElement>('a[href^="mailto:"]')!.href);
-      expect(url.pathname).toBe("research@xeniostechnology.com");
+      expect(url.pathname).toBe("team@xeniostechnology.com");
       expect(url.searchParams.get("body")?.split("\r\n")).toContain("Catalog reference: " + ref);
     }
     for (const [card, ref] of [[clinical, refs[0]], [held, refs[1]]] as const) {
@@ -383,7 +383,8 @@ describe("mixed private request customer form source", () => {
       expect(card.textContent).not.toContain(reviewedCopy.overview);
       expectOneQuestion(card, ref);
     }
-    expect(held.querySelector("button")).toBeNull(); // A question does not unlock a held item.
+    // Copying contact details is the only button; the hold still has no request action.
+    expect([...held.querySelectorAll("button")].map(button => button.textContent)).toEqual(["Copy email details"]);
     expect(clinical.textContent).toContain("Clinical review required.");
     expect(ordinary.querySelector(widget)).toBeNull();
     await act(async () => ordinary.querySelector<HTMLButtonElement>(detailsButton)!.click());
@@ -642,7 +643,7 @@ describe("customer restriction copy", () => {
       expect(card.textContent).not.toContain("$123.45");
     }
     if (nonMerchandise) {
-      expect(card.querySelector("button")).toBeNull();
+      expect(Array.from(card.querySelectorAll("button"), (button) => button.textContent?.trim())).toEqual(["Copy email details"]);
       expect(card.textContent).toContain("Shipping or service entry, not a product request");
     } else {
       expect(card.querySelector("button")?.disabled).toBe(false);
@@ -683,7 +684,7 @@ describe("customer restriction copy", () => {
     const card = host.querySelector("article")!;
     expect(card.textContent).toContain("Coming soon");
     expect(card.textContent).not.toContain("future_reason");
-    expect(card.querySelector("button")).toBeNull();
+    expect(Array.from(card.querySelectorAll("button"), (button) => button.textContent?.trim())).toEqual(["Copy email details"]);
     expect(api.submit).not.toHaveBeenCalled();
   });
 

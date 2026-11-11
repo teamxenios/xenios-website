@@ -4,6 +4,7 @@ import type { RequestIntentDetail, RequestIntentQueuePage } from "../../../../sh
 import type { RequestIntentApi } from "./request-intent-api";
 import type { AssistedOrderAddressInput } from "../../../../shared/research/assisted-order/contract";
 import "./assisted-order.css";
+import { PrivateQuoteDesk } from "./PrivateQuoteDesk";
 
 type QueueLoad = Readonly<{ api: RequestIntentApi; page: number; attempt: number }> & (
   | Readonly<{ status: "loading" }>
@@ -50,6 +51,9 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
     pendingRead.current = run; setDetailPending(true);
     try {
       const saved = await api.staff(id);
+      if (saved.requestId?.toLowerCase() !== id || saved.publicReference?.toUpperCase() !== "XRI-" + match[1].toUpperCase()) {
+        throw new Error("Private request identity mismatch");
+      }
       if (sequence.current === run) setDetail(saved);
     } catch { if (sequence.current === run) setMessage("Private request access could not be confirmed. No authorization was bypassed."); }
     finally {
@@ -99,7 +103,9 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
         Pending {line.clinicalReviewRequired ? "clinical" : "internal"} review
         {line.researchUseOnly && " | Research Use Only"}
         {line.sourceRefusal && " | Source restriction: " + line.sourceRefusal}
-      </li>)}</ul></section>}
+      </li>)}</ul>
+      <PrivateQuoteDesk key={JSON.stringify([detail.requestId,detail.contact.email])} detail={detail} />
+    </section>}
   </section>;
 }
 

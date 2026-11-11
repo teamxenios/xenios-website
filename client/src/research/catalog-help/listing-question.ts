@@ -1,5 +1,7 @@
-// Published operational support address; never take an email recipient from catalog data.
-export const RESEARCH_SUPPORT_EMAIL = "research@xeniostechnology.com";
+import { EARLY_ACCESS_TEAM_EMAIL, teamDraft } from "../../../../shared/research/early-access/quote-contact";
+
+// Kept as an alias for existing Support page imports.
+export { EARLY_ACCESS_TEAM_EMAIL as RESEARCH_SUPPORT_EMAIL };
 
 export const LISTING_QUESTION_TOPICS = {
   listing: "A listing detail",
@@ -32,7 +34,7 @@ export function listingQuestionDraft(candidate: unknown, topic: ListingQuestionT
   ].join("\r\n");
   // Encode the headers individually (mailto is not an HTML form). Arbitrary
   // text, addresses, state from other variants and question drafts are not inputs.
-  const href = "mailto:" + RESEARCH_SUPPORT_EMAIL
-    + "?subject=" + encodeURIComponent(GENERIC_SUBJECT) + "&body=" + encodeURIComponent(body);
-  return { href, reference };
+  const href = teamDraft(GENERIC_SUBJECT, body);
+  const copyText = "To: " + EARLY_ACCESS_TEAM_EMAIL + "\nSubject: " + GENERIC_SUBJECT + "\n\n" + body;
+  return { href, reference, copyText };
 }
