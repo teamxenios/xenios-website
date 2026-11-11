@@ -13,6 +13,7 @@ import type {
 } from "../ports";
 import type { RequestIntentCatalog } from "./catalog";
 import { quoteOnlyCatalogPage } from "../../../../shared/research/early-access/quote-only";
+import { inquiryReviewCodeForVariant } from "../../master-offerings/inquiry-review-states";
 
 export class RequestIntentError extends Error {
   constructor(public readonly code: string, public readonly status: 400 | 401 | 403 | 409 | 503) {
@@ -164,7 +165,13 @@ export class RequestIntentService {
     // independently rechecks current clinical_admin assignment and the approved
     // request_intent_pending_read capability on EVERY operation. Whole Care can
     // remain disabled. No direct authenticated Data API access is introduced.
-    return reader.get(requestId, principal.subjectId);
+    const detail = await reader.get(requestId, principal.subjectId);
+    if (!detail) return null;
+    // Add, for staff only, the kind of open question on each line's listing.
+    // Read now rather than stored, so it reflects the current review record.
+    return { ...detail, lines: detail.lines.map((line) => ({
+      ...line, reviewCode: inquiryReviewCodeForVariant(line.sourceVariantId),
+    })) };
   }
 
   async staffList(principal: CarePrincipal | null, context: RequestIntentStaffReadContext,

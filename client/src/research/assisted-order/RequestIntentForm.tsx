@@ -541,7 +541,8 @@ function RequestIntentFormSession({
             <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
             <p>{requestIntentPriceNote(item)}</p>
-            {isHeldHcg(item) && item.selectableForReview && <p>{item.actionLabel}. You can still add it to your request.</p>}
+            {item.intentExclusion === "specification_review" && item.selectableForReview && <p>
+              <strong>{item.actionLabel}.</strong> {item.accessNotice ?? "You can still add it to your request."}</p>}
           </div>
           <div className="xenios-order-card-actions">
           {showDetails && <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />}

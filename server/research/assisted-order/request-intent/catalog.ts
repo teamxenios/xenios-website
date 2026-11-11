@@ -9,6 +9,7 @@ import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "../../../../shared/res
 import { authorityFor, type AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
 import { getReviewedProductContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
+import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
 
 export type RequestIntentCatalog = Readonly<{
   list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery): Promise<RequestIntentCatalogPage>;
@@ -55,12 +56,19 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         const nonMerchandise = refusal === "non_merchandise_family";
         const strengthReview = isHcgStrengthReview(offering.id, variant.id);
         const widerStoreNeeded = comingSoon || nonMerchandise;
+        // A reviewed state for a listing with no reviewed description, or whose
+        // label states an unconfirmed fact. Only its customer fields are used here.
+        const reviewState = inquiryReviewStateFor(offering.id, variant.id);
         const reviewedContent = getReviewedProductContent(offering, variant);
         const reviewedMedia = getReviewedProductMedia(offering, variant);
         items.push({
           ...item,
           ...(reviewedContent ? { reviewedContent } : {}),
           ...(reviewedMedia ? { reviewedMedia } : {}),
+          ...(reviewState ? {
+            specification: reviewState.neutralSpecification ?? item.specification,
+            accessNotice: reviewState.customerMessage,
+          } : {}),
           // A clinical request is not a quote. Never present its price as permission to buy.
           unitPriceCents: authority.providerWorkflowRequired ? null : item.unitPriceCents,
           priceVersion: authority.providerWorkflowRequired ? null : item.priceVersion,
@@ -74,12 +82,14 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
           // The reason a line needs a human decision. It excludes the row only
           // while selectableForReview is false.
           intentExclusion: strengthReview ? "specification_review"
-            : nonMerchandise ? "non_merchandise" : comingSoon ? "coming_soon" : null,
+            : nonMerchandise ? "non_merchandise" : comingSoon ? "coming_soon"
+            : reviewState ? "specification_review" : null,
           clinicalReviewRequired: authority.providerWorkflowRequired,
           sourceDisplayState: offering.displayState,
           sourceVariantDisplayState: variant.displayState,
           sourceRefusal: refusal,
-          actionLabel: strengthReview ? HCG_STRENGTH_REVIEW.actionLabel
+          actionLabel: strengthReview || (reviewState && !comingSoon && !nonMerchandise)
+            ? HCG_STRENGTH_REVIEW.actionLabel
             : comingSoon ? "Coming soon"
             : nonMerchandise ? (input.allListedInquirable === true ? "Supply or service inquiry" : "Not a product request")
             : "Add to request",

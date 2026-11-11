@@ -57,6 +57,11 @@ export type RequestIntentLine = Readonly<{
   sourceRefusal: string | null;
   catalogVersion: string;
   reviewState: "pending";
+  /**
+   * Staff readback only, never stored and never sent to a customer: the kind of
+   * open question on this line's listing as it stands when staff read it.
+   */
+  reviewCode?: string | null;
 }>;
 
 export type RequestIntentReceipt = Readonly<{
