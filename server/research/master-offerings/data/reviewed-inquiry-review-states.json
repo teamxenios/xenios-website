@@ -376,28 +376,28 @@
       "offeringId": "mo_e06b78bda06b0eb046ee",
       "sourceVariantId": "mov_92a9e34a7ee0402c096a",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "label_or_source_needed",
       "neutralSpecification": null
     },
     {
       "offeringId": "mo_4a94e7d0778b10bff7c9",
       "sourceVariantId": "mov_3f1723408696198377fc",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "label_or_source_needed",
       "neutralSpecification": null
     },
     {
       "offeringId": "mo_b921da33c0430303f46f",
       "sourceVariantId": "mov_c3a5f9fdcb1adfd3b4a8",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "label_or_source_needed",
       "neutralSpecification": null
     },
     {
       "offeringId": "mo_6462cb4aee9e7583d839",
       "sourceVariantId": "mov_e5b24db4e56bf2b69b37",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "label_or_source_needed",
       "neutralSpecification": null
     },
     {
@@ -1062,7 +1062,7 @@
       "offeringId": "mo_89fe9b28f30b6b1b102b",
       "sourceVariantId": "mov_f2e6a643b1e940ed8525",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "offering_decision",
       "neutralSpecification": null
     },
     {
