@@ -2951,6 +2951,28 @@
       "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
       "primarySha256": "4c74af15f47bca00924dfb35eddc5411024074c2a4978e2bdf5e8e4e9e3b2ff0",
       "labelPreviewSha256": "89f0e920146f6afe9253085273660ed5ed5d44004eb34f014590d877f5011c11"
+    },
+    {
+      "offeringId": "mo_5e454a6196e0a7defb77",
+      "sourceVariantId": "mov_aef099fb39b3fa062f45",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/dihexa-10mg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Dihexa research capsules, listed strength 10 mg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/dihexa-10mg-capsule-front-artwork-v1.webp",
+          "altText": "Dihexa research capsule front label design, listed strength 10 mg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "851d7734a39813455de9beab9afc1437158ad9c7",
+      "primarySha256": "319244a7c4f6e79aaa381e29875441ff70418b54ed8299edd84c3c645b47423b",
+      "labelPreviewSha256": "4823ea25b03a0b81bee1306e574ce44c0536497f4f9af77195164961672e9b71"
     }
   ]
 }
