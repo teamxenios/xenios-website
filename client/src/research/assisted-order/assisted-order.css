@@ -300,3 +300,11 @@
     }
   }
 }
+
+/* Short screens and enlarged text: the sticky toolbar and the fixed request
+   dock together can cover every product. The height is in em, so the rule
+   follows the reader's text size as well as zoom. The toolbar then scrolls
+   with the page; its place in the page and in the tab order does not change. */
+@media (max-width: 700px) and (max-height: 38em) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar { position: static; }
+}

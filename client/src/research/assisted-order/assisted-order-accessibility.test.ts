@@ -25,4 +25,20 @@ describe("assisted-order pointer target source contracts", () => {
       /@media \(max-width: 700px\)[\s\S]*?\.xenios-order-steps \{ grid-template-columns: 1fr; \}/u,
     );
   });
+
+  it("stops the phone catalog toolbar sticking on a short screen or at enlarged text", () => {
+    // The toolbar is sticky on a phone.
+    expect(css).toMatch(
+      /@media \(max-width: 700px\) \{[\s\S]*?\.xenios-order-page--guest-catalog \.xenios-order-catalog-toolbar \{\s*position: sticky;/u,
+    );
+    // It is released by a later rule whose height is in em, so it follows text size as well as zoom.
+    const sticky = css.search(/position: sticky;\s+top: 0;/u);
+    const released = css.search(
+      /@media \(max-width: 700px\) and \(max-height: 38em\) \{\s+\.xenios-order-page--guest-catalog \.xenios-order-catalog-toolbar \{ position: static; \}\s+\}/u,
+    );
+    expect(sticky).toBeGreaterThan(-1);
+    expect(released).toBeGreaterThan(sticky);
+    // 38em is 608px at the default text size: below a 390 x 664 phone viewport, so the toolbar still sticks there.
+    expect(38 * 16).toBeLessThan(664);
+  });
 });
