@@ -323,6 +323,8 @@
 @media (max-width: 700px) and (max-height: 38em) {
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar { position: static; }
   .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: block; }
+  /* The toolbar no longer sticks here, so the margin only has to clear the small sticky button. */
+  .xenios-order-page--guest-catalog .xenios-order-card :is(a, button, input, select, summary) { scroll-margin-top: 3.5rem; }
   .xenios-order-page--guest-catalog .xenios-order-find-tools {
     display: block; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 19;
     justify-self: start; min-height: 44px; max-width: 100%; padding: 4px 10px;
@@ -335,6 +337,7 @@
   @container guest-order-reflow (max-width: 13.5rem) {
     .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar { position: static; }
     .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: block; }
+    .xenios-order-page--guest-catalog .xenios-order-card :is(a, button, input, select, summary) { scroll-margin-top: 3.5rem; }
     .xenios-order-page--guest-catalog .xenios-order-find-tools {
       display: block; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 19;
       justify-self: start; min-height: 44px; max-width: 100%; padding: 4px 10px;
