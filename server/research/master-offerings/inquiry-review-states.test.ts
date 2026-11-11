@@ -166,7 +166,9 @@ describe("reviewed inquiry review states", () => {
       { get: async () => stored, list: async () => ({ items: [], total: 0, page: 1, pageSize: 25 }) },
       stored.requestId,
     );
-    expect(detail?.lines.map((line) => line.reviewCode)).toEqual([null, record.staffReviewCode]);
+    // A line with no open question comes back exactly as stored, with no added field.
+    expect(detail?.lines[0]).toEqual(stored.lines[0]);
+    expect(detail?.lines[1]).toEqual({ ...stored.lines[1], reviewCode: record.staffReviewCode });
     // The stored record itself is not changed.
     expect(stored.lines.every((line) => !("reviewCode" in line))).toBe(true);
   });

@@ -169,9 +169,11 @@ export class RequestIntentService {
     if (!detail) return null;
     // Add, for staff only, the kind of open question on each line's listing.
     // Read now rather than stored, so it reflects the current review record.
-    return { ...detail, lines: detail.lines.map((line) => ({
-      ...line, reviewCode: inquiryReviewCodeForVariant(line.sourceVariantId),
-    })) };
+    // A line whose listing has no open question is returned exactly as stored.
+    return { ...detail, lines: detail.lines.map((line) => {
+      const reviewCode = inquiryReviewCodeForVariant(line.sourceVariantId);
+      return reviewCode === null ? line : { ...line, reviewCode };
+    }) };
   }
 
   async staffList(principal: CarePrincipal | null, context: RequestIntentStaffReadContext,
