@@ -2973,6 +2973,50 @@
       "sourceCommit": "851d7734a39813455de9beab9afc1437158ad9c7",
       "primarySha256": "319244a7c4f6e79aaa381e29875441ff70418b54ed8299edd84c3c645b47423b",
       "labelPreviewSha256": "4823ea25b03a0b81bee1306e574ce44c0536497f4f9af77195164961672e9b71"
+    },
+    {
+      "offeringId": "mo_d5072d9cc26b1f898b6d",
+      "sourceVariantId": "mov_30d35dcbc0bc8d59ff5b",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/acetic-acid-0-6-5ml-label-card-v1-1024.webp",
+          "altText": "Xenios Acetic Acid 0.6% 5 mL label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/acetic-acid-0-6-5ml-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Acetic Acid 0.6% 5 mL",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "4e95326e42be7dba8c48632cb5d130abfd3d4281",
+      "primarySha256": "133bf19bd09871cb89c1e10f679c3c852f065e0439c6cca8b4a4e872e0e33aa7",
+      "labelPreviewSha256": "af88abf8d190621ae74439861e9e3bae5a6259d705b865131fe051d71083af80"
+    },
+    {
+      "offeringId": "mo_b49627a2296975935e26",
+      "sourceVariantId": "mov_88fd1531d586cdebb896",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/reconstitution-solution-4ml-label-card-v1-1024.webp",
+          "altText": "Xenios Reconstitution Solution 4 mL label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/reconstitution-solution-4ml-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Reconstitution Solution 4 mL",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "4e95326e42be7dba8c48632cb5d130abfd3d4281",
+      "primarySha256": "58422f76f1c385984a5a085ca5fbf147bb685b6a0aa4a197d5f6cca6d9f05a1e",
+      "labelPreviewSha256": "8ec6d37a1b194b863f8600612a9cc4250eb042dbb92618990baafa7a74220125"
     }
   ]
 }
