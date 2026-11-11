@@ -6433,6 +6433,240 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_f9bf2c4e55dbbb5e7a03",
+      "sourceVariantId": "mov_e0ce4fde8a3393202bdc",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic peptide derived from the carboxy-terminal region of human growth hormone. Cell, tissue and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 5 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic peptide taken from the tail end of human growth hormone - the investigators who studied it describe it as a C-terminal fragment of that hormone, and the reference record shows a sequence beginning with tyrosine and closed by a disulfide bridge. It is listed for laboratory work on how such fragments affect fat breakdown and fat formation. What the cited work establishes is in rats, mice and isolated tissue, much of it on related analogues: the fragment reduced fat formation as strongly as the intact hormone and slowed weight gain in obese mice, without the high blood glucose or the reduced insulin secretion that followed the intact hormone. What it does not establish is any effect in a person. The full technical description follows.\n\nAOD-9604 is a synthetic peptide derived from the carboxy-terminal region of human growth hormone, described by the investigators who studied it as a C-terminal fragment of that hormone; the PubChem record shows a sequence that begins with tyrosine and is closed by a disulfide bridge. The antilipogenic activity of this region of the hormone was reported from 1993: a synthetic peptide of human growth hormone residues 177 to 191 had antilipogenic activity identical to that of the intact hormone, while showing no significant lipolytic effect as measured by glycerol release from the fat pads of rats given the peptide, and in 1994 long-term administration of the same peptide to obese mice reduced cumulative body weight gain, decreased adipose tissue mass and inhibited lipogenesis in adipose tissue. In one 2000 report on AOD9401, an analogue of that domain spanning residues 177 to 191, the peptide stimulated hormone-sensitive lipase and inhibited acetyl-coenzyme A carboxylase in isolated rat adipose tissue, mimicked the intact hormone's effect on diacylglycerol release in adipocytes, and over 20 days in obese Zucker rats reduced body weight gain and lowered mean adipocyte diameter from about 110 to about 80 micrometres, without the insulin resistance or glucose intolerance that followed the intact hormone. In a second 2000 report, administration of AOD9401 to obese mice over 30 days lowered body weight gain from day 16 with no difference in food consumption, reduced lipogenic and raised lipolytic activity in adipose tissue examined afterwards, acutely raised energy expenditure and glucose and fat oxidation, and raised lipolytic and lowered lipogenic activity in isolated adipose tissue from obese rodents and from people. Two 2001 reports on AOD9604 itself found that over 14 days it reduced body weight gain and body fat in obese mice with increased fat oxidation and raised plasma glycerol, did not produce the high blood glucose or the reduced insulin secretion that followed the intact hormone, did not compete with the intact hormone for its receptor and did not induce cell proliferation through that receptor; the same work found the weight and lipolysis changes absent over the long term in mice lacking the β3-adrenergic receptor, while a single administration still raised energy expenditure and fat oxidation in those mice, from which the authors concluded that the lipolytic action is not mediated directly through that receptor, although both the hormone and the peptide raised its expression. This listing is a laboratory research material and not a medicine. The cell, tissue and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0261"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone fragment effects on lipolysis and lipogenesis in cell, tissue and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_fa2070d7fd794ad0c245",
+      "sourceVariantId": "mov_77a80adce9e9cb1b93a0",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Glutathione is a tripeptide of glutamate, cysteine and glycine. The catalog states only 'Glutathione' without saying which redox form this listing supplies. Biochemical studies of this compound do not establish the safety or effects of this research material in people. Listed at 500 mg for laboratory research.",
+        "overview": "In plain terms, this is glutathione, a tripeptide - a chain of three amino acids - that cells use to keep their own chemistry in a reduced state and to tag other molecules for disposal. It is listed for laboratory work on that thiol chemistry, on glutathione metabolism and on how glutathione status is measured. What the cited work establishes is biochemical: it is the most abundant non-protein thiol in mammalian tissues, it is made in two enzyme steps whose rate depends on the supply of cysteine, and one review describes how its status is assessed in cells. What it does not establish is which redox form this listing supplies, since the catalog says only Glutathione, nor any effect in a person. The full technical description follows.\n\nGlutathione is the tripeptide γ-L-glutamyl-L-cysteinylglycine, in which the glutamate is joined to cysteine through its side-chain carboxyl group; the reductant and conjugating chemistry below belongs to its reduced form, reduced glutathione, whose free cysteine thiol carries it, and the catalog states only 'Glutathione' without saying which redox form this listing supplies. A 1983 article placed this thiol in virtually every cell, with roles in metabolism, in transport and in cellular protection: it reduces disulfides and other molecules, forms conjugates with compounds arising both outside and inside the cell, and shields cells from reactive oxygen intermediates and free radicals. Later reviews describe it as the most abundant non-protein thiol in mammalian tissues and as the most abundant low-molecular-weight thiol compound synthesized in cells, a determinant of redox signalling, and a participant in the detoxification of xenobiotics and xenobiotic electrophiles and in maintaining redox homeostasis. Its biosynthesis occurs in the cytosol in two enzymatic steps, the first catalysed by glutamate cysteine ligase, the rate-limiting enzyme, which is composed of a catalytic and a modifier subunit, and the second by glutathione synthetase; the key determinants are the availability of the sulfur amino acid precursor cysteine and the activity of that ligase, whose subunit genes are regulated through transcription factors including NF-E2 related factor 2 acting at the antioxidant response element. One of them also describes methods of assessing glutathione status in cells. This listing is a laboratory research material and not a medicine. The biochemical findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 500 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "500 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0296"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on thiol redox chemistry, glutathione metabolism and the measurement of glutathione status in cell and tissue assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_dbed3adeeecd92ac1d41",
+      "sourceVariantId": "mov_557749e5f12e1d27e367",
+      "content": {
+        "brand": "Xenios",
+        "summary": "MGF is an abbreviation that in the published record stands for mechano growth factor, a splice variant of insulin-like growth factor 1. Work on a product sold under the name does not establish this listing's composition, or the safety or effects of this research material in people. Listed at 2 mg for laboratory research.",
+        "overview": "In plain terms, this listing's name is the abbreviation MGF, which in the published record stands for mechano growth factor, a splice variant of insulin-like growth factor 1. It is listed for laboratory work on those splice variants, on E-domain peptide chemistry and on receptor activation. What the cited work establishes is that the name covers more than one material and that they behave differently: a product sold as full-length mechano growth factor activated the insulin-like growth factor 1 receptor, while a shorter mechano growth factor and a stabilised analogue produced no activation in the same assays. What it does not establish is which of those this listing is - the label states the abbreviation alone, so it identifies neither the material nor the basis of the stated amount. The full technical description follows.\n\nThis listing's name is the abbreviation MGF, which in the published record stands for mechano growth factor: a 2013 study states that human insulin-like growth factor 1 Ec, also called mechano growth factor, is a splice variant of insulin-like growth factor 1, and reference records list mechano growth factor as an alternative name for insulin-like growth factor 1. The catalog writes the same abbreviation with that expansion on another listing, as MGF with IGF-1Ec in parentheses, and on a pegylated preparation, so within this catalog the abbreviation names the peptide and not any of the unrelated substances that share the letters. Reference records give the human insulin-like growth factor 1 precursor as 195 residues, with a signal region at 1 to 21, a propeptide at 22 to 48, the mature insulin-like growth factor 1 chain at 49 to 118, and the E peptide as residues 119 to 195, and a 2014 review describes IGF-1Ec as arising from alternative splicing of exons 4, 5 and 6 and notes that a synthetic analogue corresponding to the last 24 amino acids of the E domain has been used to study what that domain does. The name is applied in the published record to more than one material. A 2014 analytical study characterised a product sold as full-length mechano growth factor and reported a protein of monoisotopic molecular mass 12264.9 whose sequence is closely related to IGF-1Ec without the signal and propeptide regions, its C-terminus altered by loss of the terminal lysine and by an R109H substitution; that study examined a product sold under the name, so it establishes what the name has been shown to denote and not the composition of this listing. A 2016 receptor-activation study compared the two readings directly: in kinase-specific receptor activation assays, full-length mechano growth factor stimulated the insulin-like growth factor 1 receptor to a maximal effect similar to recombinant human insulin-like growth factor 1 at high equimolar concentrations, while human mechano growth factor and a stabilised mechano growth factor analogue produced no activation of that receptor in the same assays. This listing's label states the abbreviation alone, so it identifies neither which of those materials is listed nor the basis of the stated amount. This listing is a laboratory research material and not a medicine. The analytical and cell-assay findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 2 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "2 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0316"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on insulin-like growth factor 1 splice variants, E-domain peptide chemistry and receptor activation in cell and biochemical assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_25463089835b0939dc4b",
+      "sourceVariantId": "mov_26ba2e0fb6498f8e96ac",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The oxidized form of nicotinamide adenine dinucleotide, also called coenzyme I, a dinucleotide on which the cell's redox state depends. Biochemical and laboratory studies of this compound do not establish the safety or effects of this research material in people. Listed at 1000 mg for laboratory research.",
+        "overview": "In plain terms, this is the oxidized form of nicotinamide adenine dinucleotide, also called coenzyme I - a molecule central to the chemistry by which cells move electrons about. It is listed for laboratory work on that redox chemistry and on the enzymes that depend on it, in cell and biochemical assays. What the cited work establishes is biochemical: a cell's redox state depends both on the absolute concentrations of these dinucleotides and on the ratios of their oxidized and reduced forms, and in 2000 yeast and mouse Sir2 proteins were shown to deacetylate histones in a manner that required it. What it does not establish is any effect in a person. The full technical description follows.\n\nNAD+ is the oxidized form of nicotinamide adenine dinucleotide, also called coenzyme I, a dinucleotide in which a nicotinamide ribonucleotide is joined through a pyrophosphate bridge to adenosine 5'-monophosphate. A 2008 review of mammalian nicotinamide adenine dinucleotide metabolism notes that the cellular redox state depends both on the absolute concentrations of the pyridine dinucleotides and on the ratios of their oxidized and reduced forms, and surveys the enzymes of both the de novo and the reutilization routes of its biosynthesis as well as those that cleave it, alongside what the review calls its non-redox functions. In 2000, yeast and mouse Sir2 proteins were shown to deacetylate lysines 9 and 14 of histone H3 in a manner dependent on nicotinamide adenine dinucleotide, with the deacetylation of lysine 16 of histone H4 reported for the yeast protein, whose activity the authors tied to transcriptional silencing and to replicative life span in yeast. A 2015 review of cellular research gathers work in which the level of nicotinamide adenine dinucleotide within a cell bears on metabolic adaptation, on sirtuin activity and on mitochondrial stress responses, among them the mitochondrial unfolded protein response. This listing is a laboratory research material and not a medicine. The biochemical and laboratory findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 1000 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "1000 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0317"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on pyridine nucleotide redox chemistry and the activity of nicotinamide adenine dinucleotide-dependent enzymes in cell and biochemical assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_4bf44c0afe1ae392ddf0",
+      "sourceVariantId": "mov_60e645f13e186042b62b",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The oxidized form of nicotinamide adenine dinucleotide, also called coenzyme I, a dinucleotide on which the cell's redox state depends. Biochemical and laboratory studies of this compound do not establish the safety or effects of this research material in people. Listed at 500 mg for laboratory research.",
+        "overview": "In plain terms, this is the oxidized form of nicotinamide adenine dinucleotide, also called coenzyme I - a molecule central to the chemistry by which cells move electrons about. It is listed for laboratory work on that redox chemistry and on the enzymes that depend on it, in cell and biochemical assays. What the cited work establishes is biochemical: a cell's redox state depends both on the absolute concentrations of these dinucleotides and on the ratios of their oxidized and reduced forms, and in 2000 yeast and mouse Sir2 proteins were shown to deacetylate histones in a manner that required it. What it does not establish is any effect in a person. The full technical description follows.\n\nNAD+ is the oxidized form of nicotinamide adenine dinucleotide, also called coenzyme I, a dinucleotide in which a nicotinamide ribonucleotide is joined through a pyrophosphate bridge to adenosine 5'-monophosphate. A 2008 review of mammalian nicotinamide adenine dinucleotide metabolism notes that the cellular redox state depends both on the absolute concentrations of the pyridine dinucleotides and on the ratios of their oxidized and reduced forms, and surveys the enzymes of both the de novo and the reutilization routes of its biosynthesis as well as those that cleave it, alongside what the review calls its non-redox functions. In 2000, yeast and mouse Sir2 proteins were shown to deacetylate lysines 9 and 14 of histone H3 in a manner dependent on nicotinamide adenine dinucleotide, with the deacetylation of lysine 16 of histone H4 reported for the yeast protein, whose activity the authors tied to transcriptional silencing and to replicative life span in yeast. A 2015 review of cellular research gathers work in which the level of nicotinamide adenine dinucleotide within a cell bears on metabolic adaptation, on sirtuin activity and on mitochondrial stress responses, among them the mitochondrial unfolded protein response. This listing is a laboratory research material and not a medicine. The biochemical and laboratory findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 500 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "500 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0318"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on pyridine nucleotide redox chemistry and the activity of nicotinamide adenine dinucleotide-dependent enzymes in cell and biochemical assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_0784f8ad4fc471f8053e",
+      "sourceVariantId": "mov_2d03422d39648068a0e4",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic tripeptide of glutamate, aspartate and arginine. The review reporting its effects presents its mechanism as an assumption rather than a demonstration. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 10 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic tripeptide - a chain of three amino acids: glutamate, aspartate and arginine. It is listed for laboratory work on oxidative stress, neuronal survival and dendrite shape in cells and animals. What the cited work establishes is in cells and rats: it restricted the accumulation of reactive oxygen species and necrotic cell death in several cell types under oxidative stress, improved spatial orientation and learning in the offspring of rats loaded with dietary methionine, and increased the number of processes and the total length of dendrites in neurons derived from elderly donors' skin cells. What it does not establish is a mechanism: the review reporting these effects presents entry into cells and binding to histone proteins or nucleic acids as an assumption rather than a demonstration. The full technical description follows.\n\nPinealon is the synthetic tripeptide L-glutamyl-L-aspartyl-L-arginine, written Glu-Asp-Arg and abbreviated EDR. In a 2011 cell study, the tripeptide restricted the accumulation of reactive oxygen species in cerebellar granule cells, in neutrophils and in pheochromocytoma PC12 cells under oxidative stress raised by both receptor-dependent and receptor-independent means, and reduced necrotic cell death measured by propidium iodide staining, alongside a delayed time course of ERK 1/2 activation and a change in the cell cycle; because the limit on reactive oxygen species and on cell mortality saturated at lower concentrations while the cell-cycle effect continued at higher ones, the authors concluded that it may act directly on the cell genome in addition to its antioxidant activity. In a 2012 study, rats were loaded with dietary methionine during pregnancy to produce experimental hyperhomocysteinemia; giving the tripeptide under those conditions improved the offspring's spatial orientation and learning and lowered both reactive oxygen species accumulation and the number of necrotic cells among neurons isolated from the offspring's cerebellum. In a 2024 study using cortical neurons transdifferentiated from the dermal fibroblasts of elderly donors, this tripeptide and two related short peptides increased the number of primary processes and the total length of dendrites, while none of the three changed the activity of mitochondria or lysosomes or the level of the p16 protein; this tripeptide lowered oxidative DNA damage in those neurons. A 2020 review of the same tripeptide reports that it activates the expression of genes and the synthesis of proteins that maintain neuronal activity and lowers the intensity of apoptosis in cell and animal studies, that it interferes with the loss of dendritic spines in neuronal cultures from mouse models of Alzheimer's and Huntington's diseases, and that it promotes the synthesis of antioxidant enzymes in cultured rat cerebellum neurons; the review presents entry into cells and binding to histone proteins or nucleic acids as an assumption rather than a demonstrated mechanism. This listing is a laboratory research material and not a medicine. The cell and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0322"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on oxidative stress, neuronal viability and dendrite morphology in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_0693d8b85b10f7c34f2e",
+      "sourceVariantId": "mov_1981dac64e329b0bf2f8",
+      "content": {
+        "brand": "Xenios",
+        "summary": "SNAP-8 is a product name rather than a chemical name. A 2026 report on peptide formulations for topical use gives it as acetyl octapeptide-3. Analytical and review studies of this compound do not establish the safety or effects of this research material in people. Listed at 10 mg for laboratory research.",
+        "overview": "In plain terms, SNAP-8 is a product name rather than a chemical name. A 2026 report gives it as acetyl octapeptide-3, a name that states an acetylated peptide of eight residues and nothing further - no source read here gives a sequence for it, so this description states none. It is listed for laboratory work on synthetic peptide chemistry and on distinguishing this peptide from other acetylated ones. What the cited work does not establish is any shared property with acetyl hexapeptide-8, a different peptide and not a clinically interchangeable substitute; a 2026 review states that its evidence does not justify assigning direct collagen stimulation or equivalent efficacy to these sequences. The full technical description follows.\n\nSNAP-8 is a product name rather than a chemical name. A 2026 report on peptide formulations for topical use gives Snap-8 as acetyl octapeptide-3. That name states an acetylated peptide of eight residues and nothing further: no source read here gives an amino acid sequence for it, so this description states none. A 2026 review of peptides in aesthetic dermatology discusses acetyl octapeptide-3 as a related commercial concept and states that it is not a clinically interchangeable substitute for acetyl hexapeptide-8. The same review states that the evidence it summarises does not justify assigning direct collagen stimulation or equivalent efficacy to these sequences. Acetyl hexapeptide-8 is a different peptide, and findings reported for it do not carry over to this listing. This listing is a laboratory research material and not a medicine. The analytical and review findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0342"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on synthetic peptide chemistry and on distinguishing acetyl octapeptide-3 from other acetylated peptides.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_ca6143466abf3895672c",
+      "sourceVariantId": "mov_e813930dcd46c36e98e2",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Thymalin is a product name for a polypeptide preparation obtained from the thymus, not a single defined molecule. Studies name components of it, not a full composition. Cell-level studies of this compound do not establish the safety or effects of this research material in people. Listed at 10 mg for laboratory research.",
+        "overview": "In plain terms, Thymalin is a product name for a polypeptide preparation obtained from the thymus, not a single defined molecule. It is listed for laboratory work on such thymus preparations in cell assays of cytokine synthesis and blood-cell differentiation. What the cited work establishes is in human cells: the preparation and two named dipeptides each lowered the measured synthesis of three inflammatory signalling proteins by between 1.4 and 6.0 times, and in haematopoietic stem cells it shifted several surface markers. What it does not establish is a composition, a potency basis, or any equivalence to thymulin, which the published record keeps distinct and which database records listing both names alongside each other do not make the same substance. The full technical description follows.\n\nThymalin is a product name for a polypeptide preparation obtained from the thymus rather than for a single defined molecule: a 2020 study describes it as a polypeptide complex isolated from the thymus, and a 2023 study describes it as an immunomodulatory preparation holding a polypeptide extract of thymus. That 2023 study names the dipeptides KE and EW as active substances of the preparation, which identifies components rather than a full composition. The published record keeps this preparation distinct from thymulin, which one review describes as a well-characterised thymic hormone existing as a nonapeptide coupled to equimolar amounts of zinc ions, and a 1997 review lists thymalin and thymulin among separate thymus preparations; a listing of one is not a listing of the other, and database records that carry both names alongside each other do not make them the same substance. In a 2023 in vitro model of an inflammatory reaction using human peripheral blood mononuclear cells stimulated with lipopolysaccharide, the preparation and the two dipeptides each lowered the measured synthesis of interleukin-1 beta, interleukin-6 and tumour necrosis factor alpha by between 1.4 and 6.0 times. In a 2020 cell study of human haematopoietic stem cells, exposure lowered the expression of CD44 and CD117 by two to three times and raised the expression of CD28 by 6.8 times, which the authors read as a shift towards mature T lymphocytes. Because the preparation is defined by its source material rather than by a structure, this listing states no composition, no potency basis and no equivalence to any single peptide. This listing is a laboratory research material and not a medicine. The cell-level findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0349"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on thymus polypeptide preparations in cell assays of cytokine synthesis and haematopoietic cell differentiation.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_13553ad94844151cf7c5",
+      "sourceVariantId": "mov_96f011e65e7b6a72f8c9",
+      "content": {
+        "brand": "Xenios",
+        "summary": "The catalog's four-pack of one compound, tesamorelin, an analogue of human growth hormone-releasing factor. The pack count is the catalog's wording; the selling unit is not established. The findings do not establish the safety or effects of this research material in people. Listed at 8 mg for laboratory research.",
+        "overview": "In plain terms, this is the catalog's four-pack of a single compound rather than a single unit. Tesamorelin itself is a version of a 44-amino-acid human hormone that prompts growth-hormone release, with one chemical group added at one end so that it breaks down more slowly. It is listed for laboratory work on that analogue chemistry, as described for the single-unit listings. What the cited work establishes is in animals: it resisted the enzyme that inactivates the natural hormone, lasted longer in plasma, and raised growth hormone and insulin-like growth factor 1 in pigs, rats and dogs. What it does not establish is what a customer receives - the per-unit amount is reproduced as the label gives it, and the pack count is the catalog's own wording, because a multipack is not a customer unit until a source says so. The full technical description follows.\n\nThis listing is the catalog's four-pack of a single compound rather than a single unit, and the description of the compound below is the one already written for the tesamorelin listings. Tesamorelin, developed under the code TH9507, is an analogue of the 44-amino-acid human growth hormone-releasing factor, hGRF(1-44)NH2, modified only by a trans-3-hexenoyl group added to the N-terminal tyrosine. That modification made it resistant to inactivation by dipeptidyl aminopeptidase IV, slowed its breakdown in rat, dog and human plasma in vitro, and prolonged its plasma elimination in vivo compared with the natural peptide. In pigs, rats and dogs, repeated administration markedly increased plasma growth hormone and insulin-like growth factor 1 (IGF-1), and its apparent elimination half-life in dogs was 21 to 45 minutes. In subchronic studies of up to four months, rats and dogs gained more body weight, and dogs showed reversible liver, kidney and blood findings that the authors attributed to sustained supraphysiological growth hormone and IGF-1 exposure. The catalog's label for this listing states 8 mg and a four-pack. The per-unit amount is reproduced as the label gives it; the pack count is the catalog's own wording and not a statement about what a customer receives, because the selling unit for this listing is not established by any source read here. A multipack is not a customer unit until a source says so. This listing is a laboratory research material and not a medicine. The findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 8 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "8 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0416"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth-hormone-releasing factor analogue chemistry, as described for the single-unit listings.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }
