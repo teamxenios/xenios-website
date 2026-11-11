@@ -1,3 +1,4 @@
+import { REQUEST_GOALS } from "../../../../shared/research/assisted-order/optional-intake";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { RequestIntentDetail, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import type { RequestIntentApi } from "./request-intent-api";
@@ -80,6 +81,10 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
     {message && <p role="alert">{message}</p>}
     {detail && <section><h2>{detail.publicReference}</h2>
       <p>{detail.contact.fullLegalName} | {detail.contact.email} | {detail.contact.mobilePhone}</p>
+      {detail.optionalIntake && <section aria-label="Optional customer information">
+        {detail.optionalIntake.goal && <p>Customer goal: {REQUEST_GOALS[detail.optionalIntake.goal]}</p>}
+        {detail.optionalIntake.referralCode && <p>Referral code (customer-reported; unverified): {detail.optionalIntake.referralCode}</p>}
+      </section>}
       {detail.contact.organizationName && <p>Organization: {detail.contact.organizationName}</p>}
       <section aria-label="Requested delivery address"><h3>Requested delivery address</h3>
         <RequestedAddress address={detail.contact.shippingAddress} />

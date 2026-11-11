@@ -196,6 +196,7 @@ export type AssistedOrderFormAcknowledgmentView = Readonly<{
 }>;
 
 export type AssistedOrderWizardConfig = Readonly<{
+  optionalIntakeEnabled?: true;
   legal: readonly AssistedOrderAgreementRequirement[];
   form: readonly AssistedOrderFormAcknowledgmentView[];
 }>;

@@ -7,6 +7,8 @@ import {
   type AssistedOrderCatalogPage,
 } from "./contract";
 
+import { normalizeOptionalIntake, type OptionalRequestIntake } from "./optional-intake";
+
 export const REQUEST_INTENT_KIND = "unapproved_selection_request" as const;
 export const REQUEST_INTENT_NOTICE =
   "Submit for review. This saves your requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.";
@@ -19,6 +21,7 @@ export const REQUEST_INTENT_RECOVERY_NOTICE =
 export type RequestIntentInput = Readonly<{
   idempotencyKey: string;
   contact: AssistedOrderContactInput;
+  optionalIntake?: OptionalRequestIntake;
   agreements: readonly Readonly<{
     kind: string;
     version: string;
@@ -79,6 +82,7 @@ export type RequestIntentReceipt = Readonly<{
 }>;
 export type RequestIntentDetail = RequestIntentReceipt & Readonly<{
   contact: RequestIntentInput["contact"];
+  optionalIntake?: OptionalRequestIntake;
   agreements: RequestIntentInput["agreements"];
   lines: readonly RequestIntentLine[];
 }>;
@@ -98,11 +102,14 @@ export function exactObject(
 }
 
 export function validateRequestIntentInput(raw: unknown): RequestIntentInput {
-  const root = exactObject(raw, ["idempotencyKey", "contact", "agreements", "lines"], "request");
+  const root = exactObject(raw, ["idempotencyKey", "contact", "agreements", "lines", "optionalIntake"], "request");
   if (typeof root.idempotencyKey !== "string"
     || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(root.idempotencyKey)) {
     throw new AssistedOrderValidationError("idempotencyKey", "A valid attempt identity is required.");
   }
+  let optionalIntake: OptionalRequestIntake | undefined;
+  try { optionalIntake = normalizeOptionalIntake(root.optionalIntake); }
+  catch { throw new AssistedOrderValidationError("optionalIntake", "Choose a listed goal or enter a valid optional referral code."); }
   const contact = exactObject(root.contact, [
     "fullLegalName", "email", "mobilePhone", "organizationName", "ageConfirmed",
     "shippingAddress", "billingSameAsShipping", "billingAddress",
@@ -142,6 +149,7 @@ export function validateRequestIntentInput(raw: unknown): RequestIntentInput {
   return {
     idempotencyKey: normalized.idempotencyKey,
     contact: normalized.contact,
+    ...(optionalIntake ? { optionalIntake } : {}),
     lines: normalized.lines.map(({ productId, variantId, quantity }) => ({ productId, variantId, quantity })),
     agreements: normalized.agreements.map((agreement) => ({ ...agreement, accepted: true })),
   };

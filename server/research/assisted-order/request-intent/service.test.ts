@@ -253,3 +253,30 @@ describe("private unapproved mixed request intent", () => {
     expect(rpc).toHaveBeenCalledWith("request_intent_find_attempt", { p_owner_hash: "a".repeat(64), p_attempt_hash: "b".repeat(64) });
   });
 });
+
+describe("explicit optional private intake", () => {
+  it("refuses brand-new optional data when the flag is off, leaving skipped requests unchanged", async () => {
+    const { service, records } = setup();
+    await expect(service.submit(viewer, { ...input(), optionalIntake: { goal: "check_availability" } }))
+      .rejects.toMatchObject({ code: "optional_intake_unavailable" });
+    expect(records.size).toBe(0);
+    await service.submit(viewer, input());
+    expect(records.size).toBe(1);
+    expect([...records.values()][0].detail).not.toHaveProperty("optionalIntake");
+  });
+  it("preserves only voluntarily submitted fields, deduplicates retries and withholds them from the receipt", async () => {
+    const { deps, records } = setup();
+    const service = new RequestIntentService({ ...deps, optionalIntakeEnabled: true });
+    const value = { ...input(), optionalIntake: { goal: "compare_options" as const, referralCode: "TEAM-12" } };
+    const receipt = await service.submit(viewer,value);
+    expect(receipt).not.toHaveProperty("optionalIntake");
+    expect((await service.recover(viewer,key))).toEqual(receipt);
+    expect((await service.submit(viewer,value))).toEqual(receipt);
+    expect(records.size).toBe(1);
+    expect([...records.values()][0].detail.optionalIntake).toEqual(value.optionalIntake);
+    await expect(service.submit(viewer,{...value,optionalIntake:{...value.optionalIntake,referralCode:"TEAM-13"}}))
+      .rejects.toMatchObject({ code: "attempt_conflict" });
+    // Disabling new collection must still allow recovery of a committed attempt.
+    expect(await new RequestIntentService(deps).submit(viewer,value)).toEqual(receipt);
+  });
+});

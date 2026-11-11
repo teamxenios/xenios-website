@@ -43,6 +43,7 @@ export type RequestIntentDependencies = Readonly<{
    * Private pricing and historical orders each have their own authority.
    */
   quoteOnly?: boolean;
+  optionalIntakeEnabled?: boolean;
   legal: AssistedOrderLegalPort;
   hasher: AssistedOrderHasher;
   ids: AssistedOrderIdGenerator;
@@ -89,12 +90,14 @@ export class RequestIntentService {
     const input = validateRequestIntentInput(raw);
     const attemptHash = this.deps.hasher.hash(input.idempotencyKey);
     const fingerprint = this.deps.hasher.stableHash({
+      ...(input.optionalIntake ? { optionalIntake: input.optionalIntake } : {}),
       kind: REQUEST_INTENT_KIND, contact: input.contact, agreements: input.agreements, lines: input.lines,
     });
     // Retry identity is based on the submitted facts, not mutable catalog prices.
     // A saved attempt still replays if catalog/legal/standing subsequently changes.
     const prior = await this.deps.repository.findAttempt(ownerHash, attemptHash);
     if (prior) return this.replay(prior, fingerprint);
+    if (input.optionalIntake && this.deps.optionalIntakeEnabled !== true) throw new RequestIntentError("optional_intake_unavailable", 400);
     if (!await this.deps.standing.accepted(viewer)) throw new RequestIntentError("agreement_standing_required", 403);
 
     const lines: RequestIntentLine[] = [];
@@ -144,6 +147,7 @@ export class RequestIntentService {
       publicReference: "XRI-" + requestId.replace(/-/g, "").toUpperCase(),
       status: "pending_review", createdAt: now.toISOString(),
       contact: input.contact, agreements: input.agreements, lines,
+      ...(input.optionalIntake ? { optionalIntake: input.optionalIntake } : {}),
     };
     // The repository transaction stores every line and audit event or none.
     const saved = await this.deps.repository.createOrReplay({ ownerHash, attemptHash, fingerprint, detail });

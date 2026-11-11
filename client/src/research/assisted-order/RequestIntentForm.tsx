@@ -27,6 +27,8 @@ import "./assisted-order.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
 import { PersistentRequestBar } from "./PersistentRequestBar";
 
+import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal } from "../../../../shared/research/assisted-order/optional-intake";
+
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
 
@@ -202,6 +204,8 @@ function RequestIntentFormSession({
   const [contact, setContact] = useState<AssistedOrderContactInput | null>(null);
   // Unreviewed values belong only to this mounted form, never retry storage.
   const [contactDraft, setContactDraft] = useState<FormData | null>(null);
+  const [goal, setGoal] = useState<RequestGoal | "">("");
+  const [referralCode, setReferralCode] = useState("");
   const [billingSame, setBillingSame] = useState(true);
   const [acknowledged, setAcknowledged] = useState<ReadonlySet<string>>(new Set());
   const [receipt, setReceipt] = useState<RequestIntentReceipt | null>(reopened);
@@ -366,6 +370,8 @@ function RequestIntentFormSession({
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const text = (name: string) => String(data.get(name) ?? "");
+    try { normalizeOptionalIntake({ goal: goal || undefined, referralCode }); }
+    catch { setError("Return to products to correct the optional referral code, or clear it to skip."); return; }
     const address = (prefix: string) => validateAddress(prefix, {
       line1: text(prefix + "Line1"), line2: text(prefix + "Line2") || undefined, city: text(prefix + "City"),
       region: text(prefix + "Region"), postalCode: text(prefix + "PostalCode"), countryCode: text(prefix + "CountryCode"),
@@ -394,6 +400,7 @@ function RequestIntentFormSession({
         const attempt: IntentAttempt = { key: crypto.randomUUID(), acceptedAt, state: "in_flight" };
         const input = validateRequestIntentInput({
           idempotencyKey: attempt.key, contact,
+          ...(goal || referralCode.trim() ? { optionalIntake: normalizeOptionalIntake({ goal: goal || undefined, referralCode }) } : {}),
           lines: selections.map(({ item, quantity }) => ({ productId: item.productId, variantId: item.variantId, quantity })),
           agreements: requirements.map(({ kind, version }) => ({ kind, version, accepted: true, acceptedAt })),
         });
@@ -543,6 +550,19 @@ function RequestIntentFormSession({
             onClick={() => addCatalogSelection(hintItem, entryIntent.quantity)}>Add linked selection for review</button>}
         <p>A link never approves a clinical item or places an order.</p>
       </section>}
+      {continuationEnabled && config?.optionalIntakeEnabled && <details className="xenios-order-panel">
+        <summary>Tell us what you need (optional)</summary>
+        <p>Skip either question. Answers are shared privately with the review team only if you submit this request. Please leave out health or medical details.</p>
+        <label>What would you like help with?<select value={goal}
+          onChange={e => setGoal(e.target.value as RequestGoal | "")}>
+          <option value="">Skip this question</option>
+          {Object.entries(REQUEST_GOALS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+        </select></label>
+        <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
+          spellCheck={false} onChange={e => setReferralCode(e.target.value)} /></label>
+        {referralCode.trim() && !/^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(referralCode.trim()) &&
+          <p role="alert">Use 2–24 letters, numbers or hyphens, or clear the code to skip.</p>}
+      </details>}
       {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
       {(compactGuestCatalog || showEarlyAccessGuide) && <div ref={catalogStartRef} className="xenios-order-catalog-start"
         id={showEarlyAccessGuide ? "early-access-catalog" : undefined} tabIndex={showEarlyAccessGuide ? -1 : undefined} />}
@@ -700,6 +720,10 @@ function RequestIntentFormSession({
         ? "If the result is unconfirmed, choose Retry same request to send the original details again."
         : "Check your items and contact details, then choose Request a quote. The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
+      {(goal || referralCode.trim()) && <p>Optional request information: {goal && REQUEST_GOALS[goal]}
+        {goal && referralCode.trim() && " · "}{referralCode.trim() && "Referral code: " + referralCode.trim()}</p>}
+      {(goal || referralCode.trim()) && <button type="button" disabled={busy || hasFrozenAttempt}
+        onClick={() => { setGoal(""); setReferralCode(""); }}>Remove optional answers</button>}
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
         {item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | {
           item.intentExclusion === "specification_review"

@@ -23,6 +23,7 @@ export function intentRefusalGuidance(error: RequestIntentHttpError): string {
     return "This request was not saved. Complete the existing access and agreement requirements before starting a new attempt.";
   }
   if (error.status === 403) return "This request was not saved. Access was refused. Review your access or contact support before starting a new attempt.";
+  if (error.code === "optional_intake_unavailable") return "This request was not saved. Optional answers are unavailable. Remove the optional answers to submit without them, or try again later.";
   if (error.code === "selection_requires_refresh") return "This request was not saved. Reload the current catalog, review the exact products and quantities, and submit a new attempt.";
   if (error.code === "current_acknowledgments_required") return "This request was not saved. Reload the current requirements, review and confirm them, and submit a new attempt.";
   if (error.status === 503 && error.code === "request_intent_unavailable") {
@@ -85,7 +86,8 @@ export function createRequestIntentApi(
       const raw = await request("/config");
       const config = parseAssistedOrderConfig(raw);
       if (!config || (raw as { enabled?: unknown }).enabled !== true) throw new Error("Request requirements unavailable.");
-      return config;
+      return (raw as { optionalIntakeEnabled?: unknown }).optionalIntakeEnabled === true
+        ? { ...config, optionalIntakeEnabled: true } : config;
     },
     async catalog(query) {
       const requestedPage = query.page === undefined ? 1 : query.page;

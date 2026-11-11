@@ -71,6 +71,8 @@ export function registerRequestIntentApi(
   care: CareAccessDependencies,
 ): void {
   const origin = requestIntentOrigin(wiring.env.SITE_URL);
+  // Enable only after separate private DB migration, rehearsal and retention approval.
+  const optionalIntakeEnabled = wiring.env.RESEARCH_REQUEST_OPTIONAL_INTAKE_ENABLED === "true";
   const legalPairs = wiring.requiredAgreements?.map(({ kind, version }) => ({ kind, version })) ?? [];
   const rpc = wiring.supabaseRpc;
   const enabled = () => wiring.env[REQUEST_INTENT_ENABLED_ENV] === "true" && origin !== null
@@ -97,7 +99,7 @@ export function registerRequestIntentApi(
     if (!enabled()) { res.status(503).json({ enabled: false, error: "request_intent_unavailable" }); return; }
     next();
   }, readRateLimit, (_req, res) => {
-    res.json({ enabled: true, requiredAgreements: legalPairs,
+    res.json({ enabled: true, ...(optionalIntakeEnabled ? { optionalIntakeEnabled: true } : {}), requiredAgreements: legalPairs,
       formAcknowledgments: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((ack) => ({
         id: ack.id, scope: ack.scope, ...assistedOrderFormPair(ack), copy: ack.copy,
       })) });
@@ -108,7 +110,7 @@ export function registerRequestIntentApi(
   }
   const service = new RequestIntentService({
     // Quote-only first release: the customer list carries no amount.
-    quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE,
+    quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE, optionalIntakeEnabled,
     catalog: createRequestIntentCatalog({
       serviceFor: wiring.masterOfferingServiceFor, bindingFor: wiring.bindingFor,
       offeringVariantFor: wiring.offeringVariantFor, catalogVersion: wiring.catalogVersion,
@@ -129,7 +131,7 @@ export function registerRequestIntentApi(
     hasher: sha256AssistedOrderHasher, ids: systemAssistedOrderIds, clock: systemAssistedOrderClock,
   });
   app.use("/api/research/early-access/request-intents", secure, createRequestIntentRouter({
-    service, care, staffReader: requestIntentStaffReader(rpc), enabled,
+    service, care, staffReader: requestIntentStaffReader(rpc, optionalIntakeEnabled), enabled,
     staffReadEnabled: () => wiring.env[REQUEST_INTENT_STAFF_READ_ENABLED_ENV] === "true",
     resolveCustomer: async (req) => {
       const viewer = await viewers.customer(req);
