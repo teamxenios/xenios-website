@@ -82,7 +82,7 @@
       "offeringId": "mo_c6a78bd97653d1a0d07a",
       "sourceVariantId": "mov_d49dd5f366963d1c1b9f",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "offering_decision",
       "neutralSpecification": null
     },
     {
@@ -271,7 +271,7 @@
       "offeringId": "mo_ee31bafef560781635e1",
       "sourceVariantId": "mov_36f2d080eb4e68f37a29",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "offering_decision",
       "neutralSpecification": null
     },
     {
@@ -418,14 +418,14 @@
       "offeringId": "mo_9b46a8704cf564734190",
       "sourceVariantId": "mov_e6c2e63137540a5772ce",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "offering_decision",
       "neutralSpecification": null
     },
     {
       "offeringId": "mo_6ef101aaa428198b1aa2",
       "sourceVariantId": "mov_be5e04f5ca9c0870837a",
       "customerMessage": "Details for this listing have not yet been confirmed; a quote request is a question to our team and is not an order, a reservation or a prescription.",
-      "staffReviewCode": "description_pending",
+      "staffReviewCode": "offering_decision",
       "neutralSpecification": null
     },
     {
