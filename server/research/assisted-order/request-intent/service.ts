@@ -12,7 +12,7 @@ import type {
   AssistedOrderIdGenerator, AssistedOrderSubmissionStanding, AssistedOrderLegalPort,
 } from "../ports";
 import type { RequestIntentCatalog } from "./catalog";
-import { quoteOnlyCatalogPage } from "../../../../shared/research/early-access/quote-only";
+import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
 import { inquiryReviewCodeForVariant } from "../../master-offerings/inquiry-review-states";
 
 export class RequestIntentError extends Error {
@@ -38,9 +38,9 @@ export type RequestIntentDependencies = Readonly<{
   repository: RequestIntentRepository;
   standing: AssistedOrderSubmissionStanding;
   /**
-   * Quote-only Early Access. When true, the catalog list carries no catalog
-   * price. Submission still resolves every line on the server. Absent keeps
-   * today's priced list.
+   * Kept for compatibility with older composition wiring. A mixed customer
+   * inquiry never exposes catalog prices, even if this value is false or absent.
+   * Private pricing and historical orders each have their own authority.
    */
   quoteOnly?: boolean;
   legal: AssistedOrderLegalPort;
@@ -73,7 +73,7 @@ export class RequestIntentService {
     // The session identifies a customer; it does not prove current policy acceptance.
     if (!await this.deps.standing.accepted(viewer)) throw new RequestIntentError("agreement_standing_required", 403);
     const page = await this.deps.catalog.list(viewer, query);
-    return this.deps.quoteOnly === true ? quoteOnlyCatalogPage(page) : page;
+    return mixedInquiryCatalogPage(page);
   }
 
   /** Same-session recovery returns only an actual committed reference, never a success guess. */

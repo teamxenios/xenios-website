@@ -1,5 +1,6 @@
 import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogPage, RequestIntentDetail, RequestIntentInput, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
+import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
 import { parseAssistedOrderConfig, type AssistedOrderWizardConfig } from "./wizard-state";
 
 /** Constructed only after a well-formed server error envelope. Body text is never surfaced. */
@@ -110,7 +111,7 @@ export function createRequestIntentApi(
           || typeof item.selectableForReview !== "boolean" || typeof item.clinicalReviewRequired !== "boolean")) {
         throw new Error("The current catalog could not be confirmed.");
       }
-      return page;
+      return mixedInquiryCatalogPage(page);
     },
     submit: (input) => request("", input),
     async recover(idempotencyKey) {

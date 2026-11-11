@@ -30,6 +30,8 @@ const viewer = {
 function service(overrides: Record<string, unknown> = {}) {
   const deps = {
     catalog: { list: vi.fn(async () => PAGE), resolveMany: vi.fn() },
+    // The catalog is listed only for a viewer whose policy acceptance is current.
+    standing: { accepted: async () => true },
     hasher: { hash: (v: string) => `h:${v}`, stableHash: (v: unknown) => `s:${JSON.stringify(v)}` },
     ...overrides,
   } as unknown as RequestIntentDependencies;
@@ -47,8 +49,21 @@ describe("the request-intent catalog, quote-only", () => {
     expect(page.total).toBe(1);
   });
 
-  it("is unchanged without it", async () => {
-    const page: any = await service().list(viewer, {} as any);
-    expect(page.items[0].unitPriceCents).toBe(4_900);
+  it("lists with no catalog price when quoteOnly is absent or false as well", async () => {
+    // A mixed inquiry never exposes a catalog price, whatever the older switch says.
+    for (const overrides of [{}, { quoteOnly: false }]) {
+      const page: any = await service(overrides).list(viewer, {} as any);
+      expect(catalogPriceFields(page)).toEqual([]);
+      expect(page.items[0].unitPriceCents).toBeNull();
+    }
+    // The source page the catalog port returned still carries its price; only the projection drops it.
+    expect((PAGE as any).items[0].unitPriceCents).toBe(4_900);
+  });
+
+  it("does not read the catalog at all for a viewer whose policy acceptance is not current", async () => {
+    const list = vi.fn(async () => PAGE);
+    const refused = service({ catalog: { list, resolveMany: vi.fn() }, standing: { accepted: async () => false } });
+    await expect(refused.list(viewer, {} as any)).rejects.toMatchObject({ code: "agreement_standing_required", status: 403 });
+    expect(list).not.toHaveBeenCalled();
   });
 });

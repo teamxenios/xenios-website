@@ -6,8 +6,9 @@ import {
   type RequestIntentCatalogItem, type RequestIntentCatalogPage, type RequestIntentInput, type RequestIntentReceipt,
 } from "../../../../shared/research/assisted-order/request-intent";
 import type { DirectPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
+import { mixedInquiryPriceNote } from "../../../../shared/research/early-access/quote-only";
 import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
-import { catalogItemKey, catalogPriceLabel, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, money, type AssistedOrderWizardConfig } from "./wizard-state";
+import { catalogItemKey, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, type AssistedOrderWizardConfig } from "./wizard-state";
 import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
 import { forgetConfirmedReceipt, readConfirmedReceiptRecord, rememberConfirmedReceipt } from "./request-intent-continuation";
@@ -137,10 +138,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
 
 /** The price line on a request-intent card. Quote-only items read "Request a quote". */
 export function requestIntentPriceNote(item: Readonly<{ unitPriceCents: number | null; clinicalReviewRequired: boolean }>): string {
-  if (item.clinicalReviewRequired) return "Final price follows applicable review.";
-  return item.unitPriceCents === null
-    ? catalogPriceLabel(null)
-    : money(item.unitPriceCents) + " (catalog display, not a final quote)";
+  return mixedInquiryPriceNote(item.clinicalReviewRequired);
 }
 
 type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Storage | null; embedded?: boolean;

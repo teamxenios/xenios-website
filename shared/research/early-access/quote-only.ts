@@ -82,6 +82,23 @@ export function quoteOnlyCatalogPage<P extends { readonly items: readonly Priced
   return Object.freeze({ ...page, items: Object.freeze(page.items.map((item) => quoteOnlyCatalogItem(item))) });
 }
 
+/**
+ * The mixed request is permanently an inquiry, including when legacy commerce
+ * is enabled elsewhere. An unexpected numeric pricing field cannot be served
+ * accidentally as additional data. Known visible-unit pricing and its private
+ * version are cleared by the established quote-only projection above.
+ */
+export function mixedInquiryCatalogPage<P extends { readonly items: readonly PricedItem[] }>(page: P): P {
+  const safe = quoteOnlyCatalogPage(page);
+  if (catalogPriceFields(safe).length !== 0) throw new Error("Mixed inquiry catalog contains an unsupported monetary field.");
+  return safe;
+}
+
+/** Do not format an amount supplied by an older server or a stale fixture. */
+export function mixedInquiryPriceNote(clinical: boolean): string {
+  return clinical ? EARLY_ACCESS_QUOTE_LABEL + ". Final price follows applicable review." : EARLY_ACCESS_QUOTE_LABEL;
+}
+
 type PricedLine = {
   readonly unitPriceCents: number | null;
   readonly lineEstimateCents: number | null;

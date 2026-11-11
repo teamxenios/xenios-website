@@ -78,8 +78,12 @@ describe("actual request form persistent action wiring", () => {
     expect(primary().form).toBe(host.querySelector("form"));
     expect(api.submit).not.toHaveBeenCalled();
   });
-  it("does not bypass the policy gate after a selection", async () => {
-    const api=makeApi();await mount(api,false);await add();expect(primary().disabled).toBe(true);expect(api.submit).not.toHaveBeenCalled();
+  it("shows the policy step, no product and no request action before the policy is accepted", async () => {
+    const api=makeApi();await mount(api,false);
+    expect(host.querySelector('[data-testid="request-catalog-policy-gate"]')).not.toBeNull();
+    expect(host.querySelector(".xenios-order-card")).toBeNull();
+    expect(document.querySelector('[data-testid="request-action-bar-primary"]')).toBeNull();
+    expect(api.catalog).not.toHaveBeenCalled();expect(api.submit).not.toHaveBeenCalled();
   });
   it("can inspect the request without destroying unsubmitted contact text", async () => {
     const api=makeApi();await mount(api);await add();await click(primary());

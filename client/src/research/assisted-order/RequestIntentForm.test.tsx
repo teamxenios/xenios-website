@@ -222,7 +222,8 @@ describe("mixed private request customer form source", () => {
     expect(fallbackImage?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
     expect(fallbackImage?.getAttribute("alt")).toBe("Synthetic missing-source illustration, format unconfirmed");
     expect(missingSource.querySelector("figcaption")).toBeNull();
-    expect(mapped.textContent).toContain("$12.50");
+    expect(mapped.textContent).toContain("Request a quote");
+    expect(mapped.textContent).not.toContain("$12.50");
     await click("Add to quote cart", "Add to quote cart: Synthetic mapped, Synthetic variant");
     expect(mapped.querySelector('input[type="number"]')).not.toBeNull();
     expect(host.querySelector('aside img')).toBeNull();
@@ -306,7 +307,7 @@ describe("mixed private request customer form source", () => {
     const api = makeApi();
     const catalog = await api.catalog();
     api.catalog.mockResolvedValue({ ...catalog, items: [
-      { ...item("reviewed", false), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy,
+      { ...item("reviewed", false), unitPriceCents: 4950, reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy,
         sourceSelection: { family: "research_peptides_materials", slug: "reviewed", variantId: "mov_82974ab2f9c652c2cb12" } },
       { ...item("clinical", true), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy },
     ] });
@@ -314,6 +315,8 @@ describe("mixed private request customer form source", () => {
     const [card, clinical] = host.querySelectorAll(".xenios-order-card");
     expect(card.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
     expect(card.textContent).toContain(reviewedCopy.summary);
+    expect(card.textContent).toContain("Request a quote");
+    expect(card.textContent).not.toContain("$49.50");
     expect(card.textContent).not.toContain(reviewedCopy.overview);
     expect(clinical.querySelector("img")).toBeNull();
     expect(clinical.querySelector('button[aria-label^="View details"]')).toBeNull();
@@ -635,7 +638,8 @@ describe("customer restriction copy", () => {
       expect(card.textContent).toContain("Clinical review required. Not a prescription.");
       expect(card.textContent).toContain("Final price follows applicable review.");
     } else if (!nonMerchandise) {
-      expect(card.textContent).toContain("$123.45 (catalog display, not a final quote)");
+      expect(card.textContent).toContain("Request a quote");
+      expect(card.textContent).not.toContain("$123.45");
     }
     if (nonMerchandise) {
       expect(card.querySelector("button")).toBeNull();
