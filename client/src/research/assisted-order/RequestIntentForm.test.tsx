@@ -1748,7 +1748,7 @@ it("shows Details under review for a row whose action label the quote-only list 
   const underReview: RequestIntentCatalogItem = {
     ...item("review", false), intentExclusion: "specification_review",
     // What the quote-only list sends for this workflow: the quote wording, not the status.
-    actionLabel: "Request a quote", accessNotice: "A synthetic reviewed sentence for this listing.",
+    actionLabel: "Request a quote", reviewMessage: "A synthetic reviewed sentence for this listing.",
   };
   api.catalog.mockResolvedValue({ ...await api.catalog(), items: [underReview] });
   await render(api);
@@ -1759,4 +1759,19 @@ it("shows Details under review for a row whose action label the quote-only list 
   const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
   expect(summary.textContent).toContain("Details under review");
   expect(summary.textContent).toContain("Synthetic review");
+});
+
+it("shows the reviewed sentence on a row that cannot be added yet", async () => {
+  const api = makeApi();
+  const comingSoon: RequestIntentCatalogItem = {
+    ...item("later", false), selectableForReview: false, intentExclusion: "coming_soon",
+    actionLabel: "Coming soon", reviewMessage: "A synthetic reviewed sentence for a listing that is coming soon.",
+  };
+  api.catalog.mockResolvedValue({ ...await api.catalog(), items: [comingSoon] });
+  await render(api);
+  const card = host.querySelector("article")!;
+  expect(card.textContent).toContain("Coming soon");
+  expect(card.textContent).toContain("A synthetic reviewed sentence for a listing that is coming soon.");
+  // It still cannot be added.
+  expect([...card.querySelectorAll("button")].some((button) => button.textContent?.startsWith("Add "))).toBe(false);
 });

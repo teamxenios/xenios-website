@@ -31,6 +31,12 @@ export type RequestIntentInput = Readonly<{
 export type RequestIntentCatalogItem = AssistedOrderCatalogItem & Readonly<{
   reviewedContent?: ReviewedProductContent;
   reviewedMedia?: ReviewedProductMedia;
+  /**
+   * The reviewed sentence a customer sees for a listing with no reviewed
+   * description, or whose details are being confirmed. Present only when the
+   * listing has a reviewed review state. Shown whether or not the row can be added.
+   */
+  reviewMessage?: string;
   selectableForReview: boolean;
   intentExclusion: "non_merchandise" | "coming_soon" | "specification_review" | null;
   clinicalReviewRequired: boolean;

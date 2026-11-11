@@ -77,7 +77,7 @@ describe("reviewed inquiry review states", () => {
     expect(stated).toHaveLength(records.length);
     for (const row of stated) {
       const record = records.find((entry) => entry.sourceVariantId === row.sourceSelection!.variantId)!;
-      expect(row.accessNotice).toBe(record.customerMessage);
+      expect(row.reviewMessage).toBe(record.customerMessage);
       if (record.neutralSpecification !== null) expect(row.specification).toBe(record.neutralSpecification);
       // The reason stays on the row. Whether it can be added follows the same rule as any other row.
       expect(row.intentExclusion).not.toBeNull();
@@ -124,7 +124,7 @@ describe("reviewed inquiry review states", () => {
       const record = records.find((entry) => entry.sourceVariantId === row.sourceSelection!.variantId)!;
       // The two things the form prints the status from survive the quote-only list.
       expect(row.intentExclusion).not.toBeNull();
-      expect(row.accessNotice).toBe(record.customerMessage);
+      expect(row.reviewMessage).toBe(record.customerMessage);
       expect(row.unitPriceCents).toBeNull();
     }
     // The action label does not always survive: for some workflows the list replaces

@@ -67,7 +67,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
           ...(reviewedMedia ? { reviewedMedia } : {}),
           ...(reviewState ? {
             specification: reviewState.neutralSpecification ?? item.specification,
-            accessNotice: reviewState.customerMessage,
+            reviewMessage: reviewState.customerMessage,
           } : {}),
           // A clinical request is not a quote. Never present its price as permission to buy.
           unitPriceCents: authority.providerWorkflowRequired ? null : item.unitPriceCents,

@@ -547,14 +547,14 @@ function RequestIntentFormSession({
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
             <p>{requestIntentPriceNote(item)}</p>
             {item.intentExclusion === "specification_review" && item.selectableForReview && <p>
-              <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.accessNotice ?? "You can still add it to your quote cart."}</p>}
+              <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.reviewMessage ?? item.accessNotice ?? "You can still add it to your quote cart."}</p>}
           </div>
           <div className="xenios-order-card-actions">
           {showDetails && <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />}
           {!item.selectableForReview ? <p>{
             item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
               : item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"
-          }</p> : selection
+          }{item.reviewMessage ? " " + item.reviewMessage : ""}</p> : selection
             ? <div className="xenios-order-quantity">
               <button type="button" aria-label={"Decrease requested quantity for " + item.productName}
                 disabled={clampQuantity(item, selection.quantity - item.quantityIncrement) === selection.quantity}
