@@ -1665,6 +1665,13 @@ it("replaces a stale selected HCG row after a catalog hold and retains sibling s
   expect(summary.textContent).toContain("Synthetic sibling");
   expect([...summary.querySelectorAll("button")]
     .find((button) => button.textContent === "Continue to details")?.disabled).toBe(true);
+  // The request bar offers the same continue action; it must refuse a held selection too.
+  const barContinue = document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-primary"]')!;
+  expect(barContinue.textContent).toBe("Continue to details");
+  await act(async () => barContinue.click());
+  expect(host.querySelector('input[name="name"]')).toBeNull();
+  expect(host.querySelector('.xenios-order-error[role="alert"]')?.textContent)
+    .toBe("Remove the held selection before continuing.");
   api.catalog.mockResolvedValue({ ...firstPage, items: [sibling], total: 1 });
   await render({ ...api });
   expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
