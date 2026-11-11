@@ -3238,6 +3238,50 @@
       "sourceCommit": "43b94f8729e5ab3ec3d7af91dcd76b9407a5353e",
       "primarySha256": "99423374d806de49a7ab97ccd5fce7b0aef39552af952036b8f8f0965964e6a0",
       "labelPreviewSha256": "c2961131d4a4d73d2e5a30b0115a4bf25bccd610159316194b40161e23e0fa69"
+    },
+    {
+      "offeringId": "mo_95489efcae6c13f8bf0d",
+      "sourceVariantId": "mov_dd8bb706cb498b40864d",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/tesamorelin-mgf-ipamorelin-5mg-500mcg-2-5mg-label-card-v1-1024.webp",
+          "altText": "Xenios Tesamorelin + MGF + Ipamorelin, 5 mg / 500 mcg / 2.5 mg, label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesamorelin-mgf-ipamorelin-5mg-500mcg-2-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesamorelin + MGF + Ipamorelin, 5 mg / 500 mcg / 2.5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "d5ce19601429ee19ca5f34596202f1ca3ada2f2a",
+      "primarySha256": "d196e120fc804bba48b6f8911335b6c60635ee7e67843e02b2200fe8b56a65c4",
+      "labelPreviewSha256": "aec8490a4639e0f328477d676b972545a4cc53ef203e61f2e443705aa04ffd79"
+    },
+    {
+      "offeringId": "mo_952b9a3bac3ac9f76438",
+      "sourceVariantId": "mov_b303ae9f0574c2d83337",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/ghrp-2-tesamorelin-mgf-ipamorelin-5mg-5mg-500mcg-2-5mg-label-card-v1-1024.webp",
+          "altText": "Xenios GHRP-2 + Tesamorelin + MGF + Ipamorelin, 5 mg / 5 mg / 500 mcg / 2.5 mg, label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghrp-2-tesamorelin-mgf-ipamorelin-5mg-5mg-500mcg-2-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios GHRP-2 + Tesamorelin + MGF + Ipamorelin, 5 mg / 5 mg / 500 mcg / 2.5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "d5ce19601429ee19ca5f34596202f1ca3ada2f2a",
+      "primarySha256": "91f9efb217f0a7569ecdcea209af91d080f2ab93093d18b0d4ea2b6b99b34bc4",
+      "labelPreviewSha256": "dbd8f45e4e8e48c48b32228f0226ae7f6ee45948d420d453252e64027f8ce5e6"
     }
   ]
 }
