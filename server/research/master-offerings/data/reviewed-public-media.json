@@ -2775,6 +2775,182 @@
       "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
       "primarySha256": "76a00862a69f93e0ee51faa214a19993780b2c9768982bd277d8f1c9267011b5",
       "labelPreviewSha256": "ddc0c46dfb5cd626ef652935fcafd5d3e21538d67576ca2fd93faba0499ecf90"
+    },
+    {
+      "offeringId": "mo_598b143f4ffe06294832",
+      "sourceVariantId": "mov_554ae2758dbe92e4baa6",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/bdnf-10mg-label-card-v1-1024.webp",
+          "altText": "Xenios BDNF 10 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bdnf-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios BDNF 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
+      "primarySha256": "143cdb238c946115895e38d353b7de41025d4d708d94560894eecd4209e8a57c",
+      "labelPreviewSha256": "f92a8d41bd0fa92e8c2604fdd9e1698a440793071e4b4d1c742c0cfa05d77504"
+    },
+    {
+      "offeringId": "mo_6d14f0bbb3bdfe5f900e",
+      "sourceVariantId": "mov_07317a1fe77fe228b793",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-with-dac-10mg-label-card-v1-1024.webp",
+          "altText": "Xenios CJC-1295 With DAC 10 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-with-dac-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 With DAC 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
+      "primarySha256": "2bc33adbb792e3041155f699fa585344da6451d9013f159d33f3027ff9f7ee16",
+      "labelPreviewSha256": "ea3a08a97d49f8f743da033c10eccb5fda1634801a1d691f28a0de2549f34b2f"
+    },
+    {
+      "offeringId": "mo_761c9b0f8f19d9d2c3b5",
+      "sourceVariantId": "mov_b96d05f393b7e3fb6a3f",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/follistatin-344-1mg-label-card-v1-1024.webp",
+          "altText": "Xenios Follistatin 344 1 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/follistatin-344-1mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Follistatin 344 1 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
+      "primarySha256": "febf3f73c8eeec0f6177f4e55f2b646ce90a50afa08c270bb9de79b843355d64",
+      "labelPreviewSha256": "7dffce7d19ae099f48cabeaaf07177e1f139250b2a420b2816886870d61ca691"
+    },
+    {
+      "offeringId": "mo_2aaac3a06aa0dd6b2923",
+      "sourceVariantId": "mov_7c55d415a9574e9ebda7",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/hexarelin-5mg-label-card-v1-1024.webp",
+          "altText": "Xenios Hexarelin 5 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/hexarelin-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Hexarelin 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
+      "primarySha256": "0dda2f429d435446758f8931ea32dfa819bd29e0de50ef99c82c0f0e9207419f",
+      "labelPreviewSha256": "c772035a142d4888f2e8523469a7980899c94b7e91c9381b522eb46428b34dfb"
+    },
+    {
+      "offeringId": "mo_b223f1eabb29e09a69e9",
+      "sourceVariantId": "mov_69a9f7466c5385ab9811",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/igf-1-des-1mg-label-card-v1-1024.webp",
+          "altText": "Xenios IGF-1 DES 1 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/igf-1-des-1mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios IGF-1 DES 1 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
+      "primarySha256": "cc25dd7b0ab974145606585bbeb642f3a64a29af6c0c0ced55824f925d1cdb8b",
+      "labelPreviewSha256": "42f52ed79b770b5607df6a81d09371d514d020960a5ba9fd6eafcc8fda067334"
+    },
+    {
+      "offeringId": "mo_f6e814a2e3224bb6b53d",
+      "sourceVariantId": "mov_0ba805e868711366428d",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/pe-22-28-10mg-label-card-v1-1024.webp",
+          "altText": "Xenios PE-22-28 10 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/pe-22-28-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios PE-22-28 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
+      "primarySha256": "1c7409d89e4dd0b39db9029dcab24e7a654a24a231c66a8f9119b70a07e63ee0",
+      "labelPreviewSha256": "49ab577b432cdf5557cc80080e284ee6b62e5d57d008742210688f74ba7dc722"
+    },
+    {
+      "offeringId": "mo_33c52b7e9611bf4e2527",
+      "sourceVariantId": "mov_b67ab9e8cd671273f3c1",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/ss-31-15mg-label-card-v1-1024.webp",
+          "altText": "Xenios SS-31 15 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ss-31-15mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios SS-31 15 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
+      "primarySha256": "76e20ff37162a511e1a0590d083eea069fc24dfa848fe2f2be99ab5f8a0c99f4",
+      "labelPreviewSha256": "7ce4a88c9ce80617fc545721662c0e71b27032045959f380a68dd7d85498038d"
+    },
+    {
+      "offeringId": "mo_4645a385049d13824a66",
+      "sourceVariantId": "mov_32c1c33224d5fca42b1e",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/survodutide-6mg-label-card-v1-1024.webp",
+          "altText": "Xenios Survodutide 6 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/survodutide-6mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Survodutide 6 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdc074c3a3113b3b2bf63b97b6c8f024c8bafa6c",
+      "primarySha256": "4c74af15f47bca00924dfb35eddc5411024074c2a4978e2bdf5e8e4e9e3b2ff0",
+      "labelPreviewSha256": "89f0e920146f6afe9253085273660ed5ed5d44004eb34f014590d877f5011c11"
     }
   ]
 }
