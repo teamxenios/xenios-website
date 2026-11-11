@@ -1,6 +1,5 @@
 import type { AuthoritativeCartProductSelection } from "../commerce/cart-product-selection";
 import type { MasterOfferingAction } from "@shared/research/master-offerings/contract";
-import { isHcgStrengthReview } from "@shared/research/master-offerings/hcg-strength-review";
 import {
   isDirectPurchaseForbidden,
   requiresProviderPathway,
@@ -144,9 +143,9 @@ export function resolveMasterOfferingAction(
   targets: MasterOfferingActionTargets = defaultMasterOfferingActionTargets,
   capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingAction {
-  if (isHcgStrengthReview(offering.id, variant.id)) {
-    return { kind: "none", label: null, href: null };
-  }
+  // The held listing is resolved like any other row. Its held specification
+  // makes a direct purchase forbidden below, so it can never be bought here;
+  // it keeps the request action of its display state, so it can be asked about.
   const selection = commerce.selection;
   // A provider-pathway row can never be a direct purchase, whatever Product
   // Control says about it.

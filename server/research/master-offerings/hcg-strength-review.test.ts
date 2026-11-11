@@ -33,25 +33,28 @@ const viewer: AssistedOrderViewer = {
 };
 const now = "2026-11-06T09:00:00.000Z";
 
-it("shows the same neutral held record at both member URLs and in the price-list export", async () => {
+it("shows the same neutral held record at both member URLs and in the price-list export, with a request action and no purchase", async () => {
   const detail = await service.detail(held.slug);
   expect(detail).toMatchObject({
     id: held.offeringId, slug: held.slug, displayState: "approval_required",
     stateExplanation: held.notice,
     variants: [{
-      id: held.variantId, label: held.specification, action: { kind: "none" },
+      // A request action, as for any row awaiting approval. Never a purchase.
+      id: held.variantId, label: held.specification, action: { kind: "apply" },
       reviewedContent: { specifications: expect.arrayContaining([{ label: "Strength", value: "Under review" }]) },
     }],
   });
   expect(await service.detail(held.legacySlug)).toEqual(detail);
   expect(await service.variant(held.legacySlug, held.variantId)).toEqual(detail?.variants[0]);
   expect(JSON.stringify(detail)).not.toContain("120000");
+  // The held specification forbids a direct purchase, so the action carries no amount and no cart identity.
+  expect(JSON.stringify(detail?.variants[0].action)).not.toMatch(/add_to_cart|amount|sku/);
   const document = buildMasterOfferingPriceList({
     offerings: reader.readCatalog(), prices: new Map(), audience: "member", generatedAt: now,
   });
   expect(document.rows).toHaveLength(420);
   expect(document.rows.find((row) => row.variantId === held.variantId)).toMatchObject({
-    offeringSlug: held.slug, variant: held.specification, purchasePath: "Not available",
+    offeringSlug: held.slug, variant: held.specification, purchasePath: "Apply for approval",
   });
   expect(toMasterOfferingPriceListCsv(document)).not.toContain(held.legacySlug);
 });
