@@ -43,6 +43,13 @@ describe("assisted-order pointer target source contracts", () => {
     expect(shownAgain).toHaveLength(2);
     expect(returnButton).toHaveLength(2);
     expect(css).toMatch(/^\.xenios-order-find-tools \{ display: none; \}$/mu);
+    // The large-text condition reaches a 430px phone: 13.5rem is 432px when the page text is doubled
+    // and 216px at the default size, which no phone is narrower than.
+    expect(css).toMatch(/@media \(max-width: 430px\) and \(max-height: 940px\) \{\s+\.xenios-order-page--guest-catalog \{ container: guest-order-reflow \/ inline-size; \}\s+@container guest-order-reflow \(max-width: 13\.5rem\) \{/u);
+    expect(13.5 * 32).toBeGreaterThanOrEqual(430);
+    expect(13.5 * 16).toBeLessThan(320);
+    // While the toolbar sticks, a control reached by keyboard keeps clear of it.
+    expect(css).toMatch(/\.xenios-order-page--guest-catalog \.xenios-order-card :is\(a, button, input, select, summary\) \{\s+scroll-margin-top: 14rem;/u);
     expect(sticky).toBeGreaterThan(-1);
     expect(released).toBeGreaterThan(sticky);
     // 38em is 608px at the default text size: below a 390 x 664 phone viewport, so the toolbar still sticks there.

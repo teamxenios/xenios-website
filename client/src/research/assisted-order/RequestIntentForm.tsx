@@ -502,9 +502,15 @@ function RequestIntentFormSession({
   if (!catalogAdmitted) return <section className="xenios-order-page" data-testid="request-catalog-policy-gate">
     <Heading ref={heading} tabIndex={-1}>Access the catalog</Heading>
     <p>Review and accept the current Early Access Product Policy to see products and request a quote.</p>
+    <p>Accepting it lets you view the catalog and request a quote. It is not consent to treatment, not a prescription and not an approval.</p>
     {error && <p role="alert">{error}</p>}
     {catalogPolicyRefused && onAgreementStandingRequired && <button type="button"
-      className="xenios-order-button" onClick={onAgreementStandingRequired}>Recheck policy status</button>}
+      className="xenios-order-button" onClick={() => {
+        // Ask the server again as well: if the policy is in fact accepted, the catalog
+        // returns without a reload; if not, the refusal puts this step back.
+        setCatalogPolicyRefused(false);
+        onAgreementStandingRequired();
+      }}>Recheck policy status</button>}
     {!embedded && <a href="/earlyaccess">Review the Early Access policy</a>}
     {frozen.current && <p>Keep this tab. Reload to recover your existing attempt before starting another.</p>}
   </section>;
