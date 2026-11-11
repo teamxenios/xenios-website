@@ -142,6 +142,8 @@ export function customerActionFromMasterOfferingAction(
       return usableAmount(action.amount) && price?.state !== "on_request"
         ? "BUY_NOW"
         : "REQUEST_QUOTE";
+    case "request_quote":
+      return "REQUEST_QUOTE";
     case "request_access":
     case "request_early_access_purchase":
     case "apply":

@@ -5,6 +5,11 @@ import {
   requiresProviderPathway,
 } from "@shared/research/master-offerings/pathway-authority";
 import { productRequestHref } from "@shared/research/product-request-sources";
+import {
+  QUOTE_CART_ACTION_LABEL,
+  quoteCartHref,
+  requestStoreWidening,
+} from "@shared/research/master-offerings/quote-cart";
 import { isResolvedCurrentLiveProductVariantActivationAuthority } from "../product-activation/authority-repository";
 import type {
   MasterOfferingCommerceIdentityBinding,
@@ -42,6 +47,11 @@ export interface MasterOfferingActionTargets {
     offering: NormalizedMasterOffering,
     variant: NormalizedMasterOfferingVariant,
   ) => string;
+  /** Optional so existing target sets compile; the default names the exact variant. */
+  quoteCart?: (
+    offering: NormalizedMasterOffering,
+    variant: NormalizedMasterOfferingVariant,
+  ) => string;
 }
 
 /**
@@ -69,6 +79,21 @@ export interface MasterOfferingActionCapabilities {
    * facing specification. `reviewedHeldSpecifications()` is the reader.
    */
   reviewedFormulationHolds?: ReadonlySet<string> | null;
+  /**
+   * The quote-only release. Every listed, member-visible variant resolves to
+   * the quote cart, and neither `Add to Cart` nor the manual purchase
+   * request can be resolved at all, whatever Product Control says. A quote
+   * request authorizes no purchase, prescription, payment, reservation or
+   * shipment, so it is offered on a provider-pathway row and on a held row
+   * as well.
+   */
+  quoteCartOnly?: boolean;
+  /**
+   * True once the request store accepts coming-soon lines and supply or
+   * service lines. Until then those rows keep their earlier action, because
+   * the quote request form lists them but cannot take them.
+   */
+  allListedInquirable?: boolean;
 }
 
 export const DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES: MasterOfferingActionCapabilities =
@@ -83,6 +108,8 @@ export const defaultMasterOfferingActionTargets: MasterOfferingActionTargets = {
   getUpdates: (offering) => productRequestHref("products", offering.displayName),
   earlyAccessPurchase: (offering) =>
     productRequestHref("products", offering.displayName),
+  quoteCart: (offering, variant) =>
+    quoteCartHref({ family: offering.family, slug: offering.slug, variantId: variant.id }),
 };
 
 function nonBlank(value: unknown): value is string {
@@ -147,6 +174,34 @@ export function resolveMasterOfferingAction(
   // makes a direct purchase forbidden below, so it can never be bought here;
   // it keeps the request action of its display state, so it can be asked about.
   const selection = commerce.selection;
+  // The quote-only release: a listed variant goes to the quote cart. Decided
+  // before any purchase authority is read, so no Product Control fact can
+  // turn a quote request into a purchase.
+  const quoteCartOnly = capabilities.quoteCartOnly === true;
+  if (
+    quoteCartOnly &&
+    offering.visibility === "member" &&
+    variant.visibility === "member" &&
+    variant.displayState !== "unavailable"
+  ) {
+    const widening = requestStoreWidening({
+      family: offering.family,
+      displayState: offering.displayState,
+      variantDisplayState: variant.displayState,
+      specification: variant.label,
+      reviewedHolds: capabilities.reviewedFormulationHolds,
+    });
+    if (
+      (!widening.comingSoon && !widening.nonMerchandise) ||
+      capabilities.allListedInquirable === true
+    ) {
+      return {
+        kind: "request_quote",
+        label: QUOTE_CART_ACTION_LABEL,
+        href: (targets.quoteCart ?? defaultMasterOfferingActionTargets.quoteCart!)(offering, variant),
+      };
+    }
+  }
   // A provider-pathway row can never be a direct purchase, whatever Product
   // Control says about it.
   //
@@ -181,6 +236,7 @@ export function resolveMasterOfferingAction(
     reviewedHolds: capabilities.reviewedFormulationHolds,
   });
   if (
+    !quoteCartOnly &&
     !forbidden &&
     offering.visibility === "member" &&
     variant.visibility === "member" &&
@@ -215,6 +271,7 @@ export function resolveMasterOfferingAction(
   // offer one by the side door just because it has no Product Control
   // authority yet.
   if (
+    !quoteCartOnly &&
     !forbidden &&
     capabilities.manualEarlyAccessPurchase === true &&
     offering.visibility === "member" &&

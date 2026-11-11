@@ -25,6 +25,7 @@
 
 import type { CartPurchaseAudience } from "@shared/research/cart-product-selection";
 import type { CustomerPriceAudience } from "@shared/research/pricing";
+import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "@shared/research/early-access/quote-only";
 import { reviewedHeldSpecifications } from "./reviewed-holds";
 import {
   authorizeAudienceFromServerIdentity,
@@ -98,6 +99,13 @@ export interface MasterOfferingCompositionInput {
   now?(): string;
 }
 
+/**
+ * The setting that says the request store accepts every listed line. The
+ * quote request lane owns it and exports the same name; a test holds the two
+ * equal.
+ */
+export const QUOTE_CART_ALL_LISTED_ENV = "RESEARCH_REQUEST_INTENT_ALL_LISTED_ENABLED";
+
 export class MasterOfferingCatalogNotConfigured extends Error {
   constructor(reason: string) {
     super(`master offerings catalog not configured: ${reason}`);
@@ -135,6 +143,14 @@ export function createMasterOfferingCatalogDependencies(
     // passes. Read at composition so an unreadable record fails the service
     // rather than silently selling.
     reviewedFormulationHolds: reviewedHeldSpecifications(input.cwd),
+    // The quote-only release: every listed variant's action is the quote
+    // cart, and no purchase action can be resolved. Rolling the release
+    // constant back restores the earlier mapping.
+    quoteCartOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE,
+    // The same setting the quote request catalog reads, so a coming-soon,
+    // supply or service row is offered the quote cart here exactly when the
+    // form can take it.
+    allListedInquirable: env[QUOTE_CART_ALL_LISTED_ENV] === "true",
   };
 
   return {

@@ -7,6 +7,7 @@ import {
 import type { RequestIntentCatalogItem, RequestIntentCatalogPage } from "../../../../shared/research/assisted-order/request-intent";
 import { MASTER_OFFERING_FAMILIES, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
 import { directPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
+import { requestStoreWidening } from "../../../../shared/research/master-offerings/quote-cart";
 import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { authorityFor, type AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
@@ -53,9 +54,12 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
           variantDisplayState: variant.displayState, specification: variant.label,
           reviewedHolds: input.reviewedFormulationHolds,
         });
-        const comingSoon = [offering.displayState, variant.displayState]
-          .some((state) => state === "coming_soon" || state === "planned");
-        const nonMerchandise = refusal === "non_merchandise_family";
+        // One rule, shared with the member catalog's quote-cart action.
+        const { comingSoon, nonMerchandise } = requestStoreWidening({
+          family: offering.family, displayState: offering.displayState,
+          variantDisplayState: variant.displayState, specification: variant.label,
+          reviewedHolds: input.reviewedFormulationHolds,
+        });
         const strengthReview = isHcgStrengthReview(offering.id, variant.id);
         const widerStoreNeeded = comingSoon || nonMerchandise;
         // A reviewed state for a listing with no reviewed description, or whose

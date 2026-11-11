@@ -31,6 +31,7 @@ import {
   resolveMasterOfferingAction,
   type MasterOfferingActionCapabilities,
 } from "./action";
+import { QUOTE_CART_PRICE_LIST_LABEL } from "@shared/research/master-offerings/quote-cart";
 import type { NormalizedMasterOffering } from "./model";
 import { priceForVariant, type MasterOfferingPriceMap } from "./price-projection";
 
@@ -40,6 +41,7 @@ export const MASTER_OFFERING_PRICE_LIST_MAX_ROWS = 5000;
 const PURCHASE_PATH_BY_ACTION: Readonly<Record<string, string>> = {
   request_early_access_purchase: "Request an Early Access purchase",
   request_access: "Request access",
+  request_quote: QUOTE_CART_PRICE_LIST_LABEL,
   apply: "Apply for approval",
   notify_me: "Ask to be notified",
   join_waitlist: "Join the waitlist",
