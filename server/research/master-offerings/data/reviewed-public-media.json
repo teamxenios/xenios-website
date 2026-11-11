@@ -3282,6 +3282,21 @@
       "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
       "primarySha256": "eea150fc8bc1e4a598ace785c720ab0c5fee51810c3890d3c3d3d2fb3fb6b9c8",
       "labelPreviewSha256": "dbd8f45e4e8e48c48b32228f0226ae7f6ee45948d420d453252e64027f8ce5e6"
+    },
+    {
+      "offeringId": "mo_a4cfc5396d714f879944",
+      "sourceVariantId": "mov_d6a8b2cd129bda39d8fa",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r982-hydrate-blue-raspberry.png",
+          "altText": "Official NutriDyn Hydrate canister, Blue Raspberry",
+          "width": 420,
+          "height": 420
+        }
+      },
+      "sourceCommit": "1a314f4cf7f6c983857a2ec919328ab8f02ae93c",
+      "primarySha256": "2b5cd2cc0017b3241d75c01395218f5f34ad80e904519c98206b0814cd96ef34"
     }
   ]
 }
