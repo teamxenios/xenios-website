@@ -34,8 +34,15 @@ describe("assisted-order pointer target source contracts", () => {
     // It is released by a later rule whose height is in em, so it follows text size as well as zoom.
     const sticky = css.search(/position: sticky;\s+top: 0;/u);
     const released = css.search(
-      /@media \(max-width: 700px\) and \(max-height: 38em\) \{\s+\.xenios-order-page--guest-catalog \.xenios-order-catalog-toolbar \{ position: static; \}\s+\}/u,
+      /@media \(max-width: 700px\) and \(max-height: 38em\) \{\s+\.xenios-order-page--guest-catalog \.xenios-order-catalog-toolbar \{ position: static; \}/u,
     );
+    // With the toolbar, and the pager inside it, scrolled away, the lower pager is shown
+    // again and one sticky button returns to search and paging. Both conditions do this.
+    const shownAgain = css.match(/\.xenios-order-page--guest-catalog \.xenios-order-bottom-pagination \{ display: block; \}/gu) ?? [];
+    const returnButton = css.match(/\.xenios-order-page--guest-catalog \.xenios-order-find-tools \{\s+display: block; position: sticky;/gu) ?? [];
+    expect(shownAgain).toHaveLength(2);
+    expect(returnButton).toHaveLength(2);
+    expect(css).toMatch(/^\.xenios-order-find-tools \{ display: none; \}$/mu);
     expect(sticky).toBeGreaterThan(-1);
     expect(released).toBeGreaterThan(sticky);
     // 38em is 608px at the default text size: below a 390 x 664 phone viewport, so the toolbar still sticks there.

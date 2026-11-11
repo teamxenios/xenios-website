@@ -88,6 +88,16 @@ function setup() {
 }
 
 describe("private unapproved mixed request intent", () => {
+  it("checks the authenticated owner's current policy before listing or searching any variants", async () => {
+    const { service, deps } = setup();
+    vi.mocked(deps.standing.accepted).mockResolvedValue(false);
+    await expect(service.list(viewer, { search: "one", page: 1, pageSize: 24 }))
+      .rejects.toMatchObject({ status: 403, code: "agreement_standing_required" });
+    expect(deps.catalog.list).not.toHaveBeenCalled();
+    vi.mocked(deps.standing.accepted).mockResolvedValue(true);
+    expect((await service.list(viewer, { page: 1, pageSize: 24 })).total).toBe(2);
+    expect(deps.catalog.list).toHaveBeenCalledTimes(1);
+  });
   it("saves clinical plus RUO exact variants and quantities once; returns only a genuine minimal receipt", async () => {
     const { service, records, sideEffect } = setup();
     const receipt = await service.submit(viewer, input());

@@ -301,10 +301,35 @@
   }
 }
 
-/* Short screens and enlarged text: the sticky toolbar and the fixed request
-   dock together can cover every product. The height is in em, so the rule
-   follows the reader's text size as well as zoom. The toolbar then scrolls
-   with the page; its place in the page and in the tab order does not change. */
+/* A full sticky toolbar and the portaled request dock cannot share a short or
+   large-text phone viewport: together they can cover every product. In those
+   viewports the toolbar scrolls with the page, the lower pager is shown
+   again, and one small sticky button returns to search and paging.
+   Two conditions select them. A short viewport, with its height in em so it
+   follows the browser's text size as well as zoom. And a narrow viewport whose
+   page text is enlarged, found by a container query in rem. */
+.xenios-order-find-tools { display: none; }
 @media (max-width: 700px) and (max-height: 38em) {
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar { position: static; }
+  .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: block; }
+  .xenios-order-page--guest-catalog .xenios-order-find-tools {
+    display: block; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 19;
+    justify-self: start; min-height: 44px; max-width: 100%; padding: 4px 10px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+    color: inherit; font: inherit; line-height: 1.2; overflow-wrap: anywhere;
+  }
+}
+@media (max-width: 375px) and (max-height: 670px) {
+  .xenios-order-page--guest-catalog { container: guest-order-reflow / inline-size; }
+  @container guest-order-reflow (max-width: 12rem) {
+    .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar { position: static; }
+    .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: block; }
+    .xenios-order-page--guest-catalog .xenios-order-find-tools {
+      display: block; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 19;
+      justify-self: start; min-height: 44px; max-width: 100%; padding: 4px 10px;
+      border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+      color: inherit; font: inherit; line-height: 1.2; overflow-wrap: anywhere;
+    }
+  }
+}
 }

@@ -859,7 +859,8 @@ describe("the login-free request-only entry", () => {
     act(() => researchStore.publish({ member: null, memberToken: null, memberChecking: false,
       memberSessionStatus: "signed_out", recovery: "none" }));
     await renderStorefront(true);
-    const add = await waitForAdd();
+    expect(container.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
+    expect(fetch.mock.calls.some(([url]) => String(url).includes("/request-intents/catalog"))).toBe(false);
     expect(container.querySelector('[data-testid="quick-order-request-only"]')).toBe(shell);
     expect(sessionReads(fetch)).toHaveLength(1);
     expect(container.querySelector('[data-testid="request-door-legacy"]')).toBeNull();
@@ -867,8 +868,7 @@ describe("the login-free request-only entry", () => {
     const checkbox = container.querySelector<HTMLInputElement>('[data-testid="early-access-agreement-checkbox"]');
     expect(checkbox).toBeTruthy();
     expect(checkbox!.checked).toBe(false);
-    act(() => add.click());
-    expect(continueButton().matches(":disabled")).toBe(true);
+    expect(container.querySelector('[data-testid="request-action-bar-primary"]')).toBeNull();
     expect(container.querySelector('input[name="name"]')).toBeNull();
     act(() => checkbox!.click());
     await act(async () => {
@@ -882,6 +882,8 @@ describe("the login-free request-only entry", () => {
     expect(posts).toHaveLength(2); // One recovery and one explicit legal acceptance.
     expect(recoveryPosts(fetch)).toHaveLength(1);
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    const add = await waitForAdd();
+    act(() => add.click());
     expect(continueButton().matches(":disabled")).toBe(false);
     act(() => continueButton().click());
     expect(container.querySelector('input[name="name"]')).toBeTruthy();
@@ -926,7 +928,7 @@ describe("the login-free request-only entry", () => {
         expect(render).toHaveBeenCalledTimes(1);
         return;
       }
-      const add = await waitForAdd();
+      expect(container.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
       expect(render).toHaveBeenCalledTimes(1);
       expect(container.querySelector('[data-testid="quick-order-request-only"]')).toBe(shell);
       expect(container.textContent).not.toContain("XRI-30000000000040008000000000000001");
@@ -935,8 +937,7 @@ describe("the login-free request-only entry", () => {
       const checkbox = container.querySelector<HTMLInputElement>('[data-testid="early-access-agreement-checkbox"]');
       expect(checkbox).toBeTruthy();
       expect(checkbox!.checked).toBe(false);
-      act(() => add.click());
-      expect(continueButton().matches(":disabled")).toBe(true);
+      expect(container.querySelector('[data-testid="request-action-bar-primary"]')).toBeNull();
       expect(container.querySelector('input[name="name"]')).toBeNull();
       act(() => checkbox!.click());
       await act(async () => {
@@ -949,6 +950,8 @@ describe("the login-free request-only entry", () => {
       expect(JSON.parse(String(acceptances[0][1]?.body))).toMatchObject({ kind: "early_access_terms", version: "v2" });
       expect(posts).toHaveLength(2);
       expect(recoveryPosts(fetch)).toHaveLength(1);
+      const admittedAdd = await waitForAdd();
+      act(() => admittedAdd.click());
       expect(continueButton().matches(":disabled")).toBe(false);
       act(() => continueButton().click());
       expect(container.querySelector('input[name="name"]')).toBeTruthy();
@@ -1281,12 +1284,11 @@ describe("the login-free request-only entry", () => {
     expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(legacyMarker);
     expectOuterHelp();
   });
-  it("allows browsing but enables contact only after canonical server agreement acceptance", async () => {
+  it("withholds mixed catalog reads and cards until canonical server agreement acceptance", async () => {
     const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement: "required" });
     await renderStorefront(true);
-    const add = await waitForAdd();
-    act(() => add.click());
-    expect(continueButton().disabled).toBe(true);
+    expect(container.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
+    expect(fetch.mock.calls.some(([url]) => String(url).includes("/request-intents/catalog"))).toBe(false);
     expect(container.querySelector('input[name="name"]')).toBeNull();
     act(() => container.querySelector<HTMLInputElement>('[data-testid="early-access-agreement-checkbox"]')!.click());
     await act(async () => {
@@ -1295,16 +1297,17 @@ describe("the login-free request-only entry", () => {
     });
     expect(fetch.mock.calls.filter(([url, init]) => String(url).endsWith("/early-access/agreements/accept")
       && init?.method === "POST")).toHaveLength(1);
+    const add = await waitForAdd();
+    act(() => add.click());
     expect(continueButton().disabled).toBe(false);
     act(() => continueButton().click());
     expect(container.querySelector('input[name="name"]')).toBeTruthy();
   });
   it.each(["unverified", "locked"] as const)("keeps continuation closed when server standing is %s", async (agreement) => {
-    stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement });
+    const fetch = stubFetch({ bridgeEnabled: false, mixedMode: "on", agreement });
     await renderStorefront(true);
-    const add = await waitForAdd();
-    act(() => add.click());
-    expect(continueButton().disabled).toBe(true);
+    expect(container.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
+    expect(fetch.mock.calls.some(([url]) => String(url).includes("/request-intents/catalog"))).toBe(false);
     expect(container.querySelector('input[name="name"]')).toBeNull();
   });
   it.each(["on", "off", "unknown"] as const)("does not switch a malformed retained attempt into a new request with %s intake", async (mixedMode) => {

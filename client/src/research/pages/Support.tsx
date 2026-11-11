@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { RESEARCH_SUPPORT_EMAIL } from "../catalog-help/listing-question";
 import SeoHead from "@/components/SeoHead";
 import { ResearchPublicShell } from "../ui/shells";
 import { ResearchSecureNotice } from "../ui/kit";
@@ -12,7 +13,7 @@ import "./public-editorial.css";
 // anything about the shared gateway credential.
 // ---------------------------------------------------------------------------
 
-export const RESEARCH_SUPPORT_EMAIL = "research@xeniostechnology.com";
+export { RESEARCH_SUPPORT_EMAIL };
 
 export default function Support() {
   return (

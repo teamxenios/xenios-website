@@ -8,12 +8,13 @@ import {
 import type { DirectPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
 import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { catalogItemKey, catalogPriceLabel, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, money, type AssistedOrderWizardConfig } from "./wizard-state";
-import { createRequestIntentApi, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
+import { createRequestIntentApi, RequestIntentHttpError, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
 import { forgetConfirmedReceipt, readConfirmedReceiptRecord, rememberConfirmedReceipt } from "./request-intent-continuation";
 import type { StorefrontIntent } from "../storefront/entry-intent";
 import { isResearchCartScope } from "../cart-session";
 import { ProductMedia } from "../product-media/ProductMedia";
+import { ListingQuestion } from "../catalog-help/ListingQuestion";
 import { ReviewedProductContent } from "../master-offerings/ReviewedProductContent";
 import { reviewedPackage } from "@shared/research/master-offerings/approved-content";
 import { EARLY_ACCESS_ENTRY_PATH, normalizeResearchPath } from "@shared/research/paths";
@@ -123,6 +124,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
         </button>
       </DialogClose>
       {showMedia && <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} detail />}
+      <ListingQuestion variantReference={item.sourceSelection?.variantId} />
       {item.reviewedContent && <ReviewedProductContent content={item.reviewedContent} inDialog />}
       {(item.specification || item.format || item.packBasis) && <dl className="grid min-w-0 gap-2 break-words text-sm">
         {item.specification && <div><dt className="font-semibold">Specification</dt><dd>{item.specification}</dd></div>}
@@ -170,6 +172,7 @@ function RequestIntentFormSession({
   const catalogStartRef = useRef<HTMLDivElement>(null);
   const pendingCatalogScroll = useRef(false);
   const requestSummaryId = useId();
+  const catalogToolsId = useId();
   const contactFormId = useId();
   const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false);
   const [restored] = useState(() => storage ? readIntentAttempt(storage) : null);
@@ -182,6 +185,15 @@ function RequestIntentFormSession({
   const [requirementsNeedRefresh, setRequirementsNeedRefresh] = useState(false);
   const [catalog, setCatalog] = useState<RequestIntentCatalogPage | null>(null);
   const [catalogFailed, setCatalogFailed] = useState(false);
+  const [catalogPolicyRefused, setCatalogPolicyRefused] = useState(false);
+  const catalogAdmitted = continuationEnabled && !catalogPolicyRefused;
+  useEffect(() => {
+    if (!continuationEnabled) setCatalogPolicyRefused(false);
+  }, [continuationEnabled]);
+  function lostCatalogStanding(error: unknown) {
+    return error instanceof RequestIntentHttpError && error.status === 403
+      && error.code === "agreement_standing_required";
+  }
   const [catalogRetry, setCatalogRetry] = useState(0);
   const [search, setSearch] = useState("");
   const [family, setFamily] = useState("");
@@ -232,7 +244,7 @@ function RequestIntentFormSession({
   useEffect(() => {
     let current = true;
     setHintItem(null); setHintChecked(false);
-    if (!entryIntent || restored || reopened) return;
+    if (!catalogAdmitted || !entryIntent || restored || reopened) return;
     // Navigation is only a hint. Re-resolve the full family from the neutral
     // audience-scoped catalog; CARE never takes the old Research redirect.
     void (async () => {
@@ -265,9 +277,13 @@ function RequestIntentFormSession({
         }
       }
       throw new Error("Incomplete hint.");
-    })().catch(() => { if (current) setHintChecked(true); });
+    })().catch((error: unknown) => {
+      if (!current) return;
+      if (lostCatalogStanding(error)) setCatalogPolicyRefused(true);
+      else setHintChecked(true);
+    });
     return () => { current = false; };
-  }, [api, hintKey, restored, reopened, confirmHcgHold]);
+  }, [api, hintKey, restored, reopened, confirmHcgHold, catalogAdmitted]);
   const selections = [...selected.values()];
   const selectedUnits = selections.reduce((total, selection) => total + selection.quantity, 0);
   const selectedProducts = new Set(selections.map(({ item }) => item.productId)).size;
@@ -290,7 +306,10 @@ function RequestIntentFormSession({
     return () => { current = false; };
   }, [api, restored, reopened]);
   useEffect(() => {
-    if (restored || reopened) return;
+    if (restored || reopened || !catalogAdmitted) {
+      setCatalog(null);
+      return;
+    }
     let current = true;
     setCatalog(null);
     setCatalogFailed(false);
@@ -302,9 +321,13 @@ function RequestIntentFormSession({
         setCatalog(items === value.items ? value : { ...value, items });
         setSelected((prior) => refreshHeldSelections(prior, items));
       })
-      .catch(() => { if (current) setCatalogFailed(true); });
+      .catch((error: unknown) => {
+        if (!current) return;
+        if (lostCatalogStanding(error)) setCatalogPolicyRefused(true);
+        else setCatalogFailed(true);
+      });
     return () => { current = false; };
-  }, [api, search, family, sort, page, restored, reopened, catalogRetry, confirmHcgHold]);
+  }, [api, search, family, sort, page, restored, reopened, catalogRetry, confirmHcgHold, catalogAdmitted]);
 
   async function refreshRequirements() {
     if (locked.current || !requirementsNeedRefresh || frozen.current) return;
@@ -476,6 +499,18 @@ function RequestIntentFormSession({
     <button className="xenios-order-button" disabled={busy} onClick={() => void recover()}>Check saved request</button>
     <a href="/research/support">Contact support before a replacement</a></section>;
 
+  // Keep the form mounted during reacceptance so in-memory selections and an
+  // uncertain retry are not replaced. Confirmed receipts and recovery render above.
+  if (!catalogAdmitted) return <section className="xenios-order-page" data-testid="request-catalog-policy-gate">
+    <Heading ref={heading} tabIndex={-1}>Access the catalog</Heading>
+    <p>Review and accept the current Early Access Product Policy to see products and request a quote.</p>
+    {error && <p role="alert">{error}</p>}
+    {catalogPolicyRefused && onAgreementStandingRequired && <button type="button"
+      className="xenios-order-button" onClick={onAgreementStandingRequired}>Recheck policy status</button>}
+    {!embedded && <a href="/earlyaccess">Review the Early Access policy</a>}
+    {frozen.current && <p>Keep this tab. Reload to recover your existing attempt before starting another.</p>}
+  </section>;
+
   const currentPath = typeof window === "undefined" ? "/" : normalizeResearchPath(window.location.pathname);
   const showEarlyAccessGuide = embedded && storage !== null && config !== null && !catalogFailed
     && (currentPath === EARLY_ACCESS_ENTRY_PATH || currentPath === "/research/early-access/order-request");
@@ -507,7 +542,7 @@ function RequestIntentFormSession({
       {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
       {(compactGuestCatalog || showEarlyAccessGuide) && <div ref={catalogStartRef} className="xenios-order-catalog-start"
         id={showEarlyAccessGuide ? "early-access-catalog" : undefined} tabIndex={showEarlyAccessGuide ? -1 : undefined} />}
-      <div className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
+      <div id={catalogToolsId} tabIndex={-1} className={compactGuestCatalog ? "xenios-order-catalog-toolbar" : undefined}>
         <div className="xenios-order-grid">
           <label>Search catalog<input value={search} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>
           <label>Product family<select value={family} onChange={(event) => { pendingCatalogScroll.current = false; setFamily(event.target.value); setPage(1); }}>
@@ -523,6 +558,13 @@ function RequestIntentFormSession({
         </div>
         {compactGuestCatalog && <div className="xenios-order-mobile-pagination">{catalogPagination}</div>}
       </div>
+      {compactGuestCatalog && <button type="button" className="xenios-order-find-tools"
+        aria-controls={catalogToolsId} onClick={() => {
+          const tools = document.getElementById(catalogToolsId);
+          if (!tools) return;
+          tools.focus({ preventScroll: true });
+          tools.scrollIntoView?.({ block: "start", behavior: "auto" });
+        }}>Search &amp; pages</button>}
       {catalogFailed ? <section className="xenios-order-panel" aria-label="Catalog unavailable">
         <p role="alert">The current catalog could not be confirmed. Retry to continue with your existing selections.</p>
         <button type="button" className="xenios-order-button" onClick={() => setCatalogRetry((value) => value + 1)}>Retry catalog</button>
@@ -563,7 +605,8 @@ function RequestIntentFormSession({
               <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.reviewMessage ?? item.accessNotice ?? "You can still add it to your quote cart."}</p>}
           </div>
           <div className="xenios-order-card-actions">
-          {showDetails && <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />}
+          {showDetails ? <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />
+            : <ListingQuestion variantReference={sourceVariantId} />}
           {!item.selectableForReview ? <p>{
             item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
               : item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"

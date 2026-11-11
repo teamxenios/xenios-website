@@ -178,6 +178,24 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
   expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
+  it("lets a guest return to the real search and paging tools without submitting a request", async () => {
+    const api = makeApi();
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    const jump = [...host.querySelectorAll("button")].find((button) => button.textContent === "Search & pages");
+    expect(jump).toBeTruthy();
+    const target = document.getElementById(jump!.getAttribute("aria-controls")!);
+    expect(target?.querySelector("input")).toBeTruthy();
+    const scroll = vi.fn();
+    Object.defineProperty(target!, "scrollIntoView", { configurable: true, value: scroll });
+    const reads = api.catalog.mock.calls.length;
+    await act(async () => jump!.click());
+    expect(document.activeElement).toBe(target);
+    expect(scroll).toHaveBeenCalledWith({ block: "start", behavior: "auto" });
+    expect(api.catalog.mock.calls.length).toBe(reads);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
   it("uses only the source variant for guest catalog artwork", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
@@ -314,11 +332,15 @@ describe("mixed private request customer form source", () => {
     expect(dialog.textContent).toContain(reviewedCopy.overview);
     expect(dialog.textContent).toContain("QA-EXACT");
     expect(dialog.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
-    expect(dialog.querySelector("a")?.getAttribute("href")).toBe(reviewedArtwork.labelPreview.href);
+    const preview = () => dialog.querySelector('a[href="' + reviewedArtwork.labelPreview.href + '"]');
+    const question = () => dialog.querySelector('[data-testid="catalog-listing-question"] a[href^="mailto:"]');
+    expect(preview()).toBeTruthy();
+    expect(question()).toBeTruthy();
     expect(dialog.querySelector('button[aria-label^="Add "]')).toBeNull();
     await act(async () => dialog.querySelector("img")!.dispatchEvent(new Event("error")));
     expect(dialog.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
-    expect(dialog.querySelector("a")).toBeNull();
+    expect(preview()).toBeNull();
+    expect(question()).toBeTruthy();
     expect(dialog.textContent).toContain(reviewedCopy.overview);
     await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
     await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
@@ -329,6 +351,44 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
     expect(api.recover).not.toHaveBeenCalled();
     expect(storedKeys()).toEqual([]);
+  });
+
+  it("offers one human question per exact member listing, including clinical and held cards with no details", async () => {
+    const api = makeApi(), catalog = await api.catalog();
+    const refs = ["mov_" + "a".repeat(20), "mov_" + "b".repeat(20), "mov_" + "c".repeat(20)];
+    const source = (i: number) => ({ family: "synthetic", slug: "fixture-" + i, variantId: refs[i] });
+    api.catalog.mockResolvedValue({ ...catalog, total: 3, items: [
+      { ...item("clinical", true), sourceSelection: source(0), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy },
+      { ...item("held", false), sourceSelection: source(1), selectableForReview: false, intentExclusion: "specification_review" },
+      { ...item("reviewed", false), sourceSelection: source(2), reviewedContent: reviewedCopy },
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={"a".repeat(64)} />));
+    const [clinical, held, ordinary] = host.querySelectorAll(".xenios-order-card");
+    const widget = '[data-testid="catalog-listing-question"]';
+    const detailsButton = 'button[aria-label^="View details"]';
+    function expectOneQuestion(node: Element, ref: string) {
+      const all = node.querySelectorAll(widget);
+      expect(all).toHaveLength(1);
+      expect(all[0].querySelector("summary")?.textContent?.trim()).toBe("Ask about this item");
+      const url = new URL(all[0].querySelector<HTMLAnchorElement>('a[href^="mailto:"]')!.href);
+      expect(url.pathname).toBe("research@xeniostechnology.com");
+      expect(url.searchParams.get("body")?.split("\r\n")).toContain("Catalog reference: " + ref);
+    }
+    for (const [card, ref] of [[clinical, refs[0]], [held, refs[1]]] as const) {
+      expect(card.querySelector(detailsButton)).toBeNull();
+      expect(card.querySelector("img")).toBeNull();
+      expect(card.textContent).not.toContain(reviewedCopy.overview);
+      expectOneQuestion(card, ref);
+    }
+    expect(held.querySelector("button")).toBeNull(); // A question does not unlock a held item.
+    expect(clinical.textContent).toContain("Clinical review required.");
+    expect(ordinary.querySelector(widget)).toBeNull();
+    await act(async () => ordinary.querySelector<HTMLButtonElement>(detailsButton)!.click());
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expectOneQuestion(dialog, refs[2]);
+    expect(ordinary.querySelector(widget)).toBeNull();
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
   });
 
   it("keeps member copy-only and art-only details honest and excludes rows without an exact source", async () => {
@@ -679,9 +739,10 @@ describe("mixed request mounted-entry contracts", () => {
   it("does not continue when the existing access/standing shell is closed", async () => {
     const api = makeApi();
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} continuationEnabled={false} />));
-    await click("Add Synthetic clinical to quote cart");
-    const next = [...host.querySelectorAll("button")].find((button) => button.textContent === "Continue to details");
-    expect(next?.disabled).toBe(true);
+    expect(host.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
+    expect(host.textContent).not.toContain("Synthetic clinical");
+    expect(api.catalog).not.toHaveBeenCalled();
+    expect(host.querySelector('[data-testid="request-action-bar-primary"]')).toBeNull();
     expect(api.submit).not.toHaveBeenCalled();
   });
   it("resolves a clinical link through the neutral catalog without adding it or redirecting", async () => {
@@ -1592,8 +1653,9 @@ describe("agreement-standing refresh preserves the current request", () => {
     expect([...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")]
       .every((input) => !input.checked)).toBe(true);
     await renderSameForm(false);
-    const submit = [...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote");
-    expect(submit?.disabled).toBe(true);
+    expect(host.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
+    expect(host.textContent).not.toContain("Synthetic Customer");
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Request a quote")).toBe(false);
     await renderSameForm(true);
     expect(api.submit).toHaveBeenCalledTimes(1);
     const newConfig = await api.config();

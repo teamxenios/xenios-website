@@ -70,6 +70,8 @@ export class RequestIntentService {
 
   async list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery) {
     this.owner(viewer);
+    // The session identifies a customer; it does not prove current policy acceptance.
+    if (!await this.deps.standing.accepted(viewer)) throw new RequestIntentError("agreement_standing_required", 403);
     const page = await this.deps.catalog.list(viewer, query);
     return this.deps.quoteOnly === true ? quoteOnlyCatalogPage(page) : page;
   }
