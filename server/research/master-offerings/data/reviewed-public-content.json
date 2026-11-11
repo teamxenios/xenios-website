@@ -6667,6 +6667,110 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_216b3a5f02fb7724cd51",
+      "sourceVariantId": "mov_d25066629d9cbdbad552",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A 16-residue synthetic peptide based on residues 177 to 191 of human growth hormone, with an added N-terminal tyrosine and a disulfide bond. Cell, tissue and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 10 mg for laboratory research.",
+        "overview": "In plain terms, this is a 16-amino-acid synthetic peptide based on residues 177 to 191 of human growth hormone, with an extra tyrosine added at one end and a disulfide bond inside it. It is listed for laboratory work on how that fragment affects fat breakdown and fat formation in cells, tissue and animals. What the cited work establishes is in rats, mice, isolated tissue and cell assays, much of it on related analogues: the fragment reduced fat formation as strongly as the intact hormone and slowed weight gain in obese mice without raising plasma glucose or reducing insulin secretion, and in cell assays it did not compete for the growth hormone receptor. What it does not establish is any effect in a person. The full technical description follows.\n\nThe reference compound AOD-9604 is a 16-residue synthetic peptide based on residues 177 to 191 of human growth hormone, with an added N-terminal tyrosine and a disulfide bond linking two internal cysteines. The antilipogenic activity of this region of the hormone was reported from 1993: a synthetic peptide of human growth hormone residues 177 to 191 had antilipogenic activity identical to that of the intact hormone, while showing no significant lipolytic effect as measured by glycerol release from the fat pads of rats given the peptide, and in 1994 long-term administration of the same peptide to obese mice reduced cumulative body weight gain, decreased adipose tissue mass and inhibited lipogenesis in adipose tissue. In one 2000 report on AOD9401, an analogue of that domain spanning residues 177 to 191, the peptide stimulated hormone-sensitive lipase and inhibited acetyl-coenzyme A carboxylase in isolated rat adipose tissue, mimicked the intact hormone's effect on diacylglycerol release in adipocytes, and over 20 days in obese Zucker rats reduced body weight gain and lowered mean adipocyte diameter from about 110 to about 80 micrometres, without the insulin resistance or glucose intolerance that followed the intact hormone. In a second AOD-9401 study, obese mice gained weight more slowly from day 16 during a 30-day experiment. Food intake was similar between groups, and resting energy expenditure showed no detectable increase. A separate acute challenge at the end of the experiment increased energy expenditure and the oxidation of both glucose and fat in the mice tested. In isolated adipose tissue assays, AOD-9401 increased lipolytic activity and lowered lipogenic activity in rodent and human samples. In one 14-day AOD-9604 study, obese mice gained weight more slowly and had higher fat oxidation and plasma glycerol. The fragment did not raise plasma glucose or reduce insulin secretion in that comparison, and in separate cell assays it neither competed for growth hormone receptor binding nor stimulated proliferation. A second AOD-9604 study reported lower body weight and body fat in obese mice and higher levels of β3-adrenergic receptor RNA after chronic exposure to AOD-9604 or intact growth hormone. The chronic weight and lipolysis effects were absent in mice lacking that receptor, although a separate acute AOD-9604 challenge still increased energy expenditure and fat oxidation in the knockout mice. This listing is a laboratory research material and not a medicine. The cell, tissue and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0260"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone fragment effects on lipolysis and lipogenesis in cell, tissue and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_7f4fc3961bd7c1e6b6bf",
+      "sourceVariantId": "mov_77837ac2575c8df8ac73",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Glutathione is a tripeptide of glutamate, cysteine and glycine. The catalog states only 'Glutathione' without saying which redox form this listing supplies. Biochemical studies of this compound do not establish the safety or effects of this research material in people. Listed at 1500 mg for laboratory research.",
+        "overview": "In plain terms, this is glutathione, a tripeptide - a chain of three amino acids - that cells use to keep their own chemistry in a reduced state and to tag other molecules for disposal. It is listed for laboratory work on that thiol chemistry, on glutathione metabolism and on how glutathione status is measured. What the cited work establishes is biochemical: it is the most abundant non-protein thiol in mammalian tissues, it is made in two enzyme steps whose rate depends on the supply of cysteine, and one review describes how its status is assessed in cells. What it does not establish is which redox form this listing supplies, since the catalog says only Glutathione, nor any effect in a person. The full technical description follows.\n\nGlutathione is the tripeptide γ-L-glutamyl-L-cysteinylglycine, in which the glutamate is joined to cysteine through its side-chain carboxyl group; the reductant and conjugating chemistry below belongs to its reduced form, reduced glutathione, whose free cysteine thiol carries it, and the catalog states only 'Glutathione' without saying which redox form this listing supplies. A 1983 article placed this thiol in virtually every cell, with roles in metabolism, in transport and in cellular protection: it reduces disulfides and other molecules, forms conjugates with compounds arising both outside and inside the cell, and shields cells from reactive oxygen intermediates and free radicals. Later reviews describe it as the most abundant non-protein thiol in mammalian tissues and as the most abundant low-molecular-weight thiol compound synthesized in cells, a determinant of redox signalling, and a participant in the detoxification of xenobiotics and xenobiotic electrophiles and in maintaining redox homeostasis. Its biosynthesis occurs in the cytosol in two enzymatic steps, the first catalysed by glutamate cysteine ligase, the rate-limiting enzyme, which is composed of a catalytic and a modifier subunit, and the second by glutathione synthetase; the key determinants are the availability of the sulfur amino acid precursor cysteine and the activity of that ligase, whose subunit genes are regulated through transcription factors including NF-E2 related factor 2 acting at the antioxidant response element. One of them also describes methods of assessing glutathione status in cells. This listing is a laboratory research material and not a medicine. The biochemical findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 1500 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "1500 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0295"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on thiol redox chemistry, glutathione metabolism and the measurement of glutathione status in cell and tissue assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_f729b05046ef91543822",
+      "sourceVariantId": "mov_0d82ac64c7e39678212c",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic tetrapeptide, also known as elamipretide, that binds cardiolipin, a phospholipid of the inner mitochondrial membrane. Animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 50 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic tetrapeptide - a chain of four amino acids - also known as elamipretide, which binds cardiolipin, a phospholipid of the inner mitochondrial membrane. It is listed for laboratory work on that interaction, on mitochondrial energy production and on redox biology in laboratory systems and animals. What the cited work establishes is in rats and mice: it protected mitochondrial cristae during kidney ischemia, reversed age-related declines in mitochondrial ATP production in the skeletal muscle of aged mice, and improved dilation of small brain vessels in 24-month-old mice. What it does not establish is any effect in a person, and the separate prescription formulation of elamipretide is approved on its own evidence, which does not transfer to this research listing. The full technical description follows.\n\nSS-31, also known as elamipretide and as MTP-131, is a synthetic tetrapeptide, D-arginyl-2′,6′-dimethyl-L-tyrosyl-L-lysyl-L-phenylalaninamide (D-Arg-Dmt-Lys-Phe-NH2). A 2013 study used a fluorescent analog of SS-31 to show that SS-31 binds with high affinity to cardiolipin, a phospholipid of the inner mitochondrial membrane that is required for cristae formation; the SS-31–cardiolipin complex inhibited cytochrome c peroxidase activity, and pretreating rats with SS-31 protected mitochondrial cristae during kidney ischemia. In aged mice, SS-31 rapidly reversed age-related declines in resting and maximal mitochondrial ATP production in skeletal muscle and made the muscle more fatigue resistant. With longer exposure in aged female mice, it also shifted the glutathione redox state toward a more reduced balance, generally reversed the age-associated increases in S-glutathionylation measured on cysteine residues across muscle proteins, and increased fatigue resistance and treadmill endurance. In 24-month-old mice, SS-31 improved neurovascular coupling responses by increasing nitric-oxide-mediated dilation of small brain vessels, and this was associated with better spatial working memory and motor skill learning, while gait measures did not differ significantly between treated and untreated aged mice. This listing is a laboratory research material and not a medicine; separately, a prescription formulation of elamipretide received accelerated approval from the U.S. Food and Drug Administration in September 2025 to improve muscle strength in adult and pediatric patients with Barth syndrome weighing at least 30 kg. The animal findings above, and the approval of that separate medicine, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 50 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "50 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0344"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on mitochondrial cardiolipin interactions, bioenergetics and redox biology in laboratory systems and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_1d9d501ac84d6cd9d46d",
+      "sourceVariantId": "mov_0a8df59fa70328b1c1ca",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Colostrum is the fluid the mammary glands secrete during pregnancy and immediately after birth, before lactation begins: a biological material and not a single defined substance. The label does not state a species, and the listed strength is a mass of material, not an amount of any component. Listed at 100 mg for laboratory research.",
+        "overview": "In plain terms, this is colostrum, the fluid the mammary glands secrete during pregnancy and immediately after birth, before lactation begins - a biological material rather than a single defined substance. It is listed for laboratory work on its composition and on how widely that composition varies. What the cited work establishes is how much it ranges: two studies of bovine samples, one of 714 and one of 1,239, report different figures for protein, fat, lactose and immunoglobulin G, and the second found immunoglobulin G associated with the animal's parity and with the time between birth and collection. What it does not establish is a composition for this material, nor which animal it came from, since the label states no species - and the listed strength is a mass of material that says nothing about how much of any component is present. The full technical description follows.\n\nColostrum is defined in the National Library of Medicine's Medical Subject Headings as the fluid secreted by the mammary glands during pregnancy and immediately postpartum, before lactation begins. It is not a single defined substance, so this listing names a biological material and not a molecule. Its composition is measured rather than fixed, and the two studies below give an idea of how widely it ranges. A 2023 study of 714 bovine colostrum samples collected within six hours of parturition reported reference measurements of immunoglobulin G at 93.54 ± 33.87 grams per litre, total immunoglobulins at 102.82 ± 35.04 grams per litre, protein at 14.71 ± 3.51 percent, fat at 4.61 ± 3.04 percent, and lactose at 2.36 ± 0.51 milligrams per 100 milligrams. A 2017 study of 1,239 bovine samples reported mean fat, protein and lactose of 6.4, 14 and 2.7 percent and mean immunoglobulin G of 55 milligrams per millilitre, and found the immunoglobulin G concentration to be associated with the animal's parity and with the time between parturition and collection. Those two sets of figures differ from each other, which is the point: a composition for this material can be reported for the samples a study measured and not assumed for any other. Both studies measured bovine colostrum, and this listing's label does not state a species, so nothing here establishes which animal this material came from. For the same reason the listed strength is a mass of material and says nothing about how much of any component is present.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "100 mg"
+          },
+          {
+            "label": "Listed package",
+            "value": "Bottle of 90 capsules (historical presentation)"
+          }
+        ],
+        "purpose": "Nonclinical research on the composition and variability of colostrum as a biological material.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }
