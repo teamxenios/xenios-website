@@ -157,7 +157,9 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(cards[0].textContent).toContain("Final price follows applicable review.");
       expect(cards[1].textContent).toContain("Synthetic exact variant 2");
       expect(cards[1].textContent).toContain("Research Use Only. Nonclinical use only.");
-      expect(cards[1].textContent).toContain("Price on request (catalog display, not a final quote)");
+      // Quote-only: a card with no catalog price says so and shows no amount.
+      expect(cards[1].textContent).toContain("Request a quote");
+      expect(cards[1].textContent).not.toMatch(/\$\s?\d/);
       await click("Add Synthetic 1 to request");
       await click("Add Synthetic 2 to request");
       const quantities = [...host.querySelectorAll<HTMLInputElement>("article input[type=number]")];
