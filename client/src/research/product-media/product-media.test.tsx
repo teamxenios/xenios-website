@@ -42,3 +42,26 @@ it("shows reviewed artwork and its disclosure, then drops its label link on fall
     host.remove();
   }
 });
+
+it("says a flat label is a label design, and adds nothing to a supplier photograph", async () => {
+  const host = document.createElement("div");
+  document.body.append(host);
+  const root = createRoot(host);
+  const primary = { href: "/research/product-media/synthetic-label-card.webp", altText: "Synthetic label design", width: 1024, height: 1024 };
+  const labelPreview = { href: "/research/product-media/synthetic-label.webp", altText: "Synthetic front label", width: 1600, height: 1000 };
+  try {
+    await act(async () => root.render(
+      <ProductMedia productName="Synthetic" variantIds={["mov_synthetic"]}
+        reviewedMedia={{ primary, labelPreview, packagingDesign: false }} />,
+    ));
+    expect(host.querySelector("figcaption")?.textContent).toBe("Label design shown. This is not a photograph of the product.");
+    await act(async () => root.render(
+      <ProductMedia productName="Synthetic" variantIds={["mov_synthetic"]}
+        reviewedMedia={{ primary, packagingDesign: false }} />,
+    ));
+    expect(host.querySelector("figcaption")).toBeNull();
+  } finally {
+    await act(async () => root.unmount());
+    host.remove();
+  }
+});

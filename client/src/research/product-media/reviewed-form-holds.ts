@@ -89,8 +89,11 @@ export function researchListingSubcategory(product: {
   subcategory: string | null;
   variants: readonly { id: string }[];
 }): string | null {
-  if (product.subcategory === "Lyophilized Vial"
-    && product.variants.some((variant) => isResearchFormUnconfirmed(variant.id, product.id))) {
+  // The hold map is the only authority. A row is in it because its own source
+  // does not state a form, so the catalog's subcategory is not shown for it,
+  // whatever form that subcategory names. A row whose source does state its
+  // form is not in the map and keeps its subcategory.
+  if (product.variants.some((variant) => isResearchFormUnconfirmed(variant.id, product.id))) {
     return null;
   }
   return product.subcategory;

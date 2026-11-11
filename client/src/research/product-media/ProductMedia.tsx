@@ -67,6 +67,13 @@ export function ProductMedia({
           Packaging design shown. Current packaging may differ.
         </figcaption>
       )}
+      {/* A flat label is a design, not a photograph. A supplier photograph has no
+          label preview and gets no caption: it is what it looks like. */}
+      {packshot && reviewedMedia && !reviewedMedia.packagingDesign && labelPreview && (
+        <figcaption className="body-s min-w-0 break-words text-ink-mute">
+          Label design shown. This is not a photograph of the product.
+        </figcaption>
+      )}
       {detail && labelPreview && (
         <a href={labelPreview.href} target="_blank" rel="noreferrer" className="body-s text-ink underline">
           View front label artwork
