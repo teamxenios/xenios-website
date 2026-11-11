@@ -5,13 +5,13 @@ import {
   REQUEST_INTENT_KIND, type RequestIntentCatalogItem, type RequestIntentDetail,
 } from "@shared/research/assisted-order/request-intent";
 import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "@shared/research/assisted-order/form";
-import { sha256AssistedOrderHasher as hasher } from "../defaults";
-import type { AssistedOrderViewer } from "../ports";
-import { GeneratedMasterOfferingCatalogReader } from "../../master-offerings/dataset-reader";
-import { inquiryReviewCodeForVariant } from "../../master-offerings/inquiry-review-states";
-import { MasterOfferingCatalogService } from "../../master-offerings/service";
-import { createRequestIntentCatalog } from "./catalog";
-import { RequestIntentService, type StoredIntent } from "./service";
+import { sha256AssistedOrderHasher as hasher } from "../assisted-order/defaults";
+import type { AssistedOrderViewer } from "../assisted-order/ports";
+import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
+import { inquiryReviewCodeForVariant } from "./inquiry-review-states";
+import { MasterOfferingCatalogService } from "./service";
+import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
+import { RequestIntentService, type StoredIntent } from "../assisted-order/request-intent/service";
 
 /**
  * One quote request holding five kinds of listing from the real catalog:
