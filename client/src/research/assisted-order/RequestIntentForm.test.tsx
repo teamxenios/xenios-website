@@ -1626,7 +1626,7 @@ describe("agreement-standing refresh preserves the current request", () => {
   });
 });
 
-it("replaces a stale selected HCG row after a catalog hold and retains sibling selections and contact", async () => {
+it("replaces a stale selected HCG row after a catalog hold, keeps it in the request with the strength withheld, and submits it", async () => {
   const api = makeApi();
   const hcg: RequestIntentCatalogItem = {
     ...item("stale-hcg", false), productName: "HCG", specification: "HCG(120000iu)",
@@ -1647,7 +1647,8 @@ it("replaces a stale selected HCG row after a catalog hold and retains sibling s
 
   api.catalog.mockResolvedValue({
     ...firstPage, items: [{
-      ...hcg, specification: HCG_STRENGTH_REVIEW.specification, selectableForReview: false,
+      // Held is a review reason, not a refusal: the server still lists the row as selectable.
+      ...hcg, specification: HCG_STRENGTH_REVIEW.specification, selectableForReview: true,
       intentExclusion: "specification_review", actionLabel: HCG_STRENGTH_REVIEW.actionLabel,
       sourceSelection: { family: HCG_STRENGTH_REVIEW.family, slug: HCG_STRENGTH_REVIEW.slug,
         variantId: HCG_STRENGTH_REVIEW.variantId },
@@ -1655,35 +1656,36 @@ it("replaces a stale selected HCG row after a catalog hold and retains sibling s
   });
   await render({ ...api });
   const contactForm = host.querySelector("form")!;
-  expect(contactForm.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(true);
-  await act(async () => contactForm.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
-  expect(host.querySelector("form")).toBe(contactForm);
+  expect(contactForm.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(false);
   await click("Back to products");
   const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
   expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
   expect(summary.textContent).not.toContain("120000");
   expect(summary.textContent).toContain("Synthetic sibling");
+  expect(summary.textContent).not.toContain("Remove this selection to continue");
   expect([...summary.querySelectorAll("button")]
-    .find((button) => button.textContent === "Continue to details")?.disabled).toBe(true);
-  // The request bar offers the same continue action; it must refuse a held selection too.
+    .find((button) => button.textContent === "Continue to details")?.disabled).toBe(false);
+  // The request bar offers the same continue action; it takes a held selection forward too.
   const barContinue = document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-primary"]')!;
   expect(barContinue.textContent).toBe("Continue to details");
   await act(async () => barContinue.click());
-  expect(host.querySelector('input[name="name"]')).toBeNull();
-  expect(host.querySelector('.xenios-order-error[role="alert"]')?.textContent)
-    .toBe("Remove the held selection before continuing.");
-  api.catalog.mockResolvedValue({ ...firstPage, items: [sibling], total: 1 });
-  await render({ ...api });
-  expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
-  expect(summary.textContent).toContain("Synthetic sibling");
-  await click("Remove", "Remove selected HCG " + HCG_STRENGTH_REVIEW.specification);
-  await click("Continue to details");
   expect(host.querySelector<HTMLInputElement>('input[name="name"]')?.value).toBe("Synthetic Customer");
-  expect(api.submit).not.toHaveBeenCalled();
+  const age = host.querySelector<HTMLInputElement>('input[name="age"]')!;
+  if (!age.checked) await act(async () => age.click());
+  await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+  await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+  expect(host.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+  expect(host.textContent).not.toContain("120000");
+  await click("Submit request");
+  // One request carries both lines: the held listing and its sibling.
+  expect(api.submit).toHaveBeenCalledTimes(1);
+  const sent = api.submit.mock.calls[0][0] as { lines: readonly { productId: string; quantity: number }[] };
+  expect(sent.lines.map((line) => line.productId)).toEqual([hcg.productId, sibling.productId]);
+  expect(JSON.stringify(sent)).not.toContain("120000");
 });
 
 it.each(["cached", "in-flight"] as const)(
-  "holds a %s HCG link after a confirmed first selection refusal",
+  "keeps a %s HCG link requestable in its held form after a first selection refusal",
   async (linkTiming) => {
     const api = makeApi();
     const basePage = await api.catalog();
@@ -1719,16 +1721,22 @@ it.each(["cached", "in-flight"] as const)(
     await click("Edit selection");
     expect(host.textContent).not.toContain("120000");
     expect(host.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
-    expect([...host.querySelectorAll("button")].some((button) =>
-      button.textContent === "Add Synthetic research to request")).toBe(false);
+    // The held listing stays in the request; nothing forces the customer to remove it.
+    const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
+    expect(summary.textContent).toContain("Synthetic research");
+    expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.specification);
     await click("Remove", "Remove selected Synthetic research " + HCG_STRENGTH_REVIEW.specification);
+    expect(summary.textContent).not.toContain("Synthetic research");
     if (linkTiming === "in-flight") await act(async () => resolveLink(linkPage));
+    // The link still offers the listing, in its held form.
     const link = host.querySelector('section[aria-label="Selection from your link"]')!;
     expect(link.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
-    expect(link.querySelector("button")).toBeNull();
-    const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
-    expect(summary.textContent).not.toContain("Synthetic research");
+    expect(link.textContent).not.toContain("120000");
+    await act(async () => link.querySelector("button")!.click());
+    expect(summary.textContent).toContain("Synthetic research");
+    expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.specification);
     expect(summary.textContent).toContain("Synthetic clinical");
+    expect(host.textContent).not.toContain("120000");
     await click("Continue to details");
     expect(host.querySelector<HTMLInputElement>('input[name="name"]')?.value).toBe("Synthetic Customer");
     expect(api.submit).toHaveBeenCalledTimes(1);

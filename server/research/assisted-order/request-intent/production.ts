@@ -14,6 +14,12 @@ import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/ear
 import { requestIntentRepository, requestIntentStaffReader, type RequestIntentRpcClient } from "./rpc-repository";
 
 export const REQUEST_INTENT_ENABLED_ENV = "RESEARCH_REQUEST_INTENT_ENABLED";
+/**
+ * Set to "true" only after the request store's line check accepts coming-soon
+ * lines and supply or service lines. Until then those rows stay listed and not
+ * selectable, because the store would refuse the whole request.
+ */
+export const REQUEST_INTENT_ALL_LISTED_ENV = "RESEARCH_REQUEST_INTENT_ALL_LISTED_ENABLED";
 
 /** The same exact-origin JSON/Fetch-Metadata policy used by Referral V1.
  * The referral visitor cookie is NOT reused as customer or CSRF authority.
@@ -107,6 +113,7 @@ export function registerRequestIntentApi(
       serviceFor: wiring.masterOfferingServiceFor, bindingFor: wiring.bindingFor,
       offeringVariantFor: wiring.offeringVariantFor, catalogVersion: wiring.catalogVersion,
       reviewedFormulationHolds: reviewedHeldSpecifications(),
+      allListedInquirable: wiring.env[REQUEST_INTENT_ALL_LISTED_ENV] === "true",
     }),
     repository: requestIntentRepository(rpc),
     legal: { requiredAgreements: async () => legalPairs },

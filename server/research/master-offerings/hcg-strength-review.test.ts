@@ -1,11 +1,13 @@
 import { resolve } from "node:path";
-import { expect, it, vi } from "vitest";
+import { expect, it } from "vitest";
 import { HCG_STRENGTH_REVIEW as held } from "@shared/research/master-offerings/hcg-strength-review";
 import {
   REQUEST_INTENT_KIND,
-  validateRequestIntentInput,
-  type RequestIntentReceipt,
+  type RequestIntentDetail,
 } from "@shared/research/assisted-order/request-intent";
+import {
+  assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments,
+} from "@shared/research/assisted-order/form";
 import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
 import { RequestIntentService, type StoredIntent } from "../assisted-order/request-intent/service";
 import { sha256AssistedOrderHasher as hasher } from "../assisted-order/defaults";
@@ -54,21 +56,25 @@ it("shows the same neutral held record at both member URLs and in the price-list
   expect(toMasterOfferingPriceListCsv(document)).not.toContain(held.legacySlug);
 });
 
-it("refuses fresh requests for the exact held variant and preserves its stored receipt", async () => {
+it("takes a quote inquiry for the exact held variant, alone or in a mixed request, and never states the disputed strength", async () => {
   const page = await catalog.list(viewer, { search: "HCG" });
   const row = page.items.find((item) => item.sourceSelection?.variantId === held.variantId);
+  // Held is a review reason, not a refusal: the row can be added.
   expect(row).toMatchObject({
     specification: held.specification, intentExclusion: "specification_review",
-    selectableForReview: false, sourceRefusal: "formulation_hold", workflowMode: "availability_review",
+    selectableForReview: true, actionLabel: "Details under review",
+    sourceRefusal: "formulation_hold", workflowMode: "availability_review",
     sourceSelection: { slug: held.slug, variantId: held.variantId },
   });
   expect(JSON.stringify(row)).not.toContain("120000");
-  const siblingIds = ["mov_e218a4fead30388a55ff", "mov_b5c50d1bb9d8ad998062"];
-  const siblings = siblingIds.map((id) => page.items.find((item) => item.sourceSelection?.variantId === id));
-  for (const sibling of siblings) expect(sibling).toMatchObject({ selectableForReview: true });
-  if (!row || !siblings[0]) throw new Error("Missing exact HCG fixture");
-  const input = validateRequestIntentInput({
-    idempotencyKey: "10000000-0000-4000-8000-000000000001",
+  const sibling = page.items.find((item) => item.sourceSelection?.variantId === "mov_e218a4fead30388a55ff");
+  if (!row || !sibling) throw new Error("Missing exact HCG fixture");
+  const required = [{ kind: "fixture-terms", version: "fixture-v1" }];
+  const agreements = [
+    ...required,
+    ...requiredAssistedOrderFormAcknowledgments({ includesResearchUseOnly: true }).map(assistedOrderFormPair),
+  ].map((pair) => ({ ...pair, accepted: true as const, acceptedAt: now }));
+  const base = {
     contact: {
       fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid",
       mobilePhone: "+15555550123", ageConfirmed: true, billingSameAsShipping: true,
@@ -76,49 +82,73 @@ it("refuses fresh requests for the exact held variant and preserves its stored r
         line1: "1 Synthetic Street", city: "Test", region: "TX", postalCode: "00000", countryCode: "US",
       },
     },
-    agreements: [{ kind: "fixture-terms", version: "fixture-v1", accepted: true, acceptedAt: now }],
-    lines: [{ productId: row.productId, variantId: row.variantId, quantity: 1 }],
-  });
-  const ownerHash = hasher.stableHash([
-    "request-intent-owner", "session", viewer.earlyAccessCustomerRef, viewer.earlyAccessSessionHash,
-  ]);
-  const attemptHash = hasher.hash(input.idempotencyKey);
-  let saved: StoredIntent | null = null;
-  const createOrReplay = vi.fn(async () => { throw new Error("Unexpected request write"); });
-  const requiredAgreements = vi.fn(async () => []);
-  const uuid = vi.fn(() => "unused");
+    agreements,
+  };
+  const heldLine = { productId: row.productId, variantId: row.variantId, quantity: 1 };
+  const saved = new Map<string, StoredIntent>();
+  const details: RequestIntentDetail[] = [];
+  let nextId = 0;
   const request = new RequestIntentService({
     catalog, hasher,
     repository: {
-      findAttempt: async (owner, attempt) => owner === ownerHash && attempt === attemptHash ? saved : null,
-      createOrReplay,
+      findAttempt: async (owner, attempt) => saved.get(owner + ":" + attempt) ?? null,
+      createOrReplay: async (record) => {
+        const key = record.ownerHash + ":" + record.attemptHash;
+        const prior = saved.get(key);
+        if (prior) return prior;
+        details.push(record.detail);
+        const { kind, requestId, publicReference, status, createdAt } = record.detail;
+        const stored = { receipt: { kind, requestId, publicReference, status, createdAt }, fingerprint: record.fingerprint };
+        saved.set(key, stored);
+        return stored;
+      },
     },
     standing: { accepted: async () => true },
-    legal: { requiredAgreements },
+    legal: { requiredAgreements: async () => required },
     clock: { now: () => new Date(now) },
-    ids: { uuid, publicReference: () => "unused", opaqueToken: () => "unused" },
+    ids: {
+      uuid: () => "20000000-0000-4000-8000-00000000000" + (nextId += 1),
+      publicReference: () => "unused", opaqueToken: () => "unused",
+    },
   });
-  await expect(request.submit(viewer, input)).rejects.toMatchObject({ code: "selection_requires_refresh" });
-  await expect(request.submit(viewer, {
-    ...input,
-    lines: [{ productId: siblings[0].productId, variantId: siblings[0].variantId, quantity: 1 }, ...input.lines],
-  })).rejects.toMatchObject({ code: "selection_requires_refresh" });
-  expect(requiredAgreements).not.toHaveBeenCalled();
-  expect(uuid).not.toHaveBeenCalled();
-  const receipt: RequestIntentReceipt = {
-    kind: REQUEST_INTENT_KIND, requestId: "20000000-0000-4000-8000-000000000001",
-    publicReference: "synthetic-receipt", status: "pending_review", createdAt: now,
+
+  // The held listing by itself.
+  const alone = { ...base, idempotencyKey: "10000000-0000-4000-8000-000000000001", lines: [heldLine] };
+  const aloneReceipt = await request.submit(viewer, alone);
+  expect(aloneReceipt).toMatchObject({ kind: REQUEST_INTENT_KIND, status: "pending_review" });
+
+  // The held listing with an ordinary one: one request, both lines, in order.
+  const mixed = {
+    ...base, idempotencyKey: "10000000-0000-4000-8000-000000000002",
+    lines: [{ productId: sibling.productId, variantId: sibling.variantId, quantity: 2 }, heldLine],
   };
-  saved = {
-    receipt,
-    fingerprint: hasher.stableHash({
-      kind: REQUEST_INTENT_KIND, contact: input.contact, agreements: input.agreements, lines: input.lines,
-    }),
-  };
-  await expect(request.submit(viewer, input)).resolves.toEqual(receipt);
-  await expect(request.recover(viewer, input.idempotencyKey)).resolves.toEqual(receipt);
-  await expect(request.recover({ ...viewer, earlyAccessSessionHash: "other" }, input.idempotencyKey)).resolves.toBeNull();
-  await expect(request.submit(viewer, { ...input, lines: [{ ...input.lines[0], quantity: 2 }] }))
+  const mixedReceipt = await request.submit(viewer, mixed);
+  expect(details).toHaveLength(2);
+  expect(details[1].lines.map((line) => [line.sourceVariantId, line.quantity])).toEqual([
+    ["mov_e218a4fead30388a55ff", 2], [held.variantId, 1],
+  ]);
+  // Staff read the reason the held line needs a decision, and a pending line only.
+  expect(details[1].lines[1]).toMatchObject({
+    specification: held.specification, sourceRefusal: "formulation_hold",
+    workflowMode: "availability_review", reviewState: "pending",
+  });
+  expect(JSON.stringify(details)).not.toContain("120000");
+  // No price, payment, order or reservation fact is stored with an inquiry.
+  expect(JSON.stringify(details)).not.toMatch(/price|amount|payment|invoice|reserv/i);
+
+  // A second submit of the same attempt returns the same receipt and writes nothing.
+  await expect(request.submit(viewer, mixed)).resolves.toEqual(mixedReceipt);
+  await expect(request.recover(viewer, mixed.idempotencyKey)).resolves.toEqual(mixedReceipt);
+  expect(details).toHaveLength(2);
+  // Another session cannot read it back, and a changed retry is a conflict.
+  await expect(request.recover({ ...viewer, earlyAccessSessionHash: "other" }, mixed.idempotencyKey)).resolves.toBeNull();
+  await expect(request.submit(viewer, { ...mixed, lines: [{ ...mixed.lines[0], quantity: 3 }, heldLine] }))
     .rejects.toMatchObject({ code: "attempt_conflict" });
-  expect(createOrReplay).not.toHaveBeenCalled();
+
+  // An invented identity is still refused, and it stores nothing.
+  await expect(request.submit(viewer, {
+    ...base, idempotencyKey: "10000000-0000-4000-8000-000000000003",
+    lines: [heldLine, { productId: row.productId, variantId: "mov_invented_variant", quantity: 1 }],
+  })).rejects.toMatchObject({ code: "selection_requires_refresh" });
+  expect(details).toHaveLength(2);
 });

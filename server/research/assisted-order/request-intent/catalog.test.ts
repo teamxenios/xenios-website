@@ -56,6 +56,23 @@ describe("mixed request canonical projection", () => {
       sourceDisplayState: "temporarily_unavailable" });
     expect(page.items[1]).toMatchObject({ selectableForReview: false, intentExclusion: "coming_soon" });
   });
+  it("lists a coming-soon row and a supply or service row as selectable only once the request store accepts their lines", async () => {
+    const future = offering(2), supply = offering(3);
+    future.displayState = "coming_soon";
+    supply.family = "shipping_and_fulfillment";
+    const closed = await createRequestIntentCatalog(wiring([offering(1), future, supply])).list(viewer, {});
+    expect(closed.items.map((item) => [item.selectableForReview, item.intentExclusion])).toEqual([
+      [true, null], [false, "coming_soon"], [false, "non_merchandise"],
+    ]);
+    const open = await createRequestIntentCatalog({ ...wiring([offering(1), future, supply]), allListedInquirable: true }).list(viewer, {});
+    // The reason stays on the row for staff; it no longer excludes the row.
+    expect(open.items.map((item) => [item.selectableForReview, item.intentExclusion])).toEqual([
+      [true, null], [true, "coming_soon"], [true, "non_merchandise"],
+    ]);
+    expect(open.items[2]).toMatchObject({ sourceRefusal: "non_merchandise_family", actionLabel: "Supply or service inquiry" });
+    // An inquiry never carries a price for either kind of row.
+    expect(open.items.slice(1).every((item) => item.unitPriceCents === null)).toBe(true);
+  });
   it("fails closed when the catalog cannot be fully enumerated, rather than reporting partial coverage", async () => {
     const input = wiring([offering(1)]);
     const catalog = createRequestIntentCatalog({ ...input, serviceFor: () => ({

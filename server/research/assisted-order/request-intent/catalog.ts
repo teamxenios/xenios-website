@@ -54,6 +54,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
           .some((state) => state === "coming_soon" || state === "planned");
         const nonMerchandise = refusal === "non_merchandise_family";
         const strengthReview = isHcgStrengthReview(offering.id, variant.id);
+        const widerStoreNeeded = comingSoon || nonMerchandise;
         const reviewedContent = getReviewedProductContent(offering, variant);
         const reviewedMedia = getReviewedProductMedia(offering, variant);
         items.push({
@@ -64,7 +65,14 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
           unitPriceCents: authority.providerWorkflowRequired ? null : item.unitPriceCents,
           priceVersion: authority.providerWorkflowRequired ? null : item.priceVersion,
           sourceSelection: { family: offering.family, slug: offering.slug, variantId: variant.id },
-          selectableForReview: !strengthReview && !comingSoon && !nonMerchandise,
+          // Every listed row may be asked about. An inquiry is not an offer: it
+          // authorizes no purchase, prescription, payment, reservation or shipment.
+          // A held row is always selectable, with its disputed detail withheld.
+          // A coming-soon row and a supply or service row are selectable only once
+          // the request store accepts their lines (see allListedInquirable).
+          selectableForReview: !widerStoreNeeded || input.allListedInquirable === true,
+          // The reason a line needs a human decision. It excludes the row only
+          // while selectableForReview is false.
           intentExclusion: strengthReview ? "specification_review"
             : nonMerchandise ? "non_merchandise" : comingSoon ? "coming_soon" : null,
           clinicalReviewRequired: authority.providerWorkflowRequired,
@@ -72,7 +80,9 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
           sourceVariantDisplayState: variant.displayState,
           sourceRefusal: refusal,
           actionLabel: strengthReview ? HCG_STRENGTH_REVIEW.actionLabel
-            : comingSoon ? "Coming soon" : nonMerchandise ? "Not a product request" : "Add to request",
+            : comingSoon ? "Coming soon"
+            : nonMerchandise ? (input.allListedInquirable === true ? "Supply or service inquiry" : "Not a product request")
+            : "Add to request",
         });
       }
       if (seen.size === total) return items;
