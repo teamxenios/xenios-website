@@ -86,6 +86,12 @@ export interface MasterOfferingCompositionInput {
   ): Promise<MasterOfferingRequestIdentity | null> | MasterOfferingRequestIdentity | null;
   /** Supplied only by tests; production reads the dataset path from env. */
   catalogReader?: MasterOfferingCatalogReader;
+  /**
+   * Whether every listed variant's action is the quote cart. Omitted means the
+   * release constant, so production follows the release without a second
+   * switch. A suite that exercises the priced purchase engine passes false.
+   */
+  quoteCartOnly?: boolean;
   env?: VisibilityEnv;
   files?: DatasetFileSystem;
   /**
@@ -146,7 +152,7 @@ export function createMasterOfferingCatalogDependencies(
     // The quote-only release: every listed variant's action is the quote
     // cart, and no purchase action can be resolved. Rolling the release
     // constant back restores the earlier mapping.
-    quoteCartOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE,
+    quoteCartOnly: input.quoteCartOnly ?? EARLY_ACCESS_QUOTE_ONLY_RELEASE,
     // The same setting the quote request catalog reads, so a coming-soon,
     // supply or service row is offered the quote cart here exactly when the
     // form can take it.
