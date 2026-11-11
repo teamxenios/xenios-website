@@ -150,6 +150,8 @@ type RequestIntentFormProps = Readonly<{ api?: RequestIntentApi; storage?: Stora
   ownerKey?: string }>;
 
 /** Reusable inside the existing customer shell. No new global Auth, cart, catalog or legal authority. */
+const CLINICAL_REVIEW_SENTENCE = "Clinical review required.";
+
 export function RequestIntentForm(props: RequestIntentFormProps) {
   // "Start another request" remounts the session, so every selection, contact
   // draft, acknowledgment and frozen attempt of the confirmed request is gone.
@@ -536,6 +538,9 @@ function RequestIntentFormSession({
           !item.clinicalReviewRequired;
         const showMedia = guestCatalog || (reviewedMemberListing && Boolean(item.reviewedMedia));
         const showDetails = showMedia || (reviewedMemberListing && Boolean(item.reviewedContent));
+        // A reviewed card summary can already end with the clinical-review sentence.
+        // The notice line then adds only what the summary does not say.
+        const summaryStatesClinicalReview = Boolean(item.reviewedContent?.summary?.trimEnd().endsWith(CLINICAL_REVIEW_SENTENCE));
         return <article className="xenios-order-card" key={key}>
           <div className="xenios-order-card-intro">
             {showMedia && <div className="xenios-order-card-media">
@@ -551,7 +556,7 @@ function RequestIntentFormSession({
             </div>
           </div>
           <div className="xenios-order-card-meta">
-            <p>{item.clinicalReviewRequired ? "Clinical review required. Not a prescription." : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
+            <p>{item.clinicalReviewRequired ? (summaryStatesClinicalReview ? "Not a prescription." : CLINICAL_REVIEW_SENTENCE + " Not a prescription.") : item.researchUseOnly ? "Research Use Only. Nonclinical use only." : "Internal review required."}</p>
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
             <p>{requestIntentPriceNote(item)}</p>
             {item.intentExclusion === "specification_review" && item.selectableForReview && <p>

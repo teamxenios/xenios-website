@@ -263,6 +263,27 @@ describe("mixed private request customer form source", () => {
     expect(storedKeys()).toEqual([]);
   });
 
+  it("states clinical review once on a card whose reviewed summary already ends with it", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, items: [
+      { ...item("stated", true), reviewedContent: { ...reviewedCopy, summary: "Synthetic clinical summary. Clinical review required." } },
+      { ...item("plain", true), reviewedContent: reviewedCopy },
+      item("bare", true),
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={"a".repeat(64)} />));
+    const [stated, plain, bare] = [...host.querySelectorAll(".xenios-order-card")].map((card) => card.textContent ?? "");
+    const count = (text: string) => text.split("Clinical review required.").length - 1;
+    // Said by the summary, so the notice line adds only the second sentence.
+    expect(count(stated)).toBe(1);
+    expect(stated).toContain("Not a prescription.");
+    // Not said by the summary, or no summary at all: the notice line says both, once.
+    for (const text of [plain, bare]) {
+      expect(count(text)).toBe(1);
+      expect(text).toContain("Clinical review required. Not a prescription.");
+    }
+  });
+
   it("shows approved art and complete details for a confirmed member without changing the request", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
