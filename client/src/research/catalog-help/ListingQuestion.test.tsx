@@ -43,9 +43,9 @@ describe("Operational question for an exact listing", () => {
       expect(host.textContent).toContain("research@xeniostechnology.com");
       // The topic menu stays inside its box at any text size and is set in 16px text,
       // so a phone does not zoom the page when it is tapped.
-      const menu = host.querySelector("select")!;
-      for (const name of ["w-full", "min-w-0", "max-w-full", "text-base"]) expect(menu.className.split(" ")).toContain(name);
-      expect(menu.closest("label")!.className).toContain("grid-cols-[minmax(0,1fr)]");
+      const topicMenu = host.querySelector("select")!;
+      for (const name of ["w-full", "min-w-0", "max-w-full", "text-base"]) expect(topicMenu.className.split(" ")).toContain(name);
+      expect(topicMenu.closest("label")!.className).toContain("grid-cols-[minmax(0,1fr)]");
       expect(submitSpy).not.toHaveBeenCalled();
       expect(fetchSpy).not.toHaveBeenCalled();
       expect(storeSpy).not.toHaveBeenCalled();
