@@ -96,7 +96,8 @@ export function mixedInquiryCatalogPage<P extends { readonly items: readonly Pri
 
 /** Do not format an amount supplied by an older server or a stale fixture. */
 export function mixedInquiryPriceNote(clinical: boolean): string {
-  return clinical ? EARLY_ACCESS_QUOTE_LABEL + ". Final price follows applicable review." : EARLY_ACCESS_QUOTE_LABEL;
+  // The clinical sentence is the reviewed wording already on the card; it is kept as it is.
+  return clinical ? "Final price follows applicable review." : EARLY_ACCESS_QUOTE_LABEL;
 }
 
 type PricedLine = {

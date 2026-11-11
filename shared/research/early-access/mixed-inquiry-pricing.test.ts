@@ -7,7 +7,7 @@ describe("price-free customer inquiry regardless of legacy switches",()=>{
     expect(safe.items[0]).toMatchObject({unitPriceCents:null,priceVersion:null,actionLabel:"Request a quote",minimumQuantity:2});
     expect(item.unitPriceCents).toBe(1250);expect(item.priceVersion).toBe("revision-1");
     expect(mixedInquiryPriceNote(false)).toBe("Request a quote");
-    expect(mixedInquiryPriceNote(true)).toContain("Final price follows applicable review.");
+    expect(mixedInquiryPriceNote(true)).toBe("Final price follows applicable review.");
   });
   it("refuses an unexpected canonical money field in a nested payload rather than exposing it",()=>{
     expect(()=>mixedInquiryCatalogPage({items:[{unitPriceCents:1250,extra:{estimatedTotalCents:500}}]})).toThrow("unsupported monetary field");
