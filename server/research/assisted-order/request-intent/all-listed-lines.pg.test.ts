@@ -8,7 +8,12 @@
  *    coming-soon line and a supply or service line, so a request holding one of
  *    those is refused whole;
  *  - after the candidate, the same request is stored once and replays;
- *  - every other rule of the line check still refuses what it refused before.
+ *  - the other rules of the line check still refuse after it. The cases below
+ *    cover each of them: the value must be a list of 1 to 200 lines; only the
+ *    allowed keys; a whole-number quantity from 1 to 100; a pending line;
+ *    boolean flags; an allowed workflow, with clinical review on a provider
+ *    line; required text fields present, non-empty and at most 300 characters;
+ *    a specification and a refusal that are text or null; no duplicate line.
  * It is a rehearsal of the SQL, not evidence that anything was applied anywhere.
  */
 import { randomUUID } from "node:crypto";
@@ -43,11 +48,13 @@ const comingSoon = line("soon", {
 });
 const supply = line("supply", {
   family: "shipping_and_fulfillment", workflowMode: "availability_review", researchUseOnly: false,
+  // Both real rows of this family carry care_pathway on both state fields.
+  sourceDisplayState: "care_pathway", sourceVariantDisplayState: "care_pathway",
   sourceRefusal: "non_merchandise_family",
 });
 
 describe("the request store's line check, before and after the all-listed-lines candidate", () => {
-  pg16It("accepts a coming-soon line and a supply or service line only after the candidate, and keeps every other rule", async () => {
+  pg16It("accepts a coming-soon line and a supply or service line only after the candidate, and keeps the other rules", async () => {
     const fixture = createDurableJourneyFixture();
     const { sql, counts } = fixture;
     const valid = async (lines: unknown) =>
@@ -92,7 +99,7 @@ describe("the request store's line check, before and after the all-listed-lines 
       expect(await valid([comingSoon])).toBe(true);
       expect(await valid([supply])).toBe(true);
       expect(await valid(mixed)).toBe(true);
-      // Every other rule still refuses what it refused before.
+      // The other rules still refuse. Each case changes one thing from a valid line.
       expect(await valid([])).toBe(false);
       expect(await valid([{ ...held, unitPriceCents: 100 }])).toBe(false);
       expect(await valid([{ ...held, quantity: 101 }])).toBe(false);
@@ -102,6 +109,24 @@ describe("the request store's line check, before and after the all-listed-lines 
       expect(await valid([{ ...held, workflowMode: "provider_request", clinicalReviewRequired: false }])).toBe(false);
       expect(await valid([held, held])).toBe(false);
       expect(await valid(Array.from({ length: 201 }, (_, index) => line("many-" + index)))).toBe(false);
+      // The value must be a list.
+      expect(await valid({ lines: [held] })).toBe(false);
+      expect(await valid("not a list")).toBe(false);
+      // A whole-number quantity.
+      expect(await valid([{ ...held, quantity: 1.5 }])).toBe(false);
+      expect(await valid([{ ...held, quantity: "1" }])).toBe(false);
+      // Boolean flags.
+      expect(await valid([{ ...held, researchUseOnly: "true" }])).toBe(false);
+      expect(await valid([{ ...held, clinicalReviewRequired: null }])).toBe(false);
+      // Required text fields: present, non-empty, at most 300 characters.
+      expect(await valid([{ ...held, productName: undefined }])).toBe(false);
+      expect(await valid([{ ...held, catalogVersion: "" }])).toBe(false);
+      expect(await valid([{ ...held, productName: "x".repeat(301) }])).toBe(false);
+      expect(await valid([{ ...held, productName: "x".repeat(300) }])).toBe(true);
+      // A specification and a refusal that are text or null.
+      expect(await valid([{ ...held, specification: 5 }])).toBe(false);
+      expect(await valid([{ ...held, sourceRefusal: true }])).toBe(false);
+      expect(await valid([{ ...held, specification: null, sourceRefusal: null }])).toBe(true);
 
       // The same mixed request is now stored once, and a repeat returns the same receipt.
       const stored = await repository.createOrReplay(intent(mixed, "after"));
