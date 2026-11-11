@@ -3128,6 +3128,50 @@
       },
       "sourceCommit": "1173a81954230bb3533fe083b8a780a2e34a358c",
       "primarySha256": "a821490ff63445863ee4f70f95d88b54fabcdbb07f0db53d8f456dcfbf6ba7ce"
+    },
+    {
+      "offeringId": "mo_b01b90df2792becd9a75",
+      "sourceVariantId": "mov_862b99ce1c9f144086dd",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/tesofensine-500mcg-0418-label-card-v1-1024.webp",
+          "altText": "Xenios Tesofensine 500 mcg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesofensine-500mcg-0418-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesofensine 500 mcg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "9be3f551c5cae7a9196a4afcf321084e9f0007d0",
+      "primarySha256": "72077db06253e2b272c4edb965d912222e35de825700607c213ba84f4bb28d69",
+      "labelPreviewSha256": "baa2f16940b8f4a1d9c45e5fa0b28cc9f4538f5945a0b07815601fc287ceb9d7"
+    },
+    {
+      "offeringId": "mo_87b00893d8f75a60b08f",
+      "sourceVariantId": "mov_235641a298fed1c2637e",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/tesofensine-500mcg-0419-label-card-v1-1024.webp",
+          "altText": "Xenios Tesofensine 500 mcg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesofensine-500mcg-0419-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesofensine 500 mcg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "9be3f551c5cae7a9196a4afcf321084e9f0007d0",
+      "primarySha256": "72077db06253e2b272c4edb965d912222e35de825700607c213ba84f4bb28d69",
+      "labelPreviewSha256": "baa2f16940b8f4a1d9c45e5fa0b28cc9f4538f5945a0b07815601fc287ceb9d7"
     }
   ]
 }
