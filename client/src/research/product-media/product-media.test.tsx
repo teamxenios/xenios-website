@@ -1,10 +1,18 @@
 // @vitest-environment jsdom
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { ProductMedia } from "./ProductMedia";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+// One synthetic vial variant, added to the real format map for this file only. The first test is about what the
+// component falls back to for a variant whose format is "vial" and whose form is not held. It used a real catalog row
+// for that and so failed whenever that row was put in the form-hold map. A synthetic id is in no hold map.
+vi.mock("./product-media-format.generated.json", async (importOriginal) => {
+  const real = (await importOriginal<{ default: { formatByVariantId: Record<string, string> } }>()).default;
+  return { default: { ...real, formatByVariantId: { ...real.formatByVariantId, mov_synthetic_vial_packshot: "vial" } } };
+});
 
 it("shows reviewed artwork and its disclosure, then drops its label link on fallback", async () => {
   const host = document.createElement("div");
@@ -24,7 +32,7 @@ it("shows reviewed artwork and its disclosure, then drops its label link on fall
   };
   try {
     await act(async () => root.render(
-      <ProductMedia productName="BPC-157" variantIds={["mov_ca3e45ae9712aee91430"]}
+      <ProductMedia productName="BPC-157" variantIds={["mov_synthetic_vial_packshot"]}
         reviewedMedia={{ primary, labelPreview, packagingDesign: true }} detail />,
     ));
     const image = host.querySelector("img")!;
