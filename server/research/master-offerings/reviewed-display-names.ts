@@ -1,3 +1,4 @@
+import { CATALOG_DISPLAY_NAME_MAX_LENGTH } from "@shared/research/master-offerings/presentation-contract";
 import batch from "./data/reviewed-display-names.json";
 
 /**
@@ -36,7 +37,8 @@ export function readReviewedDisplayNames(source: ReviewedDisplayNameBatch): Read
     if (Object.keys(record).some((key) => !RECORD_KEYS.includes(key))
       || typeof offeringId !== "string" || !/^mo_[0-9a-f]+$/.test(offeringId)
       || typeof displayName !== "string" || displayName.trim() !== displayName
-      || displayName.length === 0 || displayName.length > 200
+      // A longer name would make the catalog projection drop the listing.
+      || displayName.length === 0 || displayName.length > CATALOG_DISPLAY_NAME_MAX_LENGTH
       // The defect this file exists to correct must not come back through it.
       || !balanced(displayName)) {
       throw new Error("reviewed_display_name_invalid");

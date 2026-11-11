@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
 import type { AssistedOrderViewer } from "../assisted-order/ports";
+import { CATALOG_DISPLAY_NAME_MAX_LENGTH } from "@shared/research/master-offerings/presentation-contract";
 import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
 import { readReviewedDisplayNames } from "./reviewed-display-names";
 import { MasterOfferingCatalogService } from "./service";
@@ -68,7 +69,8 @@ describe("a reviewed heading in place of a generated display name", () => {
   it("leaves every other listing's name as the dataset gives it", () => {
     const byId = new Map(datasetRows().map((row) => [row.id, row.displayName]));
     const changed = reader.readCatalog().filter((entry) => entry.displayName !== byId.get(entry.id));
-    // The reviewed heading, and the held listing, whose record the hold itself rewrites elsewhere.
+    // Only the listing with a reviewed heading. The hold changes the held listing's label,
+    // address and aliases, not its display name.
     expect(changed.map((entry) => entry.id)).toEqual([source.id]);
   });
 
@@ -102,6 +104,14 @@ describe("the reviewed display-name file", () => {
     ]) {
       expect(() => readReviewedDisplayNames({ schemaVersion: 1, records: [bad] })).toThrow("reviewed_display_name_invalid");
     }
+  });
+  it("accepts a heading at the catalog's length limit and refuses one past it", () => {
+    const at = { ...good, displayName: "x".repeat(CATALOG_DISPLAY_NAME_MAX_LENGTH) };
+    const past = { ...good, displayName: "x".repeat(CATALOG_DISPLAY_NAME_MAX_LENGTH + 1) };
+    expect(readReviewedDisplayNames({ schemaVersion: 1, records: [at] }).size).toBe(1);
+    expect(() => readReviewedDisplayNames({ schemaVersion: 1, records: [past] })).toThrow("reviewed_display_name_invalid");
+    // The same limit the catalog projection applies; past it the projection drops the listing.
+    expect(CATALOG_DISPLAY_NAME_MAX_LENGTH).toBe(180);
   });
   it("refuses a repeated listing and an unknown schema version", () => {
     expect(() => readReviewedDisplayNames({ schemaVersion: 1, records: [good, good] })).toThrow("reviewed_display_name_duplicate");

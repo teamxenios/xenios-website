@@ -367,6 +367,13 @@ function compatibleAction(
 }
 
 /**
+ * The longest display name a catalog listing may carry. A longer name makes
+ * parseCatalogDiscoveryItem refuse the listing, which drops it from the
+ * catalog. Anything that sets a display name must stay within it.
+ */
+export const CATALOG_DISPLAY_NAME_MAX_LENGTH = 180;
+
+/**
  * Parse one untrusted DTO row. Missing/malformed status and access-path fields
  * stay displayable only as `unknown`; they never borrow meaning from any other
  * field on the row. Invalid public identity rejects the row entirely.
@@ -378,7 +385,7 @@ export function parseCatalogDiscoveryItem(
   if (!source) return null;
   const productId = identity(source.productId);
   const variantId = identity(source.variantId);
-  const displayName = exactText(source.displayName, 180);
+  const displayName = exactText(source.displayName, CATALOG_DISPLAY_NAME_MAX_LENGTH);
   const variantLabel = exactText(source.variantLabel, 180);
   const category = facet(source.category);
   if (!productId || !variantId || !displayName || !variantLabel || !category) {

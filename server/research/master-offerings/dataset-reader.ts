@@ -301,7 +301,8 @@ function readOffering(value: unknown): NormalizedMasterOffering {
   const aliases = Array.isArray(value.aliases) ? value.aliases.filter(nonBlank) : [];
   // A reviewed heading replaces a generated display name that misstates the
   // listing. Nothing else changes: the slug, the canonical name, the variant
-  // labels and the aliases are the dataset's. The dataset lists every
+  // labels and the aliases are the dataset's (the held listing's aliases are
+  // replaced by the hold, below, as before). The dataset lists every
   // listing's own display name among its aliases, which is what keeps the old
   // words searchable; a test pins that.
   const reviewedName = reviewedDisplayNameFor(id);
