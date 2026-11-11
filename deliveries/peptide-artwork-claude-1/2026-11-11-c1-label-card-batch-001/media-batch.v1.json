@@ -1,0 +1,749 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-label-card-2026-11-11-c1-label-card-batch-001",
+ "producer": "CLAUDE-1 imagery lane (Claude Code session c16cbf1c)",
+ "claim": "KAN-59/12173",
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "templateApproval": "KAN-225/12172",
+ "formBasis": {
+  "kind": "form_not_stated_label_card",
+  "note": "The catalog subcategory of every row is \"Form not stated\" and the label facts state no form. The image is a flat label: it states no form and depicts no container. No packaging declaration is used or needed for what it prints."
+ },
+ "catalogDataset": {
+  "file": "member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5"
+ },
+ "bindingDataset": {
+  "file": "master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+ },
+ "releasedContent": {
+  "file": "server/research/master-offerings/data/reviewed-public-content.json",
+  "sha256": "55ea268df8480d684d7d6b71a456815521932f3a54682ad89cde002c11862cf1"
+ },
+ "labelTemplate": {
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+  "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a",
+  "acceptedIn": "KAN-31/10627",
+  "note": "the accepted Batch 004 BPC-157 front label master (path and digest from that batch's manifest)"
+ },
+ "method": {
+  "generativeModelUsed": false,
+  "label": "The accepted Batch 004 front label with the name and amount replaced, the form line removed and the content field relabelled \"LISTED AMOUNT\". Preview: WebP quality 92.",
+  "card": "The label preview scaled to 880 px wide on a plain 1024 x 1024 ground with a soft shadow. Primary: WebP quality 89."
+ },
+ "tools": [
+  {
+   "path": "tools/fn_build.py",
+   "sha256": "b8a36baf4f1596cd331f04a7116f29044846e46a9cdcaf20f18df7ef9fd6792c"
+  },
+  {
+   "path": "tools/fn_lib.py",
+   "sha256": "ef7d74966178f8bed961ca4159d938326703571ebdfa8dfb7e550409ddf717f4"
+  },
+  {
+   "path": "tools/fn_verify.py",
+   "sha256": "91364a1aa160038b7852c3247d02e27da2ac0df541477466ef281e501cbc5e65"
+  },
+  {
+   "path": "tools/svg_label_render.py",
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "tools/wpf_kern.ps1",
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "tools/kern-table.segoe-ui.json",
+   "sha256": "851c63686ee17590d23e128aaa72cb92356fb1eaf961f269da510d2e98641de2"
+  },
+  {
+   "path": "tools/kern-request.json",
+   "sha256": "5f7e313dd665afa396b67710004446d51a10a6dd36460c8ad44b55736a8955d4"
+  },
+  {
+   "path": "tools/extra-terms.json",
+   "sha256": "56b70d311df13e0f3713ba0f53ee227a259c6622836451bd9be00729142deb9a"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_2fb4e0f567f434b55b20",
+   "sourceVariantId": "mov_9a217007a7fb93111200",
+   "quickOrderSku": "GEN-GRP-0400",
+   "catalogDisplayName": "Gonadorelin",
+   "catalogVariantLabel": "Gonadorelin (10mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "Gonadorelin 10 mg",
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10980",
+    "file": "research-batch-09.label-facts.json",
+    "sha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Gonadorelin",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0400"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "Gonadorelin",
+     "10 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "10 mg"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": true,
+   "extraDoNotPrintTerms": [
+    "fertility",
+    "hormone",
+    "ovulation",
+    "veterinary",
+    "Factrel",
+    "GONAbreed",
+    "Fertagyl"
+   ],
+   "labelNameSetting": {
+    "fontSizePx": 176.0
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Gonadorelin 10 mg label design",
+     "relativeAssetPath": "assets/gonadorelin-10mg-label-card-v1-1024.webp",
+     "sha256": "36bf118e6c91cee9d0bb8719410ec5a6ca3d2470a927b48d4070f77041a5b745"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios Gonadorelin 10 mg",
+     "relativeAssetPath": "assets/gonadorelin-10mg-label-design-v1.webp",
+     "sha256": "62b44088b385bea75b82e84b702580ff3e252a216ac443b0a0ec49279335fb4f"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/gonadorelin-10mg-label-card-v1-1024.webp",
+     "bytes": 20766,
+     "sha256": "36bf118e6c91cee9d0bb8719410ec5a6ca3d2470a927b48d4070f77041a5b745",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/gonadorelin-10mg-label-card-v1.png",
+     "bytes": 80805,
+     "sha256": "3e76cd848007fd175d1664ba855b765eee94c354003cb29389fe57899e441926",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/gonadorelin-10mg-label-design-v1.svg",
+     "bytes": 2824,
+     "sha256": "2b1483e0a94a83ab6b9f10819debef4d991f793c3450ca122c071b9d0637d696"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/gonadorelin-10mg-label-design-v1.png",
+     "bytes": 103077,
+     "sha256": "f6b2d270cbb46460a6f9bf02b8fcccc42300ccb8f4723d1ff9db9990145d3bf3",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/gonadorelin-10mg-label-design-v1.webp",
+     "bytes": 40186,
+     "sha256": "62b44088b385bea75b82e84b702580ff3e252a216ac443b0a0ec49279335fb4f",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  },
+  {
+   "offeringId": "mo_f4298f80cc7aa9f1046a",
+   "sourceVariantId": "mov_dc6c3bf9bc23dd55adc1",
+   "quickOrderSku": "GEN-GRP-0409",
+   "catalogDisplayName": "PT-141",
+   "catalogVariantLabel": "PT-141 (5mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "PT-141 5 mg",
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/10980",
+    "file": "research-batch-09.label-facts.json",
+    "sha256": "ca48036192b094212df9d3334d3ac061ea84445b862e449d6a7a81421b49dea4",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "PT-141",
+     "amount": "5 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0409"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated mg amount, product code and research classification are available for form-neutral work only."
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "PT-141",
+     "5 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "5 mg"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": true,
+   "extraDoNotPrintTerms": [
+    "bremelanotide",
+    "Vyleesi",
+    "sexual",
+    "desire",
+    "arousal",
+    "HSDD",
+    "clinical"
+   ],
+   "labelNameSetting": {
+    "fontSizePx": 176.0
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios PT-141 5 mg label design",
+     "relativeAssetPath": "assets/pt-141-5mg-label-card-v1-1024.webp",
+     "sha256": "ac8f48ca81267adb9b5540900d2ba8e6bca73666f973d613d32f85fe0a15eb78"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios PT-141 5 mg",
+     "relativeAssetPath": "assets/pt-141-5mg-label-design-v1.webp",
+     "sha256": "a8b2083ea236b5c955bfd821d3916c9533e453e43129db935eeca296e54013ef"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/pt-141-5mg-label-card-v1-1024.webp",
+     "bytes": 17598,
+     "sha256": "ac8f48ca81267adb9b5540900d2ba8e6bca73666f973d613d32f85fe0a15eb78",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/pt-141-5mg-label-card-v1.png",
+     "bytes": 63849,
+     "sha256": "1f10182a15fd42fa4fbd259201067b3c7cab353f92963d8d8e26ac27e6f35619",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/pt-141-5mg-label-design-v1.svg",
+     "bytes": 2805,
+     "sha256": "924179662456138a6c7ff0b0a31f86bc4144a6c90dc33c7ea012831ed218ebaf"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/pt-141-5mg-label-design-v1.png",
+     "bytes": 77254,
+     "sha256": "21544c5cd9737ad717601b7b519e57392103370fc4f0b6e5b1b11fbc50194571",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/pt-141-5mg-label-design-v1.webp",
+     "bytes": 32546,
+     "sha256": "a8b2083ea236b5c955bfd821d3916c9533e453e43129db935eeca296e54013ef",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  },
+  {
+   "offeringId": "mo_d1a6493665b6ba628c2a",
+   "sourceVariantId": "mov_361af70608afc9c98ec0",
+   "quickOrderSku": "GEN-GRP-0398",
+   "catalogDisplayName": "GHK-Cu",
+   "catalogVariantLabel": "GHK-Cu (75mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "GHK-Cu 75 mg",
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11091 as corrected by LABEL_FACTS_FORM_HOLD_CORRECTION_2026-11-05",
+    "file": "LABEL_FACTS_FORM_HOLD_CORRECTION_2026-11-05.json",
+    "sha256": "e4985823149b8c6796252985e0a75fad225172de72f6af32d4e28d092dbf4ecd",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "GHK-Cu",
+     "amount": "75 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0398"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819): the tiered price list states no dosage form. Note for artwork reuse: the accepted sibling strengths of this same compound were cleared with vial wording before that ruling, so their artwork must not be copied onto this row."
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "GHK-Cu",
+     "75 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "75 mg"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": true,
+   "extraDoNotPrintTerms": [],
+   "labelNameSetting": {
+    "fontSizePx": 176.0
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios GHK-Cu 75 mg label design",
+     "relativeAssetPath": "assets/ghk-cu-75mg-label-card-v1-1024.webp",
+     "sha256": "acc7c55553997392a80077c13a955c3d26fb1301cfcbf11e871568bbf61244f8"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios GHK-Cu 75 mg",
+     "relativeAssetPath": "assets/ghk-cu-75mg-label-design-v1.webp",
+     "sha256": "77e6220578f8b6cfbf65852648e2932476640cd7d5406dec588382b5925f53b7"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/ghk-cu-75mg-label-card-v1-1024.webp",
+     "bytes": 18864,
+     "sha256": "acc7c55553997392a80077c13a955c3d26fb1301cfcbf11e871568bbf61244f8",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/ghk-cu-75mg-label-card-v1.png",
+     "bytes": 71677,
+     "sha256": "9ccb385b1a3ec4e8f05978e4840cb0936cb082999033728ae0457b9504d380b6",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/ghk-cu-75mg-label-design-v1.svg",
+     "bytes": 2809,
+     "sha256": "203530dd213510adaee388b51fb2081c03c1bdbf8d3f6f0c1990b76854e84bed"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/ghk-cu-75mg-label-design-v1.png",
+     "bytes": 87755,
+     "sha256": "b6993d13a0c21a66e40b2661fb699e2cffa7c2657d8eeb1fff0b53302421f44b",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/ghk-cu-75mg-label-design-v1.webp",
+     "bytes": 36024,
+     "sha256": "77e6220578f8b6cfbf65852648e2932476640cd7d5406dec588382b5925f53b7",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  },
+  {
+   "offeringId": "mo_4c07e82051ba4c95297b",
+   "sourceVariantId": "mov_451f34fca5c1a293b145",
+   "quickOrderSku": "GEN-GRP-0393",
+   "catalogDisplayName": "BPC-157",
+   "catalogVariantLabel": "BPC-157 (20mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "BPC-157 20 mg",
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11091 as corrected by LABEL_FACTS_FORM_HOLD_CORRECTION_2026-11-05",
+    "file": "LABEL_FACTS_FORM_HOLD_CORRECTION_2026-11-05.json",
+    "sha256": "e4985823149b8c6796252985e0a75fad225172de72f6af32d4e28d092dbf4ecd",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "BPC-157",
+     "amount": "20 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0393"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819): the tiered price list states no dosage form. Note for artwork reuse: the accepted sibling strengths of this same compound were cleared with vial wording before that ruling, so their artwork must not be copied onto this row."
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "BPC-157",
+     "20 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "20 mg"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": false,
+   "extraDoNotPrintTerms": [],
+   "labelNameSetting": {
+    "fontSizePx": 176.0
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios BPC-157 20 mg label design",
+     "relativeAssetPath": "assets/bpc-157-20mg-label-card-v1-1024.webp",
+     "sha256": "13b828cf77abd322d5da7ab2d74dc192f96a859a848544e111bb86b895efe49b"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios BPC-157 20 mg",
+     "relativeAssetPath": "assets/bpc-157-20mg-label-design-v1.webp",
+     "sha256": "82a65d630b3edc9ae230d2167f07112a8aa74a733a878698655fd441c408a330"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/bpc-157-20mg-label-card-v1-1024.webp",
+     "bytes": 19546,
+     "sha256": "13b828cf77abd322d5da7ab2d74dc192f96a859a848544e111bb86b895efe49b",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/bpc-157-20mg-label-card-v1.png",
+     "bytes": 74643,
+     "sha256": "ef3c1ec78efc3d2b7bd7d10862f15930d6b2b6611ca15e2b1794a3dcf36f895e",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/bpc-157-20mg-label-design-v1.svg",
+     "bytes": 2812,
+     "sha256": "9ef509b8d4e51d327c23cb391bb4dacf7410c4122191f2785e3826b45a66540a"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/bpc-157-20mg-label-design-v1.png",
+     "bytes": 93165,
+     "sha256": "2deff1d44f3bbe0846d90fcfd7d9948031ad029123e5fcd32e3d4429a34ab0c3",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/bpc-157-20mg-label-design-v1.webp",
+     "bytes": 37134,
+     "sha256": "82a65d630b3edc9ae230d2167f07112a8aa74a733a878698655fd441c408a330",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  },
+  {
+   "offeringId": "mo_f35e748aed26af26e9e4",
+   "sourceVariantId": "mov_8bec8068d30d6f928040",
+   "quickOrderSku": "GEN-GRP-0413",
+   "catalogDisplayName": "Semax",
+   "catalogVariantLabel": "Semax (30mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "Semax 30 mg",
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11136",
+    "file": "research-batch-15.label-facts.json",
+    "sha256": "62e4715f2734b8589de1d322fb33535b6838bc25830889d6d04a8a5475d6207e",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Semax",
+     "amount": "30 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0413"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819): the tiered price list states no dosage form. Note for artwork reuse: the accepted sibling strength of this same compound (GEN-GRP-0338) was cleared with vial wording before that ruling, so its artwork must NOT be copied onto this row."
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "Semax",
+     "30 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "30 mg"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": true,
+   "extraDoNotPrintTerms": [
+    "nootropic",
+    "cognitive",
+    "neuroprotective",
+    "stroke"
+   ],
+   "labelNameSetting": {
+    "fontSizePx": 176.0
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Semax 30 mg label design",
+     "relativeAssetPath": "assets/semax-30mg-label-card-v1-1024.webp",
+     "sha256": "83c94e0423fa7eeaffdd01113422b3c80ff0ebc9cd2ff00830f9557c04904586"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios Semax 30 mg",
+     "relativeAssetPath": "assets/semax-30mg-label-design-v1.webp",
+     "sha256": "60dbecdfb88885abdc21e71748017a40df34c04255188f9445d0a62040de2d5b"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/semax-30mg-label-card-v1-1024.webp",
+     "bytes": 19484,
+     "sha256": "83c94e0423fa7eeaffdd01113422b3c80ff0ebc9cd2ff00830f9557c04904586",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/semax-30mg-label-card-v1.png",
+     "bytes": 76234,
+     "sha256": "ad11180498f5641e56bdb4bc5e2625c433c0fefa237dae60e1803b0514b83c59",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/semax-30mg-label-design-v1.svg",
+     "bytes": 2806,
+     "sha256": "1590f0fdf59b1d53feeda29e71d4496c9d05939584bb311d001a9b9015091874"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/semax-30mg-label-design-v1.png",
+     "bytes": 96271,
+     "sha256": "6f47b195511c48e3a720ffd31b4baf1f28ce8b30f03749d8ff3b9cfde8cb8ef9",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/semax-30mg-label-design-v1.webp",
+     "bytes": 37746,
+     "sha256": "60dbecdfb88885abdc21e71748017a40df34c04255188f9445d0a62040de2d5b",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  },
+  {
+   "offeringId": "mo_1dd0658eb7bf15f91900",
+   "sourceVariantId": "mov_256cb0423eb6d2a77f65",
+   "quickOrderSku": "GEN-GRP-0407",
+   "catalogDisplayName": "Oxytocin",
+   "catalogVariantLabel": "Oxytocin (10mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "Oxytocin 10 mg",
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11136",
+    "file": "research-batch-15.label-facts.json",
+    "sha256": "62e4715f2734b8589de1d322fb33535b6838bc25830889d6d04a8a5475d6207e",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Oxytocin",
+     "amount": "10 mg",
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0407"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819): the tiered price list states no dosage form. Note for artwork reuse: the accepted sibling strength of this same compound (GEN-GRP-0320) was cleared with vial wording before that ruling, so its artwork must NOT be copied onto this row."
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "Oxytocin",
+     "10 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "10 mg"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": false,
+   "extraDoNotPrintTerms": [
+    "IU",
+    "USP",
+    "Pitocin",
+    "labor",
+    "lactation",
+    "bonding",
+    "social"
+   ],
+   "labelNameSetting": {
+    "fontSizePx": 176.0
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Oxytocin 10 mg label design",
+     "relativeAssetPath": "assets/oxytocin-10mg-label-card-v1-1024.webp",
+     "sha256": "6d7e649765e950109554f74759e11869507f55c932b21d3744da5401afb5ad8a"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios Oxytocin 10 mg",
+     "relativeAssetPath": "assets/oxytocin-10mg-label-design-v1.webp",
+     "sha256": "288f141dda49e34269f9720387349d209db42505b497171a371e4733b3fd107e"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/oxytocin-10mg-label-card-v1-1024.webp",
+     "bytes": 20236,
+     "sha256": "6d7e649765e950109554f74759e11869507f55c932b21d3744da5401afb5ad8a",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/oxytocin-10mg-label-card-v1.png",
+     "bytes": 78799,
+     "sha256": "b37f0074c4886b550fc60724873d3dc21ac6c2c968b8441e8827ed96f924b528",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/oxytocin-10mg-label-design-v1.svg",
+     "bytes": 2815,
+     "sha256": "c7649470f8a8f30f4ecd5c7012cb2bc764cd477d9e05c9e933755112b94c551d"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/oxytocin-10mg-label-design-v1.png",
+     "bytes": 100534,
+     "sha256": "b094eae6647d45a6d6d62a0712d8a019749f16b28d9752816d914cec975a04ca",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/oxytocin-10mg-label-design-v1.webp",
+     "bytes": 39064,
+     "sha256": "288f141dda49e34269f9720387349d209db42505b497171a371e4733b3fd107e",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  }
+ ]
+}
