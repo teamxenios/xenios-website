@@ -2687,6 +2687,94 @@
       "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
       "primarySha256": "6d7e649765e950109554f74759e11869507f55c932b21d3744da5401afb5ad8a",
       "labelPreviewSha256": "288f141dda49e34269f9720387349d209db42505b497171a371e4733b3fd107e"
+    },
+    {
+      "offeringId": "mo_69c6615ef3e615e76088",
+      "sourceVariantId": "mov_5e74aacac728cfcbd11f",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-card-v1-1024.webp",
+          "altText": "Xenios GLOW (GHK-Cu + BPC-157 + TB-500) 27/5/10 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios GLOW (GHK-Cu + BPC-157 + TB-500) 27/5/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
+      "primarySha256": "92428c2cc9729325fc0a8936a673c162aa2fd4d661b8bad5bdea143bbf9280dd",
+      "labelPreviewSha256": "c059aa2a08765b73f0f1f65a0418b5c16a245f7b2e6cd519684ee9ac270a18bf"
+    },
+    {
+      "offeringId": "mo_86fc6ac5138a0a0ddd54",
+      "sourceVariantId": "mov_287c60ca423250ef75d6",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/tesamorelin-ipamorelin-10-5mg-label-card-v1-1024.webp",
+          "altText": "Xenios Tesamorelin + Ipamorelin 10/5 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesamorelin-ipamorelin-10-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesamorelin + Ipamorelin 10/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
+      "primarySha256": "96cf8e6caeaf2e49368437086537af30cab09e8a4c998aae9ab498e7daca6461",
+      "labelPreviewSha256": "6f8250c630e29a71294d6c8ca0317ed5533aed160df1c7a0293e22d765880fee"
+    },
+    {
+      "offeringId": "mo_b36a2992242d2a55c145",
+      "sourceVariantId": "mov_dc26bcbba0510c5bb57b",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/tesamorelin-ipamorelin-5-5mg-label-card-v1-1024.webp",
+          "altText": "Xenios Tesamorelin + Ipamorelin 5/5 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesamorelin-ipamorelin-5-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesamorelin + Ipamorelin 5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
+      "primarySha256": "66f6a467200c881d750ed4498fa0003c6cd5a2653b0028a63966f2061b8a18dd",
+      "labelPreviewSha256": "448b8b285f61193e4becf03f6aa422e918a11534c75198d08d06cf72a8b78905"
+    },
+    {
+      "offeringId": "mo_d1a47413d4b8e58bfd52",
+      "sourceVariantId": "mov_2a06e3a4fa8fb02b64cf",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/thymosin-alpha-1-thymulin-10-6-4mg-label-card-v1-1024.webp",
+          "altText": "Xenios Thymosin Alpha-1 + Thymulin 10/6.4 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymosin-alpha-1-thymulin-10-6-4mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Thymosin Alpha-1 + Thymulin 10/6.4 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "d52eba77ce6ae8933ae9c9f0a4ecf9cb5eb46e4b",
+      "primarySha256": "76a00862a69f93e0ee51faa214a19993780b2c9768982bd277d8f1c9267011b5",
+      "labelPreviewSha256": "ddc0c46dfb5cd626ef652935fcafd5d3e21538d67576ca2fd93faba0499ecf90"
     }
   ]
 }
