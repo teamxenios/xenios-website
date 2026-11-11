@@ -1873,6 +1873,688 @@
       "sourceCommit": "c75332738bfbe9cb9d5f655a90256b3932846355",
       "primarySha256": "070056d11aa0a79bfe627318a4681b2b8a753207e9f4ca6e0a831b53ffec7175",
       "labelPreviewSha256": "3db8ab83945ae5555cbbb6ba4f320d134e4473847ecd6e03b59876da6c187bcc"
+    },
+    {
+      "offeringId": "mo_13c038b9250a2c8ac901",
+      "sourceVariantId": "mov_548802074a4f9ca45f5d",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-tb-500-10-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios BPC-157 + TB-500 10/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-tb-500-10-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 + TB-500 10/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "1ac368d5940584454d9b719f5ff0b95aa17d3a032a2a06d738ece2060345baa3",
+      "labelPreviewSha256": "cd7cd8de706e27dca13ba1df6a42baa2ed4d89706031560d3314d0213bf91dd3"
+    },
+    {
+      "offeringId": "mo_53622a0c32300df8ec03",
+      "sourceVariantId": "mov_43ff04d9edfcdb5543a4",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-tb-500-15-15mg-website-render-v1-1024.webp",
+          "altText": "Xenios BPC-157 + TB-500 15/15 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-tb-500-15-15mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 + TB-500 15/15 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "5ec8598d6d2d4527f44dd9a01bb4ab9703b0637fb0fef3b1a806b28f9803147d",
+      "labelPreviewSha256": "b9986da84d25394c1dc210aa7a87e6063a81878225c2b3c36c53f890892c29b2"
+    },
+    {
+      "offeringId": "mo_178c8a4230f88f157d5d",
+      "sourceVariantId": "mov_457168650622c3647dc9",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-tb-500-5-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios BPC-157 + TB-500 5/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-tb-500-5-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 + TB-500 5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "4bd8b9e0a36d018da0540cb9f6d43c564e13c523d07176c78b085b5d9ba77015",
+      "labelPreviewSha256": "191ada412019dbf0aa5761f9aaf89b6e23586a0b5cd40f612764d210594754ce"
+    },
+    {
+      "offeringId": "mo_fbf99d262617562b9dbb",
+      "sourceVariantId": "mov_c7c5768303175886f6d1",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cagrilintide-semaglutide-10-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Cagrilintide + Semaglutide 10/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cagrilintide-semaglutide-10-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Cagrilintide + Semaglutide 10/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "0b48a0d312c801675d26d73289d7407e22ab69112a89bee19b32d15325721e30",
+      "labelPreviewSha256": "3cb02d3b13e5c9bea100e1ab4d9faa6fdb20ecd2da868114b1cc5b7861fbfdf4"
+    },
+    {
+      "offeringId": "mo_3b716f351a069264bd3d",
+      "sourceVariantId": "mov_30965a433abef7359a7b",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cagrilintide-semaglutide-5-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Cagrilintide + Semaglutide 5/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cagrilintide-semaglutide-5-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Cagrilintide + Semaglutide 5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "048e8ab3896f5ff12c2774a1d60e9748bf88446a16b1ebf60081da8370a7960c",
+      "labelPreviewSha256": "a3d43d72f45ded17f22fee2dd4a1f7f234a550976388fde949a46e7f070b8968"
+    },
+    {
+      "offeringId": "mo_04d91e1cb01f09d3496e",
+      "sourceVariantId": "mov_7502e2415b8757cad0eb",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/dsip-selank-2-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios DSIP + Selank 2/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/dsip-selank-2-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios DSIP + Selank 2/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "b8acb8d3cf24511eef3f8859e9d6e3db90faaad033151ba80490aea3e313d8fc",
+      "labelPreviewSha256": "7f10e87186b3da649fb706b83a46191184238c69c4e2e5a7c4348e8a4889bc0d"
+    },
+    {
+      "offeringId": "mo_b75af573f3209d0710b1",
+      "sourceVariantId": "mov_8df703ff84f1bb8e1662",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ghk-cu-epithalon-50-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios GHK-Cu + Epithalon 50/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghk-cu-epithalon-50-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios GHK-Cu + Epithalon 50/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "d581ffdc5e0190ccae0f6e96628c3434624a394902fbb9fdffd02a0e88609b9f",
+      "labelPreviewSha256": "a86fd41c885a494855feda6684684cd106f6f7fa4b5eb5a452e9ab5016ee335a"
+    },
+    {
+      "offeringId": "mo_a40fbe6a1890ff7176ed",
+      "sourceVariantId": "mov_4bcfb9614bef8b2c671e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios GLOW (BPC-157 + TB-500 + GHK-Cu) 10/10/50 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios GLOW (BPC-157 + TB-500 + GHK-Cu) 10/10/50 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "ebc8e36f2f86b6d17e710e486af240e8b853ad754a07519f6f5b8862be59027a",
+      "labelPreviewSha256": "1f62c1f6abc0400bb91315716d4769752a2257c0246c9b01a1b43cb3f2c6f9ff"
+    },
+    {
+      "offeringId": "mo_a8ea579b9329428591bd",
+      "sourceVariantId": "mov_ecd380609ace639d27a6",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 5/5/10/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 5/5/10/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "0d251ec7c07ea9b53548fc86d4a2fa226c5b6092500e3aced1455ebe32f6c39b",
+      "labelPreviewSha256": "a37cf39c69507f8d807b3e596a6ca53f9c6852fe05258d143f6d8797b82d1f4f"
+    },
+    {
+      "offeringId": "mo_d40ce6b09815282e14fa",
+      "sourceVariantId": "mov_644f912141d81a0199b0",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 10/10/50/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV) 10/10/50/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "0da7f5544819ad8b91d24483830dc787a0ecde2710f175e4e463638a605a06c1",
+      "labelPreviewSha256": "8de51c81ea12647c25bab63a12745acbf79e68623f015ceecb720ffcae945e4a"
+    },
+    {
+      "offeringId": "mo_8cea67b7890cebf8eb52",
+      "sourceVariantId": "mov_d97f1f887a86b0c31947",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-cagrilintide-10-2p5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide + Cagrilintide 10/2.5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-cagrilintide-10-2p5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Retatrutide + Cagrilintide 10/2.5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "2227395ec99dea3a8447a99efa368dd8ecb2197fe26d0ea171080aa8178a08cb",
+      "labelPreviewSha256": "67c407a504414f10ae5ce3cf1a5d1004300096a0b686ea8932b57c2f73f62c0b"
+    },
+    {
+      "offeringId": "mo_c87f1a7cdcd50253c3e8",
+      "sourceVariantId": "mov_3e4c0914851a77ba8763",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/semax-selank-dsip-10-10-2mg-website-render-v1-1024.webp",
+          "altText": "Xenios Semax + Selank + DSIP 10/10/2 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semax-selank-dsip-10-10-2mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Semax + Selank + DSIP 10/10/2 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "f767eb7b81462caabdbf1cdb9dc113a14c26c446caea31a151c715f486d96b6b",
+      "labelPreviewSha256": "4c7adc59072b4d14c95b9444510414e311a5be1cd42864ac20db267d466b8198"
+    },
+    {
+      "offeringId": "mo_2e8194100fed7f7ca6ee",
+      "sourceVariantId": "mov_11b73649761a6d35f28c",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/thymosin-alpha-1-kpv-ll-37-10-10-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Thymosin Alpha-1 + KPV + LL-37 10/10/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymosin-alpha-1-kpv-ll-37-10-10-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Thymosin Alpha-1 + KPV + LL-37 10/10/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "28c62ea0e438efb31e4a04344103e8f0e468bc891e3e3b29113059bb8f47f57b",
+      "labelPreviewSha256": "a4af3d0dd718d279377c85856587699436e317f022857d6cde7f8f675b483365"
+    },
+    {
+      "offeringId": "mo_422f4a4ca7e34ce66416",
+      "sourceVariantId": "mov_971080f20e26e8775e2b",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/thymosin-alpha-1-kpv-ll-37-5-5-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Thymosin Alpha-1 + KPV + LL-37 5/5/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymosin-alpha-1-kpv-ll-37-5-5-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Thymosin Alpha-1 + KPV + LL-37 5/5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "2961f130c843f0fb5e9751ab90e246f893c5ebb0a9b0d1801d51bccbeacc5ea5",
+      "labelPreviewSha256": "0c41282654cb0ccd1c2b663182e555fe5106970541e903371656fa531bdb87ce"
+    },
+    {
+      "offeringId": "mo_839d9f0cb2ab74e094ee",
+      "sourceVariantId": "mov_95104bb0edee8e97a3a6",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ll-37-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios LL-37 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ll-37-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios LL-37 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "c6a5d4d08e0a7fc862d3b5e52c79dc40bb799de8",
+      "primarySha256": "3d0229df9de0dcb1c52068dc998af97c8c53e3cdd66c0777ef652372abc54dc6",
+      "labelPreviewSha256": "c3ed46d19fa3fd44df197684b9d052a244dbf52fa6e038396137952939f91012"
+    },
+    {
+      "offeringId": "mo_8023384ab099bc55fa93",
+      "sourceVariantId": "mov_420ac197458ecbcddb9a",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-no-dac-ipamorelin-10-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 (No DAC) + Ipamorelin 10/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-no-dac-ipamorelin-10-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 (No DAC) + Ipamorelin 10/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "ca3d512d8050cf251e85d2c43f568cd9c7fcbafd",
+      "primarySha256": "f613124cd366a5a54530c91972086d4c57573904619b2f11cde62d7a1c2542a7",
+      "labelPreviewSha256": "8539676f0273ca63e0a6cc937eea06604de5a8e63d69ed509f0401bf5b27466b"
+    },
+    {
+      "offeringId": "mo_ec5dad7fec0e0750fdbc",
+      "sourceVariantId": "mov_082a1d9c8a0d21e4a5c9",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-no-dac-ipamorelin-5-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 (No DAC) + Ipamorelin 5/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-no-dac-ipamorelin-5-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 (No DAC) + Ipamorelin 5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "ca3d512d8050cf251e85d2c43f568cd9c7fcbafd",
+      "primarySha256": "fedc9938e98eefd9b4055e5bb1f87a80c27c39ff8551c32578ad51edd220a0d9",
+      "labelPreviewSha256": "e1a710988f470a797c6a0cbe0c6bea1a83c9d1aa8366034b31412537d72f15c5"
+    },
+    {
+      "offeringId": "mo_9c3a4dd1b38f6b9ebc54",
+      "sourceVariantId": "mov_9421188f57af62413a4c",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/epithalon-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Epithalon 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/epithalon-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Epithalon 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "e6353348c52743e2ec2494fa7262aac692ff8662",
+      "primarySha256": "5badc6a70c9f55297a85bc1cc1d8040f1058dc763d4aff25785824822281284c",
+      "labelPreviewSha256": "91e1c23b70120293a9981aa2ae64cc28a1785ba755e94a00a3f875cf31626781"
+    },
+    {
+      "offeringId": "mo_c0b32b7549d7539af51e",
+      "sourceVariantId": "mov_c4e5006693c890563310",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/epithalon-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios Epithalon 50 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/epithalon-50mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Epithalon 50 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "e6353348c52743e2ec2494fa7262aac692ff8662",
+      "primarySha256": "6a3a28ab9028089f470d6322792f57360a7aaab992445cde14c3c4f26828124b",
+      "labelPreviewSha256": "c6caea82d2ca59bc347d2327a49e29ad31d393ab3a89b053b4b53f735ffef4ba"
+    },
+    {
+      "offeringId": "mo_f8e8d69d2068c9bb2de1",
+      "sourceVariantId": "mov_556cf3eb15555573aa54",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ghrp-6-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios GHRP-6 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghrp-6-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios GHRP-6 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "e6353348c52743e2ec2494fa7262aac692ff8662",
+      "primarySha256": "62c1e0beaa19a8f1db1432f959738616d86fe2727df7e34425c5665b739532b1",
+      "labelPreviewSha256": "f5d60efa5894c8b0c562ef053c382a7e0317a5197fae5addeafe0acd5407c9bc"
+    },
+    {
+      "offeringId": "mo_e7bb199ac249b82eb17b",
+      "sourceVariantId": "mov_dd89c37657eb69bce04f",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ss-31-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios SS-31 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ss-31-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios SS-31 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "e6353348c52743e2ec2494fa7262aac692ff8662",
+      "primarySha256": "265e28ccd922a3dab91c91cd4a0fb5cd11c0194d69a62c3fff4641fefbdacb90",
+      "labelPreviewSha256": "cd6dfd9bfcc1a8a273e0f15a267c6f9f08e5f39965ec2052b33b7a6e7d026d8f"
+    },
+    {
+      "offeringId": "mo_d3a60ea0a358aef218f8",
+      "sourceVariantId": "mov_50c16caf05daa93ef289",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/igf-1-lr3-1mg-website-render-v1-1024.webp",
+          "altText": "Xenios IGF-1 LR3 1 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/igf-1-lr3-1mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios IGF-1 LR3 1 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "b0f7c960a1f245c23b0e17eb680a0e597d11ad4a7480c92a45321007f7a1d0c4",
+      "labelPreviewSha256": "7819adaedc30e6b2d913e49bddc1a322da2acbb0267c8a994397e0958f905006"
+    },
+    {
+      "offeringId": "mo_0693d8b85b10f7c34f2e",
+      "sourceVariantId": "mov_1981dac64e329b0bf2f8",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/snap-8-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios SNAP-8 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/snap-8-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios SNAP-8 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "434066796993209062ca8c2f76a4261cf0a124ac2548efe1f4061de9b5f22a7d",
+      "labelPreviewSha256": "cf38fd762cfa5a79e0368f167f6c32e1fb974b27c9b82c99748c6da049d1217c"
+    },
+    {
+      "offeringId": "mo_b33c802f4f7735fe986d",
+      "sourceVariantId": "mov_5d10608450270b22967f",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tb-500-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios TB-500 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tb-500-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios TB-500 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "5947874079270bd33fbffe19a973cc7a22e6997d08f6cdafa4aea96335d300cc",
+      "labelPreviewSha256": "93071f3eafe85940c87f83b6747a984d4eacedbe3ce2054773a0283efe9ed8d8"
+    },
+    {
+      "offeringId": "mo_9651dedf0c4086bc6e3d",
+      "sourceVariantId": "mov_3c9394000d1302336110",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tb-500-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios TB-500 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tb-500-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios TB-500 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "d4a28241838420960d0d0bbfdbcb1bd27d3de805b5f49bf7fdafad49d7115062",
+      "labelPreviewSha256": "e33946e2d99499d2e472c2cb49814f094ac04b6181c39c250f33c228b1c88c76"
+    },
+    {
+      "offeringId": "mo_ca6143466abf3895672c",
+      "sourceVariantId": "mov_e813930dcd46c36e98e2",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/thymalin-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Thymalin 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymalin-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Thymalin 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "a462d90b9c0ccef4a245aa1a2c35dd412a4fa3665924d236b02a373811a32020",
+      "labelPreviewSha256": "34b9e3d970b764bcd9ee86f4c25da43c6c519fc0f6373b396901852f0f4600b9"
+    },
+    {
+      "offeringId": "mo_c464ca523cda95adb8a6",
+      "sourceVariantId": "mov_0d00b80820b69cc39796",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-no-dac-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 No DAC 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-no-dac-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 No DAC 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "a7d246f2cda6ddf8c4dccd4c3edf0231365f999a",
+      "primarySha256": "667c1228420f00c2505e84c2a3318a2b971a62e6b44ddf3b95dc969e4ffd2edf",
+      "labelPreviewSha256": "089da40ce3413b9d405bfc4a0e6385a2e7ffdc7bbe6465d5bf75e92fc3dcb03e"
+    },
+    {
+      "offeringId": "mo_4bbd59b26b04e4265758",
+      "sourceVariantId": "mov_f7b635c1cc2be94922a0",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-no-dac-2mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 No DAC 2 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-no-dac-2mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 No DAC 2 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "a7d246f2cda6ddf8c4dccd4c3edf0231365f999a",
+      "primarySha256": "0e9ba9828be720680ee490301f5513e74961f4f8bc3c03fae91c3e175512fcae",
+      "labelPreviewSha256": "711090aa78f09905a23875356265c8ff9671a0a6221f30db79610dcbaf178932"
+    },
+    {
+      "offeringId": "mo_023a54a623e28e84ffd5",
+      "sourceVariantId": "mov_9331f42ce573fb3f72e5",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-with-dac-2mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 With DAC 2 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-with-dac-2mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 With DAC 2 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "a7d246f2cda6ddf8c4dccd4c3edf0231365f999a",
+      "primarySha256": "bb64199abe53bd1f8c938d95b438a4bb2fb4bb67dceb3634bb01727f886a0564",
+      "labelPreviewSha256": "a7640af503154aa74c84ead8114696df30bf7a21d076679caae3edaaa944ac7c"
+    },
+    {
+      "offeringId": "mo_be72c9fb4d708d8a3eee",
+      "sourceVariantId": "mov_6c559c89db938c58e815",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-with-dac-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 With DAC 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-with-dac-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 With DAC 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "a7d246f2cda6ddf8c4dccd4c3edf0231365f999a",
+      "primarySha256": "699b7cde8ae5e516079d904fbfd115b0f938432e24280a93ba7c3da3683c7764",
+      "labelPreviewSha256": "a60f5a429cfe50fc0071e303ddc2ca829579f50a251e2ac8b1b7de7894d962b3"
+    },
+    {
+      "offeringId": "mo_a6f7f071ed946577ce56",
+      "sourceVariantId": "mov_9e34d0c1acde46249621",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tesofensine-500mcg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Tesofensine research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesofensine-500mcg-capsule-front-artwork-v1.webp",
+          "altText": "Tesofensine research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "915b0f52078038ad9abfea52481d2062f77cab8b",
+      "primarySha256": "394dcb26dc8368279df26004a1c0a69ceb19f35f32e5b8b2ff4d39d3b17149c6",
+      "labelPreviewSha256": "a5c78e959f19e1708afb5ff8bc5ef9edc36af06a49938e547d745f88cd04954d"
     }
   ]
 }
