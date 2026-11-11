@@ -343,6 +343,15 @@ export class AssistedOrderService {
     query: AssistedOrderCatalogQuery,
   ): Promise<AssistedOrderCatalogPage> {
     requireCapability(viewer, "assisted_orders:submit");
+    // The same durable acceptance that submission requires. A session
+    // identifies a customer; it does not prove the current policy was
+    // accepted, so no catalog row is read for a viewer without it.
+    if (
+      !this.deps.submissionStanding ||
+      !(await this.deps.submissionStanding.accepted(viewer))
+    ) {
+      throw new AssistedOrderAgreementRequiredError();
+    }
     return this.deps.catalog.list(viewer, query);
   }
 
