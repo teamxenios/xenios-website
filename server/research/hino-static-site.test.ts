@@ -84,15 +84,18 @@ describe("the isolated Hollywood Hino static microsite", () => {
     );
   });
 
-  it("includes the complete dated 127-entry retail-reference list", () => {
+  it("includes the complete dated 127-entry reference list, and states no price", () => {
     const research = read("research/index.html");
     const list = research.match(/<ol class="catalog-list">([\s\S]*?)<\/ol>/)?.[1] ?? "";
     const renderedText = research.replaceAll("<!-- -->", "");
     expect([...list.matchAll(/<li>/g)]).toHaveLength(127);
     expect(renderedText).toContain("Showing 127 of 127 entries");
-    expect(research).toContain("Retail price / unit");
-    expect(research).toContain("Price pending");
     expect(research).toContain("Research use only");
+    // The quote-only release shows no numeric catalog price to a customer,
+    // and this page is public. The list keeps every entry and no amount.
+    expect(research).not.toContain("Retail price / unit");
+    expect(research).not.toContain("Price pending");
+    expect(research).not.toMatch(/\$\s?\d/);
   });
 
   it("keeps all three requested YouTube players privacy-gated", () => {
