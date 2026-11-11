@@ -23,6 +23,7 @@ import {
   MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE,
   createMasterOfferingCatalogApiHandlers,
 } from "./routes";
+import { masterOfferingCatalogRouteTable } from "./mount";
 import { InMemoryMasterOfferingCatalogReader } from "./service";
 import { offering, variant } from "./test-fixtures";
 import {
@@ -181,6 +182,28 @@ describe("the full member catalog under quote-only", () => {
     expect(detail.body.product.variants[0].price).toMatchObject({ state: "priced", amountCents: 9900 });
     expect(json.body.pricedRowCount).toBe(1);
     expect(csv.text).toContain("$99.00");
+  });
+});
+
+describe("the full-catalog route table", () => {
+  it("has exactly the three data routes this file calls, so a fourth cannot be added unswept", () => {
+    const table = masterOfferingCatalogRouteTable({
+      authorizeViewer: () => null,
+      serviceForViewer: () => {
+        throw new Error("not called");
+      },
+    } as never);
+    const data = table.filter((route) => route.method !== "options").map((route) => `${route.method} ${route.path}`).sort();
+    expect(data).toEqual([
+      `get ${MASTER_OFFERING_CATALOG_LIST_ROUTE}`,
+      `get ${MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE}`,
+      `get ${MASTER_OFFERING_CATALOG_DETAIL_ROUTE}`,
+    ].sort());
+    // Every other entry is a preflight for one of those three paths.
+    const paths = new Set([MASTER_OFFERING_CATALOG_LIST_ROUTE, MASTER_OFFERING_CATALOG_PRICE_LIST_ROUTE, MASTER_OFFERING_CATALOG_DETAIL_ROUTE]);
+    for (const route of table.filter((entry) => entry.method === "options")) {
+      expect(paths.has(route.path as never)).toBe(true);
+    }
   });
 });
 

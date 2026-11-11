@@ -120,6 +120,7 @@ import { pricingViewerForCustomerViewer } from "./research/master-offerings/earl
 import {
   masterOfferingViewerForMember,
   pricingIdentityFromViewer,
+  quoteOnlyCatalogViewer,
   type MasterOfferingViewerWithGrant,
 } from "./research/master-offerings/member-pricing-viewer";
 import {
@@ -697,7 +698,9 @@ const authorizeMasterOfferingViewer = async (
   if (!mayViewMasterOfferings({ audience: viewer.audience, email: viewer.email })) {
     return null;
   }
-  return viewer;
+  // Quote-only first release: these routes price for the admin only. A member
+  // keeps the catalog and sees "Price on request".
+  return EARLY_ACCESS_QUOTE_ONLY_RELEASE ? quoteOnlyCatalogViewer(viewer) : viewer;
 };
 // Product Control facts for one exact selection request. The reader owns only
 // facts Product Control can state (product, variants, prices, media, required
