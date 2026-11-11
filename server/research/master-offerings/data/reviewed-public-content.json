@@ -6355,6 +6355,84 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_0907a4d651019afed8ed",
+      "sourceVariantId": "mov_04f750af7277d98b7ad9",
+      "content": {
+        "brand": "Xenios",
+        "summary": "An eleven-amino-acid peptide, also called cibinetide, whose sequence reproduces the water-facing side of one helix of erythropoietin. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 10 mg for laboratory research.",
+        "overview": "In plain terms, this is an eleven-amino-acid peptide, also called cibinetide, whose sequence reproduces one face of a helix of erythropoietin. It is listed for laboratory work on the erythropoietin receptor, on the beta common receptor and on tissue protection in cells and animals. What the cited work establishes is in rats and mice: it was not erythropoietic, meaning it did not drive red-cell production, yet on a molar basis it was as active as erythropoietin in a sciatic nerve compression model, reduced infarct volume in a stroke model and gave long-lasting relief of nerve-injury pain in a way that depended on the beta common receptor. What it does not establish is any effect in a person. The full technical description follows.\n\nARA-290, also called cibinetide, is an eleven-amino-acid peptide whose sequence pGlu-Glu-Gln-Leu-Glu-Arg-Ala-Leu-Asn-Ser-Ser reproduces the water-facing side of helix B of erythropoietin, with the first residue present as pyroglutamate. In the 2008 report that described this family of peptides, the tissue-protective effects of erythropoietin were attributed to a receptor complex of the erythropoietin receptor with CD131, the β common receptor, separate from the erythropoietin receptor homodimer that drives red-cell production; crystallographic work showed the water-facing side of helix B to be the sequence QEQLERAL, the eleven-residue peptide QEQLERALNSS was synthesized from it, and its N-terminal glutamine was found to cyclize spontaneously to pyroglutamate, giving the peptide of this listing. In that report neither the helix B peptide nor the eleven-residue peptide was erythropoietic in a cell assay or in animals; the eleven-residue peptide was as active as erythropoietin and as the longer helix B peptide, on a molar basis, in a sciatic nerve compression model; the pyroglutamate form reduced infarct volume (225 ± 20 against 291 ± 23 cubic millimetres, P < 0.05) and improved a neurological score in a stroke model, lowered markers of kidney injury after renal ischaemia and reperfusion in mice, and sped the closure of skin punch wounds in rats; the longer helix B peptide held retinal leakage in a rat model of diabetes to the level of animals without diabetes, and the authors also summarize the peptide as augmenting cognitive function in rodents. A 2011 study reported long-lasting relief of tactile and cold allodynia in rats after a peripheral nerve injury, and concluded from work in rats and in mice lacking the β common receptor that the relief depended on activation of that receptor. A 2012 review by the peptide's investigators describes it as a short-lived mimic of erythropoietin, with a plasma half-life of about two minutes, whose single administration suppressed a histamine-induced skin wheal in rats for more than twenty-four hours, and attributes such effects to the tissue-protective receptor rather than to erythropoiesis. This listing is a laboratory research material and not a medicine. The cell and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0257"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on erythropoietin receptor and β common receptor signaling and tissue protection in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_ca085a7994a6db594748",
+      "sourceVariantId": "mov_6509a8f595cfc3fc36bc",
+      "content": {
+        "brand": "Xenios",
+        "summary": "An eleven-amino-acid peptide, also called cibinetide, whose sequence reproduces the water-facing side of one helix of erythropoietin. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 15 mg for laboratory research.",
+        "overview": "In plain terms, this is an eleven-amino-acid peptide, also called cibinetide, whose sequence reproduces one face of a helix of erythropoietin. It is listed for laboratory work on the erythropoietin receptor, on the beta common receptor and on tissue protection in cells and animals. What the cited work establishes is in rats and mice: it was not erythropoietic, meaning it did not drive red-cell production, yet on a molar basis it was as active as erythropoietin in a sciatic nerve compression model, reduced infarct volume in a stroke model and gave long-lasting relief of nerve-injury pain in a way that depended on the beta common receptor. What it does not establish is any effect in a person. The full technical description follows.\n\nARA-290, also called cibinetide, is an eleven-amino-acid peptide whose sequence pGlu-Glu-Gln-Leu-Glu-Arg-Ala-Leu-Asn-Ser-Ser reproduces the water-facing side of helix B of erythropoietin, with the first residue present as pyroglutamate. In the 2008 report that described this family of peptides, the tissue-protective effects of erythropoietin were attributed to a receptor complex of the erythropoietin receptor with CD131, the β common receptor, separate from the erythropoietin receptor homodimer that drives red-cell production; crystallographic work showed the water-facing side of helix B to be the sequence QEQLERAL, the eleven-residue peptide QEQLERALNSS was synthesized from it, and its N-terminal glutamine was found to cyclize spontaneously to pyroglutamate, giving the peptide of this listing. In that report neither the helix B peptide nor the eleven-residue peptide was erythropoietic in a cell assay or in animals; the eleven-residue peptide was as active as erythropoietin and as the longer helix B peptide, on a molar basis, in a sciatic nerve compression model; the pyroglutamate form reduced infarct volume (225 ± 20 against 291 ± 23 cubic millimetres, P < 0.05) and improved a neurological score in a stroke model, lowered markers of kidney injury after renal ischaemia and reperfusion in mice, and sped the closure of skin punch wounds in rats; the longer helix B peptide held retinal leakage in a rat model of diabetes to the level of animals without diabetes, and the authors also summarize the peptide as augmenting cognitive function in rodents. A 2011 study reported long-lasting relief of tactile and cold allodynia in rats after a peripheral nerve injury, and concluded from work in rats and in mice lacking the β common receptor that the relief depended on activation of that receptor. A 2012 review by the peptide's investigators describes it as a short-lived mimic of erythropoietin, with a plasma half-life of about two minutes, whose single administration suppressed a histamine-induced skin wheal in rats for more than twenty-four hours, and attributes such effects to the tissue-protective receptor rather than to erythropoiesis. This listing is a laboratory research material and not a medicine. The cell and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 15 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "15 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0258"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on erythropoietin receptor and β common receptor signaling and tissue protection in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_463212f23e8e3e39c57b",
+      "sourceVariantId": "mov_523c894b29954645c00a",
+      "content": {
+        "brand": "Xenios",
+        "summary": "An eleven-amino-acid peptide, also called cibinetide, whose sequence reproduces the water-facing side of one helix of erythropoietin. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 5 mg for laboratory research.",
+        "overview": "In plain terms, this is an eleven-amino-acid peptide, also called cibinetide, whose sequence reproduces one face of a helix of erythropoietin. It is listed for laboratory work on the erythropoietin receptor, on the beta common receptor and on tissue protection in cells and animals. What the cited work establishes is in rats and mice: it was not erythropoietic, meaning it did not drive red-cell production, yet on a molar basis it was as active as erythropoietin in a sciatic nerve compression model, reduced infarct volume in a stroke model and gave long-lasting relief of nerve-injury pain in a way that depended on the beta common receptor. What it does not establish is any effect in a person. The full technical description follows.\n\nARA-290, also called cibinetide, is an eleven-amino-acid peptide whose sequence pGlu-Glu-Gln-Leu-Glu-Arg-Ala-Leu-Asn-Ser-Ser reproduces the water-facing side of helix B of erythropoietin, with the first residue present as pyroglutamate. In the 2008 report that described this family of peptides, the tissue-protective effects of erythropoietin were attributed to a receptor complex of the erythropoietin receptor with CD131, the β common receptor, separate from the erythropoietin receptor homodimer that drives red-cell production; crystallographic work showed the water-facing side of helix B to be the sequence QEQLERAL, the eleven-residue peptide QEQLERALNSS was synthesized from it, and its N-terminal glutamine was found to cyclize spontaneously to pyroglutamate, giving the peptide of this listing. In that report neither the helix B peptide nor the eleven-residue peptide was erythropoietic in a cell assay or in animals; the eleven-residue peptide was as active as erythropoietin and as the longer helix B peptide, on a molar basis, in a sciatic nerve compression model; the pyroglutamate form reduced infarct volume (225 ± 20 against 291 ± 23 cubic millimetres, P < 0.05) and improved a neurological score in a stroke model, lowered markers of kidney injury after renal ischaemia and reperfusion in mice, and sped the closure of skin punch wounds in rats; the longer helix B peptide held retinal leakage in a rat model of diabetes to the level of animals without diabetes, and the authors also summarize the peptide as augmenting cognitive function in rodents. A 2011 study reported long-lasting relief of tactile and cold allodynia in rats after a peripheral nerve injury, and concluded from work in rats and in mice lacking the β common receptor that the relief depended on activation of that receptor. A 2012 review by the peptide's investigators describes it as a short-lived mimic of erythropoietin, with a plasma half-life of about two minutes, whose single administration suppressed a histamine-induced skin wheal in rats for more than twenty-four hours, and attributes such effects to the tissue-protective receptor rather than to erythropoiesis. This listing is a laboratory research material and not a medicine. The cell and animal findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0259"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on erythropoietin receptor and β common receptor signaling and tissue protection in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }
