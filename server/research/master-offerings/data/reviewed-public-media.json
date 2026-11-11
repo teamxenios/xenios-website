@@ -3216,6 +3216,28 @@
       "sourceCommit": "937706f6a19982d9902d02c8799212f3c09c5f54",
       "primarySha256": "9d26a92110ba658900b677afcd5f593a05d0821253ca7c4e4428fad5781945ee",
       "labelPreviewSha256": "805e5fce2c2925e3c274b805c562798ea0169b0f7d62a1b34246995b07227863"
+    },
+    {
+      "offeringId": "mo_dbed3adeeecd92ac1d41",
+      "sourceVariantId": "mov_557749e5f12e1d27e367",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/mgf-2mg-label-card-v1-1024.webp",
+          "altText": "Xenios MGF 2 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/mgf-2mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios MGF 2 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "43b94f8729e5ab3ec3d7af91dcd76b9407a5353e",
+      "primarySha256": "99423374d806de49a7ab97ccd5fce7b0aef39552af952036b8f8f0965964e6a0",
+      "labelPreviewSha256": "c2961131d4a4d73d2e5a30b0115a4bf25bccd610159316194b40161e23e0fa69"
     }
   ]
 }
