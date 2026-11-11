@@ -1884,3 +1884,38 @@ it("asks the server for the chosen sort over the whole catalog, from page one", 
   });
   expect(lastQuery().sort).toBeUndefined();
 });
+
+describe("the policy step's recheck asks the server again", () => {
+  const gate = () => host.querySelector('[data-testid="request-catalog-policy-gate"]');
+  const refused = () => new RequestIntentHttpError(403, "agreement_standing_required");
+  async function mountRefused(api: ReturnType<typeof makeApi>, refresh: () => void) {
+    api.catalog.mockRejectedValueOnce(refused());
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded continuationEnabled onAgreementStandingRequired={refresh} />));
+    // The server refused the catalog: the policy step is shown and no product is.
+    expect(gate()).toBeTruthy();
+    expect(host.textContent).not.toContain("Synthetic clinical");
+  }
+  it("returns to the catalog without a reload when the server now admits the viewer", async () => {
+    const api = makeApi(), refresh = vi.fn();
+    await mountRefused(api, refresh);
+    const asked = api.catalog.mock.calls.length;
+    await click("Recheck policy status");
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(api.catalog.mock.calls.length).toBe(asked + 1);
+    expect(gate()).toBeNull();
+    expect(host.textContent).toContain("Synthetic clinical");
+  });
+  it("puts the policy step back, with no product shown, when the server refuses again", async () => {
+    const api = makeApi(), refresh = vi.fn();
+    await mountRefused(api, refresh);
+    const asked = api.catalog.mock.calls.length;
+    api.catalog.mockRejectedValueOnce(refused());
+    await click("Recheck policy status");
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(api.catalog.mock.calls.length).toBe(asked + 1);
+    expect(gate()).toBeTruthy();
+    expect(host.textContent).not.toContain("Synthetic clinical");
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Recheck policy status")).toBe(true);
+  });
+});
