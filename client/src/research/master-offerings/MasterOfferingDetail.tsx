@@ -333,6 +333,11 @@ export function MasterOfferingDetail({
               </p>
               <MasterOfferingPrice price={selected.price} testId="mo-selected-price" />
             </div>
+            {selected.reviewMessage && (
+              <p className="body-s text-ink-mute min-w-0 break-words" data-testid="mo-selected-review-message">
+                {selected.reviewMessage}
+              </p>
+            )}
             <MasterOfferingVariantAction
               productName={product.displayName}
               variant={selected}

@@ -270,6 +270,12 @@ export type MasterOfferingAction =
 export interface MasterOfferingVariantSummary {
   reviewedContent?: ReviewedProductContent;
   reviewedMedia?: ReviewedProductMedia;
+  /**
+   * The reviewed sentence for a listing that has no reviewed description, or
+   * whose label states an unconfirmed fact. A listing carries a reviewed
+   * description or this sentence, never both. Shown wherever the variant is.
+   */
+  reviewMessage?: string;
   id: string;
   label: string;
   displayState: MasterOfferingDisplayState;

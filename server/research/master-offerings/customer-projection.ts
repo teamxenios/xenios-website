@@ -15,6 +15,7 @@ import {
   resolveMasterOfferingAction,
   type MasterOfferingActionCapabilities,
 } from "./action";
+import { inquiryReviewStateFor } from "./inquiry-review-states";
 import {
   NO_MASTER_OFFERING_PRICES,
   priceForVariant,
@@ -50,11 +51,17 @@ export function projectMasterOfferingVariant(
 ): MasterOfferingVariantView {
   const reviewedContent = getReviewedProductContent(offering, variant);
   const reviewedMedia = getReviewedProductMedia(offering, variant);
+  // A reviewed state for a listing with no reviewed description, or whose
+  // label states an unconfirmed fact. The same two customer fields the quote
+  // request catalog uses, so the member catalog and the form say the same
+  // thing about the same row. The staff code never leaves the server.
+  const reviewState = inquiryReviewStateFor(offering.id, variant.id);
   return {
     ...(reviewedContent ? { reviewedContent } : {}),
     ...(reviewedMedia ? { reviewedMedia } : {}),
+    ...(reviewState ? { reviewMessage: reviewState.customerMessage } : {}),
     id: variant.id,
-    label: variant.label,
+    label: reviewState?.neutralSpecification ?? variant.label,
     displayState: variant.displayState,
     displayLabel: MASTER_OFFERING_DISPLAY_LABELS[variant.displayState],
     price,
