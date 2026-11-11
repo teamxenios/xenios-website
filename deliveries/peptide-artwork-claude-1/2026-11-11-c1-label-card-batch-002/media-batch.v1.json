@@ -1,0 +1,623 @@
+{
+ "schemaVersion": 1,
+ "batchId": "claude1-label-card-2026-11-11-c1-label-card-batch-002",
+ "producer": "CLAUDE-1 imagery lane (Claude Code session c16cbf1c)",
+ "claim": "KAN-59/12192",
+ "publicationState": "review_only_not_runtime",
+ "supplierSendPerformed": false,
+ "templateApproval": "KAN-225/12172",
+ "formBasis": {
+  "kind": "form_not_stated_label_card",
+  "note": "The catalog subcategory of every row is \"Form not stated\" and the label facts state no form. The image is a flat label: it states no form and depicts no container."
+ },
+ "catalogDataset": {
+  "file": "member-safe-master-offerings.generated.json",
+  "sha256": "76b9bf6ffe908450d31e15900ee9aa1a5467068fd3dfecb2d28624a49c97c4d5"
+ },
+ "bindingDataset": {
+  "file": "master-offering-bindings.generated.json",
+  "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24"
+ },
+ "releasedContent": {
+  "file": "server/research/master-offerings/data/reviewed-public-content.json",
+  "sha256": "55ea268df8480d684d7d6b71a456815521932f3a54682ad89cde002c11862cf1"
+ },
+ "labelTemplate": {
+  "path": "deliveries/catalog-imagery/2026-11-04-batch-004/labels/bpc-157-10mg-front-artwork-v3.svg",
+  "sha256": "716d79fc7aed61485099fcf9f31a902ca30ac40cf2606901ed192f99206f4e4a",
+  "acceptedIn": "KAN-31/10627",
+  "note": "the accepted Batch 004 BPC-157 front label master (path and digest from that batch's manifest)"
+ },
+ "method": {
+  "generativeModelUsed": false,
+  "label": "The accepted Batch 004 front label. The name is set by the accepted blend rule (the exact name, broken only after \" + \"); the amount is the components' amounts in name order joined by \"/\". The form line is removed, the content caption reads \"LISTED AMOUNT\" and the per-vial basis is dropped. Preview: WebP quality 92.",
+  "card": "The label preview scaled to 880 px wide on a plain 1024 x 1024 ground with a soft shadow. Primary: WebP quality 89."
+ },
+ "tools": [
+  {
+   "path": "tools/fn_blend.py",
+   "sha256": "6bab3076ae5897b70ba3f026b3062d0f4859fdd8a01ab70d9e508d330bed1e55"
+  },
+  {
+   "path": "tools/fn_lib.py",
+   "sha256": "ef7d74966178f8bed961ca4159d938326703571ebdfa8dfb7e550409ddf717f4"
+  },
+  {
+   "path": "tools/build_c1.py",
+   "sha256": "51bbf4c5272cc982e252f67f4d27cb0b8c487bac4377f7a97986279a08e39390"
+  },
+  {
+   "path": "tools/xr_compose.py",
+   "sha256": "fe41582b115d0135a9b39e18756527021d5f4851f1f9ee82b22604f8d6a4a84c"
+  },
+  {
+   "path": "tools/svg_label_render.py",
+   "sha256": "49cfcd545d6201beeb98bf80c1e711e65b49e9d05f94f2af952b6cb1a95b3df1"
+  },
+  {
+   "path": "tools/wpf_kern.ps1",
+   "sha256": "76c7e559b7a159c0450821f54a3684bea1456a215c03e90de41efca0d27e7c7f"
+  },
+  {
+   "path": "tools/kern-table.segoe-ui.json",
+   "sha256": "57d67f2d52858307c25bf01f3d1a4703c1e4ad02d64f34c0fac1cd0918c4e25a"
+  },
+  {
+   "path": "tools/kern-request.json",
+   "sha256": "6176563672ac15b180e7e9668c77e0ebdae1e442dc651d927ba0896ff9754761"
+  },
+  {
+   "path": "tools/extra-terms.json",
+   "sha256": "afdeeaae27be8fb3a86a8815fe09ae851416eb4913f65662968a35e53a2ae093"
+  }
+ ],
+ "records": [
+  {
+   "offeringId": "mo_69c6615ef3e615e76088",
+   "sourceVariantId": "mov_5e74aacac728cfcbd11f",
+   "quickOrderSku": "GEN-GRP-0399",
+   "catalogDisplayName": "GLOW (GHK-Cu + BPC-157 + TB-500)",
+   "catalogVariantLabel": "GLOW GHK-Cu(27mg) / BPC-157 (5mg) / TB-500 (10mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "GLOW (GHK-Cu + BPC-157 + TB-500) 27/5/10 mg",
+   "componentAmounts": [
+    {
+     "name": "GHK-Cu",
+     "amount": "27 mg"
+    },
+    {
+     "name": "BPC-157",
+     "amount": "5 mg"
+    },
+    {
+     "name": "TB-500",
+     "amount": "10 mg"
+    }
+   ],
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11972",
+    "file": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+    "sha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "GLOW (GHK-Cu + BPC-157 + TB-500)",
+     "components": [
+      {
+       "name": "GHK-Cu",
+       "amount": "27 mg"
+      },
+      {
+       "name": "BPC-157",
+       "amount": "5 mg"
+      },
+      {
+       "name": "TB-500",
+       "amount": "10 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0399"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only.",
+    "componentSplitCheckableAgainstCatalogLabel": true
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "GLOW (GHK-Cu +",
+     "BPC-157 + TB-500)",
+     "27/5/10 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "27/5/10 mg"
+    ],
+    "nameLines": [
+     "GLOW (GHK-Cu +",
+     "BPC-157 + TB-500)"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": false,
+   "extraDoNotPrintTerms": [],
+   "labelNameSetting": {
+    "fontSizePx": 102.5,
+    "lines": [
+     "GLOW (GHK-Cu +",
+     "BPC-157 + TB-500)"
+    ]
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios GLOW (GHK-Cu + BPC-157 + TB-500) 27/5/10 mg label design",
+     "relativeAssetPath": "assets/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-card-v1-1024.webp",
+     "sha256": "92428c2cc9729325fc0a8936a673c162aa2fd4d661b8bad5bdea143bbf9280dd"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios GLOW (GHK-Cu + BPC-157 + TB-500) 27/5/10 mg",
+     "relativeAssetPath": "assets/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-design-v1.webp",
+     "sha256": "c059aa2a08765b73f0f1f65a0418b5c16a245f7b2e6cd519684ee9ac270a18bf"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-card-v1-1024.webp",
+     "bytes": 26660,
+     "sha256": "92428c2cc9729325fc0a8936a673c162aa2fd4d661b8bad5bdea143bbf9280dd",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-card-v1.png",
+     "bytes": 104346,
+     "sha256": "1c5c22561390c7cbca25b7d60f6b0730831d5778f8177050489c23ebe5711ce2",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-design-v1.svg",
+     "bytes": 3020,
+     "sha256": "bb55ca1f9bc44e8ca1b133acafaab0cdaab6eee502a96aaa2831ab12a57cdd3d"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-design-v1.png",
+     "bytes": 132954,
+     "sha256": "be6d5dfb2592fcd19146a6b9cf545eb9c41ff3c350f1e446a0313f4ca360afd9",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-design-v1.webp",
+     "bytes": 51246,
+     "sha256": "c059aa2a08765b73f0f1f65a0418b5c16a245f7b2e6cd519684ee9ac270a18bf",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  },
+  {
+   "offeringId": "mo_86fc6ac5138a0a0ddd54",
+   "sourceVariantId": "mov_287c60ca423250ef75d6",
+   "quickOrderSku": "GEN-GRP-0388",
+   "catalogDisplayName": "Tesamorelin + Ipamorelin",
+   "catalogVariantLabel": "2X Blend Tesamorelin (10mg) / Ipamorelin (5mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "Tesamorelin + Ipamorelin 10/5 mg",
+   "componentAmounts": [
+    {
+     "name": "TESAMORELIN",
+     "amount": "10 mg"
+    },
+    {
+     "name": "IPAMORELIN",
+     "amount": "5 mg"
+    }
+   ],
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11972",
+    "file": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+    "sha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Tesamorelin + Ipamorelin",
+     "components": [
+      {
+       "name": "TESAMORELIN",
+       "amount": "10 mg"
+      },
+      {
+       "name": "IPAMORELIN",
+       "amount": "5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0388"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only.",
+    "componentSplitCheckableAgainstCatalogLabel": true
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "Tesamorelin + Ipamorelin",
+     "10/5 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "10/5 mg"
+    ],
+    "nameLines": [
+     "Tesamorelin + Ipamorelin"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": false,
+   "extraDoNotPrintTerms": [],
+   "labelNameSetting": {
+    "fontSizePx": 115.5,
+    "lines": [
+     "Tesamorelin + Ipamorelin"
+    ]
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Tesamorelin + Ipamorelin 10/5 mg label design",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-10-5mg-label-card-v1-1024.webp",
+     "sha256": "96cf8e6caeaf2e49368437086537af30cab09e8a4c998aae9ab498e7daca6461"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios Tesamorelin + Ipamorelin 10/5 mg",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-10-5mg-label-design-v1.webp",
+     "sha256": "6f8250c630e29a71294d6c8ca0317ed5533aed160df1c7a0293e22d765880fee"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-10-5mg-label-card-v1-1024.webp",
+     "bytes": 22976,
+     "sha256": "96cf8e6caeaf2e49368437086537af30cab09e8a4c998aae9ab498e7daca6461",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-10-5mg-label-card-v1.png",
+     "bytes": 87589,
+     "sha256": "2b56ff9ce66368487486f2b0f3630f6309d0e806a081ca9b36c043f18368eb8b",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/tesamorelin-ipamorelin-10-5mg-label-design-v1.svg",
+     "bytes": 2879,
+     "sha256": "603579597e9ae0d21703934eae44f218140ec2f2ced66355097d2283c0a99e0c"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-10-5mg-label-design-v1.png",
+     "bytes": 112054,
+     "sha256": "83ae7eedf56df58f39716c4a4707973faeccf8aebce6bb8bae503ac4070ca45a",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-10-5mg-label-design-v1.webp",
+     "bytes": 42534,
+     "sha256": "6f8250c630e29a71294d6c8ca0317ed5533aed160df1c7a0293e22d765880fee",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  },
+  {
+   "offeringId": "mo_b36a2992242d2a55c145",
+   "sourceVariantId": "mov_dc26bcbba0510c5bb57b",
+   "quickOrderSku": "GEN-GRP-0389",
+   "catalogDisplayName": "Tesamorelin + Ipamorelin",
+   "catalogVariantLabel": "2X Blend Tesamorelin (5mg) / Ipamorelin (5mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "Tesamorelin + Ipamorelin 5/5 mg",
+   "componentAmounts": [
+    {
+     "name": "TESAMORELIN",
+     "amount": "5 mg"
+    },
+    {
+     "name": "IPAMORELIN",
+     "amount": "5 mg"
+    }
+   ],
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11972",
+    "file": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+    "sha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Tesamorelin + Ipamorelin",
+     "components": [
+      {
+       "name": "TESAMORELIN",
+       "amount": "5 mg"
+      },
+      {
+       "name": "IPAMORELIN",
+       "amount": "5 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0389"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only.",
+    "componentSplitCheckableAgainstCatalogLabel": true
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "Tesamorelin + Ipamorelin",
+     "5/5 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "5/5 mg"
+    ],
+    "nameLines": [
+     "Tesamorelin + Ipamorelin"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": false,
+   "extraDoNotPrintTerms": [],
+   "labelNameSetting": {
+    "fontSizePx": 115.5,
+    "lines": [
+     "Tesamorelin + Ipamorelin"
+    ]
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Tesamorelin + Ipamorelin 5/5 mg label design",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-5-5mg-label-card-v1-1024.webp",
+     "sha256": "66f6a467200c881d750ed4498fa0003c6cd5a2653b0028a63966f2061b8a18dd"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios Tesamorelin + Ipamorelin 5/5 mg",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-5-5mg-label-design-v1.webp",
+     "sha256": "448b8b285f61193e4becf03f6aa422e918a11534c75198d08d06cf72a8b78905"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-5-5mg-label-card-v1-1024.webp",
+     "bytes": 22678,
+     "sha256": "66f6a467200c881d750ed4498fa0003c6cd5a2653b0028a63966f2061b8a18dd",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-5-5mg-label-card-v1.png",
+     "bytes": 85932,
+     "sha256": "9ff9b80b228086bf33ed153509bf4cddd31d7f457f04788eb4b7055cdf0fa0b4",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/tesamorelin-ipamorelin-5-5mg-label-design-v1.svg",
+     "bytes": 2875,
+     "sha256": "51dbe9a124d7090a0969b6c4b1402c1e3a1ee3c0cba8c07a0c0ea5d46bc64e46"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-5-5mg-label-design-v1.png",
+     "bytes": 109218,
+     "sha256": "7749416f280155a9dda72439d5535927c183ab5297143ad77d1991f5d83028bc",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/tesamorelin-ipamorelin-5-5mg-label-design-v1.webp",
+     "bytes": 43306,
+     "sha256": "448b8b285f61193e4becf03f6aa422e918a11534c75198d08d06cf72a8b78905",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  },
+  {
+   "offeringId": "mo_d1a47413d4b8e58bfd52",
+   "sourceVariantId": "mov_2a06e3a4fa8fb02b64cf",
+   "quickOrderSku": "GEN-GRP-0417",
+   "catalogDisplayName": "Thymosin Alpha-1 + Thymulin",
+   "catalogVariantLabel": "Thymosin Alpha 1 (TA1) Complex Thymulin (10mg/6.4mg)",
+   "catalogSubcategory": "Form not stated",
+   "catalogDisplayState": [
+    "approval_required",
+    "approval_required"
+   ],
+   "canonicalVariant": "Thymosin Alpha-1 + Thymulin 10/6.4 mg",
+   "componentAmounts": [
+    {
+     "name": "Thymosin Alpha-1",
+     "amount": "10 mg"
+    },
+    {
+     "name": "Thymulin",
+     "amount": "6.4 mg"
+    }
+   ],
+   "mediaKind": "original_xenios_label_card",
+   "websiteArtworkState": "pending_independent_file_level_review",
+   "physicalPackagingState": "not_depicted",
+   "runtimeLinked": false,
+   "publicationAuthorized": false,
+   "labelFacts": {
+    "reference": "KAN-59/11972",
+    "file": "BLEND_LABEL_FACTS_CJC_SPELLING_2026-11-08.json",
+    "sha256": "4656bcff536afbe2ed25f61009be970e3875e9318ea1674b11aeb075746341a8",
+    "verifiedStaticText": {
+     "brand": "Xenios",
+     "productName": "Thymosin Alpha-1 + Thymulin",
+     "components": [
+      {
+       "name": "Thymosin Alpha-1",
+       "amount": "10 mg"
+      },
+      {
+       "name": "Thymulin",
+       "amount": "6.4 mg"
+      }
+     ],
+     "classification": "For laboratory research use only.",
+     "productCode": "Product code GEN-GRP-0417"
+    },
+    "hold": "Vial artwork and per-vial wording held (KAN-31/10870 class, KAN-225/10819, KAN-59/10871): the selected source states no dosage form. Exact name, stated component amounts, product code and research classification are available for form-neutral work only.",
+    "componentSplitCheckableAgainstCatalogLabel": false
+   },
+   "exactDepictedFacts": {
+    "printedLines": [
+     "XENIOS",
+     "Thymosin Alpha-1 + Thymulin",
+     "10/6.4 mg",
+     "RESEARCH USE ONLY",
+     "NONCLINICAL USE ONLY",
+     "LISTED AMOUNT",
+     "10/6.4 mg"
+    ],
+    "nameLines": [
+     "Thymosin Alpha-1 + Thymulin"
+    ],
+    "containerDepicted": false,
+    "formStated": false,
+    "productCodePrinted": false
+   },
+   "releasedReviewedCopy": false,
+   "extraDoNotPrintTerms": [],
+   "labelNameSetting": {
+    "fontSizePx": 97.0,
+    "lines": [
+     "Thymosin Alpha-1 + Thymulin"
+    ]
+   },
+   "websiteReviewCandidates": [
+    {
+     "role": "primary",
+     "altText": "Xenios Thymosin Alpha-1 + Thymulin 10/6.4 mg label design",
+     "relativeAssetPath": "assets/thymosin-alpha-1-thymulin-10-6-4mg-label-card-v1-1024.webp",
+     "sha256": "76a00862a69f93e0ee51faa214a19993780b2c9768982bd277d8f1c9267011b5"
+    },
+    {
+     "role": "labelPreview",
+     "altText": "Front label artwork for Xenios Thymosin Alpha-1 + Thymulin 10/6.4 mg",
+     "relativeAssetPath": "assets/thymosin-alpha-1-thymulin-10-6-4mg-label-design-v1.webp",
+     "sha256": "ddc0c46dfb5cd626ef652935fcafd5d3e21538d67576ca2fd93faba0499ecf90"
+    }
+   ],
+   "artifacts": {
+    "website_primary": {
+     "role": "website_primary",
+     "relativeAssetPath": "assets/thymosin-alpha-1-thymulin-10-6-4mg-label-card-v1-1024.webp",
+     "bytes": 23310,
+     "sha256": "76a00862a69f93e0ee51faa214a19993780b2c9768982bd277d8f1c9267011b5",
+     "width": 1024,
+     "height": 1024,
+     "format": "webp"
+    },
+    "website_source_master": {
+     "role": "website_source_master",
+     "relativeAssetPath": "assets/thymosin-alpha-1-thymulin-10-6-4mg-label-card-v1.png",
+     "bytes": 88395,
+     "sha256": "f962f70dd5f16a6a4c6900f1ce004aaa37985d95669acb1b5b1ab8c76b941aa8",
+     "width": 1024,
+     "height": 1024,
+     "format": "png"
+    },
+    "label_master": {
+     "role": "label_master",
+     "relativeAssetPath": "labels/thymosin-alpha-1-thymulin-10-6-4mg-label-design-v1.svg",
+     "bytes": 2893,
+     "sha256": "65fb54911f395f0c8b72978db3c3e61eb9e7bddb88bd22cde82602018930dded"
+    },
+    "label_preview_png": {
+     "role": "label_preview_png",
+     "relativeAssetPath": "assets/thymosin-alpha-1-thymulin-10-6-4mg-label-design-v1.png",
+     "bytes": 112067,
+     "sha256": "2f8a971a0d0af0ab13b07ddf2ee2828a4938a75885cc45de2c19249e9b196587",
+     "width": 1600,
+     "height": 1000,
+     "format": "png"
+    },
+    "label_preview": {
+     "role": "label_preview",
+     "relativeAssetPath": "assets/thymosin-alpha-1-thymulin-10-6-4mg-label-design-v1.webp",
+     "bytes": 43352,
+     "sha256": "ddc0c46dfb5cd626ef652935fcafd5d3e21538d67576ca2fd93faba0499ecf90",
+     "width": 1600,
+     "height": 1000,
+     "format": "webp"
+    }
+   }
+  }
+ ]
+}
