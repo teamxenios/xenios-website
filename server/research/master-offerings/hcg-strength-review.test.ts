@@ -1,6 +1,7 @@
 import { resolve } from "node:path";
 import { expect, it } from "vitest";
 import { HCG_STRENGTH_REVIEW as held } from "@shared/research/master-offerings/hcg-strength-review";
+import { isDirectPurchaseForbidden } from "@shared/research/master-offerings/pathway-authority";
 import {
   REQUEST_INTENT_KIND,
   type RequestIntentDetail,
@@ -49,6 +50,17 @@ it("shows the same neutral held record at both member URLs and in the price-list
   expect(JSON.stringify(detail)).not.toContain("120000");
   // The held specification forbids a direct purchase, so the action carries no amount and no cart identity.
   expect(JSON.stringify(detail?.variants[0].action)).not.toMatch(/add_to_cart|amount|sku/);
+  // The reason, not only the outcome: the held specification by itself forbids a direct
+  // purchase, even for a row that is otherwise available now and with no reviewed-holds list.
+  // The row's own display state would also keep it out; this pins that it is not the only guard.
+  expect(isDirectPurchaseForbidden({
+    family: held.family, displayState: "available_now", variantDisplayState: "available_now",
+    specification: held.specification,
+  })).toBe(true);
+  expect(isDirectPurchaseForbidden({
+    family: held.family, displayState: "available_now", variantDisplayState: "available_now",
+    specification: "Synthetic 10 mg",
+  })).toBe(false);
   const document = buildMasterOfferingPriceList({
     offerings: reader.readCatalog(), prices: new Map(), audience: "member", generatedAt: now,
   });
