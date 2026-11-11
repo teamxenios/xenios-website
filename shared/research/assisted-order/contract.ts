@@ -311,8 +311,13 @@ export type AssistedOrderCatalogPage = Readonly<{
   workflowModes: readonly AssistedOrderWorkflowMode[];
 }>;
 
+/** Orders the whole filtered catalog by product name. Absent keeps catalog order. */
+export const ASSISTED_ORDER_CATALOG_SORTS = ["name_asc", "name_desc"] as const;
+export type AssistedOrderCatalogSort = typeof ASSISTED_ORDER_CATALOG_SORTS[number];
+
 export type AssistedOrderCatalogQuery = Readonly<{
   search?: string;
+  sort?: AssistedOrderCatalogSort;
   family?: string;
   channel?: string;
   actionGroup?: AssistedOrderActionGroup;

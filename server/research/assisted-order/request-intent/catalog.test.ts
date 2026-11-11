@@ -81,3 +81,47 @@ describe("mixed request canonical projection", () => {
     await expect(catalog.list(viewer, {})).rejects.toThrow("request_intent_catalog_incomplete");
   });
 });
+
+describe("sorting the whole request catalog by name", () => {
+  // Thirty rows, inserted in descending id order, so catalog order is not name order.
+  const rows = Array.from({ length: 30 }, (_, index) => offering(29 - index));
+  const names = async (query: Parameters<ReturnType<typeof createRequestIntentCatalog>["list"]>[1]) => {
+    const catalog = createRequestIntentCatalog(wiring(rows));
+    const first = await catalog.list(viewer, { ...query, page: 1, pageSize: 24 });
+    const second = await catalog.list(viewer, { ...query, page: 2, pageSize: 24 });
+    expect(first.total).toBe(30);
+    return [...first.items, ...second.items].map((item) => item.productName);
+  };
+  const ascending = Array.from({ length: 30 }, (_, index) => "Synthetic " + index);
+
+  it("keeps catalog order when no sort is asked for", async () => {
+    expect(await names({})).toEqual([...ascending].reverse());
+  });
+  it("sorts A to Z across pages, reading a number in a name as a number, with every row exactly once", async () => {
+    const sorted = await names({ sort: "name_asc" });
+    // "Synthetic 2" comes before "Synthetic 10", and page 2 continues page 1.
+    expect(sorted).toEqual(ascending);
+    expect(new Set(sorted).size).toBe(30);
+  });
+  it("sorts Z to A across pages", async () => {
+    expect(await names({ sort: "name_desc" })).toEqual([...ascending].reverse());
+  });
+  it("sorts within a search, not just within a page", async () => {
+    const catalog = createRequestIntentCatalog(wiring(rows));
+    const page = await catalog.list(viewer, { search: "synthetic 1", sort: "name_asc", pageSize: 24 });
+    expect(page.items.map((item) => item.productName)).toEqual(
+      ["Synthetic 1", ...Array.from({ length: 10 }, (_, index) => "Synthetic " + (10 + index))]);
+  });
+  it("gives rows with the same name a fixed order, so paging cannot repeat or skip one", async () => {
+    const twins = [offering(3), offering(1), offering(2)].map((row) => ({ ...row, displayName: "Same name", canonicalName: "Same name" }));
+    const catalog = createRequestIntentCatalog(wiring(twins));
+    const once = (await catalog.list(viewer, { sort: "name_asc" })).items.map((item) => item.variantId);
+    const again = (await catalog.list(viewer, { sort: "name_asc" })).items.map((item) => item.variantId);
+    expect(once).toEqual(again);
+    expect(new Set(once).size).toBe(3);
+  });
+  it("refuses a sort it does not know", async () => {
+    const catalog = createRequestIntentCatalog(wiring(rows));
+    await expect(catalog.list(viewer, { sort: "best_sellers" as never })).rejects.toThrow("request_intent_sort_invalid");
+  });
+});

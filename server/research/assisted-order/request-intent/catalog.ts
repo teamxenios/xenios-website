@@ -1,7 +1,9 @@
 import {
   projectAssistedOrderCatalogItem,
 } from "../../../../shared/research/assisted-order/action-policy";
-import { assistedOrderActionGroupFor, type AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
+import {
+  ASSISTED_ORDER_CATALOG_SORTS, assistedOrderActionGroupFor, type AssistedOrderCatalogQuery,
+} from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogItem, RequestIntentCatalogPage } from "../../../../shared/research/assisted-order/request-intent";
 import { MASTER_OFFERING_FAMILIES, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
 import { directPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
@@ -109,13 +111,25 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
       if (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(pageSize) || pageSize < 1 || pageSize > 100) {
         throw new Error("request_intent_page_invalid");
       }
+      if (query.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(query.sort)) {
+        throw new Error("request_intent_sort_invalid");
+      }
       const search = query.search?.trim().toLowerCase();
-      const items = (await visible(viewer)).filter((item) =>
+      const filtered = (await visible(viewer)).filter((item) =>
         (!query.family || (isMasterOfferingFamily(query.family) && item.family === query.family))
         && (!query.channel || item.channel === query.channel)
         && (!query.actionGroup || assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup)
         && (query.actionGroup !== undefined || !query.workflowMode || item.workflowMode === query.workflowMode)
         && (!search || [item.productName, item.specification, item.variantId].join(" ").toLowerCase().includes(search)));
+      // Sorting is over the whole filtered catalog, before paging, so page 2 follows
+      // page 1 in the chosen order. Ties keep a fixed order so paging never repeats
+      // or skips a row. Absent sort keeps the catalog's own order.
+      const direction = query.sort === "name_desc" ? -1 : 1;
+      const byName = (left: RequestIntentCatalogItem, right: RequestIntentCatalogItem) =>
+        direction * left.productName.localeCompare(right.productName, "en", { sensitivity: "base", numeric: true })
+        || (left.specification ?? "").localeCompare(right.specification ?? "", "en", { sensitivity: "base", numeric: true })
+        || left.variantId.localeCompare(right.variantId);
+      const items = query.sort === undefined ? filtered : [...filtered].sort(byName);
       return {
         items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length, page, pageSize,
         families: MASTER_OFFERING_FAMILIES,

@@ -1776,3 +1776,24 @@ it("shows the reviewed sentence on a row that cannot be added yet", async () => 
   // It still cannot be added.
   expect([...card.querySelectorAll("button")].some((button) => button.textContent?.startsWith("Add "))).toBe(false);
 });
+
+it("asks the server for the chosen sort over the whole catalog, from page one", async () => {
+  const api = makeApi();
+  await render(api);
+  const sort = [...host.querySelectorAll("label")].find((label) => label.textContent?.startsWith("Sort"))!
+    .querySelector("select")!;
+  expect([...sort.options].map((option) => option.textContent)).toEqual(["Catalog order", "Name A to Z", "Name Z to A"]);
+  // No sort is sent until the customer chooses one.
+  const lastQuery = () => (api.catalog.mock.calls.at(-1) as unknown as [{ sort?: string }])[0];
+  expect(lastQuery().sort).toBeUndefined();
+  await act(async () => {
+    sort.value = "name_asc";
+    sort.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  expect(api.catalog).toHaveBeenLastCalledWith({ search: "", family: undefined, sort: "name_asc", page: 1, pageSize: 24 });
+  await act(async () => {
+    sort.value = "";
+    sort.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  expect(lastQuery().sort).toBeUndefined();
+});

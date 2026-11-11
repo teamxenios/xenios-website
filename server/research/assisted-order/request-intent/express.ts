@@ -1,5 +1,8 @@
 import { Router, type Request, type RequestHandler } from "express";
-import { AssistedOrderValidationError, type AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
+import {
+  ASSISTED_ORDER_CATALOG_SORTS, AssistedOrderValidationError,
+  type AssistedOrderCatalogQuery, type AssistedOrderCatalogSort,
+} from "../../../../shared/research/assisted-order/contract";
 import { exactObject, REQUEST_INTENT_RECOVERY_NOTICE } from "../../../../shared/research/assisted-order/request-intent";
 import type { CareAccessDependencies } from "../../../care/access";
 import { requirePendingRequestIntentRead, type RequestIntentStaffReadContext } from "./staff-read-authority";
@@ -59,12 +62,16 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
       });
     };
   router.get("/catalog", deps.readRateLimit, handle(async (req, res) => {
-    const raw = exactObject(req.query, ["search", "family", "page", "pageSize"], "query");
+    const raw = exactObject(req.query, ["search", "family", "sort", "page", "pageSize"], "query");
     for (const key of Object.keys(raw)) {
       if (typeof raw[key] !== "string") throw new AssistedOrderValidationError("query", "Invalid query.");
     }
+    if (raw.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(raw.sort as AssistedOrderCatalogSort)) {
+      throw new AssistedOrderValidationError("query", "Invalid query.");
+    }
     const query: AssistedOrderCatalogQuery = {
       search: raw.search as string | undefined,
+      sort: raw.sort as AssistedOrderCatalogSort | undefined,
       family: raw.family as string | undefined,
       page: raw.page === undefined ? 1 : Number(raw.page),
       pageSize: raw.pageSize === undefined ? 24 : Number(raw.pageSize),

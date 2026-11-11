@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { validateAddress, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
+import { validateAddress, type AssistedOrderCatalogSort, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
   REQUEST_INTENT_NOTICE, REQUEST_INTENT_RECOVERY_NOTICE, validateRequestIntentInput,
   type RequestIntentCatalogItem, type RequestIntentCatalogPage, type RequestIntentInput, type RequestIntentReceipt,
@@ -183,6 +183,7 @@ function RequestIntentFormSession({
   const [catalogRetry, setCatalogRetry] = useState(0);
   const [search, setSearch] = useState("");
   const [family, setFamily] = useState("");
+  const [sort, setSort] = useState<"" | AssistedOrderCatalogSort>("");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ReadonlyMap<string, Selection>>(new Map());
   const [editingSelection, setEditingSelection] = useState<string | null>(null);
@@ -291,7 +292,7 @@ function RequestIntentFormSession({
     let current = true;
     setCatalog(null);
     setCatalogFailed(false);
-    void api.catalog({ search, family: family || undefined, page, pageSize: 24 })
+    void api.catalog({ search, family: family || undefined, sort: sort || undefined, page, pageSize: 24 })
       .then((value) => {
         if (!current) return;
         if (value.items.some(isHeldHcg)) confirmHcgHold();
@@ -301,7 +302,7 @@ function RequestIntentFormSession({
       })
       .catch(() => { if (current) setCatalogFailed(true); });
     return () => { current = false; };
-  }, [api, search, family, page, restored, reopened, catalogRetry, confirmHcgHold]);
+  }, [api, search, family, sort, page, restored, reopened, catalogRetry, confirmHcgHold]);
 
   async function refreshRequirements() {
     if (locked.current || !requirementsNeedRefresh || frozen.current) return;
@@ -509,6 +510,13 @@ function RequestIntentFormSession({
           <label>Search catalog<input value={search} onChange={(event) => { pendingCatalogScroll.current = false; setSearch(event.target.value); setPage(1); }} /></label>
           <label>Product family<select value={family} onChange={(event) => { pendingCatalogScroll.current = false; setFamily(event.target.value); setPage(1); }}>
             <option value="">All families</option>{catalog?.families.map((value) => <option key={value} value={value}>{catalogPresentationLabel(value, value.replaceAll("_", " "))}</option>)}
+          </select></label>
+          <label>Sort<select value={sort} onChange={(event) => {
+            pendingCatalogScroll.current = false; setSort(event.target.value as "" | AssistedOrderCatalogSort); setPage(1);
+          }}>
+            <option value="">Catalog order</option>
+            <option value="name_asc">Name A to Z</option>
+            <option value="name_desc">Name Z to A</option>
           </select></label>
         </div>
         {compactGuestCatalog && <div className="xenios-order-mobile-pagination">{catalogPagination}</div>}

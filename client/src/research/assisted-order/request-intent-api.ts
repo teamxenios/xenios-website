@@ -97,6 +97,7 @@ export function createRequestIntentApi(
       const params = new URLSearchParams();
       if (query.search) params.set("search", query.search);
       if (query.family) params.set("family", query.family);
+      if (query.sort) params.set("sort", query.sort);
       params.set("page", String(requestedPage)); params.set("pageSize", String(requestedSize));
       const raw = await request("/catalog?" + params);
       const page = raw as RequestIntentCatalogPage;
