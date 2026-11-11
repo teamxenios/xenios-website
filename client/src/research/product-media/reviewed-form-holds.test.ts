@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import media from "./product-media-format.generated.json";
 import { researchListingSubcategory } from "./reviewed-form-holds";
 
 // Two rows that are in the hold map today, with their own offering ids.
@@ -19,5 +20,16 @@ describe("the catalog subcategory on a listing card", () => {
     expect(researchListingSubcategory({
       id: "mo_another_offering", subcategory: "Lyophilized Vial", variants: heldVial.variants,
     })).toBe("Lyophilized Vial");
+  });
+});
+
+describe("the real format map", () => {
+  // The product image tests reach the vial symbol through synthetic rows only. While the reviewed
+  // form holds stand, every real vial-format variant is held and falls back to the neutral symbol.
+  // That is today's state and not a rule, so it is not asserted here; this only checks that the
+  // real map still has vial rows for the fallback to matter to.
+  it("still lists vial-format variants", () => {
+    const vials = Object.values(media.formatByVariantId).filter((format) => format === "vial");
+    expect(vials.length).toBeGreaterThan(0);
   });
 });
