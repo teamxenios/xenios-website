@@ -11,7 +11,14 @@ const state: RequestBarState = { step: "products", selectedCount: 1, continuatio
   requirementsCount: 2, allAcknowledged: true, busy: false, frozen: false };
 const lines = [{ key: "synthetic:variant", name: "Synthetic exact product", specification: "Synthetic variant", quantity: 2 }];
 let host: HTMLDivElement, root: Root, dockTop: number, frames: Map<number, FrameRequestCallback>, frameId: number;
-let callbacks: { onContinue: ReturnType<typeof vi.fn>; onSubmit: ReturnType<typeof vi.fn>; focusContactHeading: ReturnType<typeof vi.fn> };
+function createCallbacks() {
+  return {
+    onContinue: vi.fn((): void => {}),
+    onSubmit: vi.fn((): void => {}),
+    focusContactHeading: vi.fn((): void => {}),
+  };
+}
+let callbacks: ReturnType<typeof createCallbacks>;
 let oldPadding: string, oldPriority: string;
 let oldInnerHeight: PropertyDescriptor | undefined;
 const padding = () => document.documentElement.style.getPropertyValue("scroll-padding-bottom");
@@ -20,7 +27,7 @@ beforeEach(() => {
   oldPadding = padding(); oldPriority = document.documentElement.style.getPropertyPriority("scroll-padding-bottom");
   document.documentElement.style.removeProperty("scroll-padding-bottom");
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
-  callbacks = { onContinue: vi.fn(), onSubmit: vi.fn(), focusContactHeading: vi.fn() };
+  callbacks = createCallbacks();
   dockTop = 600; frames = new Map(); frameId = 0;
   oldInnerHeight = Object.getOwnPropertyDescriptor(window, "innerHeight");
   Object.defineProperty(window, "innerHeight", { configurable: true, value: 844 });
