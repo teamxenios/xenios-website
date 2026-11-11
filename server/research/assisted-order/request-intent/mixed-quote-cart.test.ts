@@ -14,9 +14,10 @@ import { createRequestIntentCatalog } from "./catalog";
 import { RequestIntentService, type StoredIntent } from "./service";
 
 /**
- * One quote request holding four kinds of listing from the real catalog:
- * an ordinary research item, a supplier's supplement, a clinical-review item
- * and the held listing. Service level, synthetic customer, in-memory store.
+ * One quote request holding five kinds of listing from the real catalog:
+ * an ordinary research item, a supplier's supplement, a clinical-review item,
+ * the held listing, and a listing whose details are under review. Service
+ * level, synthetic customer, in-memory store.
  * It is not a browser run and not a database run.
  */
 const reader = new GeneratedMasterOfferingCatalogReader(
@@ -76,32 +77,37 @@ async function everyRow(service: RequestIntentService): Promise<RequestIntentCat
 function cart(rows: readonly RequestIntentCatalogItem[]) {
   const ordinary = rows.find((row) => row.family === "research_peptides_materials"
     && row.selectableForReview && row.intentExclusion === null && !row.clinicalReviewRequired);
-  const supplement = rows.find((row) => row.family === "supplements" && row.selectableForReview);
+  const supplement = rows.find((row) => row.family === "supplements" && row.selectableForReview
+    && row.intentExclusion === null);
   const clinical = rows.find((row) => row.clinicalReviewRequired && row.selectableForReview && row.intentExclusion === null);
   const heldRow = rows.find((row) => row.sourceSelection?.variantId === held.variantId);
-  if (!ordinary || !supplement || !clinical || !heldRow) throw new Error("Missing a cart fixture row");
-  return { ordinary, supplement, clinical, heldRow };
+  // A listing with a reviewed review state: no description yet, still open to an inquiry.
+  const underReview = rows.find((row) => row.selectableForReview && row.intentExclusion === "specification_review"
+    && row.sourceSelection?.variantId !== held.variantId);
+  if (!ordinary || !supplement || !clinical || !heldRow || !underReview) throw new Error("Missing a cart fixture row");
+  return { ordinary, supplement, clinical, heldRow, underReview };
 }
 
-describe("one quote request with four kinds of listing from the real catalog", () => {
-  it("lists every row without a price, and lets each of the four kinds be added", async () => {
+describe("one quote request with five kinds of listing from the real catalog", () => {
+  it("lists every row without a price, and lets each of the five kinds be added", async () => {
     const { service } = setup();
     const rows = await everyRow(service);
     expect(rows).toHaveLength(420);
     // Quote-only: no row carries a catalog price.
     expect(rows.every((row) => row.unitPriceCents === null && row.priceVersion === null)).toBe(true);
-    const { ordinary, supplement, clinical, heldRow } = cart(rows);
-    for (const row of [ordinary, supplement, clinical, heldRow]) expect(row.selectableForReview).toBe(true);
+    const { ordinary, supplement, clinical, heldRow, underReview } = cart(rows);
+    for (const row of [ordinary, supplement, clinical, heldRow, underReview]) expect(row.selectableForReview).toBe(true);
     expect(heldRow).toMatchObject({ intentExclusion: "specification_review", specification: held.specification });
+    // 120000 is the held listing's disputed strength figure; it must appear nowhere.
     expect(JSON.stringify(heldRow)).not.toContain("120000");
   });
 
-  it("stores all four lines once, replays a second submit, and gives staff the same lines with their reasons", async () => {
+  it("stores all five lines once, replays a second submit, and gives staff the same lines with their reasons", async () => {
     const { service, details } = setup();
-    const { ordinary, supplement, clinical, heldRow } = cart(await everyRow(service));
+    const { ordinary, supplement, clinical, heldRow, underReview } = cart(await everyRow(service));
     const chosen = [
       { row: ordinary, quantity: 2 }, { row: supplement, quantity: 1 },
-      { row: clinical, quantity: 1 }, { row: heldRow, quantity: 3 },
+      { row: clinical, quantity: 1 }, { row: heldRow, quantity: 3 }, { row: underReview, quantity: 1 },
     ];
     const agreements = [
       ...required,
@@ -133,7 +139,7 @@ describe("one quote request with four kinds of listing from the real catalog", (
     // Another session cannot read it back.
     expect(await service.recover({ ...viewer, earlyAccessSessionHash: "another-session" }, input.idempotencyKey)).toBeNull();
 
-    // The stored request holds the four lines, in order, each still pending.
+    // The stored request holds the five lines, in order, each still pending.
     const stored = details[0];
     expect(stored.lines.map((line) => [line.sourceVariantId, line.quantity])).toEqual(
       chosen.map(({ row, quantity }) => [row.sourceSelection!.variantId, quantity]));
@@ -151,17 +157,24 @@ describe("one quote request with four kinds of listing from the real catalog", (
     );
     expect(readback?.lines.map((line) => [line.sourceVariantId, line.quantity, line.productName])).toEqual(
       stored.lines.map((line) => [line.sourceVariantId, line.quantity, line.productName]));
-    const [ordinaryLine, supplementLine, clinicalLine, heldLine] = readback!.lines;
+    const [ordinaryLine, supplementLine, clinicalLine, heldLine, underReviewLine] = readback!.lines;
     expect(ordinaryLine).toMatchObject({ clinicalReviewRequired: false, researchUseOnly: true });
     expect(supplementLine).toMatchObject({ family: "supplements", clinicalReviewRequired: false });
     expect(clinicalLine).toMatchObject({ clinicalReviewRequired: true, workflowMode: "provider_request" });
     expect(heldLine).toMatchObject({
       specification: held.specification, sourceRefusal: "formulation_hold", workflowMode: "availability_review",
     });
-    // A line whose listing has a review state carries its code for staff; the others carry none.
-    for (const line of readback!.lines) {
-      expect(line.reviewCode ?? null).toBe(inquiryReviewCodeForVariant(line.sourceVariantId));
+    // The line whose listing has a review state carries that listing's code for staff.
+    const code = inquiryReviewCodeForVariant(underReview.sourceSelection!.variantId);
+    expect(code).not.toBeNull();
+    expect(underReviewLine.reviewCode).toBe(code);
+    // The other four listings have no review state, so their lines carry no code.
+    for (const line of [ordinaryLine, supplementLine, clinicalLine, heldLine]) {
+      expect(inquiryReviewCodeForVariant(line.sourceVariantId)).toBeNull();
+      expect("reviewCode" in line).toBe(false);
     }
+    // The code is for staff only: it is not in the stored request.
+    expect(JSON.stringify(stored)).not.toContain("reviewCode");
 
     // Nothing commercial can follow from an inquiry.
     expect(() => service.rejectCommercialTransition()).toThrow("unapproved_intent_has_no_commercial_authority");
