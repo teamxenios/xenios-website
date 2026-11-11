@@ -11,8 +11,8 @@ export function ListingQuestion({ variantReference }: { variantReference?: strin
     </summary>
     <div className="grid min-w-0 gap-2 py-2">
       <p>A Xenios team member can help with the listing, packaging, availability or your quote request.</p>
-      <label className="grid min-w-0 gap-1">What is your question about?
-        <select className="min-h-11 max-w-full" value={topic}
+      <label className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-1">What is your question about?
+        <select className="min-h-11 w-full min-w-0 max-w-full text-base" value={topic}
           onChange={(event) => setTopic(event.currentTarget.value as ListingQuestionTopic)}>
           {Object.entries(LISTING_QUESTION_TOPICS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
         </select>
