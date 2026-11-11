@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
@@ -6,6 +6,7 @@ import {
   type RequestIntentCatalogItem, type RequestIntentCatalogPage, type RequestIntentInput, type RequestIntentReceipt,
 } from "../../../../shared/research/assisted-order/request-intent";
 import type { DirectPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
+import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { catalogItemKey, catalogPriceLabel, clampQuantity, requiredAcknowledgmentEntries, agreementRequirementKey, money, type AssistedOrderWizardConfig } from "./wizard-state";
 import { createRequestIntentApi, isKnownIntentPrewriteRefusal, intentRefusalGuidance, type RequestIntentApi } from "./request-intent-api";
 import { clearConfirmedIntentAttempt, clearFirstRefusedIntentAttempt, postIntentAttempt, readIntentAttempt, type IntentAttempt } from "./request-intent-attempt";
@@ -26,6 +27,52 @@ import { PersistentRequestBar } from "./PersistentRequestBar";
 
 const defaultApi = createRequestIntentApi();
 type Selection = Readonly<{ item: RequestIntentCatalogItem; quantity: number }>;
+
+function hasHcgSource(item: RequestIntentCatalogItem): boolean {
+  const source = item.sourceSelection;
+  return source?.family === HCG_STRENGTH_REVIEW.family &&
+    source.variantId === HCG_STRENGTH_REVIEW.variantId &&
+    (source.slug === HCG_STRENGTH_REVIEW.legacySlug || source.slug === HCG_STRENGTH_REVIEW.slug);
+}
+
+function isHeldHcg(item: RequestIntentCatalogItem): boolean {
+  return item.intentExclusion === "specification_review" && hasHcgSource(item);
+}
+
+function presentHeldHcg(item: RequestIntentCatalogItem): RequestIntentCatalogItem {
+  if (!hasHcgSource(item) || item.intentExclusion === "specification_review") return item;
+  return {
+    ...item,
+    specification: HCG_STRENGTH_REVIEW.specification,
+    accessNotice: HCG_STRENGTH_REVIEW.notice,
+    reviewedContent: undefined,
+    reviewedMedia: undefined,
+    sourceSelection: {
+      family: HCG_STRENGTH_REVIEW.family,
+      slug: HCG_STRENGTH_REVIEW.slug,
+      variantId: HCG_STRENGTH_REVIEW.variantId,
+    },
+    selectableForReview: false,
+    intentExclusion: "specification_review",
+    actionLabel: HCG_STRENGTH_REVIEW.actionLabel,
+  };
+}
+
+function refreshHeldSelections(
+  selected: ReadonlyMap<string, Selection>,
+  items: readonly RequestIntentCatalogItem[],
+): ReadonlyMap<string, Selection> {
+  let next: Map<string, Selection> | undefined;
+  for (const item of items) {
+    if (item.intentExclusion !== "specification_review" || !item.sourceSelection) continue;
+    const key = catalogItemKey(item);
+    const prior = selected.get(key);
+    if (!prior || prior.item.sourceSelection?.variantId !== item.sourceSelection.variantId) continue;
+    next ??= new Map(selected);
+    next.set(key, { item, quantity: prior.quantity });
+  }
+  return next ?? selected;
+}
 function browserStorage(): Storage | null { try { return window.sessionStorage; } catch { return null; } }
 
 // Presentation of the server's reason only. Request eligibility remains the
@@ -142,6 +189,7 @@ function RequestIntentFormSession({
   const [busy, setBusy] = useState(false);
   const frozen = useRef<{ readonly attempt: IntentAttempt; readonly input: RequestIntentInput; postsStarted: number } | null>(null);
   const locked = useRef(false);
+  const hcgHoldConfirmed = useRef(false);
   const mounted = useRef(true);
   const heading = useRef<HTMLHeadingElement>(null);
   const contactHeading = useRef<HTMLHeadingElement>(null);
@@ -149,6 +197,25 @@ function RequestIntentFormSession({
   const [hintItem, setHintItem] = useState<RequestIntentCatalogItem | null>(null);
   const [hintChecked, setHintChecked] = useState(false);
   const hintKey = entryIntent ? JSON.stringify(entryIntent) : "";
+
+  const confirmHcgHold = useCallback(() => {
+    if (hcgHoldConfirmed.current) return;
+    hcgHoldConfirmed.current = true;
+    setHintItem((prior) => prior && presentHeldHcg(prior));
+    setSelected((prior) => refreshHeldSelections(
+      prior, [...prior.values()].map(({ item }) => presentHeldHcg(item)),
+    ));
+    setCatalog((prior) => prior ? { ...prior, items: prior.items.map(presentHeldHcg) } : prior);
+  }, []);
+
+  function addCatalogSelection(item: RequestIntentCatalogItem, quantity: number) {
+    if (!item.selectableForReview || (hcgHoldConfirmed.current && hasHcgSource(item))) return;
+    const key = catalogItemKey(item);
+    setSelected((prior) => {
+      if (prior.has(key) || prior.size >= 200) return prior;
+      return new Map(prior).set(key, { item, quantity });
+    });
+  }
   useEffect(() => { onStepChange?.(step); }, [step, onStepChange]);
   useEffect(() => {
     let current = true;
@@ -158,6 +225,7 @@ function RequestIntentFormSession({
     // audience-scoped catalog; CARE never takes the old Research redirect.
     void (async () => {
       const matches: RequestIntentCatalogItem[] = [];
+      let sawHcgHold = false;
       let total: number | null = null, scanned = 0;
       const seen = new Set<string>();
       for (let page = 1; page <= 500; page += 1) {
@@ -171,20 +239,26 @@ function RequestIntentFormSession({
           const key = catalogItemKey(item);
           if (seen.has(key)) throw new Error("Ambiguous hint.");
           seen.add(key);
+          if (isHeldHcg(item)) sawHcgHold = true;
           if (matchesOrderEntryIntent(item, entryIntent)) matches.push(item);
         }
         scanned += result.items.length;
         if (scanned === total) {
+          if (sawHcgHold) confirmHcgHold();
           const match = matches.length === 1 ? matches[0] : null;
-          if (match?.selectableForReview && orderEntryQuantityAllowed(match, entryIntent.quantity)) setHintItem(match);
+          if (match && (isHeldHcg(match) ||
+            (match.selectableForReview && orderEntryQuantityAllowed(match, entryIntent.quantity)))) {
+            setHintItem(hcgHoldConfirmed.current ? presentHeldHcg(match) : match);
+          }
           setHintChecked(true); return;
         }
       }
       throw new Error("Incomplete hint.");
     })().catch(() => { if (current) setHintChecked(true); });
     return () => { current = false; };
-  }, [api, hintKey, restored, reopened]);
+  }, [api, hintKey, restored, reopened, confirmHcgHold]);
   const selections = [...selected.values()];
+  const hasHeldSelection = selections.some(({ item }) => item.intentExclusion === "specification_review");
   const selectedUnits = selections.reduce((total, selection) => total + selection.quantity, 0);
   const selectedProducts = new Set(selections.map(({ item }) => item.productId)).size;
   const requirements = config ? requiredAcknowledgmentEntries(config, selections.some(({ item }) => item.researchUseOnly)) : [];
@@ -211,10 +285,16 @@ function RequestIntentFormSession({
     setCatalog(null);
     setCatalogFailed(false);
     void api.catalog({ search, family: family || undefined, page, pageSize: 24 })
-      .then((value) => { if (current) setCatalog(value); })
+      .then((value) => {
+        if (!current) return;
+        if (value.items.some(isHeldHcg)) confirmHcgHold();
+        const items = hcgHoldConfirmed.current ? value.items.map(presentHeldHcg) : value.items;
+        setCatalog(items === value.items ? value : { ...value, items });
+        setSelected((prior) => refreshHeldSelections(prior, items));
+      })
       .catch(() => { if (current) setCatalogFailed(true); });
     return () => { current = false; };
-  }, [api, search, family, page, restored, reopened, catalogRetry]);
+  }, [api, search, family, page, restored, reopened, catalogRetry, confirmHcgHold]);
 
   async function refreshRequirements() {
     if (locked.current || !requirementsNeedRefresh || frozen.current) return;
@@ -253,6 +333,10 @@ function RequestIntentFormSession({
   }
   function captureContact(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (hasHeldSelection) {
+      setError("Remove the held selection before continuing.");
+      return;
+    }
     const data = new FormData(event.currentTarget);
     const text = (name: string) => String(data.get(name) ?? "");
     const address = (prefix: string) => validateAddress(prefix, {
@@ -271,6 +355,10 @@ function RequestIntentFormSession({
   }
   async function submit() {
     if (locked.current || !storage || !config || !contact || !continuationEnabled || requirementsNeedRefresh) return;
+    if (!frozen.current && hasHeldSelection) {
+      setError("Remove the held selection before sending a new request.");
+      return;
+    }
     locked.current = true; setBusy(true);
     let firstPost = false;
     let sentSnapshot: typeof frozen.current = null;
@@ -324,7 +412,13 @@ function RequestIntentFormSession({
           setRequirementsNeedRefresh(true);
           setError("This request was not saved. Review the current access policy and refresh the request requirements before submitting again. Your selections and contact details are still on this page. Nothing will be submitted automatically.");
           onAgreementStandingRequired();
-        } else setError(intentRefusalGuidance(error));
+        } else {
+          if (error.status === 400 && error.code === "selection_requires_refresh" &&
+            selections.some(({ item }) => hasHcgSource(item))) {
+            confirmHcgHold();
+          }
+          setError(intentRefusalGuidance(error));
+        }
       } else if (mounted.current) {
         setError(REQUEST_INTENT_RECOVERY_NOTICE);
       }
@@ -401,10 +495,11 @@ function RequestIntentFormSession({
         <h2>Selection from your link</h2>
         <p>{!hintChecked ? "Checking the exact product and quantity..." : !hintItem
           ? "The current catalog did not confirm one requestable match. Review the catalog below; no item was added."
+          : isHeldHcg(hintItem) ? hintItem.actionLabel
           : hintItem.productName + " | Requested quantity: " + entryIntent.quantity}</p>
-        {hintItem && <button type="button" disabled={selected.has(catalogItemKey(hintItem)) || selected.size >= 200}
-          onClick={() => setSelected((prior) => new Map(prior).set(catalogItemKey(hintItem),
-            { item: hintItem, quantity: entryIntent.quantity }))}>Add linked selection for review</button>}
+        {hintItem?.selectableForReview && !isHeldHcg(hintItem) &&
+          <button type="button" disabled={selected.has(catalogItemKey(hintItem)) || selected.size >= 200}
+            onClick={() => addCatalogSelection(hintItem, entryIntent.quantity)}>Add linked selection for review</button>}
         <p>A link never approves a clinical item or places an order.</p>
       </section>}
       {showEarlyAccessGuide && <EarlyAccessRequestGuide browseTargetId="early-access-catalog" />}
@@ -455,7 +550,10 @@ function RequestIntentFormSession({
           </div>
           <div className="xenios-order-card-actions">
           {showDetails && <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />}
-          {!item.selectableForReview ? <p>{item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"}</p> : selection
+          {!item.selectableForReview ? <p>{
+            item.intentExclusion === "specification_review" ? item.actionLabel
+              : item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"
+          }</p> : selection
             ? <div className="xenios-order-quantity">
               <button type="button" aria-label={"Decrease requested quantity for " + item.productName}
                 disabled={clampQuantity(item, selection.quantity - item.quantityIncrement) === selection.quantity}
@@ -476,7 +574,7 @@ function RequestIntentFormSession({
               <button type="button" className="xenios-order-link" onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
             : <button type="button" className="xenios-order-button" disabled={selected.size >= 200}
                 aria-label={compactGuestCatalog ? "Add to request: " + item.productName + (item.specification ? ", " + item.specification : "") : undefined}
-                onClick={() => setSelected((prior) => new Map(prior).set(key, { item, quantity: item.minimumQuantity }))}>{compactGuestCatalog ? "Add to request" : "Add " + item.productName + " to request"}</button>}
+                onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{compactGuestCatalog ? "Add to request" : "Add " + item.productName + " to request"}</button>}
           </div>
         </article>;
       })}</div>
@@ -496,7 +594,9 @@ function RequestIntentFormSession({
           {selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
             <strong>{item.productName}</strong><span>{item.specification || item.variantId}</span>
             <span>Requested quantity: {quantity}</span>
-            {editingSelection === catalogItemKey(item) ? <>
+            {item.intentExclusion === "specification_review"
+              ? <span>{item.actionLabel}. Remove this selection to continue.</span>
+              : editingSelection === catalogItemKey(item) ? <>
               <label>Requested quantity for selected {item.productName} {item.specification || item.variantId}
                 <input type="number" min={item.minimumQuantity} max={item.maximumQuantity ?? undefined}
                   step={item.quantityIncrement} value={quantity} autoFocus
@@ -512,7 +612,7 @@ function RequestIntentFormSession({
           </li>)}
         </ul>}
         <p className="xenios-order-small">A request is not an approved order. Final quantities, prices and availability require review.</p>
-        <button className="xenios-order-button" disabled={!selected.size || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>{EARLY_ACCESS_REQUEST_CTA.details}</button>
+        <button className="xenios-order-button" disabled={!selected.size || hasHeldSelection || !config || !storage || !continuationEnabled} onClick={() => { setStep("contact"); setError(""); }}>{EARLY_ACCESS_REQUEST_CTA.details}</button>
         </div>
       </aside></div>
     </>}
@@ -529,18 +629,26 @@ function RequestIntentFormSession({
       }} />Billing address is the same</label>
       {!billingSame && addressFields("billing", "Billing address")}
       <label className="xenios-order-check"><input name="age" type="checkbox" required defaultChecked={contactDraft ? contactDraft.get("age") === "on" : contact?.ageConfirmed ?? false} />I confirm I am at least 18 years old.</label>
+      {hasHeldSelection && <p role="status">Remove the held selection before continuing.</p>}
       <div className="xenios-order-actions"><button type="button" onClick={(event) => {
         const form = event.currentTarget.form;
         if (!form) return;
         rememberContactDraft(form); setStep("products");
-      }}>Back to products</button><button className="xenios-order-button" type="submit">{EARLY_ACCESS_REQUEST_CTA.finalReview}</button></div>
+      }}>Back to products</button><button className="xenios-order-button" type="submit" disabled={hasHeldSelection}>{EARLY_ACCESS_REQUEST_CTA.finalReview}</button></div>
     </form>}
     {step === "review" && <section className="xenios-order-panel"><h2>{EARLY_ACCESS_REQUEST_CTA.finalHeading}</h2>
       <p>{hasFrozenAttempt
         ? "If the result is unconfirmed, choose Retry same request to send the original details again."
         : "Check your items and contact details, then choose Submit request. The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
-      <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>{item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | Pending {item.clinicalReviewRequired ? "clinical" : "internal"} review</li>)}</ul>
+      <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
+        {item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | {
+          item.intentExclusion === "specification_review"
+            ? item.actionLabel
+            : "Pending " + (item.clinicalReviewRequired ? "clinical" : "internal") + " review"
+        }
+      </li>)}</ul>
+      {hasHeldSelection && !frozen.current && <p role="status">Remove the held selection before sending a new request.</p>}
       <fieldset disabled={busy || frozen.current !== null} className="xenios-order-acknowledgments"><legend>Confirm the current requirements</legend>
         {requirements.map((entry) => { const key = agreementRequirementKey(entry); return <label className="xenios-order-check" key={key}>
           <input type="checkbox" checked={acknowledged.has(key)} onChange={(event) => setAcknowledged((prior) => {
@@ -549,7 +657,7 @@ function RequestIntentFormSession({
       <p>{REQUEST_INTENT_NOTICE}</p><p>Delivery dates are not guaranteed by this request. The team must confirm any proposed arrival date after review.</p>
       <div className="xenios-order-actions">
         <button disabled={busy || frozen.current !== null} onClick={() => { setAcknowledged(new Set()); setStep("products"); }}>Edit selection</button>
-        <button className="xenios-order-button" disabled={busy || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
+        <button className="xenios-order-button" disabled={busy || (!frozen.current && hasHeldSelection) || !continuationEnabled || !requirements.length || requirements.some((entry) => !acknowledged.has(agreementRequirementKey(entry)))}
           onClick={() => void submit()}>{finalRequestActionLabel(hasFrozenAttempt, busy && hasFrozenAttempt)}</button>
       </div><a href="/research/support">Contact support</a>
     </section>}
@@ -565,6 +673,7 @@ function RequestIntentFormSession({
       focusContactHeading={() => contactHeading.current?.focus()}
       onContinue={() => {
         if (!selected.size || !config || !storage || !continuationEnabled || busy || requirementsNeedRefresh) return;
+        if (hasHeldSelection) { setError("Remove the held selection before continuing."); return; }
         setStep("contact"); setError("");
       }}
       onSubmit={() => void submit()} />

@@ -32,7 +32,7 @@ export type RequestIntentCatalogItem = AssistedOrderCatalogItem & Readonly<{
   reviewedContent?: ReviewedProductContent;
   reviewedMedia?: ReviewedProductMedia;
   selectableForReview: boolean;
-  intentExclusion: "non_merchandise" | "coming_soon" | null;
+  intentExclusion: "non_merchandise" | "coming_soon" | "specification_review" | null;
   clinicalReviewRequired: boolean;
   sourceDisplayState: string;
   sourceVariantDisplayState: string;

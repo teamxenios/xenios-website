@@ -5,6 +5,7 @@ import { assistedOrderActionGroupFor, type AssistedOrderCatalogQuery } from "../
 import type { RequestIntentCatalogItem, RequestIntentCatalogPage } from "../../../../shared/research/assisted-order/request-intent";
 import { MASTER_OFFERING_FAMILIES, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
 import { directPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
+import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { authorityFor, type AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
 import { getReviewedProductContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
@@ -52,6 +53,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         const comingSoon = [offering.displayState, variant.displayState]
           .some((state) => state === "coming_soon" || state === "planned");
         const nonMerchandise = refusal === "non_merchandise_family";
+        const strengthReview = isHcgStrengthReview(offering.id, variant.id);
         const reviewedContent = getReviewedProductContent(offering, variant);
         const reviewedMedia = getReviewedProductMedia(offering, variant);
         items.push({
@@ -62,13 +64,15 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
           unitPriceCents: authority.providerWorkflowRequired ? null : item.unitPriceCents,
           priceVersion: authority.providerWorkflowRequired ? null : item.priceVersion,
           sourceSelection: { family: offering.family, slug: offering.slug, variantId: variant.id },
-          selectableForReview: !comingSoon && !nonMerchandise,
-          intentExclusion: nonMerchandise ? "non_merchandise" : comingSoon ? "coming_soon" : null,
+          selectableForReview: !strengthReview && !comingSoon && !nonMerchandise,
+          intentExclusion: strengthReview ? "specification_review"
+            : nonMerchandise ? "non_merchandise" : comingSoon ? "coming_soon" : null,
           clinicalReviewRequired: authority.providerWorkflowRequired,
           sourceDisplayState: offering.displayState,
           sourceVariantDisplayState: variant.displayState,
           sourceRefusal: refusal,
-          actionLabel: comingSoon ? "Coming soon" : nonMerchandise ? "Not a product request" : "Add to request",
+          actionLabel: strengthReview ? HCG_STRENGTH_REVIEW.actionLabel
+            : comingSoon ? "Coming soon" : nonMerchandise ? "Not a product request" : "Add to request",
         });
       }
       if (seen.size === total) return items;
