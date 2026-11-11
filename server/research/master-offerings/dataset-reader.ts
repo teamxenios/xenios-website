@@ -31,6 +31,7 @@ import {
 import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "@shared/research/master-offerings/hcg-strength-review";
 import { warmMasterOfferingSearch } from "./search";
 import { registerReviewedProductDataset } from "./reviewed-content";
+import { reviewedDisplayNameFor } from "./reviewed-display-names";
 import {
   MASTER_OFFERINGS_DATASET_ENV_VAR,
   resolveMasterOfferingDatasetLocation,
@@ -298,6 +299,12 @@ function readOffering(value: unknown): NormalizedMasterOffering {
   const strengthReview = value.family === HCG_STRENGTH_REVIEW.family &&
     variants.some((variant) => isHcgStrengthReview(id, variant.id));
   const aliases = Array.isArray(value.aliases) ? value.aliases.filter(nonBlank) : [];
+  // A reviewed heading replaces a generated display name that misstates the
+  // listing. Nothing else changes: the slug, the canonical name, the variant
+  // labels and the aliases are the dataset's. The dataset lists every
+  // listing's own display name among its aliases, which is what keeps the old
+  // words searchable; a test pins that.
+  const reviewedName = reviewedDisplayNameFor(id);
   return {
     id,
     slug: strengthReview ? HCG_STRENGTH_REVIEW.slug : value.slug,
@@ -305,7 +312,7 @@ function readOffering(value: unknown): NormalizedMasterOffering {
     // display path reads it, and reconstructing one here would put a private
     // identity back into a member-safe object.
     canonicalKey: "",
-    displayName: value.displayName,
+    displayName: reviewedName ?? value.displayName,
     canonicalName: nonBlank(value.canonicalName)
       ? value.canonicalName
       : value.displayName,
