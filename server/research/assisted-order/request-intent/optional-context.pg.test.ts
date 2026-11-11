@@ -149,6 +149,27 @@ describe("optional goal and referral code, before and after the optional-context
           "select public.request_intent_create_with_context('a','b','c','{}'::jsonb,'{}'::jsonb)")).rejects.toThrow();
       }
       await expect(fixture.asRole("service_role", "select count(*) from request_intent_private.optional_context")).rejects.toThrow();
+      // The calls above would also be refused by the functions' own checks, so they do not
+      // prove the revoke. The grant itself: execute for the backend role and for no customer role.
+      for (const signature of [
+        "request_intent_private.create_with_context(text,text,text,jsonb,jsonb)",
+        "request_intent_private.staff_get_with_context(uuid,uuid)",
+        "public.request_intent_create_with_context(text,text,text,jsonb,jsonb)",
+        "public.request_intent_staff_get_with_context(uuid,uuid)",
+      ]) {
+        const may = async (role: string) =>
+          (await sql("select has_function_privilege($1, $2, 'execute') as ok", [role, signature])).rows[0].ok;
+        expect(await may("anon"), signature).toBe(false);
+        expect(await may("authenticated"), signature).toBe(false);
+        expect(await may("service_role"), signature).toBe(true);
+      }
+      // And no role holds any privilege on the table.
+      for (const role of ["anon", "authenticated", "service_role"]) {
+        for (const privilege of ["select", "insert", "update", "delete"]) {
+          expect((await sql("select has_table_privilege($1, 'request_intent_private.optional_context', $2) as ok",
+            [role, privilege])).rows[0].ok, role + " " + privilege).toBe(false);
+        }
+      }
     } finally {
       await fixture.close();
     }
