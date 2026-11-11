@@ -552,7 +552,7 @@ function RequestIntentFormSession({
       </section>}
       {continuationEnabled && config?.optionalIntakeEnabled && <details className="xenios-order-panel">
         <summary>Tell us what you need (optional)</summary>
-        <p>Skip either question. Answers are shared privately with the review team only if you submit this request. Please leave out health or medical details.</p>
+        <p>You can skip either question. Your answers go to the review team only if you send this request. The team can explain a listing, availability and how requests work. For questions about your own care, ask your healthcare provider.</p>
         <label>What would you like help with?<select value={goal}
           onChange={e => setGoal(e.target.value as RequestGoal | "")}>
           <option value="">Skip this question</option>
@@ -560,6 +560,7 @@ function RequestIntentFormSession({
         </select></label>
         <label>Referral code (optional)<input value={referralCode} maxLength={24} autoComplete="off"
           spellCheck={false} onChange={e => setReferralCode(e.target.value)} /></label>
+        <p>We record the code with your request. It does not change which products you can see or request.</p>
         {referralCode.trim() && !/^[A-Za-z0-9][A-Za-z0-9-]{1,23}$/.test(referralCode.trim()) &&
           <p role="alert">Use 2–24 letters, numbers or hyphens, or clear the code to skip.</p>}
       </details>}
