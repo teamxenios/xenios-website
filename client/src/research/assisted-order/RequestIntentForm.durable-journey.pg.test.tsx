@@ -160,8 +160,8 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       // Quote-only: a card with no catalog price says so and shows no amount.
       expect(cards[1].textContent).toContain("Request a quote");
       expect(cards[1].textContent).not.toMatch(/\$\s?\d/);
-      await click("Add Synthetic 1 to request");
-      await click("Add Synthetic 2 to request");
+      await click("Add Synthetic 1 to quote cart");
+      await click("Add Synthetic 2 to quote cart");
       const quantities = [...host.querySelectorAll<HTMLInputElement>("article input[type=number]")];
       expect(quantities).toHaveLength(2);
       expect(quantities.map((input) => [input.min, input.max, input.step])).toEqual([["1", "100", "1"], ["1", "100", "1"]]);
@@ -184,15 +184,15 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(host.textContent).toContain("Submit your request");
       expect(host.textContent).toContain("Synthetic 1 | Synthetic exact variant 1 | Requested quantity: 2 | Pending clinical review");
       expect(host.textContent).toContain("Synthetic 2 | Synthetic exact variant 2 | Requested quantity: 3 | Pending internal review");
-      expect(button("Submit request").disabled).toBe(true);
-      await click("Submit request");
+      expect(button("Request a quote").disabled).toBe(true);
+      await click("Request a quote");
       const checks = [...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")];
       expect(checks.map((input) => input.closest("label")?.textContent)).toEqual([
         "I have read and accept the fixture-terms policy.", ...acknowledgments.map((ack) => ack.copy),
       ]);
       for (const check of checks.slice(0, -1)) await act(async () => check.click());
-      expect(button("Submit request").disabled).toBe(true);
-      await click("Submit request");
+      expect(button("Request a quote").disabled).toBe(true);
+      await click("Request a quote");
       expect(submitExchanges()).toHaveLength(0);
       expect(await fixture.counts()).toEqual({ requests: 0, submitted: 0, events: 0 });
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -207,8 +207,8 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(await fixture.counts()).toEqual({ requests: 0, submitted: 0, events: 0 });
       expect(rpc.calls.filter((name) => name === "request_intent_create_or_replay")).toEqual([]);
       await act(async () => checks[checks.length - 1].click());
-      expect(button("Submit request").disabled).toBe(false);
-      await click("Submit request");
+      expect(button("Request a quote").disabled).toBe(false);
+      await click("Request a quote");
       await settles(() => expect(host.querySelector('[role="alert"]')?.textContent).toBe(REQUEST_INTENT_RECOVERY_NOTICE));
       expect(submitExchanges()).toHaveLength(3);
       const sent = submitExchanges()[2];
@@ -306,7 +306,7 @@ describe("mounted guest request through disposable PostgreSQL to mounted operato
       expect(Date.parse(receipt.createdAt)).toBe(saved.created_at.getTime());
       expect(host.querySelector('[role="status"]')?.textContent).toBe("Your request reference is " + saved.public_reference + ".");
       expect(host.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
-      expect(host.textContent).not.toContain("Submit request");
+      expect(host.textContent).not.toContain("Request a quote");
       expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
       expect(submitExchanges()).toHaveLength(3); // Recovery never silently resubmits.
       for (let replay = 0; replay < 2; replay += 1) expect(await guestApi.submit(input)).toEqual(receipt);

@@ -14,7 +14,7 @@ vi.mock("./persistent-request-bar.css", () => ({}));
 const item: RequestIntentCatalogItem = { productId: "synthetic", variantId: "synthetic-variant",
   productName: "Synthetic product", family: "research_peptides_materials", channel: "synthetic", specification: "Synthetic selection",
   format: null, packBasis: null, minimumQuantity: 1, maximumQuantity: 10, quantityIncrement: 1,
-  unitPriceCents: null, currency: "USD", workflowMode: "request_pricing", actionLabel: "Add to request", accessNotice: null,
+  unitPriceCents: null, currency: "USD", workflowMode: "request_pricing", actionLabel: "Add to quote cart", accessNotice: null,
   researchUseOnly: true, catalogVersion: "synthetic", priceVersion: null,
   selectableForReview: true, intentExclusion: null, clinicalReviewRequired: false,
   sourceDisplayState: "request_access", sourceVariantDisplayState: "request_access", sourceRefusal: null };

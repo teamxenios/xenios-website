@@ -10,8 +10,8 @@ describe("request-specific labels and explanatory copy", () => {
     expect(EARLY_ACCESS_BRAND.name).toBe("Xenios Care + Research");
     expect(EARLY_ACCESS_BRAND.wordmarkSuffix).toBe("care + research");
   });
-  it("uses Submit request only for the final new-request action", () => {
-    expect(finalRequestActionLabel(false)).toBe("Submit request");
+  it("uses Request a quote only for the final new-request action", () => {
+    expect(finalRequestActionLabel(false)).toBe("Request a quote");
     expect(EARLY_ACCESS_REQUEST_CTA.finalReview).toBe("Continue to submit request");
     expect(EARLY_ACCESS_REQUEST_CTA.details).toBe("Continue to details");
   });

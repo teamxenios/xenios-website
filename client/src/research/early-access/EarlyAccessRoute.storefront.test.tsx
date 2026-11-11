@@ -360,7 +360,7 @@ describe("the login-free request-only entry", () => {
       await act(async () => { await new Promise((resolve) => setTimeout(resolve, 25)); });
       add = [...container.querySelectorAll("button")].find((button) => surface === "guest"
         ? button.getAttribute("aria-label") === "Add to request: Kisspeptin, KISSPEPTIN 10 mg"
-        : button.textContent === "Add Kisspeptin to request");
+        : button.textContent === "Add Kisspeptin to quote cart");
     }
     expect(add).toBeTruthy();
     return add!;
@@ -996,7 +996,7 @@ describe("the login-free request-only entry", () => {
     act(() => container.querySelector<HTMLInputElement>('input[name="age"]')!.click());
     await act(async () => container.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
     act(() => container.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
-    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Submit request")!;
+    const submit = [...container.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!;
     await act(async () => submit.click());
     expect(container.textContent).toContain("XRI-30000000000040008000000000000001");
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();

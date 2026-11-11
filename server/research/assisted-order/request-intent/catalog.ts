@@ -92,7 +92,7 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
             ? HCG_STRENGTH_REVIEW.actionLabel
             : comingSoon ? "Coming soon"
             : nonMerchandise ? (input.allListedInquirable === true ? "Supply or service inquiry" : "Not a product request")
-            : "Add to request",
+            : "Add to quote cart",
         });
       }
       if (seen.size === total) return items;

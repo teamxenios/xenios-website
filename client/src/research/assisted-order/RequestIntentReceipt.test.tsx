@@ -67,7 +67,7 @@ describe("confirmed receipt wording and heading level", () => {
   it("states what a review request covers without asking the customer to submit again", async () => {
     await act(async () => root.render(<RequestIntentReceipt receipt={receipt} />));
     expect(container.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
-    expect(container.textContent).not.toContain("Submit request");
+    expect(container.textContent).not.toContain("Request a quote");
   });
   it("renders its heading at the level the surrounding page needs, and focuses it the same way", async () => {
     await act(async () => root.render(<RequestIntentReceipt receipt={receipt} headingLevel={2} focusOnMount />));

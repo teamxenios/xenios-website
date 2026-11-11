@@ -103,6 +103,37 @@ describe("reviewed inquiry review states", () => {
     }
   });
 
+  it("keeps the reason and the sentence when the quote-only list replaces a row's action label", async () => {
+    const quoteOnly = new RequestIntentService({
+      catalog, hasher, quoteOnly: true,
+      repository: { findAttempt: async () => null, createOrReplay: async () => { throw new Error("unused"); } },
+      standing: { accepted: async () => true }, legal: { requiredAgreements: async () => [] },
+      clock: { now: () => new Date("2026-11-11T00:00:00.000Z") },
+      ids: { uuid: () => "unused", publicReference: () => "unused", opaqueToken: () => "unused" },
+    });
+    const rows = [];
+    for (let page = 1; ; page += 1) {
+      const result = await quoteOnly.list(viewer, { page, pageSize: 100 });
+      rows.push(...result.items);
+      if (rows.length >= result.total) break;
+    }
+    const stated = rows.filter((row) => row.sourceSelection
+      && inquiryReviewCodeForVariant(row.sourceSelection.variantId) !== null);
+    expect(stated).toHaveLength(records.length);
+    for (const row of stated) {
+      const record = records.find((entry) => entry.sourceVariantId === row.sourceSelection!.variantId)!;
+      // The two things the form prints the status from survive the quote-only list.
+      expect(row.intentExclusion).not.toBeNull();
+      expect(row.accessNotice).toBe(record.customerMessage);
+      expect(row.unitPriceCents).toBeNull();
+    }
+    // The action label does not always survive: for some workflows the list replaces
+    // it with the quote wording. That is why the form does not read the status from it.
+    const labels = new Set(stated.filter((row) => row.selectableForReview).map((row) => row.actionLabel));
+    expect([...labels].every((label) => label === "Details under review" || label === "Request a quote")).toBe(true);
+    expect(JSON.stringify(rows)).not.toContain("staffReviewCode");
+  });
+
   it("adds the review code to a line only when staff read the request", async () => {
     const record = records[0];
     const stored: RequestIntentDetail = {

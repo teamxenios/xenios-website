@@ -1,10 +1,10 @@
 /** Customer-facing copy only. Never determines eligibility, consent or payment. */
 export const EARLY_ACCESS_REQUEST_CTA = Object.freeze({
-  add: "Add to request",
+  add: "Add to quote cart",
   view: "View request",
   details: "Continue to details",
   finalReview: "Continue to submit request",
-  submit: "Submit request",
+  submit: "Request a quote",
   retry: "Retry same request",
   submitting: "Submitting request…",
   finalHeading: "Submit your request",
@@ -33,13 +33,13 @@ export type RequestJourneyStep = Readonly<{ id: string; title: string; descripti
 /** Founder-described process. Future steps, not evidence that any action occurred. */
 export const EARLY_ACCESS_REQUEST_STEPS: readonly RequestJourneyStep[] = Object.freeze([
   Object.freeze({ id: "choose", title: "Choose your products",
-    description: "Read the descriptions and intended use, then add eligible items to your request." }),
+    description: "Read the descriptions and intended use, then add items to your quote cart." }),
   Object.freeze({ id: "submit", title: "Submit your request",
-    description: "Enter your contact and delivery details, check your selections and acknowledgments, then select Submit request. No payment is collected here." }),
+    description: "Enter your contact and delivery details, check your selections and acknowledgments, then select Request a quote. No payment is collected here." }),
   Object.freeze({ id: "team", title: "Our team reviews it",
     description: "Once saved, your request is available to the team for review. We follow up about the items and any information needed." }),
   Object.freeze({ id: "clinical", title: "Clinical review, when needed",
-    description: "For clinical products, a clinician contacts you and decides whether the requested treatment is appropriate. Nonclinical items follow their own product requirements." }),
+    description: "For clinical products, requests go through the provider pathway, where a licensed clinician decides whether the product is appropriate. Nonclinical items follow their own product requirements." }),
   Object.freeze({ id: "decision", title: "Decision and payment options",
     description: "We let you know whether the request can proceed. For approved, available items, the team confirms the price and payment options. Items that are not approved do not proceed to payment." }),
 ]);
@@ -48,7 +48,7 @@ export const EARLY_ACCESS_RECEIPT_STEPS: readonly RequestJourneyStep[] = Object.
   Object.freeze({ id: "review", title: "Team review",
     description: "Our team reviews the selected products and uses the contact details you provided if more information is needed." }),
   Object.freeze({ id: "assessment", title: "The right checks for each item",
-    description: "For clinical products, a clinician contacts you to assess whether treatment is appropriate. Nonclinical items follow their own requirements and availability checks." }),
+    description: "For clinical products, requests go through the provider pathway, where a licensed clinician decides whether the product is appropriate. Nonclinical items follow their own requirements and availability checks." }),
   Object.freeze({ id: "decision", title: "A clear decision",
     description: "The team lets you know which items can proceed, which need more information and which cannot be approved." }),
   Object.freeze({ id: "payment", title: "Pricing and payment options",

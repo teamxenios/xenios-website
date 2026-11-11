@@ -35,6 +35,11 @@ function hasHcgSource(item: RequestIntentCatalogItem): boolean {
     (source.slug === HCG_STRENGTH_REVIEW.legacySlug || source.slug === HCG_STRENGTH_REVIEW.slug);
 }
 
+// The status of any row whose details are under review. It is printed from this
+// constant, never from the row's action label, which the quote-only list may
+// replace with the quote wording.
+const DETAILS_UNDER_REVIEW = HCG_STRENGTH_REVIEW.actionLabel;
+
 function isHeldHcg(item: RequestIntentCatalogItem): boolean {
   return item.intentExclusion === "specification_review" && hasHcgSource(item);
 }
@@ -489,7 +494,7 @@ function RequestIntentFormSession({
         <h2>Selection from your link</h2>
         <p>{!hintChecked ? "Checking the exact product and quantity..." : !hintItem
           ? "The current catalog did not confirm one requestable match. Review the catalog below; no item was added."
-          : hintItem.productName + (isHeldHcg(hintItem) ? " | " + hintItem.actionLabel : "")
+          : hintItem.productName + (hintItem.intentExclusion === "specification_review" ? " | " + DETAILS_UNDER_REVIEW : "")
             + " | Requested quantity: " + entryIntent.quantity}</p>
         {hintItem?.selectableForReview &&
           <button type="button" disabled={selected.has(catalogItemKey(hintItem)) || selected.size >= 200}
@@ -542,12 +547,12 @@ function RequestIntentFormSession({
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
             <p>{requestIntentPriceNote(item)}</p>
             {item.intentExclusion === "specification_review" && item.selectableForReview && <p>
-              <strong>{item.actionLabel}.</strong> {item.accessNotice ?? "You can still add it to your request."}</p>}
+              <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.accessNotice ?? "You can still add it to your request."}</p>}
           </div>
           <div className="xenios-order-card-actions">
           {showDetails && <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />}
           {!item.selectableForReview ? <p>{
-            item.intentExclusion === "specification_review" ? item.actionLabel
+            item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
               : item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"
           }</p> : selection
             ? <div className="xenios-order-quantity">
@@ -570,7 +575,7 @@ function RequestIntentFormSession({
               <button type="button" className="xenios-order-link" onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
             : <button type="button" className="xenios-order-button" disabled={selected.size >= 200}
                 aria-label={compactGuestCatalog ? "Add to request: " + item.productName + (item.specification ? ", " + item.specification : "") : undefined}
-                onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{compactGuestCatalog ? "Add to request" : "Add " + item.productName + " to request"}</button>}
+                onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{compactGuestCatalog ? EARLY_ACCESS_REQUEST_CTA.add : "Add " + item.productName + " to quote cart"}</button>}
           </div>
         </article>;
       })}</div>
@@ -590,7 +595,7 @@ function RequestIntentFormSession({
           {selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
             <strong>{item.productName}</strong><span>{item.specification || item.variantId}</span>
             <span>Requested quantity: {quantity}</span>
-            {item.intentExclusion === "specification_review" && <span>{item.actionLabel}</span>}
+            {item.intentExclusion === "specification_review" && <span>{DETAILS_UNDER_REVIEW}</span>}
             {editingSelection === catalogItemKey(item) ? <>
               <label>Requested quantity for selected {item.productName} {item.specification || item.variantId}
                 <input type="number" min={item.minimumQuantity} max={item.maximumQuantity ?? undefined}
@@ -633,12 +638,12 @@ function RequestIntentFormSession({
     {step === "review" && <section className="xenios-order-panel"><h2>{EARLY_ACCESS_REQUEST_CTA.finalHeading}</h2>
       <p>{hasFrozenAttempt
         ? "If the result is unconfirmed, choose Retry same request to send the original details again."
-        : "Check your items and contact details, then choose Submit request. The team will review your request before any approval or payment."}</p>
+        : "Check your items and contact details, then choose Request a quote. The team will review your request before any approval or payment."}</p>
       <p>{contact?.fullLegalName} | {contact?.email}</p>
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
         {item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | {
           item.intentExclusion === "specification_review"
-            ? item.actionLabel
+            ? DETAILS_UNDER_REVIEW
             : "Pending " + (item.clinicalReviewRequired ? "clinical" : "internal") + " review"
         }
       </li>)}</ul>

@@ -18,7 +18,7 @@ function item(id: string, clinical: boolean): RequestIntentCatalogItem {
     productId: id, variantId: id + "-variant", productName: "Synthetic " + id, family: clinical ? "clinical_formulations_503a" : "research_peptides_materials",
     channel: "synthetic", specification: "synthetic variant", format: null, packBasis: null,
     minimumQuantity: 1, maximumQuantity: 100, quantityIncrement: 1, unitPriceCents: null, currency: "USD",
-    workflowMode: clinical ? "provider_request" : "direct_order_request", actionLabel: "Add to request",
+    workflowMode: clinical ? "provider_request" : "direct_order_request", actionLabel: "Add to quote cart",
     accessNotice: null, researchUseOnly: !clinical, catalogVersion: "synthetic-catalog", priceVersion: null,
     sourceSelection: { family: clinical ? "clinical_formulations_503a" : "research_peptides_materials", slug: id, variantId: "source-" + id },
     selectableForReview: true, intentExclusion: null, clinicalReviewRequired: clinical,
