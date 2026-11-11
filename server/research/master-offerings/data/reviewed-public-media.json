@@ -3194,6 +3194,28 @@
       "sourceCommit": "56cc9fd25bf2b58776c7b0a3228a16a4a8127448",
       "primarySha256": "bec5d8d3b736c35176eb2dc7451c88362bb3a49c6de81fcabb122be515688d60",
       "labelPreviewSha256": "32d2e7a154ac8781c72c89044e85a264f092a43c292e95a8b037cac82cb97c74"
+    },
+    {
+      "offeringId": "mo_ef095e8f7e8fe3a7f85d",
+      "sourceVariantId": "mov_50fc8d22f6777f3f0d4d",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/semaglutide-bpc-157-5mg-650mcg-label-card-v1-1024.webp",
+          "altText": "Xenios Semaglutide + BPC-157, 5 mg/650 mcg, label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semaglutide-bpc-157-5mg-650mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Semaglutide + BPC-157, 5 mg/650 mcg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "937706f6a19982d9902d02c8799212f3c09c5f54",
+      "primarySha256": "9d26a92110ba658900b677afcd5f593a05d0821253ca7c4e4428fad5781945ee",
+      "labelPreviewSha256": "805e5fce2c2925e3c274b805c562798ea0169b0f7d62a1b34246995b07227863"
     }
   ]
 }
