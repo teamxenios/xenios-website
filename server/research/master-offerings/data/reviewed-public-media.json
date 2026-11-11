@@ -2555,6 +2555,138 @@
       "sourceCommit": "915b0f52078038ad9abfea52481d2062f77cab8b",
       "primarySha256": "394dcb26dc8368279df26004a1c0a69ceb19f35f32e5b8b2ff4d39d3b17149c6",
       "labelPreviewSha256": "a5c78e959f19e1708afb5ff8bc5ef9edc36af06a49938e547d745f88cd04954d"
+    },
+    {
+      "offeringId": "mo_2fb4e0f567f434b55b20",
+      "sourceVariantId": "mov_9a217007a7fb93111200",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/gonadorelin-10mg-label-card-v1-1024.webp",
+          "altText": "Xenios Gonadorelin 10 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/gonadorelin-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Gonadorelin 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
+      "primarySha256": "36bf118e6c91cee9d0bb8719410ec5a6ca3d2470a927b48d4070f77041a5b745",
+      "labelPreviewSha256": "62b44088b385bea75b82e84b702580ff3e252a216ac443b0a0ec49279335fb4f"
+    },
+    {
+      "offeringId": "mo_f4298f80cc7aa9f1046a",
+      "sourceVariantId": "mov_dc6c3bf9bc23dd55adc1",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/pt-141-5mg-label-card-v1-1024.webp",
+          "altText": "Xenios PT-141 5 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/pt-141-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios PT-141 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
+      "primarySha256": "ac8f48ca81267adb9b5540900d2ba8e6bca73666f973d613d32f85fe0a15eb78",
+      "labelPreviewSha256": "a8b2083ea236b5c955bfd821d3916c9533e453e43129db935eeca296e54013ef"
+    },
+    {
+      "offeringId": "mo_d1a6493665b6ba628c2a",
+      "sourceVariantId": "mov_361af70608afc9c98ec0",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/ghk-cu-75mg-label-card-v1-1024.webp",
+          "altText": "Xenios GHK-Cu 75 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghk-cu-75mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios GHK-Cu 75 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
+      "primarySha256": "acc7c55553997392a80077c13a955c3d26fb1301cfcbf11e871568bbf61244f8",
+      "labelPreviewSha256": "77e6220578f8b6cfbf65852648e2932476640cd7d5406dec588382b5925f53b7"
+    },
+    {
+      "offeringId": "mo_4c07e82051ba4c95297b",
+      "sourceVariantId": "mov_451f34fca5c1a293b145",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/bpc-157-20mg-label-card-v1-1024.webp",
+          "altText": "Xenios BPC-157 20 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-20mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 20 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
+      "primarySha256": "13b828cf77abd322d5da7ab2d74dc192f96a859a848544e111bb86b895efe49b",
+      "labelPreviewSha256": "82a65d630b3edc9ae230d2167f07112a8aa74a733a878698655fd441c408a330"
+    },
+    {
+      "offeringId": "mo_f35e748aed26af26e9e4",
+      "sourceVariantId": "mov_8bec8068d30d6f928040",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/semax-30mg-label-card-v1-1024.webp",
+          "altText": "Xenios Semax 30 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semax-30mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Semax 30 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
+      "primarySha256": "83c94e0423fa7eeaffdd01113422b3c80ff0ebc9cd2ff00830f9557c04904586",
+      "labelPreviewSha256": "60dbecdfb88885abdc21e71748017a40df34c04255188f9445d0a62040de2d5b"
+    },
+    {
+      "offeringId": "mo_1dd0658eb7bf15f91900",
+      "sourceVariantId": "mov_256cb0423eb6d2a77f65",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/oxytocin-10mg-label-card-v1-1024.webp",
+          "altText": "Xenios Oxytocin 10 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/oxytocin-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Oxytocin 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "88c7bb4f98df037c80f18946bb5b32a1e6a46d9d",
+      "primarySha256": "6d7e649765e950109554f74759e11869507f55c932b21d3744da5401afb5ad8a",
+      "labelPreviewSha256": "288f141dda49e34269f9720387349d209db42505b497171a371e4733b3fd107e"
     }
   ]
 }
