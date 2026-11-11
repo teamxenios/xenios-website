@@ -38,7 +38,7 @@ async function mount(api: RequestIntentApi, continuationEnabled=true) {
     ownerKey="early-access-session" continuationEnabled={continuationEnabled} />));
 }
 async function click(button: HTMLButtonElement) { await act(async () => button.click()); }
-async function add() { await click(host.querySelector<HTMLButtonElement>('button[aria-label="Add to request: Synthetic product, Synthetic selection"]')!); }
+async function add() { await click(host.querySelector<HTMLButtonElement>('button[aria-label="Add to quote cart: Synthetic product, Synthetic selection"]')!); }
 async function prepareReview(api: RequestIntentApi) {
   await mount(api); await add(); await click(primary());
   const values={name:"Synthetic Person",email:"test@example.invalid",phone:"+15555550123",shippingLine1:"1 Test Lane",shippingCity:"Test",shippingRegion:"TX",shippingPostalCode:"00000",shippingCountryCode:"US"};

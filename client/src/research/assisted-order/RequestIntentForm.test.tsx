@@ -205,7 +205,7 @@ describe("mixed private request customer form source", () => {
     expect(fallbackImage?.getAttribute("alt")).toBe("Synthetic missing-source illustration, format unconfirmed");
     expect(missingSource.querySelector("figcaption")).toBeNull();
     expect(mapped.textContent).toContain("$12.50");
-    await click("Add to quote cart", "Add to request: Synthetic mapped, Synthetic variant");
+    await click("Add to quote cart", "Add to quote cart: Synthetic mapped, Synthetic variant");
     expect(mapped.querySelector('input[type="number"]')).not.toBeNull();
     expect(host.querySelector('aside img')).toBeNull();
 
@@ -224,7 +224,7 @@ describe("mixed private request customer form source", () => {
 
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       embedded ownerKey="early-access-session" />));
-    await click("Add to quote cart", "Add to request: Synthetic mapped, Synthetic 10 mg");
+    await click("Add to quote cart", "Add to quote cart: Synthetic mapped, Synthetic 10 mg");
     const quantity = host.querySelector<HTMLInputElement>(".xenios-order-card input[type=number]")!;
     await type(quantity, "3");
     expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.summary);

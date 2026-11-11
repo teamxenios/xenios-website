@@ -12,7 +12,7 @@ describe("request-specific labels and explanatory copy", () => {
   });
   it("uses Request a quote only for the final new-request action", () => {
     expect(finalRequestActionLabel(false)).toBe("Request a quote");
-    expect(EARLY_ACCESS_REQUEST_CTA.finalReview).toBe("Continue to submit request");
+    expect(EARLY_ACCESS_REQUEST_CTA.finalReview).toBe("Continue to request a quote");
     expect(EARLY_ACCESS_REQUEST_CTA.details).toBe("Continue to details");
   });
   it("keeps same-attempt retry distinct", () => {

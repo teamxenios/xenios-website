@@ -10,7 +10,7 @@ describe("consistent persistent-dock labels", () => {
     expect(requestBarAction({...ready,step:"products"})).toMatchObject({label:"Continue to details",type:"button",disabled:false});
   });
   it("uses the native contact form before final submission", () => {
-    expect(requestBarAction({...ready,step:"contact"})).toMatchObject({label:"Continue to submit request",type:"submit",disabled:false});
+    expect(requestBarAction({...ready,step:"contact"})).toMatchObject({label:"Continue to request a quote",type:"submit",disabled:false});
   });
   it("labels the existing final send action Request a quote", () => {
     expect(requestBarAction(ready)).toMatchObject({label:"Request a quote",type:"button",disabled:false});

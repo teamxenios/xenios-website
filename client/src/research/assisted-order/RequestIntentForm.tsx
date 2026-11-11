@@ -547,7 +547,7 @@ function RequestIntentFormSession({
             {item.sourceRefusal && <p>Current restriction: {restrictionCopy(item.sourceRefusal)} Adding a request does not remove this restriction.</p>}
             <p>{requestIntentPriceNote(item)}</p>
             {item.intentExclusion === "specification_review" && item.selectableForReview && <p>
-              <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.accessNotice ?? "You can still add it to your request."}</p>}
+              <strong>{DETAILS_UNDER_REVIEW}.</strong> {item.accessNotice ?? "You can still add it to your quote cart."}</p>}
           </div>
           <div className="xenios-order-card-actions">
           {showDetails && <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />}
@@ -574,7 +574,7 @@ function RequestIntentFormSession({
                 })}>+</button>
               <button type="button" className="xenios-order-link" onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
             : <button type="button" className="xenios-order-button" disabled={selected.size >= 200}
-                aria-label={compactGuestCatalog ? "Add to request: " + item.productName + (item.specification ? ", " + item.specification : "") : undefined}
+                aria-label={compactGuestCatalog ? "Add to quote cart: " + item.productName + (item.specification ? ", " + item.specification : "") : undefined}
                 onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{compactGuestCatalog ? EARLY_ACCESS_REQUEST_CTA.add : "Add " + item.productName + " to quote cart"}</button>}
           </div>
         </article>;

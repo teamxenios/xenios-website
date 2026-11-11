@@ -3,7 +3,7 @@ export const EARLY_ACCESS_REQUEST_CTA = Object.freeze({
   add: "Add to quote cart",
   view: "View request",
   details: "Continue to details",
-  finalReview: "Continue to submit request",
+  finalReview: "Continue to request a quote",
   submit: "Request a quote",
   retry: "Retry same request",
   submitting: "Submitting request…",
