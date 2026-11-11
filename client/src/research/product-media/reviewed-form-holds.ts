@@ -76,6 +76,16 @@ const unconfirmedOfferingByVariant = new Map<string, string>([
   ["mov_6c559c89db938c58e815", "mo_be72c9fb4d708d8a3eee"],
   ["mov_30d35dcbc0bc8d59ff5b", "mo_d5072d9cc26b1f898b6d"],
   ["mov_88fd1531d586cdebb896", "mo_b49627a2296975935e26"],
+  ["mov_2183aa9edb06f34ef3af", "mo_c600e7eb1c9f5fd03c80"],
+  ["mov_753d3f94385adf791d1e", "mo_7ba89975fb62ceb33b7b"],
+  ["mov_8293d0baa21eb4d561f8", "mo_75bc8d1ad93b04865e6c"],
+  ["mov_a2d32f69681dca2b17fb", "mo_4668304296fb55b51280"],
+  ["mov_fe292b5f03527ec13e5e", "mo_b2ebb969d48a20f9e680"],
+  ["mov_c58b682a44514760a74f", "mo_34fa0d12f1effd156e61"],
+  ["mov_8e11e063f79d56a3a946", "mo_143d09ffd9b13780f2d7"],
+  ["mov_257fd9d66f6284e3570e", "mo_2923115827ca8fe37d2c"],
+  ["mov_9e34d0c1acde46249621", "mo_a6f7f071ed946577ce56"],
+  ["mov_120b19d12e869b0070ff", "mo_aace3aded470921f6af2"],
 ]);
 
 export function isResearchFormUnconfirmed(variantId: string, offeringId?: string): boolean {
