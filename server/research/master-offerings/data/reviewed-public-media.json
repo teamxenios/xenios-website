@@ -3017,6 +3017,72 @@
       "sourceCommit": "4e95326e42be7dba8c48632cb5d130abfd3d4281",
       "primarySha256": "58422f76f1c385984a5a085ca5fbf147bb685b6a0aa4a197d5f6cca6d9f05a1e",
       "labelPreviewSha256": "8ec6d37a1b194b863f8600612a9cc4250eb042dbb92618990baafa7a74220125"
+    },
+    {
+      "offeringId": "mo_f3a48e654e93b4f7d0b9",
+      "sourceVariantId": "mov_7871c059b8a970a5b3d1",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/ll-37-complex-5mg-label-card-v1-1024.webp",
+          "altText": "Xenios LL-37 Complex 5 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ll-37-complex-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios LL-37 Complex 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "6a6b3ed4a88d2402802bf4762e60e18b6c103431",
+      "primarySha256": "3f4b1aab5493c4ff2dabc7b35ef1e6ca48468449ac9de721210b5bbbe9c23069",
+      "labelPreviewSha256": "67bed253f06b960f52810c530273f268078c30748abd325f4133c905559cc2a1"
+    },
+    {
+      "offeringId": "mo_9138595ccf6417877896",
+      "sourceVariantId": "mov_d2bd32bf961854a033b1",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/mgf-5mg-label-card-v1-1024.webp",
+          "altText": "Xenios MGF 5 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/mgf-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios MGF 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "6a6b3ed4a88d2402802bf4762e60e18b6c103431",
+      "primarySha256": "c8284bfbb0f59bf746c6cb07653b6f10142685abc1f81e2bce987da0bc6e6bd6",
+      "labelPreviewSha256": "77cb491a954ea5d129eff29ab940bb140906463bc430a111110ec3224a11330f"
+    },
+    {
+      "offeringId": "mo_13553ad94844151cf7c5",
+      "sourceVariantId": "mov_96f011e65e7b6a72f8c9",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/tesamorelin-8mg-label-card-v1-1024.webp",
+          "altText": "Xenios Tesamorelin 8 mg label design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesamorelin-8mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesamorelin 8 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "6a6b3ed4a88d2402802bf4762e60e18b6c103431",
+      "primarySha256": "6c4ad5d3bd1385d46ca947d180fd35441752b28e7ccee9d3132bea768a916d69",
+      "labelPreviewSha256": "b6ee77baac68545e525f030c4d57daa07449cb7116e3f0a45cd8898e2bdf7069"
     }
   ]
 }
