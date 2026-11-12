@@ -11,6 +11,7 @@ import PolicyPage from "./pages/PolicyPage";
 import { RequireMember } from "./pages/MemberArea";
 import { memberDestination } from "./lib/member-routing";
 import { ResearchLoadingState } from "./ui/kit";
+import "./type-scale.css";
 
 // xenios research: the section router (Supreme build). Canonical route flow:
 //   access family  -> gateway, apply, status, sign-in, reset, activate,
@@ -293,6 +294,8 @@ export default function ResearchSection() {
 
   return (
     <ResearchProvider>
+      {/* No box of its own (display: contents); it only scopes type-scale.css to the Research tree. */}
+      <div className="research-type-scale" style={{ display: "contents" }}>
       <ResearchLayout>
         <Switch>
           {/* The gateway */}
@@ -455,6 +458,7 @@ export default function ResearchSection() {
           <Route component={ResearchNotFound} />
         </Switch>
       </ResearchLayout>
+      </div>
     </ResearchProvider>
   );
 }

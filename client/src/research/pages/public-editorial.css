@@ -143,6 +143,15 @@
   }
 }
 
+/* The same one-column footer when the reader's text is enlarged. A media query's em follows the
+   browser's default text size: 16.25em is the 260px above at the default 16px, and 520px at 200%,
+   where "Accessibility" no longer fits its half of a phone-width footer. */
+@media (max-width: 16.25em) {
+  .public-editorial-footer-links {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (forced-colors: active) {
   .btn.public-editorial-action {
     border-color: ButtonText;
