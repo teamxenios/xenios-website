@@ -196,6 +196,52 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
   });
 
+  it("gives the two supply and service rows an Ask path on the card, and a cart line once the store accepts them", async () => {
+    // The two real rows the request store does not yet accept, with their own source variant ids.
+    const rows = [
+      ["FedEx Standard Overnight", "mov_9b65ad5bb184691e19e0"],
+      ["Syringes & Alcohol Swabs", "mov_512ed6b875c04eee4753"],
+    ] as const;
+    const supply = (open: boolean) => rows.map(([name, variantId], index) => ({
+      ...item("supply-" + index, false), productName: name, specification: name,
+      sourceSelection: { family: "shipping_and_fulfillment", slug: "supply-" + index, variantId },
+      sourceRefusal: "non_merchandise_family", selectableForReview: open, intentExclusion: "non_merchandise" as const,
+      actionLabel: open ? "Supply or service inquiry" : "Not a product request",
+    }));
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, total: 2, items: supply(false) });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    let cards = [...host.querySelectorAll(".xenios-order-card")];
+    expect(cards).toHaveLength(2);
+    cards.forEach((card, index) => {
+      expect(card.textContent).toContain("Shipping or service entry, not a product request");
+      expect(card.querySelector('button[aria-label^="Add to quote cart"]')).toBeNull();
+      // Not a dead end: the question is on the card itself and names this exact variant.
+      const question = card.querySelector('[data-testid="catalog-listing-question"]');
+      expect(question?.querySelector("summary")?.textContent?.trim()).toBe("Ask about this item");
+      expect(question?.textContent).toContain(rows[index][1]);
+      expect(card.textContent).not.toMatch(/\$\d/);
+    });
+    expect(api.submit).not.toHaveBeenCalled();
+
+    // Once the store accepts these lines the same rows go in the quote cart.
+    await act(async () => root.unmount());
+    root = createRoot(host);
+    api.catalog.mockResolvedValue({ ...catalog, total: 2, items: supply(true) });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    cards = [...host.querySelectorAll(".xenios-order-card")];
+    for (const card of cards) {
+      const add = card.querySelector<HTMLButtonElement>('button[aria-label^="Add to quote cart"]');
+      expect(add?.disabled).toBe(false);
+      await act(async () => add!.click());
+    }
+    expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("2 exact variants");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
   it("uses only the source variant for guest catalog artwork", async () => {
     const api = makeApi();
     const catalog = await api.catalog();

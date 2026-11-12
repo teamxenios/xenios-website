@@ -643,10 +643,15 @@ function RequestIntentFormSession({
           <div className="xenios-order-card-actions">
           {showDetails ? <CatalogDetails item={item} variantIds={variantIds} showMedia={showMedia} />
             : <ListingQuestion variantReference={sourceVariantId} />}
-          {!item.selectableForReview ? <p>{
-            item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
-              : item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"
-          }{item.reviewMessage ? ". " + item.reviewMessage : ""}</p> : selection
+          {!item.selectableForReview ? <>
+            <p>{
+              item.intentExclusion === "specification_review" ? DETAILS_UNDER_REVIEW
+                : item.intentExclusion === "coming_soon" ? "Coming soon" : "Shipping or service entry, not a product request"
+            }{item.reviewMessage ? ". " + item.reviewMessage : ""}</p>
+            {/* A row that cannot go in the cart is never a dead end: the question,
+                with its exact variant reference, is on the card, not only in Details. */}
+            {showDetails && <ListingQuestion variantReference={sourceVariantId} />}
+          </> : selection
             ? <div className="xenios-order-quantity">
               <button type="button" aria-label={"Decrease requested quantity for " + item.productName}
                 disabled={clampQuantity(item, selection.quantity - item.quantityIncrement) === selection.quantity}
