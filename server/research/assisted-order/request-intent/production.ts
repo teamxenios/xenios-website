@@ -1,3 +1,5 @@
+import { makeCatalogAdmission } from "./catalog-admission";
+import { privateContactAdmissionRpc } from "./contact-admission-rpc";
 import type { Express, Request, RequestHandler } from "express";
 import type { CareAccessDependencies } from "../../../care/access";
 import { requestIp } from "../../rate-limit";
@@ -13,6 +15,13 @@ import { RequestIntentError, RequestIntentService } from "./service";
 import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/early-access/quote-only";
 import { requestIntentRepository, requestIntentStaffReader, type RequestIntentRpcClient } from "./rpc-repository";
 
+export function catalogAdmissionMode(env: Readonly<Record<string,string|undefined>>) {
+  const raw=env.RESEARCH_REQUEST_CATALOG_CONTACT_REQUIRED;
+  if(raw===undefined || raw==="false")return {required:false,ready:true,ttl:0};
+  const configured=env.RESEARCH_REQUEST_CATALOG_CONTACT_RETENTION_SECONDS??"";
+  const ttl=Number(configured);
+  return {required:true,ready:raw==="true"&&/^[1-9][0-9]{0,4}$/.test(configured)&&ttl>=60&&ttl<=86400,ttl};
+}
 export const REQUEST_INTENT_ENABLED_ENV = "RESEARCH_REQUEST_INTENT_ENABLED";
 /**
  * Set to "true" only after the request store's line check accepts coming-soon
@@ -73,9 +82,10 @@ export function registerRequestIntentApi(
   const origin = requestIntentOrigin(wiring.env.SITE_URL);
   // Enable only after separate private DB migration, rehearsal and retention approval.
   const optionalIntakeEnabled = wiring.env.RESEARCH_REQUEST_OPTIONAL_INTAKE_ENABLED === "true";
+  const admissionMode=catalogAdmissionMode(wiring.env);
   const legalPairs = wiring.requiredAgreements?.map(({ kind, version }) => ({ kind, version })) ?? [];
   const rpc = wiring.supabaseRpc;
-  const enabled = () => wiring.env[REQUEST_INTENT_ENABLED_ENV] === "true" && origin !== null
+  const enabled = () => admissionMode.ready && wiring.env[REQUEST_INTENT_ENABLED_ENV] === "true" && origin !== null
     && rpc !== null && wiring.agreementGate !== null && legalPairs.length > 0
     && legalPairs.every(({ kind, version }) => !!kind && !!version && !kind.startsWith("assisted_order_form_v1:"));
   const secure: RequestHandler = (_req, res, next) => {
@@ -93,13 +103,13 @@ export function registerRequestIntentApi(
     // Distinguish default/explicit off from broken or unknown readiness.
     // Only this exact response admits the existing assisted-order fallback.
     const flag = wiring.env[REQUEST_INTENT_ENABLED_ENV];
-    if (flag === undefined || flag === "false") {
+    if (!admissionMode.required && (flag === undefined || flag === "false")) {
       res.status(503).json({ enabled: false, error: "request_intent_disabled" }); return;
     }
     if (!enabled()) { res.status(503).json({ enabled: false, error: "request_intent_unavailable" }); return; }
     next();
   }, readRateLimit, (_req, res) => {
-    res.json({ enabled: true, ...(optionalIntakeEnabled ? { optionalIntakeEnabled: true } : {}), requiredAgreements: legalPairs,
+    res.json({ enabled: true, ...(admissionMode.required ? {contactAdmissionRequired:true} : {}), ...(optionalIntakeEnabled ? { optionalIntakeEnabled: true } : {}), requiredAgreements: legalPairs,
       formAcknowledgments: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((ack) => ({
         id: ack.id, scope: ack.scope, ...assistedOrderFormPair(ack), copy: ack.copy,
       })) });
@@ -108,7 +118,11 @@ export function registerRequestIntentApi(
     app.use("/api/research/early-access/request-intents", secure, unavailable);
     return;
   }
+  const legal = {requiredAgreements:async()=>legalPairs};
+  const contactAdmission=admissionMode.required ? makeCatalogAdmission(legal,sha256AssistedOrderHasher,
+    admissionMode.ready ? privateContactAdmissionRpc(rpc,admissionMode.ttl) : null) : undefined;
   const service = new RequestIntentService({
+    contactAdmission,
     // Quote-only first release: the customer list carries no amount.
     quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE, optionalIntakeEnabled,
     catalog: createRequestIntentCatalog({
@@ -118,7 +132,7 @@ export function registerRequestIntentApi(
       allListedInquirable: wiring.env[REQUEST_INTENT_ALL_LISTED_ENV] === "true",
     }),
     repository: requestIntentRepository(rpc),
-    legal: { requiredAgreements: async () => legalPairs },
+    legal,
     // Identical standing contract to the existing bridge. No browser checkbox
     // substitutes for the durable session/customer/member binding.
     standing: { accepted: async (viewer) => {
@@ -131,7 +145,7 @@ export function registerRequestIntentApi(
     hasher: sha256AssistedOrderHasher, ids: systemAssistedOrderIds, clock: systemAssistedOrderClock,
   });
   app.use("/api/research/early-access/request-intents", secure, createRequestIntentRouter({
-    service, care, staffReader: requestIntentStaffReader(rpc, optionalIntakeEnabled), enabled,
+    service, care, contactAdmissionRoutes:admissionMode.required&&admissionMode.ready, staffReader: requestIntentStaffReader(rpc, optionalIntakeEnabled), enabled,
     staffReadEnabled: () => wiring.env[REQUEST_INTENT_STAFF_READ_ENABLED_ENV] === "true",
     resolveCustomer: async (req) => {
       const viewer = await viewers.customer(req);

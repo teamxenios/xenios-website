@@ -1,3 +1,4 @@
+import { CatalogAdmissionFailure } from "./catalog-admission";
 import { Router, type Request, type RequestHandler } from "express";
 import {
   ASSISTED_ORDER_CATALOG_SORTS, AssistedOrderValidationError,
@@ -12,6 +13,7 @@ import { RequestIntentError, type RequestIntentService, type RequestIntentStaffR
 
 export type RequestIntentRouteDependencies = Readonly<{
   service: RequestIntentService;
+  contactAdmissionRoutes?: boolean;
   /** Existing createAssistedOrderViewerResolvers(...).customer, not a body/email resolver. */
   resolveCustomer(request: Request): Promise<AssistedOrderViewer>;
   care: CareAccessDependencies;
@@ -50,7 +52,9 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
   const handle = (work: (request: Request, response: Parameters<RequestHandler>[1]) => Promise<unknown>): RequestHandler =>
     (request, response) => {
       void work(request, response).catch((error: unknown) => {
-        if (error instanceof AssistedOrderValidationError) {
+        if (error instanceof CatalogAdmissionFailure) {
+          response.status(error.status).json({ error: error.code });
+        } else if (error instanceof AssistedOrderValidationError) {
           response.status(400).json({ error: "invalid_request", message: "Check the required fields and current selections." });
         } else if (error instanceof RequestIntentError && error.status !== 503) {
           response.status(error.status).json({ error: error.code,
@@ -61,6 +65,16 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
         }
       });
     };
+  // Same resolver, trusted-origin and abuse guards as the existing request routes.
+  // Status exposes only admission standing plus the exact revision the UI must submit.
+  if(deps.contactAdmissionRoutes === true) {
+  router.get("/admission", deps.readRateLimit, handle(async (req, res) => {
+    res.status(200).json(await deps.service.admissionStatus(await deps.resolveCustomer(req)));
+  }));
+  router.post("/admission", deps.mutationGuard, deps.writeRateLimit, handle(async (req,res) => {
+    res.status(200).json(await deps.service.recordAdmission(await deps.resolveCustomer(req),req.body));
+  }));
+  }
   router.get("/catalog", deps.readRateLimit, handle(async (req, res) => {
     const raw = exactObject(req.query, ["search", "family", "sort", "page", "pageSize"], "query");
     for (const key of Object.keys(raw)) {

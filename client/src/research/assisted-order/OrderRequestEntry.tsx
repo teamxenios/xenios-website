@@ -53,7 +53,7 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
     {prior === "legacy" ? <p role="status">Continue your existing order-request attempt. Its key and recovery rules are unchanged; do not submit a replacement.</p> : null}
     {prior === "mixed" && props.mode.kind !== "mixed" ? <p role="status">An earlier private request may exist. Keep this attempt and contact support if its result cannot be confirmed. This page will not start a different request.</p> : null}
     <Suspense fallback={<p role="status">Loading the request form...</p>}>
-      {kind === "mixed" ? <MixedEntry embedded={props.embedded} continuationEnabled={props.continuationEnabled}
+      {kind === "mixed" ? <MixedEntry admissionRequired={props.mode.contactAdmissionRequired===true && prior!=="mixed"} embedded={props.embedded} continuationEnabled={props.continuationEnabled}
         onStepChange={props.onStepChange} entryIntent={hint} onConfirmedReceipt={props.onConfirmedReceipt}
         onAgreementStandingRequired={props.onAgreementStandingRequired} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled

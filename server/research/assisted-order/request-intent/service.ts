@@ -1,3 +1,4 @@
+import type { CatalogAdmission } from "./catalog-admission";
 import type { CarePrincipal } from "../../../../shared/care/contracts";
 import { canReadPendingRequestIntent, type RequestIntentStaffReadContext } from "./staff-read-authority";
 import { quantityIsAllowed } from "../../../../shared/research/assisted-order/action-policy";
@@ -37,6 +38,8 @@ export type RequestIntentDependencies = Readonly<{
   catalog: RequestIntentCatalog;
   repository: RequestIntentRepository;
   standing: AssistedOrderSubmissionStanding;
+  /** Optional until the private contact custodian and gate/UI are qualified by the owner. */
+  contactAdmission?: CatalogAdmission;
   /**
    * Kept for compatibility with older composition wiring. A mixed customer
    * inquiry never exposes catalog prices, even if this value is false or absent.
@@ -69,10 +72,27 @@ export class RequestIntentService {
     throw new RequestIntentError("authentication_required", 401);
   }
 
-  async list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery) {
-    this.owner(viewer);
-    // The session identifies a customer; it does not prove current policy acceptance.
+  private async assertStanding(viewer: AssistedOrderViewer) {
     if (!await this.deps.standing.accepted(viewer)) throw new RequestIntentError("agreement_standing_required", 403);
+  }
+  async admissionStatus(viewer: AssistedOrderViewer) {
+    const ownerHash=this.owner(viewer);
+    await this.assertStanding(viewer);
+    if(!this.deps.contactAdmission) throw new RequestIntentError("catalog_admission_unavailable",503);
+    return this.deps.contactAdmission.status(ownerHash,viewer.earlyAccessSessionHash);
+  }
+  async recordAdmission(viewer: AssistedOrderViewer, input: unknown) {
+    const ownerHash=this.owner(viewer);
+    await this.assertStanding(viewer);
+    if(!this.deps.contactAdmission) throw new RequestIntentError("catalog_admission_unavailable",503);
+    return this.deps.contactAdmission.capture(ownerHash,viewer.earlyAccessSessionHash,input);
+  }
+
+  async list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery) {
+    const ownerHash=this.owner(viewer);
+    // The session identifies a customer; it does not prove current policy acceptance.
+    await this.assertStanding(viewer);
+    await this.deps.contactAdmission?.require(ownerHash,viewer.earlyAccessSessionHash);
     const page = await this.deps.catalog.list(viewer, query);
     return mixedInquiryCatalogPage(page);
   }
@@ -98,7 +118,8 @@ export class RequestIntentService {
     const prior = await this.deps.repository.findAttempt(ownerHash, attemptHash);
     if (prior) return this.replay(prior, fingerprint);
     if (input.optionalIntake && this.deps.optionalIntakeEnabled !== true) throw new RequestIntentError("optional_intake_unavailable", 400);
-    if (!await this.deps.standing.accepted(viewer)) throw new RequestIntentError("agreement_standing_required", 403);
+    await this.assertStanding(viewer);
+    await this.deps.contactAdmission?.require(ownerHash,viewer.earlyAccessSessionHash);
 
     const lines: RequestIntentLine[] = [];
     const resolved = await this.deps.catalog.resolveMany(viewer, input.lines);

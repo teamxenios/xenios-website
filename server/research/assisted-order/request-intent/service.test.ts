@@ -280,3 +280,92 @@ describe("explicit optional private intake", () => {
     expect(await new RequestIntentService(deps).submit(viewer,value)).toEqual(receipt);
   });
 });
+
+import express, { type RequestHandler } from "express";
+import request from "supertest";
+import { createRequestIntentRouter } from "./express";
+import { requestIntentMutationGuard } from "./production";
+import { makeCatalogAdmission, type ContactAdmissionCustody } from "./catalog-admission";
+
+describe("private version-bound admission before a catalog read",()=>{
+  const qa={...viewer,actorType:"early_access_session",memberId:null,authUserId:null,earlyAccessCustomerRef:"eac-synthetic",
+    earlyAccessSessionHash:"hash-A",normalizedEmail:null} as const;
+  const form={fullLegalName:"  Andre\u0301   Example  ",email:"  EXAMPLE@EXAMPLE.INVALID  "};
+  function gate() {
+    const base=setup();const store=new Map<string,{fullLegalName:string;email:string}>();
+    const custody: ContactAdmissionCustody={
+      present:vi.fn(async k=>store.has(JSON.stringify(k))),
+      saveFirst:vi.fn(async (k,contact)=>{
+        const key=JSON.stringify(k);const prev=store.get(key);
+        if(prev) return prev.fullLegalName===contact.fullLegalName&&prev.email===contact.email?"already_same":"different_contact";
+        store.set(key,contact);return "committed";
+      }),
+    };
+    const contactAdmission=makeCatalogAdmission(base.deps.legal,base.deps.hasher,custody);
+    return {...base,store,custody,service:new RequestIntentService({...base.deps,contactAdmission})};
+  }
+  it("recording requires live resolved identity and server-confirmed waiver before data custody",async()=>{
+    const g=gate();
+    await expect(g.service.admissionStatus({...qa,capabilities:new Set()})).rejects.toMatchObject({status:401});
+    vi.mocked(g.deps.standing.accepted).mockResolvedValue(false);
+    await expect(g.service.recordAdmission(qa,form)).rejects.toMatchObject({code:"agreement_standing_required"});
+    expect(g.custody.saveFirst).not.toHaveBeenCalled();expect(g.custody.present).not.toHaveBeenCalled();
+  });
+  it("denies direct listings and new requests before admission, before any catalog read or write",async()=>{
+    const g=gate();
+    await expect(g.service.list(qa,{search:"example"})).rejects.toMatchObject({code:"catalog_admission_required"});
+    await expect(g.service.submit(qa,input())).rejects.toMatchObject({code:"catalog_admission_required"});
+    expect(g.deps.catalog.list).not.toHaveBeenCalled();expect(g.deps.catalog.resolveMany).not.toHaveBeenCalled();expect(g.records.size).toBe(0);
+  });
+  it("normalizes facts and returns an opaque policy indicator only; duplicate is idempotent and cannot overwrite",async()=>{
+    const g=gate();const {policyRevision,admitted}=await g.service.admissionStatus(qa);expect(admitted).toBe(false);
+    const recorded=await g.service.recordAdmission(qa,{...form,policyRevision});expect(recorded).toEqual({admitted:true,policyRevision});
+    expect([...g.store.values()]).toEqual([{fullLegalName:"André Example",email:"example@example.invalid"}]);
+    await expect(g.service.recordAdmission(qa,{...form,policyRevision})).resolves.toEqual(recorded);
+    await expect(g.service.recordAdmission(qa,{...form,email:"other@example.invalid",policyRevision})).rejects.toMatchObject({status:409});
+    expect((await g.service.list(qa,{})).total).toBe(2);
+    expect(g.store.size).toBe(1);expect(JSON.stringify([...g.store.keys()])).not.toContain("eac-synthetic");
+  });
+  it.each([{fullLegalName:" "},{email:"@example.com"},{email:"bad@@example.com"},{email:"foo\r\n@example.com"},{ownerHash:"spoof"},
+    {customerRef:"claimed"},{goal:"unrelated medical data"},{fullLegalName:"A".repeat(201)}])("does not write invalid or unowned fields",async(change)=>{
+    const g=gate(),{policyRevision}=await g.service.admissionStatus(qa);await expect(g.service.recordAdmission(qa,{...form,policyRevision,...change})).rejects.toThrow();
+    expect(g.store.size).toBe(0);
+  });
+  it("a rotated session, changed customer reference, and changed legal pair cannot reuse old admission",async()=>{
+    const g=gate(),{policyRevision}=await g.service.admissionStatus(qa);await g.service.recordAdmission(qa,{...form,policyRevision});
+    for(const other of [{...qa,earlyAccessSessionHash:"hash-B"},{...qa,earlyAccessCustomerRef:"eac-other"}]){
+      expect((await g.service.admissionStatus(other)).admitted).toBe(false);
+      await expect(g.service.list(other,{})).rejects.toMatchObject({status:403});
+    }
+    vi.mocked(g.deps.legal.requiredAgreements).mockResolvedValue([{kind:"fixture-terms",version:"v2"}]);
+    expect((await g.service.admissionStatus(qa)).admitted).toBe(false);
+    await expect(g.service.recordAdmission(qa,{...form,policyRevision})).rejects.toMatchObject({code:"catalog_admission_policy_changed"});expect(g.store.size).toBe(1);
+  });
+  it("custody error/unknown schema or empty/ambiguous legal set cannot grant access",async()=>{
+    const g=gate();vi.mocked(g.custody.present).mockRejectedValue(Error("provider private detail"));
+    await expect(g.service.list(qa,{})).rejects.toMatchObject({status:503,message:"catalog_admission_unavailable"});
+    const rev="a".repeat(64);for(const p of [[],[{kind:"waiver",version:"1"},{kind:"waiver",version:"2"}]]){
+      vi.mocked(g.deps.legal.requiredAgreements).mockResolvedValue(p);await expect(g.service.recordAdmission(qa,{...form,policyRevision:rev})).rejects.toMatchObject({status:503});
+    }expect(g.deps.catalog.list).not.toHaveBeenCalled();expect(g.store.size).toBe(0);
+  });
+  it("missing custody adapter fails closed even with a valid current policy",async()=>{
+    const b=setup();const s=new RequestIntentService({...b.deps,contactAdmission:makeCatalogAdmission(b.deps.legal,b.deps.hasher,null)});
+    await expect(s.admissionStatus(qa)).rejects.toMatchObject({status:503});await expect(s.list(qa,{})).rejects.toMatchObject({status:503});
+  });
+  it("renewed waiver/temporarily unavailable contact store cannot strand an identical saved receipt",async()=>{
+    const g=gate(),{policyRevision}=await g.service.admissionStatus(qa);await g.service.recordAdmission(qa,{...form,policyRevision});
+    const receipt=await g.service.submit(qa,input());vi.mocked(g.custody.present).mockRejectedValue(Error("down"));vi.mocked(g.deps.standing.accepted).mockResolvedValue(false);
+    expect(await g.service.submit(qa,input())).toEqual(receipt);expect(await g.service.recover(qa,key)).toEqual(receipt);expect(g.records.size).toBe(1);
+  });
+  it("Express honors the existing origin guard, private cache header and backend owner; never echoes contact",async()=>{
+    const g=gate(),app=express(),pass:RequestHandler=(_q,_r,next)=>next();app.use(express.json());
+    app.use("/test",createRequestIntentRouter({service:g.service,contactAdmissionRoutes:true,resolveCustomer:async()=>qa,care:{loadCapabilityStatus:async()=>({rail:"care",state:"disabled",enabled:false,publicMessage:"",checkedAt:now}),resolvePrincipal:async()=>null,recordAccessDecision:async()=>{}},staffReadEnabled:()=>false,
+      staffReader:{get:async()=>null,list:async()=>{throw Error("unused")}},enabled:()=>true,mutationGuard:requestIntentMutationGuard("https://site.example.invalid"),readRateLimit:pass,writeRateLimit:pass}));
+    expect((await request(app).get("/test/catalog")).status).toBe(403);
+    const status=await request(app).get("/test/admission");expect(status.headers["cache-control"]).toContain("no-store");
+    const payload={...form,policyRevision:status.body.policyRevision};
+    expect((await request(app).post("/test/admission").send(payload)).status).toBe(403);
+    const post=await request(app).post("/test/admission").set("Origin","https://site.example.invalid").send(payload);
+    expect(post.body).toEqual({admitted:true,policyRevision:payload.policyRevision});expect((await request(app).get("/test/catalog")).status).toBe(200);
+  });
+});
