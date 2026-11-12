@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { AssistedOrderViewer } from "../assisted-order/ports";
 import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
 import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
+import { heldEducationRegistrations } from "./held-education-registrations";
 import { reviewedHeldSpecifications } from "./reviewed-holds";
 import { MasterOfferingCatalogService } from "./service";
 
@@ -43,16 +44,21 @@ async function memberRows(): Promise<MemberRow[]> {
 }
 
 describe("the reviewed sentence on the member full catalog", () => {
-  it("gives every listing a reviewed description or the reviewed sentence, never both and never neither", async () => {
+  it("gives every listing a reviewed description or the reviewed sentence, and both only beside a registered hold", async () => {
     const rows = await memberRows();
     expect(rows.length).toBeGreaterThan(400);
     const described = rows.filter((row) => row.described);
     const explained = rows.filter((row) => row.reviewMessage !== undefined);
     expect(described.length).toBeGreaterThan(0);
     expect(explained.length).toBeGreaterThan(0);
-    expect(described.length + explained.length).toBe(rows.length);
+    // An accepted description shown beside a hold keeps the hold's sentence. That
+    // happens only for a registered row, so "both" is exactly the registration list.
+    const registered = new Set(heldEducationRegistrations.map((grant) => grant.sourceVariantId));
+    const both = rows.filter((row) => row.described && row.reviewMessage !== undefined).map((row) => row.variantId);
+    expect(new Set(both)).toEqual(registered);
+    expect(described.length + explained.length - both.length).toBe(rows.length);
     for (const row of rows) {
-      expect(row.described !== (row.reviewMessage !== undefined), row.variantId).toBe(true);
+      expect(row.described || row.reviewMessage !== undefined, row.variantId).toBe(true);
       if (row.reviewMessage !== undefined) expect(row.reviewMessage.trim().length, row.variantId).toBeGreaterThan(20);
     }
   });

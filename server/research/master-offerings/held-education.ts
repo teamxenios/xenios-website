@@ -52,7 +52,7 @@ export function createHeldEducationLookup(raw: readonly HeldEducationGrant[]) {
       || ctx.datasetSha256 !== r.datasetSha256 || ctx.family !== r.family || !permitted(r.holdCode)
       || hold.staffReviewCode !== r.holdCode || hold.customerMessage !== r.holdMessage
       || !clean(r.holdMessage, 1500) || !clean(r.summary, 1200) || !clean(r.overview, 12000)
-      || !clean(r.purpose, 4000) || !clean(r.cautions, 8000)
+      || !clean(r.purpose, 4000) || !clean(r.cautions, 20000)
       || !hex(r.contentReviewReceiptSha256) || !hex(r.displayDecisionReceiptSha256)
       || r.contentReviewReceiptSha256 === r.displayDecisionReceiptSha256
       || !hex(r.digest) || heldEducationDigest(r) !== r.digest) return undefined;
