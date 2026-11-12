@@ -80,6 +80,19 @@ describe("Research text that follows the reader's text size", () => {
     expect(Number(em![1]) * 16).toBe(Number(px![1]));
   });
 
+  it("wraps the account nav at enlarged text from the same width as at the default size", () => {
+    const portal = readFileSync(resolve("client/src/research/account-portal/account-portal.css"), "utf8");
+    const block = (head: string) => {
+      const start = portal.indexOf(head + " {\n  .account-portal-nav {");
+      expect(start).toBeGreaterThan(-1);
+      return portal.slice(portal.indexOf("{", start) + 1, portal.indexOf("\n}\n", start));
+    };
+    const px = /@media \(max-width: (\d+)px\)/.exec(portal.slice(portal.indexOf("@media (max-width: 1023px)")))!;
+    const em = /@media \(max-width: ([\d.]+)em\) \{\n  \.account-portal-nav \{/.exec(portal)!;
+    expect(Number(em[1]) * 16).toBe(Number(px[1]));
+    expect(block(`@media (max-width: ${em[1]}em)`)).toBe(block(`@media (max-width: ${px[1]}px)`));
+  });
+
   it("renders the scope around the Research layout without a box of its own", () => {
     expect(section).toContain('import "./type-scale.css";');
     expect(section).toMatch(/<div className="research-type-scale" style=\{\{ display: "contents" \}\}>\s*<ResearchLayout>/);
