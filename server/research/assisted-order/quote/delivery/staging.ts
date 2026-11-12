@@ -17,6 +17,34 @@ export const STAGING_QUOTE_ORIGIN = "https://xenios-research-staging.onrender.co
 const STAGING_REF = "tetynodzrtmdbuzgboro";
 const STAGING_SERVICE = "srv-d9h4f4m7r5hc73ctjng0";
 const STAGING_LOGIN = "ea_quote_stage_login";
+const STAGING_POOLER = "aws-1-us-west-2.pooler.supabase.com";
+// Public Supabase Root 2021 CA from the provider's prod/ssl/prod-ca-2021.crt.
+// SHA-256 80:70:25:AD:50:D4:ED:21:9D:2C:9C:7D:29:9C:00:4F:82:4E:B0:0C:F7:F6:5A:FE:F6:07:D0:7B:72:E6:CA:FA.
+// The shared pooler uses this chain rather than Node's public CA store.
+const SUPABASE_ROOT_CA = `-----BEGIN CERTIFICATE-----
+MIIDxDCCAqygAwIBAgIUbLxMod62P2ktCiAkxnKJwtE9VPYwDQYJKoZIhvcNAQEL
+BQAwazELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB0RlbHdhcmUxEzARBgNVBAcMCk5l
+dyBDYXN0bGUxFTATBgNVBAoMDFN1cGFiYXNlIEluYzEeMBwGA1UEAwwVU3VwYWJh
+c2UgUm9vdCAyMDIxIENBMB4XDTIxMDQyODEwNTY1M1oXDTMxMDQyNjEwNTY1M1ow
+azELMAkGA1UEBhMCVVMxEDAOBgNVBAgMB0RlbHdhcmUxEzARBgNVBAcMCk5ldyBD
+YXN0bGUxFTATBgNVBAoMDFN1cGFiYXNlIEluYzEeMBwGA1UEAwwVU3VwYWJhc2Ug
+Um9vdCAyMDIxIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqQXW
+QyHOB+qR2GJobCq/CBmQ40G0oDmCC3mzVnn8sv4XNeWtE5XcEL0uVih7Jo4Dkx1Q
+DmGHBH1zDfgs2qXiLb6xpw/CKQPypZW1JssOTMIfQppNQ87K75Ya0p25Y3ePS2t2
+GtvHxNjUV6kjOZjEn2yWEcBdpOVCUYBVFBNMB4YBHkNRDa/+S4uywAoaTWnCJLUi
+cvTlHmMw6xSQQn1UfRQHk50DMCEJ7Cy1RxrZJrkXXRP3LqQL2ijJ6F4yMfh+Gyb4
+O4XajoVj/+R4GwywKYrrS8PrSNtwxr5StlQO8zIQUSMiq26wM8mgELFlS/32Uclt
+NaQ1xBRizkzpZct9DwIDAQABo2AwXjALBgNVHQ8EBAMCAQYwHQYDVR0OBBYEFKjX
+uXY32CztkhImng4yJNUtaUYsMB8GA1UdIwQYMBaAFKjXuXY32CztkhImng4yJNUt
+aUYsMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQELBQADggEBAB8spzNn+4VU
+tVxbdMaX+39Z50sc7uATmus16jmmHjhIHz+l/9GlJ5KqAMOx26mPZgfzG7oneL2b
+VW+WgYUkTT3XEPFWnTp2RJwQao8/tYPXWEJDc0WVQHrpmnWOFKU/d3MqBgBm5y+6
+jB81TU/RG2rVerPDWP+1MMcNNy0491CTL5XQZ7JfDJJ9CCmXSdtTl4uUQnSuv/Qx
+Cea13BX2ZgJc7Au30vihLhub52De4P/4gonKsNHYdbWjg7OWKwNv/zitGDVDB9Y2
+CMTyZKG3XEu5Ghl1LEnI3QmEKsqaCLv12BnVjbkSeZsMnevJPs1Ye6TjjJwdik5P
+o/bKiIz+Fq8=
+-----END CERTIFICATE-----
+`;
 const RECIPIENT = "samuel@xeniostechnology.com";
 const TENANT = "ea-staging";
 const SELLER = "team-xenios-stage";
@@ -33,10 +61,9 @@ export function stagingQuotePoolOptions(env: NodeJS.ProcessEnv): pg.PoolConfig |
   if (!isPrivateQuoteStaging(env) || !env.EA_STAGE_QUOTE_DATABASE_URL) return null;
   try {
     const uri = new URL(env.EA_STAGE_QUOTE_DATABASE_URL);
-    const direct = uri.hostname === `db.${STAGING_REF}.supabase.co` && uri.username === STAGING_LOGIN;
-    const pooled = /^aws-\d+-us-west-2\.pooler\.supabase\.com$/.test(uri.hostname) &&
+    const pooled = uri.hostname === STAGING_POOLER &&
       uri.username === `${STAGING_LOGIN}.${STAGING_REF}`;
-    if (uri.protocol !== "postgresql:" || (!direct && !pooled) || uri.port !== "5432" ||
+    if (uri.protocol !== "postgresql:" || !pooled || uri.port !== "5432" ||
         uri.pathname !== "/postgres" || uri.search || uri.hash || !uri.password) return null;
     return {
       host: uri.hostname,
@@ -44,7 +71,7 @@ export function stagingQuotePoolOptions(env: NodeJS.ProcessEnv): pg.PoolConfig |
       user: uri.username,
       password: decodeURIComponent(uri.password),
       database: "postgres",
-      ssl: { rejectUnauthorized: true },
+      ssl: { ca: SUPABASE_ROOT_CA, rejectUnauthorized: true },
       max: 2,
       connectionTimeoutMillis: 4_000,
     };
