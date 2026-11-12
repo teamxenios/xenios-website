@@ -2101,6 +2101,22 @@
       "acceptedSha": "e79324a0b0fb54010533716c45c8d5c46cfaa5de",
       "acceptedBy": "codex-seth-revenue-launch-20260905",
       "acceptedAt": "2026-09-06T03:50:13.667Z"
+    },
+    {
+      "id": "EARLY-ACCESS-PROTECTED-INTEGRATION-20261112",
+      "title": "Integrate protected Early Access catalog admission and qualify the quote journey",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-root-early-access-20261112",
+      "paths": [
+        "server/index.ts",
+        "server/research/index.ts",
+        "server/research/early-access-wall.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "scripts/acceptance/quote-delivery/browser-fixture.mjs"
+      ],
+      "dependsOn": [],
+      "claimedAt": "2026-11-12T19:45:34.788Z"
     }
   ]
 }

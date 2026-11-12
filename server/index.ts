@@ -990,6 +990,12 @@ async function composeAssistedOrderBridge(): Promise<
     method: "GET" | "POST" | "PATCH",
     path: string,
   ): RequestHandler => {
+    // Contact-gated requests use the neutral request-intent catalog. Do not expose
+    // its older sibling as a second catalog entrance. Preserve prior receipts/replay and admin.
+    const contactFlag=assistedOrderWiring.env.RESEARCH_REQUEST_CATALOG_CONTACT_REQUIRED;
+    if (contactFlag!==undefined && contactFlag!=="false" && (
+      method==="GET"&&path==="/api/research/early-access/assisted-orders/catalog"
+    )) return (_req,res)=>{res.set("Cache-Control","private, no-store").status(403).json({error:"legacy_intake_closed"});};
     if (assistedOrderRoutes === null) {
       return assistedOrderUnavailableDoor(
         path,

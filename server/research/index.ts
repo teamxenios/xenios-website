@@ -342,6 +342,7 @@ export function registerResearchApi(app: Express) {
     // Neutral request doors retain their own customer/Care guards downstream.
     "/early-access/request-intents/config",
     "/early-access/request-intents/catalog",
+    "/early-access/request-intents/admission",
     "/early-access/request-intents/staff",
   ]);
   const EARLY_ACCESS_OPEN_WRITE_PATHS = new Set([
@@ -375,6 +376,7 @@ export function registerResearchApi(app: Express) {
     "/early-access/assisted-orders",
     "/early-access/request-intents",
     "/early-access/request-intents/recover",
+    "/early-access/request-intents/admission",
   ]);
   // The order routes carry an order number, so they cannot be a Set entry. They
   // are ANCHORED against the exact generated shape instead of a bare prefix:
