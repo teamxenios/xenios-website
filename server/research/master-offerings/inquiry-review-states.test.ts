@@ -5,6 +5,9 @@ import { RequestIntentService } from "../assisted-order/request-intent/service";
 import { sha256AssistedOrderHasher as hasher } from "../assisted-order/defaults";
 import type { AssistedOrderViewer } from "../assisted-order/ports";
 import type { RequestIntentDetail } from "@shared/research/assisted-order/request-intent";
+import {
+  CATALOG_DISPLAY_NAME_MAX_LENGTH, CATALOG_VARIANT_LABEL_MAX_LENGTH, parseCatalogDiscoveryItem,
+} from "@shared/research/master-offerings/presentation-contract";
 import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
 import { getReviewedProductContent } from "./reviewed-content";
 import { MasterOfferingCatalogService } from "./service";
@@ -68,6 +71,31 @@ describe("reviewed inquiry review states", () => {
     expect(() => readInquiryReviewStates([{ schemaVersion: 1, records: [good, { ...good, offeringId: "mo_0b" }] }]))
       .toThrow("inquiry_review_state_duplicate");
     expect(() => readInquiryReviewStates([{ schemaVersion: 2, records: [good] }])).toThrow("inquiry_review_states_invalid");
+  });
+
+  it("holds a neutral specification to the catalog's label limit, so it can never drop its listing", () => {
+    const at = "S".repeat(CATALOG_VARIANT_LABEL_MAX_LENGTH);
+    expect(readInquiryReviewStates([{ schemaVersion: 1, records: [{ ...good, neutralSpecification: at }] }]).size).toBe(1);
+    for (const bad of [at + "S", " Synthetic", "Synthetic "]) {
+      expect(() => readInquiryReviewStates([{ schemaVersion: 1, records: [{ ...good, neutralSpecification: bad }] }]), bad)
+        .toThrow("inquiry_review_state_invalid");
+    }
+    // The limit is the one the card parser applies: a label at it is kept, one past it is dropped.
+    const row = (variantLabel: string) => parseCatalogDiscoveryItem({
+      productId: "product-a", variantId: "variant-a", displayName: "Synthetic", variantLabel,
+      category: { key: "research", label: "Research" },
+    });
+    expect(row(at)).not.toBeNull();
+    expect(row(at + "S")).toBeNull();
+  });
+
+  it("keeps every real catalog name and label within the limits the card parser applies", () => {
+    for (const offering of reader.readCatalog()) {
+      expect(offering.displayName.length, offering.id).toBeLessThanOrEqual(CATALOG_DISPLAY_NAME_MAX_LENGTH);
+      for (const variant of offering.variants) {
+        expect(variant.label.length, variant.id).toBeLessThanOrEqual(CATALOG_VARIANT_LABEL_MAX_LENGTH);
+      }
+    }
   });
 
   it("shows the customer sentence on the row and never sends the staff code to a customer", async () => {

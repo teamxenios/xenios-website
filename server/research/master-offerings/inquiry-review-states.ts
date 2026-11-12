@@ -1,3 +1,4 @@
+import { CATALOG_VARIANT_LABEL_MAX_LENGTH } from "@shared/research/master-offerings/presentation-contract";
 import clinical from "./data/reviewed-inquiry-review-states.json";
 import research from "./data/reviewed-inquiry-review-states.research.json";
 
@@ -46,8 +47,12 @@ export function readInquiryReviewStates(
         || typeof sourceVariantId !== "string" || !/^mov_[0-9a-f]+$/.test(sourceVariantId)
         || typeof customerMessage !== "string" || customerMessage.trim() !== customerMessage
         || customerMessage.length < 20
+        // A neutral specification is shown in place of the variant label, so it is held to the
+        // label's limit: a longer one would make the catalog drop the listing without a message.
         || !(neutralSpecification === null
-          || (typeof neutralSpecification === "string" && neutralSpecification.trim().length > 0))
+          || (typeof neutralSpecification === "string" && neutralSpecification.trim().length > 0
+            && neutralSpecification.trim() === neutralSpecification
+            && neutralSpecification.length <= CATALOG_VARIANT_LABEL_MAX_LENGTH))
         || !INQUIRY_REVIEW_CODES.includes(staffReviewCode as InquiryReviewCode)) {
         throw new Error("inquiry_review_state_invalid");
       }
