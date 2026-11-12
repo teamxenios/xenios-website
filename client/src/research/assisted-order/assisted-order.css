@@ -301,6 +301,13 @@
   }
 }
 
+/* A card with no reviewed artwork has no media column: its identity takes the
+   whole width instead of sitting beside an empty 88px track. */
+@media (max-width: 700px) {
+  .xenios-order-page--guest-catalog .xenios-order-card-intro--no-media { grid-template-columns: minmax(0, 1fr); }
+  .xenios-order-page--guest-catalog .xenios-order-card-intro--no-media .xenios-order-card-identity { grid-column: 1 / -1; }
+}
+
 /* While the toolbar is sticky, a control reached by keyboard must not scroll
    to rest underneath it. The margin is in rem so it grows with the toolbar
    when the page text is enlarged. */

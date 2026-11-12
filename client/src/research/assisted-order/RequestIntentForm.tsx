@@ -613,14 +613,17 @@ function RequestIntentFormSession({
         const guestCatalog = ownerKey === "early-access-session";
         const reviewedMemberListing = isResearchCartScope(ownerKey) && Boolean(sourceVariantId) &&
           !item.clinicalReviewRequired;
-        const showMedia = guestCatalog || (reviewedMemberListing && Boolean(item.reviewedMedia));
+        // Only reviewed artwork is shown. A row without it shows no image, not a form
+        // illustration: the form map is not a reviewed source. The guest keeps Details
+        // on every row, as before.
+        const showMedia = Boolean(item.reviewedMedia) && (guestCatalog || reviewedMemberListing);
         const heldEducation = Boolean(item.reviewMessage && item.reviewedContent);
-        const showDetails = showMedia || (reviewedMemberListing && Boolean(item.reviewedContent)) || heldEducation;
+        const showDetails = guestCatalog || showMedia || (reviewedMemberListing && Boolean(item.reviewedContent)) || heldEducation;
         // A reviewed card summary can already end with the clinical-review sentence.
         // The notice line then adds only what the summary does not say.
         const summaryStatesClinicalReview = Boolean(item.reviewedContent?.summary?.trimEnd().endsWith(CLINICAL_REVIEW_SENTENCE));
         return <article className="xenios-order-card" key={key}>
-          <div className="xenios-order-card-intro">
+          <div className={"xenios-order-card-intro" + (showMedia ? "" : " xenios-order-card-intro--no-media")}>
             {showMedia && <div className="xenios-order-card-media">
               <ProductMedia productName={item.productName} variantIds={variantIds} reviewedMedia={item.reviewedMedia} />
             </div>}
