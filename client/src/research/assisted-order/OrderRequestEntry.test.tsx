@@ -14,8 +14,8 @@ vi.mock("../core", () => ({ useResearch: () => auth }));
 vi.mock("./AssistedOrderPage", () => ({ AssistedOrderPage: (props: { embedded?: boolean }) =>
   <div data-testid="legacy-form">{props.embedded ? "embedded" : "standalone"}</div> }));
 vi.mock("./RequestIntentEntry", () => ({ RequestIntentEntry: (props: { embedded?: boolean; entryIntent?: { action: string };
-  onConfirmedReceipt?: (receipt: unknown) => void }) =>
-  <div data-testid="mixed-form">{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}
+  onConfirmedReceipt?: (receipt: unknown) => void; admissionRequired?: boolean }) =>
+  <div data-testid="mixed-form" data-admission={String(props.admissionRequired === true)}>{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}
     <button type="button" aria-label="confirm synthetic receipt" onClick={() => props.onConfirmedReceipt?.({
       kind: "unapproved_selection_request", requestId: "30000000-0000-4000-8000-000000000001",
       publicReference: "XRI-30000000000040008000000000000001", status: "pending_review", createdAt: "2026-10-14T12:00:00.000Z" })} /></div> }));
@@ -77,6 +77,23 @@ describe("actual front-door selection and preservation (child form boundary stub
     await render(<OrderRequestEntry mode={{ kind: "legacy" }} />);
     expect(container.querySelector('[data-testid="mixed-form"]')).toBeTruthy();
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(raw);
+  });
+  it("asks for the contact step when it is required, also for a tab holding a stored attempt, and keeps the attempt", async () => {
+    await render(<OrderRequestEntry mode={{ kind: "mixed", contactAdmissionRequired: true }} />);
+    expect(container.querySelector('[data-testid="mixed-form"]')?.getAttribute("data-admission")).toBe("true");
+    act(() => root.unmount()); root = createRoot(container);
+    const raw = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+      acceptedAt: "2026-10-14T12:00:00Z", state: "in_flight" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, raw);
+    // The server requires the contact record for the catalog read even when an attempt is stored,
+    // so skipping the step here would leave the form unable to load the catalog.
+    await render(<OrderRequestEntry mode={{ kind: "mixed", contactAdmissionRequired: true }} />);
+    expect(container.querySelector('[data-testid="mixed-form"]')?.getAttribute("data-admission")).toBe("true");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(raw);
+    act(() => root.unmount()); root = createRoot(container);
+    // Switched off, no contact step, with or without a stored attempt.
+    await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
+    expect(container.querySelector('[data-testid="mixed-form"]')?.getAttribute("data-admission")).toBe("false");
   });
   it("restores the existing legacy attempt even when mixed is enabled", async () => {
     const raw = JSON.stringify({ idempotencyKey: "original-key", acceptedAt: "original-stamp",
