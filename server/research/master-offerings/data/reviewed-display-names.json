@@ -103,7 +103,7 @@
     },
     {
       "offeringId": "mo_c9c3aa9e5613ca970ef4",
-      "displayName": "GHK-Cu Firming Serum, Gel"
+      "displayName": "GHK-Cu Serum, Gel"
     },
     {
       "offeringId": "mo_071c4b9f279557c52f15",
@@ -167,7 +167,7 @@
     },
     {
       "offeringId": "mo_85333819f0419b09c591",
-      "displayName": "Methylene Blue Anti-Aging Cream"
+      "displayName": "Methylene Blue + Estriol Cream"
     },
     {
       "offeringId": "mo_b11b15656e48a07633d7",
@@ -256,6 +256,14 @@
     {
       "offeringId": "mo_f729b05046ef91543822",
       "displayName": "SS-31"
+    },
+    {
+      "offeringId": "mo_3d043e2a35ceaa045986",
+      "displayName": "Testosterone Cypionate + Sildenafil Citrate Cream"
+    },
+    {
+      "offeringId": "mo_740df0000ec017ecab18",
+      "displayName": "Vitamin E, Milk Thistle, N-Acetylcysteine, Thiamine, Selenium Capsule"
     }
   ]
 }
