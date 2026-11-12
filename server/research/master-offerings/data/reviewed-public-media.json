@@ -46,12 +46,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r152-brain-restore.png",
           "altText": "Official NutriDyn Brain Restore bottle, 210 capsules",
-          "width": 158,
-          "height": 265
+          "width": 251,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "884cfd91fb88f73af7db9c15f2b0672bdacf21d2f94423290bbe7077fe46b06f"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "30c5ba90365553a8a160085db0baeadbacc54dc553bce9d85c077e8d8afd7732"
     },
     {
       "offeringId": "mo_db61126250f5fa3a3324",
@@ -61,12 +61,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r190-collagen-renew.png",
           "altText": "Official NutriDyn Collagen Renew tub, 525 grams unflavored powder",
-          "width": 181,
-          "height": 265
+          "width": 287,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "696d56cdddeeddd2ceb9f9bec9cdde4b89788c75d39960bd66bbd0e90fcb527d"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "9ffb60a265bf0b8dadd75c2b56fd25a3ca7e3ed559d698fd7bb35a00d453104a"
     },
     {
       "offeringId": "mo_474aba04fff9d244c37b",
@@ -76,12 +76,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r191-gi-defend.png",
           "altText": "Official NutriDyn GI Defend tub, 75 grams unflavored powder",
-          "width": 265,
-          "height": 265
+          "width": 420,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "388b64fa4ceaa04bd4dd847875f6a8252df513cd7258a439016584cebee8bbcf"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "98b0469d411d15adaaf5010572f4988ab83c12df2eca01b5131ce909ea7f74d9"
     },
     {
       "offeringId": "mo_5050cf525ec249ebf0bf",
@@ -91,12 +91,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r167-mito-recharge.png",
           "altText": "Official NutriDyn Mito Recharge bottle, 90 capsules",
-          "width": 160,
-          "height": 265
+          "width": 254,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "2be03e010ef7991b239011280afe41f5855ff1491f352d64a6b96b07be48e766"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "36b00f1aa0b3e12903685f38cb11c61b2ca4950965c075e4a9f675cf8acd8866"
     },
     {
       "offeringId": "mo_381d77419fba80336299",
@@ -106,12 +106,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r817e-omega-pure-epa-dha-2400.png",
           "altText": "Official NutriDyn Omega Pure EPA-DHA 2400 bottle, 150 milliliters",
-          "width": 114,
-          "height": 265
+          "width": 180,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "7c5d16b355f00be93f7f00f3255444efec01b3f684be3b41aa9140d44fff0ba3"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "fd1c15fccbbee9754e739b55779b4c2b19a59954f4d90f7c4333254870467492"
     },
     {
       "offeringId": "mo_453f612e1a8a3021d41c",
@@ -136,12 +136,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r199-perimenopause-support.png",
           "altText": "Official NutriDyn PeriMenopause Support bottle, 30 tablets",
-          "width": 166,
-          "height": 265
+          "width": 263,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "a2e42f03590d433a64f4a6553f7df5f269041e8d94bc2059674448c99dc148be"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "33c2a8fa8f5a8ebaba4497481b769c26d2988b4560db122d3bb56e6085d8679e"
     },
     {
       "offeringId": "mo_62754736300e3e130eb5",
