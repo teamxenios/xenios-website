@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import type { NormalizedMasterOffering, NormalizedMasterOfferingVariant } from "./model";
-import type { ReviewedProductContent, ReviewedProductContentRecord, ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
+import {
+  PRODUCT_MEDIA_REPRESENTATIONS,
+  type ReviewedProductContent, type ReviewedProductContentRecord, type ReviewedProductMedia,
+} from "@shared/research/master-offerings/approved-content";
 import { createHeldEducationLookup } from "./held-education";
 import { heldEducationRegistrations } from "./held-education-registrations";
 import type { InquiryReviewState } from "./inquiry-review-states";
@@ -12,8 +15,17 @@ const contentByIdentity = new Map(
   records.map(({ offeringId, sourceVariantId, content }) => [JSON.stringify([offeringId, sourceVariantId]), content]),
 );
 
+/** A studio record names what its image is; an unknown name refuses the whole file at load. */
+function reviewedMedia(media: Omit<ReviewedProductMedia, "representation"> & { readonly representation?: string }): ReviewedProductMedia {
+  const { representation } = media;
+  if (representation === undefined) return media as ReviewedProductMedia;
+  if (!(PRODUCT_MEDIA_REPRESENTATIONS as readonly string[]).includes(representation)) {
+    throw new Error("reviewed-public-media: unknown representation " + JSON.stringify(representation));
+  }
+  return media as ReviewedProductMedia;
+}
 const mediaByIdentity = new Map<string, ReviewedProductMedia>(
-  mediaBatch.records.map(({ offeringId, sourceVariantId, media }) => [JSON.stringify([offeringId, sourceVariantId]), media]),
+  mediaBatch.records.map(({ offeringId, sourceVariantId, media }) => [JSON.stringify([offeringId, sourceVariantId]), reviewedMedia(media)]),
 );
 const reviewedOfferings = new WeakSet<NormalizedMasterOffering>();
 
