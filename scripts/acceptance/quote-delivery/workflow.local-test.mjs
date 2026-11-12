@@ -91,6 +91,39 @@ test('disabled sender/portal returns disabled without claiming work',async t=>{
  const f=fixture(t),q=await f.desk.issue(viewer(),request());const no=f.make({transport:resendTransport({})});
  assert.equal(await no.dispatch(tenant,xri,q.quoteId),'disabled');assert.equal(f.raw().prepare('SELECT state FROM qd_notification_intents').get().state,'queued');
 });
+
+test('controlled quote notice uses the verified deployment origin and the fixed private path', async () => {
+ const deliveries = [];
+ const transport = resendTransport({
+  enabled: true, apiKey: 'not-real', verifiedSender: TEAM, verifiedReplyTo: TEAM,
+  portalVerified: true, portalOrigin: 'https://quote-qa.example.invalid/',
+  fetchImpl: async (_url, options) => {
+   deliveries.push(JSON.parse(options.body));
+   return { ok: true, json: async () => ({ id: 'fixture-provider' }) };
+  }
+ });
+ assert.equal(transport.ready(), true);
+ assert.equal(await transport.send('qd-' + 'a'.repeat(64), 'fixture@example.invalid'), 'fixture-provider');
+ assert.equal(deliveries.length, 1);
+ assert.match(deliveries[0].text, /https:\/\/quote-qa\.example\.invalid\/earlyaccess\/quotes\b/);
+ assert.ok(!deliveries[0].text.includes(PORTAL));
+ assert.equal(deliveries[0].reply_to, TEAM);
+});
+
+test('unsafe or malformed configured portal origins disable the controlled sender', async () => {
+ for (const portalOrigin of [
+  '', null, 'http://quote-qa.example.invalid', 'https://user@quote-qa.example.invalid',
+  'https://quote-qa.example.invalid/other', 'https://quote-qa.example.invalid?redirect=other',
+  'https://quote-qa.example.invalid#other'
+ ]) {
+  const transport = resendTransport({
+   enabled: true, apiKey: 'not-real', verifiedSender: TEAM, verifiedReplyTo: TEAM, portalVerified: true,
+   portalOrigin, fetchImpl: () => assert.fail('invalid origin must not send mail')
+  });
+  assert.equal(transport.ready(), false);
+  await assert.rejects(transport.send('qd-' + 'a'.repeat(64), 'fixture@example.invalid'), /not enabled/);
+ }
+});
 test('private HTML uses verified session, no-store, escaped labels and no staff basis; CSRF refusal',async t=>{
  const f=fixture(t);await f.desk.issue(viewer(),request());
  const handlers={};const router={get:(r,h)=>handlers.get=h,post:(r,h)=>handlers.post=h};
