@@ -3133,67 +3133,67 @@
       "offeringId": "mo_b01b90df2792becd9a75",
       "sourceVariantId": "mov_862b99ce1c9f144086dd",
       "media": {
-        "packagingDesign": false,
+        "packagingDesign": true,
         "primary": {
-          "href": "/research/product-media/tesofensine-500mcg-0418-label-card-v1-1024.webp",
-          "altText": "Xenios Tesofensine 500 mcg label design",
+          "href": "/research/product-media/tesofensine-500mcg-0418-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Tesofensine research capsules, listed strength 500 mcg",
           "width": 1024,
-          "height": 768
+          "height": 1024
         },
         "labelPreview": {
-          "href": "/research/product-media/tesofensine-500mcg-0418-label-design-v1.webp",
-          "altText": "Front label artwork for Xenios Tesofensine 500 mcg",
-          "width": 1600,
-          "height": 1000
+          "href": "/research/product-media/tesofensine-500mcg-0418-capsule-front-artwork-v1.webp",
+          "altText": "Tesofensine research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
         }
       },
-      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
-      "primarySha256": "5ad0ae052648513b60c42976b9f9e7d1e825fec3c1d4da18b7b5e4220a29d914",
-      "labelPreviewSha256": "baa2f16940b8f4a1d9c45e5fa0b28cc9f4538f5945a0b07815601fc287ceb9d7"
+      "sourceCommit": "90cda89ea9115cd03ffe7835457fe61c0b8eef48",
+      "primarySha256": "394dcb26dc8368279df26004a1c0a69ceb19f35f32e5b8b2ff4d39d3b17149c6",
+      "labelPreviewSha256": "a5c78e959f19e1708afb5ff8bc5ef9edc36af06a49938e547d745f88cd04954d"
     },
     {
       "offeringId": "mo_87b00893d8f75a60b08f",
       "sourceVariantId": "mov_235641a298fed1c2637e",
       "media": {
-        "packagingDesign": false,
+        "packagingDesign": true,
         "primary": {
-          "href": "/research/product-media/tesofensine-500mcg-0419-label-card-v1-1024.webp",
-          "altText": "Xenios Tesofensine 500 mcg label design",
+          "href": "/research/product-media/tesofensine-500mcg-0419-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Tesofensine research capsules, listed strength 500 mcg",
           "width": 1024,
-          "height": 768
+          "height": 1024
         },
         "labelPreview": {
-          "href": "/research/product-media/tesofensine-500mcg-0419-label-design-v1.webp",
-          "altText": "Front label artwork for Xenios Tesofensine 500 mcg",
-          "width": 1600,
-          "height": 1000
+          "href": "/research/product-media/tesofensine-500mcg-0419-capsule-front-artwork-v1.webp",
+          "altText": "Tesofensine research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
         }
       },
-      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
-      "primarySha256": "5ad0ae052648513b60c42976b9f9e7d1e825fec3c1d4da18b7b5e4220a29d914",
-      "labelPreviewSha256": "baa2f16940b8f4a1d9c45e5fa0b28cc9f4538f5945a0b07815601fc287ceb9d7"
+      "sourceCommit": "90cda89ea9115cd03ffe7835457fe61c0b8eef48",
+      "primarySha256": "394dcb26dc8368279df26004a1c0a69ceb19f35f32e5b8b2ff4d39d3b17149c6",
+      "labelPreviewSha256": "a5c78e959f19e1708afb5ff8bc5ef9edc36af06a49938e547d745f88cd04954d"
     },
     {
       "offeringId": "mo_1d9d501ac84d6cd9d46d",
       "sourceVariantId": "mov_0a8df59fa70328b1c1ca",
       "media": {
-        "packagingDesign": false,
+        "packagingDesign": true,
         "primary": {
-          "href": "/research/product-media/colostrum-100mg-0395-label-card-v1-1024.webp",
-          "altText": "Xenios Colostrum 100 mg label design",
+          "href": "/research/product-media/colostrum-100mg-0395-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Colostrum research capsules, listed strength 100 mg",
           "width": 1024,
-          "height": 768
+          "height": 1024
         },
         "labelPreview": {
-          "href": "/research/product-media/colostrum-100mg-0395-label-design-v1.webp",
-          "altText": "Front label artwork for Xenios Colostrum 100 mg",
-          "width": 1600,
-          "height": 1000
+          "href": "/research/product-media/colostrum-100mg-0395-capsule-front-artwork-v1.webp",
+          "altText": "Colostrum research capsule front label design, listed strength 100 mg",
+          "width": 1000,
+          "height": 850
         }
       },
-      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
-      "primarySha256": "a09ad9df05bbb1d59105b69f60a4810a58bc84ac42de2c3fa098de0cfd1dd74f",
-      "labelPreviewSha256": "32d2e7a154ac8781c72c89044e85a264f092a43c292e95a8b037cac82cb97c74"
+      "sourceCommit": "90cda89ea9115cd03ffe7835457fe61c0b8eef48",
+      "primarySha256": "9f0ec2b395d0c5a310d6ee80d80ca0ef8e71120bbf1077a517c2fe51ccde1dd9",
+      "labelPreviewSha256": "02a7a42feb458f866ef08bff823e15542f9135b2bdbaf91db4d27aab72ce2d2b"
     },
     {
       "offeringId": "mo_ef095e8f7e8fe3a7f85d",
