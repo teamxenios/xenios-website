@@ -6,14 +6,15 @@ import {pgTransactions} from './pg.mjs';
 import {dispatchSharedQuoteJob} from './shared-worker.mjs';
 import {attachResendReceiptDoor,createResendReceipts,signedQuoteReceiptVerifier} from './signed-receipts.mjs';
 export function attachApprovedPrivateQuotes({enabled=false,router,pool,authority,Engine,bind,transport,tagKey,
-  customerPrincipal,ownedRequests,staffPrincipal,csrfChecked,registerPrivateQuoteDispatch,receiptEndpoint=null}) {
+  customerPrincipal,ownedRequests,staffPrincipal,csrfChecked,registerPrivateQuoteDispatch,receiptEndpoint=null,
+  assumeStagingRuntimeRole=false}) {
   if(enabled!==true)return null;
   for(const p of [Engine,bind,customerPrincipal,ownedRequests,staffPrincipal,csrfChecked,registerPrivateQuoteDispatch,
     authority?.forIssue,authority?.forDispatch,authority?.forCustomer,receiptEndpoint?.enabled===true?()=>{}:authority?.verifiedDispatchEvidence]){
     if(typeof p!=='function')throw Error('Missing private quote authority.');
   }
   if(!transport?.ready?.()||typeof pool?.connect!=='function')throw Error('Private quote transport or database unavailable.');
-  const transact=pgTransactions(pool);
+  const transact=pgTransactions(pool,{assumeStagingRuntimeRole});
   let receipts=null;
   const deskAuthority={
     forIssue:authority.forIssue.bind(authority),forCustomer:authority.forCustomer.bind(authority),

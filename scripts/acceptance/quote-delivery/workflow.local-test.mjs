@@ -9,6 +9,25 @@ const base=process.env.EA_REPO??process.cwd(), imp=p=>import(pathToFileURL(resol
 const {AssistedOrderQuoteService:Engine}=await imp('server/research/assisted-order/quote/service.ts');
 const {bindReviewedXriQuoteLines:bind}=await imp('server/research/assisted-order/quote/xri-line-bindings.ts');
 import {key,xri,s,tenant,now,viewer,customer,ctx,request} from './synthetic.mjs';
+test('staging quote transactions cannot run application SQL before the restricted role is verified',async()=>{
+ for(const access of ['approved','wrong_role','missing_grant']){
+   const queries=[],released=[];
+   const tx=pgTransactions({connect:async()=>({
+     async query(sql){
+       queries.push(sql);
+       if(access==='missing_grant' && sql.startsWith('SET LOCAL ROLE'))throw Error('role denied');
+       return {rows:sql.includes('AS restricted')?[{restricted:access==='approved'}]:[]};
+     },
+     release(damaged){released.push(damaged);}
+   })},{assumeStagingRuntimeRole:true});
+   const run=tx(tenant,xri,q=>q('SELECT snapshot FROM qd_quotes'));
+   if(access==='approved')await run;else await assert.rejects(run);
+   assert.deepEqual(queries.slice(0,2),['BEGIN','SET LOCAL ROLE ea_quote_stage_runtime']);
+   assert.equal(queries.includes('SELECT snapshot FROM qd_quotes'),access==='approved');
+   assert.equal(queries.at(-1),access==='approved'?'COMMIT':'ROLLBACK');
+   assert.deepEqual(released,[false]);
+ }
+});
 function fixture(t){
  const dir=mkdtempSync(join(tmpdir(),'qd-synthetic-'));let db=new DatabaseSync(join(dir,'db'));const raw=()=>db;
  db.exec('PRAGMA foreign_keys=ON');db.exec('CREATE TABLE research_notification_outbox(event_key TEXT PRIMARY KEY,event_type TEXT,template_key TEXT,recipient TEXT,payload TEXT)');db.exec(readFileSync(new URL('../../../server/research/assisted-order/quote/delivery/tables.sql',import.meta.url),'utf8'));

@@ -2115,7 +2115,9 @@
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "scripts/acceptance/quote-delivery/browser-fixture.mjs",
         "server/research/assisted-order/quote/delivery/mail.mjs",
-        "scripts/acceptance/quote-delivery/workflow.local-test.mjs"
+        "scripts/acceptance/quote-delivery/workflow.local-test.mjs",
+        "server/research/assisted-order/quote/delivery/pg.mjs",
+        "server/research/assisted-order/quote/delivery/compose.mjs"
       ],
       "dependsOn": [],
       "claimedAt": "2026-11-12T19:45:34.788Z"

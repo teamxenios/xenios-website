@@ -2074,11 +2074,13 @@
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "scripts/acceptance/quote-delivery/browser-fixture.mjs",
         "server/research/assisted-order/quote/delivery/mail.mjs",
-        "scripts/acceptance/quote-delivery/workflow.local-test.mjs"
+        "scripts/acceptance/quote-delivery/workflow.local-test.mjs",
+        "server/research/assisted-order/quote/delivery/pg.mjs",
+        "server/research/assisted-order/quote/delivery/compose.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-11-12T19:45:34.792Z",
-      "heartbeatAt": "2026-11-12T19:45:34.792Z"
+      "heartbeatAt": "2026-11-12T20:56:43.042Z"
     }
   ],
   "rules": [
