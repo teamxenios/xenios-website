@@ -242,7 +242,7 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
   });
 
-  it("uses only the source variant for guest catalog artwork", async () => {
+  it("shows guest catalog artwork only where it is reviewed, and no form illustration otherwise", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
     const productControlVariantId = "mov_9262033fe69a14a50f1c";
@@ -250,24 +250,33 @@ describe("mixed private request customer form source", () => {
     api.catalog.mockResolvedValue({
       ...catalog,
       items: [
+        // Mapped to capsule in the generated form map, but with no reviewed artwork.
         { ...item("mapped", false), variantId: productControlVariantId, unitPriceCents: 1250,
           sourceSelection: { family: "synthetic", slug: "mapped", variantId: sourceVariantId } },
         { ...item("missing-source", false), variantId: productControlVariantId, sourceSelection: undefined },
+        { ...item("reviewed", false), variantId: "mov_reviewed_guest_row", reviewedMedia: reviewedArtwork,
+          sourceSelection: { family: "synthetic", slug: "reviewed", variantId: sourceVariantId } },
       ],
     });
 
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       embedded ownerKey="early-access-session" />));
-    const [mapped, missingSource] = host.querySelectorAll(".xenios-order-card");
-    const mappedImage = mapped.querySelector("img");
-    expect(mappedImage?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
-    expect(mappedImage?.getAttribute("alt")).toBe("Synthetic mapped illustration, capsule");
-    expect(mapped.querySelector(".xenios-order-card-intro > .xenios-order-card-media > figure"))
-      .toBe(mappedImage?.closest("figure"));
-    const fallbackImage = missingSource.querySelector("img");
-    expect(fallbackImage?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
-    expect(fallbackImage?.getAttribute("alt")).toBe("Synthetic missing-source illustration, format unconfirmed");
-    expect(missingSource.querySelector("figcaption")).toBeNull();
+    const [mapped, missingSource, reviewed] = host.querySelectorAll(".xenios-order-card");
+    for (const card of [mapped, missingSource]) {
+      expect(card.querySelector("img")).toBeNull();
+      expect(card.querySelector(".xenios-order-card-media")).toBeNull();
+      expect(card.querySelector("figure")).toBeNull();
+      // The identity takes the card's width: no empty media column.
+      expect(card.querySelector(".xenios-order-card-intro--no-media")).not.toBeNull();
+      // Details stay available to the guest without an image.
+      expect(card.querySelector('button[aria-label^="View details"]')).not.toBeNull();
+    }
+    expect(reviewed.querySelector(".xenios-order-card-intro--no-media")).toBeNull();
+    const reviewedImage = reviewed.querySelector("img");
+    expect(reviewedImage?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(reviewed.querySelector(".xenios-order-card-intro > .xenios-order-card-media > figure"))
+      .toBe(reviewedImage?.closest("figure"));
+    expect(host.innerHTML).not.toMatch(/\/research\/product-media\/(capsule|unknown|vial|liquid|topical|tablet)\.svg/);
     expect(mapped.textContent).toContain("Request a quote");
     expect(mapped.textContent).not.toContain("$12.50");
     await click("Add to quote cart", "Add to quote cart: Synthetic mapped, Synthetic variant");
@@ -306,7 +315,8 @@ describe("mixed private request customer form source", () => {
     for (const fact of [row.specification, row.format, row.packBasis]) {
       expect(dialog?.textContent).toContain(fact);
     }
-    expect(dialog?.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
+    // No reviewed artwork for this row, so Details shows no image.
+    expect(dialog?.querySelector("img")).toBeNull();
     expect(dialog?.contains(document.activeElement)).toBe(true);
 
     await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
