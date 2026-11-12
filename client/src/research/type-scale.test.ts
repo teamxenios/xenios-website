@@ -2,7 +2,7 @@
  * The Research text sizes restated in rem must equal the site's px sizes at the default 16px root,
  * so a reader at the default size sees no change, and every rule must stay inside the Research tree.
  */
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -46,6 +46,36 @@ describe("Research text that follows the reader's text size", () => {
     const editorial = readFileSync(resolve("client/src/research/pages/public-editorial.css"), "utf8");
     const px = /@media \(max-width: (\d+)px\) \{[^@]*?\.public-editorial-footer-links \{\s*grid-template-columns: minmax\(0, 1fr\);/.exec(editorial);
     const em = /@media \(max-width: ([\d.]+)em\) \{\s*\.public-editorial-footer-links \{\s*grid-template-columns: minmax\(0, 1fr\);/.exec(editorial);
+    expect(px && em).toBeTruthy();
+    expect(Number(em![1]) * 16).toBe(Number(px![1]));
+  });
+
+  it("sets no Research text size in px, except as the default-size floor of a bounded heading", () => {
+    const files = readdirSync(resolve("client/src/research"), { recursive: true, encoding: "utf8" })
+      .filter((file) => file.endsWith(".css")).map((file) => "client/src/research/" + file.replaceAll("\\", "/"));
+    expect(files.length).toBeGreaterThan(5);
+    const offenders: string[] = [];
+    let bounded = 0;
+    for (const file of files) {
+      const css = readFileSync(resolve(file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      for (const [, value] of css.matchAll(/font-size\s*:\s*([^;}]+)/g)) {
+        if (!/\dpx/.test(value)) continue;
+        // max(<px size>, min(<the same size in rem>, <cap in vw>)): equal to the px size at the default
+        // 16px, larger with the reader's text, and never wider than its column allows.
+        const heading = /^max\((.+), min\((.+), [\d.]+vw\)\)$/.exec(value.trim());
+        if (heading && !/rem/.test(heading[1]) && !/\dpx/.test(heading[2]) && pxAt16(heading[1]).join() === pxAt16(heading[2]).join()
+          && heading[1].replace(/[\d.]+(px|rem)/g, "L") === heading[2].replace(/[\d.]+(px|rem)/g, "L")) { bounded += 1; continue; }
+        offenders.push(file + ": " + value.trim());
+      }
+    }
+    expect(offenders).toEqual([]);
+    expect(bounded).toBeGreaterThan(0);
+  });
+
+  it("switches the gateway header to its menu at enlarged text from the same width as at the default size", () => {
+    const gateway = readFileSync(resolve("client/src/research/pages/gateway-editorial.css"), "utf8");
+    const px = /@media \(max-width: (\d+)px\) \{[^@]*?\.rg-header-nav-desktop \{ display: none; \}\s*\.rg-mobile-menu \{ display: block; \}/.exec(gateway);
+    const em = /@media \(max-width: ([\d.]+)em\) \{\s*\.rg-header-nav-desktop \{ display: none; \}\s*\.rg-mobile-menu \{ display: block; \}\s*\}/.exec(gateway);
     expect(px && em).toBeTruthy();
     expect(Number(em![1]) * 16).toBe(Number(px![1]));
   });
