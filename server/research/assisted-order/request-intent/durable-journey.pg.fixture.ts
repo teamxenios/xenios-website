@@ -182,6 +182,16 @@ export function createDurableJourneyFixture() {
             text = "select public.request_intent_staff_get_with_context($1::uuid,$2::uuid) as value";
             values = [args.p_request_id, args.p_actor_user_id];
             break;
+          // The private contact candidate's two functions (name and email before the
+          // catalog). They exist only after that candidate is applied.
+          case "request_intent_catalog_contact_has":
+            text = "select public.request_intent_catalog_contact_has($1::text,$2::text) as value";
+            values = [args.p_owner_binding, args.p_policy_revision];
+            break;
+          case "request_intent_catalog_contact_put":
+            text = "select public.request_intent_catalog_contact_put($1::text,$2::text,$3::text,$4::text,$5::integer) as value";
+            values = [args.p_owner_binding, args.p_policy_revision, args.p_full_legal_name, args.p_email, args.p_ttl_seconds];
+            break;
           case "request_intent_staff_list":
             text = "select public.request_intent_staff_list($1::uuid,$2::integer) as value";
             values = [args.p_actor_user_id, args.p_page];
