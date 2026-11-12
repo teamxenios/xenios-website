@@ -17,7 +17,8 @@ const row: RequestIntentCatalogItem = {
   sourceSelection:{family:"clinical_formulations_503a",slug:"synthetic",variantId:"mov_0b"},
   selectableForReview:true,intentExclusion:"specification_review",clinicalReviewRequired:true,sourceDisplayState:"care_pathway",
   sourceVariantDisplayState:"care_pathway",sourceRefusal:null,
-  reviewedContent:{summary:"Explicitly cleared synthetic summary.",overview:"Complete synthetic educational description."},
+  reviewedContent:{summary:"Explicitly cleared synthetic summary.",overview:"Complete synthetic educational description. See the cautions.",
+   purpose:"Synthetic purpose for this exact listing.",cautions:"Synthetic first caution.\n\nSynthetic second caution."},
   reviewMessage:"Synthetic listing remains on hold.",
 };
 describe("an exact education-only exception preserves hold notice in both contexts",()=>{
@@ -39,6 +40,12 @@ describe("an exact education-only exception preserves hold notice in both contex
    const dialog=document.querySelector('[role="dialog"]');
    expect(dialog?.textContent).toContain(row.reviewMessage);
    expect(dialog?.textContent).toContain(row.reviewedContent!.overview);
+   // Purpose and cautions are shown beside the hold, verbatim, each under its own heading.
+   const headings=[...dialog!.querySelectorAll("h3")].map(h=>h.textContent);
+   expect(headings).toEqual(expect.arrayContaining(["Purpose","Cautions"]));
+   expect(dialog?.textContent).toContain(row.reviewedContent!.purpose);
+   expect(dialog?.textContent).toContain("Synthetic first caution.");
+   expect(dialog?.textContent).toContain("Synthetic second caution.");
    expect(api.submit).not.toHaveBeenCalled();
   }finally{await act(async()=>root.unmount());host.remove();sessionStorage.clear();}
  });
