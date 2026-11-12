@@ -30,6 +30,7 @@ import {
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDateTime, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { ProductPriceBatchPanel } from "./ProductPriceBatchPanel";
 import { ProductPriceReviewPanel, readDraftAmountCents, readDraftEffectiveAt } from "./ProductPriceReviewPanel";
 import {
   Website3RequiredInputNotice,
@@ -785,6 +786,7 @@ export function PricePanel({
   return (
     <div className="min-w-0">
       <ProductPriceReviewPanel product={product} />
+      <ProductPriceBatchPanel key={product.id} product={product} token={token} onSaved={onSaved} />
       {product.prices.some((price) => price.status === "draft") ? (
         <section aria-label="Existing draft price approvals" className="card min-w-0 mt-4">
           <h3 className="body-m font-700">Draft price approvals</h3>

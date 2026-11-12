@@ -88,6 +88,11 @@ async function realCatalogueApp(
   app.use(express.json());
   registerPrivateEarlyAccessApi(app, {
     config: EARLY_ACCESS_TEST_CONFIG,
+    // This suite proves the PRICED engine (shelf and cart agree on amounts,
+    // withdrawn units carry none). The quote-only customer projection that
+    // production uses is proven in release/catalog-quote-only and in
+    // founder-first-release-live-api's production-default case.
+    quoteOnly: false,
     now: options.now ?? (() => FIXTURE_NOW),
     sessionIdentity: true,
     env: CART_ON,

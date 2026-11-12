@@ -62,7 +62,7 @@ const NOW_ISO = new Date(NOW_MS).toISOString();
  * name 14 of them exactly; the other 8 are reported unresolved, never bent
  * to fit, because a price may not invent an identity.
  */
-async function harness() {
+async function harness(mode: "priced" | "production-default" = "priced") {
   const source = new ProductControlCatalogSource({
     catalog: { readCatalog: async () => canonicalReviewProducts() },
     declaredFacts: new ProductControlDeclaredFactsReader({
@@ -117,6 +117,9 @@ async function harness() {
     orderNumber: sequentialOrderNumbers(),
     proofId: sequentialProofIds(),
     now: () => NOW_MS,
+    // "priced": this suite proves the priced engine. "production-default":
+    // no option at all, which is the quote-only release.
+    ...(mode === "priced" ? { quoteOnly: false } : {}),
   });
 
   const readSessionId = createEarlyAccessSessionIdReader({
@@ -165,6 +168,27 @@ describe("the founder first-release seed against the founder-locked catalog", ()
     // onto one catalogued unit.
     const pairs = new Set(outcome.seeded.map((entry) => entry.sku));
     expect(pairs.size).toBe(21);
+  });
+});
+
+describe("GET /api/research/early-access/catalog, the production default", () => {
+  it("is quote-only: no unit carries an amount, and the same units stay sellable", async () => {
+    const priced = await harness("priced");
+    const pricedUnits = (await request(priced.app).get(CATALOG_PATH).set("Cookie", await boundSession(priced)))
+      .body.units as ReadonlyArray<Record<string, unknown>>;
+    const quote = await harness("production-default");
+    const answered = await request(quote.app).get(CATALOG_PATH).set("Cookie", await boundSession(quote));
+    expect(answered.status).toBe(200);
+    const units = answered.body.units as ReadonlyArray<Record<string, unknown>>;
+    expect(units).toHaveLength(pricedUnits.length);
+    expect(pricedUnits.some((unit) => typeof unit.priceCents === "number")).toBe(true);
+    for (const unit of units) {
+      expect(unit.priceCents).toBeNull();
+      expect(unit.pricing).toBe("quote");
+    }
+    const sellable = (list: ReadonlyArray<Record<string, unknown>>) =>
+      list.filter((unit) => unit.purchasable === true).map((unit) => `${unit.sku}|${unit.strength}`).sort();
+    expect(sellable(units)).toEqual(sellable(pricedUnits));
   });
 });
 
@@ -366,6 +390,9 @@ describe("with Raw Peptides supply confirmed: the finish line", () => {
     app.use(express.json());
     registerPrivateEarlyAccessApi(app, {
       config: EARLY_ACCESS_TEST_CONFIG,
+      // The priced engine: this proves the /orders door against the shelf's
+      // amount. The quote-only shelf is proven in the production-default case.
+      quoteOnly: false,
       catalog: source,
       releases: ledger,
       customers,

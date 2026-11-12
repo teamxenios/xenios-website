@@ -73,11 +73,11 @@ describe("review-request reference pages", () => {
     expect(host.textContent).toContain("Nothing was sent again.");
     expect(host.textContent).toContain("not an order, approval or payment");
     const links = hrefs();
-    expect(links).toContain("/research/early-access/order-request");
+    expect(links).toContain("/earlyaccess");
     expect(links).toContain("/research/support");
     const mailto = links.find((href) => href.startsWith("mailto:"))!;
-    expect(mailto.startsWith("mailto:research@xeniostechnology.com?")).toBe(true);
-    expect(decodeURIComponent(mailto)).toContain("Quick Order request " + receipt.publicReference);
+    expect(mailto.startsWith("mailto:team@xeniostechnology.com?")).toBe(true);
+    expect(decodeURIComponent(mailto)).toContain("Early Access request " + receipt.publicReference);
     expect(host.querySelectorAll("h1")).toHaveLength(1);
     expectNoSecretOrStatusClaim();
   });

@@ -7,7 +7,7 @@
   color: var(--ink-2);
   cursor: pointer;
   flex: none;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   min-height: 44px;
   padding: 8px 12px;
@@ -21,7 +21,7 @@
 .catalog-priority-card-top .account-section-label { overflow-wrap: anywhere; }
 .catalog-priority-card-top .ra-badge { max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
 .catalog-priority-lanes { display: flex; flex-wrap: wrap; gap: 5px; min-height: 22px; }
-.catalog-priority-lanes span { border-left: 1px solid var(--rule); color: var(--ink-mute); font-size: 11px; padding-left: 7px; }
+.catalog-priority-lanes span { border-left: 1px solid var(--rule); color: var(--ink-mute); font-size: 0.6875rem; padding-left: 7px; }
 .catalog-priority-action { align-self: end; margin-top: 6px; min-height: 44px; }
 .catalog-priority-action.btn {
   height: auto;

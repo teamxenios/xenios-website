@@ -1,3 +1,4 @@
+import type { CatalogAdmission } from "./catalog-admission";
 import type { CarePrincipal } from "../../../../shared/care/contracts";
 import { canReadPendingRequestIntent, type RequestIntentStaffReadContext } from "./staff-read-authority";
 import { quantityIsAllowed } from "../../../../shared/research/assisted-order/action-policy";
@@ -12,6 +13,8 @@ import type {
   AssistedOrderIdGenerator, AssistedOrderSubmissionStanding, AssistedOrderLegalPort,
 } from "../ports";
 import type { RequestIntentCatalog } from "./catalog";
+import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
+import { inquiryReviewCodeForVariant } from "../../master-offerings/inquiry-review-states";
 
 export class RequestIntentError extends Error {
   constructor(public readonly code: string, public readonly status: 400 | 401 | 403 | 409 | 503) {
@@ -35,6 +38,15 @@ export type RequestIntentDependencies = Readonly<{
   catalog: RequestIntentCatalog;
   repository: RequestIntentRepository;
   standing: AssistedOrderSubmissionStanding;
+  /** Optional until the private contact custodian and gate/UI are qualified by the owner. */
+  contactAdmission?: CatalogAdmission;
+  /**
+   * Kept for compatibility with older composition wiring. A mixed customer
+   * inquiry never exposes catalog prices, even if this value is false or absent.
+   * Private pricing and historical orders each have their own authority.
+   */
+  quoteOnly?: boolean;
+  optionalIntakeEnabled?: boolean;
   legal: AssistedOrderLegalPort;
   hasher: AssistedOrderHasher;
   ids: AssistedOrderIdGenerator;
@@ -60,9 +72,29 @@ export class RequestIntentService {
     throw new RequestIntentError("authentication_required", 401);
   }
 
+  private async assertStanding(viewer: AssistedOrderViewer) {
+    if (!await this.deps.standing.accepted(viewer)) throw new RequestIntentError("agreement_standing_required", 403);
+  }
+  async admissionStatus(viewer: AssistedOrderViewer) {
+    const ownerHash=this.owner(viewer);
+    await this.assertStanding(viewer);
+    if(!this.deps.contactAdmission) throw new RequestIntentError("catalog_admission_unavailable",503);
+    return this.deps.contactAdmission.status(ownerHash,viewer.earlyAccessSessionHash);
+  }
+  async recordAdmission(viewer: AssistedOrderViewer, input: unknown) {
+    const ownerHash=this.owner(viewer);
+    await this.assertStanding(viewer);
+    if(!this.deps.contactAdmission) throw new RequestIntentError("catalog_admission_unavailable",503);
+    return this.deps.contactAdmission.capture(ownerHash,viewer.earlyAccessSessionHash,input);
+  }
+
   async list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery) {
-    this.owner(viewer);
-    return this.deps.catalog.list(viewer, query);
+    const ownerHash=this.owner(viewer);
+    // The session identifies a customer; it does not prove current policy acceptance.
+    await this.assertStanding(viewer);
+    await this.deps.contactAdmission?.require(ownerHash,viewer.earlyAccessSessionHash);
+    const page = await this.deps.catalog.list(viewer, query);
+    return mixedInquiryCatalogPage(page);
   }
 
   /** Same-session recovery returns only an actual committed reference, never a success guess. */
@@ -78,13 +110,16 @@ export class RequestIntentService {
     const input = validateRequestIntentInput(raw);
     const attemptHash = this.deps.hasher.hash(input.idempotencyKey);
     const fingerprint = this.deps.hasher.stableHash({
+      ...(input.optionalIntake ? { optionalIntake: input.optionalIntake } : {}),
       kind: REQUEST_INTENT_KIND, contact: input.contact, agreements: input.agreements, lines: input.lines,
     });
     // Retry identity is based on the submitted facts, not mutable catalog prices.
     // A saved attempt still replays if catalog/legal/standing subsequently changes.
     const prior = await this.deps.repository.findAttempt(ownerHash, attemptHash);
     if (prior) return this.replay(prior, fingerprint);
-    if (!await this.deps.standing.accepted(viewer)) throw new RequestIntentError("agreement_standing_required", 403);
+    if (input.optionalIntake && this.deps.optionalIntakeEnabled !== true) throw new RequestIntentError("optional_intake_unavailable", 400);
+    await this.assertStanding(viewer);
+    await this.deps.contactAdmission?.require(ownerHash,viewer.earlyAccessSessionHash);
 
     const lines: RequestIntentLine[] = [];
     const resolved = await this.deps.catalog.resolveMany(viewer, input.lines);
@@ -133,6 +168,7 @@ export class RequestIntentService {
       publicReference: "XRI-" + requestId.replace(/-/g, "").toUpperCase(),
       status: "pending_review", createdAt: now.toISOString(),
       contact: input.contact, agreements: input.agreements, lines,
+      ...(input.optionalIntake ? { optionalIntake: input.optionalIntake } : {}),
     };
     // The repository transaction stores every line and audit event or none.
     const saved = await this.deps.repository.createOrReplay({ ownerHash, attemptHash, fingerprint, detail });
@@ -156,7 +192,15 @@ export class RequestIntentService {
     // independently rechecks current clinical_admin assignment and the approved
     // request_intent_pending_read capability on EVERY operation. Whole Care can
     // remain disabled. No direct authenticated Data API access is introduced.
-    return reader.get(requestId, principal.subjectId);
+    const detail = await reader.get(requestId, principal.subjectId);
+    if (!detail) return null;
+    // Add, for staff only, the kind of open question on each line's listing.
+    // Read now rather than stored, so it reflects the current review record.
+    // A line whose listing has no open question is returned exactly as stored.
+    return { ...detail, lines: detail.lines.map((line) => {
+      const reviewCode = inquiryReviewCodeForVariant(line.sourceVariantId);
+      return reviewCode === null ? line : { ...line, reviewCode };
+    }) };
   }
 
   async staffList(principal: CarePrincipal | null, context: RequestIntentStaffReadContext,

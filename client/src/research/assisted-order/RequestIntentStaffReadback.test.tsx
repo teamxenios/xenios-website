@@ -117,3 +117,48 @@ describe("private request detail pending feedback", () => {
     expect(replacement.staff).not.toHaveBeenCalled(); noUnrelatedCalls(api); noUnrelatedCalls(replacement);
   });
 });
+
+describe("private quote desk", () => {
+  const desk = () => host.querySelector<HTMLElement>('[aria-label="Private quote desk"]');
+  function body() { return desk()?.querySelector<HTMLTextAreaElement>("textarea")?.value; }
+  function field(label: string) {
+    const control = [...desk()!.querySelectorAll("label")].find(l=>(l.textContent || "").trim().startsWith(label))?.querySelector("input");
+    if (!control) throw new Error("Missing quote field: " + label);
+    return control;
+  }
+  async function enter(label:string,text:string) {
+    const input=field(label);
+    await act(async()=>{
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value")!.set!.call(input,text);
+      input.dispatchEvent(new Event("input",{bubbles:true}));
+      input.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  }
+  it("refuses a response for another saved request before showing its contact or draft", async()=>{
+    const api=fixture(); api.staff.mockResolvedValueOnce(B);
+    await mount(api); await reference(A.publicReference); await act(async()=>submit());
+    expect(desk()).toBeNull(); expect(host.textContent).not.toContain(B.contact.email);
+    expect(host.textContent).toContain("Private request access could not be confirmed.");
+  });
+  it("withholds composition after a malformed stored contact",async()=>{
+    const api=fixture(); api.staff.mockResolvedValueOnce({...A,contact:{...A.contact,email:""}});
+    await mount(api); await reference(A.publicReference); await act(async()=>submit());
+    expect(desk()).toBeNull(); expect(host.textContent).toContain("No draft is available");
+  });
+  it("previews only a matched private quote, invalidates it on edit and forgets it on a request change", async()=>{
+    const api=fixture(); await mount(api); expect(desk()).toBeNull();
+    await reference(A.publicReference); await act(async()=>submit());
+    await enter("Request reference on issued quote",A.publicReference);
+    await enter("Recipient email on issued quote",A.contact.email);
+    await enter("Issued quote number","EA-TEST-2");
+    await enter("Final total","1.25"); await enter("Valid through","2099-12-31");
+    await act(async()=>{ field("I matched").click(); });
+    await act(async()=>{ desk()!.querySelector("form")!.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true})); });
+    expect(body()).toContain("$1.25 USD"); expect(body()).not.toContain("1 Synthetic Street");
+    expect(desk()!.querySelector("a[href]")).toBeNull(); noUnrelatedCalls(api);
+    await enter("Final total","1.50"); expect(body()).toBeUndefined(); expect(field("I matched").checked).toBe(false);
+    await reference(B.publicReference); expect(desk()).toBeNull();
+    api.staff.mockResolvedValueOnce(B); await act(async()=>submit());
+    expect(field("Final total").value).toBe(""); expect(body()).toBeUndefined();
+  });
+});

@@ -161,7 +161,7 @@ describe("public editorial page system", () => {
   it("keeps Contact read-only, routes clinical questions away, and makes no SLA promise", async () => {
     const view = await renderPage(<ResearchContact />);
     expect(view.querySelector("form")).toBeNull();
-    expect(hrefs(view)).toContain("mailto:research@xeniostechnology.com");
+    expect(hrefs(view)).toContain("mailto:team@xeniostechnology.com");
     expect(hrefs(view)).toContain("/care");
     expect(view.textContent).toContain("No response-time promise");
     expect(view.textContent).toContain("Do not email passwords");

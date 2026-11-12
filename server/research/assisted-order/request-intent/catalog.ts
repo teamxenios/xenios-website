@@ -1,13 +1,20 @@
 import {
   projectAssistedOrderCatalogItem,
 } from "../../../../shared/research/assisted-order/action-policy";
-import { assistedOrderActionGroupFor, type AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
+import {
+  ASSISTED_ORDER_CATALOG_SORTS, assistedOrderActionGroupFor, type AssistedOrderCatalogQuery,
+} from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogItem, RequestIntentCatalogPage } from "../../../../shared/research/assisted-order/request-intent";
 import { MASTER_OFFERING_FAMILIES, isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
 import { directPurchaseRefusal } from "../../../../shared/research/master-offerings/pathway-authority";
+import { requestStoreWidening } from "../../../../shared/research/master-offerings/quote-cart";
+import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { authorityFor, type AssistedOrderMasterCatalogInput } from "../production-catalog";
 import type { AssistedOrderViewer } from "../ports";
-import { getReviewedProductContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
+import { getInquiryDisplayContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
+import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
+
+import { candidateRankOrders, readCatalogRankingSource, type RankingSource } from "./ranking-source";
 
 export type RequestIntentCatalog = Readonly<{
   list(viewer: AssistedOrderViewer, query: AssistedOrderCatalogQuery): Promise<RequestIntentCatalogPage>;
@@ -15,7 +22,9 @@ export type RequestIntentCatalog = Readonly<{
 }>;
 
 /** Same viewer-scoped master reader, binding artifact, price and pathway authorities. No copied catalog. */
-export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput): RequestIntentCatalog {
+export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput,
+  rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now): RequestIntentCatalog {
+  const searchAliases = new WeakMap<RequestIntentCatalogItem, string>();
   async function visible(viewer: AssistedOrderViewer): Promise<RequestIntentCatalogItem[]> {
     const service = input.serviceFor(viewer);
     if (!service) throw new Error("request_intent_catalog_unavailable");
@@ -49,27 +58,57 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
           variantDisplayState: variant.displayState, specification: variant.label,
           reviewedHolds: input.reviewedFormulationHolds,
         });
-        const comingSoon = [offering.displayState, variant.displayState]
-          .some((state) => state === "coming_soon" || state === "planned");
-        const nonMerchandise = refusal === "non_merchandise_family";
-        const reviewedContent = getReviewedProductContent(offering, variant);
+        // One rule, shared with the member catalog's quote-cart action.
+        const { comingSoon, nonMerchandise } = requestStoreWidening({
+          family: offering.family, displayState: offering.displayState,
+          variantDisplayState: variant.displayState, specification: variant.label,
+          reviewedHolds: input.reviewedFormulationHolds,
+        });
+        const strengthReview = isHcgStrengthReview(offering.id, variant.id);
+        const widerStoreNeeded = comingSoon || nonMerchandise;
+        // A reviewed state for a listing with no reviewed description, or whose
+        // label states an unconfirmed fact. Only its customer fields are used here.
+        const reviewState = inquiryReviewStateFor(offering.id, variant.id);
+        const reviewedContent = getInquiryDisplayContent(offering, variant, reviewState);
         const reviewedMedia = getReviewedProductMedia(offering, variant);
         items.push({
           ...item,
           ...(reviewedContent ? { reviewedContent } : {}),
           ...(reviewedMedia ? { reviewedMedia } : {}),
+          ...(reviewState ? {
+            specification: reviewState.neutralSpecification ?? item.specification,
+            reviewMessage: reviewState.customerMessage,
+          } : {}),
           // A clinical request is not a quote. Never present its price as permission to buy.
           unitPriceCents: authority.providerWorkflowRequired ? null : item.unitPriceCents,
           priceVersion: authority.providerWorkflowRequired ? null : item.priceVersion,
           sourceSelection: { family: offering.family, slug: offering.slug, variantId: variant.id },
-          selectableForReview: !comingSoon && !nonMerchandise,
-          intentExclusion: nonMerchandise ? "non_merchandise" : comingSoon ? "coming_soon" : null,
+          // Every listed row may be asked about. An inquiry is not an offer: it
+          // authorizes no purchase, prescription, payment, reservation or shipment.
+          // A held row is always selectable, with its disputed detail withheld.
+          // A coming-soon row and a supply or service row are selectable only once
+          // the request store accepts their lines (see allListedInquirable).
+          selectableForReview: !widerStoreNeeded || input.allListedInquirable === true,
+          // The reason a line needs a human decision. It excludes the row only
+          // while selectableForReview is false.
+          intentExclusion: strengthReview ? "specification_review"
+            : nonMerchandise ? "non_merchandise" : comingSoon ? "coming_soon"
+            : reviewState ? "specification_review" : null,
           clinicalReviewRequired: authority.providerWorkflowRequired,
           sourceDisplayState: offering.displayState,
           sourceVariantDisplayState: variant.displayState,
           sourceRefusal: refusal,
-          actionLabel: comingSoon ? "Coming soon" : nonMerchandise ? "Not a product request" : "Add to request",
+          actionLabel: strengthReview || (reviewState && !comingSoon && !nonMerchandise)
+            ? HCG_STRENGTH_REVIEW.actionLabel
+            : comingSoon ? "Coming soon"
+            : nonMerchandise ? (input.allListedInquirable === true ? "Supply or service inquiry" : "Not a product request")
+            : "Add to quote cart",
         });
+        // The listing's dataset aliases, which include its listed name and label, so a reviewed
+        // heading or neutral line does not hide the listed words from search. Search only: the
+        // aliases never enter the DTO, and a match shows the row, not any withheld detail. The
+        // member catalog search reads the same aliases.
+        searchAliases.set(items[items.length - 1], offering.aliases.join(" "));
       }
       if (seen.size === total) return items;
       if (seen.size > total || selection.offerings.length === 0) throw new Error("request_intent_catalog_incomplete");
@@ -85,14 +124,43 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
       if (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(pageSize) || pageSize < 1 || pageSize > 100) {
         throw new Error("request_intent_page_invalid");
       }
+      if (query.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(query.sort)) {
+        throw new Error("request_intent_sort_invalid");
+      }
       const search = query.search?.trim().toLowerCase();
-      const items = (await visible(viewer)).filter((item) =>
+      const filtered = (await visible(viewer)).filter((item) =>
         (!query.family || (isMasterOfferingFamily(query.family) && item.family === query.family))
         && (!query.channel || item.channel === query.channel)
         && (!query.actionGroup || assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup)
         && (query.actionGroup !== undefined || !query.workflowMode || item.workflowMode === query.workflowMode)
-        && (!search || [item.productName, item.specification, item.variantId].join(" ").toLowerCase().includes(search)));
+        && (!search || [item.productName, item.specification, item.variantId, searchAliases.get(item) ?? ""]
+          .join(" ").toLowerCase().includes(search)));
+      // Sorting is over the whole filtered catalog, before paging, so page 2 follows
+      // page 1 in the chosen order. Absent sort keeps the catalog's own order.
+      //
+      // Z to A reverses the names only: inside one name the specifications still
+      // run in ascending order, as written, in both directions.
+      //
+      // The order is total. The last two keys are the row's variant id and product
+      // id, and the catalog refuses two rows with the same pair, so no two rows
+      // compare equal and the result does not depend on the catalog's own order.
+      const direction = query.sort === "name_desc" ? -1 : 1;
+      const byName = (left: RequestIntentCatalogItem, right: RequestIntentCatalogItem) =>
+        direction * left.productName.localeCompare(right.productName, "en", { sensitivity: "base", numeric: true })
+        || (left.specification ?? "").localeCompare(right.specification ?? "", "en", { sensitivity: "base", numeric: true })
+        || left.variantId.localeCompare(right.variantId)
+        || left.productId.localeCompare(right.productId);
+      // An expired or unreadable aggregate never blocks the ordinary catalog. No ranking source is
+      // read until visibility has been established; no hidden identities or counts go in the DTO.
+      let aggregate: unknown = null;
+      if (filtered.length > 1) try { aggregate = await rankingSource(); } catch { /* optional source unavailable */ }
+      const rankOrders = candidateRankOrders(aggregate, filtered, clock(), byName);
+      const ranked = query.sort === "best_sellers" || query.sort === "most_requested_research_peptides" ? query.sort : null;
+      const items = ranked ? (rankOrders.get(ranked) ?? filtered)
+        : query.sort === undefined ? filtered : [...filtered].sort(byName);
       return {
+        ...(rankOrders.size ? { availableRankSorts: [...rankOrders.keys()] } : {}),
+        ...(ranked && !rankOrders.has(ranked) ? { rankUnavailable: true as const } : {}),
         items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length, page, pageSize,
         families: MASTER_OFFERING_FAMILIES,
         channels: [...new Set(items.map((item) => item.channel))],

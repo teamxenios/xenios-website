@@ -5,6 +5,7 @@ import type { StorefrontIntent } from "../storefront/entry-intent";
 import { OrderEntryIntentNotice } from "../early-access/OrderEntryIntentNotice";
 import { orderEntryIntentFromSearch, type OrderEntryIntentResolution } from "../early-access/orderEntryIntent";
 import { AssistedOrderCta } from "./AssistedOrderCta";
+import { EARLY_ACCESS_REQUEST_CTA } from "../early-access/request-experience-copy";
 import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
 import { RequestIntentReceipt as ReceiptView } from "./RequestIntentReceipt";
 import { readOrderRequestContinuity, selectOrderRequestDoor, useOrderRequestMode, type OrderRequestMode } from "./order-request-mode";
@@ -24,10 +25,10 @@ export function OrderRequestCta({ mode }: { mode: OrderRequestMode }) {
   if (mode.kind !== "mixed") return null;
   return <section className="card mt-6"><h2>Request products for review</h2>
     <p>Choose clinical and nonclinical items in one private request. Submission does not approve treatment, place an order or collect payment.</p>
-    <a className="btn btn-primary mt-4" href="/research/early-access/order-request">Open request form</a></section>;
+    <a className="btn btn-primary mt-4" href="/research/early-access/order-request">{EARLY_ACCESS_REQUEST_CTA.open}</a></section>;
 }
 function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
-  onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void }) {
+  onConfirmedReceipt?: (receipt: RequestIntentReceipt, recovered?: boolean) => void }) {
   const [prior] = useState(() => {
     try { return readOrderRequestContinuity(window.sessionStorage); } catch { return "blocked" as const; }
   });
@@ -52,7 +53,10 @@ function OwnedOrderRequestEntry(props: Props & { mode: OrderRequestMode;
     {prior === "legacy" ? <p role="status">Continue your existing order-request attempt. Its key and recovery rules are unchanged; do not submit a replacement.</p> : null}
     {prior === "mixed" && props.mode.kind !== "mixed" ? <p role="status">An earlier private request may exist. Keep this attempt and contact support if its result cannot be confirmed. This page will not start a different request.</p> : null}
     <Suspense fallback={<p role="status">Loading the request form...</p>}>
-      {kind === "mixed" ? <MixedEntry embedded={props.embedded} continuationEnabled={props.continuationEnabled}
+      {/* The server requires the contact record for every catalog read, including for a tab that
+          already holds a stored attempt, so the contact step is never skipped for one. The attempt
+          stays in session storage and the form restores it once the step is done. */}
+      {kind === "mixed" ? <MixedEntry admissionRequired={props.mode.contactAdmissionRequired===true} embedded={props.embedded} continuationEnabled={props.continuationEnabled}
         onStepChange={props.onStepChange} entryIntent={hint} onConfirmedReceipt={props.onConfirmedReceipt}
         onAgreementStandingRequired={props.onAgreementStandingRequired} />
         : <>{props.embedded && hint ? <OrderEntryIntentNotice intent={hint} enabled
@@ -71,7 +75,7 @@ function OrderRequestEntryBody(props: Props & { closedIntakeFallback?: ReactNode
   const checking = memberChecking || memberSessionStatus === "checking";
   const verifiedScope = !checking && recovery === "none" && memberSessionStatus === "authenticated"
     && member && isResearchCartScope(member.cartScope) ? member.cartScope : null;
-  const [confirmed, setConfirmed] = useState<{ scope: string; receipt: RequestIntentReceipt } | null>(null);
+  const [confirmed, setConfirmed] = useState<{ scope: string; receipt: RequestIntentReceipt; recovered?: boolean } | null>(null);
   // Keep only confirmed display data through verification. A real owner or
   // recovery boundary discards it permanently, including a later return to A.
   // The anonymous literal is not a verified session identity. Route reset
@@ -101,11 +105,11 @@ function OrderRequestEntryBody(props: Props & { closedIntakeFallback?: ReactNode
       ? readConfirmedReceiptRecord(storage, verifiedScope) : null;
     return receipt ? <ReceiptView receipt={receipt} headingLevel={2} focusOnMount reopened /> : props.closedIntakeFallback;
   }
-  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} focusOnMount
+  if (confirmed && verifiedScope === confirmed.scope) return <ReceiptView receipt={confirmed.receipt} recovered={confirmed.recovered} focusOnMount
     headingLevel={props.embedded ? 2 : 1}
     onStartAnother={() => { const storage = browserStorage(); if (storage) forgetConfirmedReceipt(storage); setConfirmed(null); }} />;
   return <OwnedOrderRequestEntry key={owner} {...props} mode={props.mode ?? standaloneMode}
-    onConfirmedReceipt={verifiedScope ? (receipt) => setConfirmed({ scope: verifiedScope, receipt }) : undefined} />;
+    onConfirmedReceipt={verifiedScope ? (receipt, recovered) => setConfirmed({ scope: verifiedScope, receipt, recovered }) : undefined} />;
 }
 
 export function ClosedIntakeRequestReceipt({ fallback }: Readonly<{ fallback: ReactNode }>) {

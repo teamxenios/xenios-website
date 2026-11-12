@@ -362,7 +362,8 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
         family: "research_peptides_materials",
         action: "request_order",
       })
-      .set("x-test-member", "1");
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE);
 
     expect(response.status).toBe(200);
     expect(observed).toMatchObject({
@@ -580,6 +581,40 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
     });
   });
 
+  it("does not list the catalog before the policy is accepted, and never reads it", async () => {
+    // A signed-in member with no Early Access session: a session identifies a
+    // customer, it does not prove the current policy was accepted.
+    let queries = 0;
+    const withoutSession = await buildApp(() => { queries += 1; });
+    const noSession = await request(withoutSession)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .set("x-test-member", "1");
+    expect(noSession.status).toBe(403);
+    expect(noSession.body.error).toBe("agreement_required");
+    expect(noSession.body.items).toBeUndefined();
+    expect(queries).toBe(0);
+
+    // An Early Access session whose recorded acceptance is absent.
+    const notAccepted = await buildApp(() => { queries += 1; }, { agreementAccepted: false });
+    const refused = await request(notAccepted)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE);
+    expect(refused.status).toBe(403);
+    expect(refused.body.error).toBe("agreement_required");
+    expect(queries).toBe(0);
+
+    // Control: the same read with acceptance recorded is listed, and the catalog is read once.
+    const accepted = await buildApp(() => { queries += 1; });
+    const listed = await request(accepted)
+      .get("/api/research/early-access/assisted-orders/catalog")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE);
+    expect(listed.status).toBe(200);
+    expect(listed.body.items).toHaveLength(1);
+    expect(queries).toBe(1);
+  });
+
   it("rejects forged agreement pairs when durable standing is absent, with no write or notification", async () => {
     let notificationCount = 0;
     let observedCustomerRef: string | null = null;
@@ -671,10 +706,12 @@ describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> 
       { kind: "assisted_order_request_notice", version: "v1" },
     ]);
 
-    // 2. The member browses the catalog.
+    // 2. The member browses the catalog. The policy is accepted first: the
+    //    catalog is not listed for a viewer without that standing.
     const catalog = await request(app)
       .get("/api/research/early-access/assisted-orders/catalog")
-      .set("x-test-member", "1");
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE);
     expect(catalog.status).toBe(200);
     expect(catalog.body.items).toHaveLength(1);
     expect(catalog.body.items[0].unitPriceCents).toBe(9900);

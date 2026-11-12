@@ -375,6 +375,11 @@ export type AssistedOrderDependencies = Readonly<{
   logger: AssistedOrderLogger;
   adminNotificationEmail: string;
   documentBucketName: string;
+  // Quote-only Early Access. When true the CUSTOMER confirmation payload is
+  // marked `pricing: "quote"` and carries no catalog amount. The server still
+  // prices the request; the admin payload, the stored record and the receipt
+  // are unchanged here (the customer route strips the receipt separately).
+  quoteOnly?: boolean;
 }>;
 
 export type AssistedOrderRouteViewerResolver<Request> = Readonly<{

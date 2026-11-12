@@ -25,6 +25,10 @@
 .xenios-order-steps button.is-active span { background: var(--accent); color: white; }
 .xenios-order-steps button:disabled { opacity: .56; cursor: not-allowed; }
 .xenios-order-panel { border: 1px solid var(--line); background: var(--surface); border-radius: 22px; padding: clamp(20px, 4vw, 40px); box-shadow: 0 18px 70px rgba(25, 35, 29, .06); }
+/* Contact addresses and exact product identifiers can contain long unbroken
+   strings. Let request-panel text reflow at enlarged sizes; never hide it,
+   truncate it, shrink it, or change the request/dock action. */
+.xenios-order-page > .xenios-order-panel { overflow-wrap: anywhere; }
 .xenios-order-panel h2 { font-size: 1.65rem; margin: 0 0 24px; }
 .xenios-order-panel h3 { font-size: 1rem; margin: 32px 0 12px; }
 .xenios-order-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
@@ -121,7 +125,7 @@
      and zoom does not apply to it. */
   .xenios-order-page input:not([type="checkbox"]),
   .xenios-order-page select,
-  .xenios-order-page textarea { font-size: 16px; }
+  .xenios-order-page textarea { font-size: 1rem; }
 }
 .xenios-order-timeline { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 14px; }
 .xenios-order-timeline li { border-left: 3px solid var(--accent); padding-left: 15px; display: grid; gap: 3px; }
@@ -173,7 +177,7 @@
   }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar label { min-width: 0; gap: 4px; font-size: .75rem; }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar input,
-  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select { min-width: 0; height: 44px; padding: 8px 10px; font-size: 16px; }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar select { min-width: 0; height: 44px; padding: 8px 10px; font-size: 1rem; }
   .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-pagination {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -211,7 +215,7 @@
   .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-quantity { width: 100%; margin: 0; gap: 8px; }
   .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity label { flex: 0 1 4.25rem; min-width: 3.5rem; }
   .xenios-order-page--guest-catalog .xenios-order-card-quantity-label { display: none; }
-  .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity input { padding-inline: 6px; font-size: 16px; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity input { padding-inline: 6px; font-size: 1rem; }
   .xenios-order-page--guest-catalog .xenios-order-summary { padding: 0; border-radius: 12px; }
   .xenios-order-page--guest-catalog .xenios-order-summary-toggle {
     display: flex;
@@ -233,4 +237,112 @@
   .xenios-order-page--guest-catalog .xenios-order-summary-content { display: none; }
   .xenios-order-page--guest-catalog .xenios-order-summary-content.is-open { display: block; padding: 0 12px 12px; }
   .xenios-order-page--guest-catalog .xenios-order-summary-content h2 { display: none; }
+}
+
+/* PR427 closeout: retain 44px controls and every notice while using the guest
+   catalog's available width. The image remains 88px; its packaging caption
+   spans the card instead of wrapping down a narrow 88px column. Nested grids
+   preserve the figure/caption DOM and place long identities above the caption.
+   The original layout remains the fallback when subgrid is unavailable. */
+@media (max-width: 700px) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar + p[role="status"] {
+    margin-block: 8px;
+  }
+  /* At enlarged text, reserve each action's intrinsic width and let the page
+     counter wrap in the remaining track instead of painting over Previous. */
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-pagination {
+    grid-template-columns: minmax(44px, max-content) minmax(0, 1fr) minmax(44px, max-content);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-pagination button,
+  .xenios-order-page--guest-catalog .xenios-order-pagination span {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-layout { gap: 8px; }
+  .xenios-order-page--guest-catalog .xenios-order-cards { gap: 8px; }
+  .xenios-order-page--guest-catalog .xenios-order-card { padding: 10px; gap: 6px; }
+  .xenios-order-page--guest-catalog .xenios-order-summary-toggle { padding-block: 8px; }
+
+  @supports (grid-template-columns: subgrid) and (grid-template-rows: subgrid) {
+    .xenios-order-page--guest-catalog .xenios-order-card-intro {
+      grid-template-rows: auto auto;
+      gap: 4px 12px;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-media {
+      display: grid;
+      grid-column: 1 / -1;
+      grid-row: 1 / span 2;
+      grid-template-columns: subgrid;
+      grid-template-rows: subgrid;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-media > figure {
+      grid-column: 1 / -1;
+      grid-row: 1 / span 2;
+      grid-template-columns: subgrid;
+      grid-template-rows: subgrid;
+      gap: inherit;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-media > figure > div {
+      grid-column: 1;
+      grid-row: 1;
+      align-self: start;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-media figcaption {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .xenios-order-page--guest-catalog .xenios-order-card-identity {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: start;
+    }
+  }
+}
+
+/* While the toolbar is sticky, a control reached by keyboard must not scroll
+   to rest underneath it. The margin is in rem so it grows with the toolbar
+   when the page text is enlarged. */
+@media (max-width: 700px) {
+  .xenios-order-page--guest-catalog .xenios-order-card :is(a, button, input, select, summary) {
+    scroll-margin-top: 14rem;
+  }
+}
+
+/* A full sticky toolbar and the portaled request dock cannot share a short or
+   large-text phone viewport: together they can cover every product. In those
+   viewports the toolbar scrolls with the page, the lower pager is shown
+   again, and one small sticky button returns to search and paging.
+   Two conditions select them. A short viewport, with its height in em so it
+   follows the browser's text size as well as zoom. And a narrow viewport whose
+   page text is enlarged, found by a container query in rem: 13.5rem is 216px
+   at the default size, narrower than any phone, and 432px when the page text
+   is doubled, wider than a 430px phone. */
+.xenios-order-find-tools { display: none; }
+@media (max-width: 700px) and (max-height: 38em) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar { position: static; }
+  .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: block; }
+  /* The toolbar no longer sticks here, so the margin only has to clear the small sticky button. */
+  .xenios-order-page--guest-catalog .xenios-order-card :is(a, button, input, select, summary) { scroll-margin-top: 3.5rem; }
+  .xenios-order-page--guest-catalog .xenios-order-find-tools {
+    display: block; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 19;
+    justify-self: start; min-height: 44px; max-width: 100%; padding: 4px 10px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+    color: inherit; font: inherit; line-height: 1.2; overflow-wrap: anywhere;
+  }
+}
+@media (max-width: 430px) and (max-height: 940px) {
+  .xenios-order-page--guest-catalog { container: guest-order-reflow / inline-size; }
+  @container guest-order-reflow (max-width: 13.5rem) {
+    .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar { position: static; }
+    .xenios-order-page--guest-catalog .xenios-order-bottom-pagination { display: block; }
+    .xenios-order-page--guest-catalog .xenios-order-card :is(a, button, input, select, summary) { scroll-margin-top: 3.5rem; }
+    .xenios-order-page--guest-catalog .xenios-order-find-tools {
+      display: block; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 19;
+      justify-self: start; min-height: 44px; max-width: 100%; padding: 4px 10px;
+      border: 1px solid var(--line); border-radius: 8px; background: var(--surface);
+      color: inherit; font: inherit; line-height: 1.2; overflow-wrap: anywhere;
+    }
+  }
 }

@@ -121,6 +121,9 @@ async function cartApp(
   const store = new InMemoryEarlyAccessCartStore();
   const audit: AuditEvent[] = [];
   registerPrivateEarlyAccessApi(app, {
+    // This suite proves the PRICED cart and order engine: it quotes and buys.
+    // Quote-only is the production default and refuses both, so it is switched off here.
+    quoteOnly: false,
     config: EARLY_ACCESS_TEST_CONFIG,
     sessionIdentity: true,
     env: CART_ON,

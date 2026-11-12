@@ -218,6 +218,14 @@ export interface EarlyAccessOrderRouteDependencies {
    * mail may never refuse money.
    */
   readonly notifications?: EarlyAccessLegacyOrderNotifier;
+  /**
+   * Quote-only Early Access. When true, this door creates no NEW order: the
+   * customer catalog carries no price to order at, and requests go through the
+   * quote flow instead. Everything about an order that already exists is
+   * unchanged: its idempotent replay, its read-back, its invoice and its
+   * payment proof. Absent or false keeps the door's priced behaviour.
+   */
+  readonly quoteOnly?: boolean;
   /** Epoch milliseconds. */
   readonly now: () => number;
   readonly orderNumber: () => string;
@@ -525,6 +533,18 @@ export function createEarlyAccessOrderPlacementRoute(deps: EarlyAccessOrderRoute
           return;
         }
         send(response, 200, { ok: true, replayed: true, order: orderView(prior) });
+        return;
+      }
+
+      // QUOTE-ONLY. No new order is created at a catalog price the customer is
+      // not shown. It sits after the caller checks, so it tells an unknown
+      // caller nothing, and after the replay, so what was sold stays sold. It
+      // sits before the catalog and the ledger, so nothing is read or written.
+      // The code is one every client already treats as final ("not released for
+      // ordering"): an unknown code would read as a lost connection and offer a
+      // retry that can never succeed. The flag says why.
+      if (deps.quoteOnly === true) {
+        refuse(response, "RELEASE_REQUIRED", { quoteOnly: true });
         return;
       }
 

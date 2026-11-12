@@ -67,12 +67,12 @@ describe("confirmed receipt wording and heading level", () => {
   it("states what a review request covers without asking the customer to submit again", async () => {
     await act(async () => root.render(<RequestIntentReceipt receipt={receipt} />));
     expect(container.textContent).toContain("A review request saves the requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.");
-    expect(container.textContent).not.toContain("Submit for review");
+    expect(container.textContent).not.toContain("Request a quote");
   });
   it("renders its heading at the level the surrounding page needs, and focuses it the same way", async () => {
     await act(async () => root.render(<RequestIntentReceipt receipt={receipt} headingLevel={2} focusOnMount />));
     expect(container.querySelector("h1")).toBeNull();
-    expect(container.querySelector("h2")?.textContent).toBe("Request saved for review");
+    expect(container.querySelector("h2")?.textContent).toBe("Request submitted");
     expect(document.activeElement).toBe(container.querySelector("h2"));
   });
 });
@@ -84,12 +84,16 @@ describe("confirmed receipt continuation", () => {
     const links = hrefs();
     expect(links).toContain("/research/early-access/order-request/confirmation/" + receipt.publicReference);
     expect(links).toContain("/research/support");
-    const mailto = links.find((href) => href.startsWith("mailto:research@xeniostechnology.com"))!;
-    expect(decodeURIComponent(mailto)).toContain("Quick Order request " + receipt.publicReference);
+    const mailto = links.find((href) => href.startsWith("mailto:team@xeniostechnology.com"))!;
+    expect(decodeURIComponent(mailto)).toContain("Early Access request " + receipt.publicReference);
     expect(decodeURIComponent(mailto)).toContain("do not include medical information or payment details");
     for (const href of links) expect(href).not.toMatch(/token|key=|requestId/i);
     expect(container.textContent).toContain("Online status is not available for review requests.");
-    expect(container.textContent).not.toMatch(/approved|paid|shipped|delivery date/i);
+    const nextSteps = container.querySelector('[data-testid="request-next-steps"]');
+    expect(nextSteps?.textContent).toContain("For approved, available items");
+    const receiptWithoutNextSteps = container.cloneNode(true) as HTMLElement;
+    receiptWithoutNextSteps.querySelector('[data-testid="request-next-steps"]')?.remove();
+    expect(receiptWithoutNextSteps.textContent).not.toMatch(/approved|paid|shipped|delivery date/i);
     expect(container.textContent).not.toContain("earlier in this browser tab");
     expect([...container.querySelectorAll("button")].map((button) => button.textContent)).toEqual(["Copy reference"]);
     // The continuations are a plain list, not the shared action row, which reverses its order on narrow screens.
@@ -105,7 +109,7 @@ describe("confirmed receipt continuation", () => {
     try {
       await act(async () => root.render(<RequestIntentReceipt receipt={receipt} />));
       const statuses = () => [...container.querySelectorAll('[role="status"]')].map((node) => node.textContent);
-      expect(statuses()).toEqual(["Your saved request reference is " + receipt.publicReference + ".", ""]);
+      expect(statuses()).toEqual(["Your request reference is " + receipt.publicReference + ".", ""]);
       const copy = [...container.querySelectorAll("button")].find((button) => button.textContent === "Copy reference")!;
       await act(async () => copy.click());
       expect(writeText).toHaveBeenCalledExactlyOnceWith(receipt.publicReference);
@@ -122,6 +126,9 @@ describe("confirmed receipt continuation", () => {
     const startAnother = vi.fn();
     await act(async () => root.render(<RequestIntentReceipt receipt={receipt} reopened onStartAnother={startAnother} />));
     expect(container.textContent).toContain("This reference was confirmed earlier in this browser tab. Nothing was sent again.");
+    expect(container.querySelector("h1")?.textContent).toBe("Your submitted request");
+    expect(container.textContent).not.toContain("Each item is pending review");
+    expect(container.querySelector('[data-testid="request-next-steps"]')).toBeNull();
     const start = [...container.querySelectorAll("button")].find((button) => button.textContent === "Start another request")!;
     expect(start).toBeTruthy();
     await act(async () => start.click());

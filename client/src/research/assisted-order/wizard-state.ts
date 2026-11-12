@@ -4,6 +4,7 @@ import type {
   AssistedOrderLineInput,
 } from "../../../../shared/research/assisted-order/contract";
 import { quantityIsAllowed } from "../../../../shared/research/assisted-order/action-policy";
+import { EARLY_ACCESS_QUOTE_LABEL } from "../../../../shared/research/early-access/quote-only";
 
 export type AssistedOrderSelection = Readonly<{
   item: AssistedOrderCatalogItem;
@@ -195,6 +196,7 @@ export type AssistedOrderFormAcknowledgmentView = Readonly<{
 }>;
 
 export type AssistedOrderWizardConfig = Readonly<{
+  optionalIntakeEnabled?: true;
   legal: readonly AssistedOrderAgreementRequirement[];
   form: readonly AssistedOrderFormAcknowledgmentView[];
 }>;
@@ -338,6 +340,15 @@ export function acceptedAgreements(
       }),
     ),
   );
+}
+
+/**
+ * A catalog price while browsing or selecting. With no price (quote-only, or
+ * an item still to be priced) it reads "Request a quote". Status pages keep
+ * money(), whose null wording describes an existing request.
+ */
+export function catalogPriceLabel(cents: number | null): string {
+  return cents === null ? EARLY_ACCESS_QUOTE_LABEL : money(cents);
 }
 
 export function money(cents: number | null): string {

@@ -42,6 +42,82 @@ const unconfirmedOfferingByVariant = new Map<string, string>([
   ["mov_0f9bee8bdfc89ec9c2d3", "mo_a1d452a070c24e5f0033"],
   ["mov_7b331364b57f9fdd335a", "mo_4e47d44fd3982b0b5e61"],
   ["mov_2d03422d39648068a0e4", "mo_0784f8ad4fc471f8053e"],
+  ["mov_e218a4fead30388a55ff", "mo_adf1037eceb9904e7d07"],
+  ["mov_b5c50d1bb9d8ad998062", "mo_4223bdd3e6880240fc4a"],
+  ["mov_548802074a4f9ca45f5d", "mo_13c038b9250a2c8ac901"],
+  ["mov_43ff04d9edfcdb5543a4", "mo_53622a0c32300df8ec03"],
+  ["mov_457168650622c3647dc9", "mo_178c8a4230f88f157d5d"],
+  ["mov_c7c5768303175886f6d1", "mo_fbf99d262617562b9dbb"],
+  ["mov_30965a433abef7359a7b", "mo_3b716f351a069264bd3d"],
+  ["mov_7502e2415b8757cad0eb", "mo_04d91e1cb01f09d3496e"],
+  ["mov_8df703ff84f1bb8e1662", "mo_b75af573f3209d0710b1"],
+  ["mov_4bcfb9614bef8b2c671e", "mo_a40fbe6a1890ff7176ed"],
+  ["mov_ecd380609ace639d27a6", "mo_a8ea579b9329428591bd"],
+  ["mov_644f912141d81a0199b0", "mo_d40ce6b09815282e14fa"],
+  ["mov_d97f1f887a86b0c31947", "mo_8cea67b7890cebf8eb52"],
+  ["mov_3e4c0914851a77ba8763", "mo_c87f1a7cdcd50253c3e8"],
+  ["mov_11b73649761a6d35f28c", "mo_2e8194100fed7f7ca6ee"],
+  ["mov_971080f20e26e8775e2b", "mo_422f4a4ca7e34ce66416"],
+  ["mov_95104bb0edee8e97a3a6", "mo_839d9f0cb2ab74e094ee"],
+  ["mov_420ac197458ecbcddb9a", "mo_8023384ab099bc55fa93"],
+  ["mov_082a1d9c8a0d21e4a5c9", "mo_ec5dad7fec0e0750fdbc"],
+  ["mov_9421188f57af62413a4c", "mo_9c3a4dd1b38f6b9ebc54"],
+  ["mov_c4e5006693c890563310", "mo_c0b32b7549d7539af51e"],
+  ["mov_556cf3eb15555573aa54", "mo_f8e8d69d2068c9bb2de1"],
+  ["mov_dd89c37657eb69bce04f", "mo_e7bb199ac249b82eb17b"],
+  ["mov_50c16caf05daa93ef289", "mo_d3a60ea0a358aef218f8"],
+  ["mov_1981dac64e329b0bf2f8", "mo_0693d8b85b10f7c34f2e"],
+  ["mov_5d10608450270b22967f", "mo_b33c802f4f7735fe986d"],
+  ["mov_3c9394000d1302336110", "mo_9651dedf0c4086bc6e3d"],
+  ["mov_e813930dcd46c36e98e2", "mo_ca6143466abf3895672c"],
+  ["mov_0d00b80820b69cc39796", "mo_c464ca523cda95adb8a6"],
+  ["mov_f7b635c1cc2be94922a0", "mo_4bbd59b26b04e4265758"],
+  ["mov_9331f42ce573fb3f72e5", "mo_023a54a623e28e84ffd5"],
+  ["mov_6c559c89db938c58e815", "mo_be72c9fb4d708d8a3eee"],
+  ["mov_30d35dcbc0bc8d59ff5b", "mo_d5072d9cc26b1f898b6d"],
+  ["mov_88fd1531d586cdebb896", "mo_b49627a2296975935e26"],
+  ["mov_2183aa9edb06f34ef3af", "mo_c600e7eb1c9f5fd03c80"],
+  ["mov_753d3f94385adf791d1e", "mo_7ba89975fb62ceb33b7b"],
+  ["mov_8293d0baa21eb4d561f8", "mo_75bc8d1ad93b04865e6c"],
+  ["mov_a2d32f69681dca2b17fb", "mo_4668304296fb55b51280"],
+  ["mov_fe292b5f03527ec13e5e", "mo_b2ebb969d48a20f9e680"],
+  ["mov_c58b682a44514760a74f", "mo_34fa0d12f1effd156e61"],
+  ["mov_8e11e063f79d56a3a946", "mo_143d09ffd9b13780f2d7"],
+  ["mov_257fd9d66f6284e3570e", "mo_2923115827ca8fe37d2c"],
+  ["mov_9e34d0c1acde46249621", "mo_a6f7f071ed946577ce56"],
+  ["mov_120b19d12e869b0070ff", "mo_aace3aded470921f6af2"],
+  ["mov_50fc8d22f6777f3f0d4d", "mo_ef095e8f7e8fe3a7f85d"],
+  ["mov_557749e5f12e1d27e367", "mo_dbed3adeeecd92ac1d41"],
+  ["mov_ca3e45ae9712aee91430", "mo_af289f611c02b3fcef01"],
+  ["mov_257330ea83ecbfc45fae", "mo_9a755fa72de0409cd937"],
+  ["mov_09db3e866424b64994d3", "mo_e4de11c77d16c4c3b83d"],
+  ["mov_0efd31ea72138e78d999", "mo_1c93e6c7c97d1e38167e"],
+  ["mov_3f59629a005b238f4faa", "mo_8a3829642d06ad3ca7c4"],
+  ["mov_35b19a790d7a247210c9", "mo_b06b77a95d5dd5bf8cd7"],
+  ["mov_4522e672752616ff992d", "mo_fb02f804912e868b0a10"],
+  ["mov_e562b76120d36c6ebf2d", "mo_5720466fd9388d2044ed"],
+  ["mov_80aaef9ddc11edab6c89", "mo_e9e1c849f7549246cb89"],
+  ["mov_cd50ffa15bc031572636", "mo_b2300ccf4ffd64e20ca2"],
+  ["mov_15eddad2da8035493bd6", "mo_bb39fc388cb58003b1f8"],
+  ["mov_823a1410e1831e6d845f", "mo_61e8c1f887725c9938ae"],
+  ["mov_72b54c1f1e71b4229c2a", "mo_33b6b3e982b2dc5113bb"],
+  ["mov_cf7635f44beb5898b8fe", "mo_b785d68e84643da31a20"],
+  ["mov_12b96a21ca34f80cdb6a", "mo_3ac83d28defd63915a71"],
+  ["mov_0c4a5438cc87ab9d85b6", "mo_f7fecc82508964efe3aa"],
+  ["mov_8f14c1dd839544567d53", "mo_e230262ae1c41d2d7e18"],
+  ["mov_7bd700ce0704d66e614e", "mo_f293ba683340fcd926d9"],
+  ["mov_0db878384f6f3f42fc1a", "mo_45db3e0f87d6d796d4b8"],
+  ["mov_99e4c4e045d188c3026f", "mo_d045624d6f5d00d2cda2"],
+  ["mov_ee0d20dec866e2090585", "mo_06babb8e374b38824ee8"],
+  ["mov_bd3ee913aa6fedf2c743", "mo_42060e3ba6b7fa26b5a9"],
+  ["mov_6a43249c424441bf28bb", "mo_005347c6204a94d3f7e2"],
+  ["mov_e737e2f494af1ea61435", "mo_9c7083a0cfc2bfd2d525"],
+  ["mov_b1fbc841c7fb09265cad", "mo_5da1ee7942bcff333ef6"],
+  ["mov_52fd0b8a213ee19e40e8", "mo_941e1192f6c03d88cb43"],
+  ["mov_ba80c9a61870131db0cf", "mo_f23a8023a45df853f6e1"],
+  ["mov_cacbbed2b1431c073e72", "mo_8fd0e604ab7719eded45"],
+  ["mov_eb49bfc0ee44e7b83d52", "mo_25017e496277b4120dde"],
+  ["mov_645c8c707682a45abcaa", "mo_3566952a7131123bd55f"],
 ]);
 
 export function isResearchFormUnconfirmed(variantId: string, offeringId?: string): boolean {
@@ -50,14 +126,25 @@ export function isResearchFormUnconfirmed(variantId: string, offeringId?: string
     && (offeringId === undefined || offeringId === expectedOfferingId);
 }
 
+/**
+ * "Capsule / Bottle" is the catalog's normalization, not a source statement:
+ * no listing's source names a bottle. A row that is not held has a reviewed
+ * form, so it reads "Capsules". The stored subcategory and the SKU are
+ * unchanged; this is display only.
+ */
+const CAPSULE_OR_BOTTLE = "Capsule / Bottle";
+
 export function researchListingSubcategory(product: {
   id?: string;
   subcategory: string | null;
   variants: readonly { id: string }[];
 }): string | null {
-  if (product.subcategory === "Lyophilized Vial"
-    && product.variants.some((variant) => isResearchFormUnconfirmed(variant.id, product.id))) {
+  // The hold map is the only authority. A row is in it because its own source
+  // does not state a form, so the catalog's subcategory is not shown for it,
+  // whatever form that subcategory names. A row whose source does state its
+  // form is not in the map and keeps its subcategory.
+  if (product.variants.some((variant) => isResearchFormUnconfirmed(variant.id, product.id))) {
     return null;
   }
-  return product.subcategory;
+  return product.subcategory === CAPSULE_OR_BOTTLE ? "Capsules" : product.subcategory;
 }

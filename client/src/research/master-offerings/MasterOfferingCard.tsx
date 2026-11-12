@@ -166,6 +166,14 @@ export function MasterOfferingVariantRow({
         </span>
         <MasterOfferingPrice price={variant.price} testId="mo-variant-price" />
       </div>
+      {product.variants.length > 1 && variant.reviewMessage && variant.reviewedContent && (
+        <p className="body-s text-ink-2 min-w-0 break-words">{variant.reviewedContent.summary}</p>
+      )}
+      {variant.reviewMessage && (
+        <p className="text-ink-mute min-w-0 break-words" data-testid="mo-variant-review-message">
+          {variant.reviewMessage}
+        </p>
+      )}
       {/* The action sits on its own wrapping line so a 44px touch target never
           fights the price for width on a phone. */}
       <div className="flex min-w-0 flex-wrap items-center gap-2">

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import type { AssistedOrderStatusView } from "../../../../shared/research/assisted-order/contract";
 import { loadAssistedOrderStatus } from "./api";
+import { EARLY_ACCESS_QUOTE_LABEL, EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/early-access/quote-only";
 import { money } from "./wizard-state";
 import { readAssistedOrderToken } from "./storage";
 import { SecureDocumentUpload } from "./SecureDocumentUpload";
@@ -108,7 +109,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
           <section className="xenios-order-panel">
             <div className="xenios-order-card__header" style={{ flexWrap: "wrap" }}>
               <div><p className="xenios-order-eyebrow">Current status</p><h2>{status.status.replaceAll("_", " ")}</h2></div>
-              <strong data-testid="assisted-request-status-estimate">Estimate: {money(status.estimatedTotalCents)}</strong>
+              <strong data-testid="assisted-request-status-estimate">{EARLY_ACCESS_QUOTE_ONLY_RELEASE ? EARLY_ACCESS_QUOTE_LABEL : "Estimate: " + money(status.estimatedTotalCents)}</strong>
             </div>
             {status.actionRequired ? <div className="xenios-order-notice"><strong>Action required:</strong> {status.actionRequired}</div> : null}
             {typeof status.trackingReference === "string" && status.trackingReference.length > 0
@@ -118,7 +119,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
               {status.lines.map((line) => (
                 <article key={line.lineId} style={{ flexWrap: "wrap", minWidth: 0 }}>
                   <div style={{ minWidth: 0 }}><strong>{line.productName}</strong><span>{line.specification}</span><span>{line.workflowMode.replaceAll("_", " ")}</span></div>
-                  <div><span>Qty {line.quantity}</span><strong>{line.lineEstimateCents === null ? "Price on request" : money(line.lineEstimateCents)}</strong></div>
+                  <div><span>Qty {line.quantity}</span>{!EARLY_ACCESS_QUOTE_ONLY_RELEASE && <strong>{line.lineEstimateCents === null ? "Price on request" : money(line.lineEstimateCents)}</strong>}</div>
                 </article>
               ))}
             </div>

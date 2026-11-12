@@ -80,7 +80,7 @@ describe("generated dataset loading", () => {
     const offeringId = "mo_ef095e8f7e8fe3a7f85d";
     const variantId = "mov_50fc8d22f6777f3f0d4d";
     const malformed = "SEMAGLUTIDE+BPC-157 5 mg/650 mcgmg/mcg";
-    const corrected = "SEMAGLUTIDE 5 mg + BPC-157 650 mcg";
+    const corrected = "SEMAGLUTIDE + BPC-157 5 mg/650 mcg";
     const slug = "semaglutide-bpc-157-fixture";
     const read = (id: string, variant: string, label: string) =>
       loadMasterOfferingDataset(dataset({

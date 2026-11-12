@@ -30,6 +30,8 @@ export interface EarlyAccessQuantitySelectorProps {
   maxQuantity?: EarlyAccessQuantity;
   disabled?: boolean;
   testId?: string;
+  /** Quote-only Early Access: no checkout or bundle-price wording. */
+  quoteOnly?: boolean;
 }
 
 /**
@@ -64,6 +66,7 @@ export function EarlyAccessQuantitySelector({
   maxQuantity = EARLY_ACCESS_QUANTITY_MAX,
   disabled = false,
   testId = "early-access-quantity-selector",
+  quoteOnly = false,
 }: EarlyAccessQuantitySelectorProps) {
   const baseId = useId();
   const noteId = `${baseId}-note`;
@@ -215,7 +218,11 @@ export function EarlyAccessQuantitySelector({
         in, so it reads as a sentence at every card width.
       */}
       <p id={noteId} className="body-xs text-ink-mute min-w-0">
-        {effectiveMax < REQUEST_MAX_QUANTITY ? (
+        {quoteOnly ? (
+          <>
+            Requests support {EARLY_ACCESS_MIN_QUANTITY}–{EARLY_ACCESS_POLICY_MAX_QUANTITY} units per exact variant.
+          </>
+        ) : effectiveMax < REQUEST_MAX_QUANTITY ? (
           <>This product is currently released for direct checkout up to {effectiveMax} units. </>
         ) : (
           <>
@@ -223,7 +230,7 @@ export function EarlyAccessQuantitySelector({
             {EARLY_ACCESS_MIN_QUANTITY}–{EARLY_ACCESS_POLICY_MAX_QUANTITY} units per exact variant.{" "}
           </>
         )}
-        3 units is the Research Bundle, 20% savings.
+        {quoteOnly ? null : "3 units is the Research Bundle, 20% savings."}
       </p>
     </fieldset>
   );

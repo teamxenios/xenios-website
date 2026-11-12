@@ -1,8 +1,10 @@
+import { REQUEST_GOALS } from "../../../../shared/research/assisted-order/optional-intake";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { RequestIntentDetail, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
 import type { RequestIntentApi } from "./request-intent-api";
 import type { AssistedOrderAddressInput } from "../../../../shared/research/assisted-order/contract";
 import "./assisted-order.css";
+import { PrivateQuoteDesk } from "./PrivateQuoteDesk";
 
 type QueueLoad = Readonly<{ api: RequestIntentApi; page: number; attempt: number }> & (
   | Readonly<{ status: "loading" }>
@@ -49,6 +51,9 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
     pendingRead.current = run; setDetailPending(true);
     try {
       const saved = await api.staff(id);
+      if (saved.requestId?.toLowerCase() !== id || saved.publicReference?.toUpperCase() !== "XRI-" + match[1].toUpperCase()) {
+        throw new Error("Private request identity mismatch");
+      }
       if (sequence.current === run) setDetail(saved);
     } catch { if (sequence.current === run) setMessage("Private request access could not be confirmed. No authorization was bypassed."); }
     finally {
@@ -80,6 +85,10 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
     {message && <p role="alert">{message}</p>}
     {detail && <section><h2>{detail.publicReference}</h2>
       <p>{detail.contact.fullLegalName} | {detail.contact.email} | {detail.contact.mobilePhone}</p>
+      {detail.optionalIntake && <section aria-label="Optional customer information">
+        {detail.optionalIntake.goal && <p>Customer goal: {REQUEST_GOALS[detail.optionalIntake.goal]}</p>}
+        {detail.optionalIntake.referralCode && <p>Referral code (customer-reported; unverified): {detail.optionalIntake.referralCode}</p>}
+      </section>}
       {detail.contact.organizationName && <p>Organization: {detail.contact.organizationName}</p>}
       <section aria-label="Requested delivery address"><h3>Requested delivery address</h3>
         <RequestedAddress address={detail.contact.shippingAddress} />
@@ -94,7 +103,9 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
         Pending {line.clinicalReviewRequired ? "clinical" : "internal"} review
         {line.researchUseOnly && " | Research Use Only"}
         {line.sourceRefusal && " | Source restriction: " + line.sourceRefusal}
-      </li>)}</ul></section>}
+      </li>)}</ul>
+      <PrivateQuoteDesk key={JSON.stringify([detail.requestId,detail.contact.email])} detail={detail} />
+    </section>}
   </section>;
 }
 

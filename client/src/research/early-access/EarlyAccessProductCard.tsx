@@ -2,6 +2,7 @@ import {
   EarlyAccessQuantitySelector,
   type EarlyAccessQuantity,
 } from "./EarlyAccessQuantitySelector";
+import { EARLY_ACCESS_QUOTE_LABEL } from "@shared/research/early-access/quote-only";
 import { Link } from "wouter";
 import {
   ASSISTED_ORDER_CTA_PATH,
@@ -60,6 +61,12 @@ export type EarlyAccessCardProduct = Readonly<{
   availability: EarlyAccessAvailabilityState;
   /** Server-projected effective Product Control / release / global ceiling. */
   quantityLimit: EarlyAccessQuantity | null;
+  /**
+   * Quote-only Early Access: the server marked this unit `pricing: "quote"`.
+   * The card shows "Request a quote" and no amount, and a selection goes to
+   * the request flow, never the pay-now checkout.
+   */
+  quoteOnly?: boolean;
 }>;
 
 export interface EarlyAccessProductCardProps {
@@ -234,7 +241,11 @@ export function EarlyAccessProductCard({
         </p>
       ) : null}
 
-      {product.unitPriceCents === null ? (
+      {product.quoteOnly === true ? (
+        <p data-testid={`${testId}-quote`} className="body-s mt-1 font-medium">
+          {EARLY_ACCESS_QUOTE_LABEL}
+        </p>
+      ) : product.unitPriceCents === null ? (
         // No price, and no placeholder that could be mistaken for one.
         <p data-testid={`${testId}-no-price`} className="body-s text-ink-mute mt-1">
           Not available to order
@@ -269,6 +280,7 @@ export function EarlyAccessProductCard({
             onQuantityChange(nextQuantity);
           }}
           testId={`${testId}-quantity`}
+          quoteOnly={product.quoteOnly === true}
         />
       ) : null}
 
@@ -306,7 +318,9 @@ export function EarlyAccessProductCard({
         >
           {selected
             ? "Remove"
-            : ACTION_COPY[product.availability]}
+            : product.quoteOnly === true
+              ? EARLY_ACCESS_QUOTE_LABEL
+              : ACTION_COPY[product.availability]}
         </button>
       ) : null}
     </article>

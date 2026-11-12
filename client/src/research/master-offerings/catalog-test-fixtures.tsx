@@ -111,6 +111,11 @@ export const ACTIONS: Readonly<Record<MasterOfferingAction["kind"], MasterOfferi
     label: "Request Early Access Purchase",
     href: REQUEST_HREF,
   },
+  request_quote: {
+    kind: "request_quote",
+    label: "Add to quote cart",
+    href: "/research/early-access/order-request?family=research_vials&slug=fixture&variant=mov_fixture&qty=1&intent=request_quote",
+  },
   apply: { kind: "apply", label: "Apply", href: "/research/apply" },
   notify_me: { kind: "notify_me", label: "Notify Me", href: REQUEST_HREF },
   join_waitlist: { kind: "join_waitlist", label: "Join Waitlist", href: REQUEST_HREF },

@@ -2,12 +2,33 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { act } from "react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { MasterOfferingCard } from "./MasterOfferingCard";
 import { MasterOfferingDetail } from "./MasterOfferingDetail";
 import { card, click, detail, render, variant } from "./catalog-test-fixtures";
 
-const vial = variant({ id: "mov_09db3e866424b64994d3", label: "Listed vial" });
+// Two synthetic vial variants, added to the real format map for this file only. The tests below are about what the
+// page draws for a variant whose format is "vial" and whose form is not held. They used two real catalog rows for
+// that, so they failed whenever one of those rows was put in the form-hold map, which is a statement about the row
+// and not about the component. A synthetic id is in no hold map. The real hold map and the real format map are still
+// what every other fixture here is read against.
+const SYNTHETIC_VIAL = "mov_synthetic_vial_listing";
+const SYNTHETIC_VIAL_WITH_PACKSHOT = "mov_synthetic_vial_packshot";
+vi.mock("../product-media/product-media-format.generated.json", async (importOriginal) => {
+  const real = (await importOriginal<{ default: { formatByVariantId: Record<string, string> } }>()).default;
+  return {
+    default: {
+      ...real,
+      formatByVariantId: {
+        ...real.formatByVariantId,
+        mov_synthetic_vial_listing: "vial",
+        mov_synthetic_vial_packshot: "vial",
+      },
+    },
+  };
+});
+
+const vial = variant({ id: SYNTHETIC_VIAL, label: "Listed vial" });
 const capsule = variant({ id: "mov_82974ab2f9c652c2cb12", label: "Listed capsule" });
 const heldPackshot = "/research/product-media/5-amino-1mq-10mg-website-render-v1-1024.webp";
 const heldVial = variant({
@@ -23,8 +44,9 @@ const heldVial = variant({
     packagingDesign: true,
   },
 });
+// The packshot and its alt text are the BPC-157 10 mg record's; the variant id is synthetic, for the reason above.
 const bpc157 = variant({
-  id: "mov_ca3e45ae9712aee91430",
+  id: SYNTHETIC_VIAL_WITH_PACKSHOT,
   label: "BPC-157 10 mg",
   reviewedMedia: {
     primary: {
@@ -156,7 +178,7 @@ describe("product visuals on catalog routes", () => {
     }
   });
 
-  it("uses a generic illustration for the same BPC ID without reviewed media", () => {
+  it("uses a generic illustration for the same variant id without reviewed media", () => {
     const unchangedId = variant({ id: bpc157.id, label: "Synthetic changed BPC listing" });
     const { host, unmount } = render(
       <MasterOfferingDetail product={detail({ displayName: "Synthetic changed listing", variants: [unchangedId] })} />,

@@ -1,5 +1,6 @@
 import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
 import type { RequestIntentCatalogPage, RequestIntentDetail, RequestIntentInput, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
+import { mixedInquiryCatalogPage } from "../../../../shared/research/early-access/quote-only";
 import { parseAssistedOrderConfig, type AssistedOrderWizardConfig } from "./wizard-state";
 
 /** Constructed only after a well-formed server error envelope. Body text is never surfaced. */
@@ -22,6 +23,7 @@ export function intentRefusalGuidance(error: RequestIntentHttpError): string {
     return "This request was not saved. Complete the existing access and agreement requirements before starting a new attempt.";
   }
   if (error.status === 403) return "This request was not saved. Access was refused. Review your access or contact support before starting a new attempt.";
+  if (error.code === "optional_intake_unavailable") return "This request was not saved. Optional answers are unavailable. Remove the optional answers to submit without them, or try again later.";
   if (error.code === "selection_requires_refresh") return "This request was not saved. Reload the current catalog, review the exact products and quantities, and submit a new attempt.";
   if (error.code === "current_acknowledgments_required") return "This request was not saved. Reload the current requirements, review and confirm them, and submit a new attempt.";
   if (error.status === 503 && error.code === "request_intent_unavailable") {
@@ -84,7 +86,8 @@ export function createRequestIntentApi(
       const raw = await request("/config");
       const config = parseAssistedOrderConfig(raw);
       if (!config || (raw as { enabled?: unknown }).enabled !== true) throw new Error("Request requirements unavailable.");
-      return config;
+      return (raw as { optionalIntakeEnabled?: unknown }).optionalIntakeEnabled === true
+        ? { ...config, optionalIntakeEnabled: true } : config;
     },
     async catalog(query) {
       const requestedPage = query.page === undefined ? 1 : query.page;
@@ -97,6 +100,7 @@ export function createRequestIntentApi(
       const params = new URLSearchParams();
       if (query.search) params.set("search", query.search);
       if (query.family) params.set("family", query.family);
+      if (query.sort) params.set("sort", query.sort);
       params.set("page", String(requestedPage)); params.set("pageSize", String(requestedSize));
       const raw = await request("/catalog?" + params);
       const page = raw as RequestIntentCatalogPage;
@@ -104,12 +108,16 @@ export function createRequestIntentApi(
         || !Number.isSafeInteger(page.page) || !Number.isSafeInteger(page.pageSize)
         || page.page !== requestedPage || page.pageSize !== requestedSize
         || page.items.length > requestedSize || page.items.length > page.total
+        || (page.availableRankSorts !== undefined && (!Array.isArray(page.availableRankSorts) || page.availableRankSorts.length > 2
+          || new Set(page.availableRankSorts).size !== page.availableRankSorts.length
+          || page.availableRankSorts.some(value => value !== "best_sellers" && value !== "most_requested_research_peptides")))
+        || (page.rankUnavailable !== undefined && page.rankUnavailable !== true)
         || !Array.isArray(page.families)
         || page.items.some((item) => typeof item.productId !== "string" || typeof item.variantId !== "string"
           || typeof item.selectableForReview !== "boolean" || typeof item.clinicalReviewRequired !== "boolean")) {
         throw new Error("The current catalog could not be confirmed.");
       }
-      return page;
+      return mixedInquiryCatalogPage(page);
     },
     submit: (input) => request("", input),
     async recover(idempotencyKey) {

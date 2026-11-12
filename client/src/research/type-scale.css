@@ -1,0 +1,24 @@
+/*
+ * Research text that follows the reader's chosen text size.
+ *
+ * The site's .body-s, .body-m and .body-l (client/src/index.css) are set or capped in px, so a
+ * reader who raises the browser's default text size sees captions and body copy barely change.
+ * Inside the Research tree only, the same three sizes are restated in rem. At the default 16px
+ * root each value equals the original px exactly (14, 15 to 17, 17 to 20), so nothing moves for
+ * a reader at the default size; at a larger default every value grows with it.
+ *
+ * Scoped to .research-type-scale, which ResearchSection renders around the Research layout, so a
+ * stylesheet that stays loaded after client-side navigation back to the main site changes nothing
+ * there. :where() keeps each rule's specificity equal to the original single class.
+ */
+:where(.research-type-scale) .body-s {
+  font-size: 0.875rem;
+}
+
+:where(.research-type-scale) .body-m {
+  font-size: clamp(0.9375rem, 0.15vw + 0.9rem, 1.0625rem);
+}
+
+:where(.research-type-scale) .body-l {
+  font-size: clamp(1.0625rem, 0.25vw + 1rem, 1.25rem);
+}
