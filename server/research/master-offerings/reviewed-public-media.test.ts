@@ -54,7 +54,8 @@ describe("reviewed public media registry", () => {
       if (preview) expect(sha256(publicFile(preview.href)), label + " label").toBe(record.labelPreviewSha256);
       else expect(record.labelPreviewSha256, label).toBeUndefined();
     }
-  });
+    // Reads every registered image (about 30 MB once the studio set lands); 5 s is too short under a full-suite load.
+  }, 60_000);
 
   it("puts no studio image on a held or form-unconfirmed listing", () => {
     for (const record of records) expect(studioRefusal(record), record.sourceVariantId).toBeNull();
