@@ -25,9 +25,10 @@ function owned(viewer,binding){
     ((text(viewer.memberId)&&viewer.memberId===binding.actorMemberId)||
     (text(viewer.earlyAccessSessionHash)&&viewer.earlyAccessSessionHash===binding.earlyAccessSessionHash));
 }
-export function makePrivateQuoteDesk({transact,authority,Engine,bind,transport,tagKey,clock=()=>new Date(),uuid=randomUUID}) {
+export function makePrivateQuoteDesk({transact,authority,Engine,bind,transport,tagKey,clock=()=>new Date(),uuid=randomUUID,deferStagingNotice=false}) {
   if(!Buffer.isBuffer(tagKey)||tagKey.length<32)throw Error('Private stable tag key required.');
   const tag=(purpose,value)=>createHmac('sha256',tagKey).update(JSON.stringify([purpose,value])).digest('hex');
+  const portalProof=(tenant,xriId,quoteId)=>'portal-'+tag('portal-proof',[tenant,xriId,quoteId]);
   function vetted(ctx,tenant,xriId,seller,desired){
     validateIdentity(ctx,tenant,xriId,seller); const wanted=new Set(desired);
     need(wanted.size===desired.length && wanted.size>0 && wanted.size<=200);
@@ -77,7 +78,25 @@ export function makePrivateQuoteDesk({transact,authority,Engine,bind,transport,t
       const bindingTag=vetted(ctx,tenant,xriId,seller,lines.map(l=>l.requestLineId));
       const contactTag=tag('contact',safeContact(ctx));
       const replay=(await q('SELECT fingerprint,id FROM qd_attempts WHERE tenant=$1 AND xri_id=$2 AND opkey=$3',[tenant,xriId,attempt]))[0];
-      if(replay){if(replay.fingerprint!==fp)throw Error('Attempt conflict.');return {quoteId:replay.id,replay:true};}
+      if(replay){
+        if(replay.fingerprint!==fp)throw Error('Attempt conflict.');
+        if(deferStagingNotice){
+          let noticeReleased=false;
+          if(transport.ready() && Date.parse(validUntil)>clock().getTime()){
+            const proof=(await q("SELECT id FROM qd_audits WHERE id=$1 AND tenant=$2 AND quote_id=$3 AND kind='staging_portal_verified'",
+              [portalProof(tenant,xriId,replay.id),tenant,replay.id]))[0];
+            const pending=(await q("SELECT id FROM qd_notification_intents WHERE tenant=$1 AND xri_id=$2 AND id=$3 AND state='queued' AND contact_tag=$4 AND bindings_tag=$5",
+              [tenant,xriId,replay.id,contactTag,bindingTag]))[0];
+            if(proof&&pending){
+              await enqueueSharedQuoteJob(q,{tenant,xriId,quoteId:replay.id,recipient:ctx.contact.email,
+                eventKey:'qd-'+tag('delivery',[tenant,xriId,replay.id]),repeatRelease:true});
+              noticeReleased=true;
+            }
+          }
+          return {quoteId:replay.id,replay:true,noticeReleased};
+        }
+        return {quoteId:replay.id,replay:true};
+      }
       const tid=ctx.target.requestId;
       await q('INSERT INTO qd_directory(tenant,target_id,xri_id,seller) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING',[tenant,tid,xriId,seller]);
       need((await q('SELECT target_id FROM qd_directory WHERE tenant=$1 AND target_id=$2 AND xri_id=$3 AND seller=$4',[tenant,tid,xriId,seller])).length===1);
@@ -87,8 +106,8 @@ export function makePrivateQuoteDesk({transact,authority,Engine,bind,transport,t
       await q('INSERT INTO qd_attempts(tenant,xri_id,opkey,fingerprint,id) VALUES($1,$2,$3,$4,$5)',[tenant,xriId,attempt,fp,next.quoteId]);
       await q("INSERT INTO qd_notification_intents(tenant,id,xri_id,contact_tag,bindings_tag,issuer,state) VALUES($1,$2,$3,$4,$5,$6,'queued')",
         [tenant,next.quoteId,xriId,contactTag,bindingTag,subject]);
-      await enqueueSharedQuoteJob(q,{tenant,xriId,quoteId:next.quoteId,recipient:ctx.contact.email,eventKey:'qd-'+tag('delivery',[tenant,xriId,next.quoteId])});
-      return {quoteId:next.quoteId,replay:false};
+      if(!deferStagingNotice)await enqueueSharedQuoteJob(q,{tenant,xriId,quoteId:next.quoteId,recipient:ctx.contact.email,eventKey:'qd-'+tag('delivery',[tenant,xriId,next.quoteId])});
+      return deferStagingNotice?{quoteId:next.quoteId,replay:false,noticeReleased:false}:{quoteId:next.quoteId,replay:false};
     });
   }
   async function privateForCustomer(viewer,xriId,seller) {
@@ -103,7 +122,10 @@ export function makePrivateQuoteDesk({transact,authority,Engine,bind,transport,t
         const event=(await q('SELECT contact_tag,bindings_tag FROM qd_notification_intents WHERE tenant=$1 AND xri_id=$2 AND id=$3',[viewer.tenant,xriId,r.quoteId]))[0];
         // Material revocation fails closed for the private portal too.
         if(!event||tag('contact',safeContact(ctx))!==event.contact_tag)continue;
-        try{if(vetted(ctx,viewer.tenant,xriId,seller,r.lines.map(x=>x.lineId))===event.bindings_tag)output.push(r);}catch{ /* withdrawn clearance: omit */ }
+        try{if(vetted(ctx,viewer.tenant,xriId,seller,r.lines.map(x=>x.lineId))!==event.bindings_tag)continue;}catch{continue;}
+        if(deferStagingNotice)await q("INSERT INTO qd_audits(id,tenant,quote_id,kind,at_time) VALUES($1,$2,$3,'staging_portal_verified',$4) ON CONFLICT(id) DO NOTHING",
+          [portalProof(viewer.tenant,xriId,r.quoteId),viewer.tenant,r.quoteId,clock().toISOString()]);
+        output.push(r);
       } return output;
     });
   }

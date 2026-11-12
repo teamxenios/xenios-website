@@ -61,6 +61,30 @@ test('controlled failure after old supersession, before enqueue: snapshot, audit
  assert.deepEqual(f.raw().prepare('SELECT id,state FROM qd_quotes').all().map(o=>({...o})),[{id:r.quoteId,state:'issued'}]);
  assert.equal(f.raw().prepare('SELECT COUNT(*) AS n FROM qd_audits').get().n,1);
 });
+test('staging requires the exact owner to open the quote and the issuer to release it after delivery approval',async t=>{
+ const f=fixture(t);
+ let approved=false,sends=0;
+ const desk=f.make({deferStagingNotice:true,transport:{ready:()=>approved,async send(){sends++;return 'synthetic-stage-id';}}});
+ const count=()=>f.raw().prepare('SELECT count(*) AS n FROM research_notification_outbox').get().n;
+ const issued=await desk.issue(viewer(),request());
+ assert.equal(issued.noticeReleased,false);
+ assert.equal(count(),0);
+ approved=true;
+ assert.equal((await desk.issue(viewer(),request())).noticeReleased,false);
+ await assert.rejects(desk.privateForCustomer(customer({earlyAccessSessionHash:'fresh-session'}),xri,s));
+ assert.equal(count(),0);
+ assert.equal((await desk.privateForCustomer(customer(),xri,s)).length,1);
+ approved=false;
+ assert.equal((await desk.issue(viewer(),request())).noticeReleased,false);
+ assert.equal(count(),0);
+ approved=true;
+ assert.equal((await desk.issue(viewer(),request())).noticeReleased,true);
+ assert.equal((await desk.issue(viewer(),request())).noticeReleased,true);
+ assert.equal(count(),1);
+ assert.equal(await desk.dispatch(tenant,xri,issued.quoteId),'accepted');
+ assert.equal(await desk.dispatch(tenant,xri,issued.quoteId),'accepted');
+ assert.equal(sends,1);
+});
 test('two concurrent operations produce one new version; duplicate attempt is a replay; stale new intent is refused',async t=>{
  const f=fixture(t);let r=await Promise.all([f.desk.issue(viewer(),request()),f.desk.issue(viewer(),request())]);
  assert.equal(r[0].quoteId,r[1].quoteId);assert.notEqual(r[0].replay,r[1].replay);

@@ -140,6 +140,7 @@ import {
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from "./research/assisted-order/production-deps";
 import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
+import { mountStagingPrivateQuotePortal } from "./research/assisted-order/quote/delivery/staging";
 import { createAssistedMemberHistoryReader, withAssistedOrderRequestHistory } from "./research/assisted-order/member-order-history";
 import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
 import { resolveAssistedOrderAuditAuthority } from "./research/assisted-order/audit-store";
@@ -1034,6 +1035,13 @@ async function composeAssistedOrderBridge(): Promise<
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
   // Preserve registration of all existing doors before the optional new composition.
   registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
+  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, async (userId) => {
+    const { data, error } = await getSupabaseAdmin().auth.admin.getUserById(userId);
+    const user = data?.user;
+    return !error && user?.id === userId && user.email && user.email_confirmed_at
+      ? { email: user.email.trim().toLowerCase(), confirmedAt: user.email_confirmed_at }
+      : null;
+  });
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,

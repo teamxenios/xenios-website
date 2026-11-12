@@ -1,9 +1,9 @@
 // Same contract as enqueueNotificationOnce; reuse the existing worker, not a second mail queue.
 export const TEMPLATE='ea_private_quote_notice_v1';
-export async function enqueueSharedQuoteJob(q,{tenant,xriId,quoteId,recipient,eventKey}) {
+export async function enqueueSharedQuoteJob(q,{tenant,xriId,quoteId,recipient,eventKey,repeatRelease=false}) {
  const inserted=await q("INSERT INTO public.research_notification_outbox(event_key,event_type,template_key,recipient,payload) VALUES($1,$2,$2,$3,$4) ON CONFLICT(event_key) DO NOTHING RETURNING event_key",
  [eventKey,TEMPLATE,recipient,JSON.stringify({tenant,xriId,quoteId})]);
- if(inserted.length!==1)throw Error('Quote notification key conflict.');
+ if(inserted.length!==1&&!repeatRelease)throw Error('Quote notification key conflict.');
 }
 // Call only from the existing privileged worker dispatch(job) for this template.
 // Explicit terminal uncertainty prevents the shared generic retry branch from blindly sending again.

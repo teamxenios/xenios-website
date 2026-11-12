@@ -21,7 +21,8 @@ function render(records){
   }).join('');
   return frame('Your private quotes',total?sections+'<p>A quote is not a payment, prescription, or order. Reply to Team Xenios with questions.</p>':'<p>No current quote is available in this session. If you requested one, use the same verified access or reply to the Team Xenios message for help.</p>');
 }
-export function attachPrivateQuotePortal(router,{desk,customerPrincipal,ownedRequests,staffPrincipal,csrfChecked}) {
+export function attachPrivateQuotePortal(router,{desk,customerPrincipal,ownedRequests,staffPrincipal,csrfChecked,
+  staffGuard,issueInput=async req=>req.body}) {
   router.get('/earlyaccess/quotes',async(req,res)=>{
     res.set(headers).type('html');
     try{
@@ -37,12 +38,12 @@ export function attachPrivateQuotePortal(router,{desk,customerPrincipal,ownedReq
       return res.status(200).send(render(found));
     }catch{return res.status(503).send(frame('Private quotes unavailable','<p>Your quote could not be loaded. Please try again later or reply to Team Xenios.</p>'));}
   });
-  router.post('/api/staff/early-access/private-quotes/issue',async(req,res)=>{
+  router.post('/api/staff/early-access/private-quotes/issue',...(staffGuard?[staffGuard]:[]),async(req,res)=>{
     res.set(headers);
     try{
       const viewer=await staffPrincipal(req);
       if(!viewer?.capabilities?.has('assisted_orders:manage') || (await csrfChecked(req,viewer))!==true)return res.status(403).json({error:'not_authorized'});
-      const r=await desk.issue(viewer,req.body);return res.status(r.replay?200:201).json(r);
+      const r=await desk.issue(viewer,await issueInput(req));return res.status(r.replay?200:201).json(r);
     }catch(e){return res.status(['Quote version changed.','Attempt conflict.'].includes(e?.message)?409:400).json({error:'quote_not_issued'});}
   });
 }
