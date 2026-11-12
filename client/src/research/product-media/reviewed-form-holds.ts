@@ -126,6 +126,14 @@ export function isResearchFormUnconfirmed(variantId: string, offeringId?: string
     && (offeringId === undefined || offeringId === expectedOfferingId);
 }
 
+/**
+ * "Capsule / Bottle" is the catalog's normalization, not a source statement:
+ * no listing's source names a bottle. A row that is not held has a reviewed
+ * form, so it reads "Capsules". The stored subcategory and the SKU are
+ * unchanged; this is display only.
+ */
+const CAPSULE_OR_BOTTLE = "Capsule / Bottle";
+
 export function researchListingSubcategory(product: {
   id?: string;
   subcategory: string | null;
@@ -138,5 +146,5 @@ export function researchListingSubcategory(product: {
   if (product.variants.some((variant) => isResearchFormUnconfirmed(variant.id, product.id))) {
     return null;
   }
-  return product.subcategory;
+  return product.subcategory === CAPSULE_OR_BOTTLE ? "Capsules" : product.subcategory;
 }

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import media from "./product-media-format.generated.json";
+import catalog from "../../../../server/research/master-offerings/data/member-safe-master-offerings.generated.json";
 import { researchListingSubcategory } from "./reviewed-form-holds";
 
 // Two rows that are in the hold map today, with their own offering ids.
@@ -13,8 +14,25 @@ describe("the catalog subcategory on a listing card", () => {
   });
   it("is shown for a row that is not held", () => {
     expect(researchListingSubcategory({
+      id: "mo_not_held", subcategory: "Lyophilized Vial", variants: [{ id: "mov_not_held" }],
+    })).toBe("Lyophilized Vial");
+  });
+  it("never names a bottle: a row that is not held reads Capsules", () => {
+    expect(researchListingSubcategory({
       id: "mo_not_held", subcategory: "Capsule / Bottle", variants: [{ id: "mov_not_held" }],
-    })).toBe("Capsule / Bottle");
+    })).toBe("Capsules");
+  });
+  it("leaves no real listing card saying bottle", () => {
+    const shown = catalog.products
+      .filter((product) => product.subcategory === "Capsule / Bottle")
+      .map((product) => [product.variants[0].id, researchListingSubcategory(product)] as const);
+    expect(shown).toHaveLength(16);
+    // Ten are form-held and show no form; the other six read Capsules.
+    expect(shown.filter(([, text]) => text === null)).toHaveLength(10);
+    expect(shown.filter(([, text]) => text === "Capsules").map(([id]) => id).sort()).toEqual([
+      "mov_038386172c35c2ad8cca", "mov_0a8df59fa70328b1c1ca", "mov_235641a298fed1c2637e",
+      "mov_395e7047e013e2074f6a", "mov_862b99ce1c9f144086dd", "mov_aef099fb39b3fa062f45",
+    ]);
   });
   it("needs the held variant to belong to the held offering", () => {
     expect(researchListingSubcategory({
