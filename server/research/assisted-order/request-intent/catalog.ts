@@ -24,6 +24,7 @@ export type RequestIntentCatalog = Readonly<{
 /** Same viewer-scoped master reader, binding artifact, price and pathway authorities. No copied catalog. */
 export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInput,
   rankingSource: RankingSource = readCatalogRankingSource, clock: () => number = Date.now): RequestIntentCatalog {
+  const searchAliases = new WeakMap<RequestIntentCatalogItem, string>();
   async function visible(viewer: AssistedOrderViewer): Promise<RequestIntentCatalogItem[]> {
     const service = input.serviceFor(viewer);
     if (!service) throw new Error("request_intent_catalog_unavailable");
@@ -103,6 +104,11 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
             : nonMerchandise ? (input.allListedInquirable === true ? "Supply or service inquiry" : "Not a product request")
             : "Add to quote cart",
         });
+        // The listing's dataset aliases, which include its listed name and label, so a reviewed
+        // heading or neutral line does not hide the listed words from search. Search only: the
+        // aliases never enter the DTO, and a match shows the row, not any withheld detail. The
+        // member catalog search reads the same aliases.
+        searchAliases.set(items[items.length - 1], offering.aliases.join(" "));
       }
       if (seen.size === total) return items;
       if (seen.size > total || selection.offerings.length === 0) throw new Error("request_intent_catalog_incomplete");
@@ -127,7 +133,8 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         && (!query.channel || item.channel === query.channel)
         && (!query.actionGroup || assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup)
         && (query.actionGroup !== undefined || !query.workflowMode || item.workflowMode === query.workflowMode)
-        && (!search || [item.productName, item.specification, item.variantId].join(" ").toLowerCase().includes(search)));
+        && (!search || [item.productName, item.specification, item.variantId, searchAliases.get(item) ?? ""]
+          .join(" ").toLowerCase().includes(search)));
       // Sorting is over the whole filtered catalog, before paging, so page 2 follows
       // page 1 in the chosen order. Absent sort keeps the catalog's own order.
       //
