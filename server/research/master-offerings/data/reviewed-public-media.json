@@ -4788,6 +4788,94 @@
       },
       "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
       "primarySha256": "7d23ad6071ffbf764a8d22d468ac24dffa27d75490f89c2a0215853062762f86"
+    },
+    {
+      "offeringId": "mo_06babb8e374b38824ee8",
+      "sourceVariantId": "mov_ee0d20dec866e2090585",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/semaglutide-20mg-website-render-v1-1024.webp",
+          "altText": "Xenios Semaglutide 20 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semaglutide-20mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Semaglutide 20 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
+      "primarySha256": "61d6101a6d6a449d676b4bdbbccc73e9b7779ec0e219e6fb09e624da59793577",
+      "labelPreviewSha256": "8a993b045397a7ae64266a8bfde7ee9a4ab2d5e3464cdcb3d20bd88c91448280"
+    },
+    {
+      "offeringId": "mo_25017e496277b4120dde",
+      "sourceVariantId": "mov_eb49bfc0ee44e7b83d52",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 50 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-50mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 50 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
+      "primarySha256": "1b0d6b5e8c2b3c8713d6912e7468944734b5c6a6463aa6ceee6f4bec36e69d8d",
+      "labelPreviewSha256": "b5e678acd3a4018b98af614eae0a608b9a1a066c0e9d14ecf6f65887ec1da3fc"
+    },
+    {
+      "offeringId": "mo_3566952a7131123bd55f",
+      "sourceVariantId": "mov_645c8c707682a45abcaa",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-60mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 60 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-60mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 60 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
+      "primarySha256": "3ca883f01640be1a4b82b68a6c810a0e2867a058de85ad034dd636195b63f840",
+      "labelPreviewSha256": "4e6a6f9760e79d57d2a06c5fa50f386c57efff2b805a30cf9c1b3afcb61bcf1e"
+    },
+    {
+      "offeringId": "mo_45db3e0f87d6d796d4b8",
+      "sourceVariantId": "mov_0db878384f6f3f42fc1a",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Retatrutide 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
+      "primarySha256": "3b47cc0ac144ccaf7520417111e7d631b4896954534ae23870ab349a7208d4f9",
+      "labelPreviewSha256": "cc74a41c7bb66af237ae040ba880d9e319a74f94057c020d321dea55b3cc0d2e"
     }
   ]
 }
