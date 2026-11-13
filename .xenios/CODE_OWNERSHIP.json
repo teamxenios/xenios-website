@@ -2013,7 +2013,6 @@
         "supabase/MIGRATIONS.md",
         "docs/coordination/MIGRATION_DAG.json",
         "docs/production-completion/checkout/**",
-        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
         "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
         "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
@@ -2025,7 +2024,15 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-23T18:11:08.108Z",
-      "heartbeatAt": "2026-09-23T18:11:08.108Z"
+      "heartbeatAt": "2026-09-23T18:11:08.108Z",
+      "pathTransfers": [
+        {
+          "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+          "to": "codex-root-early-access-20261112",
+          "at": "2026-11-12T19:45:34.659Z",
+          "reason": "Narrow lead takeover on isolated successor. Prior branch and origin are f90ad88d2b39a156006289a60738f7e545572f0a; no linked worktree or matching writer; all other paths and the original branch are preserved."
+        }
+      ]
     },
     {
       "id": "1572207b-c8dc-4ea2-8893-84b50a3478a3",
@@ -2055,6 +2062,34 @@
       "state": "active",
       "claimedAt": "2026-09-24T03:32:26.959Z",
       "heartbeatAt": "2026-09-24T04:47:22.614Z"
+    },
+    {
+      "id": "2cf5d23e-309b-4ab9-a413-cd6d6f185ef7",
+      "task": "EARLY-ACCESS-PROTECTED-INTEGRATION-20261112",
+      "session": "codex-root-early-access-20261112",
+      "paths": [
+        "server/index.ts",
+        "server/research/index.ts",
+        "server/research/early-access-wall.test.ts",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "scripts/acceptance/quote-delivery/browser-fixture.mjs",
+        "server/research/assisted-order/quote/delivery/mail.mjs",
+        "scripts/acceptance/quote-delivery/workflow.local-test.mjs",
+        "server/research/assisted-order/quote/delivery/pg.mjs",
+        "server/research/assisted-order/quote/delivery/compose.mjs",
+        "server/research/assisted-order/quote/delivery/staging.ts",
+        "server/research/assisted-order/quote/delivery/staging.test.ts",
+        "server/research/assisted-order/quote/delivery/portal.mjs",
+        "server/research/assisted-order/quote/delivery/workflow.mjs",
+        "server/research/assisted-order/quote/delivery/shared-worker.mjs",
+        "server/research/assisted-order/quote/delivery/compose.d.mts",
+        "server/research/assisted-order/quote/delivery/mail.d.mts",
+        "server/research/assisted-order/quote/delivery/pg.d.mts",
+        "server/research/assisted-order/quote/delivery/STAGING_RUNBOOK.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-11-12T19:45:34.792Z",
+      "heartbeatAt": "2026-11-12T21:33:39.787Z"
     }
   ],
   "rules": [

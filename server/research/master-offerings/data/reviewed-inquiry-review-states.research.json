@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "offeringId": "mo_918fe6760c731934168d",
+      "sourceVariantId": "mov_bc725d0ad2a12e1ee57c",
+      "customerMessage": "The catalog lists this item as Cagrilintide 10 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_595ec28612674477e5aa",
+      "sourceVariantId": "mov_71e448565b155e87b979",
+      "customerMessage": "The catalog lists this item as Melanotan II 10 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_f66623171e193fc81edb",
+      "sourceVariantId": "mov_9cc6d7d3967d7507480b",
+      "customerMessage": "The catalog lists this item as PT-141 10 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_45db3e0f87d6d796d4b8",
+      "sourceVariantId": "mov_0db878384f6f3f42fc1a",
+      "customerMessage": "The catalog lists this item as Retatrutide 5 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_a1d452a070c24e5f0033",
+      "sourceVariantId": "mov_0f9bee8bdfc89ec9c2d3",
+      "customerMessage": "The catalog lists this item as Semaglutide 10 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_4e47d44fd3982b0b5e61",
+      "sourceVariantId": "mov_7b331364b57f9fdd335a",
+      "customerMessage": "The catalog lists this item as Semaglutide 15 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_36fbcc90a698a8e7ada6",
+      "sourceVariantId": "mov_3ff3d97173e8a1f7645b",
+      "customerMessage": "The catalog lists this item as Semaglutide 5 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_06babb8e374b38824ee8",
+      "sourceVariantId": "mov_ee0d20dec866e2090585",
+      "customerMessage": "The catalog lists this item as Semaglutide 20 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_25017e496277b4120dde",
+      "sourceVariantId": "mov_eb49bfc0ee44e7b83d52",
+      "customerMessage": "The catalog lists this item as Tirzepatide 50 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_3566952a7131123bd55f",
+      "sourceVariantId": "mov_645c8c707682a45abcaa",
+      "customerMessage": "The catalog lists this item as Tirzepatide 60 mg. Its identity has not yet been confirmed against its source, so no description is shown yet.",
+      "staffReviewCode": "identity_unconfirmed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_edefaf4799bd53853d01",
+      "sourceVariantId": "mov_e74adec4c45f9c9db404",
+      "customerMessage": "The catalog lists this item as Longevity Essentials NAD+. The exact product and label it refers to have not yet been confirmed, so no description is shown yet.",
+      "staffReviewCode": "label_or_source_needed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_b48e883b4ada1469f824",
+      "sourceVariantId": "mov_904af0a54faddfe2f21f",
+      "customerMessage": "The catalog lists this item as Rejuvenate+. The exact product and label it refers to have not yet been confirmed, so no description is shown yet.",
+      "staffReviewCode": "label_or_source_needed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_5b122372a6ecdea51c52",
+      "sourceVariantId": "mov_ffe0eef7766200ac8c53",
+      "customerMessage": "The catalog lists this item as Stress Essentials Calm. The exact product and label it refers to have not yet been confirmed, so no description is shown yet.",
+      "staffReviewCode": "label_or_source_needed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_85898714d8df5a3d2f10",
+      "sourceVariantId": "mov_4a105b161858064229f3",
+      "customerMessage": "The catalog lists this item as Uplift+. The exact product and label it refers to have not yet been confirmed, so no description is shown yet.",
+      "staffReviewCode": "label_or_source_needed",
+      "neutralSpecification": null
+    },
+    {
+      "offeringId": "mo_a7a7e307d58f24affb42",
+      "sourceVariantId": "mov_512ed6b875c04eee4753",
+      "customerMessage": "The catalog lists this entry as Syringes & Alcohol Swabs. What it includes has not yet been confirmed, so no description is shown yet.",
+      "staffReviewCode": "label_or_source_needed",
+      "neutralSpecification": null
+    }
+  ]
+}

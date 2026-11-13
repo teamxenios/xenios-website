@@ -1,6 +1,8 @@
+import { EARLY_ACCESS_TEAM_EMAIL } from "../../../../shared/research/early-access/quote-contact";
+import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../../../../shared/research/early-access/quote-only";
 import { useMemo } from "react";
 import { Link } from "wouter";
-import { money } from "./wizard-state";
+import { OrderEstimateRow } from "./OrderEstimateRow";
 import { readStoredAssistedOrderReceipt } from "./storage";
 import { REQUEST_INTENT_PUBLIC_REFERENCE } from "./request-intent-continuation";
 import { RequestIntentReferenceNotice } from "./RequestIntentReferenceNotice";
@@ -85,7 +87,7 @@ export function AssistedOrderConfirmationPage() {
         <dl className="xenios-order-facts">
           <div><dt>Status</dt><dd>Submitted</dd></div>
           {receipt ? <div><dt>Lines</dt><dd>{receipt.lines.length}</dd></div> : null}
-          {receipt ? <div><dt>Estimated priced total</dt><dd>{money(receipt.estimatedTotalCents)}</dd></div> : null}
+          {!EARLY_ACCESS_QUOTE_ONLY_RELEASE && receipt ? <OrderEstimateRow estimate={receipt.estimatedTotalCents} variant="facts" /> : null}
         </dl>
         {receipt && receipt.nextSteps.length > 0 ? (
           <ul className="xenios-order-timeline">
@@ -104,7 +106,7 @@ export function AssistedOrderConfirmationPage() {
           </a>
           {reference ? <a className="xenios-order-button" href={statusHref}>View request status</a> : null}
         </div>
-        <p className="xenios-order-small">Questions: research@xeniostechnology.com</p>
+        <p className="xenios-order-small">Questions: <a href={'mailto:' + EARLY_ACCESS_TEAM_EMAIL}>{EARLY_ACCESS_TEAM_EMAIL}</a></p>
       </section>
     </section>
   );

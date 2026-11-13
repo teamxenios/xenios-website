@@ -28,8 +28,10 @@ import {
   isMasterOfferingFamily,
   type MasterOfferingCopyState,
 } from "@shared/research/master-offerings/contract";
+import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "@shared/research/master-offerings/hcg-strength-review";
 import { warmMasterOfferingSearch } from "./search";
 import { registerReviewedProductDataset } from "./reviewed-content";
+import { reviewedDisplayNameFor } from "./reviewed-display-names";
 import {
   MASTER_OFFERINGS_DATASET_ENV_VAR,
   resolveMasterOfferingDatasetLocation,
@@ -221,15 +223,20 @@ function readVariant(
       `variant ${value.id} has an unknown display state`,
     );
   }
-  let label = value.label;
+  let label = isHcgStrengthReview(offeringId, value.id)
+    ? HCG_STRENGTH_REVIEW.specification
+    : value.label;
   // GRP-0337 carries a duplicated unit suffix in the selected supplier row.
   // Correct its display while keeping the source identities and artifact bytes.
+  // The row gives one group of two amounts and does not say which amount
+  // belongs to which material, so the group is kept as written and neither
+  // amount is assigned to a component.
   if (
     offeringId === "mo_ef095e8f7e8fe3a7f85d" &&
     value.id === "mov_50fc8d22f6777f3f0d4d" &&
     label === "SEMAGLUTIDE+BPC-157 5 mg/650 mcgmg/mcg"
   ) {
-    label = "SEMAGLUTIDE 5 mg + BPC-157 650 mcg";
+    label = "SEMAGLUTIDE + BPC-157 5 mg/650 mcg";
   }
   if (isOpaqueVariantLabel(label)) {
     if (variantCount !== 1) {
@@ -288,17 +295,28 @@ function readOffering(value: unknown): NormalizedMasterOffering {
       `offering ${value.id} has no member-safe variant`,
     );
   }
-  const aliases = Array.isArray(value.aliases)
-    ? value.aliases.filter(nonBlank)
-    : [];
+  const id = value.id;
+  const variants = rawVariants.map((variant) =>
+    readVariant(variant, id, value.displayName as string, rawVariants.length),
+  );
+  const strengthReview = value.family === HCG_STRENGTH_REVIEW.family &&
+    variants.some((variant) => isHcgStrengthReview(id, variant.id));
+  const aliases = Array.isArray(value.aliases) ? value.aliases.filter(nonBlank) : [];
+  // A reviewed heading replaces a generated display name that misstates the
+  // listing. Nothing else changes: the slug, the canonical name, the variant
+  // labels and the aliases are the dataset's (the held listing's aliases are
+  // replaced by the hold, below, as before). The dataset lists every
+  // listing's own display name among its aliases, which is what keeps the old
+  // words searchable; a test pins that.
+  const reviewedName = reviewedDisplayNameFor(id);
   return {
-    id: value.id,
-    slug: value.slug,
+    id,
+    slug: strengthReview ? HCG_STRENGTH_REVIEW.slug : value.slug,
     // The generated file drops the canonical key on purpose. Nothing in the
     // display path reads it, and reconstructing one here would put a private
     // identity back into a member-safe object.
     canonicalKey: "",
-    displayName: value.displayName,
+    displayName: reviewedName ?? value.displayName,
     canonicalName: nonBlank(value.canonicalName)
       ? value.canonicalName
       : value.displayName,
@@ -306,21 +324,13 @@ function readOffering(value: unknown): NormalizedMasterOffering {
     category: nonBlank(value.category) ? value.category : "Uncategorized",
     subcategory: nonBlank(value.subcategory) ? value.subcategory : null,
     brand: nonBlank(value.brand) ? value.brand : null,
-    aliases,
+    aliases: strengthReview ? ["HCG"] : aliases,
     displayState: value.displayState,
-    stateExplanation: nonBlank(value.stateExplanation)
-      ? value.stateExplanation
-      : "",
+    stateExplanation: strengthReview ? HCG_STRENGTH_REVIEW.notice
+      : nonBlank(value.stateExplanation) ? value.stateExplanation : "",
     copyState: readCopyState(value.copyState),
     visibility: "member",
-    variants: rawVariants.map((variant) =>
-      readVariant(
-        variant,
-        value.id as string,
-        value.displayName as string,
-        rawVariants.length,
-      ),
-    ),
+    variants,
     sourceReferences: [],
   };
 }
@@ -375,13 +385,17 @@ export function loadMasterOfferingDataset(
         `duplicate offering id ${product.id}`,
       );
     }
-    if (slugs.has(product.slug)) {
-      throw new MasterOfferingDatasetUnavailable(
-        `duplicate offering slug ${product.slug}`,
-      );
-    }
     ids.add(product.id);
-    slugs.add(product.slug);
+    const addresses = product.id === HCG_STRENGTH_REVIEW.offeringId &&
+      product.slug === HCG_STRENGTH_REVIEW.slug
+      ? [product.slug, HCG_STRENGTH_REVIEW.legacySlug]
+      : [product.slug];
+    for (const address of addresses) {
+      if (slugs.has(address)) {
+        throw new MasterOfferingDatasetUnavailable("duplicate offering slug " + address);
+      }
+      slugs.add(address);
+    }
   }
 
   const families: Record<string, number> = {};

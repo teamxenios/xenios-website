@@ -120,6 +120,7 @@ import { pricingViewerForCustomerViewer } from "./research/master-offerings/earl
 import {
   masterOfferingViewerForMember,
   pricingIdentityFromViewer,
+  quoteOnlyCatalogViewer,
   type MasterOfferingViewerWithGrant,
 } from "./research/master-offerings/member-pricing-viewer";
 import {
@@ -139,6 +140,7 @@ import {
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from "./research/assisted-order/production-deps";
 import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
+import { mountStagingPrivateQuotePortal } from "./research/assisted-order/quote/delivery/staging";
 import { createAssistedMemberHistoryReader, withAssistedOrderRequestHistory } from "./research/assisted-order/member-order-history";
 import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
 import { resolveAssistedOrderAuditAuthority } from "./research/assisted-order/audit-store";
@@ -148,6 +150,7 @@ import {
   type ExpressAssistedOrderRequest,
 } from "./research/assisted-order/express";
 import { createAssistedOrderRouteTable } from "./research/assisted-order/http";
+import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "../shared/research/early-access/quote-only";
 import type { SupabaseRpcClient as AssistedOrderRpcClient } from "./research/assisted-order/supabase-repository";
 import type { SupabaseStorageClient as AssistedOrderStorageClient } from "./research/assisted-order/supabase-document-store";
 import { requireSupabaseAdmin } from "./routes";
@@ -578,6 +581,9 @@ registerMemberCatalogApi(
   app,
   buildMemberCatalogProductionService(),
   requireActiveMember,
+  // Quote-only first release: an ordinary member is a customer, so the
+  // member catalog carries no member price. Admin routes keep staff pricing.
+  { quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE },
 );
 
 // Launch A is a private, read-only partner catalog. The route table contributes
@@ -693,7 +699,9 @@ const authorizeMasterOfferingViewer = async (
   if (!mayViewMasterOfferings({ audience: viewer.audience, email: viewer.email })) {
     return null;
   }
-  return viewer;
+  // Quote-only first release: these routes price for the admin only. A member
+  // keeps the catalog and sees "Price on request".
+  return EARLY_ACCESS_QUOTE_ONLY_RELEASE ? quoteOnlyCatalogViewer(viewer) : viewer;
 };
 // Product Control facts for one exact selection request. The reader owns only
 // facts Product Control can state (product, variants, prices, media, required
@@ -975,11 +983,20 @@ async function composeAssistedOrderBridge(): Promise<
     // attribution. Referral V1 is now the one authority: the cookie names a
     // touch, and the partner behind it is re-read durably on each submit.
     createReferralV1AttributionResolver(buildReferralV1Dependencies()),
+    // Quote-only first release: customer catalog, receipt and status carry no
+    // catalog amount. Admin routes keep staff pricing.
+    { quoteOnly: EARLY_ACCESS_QUOTE_ONLY_RELEASE },
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",
     path: string,
   ): RequestHandler => {
+    // Contact-gated requests use the neutral request-intent catalog. Do not expose
+    // its older sibling as a second catalog entrance. Preserve prior receipts/replay and admin.
+    const contactFlag=assistedOrderWiring.env.RESEARCH_REQUEST_CATALOG_CONTACT_REQUIRED;
+    if (contactFlag!==undefined && contactFlag!=="false" && (
+      method==="GET"&&path==="/api/research/early-access/assisted-orders/catalog"
+    )) return (_req,res)=>{res.set("Cache-Control","private, no-store").status(403).json({error:"legacy_intake_closed"});};
     if (assistedOrderRoutes === null) {
       return assistedOrderUnavailableDoor(
         path,
@@ -1018,6 +1035,13 @@ async function composeAssistedOrderBridge(): Promise<
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
   // Preserve registration of all existing doors before the optional new composition.
   registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
+  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, async (userId) => {
+    const { data, error } = await getSupabaseAdmin().auth.admin.getUserById(userId);
+    const user = data?.user;
+    return !error && user?.id === userId && user.email && user.email_confirmed_at
+      ? { email: user.email.trim().toLowerCase(), confirmedAt: user.email_confirmed_at }
+      : null;
+  });
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,

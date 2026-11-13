@@ -69,6 +69,9 @@ async function cartApp(): Promise<{ app: Express; store: InMemoryEarlyAccessCart
   const ledger = await approvedLedgerFor(unit, { approvedQuantityLimit: 20 });
   const store = new InMemoryEarlyAccessCartStore();
   registerPrivateEarlyAccessApi(app, {
+    // This suite proves the PRICED cart and order engine: it quotes and buys.
+    // Quote-only is the production default and refuses both, so it is switched off here.
+    quoteOnly: false,
     config: EARLY_ACCESS_TEST_CONFIG,
     sessionIdentity: true,
     env: CART_ON,

@@ -79,6 +79,9 @@ async function sessionCodeApp(
   const unit = cleanUnit();
   const store = new InMemoryEarlyAccessCommerceStore();
   registerPrivateEarlyAccessApi(app, {
+    // This suite proves the PRICED order engine: it places an order. Quote-only is
+    // the production default and refuses a new order, so it is switched off here.
+    quoteOnly: false,
     config: EARLY_ACCESS_TEST_CONFIG,
     sessionIdentity: true,
     catalog: catalogOf([unit]),

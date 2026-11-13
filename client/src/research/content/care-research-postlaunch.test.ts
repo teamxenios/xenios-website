@@ -158,4 +158,22 @@ describe("Care + Research product education reconciliation", () => {
     expect(clinical.whyPeopleAreInterested).toContain("licensed clinical team");
     expect(clinical.careAvailability).toContain("licensed clinician");
   });
+
+  it("names no bottle and, for a research row, no catalog form in the identity sentence", () => {
+    // Every catalog product, in each lane the member page can pass.
+    for (const product of PRODUCT_EDUCATION_PRODUCTS) {
+      for (const lane of ["research", "research_material", "pending", "future_clinical", undefined]) {
+        const text = getProductEducationProfile({
+          canonicalName: product.displayName, displayName: product.displayName, lane,
+        }).whatItIs;
+        expect(text, product.key).not.toMatch(/bottle/i);
+        if (lane === "research" || lane === "research_material") {
+          expect(text, product.key).not.toMatch(/lyophili[sz]ed vial|form not stated/i);
+        }
+      }
+    }
+    // A row that is not on a research lane keeps a capsule form, worded without a container.
+    expect(getProductEducationProfile({ canonicalName: "Tesofensine", displayName: "Tesofensine", lane: "pending" }).whatItIs)
+      .toContain("· Capsules record");
+  });
 });

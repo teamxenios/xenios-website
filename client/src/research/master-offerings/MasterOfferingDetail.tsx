@@ -10,6 +10,7 @@ import { isContradictoryPurchase } from "./catalog-access-path";
 import { catalogPresentationLabel } from "./catalog-presentation-labels";
 import { MasterOfferingPrice } from "./MasterOfferingPrice";
 import { ProductMedia } from "../product-media/ProductMedia";
+import { ListingQuestion } from "../catalog-help/ListingQuestion";
 import { ReviewedProductContent } from "./ReviewedProductContent";
 import {
   purchaseQuantityControl,
@@ -333,6 +334,12 @@ export function MasterOfferingDetail({
               </p>
               <MasterOfferingPrice price={selected.price} testId="mo-selected-price" />
             </div>
+            {selected.reviewMessage && (
+              <p className="body-s text-ink-mute min-w-0 break-words" data-testid="mo-selected-review-message">
+                {selected.reviewMessage}
+              </p>
+            )}
+            <ListingQuestion key={selected.id} variantReference={selected.id} />
             <MasterOfferingVariantAction
               productName={product.displayName}
               variant={selected}

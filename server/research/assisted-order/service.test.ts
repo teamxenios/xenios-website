@@ -163,6 +163,7 @@ function harness(
     submissionStanding?: AssistedOrderSubmissionStanding | null;
     auditRecord?: AssistedOrderAuditSink["record"];
     documents?: AssistedOrderDocumentStore;
+    quoteOnly?: boolean;
   } = {},
 ) {
   const repository = new InMemoryAssistedOrderRepository();
@@ -256,6 +257,7 @@ function harness(
     logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
     adminNotificationEmail: "research@xeniostechnology.com",
     documentBucketName: "research-assisted-order-documents",
+    ...(overrides.quoteOnly === undefined ? {} : { quoteOnly: overrides.quoteOnly }),
   };
   return {
     service: new AssistedOrderService(deps),
@@ -1307,5 +1309,34 @@ describe("the customer-typed affiliate code", () => {
     const replay = await h.service.submit(memberViewer, input({ declaredAffiliateCode: "DANA10" }));
     expect(replay.publicReference).toBe(first.publicReference);
     expect(h.notifications).toHaveLength(2);
+  });
+});
+
+describe("AssistedOrderService, quote-only customer notification", () => {
+  it("marks the customer payload and carries no catalog amount; the admin payload keeps its pricing", async () => {
+    const h = harness(item(), { quoteOnly: true });
+    const receipt = await h.service.submit(memberViewer, input());
+    // The server still prices the request for staff and for eligibility.
+    expect(receipt.estimatedTotalCents).toBe(10000);
+    const admin = h.notifications.find((n) => n.recipientKind === "admin")!.payload as Record<string, unknown>;
+    const customer = h.notifications.find((n) => n.recipientKind === "customer")!.payload as Record<string, any>;
+    expect(admin.estimatedTotalCents).toBe(10000);
+    expect(customer.pricing).toBe("quote");
+    expect(customer).not.toHaveProperty("estimatedTotalCents");
+    expect(customer.lines.length).toBeGreaterThan(0);
+    for (const line of customer.lines) {
+      expect(line.unitPriceCents).toBeNull();
+      expect(line.lineEstimateCents).toBeNull();
+      expect(typeof line.productName).toBe("string");
+      expect(typeof line.quantity).toBe("number");
+    }
+  });
+
+  it("is unchanged without it", async () => {
+    const h = harness();
+    await h.service.submit(memberViewer, input());
+    const customer = h.notifications.find((n) => n.recipientKind === "customer")!.payload as Record<string, unknown>;
+    expect(customer.estimatedTotalCents).toBe(10000);
+    expect(customer).not.toHaveProperty("pricing");
   });
 });

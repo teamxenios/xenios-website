@@ -1,0 +1,8 @@
+{
+  "source": "standardwebhooks@1.0.0 Webhook.sign(msgId, Date, raw)",
+  "secret": "whsec_YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWE=",
+  "ts": 1794438000,
+  "eid": "msg_standard_webhooks_vector1",
+  "raw": "{\"type\":\"email.delivered\",\"data\":{\"email_id\":\"ab53c509-9d12-4e73-8a2f-7e5b23c228ef\",\"from\":\"Team Xenios <team@xeniostechnology.com>\",\"subject\":\"A private update from Team Xenios\",\"to\":[\"verified@example.invalid\"]},\"_ignored\":\"synthetic π\"}",
+  "signature": "v1,umEcG3Hulpy84WEXn2R4PmxUJZ62MGlPHTvbyDXHvmk="
+}

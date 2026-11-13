@@ -3,7 +3,7 @@ import { parseAssistedOrderConfig } from "./wizard-state";
 import { ASSISTED_ORDER_DRAFT_KEY, readAssistedOrderDraft } from "./draft-store";
 import { REQUEST_INTENT_ATTEMPT_KEY, readIntentAttempt } from "./request-intent-attempt";
 
-export type OrderRequestMode = Readonly<{ kind: "checking" | "legacy" | "mixed" | "unavailable" }>;
+export type OrderRequestMode = Readonly<{ kind: "checking" | "legacy" | "mixed" | "unavailable"; contactAdmissionRequired?:true }>;
 export type OrderRequestContinuity = "none" | "legacy" | "mixed" | "blocked";
 
 /** Called once by a door owner and passed to its CTA and embedded entry.
@@ -16,6 +16,7 @@ export function useOrderRequestMode(active = true, scope = "standalone"): OrderR
     if (!active) { setObserved(null); return; }
     let current = true;
     void (async () => {
+      let required=false;
       let kind: OrderRequestMode["kind"] = "unavailable";
       try {
         const response = await fetch("/api/research/early-access/request-intents/config", {
@@ -25,10 +26,13 @@ export function useOrderRequestMode(active = true, scope = "standalone"): OrderR
         if (body && typeof body === "object" && !Array.isArray(body)) {
           const row = body as Record<string, unknown>;
           if (response.status === 503 && row.enabled === false && row.error === "request_intent_disabled") kind = "legacy";
-          else if (response.ok && row.enabled === true && parseAssistedOrderConfig(body)) kind = "mixed";
+          else if (response.ok && row.enabled === true && parseAssistedOrderConfig(body)
+            && (row.contactAdmissionRequired===undefined || typeof row.contactAdmissionRequired==="boolean")) {
+            kind="mixed"; required=row.contactAdmissionRequired===true;
+          }
         }
       } catch { /* Unknown readiness is NOT proof the feature is off. */ }
-      if (current) setObserved({ scope, state: { kind } });
+      if (current) setObserved({ scope, state: required ? {kind,contactAdmissionRequired:true} : {kind} });
     })();
     return () => { current = false; };
   }, [active, scope]);

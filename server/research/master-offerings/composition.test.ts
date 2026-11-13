@@ -1,4 +1,5 @@
 import express, { type Express } from "express";
+import { EARLY_ACCESS_QUOTE_ONLY_RELEASE } from "@shared/research/early-access/quote-only";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import type { AdminProductDetail } from "@shared/research/product-admin";
@@ -90,6 +91,9 @@ function input(
     }),
     catalogReader: new InMemoryMasterOfferingCatalogReader([PRODUCT]),
     now: () => EVALUATED_AT,
+    // These cases exercise the priced purchase engine, which the quote-only
+    // release switches off. The release default is tested by name below.
+    quoteCartOnly: false,
     ...overrides,
   };
 }
@@ -167,6 +171,25 @@ describe("composition", () => {
       }),
     ).get(DETAIL_PATH);
     expect(response.body.product.variants[0].action.kind).toBe("add_to_cart");
+  });
+
+  it("under the release default offers the quote cart and no purchase, even when Product Control authorizes one", async () => {
+    const authorized = {
+      select: async () => ({
+        ok: true,
+        selection: await cartSelection({
+          productId: "pc_product_1", variantId: "pc_variant_1", sku: "XEN-BPC-5", evaluatedAt: EVALUATED_AT,
+        }),
+      }),
+    } as never;
+    // Control: with the engine on, this exact input is a purchase (the case above).
+    const response = await request(app({ selections: authorized, quoteCartOnly: undefined })).get(DETAIL_PATH);
+    expect(EARLY_ACCESS_QUOTE_ONLY_RELEASE).toBe(true);
+    const action = response.body.product.variants[0].action;
+    expect(action.kind).toBe("request_quote");
+    expect(action.label).toBe("Add to quote cart");
+    expect(action.href).toMatch(/^\/research\/early-access\/order-request\?family=research_vials&slug=research-vials-bpc-157&variant=/);
+    expect(JSON.stringify(response.body)).not.toContain("add_to_cart");
   });
 
   it("builds a fresh service per request so a price memo cannot go stale", async () => {

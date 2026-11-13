@@ -114,8 +114,9 @@ describe("private queue response page identity and bounds", () => {
 });
 
 describe("customer catalog response page identity and bounds", () => {
+  // The client clears the catalog amount on every item (quote-only), so a served item always carries the field.
   const item = { productId: "synthetic-product", variantId: "synthetic-variant",
-    selectableForReview: true, clinicalReviewRequired: false };
+    selectableForReview: true, clinicalReviewRequired: false, unitPriceCents: null };
   const valid = { items: [item], total: 51, page: 1, pageSize: 24,
     families: [], channels: [], workflowModes: [] };
   function fixture(body: unknown) {

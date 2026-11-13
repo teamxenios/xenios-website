@@ -76,6 +76,12 @@ export type AssistedOrderMasterCatalogInput = Readonly<{
   catalogVersion: string;
   /** Canonical, founder-reviewed formulation holds from the reconciliation record. */
   reviewedFormulationHolds?: ReadonlySet<string>;
+  /**
+   * Request intent only. True once the request store accepts a coming-soon line
+   * and a supply or service line. Absent or false keeps those rows listed but
+   * not selectable, so a cart is never refused whole at the store.
+   */
+  allListedInquirable?: boolean;
 }>;
 
 /**

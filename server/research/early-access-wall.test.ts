@@ -81,6 +81,7 @@ const ORDER_NUMBER = "XEA-7F3K9QW2TM4BXYZ1";
 
 /** A well-formed cart checkout number, in the generated shape XEC-<hex>. */
 const CART_NUMBER = "XEC-063A962A0053A65324F21E7F";
+const CONTACT_ADMISSION = "/api/research/early-access/request-intents/admission";
 
 describe("the research wall lets Private Early Access reach its own gate", () => {
   it.each([
@@ -166,6 +167,23 @@ describe("the research wall lets Private Early Access reach its own gate", () =>
 });
 
 describe("the exemption opened nothing else", () => {
+  it("passes only exact contact admission reads and writes to the downstream guard", async () => {
+    const app = makeApp();
+    app.get(CONTACT_ADMISSION, (_req, res) => res.sendStatus(204));
+    app.post(CONTACT_ADMISSION, (_req, res) => res.sendStatus(204));
+
+    expect((await request(app).get(CONTACT_ADMISSION)).status).toBe(204);
+    expect((await request(app).post(CONTACT_ADMISSION)).status).toBe(204);
+    for (const response of [
+      await request(app).patch(CONTACT_ADMISSION),
+      await request(app).get(`${CONTACT_ADMISSION}-extra`),
+      await request(app).post(`${CONTACT_ADMISSION}/extra`),
+    ]) {
+      expect(response.status).toBe(401);
+      expect(response.body?.message).toBe(WALLED);
+    }
+  });
+
   it.each([
     "/api/research/catalog",
     "/api/research/orders",

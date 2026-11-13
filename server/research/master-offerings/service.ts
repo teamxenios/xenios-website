@@ -4,6 +4,7 @@ import type {
   MasterOfferingDetailView,
   MasterOfferingVariantView,
 } from "@shared/research/master-offerings/contract";
+import { HCG_STRENGTH_REVIEW, isHcgStrengthReview } from "@shared/research/master-offerings/hcg-strength-review";
 import {
   projectMasterOfferingCard,
   projectMasterOfferingDetail,
@@ -228,16 +229,20 @@ export class MasterOfferingCatalogService {
   private async findMemberOffering(
     slug: string,
   ): Promise<NormalizedMasterOffering | null> {
+    const lookupSlug = slug === HCG_STRENGTH_REVIEW.legacySlug
+      ? HCG_STRENGTH_REVIEW.slug
+      : slug;
+    const matches = (product: NormalizedMasterOffering) =>
+      product.visibility === "member" && product.slug === lookupSlug &&
+      (lookupSlug !== HCG_STRENGTH_REVIEW.slug ||
+        (product.family === HCG_STRENGTH_REVIEW.family &&
+          product.variants.some((variant) => isHcgStrengthReview(product.id, variant.id))));
     if (typeof this.reader.readBySlug === "function") {
-      const found = await this.reader.readBySlug(slug);
-      if (found === null || found === undefined) return null;
-      return found.visibility === "member" && found.slug === slug ? found : null;
+      const found = await this.reader.readBySlug(lookupSlug);
+      return found && matches(found) ? found : null;
     }
-    const products = await this.reader.readCatalog();
-    const matches = products.filter(
-      (product) => product.visibility === "member" && product.slug === slug,
-    );
-    return matches.length === 1 ? matches[0] : null;
+    const products = (await this.reader.readCatalog()).filter(matches);
+    return products.length === 1 ? products[0] : null;
   }
 
   async detail(slug: string): Promise<MasterOfferingDetailView | null> {

@@ -15,6 +15,7 @@ import {
 } from "./first-release-review";
 import { resolveFounderHeldUnits } from "./founder-first-release-seed";
 import { buildEarlyAccessStorefront } from "./storefront-view";
+import { quoteOnlyStorefrontUnit } from "../../../../shared/research/early-access/quote-only";
 
 // The two routes the bridge needs: what a signed-in customer may see, and how a
 // founder records a release.
@@ -77,6 +78,13 @@ export interface EarlyAccessReleaseRouteDependencies {
   readonly ledger: EarlyAccessReleaseLedger;
   readonly now: () => number;
   readonly logger?: (event: string, detail?: Record<string, unknown>) => void;
+  /**
+   * Quote-only Early Access. When true, the customer response carries no
+   * catalog price: each unit's priceCents is null and it is marked
+   * `pricing: "quote"`. The internal storefront, which the cart prices from,
+   * is unchanged. Absent or false keeps today's priced response.
+   */
+  readonly quoteOnly?: boolean;
 }
 
 type ResponsePort = {
@@ -167,7 +175,9 @@ export function createEarlyAccessCatalogRoute(deps: EarlyAccessReleaseRouteDepen
         evaluatedAt: storefront.evaluatedAt,
         purchasableCount: storefront.purchasableCount,
         heldCount: storefront.heldCount,
-        units: storefront.units,
+        units: deps.quoteOnly === true
+          ? storefront.units.map((unit) => quoteOnlyStorefrontUnit(unit))
+          : storefront.units,
       });
     } catch {
       // A catalog that cannot be built must not read as a catalog with nothing

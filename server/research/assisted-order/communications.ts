@@ -11,6 +11,11 @@
 
 const SITE_ORIGIN = "https://xeniostechnology.com";
 
+/** The customer-payload marker for quote-only Early Access. */
+export const QUOTE_PRICING = "quote";
+const QUOTE_SENTENCE =
+  "Xenios reviews each request and confirms availability, a quote and payment details before fulfillment.";
+
 function text(value: unknown): string {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : "";
 }
@@ -46,7 +51,7 @@ function amount(cents: unknown): string | null {
  * what keeps rows queued before this change renderable: they simply render the
  * summary they always did, instead of walking to failed_permanent.
  */
-function lineBlock(payload: Record<string, unknown>): string[] {
+function lineBlock(payload: Record<string, unknown>, options: { quote?: boolean } = {}): string[] {
   const raw = payload.lines;
   if (!Array.isArray(raw) || raw.length === 0) return [];
   const rendered: string[] = [];
@@ -61,10 +66,13 @@ function lineBlock(payload: Record<string, unknown>): string[] {
     const total = amount(line.lineEstimateCents);
     const parts = [spec === "" ? name : `${name} — ${spec}`];
     if (quantity !== null) parts.push(`qty ${quantity}`);
-    // An unpriced line is truthful about being unpriced. It is never rendered
-    // as $0.00, which would read as free.
-    parts.push(unit === null ? "price on request" : `${unit} each`);
-    if (total !== null) parts.push(`${total} line total`);
+    // A quote-only payload states no amount on any line, even one that
+    // arrived with one. Otherwise an unpriced line is truthful about being
+    // unpriced. It is never rendered as $0.00, which would read as free.
+    if (options.quote !== true) {
+      parts.push(unit === null ? "price on request" : `${unit} each`);
+      if (total !== null) parts.push(`${total} line total`);
+    }
     rendered.push(`  - ${parts.join(" | ")}`);
   }
   if (rendered.length === 0) return [];
@@ -163,6 +171,10 @@ export function renderAssistedOrderOutboxEmail(
 
   if (templateKey === "research.assisted_order.submitted.customer") {
     const lineCount = count(payload.lineCount);
+    // Quote-only Early Access: the service marks the payload, and the email
+    // then carries no catalog amount at all. Rows queued without the marker
+    // render exactly as they always did.
+    const quote = payload.pricing === QUOTE_PRICING;
     return {
       subject: `Xenios Research order request received (${reference})`,
       text: [
@@ -170,8 +182,10 @@ export function renderAssistedOrderOutboxEmail(
         ``,
         `Reference: ${reference}`,
         lineCount !== null ? `Requested items: ${lineCount}` : "",
-        ...lineBlock(payload),
-        `Estimated value: ${money(payload.estimatedTotalCents)}`,
+        ...lineBlock(payload, { quote }),
+        quote
+          ? QUOTE_SENTENCE
+          : `Estimated value: ${money(payload.estimatedTotalCents)}`,
         paymentSentence(payload),
         ``,
         `A member of the Xenios team reviews every request personally. You will`,

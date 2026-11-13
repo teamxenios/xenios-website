@@ -134,6 +134,8 @@ export type EarlyAccessCartQuoteResult =
       ok: false;
       code: "CART_INVALID" | "AGREEMENT_REQUIRED" | "LINE_REFUSED" | "UNAVAILABLE";
       lines?: readonly EarlyAccessCartLineRefusal[];
+      /** Present on a refusal made because the release is quote-only. */
+      quoteOnly?: true;
     }>;
 
 export type EarlyAccessCartCheckoutRequest = Readonly<{
@@ -260,6 +262,8 @@ export type EarlyAccessCartCheckoutResult =
         | "IDEMPOTENCY_CONFLICT"
         | "CART_INVALID"
         | "UNAVAILABLE";
+      /** Present on a refusal made because the release is quote-only. */
+      quoteOnly?: true;
     }>;
 
 /** Metadata for proof received outside the Xenios website. No file-storage claim. */

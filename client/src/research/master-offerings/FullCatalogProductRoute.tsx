@@ -4,6 +4,7 @@ import {
   isMasterOfferingFamily,
   type MasterOfferingVariantView,
 } from "@shared/research/master-offerings/contract";
+import { HCG_STRENGTH_REVIEW } from "@shared/research/master-offerings/hcg-strength-review";
 import {
   EARLY_ACCESS_MAX_QUANTITY,
   EARLY_ACCESS_MIN_QUANTITY,
@@ -146,11 +147,14 @@ export default function FullCatalogProductRoute() {
     );
   }
 
+  const detailSlug = family === HCG_STRENGTH_REVIEW.family && slug === HCG_STRENGTH_REVIEW.legacySlug
+    ? HCG_STRENGTH_REVIEW.slug
+    : slug;
   return (
     <MasterOfferingDetailSurface
       memberToken={memberToken}
       family={family}
-      slug={slug}
+      slug={detailSlug}
       initialVariantId={preselection.variantId}
       initialQuantity={preselection.quantity}
       cart={cart}
