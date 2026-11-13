@@ -6715,6 +6715,373 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_230a06a5ed15405e65b2",
+      "sourceVariantId": "mov_64db7bf766cd1d66694d",
+      "content": {
+        "brand": "Xenios",
+        "summary": "HGH is the common abbreviation for human growth hormone, the pituitary hormone also called somatotropin. The listed amount is in international units, which express activity, not mass. The findings do not establish the safety or effects of this research material in people. Listed at 10 IU for laboratory research.",
+        "overview": "In plain terms, HGH is the common abbreviation for human growth hormone, the pituitary hormone also called somatotropin. It is listed for laboratory work on how that hormone binds its receptor and on receptor dimerization in structural and cell systems. What the cited work establishes is structural: a 1992 crystal structure at 2.8 angstrom resolution showed one molecule of the hormone bound to two molecules of receptor, with both receptors donating essentially the same residues even though the two sites on the hormone have no structural similarity, which supports a sequential mechanism of receptor dimerization. What it does not establish is any effect in a person - and the listed amount is in international units, which express activity rather than mass, so no milligram equivalent is implied. The full technical description follows.\n\nHGH is the common abbreviation for human growth hormone, the pituitary hormone also called somatotropin. Reference records give the human somatotropin precursor as 217 residues with a signal region at 1 to 26 and a mature chain at 27 to 217, which is 191 residues, and list growth hormone among its names.\n\nA 1992 crystallographic study of the hormone bound to the extracellular domain of its receptor, solved at 2.8 angstrom resolution, found that the complex consists of one molecule of the hormone per two molecules of receptor, and described the hormone as a four-helix bundle with an unusual topology. In that structure both receptor molecules donate essentially the same residues to the interaction even though the two binding sites on the hormone have no structural similarity, and the extents of the contact areas support a sequential mechanism of receptor dimerization that the authors suggest may be central to signal transduction.\n\nThe catalog states this listing in international units, which express activity rather than mass, and no source read here states a mass equivalence for this material, so the amount is reproduced as the catalog gives it and no milligram figure is implied. This listing is a laboratory research material and not a medicine. The findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 IU, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 IU"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0403"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on growth hormone receptor binding and dimerization in structural and cell systems.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_a8ad050608013cf7d4b4",
+      "sourceVariantId": "mov_1f87878d1e95e525b15d",
+      "content": {
+        "brand": "Xenios",
+        "summary": "Curcumin is described in the published literature as a major polyphenolic compound of turmeric. Chemical studies of this compound do not establish the safety or effects of this research material in people. Listed at 600 mg for laboratory research.",
+        "overview": "In plain terms, this is curcumin, described in the literature as a major polyphenol of turmeric. It is listed for laboratory work on its chemistry: which of its two tautomeric forms is the more stable, how it behaves under light, and how poorly it dissolves in water. What the cited work establishes is chemical: the enol forms are more stable than the keto forms, the computed electronic levels agree with the measured absorption, fluorescence and phosphorescence spectra, and its poor water solubility limits analysis in most aqueous systems. What it does not establish is anything about use - the wider literature on this compound concerns disease models, which a nonclinical research listing cannot describe. The full technical description follows.\n\nCurcumin is the polyphenol 1,7-bis(4-hydroxy-3-methoxyphenyl)-1,6-heptadiene-3,5-dione, also called diferuloylmethane, described in the published literature as a major polyphenolic compound of turmeric, the rhizome of Curcuma longa. A 2026 computational and experimental study of curcumin and seven of its derivatives reported that the enol forms are more stable than the keto forms, and found the compounds' main electronic levels to agree with their measured absorption, fluorescence and phosphorescence spectra. A 2024 study notes that curcumin's poor solubility in water limits the analysis of its biological activities in most aqueous experimental systems, and examined whether a polymer vehicle altered its solubility and stability.\n\nThe published work on this compound is extensive and much of it concerns disease models, which a nonclinical research listing cannot describe; the chemical behaviour above is what this listing rests on. This listing is a laboratory research material and not a medicine. The chemical findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 600 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "600 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0396"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on polyphenol tautomerism, photophysical behaviour and aqueous solubility in chemical and cell assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_73f7704a1cabe9b2f63a",
+      "sourceVariantId": "mov_973154f49c156dcf7a72",
+      "content": {
+        "brand": "Xenios",
+        "summary": "This listing's catalog name is GLP-3, and no published record read uses that name for this material. Which material this listing holds is not established. Laboratory and animal findings do not establish the safety or effects of this research material in people. Listed at 12 mg for laboratory research.",
+        "overview": "In plain terms, what this listing holds is not established. Its catalog name is GLP-3, and no published source read here uses that name for this material; in the literature, glucagon-like peptide 3 names a peptide reported in cartilaginous fishes. The catalog's product name for this row is 'Retatrutide / GLP-3', so the catalog itself pairs this listing's label with retatrutide; the description below is retatrutide's, carried over from those listings. What the cited work establishes is about retatrutide, in mice and hamsters. What it does not establish is that this listing holds retatrutide, and the catalog name does not settle it. The full technical description follows.\n\nThis listing's catalog name is GLP-3, and no published record read here uses that name for this material. In the published record, glucagon-like peptide 3 names a proglucagon-derived peptide reported in cartilaginous fishes, additional to glucagon-like peptide-1 and glucagon-like peptide-2, which occur in other vertebrates. The catalog's product name for this row is 'Retatrutide / GLP-3', so the catalog itself pairs this listing's label with retatrutide, and the description of retatrutide below is the one already written for the retatrutide listings in this catalog. What no source read here establishes is which material this listing holds, and the catalog name does not settle it.\n\nRetatrutide, also designated LY3437943, is a lipidated peptide of 39 amino acids designed to activate three receptors with a single molecule: the receptors for glucagon, glucose-dependent insulinotropic polypeptide (GIP) and glucagon-like peptide-1 (GLP-1). In its developer's 2022 report, it showed balanced glucagon- and GLP-1-receptor activity but more GIP-receptor activity in vitro, and in obese mice it decreased body weight and improved glycemic control; the authors reported that glucagon-receptor-mediated increases in energy expenditure added to the weight loss from reduced calorie intake driven by the GIP and GLP-1 receptors.\n\nIn a separate 2026 study in diet-induced obese mice used as a model of steatohepatitis, retatrutide reduced body weight, both fat and lean mass, an index of insulin resistance and liver lipid content without significantly changing energy expenditure, and in a hamster model it halved liver triglycerides without reducing liver histology scores. In a 2025 mouse model of steatohepatitis induced by a Western diet with fructose and sucrose in the drinking water, retatrutide significantly lowered body weight, alanine aminotransferase (ALT) levels, liver triglycerides and cholesterol, and hepatic inflammatory markers in female mice compared with vehicle controls.\n\nIn isolated mouse atria, retatrutide did not increase the force of contraction of the left atrium but raised the beating rate of the right atrium, an effect antagonized by a glucagon-receptor antagonist. As of a review covering evidence through September 2026, retatrutide was an investigational medicine in phase 3 clinical development and was not approved; this listing is a laboratory research material, not a medicine. These laboratory and animal findings do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 12 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "12 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0410"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on multi-receptor peptide agonist chemistry, as described for the retatrutide listings.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_1d2f33123a079af3786b",
+      "sourceVariantId": "mov_867e32ca427228fdd87e",
+      "content": {
+        "brand": "Xenios",
+        "summary": "This listing's catalog name is GLP-3, and no published record read uses that name for this material. Which material this listing holds is not established. Laboratory and animal findings do not establish the safety or effects of this research material in people. Listed at 24 mg for laboratory research.",
+        "overview": "In plain terms, what this listing holds is not established. Its catalog name is GLP-3, and no published source read here uses that name for this material; in the literature, glucagon-like peptide 3 names a peptide reported in cartilaginous fishes. The catalog's product name for this row is 'Retatrutide / GLP-3', so the catalog itself pairs this listing's label with retatrutide; the description below is retatrutide's, carried over from those listings. What the cited work establishes is about retatrutide, in mice and hamsters. What it does not establish is that this listing holds retatrutide, and the catalog name does not settle it. The full technical description follows.\n\nThis listing's catalog name is GLP-3, and no published record read here uses that name for this material. In the published record, glucagon-like peptide 3 names a proglucagon-derived peptide reported in cartilaginous fishes, additional to glucagon-like peptide-1 and glucagon-like peptide-2, which occur in other vertebrates. The catalog's product name for this row is 'Retatrutide / GLP-3', so the catalog itself pairs this listing's label with retatrutide, and the description of retatrutide below is the one already written for the retatrutide listings in this catalog. What no source read here establishes is which material this listing holds, and the catalog name does not settle it.\n\nRetatrutide, also designated LY3437943, is a lipidated peptide of 39 amino acids designed to activate three receptors with a single molecule: the receptors for glucagon, glucose-dependent insulinotropic polypeptide (GIP) and glucagon-like peptide-1 (GLP-1). In its developer's 2022 report, it showed balanced glucagon- and GLP-1-receptor activity but more GIP-receptor activity in vitro, and in obese mice it decreased body weight and improved glycemic control; the authors reported that glucagon-receptor-mediated increases in energy expenditure added to the weight loss from reduced calorie intake driven by the GIP and GLP-1 receptors.\n\nIn a separate 2026 study in diet-induced obese mice used as a model of steatohepatitis, retatrutide reduced body weight, both fat and lean mass, an index of insulin resistance and liver lipid content without significantly changing energy expenditure, and in a hamster model it halved liver triglycerides without reducing liver histology scores. In a 2025 mouse model of steatohepatitis induced by a Western diet with fructose and sucrose in the drinking water, retatrutide significantly lowered body weight, alanine aminotransferase (ALT) levels, liver triglycerides and cholesterol, and hepatic inflammatory markers in female mice compared with vehicle controls.\n\nIn isolated mouse atria, retatrutide did not increase the force of contraction of the left atrium but raised the beating rate of the right atrium, an effect antagonized by a glucagon-receptor antagonist. As of a review covering evidence through September 2026, retatrutide was an investigational medicine in phase 3 clinical development and was not approved; this listing is a laboratory research material, not a medicine. These laboratory and animal findings do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 24 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "24 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0411"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on multi-receptor peptide agonist chemistry, as described for the retatrutide listings.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_17fe8edfd59d6a97260b",
+      "sourceVariantId": "mov_bb52e1ff1819c70d9db1",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic peptide of 39 amino acids, based on the sequence of glucose-dependent insulinotropic polypeptide (GIP) and engineered to activate both the GIP and GLP-1 receptors. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 10 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic 39-amino-acid peptide based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), carrying an attached fatty chain, engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor. It is listed for laboratory work on those two receptors, on insulin secretion and on energy balance in cells and animals. What the cited work establishes is in cell assays and mice: it bound the GIP receptor about as well as native GIP and the GLP-1 receptor more weakly, and in diet-induced obese mice it lowered body weight and food intake more than a GLP-1-only agonist. What it does not establish is any effect in a person, and the separate prescription medicines made with this compound are approved on their own evidence, which does not transfer to this research listing. The full technical description follows.\n\nTirzepatide, also designated LY3298176, is a synthetic linear peptide of 39 amino acids based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), with a C20 fatty diacid attached through a linker to the lysine at position 20, two aminoisobutyric acid residues at positions 2 and 13 and an amidated C-terminus; it was engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor.\n\nIn cell-based assays run without albumin, tirzepatide bound the GIP receptor with an affinity comparable to native GIP and the GLP-1 receptor with roughly 5-fold weaker affinity than native GLP-1, and it stimulated cAMP production through both receptors, which its developer describes as an imbalanced dual agonism favoring the GIP receptor. At the GLP-1 receptor, it showed biased signaling in these assays, favoring cAMP generation over β-arrestin recruitment, and it drove less receptor internalization than GLP-1, whereas at the GIP receptor it behaved like native GIP.\n\nCryogenic electron microscopy structures of tirzepatide bound to each receptor, reported in 2022 together with assays on an analog lacking the fatty diacid, indicated that the lipid modification together with the N-terminal tyrosine accounts for its reduced efficacy for β-arrestin recruitment and receptor internalization at the GLP-1 receptor, and that removing the fatty diacid increased affinity for the GIP receptor about fourfold.\n\nIn mice, tirzepatide enhanced glucose-stimulated insulin secretion in isolated islets and improved glucose tolerance through both receptors, and with repeated administration to diet-induced obese mice it decreased body weight and food intake more than a selective GLP-1 receptor agonist, with a small but significant increase in energy expenditure. A 2021 study in obese mice reported that tirzepatide improved insulin sensitivity more than GLP-1 receptor agonism alone and that, in mice lacking the GLP-1 receptor, it still enhanced glucose disposal in white adipose tissue, which the authors attributed to GIP receptor agonism.\n\nThis listing is a laboratory research material and not a medicine; separately, tirzepatide is the active ingredient of prescription medicines approved by the U.S. Food and Drug Administration, first in May 2022 as an adjunct to diet and exercise to improve glycemic control in adults with type 2 diabetes mellitus, with later approvals, in combination with a reduced-calorie diet and increased physical activity, to reduce excess body weight in two populations the label defines, namely adults with obesity and adults in a second body-weight category who additionally have at least one weight-related condition it lists, and for moderate to severe obstructive sleep apnea in adults with obesity. The cell and animal findings above, and the approval of those separate medicines, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 10 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0354"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GIP and GLP-1 receptor signaling, insulin secretion and energy balance in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_c79fda8d9b5122d37137",
+      "sourceVariantId": "mov_c46129d04e61dd2a9722",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic peptide of 39 amino acids, based on the sequence of glucose-dependent insulinotropic polypeptide (GIP) and engineered to activate both the GIP and GLP-1 receptors. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 15 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic 39-amino-acid peptide based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), carrying an attached fatty chain, engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor. It is listed for laboratory work on those two receptors, on insulin secretion and on energy balance in cells and animals. What the cited work establishes is in cell assays and mice: it bound the GIP receptor about as well as native GIP and the GLP-1 receptor more weakly, and in diet-induced obese mice it lowered body weight and food intake more than a GLP-1-only agonist. What it does not establish is any effect in a person, and the separate prescription medicines made with this compound are approved on their own evidence, which does not transfer to this research listing. The full technical description follows.\n\nTirzepatide, also designated LY3298176, is a synthetic linear peptide of 39 amino acids based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), with a C20 fatty diacid attached through a linker to the lysine at position 20, two aminoisobutyric acid residues at positions 2 and 13 and an amidated C-terminus; it was engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor.\n\nIn cell-based assays run without albumin, tirzepatide bound the GIP receptor with an affinity comparable to native GIP and the GLP-1 receptor with roughly 5-fold weaker affinity than native GLP-1, and it stimulated cAMP production through both receptors, which its developer describes as an imbalanced dual agonism favoring the GIP receptor. At the GLP-1 receptor, it showed biased signaling in these assays, favoring cAMP generation over β-arrestin recruitment, and it drove less receptor internalization than GLP-1, whereas at the GIP receptor it behaved like native GIP.\n\nCryogenic electron microscopy structures of tirzepatide bound to each receptor, reported in 2022 together with assays on an analog lacking the fatty diacid, indicated that the lipid modification together with the N-terminal tyrosine accounts for its reduced efficacy for β-arrestin recruitment and receptor internalization at the GLP-1 receptor, and that removing the fatty diacid increased affinity for the GIP receptor about fourfold.\n\nIn mice, tirzepatide enhanced glucose-stimulated insulin secretion in isolated islets and improved glucose tolerance through both receptors, and with repeated administration to diet-induced obese mice it decreased body weight and food intake more than a selective GLP-1 receptor agonist, with a small but significant increase in energy expenditure. A 2021 study in obese mice reported that tirzepatide improved insulin sensitivity more than GLP-1 receptor agonism alone and that, in mice lacking the GLP-1 receptor, it still enhanced glucose disposal in white adipose tissue, which the authors attributed to GIP receptor agonism.\n\nThis listing is a laboratory research material and not a medicine; separately, tirzepatide is the active ingredient of prescription medicines approved by the U.S. Food and Drug Administration, first in May 2022 as an adjunct to diet and exercise to improve glycemic control in adults with type 2 diabetes mellitus, with later approvals, in combination with a reduced-calorie diet and increased physical activity, to reduce excess body weight in two populations the label defines, namely adults with obesity and adults in a second body-weight category who additionally have at least one weight-related condition it lists, and for moderate to severe obstructive sleep apnea in adults with obesity. The cell and animal findings above, and the approval of those separate medicines, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 15 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "15 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0355"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GIP and GLP-1 receptor signaling, insulin secretion and energy balance in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_e28684442b78867c14ae",
+      "sourceVariantId": "mov_02ca369a8834ebeb0b3b",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic peptide of 39 amino acids, based on the sequence of glucose-dependent insulinotropic polypeptide (GIP) and engineered to activate both the GIP and GLP-1 receptors. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 20 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic 39-amino-acid peptide based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), carrying an attached fatty chain, engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor. It is listed for laboratory work on those two receptors, on insulin secretion and on energy balance in cells and animals. What the cited work establishes is in cell assays and mice: it bound the GIP receptor about as well as native GIP and the GLP-1 receptor more weakly, and in diet-induced obese mice it lowered body weight and food intake more than a GLP-1-only agonist. What it does not establish is any effect in a person, and the separate prescription medicines made with this compound are approved on their own evidence, which does not transfer to this research listing. The full technical description follows.\n\nTirzepatide, also designated LY3298176, is a synthetic linear peptide of 39 amino acids based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), with a C20 fatty diacid attached through a linker to the lysine at position 20, two aminoisobutyric acid residues at positions 2 and 13 and an amidated C-terminus; it was engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor.\n\nIn cell-based assays run without albumin, tirzepatide bound the GIP receptor with an affinity comparable to native GIP and the GLP-1 receptor with roughly 5-fold weaker affinity than native GLP-1, and it stimulated cAMP production through both receptors, which its developer describes as an imbalanced dual agonism favoring the GIP receptor. At the GLP-1 receptor, it showed biased signaling in these assays, favoring cAMP generation over β-arrestin recruitment, and it drove less receptor internalization than GLP-1, whereas at the GIP receptor it behaved like native GIP.\n\nCryogenic electron microscopy structures of tirzepatide bound to each receptor, reported in 2022 together with assays on an analog lacking the fatty diacid, indicated that the lipid modification together with the N-terminal tyrosine accounts for its reduced efficacy for β-arrestin recruitment and receptor internalization at the GLP-1 receptor, and that removing the fatty diacid increased affinity for the GIP receptor about fourfold.\n\nIn mice, tirzepatide enhanced glucose-stimulated insulin secretion in isolated islets and improved glucose tolerance through both receptors, and with repeated administration to diet-induced obese mice it decreased body weight and food intake more than a selective GLP-1 receptor agonist, with a small but significant increase in energy expenditure. A 2021 study in obese mice reported that tirzepatide improved insulin sensitivity more than GLP-1 receptor agonism alone and that, in mice lacking the GLP-1 receptor, it still enhanced glucose disposal in white adipose tissue, which the authors attributed to GIP receptor agonism.\n\nThis listing is a laboratory research material and not a medicine; separately, tirzepatide is the active ingredient of prescription medicines approved by the U.S. Food and Drug Administration, first in May 2022 as an adjunct to diet and exercise to improve glycemic control in adults with type 2 diabetes mellitus, with later approvals, in combination with a reduced-calorie diet and increased physical activity, to reduce excess body weight in two populations the label defines, namely adults with obesity and adults in a second body-weight category who additionally have at least one weight-related condition it lists, and for moderate to severe obstructive sleep apnea in adults with obesity. The cell and animal findings above, and the approval of those separate medicines, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 20 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "20 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0356"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GIP and GLP-1 receptor signaling, insulin secretion and energy balance in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_330de196b6297a7096d2",
+      "sourceVariantId": "mov_c6f57f9b117d418065ff",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic peptide of 39 amino acids, based on the sequence of glucose-dependent insulinotropic polypeptide (GIP) and engineered to activate both the GIP and GLP-1 receptors. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 30 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic 39-amino-acid peptide based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), carrying an attached fatty chain, engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor. It is listed for laboratory work on those two receptors, on insulin secretion and on energy balance in cells and animals. What the cited work establishes is in cell assays and mice: it bound the GIP receptor about as well as native GIP and the GLP-1 receptor more weakly, and in diet-induced obese mice it lowered body weight and food intake more than a GLP-1-only agonist. What it does not establish is any effect in a person, and the separate prescription medicines made with this compound are approved on their own evidence, which does not transfer to this research listing. The full technical description follows.\n\nTirzepatide, also designated LY3298176, is a synthetic linear peptide of 39 amino acids based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), with a C20 fatty diacid attached through a linker to the lysine at position 20, two aminoisobutyric acid residues at positions 2 and 13 and an amidated C-terminus; it was engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor.\n\nIn cell-based assays run without albumin, tirzepatide bound the GIP receptor with an affinity comparable to native GIP and the GLP-1 receptor with roughly 5-fold weaker affinity than native GLP-1, and it stimulated cAMP production through both receptors, which its developer describes as an imbalanced dual agonism favoring the GIP receptor. At the GLP-1 receptor, it showed biased signaling in these assays, favoring cAMP generation over β-arrestin recruitment, and it drove less receptor internalization than GLP-1, whereas at the GIP receptor it behaved like native GIP.\n\nCryogenic electron microscopy structures of tirzepatide bound to each receptor, reported in 2022 together with assays on an analog lacking the fatty diacid, indicated that the lipid modification together with the N-terminal tyrosine accounts for its reduced efficacy for β-arrestin recruitment and receptor internalization at the GLP-1 receptor, and that removing the fatty diacid increased affinity for the GIP receptor about fourfold.\n\nIn mice, tirzepatide enhanced glucose-stimulated insulin secretion in isolated islets and improved glucose tolerance through both receptors, and with repeated administration to diet-induced obese mice it decreased body weight and food intake more than a selective GLP-1 receptor agonist, with a small but significant increase in energy expenditure. A 2021 study in obese mice reported that tirzepatide improved insulin sensitivity more than GLP-1 receptor agonism alone and that, in mice lacking the GLP-1 receptor, it still enhanced glucose disposal in white adipose tissue, which the authors attributed to GIP receptor agonism.\n\nThis listing is a laboratory research material and not a medicine; separately, tirzepatide is the active ingredient of prescription medicines approved by the U.S. Food and Drug Administration, first in May 2022 as an adjunct to diet and exercise to improve glycemic control in adults with type 2 diabetes mellitus, with later approvals, in combination with a reduced-calorie diet and increased physical activity, to reduce excess body weight in two populations the label defines, namely adults with obesity and adults in a second body-weight category who additionally have at least one weight-related condition it lists, and for moderate to severe obstructive sleep apnea in adults with obesity. The cell and animal findings above, and the approval of those separate medicines, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 30 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "30 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0357"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GIP and GLP-1 receptor signaling, insulin secretion and energy balance in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_8f14a0f8f4f86e07fda8",
+      "sourceVariantId": "mov_20d811a3df0894211cbc",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic peptide of 39 amino acids, based on the sequence of glucose-dependent insulinotropic polypeptide (GIP) and engineered to activate both the GIP and GLP-1 receptors. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 40 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic 39-amino-acid peptide based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), carrying an attached fatty chain, engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor. It is listed for laboratory work on those two receptors, on insulin secretion and on energy balance in cells and animals. What the cited work establishes is in cell assays and mice: it bound the GIP receptor about as well as native GIP and the GLP-1 receptor more weakly, and in diet-induced obese mice it lowered body weight and food intake more than a GLP-1-only agonist. What it does not establish is any effect in a person, and the separate prescription medicines made with this compound are approved on their own evidence, which does not transfer to this research listing. The full technical description follows.\n\nTirzepatide, also designated LY3298176, is a synthetic linear peptide of 39 amino acids based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), with a C20 fatty diacid attached through a linker to the lysine at position 20, two aminoisobutyric acid residues at positions 2 and 13 and an amidated C-terminus; it was engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor.\n\nIn cell-based assays run without albumin, tirzepatide bound the GIP receptor with an affinity comparable to native GIP and the GLP-1 receptor with roughly 5-fold weaker affinity than native GLP-1, and it stimulated cAMP production through both receptors, which its developer describes as an imbalanced dual agonism favoring the GIP receptor. At the GLP-1 receptor, it showed biased signaling in these assays, favoring cAMP generation over β-arrestin recruitment, and it drove less receptor internalization than GLP-1, whereas at the GIP receptor it behaved like native GIP.\n\nCryogenic electron microscopy structures of tirzepatide bound to each receptor, reported in 2022 together with assays on an analog lacking the fatty diacid, indicated that the lipid modification together with the N-terminal tyrosine accounts for its reduced efficacy for β-arrestin recruitment and receptor internalization at the GLP-1 receptor, and that removing the fatty diacid increased affinity for the GIP receptor about fourfold.\n\nIn mice, tirzepatide enhanced glucose-stimulated insulin secretion in isolated islets and improved glucose tolerance through both receptors, and with repeated administration to diet-induced obese mice it decreased body weight and food intake more than a selective GLP-1 receptor agonist, with a small but significant increase in energy expenditure. A 2021 study in obese mice reported that tirzepatide improved insulin sensitivity more than GLP-1 receptor agonism alone and that, in mice lacking the GLP-1 receptor, it still enhanced glucose disposal in white adipose tissue, which the authors attributed to GIP receptor agonism.\n\nThis listing is a laboratory research material and not a medicine; separately, tirzepatide is the active ingredient of prescription medicines approved by the U.S. Food and Drug Administration, first in May 2022 as an adjunct to diet and exercise to improve glycemic control in adults with type 2 diabetes mellitus, with later approvals, in combination with a reduced-calorie diet and increased physical activity, to reduce excess body weight in two populations the label defines, namely adults with obesity and adults in a second body-weight category who additionally have at least one weight-related condition it lists, and for moderate to severe obstructive sleep apnea in adults with obesity. The cell and animal findings above, and the approval of those separate medicines, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 40 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "40 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0358"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GIP and GLP-1 receptor signaling, insulin secretion and energy balance in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_226c15232adfd35b3288",
+      "sourceVariantId": "mov_8615d2aea357b8241ba3",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A synthetic peptide of 39 amino acids, based on the sequence of glucose-dependent insulinotropic polypeptide (GIP) and engineered to activate both the GIP and GLP-1 receptors. Cell and animal studies of this compound do not establish the safety or effects of this research material in people. Listed at 5 mg for laboratory research.",
+        "overview": "In plain terms, this is a synthetic 39-amino-acid peptide based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), carrying an attached fatty chain, engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor. It is listed for laboratory work on those two receptors, on insulin secretion and on energy balance in cells and animals. What the cited work establishes is in cell assays and mice: it bound the GIP receptor about as well as native GIP and the GLP-1 receptor more weakly, and in diet-induced obese mice it lowered body weight and food intake more than a GLP-1-only agonist. What it does not establish is any effect in a person, and the separate prescription medicines made with this compound are approved on their own evidence, which does not transfer to this research listing. The full technical description follows.\n\nTirzepatide, also designated LY3298176, is a synthetic linear peptide of 39 amino acids based on the sequence of glucose-dependent insulinotropic polypeptide (GIP), with a C20 fatty diacid attached through a linker to the lysine at position 20, two aminoisobutyric acid residues at positions 2 and 13 and an amidated C-terminus; it was engineered to activate both the GIP receptor and the glucagon-like peptide-1 (GLP-1) receptor.\n\nIn cell-based assays run without albumin, tirzepatide bound the GIP receptor with an affinity comparable to native GIP and the GLP-1 receptor with roughly 5-fold weaker affinity than native GLP-1, and it stimulated cAMP production through both receptors, which its developer describes as an imbalanced dual agonism favoring the GIP receptor. At the GLP-1 receptor, it showed biased signaling in these assays, favoring cAMP generation over β-arrestin recruitment, and it drove less receptor internalization than GLP-1, whereas at the GIP receptor it behaved like native GIP.\n\nCryogenic electron microscopy structures of tirzepatide bound to each receptor, reported in 2022 together with assays on an analog lacking the fatty diacid, indicated that the lipid modification together with the N-terminal tyrosine accounts for its reduced efficacy for β-arrestin recruitment and receptor internalization at the GLP-1 receptor, and that removing the fatty diacid increased affinity for the GIP receptor about fourfold.\n\nIn mice, tirzepatide enhanced glucose-stimulated insulin secretion in isolated islets and improved glucose tolerance through both receptors, and with repeated administration to diet-induced obese mice it decreased body weight and food intake more than a selective GLP-1 receptor agonist, with a small but significant increase in energy expenditure. A 2021 study in obese mice reported that tirzepatide improved insulin sensitivity more than GLP-1 receptor agonism alone and that, in mice lacking the GLP-1 receptor, it still enhanced glucose disposal in white adipose tissue, which the authors attributed to GIP receptor agonism.\n\nThis listing is a laboratory research material and not a medicine; separately, tirzepatide is the active ingredient of prescription medicines approved by the U.S. Food and Drug Administration, first in May 2022 as an adjunct to diet and exercise to improve glycemic control in adults with type 2 diabetes mellitus, with later approvals, in combination with a reduced-calorie diet and increased physical activity, to reduce excess body weight in two populations the label defines, namely adults with obesity and adults in a second body-weight category who additionally have at least one weight-related condition it lists, and for moderate to severe obstructive sleep apnea in adults with obesity. The cell and animal findings above, and the approval of those separate medicines, do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 5 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "5 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0360"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on GIP and GLP-1 receptor signaling, insulin secretion and energy balance in cell and animal models.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_5e454a6196e0a7defb77",
+      "sourceVariantId": "mov_aef099fb39b3fa062f45",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A small synthetic peptide derivative that research groups describe as an analog of angiotensin IV, a peptide of the brain's renin–angiotensin system. Rodent findings are mixed, concern the compound and not this capsule product, and do not establish safety or benefit in people. Listed as research capsules at a 10 mg strength.",
+        "overview": "In plain terms, this is a small synthetic peptide derivative that research groups describe as an analog of angiotensin IV, a peptide of the brain's renin-angiotensin system. It is listed for laboratory work on such analogs, on PI3K/AKT signaling and on memory in rodent models of neurodegeneration and brain injury. What the cited work establishes is mixed and entirely in rodents: better spatial learning in an Alzheimer's mouse model and improved working memory in rats after repeated mild brain injury, but a 2024 study found it did not protect rats against a mitochondrial toxin used to model Huntington's-disease-like symptoms. What it does not establish is safety or benefit in people. The full technical description follows.\n\nDihexa, also designated PNB-0408, is a small synthetic peptide derivative, hexanoyl-L-tyrosyl-L-isoleucine linked to 6-aminohexanoic acid amide (Hexanoyl-Tyr-Ile-Ahx-NH2), with the molecular formula C27H44N4O5. Research groups describe it as an analog of angiotensin IV, a peptide of the brain's renin–angiotensin system. In a 2021 study in APP/PS1 transgenic mice, a model of Alzheimer's disease, dihexa was associated with better spatial learning in the Morris water maze, more Nissl-stained neurons and higher synaptophysin levels, and less astrocyte and microglial activation, with lower IL-1β and TNF-α and higher IL-10. The same study reported activation of PI3K/AKT signaling, and the PI3K inhibitor wortmannin reversed the anti-inflammatory and anti-apoptotic effects.\n\nIn an independent 2025 study in male and female rats with repeated mild traumatic brain injury, dihexa improved performance on a spatial working-memory task, with the clearest effect at the highest amount tested. By contrast, a 2024 study found that PNB-0408 did not protect rats from the weight-gain, motor and memory deficits caused by 3-nitropropionic acid, a mitochondrial toxin used to model Huntington's-disease-like symptoms. These mixed rodent findings concern the compound, not this capsule product, and they do not establish safety or benefit in people. The catalog lists this item as research capsules at a listed strength of 10 mg, for nonclinical laboratory research; a bottle of 60 capsules is its historical presentation.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "10 mg"
+          },
+          {
+            "label": "Listed package",
+            "value": "Bottle of 60 capsules (historical presentation)"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0247"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on angiotensin IV analogs, PI3K/AKT signaling, and memory in rodent models of neurodegeneration and brain injury.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_8a3829642d06ad3ca7c4",
+      "sourceVariantId": "mov_3f59629a005b238f4faa",
+      "content": {
+        "brand": "Xenios",
+        "summary": "A small synthetic peptide derivative that research groups describe as an analog of angiotensin IV, a peptide of the brain's renin–angiotensin system. Rodent findings are mixed and do not establish safety or benefit in people. Listed at 10 mg for laboratory research.",
+        "overview": "In plain terms, this is a small synthetic peptide derivative that research groups describe as an analog of angiotensin IV, a peptide of the brain's renin-angiotensin system. It is listed for laboratory work on such analogs, on PI3K/AKT signaling and on memory in rodent models of neurodegeneration and brain injury. What the cited work establishes is mixed and entirely in rodents: better spatial learning in an Alzheimer's mouse model and improved working memory in rats after repeated mild brain injury, but a 2024 study found it did not protect rats against a mitochondrial toxin used to model Huntington's-disease-like symptoms. What it does not establish is safety or benefit in people. The full technical description follows.\n\nDihexa, also designated PNB-0408, is a small synthetic peptide derivative, hexanoyl-L-tyrosyl-L-isoleucine linked to 6-aminohexanoic acid amide (Hexanoyl-Tyr-Ile-Ahx-NH2), with the molecular formula C27H44N4O5. Research groups describe it as an analog of angiotensin IV, a peptide of the brain's renin–angiotensin system. In a 2021 study in APP/PS1 transgenic mice, a model of Alzheimer's disease, dihexa was associated with better spatial learning in the Morris water maze, more Nissl-stained neurons and higher synaptophysin levels, and less astrocyte and microglial activation, with lower IL-1β and TNF-α and higher IL-10. The same study reported activation of PI3K/AKT signaling, and the PI3K inhibitor wortmannin reversed the anti-inflammatory and anti-apoptotic effects.\n\nIn an independent 2025 study in male and female rats with repeated mild traumatic brain injury, dihexa improved performance on a spatial working-memory task, with the clearest effect at the highest amount tested. By contrast, a 2024 study found that PNB-0408 did not protect rats from the weight-gain, motor and memory deficits caused by 3-nitropropionic acid, a mitochondrial toxin used to model Huntington's-disease-like symptoms. These mixed rodent findings do not establish safety or benefit in people. The catalog lists this item at 10 mg of Dihexa, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "10 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0280"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on angiotensin IV analogs, PI3K/AKT signaling, and memory in rodent models of neurodegeneration and brain injury.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_401b85ce671d94672ba0",
+      "sourceVariantId": "mov_038386172c35c2ad8cca",
+      "content": {
+        "summary": "A small molecule that acts as a mitochondrial protonophore, carrying protons across the inner mitochondrial membrane. Cell and biochemical studies of this compound do not establish the safety or effects of this research material in people. Listed at 500 mcg for laboratory research.",
+        "overview": "In plain terms, this is a small molecule that acts as a mitochondrial protonophore: it carries protons across the inner mitochondrial membrane, weakening the gradient that normally links respiration to ATP production. It is listed for laboratory work on that proton transport and on how tightly respiration is coupled to ATP production. What the cited work establishes is in cells and biochemical assays: it lowered mitochondrial membrane potential in a muscle-cell line with no detected depolarization of the plasma membrane, and analogues lacking any one of its three rings failed to stimulate respiration. What it does not establish is any effect in a person. The full technical description follows.\n\nBAM15 is the small molecule 5-N,6-N-bis(2-fluorophenyl)-[1,2,5]oxadiazolo[3,4-b]pyrazine-5,6-diamine, a furazano[3,4-b]pyrazine. Mitochondrial protonophores carry protons across the inner mitochondrial membrane, weakening the gradient that normally links respiration to ATP production. In the 2014 discovery study, BAM15 lowered mitochondrial membrane potential in L6 myoblasts with no detected depolarization of their plasma membrane under the tested conditions. A 2015 structure-activity study of furazano[3,4-b]pyrazines describes BAM15 as a mitochondrial protonophore that stimulates mitochondrial respiration, and examined how structural changes across the series alter that activity. In the 2015 study, analogues lacking any one of the furazan, pyrazine or aniline rings failed to stimulate respiration across the tested concentration range.\n\nThis listing is a laboratory research material and not a medicine. The cell and biochemical findings above do not establish the safety or effects of this research material in people. The catalog lists this item as research capsules at a listed strength of 500 mcg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Form",
+            "value": "Research capsules"
+          },
+          {
+            "label": "Listed strength",
+            "value": "500 mcg"
+          }
+        ],
+        "purpose": "Nonclinical research on mitochondrial proton transport and oxidative-phosphorylation coupling in cell and biochemical assays.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
+    },
+    {
+      "offeringId": "mo_364c9d00a30c0cfb197b",
+      "sourceVariantId": "mov_06849c26f971f74805ef",
+      "content": {
+        "brand": "Xenios",
+        "summary": "This listing's catalog name is GLP-1, which in the published record names a human hormone and not this material. Which material this listing holds is not established. The findings do not establish the safety or effects of this research material in people. Listed at 2 mg for laboratory research.",
+        "overview": "In plain terms, what this listing holds is not established. Its catalog name is GLP-1, which in the published record names a human hormone, glucagon-like peptide-1, and not this material. The catalog's product name for this row is 'Semaglutide / GLP-1', so the catalog itself pairs this listing's label with semaglutide, which is not that hormone but a lipidated peptide carrying a glucagon-like peptide-1 sequence. What the cited work establishes is about semaglutide's physical chemistry and about stapled analogues of it. What it does not establish is which material this listing holds: a name that belongs to the hormone cannot establish that this is the hormone, the analogue, or anything else. The full technical description follows.\n\nThis listing's catalog name is GLP-1, which in the published record names a human hormone, glucagon-like peptide-1, and not this material. The catalog's product name for this row is 'Semaglutide / GLP-1', so the catalog itself pairs this listing's label with semaglutide, and semaglutide is not that hormone: a 2026 study describes it as a lipopeptide comprising a lipidated peptide that carries a glucagon-like peptide-1 sequence. That study reported that in solution at pH 2.4 it forms beta-sheet fibrils, in contrast to the oligomeric and micellar structures it forms at higher pH, and proposed a structure of curved beta-strands arranged in an antiparallel fashion around a core comprising the lipidated lysine residue.\n\nA separate 2026 design study describes semaglutide as a ligand of the glucagon-like peptide-1 receptor and reports that most of a set of 35 synthesised stapled analogues showed improved serum and proteolytic stability relative to semaglutide itself.\n\nWhat no source read here establishes is which material this listing holds, and the catalog name does not settle it: a name that belongs to the hormone cannot establish that the contents are the hormone, the analogue, or anything else. This listing is a laboratory research material and not a medicine. The physicochemical and design findings above do not establish the safety or effects of this research material in people. The catalog lists this item with a listed amount of 2 mg, for nonclinical laboratory research.",
+        "specifications": [
+          {
+            "label": "Listed amount",
+            "value": "2 mg"
+          },
+          {
+            "label": "Product code",
+            "value": "GEN-GRP-0412"
+          },
+          {
+            "label": "Intended use",
+            "value": "Laboratory research only"
+          }
+        ],
+        "purpose": "Nonclinical research on lipidated peptide analogue chemistry, aggregation behaviour and receptor-ligand design.",
+        "label": "For laboratory research use only.",
+        "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
+      }
     }
   ]
 }
