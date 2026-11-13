@@ -14,6 +14,8 @@ import { isResearchFormUnconfirmed } from "../../../client/src/research/product-
 import { MASTER_OFFERINGS_COMMITTED_DATASET_PATH } from "./dataset-location";
 import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
 import mediaBatch from "./data/reviewed-public-media.json";
+import clinicalStates from "./data/reviewed-inquiry-review-states.json";
+import researchStates from "./data/reviewed-inquiry-review-states.research.json";
 import { inquiryReviewStateFor } from "./inquiry-review-states";
 
 type MediaRecord = (typeof mediaBatch.records)[number] & { media: { representation?: string } };
@@ -62,8 +64,11 @@ describe("reviewed public media registry", () => {
   });
 
   it("refuses a planted studio record on a held listing, an unconfirmed form, or with two captions", () => {
-    const held = records.find((record) => inquiryReviewStateFor(record.offeringId, record.sourceVariantId) !== null);
-    expect(held, "a held registered listing exists to plant on").toBeDefined();
+    // Plant on a held listing whether or not one has registered media: the refusal is about the hold, not the image.
+    const heldRow = [...clinicalStates.records, ...researchStates.records][0];
+    expect(heldRow, "a held listing exists to plant on").toBeDefined();
+    expect(inquiryReviewStateFor(heldRow.offeringId, heldRow.sourceVariantId), "that listing is held").not.toBeNull();
+    const held = { ...records[0], offeringId: heldRow.offeringId, sourceVariantId: heldRow.sourceVariantId };
     const plant = (record: MediaRecord, representation: string, packagingDesign = false) =>
       studioRefusal({ ...record, media: { ...record.media, representation, packagingDesign } });
     expect(plant(held!, "proposed_carton")).toMatch(/^listing is held: /);
