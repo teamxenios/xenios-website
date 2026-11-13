@@ -287,6 +287,34 @@ describe("mixed private request customer form source", () => {
     expect(host.querySelector(".xenios-order-card img")).toBeNull();
   });
 
+  it("names two rows with the same product and specification apart by the reviewed package", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    const vial = { ...item("same", false), variantId: "same-vial", specification: "SYNTHETIC 10 mg",
+      reviewedContent: { summary: "Synthetic vial summary", overview: "Synthetic vial overview",
+        specifications: [{ label: "Listed amount", value: "10 mg" }] },
+      sourceSelection: { family: "synthetic", slug: "same-vial", variantId: "same-vial-source" } };
+    const capsules = { ...vial, variantId: "same-capsules",
+      reviewedContent: { summary: "Synthetic capsule summary", overview: "Synthetic capsule overview",
+        specifications: [{ label: "Listed package", value: "Bottle of 60 capsules" }] },
+      sourceSelection: { family: "synthetic", slug: "same-capsules", variantId: "same-capsules-source" } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [vial, capsules], total: 2 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    const names = ["Synthetic same, SYNTHETIC 10 mg", "Synthetic same, SYNTHETIC 10 mg, Bottle of 60 capsules"];
+    for (const name of names) await click("Add to quote cart", "Add to quote cart: " + name);
+    const prefixes = ["View details for ", "Decrease requested quantity for ", "Requested quantity for ",
+      "Increase requested quantity for ", "Remove ", "Edit selected quantity for ", "Remove selected "];
+    const labels = [...host.querySelectorAll("[aria-label]")].map((element) => element.getAttribute("aria-label")!)
+      .filter((label) => prefixes.some((prefix) => label.startsWith(prefix)));
+    for (const name of names) for (const prefix of prefixes) {
+      expect(labels.filter((label) => label === prefix + name)).toHaveLength(1);
+    }
+    expect(labels).toHaveLength(names.length * prefixes.length);
+    // The visible text is unchanged and still begins the spoken name.
+    expect([...host.querySelectorAll(".xenios-order-card button")].filter((button) => button.textContent === "Remove Synthetic same")).toHaveLength(2);
+  });
+
   it("opens exact guest catalog details without changing the request or leaving the catalog", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
@@ -871,8 +899,8 @@ describe("request selection layout and controls (component fixtures, not viewpor
     api.catalog.mockResolvedValue({ items: [bounded], total: 1, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
     await render(api); await click("Add Synthetic bounded to quote cart");
     const number = host.querySelector<HTMLInputElement>('input[type="number"]')!;
-    const decrease = host.querySelector<HTMLButtonElement>('[aria-label="Decrease requested quantity for Synthetic bounded"]')!;
-    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic bounded"]')!;
+    const decrease = host.querySelector<HTMLButtonElement>('[aria-label="Decrease requested quantity for Synthetic bounded, Synthetic variant"]')!;
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic bounded, Synthetic variant"]')!;
     expect([number.min, number.step, number.max, number.value]).toEqual(["3", "4", "12", "3"]);
     expect(decrease.disabled).toBe(true);
     await act(async () => increase.click()); expect(number.value).toBe("7");
@@ -883,7 +911,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
   });
   it("applies multiple queued increment clicks to the latest selection", async () => {
     const api = makeApi(); await render(api); await click("Add Synthetic research to quote cart");
-    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!;
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research, Synthetic variant"]')!;
     await act(async () => { increase.click(); increase.click(); });
     expect(host.querySelector<HTMLInputElement>('input[type="number"]')?.value).toBe("3");
   });
@@ -892,9 +920,9 @@ describe("request selection layout and controls (component fixtures, not viewpor
     await click("Add Synthetic clinical to quote cart"); await click("Add Synthetic research to quote cart");
     const summary = host.querySelector<HTMLElement>('[aria-label="Selected request items"]')!;
     expect(summary.textContent).toContain("2 exact variants | 2 requested units");
-    await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical"]')!.click());
+    await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical, Synthetic variant"]')!.click());
     expect(summary.textContent).toContain("2 exact variants | 3 requested units");
-    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Remove selected Synthetic clinical Synthetic variant"]')!.click());
+    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Remove selected Synthetic clinical, Synthetic variant"]')!.click());
     expect(summary.textContent).toContain("1 exact variants | 1 requested units");
     expect(summary.textContent).not.toContain("Synthetic clinical");
     expect(summary.textContent).toContain("Synthetic research");
@@ -967,7 +995,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
       expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
 
       await click("Back to products");
-      await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!.click());
+      await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research, Synthetic variant"]')!.click());
       expect(host.querySelector('[aria-label="Selected request items"]')?.textContent)
         .toContain(previouslyReviewed ? "2 exact variants | 4 requested units" : "1 exact variants | 2 requested units");
       await click("Continue to details");
@@ -1044,7 +1072,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
       expect(host.querySelector('input[name="billingLine1"]')).toBeNull();
       if (visitProducts) {
         await click("Back to products");
-        await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!.click());
+        await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research, Synthetic variant"]')!.click());
         expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("1 exact variants | 2 requested units");
         await click("Continue to details");
         expect(billingSame().checked).toBe(true);
@@ -1108,7 +1136,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
     const search = [...host.querySelectorAll<HTMLInputElement>("input")].find((input) => input.closest("label")?.textContent === "Search catalog")!;
     await type(search, "no-match");
     const summary = host.querySelector<HTMLElement>('[aria-label="Selected request items"]')!;
-    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Edit selected quantity for Synthetic research Synthetic variant"]')!.click());
+    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Edit selected quantity for Synthetic research, Synthetic variant"]')!.click());
     const editor = summary.querySelector<HTMLInputElement>('input[type="number"]')!;
     expect([editor.min, editor.max, editor.step]).toEqual(["1", "100", "1"]);
     await type(editor, "200"); expect(editor.value).toBe("100");
@@ -1174,7 +1202,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(buttonNamed("Continue to details").disabled).toBe(true);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     await click("Remove Synthetic research");
-    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical"]');
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical, Synthetic variant"]');
     expect(increase).toBeTruthy(); await act(async () => increase!.click());
     api.config.mockResolvedValueOnce(updatedRequirements());
     await click("Refresh requirements");
@@ -1869,7 +1897,7 @@ it.each(["cached", "in-flight"] as const)(
     const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
     expect(summary.textContent).toContain("Synthetic research");
     expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.specification);
-    await click("Remove", "Remove selected Synthetic research " + HCG_STRENGTH_REVIEW.specification);
+    await click("Remove", "Remove selected Synthetic research, " + HCG_STRENGTH_REVIEW.specification);
     expect(summary.textContent).not.toContain("Synthetic research");
     if (linkTiming === "in-flight") await act(async () => resolveLink(linkPage));
     // The link still offers the listing, in its held form.
