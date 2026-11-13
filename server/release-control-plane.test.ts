@@ -2247,9 +2247,12 @@ describe("route uniqueness validator", () => {
       "POST /api/research/early-access/request-intents/admission",
       "POST /api/research/early-access/request-intents/recover",
     ]);
-    // The paired private contact status/read and capture/write registrations.
-    expect(result.callSites).toBe(447);
-    expect(result.routes).toHaveLength(456);
+    expect(result.routes.filter((route) =>
+      route.path === "/api/staff/early-access/private-quotes/staging-readiness")
+      .map((route) => route.method)).toEqual(["GET"]);
+    // Includes the isolated staging staff readiness registration.
+    expect(result.callSites).toBe(448);
+    expect(result.routes).toHaveLength(457);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
