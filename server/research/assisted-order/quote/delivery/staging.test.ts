@@ -10,9 +10,9 @@ const stage = {
   RENDER: "true",
   RENDER_SERVICE_ID: "srv-d9h4f4m7r5hc73ctjng0",
   RENDER_EXTERNAL_URL: STAGING_QUOTE_ORIGIN,
-  SUPABASE_URL: "https://tetynodzrtmdbuzgboro.supabase.co",
+  SUPABASE_URL: "https://srcphrgnxreqyirkitxd.supabase.co",
   EA_STAGE_QUOTE_DATABASE_URL:
-    "postgresql://ea_quote_stage_login.tetynodzrtmdbuzgboro:fixture%40secret@aws-1-us-west-2.pooler.supabase.com:5432/postgres",
+    "postgresql://ea_quote_stage_login.srcphrgnxreqyirkitxd:fixture%40secret@aws-0-us-east-2.pooler.supabase.com:5432/postgres",
 };
 
 describe("staging quote connection", () => {
@@ -25,11 +25,12 @@ describe("staging quote connection", () => {
     for (const env of [
       { ...stage, RENDER_SERVICE_ID: "another-service" },
       { ...stage, IS_PULL_REQUEST: "true" },
-      { ...stage, SUPABASE_URL: "https://another-project.supabase.co" },
+      { ...stage, SUPABASE_URL: "https://tetynodzrtmdbuzgboro.supabase.co" },
       { ...stage, EA_STAGE_QUOTE_DATABASE_URL: stage.EA_STAGE_QUOTE_DATABASE_URL + "?sslmode=disable" },
       { ...stage, EA_STAGE_QUOTE_DATABASE_URL: stage.EA_STAGE_QUOTE_DATABASE_URL.replace("ea_quote_stage_login.", "postgres.") },
       { ...stage, EA_STAGE_QUOTE_DATABASE_URL: stage.EA_STAGE_QUOTE_DATABASE_URL.replace(":5432", ":6543") },
-      { ...stage, EA_STAGE_QUOTE_DATABASE_URL: stage.EA_STAGE_QUOTE_DATABASE_URL.replace("aws-1-", "aws-0-") },
+      { ...stage, EA_STAGE_QUOTE_DATABASE_URL: stage.EA_STAGE_QUOTE_DATABASE_URL.replace("aws-0-us-east-2", "aws-1-us-west-2") },
+      { ...stage, EA_STAGE_QUOTE_DATABASE_URL: stage.EA_STAGE_QUOTE_DATABASE_URL.replace("srcphrgnxreqyirkitxd", "tetynodzrtmdbuzgboro") },
     ]) expect(stagingQuotePoolOptions(env)).toBeNull();
   });
 

@@ -14,10 +14,10 @@ import { resendTransport, TEAM } from "./mail.mjs";
 import { pgTransactions } from "./pg.mjs";
 
 export const STAGING_QUOTE_ORIGIN = "https://xenios-research-staging.onrender.com";
-const STAGING_REF = "tetynodzrtmdbuzgboro";
+const STAGING_REF = "srcphrgnxreqyirkitxd";
 const STAGING_SERVICE = "srv-d9h4f4m7r5hc73ctjng0";
 const STAGING_LOGIN = "ea_quote_stage_login";
-const STAGING_POOLER = "aws-1-us-west-2.pooler.supabase.com";
+const STAGING_POOLER = "aws-0-us-east-2.pooler.supabase.com";
 // Public Supabase Root 2021 CA from the provider's prod/ssl/prod-ca-2021.crt.
 // SHA-256 80:70:25:AD:50:D4:ED:21:9D:2C:9C:7D:29:9C:00:4F:82:4E:B0:0C:F7:F6:5A:FE:F6:07:D0:7B:72:E6:CA:FA.
 // The shared pooler uses this chain rather than Node's public CA store.
