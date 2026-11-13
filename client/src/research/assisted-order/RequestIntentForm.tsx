@@ -102,6 +102,15 @@ function restrictionCopy(code: string): string {
     : "A purchase restriction applies. Its details need to be confirmed.";
 }
 
+/** The name a screen reader hears for one catalog row's controls. Two rows can share a product name and
+ *  specification (the same compound as capsules and as a vial), so the row's reviewed package, which
+ *  Details shows, is added when it has one. */
+function catalogRowName(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
+  const packageLabel = reviewedPackage(item.reviewedContent)
+    ?? item.reviewedContent?.specifications?.find(({ label }) => label === "Listed package")?.value;
+  return [item.productName, item.specification || fallbackSpecification, packageLabel].filter(Boolean).join(", ");
+}
+
 function CatalogDetails({ item, variantIds, showMedia }: {
   item: RequestIntentCatalogItem;
   variantIds: readonly string[];
@@ -110,7 +119,7 @@ function CatalogDetails({ item, variantIds, showMedia }: {
   return <Dialog>
     <DialogTrigger asChild>
       <button type="button" className="xenios-order-link"
-        aria-label={"View details for " + item.productName + (item.specification ? ", " + item.specification : "")}>
+        aria-label={"View details for " + catalogRowName(item)}>
         View details
       </button>
     </DialogTrigger>
@@ -656,25 +665,25 @@ function RequestIntentFormSession({
             {showDetails && <ListingQuestion variantReference={sourceVariantId} />}
           </> : selection
             ? <div className="xenios-order-quantity">
-              <button type="button" aria-label={"Decrease requested quantity for " + item.productName}
+              <button type="button" aria-label={"Decrease requested quantity for " + catalogRowName(item)}
                 disabled={clampQuantity(item, selection.quantity - item.quantityIncrement) === selection.quantity}
                 onClick={() => setSelected((prior) => {
                   const current = prior.get(key); if (!current) return prior;
                   return new Map(prior).set(key, { item, quantity: clampQuantity(item, current.quantity - item.quantityIncrement) });
                 })}>−</button>
               <label><span className="xenios-order-card-quantity-label">Requested quantity for {item.productName}</span>
-                <input type="number" aria-label={compactGuestCatalog ? "Requested quantity for " + item.productName : undefined}
+                <input type="number" aria-label={"Requested quantity for " + catalogRowName(item)}
                   min={item.minimumQuantity} max={item.maximumQuantity ?? undefined} step={item.quantityIncrement} value={selection.quantity}
                 onChange={(event) => setSelected((prior) => new Map(prior).set(key, { item, quantity: clampQuantity(item, Number(event.target.value)) }))} /></label>
-              <button type="button" aria-label={"Increase requested quantity for " + item.productName}
+              <button type="button" aria-label={"Increase requested quantity for " + catalogRowName(item)}
                 disabled={clampQuantity(item, selection.quantity + item.quantityIncrement) === selection.quantity}
                 onClick={() => setSelected((prior) => {
                   const current = prior.get(key); if (!current) return prior;
                   return new Map(prior).set(key, { item, quantity: clampQuantity(item, current.quantity + item.quantityIncrement) });
                 })}>+</button>
-              <button type="button" className="xenios-order-link" onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
+              <button type="button" className="xenios-order-link" aria-label={"Remove " + catalogRowName(item)} onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
             : <button type="button" className="xenios-order-button" disabled={selected.size >= 200}
-                aria-label={compactGuestCatalog ? "Add to quote cart: " + item.productName + (item.specification ? ", " + item.specification : "") : undefined}
+                aria-label={compactGuestCatalog ? "Add to quote cart: " + catalogRowName(item) : undefined}
                 onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{compactGuestCatalog ? EARLY_ACCESS_REQUEST_CTA.add : "Add " + item.productName + " to quote cart"}</button>}
           </div>
         </article>;
@@ -705,9 +714,9 @@ function RequestIntentFormSession({
               </label>
               <button type="button" className="xenios-order-link" onClick={() => setEditingSelection(null)}>Done editing quantity</button>
             </> : <button type="button" className="xenios-order-link"
-              aria-label={"Edit selected quantity for " + item.productName + " " + (item.specification || item.variantId)}
+              aria-label={"Edit selected quantity for " + catalogRowName(item, item.variantId)}
               onClick={() => setEditingSelection(catalogItemKey(item))}>Edit quantity</button>}
-            <button type="button" className="xenios-order-link" aria-label={"Remove selected " + item.productName + " " + (item.specification || item.variantId)}
+            <button type="button" className="xenios-order-link" aria-label={"Remove selected " + catalogRowName(item, item.variantId)}
               onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(catalogItemKey(item)); return next; })}>Remove</button>
           </li>)}
         </ul>}
