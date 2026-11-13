@@ -45,9 +45,16 @@ function Gate({api,children}: Pick<Props,"api"|"children">) {
   if(state==="done") return <>{children}</>;
   if(state==="error") return <div role="alert">We couldn’t confirm your catalog access. <button type="button" onClick={()=>{set("checking");retry(i=>i+1)}}>Check again</button></div>;
   if(state==="checking") return <p role="status">Checking catalog access…</p>;
-  return <form onSubmit={save} aria-label="Contact information for catalog access">
+  const staging = window.location.origin === "https://xenios-research-staging.onrender.com";
+  return <form onSubmit={save} aria-label="Contact information for catalog access"
+    aria-describedby={staging ? "staging-catalog-contact-notice" : undefined}>
     <h2>Before you view the catalog</h2>
     <p>Enter your name and email to continue. You can select items and request a private quote.</p>
+    {staging && <p id="staging-catalog-contact-notice">
+      For this staging test, we use your name and work email to give you catalog access.
+      This temporary record expires after two hours. A cleanup job removes expired records every five minutes.
+      If you submit a request, its contact details are stored separately with that request.
+    </p>}
     <label>Full name<input name="fullLegalName" autoComplete="name" maxLength={200} required/></label>
     <label>Email address<input name="email" type="email" autoComplete="email" maxLength={254} required/></label>
     <button disabled={state==="saving"} type="submit">{state==="saving"?"Saving…":"View catalog"}</button>

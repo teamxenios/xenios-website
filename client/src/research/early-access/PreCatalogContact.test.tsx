@@ -4,7 +4,7 @@ import {PreCatalogContact,type CatalogAdmissionApi,type CatalogAdmissionView} fr
 (globalThis as typeof globalThis & {IS_REACT_ACT_ENVIRONMENT:boolean}).IS_REACT_ACT_ENVIRONMENT=true;
 const key="a".repeat(64),pending={admitted:false,policyRevision:key},granted={...pending,admitted:true};
 let root:ReturnType<typeof createRoot>|null=null;
-afterEach(async()=>{if(root)await act(async()=>root?.unmount());document.body.replaceChildren();root=null;});
+afterEach(async()=>{if(root)await act(async()=>root?.unmount());document.body.replaceChildren();vi.unstubAllGlobals();root=null;});
 function mount(){const host=document.createElement("main");document.body.append(host);root=createRoot(host);
  return {host,render:(epoch:string,api:CatalogAdmissionApi)=>act(async()=>root!.render(<PreCatalogContact api={api} sessionEpoch={epoch}><h2>Private catalog</h2></PreCatalogContact>))};}
 it("withholds children until private save succeeds; contact input is not copied to browser storage",async()=>{
@@ -24,4 +24,22 @@ it("a temporarily unavailable custodian offers a status retry and no catalog",as
  const {host,render}=mount(),api={status:vi.fn().mockRejectedValueOnce(new Error("private backend")).mockResolvedValueOnce(pending),record:vi.fn()};
  await render("one",api);expect(host.textContent).not.toContain("private backend");await act(async()=>host.querySelector('button')!.click());
  expect(host.querySelector("form")).not.toBeNull();expect(host.textContent).not.toContain("Private catalog");
+});
+
+it("displays the approved contact notice before the fields only on isolated staging", async () => {
+  const { host, render } = mount();
+  const api = { status: vi.fn(async () => pending), record: vi.fn() };
+  vi.stubGlobal("location", new URL("https://xenios-research-staging.onrender.com/earlyaccess"));
+  await render("visitor", api);
+  const form = host.querySelector("form")!;
+  const notice = form.querySelector("#staging-catalog-contact-notice")!;
+  expect(form.getAttribute("aria-describedby")).toBe(notice.id);
+  expect(notice.nextElementSibling?.querySelector("input")?.name).toBe("fullLegalName");
+  expect(notice.textContent).toMatch(/two hours[\s\S]*five minutes[\s\S]*stored separately/);
+  expect(api.record).not.toHaveBeenCalled();
+
+  vi.stubGlobal("location", new URL("https://xeniostechnology.com/earlyaccess"));
+  await render("visitor", api);
+  expect(form.querySelector("#staging-catalog-contact-notice")).toBeNull();
+  expect(form.hasAttribute("aria-describedby")).toBe(false);
 });
