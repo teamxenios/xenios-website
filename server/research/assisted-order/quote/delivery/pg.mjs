@@ -18,6 +18,9 @@ export function pgTransactions(pool,{assumeStagingRuntimeRole=false}={}) {
                AND NOT runtime.rolcanlogin AND NOT runtime.rolinherit
                AND login.rolname = session_user AND login.rolname = 'ea_quote_stage_login' AND login.rolcanlogin
                AND NOT login.rolsuper AND NOT login.rolbypassrls
+               -- rolinherit is only the default for new grants (PG16+); a grant made
+               -- WITH INHERIT TRUE still passes privileges, so the runtime role must hold none.
+               AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m WHERE m.member = runtime.oid)
            ) AS restricted`);
         if(check.rows[0]?.restricted!==true)throw Error('Restricted staging quote connection required.');
         await client.query("SET LOCAL statement_timeout = '5s'");
