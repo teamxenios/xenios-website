@@ -2,34 +2,6 @@
   "schemaVersion": 1,
   "records": [
     {
-      "offeringId": "mo_edefaf4799bd53853d01",
-      "sourceVariantId": "mov_e74adec4c45f9c9db404",
-      "customerMessage": "The catalog lists this item as Longevity Essentials NAD+. The exact product and label it refers to have not yet been confirmed, so no description is shown yet.",
-      "staffReviewCode": "label_or_source_needed",
-      "neutralSpecification": null
-    },
-    {
-      "offeringId": "mo_b48e883b4ada1469f824",
-      "sourceVariantId": "mov_904af0a54faddfe2f21f",
-      "customerMessage": "The catalog lists this item as Rejuvenate+. The exact product and label it refers to have not yet been confirmed, so no description is shown yet.",
-      "staffReviewCode": "label_or_source_needed",
-      "neutralSpecification": null
-    },
-    {
-      "offeringId": "mo_5b122372a6ecdea51c52",
-      "sourceVariantId": "mov_ffe0eef7766200ac8c53",
-      "customerMessage": "The catalog lists this item as Stress Essentials Calm. The exact product and label it refers to have not yet been confirmed, so no description is shown yet.",
-      "staffReviewCode": "label_or_source_needed",
-      "neutralSpecification": null
-    },
-    {
-      "offeringId": "mo_85898714d8df5a3d2f10",
-      "sourceVariantId": "mov_4a105b161858064229f3",
-      "customerMessage": "The catalog lists this item as Uplift+. The exact product and label it refers to have not yet been confirmed, so no description is shown yet.",
-      "staffReviewCode": "label_or_source_needed",
-      "neutralSpecification": null
-    },
-    {
       "offeringId": "mo_a7a7e307d58f24affb42",
       "sourceVariantId": "mov_512ed6b875c04eee4753",
       "customerMessage": "The catalog lists this entry as Syringes & Alcohol Swabs. What it includes has not yet been confirmed, so no description is shown yet.",

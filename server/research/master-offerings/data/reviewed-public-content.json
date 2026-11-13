@@ -7342,6 +7342,138 @@
         "label": "For laboratory research use only.",
         "cautions": "For nonclinical laboratory research only. Not for human or veterinary use."
       }
+    },
+    {
+      "offeringId": "mo_edefaf4799bd53853d01",
+      "sourceVariantId": "mov_e74adec4c45f9c9db404",
+      "content": {
+        "summary": "Longevity Essentials NAD+ is a 90-capsule supplement built around nicotinamide riboside, with rutin, sodium butyrate, hesperidin, quercetin and hydroxytyrosol. Each three-capsule serving lists six ingredients.",
+        "overview": "In plain terms, this is a capsule that pairs nicotinamide riboside with five other compounds, three of them labeled as coming from plants. The National Institutes of Health (NIH) Office of Dietary Supplements (ODS) fact sheet on niacin for health professionals names nicotinamide riboside as one of the related derivatives covered by the generic name niacin. It also says nicotinamide riboside is available as a dietary supplement but is not marketed or labeled as a source of niacin. NutriDyn describes the formula as replenishing declining NAD+ levels and providing antioxidant support. Those are the manufacturer's descriptions. They are not findings.\n\nOn antioxidants in general, the National Center for Complementary and Integrative Health (NCCIH), part of NIH, says extensive studies have tested antioxidant supplements against chronic diseases associated with aging. It says that, except for age-related macular degeneration, there is currently no evidence that antioxidant supplements have a positive impact on those diseases. It adds that antioxidants, especially in larger-than-usual amounts, may not always be beneficial, and that different types of antioxidants may not be interchangeable. Neither NIH page mentions rutin, hesperidin, quercetin, sodium butyrate or hydroxytyrosol, and neither describes a study of nicotinamide riboside or of this combination. So these sources identify nicotinamide riboside as a niacin-related compound. They do not show that this product raises NAD+ levels or has the effects NutriDyn describes. The label details follow.\n\nEach serving of three capsules lists nicotinamide riboside hydrogen malate 500 mg, rutin 500 mg, sodium butyrate 300 mg, hesperidin 250 mg, quercetin 100 mg and hydroxytyrosol from olive leaf extract 10 mg. The 500 mg figure is for nicotinamide riboside hydrogen malate, the salt form, and the panel does not state how much of it is nicotinamide riboside. No Daily Value is established for any of the six. A bottle holds 30 servings.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "90 capsules",
+            "label": "Package"
+          },
+          {
+            "value": "3 capsules",
+            "label": "Serving size"
+          },
+          {
+            "value": "30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions this dietary supplement to support cellular energy, metabolic health and healthy aging.",
+        "ingredients": "Per serving: nicotinamide riboside hydrogen malate 500 mg, rutin (from Sophora japonica) 500 mg, sodium butyrate 300 mg, hesperidin (from Citrus aurantium) 250 mg, quercetin 100 mg and hydroxytyrosol (from olive leaf extract; Olea europaea) 10 mg. Other ingredients: hypromellose, vegetable magnesium stearate and silica.",
+        "label": "The manufacturer suggests three capsules daily unless your healthcare practitioner directs otherwise. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "If you are pregnant, nursing, or taking medication, consult your healthcare practitioner before use. Keep out of reach of children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/longevity-essentials-nad-plus-r288"
+          }
+        ]
+      }
+    },
+    {
+      "offeringId": "mo_b48e883b4ada1469f824",
+      "sourceVariantId": "mov_904af0a54faddfe2f21f",
+      "content": {
+        "summary": "Rejuvenate+, sold by NutriDyn as Beauty Essentials Rejuvenate+, is a drink powder with collagen peptides, vitamin C, biotin, MSM and hyaluronic acid. It contains fish, and one scoop lists 10,000 mcg of biotin.",
+        "overview": "In plain terms, this is a powder to mix with water that combines two collagen preparations with vitamin C, a high amount of biotin, MSM, hyaluronic acid and Lustriva®, which the label lists as inositol-stabilized arginine silicate and magnesium biotinate. NutriDyn positions it for skin, hair and nails. The National Institutes of Health (NIH) Office of Dietary Supplements (ODS) says the body needs vitamin C to make collagen, and that biotin helps turn the carbohydrates, fats and proteins in food into energy.\n\nWhat the research shows is limited. ODS says biotin supplements are often promoted to improve the health of hair, skin and nails, but that there is little scientific evidence to support these claims. It says that in a few small studies, some people with thin and brittle nails who took high doses of biotin had harder nails, and that more research is needed before biotin supplements can be recommended for any of the conditions it describes. Neither fact sheet mentions collagen supplements, hyaluronic acid or MSM. So these sources support what vitamin C and biotin do in the body. They do not show that this powder improves skin, hair or nails.\n\nOn safety, ODS says biotin has not been shown to cause any harm, but that supplements with biotin above recommended amounts may cause false results in some lab tests, including those that measure certain hormones, like thyroid hormone. It gives 30 mcg as the recommended amount for adults; one scoop of this product lists 10,000 mcg. The label itself says to pause use at least 3 days before any blood tests. For vitamin C, ODS says taking too much can cause diarrhea, nausea and stomach cramps, and that in people with hemochromatosis, high doses could worsen iron overload. It gives 2,000 mg a day from all sources as the upper limit for adults; one scoop lists 500 mg. The label details follow.\n\nEach scoop of about 8.68 g supplies 25 calories, 2 g of total carbohydrate, 5 g of protein and 25 mg of sodium. It lists vitamin C as ascorbic acid 500 mg, biotin from magnesium biotinate 10,000 mcg, VERISOL® collagen peptides 2.5 g, hydrolyzed type I collagen 2.5 g, OptiMSM® 1,000 mg, Lustriva® 160 mg and hyaluronic acid as sodium hyaluronate 100 mg. The label declares fish (cod and/or tilapia) as an allergen. A container holds 30 servings.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "Powder",
+            "label": "Form"
+          },
+          {
+            "value": "About 1 scoop (8.68 g)",
+            "label": "Serving size"
+          },
+          {
+            "value": "30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions this collagen and nutrient powder for healthy skin, hair and nails.",
+        "ingredients": "Per scoop: 25 calories, total carbohydrate 2 g, protein 5 g, vitamin C (ascorbic acid) 500 mg, biotin (from magnesium biotinate) 10,000 mcg, sodium 25 mg, collagen peptides (VERISOL®) 2.5 g, hydrolyzed collagen (type I) 2.5 g, MSM (methylsulfonylmethane) (OptiMSM®) 1,000 mg, inositol-stabilized arginine silicate and magnesium biotinate (Lustriva®) 160 mg, hyaluronic acid (as sodium hyaluronate) 100 mg, inositol (as inositol-stabilized arginine silicate) 27 mg and silicon (as inositol-stabilized arginine silicate) 10 mg. Other ingredients: citric acid, natural flavors, beet root powder (color), bamboo extract and stevia leaf extract. Contains: fish (cod and/or tilapia).",
+        "label": "The manufacturer suggests mixing one scoop in 10 ounces of water unless your healthcare practitioner directs otherwise. VERISOL® is a registered trademark of GELITA AG. OptiMSM® is a registered trademark of Balchem Corporation or its subsidiaries. Lustriva® is a registered trademark of Nutrition 21, LLC. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "Contains fish (cod and/or tilapia). If you are pregnant, nursing, or taking medication, consult your healthcare practitioner before use. Pause use at least 3 days before any blood tests. Keep out of reach of children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/r289-beauty-essentials-rejuvenate-plus"
+          }
+        ]
+      }
+    },
+    {
+      "offeringId": "mo_85898714d8df5a3d2f10",
+      "sourceVariantId": "mov_4a105b161858064229f3",
+      "content": {
+        "summary": "Uplift+ is a drink powder that combines creatine, L-theanine and extracts of lion's mane mushroom, rhodiola and saffron with vitamin D, magnesium, zinc and selenium. Each scoop lists 5 g of creatine.",
+        "overview": "In plain terms, this is a powder to mix with water that pairs four nutrients, vitamin D, magnesium, zinc and selenium, with creatine, L-theanine, lion's mane mushroom extract, rhodiola extract and saffron extract. NutriDyn positions it for cognitive performance, mood and stress response. National Institutes of Health (NIH) Office of Dietary Supplements (ODS) fact sheets describe what the four nutrients do in the body: vitamin D helps the body absorb calcium, magnesium helps regulate muscle and nerve function, zinc helps the immune system fight off invading bacteria and viruses, and the thyroid gland needs selenium to produce hormones.\n\nFor rhodiola, the National Center for Complementary and Integrative Health (NCCIH), part of NIH, says it is promoted today for improving athletic performance, mood and cognition, increasing energy and reducing stress, but that there isn't enough reliable evidence to determine whether rhodiola or its components are useful for any health-related purpose. None of these NIH pages mentions creatine, lion's mane, L-theanine or saffron, and none describes these ingredients taken together. So these sources describe what the four nutrients do in the body. They do not show that this formula supports mood, focus or stress response.\n\nOn safety, NCCIH says rhodiola is possibly safe for up to 12 weeks, that side effects may include dizziness, headache, insomnia, and either dry mouth or excessive saliva production, and that interactions with losartan, a drug used for high blood pressure, have been reported. It says little is known about whether rhodiola is safe to use during pregnancy or while breastfeeding. ODS gives adult upper limits of 100 mcg (4,000 IU) of vitamin D, 40 mg of zinc and 400 mcg of selenium from all sources, and 350 mg of magnesium from supplements and medications. One scoop of this product lists 50 mcg of vitamin D, 15 mg of zinc, 100 mcg of selenium and 150 mg of magnesium. ODS says high intakes of magnesium from supplements and medications can cause diarrhea, nausea and abdominal cramping. The label details follow.\n\nEach scoop of about 11.9 g supplies 15 calories and 4 g of total carbohydrate, with less than 1 g of dietary fiber. It lists vitamin D as cholecalciferol 50 mcg, magnesium as magnesium glycinate 150 mg, zinc as zinc glycinate 15 mg, selenium as L-selenomethionine 100 mcg, creatine monohydrate 5 g, an organic hot water extract of lion's mane mushroom fruiting body (Nammex®) 900 mg, rhodiola root extract standardized to 3% rosavins and 1% salidroside 400 mg, L-theanine 200 mg and saffron stigma extract standardized to 0.3% safranal 30 mg. A container holds 30 servings.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "Powder",
+            "label": "Form"
+          },
+          {
+            "value": "About 1 scoop (11.9 g)",
+            "label": "Serving size"
+          },
+          {
+            "value": "30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions this formula as neuro support for a healthy mood and emotional wellness.",
+        "ingredients": "Per scoop: 15 calories, total carbohydrate 4 g, dietary fiber less than 1 g, vitamin D (as cholecalciferol) 50 mcg, magnesium (as magnesium glycinate) 150 mg, zinc (as zinc glycinate) 15 mg, selenium (as L-selenomethionine) 100 mcg, creatine monohydrate 5 g, organic lion's mane mushroom extract (fruiting body; Hericium erinaceus; hot water extract) (Nammex®) 900 mg, rhodiola extract (root; Rhodiola rosea; 3% rosavins and 1% salidroside) 400 mg, L-theanine 200 mg and saffron stigma extract (Crocus sativus; 0.3% safranal) 30 mg. Other ingredients: citric acid, natural flavors, inulin, bamboo extract, beet root powder (color) and stevia leaf extract.",
+        "label": "The manufacturer suggests mixing one scoop in 10 ounces of water unless your healthcare practitioner directs otherwise. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "If you are pregnant, nursing, or taking medication, consult your healthcare practitioner before use. Keep out of reach of children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/r290-uplift-plus"
+          }
+        ]
+      }
+    },
+    {
+      "offeringId": "mo_5b122372a6ecdea51c52",
+      "sourceVariantId": "mov_ffe0eef7766200ac8c53",
+      "content": {
+        "summary": "Stress Essentials Calm, formerly Calm Eze, is a 60-capsule supplement with GABA and Suntheanine® L-theanine. Each two-capsule serving lists 550 mg of GABA and 200 mg of L-theanine.",
+        "overview": "In plain terms, this is a two-ingredient capsule: gamma-aminobutyric acid (GABA) and L-theanine in its Suntheanine® form. NutriDyn positions it for healthy stress management and describes the two ingredients as natural calming agents that support relaxation and restful sleep. Those are the manufacturer's descriptions. They are not findings.\n\nThe National Center for Complementary and Integrative Health (NCCIH), part of the National Institutes of Health, publishes pages on anxiety, on sleep disorders and on stress. None of the three mentions GABA or L-theanine, and this description cites no other source on either ingredient. So nothing cited here establishes that this product supports relaxation, sleep or stress management, or describes its safety. The label details follow.\n\nEach serving of two capsules lists GABA 550 mg and L-theanine (Suntheanine®) 200 mg. No Daily Value is established for either. A bottle holds 60 vegetable capsules, or 30 servings.",
+        "brand": "NutriDyn",
+        "specifications": [
+          {
+            "value": "60 vegetable capsules",
+            "label": "Package"
+          },
+          {
+            "value": "2 capsules",
+            "label": "Serving size"
+          },
+          {
+            "value": "30",
+            "label": "Servings per package"
+          }
+        ],
+        "purpose": "NutriDyn positions this dietary supplement as support for healthy stress management.",
+        "ingredients": "Per serving: GABA (gamma-aminobutyric acid) 550 mg and L-theanine (Suntheanine®) 200 mg. Other ingredients: vegetable capsule, microcrystalline cellulose, vegetable magnesium stearate and silicon dioxide.",
+        "label": "The manufacturer suggests two capsules daily unless your healthcare practitioner directs otherwise. Suntheanine® is a registered trademark of Taiyo International, Inc. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.",
+        "cautions": "If you are pregnant, nursing, or taking medication, consult your healthcare practitioner before use. Keep out of reach of children.",
+        "documentation": [
+          {
+            "label": "NutriDyn product information",
+            "href": "https://nutridyn.com/calm-eze-r405"
+          }
+        ]
+      }
     }
   ]
 }
