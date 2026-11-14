@@ -1,4 +1,8 @@
-import { randomUUID } from "node:crypto";
+import { execFileSync } from "node:child_process";
+import { createHmac, randomUUID } from "node:crypto";
+import { setTimeout as delay } from "node:timers/promises";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import WebSocket from "ws";
 import { readFileSync } from "node:fs";
 import express from "express";
 import type { Pool } from "pg";
@@ -6,7 +10,7 @@ import request from "supertest";
 import { expect, vi } from "vitest";
 import { createDurableJourneyFixture, OPERATOR, pg16It, submission } from "../../request-intent/durable-journey.pg.fixture";
 import { requestIntentQuoteOwnerReader } from "../../request-intent/quote-owner-reader";
-import { requestIntentQuoteRequestReader, requestIntentStaffReader, type RequestIntentRpcClient } from "../../request-intent/rpc-repository";
+import { requestIntentQuoteRequestReader, requestIntentStaffReader } from "../../request-intent/rpc-repository";
 import { registerPrivateQuoteDispatch, runOutboxTick } from "../../../outbox";
 import { AssistedOrderQuoteService } from "../service";
 import { bindReviewedXriQuoteLines } from "../xri-line-bindings";
@@ -14,71 +18,58 @@ import { attachApprovedPrivateQuotes } from "./compose.mjs";
 import { createProductionQuoteAuthority, memberOwnerHash, PRODUCTION_QUOTE_SELLER, productionQuoteLineId } from "./production-portal";
 import { PRODUCTION_QUOTE_ORIGIN, PRODUCTION_QUOTE_TENANT } from "./production";
 
-const client = vi.hoisted(() => ({ from: vi.fn() }));
+const state = vi.hoisted(() => ({ admin: null as SupabaseClient | null }));
 vi.mock("../../../../supabase", () => ({
-  getSupabaseAdmin: () => client,
+  getSupabaseAdmin: () => {
+    if (!state.admin) throw new Error("Owned PostgREST client not ready");
+    return state.admin;
+  },
   supabaseConfigured: () => true,
 }));
 vi.mock("../../../agreement-package-reconciliation", () => ({ runAgreementPackageReconciler: vi.fn() }));
 vi.mock("../../../../routes", () => ({ requireSupabaseAdmin: vi.fn() }));
 
-type Database = ReturnType<typeof createDurableJourneyFixture>;
-const OUTBOX = "research_notification_outbox";
-const ATTEMPTS = "research_notification_attempts";
+const POSTGREST = "postgrest/postgrest:v14.18@sha256:c7cd7e265a85b05248abf53f4473fcec7e327c282d0bd0cf60f1551996d09fcf";
+const docker = (...args: string[]) => execFileSync("docker", args, {
+  encoding: "utf8", windowsHide: true, timeout: 60_000, stdio: ["ignore", "pipe", "pipe"],
+}).trim();
 
-// Translate the worker's PostgREST calls to committed queries against the
-// disposable database. The mail transport and account facts are synthetic.
-function connectWorker(db: Database) {
-  client.from.mockImplementation((table: string) => {
-    if (table === ATTEMPTS) {
-      return { insert: ({ outbox_id, attempt, outcome, error_summary }: Record<string, unknown>) =>
-        db.sql("INSERT INTO public.research_notification_attempts (outbox_id,attempt,outcome,error_summary) VALUES ($1,$2,$3,$4)",
-          [outbox_id, attempt, outcome, error_summary]) };
-    }
-    if (table !== OUTBOX) throw new Error("Unexpected worker table");
-    return {
-      select: () => ({
-        eq: (key: string, status: string) => ({
-          lt: (column: string, cutoff: string) => ({
-            limit: async (limit: number) => {
-              expect([key, column]).toEqual(["status", "updated_at"]);
-              return { data: (await db.sql(
-                "SELECT * FROM public.research_notification_outbox WHERE status=$1 AND updated_at<$2 LIMIT $3", [status, cutoff, limit])).rows, error: null };
-            },
-          }),
-        }),
-        in: (key: string, statuses: string[]) => ({
-          lte: (column: string, now: string) => ({
-            limit: async (limit: number) => {
-              expect([key, column]).toEqual(["status", "next_attempt_at"]);
-              return { data: (await db.sql(
-                "SELECT * FROM public.research_notification_outbox WHERE status=ANY($1) AND next_attempt_at<=$2 LIMIT $3", [statuses, now, limit])).rows, error: null };
-            },
-          }),
-        }),
-      }),
-      update: (patch: Record<string, unknown>) => ({
-        eq: (column: string, id: string) => {
-          expect(column).toBe("id");
-          if (patch.status !== "processing") {
-            expect(patch.status).toBe("sent");
-            return db.sql(
-              "UPDATE public.research_notification_outbox SET status=$1,attempt_count=$2,last_attempt_at=$3,provider_message_id=$4,completed_at=$5,updated_at=$6 WHERE id=$7",
-              [patch.status, patch.attempt_count, patch.last_attempt_at, patch.provider_message_id, patch.completed_at, patch.updated_at, id]);
-          }
-          return { eq: (statusColumn: string, status: string) => ({
-            select: () => ({
-              single: async () => {
-                expect(statusColumn).toBe("status");
-                return { data: (await db.sql(
-                  "UPDATE public.research_notification_outbox SET status=$1,updated_at=$2 WHERE id=$3 AND status=$4 RETURNING *",
-                  [patch.status, patch.updated_at, id, status])).rows[0] ?? null };
-              },
-            }),
-          }) };
-        },
-      }),
-    };
+function testToken(secret: string, claims: Record<string, string>) {
+  const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
+  const body = encode({ alg: "HS256", typ: "JWT" }) + "." + encode(claims);
+  return body + "." + createHmac("sha256", secret).update(body).digest("base64url");
+}
+
+async function openRest(name: string, network: string, dbName: string, password: string, secret: string) {
+  docker("run", "--detach", "--rm", "--name", name, "--network", network,
+    "--publish", "127.0.0.1::3000",
+    "--env", "PGRST_DB_URI=postgres://fixture_rest:" + password + "@" + dbName + ":5432/request_intent_disposable",
+    "--env", "PGRST_DB_SCHEMAS=public", "--env", "PGRST_DB_ANON_ROLE=anon", "--env", "PGRST_JWT_SECRET=" + secret, POSTGREST);
+  const match = /^127\.0\.0\.1:(\d+)$/.exec(docker("port", name, "3000/tcp"));
+  if (!match) throw new Error("PostgREST port was not confined to literal loopback");
+  const origin = "http://127.0.0.1:" + match[1];
+  for (let attempt = 0; attempt < 30; attempt++) {
+    try {
+      const ready = await fetch(origin, { signal: AbortSignal.timeout(1_000) });
+      if (ready.ok) return origin;
+    } catch { /* The fresh service may still be connecting to PostgreSQL. */ }
+    await delay(250);
+  }
+  throw new Error("Owned PostgREST service did not become ready");
+}
+
+function restClient(origin: string, key: string): SupabaseClient {
+  // Bare PostgREST has no Supabase gateway, so strip only the SDK REST prefix.
+  // Refuse every other request and destination in this synthetic rehearsal.
+  return createClient(origin, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    realtime: { transport: WebSocket as unknown as typeof globalThis.WebSocket },
+    global: { fetch: (input, init) => {
+      const url = new URL(String(input));
+      if (url.origin !== origin || !url.pathname.startsWith("/rest/v1/")) throw new Error("Unexpected fixture request");
+      url.pathname = url.pathname.slice("/rest/v1".length);
+      return fetch(url, init);
+    } },
   });
 }
 
@@ -92,9 +83,14 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
   const issuerEmail = "staff@example.invalid";
   const customerRef = "eac_" + "a".repeat(32);
   const ownerHash = memberOwnerHash(authId);
+  const network = "xenios-quote-network-" + randomUUID();
+  const rest = "xenios-quote-rest-" + randomUUID();
+  const restPassword = randomUUID();
+  const secret = randomUUID() + randomUUID();
+  let networkCreated = false;
   let pool: Pool | undefined;
   try {
-    await db.start();
+    await db.start({ dockerOnly: true });
     await db.sql(readFileSync("supabase/research-notification-outbox.sql", "utf8"));
     for (const file of [
       "20261114025655_early_access_contact_and_private_quote_schema.sql",
@@ -102,6 +98,11 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
       "20261114043300_early_access_quote_request_audit.sql",
     ]) await db.sql(readFileSync("supabase/migrations/" + file, "utf8"));
     await db.sql([
+      "CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT (nullif(current_setting('request.jwt.claims', true), '')::jsonb->>'sub')::uuid $$;",
+      "GRANT SELECT, UPDATE ON public.research_notification_outbox TO service_role;",
+      "GRANT INSERT ON public.research_notification_attempts TO service_role;",
+      "CREATE ROLE fixture_rest LOGIN NOINHERIT PASSWORD '" + restPassword + "';",
+      "GRANT anon, authenticated, service_role TO fixture_rest WITH SET TRUE, INHERIT FALSE, ADMIN FALSE;",
       "CREATE ROLE ea_quote_runtime NOLOGIN NOINHERIT;",
       `CREATE ROLE ea_quote_login LOGIN NOINHERIT PASSWORD '${password}';`,
       "GRANT ea_quote_runtime TO ea_quote_login WITH SET TRUE, INHERIT FALSE, ADMIN FALSE;",
@@ -128,19 +129,16 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
         JSON.stringify({ ...input.contact, email: recipient, billingAddress: input.contact.shippingAddress }),
         JSON.stringify([{ ...input.agreements[0], ...terms }, ...input.agreements.slice(1)]), JSON.stringify([line])],
     );
-    const staffRpc = db.adapter().client;
-    const rpc: RequestIntentRpcClient = {
-      async rpc(name, args) {
-        if (name !== "request_intent_owned_ids" && name !== "request_intent_quote_read") return staffRpc.rpc(name, args);
-        const lookup = name === "request_intent_owned_ids";
-        const result = await db.asRole("service_role", lookup
-          ? "SELECT public.request_intent_owned_ids($1::text,$2::uuid,$3::uuid) AS value"
-          : "SELECT public.request_intent_quote_read($1::uuid,$2::text,$3::uuid) AS value", lookup
-          ? [args.p_owner_hash, args.p_request_id, args.p_after_id]
-          : [args.p_request_id, args.p_owner_hash, args.p_quote_id]);
-        return { data: result.rows[0].value, error: null };
-      },
-    };
+    const dbName = db.ownedDockerContainer();
+    docker("network", "create", network);
+    networkCreated = true;
+    docker("network", "connect", network, dbName);
+    const origin = await openRest(rest, network, dbName, restPassword, secret);
+    const rpc = restClient(origin, testToken(secret, { role: "service_role" }));
+    state.admin = rpc;
+    const denied = await restClient(origin, testToken(secret, { role: "authenticated", sub: authId }))
+      .rpc("request_intent_quote_read", { p_request_id: requestId, p_owner_hash: ownerHash, p_quote_id: null });
+    expect(denied.error?.code).toBe("42501");
     const quoteRequests = requestIntentQuoteRequestReader(rpc);
     const authority = createProductionQuoteAuthority({
       tenant: PRODUCTION_QUOTE_TENANT, issuerId: OPERATOR, adminEmail: issuerEmail, deliveryEnabled: true,
@@ -163,7 +161,6 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
     const app = express();
     app.use(express.json());
     pool = db.poolForLogin("ea_quote_login", password);
-    connectWorker(db);
     attachApprovedPrivateQuotes({
       enabled: true, router: app, pool, authority: authority.authority, runtimeRole: "production",
       assumeStagingRuntimeRole: false, stageDispatchPaused: false, deferStagingNotice: false,
@@ -200,6 +197,15 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
     expect((await db.sql("SELECT actor_user_id FROM request_intent_private.access_events WHERE event_type='quote_dispatch_read'")).rows)
       .toEqual([{ actor_user_id: null }]);
   } finally {
-    try { await pool?.end(); } finally { await db.close(); }
+    state.admin = null;
+    try {
+      await pool?.end();
+    } finally {
+      try {
+        if (docker("ps", "-aq", "--filter", "name=^/" + rest + "$")) docker("rm", "--force", rest);
+      } finally {
+        try { await db.close(); } finally { if (networkCreated) docker("network", "rm", network); }
+      }
+    }
   }
 }, 180_000);
