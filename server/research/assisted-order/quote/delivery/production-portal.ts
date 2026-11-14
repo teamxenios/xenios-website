@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Express, Request, RequestHandler } from "express";
 import type pg from "pg";
+import { decodeJwtClaims } from "../../../member-auth";
 import { registerPrivateQuoteDispatch } from "../../../outbox";
 import { EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT } from "../../../policies-data";
 import type { RequestIntentDetail, RequestIntentLine } from "../../../../../shared/research/assisted-order/request-intent";
@@ -130,6 +131,11 @@ export function createProductionQuoteAuthority(deps: ProductionQuoteAuthorityDep
     const issuer = await verifyAccount(issuerId);
     return !!adminEmail && issuer?.email === adminEmail;
   };
+
+  async function staffPrincipal(verifiedSubject: unknown, verifiedEmail: string | undefined) {
+    if (verifiedSubject !== issuerId || normalizeEmail(verifiedEmail) !== adminEmail || !await issuerIsCurrent()) return null;
+    return { tenant, subject: issuerId, actorLabel: issuerId, capabilities: new Set(["assisted_orders:manage"]) };
+  }
 
   /** One verified binding of this member, with live standing; anything else is ambiguous. */
   async function standingRef(memberId: string): Promise<string | null> {
@@ -294,7 +300,7 @@ export function createProductionQuoteAuthority(deps: ProductionQuoteAuthorityDep
     async verifiedDispatchEvidence() { return null; },
   };
 
-  return { issuerIsCurrent, standingRef, recipientFor, loadScope, customerPrincipal, ownedRequests, issueInput, authority };
+  return { issuerIsCurrent, staffPrincipal, standingRef, recipientFor, loadScope, customerPrincipal, ownedRequests, issueInput, authority };
 }
 
 type Transact = <T>(tenant: string, key: string, work: (q: QuoteQuery) => Promise<T>) => Promise<T>;
@@ -372,8 +378,9 @@ export function mountProductionPrivateQuotePortal(
       return built.ownedRequests(viewer, directoryHits);
     },
     async staffPrincipal(req: Request & { adminEmail?: string }) {
-      if (req.adminEmail?.trim().toLowerCase() !== adminEmail || !await built.issuerIsCurrent()) return null;
-      return { tenant, subject: issuerId, actorLabel: issuerId, capabilities: new Set(["assisted_orders:manage"]) };
+      // requireSupabaseAdmin has verified this bearer with Supabase before this handler runs.
+      const bearer = req.headers.authorization?.slice(7) ?? "";
+      return built.staffPrincipal(decodeJwtClaims(bearer)?.sub, req.adminEmail);
     },
     async csrfChecked(req: Request) {
       return req.get("origin") === PRODUCTION_QUOTE_ORIGIN && !!req.is("application/json") &&

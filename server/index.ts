@@ -140,6 +140,8 @@ import {
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from "./research/assisted-order/production-deps";
 import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
+import { requestIntentQuoteRequestReader } from "./research/assisted-order/request-intent/rpc-repository";
+import { productControlQuoteLineClearance } from "./research/assisted-order/quote/delivery/product-control-clearance";
 import { mountStagingPrivateQuotePortal } from "./research/assisted-order/quote/delivery/staging";
 import { mountProductionQuoteConnection } from "./research/assisted-order/quote/delivery/production";
 import { mountProductionPrivateQuotePortal, researchMembersByEmail } from "./research/assisted-order/quote/delivery/production-portal";
@@ -1045,7 +1047,7 @@ async function composeAssistedOrderBridge(): Promise<
       : null;
   };
   const quoteBindings = earlyAccessPersistence.orderHistory?.bindings;
-  if (supabaseConfigured() && quoteBindings?.customerRefsForHistory) {
+  if (assistedOrderWiring.supabaseRpc && quoteBindings?.customerRefsForHistory) {
     mountProductionPrivateQuotePortal(
       app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount,
       {
@@ -1054,8 +1056,8 @@ async function composeAssistedOrderBridge(): Promise<
           forCustomer: quoteBindings.forCustomer.bind(quoteBindings),
           customerRefsForHistory: quoteBindings.customerRefsForHistory.bind(quoteBindings),
         },
-        clearance: null,
-        quoteRequests: null,
+        clearance: productControlQuoteLineClearance(pricingResolver),
+        quoteRequests: requestIntentQuoteRequestReader(assistedOrderWiring.supabaseRpc),
       },
     );
   } else {
