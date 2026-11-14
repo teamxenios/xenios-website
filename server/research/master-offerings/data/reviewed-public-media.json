@@ -4876,6 +4876,66 @@
       "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
       "primarySha256": "3b47cc0ac144ccaf7520417111e7d631b4896954534ae23870ab349a7208d4f9",
       "labelPreviewSha256": "cc74a41c7bb66af237ae040ba880d9e319a74f94057c020d321dea55b3cc0d2e"
+    },
+    {
+      "offeringId": "mo_edefaf4799bd53853d01",
+      "sourceVariantId": "mov_e74adec4c45f9c9db404",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r288-longevity-essentials-nad-plus.png",
+          "altText": "Official NutriDyn Longevity Essentials NAD+ bottle, 90 capsules",
+          "width": 254,
+          "height": 420
+        }
+      },
+      "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
+      "primarySha256": "e3fca3f34d64de32fe1f86ee9fba24de1603744009f5e31979f8ac762996ff74"
+    },
+    {
+      "offeringId": "mo_b48e883b4ada1469f824",
+      "sourceVariantId": "mov_904af0a54faddfe2f21f",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r289-beauty-essentials-rejuvenate-plus-hibiscus-berry.png",
+          "altText": "Official NutriDyn Beauty Essentials Rejuvenate+ canister, Hibiscus Berry",
+          "width": 255,
+          "height": 420
+        }
+      },
+      "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
+      "primarySha256": "48989e89c22a534ded69a3dd8046c759bba62ccbeafd2534bc03c30f7f883dc8"
+    },
+    {
+      "offeringId": "mo_85898714d8df5a3d2f10",
+      "sourceVariantId": "mov_4a105b161858064229f3",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r290-uplift-plus-berry-lemonade.png",
+          "altText": "Official NutriDyn Uplift+ canister, Berry Lemonade",
+          "width": 266,
+          "height": 420
+        }
+      },
+      "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
+      "primarySha256": "d202f117a2cc6d68d12b6e27fe6628b2c1b5eb949eb1e30ef49b9d91259710ee"
+    },
+    {
+      "offeringId": "mo_5b122372a6ecdea51c52",
+      "sourceVariantId": "mov_ffe0eef7766200ac8c53",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r405-stress-essentials-calm.png",
+          "altText": "Official NutriDyn Stress Essentials Calm bottle, 60 capsules",
+          "width": 258,
+          "height": 420
+        }
+      },
+      "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
+      "primarySha256": "70ec66308f6476e7a2880a8f4574ba88b09b0f030cf82e0c5af583daaf83929e"
     }
   ]
 }
