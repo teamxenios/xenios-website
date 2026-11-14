@@ -823,6 +823,26 @@
         "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
         "evidence": "Disposable PostgreSQL 18.6 replayed under a non-superuser request-store owner with RLS bypass. Exact ownership and cursor pagination returned only matching UUIDs. Public roles, direct table reads, user JWTs and invalid scopes were denied."
       }
+    },
+    {
+      "id": "early_access_quote_request_audit",
+      "path": "supabase/migrations/20261114043300_early_access_quote_request_audit.sql",
+      "sourceSha": "280b9e0d69f9c9b8d1b3374b45bbc0f009a3eef6",
+      "dependsOn": [
+        "early_access_quote_request_ownership"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "0116d9b0f04e066c167166dcc598546e3b556cb29e3e3501c35bd3cc79458499"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_purpose_scoped_read_and_preserve_append_only_audit_history",
+        "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
+        "evidence": "Disposable Supabase PostgreSQL 17.6 replayed twice with a prior staff audit event. A correct customer owner and processing quote job each wrote one purpose-scoped event. Wrong scope, pending job, public roles and a JWT subject were denied."
+      }
     }
   ],
   "invariants": [
