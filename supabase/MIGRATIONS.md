@@ -266,3 +266,9 @@ remain explicitly deferred to an authorized staging lane. See
 | 80 | migrations/20261114025700_early_access_contact_purge_schedule.sql | Five-minute temporary contact purge; requires row 79 | PENDING (not run). Exact Git-blob SHA-256: a24ddbc9739013d93fe0ca42944b96fa9fa1a924e4998cf6eb5e32603264fef0. Disposable PostgreSQL apply-twice and pg_cron checks passed. |
 | 81 | migrations/20261114033000_early_access_quote_request_ownership.sql | Backend-only, UUID-only ownership lookup from the existing private request store; requires row 79 | PENDING (not run). Exact Git-blob SHA-256: fb54047f1dea3563772ee6ec6e9c38a1a256d55273a43ff8571bd2f8474725b8. Disposable PostgreSQL apply-twice, ownership, pagination and access-denial checks passed. |
 | 82 | migrations/20261114043300_early_access_quote_request_audit.sql | Backend-only, owner- or job-scoped quote reads with accurate audit attribution; requires row 81 | PENDING (not run). Exact Git-blob SHA-256: 0116d9b0f04e066c167166dcc598546e3b556cb29e3e3501c35bd3cc79458499. Disposable Supabase PostgreSQL 17.6 replay and audit checks passed. |
+
+## Early Access pending request operator
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 83 | migrations/20261114133500_early_access_pending_request_reader.sql | Adds a queue-only role and backend list/detail for installed Care and mixed-request schemas. Optional detail uses the existing optional-context schema when enabled. No identity assignment or activation. | PENDING (not run in managed environments). SHA-256: 94999e02049f2c4c06a55621734a38c7a1f72288ae9b91f7466315db99c5a973. Disposable PostgreSQL 16.15 replayed twice. |

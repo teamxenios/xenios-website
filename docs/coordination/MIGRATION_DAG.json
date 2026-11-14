@@ -843,6 +843,24 @@
         "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
         "evidence": "Disposable Supabase PostgreSQL 17.6 replayed twice with a prior staff audit event. A correct customer owner and processing quote job each wrote one purpose-scoped event. Wrong scope, pending job, public roles and a JWT subject were denied."
       }
+    },
+    {
+      "id": "early_access_pending_request_reader",
+      "path": "supabase/migrations/20261114133500_early_access_pending_request_reader.sql",
+      "sourceSha": "b049fad38482e042b4e203684cdbe190cc51ec6a",
+      "dependsOn": [],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "94999e02049f2c4c06a55621734a38c7a1f72288ae9b91f7466315db99c5a973"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "revoke_queue_only_grant_preserve_audit",
+        "procedure": "supabase/production/early-access-pending-reader-rollback.md",
+        "evidence": "Independent disposable PostgreSQL 16.15 applied the migration twice against the installed Care and mixed-request schemas. Checks covered synthetic queue list, detail and two audits, unrelated users, denied legacy clinical reads and immediate revocation."
+      }
     }
   ],
   "invariants": [
