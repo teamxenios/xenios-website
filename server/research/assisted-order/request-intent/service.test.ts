@@ -290,14 +290,15 @@ import { makeCatalogAdmission, type ContactAdmissionCustody } from "./catalog-ad
 describe("private version-bound admission before a catalog read",()=>{
   const qa={...viewer,actorType:"early_access_session",memberId:null,authUserId:null,earlyAccessCustomerRef:"eac-synthetic",
     earlyAccessSessionHash:"hash-A",normalizedEmail:null} as const;
-  const form={fullLegalName:"  Andre\u0301   Example  ",email:"  EXAMPLE@EXAMPLE.INVALID  "};
+  const postalAddress={line1:"12 Sample Street",city:"Austin",region:"TX",postalCode:"78701",countryCode:"US"};
+  const form={postalAddress,fullLegalName:"  Andre\u0301   Example  ",email:"  EXAMPLE@EXAMPLE.INVALID  "};
   function gate() {
     const base=setup();const store=new Map<string,{fullLegalName:string;email:string}>();
     const custody: ContactAdmissionCustody={
       present:vi.fn(async k=>store.has(JSON.stringify(k))),
       saveFirst:vi.fn(async (k,contact)=>{
         const key=JSON.stringify(k);const prev=store.get(key);
-        if(prev) return prev.fullLegalName===contact.fullLegalName&&prev.email===contact.email?"already_same":"different_contact";
+        if(prev) return JSON.stringify(prev)===JSON.stringify(contact)?"already_same":"different_contact";
         store.set(key,contact);return "committed";
       }),
     };
@@ -320,13 +321,14 @@ describe("private version-bound admission before a catalog read",()=>{
   it("normalizes facts and returns an opaque policy indicator only; duplicate is idempotent and cannot overwrite",async()=>{
     const g=gate();const {policyRevision,admitted}=await g.service.admissionStatus(qa);expect(admitted).toBe(false);
     const recorded=await g.service.recordAdmission(qa,{...form,policyRevision});expect(recorded).toEqual({admitted:true,policyRevision});
-    expect([...g.store.values()]).toEqual([{fullLegalName:"André Example",email:"example@example.invalid"}]);
+    expect([...g.store.values()]).toEqual([{fullLegalName:"André Example",email:"example@example.invalid",postalAddress}]);
     await expect(g.service.recordAdmission(qa,{...form,policyRevision})).resolves.toEqual(recorded);
     await expect(g.service.recordAdmission(qa,{...form,email:"other@example.invalid",policyRevision})).rejects.toMatchObject({status:409});
     expect((await g.service.list(qa,{})).total).toBe(2);
     expect(g.store.size).toBe(1);expect(JSON.stringify([...g.store.keys()])).not.toContain("eac-synthetic");
   });
-  it.each([{fullLegalName:" "},{email:"@example.com"},{email:"bad@@example.com"},{email:"foo\r\n@example.com"},{ownerHash:"spoof"},
+  it.each([{postalAddress:undefined},{postalAddress:{...postalAddress,region:""}},{postalAddress:{...postalAddress,line1:""}},{postalAddress:{...postalAddress,countryCode:"ZZ"}},
+    {postalAddress:{...postalAddress,notes:"extra"}},{postalAddress:{...postalAddress,line2:"A\nB"}},{fullLegalName:" "},{email:"@example.com"},{email:"bad@@example.com"},{email:"foo\r\n@example.com"},{ownerHash:"spoof"},
     {customerRef:"claimed"},{goal:"unrelated medical data"},{fullLegalName:"A".repeat(201)}])("does not write invalid or unowned fields",async(change)=>{
     const g=gate(),{policyRevision}=await g.service.admissionStatus(qa);await expect(g.service.recordAdmission(qa,{...form,policyRevision,...change})).rejects.toThrow();
     expect(g.store.size).toBe(0);
@@ -347,6 +349,13 @@ describe("private version-bound admission before a catalog read",()=>{
     const rev="a".repeat(64);for(const p of [[],[{kind:"waiver",version:"1"},{kind:"waiver",version:"2"}]]){
       vi.mocked(g.deps.legal.requiredAgreements).mockResolvedValue(p);await expect(g.service.recordAdmission(qa,{...form,policyRevision:rev})).rejects.toMatchObject({status:503});
     }expect(g.deps.catalog.list).not.toHaveBeenCalled();expect(g.store.size).toBe(0);
+  });
+  it("accepts addresses without a postal code in Hong Kong and rejects a conflicting address on retry",async()=>{
+    const g=gate(),{policyRevision}=await g.service.admissionStatus(qa);
+    const postalAddress={line1:"16 Sample Road",city:"Kowloon",countryCode:"HK"};
+    await g.service.recordAdmission(qa,{...form,policyRevision,postalAddress});
+    await expect(g.service.recordAdmission(qa,{...form,policyRevision,postalAddress:{...postalAddress,line1:"18 Sample Road"}})).rejects.toMatchObject({status:409});
+    expect(g.store.size).toBe(1);
   });
   it("missing custody adapter fails closed even with a valid current policy",async()=>{
     const b=setup();const s=new RequestIntentService({...b.deps,contactAdmission:makeCatalogAdmission(b.deps.legal,b.deps.hasher,null)});

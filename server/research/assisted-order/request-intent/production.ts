@@ -120,7 +120,7 @@ export function registerRequestIntentApi(
   }
   const legal = {requiredAgreements:async()=>legalPairs};
   const contactAdmission=admissionMode.required ? makeCatalogAdmission(legal,sha256AssistedOrderHasher,
-    admissionMode.ready ? privateContactAdmissionRpc(rpc,admissionMode.ttl) : null) : undefined;
+    admissionMode.ready ? privateContactAdmissionRpc(rpc,admissionMode.ttl) : null, admissionMode.ttl) : undefined;
   const service = new RequestIntentService({
     contactAdmission,
     // Quote-only first release: the customer list carries no amount.

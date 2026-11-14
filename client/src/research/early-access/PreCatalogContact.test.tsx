@@ -7,12 +7,75 @@ let root:ReturnType<typeof createRoot>|null=null;
 afterEach(async()=>{if(root)await act(async()=>root?.unmount());document.body.replaceChildren();vi.unstubAllGlobals();root=null;});
 function mount(){const host=document.createElement("main");document.body.append(host);root=createRoot(host);
  return {host,render:(epoch:string,api:CatalogAdmissionApi)=>act(async()=>root!.render(<PreCatalogContact api={api} sessionEpoch={epoch}><h2>Private catalog</h2></PreCatalogContact>))};}
-it("withholds children until private save succeeds; contact input is not copied to browser storage",async()=>{
- const {host,render}=mount(),api={status:vi.fn(async()=>pending),record:vi.fn(async()=>granted)};await render("first",api);
- expect(host.textContent).not.toContain("Private catalog");const f=host.querySelector("form")!;f.querySelector<HTMLInputElement>('[name=fullLegalName]')!.value="Example";
- f.querySelector<HTMLInputElement>('[name=email]')!.value="qa@example.invalid";await act(async()=>{f.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}))});
- expect(api.record).toHaveBeenCalledWith({fullLegalName:"Example",email:"qa@example.invalid",policyRevision:key},expect.anything());
- expect(host.textContent).toBe("Private catalog");expect(localStorage.length+sessionStorage.length).toBe(0);
+function field(form: HTMLFormElement, name: string) {
+  return form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+}
+async function selectCountry(form: HTMLFormElement, code: string) {
+  const select = field(form, "countryCode");
+  await act(async () => {
+    select.value = code;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+async function submit(form: HTMLFormElement) {
+  await act(async () => { form.requestSubmit(); });
+}
+function fillContact(form: HTMLFormElement) {
+  field(form, "fullLegalName").value = "Élodie Example";
+  field(form, "email").value = "qa@example.invalid";
+  field(form, "line1").value = "12 Example Lane";
+  field(form, "city").value = "Montréal";
+}
+it("saves the contact and address only on submit and clears the form after admission", async () => {
+  const { host, render } = mount();
+  const api = { status: vi.fn(async () => pending), record: vi.fn(async () => granted) };
+  await render("first", api);
+  const form = host.querySelector("form")!;
+  fillContact(form);
+  await selectCountry(form, "CA");
+  field(form, "line2").value = "Suite 2";
+  field(form, "region").value = "Québec";
+  field(form, "postalCode").value = "H1A 1A1";
+  expect(api.record).not.toHaveBeenCalled();
+  expect(host.textContent).not.toContain("Private catalog");
+  await submit(form);
+  expect(api.record).toHaveBeenCalledWith({
+    fullLegalName: "Élodie Example", email: "qa@example.invalid", policyRevision: key,
+    postalAddress: { line1: "12 Example Lane", line2: "Suite 2", city: "Montréal", region: "Québec",
+      postalCode: "H1A 1A1", countryCode: "CA" },
+  }, expect.anything());
+  expect(host.textContent).toBe("Private catalog");
+  expect(host.querySelector("form")).toBeNull();
+  expect(localStorage.length + sessionStorage.length).toBe(0);
+});
+it("requires basic address fields and updates region and postal requirements when the country changes", async () => {
+  const { host, render } = mount();
+  const api = { status: vi.fn(async () => pending), record: vi.fn(async () => granted) };
+  await render("guest", api);
+  const form = host.querySelector("form")!;
+  fillContact(form);
+  expect(field(form, "countryCode").validity.valueMissing).toBe(true);
+  for (const country of ["US", "CA"]) {
+    await selectCountry(form, country);
+    expect(field(form, "postalCode").validity.valueMissing).toBe(true);
+    expect(field(form, "region").validity.valueMissing).toBe(true);
+    await submit(form);
+  }
+  await selectCountry(form, "HK");
+  field(form, "line1").value = "   ";
+  expect(field(form, "line1").validity.patternMismatch).toBe(true);
+  await submit(form);
+  field(form, "line1").value = "8 Example Road";
+  field(form, "city").value = "";
+  expect(field(form, "city").validity.valueMissing).toBe(true);
+  await submit(form);
+  expect(api.record).not.toHaveBeenCalled();
+  field(form, "city").value = "香港";
+  await submit(form);
+  expect(api.record.mock.calls[0]).toEqual([{
+    fullLegalName: "Élodie Example", email: "qa@example.invalid", policyRevision: key,
+    postalAddress: { line1: "8 Example Road", city: "香港", countryCode: "HK" },
+  }, expect.anything()]);
 });
 it("a superseded visitor's slow read does not unlock the new visitor on a shared device",async()=>{
  const {host,render}=mount();let resolve!: (v:CatalogAdmissionView)=>void;
@@ -26,20 +89,20 @@ it("a temporarily unavailable custodian offers a status retry and no catalog",as
  expect(host.querySelector("form")).not.toBeNull();expect(host.textContent).not.toContain("Private catalog");
 });
 
-it("displays the approved contact notice before the fields only on isolated staging", async () => {
+it("shows the access record lifetime from the server and distinguishes the later quote request", async () => {
   const { host, render } = mount();
-  const api = { status: vi.fn(async () => pending), record: vi.fn() };
-  vi.stubGlobal("location", new URL("https://xenios-research-staging.onrender.com/earlyaccess"));
-  await render("visitor", api);
-  const form = host.querySelector("form")!;
-  const notice = form.querySelector("#staging-catalog-contact-notice")!;
-  expect(form.getAttribute("aria-describedby")).toBe(notice.id);
-  expect(notice.nextElementSibling?.querySelector("input")?.name).toBe("fullLegalName");
-  expect(notice.textContent).toMatch(/two hours[\s\S]*five minutes[\s\S]*stored separately/);
-  expect(api.record).not.toHaveBeenCalled();
-
-  vi.stubGlobal("location", new URL("https://xeniostechnology.com/earlyaccess"));
-  await render("visitor", api);
-  expect(form.querySelector("#staging-catalog-contact-notice")).toBeNull();
-  expect(form.hasAttribute("aria-describedby")).toBe(false);
+  const record = vi.fn();
+  async function notice(retentionSeconds?: number) {
+    await render("guest", { status: async () => ({ ...pending, retentionSeconds }), record });
+    const form = host.querySelector("form")!;
+    const text = document.getElementById(form.getAttribute("aria-describedby")!)!;
+    expect(text.compareDocumentPosition(form.querySelector("input")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    return text.textContent;
+  }
+  expect(await notice(7200)).toMatch(/postal address[\s\S]*temporary access record[\s\S]*two hours[\s\S]*five minutes[\s\S]*stored separately/);
+  expect(await notice(900)).toContain("15 minutes");
+  expect(await notice(91)).toContain("91 seconds");
+  expect(await notice()).not.toMatch(/expires after|five minutes/);
+  expect(await notice(0)).not.toMatch(/expires after|five minutes/);
+  expect(record).not.toHaveBeenCalled();
 });

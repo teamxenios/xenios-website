@@ -13,15 +13,30 @@ export function createCatalogAdmissionApi(
       method: body ? "POST" : "GET", credentials: "include", cache: "no-store", signal,
       headers: { accept: "application/json", ...(token ? { Authorization: "Bearer " + token } : {}),
         ...(body ? { "content-type": "application/json" } : {}) },
-      ...(body ? { body: JSON.stringify({fullLegalName:body.fullLegalName,email:body.email,policyRevision:body.policyRevision}) } : {}),
+      ...(body ? { body: JSON.stringify({
+        fullLegalName: body.fullLegalName,
+        email: body.email,
+        postalAddress: {
+          line1: body.postalAddress.line1,
+          line2: body.postalAddress.line2,
+          city: body.postalAddress.city,
+          region: body.postalAddress.region,
+          postalCode: body.postalAddress.postalCode,
+          countryCode: body.postalAddress.countryCode,
+        },
+        policyRevision: body.policyRevision,
+      }) } : {}),
     });
     if (!response.ok) throw new Error("Catalog access could not be confirmed.");
     const result: unknown = await response.json();
     if (!result || typeof result !== "object" || Array.isArray(result)) throw new Error("Catalog access could not be confirmed.");
-    const {admitted, policyRevision} = result as Partial<CatalogAdmissionView>;
+    const {admitted, policyRevision, retentionSeconds} = result as Partial<CatalogAdmissionView>;
     if (typeof admitted !== "boolean" || typeof policyRevision !== "string" || !/^[a-f0-9]{64}$/.test(policyRevision))
       throw new Error("Catalog access could not be confirmed.");
-    return {admitted,policyRevision};
+    return {
+      admitted, policyRevision,
+      ...(typeof retentionSeconds === "number" && { retentionSeconds }),
+    };
   }
   return {status: signal => call(signal),record: (body,signal) => call(signal,body)};
 }

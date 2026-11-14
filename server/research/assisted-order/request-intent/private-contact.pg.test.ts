@@ -26,10 +26,12 @@ import { createDurableJourneyFixture, pg16It } from "./durable-journey.pg.fixtur
 
 const CANDIDATE = "server/research/assisted-order/request-intent/private-contact.candidate.sql";
 const CANDIDATE_SHA256 = "1cb77c07dc5126b6b5bccc210994a3094877b9c6e4d75db9387f1fb5a7246103";
+const POSTAL_MIGRATION = "supabase/migrations/20261114133643_early_access_postal_admission.sql";
 const RETENTION_SECONDS = 600;
 const hex = (text: string) => createHash("sha256").update(text).digest("hex");
 const key = (owner: string, policy = "policy-1") => ({ ownerBinding: hex("owner:" + owner), policyRevision: hex(policy) });
-const contact = { fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid" } as const;
+const contact = { fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid",
+  postalAddress: { line1: "1 Test Avenue", city: "Example City", region: "TX", postalCode: "00000", countryCode: "US" } } as const;
 
 describe("name and email before the catalog, before and after the private contact candidate", () => {
   pg16It("stores one contact per viewer and policy, expires it, and keeps it private", async () => {
@@ -51,8 +53,8 @@ describe("name and email before the catalog, before and after the private contac
       await expect(custody.present(a)).rejects.toThrow("private_contact_unavailable");
       await expect(custody.saveFirst(a, contact)).rejects.toThrow("private_contact_unavailable");
       expect(database.errors).toEqual([
-        { name: "request_intent_catalog_contact_has", code: "42883" },
-        { name: "request_intent_catalog_contact_put", code: "42883" },
+        { name: "request_intent_catalog_address_has", code: "42883" },
+        { name: "request_intent_catalog_address_put", code: "42883" },
       ]);
       expect((await sql("select to_regclass('request_intent_private.catalog_contact_admission') as t")).rows[0].t).toBeNull();
 
@@ -60,6 +62,22 @@ describe("name and email before the catalog, before and after the private contac
       const candidate = readFileSync(resolve(process.cwd(), CANDIDATE));
       expect(createHash("sha256").update(candidate).digest("hex")).toBe(CANDIDATE_SHA256);
       await sql(candidate.toString("utf8"));
+      // Address-aware reads stay closed on the original name/email schema.
+      await expect(custody.present(a)).rejects.toThrow("private_contact_unavailable");
+      const postalMigration = readFileSync(resolve(process.cwd(), POSTAL_MIGRATION), "utf8");
+      for (const statement of [
+        ["request_intent_catalog_contact_put($1,$2,$3,$4,$5)", [key("legacy").ownerBinding, a.policyRevision, "Legacy Customer", "legacy@example.invalid", RETENTION_SECONDS]],
+        ["request_intent_catalog_contact_has($1,$2)", [key("legacy").ownerBinding, a.policyRevision]],
+      ] as const) {
+        await asRole("service_role", "select public." + statement[0], [...statement[1]]);
+      }
+      await sql(postalMigration);
+      // The running release's name/email record survives rollout but grants no access through the postal API.
+      expect((await asRole("service_role", "select public.request_intent_catalog_contact_has($1,$2) as ok",
+        [key("legacy").ownerBinding, a.policyRevision])).rows[0].ok).toBe(true);
+      expect(await custody.present(key("legacy"))).toBe(false);
+      await sql("update request_intent_private.catalog_contact_admission set expires_at=clock_timestamp()-interval '1 second' where owner_binding=$1", [key("legacy").ownerBinding]);
+      await sql("select request_intent_private.purge_expired_contact_admissions(1000)");
       expect(await rows()).toEqual([]);
       expect(await custody.present(a)).toBe(false);
 
@@ -88,11 +106,26 @@ describe("name and email before the catalog, before and after the private contac
       expect(await custody.saveFirst(a, { ...contact, fullLegalName: "Other Name" })).toBe("different_contact");
       expect((await rows()).map((row) => row.email)).toEqual([contact.email]);
 
+      const addressRecord = "select owner_binding, policy_revision, postal_address, expires_at from request_intent_private.catalog_contact_admission where owner_binding=$1";
+      const original = (await sql(addressRecord, [a.ownerBinding])).rows;
+      await sql(postalMigration);
+      expect((await sql(addressRecord, [a.ownerBinding])).rows).toEqual(original);
+      // Simulate code rollback using the old deployed RPC signature; it cannot erase the saved address.
+      expect((await asRole("service_role", "select public.request_intent_catalog_contact_put($1,$2,$3,$4,$5) as outcome",
+        [a.ownerBinding, a.policyRevision, contact.fullLegalName, contact.email, RETENTION_SECONDS])).rows[0].outcome).toBe("already_same");
+      expect((await sql(addressRecord, [a.ownerBinding])).rows).toEqual(original);
+
+      // A different address cannot overwrite a live admission.
+      expect(await custody.saveFirst(a, { ...contact, postalAddress: { ...contact.postalAddress, city: "Another City" } }))
+        .toBe("different_contact");
+      expect((await sql("select postal_address from request_intent_private.catalog_contact_admission where owner_binding=$1", [a.ownerBinding])).rows[0].postal_address)
+        .toEqual(contact.postalAddress);
+
       // Two simultaneous first saves for one key: exactly one contact is stored.
       const c = key("c");
       const raced = await Promise.all([
-        custody.saveFirst(c, { fullLegalName: "Racer One", email: "one@example.invalid" }),
-        custody.saveFirst(c, { fullLegalName: "Racer Two", email: "two@example.invalid" }),
+        custody.saveFirst(c, { ...contact, fullLegalName: "Racer One", email: "one@example.invalid" }),
+        custody.saveFirst(c, { ...contact, fullLegalName: "Racer Two", email: "two@example.invalid" }),
       ]);
       expect([...raced].sort()).toEqual(["committed", "different_contact"]);
       expect((await sql("select count(*)::int as n from request_intent_private.catalog_contact_admission where owner_binding = $1",
@@ -138,7 +171,15 @@ describe("name and email before the catalog, before and after the private contac
       ] as const) {
         const errorsBefore = database.errors.length;
         await expect(custody.saveFirst(k, facts), name).rejects.toThrow("private_contact_unavailable");
-        expect(database.errors.slice(errorsBefore), name).toEqual([{ name: "request_intent_catalog_contact_put", code: "22023" }]);
+        expect(database.errors.slice(errorsBefore), name).toEqual([{ name: "request_intent_catalog_address_put", code: "22023" }]);
+      }
+      for (const postalAddress of [
+        null, { ...contact.postalAddress, postalCode: "" }, { ...contact.postalAddress, line1: "X".repeat(201) },
+        { ...contact.postalAddress, region: null }, { ...contact.postalAddress, extra: "unexpected" },
+      ]) {
+        await expect(asRole("service_role", "select public.request_intent_catalog_address_put($1,$2,$3,$4,$5::jsonb,$6)",
+          [d.ownerBinding, d.policyRevision, contact.fullLegalName, contact.email, JSON.stringify(postalAddress), RETENTION_SECONDS]))
+          .rejects.toMatchObject({ code: "22023" });
       }
       // Retention outside 60 seconds to one day: the adapter will not start, and the function refuses it too.
       expect(() => privateContactAdmissionRpc(database.client, 59)).toThrow("private_contact_retention_required");
@@ -167,6 +208,10 @@ describe("name and email before the catalog, before and after the private contac
         "request_intent_private.contact_admission_put(text,text,text,text,integer)",
         "public.request_intent_catalog_contact_has(text,text)",
         "public.request_intent_catalog_contact_put(text,text,text,text,integer)",
+        "request_intent_private.catalog_address_has(text,text)",
+        "request_intent_private.catalog_address_put(text,text,text,text,jsonb,integer)",
+        "public.request_intent_catalog_address_has(text,text)",
+        "public.request_intent_catalog_address_put(text,text,text,text,jsonb,integer)",
       ]) {
         expect(await may("anon", signature), signature).toBe(false);
         expect(await may("authenticated", signature), signature).toBe(false);

@@ -192,6 +192,23 @@ export function createDurableJourneyFixture() {
             text = "select public.request_intent_catalog_contact_put($1::text,$2::text,$3::text,$4::text,$5::integer) as value";
             values = [args.p_owner_binding, args.p_policy_revision, args.p_full_legal_name, args.p_email, args.p_ttl_seconds];
             break;
+          case "request_intent_catalog_address_has":
+            text = "select public.request_intent_catalog_address_has($1::text,$2::text) as value";
+            values = [args.p_owner_binding, args.p_policy_revision];
+            break;
+          case "request_intent_catalog_address_put":
+            text = "select public.request_intent_catalog_address_put($1::text,$2::text,$3::text,$4::text,$5::jsonb,$6::integer) as value";
+            values = [args.p_owner_binding, args.p_policy_revision, args.p_full_legal_name, args.p_email,
+              JSON.stringify(args.p_postal_address), args.p_ttl_seconds];
+            break;
+          case "request_intent_operator_list":
+            text = "select public.request_intent_operator_list($1::uuid,$2::integer) as value";
+            values = [args.p_actor_user_id, args.p_page];
+            break;
+          case "request_intent_operator_get":
+            text = "select public.request_intent_operator_get($1::uuid,$2::uuid,$3::boolean) as value";
+            values = [args.p_request_id, args.p_actor_user_id, args.p_include_context];
+            break;
           case "request_intent_staff_list":
             text = "select public.request_intent_staff_list($1::uuid,$2::integer) as value";
             values = [args.p_actor_user_id, args.p_page];
@@ -222,7 +239,8 @@ export function createDurableJourneyFixture() {
   }
 
   function application(rpc: SupabaseRpcClient, dependenciesClosed = false,
-    legalAgreement = { kind: "fixture-terms", version: dependenciesClosed ? "fixture-v2" : "fixture-v1" }) {
+    legalAgreement = { kind: "fixture-terms", version: dependenciesClosed ? "fixture-v2" : "fixture-v1" },
+    overrides: Readonly<{ env?: NodeJS.ProcessEnv; resolvePrincipal?: CareAccessDependencies["resolvePrincipal"] }> = {}) {
     const rows = [offering(1, true), offering(2, false)];
     const select = vi.fn(async (query: { page?: number; pageSize?: number }) => {
       if (dependenciesClosed) throw new Error("Replay must not re-resolve the catalog");
@@ -239,7 +257,7 @@ export function createDurableJourneyFixture() {
     const env: NodeJS.ProcessEnv = {
       SITE_URL: ORIGIN, RESEARCH_REQUEST_INTENT_ENABLED: "true",
       RESEARCH_REQUEST_INTENT_STAFF_READ_ENABLED: "true",
-      CARE_ENABLED: "false", CARE_ENABLE_APPROVED: "false",
+      CARE_ENABLED: "false", CARE_ENABLE_APPROVED: "false", ...overrides.env,
     };
     const wiring: AssistedOrderProductionWiring = {
       env, requiredAgreements: [legalAgreement],
@@ -258,10 +276,10 @@ export function createDurableJourneyFixture() {
       })),
       // These stand in for previously verified principals, not browser role
       // claims. Keep the operator snapshot stale for the SQL revocation probe.
-      resolvePrincipal: async (req) => req.get("x-fixture-staff") === "operator"
+      resolvePrincipal: overrides.resolvePrincipal ?? (async (req) => req.get("x-fixture-staff") === "operator"
         ? { subjectId: OPERATOR, roles: ["clinical_admin"] }
         : req.get("x-fixture-staff") === "research"
-          ? { subjectId: OTHER_ACTOR, roles: ["research_admin"] } : null,
+          ? { subjectId: OTHER_ACTOR, roles: ["research_admin"] } : null),
       recordAccessDecision: vi.fn(async () => undefined),
     };
     const app = express();
@@ -290,7 +308,7 @@ export function createDurableJourneyFixture() {
     "(select count(*)::int from request_intent_private.access_events) as events",
   ].join("\n"))).rows[0];
 
-  async function start({ dockerOnly = false } = {}) {
+  async function start({ dockerOnly = false, managedCareSchema = false } = {}) {
     if (!dockerOnly && !process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
       native=await ownedPg16(process.env.XENIOS_TEST_LOCAL_PG16_BIN,password);
       created=true;port=native.port;
@@ -323,14 +341,21 @@ export function createDurableJourneyFixture() {
       "create schema auth;",
       "create function auth.uid() returns uuid language sql stable as $$",
       " select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;",
-      "create table public.care_role_assignments (user_id uuid not null, role text not null, revoked_at timestamptz);",
-      "create table public.care_capabilities (capability_key text primary key, state text not null, approved_by uuid, approved_at timestamptz);",
       "grant usage on schema public,auth to anon,authenticated,service_role;",
     ].join("\n"));
-    await sql("insert into public.care_role_assignments(user_id,role) values ($1::uuid,'clinical_admin'),($2::uuid,'research_admin')",
-      [OPERATOR, OTHER_ACTOR]);
-    await sql("insert into public.care_capabilities values ('request_intent_pending_read','enabled',$1::uuid,now()),('care','disabled',null,null)",
+    if (managedCareSchema) {
+      await sql("create table auth.users(id uuid primary key)");
+      await sql("insert into auth.users(id) values ($1),($2)", [OPERATOR, OTHER_ACTOR]);
+      await sql(readFileSync(resolve(ROOT, "supabase/care-access-foundation.sql"), "utf8"));
+      await sql("insert into public.care_capabilities(capability_key,state,approved_by,approved_at) values ('request_intent_pending_read','enabled',$1,now())", [OPERATOR]);
+    } else {
+      await sql("create table public.care_role_assignments (user_id uuid not null, role text not null, revoked_at timestamptz)");
+      await sql("create table public.care_capabilities (capability_key text primary key, state text not null, approved_by uuid, approved_at timestamptz)");
+      await sql("insert into public.care_role_assignments(user_id,role) values ($1::uuid,'clinical_admin'),($2::uuid,'research_admin')",
+        [OPERATOR, OTHER_ACTOR]);
+      await sql("insert into public.care_capabilities values ('request_intent_pending_read','enabled',$1::uuid,now()),('care','disabled',null,null)",
       [OPERATOR]);
+    }
 
     // Load the unchanged canonical limiter statements, not a fake allow RPC.
     // The other referral tables in that file are unrelated to this fixture.

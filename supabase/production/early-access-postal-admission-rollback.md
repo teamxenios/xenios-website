@@ -1,0 +1,5 @@
+# Postal intake rollout and rollback
+
+Apply the existing contact-admission schema and its approved purge schedule before the additive postal migration. Verify the five-minute job, then deploy the application with required contact admission and the two-hour retention setting. Keep the customer entrypoint on the same request-intent route. A pre-upgrade name/email record cannot admit someone through the postal gate. The old server can continue to run against the expanded schema during rollout.
+
+To roll back the postal requirement, restore the previous application version and its approved intake settings. Keep the new nullable field and private functions in place while any new-version process is running. Leave the scheduled purge active: it removes the entire temporary record, including the postal address. Existing submitted requests and quotes have their own storage and retention. No backfill or change to their addresses is required. Verify the previous intake on a synthetic guest and the next successful purge.
