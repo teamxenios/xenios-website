@@ -1055,6 +1055,7 @@ async function composeAssistedOrderBridge(): Promise<
           customerRefsForHistory: quoteBindings.customerRefsForHistory.bind(quoteBindings),
         },
         clearance: null,
+        quoteRequests: null,
       },
     );
   } else {
