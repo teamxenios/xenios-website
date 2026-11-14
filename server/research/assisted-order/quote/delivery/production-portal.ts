@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Express, Request, RequestHandler } from "express";
 import type pg from "pg";
 import { registerPrivateQuoteDispatch } from "../../../outbox";
@@ -273,9 +274,9 @@ export function quoteDirectoryHits(transact: Transact, tenant: string) {
 }
 
 /** Exact-email lookup with the same query shape as the access inspection directory. */
-export function researchMembersByEmail(db: {
-  from(table: "research_members"): { select(columns: string): { eq(column: "email", value: string): { limit(n: number): PromiseLike<{ data: unknown; error: unknown }> } } };
-}) {
+// Typed as the concrete client so a call with getSupabaseAdmin() does not make
+// the compiler expand the client's generics against a structural shape.
+export function researchMembersByEmail(db: SupabaseClient) {
   return async (email: string): Promise<readonly MemberRow[]> => {
     const { data, error } = await db.from("research_members").select("id,email,auth_user_id,status").eq("email", email).limit(2);
     if (error || !Array.isArray(data)) throw Error("Member directory unavailable.");
