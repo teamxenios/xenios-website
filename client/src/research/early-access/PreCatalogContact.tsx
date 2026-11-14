@@ -142,12 +142,13 @@ const hasText = ".*\\S.*";
 
 function expiryNotice(seconds?: number) {
   if (seconds === undefined || !Number.isInteger(seconds) || seconds < 60 || seconds > 86400) return "";
+  // The privacy owner's approved wording for the production setting (two hours, five-minute cleanup).
   if (seconds === 7200) {
-    return " This record expires after two hours. Cleanup of expired records is scheduled every five minutes.";
+    return " Your catalog access expires after two hours. We run a cleanup every five minutes to remove expired access records.";
   }
   const minutes = seconds / 60;
-  if (Number.isInteger(minutes)) return ` This record expires after ${minutes} minute${minutes === 1 ? "" : "s"}.`;
-  return ` This record expires after ${seconds} seconds.`;
+  if (Number.isInteger(minutes)) return ` Your catalog access expires after ${minutes} minute${minutes === 1 ? "" : "s"}.`;
+  return ` Your catalog access expires after ${seconds} seconds.`;
 }
 
 function ContactForm({ saving, retentionSeconds, onSubmit }: {
@@ -164,10 +165,9 @@ function ContactForm({ saving, retentionSeconds, onSubmit }: {
       aria-label="Contact information for catalog access" aria-describedby={noticeId} aria-busy={saving}>
       <h2>Before you view the catalog</h2>
       <p id={noticeId}>
-        We use your name, email and postal address to give you catalog access. Selecting “View catalog”
-        saves these details in a temporary access record.
+        We use your name, work email and postal address to give you access to the Early Access catalog.
         {expiryNotice(retentionSeconds)}
-        {" "}If you submit a quote request later, you can review and edit your contact and delivery details. The details you submit are stored separately with the request.
+        {" "}If you submit a request, we keep the request and any resulting quote separately so our team can respond.
       </p>
       <div className="xenios-order-grid">
         <label>Full name
