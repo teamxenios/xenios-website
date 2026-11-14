@@ -168,12 +168,18 @@ test('unsafe or malformed configured portal origins disable the controlled sende
  }
 });
 test('private HTML uses verified session, no-store, escaped labels and no staff basis; CSRF refusal',async t=>{
- const f=fixture(t);await f.desk.issue(viewer(),request());
+ const f=fixture(t);
+ const reference=f.source.intent.publicReference;
+ f.source.binding.publicReference=reference;
+ await f.desk.issue(viewer(),request());
  const handlers={};const router={get:(r,h)=>handlers.get=h,post:(r,h)=>handlers.post=h};
  const res={set(h){this.headers=h;return this;},type(){return this;},status(s){this.statusCode=s;return this;},send(v){this.body=v;return this;},json(v){this.body=v;return this;}};
  attachPrivateQuotePortal(router,{desk:f.desk,customerPrincipal:async()=>customer(),ownedRequests:async()=>[{xriId:xri,seller:s,sellerLabel:'Example',requestLineCount:2}],staffPrincipal:async()=>viewer(),csrfChecked:async()=>false});
  await handlers.get({},res);assert.equal(res.statusCode,200);assert.match(res.headers['Cache-Control'],/no-store/);assert.match(res.body,/\$25\.50/);
  assert.match(res.body,/partial quote/);assert.match(res.body,/&lt;script&gt;/);assert.doesNotMatch(res.body,/private-base|<script>/);
+ const heading = res.body.match(/<h2>(.*?)<\/h2>/)[1];
+ const groups = reference.slice(4).match(/.{8}/g);
+ assert.equal(heading, 'Quote XRI-' + groups.join('<wbr>') + ' · version 1');
  await handlers.post({body:request()},res);assert.equal(res.statusCode,403);
 });
 test('postgres port locks by request, rolls back failure and releases dedicated connection once',async()=>{

@@ -9,13 +9,18 @@ const headers={'Cache-Control':'private, no-store, max-age=0','Referrer-Policy':
  'Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
  'X-Content-Type-Options':'nosniff','X-Robots-Tag':'noindex, nofollow, noarchive','Vary':'Cookie, Authorization'};
 function frame(title,body){return '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+title+'</title><main><h1>'+title+'</h1>'+body+'</main></html>';}
+function renderReference(reference) {
+  // Let long identifiers wrap without adding characters to the copied reference.
+  return escape(reference).replace(/^(XRI-)([A-F0-9]{32})$/, (_, prefix, hex) =>
+    prefix + hex.match(/.{8}/g).join('<wbr>'));
+}
 function render(records){
   let total=0;
   const sections=records.map(({sellerLabel,quote:q,partial})=>{
     total++;
     if(q.state!=='issued'||q.currency!=='USD'||!Number.isSafeInteger(q.totalCents)||!Array.isArray(q.lines))throw Error('Quote unavailable.');
     const items=q.lines.map(l=>'<li>'+escape(l.productName)+' — '+(l.specification?escape(l.specification)+'; ':'')+'quantity '+escape(l.quantity)+' × '+escape(dollars(l.unitPriceCents))+' = '+escape(dollars(l.lineTotalCents))+'</li>').join('');
-    return '<section><h2>Quote '+escape(q.requestPublicReference)+' · version '+escape(q.version)+'</h2><p>Seller: '+escape(sellerLabel)+'</p><p>'+
+    return '<section><h2>Quote '+renderReference(q.requestPublicReference)+' · version '+escape(q.version)+'</h2><p>Seller: '+escape(sellerLabel)+'</p><p>'+
       (partial?'This is a partial quote. Only the items listed here are covered.':'Only the items listed below are covered.')+
       '</p><ul>'+items+'</ul><p><strong>Total: '+escape(dollars(q.totalCents))+'</strong></p><p>Expires (UTC): '+escape(q.validUntil)+'</p></section>';
   }).join('');
