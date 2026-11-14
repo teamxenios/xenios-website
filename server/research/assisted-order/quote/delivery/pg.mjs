@@ -25,11 +25,25 @@ export function pgTransactions(pool,{assumeStagingRuntimeRole=false,runtimeRole=
              WHERE runtime.rolname = current_user AND runtime.rolname = $1
                AND NOT runtime.rolsuper AND NOT runtime.rolbypassrls
                AND NOT runtime.rolcanlogin AND NOT runtime.rolinherit
+               AND NOT runtime.rolcreaterole AND NOT runtime.rolcreatedb AND NOT runtime.rolreplication
                AND login.rolname = session_user AND login.rolname = $2 AND login.rolcanlogin
-               AND NOT login.rolsuper AND NOT login.rolbypassrls
+               AND NOT login.rolsuper AND NOT login.rolbypassrls AND NOT login.rolinherit
+               AND NOT login.rolcreaterole AND NOT login.rolcreatedb AND NOT login.rolreplication
                -- rolinherit is only the default for new grants (PG16+); a grant made
                -- WITH INHERIT TRUE still passes privileges, so the runtime role must hold none.
                AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m WHERE m.member = runtime.oid)
+               -- The login's one membership is SET-only on the runtime role: no admin,
+               -- no inheritance, and no other role it could assume or inherit.
+               AND (SELECT count(*) FROM pg_catalog.pg_auth_members AS m WHERE m.member = login.oid) = 1
+               AND EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m
+                 WHERE m.member = login.oid AND m.roleid = runtime.oid
+                   AND m.set_option AND NOT m.inherit_option AND NOT m.admin_option)
+               -- No other member may assume or inherit either role. A managed provider's
+               -- admin-only grant to the creating role (no SET, no INHERIT) is allowed.
+               AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m
+                 WHERE m.roleid = runtime.oid AND m.member <> login.oid AND (m.set_option OR m.inherit_option))
+               AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m
+                 WHERE m.roleid = login.oid AND (m.set_option OR m.inherit_option))
            ) AS restricted`,[restricted.runtime,restricted.login]);
         if(check.rows[0]?.restricted!==true)throw Error('Restricted quote connection required.');
         await client.query("SET LOCAL statement_timeout = '5s'");
