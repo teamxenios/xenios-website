@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useContext, useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { validateAddress, type AssistedOrderCatalogSort, type AssistedOrderContactInput } from "../../../../shared/research/assisted-order/contract";
 import {
@@ -26,6 +26,7 @@ import { catalogPresentationLabel } from "../master-offerings/catalog-presentati
 import "./assisted-order.css";
 import { EARLY_ACCESS_REQUEST_CTA, finalRequestActionLabel } from "../early-access/request-experience-copy";
 import { PersistentRequestBar } from "./PersistentRequestBar";
+import { CatalogContactDraftContext, type CatalogContactDraft } from "../early-access/PreCatalogContact";
 
 import { REQUEST_GOALS, normalizeOptionalIntake, type RequestGoal } from "../../../../shared/research/assisted-order/optional-intake";
 
@@ -170,14 +171,18 @@ export function RequestIntentForm(props: RequestIntentFormProps) {
   // "Start another request" remounts the session, so every selection, contact
   // draft, acknowledgment and frozen attempt of the confirmed request is gone.
   const [generation, setGeneration] = useState(0);
+  const admissionContact = useContext(CatalogContactDraftContext);
   return <RequestIntentFormSession key={generation} {...props} focusHeadingOnMount={generation > 0}
+    admissionContact={generation === 0 ? admissionContact : null}
     onStartAnother={() => setGeneration((value) => value + 1)} />;
 }
 
 function RequestIntentFormSession({
   api = defaultApi, storage = browserStorage(), embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt,
-  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired,
-}: RequestIntentFormProps & Readonly<{ onStartAnother: () => void; focusHeadingOnMount?: boolean }>) {
+  ownerKey = "unscoped", onStartAnother, focusHeadingOnMount = false, onAgreementStandingRequired, admissionContact,
+}: RequestIntentFormProps & Readonly<{
+  onStartAnother: () => void; focusHeadingOnMount?: boolean; admissionContact: CatalogContactDraft | null;
+}>) {
   // Only the public guest mount has non-sticky chrome. Member shells retain their
   // current layout and own sticky-header behavior.
   const compactGuestCatalog = embedded && ownerKey === "early-access-session";
@@ -473,7 +478,7 @@ function RequestIntentFormSession({
   }
   const contactValue = (name: string, fallback: string) => String(contactDraft?.get(name) ?? fallback);
   const addressFields = (prefix: "shipping" | "billing", label: string) => {
-    const address = prefix === "shipping" ? contact?.shippingAddress : contact?.billingAddress;
+    const address = prefix === "shipping" ? contact?.shippingAddress ?? admissionContact?.postalAddress : contact?.billingAddress;
     return <fieldset className="xenios-order-grid">
     <legend>{label}</legend>
     {([["Line1", "line1", "Street address"], ["Line2", "line2", "Apartment or suite (optional)"], ["City", "city", "City"],
@@ -732,8 +737,9 @@ function RequestIntentFormSession({
     </>}
     {step === "contact" && <form id={contactFormId} onSubmit={captureContact}>
       <h2 ref={contactHeading} tabIndex={-1}>Contact details</h2>
-      <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} defaultValue={contactValue("name", contact?.fullLegalName ?? "")} /></label>
-        <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} defaultValue={contactValue("email", contact?.email ?? "")} /></label>
+      {admissionContact && <p>Review the details from your catalog access form. You can edit them before sending your request.</p>}
+      <div className="xenios-order-grid"><label>Full legal name<input name="name" required autoComplete="name" maxLength={200} defaultValue={contactValue("name", contact?.fullLegalName ?? admissionContact?.fullLegalName ?? "")} /></label>
+        <label>Email<input name="email" type="email" required autoComplete="email" maxLength={320} defaultValue={contactValue("email", contact?.email ?? admissionContact?.email ?? "")} /></label>
         <label>Phone<input name="phone" type="tel" required autoComplete="tel" maxLength={50} defaultValue={contactValue("phone", contact?.mobilePhone ?? "")} /></label></div>
       {addressFields("shipping", "Delivery address")}
       <label className="xenios-order-check"><input type="checkbox" checked={billingSame} onChange={(event) => {

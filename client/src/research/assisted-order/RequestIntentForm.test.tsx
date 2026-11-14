@@ -8,6 +8,7 @@ import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
 import { RequestIntentForm } from "./RequestIntentForm";
+import { BoundCatalogAdmission } from "../early-access/BoundCatalogAdmission";
 import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
 import { RequestIntentService, type CreateIntent, type StoredIntent } from "../../../../server/research/assisted-order/request-intent/service";
@@ -178,6 +179,64 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
   expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
+  it("prefills editable request details only after the same owner submits the access form", async () => {
+    const api = makeApi();
+    let status = { admitted: false, policyRevision: "a".repeat(64) };
+    const admission = { status: async () => status, record: async () => (status = { ...status, admitted: true }) };
+    const input = (name: string) => host.querySelector<HTMLInputElement>(`input[name="${name}"]`)!;
+    const openDetails = async () => {
+      const add = host.querySelector<HTMLButtonElement>('button[aria-label^="Add to quote cart: Synthetic research"]');
+      expect(add).toBeTruthy();
+      await act(async () => add!.click());
+      await click("Continue to details");
+    };
+    await act(async () => root.render(<BoundCatalogAdmission api={admission}>
+      <RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey="early-access-session" />
+    </BoundCatalogAdmission>));
+    const gate = host.querySelector("form")!;
+    for (const [name, value] of Object.entries({
+      fullLegalName: "Synthetic Person", email: "qa@example.invalid", line1: "1 Example St",
+      line2: "Unit 2", city: "Montréal", region: "QC", postalCode: "H1A 1A1",
+    })) await type(input(name), value);
+    const country = gate.querySelector("select")!;
+    await act(async () => { country.value = "CA"; country.dispatchEvent(new Event("change", { bubbles: true })); });
+    await act(async () => gate.requestSubmit());
+    await openDetails();
+    expect(input("name").value).toBe("Synthetic Person");
+    expect(input("email").value).toBe("qa@example.invalid");
+    expect(input("shippingLine1").value).toBe("1 Example St");
+    expect(input("shippingLine2").value).toBe("Unit 2");
+    expect(input("shippingCity").value).toBe("Montréal");
+    expect(input("shippingRegion").value).toBe("QC");
+    expect(input("shippingPostalCode").value).toBe("H1A 1A1");
+    expect(input("shippingCountryCode").value).toBe("CA");
+    expect(input("age").checked).toBe(false);
+    expect(input("phone").value).toBe("");
+    await type(input("shippingLine1"), "2 Example St");
+    await type(input("phone"), "+15555550123");
+    await act(async () => input("age").click());
+    await act(async () => host.querySelector("form")!.requestSubmit());
+    const confirmations = [...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")];
+    expect(confirmations.length).toBeGreaterThan(0);
+    expect(confirmations.every(box => !box.checked)).toBe(true);
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(localStorage.length + sessionStorage.length).toBe(0);
+    for (const box of confirmations) await act(async () => box.click());
+    await click("Request a quote");
+    const submitted = api.submit.mock.calls[0][0];
+    expect(submitted.contact.shippingAddress.line1).toBe("2 Example St");
+    expect(JSON.stringify(submitted)).not.toContain("1 Example St");
+
+    // A status-only response for an admitted successor owner cannot supply the old address.
+    status = { admitted: true, policyRevision: "b".repeat(64) };
+    await act(async () => { window.dispatchEvent(new Event("pageshow")); });
+    await openDetails();
+    expect(input("name").value).toBe("");
+    expect(input("email").value).toBe("");
+    expect(input("shippingLine1").value).toBe("");
+    expect(input("age").checked).toBe(false);
+  });
+
   it("lets a guest return to the real search and paging tools without submitting a request", async () => {
     const api = makeApi();
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}

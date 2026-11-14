@@ -10,7 +10,7 @@ import { registerRequestIntentApi, requestIntentOrigin } from "./production";
 const root = "/api/research/early-access/request-intents";
 const actor = "10000000-0000-4000-8000-000000000001";
 function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "denied" | "failure";
-  principal?: "clinical_admin" | "research_admin" | "absent"; bearerRejected?: boolean;
+  principal?: "clinical_admin" | "request_intent_reader" | "research_admin" | "absent"; bearerRejected?: boolean;
   staffFlag?: string; staffDbDenied?: boolean; customer?: AssistedOrderViewer;
   savedAttempt?: Readonly<{ ownerHash: string; attemptHash: string; record: unknown }> } = {}) {
   const rpc = vi.fn(async (name: string, _args?: Readonly<Record<string, unknown>>):
@@ -23,10 +23,10 @@ function fixture(options: { enabled?: boolean; legal?: boolean; rate?: "ok" | "d
       return { data: saved && _args?.p_owner_hash === saved.ownerHash && _args?.p_attempt_hash === saved.attemptHash
         ? saved.record : null, error: null };
     }
-    if (name === "request_intent_staff_list") return options.staffDbDenied
+    if (name === "request_intent_staff_list" || name === "request_intent_operator_list") return options.staffDbDenied
       ? { data: null, error: { code: "42501", message: "private approval or current role absent" } }
       : { data: { items: [], total: 0, page: 1, pageSize: 25 }, error: null };
-    if (name === "request_intent_staff_get") return { data: null, error: null };
+    if (name === "request_intent_staff_get" || name === "request_intent_operator_get") return { data: null, error: null };
     throw new Error("Unexpected RPC " + name);
   });
   const wiring: AssistedOrderProductionWiring = {
@@ -143,6 +143,16 @@ describe("proposed mixed-request production composition", () => {
     expect(f.rpc).toHaveBeenCalledWith("request_intent_staff_list", { p_actor_user_id: actor, p_page: 1 });
     expect(f.care.loadCapabilityStatus).not.toHaveBeenCalled();
     expect(f.care.recordAccessDecision).toHaveBeenCalledWith(expect.objectContaining({ outcome: "allowed", actorSubjectId: actor }));
+  });
+  it("isolates a named operator's list and detail from the privileged staff RPCs", async () => {
+    const f = fixture({ principal: "request_intent_reader", staffFlag: "true" });
+    expect((await request(f.app).get(root + "/staff")).status).toBe(200);
+    expect((await request(f.app).get(root + "/staff/" + actor)).status).toBe(404);
+    expect(f.rpc).toHaveBeenCalledWith("request_intent_operator_list", { p_actor_user_id: actor, p_page: 1 });
+    expect(f.rpc).toHaveBeenCalledWith("request_intent_operator_get", {
+      p_request_id: actor, p_actor_user_id: actor, p_include_context: false,
+    });
+    expect(f.rpc.mock.calls.map(([name]) => name)).not.toContain("request_intent_staff_get");
   });
   it("keeps pending read closed for an absent or malformed independent flag even for clinical_admin", async () => {
     for (const staffFlag of [undefined, "false", "TRUE", "1", " true", "true "]) {

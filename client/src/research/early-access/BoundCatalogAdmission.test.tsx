@@ -30,6 +30,9 @@ async function submitContact() {
   const form = host.querySelector("form")!;
   form.querySelector<HTMLInputElement>("[name=fullLegalName]")!.value = "Example";
   form.querySelector<HTMLInputElement>("[name=email]")!.value = "qa@example.invalid";
+  form.querySelector<HTMLInputElement>("[name=line1]")!.value = "12 Example Lane";
+  form.querySelector<HTMLInputElement>("[name=city]")!.value = "Hong Kong";
+  form.querySelector<HTMLSelectElement>("[name=countryCode]")!.value = "HK";
   await act(async () => { form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })); });
 }
 

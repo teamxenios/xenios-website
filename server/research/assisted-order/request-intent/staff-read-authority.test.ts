@@ -1,4 +1,5 @@
 import express from "express";
+import { CARE_PERMISSIONS, hasCarePermission } from "../../../../shared/care/contracts";
 import request from "supertest";
 import { describe, expect, it, vi } from "vitest";
 import { createCareProductionDependencies, type CareProductionAdapters } from "../../../care/production-deps";
@@ -40,6 +41,18 @@ describe("proposed pending-intake read guard, separate from Care activation", ()
     }));
     expect(f.next).toHaveBeenCalledOnce();
   });
+  it("admits a verified queue-only operator with exactly the pending-read permission", async () => {
+    const principal = { subjectId: actor, roles: ["request_intent_reader" as const] };
+    expect(CARE_PERMISSIONS.filter((permission) => hasCarePermission(principal, permission)))
+      .toEqual(["request_intent:read_pending"]);
+    const f = fixture({ loadActiveRoles: vi.fn(async () => principal.roles) });
+    const response = await request(f.app).get("/pending").set("Authorization", "Bearer verified-synthetic");
+    expect(response.status).toBe(200);
+    expect(f.adapters.writeAccessAudit).toHaveBeenCalledWith(expect.objectContaining({
+      actorSubjectId: actor, permission: "request_intent:read_pending", outcome: "allowed",
+    }));
+  });
+
   it("stays unavailable before identity lookup when the independent scope is disabled", async () => {
     const f = fixture({}, false);
     expect((await request(f.app).get("/pending").set("Authorization", "Bearer verified-synthetic")).status).toBe(503);

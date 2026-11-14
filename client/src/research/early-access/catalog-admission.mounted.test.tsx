@@ -24,7 +24,7 @@ it("connects the rendered form to HTTP admission and protected catalog; fresh id
     present:async key=>saved.has(JSON.stringify(key)),
     saveFirst:async(key,value)=>{const k=JSON.stringify(key),v=JSON.stringify(value);
       if(saved.has(k)) return saved.get(k)===v?"already_same":"different_contact"; saved.set(k,v);return "committed";}
-  });
+  }, 7200);
   const catalogList=vi.fn(async()=>({items:[],total:0,page:1,pageSize:24,families:[],channels:[],workflowModes:[]}));
   const deps={legal,standing:{accepted:async()=>waiver},hasher,contactAdmission:admission,
     catalog:{list:catalogList,resolveMany:async()=>[]},clock:{now:()=>new Date()},
@@ -63,12 +63,19 @@ it("connects the rendered form to HTTP admission and protected catalog; fresh id
     waiver=true;
     expect((await direct("a")).body.error).toBe("catalog_admission_required");expect(catalogList).not.toHaveBeenCalled();
     await render("epoch-a"); await wait(()=>!!host.querySelector("form"));
+    expect(host.textContent).toMatch(/two hours[\s\S]*five minutes/);
     expect(wire).toEqual([{method:"GET",path:base+"/admission",status:200}]);expect(catalogList).not.toHaveBeenCalled();
     const f=host.querySelector("form")!;f.querySelector<HTMLInputElement>('[name=fullLegalName]')!.value="Synthetic Person";
     f.querySelector<HTMLInputElement>('[name=email]')!.value="synthetic@example.invalid";
+    f.querySelector<HTMLInputElement>("[name=line1]")!.value = "12 Example Lane";
+    f.querySelector<HTMLInputElement>("[name=city]")!.value = "Hong Kong";
+    f.querySelector<HTMLSelectElement>("[name=countryCode]")!.value = "HK";
     await act(async()=>{f.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));});await wait(()=>!!host.textContent?.includes("0 visible catalog entries. 0 selected."));
     expect(wire.slice(1).filter(x=>!x.path.endsWith("/config")).map(x=>[x.method,x.path.split("?")[0],x.status])).toEqual([["POST",base+"/admission",200],["GET",base+"/catalog",200]]);
     expect(catalogList).toHaveBeenCalledTimes(1);expect(saved.size).toBe(1);
+    expect(JSON.parse([...saved.values()][0]).postalAddress).toEqual({
+      line1: "12 Example Lane", city: "Hong Kong", countryCode: "HK",
+    });
     actor="b";await render("epoch-b");await wait(()=>!!host.querySelector("form"));expect((await direct("b")).status).toBe(403);
     expect((await direct("a")).status).toBe(200);
     version="v2";expect((await direct("a")).body.error).toBe("catalog_admission_required");waiver=false;

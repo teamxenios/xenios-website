@@ -1,6 +1,6 @@
 import type { CatalogAdmission } from "./catalog-admission";
 import type { CarePrincipal } from "../../../../shared/care/contracts";
-import { canReadPendingRequestIntent, type RequestIntentStaffReadContext } from "./staff-read-authority";
+import { canReadPendingRequestIntent, pendingRequestStaffMode, type RequestIntentStaffReadContext } from "./staff-read-authority";
 import { quantityIsAllowed } from "../../../../shared/research/assisted-order/action-policy";
 import type { AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
 import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
@@ -31,8 +31,8 @@ export type RequestIntentRepository = Readonly<{
 }>;
 /** Backend-only reader; the actor comes from canonical Care authentication, never request data. */
 export type RequestIntentStaffReader = Readonly<{
-  get(requestId: string, verifiedActorSubjectId: string): Promise<RequestIntentDetail | null>;
-  list(verifiedActorSubjectId: string, page: number): Promise<RequestIntentQueuePage>;
+  get(requestId: string, verifiedActorSubjectId: string, scope?: "operator"): Promise<RequestIntentDetail | null>;
+  list(verifiedActorSubjectId: string, page: number, scope?: "operator"): Promise<RequestIntentQueuePage>;
 }>;
 export type RequestIntentDependencies = Readonly<{
   catalog: RequestIntentCatalog;
@@ -189,10 +189,12 @@ export class RequestIntentService {
       throw new RequestIntentError("private_review_access_required", 403);
     }
     // This application check authorizes no clinical action. The backend reader
-    // independently rechecks current clinical_admin assignment and the approved
+    // independently rechecks the verified actor’s active assignment and the approved
     // request_intent_pending_read capability on EVERY operation. Whole Care can
     // remain disabled. No direct authenticated Data API access is introduced.
-    const detail = await reader.get(requestId, principal.subjectId);
+    const detail = pendingRequestStaffMode(principal) === "operator"
+      ? await reader.get(requestId, principal.subjectId, "operator")
+      : await reader.get(requestId, principal.subjectId);
     if (!detail) return null;
     // Add, for staff only, the kind of open question on each line's listing.
     // Read now rather than stored, so it reflects the current review record.
@@ -208,7 +210,9 @@ export class RequestIntentService {
     if (!principal) throw new RequestIntentError("authentication_required", 401);
     if (!canReadPendingRequestIntent(principal, context)) throw new RequestIntentError("private_review_access_required", 403);
     if (!Number.isSafeInteger(page) || page < 1 || page > 10000) throw new RequestIntentError("invalid_page", 400);
-    return reader.list(principal.subjectId, page);
+    return pendingRequestStaffMode(principal) === "operator"
+      ? reader.list(principal.subjectId, page, "operator")
+      : reader.list(principal.subjectId, page);
   }
 
   rejectCommercialTransition(): never {
