@@ -2250,9 +2250,12 @@ describe("route uniqueness validator", () => {
     expect(result.routes.filter((route) =>
       route.path === "/api/staff/early-access/private-quotes/staging-readiness")
       .map((route) => route.method)).toEqual(["GET"]);
-    // Includes the isolated staging staff readiness registration.
-    expect(result.callSites).toBe(448);
-    expect(result.routes).toHaveLength(457);
+    expect(result.routes.filter((route) =>
+      route.path === "/api/staff/early-access/private-quotes/production-readiness")
+      .map((route) => route.method)).toEqual(["GET"]);
+    // Includes the isolated staging and flag-gated production staff readiness registrations.
+    expect(result.callSites).toBe(449);
+    expect(result.routes).toHaveLength(458);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
