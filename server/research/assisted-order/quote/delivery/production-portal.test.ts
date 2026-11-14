@@ -1,4 +1,4 @@
-import express from "express";
+import express, { type RequestHandler } from "express";
 import type { Pool } from "pg";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
@@ -97,6 +97,15 @@ function harness(o: Overrides = {}) {
 }
 
 describe("production quote authority", () => {
+  it("attributes issuance only to the configured current issuer with matching verified subject and email", async () => {
+    const { built } = harness();
+    expect(await built.staffPrincipal(ISSUER, ADMIN.toUpperCase())).toMatchObject({ subject: ISSUER, actorLabel: ISSUER });
+    expect(await built.staffPrincipal(AUTH, ADMIN)).toBeNull();
+    expect(await built.staffPrincipal(undefined, ADMIN)).toBeNull();
+    expect(await built.staffPrincipal(ISSUER, EMAIL)).toBeNull();
+    expect(await harness({ issuer: null }).built.staffPrincipal(ISSUER, ADMIN)).toBeNull();
+  });
+
   it("resolves the recipient from the stored contact and binds only lines with exact current clearance", async () => {
     const { built, calls } = harness({ clearance: s => s.productId === "p2" ? cleared(s, { seller: "other" }) : cleared(s) });
     const ctx = await built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE);
@@ -359,8 +368,11 @@ const production = {
   EA_QUOTE_ISSUER_ID: ISSUER, ADMIN_EMAIL: ADMIN, EA_QUOTE_TAG_KEY: "1".repeat(64),
 };
 const unexpected = () => { throw Error("unexpected"); };
+const rejectAdmin: RequestHandler = (_req, res) => { res.status(401).end(); };
 function mount(env: Record<string, string | undefined>, clearance: unknown = { cleared: unexpected },
-  quoteRequests: unknown = { forCustomer: unexpected, forDispatch: unexpected }) {
+  quoteRequests: unknown = { forCustomer: unexpected, forDispatch: unexpected },
+  staffGuard: RequestHandler = rejectAdmin,
+  verifyAccount: ProductionQuoteAuthorityDeps["verifyAccount"] = unexpected) {
   const app = express();
   let connects = 0;
   const wiring = {
@@ -369,7 +381,7 @@ function mount(env: Record<string, string | undefined>, clearance: unknown = { c
   } as unknown as AssistedOrderProductionWiring;
   const mounted = mountProductionPrivateQuotePortal(app, wiring, { customer: async () => ({
     actorType: "early_access_session", memberId: null, earlyAccessSessionHash: null, normalizedEmail: null, capabilities: new Set(),
-  }) as AssistedOrderViewer }, (_req, res) => { res.status(401).end(); }, unexpected, {
+  }) as AssistedOrderViewer }, staffGuard, verifyAccount, {
     membersByEmail: unexpected, bindings: { customerRefsForHistory: unexpected, forCustomer: unexpected }, clearance: clearance as never,
     quoteRequests: quoteRequests as never,
   }, () => ({ on() {}, connect() { connects++; throw Error("unexpected database access"); } }) as unknown as Pool);
@@ -403,13 +415,31 @@ describe("production private quote mount", () => {
     }
   });
 
-  it("mounts when complete, and refuses a guest session and unauthenticated staff before any data access", async () => {
-    const { app, mounted, connects } = mount(production);
+  it("mounts when complete and limits staff actions to the authenticated configured issuer", async () => {
+    const testBearer = (id: string) => "Bearer fixture." + Buffer.from(JSON.stringify({ sub: id })).toString("base64url") + ".fixture";
+    const approvedSessions = new Set([testBearer(ISSUER), testBearer(AUTH)]);
+    const adminGuard: RequestHandler = (req, res, next) => {
+      if (!approvedSessions.has(req.get("authorization") ?? "")) { res.sendStatus(401); return; }
+      Object.assign(req, { adminEmail: ADMIN });
+      next();
+    };
+    const checked: string[] = [];
+    const { app, mounted, connects } = mount(production, undefined, undefined, adminGuard, async (id) => {
+      checked.push(id);
+      return { email: ADMIN, confirmedAt: "2026-01-01T00:00:00Z" };
+    });
     expect(mounted).toBe(true);
     const page = await request(app).get("/earlyaccess/quotes").expect(401);
     expect(page.headers["cache-control"]).toContain("no-store");
     expect(page.text).toContain("Verified access required");
     await request(app).post("/api/staff/early-access/private-quotes/issue").send({}).expect(401);
+    const submit = (id: string) => request(app).post("/api/staff/early-access/private-quotes/issue")
+      .set("Authorization", testBearer(id)).set("Origin", "https://xeniostechnology.com").send({});
+    await submit(AUTH).expect(403);
+    expect(checked).toEqual([]);
+    // The configured issuer reaches ordinary issue-input validation. The empty input cannot write a quote.
+    await submit(ISSUER).expect(400);
+    expect(checked).toEqual([ISSUER]);
     expect(connects()).toBe(0);
   });
 });
