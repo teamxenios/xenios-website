@@ -91,7 +91,8 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
   let networkCreated = false;
   let pool: Pool | undefined;
   try {
-    await db.start({ dockerOnly: true });
+    // The managed care registry carries the role constraints the queue-only reader migration extends.
+    await db.start({ dockerOnly: true, managedCareSchema: true });
     await db.sql(readFileSync("supabase/research-notification-outbox.sql", "utf8"));
     for (const file of [
       "20261114025655_early_access_contact_and_private_quote_schema.sql",
@@ -99,6 +100,11 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
       "20261114043300_early_access_quote_request_audit.sql",
     ]) await db.sql(readFileSync("supabase/migrations/" + file, "utf8"));
     await db.sql(readFileSync("supabase/production/early-access-quote-runtime-review.sql", "utf8"));
+    // The issuer reads the request through the queue-only pending reader, so it holds only that role.
+    await db.sql(readFileSync("supabase/migrations/20261114133500_early_access_pending_request_reader.sql", "utf8"));
+    await db.sql("INSERT INTO public.care_role_assignments(user_id,role,granted_by) VALUES ($1,'request_intent_reader',$1)", [OPERATOR]);
+    expect((await db.sql("SELECT role FROM public.care_role_assignments WHERE user_id=$1 AND revoked_at IS NULL", [OPERATOR])).rows)
+      .toEqual([{ role: "request_intent_reader" }]);
     expect((await db.sql("SELECT rolcanlogin FROM pg_roles WHERE rolname='ea_quote_login'")).rows)
       .toEqual([{ rolcanlogin: false }]);
     await db.sql([
@@ -203,6 +209,9 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
       .toEqual([{ outcome: "sent", attempt: 1 }]);
     expect((await db.sql("SELECT actor_user_id FROM request_intent_private.access_events WHERE event_type='quote_dispatch_read'")).rows)
       .toEqual([{ actor_user_id: null }]);
+    // Each issue attempt, including the replay, read the request once as the issuer through the audited queue reader.
+    expect((await db.sql("SELECT actor_user_id FROM request_intent_private.access_events WHERE event_type='staff_read'")).rows)
+      .toEqual([{ actor_user_id: OPERATOR }, { actor_user_id: OPERATOR }]);
   } finally {
     state.admin = null;
     try {
