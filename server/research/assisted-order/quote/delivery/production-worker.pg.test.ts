@@ -15,6 +15,7 @@ import { registerPrivateQuoteDispatch, runOutboxTick } from "../../../outbox";
 import { AssistedOrderQuoteService } from "../service";
 import { bindReviewedXriQuoteLines } from "../xri-line-bindings";
 import { attachApprovedPrivateQuotes } from "./compose.mjs";
+import { pgTransactions } from "./pg.mjs";
 import { createProductionQuoteAuthority, memberOwnerHash, PRODUCTION_QUOTE_SELLER, productionQuoteLineId } from "./production-portal";
 import { PRODUCTION_QUOTE_ORIGIN, PRODUCTION_QUOTE_TENANT } from "./production";
 
@@ -97,22 +98,16 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
       "20261114033000_early_access_quote_request_ownership.sql",
       "20261114043300_early_access_quote_request_audit.sql",
     ]) await db.sql(readFileSync("supabase/migrations/" + file, "utf8"));
+    await db.sql(readFileSync("supabase/production/early-access-quote-runtime-review.sql", "utf8"));
+    expect((await db.sql("SELECT rolcanlogin FROM pg_roles WHERE rolname='ea_quote_login'")).rows)
+      .toEqual([{ rolcanlogin: false }]);
     await db.sql([
       "CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT (nullif(current_setting('request.jwt.claims', true), '')::jsonb->>'sub')::uuid $$;",
       "GRANT SELECT, UPDATE ON public.research_notification_outbox TO service_role;",
       "GRANT INSERT ON public.research_notification_attempts TO service_role;",
       "CREATE ROLE fixture_rest LOGIN NOINHERIT PASSWORD '" + restPassword + "';",
       "GRANT anon, authenticated, service_role TO fixture_rest WITH SET TRUE, INHERIT FALSE, ADMIN FALSE;",
-      "CREATE ROLE ea_quote_runtime NOLOGIN NOINHERIT;",
-      `CREATE ROLE ea_quote_login LOGIN NOINHERIT PASSWORD '${password}';`,
-      "GRANT ea_quote_runtime TO ea_quote_login WITH SET TRUE, INHERIT FALSE, ADMIN FALSE;",
-      "GRANT USAGE ON SCHEMA quote_delivery_private TO ea_quote_runtime;",
-      "GRANT SELECT, INSERT ON quote_delivery_private.qd_quotes, quote_delivery_private.qd_attempts, quote_delivery_private.qd_notification_intents, quote_delivery_private.qd_audits, quote_delivery_private.qd_directory TO ea_quote_runtime;",
-      "GRANT UPDATE(state) ON quote_delivery_private.qd_quotes TO ea_quote_runtime;",
-      "GRANT UPDATE(state,provider_id) ON quote_delivery_private.qd_notification_intents TO ea_quote_runtime;",
-      "GRANT INSERT(event_key,event_type,template_key,recipient,payload), SELECT(event_key) ON public.research_notification_outbox TO ea_quote_runtime;",
-      "CREATE POLICY fixture_quote_insert ON public.research_notification_outbox FOR INSERT TO ea_quote_runtime WITH CHECK (event_type='ea_private_quote_notice_v1' AND payload->>'tenant'='ea-production');",
-      "CREATE POLICY fixture_quote_return ON public.research_notification_outbox FOR SELECT TO ea_quote_runtime USING (event_type='ea_private_quote_notice_v1' AND payload->>'tenant'='ea-production');",
+      `ALTER ROLE ea_quote_login LOGIN PASSWORD '${password}';`,
     ].join("\n"));
     const input = submission();
     const terms = { kind: "early_access_terms", version: "v2" };
@@ -161,6 +156,18 @@ pg16It("claims an issued quote through the real worker and dispatches once throu
     const app = express();
     app.use(express.json());
     pool = db.poolForLogin("ea_quote_login", password);
+    const asRuntime = pgTransactions(pool, { runtimeRole: "production" });
+    await expect(pool.query("SELECT id FROM quote_delivery_private.qd_quotes")).rejects.toMatchObject({ code: "42501" });
+    await expect(asRuntime(PRODUCTION_QUOTE_TENANT, requestId, (q) =>
+      q("SELECT recipient FROM public.research_notification_outbox"))).rejects.toMatchObject({ code: "42501" });
+    await expect(asRuntime(PRODUCTION_QUOTE_TENANT, requestId, (q) =>
+      q("INSERT INTO public.research_notification_outbox(event_key,event_type,template_key,recipient,payload) VALUES($1,$2,$2,$3,$4)",
+        ["qd-" + "0".repeat(64), "ea_private_quote_notice_v1", recipient, JSON.stringify({
+          tenant: PRODUCTION_QUOTE_TENANT, xriId: requestId, quoteId: randomUUID(), extra: "denied",
+        })]))).rejects.toMatchObject({ code: "42501" });
+    await expect(asRuntime("ea-staging", requestId, (q) =>
+      q("INSERT INTO qd_directory(tenant,target_id,xri_id,seller) VALUES($1,$2,$3,$4)",
+        ["ea-staging", "fixture-stage", requestId, PRODUCTION_QUOTE_SELLER]))).rejects.toMatchObject({ code: "42501" });
     attachApprovedPrivateQuotes({
       enabled: true, router: app, pool, authority: authority.authority, runtimeRole: "production",
       assumeStagingRuntimeRole: false, stageDispatchPaused: false, deferStagingNotice: false,

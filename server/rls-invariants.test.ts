@@ -14,6 +14,9 @@ const earlyAccessPrivateQuotePath = join(
   migrationsDir,
   "20261114025655_early_access_contact_and_private_quote_schema.sql",
 );
+const productionQuoteRuntimeReviewPath = join(
+  supabaseDir, "production", "early-access-quote-runtime-review.sql",
+);
 
 function stripSqlComments(sql: string): string {
   return sql
@@ -42,7 +45,7 @@ function sqlFilesUnder(dir: string): string[] {
 const retroSql = stripSqlComments(readFileSync(retroMigrationPath, "utf8"));
 
 describe("RLS invariants across supabase/", () => {
-  it("limits policy definitions to the Care foundation and private quote schema", () => {
+  it("limits policy definitions to the Care foundation and reviewed private quote policies", () => {
     const offenders: string[] = [];
     for (const file of sqlFilesUnder(supabaseDir)) {
       if (file.endsWith("care-access-foundation.sql")) continue;
@@ -61,6 +64,35 @@ describe("RLS invariants across supabase/", () => {
         ]);
         expect(text).toMatch(/ALTER TABLE quote_delivery_private\.%I FORCE ROW LEVEL SECURITY/);
         expect(text).toMatch(/ALTER TABLE qd_verified_receipts FORCE ROW LEVEL SECURITY/);
+        continue;
+      }
+      if (file === productionQuoteRuntimeReviewPath) {
+        const normalize = (statement: string) => statement.trim().replace(/\s+/g, " ");
+        const policies = [...text.matchAll(/create\s+policy\s+([^;]+)/gi)].map((match) => normalize(match[1]));
+        const queueScope = `
+          event_type = 'ea_private_quote_notice_v1' AND template_key = event_type
+          AND payload->>'tenant' = 'ea-production' AND event_key ~ '^qd-[0-9a-f]{64}$'
+        `.trim();
+        expect(policies).toEqual([
+          `production_quote_runtime_tenant ON quote_delivery_private.%I AS RESTRICTIVE TO ea_quote_runtime
+           USING (tenant = ''ea-production'') WITH CHECK (tenant = ''ea-production'')', table_name )`,
+          `production_quote_runtime_outbox_access ON public.research_notification_outbox
+           TO ea_quote_runtime USING (true) WITH CHECK (true)`,
+          `production_quote_runtime_outbox_scope ON public.research_notification_outbox
+           AS RESTRICTIVE TO ea_quote_runtime
+           USING ( ${queueScope} )
+           WITH CHECK (
+             ${queueScope}
+             AND payload = pg_catalog.jsonb_build_object(
+               'tenant', 'ea-production', 'xriId', payload->>'xriId', 'quoteId', payload->>'quoteId'
+             )
+             AND payload->>'xriId' ~ '^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$'
+             AND payload->>'quoteId' ~ '^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$'
+           )`,
+        ].map(normalize));
+        expect(text.match(/FOREACH table_name IN ARRAY ARRAY\[([^\]]+)\]/)?.[1].match(/qd_\w+/g))
+          .toEqual(["qd_quotes", "qd_attempts", "qd_notification_intents", "qd_directory", "qd_audits"]);
+        expect(text).not.toMatch(/\b(?:disable\s+row\s+level\s+security|drop\s+policy|alter\s+policy)\b/i);
         continue;
       }
       if (/create\s+policy/i.test(text)) offenders.push(file);
