@@ -99,7 +99,10 @@ it("shows the access record lifetime from the server and distinguishes the later
     expect(text.compareDocumentPosition(form.querySelector("input")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     return text.textContent;
   }
-  expect(await notice(7200)).toMatch(/postal address[\s\S]*temporary access record[\s\S]*two hours[\s\S]*five minutes[\s\S]*stored separately/);
+  // The privacy owner's approved wording, with the approved postal-address disclosure.
+  expect(await notice(7200)).toBe("We use your name, work email and postal address to give you access to the Early Access catalog."
+    + " Your catalog access expires after two hours. We run a cleanup every five minutes to remove expired access records."
+    + " If you submit a request, we keep the request and any resulting quote separately so our team can respond.");
   expect(await notice(900)).toContain("15 minutes");
   expect(await notice(91)).toContain("91 seconds");
   expect(await notice()).not.toMatch(/expires after|five minutes/);
