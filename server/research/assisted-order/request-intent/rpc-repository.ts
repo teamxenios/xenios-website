@@ -25,6 +25,18 @@ function stored(value: unknown): StoredIntent {
   }
   return { receipt: receipt(row.receipt), fingerprint: row.fingerprint };
 }
+function detail(value: unknown, readOptional = false): RequestIntentDetail {
+  const publicPart = receipt(value);
+  const row = value as RequestIntentDetail;
+  if (!row.contact || !Array.isArray(row.agreements) || !Array.isArray(row.lines)
+    || row.lines.some((line) => line.reviewState !== "pending")) {
+    throw new RequestIntentError("invalid_persistence_result", 503);
+  }
+  let optionalIntake;
+  try { optionalIntake = readOptional ? normalizeOptionalIntake(row.optionalIntake) : undefined; }
+  catch { throw new RequestIntentError("invalid_persistence_result", 503); }
+  return { ...publicPart, ...(optionalIntake ? { optionalIntake } : {}), contact: row.contact, agreements: row.agreements, lines: row.lines };
+}
 async function call(client: RequestIntentRpcClient, name: string, args: Record<string, unknown>): Promise<unknown> {
   const result = await client.rpc(name, args);
   if (result.error) {
@@ -69,16 +81,25 @@ export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClie
         p_request_id: requestId, p_actor_user_id: verifiedActorSubjectId,
       });
       if (data === null) return null;
-      const row = data as RequestIntentDetail;
-      const publicPart = receipt(row);
-      if (!row.contact || !Array.isArray(row.agreements) || !Array.isArray(row.lines)
-        || row.lines.some((line) => line.reviewState !== "pending")) {
-        throw new RequestIntentError("invalid_persistence_result", 503);
-      }
-      let optionalIntake;
-      try { optionalIntake = readOptional ? normalizeOptionalIntake(row.optionalIntake) : undefined; }
-      catch { throw new RequestIntentError("invalid_persistence_result", 503); }
-      return { ...publicPart, ...(optionalIntake ? { optionalIntake } : {}), contact: row.contact, agreements: row.agreements, lines: row.lines };
+      return detail(data, readOptional);
     },
+  };
+}
+
+/** Server-only quote reads record their purpose and never impersonate staff. */
+export function requestIntentQuoteRequestReader(client: RequestIntentRpcClient) {
+  async function read(requestId: string, ownerHash: string | null, quoteId: string | null) {
+    const data = await call(client, "request_intent_quote_read", {
+      p_request_id: requestId, p_owner_hash: ownerHash, p_quote_id: quoteId,
+    });
+    if (data === null) return null;
+    const result = detail(data);
+    if (result.requestId !== requestId) throw new RequestIntentError("invalid_persistence_result", 503);
+    return result;
+  }
+
+  return {
+    forCustomer: (ownerHash: string, requestId: string) => read(requestId, ownerHash, null),
+    forDispatch: (requestId: string, quoteId: string) => read(requestId, null, quoteId),
   };
 }
