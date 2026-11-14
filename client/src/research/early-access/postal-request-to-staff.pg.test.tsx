@@ -41,7 +41,7 @@ pg16It("takes an adult fixture from postal intake to one recoverable receipt and
   async function click(root: HTMLElement, label: string) {
     let button: HTMLButtonElement | undefined;
     await waitFor(() => {
-      button = Array.from(root.querySelectorAll("button")).find(e => e.textContent.trim() === label && !e.disabled);
+      button = Array.from(root.querySelectorAll("button")).find(e => e.textContent?.trim() === label && !e.disabled);
       expect(button, label).toBeDefined();
     });
     await act(async () => button!.click());
@@ -110,7 +110,7 @@ pg16It("takes an adult fixture from postal intake to one recoverable receipt and
     await click(visitor, "Retry same request");
     const reference = /XRI-[\dA-F]{32}/;
     await waitFor(() => expect(visitor.textContent).toMatch(reference));
-    const receipt = visitor.textContent.match(reference)![0];
+    const receipt = visitor.textContent!.match(reference)![0];
     expect(receipts).toEqual([503, 200]);
 
     await act(async () => guestRoot!.unmount());
