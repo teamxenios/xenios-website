@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ReactNode, type FormEvent } from "react";
 export type CatalogAdmissionView = Readonly<{admitted: boolean;policyRevision:string}>;
 type Input = Readonly<{fullLegalName:string;email:string;policyRevision:string}>;
 export type CatalogAdmissionApi = Readonly<{
@@ -13,40 +13,94 @@ function valid(v: CatalogAdmissionView) {
  * changed by the owner on principal change/logout; never use the actual session token. */
 export function PreCatalogContact({sessionEpoch,api,children}:Props) {
   if(!sessionEpoch) return <p role="status">Sign in again to view the catalog.</p>;
-  return <Gate key={sessionEpoch} api={api}>{children}</Gate>;
+  return <CatalogAdmissionGate key={sessionEpoch} api={api}>{children}</CatalogAdmissionGate>;
 }
-function Gate({api,children}: Pick<Props,"api"|"children">) {
-  const [cycle,retry]=useState(0);
-  const [state,set]=useState<"checking"|"form"|"saving"|"done"|"error">("checking");
-  const [revision,setRevision]=useState("");
-  const [scope,setScope]=useState<AbortController|null>(null);
-  useEffect(()=>{
-    const controller=new AbortController();setScope(controller);set("checking");
-    void api.status(controller.signal).then(v=>{
-      if(controller.signal.aborted)return;
-      if(!valid(v)){set("error");return}
-      setRevision(v.policyRevision);set(v.admitted?"done":"form");
-    },()=>{if(!controller.signal.aborted)set("error")});
-    return ()=>controller.abort();
-  },[api,cycle]);
-  async function save(e:FormEvent<HTMLFormElement>) {
-    e.preventDefault();if(!scope||scope.signal.aborted||state!=="form")return;
-    const form=e.currentTarget;const data=new FormData(form);
-    const fullLegalName=data.get("fullLegalName"),email=data.get("email");
-    if(typeof fullLegalName!=="string"||typeof email!=="string")return;
-    set("saving");
+
+export function CatalogAdmissionGate({
+  api, children, recheckOnRestore = false,
+}: Pick<Props, "api" | "children"> & { recheckOnRestore?: boolean }) {
+  const [attempt, retry] = useState(0);
+  const [view, setView] = useState<CatalogAdmissionView | null>(null);
+  const [phase, setPhase] = useState<"checking" | "ready" | "saving" | "error">("checking");
+  const scope = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    function hide() {
+      scope.current?.abort();
+      setPhase("checking");
+    }
+
+    function check() {
+      hide();
+      if (recheckOnRestore && document.visibilityState === "hidden") return;
+      const controller = new AbortController();
+      scope.current = controller;
+      void api.status(controller.signal).then(result => {
+        if (controller.signal.aborted) return;
+        if (!valid(result)) {
+          setPhase("error");
+          return;
+        }
+        setView(result);
+        setPhase("ready");
+      }, () => {
+        if (!controller.signal.aborted) setPhase("error");
+      });
+    }
+
+    if (recheckOnRestore) {
+      document.addEventListener("visibilitychange", check);
+      window.addEventListener("pagehide", hide);
+      window.addEventListener("pageshow", check);
+    }
+    check();
+    return () => {
+      scope.current?.abort();
+      if (recheckOnRestore) {
+        document.removeEventListener("visibilitychange", check);
+        window.removeEventListener("pagehide", hide);
+        window.removeEventListener("pageshow", check);
+      }
+    };
+  }, [api, attempt, recheckOnRestore]);
+
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const signal = scope.current?.signal;
+    if (!signal || signal.aborted || phase !== "ready" || !view || view.admitted) return;
+    const data = new FormData(event.currentTarget);
+    const fullLegalName = data.get("fullLegalName");
+    const email = data.get("email");
+    if (typeof fullLegalName !== "string" || typeof email !== "string") return;
+    setPhase("saving");
     try {
-      const result=await api.record({fullLegalName,email,policyRevision:revision},scope.signal);
-      if(scope.signal.aborted)return;
-      if(!valid(result)||!result.admitted||result.policyRevision!==revision){set("error");return}
-      set("done");
-    } catch {if(!scope.signal.aborted)set("error")}
+      const result = await api.record({ fullLegalName, email, policyRevision: view.policyRevision }, signal);
+      if (signal.aborted) return;
+      if (!valid(result) || !result.admitted || result.policyRevision !== view.policyRevision) {
+        setPhase("error");
+        return;
+      }
+      setView(result);
+      setPhase("ready");
+    } catch {
+      if (!signal.aborted) setPhase("error");
+    }
   }
-  if(state==="done") return <>{children}</>;
-  if(state==="error") return <div role="alert">We couldn’t confirm your catalog access. <button type="button" onClick={()=>{set("checking");retry(i=>i+1)}}>Check again</button></div>;
-  if(state==="checking") return <p role="status">Checking catalog access…</p>;
+
+  if (phase === "error") {
+    return <div role="alert">We couldn’t confirm your catalog access. <button type="button" onClick={() => retry(i => i + 1)}>Check again</button></div>;
+  }
+  if (!view) return <p role="status">Checking catalog access…</p>;
+  // Keep the same owner's draft mounted while a restore is pending. A changed
+  // owner/policy revision remounts the entire subtree, even if both are admitted.
+  return <div key={view.policyRevision} hidden={phase === "checking"}>
+    {view.admitted ? children : <ContactForm saving={phase === "saving"} onSubmit={save} />}
+  </div>;
+}
+
+function ContactForm({ saving, onSubmit }: { saving: boolean; onSubmit(event: FormEvent<HTMLFormElement>): void }) {
   const staging = window.location.origin === "https://xenios-research-staging.onrender.com";
-  return <form onSubmit={save} aria-label="Contact information for catalog access"
+  return <form onSubmit={onSubmit} aria-label="Contact information for catalog access"
     aria-describedby={staging ? "staging-catalog-contact-notice" : undefined}>
     <h2>Before you view the catalog</h2>
     <p>Enter your name and email to continue. You can select items and request a private quote.</p>
@@ -57,6 +111,6 @@ function Gate({api,children}: Pick<Props,"api"|"children">) {
     </p>}
     <label>Full name<input name="fullLegalName" autoComplete="name" maxLength={200} required/></label>
     <label>Email address<input name="email" type="email" autoComplete="email" maxLength={254} required/></label>
-    <button disabled={state==="saving"} type="submit">{state==="saving"?"Saving…":"View catalog"}</button>
+    <button disabled={saving} type="submit">{saving?"Saving…":"View catalog"}</button>
   </form>;
 }
