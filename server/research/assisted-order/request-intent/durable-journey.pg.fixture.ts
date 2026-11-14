@@ -290,8 +290,8 @@ export function createDurableJourneyFixture() {
     "(select count(*)::int from request_intent_private.access_events) as events",
   ].join("\n"))).rows[0];
 
-  async function start() {
-    if (!process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
+  async function start({ dockerOnly = false } = {}) {
+    if (!dockerOnly && !process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
       native=await ownedPg16(process.env.XENIOS_TEST_LOCAL_PG16_BIN,password);
       created=true;port=native.port;
     } else {
@@ -368,5 +368,9 @@ export function createDurableJourneyFixture() {
       ssl: false, max: 2, connectionTimeoutMillis: 5000,
     });
   }
-  return { start, close, adapter, application, post, staff, snapshot, counts, sql, asRole, poolForLogin };
+  function ownedDockerContainer() {
+    if (!created || native) throw new Error("Owned Docker database not ready");
+    return container;
+  }
+  return { start, close, adapter, application, post, staff, snapshot, counts, sql, asRole, poolForLogin, ownedDockerContainer };
 }
