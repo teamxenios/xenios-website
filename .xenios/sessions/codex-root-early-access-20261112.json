@@ -1,0 +1,10 @@
+{
+  "id": "codex-root-early-access-20261112",
+  "tool": "Codex",
+  "lane": "release-integration",
+  "branch": "codex/early-access-protected-integration-20261112",
+  "state": "active",
+  "startedAt": "2026-11-12T19:45:34.500Z",
+  "heartbeatAt": "2026-11-13T22:24:44.454Z",
+  "note": "Verified the disposable staging Session pooler in Supabase. Updating and testing the exact rehearsal database guard."
+}

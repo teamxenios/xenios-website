@@ -209,6 +209,17 @@ export type MasterOfferingAction =
     }
   | {
       /**
+       * Quote-only release. The link opens the quote request form with this
+       * exact variant named, where the customer adds it to the one quote
+       * cart. It creates no line, order, price, payment or commitment by
+       * itself, and the form resolves the variant again from the catalog.
+       */
+      kind: "request_quote";
+      label: "Add to quote cart";
+      href: string;
+    }
+  | {
+      /**
        * Manual Early Access purchase. The buyer-facing path for a member-safe
        * variant that has no direct purchase authority: the buyer asks for the
        * purchase and a named human completes it. It creates no cart, no order,
@@ -259,6 +270,12 @@ export type MasterOfferingAction =
 export interface MasterOfferingVariantSummary {
   reviewedContent?: ReviewedProductContent;
   reviewedMedia?: ReviewedProductMedia;
+  /**
+   * The reviewed sentence for a listing that has no reviewed description, or
+   * whose label states an unconfirmed fact. An exact approved educational exception may accompany this
+   * notice. The underlying restriction and neutral label remain in force.
+   */
+  reviewMessage?: string;
   id: string;
   label: string;
   displayState: MasterOfferingDisplayState;

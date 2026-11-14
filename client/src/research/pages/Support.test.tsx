@@ -67,8 +67,8 @@ describe("Support catalog and ordering help", () => {
   it("preserves email, secure account help, and the Care boundary", async () => {
     const view = await renderPage();
     const links = [...view.querySelectorAll<HTMLAnchorElement>("a")];
-    expect(links.find((link) => link.textContent?.trim() === "Email research@xeniostechnology.com")
-      ?.getAttribute("href")).toBe("mailto:research@xeniostechnology.com");
+    expect(links.find((link) => link.textContent?.trim() === "Email team@xeniostechnology.com")
+      ?.getAttribute("href")).toBe("mailto:team@xeniostechnology.com");
     expect(links.find((link) => link.textContent?.trim() === "Application status")
       ?.getAttribute("href")).toBe("/research/application-status");
     expect(links.find((link) => link.textContent?.trim() === "Reset password")

@@ -1,4 +1,5 @@
 import type { RequestIntentReceipt } from "../../../../shared/research/assisted-order/request-intent";
+import { EARLY_ACCESS_TEAM_EMAIL, teamDraft } from "../../../../shared/research/early-access/quote-contact";
 import { isResearchCartScope } from "../cart-session";
 import { ASSISTED_ORDER_STORAGE_PREFIX } from "./storage";
 
@@ -10,7 +11,7 @@ import { ASSISTED_ORDER_STORAGE_PREFIX } from "./storage";
 // nothing here reads or claims a request status.
 export const REQUEST_INTENT_RECEIPT_RECORD_KEY = ASSISTED_ORDER_STORAGE_PREFIX + "intent-receipt.v1";
 export const REQUEST_INTENT_PUBLIC_REFERENCE = /^XRI-[0-9A-F]{32}$/;
-export const RESEARCH_SUPPORT_EMAIL = "research@xeniostechnology.com";
+export { EARLY_ACCESS_TEAM_EMAIL as RESEARCH_SUPPORT_EMAIL };
 
 // One opaque id per page load. A record written during THIS load is never
 // reopened by a later mount of the same load: an in-page remount (session
@@ -99,7 +100,9 @@ export function requestIntentConfirmationHref(publicReference: string): string {
 
 /** Support email prefilled with the reference, so staff can route it without a token or personal data. */
 export function requestIntentSupportMailto(publicReference: string): string {
-  const subject = "Quick Order request " + publicReference;
-  const body = "Reference: " + publicReference + "\n\nPlease do not include medical information or payment details in email.";
-  return "mailto:" + RESEARCH_SUPPORT_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+  const valid = publicReference.length === 36 && REQUEST_INTENT_PUBLIC_REFERENCE.test(publicReference);
+  const subject = "Early Access request" + (valid ? " " + publicReference : "");
+  const body = (valid ? "Reference: " + publicReference + "\n\n" : "")
+    + "Please do not include medical information or payment details in email.";
+  return teamDraft(subject, body);
 }

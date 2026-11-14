@@ -1,3 +1,5 @@
+import { BoundCatalogAdmission } from "../early-access/BoundCatalogAdmission";
+import { createCatalogAdmissionApi } from "../early-access/catalog-admission-api";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useResearch } from "../core";
 import { isResearchCartScope } from "../cart-session";
@@ -31,8 +33,8 @@ export function RequestIntentCta() {
       : <p role="status">Request intake is currently unavailable. No request has been submitted.</p>}
   </section>;
 }
-export function RequestIntentEntry({ embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt, onAgreementStandingRequired }: Readonly<{
-  embedded?: boolean; continuationEnabled?: boolean; onStepChange?: (step: Step) => void;
+export function RequestIntentEntry({ admissionRequired=false, embedded = false, continuationEnabled = true, onStepChange, entryIntent, onConfirmedReceipt, onAgreementStandingRequired }: Readonly<{
+  admissionRequired?:boolean; embedded?: boolean; continuationEnabled?: boolean; onStepChange?: (step: Step) => void;
   entryIntent?: StorefrontIntent | null;
   onConfirmedReceipt?: (receipt: RequestIntentReceipt) => void;
   onAgreementStandingRequired?: () => void;
@@ -58,6 +60,7 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
   const tokenRef = useRef(memberToken);
   tokenRef.current = memberToken;
   const api = useMemo(() => createRequestIntentApi(() => tokenRef.current), []);
+  const admissionApi=useMemo(()=>admissionRequired ? createCatalogAdmissionApi(()=>tokenRef.current) : null,[admissionRequired]);
   const hint = useMemo(() => entryIntent ?? orderEntryIntentFromSearch(
     typeof window === "undefined" ? "" : window.location.search), [entryIntent]);
   if (memberChecking || memberSessionStatus === "checking") return <p role="status">Checking your existing session...</p>;
@@ -69,8 +72,12 @@ export function RequestIntentEntry({ embedded = false, continuationEnabled = tru
     <p>Your account could not be confirmed for this request. Contact support before continuing.</p><a href="/research/support">Contact support</a></section>;
   // Key by the confirmed opaque owner, never token. Token-only rerenders keep
   // the form; account switches remount it. Checking/recovery renders no form.
-  return <RequestIntentForm key={owner} api={api} ownerKey={owner}
+  const form=<RequestIntentForm key={owner} api={api} ownerKey={owner}
     embedded={embedded} continuationEnabled={embedded ? continuationEnabled : standing}
     onStepChange={onStepChange} entryIntent={hint} onConfirmedReceipt={onConfirmedReceipt}
     onAgreementStandingRequired={embedded ? onAgreementStandingRequired : refreshStandaloneStanding} />;
+  if(!admissionRequired)return form;
+  if(!admissionApi)return <p role="status">Catalog access could not be confirmed.</p>;
+  if(!(embedded?continuationEnabled:standing))return <p role="status">Accept the current policy to continue.</p>;
+  return <BoundCatalogAdmission key={owner} api={admissionApi}>{form}</BoundCatalogAdmission>;
 }

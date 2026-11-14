@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
+import { PRODUCT_MEDIA_REPRESENTATION_CAPTIONS, type ReviewedProductMedia } from "@shared/research/master-offerings/approved-content";
 import media from "./product-media-format.generated.json";
 import { isResearchFormUnconfirmed } from "./reviewed-form-holds";
 
@@ -62,9 +62,21 @@ export function ProductMedia({
             : format === "unknown" ? undefined : () => setFailedFormat(format)}
         />
       </div>
-      {packshot && reviewedMedia?.packagingDesign && (
+      {packshot && reviewedMedia?.representation && (
+        <figcaption className="body-s min-w-0 break-words text-ink-mute" data-representation={reviewedMedia.representation}>
+          {PRODUCT_MEDIA_REPRESENTATION_CAPTIONS[reviewedMedia.representation]}
+        </figcaption>
+      )}
+      {packshot && !reviewedMedia?.representation && reviewedMedia?.packagingDesign && (
         <figcaption className="body-s min-w-0 break-words text-ink-mute">
           Packaging design shown. Current packaging may differ.
+        </figcaption>
+      )}
+      {/* A flat label is a design, not a photograph. A supplier photograph has no
+          label preview and gets no caption: it is what it looks like. */}
+      {packshot && reviewedMedia && !reviewedMedia.representation && !reviewedMedia.packagingDesign && labelPreview && (
+        <figcaption className="body-s min-w-0 break-words text-ink-mute">
+          Label design shown. This is not a photograph of the product.
         </figcaption>
       )}
       {detail && labelPreview && (

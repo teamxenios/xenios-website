@@ -3,6 +3,7 @@ import type {
   EarlyAccessCardProduct,
 } from "./EarlyAccessProductCard";
 import { isEarlyAccessQuantity } from "@shared/research/early-access-quantity";
+import { EARLY_ACCESS_QUOTE_PRICING } from "@shared/research/early-access/quote-only";
 
 const EARLY_ACCESS_CATEGORY_MAX_LENGTH = 120;
 const EARLY_ACCESS_CATEGORY_UNSAFE_TEXT =
@@ -55,6 +56,8 @@ export type EarlyAccessCatalogRowView = Readonly<{
   availability?: unknown;
   purchasable?: unknown;
   quantityLimit?: unknown;
+  /** "quote" when the server serves this unit quote-only. */
+  pricing?: unknown;
 }>;
 
 function isNonEmptyString(value: unknown): value is string {
@@ -108,11 +111,16 @@ export function toCardProduct(row: EarlyAccessCatalogRowView): EarlyAccessCardPr
   // Every other row must carry an exact positive integer number of cents. A
   // string, a float, a zero or a negative is not a price, and rendering one
   // would show a customer a figure the server never approved.
+  //
+  // A quote-only row is the one other row with no price: the server says so
+  // explicitly with `pricing: "quote"`, so it is kept and shown as Request a
+  // quote. Any amount on such a row is ignored, never shown.
+  const quoteOnly = row.pricing === EARLY_ACCESS_QUOTE_PRICING;
   const priceIsExact = Number.isSafeInteger(row.priceCents) && (row.priceCents as number) > 0;
-  if (!priceIsExact && availability !== "TEMPORARILY_HELD") return null;
+  if (!priceIsExact && !quoteOnly && availability !== "TEMPORARILY_HELD") return null;
   // A held row that somehow carries a malformed price shows no price at all
   // rather than a wrong one.
-  const unitPriceCents = priceIsExact ? (row.priceCents as number) : null;
+  const unitPriceCents = priceIsExact && !quoteOnly ? (row.priceCents as number) : null;
 
   return {
     productId: row.productId,
@@ -125,6 +133,7 @@ export function toCardProduct(row: EarlyAccessCatalogRowView): EarlyAccessCardPr
     description: isNonEmptyString(row.description) ? row.description : "",
     availability,
     quantityLimit,
+    ...(quoteOnly ? { quoteOnly: true } : {}),
   };
 }
 

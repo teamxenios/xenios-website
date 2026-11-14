@@ -8,6 +8,7 @@ import { RequestIntentHttpError, type RequestIntentApi } from "./request-intent-
 import { REQUEST_INTENT_ATTEMPT_KEY } from "./request-intent-attempt";
 import { REQUEST_INTENT_RECEIPT_RECORD_KEY } from "./request-intent-continuation";
 import { RequestIntentForm } from "./RequestIntentForm";
+import { HCG_STRENGTH_REVIEW } from "../../../../shared/research/master-offerings/hcg-strength-review";
 import { RequestIntentStaffReadback } from "./RequestIntentStaffReadback";
 import { RequestIntentService, type CreateIntent, type StoredIntent } from "../../../../server/research/assisted-order/request-intent/service";
 import { sha256AssistedOrderHasher } from "../../../../server/research/assisted-order/defaults";
@@ -23,7 +24,7 @@ function item(id: string, clinical: boolean): RequestIntentCatalogItem {
     productId: id, variantId: id + "-variant", productName: "Synthetic " + id, family: clinical ? "clinical_formulations_503a" : "research_peptides_materials",
     channel: "synthetic", specification: "Synthetic variant", format: null, packBasis: null, minimumQuantity: 1, maximumQuantity: 100, quantityIncrement: 1,
     unitPriceCents: null, currency: "USD", workflowMode: clinical ? "provider_request" : "request_pricing",
-    actionLabel: "Add to request", accessNotice: null, researchUseOnly: !clinical, catalogVersion: "synthetic", priceVersion: null,
+    actionLabel: "Add to quote cart", accessNotice: null, researchUseOnly: !clinical, catalogVersion: "synthetic", priceVersion: null,
     sourceSelection: { family: "synthetic", slug: id, variantId: id + "-source" },
     selectableForReview: true, intentExclusion: null, clinicalReviewRequired: clinical,
     sourceDisplayState: clinical ? "care_pathway" : "request_access", sourceVariantDisplayState: clinical ? "care_pathway" : "request_access", sourceRefusal: null,
@@ -121,17 +122,20 @@ async function type(input: HTMLInputElement, value: string) {
     input.dispatchEvent(new Event("input", { bubbles: true }));
   });
 }
-async function prepare(api: RequestIntentApi, separateBilling = false, embedded = false) {
-  await render(api, embedded);
-  await click("Add Synthetic clinical to request");
-  await click("Add Synthetic research to request");
-  const quantity = [...host.querySelectorAll("input[type=number]")][0] as HTMLInputElement;
-  await type(quantity, "2");
-  await click("Continue to contact");
+async function fillBaseContact() {
   for (const [name, value] of Object.entries({
     name: "Synthetic Customer", email: "synthetic@example.invalid", phone: "+15555550123",
     shippingLine1: "1 Synthetic Street", shippingCity: "Test", shippingRegion: "TX", shippingPostalCode: "00000", shippingCountryCode: "US",
   })) await type(host.querySelector('input[name="' + name + '"]')!, value);
+}
+async function prepare(api: RequestIntentApi, separateBilling = false, embedded = false) {
+  await render(api, embedded);
+  await click("Add Synthetic clinical to quote cart");
+  await click("Add Synthetic research to quote cart");
+  const quantity = [...host.querySelectorAll("input[type=number]")][0] as HTMLInputElement;
+  await type(quantity, "2");
+  await click("Continue to details");
+  await fillBaseContact();
   if (separateBilling) {
     await type(host.querySelector<HTMLInputElement>('input[name="shippingLine2"]')!, "Suite 2");
     const billingSame = [...host.querySelectorAll("label")]
@@ -174,7 +178,71 @@ function expectContactInputs(contact: RequestIntentInput["contact"]) {
   expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(contact.ageConfirmed);
 }
 describe("mixed private request customer form source", () => {
-  it("uses only the source variant for guest catalog artwork", async () => {
+  it("lets a guest return to the real search and paging tools without submitting a request", async () => {
+    const api = makeApi();
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    const jump = [...host.querySelectorAll("button")].find((button) => button.textContent === "Search & pages");
+    expect(jump).toBeTruthy();
+    const target = document.getElementById(jump!.getAttribute("aria-controls")!);
+    expect(target?.querySelector("input")).toBeTruthy();
+    const scroll = vi.fn();
+    Object.defineProperty(target!, "scrollIntoView", { configurable: true, value: scroll });
+    const reads = api.catalog.mock.calls.length;
+    await act(async () => jump!.click());
+    expect(document.activeElement).toBe(target);
+    expect(scroll).toHaveBeenCalledWith({ block: "start", behavior: "auto" });
+    expect(api.catalog.mock.calls.length).toBe(reads);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
+  it("gives the two supply and service rows an Ask path on the card, and a cart line once the store accepts them", async () => {
+    // The two real rows the request store does not yet accept, with their own source variant ids.
+    const rows = [
+      ["FedEx Standard Overnight", "mov_9b65ad5bb184691e19e0"],
+      ["Syringes & Alcohol Swabs", "mov_512ed6b875c04eee4753"],
+    ] as const;
+    const supply = (open: boolean) => rows.map(([name, variantId], index) => ({
+      ...item("supply-" + index, false), productName: name, specification: name,
+      sourceSelection: { family: "shipping_and_fulfillment", slug: "supply-" + index, variantId },
+      sourceRefusal: "non_merchandise_family", selectableForReview: open, intentExclusion: "non_merchandise" as const,
+      actionLabel: open ? "Supply or service inquiry" : "Not a product request",
+    }));
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, total: 2, items: supply(false) });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    let cards = [...host.querySelectorAll(".xenios-order-card")];
+    expect(cards).toHaveLength(2);
+    cards.forEach((card, index) => {
+      expect(card.textContent).toContain("Shipping or service entry, not a product request");
+      expect(card.querySelector('button[aria-label^="Add to quote cart"]')).toBeNull();
+      // Not a dead end: the question is on the card itself and names this exact variant.
+      const question = card.querySelector('[data-testid="catalog-listing-question"]');
+      expect(question?.querySelector("summary")?.textContent?.trim()).toBe("Ask about this item");
+      expect(question?.textContent).toContain(rows[index][1]);
+      expect(card.textContent).not.toMatch(/\$\d/);
+    });
+    expect(api.submit).not.toHaveBeenCalled();
+
+    // Once the store accepts these lines the same rows go in the quote cart.
+    await act(async () => root.unmount());
+    root = createRoot(host);
+    api.catalog.mockResolvedValue({ ...catalog, total: 2, items: supply(true) });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey="early-access-session" />));
+    cards = [...host.querySelectorAll(".xenios-order-card")];
+    for (const card of cards) {
+      const add = card.querySelector<HTMLButtonElement>('button[aria-label^="Add to quote cart"]');
+      expect(add?.disabled).toBe(false);
+      await act(async () => add!.click());
+    }
+    expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("2 exact variants");
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
+  it("shows guest catalog artwork only where it is reviewed, and no form illustration otherwise", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
     const productControlVariantId = "mov_9262033fe69a14a50f1c";
@@ -182,31 +250,116 @@ describe("mixed private request customer form source", () => {
     api.catalog.mockResolvedValue({
       ...catalog,
       items: [
+        // Mapped to capsule in the generated form map, but with no reviewed artwork.
         { ...item("mapped", false), variantId: productControlVariantId, unitPriceCents: 1250,
           sourceSelection: { family: "synthetic", slug: "mapped", variantId: sourceVariantId } },
         { ...item("missing-source", false), variantId: productControlVariantId, sourceSelection: undefined },
+        { ...item("reviewed", false), variantId: "mov_reviewed_guest_row", reviewedMedia: reviewedArtwork,
+          sourceSelection: { family: "synthetic", slug: "reviewed", variantId: sourceVariantId } },
       ],
     });
 
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       embedded ownerKey="early-access-session" />));
-    const [mapped, missingSource] = host.querySelectorAll(".xenios-order-card");
-    const mappedImage = mapped.querySelector("img");
-    expect(mappedImage?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
-    expect(mappedImage?.getAttribute("alt")).toBe("Synthetic mapped illustration, capsule");
-    expect(mapped.querySelector(".xenios-order-card-intro > .xenios-order-card-media > figure"))
-      .toBe(mappedImage?.closest("figure"));
-    const fallbackImage = missingSource.querySelector("img");
-    expect(fallbackImage?.getAttribute("src")).toBe("/research/product-media/unknown.svg");
-    expect(fallbackImage?.getAttribute("alt")).toBe("Synthetic missing-source illustration, format unconfirmed");
-    expect(missingSource.querySelector("figcaption")).toBeNull();
-    expect(mapped.textContent).toContain("$12.50");
-    await click("Add to request", "Add to request: Synthetic mapped, Synthetic variant");
+    const [mapped, missingSource, reviewed] = host.querySelectorAll(".xenios-order-card");
+    for (const card of [mapped, missingSource]) {
+      expect(card.querySelector("img")).toBeNull();
+      expect(card.querySelector(".xenios-order-card-media")).toBeNull();
+      expect(card.querySelector("figure")).toBeNull();
+      // The identity takes the card's width: no empty media column.
+      expect(card.querySelector(".xenios-order-card-intro--no-media")).not.toBeNull();
+      // Details stay available to the guest without an image.
+      expect(card.querySelector('button[aria-label^="View details"]')).not.toBeNull();
+    }
+    expect(reviewed.querySelector(".xenios-order-card-intro--no-media")).toBeNull();
+    const reviewedImage = reviewed.querySelector("img");
+    expect(reviewedImage?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
+    expect(reviewed.querySelector(".xenios-order-card-intro > .xenios-order-card-media > figure"))
+      .toBe(reviewedImage?.closest("figure"));
+    expect(host.innerHTML).not.toMatch(/\/research\/product-media\/(capsule|unknown|vial|liquid|topical|tablet)\.svg/);
+    expect(mapped.textContent).toContain("Request a quote");
+    expect(mapped.textContent).not.toContain("$12.50");
+    await click("Add to quote cart", "Add to quote cart: Synthetic mapped, Synthetic variant");
     expect(mapped.querySelector('input[type="number"]')).not.toBeNull();
     expect(host.querySelector('aside img')).toBeNull();
 
     await render(api, true);
     expect(host.querySelector(".xenios-order-card img")).toBeNull();
+  });
+
+  it.each(["guest", "member"] as const)("names two rows with the same product and specification apart by the reviewed package in the %s catalog", async (mode) => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    const vial = { ...item("same", false), variantId: "same-vial", specification: "SYNTHETIC 10 mg",
+      reviewedContent: { summary: "Synthetic vial summary", overview: "Synthetic vial overview",
+        specifications: [{ label: "Listed amount", value: "10 mg" }] },
+      sourceSelection: { family: "synthetic", slug: "same-vial", variantId: "same-vial-source" } };
+    const capsules = { ...vial, variantId: "same-capsules",
+      reviewedContent: { summary: "Synthetic capsule summary", overview: "Synthetic capsule overview",
+        specifications: [{ label: "Listed package", value: "Bottle of 60 capsules" }] },
+      sourceSelection: { family: "synthetic", slug: "same-capsules", variantId: "same-capsules-source" } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [vial, capsules], total: 2 });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded ownerKey={mode === "guest" ? "early-access-session" : "a".repeat(64)} />));
+    const names = ["Synthetic same, SYNTHETIC 10 mg", "Synthetic same, SYNTHETIC 10 mg, Bottle of 60 capsules"];
+    const visibleAdd = mode === "guest" ? "Add to quote cart" : "Add Synthetic same to quote cart";
+    const addNames = mode === "guest" ? names.map((name) => visibleAdd + ": " + name) : [
+      visibleAdd + ", SYNTHETIC 10 mg",
+      visibleAdd + ", SYNTHETIC 10 mg, Bottle of 60 capsules",
+    ];
+    for (const name of addNames) await click(visibleAdd, name);
+    const prefixes = ["View details for ", "Decrease requested quantity for ", "Requested quantity for ",
+      "Increase requested quantity for ", "Remove ", "Edit selected quantity for ", "Remove selected "];
+    const labels = [...host.querySelectorAll("[aria-label]")].map((element) => element.getAttribute("aria-label")!)
+      .filter((label) => prefixes.some((prefix) => label.startsWith(prefix)));
+    for (const name of names) for (const prefix of prefixes) {
+      expect(labels.filter((label) => label === prefix + name)).toHaveLength(1);
+    }
+    expect(labels).toHaveLength(names.length * prefixes.length);
+    // The visible text is unchanged and still begins the spoken name.
+    expect([...host.querySelectorAll(".xenios-order-card button")].filter((button) => button.textContent === "Remove Synthetic same")).toHaveLength(2);
+  });
+
+  it("shows the reviewed package in each selection summary and in the final review", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    const common = { ...item("same", false), specification: "10 mg" };
+    const plain = { ...common, variantId: "plain", packBasis: "Unconfirmed package" };
+    const packageLabel = "Bottle of 60 capsules (historical presentation)";
+    const capsules = { ...common, variantId: "capsules", reviewedContent: {
+      summary: "Synthetic summary", overview: "Synthetic overview",
+      specifications: [{ label: "Listed package", value: packageLabel }],
+    } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [plain, capsules], total: 2 });
+    await render(api);
+    const [plainCard, capsuleCard] = host.querySelectorAll(".xenios-order-card");
+    const select = (card: Element) => act(async () => {
+      [...card.querySelectorAll("button")].find(button => button.textContent === "Add Synthetic same to quote cart")!.click();
+    });
+
+    // Only the capsule row is selected. Its reviewed wording must still travel with it.
+    await select(capsuleCard);
+    expect(host.querySelector("aside li > span")?.textContent).toBe("10 mg, " + packageLabel);
+    await select(plainCard);
+    expect([...host.querySelectorAll("aside li > strong + span")].map(el => el.textContent))
+      .toEqual(["10 mg, " + packageLabel, "10 mg"]);
+
+    const summary = document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-summary"]')!;
+    await act(async () => summary.click());
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expect([...dialog.querySelectorAll("li > strong + span")].map(el => el.textContent))
+      .toEqual(["10 mg, " + packageLabel, "10 mg"]);
+    await act(async () => [...dialog.querySelectorAll("button")].find(b => b.textContent === "Return to request")!.click());
+
+    await click("Continue to details");
+    await fillBaseContact();
+    await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    const review = [...host.querySelectorAll(".xenios-order-panel li")].map(el => el.textContent);
+    expect(review[0]).toContain("Synthetic same | 10 mg, " + packageLabel + " | Requested quantity: 1");
+    expect(review[1]).toContain("Synthetic same | 10 mg | Requested quantity: 1");
+    expect(review.join(" ")).not.toContain(plain.packBasis);
+    expect(api.submit).not.toHaveBeenCalled();
   });
 
   it("opens exact guest catalog details without changing the request or leaving the catalog", async () => {
@@ -220,7 +373,7 @@ describe("mixed private request customer form source", () => {
 
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       embedded ownerKey="early-access-session" />));
-    await click("Add to request", "Add to request: Synthetic mapped, Synthetic 10 mg");
+    await click("Add to quote cart", "Add to quote cart: Synthetic mapped, Synthetic 10 mg");
     const quantity = host.querySelector<HTMLInputElement>(".xenios-order-card input[type=number]")!;
     await type(quantity, "3");
     expect(host.querySelector(".xenios-order-card")?.textContent).toContain(row.reviewedContent.summary);
@@ -237,7 +390,8 @@ describe("mixed private request customer form source", () => {
     for (const fact of [row.specification, row.format, row.packBasis]) {
       expect(dialog?.textContent).toContain(fact);
     }
-    expect(dialog?.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
+    // No reviewed artwork for this row, so Details shows no image.
+    expect(dialog?.querySelector("img")).toBeNull();
     expect(dialog?.contains(document.activeElement)).toBe(true);
 
     await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
@@ -259,11 +413,32 @@ describe("mixed private request customer form source", () => {
     expect(storedKeys()).toEqual([]);
   });
 
+  it("states clinical review once on a card whose reviewed summary already ends with it", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    api.catalog.mockResolvedValue({ ...catalog, items: [
+      { ...item("stated", true), reviewedContent: { ...reviewedCopy, summary: "Synthetic clinical summary. Clinical review required." } },
+      { ...item("plain", true), reviewedContent: reviewedCopy },
+      item("bare", true),
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={"a".repeat(64)} />));
+    const [stated, plain, bare] = [...host.querySelectorAll(".xenios-order-card")].map((card) => card.textContent ?? "");
+    const count = (text: string) => text.split("Clinical review required.").length - 1;
+    // Said by the summary, so the notice line adds only the second sentence.
+    expect(count(stated)).toBe(1);
+    expect(stated).toContain("Not a prescription.");
+    // Not said by the summary, or no summary at all: the notice line says both, once.
+    for (const text of [plain, bare]) {
+      expect(count(text)).toBe(1);
+      expect(text).toContain("Clinical review required. Not a prescription.");
+    }
+  });
+
   it("shows approved art and complete details for a confirmed member without changing the request", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
     api.catalog.mockResolvedValue({ ...catalog, items: [
-      { ...item("reviewed", false), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy,
+      { ...item("reviewed", false), unitPriceCents: 4950, reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy,
         sourceSelection: { family: "research_peptides_materials", slug: "reviewed", variantId: "mov_82974ab2f9c652c2cb12" } },
       { ...item("clinical", true), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy },
     ] });
@@ -271,13 +446,15 @@ describe("mixed private request customer form source", () => {
     const [card, clinical] = host.querySelectorAll(".xenios-order-card");
     expect(card.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
     expect(card.textContent).toContain(reviewedCopy.summary);
+    expect(card.textContent).toContain("Request a quote");
+    expect(card.textContent).not.toContain("$49.50");
     expect(card.textContent).not.toContain(reviewedCopy.overview);
     expect(clinical.querySelector("img")).toBeNull();
     expect(clinical.querySelector('button[aria-label^="View details"]')).toBeNull();
     expect(clinical.textContent).toContain("Clinical review required. Not a prescription.");
     expect(clinical.textContent).toContain("Final price follows applicable review.");
 
-    await click("Add Synthetic reviewed to request");
+    await click("Add Synthetic reviewed to quote cart");
     const quantity = card.querySelector<HTMLInputElement>('input[type="number"]')!;
     await type(quantity, "3");
     const trigger = card.querySelector<HTMLButtonElement>('button[aria-label^="View details"]')!;
@@ -289,11 +466,15 @@ describe("mixed private request customer form source", () => {
     expect(dialog.textContent).toContain(reviewedCopy.overview);
     expect(dialog.textContent).toContain("QA-EXACT");
     expect(dialog.querySelector("img")?.getAttribute("src")).toBe(reviewedArtwork.primary.href);
-    expect(dialog.querySelector("a")?.getAttribute("href")).toBe(reviewedArtwork.labelPreview.href);
+    const preview = () => dialog.querySelector('a[href="' + reviewedArtwork.labelPreview.href + '"]');
+    const question = () => dialog.querySelector('[data-testid="catalog-listing-question"] a[href^="mailto:"]');
+    expect(preview()).toBeTruthy();
+    expect(question()).toBeTruthy();
     expect(dialog.querySelector('button[aria-label^="Add "]')).toBeNull();
     await act(async () => dialog.querySelector("img")!.dispatchEvent(new Event("error")));
     expect(dialog.querySelector("img")?.getAttribute("src")).toBe("/research/product-media/capsule.svg");
-    expect(dialog.querySelector("a")).toBeNull();
+    expect(preview()).toBeNull();
+    expect(question()).toBeTruthy();
     expect(dialog.textContent).toContain(reviewedCopy.overview);
     await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })));
     await vi.waitFor(() => expect(document.activeElement).toBe(trigger));
@@ -304,6 +485,45 @@ describe("mixed private request customer form source", () => {
     expect(api.submit).not.toHaveBeenCalled();
     expect(api.recover).not.toHaveBeenCalled();
     expect(storedKeys()).toEqual([]);
+  });
+
+  it("offers one human question per exact member listing, including clinical and held cards with no details", async () => {
+    const api = makeApi(), catalog = await api.catalog();
+    const refs = ["mov_" + "a".repeat(20), "mov_" + "b".repeat(20), "mov_" + "c".repeat(20)];
+    const source = (i: number) => ({ family: "synthetic", slug: "fixture-" + i, variantId: refs[i] });
+    api.catalog.mockResolvedValue({ ...catalog, total: 3, items: [
+      { ...item("clinical", true), sourceSelection: source(0), reviewedMedia: reviewedArtwork, reviewedContent: reviewedCopy },
+      { ...item("held", false), sourceSelection: source(1), selectableForReview: false, intentExclusion: "specification_review" },
+      { ...item("reviewed", false), sourceSelection: source(2), reviewedContent: reviewedCopy },
+    ] });
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} embedded ownerKey={"a".repeat(64)} />));
+    const [clinical, held, ordinary] = host.querySelectorAll(".xenios-order-card");
+    const widget = '[data-testid="catalog-listing-question"]';
+    const detailsButton = 'button[aria-label^="View details"]';
+    function expectOneQuestion(node: Element, ref: string) {
+      const all = node.querySelectorAll(widget);
+      expect(all).toHaveLength(1);
+      expect(all[0].querySelector("summary")?.textContent?.trim()).toBe("Ask about this item");
+      const url = new URL(all[0].querySelector<HTMLAnchorElement>('a[href^="mailto:"]')!.href);
+      expect(url.pathname).toBe("team@xeniostechnology.com");
+      expect(url.searchParams.get("body")?.split("\r\n")).toContain("Catalog reference: " + ref);
+    }
+    for (const [card, ref] of [[clinical, refs[0]], [held, refs[1]]] as const) {
+      expect(card.querySelector(detailsButton)).toBeNull();
+      expect(card.querySelector("img")).toBeNull();
+      expect(card.textContent).not.toContain(reviewedCopy.overview);
+      expectOneQuestion(card, ref);
+    }
+    // Copying contact details is the only button; the hold still has no request action.
+    expect([...held.querySelectorAll("button")].map(button => button.textContent)).toEqual(["Copy email details"]);
+    expect(clinical.textContent).toContain("Clinical review required.");
+    expect(ordinary.querySelector(widget)).toBeNull();
+    await act(async () => ordinary.querySelector<HTMLButtonElement>(detailsButton)!.click());
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expectOneQuestion(dialog, refs[2]);
+    expect(ordinary.querySelector(widget)).toBeNull();
+    expect(api.submit).not.toHaveBeenCalled();
+    expect(api.recover).not.toHaveBeenCalled();
   });
 
   it("keeps member copy-only and art-only details honest and excludes rows without an exact source", async () => {
@@ -364,10 +584,16 @@ describe("mixed private request customer form source", () => {
       key: "10000000-0000-4000-8000-000000000001", acceptedAt: "2026-10-14T12:00:00Z", state: "uncertain" }));
     const props = { api, storage: sessionStorage, onConfirmedReceipt: confirmed };
     await act(async () => root.render(<RequestIntentForm {...props} />));
-    await click(path === "submission" ? "Submit for review" : "Check saved request");
+    await click(path === "submission" ? "Request a quote" : "Check saved request");
     expect(host.textContent).toContain(reference);
     expect(confirmed).toHaveBeenCalledTimes(1);
-    expect(confirmed).toHaveBeenCalledWith(receipt);
+    if (path === "submission") {
+      expect(confirmed).toHaveBeenCalledWith(receipt);
+    } else {
+      expect(confirmed).toHaveBeenCalledWith(receipt, true);
+      expect(host.querySelector("h1")?.textContent).toBe("Your submitted request");
+      expect(host.querySelector('[data-testid="request-next-steps"]')).toBeNull();
+    }
     expect(markerAtConfirmation).toEqual([null]);
   });
   it("does not publish confirmation when recovery loses ownership of its marker", async () => {
@@ -391,7 +617,7 @@ describe("mixed private request customer form source", () => {
   });
   it("round-trips the form through the real intent service to one memory repository and authorized staff readback", async () => {
     const { api, rows } = makeRoundTrip();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     expect(rows.size).toBe(1);
     expect(host.textContent).toContain(reference);
     const hrefs = [...host.querySelectorAll("a")].map((anchor) => anchor.getAttribute("href"));
@@ -408,7 +634,7 @@ describe("mixed private request customer form source", () => {
     expect(host.querySelector('a[href="/research/support"]')?.textContent).toBe("Contact support");
     expect(host.querySelector('a[href="/support"]')).toBeNull();
     expect(api.submit).not.toHaveBeenCalled();
-    await click("Submit for review");
+    await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const payload = api.submit.mock.calls[0][0];
     expect(payload.lines).toEqual([
@@ -417,7 +643,7 @@ describe("mixed private request customer form source", () => {
     ]);
     expect(payload.agreements.every((entry) => entry.accepted === true)).toBe(true);
     expect(host.textContent).toContain(reference);
-    expect(host.textContent).toContain("Each item is pending review");
+    expect(host.textContent).toContain("Final availability, quantities, pricing and delivery are confirmed separately.");
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
     expect(payload).not.toHaveProperty("paymentVerificationId");
     expect(payload).not.toHaveProperty("medicalHistory");
@@ -432,9 +658,10 @@ describe("mixed private request customer form source", () => {
       throw new Error("synthetic lost response");
     });
     await prepare(api);
-    await click("Submit for review");
+    await click("Request a quote");
     expect(host.textContent).not.toContain(reference);
     const first = api.submit.mock.calls[0][0];
+    expect(host.textContent).toContain("choose Retry same request to send the original details again");
     await click("Retry same request");
     expect(api.submit.mock.calls[1][0]).toEqual(first);
     expect(host.textContent).toContain(reference);
@@ -442,7 +669,7 @@ describe("mixed private request customer form source", () => {
   it("refresh restores only the same attempt and recovers its real saved reference, without storing clinical selections", async () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost response"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)!;
     expect(marker).not.toContain("clinical");
     expect(marker).not.toContain("synthetic@example");
@@ -460,7 +687,7 @@ describe("mixed private request customer form source", () => {
   });
   it("malformed successful body never becomes a saved confirmation or a replacement key", async () => {
     const api = makeApi(); api.submit.mockResolvedValueOnce("<html>");
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     expect(host.textContent).not.toContain(reference);
     expect(host.textContent).toContain("could not confirm");
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).not.toBeNull();
@@ -504,7 +731,7 @@ describe("mixed catalog family labels", () => {
       filter!.dispatchEvent(new Event("change", { bubbles: true }));
     });
     expect(api.catalog).toHaveBeenLastCalledWith({ search: "", family, page: 1, pageSize: 24 });
-    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Add Synthetic clinical to request"))
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Add Synthetic clinical to quote cart"))
       .toBe(true);
     expect(api.submit).not.toHaveBeenCalled();
     expect(api.recover).not.toHaveBeenCalled();
@@ -543,14 +770,15 @@ describe("customer restriction copy", () => {
       expect(card.textContent).toContain("Clinical review required. Not a prescription.");
       expect(card.textContent).toContain("Final price follows applicable review.");
     } else if (!nonMerchandise) {
-      expect(card.textContent).toContain("$123.45 (catalog display, not a final quote)");
+      expect(card.textContent).toContain("Request a quote");
+      expect(card.textContent).not.toContain("$123.45");
     }
     if (nonMerchandise) {
-      expect(card.querySelector("button")).toBeNull();
+      expect(Array.from(card.querySelectorAll("button"), (button) => button.textContent?.trim())).toEqual(["Copy email details"]);
       expect(card.textContent).toContain("Shipping or service entry, not a product request");
     } else {
       expect(card.querySelector("button")?.disabled).toBe(false);
-      await click("Add Synthetic restricted to request");
+      await click("Add Synthetic restricted to quote cart");
       expect(host.querySelector('[aria-label="Selected request items"]')?.textContent)
         .toContain("1 exact variants | 1 requested units");
     }
@@ -587,7 +815,7 @@ describe("customer restriction copy", () => {
     const card = host.querySelector("article")!;
     expect(card.textContent).toContain("Coming soon");
     expect(card.textContent).not.toContain("future_reason");
-    expect(card.querySelector("button")).toBeNull();
+    expect(Array.from(card.querySelectorAll("button"), (button) => button.textContent?.trim())).toEqual(["Copy email details"]);
     expect(api.submit).not.toHaveBeenCalled();
   });
 
@@ -610,9 +838,9 @@ describe("mixed request mounted-entry contracts", () => {
       expect(document.activeElement).toBe(agreement);
       await render(api);
       expect(document.activeElement).toBe(agreement);
-      await click("Add Synthetic clinical to request");
+      await click("Add Synthetic clinical to quote cart");
       expect(document.activeElement).toBe(agreement);
-      await click("Continue to contact");
+      await click("Continue to details");
       expect(document.activeElement).toBe(host.querySelector("h1"));
       expect(host.querySelector('input[name="name"]')).toBeTruthy();
     } finally { agreement.remove(); }
@@ -647,9 +875,10 @@ describe("mixed request mounted-entry contracts", () => {
   it("does not continue when the existing access/standing shell is closed", async () => {
     const api = makeApi();
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} continuationEnabled={false} />));
-    await click("Add Synthetic clinical to request");
-    const next = [...host.querySelectorAll("button")].find((button) => button.textContent === "Continue to contact");
-    expect(next?.disabled).toBe(true);
+    expect(host.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
+    expect(host.textContent).not.toContain("Synthetic clinical");
+    expect(api.catalog).not.toHaveBeenCalled();
+    expect(host.querySelector('[data-testid="request-action-bar-primary"]')).toBeNull();
     expect(api.submit).not.toHaveBeenCalled();
   });
   it("resolves a clinical link through the neutral catalog without adding it or redirecting", async () => {
@@ -679,18 +908,18 @@ describe("an embedded form inside a page with its own h1", () => {
   it("puts its top heading one level below the page heading at every step and on the receipt, and still moves focus to it", async () => {
     const api = makeApi();
     await render(api, true);
-    expect(headings()).toEqual(["H2 Request products for review", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
+    expect(headings()).toEqual(["H2 Build your request", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
     await prepare(api, false, true);
-    expect(headings()).toEqual(["H2 Request products for review", "H2 Review your request"]);
+    expect(headings()).toEqual(["H2 Build your request", "H2 Submit your request"]);
     expect(document.activeElement).toBe(host.querySelector("h2"));
-    await click("Submit for review");
-    expect(headings()).toEqual(["H2 Request saved for review"]);
+    await click("Request a quote");
+    expect(headings()).toEqual(["H2 Request submitted", "H3 What happens next"]);
     expect(document.activeElement).toBe(host.querySelector("h2"));
   });
   it("puts the earlier-request check below the page heading too", async () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost response"));
-    await prepare(api, false, true); await click("Submit for review");
+    await prepare(api, false, true); await click("Request a quote");
     await act(async () => root.unmount());
     root = createRoot(host);
     await render(api, true);
@@ -699,7 +928,7 @@ describe("an embedded form inside a page with its own h1", () => {
   it("keeps its h1 when the form is the page", async () => {
     const api = makeApi();
     await render(api);
-    expect(headings()).toEqual(["H1 Request products for review", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
+    expect(headings()).toEqual(["H1 Build your request", "H2 Synthetic clinical", "H2 Synthetic research", "H2 Your request"]);
   });
 });
 
@@ -715,10 +944,10 @@ describe("request selection layout and controls (component fixtures, not viewpor
     const api = makeApi();
     const bounded = { ...item("bounded", false), minimumQuantity: 3, quantityIncrement: 4, maximumQuantity: 12 };
     api.catalog.mockResolvedValue({ items: [bounded], total: 1, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
-    await render(api); await click("Add Synthetic bounded to request");
+    await render(api); await click("Add Synthetic bounded to quote cart");
     const number = host.querySelector<HTMLInputElement>('input[type="number"]')!;
-    const decrease = host.querySelector<HTMLButtonElement>('[aria-label="Decrease requested quantity for Synthetic bounded"]')!;
-    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic bounded"]')!;
+    const decrease = host.querySelector<HTMLButtonElement>('[aria-label="Decrease requested quantity for Synthetic bounded, Synthetic variant"]')!;
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic bounded, Synthetic variant"]')!;
     expect([number.min, number.step, number.max, number.value]).toEqual(["3", "4", "12", "3"]);
     expect(decrease.disabled).toBe(true);
     await act(async () => increase.click()); expect(number.value).toBe("7");
@@ -728,26 +957,26 @@ describe("request selection layout and controls (component fixtures, not viewpor
     expect(api.submit).not.toHaveBeenCalled();
   });
   it("applies multiple queued increment clicks to the latest selection", async () => {
-    const api = makeApi(); await render(api); await click("Add Synthetic research to request");
-    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!;
+    const api = makeApi(); await render(api); await click("Add Synthetic research to quote cart");
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research, Synthetic variant"]')!;
     await act(async () => { increase.click(); increase.click(); });
     expect(host.querySelector<HTMLInputElement>('input[type="number"]')?.value).toBe("3");
   });
   it("counts exact variants and units and removes a selected line independently", async () => {
     const api = makeApi(); await render(api);
-    await click("Add Synthetic clinical to request"); await click("Add Synthetic research to request");
+    await click("Add Synthetic clinical to quote cart"); await click("Add Synthetic research to quote cart");
     const summary = host.querySelector<HTMLElement>('[aria-label="Selected request items"]')!;
     expect(summary.textContent).toContain("2 exact variants | 2 requested units");
-    await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical"]')!.click());
+    await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical, Synthetic variant"]')!.click());
     expect(summary.textContent).toContain("2 exact variants | 3 requested units");
-    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Remove selected Synthetic clinical Synthetic variant"]')!.click());
+    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Remove selected Synthetic clinical, Synthetic variant"]')!.click());
     expect(summary.textContent).toContain("1 exact variants | 1 requested units");
     expect(summary.textContent).not.toContain("Synthetic clinical");
     expect(summary.textContent).toContain("Synthetic research");
     expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
   });
   it("keeps selected summary lines when search hides the corresponding catalog card", async () => {
-    const api = makeApi(); await render(api); await click("Add Synthetic research to request");
+    const api = makeApi(); await render(api); await click("Add Synthetic research to quote cart");
     api.catalog.mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
     const search = [...host.querySelectorAll<HTMLInputElement>("input")].find((input) => input.closest("label")?.textContent === "Search catalog")!;
     await type(search, "no-match");
@@ -760,7 +989,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
     expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("2 exact variants | 3 requested units");
     expect(sessionStorage.length).toBe(0);
     expect(api.submit).not.toHaveBeenCalled();
-    await click("Continue to contact");
+    await click("Continue to details");
     expectContactInputs({ fullLegalName: "Synthetic Customer", email: "synthetic@example.invalid", mobilePhone: "+15555550123",
       ageConfirmed: true, shippingAddress: { line1: "1 Synthetic Street", city: "Test", region: "TX", postalCode: "00000", countryCode: "US" },
       billingSameAsShipping: true });
@@ -768,7 +997,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks.length).toBeGreaterThan(0);
     expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!.disabled).toBe(true);
     expect(sessionStorage.length).toBe(0); expect(api.submit).not.toHaveBeenCalled();
   });
   it.each([false, true])("retains an unfinished contact draft across a quantity edit (previous review %s)", async (previouslyReviewed) => {
@@ -779,9 +1008,9 @@ describe("request selection layout and controls (component fixtures, not viewpor
         await click("Edit selection");
       } else {
         await render(api);
-        await click("Add Synthetic research to request");
+        await click("Add Synthetic research to quote cart");
       }
-      await click("Continue to contact");
+      await click("Continue to details");
       const billingSame = () => [...host.querySelectorAll("label")]
         .find((label) => label.textContent?.includes("Billing address is the same"))!.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
       if (!previouslyReviewed) await act(async () => billingSame().click());
@@ -813,10 +1042,10 @@ describe("request selection layout and controls (component fixtures, not viewpor
       expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
 
       await click("Back to products");
-      await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!.click());
+      await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research, Synthetic variant"]')!.click());
       expect(host.querySelector('[aria-label="Selected request items"]')?.textContent)
         .toContain(previouslyReviewed ? "2 exact variants | 4 requested units" : "1 exact variants | 2 requested units");
-      await click("Continue to contact");
+      await click("Continue to details");
       expectDraft();
       expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
       expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
@@ -827,24 +1056,24 @@ describe("request selection layout and controls (component fixtures, not viewpor
       await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
       expect(host.querySelector('input[name="name"]')).not.toBeNull();
       expect(host.textContent).toContain("Complete the required contact and address fields.");
-      expect(host.textContent).not.toContain("Review your request");
+      expect(host.textContent).not.toContain("Submit your request");
       await type(host.querySelector<HTMLInputElement>('input[name="shippingCity"]')!, "Draft Delivery");
       await type(host.querySelector<HTMLInputElement>('input[name="billingPostalCode"]')!, "00004");
       if (previouslyReviewed) {
         await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
         expect(host.querySelector('input[name="age"]')).not.toBeNull();
         expect(host.querySelector<HTMLInputElement>('input[name="age"]')!.checked).toBe(false);
-        expect(host.textContent).not.toContain("Review your request");
+        expect(host.textContent).not.toContain("Submit your request");
         await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
       }
       await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
-      expect(host.textContent).toContain("Review your request");
+      expect(host.textContent).toContain("Submit your request");
       expect(host.textContent).toContain("Synthetic unfinished draft");
       expect(host.textContent).toContain("draft@example.invalid");
       const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
       expect(checks.length).toBeGreaterThan(0);
       expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!.disabled).toBe(true);
       expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
       expect(storageWrites).not.toHaveBeenCalled(); expect(sessionStorage.length).toBe(0);
     } finally { storageWrites.mockRestore(); }
@@ -865,9 +1094,9 @@ describe("request selection layout and controls (component fixtures, not viewpor
       const billingSame = () => [...host.querySelectorAll("label")]
         .find((label) => label.textContent?.includes("Billing address is the same"))!.querySelector<HTMLInputElement>('input[type="checkbox"]')!;
       if (previouslyReviewed) {
-        await prepare(api, true); await click("Edit selection"); await click("Continue to contact");
+        await prepare(api, true); await click("Edit selection"); await click("Continue to details");
       } else {
-        await render(api); await click("Add Synthetic research to request"); await click("Continue to contact");
+        await render(api); await click("Add Synthetic research to quote cart"); await click("Continue to details");
         for (const [name, value] of Object.entries({
           name: contact.fullLegalName, email: contact.email, phone: contact.mobilePhone,
           shippingLine1: shippingAddress.line1, shippingLine2: shippingAddress.line2, shippingCity: shippingAddress.city,
@@ -890,9 +1119,9 @@ describe("request selection layout and controls (component fixtures, not viewpor
       expect(host.querySelector('input[name="billingLine1"]')).toBeNull();
       if (visitProducts) {
         await click("Back to products");
-        await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research"]')!.click());
+        await act(async () => host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic research, Synthetic variant"]')!.click());
         expect(host.querySelector('[aria-label="Selected request items"]')?.textContent).toContain("1 exact variants | 2 requested units");
-        await click("Continue to contact");
+        await click("Continue to details");
         expect(billingSame().checked).toBe(true);
         expect(host.querySelector('input[name="billingLine1"]')).toBeNull();
       }
@@ -904,19 +1133,19 @@ describe("request selection layout and controls (component fixtures, not viewpor
       // Direct dispatch checks component validation, not native browser validity.
       await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
       expect(host.textContent).toContain("Complete the required contact and address fields.");
-      expect(host.textContent).not.toContain("Review your request");
+      expect(host.textContent).not.toContain("Submit your request");
       expectContactInputs(contact);
       // Choosing shipping explicitly must ignore the incomplete inactive draft.
       await act(async () => billingSame().click());
       await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
-      expect(host.textContent).toContain("Review your request");
+      expect(host.textContent).toContain("Submit your request");
       const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
       expect(checks.length).toBeGreaterThan(0); expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")!.disabled).toBe(true);
+      expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")!.disabled).toBe(true);
       expect(api.submit).not.toHaveBeenCalled(); expect(api.recover).not.toHaveBeenCalled();
       expect(storageWrites).not.toHaveBeenCalled();
       await act(async () => checks.forEach((checkbox) => checkbox.click()));
-      await click("Submit for review");
+      await click("Request a quote");
       expect(api.submit).toHaveBeenCalledTimes(1);
       const submitted = api.submit.mock.calls[0][0].contact;
       expect(submitted.billingSameAsShipping).toBe(true);
@@ -940,7 +1169,7 @@ describe("request selection layout and controls (component fixtures, not viewpor
     const first = { ...item("same", false), variantId: "first", specification: "First synthetic variant" };
     const second = { ...first, variantId: "second", specification: "Second synthetic variant" };
     api.catalog.mockResolvedValue({ items: [first, second], total: 2, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
-    await render(api); await click("Add Synthetic same to request"); await click("Add Synthetic same to request");
+    await render(api); await click("Add Synthetic same to quote cart"); await click("Add Synthetic same to quote cart");
     const summary = host.querySelector('[aria-label="Selected request items"]')!;
     expect(summary.textContent).toContain("1 products | 2 exact variants | 2 requested units");
     expect(summary.querySelectorAll("li")).toHaveLength(2);
@@ -949,12 +1178,12 @@ describe("request selection layout and controls (component fixtures, not viewpor
   });
   it("edits an off-page selected quantity with canonical bounds while preserving other selections", async () => {
     const api = makeApi(); await render(api);
-    await click("Add Synthetic clinical to request"); await click("Add Synthetic research to request");
+    await click("Add Synthetic clinical to quote cart"); await click("Add Synthetic research to quote cart");
     api.catalog.mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 24, families: [], channels: [], workflowModes: [] });
     const search = [...host.querySelectorAll<HTMLInputElement>("input")].find((input) => input.closest("label")?.textContent === "Search catalog")!;
     await type(search, "no-match");
     const summary = host.querySelector<HTMLElement>('[aria-label="Selected request items"]')!;
-    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Edit selected quantity for Synthetic research Synthetic variant"]')!.click());
+    await act(async () => summary.querySelector<HTMLButtonElement>('[aria-label="Edit selected quantity for Synthetic research, Synthetic variant"]')!.click());
     const editor = summary.querySelector<HTMLInputElement>('input[type="number"]')!;
     expect([editor.min, editor.max, editor.step]).toEqual(["1", "100", "1"]);
     await type(editor, "200"); expect(editor.value).toBe("100");
@@ -1010,17 +1239,17 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   }
   it("preserves separate billing and contact through selection editing and an explicit requirements refresh", async () => {
     const api = versionCheckedApi();
-    await prepare(api, true); await click("Submit for review");
+    await prepare(api, true); await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const first = api.submit.mock.calls[0][0];
     expect(first.contact.billingSameAsShipping).toBe(false);
     expect(sessionStorage.length).toBe(0);
     expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
     await click("Edit selection");
-    expect(buttonNamed("Continue to contact").disabled).toBe(true);
+    expect(buttonNamed("Continue to details").disabled).toBe(true);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     await click("Remove Synthetic research");
-    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical"]');
+    const increase = host.querySelector<HTMLButtonElement>('[aria-label="Increase requested quantity for Synthetic clinical, Synthetic variant"]');
     expect(increase).toBeTruthy(); await act(async () => increase!.click());
     api.config.mockResolvedValueOnce(updatedRequirements());
     await click("Refresh requirements");
@@ -1028,15 +1257,15 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(sessionStorage.length).toBe(0);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
     expect(host.querySelector('.xenios-order-error[role="alert"]')).toBeNull();
-    await click("Continue to contact"); expectContactInputs(first.contact);
+    await click("Continue to details"); expectContactInputs(first.contact);
     await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
     const clinicalRequirements = requiredAssistedOrderFormAcknowledgments({ includesResearchUseOnly: false });
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks).toHaveLength(clinicalRequirements.length + updatedRequirements().legal.length);
     expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Request a quote").disabled).toBe(true);
     expect(api.submit).toHaveBeenCalledTimes(1); expect(sessionStorage.length).toBe(0);
-    await confirmFreshRequirements(); await click("Submit for review");
+    await confirmFreshRequirements(); await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1051,7 +1280,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("refreshes obsolete requirements explicitly before a fresh version-valid submission", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const first = api.submit.mock.calls[0][0];
     expect(first.agreements.find((entry) => entry.kind === "fixture-terms")?.version).toBe("fixture-v1");
     expect(api.config).toHaveBeenCalledTimes(1);
@@ -1065,8 +1294,8 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).not.toContain("Retry same request");
     expect(buttonNamed("Edit selection").disabled).toBe(false);
     expect(buttonNamed("Refresh requirements").disabled).toBe(false);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
-    await click("Submit for review");
+    expect(buttonNamed("Request a quote").disabled).toBe(true);
+    await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(1);
 
     api.config.mockResolvedValueOnce(updatedRequirements());
@@ -1082,12 +1311,12 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).toContain("Synthetic clinical");
     expect(host.textContent).toContain("Synthetic research");
     expect(sessionStorage.length).toBe(0);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
-    await click("Submit for review");
+    expect(buttonNamed("Request a quote").disabled).toBe(true);
+    await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(1);
     await confirmFreshRequirements();
-    expect(buttonNamed("Submit for review").disabled).toBe(false);
-    await click("Submit for review");
+    expect(buttonNamed("Request a quote").disabled).toBe(false);
+    await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1105,7 +1334,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("keeps submission closed after refresh failure and permits an explicit successful refresh retry", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const first = api.submit.mock.calls[0][0];
     api.config.mockRejectedValueOnce(new Error("Synthetic configuration failure"))
       .mockResolvedValueOnce(updatedRequirements());
@@ -1117,10 +1346,10 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).not.toContain("Synthetic legal requirement");
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(host.textContent).not.toContain(receipt.publicReference);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Request a quote").disabled).toBe(true);
     expect(buttonNamed("Refresh requirements").disabled).toBe(false);
     expect(sessionStorage.length).toBe(0);
-    await click("Submit for review");
+    await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(1);
 
     await click("Refresh requirements");
@@ -1129,9 +1358,9 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(host.textContent).toContain("Version 2 synthetic legal requirement");
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
     expect(host.querySelector('.xenios-order-error[role="alert"]')).toBeNull();
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Request a quote").disabled).toBe(true);
     expect(sessionStorage.length).toBe(0);
-    await confirmFreshRequirements(); await click("Submit for review");
+    await confirmFreshRequirements(); await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1143,7 +1372,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
   });
   it("deduplicates refresh clicks while configuration is pending without posting a request", async () => {
     const api = versionCheckedApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     type Config = Awaited<ReturnType<typeof api.config>>;
     let resolveRefresh!: (value: Config) => void;
     const pending = new Promise<Config>((resolve) => { resolveRefresh = resolve; });
@@ -1154,21 +1383,22 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.config).toHaveBeenCalledTimes(2);
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(buttonNamed("Refresh requirements").disabled).toBe(true);
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Request a quote").disabled).toBe(true);
+    expect(host.textContent).not.toMatch(/Submitting request/);
     expect(host.querySelectorAll(".xenios-order-acknowledgments input[type=checkbox]")).toHaveLength(0);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).not.toBeNull();
     expect(sessionStorage.length).toBe(0);
-    await click("Submit for review");
+    await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(1);
     await act(async () => { resolveRefresh(updatedRequirements()); await pending; });
     expect(api.config).toHaveBeenCalledTimes(2);
     expect(api.submit).toHaveBeenCalledTimes(1);
     expect(host.textContent).toContain("Version 2 synthetic legal requirement");
-    expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Request a quote").disabled).toBe(true);
     expect(sessionStorage.length).toBe(0);
     await confirmFreshRequirements();
-    expect(buttonNamed("Submit for review").disabled).toBe(false);
-    await click("Submit for review");
+    expect(buttonNamed("Request a quote").disabled).toBe(false);
+    await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(2);
     expect(host.textContent).toContain(receipt.publicReference);
   });
@@ -1182,7 +1412,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
       if (!submissionAdmitted) throw new RequestIntentHttpError(status, code);
       return receipt;
     });
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(1);
     const first = api.submit.mock.calls[0][0];
     expect(host.textContent).toContain("This request was not saved."); expect(host.textContent).toContain(guidance);
@@ -1190,16 +1420,16 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     expect(api.config).toHaveBeenCalledTimes(1);
     expect(host.querySelector('[aria-label="Refresh request requirements"]')).toBeNull();
     expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Refresh requirements")).toBe(false);
-    expect(buttonNamed("Edit selection").disabled).toBe(false); expect(buttonNamed("Submit for review").disabled).toBe(true);
+    expect(buttonNamed("Edit selection").disabled).toBe(false); expect(buttonNamed("Request a quote").disabled).toBe(true);
     const checks = [...host.querySelectorAll<HTMLInputElement>(".xenios-order-acknowledgments input[type=checkbox]")];
     expect(checks.length).toBeGreaterThan(0); expect(checks.every((checkbox) => !checkbox.checked)).toBe(true);
     expect(checks.every((checkbox) => !checkbox.matches(":disabled"))).toBe(true);
-    await click("Submit for review"); expect(api.submit).toHaveBeenCalledTimes(1);
+    await click("Request a quote"); expect(api.submit).toHaveBeenCalledTimes(1);
     submissionAdmitted = true;
     // A controlled clock proves the new attempt records its own confirmation time.
     const fresh = new Date(Date.parse(first.agreements[0].acceptedAt) + 60_000);
     vi.useFakeTimers({ toFake: ["Date"] }); vi.setSystemTime(fresh);
-    try { await confirmFreshRequirements(); await click("Submit for review"); } finally { vi.useRealTimers(); }
+    try { await confirmFreshRequirements(); await click("Request a quote"); } finally { vi.useRealTimers(); }
     expect(api.submit).toHaveBeenCalledTimes(2);
     const second = api.submit.mock.calls[1][0];
     expect(second.idempotencyKey).not.toBe(first.idempotencyKey);
@@ -1214,7 +1444,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(400, "current_acknowledgments_required"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     await click("Retry same request");
     expect(api.submit).toHaveBeenCalledTimes(2);
@@ -1235,7 +1465,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(409, "attempt_conflict"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_outcome_unconfirmed"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     await click("Retry same request");
@@ -1248,7 +1478,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_intent_unavailable"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     const notice = host.querySelector(".xenios-order-error")?.textContent;
@@ -1271,7 +1501,7 @@ describe("Doc163 known first refusal versus prior uncertainty", () => {
     const api = makeApi();
     api.submit.mockRejectedValueOnce(new Error("synthetic lost reply"));
     api.recover.mockRejectedValueOnce(new RequestIntentHttpError(503, "request_intent_unavailable"));
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
     await act(async () => root.unmount());
@@ -1432,7 +1662,7 @@ describe("confirmed reference continuation", () => {
     const api = makeApi();
     await prepare(api);
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} ownerKey="owner-a" />));
-    await click("Submit for review");
+    await click("Request a quote");
     expect(host.textContent).toContain(reference); expectOnlyReferenceRecord("owner-a");
     expect(host.textContent).not.toContain("confirmed earlier in this browser tab");
     sessionStorage.clear(); sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, uncertainMarker);
@@ -1443,22 +1673,22 @@ describe("confirmed reference continuation", () => {
   });
   it("shows a fresh form on an in-page remount of the same page load and keeps the record for a later load", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
-    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).toContain("Build your request");
     expect(host.textContent).not.toContain(reference);
     expect(replacement.catalog).toHaveBeenCalledTimes(1);
     expectOnlyReferenceRecord();
   });
   it("reopens the confirmed reference for the same owner after a reload without reading or publishing again", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     simulateReload();
     const replacement = makeApi(), confirmed = vi.fn(), steps = vi.fn();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} onConfirmedReceipt={confirmed} onStepChange={steps}
       entryIntent={{ family: "research_peptides_materials", slug: "research", variantId: "research-source", quantity: 1, action: "REQUEST_QUOTE" }} />);
-    expect(host.textContent).toContain("Request saved for review");
+    expect(host.textContent).toContain("Your submitted request");
     expect(steps).toHaveBeenLastCalledWith("review");
     expect(host.textContent).toContain(reference);
     expect(host.textContent).toContain("This reference was confirmed earlier in this browser tab. Nothing was sent again.");
@@ -1470,18 +1700,18 @@ describe("confirmed reference continuation", () => {
   });
   it("discards another owner's record and renders a fresh form", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     simulateReload();
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} ownerKey="owner-b" />);
-    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).toContain("Build your request");
     expect(host.textContent).not.toContain(reference);
     expect(replacement.catalog).toHaveBeenCalledTimes(1);
     expect(sessionStorage.length).toBe(0);
   });
   it("lets an uncertain attempt take precedence over a reopened reference", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     simulateReload(); sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, uncertainMarker);
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
@@ -1492,29 +1722,29 @@ describe("confirmed reference continuation", () => {
   });
   it("starts another request from a clean session with a new attempt key", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     const first = api.submit.mock.calls[0][0];
     await click("Start another request");
-    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).toContain("Build your request");
     expect(document.activeElement).toBe(host.querySelector("h1"));
     expect(host.textContent).toContain("0 products | 0 exact variants | 0 requested units");
     expect(host.textContent).not.toContain(reference);
     expect(sessionStorage.length).toBe(0);
     expect(api.catalog).toHaveBeenCalledTimes(2); expect(api.config).toHaveBeenCalledTimes(2);
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     expect(api.submit).toHaveBeenCalledTimes(2);
     expect(api.submit.mock.calls[1][0].idempotencyKey).not.toBe(first.idempotencyKey);
     expect(host.textContent).toContain(reference); expectOnlyReferenceRecord();
   });
   it("starts another request from a reopened receipt too, forgetting the record and focusing the fresh form", async () => {
     const api = makeApi();
-    await prepare(api); await click("Submit for review");
+    await prepare(api); await click("Request a quote");
     simulateReload();
     const replacement = makeApi();
     await remount(<RequestIntentForm api={replacement} storage={sessionStorage} />);
     expect(host.textContent).toContain("confirmed earlier in this browser tab");
     await click("Start another request");
-    expect(host.textContent).toContain("Request products for review");
+    expect(host.textContent).toContain("Build your request");
     expect(document.activeElement).toBe(host.querySelector("h1"));
     expect(sessionStorage.length).toBe(0);
     expect(replacement.catalog).toHaveBeenCalledTimes(1); expect(replacement.config).toHaveBeenCalledTimes(1);
@@ -1529,7 +1759,7 @@ describe("confirmed reference continuation", () => {
     try {
       await prepare(api);
       await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage} onConfirmedReceipt={confirmed} />));
-      await click("Submit for review");
+      await click("Request a quote");
       expect(host.textContent).toContain(reference);
       expect(confirmed).toHaveBeenCalledWith(receipt);
       expect(sessionStorage.length).toBe(0);
@@ -1549,7 +1779,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     };
     await renderSameForm(true);
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(403, "agreement_standing_required"));
-    await click("Submit for review");
+    await click("Request a quote");
     const first = api.submit.mock.calls[0][0];
     expect(refresh).toHaveBeenCalledTimes(1);
     expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
@@ -1559,8 +1789,9 @@ describe("agreement-standing refresh preserves the current request", () => {
     expect([...host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]")]
       .every((input) => !input.checked)).toBe(true);
     await renderSameForm(false);
-    const submit = [...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review");
-    expect(submit?.disabled).toBe(true);
+    expect(host.querySelector('[data-testid="request-catalog-policy-gate"]')).toBeTruthy();
+    expect(host.textContent).not.toContain("Synthetic Customer");
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Request a quote")).toBe(false);
     await renderSameForm(true);
     expect(api.submit).toHaveBeenCalledTimes(1);
     const newConfig = await api.config();
@@ -1568,9 +1799,9 @@ describe("agreement-standing refresh preserves the current request", () => {
       legal: [{ kind: "fixture-terms", version: "fixture-v2", label: "Current synthetic legal requirement" }] });
     await click("Refresh requirements");
     // Reacceptance alone is insufficient: the request acknowledgments remain unchecked.
-    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Submit for review")?.disabled).toBe(true);
+    expect([...host.querySelectorAll("button")].find((button) => button.textContent === "Request a quote")?.disabled).toBe(true);
     await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((input) => input.click()));
-    await click("Submit for review");
+    await click("Request a quote");
     const second = api.submit.mock.calls[1][0];
     expect(second.contact).toEqual(first.contact);
     expect(second.lines).toEqual(first.lines);
@@ -1586,7 +1817,7 @@ describe("agreement-standing refresh preserves the current request", () => {
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       onAgreementStandingRequired={refresh} />));
     api.submit.mockRejectedValueOnce(new Error("Synthetic lost reply"));
-    await click("Submit for review");
+    await click("Request a quote");
     const first = api.submit.mock.calls[0][0];
     const marker = sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY);
     expect(marker).not.toBeNull();
@@ -1608,8 +1839,215 @@ describe("agreement-standing refresh preserves the current request", () => {
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
       onAgreementStandingRequired={refresh} />));
     api.submit.mockRejectedValueOnce(new RequestIntentHttpError(status, code));
-    await click("Submit for review");
+    await click("Request a quote");
     expect(refresh).not.toHaveBeenCalled();
     expect(api.submit).toHaveBeenCalledTimes(1);
+  });
+});
+
+it("replaces a stale selected HCG row after a catalog hold, keeps it in the request with the strength withheld, and submits it", async () => {
+  const api = makeApi();
+  const hcg: RequestIntentCatalogItem = {
+    ...item("stale-hcg", false), productName: "HCG", specification: "HCG(120000iu)",
+    sourceSelection: {
+      family: HCG_STRENGTH_REVIEW.family, slug: HCG_STRENGTH_REVIEW.legacySlug,
+      variantId: HCG_STRENGTH_REVIEW.variantId,
+    },
+  };
+  const sibling = item("sibling", false);
+  const firstPage = { ...await api.catalog(), items: [hcg, sibling] };
+  api.catalog.mockResolvedValue(firstPage);
+  await render(api);
+  await click("Add HCG to quote cart");
+  await click("Add Synthetic sibling to quote cart");
+  await click("Continue to details");
+  await fillBaseContact();
+  await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+
+  api.catalog.mockResolvedValue({
+    ...firstPage, items: [{
+      // Held is a review reason, not a refusal: the server still lists the row as selectable.
+      ...hcg, specification: HCG_STRENGTH_REVIEW.specification, selectableForReview: true,
+      intentExclusion: "specification_review", actionLabel: HCG_STRENGTH_REVIEW.actionLabel,
+      sourceSelection: { family: HCG_STRENGTH_REVIEW.family, slug: HCG_STRENGTH_REVIEW.slug,
+        variantId: HCG_STRENGTH_REVIEW.variantId },
+    }, sibling],
+  });
+  await render({ ...api });
+  const contactForm = host.querySelector("form")!;
+  expect(contactForm.querySelector<HTMLButtonElement>('button[type="submit"]')?.disabled).toBe(false);
+  await click("Back to products");
+  const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
+  expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+  expect(summary.textContent).not.toContain("120000");
+  expect(summary.textContent).toContain("Synthetic sibling");
+  expect(summary.textContent).not.toContain("Remove this selection to continue");
+  expect([...summary.querySelectorAll("button")]
+    .find((button) => button.textContent === "Continue to details")?.disabled).toBe(false);
+  // The request bar offers the same continue action; it takes a held selection forward too.
+  const barContinue = document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-primary"]')!;
+  expect(barContinue.textContent).toBe("Continue to details");
+  await act(async () => barContinue.click());
+  expect(host.querySelector<HTMLInputElement>('input[name="name"]')?.value).toBe("Synthetic Customer");
+  const age = host.querySelector<HTMLInputElement>('input[name="age"]')!;
+  if (!age.checked) await act(async () => age.click());
+  await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+  await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+  expect(host.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+  expect(host.textContent).not.toContain("120000");
+  await click("Request a quote");
+  // One request carries both lines: the held listing and its sibling.
+  expect(api.submit).toHaveBeenCalledTimes(1);
+  const sent = api.submit.mock.calls[0][0] as { lines: readonly { productId: string; quantity: number }[] };
+  expect(sent.lines.map((line) => line.productId)).toEqual([hcg.productId, sibling.productId]);
+  expect(JSON.stringify(sent)).not.toContain("120000");
+});
+
+it.each(["cached", "in-flight"] as const)(
+  "keeps a %s HCG link requestable in its held form after a first selection refusal",
+  async (linkTiming) => {
+    const api = makeApi();
+    const basePage = await api.catalog();
+    const sourceSelection = {
+      family: HCG_STRENGTH_REVIEW.family, slug: HCG_STRENGTH_REVIEW.legacySlug,
+      variantId: HCG_STRENGTH_REVIEW.variantId,
+    };
+    const hcg = { ...item("research", false), specification: "HCG(120000iu)", sourceSelection };
+    const firstPage = { ...basePage, items: [item("clinical", true), hcg] };
+    const linkPage = { ...basePage, items: [hcg], total: 1, pageSize: 100 };
+    let resolveLink!: (page: typeof linkPage) => void;
+    const pendingLink = new Promise<typeof linkPage>((resolve) => { resolveLink = resolve; });
+    const linkedApi: RequestIntentApi = {
+      ...api,
+      catalog: async (query) => query.pageSize === 100
+        ? (linkTiming === "in-flight" ? pendingLink : linkPage) : firstPage,
+    };
+    api.submit.mockRejectedValueOnce(new RequestIntentHttpError(400, "selection_requires_refresh"));
+    await act(async () => root.render(<RequestIntentForm api={linkedApi} storage={sessionStorage}
+      entryIntent={{ ...sourceSelection, quantity: 2, action: "ASSISTED_ORDER" }} />));
+    await click("Add Synthetic clinical to quote cart");
+    await click(linkTiming === "cached" ? "Add linked selection for review" : "Add Synthetic research to quote cart");
+    await click("Continue to details");
+    await fillBaseContact();
+    await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    await act(async () => host.querySelectorAll<HTMLInputElement>("fieldset input[type=checkbox]").forEach((entry) => entry.click()));
+    await click("Request a quote");
+
+    expect(api.submit).toHaveBeenCalledTimes(1);
+    expect(sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBeNull();
+    expect(host.textContent).not.toContain("120000");
+    await click("Edit selection");
+    expect(host.textContent).not.toContain("120000");
+    expect(host.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+    // The held listing stays in the request; nothing forces the customer to remove it.
+    const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
+    expect(summary.textContent).toContain("Synthetic research");
+    expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.specification);
+    await click("Remove", "Remove selected Synthetic research, " + HCG_STRENGTH_REVIEW.specification);
+    expect(summary.textContent).not.toContain("Synthetic research");
+    if (linkTiming === "in-flight") await act(async () => resolveLink(linkPage));
+    // The link still offers the listing, in its held form.
+    const link = host.querySelector('section[aria-label="Selection from your link"]')!;
+    expect(link.textContent).toContain(HCG_STRENGTH_REVIEW.actionLabel);
+    expect(link.textContent).not.toContain("120000");
+    await act(async () => link.querySelector("button")!.click());
+    expect(summary.textContent).toContain("Synthetic research");
+    expect(summary.textContent).toContain(HCG_STRENGTH_REVIEW.specification);
+    expect(summary.textContent).toContain("Synthetic clinical");
+    expect(host.textContent).not.toContain("120000");
+    await click("Continue to details");
+    expect(host.querySelector<HTMLInputElement>('input[name="name"]')?.value).toBe("Synthetic Customer");
+    expect(api.submit).toHaveBeenCalledTimes(1);
+  },
+);
+
+it("shows Details under review for a row whose action label the quote-only list replaced", async () => {
+  const api = makeApi();
+  const underReview: RequestIntentCatalogItem = {
+    ...item("review", false), intentExclusion: "specification_review",
+    // What the quote-only list sends for this workflow: the quote wording, not the status.
+    actionLabel: "Request a quote", reviewMessage: "A synthetic reviewed sentence for this listing.",
+  };
+  api.catalog.mockResolvedValue({ ...await api.catalog(), items: [underReview] });
+  await render(api);
+  const card = host.querySelector("article")!;
+  expect(card.textContent).toContain("Details under review.");
+  expect(card.textContent).toContain("A synthetic reviewed sentence for this listing.");
+  await click("Add Synthetic review to quote cart");
+  const summary = host.querySelector('aside[aria-label="Selected request items"]')!;
+  expect(summary.textContent).toContain("Details under review");
+  expect(summary.textContent).toContain("Synthetic review");
+});
+
+it("shows the reviewed sentence on a row that cannot be added yet", async () => {
+  const api = makeApi();
+  const comingSoon: RequestIntentCatalogItem = {
+    ...item("later", false), selectableForReview: false, intentExclusion: "coming_soon",
+    actionLabel: "Coming soon", reviewMessage: "A synthetic reviewed sentence for a listing that is coming soon.",
+  };
+  api.catalog.mockResolvedValue({ ...await api.catalog(), items: [comingSoon] });
+  await render(api);
+  const card = host.querySelector("article")!;
+  expect(card.textContent).toContain("Coming soon");
+  // The status and the sentence read as two sentences, not one run-on.
+  expect(card.textContent).toContain("Coming soon. A synthetic reviewed sentence for a listing that is coming soon.");
+  // It still cannot be added.
+  expect([...card.querySelectorAll("button")].some((button) => button.textContent?.startsWith("Add "))).toBe(false);
+});
+
+it("asks the server for the chosen sort over the whole catalog, from page one", async () => {
+  const api = makeApi();
+  await render(api);
+  const sort = [...host.querySelectorAll("label")].find((label) => label.textContent?.startsWith("Sort"))!
+    .querySelector("select")!;
+  expect([...sort.options].map((option) => option.textContent)).toEqual(["Catalog order", "Name A to Z", "Name Z to A"]);
+  // No sort is sent until the customer chooses one.
+  const lastQuery = () => (api.catalog.mock.calls.at(-1) as unknown as [{ sort?: string }])[0];
+  expect(lastQuery().sort).toBeUndefined();
+  await act(async () => {
+    sort.value = "name_asc";
+    sort.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  expect(api.catalog).toHaveBeenLastCalledWith({ search: "", family: undefined, sort: "name_asc", page: 1, pageSize: 24 });
+  await act(async () => {
+    sort.value = "";
+    sort.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  expect(lastQuery().sort).toBeUndefined();
+});
+
+describe("the policy step's recheck asks the server again", () => {
+  const gate = () => host.querySelector('[data-testid="request-catalog-policy-gate"]');
+  const refused = () => new RequestIntentHttpError(403, "agreement_standing_required");
+  async function mountRefused(api: ReturnType<typeof makeApi>, refresh: () => void) {
+    api.catalog.mockRejectedValueOnce(refused());
+    await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
+      embedded continuationEnabled onAgreementStandingRequired={refresh} />));
+    // The server refused the catalog: the policy step is shown and no product is.
+    expect(gate()).toBeTruthy();
+    expect(host.textContent).not.toContain("Synthetic clinical");
+  }
+  it("returns to the catalog without a reload when the server now admits the viewer", async () => {
+    const api = makeApi(), refresh = vi.fn();
+    await mountRefused(api, refresh);
+    const asked = api.catalog.mock.calls.length;
+    await click("Recheck policy status");
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(api.catalog.mock.calls.length).toBe(asked + 1);
+    expect(gate()).toBeNull();
+    expect(host.textContent).toContain("Synthetic clinical");
+  });
+  it("puts the policy step back, with no product shown, when the server refuses again", async () => {
+    const api = makeApi(), refresh = vi.fn();
+    await mountRefused(api, refresh);
+    const asked = api.catalog.mock.calls.length;
+    api.catalog.mockRejectedValueOnce(refused());
+    await click("Recheck policy status");
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(api.catalog.mock.calls.length).toBe(asked + 1);
+    expect(gate()).toBeTruthy();
+    expect(host.textContent).not.toContain("Synthetic clinical");
+    expect([...host.querySelectorAll("button")].some((button) => button.textContent === "Recheck policy status")).toBe(true);
   });
 });

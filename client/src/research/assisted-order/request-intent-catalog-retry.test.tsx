@@ -12,7 +12,7 @@ const product: RequestIntentCatalogItem = {
   productId: "synthetic-product", variantId: "synthetic-variant", productName: "Synthetic item",
   family: "research_peptides_materials", channel: "synthetic", specification: "Synthetic exact variant",
   format: null, packBasis: null, minimumQuantity: 1, maximumQuantity: 100, quantityIncrement: 1,
-  unitPriceCents: null, currency: "USD", workflowMode: "request_pricing", actionLabel: "Add to request",
+  unitPriceCents: null, currency: "USD", workflowMode: "request_pricing", actionLabel: "Add to quote cart",
   accessNotice: null, researchUseOnly: true, catalogVersion: "synthetic", priceVersion: null,
   sourceSelection: { family: "synthetic", slug: "synthetic", variantId: "synthetic-source" },
   selectableForReview: true, intentExclusion: null, clinicalReviewRequired: false,
@@ -83,8 +83,8 @@ describe("Quick Order catalog read recovery", () => {
     await act(async () => retry.resolve(page()));
     expect(host.textContent).toContain("1 visible catalog entries");
     expect(host.querySelector('[role="alert"]')).toBeNull();
-    await click("Add Synthetic item to request");
-    expect(button("Continue to contact")!.disabled).toBe(false);
+    await click("Add Synthetic item to quote cart");
+    expect(button("Continue to details")!.disabled).toBe(false);
     noWrites(api);
   });
 
@@ -92,7 +92,7 @@ describe("Quick Order catalog read recovery", () => {
     const api = makeApi();
     api.catalog.mockResolvedValueOnce(page()).mockResolvedValueOnce(page(1, 25))
       .mockRejectedValueOnce(new Error("temporary failure")).mockResolvedValueOnce(page(2, 25));
-    await mount(api); await click("Add Synthetic item to request");
+    await mount(api); await click("Add Synthetic item to quote cart");
     const quantity = host.querySelector<HTMLInputElement>('input[type="number"]')!;
     await act(async () => {
       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(quantity, "7");
@@ -107,7 +107,7 @@ describe("Quick Order catalog read recovery", () => {
     expect(summary.textContent).toContain("Synthetic exact variant");
     expect(summary.textContent).toContain("Requested quantity: 7");
     expect(host.textContent).toContain("Page 2");
-    await click("Continue to contact");
+    await click("Continue to details");
     expect(host.querySelector('input[name="name"]')).not.toBeNull();
     noWrites(api);
   });
@@ -167,7 +167,7 @@ describe("Quick Order catalog read recovery", () => {
     api.catalog.mockRejectedValueOnce(new Error("catalog unavailable")).mockResolvedValueOnce(page());
     await mount(api); await click("Retry catalog");
     expect(host.textContent).toContain("Current request requirements are unavailable. Submission remains closed.");
-    expect(button("Continue to contact")!.disabled).toBe(true);
+    expect(button("Continue to details")!.disabled).toBe(true);
     expect(api.config).toHaveBeenCalledTimes(1); noWrites(api);
   });
 

@@ -7,6 +7,7 @@
  * Identity, catalog facts and Care access-audit delivery are synthetic inputs.
  * The production registration, service, repository and candidate SQL are real.
  */
+import { ownedPg16 } from "./disposable-pg16.fixture";
 import { execFileSync } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -103,6 +104,7 @@ export function createDurableJourneyFixture() {
   const container = "xenios-request-intent-" + randomUUID();
   const database = "request_intent_disposable";
   const password = randomUUID(); // Ephemeral fixture credential; never a host secret.
+  let native: Awaited<ReturnType<typeof ownedPg16>> | undefined;
   let created = false;
   let port = 0;
   const docker = (...args: string[]) => execFileSync("docker", args, {
@@ -169,6 +171,27 @@ export function createDurableJourneyFixture() {
             text = "select public.request_intent_staff_get($1::uuid,$2::uuid) as value";
             values = [args.p_request_id, args.p_actor_user_id];
             break;
+          // The optional-context candidate's two functions. They exist only after
+          // that candidate is applied; before it, the call fails in the database.
+          case "request_intent_create_with_context":
+            text = "select public.request_intent_create_with_context($1::text,$2::text,$3::text,$4::jsonb,$5::jsonb) as value";
+            values = [args.p_owner_hash, args.p_attempt_hash, args.p_fingerprint,
+              JSON.stringify(args.p_detail), JSON.stringify(args.p_context)];
+            break;
+          case "request_intent_staff_get_with_context":
+            text = "select public.request_intent_staff_get_with_context($1::uuid,$2::uuid) as value";
+            values = [args.p_request_id, args.p_actor_user_id];
+            break;
+          // The private contact candidate's two functions (name and email before the
+          // catalog). They exist only after that candidate is applied.
+          case "request_intent_catalog_contact_has":
+            text = "select public.request_intent_catalog_contact_has($1::text,$2::text) as value";
+            values = [args.p_owner_binding, args.p_policy_revision];
+            break;
+          case "request_intent_catalog_contact_put":
+            text = "select public.request_intent_catalog_contact_put($1::text,$2::text,$3::text,$4::text,$5::integer) as value";
+            values = [args.p_owner_binding, args.p_policy_revision, args.p_full_legal_name, args.p_email, args.p_ttl_seconds];
+            break;
           case "request_intent_staff_list":
             text = "select public.request_intent_staff_list($1::uuid,$2::integer) as value";
             values = [args.p_actor_user_id, args.p_page];
@@ -198,7 +221,8 @@ export function createDurableJourneyFixture() {
     return { client, calls, errors };
   }
 
-  function application(rpc: SupabaseRpcClient, dependenciesClosed = false) {
+  function application(rpc: SupabaseRpcClient, dependenciesClosed = false,
+    legalAgreement = { kind: "fixture-terms", version: dependenciesClosed ? "fixture-v2" : "fixture-v1" }) {
     const rows = [offering(1, true), offering(2, false)];
     const select = vi.fn(async (query: { page?: number; pageSize?: number }) => {
       if (dependenciesClosed) throw new Error("Replay must not re-resolve the catalog");
@@ -218,9 +242,7 @@ export function createDurableJourneyFixture() {
       CARE_ENABLED: "false", CARE_ENABLE_APPROVED: "false",
     };
     const wiring: AssistedOrderProductionWiring = {
-      env, requiredAgreements: [{
-        kind: "fixture-terms", version: dependenciesClosed ? "fixture-v2" : "fixture-v1",
-      }],
+      env, requiredAgreements: [legalAgreement],
       agreementGate: { accepted },
       masterOfferingServiceFor: () => ({ select }),
       bindingFor: (id) => rows.some((row) => row.variants[0].id === id)
@@ -251,7 +273,7 @@ export function createDurableJourneyFixture() {
         throw new RequestIntentError("authentication_required", 401);
       },
     }, care);
-    return { app, env, select, accepted, care };
+    return { app, env, select, accepted, care, wiring };
   }
   const post = (app: express.Express, suffix: string, body: object, owner = "a") =>
     request(app).post(ROUTE + suffix).set("Origin", ORIGIN)
@@ -269,6 +291,10 @@ export function createDurableJourneyFixture() {
   ].join("\n"))).rows[0];
 
   async function start() {
+    if (!process.env.CI && process.env.XENIOS_TEST_LOCAL_PG16_BIN) {
+      native=await ownedPg16(process.env.XENIOS_TEST_LOCAL_PG16_BIN,password);
+      created=true;port=native.port;
+    } else {
     docker("create", "--rm", "--name", container,
       "--publish", "127.0.0.1::5432",
       "--env", "POSTGRES_PASSWORD=" + password,
@@ -284,6 +310,7 @@ export function createDurableJourneyFixture() {
       "if pg_isready -h 127.0.0.1 -p 5432 -U postgres -d request_intent_disposable >/dev/null 2>&1; " +
       "then exit 0; fi; i=$((i+1)); sleep 1; done; exit 1",
     ], { timeout: 35_000, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
+    }
     const version = Number((await sql("show server_version_num")).rows[0].server_version_num);
     expect(version).toBeGreaterThanOrEqual(160000);
     expect(version).toBeLessThan(170000);
@@ -328,10 +355,18 @@ export function createDurableJourneyFixture() {
 
   async function close() {
     // Cleanup failures fail CI; never convert them into a skip/PASS.
+    if(native){native.close();native=undefined;created=false;return;}
     if (created) {
       docker("rm", "--force", container);
       created = false;
     }
   }
-  return { start, close, adapter, application, post, staff, snapshot, counts, sql, asRole };
+  function poolForLogin(user: string, loginPassword: string) {
+    if (!created || !port) throw new Error("Owned database not ready");
+    return new pg.Pool({
+      host: "127.0.0.1", port, database, user, password: loginPassword,
+      ssl: false, max: 2, connectionTimeoutMillis: 5000,
+    });
+  }
+  return { start, close, adapter, application, post, staff, snapshot, counts, sql, asRole, poolForLogin };
 }

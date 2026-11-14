@@ -19,7 +19,7 @@ export function RequestIntentReferenceNotice({ reference, variant }: Readonly<{ 
   const confirmed = confirmedAt !== null;
   return <section className="xenios-order-page" data-testid={"request-intent-reference-" + variant}>
     <section className="xenios-order-panel">
-      <p className="xenios-order-eyebrow">Quick Order</p>
+      <p className="xenios-order-eyebrow">Early Access</p>
       <h1>{variant === "status" ? "Request status" : confirmed ? "Request saved for review" : "Request reference"}</h1>
       <p role="status">Reference: <strong>{reference}</strong></p>
       {variant === "status" && <p>Online status is not available for review requests. This page shows no request details and has checked nothing.</p>}
@@ -29,7 +29,7 @@ export function RequestIntentReferenceNotice({ reference, variant }: Readonly<{ 
       <p>{REQUEST_INTENT_SCOPE_NOTICE}</p>
       <p>A reference identifies a review request only. It is not an order, approval or payment, and no delivery date is implied.</p>
       <div className="xenios-order-actions">
-        <a className="xenios-order-return-link" href="/research/early-access/order-request">Return to Quick Order</a>
+        <a className="xenios-order-return-link" href="/earlyaccess">Return to Early Access</a>
         <a href={requestIntentSupportMailto(reference)}>Email support about this request</a>
         <a href="/research/support">Contact support</a>
       </div>

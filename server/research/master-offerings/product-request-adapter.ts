@@ -58,6 +58,7 @@ export function demandIntentForAction(
     case "get_updates":
       return action.kind;
     case "add_to_cart":
+    case "request_quote":
     case "explore_care":
     case "none":
       return null;

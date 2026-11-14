@@ -1,4 +1,5 @@
 import type { RequestIntentDetail, RequestIntentReceipt, RequestIntentQueuePage } from "../../../../shared/research/assisted-order/request-intent";
+import { normalizeOptionalIntake } from "../../../../shared/research/assisted-order/optional-intake";
 import { RequestIntentError, type RequestIntentRepository, type RequestIntentStaffReader, type StoredIntent } from "./service";
 
 export interface RequestIntentRpcClient {
@@ -42,15 +43,17 @@ export function requestIntentRepository(serviceRoleClient: RequestIntentRpcClien
       return data === null ? null : stored(data);
     },
     async createOrReplay(record) {
-      return stored(await call(serviceRoleClient, "request_intent_create_or_replay", {
+      const { optionalIntake, ...baseDetail } = record.detail;
+      return stored(await call(serviceRoleClient, optionalIntake ? "request_intent_create_with_context" : "request_intent_create_or_replay", {
         p_owner_hash: record.ownerHash, p_attempt_hash: record.attemptHash,
-        p_fingerprint: record.fingerprint, p_detail: record.detail,
+        p_fingerprint: record.fingerprint, p_detail: baseDetail,
+        ...(optionalIntake ? { p_context: optionalIntake } : {}),
       }));
     },
   };
 }
 /** Server-only client; pass the actor solely from requireCarePermission's verified principal. */
-export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClient): RequestIntentStaffReader {
+export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClient, readOptional = false): RequestIntentStaffReader {
   return {
     async list(verifiedActorSubjectId, page) {
       const data = await call(serviceRoleClient, "request_intent_staff_list", { p_actor_user_id: verifiedActorSubjectId, p_page: page });
@@ -62,7 +65,7 @@ export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClie
         total: row.total, page: row.page, pageSize: row.pageSize };
     },
     async get(requestId, verifiedActorSubjectId) {
-      const data = await call(serviceRoleClient, "request_intent_staff_get", {
+      const data = await call(serviceRoleClient, readOptional ? "request_intent_staff_get_with_context" : "request_intent_staff_get", {
         p_request_id: requestId, p_actor_user_id: verifiedActorSubjectId,
       });
       if (data === null) return null;
@@ -72,7 +75,10 @@ export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClie
         || row.lines.some((line) => line.reviewState !== "pending")) {
         throw new RequestIntentError("invalid_persistence_result", 503);
       }
-      return { ...publicPart, contact: row.contact, agreements: row.agreements, lines: row.lines };
+      let optionalIntake;
+      try { optionalIntake = readOptional ? normalizeOptionalIntake(row.optionalIntake) : undefined; }
+      catch { throw new RequestIntentError("invalid_persistence_result", 503); }
+      return { ...publicPart, ...(optionalIntake ? { optionalIntake } : {}), contact: row.contact, agreements: row.agreements, lines: row.lines };
     },
   };
 }

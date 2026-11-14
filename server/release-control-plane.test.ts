@@ -2238,15 +2238,21 @@ describe("route uniqueness validator", () => {
     expect(result.routes.filter((route) =>
       route.path.startsWith("/api/research/early-access/request-intents"))
       .map((route) => route.method + " " + route.path).sort()).toEqual([
+      "GET /api/research/early-access/request-intents/admission",
       "GET /api/research/early-access/request-intents/catalog",
       "GET /api/research/early-access/request-intents/config",
       "GET /api/research/early-access/request-intents/staff",
       "GET /api/research/early-access/request-intents/staff/:requestId",
       "POST /api/research/early-access/request-intents",
+      "POST /api/research/early-access/request-intents/admission",
       "POST /api/research/early-access/request-intents/recover",
     ]);
-    expect(result.callSites).toBe(445);
-    expect(result.routes).toHaveLength(454);
+    expect(result.routes.filter((route) =>
+      route.path === "/api/staff/early-access/private-quotes/staging-readiness")
+      .map((route) => route.method)).toEqual(["GET"]);
+    // Includes the isolated staging staff readiness registration.
+    expect(result.callSites).toBe(448);
+    expect(result.routes).toHaveLength(457);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

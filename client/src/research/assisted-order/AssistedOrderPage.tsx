@@ -23,6 +23,7 @@ import {
   addOrUpdateSelection,
   agreementRequirementKey,
   catalogItemKey,
+  catalogPriceLabel,
   clampQuantity,
   money,
   removeSelection,
@@ -35,6 +36,7 @@ import {
   type AssistedOrderSelectionMap,
   type AssistedOrderWizardConfig,
 } from "./wizard-state";
+import { OrderEstimateRow } from "./OrderEstimateRow";
 import {
   attemptOwnsStoredDraft,
   clearAssistedOrderDraft,
@@ -271,7 +273,7 @@ function ProductCard(props: {
         {item.minimumQuantity > 1 ? (
           <div><dt>Minimum</dt><dd>{item.minimumQuantity}</dd></div>
         ) : null}
-        <div><dt>Price</dt><dd>{money(item.unitPriceCents)}</dd></div>
+        <div><dt>Price</dt><dd>{catalogPriceLabel(item.unitPriceCents)}</dd></div>
       </dl>
       {item.researchUseOnly ? (
         <p className="xenios-order-notice"><strong>Research Use Only.</strong> Not for human or veterinary use.</p>
@@ -1240,10 +1242,12 @@ export function AssistedOrderPage({
           <aside className="xenios-order-summary">
             <h2>Your request</h2>
             {selectionList.length === 0 ? <p>No products selected yet.</p> : (
-              <ul>{selectionList.map((selection) => <li key={catalogItemKey(selection.item)}><div><strong>{selection.item.productName}</strong><span>{selection.item.specification}</span></div><span>{selection.quantity} × {money(selection.item.unitPriceCents)}</span></li>)}</ul>
+              <ul>{selectionList.map((selection) => <li key={catalogItemKey(selection.item)}><div><strong>{selection.item.productName}</strong><span>{selection.item.specification}</span></div><span>{selection.quantity} × {catalogPriceLabel(selection.item.unitPriceCents)}</span></li>)}</ul>
             )}
-            <div className="xenios-order-total"><span>Estimated priced total</span><strong data-testid="order-estimate">{money(estimate)}</strong></div>
-            <p className="xenios-order-small">Estimates only. Xenios confirms availability and payment details before fulfillment.</p>
+            <OrderEstimateRow estimate={estimate} variant="summary" testId="order-estimate" />
+            <p className="xenios-order-small">{estimate === null
+              ? "Xenios reviews each request and confirms availability, a quote and payment details before fulfillment."
+              : "Estimates only. Xenios confirms availability and payment details before fulfillment."}</p>
             {!continuationEnabled ? (
               <p className="xenios-order-notice" id="order-continuation-gate" role="status">
                 Complete the required agreement and account checks above before continuing.
@@ -1335,11 +1339,11 @@ export function AssistedOrderPage({
                     />
                   </label>
                 </div>
-                <div><span>Qty {selection.quantity}</span><strong>{selection.item.unitPriceCents === null ? "Price on request" : money(selection.item.unitPriceCents * selection.quantity)}</strong></div>
+                <div><span>Qty {selection.quantity}</span><strong>{selection.item.unitPriceCents === null ? catalogPriceLabel(null) : money(selection.item.unitPriceCents * selection.quantity)}</strong></div>
               </article>
             ))}
           </div>
-          <div className="xenios-order-total"><span>Estimated priced total</span><strong>{money(estimate)}</strong></div>
+          <OrderEstimateRow estimate={estimate} variant="summary" />
           <label>Additional notes, optional<textarea maxLength={2000} value={generalNotes} onChange={(e) => setGeneralNotes(e.target.value)} rows={3} /></label>
           <fieldset className="xenios-order-acknowledgments">
             <legend>Required acknowledgments</legend>

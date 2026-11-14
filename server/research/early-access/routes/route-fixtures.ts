@@ -291,6 +291,12 @@ export function makeEarlyAccessApp(
     suppliers: new StubSupplierDirectory(SUPPLIER_ASSIGNMENT),
     shipping: new StubShippingPolicy(true),
     referrals: new StubReferralResolver(null),
+    // These fixtures prove the PRICED order engine: orders are placed,
+    // invoiced, paid, refunded and shipped. Quote-only is the production
+    // default and refuses a new order, so it is switched off here and has its
+    // own tests. A test that wants it passes `quoteOnly: true`, and one that
+    // wants the production default passes `quoteOnly: undefined`.
+    quoteOnly: false,
     ...overrides,
     store,
     identity,

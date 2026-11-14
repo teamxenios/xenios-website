@@ -45,3 +45,24 @@ describe("unapplied request-intent SQL contract (static, NOT database execution)
     expect(sql).not.toMatch(/grant\s+[^;]*\bto\s+(?:public|anon)\s*;/i);
   });
 });
+
+const allListedSql = readFileSync(new URL("../../../../supabase/candidates/request_intent_all_listed_lines.sql", import.meta.url), "utf8");
+describe("unapplied all-listed-lines SQL contract (static, NOT database execution)", () => {
+  const lineCheck = (text: string) => text.split("function request_intent_private.valid_lines(value jsonb)")[1].split("$$;")[0];
+  it("replaces only the line check, and differs from the first version only by accepting coming-soon and supply or service lines", () => {
+    expect(allListedSql).toContain("create or replace function request_intent_private.valid_lines(value jsonb)");
+    expect([...allListedSql.matchAll(/create\s+(?:or\s+replace\s+)?(?:function|table|policy|trigger|schema)\s/gi)]).toHaveLength(1);
+    const statements = allListedSql.split("\n").filter((line) => !line.startsWith("--")).join("\n");
+    expect(statements).not.toMatch(/\bgrant\b|\bdrop\b|\balter\b|insert into|\bupdate\b/i);
+    const removed = [
+      "    if entry->>'sourceDisplayState' in ('coming_soon','planned')",
+      "      or entry->>'sourceVariantDisplayState' in ('coming_soon','planned')",
+      "      or entry->>'sourceRefusal' = 'non_merchandise_family' then return false; end if;",
+    ].join("\n") + "\n";
+    expect(lineCheck(sql)).toContain(removed);
+    expect(lineCheck(allListedSql)).toBe(lineCheck(sql).replace(removed, ""));
+  });
+  it("keeps the function private", () => {
+    expect(allListedSql).toContain("revoke all on function request_intent_private.valid_lines(jsonb) from public, anon, authenticated, service_role");
+  });
+});

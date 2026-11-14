@@ -156,7 +156,7 @@ describe("Research public application flow", () => {
     assertSinglePageHeading(view);
     expect(view.textContent).not.toMatch(/within two business days/i);
     const email = view.querySelector<HTMLAnchorElement>(
-      'a[href="mailto:research@xeniostechnology.com"]',
+      'a[href="mailto:team@xeniostechnology.com"]',
     );
     expect(email).not.toBeNull();
     expect(email?.style.maxWidth).toBe("100%");

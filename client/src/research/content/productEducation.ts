@@ -301,9 +301,15 @@ function genericIdentityText(
   displayName: string,
   binding: ProductEducationProductBinding | null,
   variantLabel: string | null | undefined,
+  researchLane: boolean,
 ) {
   const formulation = variantLabel?.trim() || binding?.variants[0]?.formulation;
-  const dosageForm = binding?.variants[0]?.dosageForm;
+  // The catalog's dosage form is a normalization, not a source statement. A
+  // research row's form is governed by the reviewed form holds, which this
+  // page cannot see, so a research row names no form here. No row names a
+  // bottle: no source states one.
+  const catalogForm = researchLane ? undefined : binding?.variants[0]?.dosageForm;
+  const dosageForm = catalogForm === "Capsule / Bottle" ? "Capsules" : catalogForm;
   const details = [formulation, dosageForm].filter(Boolean).join(" · ");
   return details
     ? `${displayName} is the exact catalog identity for the selected ${details} record. Its pathway and product-specific source records govern how it may be described or accessed.`
@@ -340,8 +346,8 @@ export function getProductEducationProfile(
     displayName,
     aliases,
     whatItIs: guide
-      ? `${genericIdentityText(displayName, binding, lookup.variantLabel)} The approved Xenios education guide describes it as ${guide.summary.charAt(0).toLowerCase()}${guide.summary.slice(1)}`
-      : genericIdentityText(displayName, binding, lookup.variantLabel),
+      ? `${genericIdentityText(displayName, binding, lookup.variantLabel, isResearch)} The approved Xenios education guide describes it as ${guide.summary.charAt(0).toLowerCase()}${guide.summary.slice(1)}`
+      : genericIdentityText(displayName, binding, lookup.variantLabel, isResearch),
     whyPeopleAreInterested,
     commonlyDiscussedGoals: category?.goals ?? [],
     researchAreas: category?.researchAreas ?? [],

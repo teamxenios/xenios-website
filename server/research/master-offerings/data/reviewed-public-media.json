@@ -46,12 +46,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r152-brain-restore.png",
           "altText": "Official NutriDyn Brain Restore bottle, 210 capsules",
-          "width": 158,
-          "height": 265
+          "width": 251,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "884cfd91fb88f73af7db9c15f2b0672bdacf21d2f94423290bbe7077fe46b06f"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "30c5ba90365553a8a160085db0baeadbacc54dc553bce9d85c077e8d8afd7732"
     },
     {
       "offeringId": "mo_db61126250f5fa3a3324",
@@ -61,12 +61,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r190-collagen-renew.png",
           "altText": "Official NutriDyn Collagen Renew tub, 525 grams unflavored powder",
-          "width": 181,
-          "height": 265
+          "width": 287,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "696d56cdddeeddd2ceb9f9bec9cdde4b89788c75d39960bd66bbd0e90fcb527d"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "9ffb60a265bf0b8dadd75c2b56fd25a3ca7e3ed559d698fd7bb35a00d453104a"
     },
     {
       "offeringId": "mo_474aba04fff9d244c37b",
@@ -76,12 +76,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r191-gi-defend.png",
           "altText": "Official NutriDyn GI Defend tub, 75 grams unflavored powder",
-          "width": 265,
-          "height": 265
+          "width": 420,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "388b64fa4ceaa04bd4dd847875f6a8252df513cd7258a439016584cebee8bbcf"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "98b0469d411d15adaaf5010572f4988ab83c12df2eca01b5131ce909ea7f74d9"
     },
     {
       "offeringId": "mo_5050cf525ec249ebf0bf",
@@ -91,12 +91,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r167-mito-recharge.png",
           "altText": "Official NutriDyn Mito Recharge bottle, 90 capsules",
-          "width": 160,
-          "height": 265
+          "width": 254,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "2be03e010ef7991b239011280afe41f5855ff1491f352d64a6b96b07be48e766"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "36b00f1aa0b3e12903685f38cb11c61b2ca4950965c075e4a9f675cf8acd8866"
     },
     {
       "offeringId": "mo_381d77419fba80336299",
@@ -106,12 +106,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r817e-omega-pure-epa-dha-2400.png",
           "altText": "Official NutriDyn Omega Pure EPA-DHA 2400 bottle, 150 milliliters",
-          "width": 114,
-          "height": 265
+          "width": 180,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "7c5d16b355f00be93f7f00f3255444efec01b3f684be3b41aa9140d44fff0ba3"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "fd1c15fccbbee9754e739b55779b4c2b19a59954f4d90f7c4333254870467492"
     },
     {
       "offeringId": "mo_453f612e1a8a3021d41c",
@@ -136,12 +136,12 @@
         "primary": {
           "href": "/research/product-media/nutridyn-r199-perimenopause-support.png",
           "altText": "Official NutriDyn PeriMenopause Support bottle, 30 tablets",
-          "width": 166,
-          "height": 265
+          "width": 263,
+          "height": 420
         }
       },
-      "sourceCommit": "8eda87dba4098d656c45651294138f62d8972673",
-      "primarySha256": "a2e42f03590d433a64f4a6553f7df5f269041e8d94bc2059674448c99dc148be"
+      "sourceCommit": "93e28401decffd76fa4d0b4e6afca1b763e7307e",
+      "primarySha256": "33c2a8fa8f5a8ebaba4497481b769c26d2988b4560db122d3bb56e6085d8679e"
     },
     {
       "offeringId": "mo_62754736300e3e130eb5",
@@ -580,89 +580,89 @@
       "offeringId": "mo_c600e7eb1c9f5fd03c80",
       "sourceVariantId": "mov_2183aa9edb06f34ef3af",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/5-amino-1mq-50mg-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for 5-Amino-1MQ research capsules, listed strength 50 mg",
+          "href": "/research/product-media/5-amino-1mq-50mg-label-card-v1-1024.webp",
+          "altText": "Xenios 5-Amino-1MQ 50 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/5-amino-1mq-50mg-front-artwork-v1.webp",
-          "altText": "5-Amino-1MQ research capsule front label design, listed strength 50 mg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/5-amino-1mq-50mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios 5-Amino-1MQ 50 mg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "0ab9ebc1c4cc0272325f3250aeaeabd8c8a9f8a5",
-      "primarySha256": "fc4477d3e2ecc5ad92032690033058c08df5b77cde885aef04fe6a5183c05ca2",
-      "labelPreviewSha256": "f83c7ab9ca10f8bf39165b6861e545abb9457175055c231538107ceb85d3c62a"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "73c7016ace7b823e2f981e7feb1dc305671399dddf8c794ec04b74fd74c6260d",
+      "labelPreviewSha256": "05439e2c61c2bdb9250aea704bab49a19fb53f20c0992c42aeb8d7f39e06a55d"
     },
     {
       "offeringId": "mo_7ba89975fb62ceb33b7b",
       "sourceVariantId": "mov_753d3f94385adf791d1e",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/bpc-157-500mcg-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for BPC-157 research capsules, listed strength 500 mcg",
+          "href": "/research/product-media/bpc-157-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios BPC-157 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/bpc-157-500mcg-front-artwork-v1.webp",
-          "altText": "BPC-157 research capsule front label design, listed strength 500 mcg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/bpc-157-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 500 mcg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "e83e6eb1075ce0574e8a01f7b71e7c6e1a1fa8b8",
-      "primarySha256": "9c24975b33baf439307129c645f61ea1e1812dd4dba9cb290903a57bd9ccbe80",
-      "labelPreviewSha256": "f4ed18c0146a6ebc87b7453100ff4305f8376f5060a845fc400b8f1aa1a9e210"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "316f16d75a469212cff0c4ebe5f233d7a5e62cdacf92c9c423b4ac14213aee49",
+      "labelPreviewSha256": "0faf32a1b9c73c85f720791223bf9b1630e326cbe1f0a99335a533283ea0bd53"
     },
     {
       "offeringId": "mo_b2ebb969d48a20f9e680",
       "sourceVariantId": "mov_fe292b5f03527ec13e5e",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/kpv-500mcg-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for KPV research capsules, listed strength 500 mcg",
+          "href": "/research/product-media/kpv-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios KPV 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/kpv-500mcg-front-artwork-v1.webp",
-          "altText": "KPV research capsule front label design, listed strength 500 mcg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/kpv-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios KPV 500 mcg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "178f1775819835d4c17250edb0b675dfa7ee4189",
-      "primarySha256": "2c8dcdff792f6ff125368914bec6f7ac1986f920abc6d12793b97b94d12cc3df",
-      "labelPreviewSha256": "c8459d95b7c476be68770e99eb11361ca58346572f2da4d323102f49d47993ff"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "417bb0dbafa33c05043cf1471ccaa2f817f29dbe7bf414266e801c56b6e06250",
+      "labelPreviewSha256": "eec9e77e3c52200b5ad6111d62d86a176d63b95b46438c681f2b9d7eb944bc77"
     },
     {
       "offeringId": "mo_4668304296fb55b51280",
       "sourceVariantId": "mov_a2d32f69681dca2b17fb",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/ghk-cu-2mg-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for GHK-Cu research capsules, listed strength 2 mg",
+          "href": "/research/product-media/ghk-cu-2mg-label-card-v1-1024.webp",
+          "altText": "Xenios GHK-Cu 2 mg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/ghk-cu-2mg-front-artwork-v1.webp",
-          "altText": "GHK-Cu research capsule front label design, listed strength 2 mg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/ghk-cu-2mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios GHK-Cu 2 mg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "7d587a2dbd81812aeac75632397e6ccfedfeb8ad",
-      "primarySha256": "f23e18c14d58a821795301763b629e142144ff26ac635da733457b715fc5b1d3",
-      "labelPreviewSha256": "3b50bfdbddcee4559f4b559919e7cf869763fbb71f57ee883d1fc73b122b072d"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "d7632eeca839d17e4c9108adbde9015a68dcb5ebd2fe295213ee09380ce35788",
+      "labelPreviewSha256": "e4146cd302719f92307c14d2a35d07f1eb1f221e5b96de572f24a3bea0905f56"
     },
     {
       "offeringId": "mo_e4de11c77d16c4c3b83d",
@@ -712,89 +712,89 @@
       "offeringId": "mo_143d09ffd9b13780f2d7",
       "sourceVariantId": "mov_8e11e063f79d56a3a946",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/sermorelin-500mcg-capsule-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for Sermorelin research capsules, listed strength 500 mcg",
+          "href": "/research/product-media/sermorelin-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios Sermorelin 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/sermorelin-500mcg-capsule-front-artwork-v1.webp",
-          "altText": "Sermorelin research capsule front label design, listed strength 500 mcg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/sermorelin-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Sermorelin 500 mcg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "ca04de90b42dd66f1099fb0118437d7fe5ee96ac",
-      "primarySha256": "e404c5f224b4704c46096b750cbc7308e1ff0b53c61b04a14afb602a623ee591",
-      "labelPreviewSha256": "e9f963942ee01ef3d0abfcb8829c0402ac33a6726f51677560d6791e927af9e1"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "a34928ab9ba7dc6b0e7d7714066e8c7fcfe1810e825ddc57d2f8dc66d2131490",
+      "labelPreviewSha256": "6b64a5907212d45f7ae60e7003ab34853ab239a23fdfb5ca519aaa5d932320ad"
     },
     {
       "offeringId": "mo_aace3aded470921f6af2",
       "sourceVariantId": "mov_120b19d12e869b0070ff",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/thymosin-alpha-1-500mcg-capsule-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for Thymosin Alpha-1 research capsules, listed strength 500 mcg",
+          "href": "/research/product-media/thymosin-alpha-1-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios Thymosin Alpha-1 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/thymosin-alpha-1-500mcg-capsule-front-artwork-v1.webp",
-          "altText": "Thymosin Alpha-1 research capsule front label design, listed strength 500 mcg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/thymosin-alpha-1-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Thymosin Alpha-1 500 mcg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "2baf5b6519cd8f67f6892ecdcb75bd7c2d93893c",
-      "primarySha256": "9b4ef86da53bc2da845c726e318a8a413bb58fd4895a18d865e50b49e1a6444b",
-      "labelPreviewSha256": "b89dd9ab0b654c47438236c9505b65271a0874be0b344b0026b1aa3d866a086a"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "eb056a2af18b737a24ce7aaea6de0c2dedf35a1498988a249fbd99b83467d55b",
+      "labelPreviewSha256": "7d1687675d997bbcb09e9811208c3e4861385876bb170d3c90bb5b9671bf48c0"
     },
     {
       "offeringId": "mo_34fa0d12f1effd156e61",
       "sourceVariantId": "mov_c58b682a44514760a74f",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/slu-pp-332-500mcg-capsule-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for SLU-PP-332 research capsules, listed strength 500 mcg",
+          "href": "/research/product-media/slu-pp-332-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios SLU-PP-332 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/slu-pp-332-500mcg-capsule-front-artwork-v1.webp",
-          "altText": "SLU-PP-332 research capsule front label design, listed strength 500 mcg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/slu-pp-332-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios SLU-PP-332 500 mcg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "75d1f5b2c1159603c48f476ad27a276b2cad2496",
-      "primarySha256": "1c7de1eda463c5ba9b24e7f0ed8e9c036f7384a1658c340370741a65ad896754",
-      "labelPreviewSha256": "c6502987b826c372119dca77bdd32d07f18d32e57eff118ebc17b3ffdc0dc93c"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "ff30f55a387652f5c4a182bd281d1225b640c61018ce541a316487e3c58ab387",
+      "labelPreviewSha256": "1f58350c81261c52f7368e67f5fa251e91d4974f28e86bbacdb391a35814a7e1"
     },
     {
       "offeringId": "mo_2923115827ca8fe37d2c",
       "sourceVariantId": "mov_257fd9d66f6284e3570e",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/tb-500-500mcg-capsule-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for TB-500 research capsules, listed strength 500 mcg",
+          "href": "/research/product-media/tb-500-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios TB-500 500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/tb-500-500mcg-capsule-front-artwork-v1.webp",
-          "altText": "TB-500 research capsule front label design, listed strength 500 mcg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/tb-500-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios TB-500 500 mcg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "487ab7b35f40ce8e0f59c8f4cc653d69f9772ef4",
-      "primarySha256": "2e420b7f36024b883a47561bd75e533cdf2aec0e17b8c78ce07a9b5c3783a1aa",
-      "labelPreviewSha256": "20571d2c66f7da8051b49bdda9b567dd51f258e11e65a13c33d7d4f3bcf15580"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "548db9aaff2bec93cb742e7071dacad21137ee94a0c4791acfd9ec6619562ece",
+      "labelPreviewSha256": "8fa60dc7f4ee0a03c8bf73b91b9d23ac115781a0c437acce8a444bca53438c12"
     },
     {
       "offeringId": "mo_3c6f0d26e9df4bcb80c5",
@@ -822,23 +822,23 @@
       "offeringId": "mo_75bc8d1ad93b04865e6c",
       "sourceVariantId": "mov_8293d0baa21eb4d561f8",
       "media": {
-        "packagingDesign": true,
+        "packagingDesign": false,
         "primary": {
-          "href": "/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-website-render-v1-1024.webp",
-          "altText": "Xenios packaging design for Blend BPC-157 + TB-500 research capsules, listed strength 500/500 mcg",
+          "href": "/research/product-media/blend-bpc-157-tb-500-500-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios Blend BPC-157 + TB-500 500/500 mcg label design",
           "width": 1024,
-          "height": 1024
+          "height": 768
         },
         "labelPreview": {
-          "href": "/research/product-media/bpc-157-tb-500-blend-500-500mcg-capsule-front-artwork-v1.webp",
-          "altText": "Blend BPC-157 + TB-500 research capsule front label design, listed strength 500/500 mcg",
-          "width": 1000,
-          "height": 850
+          "href": "/research/product-media/blend-bpc-157-tb-500-500-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Blend BPC-157 + TB-500 500/500 mcg",
+          "width": 1600,
+          "height": 1000
         }
       },
-      "sourceCommit": "ba455f74ae9e16093b934b772008616248b6bbc2",
-      "primarySha256": "a9bf1f1de9fa751095b4b8b8ee42b3a284988b64faa6bdba2834130c00f81f6d",
-      "labelPreviewSha256": "28648b998a35fd2fa06b61f0b9ba010f3da67d2d8855627b3a8bf6411ff0c60b"
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "b93a701d12bb5a6747636c31e8ddc4663aafe578fb922402bde5802de04978e4",
+      "labelPreviewSha256": "4b31bc6d018e90eed6b84bbb159624f54e1fd67fa9de4c746e5e16cda03da66c"
     },
     {
       "offeringId": "mo_f7fecc82508964efe3aa",
@@ -1126,72 +1126,72 @@
       "primarySha256": "2112daf0248c066594a6e6d0c99ed69fafe9460c651a67f0a7c2c5216ff972e0",
       "labelPreviewSha256": "3c0e430b6c7c4bee6c791b96fba82f4ae28efe1e157b031a6893e6a442a4e9ec"
     },
-  {
-    "offeringId": "mo_4a4dd3014ea4cd85cb6e",
-    "sourceVariantId": "mov_19de1d73a1a3844c0190",
-    "media": {
-      "packagingDesign": true,
-      "primary": {
-        "href": "/research/product-media/cagrilintide-5mg-website-render-v1-1024.webp",
-        "altText": "Xenios Cagrilintide 5 mg packaging design",
-        "width": 1024,
-        "height": 1024
+    {
+      "offeringId": "mo_4a4dd3014ea4cd85cb6e",
+      "sourceVariantId": "mov_19de1d73a1a3844c0190",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cagrilintide-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Cagrilintide 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cagrilintide-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Cagrilintide 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
       },
-      "labelPreview": {
-        "href": "/research/product-media/cagrilintide-5mg-front-artwork-v1.webp",
-        "altText": "Front label artwork for Xenios Cagrilintide 5 mg",
-        "width": 1600,
-        "height": 1000
-      }
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "98506815c5584508613d6579c9af7dd3274aa3fa12cb324ddd6a84652c3d8651",
+      "labelPreviewSha256": "a9b9ea206a51c0cf78ace6bbd2e3f4f4a74beee6946298b3132cfbe73c44e4b6"
     },
-    "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
-    "primarySha256": "98506815c5584508613d6579c9af7dd3274aa3fa12cb324ddd6a84652c3d8651",
-    "labelPreviewSha256": "a9b9ea206a51c0cf78ace6bbd2e3f4f4a74beee6946298b3132cfbe73c44e4b6"
-  },
-  {
-    "offeringId": "mo_987ced2746afaa80e326",
-    "sourceVariantId": "mov_3e5e9840aea10ca2137e",
-    "media": {
-      "packagingDesign": true,
-      "primary": {
-        "href": "/research/product-media/liraglutide-10mg-website-render-v1-1024.webp",
-        "altText": "Xenios Liraglutide 10 mg packaging design",
-        "width": 1024,
-        "height": 1024
+    {
+      "offeringId": "mo_987ced2746afaa80e326",
+      "sourceVariantId": "mov_3e5e9840aea10ca2137e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/liraglutide-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Liraglutide 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/liraglutide-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Liraglutide 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
       },
-      "labelPreview": {
-        "href": "/research/product-media/liraglutide-10mg-front-artwork-v1.webp",
-        "altText": "Front label artwork for Xenios Liraglutide 10 mg",
-        "width": 1600,
-        "height": 1000
-      }
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "bc19a96b9a13cedbef3dc3446d636a15d4475dc0733f8d61fd029860959d3712",
+      "labelPreviewSha256": "10556edb742395e337d277630d60324a8a10a862367ea820b3cbdf40a158e505"
     },
-    "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
-    "primarySha256": "bc19a96b9a13cedbef3dc3446d636a15d4475dc0733f8d61fd029860959d3712",
-    "labelPreviewSha256": "10556edb742395e337d277630d60324a8a10a862367ea820b3cbdf40a158e505"
-  },
-  {
-    "offeringId": "mo_2fd34c733360f34e7a63",
-    "sourceVariantId": "mov_a75d9a7c5bfa0dec5ece",
-    "media": {
-      "packagingDesign": true,
-      "primary": {
-        "href": "/research/product-media/liraglutide-20mg-website-render-v1-1024.webp",
-        "altText": "Xenios Liraglutide 20 mg packaging design",
-        "width": 1024,
-        "height": 1024
+    {
+      "offeringId": "mo_2fd34c733360f34e7a63",
+      "sourceVariantId": "mov_a75d9a7c5bfa0dec5ece",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/liraglutide-20mg-website-render-v1-1024.webp",
+          "altText": "Xenios Liraglutide 20 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/liraglutide-20mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Liraglutide 20 mg",
+          "width": 1600,
+          "height": 1000
+        }
       },
-      "labelPreview": {
-        "href": "/research/product-media/liraglutide-20mg-front-artwork-v1.webp",
-        "altText": "Front label artwork for Xenios Liraglutide 20 mg",
-        "width": 1600,
-        "height": 1000
-      }
+      "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
+      "primarySha256": "9b93ddad8615937cc34e696f7a4f8046b3191242efb2e5b0ac2feabc91f3af2e",
+      "labelPreviewSha256": "7120d168041b2977d98dc6c0dfaf312c112248060a76d8e32525ea4d80bdd9a1"
     },
-    "sourceCommit": "faf78b20731e24603c7b3e4560aae45e3c0371a4",
-    "primarySha256": "9b93ddad8615937cc34e696f7a4f8046b3191242efb2e5b0ac2feabc91f3af2e",
-    "labelPreviewSha256": "7120d168041b2977d98dc6c0dfaf312c112248060a76d8e32525ea4d80bdd9a1"
-  },
     {
       "offeringId": "mo_595ec28612674477e5aa",
       "sourceVariantId": "mov_71e448565b155e87b979",
@@ -1829,6 +1829,3113 @@
       "sourceCommit": "219634598bbda5f90e5714c26623b0e69b1b1c67",
       "primarySha256": "990bb2f1abe1dbdc747e4df19f2a4775d602acd56e49f8ac35614938f091272b",
       "labelPreviewSha256": "3b7d8b454d00660741e6d9fa3c6ed44c24b675432db6be567cff18b1a1da968f"
+    },
+    {
+      "offeringId": "mo_adf1037eceb9904e7d07",
+      "sourceVariantId": "mov_e218a4fead30388a55ff",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/hcg-10000iu-website-render-v1-1024.webp",
+          "altText": "Xenios HCG 10,000 IU packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/hcg-10000iu-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios HCG 10,000 IU",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "c75332738bfbe9cb9d5f655a90256b3932846355",
+      "primarySha256": "1573b491517867ff52d8a04a1eb83878f19822f80ea2a1c2f5f6ed0e8fc08edf",
+      "labelPreviewSha256": "aae4759071b0123a32c93c3bb653af6a67d899b33763bc8398cfe3c456164c5f"
+    },
+    {
+      "offeringId": "mo_4223bdd3e6880240fc4a",
+      "sourceVariantId": "mov_b5c50d1bb9d8ad998062",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/hcg-5000iu-website-render-v1-1024.webp",
+          "altText": "Xenios HCG 5000 IU packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/hcg-5000iu-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios HCG 5000 IU",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "c75332738bfbe9cb9d5f655a90256b3932846355",
+      "primarySha256": "070056d11aa0a79bfe627318a4681b2b8a753207e9f4ca6e0a831b53ffec7175",
+      "labelPreviewSha256": "3db8ab83945ae5555cbbb6ba4f320d134e4473847ecd6e03b59876da6c187bcc"
+    },
+    {
+      "offeringId": "mo_13c038b9250a2c8ac901",
+      "sourceVariantId": "mov_548802074a4f9ca45f5d",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-tb-500-10-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios BPC-157 + TB-500 10/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-tb-500-10-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 + TB-500 10/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "1ac368d5940584454d9b719f5ff0b95aa17d3a032a2a06d738ece2060345baa3",
+      "labelPreviewSha256": "cd7cd8de706e27dca13ba1df6a42baa2ed4d89706031560d3314d0213bf91dd3"
+    },
+    {
+      "offeringId": "mo_53622a0c32300df8ec03",
+      "sourceVariantId": "mov_43ff04d9edfcdb5543a4",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-tb-500-15-15mg-website-render-v1-1024.webp",
+          "altText": "Xenios BPC-157 + TB-500 15/15 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-tb-500-15-15mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 + TB-500 15/15 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "5ec8598d6d2d4527f44dd9a01bb4ab9703b0637fb0fef3b1a806b28f9803147d",
+      "labelPreviewSha256": "b9986da84d25394c1dc210aa7a87e6063a81878225c2b3c36c53f890892c29b2"
+    },
+    {
+      "offeringId": "mo_178c8a4230f88f157d5d",
+      "sourceVariantId": "mov_457168650622c3647dc9",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/bpc-157-tb-500-5-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios BPC-157 + TB-500 5/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-tb-500-5-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 + TB-500 5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "4bd8b9e0a36d018da0540cb9f6d43c564e13c523d07176c78b085b5d9ba77015",
+      "labelPreviewSha256": "191ada412019dbf0aa5761f9aaf89b6e23586a0b5cd40f612764d210594754ce"
+    },
+    {
+      "offeringId": "mo_fbf99d262617562b9dbb",
+      "sourceVariantId": "mov_c7c5768303175886f6d1",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cagrilintide-semaglutide-10-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Cagrilintide + Semaglutide 10/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cagrilintide-semaglutide-10-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Cagrilintide + Semaglutide 10/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "0b48a0d312c801675d26d73289d7407e22ab69112a89bee19b32d15325721e30",
+      "labelPreviewSha256": "3cb02d3b13e5c9bea100e1ab4d9faa6fdb20ecd2da868114b1cc5b7861fbfdf4"
+    },
+    {
+      "offeringId": "mo_3b716f351a069264bd3d",
+      "sourceVariantId": "mov_30965a433abef7359a7b",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cagrilintide-semaglutide-5-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Cagrilintide + Semaglutide 5/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cagrilintide-semaglutide-5-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Cagrilintide + Semaglutide 5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "048e8ab3896f5ff12c2774a1d60e9748bf88446a16b1ebf60081da8370a7960c",
+      "labelPreviewSha256": "a3d43d72f45ded17f22fee2dd4a1f7f234a550976388fde949a46e7f070b8968"
+    },
+    {
+      "offeringId": "mo_04d91e1cb01f09d3496e",
+      "sourceVariantId": "mov_7502e2415b8757cad0eb",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/dsip-selank-2-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios DSIP + Selank, 2/10 mg, packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/dsip-selank-2-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios DSIP + Selank, 2/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "b8acb8d3cf24511eef3f8859e9d6e3db90faaad033151ba80490aea3e313d8fc",
+      "labelPreviewSha256": "7f10e87186b3da649fb706b83a46191184238c69c4e2e5a7c4348e8a4889bc0d"
+    },
+    {
+      "offeringId": "mo_b75af573f3209d0710b1",
+      "sourceVariantId": "mov_8df703ff84f1bb8e1662",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ghk-cu-epithalon-50-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios GHK-Cu + Epithalon, 50/10 mg, packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghk-cu-epithalon-50-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios GHK-Cu + Epithalon, 50/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "d581ffdc5e0190ccae0f6e96628c3434624a394902fbb9fdffd02a0e88609b9f",
+      "labelPreviewSha256": "a86fd41c885a494855feda6684684cd106f6f7fa4b5eb5a452e9ab5016ee335a"
+    },
+    {
+      "offeringId": "mo_a40fbe6a1890ff7176ed",
+      "sourceVariantId": "mov_4bcfb9614bef8b2c671e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios GLOW (BPC-157 + TB-500 + GHK-Cu), 10/10/50 mg, packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/glow-bpc-157-tb-500-ghk-cu-10-10-50mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios GLOW (BPC-157 + TB-500 + GHK-Cu), 10/10/50 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "ebc8e36f2f86b6d17e710e486af240e8b853ad754a07519f6f5b8862be59027a",
+      "labelPreviewSha256": "1f62c1f6abc0400bb91315716d4769752a2257c0246c9b01a1b43cb3f2c6f9ff"
+    },
+    {
+      "offeringId": "mo_a8ea579b9329428591bd",
+      "sourceVariantId": "mov_ecd380609ace639d27a6",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV), 5/5/10/5 mg, packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/klow-bpc-157-tb-500-ghk-cu-kpv-5-5-10-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV), 5/5/10/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "0d251ec7c07ea9b53548fc86d4a2fa226c5b6092500e3aced1455ebe32f6c39b",
+      "labelPreviewSha256": "a37cf39c69507f8d807b3e596a6ca53f9c6852fe05258d143f6d8797b82d1f4f"
+    },
+    {
+      "offeringId": "mo_d40ce6b09815282e14fa",
+      "sourceVariantId": "mov_644f912141d81a0199b0",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV), 10/10/50/10 mg, packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/klow-bpc-157-tb-500-ghk-cu-kpv-10-10-50-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios KLOW (BPC-157 + TB-500 + GHK-Cu + KPV), 10/10/50/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "0da7f5544819ad8b91d24483830dc787a0ecde2710f175e4e463638a605a06c1",
+      "labelPreviewSha256": "8de51c81ea12647c25bab63a12745acbf79e68623f015ceecb720ffcae945e4a"
+    },
+    {
+      "offeringId": "mo_8cea67b7890cebf8eb52",
+      "sourceVariantId": "mov_d97f1f887a86b0c31947",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-cagrilintide-10-2p5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide + Cagrilintide, 10/2.5 mg, packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-cagrilintide-10-2p5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Retatrutide + Cagrilintide, 10/2.5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "2227395ec99dea3a8447a99efa368dd8ecb2197fe26d0ea171080aa8178a08cb",
+      "labelPreviewSha256": "67c407a504414f10ae5ce3cf1a5d1004300096a0b686ea8932b57c2f73f62c0b"
+    },
+    {
+      "offeringId": "mo_c87f1a7cdcd50253c3e8",
+      "sourceVariantId": "mov_3e4c0914851a77ba8763",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/semax-selank-dsip-10-10-2mg-website-render-v1-1024.webp",
+          "altText": "Xenios Semax + Selank + DSIP, 10/10/2 mg, packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semax-selank-dsip-10-10-2mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Semax + Selank + DSIP, 10/10/2 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "f767eb7b81462caabdbf1cdb9dc113a14c26c446caea31a151c715f486d96b6b",
+      "labelPreviewSha256": "4c7adc59072b4d14c95b9444510414e311a5be1cd42864ac20db267d466b8198"
+    },
+    {
+      "offeringId": "mo_2e8194100fed7f7ca6ee",
+      "sourceVariantId": "mov_11b73649761a6d35f28c",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/thymosin-alpha-1-kpv-ll-37-10-10-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Thymosin Alpha-1 + KPV + LL-37, 10/10/5 mg, packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymosin-alpha-1-kpv-ll-37-10-10-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Thymosin Alpha-1 + KPV + LL-37, 10/10/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "28c62ea0e438efb31e4a04344103e8f0e468bc891e3e3b29113059bb8f47f57b",
+      "labelPreviewSha256": "a4af3d0dd718d279377c85856587699436e317f022857d6cde7f8f675b483365"
+    },
+    {
+      "offeringId": "mo_422f4a4ca7e34ce66416",
+      "sourceVariantId": "mov_971080f20e26e8775e2b",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/thymosin-alpha-1-kpv-ll-37-5-5-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Thymosin Alpha-1 + KPV + LL-37 5/5/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymosin-alpha-1-kpv-ll-37-5-5-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Thymosin Alpha-1 + KPV + LL-37 5/5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "5b9e48cde22e0010e8d87d934d56391f11f0db95",
+      "primarySha256": "2961f130c843f0fb5e9751ab90e246f893c5ebb0a9b0d1801d51bccbeacc5ea5",
+      "labelPreviewSha256": "0c41282654cb0ccd1c2b663182e555fe5106970541e903371656fa531bdb87ce"
+    },
+    {
+      "offeringId": "mo_839d9f0cb2ab74e094ee",
+      "sourceVariantId": "mov_95104bb0edee8e97a3a6",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ll-37-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios LL-37 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ll-37-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios LL-37 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "c6a5d4d08e0a7fc862d3b5e52c79dc40bb799de8",
+      "primarySha256": "3d0229df9de0dcb1c52068dc998af97c8c53e3cdd66c0777ef652372abc54dc6",
+      "labelPreviewSha256": "c3ed46d19fa3fd44df197684b9d052a244dbf52fa6e038396137952939f91012"
+    },
+    {
+      "offeringId": "mo_8023384ab099bc55fa93",
+      "sourceVariantId": "mov_420ac197458ecbcddb9a",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-no-dac-ipamorelin-10-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 (No DAC) + Ipamorelin 10/10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-no-dac-ipamorelin-10-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 (No DAC) + Ipamorelin 10/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "ca3d512d8050cf251e85d2c43f568cd9c7fcbafd",
+      "primarySha256": "f613124cd366a5a54530c91972086d4c57573904619b2f11cde62d7a1c2542a7",
+      "labelPreviewSha256": "8539676f0273ca63e0a6cc937eea06604de5a8e63d69ed509f0401bf5b27466b"
+    },
+    {
+      "offeringId": "mo_ec5dad7fec0e0750fdbc",
+      "sourceVariantId": "mov_082a1d9c8a0d21e4a5c9",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-no-dac-ipamorelin-5-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 (No DAC) + Ipamorelin 5/5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-no-dac-ipamorelin-5-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 (No DAC) + Ipamorelin 5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "ca3d512d8050cf251e85d2c43f568cd9c7fcbafd",
+      "primarySha256": "fedc9938e98eefd9b4055e5bb1f87a80c27c39ff8551c32578ad51edd220a0d9",
+      "labelPreviewSha256": "e1a710988f470a797c6a0cbe0c6bea1a83c9d1aa8366034b31412537d72f15c5"
+    },
+    {
+      "offeringId": "mo_9c3a4dd1b38f6b9ebc54",
+      "sourceVariantId": "mov_9421188f57af62413a4c",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/epithalon-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Epithalon 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/epithalon-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Epithalon 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "e6353348c52743e2ec2494fa7262aac692ff8662",
+      "primarySha256": "5badc6a70c9f55297a85bc1cc1d8040f1058dc763d4aff25785824822281284c",
+      "labelPreviewSha256": "91e1c23b70120293a9981aa2ae64cc28a1785ba755e94a00a3f875cf31626781"
+    },
+    {
+      "offeringId": "mo_c0b32b7549d7539af51e",
+      "sourceVariantId": "mov_c4e5006693c890563310",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/epithalon-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios Epithalon 50 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/epithalon-50mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Epithalon 50 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "e6353348c52743e2ec2494fa7262aac692ff8662",
+      "primarySha256": "6a3a28ab9028089f470d6322792f57360a7aaab992445cde14c3c4f26828124b",
+      "labelPreviewSha256": "c6caea82d2ca59bc347d2327a49e29ad31d393ab3a89b053b4b53f735ffef4ba"
+    },
+    {
+      "offeringId": "mo_f8e8d69d2068c9bb2de1",
+      "sourceVariantId": "mov_556cf3eb15555573aa54",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ghrp-6-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios GHRP-6 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghrp-6-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios GHRP-6 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "e6353348c52743e2ec2494fa7262aac692ff8662",
+      "primarySha256": "62c1e0beaa19a8f1db1432f959738616d86fe2727df7e34425c5665b739532b1",
+      "labelPreviewSha256": "f5d60efa5894c8b0c562ef053c382a7e0317a5197fae5addeafe0acd5407c9bc"
+    },
+    {
+      "offeringId": "mo_e7bb199ac249b82eb17b",
+      "sourceVariantId": "mov_dd89c37657eb69bce04f",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/ss-31-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios SS-31 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ss-31-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios SS-31 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "e6353348c52743e2ec2494fa7262aac692ff8662",
+      "primarySha256": "265e28ccd922a3dab91c91cd4a0fb5cd11c0194d69a62c3fff4641fefbdacb90",
+      "labelPreviewSha256": "cd6dfd9bfcc1a8a273e0f15a267c6f9f08e5f39965ec2052b33b7a6e7d026d8f"
+    },
+    {
+      "offeringId": "mo_d3a60ea0a358aef218f8",
+      "sourceVariantId": "mov_50c16caf05daa93ef289",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/igf-1-lr3-1mg-website-render-v1-1024.webp",
+          "altText": "Xenios IGF-1 LR3 1 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/igf-1-lr3-1mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios IGF-1 LR3 1 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "b0f7c960a1f245c23b0e17eb680a0e597d11ad4a7480c92a45321007f7a1d0c4",
+      "labelPreviewSha256": "7819adaedc30e6b2d913e49bddc1a322da2acbb0267c8a994397e0958f905006"
+    },
+    {
+      "offeringId": "mo_0693d8b85b10f7c34f2e",
+      "sourceVariantId": "mov_1981dac64e329b0bf2f8",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/snap-8-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios SNAP-8 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/snap-8-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios SNAP-8 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "434066796993209062ca8c2f76a4261cf0a124ac2548efe1f4061de9b5f22a7d",
+      "labelPreviewSha256": "cf38fd762cfa5a79e0368f167f6c32e1fb974b27c9b82c99748c6da049d1217c"
+    },
+    {
+      "offeringId": "mo_b33c802f4f7735fe986d",
+      "sourceVariantId": "mov_5d10608450270b22967f",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tb-500-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios TB-500 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tb-500-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios TB-500 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "5947874079270bd33fbffe19a973cc7a22e6997d08f6cdafa4aea96335d300cc",
+      "labelPreviewSha256": "93071f3eafe85940c87f83b6747a984d4eacedbe3ce2054773a0283efe9ed8d8"
+    },
+    {
+      "offeringId": "mo_9651dedf0c4086bc6e3d",
+      "sourceVariantId": "mov_3c9394000d1302336110",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tb-500-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios TB-500 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tb-500-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios TB-500 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "d4a28241838420960d0d0bbfdbcb1bd27d3de805b5f49bf7fdafad49d7115062",
+      "labelPreviewSha256": "e33946e2d99499d2e472c2cb49814f094ac04b6181c39c250f33c228b1c88c76"
+    },
+    {
+      "offeringId": "mo_ca6143466abf3895672c",
+      "sourceVariantId": "mov_e813930dcd46c36e98e2",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/thymalin-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios Thymalin 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymalin-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Thymalin 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "b4c99429f57eeb234d3c81052ba810a2a5bca988",
+      "primarySha256": "a462d90b9c0ccef4a245aa1a2c35dd412a4fa3665924d236b02a373811a32020",
+      "labelPreviewSha256": "34b9e3d970b764bcd9ee86f4c25da43c6c519fc0f6373b396901852f0f4600b9"
+    },
+    {
+      "offeringId": "mo_c464ca523cda95adb8a6",
+      "sourceVariantId": "mov_0d00b80820b69cc39796",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-no-dac-10mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 No DAC 10 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-no-dac-10mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 No DAC 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "a7d246f2cda6ddf8c4dccd4c3edf0231365f999a",
+      "primarySha256": "667c1228420f00c2505e84c2a3318a2b971a62e6b44ddf3b95dc969e4ffd2edf",
+      "labelPreviewSha256": "089da40ce3413b9d405bfc4a0e6385a2e7ffdc7bbe6465d5bf75e92fc3dcb03e"
+    },
+    {
+      "offeringId": "mo_4bbd59b26b04e4265758",
+      "sourceVariantId": "mov_f7b635c1cc2be94922a0",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-no-dac-2mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 No DAC 2 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-no-dac-2mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 No DAC 2 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "a7d246f2cda6ddf8c4dccd4c3edf0231365f999a",
+      "primarySha256": "0e9ba9828be720680ee490301f5513e74961f4f8bc3c03fae91c3e175512fcae",
+      "labelPreviewSha256": "711090aa78f09905a23875356265c8ff9671a0a6221f30db79610dcbaf178932"
+    },
+    {
+      "offeringId": "mo_023a54a623e28e84ffd5",
+      "sourceVariantId": "mov_9331f42ce573fb3f72e5",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-with-dac-2mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 With DAC 2 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-with-dac-2mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 With DAC 2 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "a7d246f2cda6ddf8c4dccd4c3edf0231365f999a",
+      "primarySha256": "bb64199abe53bd1f8c938d95b438a4bb2fb4bb67dceb3634bb01727f886a0564",
+      "labelPreviewSha256": "a7640af503154aa74c84ead8114696df30bf7a21d076679caae3edaaa944ac7c"
+    },
+    {
+      "offeringId": "mo_be72c9fb4d708d8a3eee",
+      "sourceVariantId": "mov_6c559c89db938c58e815",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/cjc-1295-with-dac-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios CJC-1295 With DAC 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-with-dac-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 With DAC 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "a7d246f2cda6ddf8c4dccd4c3edf0231365f999a",
+      "primarySha256": "699b7cde8ae5e516079d904fbfd115b0f938432e24280a93ba7c3da3683c7764",
+      "labelPreviewSha256": "a60f5a429cfe50fc0071e303ddc2ca829579f50a251e2ac8b1b7de7894d962b3"
+    },
+    {
+      "offeringId": "mo_a6f7f071ed946577ce56",
+      "sourceVariantId": "mov_9e34d0c1acde46249621",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/tesofensine-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios Tesofensine 500 mcg label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesofensine-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesofensine 500 mcg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "1b3b4a8e3c71d59f68080fc15d8ef4b6caf1bc9c896fd11bf1b0cb8c462643b4",
+      "labelPreviewSha256": "0c0d34e6de887cca1937d9d0e4dcaf6eecd98f027b000dd6e7903ac9c3f25b43"
+    },
+    {
+      "offeringId": "mo_2fb4e0f567f434b55b20",
+      "sourceVariantId": "mov_9a217007a7fb93111200",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_9a217007a7fb93111200.webp",
+          "altText": "Proposed Xenios vial design showing Gonadorelin, 10 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/gonadorelin-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Gonadorelin 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "73553c8265ba72536594dbe5458a6643991af6fc550cdcd9617fea4f5cc47969",
+      "labelPreviewSha256": "62b44088b385bea75b82e84b702580ff3e252a216ac443b0a0ec49279335fb4f"
+    },
+    {
+      "offeringId": "mo_f4298f80cc7aa9f1046a",
+      "sourceVariantId": "mov_dc6c3bf9bc23dd55adc1",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_dc6c3bf9bc23dd55adc1.webp",
+          "altText": "Proposed Xenios vial design showing PT-141, 5 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/pt-141-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios PT-141 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "e628739b5d1ceffa31f4bb3f9d4c9fc8ec54313d56c4fc35f7c5ba0203fee6f1",
+      "labelPreviewSha256": "a8b2083ea236b5c955bfd821d3916c9533e453e43129db935eeca296e54013ef"
+    },
+    {
+      "offeringId": "mo_d1a6493665b6ba628c2a",
+      "sourceVariantId": "mov_361af70608afc9c98ec0",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_361af70608afc9c98ec0.webp",
+          "altText": "Proposed Xenios vial design showing GHK-Cu, 75 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghk-cu-75mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios GHK-Cu 75 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "185d421b7c2aeca8792e44d9d20fae8f80316288e7756f19b51601b2fd14e72e",
+      "labelPreviewSha256": "77e6220578f8b6cfbf65852648e2932476640cd7d5406dec588382b5925f53b7"
+    },
+    {
+      "offeringId": "mo_4c07e82051ba4c95297b",
+      "sourceVariantId": "mov_451f34fca5c1a293b145",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_451f34fca5c1a293b145.webp",
+          "altText": "Proposed Xenios vial design showing BPC-157, 20 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bpc-157-20mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios BPC-157 20 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "2a61ada64e4f3287621f78314c569515b471a142535ab6ed33ea835e19faabe9",
+      "labelPreviewSha256": "82a65d630b3edc9ae230d2167f07112a8aa74a733a878698655fd441c408a330"
+    },
+    {
+      "offeringId": "mo_f35e748aed26af26e9e4",
+      "sourceVariantId": "mov_8bec8068d30d6f928040",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_8bec8068d30d6f928040.webp",
+          "altText": "Proposed Xenios vial design showing Semax, 30 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semax-30mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Semax 30 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "c7bd06ac694b3c0e397a69f8ffdff049f02f6fdf241f05effc1e6e163943558f",
+      "labelPreviewSha256": "60dbecdfb88885abdc21e71748017a40df34c04255188f9445d0a62040de2d5b"
+    },
+    {
+      "offeringId": "mo_1dd0658eb7bf15f91900",
+      "sourceVariantId": "mov_256cb0423eb6d2a77f65",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_256cb0423eb6d2a77f65.webp",
+          "altText": "Proposed Xenios vial design showing Oxytocin, 10 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/oxytocin-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Oxytocin 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "d75dbff3af7ab07cfb0e33909b4b6876b421da3446d17d8f9b04cd9915553210",
+      "labelPreviewSha256": "288f141dda49e34269f9720387349d209db42505b497171a371e4733b3fd107e"
+    },
+    {
+      "offeringId": "mo_69c6615ef3e615e76088",
+      "sourceVariantId": "mov_5e74aacac728cfcbd11f",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_5e74aacac728cfcbd11f.webp",
+          "altText": "Proposed Xenios vial design showing GLOW (GHK-Cu + BPC-157 + TB-500), 27/5/10 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/glow-ghk-cu-bpc-157-tb-500-27-5-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios GLOW (GHK-Cu + BPC-157 + TB-500), 27/5/10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "8ce471a14402e991aa3f115a2ff0a361c340de91e4ce9d323a2361302488f4b1",
+      "labelPreviewSha256": "c059aa2a08765b73f0f1f65a0418b5c16a245f7b2e6cd519684ee9ac270a18bf"
+    },
+    {
+      "offeringId": "mo_86fc6ac5138a0a0ddd54",
+      "sourceVariantId": "mov_287c60ca423250ef75d6",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_287c60ca423250ef75d6.webp",
+          "altText": "Proposed Xenios vial design showing Tesamorelin + Ipamorelin, 10/5 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesamorelin-ipamorelin-10-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesamorelin + Ipamorelin, 10/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "5f5ee6ce67235c54abc682e5edae5f517ed9c1060f9e4114504420699b2f9f4d",
+      "labelPreviewSha256": "6f8250c630e29a71294d6c8ca0317ed5533aed160df1c7a0293e22d765880fee"
+    },
+    {
+      "offeringId": "mo_b36a2992242d2a55c145",
+      "sourceVariantId": "mov_dc26bcbba0510c5bb57b",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_dc26bcbba0510c5bb57b.webp",
+          "altText": "Proposed Xenios vial design showing Tesamorelin + Ipamorelin, 5/5 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesamorelin-ipamorelin-5-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesamorelin + Ipamorelin 5/5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "c35ae799d3ed12bbb5b7d3e2595f9a7201b8ef8d44990bca44f65f758586ae02",
+      "labelPreviewSha256": "448b8b285f61193e4becf03f6aa422e918a11534c75198d08d06cf72a8b78905"
+    },
+    {
+      "offeringId": "mo_d1a47413d4b8e58bfd52",
+      "sourceVariantId": "mov_2a06e3a4fa8fb02b64cf",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_2a06e3a4fa8fb02b64cf.webp",
+          "altText": "Proposed Xenios vial design showing Thymosin Alpha-1 + Thymulin, 10/6.4 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/thymosin-alpha-1-thymulin-10-6-4mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Thymosin Alpha-1 + Thymulin, 10/6.4 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "77970bea4335e24b2113ba916f240353840819df62cb9bcdd00ed45da274d5fb",
+      "labelPreviewSha256": "ddc0c46dfb5cd626ef652935fcafd5d3e21538d67576ca2fd93faba0499ecf90"
+    },
+    {
+      "offeringId": "mo_598b143f4ffe06294832",
+      "sourceVariantId": "mov_554ae2758dbe92e4baa6",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_554ae2758dbe92e4baa6.webp",
+          "altText": "Proposed Xenios vial design showing BDNF, 10 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bdnf-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios BDNF 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "183c5de0d527a5e531e979fe0d2600848f8edbe1bf53b9258ad8f66d26784e85",
+      "labelPreviewSha256": "f92a8d41bd0fa92e8c2604fdd9e1698a440793071e4b4d1c742c0cfa05d77504"
+    },
+    {
+      "offeringId": "mo_6d14f0bbb3bdfe5f900e",
+      "sourceVariantId": "mov_07317a1fe77fe228b793",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_07317a1fe77fe228b793.webp",
+          "altText": "Proposed Xenios vial design showing CJC-1295 With DAC, 10 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/cjc-1295-with-dac-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios CJC-1295 With DAC 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "b1b0a3f2db70519e2348dcccd969118c0dc15ac040bdd1115ca9f399d4d74afe",
+      "labelPreviewSha256": "ea3a08a97d49f8f743da033c10eccb5fda1634801a1d691f28a0de2549f34b2f"
+    },
+    {
+      "offeringId": "mo_761c9b0f8f19d9d2c3b5",
+      "sourceVariantId": "mov_b96d05f393b7e3fb6a3f",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_b96d05f393b7e3fb6a3f.webp",
+          "altText": "Proposed Xenios vial design showing Follistatin 344, 1 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/follistatin-344-1mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Follistatin 344 1 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "5dbde3ec3bd2e35eb0f8882681af5e2c243491f97947e4eac448b2281973aa90",
+      "labelPreviewSha256": "7dffce7d19ae099f48cabeaaf07177e1f139250b2a420b2816886870d61ca691"
+    },
+    {
+      "offeringId": "mo_2aaac3a06aa0dd6b2923",
+      "sourceVariantId": "mov_7c55d415a9574e9ebda7",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_7c55d415a9574e9ebda7.webp",
+          "altText": "Proposed Xenios vial design showing Hexarelin, 5 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/hexarelin-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Hexarelin 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "f44e09af11396f723c64a3e8b969158fb121c91345390a6295ac5b334245f916",
+      "labelPreviewSha256": "c772035a142d4888f2e8523469a7980899c94b7e91c9381b522eb46428b34dfb"
+    },
+    {
+      "offeringId": "mo_b223f1eabb29e09a69e9",
+      "sourceVariantId": "mov_69a9f7466c5385ab9811",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_69a9f7466c5385ab9811.webp",
+          "altText": "Proposed Xenios vial design showing IGF-1 DES, 1 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/igf-1-des-1mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios IGF-1 DES 1 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "2c103b57ff4d26d39ba0b81b825043b5cf761c6cc9c41e154393d646b7385559",
+      "labelPreviewSha256": "42f52ed79b770b5607df6a81d09371d514d020960a5ba9fd6eafcc8fda067334"
+    },
+    {
+      "offeringId": "mo_f6e814a2e3224bb6b53d",
+      "sourceVariantId": "mov_0ba805e868711366428d",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_0ba805e868711366428d.webp",
+          "altText": "Proposed Xenios vial design showing PE-22-28, 10 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/pe-22-28-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios PE-22-28 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "388846310792d6303e3915fb3686fba8e56a63033e619df50da7f95c86161dc4",
+      "labelPreviewSha256": "49ab577b432cdf5557cc80080e284ee6b62e5d57d008742210688f74ba7dc722"
+    },
+    {
+      "offeringId": "mo_33c52b7e9611bf4e2527",
+      "sourceVariantId": "mov_b67ab9e8cd671273f3c1",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_b67ab9e8cd671273f3c1.webp",
+          "altText": "Proposed Xenios vial design showing SS-31, 15 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ss-31-15mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios SS-31 15 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "71ff93f034339f241996d99b70c237642aa9d2520429e7ec7d5b8c15726d7484",
+      "labelPreviewSha256": "7ce4a88c9ce80617fc545721662c0e71b27032045959f380a68dd7d85498038d"
+    },
+    {
+      "offeringId": "mo_4645a385049d13824a66",
+      "sourceVariantId": "mov_32c1c33224d5fca42b1e",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_32c1c33224d5fca42b1e.webp",
+          "altText": "Proposed Xenios vial design showing Survodutide, 6 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/survodutide-6mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Survodutide 6 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "4d9027143357935bf64fa5d6a2fa21e5efd38cff7d676cf2910ea03af4a71a23",
+      "labelPreviewSha256": "89f0e920146f6afe9253085273660ed5ed5d44004eb34f014590d877f5011c11"
+    },
+    {
+      "offeringId": "mo_5e454a6196e0a7defb77",
+      "sourceVariantId": "mov_aef099fb39b3fa062f45",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/dihexa-10mg-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Dihexa research capsules, listed strength 10 mg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/dihexa-10mg-capsule-front-artwork-v1.webp",
+          "altText": "Dihexa research capsule front label design, listed strength 10 mg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "851d7734a39813455de9beab9afc1437158ad9c7",
+      "primarySha256": "319244a7c4f6e79aaa381e29875441ff70418b54ed8299edd84c3c645b47423b",
+      "labelPreviewSha256": "4823ea25b03a0b81bee1306e574ce44c0536497f4f9af77195164961672e9b71"
+    },
+    {
+      "offeringId": "mo_d5072d9cc26b1f898b6d",
+      "sourceVariantId": "mov_30d35dcbc0bc8d59ff5b",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/acetic-acid-0-6-5ml-label-card-v1-1024.webp",
+          "altText": "Xenios Acetic Acid 0.6% 5 mL label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/acetic-acid-0-6-5ml-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Acetic Acid 0.6% 5 mL",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "4d8e24ec0d2b4a41b2384165d14940a2cda1b6cff2f6241a1d11ba1439dfa743",
+      "labelPreviewSha256": "af88abf8d190621ae74439861e9e3bae5a6259d705b865131fe051d71083af80"
+    },
+    {
+      "offeringId": "mo_b49627a2296975935e26",
+      "sourceVariantId": "mov_88fd1531d586cdebb896",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/reconstitution-solution-4ml-label-card-v1-1024.webp",
+          "altText": "Xenios Reconstitution Solution 4 mL label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/reconstitution-solution-4ml-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Reconstitution Solution 4 mL",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "7cb2c190ea17e1bdba97f89ad4be155d50f9e3652e26c484295269aea3d67a8d",
+      "labelPreviewSha256": "8ec6d37a1b194b863f8600612a9cc4250eb042dbb92618990baafa7a74220125"
+    },
+    {
+      "offeringId": "mo_f3a48e654e93b4f7d0b9",
+      "sourceVariantId": "mov_7871c059b8a970a5b3d1",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_7871c059b8a970a5b3d1.webp",
+          "altText": "Proposed Xenios vial design showing LL-37 Complex, 5 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ll-37-complex-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios LL-37 Complex 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "c47393310ad483408256aad2156d0b51122d2ce47f403727d5fcd6aaef150fd4",
+      "labelPreviewSha256": "67bed253f06b960f52810c530273f268078c30748abd325f4133c905559cc2a1"
+    },
+    {
+      "offeringId": "mo_9138595ccf6417877896",
+      "sourceVariantId": "mov_d2bd32bf961854a033b1",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_d2bd32bf961854a033b1.webp",
+          "altText": "Proposed Xenios vial design showing MGF, 5 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/mgf-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios MGF 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "54c13703a9ca070e314949e50445ddbd8ded7e53467516b51218531ce63ed046",
+      "labelPreviewSha256": "77cb491a954ea5d129eff29ab940bb140906463bc430a111110ec3224a11330f"
+    },
+    {
+      "offeringId": "mo_13553ad94844151cf7c5",
+      "sourceVariantId": "mov_96f011e65e7b6a72f8c9",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/tesamorelin-8mg-label-card-v1-1024.webp",
+          "altText": "Xenios Tesamorelin 8 mg label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesamorelin-8mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesamorelin 8 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "5e7a9840078972fea37616e77bed93cec05e6b447c0388cb744e01a99562fa2c",
+      "labelPreviewSha256": "b6ee77baac68545e525f030c4d57daa07449cb7116e3f0a45cd8898e2bdf7069"
+    },
+    {
+      "offeringId": "mo_7bc91b37c8c041f166dd",
+      "sourceVariantId": "mov_2de19f71e09e8bc3febb",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r149c-chondro-jointaide.png",
+          "altText": "Official NutriDyn Chondro Jointaide container, 60 packets",
+          "width": 335,
+          "height": 420
+        }
+      },
+      "sourceCommit": "1173a81954230bb3533fe083b8a780a2e34a358c",
+      "primarySha256": "e990586ce03968f6e9414c80a20d0f5d8b25e2a522e62d5465373f7cf32231ee"
+    },
+    {
+      "offeringId": "mo_eca326cdaae5d36cfae6",
+      "sourceVariantId": "mov_0f3fa003c76aadef763c",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r266l-inflam-eze-chocolate-orange.png",
+          "altText": "Official NutriDyn Inflam-Eze container, Chocolate Orange",
+          "width": 298,
+          "height": 420
+        }
+      },
+      "sourceCommit": "1173a81954230bb3533fe083b8a780a2e34a358c",
+      "primarySha256": "695c2a6d3a1177c26ac2d7aceb8c29ed3ab0d454432a8f67ac1446b5a691a1a0"
+    },
+    {
+      "offeringId": "mo_2d42f72361aac15b6d5d",
+      "sourceVariantId": "mov_dbb59b83827a556051da",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r196-ultrabiotic-akkermansia-plus.png",
+          "altText": "Official NutriDyn UltraBiotic Akkermansia Plus bottle, 30 capsules",
+          "width": 682,
+          "height": 1150
+        }
+      },
+      "sourceCommit": "1173a81954230bb3533fe083b8a780a2e34a358c",
+      "primarySha256": "a821490ff63445863ee4f70f95d88b54fabcdbb07f0db53d8f456dcfbf6ba7ce"
+    },
+    {
+      "offeringId": "mo_b01b90df2792becd9a75",
+      "sourceVariantId": "mov_862b99ce1c9f144086dd",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tesofensine-500mcg-0418-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Tesofensine research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesofensine-500mcg-0418-capsule-front-artwork-v1.webp",
+          "altText": "Tesofensine research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "90cda89ea9115cd03ffe7835457fe61c0b8eef48",
+      "primarySha256": "394dcb26dc8368279df26004a1c0a69ceb19f35f32e5b8b2ff4d39d3b17149c6",
+      "labelPreviewSha256": "a5c78e959f19e1708afb5ff8bc5ef9edc36af06a49938e547d745f88cd04954d"
+    },
+    {
+      "offeringId": "mo_87b00893d8f75a60b08f",
+      "sourceVariantId": "mov_235641a298fed1c2637e",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tesofensine-500mcg-0419-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Tesofensine research capsules, listed strength 500 mcg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesofensine-500mcg-0419-capsule-front-artwork-v1.webp",
+          "altText": "Tesofensine research capsule front label design, listed strength 500 mcg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "90cda89ea9115cd03ffe7835457fe61c0b8eef48",
+      "primarySha256": "394dcb26dc8368279df26004a1c0a69ceb19f35f32e5b8b2ff4d39d3b17149c6",
+      "labelPreviewSha256": "a5c78e959f19e1708afb5ff8bc5ef9edc36af06a49938e547d745f88cd04954d"
+    },
+    {
+      "offeringId": "mo_1d9d501ac84d6cd9d46d",
+      "sourceVariantId": "mov_0a8df59fa70328b1c1ca",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/colostrum-100mg-0395-capsule-website-render-v1-1024.webp",
+          "altText": "Xenios packaging design for Colostrum research capsules, listed strength 100 mg",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/colostrum-100mg-0395-capsule-front-artwork-v1.webp",
+          "altText": "Colostrum research capsule front label design, listed strength 100 mg",
+          "width": 1000,
+          "height": 850
+        }
+      },
+      "sourceCommit": "90cda89ea9115cd03ffe7835457fe61c0b8eef48",
+      "primarySha256": "9f0ec2b395d0c5a310d6ee80d80ca0ef8e71120bbf1077a517c2fe51ccde1dd9",
+      "labelPreviewSha256": "02a7a42feb458f866ef08bff823e15542f9135b2bdbaf91db4d27aab72ce2d2b"
+    },
+    {
+      "offeringId": "mo_ef095e8f7e8fe3a7f85d",
+      "sourceVariantId": "mov_50fc8d22f6777f3f0d4d",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/semaglutide-bpc-157-5mg-650mcg-label-card-v1-1024.webp",
+          "altText": "Xenios Semaglutide + BPC-157, 5 mg/650 mcg, label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semaglutide-bpc-157-5mg-650mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Semaglutide + BPC-157, 5 mg/650 mcg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "bc0e70d84eeb2df0f8ced1a5fd93723bb5d8626af15bb8bff65e64ccc03c7fb2",
+      "labelPreviewSha256": "805e5fce2c2925e3c274b805c562798ea0169b0f7d62a1b34246995b07227863"
+    },
+    {
+      "offeringId": "mo_dbed3adeeecd92ac1d41",
+      "sourceVariantId": "mov_557749e5f12e1d27e367",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/mgf-2mg-label-card-v1-1024.webp",
+          "altText": "Xenios MGF 2 mg label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/mgf-2mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios MGF 2 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "bdcb694b327d6a3f6e13e7d6b5cecd5677c57d5e",
+      "primarySha256": "9e52d0700f52a8715619be117c5da4ab07437bd6320203b5510ff274757d26ad",
+      "labelPreviewSha256": "c2961131d4a4d73d2e5a30b0115a4bf25bccd610159316194b40161e23e0fa69"
+    },
+    {
+      "offeringId": "mo_95489efcae6c13f8bf0d",
+      "sourceVariantId": "mov_dd8bb706cb498b40864d",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_dd8bb706cb498b40864d.webp",
+          "altText": "Proposed Xenios vial design showing Tesamorelin + MGF + Ipamorelin, 5 mg / 500 mcg / 2.5 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tesamorelin-mgf-ipamorelin-5mg-500mcg-2-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Tesamorelin + MGF + Ipamorelin, 5 mg / 500 mcg / 2.5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "cc141db80aab0ebc2ececc10febd3cbd90ef1a793171b17fb67ddc66e28425b3",
+      "labelPreviewSha256": "aec8490a4639e0f328477d676b972545a4cc53ef203e61f2e443705aa04ffd79"
+    },
+    {
+      "offeringId": "mo_952b9a3bac3ac9f76438",
+      "sourceVariantId": "mov_b303ae9f0574c2d83337",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_vial",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-vial-mov_b303ae9f0574c2d83337.webp",
+          "altText": "Proposed Xenios vial design showing GHRP-2 + Tesamorelin + MGF + Ipamorelin, 5 mg / 5 mg / 500 mcg / 2.5 mg",
+          "width": 1086,
+          "height": 1170
+        },
+        "labelPreview": {
+          "href": "/research/product-media/ghrp-2-tesamorelin-mgf-ipamorelin-5mg-5mg-500mcg-2-5mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios GHRP-2 + Tesamorelin + MGF + Ipamorelin, 5 mg / 5 mg / 500 mcg / 2.5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "37edb11d9046e6d6287c11a1106edfdcd41d795c2fba88506055c8f9bcb7f8a7",
+      "labelPreviewSha256": "dbd8f45e4e8e48c48b32228f0226ae7f6ee45948d420d453252e64027f8ce5e6"
+    },
+    {
+      "offeringId": "mo_a4cfc5396d714f879944",
+      "sourceVariantId": "mov_d6a8b2cd129bda39d8fa",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r982-hydrate-blue-raspberry.png",
+          "altText": "Official NutriDyn Hydrate canister, Blue Raspberry",
+          "width": 420,
+          "height": 420
+        }
+      },
+      "sourceCommit": "1a314f4cf7f6c983857a2ec919328ab8f02ae93c",
+      "primarySha256": "2b5cd2cc0017b3241d75c01395218f5f34ad80e904519c98206b0814cd96ef34"
+    },
+    {
+      "offeringId": "mo_79376f449760149d1030",
+      "sourceVariantId": "mov_cdfb19499637f274f271",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r305-gfsk-fruits-and-greens-strawberry-kiwi.png",
+          "altText": "Official NutriDyn Fruits & Greens canister, Strawberry Kiwi",
+          "width": 271,
+          "height": 420
+        }
+      },
+      "sourceCommit": "53226181947d2695b686c59b3e179221f5267521",
+      "primarySha256": "318a13680455d454268f08938e9d2876785d60e3ad6f2c078892378602810b25"
+    },
+    {
+      "offeringId": "mo_d82610b6fe7ebf3b4d63",
+      "sourceVariantId": "mov_f5d63d95caa3d6d0a7a0",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r227-magtein-90-capsules.png",
+          "altText": "Official NutriDyn Magtein (Magnesium L-Threonate) bottle",
+          "width": 254,
+          "height": 420
+        }
+      },
+      "sourceCommit": "53226181947d2695b686c59b3e179221f5267521",
+      "primarySha256": "f5b880fc7210d8083482c1e99c333100983df29700dcac5cc988ff6d7cacd4d3"
+    },
+    {
+      "offeringId": "mo_ad9795d751913350bdea",
+      "sourceVariantId": "mov_d91d7248ed06d7280a2d",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r222-ultrabiotic-prebiotic-cranberry-lemonade.png",
+          "altText": "Official NutriDyn UltraBiotic Prebiotic canister, Cranberry Lemonade",
+          "width": 313,
+          "height": 420
+        }
+      },
+      "sourceCommit": "53226181947d2695b686c59b3e179221f5267521",
+      "primarySha256": "7669bab5d6e010811c506ee27b12f80611851dcedc3a31104f246f79dfea0a4f"
+    },
+    {
+      "offeringId": "mo_95b724aa9a1b0cebaf02",
+      "sourceVariantId": "mov_0146c6b245d5f09247a8",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_0146c6b245d5f09247a8.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 250MG/ML CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "8db919645b58ec83ae80f5f45c48b0c47887b16fc2ad1b42a8f3ad24b5ae2623"
+    },
+    {
+      "offeringId": "mo_cfdbc0f047dc06f6e1f4",
+      "sourceVariantId": "mov_028599999058c362cc84",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_028599999058c362cc84.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil, 12MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "22044a6ff635e22904d72298e7e2394cb44e0ab58ea19167dc799e820bcd79b8"
+    },
+    {
+      "offeringId": "mo_62935f6113d345b8eaef",
+      "sourceVariantId": "mov_032788e5244937ceca28",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_032788e5244937ceca28.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil SR, 36MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "6129d0c28f677ed0b292a12ee50fdd62f638e1fe63e516b15c57cbd027382476"
+    },
+    {
+      "offeringId": "mo_575a315e40db433d731d",
+      "sourceVariantId": "mov_0599d5a40aa70a61481b",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_0599d5a40aa70a61481b.webp",
+          "altText": "Proposed Xenios outer carton design showing Anastrozole Tablet, 1MG",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "4b78ed4a86a6775c413035ecd106102e689729d61754340ea5f7219b84d444b0"
+    },
+    {
+      "offeringId": "mo_f3107dd5a39ed82eb00e",
+      "sourceVariantId": "mov_05e4dd8400058a9c51de",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_05e4dd8400058a9c51de.webp",
+          "altText": "Proposed Xenios outer carton design showing Testosterone, 200MG/GM TOPICAL CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "1fc430b94e3e06af5b916dfab2de278811874553c40c9c77757aa0d964080f9d"
+    },
+    {
+      "offeringId": "mo_c93c18f3a636a88d2bdd",
+      "sourceVariantId": "mov_0753f47d752e1c799a66",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_0753f47d752e1c799a66.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil, 50MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "586f22ccdc2325eac4ac109d09a1991602d4069d7a53bbd87ac0db0795eb1aed"
+    },
+    {
+      "offeringId": "mo_57c25c9e9d07f83c0aac",
+      "sourceVariantId": "mov_083f7ccf9c4bd92d299f",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_083f7ccf9c4bd92d299f.webp",
+          "altText": "Proposed Xenios outer carton design showing Clomiphene, 25MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "0d719277a7c80ea39029136d30e9c91ea89372d3dd254a3438f907882db4ebc0"
+    },
+    {
+      "offeringId": "mo_c7c531599a1de3a083a0",
+      "sourceVariantId": "mov_08f0c1f6459b4238952b",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_08f0c1f6459b4238952b.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil + Tadalafil, SILDENAFIL/TADALAFIL 50MG-10MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "6063f7ba11634339f508ad41ce3fec57506523f545aadfe247bbbe1e8f722ee7"
+    },
+    {
+      "offeringId": "mo_b11b15656e48a07633d7",
+      "sourceVariantId": "mov_0c2ae18a59f6b2a23237",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_0c2ae18a59f6b2a23237.webp",
+          "altText": "Proposed Xenios outer carton design showing Minoxidil, MINOXIDIL 5% / AZELAIC ACID 12.5% / FINASTERIDE 0.1% / KETOCONAZOLE 2% SOLUTION 60ML",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "b6f7a31385d699cf30d738c60707452a3f4af3b06ed293b2ad1121577732b761"
+    },
+    {
+      "offeringId": "mo_9970858318e0c0947b31",
+      "sourceVariantId": "mov_0d6ca1ef7c59b4abaede",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_0d6ca1ef7c59b4abaede.webp",
+          "altText": "Proposed Xenios outer carton design showing Ascorbic Acid, 500MG/ML INJ. (30ML)",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "912a71d6995bb53c8624d4974d24fdd07dc8b0466db01b8c550d0ec1bad20612"
+    },
+    {
+      "offeringId": "mo_51fe59c0f212ad68ca3f",
+      "sourceVariantId": "mov_0e4d058496289e517594",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_0e4d058496289e517594.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 1MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "9841a933e006b4c122c700496f05789450794bbbb32ba40f4ae82e4e80ab4fcc"
+    },
+    {
+      "offeringId": "mo_a795e8418c3d6a7a78b7",
+      "sourceVariantId": "mov_11a2d542bd5c9d262d33",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_11a2d542bd5c9d262d33.webp",
+          "altText": "Proposed Xenios outer carton design showing Bi-Est, (80/20) 2MG/ML CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "7cd77ab5ac317cbade3c3f49214f1bc6f222593dff7db0b3650df489ec9b254c"
+    },
+    {
+      "offeringId": "mo_e39eebc18fe8e7795adf",
+      "sourceVariantId": "mov_1257ce2cf99948f94deb",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_1257ce2cf99948f94deb.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 0.25MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "7775d362886f55696103162b43f53d565c465ef1e192b2f91c5cfd1d2d1fc6ad"
+    },
+    {
+      "offeringId": "mo_ee73386cbf5463478334",
+      "sourceVariantId": "mov_14a952b1a5b4951dc063",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_14a952b1a5b4951dc063.webp",
+          "altText": "Proposed Xenios outer carton design showing Finasteride Tablet, 1MG",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "91328c02f4407899ac8f396d81cfe39ea5e9c18101ccb4597afd26560f51b235"
+    },
+    {
+      "offeringId": "mo_456476cdb9ece08d4690",
+      "sourceVariantId": "mov_16d6440006e72819c033",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_16d6440006e72819c033.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil SR, 24MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "2f39e4b6c8c7e52e62749ae29df858031fb45b90cbc6e74e99747d0de6a3c801"
+    },
+    {
+      "offeringId": "mo_339e35d9e938ca7e0da1",
+      "sourceVariantId": "mov_189d42074e6b32a05462",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_189d42074e6b32a05462.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 300MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "787ef797e12406a364c52a3cd706bc09ca640b3d058779a1009d0bd8c08e4f10"
+    },
+    {
+      "offeringId": "mo_b2c16be50b550aae5a41",
+      "sourceVariantId": "mov_1af9bddcc747b4b0390d",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_1af9bddcc747b4b0390d.webp",
+          "altText": "Proposed Xenios outer carton design showing Testosterone, 50MG/GM TOPICAL CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "c07c4a25d10e860c44fcd70d2409892d3ccc27efaf5102bbd3770abb815ddb64"
+    },
+    {
+      "offeringId": "mo_df301126ddc3108dc6b4",
+      "sourceVariantId": "mov_1b1c6fad6fe643bae46f",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_1b1c6fad6fe643bae46f.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 0.75MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "afcb7141a69cbbef3f9ddfa8b1ccd862e0d9b33fbe84009ff68a782bb763b78e"
+    },
+    {
+      "offeringId": "mo_8ecd70a2d4731e48ba35",
+      "sourceVariantId": "mov_21534608574ca9d6fbd5",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_21534608574ca9d6fbd5.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 150MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "2eb510f690ff5d4ac6cd30d3bdbe397afd423132c66afa31b48befca4095a6f0"
+    },
+    {
+      "offeringId": "mo_c50b5f1d259a7f6dea01",
+      "sourceVariantId": "mov_22f8ede1ff7f158b8c9b",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_22f8ede1ff7f158b8c9b.webp",
+          "altText": "Proposed Xenios outer carton design showing Testosterone, 14MG/GM TOPICAL CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "aaedf15d6c61eec1d7564c05d6c8fcd6645470032245f8612d68c08c16551200"
+    },
+    {
+      "offeringId": "mo_79a4ee26cea6c7ff0dcf",
+      "sourceVariantId": "mov_25ad4a66f23a5721d7bb",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_25ad4a66f23a5721d7bb.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil, 100MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "ea75282edd443459f7dfd6cb2fe3165b13c6df8917415a45bc6f3eb6c31f469e"
+    },
+    {
+      "offeringId": "mo_a7da518e4103504ebdef",
+      "sourceVariantId": "mov_32f6214d6f971441ba65",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_32f6214d6f971441ba65.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 50MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "b2086d0a99e09bdd2824889d1d5c14c5034cc1bbb5a638970fdb96dcdc1e41f3"
+    },
+    {
+      "offeringId": "mo_b7dcd84743d97b069cf5",
+      "sourceVariantId": "mov_33922aadda137c9d24d5",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_33922aadda137c9d24d5.webp",
+          "altText": "Proposed Xenios outer carton design showing Bi-Est, (80/20) 3MG/ML CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "d8c2a9adc600971eb56fe760941603a55edf1cd7db0f90ee647c5e0fe1ee5aa0"
+    },
+    {
+      "offeringId": "mo_f4405d79b2c8feb650dc",
+      "sourceVariantId": "mov_3bb2af00aa17be6978cf",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_3bb2af00aa17be6978cf.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 25MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "2d35c114de9b3b8562163d1400406728ad68a110d726d6b922098de3c2a78e96"
+    },
+    {
+      "offeringId": "mo_aebdba8672b47fafeb70",
+      "sourceVariantId": "mov_413281c7f02b2e6855d9",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_413281c7f02b2e6855d9.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 1.75MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "5f32fb9beb8371493d4a5b68aad31a1f5bbea06db9af260474432490af20091e"
+    },
+    {
+      "offeringId": "mo_5ffbf1b43993ad6868b0",
+      "sourceVariantId": "mov_446a8e2fe9f0df430708",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_446a8e2fe9f0df430708.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 1.25MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "a61b2c1e9bfafd6d22370c7b27bbfdad3424223b3164677332ee736e915692f9"
+    },
+    {
+      "offeringId": "mo_2d4c6bd9c04b27797c53",
+      "sourceVariantId": "mov_486a506935156d81ba02",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_486a506935156d81ba02.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 225MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "8c513f346f614c7b37ef5ca21ae8eade99984ccafdb5d000eb9b754f691a2f1a"
+    },
+    {
+      "offeringId": "mo_94a9cc1056bd619832ad",
+      "sourceVariantId": "mov_4b3417df465b8cbf0690",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_4b3417df465b8cbf0690.webp",
+          "altText": "Proposed Xenios outer carton design showing Ascorbic Acid, 500MG/ML INJ. (10ML)",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "040e1539a44d5793e713095d4012168403f852d719012c9b2c8c3094844366cb"
+    },
+    {
+      "offeringId": "mo_1a49c73846a526f4dafa",
+      "sourceVariantId": "mov_4e912c763e1dbbd2fc68",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_4e912c763e1dbbd2fc68.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil SR, 18MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "ab2b6bddc863d61d581ce79d0fc403b5882db5d3b6abab9ecdab3059a62f9a11"
+    },
+    {
+      "offeringId": "mo_102c7bf21db99d3c4622",
+      "sourceVariantId": "mov_4f2d35bd4e81caefabe8",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_4f2d35bd4e81caefabe8.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 150MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "edb53a7a018063c7cb763365ae66f4bf6b5c7482b1284b701ed153ad914b5361"
+    },
+    {
+      "offeringId": "mo_3d63197d505782575b8c",
+      "sourceVariantId": "mov_501ff7009923315e60b0",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_501ff7009923315e60b0.webp",
+          "altText": "Proposed Xenios outer carton design showing Enclomiphene, 25MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "2ba3367be5ee53c1f26f36f134e3a273bf874c57c92957941452538c943db655"
+    },
+    {
+      "offeringId": "mo_f16dab92434da8c1b715",
+      "sourceVariantId": "mov_56536dce04781fce3c09",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_56536dce04781fce3c09.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil SR, 55MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "955b45331e4fd7d9ac515daf7a0a504009d3dfebea6ad8574427c0dba1be2196"
+    },
+    {
+      "offeringId": "mo_a86493b9d16bbdf413fc",
+      "sourceVariantId": "mov_59e2c67cd424c10da631",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_59e2c67cd424c10da631.webp",
+          "altText": "Proposed Xenios outer carton design showing Metformin HCl ER Tablet, 500MG",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "e215957eb26b429b4748203d7d796814f1ae5fa59b00b72db1e13c0a826f26ee"
+    },
+    {
+      "offeringId": "mo_c9eb5f65b71cc7896515",
+      "sourceVariantId": "mov_6195e2808bfe7028279c",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_6195e2808bfe7028279c.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil SR, 6MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "0eac5babf4445051ad80af8c93c5f1ff466ff257852d0e475ac9b25ee60855f3"
+    },
+    {
+      "offeringId": "mo_bb24c4cae6b18541db17",
+      "sourceVariantId": "mov_65a56f5a4d64e1b6642d",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_65a56f5a4d64e1b6642d.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil Troche, 20MG",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "4fabff03b2f32d025bf54d0aa944e5ad67b4ae8521c27ebf14fb1adff2fa29c9"
+    },
+    {
+      "offeringId": "mo_71e2492004c64bf53988",
+      "sourceVariantId": "mov_6965dfbce32ee305eb45",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_6965dfbce32ee305eb45.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil, 20MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "fa9d7f73cd3af2c600b5302a921bc5712a431dabb3489bd258a2a200616a71f4"
+    },
+    {
+      "offeringId": "mo_7b97bb146bda0d0ea4ac",
+      "sourceVariantId": "mov_6a7975035b2f4714a9bf",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_6a7975035b2f4714a9bf.webp",
+          "altText": "Proposed Xenios outer carton design showing Minoxidil, MINOXIDIL 5% / TRETINOIN 0.025% SOLUTION 60ML",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "0f857698e63ce4c13fe0fe4417f5f47b4ee5c32de928e0e52b64862b48dbc1cf"
+    },
+    {
+      "offeringId": "mo_c35ba5fa200b86b340e0",
+      "sourceVariantId": "mov_6a7ce276b6726e5d0a90",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_6a7ce276b6726e5d0a90.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 25MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "3ae1a1aef6080626d3037e164428891c7dd26218f3b394267fec76cd8810acc2"
+    },
+    {
+      "offeringId": "mo_90738c1f17934a557b28",
+      "sourceVariantId": "mov_6a9fbc4e6522db1b9478",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_6a9fbc4e6522db1b9478.webp",
+          "altText": "Proposed Xenios outer carton design showing Testosterone, 30MG/GM TOPICAL CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "fd27b630173b65734f980a957e20ac93e9e2287dde2be91e7938dbb54af82587"
+    },
+    {
+      "offeringId": "mo_6ea962af58dadfcd943e",
+      "sourceVariantId": "mov_6fa1343c6cfe7cacc9e8",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_6fa1343c6cfe7cacc9e8.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil, 10MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "d37a154c3b338b6b9cfc4f5ab4b3bbe3c2dabed2be52b575ff7e7316abd2c1da"
+    },
+    {
+      "offeringId": "mo_55c79f62b104199c734b",
+      "sourceVariantId": "mov_7673a9b4ccaa340557f2",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_7673a9b4ccaa340557f2.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil SR, 110MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "c4e9b6a4003fa2e935ccbafd89dced52ce36648a4cdf98eb0e7063c326c3eb95"
+    },
+    {
+      "offeringId": "mo_167fa15a6b3f29edcad1",
+      "sourceVariantId": "mov_7a9f5490412704a83cb5",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_7a9f5490412704a83cb5.webp",
+          "altText": "Proposed Xenios outer carton design showing Tamoxifen, 10MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "6f869e01fa7471f28eb43cb887d7c6664f50e92d731de458cc98d00cd3ad6be5"
+    },
+    {
+      "offeringId": "mo_cd193eb5a09726090ad9",
+      "sourceVariantId": "mov_7db23839e0378f076ad5",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_7db23839e0378f076ad5.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 50MG/ML CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "4b17e5f40301e5e9166ac40b88b3d41ec17982f80a5bca9747fc683a93dfaa3f"
+    },
+    {
+      "offeringId": "mo_22f24e6b7f11be51fc44",
+      "sourceVariantId": "mov_7f82640f5ac1adc9483f",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_7f82640f5ac1adc9483f.webp",
+          "altText": "Proposed Xenios outer carton design showing Enclomiphene, 12.5MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "ee7f3e6e2bca9d142ebc37f3a7862f18bfcde7437bc435d36c21e534ccdd49cc"
+    },
+    {
+      "offeringId": "mo_4463fcdff81752545aec",
+      "sourceVariantId": "mov_806be6cd914c527fad37",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_806be6cd914c527fad37.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil SR, 12MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "439823812f2fa32157cde2f5b25ecfc063d2485b9038fd7b584c6eb132748423"
+    },
+    {
+      "offeringId": "mo_28408f253a09df4cc6d8",
+      "sourceVariantId": "mov_82974ab2f9c652c2cb12",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_82974ab2f9c652c2cb12.webp",
+          "altText": "Proposed Xenios outer carton design showing Anastrozole, 0.25MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "60bfb3e532d56ffb17c1c4c9ce3a334ce987720a57f226aea3e51cd5542dd4e2"
+    },
+    {
+      "offeringId": "mo_ec8335d4636f1efe50b4",
+      "sourceVariantId": "mov_831a50352c3ea54cf4e7",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_831a50352c3ea54cf4e7.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 6MG/ML CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "55c2d792ea754ec0fd820b36990dea6c1a7f2cab358688fa212d0e7846835e82"
+    },
+    {
+      "offeringId": "mo_3c7b42246b0c5b975f23",
+      "sourceVariantId": "mov_85b30027c9aab0079752",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_85b30027c9aab0079752.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 1.5MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "dfe6732d295dd7fda683b5966f5f7577e6c2468d17da86575bc05241c1b4ceb1"
+    },
+    {
+      "offeringId": "mo_d457e842bc771b91a571",
+      "sourceVariantId": "mov_86df1a74878cfd60f6c2",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_86df1a74878cfd60f6c2.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil, 55MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "1704e8e7931adb6b182684171b87dcf529a753e09cced99221d4265dcc2c2e88"
+    },
+    {
+      "offeringId": "mo_01aa8c629f0c4c030103",
+      "sourceVariantId": "mov_8916bc3cdec720be82c2",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_8916bc3cdec720be82c2.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil, 5MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "95c7dd9bc093e8c213ad37b0f4703467bc904c9b71b3caae68d414da7dbc325e"
+    },
+    {
+      "offeringId": "mo_1a1322bbf0026b9f48ba",
+      "sourceVariantId": "mov_8b5397cde4ee58ec1e07",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_8b5397cde4ee58ec1e07.webp",
+          "altText": "Proposed Xenios outer carton design showing Metformin HCl ER Tablet, 1000MG",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "edc2c698dd3f02aa56f2d159bac6323635065618b5dabeb40a7fdafe76521e65"
+    },
+    {
+      "offeringId": "mo_e0deaee446f7a1615ce1",
+      "sourceVariantId": "mov_8c43d8049cba3bbc8938",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_8c43d8049cba3bbc8938.webp",
+          "altText": "Proposed Xenios outer carton design showing Vardenafil, 20MG TROCHE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "441e3e120617e1da91aded2b7b2a3c126474defebc513e0b4849ffc78319fb42"
+    },
+    {
+      "offeringId": "mo_52fb8d64bf9d436c8b94",
+      "sourceVariantId": "mov_8d910726a1f47aada8b1",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_8d910726a1f47aada8b1.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil, 24MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "c5510f9bda63383fdac186310a930a2aaa4459fb24b8d7587ae417986b07f80f"
+    },
+    {
+      "offeringId": "mo_466c20dfa5a68bca9520",
+      "sourceVariantId": "mov_8fc79749268ceced7f51",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_8fc79749268ceced7f51.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 250MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "40cc7ee886c0e2f75e2d2f3b19d6f758ee3cdd0ce7588b365192214fc7e920b2"
+    },
+    {
+      "offeringId": "mo_c100778b39a735f70686",
+      "sourceVariantId": "mov_90758b4e6a42d66e47f7",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_90758b4e6a42d66e47f7.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 4MG/ML CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "3892f99ec1018523390b468011b31eab3ea00a28391b5157a2a320b741670076"
+    },
+    {
+      "offeringId": "mo_4f81b4aaa77b1aea6041",
+      "sourceVariantId": "mov_908f0621f69df1349570",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_908f0621f69df1349570.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 250MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "1db6b06e1df026fc63f2b2b9dc0e5fb175dca422fda586a42ad18ec03ba5ce52"
+    },
+    {
+      "offeringId": "mo_b95ade79821018d8cd22",
+      "sourceVariantId": "mov_9244125895144bc27dc7",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_9244125895144bc27dc7.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 200MG/ML CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "b10ac3a599615f5bbe86f4448c25cd9eb4a55d220a30d9c3fee9fa02be43f9f8"
+    },
+    {
+      "offeringId": "mo_f524eb1ffae9041d8b56",
+      "sourceVariantId": "mov_9fa662797891a14f0be9",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_9fa662797891a14f0be9.webp",
+          "altText": "Proposed Xenios outer carton design showing Minoxidil, MINOXIDIL 5% / FINASTERIDE 0.1% SOLUTION 60ML",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "79a03c861d714d324a6c16659fdb8b3ef026194b23a3ebb0a331a425b8a4462f"
+    },
+    {
+      "offeringId": "mo_ccf410e1df6931045e1f",
+      "sourceVariantId": "mov_a66e2af49da46a4c4ab1",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_a66e2af49da46a4c4ab1.webp",
+          "altText": "Proposed Xenios outer carton design showing Finasteride Tablet, 5MG",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "88278cda7210bef91c2cff784b700341b23192af3b2e1b17227c97ad577dc275"
+    },
+    {
+      "offeringId": "mo_2064240ea11f991b8cb4",
+      "sourceVariantId": "mov_a69bd4220917c3df075a",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_a69bd4220917c3df075a.webp",
+          "altText": "Proposed Xenios outer carton design showing Bi-Est, 5MG (80/20) CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "3ebd6e0322e1bb33a49ed0d1ee47f0b9be99d25f7ece7ddaef67cb358119ea39"
+    },
+    {
+      "offeringId": "mo_5261903feb1b3551d7ff",
+      "sourceVariantId": "mov_b56ef587dd6b17bf8b0c",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_b56ef587dd6b17bf8b0c.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 125MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "1f36b3792fe22b76afae9fd81eac7627f222ff38ba5665edd47df71a22ee803e"
+    },
+    {
+      "offeringId": "mo_aa9e5754187361b07ce3",
+      "sourceVariantId": "mov_b6edf8e84ad31102991a",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_b6edf8e84ad31102991a.webp",
+          "altText": "Proposed Xenios outer carton design showing Ketoconazole / Niacinamide Cream, KETOCONAZOLE CREAM (KETOCONAZOLE 2% / NIACINAMIDE 4%) 30GM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "8c534be135eaa2e46230738352c25599f2a5e16ab350580c1bfe5d03c93d8dde"
+    },
+    {
+      "offeringId": "mo_4212e2161648af7f969a",
+      "sourceVariantId": "mov_b7bfd79381bccbb3f0bc",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_b7bfd79381bccbb3f0bc.webp",
+          "altText": "Proposed Xenios outer carton design showing Enclomiphene, 50MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "0c70eebfc6ab1e5f7717c91cdddd9e187c8e88551688ed1120765fd13a5ef76a"
+    },
+    {
+      "offeringId": "mo_a1c1549134223ad0c541",
+      "sourceVariantId": "mov_ba9acd2ddd6efbd40a18",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_ba9acd2ddd6efbd40a18.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 300MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "1dfcd1ae970e155b2740e10c9886255eb78da3fb15a4c08ab64b0a76b0ba0440"
+    },
+    {
+      "offeringId": "mo_b745ef3cdaeee166dcd6",
+      "sourceVariantId": "mov_baf57ab8c9cc745ad5ac",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_baf57ab8c9cc745ad5ac.webp",
+          "altText": "Proposed Xenios outer carton design showing Tadalafil Troche, 25MG",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "983cfcfa222480279603de55a9cbbbfe77493d0df7aa97cd206b621e57a001d3"
+    },
+    {
+      "offeringId": "mo_b1a47ddceb680dead7d1",
+      "sourceVariantId": "mov_bb171e1e99b202b19469",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_bb171e1e99b202b19469.webp",
+          "altText": "Proposed Xenios outer carton design showing Testosterone, 100MG/GM TOPICAL CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "00ba21e4fb38e2b7d32f10216ed26d8763156774147792921d6646db90e55b1d"
+    },
+    {
+      "offeringId": "mo_b6019095f40863517855",
+      "sourceVariantId": "mov_bd54445f33fdbb0fb7a5",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_bd54445f33fdbb0fb7a5.webp",
+          "altText": "Proposed Xenios outer carton design showing Bi-Est, 6MG (80/20) CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "91135d54335ea32e9be7de4e197622dda48efcd1e3034cdacd9f7ef897b7cee8"
+    },
+    {
+      "offeringId": "mo_99793af3a2ec5e6f704f",
+      "sourceVariantId": "mov_bf88614f97a61d969acd",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_bf88614f97a61d969acd.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 50MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "8f838ebd2836ca72b0e8e0adba02b0276e979b6c8daf3e3e43953afb75f72e03"
+    },
+    {
+      "offeringId": "mo_9f6c9d3b8e8c2ee60ffe",
+      "sourceVariantId": "mov_c0c333d9892dd582a721",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_c0c333d9892dd582a721.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 200MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "43ea0e702fbd985ede18dc3e485887273a79de290d3d8ce1183733e71355ff72"
+    },
+    {
+      "offeringId": "mo_c640dc6db29f26b53e55",
+      "sourceVariantId": "mov_c540ba91fb1c51210f22",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_c540ba91fb1c51210f22.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 0.5MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "6f0e63e5d00382c27a5ece370802c6504f3a1143943aacf7420bf9399974b3bc"
+    },
+    {
+      "offeringId": "mo_e48d78fa7ebd33e081c9",
+      "sourceVariantId": "mov_c6abe9e1c6b987e29192",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_c6abe9e1c6b987e29192.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil, 110MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "8b451193a00813e7b6af312bccc6200c0f4d7f95646a2c5b7a96fbd73333488e"
+    },
+    {
+      "offeringId": "mo_f090369236db025d4a9b",
+      "sourceVariantId": "mov_cc5b7fced81f23f7378f",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_cc5b7fced81f23f7378f.webp",
+          "altText": "Proposed Xenios outer carton design showing Bi-Est, 1.25MG (80/20) CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "d307f4e823f69c107463d823e244fce18f231f88813dac557bce88c8710afaae"
+    },
+    {
+      "offeringId": "mo_e85284c651d65690a90d",
+      "sourceVariantId": "mov_cda363a46b53964275df",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_cda363a46b53964275df.webp",
+          "altText": "Proposed Xenios outer carton design showing Low Dose Naltrexone, 1.5MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "905d4f171d894aae61a9a2ce5c3b08d3de6ca7841211051257635667b6170c33"
+    },
+    {
+      "offeringId": "mo_327138734a9410ce05d2",
+      "sourceVariantId": "mov_d2cc17167334831c9361",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_d2cc17167334831c9361.webp",
+          "altText": "Proposed Xenios outer carton design showing Cabergoline Tablets, 0.5MG",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "8ac8a743807406f539151fce21ff64567306f9c9e0ca87d7b30577627f1d31bb"
+    },
+    {
+      "offeringId": "mo_5ae80eae05219c7ed007",
+      "sourceVariantId": "mov_d3773942eddcd7a25bff",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_d3773942eddcd7a25bff.webp",
+          "altText": "Proposed Xenios outer carton design showing Clomiphene, 50MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "e2b6727d6956c2eb464c9e17b7010c6c38ebe567e4060afbfd57b31df09594be"
+    },
+    {
+      "offeringId": "mo_7e5b4f1628b4bc2f6078",
+      "sourceVariantId": "mov_d45176011a0fd2aa21b7",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_d45176011a0fd2aa21b7.webp",
+          "altText": "Proposed Xenios outer carton design showing Bi-Est, 5MG (50/50) CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "150b93fe674b71c222d5581d067882cf194a0eef5318624ee22d7dee29b064d8"
+    },
+    {
+      "offeringId": "mo_64c49ea66ef9b84b54c7",
+      "sourceVariantId": "mov_da50073bd180c9eedead",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_da50073bd180c9eedead.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 100MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "c61fa227bb160a0f96810f0caafea16c6b844a864726ada88ee40ed7f0416ffc"
+    },
+    {
+      "offeringId": "mo_a455518e174020e345a1",
+      "sourceVariantId": "mov_dc95dfc0855b432bb8a3",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_dc95dfc0855b432bb8a3.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 125MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "ab3d50a91a9d9b145493b772fa1aa8361384f3d0d1f8f185b1103f6268b14217"
+    },
+    {
+      "offeringId": "mo_d7a9409fb28a8c4623a1",
+      "sourceVariantId": "mov_e1a1bec56d74854fd435",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_e1a1bec56d74854fd435.webp",
+          "altText": "Proposed Xenios outer carton design showing Bi-Est, 2.5MG (80/20) CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "f47336eeb003efdfa4933bf9aff32b71d78eb07e70df9ce0f33b94823284850d"
+    },
+    {
+      "offeringId": "mo_ca1bb5bbcb82035373c1",
+      "sourceVariantId": "mov_e40e7a99246a86038f67",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_e40e7a99246a86038f67.webp",
+          "altText": "Proposed Xenios outer carton design showing Sildenafil SR, 75MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "5b0cdf1d0809c1f4c0ab5bfa570bbdf1ac6f800ed9ae980f2cef5c87e2766b07"
+    },
+    {
+      "offeringId": "mo_be72c39f79aed473eeb4",
+      "sourceVariantId": "mov_e454956f77357ddec871",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_e454956f77357ddec871.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 75MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "5dd8d9cb4cbb7b4e3eb8a7772a903d3be2ac399965ef30cf1e3cde9daf7571ce"
+    },
+    {
+      "offeringId": "mo_6dd72b337df13c68232d",
+      "sourceVariantId": "mov_e4d2a9494b75d6af6ff2",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_e4d2a9494b75d6af6ff2.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 175MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "c98376ac154321282f6f887edff9a89d3de1e44d6a18f70ec7f80dd9e6a133cf"
+    },
+    {
+      "offeringId": "mo_9c4e4a0e5ad273733807",
+      "sourceVariantId": "mov_e7761f3515fdd7679bc0",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_e7761f3515fdd7679bc0.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 10MG/ML CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "de98d1cb3a0f08192776f0ced5f0c3c3960e5b81fdd7bff9ca6591fe0e8091c0"
+    },
+    {
+      "offeringId": "mo_959f2da90c182628d171",
+      "sourceVariantId": "mov_f16bed144ebe7ec20b61",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_f16bed144ebe7ec20b61.webp",
+          "altText": "Proposed Xenios outer carton design showing Anastrozole, 1MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "315a15c38e8144602e76ba87a37ab35321d99665487b1b337c8d711dec5daa15"
+    },
+    {
+      "offeringId": "mo_142f893feea7dde2c738",
+      "sourceVariantId": "mov_f72cf2f324eb23e46646",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_f72cf2f324eb23e46646.webp",
+          "altText": "Proposed Xenios outer carton design showing Progesterone, 75MG SR CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "24d29969886547d68ef978a0f4867e30e6f47c1b5aff170f76e500f1ac9981d3"
+    },
+    {
+      "offeringId": "mo_cb9f8afab0a6228de0bb",
+      "sourceVariantId": "mov_f8127b7d800d59a87749",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_f8127b7d800d59a87749.webp",
+          "altText": "Proposed Xenios outer carton design showing Estradiol, 2MG TABLET",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "076bef49e2d6f9843acd291a098b5a023972e5d3bc16b3a64bdb65a62b36f52e"
+    },
+    {
+      "offeringId": "mo_76ccee864784942d94bf",
+      "sourceVariantId": "mov_fce7784f2a27983462c2",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_fce7784f2a27983462c2.webp",
+          "altText": "Proposed Xenios outer carton design showing Anastrozole, 0.5MG CAPSULE",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "0904d731d7695bfbb4b003ce4b147c235a554b6573b307829b744ceacd81d651"
+    },
+    {
+      "offeringId": "mo_493b3d5a7aeeaa81df5b",
+      "sourceVariantId": "mov_ff9faa14357676165e39",
+      "media": {
+        "packagingDesign": false,
+        "representation": "proposed_carton",
+        "primary": {
+          "href": "/research/product-media/studio-proposed-carton-mov_ff9faa14357676165e39.webp",
+          "altText": "Proposed Xenios outer carton design showing Testosterone, 10MG/GM TOPICAL CREAM",
+          "width": 1086,
+          "height": 1170
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "7e09886b17f70fddf9df8d9d3c11292ff9e5a2e298cb7092f03e3da7a1e773f3"
+    },
+    {
+      "offeringId": "mo_b7ebe0db8b401f515de0",
+      "sourceVariantId": "mov_1119581881eb8a50c333",
+      "media": {
+        "packagingDesign": false,
+        "representation": "catalog_reference",
+        "primary": {
+          "href": "/research/product-media/studio-catalog-reference-mov_1119581881eb8a50c333.webp",
+          "altText": "Xenios catalog reference card for Kyzatrex (Oral Testosterone)",
+          "width": 1440,
+          "height": 1080
+        }
+      },
+      "sourceCommit": "76c5666992b9601c66d8c2b7e94d3a8301cc589f",
+      "primarySha256": "7d23ad6071ffbf764a8d22d468ac24dffa27d75490f89c2a0215853062762f86"
+    },
+    {
+      "offeringId": "mo_06babb8e374b38824ee8",
+      "sourceVariantId": "mov_ee0d20dec866e2090585",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/semaglutide-20mg-website-render-v1-1024.webp",
+          "altText": "Xenios Semaglutide 20 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/semaglutide-20mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Semaglutide 20 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
+      "primarySha256": "61d6101a6d6a449d676b4bdbbccc73e9b7779ec0e219e6fb09e624da59793577",
+      "labelPreviewSha256": "8a993b045397a7ae64266a8bfde7ee9a4ab2d5e3464cdcb3d20bd88c91448280"
+    },
+    {
+      "offeringId": "mo_25017e496277b4120dde",
+      "sourceVariantId": "mov_eb49bfc0ee44e7b83d52",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-50mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 50 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-50mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 50 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
+      "primarySha256": "1b0d6b5e8c2b3c8713d6912e7468944734b5c6a6463aa6ceee6f4bec36e69d8d",
+      "labelPreviewSha256": "b5e678acd3a4018b98af614eae0a608b9a1a066c0e9d14ecf6f65887ec1da3fc"
+    },
+    {
+      "offeringId": "mo_3566952a7131123bd55f",
+      "sourceVariantId": "mov_645c8c707682a45abcaa",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/tirzepatide-60mg-website-render-v1-1024.webp",
+          "altText": "Xenios Tirzepatide 60 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/tirzepatide-60mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Tirzepatide 60 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
+      "primarySha256": "3ca883f01640be1a4b82b68a6c810a0e2867a058de85ad034dd636195b63f840",
+      "labelPreviewSha256": "4e6a6f9760e79d57d2a06c5fa50f386c57efff2b805a30cf9c1b3afcb61bcf1e"
+    },
+    {
+      "offeringId": "mo_45db3e0f87d6d796d4b8",
+      "sourceVariantId": "mov_0db878384f6f3f42fc1a",
+      "media": {
+        "packagingDesign": true,
+        "primary": {
+          "href": "/research/product-media/retatrutide-5mg-website-render-v1-1024.webp",
+          "altText": "Xenios Retatrutide 5 mg packaging design",
+          "width": 1024,
+          "height": 1024
+        },
+        "labelPreview": {
+          "href": "/research/product-media/retatrutide-5mg-front-artwork-v1.webp",
+          "altText": "Front label artwork for Xenios Retatrutide 5 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "798797f8885c793f2c497da5bf09f6b209e980fe",
+      "primarySha256": "3b47cc0ac144ccaf7520417111e7d631b4896954534ae23870ab349a7208d4f9",
+      "labelPreviewSha256": "cc74a41c7bb66af237ae040ba880d9e319a74f94057c020d321dea55b3cc0d2e"
+    },
+    {
+      "offeringId": "mo_edefaf4799bd53853d01",
+      "sourceVariantId": "mov_e74adec4c45f9c9db404",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r288-longevity-essentials-nad-plus.png",
+          "altText": "Official NutriDyn Longevity Essentials NAD+ bottle, 90 capsules",
+          "width": 254,
+          "height": 420
+        }
+      },
+      "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
+      "primarySha256": "e3fca3f34d64de32fe1f86ee9fba24de1603744009f5e31979f8ac762996ff74"
+    },
+    {
+      "offeringId": "mo_b48e883b4ada1469f824",
+      "sourceVariantId": "mov_904af0a54faddfe2f21f",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r289-beauty-essentials-rejuvenate-plus-hibiscus-berry.png",
+          "altText": "Official NutriDyn Beauty Essentials Rejuvenate+ canister, Hibiscus Berry",
+          "width": 255,
+          "height": 420
+        }
+      },
+      "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
+      "primarySha256": "48989e89c22a534ded69a3dd8046c759bba62ccbeafd2534bc03c30f7f883dc8"
+    },
+    {
+      "offeringId": "mo_85898714d8df5a3d2f10",
+      "sourceVariantId": "mov_4a105b161858064229f3",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r290-uplift-plus-berry-lemonade.png",
+          "altText": "Official NutriDyn Uplift+ canister, Berry Lemonade",
+          "width": 266,
+          "height": 420
+        }
+      },
+      "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
+      "primarySha256": "d202f117a2cc6d68d12b6e27fe6628b2c1b5eb949eb1e30ef49b9d91259710ee"
+    },
+    {
+      "offeringId": "mo_5b122372a6ecdea51c52",
+      "sourceVariantId": "mov_ffe0eef7766200ac8c53",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/nutridyn-r405-stress-essentials-calm.png",
+          "altText": "Official NutriDyn Stress Essentials Calm bottle, 60 capsules",
+          "width": 258,
+          "height": 420
+        }
+      },
+      "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
+      "primarySha256": "70ec66308f6476e7a2880a8f4574ba88b09b0f030cf82e0c5af583daaf83929e"
     }
   ]
 }

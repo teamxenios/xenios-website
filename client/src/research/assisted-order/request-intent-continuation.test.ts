@@ -149,8 +149,8 @@ describe("reference continuation links", () => {
     const href = requestIntentSupportMailto(receipt.publicReference);
     const url = new URL(href);
     expect(url.protocol).toBe("mailto:");
-    expect(url.pathname).toBe("research@xeniostechnology.com");
-    expect(url.searchParams.get("subject")).toBe("Quick Order request " + receipt.publicReference);
+    expect(url.pathname).toBe("team@xeniostechnology.com");
+    expect(url.searchParams.get("subject")).toBe("Early Access request " + receipt.publicReference);
     expect(url.searchParams.get("body")).toBe("Reference: " + receipt.publicReference
       + "\n\nPlease do not include medical information or payment details in email.");
     expect([...url.searchParams.keys()]).toEqual(["subject", "body"]);

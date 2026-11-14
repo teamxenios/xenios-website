@@ -142,7 +142,12 @@ async function bootProductionRoot(envOverrides: Record<string, string | undefine
     else env[key] = value;
   }
   const cli = path.join(ROOT, "node_modules", "tsx", "dist", "cli.mjs");
-  const child = spawn(process.execPath, [cli, "server/index.ts"], { cwd: ROOT, env, stdio: ["ignore", "pipe", "pipe"] });
+  // A local runtime may permit the loopback HTTP test but lack the TSX CLI's
+  // private IPC socket. Node's TSX import registers the same TypeScript loader
+  // and boots the real entrypoint unmocked. Hosted CI keeps the original CLI.
+  const args = !process.env.CI && process.env.XENIOS_TEST_BOOT_NODE_REGISTER === "1"
+    ? ["--import", "tsx", "server/index.ts"] : [cli, "server/index.ts"];
+  const child = spawn(process.execPath, args, { cwd: ROOT, env, stdio: ["ignore", "pipe", "pipe"] });
   children.push(child);
   let output = "";
   child.stdout?.on("data", (chunk) => { output += String(chunk); });

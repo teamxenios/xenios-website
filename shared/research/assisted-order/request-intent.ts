@@ -4,8 +4,10 @@ import {
   validateSubmitInput,
   type AssistedOrderContactInput,
   type AssistedOrderCatalogItem,
-  type AssistedOrderCatalogPage,
+  type AssistedOrderCatalogPage, type InquiryRankSort,
 } from "./contract";
+
+import { normalizeOptionalIntake, type OptionalRequestIntake } from "./optional-intake";
 
 export const REQUEST_INTENT_KIND = "unapproved_selection_request" as const;
 export const REQUEST_INTENT_NOTICE =
@@ -19,6 +21,7 @@ export const REQUEST_INTENT_RECOVERY_NOTICE =
 export type RequestIntentInput = Readonly<{
   idempotencyKey: string;
   contact: AssistedOrderContactInput;
+  optionalIntake?: OptionalRequestIntake;
   agreements: readonly Readonly<{
     kind: string;
     version: string;
@@ -31,15 +34,24 @@ export type RequestIntentInput = Readonly<{
 export type RequestIntentCatalogItem = AssistedOrderCatalogItem & Readonly<{
   reviewedContent?: ReviewedProductContent;
   reviewedMedia?: ReviewedProductMedia;
+  /**
+   * The reviewed sentence a customer sees for a listing with no reviewed
+   * description, or whose details are being confirmed. Present only when the
+   * listing has a reviewed review state. Shown whether or not the row can be added.
+   */
+  reviewMessage?: string;
   selectableForReview: boolean;
-  intentExclusion: "non_merchandise" | "coming_soon" | null;
+  intentExclusion: "non_merchandise" | "coming_soon" | "specification_review" | null;
   clinicalReviewRequired: boolean;
   sourceDisplayState: string;
   sourceVariantDisplayState: string;
   sourceRefusal: string | null;
 }>;
 export type RequestIntentCatalogPage = Omit<AssistedOrderCatalogPage, "items"> &
-  Readonly<{ items: readonly RequestIntentCatalogItem[] }>;
+  Readonly<{ items: readonly RequestIntentCatalogItem[];
+    /** Names only, computed after access and filtering. No individual or aggregate counts. */
+    availableRankSorts?: readonly InquiryRankSort[]; rankUnavailable?: true;
+  }>;
 
 export type RequestIntentLine = Readonly<{
   productId: string;
@@ -57,6 +69,11 @@ export type RequestIntentLine = Readonly<{
   sourceRefusal: string | null;
   catalogVersion: string;
   reviewState: "pending";
+  /**
+   * Staff readback only, never stored and never sent to a customer: the kind of
+   * open question on this line's listing as it stands when staff read it.
+   */
+  reviewCode?: string | null;
 }>;
 
 export type RequestIntentReceipt = Readonly<{
@@ -68,6 +85,7 @@ export type RequestIntentReceipt = Readonly<{
 }>;
 export type RequestIntentDetail = RequestIntentReceipt & Readonly<{
   contact: RequestIntentInput["contact"];
+  optionalIntake?: OptionalRequestIntake;
   agreements: RequestIntentInput["agreements"];
   lines: readonly RequestIntentLine[];
 }>;
@@ -87,11 +105,14 @@ export function exactObject(
 }
 
 export function validateRequestIntentInput(raw: unknown): RequestIntentInput {
-  const root = exactObject(raw, ["idempotencyKey", "contact", "agreements", "lines"], "request");
+  const root = exactObject(raw, ["idempotencyKey", "contact", "agreements", "lines", "optionalIntake"], "request");
   if (typeof root.idempotencyKey !== "string"
     || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(root.idempotencyKey)) {
     throw new AssistedOrderValidationError("idempotencyKey", "A valid attempt identity is required.");
   }
+  let optionalIntake: OptionalRequestIntake | undefined;
+  try { optionalIntake = normalizeOptionalIntake(root.optionalIntake); }
+  catch { throw new AssistedOrderValidationError("optionalIntake", "Choose a listed goal or enter a valid optional referral code."); }
   const contact = exactObject(root.contact, [
     "fullLegalName", "email", "mobilePhone", "organizationName", "ageConfirmed",
     "shippingAddress", "billingSameAsShipping", "billingAddress",
@@ -131,6 +152,7 @@ export function validateRequestIntentInput(raw: unknown): RequestIntentInput {
   return {
     idempotencyKey: normalized.idempotencyKey,
     contact: normalized.contact,
+    ...(optionalIntake ? { optionalIntake } : {}),
     lines: normalized.lines.map(({ productId, variantId, quantity }) => ({ productId, variantId, quantity })),
     agreements: normalized.agreements.map((agreement) => ({ ...agreement, accepted: true })),
   };

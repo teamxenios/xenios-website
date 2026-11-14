@@ -51,6 +51,27 @@ export function masterOfferingViewerForMember(
 }
 
 /**
+ * The viewer the full-catalog routes price for under the quote-only release.
+ *
+ * Only an admin keeps the pricing grant. An ordinary member is a customer, and
+ * so is a member on the full-catalog allowlist: the allowlist decides who may
+ * open the catalog, not who is staff. Without the grant the pricing identity
+ * is null, and every price fails closed to "Price on request" on the list,
+ * the product and the price-list download.
+ *
+ * This removes a grant and never creates or changes one. The request flow
+ * builds its own viewer and does not pass through here, so the server still
+ * prices a request for eligibility and for staff.
+ */
+export function quoteOnlyCatalogViewer(
+  viewer: MasterOfferingViewerWithGrant,
+): MasterOfferingViewerWithGrant {
+  if (viewer.audience === "admin") return viewer;
+  const { pricingGrant: _withheld, ...withoutGrant } = viewer;
+  return withoutGrant;
+}
+
+/**
  * The pricing request identity for a viewer, or null when the viewer carries
  * no grant. Null-safe by contract: an absent viewer (an Early Access session
  * without a member row, an anonymous probe) is a null identity, so the price

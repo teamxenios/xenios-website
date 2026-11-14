@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "records": [
+    {
+      "offeringId": "mo_a7a7e307d58f24affb42",
+      "sourceVariantId": "mov_512ed6b875c04eee4753",
+      "customerMessage": "The catalog lists this entry as Syringes & Alcohol Swabs. What it includes has not yet been confirmed, so no description is shown yet.",
+      "staffReviewCode": "label_or_source_needed",
+      "neutralSpecification": null
+    }
+  ]
+}

@@ -14,8 +14,8 @@ vi.mock("../core", () => ({ useResearch: () => auth }));
 vi.mock("./AssistedOrderPage", () => ({ AssistedOrderPage: (props: { embedded?: boolean }) =>
   <div data-testid="legacy-form">{props.embedded ? "embedded" : "standalone"}</div> }));
 vi.mock("./RequestIntentEntry", () => ({ RequestIntentEntry: (props: { embedded?: boolean; entryIntent?: { action: string };
-  onConfirmedReceipt?: (receipt: unknown) => void }) =>
-  <div data-testid="mixed-form">{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}
+  onConfirmedReceipt?: (receipt: unknown) => void; admissionRequired?: boolean }) =>
+  <div data-testid="mixed-form" data-admission={String(props.admissionRequired === true)}>{props.embedded ? "embedded" : "standalone"} {props.entryIntent?.action}
     <button type="button" aria-label="confirm synthetic receipt" onClick={() => props.onConfirmedReceipt?.({
       kind: "unapproved_selection_request", requestId: "30000000-0000-4000-8000-000000000001",
       publicReference: "XRI-30000000000040008000000000000001", status: "pending_review", createdAt: "2026-10-14T12:00:00.000Z" })} /></div> }));
@@ -77,6 +77,23 @@ describe("actual front-door selection and preservation (child form boundary stub
     await render(<OrderRequestEntry mode={{ kind: "legacy" }} />);
     expect(container.querySelector('[data-testid="mixed-form"]')).toBeTruthy();
     expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(raw);
+  });
+  it("asks for the contact step when it is required, also for a tab holding a stored attempt, and keeps the attempt", async () => {
+    await render(<OrderRequestEntry mode={{ kind: "mixed", contactAdmissionRequired: true }} />);
+    expect(container.querySelector('[data-testid="mixed-form"]')?.getAttribute("data-admission")).toBe("true");
+    act(() => root.unmount()); root = createRoot(container);
+    const raw = JSON.stringify({ key: "10000000-0000-4000-8000-000000000001",
+      acceptedAt: "2026-10-14T12:00:00Z", state: "in_flight" });
+    window.sessionStorage.setItem(REQUEST_INTENT_ATTEMPT_KEY, raw);
+    // The server requires the contact record for the catalog read even when an attempt is stored,
+    // so skipping the step here would leave the form unable to load the catalog.
+    await render(<OrderRequestEntry mode={{ kind: "mixed", contactAdmissionRequired: true }} />);
+    expect(container.querySelector('[data-testid="mixed-form"]')?.getAttribute("data-admission")).toBe("true");
+    expect(window.sessionStorage.getItem(REQUEST_INTENT_ATTEMPT_KEY)).toBe(raw);
+    act(() => root.unmount()); root = createRoot(container);
+    // Switched off, no contact step, with or without a stored attempt.
+    await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
+    expect(container.querySelector('[data-testid="mixed-form"]')?.getAttribute("data-admission")).toBe("false");
   });
   it("restores the existing legacy attempt even when mixed is enabled", async () => {
     const raw = JSON.stringify({ idempotencyKey: "original-key", acceptedAt: "original-stamp",
@@ -238,21 +255,21 @@ describe("stored confirmed reference across recovery and owner boundaries", () =
     auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
     await render(<OrderRequestEntry mode={{ kind: "mixed" }} />);
     await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="confirm synthetic receipt"]')!.click());
-    expect(container.textContent).toContain("Request saved for review");
+    expect(container.textContent).toContain("Request submitted");
     expect(container.querySelector('[data-testid="mixed-form"]')).toBeNull();
     storeRecord("a".repeat(64));
     const start = [...container.querySelectorAll("button")].find((button) => button.textContent === "Start another request");
     expect(start).toBeTruthy();
     await act(async () => start!.click());
     expect(container.querySelector('[data-testid="mixed-form"]')).not.toBeNull();
-    expect(container.textContent).not.toContain("Request saved for review");
+    expect(container.textContent).not.toContain("Request submitted");
     expect(record()).toBeNull();
   });
   it.each([false, true])("puts the member's confirmed receipt heading at the page's level (embedded=%s)", async (embedded) => {
     auth.memberSessionStatus = "authenticated"; auth.member = member("a".repeat(64));
     await render(<OrderRequestEntry embedded={embedded} mode={{ kind: "mixed" }} />);
     await act(async () => container.querySelector<HTMLButtonElement>('button[aria-label="confirm synthetic receipt"]')!.click());
-    expect(container.querySelector(embedded ? "h2" : "h1")?.textContent).toBe("Request saved for review");
+    expect(container.querySelector(embedded ? "h2" : "h1")?.textContent).toBe("Request submitted");
     expect(container.querySelectorAll("h1")).toHaveLength(embedded ? 0 : 1);
   });
   it("keeps the record through an ordinary confirmed member mount and while the session is being checked", async () => {
