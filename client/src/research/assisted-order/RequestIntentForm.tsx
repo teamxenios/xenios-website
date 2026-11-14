@@ -102,13 +102,15 @@ function restrictionCopy(code: string): string {
     : "A purchase restriction applies. Its details need to be confirmed.";
 }
 
-/** The name a screen reader hears for one catalog row's controls. Two rows can share a product name and
- *  specification (the same compound as capsules and as a vial), so the row's reviewed package, which
- *  Details shows, is added when it has one. */
-function catalogRowName(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
+/** Distinguish rows of the same strength using the reviewed package shown in Details. */
+function rowSpecification(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
   const packageLabel = reviewedPackage(item.reviewedContent)
     ?? item.reviewedContent?.specifications?.find(({ label }) => label === "Listed package")?.value;
-  return [item.productName, item.specification || fallbackSpecification, packageLabel].filter(Boolean).join(", ");
+  return [item.specification || fallbackSpecification, packageLabel].filter(Boolean).join(", ");
+}
+
+function catalogRowName(item: RequestIntentCatalogItem, fallbackSpecification?: string): string {
+  return [item.productName, rowSpecification(item, fallbackSpecification)].filter(Boolean).join(", ");
 }
 
 function CatalogDetails({ item, variantIds, showMedia }: {
@@ -619,6 +621,7 @@ function RequestIntentFormSession({
         const sourceVariantId = item.sourceSelection?.variantId;
         const variantIds = sourceVariantId ? [sourceVariantId] : [];
         const packageLabel = reviewedPackage(item.reviewedContent);
+        const addLabel = compactGuestCatalog ? EARLY_ACCESS_REQUEST_CTA.add : "Add " + item.productName + " to quote cart";
         const guestCatalog = ownerKey === "early-access-session";
         const reviewedMemberListing = isResearchCartScope(ownerKey) && Boolean(sourceVariantId) &&
           !item.clinicalReviewRequired;
@@ -683,8 +686,10 @@ function RequestIntentFormSession({
                 })}>+</button>
               <button type="button" className="xenios-order-link" aria-label={"Remove " + catalogRowName(item)} onClick={() => setSelected((prior) => { const next = new Map(prior); next.delete(key); return next; })}>Remove {item.productName}</button></div>
             : <button type="button" className="xenios-order-button" disabled={selected.size >= 200}
-                aria-label={compactGuestCatalog ? "Add to quote cart: " + catalogRowName(item) : undefined}
-                onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{compactGuestCatalog ? EARLY_ACCESS_REQUEST_CTA.add : "Add " + item.productName + " to quote cart"}</button>}
+                aria-label={compactGuestCatalog
+                  ? addLabel + ": " + catalogRowName(item)
+                  : [addLabel, rowSpecification(item)].filter(Boolean).join(", ")}
+                onClick={() => addCatalogSelection(item, item.minimumQuantity)}>{addLabel}</button>}
           </div>
         </article>;
       })}</div>

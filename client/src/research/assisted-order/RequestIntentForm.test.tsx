@@ -287,7 +287,7 @@ describe("mixed private request customer form source", () => {
     expect(host.querySelector(".xenios-order-card img")).toBeNull();
   });
 
-  it("names two rows with the same product and specification apart by the reviewed package", async () => {
+  it.each(["guest", "member"] as const)("names two rows with the same product and specification apart by the reviewed package in the %s catalog", async (mode) => {
     const api = makeApi();
     const catalog = await api.catalog();
     const vial = { ...item("same", false), variantId: "same-vial", specification: "SYNTHETIC 10 mg",
@@ -300,9 +300,14 @@ describe("mixed private request customer form source", () => {
       sourceSelection: { family: "synthetic", slug: "same-capsules", variantId: "same-capsules-source" } };
     api.catalog.mockResolvedValue({ ...catalog, items: [vial, capsules], total: 2 });
     await act(async () => root.render(<RequestIntentForm api={api} storage={sessionStorage}
-      embedded ownerKey="early-access-session" />));
+      embedded ownerKey={mode === "guest" ? "early-access-session" : "a".repeat(64)} />));
     const names = ["Synthetic same, SYNTHETIC 10 mg", "Synthetic same, SYNTHETIC 10 mg, Bottle of 60 capsules"];
-    for (const name of names) await click("Add to quote cart", "Add to quote cart: " + name);
+    const visibleAdd = mode === "guest" ? "Add to quote cart" : "Add Synthetic same to quote cart";
+    const addNames = mode === "guest" ? names.map((name) => visibleAdd + ": " + name) : [
+      visibleAdd + ", SYNTHETIC 10 mg",
+      visibleAdd + ", SYNTHETIC 10 mg, Bottle of 60 capsules",
+    ];
+    for (const name of addNames) await click(visibleAdd, name);
     const prefixes = ["View details for ", "Decrease requested quantity for ", "Requested quantity for ",
       "Increase requested quantity for ", "Remove ", "Edit selected quantity for ", "Remove selected "];
     const labels = [...host.querySelectorAll("[aria-label]")].map((element) => element.getAttribute("aria-label")!)
