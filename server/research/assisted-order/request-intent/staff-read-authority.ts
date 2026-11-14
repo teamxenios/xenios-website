@@ -2,11 +2,7 @@ import type { RequestHandler } from "express";
 import { hasCarePermission, type CarePrincipal } from "../../../../shared/care/contracts";
 import type { CareAccessDependencies } from "../../../care/access";
 
-/** A separate pending-intake read scope, NOT whole-Care enablement.
- * The existing clinical_admin role is reused; no website email or new role
- * establishes medical-data access. The SQL reader separately requires an
- * approved care_capabilities row for this exact purpose on every operation.
- */
+/** Both staff paths require an active, approved database capability on each read. */
 export const REQUEST_INTENT_PENDING_READ_PURPOSE = "request_intent_pending_read";
 export const REQUEST_INTENT_STAFF_READ_ENABLED_ENV = "RESEARCH_REQUEST_INTENT_STAFF_READ_ENABLED";
 export type RequestIntentStaffReadContext = Readonly<{
@@ -15,13 +11,20 @@ export type RequestIntentStaffReadContext = Readonly<{
   enabled: boolean;
 }>;
 
+/** Select the reader from the verified assignment. The issuer uses its existing clinical reader. */
+export function pendingRequestStaffMode(principal: CarePrincipal | null) {
+  if (principal && hasCarePermission(principal, "request_intent:read_pending")) return "operator";
+  if (principal && hasCarePermission(principal, "care:administer")) return "clinical";
+  return null;
+}
+
 export function canReadPendingRequestIntent(
   principal: CarePrincipal | null, context: RequestIntentStaffReadContext | null | undefined,
 ): boolean {
   return !!principal && !!context && context.enabled === true
     && context.purpose === REQUEST_INTENT_PENDING_READ_PURPOSE
     && context.actorSubjectId === principal.subjectId
-    && hasCarePermission(principal, "care:administer");
+    && pendingRequestStaffMode(principal) !== null;
 }
 
 /** Reuses canonical verified JWT + active-role resolution and durable access
@@ -43,7 +46,8 @@ export function requirePendingRequestIntentRead(
       } : null;
       const allowed = canReadPendingRequestIntent(principal, context);
       await care.recordAccessDecision({
-        actorSubjectId: principal?.subjectId ?? null, permission: "care:administer",
+        actorSubjectId: principal?.subjectId ?? null,
+        permission: pendingRequestStaffMode(principal) === "clinical" ? "care:administer" : "request_intent:read_pending",
         outcome: !principal ? "unauthenticated" : allowed ? "allowed" : "forbidden",
         occurredAt: new Date().toISOString(),
       });

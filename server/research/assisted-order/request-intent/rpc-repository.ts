@@ -67,8 +67,9 @@ export function requestIntentRepository(serviceRoleClient: RequestIntentRpcClien
 /** Server-only client; pass the actor solely from requireCarePermission's verified principal. */
 export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClient, readOptional = false): RequestIntentStaffReader {
   return {
-    async list(verifiedActorSubjectId, page) {
-      const data = await call(serviceRoleClient, "request_intent_staff_list", { p_actor_user_id: verifiedActorSubjectId, p_page: page });
+    async list(verifiedActorSubjectId, page, scope) {
+      const name = scope === "operator" ? "request_intent_operator_list" : "request_intent_staff_list";
+      const data = await call(serviceRoleClient, name, { p_actor_user_id: verifiedActorSubjectId, p_page: page });
       const row = data as RequestIntentQueuePage;
       if (!row || !Array.isArray(row.items) || !Number.isSafeInteger(row.total) || row.total < 0) {
         throw new RequestIntentError("invalid_persistence_result", 503);
@@ -76,10 +77,11 @@ export function requestIntentStaffReader(serviceRoleClient: RequestIntentRpcClie
       return { items: row.items.map((item) => ({ ...receipt(item), lineCount: item.lineCount })),
         total: row.total, page: row.page, pageSize: row.pageSize };
     },
-    async get(requestId, verifiedActorSubjectId) {
-      const data = await call(serviceRoleClient, readOptional ? "request_intent_staff_get_with_context" : "request_intent_staff_get", {
-        p_request_id: requestId, p_actor_user_id: verifiedActorSubjectId,
-      });
+    async get(requestId, verifiedActorSubjectId, scope) {
+      const actor = { p_request_id: requestId, p_actor_user_id: verifiedActorSubjectId };
+      const data = scope === "operator"
+        ? await call(serviceRoleClient, "request_intent_operator_get", { ...actor, p_include_context: readOptional })
+        : await call(serviceRoleClient, readOptional ? "request_intent_staff_get_with_context" : "request_intent_staff_get", actor);
       if (data === null) return null;
       return detail(data, readOptional);
     },
