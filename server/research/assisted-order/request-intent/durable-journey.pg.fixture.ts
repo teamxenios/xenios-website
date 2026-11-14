@@ -221,7 +221,8 @@ export function createDurableJourneyFixture() {
     return { client, calls, errors };
   }
 
-  function application(rpc: SupabaseRpcClient, dependenciesClosed = false) {
+  function application(rpc: SupabaseRpcClient, dependenciesClosed = false,
+    legalAgreement = { kind: "fixture-terms", version: dependenciesClosed ? "fixture-v2" : "fixture-v1" }) {
     const rows = [offering(1, true), offering(2, false)];
     const select = vi.fn(async (query: { page?: number; pageSize?: number }) => {
       if (dependenciesClosed) throw new Error("Replay must not re-resolve the catalog");
@@ -241,9 +242,7 @@ export function createDurableJourneyFixture() {
       CARE_ENABLED: "false", CARE_ENABLE_APPROVED: "false",
     };
     const wiring: AssistedOrderProductionWiring = {
-      env, requiredAgreements: [{
-        kind: "fixture-terms", version: dependenciesClosed ? "fixture-v2" : "fixture-v1",
-      }],
+      env, requiredAgreements: [legalAgreement],
       agreementGate: { accepted },
       masterOfferingServiceFor: () => ({ select }),
       bindingFor: (id) => rows.some((row) => row.variants[0].id === id)
@@ -274,7 +273,7 @@ export function createDurableJourneyFixture() {
         throw new RequestIntentError("authentication_required", 401);
       },
     }, care);
-    return { app, env, select, accepted, care };
+    return { app, env, select, accepted, care, wiring };
   }
   const post = (app: express.Express, suffix: string, body: object, owner = "a") =>
     request(app).post(ROUTE + suffix).set("Origin", ORIGIN)
@@ -362,5 +361,12 @@ export function createDurableJourneyFixture() {
       created = false;
     }
   }
-  return { start, close, adapter, application, post, staff, snapshot, counts, sql, asRole };
+  function poolForLogin(user: string, loginPassword: string) {
+    if (!created || !port) throw new Error("Owned database not ready");
+    return new pg.Pool({
+      host: "127.0.0.1", port, database, user, password: loginPassword,
+      ssl: false, max: 2, connectionTimeoutMillis: 5000,
+    });
+  }
+  return { start, close, adapter, application, post, staff, snapshot, counts, sql, asRole, poolForLogin };
 }
