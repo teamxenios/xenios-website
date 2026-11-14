@@ -257,3 +257,10 @@ exact ACL starting states and passed 18 existing plus 16 new authority tamper
 cases. Independent-connection contention and managed Supabase/PostgREST proof
 remain explicitly deferred to an authorized staging lane. See
 `docs/production-completion/checkout/COMMERCE_AUTHORITY_QUALIFICATION_20260923.md`.
+
+## Early Access private quote foundation
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 79 | migrations/20261114025655_early_access_contact_and_private_quote_schema.sql | Private contact admissions and eight forced-RLS quote tables; no quote runtime grant | PENDING (not run). Exact Git-blob SHA-256: be262266a1ef3d3ad4b1e67eed0b2e5a74f8212c04b5d0a5d0009e502ebeefad. Disposable PostgreSQL apply-twice and pg_cron checks passed. |
+| 80 | migrations/20261114025700_early_access_contact_purge_schedule.sql | Five-minute temporary contact purge; requires row 79 | PENDING (not run). Exact Git-blob SHA-256: a24ddbc9739013d93fe0ca42944b96fa9fa1a924e4998cf6eb5e32603264fef0. Disposable PostgreSQL apply-twice and pg_cron checks passed. |

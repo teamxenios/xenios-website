@@ -10,6 +10,10 @@ const supabaseDir = resolve(__dirname, "../supabase");
 const migrationsDir = join(supabaseDir, "migrations");
 const retroMigrationName = "20260729100000_research_rls_retro_hardening.sql";
 const retroMigrationPath = join(migrationsDir, retroMigrationName);
+const earlyAccessPrivateQuotePath = join(
+  migrationsDir,
+  "20261114025655_early_access_contact_and_private_quote_schema.sql",
+);
 
 function stripSqlComments(sql: string): string {
   return sql
@@ -38,11 +42,27 @@ function sqlFilesUnder(dir: string): string[] {
 const retroSql = stripSqlComments(readFileSync(retroMigrationPath, "utf8"));
 
 describe("RLS invariants across supabase/", () => {
-  it("keeps care-access-foundation.sql the only source of policies", () => {
+  it("limits policy definitions to the Care foundation and private quote schema", () => {
     const offenders: string[] = [];
     for (const file of sqlFilesUnder(supabaseDir)) {
       if (file.endsWith("care-access-foundation.sql")) continue;
       const text = stripSqlComments(readFileSync(file, "utf8"));
+      if (file === earlyAccessPrivateQuotePath) {
+        const policies = [...text.matchAll(/create\s+policy\s+([^;]+)/gi)].map((match) => match[1].trim());
+        expect(policies).toEqual([
+          "tenant_isolation ON quote_delivery_private.%I USING (tenant = pg_catalog.current_setting(''xenios.private_quote_tenant'',true)) WITH CHECK (tenant = pg_catalog.current_setting(''xenios.private_quote_tenant'',true))',t)",
+          "tenant_isolation ON qd_verified_receipts USING(tenant=pg_catalog.current_setting('xenios.private_quote_tenant',true)) WITH CHECK(tenant=pg_catalog.current_setting('xenios.private_quote_tenant',true))",
+        ]);
+        expect(text).toMatch(/SET LOCAL search_path = quote_delivery_private, pg_catalog;/);
+        expect(text.match(/FOREACH t IN ARRAY ARRAY\[([^\]]+)\]/)?.[1]
+          .match(/qd_\w+/g)).toEqual([
+          "qd_quotes", "qd_attempts", "qd_notification_intents", "qd_audits",
+          "qd_events", "qd_directory", "qd_replies",
+        ]);
+        expect(text).toMatch(/ALTER TABLE quote_delivery_private\.%I FORCE ROW LEVEL SECURITY/);
+        expect(text).toMatch(/ALTER TABLE qd_verified_receipts FORCE ROW LEVEL SECURITY/);
+        continue;
+      }
       if (/create\s+policy/i.test(text)) offenders.push(file);
     }
     expect(offenders).toEqual([]);
