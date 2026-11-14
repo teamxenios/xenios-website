@@ -8,6 +8,7 @@ import type { AssistedOrderProductionWiring } from "../../production-deps";
 import { InMemoryAssistedOrderQuoteRepository } from "../memory-repository";
 import { AssistedOrderQuoteService } from "../service";
 import { makePrivateQuoteDesk } from "./workflow.mjs";
+import { requestIntentStaffReader } from "../../request-intent/rpc-repository";
 import {
   createProductionQuoteAuthority, memberOwnerHash, mountProductionPrivateQuotePortal, PRODUCTION_QUOTE_SELLER,
   productionQuoteLineId, researchMembersByEmail, type ProductionQuoteAuthorityDeps, type QuoteLineClearanceScope,
@@ -46,7 +47,7 @@ type Overrides = {
   members?: unknown[]; account?: { email: string; confirmedAt: string } | null; issuer?: { email: string; confirmedAt: string } | null;
   owns?: boolean; refs?: { refs: string[]; complete: boolean }; bound?: Record<string, string | null>; standing?: boolean;
   detail?: RequestIntentDetail | null; clearance?: (s: QuoteLineClearanceScope) => unknown; ownedPages?: string[][];
-  customerRead?: boolean; dispatchRead?: boolean;
+  customerRead?: boolean; dispatchRead?: boolean; staffReader?: ProductionQuoteAuthorityDeps["staffReader"];
 };
 const cleared = (s: QuoteLineClearanceScope, extra: Record<string, unknown> = {}) =>
   ({ ...s, approvalEvidenceId: "ev-" + s.productId, unitPriceCents: 1275, currency: "USD", ...extra });
@@ -68,7 +69,7 @@ function harness(o: Overrides = {}) {
       async owns(hash, id) { calls.owns.push([hash, id]); return o.owns ?? true; },
       async list(_hash, after = null) { calls.list.push(after); return (o.ownedPages ?? [[XRI]])[calls.list.length - 1] ?? []; },
     },
-    staffReader: { async get(id, actor) { calls.staff.push([id, actor]); return detailFor(id); } },
+    staffReader: o.staffReader ?? { async get(id, actor, scope) { calls.staff.push([id, actor, scope]); return detailFor(id); } },
     directories: {
       async membersByEmail(email) {
         return (o.members ?? [{ id: MEMBER, authUserId: AUTH, email, status: "active" }]) as never;
@@ -117,7 +118,7 @@ describe("production quote authority", () => {
     expect(ctx!.bindings.map(b => b.issueLineId)).toEqual([productionQuoteLineId(XRI, "p1", "p1-v")]);
     expect(calls.cleared.map(s => s.productId)).toEqual(["p1", "p2"]);
     expect(calls.owns).toEqual([[memberOwnerHash(AUTH), XRI]]);
-    expect(calls.staff).toEqual([[XRI, ISSUER]]);
+    expect(calls.staff).toEqual([[XRI, ISSUER, "operator"]]);
   });
 
   it("refuses an unverified, inactive, ambiguous or non-owning recipient, including a guest with the same email", async () => {
@@ -294,7 +295,40 @@ describe("production quote authority", () => {
     expect(calls.dispatchReads).toEqual([[XRI, QUOTE]]);
     // Real staff issuing still reads through the pending-review staff reader as the issuer.
     await built.authority.forIssue(null, { tenant: "ea-production", subject: ISSUER }, XRI, PRODUCTION_QUOTE_SELLER);
-    expect(calls.staff).toEqual([[XRI, ISSUER]]);
+    expect(calls.staff).toEqual([[XRI, ISSUER, "operator"]]);
+  });
+
+  it("reads the request for issue through the queue-only pending reader as the issuer, never the clinical reader", async () => {
+    const rpcs: [string, Record<string, unknown>][] = [];
+    const rpc = (result: { data: unknown; error: unknown }) => ({
+      async rpc(name: string, args: Record<string, unknown>) { rpcs.push([name, args]); return result; },
+    });
+    const reader = (r: { data: unknown; error: unknown }) => requestIntentStaffReader(rpc(r) as never);
+    const issuer = { tenant: "ea-production", subject: ISSUER };
+
+    // Authorized: the configured, current issuer reads with operator scope and no optional context.
+    const ok = harness({ staffReader: reader({ data: intent(), error: null }) });
+    expect(await ok.built.authority.forIssue(null, issuer, XRI, PRODUCTION_QUOTE_SELLER)).toMatchObject({ issueAuthorized: true });
+    expect(rpcs).toEqual([["request_intent_operator_get", { p_request_id: XRI, p_actor_user_id: ISSUER, p_include_context: false }]]);
+
+    // A mismatched subject, e.g. a queue-only operator who is not the issuer, is refused before any read.
+    rpcs.length = 0;
+    expect(await ok.built.authority.forIssue(null, { tenant: "ea-production", subject: AUTH }, XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
+    expect(await ok.built.authority.forIssue(null, { tenant: "ea-staging", subject: ISSUER }, XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
+    expect(rpcs).toEqual([]);
+
+    // A revoked or missing request_intent_reader assignment fails in the database: the issue fails closed.
+    const revoked = harness({ staffReader: reader({ data: null, error: { code: "42501", message: "request_intent_private_review_required" } }) });
+    await expect(revoked.built.authority.forIssue(null, issuer, XRI, PRODUCTION_QUOTE_SELLER)).rejects.toThrow();
+    // A request that is not pending review is not returned by the queue-only reader.
+    expect(await harness({ staffReader: reader({ data: null, error: null }) }).built.authority
+      .forIssue(null, issuer, XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
+    // A no-longer-current issuer account is refused before any read.
+    rpcs.length = 0;
+    expect(await harness({ issuer: null, staffReader: reader({ data: intent(), error: null }) }).built.authority
+      .forIssue(null, issuer, XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
+    expect(rpcs).toEqual([]);
+    expect(rpcs.some(([name]) => name.startsWith("request_intent_staff_"))).toBe(false);
   });
 
   it("closes the customer page and dispatch when the purpose reader refuses, or the job names no quote", async () => {

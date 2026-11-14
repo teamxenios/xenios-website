@@ -100,7 +100,7 @@ type OwnerReader = Readonly<{
   owns(ownerHash: string, requestId: string): Promise<boolean>;
   list(ownerHash: string, afterId?: string | null): Promise<readonly string[]>;
 }>;
-type StaffReader = Readonly<{ get(requestId: string, actorId: string): Promise<RequestIntentDetail | null> }>;
+type StaffReader = Readonly<{ get(requestId: string, actorId: string, scope: "operator"): Promise<RequestIntentDetail | null> }>;
 type ScopedViewer = { tenant?: string; subject?: string; earlyAccessSessionHash?: string | null };
 
 export type ProductionQuoteAuthorityDeps = Readonly<{
@@ -190,10 +190,16 @@ export function createProductionQuoteAuthority(deps: ProductionQuoteAuthorityDep
     return lines;
   }
 
-  /** The request read for this purpose. Only staff issuing reads as the issuer. */
+  /**
+   * The request read for this purpose. Only staff issuing reads as the issuer,
+   * and it uses the queue-only pending reader: the database requires the
+   * issuer's own unrevoked request_intent_reader assignment and the approved
+   * pending-read capability, and audits the read. No clinical role is needed,
+   * and a queue-only operator who is not the configured issuer never gets here.
+   */
   function readRequest(xriId: string, purpose: QuoteScopePurpose) {
     switch (purpose.kind) {
-      case "issue": return staffReader.get(xriId, issuerId);
+      case "issue": return staffReader.get(xriId, issuerId, "operator");
       case "customer": return /^[0-9a-f]{64}$/.test(purpose.ownerHash)
         ? directories.quoteRequests.forCustomer(purpose.ownerHash, xriId) : Promise.resolve(null);
       case "dispatch": return QUOTE_ID.test(purpose.quoteId)
