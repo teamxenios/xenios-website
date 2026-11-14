@@ -803,6 +803,26 @@
         "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
         "evidence": "Disposable PostgreSQL 18.6 with pg_cron executed the exact job command. It removed one expired record, preserved the current record and returned zero on retry. Reapplying preserved the job ID. SELECT-only, DELETE-only and no-schema-USAGE principals were refused."
       }
+    },
+    {
+      "id": "early_access_quote_request_ownership",
+      "path": "supabase/migrations/20261114033000_early_access_quote_request_ownership.sql",
+      "sourceSha": "3b1b34630ea319beb6859c2e9f3ba4b358ad96a7",
+      "dependsOn": [
+        "early_access_contact_and_private_quote_schema"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "fb54047f1dea3563772ee6ec6e9c38a1a256d55273a43ff8571bd2f8474725b8"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "close_the_quote_portal_and_retain_additive_backend_only_ownership_lookup",
+        "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
+        "evidence": "Disposable PostgreSQL 18.6 replayed under a non-superuser request-store owner with RLS bypass. Exact ownership and cursor pagination returned only matching UUIDs. Public roles, direct table reads, user JWTs and invalid scopes were denied."
+      }
     }
   ],
   "invariants": [
