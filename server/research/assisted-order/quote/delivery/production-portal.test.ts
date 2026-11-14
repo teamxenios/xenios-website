@@ -7,6 +7,7 @@ import type { AssistedOrderViewer } from "../../ports";
 import type { AssistedOrderProductionWiring } from "../../production-deps";
 import { InMemoryAssistedOrderQuoteRepository } from "../memory-repository";
 import { AssistedOrderQuoteService } from "../service";
+import { makePrivateQuoteDesk } from "./workflow.mjs";
 import {
   createProductionQuoteAuthority, memberOwnerHash, mountProductionPrivateQuotePortal, PRODUCTION_QUOTE_SELLER,
   productionQuoteLineId, researchMembersByEmail, type ProductionQuoteAuthorityDeps, type QuoteLineClearanceScope,
@@ -20,6 +21,8 @@ const REF = "eac_" + "a".repeat(32);
 const ADMIN = "staff@example.test";
 const EMAIL = "member@example.test";
 const NOW = Date.parse("2026-11-14T00:00:00Z");
+const ISSUE = { kind: "issue" } as const;
+const QUOTE = "4520449e-7cfd-4ebb-b193-bd85b507aee3";
 
 function line(productId: string, extra: Partial<RequestIntentLine> = {}): RequestIntentLine {
   return {
@@ -43,11 +46,15 @@ type Overrides = {
   members?: unknown[]; account?: { email: string; confirmedAt: string } | null; issuer?: { email: string; confirmedAt: string } | null;
   owns?: boolean; refs?: { refs: string[]; complete: boolean }; bound?: Record<string, string | null>; standing?: boolean;
   detail?: RequestIntentDetail | null; clearance?: (s: QuoteLineClearanceScope) => unknown; ownedPages?: string[][];
+  customerRead?: boolean; dispatchRead?: boolean;
 };
 const cleared = (s: QuoteLineClearanceScope, extra: Record<string, unknown> = {}) =>
   ({ ...s, approvalEvidenceId: "ev-" + s.productId, unitPriceCents: 1275, currency: "USD", ...extra });
 function harness(o: Overrides = {}) {
-  const calls = { owns: [] as string[][], list: [] as (string | null)[], staff: [] as string[][], cleared: [] as QuoteLineClearanceScope[] };
+  const calls = { owns: [] as string[][], list: [] as (string | null)[], staff: [] as string[][], cleared: [] as QuoteLineClearanceScope[],
+    customerReads: [] as string[][], dispatchReads: [] as string[][] };
+  const detailFor = (id: string) => o.detail !== undefined ? o.detail
+    : intent({ requestId: id, publicReference: "XRI-" + id.replace(/-/g, "").toUpperCase() });
   const deps: ProductionQuoteAuthorityDeps = {
     tenant: "ea-production", issuerId: ISSUER, adminEmail: ADMIN, deliveryEnabled: true,
     requiredAgreements: [{ kind: "early_access_terms", version: "v2" }],
@@ -61,8 +68,7 @@ function harness(o: Overrides = {}) {
       async owns(hash, id) { calls.owns.push([hash, id]); return o.owns ?? true; },
       async list(_hash, after = null) { calls.list.push(after); return (o.ownedPages ?? [[XRI]])[calls.list.length - 1] ?? []; },
     },
-    staffReader: { async get(id, actor) { calls.staff.push([id, actor]); return o.detail !== undefined ? o.detail
-      : intent({ requestId: id, publicReference: "XRI-" + id.replace(/-/g, "").toUpperCase() }); } },
+    staffReader: { async get(id, actor) { calls.staff.push([id, actor]); return detailFor(id); } },
     directories: {
       async membersByEmail(email) {
         return (o.members ?? [{ id: MEMBER, authUserId: AUTH, email, status: "active" }]) as never;
@@ -80,6 +86,10 @@ function harness(o: Overrides = {}) {
           return o.clearance ? o.clearance(scope) as never : cleared(scope);
         },
       },
+      quoteRequests: {
+        async forCustomer(hash, id) { calls.customerReads.push([hash, id]); return o.customerRead === false ? null : detailFor(id); },
+        async forDispatch(id, quote) { calls.dispatchReads.push([id, quote]); return o.dispatchRead === false ? null : detailFor(id); },
+      },
     },
     now: () => NOW,
   };
@@ -89,7 +99,7 @@ function harness(o: Overrides = {}) {
 describe("production quote authority", () => {
   it("resolves the recipient from the stored contact and binds only lines with exact current clearance", async () => {
     const { built, calls } = harness({ clearance: s => s.productId === "p2" ? cleared(s, { seller: "other" }) : cleared(s) });
-    const ctx = await built.loadScope(XRI, PRODUCTION_QUOTE_SELLER);
+    const ctx = await built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE);
     expect(ctx).not.toBeNull();
     expect(ctx!.contact).toMatchObject({ email: EMAIL, requestId: XRI, verified: true, deliveryAllowed: true });
     expect(ctx!.binding).toMatchObject({ actorMemberId: null, earlyAccessSessionHash: memberOwnerHash(AUTH) });
@@ -115,7 +125,7 @@ describe("production quote authority", () => {
       { owns: false },
       { detail: intent({ contact: { email: "" } as RequestIntentDetail["contact"] }) },
     ];
-    for (const c of cases) expect(await harness(c).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
+    for (const c of cases) expect(await harness(c).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE)).toBeNull();
   });
 
   it("requires recorded current terms and live standing through exactly one verified binding to the same member", async () => {
@@ -129,9 +139,9 @@ describe("production quote authority", () => {
       { refs: { refs: [REF, other], complete: true }, bound: { [REF]: MEMBER, [other]: MEMBER } },
       { standing: false },
     ];
-    for (const c of cases) expect(await harness(c).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
+    for (const c of cases) expect(await harness(c).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE)).toBeNull();
     // An alias handle that does not resolve as its own binding is ignored, not ambiguous.
-    expect(await harness({ refs: { refs: [REF, other], complete: true } }).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER)).not.toBeNull();
+    expect(await harness({ refs: { refs: [REF, other], complete: true } }).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE)).not.toBeNull();
   });
 
   it("refuses another seller, a malformed request id, a missing request and a stale issuer before reading contact", async () => {
@@ -142,7 +152,7 @@ describe("production quote authority", () => {
       [XRI, PRODUCTION_QUOTE_SELLER, { issuer: null }],
     ] as [string, string, Overrides][]) {
       const { built, calls } = harness(o);
-      expect(await built.loadScope(xri, seller)).toBeNull();
+      expect(await built.loadScope(xri, seller, ISSUE)).toBeNull();
       expect(calls.owns).toEqual([]);
     }
   });
@@ -156,7 +166,7 @@ describe("production quote authority", () => {
     const owner = { tenant: "ea-production", earlyAccessSessionHash: memberOwnerHash(AUTH) };
     expect(await built.authority.forCustomer(null, owner, XRI, PRODUCTION_QUOTE_SELLER)).toMatchObject({ customerAuthorized: true });
     expect(await built.authority.forCustomer(null, { ...owner, earlyAccessSessionHash: "f".repeat(64) }, XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
-    const job = { tenant: "ea-production", issuer: ISSUER, xriId: XRI, seller: PRODUCTION_QUOTE_SELLER };
+    const job = { tenant: "ea-production", issuer: ISSUER, xriId: XRI, seller: PRODUCTION_QUOTE_SELLER, quoteId: QUOTE };
     expect(await built.authority.forDispatch(null, job)).toMatchObject({ dispatchAuthorized: true });
     expect(await built.authority.forDispatch(null, { ...job, issuer: MEMBER })).toBeNull();
     expect(await built.authority.verifiedDispatchEvidence()).toBeNull();
@@ -164,12 +174,12 @@ describe("production quote authority", () => {
 
   it("re-resolves the recipient at read and send, so a changed account closes both", async () => {
     const changed = harness({ account: { email: EMAIL, confirmedAt: "2026-02-01T00:00:00Z" } });
-    const original = await harness().built.loadScope(XRI, PRODUCTION_QUOTE_SELLER);
-    const later = await changed.built.loadScope(XRI, PRODUCTION_QUOTE_SELLER);
+    const original = await harness().built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE);
+    const later = await changed.built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE);
     // The workflow compares this revision with the tag stored at issue time.
     expect(later!.contact.revision).not.toBe(original!.contact.revision);
     expect(await harness({ owns: false }).built.authority.forDispatch(null,
-      { tenant: "ea-production", issuer: ISSUER, xriId: XRI, seller: PRODUCTION_QUOTE_SELLER })).toBeNull();
+      { tenant: "ea-production", issuer: ISSUER, xriId: XRI, seller: PRODUCTION_QUOTE_SELLER, quoteId: QUOTE })).toBeNull();
   });
 
   it("admits only a signed-in member whose bound handle has live standing", async () => {
@@ -228,20 +238,20 @@ describe("production quote authority", () => {
       { approvalEvidenceId: "" }, { approvalEvidenceId: "bad id" }, { approvalEvidenceId: 7 },
       { lineId: productionQuoteLineId(XRI, "p2", "p2-v") }, { catalogVersion: "cat-0" }, { quantity: 2 },
     ]) {
-      const ctx = await harness({ clearance: s => cleared(s, extra) }).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER);
+      const ctx = await harness({ clearance: s => cleared(s, extra) }).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE);
       expect(ctx!.bindings.map(b => b.issueLineId)).not.toContain(p1);
     }
-    const priced = await harness().built.loadScope(XRI, PRODUCTION_QUOTE_SELLER);
+    const priced = await harness().built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE);
     expect(priced!.target.lines.find(l => l.lineId === p1)).toMatchObject({ unitPriceCents: 1275, currency: "USD" });
     // A changed price under a reused evidence ID still changes the bound evidence, so the
     // workflow's clearance tag no longer matches a quote issued at the old price.
-    const repriced = await harness({ clearance: s => cleared(s, { unitPriceCents: 1300 }) }).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER);
+    const repriced = await harness({ clearance: s => cleared(s, { unitPriceCents: 1300 }) }).built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE);
     const evidence = (c: typeof priced) => c!.bindings.find(b => b.issueLineId === p1)!.approvalEvidenceId;
     expect(evidence(repriced)).not.toBe(evidence(priced));
   });
 
   it("issues at the cleared price and refuses a staff amount that differs, through the real quote engine", async () => {
-    const ctx = (await harness().built.loadScope(XRI, PRODUCTION_QUOTE_SELLER))!;
+    const ctx = (await harness().built.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE))!;
     const p1 = productionQuoteLineId(XRI, "p1", "p1-v");
     let n = 0;
     const engine = new AssistedOrderQuoteService({
@@ -262,6 +272,55 @@ describe("production quote authority", () => {
     expect(quote.totalCents).toBe(1275);
   });
 
+  it("reads requests for the customer page, listing and dispatch without acting as the issuer", async () => {
+    const { built, calls } = harness();
+    const owner = { tenant: "ea-production", earlyAccessSessionHash: memberOwnerHash(AUTH) };
+    expect(await built.authority.forCustomer(null, owner, XRI, PRODUCTION_QUOTE_SELLER)).toMatchObject({ customerAuthorized: true });
+    expect(await built.ownedRequests(owner, async ids => ids)).toHaveLength(1);
+    const job = { tenant: "ea-production", issuer: ISSUER, xriId: XRI, seller: PRODUCTION_QUOTE_SELLER, quoteId: QUOTE };
+    expect(await built.authority.forDispatch(null, job)).toMatchObject({ dispatchAuthorized: true });
+    // No issuer-attributed staff read on any of these paths.
+    expect(calls.staff).toEqual([]);
+    expect(calls.customerReads).toEqual([[memberOwnerHash(AUTH), XRI], [memberOwnerHash(AUTH), XRI]]);
+    expect(calls.dispatchReads).toEqual([[XRI, QUOTE]]);
+    // Real staff issuing still reads through the pending-review staff reader as the issuer.
+    await built.authority.forIssue(null, { tenant: "ea-production", subject: ISSUER }, XRI, PRODUCTION_QUOTE_SELLER);
+    expect(calls.staff).toEqual([[XRI, ISSUER]]);
+  });
+
+  it("closes the customer page and dispatch when the purpose reader refuses, or the job names no quote", async () => {
+    const owner = { tenant: "ea-production", earlyAccessSessionHash: memberOwnerHash(AUTH) };
+    expect(await harness({ customerRead: false }).built.authority.forCustomer(null, owner, XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
+    const listing = harness({ customerRead: false });
+    expect(await listing.built.ownedRequests(owner, async ids => ids)).toEqual([]);
+    const job = { tenant: "ea-production", issuer: ISSUER, xriId: XRI, seller: PRODUCTION_QUOTE_SELLER, quoteId: QUOTE };
+    expect(await harness({ dispatchRead: false }).built.authority.forDispatch(null, job)).toBeNull();
+    for (const quoteId of [undefined, "", "bad quote id", 7]) {
+      const h = harness();
+      expect(await h.built.authority.forDispatch(null, { ...job, quoteId } as never)).toBeNull();
+      expect([...h.calls.dispatchReads, ...h.calls.staff]).toEqual([]);
+    }
+    const h = harness();
+    expect(await h.built.authority.forCustomer(null, { ...owner, earlyAccessSessionHash: "not-a-hash" }, XRI, PRODUCTION_QUOTE_SELLER)).toBeNull();
+    expect([...h.calls.customerReads, ...h.calls.staff]).toEqual([]);
+  });
+
+  it("passes the durable notice's quote ID to the dispatch authority", async () => {
+    const jobs: unknown[] = [];
+    const desk = makePrivateQuoteDesk({
+      tagKey: Buffer.alloc(32, 1), Engine: AssistedOrderQuoteService, bind: () => [],
+      transport: { ready: () => true, send: async () => { throw Error("unexpected send"); } },
+      transact: async (_t: string, _x: string, work: (q: (sql: string) => Promise<unknown[]>) => Promise<unknown>) => work(async (sql: string) =>
+        sql.startsWith("SELECT b.*") ? [{ state: "queued", quote_state: "issued", issuer: ISSUER, seller: PRODUCTION_QUOTE_SELLER,
+          snapshot: JSON.stringify({ validUntil: "2999-01-01T00:00:00Z", lines: [] }) }]
+        : sql.startsWith("UPDATE") ? [{ id: QUOTE }] : []),
+      authority: { forIssue: unexpected, forCustomer: unexpected, verifiedDispatchEvidence: unexpected,
+        forDispatch: async (_q: unknown, job: unknown) => { jobs.push(job); return null; } },
+    } as never);
+    expect(await desk.dispatch("ea-production", XRI, QUOTE)).toBe("suppressed");
+    expect(jobs).toEqual([{ tenant: "ea-production", issuer: ISSUER, xriId: XRI, seller: PRODUCTION_QUOTE_SELLER, quoteId: QUOTE }]);
+  });
+
   it("propagates directory failures instead of treating them as answers", async () => {
     const failing = createProductionQuoteAuthority({
       tenant: "ea-production", issuerId: ISSUER, adminEmail: ADMIN, deliveryEnabled: true,
@@ -272,9 +331,9 @@ describe("production quote authority", () => {
       staffReader: { get: async () => intent() },
       directories: { membersByEmail: async () => { throw Error("unavailable"); },
         bindings: { customerRefsForHistory: async () => ({ refs: [], complete: false }), forCustomer: async () => ({ ok: false }) },
-        clearance: { cleared: async () => null } },
+        clearance: { cleared: async () => null }, quoteRequests: { forCustomer: async () => null, forDispatch: async () => null } },
     });
-    await expect(failing.loadScope(XRI, PRODUCTION_QUOTE_SELLER)).rejects.toThrow("unavailable");
+    await expect(failing.loadScope(XRI, PRODUCTION_QUOTE_SELLER, ISSUE)).rejects.toThrow("unavailable");
   });
 
   it("reads the member directory by exact email and refuses a malformed row", async () => {
@@ -300,7 +359,8 @@ const production = {
   EA_QUOTE_ISSUER_ID: ISSUER, ADMIN_EMAIL: ADMIN, EA_QUOTE_TAG_KEY: "1".repeat(64),
 };
 const unexpected = () => { throw Error("unexpected"); };
-function mount(env: Record<string, string | undefined>, clearance: unknown = { cleared: unexpected }) {
+function mount(env: Record<string, string | undefined>, clearance: unknown = { cleared: unexpected },
+  quoteRequests: unknown = { forCustomer: unexpected, forDispatch: unexpected }) {
   const app = express();
   let connects = 0;
   const wiring = {
@@ -311,6 +371,7 @@ function mount(env: Record<string, string | undefined>, clearance: unknown = { c
     actorType: "early_access_session", memberId: null, earlyAccessSessionHash: null, normalizedEmail: null, capabilities: new Set(),
   }) as AssistedOrderViewer }, (_req, res) => { res.status(401).end(); }, unexpected, {
     membersByEmail: unexpected, bindings: { customerRefsForHistory: unexpected, forCustomer: unexpected }, clearance: clearance as never,
+    quoteRequests: quoteRequests as never,
   }, () => ({ on() {}, connect() { connects++; throw Error("unexpected database access"); } }) as unknown as Pool);
   return { app, mounted, connects: () => connects };
 }
@@ -334,9 +395,12 @@ describe("production private quote mount", () => {
       await request(app).post("/api/staff/early-access/private-quotes/issue").send({}).expect(404);
       expect(connects()).toBe(0);
     }
-    const { app, mounted } = mount(production, null);
-    expect(mounted).toBe(false);
-    await request(app).get("/earlyaccess/quotes").expect(404);
+    for (const [clearance, readers] of [[null, undefined], [undefined, null], [undefined, { forCustomer: unexpected }]] as const) {
+      // undefined takes the helper's present default; null is an absent reader.
+      const { app, mounted } = mount(production, clearance, readers);
+      expect(mounted).toBe(false);
+      await request(app).get("/earlyaccess/quotes").expect(404);
+    }
   });
 
   it("mounts when complete, and refuses a guest session and unauthenticated staff before any data access", async () => {

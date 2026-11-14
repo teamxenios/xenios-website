@@ -29,6 +29,7 @@ const EVIDENCE_ID = /^[-a-zA-Z0-9_.:]{1,180}$/;
 const MAX_VALIDITY_MS = 30 * 86400_000;
 const MAX_OWNER_PAGES = 50;
 const MAX_UNIT_PRICE_CENTS = 10_000_000;
+const QUOTE_ID = /^[-a-zA-Z0-9_.:]{1,180}$/;
 
 type VerifyAccount = (userId: string) => Promise<{ email: string; confirmedAt: string } | null>;
 type MemberRow = Readonly<{ id: string; authUserId: string | null; email: string; status: string }>;
@@ -65,7 +66,26 @@ export type ProductionQuoteDirectories = Readonly<{
   }>;
   /** Absent means no production evidence source: the desk stays closed. */
   clearance: QuoteLineClearanceReader | null;
+  /** Absent until its storage contract and access events are reviewed: the desk stays closed. */
+  quoteRequests: QuoteRequestReader | null;
 }>;
+
+/**
+ * Purpose-specific request reads for the customer page and automated dispatch.
+ * Neither acts as the issuer: real staff issuing keeps the pending-review
+ * staff reader and its staff_read event. Each returns the server-only
+ * canonical request detail, or null when the purpose is not satisfied.
+ */
+export type QuoteRequestReader = Readonly<{
+  /** Only when this exact owner hash owns this exact request. */
+  forCustomer(ownerHash: string, xriId: string): Promise<RequestIntentDetail | null>;
+  /** Only for the durable queued notice and its matching processing job for this quote. */
+  forDispatch(xriId: string, quoteId: string): Promise<RequestIntentDetail | null>;
+}>;
+export type QuoteScopePurpose =
+  | Readonly<{ kind: "issue" }>
+  | Readonly<{ kind: "customer"; ownerHash: string }>
+  | Readonly<{ kind: "dispatch"; quoteId: string }>;
 
 /** The stable issue-line identity staff send for one XRI source line. */
 export function productionQuoteLineId(xriId: string, productId: string, variantId: string): string {
@@ -92,7 +112,7 @@ export type ProductionQuoteAuthorityDeps = Readonly<{
   verifyAccount: VerifyAccount;
   owners: OwnerReader;
   staffReader: StaffReader;
-  directories: ProductionQuoteDirectories & { clearance: QuoteLineClearanceReader };
+  directories: ProductionQuoteDirectories & { clearance: QuoteLineClearanceReader; quoteRequests: QuoteRequestReader };
   now?: () => number;
 }>;
 
@@ -164,9 +184,21 @@ export function createProductionQuoteAuthority(deps: ProductionQuoteAuthorityDep
     return lines;
   }
 
-  async function loadScope(xriId: string, seller: string) {
+  /** The request read for this purpose. Only staff issuing reads as the issuer. */
+  function readRequest(xriId: string, purpose: QuoteScopePurpose) {
+    switch (purpose.kind) {
+      case "issue": return staffReader.get(xriId, issuerId);
+      case "customer": return /^[0-9a-f]{64}$/.test(purpose.ownerHash)
+        ? directories.quoteRequests.forCustomer(purpose.ownerHash, xriId) : Promise.resolve(null);
+      case "dispatch": return QUOTE_ID.test(purpose.quoteId)
+        ? directories.quoteRequests.forDispatch(xriId, purpose.quoteId) : Promise.resolve(null);
+      default: return Promise.resolve(null);
+    }
+  }
+
+  async function loadScope(xriId: string, seller: string, purpose: QuoteScopePurpose) {
     if (seller !== PRODUCTION_QUOTE_SELLER || typeof xriId !== "string" || !UUID.test(xriId) || !await issuerIsCurrent()) return null;
-    const intent = await staffReader.get(xriId, issuerId);
+    const intent = await readRequest(xriId, purpose);
     if (!intent || intent.requestId !== xriId || !Array.isArray(intent.lines) || !Array.isArray(intent.agreements) ||
         !currentPolicy.every(p => intent.agreements.some(a => a.kind === p.kind && a.version === p.version))) return null;
     const recipient = await recipientFor(intent);
@@ -214,8 +246,8 @@ export function createProductionQuoteAuthority(deps: ProductionQuoteAuthorityDep
         const hits = new Set(await directoryHits(ids));
         for (const xriId of ids) {
           if (!hits.has(xriId)) continue;
-          const intent = await staffReader.get(xriId, issuerId);
-          if (!intent || intent.requestId !== xriId) continue;
+          const intent = await directories.quoteRequests.forCustomer(ownerHash, xriId);
+          if (!intent || intent.requestId !== xriId || !Array.isArray(intent.lines)) continue;
           found.push({ xriId, seller: PRODUCTION_QUOTE_SELLER, sellerLabel: SELLER_LABEL, requestLineCount: intent.lines.length });
         }
       }
@@ -244,18 +276,18 @@ export function createProductionQuoteAuthority(deps: ProductionQuoteAuthorityDep
   const authority = {
     async forIssue(_q: unknown, viewer: ScopedViewer, xriId: string, seller: string) {
       if (viewer.tenant !== tenant || viewer.subject !== issuerId) return null;
-      const context = await loadScope(xriId, seller);
+      const context = await loadScope(xriId, seller, { kind: "issue" });
       return context && { ...context, issueAuthorized: true, notifyAuthorized: true };
     },
     async forCustomer(_q: unknown, viewer: ScopedViewer, xriId: string, seller: string) {
       if (viewer.tenant !== tenant || typeof viewer.earlyAccessSessionHash !== "string") return null;
-      const context = await loadScope(xriId, seller);
+      const context = await loadScope(xriId, seller, { kind: "customer", ownerHash: viewer.earlyAccessSessionHash });
       return context && context.recipient.ownerHash === viewer.earlyAccessSessionHash
         ? { ...context, customerAuthorized: true } : null;
     },
-    async forDispatch(_q: unknown, job: { tenant: string; issuer: string; xriId: string; seller: string }) {
-      if (!deps.deliveryEnabled || job.tenant !== tenant || job.issuer !== issuerId) return null;
-      const context = await loadScope(job.xriId, job.seller);
+    async forDispatch(_q: unknown, job: { tenant: string; issuer: string; xriId: string; seller: string; quoteId: string }) {
+      if (!deps.deliveryEnabled || job.tenant !== tenant || job.issuer !== issuerId || typeof job.quoteId !== "string") return null;
+      const context = await loadScope(job.xriId, job.seller, { kind: "dispatch", quoteId: job.quoteId });
       return context && { ...context, dispatchAuthorized: true };
     },
     // No receipt endpoint in this slice: an accepted send is never delivery proof.
@@ -304,8 +336,9 @@ export function mountProductionPrivateQuotePortal(
   const { env, supabaseRpc, agreementGate, requiredAgreements } = wiring;
   const pool = mountProductionQuoteConnection(app, env, requireAdmin, connect);
   if (!pool || !isPrivateQuoteProduction(env) || env.EA_PRIVATE_QUOTE_DESK_ENABLED !== "true") return false;
-  const clearance = directories.clearance;
-  if (!supabaseRpc || !agreementGate || !clearance || typeof clearance.cleared !== "function" ||
+  const { clearance, quoteRequests } = directories;
+  if (!supabaseRpc || !agreementGate || !clearance || typeof clearance.cleared !== "function" || !quoteRequests ||
+      typeof quoteRequests.forCustomer !== "function" || typeof quoteRequests.forDispatch !== "function" ||
       !requiredAgreements?.some(({ kind, version }) =>
         kind === EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT.kind && version === EARLY_ACCESS_PRODUCT_POLICY_AGREEMENT.version)) return false;
   const issuerId = env.EA_QUOTE_ISSUER_ID?.trim() ?? "";
@@ -323,7 +356,7 @@ export function mountProductionPrivateQuotePortal(
   const built = createProductionQuoteAuthority({
     tenant, issuerId, adminEmail, deliveryEnabled: true, requiredAgreements, agreementGate, verifyAccount,
     owners: requestIntentQuoteOwnerReader(supabaseRpc), staffReader: requestIntentStaffReader(supabaseRpc),
-    directories: { ...directories, clearance },
+    directories: { ...directories, clearance, quoteRequests },
   });
   // The customer listing intersects owned XRIs with the quote directory under
   // the same restricted role and tenant policy as every other quote read.

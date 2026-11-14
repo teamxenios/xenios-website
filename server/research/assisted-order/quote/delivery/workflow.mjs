@@ -145,7 +145,7 @@ export function makePrivateQuoteDesk({transact,authority,Engine,bind,transport,t
       let to=null;
       if(row.quote_state==='issued' && Date.parse(record.validUntil)>clock().getTime()){
         // A DB/authority outage throws before mutation; deliberate revoked state returns null or false.
-        const ctx=await authority.forDispatch(q,{tenant,issuer:row.issuer,xriId,seller:row.seller});
+        const ctx=await authority.forDispatch(q,{tenant,issuer:row.issuer,xriId,seller:row.seller,quoteId});
         if(ctx?.dispatchAuthorized===true)try{
           const stamp=vetted(ctx,tenant,xriId,row.seller,record.lines.map(l=>l.lineId));
           if(stamp===row.bindings_tag && tag('contact',safeContact(ctx))===row.contact_tag && (!job || job.recipient===ctx.contact.email))to=ctx.contact.email;
@@ -195,7 +195,7 @@ export function makePrivateQuoteDesk({transact,authority,Engine,bind,transport,t
       const row=await eventRow(q,tenant,xriId,quoteId);
       need(row && ['delivered','accepted'].includes(row.state) && id(row.provider_id));
       const ev=await authority.verifiedReplyEvidence(q,{tenant,xriId,quoteId,proof});
-      const ctx=await authority.forDispatch(q,{tenant,issuer:row.issuer,xriId,seller:row.seller});
+      const ctx=await authority.forDispatch(q,{tenant,issuer:row.issuer,xriId,seller:row.seller,quoteId});
       validateIdentity(ctx,tenant,xriId,row.seller);
       const [recipient,rev]=safeContact(ctx);
       need(ctx.dispatchAuthorized===true && tag('contact',[recipient,rev])===row.contact_tag
