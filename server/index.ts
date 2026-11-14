@@ -1049,7 +1049,9 @@ async function composeAssistedOrderBridge(): Promise<
     mountProductionPrivateQuotePortal(
       app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount,
       {
-        membersByEmail: researchMembersByEmail(getSupabaseAdmin()),
+        membersByEmail: researchMembersByEmail(
+          getSupabaseAdmin() as unknown as Parameters<typeof researchMembersByEmail>[0],
+        ),
         bindings: {
           forCustomer: quoteBindings.forCustomer.bind(quoteBindings),
           customerRefsForHistory: quoteBindings.customerRefsForHistory.bind(quoteBindings),
