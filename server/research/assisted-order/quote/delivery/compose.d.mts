@@ -11,7 +11,8 @@ type Viewer = {
   earlyAccessSessionHash?: string | null;
   capabilities: ReadonlySet<string>;
 };
-type Job = { tenant: string; issuer: string; xriId: string; seller: string };
+/** quoteId is the durable notice's quote; staging ignores it. */
+type Job = { tenant: string; issuer: string; xriId: string; seller: string; quoteId: string };
 export function attachApprovedPrivateQuotes(options: {
   enabled: boolean;
   router: Express;
@@ -34,6 +35,7 @@ export function attachApprovedPrivateQuotes(options: {
   issueInput(req: Request): Promise<unknown>;
   registerPrivateQuoteDispatch: typeof registerPrivateQuoteDispatch;
   assumeStagingRuntimeRole: boolean;
+  runtimeRole?: "staging" | "production" | null;
   stageDispatchPaused: boolean;
   deferStagingNotice: boolean;
 }): unknown;
