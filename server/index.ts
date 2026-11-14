@@ -142,6 +142,7 @@ import { buildAssistedOrderProduction, type AssistedOrderProductionWiring } from
 import { registerRequestIntentApi } from "./research/assisted-order/request-intent/production";
 import { mountStagingPrivateQuotePortal } from "./research/assisted-order/quote/delivery/staging";
 import { mountProductionQuoteConnection } from "./research/assisted-order/quote/delivery/production";
+import { mountProductionPrivateQuotePortal, researchMembersByEmail } from "./research/assisted-order/quote/delivery/production-portal";
 import { createAssistedMemberHistoryReader, withAssistedOrderRequestHistory } from "./research/assisted-order/member-order-history";
 import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
 import { resolveAssistedOrderAuditAuthority } from "./research/assisted-order/audit-store";
@@ -1036,14 +1037,30 @@ async function composeAssistedOrderBridge(): Promise<
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
   // Preserve registration of all existing doors before the optional new composition.
   registerRequestIntentApi(app, assistedOrderWiring, assistedOrderViewers, careAccess);
-  mountProductionQuoteConnection(app, assistedOrderWiring.env, requireSupabaseAdmin);
-  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, async (userId) => {
+  const verifyQuoteAccount = async (userId: string) => {
     const { data, error } = await getSupabaseAdmin().auth.admin.getUserById(userId);
     const user = data?.user;
     return !error && user?.id === userId && user.email && user.email_confirmed_at
       ? { email: user.email.trim().toLowerCase(), confirmedAt: user.email_confirmed_at }
       : null;
-  });
+  };
+  const quoteBindings = earlyAccessPersistence.orderHistory?.bindings;
+  if (supabaseConfigured() && quoteBindings?.customerRefsForHistory) {
+    mountProductionPrivateQuotePortal(
+      app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount,
+      {
+        membersByEmail: researchMembersByEmail(getSupabaseAdmin()),
+        bindings: {
+          forCustomer: quoteBindings.forCustomer.bind(quoteBindings),
+          customerRefsForHistory: quoteBindings.customerRefsForHistory.bind(quoteBindings),
+        },
+        clearance: null,
+      },
+    );
+  } else {
+    mountProductionQuoteConnection(app, assistedOrderWiring.env, requireSupabaseAdmin);
+  }
+  mountStagingPrivateQuotePortal(app, assistedOrderWiring, assistedOrderViewers, requireSupabaseAdmin, verifyQuoteAccount);
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,
