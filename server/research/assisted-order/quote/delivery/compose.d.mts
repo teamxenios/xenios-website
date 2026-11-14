@@ -11,7 +11,8 @@ type Viewer = {
   earlyAccessSessionHash?: string | null;
   capabilities: ReadonlySet<string>;
 };
-type Job = { tenant: string; issuer: string; xriId: string; seller: string };
+/** quoteId is the durable notice's quote; staging ignores it. */
+type Job = { tenant: string; issuer: string; xriId: string; seller: string; quoteId: string };
 export function attachApprovedPrivateQuotes(options: {
   enabled: boolean;
   router: Express;
