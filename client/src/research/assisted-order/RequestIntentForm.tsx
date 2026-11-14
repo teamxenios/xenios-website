@@ -707,11 +707,11 @@ function RequestIntentFormSession({
         <p role="status">{selectedProducts} products | {selections.length} exact variants | {selectedUnits} requested units</p>
         {!selections.length ? <p>No products selected yet. Add an eligible item from the catalog.</p> : <ul>
           {selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
-            <strong>{item.productName}</strong><span>{item.specification || item.variantId}</span>
+            <strong>{item.productName}</strong><span>{rowSpecification(item, item.variantId)}</span>
             <span>Requested quantity: {quantity}</span>
             {item.intentExclusion === "specification_review" && <span>{DETAILS_UNDER_REVIEW}</span>}
             {editingSelection === catalogItemKey(item) ? <>
-              <label>Requested quantity for selected {item.productName} {item.specification || item.variantId}
+              <label>Requested quantity for selected {item.productName} {rowSpecification(item, item.variantId)}
                 <input type="number" min={item.minimumQuantity} max={item.maximumQuantity ?? undefined}
                   step={item.quantityIncrement} value={quantity} autoFocus
                   onChange={(event) => setSelected((prior) => new Map(prior).set(catalogItemKey(item),
@@ -759,7 +759,7 @@ function RequestIntentFormSession({
       {(goal || referralCode.trim()) && <button type="button" disabled={busy || hasFrozenAttempt}
         onClick={() => { setGoal(""); setReferralCode(""); }}>Remove optional answers</button>}
       <ul>{selections.map(({ item, quantity }) => <li key={catalogItemKey(item)}>
-        {item.productName} | {item.specification || item.variantId} | Requested quantity: {quantity} | {
+        {item.productName} | {rowSpecification(item, item.variantId)} | Requested quantity: {quantity} | {
           item.intentExclusion === "specification_review"
             ? DETAILS_UNDER_REVIEW
             : "Pending " + (item.clinicalReviewRequired ? "clinical" : "internal") + " review"
@@ -784,7 +784,7 @@ function RequestIntentFormSession({
         allAcknowledged: requirements.every((entry) => acknowledged.has(agreementRequirementKey(entry))),
         busy, frozen: frozen.current !== null }}
       lines={selections.map(({ item, quantity }) => ({ key: catalogItemKey(item),
-        name: item.productName, specification: item.specification || item.variantId, quantity }))}
+        name: item.productName, specification: rowSpecification(item, item.variantId), quantity }))}
       contactFormId={contactFormId}
       focusContactHeading={() => contactHeading.current?.focus()}
       onContinue={() => {

@@ -320,6 +320,48 @@ describe("mixed private request customer form source", () => {
     expect([...host.querySelectorAll(".xenios-order-card button")].filter((button) => button.textContent === "Remove Synthetic same")).toHaveLength(2);
   });
 
+  it("shows the reviewed package in each selection summary and in the final review", async () => {
+    const api = makeApi();
+    const catalog = await api.catalog();
+    const common = { ...item("same", false), specification: "10 mg" };
+    const plain = { ...common, variantId: "plain", packBasis: "Unconfirmed package" };
+    const packageLabel = "Bottle of 60 capsules (historical presentation)";
+    const capsules = { ...common, variantId: "capsules", reviewedContent: {
+      summary: "Synthetic summary", overview: "Synthetic overview",
+      specifications: [{ label: "Listed package", value: packageLabel }],
+    } };
+    api.catalog.mockResolvedValue({ ...catalog, items: [plain, capsules], total: 2 });
+    await render(api);
+    const [plainCard, capsuleCard] = host.querySelectorAll(".xenios-order-card");
+    const select = (card: Element) => act(async () => {
+      [...card.querySelectorAll("button")].find(button => button.textContent === "Add Synthetic same to quote cart")!.click();
+    });
+
+    // Only the capsule row is selected. Its reviewed wording must still travel with it.
+    await select(capsuleCard);
+    expect(host.querySelector("aside li > span")?.textContent).toBe("10 mg, " + packageLabel);
+    await select(plainCard);
+    expect([...host.querySelectorAll("aside li > strong + span")].map(el => el.textContent))
+      .toEqual(["10 mg, " + packageLabel, "10 mg"]);
+
+    const summary = document.querySelector<HTMLButtonElement>('[data-testid="request-action-bar-summary"]')!;
+    await act(async () => summary.click());
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expect([...dialog.querySelectorAll("li > strong + span")].map(el => el.textContent))
+      .toEqual(["10 mg, " + packageLabel, "10 mg"]);
+    await act(async () => [...dialog.querySelectorAll("button")].find(b => b.textContent === "Return to request")!.click());
+
+    await click("Continue to details");
+    await fillBaseContact();
+    await act(async () => host.querySelector<HTMLInputElement>('input[name="age"]')!.click());
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    const review = [...host.querySelectorAll(".xenios-order-panel li")].map(el => el.textContent);
+    expect(review[0]).toContain("Synthetic same | 10 mg, " + packageLabel + " | Requested quantity: 1");
+    expect(review[1]).toContain("Synthetic same | 10 mg | Requested quantity: 1");
+    expect(review.join(" ")).not.toContain(plain.packBasis);
+    expect(api.submit).not.toHaveBeenCalled();
+  });
+
   it("opens exact guest catalog details without changing the request or leaving the catalog", async () => {
     const api = makeApi();
     const catalog = await api.catalog();
