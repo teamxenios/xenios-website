@@ -1,28 +1,51 @@
 // Inject the application's PRIVATE pg.Pool, never a browser Supabase client.
 // Schema and table installation are always operator-owned; startup executes no DDL.
-export function pgTransactions(pool,{assumeStagingRuntimeRole=false}={}) {
+// The only restricted login/runtime pairs a composition may assume. Names are
+// fixed here so no configuration value is ever interpolated into SET ROLE.
+export const RESTRICTED_RUNTIME_ROLES=Object.freeze({
+  staging:Object.freeze({runtime:'ea_quote_stage_runtime',login:'ea_quote_stage_login'}),
+  production:Object.freeze({runtime:'ea_quote_runtime',login:'ea_quote_login'}),
+});
+export function pgTransactions(pool,{assumeStagingRuntimeRole=false,runtimeRole=null}={}) {
+  if(runtimeRole!==null && !Object.hasOwn(RESTRICTED_RUNTIME_ROLES,runtimeRole))throw Error('Unknown restricted runtime role.');
+  if(assumeStagingRuntimeRole && runtimeRole!==null && runtimeRole!=='staging')throw Error('Conflicting restricted runtime role.');
+  const restricted=runtimeRole!==null?RESTRICTED_RUNTIME_ROLES[runtimeRole]:assumeStagingRuntimeRole?RESTRICTED_RUNTIME_ROLES.staging:null;
   return async function transact(tenant, xriId, work) {
     const client=await pool.connect();
     let damaged=false;
     try {
       await client.query("BEGIN");
-      if(assumeStagingRuntimeRole){
-        // The operator grants SET to a dedicated staging login. Keep the
-        // effective role transaction-local so a pooled session cannot retain it.
-        await client.query("SET LOCAL ROLE ea_quote_stage_runtime");
+      if(restricted){
+        // The operator grants SET to a dedicated login. Keep the effective
+        // role transaction-local so a pooled session cannot retain it.
+        await client.query("SET LOCAL ROLE "+restricted.runtime);
         const check=await client.query(
           `SELECT EXISTS(
              SELECT 1 FROM pg_catalog.pg_roles AS runtime, pg_catalog.pg_roles AS login
-             WHERE runtime.rolname = current_user AND runtime.rolname = 'ea_quote_stage_runtime'
+             WHERE runtime.rolname = current_user AND runtime.rolname = $1
                AND NOT runtime.rolsuper AND NOT runtime.rolbypassrls
                AND NOT runtime.rolcanlogin AND NOT runtime.rolinherit
-               AND login.rolname = session_user AND login.rolname = 'ea_quote_stage_login' AND login.rolcanlogin
-               AND NOT login.rolsuper AND NOT login.rolbypassrls
+               AND NOT runtime.rolcreaterole AND NOT runtime.rolcreatedb AND NOT runtime.rolreplication
+               AND login.rolname = session_user AND login.rolname = $2 AND login.rolcanlogin
+               AND NOT login.rolsuper AND NOT login.rolbypassrls AND NOT login.rolinherit
+               AND NOT login.rolcreaterole AND NOT login.rolcreatedb AND NOT login.rolreplication
                -- rolinherit is only the default for new grants (PG16+); a grant made
                -- WITH INHERIT TRUE still passes privileges, so the runtime role must hold none.
                AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m WHERE m.member = runtime.oid)
-           ) AS restricted`);
-        if(check.rows[0]?.restricted!==true)throw Error('Restricted staging quote connection required.');
+               -- The login's one membership is SET-only on the runtime role: no admin,
+               -- no inheritance, and no other role it could assume or inherit.
+               AND (SELECT count(*) FROM pg_catalog.pg_auth_members AS m WHERE m.member = login.oid) = 1
+               AND EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m
+                 WHERE m.member = login.oid AND m.roleid = runtime.oid
+                   AND m.set_option AND NOT m.inherit_option AND NOT m.admin_option)
+               -- No other member may assume or inherit either role. A managed provider's
+               -- admin-only grant to the creating role (no SET, no INHERIT) is allowed.
+               AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m
+                 WHERE m.roleid = runtime.oid AND m.member <> login.oid AND (m.set_option OR m.inherit_option))
+               AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_auth_members AS m
+                 WHERE m.roleid = login.oid AND (m.set_option OR m.inherit_option))
+           ) AS restricted`,[restricted.runtime,restricted.login]);
+        if(check.rows[0]?.restricted!==true)throw Error('Restricted quote connection required.');
         await client.query("SET LOCAL statement_timeout = '5s'");
       }
       await client.query("SET LOCAL search_path = quote_delivery_private, pg_catalog");

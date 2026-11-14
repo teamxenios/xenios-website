@@ -34,6 +34,7 @@ export function attachApprovedPrivateQuotes(options: {
   issueInput(req: Request): Promise<unknown>;
   registerPrivateQuoteDispatch: typeof registerPrivateQuoteDispatch;
   assumeStagingRuntimeRole: boolean;
+  runtimeRole?: "staging" | "production" | null;
   stageDispatchPaused: boolean;
   deferStagingNotice: boolean;
 }): unknown;
