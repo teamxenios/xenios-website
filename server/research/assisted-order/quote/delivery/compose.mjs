@@ -7,7 +7,7 @@ import {dispatchSharedQuoteJob} from './shared-worker.mjs';
 import {attachResendReceiptDoor,createResendReceipts,signedQuoteReceiptVerifier} from './signed-receipts.mjs';
 export function attachApprovedPrivateQuotes({enabled=false,router,pool,authority,Engine,bind,transport,tagKey,
   customerPrincipal,ownedRequests,staffPrincipal,csrfChecked,registerPrivateQuoteDispatch,receiptEndpoint=null,
-  assumeStagingRuntimeRole=false,stageDispatchPaused=false,deferStagingNotice=false,staffGuard,issueInput}) {
+  assumeStagingRuntimeRole=false,runtimeRole=null,stageDispatchPaused=false,deferStagingNotice=false,staffGuard,issueInput}) {
   if(enabled!==true)return null;
   for(const p of [Engine,bind,customerPrincipal,ownedRequests,staffPrincipal,csrfChecked,registerPrivateQuoteDispatch,
     authority?.forIssue,authority?.forDispatch,authority?.forCustomer,receiptEndpoint?.enabled===true?()=>{}:authority?.verifiedDispatchEvidence]){
@@ -15,7 +15,7 @@ export function attachApprovedPrivateQuotes({enabled=false,router,pool,authority
   }
   if((!transport?.ready?.() && !(assumeStagingRuntimeRole && stageDispatchPaused)) ||
     typeof transport?.send!=='function'||typeof pool?.connect!=='function')throw Error('Private quote transport or database unavailable.');
-  const transact=pgTransactions(pool,{assumeStagingRuntimeRole});
+  const transact=pgTransactions(pool,{assumeStagingRuntimeRole,runtimeRole});
   let receipts=null;
   const deskAuthority={
     forIssue:authority.forIssue.bind(authority),forCustomer:authority.forCustomer.bind(authority),
