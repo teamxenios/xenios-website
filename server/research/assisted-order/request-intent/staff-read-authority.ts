@@ -47,7 +47,7 @@ export function requirePendingRequestIntentRead(
       const allowed = canReadPendingRequestIntent(principal, context);
       await care.recordAccessDecision({
         actorSubjectId: principal?.subjectId ?? null,
-        permission: pendingRequestStaffMode(principal) === "clinical" ? "care:administer" : "request_intent:read_pending",
+        permission: pendingRequestStaffMode(principal) === "operator" ? "request_intent:read_pending" : "care:administer",
         outcome: !principal ? "unauthenticated" : allowed ? "allowed" : "forbidden",
         occurredAt: new Date().toISOString(),
       });
