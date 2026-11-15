@@ -12,7 +12,7 @@ import { mountStagingPrivateQuotePortal, STAGING_QUOTE_ORIGIN } from "./staging"
 
 // Managed identity is synthetic. The mounted request, RPCs, issuer, portal, and
 // SQL run against the fixture's own loopback-only PG16 database.
-pg16It("issues one staged quote, shows it to its request owner, and keeps mail paused on replay", async () => {
+pg16It("issues a staged quote as a queue-only operator, shows it to its owner, and keeps mail paused on replay", async () => {
   const db = createDurableJourneyFixture();
   const loginPassword = randomUUID();
   const issuerEmail = "operator@example.invalid";
@@ -20,7 +20,16 @@ pg16It("issues one staged quote, shows it to its request owner, and keeps mail p
   const recipientId = randomUUID();
   let pool: pg.Pool | undefined;
   try {
-    await db.start();
+    await db.start({ managedCareSchema: true });
+    await db.sql(readFileSync("supabase/migrations/20261114133500_early_access_pending_request_reader.sql", "utf8"));
+    await db.sql(`
+      INSERT INTO public.care_role_assignments (user_id, role, granted_by)
+      VALUES ($1, 'request_intent_reader', $1)
+    `, [OPERATOR]);
+    const roles = await db.sql(`
+      SELECT role FROM public.care_role_assignments WHERE user_id = $1 AND revoked_at IS NULL
+    `, [OPERATOR]);
+    expect(roles.rows).toEqual([{ role: "request_intent_reader" }]);
     await db.sql(readFileSync("supabase/research-notification-outbox.sql", "utf8"));
     const privateSql = (file: string) => readFileSync(new URL(file, import.meta.url), "utf8");
     await db.sql([
@@ -72,6 +81,11 @@ pg16It("issues one staged quote, shows it to its request owner, and keeps mail p
       .set("x-fixture-staff", "operator").set("Origin", STAGING_QUOTE_ORIGIN).send({});
     const issued = await issue().expect(201);
     expect(issued.body).toEqual({ quoteId: expect.any(String), replay: false, noticeReleased: false });
+    const issuerReads = await db.sql(`
+      SELECT actor_user_id FROM request_intent_private.access_events
+      WHERE request_id = $1 AND event_type = 'staff_read'
+    `, [saved.id]);
+    expect(issuerReads.rows).toEqual([{ actor_user_id: OPERATOR }]);
     const portal = await request(app).get("/earlyaccess/quotes").expect(200);
     const quote = new DOMParser().parseFromString(portal.text, "text/html").querySelector("main > section");
     expect(quote?.querySelector("h2")?.textContent).toContain(submitted.body.publicReference);
