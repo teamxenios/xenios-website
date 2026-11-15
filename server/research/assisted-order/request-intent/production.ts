@@ -158,5 +158,5 @@ export function registerRequestIntentApi(
     mutationGuard: requestIntentMutationGuard(origin), readRateLimit,
     writeRateLimit: requestIntentRateLimit(rpc, "write"),
   }));
-  // No outbox/mirror/payment/provider/supplier writer is composed.
+  // Staff notices read committed requests from the outbox worker, outside intake.
 }
