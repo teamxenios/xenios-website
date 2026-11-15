@@ -31,6 +31,7 @@ import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/commu
 import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
 import { renderAssistedOrderOutboxEmail } from "./assisted-order/communications";
 import {
+  REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE,
   REQUEST_SUBMITTED_STAFF_TEMPLATE,
   requestSubmittedStaffNoticeConfig,
   sendRequestSubmittedStaffNotice,
@@ -258,7 +259,7 @@ async function dispatch(
   job: any,
   staffNotice: ReturnType<typeof requestSubmittedStaffNoticeConfig>,
 ): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
-  if (job?.template_key === REQUEST_SUBMITTED_STAFF_TEMPLATE) {
+  if (job?.template_key === REQUEST_SUBMITTED_STAFF_TEMPLATE || job?.template_key === REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE) {
     if (!staffNotice) return { ok: false, providerId: null, error: "Staff notices paused." };
     return sendRequestSubmittedStaffNotice(job, staffNotice);
   }
@@ -553,9 +554,12 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
   const staffNotice = requestSubmittedStaffNoticeConfig(process.env);
   if (staffNotice) {
     try {
+      // With the full email off, the existing two-argument reconciliation runs
+      // unchanged, so this build also works before the detail migration.
       const { error } = await getSupabaseAdmin().rpc("request_intent_enqueue_staff_notices", {
         p_since: staffNotice.since,
         p_recipients: staffNotice.recipients,
+        ...(staffNotice.detailSince ? { p_detail_since: staffNotice.detailSince } : {}),
       });
       if (error) console.error("[outbox] staff notice reconciliation failed");
     } catch {
@@ -582,7 +586,10 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     .select("*")
     .in("status", ["pending", "failed_retryable"])
     .lte("next_attempt_at", now.toISOString());
+  // Paused staff jobs are left out in the query itself, so they cannot fill
+  // the batch ahead of other mail.
   if (!staffNotice) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_TEMPLATE);
+  if (!staffNotice?.detailSince) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE);
   const { data: due, error } = await dueQuery.limit(20);
   if (error || !due?.length) return result;
 
