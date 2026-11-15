@@ -30,4 +30,8 @@ To pause this channel, set its enable flag to `false` and deploy the updated set
 
 The full request email needs the detail migration and two more settings: `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL=full` and `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL_START_AT`. Requests created on or after that time are queued with the full template. Earlier requests keep the short alert. Record the cutoff when you enable it, and enable it only on a mail route approved for the customer details and requested items it carries.
 
-To stop sending full details, set `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL` to anything other than `full` and deploy. New requests are then queued as the short alert. Full-template jobs already queued are held unsent; they are never resent with a different body. Preserve them. To release them as short alerts instead, an operator must change their template on purpose; nothing does it automatically.
+Apply the detail migration before setting `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL=full`. With the setting on and the migration absent, the three-argument reconciliation fails and no staff notice is queued, short or full.
+
+To stop sending full details, set `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL` to anything other than `full` and deploy. New requests are then queued as the short alert. Full-template jobs already queued are held unsent; they are never resent with a different body. Preserve them. Nothing converts them automatically.
+
+To release a held job as a short alert instead, an operator must set both `event_type` and `template_key` to `ea_request_submitted_staff_v1`. The worker refuses a job whose two columns disagree, and does not retry it. Do this only for a job with `attempt_count` 0 and no row in `research_notification_attempts`. A job that was ever attempted may already have been accepted under its idempotency key, and sending a different body under the same key is not allowed.
