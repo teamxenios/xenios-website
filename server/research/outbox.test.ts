@@ -254,6 +254,39 @@ describe("worker tick", () => {
     expect(emails.sendApplicationReceived).toHaveBeenCalledTimes(1);
   });
 
+  it("leaves paused full staff notices out of the batch, so other mail still sends", async () => {
+    const settings = {
+      EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED: "true",
+      EA_REQUEST_SUBMITTED_STAFF_NOTICE_RECIPIENTS: "team@example.invalid,samuel@example.invalid",
+      EA_REQUEST_SUBMITTED_STAFF_NOTICE_START_AT: "2026-11-15T20:00:00Z",
+      SITE_URL: "https://staff.example.invalid",
+    };
+    Object.assign(process.env, settings);
+    try {
+      // The full email is off (no detail switch), so queued full jobs must wait.
+      for (let index = 0; index < 20; index++) {
+        const id = crypto.randomUUID();
+        state.outbox.push({
+          id: crypto.randomUUID(), event_key: "ea-request-submitted-" + id,
+          event_type: "ea_request_submitted_staff_full_v1", template_key: "ea_request_submitted_staff_full_v1",
+          recipient: "team@example.invalid", status: "pending", attempt_count: 0,
+          next_attempt_at: new Date(0).toISOString(), created_at: new Date().toISOString(),
+          payload: { reference: "XRI-" + id.replace(/-/g, "").toUpperCase(), submittedAt: "2026-11-15T23:00:00Z",
+            itemCount: 1, recipients: ["team@example.invalid", "samuel@example.invalid"] },
+        });
+      }
+      await enqueueNotification(job());
+      expect((await runOutboxTick(new Date())).sent).toBe(1);
+      expect(emails.sendApplicationReceived).toHaveBeenCalledTimes(1);
+      expect(resend.send).not.toHaveBeenCalled();
+      const full = state.outbox.filter((row) => row.template_key === "ea_request_submitted_staff_full_v1");
+      expect(full.every((row) => row.status === "pending" && row.attempt_count === 0)).toBe(true);
+      expect(state.attempts).toHaveLength(1);
+    } finally {
+      for (const key of Object.keys(settings)) delete process.env[key];
+    }
+  });
+
   it("a thrown provider error schedules a retry with backoff, then goes permanent at the cap", async () => {
     state.sendMode = "throw";
     await enqueueNotification(job());
