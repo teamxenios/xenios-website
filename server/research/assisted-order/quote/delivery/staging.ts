@@ -181,9 +181,8 @@ export function mountStagingPrivateQuotePortal(
     const attempt = await repository.findAttempt(fixture.ownerHash, fixture.attemptHash);
     if (attempt?.receipt.requestId !== fixture.xriId) return null;
     const [intent, recipient] = await Promise.all([
-      // This fixed staging subject must retain the actual pending-review read
-      // capability. The RPC checks it at storage and audits the access.
-      staffReader.get(fixture.xriId, fixture.issuerId),
+      // The scoped RPC checks the issuer's pending-review grant and audits the read.
+      staffReader.get(fixture.xriId, fixture.issuerId, "operator"),
       verifyAccount(fixture.recipientId),
     ]);
     if (!intent || intent.lines.length !== 1 || recipient?.email !== RECIPIENT ||
