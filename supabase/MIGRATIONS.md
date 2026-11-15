@@ -273,3 +273,9 @@ remain explicitly deferred to an authorized staging lane. See
 | --- | --- | --- | --- |
 | 83 | migrations/20261114133500_early_access_pending_request_reader.sql | Adds a queue-only role and backend list/detail for installed Care and mixed-request schemas. Optional detail uses the existing optional-context schema when enabled. No identity assignment or activation. | PENDING (not run in managed environments). SHA-256: 94999e02049f2c4c06a55621734a38c7a1f72288ae9b91f7466315db99c5a973. Disposable PostgreSQL 16.15 replayed twice. |
 | 84 | migrations/20261114133643_early_access_postal_admission.sql | Required postal survey shares the temporary catalog record and existing purge. Requires rows 79–80. | PENDING (not run). Tested on PostgreSQL 16. Source f6ffb23613adb4f29e5abdd309642782e263fbc0, SHA-256 0bf6e063eb8c08121acd4dfeaa9ea1c0872fec848f5c346c65d0c4478a1800b3. |
+
+## Early Access staff request notices
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 85 | migrations/20261115205033_early_access_request_submitted_staff_notice.sql | Reconcile committed Early Access requests to the canonical staff notification outbox using a backend-only RPC. | PENDING. Applied twice in disposable PostgreSQL 16. Source 8a5e06642f916cad3752d2fcc136d0dcddfb2856, SHA-256 71e04a5676a70588ed1bd8edbf18d8ae3c2225713c7ac837cd83c0f76aa4965d. |

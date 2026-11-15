@@ -19,3 +19,9 @@ After applying, verify the ledger contains all four exact versions, all eight qu
 2. Leave the additive tables, contact and quote RPCs, and expanded audit event contract in place. Verify the quote wrappers remain backend-only. The predecessor must serve the existing request path with quote read, issuance and dispatch closed. Preserve request, quote, audit and delivery records.
 3. Keep the scheduled purge active while temporary contact admissions remain. If intake is closed and the privacy owner has confirmed that no temporary records still need this job, unschedule only `ea_contact_admission_purge` using `cron.unschedule`. Keep unrelated cron jobs and the extension.
 4. Verify the production origin serves the rollback SHA. Record the request-path smoke result, the managed migration ledger and the purge and retention state.
+
+## Staff request notices
+
+Enable `EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED` only after the backend migration and sending credential are verified. Set the two approved recipients in `EA_REQUEST_SUBMITTED_STAFF_NOTICE_RECIPIENTS` as a comma-separated list and record the earliest eligible request time as `EA_REQUEST_SUBMITTED_STAFF_NOTICE_START_AT`. The cutoff prevents unintended historical mail.
+
+To pause this channel, set its enable flag to `false` and deploy the updated settings on a compatible build before rolling back. The worker leaves staff notice jobs pending while paused and continues processing other outbox jobs. Preserve all request and outbox rows. If the previous app lacks the staff notice handler, leave its outbox worker on a compatible build until pending staff jobs are accounted for. Resume with the same recipient pair and cutoff so retry bindings remain valid.
