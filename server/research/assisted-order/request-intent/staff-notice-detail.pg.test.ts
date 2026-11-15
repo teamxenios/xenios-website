@@ -56,7 +56,7 @@ pg16It("queues full notices only after their cutoff and reads each request as su
     expect((await db.asRole("service_role", reconcileShort, [since, recipients])).rows).toEqual([{ queued: 0 }]);
 
     const jobs = (await db.sql(`
-      select event_key, event_type, template_key, payload from public.research_notification_outbox order by created_at, event_key
+      select event_key, event_type, template_key, payload from public.research_notification_outbox order by (payload->>'submittedAt')::timestamptz
     `)).rows;
     expect(jobs).toEqual([
       { event_key: "ea-request-submitted-" + a.id, event_type: REQUEST_SUBMITTED_STAFF_TEMPLATE,
