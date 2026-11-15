@@ -30,6 +30,11 @@ import { runAgreementPackageReconciler } from "./agreement-package-reconciliatio
 import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/communications";
 import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
 import { renderAssistedOrderOutboxEmail } from "./assisted-order/communications";
+import {
+  REQUEST_SUBMITTED_STAFF_TEMPLATE,
+  requestSubmittedStaffNoticeConfig,
+  sendRequestSubmittedStaffNotice,
+} from "./assisted-order/request-intent/staff-notice";
 import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications";
 
 // ---------------------------------------------------------------------------
@@ -249,7 +254,14 @@ export function registerPrivateQuoteDispatch(handler: (job: unknown) => Promise<
 // Template dispatch at SEND time. Fresh tokens are minted here, never stored.
 // The token PURPOSE is decided at enqueue time (payload.tokenPurpose) so a
 // pre-approval status link can never carry an account-claim credential.
-async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
+async function dispatch(
+  job: any,
+  staffNotice: ReturnType<typeof requestSubmittedStaffNoticeConfig>,
+): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
+  if (job?.template_key === REQUEST_SUBMITTED_STAFF_TEMPLATE) {
+    if (!staffNotice) return { ok: false, providerId: null, error: "Staff notices paused." };
+    return sendRequestSubmittedStaffNotice(job, staffNotice);
+  }
   if (job?.template_key === "ea_private_quote_notice_v1") {
     if (!privateQuoteDispatch) return { ok: false, providerId: null, error: "Private quote channel unavailable." };
     return privateQuoteDispatch(job);
@@ -538,6 +550,19 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
   const result = { sent: 0, retried: 0, failed: 0 };
   if (!supabaseConfigured()) return result;
 
+  const staffNotice = requestSubmittedStaffNoticeConfig(process.env);
+  if (staffNotice) {
+    try {
+      const { error } = await getSupabaseAdmin().rpc("request_intent_enqueue_staff_notices", {
+        p_since: staffNotice.since,
+        p_recipients: staffNotice.recipients,
+      });
+      if (error) console.error("[outbox] staff notice reconciliation failed");
+    } catch {
+      console.error("[outbox] staff notice reconciliation failed");
+    }
+  }
+
   // Materialize any agreement-package candidates captured atomically with a
   // legal acceptance before claiming email jobs. This is restart-safe.
   try {
@@ -552,12 +577,13 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
   }
   await reclaimStaleProcessing(now);
 
-  const { data: due, error } = await getSupabaseAdmin()
+  let dueQuery = getSupabaseAdmin()
     .from(OUTBOX)
     .select("*")
     .in("status", ["pending", "failed_retryable"])
-    .lte("next_attempt_at", now.toISOString())
-    .limit(20);
+    .lte("next_attempt_at", now.toISOString());
+  if (!staffNotice) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_TEMPLATE);
+  const { data: due, error } = await dueQuery.limit(20);
   if (error || !due?.length) return result;
 
   for (const job of due as any[]) {
@@ -572,7 +598,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     if (!claimed) continue;
 
     const attempt = (job.attempt_count ?? 0) + 1;
-    const outcome = await dispatch(job);
+    const outcome = await dispatch(job, staffNotice);
 
     await getSupabaseAdmin().from(ATTEMPTS).insert({
       outbox_id: job.id,

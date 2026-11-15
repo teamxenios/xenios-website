@@ -54,8 +54,8 @@ export type RequestIntentDependencies = Readonly<{
 }>;
 
 /**
- * Private intent only. There is deliberately no outbox, analytics, mirror,
- * payment, prescription, order-conversion or supplier dependency here.
+ * Private intent only. A separate outbox worker reconciles committed requests
+ * for staff alerts. Submission has no mail, payment, or supplier dependency.
  */
 export class RequestIntentService {
   constructor(private readonly deps: RequestIntentDependencies) {}

@@ -99,6 +99,8 @@ const EA_QUOTE_AUDIT_SOURCE_PATH =
 const EA_PENDING_READER_SOURCE_SHA = "b049fad38482e042b4e203684cdbe190cc51ec6a";
 const EA_POSTAL_SOURCE_SHA = "f6ffb23613adb4f29e5abdd309642782e263fbc0";
 const EA_POSTAL_SOURCE_PATH = "supabase/migrations/20261114133643_early_access_postal_admission.sql";
+const EA_STAFF_NOTICE_SOURCE_SHA = "8a5e06642f916cad3752d2fcc136d0dcddfb2856";
+const EA_STAFF_NOTICE_SOURCE_PATH = "supabase/migrations/20261115205033_early_access_request_submitted_staff_notice.sql";
 const EA_PENDING_READER_SOURCE_PATH =
   "supabase/migrations/20261114133500_early_access_pending_request_reader.sql";
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
@@ -1213,6 +1215,9 @@ describe("migration DAG validator", () => {
             });
           } else if (path === EA_POSTAL_SOURCE_PATH) {
             expect(sourceSha).toBe(EA_POSTAL_SOURCE_SHA);
+            return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], { cwd: ROOT, encoding: "buffer" });
+          } else if (path === EA_STAFF_NOTICE_SOURCE_PATH) {
+            expect(sourceSha).toBe(EA_STAFF_NOTICE_SOURCE_SHA);
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], { cwd: ROOT, encoding: "buffer" });
           } else if (path === EA_PENDING_READER_SOURCE_PATH) {
             expect(sourceSha).toBe(EA_PENDING_READER_SOURCE_SHA);

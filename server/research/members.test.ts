@@ -95,6 +95,7 @@ vi.mock("../supabase", () => {
     let insertPayload: any = null;
     let updatePayload: any = null;
     const filters: Array<[string, any]> = [];
+    const neqFilters: Array<[string, any]> = [];
     const lteFilters: Array<[string, any]> = [];
     const ltFilters: Array<[string, any]> = [];
     let inFilter: [string, any[]] | null = null;
@@ -103,6 +104,7 @@ vi.mock("../supabase", () => {
       rows.filter(
         (r) =>
           filters.every(([c, v]) => r[c] === v) &&
+          neqFilters.every(([c, v]) => r[c] != null && r[c] !== v) &&
           lteFilters.every(([c, v]) => r[c] <= v) &&
           ltFilters.every(([c, v]) => r[c] != null && r[c] < v) &&
           (!inFilter || inFilter[1].includes(r[inFilter[0]])),
@@ -140,6 +142,7 @@ vi.mock("../supabase", () => {
       insert: (p: any) => { mode = "insert"; insertPayload = p; return api; },
       update: (p: any) => { mode = "update"; updatePayload = p; return api; },
       eq: (c: string, v: any) => { filters.push([c, v]); return api; },
+      neq: (c: string, v: any) => { neqFilters.push([c, v]); return api; },
       in: (c: string, vs: any[]) => { inFilter = [c, vs]; return api; },
       lte: (c: string, v: any) => { lteFilters.push([c, v]); return api; },
       lt: (c: string, v: any) => { ltFilters.push([c, v]); return api; },

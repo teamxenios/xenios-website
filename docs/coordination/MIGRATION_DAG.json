@@ -882,6 +882,26 @@
         "procedure": "supabase/production/early-access-postal-admission-rollback.md",
         "evidence": "Isolated PostgreSQL 16 preserved a populated postal record and exact expiry on reapply and legacy read/replay. Expired records were removed while active records survived."
       }
+    },
+    {
+      "id": "early_access_request_submitted_staff_notice",
+      "path": "supabase/migrations/20261115205033_early_access_request_submitted_staff_notice.sql",
+      "sourceSha": "8a5e06642f916cad3752d2fcc136d0dcddfb2856",
+      "dependsOn": [
+        "early_access_contact_and_private_quote_schema"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "71e04a5676a70588ed1bd8edbf18d8ae3c2225713c7ac837cd83c0f76aa4965d"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "pause_staff_notices_preserve_existing_requests_and_outbox_rows",
+        "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
+        "evidence": "Disposable PostgreSQL 16 applied the migration twice, denied public roles, and preserved one outbox row across a lost reply, concurrent reconciliation, and customer replay."
+      }
     }
   ],
   "invariants": [
