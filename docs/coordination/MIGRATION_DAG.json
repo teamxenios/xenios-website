@@ -902,6 +902,26 @@
         "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
         "evidence": "Disposable PostgreSQL 16 applied the migration twice, denied public roles, and preserved one outbox row across a lost reply, concurrent reconciliation, and customer replay."
       }
+    },
+    {
+      "id": "early_access_staff_notice_request_detail",
+      "path": "supabase/migrations/20261115222911_early_access_staff_notice_request_detail.sql",
+      "sourceSha": "9738497fff13a5185080e8409f3538719083b5e1",
+      "dependsOn": [
+        "early_access_request_submitted_staff_notice"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "1da7e15da3a888a5b0c758a0f4011e62b50f2f3333de6aa7dd2eeb7675381adc"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "switch_off_full_staff_notices_preserve_requests_and_outbox_rows",
+        "procedure": "supabase/production/early-access-contact-and-quote-rollback.md",
+        "evidence": "Disposable PostgreSQL 16 applied the migration twice, denied public roles, queued the full template only after its cutoff, returned only the named fields for a full-template job, and wrote no access event."
+      }
     }
   ],
   "invariants": [

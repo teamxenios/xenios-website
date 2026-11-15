@@ -25,3 +25,9 @@ After applying, verify the ledger contains all four exact versions, all eight qu
 Enable `EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED` only after the backend migration and sending credential are verified. Set the two approved recipients in `EA_REQUEST_SUBMITTED_STAFF_NOTICE_RECIPIENTS` as a comma-separated list and record the earliest eligible request time as `EA_REQUEST_SUBMITTED_STAFF_NOTICE_START_AT`. The cutoff prevents unintended historical mail.
 
 To pause this channel, set its enable flag to `false` and deploy the updated settings on a compatible build before rolling back. The worker leaves staff notice jobs pending while paused and continues processing other outbox jobs. Preserve all request and outbox rows. If the previous app lacks the staff notice handler, leave its outbox worker on a compatible build until pending staff jobs are accounted for. Resume with the same recipient pair and cutoff so retry bindings remain valid.
+
+### Full request notices
+
+The full request email needs the detail migration and two more settings: `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL=full` and `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL_START_AT`. Requests created on or after that time are queued with the full template. Earlier requests keep the short alert. Record the cutoff when you enable it, and enable it only on a mail route approved for the customer details and requested items it carries.
+
+To stop sending full details, set `EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL` to anything other than `full` and deploy. New requests are then queued as the short alert. Full-template jobs already queued are held unsent; they are never resent with a different body. Preserve them. To release them as short alerts instead, an operator must change their template on purpose; nothing does it automatically.
