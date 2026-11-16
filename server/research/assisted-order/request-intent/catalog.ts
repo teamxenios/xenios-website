@@ -14,6 +14,7 @@ import type { AssistedOrderViewer } from "../ports";
 import { getInquiryDisplayContent, getReviewedProductMedia } from "../../master-offerings/reviewed-content";
 import { inquiryReviewStateFor } from "../../master-offerings/inquiry-review-states";
 
+import { catalogSearchText, matchesCatalogSearch } from "./catalog-search";
 import { candidateRankOrders, readCatalogRankingSource, type RankingSource } from "./ranking-source";
 
 export type RequestIntentCatalog = Readonly<{
@@ -127,14 +128,14 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
       if (query.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(query.sort)) {
         throw new Error("request_intent_sort_invalid");
       }
-      const search = query.search?.trim().toLowerCase();
+      const search = query.search?.trim() ?? "";
       const filtered = (await visible(viewer)).filter((item) =>
         (!query.family || (isMasterOfferingFamily(query.family) && item.family === query.family))
         && (!query.channel || item.channel === query.channel)
         && (!query.actionGroup || assistedOrderActionGroupFor(item.workflowMode) === query.actionGroup)
         && (query.actionGroup !== undefined || !query.workflowMode || item.workflowMode === query.workflowMode)
-        && (!search || [item.productName, item.specification, item.variantId, searchAliases.get(item) ?? ""]
-          .join(" ").toLowerCase().includes(search)));
+        && (!search || matchesCatalogSearch(
+          catalogSearchText([item.productName, item.specification, searchAliases.get(item)], item.variantId), search)));
       // Sorting is over the whole filtered catalog, before paging, so page 2 follows
       // page 1 in the chosen order. Absent sort keeps the catalog's own order.
       //
