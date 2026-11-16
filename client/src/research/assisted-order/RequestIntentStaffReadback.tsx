@@ -4,6 +4,7 @@ import type { RequestIntentDetail, RequestIntentQueuePage } from "../../../../sh
 import type { RequestIntentApi } from "./request-intent-api";
 import type { AssistedOrderAddressInput } from "../../../../shared/research/assisted-order/contract";
 import "./assisted-order.css";
+import "./staff-desk-v2.css";
 import { PrivateQuoteDesk } from "./PrivateQuoteDesk";
 
 type QueueLoad = Readonly<{ api: RequestIntentApi; page: number; attempt: number }> & (
@@ -61,7 +62,7 @@ export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestInten
       if (sequence.current === run) { pendingRead.current = null; setDetailPending(false); }
     }
   }
-  return <section className="xenios-order-page"><h1>Private request readback</h1>
+  return <section className="xenios-order-page xenios-staff-desk"><h1>Private request readback</h1>
     <p>All items below are unapproved requests. This view cannot approve treatment, issue payment instructions, mark paid or release fulfillment.</p>
     <section aria-label="Pending private requests"><h2>Pending requests{queue && ` (${queue.total})`}</h2>
       {queueLoading && <p role="status">Loading pending requests...</p>}

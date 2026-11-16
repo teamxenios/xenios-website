@@ -1,0 +1,124 @@
+/* Private staff presentation only. No network, permission or data changes. */
+.xenios-staff-desk {
+  --staff-ink: #202643;
+  --staff-muted: #5e647a;
+  --staff-stroke: #dee1f0;
+  --staff-surface: #fff;
+  --staff-tint: #f7f7fc;
+  min-width: 0;
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: clamp(12px, 2vw, 28px);
+  color: var(--staff-ink);
+}
+.xenios-staff-desk * { box-sizing: border-box; }
+.xenios-staff-desk > h1 {
+  letter-spacing: -.04em;
+  font-size: clamp(1.8rem, 3.8vw, 2.6rem);
+  line-height: 1.15;
+  margin: 8px 0 10px;
+}
+.xenios-staff-desk > p:first-of-type {
+  max-width: 72ch;
+  font-size: .92rem;
+  line-height: 1.6;
+  color: var(--staff-muted);
+  padding-left: 13px;
+  border-left: 3px solid #8377d0;
+}
+.xenios-staff-desk > section[aria-label="Pending private requests"] {
+  border-radius: 22px;
+  border: 1px solid var(--staff-stroke);
+  background: linear-gradient(135deg,#fff,#faf9ff 80%);
+  box-shadow: 0 14px 32px rgba(21,28,73,.06);
+  padding: clamp(15px, 3vw, 28px);
+  margin-top: 24px;
+}
+.xenios-staff-desk > section[aria-label="Pending private requests"] h2 {
+  margin-top: 0;
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+  letter-spacing: -.025em;
+}
+.xenios-staff-desk > section[aria-label="Pending private requests"] ul {
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  gap: 8px;
+  list-style: none;
+}
+.xenios-staff-desk > section[aria-label="Pending private requests"] li {
+  border: 1px solid var(--staff-stroke);
+  border-radius: 12px;
+  background: var(--staff-surface);
+  padding: 14px;
+  font-size: .82rem;
+  line-height: 1.8;
+  color: var(--staff-muted);
+  overflow-wrap: anywhere;
+}
+.xenios-staff-desk > section[aria-label="Pending private requests"] li button {
+  display: inline-block;
+  border: none;
+  border-bottom: 1px solid currentColor;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: .86rem;
+  font-weight: 800;
+  color: #4d429e;
+  min-height: 44px;
+  padding: 8px 1px;
+  overflow-wrap: anywhere;
+}
+.xenios-staff-desk nav[aria-label="Private request pages"] { display: flex; gap: 9px; flex-wrap: wrap; }
+.xenios-staff-desk nav[aria-label="Private request pages"] button,
+.xenios-staff-desk section[aria-label="Pending private requests"] > button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #c8cbe3;
+  border-radius: 99px;
+  background: #fff;
+  color: var(--staff-ink);
+  font-weight: 760;
+  font: inherit;
+  cursor: pointer;
+}
+.xenios-staff-desk :where(button):disabled { opacity: .5; cursor: default; }
+.xenios-staff-desk > form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 14px;
+  border-radius: 22px;
+  border: 1px solid var(--staff-stroke);
+  background: #fff;
+  padding: clamp(15px, 3vw, 24px);
+  margin-top: 18px;
+}
+.xenios-staff-desk > form > label { min-width: min(100%,280px); flex: 1 1 330px; color: var(--staff-ink); font-size: .88rem; font-weight: 760; }
+.xenios-staff-desk > form > label input { display: block; width: 100%; margin-top: 8px; border: 1px solid #bdc4e1; border-radius: 12px; padding: 12px 14px; min-height: 46px; font: inherit; font-variant-numeric: tabular-nums; }
+.xenios-staff-desk > form > button { flex: 0 0 auto; min-height: 46px; }
+.xenios-staff-desk [role="alert"] { border: 1px solid #e9b8b3; border-radius: 11px; padding: 12px 14px; background: #fff3f1; color: #7a2c28; }
+.xenios-staff-desk > section:not([aria-label="Pending private requests"]) {
+  padding: clamp(14px,2vw,27px);
+  margin-block: 20px;
+  background: linear-gradient(160deg,#fff,#f8f9ff);
+  border: 1px solid var(--staff-stroke);
+  border-radius: 22px;
+  overflow-wrap: anywhere;
+}
+.xenios-staff-desk > section:not([aria-label="Pending private requests"]) > h2 { font-size: clamp(1rem,2vw,1.35rem); color: #3a3278; overflow-wrap: anywhere; }
+.xenios-staff-desk > section:not([aria-label="Pending private requests"]) > ul { padding-left: 20px; display: grid; gap: 12px; }
+.xenios-staff-desk > section:not([aria-label="Pending private requests"]) > ul li { padding: 12px; line-height: 1.65; border-radius: 11px; background: #fff; border: 1px solid var(--staff-stroke); }
+.xenios-staff-desk address { font-style: normal; line-height: 1.7; }
+.xenios-staff-desk :where(button,input):focus-visible { outline: 3px solid #6457c8; outline-offset: 3px; }
+@media (max-width: 520px) {
+  .xenios-staff-desk { padding: 10px; }
+  .xenios-staff-desk > form > button { width: 100%; }
+  .xenios-staff-desk > section[aria-label="Pending private requests"] li button { display: block; max-width: 100%; }
+}
+@media (forced-colors: active) {
+  .xenios-staff-desk :where(section,li,form) { background: Canvas; border-color: CanvasText; color: CanvasText; }
+  .xenios-staff-desk button { color: LinkText; }
+}
