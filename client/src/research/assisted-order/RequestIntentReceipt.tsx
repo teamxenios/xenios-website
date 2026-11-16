@@ -33,7 +33,7 @@ export function RequestIntentReceipt({ receipt, headingRef, headingLevel = 1, fo
   const Heading = headingLevel === 2 ? "h2" : "h1";
   const earlierReceipt = reopened || recovered;
   return <section className="xenios-order-page"><Heading ref={headingRef ?? heading} tabIndex={-1}>{requestReceiptHeading(earlierReceipt)}</Heading>
-    <p role="status">Your request reference is <strong>{receipt.publicReference}</strong>.</p>
+    <p role="status">Your request reference is <strong style={{ overflowWrap: "anywhere" }}>{receipt.publicReference}</strong>.</p>
     {reopened && <p>This reference was confirmed earlier in this browser tab. Nothing was sent again.</p>}
     {recovered && !reopened && <p>We found the saved request from your earlier attempt. Nothing was sent again.</p>}
     <p>{REQUEST_INTENT_SCOPE_NOTICE}</p><p>Final availability, quantities, pricing and delivery are confirmed separately.</p>
