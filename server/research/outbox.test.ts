@@ -85,7 +85,9 @@ vi.mock("../supabase", () => {
         for (const target of targets) Object.assign(target, updatePayload);
         return { data: targets[0], error: null };
       }
-      let rows = applyFilters(list);
+      // A read returns copies, as PostgREST does, so a later update never
+      // reaches a row the caller already holds.
+      let rows = applyFilters(list).map((r) => ({ ...r }));
       if (limitN != null) rows = rows.slice(0, limitN);
       if (selectCols && selectCols !== "*") {
         const cols = selectCols.split(",").map((c) => c.trim());
@@ -126,6 +128,7 @@ vi.mock("./membership-emails", () => emails);
 vi.mock("../services/email", () => ({
   getResendClient: async () => ({
     client: { emails: { send: resend.send } },
+    fromEmail: "notices@example.invalid",
   }),
 }));
 
@@ -331,6 +334,50 @@ describe("worker tick", () => {
         expect(resend.send).not.toHaveBeenCalled();
         expect(state.outbox[0]).toMatchObject({ status: "failed_permanent", attempt_count: 1 });
         expect(state.outbox[0].last_error_summary).toContain("24-hour duplicate check");
+      });
+    });
+
+    it("a manual retry of a stale claim with no recorded attempt, past the window, sends nothing", async () => {
+      await withSettings(async () => {
+        const id = crypto.randomUUID();
+        // A claim from before claims recorded the attempt: processing, last_attempt_at null.
+        state.outbox.push({
+          id: crypto.randomUUID(), event_key: "ea-request-submitted-" + id,
+          event_type: "ea_request_submitted_staff_v1", template_key: "ea_request_submitted_staff_v1",
+          recipient: "team@example.invalid", status: "processing", attempt_count: 0,
+          next_attempt_at: new Date(0).toISOString(), last_attempt_at: null,
+          created_at: new Date(Date.now() - STAFF_NOTICE_RESEND_LIMIT_MS - 3_600_000).toISOString(),
+          updated_at: new Date(Date.now() - STAFF_NOTICE_RESEND_LIMIT_MS).toISOString(),
+          payload: { reference: "XRI-" + id.replace(/-/g, "").toUpperCase(), submittedAt: "2026-11-15T23:00:00Z",
+            itemCount: 1, recipients: ["team@example.invalid", "samuel@example.invalid"] },
+        });
+        const res = await request(makeAdminApp()).post(`/api/admin/research/outbox/${state.outbox[0].id}/retry`);
+        expect(res.status).toBe(200);
+        expect(resend.send).not.toHaveBeenCalled();
+        expect(state.outbox[0]).toMatchObject({ status: "failed_permanent" });
+        expect(state.outbox[0].last_error_summary).toContain("24-hour duplicate check");
+      });
+    });
+
+    it("records the attempt when it claims a job, before the send", async () => {
+      await withSettings(async () => {
+        const id = crypto.randomUUID();
+        state.outbox.push({
+          id: crypto.randomUUID(), event_key: "ea-request-submitted-" + id,
+          event_type: "ea_request_submitted_staff_v1", template_key: "ea_request_submitted_staff_v1",
+          recipient: "team@example.invalid", status: "pending", attempt_count: 0,
+          next_attempt_at: new Date(0).toISOString(), created_at: new Date().toISOString(),
+          payload: { reference: "XRI-" + id.replace(/-/g, "").toUpperCase(), submittedAt: "2026-11-15T23:00:00Z",
+            itemCount: 1, recipients: ["team@example.invalid", "samuel@example.invalid"] },
+        });
+        const now = new Date();
+        let atSend: unknown = "not called";
+        resend.send.mockImplementationOnce(async () => {
+          atSend = { status: state.outbox[0].status, last_attempt_at: state.outbox[0].last_attempt_at };
+          return { data: { id: "resend-product-id" }, error: null };
+        });
+        await runOutboxTick(now);
+        expect(atSend).toEqual({ status: "processing", last_attempt_at: now.toISOString() });
       });
     });
 

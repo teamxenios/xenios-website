@@ -602,10 +602,13 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
   if (error || !due?.length) return result;
 
   for (const job of due as any[]) {
-    // Claim: only one runner may move it to processing.
+    // Claim: only one runner may move it to processing. The claim also
+    // records the attempt before any send, so a worker that dies after the
+    // provider accepted still leaves durable evidence that a send may have
+    // happened. Dispatch reads the row as it was before this claim.
     const { data: claimed } = await getSupabaseAdmin()
       .from(OUTBOX)
-      .update({ status: "processing", updated_at: now.toISOString() })
+      .update({ status: "processing", updated_at: now.toISOString(), last_attempt_at: now.toISOString() })
       .eq("id", job.id)
       .eq("status", job.status)
       .select()
@@ -741,6 +744,12 @@ export function registerOutboxAdmin(app: Express) {
         }
       }
       const now = new Date().toISOString();
+      // A processing row was claimed, so a send may have reached the provider.
+      // Keep that evidence (a claim from before claims were stamped falls back
+      // to its claim time), so the requeued job is never treated as unattempted.
+      const attempted = (row as any).status === "processing"
+        ? { last_attempt_at: (row as any).last_attempt_at ?? (row as any).updated_at ?? now }
+        : {};
       const { data: updated, error } = await getSupabaseAdmin()
         .from(OUTBOX)
         .update({
@@ -749,6 +758,7 @@ export function registerOutboxAdmin(app: Express) {
           next_attempt_at: now,
           last_error_summary: null,
           updated_at: now,
+          ...attempted,
         })
         .eq("id", id)
         .eq("status", (row as any).status)
