@@ -77,8 +77,19 @@ describe("catalog search matcher", () => {
     expect(finds(["BPC-157 10 mg"], "bpc 157 1")).toBe(true);
     expect(finds(["BPC-157 10 mg"], "bpc 15")).toBe(true);
     expect(finds(["BPC-157 10 mg"], "bpc 157 10 m")).toBe(true);
-    // Only the last token: a whole number before another number must be equal.
-    expect(finds(["BPC-157 10 mg"], "15 10")).toBe(false);
+    expect(finds(["HCG 10,000 IU"], "10,0")).toBe(true);
+    expect(finds(["HCG 10,000 IU"], "10,00")).toBe(true);
+  });
+  it("matches a number without a unit inside a listed number, as before, and keeps an amount whole", () => {
+    expect(finds(["BPC-157 10 mg"], "57")).toBe(true);
+    expect(finds(["BPC-157 10 mg"], "57 mg")).toBe(false);
+    expect(finds(["BPC-157 10 mg"], "0 mg")).toBe(false);
+  });
+  it("reads only a number and its unit as one amount, so other words can come in any order", () => {
+    expect(finds(["BPC-157 + TB-500", "BPC-157/TB-500 10MG"], "tb 500 bpc 157")).toBe(true);
+    expect(finds(["5-AMINO-1MQ 5MG/ML (5ML)"], "5 amino 1mq 5mg")).toBe(true);
+    expect(finds(["BPC-157 10 mg"], "10 m")).toBe(true);
+    expect(finds(["BPC-157 10 mg"], "10 mc")).toBe(false);
   });
   it("still finds a row by the identifier it carries, and treats a blank query as no search", () => {
     expect(matchesCatalogSearch(catalogSearchText(["Synthetic"], "d540b4da-25cb-4143-8d5a-cdc065dc454f"), "d540b4da-25cb")).toBe(true);
