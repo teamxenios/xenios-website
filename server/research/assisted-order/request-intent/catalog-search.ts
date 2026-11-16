@@ -19,8 +19,11 @@
  * - An amount is a number followed by a unit (mg, mcg, ml, iu, g, gm, unit), or by the start of
  *   one. It matches only that whole number followed by a listed word that starts with the query's
  *   unit, so "5 mg" finds "5 mg" and "5MG/ML" but not "15 mg", "2.5 mg", "50 mg" or "5 mcg".
- * - Any other number matches inside a listed number, as a word does inside a word: "57" finds
- *   "BPC-157", "bpc 157 1" still shows "10 mg", and "tb 500 bpc 157" finds "BPC-157/TB-500".
+ * - Any other number that opens the query matches inside a listed number, as on #448: "57" finds
+ *   "BPC-157". After another token, the last number must start a listed number, so a query typed
+ *   one key at a time keeps its rows ("bpc 157 1" still shows "10 mg", and "synthetic 1" does not
+ *   show "Synthetic 21"). Any other number must equal a listed one: "tb 500 bpc 157" finds
+ *   "BPC-157/TB-500".
  *
  * The identifier the row carries is still found by its exact characters.
  * Matching only: nothing here changes a row, its order or what the picker returns.
@@ -77,7 +80,11 @@ export function matchesCatalogSearch(row: CatalogSearchText, query: string): boo
       if (!listed.some((own, at) => own.kind === "number" && sameNumber(own.text, token.text)
         && listed[at + 1]?.kind === "word" && listed[at + 1].text.startsWith(next.text))) return false;
       index += 1;
-    } else if (!listed.some((own) => own.kind === "number" && own.text.includes(token.text))) {
+    } else if (index === 0) {
+      if (!listed.some((own) => own.kind === "number" && own.text.includes(token.text))) return false;
+    } else if (next === undefined) {
+      if (!listed.some((own) => own.kind === "number" && own.text.startsWith(token.text))) return false;
+    } else if (!listed.some((own) => own.kind === "number" && sameNumber(own.text, token.text))) {
       return false;
     }
   }

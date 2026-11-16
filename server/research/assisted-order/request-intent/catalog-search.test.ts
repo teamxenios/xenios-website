@@ -88,6 +88,10 @@ describe("catalog search matcher", () => {
     expect(finds(["BPC-157 10 mg"], "57")).toBe(true);
     expect(finds(["BPC-157 10 mg"], "57 mg")).toBe(false);
     expect(finds(["BPC-157 10 mg"], "0 mg")).toBe(false);
+    // After another token, the last number must start a listed number, as on #448.
+    expect(finds(["Synthetic 21"], "synthetic 1")).toBe(false);
+    expect(finds(["Synthetic 12"], "synthetic 1")).toBe(true);
+    expect(finds(["BPC-157 10 mg"], "bpc 57")).toBe(false);
   });
   it("reads only a number and its unit as one amount, so other words can come in any order", () => {
     expect(finds(["BPC-157 + TB-500", "BPC-157/TB-500 10MG"], "tb 500 bpc 157")).toBe(true);
