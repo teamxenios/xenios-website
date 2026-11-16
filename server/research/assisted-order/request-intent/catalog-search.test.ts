@@ -58,6 +58,21 @@ describe("catalog search matcher", () => {
     expect(finds(["Dihexa"], "hexa")).toBe(true);
     expect(finds(["Versabase cream"], "versabase cream")).toBe(true);
   });
+  it("keeps a plus on the word it follows, so NAD+ is not found inside another name", () => {
+    for (const query of ["nad+", "NAD+", "nad+ 500mg"]) expect(finds(["NAD+", "NAD+ 500 mg"], query)).toBe(true);
+    expect(finds(["Gonadorelin", "GONADORELIN 5 mg"], "nad+")).toBe(false);
+    // Without the plus the query is a plain word, matched inside a listed word as before.
+    expect(finds(["Gonadorelin"], "nad")).toBe(true);
+    expect(finds(["SEMAGLUTIDE+BPC-157 5 mg"], "semaglutide bpc157")).toBe(true);
+  });
+  it("finds a singular listed word by its plural, from five letters", () => {
+    expect(finds(["DIHEXA 5MG CAPSULE"], "capsules")).toBe(true);
+    expect(finds(["(1.2mg vial)"], "vials")).toBe(true);
+    expect(finds(["CREAM 30GM"], "creams")).toBe(true);
+    expect(finds(["Tesofensine (500mcg) Capsules x30"], "capsules")).toBe(true);
+    // Four letters is too short to read as a plural.
+    expect(finds(["Topical gel"], "gels")).toBe(false);
+  });
   it("lets the last token be the start of a number or unit, so typing one key at a time keeps the rows", () => {
     expect(finds(["BPC-157 10 mg"], "bpc 157 1")).toBe(true);
     expect(finds(["BPC-157 10 mg"], "bpc 15")).toBe(true);

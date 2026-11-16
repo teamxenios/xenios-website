@@ -7,9 +7,12 @@
  *
  * - A token is a run of letters or a number. Everything else separates tokens. A hyphen or
  *   apostrophe between two letters is dropped first, so "ghk-cu" is "ghkcu" and "men's" is "mens".
+ *   A "+" right after letters stays on the word, so "nad+" finds "NAD+" and not "Gonadorelin".
  *   "µg" reads as "mcg", and a thousands comma is dropped, so "10,000" is "10000".
  * - Every query token must match, in any order.
  * - A word matches inside a listed word, as before ("hexa" finds "Dihexa").
+ * - A query word of five or more letters ending in "s" also matches a listed word ending in the
+ *   word without it, so "capsules" finds "CAPSULE" and "vials" finds "vial".
  * - An amount is a number followed by a word. It matches only that whole number followed by a
  *   word that starts with the query's word, so "5 mg" finds "5 mg" and "5MG/ML" but not "15 mg",
  *   "2.5 mg", "50 mg" or "5 mcg".
@@ -26,7 +29,7 @@ type Token = { readonly kind: "word" | "number"; readonly text: string };
 const WORD_JOINERS = /(\p{L})[-‐‑'’]+(?=\p{L})/gu;
 const THOUSANDS = /(\d),(?=\d{3}(?!\d))/g;
 const MICRO = /[µμ](?=g)/g;
-const TOKEN = /\p{L}+|\d+(?:\.\d+)?/gu;
+const TOKEN = /\p{L}+\+?|\d+(?:\.\d+)?/gu;
 const NUMBER_RUN = /(?<![\d.])\d+(?:[-‐‑]\d+)+(?![\d.])/g;
 
 function tokens(text: string): Token[] {
@@ -60,7 +63,9 @@ export function matchesCatalogSearch(row: CatalogSearchText, query: string): boo
     const token = wanted[index];
     const next = wanted[index + 1];
     if (token.kind === "word") {
-      if (!listed.some((own) => own.kind === "word" && own.text.includes(token.text))) return false;
+      const singular = token.text.length >= 5 && token.text.endsWith("s") ? token.text.slice(0, -1) : null;
+      if (!listed.some((own) => own.kind === "word"
+        && (own.text.includes(token.text) || (singular !== null && own.text.endsWith(singular))))) return false;
     } else if (next?.kind === "word") {
       // An amount: this whole number, then a word starting with the query's word.
       if (!listed.some((own, at) => own.kind === "number" && sameNumber(own.text, token.text)
