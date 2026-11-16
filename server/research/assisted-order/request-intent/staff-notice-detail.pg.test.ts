@@ -51,7 +51,9 @@ pg16It("queues full notices only after their cutoff and reads each request as su
     await expect(db.asRole("authenticated", reconcile, args)).rejects.toMatchObject({ code: "42501" });
     await expect(db.asRole("service_role", reconcile, [since, recipients, null]))
       .rejects.toMatchObject({ code: "22023" });
-    expect((await db.asRole("service_role", reconcile, args)).rows).toEqual([{ queued: 2 }]);
+    // Two workers reconciling at once, each on its own connection, still queue one job per request.
+    const racing = await Promise.all([0, 1].map(() => db.asRole("service_role", reconcile, args)));
+    expect(racing.map(result => result.rows[0].queued).sort()).toEqual([0, 2]);
     expect((await db.asRole("service_role", reconcile, args)).rows).toEqual([{ queued: 0 }]);
     expect((await db.asRole("service_role", reconcileShort, [since, recipients])).rows).toEqual([{ queued: 0 }]);
 

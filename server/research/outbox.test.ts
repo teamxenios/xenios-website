@@ -37,6 +37,7 @@ const emails = vi.hoisted(() => ({
 const resend = vi.hoisted(() => ({
   send: vi.fn(async () => ({ data: { id: "resend-product-id" }, error: null })),
 }));
+const supabaseRpc = vi.hoisted(() => vi.fn(async (..._args: unknown[]) => ({ data: 0, error: null as null | { code: string } })));
 
 vi.mock("../supabase", () => {
   function query(table: string) {
@@ -84,7 +85,9 @@ vi.mock("../supabase", () => {
         for (const target of targets) Object.assign(target, updatePayload);
         return { data: targets[0], error: null };
       }
-      let rows = applyFilters(list);
+      // A read returns copies, as PostgREST does, so a later update never
+      // reaches a row the caller already holds.
+      let rows = applyFilters(list).map((r) => ({ ...r }));
       if (limitN != null) rows = rows.slice(0, limitN);
       if (selectCols && selectCols !== "*") {
         const cols = selectCols.split(",").map((c) => c.trim());
@@ -115,7 +118,7 @@ vi.mock("../supabase", () => {
   }
   return {
     supabaseConfigured: () => true,
-    getSupabaseAdmin: () => ({ from: query }),
+    getSupabaseAdmin: () => ({ from: query, rpc: supabaseRpc }),
     getSupabaseAnon: () => { throw new Error("not used"); },
   };
 });
@@ -125,12 +128,14 @@ vi.mock("./membership-emails", () => emails);
 vi.mock("../services/email", () => ({
   getResendClient: async () => ({
     client: { emails: { send: resend.send } },
+    fromEmail: "notices@example.invalid",
   }),
 }));
 
 process.env.RESEARCH_SESSION_SECRET = "test-secret-for-vitest";
 
-import { enqueueNotification, registerOutboxAdmin, runOutboxTick } from "./outbox";
+import { OUTBOX_RETRY_LADDER, enqueueNotification, registerOutboxAdmin, runOutboxTick } from "./outbox";
+import { STAFF_NOTICE_RESEND_LIMIT_MS } from "./assisted-order/request-intent/staff-notice";
 import { enqueueProductDiagnosticEmail } from "./products-diagnostics/outbox-adapter";
 
 function makeAdminApp() {
@@ -285,6 +290,114 @@ describe("worker tick", () => {
     } finally {
       for (const key of Object.keys(settings)) delete process.env[key];
     }
+  });
+
+  describe("staff notices and the provider's 24-hour duplicate check", () => {
+    const settings = {
+      EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED: "true",
+      EA_REQUEST_SUBMITTED_STAFF_NOTICE_RECIPIENTS: "team@example.invalid,samuel@example.invalid",
+      EA_REQUEST_SUBMITTED_STAFF_NOTICE_START_AT: "2026-11-15T20:00:00Z",
+      EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL: "full",
+      EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL_START_AT: "2026-11-15T22:00:00Z",
+      SITE_URL: "https://staff.example.invalid",
+      RESEND_API_KEY: "synthetic-test-only",
+    };
+    const withSettings = async (run: () => Promise<void>) => {
+      Object.assign(process.env, settings);
+      try { await run(); } finally { for (const key of Object.keys(settings)) delete process.env[key]; }
+    };
+
+    it("finishes every automatic retry well inside the window", () => {
+      const { backoffSeconds, maxJitter } = OUTBOX_RETRY_LADDER;
+      expect(backoffSeconds).toHaveLength(6);
+      const longestLadderMs = backoffSeconds.reduce((sum, seconds) => sum + seconds * (1 + maxJitter), 0) * 1000;
+      // Allow a 15-minute stale-claim reclaim before every attempt as well.
+      const reclaimsMs = backoffSeconds.length * 15 * 60 * 1000;
+      expect(longestLadderMs + reclaimsMs).toBeLessThan(STAFF_NOTICE_RESEND_LIMIT_MS);
+    });
+
+    it("does not resend a job attempted before once it is past the window, and alerts instead", async () => {
+      await withSettings(async () => {
+        const id = crypto.randomUUID();
+        const now = new Date("2026-11-17T23:00:00Z");
+        state.outbox.push({
+          id: crypto.randomUUID(), event_key: "ea-request-submitted-" + id,
+          event_type: "ea_request_submitted_staff_v1", template_key: "ea_request_submitted_staff_v1",
+          recipient: "team@example.invalid", status: "failed_retryable", attempt_count: 0,
+          next_attempt_at: new Date(0).toISOString(),
+          created_at: new Date(now.getTime() - STAFF_NOTICE_RESEND_LIMIT_MS - 1).toISOString(),
+          last_attempt_at: new Date(now.getTime() - 3_600_000).toISOString(),
+          payload: { reference: "XRI-" + id.replace(/-/g, "").toUpperCase(), submittedAt: "2026-11-16T23:00:00Z",
+            itemCount: 1, recipients: ["team@example.invalid", "samuel@example.invalid"] },
+        });
+        expect((await runOutboxTick(now)).failed).toBe(1);
+        expect(resend.send).not.toHaveBeenCalled();
+        expect(state.outbox[0]).toMatchObject({ status: "failed_permanent", attempt_count: 1 });
+        expect(state.outbox[0].last_error_summary).toContain("24-hour duplicate check");
+      });
+    });
+
+    it("a manual retry of a stale claim with no recorded attempt, past the window, sends nothing", async () => {
+      await withSettings(async () => {
+        const id = crypto.randomUUID();
+        // A claim from before claims recorded the attempt: processing, last_attempt_at null.
+        state.outbox.push({
+          id: crypto.randomUUID(), event_key: "ea-request-submitted-" + id,
+          event_type: "ea_request_submitted_staff_v1", template_key: "ea_request_submitted_staff_v1",
+          recipient: "team@example.invalid", status: "processing", attempt_count: 0,
+          next_attempt_at: new Date(0).toISOString(), last_attempt_at: null,
+          created_at: new Date(Date.now() - STAFF_NOTICE_RESEND_LIMIT_MS - 3_600_000).toISOString(),
+          updated_at: new Date(Date.now() - STAFF_NOTICE_RESEND_LIMIT_MS).toISOString(),
+          payload: { reference: "XRI-" + id.replace(/-/g, "").toUpperCase(), submittedAt: "2026-11-15T23:00:00Z",
+            itemCount: 1, recipients: ["team@example.invalid", "samuel@example.invalid"] },
+        });
+        const res = await request(makeAdminApp()).post(`/api/admin/research/outbox/${state.outbox[0].id}/retry`);
+        expect(res.status).toBe(200);
+        expect(resend.send).not.toHaveBeenCalled();
+        expect(state.outbox[0]).toMatchObject({ status: "failed_permanent" });
+        expect(state.outbox[0].last_error_summary).toContain("24-hour duplicate check");
+      });
+    });
+
+    it("records the attempt when it claims a job, before the send", async () => {
+      await withSettings(async () => {
+        const id = crypto.randomUUID();
+        state.outbox.push({
+          id: crypto.randomUUID(), event_key: "ea-request-submitted-" + id,
+          event_type: "ea_request_submitted_staff_v1", template_key: "ea_request_submitted_staff_v1",
+          recipient: "team@example.invalid", status: "pending", attempt_count: 0,
+          next_attempt_at: new Date(0).toISOString(), created_at: new Date().toISOString(),
+          payload: { reference: "XRI-" + id.replace(/-/g, "").toUpperCase(), submittedAt: "2026-11-15T23:00:00Z",
+            itemCount: 1, recipients: ["team@example.invalid", "samuel@example.invalid"] },
+        });
+        const now = new Date();
+        let atSend: unknown = "not called";
+        resend.send.mockImplementationOnce(async () => {
+          atSend = { status: state.outbox[0].status, last_attempt_at: state.outbox[0].last_attempt_at };
+          return { data: { id: "resend-product-id" }, error: null };
+        });
+        await runOutboxTick(now);
+        expect(atSend).toEqual({ status: "processing", last_attempt_at: now.toISOString() });
+      });
+    });
+
+    it("queues the short alert when the full switch is on before its migration", async () => {
+      await withSettings(async () => {
+        supabaseRpc.mockResolvedValueOnce({ data: null, error: { code: "PGRST202" } });
+        await runOutboxTick(new Date());
+        const short = { p_since: settings.EA_REQUEST_SUBMITTED_STAFF_NOTICE_START_AT,
+          p_recipients: ["team@example.invalid", "samuel@example.invalid"] };
+        expect(supabaseRpc.mock.calls).toEqual([
+          ["request_intent_enqueue_staff_notices", { ...short, p_detail_since: settings.EA_REQUEST_SUBMITTED_STAFF_NOTICE_DETAIL_START_AT }],
+          ["request_intent_enqueue_staff_notices", short],
+        ]);
+        // Any other failure is not taken as a missing migration.
+        supabaseRpc.mockClear();
+        supabaseRpc.mockResolvedValueOnce({ data: null, error: { code: "57014" } });
+        await runOutboxTick(new Date());
+        expect(supabaseRpc).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 
   it("a thrown provider error schedules a retry with backoff, then goes permanent at the cap", async () => {

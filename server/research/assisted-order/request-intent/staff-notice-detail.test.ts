@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE,
   REQUEST_SUBMITTED_STAFF_TEMPLATE,
+  STAFF_NOTICE_DETAIL_RPC,
+  STAFF_NOTICE_RESEND_LIMIT_MS,
   mapStaffNoticeDetail,
   renderFullStaffNotice,
   requestSubmittedStaffNoticeConfig,
@@ -12,9 +14,9 @@ const send = vi.hoisted(() => vi.fn());
 vi.mock("../../../services/email", () => ({
   getResendClient: async () => ({ client: { emails: { send } }, fromEmail: "Xenios <staff@example.invalid>" }),
 }));
-vi.mock("../../../supabase", () => ({
-  getSupabaseAdmin: () => { throw new Error("tests pass their own reader"); },
-}));
+const rpc = vi.hoisted(() => vi.fn());
+// Only the default reader reaches the database client; other tests pass their own reader.
+vi.mock("../../../supabase", () => ({ getSupabaseAdmin: () => ({ rpc }) }));
 
 const env = {
   EA_REQUEST_SUBMITTED_STAFF_NOTICE_ENABLED: "true",
@@ -64,7 +66,10 @@ function detail(n: 1 | 2, overrides: Record<string, unknown> = {}) {
 const reader = (value: unknown) => vi.fn(async (_key: string) => value);
 
 describe("full request staff notice", () => {
-  beforeEach(() => { send.mockReset(); send.mockResolvedValue({ data: { id: "provider-proof" }, error: null }); });
+  beforeEach(() => {
+    send.mockReset(); send.mockResolvedValue({ data: { id: "provider-proof" }, error: null });
+    rpc.mockReset();
+  });
 
   it("turns on only with its own switch and a valid cutoff", () => {
     expect(config.detailSince).toBe("2026-11-15T22:00:00Z");
@@ -263,6 +268,89 @@ describe("full request staff notice", () => {
     const [a, b, c] = send.mock.calls;
     expect(b).toEqual(a);
     expect(c).toEqual(a);
+  });
+
+  it("keeps long international names and addresses whole, and sends a record past the limits as the short alert", async () => {
+    const name = "Zoë Ångström-Núñez 李小龍 محمد ".padEnd(320, "ł");
+    const abroad = {
+      line1: "Maximilianstraße 12, Hinterhaus ".padEnd(200, "ß"), city: "München", region: "Bayern",
+      postalCode: "80331", countryCode: "DE",
+    };
+    const product = "ペプチド研究用サンプル ".padEnd(300, "語");
+    const record = detail(1, {
+      contact: { ...detail(1).contact, fullLegalName: name, organizationName: "Labor \u202egnp.exe",
+        shippingAddress: abroad, billingSameAsShipping: false, billingAddress: { ...abroad, line2: "Postfach 7" } },
+      lines: [{ productName: product, specification: null, variantId: "pc-intl-1", quantity: 100 },
+        { productName: "Example Peptide", specification: "5 mg vial", variantId: "pc-example-5mg", quantity: 1 }],
+    });
+    await sendRequestSubmittedStaffNotice(job(1), config, env, reader(record));
+    const { text, html } = send.mock.calls[0][0];
+    expect(text).toContain(`Name: ${name}\n`);
+    expect(text).toContain(`Shipping address\n${abroad.line1.trim()}\nMünchen, Bayern 80331\nDE\n`);
+    expect(text).toContain(`Billing address\n${abroad.line1.trim()}\nPostfach 7\nMünchen, Bayern 80331\nDE\n`);
+    expect(text).toContain(`1. ${product}\n   Specification: Not stated\n   Variant: pc-intl-1\n   Quantity: 100\n`);
+    // A direction override cannot make the organization display in a different order.
+    expect(text).toContain("Organization: Labor gnp.exe\n");
+    expect(html).not.toMatch(/[\u202a-\u202e\u2066-\u2069]/);
+    for (const value of [name, "München, Bayern 80331", product]) expect(html).toContain(value);
+
+    send.mockClear();
+    const tooLong = detail(1, { contact: { ...detail(1).contact, fullLegalName: name + "ł" } });
+    await sendRequestSubmittedStaffNotice(job(1), config, env, reader(tooLong));
+    expect(send.mock.calls[0][0].text).toContain("Full details could not be included.");
+    expect(JSON.stringify(send.mock.calls[0][0])).not.toContain("Zoë");
+  });
+
+  it("sends two concurrent requests apart, each with its own customer under its own key", async () => {
+    const read = vi.fn(async (key: string) => {
+      await new Promise(resolve => setTimeout(resolve, key === ids(1).key ? 10 : 0));
+      return key === ids(1).key ? detail(1) : detail(2);
+    });
+    const results = await Promise.all(([1, 2, 1, 2] as const).map(n => sendRequestSubmittedStaffNotice(job(n), config, env, read)));
+    expect(results).toEqual(Array(4).fill({ ok: true, providerId: "provider-proof" }));
+    const byKey = new Map<string, unknown[]>();
+    for (const [message, options] of send.mock.calls) {
+      const first = options.idempotencyKey === ids(1).key;
+      expect(message.subject).toBe("New Early Access request " + (first ? ids(1) : ids(2)).reference);
+      expect(message.text).toContain(first ? "Avery Fictional" : "Jordan Example");
+      expect(JSON.stringify(message)).not.toContain(first ? "Jordan" : "Avery");
+      byKey.set(options.idempotencyKey, [...(byKey.get(options.idempotencyKey) ?? []), message]);
+    }
+    // A repeated job sends the identical request under the same key, which the provider recognises.
+    expect([...byKey.keys()].sort()).toEqual([ids(1).key, ids(2).key]);
+    for (const [a, b] of byKey.values()) expect(b).toEqual(a);
+  });
+
+  it("retries, sending nothing, when the detail function is missing from the database", async () => {
+    rpc.mockResolvedValueOnce({ data: null, error: { code: "PGRST202", message: "Could not find the function" } });
+    expect(await sendRequestSubmittedStaffNotice(job(1), config, env))
+      .toEqual({ ok: false, providerId: null, error: "Staff notice detail was unavailable." });
+    expect(rpc).toHaveBeenCalledExactlyOnceWith(STAFF_NOTICE_DETAIL_RPC, { p_event_key: ids(1).key });
+    expect(send).not.toHaveBeenCalled();
+    rpc.mockResolvedValueOnce({ data: detail(1), error: null });
+    expect(await sendRequestSubmittedStaffNotice(job(1), config, env)).toEqual({ ok: true, providerId: "provider-proof" });
+  });
+
+  it("resends after an earlier attempt only inside the provider's 24-hour duplicate check", async () => {
+    expect(STAFF_NOTICE_RESEND_LIMIT_MS).toBeLessThan(24 * 60 * 60 * 1000);
+    const now = new Date("2026-11-16T22:00:00Z");
+    const ago = (ms: number) => new Date(now.getTime() - ms).toISOString();
+    const read = reader(detail(1));
+    // Never attempted: even an old job is sent, once.
+    expect(await sendRequestSubmittedStaffNotice({ ...job(1), created_at: ago(3 * 86_400_000), last_attempt_at: null },
+      config, env, read, now)).toEqual({ ok: true, providerId: "provider-proof" });
+    // Attempted, response lost, still inside the window: the same request under the same key.
+    const lost = { ...job(1), created_at: ago(STAFF_NOTICE_RESEND_LIMIT_MS - 60_000), last_attempt_at: ago(60_000) };
+    expect(await sendRequestSubmittedStaffNotice(lost, config, env, read, now)).toEqual({ ok: true, providerId: "provider-proof" });
+    expect(send.mock.calls[1]).toEqual(send.mock.calls[0]);
+    // Past the window, or with no creation time to measure from: refused for good, nothing read or sent.
+    for (const late of [{ ...lost, created_at: ago(STAFF_NOTICE_RESEND_LIMIT_MS + 1) }, { ...lost, created_at: undefined }]) {
+      expect(await sendRequestSubmittedStaffNotice(late, config, env, read, now)).toMatchObject({
+        ok: false, nonRetryable: true, error: expect.stringContaining("24-hour duplicate check"),
+      });
+    }
+    expect(send).toHaveBeenCalledTimes(2);
+    expect(read).toHaveBeenCalledTimes(2);
   });
 
   it("refuses a job whose template and event type disagree", async () => {
