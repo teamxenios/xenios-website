@@ -40,6 +40,10 @@ describe("catalog search matcher", () => {
     expect(finds(["HCG 10,000 IU"], "10,000iu")).toBe(true);
     expect(finds(["Peptide 500 µg"], "500mcg")).toBe(true);
     expect(finds(["Anastrozole 0.25MG"], "0.25 mg")).toBe(true);
+    for (const query of [".25mg", ".25 mg", "0.250mg"]) {
+      expect(finds(["ANASTROZOLE 0.25MG CAPSULE"], query)).toBe(true);
+      expect(finds(["Tirzepatide 25 mg"], query)).toBe(false);
+    }
   });
   it("matches an amount only as the whole number with its unit", () => {
     for (const listed of ["BPC-157 15 mg", "BPC-157 35 mg", "AOD 2.5 mg", "TB-500 50 mg", "BPC-157 5 mcg", "BPC-157 3MG/ML (5ML)"]) {

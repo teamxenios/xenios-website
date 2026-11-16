@@ -52,6 +52,13 @@ describe("quote-request picker search over the real catalog", () => {
     }
     expect(await sourceIds("bpc 157 1 mg")).toEqual([]);
   });
+  it("reads .25mg as 0.25 mg: the same rows, and no 25 mg row", async () => {
+    const leading = await sourceIds(".25mg");
+    expect(leading.length).toBeGreaterThan(0);
+    expect(leading).toEqual(await sourceIds("0.25mg"));
+    const page = await catalog.list(viewer, { search: ".25mg", pageSize: 100 });
+    for (const item of page.items) expect(`${item.productName} ${item.specification ?? ""}`).not.toMatch(/(?<![\d.])25\s*mg/i);
+  });
   it("finds NAD+ listings by nad+ without the names that only contain the letters", async () => {
     const page = await catalog.list(viewer, { search: "nad+", pageSize: 100 });
     expect(page.total).toBeGreaterThan(0);

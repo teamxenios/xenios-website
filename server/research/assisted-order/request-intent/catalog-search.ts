@@ -8,6 +8,7 @@
  * - A token is a run of letters or a number. Everything else separates tokens. A hyphen or
  *   apostrophe between two letters is dropped first, so "ghk-cu" is "ghkcu" and "men's" is "mens".
  *   A "+" right after letters stays on the word, so "nad+" finds "NAD+" and not "Gonadorelin".
+ *   A number may start with its decimal point, so ".25mg" is 0.25 mg and never 25 mg.
  *   "µg" reads as "mcg", and a thousands comma is dropped, so "10,000" is "10000". In the query
  *   every comma between digits is dropped, so "10,0" typed on the way to "10,000" keeps HCG 10,000 IU.
  * - Every query token must match, in any order. An amount is the one pair that stays together: its
@@ -30,7 +31,7 @@ type Token = { readonly kind: "word" | "number"; readonly text: string };
 const WORD_JOINERS = /(\p{L})[-‐‑'’]+(?=\p{L})/gu;
 const THOUSANDS = /(\d),(?=\d{3}(?!\d))/g;
 const MICRO = /[µμ](?=g)/g;
-const TOKEN = /\p{L}+\+?|\d+(?:\.\d+)?/gu;
+const TOKEN = /\p{L}+\+?|\d+(?:\.\d+)?|(?<![\p{L}\d])\.\d+/gu;
 const NUMBER_RUN = /(?<![\d.])\d+(?:[-‐‑]\d+)+(?![\d.])/g;
 const QUERY_DIGIT_COMMA = /(\d),(?=\d)/g;
 const UNITS = ["mg", "mcg", "ml", "iu", "g", "gm", "unit", "units"];
@@ -40,7 +41,7 @@ function tokens(text: string, query = false): Token[] {
   const normalized = text.normalize("NFKC").toLowerCase();
   const folded = (query ? normalized.replace(QUERY_DIGIT_COMMA, "$1") : normalized)
     .replace(MICRO, "mc").replace(THOUSANDS, "$1").replace(WORD_JOINERS, "$1");
-  return [...folded.matchAll(TOKEN)].map(([value]) => ({ kind: /\d/.test(value[0]) ? "number" : "word", text: value }));
+  return [...folded.matchAll(TOKEN)].map(([value]) => ({ kind: /[\d.]/.test(value[0]) ? "number" : "word", text: value }));
 }
 
 const sameNumber = (left: string, right: string) => Number(left) === Number(right);
