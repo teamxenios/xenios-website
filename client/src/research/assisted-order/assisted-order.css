@@ -156,6 +156,7 @@
 .xenios-order-card-actions > .xenios-order-button { margin-top: auto; align-self: flex-start; }
 .xenios-order-summary-toggle { display: none; }
 .xenios-order-mobile-pagination { display: none; }
+.xenios-order-page--guest-catalog .xenios-order-card :is(h2, p) { overflow-wrap: anywhere; }
 
 @media (max-width: 700px) {
   .xenios-order-page--guest-catalog { width: 100%; }
@@ -192,12 +193,13 @@
   .xenios-order-page--guest-catalog .xenios-order-card {
     min-width: 0;
     min-height: 0;
+    container: guest-order-card / inline-size;
     gap: 8px;
     padding: 12px;
     border-radius: 14px;
   }
-  .xenios-order-page--guest-catalog .xenios-order-card h2 { margin: 0; font-size: 1rem; line-height: 1.3; overflow-wrap: anywhere; }
-  .xenios-order-page--guest-catalog .xenios-order-card p { margin: 0; font-size: .8125rem; line-height: 1.4; overflow-wrap: anywhere; }
+  .xenios-order-page--guest-catalog .xenios-order-card h2 { margin: 0; font-size: 1rem; line-height: 1.3; }
+  .xenios-order-page--guest-catalog .xenios-order-card p { margin: 0; font-size: .8125rem; line-height: 1.4; }
   .xenios-order-page--guest-catalog .xenios-order-card-intro { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 12px; align-items: start; }
   .xenios-order-page--guest-catalog .xenios-order-card-media { display: block; min-width: 0; }
   .xenios-order-page--guest-catalog .xenios-order-card-media figcaption { font-size: .75rem; line-height: 1.35; }
@@ -306,6 +308,23 @@
 @media (max-width: 700px) {
   .xenios-order-page--guest-catalog .xenios-order-card-intro--no-media { grid-template-columns: minmax(0, 1fr); }
   .xenios-order-page--guest-catalog .xenios-order-card-intro--no-media .xenios-order-card-identity { grid-column: 1 / -1; }
+}
+
+/* When the card is narrow relative to the text, give the identity and the
+   packaging caption the whole width while retaining the compact image. */
+@container guest-order-card (max-width: 13rem) {
+  .xenios-order-page--guest-catalog .xenios-order-card-intro {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-media { display: block; grid-row: auto; }
+  .xenios-order-page--guest-catalog .xenios-order-card-media > figure {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-media > figure > div { max-inline-size: 88px; }
+  .xenios-order-page--guest-catalog .xenios-order-card-identity { grid-column: 1; grid-row: auto; }
+  .xenios-order-page--guest-catalog .xenios-order-card-description { display: block; }
 }
 
 /* While the toolbar is sticky, a control reached by keyboard must not scroll
