@@ -23,7 +23,17 @@ type StaffNoticeJob = {
   template_key?: unknown;
   recipient: unknown;
   payload: unknown;
+  created_at?: unknown;
+  last_attempt_at?: unknown;
 };
+
+/**
+ * Resend recognises a repeated idempotency key for 24 hours. A job tried before
+ * may already have been delivered with its response lost, so once it is older
+ * than this it is not sent again. The job's creation time is used because it is
+ * never later than the first attempt, which leaves an hour's margin at least.
+ */
+export const STAFF_NOTICE_RESEND_LIMIT_MS = 23 * 60 * 60 * 1000;
 
 const eventKey = /^ea-request-submitted-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
 const centralTime = new Intl.DateTimeFormat("en-US", {
@@ -140,9 +150,10 @@ export function mapStaffNoticeDetail(raw: unknown): StaffNoticeDetail | null {
   };
 }
 
-// Customer text is shown as one line: no control characters, no line breaks.
+// Customer text is shown as one line: no control characters, no line breaks,
+// and no direction overrides that could make it display in a different order.
 function plain(value: string): string {
-  return value.replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]+/g, " ").replace(/ {2,}/g, " ").trim();
+  return value.replace(/[\u202a-\u202e\u2066-\u2069]/g, "").replace(/[\u0000-\u001f\u007f-\u009f\u2028\u2029]+/g, " ").replace(/ {2,}/g, " ").trim();
 }
 
 function html(value: string): string {
@@ -251,6 +262,7 @@ export const readStaffNoticeDetail: StaffNoticeDetailReader = async (key) => {
 export async function sendRequestSubmittedStaffNotice(
   job: StaffNoticeJob, config: StaffNoticeConfig, env = process.env,
   readDetail: StaffNoticeDetailReader = readStaffNoticeDetail,
+  now: Date = new Date(),
 ): Promise<MailResult> {
   const payload = payloadSchema.safeParse(job.payload);
   const full = job.event_type === REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE;
@@ -261,6 +273,15 @@ export async function sendRequestSubmittedStaffNotice(
     || payload.data.recipients.some((email, index) => email !== config.recipients[index])
     || payload.data.reference !== "XRI-" + job.event_key.slice("ea-request-submitted-".length).replace(/-/g, "").toUpperCase()) {
     return { ok: false, providerId: null, error: "Invalid staff notice binding.", nonRetryable: true };
+  }
+  if (job.last_attempt_at != null) {
+    const created = typeof job.created_at === "string" ? Date.parse(job.created_at) : Number.NaN;
+    if (!Number.isFinite(created) || now.getTime() - created > STAFF_NOTICE_RESEND_LIMIT_MS) {
+      return {
+        ok: false, providerId: null, nonRetryable: true,
+        error: "Not resent: an earlier attempt is past the provider's 24-hour duplicate check. Open the request in the private queue.",
+      };
+    }
   }
   if (!env.RESEND_API_KEY?.trim()) {
     return { ok: false, providerId: null, error: "Staff notice email is unconfigured." };
