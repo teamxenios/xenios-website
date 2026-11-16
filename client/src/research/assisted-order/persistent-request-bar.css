@@ -43,6 +43,22 @@
   .xenios-request-dock__status { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; }
   .xenios-request-dock__summary, .xenios-request-dock__primary { padding-inline: 10px; }
 }
+@media (max-width: 360px) and (max-height: 650px) {
+  body:has(.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar) > .xenios-request-dock {
+    container: guest-request-dock / inline-size;
+  }
+  /* Cap the dock when the remaining width is narrow relative to the text.
+     Keep room for the button outlines inside its scrollable content. */
+  @container guest-request-dock (max-width: 10rem) {
+    .xenios-request-dock__inner {
+      max-block-size: 38dvh;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      padding: 7px;
+      scroll-padding-block: 7px;
+    }
+  }
+}
 @media (forced-colors: active) {
   .xenios-request-dock { border-top: 2px solid CanvasText; background: Canvas; color: CanvasText; box-shadow: none; }
   .xenios-request-dock__primary, .xenios-request-dock__summary { border: 2px solid ButtonText; }
