@@ -31,6 +31,7 @@ import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/commu
 import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
 import { renderAssistedOrderOutboxEmail } from "./assisted-order/communications";
 import {
+  REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE,
   REQUEST_SUBMITTED_STAFF_TEMPLATE,
   requestSubmittedStaffNoticeConfig,
   sendRequestSubmittedStaffNotice,
@@ -52,6 +53,8 @@ const ATTEMPTS = "research_notification_attempts";
 // Backoff schedule (Mega 1 section 4): immediate, 1m, 5m, 20m, 1h, 6h.
 const BACKOFF_SECONDS = [0, 60, 300, 1200, 3600, 21600];
 const MAX_ATTEMPTS = BACKOFF_SECONDS.length;
+/** The automatic retry ladder, exported so tests can bound its span. */
+export const OUTBOX_RETRY_LADDER = Object.freeze({ backoffSeconds: Object.freeze([...BACKOFF_SECONDS]), maxJitter: 0.2 });
 
 type EnqueueInput = {
   eventKey: string;
@@ -257,10 +260,11 @@ export function registerPrivateQuoteDispatch(handler: (job: unknown) => Promise<
 async function dispatch(
   job: any,
   staffNotice: ReturnType<typeof requestSubmittedStaffNoticeConfig>,
+  now: Date,
 ): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
-  if (job?.template_key === REQUEST_SUBMITTED_STAFF_TEMPLATE) {
+  if (job?.template_key === REQUEST_SUBMITTED_STAFF_TEMPLATE || job?.template_key === REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE) {
     if (!staffNotice) return { ok: false, providerId: null, error: "Staff notices paused." };
-    return sendRequestSubmittedStaffNotice(job, staffNotice);
+    return sendRequestSubmittedStaffNotice(job, staffNotice, process.env, undefined, now);
   }
   if (job?.template_key === "ea_private_quote_notice_v1") {
     if (!privateQuoteDispatch) return { ok: false, providerId: null, error: "Private quote channel unavailable." };
@@ -463,7 +467,7 @@ async function dispatch(
 
 function nextAttemptAt(attemptCount: number, now: Date): string {
   const base = BACKOFF_SECONDS[Math.min(attemptCount, BACKOFF_SECONDS.length - 1)];
-  const jitter = base * 0.2 * Math.random();
+  const jitter = base * OUTBOX_RETRY_LADDER.maxJitter * Math.random();
   return new Date(now.getTime() + (base + jitter) * 1000).toISOString();
 }
 
@@ -553,10 +557,18 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
   const staffNotice = requestSubmittedStaffNoticeConfig(process.env);
   if (staffNotice) {
     try {
-      const { error } = await getSupabaseAdmin().rpc("request_intent_enqueue_staff_notices", {
-        p_since: staffNotice.since,
-        p_recipients: staffNotice.recipients,
-      });
+      // With the full email off, the existing two-argument reconciliation runs
+      // unchanged, so this build also works before the detail migration.
+      const shortOnly = { p_since: staffNotice.since, p_recipients: staffNotice.recipients };
+      let { error } = await getSupabaseAdmin().rpc("request_intent_enqueue_staff_notices",
+        staffNotice.detailSince ? { ...shortOnly, p_detail_since: staffNotice.detailSince } : shortOnly);
+      // If the full email is switched on before its migration is applied, the
+      // three-argument function does not exist yet. Queue the short alert then,
+      // so the switch can never silence staff notices.
+      if (error && staffNotice.detailSince && (error.code === "PGRST202" || error.code === "42883")) {
+        ({ error } = await getSupabaseAdmin().rpc("request_intent_enqueue_staff_notices", shortOnly));
+        console.error("[outbox] full staff notices need the detail migration; short alerts queued instead");
+      }
       if (error) console.error("[outbox] staff notice reconciliation failed");
     } catch {
       console.error("[outbox] staff notice reconciliation failed");
@@ -582,15 +594,21 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     .select("*")
     .in("status", ["pending", "failed_retryable"])
     .lte("next_attempt_at", now.toISOString());
+  // Paused staff jobs are left out in the query itself, so they cannot fill
+  // the batch ahead of other mail.
   if (!staffNotice) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_TEMPLATE);
+  if (!staffNotice?.detailSince) dueQuery = dueQuery.neq("template_key", REQUEST_SUBMITTED_STAFF_FULL_TEMPLATE);
   const { data: due, error } = await dueQuery.limit(20);
   if (error || !due?.length) return result;
 
   for (const job of due as any[]) {
-    // Claim: only one runner may move it to processing.
+    // Claim: only one runner may move it to processing. The claim also
+    // records the attempt before any send, so a worker that dies after the
+    // provider accepted still leaves durable evidence that a send may have
+    // happened. Dispatch reads the row as it was before this claim.
     const { data: claimed } = await getSupabaseAdmin()
       .from(OUTBOX)
-      .update({ status: "processing", updated_at: now.toISOString() })
+      .update({ status: "processing", updated_at: now.toISOString(), last_attempt_at: now.toISOString() })
       .eq("id", job.id)
       .eq("status", job.status)
       .select()
@@ -598,7 +616,7 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
     if (!claimed) continue;
 
     const attempt = (job.attempt_count ?? 0) + 1;
-    const outcome = await dispatch(job, staffNotice);
+    const outcome = await dispatch(job, staffNotice, now);
 
     await getSupabaseAdmin().from(ATTEMPTS).insert({
       outbox_id: job.id,
@@ -726,6 +744,12 @@ export function registerOutboxAdmin(app: Express) {
         }
       }
       const now = new Date().toISOString();
+      // A processing row was claimed, so a send may have reached the provider.
+      // Keep that evidence (a claim from before claims were stamped falls back
+      // to its claim time), so the requeued job is never treated as unattempted.
+      const attempted = (row as any).status === "processing"
+        ? { last_attempt_at: (row as any).last_attempt_at ?? (row as any).updated_at ?? now }
+        : {};
       const { data: updated, error } = await getSupabaseAdmin()
         .from(OUTBOX)
         .update({
@@ -734,6 +758,7 @@ export function registerOutboxAdmin(app: Express) {
           next_attempt_at: now,
           last_error_summary: null,
           updated_at: now,
+          ...attempted,
         })
         .eq("id", id)
         .eq("status", (row as any).status)

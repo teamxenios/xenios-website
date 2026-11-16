@@ -13,9 +13,19 @@ type QueueLoad = Readonly<{ api: RequestIntentApi; page: number; attempt: number
   | Readonly<{ status: "error" }>
 );
 
+/**
+ * A staff notice links here with ?reference=XRI-... . The link only fills in the
+ * reference. Staff still choose to read it, so opening a link reads nothing.
+ */
+export function linkedRequestReference(search: string): string {
+  const value = new URLSearchParams(search).get("reference")?.trim() ?? "";
+  return /^XRI-[0-9A-F]{32}$/i.test(value) ? value.toUpperCase() : "";
+}
+
 /** Mount only inside the existing private staff shell. The server still enforces Care authorization. */
 export function RequestIntentStaffReadback({ api }: Readonly<{ api: RequestIntentApi }>) {
-  const [reference, setReference] = useState("");
+  const [reference, setReference] = useState(() =>
+    typeof window === "undefined" ? "" : linkedRequestReference(window.location.search));
   const [detail, setDetail] = useState<RequestIntentDetail | null>(null);
   const [detailPending, setDetailPending] = useState(false);
   const [message, setMessage] = useState("");
