@@ -7,15 +7,23 @@
  *
  * - A token is a run of letters or a number. Everything else separates tokens. A hyphen or
  *   apostrophe between two letters is dropped first, so "ghk-cu" is "ghkcu" and "men's" is "mens".
- *   "µg" reads as "mcg", and a thousands comma is dropped, so "10,000" is "10000".
- * - Every query token must match, in any order.
+ *   A "+" right after letters stays on the word, so "nad+" finds "NAD+" and not "Gonadorelin".
+ *   A number may start with its decimal point, so ".25mg" is 0.25 mg and never 25 mg.
+ *   "µg" reads as "mcg", and a thousands comma is dropped, so "10,000" is "10000". In the query
+ *   every comma between digits is dropped, so "10,0" typed on the way to "10,000" keeps HCG 10,000 IU.
+ * - Every query token must match, in any order. An amount is the one pair that stays together: its
+ *   number and its unit.
  * - A word matches inside a listed word, as before ("hexa" finds "Dihexa").
- * - An amount is a number followed by a word. It matches only that whole number followed by a
- *   word that starts with the query's word, so "5 mg" finds "5 mg" and "5MG/ML" but not "15 mg",
- *   "2.5 mg", "50 mg" or "5 mcg".
- * - A number on its own must equal a listed number, except the last token of the query, which may
- *   be the start of one, so a query typed one key at a time keeps its rows: "bpc 157 1" still
- *   shows "10 mg".
+ * - A query word of five or more letters ending in "s" also matches a listed word ending in the
+ *   word without it, so "capsules" finds "CAPSULE" and "vials" finds "vial".
+ * - An amount is a number followed by a unit (mg, mcg, ml, iu, g, gm, unit), or by the start of
+ *   one. It matches only that whole number followed by a listed word that starts with the query's
+ *   unit, so "5 mg" finds "5 mg" and "5MG/ML" but not "15 mg", "2.5 mg", "50 mg" or "5 mcg".
+ * - Any other number that opens the query matches inside a listed number, as on #448: "57" finds
+ *   "BPC-157". After another token, the last number must start a listed number, so a query typed
+ *   one key at a time keeps its rows ("bpc 157 1" still shows "10 mg", and "synthetic 1" does not
+ *   show "Synthetic 21"). Any other number must equal a listed one: "tb 500 bpc 157" finds
+ *   "BPC-157/TB-500".
  *
  * The identifier the row carries is still found by its exact characters.
  * Matching only: nothing here changes a row, its order or what the picker returns.
@@ -26,13 +34,17 @@ type Token = { readonly kind: "word" | "number"; readonly text: string };
 const WORD_JOINERS = /(\p{L})[-‐‑'’]+(?=\p{L})/gu;
 const THOUSANDS = /(\d),(?=\d{3}(?!\d))/g;
 const MICRO = /[µμ](?=g)/g;
-const TOKEN = /\p{L}+|\d+(?:\.\d+)?/gu;
+const TOKEN = /\p{L}+\+?|\d+(?:\.\d+)?|(?<![\p{L}\d])\.\d+/gu;
 const NUMBER_RUN = /(?<![\d.])\d+(?:[-‐‑]\d+)+(?![\d.])/g;
+const QUERY_DIGIT_COMMA = /(\d),(?=\d)/g;
+const UNITS = ["mg", "mcg", "ml", "iu", "g", "gm", "unit", "units"];
+const isUnit = (word: string) => UNITS.some((unit) => unit.startsWith(word));
 
-function tokens(text: string): Token[] {
-  const folded = text.normalize("NFKC").toLowerCase()
+function tokens(text: string, query = false): Token[] {
+  const normalized = text.normalize("NFKC").toLowerCase();
+  const folded = (query ? normalized.replace(QUERY_DIGIT_COMMA, "$1") : normalized)
     .replace(MICRO, "mc").replace(THOUSANDS, "$1").replace(WORD_JOINERS, "$1");
-  return [...folded.matchAll(TOKEN)].map(([value]) => ({ kind: /\d/.test(value[0]) ? "number" : "word", text: value }));
+  return [...folded.matchAll(TOKEN)].map(([value]) => ({ kind: /[\d.]/.test(value[0]) ? "number" : "word", text: value }));
 }
 
 const sameNumber = (left: string, right: string) => Number(left) === Number(right);
@@ -53,19 +65,23 @@ export function matchesCatalogSearch(row: CatalogSearchText, query: string): boo
   const search = query.trim().toLowerCase();
   if (!search) return true;
   if (row.identifier.includes(search)) return true;
-  const wanted = tokens(search);
+  const wanted = tokens(search, true);
   if (wanted.length === 0) return false;
   const listed = row.tokens;
   for (let index = 0; index < wanted.length; index += 1) {
     const token = wanted[index];
     const next = wanted[index + 1];
     if (token.kind === "word") {
-      if (!listed.some((own) => own.kind === "word" && own.text.includes(token.text))) return false;
-    } else if (next?.kind === "word") {
-      // An amount: this whole number, then a word starting with the query's word.
+      const singular = token.text.length >= 5 && token.text.endsWith("s") ? token.text.slice(0, -1) : null;
+      if (!listed.some((own) => own.kind === "word"
+        && (own.text.includes(token.text) || (singular !== null && own.text.endsWith(singular))))) return false;
+    } else if (next?.kind === "word" && isUnit(next.text)) {
+      // An amount: this whole number, then a listed word starting with the query's unit.
       if (!listed.some((own, at) => own.kind === "number" && sameNumber(own.text, token.text)
         && listed[at + 1]?.kind === "word" && listed[at + 1].text.startsWith(next.text))) return false;
       index += 1;
+    } else if (index === 0) {
+      if (!listed.some((own) => own.kind === "number" && own.text.includes(token.text))) return false;
     } else if (next === undefined) {
       if (!listed.some((own) => own.kind === "number" && own.text.startsWith(token.text))) return false;
     } else if (!listed.some((own) => own.kind === "number" && sameNumber(own.text, token.text))) {

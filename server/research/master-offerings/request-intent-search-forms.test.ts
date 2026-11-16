@@ -44,6 +44,26 @@ describe("quote-request picker search over the real catalog", () => {
       expect(found).not.toContain(BPC_15MG);
     }
   });
+  it("keeps BPC-157 10 mg apart from 5 mg, and a partial amount finds no false 1 mg", async () => {
+    for (const search of ["bpc-157 10 mg", "bpc157 10mg"]) {
+      const found = await sourceIds(search);
+      expect(found).toContain(BPC_10MG);
+      expect(found).not.toContain(BPC_5MG);
+    }
+    expect(await sourceIds("bpc 157 1 mg")).toEqual([]);
+  });
+  it("reads .25mg as 0.25 mg: the same rows, and no 25 mg row", async () => {
+    const leading = await sourceIds(".25mg");
+    expect(leading.length).toBeGreaterThan(0);
+    expect(leading).toEqual(await sourceIds("0.25mg"));
+    const page = await catalog.list(viewer, { search: ".25mg", pageSize: 100 });
+    for (const item of page.items) expect(`${item.productName} ${item.specification ?? ""}`).not.toMatch(/(?<![\d.])25\s*mg/i);
+  });
+  it("finds NAD+ listings by nad+ without the names that only contain the letters", async () => {
+    const page = await catalog.list(viewer, { search: "nad+", pageSize: 100 });
+    expect(page.total).toBeGreaterThan(0);
+    for (const item of page.items) expect(`${item.productName} ${item.specification ?? ""}`).toMatch(/NAD\+/i);
+  });
   it("gives the same BPC-157 rows for bpc-157, bpc 157 and bpc157", async () => {
     const hyphen = await sourceIds("bpc-157");
     expect(hyphen.length).toBeGreaterThan(0);
