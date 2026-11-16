@@ -42,7 +42,7 @@ const UNITS = ["mg", "mcg", "ml", "iu", "g", "gm", "unit", "units"];
 const isUnit = (word: string) => UNITS.some((unit) => unit.startsWith(word));
 const NUMBER_TEXT = String.raw`(?:\d+(?:\.\d+)?|\.\d+)`;
 const AMOUNT = new RegExp(String.raw`(?<![\d.])(${NUMBER_TEXT})\s*(${UNITS.join("|")})(?![\p{L}\d])`, "gu");
-const CONCENTRATION = new RegExp(AMOUNT.source + String.raw`\s*/\s*(?:(${NUMBER_TEXT})\s*)?ml(?![\p{L}\d])`, "gu");
+const MEASUREMENT = new RegExp(AMOUNT.source + String.raw`(?:\s*/\s*(?:(${NUMBER_TEXT})\s*)?(ml)(?![\p{L}\d]))?`, "gu");
 const COMPONENT_SEPARATOR = /(?:\+|,|\/(?!\s*(?:mg|mcg|ml|iu|g|gm|units?)\b))\s*(?=\p{L})/u;
 
 function foldText(text: string, query = false): string {
@@ -57,28 +57,15 @@ function tokens(text: string): Token[] {
 
 const sameNumber = (left: string, right: string) => Number(left) === Number(right);
 
-function matchesConcentrations(fields: readonly string[], search: string): boolean {
-  for (const [, amount, unit, volume = "1"] of search.matchAll(CONCENTRATION)) {
-    if (!fields.some(field => [...field.matchAll(CONCENTRATION)].some(
-      ([, ownAmount, ownUnit, ownVolume = "1"]) =>
-        sameNumber(amount, ownAmount) && unit === ownUnit && sameNumber(volume, ownVolume),
-    ))) return false;
-  }
-  return true;
+function sameMeasurement(wanted: RegExpExecArray, listed: RegExpExecArray): boolean {
+  return wanted[2] === listed[2] && sameNumber(wanted[1], listed[1])
+    && (!wanted[4] || (Boolean(listed[4]) && sameNumber(wanted[3] ?? "1", listed[3] ?? "1")));
 }
 
-function matchesComponentStrength(fields: readonly string[], search: string): boolean {
-  const [strength, second] = search.matchAll(AMOUNT);
-  if (!strength || second || strength[2] === "ml") return true;
-  const [expression, amount, unit] = strength;
-  const before = tokens(search.slice(0, strength.index)).reverse();
-  const after = tokens(search.slice(strength.index + expression.length));
-  const nearbyTerms = [...before, ...after];
-  if (!nearbyTerms.length) return true;
-
+function matchesComponentStrength(fields: readonly string[], wanted: RegExpExecArray, nearbyTerms: readonly Token[]): boolean {
   return fields.every(field => {
     const components = field.split(COMPONENT_SEPARATOR).flatMap(part => {
-      const [listedStrength] = part.matchAll(AMOUNT);
+      const [listedStrength] = part.matchAll(MEASUREMENT);
       if (!listedStrength || listedStrength[2] === "ml") return [];
       const name = tokens(part.slice(0, listedStrength.index));
       return name.some(term => term.kind === "word") ? [{ name, strength: listedStrength }] : [];
@@ -86,16 +73,41 @@ function matchesComponentStrength(fields: readonly string[], search: string): bo
     if (components.length < 2) return true;
 
     // Match the name closest to the queried amount. A leading blend name may be in a
-    // different clause, so stop when the surrounding terms stop describing this component.
-    let candidates = components;
-    for (const term of nearbyTerms) {
-      const matching = candidates.filter(component => component.name.some(own => own.kind === term.kind
-        && (term.kind === "number" ? sameNumber(own.text, term.text) : own.text.includes(term.text))));
-      if (matching.length) candidates = matching;
-      else if (candidates !== components) break;
+    // different clause. Anchor on a word so a code number cannot select the wrong component.
+    const hasTerm = (name: readonly Token[], term: Token) => name.some(own => own.kind === term.kind
+      && (term.kind === "number" ? sameNumber(own.text, term.text) : own.text.includes(term.text)));
+    const anchor = nearbyTerms.findIndex(term => term.kind === "word"
+      && components.some(component => hasTerm(component.name, term)));
+    if (anchor === -1) return true;
+    let candidates = components.filter(component => hasTerm(component.name, nearbyTerms[anchor]));
+    const otherTerms = [...nearbyTerms.slice(0, anchor).reverse(), ...nearbyTerms.slice(anchor + 1)];
+    for (const term of otherTerms) {
+      const matching = candidates.filter(component => hasTerm(component.name, term));
+      if (!matching.length) {
+        if (term.kind === "number") return false;
+        break;
+      }
+      candidates = matching;
     }
-    return candidates === components || candidates.some(({ strength: part }) => part[2] === unit && sameNumber(part[1], amount));
+    return candidates.some(({ strength }) => sameMeasurement(wanted, strength));
   });
+}
+
+function matchesMeasurements(fields: readonly string[], search: string): boolean {
+  for (const clause of search.split(COMPONENT_SEPARATOR)) {
+    const measurements = [...clause.matchAll(MEASUREMENT)];
+    let previousEnd = 0;
+    for (const wanted of measurements) {
+      const before = tokens(clause.slice(previousEnd, wanted.index)).reverse();
+      previousEnd = wanted.index + wanted[0].length;
+      const nearbyTerms = !before.length && measurements.length === 1 ? tokens(clause.slice(previousEnd)) : before;
+      if (wanted[4] && !fields.some(field => [...field.matchAll(MEASUREMENT)].some(
+        listed => sameMeasurement(wanted, listed),
+      ))) return false;
+      if (wanted[2] !== "ml" && nearbyTerms.length && !matchesComponentStrength(fields, wanted, nearbyTerms)) return false;
+    }
+  }
+  return true;
 }
 
 /** The listed text of one row, read once. `identifier` is matched by its exact characters only. */
@@ -140,5 +152,5 @@ export function matchesCatalogSearch(row: CatalogSearchText, query: string): boo
       return false;
     }
   }
-  return matchesConcentrations(row.fields, folded) && matchesComponentStrength(row.fields, folded);
+  return matchesMeasurements(row.fields, folded);
 }

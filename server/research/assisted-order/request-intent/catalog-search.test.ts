@@ -72,6 +72,17 @@ describe("catalog search matcher", () => {
     expect(finds(["COLOUR MIX 5MG/ML (2ML)"], "5 mg/ml")).toBe(true);
     expect(finds(listed, "10mg")).toBe(true);
   });
+  it("keeps every explicit strength or concentration with its named component", () => {
+    const blend = ["SHADE MIX Red-41 (10mg/0.1ml) / Blue-42 (20mg/0.2ml)"];
+    expect(finds(blend, "blue42 10mg/0.1ml")).toBe(false);
+    expect(finds(blend, "blue42 20mg/0.2ml")).toBe(true);
+    expect(finds(blend, "red41 20mg + blue42 10mg")).toBe(false);
+    expect(finds(blend, "blue42 20mg + red41 10mg")).toBe(true);
+    expect(finds(blend, "red41 10mg blue42 20mg")).toBe(true);
+    expect(finds(blend, "blue41 10mg")).toBe(false);
+    expect(finds(blend, "10mg blue41")).toBe(false);
+    expect(finds(blend, blend[0])).toBe(true);
+  });
   it("needs every word of the query, in any order, so a name and an amount narrow together", () => {
     expect(finds(["BPC-157", "BPC-157 5 mg"], "bpc157 5mg")).toBe(true);
     expect(finds(["BPC-157", "BPC-157 5 mg"], "5mg bpc 157")).toBe(true);
