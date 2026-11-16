@@ -4936,6 +4936,94 @@
       },
       "sourceCommit": "92fc6c845259a3984567ce29ddf90afbf76d0369",
       "primarySha256": "70ec66308f6476e7a2880a8f4574ba88b09b0f030cf82e0c5af583daaf83929e"
+    },
+    {
+      "offeringId": "mo_a8ad050608013cf7d4b4",
+      "sourceVariantId": "mov_1f87878d1e95e525b15d",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/curcumin-600mg-label-card-v1-1024.webp",
+          "altText": "Xenios Curcumin 600 mg label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/curcumin-600mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Curcumin 600 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "728f4b9f8584330a6f9443cb43e186e9ee4868f9",
+      "primarySha256": "7e2b87331a52776dcf714564df3ecd0634173689933b36c509dafe9fd00e7f47",
+      "labelPreviewSha256": "e62f5b9e358706e336aa23dfe819466e431ce26294eb463f4dc80733d5a2b93c"
+    },
+    {
+      "offeringId": "mo_230a06a5ed15405e65b2",
+      "sourceVariantId": "mov_64db7bf766cd1d66694d",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/hgh-10iu-label-card-v1-1024.webp",
+          "altText": "Xenios HGH 10 IU label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/hgh-10iu-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios HGH 10 IU",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "728f4b9f8584330a6f9443cb43e186e9ee4868f9",
+      "primarySha256": "9dd5269ea032cbfed3d825d5d874b31129a812ab47974ce15f312fe1df518734",
+      "labelPreviewSha256": "0adfa058b0219bb4d1198985c060b6d717da1e1ad5a6551acba83457e8051dfb"
+    },
+    {
+      "offeringId": "mo_8a3829642d06ad3ca7c4",
+      "sourceVariantId": "mov_3f59629a005b238f4faa",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/dihexa-10mg-label-card-v1-1024.webp",
+          "altText": "Xenios Dihexa 10 mg label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/dihexa-10mg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios Dihexa 10 mg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "728f4b9f8584330a6f9443cb43e186e9ee4868f9",
+      "primarySha256": "797f1f1e8f0ffeb1cc35cda59c854a7b41d8f7f94227a1c8f59bb372d8949e7a",
+      "labelPreviewSha256": "cd80dd708d23511d8ea164da334cad316edce5eee360b07e8d57673d519e7b01"
+    },
+    {
+      "offeringId": "mo_401b85ce671d94672ba0",
+      "sourceVariantId": "mov_038386172c35c2ad8cca",
+      "media": {
+        "packagingDesign": false,
+        "primary": {
+          "href": "/research/product-media/bam15-500mcg-label-card-v1-1024.webp",
+          "altText": "Xenios BAM15 500 mcg label design",
+          "width": 1024,
+          "height": 768
+        },
+        "labelPreview": {
+          "href": "/research/product-media/bam15-500mcg-label-design-v1.webp",
+          "altText": "Front label artwork for Xenios BAM15 500 mcg",
+          "width": 1600,
+          "height": 1000
+        }
+      },
+      "sourceCommit": "9faae28b2ad6802df2d36a1939dba5804598b08a",
+      "primarySha256": "e3889cd8bc2b15d80496e738af6828a75e2948122406d84dfd4c93132c0b67e5",
+      "labelPreviewSha256": "27d3251a9d4534bc14bffb2c4f6bb560739bbb1df8291fd8d8c5e02b5edf4168"
     }
   ]
 }
