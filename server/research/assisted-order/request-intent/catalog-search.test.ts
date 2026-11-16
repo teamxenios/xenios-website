@@ -52,6 +52,26 @@ describe("catalog search matcher", () => {
     }
     expect(finds(["BPC-157 15 mg"], "bpc157 5mg")).toBe(false);
   });
+  it("keeps each listed component paired with its own strength", () => {
+    const blend = ["Shade Mix", "SHADE MIX Red-157 (5mg) / Blue-500 (10mg) / Green-Cu (27mg)"];
+    for (const query of ["blue-500 5 mg", "blue500 5mg", "5 mg blue-500", "shade mix blue-500 5 mg"]) {
+      expect(finds(blend, query)).toBe(false);
+    }
+    expect(finds(blend, "red157 5 mg")).toBe(true);
+    expect(finds(blend, "blue500 10mg")).toBe(true);
+    expect(finds(blend, "5 mg")).toBe(true);
+    expect(finds(["Red-157 5 mg + Blue-500 5 mg"], "blue500 5mg")).toBe(true);
+    expect(finds(["Red-157/Blue-500 5MG/ML"], "blue500 5mg")).toBe(true);
+  });
+  it("matches the whole concentration instead of amounts found elsewhere", () => {
+    const listed = ["COLOUR MIX Red 10mg, Blue 0.1mL (30mL)"];
+    expect(finds(listed, "10mg/0.1ml")).toBe(false);
+    expect(finds(["COLOUR MIX 10MG/1ML (0.1ML)"], "10 mg/0.1mL")).toBe(false);
+    expect(finds(["COLOUR MIX 10MG/0.1ML (30ML)"], "10 mg / .1 mL")).toBe(true);
+    expect(finds(["COLOUR MIX 5MG VIAL (2ML)"], "5 mg/ml")).toBe(false);
+    expect(finds(["COLOUR MIX 5MG/ML (2ML)"], "5 mg/ml")).toBe(true);
+    expect(finds(listed, "10mg")).toBe(true);
+  });
   it("needs every word of the query, in any order, so a name and an amount narrow together", () => {
     expect(finds(["BPC-157", "BPC-157 5 mg"], "bpc157 5mg")).toBe(true);
     expect(finds(["BPC-157", "BPC-157 5 mg"], "5mg bpc 157")).toBe(true);

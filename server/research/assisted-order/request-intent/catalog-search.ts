@@ -11,8 +11,9 @@
  *   A number may start with its decimal point, so ".25mg" is 0.25 mg and never 25 mg.
  *   "µg" reads as "mcg", and a thousands comma is dropped, so "10,000" is "10000". In the query
  *   every comma between digits is dropped, so "10,0" typed on the way to "10,000" keeps HCG 10,000 IU.
- * - Every query token must match, in any order. An amount is the one pair that stays together: its
- *   number and its unit.
+ * - Every query token must match. A number and its unit stay paired. An explicit per-mL
+ *   concentration must occur together in the listing. When a blend names and measures each
+ *   component separately, a component search uses that component's listed strength.
  * - A word matches inside a listed word, as before ("hexa" finds "Dihexa").
  * - A query word of five or more letters ending in "s" also matches a listed word ending in the
  *   word without it, so "capsules" finds "CAPSULE" and "vials" finds "vial".
@@ -39,25 +40,75 @@ const NUMBER_RUN = /(?<![\d.])\d+(?:[-‐‑]\d+)+(?![\d.])/g;
 const QUERY_DIGIT_COMMA = /(\d),(?=\d)/g;
 const UNITS = ["mg", "mcg", "ml", "iu", "g", "gm", "unit", "units"];
 const isUnit = (word: string) => UNITS.some((unit) => unit.startsWith(word));
+const NUMBER_TEXT = String.raw`(?:\d+(?:\.\d+)?|\.\d+)`;
+const AMOUNT = new RegExp(String.raw`(?<![\d.])(${NUMBER_TEXT})\s*(${UNITS.join("|")})(?![\p{L}\d])`, "gu");
+const CONCENTRATION = new RegExp(AMOUNT.source + String.raw`\s*/\s*(?:(${NUMBER_TEXT})\s*)?ml(?![\p{L}\d])`, "gu");
+const COMPONENT_SEPARATOR = /(?:\+|,|\/(?!\s*(?:mg|mcg|ml|iu|g|gm|units?)\b))\s*(?=\p{L})/u;
 
-function tokens(text: string, query = false): Token[] {
+function foldText(text: string, query = false): string {
   const normalized = text.normalize("NFKC").toLowerCase();
-  const folded = (query ? normalized.replace(QUERY_DIGIT_COMMA, "$1") : normalized)
+  return (query ? normalized.replace(QUERY_DIGIT_COMMA, "$1") : normalized)
     .replace(MICRO, "mc").replace(THOUSANDS, "$1").replace(WORD_JOINERS, "$1");
-  return [...folded.matchAll(TOKEN)].map(([value]) => ({ kind: /[\d.]/.test(value[0]) ? "number" : "word", text: value }));
+}
+
+function tokens(text: string): Token[] {
+  return [...text.matchAll(TOKEN)].map(([value]) => ({ kind: /[\d.]/.test(value[0]) ? "number" : "word", text: value }));
 }
 
 const sameNumber = (left: string, right: string) => Number(left) === Number(right);
 
+function matchesConcentrations(fields: readonly string[], search: string): boolean {
+  for (const [, amount, unit, volume = "1"] of search.matchAll(CONCENTRATION)) {
+    if (!fields.some(field => [...field.matchAll(CONCENTRATION)].some(
+      ([, ownAmount, ownUnit, ownVolume = "1"]) =>
+        sameNumber(amount, ownAmount) && unit === ownUnit && sameNumber(volume, ownVolume),
+    ))) return false;
+  }
+  return true;
+}
+
+function matchesComponentStrength(fields: readonly string[], search: string): boolean {
+  const [strength, second] = search.matchAll(AMOUNT);
+  if (!strength || second || strength[2] === "ml") return true;
+  const [expression, amount, unit] = strength;
+  const before = tokens(search.slice(0, strength.index)).reverse();
+  const after = tokens(search.slice(strength.index + expression.length));
+  const nearbyTerms = [...before, ...after];
+  if (!nearbyTerms.length) return true;
+
+  return fields.every(field => {
+    const components = field.split(COMPONENT_SEPARATOR).flatMap(part => {
+      const [listedStrength] = part.matchAll(AMOUNT);
+      if (!listedStrength || listedStrength[2] === "ml") return [];
+      const name = tokens(part.slice(0, listedStrength.index));
+      return name.some(term => term.kind === "word") ? [{ name, strength: listedStrength }] : [];
+    });
+    if (components.length < 2) return true;
+
+    // Match the name closest to the queried amount. A leading blend name may be in a
+    // different clause, so stop when the surrounding terms stop describing this component.
+    let candidates = components;
+    for (const term of nearbyTerms) {
+      const matching = candidates.filter(component => component.name.some(own => own.kind === term.kind
+        && (term.kind === "number" ? sameNumber(own.text, term.text) : own.text.includes(term.text))));
+      if (matching.length) candidates = matching;
+      else if (candidates !== components) break;
+    }
+    return candidates === components || candidates.some(({ strength: part }) => part[2] === unit && sameNumber(part[1], amount));
+  });
+}
+
 /** The listed text of one row, read once. `identifier` is matched by its exact characters only. */
-export type CatalogSearchText = { readonly tokens: readonly Token[]; readonly identifier: string };
+export type CatalogSearchText = { readonly tokens: readonly Token[]; readonly fields: readonly string[]; readonly identifier: string };
 
 export function catalogSearchText(listed: readonly (string | null | undefined)[], identifier: string): CatalogSearchText {
-  const text = listed.filter((part): part is string => !!part).join(" ");
+  const fields = listed.filter((part): part is string => !!part);
+  const text = fields.join(" ");
   // Numbers joined by hyphens ("PE-22-28") are separate numbers, so "3-3-3-10MG" keeps its amount.
   // Their joined form is also listed, as numbers only, so "pe2228" finds them too.
   const joined = [...text.matchAll(NUMBER_RUN)].map(([run]): Token => ({ kind: "number", text: run.replace(/\D/g, "") }));
-  return { tokens: [...tokens(text), ...joined], identifier: identifier.toLowerCase() };
+  const normalized = fields.map(field => foldText(field));
+  return { tokens: [...tokens(normalized.join(" ")), ...joined], fields: normalized, identifier: identifier.toLowerCase() };
 }
 
 /** True when every token of `query` matches the row. A blank query matches every row. */
@@ -65,7 +116,8 @@ export function matchesCatalogSearch(row: CatalogSearchText, query: string): boo
   const search = query.trim().toLowerCase();
   if (!search) return true;
   if (row.identifier.includes(search)) return true;
-  const wanted = tokens(search, true);
+  const folded = foldText(search, true);
+  const wanted = tokens(folded);
   if (wanted.length === 0) return false;
   const listed = row.tokens;
   for (let index = 0; index < wanted.length; index += 1) {
@@ -88,5 +140,5 @@ export function matchesCatalogSearch(row: CatalogSearchText, query: string): boo
       return false;
     }
   }
-  return true;
+  return matchesConcentrations(row.fields, folded) && matchesComponentStrength(row.fields, folded);
 }
