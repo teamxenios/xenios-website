@@ -1,0 +1,73 @@
+/**
+ * Quote-request picker search: separators and amounts.
+ *
+ * Unit cases on the matcher. The real generated catalog cases are in
+ * server/research/master-offerings/request-intent-search-forms.test.ts, inside the lane that may
+ * read the dataset. Matching only: rows, order and DTO are unchanged.
+ */
+import { describe, expect, it } from "vitest";
+import { catalogSearchText, matchesCatalogSearch } from "./catalog-search";
+
+const row = (...listed: string[]) => catalogSearchText(listed, "pc-0000");
+const finds = (listed: string[], query: string) => matchesCatalogSearch(row(...listed), query);
+
+describe("catalog search matcher", () => {
+  it("reads a hyphen, a space and no separator between a word and a number the same way", () => {
+    for (const query of ["bpc-157", "bpc 157", "bpc157", "BPC-157", "Bpc 157"]) {
+      expect(finds(["BPC-157", "BPC-157 5 mg"], query)).toBe(true);
+    }
+    expect(finds(["Thymosin Alpha-1"], "alpha 1")).toBe(true);
+    expect(finds(["SNAP-8"], "snap8")).toBe(true);
+  });
+  it("finds numbers joined by hyphens joined or apart, without merging an amount", () => {
+    for (const query of ["pe-22-28", "pe 22 28", "pe2228", "PE-22-28"]) expect(finds(["PE-22-28"], query)).toBe(true);
+    // "3-3-3-10MG/ML" lists 10 mg as an amount; the joined number is never an amount.
+    expect(finds(["BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)"], "10mg")).toBe(true);
+    expect(finds(["BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)"], "33310mg")).toBe(false);
+  });
+  it("reads a hyphen or apostrophe between two words as part of one word, and still finds either part", () => {
+    for (const query of ["ghk-cu", "ghk cu", "ghkcu", "cu"]) expect(finds(["GHK-Cu"], query)).toBe(true);
+    for (const query of ["anti-aging", "anti aging", "antiaging"]) expect(finds(["Anti-Aging"], query)).toBe(true);
+    expect(finds(["Men's formula"], "mens")).toBe(true);
+  });
+  it("reads an amount with or without a space, in either case", () => {
+    for (const query of ["5mg", "5 mg", "5 MG", "5MG"]) {
+      expect(finds(["BPC-157 5 mg"], query)).toBe(true);
+      expect(finds(["DIHEXA 5MG CAPSULE"], query)).toBe(true);
+      expect(finds(["5-AMINO-1MQ 5MG/ML (5ML)"], query)).toBe(true);
+    }
+    expect(finds(["HCG 10,000 IU"], "10000 iu")).toBe(true);
+    expect(finds(["HCG 10,000 IU"], "10,000iu")).toBe(true);
+    expect(finds(["Peptide 500 µg"], "500mcg")).toBe(true);
+    expect(finds(["Anastrozole 0.25MG"], "0.25 mg")).toBe(true);
+  });
+  it("matches an amount only as the whole number with its unit", () => {
+    for (const listed of ["BPC-157 15 mg", "BPC-157 35 mg", "AOD 2.5 mg", "TB-500 50 mg", "BPC-157 5 mcg", "BPC-157 3MG/ML (5ML)"]) {
+      expect(finds([listed], "5 mg")).toBe(false);
+      expect(finds([listed], "5mg")).toBe(false);
+    }
+    expect(finds(["BPC-157 15 mg"], "bpc157 5mg")).toBe(false);
+  });
+  it("needs every word of the query, in any order, so a name and an amount narrow together", () => {
+    expect(finds(["BPC-157", "BPC-157 5 mg"], "bpc157 5mg")).toBe(true);
+    expect(finds(["BPC-157", "BPC-157 5 mg"], "5mg bpc 157")).toBe(true);
+    expect(finds(["BPC-157 Arginate", "5 mg"], "arginate 5 mg")).toBe(true);
+    expect(finds(["BPC-157", "BPC-157 5 mg"], "tb500 5mg")).toBe(false);
+  });
+  it("keeps a word matching inside a listed word, as before", () => {
+    expect(finds(["Dihexa"], "hexa")).toBe(true);
+    expect(finds(["Versabase cream"], "versabase cream")).toBe(true);
+  });
+  it("lets the last token be the start of a number or unit, so typing one key at a time keeps the rows", () => {
+    expect(finds(["BPC-157 10 mg"], "bpc 157 1")).toBe(true);
+    expect(finds(["BPC-157 10 mg"], "bpc 15")).toBe(true);
+    expect(finds(["BPC-157 10 mg"], "bpc 157 10 m")).toBe(true);
+    // Only the last token: a whole number before another number must be equal.
+    expect(finds(["BPC-157 10 mg"], "15 10")).toBe(false);
+  });
+  it("still finds a row by the identifier it carries, and treats a blank query as no search", () => {
+    expect(matchesCatalogSearch(catalogSearchText(["Synthetic"], "d540b4da-25cb-4143-8d5a-cdc065dc454f"), "d540b4da-25cb")).toBe(true);
+    expect(matchesCatalogSearch(row("Synthetic"), "   ")).toBe(true);
+    expect(matchesCatalogSearch(row("Synthetic"), "/ - ")).toBe(false);
+  });
+});
