@@ -45,9 +45,14 @@ body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-reque
   border-color: var(--dock-accent-hover);
   background: var(--dock-accent-hover);
 }
-/* The dock's only blue (#4d6bda) becomes the catalog's focus ring. */
+/* The dock's blue focus ring (#4d6bda) becomes the catalog's. The summary
+   dialog renders in a Radix portal outside the dock, so it is scoped from body. */
 body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock button:focus-visible {
   outline: 3px solid var(--dock-focus);
+  outline-offset: 3px;
+}
+body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog button:focus-visible {
+  outline: 3px solid #4d7358;
   outline-offset: 3px;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -55,5 +60,6 @@ body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock button:focus-
 }
 @media (forced-colors: active) {
   body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock { background: Canvas; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
-  body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock button:focus-visible { outline-color: Highlight; }
+  body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock button:focus-visible,
+  body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog button:focus-visible { outline-color: Highlight; }
 }
