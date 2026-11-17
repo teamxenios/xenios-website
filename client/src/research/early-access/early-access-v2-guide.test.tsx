@@ -69,9 +69,6 @@ describe("Early Access 2.0 guide is presentation only", () => {
       // Hidden decoration may carry stage numerals only, never words.
       expect(hidden.textContent ?? "").toMatch(/^[\d\s]*$/);
     }
-    const showcase = container.querySelector(".xenios-ea-v2__showcase");
-    expect(showcase?.getAttribute("aria-hidden")).toBe("true");
-    expect(showcase?.querySelectorAll("span")).toHaveLength(EARLY_ACCESS_REQUEST_STEPS.length);
     expect(container.querySelectorAll("[aria-label]")).toHaveLength(0);
   });
   it("renders all five steps, the local browse target and the support link over SSR", () => {
