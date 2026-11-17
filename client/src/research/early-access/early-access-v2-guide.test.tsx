@@ -128,4 +128,11 @@ describe("Early Access 2.0 stylesheet contract", () => {
     }
     expect(body).not.toMatch(/!important|@import|url\(|position:\s*fixed/);
   });
+  it("lets forced-colors rules outrank the panel's own colours", () => {
+    const forced = css.slice(css.indexOf("@media (forced-colors: active)"));
+    expect(forced).toContain(".xenios-request-guide.xenios-ea-v2,");
+    expect(forced).toMatch(/\.xenios-request-guide\.xenios-ea-v2 :is\([^)]*\.xenios-ea-v2__kicker/);
+    expect(forced).toMatch(/background: Canvas/);
+    expect(forced).not.toMatch(/\.xenios-ea-v2 :where\(/);
+  });
 });
