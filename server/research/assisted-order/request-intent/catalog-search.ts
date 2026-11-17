@@ -38,8 +38,9 @@
  *   Pyridoxine 2mg per mL)" gives 10 mg/ml and 2 mg/ml. In the query "2mg per ml" is "2mg/ml".
  * - An amount with no name before it ("(5ML)", "(1.2mg vial)", "INJ. (10ML)") belongs to the row.
  * In the query, an amount belongs to the one name typed beside it: the word and its numbers before
- * it, or after it when the query starts with an amount ("5 mg bpc-157"). "shade mix blue-500 5 mg"
- * ties 5 mg to "blue 500". The query amount must be an amount of the listed part with that whole
+ * it, or after it when its clause starts with an amount ("5 mg bpc-157"). A ";" or "," between two
+ * amounts starts a new clause. "shade mix blue-500 5 mg" ties 5 mg to "blue 500", and "5 mg
+ * red-157; blue-500 10 mg" ties 5 mg to "red 157" and 10 mg to "blue 500". The query amount must be an amount of the listed part with that whole
  * name, or one that belongs to the row: "tb-500 5 mg" does not find "BPC-157 (5mg) / TB-500
  * (10mg)", nor "cashmere cream ghk-cu 4%" "CASHMERE CREAM (GHK-CU 3% / NIACINAMIDE 4%)". When
  * only part of the name is a listed part's ("blue41" beside "Red-41" and "Blue-42"), only the
@@ -76,6 +77,8 @@ const PHRASE_BREAK = /[),;]/;
 const NAME_JOIN = /[+&]|\s\/|\/\s/;
 // In the query, any of these between the names before an amount names more than one part.
 const SEVERAL = /[+&,/]/;
+// In the query, either of these between two amounts ends one amount's clause and starts the next.
+const CLAUSE_BREAK = /[;,]/;
 
 const isUnitStart = (word: string) => UNITS.some((unit) => unit.startsWith(word));
 const sameNumber = (left: string, right: string) => Number(left) === Number(right);
@@ -271,7 +274,7 @@ function wordMatches(own: Token, word: string, start = false): boolean {
 /**
  * The one name a query amount is typed beside: a word and the numbers written with it. Before the
  * amount that is the last word and the numbers after it ("shade mix blue-500 5 mg" gives "blue
- * 500"); after an amount that opens the query, the first word and the numbers after it.
+ * 500"); after an amount, the first word and the numbers after it.
  */
 function nameBeside(run: readonly Lexeme[], after: boolean): Token[] {
   const unit: Token[] = [];
@@ -291,7 +294,6 @@ function nameBeside(run: readonly Lexeme[], after: boolean): Token[] {
 function readQuery(search: string): Query {
   const lexemes = lex(search, true);
   const parsed = phrase(lexemes, isUnitStart, false);
-  const amountFirst = parsed.chains[0]?.start === 0;
   const seen = new Set<string>();
   const names = parsed.names.flatMap(({ lexeme, at }) => {
     const first = at === 0;
@@ -302,12 +304,33 @@ function readQuery(search: string): Query {
     seen.add(key);
     return [{ token: plain(lexeme), first, last }];
   });
+  // A ";" or "," between two amounts ends a clause: "5 mg red-157; blue-500 10 mg" is two. The names
+  // before the break are the earlier amount's, and the names after it the later amount's.
+  const chains = parsed.chains;
+  const zones = chains.map((entry) => ({ before: entry.before, after: entry.after, opens: false }));
+  zones.forEach((zone, index) => {
+    const next = zones[index + 1];
+    if (index === 0) zone.opens = true;
+    if (!next) return;
+    const shared = zone.after;
+    let at = shared.findIndex((lexeme) => CLAUSE_BREAK.test(lexeme.gap));
+    if (at < 0 && CLAUSE_BREAK.test(lexemes[chains[index + 1].start].gap)) at = shared.length;
+    if (at < 0) return;
+    zone.after = shared.slice(0, at);
+    next.before = shared.slice(at);
+    next.opens = true;
+  });
+  // In each clause, an amount typed before any name takes the name after it, as does every amount
+  // after it in that clause ("5 mg red-157 10 mg blue-500"); otherwise each takes the name before it.
+  let amountFirst = false;
   const kept = new Set<string>();
-  const amounts = parsed.chains.flatMap((entry) => {
-    const run = amountFirst ? entry.after : entry.before;
+  const amounts = chains.flatMap((entry, index) => {
+    const zone = zones[index];
+    if (zone.opens) amountFirst = zone.before.length === 0;
+    const run = amountFirst ? zone.after : zone.before;
+    const name = nameBeside(run, amountFirst);
     // "dsip + selank 2mg" or "bpc-157/tb-500 5mg" names several parts for one amount.
     const several = run.slice(1).some((lexeme) => SEVERAL.test(lexeme.gap));
-    const name = nameBeside(run, amountFirst);
     const wanted = entry.chain.amounts.map((amount) => ({ name, several, amount }));
     // The amount a query amount is per ("0.1ml" of "10mg/0.1ml") must also be listed.
     const per = entry.chain.amounts[0].per;

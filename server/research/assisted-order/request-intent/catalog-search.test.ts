@@ -63,6 +63,30 @@ describe("catalog search matcher", () => {
     expect(finds(["Red-157 5 mg + Blue-500 5 mg"], "blue500 5mg")).toBe(true);
     expect(finds(["Red-157/Blue-500 5MG/ML"], "blue500 5mg")).toBe(true);
   });
+  it("ties each amount to its own name when a query mixes amount-first and name-first", () => {
+    const blend = ["SHADE MIX Red-157 (5mg) / Blue-500 (10mg) / Green-Cu (27mg)"];
+    for (const query of [
+      "5 mg Red-157; Blue-500 5 mg",
+      "5 mg Red-157; Blue-500 27 mg",
+      "5 mg Red-157, Blue-500 5 mg",
+      "Red-157 5 mg; 27 mg Blue-500",
+      "5 mg Red-157 5 mg Blue-500",
+    ]) {
+      expect(finds(blend, query)).toBe(false);
+    }
+    for (const query of [
+      "5 mg Red-157; Blue-500 10 mg",
+      "5 mg Red-157, Blue-500 10 mg",
+      "Red-157 5 mg; 10 mg Blue-500",
+      "5 mg Red-157 10 mg Blue-500",
+      "Red-157 5 mg; Blue-500 10 mg",
+    ]) {
+      expect(finds(blend, query)).toBe(true);
+    }
+    // Same order, as before.
+    expect(finds(blend, "Red-157 5 mg; Blue-500 5 mg")).toBe(false);
+    expect(finds(blend, "Red-157 5 mg; Blue-500 27 mg")).toBe(false);
+  });
   it("matches the whole concentration instead of amounts found elsewhere", () => {
     const listed = ["COLOUR MIX Red 10mg, Blue 0.1mL (30mL)"];
     expect(finds(listed, "10mg/0.1ml")).toBe(false);
