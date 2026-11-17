@@ -322,13 +322,15 @@ function readQuery(search: string): Query {
   });
   // In each clause, an amount typed before any name takes the name after it, as does every amount
   // after it in that clause ("5 mg red-157 10 mg blue-500"); otherwise each takes the name before it.
+  // An amount with no name after it takes the name before it ("5 mg red-157 blue-500 10 mg").
   let amountFirst = false;
   const kept = new Set<string>();
   const amounts = chains.flatMap((entry, index) => {
     const zone = zones[index];
     if (zone.opens) amountFirst = zone.before.length === 0;
-    const run = amountFirst ? zone.after : zone.before;
-    const name = nameBeside(run, amountFirst);
+    const useAfter = amountFirst && zone.after.length > 0;
+    const run = useAfter ? zone.after : zone.before;
+    const name = nameBeside(run, useAfter);
     // "dsip + selank 2mg" or "bpc-157/tb-500 5mg" names several parts for one amount.
     const several = run.slice(1).some((lexeme) => SEVERAL.test(lexeme.gap));
     const wanted = entry.chain.amounts.map((amount) => ({ name, several, amount }));
