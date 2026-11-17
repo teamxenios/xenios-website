@@ -71,6 +71,8 @@ describe("catalog search matcher", () => {
       "5 mg Red-157, Blue-500 5 mg",
       "Red-157 5 mg; 27 mg Blue-500",
       "5 mg Red-157 5 mg Blue-500",
+      "5 mg Red-157 Blue-500 5 mg",
+      "5 mg Red-157 Blue-500 27 mg",
     ]) {
       expect(finds(blend, query)).toBe(false);
     }
@@ -79,6 +81,7 @@ describe("catalog search matcher", () => {
       "5 mg Red-157, Blue-500 10 mg",
       "Red-157 5 mg; 10 mg Blue-500",
       "5 mg Red-157 10 mg Blue-500",
+      "5 mg Red-157 Blue-500 10 mg",
       "Red-157 5 mg; Blue-500 10 mg",
     ]) {
       expect(finds(blend, query)).toBe(true);
