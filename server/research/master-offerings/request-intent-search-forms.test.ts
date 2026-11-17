@@ -10,6 +10,7 @@ import { describe, expect, it } from "vitest";
 import type { AssistedOrderViewer } from "../assisted-order/ports";
 import { createRequestIntentCatalog } from "../assisted-order/request-intent/catalog";
 import { catalogSearchText, matchesCatalogSearch } from "../assisted-order/request-intent/catalog-search";
+import { REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH } from "../../../shared/research/assisted-order/request-intent";
 import { GeneratedMasterOfferingCatalogReader } from "./dataset-reader";
 import { MasterOfferingCatalogService } from "./service";
 
@@ -104,5 +105,28 @@ describe("quote-request picker search over the real catalog", () => {
     for (const item of families.values()) {
       expect(await sourceIds(item.specification ?? item.productName)).toContain(item.sourceSelection.variantId);
     }
+  });
+  it("still finds every row when a pasted name, line or label stops at the search box's length", async () => {
+    const rows = [];
+    for (let page = 1; page <= 5; page += 1) rows.push(...(await catalog.list(viewer, { page, pageSize: 100 })).items);
+    expect(rows).toHaveLength(420);
+    const aliases = new Map(reader.load().products.map((offering) => [offering.variants[0].id, offering.aliases]));
+    const cut: string[] = [];
+    const missed: string[] = [];
+    for (const item of rows) {
+      const listed = aliases.get(item.sourceSelection.variantId) ?? [];
+      for (const full of [item.productName, item.specification ?? "", ...listed].filter(Boolean)) {
+        if (full.length <= REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH) continue;
+        // What the search box keeps of a longer paste.
+        const search = full.slice(0, REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH);
+        cut.push(search);
+        if (!(await sourceIds(search)).includes(item.sourceSelection.variantId)) {
+          missed.push(`${item.sourceSelection.variantId} by "${search}"`);
+        }
+      }
+    }
+    // Some listed text is longer than the box, so this is not vacuous.
+    expect(cut.length).toBeGreaterThan(0);
+    expect(missed).toEqual([]);
   });
 });

@@ -4,7 +4,9 @@ import {
   ASSISTED_ORDER_CATALOG_SORTS, AssistedOrderValidationError,
   type AssistedOrderCatalogQuery, type AssistedOrderCatalogSort,
 } from "../../../../shared/research/assisted-order/contract";
-import { exactObject, REQUEST_INTENT_RECOVERY_NOTICE } from "../../../../shared/research/assisted-order/request-intent";
+import {
+  exactObject, REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH, REQUEST_INTENT_RECOVERY_NOTICE,
+} from "../../../../shared/research/assisted-order/request-intent";
 import type { CareAccessDependencies } from "../../../care/access";
 import { requirePendingRequestIntentRead, type RequestIntentStaffReadContext } from "./staff-read-authority";
 import type { CarePrincipal } from "../../../../shared/care/contracts";
@@ -81,6 +83,11 @@ export function createRequestIntentRouter(deps: RequestIntentRouteDependencies) 
       if (typeof raw[key] !== "string") throw new AssistedOrderValidationError("query", "Invalid query.");
     }
     if (raw.sort !== undefined && !ASSISTED_ORDER_CATALOG_SORTS.includes(raw.sort as AssistedOrderCatalogSort)) {
+      throw new AssistedOrderValidationError("query", "Invalid query.");
+    }
+    // Each search rescans every row for every amount in it, so a long query can
+    // hold the process for seconds. Refuse it before the catalog is read.
+    if (typeof raw.search === "string" && raw.search.length > REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH) {
       throw new AssistedOrderValidationError("query", "Invalid query.");
     }
     const query: AssistedOrderCatalogQuery = {

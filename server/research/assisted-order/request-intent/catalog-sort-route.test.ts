@@ -45,6 +45,17 @@ describe("the catalog route's sort", () => {
     expect((await request(app).get(root + "/catalog").query({ sort })).status).toBe(400);
     expect(list).not.toHaveBeenCalled();
   });
+  it("refuses a search over 120 characters before asking the service, and passes one of 120", async () => {
+    const { app, list } = fixture();
+    const refused = await request(app).get(root + "/catalog").query({ search: "b".repeat(121) });
+    expect(refused.status).toBe(400);
+    // The same refusal an unknown sort gets.
+    expect(refused.body).toEqual((await request(app).get(root + "/catalog").query({ sort: "invented_sort" })).body);
+    expect(list).not.toHaveBeenCalled();
+    expect((await request(app).get(root + "/catalog").query({ search: "b".repeat(120) })).status).toBe(200);
+    expect(list).toHaveBeenCalledTimes(1);
+    expect(list.mock.calls[0][1]).toMatchObject({ search: "b".repeat(120) });
+  });
   it("refuses a repeated sort", async () => {
     const { app, list } = fixture();
     expect((await request(app).get(root + "/catalog?sort=name_asc&sort=name_desc")).status).toBe(400);
