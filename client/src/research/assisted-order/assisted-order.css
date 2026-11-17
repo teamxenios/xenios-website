@@ -158,6 +158,16 @@
 .xenios-order-mobile-pagination { display: none; }
 .xenios-order-page--guest-catalog .xenios-order-card :is(h2, p) { overflow-wrap: anywhere; }
 
+/* Enlarged text can run out of room before the phone layout applies. Give
+   guest cards the whole column and keep the product image at card scale. */
+@media (min-width: 701px) and (max-width: 35em) {
+  .xenios-order-page--guest-catalog :is(.xenios-order-catalog-layout, .xenios-order-cards) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-summary { position: static; order: -1; }
+  .xenios-order-page--guest-catalog .xenios-order-card-media > figure > div { max-inline-size: 360px; }
+}
+
 @media (max-width: 700px) {
   .xenios-order-page--guest-catalog { width: 100%; }
   /* The guest chrome scrolls normally; member shells keep their sticky header. */
