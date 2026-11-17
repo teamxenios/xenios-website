@@ -382,3 +382,162 @@
     }
   }
 }
+
+/* Guest catalog above phone width. The phone layout above is unchanged; these
+   rules only apply from 701px. They give each card its own structure (artwork,
+   identity, the notice group, then the actions on one baseline), replace the
+   stacked paragraph margins with one spacing scale, and put search, family and
+   sort in one tool bar. Presentation only: every notice, control and label is
+   still rendered, no smaller than the phone layout renders it, and controls
+   keep 44px targets.
+   Sizes are in rem so they follow the reader's text size. */
+@media (min-width: 701px) {
+  .xenios-order-page--guest-catalog {
+    --guest-card-pad: 1.375rem;
+    --guest-hairline: rgba(23, 33, 27, .1);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar {
+    margin-bottom: 1rem;
+    padding: 1rem 1.125rem;
+    border: 1px solid var(--guest-hairline);
+    border-radius: 1.125rem;
+    background: var(--soft);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar .xenios-order-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: .75rem;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar label {
+    gap: .375rem;
+    color: var(--muted);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar :is(input, select) {
+    border-color: var(--guest-hairline);
+    color: var(--ink);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    box-shadow: 0 1px 2px rgba(23, 33, 27, .04);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar > p { margin: .75rem 0 0; color: var(--muted); font-size: .875rem; }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar + p[role="status"],
+  .xenios-order-page--guest-catalog .xenios-order-find-tools + p[role="status"] {
+    margin: 0 0 .875rem;
+    color: var(--muted);
+    font-size: .875rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-layout { gap: 1.5rem; }
+  .xenios-order-page--guest-catalog .xenios-order-cards { gap: 1.25rem; }
+
+  .xenios-order-page--guest-catalog .xenios-order-card {
+    gap: 0;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    border-color: var(--guest-hairline);
+    border-radius: 1.25rem;
+    box-shadow: 0 1px 2px rgba(23, 33, 27, .04), 0 10px 30px -18px rgba(23, 33, 27, .22);
+    transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card:hover,
+  .xenios-order-page--guest-catalog .xenios-order-card:focus-within {
+    border-color: rgba(23, 33, 27, .2);
+    box-shadow: 0 1px 2px rgba(23, 33, 27, .05), 0 22px 44px -22px rgba(23, 33, 27, .32);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card:hover { transform: translateY(-2px); }
+  .xenios-order-page--guest-catalog .xenios-order-card p { margin: 0; }
+
+  .xenios-order-page--guest-catalog .xenios-order-card-intro { display: grid; gap: 1rem; padding: var(--guest-card-pad) var(--guest-card-pad) 0; }
+  .xenios-order-page--guest-catalog .xenios-order-card-media { display: block; min-width: 0; }
+  .xenios-order-page--guest-catalog .xenios-order-card-media figure { gap: .5rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-media figcaption { font-size: .75rem; line-height: 1.4; }
+  .xenios-order-page--guest-catalog .xenios-order-card-identity { display: grid; min-width: 0; gap: .5rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-identity h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.25;
+    letter-spacing: -.015em;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-identity h2 + p {
+    color: var(--muted);
+    font-size: .8125rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: .02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-identity p:not(:first-of-type) { font-size: .9375rem; line-height: 1.55; }
+
+  .xenios-order-page--guest-catalog .xenios-order-card-meta {
+    display: grid;
+    gap: .5rem;
+    margin: 1.125rem var(--guest-card-pad) 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--guest-hairline);
+    color: var(--muted);
+    font-size: .875rem;
+    line-height: 1.5;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-meta strong { color: var(--ink); }
+
+  .xenios-order-page--guest-catalog .xenios-order-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-top: auto;
+    padding: 1.25rem var(--guest-card-pad) var(--guest-card-pad);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > p { flex: 1 1 100%; color: var(--muted); font-size: .875rem; line-height: 1.5; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-link {
+    order: 2;
+    margin: 0;
+    padding-inline: .25rem;
+    color: var(--ink);
+    font-weight: 650;
+    text-underline-offset: .2em;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-button { order: 1; margin: 0; padding-inline: 1.375rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-quantity { order: 1; flex: 1 1 100%; align-items: flex-end; margin: 0; gap: .5rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity label { flex: 1 1 8rem; min-width: 6rem; gap: .25rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-quantity-label { color: var(--muted); font-size: .75rem; font-weight: 600; line-height: 1.3; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions .xenios-order-quantity .xenios-order-link { color: var(--ink); font-weight: 650; }
+
+  .xenios-order-page--guest-catalog .xenios-order-summary {
+    border-color: var(--guest-hairline);
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgba(23, 33, 27, .04), 0 18px 48px -28px rgba(23, 33, 27, .3);
+  }
+  .xenios-order-page--guest-catalog .xenios-order-summary h2 { margin-bottom: .75rem; font-size: 1.25rem; letter-spacing: -.01em; }
+  .xenios-order-page--guest-catalog .xenios-order-summary p { margin: 0 0 .875rem; line-height: 1.5; }
+  .xenios-order-page--guest-catalog .xenios-order-summary p[role="status"] { color: var(--muted); font-size: .8125rem; font-variant-numeric: tabular-nums; }
+  .xenios-order-page--guest-catalog .xenios-order-summary .xenios-order-button { width: 100%; }
+  /* Edit and Remove sit together under each selected line instead of stacking at the right edge. */
+  .xenios-order-page--guest-catalog .xenios-order-summary li { display: flex; flex-wrap: wrap; gap: 5px 1rem; }
+  .xenios-order-page--guest-catalog .xenios-order-summary li > :not(.xenios-order-link) { flex: 1 1 100%; min-width: 0; }
+  .xenios-order-page--guest-catalog .xenios-order-summary li > .xenios-order-link { margin: 0; padding-inline: 0; }
+
+  .xenios-order-page--guest-catalog .xenios-order-bottom-pagination + p { color: var(--muted); font-size: .8125rem; }
+}
+/* With enlarged text a desktop window can leave two card columns only a few
+   words wide. When the card area is narrower than 36rem (576px at the default
+   size, wider than it is at 200% text on a 1366px window) the cards take one
+   column. At the default text size no width from 701px up reaches this. */
+@media (min-width: 701px) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-layout > div:first-child { container: guest-order-cards / inline-size; min-width: 0; }
+  @container guest-order-cards (max-width: 36rem) {
+    .xenios-order-page--guest-catalog .xenios-order-cards { grid-template-columns: minmax(0, 1fr); }
+  }
+}
+@media (min-width: 701px) and (prefers-reduced-motion: reduce) {
+  .xenios-order-page--guest-catalog .xenios-order-card { transition: none; }
+  .xenios-order-page--guest-catalog .xenios-order-card:hover { transform: none; }
+}
