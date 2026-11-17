@@ -33,7 +33,7 @@ describe("guest catalog phone stylesheet", () => {
     }
     expect(depth).toBe(0);
     // 20em is 320px at the default text size and 640px when the text is doubled,
-    // so a phone showing doubled text is never matched.
+    // so portrait phones up to 430px keep the existing doubled-text reflow.
     expect(20 * 16).toBe(320);
     expect(20 * 32).toBeGreaterThan(430);
   });
@@ -46,10 +46,11 @@ describe("guest catalog phone stylesheet", () => {
     }
   });
 
-  it("sizes in rem, hides nothing and adds no content", () => {
+  it("keeps base side padding while spacing follows text size, hides nothing and adds no content", () => {
     const body = withoutComments.slice(withoutComments.indexOf("{") + 1, withoutComments.lastIndexOf("}"));
-    // The one hairline is the only pixel length; everything else follows the text size.
-    expect(body.replace(/1px solid/gu, "")).not.toMatch(/\dpx\b/u);
+    // Preserve the base text width even when this block matches enlarged text.
+    expect(body).toMatch(/padding:\s*\.75rem 10px;/u);
+    expect(body.replace(/1px solid|padding:\s*\.75rem 10px;/gu, "")).not.toMatch(/\dpx\b/u);
     expect(withoutComments).not.toMatch(/display:\s*none|visibility:\s*hidden|content:|line-clamp|text-overflow|font-size/u);
   });
 

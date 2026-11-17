@@ -1,10 +1,11 @@
-/* Guest catalog, phone widths, default-size text. Presentation only.
+/* Guest catalog, phone widths. Presentation only.
 
    Every rule sits inside one media block. Its lower bound is in em, so it
    follows the reader's text size: 20em is 320px at the default size and 640px
-   when the browser's text is doubled. A phone showing enlarged text therefore
-   never matches, and keeps the reflow rules in assisted-order.css exactly as
-   they are. Sizes here are in rem for the same reason.
+   when the browser's text is doubled. Enlarged text keeps the existing reflow
+   below that bound; wider phones and landscape windows can still match.
+   Spacing follows the text size, while the base 10px side padding is kept so
+   this block does not narrow the available text width.
 
    The doubled page class outranks assisted-order.css and
    early-access-premium.css whichever of the three loads last. */
@@ -14,7 +15,7 @@
      line of text wraps differently from before. */
   .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-cards { gap: .75rem; }
   .xenios-order-page.xenios-order-page--guest-catalog .xenios-order-card {
-    padding: .75rem .625rem;
+    padding: .75rem 10px;
     gap: .625rem;
   }
 
