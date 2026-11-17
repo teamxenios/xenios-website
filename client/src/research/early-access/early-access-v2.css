@@ -169,9 +169,13 @@
 @media (prefers-reduced-motion: reduce) {
   .xenios-ea-v2 .xenios-ea-v2__actions > a { transition: none; }
 }
+/* Selectors here are at least as specific as the rules they replace, so the
+   system palette wins even where a browser only emulates the media query. */
 @media (forced-colors: active) {
-  .xenios-ea-v2, .xenios-ea-v2-next { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
-  .xenios-ea-v2 :where(.xenios-ea-v2__kicker, .xenios-ea-v2__lede, .xenios-request-guide__heading > p,
+  .xenios-request-guide.xenios-ea-v2,
+  .xenios-ea-v2-next.xenios-request-next { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .xenios-ea-v2-next.xenios-request-next :is(h2, h3, strong, p, .xenios-ea-v2-next__index) { color: CanvasText; }
+  .xenios-request-guide.xenios-ea-v2 :is(.xenios-ea-v2__kicker, .xenios-ea-v2__lede, .xenios-request-guide__heading > p,
     h2, h3, summary, dt, dd, .xenios-request-guide__number, .xenios-request-guide__categories, .xenios-request-guide__boundary) { color: CanvasText; }
   .xenios-ea-v2 .xenios-request-guide__steps > li,
   .xenios-ea-v2 .xenios-request-guide__details { border-color: CanvasText; }
