@@ -63,6 +63,33 @@ describe("catalog search matcher", () => {
     expect(finds(["Red-157 5 mg + Blue-500 5 mg"], "blue500 5mg")).toBe(true);
     expect(finds(["Red-157/Blue-500 5MG/ML"], "blue500 5mg")).toBe(true);
   });
+  it("ties each amount to its own name when a query mixes amount-first and name-first", () => {
+    const blend = ["SHADE MIX Red-157 (5mg) / Blue-500 (10mg) / Green-Cu (27mg)"];
+    for (const query of [
+      "5 mg Red-157; Blue-500 5 mg",
+      "5 mg Red-157; Blue-500 27 mg",
+      "5 mg Red-157, Blue-500 5 mg",
+      "Red-157 5 mg; 27 mg Blue-500",
+      "5 mg Red-157 5 mg Blue-500",
+      "5 mg Red-157 Blue-500 5 mg",
+      "5 mg Red-157 Blue-500 27 mg",
+    ]) {
+      expect(finds(blend, query)).toBe(false);
+    }
+    for (const query of [
+      "5 mg Red-157; Blue-500 10 mg",
+      "5 mg Red-157, Blue-500 10 mg",
+      "Red-157 5 mg; 10 mg Blue-500",
+      "5 mg Red-157 10 mg Blue-500",
+      "5 mg Red-157 Blue-500 10 mg",
+      "Red-157 5 mg; Blue-500 10 mg",
+    ]) {
+      expect(finds(blend, query)).toBe(true);
+    }
+    // Same order, as before.
+    expect(finds(blend, "Red-157 5 mg; Blue-500 5 mg")).toBe(false);
+    expect(finds(blend, "Red-157 5 mg; Blue-500 27 mg")).toBe(false);
+  });
   it("matches the whole concentration instead of amounts found elsewhere", () => {
     const listed = ["COLOUR MIX Red 10mg, Blue 0.1mL (30mL)"];
     expect(finds(listed, "10mg/0.1ml")).toBe(false);
@@ -129,6 +156,66 @@ describe("catalog search matcher", () => {
     expect(finds(["5-AMINO-1MQ 5MG/ML (5ML)"], "5 amino 1mq 5mg")).toBe(true);
     expect(finds(["BPC-157 10 mg"], "10 m")).toBe(true);
     expect(finds(["BPC-157 10 mg"], "10 mc")).toBe(false);
+  });
+  it("ties an amount to the ingredient written before it, so a blend never lends one ingredient's amount to another", () => {
+    const glow = ["GLOW (GHK-Cu + BPC-157 + TB-500)", "GLOW GHK-Cu(27mg) / BPC-157 (5mg) / TB-500 (10mg)"];
+    for (const query of ["tb-500 5 mg", "TB-500 5MG", "tb500 5mg", "5 mg tb-500", "TB‑500,  5 MG!!", "tb—500 (5mg)"]) {
+      expect(finds(glow, query)).toBe(false);
+    }
+    for (const query of ["tb-500 10 mg", "bpc-157 5 mg", "ghk-cu 27mg", "5 mg bpc-157"]) expect(finds(glow, query)).toBe(true);
+    // Swapped doses.
+    expect(finds(glow, "bpc-157 10mg tb-500 5mg")).toBe(false);
+    expect(finds(glow, "tb-500 10mg bpc-157 5mg")).toBe(true);
+    expect(finds(["BPC-157 + TB-500", "BPC-157 5 mg + TB-500 5 mg"], "tb-500 5 mg")).toBe(true);
+    expect(finds(["DSIP + Selank", "DSIP 2 mg + SELANK 10 mg"], "selank 2mg")).toBe(false);
+    expect(finds(["DSIP + Selank", "DSIP 2 mg + SELANK 10 mg"], "selank 10 mg")).toBe(true);
+    // The whole product name names both parts, so its amount is not tied to one of them.
+    expect(finds(["DSIP + Selank", "DSIP 2 mg + SELANK 10 mg"], "dsip + selank 2mg")).toBe(true);
+    const cream = ["CASHMERE CREAM (GHK-CU 3% / NIACINAMIDE 4%) 30GM"];
+    expect(finds(cream, "niacinamide 4%")).toBe(true);
+    expect(finds(cream, "niacinamide 3%")).toBe(false);
+    expect(finds(cream, "cashmere cream ghk-cu 4%")).toBe(false);
+    expect(finds(cream, "cashmere cream 30gm")).toBe(true);
+  });
+  it("lets a product name, or an amount written apart from any name, take any listed amount", () => {
+    const klow = ["KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)", "BPC-157 5 mg + TB-500 5 mg + GHK-Cu 10 mg + KPV 5 mg"];
+    expect(finds(klow, "klow 5 mg")).toBe(true);
+    expect(finds(klow, "klow 50 mg")).toBe(false);
+    expect(finds(["ASCORBIC ACID 500MG/ML INJ. (10ML)"], "ascorbic acid 10ml")).toBe(true);
+    expect(finds(["SEMAGLUTIDE/B12 0.6MG-500MCG/ML (2ML) (1.2mg vial)"], "semaglutide 1.2mg")).toBe(true);
+    const bcaa = ["Branched Chain Amino Acids (BCAA) ILE(0.4g) / L(0.3g) / V(1.2g) (30ml)"];
+    expect(finds(bcaa, "l 0.4g")).toBe(false);
+    expect(finds(bcaa, "bcaa 0.3g")).toBe(true);
+  });
+  it("does not pair one group of amounts with the names by order, because the label does not", () => {
+    expect(finds(["SEMAGLUTIDE + BPC-157 5 mg/650 mcg"], "bpc 157 650mcg")).toBe(true);
+    expect(finds(["SEMAGLUTIDE + BPC-157 5 mg/650 mcg"], "bpc 157 5mg")).toBe(true);
+    expect(finds(["BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)"], "kpv 3mg")).toBe(true);
+    expect(finds(["BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)"], "3 mg/ml")).toBe(true);
+    expect(finds(["BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)"], "5 mg")).toBe(false);
+  });
+  it("reads an amount per volume as one amount, written with / or per", () => {
+    const nasal = ["NAD+ 10MG/0.1ML (15ML) NASAL SPRAY"];
+    for (const query of ["10mg/0.1ml", "10 mg/0.1 ml", "10MG / 0.1ML", "10mg per 0.1 ml"]) expect(finds(nasal, query)).toBe(true);
+    expect(finds(nasal, "10mg/ml")).toBe(false);
+    expect(finds(nasal, "nad+ 0.1ml")).toBe(true);
+    const myers = ["MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin 20mg, Calcium Gluconate 0.04mL, Magnesium Chloride 0.1mL per mL) (10ML)"];
+    expect(finds(myers, "10mg/0.1ml")).toBe(false);
+    expect(finds(myers, "thiamine 10mg/ml")).toBe(true);
+    expect(finds(myers, "thiamine 10 mg per ml")).toBe(true);
+    expect(finds(myers, "riboflavin 10mg")).toBe(false);
+    expect(finds(["TB-500 10MG/ML (5ML)"], "10mg/ml")).toBe(true);
+    expect(finds(["TB-500 10MG/ML (5ML)"], "tb 500 10mg")).toBe(true);
+    expect(finds(["ARA 290 6MG/ML (5ML)"], "6mg/5ml")).toBe(false);
+    expect(finds(["AOD-9604 1.2MG/ML (6MG/5ML)"], "6mg/5ml")).toBe(true);
+    expect(finds(["PT-141 NASAL SPRAY 2.5MG/SPRAY (3ML)"], "pt-141 nasal spray 3ml")).toBe(true);
+  });
+  it("gives the same answer for a very long query as for its short form", () => {
+    const glow = ["GLOW (GHK-Cu + BPC-157 + TB-500)", "GLOW GHK-Cu(27mg) / BPC-157 (5mg) / TB-500 (10mg)"];
+    expect(finds(glow, "tb-500 10 mg ".repeat(1500))).toBe(true);
+    expect(finds(glow, "tb-500 5 mg ".repeat(1500))).toBe(false);
+    expect(finds(glow, "5mg/".repeat(2000))).toBe(true);
+    expect(finds(glow, "1-".repeat(4000))).toBe(false);
   });
   it("still finds a row by the identifier it carries, and treats a blank query as no search", () => {
     expect(matchesCatalogSearch(catalogSearchText(["Synthetic"], "d540b4da-25cb-4143-8d5a-cdc065dc454f"), "d540b4da-25cb")).toBe(true);

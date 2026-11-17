@@ -34,6 +34,14 @@ const BPC_5MG = "mov_09db3e866424b64994d3";
 const BPC_10MG = "mov_ca3e45ae9712aee91430";
 const BPC_15MG = "mov_257330ea83ecbfc45fae";
 const DIHEXA_5MG = "mov_120042d931e6c04de5a7";
+const GLOW_27_5_10 = "mov_5e74aacac728cfcbd11f";
+const TB500_5MG = "mov_3c9394000d1302336110";
+const BPC_TB_5_5 = "mov_457168650622c3647dc9";
+const KLOW_5 = "mov_ecd380609ace639d27a6";
+const NAD_NASAL = "mov_de7158dd9892e7e78e1f";
+const HCG_10000_IU = "mov_e218a4fead30388a55ff";
+const MYERS = ["mov_e6c2e63137540a5772ce", "mov_be5e04f5ca9c0870837a"];
+const sorted = (ids: readonly string[]) => [...ids].sort();
 
 describe("quote-request picker search over the real catalog", () => {
   it("finds BPC-157 5 mg however the hyphen and the amount are typed", async () => {
@@ -58,6 +66,64 @@ describe("quote-request picker search over the real catalog", () => {
     expect(leading).toEqual(await sourceIds("0.25mg"));
     const page = await catalog.list(viewer, { search: ".25mg", pageSize: 100 });
     for (const item of page.items) expect(`${item.productName} ${item.specification ?? ""}`).not.toMatch(/(?<![\d.])25\s*mg/i);
+  });
+  it("ties an amount to its own ingredient: tb-500 5 mg never takes BPC-157's 5 mg from a blend", async () => {
+    for (const search of ["tb-500 5 mg", "TB-500 5MG", "tb500 5mg", "5 mg tb-500"]) {
+      expect(sorted(await sourceIds(search))).toEqual(sorted([BPC_TB_5_5, KLOW_5, TB500_5MG]));
+    }
+    expect(await sourceIds("tb-500 10 mg")).toContain(GLOW_27_5_10);
+    expect(await sourceIds("bpc-157 5 mg")).toContain(GLOW_27_5_10);
+    expect(await sourceIds("bpc-157 10mg tb-500 5mg")).toEqual([]);
+    expect(await sourceIds("tb-500 10mg bpc-157 5mg")).toEqual([GLOW_27_5_10]);
+  });
+  it("reads 10mg/0.1ml as one concentration, not 10 mg and 0.1 ml from different ingredients", async () => {
+    for (const search of ["10mg/0.1ml", "10 mg/0.1 ml", "10MG / 0.1ML"]) expect(await sourceIds(search)).toEqual([NAD_NASAL]);
+    const perMl = await sourceIds("10mg/ml");
+    expect(perMl).not.toContain(NAD_NASAL);
+    // "Thiamine 10mg, ... per mL" is 10 mg per ml.
+    expect(perMl).toEqual(expect.arrayContaining(MYERS));
+  });
+  it("never lends an ingredient another ingredient's amount, on any listing that writes each amount beside its name", async () => {
+    const rows = [];
+    for (let page = 1; page <= 5; page += 1) rows.push(...(await catalog.list(viewer, { page, pageSize: 100 })).items);
+    const aliases = new Map(reader.load().products.map((offering) => [offering.variants[0].id, offering.aliases]));
+    // The same text the catalog searches for each row.
+    const texts = rows.map((item) => catalogSearchText(
+      [item.productName, item.specification, (aliases.get(item.sourceSelection.variantId) ?? []).join("\n")], item.variantId));
+    const found = (search: string) => rows.filter((_, index) => matchesCatalogSearch(texts[index], search)).map((item) => item.sourceSelection.variantId);
+    // Read the label without the matcher: "NAME AMOUNT" or "NAME (AMOUNT)" parts joined by " + ", " / " or ", ".
+    const PART = /^(.*\p{L}.*?)\s*\(?\s*(\d+(?:\.\d+)?)\s*(mg|mcg|iu|g|%)\s*\)?$/iu;
+    let checked = 0;
+    const wrong: string[] = [];
+    const missed: string[] = [];
+    for (const item of rows) {
+      const parts = (item.specification ?? "").split(/\s+\+\s+|\s+\/\s+|,\s+/)
+        .map((part) => PART.exec(part.trim())).filter((part): part is RegExpExecArray => part !== null)
+        .map(([, name, amount, unit]) => ({ name, amount: Number(amount), unit: unit.toLowerCase() }));
+      if (parts.length < 2) continue;
+      const id = item.sourceSelection.variantId;
+      for (const part of parts) {
+        if (!found(`${part.name} ${part.amount}${part.unit}`).includes(id)) missed.push(`${id} ${part.name} ${part.amount}${part.unit}`);
+        for (const other of parts) {
+          if (other.unit !== part.unit || other.amount === part.amount) continue;
+          if (parts.some((same) => same.name === part.name && same.unit === part.unit && same.amount === other.amount)) continue;
+          checked += 1;
+          if (found(`${part.name} ${other.amount}${other.unit}`).includes(id)) wrong.push(`${id} ${part.name} ${other.amount}${other.unit}`);
+        }
+      }
+    }
+    expect(checked).toBeGreaterThan(20);
+    expect(wrong).toEqual([]);
+    expect(missed).toEqual([]);
+  });
+  it("keeps the typing and word-form cases on the real catalog", async () => {
+    expect(await sourceIds("57")).toEqual(expect.arrayContaining([BPC_5MG, BPC_10MG, BPC_15MG]));
+    for (const search of ["10,0", "10,00", "10,000", "10,000 iu"]) expect(await sourceIds(search)).toContain(HCG_10000_IU);
+    expect((await sourceIds("vials")).length).toBeGreaterThan(0);
+    expect((await sourceIds("creams")).length).toBeGreaterThan(0);
+    const pe = await sourceIds("pe-22-28");
+    expect(pe.length).toBeGreaterThan(0);
+    for (const search of ["pe 22 28", "pe2228", "PE-22-28"]) expect(await sourceIds(search)).toEqual(pe);
   });
   it("finds NAD+ listings by nad+ without the names that only contain the letters", async () => {
     const page = await catalog.list(viewer, { search: "nad+", pageSize: 100 });
@@ -93,7 +159,7 @@ describe("quote-request picker search over the real catalog", () => {
     for (const item of rows) {
       const listed = aliases.get(item.sourceSelection.variantId) ?? [];
       // The same text the catalog searches: shown name, shown line and the dataset aliases.
-      const text = catalogSearchText([item.productName, item.specification, listed.join(" ")], item.variantId);
+      const text = catalogSearchText([item.productName, item.specification, listed.join("\n")], item.variantId);
       for (const search of [item.productName, item.specification ?? "", ...listed].filter(Boolean)) {
         if (!matchesCatalogSearch(text, search)) missed.push(`${item.sourceSelection.variantId} by "${search}"`);
       }

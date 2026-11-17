@@ -108,8 +108,9 @@ export function createRequestIntentCatalog(input: AssistedOrderMasterCatalogInpu
         // The listing's dataset aliases, which include its listed name and label, so a reviewed
         // heading or neutral line does not hide the listed words from search. Search only: the
         // aliases never enter the DTO, and a match shows the row, not any withheld detail. The
-        // member catalog search reads the same aliases.
-        searchAliases.set(items[items.length - 1], offering.aliases.join(" "));
+        // member catalog search reads the same aliases. One alias per line, so search reads each
+        // alias as its own phrase and an amount in one is never tied to a name in another.
+        searchAliases.set(items[items.length - 1], offering.aliases.join("\n"));
       }
       if (seen.size === total) return items;
       if (seen.size > total || selection.offerings.length === 0) throw new Error("request_intent_catalog_incomplete");
