@@ -4,6 +4,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, Dia
 import { requestBarAction, requestBarKeyboardOffset, type RequestBarState } from "./persistent-request-bar-model";
 import { observeRequestDockViewport } from "./request-dock-viewport";
 import "./persistent-request-bar.css";
+import "./request-dock-premium.css";
 
 export interface RequestBarLine {
   readonly key: string;
