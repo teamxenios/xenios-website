@@ -10,6 +10,9 @@ import {
 import { normalizeOptionalIntake, type OptionalRequestIntake } from "./optional-intake";
 
 export const REQUEST_INTENT_KIND = "unapproved_selection_request" as const;
+/** The longest catalog search the guest route accepts. Matching cost grows with
+ * the query, so the route refuses a longer one before the catalog is read. */
+export const REQUEST_INTENT_CATALOG_SEARCH_MAX_LENGTH = 120;
 export const REQUEST_INTENT_NOTICE =
   "Submit for review. This saves your requested items only. It does not approve treatment, create a prescription, collect payment or place a supplier order.";
 /** The same limits for pages shown after a save, which ask the customer for nothing more. */
