@@ -69,9 +69,9 @@ describe("Early Access 2.0 guide is presentation only", () => {
       // Hidden decoration may carry stage numerals only, never words.
       expect(hidden.textContent ?? "").toMatch(/^[\d\s]*$/);
     }
-    const showcase = container.querySelector(".xenios-ea-v2__showcase");
-    expect(showcase?.getAttribute("aria-hidden")).toBe("true");
-    expect(showcase?.querySelectorAll("span")).toHaveLength(EARLY_ACCESS_REQUEST_STEPS.length);
+    // The only hidden marks are the five step numbers; no decorative ornament remains.
+    expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(EARLY_ACCESS_REQUEST_STEPS.length);
+    expect(container.querySelector(".xenios-ea-v2__showcase, .xenios-ea-v2__aurora, .xenios-ea-v2__star")).toBeNull();
     expect(container.querySelectorAll("[aria-label]")).toHaveLength(0);
   });
   it("renders all five steps, the local browse target and the support link over SSR", () => {
@@ -130,5 +130,22 @@ describe("Early Access 2.0 stylesheet contract", () => {
       expect(selector.trim()).toMatch(/^\.xenios-(request-guide\.xenios-)?ea-v2/);
     }
     expect(body).not.toMatch(/!important|@import|url\(|position:\s*fixed/);
+  });
+  it("defines the shared --xea-* brand values the guest catalog shell also uses", () => {
+    const shared: Record<string, string> = {
+      "--xea-ink": "#17211b", "--xea-muted": "#5f6c63", "--xea-accent": "#183d2d", "--xea-soft": "#f4f5ef",
+      "--xea-surface": "#ffffff", "--xea-line": "rgba(23, 33, 27, .14)", "--xea-radius-sm": "10px",
+      "--xea-radius-lg": "16px", "--xea-radius-pill": "999px", "--xea-weight-heading": "600",
+      "--xea-weight-label": "500", "--xea-elevation": "0 12px 32px rgba(23, 33, 27, .08)",
+    };
+    for (const [name, value] of Object.entries(shared)) expect(css).toContain(`${name}: ${value};`);
+    // One brand: no gradient-clipped text and none of the retired violet or blue tones.
+    expect(css).not.toMatch(/background-clip|#2a174e|#a493f9|#97cdfb|#5b4cb7/i);
+  });
+  it("lets forced-colors rules outrank the panel's own colours", () => {
+    const forced = css.slice(css.indexOf("@media (forced-colors: active)"));
+    expect(forced).toContain(".xenios-request-guide.xenios-ea-v2,");
+    expect(forced).toMatch(/\.xenios-request-guide\.xenios-ea-v2 :is\([^)]*h3/);
+    expect(forced).toMatch(/background: Canvas/);
   });
 });
