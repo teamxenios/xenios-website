@@ -10,6 +10,7 @@ import {
 } from "./request-experience-copy";
 import "./request-experience.css";
 import "./early-access-v2.css";
+import "../assisted-order/early-access-premium.css";
 
 /**
  * Read-only guidance. Does not accept a policy, select items or send a request.
@@ -24,27 +25,19 @@ export function EarlyAccessRequestGuide({ browseTargetId }: Readonly<{ browseTar
   return (
     <section className="xenios-request-guide xenios-ea-v2" aria-labelledby={headingId}
       data-testid="early-access-how-it-works">
-      <div className="xenios-ea-v2__aurora" aria-hidden="true" />
       <p className="xenios-ea-v2__kicker">
-        <span className="xenios-ea-v2__star" aria-hidden="true" />
         {EARLY_ACCESS_BRAND.name}
       </p>
       <div className="xenios-ea-v2__hero">
+        <div className="xenios-request-guide__heading">
+          <h2 id={headingId}>How Early Access works</h2>
+          <p>One request. Clear next steps.</p>
+        </div>
         <div className="xenios-ea-v2__hero-copy">
-          <div className="xenios-request-guide__heading">
-            <h2 id={headingId}>How Early Access works</h2>
-            <p>One request. Clear next steps.</p>
-          </div>
           <p className="xenios-ea-v2__lede">{EARLY_ACCESS_REQUEST_INTRO}</p>
           <div className="xenios-request-guide__actions xenios-ea-v2__actions">
             {target && <a href={target} className="btn btn-primary xenios-ea-v2__primary">{EARLY_ACCESS_REQUEST_CTA.browse}</a>}
             <a href="/research/support" className="btn btn-secondary xenios-ea-v2__secondary">{EARLY_ACCESS_REQUEST_CTA.help}</a>
-          </div>
-        </div>
-        {/* Decorative only: one mark per approved stage, no words. */}
-        <div className="xenios-ea-v2__showcase" aria-hidden="true">
-          <div className="xenios-ea-v2__showcase-ring">
-            {EARLY_ACCESS_REQUEST_STEPS.map((step, index) => <span key={step.id}>{index + 1}</span>)}
           </div>
         </div>
       </div>

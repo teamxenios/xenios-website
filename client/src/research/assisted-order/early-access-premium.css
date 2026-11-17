@@ -1,0 +1,112 @@
+/* The existing guest form owns layout, selection and admission.
+   This treatment is confined to its catalog and matching request panels. */
+.xenios-order-page--guest-catalog {
+  --ink: #20342a;
+  --muted: #526459;
+  --line: #dce3da;
+  --soft: #f4f6f0;
+  --accent: #214a35;
+  --surface: #fff;
+}
+.xenios-order-page--guest-catalog .xenios-order-hero {
+  max-width: 64rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+}
+.xenios-order-page--guest-catalog .xenios-order-hero :is(h1, h2, h3) {
+  font-weight: 550;
+  line-height: 1.12;
+  letter-spacing: -.035em;
+}
+.xenios-order-page--guest-catalog .xenios-order-hero p { line-height: 1.65; }
+.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar {
+  margin-block: 1.75rem 1rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--soft);
+}
+.xenios-order-page--guest-catalog .xenios-order-catalog-toolbar > .xenios-order-grid {
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+.xenios-order-page--guest-catalog :is(input, select, textarea) {
+  border-color: #c3cfc4;
+  border-radius: .625rem;
+}
+.xenios-order-page--guest-catalog :is(input, select, textarea):focus-visible,
+.xenios-order-page--guest-catalog :is(button, a, summary):focus-visible {
+  outline: 3px solid #4d7358;
+  outline-offset: 3px;
+}
+.xenios-order-page--guest-catalog .xenios-order-card {
+  border-color: var(--line);
+  border-radius: 1rem;
+  box-shadow: 0 3px 12px #193b2705;
+}
+.xenios-order-page--guest-catalog .xenios-order-card h2 {
+  color: var(--ink);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.02em;
+}
+.xenios-order-page--guest-catalog .xenios-order-card-description { line-height: 1.65; }
+.xenios-order-page--guest-catalog .xenios-order-card-meta p { line-height: 1.6; }
+.xenios-order-page--guest-catalog .xenios-order-card-actions { padding-top: .5rem; }
+.xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-button {
+  border-radius: .625rem;
+  font-weight: 600;
+}
+.xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-link {
+  color: var(--accent);
+  text-underline-offset: .2em;
+}
+.xenios-order-page--guest-catalog .xenios-order-summary {
+  border-color: #cbd8c9;
+  border-radius: 1rem;
+  background: #f3f6ee;
+}
+.xenios-order-page--guest-catalog .xenios-order-summary h2 {
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
+.xenios-order-page--guest-catalog .xenios-order-panel { border-radius: 1rem; box-shadow: none; }
+@media (min-width: 43.8125em) {
+  .xenios-order-page--guest-catalog .xenios-order-card { padding: 1.5rem; gap: 1rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-intro,
+  .xenios-order-page--guest-catalog .xenios-order-card-identity,
+  .xenios-order-page--guest-catalog .xenios-order-card-meta { display: grid; min-width: 0; gap: .75rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card-media { display: block; min-width: 0; }
+  .xenios-order-page--guest-catalog .xenios-order-card-identity :is(h2, p),
+  .xenios-order-page--guest-catalog .xenios-order-card-meta p { margin: 0; }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-top: auto;
+  }
+  .xenios-order-page--guest-catalog .xenios-order-card-actions > .xenios-order-link { margin-inline: 0 auto; }
+}
+@media (max-width: 61.25em) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar > .xenios-order-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar > .xenios-order-grid > label:first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 43.75em) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar { padding: 1rem; }
+  .xenios-order-page--guest-catalog .xenios-order-card { border-radius: .875rem; }
+}
+@media (max-width: 23.75em) {
+  .xenios-order-page--guest-catalog .xenios-order-catalog-toolbar > .xenios-order-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (forced-colors: active) {
+  .xenios-order-page--guest-catalog { --ink: CanvasText; --muted: CanvasText; --line: CanvasText; --soft: Canvas; --surface: Canvas; --accent: LinkText; }
+  .xenios-order-page--guest-catalog :is(.xenios-order-card, .xenios-order-panel, .xenios-order-summary, .xenios-order-catalog-toolbar) {
+    background: Canvas;
+    border-color: CanvasText;
+    box-shadow: none;
+  }
+  .xenios-order-page--guest-catalog :is(button, a, summary, input, select, textarea):focus-visible { outline-color: Highlight; }
+}
