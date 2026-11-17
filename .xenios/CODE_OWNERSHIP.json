@@ -1921,8 +1921,8 @@
       ],
       "state": "released",
       "claimedAt": "2026-09-21T14:38:50.597Z",
-      "heartbeatAt": "2026-09-21T16:38:05.000Z",
-      "releasedAt": "2026-09-21T16:38:05.000Z",
+      "heartbeatAt": "2026-09-21T16:38:05Z",
+      "releasedAt": "2026-09-21T16:38:05Z",
       "releaseReason": "Local engineering qualified; task remains blocked_external for managed release and authoritative EA policy inputs. No active source writer remains."
     },
     {
@@ -1954,7 +1954,7 @@
         ".xenios/handoffs/*CHECKOUT-RC-P1-REMEDIATION*"
       ],
       "state": "handoff",
-      "claimedAt": "2026-09-23T04:19:38.800Z",
+      "claimedAt": "2026-09-23T04:19:38.8Z",
       "heartbeatAt": "2026-09-23T05:16:21.545Z"
     },
     {
@@ -2059,9 +2059,10 @@
         "docs/research-launch/*ORDERING_READINESS*",
         ".xenios/sessions/codex-ordering-readiness-20260923.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-24T03:32:26.959Z",
-      "heartbeatAt": "2026-09-24T04:47:22.614Z"
+      "heartbeatAt": "2026-09-24T04:47:22.614Z",
+      "localTransferNote": "2026-11-17 new founder premium UI task. Original September ordering checkout preserved. Superseding broad stale lease in this isolated metadata copy for exact listed UI paths only."
     },
     {
       "id": "2cf5d23e-309b-4ab9-a413-cd6d6f185ef7",
@@ -2090,6 +2091,34 @@
       "state": "active",
       "claimedAt": "2026-11-12T19:45:34.792Z",
       "heartbeatAt": "2026-11-13T22:24:44.454Z"
+    },
+    {
+      "id": "5cc7503b-e2d4-4fc3-92d7-496c155fb645",
+      "task": "EA2-PREMIUM-UI-20261117",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRequestGuide.tsx",
+        "client/src/research/early-access/early-access-v2.css",
+        "client/src/research/early-access/early-access-v2-guide.test.tsx",
+        "client/src/research/assisted-order/early-access-premium.css"
+      ],
+      "state": "released",
+      "claimedAt": "2026-11-17T17:40:56.444Z",
+      "heartbeatAt": "2026-11-17T17:54:29.978Z"
+    },
+    {
+      "id": "6aedb798-bded-46c6-a05e-2c36aff6f5e0",
+      "task": "EA2-PHONE-INTEGRATION-20261117",
+      "session": "codex-ea2-premium-ui-20261117",
+      "paths": [
+        "client/src/research/assisted-order/RequestIntentForm.tsx",
+        "client/src/research/assisted-order/guest-catalog-phone.css",
+        "client/src/research/assisted-order/guest-catalog-phone.test.ts",
+        "docs/ux/ea2-phone-ccf68a9e/**"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-11-17T23:26:53.576Z",
+      "heartbeatAt": "2026-11-17T23:33:43.075Z"
     }
   ],
   "rules": [

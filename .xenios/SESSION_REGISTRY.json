@@ -506,6 +506,16 @@
       "startedAt": "2026-11-12T19:45:34.500Z",
       "heartbeatAt": "2026-11-13T22:24:44.454Z",
       "note": "Verified the disposable staging Session pooler in Supabase. Updating and testing the exact rehearsal database guard."
+    },
+    {
+      "id": "codex-ea2-premium-ui-20261117",
+      "tool": "codex",
+      "lane": "early-access-premium-ui",
+      "branch": "codex/ea2-phone-checkpoint-20261117",
+      "state": "active",
+      "startedAt": "2026-11-17T17:40:53.589Z",
+      "heartbeatAt": "2026-11-17T23:42:41.185Z",
+      "note": "Source candidate ccf68a9e remains on draft 473, all five hosted jobs and 5040 browser card observations passed. Separate branch checkpoints evidence and corpus; exact independent review pending in KAN-225 13297."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
