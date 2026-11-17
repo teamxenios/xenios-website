@@ -1,0 +1,65 @@
+/* Request dock on the Early Access guest catalog: presentation only.
+   Matches the guest catalog values in early-access-premium.css (#468), so the dock
+   reads as part of the same page: pine accent, hairline, 0.625rem controls and
+   the same focus ring. Scoped to the guest catalog; other dock uses are unchanged.
+   Loads after persistent-request-bar.css (PersistentRequestBar.tsx). */
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock {
+  --dock-ink: #20342a;
+  --dock-muted: #526459;
+  --dock-line: #dce3da;
+  --dock-soft: #f4f6f0;
+  --dock-accent: #214a35;
+  --dock-accent-hover: #1a3d2b;
+  --dock-focus: #4d7358;
+  color: var(--dock-ink);
+  border-top-color: var(--dock-line);
+  box-shadow: 0 -10px 30px rgba(32, 52, 42, .07);
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock {
+    background: rgba(255, 255, 255, .92);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    backdrop-filter: saturate(1.4) blur(14px);
+  }
+}
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-request-dock__status strong {
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock :is(.xenios-request-dock__status span, .xenios-request-dock__hint) {
+  color: var(--dock-muted);
+  font-variant-numeric: tabular-nums;
+}
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock :is(.xenios-request-dock__summary, .xenios-request-dock__primary) {
+  border-radius: .625rem;
+  font-weight: 600;
+  transition: background-color .18s ease, border-color .18s ease;
+}
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-request-dock__summary { color: var(--dock-ink); }
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-request-dock__summary:hover { background: var(--dock-soft); }
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-request-dock__primary:not(:disabled) {
+  border-color: var(--dock-accent);
+  background: var(--dock-accent);
+}
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock .xenios-request-dock__primary:not(:disabled):hover {
+  border-color: var(--dock-accent-hover);
+  background: var(--dock-accent-hover);
+}
+/* The dock's blue focus ring (#4d6bda) becomes the catalog's. The summary
+   dialog renders in a Radix portal outside the dock, so it is scoped from body. */
+body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock button:focus-visible {
+  outline: 3px solid var(--dock-focus);
+  outline-offset: 3px;
+}
+body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog button:focus-visible {
+  outline: 3px solid #4d7358;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock :is(.xenios-request-dock__summary, .xenios-request-dock__primary) { transition: none; }
+}
+@media (forced-colors: active) {
+  body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock { background: Canvas; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+  body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock button:focus-visible,
+  body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog button:focus-visible { outline-color: Highlight; }
+}
