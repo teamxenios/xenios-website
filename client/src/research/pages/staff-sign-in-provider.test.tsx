@@ -117,6 +117,9 @@ function expectNoCustomerAccess() {
   expect(revokeRecoverySession).not.toHaveBeenCalled();
 }
 function expectCareDeniedWithRetainedAuth() {
+  const claims = JSON.parse(globalThis.atob(supa.state.session!.access_token.split(".")[1])) as { sub: string; session_id: string };
+  expect(claims.sub).toBe(supa.state.session?.user.id);
+  expect(claims.session_id).toMatch(/^91000000-0000-4000-8000-\d{12}$/);
   expect(window.location.pathname).toBe("/care/request-intents");
   expect(container.textContent).toContain("Private queue access could not be confirmed.");
   const queue = fetchMock.mock.calls.find(([url]) => String(url).includes("/request-intents/staff?page=1"));

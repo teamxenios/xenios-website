@@ -126,7 +126,7 @@ describe("private staff workflow wiring (synthetic provider/server, real canonic
     expect(container.textContent).toContain("State: Reviewing | Revision 2");
     expect(container.textContent).toContain("saved request receipt remains pending review");
   });
-  it.each([false, 403, 503])("exposes no command when current processing availability is %s", async (mode) => {
+  it.each([false, 403, 503] as const)("exposes no command when current processing availability is %s", async (mode) => {
     auth.session = providerSession(); if (mode === false) server.allowed = false; else server.workflowStatus = mode;
     await mount(); await openRequest();
     expect(button("Start review")).toBeUndefined(); expect(button("Confirm start review")).toBeUndefined();
