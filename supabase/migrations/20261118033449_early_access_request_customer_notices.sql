@@ -19,6 +19,8 @@ create table if not exists request_intent_private.workflow_notice_intents (
   revision bigint not null check (revision >= 0),
   environment text not null check (environment ~ '^[a-z][a-z0-9_-]{2,63}$'),
   created_at timestamptz not null default clock_timestamp(),
+  -- Set once, before the first send: a digest of the exact message attempted.
+  attempt_digest text check (attempt_digest ~ '^[0-9a-f]{64}$'),
   unique (request_id, revision)
 );
 alter table request_intent_private.workflow_notice_intents enable row level security;
@@ -156,14 +158,49 @@ returns jsonb language sql stable security invoker set search_path = '' as $$
   select request_intent_private.customer_notice_delivery(p_event_key);
 $$;
 
+-- Before its first send the worker binds a digest of the exact message: the
+-- sender, the recipient, the subject, both bodies and the provider key. The
+-- first digest stays. Every later attempt gets that first digest back, so a
+-- worker whose current code or settings would send different bytes under the
+-- same key can see that and hold the job instead. Only the digest is stored.
+create or replace function request_intent_private.customer_notice_bind(p_event_key text, p_digest text)
+returns text language plpgsql security definer set search_path = '' as $$
+declare
+  bound text;
+begin
+  if current_setting('role', true) is distinct from 'service_role' or auth.uid() is not null then
+    raise exception using errcode = '42501', message = 'customer_notice_backend_only';
+  end if;
+  if p_event_key is null
+    or p_event_key !~ '^ea-request-customer-[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$'
+    or p_digest is null or p_digest !~ '^[0-9a-f]{64}$' then
+    raise exception using errcode = '22023', message = 'invalid_customer_notice_binding';
+  end if;
+  update request_intent_private.workflow_notice_intents i
+  set attempt_digest = coalesce(i.attempt_digest, p_digest)
+  where i.event_id = substr(p_event_key, length('ea-request-customer-') + 1)::uuid
+  returning i.attempt_digest into bound;
+  return bound;
+end;
+$$;
+
+create or replace function public.request_intent_customer_notice_bind(p_event_key text, p_digest text)
+returns text language sql security invoker set search_path = '' as $$
+  select request_intent_private.customer_notice_bind(p_event_key, p_digest);
+$$;
+
 -- The two workflow functions are callable only from the workflow's definer
 -- functions. The worker's read is for the backend role alone.
 revoke all on function request_intent_private.enqueue_workflow_notice(uuid, uuid, text, bigint, text),
   request_intent_private.workflow_customer_notice(uuid, uuid),
   request_intent_private.customer_notice_delivery(text),
-  public.request_intent_customer_notice_delivery(text)
+  public.request_intent_customer_notice_delivery(text),
+  request_intent_private.customer_notice_bind(text, text),
+  public.request_intent_customer_notice_bind(text, text)
   from public, anon, authenticated, service_role;
 grant execute on function request_intent_private.customer_notice_delivery(text),
-  public.request_intent_customer_notice_delivery(text)
+  public.request_intent_customer_notice_delivery(text),
+  request_intent_private.customer_notice_bind(text, text),
+  public.request_intent_customer_notice_bind(text, text)
   to service_role;
 commit;

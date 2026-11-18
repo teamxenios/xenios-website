@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   CUSTOMER_NOTICE_BEFORE_START,
+  CUSTOMER_NOTICE_BIND_RPC,
   CUSTOMER_NOTICE_DELIVERY_RPC,
   CUSTOMER_NOTICE_REFUSED,
   CUSTOMER_NOTICE_SEND_LIMIT_MS,
   CUSTOMER_NOTICE_TEMPLATES,
   CUSTOMER_NOTICE_UNCONFIRMED,
   type CustomerNoticeKind,
+  customerNoticeDigest,
   renderCustomerNotice,
   requestCustomerNoticeConfig,
   sendRequestCustomerNotice,
@@ -43,8 +45,10 @@ function job(n: 1 | 2, kind: CustomerNoticeKind = "request_received_queued", ove
   };
 }
 const facts = (address: unknown = "avery@example.invalid", superseded = false) => vi.fn(async () => ({ address, superseded }));
-const run = (queued: ReturnType<typeof job>, read = facts(), now = soon, settings = config) =>
-  sendRequestCustomerNotice(queued, sender, settings, env, read, now);
+// The database keeps the first digest bound. A first attempt gets its own digest back.
+const firstAttempt = () => vi.fn(async (_key: string, digest: string): Promise<unknown> => digest);
+const run = (queued: ReturnType<typeof job>, read = facts(), now = soon, settings = config, bind = firstAttempt()) =>
+  sendRequestCustomerNotice(queued, sender, settings, env, read, now, bind);
 
 beforeEach(() => {
   send.mockReset();
@@ -152,11 +156,70 @@ describe("sending a customer notice", () => {
     expect(sent).toContainEqual(["jordan@example.invalid", ids(2).key, false, true]);
   });
 
-  it("the default reader asks the backend-only function for this event alone", async () => {
-    rpc.mockResolvedValue({ data: { address: "avery@example.invalid", superseded: false }, error: null });
+  it("the default reader and binder ask the backend-only functions for this event alone", async () => {
+    rpc.mockImplementation(async (name: string, args: { p_digest?: string }) => name === CUSTOMER_NOTICE_BIND_RPC
+      ? { data: args.p_digest, error: null }
+      : { data: { address: "avery@example.invalid", superseded: false }, error: null });
     expect((await sendRequestCustomerNotice(job(1), sender, config, env, undefined, soon)).ok).toBe(true);
-    expect(rpc.mock.calls).toEqual([[CUSTOMER_NOTICE_DELIVERY_RPC, { p_event_key: ids(1).key }]]);
+    const message = { from: sender.from, to: "avery@example.invalid", ...renderCustomerNotice("request_received_queued", ids(1).reference, eventAt) };
+    expect(rpc.mock.calls).toEqual([
+      [CUSTOMER_NOTICE_DELIVERY_RPC, { p_event_key: ids(1).key }],
+      [CUSTOMER_NOTICE_BIND_RPC, { p_event_key: ids(1).key, p_digest: customerNoticeDigest(message, ids(1).key) }],
+    ]);
     expect(send.mock.calls[0][0].to).toBe("avery@example.invalid");
+  });
+
+  it("binds a digest of the exact message before anything reaches the provider", async () => {
+    const order: string[] = [];
+    const bind = vi.fn(async (_key: string, digest: string): Promise<unknown> => { order.push("bind"); return digest; });
+    send.mockImplementation(async () => { order.push("send"); return { data: { id: "provider-1" }, error: null }; });
+    expect((await run(job(1), facts(), soon, config, bind)).ok).toBe(true);
+    expect(order).toEqual(["bind", "send"]);
+    const [message, options] = send.mock.calls[0];
+    expect(bind).toHaveBeenCalledWith(ids(1).key, customerNoticeDigest(message, options.idempotencyKey));
+    expect(bind.mock.calls[0][1]).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it("the digest changes with the sender, the recipient, the subject, either body or the key", () => {
+    const message = { from: sender.from, to: "avery@example.invalid", ...renderCustomerNotice("request_received_queued", ids(1).reference, eventAt) };
+    const base = customerNoticeDigest(message, ids(1).key);
+    expect(customerNoticeDigest({ ...message }, ids(1).key)).toBe(base);
+    const variants = [
+      customerNoticeDigest({ ...message, from: "Other <other@example.invalid>" }, ids(1).key),
+      customerNoticeDigest({ ...message, to: "jordan@example.invalid" }, ids(1).key),
+      customerNoticeDigest({ ...message, subject: message.subject + "." }, ids(1).key),
+      customerNoticeDigest({ ...message, text: message.text + "." }, ids(1).key),
+      customerNoticeDigest({ ...message, html: message.html + " " }, ids(1).key),
+      customerNoticeDigest(message, ids(2).key),
+    ];
+    expect(new Set([base, ...variants]).size).toBe(7);
+  });
+
+  it("holds a retry whose message differs from the one first attempted, and sends nothing", async () => {
+    // An earlier deployment bound another digest: other wording, another sender, or another address.
+    const earlier = vi.fn(async (): Promise<unknown> => "f".repeat(64));
+    expect(await run(job(1, "request_received_queued", { last_attempt_at: recordedAt }), facts(), soon, config, earlier)).toEqual({
+      ok: false, providerId: null, nonRetryable: true,
+      error: "Not resent: this message differs from the one first attempted. Reconcile with the provider before any resend.",
+    });
+    expect(send).not.toHaveBeenCalled();
+  });
+
+  it("retries without sending when the binding cannot be written, and holds when there is nothing to bind to", async () => {
+    const failing = vi.fn(async (): Promise<unknown> => { throw new Error("connection reset"); });
+    expect(await run(job(1), facts(), soon, config, failing)).toEqual({
+      ok: false, providerId: null, error: "Customer notice binding was unavailable.",
+    });
+    rpc.mockImplementation(async (name: string) => name === CUSTOMER_NOTICE_BIND_RPC
+      ? { data: null, error: { code: "57014" } }
+      : { data: { address: "avery@example.invalid", superseded: false }, error: null });
+    expect(await sendRequestCustomerNotice(job(1), sender, config, env, undefined, soon)).toEqual({
+      ok: false, providerId: null, error: "Customer notice binding was unavailable.",
+    });
+    expect(await run(job(1), facts(), soon, config, vi.fn(async (): Promise<unknown> => null))).toEqual({
+      ok: false, providerId: null, nonRetryable: true, error: "Not sent: no saved request for this notice.",
+    });
+    expect(send).not.toHaveBeenCalled();
   });
 
   it("refuses a job whose key, template, marker, time or payload do not belong together, without reading an address", async () => {

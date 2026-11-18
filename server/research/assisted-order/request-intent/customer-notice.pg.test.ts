@@ -8,6 +8,9 @@ const ENV = "ea-fixture";
 const record = `select ${S}.enqueue_workflow_notice($1::uuid, $2::uuid, $3::text, $4::bigint, $5::text)`;
 const project = `select ${S}.workflow_customer_notice($1::uuid, $2::uuid) as notice`;
 const delivery = "select public.request_intent_customer_notice_delivery($1::text) as facts";
+const bind = "select public.request_intent_customer_notice_bind($1::text, $2::text) as bound";
+const DIGEST_A = "a".repeat(64);
+const DIGEST_B = "b".repeat(64);
 const QUEUED = "40000000-0000-4000-8000-000000000001";
 const REVIEWING = "40000000-0000-4000-8000-000000000002";
 const OTHER = "40000000-0000-4000-8000-000000000003";
@@ -17,7 +20,7 @@ pg16It("records one notice per workflow event in the caller's transaction, store
   try {
     await db.start();
     await db.sql(readFileSync("supabase/research-notification-outbox.sql", "utf8"));
-    const migration = readFileSync("supabase/migrations/20261118033000_early_access_request_customer_notices.sql", "utf8");
+    const migration = readFileSync("supabase/migrations/20261118033449_early_access_request_customer_notices.sql", "utf8");
     await db.sql(migration);
     await db.sql(migration);
 
@@ -100,6 +103,21 @@ pg16It("records one notice per workflow event in the caller's transaction, store
     expect((await db.asRole("service_role", delivery, ["ea-request-customer-" + OTHER])).rows).toEqual([{ facts: null }]);
     expect((await db.asRole("service_role", delivery, [keyQueued])).rows)
       .toEqual([{ facts: { address: "jordan@example.invalid", superseded: false } }]);
+
+    // The first digest bound for an event stays: a later attempt with other bytes gets the first one back.
+    await expect(db.asRole("anon", bind, [keyQueued, DIGEST_A])).rejects.toMatchObject({ code: "42501" });
+    await expect(db.asRole("authenticated", bind, [keyQueued, DIGEST_A])).rejects.toMatchObject({ code: "42501" });
+    await expect(db.asRole("service_role", bind, [keyQueued, "not-a-digest"])).rejects.toMatchObject({ code: "22023" });
+    await expect(db.asRole("service_role", bind, ["not-a-key", DIGEST_A])).rejects.toMatchObject({ code: "22023" });
+    expect((await db.asRole("service_role", bind, ["ea-request-customer-" + OTHER, DIGEST_A])).rows).toEqual([{ bound: null }]);
+    const racingBind = await Promise.all([DIGEST_A, DIGEST_B].map(digest => db.asRole("service_role", bind, [keyQueued, digest])));
+    const first = racingBind[0].rows[0].bound;
+    expect([DIGEST_A, DIGEST_B]).toContain(first);
+    expect(racingBind[1].rows[0].bound).toBe(first);
+    expect((await db.asRole("service_role", bind, [keyQueued, DIGEST_A === first ? DIGEST_B : DIGEST_A])).rows).toEqual([{ bound: first }]);
+    // Recording the same event again does not clear the binding.
+    await db.sql(record, [b.id, QUEUED, "request_received_queued", 1, ENV]);
+    expect((await db.asRole("service_role", bind, [keyQueued, DIGEST_B])).rows).toEqual([{ bound: first }]);
 
     // The projection follows the job, in fixed words.
     const setJob = (key: string, status: string, error: string | null = null) => db.sql(

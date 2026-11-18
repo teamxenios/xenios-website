@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import { getResendClient } from "../../../services/email";
 import { getSupabaseAdmin } from "../../../supabase";
@@ -14,6 +15,7 @@ export const CUSTOMER_NOTICE_TEMPLATES = {
 export type CustomerNoticeKind = keyof typeof CUSTOMER_NOTICE_TEMPLATES;
 export const CUSTOMER_NOTICE_TEMPLATE_KEYS: readonly string[] = Object.values(CUSTOMER_NOTICE_TEMPLATES);
 export const CUSTOMER_NOTICE_DELIVERY_RPC = "request_intent_customer_notice_delivery";
+export const CUSTOMER_NOTICE_BIND_RPC = "request_intent_customer_notice_bind";
 
 /**
  * Resend recognises a repeated idempotency key for 24 hours, and a notice that
@@ -135,6 +137,22 @@ export const readCustomerNoticeDelivery: CustomerNoticeDeliveryReader = async (k
   return data;
 };
 
+export type CustomerNoticeBinder = (eventKey: string, digest: string) => Promise<unknown>;
+
+/** Binds the digest of the first message attempted and returns the bound one. Throws on a failed write. */
+export const bindCustomerNoticeDigest: CustomerNoticeBinder = async (key, digest) => {
+  const { data, error } = await getSupabaseAdmin().rpc(CUSTOMER_NOTICE_BIND_RPC, { p_event_key: key, p_digest: digest });
+  if (error) throw new Error("Customer notice binding failed.");
+  return data;
+};
+
+/** One digest over everything the provider is given: sender, recipient, subject, both bodies and the key. */
+export function customerNoticeDigest(message: Readonly<{ from: string; to: string; subject: string; text: string; html: string }>, key: string): string {
+  return createHash("sha256")
+    .update(JSON.stringify([message.from, message.to, message.subject, message.text, message.html, key]))
+    .digest("hex");
+}
+
 // Provider answers that say the message was not taken. Anything else, a
 // thrown error or a reply without an id leaves the result unknown.
 const DEFINITE_REFUSALS = new Set([
@@ -153,6 +171,7 @@ export async function sendRequestCustomerNotice(
   env: NodeJS.ProcessEnv = process.env,
   readDelivery: CustomerNoticeDeliveryReader = readCustomerNoticeDelivery,
   now: Date = new Date(),
+  bindDigest: CustomerNoticeBinder = bindCustomerNoticeDigest,
 ): Promise<CustomerNoticeResult> {
   const payload = payloadSchema.safeParse(job.payload);
   if (!payload.success || typeof job.event_key !== "string" || !eventKey.test(job.event_key)
@@ -196,13 +215,25 @@ export async function sendRequestCustomerNotice(
   const to = address.safeParse(delivery.data.address);
   if (!to.success) return held("Not sent: the saved contact address cannot be used for email.");
 
+  // The exact message is bound before anything reaches the network. A later
+  // deployment that would send other bytes under this key holds the job
+  // instead: the provider ties an accepted key to the body first sent.
+  const message = { from: sender.from, to: to.data, ...renderCustomerNotice(kind, reference, eventAt) };
+  const digest = customerNoticeDigest(message, job.event_key);
+  let bound: unknown;
+  try {
+    bound = await bindDigest(job.event_key, digest);
+  } catch {
+    return later("Customer notice binding was unavailable.");
+  }
+  if (bound === null || bound === undefined) return held("Not sent: no saved request for this notice.");
+  if (bound !== digest) {
+    return held("Not resent: this message differs from the one first attempted. Reconcile with the provider before any resend.");
+  }
+
   try {
     const { client } = await getResendClient();
-    const { data, error } = await client.emails.send({
-      from: sender.from,
-      to: to.data,
-      ...renderCustomerNotice(kind, reference, eventAt),
-    }, { idempotencyKey: job.event_key });
+    const { data, error } = await client.emails.send(message, { idempotencyKey: job.event_key });
     if (!error && data?.id) return { ok: true, providerId: data.id };
     if (error && DEFINITE_REFUSALS.has(String((error as { name?: unknown }).name))) return later(CUSTOMER_NOTICE_REFUSED);
   } catch {

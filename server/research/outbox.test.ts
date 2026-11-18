@@ -634,8 +634,10 @@ describe("customer notices recorded by the request workflow", () => {
         environment: "ea-staging" },
     };
   }
-  const answerDelivery = (address: unknown, superseded = false) => supabaseRpc.mockImplementation(async (name: unknown) =>
-    ({ data: name === "request_intent_customer_notice_delivery" ? { address, superseded } : 0, error: null }) as any);
+  // The binding function returns the first digest bound; here that is always the one offered.
+  const answerDelivery = (address: unknown, superseded = false) => supabaseRpc.mockImplementation(async (name: unknown, args: any) =>
+    ({ data: name === "request_intent_customer_notice_delivery" ? { address, superseded }
+      : name === "request_intent_customer_notice_bind" ? args.p_digest : 0, error: null }) as any);
   const alerts = () => state.outbox.filter((row) => row.template_key === "admin_email_failure");
 
   it("is off by default: recorded notices wait unsent and unclaimed, and other mail still flows past them", async () => {
@@ -662,6 +664,7 @@ describe("customer notices recorded by the request workflow", () => {
       // No reconciliation call: the workflow records the notice, the worker only sends it.
       expect(supabaseRpc.mock.calls).toEqual([
         ["request_intent_customer_notice_delivery", { p_event_key: queued.event_key }],
+        ["request_intent_customer_notice_bind", { p_event_key: queued.event_key, p_digest: expect.stringMatching(/^[0-9a-f]{64}$/) }],
       ]);
       expect(resend.send).toHaveBeenCalledTimes(1);
       const [message, options] = resend.send.mock.calls[0] as unknown as [Record<string, string>, unknown];
