@@ -4,7 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { parseStaffRequestWorkflow, type RequestWorkflowV1, type StartReviewResultV1 } from "../../../../shared/research/assisted-order/request-intent-workflow";
 import { RequestIntentHttpError } from "./request-intent-api";
-import { StaffStartReviewControl, type StaffReviewSnapshot, type StaffStartReviewControlProps } from "./StaffStartReviewControl";
+import { createStaffReviewCommandJournal, StaffStartReviewControl, type StaffReviewCommandJournal, type StaffReviewSnapshot, type StaffStartReviewControlProps } from "./StaffStartReviewControl";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 const A = "30000000-0000-4000-8000-000000000001";
@@ -31,13 +31,16 @@ function deferred() {
   return { promise, resolve, reject };
 }
 let host: HTMLDivElement, root: Root;
+let sessionInstance: object, journal: StaffReviewCommandJournal;
 beforeEach(() => {
   host = document.createElement("div"); document.body.append(host); root = createRoot(host);
+  sessionInstance = {}; journal = createStaffReviewCommandJournal(sessionInstance);
   let sequence = 0;
   vi.spyOn(crypto, "randomUUID").mockImplementation(() => `70000000-0000-4000-8000-${String(++sequence).padStart(12, "0")}`);
 });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); vi.restoreAllMocks(); });
-async function mount(props: StaffStartReviewControlProps) { await act(async () => root.render(<StaffStartReviewControl {...props} />)); }
+type FixtureProps = Omit<StaffStartReviewControlProps, "sessionInstance" | "journal"> & Partial<Pick<StaffStartReviewControlProps, "sessionInstance" | "journal">>;
+async function mount(props: FixtureProps) { await act(async () => root.render(<StaffStartReviewControl sessionInstance={sessionInstance} journal={journal} {...props} />)); }
 function button(text: string) { return [...host.querySelectorAll("button")].find(b => b.textContent === text); }
 async function click(text: string) { const value = button(text); expect(value, text).toBeDefined(); await act(async () => value!.click()); }
 async function confirm() { await click("Start review"); await click("Confirm start review"); }
@@ -213,15 +216,14 @@ describe("manual staff start-review control", () => {
     await click("Refresh review availability"); expect(host.textContent).toContain("Review is already in progress.");
   });
 
-  it("keeps an uncertain command across API changes and only retries it under its original identity", async () => {
+  it("keeps an uncertain command across API changes within the same canonical session and requires fresh API-scoped availability", async () => {
     const api = fixture(), other = fixture(); api.startReview.mockRejectedValueOnce(new Error("response lost"));
     const current = snapshot(api); await mount({ requestId: A, api, current }); await confirm();
     await mount({ requestId: A, api: other, current }); expect(button("Start review")).toBeUndefined();
+    expect(button("Retry the same start-review attempt")).toBeUndefined();
     await click("Refresh review availability"); expect(button("Start review")).toBeUndefined();
-    expect(button("Retry the same start-review attempt")).toBeUndefined(); expect(other.startReview).not.toHaveBeenCalled();
-    expect(host.textContent).toContain("another session identity");
-    await mount({ requestId: A, api, current }); await click("Retry the same start-review attempt");
-    expect(api.startReview.mock.calls[1]).toEqual(api.startReview.mock.calls[0]); expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
+    await click("Retry the same start-review attempt");
+    expect(other.startReview.mock.calls[0]).toEqual(api.startReview.mock.calls[0]); expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
   });
 
   it("resolves uncertain state from a strict refreshed reviewing workflow without posting again", async () => {
@@ -233,12 +235,16 @@ describe("manual staff start-review control", () => {
     expect(button("Retry the same start-review attempt")).toBeUndefined();
   });
 
-  it("ignores unmounted completion and contains a throwing parent callback without retrying a confirmed command", async () => {
+  it("ignores unmounted completion while retaining its confirmed command in the external journal", async () => {
     const api = fixture(), pending = deferred(), onConfirmed = vi.fn(); api.startReview.mockReturnValueOnce(pending.promise);
     await mount({ requestId: A, api, current: snapshot(api), onConfirmed }); await confirm();
     await act(async () => root.render(<p>Signed out</p>));
     await act(async () => pending.resolve({ replay: false, workflow: workflow(A, true) }));
     expect(onConfirmed).not.toHaveBeenCalled(); expect(host.textContent).toBe("Signed out");
+    expect(journal.read(A)?.status).toBe("confirmed");
+  });
+
+  it("contains a throwing parent callback without retrying a confirmed command", async () => {
     const second = fixture(), throwing = vi.fn((_value: StartReviewResultV1) => { throw new Error("private callback failure"); });
     await mount({ requestId: A, api: second, current: snapshot(second), onConfirmed: throwing }); await confirm();
     expect(throwing).toHaveBeenCalledTimes(1); expect(host.textContent).toContain("Review started.");
@@ -247,12 +253,96 @@ describe("manual staff start-review control", () => {
 
   it("uses native button semantics and cannot implicitly submit an enclosing form", async () => {
     const api = fixture(), submit = vi.fn((event: React.FormEvent) => event.preventDefault());
-    await act(async () => root.render(<form onSubmit={submit}><StaffStartReviewControl requestId={A} api={api} current={snapshot(api)} /></form>));
+    await act(async () => root.render(<form onSubmit={submit}><StaffStartReviewControl requestId={A} sessionInstance={sessionInstance} journal={journal} api={api} current={snapshot(api)} /></form>));
     for (const control of host.querySelectorAll("button")) expect(control.type).toBe("button");
     button("Start review")!.focus(); expect(document.activeElement).toBe(button("Start review"));
     await click("Start review");
     for (const control of host.querySelectorAll("button")) expect(control.type).toBe("button");
     button("Confirm start review")!.focus(); expect(document.activeElement).toBe(button("Confirm start review"));
     await click("Cancel"); expect(submit).not.toHaveBeenCalled(); expect(api.startReview).not.toHaveBeenCalled();
+  });
+
+  it.each(["permission", "reviewing", "missing"])("immediately reconciles parent %s after local refresh and invalidates confirmation", async kind => {
+    const api = fixture(); await mount({ requestId: A, api, current: snapshot(api) });
+    await click("Refresh review availability"); await click("Start review");
+    const next = kind === "missing" ? null : snapshot(api, A, false, kind === "reviewing");
+    await mount({ requestId: A, api, current: next }); noNewCommand(api);
+    expect(button("Retry the same start-review attempt")).toBeUndefined();
+    if (kind === "reviewing") expect(host.textContent).toContain("Review is already in progress.");
+    await mount({ requestId: A, api, current: snapshot(api) });
+    expect(button("Start review")).toBeUndefined(); expect(button("Confirm start review")).toBeUndefined();
+    await click("Refresh review availability"); expect(button("Start review")).toBeDefined();
+    expect(button("Confirm start review")).toBeUndefined(); expect(api.startReview).not.toHaveBeenCalled();
+  });
+
+  it("does not overwrite a newer parent denial with an older in-flight GET", async () => {
+    const api = fixture(), read = deferred(); api.readStaffWorkflow.mockReturnValueOnce(read.promise);
+    await mount({ requestId: A, api, current: snapshot(api) }); act(() => button("Refresh review availability")!.click());
+    await mount({ requestId: A, api, current: snapshot(api, A, false) });
+    await act(async () => read.resolve({ workflow: workflow(), canStartReview: true })); noNewCommand(api);
+  });
+
+  it("retains lost-response command across a real child unmount/remount with the required external journal", async () => {
+    const api = fixture(), pending = deferred(), onConfirmed = vi.fn(); api.startReview.mockReturnValueOnce(pending.promise);
+    await mount({ requestId: A, api, current: snapshot(api), onConfirmed }); await confirm();
+    const first = api.startReview.mock.calls[0];
+    await act(async () => root.render(<p>Auth-event child remount fixture</p>));
+    await act(async () => pending.reject(new Error("response lost after child unmount")));
+    const renewedApi = fixture();
+    await mount({ requestId: A, api: renewedApi, current: snapshot(api), onConfirmed });
+    expect(button("Start review")).toBeUndefined(); expect(button("Retry the same start-review attempt")).toBeUndefined();
+    await click("Refresh review availability"); await click("Retry the same start-review attempt");
+    expect(renewedApi.startReview).toHaveBeenCalledExactlyOnceWith(...first);
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(1); expect(onConfirmed).toHaveBeenCalledTimes(1);
+  });
+
+  it("fences a still-pending command across child remount and permits only the same command after uncertainty settles", async () => {
+    const api = fixture(), pending = deferred(); api.startReview.mockReturnValueOnce(pending.promise);
+    const current = snapshot(api); await mount({ requestId: A, api, current }); await confirm();
+    await act(async () => root.render(<p>Canonical child remount</p>)); await mount({ requestId: A, api, current });
+    expect(button("Start review")).toBeUndefined(); expect(button("Retry the same start-review attempt")).toBeUndefined();
+    await click("Refresh review availability"); expect(api.startReview).toHaveBeenCalledTimes(1);
+    await act(async () => pending.reject(new Error("synthetic lost reply")));
+    await click("Refresh review availability"); await click("Retry the same start-review attempt");
+    expect(api.startReview.mock.calls[1]).toEqual(api.startReview.mock.calls[0]); expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
+  });
+
+  it("denies a journal from another exact canonical session scope without reading or posting", async () => {
+    const api = fixture(); await mount({ requestId: A, api, current: snapshot(api), sessionInstance: {} }); noNewCommand(api);
+    expect(button("Refresh review availability")?.disabled).toBe(true);
+    expect(api.readStaffWorkflow).not.toHaveBeenCalled(); expect(host.textContent).toContain("current review session could not be confirmed");
+    expect(crypto.randomUUID).not.toHaveBeenCalled();
+  });
+
+  it("preserves request separation in one session journal and confirmed state across remount", async () => {
+    const api = fixture(); await mount({ requestId: A, api, current: snapshot(api) }); await confirm();
+    await act(async () => root.render(<p>Child replaced</p>)); await mount({ requestId: B, api, current: snapshot(api, B) }); await confirm();
+    expect(api.startReview).toHaveBeenCalledTimes(2); expect(api.startReview.mock.calls.map(call => call[0])).toEqual([A, B]);
+    await act(async () => root.render(<p>Child replaced again</p>)); await mount({ requestId: A, api, current: snapshot(api) });
+    expect(button("Start review")).toBeUndefined(); expect(button("Retry the same start-review attempt")).toBeUndefined();
+    expect(crypto.randomUUID).toHaveBeenCalledTimes(2);
+  });
+
+  it("uses the shared journal as a synchronous fence across two mounted controls", async () => {
+    const api = fixture(), pending = deferred(); api.startReview.mockReturnValueOnce(pending.promise);
+    const props = { requestId: A, api, current: snapshot(api), sessionInstance, journal };
+    await act(async () => root.render(<><StaffStartReviewControl {...props} /><StaffStartReviewControl {...props} /></>));
+    await act(async () => { for (const control of [...host.querySelectorAll("button")].filter(b => b.textContent === "Start review")) control.click(); });
+    const confirmations = [...host.querySelectorAll("button")].filter(b => b.textContent === "Confirm start review");
+    expect(confirmations).toHaveLength(2); act(() => { confirmations[0].click(); confirmations[1].click(); });
+    expect(api.startReview).toHaveBeenCalledTimes(1); expect(crypto.randomUUID).toHaveBeenCalledTimes(1);
+    await act(async () => pending.resolve({ replay: false, workflow: workflow(A, true) }));
+  });
+
+  it("does not downgrade a strict reviewing readback when an older ambiguous reply arrives", async () => {
+    const api = fixture(), pending = deferred(); api.startReview.mockReturnValueOnce(pending.promise);
+    await mount({ requestId: A, api, current: snapshot(api) }); await confirm();
+    await act(async () => root.render(<p>Child remounted</p>)); await mount({ requestId: A, api, current: snapshot(api) });
+    api.readStaffWorkflow.mockResolvedValueOnce({ workflow: workflow(A, true), canStartReview: false });
+    await click("Refresh review availability");
+    await act(async () => pending.reject(new Error("old lost reply")));
+    await act(async () => root.render(<p>Child remounted again</p>)); await mount({ requestId: A, api, current: snapshot(api) });
+    expect(button("Start review")).toBeUndefined(); expect(button("Retry the same start-review attempt")).toBeUndefined();
+    expect(journal.read(A)?.status).toBe("confirmed"); expect(api.startReview).toHaveBeenCalledTimes(1);
   });
 });
