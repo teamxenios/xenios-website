@@ -49,6 +49,7 @@ function HomeHeader() {
       <span className="xh-mark" aria-hidden="true" /><span>{HOME_UI.wordmark}</span>
     </a>
     <nav className="xh-nav" aria-label={HOME_UI.primaryNavigation}>
+      <a href={HOME_DESTINATIONS.healthRequest.href}><Copy slot="nav.earlyAccess" /></a>
       <a href={HOME_DESTINATIONS.health.href}><Copy slot="nav.health" /></a>
       <a href={HOME_DESTINATIONS.infinity.href}><Copy slot="nav.infinity" /></a>
       <a href={HOME_DESTINATIONS.about.href}>{HOME_UI.about}</a>
@@ -59,6 +60,7 @@ function HomeHeader() {
     }}>
       <summary>{HOME_UI.menu} <span aria-hidden="true">+</span></summary>
       <nav aria-label={HOME_UI.mobileNavigation}>
+        <a href={HOME_DESTINATIONS.healthRequest.href}>{HOME_COPY["nav.earlyAccess"]}</a>
         <a href={HOME_DESTINATIONS.health.href}>{HOME_COPY["nav.health"]}</a>
         <a href={HOME_DESTINATIONS.infinity.href}>{HOME_COPY["nav.infinity"]}</a>
         <a href={HOME_DESTINATIONS.about.href}>{HOME_UI.mobileAbout}</a>
@@ -85,25 +87,30 @@ function HomeHero() {
       <a href={HOME_DESTINATIONS.infinity.href}>{HOME_UI.infinityJump}<Arrow /></a>
     </nav>
     <p className="xh-editorial-note"><Copy slot="hero.note" /></p>
+    <p className="xh-quality"><Copy slot="hero.quality" /></p>
     <ul className="xh-trust-strip" aria-label={HOME_UI.trustStrip}>
       {(["company", "process", "scope"] as const).map(id => <li key={id}><Copy slot={"trust.strip." + id as HomeCopySlot} /></li>)}
     </ul>
   </section>;
 }
 
-function Pathway({ pathway }: { pathway: "clinical" | "research" }) {
+const PATHWAY_DESTINATIONS = {
+  clinical: "clinicalRequest", research: "researchRequest",
+  supplements: "supplementsRequest", topicals: "topicalsRequest",
+} as const satisfies Record<string, HomeDestinationId>;
+function Pathway({ pathway }: { pathway: keyof typeof PATHWAY_DESTINATIONS }) {
   const slot = (part: string) => pathway + "." + part as HomeCopySlot;
   return <section className="xh-pathway" aria-labelledby={"xh-" + pathway + "-title"}>
     <p className="xh-label"><Copy slot={slot("label")} /></p>
     <h3 id={"xh-" + pathway + "-title"}><Copy slot={slot("title")} /></h3>
     <p className="xh-body"><Copy slot={slot("body")} /></p>
     {pathway === "research" && <p className="xh-audience"><Copy slot="research.audience" /></p>}
-    <Action destination={pathway === "clinical" ? "clinicalRequest" : "researchRequest"} slot={slot("cta")}
+    <Action destination={PATHWAY_DESTINATIONS[pathway]} slot={slot("cta")}
       describedBy="xh-shared-entry" secondary={pathway === "research"} />
-    <details className="xh-explanation">
+    {(pathway === "clinical" || pathway === "research") && <details className="xh-explanation">
       <summary><Copy slot={slot("detailsLabel")} /></summary>
       <p className="xh-body"><Copy slot={slot("detailsBody")} /></p>
-    </details>
+    </details>}
   </section>;
 }
 
@@ -170,7 +177,8 @@ function HealthSection() {
         <TextLink destination="howRequests" slot="health.processCta" /></div>
       <p className="xh-boundary"><Copy slot="health.boundary" /></p>
     </section>
-    <div className="xh-pathways"><Pathway pathway="clinical" /><Pathway pathway="research" /></div>
+    <div className="xh-pathways">{(Object.keys(PATHWAY_DESTINATIONS) as (keyof typeof PATHWAY_DESTINATIONS)[])
+      .map(pathway => <Pathway key={pathway} pathway={pathway} />)}</div>
     <p className="xh-shared-entry" id="xh-shared-entry"><Copy slot="health.sharedEntry" /></p>
     <HowRequestsWork />
     <ReviewApproach />
