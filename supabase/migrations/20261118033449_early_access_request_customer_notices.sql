@@ -73,10 +73,13 @@ begin
 
   insert into request_intent_private.workflow_notice_intents (event_id, request_id, kind, revision, environment)
   values (p_event_id, p_request_id, p_kind, p_revision, p_environment)
-  on conflict (event_id) do nothing;
-  select * into strict existing from request_intent_private.workflow_notice_intents where event_id = p_event_id;
-  -- The same event may be recorded again. The same id with other facts may not.
-  if existing.request_id <> p_request_id or existing.kind <> p_kind
+  -- Both unique indexes arbitrate a same-event race. A revision-only conflict
+  -- is not a replay: the exact event and all its facts must still match below.
+  on conflict do nothing;
+  select * into existing from request_intent_private.workflow_notice_intents where event_id = p_event_id;
+  -- This VOLATILE function takes a fresh lookup snapshot after the INSERT
+  -- under READ COMMITTED. A missing or different event is never success.
+  if not found or existing.request_id <> p_request_id or existing.kind <> p_kind
     or existing.revision <> p_revision or existing.environment <> p_environment then
     raise exception using errcode = '23505', message = 'workflow_notice_identity_conflict';
   end if;

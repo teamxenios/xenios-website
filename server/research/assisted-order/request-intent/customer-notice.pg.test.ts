@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import type { PoolClient } from "pg";
 import { expect } from "vitest";
 import { createDurableJourneyFixture, pg16It, submission, OPERATOR } from "./durable-journey.pg.fixture";
 import { CUSTOMER_NOTICE_TEMPLATES, CUSTOMER_NOTICE_UNCONFIRMED } from "./customer-notice";
@@ -88,7 +90,7 @@ pg16It("records one notice per workflow event in the caller's transaction, store
     expect((await db.sql("select count(*)::int as n from public.research_notification_outbox")).rows).toEqual([{ n: 0 }]);
 
     // Recording the same event twice, even at once, leaves one intent and one job.
-    await Promise.all([0, 1].map(() => db.sql(record, [b.id, QUEUED, "request_received_queued", 1, ENV])));
+    await Promise.all(Array.from({ length: 8 }, () => db.sql(record, [b.id, QUEUED, "request_received_queued", 1, ENV])));
     await db.sql(record, [b.id, QUEUED, "request_received_queued", 1, ENV]);
     // A notice must name one recorded event of its own request, of the matching kind and revision.
     await expect(db.sql(record, [a.id, QUEUED, "request_received_queued", 1, ENV])).rejects.toMatchObject({ code: "22023" });
@@ -225,5 +227,113 @@ pg16It("records one notice per workflow event in the caller's transaction, store
       .toEqual([{ notice: "pending" }]);
   } finally {
     await db.close();
+  }
+}, 120_000);
+
+
+pg16It("waits for competing notice commits and rollbacks without treating a different event as a replay", async () => {
+  const db = createDurableJourneyFixture();
+  let pool: ReturnType<typeof db.poolForLogin> | undefined;
+  try {
+    await db.start({ managedCareSchema: true });
+    await db.sql(readFileSync("supabase/research-notification-outbox.sql", "utf8"));
+    await db.sql(readFileSync("supabase/migrations/20261114133500_early_access_pending_request_reader.sql", "utf8"));
+    await db.sql(readFileSync("supabase/migrations/20261118024134_request_intent_workflow.sql", "utf8"));
+    await db.sql(readFileSync("supabase/migrations/20261118033449_early_access_request_customer_notices.sql", "utf8"));
+    expect((await db.sql(`select contype, pg_get_constraintdef(oid) as definition from pg_constraint
+      where conrelid = 'request_intent_private.workflow_notice_intents'::regclass and contype in ('p','u')
+      order by contype`)).rows).toEqual([
+      { contype: "p", definition: "PRIMARY KEY (event_id)" },
+      { contype: "u", definition: "UNIQUE (request_id, revision)" },
+    ]);
+    const { app } = db.application(db.adapter().client);
+    const seed = async (name: string, eventId: string) => {
+      const base = submission();
+      const input = { ...base, idempotencyKey: randomUUID(), contact: { ...base.contact, fullLegalName: name } };
+      expect((await db.post(app, "", input, "a")).status).toBe(200);
+      const saved = (await db.snapshot()).find(row => row.contact.fullLegalName === name)!;
+      expect(saved).toBeDefined();
+      await db.sql(`insert into ${S}.workflow (request_id, environment, state, revision, initial_queue_cycle_id, changed_at)
+        select id, $2, 'queued', 1, gen_random_uuid(), created_at from ${S}.requests where id = $1`, [saved.id, ENV]);
+      await db.sql(`insert into ${S}.workflow_events (id, request_id, revision, kind, occurred_at)
+        select gen_random_uuid(), id, 0, 'received', created_at from ${S}.requests where id = $1
+        union all select $2::uuid, id, 1, 'queued', created_at from ${S}.requests where id = $1`, [saved.id, eventId]);
+      return saved;
+    };
+    const committedId = "50000000-0000-4000-8000-000000000001";
+    const rolledBackId = "50000000-0000-4000-8000-000000000002";
+    const conflictId = "50000000-0000-4000-8000-000000000003";
+    const otherId = "50000000-0000-4000-8000-000000000004";
+    const committed = await seed("Synthetic committed writer", committedId);
+    const rolledBack = await seed("Synthetic rolled back writer", rolledBackId);
+    const conflict = await seed("Synthetic conflicting revision", conflictId);
+
+    // This fixture-only login obtains two persistent independent connections.
+    // It can call only this private function, not read or mutate either table.
+    // No actual application role receives a grant; the owned DB is destroyed.
+    const password = randomUUID();
+    expect(password).toMatch(/^[0-9a-f-]{36}$/);
+    await db.sql("create role notice_race_fixture login password '" + password + "'");
+    await db.sql(`grant usage on schema ${S} to notice_race_fixture;
+      grant execute on function ${S}.enqueue_workflow_notice(uuid,uuid,text,bigint,text) to notice_race_fixture`);
+    expect((await db.sql(`select bool_and(not has_function_privilege(role_name,
+      'request_intent_private.enqueue_workflow_notice(uuid,uuid,text,bigint,text)', 'execute')) as denied
+      from (values ('anon'),('authenticated'),('service_role')) roles(role_name)`)).rows).toEqual([{ denied: true }]);
+    pool = db.poolForLogin("notice_race_fixture", password);
+
+    const behindWriter = async (requestId: string, eventId: string, finish: "commit" | "rollback") => {
+      const writer = await pool!.connect();
+      let replay: PoolClient | undefined;
+      let pending: Promise<{ error?: unknown }> | undefined;
+      try {
+        replay = await pool!.connect();
+        await writer.query("set statement_timeout = '8s'");
+        await replay.query("set statement_timeout = '8s'");
+        expect((await replay.query("show transaction_isolation")).rows[0].transaction_isolation).toBe("read committed");
+        const writerPid = (await writer.query("select pg_backend_pid() as pid")).rows[0].pid as number;
+        const replayPid = (await replay.query("select pg_backend_pid() as pid")).rows[0].pid as number;
+        expect(replayPid).not.toBe(writerPid);
+        await writer.query("begin isolation level read committed");
+        const args = [requestId, eventId, "request_received_queued", 1, ENV];
+        await writer.query(record, args);
+        pending = replay.query(record, args).then(() => ({}), (error: unknown) => ({ error }));
+        // Observe the actual unique-index wait, rather than sleep and guess
+        // whether the competing statement had reached the uncommitted row.
+        await expect.poll(async () => (await db.sql(
+          "select $1::int = any(pg_blocking_pids($2::int)) as blocked", [writerPid, replayPid],
+        )).rows, { timeout: 5_000, interval: 25 }).toEqual([{ blocked: true }]);
+        await writer.query(finish);
+        const result = await pending;
+        if (result.error) throw result.error;
+      } finally {
+        try {
+          await writer.query("rollback");
+          if (pending) await pending;
+        } finally {
+          replay?.release();
+          writer.release();
+        }
+      }
+      expect((await db.sql(`select event_id, request_id, revision::int as revision from ${S}.workflow_notice_intents where request_id = $1`, [requestId])).rows)
+        .toEqual([{ event_id: eventId, request_id: requestId, revision: 1 }]);
+      expect((await db.sql("select event_key from public.research_notification_outbox where event_key = $1",
+        ["ea-request-customer-" + eventId])).rows).toEqual([{ event_key: "ea-request-customer-" + eventId }]);
+    };
+    await behindWriter(committed.id, committedId, "commit");
+    await behindWriter(rolledBack.id, rolledBackId, "rollback");
+
+    // A secondary-key-only conflict must not be swallowed as an identical
+    // replay. Seed a fixture-owner inconsistency and prove it stays untouched.
+    await db.sql(`insert into ${S}.workflow_notice_intents
+      (event_id,request_id,kind,revision,environment,attempt_digest)
+      values ($1,$2,'request_received_queued',1,$3,$4)`, [otherId, conflict.id, ENV, DIGEST_A]);
+    await expect(db.sql(record, [conflict.id, conflictId, "request_received_queued", 1, ENV]))
+      .rejects.toMatchObject({ code: "23505", message: "workflow_notice_identity_conflict" });
+    expect((await db.sql(`select event_id, attempt_digest from ${S}.workflow_notice_intents where request_id = $1`, [conflict.id])).rows)
+      .toEqual([{ event_id: otherId, attempt_digest: DIGEST_A }]);
+    expect((await db.sql("select event_key from public.research_notification_outbox where event_key in ($1,$2)",
+      ["ea-request-customer-" + conflictId, "ea-request-customer-" + otherId])).rows).toEqual([]);
+  } finally {
+    try { if (pool) await pool.end(); } finally { await db.close(); }
   }
 }, 120_000);
