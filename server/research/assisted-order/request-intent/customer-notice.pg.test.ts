@@ -248,9 +248,8 @@ pg16It("waits for competing notice commits and rollbacks without treating a diff
     ]);
     const { app } = db.application(db.adapter().client);
     const seed = async (name: string, eventId: string) => {
-      const input = submission();
-      input.idempotencyKey = randomUUID();
-      input.contact.fullLegalName = name;
+      const base = submission();
+      const input = { ...base, idempotencyKey: randomUUID(), contact: { ...base.contact, fullLegalName: name } };
       expect((await db.post(app, "", input, "a")).status).toBe(200);
       const saved = (await db.snapshot()).find(row => row.contact.fullLegalName === name)!;
       expect(saved).toBeDefined();
