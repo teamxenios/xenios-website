@@ -594,6 +594,13 @@ describe("the assisted-order route table", () => {
 const RI = `${EA}/request-intents`;
 const RI_CUSTOMER = [`GET ${RI}/catalog`, `GET ${RI}/config`, `POST ${RI}/`, `POST ${RI}/recover`] as const;
 const RI_STAFF = [`GET ${RI}/staff`, `GET ${RI}/staff/:requestId`] as const;
+// These carry only workflow metadata, never product prices. The owner read
+// and staff read/write have separate downstream authority and rollout guards.
+const RI_WORKFLOW = [
+  `GET ${RI}/:requestId/workflow`,
+  `GET ${RI}/staff/:requestId/workflow`,
+  `POST ${RI}/staff/:requestId/start-review`,
+] as const;
 const RI_ORIGIN = "https://fixture.example.invalid";
 
 const RI_VIEWER: AssistedOrderViewer = {
@@ -656,7 +663,19 @@ describe("the request-intent registration", () => {
     const routers = mountedRouters(app);
     expect(routers.length).toBe(1);
     const mounted = [...routesOf(app), ...routesOf(routers[0], RI)].sort();
-    expect(mounted).toEqual([...RI_CUSTOMER, ...RI_STAFF].sort());
+    expect(mounted).toEqual([...RI_CUSTOMER, ...RI_STAFF, ...RI_WORKFLOW].sort());
+  });
+
+  it("keeps each workflow leaf closed by default and exposes no prices to a customer", async () => {
+    const app = requestIntentApp();
+    for (const route of RI_WORKFLOW) {
+      const { method, path } = parse(route);
+      const target = path.replace(":requestId", "10000000-0000-4000-8000-000000000001");
+      const response = method === "GET" ? await request(app).get(target)
+        : await request(app).post(target).set("Origin", RI_ORIGIN).send({});
+      expect({ route, refused: response.status >= 400, price: priceIn(response.body) })
+        .toEqual({ route, refused: true, price: [] });
+    }
   });
 
   it("is given a catalog that really is priced", async () => {

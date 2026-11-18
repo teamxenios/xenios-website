@@ -1,6 +1,7 @@
 import express from "express";
 import request from "supertest";
 import { createClient } from "@supabase/supabase-js";
+import ws from "ws";
 import { describe, expect, it, vi } from "vitest";
 import type { CareRole } from "../../../../../shared/care/contracts";
 import { requireRequestProcessor } from "./access";
@@ -44,6 +45,9 @@ describe("explicit request processor authority", () => {
     { status: 200, headers: { "Content-Type": "application/json" } }));
     const client = createClient("https://auth-fixture.example.invalid", "synthetic-anon-key", {
       global: { fetch }, auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+      // Match server/supabase.ts: Node20 needs the installed transport even
+      // though this Auth-only exercise never opens a realtime connection.
+      realtime: { transport: ws as unknown as typeof WebSocket },
     });
     const aal1 = await client.auth.mfa.getAuthenticatorAssuranceLevel(token({ aal: "aal1" }));
     expect(aal1.error).toBeNull();
