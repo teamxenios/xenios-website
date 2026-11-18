@@ -22,7 +22,7 @@ describe("homepage current copy contract", () => {
   it("renders the complete versioned addendum, with consistent repeated actions", async () => {
     const view = await renderHome();
     expect(view.querySelector(".xenios-home-next")?.getAttribute("data-copy-version")).toBe(HOME_COPY_VERSION);
-    expect(HOME_COPY_VERSION).toBe("2.0.0");
+    expect(HOME_COPY_VERSION).toBe("2.0.1");
     const rendered = [...view.querySelectorAll<HTMLElement>("[data-copy]")];
     expect(new Set(rendered.map(node => node.dataset.copy))).toEqual(new Set(Object.keys(HOME_COPY)));
     for (const node of rendered) {

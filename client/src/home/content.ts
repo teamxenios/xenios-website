@@ -1,6 +1,6 @@
 // Current copy contract. Earlier designs remain in Git; this addendum
 // replaces their fixed slot inventory without hidden overrides.
-export const HOME_COPY_VERSION = "2.0.0";
+export const HOME_COPY_VERSION = "2.0.1";
 export const HOME_COPY = Object.freeze({
   "nav.health": "Xenios Health",
   "nav.infinity": "Infinity",
@@ -24,7 +24,7 @@ export const HOME_COPY = Object.freeze({
   "trust.strip.process": "A saved reference for your request",
   "trust.strip.scope": "Distinct clinical and research purposes",
   "clinical.label": "Clinical & wellness",
-  "clinical.title": "Start with the right conversation.",
+  "clinical.title": "Start with the right question.",
   "clinical.body": "Explore clinical formulation listings, supplements and topicals. Ask about the item you are considering and the appropriate next step. Clinical suitability and prescribing decisions require the applicable qualified clinical review.",
   "clinical.cta": "Start a clinical or wellness inquiry",
   "clinical.detailsLabel": "Understand the clinical process",
