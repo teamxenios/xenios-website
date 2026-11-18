@@ -34,6 +34,11 @@ fixtures. Allow 45 seconds per real retryable-provider case and a ten-minute
 overall sequential budget. Stop at first failure or deadline; never count
 pattern-skipped cases as passes. No corrected-source run has occurred.
 
+The `15d0` review additionally required terminal settlement of outstanding
+ACK-required sends during stale-frame retirement. The successor adds generic
+once-only cancellation and direct local timeout settlement plus successful ACK
+and bounded transition probes. This remains source-only and unqualified.
+
 `qualify.mjs` enforces that budget and exact clean Git head, runs discovery with
 all cases skipped, then one selected case/worker per child. It preserves full
 stdout/stderr and direct/observed worker PID/start/exit receipts. It stops at

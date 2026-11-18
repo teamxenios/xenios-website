@@ -5,7 +5,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
-import { KEY, EPOCH, browser, memory, mutex, provider, client, session, deferred, tick, until, verify, login, assertCurrent, websocketFixture, subscribeFixture } from './fixtures.mjs';
+import { KEY, EPOCH, browser, memory, mutex, provider, client, session, deferred, tick, until, verify, login, assertCurrent, websocketFixture, subscribeFixture, withDeadline } from './fixtures.mjs';
 if (process.env.XENIOS_AUTH_PROTOCOL_RECEIPT === '1') console.log('prototype-worker:' + JSON.stringify({ pid: process.pid, at: new Date().toISOString() }));
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -397,6 +397,53 @@ for (const [entry, sdk] of Object.entries(entries)) {
     await until(() => wire.packets(joined.socket).some(packet => packet.event === 'broadcast'));
     same((await joined.channel.httpSend('fixture', { synthetic: true })).success, true);
     same(a.transport.calls.filter(call => call.path.startsWith('/realtime/v1/api/broadcast')).at(-1).authorization, 'Bearer ' + session().access_token);
+  });
+
+  scenario('ordinary ACK-required broadcast settles successfully after current server ACK', async ({ open }) => {
+    const wire = websocketFixture(); const a = await open(memory(), mutex(), provider(), { realtime: { transport: wire.FakeWebSocket, vsn: '1.0.0' } });
+    const joined = await subscribeFixture(a, wire, 'ack-success', true, { broadcast: { ack: true } });
+    let settlements = 0;
+    const pending = joined.channel.send({ type: 'broadcast', event: 'fixture', payload: { synthetic: true } }).then(value => { settlements++; return value; });
+    await until(() => wire.packets(joined.socket).some(packet => packet.event === 'broadcast'));
+    same(settlements, 0, 'ack=true must actually await its server result');
+    const sent = wire.packets(joined.socket).filter(packet => packet.event === 'broadcast').at(-1);
+    wire.reply(joined.socket, sent); same(await withDeadline(pending), 'ok'); same(settlements, 1);
+    wire.reply(joined.socket, sent); await tick(); same(settlements, 1);
+  });
+
+  for (const transition of ['replacement', 'signout']) {
+    scenario(`in-flight ACK-required send settles once when ${transition} retires its frame`, async ({ open, environment }) => {
+      const wire = websocketFixture(); const a = await open(memory(), mutex(), provider(), { realtime: { transport: wire.FakeWebSocket, vsn: '1.0.0' } });
+      const joined = await subscribeFixture(a, wire, 'ack-retire-' + transition, true, { broadcast: { ack: true } });
+      environment.holdTimerDelays.add(9876); let settlements = 0;
+      const pending = joined.channel.send({ type: 'broadcast', event: 'held-ack', payload: { synthetic: true } }, { timeout: 9876 })
+        .then(value => { settlements++; return value; });
+      await until(() => wire.packets(joined.socket).some(packet => packet.event === 'broadcast'));
+      const sent = wire.packets(joined.socket).filter(packet => packet.event === 'broadcast').at(-1);
+      same(settlements, 0); const sentBefore = joined.socket.sent.length;
+      if (transition === 'replacement') same((await login(a.auth)).error, null);
+      else same((await a.auth.signOut({ scope: 'local' })).error, null);
+      same(await withDeadline(pending), 'error', 'retirement must not leave the public send promise pending');
+      same(settlements, 1); wire.reply(joined.socket, sent, 'ok', { syntheticLateAck: true });
+      await environment.flushHeldTimers(); await tick();
+      same(settlements, 1); same(joined.socket.sent.length, sentBefore, 'no old payload resend');
+    });
+  }
+
+  scenario('stale local ACK timeout settles even when data admission and broadcast delivery are delayed', async ({ open, environment }) => {
+    const store = memory(), lock = mutex(), wire = websocketFixture();
+    const a = await open(store, lock, provider(), { realtime: { transport: wire.FakeWebSocket, vsn: '1.0.0' } }); const b = await open(store, lock);
+    const joined = await subscribeFixture(a, wire, 'ack-timeout', true, { broadcast: { ack: true } });
+    environment.holdTimerDelays.add(9877);
+    const pending = joined.channel.send({ type: 'broadcast', event: 'held-ack', payload: { synthetic: true } }, { timeout: 9877 });
+    await until(() => wire.packets(joined.socket).some(packet => packet.event === 'broadcast'));
+    const sent = wire.packets(joined.socket).filter(packet => packet.event === 'broadcast').at(-1);
+    const sentBefore = joined.socket.sent.length; await login(b.auth);
+    // No B BroadcastChannel notification is delivered to A, so the old cache
+    // and channel remain. Its local terminal timer must bypass data admission.
+    assert.ok(environment.heldTimers.length > 0); await environment.flushHeldTimers();
+    same(await withDeadline(pending), 'timed out'); wire.reply(joined.socket, sent); await tick();
+    same(joined.socket.sent.length, sentBefore); assertCurrent(store, session('B'));
   });
 
   scenario('stable anonymous public channel works while anonymous private admission is refused', async ({ open }) => {

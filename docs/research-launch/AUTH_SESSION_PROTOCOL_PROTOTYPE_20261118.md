@@ -17,6 +17,19 @@ new fixtures are authored **NOT_RUN**. They change SDK build inputs; the six
 historical artifacts are invalid for this source. The next allocation requires
 a fresh isolated build, not artifact reuse.
 
+Independent static review of `15d0abeedf7249cc863848ffbee22a66ab94098e`
+found those five corrections source-coherent but still unqualified, with one
+remaining terminal-result gap: an in-flight ACK-required broadcast could hang
+when stale local timeout delivery was suppressed or teardown canceled it.
+The narrow successor tracks pending strict-mode Push objects, removes them on
+normal ACK, and settles each once with a generic redacted cancellation during
+retirement/destruction. Local timeout settlement bypasses the data-admission
+gate while carrying no remote payload. Canceled work cannot reset/resend, and
+retired channels cannot schedule rejoin. This correction and its bounded
+successful-ACK, replacement/sign-out cancellation, and stale-local-timeout
+fixtures are authored NOT_RUN. `15d0` and all historical receipts are preserved;
+no source-coherence finding is treated as runtime acceptance.
+
 Task: `EA-AUTH-SESSION-PROTOCOL-PROTOTYPE-20261118`. Owner registration:
 `codex-ea-auth-protocol-20261118`, `2026-11-18T15:38:17.188Z`.
 Base: `e6e11c3f923491d55bc2cd221c29da77001a0822`.
@@ -262,6 +275,12 @@ a newer ordinary same-token revision, forged ticket refusal and current clear.
 Channel probes cover normal authenticated/anonymous join/send, stale private
 send after sign-out, disconnected queued join, delayed encode/decode/HTTP,
 scheduled rejoin and refresh retirement/fresh-subscription availability.
+ACK-required probes now hold a real public send's ACK across replacement or
+sign-out, await a generic error within a fixture deadline, and then force a
+late ACK and canceled timeout without resend. Another probe withholds B's
+broadcast notification and forces the stale local timer to settle the send.
+Ordinary successful ACK remains a separate positive case. These use actual
+public channel methods and controlled transport replies; none has executed.
 
 Four `.mjs` syntax checks and `git diff --check` passed at the source checkpoint.
 Browser, live-provider, full application/type gates and the remaining 47

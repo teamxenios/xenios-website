@@ -10,6 +10,12 @@ export function deferred() {
   return { promise, resolve, reject };
 }
 export const tick = () => new Promise(resolve => setImmediate(resolve));
+export async function withDeadline(promise, timeout = 1200) {
+  let timer;
+  try {
+    return await Promise.race([promise, new Promise((_resolve, reject) => { timer = setTimeout(() => reject(new Error('FIXTURE_TERMINAL_RESULT_DEADLINE')), timeout); })]);
+  } finally { clearTimeout(timer); }
+}
 export async function until(predicate) {
   for (let count = 0; count < 1500; count++) { if (predicate()) return; await new Promise(resolve => setTimeout(resolve, 1)); }
   throw new Error('FIXTURE_EXPECTED_BOUNDARY_NOT_REACHED');
@@ -148,18 +154,21 @@ export function websocketFixture() {
     removeEventListener(kind, callback) { if (this['on' + kind] === callback) this['on' + kind] = null; }
   }
   const packets = socket => socket.sent.map(data => JSON.parse(String(data)));
+  const reply = (socket, packet, status = 'ok', response = {}) => {
+    socket.message(JSON.stringify({ topic: packet.topic, event: 'phx_reply', ref: packet.ref, join_ref: packet.join_ref,
+      payload: { status, response } }));
+  };
   const acknowledge = socket => {
     const join = packets(socket).filter(packet => packet.event === 'phx_join').at(-1);
     assert.ok(join, 'actual public subscribe sent a join');
-    socket.message(JSON.stringify({ topic: join.topic, event: 'phx_reply', ref: join.ref, join_ref: join.join_ref,
-      payload: { status: 'ok', response: {} } }));
+    reply(socket, join);
     return join;
   };
-  return { FakeWebSocket, sockets, packets, acknowledge };
+  return { FakeWebSocket, sockets, packets, acknowledge, reply };
 }
-export async function subscribeFixture(opened, wire, topic = 'fixture', isPrivate = true) {
+export async function subscribeFixture(opened, wire, topic = 'fixture', isPrivate = true, channelConfig = {}) {
   const statuses = [];
-  const channel = opened.instance.channel(topic, { config: { private: isPrivate } });
+  const channel = opened.instance.channel(topic, { config: { private: isPrivate, ...channelConfig } });
   channel.subscribe(status => statuses.push(status));
   await until(() => wire.sockets.some(socket => socket.readyState === 0 || socket.readyState === 1));
   const socket = wire.sockets.at(-1); if (socket.readyState === 0) socket.open();

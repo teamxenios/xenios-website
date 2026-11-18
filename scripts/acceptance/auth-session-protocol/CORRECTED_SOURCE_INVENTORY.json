@@ -1,9 +1,9 @@
 {
   "schema": "xenios-auth-corrected-source-inventory-v1",
   "status": "UNQUALIFIED_SOURCE_ONLY",
-  "at": "2026-11-18T17:02:50.493Z",
+  "at": "2026-11-18T17:15:14.319Z",
   "baseSha": "e6e11c3f923491d55bc2cd221c29da77001a0822",
-  "predecessorSha": "d13fd0695dde97974e031b6dc172721e17b4fa20",
+  "predecessorSha": "15d0abeedf7249cc863848ffbee22a66ab94098e",
   "sdkVersion": "2.108.2",
   "phoenixVersion": "0.4.4",
   "nodeVersion": "20.19.0",
@@ -70,7 +70,7 @@
     },
     {
       "path": "patch-transport.mjs",
-      "sha256": "44f4197dc78ed3053d309c10990ab652cac0654629d27a980c716004df12dd88"
+      "sha256": "e828cad6c4ecb20e90dcd526894ac398d3baa475de435b8d66b9ef6541fe8226"
     },
     {
       "path": "source/SessionProtocol.ts",
@@ -84,7 +84,7 @@
   "fixtureInputs": [
     {
       "path": "fixtures.mjs",
-      "sha256": "175e6c31877b46ab8e2b750b72a071dc9cf84d521e7dea998a12396afe7be475"
+      "sha256": "b8b0ca6986b95156a7ed56a9c8b483ab7bac3cf274af7216e69d909e400c5c0d"
     },
     {
       "path": "fixtures.test.mjs",
@@ -92,7 +92,7 @@
     },
     {
       "path": "protocol.test.mjs",
-      "sha256": "6e921b1fc4b607167be502ee01f13875a8fbc5411101ce0ed83df7b34263c2e4"
+      "sha256": "a8a67ca4827404d4d8ade70717cc6ebe3990eea33b83557036dcf425a1d0d984"
     },
     {
       "path": "qualify.mjs",
@@ -132,5 +132,12 @@
     "browser ESM and opaque custom transports",
     "application facade/recovery integration/subscription restoration"
   ],
-  "ownedSourceDigestFormat": "SHA256 of LF-normalized UTF8 repository source; builder separately records physical byte hashes. Upstream pins are exact observed package bytes."
+  "ownedSourceDigestFormat": "SHA256 of LF-normalized UTF8 repository source; builder separately records physical byte hashes. Upstream pins are exact observed package bytes.",
+  "terminalResultCorrection": {
+    "reviewBase": "15d0abeedf7249cc863848ffbee22a66ab94098e",
+    "finding": "Stale timeout suppression/retirement could leave ack-required public send pending.",
+    "source": "Pending Push registry, once-only redacted cancellation, direct local timeout terminal settlement and no canceled resend.",
+    "fixtures": "Successful ACK; held ACK across replacement/signout; late ACK and canceled timeout; stale local timeout without B notification.",
+    "status": "AUTHORED_NOT_RUN"
+  }
 }

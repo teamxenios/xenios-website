@@ -166,26 +166,84 @@ export function patchPhoenixSocket(text) {
     }`);
 }
 export function patchPhoenixPush(text) {
-  text = one(text, '    this.channel = channel', '    this.channel = channel\n    this.sessionProtocolFrame = channel.sessionProtocolFrame');
+  text = one(text, '    this.channel = channel', `    this.channel = channel
+    this.sessionProtocolFrame = channel.sessionProtocolFrame
+    this.sessionProtocolSettled = false
+    this.sessionProtocolCancelled = false
+    if(channel.socket.sessionProtocolBoundary?.active()){
+      channel.sessionProtocolPushes ??= new Set()
+      channel.sessionProtocolPushes.add(this)
+    }`);
   text = one(text, '  resend(timeout){\n    this.timeout = timeout', '  resend(timeout, frame = this.sessionProtocolFrame){\n    this.sessionProtocolFrame = frame\n    this.timeout = timeout');
   text = one(text, '  send(){', `  send(checked = false){
     const boundary = this.channel.socket.sessionProtocolBoundary
+    if(boundary?.active() && (this.channel.sessionProtocolRetired || this.sessionProtocolSettled)){
+      if(!this.sessionProtocolSettled) this.settleSessionStale()
+      return
+    }
     if(boundary?.active() && !checked){
-      void boundary.consumeFrame(this.sessionProtocolFrame, () => this.send(true)).catch(() => {})
+      ;(this.channel.sessionProtocolPushes ??= new Set()).add(this)
+      void boundary.consumeFrame(this.sessionProtocolFrame, () => this.send(true))
+        .then(accepted => { if(!accepted) this.settleSessionStale() })
+        .catch(() => this.settleSessionStale())
       return
     }`);
-  return one(text, '      join_ref: this.channel.joinRef()\n    })', '      join_ref: this.channel.joinRef()\n    }, this.sessionProtocolFrame)');
+  text = one(text, '      join_ref: this.channel.joinRef()\n    })', '      join_ref: this.channel.joinRef()\n    }, this.sessionProtocolFrame)');
+  text = one(text, '  reset(){', '  reset(){\n    if(this.sessionProtocolCancelled || this.channel.sessionProtocolRetired) return\n    this.sessionProtocolSettled = false');
+  text = one(text, '  destroy(){', '  destroy(){\n    if(this.channel.socket.sessionProtocolBoundary?.active()) this.settleSessionStale()');
+  text = one(text, '  matchReceive({status, response, _ref}){', `  matchReceive({status, response, _ref}){
+    if(this.channel.socket.sessionProtocolBoundary?.active()){
+      if(this.sessionProtocolSettled) return
+      this.sessionProtocolSettled = true
+      this.channel.sessionProtocolPushes?.delete(this)
+    }`);
+  return one(text, '  trigger(status, response){', `  settleSessionTerminal(status, response){
+    if(this.sessionProtocolSettled) return
+    this.sessionProtocolSettled = true
+    this.cancelRefEvent()
+    this.cancelTimeout()
+    this.channel.sessionProtocolPushes?.delete(this)
+    this.receivedResp = {status, response}
+    // Terminal status is independent of old data admission. No old payload,
+    // resend, or observer exception may keep another receiver unresolved.
+    for(const hook of [...this.recHooks]){
+      if(hook.status !== status) continue
+      try { Promise.resolve(hook.callback(response)).catch(() => {}) } catch {}
+    }
+  }
+
+  settleSessionStale(){
+    if(this.sessionProtocolCancelled) return
+    this.sessionProtocolCancelled = true
+    this.settleSessionTerminal('error', {reason: 'session_work_discarded'})
+  }
+
+  trigger(status, response){
+    if(this.channel.socket.sessionProtocolBoundary?.active() && status === 'timeout'){
+      // A local timer carries no remote data and must settle even if a later
+      // canonical revision makes Channel.trigger refuse payload callbacks.
+      this.settleSessionTerminal('timeout', {})
+      return
+    }`);
 }
 export function patchPhoenixChannel(text) {
+  text = one(text, '  teardown(){', `  teardown(){
+    if(this.socket.sessionProtocolBoundary?.active()){
+      this.sessionProtocolRetired = true
+      for(const push of [...(this.sessionProtocolPushes ?? [])]) push.settleSessionStale()
+      this.sessionProtocolPushes?.clear()
+    }`);
   text = one(text, '      if(this.socket.isConnected()){ this.rejoin() }', '      if(this.socket.isConnected()){ this.rejoin(undefined, this.sessionProtocolRejoinFrame) }');
   text = one(text, '      if(this.isErrored()){ this.rejoin() }', '      if(this.isErrored()){ this.rejoin(undefined, this.sessionProtocolRejoinFrame) }');
   text = all(text, 'this.rejoinTimer.scheduleTimeout()', 'this.scheduleSessionRejoin()', 3);
   text = one(text, '  rejoin(timeout = this.timeout){', `  scheduleSessionRejoin(){
+    if(this.sessionProtocolRetired) return
     this.sessionProtocolRejoinFrame = this.sessionProtocolFrame
     this.rejoinTimer.scheduleTimeout()
   }
 
   rejoin(timeout = this.timeout, frame = this.sessionProtocolFrame, checked = false){
+    if(this.sessionProtocolRetired) return
     const boundary = this.socket.sessionProtocolBoundary
     if(boundary?.active() && !checked){
       void boundary.consumeFrame(frame, () => this.rejoin(timeout, frame, true)).catch(() => {})
