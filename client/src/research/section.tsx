@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from "react";
-import { Link, Redirect, Route, Switch } from "wouter";
+import { Link, Redirect, Route, Switch, useRoute } from "wouter";
 import { ResearchProvider, useResearch } from "./core";
 import ResearchLayout from "./layout";
 import Gateway from "./pages/Gateway";
@@ -41,7 +41,7 @@ const Testing = lazy(() => import("./pages/Testing"));
 const ResearchDocuments = lazy(() => import("./pages/ResearchDocuments"));
 const LotVerification = lazy(() => import("./pages/LotVerification"));
 const SupplierAccess = lazy(() => import("./pages/SupplierAccess"));
-const OrganizationAccess = lazy(() => import("./b2b/OrganizationAccessPage"));
+const OrganizationAccess = lazy(() => import("./b2b/ConnectedBusinessInquiryPage"));
 const AffiliateAccess = lazy(() => import("./b2b/AffiliateAccessPage"));
 // The assisted-order wizard family. Inside the gated Early Access experience:
 // every page's own fetches carry the Early Access session and are refused
@@ -216,6 +216,7 @@ function L({ component: C, member = false, props }: { component: ComponentType<a
 }
 
 export default function ResearchSection() {
+  const [isWholesaleAlias] = useRoute("/research/wholesale");
   // SEN-0027. The research tree must never advertise itself as indexable.
   //
   // TWO EARLIER ATTEMPTS, and why each was not enough. Recorded because the
@@ -291,6 +292,9 @@ export default function ResearchSection() {
       else if (previous) el.setAttribute("content", previous);
     };
   }, []);
+
+  // Resolve this exact public alias before the layout's shared gate.
+  if (isWholesaleAlias) return <ResearchProvider><Redirect to="/research/organizations" /></ResearchProvider>;
 
   return (
     <ResearchProvider>
@@ -452,7 +456,6 @@ export default function ResearchSection() {
           <Route path="/research/programs"><Redirect to="/research/member/goals" /></Route>
           <Route path="/research/professionals"><Redirect to="/research/partners" /></Route>
           <Route path="/research/access"><Redirect to="/research/partners" /></Route>
-          <Route path="/research/wholesale"><Redirect to="/research/partners" /></Route>
           <Route path="/research/access-gate"><Redirect to="/research" /></Route>
 
           <Route component={ResearchNotFound} />

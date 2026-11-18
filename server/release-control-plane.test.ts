@@ -2348,8 +2348,13 @@ describe("route uniqueness validator", () => {
       .map((route) => route.method)).toEqual(["GET"]);
     // Measured on workflow source 9f9bcf59: the three exact router leaves add
     // three call sites and registrations. Uniqueness remains mandatory.
-    expect(result.callSites).toBe(452);
-    expect(result.routes).toHaveLength(461);
+    // The default-off business enquiry registrar adds five literal source
+    // call sites: public submit; staff list/detail/assign; own-organization list.
+    // These counts include unmounted declarations. They do not claim enabled
+    // intake, authorized staff scope, organization membership or delivery.
+    // Root's exact public business readiness GET adds one call site/route.
+    expect(result.callSites).toBe(458);
+    expect(result.routes).toHaveLength(467);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
