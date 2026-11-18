@@ -55,6 +55,21 @@ body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog button:f
   outline: 3px solid #4d7358;
   outline-offset: 3px;
 }
+/* The shared dialog's direct close button needs a full touch target here.
+   Reserve title space for it without changing other dialog or dock uses. */
+body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog > button {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+body:has(.xenios-order-page--guest-catalog) .xenios-request-dock-dialog h2 {
+  padding-inline-end: 3rem;
+}
 @media (prefers-reduced-motion: reduce) {
   body:has(.xenios-order-page--guest-catalog) > .xenios-request-dock :is(.xenios-request-dock__summary, .xenios-request-dock__primary) { transition: none; }
 }
