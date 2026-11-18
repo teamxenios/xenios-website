@@ -15,6 +15,7 @@ const ref = (requestId: string) => `XRI-${requestId.replaceAll("-", "").toUpperC
 const clone = <T,>(value: T): T => structuredClone(value);
 function authority(): AeOperationAuthority {
   return { actorAuthUserId: actor, scopeId: scope, grantId: id(7), grantRevision: 1, active: true,
+    authenticationPurpose: "ordinary",
     validFrom: "2026-11-18T13:00:00.000Z", validUntil: "2026-11-18T16:00:00.000Z",
     capabilities: ["workspace:read", "customer:contact", "followup:record", "customer:reassign"] };
 }
@@ -75,6 +76,13 @@ describe("explicit-scoped AE workspace source service", () => {
     expect(await ports(source).service.read(actor)).toEqual({ ok: false, code: "access_denied" });
     source.authority.active = true; source.authority.capabilities = ["customer:contact"];
     expect(await ports(source).service.read(actor)).toEqual({ ok: false, code: "access_denied" });
+  });
+  it("denies a recovery-purpose session despite an active staff grant", async () => {
+    const source = snapshot(); source.authority.authenticationPurpose = "recovery";
+    const { service, port } = ports(source);
+    expect(await service.read(actor)).toEqual({ ok: false, code: "access_denied" });
+    expect(await service.command(actor, followup())).toEqual({ ok: false, code: "access_denied" });
+    expect(port.commitAuthorizedCommand).not.toHaveBeenCalled();
   });
   it("resolves authority anew and blocks the operation after revocation", async () => {
     const { port, service } = ports();

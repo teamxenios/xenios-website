@@ -24,6 +24,7 @@ export interface AeOperationAuthority {
   grantId: string;
   grantRevision: number;
   active: boolean;
+  authenticationPurpose: "ordinary" | "recovery";
   validFrom: string;
   validUntil: string;
   capabilities: readonly AeOperationCapability[];
@@ -51,7 +52,7 @@ export interface AeCustomerOperationScope {
 }
 export interface AeWorkspaceAuthorityPort {
   /**
-   * Resolve current canonical Auth/staff grant + explicit AE assignment scope
+   * Resolve current canonical Auth/purpose/required assurance, staff grant and explicit AE assignment scope
    * BEFORE selecting contacts. Recheck revocation/expiry every call. Return a
    * coherent complete assigned-only snapshot, or a failure; do not cache a
    * positive scope or convert source errors/partial reads into an empty array.
@@ -78,7 +79,7 @@ export interface AeWorkspaceAuthorityPort {
 
 const authoritySchema = z.object({
   actorAuthUserId: aeIdentifier, scopeId: aeIdentifier, grantId: aeIdentifier, grantRevision: aeRevision,
-  active: z.boolean(), validFrom: aeInstant, validUntil: aeInstant,
+  active: z.boolean(), authenticationPurpose: z.enum(["ordinary", "recovery"]), validFrom: aeInstant, validUntil: aeInstant,
   capabilities: z.array(z.enum(AE_OPERATION_CAPABILITIES)).max(AE_OPERATION_CAPABILITIES.length),
 }).strict().refine(value => new Set(value.capabilities).size === value.capabilities.length &&
   Date.parse(value.validUntil) > Date.parse(value.validFrom));
@@ -116,7 +117,7 @@ function safeFailure(value: unknown): AeFailure {
 }
 function permitted(authority: AeOperationAuthority, actor: string, at: string, capability: AeOperationCapability): boolean {
   const now = Date.parse(at);
-  return authority.actorAuthUserId === actor && authority.active &&
+  return authority.actorAuthUserId === actor && authority.active && authority.authenticationPurpose === "ordinary" &&
     Date.parse(authority.validFrom) <= now && now < Date.parse(authority.validUntil) &&
     authority.capabilities.includes(capability);
 }
