@@ -18,7 +18,8 @@ type ReviewLifetime = {
   identity: SessionIdentity; instance: object; journal: StaffReviewCommandJournal;
   epoch: number; revoked: boolean;
 };
-type PageBinding = { lifetime: ReviewLifetime; generation: string; active: boolean; matchesCredential: (token: string) => boolean };
+type PageBinding = { lifetime: ReviewLifetime; generation: string; active: boolean;
+  businessDenial: BusinessInquiryStaffError | null; matchesCredential: (token: string) => boolean };
 type PageSession = Readonly<{ checked: boolean; binding: PageBinding | null }>;
 
 // Browser-memory command coordination, not an Auth store or staff permission.
@@ -74,25 +75,38 @@ function lifetimeFor(identity: SessionIdentity): ReviewLifetime | null {
 export default function CareRequestIntentPage() {
   const [session, setSession] = useState<PageSession>({ checked: false, binding: null });
   const [deskView, setDeskView] = useState<"requests" | "business">("requests");
+  const [, notifyBusinessDenial] = useState(0);
   const bindingRef = useRef<PageBinding | null>(null);
   const business = useMemo(() => {
     const binding = session.binding;
     if (!binding) return null;
-    const isCurrent = () => binding.active && bindingRef.current === binding
+    const isAuthCurrent = () => binding.active && bindingRef.current === binding
       && reviewLifetime === binding.lifetime && !binding.lifetime.revoked;
+    const isCurrent = () => isAuthCurrent() && binding.businessDenial === null;
     const fetcher = (path: string, init: RequestInit) => careApiFetch(path, init, actual =>
       isCurrent() && actual !== null && binding.matchesCredential(actual.access_token)
       && sessionIdentity(actual)?.key === binding.lifetime.identity.key);
     const source = createBusinessInquiryStaffApi({fetcher, isCurrent});
     // Keep an actual denial on this Root binding when its child view unmounts.
     // A local read cancellation is not a credential or permission revocation.
-    let terminalDenial: BusinessInquiryStaffError | null = null;
     async function scopedBusiness<T>(operation: () => Promise<T>): Promise<T> {
-      if (terminalDenial) throw terminalDenial;
-      try { return await operation(); }
+      if (binding.businessDenial) throw binding.businessDenial;
+      try {
+        const value = await operation();
+        if (binding.businessDenial) throw binding.businessDenial;
+        if (!isAuthCurrent()) throw new BusinessInquiryStaffError("stale");
+        return value;
+      }
       catch (error) {
         if (error instanceof BusinessInquiryStaffError
-          && (error.code === "denied" || error.code === "unauthenticated")) terminalDenial = error;
+          && (error.code === "denied" || error.code === "unauthenticated")
+          && isAuthCurrent() && binding.businessDenial === null) {
+          // Invalidate every concurrent read first, then clear the active view.
+          // This notification also applies when the denied child has unmounted.
+          binding.businessDenial = error;
+          notifyBusinessDenial(revision => revision + 1);
+        }
+        if (binding.businessDenial) throw binding.businessDenial;
         throw error;
       }
     }
@@ -101,6 +115,7 @@ export default function CareRequestIntentPage() {
       read: (id: string, options?: {signal?: AbortSignal}) => scopedBusiness(() => source.read(id, options)),
     },
       generation: binding.generation,
+      denial: () => binding.businessDenial,
       isContextCurrent: (generation: string) => generation === binding.generation && isCurrent() };
   }, [session.binding]);
   const api = useMemo<RequestIntentApi | null>(() => {
@@ -136,6 +151,7 @@ export default function CareRequestIntentPage() {
       // The reusable journal/lifetime never stores or exposes credentials.
       const binding = lifetime && observedToken ? { lifetime, active: true,
         generation: "staff-desk-" + (++nextBindingGeneration),
+        businessDenial: null,
         matchesCredential: (token: string) => token === observedToken } : null;
       // Revoke old callbacks synchronously, before React updates the screen.
       bindingRef.current = binding;
@@ -177,6 +193,7 @@ export default function CareRequestIntentPage() {
     };
   }, []);
   const lifetime = session.binding?.lifetime;
+  const businessDenial = business?.denial();
   return <PageShell><SeoHead title="Private request review, xenios"
     description="Authorized private readback of unapproved product requests." path={CARE_REQUEST_INTENT_PATH} robots="noindex, nofollow" />
     <div className="container-x pt-24 md:pt-36 pb-20" id="main-content">
@@ -190,7 +207,9 @@ export default function CareRequestIntentPage() {
           <button type="button" className="btn btn-ghost" aria-pressed={deskView === "business"} onClick={() => setDeskView("business")}>Business enquiries</button>
         </div>
           {deskView === "business" && business
-            ? <BusinessInquiryQueue api={business.api} contextGeneration={business.generation} isContextCurrent={business.isContextCurrent} />
+            ? businessDenial
+              ? <section><h1>Business enquiries</h1><h2 role="alert">{businessDenial.code === "unauthenticated" ? "Session expired" : "Access denied"}</h2><p>{businessDenial.message}</p></section>
+              : <BusinessInquiryQueue api={business.api} contextGeneration={business.generation} isContextCurrent={business.isContextCurrent} />
             : <RequestIntentStaffReadback key={lifetime.epoch} api={api}
               reviewSession={{ sessionInstance: lifetime.instance, journal: lifetime.journal }} />}
         </>}

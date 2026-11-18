@@ -70,6 +70,9 @@ jobs:
           client/src/research/b2b/protected-composition.behavior.test.tsx
           server/research/early-access-wall.test.ts
           --maxWorkers=1 --no-file-parallelism --allowOnly=false --retry=0
+      - name: Verify the business denial overlap tests reject the prior source
+        if: ${{ hashFiles('scripts/acceptance/qualify-business-denial-remount.mjs') != '' }}
+        run: node scripts/acceptance/qualify-business-denial-remount.mjs
       - name: Public offering and homepage source qualification
         run: >-
           npx --no-install vitest run

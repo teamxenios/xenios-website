@@ -52,6 +52,17 @@ const receipt = { kind: "unapproved_selection_request", requestId: ID, publicRef
 const detail = { ...receipt, agreements: [], lines: [], contact: { fullLegalName: "Synthetic staff fixture",
   email: "fixture@example.invalid", mobilePhone: "+15555550123", ageConfirmed: true, billingSameAsShipping: true,
   shippingAddress: { line1: "1 Synthetic Street", city: "Test", region: "TX", postalCode: "00000", countryCode: "US" } } };
+const businessRecord = {
+  id: ID, reference: "BE-" + "A".repeat(24), receivedAt: at, provenance: "web",
+  category: "b2b_organization", state: "needs_human_review", revision: 1,
+  assignedTo: null, organizationId: null, policyVersion: "synthetic-business-policy",
+  enquiry: { contactName: "Private business contact", contactEmail: "business@example.invalid",
+    organizationName: "Private business organization", organizationType: "research", location: "Austin",
+    serviceArea: "Synthetic area", categories: ["research"],
+    selections: [{description: "Synthetic material", variant: "Synthetic presentation", quantity: 2, unit: "vial"}],
+    packagingPreference: "organization_brand", siteCount: 1, replenishment: "recurring", services: ["sourcing"],
+    timing: "Synthetic timing", documentationNeeds: "Synthetic documentation", context: "Synthetic business context", referral: "Reported source" },
+};
 function deferred<T>() {
   let resolve!: (value: T) => void, reject!: (error: unknown) => void;
   const promise = new Promise<T>((yes, no) => { resolve = yes; reject = no; });
@@ -171,6 +182,36 @@ describe("private staff workflow wiring (synthetic provider/server, real canonic
     expect(read).toHaveBeenCalledTimes(2);
     expect(container.textContent).not.toContain("Access denied");
     expect(container.querySelector("h1")?.textContent).toBe("Business enquiries");
+  });
+
+  it.each(["deny_first", "success_first"])("keeps business denial authoritative across overlapping view reads (%s)", async order => {
+    auth.session = providerSession();
+    const older = deferred<Response>(), newer = deferred<Response>();
+    const read = vi.fn().mockImplementationOnce(() => older.promise).mockImplementationOnce(() => newer.promise);
+    server.businessRead = read;
+    await mount();
+    await click("Business enquiries");
+    await click("Product requests");
+    await click("Business enquiries");
+    expect(read).toHaveBeenCalledTimes(2);
+    const allow = async () => act(async () => newer.resolve(json({items: [businessRecord], nextBefore: null})));
+    const deny = async () => act(async () => older.resolve(json({error: "forbidden"}, 403)));
+    if (order === "success_first") {
+      await allow();
+      expect(container.textContent).toContain("Private business contact");
+      await deny();
+    } else {
+      await deny();
+      await allow();
+    }
+    expect(container.textContent).toContain("Access denied");
+    expect(container.textContent).not.toContain("Private business contact");
+    expect(container.textContent).not.toContain("Private business organization");
+    await click("Product requests");
+    expect(container.textContent).toContain("Retrieve private request");
+    await click("Business enquiries");
+    expect(read).toHaveBeenCalledTimes(2);
+    expect(container.textContent).toContain("Access denied");
   });
   it("requires sign-in, keeps noindex and the exact private return destination", async () => {
     await mount();

@@ -97,3 +97,14 @@ an eligible new credential binding can establish a fresh business context.
 The new shell regression exercises that denial/reentry/credential-refresh chain.
 The JSON fixture now carries its real application/json content type. New
 successor execution is separate from the green e9 predecessor.
+
+The business author's independent consumer review then identified two overlapping
+view-read orderings that the sequential991 regression did not exercise. An old
+unmounted view's403 could arrive before or after the current view's200. The new
+negative fence lives on the actual canonical PageBinding, synchronously affects
+all current business callbacks and notifies React to clear the active view.
+Every awaited result rechecks that fence. It leaves the product-reader journal
+and a genuinely newer credential binding independent. Cancellation is nonterminal.
+Two held-response regressions cover both orderings; the CI-only negative control
+must see both fail on exact991, restores the candidate bytes in finally, and then
+leaves the normal focused/full candidate checks intact. No local run is claimed.
